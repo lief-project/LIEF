@@ -1,0 +1,506 @@
+DynamicReloc:
+- {info: 8, name: '', offset: 3132816, value: 21984}
+- {info: 8, name: '', offset: 3132824, value: 21920}
+- {info: 8, name: '', offset: 3133688, value: 3133688}
+- {info: 12884901894, name: _ITM_deregisterTMClone, offset: 3133368, value: 0}
+- {info: 17179869202, name: errno, offset: 3133376, value: 0}
+- {info: 51539607558, name: __gmon_start__, offset: 3133384, value: 0}
+- {info: 1142461300742, name: signgam, offset: 3133392, value: 3133712}
+- {info: 584115552262, name: _LIB_VERSION, offset: 3133400, value: 3133696}
+- {info: 60129542150, name: _Jv_RegisterClasses, offset: 3133408, value: 0}
+- {info: 73014444038, name: _ITM_registerTMCloneTa, offset: 3133416, value: 0}
+- {info: 77309411334, name: __cxa_finalize, offset: 3133424, value: 0}
+- {info: 81604378630, name: stderr, offset: 3133432, value: 0}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: '', num: 1}
+- {name: __errno_location, num: 2}
+- {name: _ITM_deregisterTMCloneTab, num: 3}
+- {name: errno, num: 4}
+- {name: qsort, num: 5}
+- {name: strtod, num: 6}
+- {name: strlen, num: 7}
+- {name: __get_cpu_features, num: 8}
+- {name: __assert_fail, num: 9}
+- {name: fputs, num: 10}
+- {name: strtof, num: 11}
+- {name: __gmon_start__, num: 12}
+- {name: strtold, num: 13}
+- {name: _Jv_RegisterClasses, num: 14}
+- {name: sprintf, num: 15}
+- {name: fwrite, num: 16}
+- {name: _ITM_registerTMCloneTable, num: 17}
+- {name: __cxa_finalize, num: 18}
+- {name: stderr, num: 19}
+- {name: __clog10l, num: 20}
+- {name: clog10, num: 21}
+- {name: copysign, num: 22}
+- {name: ldexpf, num: 23}
+- {name: powf, num: 24}
+- {name: casin, num: 25}
+- {name: llrintf, num: 26}
+- {name: ldexpl, num: 27}
+- {name: powl, num: 28}
+- {name: truncf, num: 29}
+- {name: llrintl, num: 30}
+- {name: expf, num: 31}
+- {name: fesetexceptflag, num: 32}
+- {name: truncl, num: 33}
+- {name: expl, num: 34}
+- {name: frexpf, num: 35}
+- {name: frexpl, num: 36}
+- {name: fmod, num: 37}
+- {name: expm1, num: 38}
+- {name: __fmodl_finite, num: 39}
+- {name: catan, num: 40}
+- {name: fmaxf, num: 41}
+- {name: __yn_finite, num: 42}
+- {name: catanf, num: 43}
+- {name: catanh, num: 44}
+- {name: fmaxl, num: 45}
+- {name: rintf, num: 46}
+- {name: j0f, num: 47}
+- {name: catanl, num: 48}
+- {name: __j0l_finite, num: 49}
+- {name: rintl, num: 50}
+- {name: j0l, num: 51}
+- {name: creal, num: 52}
+- {name: __expl_finite, num: 53}
+- {name: __log10f_finite, num: 54}
+- {name: pow10, num: 55}
+- {name: __gammaf_r_finite, num: 56}
+- {name: j1f, num: 57}
+- {name: j1l, num: 58}
+- {name: __y0l_finite, num: 59}
+- {name: fma, num: 60}
+- {name: ccos, num: 61}
+- {name: fabs, num: 62}
+- {name: cos, num: 63}
+- {name: ynf, num: 64}
+- {name: __jnl_finite, num: 65}
+- {name: fabsf, num: 66}
+- {name: ccosf, num: 67}
+- {name: ccosh, num: 68}
+- {name: __sinhf_finite, num: 69}
+- {name: ynl, num: 70}
+- {name: fabsl, num: 71}
+- {name: ccosl, num: 72}
+- {name: sincosf, num: 73}
+- {name: cacoshf, num: 74}
+- {name: sincosl, num: 75}
+- {name: fesetround, num: 76}
+- {name: fegetround, num: 77}
+- {name: trunc, num: 78}
+- {name: cacoshl, num: 79}
+- {name: acoshf, num: 80}
+- {name: nexttoward, num: 81}
+- {name: acoshl, num: 82}
+- {name: acosf, num: 83}
+- {name: acosh, num: 84}
+- {name: csinf, num: 85}
+- {name: __exp2_finite, num: 86}
+- {name: __j1f_finite, num: 87}
+- {name: csinh, num: 88}
+- {name: acosl, num: 89}
+- {name: csinl, num: 90}
+- {name: cbrtf, num: 91}
+- {name: __finite, num: 92}
+- {name: cabsf, num: 93}
+- {name: cbrtl, num: 94}
+- {name: fesetenv, num: 95}
+- {name: cabsl, num: 96}
+- {name: cimag, num: 97}
+- {name: __hypotl_finite, num: 98}
+- {name: __acoshl_finite, num: 99}
+- {name: fegetenv, num: 100}
+- {name: asinf, num: 101}
+- {name: lgammaf_r, num: 102}
+- {name: asinh, num: 103}
+- {name: asinl, num: 104}
+- {name: __y1f_finite, num: 105}
+- {name: __fpclassifyf, num: 106}
+- {name: cexp, num: 107}
+- {name: coshf, num: 108}
+- {name: exp, num: 109}
+- {name: __log10_finite, num: 110}
+- {name: __fpclassifyl, num: 111}
+- {name: coshl, num: 112}
+- {name: __atanhf_finite, num: 113}
+- {name: __j0_finite, num: 114}
+- {name: sqrtf, num: 115}
+- {name: __signbit, num: 116}
+- {name: csinhf, num: 117}
+- {name: hypot, num: 118}
+- {name: sqrtl, num: 119}
+- {name: cproj, num: 120}
+- {name: copysignf, num: 121}
+- {name: csinhl, num: 122}
+- {name: copysignl, num: 123}
+- {name: __j1_finite, num: 124}
+- {name: pow10f, num: 125}
+- {name: csqrt, num: 126}
+- {name: drem, num: 127}
+- {name: pow10l, num: 128}
+- {name: __log2_finite, num: 129}
+- {name: __asinl_finite, num: 130}
+- {name: __j0f_finite, num: 131}
+- {name: nexttowardf, num: 132}
+- {name: crealf, num: 133}
+- {name: atan2, num: 134}
+- {name: nexttowardl, num: 135}
+- {name: _LIB_VERSION, num: 136}
+- {name: __expf_finite, num: 137}
+- {name: __log10l_finite, num: 138}
+- {name: creall, num: 139}
+- {name: log10, num: 140}
+- {name: log10f, num: 141}
+- {name: nanf, num: 142}
+- {name: log10l, num: 143}
+- {name: ilogb, num: 144}
+- {name: ctanf, num: 145}
+- {name: nextafterf, num: 146}
+- {name: __hypot_finite, num: 147}
+- {name: nearbyintf, num: 148}
+- {name: nanl, num: 149}
+- {name: ctanh, num: 150}
+- {name: nearbyint, num: 151}
+- {name: __y0f_finite, num: 152}
+- {name: ctanl, num: 153}
+- {name: nextafterl, num: 154}
+- {name: nearbyintl, num: 155}
+- {name: scalbf, num: 156}
+- {name: remainder, num: 157}
+- {name: scalbl, num: 158}
+- {name: scalbn, num: 159}
+- {name: __jnf_finite, num: 160}
+- {name: __sinhl_finite, num: 161}
+- {name: fmodf, num: 162}
+- {name: roundf, num: 163}
+- {name: fmodl, num: 164}
+- {name: roundl, num: 165}
+- {name: atanf, num: 166}
+- {name: fedisableexcept, num: 167}
+- {name: atanh, num: 168}
+- {name: __exp10l_finite, num: 169}
+- {name: atanl, num: 170}
+- {name: feupdateenv, num: 171}
+- {name: feholdexcept, num: 172}
+- {name: __j1l_finite, num: 173}
+- {name: log1p, num: 174}
+- {name: __ynf_finite, num: 175}
+- {name: cacos, num: 176}
+- {name: clog, num: 177}
+- {name: scalb, num: 178}
+- {name: erfc, num: 179}
+- {name: log, num: 180}
+- {name: erff, num: 181}
+- {name: lgammal_r, num: 182}
+- {name: logbf, num: 183}
+- {name: erfl, num: 184}
+- {name: logbl, num: 185}
+- {name: __hypotf_finite, num: 186}
+- {name: log2f, num: 187}
+- {name: __logf_finite, num: 188}
+- {name: lgamma, num: 189}
+- {name: log2l, num: 190}
+- {name: __coshl_finite, num: 191}
+- {name: __y1l_finite, num: 192}
+- {name: remquof, num: 193}
+- {name: significandf, num: 194}
+- {name: clogf, num: 195}
+- {name: remquol, num: 196}
+- {name: __atanhl_finite, num: 197}
+- {name: __acos_finite, num: 198}
+- {name: significandl, num: 199}
+- {name: clogl, num: 200}
+- {name: modff, num: 201}
+- {name: tgamma, num: 202}
+- {name: fmaf, num: 203}
+- {name: lround, num: 204}
+- {name: conj, num: 205}
+- {name: modfl, num: 206}
+- {name: __sinh_finite, num: 207}
+- {name: fmal, num: 208}
+- {name: llrint, num: 209}
+- {name: cpowf, num: 210}
+- {name: casinhf, num: 211}
+- {name: conjf, num: 212}
+- {name: cpowl, num: 213}
+- {name: casinhl, num: 214}
+- {name: conjl, num: 215}
+- {name: fmax, num: 216}
+- {name: asinhf, num: 217}
+- {name: cexpf, num: 218}
+- {name: erfcf, num: 219}
+- {name: asinhl, num: 220}
+- {name: cexpl, num: 221}
+- {name: erfcl, num: 222}
+- {name: carg, num: 223}
+- {name: GLIBC_2.4, num: 224}
+- {name: ctanhf, num: 225}
+- {name: fdim, num: 226}
+- {name: atan2f, num: 227}
+- {name: __clog10, num: 228}
+- {name: ctanhl, num: 229}
+- {name: __sqrtf_finite, num: 230}
+- {name: __asinf_finite, num: 231}
+- {name: atan2l, num: 232}
+- {name: __gammal_r_finite, num: 233}
+- {name: y0, num: 234}
+- {name: y1, num: 235}
+- {name: remainderf, num: 236}
+- {name: __log2l_finite, num: 237}
+- {name: remainderl, num: 238}
+- {name: asin, num: 239}
+- {name: sinhf, num: 240}
+- {name: GLIBC_2.2.5, num: 241}
+- {name: cargf, num: 242}
+- {name: __fmod_finite, num: 243}
+- {name: dremf, num: 244}
+- {name: exp10, num: 245}
+- {name: sinhl, num: 246}
+- {name: __y0_finite, num: 247}
+- {name: cprojf, num: 248}
+- {name: cargl, num: 249}
+- {name: tgammaf, num: 250}
+- {name: y0f, num: 251}
+- {name: dreml, num: 252}
+- {name: __lgammaf_r_finite, num: 253}
+- {name: cprojl, num: 254}
+- {name: tgammal, num: 255}
+- {name: y0l, num: 256}
+- {name: nan, num: 257}
+- {name: fminf, num: 258}
+- {name: fminl, num: 259}
+- {name: atan, num: 260}
+- {name: fegetexcept, num: 261}
+- {name: __issignaling, num: 262}
+- {name: __exp10f_finite, num: 263}
+- {name: __y1_finite, num: 264}
+- {name: ceil, num: 265}
+- {name: signgam, num: 266}
+- {name: y1f, num: 267}
+- {name: lrintf, num: 268}
+- {name: ldexp, num: 269}
+- {name: yn, num: 270}
+- {name: y1l, num: 271}
+- {name: __acosl_finite, num: 272}
+- {name: lrintl, num: 273}
+- {name: __ynl_finite, num: 274}
+- {name: __exp_finite, num: 275}
+- {name: finitef, num: 276}
+- {name: __fpclassify, num: 277}
+- {name: finitel, num: 278}
+- {name: jnf, num: 279}
+- {name: rint, num: 280}
+- {name: remquo, num: 281}
+- {name: jnl, num: 282}
+- {name: __logl_finite, num: 283}
+- {name: lgammaf, num: 284}
+- {name: __coshf_finite, num: 285}
+- {name: lgammal, num: 286}
+- {name: sincos, num: 287}
+- {name: __signbitf, num: 288}
+- {name: exp2f, num: 289}
+- {name: cosf, num: 290}
+- {name: __exp10_finite, num: 291}
+- {name: cosh, num: 292}
+- {name: __signbitl, num: 293}
+- {name: exp2l, num: 294}
+- {name: cosl, num: 295}
+- {name: __scalb_finite, num: 296}
+- {name: finite, num: 297}
+- {name: significand, num: 298}
+- {name: __gamma_r_finite, num: 299}
+- {name: __remainder_finite, num: 300}
+- {name: sinf, num: 301}
+- {name: sinh, num: 302}
+- {name: sinl, num: 303}
+- {name: fetestexcept, num: 304}
+- {name: fdimf, num: 305}
+- {name: lgamma_r, num: 306}
+- {name: fdiml, num: 307}
+- {name: nextafter, num: 308}
+- {name: __powf_finite, num: 309}
+- {name: __sqrtl_finite, num: 310}
+- {name: csin, num: 311}
+- {name: catanhf, num: 312}
+- {name: __scalbl_finite, num: 313}
+- {name: __remainderl_finite, num: 314}
+- {name: sin, num: 315}
+- {name: __jn_finite, num: 316}
+- {name: floor, num: 317}
+- {name: catanhl, num: 318}
+- {name: atanhf, num: 319}
+- {name: __log_finite, num: 320}
+- {name: scalblnf, num: 321}
+- {name: atanhl, num: 322}
+- {name: scalblnl, num: 323}
+- {name: __finitef, num: 324}
+- {name: __log2f_finite, num: 325}
+- {name: __exp2f_finite, num: 326}
+- {name: __finitel, num: 327}
+- {name: ctan, num: 328}
+- {name: lroundf, num: 329}
+- {name: llroundf, num: 330}
+- {name: tan, num: 331}
+- {name: __sqrt_finite, num: 332}
+- {name: lroundl, num: 333}
+- {name: __atan2l_finite, num: 334}
+- {name: __lgamma_r_finite, num: 335}
+- {name: llroundl, num: 336}
+- {name: __atan2_finite, num: 337}
+- {name: feraiseexcept, num: 338}
+- {name: __cosh_finite, num: 339}
+- {name: gammaf, num: 340}
+- {name: fmin, num: 341}
+- {name: tanhf, num: 342}
+- {name: gammal, num: 343}
+- {name: ilogbf, num: 344}
+- {name: tanhl, num: 345}
+- {name: ilogbl, num: 346}
+- {name: sqrt, num: 347}
+- {name: ceilf, num: 348}
+- {name: __fmodf_finite, num: 349}
+- {name: ceill, num: 350}
+- {name: __pow_finite, num: 351}
+- {name: floorf, num: 352}
+- {name: __acosf_finite, num: 353}
+- {name: floorl, num: 354}
+- {name: cabs, num: 355}
+- {name: matherr, num: 356}
+- {name: cacosf, num: 357}
+- {name: cacosh, num: 358}
+- {name: tanf, num: 359}
+- {name: clog10f, num: 360}
+- {name: cacosl, num: 361}
+- {name: llround, num: 362}
+- {name: exp10f, num: 363}
+- {name: tanh, num: 364}
+- {name: tanl, num: 365}
+- {name: clog10l, num: 366}
+- {name: exp10l, num: 367}
+- {name: __asin_finite, num: 368}
+- {name: cbrt, num: 369}
+- {name: scalbln, num: 370}
+- {name: gamma, num: 371}
+- {name: cpow, num: 372}
+- {name: expm1f, num: 373}
+- {name: pow, num: 374}
+- {name: casinf, num: 375}
+- {name: expm1l, num: 376}
+- {name: casinh, num: 377}
+- {name: __acosh_finite, num: 378}
+- {name: casinl, num: 379}
+- {name: j0, num: 380}
+- {name: j1, num: 381}
+- {name: ccoshf, num: 382}
+- {name: log2, num: 383}
+- {name: round, num: 384}
+- {name: ccoshl, num: 385}
+- {name: __issignalingf, num: 386}
+- {name: csqrtf, num: 387}
+- {name: lrint, num: 388}
+- {name: feclearexcept, num: 389}
+- {name: __issignalingl, num: 390}
+- {name: csqrtl, num: 391}
+- {name: acos, num: 392}
+- {name: __powl_finite, num: 393}
+- {name: feenableexcept, num: 394}
+- {name: modf, num: 395}
+- {name: __scalbf_finite, num: 396}
+- {name: GLIBC_2.15, num: 397}
+- {name: __remainderf_finite, num: 398}
+- {name: exp2, num: 399}
+- {name: scalbnf, num: 400}
+- {name: hypotf, num: 401}
+- {name: GLIBC_2.18, num: 402}
+- {name: fegetexceptflag, num: 403}
+- {name: scalbnl, num: 404}
+- {name: hypotl, num: 405}
+- {name: erf, num: 406}
+- {name: log1pf, num: 407}
+- {name: log1pl, num: 408}
+- {name: __exp2l_finite, num: 409}
+- {name: logb, num: 410}
+- {name: __acoshf_finite, num: 411}
+- {name: logf, num: 412}
+- {name: __lgammal_r_finite, num: 413}
+- {name: frexp, num: 414}
+- {name: jn, num: 415}
+- {name: cimagf, num: 416}
+- {name: logl, num: 417}
+- {name: __atan2f_finite, num: 418}
+- {name: cimagl, num: 419}
+- {name: __atanh_finite, num: 420}
+- {name: __clog10f, num: 421}
+Header: {entryPoint: 21776, nbPhdr: 7, nbShdr: 29, offsetToPhdr: 64, offsetToShdr: 1036832}
+PltGotReloc:
+- {info: 8589934599, name: __errno_location, offset: 3133464, value: 0}
+- {info: 21474836487, name: qsort, offset: 3133488, value: 0}
+- {info: 25769803783, name: strtod, offset: 3133496, value: 0}
+- {info: 30064771079, name: strlen, offset: 3133504, value: 0}
+- {info: 34359738375, name: __get_cpu_features, offset: 3133512, value: 0}
+- {info: 38654705671, name: __assert_fail, offset: 3133520, value: 0}
+- {info: 42949672967, name: fputs, offset: 3133528, value: 0}
+- {info: 47244640263, name: strtof, offset: 3133536, value: 0}
+- {info: 51539607559, name: __gmon_start__, offset: 3133560, value: 0}
+- {info: 55834574855, name: strtold, offset: 3133624, value: 0}
+- {info: 64424509447, name: sprintf, offset: 3133648, value: 0}
+- {info: 68719476743, name: fwrite, offset: 3133656, value: 0}
+- {info: 77309411335, name: __cxa_finalize, offset: 3133672, value: 0}
+- {info: 1529008357383, name: matherr, offset: 3133680, value: 22032}
+- {info: 37, name: '', offset: 3133664, value: 51984}
+- {info: 37, name: '', offset: 3133640, value: 111088}
+- {info: 37, name: '', offset: 3133632, value: 97696}
+- {info: 37, name: '', offset: 3133616, value: 196912}
+- {info: 37, name: '', offset: 3133608, value: 91712}
+- {info: 37, name: '', offset: 3133600, value: 75952}
+- {info: 37, name: '', offset: 3133592, value: 70720}
+- {info: 37, name: '', offset: 3133584, value: 202752}
+- {info: 37, name: '', offset: 3133576, value: 33392}
+- {info: 37, name: '', offset: 3133568, value: 201344}
+- {info: 37, name: '', offset: 3133552, value: 95856}
+- {info: 37, name: '', offset: 3133544, value: 33440}
+- {info: 37, name: '', offset: 3133480, value: 49712}
+- {info: 37, name: '', offset: 3133472, value: 111168}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 456, name: .note.gnu.build-i, nb: 1, offset: 456, size: 36}
+- {address: 492, name: .note.ABI-tag, nb: 2, offset: 492, size: 32}
+- {address: 528, name: .gnu.hash, nb: 3, offset: 528, size: 5324}
+- {address: 5856, name: .dynsym, nb: 4, offset: 5856, size: 10128}
+- {address: 15984, name: .dynstr, nb: 5, offset: 15984, size: 3269}
+- {address: 19254, name: .gnu.version, nb: 6, offset: 19254, size: 844}
+- {address: 20104, name: .gnu.version_d, nb: 7, offset: 20104, size: 164}
+- {address: 20272, name: .gnu.version_r, nb: 8, offset: 20272, size: 48}
+- {address: 20320, name: .rela.dyn, nb: 9, offset: 20320, size: 288}
+- {address: 20608, name: .rela.plt, nb: 10, offset: 20608, size: 672}
+- {address: 21280, name: .init, nb: 11, offset: 21280, size: 26}
+- {address: 21312, name: .plt, nb: 12, offset: 21312, size: 464}
+- {address: 21776, name: .text, nb: 13, offset: 21776, size: 425514}
+- {address: 447292, name: .fini, nb: 14, offset: 447292, size: 9}
+- {address: 447328, name: .rodata, nb: 15, offset: 447328, size: 548772}
+- {address: 996100, name: .eh_frame_hdr, nb: 16, offset: 996100, size: 4900}
+- {address: 1001000, name: .eh_frame, nb: 17, offset: 1001000, size: 28484}
+- {address: 1029488, name: .hash, nb: 18, offset: 1029488, size: 4996}
+- {address: 3132816, name: .init_array, nb: 19, offset: 1035664, size: 8}
+- {address: 3132824, name: .fini_array, nb: 20, offset: 1035672, size: 8}
+- {address: 3132832, name: .jcr, nb: 21, offset: 1035680, size: 8}
+- {address: 3132840, name: .dynamic, nb: 22, offset: 1035688, size: 528}
+- {address: 3133368, name: .got, nb: 23, offset: 1036216, size: 72}
+- {address: 3133440, name: .got.plt, nb: 24, offset: 1036288, size: 248}
+- {address: 3133688, name: .data, nb: 25, offset: 1036536, size: 20}
+- {address: 3133708, name: .bss, nb: 26, offset: 1036556, size: 12}
+- {address: 0, name: .comment, nb: 27, offset: 1036556, size: 17}
+- {address: 0, name: .shstrtab, nb: 28, offset: 1036573, size: 255}
+Segments:
+- {fSize: 1034484, offset: 0, pAddress: 0, vAddress: 0, vSize: 1034484}
+- {fSize: 892, offset: 1035664, pAddress: 3132816, vAddress: 3132816, vSize: 904}
+- {fSize: 528, offset: 1035688, pAddress: 3132840, vAddress: 3132840, vSize: 528}
+- {fSize: 68, offset: 456, pAddress: 456, vAddress: 456, vSize: 68}
+- {fSize: 4900, offset: 996100, pAddress: 996100, vAddress: 996100, vSize: 4900}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+- {fSize: 624, offset: 1035664, pAddress: 3132816, vAddress: 3132816, vSize: 624}
+filename: libm-2.22.so
+hash: f414f8c675a576a22540a205b5bf9c07

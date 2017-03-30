@@ -1,0 +1,242 @@
+DynamicReloc:
+- {info: 154618822662, name: _sch_istable, offset: 6328296, value: 0}
+- {info: 214748364806, name: __gmon_start__, offset: 6328304, value: 0}
+- {info: 386547056646, name: stderr, offset: 6328312, value: 6331264}
+- {info: 386547056645, name: stderr, offset: 6331264, value: 6331264}
+- {info: 390842023941, name: stdout, offset: 6330080, value: 6330080}
+- {info: 438086664197, name: optind, offset: 6330088, value: 6330088}
+- {info: 425201762309, name: __environ, offset: 6330096, value: 6330096}
+- {info: 403726925829, name: optarg, offset: 6330104, value: 6330104}
+- {info: 399431958533, name: bfd_target_vector, offset: 6330112, value: 6330112}
+- {info: 395136991237, name: _bfd_std_section, offset: 6330144, value: 6330144}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: mkstemps, num: 1}
+- {name: getenv, num: 2}
+- {name: cplus_demangle_name_to_st, num: 3}
+- {name: free, num: 4}
+- {name: bfd_scan_vma, num: 5}
+- {name: putchar, num: 6}
+- {name: __vfprintf_chk, num: 7}
+- {name: abort, num: 8}
+- {name: __errno_location, num: 9}
+- {name: unlink, num: 10}
+- {name: _ITM_deregisterTMCloneTab, num: 11}
+- {name: strcpy, num: 12}
+- {name: bfd_plugin_set_plugin, num: 13}
+- {name: ferror, num: 14}
+- {name: bfd_arch_list, num: 15}
+- {name: qsort, num: 16}
+- {name: bfd_set_default_target, num: 17}
+- {name: fread, num: 18}
+- {name: bfd_is_undefined_symclass, num: 19}
+- {name: cplus_demangle_set_style, num: 20}
+- {name: textdomain, num: 21}
+- {name: bfd_openr, num: 22}
+- {name: fclose, num: 23}
+- {name: ctime, num: 24}
+- {name: bindtextdomain, num: 25}
+- {name: dcgettext, num: 26}
+- {name: strlen, num: 27}
+- {name: bfd_malloc, num: 28}
+- {name: __stack_chk_fail, num: 29}
+- {name: getopt_long, num: 30}
+- {name: _IO_putc, num: 31}
+- {name: xrealloc, num: 32}
+- {name: strrchr, num: 33}
+- {name: __assert_fail, num: 34}
+- {name: fputs, num: 35}
+- {name: _sch_istable, num: 36}
+- {name: bfd_target_list, num: 37}
+- {name: bfd_get_error, num: 38}
+- {name: xmalloc, num: 39}
+- {name: xmalloc_set_program_name, num: 40}
+- {name: close, num: 41}
+- {name: xstrdup, num: 42}
+- {name: fputc, num: 43}
+- {name: __libc_start_main, num: 44}
+- {name: sbrk, num: 45}
+- {name: bfd_get_arch_size, num: 46}
+- {name: bfd_init, num: 47}
+- {name: strcmp, num: 48}
+- {name: ftell, num: 49}
+- {name: __gmon_start__, num: 50}
+- {name: bfd_set_format, num: 51}
+- {name: strtol, num: 52}
+- {name: memcpy, num: 53}
+- {name: bfd_close_all_done, num: 54}
+- {name: bfd_plugin_set_program_na, num: 55}
+- {name: __xstat, num: 56}
+- {name: bfd_printable_arch_mach, num: 57}
+- {name: fflush, num: 58}
+- {name: strcoll, num: 59}
+- {name: mkstemp, num: 60}
+- {name: fseek, num: 61}
+- {name: mkdtemp, num: 62}
+- {name: setlocale, num: 63}
+- {name: bfd_openw, num: 64}
+- {name: __printf_chk, num: 65}
+- {name: bfd_set_error_program_nam, num: 66}
+- {name: memmove, num: 67}
+- {name: bfd_demangle, num: 68}
+- {name: access, num: 69}
+- {name: fopen, num: 70}
+- {name: xexit, num: 71}
+- {name: bfd_close, num: 72}
+- {name: _Jv_RegisterClasses, num: 73}
+- {name: bfd_check_format_matches, num: 74}
+- {name: bfd_errmsg, num: 75}
+- {name: bfd_canonicalize_reloc, num: 76}
+- {name: exit, num: 77}
+- {name: fwrite, num: 78}
+- {name: __fprintf_chk, num: 79}
+- {name: bfd_check_format, num: 80}
+- {name: bfd_openr_next_archived_f, num: 81}
+- {name: _ITM_registerTMCloneTable, num: 82}
+- {name: bfd_get_reloc_upper_bound, num: 83}
+- {name: bfd_map_over_sections, num: 84}
+- {name: strerror, num: 85}
+- {name: strstr, num: 86}
+- {name: bfd_get_next_mapent, num: 87}
+- {name: __sprintf_chk, num: 88}
+- {name: _end, num: 89}
+- {name: stderr, num: 90}
+- {name: stdout, num: 91}
+- {name: _bfd_std_section, num: 92}
+- {name: bfd_target_vector, num: 93}
+- {name: optarg, num: 94}
+- {name: _edata, num: 95}
+- {name: _init, num: 96}
+- {name: _fini, num: 97}
+- {name: environ, num: 98}
+- {name: __environ, num: 99}
+- {name: __bss_start, num: 100}
+- {name: _environ, num: 101}
+- {name: optind, num: 102}
+Header: {entryPoint: 4203952, nbPhdr: 9, nbShdr: 28, offsetToPhdr: 64, offsetToShdr: 38888}
+PltGotReloc:
+- {info: 4294967303, name: mkstemps, offset: 6328344, value: 0}
+- {info: 8589934599, name: getenv, offset: 6328352, value: 0}
+- {info: 12884901895, name: cplus_demangle_name_to, offset: 6328360, value: 0}
+- {info: 17179869191, name: free, offset: 6328368, value: 0}
+- {info: 21474836487, name: bfd_scan_vma, offset: 6328376, value: 0}
+- {info: 25769803783, name: putchar, offset: 6328384, value: 0}
+- {info: 30064771079, name: __vfprintf_chk, offset: 6328392, value: 0}
+- {info: 34359738375, name: abort, offset: 6328400, value: 0}
+- {info: 38654705671, name: __errno_location, offset: 6328408, value: 0}
+- {info: 42949672967, name: unlink, offset: 6328416, value: 0}
+- {info: 51539607559, name: strcpy, offset: 6328424, value: 0}
+- {info: 55834574855, name: bfd_plugin_set_plugin, offset: 6328432, value: 0}
+- {info: 60129542151, name: ferror, offset: 6328440, value: 0}
+- {info: 64424509447, name: bfd_arch_list, offset: 6328448, value: 0}
+- {info: 68719476743, name: qsort, offset: 6328456, value: 0}
+- {info: 73014444039, name: bfd_set_default_target, offset: 6328464, value: 0}
+- {info: 77309411335, name: fread, offset: 6328472, value: 0}
+- {info: 81604378631, name: bfd_is_undefined_symcl, offset: 6328480, value: 0}
+- {info: 85899345927, name: cplus_demangle_set_sty, offset: 6328488, value: 0}
+- {info: 90194313223, name: textdomain, offset: 6328496, value: 0}
+- {info: 94489280519, name: bfd_openr, offset: 6328504, value: 0}
+- {info: 98784247815, name: fclose, offset: 6328512, value: 0}
+- {info: 103079215111, name: ctime, offset: 6328520, value: 0}
+- {info: 107374182407, name: bindtextdomain, offset: 6328528, value: 0}
+- {info: 111669149703, name: dcgettext, offset: 6328536, value: 0}
+- {info: 115964116999, name: strlen, offset: 6328544, value: 0}
+- {info: 120259084295, name: bfd_malloc, offset: 6328552, value: 0}
+- {info: 124554051591, name: __stack_chk_fail, offset: 6328560, value: 0}
+- {info: 128849018887, name: getopt_long, offset: 6328568, value: 0}
+- {info: 133143986183, name: _IO_putc, offset: 6328576, value: 0}
+- {info: 137438953479, name: xrealloc, offset: 6328584, value: 0}
+- {info: 141733920775, name: strrchr, offset: 6328592, value: 0}
+- {info: 146028888071, name: __assert_fail, offset: 6328600, value: 0}
+- {info: 150323855367, name: fputs, offset: 6328608, value: 0}
+- {info: 158913789959, name: bfd_target_list, offset: 6328616, value: 0}
+- {info: 163208757255, name: bfd_get_error, offset: 6328624, value: 0}
+- {info: 167503724551, name: xmalloc, offset: 6328632, value: 0}
+- {info: 171798691847, name: xmalloc_set_program_na, offset: 6328640, value: 0}
+- {info: 176093659143, name: close, offset: 6328648, value: 0}
+- {info: 180388626439, name: xstrdup, offset: 6328656, value: 0}
+- {info: 184683593735, name: fputc, offset: 6328664, value: 0}
+- {info: 188978561031, name: __libc_start_main, offset: 6328672, value: 0}
+- {info: 193273528327, name: sbrk, offset: 6328680, value: 0}
+- {info: 197568495623, name: bfd_get_arch_size, offset: 6328688, value: 0}
+- {info: 201863462919, name: bfd_init, offset: 6328696, value: 0}
+- {info: 206158430215, name: strcmp, offset: 6328704, value: 0}
+- {info: 210453397511, name: ftell, offset: 6328712, value: 0}
+- {info: 214748364807, name: __gmon_start__, offset: 6328720, value: 0}
+- {info: 219043332103, name: bfd_set_format, offset: 6328728, value: 0}
+- {info: 223338299399, name: strtol, offset: 6328736, value: 0}
+- {info: 227633266695, name: memcpy, offset: 6328744, value: 0}
+- {info: 231928233991, name: bfd_close_all_done, offset: 6328752, value: 0}
+- {info: 236223201287, name: bfd_plugin_set_program, offset: 6328760, value: 0}
+- {info: 240518168583, name: __xstat, offset: 6328768, value: 0}
+- {info: 244813135879, name: bfd_printable_arch_mac, offset: 6328776, value: 0}
+- {info: 249108103175, name: fflush, offset: 6328784, value: 0}
+- {info: 253403070471, name: strcoll, offset: 6328792, value: 0}
+- {info: 257698037767, name: mkstemp, offset: 6328800, value: 0}
+- {info: 261993005063, name: fseek, offset: 6328808, value: 0}
+- {info: 266287972359, name: mkdtemp, offset: 6328816, value: 0}
+- {info: 270582939655, name: setlocale, offset: 6328824, value: 0}
+- {info: 274877906951, name: bfd_openw, offset: 6328832, value: 0}
+- {info: 279172874247, name: __printf_chk, offset: 6328840, value: 0}
+- {info: 283467841543, name: bfd_set_error_program_, offset: 6328848, value: 0}
+- {info: 287762808839, name: memmove, offset: 6328856, value: 0}
+- {info: 292057776135, name: bfd_demangle, offset: 6328864, value: 0}
+- {info: 296352743431, name: access, offset: 6328872, value: 0}
+- {info: 300647710727, name: fopen, offset: 6328880, value: 0}
+- {info: 304942678023, name: xexit, offset: 6328888, value: 0}
+- {info: 309237645319, name: bfd_close, offset: 6328896, value: 0}
+- {info: 317827579911, name: bfd_check_format_match, offset: 6328904, value: 0}
+- {info: 322122547207, name: bfd_errmsg, offset: 6328912, value: 0}
+- {info: 326417514503, name: bfd_canonicalize_reloc, offset: 6328920, value: 0}
+- {info: 330712481799, name: exit, offset: 6328928, value: 0}
+- {info: 335007449095, name: fwrite, offset: 6328936, value: 0}
+- {info: 339302416391, name: __fprintf_chk, offset: 6328944, value: 0}
+- {info: 343597383687, name: bfd_check_format, offset: 6328952, value: 0}
+- {info: 347892350983, name: bfd_openr_next_archive, offset: 6328960, value: 0}
+- {info: 356482285575, name: bfd_get_reloc_upper_bo, offset: 6328968, value: 0}
+- {info: 360777252871, name: bfd_map_over_sections, offset: 6328976, value: 0}
+- {info: 365072220167, name: strerror, offset: 6328984, value: 0}
+- {info: 369367187463, name: strstr, offset: 6328992, value: 0}
+- {info: 373662154759, name: bfd_get_next_mapent, offset: 6329000, value: 0}
+- {info: 377957122055, name: __sprintf_chk, offset: 6329008, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194872, name: .interp, nb: 1, offset: 568, size: 28}
+- {address: 4194900, name: .note.ABI-tag, nb: 2, offset: 596, size: 32}
+- {address: 4194932, name: .note.gnu.build-i, nb: 3, offset: 628, size: 36}
+- {address: 4194968, name: .gnu.hash, nb: 4, offset: 664, size: 196}
+- {address: 4195168, name: .dynsym, nb: 5, offset: 864, size: 2472}
+- {address: 4197640, name: .dynstr, nb: 6, offset: 3336, size: 1301}
+- {address: 4198942, name: .gnu.version, nb: 7, offset: 4638, size: 206}
+- {address: 4199152, name: .gnu.version_r, nb: 8, offset: 4848, size: 96}
+- {address: 4199248, name: .rela.dyn, nb: 9, offset: 4944, size: 240}
+- {address: 4199488, name: .rela.plt, nb: 10, offset: 5184, size: 2016}
+- {address: 4201504, name: .init, nb: 11, offset: 7200, size: 26}
+- {address: 4201536, name: .plt, nb: 12, offset: 7232, size: 1360}
+- {address: 4202896, name: .text, nb: 13, offset: 8592, size: 17170}
+- {address: 4220068, name: .fini, nb: 14, offset: 25764, size: 9}
+- {address: 4220096, name: .rodata, nb: 15, offset: 25792, size: 6294}
+- {address: 4226392, name: .eh_frame_hdr, nb: 16, offset: 32088, size: 540}
+- {address: 4226936, name: .eh_frame, nb: 17, offset: 32632, size: 3068}
+- {address: 6327792, name: .init_array, nb: 18, offset: 36336, size: 8}
+- {address: 6327800, name: .fini_array, nb: 19, offset: 36344, size: 8}
+- {address: 6327808, name: .jcr, nb: 20, offset: 36352, size: 8}
+- {address: 6327816, name: .dynamic, nb: 21, offset: 36360, size: 480}
+- {address: 6328296, name: .got, nb: 22, offset: 36840, size: 24}
+- {address: 6328320, name: .got.plt, nb: 23, offset: 36864, size: 696}
+- {address: 6329024, name: .data, nb: 24, offset: 37568, size: 1048}
+- {address: 6330080, name: .bss, nb: 25, offset: 38616, size: 1480}
+- {address: 0, name: .comment, nb: 26, offset: 38616, size: 17}
+- {address: 0, name: .shstrtab, nb: 27, offset: 38633, size: 248}
+Segments:
+- {fSize: 504, offset: 64, pAddress: 4194368, vAddress: 4194368, vSize: 504}
+- {fSize: 28, offset: 568, pAddress: 4194872, vAddress: 4194872, vSize: 28}
+- {fSize: 35700, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 35700}
+- {fSize: 2280, offset: 36336, pAddress: 6327792, vAddress: 6327792, vSize: 3768}
+- {fSize: 480, offset: 36360, pAddress: 6327816, vAddress: 6327816, vSize: 480}
+- {fSize: 68, offset: 596, pAddress: 4194900, vAddress: 4194900, vSize: 68}
+- {fSize: 540, offset: 32088, pAddress: 4226392, vAddress: 4226392, vSize: 540}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+- {fSize: 528, offset: 36336, pAddress: 6327792, vAddress: 6327792, vSize: 528}
+filename: nm
+hash: 71a396571d735394b218774ca083956f

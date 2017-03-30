@@ -1,0 +1,489 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: cmd_upx.exe
+hash: c904c50b70a0f5031226fbcd99548e23
+header: {Characteristics: 258, Machine: 332, NumberOfSections: 3, NumberOfSymbols: 0,
+  PointerToSymbolTable: 0, SizeOfOptionalHeader: 224, TimeDateStamp: 1290243627}
+imports:
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: LoadLibraryA}
+  - {name: GetProcAddress}
+  - {name: VirtualProtect}
+  - {name: VirtualAlloc}
+  - {name: VirtualFree}
+  - {name: ExitProcess}
+  name: KERNEL32.DLL
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: exit}
+  name: msvcrt.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: NtClose}
+  name: ntdll.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: BrandingFormatString}
+  name: WINBRAND.dll
+optional_header: {AddressOfEntryPoint: 323184, BaseOfCode: 245760, BaseOfData: 327680,
+  CheckSum: 0, DllCharacteristics: 33088, FileAlignment: 512, ImageBase: 1255145472,
+  LoaderFlags: 0, Magic: 267, MajorImageVersion: 6, MajorLinkerVersion: 9, MajorOperatingSystemVersion: 6,
+  MajorSubsystemVersion: 6, MinorImageVersion: 1, MinorLinkerVersion: 0, MinorOperatingSystemVersion: 1,
+  MinorSubsystemVersion: 1, NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 4096,
+  SizeOfCode: 81920, SizeOfHeaders: 4096, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576,
+  SizeOfImage: 364544, SizeOfInitializedData: 36864, SizeOfStackCommit: 1036288, SizeOfStackReserve: 1048576,
+  SizeOfUninitializedData: 241664, Subsystem: 3}
+resources:
+  Characteristics: 0
+  MajorVersion: 0
+  MinorVersion: 0
+  NumberOfIdEntries: 4
+  NumberOfNamedEntries: 1
+  TimeDateStamp: 0
+  childs:
+  - Name: MUI
+    OffsetToData: 2147483704
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483728
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 104
+            childs:
+            - CodePage: 0
+              OffsetToData: 299896
+              Reserved: 0
+              Size: 216
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: null
+    type: 1
+  - Name: None
+    OffsetToData: 2147483768
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 10
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483864
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 240
+            childs:
+            - CodePage: 0
+              OffsetToData: 328524
+              Reserved: 0
+              Size: 1640
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      - Name: None
+        OffsetToData: 2147483904
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 280
+            childs:
+            - CodePage: 0
+              OffsetToData: 330168
+              Reserved: 0
+              Size: 744
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 2
+        type: 1
+      - Name: None
+        OffsetToData: 2147483944
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 320
+            childs:
+            - CodePage: 0
+              OffsetToData: 330916
+              Reserved: 0
+              Size: 296
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 3
+        type: 1
+      - Name: None
+        OffsetToData: 2147483984
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 360
+            childs:
+            - CodePage: 0
+              OffsetToData: 331216
+              Reserved: 0
+              Size: 3752
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 4
+        type: 1
+      - Name: None
+        OffsetToData: 2147484024
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 400
+            childs:
+            - CodePage: 0
+              OffsetToData: 334972
+              Reserved: 0
+              Size: 2216
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 5
+        type: 1
+      - Name: None
+        OffsetToData: 2147484064
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 440
+            childs:
+            - CodePage: 0
+              OffsetToData: 337192
+              Reserved: 0
+              Size: 1384
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 6
+        type: 1
+      - Name: None
+        OffsetToData: 2147484104
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 480
+            childs:
+            - CodePage: 0
+              OffsetToData: 338580
+              Reserved: 0
+              Size: 5790
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 7
+        type: 1
+      - Name: None
+        OffsetToData: 2147484144
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 520
+            childs:
+            - CodePage: 0
+              OffsetToData: 344376
+              Reserved: 0
+              Size: 9640
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 8
+        type: 1
+      - Name: None
+        OffsetToData: 2147484184
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 560
+            childs:
+            - CodePage: 0
+              OffsetToData: 354020
+              Reserved: 0
+              Size: 4264
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 9
+        type: 1
+      - Name: None
+        OffsetToData: 2147484224
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 600
+            childs:
+            - CodePage: 0
+              OffsetToData: 358288
+              Reserved: 0
+              Size: 1128
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 10
+        type: 1
+      type: 0
+    id: 3
+    type: 1
+  - Name: None
+    OffsetToData: 2147484264
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 0
+      NumberOfNamedEntries: 1
+      TimeDateStamp: 0
+      childs:
+      - Name: IDI_APPICON
+        OffsetToData: 2147484288
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 664
+            childs:
+            - CodePage: 0
+              OffsetToData: 359420
+              Reserved: 0
+              Size: 146
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: null
+        type: 1
+      type: 0
+    id: 14
+    type: 1
+  - Name: None
+    OffsetToData: 2147484328
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484352
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 728
+            childs:
+            - CodePage: 0
+              OffsetToData: 359572
+              Reserved: 0
+              Size: 904
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 16
+    type: 1
+  - Name: None
+    OffsetToData: 2147484392
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484416
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 792
+            childs:
+            - CodePage: 0
+              OffsetToData: 360480
+              Reserved: 0
+              Size: 896
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 24
+    type: 1
+  type: 0
+sections:
+- {Characteristics: 3758096512, Misc_VirtualSize: 241664, NumberOfLinenumbers: 0,
+  NumberOfRelocations: 0, PointerToLinenumbers: 0, PointerToRawData: 1024, PointerToRelocations: 0,
+  SizeOfRawData: 0, VirtualAddress: 4096, name: UPX0}
+- {Characteristics: 3758096448, Misc_VirtualSize: 81920, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 1024, PointerToRelocations: 0, SizeOfRawData: 78336,
+  VirtualAddress: 245760, name: UPX1}
+- {Characteristics: 3221225536, Misc_VirtualSize: 36864, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 79360, PointerToRelocations: 0, SizeOfRawData: 34304,
+  VirtualAddress: 327680, name: .rsrc}
+tls: {}

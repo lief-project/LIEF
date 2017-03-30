@@ -1,0 +1,132 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: winhello64_mingw.exe
+hash: 1e40b8524f8d0fecf449752a4c756fec
+header: {Characteristics: 39, Machine: 34404, NumberOfSections: 17, NumberOfSymbols: 1512,
+  PointerToSymbolTable: 98304, SizeOfOptionalHeader: 240, TimeDateStamp: 1456677612}
+imports:
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: DeleteCriticalSection}
+  - {name: EnterCriticalSection}
+  - {name: GetCurrentProcess}
+  - {name: GetCurrentProcessId}
+  - {name: GetCurrentThreadId}
+  - {name: GetLastError}
+  - {name: GetModuleHandleA}
+  - {name: GetProcAddress}
+  - {name: GetStartupInfoA}
+  - {name: GetSystemTimeAsFileTime}
+  - {name: GetTickCount}
+  - {name: InitializeCriticalSection}
+  - {name: LeaveCriticalSection}
+  - {name: QueryPerformanceCounter}
+  - {name: RtlAddFunctionTable}
+  - {name: RtlCaptureContext}
+  - {name: RtlLookupFunctionEntry}
+  - {name: RtlVirtualUnwind}
+  - {name: SetUnhandledExceptionFilter}
+  - {name: Sleep}
+  - {name: TerminateProcess}
+  - {name: TlsGetValue}
+  - {name: UnhandledExceptionFilter}
+  - {name: VirtualProtect}
+  - {name: VirtualQuery}
+  name: KERNEL32.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: __C_specific_handler}
+  - {name: __dllonexit}
+  - {name: __getmainargs}
+  - {name: __initenv}
+  - {name: __iob_func}
+  - {name: __lconv_init}
+  - {name: __set_app_type}
+  - {name: __setusermatherr}
+  - {name: _acmdln}
+  - {name: _amsg_exit}
+  - {name: _cexit}
+  - {name: _fmode}
+  - {name: _initterm}
+  - {name: _lock}
+  - {name: _onexit}
+  - {name: _unlock}
+  - {name: abort}
+  - {name: calloc}
+  - {name: exit}
+  - {name: fprintf}
+  - {name: free}
+  - {name: fwrite}
+  - {name: malloc}
+  - {name: memcpy}
+  - {name: printf}
+  - {name: signal}
+  - {name: strlen}
+  - {name: strncmp}
+  - {name: vfprintf}
+  name: msvcrt.dll
+optional_header: {AddressOfEntryPoint: 5392, BaseOfCode: 4096, CheckSum: 152578, DllCharacteristics: 0,
+  FileAlignment: 512, ImageBase: 4194304, LoaderFlags: 0, Magic: 523, MajorImageVersion: 0,
+  MajorLinkerVersion: 2, MajorOperatingSystemVersion: 4, MajorSubsystemVersion: 5,
+  MinorImageVersion: 0, MinorLinkerVersion: 26, MinorOperatingSystemVersion: 0, MinorSubsystemVersion: 2,
+  NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 4096, SizeOfCode: 7680,
+  SizeOfHeaders: 1536, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576, SizeOfImage: 139264,
+  SizeOfInitializedData: 15872, SizeOfStackCommit: 4096, SizeOfStackReserve: 2097152,
+  SizeOfUninitializedData: 2560, Subsystem: 3}
+resources: {}
+sections:
+- {Characteristics: 1615855712, Misc_VirtualSize: 7640, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 1536, PointerToRelocations: 0, SizeOfRawData: 7680,
+  VirtualAddress: 4096, name: .text}
+- {Characteristics: 3226468416, Misc_VirtualSize: 168, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 9216, PointerToRelocations: 0, SizeOfRawData: 512,
+  VirtualAddress: 12288, name: .data}
+- {Characteristics: 1078984768, Misc_VirtualSize: 2048, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 9728, PointerToRelocations: 0, SizeOfRawData: 2048,
+  VirtualAddress: 16384, name: .rdata}
+- {Characteristics: 1076887616, Misc_VirtualSize: 612, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 11776, PointerToRelocations: 0, SizeOfRawData: 1024,
+  VirtualAddress: 20480, name: .pdata}
+- {Characteristics: 1076887616, Misc_VirtualSize: 516, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 12800, PointerToRelocations: 0, SizeOfRawData: 1024,
+  VirtualAddress: 24576, name: .xdata}
+- {Characteristics: 3227517056, Misc_VirtualSize: 2480, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 0, PointerToRelocations: 0, SizeOfRawData: 0,
+  VirtualAddress: 28672, name: .bss}
+- {Characteristics: 3224371264, Misc_VirtualSize: 2072, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 13824, PointerToRelocations: 0, SizeOfRawData: 2560,
+  VirtualAddress: 32768, name: .idata}
+- {Characteristics: 3225419840, Misc_VirtualSize: 104, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 16384, PointerToRelocations: 0, SizeOfRawData: 512,
+  VirtualAddress: 36864, name: .CRT}
+- {Characteristics: 3227516992, Misc_VirtualSize: 104, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 16896, PointerToRelocations: 0, SizeOfRawData: 512,
+  VirtualAddress: 40960, name: .tls}
+- {Characteristics: 1112539200, Misc_VirtualSize: 1056, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 17408, PointerToRelocations: 0, SizeOfRawData: 1536,
+  VirtualAddress: 45056, name: /4}
+- {Characteristics: 1108344896, Misc_VirtualSize: 48002, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 18944, PointerToRelocations: 0, SizeOfRawData: 48128,
+  VirtualAddress: 49152, name: /19}
+- {Characteristics: 1108344896, Misc_VirtualSize: 6636, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 67072, PointerToRelocations: 0, SizeOfRawData: 6656,
+  VirtualAddress: 98304, name: /31}
+- {Characteristics: 1108344896, Misc_VirtualSize: 6198, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 73728, PointerToRelocations: 0, SizeOfRawData: 6656,
+  VirtualAddress: 106496, name: /45}
+- {Characteristics: 1111490624, Misc_VirtualSize: 2608, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 80384, PointerToRelocations: 0, SizeOfRawData: 3072,
+  VirtualAddress: 114688, name: /57}
+- {Characteristics: 1108344896, Misc_VirtualSize: 1223, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 83456, PointerToRelocations: 0, SizeOfRawData: 1536,
+  VirtualAddress: 118784, name: /70}
+- {Characteristics: 1108344896, Misc_VirtualSize: 11753, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 84992, PointerToRelocations: 0, SizeOfRawData: 11776,
+  VirtualAddress: 122880, name: /81}
+- {Characteristics: 1108344896, Misc_VirtualSize: 1440, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 96768, PointerToRelocations: 0, SizeOfRawData: 1536,
+  VirtualAddress: 135168, name: /92}
+tls: {AddressOfCallBacks: 4231232, AddressOfIndex: 4224508, Characteristics: 0, EndAddressOfRawData: 4235360,
+  SizeOfZeroFill: 0, StartAddressOfRawData: 4235264}

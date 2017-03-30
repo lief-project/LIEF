@@ -1,0 +1,1080 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: kernel32.dll
+hash: 24aba6b0a11ca891f6e6587d8756f65a
+header: {Characteristics: 8450, Machine: 332, NumberOfSections: 4, NumberOfSymbols: 0,
+  PointerToSymbolTable: 0, SizeOfOptionalHeader: 224, TimeDateStamp: 1354251401}
+imports:
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: RtlUnwind}
+  - {name: RtlCaptureContext}
+  - {name: RtlCaptureStackBackTrace}
+  name: API-MS-Win-Core-RtlSupport-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: NtCreateEvent}
+  - {name: NtDuplicateObject}
+  - {name: RtlConvertSidToUnicodeString}
+  - {name: NtNotifyChangeKey}
+  - {name: RtlRunOnceInitialize}
+  - {name: NtResetEvent}
+  - {name: RtlValidSecurityDescriptor}
+  - {name: RtlOpenCurrentUser}
+  - {name: strncat}
+  - {name: _strlwr}
+  - {name: NtQueryInstallUILanguage}
+  - {name: RtlpConvertCultureNamesToLCIDs}
+  - {name: RtlpConvertLCIDsToCultureNames}
+  - {name: EtwEventEnabled}
+  - {name: RtlSetProcessPreferredUILanguages}
+  - {name: RtlExpandEnvironmentStrings_U}
+  - {name: RtlUnicodeStringToInteger}
+  - {name: RtlLCIDToCultureName}
+  - {name: RtlIdnToUnicode}
+  - {name: RtlIdnToNameprepUnicode}
+  - {name: RtlIdnToAscii}
+  - {name: RtlIsNormalizedString}
+  - {name: RtlNormalizeString}
+  - {name: RtlIntegerToUnicodeString}
+  - {name: _ui64tow}
+  - {name: _wtol}
+  - {name: _wcslwr}
+  - {name: RtlUnhandledExceptionFilter}
+  - {name: NtTerminateProcess}
+  - {name: wcsncpy}
+  - {name: wcsncmp}
+  - {name: RtlReadThreadProfilingData}
+  - {name: RtlQueryThreadProfiling}
+  - {name: RtlDisableThreadProfiling}
+  - {name: RtlEnableThreadProfiling}
+  - {name: RtlSetExtendedFeaturesMask}
+  - {name: RtlGetExtendedFeaturesMask}
+  - {name: RtlLocateExtendedFeature}
+  - {name: RtlCopyContext}
+  - {name: RtlGetEnabledExtendedFeatures}
+  - {name: RtlGetExtendedContextLength}
+  - {name: RtlInitializeExtendedContext}
+  - {name: RtlLocateLegacyContext}
+  - {name: NtRaiseException}
+  - {name: EtwEventWriteNoRegistration}
+  - {name: RtlRegisterWait}
+  - {name: RtlSetIoCompletionCallback}
+  - {name: RtlQueueWorkItem}
+  - {name: RtlDeregisterWait}
+  - {name: NtOpenEvent}
+  - {name: NtResetWriteWatch}
+  - {name: NtGetWriteWatch}
+  - {name: NtMapUserPhysicalPagesScatter}
+  - {name: NtMapUserPhysicalPages}
+  - {name: NtFreeUserPhysicalPages}
+  - {name: NtAllocateUserPhysicalPages}
+  - {name: NtUnlockVirtualMemory}
+  - {name: NtLockVirtualMemory}
+  - {name: RtlOemStringToUnicodeString}
+  - {name: RtlSetEnvironmentStrings}
+  - {name: RtlComputeImportTableHash}
+  - {name: bsearch}
+  - {name: RtlEncodeSystemPointer}
+  - {name: RtlFindCharInUnicodeString}
+  - {name: RtlNtPathNameToDosPathName}
+  - {name: NtApphelpCacheControl}
+  - {name: RtlRandom}
+  - {name: RtlFindActivationContextSectionGuid}
+  - {name: RtlFindActivationContextSectionString}
+  - {name: RtlDoesFileExists_U}
+  - {name: RtlCreateActivationContext}
+  - {name: DbgPrintEx}
+  - {name: RtlImageNtHeaderEx}
+  - {name: RtlSetThreadPreferredUILanguages}
+  - {name: RtlQueryActivationContextApplicationSettings}
+  - {name: RtlGetThreadPreferredUILanguages}
+  - {name: RtlQueryInformationActivationContext}
+  - {name: RtlMultiAppendUnicodeStringBuffer}
+  - {name: RtlpEnsureBufferSize}
+  - {name: RtlGetLengthWithoutLastFullDosOrNtPathElement}
+  - {name: RtlpApplyLengthFunction}
+  - {name: RtlGetActiveActivationContext}
+  - {name: RtlDeactivateActivationContext}
+  - {name: RtlActivateActivationContext}
+  - {name: RtlZombifyActivationContext}
+  - {name: RtlReleaseActivationContext}
+  - {name: RtlAddRefActivationContext}
+  - {name: NtSetInformationJobObject}
+  - {name: NtCreateJobSet}
+  - {name: NtQueryInformationJobObject}
+  - {name: NtTerminateJobObject}
+  - {name: NtAssignProcessToJobObject}
+  - {name: NtOpenJobObject}
+  - {name: NtCreateJobObject}
+  - {name: tolower}
+  - {name: atol}
+  - {name: isdigit}
+  - {name: toupper}
+  - {name: RtlGetCurrentDirectory_U}
+  - {name: RtlCopyLuid}
+  - {name: RtlFreeOemString}
+  - {name: RtlCreateEnvironment}
+  - {name: RtlCreateEnvironmentEx}
+  - {name: RtlDestroyEnvironment}
+  - {name: NtQueryEvent}
+  - {name: CsrClientCallServer}
+  - {name: CsrAllocateCaptureBuffer}
+  - {name: CsrAllocateMessagePointer}
+  - {name: CsrFreeCaptureBuffer}
+  - {name: NtDeviceIoControlFile}
+  - {name: RtlCreateQueryDebugBuffer}
+  - {name: RtlQueryProcessDebugInformation}
+  - {name: RtlDestroyQueryDebugBuffer}
+  - {name: NtMapViewOfSection}
+  - {name: NtUnmapViewOfSection}
+  - {name: RtlFreeUserStack}
+  - {name: RtlProcessFlsData}
+  - {name: RtlAllocateActivationContextStack}
+  - {name: RtlFreeActivationContextStack}
+  - {name: RtlCreateUserStack}
+  - {name: TpCaptureCaller}
+  - {name: NtSuspendThread}
+  - {name: NtSetContextThread}
+  - {name: NtGetContextThread}
+  - {name: RtlAllocateAndInitializeSid}
+  - {name: RtlFreeSid}
+  - {name: NtSignalAndWaitForSingleObject}
+  - {name: RtlRunOnceComplete}
+  - {name: RtlRunOnceBeginInitialize}
+  - {name: RtlRunOnceExecuteOnce}
+  - {name: RtlSleepConditionVariableSRW}
+  - {name: RtlSleepConditionVariableCS}
+  - {name: NtOpenPrivateNamespace}
+  - {name: NtCreatePrivateNamespace}
+  - {name: NtDeletePrivateNamespace}
+  - {name: RtlInitializeSRWLock}
+  - {name: RtlAddIntegrityLabelToBoundaryDescriptor}
+  - {name: RtlAddSIDToBoundaryDescriptor}
+  - {name: RtlCreateBoundaryDescriptor}
+  - {name: NtProtectVirtualMemory}
+  - {name: strcpy_s}
+  - {name: NtReplacePartitionUnit}
+  - {name: RtlCompareUnicodeString}
+  - {name: RtlRaiseStatus}
+  - {name: NtQueryInformationToken}
+  - {name: RtlInitializeSid}
+  - {name: RtlSubAuthoritySid}
+  - {name: LdrLoadDll}
+  - {name: LdrGetProcedureAddress}
+  - {name: LdrUnloadDll}
+  - {name: RtlQueryRegistryValues}
+  - {name: NtQuerySystemInformationEx}
+  - {name: RtlDecodeSystemPointer}
+  - {name: RtlWow64LogMessageInEventLogger}
+  - {name: RtlxAnsiStringToUnicodeSize}
+  - {name: NtIsSystemResumeAutomatic}
+  - {name: NtGetDevicePowerState}
+  - {name: NtSetThreadExecutionState}
+  - {name: NtInitiatePowerAction}
+  - {name: NtPowerInformation}
+  - {name: NtSetVolumeInformationFile}
+  - {name: RtlQueryEnvironmentVariable_U}
+  - {name: RtlGetFullPathName_U}
+  - {name: RtlIsNameLegalDOS8Dot3}
+  - {name: RtlGetCurrentProcessorNumberEx}
+  - {name: _allshl}
+  - {name: NtOpenThreadToken}
+  - {name: NtSetInformationThread}
+  - {name: LdrLoadAlternateResourceModuleEx}
+  - {name: LdrLoadAlternateResourceModule}
+  - {name: LdrpResGetMappingSize}
+  - {name: LdrRscIsTypeExist}
+  - {name: LdrFindResource_U}
+  - {name: _strcmpi}
+  - {name: strncat_s}
+  - {name: RtlAcquireSRWLockShared}
+  - {name: RtlReleaseSRWLockShared}
+  - {name: strchr}
+  - {name: RtlInitAnsiStringEx}
+  - {name: RtlCreateUnicodeString}
+  - {name: RtlUpcaseUnicodeChar}
+  - {name: wcstoul}
+  - {name: LdrGetFileNameFromLoadAsDataTable}
+  - {name: wcsrchr}
+  - {name: NtQueryVirtualMemory}
+  - {name: RtlCultureNameToLCID}
+  - {name: LdrResFindResourceDirectory}
+  - {name: LdrResFindResource}
+  - {name: LdrFindResourceEx_U}
+  - {name: LdrpResGetResourceDirectory}
+  - {name: RtlImageDirectoryEntryToData}
+  - {name: LdrResGetRCConfig}
+  - {name: RtlVerifyVersionInfo}
+  - {name: RtlGetProductInfo}
+  - {name: RtlLcidToLocaleName}
+  - {name: RtlGetUILanguageInfo}
+  - {name: NtCreateMailslotFile}
+  - {name: RtlExtendedLargeIntegerDivide}
+  - {name: _stricmp}
+  - {name: RtlCleanUpTEBLangLists}
+  - {name: RtlImageNtHeader}
+  - {name: RtlSetThreadPoolStartFunc}
+  - {name: LdrSetDllManifestProber}
+  - {name: RtlSetUserCallbackExceptionFilter}
+  - {name: RtlSetUnhandledExceptionFilter}
+  - {name: RtlEncodePointer}
+  - {name: RtlGetNativeSystemInformation}
+  - {name: RtlAcquireSRWLockExclusive}
+  - {name: RtlReleaseSRWLockExclusive}
+  - {name: LdrQueryImageFileExecutionOptions}
+  - {name: _aulldiv}
+  - {name: RtlSetUserValueHeap}
+  - {name: RtlReAllocateHeap}
+  - {name: RtlAllocateHandle}
+  - {name: RtlFreeHandle}
+  - {name: RtlDeregisterSecureMemoryCacheCallback}
+  - {name: RtlRegisterSecureMemoryCacheCallback}
+  - {name: RtlCompactHeap}
+  - {name: RtlSizeHeap}
+  - {name: RtlGetUserInfoHeap}
+  - {name: RtlLockHeap}
+  - {name: RtlIsValidHandle}
+  - {name: RtlUnlockHeap}
+  - {name: NtQuerySystemInformation}
+  - {name: RtlInitString}
+  - {name: NtSetSystemEnvironmentValueEx}
+  - {name: RtlGUIDFromString}
+  - {name: NtQuerySystemEnvironmentValueEx}
+  - {name: swprintf_s}
+  - {name: _alldiv}
+  - {name: NtFlushBuffersFile}
+  - {name: RtlGetLastNtStatus}
+  - {name: RtlDosPathNameToNtPathName_U_WithStatus}
+  - {name: RtlEqualSid}
+  - {name: RtlQueryInformationAcl}
+  - {name: RtlGetAce}
+  - {name: NtRaiseHardError}
+  - {name: NtQueryVolumeInformationFile}
+  - {name: LdrAddRefDll}
+  - {name: NtCreateKeyTransacted}
+  - {name: RtlDetermineDosPathNameType_U}
+  - {name: _vsnwprintf}
+  - {name: RtlUnicodeStringToOemString}
+  - {name: RtlWow64EnableFsRedirection}
+  - {name: NtCancelIoFile}
+  - {name: NtCancelSynchronousIoFile}
+  - {name: NtNotifyChangeDirectoryFile}
+  - {name: RtlActivateActivationContextUnsafeFast}
+  - {name: RtlDeactivateActivationContextUnsafeFast}
+  - {name: NtQueryDirectoryFile}
+  - {name: NtWaitForSingleObject}
+  - {name: RtlGetThreadErrorMode}
+  - {name: RtlSetThreadErrorMode}
+  - {name: RtlSetLastWin32ErrorAndNtStatusFromNtStatus}
+  - {name: NtOpenProcessToken}
+  - {name: RtlNtStatusToDosErrorNoTeb}
+  - {name: EtwEventRegister}
+  - {name: EtwEventWrite}
+  - {name: EtwEventUnregister}
+  - {name: NtCreateSection}
+  - {name: NtQuerySection}
+  - {name: RtlGetVersion}
+  - {name: RtlQueryElevationFlags}
+  - {name: NtSetInformationProcess}
+  - {name: RtlCharToInteger}
+  - {name: strncpy_s}
+  - {name: RtlGetLongestNtPathLength}
+  - {name: RtlEqualString}
+  - {name: RtlFreeAnsiString}
+  - {name: RtlCopyUnicodeString}
+  - {name: RtlDosPathNameToNtPathName_U}
+  - {name: NtLockFile}
+  - {name: NtReadFile}
+  - {name: RtlIsTextUnicode}
+  - {name: NtDeleteValueKey}
+  - {name: NtEnumerateKey}
+  - {name: RtlFormatCurrentUserKeyPath}
+  - {name: RtlAppendUnicodeToString}
+  - {name: RtlAppendUnicodeStringToString}
+  - {name: RtlPrefixUnicodeString}
+  - {name: CsrVerifyRegion}
+  - {name: NtAllocateVirtualMemory}
+  - {name: NtWriteFile}
+  - {name: NtFreeVirtualMemory}
+  - {name: NtUnlockFile}
+  - {name: NtEnumerateValueKey}
+  - {name: RtlMultiByteToUnicodeSize}
+  - {name: RtlUnicodeToMultiByteN}
+  - {name: RtlMultiByteToUnicodeN}
+  - {name: RtlQueryAtomInAtomTable}
+  - {name: NtQueryInformationAtom}
+  - {name: RtlDeleteAtomFromAtomTable}
+  - {name: NtDeleteAtom}
+  - {name: RtlLookupAtomInAtomTable}
+  - {name: NtFindAtom}
+  - {name: RtlAddAtomToAtomTable}
+  - {name: NtAddAtom}
+  - {name: RtlCreateAtomTable}
+  - {name: RtlDestroyAtomTable}
+  - {name: RtlDosPathNameToRelativeNtPathName_U}
+  - {name: RtlReleaseRelativeName}
+  - {name: RtlEqualUnicodeString}
+  - {name: RtlIsDosDeviceName_U}
+  - {name: DbgUiStopDebugging}
+  - {name: DbgUiContinue}
+  - {name: DbgUiWaitStateChange}
+  - {name: DbgUiConvertStateChangeStructure}
+  - {name: NtFlushInstructionCache}
+  - {name: NtQueryInformationThread}
+  - {name: DbgUiGetThreadDebugObject}
+  - {name: NtSetInformationDebugObject}
+  - {name: DbgUiIssueRemoteBreakin}
+  - {name: DbgUiConnectToDbg}
+  - {name: DbgUiDebugActiveProcess}
+  - {name: CsrGetProcessId}
+  - {name: NtOpenProcess}
+  - {name: NtSetSystemTime}
+  - {name: RtlReleasePrivilege}
+  - {name: RtlAcquirePrivilege}
+  - {name: _allmul}
+  - {name: RtlCutoverTimeToSystemTime}
+  - {name: NtSetSystemInformation}
+  - {name: RtlTimeFieldsToTime}
+  - {name: RtlTimeToTimeFields}
+  - {name: NtQueryInformationProcess}
+  - {name: RtlGetCurrentTransaction}
+  - {name: RtlSetCurrentTransaction}
+  - {name: _wcsicmp}
+  - {name: wcsncpy_s}
+  - {name: wcscat_s}
+  - {name: RtlPrefixString}
+  - {name: wcsstr}
+  - {name: wcschr}
+  - {name: RtlCreateUnicodeStringFromAsciiz}
+  - {name: RtlInitAnsiString}
+  - {name: RtlAnsiStringToUnicodeString}
+  - {name: RtlInitUnicodeStringEx}
+  - {name: NlsMbCodePageTag}
+  - {name: RtlxUnicodeStringToAnsiSize}
+  - {name: RtlUnicodeStringToAnsiString}
+  - {name: RtlEnterCriticalSection}
+  - {name: RtlLeaveCriticalSection}
+  - {name: RtlNtStatusToDosError}
+  - {name: RtlDnsHostNameToComputerName}
+  - {name: RtlFreeUnicodeString}
+  - {name: RtlUnicodeToMultiByteSize}
+  - {name: wcscspn}
+  - {name: wcscpy_s}
+  - {name: memmove}
+  - {name: _memicmp}
+  - {name: NtCreateKey}
+  - {name: NtSetValueKey}
+  - {name: NtFlushKey}
+  - {name: RtlInitUnicodeString}
+  - {name: NtOpenKey}
+  - {name: NtQueryValueKey}
+  - {name: NtClose}
+  - {name: RtlDeleteCriticalSection}
+  - {name: RtlInitializeCriticalSection}
+  - {name: NtSetInformationFile}
+  - {name: NtSetSecurityObject}
+  - {name: NtSetEaFile}
+  - {name: NtQuerySecurityObject}
+  - {name: RtlLengthSecurityDescriptor}
+  - {name: NtQueryEaFile}
+  - {name: NtQueryInformationFile}
+  - {name: NtOpenFile}
+  - {name: memset}
+  - {name: _wcsnicmp}
+  - {name: NtCreateFile}
+  - {name: NtFsControlFile}
+  - {name: memcpy}
+  - {name: RtlSetLastWin32Error}
+  - {name: RtlAllocateHeap}
+  - {name: RtlCreateAcl}
+  - {name: RtlAddAccessAllowedAce}
+  - {name: RtlCreateSecurityDescriptor}
+  - {name: RtlSetOwnerSecurityDescriptor}
+  - {name: RtlSetGroupSecurityDescriptor}
+  - {name: RtlSetDaclSecurityDescriptor}
+  - {name: RtlFreeHeap}
+  - {name: RtlInitializeExceptionChain}
+  - {name: TpAllocPool}
+  - {name: TpSetPoolMinThreads}
+  - {name: TpSetPoolStackInformation}
+  - {name: TpQueryPoolStackInformation}
+  - {name: TpAllocCleanupGroup}
+  - {name: TpSimpleTryPost}
+  - {name: TpAllocWork}
+  - {name: TpAllocTimer}
+  - {name: TpAllocWait}
+  - {name: TpAllocIoCompletion}
+  - {name: TpCallbackMayRunLong}
+  - {name: RtlQueryEnvironmentVariable}
+  - {name: NtWriteVirtualMemory}
+  - {name: NtOpenDirectoryObject}
+  - {name: NtQuerySymbolicLinkObject}
+  - {name: NtOpenSymbolicLinkObject}
+  - {name: wcspbrk}
+  - {name: NtWow64WriteVirtualMemory64}
+  - {name: RtlDestroyProcessParameters}
+  - {name: RtlCreateProcessParametersEx}
+  - {name: NtResumeThread}
+  - {name: DbgPrint}
+  - {name: NtRemoveProcessDebug}
+  - {name: LdrQueryImageFileKeyOption}
+  - {name: NtCreateUserProcess}
+  - {name: RtlGetFullPathName_UstrEx}
+  - {name: RtlDecodePointer}
+  - {name: RtlKnownExceptionFilter}
+  - {name: RtlRaiseException}
+  - {name: NtRequestWaitReplyPort}
+  - {name: NtOpenKeyTransacted}
+  - {name: NtQueryKey}
+  - {name: NtOpenKeyEx}
+  - {name: NtOpenKeyTransactedEx}
+  - {name: RtlValidRelativeSecurityDescriptor}
+  - {name: NtDeleteKey}
+  - {name: NtLoadKey}
+  - {name: NtUnloadKey}
+  - {name: NtNotifyChangeMultipleKeys}
+  - {name: NtRestoreKey}
+  - {name: NtSaveKeyEx}
+  - {name: RtlLengthSid}
+  - {name: RtlMakeSelfRelativeSD}
+  - {name: _strnicmp}
+  - {name: strncmp}
+  - {name: NtDuplicateToken}
+  - {name: RtlTryAcquirePebLock}
+  - {name: _vsnprintf}
+  - {name: NtWaitForMultipleObjects}
+  - {name: RtlReleasePebLock}
+  - {name: NtClearEvent}
+  - {name: RtlWerpReportException}
+  - {name: LdrResSearchResource}
+  - {name: NtWow64ReadVirtualMemory64}
+  - {name: NtWow64QueryInformationProcess64}
+  - {name: RtlCompareMemory}
+  - {name: WerReportSQMEvent}
+  - {name: LdrUnlockLoaderLock}
+  - {name: LdrLockLoaderLock}
+  - {name: NtAccessCheck}
+  - {name: VerSetConditionMask}
+  - {name: WinSqmIsOptedIn}
+  - {name: strcat_s}
+  - {name: RtlExitUserThread}
+  - {name: RtlExitUserProcess}
+  - {name: _aullrem}
+  name: ntdll.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: BaseReleaseProcessDllPath}
+  - {name: BaseGetProcessExePath}
+  - {name: BaseGetProcessDllPath}
+  - {name: LoadStringByReference}
+  - {name: InternalLcidToName}
+  - {name: NlsIsUserDefaultLocale}
+  - {name: GetUserInfo}
+  - {name: GetPtrCalDataArray}
+  - {name: GetPtrCalData}
+  - {name: GetStringTableEntry}
+  - {name: CheckGroupPolicyEnabled}
+  - {name: OpenRegKey}
+  - {name: GetCPHashNode}
+  - {name: Internal_EnumSystemCodePages}
+  - {name: Internal_EnumUILanguages}
+  - {name: Internal_EnumLanguageGroupLocales}
+  - {name: Internal_EnumSystemLanguageGroups}
+  - {name: Internal_EnumDateFormats}
+  - {name: Internal_EnumTimeFormats}
+  - {name: KernelBaseGetGlobalData}
+  - {name: InvalidateTzSpecificCache}
+  - {name: IsDBCSLeadByte}
+  - {name: CreateFileMappingNumaW}
+  - {name: CompareStringA}
+  - {name: LoadStringBaseExW}
+  - {name: BaseInvalidateDllSearchPathCache}
+  - {name: BaseInvalidateProcessSearchPathCache}
+  - {name: BaseDllFreeResourceId}
+  - {name: BaseDllMapResourceIdW}
+  - {name: GetUserDefaultUILanguage}
+  - {name: EnumUILanguagesW}
+  - {name: AreFileApisANSI}
+  - {name: EnumCalendarInfoExW}
+  - {name: EnumCalendarInfoW}
+  - {name: EnumDateFormatsExW}
+  - {name: EnumDateFormatsW}
+  - {name: EnumLanguageGroupLocalesW}
+  - {name: EnumSystemCodePagesW}
+  - {name: EnumSystemLanguageGroupsW}
+  - {name: EnumSystemLocalesEx}
+  - {name: EnumSystemLocalesW}
+  - {name: EnumTimeFormatsW}
+  - {name: GetLocaleInfoA}
+  - {name: GetStringTypeA}
+  - {name: GetSystemDefaultUILanguage}
+  - {name: IsDBCSLeadByteEx}
+  - {name: MapViewOfFileExNuma}
+  - {name: SetFileApisToANSI}
+  - {name: SetFileApisToOEM}
+  - {name: VirtualAllocExNuma}
+  - {name: EnumCalendarInfoExEx}
+  - {name: EnumDateFormatsExEx}
+  - {name: EnumTimeFormatsEx}
+  - {name: GetCurrencyFormatEx}
+  - {name: GetEraNameCountedString}
+  - {name: GetNumberFormatEx}
+  - {name: GetSystemDefaultLocaleName}
+  - {name: GetUserDefaultLocaleName}
+  - {name: LCIDToLocaleName}
+  - {name: GetNamedLocaleHashNode}
+  - {name: GetLocaleInfoHelper}
+  - {name: GetUserInfoWord}
+  - {name: GetCalendar}
+  - {name: SpecialMBToWC}
+  - {name: Internal_EnumCalendarInfo}
+  - {name: NlsValidateLocale}
+  - {name: BaseReleaseProcessExePath}
+  name: KERNELBASE.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: TlsGetValue}
+  - {name: SetThreadPriority}
+  - {name: SetProcessShutdownParameters}
+  - {name: SetPriorityClass}
+  - {name: ResumeThread}
+  - {name: QueueUserAPC}
+  - {name: ProcessIdToSessionId}
+  - {name: OpenThread}
+  - {name: GetThreadPriorityBoost}
+  - {name: GetThreadPriority}
+  - {name: GetStartupInfoW}
+  - {name: GetProcessTimes}
+  - {name: GetPriorityClass}
+  - {name: GetExitCodeThread}
+  - {name: GetCurrentThreadId}
+  - {name: GetCurrentThread}
+  - {name: GetProcessId}
+  - {name: GetProcessIdOfThread}
+  - {name: GetThreadId}
+  - {name: GetCurrentProcessId}
+  - {name: CreateRemoteThreadEx}
+  - {name: GetExitCodeProcess}
+  - {name: TlsFree}
+  - {name: TlsAlloc}
+  - {name: TerminateThread}
+  - {name: TerminateProcess}
+  - {name: SwitchToThread}
+  - {name: SuspendThread}
+  - {name: SetThreadStackGuarantee}
+  - {name: SetThreadPriorityBoost}
+  - {name: OpenProcessToken}
+  - {name: TlsSetValue}
+  - {name: SetProcessAffinityUpdateMode}
+  - {name: QueryProcessAffinityUpdateMode}
+  - {name: GetProcessVersion}
+  - {name: CreateRemoteThread}
+  - {name: InitializeProcThreadAttributeList}
+  - {name: UpdateProcThreadAttribute}
+  - {name: DeleteProcThreadAttributeList}
+  - {name: GetCurrentProcess}
+  name: API-MS-Win-Core-ProcessThreads-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: HeapCreate}
+  - {name: HeapSetInformation}
+  - {name: HeapQueryInformation}
+  - {name: HeapLock}
+  - {name: HeapDestroy}
+  - {name: GetProcessHeap}
+  - {name: GetProcessHeaps}
+  - {name: HeapWalk}
+  - {name: HeapValidate}
+  - {name: HeapUnlock}
+  - {name: HeapCompact}
+  - {name: HeapSummary}
+  name: API-MS-Win-Core-Heap-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: MapViewOfFileEx}
+  - {name: ReadProcessMemory}
+  - {name: UnmapViewOfFile}
+  - {name: VirtualAlloc}
+  - {name: VirtualAllocEx}
+  - {name: VirtualFree}
+  - {name: VirtualFreeEx}
+  - {name: VirtualProtect}
+  - {name: WriteProcessMemory}
+  - {name: VirtualQueryEx}
+  - {name: VirtualQuery}
+  - {name: VirtualProtectEx}
+  - {name: FlushViewOfFile}
+  - {name: CreateFileMappingW}
+  - {name: OpenFileMappingW}
+  - {name: MapViewOfFile}
+  name: API-MS-Win-Core-Memory-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: DuplicateHandle}
+  - {name: GetHandleInformation}
+  - {name: SetHandleInformation}
+  - {name: CloseHandle}
+  name: API-MS-Win-Core-Handle-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: OpenProcess}
+  - {name: OpenSemaphoreW}
+  - {name: OpenWaitableTimerW}
+  - {name: ReleaseMutex}
+  - {name: ReleaseSemaphore}
+  - {name: OpenMutexW}
+  - {name: SetEvent}
+  - {name: SetWaitableTimer}
+  - {name: SleepEx}
+  - {name: WaitForMultipleObjectsEx}
+  - {name: WaitForSingleObjectEx}
+  - {name: OpenEventW}
+  - {name: OpenEventA}
+  - {name: InitializeCriticalSectionEx}
+  - {name: InitializeCriticalSectionAndSpinCount}
+  - {name: CreateWaitableTimerExW}
+  - {name: CreateSemaphoreExW}
+  - {name: CreateEventA}
+  - {name: CreateEventW}
+  - {name: CancelWaitableTimer}
+  - {name: CreateEventExA}
+  - {name: CreateEventExW}
+  - {name: CreateMutexA}
+  - {name: CreateMutexExA}
+  - {name: CreateMutexExW}
+  - {name: ResetEvent}
+  - {name: CreateMutexW}
+  name: API-MS-Win-Core-Synch-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetFullPathNameW}
+  - {name: GetFullPathNameA}
+  - {name: SetFileTime}
+  - {name: QueryDosDeviceW}
+  - {name: CreateFileW}
+  - {name: LockFile}
+  - {name: GetFileSize}
+  - {name: SetEndOfFile}
+  - {name: WriteFile}
+  - {name: SetFilePointer}
+  - {name: ReadFile}
+  - {name: WriteFileEx}
+  - {name: WriteFileGather}
+  - {name: GetFinalPathNameByHandleA}
+  - {name: GetFinalPathNameByHandleW}
+  - {name: RemoveDirectoryW}
+  - {name: GetDiskFreeSpaceW}
+  - {name: CreateDirectoryW}
+  - {name: DefineDosDeviceW}
+  - {name: FindFirstFileExA}
+  - {name: FindFirstFileExW}
+  - {name: FindClose}
+  - {name: GetFileType}
+  - {name: FlushFileBuffers}
+  - {name: SetFileAttributesW}
+  - {name: GetFileAttributesExW}
+  - {name: DeleteFileW}
+  - {name: GetFileTime}
+  - {name: DeleteFileA}
+  - {name: GetFileAttributesA}
+  - {name: FindNextFileW}
+  - {name: FindFirstFileW}
+  - {name: GetLogicalDriveStringsW}
+  - {name: GetTempFileNameW}
+  - {name: GetVolumeInformationW}
+  - {name: CompareFileTime}
+  - {name: CreateDirectoryA}
+  - {name: FileTimeToLocalFileTime}
+  - {name: FileTimeToSystemTime}
+  - {name: FindCloseChangeNotification}
+  - {name: FindFirstFileA}
+  - {name: FindFirstChangeNotificationA}
+  - {name: FindFirstChangeNotificationW}
+  - {name: FindNextChangeNotification}
+  - {name: FindNextFileA}
+  - {name: GetDiskFreeSpaceA}
+  - {name: GetDiskFreeSpaceExA}
+  - {name: GetDiskFreeSpaceExW}
+  - {name: UnlockFileEx}
+  - {name: GetDriveTypeA}
+  - {name: GetDriveTypeW}
+  - {name: GetFileAttributesExA}
+  - {name: GetFileAttributesW}
+  - {name: GetFileInformationByHandle}
+  - {name: GetFileSizeEx}
+  - {name: GetVolumeInformationByHandleW}
+  - {name: LocalFileTimeToFileTime}
+  - {name: LockFileEx}
+  - {name: ReadFileScatter}
+  - {name: ReadFileEx}
+  - {name: RemoveDirectoryA}
+  - {name: SetFileAttributesA}
+  - {name: SetFileInformationByHandle}
+  - {name: SetFilePointerEx}
+  - {name: SetFileValidData}
+  - {name: UnlockFile}
+  name: API-MS-Win-Core-File-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: PostQueuedCompletionStatus}
+  - {name: GetQueuedCompletionStatusEx}
+  - {name: GetQueuedCompletionStatus}
+  - {name: CreateIoCompletionPort}
+  - {name: CancelIoEx}
+  - {name: GetOverlappedResult}
+  - {name: DeviceIoControl}
+  name: API-MS-Win-Core-IO-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: ChangeTimerQueueTimer}
+  - {name: CreateTimerQueue}
+  - {name: UnregisterWaitEx}
+  - {name: DeleteTimerQueueTimer}
+  - {name: DeleteTimerQueueEx}
+  - {name: CreateTimerQueueTimer}
+  name: API-MS-Win-Core-ThreadPool-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetModuleHandleA}
+  - {name: GetModuleHandleW}
+  - {name: GetModuleHandleExA}
+  - {name: GetModuleHandleExW}
+  - {name: LoadResource}
+  - {name: LockResource}
+  - {name: SizeofResource}
+  - {name: GetProcAddress}
+  - {name: GetModuleFileNameA}
+  - {name: FreeLibraryAndExitThread}
+  - {name: FindStringOrdinal}
+  - {name: DisableThreadLibraryCalls}
+  - {name: LoadLibraryExA}
+  - {name: GetModuleFileNameW}
+  - {name: FindResourceExW}
+  - {name: FreeLibrary}
+  - {name: LoadLibraryExW}
+  - {name: FreeResource}
+  name: API-MS-Win-Core-LibraryLoader-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: PeekNamedPipe}
+  - {name: DisconnectNamedPipe}
+  - {name: CreatePipe}
+  - {name: ConnectNamedPipe}
+  - {name: GetNamedPipeAttribute}
+  - {name: GetNamedPipeClientComputerNameW}
+  - {name: WaitNamedPipeW}
+  - {name: SetNamedPipeHandleState}
+  - {name: CreateNamedPipeW}
+  - {name: TransactNamedPipe}
+  name: API-MS-Win-Core-NamedPipe-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: IsWow64Process}
+  - {name: LCMapStringA}
+  - {name: LocalLock}
+  - {name: LocalReAlloc}
+  - {name: LocalUnlock}
+  - {name: GlobalAlloc}
+  - {name: FormatMessageW}
+  - {name: FormatMessageA}
+  - {name: NeedCurrentDirectoryForExePathA}
+  - {name: EnumSystemLocalesA}
+  - {name: PulseEvent}
+  - {name: Sleep}
+  - {name: Wow64DisableWow64FsRedirection}
+  - {name: Wow64RevertWow64FsRedirection}
+  - {name: lstrcmpW}
+  - {name: lstrcmpiW}
+  - {name: lstrcpynA}
+  - {name: lstrcpynW}
+  - {name: lstrlenA}
+  - {name: FatalAppExitA}
+  - {name: NeedCurrentDirectoryForExePathW}
+  - {name: FatalAppExitW}
+  - {name: LocalAlloc}
+  - {name: GlobalFree}
+  - {name: lstrlenW}
+  - {name: LocalFree}
+  - {name: IsProcessInJob}
+  name: API-MS-Win-Core-Misc-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetLocalTime}
+  - {name: GetSystemTimeAdjustment}
+  - {name: GetSystemTimeAsFileTime}
+  - {name: GetTickCount64}
+  - {name: GetTimeZoneInformation}
+  - {name: GetTimeZoneInformationForYear}
+  - {name: GetVersion}
+  - {name: GetVersionExA}
+  - {name: GetVersionExW}
+  - {name: GetWindowsDirectoryW}
+  - {name: SetLocalTime}
+  - {name: SystemTimeToTzSpecificLocalTime}
+  - {name: TzSpecificLocalTimeToSystemTime}
+  - {name: GetDynamicTimeZoneInformation}
+  - {name: GetLogicalProcessorInformation}
+  - {name: GetSystemInfo}
+  - {name: GetLogicalProcessorInformationEx}
+  - {name: GetWindowsDirectoryA}
+  - {name: GlobalMemoryStatusEx}
+  - {name: GetTickCount}
+  - {name: GetSystemTime}
+  - {name: SystemTimeToFileTime}
+  - {name: GetComputerNameExW}
+  - {name: GetComputerNameExA}
+  name: API-MS-Win-Core-SysInfo-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: VerLanguageNameA}
+  - {name: FindNLSStringEx}
+  - {name: SetThreadLocale}
+  - {name: NlsWriteEtwEvent}
+  - {name: NlsEventDataDescCreate}
+  - {name: ConvertDefaultLocale}
+  - {name: VerLanguageNameW}
+  - {name: SetLocaleInfoW}
+  - {name: SetCalendarInfoW}
+  - {name: LCMapStringW}
+  - {name: IsValidLocale}
+  - {name: IsValidLanguageGroup}
+  - {name: IsValidCodePage}
+  - {name: IsNLSDefinedString}
+  - {name: GetUserDefaultLCID}
+  - {name: GetUserDefaultLangID}
+  - {name: GetThreadLocale}
+  - {name: GetSystemDefaultLCID}
+  - {name: GetSystemDefaultLangID}
+  - {name: GetProcessPreferredUILanguages}
+  - {name: GetOEMCP}
+  - {name: GetLocaleInfoW}
+  - {name: GetCPInfoExW}
+  - {name: GetCPInfo}
+  - {name: GetACP}
+  - {name: GetFileMUIPath}
+  - {name: FindNLSString}
+  - {name: NlsUpdateSystemLocale}
+  - {name: NlsUpdateLocale}
+  - {name: NlsGetCacheUpdateCount}
+  - {name: NlsCheckPolicy}
+  - {name: GetCalendarInfoW}
+  - {name: GetCalendarInfoEx}
+  - {name: GetLocaleInfoEx}
+  - {name: GetSystemPreferredUILanguages}
+  - {name: GetThreadPreferredUILanguages}
+  - {name: GetThreadUILanguage}
+  - {name: GetUILanguageInfo}
+  - {name: GetUserPreferredUILanguages}
+  - {name: IsValidLocaleName}
+  - {name: LCMapStringEx}
+  - {name: LocaleNameToLCID}
+  - {name: ResolveLocaleName}
+  - {name: GetFileMUIInfo}
+  name: API-MS-Win-Core-Localization-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetEnvironmentStrings}
+  - {name: GetEnvironmentVariableW}
+  - {name: SearchPathW}
+  - {name: SetStdHandleEx}
+  - {name: ExpandEnvironmentStringsA}
+  - {name: ExpandEnvironmentStringsW}
+  - {name: FreeEnvironmentStringsA}
+  - {name: FreeEnvironmentStringsW}
+  - {name: GetCommandLineA}
+  - {name: GetCommandLineW}
+  - {name: GetCurrentDirectoryA}
+  - {name: GetCurrentDirectoryW}
+  - {name: GetEnvironmentStringsW}
+  - {name: SetEnvironmentStringsW}
+  - {name: GetEnvironmentVariableA}
+  - {name: GetStdHandle}
+  - {name: SetCurrentDirectoryA}
+  - {name: SetCurrentDirectoryW}
+  - {name: SetEnvironmentVariableA}
+  - {name: SetEnvironmentVariableW}
+  - {name: SetStdHandle}
+  name: API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetStringTypeW}
+  - {name: GetStringTypeExW}
+  - {name: FoldStringW}
+  - {name: CompareStringW}
+  - {name: WideCharToMultiByte}
+  - {name: CompareStringOrdinal}
+  - {name: CompareStringEx}
+  - {name: MultiByteToWideChar}
+  name: API-MS-Win-Core-String-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: DebugBreak}
+  - {name: OutputDebugStringA}
+  - {name: OutputDebugStringW}
+  - {name: IsDebuggerPresent}
+  name: API-MS-Win-Core-Debug-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: GetLastError}
+  - {name: GetErrorMode}
+  - {name: RaiseException}
+  - {name: SetErrorMode}
+  - {name: SetLastError}
+  name: API-MS-Win-Core-ErrorHandling-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: FlsAlloc}
+  - {name: FlsFree}
+  - {name: FlsGetValue}
+  - {name: FlsSetValue}
+  name: API-MS-Win-Core-Fibers-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: Beep}
+  name: API-MS-Win-Core-Util-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: QueryPerformanceFrequency}
+  - {name: QueryPerformanceCounter}
+  name: API-MS-Win-Core-Profile-L1-1-0.dll
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: AllocateAndInitializeSid}
+  - {name: FreeSid}
+  - {name: DuplicateToken}
+  - {name: AccessCheck}
+  name: API-MS-Win-Security-Base-L1-1-0.dll
+optional_header: {AddressOfEntryPoint: 78515, BaseOfCode: 65536, BaseOfData: 851968,
+  CheckSum: 1161126, DllCharacteristics: 320, FileAlignment: 65536, ImageBase: 2111176704,
+  LoaderFlags: 0, Magic: 267, MajorImageVersion: 6, MajorLinkerVersion: 9, MajorOperatingSystemVersion: 6,
+  MajorSubsystemVersion: 6, MinorImageVersion: 1, MinorLinkerVersion: 0, MinorOperatingSystemVersion: 1,
+  MinorSubsystemVersion: 1, NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 65536,
+  SizeOfCode: 851968, SizeOfHeaders: 65536, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576,
+  SizeOfImage: 1114112, SizeOfInitializedData: 196608, SizeOfStackCommit: 4096, SizeOfStackReserve: 262144,
+  SizeOfUninitializedData: 0, Subsystem: 3}
+resources:
+  Characteristics: 0
+  MajorVersion: 0
+  MinorVersion: 0
+  NumberOfIdEntries: 1
+  NumberOfNamedEntries: 1
+  TimeDateStamp: 0
+  childs:
+  - Name: MUI
+    OffsetToData: 2147483680
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483728
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 128
+            childs:
+            - CodePage: 0
+              OffsetToData: 984152
+              Reserved: 0
+              Size: 208
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: null
+    type: 1
+  - Name: None
+    OffsetToData: 2147483704
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483752
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 144
+            childs:
+            - CodePage: 0
+              OffsetToData: 983216
+              Reserved: 0
+              Size: 932
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 16
+    type: 1
+  type: 0
+sections:
+- {Characteristics: 1610612768, Misc_VirtualSize: 787046, NumberOfLinenumbers: 0,
+  NumberOfRelocations: 0, PointerToLinenumbers: 0, PointerToRawData: 65536, PointerToRelocations: 0,
+  SizeOfRawData: 851968, VirtualAddress: 65536, name: .text}
+- {Characteristics: 3221225536, Misc_VirtualSize: 4108, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 917504, PointerToRelocations: 0, SizeOfRawData: 65536,
+  VirtualAddress: 917504, name: .data}
+- {Characteristics: 1073741888, Misc_VirtualSize: 1320, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 983040, PointerToRelocations: 0, SizeOfRawData: 65536,
+  VirtualAddress: 983040, name: .rsrc}
+- {Characteristics: 1107296320, Misc_VirtualSize: 44376, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 1048576, PointerToRelocations: 0, SizeOfRawData: 65536,
+  VirtualAddress: 1048576, name: .reloc}
+tls: {}

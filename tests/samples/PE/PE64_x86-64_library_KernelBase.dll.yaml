@@ -1,0 +1,537 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: KernelBase.dll
+hash: 9841f65127210ba2ae4d8254787d0e2b
+header: {Characteristics: 8226, Machine: 34404, NumberOfSections: 6, NumberOfSymbols: 0,
+  PointerToSymbolTable: 0, SizeOfOptionalHeader: 240, TimeDateStamp: 1354254235}
+imports:
+- ForwarderChain: 0
+  TimeDateStamp: 0
+  entries:
+  - {name: RtlAnsiStringToUnicodeString}
+  - {name: RtlUnicodeStringToAnsiString}
+  - {name: RtlCreateTagHeap}
+  - {name: _vsnwprintf}
+  - {name: NtQuerySystemInformation}
+  - {name: RtlGetNativeSystemInformation}
+  - {name: CsrClientConnectToServer}
+  - {name: CsrVerifyRegion}
+  - {name: RtlAllocateHeap}
+  - {name: RtlFreeHeap}
+  - {name: RtlFreeAnsiString}
+  - {name: NtQueryInformationProcess}
+  - {name: NtSetInformationProcess}
+  - {name: NtCreateIoCompletion}
+  - {name: NtSetInformationFile}
+  - {name: NtClose}
+  - {name: NtSetIoCompletion}
+  - {name: SbSelectProcedure}
+  - {name: RtlSetLastWin32Error}
+  - {name: NtRemoveIoCompletion}
+  - {name: RtlActivateActivationContextUnsafeFast}
+  - {name: NtRemoveIoCompletionEx}
+  - {name: RtlDeactivateActivationContextUnsafeFast}
+  - {name: NtOpenFile}
+  - {name: NtCreateNamedPipeFile}
+  - {name: RtlDosPathNameToNtPathName_U}
+  - {name: RtlDefaultNpAcl}
+  - {name: RtlCreateSecurityDescriptor}
+  - {name: RtlSetDaclSecurityDescriptor}
+  - {name: NtFsControlFile}
+  - {name: NtWaitForSingleObject}
+  - {name: NtCreateEvent}
+  - {name: NtQueryInformationFile}
+  - {name: RtlCreateUnicodeString}
+  - {name: RtlDetermineDosPathNameType_U}
+  - {name: RtlInitUnicodeString}
+  - {name: RtlPrefixString}
+  - {name: RtlFreeUnicodeString}
+  - {name: _wcsnicmp}
+  - {name: RtlAppendUnicodeStringToString}
+  - {name: NtCreateFile}
+  - {name: NtDeviceIoControlFile}
+  - {name: RtlTimeToTimeFields}
+  - {name: RtlTimeFieldsToTime}
+  - {name: RtlAcquirePrivilege}
+  - {name: NtSetSystemTime}
+  - {name: RtlReleasePrivilege}
+  - {name: RtlInitializeSRWLock}
+  - {name: wcscpy_s}
+  - {name: wcschr}
+  - {name: RtlUnicodeStringToInteger}
+  - {name: RtlAcquireSRWLockShared}
+  - {name: RtlReleaseSRWLockShared}
+  - {name: RtlAcquireSRWLockExclusive}
+  - {name: RtlReleaseSRWLockExclusive}
+  - {name: RtlpCheckDynamicTimeZoneInformation}
+  - {name: RtlCutoverTimeToSystemTime}
+  - {name: _stricmp}
+  - {name: _wcsicmp}
+  - {name: RtlRegisterWait}
+  - {name: RtlDeregisterWaitEx}
+  - {name: RtlCreateTimerQueue}
+  - {name: NtDelayExecution}
+  - {name: RtlCreateTimer}
+  - {name: RtlUpdateTimer}
+  - {name: RtlDeleteTimer}
+  - {name: RtlDeleteTimerQueueEx}
+  - {name: NtAllocateVirtualMemory}
+  - {name: wcsrchr}
+  - {name: NtOpenKey}
+  - {name: NtQueryValueKey}
+  - {name: LdrEnumerateLoadedModules}
+  - {name: RtlAcquirePebLock}
+  - {name: RtlQueryEnvironmentVariable}
+  - {name: RtlReleasePebLock}
+  - {name: wcsncmp}
+  - {name: NlsMbCodePageTag}
+  - {name: RtlxAnsiStringToUnicodeSize}
+  - {name: NlsMbOemCodePageTag}
+  - {name: RtlxOemStringToUnicodeSize}
+  - {name: RtlxUnicodeStringToOemSize}
+  - {name: RtlxUnicodeStringToAnsiSize}
+  - {name: RtlOemStringToUnicodeString}
+  - {name: RtlUnicodeStringToOemString}
+  - {name: RtlRaiseException}
+  - {name: NtDuplicateObject}
+  - {name: NtQueryObject}
+  - {name: NtSetInformationObject}
+  - {name: memmove}
+  - {name: NtQueryVolumeInformationFile}
+  - {name: NtReadFile}
+  - {name: NtWriteFile}
+  - {name: NtFlushBuffersFile}
+  - {name: NtLockFile}
+  - {name: NtUnlockFile}
+  - {name: RtlNtStatusToDosError}
+  - {name: NtCancelIoFileEx}
+  - {name: NtReadFileScatter}
+  - {name: NtWriteFileGather}
+  - {name: RtlWow64EnableFsRedirectionEx}
+  - {name: NtCreateSection}
+  - {name: NtOpenSection}
+  - {name: NtMapViewOfSection}
+  - {name: NtFlushVirtualMemory}
+  - {name: NtUnmapViewOfSection}
+  - {name: RtlFlushSecureMemoryCache}
+  - {name: NtReadVirtualMemory}
+  - {name: NtProtectVirtualMemory}
+  - {name: NtWriteVirtualMemory}
+  - {name: NtFlushInstructionCache}
+  - {name: NtFreeVirtualMemory}
+  - {name: NtQueryVirtualMemory}
+  - {name: RtlGetCurrentProcessorNumberEx}
+  - {name: NtQuerySystemInformationEx}
+  - {name: NtOpenProcess}
+  - {name: RtlReportSilentProcessExit}
+  - {name: NtTerminateProcess}
+  - {name: RtlInitUnicodeStringEx}
+  - {name: RtlRaiseStatus}
+  - {name: NtRaiseHardError}
+  - {name: RtlExitUserProcess}
+  - {name: RtlInitAnsiStringEx}
+  - {name: CsrClientCallServer}
+  - {name: RtlQueryEnvironmentVariable_U}
+  - {name: strchr}
+  - {name: CsrAllocateCaptureBuffer}
+  - {name: CsrAllocateMessagePointer}
+  - {name: RtlUpcaseUnicodeString}
+  - {name: RtlCopyUnicodeString}
+  - {name: CsrFreeCaptureBuffer}
+  - {name: RtlUpcaseUnicodeChar}
+  - {name: RtlEqualUnicodeString}
+  - {name: NtOpenDirectoryObject}
+  - {name: NtOpenSymbolicLinkObject}
+  - {name: NtQuerySymbolicLinkObject}
+  - {name: NtQueryDirectoryObject}
+  - {name: RtlCompareMemory}
+  - {name: RtlUnicodeToMultiByteSize}
+  - {name: RtlUnicodeToOemN}
+  - {name: RtlSetEnvironmentStrings}
+  - {name: RtlSetEnvironmentVariable}
+  - {name: RtlSetEnvironmentVar}
+  - {name: RtlExpandEnvironmentStrings_U}
+  - {name: RtlExpandEnvironmentStrings}
+  - {name: RtlInitializeCriticalSectionAndSpinCount}
+  - {name: RtlInitializeCriticalSectionEx}
+  - {name: NtOpenEvent}
+  - {name: NtSetEvent}
+  - {name: NtClearEvent}
+  - {name: NtPulseEvent}
+  - {name: NtCreateSemaphore}
+  - {name: NtOpenSemaphore}
+  - {name: NtReleaseSemaphore}
+  - {name: NtCreateMutant}
+  - {name: NtOpenMutant}
+  - {name: NtReleaseMutant}
+  - {name: NtWaitForMultipleObjects}
+  - {name: NtCreateTimer}
+  - {name: NtOpenTimer}
+  - {name: NtSetTimerEx}
+  - {name: NtCancelTimer}
+  - {name: RtlDosApplyFileIsolationRedirection_Ustr}
+  - {name: LdrGetDllHandleByName}
+  - {name: RtlDosSearchPath_Ustr}
+  - {name: RtlImageNtHeaderEx}
+  - {name: LdrGetDllHandleByMapping}
+  - {name: RtlGetActiveActivationContext}
+  - {name: LdrAddLoadAsDataTable}
+  - {name: LdrLoadDll}
+  - {name: RtlImageNtHeader}
+  - {name: LdrRemoveLoadAsDataTable}
+  - {name: LdrUnloadAlternateResourceModule}
+  - {name: LdrUnloadDll}
+  - {name: RtlExitUserThread}
+  - {name: LdrDisableThreadCalloutsForDll}
+  - {name: LdrLockLoaderLock}
+  - {name: LdrUnlockLoaderLock}
+  - {name: LdrGetDllHandle}
+  - {name: RtlPcToFileHeader}
+  - {name: RtlComputePrivatizedDllName_U}
+  - {name: LdrAddRefDll}
+  - {name: RtlInitString}
+  - {name: LdrGetProcedureAddress}
+  - {name: RtlDosPathNameToNtPathName_U_WithStatus}
+  - {name: NtQueryAttributesFile}
+  - {name: RtlGetVersion}
+  - {name: LdrAccessResource}
+  - {name: LdrFindResource_U}
+  - {name: RtlReAllocateHeap}
+  - {name: RtlAllocateAndInitializeSid}
+  - {name: RtlLengthSid}
+  - {name: RtlCreateAcl}
+  - {name: RtlAddAccessAllowedAce}
+  - {name: RtlAddMandatoryAce}
+  - {name: RtlSetSaclSecurityDescriptor}
+  - {name: RtlFreeSid}
+  - {name: DbgPrint}
+  - {name: NtCreateThreadEx}
+  - {name: RtlAllocateActivationContextStack}
+  - {name: RtlQueryInformationActivationContext}
+  - {name: RtlActivateActivationContextEx}
+  - {name: NtResumeThread}
+  - {name: RtlReleaseActivationContext}
+  - {name: RtlFreeActivationContextStack}
+  - {name: NtTerminateThread}
+  - {name: NtOpenThread}
+  - {name: NtSetInformationThread}
+  - {name: NtQueryInformationThread}
+  - {name: TpCaptureCaller}
+  - {name: RtlCaptureStackBackTrace}
+  - {name: TpCheckTerminateWorker}
+  - {name: NtSuspendThread}
+  - {name: RtlGetCurrentUmsThread}
+  - {name: RtlFindClearBitsAndSet}
+  - {name: RtlAreBitsSet}
+  - {name: RtlClearBits}
+  - {name: NtQueueApcThread}
+  - {name: null}
+  - {name: RtlFlsAlloc}
+  - {name: RtlProcessFlsData}
+  - {name: RtlFlsFree}
+  - {name: NtYieldExecution}
+  - {name: RtlInitAnsiString}
+  - {name: RtlFindMessage}
+  - {name: RtlFormatMessageEx}
+  - {name: RtlLoadString}
+  - {name: RtlUnicodeToMultiByteN}
+  - {name: RtlLockHeap}
+  - {name: RtlAllocateHandle}
+  - {name: RtlFreeHandle}
+  - {name: RtlSetUserValueHeap}
+  - {name: RtlUnlockHeap}
+  - {name: RtlIsValidHandle}
+  - {name: RtlInitializeHandleTable}
+  - {name: RtlCreateHeap}
+  - {name: RtlDestroyHeap}
+  - {name: RtlQueryHeapInformation}
+  - {name: RtlValidateHeap}
+  - {name: RtlGetProcessHeaps}
+  - {name: RtlCompactHeap}
+  - {name: RtlWalkHeap}
+  - {name: RtlSetHeapInformation}
+  - {name: RtlGetCurrentDirectory_U}
+  - {name: wcsncpy_s}
+  - {name: RtlIntegerToChar}
+  - {name: RtlAnsiCharToUnicodeChar}
+  - {name: RtlIsDosDeviceName_U}
+  - {name: RtlSetThreadErrorMode}
+  - {name: toupper}
+  - {name: RtlInitializeCriticalSection}
+  - {name: RtlDeleteCriticalSection}
+  - {name: RtlEnterCriticalSection}
+  - {name: RtlLeaveCriticalSection}
+  - {name: RtlDosPathNameToRelativeNtPathName_U}
+  - {name: RtlReleaseRelativeName}
+  - {name: RtlDosPathNameToRelativeNtPathName_U_WithStatus}
+  - {name: NtQueryFullAttributesFile}
+  - {name: NtQueryDirectoryFile}
+  - {name: NtNotifyChangeDirectoryFile}
+  - {name: RtlGetFullPathName_UEx}
+  - {name: RtlSetCurrentDirectory_U}
+  - {name: NtQueryEaFile}
+  - {name: null}
+  - {name: NtIsProcessInJob}
+  - {name: NtDuplicateToken}
+  - {name: NtAllocateLocallyUniqueId}
+  - {name: NtAccessCheck}
+  - {name: NtAccessCheckByType}
+  - {name: NtAccessCheckByTypeResultList}
+  - {name: NtOpenProcessToken}
+  - {name: NtOpenThreadToken}
+  - {name: NtQueryInformationToken}
+  - {name: NtSetInformationToken}
+  - {name: NtAdjustPrivilegesToken}
+  - {name: NtAdjustGroupsToken}
+  - {name: NtPrivilegeCheck}
+  - {name: NtAccessCheckAndAuditAlarm}
+  - {name: NtAccessCheckByTypeAndAuditAlarm}
+  - {name: NtAccessCheckByTypeResultListAndAuditAlarm}
+  - {name: NtAccessCheckByTypeResultListAndAuditAlarmByHandle}
+  - {name: NtOpenObjectAuditAlarm}
+  - {name: NtPrivilegeObjectAuditAlarm}
+  - {name: NtCloseObjectAuditAlarm}
+  - {name: NtDeleteObjectAuditAlarm}
+  - {name: NtPrivilegedServiceAuditAlarm}
+  - {name: RtlValidSid}
+  - {name: RtlEqualSid}
+  - {name: RtlEqualPrefixSid}
+  - {name: RtlLengthRequiredSid}
+  - {name: RtlInitializeSid}
+  - {name: RtlIdentifierAuthoritySid}
+  - {name: RtlSubAuthoritySid}
+  - {name: RtlSubAuthorityCountSid}
+  - {name: RtlCopySid}
+  - {name: RtlAreAllAccessesGranted}
+  - {name: RtlAreAnyAccessesGranted}
+  - {name: RtlMapGenericMask}
+  - {name: RtlValidAcl}
+  - {name: RtlQueryInformationAcl}
+  - {name: RtlSetInformationAcl}
+  - {name: RtlAddAce}
+  - {name: RtlDeleteAce}
+  - {name: RtlGetAce}
+  - {name: RtlAddAccessAllowedAceEx}
+  - {name: RtlAddAccessDeniedAce}
+  - {name: RtlAddAccessDeniedAceEx}
+  - {name: RtlAddAuditAccessAce}
+  - {name: RtlAddAuditAccessAceEx}
+  - {name: RtlAddAccessAllowedObjectAce}
+  - {name: RtlAddAccessDeniedObjectAce}
+  - {name: RtlAddAuditAccessObjectAce}
+  - {name: RtlFirstFreeAce}
+  - {name: RtlValidSecurityDescriptor}
+  - {name: RtlValidRelativeSecurityDescriptor}
+  - {name: RtlLengthSecurityDescriptor}
+  - {name: RtlGetControlSecurityDescriptor}
+  - {name: RtlSetControlSecurityDescriptor}
+  - {name: RtlGetDaclSecurityDescriptor}
+  - {name: RtlGetSaclSecurityDescriptor}
+  - {name: RtlSetOwnerSecurityDescriptor}
+  - {name: RtlGetOwnerSecurityDescriptor}
+  - {name: RtlSetGroupSecurityDescriptor}
+  - {name: RtlGetGroupSecurityDescriptor}
+  - {name: RtlNewSecurityObject}
+  - {name: RtlConvertToAutoInheritSecurityObject}
+  - {name: RtlNewSecurityObjectEx}
+  - {name: RtlNewSecurityObjectWithMultipleInheritance}
+  - {name: RtlSetSecurityObject}
+  - {name: RtlSetSecurityObjectEx}
+  - {name: RtlQuerySecurityObject}
+  - {name: RtlDeleteSecurityObject}
+  - {name: RtlAbsoluteToSelfRelativeSD}
+  - {name: RtlSelfRelativeToAbsoluteSD}
+  - {name: NtSetSecurityObject}
+  - {name: NtQuerySecurityObject}
+  - {name: RtlImpersonateSelf}
+  - {name: NtImpersonateAnonymousToken}
+  - {name: NtFilterToken}
+  - {name: RtlSelfRelativeToAbsoluteSD2}
+  - {name: RtlGetSecurityDescriptorRMControl}
+  - {name: RtlSetSecurityDescriptorRMControl}
+  - {name: RtlUnhandledExceptionFilter}
+  - {name: RtlVirtualUnwind}
+  - {name: RtlLookupFunctionEntry}
+  - {name: RtlCaptureContext}
+  - {name: RtlNormalizeString}
+  - {name: EtwEventEnabled}
+  - {name: RtlLocaleNameToLcid}
+  - {name: wcspbrk}
+  - {name: EtwEventRegister}
+  - {name: EtwEventUnregister}
+  - {name: NtSetDefaultLocale}
+  - {name: NtSetValueKey}
+  - {name: RtlLcidToLocaleName}
+  - {name: RtlOpenCurrentUser}
+  - {name: NtEnumerateValueKey}
+  - {name: RtlLCIDToCultureName}
+  - {name: qsort}
+  - {name: RtlpCreateProcessRegistryInfo}
+  - {name: RtlpGetLCIDFromLangInfoNode}
+  - {name: RtlCultureNameToLCID}
+  - {name: RtlpIsQualifiedLanguage}
+  - {name: RtlpGetNameFromLangInfoNode}
+  - {name: RtlpInitializeLangRegistryInfo}
+  - {name: RtlpLoadUserUIByPolicy}
+  - {name: RtlpLoadMachineUIByPolicy}
+  - {name: RtlpMuiFreeLangRegistryInfo}
+  - {name: NtQueryInstallUILanguage}
+  - {name: RtlGetLocaleFileMappingAddress}
+  - {name: NtGetNlsSectionPtr}
+  - {name: RtlGetProcessPreferredUILanguages}
+  - {name: LdrFindResourceEx_U}
+  - {name: RtlGetThreadPreferredUILanguages}
+  - {name: RtlpQueryDefaultUILanguage}
+  - {name: RtlGetSystemPreferredUILanguages}
+  - {name: RtlGetUserPreferredUILanguages}
+  - {name: RtlpGetSystemDefaultUILanguage}
+  - {name: RtlGetUILanguageInfo}
+  - {name: RtlGetFileMUIPath}
+  - {name: NtEnumerateKey}
+  - {name: RtlIntegerToUnicodeString}
+  - {name: RtlAppendUnicodeToString}
+  - {name: NtCreateKey}
+  - {name: NtDeleteKey}
+  - {name: EtwEventWrite}
+  - {name: NtQueryDefaultLocale}
+  - {name: NtNotifyChangeKey}
+  - {name: swprintf_s}
+  - {name: CsrCaptureMessageBuffer}
+  - {name: RtlUTF8ToUnicodeN}
+  - {name: RtlUnicodeToUTF8N}
+  - {name: NtDeleteValueKey}
+  - {name: DbgPrintEx}
+  - {name: RtlSetLastWin32ErrorAndNtStatusFromNtStatus}
+  - {name: TpAllocCleanupGroup}
+  - {name: TpQueryPoolStackInformation}
+  - {name: TpSetPoolStackInformation}
+  - {name: TpAllocWait}
+  - {name: TpAllocPool}
+  - {name: TpCallbackMayRunLong}
+  - {name: TpSimpleTryPost}
+  - {name: TpSetPoolMinThreads}
+  - {name: TpAllocWork}
+  - {name: TpAllocIoCompletion}
+  - {name: TpAllocTimer}
+  - {name: NtQueryMultipleValueKey}
+  - {name: memset}
+  - {name: memcpy}
+  - {name: memcmp}
+  - {name: __C_specific_handler}
+  - {name: _local_unwind}
+  name: ntdll.dll
+optional_header: {AddressOfEntryPoint: 10112, BaseOfCode: 4096, CheckSum: 479670,
+  DllCharacteristics: 320, FileAlignment: 512, ImageBase: 8792746491904, LoaderFlags: 0,
+  Magic: 523, MajorImageVersion: 6, MajorLinkerVersion: 9, MajorOperatingSystemVersion: 6,
+  MajorSubsystemVersion: 6, MinorImageVersion: 1, MinorLinkerVersion: 0, MinorOperatingSystemVersion: 1,
+  MinorSubsystemVersion: 1, NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 4096,
+  SizeOfCode: 302592, SizeOfHeaders: 1024, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576,
+  SizeOfImage: 438272, SizeOfInitializedData: 120832, SizeOfStackCommit: 4096, SizeOfStackReserve: 262144,
+  SizeOfUninitializedData: 0, Subsystem: 3}
+resources:
+  Characteristics: 0
+  MajorVersion: 0
+  MinorVersion: 0
+  NumberOfIdEntries: 1
+  NumberOfNamedEntries: 1
+  TimeDateStamp: 0
+  childs:
+  - Name: MUI
+    OffsetToData: 2147483680
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483728
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 128
+            childs:
+            - CodePage: 0
+              OffsetToData: 431200
+              Reserved: 0
+              Size: 208
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: null
+    type: 1
+  - Name: None
+    OffsetToData: 2147483704
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483752
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 144
+            childs:
+            - CodePage: 0
+              OffsetToData: 430256
+              Reserved: 0
+              Size: 940
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 16
+    type: 1
+  type: 0
+sections:
+- {Characteristics: 1610612768, Misc_VirtualSize: 302111, NumberOfLinenumbers: 0,
+  NumberOfRelocations: 0, PointerToLinenumbers: 0, PointerToRawData: 1024, PointerToRelocations: 0,
+  SizeOfRawData: 302592, VirtualAddress: 4096, name: .text}
+- {Characteristics: 1073741888, Misc_VirtualSize: 85984, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 303616, PointerToRelocations: 0, SizeOfRawData: 86016,
+  VirtualAddress: 307200, name: .rdata}
+- {Characteristics: 3221225536, Misc_VirtualSize: 7080, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 389632, PointerToRelocations: 0, SizeOfRawData: 7168,
+  VirtualAddress: 393216, name: .data}
+- {Characteristics: 1073741888, Misc_VirtualSize: 25140, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 396800, PointerToRelocations: 0, SizeOfRawData: 25600,
+  VirtualAddress: 401408, name: .pdata}
+- {Characteristics: 1073741888, Misc_VirtualSize: 1328, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 422400, PointerToRelocations: 0, SizeOfRawData: 1536,
+  VirtualAddress: 430080, name: .rsrc}
+- {Characteristics: 1107296320, Misc_VirtualSize: 316, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 423936, PointerToRelocations: 0, SizeOfRawData: 512,
+  VirtualAddress: 434176, name: .reloc}
+tls: {}

@@ -1,0 +1,321 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: msvcrt.dll
+hash: 9bec81323289025ad6cef83a26c57cdc
+header: {Characteristics: 8450, Machine: 332, NumberOfSections: 4, NumberOfSymbols: 0,
+  PointerToSymbolTable: 0, SizeOfOptionalHeader: 224, TimeDateStamp: 1247533679}
+imports:
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetLocaleInfoA}
+  name: KERNELBASE.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: RtlGetNtVersionNumbers}
+  - {name: RtlUnwind}
+  name: ntdll.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetConsoleCP}
+  - {name: ReadConsoleInputW}
+  - {name: GetNumberOfConsoleInputEvents}
+  - {name: PeekConsoleInputA}
+  - {name: ReadConsoleW}
+  - {name: SetConsoleMode}
+  - {name: GetConsoleMode}
+  - {name: WriteConsoleW}
+  - {name: ReadConsoleInputA}
+  - {name: SetConsoleCtrlHandler}
+  name: API-MS-Win-Core-Console-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetDateFormatW}
+  - {name: GetTimeFormatW}
+  - {name: GetTimeFormatA}
+  - {name: GetDateFormatA}
+  name: API-MS-Win-Core-DateTime-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: OutputDebugStringA}
+  name: API-MS-Win-Core-Debug-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: UnhandledExceptionFilter}
+  - {name: RaiseException}
+  - {name: SetUnhandledExceptionFilter}
+  - {name: SetLastError}
+  - {name: GetLastError}
+  - {name: SetErrorMode}
+  name: API-MS-Win-Core-ErrorHandling-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: FlsFree}
+  - {name: FlsGetValue}
+  - {name: FlsSetValue}
+  - {name: FlsAlloc}
+  name: API-MS-Win-Core-Fibers-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: SetFileTime}
+  - {name: LocalFileTimeToFileTime}
+  - {name: FindFirstFileW}
+  - {name: WriteFile}
+  - {name: FindClose}
+  - {name: FileTimeToSystemTime}
+  - {name: FileTimeToLocalFileTime}
+  - {name: FindFirstFileA}
+  - {name: FindNextFileA}
+  - {name: GetDiskFreeSpaceA}
+  - {name: GetLogicalDrives}
+  - {name: ReadFile}
+  - {name: FindNextFileW}
+  - {name: GetFileAttributesA}
+  - {name: SetFileAttributesA}
+  - {name: GetFullPathNameA}
+  - {name: GetDriveTypeA}
+  - {name: CreateDirectoryA}
+  - {name: RemoveDirectoryA}
+  - {name: DeleteFileA}
+  - {name: GetFileAttributesW}
+  - {name: SetFileAttributesW}
+  - {name: GetFullPathNameW}
+  - {name: CreateDirectoryW}
+  - {name: DeleteFileW}
+  - {name: SetFileInformationByHandle}
+  - {name: CreateFileW}
+  - {name: RemoveDirectoryW}
+  - {name: GetDriveTypeW}
+  - {name: CreateFileA}
+  - {name: GetFileType}
+  - {name: SetEndOfFile}
+  - {name: FlushFileBuffers}
+  - {name: GetFileInformationByHandle}
+  - {name: LockFile}
+  - {name: UnlockFile}
+  - {name: SetFilePointer}
+  name: API-MS-Win-Core-File-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: DuplicateHandle}
+  - {name: CloseHandle}
+  name: API-MS-Win-Core-Handle-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: HeapWalk}
+  - {name: HeapCompact}
+  - {name: HeapValidate}
+  - {name: GetProcessHeap}
+  - {name: HeapReAlloc}
+  - {name: HeapDestroy}
+  - {name: HeapCreate}
+  - {name: HeapFree}
+  - {name: HeapAlloc}
+  - {name: HeapSize}
+  name: API-MS-Win-Core-Heap-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: InterlockedDecrement}
+  - {name: InterlockedExchange}
+  - {name: InterlockedIncrement}
+  name: API-MS-Win-Core-Interlocked-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: LCMapStringW}
+  - {name: GetUserDefaultLCID}
+  - {name: IsValidLocale}
+  - {name: IsValidCodePage}
+  - {name: GetLocaleInfoW}
+  - {name: GetOEMCP}
+  - {name: GetACP}
+  - {name: GetCPInfo}
+  name: API-MS-Win-Core-Localization-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetModuleFileNameA}
+  - {name: GetModuleHandleA}
+  - {name: LoadLibraryExW}
+  - {name: GetModuleFileNameW}
+  - {name: FreeLibrary}
+  - {name: LoadLibraryExA}
+  - {name: GetProcAddress}
+  - {name: GetModuleHandleW}
+  name: API-MS-Win-Core-LibraryLoader-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: VirtualQuery}
+  - {name: VirtualProtect}
+  - {name: VirtualAlloc}
+  - {name: VirtualFree}
+  name: API-MS-Win-Core-Memory-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: SetHandleCount}
+  - {name: Sleep}
+  - {name: EnumSystemLocalesA}
+  name: API-MS-Win-Core-Misc-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: PeekNamedPipe}
+  - {name: CreatePipe}
+  name: API-MS-Win-Core-NamedPipe-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetEnvironmentStringsW}
+  - {name: GetCommandLineW}
+  - {name: SetCurrentDirectoryW}
+  - {name: FreeEnvironmentStringsW}
+  - {name: GetCommandLineA}
+  - {name: SetEnvironmentVariableA}
+  - {name: GetCurrentDirectoryA}
+  - {name: SetCurrentDirectoryA}
+  - {name: SetEnvironmentVariableW}
+  - {name: GetCurrentDirectoryW}
+  - {name: SetStdHandle}
+  - {name: GetStdHandle}
+  name: API-MS-Win-Core-ProcessEnvironment-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: ExitThread}
+  - {name: CreateThread}
+  - {name: ResumeThread}
+  - {name: GetCurrentThread}
+  - {name: ExitProcess}
+  - {name: GetCurrentProcessId}
+  - {name: GetExitCodeProcess}
+  - {name: CreateProcessA}
+  - {name: CreateProcessW}
+  - {name: SetThreadStackGuarantee}
+  - {name: GetStartupInfoW}
+  - {name: GetCurrentProcess}
+  - {name: GetCurrentThreadId}
+  - {name: TerminateProcess}
+  name: API-MS-Win-Core-ProcessThreads-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: QueryPerformanceCounter}
+  name: API-MS-Win-Core-Profile-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: WideCharToMultiByte}
+  - {name: MultiByteToWideChar}
+  - {name: CompareStringW}
+  - {name: GetStringTypeW}
+  name: API-MS-Win-Core-String-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: LeaveCriticalSection}
+  - {name: EnterCriticalSection}
+  - {name: DeleteCriticalSection}
+  - {name: InitializeCriticalSectionEx}
+  - {name: WaitForSingleObject}
+  name: API-MS-Win-Core-Synch-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: SystemTimeToFileTime}
+  - {name: GetTimeZoneInformation}
+  - {name: GetSystemTimeAsFileTime}
+  - {name: GetLocalTime}
+  - {name: GetVersionExW}
+  - {name: GetSystemInfo}
+  - {name: GetTickCount}
+  - {name: SetLocalTime}
+  name: API-MS-Win-Core-SysInfo-L1-1-0.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: Beep}
+  - {name: EncodePointer}
+  - {name: DecodePointer}
+  name: API-MS-Win-Core-Util-L1-1-0.dll
+optional_header: {AddressOfEntryPoint: 42098, BaseOfCode: 4096, BaseOfData: 634880,
+  CheckSum: 713800, DllCharacteristics: 320, FileAlignment: 512, ImageBase: 1878327296,
+  LoaderFlags: 0, Magic: 267, MajorImageVersion: 6, MajorLinkerVersion: 9, MajorOperatingSystemVersion: 6,
+  MajorSubsystemVersion: 6, MinorImageVersion: 1, MinorLinkerVersion: 0, MinorOperatingSystemVersion: 1,
+  MinorSubsystemVersion: 1, NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 4096,
+  SizeOfCode: 648704, SizeOfHeaders: 2048, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576,
+  SizeOfImage: 704512, SizeOfInitializedData: 41472, SizeOfStackCommit: 4096, SizeOfStackReserve: 262144,
+  SizeOfUninitializedData: 0, Subsystem: 2}
+resources:
+  Characteristics: 0
+  MajorVersion: 0
+  MinorVersion: 0
+  NumberOfIdEntries: 1
+  NumberOfNamedEntries: 0
+  TimeDateStamp: 0
+  childs:
+  - Name: None
+    OffsetToData: 2147483672
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483696
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 72
+            childs:
+            - CodePage: 0
+              OffsetToData: 684128
+              Reserved: 0
+              Size: 908
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 16
+    type: 1
+  type: 0
+sections:
+- {Characteristics: 1610612768, Misc_VirtualSize: 648327, NumberOfLinenumbers: 0,
+  NumberOfRelocations: 0, PointerToLinenumbers: 0, PointerToRawData: 2048, PointerToRelocations: 0,
+  SizeOfRawData: 648704, VirtualAddress: 4096, name: .text}
+- {Characteristics: 3221225536, Misc_VirtualSize: 26820, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 650752, PointerToRelocations: 0, SizeOfRawData: 25600,
+  VirtualAddress: 655360, name: .data}
+- {Characteristics: 1073741888, Misc_VirtualSize: 1008, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 676352, PointerToRelocations: 0, SizeOfRawData: 1024,
+  VirtualAddress: 684032, name: .rsrc}
+- {Characteristics: 1107296320, Misc_VirtualSize: 12988, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 677376, PointerToRelocations: 0, SizeOfRawData: 13312,
+  VirtualAddress: 688128, name: .reloc}
+tls: {}

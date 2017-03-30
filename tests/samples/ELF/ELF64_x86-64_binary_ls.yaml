@@ -1,0 +1,290 @@
+DynamicReloc:
+- {info: 266287972358, name: __gmon_start__, offset: 6410232, value: 0}
+- {info: 519691042821, name: __progname, offset: 6411744, value: 6411744}
+- {info: 489626271749, name: stdout, offset: 6411752, value: 6411752}
+- {info: 528280977413, name: optind, offset: 6411760, value: 6411760}
+- {info: 549755813893, name: optarg, offset: 6411768, value: 6411768}
+- {info: 545460846597, name: __progname_full, offset: 6411776, value: 6411776}
+- {info: 481036337157, name: stderr, offset: 6411808, value: 6411808}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: __ctype_toupper_loc, num: 1}
+- {name: __uflow, num: 2}
+- {name: getenv, num: 3}
+- {name: cap_to_text, num: 4}
+- {name: sigprocmask, num: 5}
+- {name: raise, num: 6}
+- {name: localtime, num: 7}
+- {name: __mempcpy_chk, num: 8}
+- {name: abort, num: 9}
+- {name: __errno_location, num: 10}
+- {name: strncmp, num: 11}
+- {name: _ITM_deregisterTMCloneTab, num: 12}
+- {name: _exit, num: 13}
+- {name: strcpy, num: 14}
+- {name: __fpending, num: 15}
+- {name: isatty, num: 16}
+- {name: sigaction, num: 17}
+- {name: iswcntrl, num: 18}
+- {name: wcswidth, num: 19}
+- {name: localeconv, num: 20}
+- {name: mbstowcs, num: 21}
+- {name: readlink, num: 22}
+- {name: clock_gettime, num: 23}
+- {name: textdomain, num: 24}
+- {name: fclose, num: 25}
+- {name: opendir, num: 26}
+- {name: getpwuid, num: 27}
+- {name: bindtextdomain, num: 28}
+- {name: stpcpy, num: 29}
+- {name: dcgettext, num: 30}
+- {name: __ctype_get_mb_cur_max, num: 31}
+- {name: strlen, num: 32}
+- {name: __lxstat, num: 33}
+- {name: __stack_chk_fail, num: 34}
+- {name: getopt_long, num: 35}
+- {name: mbrtowc, num: 36}
+- {name: strchr, num: 37}
+- {name: getgrgid, num: 38}
+- {name: __overflow, num: 39}
+- {name: strrchr, num: 40}
+- {name: lseek, num: 41}
+- {name: gettimeofday, num: 42}
+- {name: __assert_fail, num: 43}
+- {name: __strtoul_internal, num: 44}
+- {name: fnmatch, num: 45}
+- {name: memset, num: 46}
+- {name: fscanf, num: 47}
+- {name: ioctl, num: 48}
+- {name: close, num: 49}
+- {name: closedir, num: 50}
+- {name: __libc_start_main, num: 51}
+- {name: memcmp, num: 52}
+- {name: _setjmp, num: 53}
+- {name: fputs_unlocked, num: 54}
+- {name: calloc, num: 55}
+- {name: strcmp, num: 56}
+- {name: signal, num: 57}
+- {name: dirfd, num: 58}
+- {name: getpwnam, num: 59}
+- {name: __memcpy_chk, num: 60}
+- {name: sigemptyset, num: 61}
+- {name: __gmon_start__, num: 62}
+- {name: memcpy, num: 63}
+- {name: getgrnam, num: 64}
+- {name: fileno, num: 65}
+- {name: tcgetpgrp, num: 66}
+- {name: __xstat, num: 67}
+- {name: readdir, num: 68}
+- {name: wcwidth, num: 69}
+- {name: fflush, num: 70}
+- {name: nl_langinfo, num: 71}
+- {name: ungetc, num: 72}
+- {name: __fxstat, num: 73}
+- {name: strcoll, num: 74}
+- {name: mktime, num: 75}
+- {name: __freading, num: 76}
+- {name: fwrite_unlocked, num: 77}
+- {name: realloc, num: 78}
+- {name: stpncpy, num: 79}
+- {name: fdopen, num: 80}
+- {name: setlocale, num: 81}
+- {name: __printf_chk, num: 82}
+- {name: strftime, num: 83}
+- {name: mempcpy, num: 84}
+- {name: memmove, num: 85}
+- {name: error, num: 86}
+- {name: open, num: 87}
+- {name: fseeko, num: 88}
+- {name: cap_get_file, num: 89}
+- {name: _Jv_RegisterClasses, num: 90}
+- {name: cap_free, num: 91}
+- {name: strtoul, num: 92}
+- {name: __cxa_atexit, num: 93}
+- {name: wcstombs, num: 94}
+- {name: getxattr, num: 95}
+- {name: sigismember, num: 96}
+- {name: exit, num: 97}
+- {name: fwrite, num: 98}
+- {name: __fprintf_chk, num: 99}
+- {name: _ITM_registerTMCloneTable, num: 100}
+- {name: fflush_unlocked, num: 101}
+- {name: mbsinit, num: 102}
+- {name: iswprint, num: 103}
+- {name: sigaddset, num: 104}
+- {name: strstr, num: 105}
+- {name: __ctype_tolower_loc, num: 106}
+- {name: __ctype_b_loc, num: 107}
+- {name: __sprintf_chk, num: 108}
+- {name: _obstack_newchunk, num: 109}
+- {name: program_invocation_short_, num: 110}
+- {name: _obstack_begin, num: 111}
+- {name: stderr, num: 112}
+- {name: _fini, num: 113}
+- {name: stdout, num: 114}
+- {name: __bss_start, num: 115}
+- {name: _obstack_allocated_p, num: 116}
+- {name: _obstack_begin_1, num: 117}
+- {name: _init, num: 118}
+- {name: _obstack_free, num: 119}
+- {name: program_invocation_name, num: 120}
+- {name: __progname, num: 121}
+- {name: malloc, num: 122}
+- {name: optind, num: 123}
+- {name: obstack_alloc_failed_hand, num: 124}
+- {name: _edata, num: 125}
+- {name: _obstack_memory_used, num: 126}
+- {name: __progname_full, num: 127}
+- {name: optarg, num: 128}
+- {name: _end, num: 129}
+- {name: free, num: 130}
+Header: {entryPoint: 4212800, nbPhdr: 9, nbShdr: 28, offsetToPhdr: 64, offsetToShdr: 120560}
+PltGotReloc:
+- {info: 4294967303, name: __ctype_toupper_loc, offset: 6410264, value: 0}
+- {info: 8589934599, name: __uflow, offset: 6410272, value: 0}
+- {info: 12884901895, name: getenv, offset: 6410280, value: 0}
+- {info: 17179869191, name: cap_to_text, offset: 6410288, value: 0}
+- {info: 21474836487, name: sigprocmask, offset: 6410296, value: 0}
+- {info: 25769803783, name: raise, offset: 6410304, value: 0}
+- {info: 558345748487, name: free, offset: 6410312, value: 4203088}
+- {info: 30064771079, name: localtime, offset: 6410320, value: 0}
+- {info: 34359738375, name: __mempcpy_chk, offset: 6410328, value: 0}
+- {info: 38654705671, name: abort, offset: 6410336, value: 0}
+- {info: 42949672967, name: __errno_location, offset: 6410344, value: 0}
+- {info: 47244640263, name: strncmp, offset: 6410352, value: 0}
+- {info: 55834574855, name: _exit, offset: 6410360, value: 0}
+- {info: 60129542151, name: strcpy, offset: 6410368, value: 0}
+- {info: 64424509447, name: __fpending, offset: 6410376, value: 0}
+- {info: 68719476743, name: isatty, offset: 6410384, value: 0}
+- {info: 73014444039, name: sigaction, offset: 6410392, value: 0}
+- {info: 77309411335, name: iswcntrl, offset: 6410400, value: 0}
+- {info: 81604378631, name: wcswidth, offset: 6410408, value: 0}
+- {info: 85899345927, name: localeconv, offset: 6410416, value: 0}
+- {info: 90194313223, name: mbstowcs, offset: 6410424, value: 0}
+- {info: 94489280519, name: readlink, offset: 6410432, value: 0}
+- {info: 98784247815, name: clock_gettime, offset: 6410440, value: 0}
+- {info: 103079215111, name: textdomain, offset: 6410448, value: 0}
+- {info: 107374182407, name: fclose, offset: 6410456, value: 0}
+- {info: 111669149703, name: opendir, offset: 6410464, value: 0}
+- {info: 115964116999, name: getpwuid, offset: 6410472, value: 0}
+- {info: 120259084295, name: bindtextdomain, offset: 6410480, value: 0}
+- {info: 124554051591, name: stpcpy, offset: 6410488, value: 0}
+- {info: 128849018887, name: dcgettext, offset: 6410496, value: 0}
+- {info: 133143986183, name: __ctype_get_mb_cur_max, offset: 6410504, value: 0}
+- {info: 137438953479, name: strlen, offset: 6410512, value: 0}
+- {info: 141733920775, name: __lxstat, offset: 6410520, value: 0}
+- {info: 146028888071, name: __stack_chk_fail, offset: 6410528, value: 0}
+- {info: 150323855367, name: getopt_long, offset: 6410536, value: 0}
+- {info: 154618822663, name: mbrtowc, offset: 6410544, value: 0}
+- {info: 158913789959, name: strchr, offset: 6410552, value: 0}
+- {info: 163208757255, name: getgrgid, offset: 6410560, value: 0}
+- {info: 167503724551, name: __overflow, offset: 6410568, value: 0}
+- {info: 171798691847, name: strrchr, offset: 6410576, value: 0}
+- {info: 176093659143, name: lseek, offset: 6410584, value: 0}
+- {info: 180388626439, name: gettimeofday, offset: 6410592, value: 0}
+- {info: 184683593735, name: __assert_fail, offset: 6410600, value: 0}
+- {info: 188978561031, name: __strtoul_internal, offset: 6410608, value: 0}
+- {info: 193273528327, name: fnmatch, offset: 6410616, value: 0}
+- {info: 197568495623, name: memset, offset: 6410624, value: 0}
+- {info: 201863462919, name: fscanf, offset: 6410632, value: 0}
+- {info: 206158430215, name: ioctl, offset: 6410640, value: 0}
+- {info: 210453397511, name: close, offset: 6410648, value: 0}
+- {info: 214748364807, name: closedir, offset: 6410656, value: 0}
+- {info: 219043332103, name: __libc_start_main, offset: 6410664, value: 0}
+- {info: 223338299399, name: memcmp, offset: 6410672, value: 0}
+- {info: 227633266695, name: _setjmp, offset: 6410680, value: 0}
+- {info: 231928233991, name: fputs_unlocked, offset: 6410688, value: 0}
+- {info: 236223201287, name: calloc, offset: 6410696, value: 0}
+- {info: 240518168583, name: strcmp, offset: 6410704, value: 0}
+- {info: 244813135879, name: signal, offset: 6410712, value: 0}
+- {info: 249108103175, name: dirfd, offset: 6410720, value: 0}
+- {info: 253403070471, name: getpwnam, offset: 6410728, value: 0}
+- {info: 257698037767, name: __memcpy_chk, offset: 6410736, value: 0}
+- {info: 261993005063, name: sigemptyset, offset: 6410744, value: 0}
+- {info: 266287972359, name: __gmon_start__, offset: 6410752, value: 0}
+- {info: 270582939655, name: memcpy, offset: 6410760, value: 0}
+- {info: 274877906951, name: getgrnam, offset: 6410768, value: 0}
+- {info: 279172874247, name: fileno, offset: 6410776, value: 0}
+- {info: 283467841543, name: tcgetpgrp, offset: 6410784, value: 0}
+- {info: 287762808839, name: __xstat, offset: 6410792, value: 0}
+- {info: 292057776135, name: readdir, offset: 6410800, value: 0}
+- {info: 296352743431, name: wcwidth, offset: 6410808, value: 0}
+- {info: 523986010119, name: malloc, offset: 6410816, value: 4204096}
+- {info: 300647710727, name: fflush, offset: 6410824, value: 0}
+- {info: 304942678023, name: nl_langinfo, offset: 6410832, value: 0}
+- {info: 309237645319, name: ungetc, offset: 6410840, value: 0}
+- {info: 313532612615, name: __fxstat, offset: 6410848, value: 0}
+- {info: 317827579911, name: strcoll, offset: 6410856, value: 0}
+- {info: 322122547207, name: mktime, offset: 6410864, value: 0}
+- {info: 326417514503, name: __freading, offset: 6410872, value: 0}
+- {info: 330712481799, name: fwrite_unlocked, offset: 6410880, value: 0}
+- {info: 335007449095, name: realloc, offset: 6410888, value: 0}
+- {info: 339302416391, name: stpncpy, offset: 6410896, value: 0}
+- {info: 343597383687, name: fdopen, offset: 6410904, value: 0}
+- {info: 347892350983, name: setlocale, offset: 6410912, value: 0}
+- {info: 352187318279, name: __printf_chk, offset: 6410920, value: 0}
+- {info: 356482285575, name: strftime, offset: 6410928, value: 0}
+- {info: 360777252871, name: mempcpy, offset: 6410936, value: 0}
+- {info: 365072220167, name: memmove, offset: 6410944, value: 0}
+- {info: 369367187463, name: error, offset: 6410952, value: 0}
+- {info: 373662154759, name: open, offset: 6410960, value: 0}
+- {info: 377957122055, name: fseeko, offset: 6410968, value: 0}
+- {info: 382252089351, name: cap_get_file, offset: 6410976, value: 0}
+- {info: 390842023943, name: cap_free, offset: 6410984, value: 0}
+- {info: 395136991239, name: strtoul, offset: 6410992, value: 0}
+- {info: 399431958535, name: __cxa_atexit, offset: 6411000, value: 0}
+- {info: 403726925831, name: wcstombs, offset: 6411008, value: 0}
+- {info: 408021893127, name: getxattr, offset: 6411016, value: 0}
+- {info: 412316860423, name: sigismember, offset: 6411024, value: 0}
+- {info: 416611827719, name: exit, offset: 6411032, value: 0}
+- {info: 420906795015, name: fwrite, offset: 6411040, value: 0}
+- {info: 425201762311, name: __fprintf_chk, offset: 6411048, value: 0}
+- {info: 433791696903, name: fflush_unlocked, offset: 6411056, value: 0}
+- {info: 438086664199, name: mbsinit, offset: 6411064, value: 0}
+- {info: 442381631495, name: iswprint, offset: 6411072, value: 0}
+- {info: 446676598791, name: sigaddset, offset: 6411080, value: 0}
+- {info: 450971566087, name: strstr, offset: 6411088, value: 0}
+- {info: 455266533383, name: __ctype_tolower_loc, offset: 6411096, value: 0}
+- {info: 459561500679, name: __ctype_b_loc, offset: 6411104, value: 0}
+- {info: 463856467975, name: __sprintf_chk, offset: 6411112, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194872, name: .interp, nb: 1, offset: 568, size: 28}
+- {address: 4194900, name: .note.ABI-tag, nb: 2, offset: 596, size: 32}
+- {address: 4194932, name: .note.gnu.build-i, nb: 3, offset: 628, size: 36}
+- {address: 4194968, name: .gnu.hash, nb: 4, offset: 664, size: 252}
+- {address: 4195224, name: .dynsym, nb: 5, offset: 920, size: 3144}
+- {address: 4198368, name: .dynstr, nb: 6, offset: 4064, size: 1462}
+- {address: 4199830, name: .gnu.version, nb: 7, offset: 5526, size: 262}
+- {address: 4200096, name: .gnu.version_r, nb: 8, offset: 5792, size: 112}
+- {address: 4200208, name: .rela.dyn, nb: 9, offset: 5904, size: 168}
+- {address: 4200376, name: .rela.plt, nb: 10, offset: 6072, size: 2568}
+- {address: 4202944, name: .init, nb: 11, offset: 8640, size: 26}
+- {address: 4202976, name: .plt, nb: 12, offset: 8672, size: 1728}
+- {address: 4204704, name: .text, nb: 13, offset: 10400, size: 65289}
+- {address: 4269996, name: .fini, nb: 14, offset: 75692, size: 9}
+- {address: 4270016, name: .rodata, nb: 15, offset: 75712, size: 27164}
+- {address: 4297180, name: .eh_frame_hdr, nb: 16, offset: 102876, size: 1884}
+- {address: 4299064, name: .eh_frame, nb: 17, offset: 104760, size: 10196}
+- {address: 6409728, name: .init_array, nb: 18, offset: 118272, size: 8}
+- {address: 6409736, name: .fini_array, nb: 19, offset: 118280, size: 8}
+- {address: 6409744, name: .jcr, nb: 20, offset: 118288, size: 8}
+- {address: 6409752, name: .dynamic, nb: 21, offset: 118296, size: 480}
+- {address: 6410232, name: .got, nb: 22, offset: 118776, size: 8}
+- {address: 6410240, name: .got.plt, nb: 23, offset: 118784, size: 880}
+- {address: 6411136, name: .data, nb: 24, offset: 119680, size: 608}
+- {address: 6411744, name: .bss, nb: 25, offset: 120288, size: 3424}
+- {address: 0, name: .comment, nb: 26, offset: 120288, size: 17}
+- {address: 0, name: .shstrtab, nb: 27, offset: 120305, size: 248}
+Segments:
+- {fSize: 504, offset: 64, pAddress: 4194368, vAddress: 4194368, vSize: 504}
+- {fSize: 28, offset: 568, pAddress: 4194872, vAddress: 4194872, vSize: 28}
+- {fSize: 114956, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 114956}
+- {fSize: 2016, offset: 118272, pAddress: 6409728, vAddress: 6409728, vSize: 5440}
+- {fSize: 480, offset: 118296, pAddress: 6409752, vAddress: 6409752, vSize: 480}
+- {fSize: 68, offset: 596, pAddress: 4194900, vAddress: 4194900, vSize: 68}
+- {fSize: 1884, offset: 102876, pAddress: 4297180, vAddress: 4297180, vSize: 1884}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+- {fSize: 512, offset: 118272, pAddress: 6409728, vAddress: 6409728, vSize: 512}
+filename: ls
+hash: 44ba5ca65651b4f36f1927576dd35436

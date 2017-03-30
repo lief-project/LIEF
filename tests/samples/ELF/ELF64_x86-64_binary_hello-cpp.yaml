@@ -1,0 +1,174 @@
+DynamicReloc:
+- {info: 4294967302, name: __gmon_start__, offset: 6296216, value: 0}
+- {info: 47244640261, name: _ZSt4cout, offset: 6296416, value: 6296416}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: __gmon_start__, num: 1}
+- {name: _Jv_RegisterClasses, num: 2}
+- {name: _ZNSt8ios_base4InitC1Ev, num: 3}
+- {name: __libc_start_main, num: 4}
+- {name: __cxa_atexit, num: 5}
+- {name: _ZNSt8ios_base4InitD1Ev, num: 6}
+- {name: _ITM_deregisterTMCloneTab, num: 7}
+- {name: _ZStlsISt11char_traitsIcE, num: 8}
+- {name: _ITM_registerTMCloneTable, num: 9}
+- {name: _ZNSt7__cxx1112basic_stri, num: 10}
+- {name: _ZSt4cout, num: 11}
+- {name: _ZSt9terminatev, num: 12}
+- {name: _ZNSaIcED1Ev, num: 13}
+- {name: _ZNSolsEPFRSoS_E, num: 14}
+- {name: _ZSt4endlIcSt11char_trait, num: 15}
+- {name: __cxa_begin_catch, num: 16}
+- {name: _ZNSt7__cxx1112basic_stri, num: 17}
+- {name: _ZNSaIcEC1Ev, num: 18}
+- {name: __gxx_personality_v0, num: 19}
+- {name: _ZStlsIcSt11char_traitsIc, num: 20}
+- {name: _Unwind_Resume, num: 21}
+Header: {entryPoint: 4197360, nbPhdr: 8, nbShdr: 30, offsetToPhdr: 64, offsetToShdr: 8760}
+PltGotReloc:
+- {info: 4294967303, name: __gmon_start__, offset: 6296248, value: 0}
+- {info: 12884901895, name: _ZNSt8ios_base4InitC1E, offset: 6296256, value: 0}
+- {info: 17179869191, name: __libc_start_main, offset: 6296264, value: 0}
+- {info: 21474836487, name: __cxa_atexit, offset: 6296272, value: 0}
+- {info: 25769803783, name: _ZNSt8ios_base4InitD1E, offset: 6296280, value: 4197056}
+- {info: 34359738375, name: _ZStlsISt11char_traits, offset: 6296288, value: 0}
+- {info: 42949672967, name: _ZNSt7__cxx1112basic_s, offset: 6296296, value: 0}
+- {info: 51539607559, name: _ZSt9terminatev, offset: 6296304, value: 0}
+- {info: 55834574855, name: _ZNSaIcED1Ev, offset: 6296312, value: 0}
+- {info: 60129542151, name: _ZNSolsEPFRSoS_E, offset: 6296320, value: 0}
+- {info: 64424509447, name: _ZSt4endlIcSt11char_tr, offset: 6296328, value: 4197152}
+- {info: 68719476743, name: __cxa_begin_catch, offset: 6296336, value: 0}
+- {info: 73014444039, name: _ZNSt7__cxx1112basic_s, offset: 6296344, value: 0}
+- {info: 77309411335, name: _ZNSaIcEC1Ev, offset: 6296352, value: 0}
+- {info: 81604378631, name: __gxx_personality_v0, offset: 6296360, value: 4197216}
+- {info: 85899345927, name: _ZStlsIcSt11char_trait, offset: 6296368, value: 0}
+- {info: 90194313223, name: _Unwind_Resume, offset: 6296376, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194816, name: .interp, nb: 1, offset: 512, size: 28}
+- {address: 4194844, name: .note.ABI-tag, nb: 2, offset: 540, size: 32}
+- {address: 4194880, name: .hash, nb: 3, offset: 576, size: 164}
+- {address: 4195048, name: .dynsym, nb: 4, offset: 744, size: 528}
+- {address: 4195576, name: .dynstr, nb: 5, offset: 1272, size: 737}
+- {address: 4196314, name: .gnu.version, nb: 6, offset: 2010, size: 44}
+- {address: 4196360, name: .gnu.version_r, nb: 7, offset: 2056, size: 128}
+- {address: 4196488, name: .rela.dyn, nb: 8, offset: 2184, size: 48}
+- {address: 4196536, name: .rela.plt, nb: 9, offset: 2232, size: 408}
+- {address: 4196944, name: .init, nb: 10, offset: 2640, size: 26}
+- {address: 4196976, name: .plt, nb: 11, offset: 2672, size: 288}
+- {address: 4197264, name: .text, nb: 12, offset: 2960, size: 738}
+- {address: 4198004, name: .fini, nb: 13, offset: 3700, size: 9}
+- {address: 4198016, name: .rodata, nb: 14, offset: 3712, size: 16}
+- {address: 4198032, name: .eh_frame_hdr, nb: 15, offset: 3728, size: 68}
+- {address: 4198104, name: .eh_frame, nb: 16, offset: 3800, size: 340}
+- {address: 4198444, name: .gcc_except_table, nb: 17, offset: 4140, size: 76}
+- {address: 6295672, name: .init_array, nb: 18, offset: 4216, size: 16}
+- {address: 6295688, name: .fini_array, nb: 19, offset: 4232, size: 8}
+- {address: 6295696, name: .jcr, nb: 20, offset: 4240, size: 8}
+- {address: 6295704, name: .dynamic, nb: 21, offset: 4248, size: 512}
+- {address: 6296216, name: .got, nb: 22, offset: 4760, size: 8}
+- {address: 6296224, name: .got.plt, nb: 23, offset: 4768, size: 160}
+- {address: 6296384, name: .data, nb: 24, offset: 4928, size: 16}
+- {address: 6296416, name: .bss, nb: 25, offset: 4944, size: 280}
+- {address: 0, name: .comment, nb: 26, offset: 4944, size: 79}
+- {address: 0, name: .shstrtab, nb: 27, offset: 5023, size: 259}
+- {address: 0, name: .symtab, nb: 28, offset: 5288, size: 2064}
+- {address: 0, name: .strtab, nb: 29, offset: 7352, size: 1402}
+Segments:
+- {fSize: 448, offset: 64, pAddress: 4194368, vAddress: 4194368, vSize: 448}
+- {fSize: 28, offset: 512, pAddress: 4194816, vAddress: 4194816, vSize: 28}
+- {fSize: 4216, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 4216}
+- {fSize: 728, offset: 4216, pAddress: 6295672, vAddress: 6295672, vSize: 1024}
+- {fSize: 512, offset: 4248, pAddress: 6295704, vAddress: 6295704, vSize: 512}
+- {fSize: 32, offset: 540, pAddress: 4194844, vAddress: 4194844, vSize: 32}
+- {fSize: 68, offset: 3728, pAddress: 4198032, vAddress: 4198032, vSize: 68}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+StaticSymbols:
+- {name: '', num: 0}
+- {name: '', num: 1}
+- {name: '', num: 2}
+- {name: '', num: 3}
+- {name: '', num: 4}
+- {name: '', num: 5}
+- {name: '', num: 6}
+- {name: '', num: 7}
+- {name: '', num: 8}
+- {name: '', num: 9}
+- {name: '', num: 10}
+- {name: '', num: 11}
+- {name: '', num: 12}
+- {name: '', num: 13}
+- {name: '', num: 14}
+- {name: '', num: 15}
+- {name: '', num: 16}
+- {name: '', num: 17}
+- {name: '', num: 18}
+- {name: '', num: 19}
+- {name: '', num: 20}
+- {name: '', num: 21}
+- {name: '', num: 22}
+- {name: '', num: 23}
+- {name: '', num: 24}
+- {name: '', num: 25}
+- {name: '', num: 26}
+- {name: init.c, num: 27}
+- {name: crtstuff.c, num: 28}
+- {name: __JCR_LIST__, num: 29}
+- {name: deregister_tm_clones, num: 30}
+- {name: register_tm_clones, num: 31}
+- {name: __do_global_dtors_aux, num: 32}
+- {name: completed.6940, num: 33}
+- {name: __do_global_dtors_aux_fin, num: 34}
+- {name: frame_dummy, num: 35}
+- {name: __frame_dummy_init_array_, num: 36}
+- {name: hello_cpp.cpp, num: 37}
+- {name: GCC_except_table1, num: 38}
+- {name: _GLOBAL__sub_I_hello_cpp., num: 39}
+- {name: _ZStL8__ioinit, num: 40}
+- {name: __cxx_global_var_init, num: 41}
+- {name: crtstuff.c, num: 42}
+- {name: __FRAME_END__, num: 43}
+- {name: __JCR_END__, num: 44}
+- {name: '', num: 45}
+- {name: _GLOBAL_OFFSET_TABLE_, num: 46}
+- {name: __init_array_end, num: 47}
+- {name: __init_array_start, num: 48}
+- {name: _DYNAMIC, num: 49}
+- {name: data_start, num: 50}
+- {name: __libc_csu_fini, num: 51}
+- {name: _start, num: 52}
+- {name: __gmon_start__, num: 53}
+- {name: _Jv_RegisterClasses, num: 54}
+- {name: _fini, num: 55}
+- {name: _ZNSt8ios_base4InitC1Ev@@, num: 56}
+- {name: __libc_start_main@@GLIBC_, num: 57}
+- {name: __cxa_atexit@@GLIBC_2.2.5, num: 58}
+- {name: __clang_call_terminate, num: 59}
+- {name: _ZNSt8ios_base4InitD1Ev@@, num: 60}
+- {name: _ITM_deregisterTMCloneTab, num: 61}
+- {name: _ZStlsISt11char_traitsIcE, num: 62}
+- {name: _IO_stdin_used, num: 63}
+- {name: _ITM_registerTMCloneTable, num: 64}
+- {name: __data_start, num: 65}
+- {name: _ZNSt7__cxx1112basic_stri, num: 66}
+- {name: __TMC_END__, num: 67}
+- {name: _ZSt4cout@@GLIBCXX_3.4, num: 68}
+- {name: _ZSt9terminatev@@GLIBCXX_, num: 69}
+- {name: __dso_handle, num: 70}
+- {name: __libc_csu_init, num: 71}
+- {name: __bss_start, num: 72}
+- {name: _ZNSaIcED1Ev@@GLIBCXX_3.4, num: 73}
+- {name: _end, num: 74}
+- {name: _ZNSolsEPFRSoS_E@@GLIBCXX, num: 75}
+- {name: _ZSt4endlIcSt11char_trait, num: 76}
+- {name: __cxa_begin_catch@@CXXABI, num: 77}
+- {name: _ZNSt7__cxx1112basic_stri, num: 78}
+- {name: _edata, num: 79}
+- {name: _ZNSaIcEC1Ev@@GLIBCXX_3.4, num: 80}
+- {name: __gxx_personality_v0@@CXX, num: 81}
+- {name: _ZStlsIcSt11char_traitsIc, num: 82}
+- {name: _Unwind_Resume@@GCC_3.0, num: 83}
+- {name: main, num: 84}
+- {name: _init, num: 85}
+filename: hello_cpp
+hash: af5a12e0a764926e67fd29bf1ae00969

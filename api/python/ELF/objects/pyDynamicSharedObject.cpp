@@ -1,0 +1,58 @@
+/* Copyright 2017 R. Thomas
+ * Copyright 2017 Quarkslab
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#include "pyELF.hpp"
+
+#include "LIEF/visitors/Hash.hpp"
+
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
+
+#include <string>
+#include <sstream>
+
+template<class T>
+using getter_t = T (DynamicSharedObject::*)(void) const;
+
+template<class T>
+using setter_t = void (DynamicSharedObject::*)(T);
+
+void init_ELF_DynamicSharedObject_class(py::module& m) {
+
+  //
+  // Dynamic Shared Object object
+  //
+  py::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject")
+    .def_property("name",
+        static_cast<getter_t<const std::string&>>(&DynamicSharedObject::name),
+        static_cast<setter_t<const std::string&>>(&DynamicSharedObject::name),
+        "Return the library name")
+
+    .def("__eq__", &DynamicSharedObject::operator==)
+    .def("__ne__", &DynamicSharedObject::operator!=)
+    .def("__hash__",
+        [] (const DynamicSharedObject& entry) {
+          return LIEF::Hash::hash(entry);
+        })
+
+    .def("__str__",
+        [] (const DynamicSharedObject& dynamicSharedObject)
+        {
+        std::ostringstream stream;
+        stream << dynamicSharedObject;
+        std::string str =  stream.str();
+        return str;
+        });
+}

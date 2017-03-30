@@ -1,0 +1,16 @@
+Acknowledgements
+----------------
+
+LIEF makes use of the following open source projects:
+
+ - mbedTLS - https://tls.mbed.org/
+ - pybind11 - https://github.com/pybind/pybind11
+ - json - https://nlohmann.github.io/json/
+ - rang - https://agauniyal.github.io/rang/
+ - easyloggingpp - https://github.com/muflihun/easyloggingpp
+ - Catch - https://github.com/philsquared/Catch
+ - yamlcpp - https://github.com/jbeder/yaml-cpp
+ - filesystem - https://github.com/wjakob/filesystem
+ - utf8-cpp - https://sourceforge.net/projects/utfcpp/
+
+The logo is designed by Freepik

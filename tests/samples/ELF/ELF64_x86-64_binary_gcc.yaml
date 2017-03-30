@@ -1,0 +1,340 @@
+DynamicReloc:
+- {info: 30064771078, name: __pthread_key_create, offset: 7160104, value: 0}
+- {info: 347892350982, name: __gmon_start__, offset: 7160112, value: 0}
+- {info: 627065225222, name: stderr, offset: 7160120, value: 7163840}
+- {info: 627065225221, name: stderr, offset: 7163840, value: 7163840}
+- {info: 601295421445, name: stdout, offset: 7163808, value: 7163808}
+- {info: 618475290629, name: stdin, offset: 7163824, value: 7163824}
+- {info: 622770257925, name: __environ, offset: 7163832, value: 7163832}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: __strcat_chk, num: 1}
+- {name: __uflow, num: 2}
+- {name: mkstemps, num: 3}
+- {name: getenv, num: 4}
+- {name: dl_iterate_phdr, num: 5}
+- {name: __snprintf_chk, num: 6}
+- {name: __pthread_key_create, num: 7}
+- {name: putchar, num: 8}
+- {name: strcasecmp, num: 9}
+- {name: localtime, num: 10}
+- {name: __vfprintf_chk, num: 11}
+- {name: strverscmp, num: 12}
+- {name: abort, num: 13}
+- {name: __errno_location, num: 14}
+- {name: unlink, num: 15}
+- {name: strncpy, num: 16}
+- {name: remove, num: 17}
+- {name: strncmp, num: 18}
+- {name: _ITM_deregisterTMCloneTab, num: 19}
+- {name: _exit, num: 20}
+- {name: strcpy, num: 21}
+- {name: iconv, num: 22}
+- {name: puts, num: 23}
+- {name: ferror, num: 24}
+- {name: qsort, num: 25}
+- {name: isatty, num: 26}
+- {name: fread, num: 27}
+- {name: wcswidth, num: 28}
+- {name: mbstowcs, num: 29}
+- {name: fcntl, num: 30}
+- {name: write, num: 31}
+- {name: getpid, num: 32}
+- {name: fread_unlocked, num: 33}
+- {name: textdomain, num: 34}
+- {name: fclose, num: 35}
+- {name: opendir, num: 36}
+- {name: bindtextdomain, num: 37}
+- {name: stpcpy, num: 38}
+- {name: strlen, num: 39}
+- {name: __stack_chk_fail, num: 40}
+- {name: mmap, num: 41}
+- {name: asctime, num: 42}
+- {name: gettext, num: 43}
+- {name: dup2, num: 44}
+- {name: strchr, num: 45}
+- {name: _IO_putc, num: 46}
+- {name: dgettext, num: 47}
+- {name: _obstack_begin, num: 48}
+- {name: snprintf, num: 49}
+- {name: __overflow, num: 50}
+- {name: strrchr, num: 51}
+- {name: gettimeofday, num: 52}
+- {name: fileno_unlocked, num: 53}
+- {name: fputs, num: 54}
+- {name: memset, num: 55}
+- {name: freopen, num: 56}
+- {name: ioctl, num: 57}
+- {name: strnlen, num: 58}
+- {name: fgetc, num: 59}
+- {name: close, num: 60}
+- {name: __realpath_chk, num: 61}
+- {name: pipe, num: 62}
+- {name: closedir, num: 63}
+- {name: fputc, num: 64}
+- {name: __strdup, num: 65}
+- {name: strcspn, num: 66}
+- {name: memchr, num: 67}
+- {name: read, num: 68}
+- {name: __libc_start_main, num: 69}
+- {name: memcmp, num: 70}
+- {name: sbrk, num: 71}
+- {name: fgets, num: 72}
+- {name: __tls_get_addr, num: 73}
+- {name: _obstack_memory_used, num: 74}
+- {name: fputs_unlocked, num: 75}
+- {name: putenv, num: 76}
+- {name: strcmp, num: 77}
+- {name: signal, num: 78}
+- {name: ftell, num: 79}
+- {name: feof, num: 80}
+- {name: __gmon_start__, num: 81}
+- {name: obstack_free, num: 82}
+- {name: strtol, num: 83}
+- {name: memcpy, num: 84}
+- {name: kill, num: 85}
+- {name: time, num: 86}
+- {name: __xstat, num: 87}
+- {name: readdir, num: 88}
+- {name: pthread_once, num: 89}
+- {name: pthread_mutex_unlock, num: 90}
+- {name: malloc, num: 91}
+- {name: strncasecmp, num: 92}
+- {name: fflush, num: 93}
+- {name: __fsetlocking, num: 94}
+- {name: nl_langinfo, num: 95}
+- {name: ungetc, num: 96}
+- {name: __fxstat, num: 97}
+- {name: sscanf, num: 98}
+- {name: fseek, num: 99}
+- {name: fwrite_unlocked, num: 100}
+- {name: setrlimit, num: 101}
+- {name: strsignal, num: 102}
+- {name: realloc, num: 103}
+- {name: fdopen, num: 104}
+- {name: munmap, num: 105}
+- {name: setlocale, num: 106}
+- {name: _obstack_newchunk, num: 107}
+- {name: __printf_chk, num: 108}
+- {name: iconv_close, num: 109}
+- {name: wait4, num: 110}
+- {name: memmove, num: 111}
+- {name: waitpid, num: 112}
+- {name: open, num: 113}
+- {name: access, num: 114}
+- {name: fopen, num: 115}
+- {name: _Jv_RegisterClasses, num: 116}
+- {name: vfork, num: 117}
+- {name: strtoul, num: 118}
+- {name: execvp, num: 119}
+- {name: __cxa_atexit, num: 120}
+- {name: strcat, num: 121}
+- {name: getpagesize, num: 122}
+- {name: sprintf, num: 123}
+- {name: exit, num: 124}
+- {name: fwrite, num: 125}
+- {name: __fprintf_chk, num: 126}
+- {name: getrlimit, num: 127}
+- {name: _ITM_registerTMCloneTable, num: 128}
+- {name: ngettext, num: 129}
+- {name: strerror, num: 130}
+- {name: sleep, num: 131}
+- {name: execv, num: 132}
+- {name: strstr, num: 133}
+- {name: __vsprintf_chk, num: 134}
+- {name: pthread_mutex_lock, num: 135}
+- {name: __ctype_tolower_loc, num: 136}
+- {name: __ctype_b_loc, num: 137}
+- {name: iconv_open, num: 138}
+- {name: __sprintf_chk, num: 139}
+- {name: stdout, num: 140}
+- {name: _environ, num: 141}
+- {name: environ, num: 142}
+- {name: free, num: 143}
+- {name: stdin, num: 144}
+- {name: __environ, num: 145}
+- {name: stderr, num: 146}
+- {name: calloc, num: 147}
+Header: {entryPoint: 4206560, nbPhdr: 9, nbShdr: 31, offsetToPhdr: 64, offsetToShdr: 872664}
+PltGotReloc:
+- {info: 4294967303, name: __strcat_chk, offset: 7160152, value: 0}
+- {info: 8589934599, name: __uflow, offset: 7160160, value: 0}
+- {info: 12884901895, name: mkstemps, offset: 7160168, value: 0}
+- {info: 17179869191, name: getenv, offset: 7160176, value: 0}
+- {info: 21474836487, name: dl_iterate_phdr, offset: 7160184, value: 0}
+- {info: 25769803783, name: __snprintf_chk, offset: 7160192, value: 0}
+- {info: 614180323335, name: free, offset: 7160200, value: 4204080}
+- {info: 34359738375, name: putchar, offset: 7160208, value: 0}
+- {info: 38654705671, name: strcasecmp, offset: 7160216, value: 0}
+- {info: 42949672967, name: localtime, offset: 7160224, value: 0}
+- {info: 47244640263, name: __vfprintf_chk, offset: 7160232, value: 0}
+- {info: 51539607559, name: strverscmp, offset: 7160240, value: 0}
+- {info: 55834574855, name: abort, offset: 7160248, value: 0}
+- {info: 60129542151, name: __errno_location, offset: 7160256, value: 0}
+- {info: 64424509447, name: unlink, offset: 7160264, value: 0}
+- {info: 68719476743, name: strncpy, offset: 7160272, value: 0}
+- {info: 73014444039, name: remove, offset: 7160280, value: 0}
+- {info: 77309411335, name: strncmp, offset: 7160288, value: 0}
+- {info: 85899345927, name: _exit, offset: 7160296, value: 0}
+- {info: 90194313223, name: strcpy, offset: 7160304, value: 0}
+- {info: 94489280519, name: iconv, offset: 7160312, value: 0}
+- {info: 98784247815, name: puts, offset: 7160320, value: 0}
+- {info: 103079215111, name: ferror, offset: 7160328, value: 0}
+- {info: 107374182407, name: qsort, offset: 7160336, value: 0}
+- {info: 111669149703, name: isatty, offset: 7160344, value: 0}
+- {info: 115964116999, name: fread, offset: 7160352, value: 0}
+- {info: 120259084295, name: wcswidth, offset: 7160360, value: 0}
+- {info: 124554051591, name: mbstowcs, offset: 7160368, value: 0}
+- {info: 128849018887, name: fcntl, offset: 7160376, value: 0}
+- {info: 133143986183, name: write, offset: 7160384, value: 0}
+- {info: 137438953479, name: getpid, offset: 7160392, value: 0}
+- {info: 141733920775, name: fread_unlocked, offset: 7160400, value: 0}
+- {info: 146028888071, name: textdomain, offset: 7160408, value: 0}
+- {info: 150323855367, name: fclose, offset: 7160416, value: 0}
+- {info: 154618822663, name: opendir, offset: 7160424, value: 0}
+- {info: 158913789959, name: bindtextdomain, offset: 7160432, value: 0}
+- {info: 163208757255, name: stpcpy, offset: 7160440, value: 0}
+- {info: 167503724551, name: strlen, offset: 7160448, value: 0}
+- {info: 171798691847, name: __stack_chk_fail, offset: 7160456, value: 0}
+- {info: 176093659143, name: mmap, offset: 7160464, value: 0}
+- {info: 180388626439, name: asctime, offset: 7160472, value: 0}
+- {info: 184683593735, name: gettext, offset: 7160480, value: 0}
+- {info: 188978561031, name: dup2, offset: 7160488, value: 0}
+- {info: 193273528327, name: strchr, offset: 7160496, value: 0}
+- {info: 197568495623, name: _IO_putc, offset: 7160504, value: 0}
+- {info: 201863462919, name: dgettext, offset: 7160512, value: 0}
+- {info: 206158430215, name: _obstack_begin, offset: 7160520, value: 0}
+- {info: 210453397511, name: snprintf, offset: 7160528, value: 0}
+- {info: 214748364807, name: __overflow, offset: 7160536, value: 0}
+- {info: 219043332103, name: strrchr, offset: 7160544, value: 0}
+- {info: 223338299399, name: gettimeofday, offset: 7160552, value: 0}
+- {info: 227633266695, name: fileno_unlocked, offset: 7160560, value: 0}
+- {info: 231928233991, name: fputs, offset: 7160568, value: 0}
+- {info: 236223201287, name: memset, offset: 7160576, value: 0}
+- {info: 240518168583, name: freopen, offset: 7160584, value: 0}
+- {info: 244813135879, name: ioctl, offset: 7160592, value: 0}
+- {info: 249108103175, name: strnlen, offset: 7160600, value: 0}
+- {info: 253403070471, name: fgetc, offset: 7160608, value: 0}
+- {info: 257698037767, name: close, offset: 7160616, value: 0}
+- {info: 261993005063, name: __realpath_chk, offset: 7160624, value: 0}
+- {info: 266287972359, name: pipe, offset: 7160632, value: 0}
+- {info: 270582939655, name: closedir, offset: 7160640, value: 0}
+- {info: 274877906951, name: fputc, offset: 7160648, value: 0}
+- {info: 279172874247, name: __strdup, offset: 7160656, value: 0}
+- {info: 283467841543, name: strcspn, offset: 7160664, value: 0}
+- {info: 287762808839, name: memchr, offset: 7160672, value: 0}
+- {info: 292057776135, name: read, offset: 7160680, value: 0}
+- {info: 296352743431, name: __libc_start_main, offset: 7160688, value: 0}
+- {info: 300647710727, name: memcmp, offset: 7160696, value: 0}
+- {info: 304942678023, name: sbrk, offset: 7160704, value: 0}
+- {info: 309237645319, name: fgets, offset: 7160712, value: 0}
+- {info: 313532612615, name: __tls_get_addr, offset: 7160720, value: 0}
+- {info: 317827579911, name: _obstack_memory_used, offset: 7160728, value: 0}
+- {info: 322122547207, name: fputs_unlocked, offset: 7160736, value: 0}
+- {info: 631360192519, name: calloc, offset: 7160744, value: 4205168}
+- {info: 326417514503, name: putenv, offset: 7160752, value: 0}
+- {info: 330712481799, name: strcmp, offset: 7160760, value: 0}
+- {info: 335007449095, name: signal, offset: 7160768, value: 0}
+- {info: 339302416391, name: ftell, offset: 7160776, value: 0}
+- {info: 343597383687, name: feof, offset: 7160784, value: 0}
+- {info: 347892350983, name: __gmon_start__, offset: 7160792, value: 0}
+- {info: 352187318279, name: obstack_free, offset: 7160800, value: 0}
+- {info: 356482285575, name: strtol, offset: 7160808, value: 0}
+- {info: 360777252871, name: memcpy, offset: 7160816, value: 0}
+- {info: 365072220167, name: kill, offset: 7160824, value: 0}
+- {info: 369367187463, name: time, offset: 7160832, value: 0}
+- {info: 373662154759, name: __xstat, offset: 7160840, value: 0}
+- {info: 377957122055, name: readdir, offset: 7160848, value: 0}
+- {info: 382252089351, name: pthread_once, offset: 7160856, value: 0}
+- {info: 386547056647, name: pthread_mutex_unlock, offset: 7160864, value: 0}
+- {info: 390842023943, name: malloc, offset: 7160872, value: 0}
+- {info: 395136991239, name: strncasecmp, offset: 7160880, value: 0}
+- {info: 399431958535, name: fflush, offset: 7160888, value: 0}
+- {info: 403726925831, name: __fsetlocking, offset: 7160896, value: 0}
+- {info: 408021893127, name: nl_langinfo, offset: 7160904, value: 0}
+- {info: 412316860423, name: ungetc, offset: 7160912, value: 0}
+- {info: 416611827719, name: __fxstat, offset: 7160920, value: 0}
+- {info: 420906795015, name: sscanf, offset: 7160928, value: 0}
+- {info: 425201762311, name: fseek, offset: 7160936, value: 0}
+- {info: 429496729607, name: fwrite_unlocked, offset: 7160944, value: 0}
+- {info: 433791696903, name: setrlimit, offset: 7160952, value: 0}
+- {info: 438086664199, name: strsignal, offset: 7160960, value: 0}
+- {info: 442381631495, name: realloc, offset: 7160968, value: 0}
+- {info: 446676598791, name: fdopen, offset: 7160976, value: 0}
+- {info: 450971566087, name: munmap, offset: 7160984, value: 0}
+- {info: 455266533383, name: setlocale, offset: 7160992, value: 0}
+- {info: 459561500679, name: _obstack_newchunk, offset: 7161000, value: 0}
+- {info: 463856467975, name: __printf_chk, offset: 7161008, value: 0}
+- {info: 468151435271, name: iconv_close, offset: 7161016, value: 0}
+- {info: 472446402567, name: wait4, offset: 7161024, value: 0}
+- {info: 476741369863, name: memmove, offset: 7161032, value: 0}
+- {info: 481036337159, name: waitpid, offset: 7161040, value: 0}
+- {info: 485331304455, name: open, offset: 7161048, value: 0}
+- {info: 489626271751, name: access, offset: 7161056, value: 0}
+- {info: 493921239047, name: fopen, offset: 7161064, value: 0}
+- {info: 502511173639, name: vfork, offset: 7161072, value: 0}
+- {info: 506806140935, name: strtoul, offset: 7161080, value: 0}
+- {info: 511101108231, name: execvp, offset: 7161088, value: 0}
+- {info: 515396075527, name: __cxa_atexit, offset: 7161096, value: 0}
+- {info: 519691042823, name: strcat, offset: 7161104, value: 0}
+- {info: 523986010119, name: getpagesize, offset: 7161112, value: 0}
+- {info: 528280977415, name: sprintf, offset: 7161120, value: 0}
+- {info: 532575944711, name: exit, offset: 7161128, value: 0}
+- {info: 536870912007, name: fwrite, offset: 7161136, value: 0}
+- {info: 541165879303, name: __fprintf_chk, offset: 7161144, value: 0}
+- {info: 545460846599, name: getrlimit, offset: 7161152, value: 0}
+- {info: 554050781191, name: ngettext, offset: 7161160, value: 0}
+- {info: 558345748487, name: strerror, offset: 7161168, value: 0}
+- {info: 562640715783, name: sleep, offset: 7161176, value: 0}
+- {info: 566935683079, name: execv, offset: 7161184, value: 0}
+- {info: 571230650375, name: strstr, offset: 7161192, value: 0}
+- {info: 575525617671, name: __vsprintf_chk, offset: 7161200, value: 0}
+- {info: 579820584967, name: pthread_mutex_lock, offset: 7161208, value: 0}
+- {info: 584115552263, name: __ctype_tolower_loc, offset: 7161216, value: 0}
+- {info: 588410519559, name: __ctype_b_loc, offset: 7161224, value: 0}
+- {info: 592705486855, name: iconv_open, offset: 7161232, value: 0}
+- {info: 597000454151, name: __sprintf_chk, offset: 7161240, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194872, name: .interp, nb: 1, offset: 568, size: 28}
+- {address: 4194900, name: .note.ABI-tag, nb: 2, offset: 596, size: 32}
+- {address: 4194932, name: .note.gnu.build-i, nb: 3, offset: 628, size: 36}
+- {address: 4194968, name: .gnu.hash, nb: 4, offset: 664, size: 68}
+- {address: 4195040, name: .dynsym, nb: 5, offset: 736, size: 3552}
+- {address: 4198592, name: .dynstr, nb: 6, offset: 4288, size: 1441}
+- {address: 4200034, name: .gnu.version, nb: 7, offset: 5730, size: 296}
+- {address: 4200336, name: .gnu.version_r, nb: 8, offset: 6032, size: 144}
+- {address: 4200480, name: .rela.dyn, nb: 9, offset: 6176, size: 168}
+- {address: 4200648, name: .rela.plt, nb: 10, offset: 6344, size: 3288}
+- {address: 4203936, name: .init, nb: 11, offset: 9632, size: 26}
+- {address: 4203968, name: .plt, nb: 12, offset: 9664, size: 2208}
+- {address: 4206176, name: .text, nb: 13, offset: 11872, size: 434761}
+- {address: 4640940, name: .fini, nb: 14, offset: 446636, size: 9}
+- {address: 4640960, name: .rodata, nb: 15, offset: 446656, size: 348792}
+- {address: 4989752, name: .eh_frame_hdr, nb: 16, offset: 795448, size: 9180}
+- {address: 4998936, name: .eh_frame, nb: 17, offset: 804632, size: 59428}
+- {address: 5058364, name: .gcc_except_table, nb: 18, offset: 864060, size: 280}
+- {address: 7155800, name: .tbss, nb: 19, offset: 864344, size: 16}
+- {address: 7155800, name: .init_array, nb: 20, offset: 864344, size: 16}
+- {address: 7155816, name: .fini_array, nb: 21, offset: 864360, size: 8}
+- {address: 7155824, name: .jcr, nb: 22, offset: 864368, size: 8}
+- {address: 7155840, name: .data.rel.ro, nb: 23, offset: 864384, size: 3768}
+- {address: 7159608, name: .dynamic, nb: 24, offset: 868152, size: 496}
+- {address: 7160104, name: .got, nb: 25, offset: 868648, size: 24}
+- {address: 7160128, name: .got.plt, nb: 26, offset: 868672, size: 1120}
+- {address: 7161248, name: .data, nb: 27, offset: 869792, size: 2552}
+- {address: 7163808, name: .bss, nb: 28, offset: 872344, size: 9648}
+- {address: 0, name: .comment, nb: 29, offset: 872344, size: 34}
+- {address: 0, name: .shstrtab, nb: 30, offset: 872378, size: 285}
+Segments:
+- {fSize: 504, offset: 64, pAddress: 4194368, vAddress: 4194368, vSize: 504}
+- {fSize: 28, offset: 568, pAddress: 4194872, vAddress: 4194872, vSize: 28}
+- {fSize: 864340, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 864340}
+- {fSize: 8000, offset: 864344, pAddress: 7155800, vAddress: 7155800, vSize: 17656}
+- {fSize: 496, offset: 868152, pAddress: 7159608, vAddress: 7159608, vSize: 496}
+- {fSize: 68, offset: 596, pAddress: 4194900, vAddress: 4194900, vSize: 68}
+- {fSize: 0, offset: 864344, pAddress: 7155800, vAddress: 7155800, vSize: 16}
+- {fSize: 9180, offset: 795448, pAddress: 4989752, vAddress: 4989752, vSize: 9180}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+filename: gcc
+hash: e0d511356bd44120af49cc96c9dcf3b3

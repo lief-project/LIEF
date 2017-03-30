@@ -1,0 +1,207 @@
+DynamicReloc:
+- {info: 20998, name: progNameReally, offset: 134541564, value: 134542080}
+- {info: 21254, name: verbosity, offset: 134541568, value: 134543116}
+- {info: 16390, name: tmpName, offset: 134541572, value: 134543136}
+- {info: 1542, name: stderr, offset: 134541576, value: 0}
+- {info: 20486, name: workFactor, offset: 134541580, value: 134544172}
+- {info: 18950, name: numFilesProcessed, offset: 134541584, value: 134544176}
+- {info: 17158, name: smallMode, offset: 134541588, value: 134544180}
+- {info: 21766, name: outputHandleJustInCase, offset: 134541592, value: 134544184}
+- {info: 14342, name: numFileNames, offset: 134541596, value: 134544188}
+- {info: 14598, name: longestFileName, offset: 134541600, value: 134544192}
+- {info: 19718, name: srcMode, offset: 134541604, value: 134544196}
+- {info: 21510, name: keepInputFiles, offset: 134541608, value: 134544200}
+- {info: 14854, name: blockSize100k, offset: 134541612, value: 134544204}
+- {info: 17414, name: exitValue, offset: 134541616, value: 134544208}
+- {info: 15622, name: noisy, offset: 134541620, value: 134544212}
+- {info: 6406, name: __gmon_start__, offset: 134541624, value: 0}
+- {info: 20742, name: outName, offset: 134541628, value: 134544224}
+- {info: 15110, name: testFailsExist, offset: 134541632, value: 134545258}
+- {info: 17926, name: inName, offset: 134541636, value: 134545280}
+- {info: 8454, name: stdin, offset: 134541640, value: 0}
+- {info: 19974, name: zSuffix, offset: 134541644, value: 134541908}
+- {info: 16646, name: unzFailsExist, offset: 134541648, value: 134546314}
+- {info: 20230, name: forceOverwrite, offset: 134541652, value: 134546315}
+- {info: 18438, name: deleteOutputOnInterrup, offset: 134541656, value: 134546316}
+- {info: 10502, name: stdout, offset: 134541660, value: 0}
+- {info: 19462, name: opMode, offset: 134541664, value: 134546320}
+- {info: 18694, name: progName, offset: 134541668, value: 134546324}
+- {info: 15878, name: unzSuffix, offset: 134541672, value: 134541892}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: strstr, num: 1}
+- {name: strcmp, num: 2}
+- {name: open64, num: 3}
+- {name: _ITM_deregisterTMCloneTab, num: 4}
+- {name: fflush, num: 5}
+- {name: stderr, num: 6}
+- {name: free, num: 7}
+- {name: BZ2_bzlibVersion, num: 8}
+- {name: ferror, num: 9}
+- {name: fclose, num: 10}
+- {name: signal, num: 11}
+- {name: __stack_chk_fail, num: 12}
+- {name: rewind, num: 13}
+- {name: BZ2_bzReadClose, num: 14}
+- {name: fopen64, num: 15}
+- {name: perror, num: 16}
+- {name: BZ2_bzWriteOpen, num: 17}
+- {name: fwrite, num: 18}
+- {name: strcat, num: 19}
+- {name: fread, num: 20}
+- {name: strcpy, num: 21}
+- {name: getenv, num: 22}
+- {name: malloc, num: 23}
+- {name: strerror, num: 24}
+- {name: __gmon_start__, num: 25}
+- {name: exit, num: 26}
+- {name: fdopen, num: 27}
+- {name: strlen, num: 28}
+- {name: fchown, num: 29}
+- {name: __libc_start_main, num: 30}
+- {name: fprintf, num: 31}
+- {name: BZ2_bzWrite, num: 32}
+- {name: stdin, num: 33}
+- {name: ungetc, num: 34}
+- {name: __errno_location, num: 35}
+- {name: strncpy, num: 36}
+- {name: BZ2_bzReadGetUnused, num: 37}
+- {name: fileno, num: 38}
+- {name: fgetc, num: 39}
+- {name: BZ2_bzWriteClose64, num: 40}
+- {name: stdout, num: 41}
+- {name: utime, num: 42}
+- {name: fputc, num: 43}
+- {name: _Jv_RegisterClasses, num: 44}
+- {name: remove, num: 45}
+- {name: BZ2_bzReadOpen, num: 46}
+- {name: _ITM_registerTMCloneTable, num: 47}
+- {name: strncmp, num: 48}
+- {name: isatty, num: 49}
+- {name: __xstat64, num: 50}
+- {name: BZ2_bzRead, num: 51}
+- {name: __lxstat64, num: 52}
+- {name: close, num: 53}
+- {name: __ctype_b_loc, num: 54}
+- {name: fchmod, num: 55}
+- {name: numFileNames, num: 56}
+- {name: longestFileName, num: 57}
+- {name: blockSize100k, num: 58}
+- {name: testFailsExist, num: 59}
+- {name: _fini, num: 60}
+- {name: noisy, num: 61}
+- {name: unzSuffix, num: 62}
+- {name: _init, num: 63}
+- {name: tmpName, num: 64}
+- {name: unzFailsExist, num: 65}
+- {name: __bss_start, num: 66}
+- {name: smallMode, num: 67}
+- {name: exitValue, num: 68}
+- {name: _IO_stdin_used, num: 69}
+- {name: inName, num: 70}
+- {name: _end, num: 71}
+- {name: deleteOutputOnInterrupt, num: 72}
+- {name: progName, num: 73}
+- {name: numFilesProcessed, num: 74}
+- {name: _edata, num: 75}
+- {name: opMode, num: 76}
+- {name: srcMode, num: 77}
+- {name: zSuffix, num: 78}
+- {name: forceOverwrite, num: 79}
+- {name: workFactor, num: 80}
+- {name: outName, num: 81}
+- {name: progNameReally, num: 82}
+- {name: verbosity, num: 83}
+- {name: keepInputFiles, num: 84}
+- {name: outputHandleJustInCase, num: 85}
+Header: {entryPoint: 134520388, nbPhdr: 8, nbShdr: 28, offsetToPhdr: 52, offsetToShdr: 29548}
+PltGotReloc:
+- {info: 263, name: strstr, offset: 134541688, value: 0}
+- {info: 519, name: strcmp, offset: 134541692, value: 0}
+- {info: 775, name: open64, offset: 134541696, value: 0}
+- {info: 1287, name: fflush, offset: 134541700, value: 0}
+- {info: 1799, name: free, offset: 134541704, value: 0}
+- {info: 2055, name: BZ2_bzlibVersion, offset: 134541708, value: 0}
+- {info: 2311, name: ferror, offset: 134541712, value: 0}
+- {info: 2567, name: fclose, offset: 134541716, value: 0}
+- {info: 2823, name: signal, offset: 134541720, value: 0}
+- {info: 3079, name: __stack_chk_fail, offset: 134541724, value: 0}
+- {info: 3335, name: rewind, offset: 134541728, value: 0}
+- {info: 3591, name: BZ2_bzReadClose, offset: 134541732, value: 0}
+- {info: 3847, name: fopen64, offset: 134541736, value: 0}
+- {info: 4103, name: perror, offset: 134541740, value: 0}
+- {info: 4359, name: BZ2_bzWriteOpen, offset: 134541744, value: 0}
+- {info: 4615, name: fwrite, offset: 134541748, value: 0}
+- {info: 4871, name: strcat, offset: 134541752, value: 0}
+- {info: 5127, name: fread, offset: 134541756, value: 0}
+- {info: 5383, name: strcpy, offset: 134541760, value: 0}
+- {info: 5639, name: getenv, offset: 134541764, value: 0}
+- {info: 5895, name: malloc, offset: 134541768, value: 0}
+- {info: 6151, name: strerror, offset: 134541772, value: 0}
+- {info: 6407, name: __gmon_start__, offset: 134541776, value: 0}
+- {info: 6663, name: exit, offset: 134541780, value: 0}
+- {info: 6919, name: fdopen, offset: 134541784, value: 0}
+- {info: 7175, name: strlen, offset: 134541788, value: 0}
+- {info: 7431, name: fchown, offset: 134541792, value: 0}
+- {info: 7687, name: __libc_start_main, offset: 134541796, value: 0}
+- {info: 7943, name: fprintf, offset: 134541800, value: 0}
+- {info: 8199, name: BZ2_bzWrite, offset: 134541804, value: 0}
+- {info: 8711, name: ungetc, offset: 134541808, value: 0}
+- {info: 8967, name: __errno_location, offset: 134541812, value: 0}
+- {info: 9223, name: strncpy, offset: 134541816, value: 0}
+- {info: 9479, name: BZ2_bzReadGetUnused, offset: 134541820, value: 0}
+- {info: 9735, name: fileno, offset: 134541824, value: 0}
+- {info: 9991, name: fgetc, offset: 134541828, value: 0}
+- {info: 10247, name: BZ2_bzWriteClose64, offset: 134541832, value: 0}
+- {info: 10759, name: utime, offset: 134541836, value: 0}
+- {info: 11015, name: fputc, offset: 134541840, value: 0}
+- {info: 11527, name: remove, offset: 134541844, value: 0}
+- {info: 11783, name: BZ2_bzReadOpen, offset: 134541848, value: 0}
+- {info: 12295, name: strncmp, offset: 134541852, value: 0}
+- {info: 12551, name: isatty, offset: 134541856, value: 0}
+- {info: 12807, name: __xstat64, offset: 134541860, value: 0}
+- {info: 13063, name: BZ2_bzRead, offset: 134541864, value: 0}
+- {info: 13319, name: __lxstat64, offset: 134541868, value: 0}
+- {info: 13575, name: close, offset: 134541872, value: 0}
+- {info: 13831, name: __ctype_b_loc, offset: 134541876, value: 0}
+- {info: 14087, name: fchmod, offset: 134541880, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 134512948, name: .interp, nb: 1, offset: 308, size: 19}
+- {address: 134512968, name: .note.ABI-tag, nb: 2, offset: 328, size: 32}
+- {address: 134513000, name: .note.gnu.build-i, nb: 3, offset: 360, size: 36}
+- {address: 134513036, name: .gnu.hash, nb: 4, offset: 396, size: 236}
+- {address: 134513272, name: .dynsym, nb: 5, offset: 632, size: 1376}
+- {address: 134514648, name: .dynstr, nb: 6, offset: 2008, size: 956}
+- {address: 134515604, name: .gnu.version, nb: 7, offset: 2964, size: 172}
+- {address: 134515776, name: .gnu.version_r, nb: 8, offset: 3136, size: 96}
+- {address: 134515872, name: .rel.dyn, nb: 9, offset: 3232, size: 224}
+- {address: 134516096, name: .rel.plt, nb: 10, offset: 3456, size: 392}
+- {address: 134516488, name: .init, nb: 11, offset: 3848, size: 35}
+- {address: 134516528, name: .plt, nb: 12, offset: 3888, size: 800}
+- {address: 134517328, name: .text, nb: 13, offset: 4688, size: 14500}
+- {address: 134531828, name: .fini, nb: 14, offset: 19188, size: 20}
+- {address: 134531848, name: .rodata, nb: 15, offset: 19208, size: 6916}
+- {address: 134538764, name: .eh_frame_hdr, nb: 16, offset: 26124, size: 292}
+- {address: 134539056, name: .eh_frame, nb: 17, offset: 26416, size: 1736}
+- {address: 134541312, name: .init_array, nb: 18, offset: 28672, size: 4}
+- {address: 134541316, name: .fini_array, nb: 19, offset: 28676, size: 4}
+- {address: 134541320, name: .jcr, nb: 20, offset: 28680, size: 4}
+- {address: 134541324, name: .dynamic, nb: 21, offset: 28684, size: 240}
+- {address: 134541564, name: .got, nb: 22, offset: 28924, size: 112}
+- {address: 134541676, name: .got.plt, nb: 23, offset: 29036, size: 208}
+- {address: 134541884, name: .data, nb: 24, offset: 29244, size: 40}
+- {address: 134541952, name: .bss, nb: 25, offset: 29284, size: 4376}
+- {address: 0, name: .comment, nb: 26, offset: 29284, size: 17}
+- {address: 0, name: .shstrtab, nb: 27, offset: 29301, size: 246}
+Segments:
+- {fSize: 256, offset: 52, pAddress: 134512692, vAddress: 134512692, vSize: 256}
+- {fSize: 19, offset: 308, pAddress: 134512948, vAddress: 134512948, vSize: 19}
+- {fSize: 28152, offset: 0, pAddress: 134512640, vAddress: 134512640, vSize: 28152}
+- {fSize: 612, offset: 28672, pAddress: 134541312, vAddress: 134541312, vSize: 5016}
+- {fSize: 240, offset: 28684, pAddress: 134541324, vAddress: 134541324, vSize: 240}
+- {fSize: 68, offset: 328, pAddress: 134512968, vAddress: 134512968, vSize: 68}
+- {fSize: 292, offset: 26124, pAddress: 134538764, vAddress: 134538764, vSize: 292}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+filename: bzip2
+hash: 2ac4abc9871fbfac373ef970179e6a00

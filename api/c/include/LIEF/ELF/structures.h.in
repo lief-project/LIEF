@@ -1,0 +1,14 @@
+#ifndef LIEF_ELF_C_STRUCTURES_H_
+#define LIEF_ELF_C_STRUCTURES_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+@LIEF_ELF_STRUCTURES@
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif

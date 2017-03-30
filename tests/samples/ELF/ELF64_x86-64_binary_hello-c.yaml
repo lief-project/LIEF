@@ -1,0 +1,119 @@
+DynamicReloc:
+- {info: 12884901894, name: __gmon_start__, offset: 6293720, value: 0}
+DynamicSymbols:
+- {name: '', num: 0}
+- {name: printf, num: 1}
+- {name: __libc_start_main, num: 2}
+- {name: __gmon_start__, num: 3}
+Header: {entryPoint: 4195312, nbPhdr: 8, nbShdr: 29, offsetToPhdr: 64, offsetToShdr: 4800}
+PltGotReloc:
+- {info: 4294967303, name: printf, offset: 6293752, value: 0}
+- {info: 8589934599, name: __libc_start_main, offset: 6293760, value: 0}
+- {info: 12884901895, name: __gmon_start__, offset: 6293768, value: 0}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194816, name: .interp, nb: 1, offset: 512, size: 28}
+- {address: 4194844, name: .note.ABI-tag, nb: 2, offset: 540, size: 32}
+- {address: 4194880, name: .hash, nb: 3, offset: 576, size: 36}
+- {address: 4194920, name: .dynsym, nb: 4, offset: 616, size: 96}
+- {address: 4195016, name: .dynstr, nb: 5, offset: 712, size: 63}
+- {address: 4195080, name: .gnu.version, nb: 6, offset: 776, size: 8}
+- {address: 4195088, name: .gnu.version_r, nb: 7, offset: 784, size: 32}
+- {address: 4195120, name: .rela.dyn, nb: 8, offset: 816, size: 24}
+- {address: 4195144, name: .rela.plt, nb: 9, offset: 840, size: 72}
+- {address: 4195216, name: .init, nb: 10, offset: 912, size: 26}
+- {address: 4195248, name: .plt, nb: 11, offset: 944, size: 64}
+- {address: 4195312, name: .text, nb: 12, offset: 1008, size: 434}
+- {address: 4195748, name: .fini, nb: 13, offset: 1444, size: 9}
+- {address: 4195760, name: .rodata, nb: 14, offset: 1456, size: 19}
+- {address: 4195780, name: .eh_frame_hdr, nb: 15, offset: 1476, size: 52}
+- {address: 4195832, name: .eh_frame, nb: 16, offset: 1528, size: 244}
+- {address: 6293232, name: .init_array, nb: 17, offset: 1776, size: 8}
+- {address: 6293240, name: .fini_array, nb: 18, offset: 1784, size: 8}
+- {address: 6293248, name: .jcr, nb: 19, offset: 1792, size: 8}
+- {address: 6293256, name: .dynamic, nb: 20, offset: 1800, size: 464}
+- {address: 6293720, name: .got, nb: 21, offset: 2264, size: 8}
+- {address: 6293728, name: .got.plt, nb: 22, offset: 2272, size: 48}
+- {address: 6293776, name: .data, nb: 23, offset: 2320, size: 16}
+- {address: 6293792, name: .bss, nb: 24, offset: 2336, size: 8}
+- {address: 0, name: .comment, nb: 25, offset: 2336, size: 79}
+- {address: 0, name: .shstrtab, nb: 26, offset: 2415, size: 241}
+- {address: 0, name: .symtab, nb: 27, offset: 2656, size: 1560}
+- {address: 0, name: .strtab, nb: 28, offset: 4216, size: 578}
+Segments:
+- {fSize: 448, offset: 64, pAddress: 4194368, vAddress: 4194368, vSize: 448}
+- {fSize: 28, offset: 512, pAddress: 4194816, vAddress: 4194816, vSize: 28}
+- {fSize: 1772, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 1772}
+- {fSize: 560, offset: 1776, pAddress: 6293232, vAddress: 6293232, vSize: 568}
+- {fSize: 464, offset: 1800, pAddress: 6293256, vAddress: 6293256, vSize: 464}
+- {fSize: 32, offset: 540, pAddress: 4194844, vAddress: 4194844, vSize: 32}
+- {fSize: 52, offset: 1476, pAddress: 4195780, vAddress: 4195780, vSize: 52}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+StaticSymbols:
+- {name: '', num: 0}
+- {name: '', num: 1}
+- {name: '', num: 2}
+- {name: '', num: 3}
+- {name: '', num: 4}
+- {name: '', num: 5}
+- {name: '', num: 6}
+- {name: '', num: 7}
+- {name: '', num: 8}
+- {name: '', num: 9}
+- {name: '', num: 10}
+- {name: '', num: 11}
+- {name: '', num: 12}
+- {name: '', num: 13}
+- {name: '', num: 14}
+- {name: '', num: 15}
+- {name: '', num: 16}
+- {name: '', num: 17}
+- {name: '', num: 18}
+- {name: '', num: 19}
+- {name: '', num: 20}
+- {name: '', num: 21}
+- {name: '', num: 22}
+- {name: '', num: 23}
+- {name: '', num: 24}
+- {name: '', num: 25}
+- {name: init.c, num: 26}
+- {name: crtstuff.c, num: 27}
+- {name: __JCR_LIST__, num: 28}
+- {name: deregister_tm_clones, num: 29}
+- {name: register_tm_clones, num: 30}
+- {name: __do_global_dtors_aux, num: 31}
+- {name: completed.6940, num: 32}
+- {name: __do_global_dtors_aux_fin, num: 33}
+- {name: frame_dummy, num: 34}
+- {name: __frame_dummy_init_array_, num: 35}
+- {name: hello_c.c, num: 36}
+- {name: crtstuff.c, num: 37}
+- {name: __FRAME_END__, num: 38}
+- {name: __JCR_END__, num: 39}
+- {name: '', num: 40}
+- {name: __init_array_end, num: 41}
+- {name: _DYNAMIC, num: 42}
+- {name: __init_array_start, num: 43}
+- {name: _GLOBAL_OFFSET_TABLE_, num: 44}
+- {name: __libc_csu_fini, num: 45}
+- {name: _ITM_deregisterTMCloneTab, num: 46}
+- {name: data_start, num: 47}
+- {name: _edata, num: 48}
+- {name: _fini, num: 49}
+- {name: printf@@GLIBC_2.2.5, num: 50}
+- {name: __libc_start_main@@GLIBC_, num: 51}
+- {name: __data_start, num: 52}
+- {name: __gmon_start__, num: 53}
+- {name: __dso_handle, num: 54}
+- {name: _IO_stdin_used, num: 55}
+- {name: __libc_csu_init, num: 56}
+- {name: _end, num: 57}
+- {name: _start, num: 58}
+- {name: __bss_start, num: 59}
+- {name: main, num: 60}
+- {name: _Jv_RegisterClasses, num: 61}
+- {name: __TMC_END__, num: 62}
+- {name: _ITM_registerTMCloneTable, num: 63}
+- {name: _init, num: 64}
+filename: hello_c
+hash: ba61cdc5d6693216283aacb771081ac0

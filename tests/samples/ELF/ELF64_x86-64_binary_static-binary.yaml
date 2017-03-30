@@ -1,0 +1,50 @@
+Header: {entryPoint: 4197584, nbPhdr: 5, nbShdr: 29, offsetToPhdr: 64, offsetToShdr: 940096}
+PltGotReloc:
+- {info: 37, name: '', offset: 7223960, value: 4497712}
+- {info: 37, name: '', offset: 7223952, value: 4863776}
+- {info: 37, name: '', offset: 7223944, value: 4498304}
+- {info: 37, name: '', offset: 7223936, value: 4519968}
+- {info: 37, name: '', offset: 7223928, value: 4521728}
+- {info: 37, name: '', offset: 7223920, value: 4518416}
+- {info: 37, name: '', offset: 7223912, value: 4517504}
+- {info: 37, name: '', offset: 7223904, value: 4521440}
+- {info: 37, name: '', offset: 7223896, value: 4519888}
+- {info: 37, name: '', offset: 7223888, value: 4507056}
+Sections:
+- {address: 0, name: '', nb: 0, offset: 0, size: 0}
+- {address: 4194648, name: .note.ABI-tag, nb: 1, offset: 344, size: 32}
+- {address: 4194680, name: .note.gnu.build-i, nb: 2, offset: 376, size: 36}
+- {address: 4194720, name: .rela.plt, nb: 3, offset: 416, size: 240}
+- {address: 4194960, name: .init, nb: 4, offset: 656, size: 26}
+- {address: 4194992, name: .plt, nb: 5, offset: 688, size: 160}
+- {address: 4195200, name: .text, nb: 6, offset: 896, size: 723780}
+- {address: 4918992, name: __libc_freeres_fn, nb: 7, offset: 724688, size: 2967}
+- {address: 4921968, name: __libc_thread_fre, nb: 8, offset: 727664, size: 168}
+- {address: 4922136, name: .fini, nb: 9, offset: 727832, size: 9}
+- {address: 4922176, name: .rodata, nb: 10, offset: 727872, size: 145672}
+- {address: 5067848, name: __libc_subfreeres, nb: 11, offset: 873544, size: 88}
+- {address: 5067936, name: __libc_atexit, nb: 12, offset: 873632, size: 8}
+- {address: 5067944, name: __libc_thread_sub, nb: 13, offset: 873640, size: 8}
+- {address: 5067952, name: .eh_frame, nb: 14, offset: 873648, size: 58180}
+- {address: 5126132, name: .gcc_except_table, nb: 15, offset: 931828, size: 164}
+- {address: 7223448, name: .tdata, nb: 16, offset: 931992, size: 104}
+- {address: 7223552, name: .tbss, nb: 17, offset: 932096, size: 48}
+- {address: 7223552, name: .init_array, nb: 18, offset: 932096, size: 16}
+- {address: 7223568, name: .fini_array, nb: 19, offset: 932112, size: 16}
+- {address: 7223584, name: .jcr, nb: 20, offset: 932128, size: 8}
+- {address: 7223616, name: .data.rel.ro, nb: 21, offset: 932160, size: 228}
+- {address: 7223848, name: .got, nb: 22, offset: 932392, size: 16}
+- {address: 7223864, name: .got.plt, nb: 23, offset: 932408, size: 104}
+- {address: 7224000, name: .data, nb: 24, offset: 932544, size: 7152}
+- {address: 7231168, name: .bss, nb: 25, offset: 939696, size: 9016}
+- {address: 7240184, name: __libc_freeres_pt, nb: 26, offset: 939696, size: 48}
+- {address: 0, name: .comment, nb: 27, offset: 939696, size: 78}
+- {address: 0, name: .shstrtab, nb: 28, offset: 939774, size: 317}
+Segments:
+- {fSize: 931992, offset: 0, pAddress: 4194304, vAddress: 4194304, vSize: 931992}
+- {fSize: 7704, offset: 931992, pAddress: 7223448, vAddress: 7223448, vSize: 16784}
+- {fSize: 68, offset: 344, pAddress: 4194648, vAddress: 4194648, vSize: 68}
+- {fSize: 104, offset: 931992, pAddress: 7223448, vAddress: 7223448, vSize: 152}
+- {fSize: 0, offset: 0, pAddress: 0, vAddress: 0, vSize: 0}
+filename: static_binary
+hash: 5934d4a7709def996d23378820286c79

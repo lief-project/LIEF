@@ -1,0 +1,886 @@
+dos_header: {e_cblp: 144, e_cparhdr: 4, e_crlc: 0, e_csum: 0, e_magic: 23117, e_maxalloc: 65535,
+  e_minalloc: 0, e_sp: 184, e_ss: 0}
+filename: notepad.exe
+hash: bb817fe5f6a66e8292c7ba6d9735e5fe
+header: {Characteristics: 34, Machine: 34404, NumberOfSections: 6, NumberOfSymbols: 0,
+  PointerToSymbolTable: 0, SizeOfOptionalHeader: 240, TimeDateStamp: 1247529395}
+imports:
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: RegSetValueExW}
+  - {name: RegQueryValueExW}
+  - {name: RegCreateKeyW}
+  - {name: RegCloseKey}
+  - {name: RegOpenKeyExW}
+  - {name: IsTextUnicode}
+  - {name: CloseServiceHandle}
+  - {name: OpenSCManagerW}
+  - {name: OpenServiceW}
+  - {name: QueryServiceConfigW}
+  name: ADVAPI32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetLocalTime}
+  - {name: GetDateFormatW}
+  - {name: GetTimeFormatW}
+  - {name: GlobalLock}
+  - {name: GlobalUnlock}
+  - {name: GetUserDefaultUILanguage}
+  - {name: HeapAlloc}
+  - {name: GetCurrentProcess}
+  - {name: HeapFree}
+  - {name: GlobalAlloc}
+  - {name: LoadLibraryW}
+  - {name: Wow64DisableWow64FsRedirection}
+  - {name: lstrcmpW}
+  - {name: Wow64RevertWow64FsRedirection}
+  - {name: GetFileAttributesW}
+  - {name: GetModuleFileNameW}
+  - {name: FreeLibraryAndExitThread}
+  - {name: IsWow64Process}
+  - {name: CreateThread}
+  - {name: FindNLSString}
+  - {name: UnmapViewOfFile}
+  - {name: LocalReAlloc}
+  - {name: MultiByteToWideChar}
+  - {name: MapViewOfFile}
+  - {name: CreateFileMappingW}
+  - {name: GetFileInformationByHandle}
+  - {name: SetEndOfFile}
+  - {name: DeleteFileW}
+  - {name: GetACP}
+  - {name: WriteFile}
+  - {name: SetLastError}
+  - {name: WideCharToMultiByte}
+  - {name: GetLastError}
+  - {name: LocalSize}
+  - {name: GetFullPathNameW}
+  - {name: FoldStringW}
+  - {name: LocalUnlock}
+  - {name: LocalLock}
+  - {name: FormatMessageW}
+  - {name: FindClose}
+  - {name: ReadFile}
+  - {name: FindFirstFileW}
+  - {name: TerminateProcess}
+  - {name: GetSystemTimeAsFileTime}
+  - {name: GetCurrentThreadId}
+  - {name: GetTickCount}
+  - {name: GetCurrentProcessId}
+  - {name: HeapSetInformation}
+  - {name: GetCommandLineW}
+  - {name: lstrlenW}
+  - {name: MulDiv}
+  - {name: GetLocaleInfoW}
+  - {name: GlobalFree}
+  - {name: LocalAlloc}
+  - {name: QueryPerformanceCounter}
+  - {name: GetVersionExW}
+  - {name: CloseHandle}
+  - {name: GetModuleHandleW}
+  - {name: SetUnhandledExceptionFilter}
+  - {name: GetStartupInfoW}
+  - {name: Sleep}
+  - {name: CreateFileW}
+  - {name: SetErrorMode}
+  - {name: lstrcmpiW}
+  - {name: LocalFree}
+  - {name: GetProcessHeap}
+  - {name: UnhandledExceptionFilter}
+  name: KERNEL32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: StartPage}
+  - {name: StartDocW}
+  - {name: SetAbortProc}
+  - {name: DeleteDC}
+  - {name: EndDoc}
+  - {name: AbortDoc}
+  - {name: EndPage}
+  - {name: GetTextMetricsW}
+  - {name: SetBkMode}
+  - {name: LPtoDP}
+  - {name: SetWindowExtEx}
+  - {name: SetViewportExtEx}
+  - {name: SetMapMode}
+  - {name: GetTextExtentPoint32W}
+  - {name: TextOutW}
+  - {name: EnumFontsW}
+  - {name: GetTextFaceW}
+  - {name: SelectObject}
+  - {name: DeleteObject}
+  - {name: CreateFontIndirectW}
+  - {name: GetDeviceCaps}
+  - {name: CreateDCW}
+  name: GDI32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetDlgItemTextW}
+  - {name: EndDialog}
+  - {name: SendDlgItemMessageW}
+  - {name: GetDlgCtrlID}
+  - {name: WinHelpW}
+  - {name: GetCursorPos}
+  - {name: ScreenToClient}
+  - {name: ChildWindowFromPoint}
+  - {name: GetParent}
+  - {name: GetWindowPlacement}
+  - {name: CharUpperW}
+  - {name: GetSystemMenu}
+  - {name: LoadAcceleratorsW}
+  - {name: SetWindowLongW}
+  - {name: RegisterWindowMessageW}
+  - {name: LoadCursorW}
+  - {name: CreateWindowExW}
+  - {name: SetWindowPlacement}
+  - {name: LoadImageW}
+  - {name: RegisterClassExW}
+  - {name: SetScrollPos}
+  - {name: InvalidateRect}
+  - {name: UpdateWindow}
+  - {name: GetWindowTextLengthW}
+  - {name: GetWindowLongW}
+  - {name: PeekMessageW}
+  - {name: SetDlgItemTextW}
+  - {name: EnableWindow}
+  - {name: CreateDialogParamW}
+  - {name: DrawTextExW}
+  - {name: GetSystemMetrics}
+  - {name: SetWindowPos}
+  - {name: GetAncestor}
+  - {name: FindWindowW}
+  - {name: SetForegroundWindow}
+  - {name: OpenClipboard}
+  - {name: GetMenuState}
+  - {name: SetWindowTextW}
+  - {name: UnhookWinEvent}
+  - {name: DispatchMessageW}
+  - {name: TranslateMessage}
+  - {name: TranslateAcceleratorW}
+  - {name: IsDialogMessageW}
+  - {name: GetMessageW}
+  - {name: SetWinEventHook}
+  - {name: CharNextW}
+  - {name: GetKeyboardLayout}
+  - {name: GetForegroundWindow}
+  - {name: MessageBeep}
+  - {name: DestroyWindow}
+  - {name: PostQuitMessage}
+  - {name: IsIconic}
+  - {name: DefWindowProcW}
+  - {name: CloseClipboard}
+  - {name: GetWindowTextW}
+  - {name: IsClipboardFormatAvailable}
+  - {name: LoadStringW}
+  - {name: SetActiveWindow}
+  - {name: SetCursor}
+  - {name: ReleaseDC}
+  - {name: GetDC}
+  - {name: ShowWindow}
+  - {name: CheckMenuItem}
+  - {name: MessageBoxW}
+  - {name: GetFocus}
+  - {name: LoadIconW}
+  - {name: DialogBoxParamW}
+  - {name: SetFocus}
+  - {name: GetSubMenu}
+  - {name: EnableMenuItem}
+  - {name: GetMenu}
+  - {name: PostMessageW}
+  - {name: MoveWindow}
+  - {name: SendMessageW}
+  - {name: GetClientRect}
+  name: USER32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: memset}
+  - {name: _vsnwprintf}
+  - {name: _wtol}
+  - {name: iswctype}
+  - {name: wcsrchr}
+  - {name: wcsncmp}
+  - {name: __getmainargs}
+  - {name: __set_app_type}
+  - {name: _fmode}
+  - {name: _commode}
+  - {name: __setusermatherr}
+  - {name: _amsg_exit}
+  - {name: _initterm}
+  - {name: _acmdln}
+  - {name: exit}
+  - {name: _cexit}
+  - {name: __C_specific_handler}
+  - {name: _XcptFilter}
+  - {name: _exit}
+  - {name: _ismbblead}
+  - {name: '?terminate@@YAXXZ'}
+  - {name: memcpy}
+  name: msvcrt.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: CommDlgExtendedError}
+  - {name: GetSaveFileNameW}
+  - {name: ReplaceTextW}
+  - {name: FindTextW}
+  - {name: PageSetupDlgW}
+  - {name: ChooseFontW}
+  - {name: GetFileTitleW}
+  - {name: PrintDlgExW}
+  - {name: GetOpenFileNameW}
+  name: COMDLG32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: SHGetFolderPathW}
+  - {name: ShellExecuteExW}
+  - {name: DragFinish}
+  - {name: SHCreateItemFromParsingName}
+  - {name: ShellAboutW}
+  - {name: DragQueryFileW}
+  - {name: SHAddToRecentDocs}
+  - {name: DragAcceptFiles}
+  name: SHELL32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: GetPrinterDriverW}
+  - {name: ClosePrinter}
+  - {name: OpenPrinterW}
+  name: WINSPOOL.DRV
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: CoUninitialize}
+  - {name: CoInitializeEx}
+  - {name: CoCreateInstance}
+  - {name: CoTaskMemAlloc}
+  - {name: CoTaskMemFree}
+  - {name: CoInitialize}
+  name: ole32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: PathIsFileSpecW}
+  - {name: SHStrDupW}
+  name: SHLWAPI.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: CreatePropertySheetPageW}
+  - {name: PropertySheetW}
+  - {name: CreateStatusWindowW}
+  - {name: null}
+  name: COMCTL32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: null}
+  - {name: null}
+  name: OLEAUT32.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: RtlCaptureContext}
+  - {name: RtlLookupFunctionEntry}
+  - {name: RtlVirtualUnwind}
+  - {name: RtlInitUnicodeString}
+  - {name: NtQueryLicenseValue}
+  - {name: WinSqmIncrementDWORD}
+  - {name: WinSqmAddToStream}
+  name: ntdll.dll
+- ForwarderChain: 4294967295
+  TimeDateStamp: 4294967295
+  entries:
+  - {name: VerQueryValueW}
+  - {name: GetFileVersionInfoExW}
+  - {name: GetFileVersionInfoSizeExW}
+  name: VERSION.dll
+optional_header: {AddressOfEntryPoint: 13680, BaseOfCode: 4096, CheckSum: 255817,
+  DllCharacteristics: 33088, FileAlignment: 512, ImageBase: 4294967296, LoaderFlags: 0,
+  Magic: 523, MajorImageVersion: 6, MajorLinkerVersion: 9, MajorOperatingSystemVersion: 6,
+  MajorSubsystemVersion: 6, MinorImageVersion: 1, MinorLinkerVersion: 0, MinorOperatingSystemVersion: 1,
+  MinorSubsystemVersion: 1, NumberOfRvaAndSizes: 16, Reserved1: 0, SectionAlignment: 4096,
+  SizeOfCode: 43008, SizeOfHeaders: 1536, SizeOfHeapCommit: 4096, SizeOfHeapReserve: 1048576,
+  SizeOfImage: 217088, SizeOfInitializedData: 153600, SizeOfStackCommit: 69632, SizeOfStackReserve: 524288,
+  SizeOfUninitializedData: 0, Subsystem: 2}
+resources:
+  Characteristics: 0
+  MajorVersion: 0
+  MinorVersion: 0
+  NumberOfIdEntries: 5
+  NumberOfNamedEntries: 1
+  TimeDateStamp: 0
+  childs:
+  - Name: MUI
+    OffsetToData: 2147483712
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483952
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 736
+            childs:
+            - CodePage: 0
+              OffsetToData: 209008
+              Reserved: 0
+              Size: 240
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: null
+    type: 1
+  - Name: None
+    OffsetToData: 2147483736
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147483976
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 752
+            childs:
+            - CodePage: 0
+              OffsetToData: 84136
+              Reserved: 0
+              Size: 22042
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 51209
+        type: 1
+      type: 0
+    id: 2
+    type: 1
+  - Name: None
+    OffsetToData: 2147483760
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 13
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484000
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 768
+            childs:
+            - CodePage: 0
+              OffsetToData: 106184
+              Reserved: 0
+              Size: 1640
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      - Name: None
+        OffsetToData: 2147484024
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 784
+            childs:
+            - CodePage: 0
+              OffsetToData: 107824
+              Reserved: 0
+              Size: 744
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 2
+        type: 1
+      - Name: None
+        OffsetToData: 2147484048
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 800
+            childs:
+            - CodePage: 0
+              OffsetToData: 108568
+              Reserved: 0
+              Size: 488
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 3
+        type: 1
+      - Name: None
+        OffsetToData: 2147484072
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 816
+            childs:
+            - CodePage: 0
+              OffsetToData: 109056
+              Reserved: 0
+              Size: 296
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 4
+        type: 1
+      - Name: None
+        OffsetToData: 2147484096
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 832
+            childs:
+            - CodePage: 0
+              OffsetToData: 109352
+              Reserved: 0
+              Size: 3752
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 5
+        type: 1
+      - Name: None
+        OffsetToData: 2147484120
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 848
+            childs:
+            - CodePage: 0
+              OffsetToData: 113104
+              Reserved: 0
+              Size: 2216
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 6
+        type: 1
+      - Name: None
+        OffsetToData: 2147484144
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 864
+            childs:
+            - CodePage: 0
+              OffsetToData: 115320
+              Reserved: 0
+              Size: 1736
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 7
+        type: 1
+      - Name: None
+        OffsetToData: 2147484168
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 880
+            childs:
+            - CodePage: 0
+              OffsetToData: 117056
+              Reserved: 0
+              Size: 1384
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 8
+        type: 1
+      - Name: None
+        OffsetToData: 2147484192
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 896
+            childs:
+            - CodePage: 0
+              OffsetToData: 118440
+              Reserved: 0
+              Size: 72024
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 9
+        type: 1
+      - Name: None
+        OffsetToData: 2147484216
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 912
+            childs:
+            - CodePage: 0
+              OffsetToData: 190464
+              Reserved: 0
+              Size: 9640
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 10
+        type: 1
+      - Name: None
+        OffsetToData: 2147484240
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 928
+            childs:
+            - CodePage: 0
+              OffsetToData: 200104
+              Reserved: 0
+              Size: 4264
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 11
+        type: 1
+      - Name: None
+        OffsetToData: 2147484264
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 944
+            childs:
+            - CodePage: 0
+              OffsetToData: 204368
+              Reserved: 0
+              Size: 2440
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 12
+        type: 1
+      - Name: None
+        OffsetToData: 2147484288
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 960
+            childs:
+            - CodePage: 0
+              OffsetToData: 206808
+              Reserved: 0
+              Size: 1128
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 13
+        type: 1
+      type: 0
+    id: 3
+    type: 1
+  - Name: None
+    OffsetToData: 2147483880
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484312
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 976
+            childs:
+            - CodePage: 0
+              OffsetToData: 207936
+              Reserved: 0
+              Size: 188
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 2
+        type: 1
+      type: 0
+    id: 14
+    type: 1
+  - Name: None
+    OffsetToData: 2147483904
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484336
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 992
+            childs:
+            - CodePage: 0
+              OffsetToData: 208128
+              Reserved: 0
+              Size: 876
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 16
+    type: 1
+  - Name: None
+    OffsetToData: 2147483928
+    childs:
+    - Characteristics: 0
+      MajorVersion: 0
+      MinorVersion: 0
+      NumberOfIdEntries: 1
+      NumberOfNamedEntries: 0
+      TimeDateStamp: 0
+      childs:
+      - Name: None
+        OffsetToData: 2147484360
+        childs:
+        - Characteristics: 0
+          MajorVersion: 0
+          MinorVersion: 0
+          NumberOfIdEntries: 1
+          NumberOfNamedEntries: 0
+          TimeDateStamp: 0
+          childs:
+          - Name: None
+            OffsetToData: 1008
+            childs:
+            - CodePage: 0
+              OffsetToData: 82960
+              Reserved: 0
+              Size: 1172
+              childs: []
+              lang: 9
+              sublang: 1
+              type: 2
+            id: 1033
+            type: 1
+          type: 0
+        id: 1
+        type: 1
+      type: 0
+    id: 24
+    type: 1
+  type: 0
+sections:
+- {Characteristics: 1610612768, Misc_VirtualSize: 42864, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 1536, PointerToRelocations: 0, SizeOfRawData: 43008,
+  VirtualAddress: 4096, name: .text}
+- {Characteristics: 1073741888, Misc_VirtualSize: 12640, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 44544, PointerToRelocations: 0, SizeOfRawData: 12800,
+  VirtualAddress: 49152, name: .rdata}
+- {Characteristics: 3221225536, Misc_VirtualSize: 10308, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 57344, PointerToRelocations: 0, SizeOfRawData: 6144,
+  VirtualAddress: 65536, name: .data}
+- {Characteristics: 1073741888, Misc_VirtualSize: 1716, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 63488, PointerToRelocations: 0, SizeOfRawData: 2048,
+  VirtualAddress: 77824, name: .pdata}
+- {Characteristics: 1073741888, Misc_VirtualSize: 127328, NumberOfLinenumbers: 0,
+  NumberOfRelocations: 0, PointerToLinenumbers: 0, PointerToRawData: 65536, PointerToRelocations: 0,
+  SizeOfRawData: 127488, VirtualAddress: 81920, name: .rsrc}
+- {Characteristics: 1107296320, Misc_VirtualSize: 184, NumberOfLinenumbers: 0, NumberOfRelocations: 0,
+  PointerToLinenumbers: 0, PointerToRawData: 193024, PointerToRelocations: 0, SizeOfRawData: 512,
+  VirtualAddress: 212992, name: .reloc}
+tls: {}

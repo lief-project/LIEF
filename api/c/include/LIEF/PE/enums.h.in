@@ -1,0 +1,20 @@
+#ifndef LIEF_PE_C_ENUMS_H_
+#define LIEF_PE_C_ENUMS_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+@LIEF_PE_ENUMS@
+
+
+enum PE_TYPES {
+    PE32      = 0x10b, /** 32bits  */
+    PE32_PLUS = 0x20b  /** 64 bits */
+};
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif
