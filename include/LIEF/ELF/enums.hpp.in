@@ -1,0 +1,11 @@
+#ifndef LIEF_ELF_ENUMS_H_
+#define LIEF_ELF_ENUMS_H_
+
+namespace LIEF {
+namespace ELF {
+
+@LIEF_ELF_ENUMS@
+
+}
+}
+#endif

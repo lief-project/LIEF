@@ -1,0 +1,13 @@
+#ifndef LIEF_PE_ENUMS_H_
+#define LIEF_PE_ENUMS_H_
+
+#include "LIEF/PE/undef.h"
+
+namespace LIEF {
+namespace PE {
+
+@LIEF_PE_ENUMS@
+
+}
+}
+#endif

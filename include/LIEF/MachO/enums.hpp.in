@@ -1,0 +1,11 @@
+#ifndef LIEF_MACHO_ENUMS_H_
+#define LIEF_MACHO_ENUMS_H_
+
+namespace LIEF {
+namespace MachO {
+
+@LIEF_MACHO_ENUMS@
+
+}
+}
+#endif

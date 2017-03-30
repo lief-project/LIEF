@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from   setuptools import setup
+import os
+import site
+
+
+package_description = '''
+LIEF is a library to instrument executable formats
+'''.strip()
+
+setup(
+    name                 = 'lief',
+    version              = '@LIEF_VERSION_MAJOR@.@LIEF_VERSION_MINOR@.@LIEF_VERSION_PATCH@',
+    license              = "Apache 2.0",
+    description          = package_description,
+    url                  = 'http://lief.quarkslab.com',
+    author               = 'Romain Thomas',
+    author_email         = 'rthomas@quarkslab.com',
+    packages             = [''],
+    package_data         = {'': ['@LIEF_LIBRARY_NAME@']},
+    keywords             = 'elf pe macho',
+    classifiers          = [
+        'License :: OSI Approved :: Apache Software License',
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+	'Intended Audience :: Science/Research',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: Windows :: Windows',
+        'Programming Language :: C++',
+        'Programming Language :: Python :: @PYTHON_VERSION@',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Security',
+        'Topic :: Scientific/Engineering :: Information Analysis',
+	'Topic :: Software Development :: Build Tools',
+    ]
+)

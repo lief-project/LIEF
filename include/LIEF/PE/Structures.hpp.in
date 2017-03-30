@@ -1,0 +1,201 @@
+#ifndef LIEF_PE_STRUCTURES_H_
+#define LIEF_PE_STRUCTURES_H_
+#include <type_traits>
+
+#include "LIEF/types.hpp"
+
+#include "LIEF/PE/enums.hpp"
+
+namespace LIEF {
+
+//! Namespace related to the LIEF's PE module
+//!
+//! Some parts from llvm/Support/COFF.h
+namespace PE {
+
+//! Sizes in bytes of various things in the COFF format.
+namespace STRUCT_SIZES {
+  enum {
+    Header16Size                  = 20,
+    Header32Size                  = 56,
+    NameSize                      = 8,
+    Symbol16Size                  = 18,
+    Symbol32Size                  = 20,
+    SectionSize                   = 40,
+    RelocationSize                = 10,
+    BaseRelocationBlockSize       = 8,
+    ImportDirectoryTableEntrySize = 20,
+    ResourceDirectoryTableSize    = 16,
+    ResourceDirectoryEntriesSize  = 8,
+    ResourceDataEntrySize         = 16
+  };
+}
+
+
+
+@LIEF_PE_STRUCTURES@
+
+static const HEADER_CHARACTERISTICS header_characteristics_array[] = {
+  HEADER_CHARACTERISTICS::IMAGE_FILE_INVALID,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_RELOCS_STRIPPED,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_EXECUTABLE_IMAGE,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_LINE_NUMS_STRIPPED,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_LOCAL_SYMS_STRIPPED,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_AGGRESSIVE_WS_TRIM,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_LARGE_ADDRESS_AWARE,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_BYTES_REVERSED_LO,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_32BIT_MACHINE,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_DEBUG_STRIPPED,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_NET_RUN_FROM_SWAP,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_SYSTEM,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_DLL,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_UP_SYSTEM_ONLY,
+  HEADER_CHARACTERISTICS::IMAGE_FILE_BYTES_REVERSED_HI
+};
+
+
+// Common section type
+enum class SECTION_TYPES : uint8_t {
+  TEXT       = 0,
+  TLS        = 1,
+  IMPORT     = 2,
+  DATA       = 3,
+  BSS        = 4,
+  RESOURCE   = 5,
+  RELOCATION = 6,
+  EXPORT     = 7,
+  DEBUG      = 8,
+  UNKNOWN    = 9
+};
+
+
+static const SECTION_CHARACTERISTICS section_characteristics_array[] = {
+  SECTION_CHARACTERISTICS::IMAGE_SCN_TYPE_NO_PAD,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_UNINITIALIZED_DATA,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_LNK_OTHER,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_LNK_INFO,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_LNK_REMOVE,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_LNK_COMDAT,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_GPREL,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_PURGEABLE,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_16BIT,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_LOCKED,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_PRELOAD,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_1BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_2BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_4BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_8BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_16BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_32BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_64BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_128BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_256BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_512BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_1024BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_2048BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_4096BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_ALIGN_8192BYTES,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_LNK_NRELOC_OVFL,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_DISCARDABLE,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_NOT_CACHED,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_NOT_PAGED,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_SHARED,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ,
+  SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE,
+};
+
+
+enum class PE_TYPE : uint16_t {
+    PE32      = 0x10b, ///< 32bits
+    PE32_PLUS = 0x20b  ///< 64 bits
+};
+
+
+
+static const DLL_CHARACTERISTICS dll_characteristics_array[] = {
+  IMAGE_DLL_CHARACTERISTICS_HIGH_ENTROPY_VA,
+  IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE,
+  IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY,
+  IMAGE_DLL_CHARACTERISTICS_NX_COMPAT,
+  IMAGE_DLL_CHARACTERISTICS_NO_ISOLATION,
+  IMAGE_DLL_CHARACTERISTICS_NO_SEH,
+  IMAGE_DLL_CHARACTERISTICS_NO_BIND,
+  IMAGE_DLL_CHARACTERISTICS_APPCONTAINER,
+  IMAGE_DLL_CHARACTERISTICS_WDM_DRIVER,
+  IMAGE_DLL_CHARACTERISTICS_GUARD_CF,
+  IMAGE_DLL_CHARACTERISTICS_TERMINAL_SERVER_AWARE,
+};
+
+
+
+//struct pe_import {
+//  uint16_t Sig1; ///< Must be IMAGE_FILE_MACHINE_UNKNOWN (0).
+//  uint16_t Sig2; ///< Must be 0xFFFF.
+//  uint16_t Version;
+//  uint16_t Machine;
+//  uint32_t TimeDateStamp;
+//  uint32_t SizeOfData;
+//  uint16_t OrdinalHint;
+//  uint16_t TypeInfo;
+//
+//  ImportType getType() const {
+//    return static_cast<ImportType>(TypeInfo & 0x3);
+//  }
+//
+//  ImportNameType getNameType() const {
+//    return static_cast<ImportNameType>((TypeInfo & 0x1C) >> 3);
+//  }
+//};
+
+
+
+
+template <typename T>
+  struct LoadConfiguration {
+  uint32_t Characteristics;
+  uint32_t TimeDateStamp;
+  uint16_t MajorVersion;
+  uint16_t MinorVersion;
+  uint32_t GlobalFlagsClear;
+  uint32_t GlobalFlagsSet;
+  uint32_t CriticalSectionDefaultTimeout;
+  T      DeCommitFreeBlockThreshold;
+  T      DeCommitTotalFreeThreshold;
+  T      LockPrefixTable;
+  T      MaximumAllocationSize;
+  T      VirtualMemoryThreshold;
+  T      ProcessAffinityMask;
+  uint32_t ProcessHeapFlags;
+  uint16_t CSDVersion;
+  uint16_t Reserved1;
+  T      EditList;
+  T      SecurityCookie;
+  T      SEHandlerTable;
+  T      SEHandlerCount;
+};
+
+
+
+class PE32 {
+  public:
+    using pe_optional_header = pe32_optional_header;
+    using pe_tls             = pe32_tls;
+    using uint               = uint32_t;
+ };
+
+
+class PE64 {
+  public:
+    using pe_optional_header = pe64_optional_header;
+    using pe_tls             = pe64_tls;
+    using uint               = uint64_t;
+ };
+
+} // end namesapce ELF
+}
+
+#endif

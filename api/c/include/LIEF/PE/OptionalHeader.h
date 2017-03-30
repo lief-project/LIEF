@@ -1,0 +1,74 @@
+/* Copyright 2017 R. Thomas
+ * Copyright 2017 Quarkslab
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#ifndef C_LIEF_PE_OPTIONAL_HEADER_H_
+#define C_LIEF_PE_OPTIONAL_HEADER_H_
+#include <inttypes.h>
+
+#include "LIEF/PE/enums.h"
+/**  @defgroup pe_optional_header_c_api OptionalHeader
+ *  @ingroup pe_c_api
+ *  @addtogroup pe_optional_header_c_api
+ *  @brief OptionalHeader C API
+ *
+ *  @{
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct Pe_OptionalHeader_t {
+  enum PE_TYPES  magic;
+  uint8_t        major_linker_version;
+  uint8_t        minor_linker_version;
+  uint32_t       sizeof_code;
+  uint32_t       sizeof_initialized_data;
+  uint32_t       sizeof_uninitialized_data;
+  uint32_t       addressof_entrypoint;
+  uint32_t       baseof_code;
+  uint32_t       baseof_data;
+  uint64_t       imagebase;
+  uint32_t       section_alignment;
+  uint32_t       file_alignment;
+  uint16_t       major_operating_system_version;
+  uint16_t       minor_operating_system_version;
+  uint16_t       major_image_version;
+  uint16_t       minor_image_version;
+  uint16_t       major_subsystem_version;
+  uint16_t       minor_subsystem_version;
+  uint32_t       win32_version_value;
+  uint32_t       sizeof_image;
+  uint32_t       sizeof_headers;
+  uint32_t       checksum;
+  enum SUBSYSTEM subsystem;
+  uint32_t       dll_characteristics;
+  uint64_t       sizeof_stack_reserve;
+  uint64_t       sizeof_stack_commit;
+  uint64_t       sizeof_heap_reserve;
+  uint64_t       sizeof_heap_commit;
+  uint32_t       loader_flags;
+  uint32_t       numberof_rva_and_size;
+};
+
+typedef struct Pe_OptionalHeader_t Pe_OptionalHeader_t;
+
+
+#ifdef __cplusplus
+}
+#endif
+
+/** @} */
+#endif

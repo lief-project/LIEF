@@ -1,0 +1,10 @@
+*
+!src
+!doc
+!tests
+!include
+!examples
+!api
+!CMakeLists.txt
+!CMakeModules
+!package

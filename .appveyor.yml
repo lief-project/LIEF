@@ -1,0 +1,89 @@
+version: 0.4.{build}
+image: Visual Studio 2015
+clone_folder: c:\projects\lief
+
+configuration: Release
+
+clone_depth: 5
+
+platform:
+- x86
+- x64
+
+environment:
+ matrix:
+    # Python 2.7
+    - PYTHON_VERSION:   "2.7"
+      PYTHON32_PATH:    "C:\\Python27"
+      PYTHON32_INCLUDE: "C:\\Python27\\include"
+      PYTHON32_BINARY:  "C:\\Python27\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python27\\libs\\python27.lib"
+      PYTHON64_PATH:    "C:\\Python27-x64"
+      PYTHON64_INCLUDE: "C:\\Python27-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python27-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python27-x64\\libs\\python27.lib"
+
+
+    # Python 3.5
+    - PYTHON_VERSION:   "3.5"
+      PYTHON32_PATH:    "C:\\Python35"
+      PYTHON32_INCLUDE: "C:\\Python35\\include"
+      PYTHON32_BINARY:  "C:\\Python35\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python35\\libs\\python35.lib"
+      PYTHON64_PATH:    "C:\\Python35-x64"
+      PYTHON64_INCLUDE: "C:\\Python35-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python35-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python35-x64\\libs\\python35.lib"
+
+
+    # Python 3.6
+    - PYTHON_VERSION:   "3.6"
+      PYTHON32_PATH:    "C:\\Python36"
+      PYTHON32_INCLUDE: "C:\\Python36\\include"
+      PYTHON32_BINARY:  "C:\\Python36\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python36\\libs\\python36.lib"
+      PYTHON64_PATH:    "C:\\Python36-x64"
+      PYTHON64_INCLUDE: "C:\\Python36-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python36-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python36-x64\\libs\\python36.lib"
+
+matrix:
+  fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
+  allow_failures:
+    - platform: x86
+      configuration: Release
+    - platform: x64
+      configuration: Release
+
+install:
+  - ps: if ($env:PLATFORM -eq "x64") { $env:CMAKE_ARCH = "x64" }
+
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_PATH    = $env:PYTHON64_PATH }
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_INCLUDE = $env:PYTHON64_INCLUDE }
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_BINARY  = $env:PYTHON64_BINARY }
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_LIBRARY = $env:PYTHON64_LIBRARY }
+
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_PATH    = $env:PYTHON32_PATH }
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_INCLUDE = $env:PYTHON32_INCLUDE }
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_BINARY  = $env:PYTHON32_BINARY }
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_LIBRARY = $env:PYTHON32_LIBRARY }
+
+  - set PATH=%PYTHON_PATH%;%PATH%
+
+build_script:
+  - cmake -A "%CMAKE_ARCH%" -DLIEF_TESTS=on -DLIEF_PYTHON_API=on -DPYTHON_VERSION=%PYTHON_VERSION% -DPYTHON_INCLUDE_DIR=%PYTHON_INCLUDE% -DPYTHON_EXECUTABLE=%PYTHON_BINARY% -DPYTHON_LIBRARY=%PYTHON_LIBRARY%
+  - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
+
+test_script:
+  - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
+
+after_test:
+  - cd api\python
+  - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
+  - ps: gci dist\*.zip | % { rename-item –path $_.Fullname –Newname ( "windows_" + $env:PLATFORM + "_" + $_.basename + "_py" + $env:PYTHON_VERSION + $_.extension) }
+
+#artifacts:
+#  - path: 'api\python\dist\*.zip'
+
+
