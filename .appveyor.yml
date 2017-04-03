@@ -79,11 +79,13 @@ test_script:
   - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
 
 after_test:
+  - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
   - cd api\python
   - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
   - ps: gci dist\*.zip | % { rename-item –path $_.Fullname –Newname ( "windows_" + $env:PLATFORM + "_" + $_.basename + "_py" + $env:PYTHON_VERSION + $_.extension) }
 
-#artifacts:
-#  - path: 'api\python\dist\*.zip'
+artifacts:
+  - path: '*.zip'
+  - path: 'api\python\dist\*.zip'
 
 
