@@ -1,5 +1,5 @@
-05 - Infect plt/got
--------------------
+05 - Infecting the plt/got
+--------------------------
 
 The objective of this tutorial is to hook an imported function in an ELF binary.
 
@@ -179,11 +179,9 @@ As a check on the input size is perform before checking the flag value, we have 
   You got it !!
 
 
-
-
-.. rubric:: Footnotes
+.. rubric:: References
 
 .. [#f1] http://vxheaven.org/lib/vrn00.html
-.. [#f2] Text of the second footnote.
+.. [#f2] http://phrack.org/issues/56/7.html
 
 

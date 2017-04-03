@@ -4,7 +4,7 @@ Tutorials
 .. toctree::
   :maxdepth: 2
 
-  00_play_with_formats.rst
+  01_play_with_formats.rst
   02_pe_from_scratch.rst
   03_elf_change_symbols.rst
   04_elf_hooking.rst

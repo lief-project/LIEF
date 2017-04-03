@@ -1,4 +1,4 @@
-00 - Parse and manipulate formats
+01 - Parse and manipulate formats
 ---------------------------------
 
 The objective of this tutorial is to give an overview of the LIEF's API to parse and manipulate formats
@@ -57,11 +57,6 @@ To modify the content of the ``.text`` section:
   text = binary.get_section(".text")
   text.content = bytes([0x33] * text.size)
 
-API of the ELF format is available here:
-
-  * Python
-  * C++
-  * C
 
 
 
