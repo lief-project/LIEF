@@ -6,6 +6,10 @@
   <a href="https://gitter.im/lief-project">
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg">
   </a>
+  &nbsp;
+  <a href="https://travis-ci.org/lief-project/LIEF">
+    <img src="https://travis-ci.org/lief-project/LIEF.svg?branch=master">
+  </a>
 
 </p>
 
