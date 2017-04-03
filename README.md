@@ -91,9 +91,10 @@ int main(int argc, const char** argv) {
 ```
 ## Documentation
 
-* [Tutorial](http://lief.quarkslab.com/doc)
-* [API](http://lief.quarkslab.com/doc)
-* [Doxygen](http://lief.quarkslab.com/doc)
+* [Main documentation](http://lief.quarkslab.com/doc/index.html)
+* [Tutorial](http://lief.quarkslab.com/doc/tutorials/index.html)
+* [API](http://lief.quarkslab.com/doc/api/index.html)
+* [Doxygen](http://lief.quarkslab.com/doxygen/index.html)
 
 ## Support
 
@@ -104,4 +105,8 @@ int main(int argc, const char** argv) {
 
 Romain Thomas - [Quarkslab](https://www.quarkslab.com)
 
+<hr />
+<p align="center" >
+<img width="40%" src="http://lief.quarkslab.com/resources/QB-big.png"/>
+</p>
 
