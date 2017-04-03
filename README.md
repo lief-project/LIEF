@@ -10,6 +10,10 @@
   <a href="https://travis-ci.org/lief-project/LIEF">
     <img src="https://travis-ci.org/lief-project/LIEF.svg?branch=master">
   </a>
+  &nbsp;
+  <a href="https://ci.appveyor.com/project/Romain/lief/branch/master">
+    <img src="https://ci.appveyor.com/api/projects/status/0ijlcujac5vh8cas/branch/master?svg=true">
+  </a>
 
 </p>
 
