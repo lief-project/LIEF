@@ -13,7 +13,7 @@ import lief
 #
 # Version:                      3
 # Serial Number:                61:04:ca:69:00:00:00:00:00:08
-# Signature Alogrithm:          SHA1_WITH_RSA_ENCRYPTION
+# Signature Algorithm:          SHA1_WITH_RSA_ENCRYPTION
 # Valid from:                   2007-6-5 22:3:21
 # Valid to:                     2012-6-5 22:13:21
 # Issuer:                       C=US, ST=Washington, L=Redmond, O=Microsoft Corporation, CN=Microsoft Time-Stamp PCA
@@ -21,7 +21,7 @@ import lief
 #
 # Version:                      3
 # Serial Number:                61:01:c6:c1:00:00:00:00:00:07
-# Signature Alogrithm:          SHA1_WITH_RSA_ENCRYPTION
+# Signature Algorithm:          SHA1_WITH_RSA_ENCRYPTION
 # Valid from:                   2008-10-22 20:39:22
 # Valid to:                     2010-1-22 20:49:22
 # Issuer:                       C=US, ST=Washington, L=Redmond, O=Microsoft Corporation, CN=Microsoft Windows Verification PCA

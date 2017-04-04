@@ -41,8 +41,8 @@ void init_PE_x509_class(py::module& m) {
         &x509::serial_number,
         "Unique id for certificate issued by a specific CA.")
 
-    .def_property_readonly("signature_alogrithm",
-        &x509::signature_alogrithm,
+    .def_property_readonly("signature_algorithm",
+        &x509::signature_algorithm,
         "Signature algorithm (OID)")
 
 

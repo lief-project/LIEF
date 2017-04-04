@@ -66,7 +66,7 @@ std::vector<uint8_t> x509::serial_number(void) const {
   return {this->x509_cert_->serial.p, this->x509_cert_->serial.p + this->x509_cert_->serial.len};
 }
 
-oid_t x509::signature_alogrithm(void) const {
+oid_t x509::signature_algorithm(void) const {
   char oid_str[256];
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &this->x509_cert_->sig_oid);
   return oid_t{oid_str};
@@ -156,7 +156,7 @@ std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
   os << std::hex << std::left;
   os << std::setw(wsize) << std::setfill(' ') << "Version:       "       << x509_cert.version() << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Serial Number: "       << sn_str << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Signature Alogrithm: " << oid_to_string(x509_cert.signature_alogrithm()) << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Signature Algorithm: " << oid_to_string(x509_cert.signature_algorithm()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Valid from: "          << valid_from_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Valid to: "            << valid_to_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Issuer: "              << x509_cert.issuer() << std::endl;
