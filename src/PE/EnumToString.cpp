@@ -193,7 +193,7 @@ const char* to_string(SECTION_CHARACTERISTICS e) {
 const char* to_string(SECTION_TYPES e) {
   const std::map<SECTION_TYPES, const char*> enumStrings {
     { SECTION_TYPES::TEXT,       "TEXT"       },
-    { SECTION_TYPES::TLS,        "TLS"        },
+    { SECTION_TYPES::TLS,        "TLS_"        },
     { SECTION_TYPES::IMPORT,     "IDATA"      },
     { SECTION_TYPES::DATA,       "DATA"       },
     { SECTION_TYPES::BSS,        "BSS"        },
