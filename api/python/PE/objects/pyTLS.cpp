@@ -62,6 +62,12 @@ void init_PE_TLS_class(py::module& m) {
         static_cast<getter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&TLS::data_template))
 
+    .def_property_readonly("has_section",
+        &TLS::has_section)
+
+    .def_property_readonly("has_data_directory",
+        &TLS::has_data_directory)
+
     .def_property_readonly("directory",
         static_cast<no_const_getter<DataDirectory&>>(&TLS::directory),
         py::return_value_policy::reference)
