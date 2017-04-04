@@ -291,15 +291,10 @@ void Parser::parse_binary(void) {
   if (it_symtab_section != std::end(this->binary_->sections_)) {
     const Section* section = *it_symtab_section;
     uint32_t nb_entries = 0;
-    if (section->entry_size() > 0) {
-      nb_entries = static_cast<uint32_t>((section->size() / section->entry_size()));
+    if (this->type_ == ELFCLASS32) {
+      nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf32_Sym)));
     } else {
-      LOG(WARNING) << "section->entry_size() is null !";
-      if (this->type_ == ELFCLASS32) {
-        nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf32_Sym)));
-      } else {
-        nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf64_Sym)));
-      }
+      nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf64_Sym)));
     }
 
     if (section->link() == 0 or section->link() >= this->binary_->sections_.size()) {
@@ -585,7 +580,6 @@ void Parser::parse_dynamic_symbols(uint64_t offset, uint64_t size) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
   LOG(DEBUG) << "[+] Parsing dynamics symbols";
 
-
   auto&& it_dynamic_section = std::find_if(
       std::begin(this->binary_->sections_),
       std::end(this->binary_->sections_),
@@ -594,16 +588,17 @@ void Parser::parse_dynamic_symbols(uint64_t offset, uint64_t size) {
         return section != nullptr and section->type() == SECTION_TYPES::SHT_DYNSYM;
       });
 
-  //TODO: To improve
-  //uint32_t nbOfSymbols = ~0;
+
+  // TODO:
+  // Not use sections to count dynamic symbols but for examples:
+  // * Dynamic + plt/got relocations
+  // * GNU hash table (dynsym)
+  // * Symbol version definitions
   uint32_t nb_symbols = static_cast<uint32_t>(size / sizeof(Elf_Sym));
 
   if (it_dynamic_section != std::end(this->binary_->sections_)) {
     const uint64_t section_size = (*it_dynamic_section)->size();
-    const uint64_t entry_size   =(*it_dynamic_section)->entry_size();
-    if (entry_size > 0)  {
-      nb_symbols = static_cast<uint32_t>(section_size / entry_size);
-    }
+    nb_symbols = static_cast<uint32_t>((section_size / sizeof(Elf_Sym)));
   }
 
   const uint64_t dynamic_symbols_offset = offset;
