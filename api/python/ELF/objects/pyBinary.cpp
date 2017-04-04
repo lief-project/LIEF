@@ -192,7 +192,7 @@ void init_ELF_Binary_class(py::module& m) {
 
     .def("insert_content",
         &Binary::insert_content,
-        "Add some datas in the binary")
+        "Add some data in the binary")
 
     .def("strip",
         &Binary::strip,

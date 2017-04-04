@@ -75,7 +75,7 @@ As example, we will use a basic *crackme* which performs a :manpage:`memcmp(3)` 
 
   }
 
-The flag is *xored* with ``0x5C`` to validate the *crackme*, the user have to enter ``Damn_YoU_Got_The_Flag``:
+The flag is *xored* with ``0x5C``. To validate the *crackme*, the user has to enter ``Damn_YoU_Got_The_Flag``:
 
 .. code-block:: console
 
@@ -84,7 +84,7 @@ The flag is *xored* with ``0x5C`` to validate the *crackme*, the user have to en
   $ crackme.bin Damn_YoU_Got_The_Flag
   You got it !!
 
-The hook will consist to print arguments of ``memcmp`` and to return ``0``:
+The hook will consist in printing arguments of ``memcmp`` and returning ``0``:
 
 .. code-block:: cpp
 
@@ -168,7 +168,7 @@ And rebuild it:
 Run
 ~~~
 
-As a check on the input size is perform before checking the flag value, we have to provide an input with the correct length (no matter its content):
+As a check on the input size is performed before checking the flag value, we have to provide an input with the correct length (no matter its content):
 
 .. code-block:: console
 

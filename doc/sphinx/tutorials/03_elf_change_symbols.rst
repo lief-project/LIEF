@@ -8,18 +8,18 @@ Scripts and materials are available here: `materials <https://github.com/lief-pr
 -----
 
 When a binary in linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the
-dynamic table and the functions needed are register in the dynamic symbols table with the following attributes:
+dynamic table and the needed functions needed are registered in the dynamic symbols table with the following attributes:
 
   * :attr:`~lief.ELF.Symbol.value` set to ``0``
   * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
-Similarly, when a library export functions it has a ``DT_SONAME`` entry in the dynamic table and the functions
-exported are register in the dynamic symbols table with the following attributes:
+Similarly, when a library exports functions it has a ``DT_SONAME`` entry in the dynamic table and the functions
+exported are registered in the dynamic symbols table with the following attributes:
 
   * :attr:`~lief.ELF.Symbol.value` set to address of the function in the library
   * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
-Imported and exported functions are abstract by LIEF thus you can iterate over this elements with :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
+Imported and exported functions are abstracted by LIEF thus you can iterate over these elements with :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
 
 .. code-block:: python
 
@@ -31,8 +31,8 @@ Imported and exported functions are abstract by LIEF thus you can iterate over t
   print(library.exported_functions)
 
 
-When analyzing a binary, imported function name are very helpful for the reverse engineering. One solution is to link statically the binary and the library
-another solution is to blow mind the reverser by swapping this symbols.
+When analyzing a binary, imported function names are very helpful for the reverse engineering. One solution is to link statically the binary and the library.
+Another solution is to blow mind the reverser's mind by swapping these symbols.
 
 Take a look at the following code:
 
@@ -72,8 +72,8 @@ Basically, this program takes an integer as argument and performs some computati
 
 
 
-The ``pow`` and ``log`` functions are located in the ``libm.so.6`` library. One interesting tricks to do with LIEF is
-two swap this function **name** with other functions **name**. In this tutorial we will swap with ``cos`` and ``sin`` functions.
+The ``pow`` and ``log`` functions are located in the ``libm.so.6`` library. One interesting trick to do with LIEF is
+to swap this function **name** with other functions **name**. In this tutorial we will swap them with ``cos`` and ``sin`` functions.
 
 First we have to load both the library and the binary:
 
@@ -143,7 +143,7 @@ To do so we export ``LD_LIBRARY_PATH`` to the current directory:
   $ LD_LIBRARY_PATH=. hashme.obf 123
   228886645.836282
 
-If we omit it, it will use the default ``libm`` and hash computation will be done witch ``sin`` and ``cos``:
+If we omit it, it will use the default ``libm`` and hash computation will be done with ``sin`` and ``cos``:
 
 
 .. code-block:: console
@@ -152,7 +152,7 @@ If we omit it, it will use the default ``libm`` and hash computation will be don
   -0.557978
 
 
-One real use case could be to swap symbols in cryptography like OpenSSL. For example ``EVP_DecryptInit`` and ``EVP_EncryptInit`` have the same prototype so we could swapped.
+One real use case could be to swap symbols in cryptographic libraries like OpenSSL. For example ``EVP_DecryptInit`` and ``EVP_EncryptInit`` have the same prototype so we could swap them.
 
 
 
