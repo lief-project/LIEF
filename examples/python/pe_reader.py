@@ -277,7 +277,7 @@ def print_signature(binary):
     print(format_str.format("Issuer:",              issuer_str))
     print(format_str.format("Digest Algorithm:",    oid_to_string(signer_info.digest_algorithm)))
     print(format_str.format("Signature algorithm:", oid_to_string(signer_info.signature_algorithm)))
-    print(format_str.format("Program name:",        signer_info.authenticated_attributes.program_name))
+    print(format_str.format("Program name:",        signer_info.authenticated_attributes.program_name.encode('utf-8')))
     print(format_str.format("Url:",                 signer_info.authenticated_attributes.more_info))
     print("")
 
