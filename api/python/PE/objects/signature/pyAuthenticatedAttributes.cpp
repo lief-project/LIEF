@@ -43,7 +43,9 @@ void init_PE_AuthenticatedAttributes_class(py::module& m) {
         "Return an hash of the signed attributes")
 
     .def_property_readonly("program_name",
-        &AuthenticatedAttributes::program_name,
+        [] (const AuthenticatedAttributes& authenticated_attributes) {
+          return u16tou8(authenticated_attributes.program_name());
+        },
         "Return the program description (if any)")
 
     .def_property_readonly("more_info",
