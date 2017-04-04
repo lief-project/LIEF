@@ -115,7 +115,7 @@ int main(int argc, const char** argv) {
 
 ## Authors
 
-Romain Thomas - [Quarkslab](https://www.quarkslab.com)
+Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://www.quarkslab.com)
 
 ---------------
 
