@@ -263,7 +263,7 @@ def print_signature(binary):
         valid_to_str = "-".join(map(str, crt.valid_to[:3])) + " " + ":".join(map(str, crt.valid_to[3:]))
         print(format_dec.format("Version:",             crt.version))
         print(format_str.format("Serial Number:",       sn_str))
-        print(format_str.format("Signature Alogrithm:", oid_to_string(crt.signature_alogrithm)))
+        print(format_str.format("Signature Algorithm:", oid_to_string(crt.signature_algorithm)))
         print(format_str.format("Valid from:",          valid_from_str))
         print(format_str.format("Valid to:",            valid_to_str))
         print(format_str.format("Issuer:",              crt.issuer))

@@ -50,7 +50,7 @@ class DLL_PUBLIC x509 : public Visitable {
   std::vector<uint8_t> serial_number(void) const;
 
   //! @brief Signature algorithm (OID)
-  oid_t signature_alogrithm(void) const;
+  oid_t signature_algorithm(void) const;
 
   //! @brief Start time of certificate validity
   x509::date_t valid_from(void) const;
