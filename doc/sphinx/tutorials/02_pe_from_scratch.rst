@@ -19,7 +19,7 @@ First we have to create a :class:`~lief.PE.Binary` :
   binary32 = PE.Binary("pe_from_scratch", PE.PE_TYPE.PE32)
 
 The first parameter is the binary's name and the second one is the type: ``PE32`` or ``PE64`` (see :class:`~lief.PE.PE_TYPE`).
-The :class:`~lief.PE.Binary`'s constructor creates automatically :class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`, :class:`~lief.PE.OptionalHeader` and empty :class:`~lief.PE.DataDirectory`.
+The :class:`~lief.PE.Binary`'s constructor creates automatically :class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`, :class:`~lief.PE.OptionalHeader` an empty :class:`~lief.PE.DataDirectory`.
 
 Now that we have a minimal binary, we have to add sections. We will have a first section holding assembly code (``.text``) and a second one containing strings (``.data``):
 
@@ -56,9 +56,9 @@ The **pseudo** assembly code of the ``.text`` section is given in next listing:
     call ExitProcess       ;
 
 
-Instead of pushing strings we have to push the **virtual address** of these strings. In the PE format a section's virtual address is in fact a **relative** virtual address (relative to :attr:`.OptionalHeader.imagebase` when the ASLR is not enabled). By default the :class:`~lief.PE.Binary`'s constructor set the :attr:`~lief.PE.OptionalHeader.imagebase` to ``0x400000``.
+Instead of pushing strings we have to push the **virtual address** of these strings. In the PE format a section's virtual address is in fact a **relative** virtual address (relative to :attr:`.OptionalHeader.imagebase` when the ASLR is not enabled). By default the :class:`~lief.PE.Binary`'s constructor sets the :attr:`~lief.PE.OptionalHeader.imagebase` to ``0x400000``.
 
-As a result, the virtual address of the strings are:
+As a result, the virtual addresses of the strings are:
 
   * **title**: :attr:`~lief.PE.OptionalHeader.imagebase` + :attr:`~lief.PE.Section.virtual_address` + 0 = ``0x402000``
   * **message**: :attr:`~lief.PE.OptionalHeader.imagebase` + :attr:`~lief.PE.Section.virtual_address` + ``len(title)`` = ``0x402010``
@@ -140,7 +140,7 @@ By default the import table is not rebuilt so we have to configure the builder t
   builder.write("pe_from_scratch.exe")
 
 
-You can now enjoy the newly binary created.
+You can now enjoy the newly created binary.
 
 
 
