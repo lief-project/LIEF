@@ -103,7 +103,7 @@ if (LIEF_EXAMPLES)
 
       ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_reader_${PE_NAME}
         ${PYTHON_EXECUTABLE}
-        "${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py \
+        "${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py --all \
         ${PE_PATH}")
     endif()
   endforeach()
