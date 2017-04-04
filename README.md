@@ -14,6 +14,10 @@
   <a href="https://ci.appveyor.com/project/Romain/lief/branch/master">
     <img src="https://ci.appveyor.com/api/projects/status/0ijlcujac5vh8cas/branch/master?svg=true">
   </a>
+  &nbsp;
+  <a href="https://github.com/lief-project/LIEF/releases">
+    <img src="https://img.shields.io/badge/release-0.6.0-brightgreen.svg?style=default">
+  </a>
 
 </p>
 
@@ -113,7 +117,8 @@ int main(int argc, const char** argv) {
 
 Romain Thomas - [Quarkslab](https://www.quarkslab.com)
 
-<hr />
+---------------
+
 <p align="center" >
 <img width="40%" src="http://lief.quarkslab.com/resources/QB-big.png"/>
 </p>
