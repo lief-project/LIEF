@@ -46,6 +46,7 @@ class DLL_PUBLIC TLS : public Visitable {
     TLS(const pe64_tls *header);
     virtual ~TLS(void);
 
+
     TLS(const TLS& copy);
     TLS& operator=(TLS copy);
     void swap(TLS& other);
@@ -58,9 +59,11 @@ class DLL_PUBLIC TLS : public Visitable {
     uint32_t                      characteristics(void) const;
     const std::vector<uint8_t>&   data_template(void) const;
 
+    bool                          has_data_directory(void) const;
     DataDirectory&                directory(void);
     const DataDirectory&          directory(void) const;
 
+    bool                          has_section(void) const;
     Section&                      section(void);
     const Section&                section(void) const;
 

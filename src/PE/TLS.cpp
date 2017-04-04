@@ -26,6 +26,7 @@ namespace PE {
 TLS::~TLS(void) = default;
 
 TLS::TLS(void) :
+  Visitable{},
   callbacks_{},
   VAOfRawData_{std::make_pair<uint64_t>(0, 0)},
   addressof_index_{0},
@@ -121,6 +122,10 @@ uint32_t TLS::characteristics(void) const {
 }
 
 
+bool TLS::has_data_directory(void) const {
+  return this->directory_ != nullptr;
+}
+
 const DataDirectory& TLS::directory(void) const {
   if (this->directory_ != nullptr) {
     return *(this->directory_);
@@ -131,6 +136,11 @@ const DataDirectory& TLS::directory(void) const {
 
 DataDirectory& TLS::directory(void) {
   return const_cast<DataDirectory&>(static_cast<const TLS*>(this)->directory());
+}
+
+
+bool TLS::has_section(void) const {
+  return this->section_ != nullptr;
 }
 
 
@@ -196,14 +206,12 @@ void TLS::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->characteristics());
   visitor.visit(this->data_template());
 
-  try {
+  if (this->has_section()) {
     visitor(this->section());
-  } catch (const not_found&) {
   }
 
-  try {
+  if (this->has_data_directory()) {
     visitor(this->directory());
-  } catch (const not_found&) {
   }
 
   for (uint64_t callback : this->callbacks()) {
@@ -227,16 +235,16 @@ std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   os << std::setw(40) << std::left << std::setfill(' ') << "Address Of Index: "                     << entry.addressof_index()        << std::endl;
   os << std::setw(40) << std::left << std::setfill(' ') << "Address Of Callbacks: "                 << entry.addressof_callbacks()    << std::endl;
 
-  for (auto& value : entry.callbacks_) {
+  for (uint64_t value : entry.callbacks()) {
     os << "\t - " << value << std::endl;
   }
 
-  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (start): "   << entry.VAOfRawData_.first     << std::endl;
-  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (end): "     << entry.VAOfRawData_.second    << std::endl;
+  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (start): "   << entry.addressof_raw_data().first     << std::endl;
+  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (end): "     << entry.addressof_raw_data().second    << std::endl;
   os << std::setw(40) << std::left << std::setfill(' ') << "Size Of Zero Fill: "                    << entry.sizeof_zero_fill()        << std::endl;
 
-  if (entry.section_ != nullptr) {
-    os << std::setw(40) << std::left << std::setfill(' ') << "Associated section: "                 << entry.section_->name() << std::endl;
+  if (entry.has_section()) {
+    os << std::setw(40) << std::left << std::setfill(' ') << "Associated section: "                 << entry.section().name() << std::endl;
   }
   return os;
 }
