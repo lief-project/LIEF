@@ -93,7 +93,7 @@ deploy:
   description: 'LIEF Release'
   provider: GitHub
   auth_token:
-    secure: /E98F7KrqAh/p8WNIaVkdEh+MCBFeEBtu6Zm+YL4YyQ=
+    secure: 43jcERaM223s4Df8Ue8Drl0p1zdB4plL7iAAEftaTCSpZPHQY30mhGQYsWo
   artifact: '*.zip,api\python\dist\*.zip'
   draft: false
   prerelease: false
