@@ -1391,6 +1391,23 @@ bool Binary::has_dynamic_entry(DYNAMIC_TAGS tag) const {
   return true;
 }
 
+
+void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
+  for (size_t i = 0; i < permutation.size(); ++i) {
+    if (this->dynamic_symbols_[i]->has_version() and this->dynamic_symbols_[permutation[i]]->has_version()) {
+      std::swap(this->symbol_version_table_[i], this->symbol_version_table_[permutation[i]]);
+      std::swap(this->dynamic_symbols_[i], this->dynamic_symbols_[permutation[i]]);
+    } else if (not this->dynamic_symbols_[i]->has_version() and not this->dynamic_symbols_[permutation[i]]->has_version()) {
+      std::swap(this->dynamic_symbols_[i], this->dynamic_symbols_[permutation[i]]);
+    } else if (permutation[i] == i) {
+      continue;
+    } else {
+      LOG(ERROR) << "Can't apply permutation at index " << std::dec << i;
+    }
+
+  }
+}
+
 LIEF::Header Binary::get_abstract_header(void) const {
   LIEF::Header header;
   const std::pair<ARCHITECTURES, std::set<MODES>>& am = this->get_header().abstract_architecture();
@@ -1401,6 +1418,8 @@ LIEF::Header Binary::get_abstract_header(void) const {
 
   return header;
 }
+
+
 
 
 void Binary::accept(LIEF::Visitor&) const {
