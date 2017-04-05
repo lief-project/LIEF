@@ -66,7 +66,7 @@ set(LIBJSON_SOURCE_DIR ${SOURCE_DIR})
 set(LIBRANG_GIT_URL "https://github.com/agauniyal/rang.git" CACHE STRING "URL to the Rang lib repo")
 ExternalProject_Add(rang_cpp_color
   GIT_REPOSITORY    ${LIBRANG_GIT_URL}
-  GIT_TAG           master
+  GIT_TAG           7f2143809b9ac90a1a8a2e779fb357d8709448c2
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
@@ -183,7 +183,7 @@ set(ELG_GIT_URL "https://github.com/easylogging/easyloggingpp.git" CACHE STRING 
 ExternalProject_Add(easyloggingpp
   GIT_REPOSITORY    ${ELG_GIT_URL}
   #GIT_TAG           "v9.83"
-  GIT_TAG           "master"
+  GIT_TAG           4e9757660072a84b2c76d9230b3c578a3a6f5afb
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
