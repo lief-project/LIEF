@@ -258,6 +258,7 @@ configure_file(
 
 set (LIEF_PUBLIC_INCLUDE_DIR
   ${CMAKE_CURRENT_SOURCE_DIR}/include/
+  ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/
   ${CMAKE_CURRENT_BINARY_DIR}/include/
   ${LIBJSON_SOURCE_DIR}/src/)
 
