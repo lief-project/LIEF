@@ -6,12 +6,14 @@ if (NOT LIEF_ELF OR NOT LIEF_PE OR NOT LIEF_MACHO)
   message(FATAL_ERROR "Tests require all LIEF's modules activated" )
 endif()
 
-set(LIEF_EXAMPLES_DIRECTORY  ${PROJECT_SOURCE_DIR}/examples)
-set(LIEF_EXAMPLES_BINARY_DIR ${PROJECT_BINARY_DIR}/examples)
-set(LIEF_SAMPLES_DIRECTORY   ${CMAKE_CURRENT_SOURCE_DIR}/samples)
+set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
+set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
+set(LIEF_SAMPLES_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/samples")
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.yaml.in
-  "${CMAKE_CURRENT_BINARY_DIR}/config.yaml" @ONLY)
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/config.yaml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/config.yaml"
+  @ONLY)
 
 add_definitions(-DPATH_TO_CONFIG="${CMAKE_CURRENT_BINARY_DIR}")
 add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
@@ -64,7 +66,7 @@ endif()
 # Catch
 # =====
 
-set(CATCH_PREFIX  ${CMAKE_CURRENT_BINARY_DIR}/catch)
+set(CATCH_PREFIX  "${CMAKE_CURRENT_BINARY_DIR}/catch")
 set(CATCH_GIT_URL https://github.com/philsquared/Catch.git CACHE STRING "URL to the Catch repo")
 
 ExternalProject_Add(catch
@@ -78,14 +80,14 @@ ExternalProject_Add(catch
     LOG_DOWNLOAD ON
 )
 ExternalProject_Get_Property(catch source_dir)
-set(CATCH_INCLUDE_DIR ${source_dir}/include CACHE INTERNAL "Path to include folder for Catch")
+set(CATCH_INCLUDE_DIR "${source_dir}/include" CACHE INTERNAL "Path to include folder for Catch")
 
 
 # Dirent
 # ======
 set(DIRENT_INCLUDE_DIR "")
 if (WIN32)
-  set(DIRENT_PREFIX  ${CMAKE_CURRENT_BINARY_DIR}/dirent)
+  set(DIRENT_PREFIX  "${CMAKE_CURRENT_BINARY_DIR}/dirent")
   set(DIRENT_GIT_URL https://github.com/tronkko/dirent.git CACHE STRING "URL to the dirent repo")
 
   ExternalProject_Add(dirent
@@ -100,7 +102,7 @@ if (WIN32)
   )
 
   ExternalProject_Get_Property(dirent source_dir)
-  set(DIRENT_INCLUDE_DIR ${source_dir}/include CACHE INTERNAL "Path to include folder for dirent")
+  set(DIRENT_INCLUDE_DIR "${source_dir}/include" CACHE INTERNAL "Path to include folder for dirent")
 endif()
 
 
@@ -147,9 +149,9 @@ if(UNIX AND NOT APPLE)
   set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
   set(MELKOR_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
   ExternalProject_Add(MELKOR
-   PREFIX         ${MELKOR_PREFIX}
-   GIT_REPOSITORY ${MELKOR_REPO}
-   INSTALL_DIR    ${MELKOR_INSTALL_DIR}
+   PREFIX            ${MELKOR_PREFIX}
+   GIT_REPOSITORY    ${MELKOR_REPO}
+   INSTALL_DIR       ${MELKOR_INSTALL_DIR}
    UPDATE_COMMAND    ""
    CONFIGURE_COMMAND ""
    INSTALL_COMMAND   ""
@@ -157,13 +159,13 @@ if(UNIX AND NOT APPLE)
    BUILD_IN_SOURCE   ON)
 
   ExternalProject_get_property(MELKOR SOURCE_DIR)
-  set(MELKOR_BINARY ${SOURCE_DIR}/melkor)
+  set(MELKOR_BINARY "${SOURCE_DIR}/melkor")
   message(STATUS "${MELKOR_BINARY}")
 endif()
 
 # Tests
 # =====
-add_executable(test_iterators ${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp)
+add_executable(test_iterators "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
 
 if (MSVC)
   target_compile_options(test_iterators PUBLIC /FIiso646.h)
@@ -191,8 +193,10 @@ add_test(test_iterators ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
 # Python
 # ======
 if(WIN32)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_python_test.bat.in
-  "${CMAKE_CURRENT_BINARY_DIR}/run_python_test.bat" @ONLY)
+  configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/run_python_test.bat.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/run_python_test.bat"
+  @ONLY)
 endif()
 
 macro(ADD_PYTHON_TEST name command)
@@ -280,6 +284,6 @@ endif()
 
 enable_testing()
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/elf)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pe)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/macho)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/elf")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")

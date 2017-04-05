@@ -25,52 +25,52 @@ set(LIEF_CPP_EXAMPLES
 )
 
 if (LIEF_ELF)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_ELF_CPP_EXAMPLES})
+  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_ELF_CPP_EXAMPLES}")
 endif()
 
 
 if (LIEF_PE)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_PE_CPP_EXAMPLES})
+  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_PE_CPP_EXAMPLES}")
 endif()
 
 
 if (LIEF_MACHO)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_MACHO_CPP_EXAMPLES})
+  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_MACHO_CPP_EXAMPLES}")
 endif()
 
 
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
-  add_executable(${output_name} ${example})
-  add_executable(${output_name}_shared ${example})
+  add_executable("${output_name}"        "${example}")
+  add_executable("${output_name}_shared" "${example}")
 
   # Don't use default include dir
-  set_property(TARGET ${output_name} ${output_name}_shared PROPERTY INCLUDE_DIRECTORIES "")
+  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY INCLUDE_DIRECTORIES "")
 
   if (MSVC)
-    target_compile_options(${output_name}        PUBLIC /FIiso646.h)
-    target_compile_options(${output_name}_shared PUBLIC /FIiso646.h)
+    target_compile_options("${output_name}"        PUBLIC /FIiso646.h)
+    target_compile_options("${output_name}_shared" PUBLIC /FIiso646.h)
 
-	  target_compile_options(${output_name}_shared PUBLIC /MT)
-	  set_property(TARGET ${output_name} ${output_name}_shared PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+	  target_compile_options("${output_name}_shared" PUBLIC /MT)
+	  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
   endif()
 
-  set_property(TARGET ${output_name} ${output_name}_shared PROPERTY CXX_STANDARD           11)
-  set_property(TARGET ${output_name} ${output_name}_shared PROPERTY CXX_STANDARD_REQUIRED  ON)
+  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY CXX_STANDARD           11)
+  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY CXX_STANDARD_REQUIRED  ON)
 
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (UNIX)
       if (LIEF_FORCE32)
-        target_compile_options(${output_name} PRIVATE -m32)
-        target_compile_options(${output_name}_shared PRIVATE -m32)
+        target_compile_options("${output_name}"        PRIVATE -m32)
+        target_compile_options("${output_name}_shared" PRIVATE -m32)
 
-        set_property(TARGET ${output_name} PROPERTY LINK_FLAGS -m32)
-        set_property(TARGET ${output_name}_shared PROPERTY LINK_FLAGS -m32)
+        set_property(TARGET "${output_name}"        PROPERTY LINK_FLAGS -m32)
+        set_property(TARGET "${output_name}_shared" PROPERTY LINK_FLAGS -m32)
       endif()
     endif()
   endif()
 
-  target_link_libraries(${output_name}        PUBLIC LIB_LIEF_STATIC)
-  target_link_libraries(${output_name}_shared PUBLIC LIB_LIEF_SHARED)
+  target_link_libraries("${output_name}"        PUBLIC LIB_LIEF_STATIC)
+  target_link_libraries("${output_name}_shared" PUBLIC LIB_LIEF_SHARED)
 endforeach()
 

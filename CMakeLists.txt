@@ -58,7 +58,7 @@ ExternalProject_Add(libjson
   INSTALL_COMMAND   "")
 
 ExternalProject_get_property(libjson SOURCE_DIR)
-set(LIBJSON_SOURCE_DIR ${SOURCE_DIR})
+set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # Rang
@@ -72,14 +72,14 @@ ExternalProject_Add(rang_cpp_color
   INSTALL_COMMAND   "")
 
 ExternalProject_get_property(rang_cpp_color SOURCE_DIR)
-set(LIBRANG_SOURCE_DIR ${SOURCE_DIR})
+set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # mbed TLS
 # --------
 set(MBED_TLS_TAG mbedtls-2.4.0)
 set(MBED_TLS_GIT_URL "https://github.com/ARMmbed/mbedtls.git" CACHE STRING "URL to MbedTLS")
-set(MBED_TLS_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/mbed_tls)
+set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
 
 ExternalProject_Add(mbed_tls
@@ -93,87 +93,87 @@ ExternalProject_Add(mbed_tls
   BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
 
 ExternalProject_get_property(mbed_tls SOURCE_DIR)
-set(MBEDTLS_SOURCE_DIR ${SOURCE_DIR})
+set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
 set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
 
 set(mbedtls_src_crypto
-    ${MBEDTLS_SOURCE_DIR}/library/aes.c
-    ${MBEDTLS_SOURCE_DIR}/library/aesni.c
-    ${MBEDTLS_SOURCE_DIR}/library/arc4.c
-    ${MBEDTLS_SOURCE_DIR}/library/asn1parse.c
-    ${MBEDTLS_SOURCE_DIR}/library/asn1write.c
-    ${MBEDTLS_SOURCE_DIR}/library/base64.c
-    ${MBEDTLS_SOURCE_DIR}/library/bignum.c
-    ${MBEDTLS_SOURCE_DIR}/library/blowfish.c
-    ${MBEDTLS_SOURCE_DIR}/library/camellia.c
-    ${MBEDTLS_SOURCE_DIR}/library/ccm.c
-    ${MBEDTLS_SOURCE_DIR}/library/cipher.c
-    ${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c
-    ${MBEDTLS_SOURCE_DIR}/library/cmac.c
-    ${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c
-    ${MBEDTLS_SOURCE_DIR}/library/des.c
-    ${MBEDTLS_SOURCE_DIR}/library/dhm.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecdh.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecdsa.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecjpake.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecp.c
-    ${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c
-    ${MBEDTLS_SOURCE_DIR}/library/entropy.c
-    ${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c
-    ${MBEDTLS_SOURCE_DIR}/library/error.c
-    ${MBEDTLS_SOURCE_DIR}/library/gcm.c
-    ${MBEDTLS_SOURCE_DIR}/library/havege.c
-    ${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c
-    ${MBEDTLS_SOURCE_DIR}/library/md.c
-    ${MBEDTLS_SOURCE_DIR}/library/md2.c
-    ${MBEDTLS_SOURCE_DIR}/library/md4.c
-    ${MBEDTLS_SOURCE_DIR}/library/md5.c
-    ${MBEDTLS_SOURCE_DIR}/library/md_wrap.c
-    ${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c
-    ${MBEDTLS_SOURCE_DIR}/library/oid.c
-    ${MBEDTLS_SOURCE_DIR}/library/padlock.c
-    ${MBEDTLS_SOURCE_DIR}/library/pem.c
-    ${MBEDTLS_SOURCE_DIR}/library/pk.c
-    ${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs12.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs5.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkparse.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkwrite.c
-    ${MBEDTLS_SOURCE_DIR}/library/platform.c
-    ${MBEDTLS_SOURCE_DIR}/library/ripemd160.c
-    ${MBEDTLS_SOURCE_DIR}/library/rsa.c
-    ${MBEDTLS_SOURCE_DIR}/library/sha1.c
-    ${MBEDTLS_SOURCE_DIR}/library/sha256.c
-    ${MBEDTLS_SOURCE_DIR}/library/sha512.c
-    ${MBEDTLS_SOURCE_DIR}/library/threading.c
-    ${MBEDTLS_SOURCE_DIR}/library/timing.c
-    ${MBEDTLS_SOURCE_DIR}/library/version.c
-    ${MBEDTLS_SOURCE_DIR}/library/version_features.c
-    ${MBEDTLS_SOURCE_DIR}/library/xtea.c
+    "${MBEDTLS_SOURCE_DIR}/library/aes.c"
+    "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
+    "${MBEDTLS_SOURCE_DIR}/library/arc4.c"
+    "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
+    "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
+    "${MBEDTLS_SOURCE_DIR}/library/base64.c"
+    "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
+    "${MBEDTLS_SOURCE_DIR}/library/blowfish.c"
+    "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
+    "${MBEDTLS_SOURCE_DIR}/library/des.c"
+    "${MBEDTLS_SOURCE_DIR}/library/dhm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecdh.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecdsa.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecjpake.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecp.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c"
+    "${MBEDTLS_SOURCE_DIR}/library/entropy.c"
+    "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
+    "${MBEDTLS_SOURCE_DIR}/library/error.c"
+    "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/havege.c"
+    "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md2.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md4.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md5.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md_wrap.c"
+    "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
+    "${MBEDTLS_SOURCE_DIR}/library/oid.c"
+    "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pem.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pk.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkcs12.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkcs5.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
+    "${MBEDTLS_SOURCE_DIR}/library/platform.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
+    "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
+    "${MBEDTLS_SOURCE_DIR}/library/threading.c"
+    "${MBEDTLS_SOURCE_DIR}/library/timing.c"
+    "${MBEDTLS_SOURCE_DIR}/library/version.c"
+    "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
+    "${MBEDTLS_SOURCE_DIR}/library/xtea.c"
 )
 
 set(mbedtls_src_x509
-    ${MBEDTLS_SOURCE_DIR}/library/certs.c
-    ${MBEDTLS_SOURCE_DIR}/library/pkcs11.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_create.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_crl.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_crt.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509_csr.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509write_crt.c
-    ${MBEDTLS_SOURCE_DIR}/library/x509write_csr.c
+    "${MBEDTLS_SOURCE_DIR}/library/certs.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkcs11.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509_create.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509_crl.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509_crt.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509_csr.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509write_crt.c"
+    "${MBEDTLS_SOURCE_DIR}/library/x509write_csr.c"
 )
 
 set(mbedtls_src_tls
-    ${MBEDTLS_SOURCE_DIR}/library/debug.c
-    ${MBEDTLS_SOURCE_DIR}/library/net_sockets.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c
-    ${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c
+    "${MBEDTLS_SOURCE_DIR}/library/debug.c"
+    "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
 )
 
 
@@ -189,7 +189,7 @@ ExternalProject_Add(easyloggingpp
   INSTALL_COMMAND   "")
 
 ExternalProject_get_property(easyloggingpp SOURCE_DIR)
-set(ELG_SOURCE_DIR ${SOURCE_DIR}/src)
+set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
 
 
 
@@ -201,50 +201,50 @@ set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.cc PROPERTIES GENERATED TRUE)
 
 set(LIEF_SRC
-  ${ELG_SOURCE_DIR}/easylogging++.cc
-  ${mbedtls_src_crypto}
-  ${mbedtls_src_x509}
-  ${mbedtls_src_tls}
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Visitable.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp)
+  "${ELG_SOURCE_DIR}/easylogging++.cc"
+  "${mbedtls_src_crypto}"
+  "${mbedtls_src_x509}"
+  "${mbedtls_src_tls}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitable.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
 set(LIEF_ABSTRACT_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Binary.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Symbol.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/EnumToString.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Header.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Parser.cpp)
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Binary.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Symbol.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/EnumToString.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Header.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Parser.cpp")
 
 
 
 set(LIBLIEF_SOURCE_FILES
-  ${LIEF_SRC}
-  ${LIEF_ABSTRACT_SRC})
+  "${LIEF_SRC}"
+  "${LIEF_ABSTRACT_SRC}")
 
-add_library(LIB_LIEF_STATIC STATIC ${LIBLIEF_SOURCE_FILES}) # Static one
-add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES}) # Shared one
+add_library(LIB_LIEF_STATIC STATIC "${LIBLIEF_SOURCE_FILES}") # Static one
+add_library(LIB_LIEF_SHARED SHARED "${LIBLIEF_SOURCE_FILES}") # Shared one
 
 
 if (LIEF_ELF)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
 endif()
 
 if (LIEF_PE)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
 endif()
 
 if (LIEF_MACHO)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
 endif()
 
 
@@ -252,21 +252,21 @@ endif()
 # =============
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/version.h
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/version.h"
 )
 
 set (LIEF_PUBLIC_INCLUDE_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/
-  ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/
-  ${CMAKE_CURRENT_BINARY_DIR}/include/
-  ${LIBJSON_SOURCE_DIR}/src/)
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/"
+  "${LIBJSON_SOURCE_DIR}/src/")
 
 set(LIEF_PRIVATE_INCLUDE_DIR
-  ${LIEF_PUBLIC_INCLUDE_DIR}
-  ${LIBRANG_SOURCE_DIR}/include
-  ${ELG_SOURCE_DIR}/
-  ${MBEDTLS_INCLUDE_DIRS})
+  "${LIEF_PUBLIC_INCLUDE_DIR}"
+  "${LIBRANG_SOURCE_DIR}/include"
+  "${ELG_SOURCE_DIR}/"
+  "${MBEDTLS_INCLUDE_DIRS}")
 
 # Library definition
 # ==================
@@ -284,12 +284,12 @@ if (LIEF_MACHO)
 endif()
 
 target_include_directories(LIB_LIEF_STATIC
-  PUBLIC  ${LIEF_PUBLIC_INCLUDE_DIR}
-  PRIVATE ${LIEF_PRIVATE_INCLUDE_DIR})
+  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
+  PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 target_include_directories(LIB_LIEF_SHARED
-  PUBLIC  ${LIEF_PUBLIC_INCLUDE_DIR}
-  PRIVATE ${LIEF_PRIVATE_INCLUDE_DIR})
+  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
+  PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 
 add_dependencies(LIB_LIEF_STATIC libjson)
@@ -419,7 +419,7 @@ if (LIEF_PYTHON_API)
   else()
     set(PYTHON_BUILD_LIEF_DIRECTORY "${CMAKE_BINARY_DIR}/api/python")
   endif()
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/api/python)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api/python")
 endif()
 
 # C API
@@ -428,53 +428,52 @@ if(LIEF_C_API)
 
   # ELF
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/enums.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/enums.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.h"
     @ONLY
   )
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/structures.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/structures.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/structures.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/structures.h"
     @ONLY
   )
 
   # PE
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/enums.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/enums.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/enums.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/enums.h"
     @ONLY
   )
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/structures.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/structures.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/structures.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/structures.h"
     @ONLY
   )
-
 
   # MachO
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/enums.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/enums.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.h"
     @ONLY
   )
 
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/structures.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/structures.h
+    "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/structures.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/structures.h"
     @ONLY
   )
 
   target_include_directories(LIB_LIEF_STATIC
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include)
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include")
 
   target_include_directories(LIB_LIEF_SHARED
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include)
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include")
 
-  include(${CMAKE_CURRENT_SOURCE_DIR}/api/c/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/api/c/CMakeLists.txt")
 endif()
 
 
@@ -482,10 +481,10 @@ endif()
 # Examples
 # ========
 if(LIEF_EXAMPLES)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/cpp)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/examples/cpp")
 
   if (LIEF_C_API)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/examples/c)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/examples/c")
   endif()
 endif()
 
@@ -493,7 +492,7 @@ endif()
 # =====
 if(LIEF_TESTS)
   enable_testing()
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests")
   add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure)
 endif()
 
@@ -545,7 +544,7 @@ install(
   FILES_MATCHING REGEX "(.*).(hpp|h|def)$")
 
 # Package
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/package)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")
 
 
 
