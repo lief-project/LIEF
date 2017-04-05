@@ -3,7 +3,7 @@
 #
 # Description
 # -----------
-# Print informations about a PE file
+# Print information about a PE file
 
 import lief
 from lief import PE

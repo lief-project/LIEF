@@ -45,25 +45,25 @@ ExternalProject_Add(pybind11
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
 ExternalProject_get_property(pybind11 SOURCE_DIR)
-set(PYBIND11_SOURCE_DIR ${SOURCE_DIR})
+set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # Define source files
 set(LIEF_PYTHON_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pyJson.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyJson.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp"
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyBinary.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyHeader.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySection.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyParser.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySymbol.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract/pyEnums.cpp
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyBinary.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyHeader.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySection.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyParser.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySymbol.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/pyEnums.cpp"
 )
 
 
@@ -71,23 +71,23 @@ add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC})
 
 
 target_include_directories(pyLIEF PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/
-  ${CMAKE_CURRENT_SOURCE_DIR}/Abstract
-  ${PYTHON_INCLUDE_DIR}
-  ${PYBIND11_SOURCE_DIR}/include)
+  "${CMAKE_CURRENT_SOURCE_DIR}/"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract"
+  "${PYTHON_INCLUDE_DIR}"
+  "${PYBIND11_SOURCE_DIR}/include")
 
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
 
 if(LIEF_ELF)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/ELF/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/ELF/CMakeLists.txt")
 endif()
 
 if(LIEF_PE)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/PE/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/PE/CMakeLists.txt")
 endif()
 
 if(LIEF_MACHO)
-  include(${CMAKE_CURRENT_SOURCE_DIR}/MachO/CMakeLists.txt)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/MachO/CMakeLists.txt")
 endif()
 
 
