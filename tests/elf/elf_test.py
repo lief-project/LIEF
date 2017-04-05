@@ -1,11 +1,24 @@
 #!/usr/bin/env python
 import unittest
 import lief
+import tempfile
+import sys
+import subprocess
+import stat
+import os
+import logging
+import random
+
+
+from subprocess import Popen
 
 from unittest import TestCase
 from utils import get_sample
 
 class TestELF(TestCase):
+
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
 
     def test_rpath(self):
         etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
@@ -59,6 +72,41 @@ class TestELF(TestCase):
                 0x12F7C433, 0xEB01FAB6, 0xECD54543, 0xAD3C9892, 0x72632CCF, 0x12F7A2B3, 0x7C92E3BB, 0x7C96F087]
         self.assertEqual(hash_values, hash_values_test)
 
+    def test_permutation(self):
+        samples = [
+                "ELF/ELF64_x86-64_binary_ls.bin",
+                "ELF/ELF64_x86-64_binary_gcc.bin",
+                "ELF/ELF64_x86-64_binary_openssl.bin",
+        ]
+        tmp_dir = tempfile.mkdtemp(suffix='_lief_test_permutation')
+        for sample in samples:
+            binary = lief.parse(get_sample(sample))
+            dynamic_symbols = binary.dynamic_symbols
+
+            gnu_hash_table = binary.gnu_hash
+
+            idx = gnu_hash_table.symbol_index
+
+            permutation = [i for i in range(1, len(dynamic_symbols))]
+            random.shuffle(permutation)
+            permutation = [0] + permutation
+
+            builder = lief.ELF.Builder(binary)
+            builder.empties_gnuhash(True)
+            builder.build()
+            output = os.path.join(tmp_dir, "{}.permutated".format(binary.name))
+            binary.write(output)
+            if not sys.platform.startswith("linux"):
+                return
+
+            st = os.stat(output)
+            os.chmod(output, st.st_mode | stat.S_IEXEC)
+
+            p = Popen([output, "--help"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, _ = p.communicate()
+            self.logger.debug(stdout.decode("utf8"))
+            self.assertEqual(p.returncode, 0)
+
 
 
 
@@ -68,5 +116,13 @@ class TestELF(TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(verbosity = 2)
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    root_logger.addHandler(ch)
+
+    unittest.main(verbosity=2)
 

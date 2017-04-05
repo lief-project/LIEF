@@ -198,6 +198,10 @@ void init_ELF_Binary_class(py::module& m) {
         &Binary::strip,
         "Strip the binary")
 
+    .def("permute_dynamic_symbols",
+        &Binary::permute_dynamic_symbols,
+        "Apply the given permutation on the dynamic symbols table")
+
     .def("write",
         &Binary::write,
         "Rebuild the binary and write it in a file",

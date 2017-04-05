@@ -97,7 +97,6 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_symbols                             get_dynamic_symbols(void);
     it_const_symbols                       get_dynamic_symbols(void) const;
 
-
     //! @brief Return symbols which are exported by the binary
     it_exported_symbols                    get_exported_symbols(void);
     it_const_exported_symbols              get_exported_symbols(void) const;
@@ -345,6 +344,12 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Method so that the ``visitor`` can visit us
     virtual void accept(LIEF::Visitor& visitor) const override;
+
+    //! @brief Apply the given permutation on the dynamic symbols table
+    //!
+    //! To avoid override by the ELF::Builder, one should set ELF::Builder::empties_gnuhash
+    //! to ``true``
+    void permute_dynamic_symbols(const std::vector<size_t>& permutation);
 
     size_t hash(const std::string& name);
 
