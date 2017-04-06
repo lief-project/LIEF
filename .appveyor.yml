@@ -1,10 +1,10 @@
-version: 0.4.{build}
+version: 0.6.{build}
 image: Visual Studio 2015
 clone_folder: c:\projects\lief
 
 configuration: Release
 
-clone_depth: 5
+clone_depth: 3
 
 platform:
 - x86
@@ -75,10 +75,9 @@ build_script:
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
 
-#test_script:
-# - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
+test_script:
+ - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
 
-#after_test:
 after_build:
   - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
   - cd api\python
@@ -91,7 +90,7 @@ artifacts:
 
 
 deploy:
-  description: 'LIEF Release'
+  description: "LIEF version $(APPVEYOR_REPO_TAG_NAME)"
   provider: GitHub
   auth_token:
     secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
