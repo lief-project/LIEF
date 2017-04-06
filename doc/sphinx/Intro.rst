@@ -23,7 +23,7 @@ The global architecture looks like this:
 
 In the architecture, each format has its own *namespace*, parser and builder.
 The parser takes a binary, library... as input and decomposes in LIEF object.
-For instance, the ``ELF``  format has segments, so ``ELF::Parser`` will parse segments to create ``ELF::Segment``. In the ``ELF::Binary`` class we will have a list of ``ELF::Segement`` which can be modified (change type, size, content...). Then the ``ELF::Builder`` will transform ``ELF::Binary`` into a valid executable.
+For instance, the ``ELF``  format has segments, so ``ELF::Parser`` will parse segments to create ``ELF::Segment``. In the ``ELF::Binary`` class we will have a list of ``ELF::Segment`` which can be modified (change type, size, content...). Then the ``ELF::Builder`` will transform ``ELF::Binary`` into a valid executable.
 
 This process can be summed up in the following figure:
 

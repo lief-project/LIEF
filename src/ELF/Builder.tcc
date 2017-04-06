@@ -61,7 +61,7 @@ void Builder::build(void) {
   if (this->binary_->get_header().program_headers_offset() > 0) {
     this->build_segments<ELF_T>();
   } else {
-    LOG(WARNING) << "Segements offset is null";
+    LOG(WARNING) << "Segments offset is null";
   }
 
   this->build_sections<ELF_T>();
