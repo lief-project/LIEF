@@ -75,10 +75,11 @@ build_script:
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
 
-test_script:
-  - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
+#test_script:
+# - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
 
-after_test:
+#after_test:
+after_build:
   - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
   - cd api\python
   - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
@@ -93,7 +94,7 @@ deploy:
   description: 'LIEF Release'
   provider: GitHub
   auth_token:
-    secure: 43jcERaM223s4Df8Ue8Drl0p1zdB4plL7iAAEftaTCSpZPHQY30mhGQYsWo
+    secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
   artifact: '*.zip,api\python\dist\*.zip'
   draft: false
   prerelease: false
