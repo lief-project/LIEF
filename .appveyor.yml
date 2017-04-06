@@ -87,7 +87,10 @@ after_build:
 
 artifacts:
   - path: '*.zip'
+  - name: SDK
+
   - path: 'api\python\dist\*.zip'
+  - name: PythonAPI
 
 
 deploy:
@@ -95,7 +98,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
-  artifact: '*.zip,api\python\dist\*.zip'
+  artifact: SDK,PythonAPI
   draft: false
   prerelease: false
   force_update: true
