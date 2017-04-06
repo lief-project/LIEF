@@ -38,7 +38,7 @@ void init_ELF_GnuHash_class(py::module& m) {
 
     .def_property_readonly("symbol_index",
       &GnuHash::symbol_index,
-      "Index of the first symbol in the dynamic symbols table which accessible with the hash table")
+      "Index of the first symbol in the dynamic symbols table which is accessible with the hash table")
 
     .def_property_readonly("shift2",
       &GnuHash::shift2,
