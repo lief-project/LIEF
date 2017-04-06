@@ -56,14 +56,6 @@ DylinkerCommand
 
 ----------
 
-DynamicSymbol
-*************
-
-.. doxygenclass:: LIEF::MachO::DynamicSymbol
-   :project: lief
-
-
-----------
 
 DynamicSymbolCommand
 ********************
