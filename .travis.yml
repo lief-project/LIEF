@@ -78,7 +78,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PREFIX="/usr/local"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
 
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PYTHON_CONFIGURE_OPTS="--enable-shared"; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs2"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv root; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv install --list  ;fi
 
