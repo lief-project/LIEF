@@ -121,6 +121,17 @@ Symbol Version Auxiliary
 
 ----------
 
+GNU Hash table
+**************
+
+.. autoclass:: lief.ELF.GnuHash
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Builder
 *******
 
