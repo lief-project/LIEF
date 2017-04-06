@@ -88,7 +88,7 @@ before_install:
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/2.7.12/include/python2.7  ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/2.7.12/lib/libpython2.7.dylib ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/2.7.20/bin/python2.7           ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/2.7.12/bin/python2.7           ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then $PYTHON_BINARY -m pip install --upgrade pip                                ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then $PYTHON_BINARY -m pip install --upgrade setuptools                         ;fi
 
