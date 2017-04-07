@@ -28,6 +28,7 @@
 
 
 #include "LIEF/MachO/BinaryParser.hpp"
+#include "LIEF/MachO/EncryptionInfoCommand.hpp"
 #include "BinaryParser.tcc"
 
 #include "LIEF/MachO/utils.hpp"
