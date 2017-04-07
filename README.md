@@ -16,7 +16,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.6.0-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.6.1-brightgreen.svg?style=default">
   </a>
 
 </p>
@@ -29,6 +29,13 @@ Main features:
   * **Modify**: LIEF enables to modify some parts of these formats
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
   * **API**: LIEF can be used in C, C++ and Python
+
+
+## Downloads / Install
+
+Pre-built packages are automatically generated and uploaded by continuous integration services.
+
+Latest version can be downloaded in [Release](https://github.com/lief-project/LIEF/releases) section.
 
 ## Getting started
 
