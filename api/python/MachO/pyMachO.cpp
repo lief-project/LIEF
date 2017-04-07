@@ -34,6 +34,7 @@ void init_MachO_module(py::module& m) {
   init_MachO_SegmentCommand_class(LIEF_MachO_module);
   init_MachO_Section_class(LIEF_MachO_module);
   init_MachO_Symbol_class(LIEF_MachO_module);
+  init_MachO_EncryptionInfoCommand_class(LIEF_MachO_module);
 
 
   // Enums
