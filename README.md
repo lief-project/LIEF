@@ -31,7 +31,7 @@ Main features:
   * **API**: LIEF can be used in C, C++ and Python
 
 
-## Downloads / Install
+## Downloads / Install
 
 Pre-built packages are automatically generated and uploaded by continuous integration services.
 
