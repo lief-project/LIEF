@@ -36,24 +36,21 @@ void init_MachO_EncryptionInfoCommand_class(py::module& m) {
     .def_property("cryptoff",
         static_cast<getter_t<uint32_t>>(&EncryptionInfoCommand::crypt_offset),
         static_cast<setter_t<uint32_t>>(&EncryptionInfoCommand::crypt_offset),
-        "Crypto chunk offset",
-        py::return_value_policy::reference_internal)
+        "Crypto chunk offset")
 
     .def_property("cryptsize",
         static_cast<getter_t<uint32_t>>(&EncryptionInfoCommand::crypt_size),
         static_cast<setter_t<uint32_t>>(&EncryptionInfoCommand::crypt_size),
-        "Crypto chunk size",
-        py::return_value_policy::reference_internal)
+        "Crypto chunk size")
     .def_property("cryptid",
         static_cast<getter_t<uint32_t>>(&EncryptionInfoCommand::crypt_id),
         static_cast<setter_t<uint32_t>>(&EncryptionInfoCommand::crypt_id),
-        "Crypto ID",
-        py::return_value_policy::reference_internal)
+        "Crypto ID")
     .def("__eq__", &EncryptionInfoCommand::operator==)
     .def("__ne__", &EncryptionInfoCommand::operator!=)
     .def("__hash__",
-        [] (const EncryptionInfoCommand& dylib_command) {
-          return LIEF::Hash::hash(dylib_command);
+        [] (const EncryptionInfoCommand& encryption_info_command) {
+          return LIEF::Hash::hash(encryption_info_command);
         })
 
 
