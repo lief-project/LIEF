@@ -1,4 +1,5 @@
 /* Copyright 2017 Zhang
+ * Copyright 2017 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +32,16 @@ EncryptionInfoCommand::EncryptionInfoCommand(const encryption_info_command_32 *c
 {
         this->command_ = static_cast<LOAD_COMMAND_TYPES>(command->cmd);
         this->size_    = command->cmdsize;
+        this->pad_=0;
+}
+EncryptionInfoCommand::EncryptionInfoCommand(const encryption_info_command_64 *command) :
+        crypt_offset_{command->cryptoff},
+        crypt_size_{command->cryptsize},
+        crypt_id_{command->cryptid},
+        pad_{command->pad}
+{
+        this->command_ = static_cast<LOAD_COMMAND_TYPES>(command->cmd);
+        this->size_    = command->cmdsize;
 }
 
 void EncryptionInfoCommand::accept(Visitor& visitor) const {
@@ -48,7 +59,9 @@ uint32_t EncryptionInfoCommand::crypt_size(void) const {
 uint32_t EncryptionInfoCommand::crypt_id(void) const {
         return this->crypt_id_;
 }
-
+uint32_t EncryptionInfoCommand::pad(void) const{
+        return this->pad_;
+}
 void EncryptionInfoCommand::crypt_offset(uint32_t offset){
         this->crypt_offset_ = offset;
 }
@@ -57,6 +70,9 @@ void EncryptionInfoCommand::crypt_size(uint32_t sz){
 }
 void EncryptionInfoCommand::crypt_id(uint32_t id){
         this->crypt_id_ = id;
+}
+void EncryptionInfoCommand::pad(uint32_t pd){
+        this->pad_=pd;
 }
 
 bool EncryptionInfoCommand::operator==(const EncryptionInfoCommand& rhs) const {

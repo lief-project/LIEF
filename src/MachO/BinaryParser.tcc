@@ -297,7 +297,15 @@ void BinaryParser::parse_load_commands(void) {
           load_command = new LoadCommand{command};
           break;
         }
-      case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO_64:
+      case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO_64:{
+          LOG(DEBUG) << "[+] Parsing LC_ENCRYPTION_INFO_64";
+          const encryption_info_command_64* cmd =
+            reinterpret_cast<const encryption_info_command_64*>(
+              this->stream_->read(loadcommands_offset, sizeof(encryption_info_command_64)));
+
+          load_command = new EncryptionInfoCommand{cmd};
+          break;
+        }
       case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO:{
           LOG(DEBUG) << "[+] Parsing LC_ENCRYPTION_INFO";
           const encryption_info_command_32* cmd =

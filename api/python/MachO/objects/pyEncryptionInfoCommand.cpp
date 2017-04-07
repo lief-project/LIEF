@@ -1,4 +1,4 @@
-/* Copyright 2017 R. Thomas
+/* Copyright 2017 Zhang
  * Copyright 2017 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,6 +46,10 @@ void init_MachO_EncryptionInfoCommand_class(py::module& m) {
         static_cast<getter_t<uint32_t>>(&EncryptionInfoCommand::crypt_id),
         static_cast<setter_t<uint32_t>>(&EncryptionInfoCommand::crypt_id),
         "Crypto ID")
+    .def_property("pad",
+        static_cast<getter_t<uint32_t>>(&EncryptionInfoCommand::pad),
+        static_cast<setter_t<uint32_t>>(&EncryptionInfoCommand::pad),
+        "Padding")
     .def("__eq__", &EncryptionInfoCommand::operator==)
     .def("__ne__", &EncryptionInfoCommand::operator!=)
     .def("__hash__",
