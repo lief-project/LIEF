@@ -35,7 +35,7 @@ Main features:
 
 Pre-built packages are automatically generated and uploaded by continuous integration services.
 
-Latest version can be downloaded in [Release](https://github.com/lief-project/LIEF/releases) section.
+Latest version can be downloaded in the [Release](https://github.com/lief-project/LIEF/releases) section.
 
 ## Getting started
 
