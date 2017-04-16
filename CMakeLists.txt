@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Modules
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(Findcppcheck)
@@ -182,7 +182,6 @@ set(mbedtls_src_tls
 set(ELG_GIT_URL "https://github.com/easylogging/easyloggingpp.git" CACHE STRING "URL to the easyloggingpp lib repo")
 ExternalProject_Add(easyloggingpp
   GIT_REPOSITORY    ${ELG_GIT_URL}
-  #GIT_TAG           "v9.83"
   GIT_TAG           4e9757660072a84b2c76d9230b3c578a3a6f5afb
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
@@ -309,7 +308,6 @@ add_dependencies(LIB_LIEF_SHARED mbed_tls)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD              11)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD_REQUIRED     ON)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY POSITION_INDEPENDENT_CODE ON)
-#set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_VISIBILITY_PRESET hidden)
 
 
 CHECK_CXX_COMPILER_FLAG("-Weverything" HAS_WARN_EVERY)
@@ -365,10 +363,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   endif()
 endif()
 
-
-if(CROSS_COMPILE_WINDOWS)
-  target_link_libraries(LIB_LIEF_STATIC -static -static-libgcc -static-libstdc++)
-endif()
 
 if(LIEF_COVERAGE)
   target_compile_options(LIB_LIEF_STATIC PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
