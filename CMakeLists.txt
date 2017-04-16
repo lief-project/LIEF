@@ -313,6 +313,7 @@ set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY POSITION_INDEPENDEN
 
 
 CHECK_CXX_COMPILER_FLAG("-Weverything" HAS_WARN_EVERY)
+CHECK_CXX_COMPILER_FLAG("-Wno-expansion-to-defined" HAS_NO_EXPANSION_TO_DEFINED)
 
 if (LIEF_EXTRA_WARNINGS AND HAS_WARN_EVERY)
   set(EXTRA_FLAGS
@@ -352,11 +353,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
     set(LIB_LIEF_COMPILE_FLAGS
       -Wall -Wextra -Wpedantic
-      -Wno-expansion-to-defined
       -fno-stack-protector
       -fomit-frame-pointer -fno-strict-aliasing
       -fexceptions
       -fvisibility=hidden)
+    if (HAS_NO_EXPANSION_TO_DEFINED)
+      set(LIB_LIEF_COMPILE_FLAGS ${LIB_LIEF_COMPILE_FLAGS} -Wno-expansion-to-defined)
+    endif()
     target_compile_options(LIB_LIEF_STATIC PRIVATE ${LIB_LIEF_COMPILE_FLAGS})
     target_compile_options(LIB_LIEF_SHARED PRIVATE ${LIB_LIEF_COMPILE_FLAGS})
   endif()
