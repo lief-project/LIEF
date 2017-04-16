@@ -124,7 +124,7 @@ The first step is to inject the hook into the binary. To do so we will add a :cl
   segment           = lief.ELF.Segment()
   segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
   segment.flag      = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
-  segment.data      = hook.segments[0].data # First LOAD segment which holds payload
+  segment.content   = hook.segments[0].content # First LOAD segment which holds payload
   segment.alignment = 8
   segment           = crackme.add_segment(segment, base=0xA0000000, force_note=True)
 

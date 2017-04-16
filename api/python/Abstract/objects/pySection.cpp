@@ -49,7 +49,7 @@ void init_LIEF_Section_class(py::module& m) {
     .def_property("content",
         static_cast<getter_t<std::vector<uint8_t>>>(&LIEF::Section::content),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&LIEF::Section::content),
-        "section's content")
+        "Section's content")
 
     .def_property_readonly("entropy",
         &LIEF::Section::entropy,

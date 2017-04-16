@@ -35,7 +35,7 @@ class TestAddSegment(TestCase):
         segment = Segment()
         segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
         segment.flag      = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
-        segment.data      = STUB.segments[0].data # First LOAD segment which holds payload
+        segment.content   = STUB.segments[0].content # First LOAD segment which holds payload
         segment.alignment = 8
         segment           = ls.add_segment(segment, base=0xA00000, force_note=True)
 
@@ -60,7 +60,7 @@ class TestAddSegment(TestCase):
         segment = Segment()
         segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
         segment.flag      = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
-        segment.data      = STUB.segments[0].data # First LOAD segment which holds payload
+        segment.content   = STUB.segments[0].content # First LOAD segment which holds payload
         segment.alignment = 8
         segment           = gcc.add_segment(segment, base=0xA00000, force_note=True)
 

@@ -85,7 +85,7 @@ void init_ELF_Segment_class(py::module& m) {
         "This member gives the value to which the segments are aligned in memory and in the file.\n"
         "Values 0 and 1 mean no alignment is required.")
 
-    .def_property("data",
+    .def_property("content",
         static_cast<getter_t<std::vector<uint8_t>>>(&Segment::content),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&Segment::content),
         "Segment's raw data")

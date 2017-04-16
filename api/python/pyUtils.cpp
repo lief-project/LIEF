@@ -22,11 +22,15 @@
 void init_utils_functions(py::module& m) {
 
 #if defined(LIEF_PE_MODULE)
-    m.def("is_pe",    static_cast<bool (*)(const std::string&)>(&LIEF::PE::is_pe),       "Check if the given binary is ``PE``");
+    m.def("is_pe",
+        static_cast<bool (*)(const std::string&)>(&LIEF::PE::is_pe),
+        "Check if the given file is a ``PE``");
 #endif
 
 #if defined(LIEF_ELF_MODULE)
-    m.def("is_elf",   &LIEF::ELF::is_elf,     "Check if the given binary is ``ELF``");
+    m.def("is_elf",
+        &LIEF::ELF::is_elf,
+        "Check if the given file is an ``ELF``");
 #endif
 
 #if defined(LIEF_MACHO_MODULE)

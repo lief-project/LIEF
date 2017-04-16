@@ -35,7 +35,7 @@ class TestAddSection(TestCase):
         section = Section()
         section.name      = "test"
         section.type      = lief.ELF.SECTION_TYPES.PROGBITS
-        section.content   = STUB.segments[0].data # First LOAD segment which holds payload
+        section.content   = STUB.segments[0].content # First LOAD segment which holds payload
         section.alignment = 8
         section = ls.add_section(section, True)
 
@@ -61,7 +61,7 @@ class TestAddSection(TestCase):
         section = Section()
         section.name      = "test"
         section.type      = lief.ELF.SECTION_TYPES.PROGBITS
-        section.content   = STUB.segments[0].data # First LOAD segment which holds payload
+        section.content   = STUB.segments[0].content # First LOAD segment which holds payload
         section.alignment = 8
         section = gcc.add_section(section, True)
 

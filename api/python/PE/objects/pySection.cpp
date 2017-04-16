@@ -63,11 +63,6 @@ void init_PE_Section_class(py::module& m) {
     .def("has_characteristic",
         &Section::has_characteristic)
 
-    .def_property("data",
-        static_cast<getter_t<std::vector<uint8_t>>>(&Section::content),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&Section::content))
-
-
     .def("__eq__", &Section::operator==)
     .def("__ne__", &Section::operator!=)
     .def("__hash__",

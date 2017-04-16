@@ -96,12 +96,9 @@ void init_ELF_Section_class(py::module& m) {
         static_cast<getter_t<uint32_t>>(&Section::link),
         static_cast<setter_t<uint32_t>>(&Section::link))
 
-    .def_property("data",
-        static_cast<getter_t<std::vector<uint8_t>>>(&Section::content),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&Section::content))
-
     .def_property_readonly("segments",
       static_cast<no_const_getter<it_segments>>(&Section::segments),
+      "Return segment(s) associated with the given section",
       py::return_value_policy::reference_internal)
 
     .def("__contains__",
