@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 include(ExternalProject)
+include(CheckCXXCompilerFlag)
+include(CheckCCompilerFlag)
 
 
 set(Python_ADDITIONAL_VERSIONS 2.7 2.7.6 3.4 3.5 3.6 3.7)
@@ -109,8 +111,16 @@ if(LIEF_COVERAGE)
   set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} gcov)
 endif()
 
+set(PYLIEF_COMPILE_FLAGS)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(pyLIEF PRIVATE -Wall -Wextra -Wpedantic -Wno-macro-redefined)
+  CHECK_CXX_COMPILER_FLAG("-Wno-macro-redefined" HAS_NO_MACRO_REDEFINED)
+  set(PYLIEF_COMPILE_FLAGS ${PYLIEF_COMPILE_FLAGS} -Wall -Wextra -Wpedantic)
+  if (HAS_NO_MACRO_REDEFINED)
+    set(PYLIEF_COMPILE_FLAGS ${PYLIEF_COMPILE_FLAGS} -Wno-macro-redefined)
+  endif()
+
+  target_compile_options(pyLIEF PRIVATE ${PYLIEF_COMPILE_FLAGS})
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
