@@ -105,7 +105,7 @@ class TestAddContent(TestCase):
         self.compile_binadd(self.binadd_path)
 
         libadd = lief.parse(self.libadd_so)
-        offset, size = libadd.insert_content(STUB.segments[0].data)
+        offset, size = libadd.insert_content(STUB.segments[0].content)
 
         dt_init = list(filter(lambda e : e.tag == lief.ELF.DYNAMIC_TAGS.INIT, libadd.dynamic_entries))[0]
         dt_init.value = offset + STUB.header.entrypoint
