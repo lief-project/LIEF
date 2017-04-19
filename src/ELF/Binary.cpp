@@ -1393,14 +1393,21 @@ bool Binary::has_dynamic_entry(DYNAMIC_TAGS tag) const {
 
 
 void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
+  std::set<size_t> done;
   for (size_t i = 0; i < permutation.size(); ++i) {
+    if (permutation[i] == i or done.count(permutation[i]) > 0 or done.count(permutation[i]) > 0) {
+      continue;
+    }
+
     if (this->dynamic_symbols_[i]->has_version() and this->dynamic_symbols_[permutation[i]]->has_version()) {
       std::swap(this->symbol_version_table_[i], this->symbol_version_table_[permutation[i]]);
       std::swap(this->dynamic_symbols_[i], this->dynamic_symbols_[permutation[i]]);
+      done.insert(permutation[i]);
+      done.insert(i);
     } else if (not this->dynamic_symbols_[i]->has_version() and not this->dynamic_symbols_[permutation[i]]->has_version()) {
       std::swap(this->dynamic_symbols_[i], this->dynamic_symbols_[permutation[i]]);
-    } else if (permutation[i] == i) {
-      continue;
+      done.insert(permutation[i]);
+      done.insert(i);
     } else {
       LOG(ERROR) << "Can't apply permutation at index " << std::dec << i;
     }
