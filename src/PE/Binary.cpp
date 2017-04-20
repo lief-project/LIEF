@@ -532,7 +532,10 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE);
-    this->optional_header().baseof_data(static_cast<uint32_t>(new_section->virtual_address()));
+
+    if (this->type() == PE_TYPE::PE32) {
+      this->optional_header().baseof_data(static_cast<uint32_t>(new_section->virtual_address()));
+    }
     this->optional_header().sizeof_initialized_data(new_section->sizeof_raw_data());
   }
 
@@ -541,6 +544,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
 
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE);
+    new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE);
 
     this->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA(new_section->virtual_address());
     this->data_directory(DATA_DIRECTORY::IMPORT_TABLE).size(new_section->sizeof_raw_data());
@@ -739,6 +743,40 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
 }
 
 
+bool Binary::has_import(const std::string& import_name) const {
+
+  auto&& it_import = std::find_if(
+      std::begin(this->imports_),
+      std::end(this->imports_),
+      [&import_name] (const Import& import) {
+        return import.name() == import_name;
+      });
+
+  return it_import != std::end(this->imports_);
+}
+
+
+Import& Binary::get_import(const std::string& import_name) {
+  return const_cast<Import&>(static_cast<const Binary*>(this)->get_import(import_name));
+}
+
+const Import& Binary::get_import(const std::string& import_name) const {
+
+  if (not this->has_import(import_name)) {
+    throw not_found("Unable to find the '" + import_name + "' library");
+  }
+
+  auto&& it_import = std::find_if(
+      std::begin(this->imports_),
+      std::end(this->imports_),
+      [&import_name] (const Import& import) {
+        return import.name() == import_name;
+      });
+
+  return *it_import;
+}
+
+
 Export& Binary::get_export(void) {
   return const_cast<Export&>(static_cast<const Binary*>(this)->get_export());
 }
@@ -874,6 +912,26 @@ LIEF::Header Binary::get_abstract_header(void) const {
   header.entrypoint(this->entrypoint());
 
   return header;
+}
+
+
+
+void Binary::hook_function(const std::string& function, uint64_t address) {
+
+  for (const Import& import : this->imports_) {
+    for (const ImportEntry& import_entry : import.entries()) {
+      if (import_entry.name() == function) {
+        return hook_function(import.name(), function, address);
+      }
+    }
+  }
+
+  throw not_found("Unable to find library associated with function '" + function + "'");
+}
+
+
+void Binary::hook_function(const std::string& library, const std::string& function, uint64_t address) {
+  this->hooks_[library][function] = address;
 }
 
 // LIEF Interface

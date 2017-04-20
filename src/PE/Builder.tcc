@@ -36,6 +36,27 @@ std::vector<uint8_t> Builder::build_jmp(uint64_t address) {
 }
 
 
+template<typename PE_T>
+std::vector<uint8_t> Builder::build_jmp_hook(uint64_t address) {
+  using uint__ = typename PE_T::uint;
+  std::vector<uint8_t> instruction; // 48 A1 XX XX XX XX XX XX XX XX FF E0
+  if (std::is_same<PE_T, PE64>::value) {
+    instruction.push_back(0x48); //x64
+  }
+  instruction.push_back(0xb8); // mov rax, 0xc0ffee
+
+  for (size_t i = 0; i < sizeof(uint__); ++i) {
+    instruction.push_back(static_cast<uint8_t>((address >> (8 * i)) & 0xFF));
+  }
+
+  // jmp rax
+  instruction.push_back(0xff);
+  instruction.push_back(0xe0);
+
+  return instruction;
+}
+
+
 /*
          Original IAT                        New IAT
      +------------------+             +------------------+
@@ -212,8 +233,14 @@ void Builder::build_import_table(void) {
 
       // If patch is enabled, we have to create a trampoline for this function
       if (this->patch_imports_) {
-        const uint64_t address = this->binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
-        const std::vector<uint8_t>& instructions = Builder::build_jmp<PE_T>(address);
+        std::vector<uint8_t> instructions;
+        uint64_t address = this->binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
+        if (this->binary_->hooks_.count(import_name) > 0 and this->binary_->hooks_[import_name].count(entry.name())) {
+          address = this->binary_->hooks_[import_name][entry.name()];
+          instructions = Builder::build_jmp_hook<PE_T>(address);
+        } else {
+          instructions = Builder::build_jmp<PE_T>(address);
+        }
         std::copy(
             std::begin(instructions),
             std::end(instructions),

@@ -49,6 +49,9 @@ class DLL_PUBLIC Builder
     template<typename PE_T>
     static std::vector<uint8_t> build_jmp(uint64_t address);
 
+    template<typename PE_T>
+    static std::vector<uint8_t> build_jmp_hook(uint64_t address);
+
     Builder& build_imports(bool flag = true);
     Builder& patch_imports(bool flag = true);
     Builder& build_relocations(bool flag = true);

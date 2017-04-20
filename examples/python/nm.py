@@ -14,7 +14,7 @@
 # >>> nm("C:\\Windows\\explorer.exe")
 
 import sys
-from lief import *
+from lief import parse
 
 def nm(filename):
     """ Return symbols from *filename* binary """

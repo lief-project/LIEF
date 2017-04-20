@@ -108,6 +108,7 @@ if (LIEF_EXAMPLES)
     endif()
   endforeach()
 endif()
+
 # Python tests
 # ============
 if (PYTHON_TESTS_ENABLED)
@@ -116,6 +117,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py \
     ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_library_kernel32.dll")
+
+  ADD_PYTHON_TEST(PE_PYTHON_hooking
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_hooking.py")
 
 endif()
 

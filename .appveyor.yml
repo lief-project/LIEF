@@ -67,7 +67,6 @@ install:
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_INCLUDE = $env:PYTHON32_INCLUDE }
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_BINARY  = $env:PYTHON32_BINARY }
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_LIBRARY = $env:PYTHON32_LIBRARY }
-
   - set PATH=%PYTHON_PATH%;%PATH%
 
 build_script:
@@ -76,13 +75,14 @@ build_script:
   - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
 
 test_script:
- - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
+  - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
 
 after_build:
   - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
   - cd api\python
   - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
   - ps: gci dist\*.zip | % { rename-item –path $_.Fullname –Newname ( "windows_" + $env:PLATFORM + "_" + $_.basename + "_py" + $env:PYTHON_VERSION + $_.extension) }
+  - cd ..\..
 
 artifacts:
   - path: '*.zip'

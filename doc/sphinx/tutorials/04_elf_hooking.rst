@@ -1,5 +1,5 @@
-04 - Hooking
-------------
+04 - ELF Hooking
+----------------
 
 The objective of this tutorial is to hook a library function
 
