@@ -109,7 +109,7 @@ std::wstring Symbol::wname(void) const {
 
 
 const Section& Symbol::section(void) const {
-  if (this->section_ != nullptr) {
+  if (this->has_section()) {
     return *(this->section_);
   } else {
     throw not_found("No section associated with this symbol");
@@ -118,6 +118,10 @@ const Section& Symbol::section(void) const {
 
 Section& Symbol::section(void) {
   return const_cast<Section&>(static_cast<const Symbol*>(this)->section());
+}
+
+bool Symbol::has_section(void) const {
+  return this->section_ != nullptr;
 }
 
 void Symbol::accept(LIEF::Visitor& visitor) const {
@@ -131,9 +135,8 @@ void Symbol::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->complex_type());
   visitor.visit(this->storage_class());
   visitor.visit(this->numberof_aux_symbols());
-  try {
+  if (this->has_section()) {
     visitor(this->section());
-  } catch (const not_found&) {
   }
 }
 
@@ -154,9 +157,9 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
     section_number_str = to_string(
         static_cast<SYMBOL_SECTION_NUMBER>(entry.section_number()));
   } else {
-    try {
+    if (entry.has_section()) {
       section_number_str = entry.section().name();
-    } catch (const not_found&) {
+    } else {
       section_number_str = std::to_string(static_cast<uint32_t>(entry.section_number())); // section
     }
   }

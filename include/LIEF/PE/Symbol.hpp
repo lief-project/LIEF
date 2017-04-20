@@ -62,6 +62,9 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     Section&             section(void);
     const Section&       section(void) const;
 
+    //! @brief ``True`` if symbols are located in a section
+    bool                 has_section(void) const;
+
     virtual void accept(Visitor& visitor) const override;
 
     bool operator==(const Symbol& rhs) const;
