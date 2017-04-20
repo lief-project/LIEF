@@ -28,6 +28,9 @@ void init_PE_module(py::module& m) {
       "Convert an OID to a human-readable string");
 
 
+  // Enums
+  init_PE_Structures_enum(LIEF_PE_module);
+
   // Objects
   init_PE_Parser_class(LIEF_PE_module);
   init_PE_Binary_class(LIEF_PE_module);
@@ -54,6 +57,4 @@ void init_PE_module(py::module& m) {
   init_PE_SignerInfo_class(LIEF_PE_module);
   init_PE_AuthenticatedAttributes_class(LIEF_PE_module);
 
-  // Enums
-  init_PE_Structures_enum(LIEF_PE_module);
 }

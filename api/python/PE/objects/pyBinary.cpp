@@ -148,7 +148,7 @@ void init_PE_Binary_class(py::module& m) {
     .def("add_section",
         &Binary::add_section,
         "Add a " RST_CLASS_REF(lief.PE.Section) " to the binary.",
-        "section"_a, py::arg("type"),
+        "section"_a, py::arg("type") = SECTION_TYPES::UNKNOWN,
         py::return_value_policy::reference)
 
     //.def("delete_section", (void (Binary::*)(const std::string&)) &Binary::delete_section)
@@ -184,6 +184,17 @@ void init_PE_Binary_class(py::module& m) {
         "Return an iterator to the " RST_CLASS_REF(lief.PE.Import) " libraries",
         py::return_value_policy::reference)
 
+    .def("has_import",
+        &Binary::has_import,
+        "``True`` if the binary import the given library name",
+        "import_name"_a)
+
+    .def("get_import",
+        static_cast<no_const_func<Import&, const std::string&>>(&Binary::get_import),
+        "Returns the " RST_CLASS_REF(lief.PE.Import) " from the given name",
+        "import_name"_a,
+        py::return_value_policy::reference)
+
     .def_property_readonly("resources_manager",
         static_cast<no_const_getter<ResourcesManager>>(&Binary::get_resources_manager),
         "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources")
@@ -209,6 +220,21 @@ void init_PE_Binary_class(py::module& m) {
         &Binary::remove_library,
         "Remove the " RST_CLASS_REF(lief.PE.Import) " from the given name",
         "import_name"_a)
+
+    .def("hook_function",
+        static_cast<void (Binary::*)(const std::string&, uint64_t)>(&Binary::hook_function),
+        "Hook the given function name\n\n"
+        ".. note:: \n\n"
+        "\tWhen using this function, the :class:`~lief.PE.Builder` should be configured as follow:\n\n"
+        "\t.. code-block:: python\n\n"
+        "\t\t\n\n"
+        "\t\tbuilder.build_imports(True).patch_imports(True)\n\n",
+        "function_name"_a, "hook_address"_a)
+
+    .def("hook_function",
+        static_cast<void (Binary::*)(const std::string&, const std::string&, uint64_t)>(&Binary::hook_function),
+        "Hook the function name from the given library name",
+        "library_name"_a, "function_name"_a, "hook_address"_a)
 
     .def("remove_all_libraries",
         &Binary::remove_all_libraries,

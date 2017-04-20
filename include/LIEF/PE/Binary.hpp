@@ -16,6 +16,8 @@
 #ifndef LIEF_PE_BINARY_H_
 #define LIEF_PE_BINARY_H_
 
+#include <map>
+
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
@@ -232,6 +234,17 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_imports       imports(void);
     it_const_imports imports(void) const;
 
+    //! @brief Returns the PE::Import from the given name
+    //!
+    //! @param[in] import_name Name of the import
+    Import&          get_import(const std::string& import_name);
+    const Import&    get_import(const std::string& import_name) const;
+
+    //! @brief ``True`` if the binary import the given library name
+    //!
+    //! @param[in] import_name Name of the import
+    bool has_import(const std::string& import_name) const;
+
     //! @brief Add the function @p function of the library @p library
     //!
     //! @param[in] library library name of the function
@@ -246,6 +259,26 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Remove all libraries in the binary
     void remove_all_libraries(void);
+
+    //! @brief Hook an imported function
+    //!
+    //! When using this function, LIEF::PE::Builder::build_imports and LIEF::PE::Builder::patch_imports
+    //! should be set to ``true``
+    //!
+    //! @param[in] function Function name to hook
+    //! @param[in] address Address of the hook
+    void hook_function(const std::string& function, uint64_t address);
+
+
+    //! @brief Hook an imported function
+    //!
+    //! When using this function, LIEF::PE::Builder::build_imports(true) and LIEF::PE::Builder::patch_imports
+    //! should be set to ``true``
+    //!
+    //! @param[in] library  Library name in which the function is located
+    //! @param[in] function Function name to hook
+    //! @param[in] address  Address of the hook
+    void hook_function(const std::string& library, const std::string& function, uint64_t address);
 
     //! @brief Reconstruct the binary object and write it in  `filename`
     //!
@@ -330,6 +363,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Debug                debug_;
     std::vector<uint8_t> overlay_;
 
+    std::map<std::string, std::map<std::string, uint64_t>> hooks_;
 };
 
 }

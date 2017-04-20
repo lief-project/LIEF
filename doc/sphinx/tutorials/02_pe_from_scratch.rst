@@ -1,3 +1,5 @@
+.. _02-pe-from-scratch:
+
 02 - Create a PE from scratch
 -----------------------------
 
