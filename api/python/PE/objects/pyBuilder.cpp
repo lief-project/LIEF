@@ -50,6 +50,10 @@ void init_PE_Builder_class(py::module& m) {
         &Builder::build_imports,
         py::return_value_policy::reference)
 
+    .def("build_overlay",
+        static_cast<Builder& (Builder::*)(bool)>(&Builder::build_overlay),
+        py::return_value_policy::reference)
+
     .def("write",
         &Builder::write)
 

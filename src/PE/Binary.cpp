@@ -925,6 +925,17 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
 
 }
 
+// Overlay
+// =======
+
+const std::vector<uint8_t>& Binary::overlay(void) const {
+  return this->overlay_;
+}
+
+std::vector<uint8_t>& Binary::overlay(void) {
+  return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->overlay());
+}
+
 // Resource manager
 // ===============
 
