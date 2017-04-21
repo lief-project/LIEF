@@ -171,6 +171,11 @@ void init_PE_Binary_class(py::module& m) {
     .def_property_readonly("resources_manager",
         static_cast<no_const_getter<ResourcesManager>>(&Binary::get_resources_manager))
 
+    .def_property_readonly("overlay",
+        static_cast<no_const_getter<std::vector<uint8_t>&>>(&Binary::overlay),
+        "Return the overlay content",
+        py::return_value_policy::reference)
+
     .def("add_import_function",
         &Binary::add_import_function,
         py::return_value_policy::reference)

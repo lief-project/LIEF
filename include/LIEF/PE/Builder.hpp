@@ -54,6 +54,7 @@ class DLL_PUBLIC Builder
     Builder& build_relocations(bool flag = true);
     Builder& build_tls(bool flag = true);
     Builder& build_resources(bool flag);
+    Builder& build_overlay(bool flag);
 
     const std::vector<uint8_t>& get_build(void);
     void write(const std::string& filename) const;
@@ -83,6 +84,7 @@ class DLL_PUBLIC Builder
     void build_string_table(void);
     void build_relocation(void);
     void build_resources(void);
+    void build_overlay(void);
 
     void compute_resources_size(
         ResourceNode *node,
@@ -108,6 +110,7 @@ class DLL_PUBLIC Builder
     bool build_relocations_;
     bool build_tls_;
     bool build_resources_;
+    bool build_overlay_;
 
 };
 

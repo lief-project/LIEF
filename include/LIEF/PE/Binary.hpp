@@ -215,6 +215,15 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Debug&       get_debug(void);
     const Debug& get_debug(void) const;
 
+    // =======
+    // Overlay
+    // =======
+
+    //! @brief Return the overlay content
+    const std::vector<uint8_t>& overlay(void) const;
+    std::vector<uint8_t>&       overlay(void);
+
+
     // =========================
     // Methods to manage Imports
     // =========================
@@ -293,32 +302,33 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     void update_lookup_address_table_offset(void);
     void update_iat(void);
 
-    PE_TYPE type_;
-    DosHeader          dos_header_;
-    Header             header_;
-    OptionalHeader     optional_header_;
+    PE_TYPE              type_;
+    DosHeader            dos_header_;
+    Header               header_;
+    OptionalHeader       optional_header_;
 
-    bool               has_tls_;
-    bool               has_imports_;
-    bool               has_signature_;
-    bool               has_exports_;
-    bool               has_resources_;
-    bool               has_exceptions_;
-    bool               has_relocations_;
-    bool               has_debug_;
-    bool               has_configuration_;
+    bool                 has_tls_;
+    bool                 has_imports_;
+    bool                 has_signature_;
+    bool                 has_exports_;
+    bool                 has_resources_;
+    bool                 has_exceptions_;
+    bool                 has_relocations_;
+    bool                 has_debug_;
+    bool                 has_configuration_;
 
-    Signature          signature_;
-    TLS                tls_;
-    sections_t         sections_;
-    data_directories_t data_directories_;
-    symbols_t          symbols_;
-    strings_table_t    strings_table_;
-    relocations_t      relocations_;
-    ResourceNode*      resources_;
-    imports_t          imports_;
-    Export             export_;
-    Debug              debug_;
+    Signature            signature_;
+    TLS                  tls_;
+    sections_t           sections_;
+    data_directories_t   data_directories_;
+    symbols_t            symbols_;
+    strings_table_t      strings_table_;
+    relocations_t        relocations_;
+    ResourceNode*        resources_;
+    imports_t            imports_;
+    Export               export_;
+    Debug                debug_;
+    std::vector<uint8_t> overlay_;
 
 };
 

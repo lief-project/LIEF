@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
+#include <numeric>
 
 #include "easylogging++.h"
 
@@ -41,7 +42,8 @@ Builder::Builder(Binary* binary) :
   patch_imports_{false},
   build_relocations_{false},
   build_tls_{false},
-  build_resources_{false}
+  build_resources_{false},
+  build_overlay_{true}
 {}
 
 
@@ -69,7 +71,10 @@ Builder& Builder::build_resources(bool flag) {
   return *this;
 }
 
-
+Builder& Builder::build_overlay(bool flag) {
+  this->build_overlay_ = flag;
+  return *this;
+}
 
 
 void Builder::write(const std::string& filename) const {
@@ -83,8 +88,6 @@ void Builder::write(const std::string& filename) const {
         std::ostreambuf_iterator<char>(output_file));
   }
 }
-
-
 
 
 void Builder::build(void) {
@@ -151,6 +154,12 @@ void Builder::build(void) {
 
   LOG(DEBUG) << "[+] Rebuilding string table" << std::endl;
   //this->build_string_table();
+
+  if (this->binary_->overlay().size() > 0 and this->build_overlay_) {
+    this->build_overlay();
+  }
+
+
 }
 
 const std::vector<uint8_t>& Builder::get_build(void) {
@@ -402,6 +411,25 @@ void Builder::build_string_table(void) {
   //TODO
 }
 
+void Builder::build_overlay(void) {
+  LOG(DEBUG) << "Building overlay";
+
+  const uint64_t last_section_offset = std::accumulate(
+      std::begin(this->binary_->sections_),
+      std::end(this->binary_->sections_), 0,
+      [] (uint64_t offset, const Section* section) {
+        return std::max<uint64_t>(section->offset() + section->size(), offset);
+      });
+
+  LOG(DEBUG) << "Overlay offset: 0x" << std::hex << last_section_offset;
+  LOG(DEBUG) << "Overlay size: " << std::dec << this->binary_->overlay().size();
+
+  const size_t saved_offset = this->ios_.tellp();
+  this->ios_.seekp(last_section_offset);
+  this->ios_.write(this->binary_->overlay());
+  this->ios_.seekp(saved_offset);
+}
+
 Builder& Builder::operator<<(const DosHeader& dos_header) {
 
   pe_dos_header dosHeader;
@@ -519,6 +547,7 @@ std::ostream& operator<<(std::ostream& os, const Builder& b) {
   os << std::setw(20) << "Builde relocations:" << b.build_relocations_ << std::endl;
   os << std::setw(20) << "Builde TLS:"         << b.build_tls_         << std::endl;
   os << std::setw(20) << "Builder resources:"  << b.build_resources_   << std::endl;
+  os << std::setw(20) << "Builder overlay:"    << b.build_overlay_     << std::endl;
   return os;
 }
 

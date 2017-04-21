@@ -47,6 +47,8 @@ void Parser::build(void) {
   } catch (const corrupted& e) {
     LOG(WARNING) << e.what();
   }
+
+  this->build_overlay();
 }
 
 template<typename PE_T>

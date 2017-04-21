@@ -17,6 +17,7 @@
 #include <iterator>
 #include <iostream>
 #include <string>
+#include <numeric>
 
 #include <mbedtls/platform.h>
 #include <mbedtls/oid.h>
@@ -1016,6 +1017,33 @@ void Parser::build_signature(void) {
   LOG(DEBUG) << "Signature: " << std::endl << signature;
   this->binary_->signature_ = std::move(signature);
   this->binary_->has_signature_ = true;
+}
+
+
+void Parser::build_overlay(void) {
+  LOG(DEBUG) << "Parsing Overlay";
+  const uint64_t last_section_offset = std::accumulate(
+      std::begin(this->binary_->sections_),
+      std::end(this->binary_->sections_), 0,
+      [] (uint64_t offset, const Section* section) {
+        return std::max<uint64_t>(section->offset() + section->size(), offset);
+      });
+
+  LOG(DEBUG) << "Overlay offset: 0x" << std::hex << last_section_offset;
+
+  const uint64_t overlay_size = this->stream_->size() - last_section_offset;
+
+  LOG(DEBUG) << "Overlay size: " << std::dec << overlay_size;
+
+  const uint8_t* ptr_to_overlay = reinterpret_cast<const uint8_t*>(this->stream_->read(
+        last_section_offset,
+        overlay_size));
+
+  this->binary_->overlay_ = {
+        ptr_to_overlay,
+        ptr_to_overlay + overlay_size
+      };
+
 }
 
 //

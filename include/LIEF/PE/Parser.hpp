@@ -83,6 +83,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     void build_string_table(void);
     void build_symbols(void);
     void build_signature(void);
+    void build_overlay(void);
 
     ResourceNode* build_resource_node(
         const pe_resource_directory_table *directoryTable, uint32_t baseOffset);
