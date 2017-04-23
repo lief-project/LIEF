@@ -15,7 +15,9 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/SymbolCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MainCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylibCommand.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/DylinkerCommand.cpp")
+  "${CMAKE_CURRENT_LIST_DIR}/DylinkerCommand.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EncryptionInfoCommand.cpp"
+  )
 
 
 target_sources(LIB_LIEF_STATIC PRIVATE ${LIEF_MACHO_SRC})
