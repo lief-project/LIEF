@@ -27,8 +27,14 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyPE.cpp"
 )
 
+set(LIEF_PYTHON_PE_HDR
+  "${CMAKE_CURRENT_LIST_DIR}/pyPE.hpp")
+
+source_group("Source Files\\PE" FILES ${LIEF_PYTHON_PE_SRC})
+source_group("Header Files\\PE" FILES ${LIEF_PYTHON_PE_HDR})
+
 target_include_directories(pyLIEF PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
-target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_PE_SRC}")
+target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_PE_SRC}" "${LIEF_PYTHON_PE_HDR}")
 
 
 

@@ -23,7 +23,13 @@ set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyELFStructures.cpp"
 )
 
-target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_ELF_SRC}")
+set(LIEF_PYTHON_ELF_HDR
+  "${CMAKE_CURRENT_LIST_DIR}/pyELF.hpp")
+
+source_group("Source Files\\ELF" FILES ${LIEF_PYTHON_ELF_SRC})
+source_group("Header Files\\ELF" FILES ${LIEF_PYTHON_ELF_HDR})
+
+target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_ELF_SRC}" "${LIEF_PYTHON_ELF_HDR}")
 target_include_directories(pyLIEF PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 
 
