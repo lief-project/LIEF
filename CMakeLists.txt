@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.8)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
@@ -224,14 +226,63 @@ set(LIEF_ABSTRACT_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Parser.cpp")
 
-
+# Grouping basic LIEF source files
+# ================================
+source_group("Source Files\\Abstract" FILES ${LIEF_ABSTRACT_SRC})
 
 set(LIBLIEF_SOURCE_FILES
   "${LIEF_SRC}"
   "${LIEF_ABSTRACT_SRC}")
 
-add_library(LIB_LIEF_STATIC STATIC "${LIBLIEF_SOURCE_FILES}") # Static one
-add_library(LIB_LIEF_SHARED SHARED "${LIBLIEF_SOURCE_FILES}") # Shared one
+# Grouping basic headers together
+# ===============================
+set(LIEF_INC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Builder.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/exception.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/iostream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/iterators.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/json.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/LIEF.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/logging.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/to_json.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/types.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/utf8.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/utils.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visibility.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Visitable.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Visitor.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/BinaryStream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp")
+
+set(LIEF_VISITOR_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/elf_json.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/Hash.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/json.hpp")
+
+set(LIEF_ABSTRACT_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Abstract.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Binary.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Symbol.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/EnumToString.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Header.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Section.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Parser.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/enums.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/type_traits.hpp")
+
+set(LIEF_INCLUDE_FILES
+  ${LIEF_INC_FILES}
+  ${LIEF_VISITOR_INCLUDE_FILES}
+  ${LIEF_ABSTRACT_INCLUDE_FILES})
+
+source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
+source_group("Header Files\\Abstract" FILES ${LIEF_ABSTRACT_INCLUDE_FILES})
+
+add_library(LIB_LIEF_STATIC STATIC ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Static one
+add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
 
 
 if (LIEF_ELF)
@@ -266,6 +317,13 @@ set(LIEF_PRIVATE_INCLUDE_DIR
   "${LIBRANG_SOURCE_DIR}/include"
   "${ELG_SOURCE_DIR}/"
   "${MBEDTLS_INCLUDE_DIRS}")
+
+# Grouping external projects
+# ==========================
+source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
+source_group("mbedtls\\x509" FILES ${mbedtls_src_x509})
+source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
+source_group("easylogging" FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
 
 # Library definition
 # ==================
@@ -542,8 +600,3 @@ install(
 
 # Package
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")
-
-
-
-
-
