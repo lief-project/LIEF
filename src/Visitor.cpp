@@ -218,6 +218,46 @@ void Visitor::visit(const PE::ResourceDirectory& directory) {
   directory.accept(*this);
 }
 
+void Visitor::visit(const PE::ResourceVersion& resource_version) {
+  resource_version.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceIcon& resource_icon) {
+  resource_icon.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceDialog& resource_dialog) {
+  resource_dialog.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceDialogItem& resource_dialogitem) {
+  resource_dialogitem.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceStringFileInfo& resource_string_file_info) {
+  resource_string_file_info.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceFixedFileInfo& resource_fixed_file_info) {
+  resource_fixed_file_info.accept(*this);
+}
+
+
+void Visitor::visit(const PE::ResourceVarFileInfo& resource_var_file_info) {
+  resource_var_file_info.accept(*this);
+}
+
+
+void Visitor::visit(const PE::LangCodeItem& lang_code_item) {
+  lang_code_item.accept(*this);
+}
+
+
 // MachO part
 // ----------
 

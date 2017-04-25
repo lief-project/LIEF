@@ -173,7 +173,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const ResourceNode&            get_resources(void) const;
 
     //! @brief Set a new resource tree
-    void set_resources(ResourceNode* resource);
+    void set_resources(const ResourceDirectory& resource);
+
+    //! @brief Set a new resource tree
+    void set_resources(const ResourceData& resource);
 
     //! @brief Return the ResourcesManager (class to manage resources more easily than the tree one)
     ResourcesManager               get_resources_manager(void);

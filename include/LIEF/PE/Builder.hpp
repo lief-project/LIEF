@@ -119,13 +119,13 @@ class DLL_PUBLIC Builder
     void build_dos_stub(void);
 
     void compute_resources_size(
-        ResourceNode *node,
+        ResourceNode& node,
         uint32_t *headerSize,
         uint32_t *dataSize,
         uint32_t *nameSize);
 
     void construct_resources(
-        ResourceNode *node,
+        ResourceNode& node,
         std::vector<uint8_t> *content,
         uint32_t *offsetToHeader,
         uint32_t *offsetToData,

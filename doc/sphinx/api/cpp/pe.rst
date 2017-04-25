@@ -176,8 +176,8 @@ Builder
 ----------
 
 
-Resource Manager
-****************
+Resources Manager
+*****************
 
 .. doxygenclass:: LIEF::PE::ResourcesManager
   :project: lief
@@ -211,3 +211,155 @@ Resource Data
 
 .. doxygenclass:: LIEF::PE::ResourceData
   :project: lief
+
+
+----------
+
+
+Resource Icon
+*************
+
+.. doxygenclass:: LIEF::PE::ResourceIcon
+  :project: lief
+
+----------
+
+Resource Dialog
+***************
+
+.. doxygenclass:: LIEF::PE::ResourceDialog
+  :project: lief
+
+----------
+
+
+Resource Dialog Item
+********************
+
+.. doxygenclass:: LIEF::PE::ResourceDialogItem
+  :project: lief
+
+----------
+
+
+Resource Version
+****************
+
+.. doxygenclass:: LIEF::PE::ResourceVersion
+  :project: lief
+
+----------
+
+
+Resource Fixed File Info
+************************
+
+.. doxygenclass:: LIEF::PE::ResourceFixedFileInfo
+  :project: lief
+
+----------
+
+
+Resource Var File Info
+**********************
+
+.. doxygenclass:: LIEF::PE::ResourceVarFileInfo
+  :project: lief
+
+
+----------
+
+
+Resource String File Info
+*************************
+
+.. doxygenclass:: LIEF::PE::ResourceStringFileInfo
+  :project: lief
+
+
+----------
+
+Lang code item
+**************
+
+.. doxygenclass:: LIEF::PE::LangCodeItem
+  :project: lief
+
+
+----------
+
+
+Enums
+*****
+
+.. doxygenenum:: LIEF::PE::MACHINE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::HEADER_CHARACTERISTICS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::SYMBOL_STORAGE_CLASS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::SYMBOL_BASE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::SYMBOL_COMPLEX_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RELOCATIONS_BASE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RELOCATIONS_I386
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RELOCATIONS_AMD64
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RELOCATIONS_ARM
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::DATA_DIRECTORY
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::SUBSYSTEM
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::DLL_CHARACTERISTICS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::DEBUG_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RESOURCE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RESOURCE_LANGS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::RESOURCE_SUBLANGS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::CODE_PAGES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::WINDOW_STYLES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::EXTENDED_WINDOW_STYLES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::DIALOG_BOX_STYLES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::FIXED_VERSION_OS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::FIXED_VERSION_FILE_FLAGS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::FIXED_VERSION_FILE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::FIXED_VERSION_FILE_SUB_TYPES
+   :project: lief

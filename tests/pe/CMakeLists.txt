@@ -122,6 +122,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_hooking.py")
 
+  ADD_PYTHON_TEST(PE_PYTHON_resources
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_resources.py")
+
 endif()
 
 

@@ -194,13 +194,14 @@ void Parser::build_resources(void) {
 
   const uint32_t resources_rva = this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA();
   LOG(DEBUG) << "Resources RVA: 0x" << std::hex << resources_rva;
+
   const uint32_t offset = this->binary_->rva_to_offset(resources_rva);
   LOG(DEBUG) << "Resources Offset: 0x" << std::hex << offset;
 
-  const pe_resource_directory_table* directoryTable = reinterpret_cast<const pe_resource_directory_table*>(
+  const pe_resource_directory_table* directory_table = reinterpret_cast<const pe_resource_directory_table*>(
       this->stream_->read(offset, sizeof(pe_resource_directory_table)));
 
-  this->binary_->resources_ = this->build_resource_node(directoryTable, offset);
+  this->binary_->resources_ = this->build_resource_node(directory_table, offset);
 }
 
 
@@ -208,25 +209,30 @@ void Parser::build_resources(void) {
 // Build the resources tree
 //
 ResourceNode* Parser::build_resource_node(
-    const pe_resource_directory_table *directoryTable,
-    uint32_t baseOffset) {
+    const pe_resource_directory_table *directory_table,
+    uint32_t base_offset,
+    uint32_t depth) {
 
-  const uint32_t numberOfIDEntries   = directoryTable->NumberOfIDEntries;
-  const uint32_t numberOfNameEntries = directoryTable->NumberOfNameEntries;
+  const uint32_t numberof_ID_entries   = directory_table->NumberOfIDEntries;
+  const uint32_t numberof_name_entries = directory_table->NumberOfNameEntries;
 
-  const auto *entriesArray = reinterpret_cast<const pe_resource_directory_entries*>(directoryTable + 1);
+  const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
 
-  ResourceDirectory* directory = new ResourceDirectory{directoryTable};
+  ResourceDirectory* directory = new ResourceDirectory{directory_table};
 
-  for (uint32_t idx = 0; idx < (numberOfNameEntries + numberOfIDEntries); ++idx) {
+  directory->depth_ = depth;
 
-    uint32_t rvaToData = entriesArray[idx].RVA;
-    uint32_t id        = entriesArray[idx].NameID.IntegerID;
+  // Iterate over the childs
+  for (uint32_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx) {
+
+    uint32_t data_rva = entries_array[idx].RVA;
+    uint32_t id        = entries_array[idx].NameID.IntegerID;
     std::u16string name;
 
+    // Get the resource name
     if (id & 0x80000000) {
       uint32_t offset = id & (~ 0x80000000);
-      uint32_t string_offset = baseOffset + offset;
+      uint32_t string_offset = base_offset + offset;
       try {
         const uint16_t length = *reinterpret_cast<const uint16_t*>(
             this->stream_->read(string_offset, sizeof(uint16_t)));
@@ -235,9 +241,10 @@ ResourceNode* Parser::build_resource_node(
           LOG(DEBUG) << "Size: " << std::dec << length;
           throw LIEF::corrupted("Size error");
         }
+
         name = std::u16string{reinterpret_cast<const char16_t*>(
             this->stream_->read(
-              baseOffset + offset + sizeof(uint16_t),
+              base_offset + offset + sizeof(uint16_t),
               length * sizeof(uint16_t))),
              length};
       } catch (const LIEF::read_out_of_bound&) {
@@ -245,31 +252,39 @@ ResourceNode* Parser::build_resource_node(
       }
     }
 
-    if ((0x80000000 & rvaToData) == 0) { // We are on a leaf
-      uint32_t offset = baseOffset + rvaToData;
+    if ((0x80000000 & data_rva) == 0) { // We are on a leaf
+      uint32_t offset = base_offset + data_rva;
+
       try {
-        const auto *dataEntry = reinterpret_cast<const pe_resource_data_entry*>(
+        const pe_resource_data_entry *data_entry = reinterpret_cast<const pe_resource_data_entry*>(
             this->stream_->read(offset, sizeof(pe_resource_data_entry)));
 
-        uint32_t offsetToContent = this->binary_->rva_to_offset(dataEntry->DataRVA);
-        uint32_t sizeOfContent   = dataEntry->Size;
-        uint32_t codePage        = dataEntry->Codepage;
+        uint32_t content_offset = this->binary_->rva_to_offset(data_entry->DataRVA);
+        uint32_t content_size   = data_entry->Size;
+        uint32_t code_page      = data_entry->Codepage;
+
         const uint8_t* content_ptr = reinterpret_cast<const uint8_t*>(
-            this->stream_->read(offsetToContent, sizeOfContent));
+            this->stream_->read(content_offset, content_size));
+
         std::vector<uint8_t> content = {
           content_ptr,
-          content_ptr + sizeOfContent};
-        ResourceNode* node = new ResourceData{content, codePage};
-        node->id_   = id;
-        node->name_ = name;
-        directory->add_child(node);
+          content_ptr + content_size};
+
+        ResourceNode* node = new ResourceData{content, code_page};
+
+        node->depth_ = depth + 1;
+        node->id(id);
+        node->name(name);
+        dynamic_cast<ResourceData*>(node)->offset_ = content_offset;
+
+        directory->childs_.push_back(node);
       } catch (const LIEF::read_out_of_bound&) { // Corrupted
         LOG(WARNING) << "The leaf is corrupted";
         break;
       }
     } else { // We are on a directory
-      uint32_t rvaToDirectory = rvaToData & (~ 0x80000000);
-      uint32_t offset = baseOffset + rvaToDirectory;
+      const uint32_t directory_rva = data_rva & (~ 0x80000000);
+      const uint32_t offset        = base_offset + directory_rva;
       try {
         const pe_resource_directory_table* nextDirectoryTable = reinterpret_cast<const pe_resource_directory_table*>(
             this->stream_->read(offset, sizeof(pe_resource_directory_table)));
@@ -279,10 +294,10 @@ ResourceNode* Parser::build_resource_node(
         }
         this->resource_visited_.insert(offset);
 
-        ResourceNode* node = this->build_resource_node(nextDirectoryTable, baseOffset);
-        node->id_   = id;
-        node->name_ = name;
-        directory->add_child(node);
+        ResourceNode* node = this->build_resource_node(nextDirectoryTable, base_offset, depth + 1);
+        node->id(id);
+        node->name(name);
+        directory->childs_.push_back(node);
       } catch (const LIEF::read_out_of_bound&) { // Corrupted
         LOG(WARNING) << "The directory is corrupted";
         break;

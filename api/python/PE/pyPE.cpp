@@ -49,7 +49,6 @@ void init_PE_module(py::module& m) {
   init_PE_ExportEntry_class(LIEF_PE_module);
   init_PE_Builder_class(LIEF_PE_module);
   init_PE_Debug_class(LIEF_PE_module);
-  init_PE_ResourcesManager_class(LIEF_PE_module);
 
   init_PE_Signature_class(LIEF_PE_module);
   init_PE_ContentInfo_class(LIEF_PE_module);
@@ -57,4 +56,24 @@ void init_PE_module(py::module& m) {
   init_PE_SignerInfo_class(LIEF_PE_module);
   init_PE_AuthenticatedAttributes_class(LIEF_PE_module);
 
+  init_PE_ResourceNode_class(LIEF_PE_module);
+  init_PE_ResourceData_class(LIEF_PE_module);
+  init_PE_ResourceDirectory_class(LIEF_PE_module);
+
+  init_PE_ResourcesIcon_class(LIEF_PE_module);
+
+  init_PE_ResourceVersion_class(LIEF_PE_module);
+  init_PE_ResourceFixedFileInfo_class(LIEF_PE_module);
+  init_PE_ResourceVarFileInfo_class(LIEF_PE_module);
+  init_PE_ResourceStringFileInfo_class(LIEF_PE_module);
+  init_PE_LangCodeItem_class(LIEF_PE_module);
+
+  init_PE_ResourcesDialog_class(LIEF_PE_module);
+  init_PE_ResourcesDialogItem_class(LIEF_PE_module);
+
+  init_PE_ResourcesManager_class(LIEF_PE_module);
+
+  // Opaque containers
+  py::bind_vector<std::vector<LangCodeItem>>(m, "ListLangCodeItem");
+  py::bind_map<dict_langcode_item>(m, "DictStringVersion");
 }

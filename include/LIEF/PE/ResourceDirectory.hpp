@@ -39,21 +39,51 @@ class DLL_PUBLIC ResourceDirectory : public ResourceNode {
     ResourceDirectory(void);
     ResourceDirectory(const pe_resource_directory_table* header);
 
-    ResourceDirectory(const ResourceDirectory&);
-    ResourceDirectory& operator=(const ResourceDirectory&);
+    ResourceDirectory(const ResourceDirectory& other);
+    ResourceDirectory& operator=(ResourceDirectory other);
+
+    void swap(ResourceDirectory& other);
+
     virtual ~ResourceDirectory(void);
 
+    //! @brief Resource flags. This field is reserved for future use.
+    //! It is currently set to zero.
     uint32_t characteristics(void) const;
+
+    //! @brief The time that the resource data was created by the
+    //! resource compiler.
     uint32_t time_date_stamp(void) const;
+
+    //! @brief The major version number, set by the user.
     uint16_t major_version(void) const;
+
+    //! @brief The minor version number, set by the user.
     uint16_t minor_version(void) const;
+
+    //! @brief The number of directory entries immediately
+    //! following the table that use strings to identify Type,
+    //! Name, or Language entries (depending on the level
+    //! of the table).
     uint16_t numberof_name_entries(void) const;
+
+    //! @brief The number of directory entries immediately
+    //! following the Name entries that use numeric IDs for
+    //! Type, Name, or Language entries.
     uint16_t numberof_id_entries(void) const;
+
+    void characteristics(uint32_t characteristics);
+    void time_date_stamp(uint32_t time_date_stamp);
+    void major_version(uint16_t major_version);
+    void minor_version(uint16_t minor_version);
+    void numberof_name_entries(uint16_t numberof_name_entries);
+    void numberof_id_entries(uint16_t numberof_id_entries);
 
     virtual void accept(Visitor& visitor) const override;
 
     bool operator==(const ResourceDirectory& rhs) const;
     bool operator!=(const ResourceDirectory& rhs) const;
+
+    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 
   private:
     uint32_t characteristics_;

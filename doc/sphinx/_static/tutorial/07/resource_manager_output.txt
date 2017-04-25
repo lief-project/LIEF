@@ -1,0 +1,314 @@
+  [Directory] ID: 01 - CURSOR
+    [Directory] ID: 01
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 02
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 03
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 04
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 05
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 06
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 07
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 08
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 09
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 10
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 02 - BITMAP
+    [Directory] CSQUERY
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXBITMAP_STD_COLOURS
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 03 - ICON
+    [Directory] ID: 01
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 02
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 03
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 04
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 05
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 06
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 07
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 08
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 09
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 10
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 11
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 12
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 13
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 14
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 15
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 16
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 17
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 18
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 19
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 20
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 21
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 22
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] ID: 23
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 04 - MENU
+    [Directory] WXWINDOWMENU
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 12 - GROUP_CURSOR
+    [Directory] WXCURSOR_BLANK
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_BULLSEYE
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_CROSS
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_HAND
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_MAGNIFIER
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_PBRUSH
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_PENCIL
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_PLEFT
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_PRIGHT
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXCURSOR_ROLLER
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 14 - GROUP_ICON
+    [Directory] APPICON
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_AAA
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_CDROM
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_CLOSED_FOLDER
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_COMPUTER
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_DRIVE
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_FILE
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_FLOPPY
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_OPEN_FOLDER
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+    [Directory] WXICON_SMALL_REMOVEABLE
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 16 - VERSION
+    [Directory] ID: 01
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+  [Directory] ID: 24 - MANIFEST
+    [Directory] ID: 01
+      [Data] ID: 1033 - ENGLISH/DEFAULT
+
+Types: CURSOR - BITMAP - ICON - MENU - GROUP_CURSOR - GROUP_ICON - VERSION - MANIFEST
+
+Langs: ENGLISH
+
+Sub-langs: DEFAULT
+
+Manifest
+========
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  <assemblyIdentity
+    name="FileZilla"
+    processorArchitecture="*"
+    version="3.10.0.0"
+    type="win32"
+  />
+  <description>FileZilla FTP client</description>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+        type="win32"
+        name="Microsoft.Windows.Common-Controls"
+        version="6.0.0.0"
+        processorArchitecture="*"
+        publicKeyToken="6595b64144ccf1df"
+        language="*"
+      />
+    </dependentAssembly>
+  </dependency>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+   </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!--Vista-->
+      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+      <!--7-->
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+      <!--8-->
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
+      <!--8.1-->
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
+      <!--10 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+    </application>
+  </compatibility>
+  <asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+    <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
+      <dpiAware>true</dpiAware>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+</assembly>
+
+
+Version
+=======
+
+type: 0
+key:  VS_VERSION_INFO
+
+Fixed file info
+===============
+Signature:       feef04bd
+Struct version:  10000
+File version:    3 - 25 - 2 - 0
+Product version: 3 - 25 - 2 - 0
+File OS:         WINDOWS32
+File type:       APP
+
+String file info
+================
+type:  1
+key:   StringFileInfo
+
+type:   1
+key:    000004b0: (NEUTRAL - NEUTRAL - UTF_16)
+Items:
+    'Comments': 'Version 3.25.2'
+    'CompanyName': 'FileZilla Project'
+    'FileDescription': 'FileZilla FTP Client'
+    'FileVersion': '3, 25, 2, 0'
+    'InternalName': 'FileZilla 3'
+    'LegalCopyright': 'Copyright (C) 2006-2016'
+    'OriginalFilename': 'filezilla.exe'
+    'ProductName': 'FileZilla'
+    'ProductVersion': '3, 25, 2, 0'
+
+
+Var file info
+=============
+type:         1
+key:          VarFileInfo
+Translations: UTF_16/NEUTRAL/NEUTRAL
+
+
+Icon #0 :
+Size:                            16x16 pixels
+Color count:                     0
+Reserved:                        0
+Planes:                          1
+Bit count:                       8
+Hash:                            ffffffffca4fbb2f
+
+Icon #1 :
+Size:                            32x32 pixels
+Color count:                     0
+Reserved:                        0
+Planes:                          1
+Bit count:                       8
+Hash:                            79eaa8a1
+
+Icon #2 :
+Size:                            48x48 pixels
+Color count:                     0
+Reserved:                        0
+Planes:                          1
+Bit count:                       8
+Hash:                            1b38942
+
+Icon #3 :
+Size:                            48x48 pixels
+Color count:                     0
+Reserved:                        0
+Planes:                          1
+Bit count:                       20
+Hash:                            281bc584
+
+Icon #4 :
+Size:                            0x0 pixels
+Color count:                     0
+Reserved:                        0
+Planes:                          1
+Bit count:                       20
+Hash:                            13a82f1
+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+  <assemblyIdentity
+    name="FileZilla"
+    processorArchitecture="*"
+    version="3.10.0.0"
+    type="win32"
+  />
+  <description>FileZilla FTP client</description>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+        type="win32"
+        name="Microsoft.Windows.Common-Controls"
+        version="6.0.0.0"
+        processorArchitecture="*"
+        publicKeyToken="6595b64144ccf1df"
+        language="*"
+      />
+    </dependentAssembly>
+  </dependency>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+   </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!--Vista-->
+      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+      <!--7-->
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+      <!--8-->
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
+      <!--8.1-->
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
+      <!--10 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+    </application>
+  </compatibility>
+  <asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+    <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
+      <dpiAware>true</dpiAware>
+    </asmv3:windowsSettings>
+  </asmv3:application>
+</assembly>

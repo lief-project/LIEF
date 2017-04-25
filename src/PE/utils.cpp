@@ -138,13 +138,15 @@ PE_TYPE get_type(const std::vector<uint8_t>& raw) {
 }
 
 
-
-//! @brief Return `PE32` or `PE32+`
-DLL_PUBLIC PE_TYPE get_type(const std::vector<uint8_t>& raw);
-
 std::string u16tou8(const std::u16string& string) {
   std::string name;
   utf8::utf16to8(std::begin(string), std::end(string), std::back_inserter(name));
+  return name;
+}
+
+std::u16string u8tou16(const std::string& string) {
+  std::u16string name;
+  utf8::utf8to16(std::begin(string), std::end(string), std::back_inserter(name));
   return name;
 }
 }

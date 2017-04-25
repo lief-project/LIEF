@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/PE/ResourceDirectory.hpp"
@@ -22,10 +24,37 @@ namespace PE {
 
 
 ResourceDirectory::~ResourceDirectory(void) = default;
-ResourceDirectory& ResourceDirectory::operator=(const ResourceDirectory&) = default;
-ResourceDirectory::ResourceDirectory(const ResourceDirectory&) = default;
+
+ResourceDirectory& ResourceDirectory::operator=(ResourceDirectory other) {
+  this->swap(other);
+  return *this;
+
+}
+
+ResourceDirectory::ResourceDirectory(const ResourceDirectory& other) :
+  ResourceNode{static_cast<const ResourceNode&>(other)},
+  characteristics_{other.characteristics_},
+  timeDateStamp_{other.timeDateStamp_},
+  majorVersion_{other.majorVersion_},
+  minorVersion_{other.minorVersion_},
+  numberOfNameEntries_{other.numberOfNameEntries_},
+  numberOfIDEntries_{other.numberOfIDEntries_}
+{
+}
+
+
+void ResourceDirectory::swap(ResourceDirectory& other) {
+  ResourceNode::swap(static_cast<ResourceNode&>(other));
+  std::swap(this->characteristics_,     other.characteristics_);
+  std::swap(this->timeDateStamp_,       other.timeDateStamp_);
+  std::swap(this->majorVersion_,        other.majorVersion_);
+  std::swap(this->minorVersion_,        other.minorVersion_);
+  std::swap(this->numberOfNameEntries_, other.numberOfNameEntries_);
+  std::swap(this->numberOfIDEntries_,   other.numberOfIDEntries_);
+}
 
 ResourceDirectory::ResourceDirectory(void) :
+  ResourceNode{},
   characteristics_{0},
   timeDateStamp_{0},
   majorVersion_{0},
@@ -35,15 +64,14 @@ ResourceDirectory::ResourceDirectory(void) :
 {}
 
 ResourceDirectory::ResourceDirectory(const pe_resource_directory_table* header) :
+  ResourceNode{},
   characteristics_(header->Characteristics),
   timeDateStamp_(header->TimeDateStamp),
   majorVersion_(header->MajorVersion),
   minorVersion_(header->MajorVersion),
   numberOfNameEntries_(header->NumberOfNameEntries),
   numberOfIDEntries_(header->NumberOfIDEntries)
-{
-  this->type_ = RESOURCE_NODE_TYPES::DIRECTORY ;
-}
+{}
 
 
 uint32_t ResourceDirectory::characteristics(void) const {
@@ -75,7 +103,35 @@ uint16_t ResourceDirectory::numberof_id_entries(void) const {
   return this->numberOfIDEntries_;
 }
 
+
+void ResourceDirectory::characteristics(uint32_t characteristics) {
+  this->characteristics_ = characteristics;
+}
+
+void ResourceDirectory::time_date_stamp(uint32_t time_date_stamp) {
+  this->timeDateStamp_ = time_date_stamp;
+}
+
+void ResourceDirectory::major_version(uint16_t major_version) {
+  this->majorVersion_ = major_version;
+}
+
+void ResourceDirectory::minor_version(uint16_t minor_version) {
+  this->minorVersion_ = minor_version;
+}
+
+void ResourceDirectory::numberof_name_entries(uint16_t numberof_name_entries) {
+  this->numberOfNameEntries_ = numberof_name_entries;
+}
+
+void ResourceDirectory::numberof_id_entries(uint16_t numberof_id_entries) {
+  this->numberOfIDEntries_ = numberof_id_entries;
+}
+
 void ResourceDirectory::accept(Visitor& visitor) const {
+  ResourceNode::accept(visitor);
+  visitor(*this); // Double dispatch to avoid down-casting
+
   visitor.visit(this->characteristics());
   visitor.visit(this->time_date_stamp());
   visitor.visit(this->major_version());
@@ -92,6 +148,18 @@ bool ResourceDirectory::operator==(const ResourceDirectory& rhs) const {
 
 bool ResourceDirectory::operator!=(const ResourceDirectory& rhs) const {
   return not (*this == rhs);
+}
+
+
+std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory) {
+  os << static_cast<const ResourceNode&>(directory) << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Characteristics :"        << directory.characteristics()       << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Time/Date stamp :"        << directory.time_date_stamp()       << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Major version :"          << directory.major_version()         << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Minor version :"          << directory.minor_version()         << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of name entries :" << directory.numberof_name_entries() << std::endl;
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of id entries :"   << directory.numberof_id_entries()   << std::endl;
+  return os;
 }
 
 }

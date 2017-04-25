@@ -42,6 +42,9 @@ DLL_PUBLIC PE_TYPE get_type(const std::vector<uint8_t>& raw);
 
 //! Convert a UTF-16 string to a UTF-8 one
 DLL_PUBLIC std::string u16tou8(const std::u16string& string);
+
+//! Convert a UTF-8 string to a UTF-16 one
+DLL_PUBLIC std::u16string u8tou16(const std::string& string);
 }
 }
 #endif

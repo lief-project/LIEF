@@ -29,7 +29,17 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/signature/x509.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/OIDToString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
-  "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc")
+  "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialog.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialogItem.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceFixedFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVarFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceStringFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/LangCodeItem.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceIcon.cpp"
+  )
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/enums.inc"      LIEF_PE_ENUMS)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/structures.inc" LIEF_PE_STRUCTURES)
@@ -86,9 +96,22 @@ set(LIEF_PE_SIG_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/types.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/x509.hpp")
 
-source_group("Source Files\\PE" FILES ${LIEF_PE_SRC})
-source_group("Header Files\\PE" FILES ${LIEF_PE_INCLUDE_FILES})
-source_group("Header Files\\PE\\signature" FILES ${LIEF_PE_SIG_INCLUDE_FILES})
 
-target_sources(LIB_LIEF_STATIC PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES})
-target_sources(LIB_LIEF_SHARED PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES})
+set(LIEF_PE_RESOURCES_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceDialog.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceDialogItem.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceFixedFileInfo.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVarFileInfo.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceStringFileInfo.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/LangCodeItem.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceIcon.hpp")
+
+source_group("Source Files\\PE"            FILES ${LIEF_PE_SRC})
+source_group("Header Files\\PE"            FILES ${LIEF_PE_INCLUDE_FILES})
+source_group("Header Files\\PE\\signature" FILES ${LIEF_PE_SIG_INCLUDE_FILES})
+source_group("Header Files\\PE\\resources" FILES ${LIEF_PE_RESOURCES_INCLUDE_FILES})
+
+target_sources(LIB_LIEF_STATIC PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES})
+target_sources(LIB_LIEF_SHARED PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES})

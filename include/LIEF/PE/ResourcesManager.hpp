@@ -17,13 +17,23 @@
 #define LIEF_PE_RESOURCES_MANAGER_H_
 #include <iostream>
 #include <sstream>
+#include <set>
 
 #include "LIEF/visibility.h"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
+#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
+
+#include "LIEF/PE/resources/ResourceVersion.hpp"
+#include "LIEF/PE/resources/ResourceIcon.hpp"
+#include "LIEF/PE/resources/ResourceDialog.hpp"
 
 namespace LIEF {
 namespace PE {
+
+//! @brief The Resource Manager provides an enhanced API to
+//! manipulate the resource tree.
 class DLL_PUBLIC ResourcesManager {
   public:
   ResourcesManager(void) = delete;
@@ -33,10 +43,76 @@ class DLL_PUBLIC ResourcesManager {
   ResourcesManager& operator=(const ResourcesManager&);
   ~ResourcesManager(void);
 
+  // Enhancemed API to explore resource tree
+  // =======================================
 
-  ResourceDirectory* cursor(void);
-  // bitmap(void);
-  //
+  //! @brief Return @link ResourceNode node @endlink with the given LIEF::PE::RESOURCE_TYPES
+  ResourceNode&       get_node_type(RESOURCE_TYPES type);
+  const ResourceNode& get_node_type(RESOURCE_TYPES type) const;
+
+  //! @brief Return list of LIEF::PE::RESOURCE_TYPES present in the resources
+  std::set<RESOURCE_TYPES> get_types_available(void) const;
+
+  //! @brief Return list of LIEF::PE::RESOURCE_LANGS present in the resources
+  std::set<RESOURCE_LANGS> get_langs_available(void) const;
+
+  //! @brief Return list of LIEF::PE::RESOURCE_SUBLANGS present in the resources
+  std::set<RESOURCE_SUBLANGS> get_sublangs_available(void) const;
+
+  //! @brief ``true`` if the resource has the given LIEF::PE::RESOURCE_TYPES
+  bool has_type(RESOURCE_TYPES type) const;
+
+  // Manifest
+  // ========
+
+  //! @brief ``true`` if resources contain Manifest element
+  bool has_manifest(void) const;
+
+  //! @brief Return the manifest as a std::string
+  std::string manifest(void) const;
+
+  //! @brief Update the manifest with the given string
+  void manifest(const std::string& manifest);
+
+
+  // Version
+  // =======
+
+  //! @brief ``true`` if resources contain LIEF::PE::ResourceVersion
+  bool has_version(void) const;
+
+  //! @brief Return ResourceVersion if any
+  ResourceVersion version(void) const;
+
+  // Icons
+  // =====
+
+  //! @brief ``true`` if resources contain LIEF::PE::ResourceIcon
+  bool has_icons(void) const;
+
+  //! @brief Return the list of the icons present in the resource
+  std::vector<ResourceIcon> icons(void) const;
+
+  //! @brief Add an icon to the resources
+  void add_icon(const ResourceIcon& icon);
+
+  //void remove_icon(const ResourceIcon& icon)
+
+  void change_icon(const ResourceIcon& original, const ResourceIcon& newone);
+
+  // Dialogs
+  // =======
+
+  //! @brief ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs @endlink
+  bool has_dialogs(void) const;
+
+  //! @brief Return the list of the dialogs present in the resource
+  std::vector<ResourceDialog> dialogs(void) const;
+
+  // Print
+  // =====
+
+  //! @brief Print the resource tree to the given depth
   std::string print(uint32_t depth = 0) const;
 
   DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
@@ -47,6 +123,14 @@ class DLL_PUBLIC ResourcesManager {
       std::ostringstream& stream,
       uint32_t current_depth,
       uint32_t max_depth) const;
+
+  //! @brief Build the ResourceStringFileInfo from the RT_VERSION node
+  ResourceStringFileInfo get_string_file_info(const VectorStream& stream, uint64_t& offset) const;
+
+  //! @brief Build the ResourceVarFileInfo from the RT_VERSION node
+  ResourceVarFileInfo get_var_file_info(const VectorStream& stream, uint64_t& offset) const;
+
+
   ResourceNode *resources_;
 };
 

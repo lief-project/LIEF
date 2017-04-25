@@ -68,9 +68,6 @@ Basically the :ref:`hooking-code` replaces the ``__acrt_iob_func`` function and 
     :noindex:
 
 
-
-
-
 First we create the ``.htext`` section which will hold the hooking code:
 
 .. code-block:: python
@@ -153,19 +150,5 @@ Now we can run the final executable:
 .. figure:: ../_static/tutorial/06/06_hooking_3.png
   :scale: 80 %
   :align: center
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

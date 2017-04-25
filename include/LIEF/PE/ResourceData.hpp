@@ -35,26 +35,48 @@ class DLL_PUBLIC ResourceData : public ResourceNode {
   friend class Builder;
 
   public:
-    ResourceData(void);
-    ResourceData(const std::vector<uint8_t>& content, uint32_t codePage);
-    ResourceData(const ResourceData&);
-    ResourceData& operator=(const ResourceData&);
-    virtual ~ResourceData(void);
+  ResourceData(void);
+  ResourceData(const std::vector<uint8_t>& content, uint32_t code_page);
 
-    uint32_t                    code_page(void) const;
-    const std::vector<uint8_t>& content(void) const;
+  ResourceData(const ResourceData& other);
+  ResourceData& operator=(ResourceData other);
+  void swap(ResourceData& other);
 
-    void code_page(uint32_t codePage);
-    void content(const std::vector<uint8_t>& content);
+  virtual ~ResourceData(void);
 
-    virtual void accept(Visitor& visitor) const override;
+  //! @brief The code page that is used to decode code point
+  //! values within the resource data. Typically, the code
+  //! page would be the Unicode code page.
+  uint32_t code_page(void) const;
 
-    bool operator==(const ResourceData& rhs) const;
-    bool operator!=(const ResourceData& rhs) const;
+  //! @brief Resource content
+  const std::vector<uint8_t>& content(void) const;
+
+  //! @brief Reserved value. Should be ``0``
+  uint32_t reserved(void) const;
+
+  //! @brief Offset of the content within the resource
+  //!
+  //! @warning This value may change when rebuilding
+  //! resource table
+  uint32_t offset(void) const;
+
+  void code_page(uint32_t code_page);
+  void content(const std::vector<uint8_t>& content);
+  void reserved(uint32_t value);
+
+  virtual void accept(Visitor& visitor) const override;
+
+  bool operator==(const ResourceData& rhs) const;
+  bool operator!=(const ResourceData& rhs) const;
+
+  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceData& data);
 
   private:
-    std::vector<uint8_t> content_;
-    uint32_t             codePage_;
+  std::vector<uint8_t> content_;
+  uint32_t             code_page_;
+  uint32_t             reserved_;
+  uint32_t             offset_;
 
 };
 

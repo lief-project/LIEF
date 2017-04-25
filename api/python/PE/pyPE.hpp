@@ -15,6 +15,11 @@
  */
 #ifndef PY_LIEF_PE_H_
 #define PY_LIEF_PE_H_
+
+#include <pybind11/stl_bind.h>
+#include <map>
+#include <string>
+
 #include "LIEF/PE.hpp"
 
 #include "pyLIEF.hpp"
@@ -38,7 +43,6 @@ void init_PE_Export_class(py::module&);
 void init_PE_ExportEntry_class(py::module&);
 void init_PE_Builder_class(py::module&);
 void init_PE_Debug_class(py::module&);
-void init_PE_ResourcesManager_class(py::module&);
 
 void init_PE_Signature_class(py::module&);
 void init_PE_ContentInfo_class(py::module&);
@@ -46,8 +50,30 @@ void init_PE_x509_class(py::module&);
 void init_PE_SignerInfo_class(py::module&);
 void init_PE_AuthenticatedAttributes_class(py::module&);
 
+void init_PE_ResourceNode_class(py::module&);
+void init_PE_ResourceData_class(py::module&);
+void init_PE_ResourceDirectory_class(py::module&);
+
+void init_PE_ResourcesIcon_class(py::module&);
+
+void init_PE_ResourceVersion_class(py::module&);
+void init_PE_ResourceFixedFileInfo_class(py::module&);
+void init_PE_ResourceVarFileInfo_class(py::module&);
+void init_PE_ResourceStringFileInfo_class(py::module&);
+void init_PE_LangCodeItem_class(py::module&);
+
+void init_PE_ResourcesDialog_class(py::module&);
+void init_PE_ResourcesDialogItem_class(py::module&);
+
+void init_PE_ResourcesManager_class(py::module&);
+
 // Enums
 void init_PE_Structures_enum(py::module&);
 
+
+// Opaque containers
+PYBIND11_MAKE_OPAQUE(std::vector<LangCodeItem>);
+using dict_langcode_item = std::map<std::u16string, std::u16string>;
+PYBIND11_MAKE_OPAQUE(dict_langcode_item);
 
 #endif
