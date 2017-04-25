@@ -86,6 +86,17 @@ class ImportEntry;
 class ResourceNode;
 class ResourceData;
 class ResourceDirectory;
+
+class ResourceVersion;
+class ResourceStringFileInfo;
+class ResourceFixedFileInfo;
+class ResourceVarFileInfo;
+class LangCodeItem;
+
+class ResourceIcon;
+class ResourceDialog;
+class ResourceDialogItem;
+
 }
 
 namespace MachO {
@@ -276,6 +287,30 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::ResourceDirectory
   virtual void visit(const PE::ResourceDirectory& directory);
+
+  //! @brief Method to visit a LIEF::PE::ResourceVersion
+  virtual void visit(const PE::ResourceVersion& resource_version);
+
+  //! @brief Method to visit a LIEF::PE::ResourceStringFileInfo
+  virtual void visit(const PE::ResourceStringFileInfo& resource_string_file_info);
+
+  //! @brief Method to visit a LIEF::PE::ResourceFixedFileInfo
+  virtual void visit(const PE::ResourceFixedFileInfo& resource_fixed_file_info);
+
+  //! @brief Method to visit a LIEF::PE::ResourceVarFileInfo
+  virtual void visit(const PE::ResourceVarFileInfo& resource_var_file_info);
+
+  //! @brief Method to visit a LIEF::PE::LangCodeItem
+  virtual void visit(const PE::LangCodeItem& lang_code_item);
+
+  //! @brief Method to visit a LIEF::PE::ResourceIcon
+  virtual void visit(const PE::ResourceIcon& resource_icon);
+
+  //! @brief Method to visit a LIEF::PE::ResourceDialog
+  virtual void visit(const PE::ResourceDialog& resource_dialog);
+
+  //! @brief Method to visit a LIEF::PE::ResourceDialogItem
+  virtual void visit(const PE::ResourceDialogItem& resource_dialogitem);
 
   // MachO part
   // ==========

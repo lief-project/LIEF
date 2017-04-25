@@ -13,26 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/PE/ResourceData.hpp"
 
 namespace LIEF {
 namespace PE {
-ResourceData::ResourceData(void) = default;
 ResourceData::~ResourceData(void) = default;
-ResourceData& ResourceData::operator=(const ResourceData&) = default;
-ResourceData::ResourceData(const ResourceData&) = default;
-
-ResourceData::ResourceData(const std::vector<uint8_t>& content, uint32_t codePage) :
-  content_(content),
-  codePage_(codePage)
-{
-  this->type_ = RESOURCE_NODE_TYPES::DATA;
+ResourceData& ResourceData::operator=(ResourceData other) {
+  this->swap(other);
+  return *this;
 }
 
+ResourceData::ResourceData(const ResourceData& other) :
+  ResourceNode{static_cast<const ResourceNode&>(other)},
+  content_{other.content_},
+  code_page_{other.code_page_},
+  reserved_{other.reserved_}
+{}
+
+
+void ResourceData::swap(ResourceData& other) {
+  ResourceNode::swap(static_cast<ResourceNode&>(other));
+
+  std::swap(this->content_,    other.content_);
+  std::swap(this->code_page_,  other.code_page_);
+  std::swap(this->reserved_,   other.reserved_);
+}
+
+
+ResourceData::ResourceData(void) :
+  content_{},
+  code_page_{0},
+  reserved_{0}
+{}
+
+
+ResourceData::ResourceData(const std::vector<uint8_t>& content, uint32_t code_page) :
+  content_{content},
+  code_page_{code_page},
+  reserved_{0}
+{}
+
+
+
 uint32_t ResourceData::code_page(void) const {
-  return this->codePage_;
+  return this->code_page_;
 }
 
 
@@ -41,8 +69,17 @@ const std::vector<uint8_t>& ResourceData::content(void) const {
 }
 
 
-void ResourceData::code_page(uint32_t codePage) {
-  this->codePage_ = codePage;
+uint32_t ResourceData::reserved(void) const {
+  return this->reserved_;
+}
+
+uint32_t ResourceData::offset(void) const {
+  return this->offset_;
+}
+
+
+void ResourceData::code_page(uint32_t code_page) {
+  this->code_page_ = code_page;
 }
 
 
@@ -50,11 +87,17 @@ void ResourceData::content(const std::vector<uint8_t>& content) {
   this->content_ = content;
 }
 
+
+void ResourceData::reserved(uint32_t value) {
+  this->reserved_ = value;
+}
+
 void ResourceData::accept(Visitor& visitor) const {
+  ResourceNode::accept(visitor);
+  visitor(*this); // Double dispatch to avoid down-casting
 
   visitor.visit(this->code_page());
   visitor.visit(this->content());
-
 }
 
 bool ResourceData::operator==(const ResourceData& rhs) const {
@@ -65,6 +108,16 @@ bool ResourceData::operator==(const ResourceData& rhs) const {
 
 bool ResourceData::operator!=(const ResourceData& rhs) const {
   return not (*this == rhs);
+}
+
+
+std::ostream& operator<<(std::ostream& os, const ResourceData& data) {
+  os << static_cast<const ResourceNode&>(data) << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Code page :" << data.code_page()                       << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Reserved :"  << data.reserved()                        << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Size :"      << data.content().size()                  << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Hash :"      << std::hex << Hash::hash(data.content()) << std::endl;
+  return os;
 }
 
 

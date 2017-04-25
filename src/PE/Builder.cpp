@@ -234,8 +234,9 @@ void Builder::build_relocation(void) {
 //
 void Builder::build_resources(void) {
   LOG(DEBUG) << "Building RSRC" << std::endl;
+  ResourceNode& node = this->binary_->get_resources();
+  //std::cout << ResourcesManager{this->binary_->resources_} << std::endl;
 
-  ResourceNode* node = this->binary_->resources_;
 
   uint32_t headerSize = 0;
   uint32_t dataSize   = 0;
@@ -264,22 +265,24 @@ void Builder::build_resources(void) {
 //
 // Pre-computation
 //
-void Builder::compute_resources_size(ResourceNode *node, uint32_t *headerSize, uint32_t *dataSize, uint32_t *nameSize) {
-  if (not node->name().empty()) {
-    *nameSize += sizeof(uint16_t) + node->name().size() * sizeof(char16_t) + 1;
+void Builder::compute_resources_size(ResourceNode& node, uint32_t *headerSize, uint32_t *dataSize, uint32_t *nameSize) {
+  if (not node.name().empty()) {
+    *nameSize += sizeof(uint16_t) + (node.name().size() + 1) * sizeof(char16_t);
   }
 
-  if (node->type() == RESOURCE_NODE_TYPES::DIRECTORY) {
-    *headerSize += STRUCT_SIZES::ResourceDirectoryTableSize;
-    *headerSize += STRUCT_SIZES::ResourceDirectoryEntriesSize;
+  if (node.is_directory()) {
+    *headerSize += sizeof(pe_resource_directory_table);
+    *headerSize += sizeof(pe_resource_directory_entries);
   } else {
-    ResourceData *dataNode = static_cast<ResourceData*>(node);
-    *headerSize += STRUCT_SIZES::ResourceDataEntrySize;
-    *headerSize += STRUCT_SIZES::ResourceDirectoryEntriesSize;
-    *dataSize   += dataNode->content_.size() + 1;
+    ResourceData *dataNode = dynamic_cast<ResourceData*>(&node);
+    *headerSize += sizeof(pe_resource_data_entry);
+    *headerSize += sizeof(pe_resource_directory_entries);
+
+    // !!! Data content have to be aligned !!!
+    *dataSize += align(dataNode->content().size(), sizeof(uint32_t));
   }
 
-  for (auto& child : node->childs()) {
+  for (ResourceNode& child : node.childs()) {
     this->compute_resources_size(child, headerSize, dataSize, nameSize);
   }
 }
@@ -289,7 +292,7 @@ void Builder::compute_resources_size(ResourceNode *node, uint32_t *headerSize, u
 // Build level by level
 //
 void Builder::construct_resources(
-    ResourceNode *node,
+    ResourceNode& node,
     std::vector<uint8_t> *content,
     uint32_t *offsetToHeader,
     uint32_t *offsetToData,
@@ -299,47 +302,39 @@ void Builder::construct_resources(
 
   // Build Directory
   // ===============
+  if (node.is_directory()) {
+    ResourceDirectory *rsrc_directory = dynamic_cast<ResourceDirectory*>(&node);
 
-  if (node->type() == RESOURCE_NODE_TYPES::DIRECTORY) {
-    //LOG(DEBUG) << "Build level " << std::dec << depth << std::endl;
-    ResourceDirectory *rsrcDirectory = static_cast<ResourceDirectory*>(node);
-
-    pe_resource_directory_table rsrcHeader;
-    rsrcHeader.Characteristics     = static_cast<uint32_t>(rsrcDirectory->characteristics_);
-    rsrcHeader.TimeDateStamp       = static_cast<uint32_t>(rsrcDirectory->timeDateStamp_);
-    rsrcHeader.MajorVersion        = static_cast<uint16_t>(rsrcDirectory->majorVersion_);
-    rsrcHeader.MinorVersion        = static_cast<uint16_t>(rsrcDirectory->minorVersion_);
-    rsrcHeader.NumberOfNameEntries = static_cast<uint16_t>(rsrcDirectory->numberOfNameEntries_);
-    rsrcHeader.NumberOfIDEntries   = static_cast<uint16_t>(rsrcDirectory->numberOfIDEntries_);
+    pe_resource_directory_table rsrc_header;
+    rsrc_header.Characteristics     = static_cast<uint32_t>(rsrc_directory->characteristics());
+    rsrc_header.TimeDateStamp       = static_cast<uint32_t>(rsrc_directory->time_date_stamp());
+    rsrc_header.MajorVersion        = static_cast<uint16_t>(rsrc_directory->major_version());
+    rsrc_header.MinorVersion        = static_cast<uint16_t>(rsrc_directory->minor_version());
+    rsrc_header.NumberOfNameEntries = static_cast<uint16_t>(rsrc_directory->numberof_name_entries());
+    rsrc_header.NumberOfIDEntries   = static_cast<uint16_t>(rsrc_directory->numberof_id_entries());
 
 
     std::copy(
-        reinterpret_cast<uint8_t*>(&rsrcHeader),
-        reinterpret_cast<uint8_t*>(&rsrcHeader) + STRUCT_SIZES::ResourceDirectoryTableSize,
+        reinterpret_cast<uint8_t*>(&rsrc_header),
+        reinterpret_cast<uint8_t*>(&rsrc_header) + sizeof(pe_resource_directory_table),
         content->data() + *offsetToHeader);
 
-    *offsetToHeader += STRUCT_SIZES::ResourceDirectoryTableSize;
+    *offsetToHeader += sizeof(pe_resource_directory_table);
 
     //Build next level
     uint32_t currentOffset = *offsetToHeader;
 
     // Offset to the next RESOURCE_NODE_TYPES::DIRECTORY
-    *offsetToHeader += node->childs().size() * STRUCT_SIZES::ResourceDirectoryEntriesSize;
+    *offsetToHeader += node.childs().size() * sizeof(pe_resource_directory_entries);
 
 
     // Build childs
     // ============
-    for (ResourceNode* child : node->childs()) {
-      if (static_cast<uint32_t>(child->id_) & 0x80000000) { // There is a name
+    for (ResourceNode& child : node.childs()) {
+      if (static_cast<uint32_t>(child.id()) & 0x80000000) { // There is a name
 
-
-        const std::u16string& name = child->name();
-        child->id_ = 0x80000000 | *offsetToName;
-
-        //for (uint32_t i = 0; i < name.size(); ++i) {
-        //  std::cout << static_cast<char>(name.data()[i]);
-        //}
-        //std::cout << std::endl;
+        const std::u16string& name = child.name();
+        child.id(0x80000000 | *offsetToName);
 
         uint16_t* length_ptr = reinterpret_cast<uint16_t*>(content->data() + *offsetToName);
         *length_ptr = name.size();
@@ -350,60 +345,63 @@ void Builder::construct_resources(
             reinterpret_cast<const char16_t*>(name.data()) + name.size(),
             name_ptr);
 
-        *offsetToName += name.size() * sizeof(char16_t) + sizeof(uint16_t) + 1;
+        *offsetToName += (name.size() + 1) * sizeof(char16_t) + sizeof(uint16_t);
       }
 
-      if (child->type() == RESOURCE_NODE_TYPES::DIRECTORY) {
-
-        pe_resource_directory_entries entryHeader;
-        entryHeader.NameID.IntegerID = static_cast<uint32_t>(child->id());
-        entryHeader.RVA              = static_cast<uint32_t>((0x80000000 | *offsetToHeader));
+      // DIRECTORY
+      if (child.is_directory()) {
+        pe_resource_directory_entries entry_header;
+        entry_header.NameID.IntegerID = static_cast<uint32_t>(child.id());
+        entry_header.RVA              = static_cast<uint32_t>((0x80000000 | *offsetToHeader));
 
         std::copy(
-            reinterpret_cast<uint8_t*>(&entryHeader),
-            reinterpret_cast<uint8_t*>(&entryHeader) + STRUCT_SIZES::ResourceDirectoryEntriesSize,
+            reinterpret_cast<uint8_t*>(&entry_header),
+            reinterpret_cast<uint8_t*>(&entry_header) + sizeof(pe_resource_directory_entries),
             content->data() + currentOffset);
 
-        currentOffset += STRUCT_SIZES::ResourceDirectoryEntriesSize;
+        currentOffset += sizeof(pe_resource_directory_entries);
         this->construct_resources(child, content, offsetToHeader, offsetToData, offsetToName, baseRVA, depth + 1);
       } else { //DATA
-        pe_resource_directory_entries entryHeader;
+        pe_resource_directory_entries entry_header;
 
-        entryHeader.NameID.IntegerID = static_cast<uint32_t>(child->id());
-        entryHeader.RVA              = static_cast<uint32_t>(*offsetToHeader);
+        entry_header.NameID.IntegerID = static_cast<uint32_t>(child.id());
+        entry_header.RVA              = static_cast<uint32_t>(*offsetToHeader);
 
         std::copy(
-            reinterpret_cast<uint8_t*>(&entryHeader),
-            reinterpret_cast<uint8_t*>(&entryHeader) + STRUCT_SIZES::ResourceDirectoryEntriesSize,
+            reinterpret_cast<uint8_t*>(&entry_header),
+            reinterpret_cast<uint8_t*>(&entry_header) + sizeof(pe_resource_directory_entries),
             content->data() + currentOffset);
-        currentOffset += STRUCT_SIZES::ResourceDirectoryEntriesSize;
+
+        currentOffset += sizeof(pe_resource_directory_entries);
+
         this->construct_resources(child, content, offsetToHeader, offsetToData, offsetToName, baseRVA, depth + 1);
       }
     }
 
   } else {
     //LOG(DEBUG) << "Building Data" << std::endl;
-    ResourceData *rsrcData = static_cast<ResourceData*>(node);
-    pe_resource_data_entry dataHeader;
-    dataHeader.DataRVA  = static_cast<uint32_t>(baseRVA + *offsetToData);
-    dataHeader.Size     = static_cast<uint32_t>(rsrcData->content_.size());
-    dataHeader.Codepage = static_cast<uint32_t>(rsrcData->codePage_);
-    dataHeader.Reserved = static_cast<uint32_t>(0);
+    ResourceData *rsrc_data = dynamic_cast<ResourceData*>(&node);
+
+    pe_resource_data_entry data_header;
+    data_header.DataRVA  = static_cast<uint32_t>(baseRVA + *offsetToData);
+    data_header.Size     = static_cast<uint32_t>(rsrc_data->content().size());
+    data_header.Codepage = static_cast<uint32_t>(rsrc_data->code_page());
+    data_header.Reserved = static_cast<uint32_t>(rsrc_data->reserved());
 
 
     std::copy(
-        reinterpret_cast<uint8_t*>(&dataHeader),
-        reinterpret_cast<uint8_t*>(&dataHeader) + STRUCT_SIZES::ResourceDataEntrySize,
+        reinterpret_cast<uint8_t*>(&data_header),
+        reinterpret_cast<uint8_t*>(&data_header) + sizeof(pe_resource_data_entry),
         content->data() + *offsetToHeader);
 
-    *offsetToHeader += STRUCT_SIZES::ResourceDirectoryTableSize;
-
+    *offsetToHeader += sizeof(pe_resource_directory_table);
+    const std::vector<uint8_t>& resource_content = rsrc_data->content();
     std::copy(
-        std::begin(rsrcData->content_),
-        std::end(rsrcData->content_),
+        std::begin(resource_content),
+        std::end(resource_content),
         content->data() + *offsetToData);
 
-    *offsetToData += rsrcData->content().size() + 1;
+    *offsetToData += align(resource_content.size(), sizeof(uint32_t));
   }
 }
 

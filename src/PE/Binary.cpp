@@ -30,6 +30,8 @@
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceData.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -796,9 +798,17 @@ const Export& Binary::get_export(void) const {
 //
 /////////////////////////////////////
 
-void Binary::set_resources(ResourceNode* resource) {
+void Binary::set_resources(const ResourceDirectory& resource) {
   // TODO: DELETE !!!!!!!!!
-  this->resources_ = resource;
+  delete this->resources_;
+  this->resources_ = new ResourceDirectory{resource};
+}
+
+
+void Binary::set_resources(const ResourceData& resource) {
+  // TODO: DELETE !!!!!!!!!
+  delete this->resources_;
+  this->resources_ = new ResourceData{resource};
 }
 
 ResourceNode& Binary::get_resources(void) {

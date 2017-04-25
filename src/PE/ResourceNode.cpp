@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
+#include <iomanip>
 
 #include "LIEF/visitors/Hash.hpp"
+
+#include "LIEF/PE/utils.hpp"
 
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
@@ -23,33 +27,25 @@
 namespace LIEF {
 namespace PE {
 
-ResourceNode::ResourceNode(void) = default;
+ResourceNode::ResourceNode(void) :
+  id_{0},
+  name_{},
+  childs_{},
+  depth_{0}
+{}
 
-ResourceNode& ResourceNode::operator=(const ResourceNode& other) {
-  if (this != &other) {
-    this->type_ = other.type_;
-    this->id_   = other.id_;
-    this->name_ = other.name_;
 
-    for (const ResourceNode* node : this->childs_) {
-      if (const ResourceDirectory* directory = dynamic_cast<const ResourceDirectory*>(node)) {
-        this->childs_.push_back(new ResourceDirectory{*directory});
-      }
-
-      if (const ResourceData* data = dynamic_cast<const ResourceData*>(node)) {
-        this->childs_.push_back(new ResourceData{*data});
-      }
-    }
-  }
+ResourceNode& ResourceNode::operator=(ResourceNode other) {
+  this->swap(other);
   return *this;
 }
 
-ResourceNode::ResourceNode(const ResourceNode& other) {
-  this->type_ = other.type_;
-  this->id_   = other.id_;
-  this->name_ = other.name_;
-
-  for (const ResourceNode* node : this->childs_) {
+ResourceNode::ResourceNode(const ResourceNode& other) :
+  id_{other.id_},
+  name_{other.name_},
+  depth_{other.depth_}
+{
+  for (const ResourceNode* node : other.childs_) {
     if (const ResourceDirectory* directory = dynamic_cast<const ResourceDirectory*>(node)) {
       this->childs_.push_back(new ResourceDirectory{*directory});
     }
@@ -60,15 +56,18 @@ ResourceNode::ResourceNode(const ResourceNode& other) {
   }
 }
 
+
+void ResourceNode::swap(ResourceNode& other) {
+  std::swap(this->id_,     other.id_);
+  std::swap(this->name_,   other.name_);
+  std::swap(this->childs_, other.childs_);
+  std::swap(this->depth_,  other.depth_);
+}
+
 ResourceNode::~ResourceNode(void) {
   for (ResourceNode* node : this->childs_) {
     delete node;
   }
-}
-
-
-RESOURCE_NODE_TYPES ResourceNode::type(void) const {
-  return this->type_;
 }
 
 
@@ -77,13 +76,13 @@ uint32_t ResourceNode::id(void) const {
 }
 
 
-std::vector<ResourceNode*>& ResourceNode::childs(void) {
-  return this->childs_;
+it_childs ResourceNode::childs(void) {
+  return {this->childs_};
 }
 
 
-const std::vector<ResourceNode*>& ResourceNode::childs(void) const {
-  return this->childs_;
+it_const_childs ResourceNode::childs(void) const {
+  return {this->childs_};
 }
 
 
@@ -92,33 +91,134 @@ const std::u16string& ResourceNode::name(void) const {
 }
 
 
+bool ResourceNode::is_directory(void) const {
+  return typeid(*this) == typeid(ResourceDirectory);
+}
+
+bool ResourceNode::is_data(void) const {
+  return not this->is_directory();
+}
+
+
 bool ResourceNode::has_name(void) const {
   return static_cast<bool>(this->id() & 0x80000000);
 }
 
+uint32_t ResourceNode::depth(void) const {
+  return this->depth_;
+}
 
-void ResourceNode::add_child(ResourceNode* child) {
-  this->childs_.push_back(child);
+
+ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
+
+  ResourceDirectory* new_node = new ResourceDirectory{child};
+  new_node->depth_ = this->depth_ + 1;
+
+  this->childs_.push_back(new_node);
+
+  if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
+    if (this->has_name()) {
+      dir->numberof_name_entries(dir->numberof_name_entries() + 1);
+    } else {
+      dir->numberof_id_entries(dir->numberof_id_entries() + 1);
+    }
+  }
+
+  return *this->childs_.back();
+}
+
+ResourceNode& ResourceNode::add_child(const ResourceData& child) {
+  ResourceData* new_node = new ResourceData{child};
+  new_node->depth_ = this->depth_ + 1;
+
+  this->childs_.push_back(new_node);
+
+  if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
+    if (this->has_name()) {
+      dir->numberof_name_entries(dir->numberof_name_entries() + 1);
+    } else {
+      dir->numberof_id_entries(dir->numberof_id_entries() + 1);
+    }
+  }
+  return *this->childs_.back();
+}
+
+void ResourceNode::delete_child(uint32_t id) {
+
+  auto&& it_node = std::find_if(
+      std::begin(this->childs_),
+      std::end(this->childs_),
+      [id] (const ResourceNode* node) {
+        return node->id() == id;
+      });
+
+  if (it_node == std::end(this->childs_)) {
+    throw not_found("Unable to find the node with id " + std::to_string(id) + "!");
+  }
+  this->delete_child(**it_node);
+
+}
+
+void ResourceNode::delete_child(const ResourceNode& node) {
+  auto&& it_node = std::find_if(
+      std::begin(this->childs_),
+      std::end(this->childs_),
+      [&node] (const ResourceNode* intree_node) {
+        return *intree_node == node;
+      });
+
+  if (it_node == std::end(this->childs_)) {
+    std::stringstream ss;
+    ss << "Unable to find the node: " << node;
+    throw not_found(ss.str());
+  }
+
+  if (this->is_directory()) {
+    ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this);
+    if (this->has_name()) {
+      dir->numberof_name_entries(dir->numberof_name_entries() - 1);
+    } else {
+      dir->numberof_id_entries(dir->numberof_id_entries() - 1);
+    }
+  }
+
+  delete *it_node;
+  this->childs_.erase(it_node);
+
+}
+
+void ResourceNode::id(uint32_t id) {
+  this->id_ = id;
+}
+
+void ResourceNode::name(const std::string& name) {
+  this->name(u8tou16(name));
+}
+
+void ResourceNode::name(const std::u16string& name) {
+  this->name_ = name;
+}
+
+
+void ResourceNode::sort_by_id(void) {
+  std::sort(
+      std::begin(this->childs_),
+      std::end(this->childs_),
+      [] (const ResourceNode* lhs, const ResourceNode* rhs) {
+        return lhs->id() < rhs->id();
+      });
 }
 
 void ResourceNode::accept(Visitor& visitor) const {
+  visitor(*this); // Double dispatch to avoid down-casting
 
   visitor.visit(this->id());
-  visitor.visit(static_cast<size_t>(this->type()));
   if (this->has_name()) {
     visitor.visit(this->name());
   }
 
-  if (const ResourceDirectory* directory = dynamic_cast<const ResourceDirectory*>(this)) {
-    visitor(*directory);
-  }
-
-  if (const ResourceData* data = dynamic_cast<const ResourceData*>(this)) {
-    visitor(*data);
-  }
-
-  for (const ResourceNode* child : this->childs()) {
-    visitor(*child);
+  for (const ResourceNode& child : this->childs()) {
+    visitor(child);
   }
 
 }
@@ -131,6 +231,25 @@ bool ResourceNode::operator==(const ResourceNode& rhs) const {
 
 bool ResourceNode::operator!=(const ResourceNode& rhs) const {
   return not (*this == rhs);
+}
+
+std::ostream& operator<<(std::ostream& os, const ResourceNode& node) {
+  if (node.is_directory()) {
+    os << "[DIRECTORY]";
+  } else {
+    os << "[DATA]";
+  }
+
+  os << " - ID: 0x" << std::setw(2) << std::setfill('0') << std::hex << node.id();
+  if (node.has_name()) {
+    os << " (" << u16tou8(node.name()) << ")";
+  }
+
+  os << " - Depth: " << std::dec << node.depth();
+  os << " - Childs : " << std::dec << node.childs().size();
+
+  return os;
+
 }
 
 

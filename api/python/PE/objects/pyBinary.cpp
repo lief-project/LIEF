@@ -205,6 +205,11 @@ void init_PE_Binary_class(py::module& m) {
         static_cast<no_const_getter<ResourcesManager>>(&Binary::get_resources_manager),
         "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources")
 
+    .def_property_readonly("resources",
+        static_cast<no_const_getter<ResourceNode&>>(&Binary::get_resources),
+        "Return the " RST_CLASS_REF(lief.PE.ResourceNode) " tree",
+        py::return_value_policy::reference)
+
     .def_property_readonly("overlay",
         static_cast<no_const_getter<std::vector<uint8_t>&>>(&Binary::overlay),
         "Return the overlay content",

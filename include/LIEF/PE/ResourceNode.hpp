@@ -23,15 +23,11 @@
 #include "LIEF/Visitable.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
-
-enum class RESOURCE_NODE_TYPES : uint8_t {
-  DIRECTORY = 0,
-  DATA
-};
 
 class Parser;
 class Builder;
@@ -42,30 +38,69 @@ class DLL_PUBLIC ResourceNode : public Visitable {
   friend class Builder;
 
   public:
-  ResourceNode(void);
   ResourceNode(const ResourceNode& other);
-  ResourceNode& operator=(const ResourceNode& other);
+  ResourceNode& operator=(ResourceNode other);
+
+  void swap(ResourceNode& other);
+
   virtual ~ResourceNode(void);
 
-  RESOURCE_NODE_TYPES               type(void) const;
-  uint32_t                          id(void) const;
-  const std::u16string&             name(void) const;
-  std::vector<ResourceNode*>&       childs(void);
-  const std::vector<ResourceNode*>& childs(void) const;
-  bool                              has_name(void) const;
+  //! @brief Integer that identifies the Type, Name, or
+  //! Language ID entry.
+  uint32_t id(void) const;
 
-  void add_child(ResourceNode* child);
+  //! @brief Name of the entry
+  const std::u16string& name(void) const;
+
+  //! @brief Iterator on node's childs
+  it_childs       childs(void);
+  it_const_childs childs(void) const;
+
+  //! @brief ``True`` if the entry uses name as ID
+  bool has_name(void) const;
+
+  //! @brief Current depth of the entry in the resource tree
+  uint32_t depth(void) const;
+
+  //! @brief ``True`` if the current entry is a ResourceDirectory
+  bool is_directory(void) const;
+
+  //! @brief ``True`` if the current entry is a ResourceData
+  bool is_data(void) const;
+
+  void id(uint32_t id);
+  void name(const std::string& name);
+  void name(const std::u16string& name);
+
+  //! @brief Add a ResourceDirectory to the current node
+  ResourceNode& add_child(const ResourceDirectory& child);
+
+  //! @brief Add a ResourceData to the current node
+  ResourceNode& add_child(const ResourceData& child);
+
+  //! @brief Delete the node with the given ``id``
+  void delete_child(uint32_t id);
+
+  //! @brief Delete the given node from childs
+  void delete_child(const ResourceNode& node);
+
+  //! @brief Sort resource childs by ID
+  void sort_by_id(void);
 
   virtual void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceNode& rhs) const;
   bool operator!=(const ResourceNode& rhs) const;
 
+  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
+
   protected:
-  RESOURCE_NODE_TYPES        type_;
-  uint32_t                   id_;
-  std::u16string             name_;
-  std::vector<ResourceNode*> childs_;
+  ResourceNode(void);
+
+  uint32_t       id_;
+  std::u16string name_;
+  childs_t       childs_;
+  uint32_t       depth_;
 };
 }
 }

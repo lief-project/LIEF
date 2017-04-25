@@ -1,4 +1,17 @@
 set(LIEF_PYTHON_PE_SRC
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceNode.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceData.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceDirectory.cpp"
+
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceIcon.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceVersion.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceVarFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceFixedFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceStringFileInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyLangCodeItem.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceDialog.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceDialogItem.cpp"
+
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignerInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyAuthenticatedAttributes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyx509.cpp"

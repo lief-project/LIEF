@@ -131,27 +131,70 @@ static const DLL_CHARACTERISTICS dll_characteristics_array[] = {
 };
 
 
+static const EXTENDED_WINDOW_STYLES extended_window_styles_array[] = {
+  WS_EX_DLGMODALFRAME,
+  WS_EX_NOPARENTNOTIFY,
+  WS_EX_TOPMOST,
+  WS_EX_ACCEPTFILES,
+  WS_EX_TRANSPARENT,
+  WS_EX_MDICHILD,
+  WS_EX_TOOLWINDOW,
+  WS_EX_WINDOWEDGE,
+  WS_EX_CLIENTEDGE,
+  WS_EX_CONTEXTHELP,
+  WS_EX_RIGHT,
+  WS_EX_LEFT,
+  WS_EX_RTLREADING,
+  WS_EX_LTRREADING,
+  WS_EX_LEFTSCROLLBAR,
+  WS_EX_RIGHTSCROLLBAR,
+  WS_EX_CONTROLPARENT,
+  WS_EX_STATICEDGE,
+  WS_EX_APPWINDOW,
+};
 
-//struct pe_import {
-//  uint16_t Sig1; ///< Must be IMAGE_FILE_MACHINE_UNKNOWN (0).
-//  uint16_t Sig2; ///< Must be 0xFFFF.
-//  uint16_t Version;
-//  uint16_t Machine;
-//  uint32_t TimeDateStamp;
-//  uint32_t SizeOfData;
-//  uint16_t OrdinalHint;
-//  uint16_t TypeInfo;
-//
-//  ImportType getType() const {
-//    return static_cast<ImportType>(TypeInfo & 0x3);
-//  }
-//
-//  ImportNameType getNameType() const {
-//    return static_cast<ImportNameType>((TypeInfo & 0x1C) >> 3);
-//  }
-//};
+
+static const WINDOW_STYLES window_styles_array[] = {
+  WS_OVERLAPPED,
+  WS_POPUP,
+  WS_CHILD,
+  WS_MINIMIZE,
+  WS_VISIBLE,
+  WS_DISABLED,
+  WS_CLIPSIBLINGS,
+  WS_CLIPCHILDREN,
+  WS_MAXIMIZE,
+  WS_CAPTION,
+  WS_BORDER,
+  WS_DLGFRAME,
+  WS_VSCROLL,
+  WS_HSCROLL,
+  WS_SYSMENU,
+  WS_THICKFRAME,
+  WS_GROUP,
+  WS_TABSTOP,
+  WS_MINIMIZEBOX,
+  WS_MAXIMIZEBOX,
+};
 
 
+static const DIALOG_BOX_STYLES dialog_box_styles_array[] = {
+  DS_ABSALIGN,
+  DS_SYSMODAL,
+  DS_LOCALEDIT,
+  DS_SETFONT,
+  DS_MODALFRAME,
+  DS_NOIDLEMSG,
+  DS_SETFOREGROUND,
+  DS_3DLOOK,
+  DS_FIXEDSYS,
+  DS_NOFAILCREATE,
+  DS_CONTROL,
+  DS_CENTER,
+  DS_CENTERMOUSE,
+  DS_CONTEXTHELP,
+  DS_SHELLFONT,
+};
 
 
 template <typename T>

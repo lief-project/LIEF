@@ -114,7 +114,8 @@ todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
-
+def setup(app):
+    app.add_stylesheet('css/custom.css')  # may also be an URL
 import sphinx_rtd_theme
 
 

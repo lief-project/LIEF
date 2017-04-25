@@ -44,6 +44,20 @@ DLL_PUBLIC const char* to_string(RELOCATIONS_ARM e);
 
 DLL_PUBLIC const char* to_string(DEBUG_TYPES e);
 
+DLL_PUBLIC const char* to_string(RESOURCE_TYPES e);
+DLL_PUBLIC const char* to_string(RESOURCE_LANGS e);
+DLL_PUBLIC const char* to_string(RESOURCE_SUBLANGS e);
+DLL_PUBLIC const char* to_string(CODE_PAGES e);
+
+DLL_PUBLIC const char* to_string(EXTENDED_WINDOW_STYLES e);
+DLL_PUBLIC const char* to_string(WINDOW_STYLES e);
+DLL_PUBLIC const char* to_string(DIALOG_BOX_STYLES e);
+
+DLL_PUBLIC const char* to_string(FIXED_VERSION_OS e);
+DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_FLAGS e);
+DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_TYPES e);
+DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e);
+
 } // namespace PE
 } // namespace LIEF
 #endif

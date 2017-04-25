@@ -310,4 +310,136 @@ struct pe_export_directory_table {
   uint32_t NamePointerRVA;        ///< Address of the name pointer table (RVA)
   uint32_t OrdinalTableRVA;       ///< Address of the ordinal table (RVA)
 };
+
+
+struct pe_resource_fixed_file_info {
+  uint32_t signature;          // e.g.  0xfeef04bd
+  uint32_t struct_version;      // e.g.  0x00000042 = "0.42"
+  uint32_t file_version_MS;    // e.g.  0x00030075 = "3.75"
+  uint32_t file_version_LS;    // e.g.  0x00000031 = "0.31"
+  uint32_t product_version_MS; // e.g.  0x00030010 = "3.10"
+  uint32_t product_version_LS; // e.g.  0x00000031 = "0.31"
+  uint32_t file_flags_mask;    // = 0x3F for version "0.42"
+  uint32_t file_flags;         // e.g.  VFF_DEBUG | VFF_PRERELEASE
+  uint32_t file_OS;            // e.g.  VOS_DOS_WINDOWS16
+  uint32_t file_type;          // e.g.  VFT_DRIVER
+  uint32_t file_subtype;       // e.g.  VFT2_DRV_KEYBOARD
+  uint32_t file_date_MS;       // e.g.  0
+  uint32_t file_date_LS;       // e.g.  0
+};
+
+
+struct pe_resource_version_info {
+  uint16_t length;
+  uint16_t sizeof_value;
+  uint16_t type;
+  char16_t key[16];
+  // uint16_t padding;
+  //
+  // uint16_t padding;
+  // uint16_t children
+};
+
+//! @brief Resource icons directory structure
+//! Based on https://msdn.microsoft.com/en-us/library/ff468901(v=vs.85).aspx
+//!
+//! This is the begining of the RESOURCE_TYPES::GROUP_ICON content
+struct pe_resource_icon_dir {
+  uint16_t reserved; ///< Reserved
+  uint16_t type;     ///< Resource type (1 for icons)
+  uint16_t count;    ///< Number of icons
+};
+
+
+//! @brief Structure that follows pe_resource_icon_dir in a resource entry
+struct pe_resource_icon_group {
+	uint8_t width;        ///< Width, in pixels, of the image
+	uint8_t height;       ///< Height, in pixels, of the image
+	uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
+	uint8_t reserved;     ///< Reserved (must be 0)
+	uint16_t planes;      ///< Color Planes
+	uint16_t bit_count;   ///< Bits per pixel
+	uint32_t size;        ///< Size of the image in bytes
+	uint16_t ID;          ///< The associated ID
+};
+
+//! @brief Structure that follows pe_resource_icon_dir in a icon **file**
+struct pe_icon_header {
+	uint8_t width;        ///< Width, in pixels, of the image
+	uint8_t height;       ///< Height, in pixels, of the image
+	uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
+	uint8_t reserved;     ///< Reserved (must be 0)
+	uint16_t planes;      ///< Color Planes
+	uint16_t bit_count;   ///< Bits per pixel
+	uint32_t size;        ///< Size of the image in bytes
+	uint32_t offset;      ///< Offset to the pixels
+};
+
+//! @brief Extended dialog box template
+struct pe_dialog_template_ext {
+  uint16_t version;
+  uint16_t signature;
+  uint32_t help_id;
+  uint32_t ext_style;
+  uint32_t style;
+  uint16_t nbof_items;
+  int16_t x;
+  int16_t y;
+  int16_t cx;
+  int16_t cy;
+  // sz_Or_Ord menu;
+  // sz_Or_Ord windowClass;
+  // char16_t  title[titleLen];
+  // uint16_t  pointsize;
+  // uint16_t  weight;
+  // uint8_t   italic;
+  // uint8_t   charset;
+  // char16_t  typeface[stringLen];
+};
+
+//! @brief Dialog box template
+struct pe_dialog_template {
+  uint32_t style;
+  uint32_t ext_style;
+  uint16_t nbof_items;
+  int16_t x;
+  int16_t y;
+  int16_t cx;
+  int16_t cy;
+};
+
+
+//! @brief Extended dialog box template item
+struct pe_dialog_item_template_ext {
+  uint32_t help_id;
+  uint32_t ext_style;
+  uint32_t style;
+  int16_t x;
+  int16_t y;
+  int16_t cx;
+  int16_t cy;
+  uint32_t id;
+  // sz_Or_Ord windowClass;
+  // sz_Or_Ord title;
+  // uint16_t extra_count;
+};
+
+
+//! @brief Dialog box template item
+struct pe_dialog_item_template {
+  uint32_t style;
+  uint32_t ext_style;
+  int16_t x;
+  int16_t y;
+  int16_t cx;
+  int16_t cy;
+  uint16_t id;
+};
+
+
+
+
+
+
 #pragma pack(pop)
+
