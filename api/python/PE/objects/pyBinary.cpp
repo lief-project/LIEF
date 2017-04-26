@@ -27,6 +27,12 @@ using no_const_func = T (Binary::*)(P);
 template<class T>
 using no_const_getter = T (Binary::*)(void);
 
+template<class T>
+using getter_t = T (Binary::*)(void) const;
+
+template<class T>
+using setter_t = void (Binary::*)(T);
+
 void init_PE_Binary_class(py::module& m) {
   py::class_<Binary, LIEF::Binary>(m, "Binary")
     .def(py::init<const std::string &, PE_TYPE>())
@@ -203,6 +209,11 @@ void init_PE_Binary_class(py::module& m) {
         static_cast<no_const_getter<std::vector<uint8_t>&>>(&Binary::overlay),
         "Return the overlay content",
         py::return_value_policy::reference)
+
+    .def_property("dos_stub",
+        static_cast<getter_t<const std::vector<uint8_t>&>>(&Binary::dos_stub),
+        static_cast<setter_t<const std::vector<uint8_t>&>>(&Binary::dos_stub),
+        "DOS stub content")
 
     .def("add_import_function",
         &Binary::add_import_function,
