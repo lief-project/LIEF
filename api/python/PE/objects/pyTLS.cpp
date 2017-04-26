@@ -32,48 +32,81 @@ using no_const_getter = T (TLS::*)(void);
 
 void init_PE_TLS_class(py::module& m) {
   py::class_<TLS>(m, "TLS")
-    .def(py::init<>())
+    .def(py::init<>(),
+        "Default constructor")
 
     .def_property("callbacks",
         static_cast<getter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
-        static_cast<setter_t<const std::vector<uint64_t>&>>(&TLS::callbacks))
+        static_cast<setter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
+        "List of the callbacks called before any other functions")
 
     .def_property("addressof_index",
         static_cast<getter_t<uint64_t>>(&TLS::addressof_index),
-        static_cast<setter_t<uint64_t>>(&TLS::addressof_index))
+        static_cast<setter_t<uint64_t>>(&TLS::addressof_index),
+        "The location to receive the TLS index, which the "
+        "loader assigns. This location is in an ordinary data "
+        "section, so it can be given a symbolic name that is "
+        "accessible to the program.")
 
     .def_property("addressof_callbacks",
         static_cast<getter_t<uint64_t>>(&TLS::addressof_callbacks),
-        static_cast<setter_t<uint64_t>>(&TLS::addressof_callbacks))
+        static_cast<setter_t<uint64_t>>(&TLS::addressof_callbacks),
+        "The pointer to an array of TLS callback functions. "
+        "The array is null-terminated, so if no callback "
+        "function is supported, this field points to 4 bytes set "
+        "to zero")
 
     .def_property("sizeof_zero_fill",
         static_cast<getter_t<uint32_t>>(&TLS::sizeof_zero_fill),
-        static_cast<setter_t<uint32_t>>(&TLS::sizeof_zero_fill))
+        static_cast<setter_t<uint32_t>>(&TLS::sizeof_zero_fill),
+        "The size in bytes of the template, beyond the "
+        "initialized data delimited by the :attr:`lief.PE.TLS.addressof_raw_data` "
+        "fields. The total template "
+        "size should be the same as the total size of TLS "
+        "data in the image file. The zero fill is the amount of "
+        "data that comes after the initialized nonzero data.")
 
     .def_property("characteristics",
         static_cast<getter_t<uint32_t>>(&TLS::characteristics),
-        static_cast<setter_t<uint32_t>>(&TLS::characteristics))
+        static_cast<setter_t<uint32_t>>(&TLS::characteristics),
+        "The four bits [23:20] describe alignment info. "
+        "Possible values are those defined as "
+        "IMAGE_SCN_ALIGN_*, which are also used to "
+        "describe alignment of section in object files. The "
+        "other 28 bits are reserved for future use.")
 
     .def_property("addressof_raw_data",
         static_cast<getter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
-        static_cast<setter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data))
+        static_cast<setter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
+        "Tuple ``(start address, end address)`` of the TLS template. The "
+        "template is a block of data that is used to initialize "
+        "TLS data. The system copies all of this data each "
+        "time a thread is created, so it must not be "
+        "corrupted. Note that these addresses are not RVA; it is "
+        "addresses for which there should be a base "
+        "relocation in the .reloc section. ")
 
     .def_property("data_template",
         static_cast<getter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&TLS::data_template))
+        static_cast<setter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
+        "The data template content")
 
     .def_property_readonly("has_section",
-        &TLS::has_section)
+        &TLS::has_section,
+        "``True`` if there is a " RST_CLASS_REF(lief.PE.Section) " associated with the TLS object")
 
     .def_property_readonly("has_data_directory",
-        &TLS::has_data_directory)
+        &TLS::has_data_directory,
+        "``True`` if there is a " RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object")
 
     .def_property_readonly("directory",
         static_cast<no_const_getter<DataDirectory&>>(&TLS::directory),
+        "" RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object",
         py::return_value_policy::reference)
 
     .def_property_readonly("section",
         static_cast<no_const_getter<Section&>>(&TLS::section),
+        "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object",
         py::return_value_policy::reference)
 
 

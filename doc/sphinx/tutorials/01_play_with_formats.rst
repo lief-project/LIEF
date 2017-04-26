@@ -58,6 +58,59 @@ To modify the content of the ``.text`` section:
   text.content = bytes([0x33] * text.size)
 
 
+PE
+~~~
+
+As for the ``ELF`` part, we can use the :func:`lief.parse` or :func:`lief.PE.parse` functions to create a :class:`.PE.Binary`
+
+
+.. code-block:: python
+
+  import lief
+  binary = lief.parse("C:\\Windows\\explorer.exe")
+
+
+To access to the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header` and :class:`~lief.PE.OptionalHeader`):
+
+.. code-block:: python
+
+  print(binary.dos_header)
+  print(binary.header)
+  print(binary.optional_header)
+
+One can also access to the imported functions using two methods. The abstract one which will the use the LIEF abstract layer:
+
+.. code-block:: python
+
+  for func in binary.imported_functions:
+    print(func)
+
+To have a better granularity on the location of the imported function in libraries or to access to other fields of the PE imports:
+
+.. code-block:: python
+
+  for imported_library in binary.imports:
+    print("Library name: " + imported_library
+    for func in imported_library.entries:
+      if not func.is_ordinal:
+        print(func.name)
+      print(func.iat_address)
+
+LIEF enables to modify all the properties of the :class:`~lief.PE.Import` and :class:`~lief.PE.ImportEntry` but to take account of the modification, the :class:`~lief.PE.Builder` must be
+configured as follow:
+
+.. code-block:: python
+
+  builder = lief.PE.Builder(binary)
+  builder.build_imports(True)
+  builder.patch_imports(True)
+
+  builder.build()
+  builder.write("result.exe")
+
+
+
+
 
 
 

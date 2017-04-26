@@ -241,10 +241,10 @@ MACHINE_TYPES
 
 ----------
 
-PE_CHARACTERISTICS
-~~~~~~~~~~~~~~~~~~
+HEADER_CHARACTERISTICS
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: lief.PE.PE_CHARACTERISTICS
+.. autoclass:: lief.PE.HEADER_CHARACTERISTICS
   :members:
   :inherited-members:
   :undoc-members:

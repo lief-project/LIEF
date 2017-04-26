@@ -67,7 +67,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Check if the given symbol is imported
     static bool is_imported(const Symbol& symbol);
 
-    //! @brief Return binary's classe (ELF32 or ELF64)
+    //! @brief Return binary's class (ELF32 or ELF64)
     ELF_CLASS type(void) const;
 
     //! @brief Return @link ELF::Header Elf header @endlink
@@ -249,12 +249,6 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @param[in] content The data ton insert
     //! @return Return {offset, size} where offset is the content's offset
     //! in the binary and size the content's aligned.
-    //!
-    //! @todo Deal with all relocations types.
-    //! Suported relocations:
-    //! * ARM
-    //! * x86_64
-    //! * x86
     std::pair<uint64_t, uint64_t> insert_content(std::vector<uint8_t>& content);
 
 

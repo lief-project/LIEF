@@ -111,10 +111,20 @@ Symbol Version
 
 ----------
 
-Symbol Version Auxiliary
-************************
+Symbol Version Definition
+*************************
 
-.. autoclass:: lief.ELF.SymbolVersionAux
+.. autoclass:: lief.ELF.SymbolVersionDefinition
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Symbol Version Requirement
+**************************
+
+.. autoclass:: lief.ELF.SymbolVersionRequirement
   :members:
   :inherited-members:
   :undoc-members:

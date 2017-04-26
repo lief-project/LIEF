@@ -69,10 +69,17 @@ class DLL_PUBLIC Section : public LIEF::Section {
     //! @brief Set section content
     virtual void content(const std::vector<uint8_t>& data) override;
 
+    //! @brief Section flags LIEF::ELF::SECTION_FLAGS
     uint64_t flags(void) const;
 
+    //! @brief ``True`` if the section has the given flag
+    //!
+    //! @param[in] flag flag to test
     bool has_flag(SECTION_FLAGS flag) const;
+
+    //! @brief Return section flags as a ``std::set``
     std::set<SECTION_FLAGS> flags_list(void) const;
+
     //! @see offset
     uint64_t file_offset(void) const;
     uint64_t original_size(void) const;

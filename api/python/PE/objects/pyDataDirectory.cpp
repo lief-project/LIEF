@@ -32,23 +32,27 @@ void init_PE_DataDirectory_class(py::module& m) {
     .def(py::init<>())
     .def_property("rva",
         static_cast<getter_t<uint32_t>>(&DataDirectory::RVA),
-        static_cast<setter_t<uint32_t>>(&DataDirectory::RVA))
+        static_cast<setter_t<uint32_t>>(&DataDirectory::RVA),
+        "**Relative** virtual address of the content associated with the current data directory")
 
     .def_property("size",
         static_cast<getter_t<uint32_t>>(&DataDirectory::size),
-        static_cast<setter_t<uint32_t>>(&DataDirectory::size))
+        static_cast<setter_t<uint32_t>>(&DataDirectory::size),
+        "Size in bytes of the content associated with the current data directory")
 
     .def_property_readonly("section",
         static_cast<Section& (DataDirectory::*) (void)>(&DataDirectory::section),
+        "" RST_CLASS_REF(lief.PE.Section) " associated with the current data directory",
         py::return_value_policy::reference)
 
     .def_property_readonly("type",
         &DataDirectory::type,
+        "Type (" RST_CLASS_REF(lief.PE.DATA_DIRECTORY) ") of the current data directory",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("has_section",
         &DataDirectory::has_section,
-        "Check if the current data directory is tied to a " RST_CLASS_REF(lief.PE.Section) "")
+        "``True`` if the current data directory is tied to a " RST_CLASS_REF(lief.PE.Section) "")
 
     .def("__eq__", &DataDirectory::operator==)
     .def("__ne__", &DataDirectory::operator!=)
