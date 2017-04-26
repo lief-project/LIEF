@@ -23,19 +23,27 @@
 
 void init_ELF_Builder_class(py::module& m) {
   py::class_<Builder>(m, "Builder")
-    .def(py::init<Binary*>())
+    .def(py::init<Binary*>(),
+        "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) "",
+        "elf_binary"_a)
 
-    .def("build", static_cast<void (Builder::*)(void)>(&Builder::build))
+    .def("build",
+        static_cast<void (Builder::*)(void)>(&Builder::build),
+        "Perform the build process")
 
     .def("empties_gnuhash",
         &Builder::empties_gnuhash,
+        "Disable the " RST_CLASS_REF(lief.ELF.GnuHash) "",
         py::return_value_policy::reference)
 
     .def("write",
-        &Builder::write)
+        &Builder::write,
+        "Write the build result into the ``output`` file",
+        "output"_a)
 
     .def("get_build",
         &Builder::get_build,
+        "Return the build result as a ``list`` of bytes",
         py::return_value_policy::reference_internal);
 
 }

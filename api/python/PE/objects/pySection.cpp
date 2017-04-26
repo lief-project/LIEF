@@ -35,33 +35,65 @@ void init_PE_Section_class(py::module& m) {
     .def(py::init<const std::string&>())
     .def_property("virtual_size",
         static_cast<getter_t<uint32_t>>(&Section::virtual_size),
-        static_cast<setter_t<uint32_t>>(&Section::virtual_size))
+        static_cast<setter_t<uint32_t>>(&Section::virtual_size),
+        "The total size of the section when loaded into "
+        "memory. If this value is greater than "
+        ":attr:`~lief.PE.Section.sizeof_raw_data`, the section is zero-padded. ")
+
+    .def_property("sizeof_raw_data",
+        static_cast<getter_t<uint32_t>>(&Section::sizeof_raw_data),
+        static_cast<setter_t<uint32_t>>(&Section::sizeof_raw_data),
+        "Alias of :attr:`~lief.PE.Section.size`")
+
+    .def_property("pointerto_raw_data",
+        static_cast<getter_t<uint32_t>>(&Section::pointerto_raw_data),
+        static_cast<setter_t<uint32_t>>(&Section::pointerto_raw_data),
+        "Alias of :attr:`~lief.PE.Section.offset`")
 
     .def_property("pointerto_relocation",
         static_cast<getter_t<uint32_t>>(&Section::pointerto_relocation),
-        static_cast<setter_t<uint32_t>>(&Section::pointerto_relocation))
+        static_cast<setter_t<uint32_t>>(&Section::pointerto_relocation),
+        "The file pointer to the beginning of relocation "
+        "entries for the section. This is set to zero for "
+        "executable images or if there are no "
+        "relocations.")
 
     .def_property("pointerto_line_numbers",
         static_cast<getter_t<uint32_t>>(&Section::pointerto_line_numbers),
-        static_cast<setter_t<uint32_t>>(&Section::pointerto_line_numbers))
+        static_cast<setter_t<uint32_t>>(&Section::pointerto_line_numbers),
+        "The file pointer to the beginning of line-number "
+        "entries for the section. This is set to zero if "
+        "there are no COFF line numbers. This value "
+        "should be zero for an image because COFF "
+        "debugging information is deprecated.")
 
     .def_property("numberof_relocations",
         static_cast<getter_t<uint16_t>>(&Section::numberof_relocations),
-        static_cast<setter_t<uint16_t>>(&Section::numberof_relocations))
+        static_cast<setter_t<uint16_t>>(&Section::numberof_relocations),
+        "The number of relocation entries for the section. "
+        "This is set to zero for executable images.")
 
     .def_property("numberof_line_numbers",
         static_cast<getter_t<uint16_t>>(&Section::numberof_line_numbers),
-        static_cast<setter_t<uint16_t>>(&Section::numberof_line_numbers))
+        static_cast<setter_t<uint16_t>>(&Section::numberof_line_numbers),
+        "The number of line-number entries for the "
+        "section. This value should be zero for an image "
+        "because COFF debugging information is "
+        "deprecated.")
 
     .def_property("characteristics",
         static_cast<getter_t<uint32_t>>(&Section::characteristics),
-        static_cast<setter_t<uint32_t>>(&Section::characteristics))
+        static_cast<setter_t<uint32_t>>(&Section::characteristics),
+        "The " RST_CLASS_REF(lief.PE.SECTION_CHARACTERISTICS) "  that describe the characteristics of the section")
 
     .def_property_readonly("characteristics_lists",
-        &Section::characteristics_list)
+        &Section::characteristics_list,
+        ":attr:`~lief.PE.Section.characteristics` as a ``list``")
 
     .def("has_characteristic",
-        &Section::has_characteristic)
+        &Section::has_characteristic,
+        "``True`` if the a section has the given " RST_CLASS_REF(lief.PE.SECTION_CHARACTERISTICS) "",
+        "characteristic"_a)
 
     .def("__eq__", &Section::operator==)
     .def("__ne__", &Section::operator!=)

@@ -32,28 +32,39 @@ void init_ELF_Relocation_class(py::module& m) {
   py::class_<Relocation>(m, "Relocation")
     .def_property("address",
         static_cast<getter_t<uint64_t>>(&Relocation::address),
-        static_cast<setter_t<uint64_t>>(&Relocation::address))
+        static_cast<setter_t<uint64_t>>(&Relocation::address),
+        "Address (or offset) of the relocation")
 
     .def_property("addend",
         static_cast<getter_t<int64_t>>(&Relocation::addend),
-        static_cast<setter_t<int64_t>>(&Relocation::addend))
+        static_cast<setter_t<int64_t>>(&Relocation::addend),
+        "Additional value")
 
     .def_property("type",
         static_cast<getter_t<uint32_t>>(&Relocation::type),
-        static_cast<setter_t<uint32_t>>(&Relocation::type))
+        static_cast<setter_t<uint32_t>>(&Relocation::type),
+        "Relocation type.\n\n"
+        "See:\n\n"
+        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_X86_64) "\n\n"
+        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_ARM) "\n\n"
+        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_i386) "\n\n")
 
     .def_property_readonly("has_symbol",
-        &Relocation::has_symbol)
+        &Relocation::has_symbol,
+        "``True`` if a " RST_CLASS_REF(lief.ELF.Symbol) " is associated with the relocations")
 
     .def_property_readonly("symbol",
         static_cast<Symbol& (Relocation::*)(void)>(&Relocation::symbol),
+        "" RST_CLASS_REF(lief.ELF.Symbol) " associated with the relocation",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("is_rela",
-      static_cast<getter_t<bool>>(&Relocation::is_rela))
+      static_cast<getter_t<bool>>(&Relocation::is_rela),
+      "``True`` if the relocation uses the :attr:`~lief.ELF.Relocation.addend` proprety")
 
     .def_property_readonly("is_rel",
-      static_cast<getter_t<bool>>(&Relocation::is_rel))
+      static_cast<getter_t<bool>>(&Relocation::is_rel),
+      "``True`` if the relocation doesn't use the :attr:`~lief.ELF.Relocation.addend` proprety")
 
 
     .def("__eq__", &Relocation::operator==)

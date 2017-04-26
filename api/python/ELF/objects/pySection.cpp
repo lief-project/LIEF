@@ -56,7 +56,7 @@ void init_ELF_Section_class(py::module& m) {
     .def_property("flags",
         static_cast<getter_t<uint64_t>>(&Section::flags),
         static_cast<setter_t<uint64_t>>(&Section::flags),
-        "Return sections flags")
+        "Return sections " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) "")
 
     .def_property("virtual_address",
         static_cast<getter_t<uint64_t>>(&Section::virtual_address),
@@ -68,7 +68,7 @@ void init_ELF_Section_class(py::module& m) {
     .def_property("file_offset",
         static_cast<getter_t<uint64_t>>(&Section::file_offset),
         static_cast<setter_t<uint64_t>>(&Section::file_offset),
-        "Data offset in the binary")
+        "Offset of the section's content")
 
     .def_property_readonly("original_size",
         static_cast<getter_t<uint64_t>>(&Section::original_size),
@@ -76,17 +76,18 @@ void init_ELF_Section_class(py::module& m) {
 
     .def_property("alignment",
         static_cast<getter_t<uint64_t>>(&Section::alignment),
-        static_cast<setter_t<uint64_t>>(&Section::alignment)
-        )
+        static_cast<setter_t<uint64_t>>(&Section::alignment),
+        "Section alignment")
 
     .def_property("information",
         static_cast<getter_t<uint64_t>>(&Section::information),
-        static_cast<setter_t<uint32_t>>(&Section::information))
+        static_cast<setter_t<uint32_t>>(&Section::information),
+        "Section information (this value depends on the section)")
 
     .def_property("entry_size",
         static_cast<getter_t<uint64_t>>(&Section::entry_size),
         static_cast<setter_t<uint64_t>>(&Section::entry_size),
-        "If section's content is an array, `entry_size` holds the element's size\n\n"
+        "If section's content is an array, `entry_size` holds the element size\n\n"
         ":Example:\n"
         "\tThe `.dynamic` section contains an array of " RST_CLASS_REF(lief.ELF.DynamicEntry) ". As the size "
         "of a dynamic entry is 0x10 (for ELF64), entry_size will contains this value\n\n"
@@ -94,7 +95,8 @@ void init_ELF_Section_class(py::module& m) {
 
     .def_property("link",
         static_cast<getter_t<uint32_t>>(&Section::link),
-        static_cast<setter_t<uint32_t>>(&Section::link))
+        static_cast<setter_t<uint32_t>>(&Section::link),
+        "Index to another section")
 
     .def_property_readonly("segments",
       static_cast<no_const_getter<it_segments>>(&Section::segments),
