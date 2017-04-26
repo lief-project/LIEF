@@ -51,13 +51,14 @@ set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # Define source files
-set(LIEF_PYTHON_SRC
+set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyJson.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp")
 
+set(LIEF_PYTHON_ABSTRACT_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects"
   "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyBinary.cpp"
@@ -68,9 +69,26 @@ set(LIEF_PYTHON_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/pyEnums.cpp"
 )
 
+set(LIEF_PYTHON_SRC
+  ${LIEF_PYTHON_BASIC_SRC}
+  ${LIEF_PYTHON_ABSTRACT_SRC})
 
-add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC})
+set(LIEF_PYTHON_ABSTRACT_HDR
+  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.hpp")
 
+set(LIEF_PYTHON_BASIC_HDR
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.hpp")
+
+set(LIEF_PYTHON_HDR
+  ${LIEF_PYTHON_BASIC_HDR}
+  ${LIEF_PYTHON_ABSTRACT_HDR})
+
+source_group("Header Files\\Abstract" FILES ${LIEF_PYTHON_ABSTRACT_HDR})
+source_group("Header Files" FILES ${LIEF_PYTHON_BASIC_HDR})
+source_group("Source Files\\Abstract" FILES ${LIEF_PYTHON_ABSTRACT_SRC})
+
+add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
 
 target_include_directories(pyLIEF PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/"
