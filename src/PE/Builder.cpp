@@ -43,7 +43,8 @@ Builder::Builder(Binary* binary) :
   build_relocations_{false},
   build_tls_{false},
   build_resources_{false},
-  build_overlay_{true}
+  build_overlay_{true},
+  build_dos_stub_{true}
 {}
 
 
@@ -73,6 +74,11 @@ Builder& Builder::build_resources(bool flag) {
 
 Builder& Builder::build_overlay(bool flag) {
   this->build_overlay_ = flag;
+  return *this;
+}
+
+Builder& Builder::build_dos_stub(bool flag) {
+  this->build_dos_stub_ = flag;
   return *this;
 }
 
@@ -459,6 +465,14 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
 
   this->ios_.seekp(0);
   this->ios_.write(reinterpret_cast<const uint8_t*>(&dosHeader), sizeof(pe_dos_header));
+  if (this->binary_->dos_stub().size() > 0 and this->build_dos_stub_) {
+
+    if (sizeof(pe_dos_header) + this->binary_->dos_stub().size() > dos_header.addressof_new_exeheader()) {
+      LOG(WARNING) << "Inconsistent 'addressof_new_exeheader' (0x" << std::hex << dos_header.addressof_new_exeheader();
+    }
+    this->ios_.write(this->binary_->dos_stub());
+  }
+
   return *this;
 }
 
@@ -542,12 +556,13 @@ Builder& Builder::operator<<(const Section& section) {
 std::ostream& operator<<(std::ostream& os, const Builder& b) {
   os << std::left;
   os << std::boolalpha;
-  os << std::setw(20) << "Builde imports:"     << b.build_imports_     << std::endl;
-  os << std::setw(20) << "Patch imports:"      << b.patch_imports_     << std::endl;
-  os << std::setw(20) << "Builde relocations:" << b.build_relocations_ << std::endl;
-  os << std::setw(20) << "Builde TLS:"         << b.build_tls_         << std::endl;
-  os << std::setw(20) << "Builder resources:"  << b.build_resources_   << std::endl;
-  os << std::setw(20) << "Builder overlay:"    << b.build_overlay_     << std::endl;
+  os << std::setw(20) << "Build imports:"     << b.build_imports_     << std::endl;
+  os << std::setw(20) << "Patch imports:"     << b.patch_imports_     << std::endl;
+  os << std::setw(20) << "Build relocations:" << b.build_relocations_ << std::endl;
+  os << std::setw(20) << "Build TLS:"         << b.build_tls_         << std::endl;
+  os << std::setw(20) << "Build resources:"   << b.build_resources_   << std::endl;
+  os << std::setw(20) << "Build overlay:"     << b.build_overlay_     << std::endl;
+  os << std::setw(20) << "Build dos stub:"    << b.build_dos_stub_    << std::endl;
   return os;
 }
 

@@ -84,6 +84,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     void build_symbols(void);
     void build_signature(void);
     void build_overlay(void);
+    void build_dos_stub(void);
 
     ResourceNode* build_resource_node(
         const pe_resource_directory_table *directoryTable, uint32_t baseOffset);
@@ -91,7 +92,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_;
-    PE_TYPE           type_;
+    PE_TYPE                       type_;
 };
 
 

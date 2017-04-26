@@ -27,6 +27,10 @@ void Parser::build(void) {
     LOG(WARNING) << e.what();
   }
 
+  LOG(DEBUG) << "[+] Retreive Dos stub";
+
+  this->build_dos_stub();
+
   LOG(DEBUG) << "[+] Decomposing Sections";
 
   try {

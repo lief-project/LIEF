@@ -83,6 +83,15 @@ void Parser::init(const std::string& name) {
 
 }
 
+void Parser::build_dos_stub(void) {
+  const DosHeader& dos_header = this->binary_->dos_header();
+  const uint64_t sizeof_dos_stub = dos_header.addressof_new_exeheader() - sizeof(pe_dos_header);
+
+  const uint8_t* ptr_to_dos_stub = reinterpret_cast<const uint8_t*>(this->stream_->read(
+        sizeof(pe_dos_header),
+        sizeof_dos_stub));
+  this->binary_->dos_stub_ = {ptr_to_dos_stub, ptr_to_dos_stub + sizeof_dos_stub};
+}
 
 
 

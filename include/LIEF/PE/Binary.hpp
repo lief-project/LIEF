@@ -240,6 +240,16 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const std::vector<uint8_t>& overlay(void) const;
     std::vector<uint8_t>&       overlay(void);
 
+    // ========
+    // DOS Stub
+    // ========
+
+    //! @brief Return the DOS stub content
+    const std::vector<uint8_t>& dos_stub(void) const;
+    std::vector<uint8_t>&       dos_stub(void);
+
+    //! @brief Update the DOS stub content
+    void dos_stub(const std::vector<uint8_t>& content);
 
     // =========================
     // Methods to manage Imports
@@ -377,6 +387,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Export               export_;
     Debug                debug_;
     std::vector<uint8_t> overlay_;
+    std::vector<uint8_t> dos_stub_;
 
     std::map<std::string, std::map<std::string, uint64_t>> hooks_;
 };

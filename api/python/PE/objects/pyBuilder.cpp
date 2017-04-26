@@ -63,6 +63,11 @@ void init_PE_Builder_class(py::module& m) {
         "Rebuild the binary's overlay",
         py::return_value_policy::reference)
 
+    .def("build_dos_stub",
+        static_cast<Builder& (Builder::*)(bool)>(&Builder::build_dos_stub),
+        "Rebuild the DOS stub",
+        py::return_value_policy::reference)
+
     .def("write",
         &Builder::write,
         "Write the build result into the ``output`` file",

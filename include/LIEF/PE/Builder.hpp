@@ -81,6 +81,9 @@ class DLL_PUBLIC Builder
     //! @brief Rebuild the binary's overlay
     Builder& build_overlay(bool flag);
 
+    //! @brief Rebuild the DOS stub content
+    Builder& build_dos_stub(bool flag);
+
     //! @brief Return the build result
     const std::vector<uint8_t>& get_build(void);
 
@@ -113,6 +116,7 @@ class DLL_PUBLIC Builder
     void build_relocation(void);
     void build_resources(void);
     void build_overlay(void);
+    void build_dos_stub(void);
 
     void compute_resources_size(
         ResourceNode *node,
@@ -139,6 +143,7 @@ class DLL_PUBLIC Builder
     bool build_tls_;
     bool build_resources_;
     bool build_overlay_;
+    bool build_dos_stub_;
 
 };
 

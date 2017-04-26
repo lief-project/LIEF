@@ -994,6 +994,22 @@ std::vector<uint8_t>& Binary::overlay(void) {
   return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->overlay());
 }
 
+// Dos stub
+// ========
+
+const std::vector<uint8_t>& Binary::dos_stub(void) const {
+  return this->dos_stub_;
+}
+
+std::vector<uint8_t>& Binary::dos_stub(void) {
+  return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->dos_stub());
+}
+
+
+void Binary::dos_stub(const std::vector<uint8_t>& content) {
+  this->dos_stub_ = content;
+}
+
 // Resource manager
 // ===============
 
