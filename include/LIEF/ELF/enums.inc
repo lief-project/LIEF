@@ -950,3 +950,12 @@ enum AUX_TYPE {
    AT_L3_CACHESHAPE   = 37
 };
 
+/** Methods that can be used by the LIEF::ELF::Parser
+    to count the number of dynamic symbols */
+enum DYNSYM_COUNT_METHODS {
+  COUNT_AUTO        = 0, /**< Automatic detection */
+  COUNT_SECTION     = 1, /**< Count based on sections (not very reliable) */
+  COUNT_HASH        = 2, /**< Count based on hash table (reliable) */
+  COUNT_RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not accurate) */
+};
+

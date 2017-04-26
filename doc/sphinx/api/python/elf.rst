@@ -308,6 +308,15 @@ Relocations ARM
   :undoc-members:
 
 
+Dynamic symbols counting
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.DYNSYM_COUNT_METHODS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
 
 
 

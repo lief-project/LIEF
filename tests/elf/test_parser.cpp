@@ -40,8 +40,14 @@ TEST_CASE("Test parse", "[elf][parser]")
 
   YAML::Node parameters = YAML::LoadFile(config[*test_case]["config_file"].as<std::string>());
 
+  DYNSYM_COUNT_METHODS mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  if (*test_case == "test_gcc_32") {
+    mtd = DYNSYM_COUNT_METHODS::COUNT_SECTION;
+  }
   // Parse binary
-  std::unique_ptr<const Binary> binary{Parser::parse(config[*test_case]["binary_path"].as<std::string>())};
+  std::unique_ptr<const Binary> binary{Parser::parse(config[*test_case]["binary_path"].as<std::string>(), mtd)};
+
+  INFO("Binary used: " << binary->name());
 
   // Raw data
   std::ifstream binfile(config[*test_case]["binary_path"].as<std::string>(), std::ios::in | std::ios::binary);

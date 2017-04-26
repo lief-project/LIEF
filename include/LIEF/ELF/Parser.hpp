@@ -45,16 +45,33 @@ namespace ELF {
 //! @brief Class which parse an ELF file and transform into a ELF::Binary
 class DLL_PUBLIC Parser : public LIEF::Parser {
   public:
-    static Binary* parse(const std::string& file);
-    static Binary* parse(const std::vector<uint8_t>& data, const std::string& name = "");
+
+    //! @brief Parse an ELF file an return a LIEF::ELF::Binary object
+    //!
+    //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
+    //!
+    //! @param[in] file Path to the ELF binary
+    //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+    //! @Return LIEF::ELF::Binary
+    static Binary* parse(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+
+    //! @brief Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
+    //!
+    //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
+    //!
+    //! @param[in] data Raw ELF
+    //! @param[in] name Binary name (optional)
+    //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+    //! @Return LIEF::ELF::Binary
+    static Binary* parse(const std::vector<uint8_t>& data, const std::string& name = "", DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
     Parser& operator=(const Parser& copy) = delete;
     Parser(const Parser& copy)            = delete;
 
   private:
     Parser(void);
-    Parser(const std::string& file);
-    Parser(const std::vector<uint8_t>& data, const std::string& name);
+    Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+    Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
     ~Parser(void);
 
     void init(const std::string& name = "");
@@ -88,11 +105,35 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     uint64_t get_dynamic_string_table_from_sections(void) const;
 
+    //! @brief Return the number of dynamic symbols using the given method
+    template<typename ELF_T>
+    uint32_t get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const;
+
+    //! @brief Count based on hash table (reliable)
+    template<typename ELF_T>
+    uint32_t nb_dynsym_hash(void) const;
+
+    //! @brief Count based on SYSV hash table
+    template<typename ELF_T>
+    uint32_t nb_dynsym_sysv_hash(void) const;
+
+    //! @brief Count based on GNU hash table
+    template<typename ELF_T>
+    uint32_t nb_dynsym_gnu_hash(void) const;
+
+    //! @brief Count based on sections (not very reliable)
+    template<typename ELF_T>
+    uint32_t nb_dynsym_section(void) const;
+
+    //! @brief Count based on PLT/GOT relocations (very reliable but not accurate)
+    template<typename ELF_T>
+    uint32_t nb_dynsym_relocations(void) const;
+
     template<typename ELF_T>
     void parse_dynamic_entries(uint64_t offset, uint64_t size);
 
     template<typename ELF_T>
-    void parse_dynamic_symbols(uint64_t offset, uint64_t size);
+    void parse_dynamic_symbols(uint64_t offset);
 
     //! @brief Parse static Symbol
     //!
@@ -154,6 +195,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_;
     uint32_t                      type_;
+    DYNSYM_COUNT_METHODS          count_mtd_;
 };
 
 

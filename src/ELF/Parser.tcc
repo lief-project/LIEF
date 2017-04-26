@@ -22,23 +22,39 @@ void Parser::parse_binary(void) {
   LOG(DEBUG) << "Start parsing";
   // Parse header
   // ============
-  this->parse_header<ELF_T>();
+  try {
+    this->parse_header<ELF_T>();
+  } catch (const corrupted& e) {
+    LOG(ERROR) << e.what();
+  }
 
   // Parse Sections
   // ==============
-  if (this->binary_->header_.section_headers_offset() > 0) {
-    this->parse_sections<ELF_T>();
-  } else {
-    LOG(WARNING) << "The current binary doesn't have a section header";
+  try {
+    if (this->binary_->header_.section_headers_offset() > 0) {
+      this->parse_sections<ELF_T>();
+    } else {
+      LOG(WARNING) << "The current binary doesn't have a section header";
+    }
+
+  } catch (const LIEF::read_out_of_bound& e) {
+    LOG(WARNING) << e.what();
+  } catch (const corrupted& e) {
+    LOG(WARNING) << e.what();
   }
 
 
   // Parse segments
   // ==============
-  if (this->binary_->header_.program_headers_offset() > 0) {
-    this->parse_segments<ELF_T>();
-  } else {
-    LOG(WARNING) << "Binary doesn't have a program header";
+
+  try {
+    if (this->binary_->header_.program_headers_offset() > 0) {
+      this->parse_segments<ELF_T>();
+    } else {
+      LOG(WARNING) << "Binary doesn't have a program header";
+    }
+  } catch (const corrupted& e) {
+    LOG(WARNING) << e.what();
   }
 
   // Parse Dynamic elements
@@ -57,7 +73,11 @@ void Parser::parse_binary(void) {
     const uint64_t offset = (*it_segment_dynamic)->file_offset();
     const uint64_t size   = (*it_segment_dynamic)->physical_size();
 
-    this->parse_dynamic_entries<ELF_T>(offset, size);
+    try {
+      this->parse_dynamic_entries<ELF_T>(offset, size);
+    } catch (const corrupted& e) {
+      LOG(WARNING) << e.what();
+    }
   }
 
 
@@ -80,11 +100,12 @@ void Parser::parse_binary(void) {
   if (it_dynamic_symbol_table != std::end(this->binary_->dynamic_entries_) and
       it_dynamic_symbol_size != std::end(this->binary_->dynamic_entries_)) {
     const uint64_t virtual_address = (*it_dynamic_symbol_table)->value();
-    const uint64_t size            = (*it_dynamic_symbol_size)->value();
+    //const uint64_t size            = (*it_dynamic_symbol_size)->value();
     try {
       const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
-      this->parse_dynamic_symbols<ELF_T>(offset, size);
-    } catch (const LIEF::exception&) {
+      this->parse_dynamic_symbols<ELF_T>(offset);
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
     }
   }
 
@@ -192,7 +213,8 @@ void Parser::parse_binary(void) {
       this->parse_pltgot_relocations<ELF_T>(
         offset, size,
         type == DYNAMIC_TAGS::DT_RELA ? true : false);
-    } catch (const LIEF::exception&) {
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
 
     }
 
@@ -331,6 +353,8 @@ void Parser::parse_binary(void) {
     try {
       //const uint64_t symbol_hash_offset = this->binary_->virtual_address_to_offset((*itSymbolHash)->value());
     } catch (const conversion_error&) {
+    } catch (const corrupted& e) {
+      LOG(WARNING) << e.what();
     }
   }
 
@@ -340,6 +364,8 @@ void Parser::parse_binary(void) {
       const uint64_t symbol_gnu_hash_offset = this->binary_->virtual_address_to_offset((*it_symbol_gnu_hash)->value());
       this->parse_symbol_gnu_hash<ELF_T>(symbol_gnu_hash_offset);
     } catch (const conversion_error&) {
+    } catch (const corrupted& e) {
+      LOG(WARNING) << e.what();
     }
   }
 
@@ -380,6 +406,245 @@ void Parser::parse_header(void) {
   } catch (const read_out_of_bound&) {
     throw corrupted("Header corrupted");
   }
+}
+
+
+template<typename ELF_T>
+uint32_t Parser::get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const {
+
+  switch(mtd) {
+    case DYNSYM_COUNT_METHODS::COUNT_HASH:
+      {
+        return this->nb_dynsym_hash<ELF_T>();
+        break;
+      }
+
+    case DYNSYM_COUNT_METHODS::COUNT_SECTION:
+      {
+        return this->nb_dynsym_section<ELF_T>();
+        break;
+      }
+
+
+    case DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS:
+      {
+        return this->nb_dynsym_relocations<ELF_T>();
+        break;
+      }
+
+    case DYNSYM_COUNT_METHODS::COUNT_AUTO:
+    default:
+      {
+        uint32_t nb_dynsym = 0;
+
+        nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_HASH);
+
+        if (nb_dynsym > 0) {
+          return nb_dynsym;
+        }
+
+        nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_SECTION);
+
+        if (nb_dynsym > 0) {
+          return nb_dynsym;
+        }
+
+
+        nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS);
+
+        if (nb_dynsym > 0) {
+          return nb_dynsym;
+        }
+
+        return 0;
+      }
+  }
+}
+
+template<typename ELF_T>
+uint32_t Parser::nb_dynsym_relocations(void) const {
+  using Elf_Rela = typename ELF_T::Elf_Rela;
+  using Elf_Rel  = typename ELF_T::Elf_Rel;
+
+  auto&& it_pltgot_relocations_size = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_PLTRELSZ;
+      });
+
+  auto&& it_pltgot_relocations_type = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_PLTREL;
+      });
+
+  if (it_pltgot_relocations_size == std::end(this->binary_->dynamic_entries_)) {
+    return 0;
+  }
+
+  DYNAMIC_TAGS type;
+  const uint64_t size = (*it_pltgot_relocations_size)->value();
+
+  if (it_pltgot_relocations_type != std::end(this->binary_->dynamic_entries_)) {
+    type = static_cast<DYNAMIC_TAGS>((*it_pltgot_relocations_type)->value());
+  } else {
+    if (std::is_same<ELF_T, ELF64>::value) {
+      type = DYNAMIC_TAGS::DT_RELA;
+    } else {
+      type = DYNAMIC_TAGS::DT_REL;
+    }
+  }
+
+  switch(type) {
+    case DYNAMIC_TAGS::DT_RELA:
+      {
+        return static_cast<uint32_t>(size / sizeof(Elf_Rela));
+        break;
+      }
+
+    case DYNAMIC_TAGS::DT_REL:
+      {
+        return static_cast<uint32_t>(size / sizeof(Elf_Rel));
+        break;
+      }
+
+    default:
+      {
+        return 0;
+      }
+  }
+  return 0;
+}
+
+
+template<typename ELF_T>
+uint32_t Parser::nb_dynsym_section(void) const {
+  using Elf_Sym = typename ELF_T::Elf_Sym;
+
+  auto&& it_dynamic_section = std::find_if(
+      std::begin(this->binary_->sections_),
+      std::end(this->binary_->sections_),
+      [] (const Section* section)
+      {
+        return section != nullptr and section->type() == SECTION_TYPES::SHT_DYNSYM;
+      });
+
+  if (it_dynamic_section == std::end(this->binary_->sections_)) {
+    return 0;
+  }
+
+  const uint64_t section_size = (*it_dynamic_section)->size();
+  const uint32_t nb_symbols = static_cast<uint32_t>((section_size / sizeof(Elf_Sym)));
+  return nb_symbols;
+}
+
+template<typename ELF_T>
+uint32_t Parser::nb_dynsym_hash(void) const {
+
+  if (this->binary_->has_dynamic_entry(DYNAMIC_TAGS::DT_HASH)) {
+    return this->nb_dynsym_sysv_hash<ELF_T>();
+  }
+
+  if (this->binary_->has_dynamic_entry(DYNAMIC_TAGS::DT_GNU_HASH)) {
+    return this->nb_dynsym_gnu_hash<ELF_T>();
+  }
+
+  return 0;
+}
+
+
+template<typename ELF_T>
+uint32_t Parser::nb_dynsym_sysv_hash(void) const {
+  const DynamicEntry& dyn_hash = this->binary_->dynamic_entry_from_tag(DYNAMIC_TAGS::DT_HASH);
+  const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+
+  uint64_t current_offset = offset;
+
+  const uint32_t* header = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(current_offset, 2 * sizeof(uint32_t)));
+
+  current_offset += 2 * sizeof(uint32_t);
+
+  //const uint32_t nbuckets  = header[0];
+  const uint32_t nchains = header[1];
+
+  // From the doc: 'so nchain should equal the number of symbol table entries.'
+  return nchains;
+}
+
+template<typename ELF_T>
+uint32_t Parser::nb_dynsym_gnu_hash(void) const {
+  using uint__ = typename ELF_T::uint;
+
+  const DynamicEntry& dyn_hash = this->binary_->dynamic_entry_from_tag(DYNAMIC_TAGS::DT_GNU_HASH);
+  const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+
+  uint64_t current_offset = offset;
+
+  const uint32_t* header = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(current_offset, 4 * sizeof(uint32_t)));
+
+  current_offset += 4 * sizeof(uint32_t);
+
+  const uint32_t nbuckets  = header[0];
+  const uint32_t symndx    = header[1];
+  const uint32_t maskwords = header[2];
+  //const uint32_t shift2    = header[3];
+
+  if (maskwords & (maskwords - 1)) {
+    LOG(WARNING) << "maskwords is not a power of 2";
+  }
+
+  std::vector<uint64_t> bloom_filters;
+  try {
+    bloom_filters.resize(maskwords);
+
+    for (size_t i = 0; i < maskwords; ++i) {
+      bloom_filters[i] = this->stream_->read_integer<uint__>(current_offset);
+      current_offset += sizeof(uint__);
+    }
+  }
+  catch (const read_out_of_bound&) {
+    throw corrupted("GNU Hash, maskwords corrupted");
+  }
+  catch (const std::bad_alloc&) {
+    throw corrupted("GNU Hash, maskwords corrupted");
+  }
+
+  std::vector<uint32_t> buckets;
+  buckets.reserve(std::min<uint32_t>(nbuckets, 400));
+  try {
+    const uint32_t* hash_buckets = reinterpret_cast<const uint32_t*>(
+        this->stream_->read(current_offset, nbuckets * sizeof(uint32_t)));
+    current_offset += nbuckets * sizeof(uint32_t);
+
+    buckets = {hash_buckets, hash_buckets + nbuckets};
+  } catch (const read_out_of_bound&) {
+    throw corrupted("GNU Hash, hash_buckets corrupted");
+  }
+  uint32_t nb_symbols = *std::max_element(std::begin(buckets), std::end(buckets));
+
+  if (nb_symbols == 0) {
+    return 0;
+  }
+
+  nb_symbols = std::max(nb_symbols, symndx);
+
+  const uint32_t* hash_values = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(current_offset, nb_symbols * sizeof(uint32_t)));
+
+
+  // "It is set to 1 when a symbol is the last symbol in a given hash chain"
+  while (((*hash_values) & 1) == 0) {
+    ++nb_symbols;
+    ++hash_values;
+  }
+
+  return ++nb_symbols;
+
+
 }
 
 template<typename ELF_T>
@@ -576,30 +841,11 @@ void Parser::parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Sec
 
 
 template<typename ELF_T>
-void Parser::parse_dynamic_symbols(uint64_t offset, uint64_t size) {
+void Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
   LOG(DEBUG) << "[+] Parsing dynamics symbols";
 
-  auto&& it_dynamic_section = std::find_if(
-      std::begin(this->binary_->sections_),
-      std::end(this->binary_->sections_),
-      [] (const Section* section)
-      {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_DYNSYM;
-      });
-
-
-  // TODO:
-  // Not use sections to count dynamic symbols but for examples:
-  // * Dynamic + plt/got relocations
-  // * GNU hash table (dynsym)
-  // * Symbol version definitions
-  uint32_t nb_symbols = static_cast<uint32_t>(size / sizeof(Elf_Sym));
-
-  if (it_dynamic_section != std::end(this->binary_->sections_)) {
-    const uint64_t section_size = (*it_dynamic_section)->size();
-    nb_symbols = static_cast<uint32_t>((section_size / sizeof(Elf_Sym)));
-  }
+  uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
 
   const uint64_t dynamic_symbols_offset = offset;
   const uint64_t string_offset = this->get_dynamic_string_table();

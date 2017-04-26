@@ -47,6 +47,12 @@ TEST_CASE("Test remove dynamic symbol", "[elf][modifier][symbol][dynamic]")
     INFO("Skip " << elf_file_str);
     return;
   }
+
+  if (elf_file_str.find("ELF64_x86-64_binary_rvs.bin") != std::string::npos) {
+    INFO("Skip " << elf_file_str);
+    return;
+  }
+
   INFO("Binary used: " << elf_file_str);
 
   std::unique_ptr<Binary> binary = std::unique_ptr<Binary>{Parser::parse(elf_file_str)};

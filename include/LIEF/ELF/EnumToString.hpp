@@ -36,6 +36,7 @@ DLL_PUBLIC const char* to_string(RELOC_i386 e);
 DLL_PUBLIC const char* to_string(ELF_CLASS e);
 DLL_PUBLIC const char* to_string(ELF_DATA e);
 DLL_PUBLIC const char* to_string(OS_ABI e);
+DLL_PUBLIC const char* to_string(DYNSYM_COUNT_METHODS e);
 } // namespace ELF
 } // namespace LIEF
 
