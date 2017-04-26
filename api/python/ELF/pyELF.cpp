@@ -21,6 +21,9 @@
 void init_ELF_module(py::module& m) {
   py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for ELF");
 
+  // Enums
+  init_ELF_Structures_enum(LIEF_ELF_module);
+
   // Objects
   init_ELF_Parser_class(LIEF_ELF_module);
   init_ELF_Binary_class(LIEF_ELF_module);
@@ -42,9 +45,6 @@ void init_ELF_module(py::module& m) {
   init_ELF_DynamicEntryRunPath_class(LIEF_ELF_module);
   init_ELF_GnuHash_class(LIEF_ELF_module);
   init_ELF_Builder_class(LIEF_ELF_module);
-
-  // Enums
-  init_ELF_Structures_enum(LIEF_ELF_module);
 
   py::module LIEF_ELF32_module = LIEF_ELF_module.def_submodule("ELF32", "");
   init_ELF32_Structures(LIEF_ELF32_module);

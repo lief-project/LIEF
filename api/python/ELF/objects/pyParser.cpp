@@ -23,14 +23,17 @@ void init_ELF_Parser_class(py::module& m) {
 
   // Parser (Parser)
   m.def("parse",
-    static_cast<Binary* (*) (const std::string&)>(&Parser::parse),
-    "Parse the given binary and return a " RST_CLASS_REF(lief.ELF.Binary) " object",
+    static_cast<Binary* (*) (const std::string&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
+    "Parse the given binary and return a " RST_CLASS_REF(lief.ELF.Binary) " object\n\n"
+    "For *weird* binaries (e.g sectionless) you can choose which method use to count dynamic symbols "
+    " (" RST_CLASS_REF(lief.ELF.DYNSYM_COUNT_METHODS) ")",
+    "filename"_a, py::arg("dynsym_count_method") = DYNSYM_COUNT_METHODS::COUNT_AUTO,
     py::return_value_policy::take_ownership);
 
 
   m.def("parse_from_raw",
-    static_cast<Binary* (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+    static_cast<Binary* (*) (const std::vector<uint8_t>&, const std::string&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
     "Parse the given raw data and return a " RST_CLASS_REF(lief.ELF.Binary) " object",
-    py::arg("raw"), py::arg("name") = "",
+    py::arg("raw"), py::arg("name") = "", py::arg("dynsym_count_method") = DYNSYM_COUNT_METHODS::COUNT_AUTO,
     py::return_value_policy::take_ownership);
 }

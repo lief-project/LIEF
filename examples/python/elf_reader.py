@@ -189,8 +189,11 @@ def print_relocations(binary):
                 type = str(ELF.RELOCATION_i386(relocation.type))
             elif binary.header.machine_type == ELF.ARCH.ARM:
                 type = str(ELF.RELOCATION_ARM(relocation.type))
-            s = relocation.symbol
-            print(f_value.format(relocation.address, type.split(".")[-1], str(relocation.symbol.name)))
+            try:
+                s = relocation.symbol
+                print(f_value.format(relocation.address, type.split(".")[-1], str(relocation.symbol.name)))
+            except lief.not_found:
+                pass
 
 
     if len(pltgot_relocations) > 0:

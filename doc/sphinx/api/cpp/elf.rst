@@ -152,3 +152,6 @@ Enums
 
 .. doxygenenum:: LIEF::ELF::DYNAMIC_FLAGS
    :project: lief
+
+.. doxygenenum:: LIEF::ELF::DYNSYM_COUNT_METHODS
+   :project: lief

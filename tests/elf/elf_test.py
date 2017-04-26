@@ -107,6 +107,14 @@ class TestELF(TestCase):
             self.logger.debug(stdout.decode("utf8"))
             self.assertEqual(p.returncode, 0)
 
+    def test_sectionless(self):
+        sample = "ELF/ELF64_x86-64_binary_rvs.bin"
+        rvs = lief.parse(get_sample(sample))
+        dynsym = list(rvs.dynamic_symbols)
+        self.assertEqual(len(dynsym), 10)
+
+
+
 
 
 

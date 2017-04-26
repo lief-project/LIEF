@@ -40,11 +40,24 @@ TEST_CASE("Test parse", "[elf][builder]")
     INFO("Skip " << elf_file_str);
     return;
   }
+
+
+  if (elf_file_str.find("ELF64_x86-64_binary_rvs.bin") != std::string::npos) {
+    INFO("Skip " << elf_file_str);
+    return;
+  }
+
+
   INFO("Binary used: " << elf_file_str);
+
+  DYNSYM_COUNT_METHODS mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  if (elf_file_str.find("ELF32_x86_binary_gcc.bin") != std::string::npos) {
+    mtd = DYNSYM_COUNT_METHODS::COUNT_SECTION;
+  }
 
   std::unique_ptr<Binary> binary_original;
   try {
-     binary_original = std::unique_ptr<Binary>{Parser::parse(elf_file_str)};
+     binary_original = std::unique_ptr<Binary>{Parser::parse(elf_file_str, mtd)};
   } catch (const LIEF::exception& e) {
     WARN("Can't parse: '" << elf_file_str << "' (" << e.what() << ")");
     return;
@@ -52,7 +65,7 @@ TEST_CASE("Test parse", "[elf][builder]")
 
   std::string output_name = binary_original->name() + "_built";
   binary_original->write(output_name);
-  std::unique_ptr<Binary> binary_build{Parser::parse(output_name)};
+  std::unique_ptr<Binary> binary_build{Parser::parse(output_name, mtd)};
 
   SECTION("Header") {
     REQUIRE(binary_original->get_header() == binary_build->get_header());

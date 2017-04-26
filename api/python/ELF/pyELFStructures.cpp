@@ -746,4 +746,12 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_i386::R_386_IRELATIVE))
     .value(PY_ENUM(RELOC_i386::R_386_NUM))
     .export_values();
+
+
+  py::enum_<DYNSYM_COUNT_METHODS>(m, "DYNSYM_COUNT_METHODS")
+    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_AUTO))
+    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_SECTION))
+    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_HASH))
+    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS))
+    .export_values();
 }

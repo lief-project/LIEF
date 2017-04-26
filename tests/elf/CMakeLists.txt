@@ -85,6 +85,7 @@ if (LIEF_EXAMPLES)
     "${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_x86_binary_tiny.bin"
     "${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_x86_binary_tiny01.bin"
     "${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_tiny-hello.bin"
+    "${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_rvs.bin"
     "${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_tiny.bin")
 
 

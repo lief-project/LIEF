@@ -36,7 +36,16 @@ TEST_CASE("Test operator==", "[elf][internal]") {
       std::begin(elf_files),
       std::prev(std::end(elf_files)));
 
+
+  const std::string& elf_file_str = *elf_file;
+
+  if (elf_file_str.find("ELF32_x86_binary_tiny.bin") != std::string::npos) {
+    INFO("Skip " << elf_file_str);
+    return;
+  }
+
   INFO("Binary used: " << *elf_file);
+
   std::unique_ptr<const Binary> binary;
   try {
      binary = std::unique_ptr<const Binary>{Parser::parse(*elf_file)};

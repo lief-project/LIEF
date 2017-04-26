@@ -40,14 +40,20 @@ namespace ELF {
 Parser::~Parser(void) = default;
 Parser::Parser(void)  = default;
 
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
+Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd) :
+  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
+  binary_{nullptr},
+  type_{0},
+  count_mtd_{count_mtd}
 {
   this->init(name);
 }
 
-Parser::Parser(const std::string& file) :
-  LIEF::Parser{file}
+Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
+  LIEF::Parser{file},
+  binary_{nullptr},
+  type_{0},
+  count_mtd_{count_mtd}
 {
   if (not is_elf(file)) {
     throw LIEF::bad_format("'" + file + "' is not an ELF");
@@ -90,13 +96,16 @@ void Parser::init(const std::string& name) {
   }
 }
 
-Binary* Parser::parse(const std::string& filename) {
-  Parser parser{filename};
+Binary* Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
+  Parser parser{filename, count_mtd};
   return parser.binary_;
 }
 
-Binary* Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
-  Parser parser{data, name};
+Binary* Parser::parse(
+    const std::vector<uint8_t>& data,
+    const std::string& name,
+    DYNSYM_COUNT_METHODS count_mtd) {
+  Parser parser{data, name, count_mtd};
   return parser.binary_;
 }
 

@@ -756,6 +756,19 @@ const char* to_string(OS_ABI e) {
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
+
+
+const char* to_string(DYNSYM_COUNT_METHODS e) {
+  const std::map<DYNSYM_COUNT_METHODS, const char*> enumStrings {
+    { DYNSYM_COUNT_METHODS::COUNT_AUTO,        "AUTO"},
+    { DYNSYM_COUNT_METHODS::COUNT_SECTION,     "SECTION"},
+    { DYNSYM_COUNT_METHODS::COUNT_HASH,        "HASH"},
+    { DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS, "RELOCATIONS"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
 } // namespace ELF
 } // namespace LIEF
 
