@@ -115,7 +115,7 @@ int main(int argc, const char** argv) {
 * [API](http://lief.quarkslab.com/doc/api/index.html)
 * [Doxygen](http://lief.quarkslab.com/doxygen/index.html)
 
-## Support
+## Contact
 
 * **Mail**: lief at quarkslab com
 * **Gitter**: [lief-project](https://gitter.im/lief-project)
