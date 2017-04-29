@@ -42,7 +42,7 @@ message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
 set(PYBIND11_GIT_URL "https://github.com/pybind/pybind11.git" CACHE STRING "URL to the Pybind11 repo")
 ExternalProject_Add(pybind11
   GIT_REPOSITORY ${PYBIND11_GIT_URL}
-  GIT_TAG           v2.1.0
+  GIT_TAG           "v2.1.1"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
