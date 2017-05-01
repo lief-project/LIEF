@@ -149,20 +149,33 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Try to predict the RVA of the function `function` in the import library `library`
     //!
     //! @warning
-    //! The value could be changed if imports change
+    //! The value could be chang if imports change
+    //!
+    //! @note
+    //! It should be used with:
+    //! LIEF::PE::Builder::build_imports set to ``true``
+    //!
+    //! @param[in] library  Library name in which the function is located
+    //! @param[in] function Function name
+    //! @return The address of the function (``IAT``)  in the new import table
     uint32_t predict_function_rva(const std::string& library, const std::string& function);
 
-    //! @brief Return a Export object
+    //! @brief Return the Export object
     Export&       get_export(void);
     const Export& get_export(void) const;
 
-    //!@brief Return binary's Symbol
+    //! @brief Return binary Symbols
     std::vector<Symbol>&       symbols(void);
     const std::vector<Symbol>& symbols(void) const;
 
+    //! @brief Return resources as a tree
     ResourceNode&                  get_resources(void);
     const ResourceNode&            get_resources(void) const;
+
+    //! @brief Set a new resource tree
     void set_resources(ResourceNode* resource);
+
+    //! @brief Return the ResourcesManager (class to manage resources more easily than the tree one)
     ResourcesManager               get_resources_manager(void);
     const ResourcesManager         get_resources_manager(void) const;
 
@@ -211,9 +224,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_data_directories       data_directories(void);
     it_const_data_directories data_directories(void) const;
 
+    //! @brief Return the DataDirectory with the given type (or index)
     DataDirectory&       data_directory(DATA_DIRECTORY index);
     const DataDirectory& data_directory(DATA_DIRECTORY index) const;
 
+    //! @brief Return the Debug object
     Debug&       get_debug(void);
     const Debug& get_debug(void) const;
 
