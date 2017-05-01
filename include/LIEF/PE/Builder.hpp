@@ -44,22 +44,47 @@ class DLL_PUBLIC Builder
     Builder(Binary* pe_binary);
     ~Builder(void);
 
+    //! @brief Perform the build process
     void build(void);
 
+    //! @brief Construct a ``jmp *address``.
+    //!
+    //! It is used when patching import table
     template<typename PE_T>
     static std::vector<uint8_t> build_jmp(uint64_t address);
 
+
+    //! @brief Construct a ``jmp address``.
+    //!
+    //! It is used for hooking
     template<typename PE_T>
     static std::vector<uint8_t> build_jmp_hook(uint64_t address);
 
+    //! @brief Rebuild the import table in another section
     Builder& build_imports(bool flag = true);
+
+    //! @brief Patch the original import table in order to
+    //! redirect functions to the new import table.
+    //!
+    //! This setting should be used with LIEF::PE::Builder::build_imports set to ``true``
     Builder& patch_imports(bool flag = true);
+
+    //! @brief Rebuild the relocation table in another section
     Builder& build_relocations(bool flag = true);
+
+    //! @brief Rebuild TLS object in another section
     Builder& build_tls(bool flag = true);
+
+    //! @brief Rebuid the resources in another section
     Builder& build_resources(bool flag);
+
+    //! @brief Rebuild the binary's overlay
     Builder& build_overlay(bool flag);
 
+    //! @brief Return the build result
     const std::vector<uint8_t>& get_build(void);
+
+    //! @brief Write the build result into the ``output`` file
     void write(const std::string& filename) const;
 
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Builder& b);
