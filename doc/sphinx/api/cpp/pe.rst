@@ -161,3 +161,53 @@ SignerInfo
 
 .. doxygenclass:: LIEF::PE::SignerInfo
   :project: lief
+
+
+----------
+
+
+Builder
+*******
+
+.. doxygenclass:: LIEF::PE::Builder
+  :project: lief
+
+
+----------
+
+
+Resource Manager
+****************
+
+.. doxygenclass:: LIEF::PE::ResourcesManager
+  :project: lief
+
+
+----------
+
+
+Resource Node
+*************
+
+.. doxygenclass:: LIEF::PE::ResourceNode
+  :project: lief
+
+
+----------
+
+
+Resource Directory
+******************
+
+.. doxygenclass:: LIEF::PE::ResourceDirectory
+  :project: lief
+
+
+----------
+
+
+Resource Data
+*************
+
+.. doxygenclass:: LIEF::PE::ResourceData
+  :project: lief
