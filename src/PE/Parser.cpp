@@ -748,6 +748,10 @@ void Parser::build_signature(void) {
 
     mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca);
     LOG(DEBUG) << std::endl << buffer << std::endl;
+
+    if (ca->raw.len <= 0) {
+      break;
+    }
     p += ca->raw.len;
   }
 
