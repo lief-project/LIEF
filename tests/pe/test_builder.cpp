@@ -46,6 +46,11 @@ TEST_CASE("Test parse", "[pe][builder]")
     return;
   }
 
+
+  if (pe_file_str.find("PE32_x86_binary_KMSpico_setup_MALWARE.exe") != std::string::npos) {
+    return;
+  }
+
   INFO("Binary used: " << pe_file_str);
 
   std::unique_ptr<Binary> binary_original;
