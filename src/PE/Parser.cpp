@@ -273,8 +273,13 @@ ResourceNode* Parser::build_resource_node(
       uint32_t rvaToDirectory = rvaToData & (~ 0x80000000);
       uint32_t offset = baseOffset + rvaToDirectory;
       try {
-        const auto* nextDirectoryTable = reinterpret_cast<const pe_resource_directory_table*>(
+        const pe_resource_directory_table* nextDirectoryTable = reinterpret_cast<const pe_resource_directory_table*>(
             this->stream_->read(offset, sizeof(pe_resource_directory_table)));
+        if (this->resource_visited_.count(offset) > 0) {
+          LOG(WARNING) << "Infinite loop detected on resources";
+          break;
+        }
+        this->resource_visited_.insert(offset);
 
         ResourceNode* node = this->build_resource_node(nextDirectoryTable, baseOffset);
         node->id_   = id;

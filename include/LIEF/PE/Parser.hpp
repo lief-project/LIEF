@@ -93,6 +93,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_;
     PE_TYPE                       type_;
+    std::set<uint32_t>            resource_visited_;
 };
 
 
