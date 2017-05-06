@@ -88,11 +88,10 @@ void init_MachO_Binary_class(py::module& m) {
         "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which contains the (relative) virtual address",
         py::return_value_policy::reference)
 
-
-
-    .def_property_readonly("entrypoint",
-        &Binary::entrypoint,
-        "Return binary's entrypoint",
+    .def_property_readonly("has_entrypoint",
+        &Binary::has_entrypoint,
+        "``True`` if the binary has an entrypoint.\n"
+        "Basically for libraries it will return ``false``",
         py::return_value_policy::reference_internal)
 
     .def("__str__",

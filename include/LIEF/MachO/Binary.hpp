@@ -160,6 +160,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
 
     virtual uint64_t entrypoint(void) const override;
 
+    //! @brief ``true`` if the binary has an entrypoint.
+    //!
+    //! Basically for libraries it will return ``false``
+    bool has_entrypoint(void) const;
+
 
   private:
     //! @brief Default constructor
