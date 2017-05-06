@@ -39,6 +39,12 @@ class DLL_PUBLIC Header : public Visitable {
   OBJECT_TYPES           object_type(void)  const;
   uint64_t               entrypoint(void)   const;
 
+  //! @brief ``true`` if the binary target a ``32-bits`` architecture
+  bool is_32(void) const;
+
+  //! @brief ``true`` if the binary target a ``64-bits`` architecture
+  bool is_64(void) const;
+
   //! @brief Method so that the ``visitor`` can visit us
   virtual void           accept(Visitor& visitor) const override;
 

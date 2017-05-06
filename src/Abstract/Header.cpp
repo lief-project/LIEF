@@ -48,6 +48,16 @@ const std::set<MODES>& Header::modes(void) const {
 }
 
 
+bool Header::is_32(void) const {
+  return this->modes().count(MODES::MODE_32) > 0;
+}
+
+
+bool Header::is_64(void) const {
+  return this->modes().count(MODES::MODE_64) > 0;
+}
+
+
 uint64_t Header::entrypoint(void) const {
   return this->entrypoint_;
 }
@@ -87,8 +97,19 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
      });
   os << std::hex << std::left;
 
+  std::string bitness = "UNKNOWN";
+  if (hdr.is_32()) {
+    bitness = "32";
+  }
+
+  if (hdr.is_64()) {
+    bitness = "64";
+  }
+
   os << std::setw(33) << std::setfill(' ') << "Architecture:" << to_string(hdr.architecture()) << "_" << modes << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint()                      << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Object type:"  << to_string(hdr.object_type())                  << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "32/64 bits:"   << bitness                                       << std::endl;
   return os;
 }
 

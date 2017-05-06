@@ -50,6 +50,9 @@ class DLL_PUBLIC Header : public Visitable {
     uint32_t               flags(void) const;
     uint32_t               reserved(void) const;
 
+    //! @brief LIEF abstract object type
+    OBJECT_TYPES abstract_object_type(void) const;
+
     std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
 
     void magic(uint32_t magic);

@@ -28,10 +28,10 @@ namespace LIEF {
 namespace ELF {
 
 static const std::map<ARCH, std::pair<ARCHITECTURES, std::set<MODES>>> arch_elf_to_lief {
-  {ARCH::EM_NONE,      {ARCH_NONE, {}}},
+  {ARCH::EM_NONE,      {ARCH_NONE,  {}}},
   {ARCH::EM_X86_64,    {ARCH_X86,   {MODE_64}}},
-  {ARCH::EM_ARM,       {ARCH_ARM,   {}}},
-  {ARCH::EM_AARCH64,   {ARCH_ARM64, {}}},
+  {ARCH::EM_ARM,       {ARCH_ARM,   {MODE_32}}},
+  {ARCH::EM_AARCH64,   {ARCH_ARM64, {MODE_64}}},
   {ARCH::EM_386,       {ARCH_X86,   {MODE_32}}},
   {ARCH::EM_IA_64,     {ARCH_INTEL, {MODE_64}}},
 };

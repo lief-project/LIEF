@@ -490,6 +490,8 @@ LIEF::Header Binary::get_abstract_header(void) const {
     header.entrypoint(0);
   }
 
+  header.object_type(this->header().abstract_object_type());
+
   return header;
 }
 
