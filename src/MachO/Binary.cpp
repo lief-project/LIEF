@@ -95,6 +95,10 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
 
 
 uint64_t Binary::entrypoint(void) const {
+  if (not this->has_entrypoint()) {
+    throw not_found("Entrypoint not found");
+  }
+
   // TODO: LC_THREAD
   auto&& it_main_command = std::find_if(
       std::begin(this->commands_),
@@ -103,12 +107,21 @@ uint64_t Binary::entrypoint(void) const {
         return command != nullptr and command->command() == LOAD_COMMAND_TYPES::LC_MAIN;
       });
 
-  if (it_main_command == std::end(this->commands_)) {
-    throw not_found("Entrypoint not found");
-  }
+  const MainCommand* main_command = dynamic_cast<const MainCommand*>(*it_main_command);
 
-  const MainCommand* main_command = static_cast<const MainCommand*>(*it_main_command);
   return this->imagebase() + main_command->entrypoint();
+}
+
+
+bool Binary::has_entrypoint(void) const {
+  auto&& it_main_command = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [] (const LoadCommand* command) {
+        return command != nullptr and command->command() == LOAD_COMMAND_TYPES::LC_MAIN;
+      });
+
+  return it_main_command != std::end(this->commands_);
 }
 
 LIEF::symbols_t Binary::get_abstract_symbols(void) {
@@ -449,7 +462,7 @@ uint64_t Binary::imagebase(void) const {
 
 
 const std::string& Binary::get_loader(void) const {
-  auto itDylinker = std::find_if(
+  auto&& itDylinker = std::find_if(
       std::begin(this->commands_),
       std::end(this->commands_),
       [] (const LoadCommand* command) {
@@ -457,7 +470,7 @@ const std::string& Binary::get_loader(void) const {
       });
 
   if (itDylinker == std::end(this->commands_)) {
-    throw LIEF::not_found("LC_LOAD_DYLINKER no found");
+    throw LIEF::not_found(std::string("") + to_string(LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER) + " no found");
   }
 
   const DylinkerCommand* dylinkerCommand = dynamic_cast<const DylinkerCommand*>(*itDylinker);
@@ -471,7 +484,11 @@ LIEF::Header Binary::get_abstract_header(void) const {
   const std::pair<ARCHITECTURES, std::set<MODES>>& am = this->header().abstract_architecture();
   header.architecture(am.first);
   header.modes(am.second);
-  header.entrypoint(this->entrypoint());
+  if (this->has_entrypoint()) {
+    header.entrypoint(this->entrypoint());
+  } else {
+    header.entrypoint(0);
+  }
 
   return header;
 }
