@@ -31,13 +31,32 @@ void init_LIEF_Header_class(py::module& m) {
     .def_property("architecture",
         static_cast<getter_t<LIEF::ARCHITECTURES>>(&LIEF::Header::architecture),
         static_cast<setter_t<LIEF::ARCHITECTURES>>(&LIEF::Header::architecture),
-        "Target's architecture")
+        "Target architecture")
 
+    .def_property("modes",
+        static_cast<getter_t<const std::set<LIEF::MODES>&>>(&LIEF::Header::modes),
+        static_cast<setter_t<const std::set<LIEF::MODES>&>>(&LIEF::Header::modes),
+        "Target modes (32-bits, 64-bits...)")
 
     .def_property("entrypoint",
         static_cast<getter_t<uint64_t>>(&LIEF::Header::entrypoint),
         static_cast<setter_t<uint64_t>>(&LIEF::Header::entrypoint),
-        "Binary's entrypoint")
+        "Binary entrypoint")
+
+    .def_property("object_type",
+        static_cast<getter_t<LIEF::OBJECT_TYPES>>(&LIEF::Header::object_type),
+        static_cast<setter_t<LIEF::OBJECT_TYPES>>(&LIEF::Header::object_type),
+        "Type of the binary (executable, library...)\n"
+        "See: " RST_CLASS_REF(lief.OBJECT_TYPES) "")
+
+
+    .def_property_readonly("is_32",
+        &LIEF::Header::is_32,
+        "``True`` if the binary target a ``32-bits`` architecture")
+
+    .def_property_readonly("is_64",
+        &LIEF::Header::is_64,
+        "``True`` if the binary target a ``64-bits`` architecture")
 
 
     .def("__str__",

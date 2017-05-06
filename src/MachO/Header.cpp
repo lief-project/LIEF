@@ -32,14 +32,20 @@ namespace LIEF {
 namespace MachO {
 
 static const std::map<CPU_TYPES, std::pair<ARCHITECTURES, std::set<MODES>>> arch_macho_to_lief {
-  {CPU_TYPES::CPU_TYPE_ANY,       {ARCH_NONE, {}}},
+  {CPU_TYPES::CPU_TYPE_ANY,       {ARCH_NONE,  {}}},
   {CPU_TYPES::CPU_TYPE_X86_64,    {ARCH_X86,   {MODE_64}}},
-  {CPU_TYPES::CPU_TYPE_ARM,       {ARCH_ARM,   {}}},
-  {CPU_TYPES::CPU_TYPE_ARM64,     {ARCH_ARM64, {}}},
+  {CPU_TYPES::CPU_TYPE_ARM,       {ARCH_ARM,   {MODE_32}}},
+  {CPU_TYPES::CPU_TYPE_ARM64,     {ARCH_ARM64, {MODE_64}}},
   {CPU_TYPES::CPU_TYPE_X86,       {ARCH_X86,   {MODE_32}}},
   {CPU_TYPES::CPU_TYPE_SPARC,     {ARCH_SPARC, {}}},
   {CPU_TYPES::CPU_TYPE_POWERPC,   {ARCH_PPC,   {MODE_32}}},
-  {CPU_TYPES::CPU_TYPE_POWERPC64, {ARCH_PPC, {MODE_64}}},
+  {CPU_TYPES::CPU_TYPE_POWERPC64, {ARCH_PPC,   {MODE_64}}},
+};
+
+static const std::map<FILE_TYPES, OBJECT_TYPES> obj_macho_to_lief {
+  {FILE_TYPES::MH_EXECUTE, OBJECT_TYPES::TYPE_EXECUTABLE},
+  {FILE_TYPES::MH_DYLIB,   OBJECT_TYPES::TYPE_LIBRARY},
+  {FILE_TYPES::MH_OBJECT,  OBJECT_TYPES::TYPE_OBJECT},
 };
 
 Header::Header(void) = default;
@@ -106,6 +112,15 @@ std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) co
     return arch_macho_to_lief.at(this->cpu_type());
   } catch (const std::out_of_range&) {
     throw not_implemented(to_string(this->cpu_type()));
+  }
+}
+
+
+OBJECT_TYPES Header::abstract_object_type(void) const {
+  try {
+    return obj_macho_to_lief.at(this->file_type());
+  } catch (const std::out_of_range&) {
+    throw not_implemented(to_string(this->file_type()));
   }
 }
 

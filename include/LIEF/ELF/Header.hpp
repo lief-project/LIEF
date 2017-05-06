@@ -47,7 +47,7 @@ class DLL_PUBLIC Header : public Visitable {
     //! @brief Define the object file type. (e.g. executable, library...)
     E_TYPE    file_type(void) const;
 
-    // @brief LIEF abstract object type
+    //! @brief LIEF abstract object type
     OBJECT_TYPES abstract_object_type(void) const;
 
     //! @brief Target architecture
