@@ -35,6 +35,7 @@ class VectorStream : public BinaryStream {
 
   private:
     std::vector<uint8_t> binary_;
+    uint64_t size_;
 };
 
 
