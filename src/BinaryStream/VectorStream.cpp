@@ -32,11 +32,11 @@ VectorStream::VectorStream(const std::string& filename) {
     binary.unsetf(std::ios::skipws);
     binary.seekg(0, std::ios::end);
     assert(binary.tellg() > 0);
-    const uint64_t filesize = static_cast<uint64_t>(binary.tellg());
+    this->size_ = static_cast<uint64_t>(binary.tellg());
     binary.seekg(0, std::ios::beg);
 
     // reserve capacity
-    this->binary_.resize(filesize + 30, 0);
+    this->binary_.resize(this->size_ + 30, 0);
     std::copy(
       std::istreambuf_iterator<char>(binary),
       std::istreambuf_iterator<char>(),
@@ -51,25 +51,27 @@ VectorStream::VectorStream(const std::string& filename) {
 
 VectorStream::VectorStream(const std::vector<uint8_t>& data):
   binary_(data)
-{}
+{
+  this->size_ = data.size();
+}
 
 
 uint64_t VectorStream::size(void) const {
-  return this->binary_.size();
+  return this->size_;
 }
 
 
 const void* VectorStream::read(uint64_t offset, uint64_t size) const {
 
-  if (offset > this->binary_.size() or (offset + size) > this->binary_.size()) {
+  if (offset > this->size_ or (offset + size) > this->size_) {
     LOG(DEBUG) << "Offset: " << std::hex << offset << std::endl;
     LOG(DEBUG) << "Size:   " << std::hex << size   << std::endl;
 
-    if (offset > this->binary_.size()) {
+    if (offset > this->size_) {
       throw LIEF::read_out_of_bound(offset);
     }
 
-    if ((offset + size) > this->binary_.size()) {
+    if ((offset + size) > this->size_) {
       throw LIEF::read_out_of_bound(offset, size);
     }
   }
@@ -80,7 +82,7 @@ const void* VectorStream::read(uint64_t offset, uint64_t size) const {
 
 const char* VectorStream::read_string(uint64_t offset) const {
 
-  if (offset > this->binary_.size()) {
+  if (offset > this->size_) {
     throw LIEF::read_out_of_bound(offset);
   }
   return reinterpret_cast<const char*>(this->binary_.data() + offset);

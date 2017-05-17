@@ -131,15 +131,13 @@ void Parser::build_sections(void) {
         ptr_to_rawdata,
         ptr_to_rawdata + sections[i].SizeOfRawData
       };
-
-      this->binary_->sections_.push_back(section);
     } catch (const std::bad_alloc& e) {
       LOG(WARNING) << "Section " << section->name() << " corrupted: " << e.what();
-      delete section;
     } catch (const read_out_of_bound& e) {
       LOG(WARNING) << "Section " << section->name() << " corrupted: " << e.what();
-      delete section;
     }
+
+    this->binary_->sections_.push_back(section);
   }
 }
 
