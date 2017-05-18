@@ -1047,19 +1047,22 @@ void Parser::build_overlay(void) {
 
   LOG(DEBUG) << "Overlay offset: 0x" << std::hex << last_section_offset;
 
-  const uint64_t overlay_size = this->stream_->size() - last_section_offset;
+  if (last_section_offset < this->stream_->size()) {
+    const uint64_t overlay_size = this->stream_->size() - last_section_offset;
 
-  LOG(DEBUG) << "Overlay size: " << std::dec << overlay_size;
+    LOG(DEBUG) << "Overlay size: " << std::dec << overlay_size;
 
-  const uint8_t* ptr_to_overlay = reinterpret_cast<const uint8_t*>(this->stream_->read(
+    const uint8_t* ptr_to_overlay = reinterpret_cast<const uint8_t*>(this->stream_->read(
         last_section_offset,
         overlay_size));
 
-  this->binary_->overlay_ = {
+    this->binary_->overlay_ = {
         ptr_to_overlay,
         ptr_to_overlay + overlay_size
       };
-
+  } else {
+    this->binary_->overlay_ = {};
+  }
 }
 
 //
