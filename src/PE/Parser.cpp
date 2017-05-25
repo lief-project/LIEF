@@ -548,7 +548,7 @@ void Parser::build_signature(void) {
   LOG(DEBUG) << "Signature Size: 0x" << std::hex << signature_size;
 
   //TODO: Deal with header (+8)
-  const uint8_t* signature_ptr = reinterpret_cast<const uint8_t*>(this->stream_->read(signature_offset + 8, signature_size));
+  const uint8_t* signature_ptr = reinterpret_cast<const uint8_t*>(this->stream_->read(signature_offset + 8, signature_size - 8));
   const uint8_t* end = signature_ptr + signature_size;
   Signature signature;
   mbedtls_asn1_buf buf;
