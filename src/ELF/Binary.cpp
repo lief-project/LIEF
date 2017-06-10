@@ -1450,9 +1450,45 @@ it_notes Binary::notes(void) {
 void Binary::accept(LIEF::Visitor&) const {
 }
 
+bool Binary::use_gnu_hash(void) const {
+
+  auto&& it_gnu_hash = std::find_if(
+      std::begin(this->dynamic_entries_),
+      std::end(this->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_GNU_HASH;
+      });
+
+  return it_gnu_hash != std::end(this->dynamic_entries_);
+}
+
 
 const GnuHash& Binary::get_gnu_hash(void) const {
-  return this->gnu_hash_;
+  if (this->use_gnu_hash()) {
+    return this->gnu_hash_;
+  } else {
+    throw not_found("GNU hash is not used!");
+  }
+}
+
+
+bool Binary::use_sysv_hash(void) const {
+  auto&& it_sysv_hash = std::find_if(
+      std::begin(this->dynamic_entries_),
+      std::end(this->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_HASH;
+      });
+
+  return it_sysv_hash != std::end(this->dynamic_entries_);
+}
+
+const SysvHash& Binary::get_sysv_hash(void) const {
+  if (this->use_sysv_hash()) {
+    return this->sysv_hash_;
+  } else {
+    throw not_found("SYSV hash is not used!");
+  }
 }
 
 
@@ -1576,6 +1612,24 @@ std::ostream& Binary::print(std::ostream& os) const {
   }
 
   os << std::endl;
+  if (this->use_gnu_hash()) {
+    os << "GNU Hash Table" << std::endl;
+    os << "==============" << std::endl;
+
+    os << this->get_gnu_hash() << std::endl;
+
+    os << std::endl;
+  }
+
+
+  if (this->use_sysv_hash()) {
+    os << "SYSV Hash Table" << std::endl;
+    os << "===============" << std::endl;
+
+    os << this->get_sysv_hash() << std::endl;
+
+    os << std::endl;
+  }
 
 
 

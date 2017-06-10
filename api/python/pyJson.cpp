@@ -24,6 +24,9 @@ void init_json_functions(py::module& m) {
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Header,                      LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Section,                     LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Segment,                     LIEF::ELF::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Note,                        LIEF::ELF::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::ELF::GnuHash,                     LIEF::ELF::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::ELF::SysvHash,                    LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntry,                LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntryArray,           LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntryLibrary,         LIEF::ELF::JsonVisitor>);

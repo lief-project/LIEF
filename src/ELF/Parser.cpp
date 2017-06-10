@@ -216,5 +216,58 @@ void Parser::link_symbol_version(void) {
   }
 }
 
+void Parser::parse_symbol_sysv_hash(uint64_t offset) {
+
+  LOG(DEBUG) << "[+] Build symbol SYSV hash";
+  SysvHash sysvhash;
+
+  uint64_t current_offset = offset;
+
+  const uint32_t* header = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(current_offset, 2 * sizeof(uint32_t)));
+
+  current_offset += 2 * sizeof(uint32_t);
+
+  const uint32_t nbuckets = header[0];
+  const uint32_t nchain   = header[1];
+  try {
+    std::vector<uint32_t> buckets(nbuckets);
+
+    for (size_t i = 0; i < nbuckets; ++i) {
+      buckets[i] = this->stream_->read_integer<uint32_t>(current_offset);
+      current_offset += sizeof(uint32_t);
+    }
+
+    sysvhash.buckets_ = std::move(buckets);
+  }
+  catch (const read_out_of_bound&) {
+    throw corrupted("SYSV Hash, nbuckets corrupted");
+  }
+  catch (const std::bad_alloc&) {
+    throw corrupted("SYSV Hash, nbuckets corrupted");
+  }
+
+   try {
+    std::vector<uint32_t> chains(nchain);
+
+    for (size_t i = 0; i < nchain; ++i) {
+      chains[i] = this->stream_->read_integer<uint32_t>(current_offset);
+      current_offset += sizeof(uint32_t);
+    }
+
+    sysvhash.chains_ = std::move(chains);
+  }
+  catch (const read_out_of_bound&) {
+    throw corrupted("SYSV Hash, nchain corrupted");
+  }
+  catch (const std::bad_alloc&) {
+    throw corrupted("SYSV Hash, nchain corrupted");
+  }
+
+  this->binary_->sysv_hash_ = std::move(sysvhash);
+
+}
+
+
 }
 }

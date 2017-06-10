@@ -101,10 +101,24 @@ void init_ELF_Binary_class(py::module& m) {
         "Return an iterator to " RST_CLASS_REF(lief.ELF.SymbolVersionDefinition) "",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("use_gnu_hash",
+        &Binary::use_gnu_hash,
+        "``True`` if GNU hash is used")
+
     .def_property_readonly("gnu_hash",
         &Binary::get_gnu_hash,
         "Return the " RST_CLASS_REF(lief.ELF.GnuHash) " object\n\n"
-        "Hash are used by the loader to speed up symbols resolving",
+        "Hash are used by the loader to speed up symbols resolving (GNU Version)",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("use_sysv_hash",
+        &Binary::use_sysv_hash,
+        "``True`` if SYSV hash is used")
+
+    .def_property_readonly("sysv_hash",
+        &Binary::get_sysv_hash,
+        "Return the " RST_CLASS_REF(lief.ELF.SysvHash) " object\n\n"
+        "Hash are used by the loader to speed up symbols resolving (SYSV version)",
         py::return_value_policy::reference_internal)
 
    .def_property_readonly("imagebase",

@@ -259,6 +259,9 @@ def print_informations(binary):
 def print_gnu_hash(binary):
     print("== GNU Hash ==\n")
 
+    if not binary.use_gnu_hash:
+        return
+
     gnu_hash = binary.gnu_hash
 
     format_str = "{:<30} {}"
@@ -271,6 +274,24 @@ def print_gnu_hash(binary):
     print(format_str.format("Bloom filters:",      gnu_hash.bloom_filters))
     print(format_str.format("Buckets:",            gnu_hash.buckets))
     print(format_str.format("Hash values:",        gnu_hash.hash_values))
+
+
+def print_sysv_hash(binary):
+    print("== SYSV Hash ==\n")
+
+    if not binary.use_sysv_hash:
+        return
+
+    sysv_hash = binary.sysv_hash
+
+    format_str = "{:<30} {}"
+    format_hex = "{:<30} 0x{:<28x}"
+    format_dec = "{:<30} {:<30d}"
+
+    print(format_dec.format("Number of buckets:", sysv_hash.nbucket))
+    print(format_dec.format("Number of chains:",  sysv_hash.nchain))
+    print(format_str.format("Buckets:",           sysv_hash.buckets))
+    print(format_str.format("Chains:",            sysv_hash.chains))
 
 
 def print_notes(binary):
@@ -301,9 +322,6 @@ def print_notes(binary):
             print(format_str.format("Version:", version_str))
 
         print("\n")
-
-
-
 
 
 def main():
@@ -364,6 +382,10 @@ def main():
             action='store_true', dest='show_gnu_hash',
             help='Display GNU Hash')
 
+    optparser.add_option('--sysv-hash',
+            action='store_true', dest='show_sysv_hash',
+            help='Display SYSV Hash')
+
     optparser.add_option('-n', '--notes',
             action='store_true', dest='show_notes',
             help='Display Notes')
@@ -414,6 +436,9 @@ def main():
 
     if options.show_gnu_hash or options.show_all:
         print_gnu_hash(binary)
+
+    if options.show_sysv_hash or options.show_all:
+        print_sysv_hash(binary)
 
     if options.show_notes or options.show_all:
         print_notes(binary)

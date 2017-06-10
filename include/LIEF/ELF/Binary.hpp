@@ -44,6 +44,7 @@
 #include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/SysvHash.hpp"
 
 
 namespace LIEF {
@@ -130,8 +131,21 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_relocations                         get_pltgot_relocations(void);
     it_const_relocations                   get_pltgot_relocations(void) const;
 
+    //! @brief ``true`` if GNU hash is used
+    //!
+    //! @see get_gnu_hash and use_sysv_hash
+    bool use_gnu_hash(void) const;
+
     //! @brief Return the GnuHash object in **readonly**
     const GnuHash& get_gnu_hash(void) const;
+
+    //! @brief ``true`` if SYSV hash is used
+    //!
+    //! @see get_sysv_hash and use_gnu_hash
+    bool use_sysv_hash(void) const;
+
+    //! @brief Return the SysvHash object in **readonly**
+    const SysvHash& get_sysv_hash(void) const;
 
     //! @brief Check if a section with the given name exists in the binary
     bool has_section(const std::string& name) const;
@@ -417,6 +431,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! .note
     notes_t                       notes_;
+
+    //! .hash
+    SysvHash                      sysv_hash_;
 
     //! object used to manage segments/sections
     DataHandler::Handler*         datahandler_;

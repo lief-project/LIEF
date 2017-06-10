@@ -44,6 +44,7 @@ void init_ELF_module(py::module& m) {
   init_ELF_DynamicEntryRpath_class(LIEF_ELF_module);
   init_ELF_DynamicEntryRunPath_class(LIEF_ELF_module);
   init_ELF_GnuHash_class(LIEF_ELF_module);
+  init_ELF_SysvHash_class(LIEF_ELF_module);
   init_ELF_Builder_class(LIEF_ELF_module);
   init_ELF_Note_class(LIEF_ELF_module);
 
