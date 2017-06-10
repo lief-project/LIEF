@@ -140,6 +140,14 @@ void Visitor::visit(const ELF::Note& note) {
   note.accept(*this);
 }
 
+void Visitor::visit(const ELF::GnuHash& gnuhash) {
+  gnuhash.accept(*this);
+}
+
+void Visitor::visit(const ELF::SysvHash& sysvhash) {
+  sysvhash.accept(*this);
+}
+
 // PE Part
 // -------
 void Visitor::visit(const PE::Binary& binary) {

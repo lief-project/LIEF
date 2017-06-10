@@ -142,6 +142,21 @@ void JsonVisitor::visit(const Binary& binary) {
   this->node_["symbols_version_requirement"] = symbols_version_requirement;
   this->node_["symbols_version_definition"]  = symbols_version_definition;
   this->node_["notes"]                       = notes;
+
+  if (binary.use_gnu_hash()) {
+    JsonVisitor gnu_hash_visitor;
+    gnu_hash_visitor(binary.get_gnu_hash());
+
+    this->node_["gnu_hash"] = gnu_hash_visitor.get();
+  }
+
+  if (binary.use_sysv_hash()) {
+    JsonVisitor sysv_hash_visitor;
+    sysv_hash_visitor(binary.get_sysv_hash());
+
+    this->node_["sysv_hash"] = sysv_hash_visitor.get();
+  }
+
 }
 
 
@@ -327,6 +342,25 @@ void JsonVisitor::visit(const SymbolVersionAuxRequirement& svar) {
 void JsonVisitor::visit(const Note& note) {
   this->node_["name"]  = note.name();
   this->node_["type"]  = to_string(static_cast<NOTE_TYPES>(note.type()));
+}
+
+
+void JsonVisitor::visit(const GnuHash& gnuhash) {
+  this->node_["nb_buckets"]    = gnuhash.nb_buckets();
+  this->node_["symbol_index"]  = gnuhash.symbol_index();
+  this->node_["shift2"]        = gnuhash.shift2();
+  this->node_["maskwords"]     = gnuhash.maskwords();
+  this->node_["bloom_filters"] = gnuhash.bloom_filters();
+  this->node_["buckets"]       = gnuhash.buckets();
+  this->node_["hash_values"]   = gnuhash.hash_values();
+}
+
+
+void JsonVisitor::visit(const SysvHash& sysvhash) {
+  this->node_["nbucket"] = sysvhash.nbucket();
+  this->node_["nchain"]  = sysvhash.nchain();
+  this->node_["buckets"] = sysvhash.buckets();
+  this->node_["chains"]  = sysvhash.chains();
 }
 
 

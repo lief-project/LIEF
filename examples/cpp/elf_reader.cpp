@@ -92,8 +92,24 @@ int main(int argc, char **argv) {
   }
 
 
-  std::cout << "== GNU Hash ==" << std::endl;
-  std::cout << binary->get_gnu_hash() << std::endl;
+  if (binary->use_gnu_hash()) {
+    std::cout << "== GNU Hash ==" << std::endl;
+    std::cout << binary->get_gnu_hash() << std::endl;
+  }
+
+
+  if (binary->use_sysv_hash()) {
+    std::cout << "== SYSV Hash ==" << std::endl;
+    std::cout << binary->get_sysv_hash() << std::endl;
+  }
+
+  if (binary->notes().size() > 0) {
+    std::cout << "== Notes ==" << std::endl;
+
+    for (const Note& note : binary->notes()) {
+      std::cout << note << std::endl;
+    }
+  }
 
 
 
