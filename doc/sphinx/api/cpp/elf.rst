@@ -68,6 +68,30 @@ Dynamic Shared Object
 
 ----------
 
+Dynamic Entry Run Path
+**********************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryRunPath
+   :project: lief
+
+----------
+
+Dynamic Entry RPath
+*******************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryRpath
+   :project: lief
+
+----------
+
+Dynamic Entry Array
+*******************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryArray
+   :project: lief
+
+----------
+
 Relocations
 ***********
 
@@ -99,6 +123,32 @@ Symbol Version Auxiliary
    :project: lief
 
 ----------
+
+GNU Hash table
+**************
+
+.. doxygenclass:: LIEF::ELF::GnuHash
+   :project: lief
+
+----------
+
+SYSV Hash table
+***************
+
+.. doxygenclass:: LIEF::ELF::SysvHash
+   :project: lief
+
+----------
+
+Note
+****
+
+.. doxygenclass:: LIEF::ELF::Note
+   :project: lief
+
+----------
+
+
 
 Enums
 *****
@@ -154,4 +204,10 @@ Enums
    :project: lief
 
 .. doxygenenum:: LIEF::ELF::DYNSYM_COUNT_METHODS
+   :project: lief
+
+.. doxygenenum:: LIEF::ELF::NOTE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::ELF::NOTE_ABIS
    :project: lief

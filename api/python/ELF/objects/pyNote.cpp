@@ -53,12 +53,12 @@ void init_ELF_Note_class(py::module& m) {
 
     .def_property_readonly("abi",
         static_cast<getter_t<NOTE_ABIS>>(&Note::abi),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_TYPES) ". Require a :attr:`~lief.ELF.NOTE_TYPES.NT_GNU_ABI_TAG` :attr:`~lief.ELF.Note.type`"
+        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_TYPES) ". Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
         )
 
     .def_property_readonly("version",
         static_cast<getter_t<std::tuple<uint32_t, uint32_t, uint32_t>>>(&Note::version),
-        "Return the target version as ``(Major, Minor, Patch)``. Require a :attr:`~lief.ELF.NOTE_TYPES.NT_GNU_ABI_TAG` :attr:`~lief.ELF.Note.type`"
+        "Return the target version as ``(Major, Minor, Patch)``. Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
         )
 
     .def("__eq__", &Note::operator==)
