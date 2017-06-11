@@ -661,6 +661,10 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   } catch (const read_out_of_bound&) {
     throw corrupted("GNU Hash, hash_buckets corrupted");
   }
+  if (buckets.size() == 0) {
+    return 0;
+  }
+
   uint32_t nb_symbols = *std::max_element(std::begin(buckets), std::end(buckets));
 
   if (nb_symbols == 0) {
