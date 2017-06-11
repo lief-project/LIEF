@@ -14,6 +14,7 @@ configure_file(
 )
 
 set(LIEF_ELF_SRC
+  "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryArray.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SymbolVersionRequirement.cpp"
@@ -42,6 +43,7 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc")
 
 set(LIEF_ELF_INC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Binary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Builder.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntry.hpp"

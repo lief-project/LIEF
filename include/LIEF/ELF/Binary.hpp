@@ -43,6 +43,7 @@
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 
 namespace LIEF {
@@ -345,6 +346,16 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! to ``true``
     void permute_dynamic_symbols(const std::vector<size_t>& permutation);
 
+
+    //! @brief ``true`` if the binary embed notes
+    bool has_notes(void) const;
+
+    //! @brief Return the Note object if any
+    //! @see has_note
+    it_const_notes notes(void) const;
+
+    it_notes notes(void);
+
     size_t hash(const std::string& name);
 
     virtual ~Binary(void);
@@ -403,6 +414,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! .gnu.hash
     GnuHash                       gnu_hash_;
+
+    //! .note
+    notes_t                       notes_;
 
     //! object used to manage segments/sections
     DataHandler::Handler*         datahandler_;

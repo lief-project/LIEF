@@ -45,6 +45,7 @@ void init_ELF_module(py::module& m) {
   init_ELF_DynamicEntryRunPath_class(LIEF_ELF_module);
   init_ELF_GnuHash_class(LIEF_ELF_module);
   init_ELF_Builder_class(LIEF_ELF_module);
+  init_ELF_Note_class(LIEF_ELF_module);
 
   py::module LIEF_ELF32_module = LIEF_ELF_module.def_submodule("ELF32", "");
   init_ELF32_Structures(LIEF_ELF32_module);

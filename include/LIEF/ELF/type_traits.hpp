@@ -31,6 +31,7 @@ class SymbolVersionRequirement;
 class SymbolVersionDefinition;
 class SymbolVersionAux;
 class SymbolVersionAuxRequirement;
+class Note;
 
 using sections_t                               = std::vector<Section*>;
 using it_sections                              = ref_iterator<sections_t&>;
@@ -77,6 +78,10 @@ using it_const_symbols_version_aux             = const_ref_iterator<const symbol
 using symbols_version_aux_requirement_t        = std::vector<SymbolVersionAuxRequirement*>;
 using it_symbols_version_aux_requirement       = ref_iterator<symbols_version_aux_requirement_t&>;
 using it_const_symbols_version_aux_requirement = const_ref_iterator<const symbols_version_aux_requirement_t&>;
+
+using notes_t                                  = std::vector<Note>;
+using it_notes                                 = ref_iterator<notes_t&>;
+using it_const_notes                           = const_ref_iterator<const notes_t&>;
 }
 }
 

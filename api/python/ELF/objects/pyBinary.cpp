@@ -213,6 +213,15 @@ void init_ELF_Binary_class(py::module& m) {
         ".. warning:: This method should be used only for **libraries**\n\n",
         "content"_a)
 
+    .def_property_readonly("has_notes",
+        &Binary::has_notes,
+        "``True`` if the binary contains notes")
+
+    .def_property_readonly("notes",
+        static_cast<no_const_getter<it_notes>>(&Binary::notes),
+        "Return an iterator to " RST_CLASS_REF(lief.ELF.Note) " entries as a list",
+        py::return_value_policy::reference_internal)
+
     .def("strip",
         &Binary::strip,
         "Strip the binary")

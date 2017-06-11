@@ -136,6 +136,10 @@ void Visitor::visit(const ELF::SymbolVersionAuxRequirement& svar) {
   svar.accept(*this);
 }
 
+void Visitor::visit(const ELF::Note& note) {
+  note.accept(*this);
+}
+
 // PE Part
 // -------
 void Visitor::visit(const PE::Binary& binary) {

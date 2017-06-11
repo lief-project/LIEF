@@ -769,6 +769,33 @@ const char* to_string(DYNSYM_COUNT_METHODS e) {
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
+
+
+const char* to_string(NOTE_TYPES e) {
+  const std::map<NOTE_TYPES, const char*> enumStrings {
+    { NOTE_TYPES::NT_GNU_ABI_TAG,      "ABI_TAG"},
+    { NOTE_TYPES::NT_GNU_HWCAP,        "HWCAP"},
+    { NOTE_TYPES::NT_GNU_BUILD_ID,     "BUILD_ID"},
+    { NOTE_TYPES::NT_GNU_GOLD_VERSION, "GOLD_VERSION"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+const char* to_string(NOTE_ABIS e) {
+  const std::map<NOTE_ABIS, const char*> enumStrings {
+    { NOTE_ABIS::ELF_NOTE_OS_LINUX,    "LINUX"},
+    { NOTE_ABIS::ELF_NOTE_OS_GNU,      "GNU"},
+    { NOTE_ABIS::ELF_NOTE_OS_SOLARIS2, "SOLARIS2"},
+    { NOTE_ABIS::ELF_NOTE_OS_FREEBSD,  "FREEBSD"},
+    { NOTE_ABIS::ELF_NOTE_OS_NETBSD,   "NETBSD"},
+    { NOTE_ABIS::ELF_NOTE_OS_SYLLABLE, "SYLLABLE"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
 } // namespace ELF
 } // namespace LIEF
 

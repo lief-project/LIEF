@@ -110,6 +110,15 @@ void JsonVisitor::visit(const Binary& binary) {
   }
 
 
+  // Notes
+  std::vector<json> notes;
+  for (const Note& note : binary.notes()) {
+    JsonVisitor visitor;
+    visitor(note);
+    notes.emplace_back(visitor.get());
+  }
+
+
 
   this->node_["name"]         = binary.name();
   this->node_["entrypoint"]   = binary.entrypoint();
@@ -132,6 +141,7 @@ void JsonVisitor::visit(const Binary& binary) {
   this->node_["symbols_version"]             = symbols_version;
   this->node_["symbols_version_requirement"] = symbols_version_requirement;
   this->node_["symbols_version_definition"]  = symbols_version_definition;
+  this->node_["notes"]                       = notes;
 }
 
 
@@ -312,6 +322,11 @@ void JsonVisitor::visit(const SymbolVersionAuxRequirement& svar) {
   this->node_["hash"]  = svar.hash();
   this->node_["flags"] = svar.flags();
   this->node_["other"] = svar.other();
+}
+
+void JsonVisitor::visit(const Note& note) {
+  this->node_["name"]  = note.name();
+  this->node_["type"]  = to_string(static_cast<NOTE_TYPES>(note.type()));
 }
 
 

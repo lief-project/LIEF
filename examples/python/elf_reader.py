@@ -273,6 +273,36 @@ def print_gnu_hash(binary):
     print(format_str.format("Hash values:",        gnu_hash.hash_values))
 
 
+def print_notes(binary):
+    print("== Notes ==\n")
+
+    format_str = "{:<19} {}"
+    format_hex = "{:<19} 0x{:<28x}"
+    format_dec = "{:<19} {:<30d}"
+
+    notes = binary.notes
+    for idx, note in enumerate(notes):
+        description = note.description
+        description_str = " ".join(map(lambda e : "{:02x}".format(e), description[:16]))
+        if len(description) > 16:
+            description_str += " ..."
+
+        print("Note #{:d}".format(idx))
+
+        print(format_str.format("Name:",        note.name))
+        print(format_str.format("Type:",        ELF.NOTE_TYPES(note.type)))
+        print(format_str.format("Description:", description_str))
+
+        if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.ABI_TAG:
+            version = note.version
+            version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
+
+            print(format_str.format("ABI:",     note.abi))
+            print(format_str.format("Version:", version_str))
+
+        print("\n")
+
+
 
 
 
@@ -334,6 +364,10 @@ def main():
             action='store_true', dest='show_gnu_hash',
             help='Display GNU Hash')
 
+    optparser.add_option('-n', '--notes',
+            action='store_true', dest='show_notes',
+            help='Display Notes')
+
 
     options, args = optparser.parse_args()
 
@@ -378,9 +412,11 @@ def main():
     if options.show_exported_symbols or options.show_all:
         print_exported_symbols(binary)
 
-
     if options.show_gnu_hash or options.show_all:
         print_gnu_hash(binary)
+
+    if options.show_notes or options.show_all:
+        print_notes(binary)
 
 
 
