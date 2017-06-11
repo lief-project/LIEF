@@ -17,6 +17,8 @@
 #include <numeric>
 #include <sstream>
 
+#include "LIEF/visitors/Hash.hpp"
+
 #include "LIEF/ELF/GnuHash.hpp"
 
 namespace LIEF {
@@ -42,7 +44,6 @@ uint32_t GnuHash::symbol_index(void) const {
   return this->symbol_index_;
 }
 
-
 uint32_t GnuHash::maskwords(void) const {
   return this->bloom_filters_.size();
 }
@@ -63,7 +64,31 @@ const std::vector<uint32_t>& GnuHash::hash_values(void) const {
   return this->hash_values_;
 }
 
-void GnuHash::accept(Visitor&) const {
+
+bool GnuHash::operator==(const GnuHash& rhs) const {
+  size_t hash_lhs = Hash::hash(*this);
+  size_t hash_rhs = Hash::hash(rhs);
+  return hash_lhs == hash_rhs;
+}
+
+bool GnuHash::operator!=(const GnuHash& rhs) const {
+  return not (*this == rhs);
+}
+
+void GnuHash::accept(Visitor& visitor) const {
+  visitor.visit(this->symbol_index());
+  visitor.visit(this->shift2());
+  for (uint64_t v : this->bloom_filters()) {
+    visitor.visit(v);
+  }
+
+  for (uint64_t v : this->buckets()) {
+    visitor.visit(v);
+  }
+
+  for (uint64_t v : this->hash_values()) {
+    visitor.visit(v);
+  }
 
 }
 

@@ -65,13 +65,15 @@ class DLL_PUBLIC GnuHash : public Visitable {
   //! @brief Hash values
   const std::vector<uint32_t>& hash_values(void) const;
 
+  bool operator==(const GnuHash& rhs) const;
+  bool operator!=(const GnuHash& rhs) const;
+
   virtual void accept(Visitor& visitor) const override;
 
   DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash);
 
   private:
   uint32_t symbol_index_;
-  //uint32_t maskwords_; -> TODO
   uint32_t shift2_;
 
   std::vector<uint64_t> bloom_filters_;
