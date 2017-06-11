@@ -45,6 +45,7 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const SymbolVersionAuxRequirement& sv) override;
   virtual void visit(const SymbolVersionRequirement& svr)   override;
   virtual void visit(const SymbolVersionDefinition& svd)    override;
+  virtual void visit(const Note& note)                      override;
 
 
   virtual void visit(const LIEF::Binary& binary)   override;

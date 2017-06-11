@@ -43,6 +43,7 @@ void init_ELF_DynamicEntryRpath_class(py::module&);
 void init_ELF_DynamicEntryRunPath_class(py::module&);
 void init_ELF_GnuHash_class(py::module&);
 void init_ELF_Builder_class(py::module&);
+void init_ELF_Note_class(py::module&);
 
 // Enums
 void init_ELF_Structures_enum(py::module&);

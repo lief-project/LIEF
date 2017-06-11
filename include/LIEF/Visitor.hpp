@@ -41,6 +41,7 @@ class Header;
 class Section;
 class Segment;
 class Relocation;
+class Note;
 
 class DynamicEntry;
 class DynamicEntryArray;
@@ -210,6 +211,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::ELF::SymbolVersionDefinition
   virtual void visit(const ELF::SymbolVersionDefinition& svd);
+
+  //! @brief Method to visit a LIEF::ELF::Note
+  virtual void visit(const ELF::Note& note);
 
   // PE Part
   // =======

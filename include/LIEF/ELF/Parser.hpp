@@ -192,6 +192,11 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     template<typename ELF_T>
     void parse_symbol_gnu_hash(uint64_t offset);
 
+    //! @brief Parse Note (.gnu.note)
+    template<typename ELF_T>
+    void parse_notes(uint64_t offset, uint64_t size);
+
+
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_;
     uint32_t                      type_;

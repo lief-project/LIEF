@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "easylogging++.h"
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -367,6 +368,42 @@ void Parser::parse_binary(void) {
     } catch (const corrupted& e) {
       LOG(WARNING) << e.what();
     }
+  }
+
+  // Parse Note segment
+  // ==================
+  auto&& it_segment_note = std::find_if(
+      std::begin(this->binary_->segments_),
+      std::end(this->binary_->segments_),
+      [] (const Segment* segment) {
+        return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_NOTE;
+      });
+
+  if (it_segment_note != std::end(this->binary_->segments_)) {
+    try {
+      const uint64_t note_offset = this->binary_->virtual_address_to_offset((*it_segment_note)->virtual_address());
+      this->parse_notes<ELF_T>(note_offset, (*it_segment_note)->physical_size());
+    } catch (const conversion_error&) {
+    } catch (const corrupted& e) {
+        LOG(WARNING) << e.what();
+    }
+  }
+
+  // Parse Note Sections
+  // ===================
+  for (const Section& section : this->binary_->get_sections()) {
+    if (section.type() != SECTION_TYPES::SHT_NOTE) {
+      continue;
+    }
+
+    try {
+      this->parse_notes<ELF_T>(section.offset(), section.size());
+    } catch (const conversion_error&) {
+    } catch (const corrupted& e) {
+        LOG(WARNING) << e.what();
+    }
+
+
   }
 
   // Try to parse using sections
@@ -1484,6 +1521,59 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   gnuhash.hash_values_ = std::move(hashvalues);
   this->binary_->gnu_hash_ = std::move(gnuhash);
+
+}
+
+template<typename ELF_T>
+void Parser::parse_notes(uint64_t offset, uint64_t size) {
+  using uint__  = typename ELF_T::uint;
+  LOG(DEBUG) << "Parsing Note segment";
+  uint64_t current_offset = offset;
+  uint64_t last_offset = offset + size;
+
+  while(current_offset < last_offset) {
+    uint32_t namesz = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Name size: " << std::hex << namesz;
+
+    uint32_t descsz = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Description size: " << std::hex << descsz;
+
+    uint32_t type = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Type: " << std::hex << type;
+
+    if (namesz == 0) { // System reserves
+      break;
+    }
+
+    std::string name = {this->stream_->read_string(current_offset, namesz), namesz - 1};
+    LOG(DEBUG) << "Name: " << name;
+    current_offset += namesz;
+    current_offset = align(current_offset, sizeof(uint32_t));
+
+    std::vector<uint8_t> description;
+    if (descsz > 0) {
+      const uint8_t* desc_ptr = reinterpret_cast<const uint8_t*>(
+        this->stream_->read(current_offset, descsz));
+
+      description = {desc_ptr, desc_ptr + descsz};
+
+      current_offset += descsz;
+      current_offset = align(current_offset, sizeof(uint32_t));
+    }
+    Note note{name, type, std::move(description)};
+    auto&& it_note = std::find_if(
+        std::begin(this->binary_->notes_),
+        std::end(this->binary_->notes_),
+        [&note] (const Note& n) {
+          return n == note;
+        });
+    if (it_note == std::end(this->binary_->notes_)) {
+      this->binary_->notes_.push_back(std::move(note));
+    }
+  }
 
 }
 

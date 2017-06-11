@@ -1,5 +1,6 @@
 set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyELF.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyNote.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbolVersionAuxRequirement.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbolVersion.cpp"

@@ -107,6 +107,37 @@ class TestELF(TestCase):
             self.logger.debug(stdout.decode("utf8"))
             self.assertEqual(p.returncode, 0)
 
+    def test_notes(self):
+        systemd_resolve = lief.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
+        notes = systemd_resolve.notes
+        self.assertEqual(len(notes), 3)
+
+        n1 = notes[0]
+        n2 = notes[1]
+        n3 = notes[2]
+
+        self.assertEqual(n1.name, "GNU")
+        self.assertEqual(n2.name, "GNU")
+        self.assertEqual(n3.name, "GNU")
+
+        self.assertEqual(n1.type, lief.ELF.NOTE_TYPES.ABI_TAG)
+        self.assertEqual(n2.type, lief.ELF.NOTE_TYPES.BUILD_ID)
+        self.assertEqual(n3.type, lief.ELF.NOTE_TYPES.GOLD_VERSION)
+
+        self.assertEqual(n1.abi, lief.ELF.NOTE_ABIS.LINUX)
+        self.assertEqual(n1.version, (2, 6, 32))
+
+        self.assertEqual(list(n2.description), [
+            0x7e, 0x68, 0x6c, 0x7d,
+            0x79, 0x9b, 0xa4, 0xcd,
+            0x32, 0xa2, 0x34, 0xe8,
+            0x4f, 0xd7, 0x45, 0x98,
+            0x21, 0x32, 0x9d, 0xc8
+            ])
+
+        self.assertEqual("".join(map(chr, n3.description)), "gold 1.12")
+
+
     def test_sectionless(self):
         sample = "ELF/ELF64_x86-64_binary_rvs.bin"
         rvs = lief.parse(get_sample(sample))

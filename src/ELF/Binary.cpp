@@ -1427,6 +1427,24 @@ LIEF::Header Binary::get_abstract_header(void) const {
 }
 
 
+bool Binary::has_notes(void) const {
+  auto&& it_segment_note = std::find_if(
+      std::begin(this->segments_),
+      std::end(this->segments_),
+      [] (const Segment* segment) {
+        return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_NOTE;
+      });
+
+  return it_segment_note != std::end(this->segments_) and this->notes().size() > 0;
+}
+
+it_const_notes Binary::notes(void) const {
+  return {this->notes_};
+}
+
+it_notes Binary::notes(void) {
+  return {this->notes_};
+}
 
 
 void Binary::accept(LIEF::Visitor&) const {
@@ -1539,6 +1557,22 @@ std::ostream& Binary::print(std::ostream& os) const {
 
   for (const Relocation& relocation : this->get_pltgot_relocations()) {
     os << relocation << std::endl;
+  }
+
+  os << std::endl;
+
+  if (this->notes().size() > 0) {
+    os << "Notes" << std::endl;
+    os << "=====" << std::endl;
+
+    it_const_notes notes = this->notes();
+    for (size_t i = 0; i < notes.size(); ++i) {
+      std::string title = "Note #" + std::to_string(i);
+      os << title << std::endl;
+      os << std::string(title.size(), '-') << std::endl;
+      os << notes[i] << std::endl;
+    }
+    os << std::endl;
   }
 
   os << std::endl;

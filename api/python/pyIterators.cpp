@@ -38,6 +38,7 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::filter_iterator<LIEF::ELF::symbols_t>>(m);
   init_ref_iterator<LIEF::ELF::it_symbols_version_aux>(m);
   init_ref_iterator<LIEF::ELF::it_symbols_version_aux_requirement>(m);
+  init_ref_iterator<LIEF::ELF::it_notes>(m);
 #endif
 
   // PE

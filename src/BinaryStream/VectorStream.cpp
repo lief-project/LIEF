@@ -52,7 +52,6 @@ VectorStream::VectorStream(const std::string& filename) {
 VectorStream::VectorStream(const std::vector<uint8_t>& data) :
   binary_{data},
   size_{data.size()}
-
 {}
 
 
@@ -81,11 +80,16 @@ const void* VectorStream::read(uint64_t offset, uint64_t size) const {
 }
 
 
-const char* VectorStream::read_string(uint64_t offset) const {
+const char* VectorStream::read_string(uint64_t offset, uint64_t size) const {
 
-  if (offset > this->size()) {
+  if ((offset + size) > this->size()) {
     throw LIEF::read_out_of_bound(offset);
   }
+
+  if (size > 0) {
+    return reinterpret_cast<const char*>(this->read(offset, size));
+  }
+
   return reinterpret_cast<const char*>(this->binary_.data() + offset);
 
 }

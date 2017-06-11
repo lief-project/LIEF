@@ -754,4 +754,22 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_HASH))
     .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS))
     .export_values();
+
+
+  py::enum_<NOTE_TYPES>(m, "NOTE_TYPES")
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_ABI_TAG))
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_HWCAP))
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_BUILD_ID))
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION))
+    .export_values();
+
+
+  py::enum_<NOTE_ABIS>(m, "NOTE_ABIS")
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_LINUX))
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_GNU))
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SOLARIS2))
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_FREEBSD))
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_NETBSD))
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SYLLABLE))
+    .export_values();
 }
