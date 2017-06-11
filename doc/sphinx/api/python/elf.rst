@@ -81,6 +81,36 @@ Dynamic Shared Object
 
 ----------
 
+Dynamic Entry Run Path
+**********************
+
+.. autoclass:: lief.ELF.DynamicEntryRunPath
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Dynamic Entry RPath
+*******************
+
+.. autoclass:: lief.ELF.DynamicEntryRpath
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Dynamic Entry Array
+*******************
+
+.. autoclass:: lief.ELF.DynamicEntryArray
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Relocations
 ***********
 
@@ -135,6 +165,28 @@ GNU Hash table
 **************
 
 .. autoclass:: lief.ELF.GnuHash
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+SYSV Hash table
+***************
+
+.. autoclass:: lief.ELF.SysvHash
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Note
+****
+
+.. autoclass:: lief.ELF.Note
   :members:
   :inherited-members:
   :undoc-members:
@@ -312,6 +364,24 @@ Dynamic symbols counting
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: lief.ELF.DYNSYM_COUNT_METHODS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+Note types
+~~~~~~~~~~
+
+.. autoclass:: lief.ELF.NOTE_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+Note ABIs
+~~~~~~~~~
+
+.. autoclass:: lief.ELF.NOTE_ABIS
   :members:
   :inherited-members:
   :undoc-members:
