@@ -20,6 +20,7 @@
 #include <set>
 
 #include "LIEF/visibility.h"
+#include "LIEF/Visitable.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/PE/type_traits.hpp"
@@ -34,14 +35,14 @@ namespace PE {
 
 //! @brief The Resource Manager provides an enhanced API to
 //! manipulate the resource tree.
-class DLL_PUBLIC ResourcesManager {
+class DLL_PUBLIC ResourcesManager : public Visitable {
   public:
   ResourcesManager(void) = delete;
   ResourcesManager(ResourceNode *rsrc);
 
   ResourcesManager(const ResourcesManager&);
   ResourcesManager& operator=(const ResourcesManager&);
-  ~ResourcesManager(void);
+  virtual ~ResourcesManager(void);
 
   // Enhancemed API to explore resource tree
   // =======================================
@@ -114,6 +115,11 @@ class DLL_PUBLIC ResourcesManager {
 
   //! @brief Print the resource tree to the given depth
   std::string print(uint32_t depth = 0) const;
+
+  virtual void accept(Visitor& visitor) const override;
+
+  bool operator==(const ResourcesManager& rhs) const;
+  bool operator!=(const ResourcesManager& rhs) const;
 
   DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
 

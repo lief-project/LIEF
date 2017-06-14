@@ -75,4 +75,4 @@ class DLL_PUBLIC DataDirectory : public Visitable {
 }
 }
 
-#endif /* DATADIRECTORY_H_ */
+#endif /* LIEF_PE_DATADIRECTORY_H_ */

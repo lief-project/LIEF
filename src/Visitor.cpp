@@ -178,6 +178,10 @@ void Visitor::visit(const PE::Symbol& symbol) {
   symbol.accept(*this);
 }
 
+void Visitor::visit(const PE::Section& section) {
+  section.accept(*this);
+}
+
 void Visitor::visit(const PE::Relocation& relocation) {
   relocation.accept(*this);
 }
@@ -216,6 +220,10 @@ void Visitor::visit(const PE::ResourceData& data) {
 
 void Visitor::visit(const PE::ResourceDirectory& directory) {
   directory.accept(*this);
+}
+
+void Visitor::visit(const PE::ResourcesManager& resources_manager) {
+  resources_manager.accept(*this);
 }
 
 void Visitor::visit(const PE::ResourceVersion& resource_version) {
@@ -258,9 +266,31 @@ void Visitor::visit(const PE::LangCodeItem& lang_code_item) {
 }
 
 
+void Visitor::visit(const PE::Signature& signature) {
+  signature.accept(*this);
+}
+
+void Visitor::visit(const PE::x509& x509) {
+  x509.accept(*this);
+}
+
+void Visitor::visit(const PE::SignerInfo& signer_info) {
+  signer_info.accept(*this);
+}
+
+void Visitor::visit(const PE::ContentInfo& content_info) {
+  content_info.accept(*this);
+}
+
+void Visitor::visit(const PE::AuthenticatedAttributes& authenticated_attributes) {
+  authenticated_attributes.accept(*this);
+}
+
+void Visitor::visit(const PE::issuer_t&) {
+}
+
 // MachO part
 // ----------
-
 
 void Visitor::visit(const MachO::Binary& binary) {
   binary.accept(*this);

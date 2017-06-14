@@ -74,25 +74,25 @@ oid_t x509::signature_algorithm(void) const {
 }
 
 x509::date_t x509::valid_from(void) const {
-  return std::make_tuple(
+  return {{
     this->x509_cert_->valid_from.year,
     this->x509_cert_->valid_from.mon,
     this->x509_cert_->valid_from.day,
     this->x509_cert_->valid_from.hour,
     this->x509_cert_->valid_from.min,
     this->x509_cert_->valid_from.sec
-    );
+  }};
 }
 
 x509::date_t x509::valid_to(void) const {
-  return std::make_tuple(
+  return {{
     this->x509_cert_->valid_to.year,
     this->x509_cert_->valid_to.mon,
     this->x509_cert_->valid_to.day,
     this->x509_cert_->valid_to.hour,
     this->x509_cert_->valid_to.min,
     this->x509_cert_->valid_to.sec
-    );
+  }};
 }
 
 
@@ -110,6 +110,13 @@ std::string x509::subject(void) const {
 
 
 void x509::accept(Visitor& visitor) const {
+  visitor.visit(this->subject());
+  visitor.visit(this->issuer());
+  visitor.visit(this->valid_to());
+  visitor.visit(this->valid_from());
+  visitor.visit(this->signature_algorithm());
+  visitor.visit(this->serial_number());
+  visitor.visit(this->version());
 }
 
 x509::~x509(void) {
@@ -131,26 +138,26 @@ std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
         return lhs.empty() ? ss.str() : lhs + ":" + ss.str();
       });
 
-
   const x509::date_t& valid_from = x509_cert.valid_from();
   const x509::date_t& valid_to   = x509_cert.valid_to();
+
   //// 2018-01-11 20:39:31
   std::string valid_from_str =
-    std::to_string(std::get<0>(valid_from)) + "-" +
-    std::to_string(std::get<1>(valid_from)) + "-" +
-    std::to_string(std::get<2>(valid_from)) + " " +
-    std::to_string(std::get<3>(valid_from)) + ":" +
-    std::to_string(std::get<4>(valid_from)) + ":" +
-    std::to_string(std::get<5>(valid_from));
+    std::to_string(valid_from[0]) + "-" +
+    std::to_string(valid_from[1]) + "-" +
+    std::to_string(valid_from[2]) + " " +
+    std::to_string(valid_from[3]) + ":" +
+    std::to_string(valid_from[4]) + ":" +
+    std::to_string(valid_from[5]);
 
 
   std::string valid_to_str =
-    std::to_string(std::get<0>(valid_to)) + "-" +
-    std::to_string(std::get<1>(valid_to)) + "-" +
-    std::to_string(std::get<2>(valid_to)) + " " +
-    std::to_string(std::get<3>(valid_to)) + ":" +
-    std::to_string(std::get<4>(valid_to)) + ":" +
-    std::to_string(std::get<5>(valid_to));
+    std::to_string(valid_to[0]) + "-" +
+    std::to_string(valid_to[1]) + "-" +
+    std::to_string(valid_to[2]) + " " +
+    std::to_string(valid_to[3]) + ":" +
+    std::to_string(valid_to[4]) + ":" +
+    std::to_string(valid_to[5]);
 
 
   os << std::hex << std::left;
@@ -161,10 +168,6 @@ std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
   os << std::setw(wsize) << std::setfill(' ') << "Valid to: "            << valid_to_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Issuer: "              << x509_cert.issuer() << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Subject: "             << x509_cert.subject() << std::endl;
-
-
-
-
 
 
   //os << std::endl << std::endl;

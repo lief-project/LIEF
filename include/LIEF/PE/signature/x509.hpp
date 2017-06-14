@@ -36,7 +36,7 @@ class DLL_PUBLIC x509 : public Visitable {
 
   public:
   //! @brief Tuple (Year, Month, Day, Hour, Minute, Second)
-  using date_t = std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t>;
+  using date_t = std::array<int32_t, 6>;
 
   x509(mbedtls_x509_crt* ca);
   x509(const x509& other);
@@ -63,7 +63,6 @@ class DLL_PUBLIC x509 : public Visitable {
 
   //! @brief Subject informations
   std::string subject(void) const;
-
 
   virtual void accept(Visitor& visitor) const override;
 

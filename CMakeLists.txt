@@ -215,6 +215,7 @@ set(LIEF_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/pe_json.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
