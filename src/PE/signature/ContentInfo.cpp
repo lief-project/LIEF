@@ -46,6 +46,9 @@ const std::vector<uint8_t>& ContentInfo::digest(void) const {
 
 
 void ContentInfo::accept(Visitor& visitor) const {
+  visitor.visit(this->digest_algorithm());
+  visitor.visit(this->digest());
+  visitor.visit(this->content_type());
 }
 
 

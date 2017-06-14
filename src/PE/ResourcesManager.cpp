@@ -22,6 +22,7 @@
 #include "easylogging++.h"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/visitors/Hash.hpp"
 #include "LIEF/utils.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -1073,6 +1074,40 @@ void ResourcesManager::print_tree(
   }
 
 }
+
+void ResourcesManager::accept(Visitor& visitor) const {
+  if (this->has_manifest()) {
+    visitor.visit(this->manifest());
+  }
+
+  if (this->has_version()) {
+    visitor(this->version());
+  }
+
+  if (this->has_icons()) {
+    for (const ResourceIcon& icon : this->icons()) {
+      visitor(icon);
+    }
+  }
+
+  if (this->has_dialogs()) {
+    for (const ResourceDialog& dialog : this->dialogs()) {
+      visitor(dialog);
+    }
+  }
+
+}
+
+bool ResourcesManager::operator==(const ResourcesManager& rhs) const {
+  size_t hash_lhs = Hash::hash(*this);
+  size_t hash_rhs = Hash::hash(rhs);
+  return hash_lhs == hash_rhs;
+}
+
+bool ResourcesManager::operator!=(const ResourcesManager& rhs) const {
+  return not (*this == rhs);
+}
+
 
 std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
   os << rsrc.print(3);

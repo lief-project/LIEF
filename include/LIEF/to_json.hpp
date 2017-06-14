@@ -20,9 +20,11 @@
 
 #include "LIEF/visitors/json.hpp"
 #include "LIEF/visitors/elf_json.hpp"
+#include "LIEF/visitors/pe_json.hpp"
 
 #include "LIEF/Abstract/Abstract.hpp"
 #include "LIEF/ELF.hpp"
+#include "LIEF/PE.hpp"
 
 namespace LIEF {
 template<class T, class VISITOR = JsonVisitor>

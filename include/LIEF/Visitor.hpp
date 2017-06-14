@@ -22,8 +22,11 @@
 #include <string>
 #include <functional>
 #include <iostream>
+#include <utility>
 
 #include "LIEF/visibility.h"
+
+#include "LIEF/PE/signature/types.hpp"
 
 namespace LIEF {
 
@@ -87,6 +90,7 @@ class ResourceNode;
 class ResourceData;
 class ResourceDirectory;
 
+class ResourcesManager;
 class ResourceVersion;
 class ResourceStringFileInfo;
 class ResourceFixedFileInfo;
@@ -97,6 +101,11 @@ class ResourceIcon;
 class ResourceDialog;
 class ResourceDialogItem;
 
+class Signature;
+class x509;
+class SignerInfo;
+class ContentInfo;
+class AuthenticatedAttributes;
 }
 
 namespace MachO {
@@ -258,6 +267,9 @@ class DLL_PUBLIC Visitor {
   //! @brief Method to visit a LIEF::PE::Symbol
   virtual void visit(const PE::Symbol& symbol);
 
+  //! @brief Method to visit a LIEF::PE::Section
+  virtual void visit(const PE::Section& section);
+
   //! @brief Method to visit a LIEF::PE::Relocation
   virtual void visit(const PE::Relocation& relocation);
 
@@ -289,6 +301,9 @@ class DLL_PUBLIC Visitor {
   virtual void visit(const PE::ResourceDirectory& directory);
 
   //! @brief Method to visit a LIEF::PE::ResourceVersion
+  virtual void visit(const PE::ResourcesManager& resources_manager);
+
+  //! @brief Method to visit a LIEF::PE::ResourceVersion
   virtual void visit(const PE::ResourceVersion& resource_version);
 
   //! @brief Method to visit a LIEF::PE::ResourceStringFileInfo
@@ -311,6 +326,24 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::ResourceDialogItem
   virtual void visit(const PE::ResourceDialogItem& resource_dialogitem);
+
+  //! @brief Method to visit a LIEF::PE::Signature
+  virtual void visit(const PE::Signature& signature);
+
+  //! @brief Method to visit a LIEF::PE::x509
+  virtual void visit(const PE::x509& x509);
+
+  //! @brief Method to visit a LIEF::PE::SignerInfo
+  virtual void visit(const PE::SignerInfo& signer_info);
+
+  //! @brief Method to visit a LIEF::PE::ContentInfo
+  virtual void visit(const PE::ContentInfo& content_info);
+
+  //! @brief Method to visit a LIEF::PE::AuthenticatedAttributes
+  virtual void visit(const PE::AuthenticatedAttributes& authenticated_attributes);
+
+  //! @brief Method to visit a LIEF::PE::issuer_t
+  virtual void visit(const PE::issuer_t& issuer);
 
   // MachO part
   // ==========
@@ -357,6 +390,7 @@ class DLL_PUBLIC Visitor {
 
 
   private:
+
   std::set<size_t> visited_;
 };
 

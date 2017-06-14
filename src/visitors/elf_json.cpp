@@ -222,7 +222,6 @@ void JsonVisitor::visit(const Segment& segment) {
 void JsonVisitor::visit(const DynamicEntry& entry) {
   this->node_["tag"]   = to_string(entry.tag());
   this->node_["value"] = entry.value();
-
 }
 
 
