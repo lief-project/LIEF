@@ -288,6 +288,21 @@ Lang code item
 
 ----------
 
+Rich Header
+***********
+
+.. doxygenclass:: LIEF::PE::RichHeader
+  :project: lief
+
+----------
+
+Rich Entry
+**********
+
+.. doxygenclass:: LIEF::PE::RichEntry
+  :project: lief
+
+----------
 
 Enums
 *****

@@ -85,6 +85,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     void build_signature(void);
     void build_overlay(void);
     void build_dos_stub(void);
+    void build_rich_header(void);
 
     ResourceNode* build_resource_node(
         const pe_resource_directory_table *directory_table,

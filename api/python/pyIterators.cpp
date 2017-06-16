@@ -53,6 +53,7 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::PE::it_symbols>(m);
   init_ref_iterator<LIEF::PE::it_const_crt>(m);
   init_ref_iterator<LIEF::PE::it_childs>(m);
+  init_ref_iterator<LIEF::PE::it_rich_entries>(m);
 #endif
 
 

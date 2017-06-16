@@ -22,6 +22,7 @@
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/DosHeader.hpp"
+#include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
@@ -101,7 +102,6 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Compute the size of all headers
     uint32_t get_sizeof_headers(void) const;
-
 
     //! @brief Return a reference to the TLS object
     TLS&       tls(void);
@@ -254,6 +254,19 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Update the DOS stub content
     void dos_stub(const std::vector<uint8_t>& content);
 
+    // Rich Header
+    // -----------
+
+    //! @brief Return a reference to the RichHeader object
+    RichHeader&       rich_header(void);
+    const RichHeader& rich_header(void) const;
+
+    //! @brief Set a RichHeader object in the current Binary
+    void rich_header(const RichHeader& rich_header);
+
+    //! @brief Check if the current binary has a RichHeader object
+    bool has_rich_header(void) const;
+
     // =========================
     // Methods to manage Imports
     // =========================
@@ -365,9 +378,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     PE_TYPE              type_;
     DosHeader            dos_header_;
+    RichHeader           rich_header_;
     Header               header_;
     OptionalHeader       optional_header_;
 
+    bool                 has_rich_header_;
     bool                 has_tls_;
     bool                 has_imports_;
     bool                 has_signature_;

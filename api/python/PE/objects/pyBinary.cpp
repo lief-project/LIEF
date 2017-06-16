@@ -93,6 +93,15 @@ void init_PE_Binary_class(py::module& m) {
       "" RST_CLASS_REF(lief.PE.TLS) " object (if present)",
       py::return_value_policy::reference)
 
+    .def_property("rich_header",
+      static_cast<RichHeader& (Binary::*)(void)>(&Binary::rich_header),
+      static_cast<void (Binary::*)(const RichHeader&)>(&Binary::rich_header),
+      "" RST_CLASS_REF(lief.PE.RichHeader) " object (if present)",
+      py::return_value_policy::reference)
+
+    .def_property_readonly("has_rich_header", &Binary::has_rich_header,
+        "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.RichHeader) " object")
+
     .def_property_readonly("has_debug", &Binary::has_debug,
         "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Debug) " object")
 

@@ -341,6 +341,26 @@ Lang code item
 
 ----------
 
+Rich Header
+***********
+
+.. autoclass:: lief.PE.RichHeader
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Rich Entry
+**********
+
+.. autoclass:: lief.PE.RichEntry
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Enums
 *****
 

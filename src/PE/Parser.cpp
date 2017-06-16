@@ -96,6 +96,66 @@ void Parser::build_dos_stub(void) {
 }
 
 
+void Parser::build_rich_header(void) {
+  LOG(DEBUG) << "Parsing Rich Header";
+  const std::vector<uint8_t>& dos_stub = this->binary_->dos_stub();
+  VectorStream stream{dos_stub};
+  auto&& it_rich = std::search(
+      std::begin(dos_stub),
+      std::end(dos_stub),
+      std::begin(Rich_Magic),
+      std::end(Rich_Magic));
+
+  if (it_rich == std::end(dos_stub)) {
+    LOG(DEBUG) << "Rich header not found";
+    return;
+  }
+
+  this->binary_->has_rich_header_ = true;
+
+  const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
+  LOG(DEBUG) << "Offset to rich header: " << std::hex << end_offset_rich_header;
+
+  const uint32_t xor_key = stream.read_integer<uint32_t>(end_offset_rich_header + sizeof(Rich_Magic));
+  this->binary_->rich_header().key(xor_key);
+  LOG(DEBUG) << "XOR Key: " << std::hex << xor_key;
+
+
+  uint64_t curent_offset = end_offset_rich_header - sizeof(Rich_Magic);
+  std::vector<uint32_t> values;
+  values.reserve(dos_stub.size() / sizeof(uint32_t));
+
+  uint32_t count = 0;
+  uint32_t value = 0;
+
+  while (value != DanS_Magic_number and count != DanS_Magic_number) {
+    count = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
+    curent_offset -= sizeof(uint32_t);
+
+    value = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
+    curent_offset -= sizeof(uint32_t);
+
+    if (value == DanS_Magic_number or count == DanS_Magic_number) {
+      break;
+    }
+
+    uint16_t build_number = value & 0xFFFF;
+    uint16_t id = (value >> 16) & 0xFFFF;
+
+    LOG(DEBUG) << "ID: "           << std::hex << id << " "
+               << "Build Number: " << std::hex << build_number << " "
+               << "Count: "        << std::dec << count;
+
+    this->binary_->rich_header().add_entry(id, build_number, count);
+  }
+
+  LOG(DEBUG) << this->binary_->rich_header();
+
+
+
+}
+
+
 
 
 //

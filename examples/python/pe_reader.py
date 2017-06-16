@@ -153,24 +153,21 @@ def print_symbols(binary):
                 str(symbol.storage_class).split(".")[-1]))
 
 def print_imports(binary):
-    if binary.has_imports:
-        print("== Imports ==")
-        imports = binary.imports
+    print("== Imports ==")
+    imports = binary.imports
 
-        for import_ in imports:
-            print(import_.name)
-            entries = import_.entries
-            f_value = "  {:<33} 0x{:<14x} 0x{:<14x} 0x{:<16x}"
-            for entry in entries:
-                print(f_value.format(entry.name, entry.data, entry.iat_value, entry.hint))
-        print("")
+    for import_ in imports:
+        print(import_.name)
+        entries = import_.entries
+        f_value = "  {:<33} 0x{:<14x} 0x{:<14x} 0x{:<16x}"
+        for entry in entries:
+            print(f_value.format(entry.name, entry.data, entry.iat_value, entry.hint))
+    print("")
 
 def print_tls(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
-    if not binary.has_tls:
-        return
 
     print("== TLS ==")
     tls = binary.tls
@@ -192,27 +189,25 @@ def print_tls(binary):
     print("")
 
 def print_relocations(binary):
-    if binary.has_relocations:
-        relocations = binary.relocations
-        print("== Relocations ==")
-        for relocation in relocations:
-            entries = relocation.entries
-            print(hex(relocation.virtual_address))
-            for entry in entries:
-                print("  0x{:<8x} {:<8}".format(entry.position, str(entry.type).split(".")[-1]))
-        print("")
+    relocations = binary.relocations
+    print("== Relocations ==")
+    for relocation in relocations:
+        entries = relocation.entries
+        print(hex(relocation.virtual_address))
+        for entry in entries:
+            print("  0x{:<8x} {:<8}".format(entry.position, str(entry.type).split(".")[-1]))
+    print("")
 
 def print_export(binary):
-    if binary.has_exports:
-        print("== Exports ==")
-        exports = binary.get_export()
-        entries = exports.entries
-        f_value = "{:<20} 0x{:<10x} 0x{:<10x} 0x{:<6x} 0x{:<6x} 0x{:<10x}"
-        print(f_value.format(exports.name, exports.export_flags, exports.timestamp, exports.major_version, exports.minor_version, exports.ordinal_base))
-        for entry in entries:
-            extern = "[EXTERN]" if entry.is_extern else ""
-            print("  {:<20} 0x{:<6x} 0x{:<10x} {:<13}".format(entry.name[:20], entry.ordinal, entry.address, extern))
-        print("")
+    print("== Exports ==")
+    exports = binary.get_export()
+    entries = exports.entries
+    f_value = "{:<20} 0x{:<10x} 0x{:<10x} 0x{:<6x} 0x{:<6x} 0x{:<10x}"
+    print(f_value.format(exports.name, exports.export_flags, exports.timestamp, exports.major_version, exports.minor_version, exports.ordinal_base))
+    for entry in entries:
+        extern = "[EXTERN]" if entry.is_extern else ""
+        print("  {:<20} 0x{:<6x} 0x{:<10x} {:<13}".format(entry.name[:20], entry.ordinal, entry.address, extern))
+    print("")
 
 
 def print_debug(binary):
@@ -220,26 +215,22 @@ def print_debug(binary):
     format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
 
-    if binary.has_debug:
-        debug = binary.debug
-        print("== Debug ==")
-        print(format_hex.format("Characteristics:",     debug.characteristics))
-        print(format_hex.format("Timestamp:",           debug.timestamp))
-        print(format_dec.format("Major version:",       debug.major_version))
-        print(format_dec.format("Minor version:",       debug.minor_version))
-        print(format_str.format("type:",                str(debug.type).split(".")[-1]))
-        print(format_hex.format("Size of data:",        debug.sizeof_data))
-        print(format_hex.format("Address of raw data:", debug.addressof_rawdata))
-        print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
-        print("")
+    debug = binary.debug
+    print("== Debug ==")
+    print(format_hex.format("Characteristics:",     debug.characteristics))
+    print(format_hex.format("Timestamp:",           debug.timestamp))
+    print(format_dec.format("Major version:",       debug.major_version))
+    print(format_dec.format("Minor version:",       debug.minor_version))
+    print(format_str.format("type:",                str(debug.type).split(".")[-1]))
+    print(format_hex.format("Size of data:",        debug.sizeof_data))
+    print(format_hex.format("Address of raw data:", debug.addressof_rawdata))
+    print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
+    print("")
 
 def print_signature(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
-
-    if not binary.has_signature:
-        return
 
     signature = binary.signature
     print("== Signature ==")
@@ -277,9 +268,17 @@ def print_signature(binary):
     print(format_str.format("Issuer:",              issuer_str))
     print(format_str.format("Digest Algorithm:",    oid_to_string(signer_info.digest_algorithm)))
     print(format_str.format("Signature algorithm:", oid_to_string(signer_info.signature_algorithm)))
-    #print(format_str.format("Program name:",       signer_info.authenticated_attributes.program_name))
+    print(format_str.format("Program name:",        signer_info.authenticated_attributes.program_name))
     print(format_str.format("Url:",                 signer_info.authenticated_attributes.more_info))
     print("")
+
+def print_rich_header(binary):
+    print("== Rich Header ==")
+    header = binary.rich_header
+    print("Key: 0x{:08x}".format(header.key))
+
+    for entry in header.entries:
+        print("  - ID: {:04x} Build ID: {:04x} Count: {:d}".format(entry.id, entry.build_id, entry.count))
 
 
 def main():
@@ -315,6 +314,10 @@ def main():
     optparser.add_option('-r', '--relocs',
             action='store_true', dest='show_relocs',
             help='Display the relocations (if present)')
+
+    optparser.add_option('-R', '--rich-header',
+            action='store_true', dest='show_richheader',
+            help='Display the Rich Header')
 
     optparser.add_option('-S', '--section-headers', '--sections',
             action='store_true', dest='show_section_header',
@@ -354,10 +357,10 @@ def main():
     if options.show_headers or options.show_all:
         print_header(binary)
 
-    if options.show_imports or options.show_all:
+    if (options.show_imports or options.show_all) and binary.has_imports:
         print_imports(binary)
 
-    if options.show_relocs or options.show_all:
+    if (options.show_relocs or options.show_all) and binary.has_relocations:
         print_relocations(binary)
 
     if options.show_section_header or options.show_all:
@@ -366,17 +369,20 @@ def main():
     if options.show_symbols or options.show_all:
         print_symbols(binary)
 
-    if options.show_tls or options.show_all:
+    if (options.show_tls or options.show_all) and binary.has_tls:
         print_tls(binary)
 
-    if options.show_export or options.show_all:
+    if (options.show_export or options.show_all) and binary.has_exports:
         print_export(binary)
 
-    if options.show_debug or options.show_all:
+    if (options.show_debug or options.show_all) and binary.has_debug:
         print_debug(binary)
 
-    if options.show_signature or options.show_all:
+    if (options.show_signature or options.show_all) and binary.has_signature:
         print_signature(binary)
+
+    if (options.show_richheader or options.show_all) and binary.has_rich_header:
+        print_rich_header(binary)
 
 if __name__ == "__main__":
     main()

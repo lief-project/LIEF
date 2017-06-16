@@ -69,6 +69,8 @@ class Binary;
 class DosHeader;
 class Header;
 class OptionalHeader;
+class RichHeader;
+class RichEntry;
 
 class DataDirectory;
 class Section;
@@ -251,6 +253,12 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::DosHeader
   virtual void visit(const PE::DosHeader& dos_header);
+
+  //! @brief Method to visit a LIEF::PE:RichHeader
+  virtual void visit(const PE::RichHeader& rich_header);
+
+  //! @brief Method to visit a LIEF::PE:RichEntry
+  virtual void visit(const PE::RichEntry& rich_entry);
 
   //! @brief Method to visit a LIEF::PE::Header
   virtual void visit(const PE::Header& header);

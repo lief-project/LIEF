@@ -30,6 +30,8 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
 
   virtual void visit(const Binary& Binary)                        override;
   virtual void visit(const DosHeader& dos_header)                 override;
+  virtual void visit(const RichHeader& rich_header)               override;
+  virtual void visit(const RichEntry& rich_entry)                 override;
   virtual void visit(const Header& header)                        override;
   virtual void visit(const OptionalHeader& optional_header)       override;
   virtual void visit(const DataDirectory& data_directory)         override;

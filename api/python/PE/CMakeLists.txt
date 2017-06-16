@@ -20,6 +20,8 @@ set(LIEF_PYTHON_PE_SRC
 
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDataDirectory.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDosHeader.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyRichHeader.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyRichEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBuilder.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyOptionalHeader.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocationEntry.cpp"

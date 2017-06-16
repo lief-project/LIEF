@@ -31,6 +31,12 @@ void Parser::build(void) {
 
   this->build_dos_stub();
 
+  try {
+    this->build_rich_header();
+  } catch (const corrupted& e) {
+    LOG(WARNING) << e.what();
+  }
+
   LOG(DEBUG) << "[+] Decomposing Sections";
 
   try {
