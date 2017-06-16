@@ -31,13 +31,15 @@
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/signature/SignatureParser.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
 
 #include "LIEF/PE/Parser.hpp"
 #include "Parser.tcc"
 
 #include "LIEF/PE/utils.hpp"
 
-#include "pkcs7.h"
+#include "signature/pkcs7.h"
 
 namespace LIEF {
 namespace PE {
@@ -562,7 +564,11 @@ void Parser::build_signature(void) {
   LOG(DEBUG) << "Signature Offset: 0x" << std::hex << signature_offset;
   LOG(DEBUG) << "Signature Size: 0x" << std::hex << signature_size;
 
+  const uint8_t* signature_ptr = reinterpret_cast<const uint8_t*>(this->stream_->read(signature_offset, signature_size));
+  std::vector<uint8_t> raw_signature = {signature_ptr, signature_ptr + signature_size};
+
   //TODO: Deal with header (+8)
+#if 0
   const uint8_t* signature_ptr = reinterpret_cast<const uint8_t*>(this->stream_->read(signature_offset + 8, signature_size - 8));
   const uint8_t* end = signature_ptr + signature_size - 8;
   Signature signature;
@@ -943,16 +949,15 @@ void Parser::build_signature(void) {
 
   std::memset(oid_str, 0, sizeof(oid_str));
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-  LOG(DEBUG) << oid_str; // 1.2.840.113549.1.9.4
+  LOG(DEBUG) << oid_str << " (" << oid_to_string(oid_str) << ")"; // 1.2.840.113549.1.9.4
   p += content_type_oid.len;
 
   if ((ret = mbedtls_asn1_get_tag(&p, end, &tag, MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
     throw corrupted("Signature corrupted");
   }
 
-
   if ((ret = mbedtls_asn1_get_tag(&p, end, &tag, MBEDTLS_ASN1_OCTET_STRING)) != 0) {
-    throw corrupted("Signature corrupted");
+    throw corrupted("Signature corrupted: Can't read 'ASN1_OCTET_STRING'");
   }
   authenticated_attributes.message_digest_ = {p, p + tag};
   p += tag;
@@ -1046,7 +1051,8 @@ void Parser::build_signature(void) {
 
   signature.signer_info_ = std::move(signer_info);
   LOG(DEBUG) << "Signature: " << std::endl << signature;
-  this->binary_->signature_ = std::move(signature);
+#endif
+  this->binary_->signature_ = SignatureParser::parse(raw_signature);
   this->binary_->has_signature_ = true;
 }
 

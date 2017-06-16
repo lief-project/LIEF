@@ -25,10 +25,12 @@ namespace LIEF {
 namespace PE {
 
 class Parser;
+class SignatureParser;
 
 class DLL_PUBLIC AuthenticatedAttributes : public Visitable {
 
   friend class Parser;
+  friend class SignatureParser;
 
   public:
   AuthenticatedAttributes(void);

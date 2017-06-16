@@ -27,10 +27,12 @@ namespace LIEF {
 namespace PE {
 
 class Parser;
+class SignatureParser;
 
 class DLL_PUBLIC SignerInfo : public Visitable {
 
   friend class Parser;
+  friend class SignatureParser;
 
   public:
   SignerInfo(void);

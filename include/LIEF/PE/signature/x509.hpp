@@ -27,12 +27,13 @@ struct mbedtls_x509_crt;
 namespace LIEF {
 namespace PE {
 
-
 class Parser;
+class SignatureParser;
 
 class DLL_PUBLIC x509 : public Visitable {
 
   friend class Parser;
+  friend class SignatureParser;
 
   public:
   //! @brief Tuple (Year, Month, Day, Hour, Minute, Second)
