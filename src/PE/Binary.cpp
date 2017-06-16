@@ -49,8 +49,10 @@ static const std::map<MACHINE_TYPES, std::pair<ARCHITECTURES, std::set<MODES>>> 
 
 Binary::Binary(void) :
   dos_header_{},
+  rich_header_{},
   header_{},
   optional_header_{},
+  has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
   has_signature_{false},
@@ -264,6 +266,10 @@ const DataDirectory& Binary::data_directory(DATA_DIRECTORY index) const {
   } else {
     throw not_found("Data directory doesn't exist");
   }
+}
+
+bool Binary::has_rich_header(void) const {
+  return this->has_rich_header_;
 }
 
 bool Binary::has_tls(void) const {
@@ -1034,6 +1040,24 @@ void Binary::dos_stub(const std::vector<uint8_t>& content) {
   this->dos_stub_ = content;
 }
 
+// Rich Header
+// -----------
+RichHeader& Binary::rich_header(void) {
+  return const_cast<RichHeader&>(static_cast<const Binary*>(this)->rich_header());
+}
+
+const RichHeader& Binary::rich_header(void) const {
+  if (not this->has_rich_header()) {
+    throw not_found("Rich Header not found");
+  }
+  return this->rich_header_;
+}
+
+void Binary::rich_header(const RichHeader& rich_header) {
+  this->rich_header_ = rich_header;
+  this->has_rich_header_ = true;
+}
+
 // Resource manager
 // ===============
 
@@ -1088,6 +1112,10 @@ void Binary::accept(Visitor& visitor) const {
     visitor(this->tls());
   }
 
+  if (this->has_rich_header()) {
+    visitor(this->rich_header());
+  }
+
 }
 
 
@@ -1109,6 +1137,14 @@ std::ostream& Binary::print(std::ostream& os) const {
 
   os << this->dos_header();
   os << std::endl;
+
+
+  if (this->has_rich_header()) {
+    os << "Rich Header" << std::endl;
+    os << "===========" << std::endl;
+    os << this->rich_header() << std::endl;
+    os << std::endl;
+  }
 
 
   os << "Header" << std::endl;

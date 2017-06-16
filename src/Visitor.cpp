@@ -158,6 +158,14 @@ void Visitor::visit(const PE::DosHeader& dos_header) {
   dos_header.accept(*this);
 }
 
+void Visitor::visit(const PE::RichHeader& rich_header) {
+  rich_header.accept(*this);
+}
+
+void Visitor::visit(const PE::RichEntry& rich_entry) {
+  rich_entry.accept(*this);
+}
+
 void Visitor::visit(const PE::Header& header) {
   header.accept(*this);
 }

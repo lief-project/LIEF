@@ -29,6 +29,13 @@ void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor dos_header_visitor;
   dos_header_visitor(binary.dos_header());
 
+  // Rich Header
+  if (binary.has_rich_header()) {
+    JsonVisitor visitor;
+    visitor(binary.rich_header());
+    this->node_["rich_header"] = visitor.get();
+  }
+
   // PE header
   JsonVisitor header_visitor;
   header_visitor(binary.header());
@@ -121,7 +128,7 @@ void JsonVisitor::visit(const Binary& binary) {
   // Signature
   if (binary.has_signature()) {
     JsonVisitor visitor;
-    binary.signature().accept(visitor);
+    visitor(binary.signature());
     this->node_["signature"] = visitor.get();
   }
 
@@ -149,6 +156,24 @@ void JsonVisitor::visit(const DosHeader& dos_header) {
   this->node_["oem_info"]                    = dos_header.oem_info();
   this->node_["reserved2"]                   = dos_header.reserved2();
   this->node_["addressof_new_exeheader"]     = dos_header.addressof_new_exeheader();
+}
+
+void JsonVisitor::visit(const RichHeader& rich_header) {
+  std::vector<json> entries;
+  for (const RichEntry& entry : rich_header.entries()) {
+    JsonVisitor visitor;
+    visitor(entry);
+    entries.emplace_back(visitor.get());
+  }
+
+  this->node_["key"]     = rich_header.key();
+  this->node_["entries"] = entries;
+}
+
+void JsonVisitor::visit(const RichEntry& rich_entry) {
+  this->node_["id"]       = rich_entry.id();
+  this->node_["build_id"] = rich_entry.build_id();
+  this->node_["count"]    = rich_entry.count();
 }
 
 void JsonVisitor::visit(const Header& header) {

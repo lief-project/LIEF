@@ -31,6 +31,8 @@ void init_PE_Binary_class(py::module&);
 void init_PE_DataDirectory_class(py::module&);
 void init_PE_Header_class(py::module&);
 void init_PE_DosHeader_class(py::module&);
+void init_PE_RichHeader_class(py::module&);
+void init_PE_RichEntry_class(py::module&);
 void init_PE_Section_class(py::module&);
 void init_PE_OptionalHeader_class(py::module&);
 void init_PE_Import_class(py::module&);

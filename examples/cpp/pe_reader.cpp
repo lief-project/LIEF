@@ -38,6 +38,10 @@ int main(int argc, char **argv) {
   std::cout << "== Optional Header ==" << std::endl;
   std::cout << binary->optional_header() << std::endl;
 
+  if (binary->has_rich_header()) {
+    std::cout << "== Rich Header ==" << std::endl;
+    std::cout << binary->rich_header() << std::endl;
+  }
 
   std::cout << "== Data Directories ==" << std::endl;
   for (const DataDirectory& directory : binary->data_directories()) {

@@ -37,6 +37,8 @@ void init_PE_module(py::module& m) {
   init_PE_DataDirectory_class(LIEF_PE_module);
   init_PE_Header_class(LIEF_PE_module);
   init_PE_DosHeader_class(LIEF_PE_module);
+  init_PE_RichHeader_class(LIEF_PE_module);
+  init_PE_RichEntry_class(LIEF_PE_module);
   init_PE_OptionalHeader_class(LIEF_PE_module);
   init_PE_Section_class(LIEF_PE_module);
   init_PE_Import_class(LIEF_PE_module);

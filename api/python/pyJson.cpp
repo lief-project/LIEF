@@ -46,6 +46,8 @@ void init_json_functions(py::module& m) {
 #if defined(LIEF_PE_MODULE)
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::Binary,                  LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::DosHeader,               LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::RichHeader,              LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::RichEntry,               LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::Header,                  LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::OptionalHeader,          LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::DataDirectory,           LIEF::PE::JsonVisitor>);

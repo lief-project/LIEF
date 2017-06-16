@@ -25,6 +25,7 @@ class DataDirectory;
 class Relocation;
 class Symbol;
 class ExportEntry;
+class RichEntry;
 
 class Import;
 class ImportEntry;
@@ -72,6 +73,10 @@ using it_const_childs           = const_ref_iterator<const childs_t&>;
 using dialog_items_t            = std::vector<ResourceDialogItem>;
 using it_dialog_items           = ref_iterator<dialog_items_t&>;
 using it_const_dialog_items     = const_ref_iterator<const dialog_items_t&>;
+
+using rich_entries_t            = std::vector<RichEntry>;
+using it_rich_entries           = ref_iterator<rich_entries_t&>;
+using it_const_rich_entries     = const_ref_iterator<const rich_entries_t&>;
 
 }
 }
