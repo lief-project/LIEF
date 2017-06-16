@@ -577,12 +577,8 @@ void JsonVisitor::visit(const x509& x509) {
   this->node_["issuer"]              = x509.issuer();
   this->node_["subject"]             = x509.subject();
   this->node_["signature_algorithm"] = x509.signature_algorithm();
-
-  const x509::date_t& valid_from = x509.valid_from();
-  const x509::date_t& valid_to   = x509.valid_to();
-
-  this->node_["valid_from"] = x509.valid_from();
-  this->node_["valid_to"]   = x509.valid_to();
+  this->node_["valid_from"]          = x509.valid_from();
+  this->node_["valid_to"]            = x509.valid_to();
 }
 
 void JsonVisitor::visit(const SignerInfo& signerinfo) {

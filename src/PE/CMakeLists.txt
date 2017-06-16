@@ -28,6 +28,7 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/signature/SignerInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/x509.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/OIDToString.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/signature/SignatureParser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
@@ -84,18 +85,18 @@ set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/TLS.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/undef.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/utils.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/pkcs7.h")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/utils.hpp")
 
 set(LIEF_PE_SIG_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/AuthenticatedAttributes.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/ContentInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/OIDToString.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/Signature.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/SignatureParser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/SignerInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/types.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/x509.hpp")
-
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/x509.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/signature/pkcs7.h")
 
 set(LIEF_PE_RESOURCES_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
