@@ -508,6 +508,10 @@ void Parser::build_exports(void) {
   const uint32_t *addressTable = reinterpret_cast<const uint32_t*>(
       this->stream_->read(offsetExportTableAddress, nbof_addr_entries * sizeof(uint32_t)));
 
+  if (nbof_addr_entries < nbof_name_ptr) {
+    throw corrupted("More exported names than addresses");
+  }
+
   for (size_t i = 0; i < nbof_addr_entries; ++i) {
     const uint32_t value = addressTable[i];
     // If value is inside export directory => 'external' function
