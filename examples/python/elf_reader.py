@@ -247,8 +247,8 @@ def print_imported_symbols(binary):
             symbol.value,
             str(symbol_version)))
 
-def print_informations(binary):
-    print("== Informations ==\n")
+def print_information(binary):
+    print("== Information ==\n")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
     format_dec = "{:<30} {:<30d}"
@@ -399,7 +399,7 @@ def main():
 
 
     binary = ELF.parse(args[0])
-    print_informations(binary)
+    print_information(binary)
     if options.show_all:
         do_file_header = do_section_header = do_program_header = True
 

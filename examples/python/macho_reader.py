@@ -3,24 +3,29 @@
 
 # Description
 # -----------
-# Print informations about a Mach-O binary
+# Print information about a Mach-O binary
+
+import sys
+import argparse
 
 from lief import MachO
 
-import sys
+def print_information(binary):
+    print("== Information ==")
+    format_str = "{:<30} {:<30}"
+    format_hex = "{:<30} 0x{:<28x}"
+    format_dec = "{:<30} {:<30d}"
+    print(format_str.format("Name:",         binary.name))
+    print(format_hex.format("Address base:", binary.imagebase))
+    print("")
 
-def read_fit_binary(binary):
-    header    = binary.header
-    commands  = binary.commands
-    libraries = binary.libraries
-    sections  = binary.sections
-    segments  = binary.segments
-
+def print_header(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
 
     print("== Header ==")
+    header = binary.header
     flags = ""
     for flag in header.flags:
         flag = str(flag).split(".")[-1]
@@ -34,58 +39,167 @@ def read_fit_binary(binary):
     print(format_dec.format("Number of commands:", header.nb_cmds))
     print(format_hex.format("Size of commands:",   header.sizeof_cmds))
     print(format_hex.format("Reserved:",           header.reserved))
-    print(binary.imagebase)
 
+def print_commands(binary):
+
+    format_str = "{:<33} {:<30}"
+    format_hex = "{:<33} 0x{:<28x}"
+    format_dec = "{:<33} {:<30d}"
+
+    f_title = "|{:<20}|{:<11}|{:<11}|"
+    f_value = "|{:<20}|0x{:08x} |0x{:08x} |"
     print("== Commands ==")
-    for command in commands:
-        print(format_str.format("Type:",    str(command.command).split(".")[-1]))
-        print(format_hex.format("Size:",    command.size))
-        print(format_hex.format("Offset:",  command.command_offset))
-        print("")
+    print(f_title.format("Command", "Offset", "Size"))
+    for command in binary.commands:
+        print(f_value.format(
+            str(command.command).split(".")[-1],
+            command.command_offset,
+            command.size))
+    print("")
 
-    print("== Imported Libraries ==")
-    # name timestamp current_version compatibility_version
+def print_libraries(binary):
+
+    format_str = "{:<33} {:<30}"
+    format_hex = "{:<33} 0x{:<28x}"
+    format_dec = "{:<33} {:<30d}"
+
     f_title = "|{:<30}|{:<10}|{:<16}|{:<22}|"
     f_value = "|{:<30}|{:<10d}|{:<16x}|{:<22x}|"
+    print("== Libraries ==")
     print(f_title.format("Name", "Timestamp", "Current Version", "Compatibility Version"))
-    for library in libraries:
-        print(f_value.format(library.name, library.timestamp, library.current_version, library.compatibility_version))
+    for library in binary.libraries:
+        print(f_value.format(
+            library.name,
+            library.timestamp,
+            library.current_version,
+            library.compatibility_version))
+    print("")
 
+def print_segments(binary):
+
+    f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:16}|{:16}|{}"
+    f_value = "|{:<20}|0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |{}"
     print("== Segments ==")
-    for segment in segments:
-        print(segment.name)
-        print(len(segment.content))
+    print(f_title.format(
+        "Name", "Virtual Address", "Virtual Size",
+        "Offset", "Size", "Max Protection",
+        "Init Protection", "Sections"))
+    for segment in binary.segments:
+        sections = ", ".join(map(lambda s : s.name, segment.sections))
+        print(f_value.format(
+            segment.name,
+            segment.virtual_address,
+            segment.virtual_size,
+            segment.file_size,
+            segment.file_offset,
+            segment.max_protection,
+            segment.init_protection,
+            sections))
+    print("")
 
+def print_sections(binary):
+
+    f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:22}|{:19}|{:25}|"
+    f_value = "|{:<20}|0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<19x} |0x{:<16x} |{:<25}|"
     print("== Sections ==")
-    for section in sections:
-        print(section.type)
+    print(f_title.format(
+        "Name", "Virtual Address", "Offset", "Size",
+        "Alignement", "Number of Relocations", "Relocation offset",
+        "Type"))
+    for section in binary.sections:
+        print(f_value.format(
+            section.name,
+            section.virtual_address,
+            section.offset,
+            section.size,
+            section.alignment,
+            section.numberof_relocations,
+            section.relocation_offset,
+            str(section.type).split(".")[-1]))
+    print("")
 
-    print("== Exported Symbols ==")
-    for symbol in binary.exported_symbols:
-        print(symbol)
+def print_symbols(binary):
+    f_title = "|{:<30}|{:<6}|{:<19}|{:<16}|{:16}|"
+    f_value = "|{:<30}|0x{:<3x} |0x{:<16x} |0x{:<13x} |0x{:<13x} |"
+    print("== Symbols ==")
+    print(f_title.format(
+        "Name", "Type", "Number of Sections", "Description", "Value"))
+    for symbol in binary.symbols:
+        print(f_value.format(
+            symbol.name,
+            symbol.type,
+            symbol.numberof_sections,
+            symbol.description,
+            symbol.value))
+    print("")
 
 
-    print("== Imported Symbols ==")
-    for symbol in binary.imported_symbols:
-        print(symbol)
+
+def main():
+    parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
+    parser.add_argument('-a', '--all',
+            action='store_true', dest='show_all',
+            help='Show all information')
+
+    parser.add_argument('-c', '--commands',
+            action='store_true', dest='show_commands',
+            help='Display Commands')
+
+    parser.add_argument('-H', '--header',
+            action='store_true', dest='show_header',
+            help='Display header')
+
+    parser.add_argument('-L', '--libraries',
+            action='store_true', dest='show_libraries',
+            help='Display Imported Libraries')
+
+    parser.add_argument('-l', '--segments',
+            action='store_true', dest='show_segments',
+            help='Display Segments')
+
+    parser.add_argument('-s', '--symbols',
+            action='store_true', dest='show_symbols',
+            help='Display Symbols')
+
+    parser.add_argument('-S', '--sections',
+            action='store_true', dest='show_sections',
+            help='Display Sections')
+
+    parser.add_argument("binary",
+            metavar="<macho-file>",
+            help='Target Mach-O File')
+
+    args = parser.parse_args()
 
 
+    binaries = None
+    try:
+        binaries = MachO.parse(args.binary)
+    except lief.exception as e:
+        print(e)
+        sys.exit(1)
 
+    for binary in binaries:
+        print_information(binary)
 
+        if args.show_header or args.show_all:
+            print_header(binary)
 
+        if args.show_commands or args.show_all:
+            print_commands(binary)
 
+        if args.show_libraries or args.show_all:
+            print_libraries(binary)
 
-def read_macho(path_to_binary):
-    binaries = MachO.parse(path_to_binary)
-    #for binary in binaries:
-    read_fit_binary(binaries[0])
+        if args.show_segments or args.show_all:
+            print_segments(binary)
 
+        if args.show_sections or args.show_all:
+            print_sections(binary)
+
+        if args.show_symbols or args.show_all:
+            print_symbols(binary)
 
 
 if __name__ == "__main__":
-
-    if len(sys.argv) != 2:
-        print("Usage:", sys.argv[0], "<Mach-O binary>")
-        sys.exit(-1)
-
-    read_macho(sys.argv[1])
+    main()
