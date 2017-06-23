@@ -539,6 +539,10 @@ void Parser::build_exports(void) {
       this->stream_->read(offsetToNamePointer, nbof_name_ptr * sizeof(uint32_t)));
 
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
+    if (ordinalTable[i] >= nbof_addr_entries) {
+      throw corrupted("Export ordinal is outside the address table");
+    }
+
     uint32_t nameOffset = this->binary_->rva_to_offset(pointerName[i]);
     std::string name  = "";
     try {
