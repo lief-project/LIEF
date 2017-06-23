@@ -41,12 +41,12 @@ if (PYTHON_TESTS_ENABLED)
 
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_macho_reader_ls
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py \
+    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all \
     ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin")
 
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_macho_reader_libc
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py \
+    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all \
     ${LIEF_SAMPLES_DIRECTORY}/MachO/FAT_MachO_x86_x86-64_library_libc.dylib")
 
 endif()

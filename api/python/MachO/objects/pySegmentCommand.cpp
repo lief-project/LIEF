@@ -54,12 +54,6 @@ void init_MachO_SegmentCommand_class(py::module& m) {
         "Segment's virtual size"
         )
 
-    .def_property("virtual_size",
-        static_cast<getter_t<uint64_t>>(&SegmentCommand::virtual_size),
-        static_cast<setter_t<uint64_t>>(&SegmentCommand::virtual_size),
-        "Segment's virtual size"
-        )
-
     .def_property("file_size",
         static_cast<getter_t<uint64_t>>(&SegmentCommand::file_size),
         static_cast<setter_t<uint64_t>>(&SegmentCommand::file_size),
@@ -111,10 +105,10 @@ void init_MachO_SegmentCommand_class(py::module& m) {
 
 
     .def("__str__",
-        [] (const Header& header)
+        [] (const SegmentCommand& segment)
         {
           std::ostringstream stream;
-          stream << header;
+          stream << segment;
           std::string str =  stream.str();
           return str;
         });
