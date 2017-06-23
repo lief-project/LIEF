@@ -164,7 +164,9 @@ void Parser::build_relocations(void) {
   while (current_offset < max_offset and relocation_headers->PageRVA != 0) {
     Relocation relocation{relocation_headers};
 
-    if (relocation_headers->BlockSize > this->binary_->optional_header().sizeof_image()) {
+    if (relocation_headers->BlockSize < sizeof(pe_base_relocation_block)) {
+      throw corrupted("Relocation corrupted: BlockSize is too small");
+    } else if (relocation_headers->BlockSize > this->binary_->optional_header().sizeof_image()) {
       throw corrupted("Relocation corrupted: BlockSize is out of bound the binary's virtual size");
     }
 
