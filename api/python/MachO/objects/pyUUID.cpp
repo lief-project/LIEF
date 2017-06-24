@@ -35,8 +35,8 @@ void init_MachO_UUIDCommand_class(py::module& m) {
   py::class_<UUIDCommand, LoadCommand>(m, "UUIDCommand")
 
     .def_property("uuid",
-        static_cast<getter_t<uuid_t>>(&UUIDCommand::uuid),
-        static_cast<setter_t<const uuid_t&>>(&UUIDCommand::uuid),
+        static_cast<getter_t<LIEF::MachO::uuid_t>>(&UUIDCommand::uuid),
+        static_cast<setter_t<const LIEF::MachO::uuid_t&>>(&UUIDCommand::uuid),
         "UUID as a list",
         py::return_value_policy::reference_internal)
 
