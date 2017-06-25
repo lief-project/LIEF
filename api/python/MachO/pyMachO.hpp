@@ -35,6 +35,8 @@ void init_MachO_SegmentCommand_class(py::module&);
 void init_MachO_Section_class(py::module&);
 void init_MachO_Symbol_class(py::module&);
 void init_MachO_UUIDCommand_class(py::module&);
+void init_MachO_MainCommand_class(py::module&);
+void init_MachO_DylinkerCommand_class(py::module&);
 
 // Enums
 void init_MachO_Structures_enum(py::module&);

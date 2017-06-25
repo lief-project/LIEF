@@ -6,9 +6,19 @@
 # Print information about a Mach-O binary
 
 import sys
+import os
 import argparse
 
 from lief import MachO
+
+terminal_rows, terminal_columns = 100, 100
+try:
+    terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
+except ValueError:
+    pass
+
+terminal_columns = int(terminal_columns)
+terminal_rows    = int(terminal_rows)
 
 def print_information(binary):
     print("== Information ==")
@@ -42,10 +52,6 @@ def print_header(binary):
 
 def print_commands(binary):
 
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
     f_title = "|{:<20}|{:<11}|{:<11}|"
     f_value = "|{:<20}|0x{:08x} |0x{:08x} |"
     print("== Commands ==")
@@ -58,10 +64,6 @@ def print_commands(binary):
     print("")
 
 def print_libraries(binary):
-
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
 
     f_title = "|{:<30}|{:<10}|{:<16}|{:<22}|"
     f_value = "|{:<30}|{:<10d}|{:<16x}|{:<22x}|"
@@ -119,20 +121,58 @@ def print_sections(binary):
     print("")
 
 def print_symbols(binary):
-    f_title = "|{:<30}|{:<6}|{:<19}|{:<16}|{:16}|"
-    f_value = "|{:<30}|0x{:<3x} |0x{:<16x} |0x{:<13x} |0x{:<13x} |"
+    symbols = binary.symbols
+    if len(symbols) == 0:
+        return
+    try:
+        maxsize = max([len(symbol.demangled_name) for symbol in symbols])
+    except:
+        maxsize = max([len(symbol.name) for symbol in symbols])
+    maxsize = min(maxsize, terminal_columns - 90) if terminal_columns > 90 else terminal_columns
+
+    f_title = "|{:<" + str(maxsize) + "} |{:<6}|{:<19}|{:<16}|{:16}|"
+    f_value = "|{:<" + str(maxsize) + "} |0x{:<3x} |0x{:<16x} |0x{:<13x} |0x{:<13x} |"
     print("== Symbols ==")
     print(f_title.format(
         "Name", "Type", "Number of Sections", "Description", "Value"))
     for symbol in binary.symbols:
+
+        try:
+            symbol_name = symbol.demangled_name
+        except:
+            symbol_name = symbol.name
         print(f_value.format(
-            symbol.name,
+            symbol_name,
             symbol.type,
             symbol.numberof_sections,
             symbol.description,
             symbol.value))
     print("")
 
+
+def print_uuid(binary):
+    print("== UUID ==")
+    cmd = binary.uuid
+    uuid_str = " ".join(map(lambda e : "{:02x}".format(e), cmd.uuid))
+    print("UUID: {}".format(uuid_str))
+
+
+def print_main_command(binary):
+
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Main Command ==")
+    cmd = binary.main_command
+
+    print(format_hex.format("Entry point:", cmd.entrypoint))
+    print(format_hex.format("Stack size:", cmd.stack_size))
+
+
+def print_dylinker(binary):
+    print("== Dylinker ==")
+    print("Path: {}".format(binary.dylinker.name))
 
 
 def main():
@@ -164,6 +204,18 @@ def main():
     parser.add_argument('-S', '--sections',
             action='store_true', dest='show_sections',
             help='Display Sections')
+
+    parser.add_argument('--uuid',
+            action='store_true', dest='show_uuid',
+            help='Display the UUID command')
+
+    parser.add_argument('--main',
+            action='store_true', dest='show_main',
+            help='Display the Main command')
+
+    parser.add_argument('--dylinker',
+            action='store_true', dest='show_dylinker',
+            help='Display the Dylinker command')
 
     parser.add_argument("binary",
             metavar="<macho-file>",
@@ -199,6 +251,15 @@ def main():
 
         if args.show_symbols or args.show_all:
             print_symbols(binary)
+
+        if (args.show_uuid or args.show_all) and binary.has_uuid:
+            print_uuid(binary)
+
+        if (args.show_main or args.show_all) and binary.has_main_command:
+            print_main_command(binary)
+
+        if (args.show_dylinker or args.show_all) and binary.has_dylinker:
+            print_dylinker(binary)
 
 
 if __name__ == "__main__":

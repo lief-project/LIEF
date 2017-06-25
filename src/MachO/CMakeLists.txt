@@ -32,6 +32,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DylibCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylinkerCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/BinaryParser.tcc")
 
 set(LIEF_MACHO_INCLUDE_FILES

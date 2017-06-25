@@ -20,10 +20,6 @@
 #include <vector>
 #include <iostream>
 
-#ifdef __unix__
-  #include <cxxabi.h>
-#endif
-
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Symbol.hpp"
