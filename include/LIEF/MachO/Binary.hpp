@@ -165,6 +165,39 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! Basically for libraries it will return ``false``
     bool has_entrypoint(void) const;
 
+    //! @brief ``true`` if the binary has an MachO::UUIDCommand command.
+    bool has_uuid(void) const;
+
+    //! @brief Return the MachO::UUIDCommand
+    UUIDCommand&       uuid(void);
+    const UUIDCommand& uuid(void) const;
+
+    //! @brief ``true`` if the binary has an MachO::MainCommand command.
+    bool has_main_command(void) const;
+
+    //! @brief Return the MachO::MainCommand
+    MainCommand&       main_command(void);
+    const MainCommand& main_command(void) const;
+
+    //! @brief ``true`` if the binary has an MachO::DylinkerCommand.
+    bool has_dylinker(void) const;
+
+    //! @brief Return the MachO::DylinkerCommand
+    DylinkerCommand&       dylinker(void);
+    const DylinkerCommand& dylinker(void) const;
+
+    template<class T>
+    bool has_command(void) const;
+
+    template<class T>
+    T& get_command(void);
+
+    template<class T>
+    const T& get_command(void) const;
+
+    template<class T>
+    size_t count_commands(void) const;
+
 
   private:
     //! @brief Default constructor

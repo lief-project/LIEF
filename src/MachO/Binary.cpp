@@ -18,6 +18,7 @@
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Builder.hpp"
+#include "Binary.tcc"
 
 #include "LIEF/exception.hpp"
 
@@ -462,20 +463,7 @@ uint64_t Binary::imagebase(void) const {
 
 
 const std::string& Binary::get_loader(void) const {
-  auto&& itDylinker = std::find_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
-      [] (const LoadCommand* command) {
-        return command->command() == LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER;
-      });
-
-  if (itDylinker == std::end(this->commands_)) {
-    throw LIEF::not_found(std::string("") + to_string(LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER) + " no found");
-  }
-
-  const DylinkerCommand* dylinkerCommand = dynamic_cast<const DylinkerCommand*>(*itDylinker);
-  return dylinkerCommand->name();
-
+  return this->dylinker().name();
 }
 
 
@@ -494,6 +482,50 @@ LIEF::Header Binary::get_abstract_header(void) const {
 
   return header;
 }
+
+// UUID
+// ++++
+bool Binary::has_uuid(void) const {
+  return this->has_command<UUIDCommand>();
+}
+
+UUIDCommand& Binary::uuid(void) {
+  return this->get_command<UUIDCommand>();
+}
+
+const UUIDCommand& Binary::uuid(void) const {
+  return this->get_command<UUIDCommand>();
+}
+
+// MainCommand
+// +++++++++++
+bool Binary::has_main_command(void) const {
+  return this->has_command<MainCommand>();
+}
+
+MainCommand& Binary::main_command(void) {
+  return this->get_command<MainCommand>();
+}
+
+const MainCommand& Binary::main_command(void) const {
+  return this->get_command<MainCommand>();
+}
+
+// DylinkerCommand
+// +++++++++++++++
+bool Binary::has_dylinker(void) const {
+  return this->has_command<DylinkerCommand>();
+}
+
+DylinkerCommand& Binary::dylinker(void) {
+  return this->get_command<DylinkerCommand>();
+}
+
+const DylinkerCommand& Binary::dylinker(void) const {
+  return this->get_command<DylinkerCommand>();
+}
+
+
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {
@@ -543,7 +575,6 @@ std::ostream& Binary::print(std::ostream& os) const {
   }
 
   os << std::endl;
-
 
   os << "Symbols" << std::endl;
   os << "=======" << std::endl;

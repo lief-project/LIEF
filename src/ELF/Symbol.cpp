@@ -15,6 +15,10 @@
  */
 #include <iomanip>
 
+#ifdef __unix__
+  #include <cxxabi.h>
+#endif
+
 #include "LIEF/exception.hpp"
 
 #include "LIEF/visitors/Hash.hpp"

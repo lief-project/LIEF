@@ -10,7 +10,7 @@ Parser
 
 ----------
 
-.. _python-pe-binary-api-ref:
+.. _python-macho-binary-api-ref:
 
 Binary
 ******
@@ -76,6 +76,41 @@ DylibCommand
 
 
 ----------
+
+DylinkerCommand
+***************
+
+.. autoclass:: lief.MachO.DylinkerCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+UUIDCommand
+***********
+
+.. autoclass:: lief.MachO.UUIDCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+
+MainCommand
+***********
+
+.. autoclass:: lief.MachO.MainCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 
 
 Symbol

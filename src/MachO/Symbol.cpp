@@ -15,6 +15,10 @@
  */
 #include <iomanip>
 
+#ifdef __unix__
+  #include <cxxabi.h>
+#endif
+
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/MachO/Symbol.hpp"
@@ -78,6 +82,23 @@ bool Symbol::is_external(void) const {
   return (this->type_ & SYMBOL_TYPES::N_TYPE) == N_LIST_TYPES::N_UNDF;
     //(this->type_ & SYMBOL_TYPES::N_EXT) == SYMBOL_TYPES::N_EXT;
     //(this->type_ & SYMBOL_TYPES::N_PEXT) == 0;
+}
+
+
+std::string Symbol::demangled_name(void) const {
+#if defined(__unix__)
+  int status;
+  const std::string& name = this->name().c_str();
+  auto realname = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+
+  if (status == 0) {
+    return realname;
+  } else {
+    return name;
+  }
+#else
+  throw not_supported("Can't demangle name");
+#endif
 }
 
 void Symbol::accept(Visitor& visitor) const {

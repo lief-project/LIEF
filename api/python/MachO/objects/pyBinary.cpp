@@ -94,6 +94,38 @@ void init_MachO_Binary_class(py::module& m) {
         "Basically for libraries it will return ``false``",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("has_uuid",
+        &Binary::has_uuid,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.UUIDCommand) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("uuid",
+        static_cast<no_const_getter<UUIDCommand&>>(&Binary::uuid),
+        "Return binary's " RST_CLASS_REF(lief.MachO.UUIDCommand) " if any.",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_main_command",
+        &Binary::has_main_command,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.MainCommand) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("main_command",
+        static_cast<no_const_getter<MainCommand&>>(&Binary::main_command),
+        "Return binary's " RST_CLASS_REF(lief.MachO.MainCommand) " if any.",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_dylinker",
+        &Binary::has_dylinker,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DylinkerCommand) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("dylinker",
+        static_cast<no_const_getter<DylinkerCommand&>>(&Binary::dylinker),
+        "Return binary's " RST_CLASS_REF(lief.MachO.DylinkerCommand) " if any.",
+        py::return_value_policy::reference)
+
+
+
     .def("__str__",
         [] (const Binary& binary)
         {

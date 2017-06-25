@@ -44,6 +44,8 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     uint16_t description(void) const;
     uint64_t value(void) const;
 
+    std::string demangled_name(void) const;
+
     void type(uint8_t type);
     void numberof_sections(uint8_t nbsections);
     void description(uint16_t desc);

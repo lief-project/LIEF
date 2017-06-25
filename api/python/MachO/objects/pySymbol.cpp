@@ -33,6 +33,10 @@ void init_MachO_Symbol_class(py::module& m) {
   py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
     .def(py::init<>())
 
+    .def_property_readonly("demangled_name",
+        &Symbol::demangled_name,
+        "Symbol's unmangled name")
+
     .def_property("type",
         static_cast<getter_t<uint8_t>>(&Symbol::type),
         static_cast<setter_t<uint8_t>>(&Symbol::type))
