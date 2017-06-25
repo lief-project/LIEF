@@ -72,8 +72,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Section& section_from_offset(uint64_t offset) const;
 
     //! @brief Find the section associated with the `virtual address`
-    Section&       section_from_virtual_address(uint64_t virtual_address);
-    const Section& section_from_virtual_address(uint64_t virtual_address) const;
+    Section&       section_from_rva(uint64_t virtual_address);
+    const Section& section_from_rva(uint64_t virtual_address) const;
 
     //! @brief Return binary's sections
     it_sections       get_sections(void);

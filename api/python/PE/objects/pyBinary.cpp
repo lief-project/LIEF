@@ -82,8 +82,8 @@ void init_PE_Binary_class(py::module& m) {
         "offset"_a,
         py::return_value_policy::reference)
 
-    .def("section_from_virtual_address",
-        static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_virtual_address),
+    .def("section_from_rva",
+        static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_rva),
         "Return the " RST_CLASS_REF(lief.PE.Section) " which contains the **relative** virtual address",
         py::return_value_policy::reference)
 

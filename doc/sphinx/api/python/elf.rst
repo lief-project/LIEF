@@ -5,7 +5,6 @@ Parser
 *******
 
 .. autofunction:: lief.ELF.parse
-.. autofunction:: lief.ELF.parse_from_raw
 
 ----------
 

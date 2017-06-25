@@ -227,7 +227,7 @@ Section& Binary::section_from_offset(uint64_t offset) {
 }
 
 
-const Section& Binary::section_from_virtual_address(uint64_t virtual_address) const {
+const Section& Binary::section_from_rva(uint64_t virtual_address) const {
   auto&& it_section = std::find_if(
       std::begin(this->sections_),
       std::end(this->sections_),
@@ -248,8 +248,8 @@ const Section& Binary::section_from_virtual_address(uint64_t virtual_address) co
   return **it_section;
 }
 
-Section& Binary::section_from_virtual_address(uint64_t virtual_address) {
-  return const_cast<Section&>(static_cast<const Binary*>(this)->section_from_virtual_address(virtual_address));
+Section& Binary::section_from_rva(uint64_t virtual_address) {
+  return const_cast<Section&>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
 }
 
 
@@ -961,7 +961,7 @@ uint64_t Binary::entrypoint(void) const {
 
 void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value) {
   // Find the section associated with the virtual address
-  Section& section_topatch = this->section_from_virtual_address(address);
+  Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
   std::vector<uint8_t> content = section_topatch.content();
   std::copy(
@@ -977,7 +977,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
     throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
   }
 
-  Section& section_topatch = this->section_from_virtual_address(address);
+  Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
   std::vector<uint8_t> content = section_topatch.content();
 
@@ -990,9 +990,14 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 }
 
 std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
-  const Section& section = this->section_from_virtual_address(virtual_address);
+  uint64_t rva = virtual_address;
+  const int64_t delta = virtual_address - this->optional_header().imagebase();
+  if (delta > 0) {
+    rva -= this->optional_header().imagebase();
+  }
+  const Section& section = this->section_from_rva(rva);
   const std::vector<uint8_t>& content = section.content();
-  const uint64_t offset = virtual_address - section.virtual_address();
+  const uint64_t offset = rva - section.virtual_address();
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {
     checked_size = checked_size - (offset + checked_size - content.size());
