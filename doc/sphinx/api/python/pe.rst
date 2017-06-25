@@ -7,7 +7,6 @@ Parser
 *******
 
 .. autofunction:: lief.PE.parse
-.. autofunction:: lief.PE.parse_from_raw
 
 
 Binary
