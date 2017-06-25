@@ -172,7 +172,7 @@ void Parser::build_relocations(void) {
 
     const uint32_t numberof_entries = (relocation_headers->BlockSize - sizeof(pe_base_relocation_block)) / sizeof(uint16_t);
     const uint16_t* entries = reinterpret_cast<const uint16_t*>(
-        this->stream_->read(offset + sizeof(pe_base_relocation_block), relocation_headers->BlockSize - sizeof(pe_base_relocation_block)));
+        this->stream_->read(current_offset + sizeof(pe_base_relocation_block), relocation_headers->BlockSize - sizeof(pe_base_relocation_block)));
     for (size_t i = 0; i < numberof_entries; ++i) {
       relocation.entries_.emplace_back(entries[i]);
     }
