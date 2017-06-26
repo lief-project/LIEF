@@ -166,12 +166,15 @@ void Parser::build_relocations(void) {
   while (current_offset < max_offset and relocation_headers->PageRVA != 0) {
     Relocation relocation{relocation_headers};
 
-    if (relocation_headers->BlockSize > this->binary_->optional_header().sizeof_image()) {
+    if (relocation_headers->BlockSize < sizeof(pe_base_relocation_block)) {
+      throw corrupted("Relocation corrupted: BlockSize is too small");
+    } else if (relocation_headers->BlockSize > this->binary_->optional_header().sizeof_image()) {
       throw corrupted("Relocation corrupted: BlockSize is out of bound the binary's virtual size");
     }
 
     const uint32_t numberof_entries = (relocation_headers->BlockSize - sizeof(pe_base_relocation_block)) / sizeof(uint16_t);
-    const uint16_t* entries = reinterpret_cast<const uint16_t*>(reinterpret_cast<const uint8_t*>(relocation_headers) + sizeof(pe_base_relocation_block));
+    const uint16_t* entries = reinterpret_cast<const uint16_t*>(
+        this->stream_->read(current_offset + sizeof(pe_base_relocation_block), relocation_headers->BlockSize - sizeof(pe_base_relocation_block)));
     for (size_t i = 0; i < numberof_entries; ++i) {
       relocation.entries_.emplace_back(entries[i]);
     }
@@ -507,6 +510,10 @@ void Parser::build_exports(void) {
   const uint32_t *addressTable = reinterpret_cast<const uint32_t*>(
       this->stream_->read(offsetExportTableAddress, nbof_addr_entries * sizeof(uint32_t)));
 
+  if (nbof_addr_entries < nbof_name_ptr) {
+    throw corrupted("More exported names than addresses");
+  }
+
   for (size_t i = 0; i < nbof_addr_entries; ++i) {
     const uint32_t value = addressTable[i];
     // If value is inside export directory => 'external' function
@@ -534,6 +541,10 @@ void Parser::build_exports(void) {
       this->stream_->read(offsetToNamePointer, nbof_name_ptr * sizeof(uint32_t)));
 
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
+    if (ordinalTable[i] >= nbof_addr_entries) {
+      throw corrupted("Export ordinal is outside the address table");
+    }
+
     uint32_t nameOffset = this->binary_->rva_to_offset(pointerName[i]);
     std::string name  = "";
     try {
