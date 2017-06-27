@@ -272,11 +272,14 @@ if (LIEF_PYTHON_API)
       "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py \
       ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_id.bin")
 
-
     ADD_PYTHON_TEST(EXAMPLE_PYTHON_abstract_json
       ${PYTHON_EXECUTABLE}
       "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_json.py \
       ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_ls.bin")
+
+    ADD_PYTHON_TEST(UNITTEST_PYTHON_abstract
+      ${PYTHON_EXECUTABLE}
+      "${CMAKE_CURRENT_SOURCE_DIR}/abstract_tests.py")
   endif()
 
 

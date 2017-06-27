@@ -48,13 +48,25 @@ static const std::map<FILE_TYPES, OBJECT_TYPES> obj_macho_to_lief {
   {FILE_TYPES::MH_OBJECT,  OBJECT_TYPES::TYPE_OBJECT},
 };
 
+static const std::map<CPU_TYPES, ENDIANNESS> endi_macho_to_lief {
+  {CPU_TYPES::CPU_TYPE_X86,       ENDIANNESS::ENDIAN_LITTLE},
+  {CPU_TYPES::CPU_TYPE_I386,      ENDIANNESS::ENDIAN_LITTLE},
+  {CPU_TYPES::CPU_TYPE_X86_64,    ENDIANNESS::ENDIAN_LITTLE},
+  {CPU_TYPES::CPU_TYPE_ARM,       ENDIANNESS::ENDIAN_LITTLE},
+  {CPU_TYPES::CPU_TYPE_ARM64,     ENDIANNESS::ENDIAN_LITTLE},
+  {CPU_TYPES::CPU_TYPE_SPARC,     ENDIANNESS::ENDIAN_BIG},
+  {CPU_TYPES::CPU_TYPE_POWERPC,   ENDIANNESS::ENDIAN_BIG},
+  {CPU_TYPES::CPU_TYPE_POWERPC64, ENDIANNESS::ENDIAN_BIG},
+};
+
+
 Header::Header(void) = default;
 Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&) = default;
 Header::~Header(void) = default;
 
 Header::Header(const mach_header_64 *header) :
-  magic_{header->magic},
+  magic_{static_cast<MACHO_TYPES>(header->magic)},
   cputype_(static_cast<CPU_TYPES>(header->cputype)),
   cpusubtype_{header->cpusubtype},
   filetype_{static_cast<FILE_TYPES>(header->filetype)},
@@ -65,7 +77,7 @@ Header::Header(const mach_header_64 *header) :
 {}
 
 Header::Header(const mach_header *header) :
-  magic_{header->magic},
+  magic_{static_cast<MACHO_TYPES>(header->magic)},
   cputype_(static_cast<CPU_TYPES>(header->cputype)),
   cpusubtype_{header->cpusubtype},
   filetype_{static_cast<FILE_TYPES>(header->filetype)},
@@ -76,7 +88,7 @@ Header::Header(const mach_header *header) :
 {}
 
 
-uint32_t Header::magic(void) const {
+MACHO_TYPES Header::magic(void) const {
   return this->magic_;
 }
 CPU_TYPES Header::cpu_type(void) const {
@@ -124,6 +136,20 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
   }
 }
 
+ENDIANNESS Header::abstract_endianness(void) const {
+  ENDIANNESS e = endi_macho_to_lief.at(this->cpu_type());
+  auto not_endianness = [] (ENDIANNESS endian) {
+    return endian == ENDIAN_LITTLE ? ENDIAN_BIG : ENDIAN_LITTLE;
+  };
+  if (this->magic() == MACHO_TYPES::MH_CIGAM or
+      this->magic() == MACHO_TYPES::MH_CIGAM_64 or
+      this->magic() == MACHO_TYPES::FAT_CIGAM) {
+    return not_endianness(e);
+  }
+  return e;
+}
+
+
 std::set<HEADER_FLAGS> Header::flags_list(void) const {
   std::set<HEADER_FLAGS> flags;
 
@@ -151,7 +177,7 @@ void Header::remove_flag(HEADER_FLAGS flag) {
 }
 
 
-void Header::magic(uint32_t magic) {
+void Header::magic(MACHO_TYPES magic) {
   this->magic_ = magic;
 }
 void Header::cpu_type(CPU_TYPES cputype) {
@@ -228,7 +254,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
      << std::setw(10) << "Reserved"
      << std::setw(10) << "Flags" << std::endl
 
-     << std::setw(10) << hdr.magic()
+     << std::setw(10) << to_string(hdr.magic())
      << std::setw(10) << to_string(hdr.cpu_type())
      << std::setw(15) << hdr.cpu_subtype()
      << std::setw(15) << to_string(hdr.file_type())

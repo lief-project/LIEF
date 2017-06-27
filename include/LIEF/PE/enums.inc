@@ -17,6 +17,9 @@ enum MACHINE_TYPES {
   IMAGE_FILE_MACHINE_POWERPC   = 0x1F0,  /**< Power PC little endian         */
   IMAGE_FILE_MACHINE_POWERPCFP = 0x1F1,  /**< Power PC with floating point   */
   IMAGE_FILE_MACHINE_R4000     = 0x166,  /**< MIPS with little endian        */
+  IMAGE_FILE_MACHINE_RISCV32   = 0x5032, /**< RISC-V 32-bit address space    */
+  IMAGE_FILE_MACHINE_RISCV64   = 0x5064, /**< RISC-V 64-bit address space    */
+  IMAGE_FILE_MACHINE_RISCV128  = 0x166,  /**< RISC-V 128-bit address space   */
   IMAGE_FILE_MACHINE_SH3       = 0x1A2,  /**< Hitachi SH3                    */
   IMAGE_FILE_MACHINE_SH3DSP    = 0x1A3,  /**< Hitachi SH3 DSP                */
   IMAGE_FILE_MACHINE_SH4       = 0x1A6,  /**< Hitachi SH4                    */

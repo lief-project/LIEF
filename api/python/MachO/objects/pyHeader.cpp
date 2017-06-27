@@ -33,8 +33,8 @@ void init_MachO_Header_class(py::module& m) {
     .def(py::init<>())
 
     .def_property("magic",
-        static_cast<getter_t<uint32_t>>(&Header::magic),
-        static_cast<setter_t<uint32_t>>(&Header::magic),
+        static_cast<getter_t<MACHO_TYPES>>(&Header::magic),
+        static_cast<setter_t<MACHO_TYPES>>(&Header::magic),
         ""
         )
 

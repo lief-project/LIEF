@@ -1422,6 +1422,7 @@ LIEF::Header Binary::get_abstract_header(void) const {
   header.modes(am.second);
   header.entrypoint(this->get_header().entrypoint());
   header.object_type(this->get_header().abstract_object_type());
+  header.endianness(this->get_header().abstract_endianness());
 
   return header;
 }

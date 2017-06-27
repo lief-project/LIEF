@@ -61,8 +61,15 @@ void JsonVisitor::visit(const Binary& binary) {
 
 
 void JsonVisitor::visit(const Header& header) {
+  std::vector<std::string> modes;
+  modes.reserve(header.modes().size());
+  for (MODES m : header.modes()) {
+    modes.push_back(to_string(m));
+  }
   this->node_["architecture"] = to_string(header.architecture());
   this->node_["object_type"]  = to_string(header.object_type());
+  this->node_["entrypoint"]   = header.entrypoint();
+  this->node_["endianness"]   = to_string(header.endianness());
 }
 
 
