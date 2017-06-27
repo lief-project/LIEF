@@ -137,27 +137,37 @@ void Parser::build_data_directories(void) {
     this->binary_->data_directories_.push_back(directory);
   }
 
-  // Import Table
-  if (this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA() > 0) {
-    LOG(DEBUG) << "[+] Decomposing Import Table";
-    const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
-    const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
+  try {
+    // Import Table
+    if (this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA() > 0) {
+      LOG(DEBUG) << "[+] Decomposing Import Table";
+      const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
+      const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
 
-    try {
-      Section& section = this->binary_->section_from_offset(offset);
-      section.add_type(SECTION_TYPES::IMPORT);
-    } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with Import Table";
+      try {
+        Section& section = this->binary_->section_from_offset(offset);
+        section.add_type(SECTION_TYPES::IMPORT);
+      } catch (const not_found&) {
+        LOG(WARNING) << "Unable to find the section associated with Import Table";
+      }
+      this->build_import_table<PE_T>();
     }
-    this->build_import_table<PE_T>();
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
   }
 
   // Exports
   if (this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0) {
     LOG(DEBUG) << "[+] Decomposing Exports";
-    this->build_exports();
+
+    try {
+      this->build_exports();
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
   }
 
+  // Signature
   if (this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
     try {
       this->build_signature();
@@ -179,7 +189,7 @@ void Parser::build_data_directories(void) {
       this->build_tls<PE_T>();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with TLS";
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -196,7 +206,7 @@ void Parser::build_data_directories(void) {
       this->build_relocations();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with relocations";
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -214,7 +224,7 @@ void Parser::build_data_directories(void) {
       this->build_debug();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with debug";
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -232,7 +242,7 @@ void Parser::build_data_directories(void) {
       this->build_resources();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with resources";
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
 
