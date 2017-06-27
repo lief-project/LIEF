@@ -48,7 +48,7 @@ void Parser::build(void) {
   LOG(DEBUG) << "[+] Decomposing Data directories";
   try {
     this->build_data_directories<PE_T>();
-  } catch (const corrupted& e) {
+  } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
