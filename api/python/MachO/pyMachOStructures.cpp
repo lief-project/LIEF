@@ -34,6 +34,16 @@ void init_MachO_Structures_enum(py::module& m) {
     .value(PY_ENUM(LIEF::MachO::CPU_TYPES::CPU_TYPE_POWERPC64))
     .export_values();
 
+  py::enum_<LIEF::MachO::MACHO_TYPES>(m, "MACHO_TYPES")
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::MH_MAGIC))
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::MH_CIGAM))
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::MH_MAGIC_64))
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::MH_CIGAM_64))
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::FAT_MAGIC))
+    .value(PY_ENUM(LIEF::MachO::MACHO_TYPES::FAT_CIGAM))
+    .export_values();
+
+
   py::enum_<LIEF::MachO::FILE_TYPES>(m, "FILE_TYPES")
     .value(PY_ENUM(LIEF::MachO::FILE_TYPES::MH_OBJECT))
     .value(PY_ENUM(LIEF::MachO::FILE_TYPES::MH_EXECUTE))

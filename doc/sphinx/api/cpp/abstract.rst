@@ -47,16 +47,17 @@ Enums
 .. doxygenenum:: LIEF::FILE_FORMATS
    :project: lief
 
-
 .. doxygenenum:: LIEF::OBJECT_TYPES
    :project: lief
-
 
 .. doxygenenum:: LIEF::ARCHITECTURES
    :project: lief
 
-
 .. doxygenenum:: LIEF::MODES
    :project: lief
+
+.. doxygenenum:: LIEF::ENDIANNESS
+   :project: lief
+
 
 

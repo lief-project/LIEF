@@ -38,6 +38,8 @@ class DLL_PUBLIC Header : public Visitable {
   const std::set<MODES>& modes(void)        const;
   OBJECT_TYPES           object_type(void)  const;
   uint64_t               entrypoint(void)   const;
+  ENDIANNESS             endianness(void)   const;
+
 
   //! @brief ``true`` if the binary target a ``32-bits`` architecture
   bool is_32(void) const;
@@ -52,6 +54,7 @@ class DLL_PUBLIC Header : public Visitable {
   void modes(const std::set<MODES>& m);
   void object_type(OBJECT_TYPES type);
   void entrypoint(uint64_t entrypoint);
+  void endianness(ENDIANNESS endianness);
 
   DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
@@ -60,6 +63,7 @@ class DLL_PUBLIC Header : public Visitable {
   std::set<MODES> modes_;
   OBJECT_TYPES    object_type_;
   uint64_t        entrypoint_;
+  ENDIANNESS      endianness_;
 
 
 };

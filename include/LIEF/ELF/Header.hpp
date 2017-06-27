@@ -35,7 +35,7 @@ class DLL_PUBLIC Header : public Visitable {
     using identity_t = std::array<uint8_t, IDENTITY::EI_NIDENT>;
 
     Header(void);
-    Header(const std::vector<uint8_t>&   header);
+    Header(const std::vector<uint8_t>& header);
     Header(const Elf32_Ehdr *header);
     Header(const Elf64_Ehdr *header);
 
@@ -55,6 +55,9 @@ class DLL_PUBLIC Header : public Visitable {
 
     //! @brief LIEF abstract architecture
     std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
+
+    //! @brief LIEF abstract endianness
+    ENDIANNESS abstract_endianness(void) const;
 
     //! @brief Version of the object file format
     VERSION   object_file_version(void) const;

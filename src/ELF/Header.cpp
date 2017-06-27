@@ -36,12 +36,18 @@ static const std::map<ARCH, std::pair<ARCHITECTURES, std::set<MODES>>> arch_elf_
   {ARCH::EM_IA_64,     {ARCH_INTEL, {MODE_64}}},
 };
 
-
 static const std::map<E_TYPE, OBJECT_TYPES> obj_elf_to_lief {
   {E_TYPE::ET_EXEC, OBJECT_TYPES::TYPE_EXECUTABLE},
   {E_TYPE::ET_DYN,  OBJECT_TYPES::TYPE_LIBRARY},
   {E_TYPE::ET_REL,  OBJECT_TYPES::TYPE_OBJECT},
 };
+
+static const std::map<ELF_DATA, ENDIANNESS> endi_elf_to_lief {
+  {ELF_DATA::ELFDATANONE, ENDIANNESS::ENDIAN_NONE},
+  {ELF_DATA::ELFDATA2LSB, ENDIANNESS::ENDIAN_LITTLE},
+  {ELF_DATA::ELFDATA2MSB, ENDIANNESS::ENDIAN_BIG},
+};
+
 
 Header& Header::operator=(const Header& copy) = default;
 Header::Header(const Header& copy)            = default;
@@ -142,11 +148,19 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
 
 
 std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) const {
-
   try {
     return arch_elf_to_lief.at(this->machine_type());
   } catch (const std::out_of_range&) {
     throw not_implemented(to_string(this->machine_type()));
+  }
+}
+
+
+ENDIANNESS Header::abstract_endianness(void) const {
+  try {
+    return endi_elf_to_lief.at(this->identity_data());
+  } catch (const std::out_of_range&) {
+    throw corrupted("Invalid encoding");
   }
 }
 

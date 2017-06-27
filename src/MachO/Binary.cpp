@@ -479,6 +479,7 @@ LIEF::Header Binary::get_abstract_header(void) const {
   }
 
   header.object_type(this->header().abstract_object_type());
+  header.endianness(this->header().abstract_endianness());
 
   return header;
 }

@@ -49,24 +49,29 @@ enum ARCHITECTURES {
 
 enum MODES {
   MODE_NONE          = 0,
-  MODE_LITTLE_ENDIAN = 1,
-  MODE_BIG_ENDIAN    = 2,
-  MODE_16            = 3,
-  MODE_32            = 4,
-  MODE_64            = 5,
-  MODE_ARM           = 6,
-  MODE_THUMB         = 7,
-  MODE_MCLASS        = 8,
-  MODE_MICRO         = 9,
-  MODE_MIPS3         = 10,
-  MODE_MIPS32R6      = 11,
-  MODE_MIPSGP64      = 12,
-  MODE_V7            = 13,
-  MODE_V8            = 14,
-  MODE_V9            = 15,
-  MODE_MIPS32        = 16,
-  MODE_MIPS64        = 17,
+  MODE_16            = 1,
+  MODE_32            = 2,
+  MODE_64            = 3,
+  MODE_ARM           = 4,
+  MODE_THUMB         = 5,
+  MODE_MCLASS        = 6,
+  MODE_MICRO         = 7,
+  MODE_MIPS3         = 8,
+  MODE_MIPS32R6      = 9,
+  MODE_MIPSGP64      = 10,
+  MODE_V7            = 11,
+  MODE_V8            = 12,
+  MODE_V9            = 13,
+  MODE_MIPS32        = 14,
+  MODE_MIPS64        = 15,
 };
+
+enum ENDIANNESS {
+  ENDIAN_NONE   = 0,
+  ENDIAN_BIG    = 1,
+  ENDIAN_LITTLE = 2,
+};
+
 
 
 } // namespace LIEF

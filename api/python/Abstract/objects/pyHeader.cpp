@@ -31,12 +31,12 @@ void init_LIEF_Header_class(py::module& m) {
     .def_property("architecture",
         static_cast<getter_t<LIEF::ARCHITECTURES>>(&LIEF::Header::architecture),
         static_cast<setter_t<LIEF::ARCHITECTURES>>(&LIEF::Header::architecture),
-        "Target architecture")
+        "Target architecture (" RST_CLASS_REF(lief.ARCHITECTURES) ")")
 
     .def_property("modes",
         static_cast<getter_t<const std::set<LIEF::MODES>&>>(&LIEF::Header::modes),
         static_cast<setter_t<const std::set<LIEF::MODES>&>>(&LIEF::Header::modes),
-        "Target modes (32-bits, 64-bits...)")
+        "Target " RST_CLASS_REF(lief.MODES) " (32-bits, 64-bits...)")
 
     .def_property("entrypoint",
         static_cast<getter_t<uint64_t>>(&LIEF::Header::entrypoint),
@@ -49,6 +49,11 @@ void init_LIEF_Header_class(py::module& m) {
         "Type of the binary (executable, library...)\n"
         "See: " RST_CLASS_REF(lief.OBJECT_TYPES) "")
 
+    .def_property("endianness",
+        static_cast<getter_t<LIEF::ENDIANNESS>>(&LIEF::Header::endianness),
+        static_cast<setter_t<LIEF::ENDIANNESS>>(&LIEF::Header::endianness),
+        "Binary endianness\n"
+        "See: " RST_CLASS_REF(lief.ENDIANNESS) "")
 
     .def_property_readonly("is_32",
         &LIEF::Header::is_32,

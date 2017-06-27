@@ -24,6 +24,7 @@ DLL_PUBLIC const char* to_string(FILE_FORMATS e);
 DLL_PUBLIC const char* to_string(ARCHITECTURES e);
 DLL_PUBLIC const char* to_string(OBJECT_TYPES e);
 DLL_PUBLIC const char* to_string(MODES e);
+DLL_PUBLIC const char* to_string(ENDIANNESS e);
 } // namespace LIEF
 
 #endif

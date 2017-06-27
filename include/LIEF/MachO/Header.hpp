@@ -39,7 +39,7 @@ class DLL_PUBLIC Header : public Visitable {
 
     virtual ~Header(void);
 
-    uint32_t               magic(void) const;
+    MACHO_TYPES            magic(void) const;
     CPU_TYPES              cpu_type(void) const;
     uint32_t               cpu_subtype(void) const;
     FILE_TYPES             file_type(void) const;
@@ -55,7 +55,10 @@ class DLL_PUBLIC Header : public Visitable {
 
     std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
 
-    void magic(uint32_t magic);
+    //! @brief LIEF abstract endiannes
+    ENDIANNESS abstract_endianness(void) const;
+
+    void magic(MACHO_TYPES magic);
     void cpu_type(CPU_TYPES cputype);
     void cpu_subtype(uint32_t cpusubtype);
     void file_type(FILE_TYPES filetype);
@@ -73,14 +76,14 @@ class DLL_PUBLIC Header : public Visitable {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   private:
-    uint32_t   magic_;
-    CPU_TYPES  cputype_;
-    uint32_t   cpusubtype_;
-    FILE_TYPES filetype_;
-    uint32_t   ncmds_;
-    uint32_t   sizeofcmds_;
-    uint32_t   flags_;
-    uint32_t   reserved_;
+    MACHO_TYPES magic_;
+    CPU_TYPES   cputype_;
+    uint32_t    cpusubtype_;
+    FILE_TYPES  filetype_;
+    uint32_t    ncmds_;
+    uint32_t    sizeofcmds_;
+    uint32_t    flags_;
+    uint32_t    reserved_;
 };
 
 }

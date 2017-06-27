@@ -41,7 +41,7 @@ def print_header(binary):
         flag = str(flag).split(".")[-1]
         flags += (flag if len(flags) == 0 else " - " + flag)
 
-    print(format_hex.format("Magic:",              header.magic))
+    print(format_str.format("Magic:",              str(header.magic).split(".")[-1]))
     print(format_str.format("CPU Type:",           str(header.cpu_type).split(".")[-1]))
     print(format_hex.format("CPU sub-type:",       header.cpu_subtype))
     print(format_str.format("File Type:",          str(header.file_type).split(".")[-1]))

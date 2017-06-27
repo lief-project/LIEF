@@ -29,7 +29,8 @@ Header::Header(void) :
   architecture_{ARCHITECTURES::ARCH_NONE},
   modes_{},
   object_type_{OBJECT_TYPES::TYPE_NONE},
-  entrypoint_{0}
+  entrypoint_{0},
+  endianness_{ENDIANNESS::ENDIAN_NONE}
 {}
 
 
@@ -63,7 +64,19 @@ uint64_t Header::entrypoint(void) const {
 }
 
 
-void Header::accept(Visitor&) const {
+ENDIANNESS Header::endianness(void) const {
+  return this->endianness_;
+}
+
+
+void Header::accept(Visitor& visitor) const {
+  visitor.visit(this->architecture());
+  visitor.visit(this->object_type());
+  visitor.visit(this->entrypoint());
+  visitor.visit(this->endianness());
+  for (MODES m : this->modes()) {
+    visitor.visit(m);
+  }
 }
 
 
@@ -84,6 +97,11 @@ void Header::modes(const std::set<MODES>& m) {
 
 void Header::entrypoint(uint64_t entrypoint) {
   this->entrypoint_ = entrypoint;
+}
+
+
+void Header::endianness(ENDIANNESS endianness) {
+  this->endianness_ = endianness;
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
@@ -110,6 +128,8 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint()                      << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Object type:"  << to_string(hdr.object_type())                  << std::endl;
   os << std::setw(33) << std::setfill(' ') << "32/64 bits:"   << bitness                                       << std::endl;
+
+  os << std::setw(33) << std::setfill(' ') << "Endianness:"   << to_string(hdr.endianness())                                       << std::endl;
   return os;
 }
 

@@ -60,8 +60,6 @@ const char* to_string(ARCHITECTURES e) {
 const char* to_string(MODES e) {
   const std::map<MODES, const char*> enumStrings {
     { MODES::MODE_NONE,          "NONE"  },
-    { MODES::MODE_LITTLE_ENDIAN, "LITTLE_ENDIAN"   },
-    { MODES::MODE_BIG_ENDIAN,    "BIG_ENDIAN" },
     { MODES::MODE_16,            "16"  },
     { MODES::MODE_32,            "32"    },
     { MODES::MODE_64,            "64"   },
@@ -80,6 +78,19 @@ const char* to_string(MODES e) {
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
+
+const char* to_string(ENDIANNESS e) {
+  const std::map<ENDIANNESS, const char*> enumStrings {
+    { ENDIANNESS::ENDIAN_NONE,   "NONE"   },
+    { ENDIANNESS::ENDIAN_BIG,    "BIG"    },
+    { ENDIANNESS::ENDIAN_LITTLE, "LITTLE" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
+
 } // namespace LIEF
 
 

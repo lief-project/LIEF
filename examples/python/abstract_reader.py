@@ -69,13 +69,10 @@ def print_imported_libraries(libraries):
 def read_binary(path):
     print("== Abstract Reader ==")
 
-    binary   = lief.parse(path)
-    binary   = super(binary.__class__, binary)
-    try:
-        header        = binary.header
-        print(header)
-    except lief.not_implemented as e:
-        print(e)
+    binary = lief.parse(path)
+    binary = super(binary.__class__, binary)
+    header = binary.header
+    print(header)
 
     sections      = binary.sections
     symbols       = binary.symbols
