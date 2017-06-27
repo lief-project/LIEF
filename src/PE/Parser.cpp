@@ -87,11 +87,17 @@ void Parser::init(const std::string& name) {
 
 void Parser::build_dos_stub(void) {
   const DosHeader& dos_header = this->binary_->dos_header();
+
+  if (dos_header.addressof_new_exeheader() < sizeof(pe_dos_header)) {
+    return;
+  }
   const uint64_t sizeof_dos_stub = dos_header.addressof_new_exeheader() - sizeof(pe_dos_header);
 
+  LOG(DEBUG) << "Size of dos stub: " << std::hex << sizeof_dos_stub;
+
   const uint8_t* ptr_to_dos_stub = reinterpret_cast<const uint8_t*>(this->stream_->read(
-        sizeof(pe_dos_header),
-        sizeof_dos_stub));
+          sizeof(pe_dos_header),
+          sizeof_dos_stub));
   this->binary_->dos_stub_ = {ptr_to_dos_stub, ptr_to_dos_stub + sizeof_dos_stub};
 }
 
@@ -129,11 +135,15 @@ void Parser::build_rich_header(void) {
   uint32_t value = 0;
 
   while (value != DanS_Magic_number and count != DanS_Magic_number) {
-    count = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
-    curent_offset -= sizeof(uint32_t);
+    try {
+      count = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
+      curent_offset -= sizeof(uint32_t);
 
-    value = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
-    curent_offset -= sizeof(uint32_t);
+      value = stream.read_integer<uint32_t>(curent_offset) ^ xor_key;
+      curent_offset -= sizeof(uint32_t);
+    } catch (const read_out_of_bound&) {
+      throw corrupted("Rich Header corrupted");
+    }
 
     if (value == DanS_Magic_number or count == DanS_Magic_number) {
       break;
@@ -184,14 +194,29 @@ void Parser::build_sections(void) {
   for (size_t i = 0; i < numberof_sections; ++i) {
     Section* section = new Section{&sections[i]};
 
+    uint32_t size_to_read = 0;
+    uint32_t offset = sections[i].PointerToRawData;
+
+    if (sections[i].VirtualSize > 0) {
+      size_to_read = std::min(sections[i].VirtualSize, sections[i].SizeOfRawData); // According to Corkami
+    } else {
+      size_to_read = sections[i].SizeOfRawData;
+    }
+
+    if ((offset + size_to_read) > this->stream_->size()) {
+      uint32_t delta = (offset + size_to_read) - this->stream_->size();
+      size_to_read = size_to_read - delta;
+    }
+
+
     try {
       const uint8_t* ptr_to_rawdata = reinterpret_cast<const uint8_t*>(this->stream_->read(
-        sections[i].PointerToRawData,
-        sections[i].SizeOfRawData));
+        offset,
+        size_to_read));
 
       section->content_ = {
         ptr_to_rawdata,
-        ptr_to_rawdata + sections[i].SizeOfRawData
+        ptr_to_rawdata + size_to_read
       };
     } catch (const std::bad_alloc& e) {
       LOG(WARNING) << "Section " << section->name() << " corrupted: " << e.what();
