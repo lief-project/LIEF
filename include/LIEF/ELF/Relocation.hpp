@@ -17,6 +17,7 @@
 #define LIEF_ELF_RELOCATION_H_
 
 #include <string>
+#include <map>
 #include <iostream>
 
 #include "LIEF/Visitable.hpp"
@@ -52,6 +53,9 @@ class DLL_PUBLIC Relocation : public Visitable {
     bool     is_rela(void) const;
     bool     is_rel(void) const;
     ARCH architecture(void) const;
+
+    //! @brief Return the **bit** size of the value to patch
+    uint32_t size(void) const;
 
     bool          has_symbol(void) const;
     Symbol&       symbol(void);

@@ -19,6 +19,7 @@
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/RelocationSizes.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
 namespace LIEF {
@@ -159,6 +160,57 @@ bool Relocation::has_symbol(void) const {
   return this->symbol_ != nullptr;
 }
 
+uint32_t Relocation::size(void) const {
+
+ switch (this->architecture()) {
+    case ARCH::EM_X86_64:
+      {
+        try {
+          return relocation_x86_64_sizes.at(static_cast<RELOC_x86_64>(this->type()));
+        } catch (const std::out_of_range&) {
+          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_x86_64>(this->type())));
+        }
+        break;
+      }
+
+    case ARCH::EM_386:
+      {
+        try {
+          return relocation_i386_sizes.at(static_cast<RELOC_i386>(this->type()));
+        } catch (const std::out_of_range&) {
+          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_i386>(this->type())));
+        }
+        break;
+      }
+
+    case ARCH::EM_ARM:
+      {
+        try {
+          return relocation_ARM_sizes.at(static_cast<RELOC_ARM>(this->type()));
+        } catch (const std::out_of_range&) {
+          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_ARM>(this->type())));
+        }
+        break;
+      }
+
+    case ARCH::EM_AARCH64:
+      {
+        try {
+          return relocation_AARCH64_sizes.at(static_cast<RELOC_AARCH64>(this->type()));
+        } catch (const std::out_of_range&) {
+          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_AARCH64>(this->type())));
+        }
+        break;
+      }
+
+    default:
+      {
+        throw not_implemented(to_string(this->architecture()));
+      }
+  }
+
+}
+
 
 void Relocation::address(uint64_t address) {
   this->address_ = address;
@@ -213,9 +265,38 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
   }
 
   std::string relocation_type = "";
-  if (entry.architecture() == ARCH::EM_X86_64) {
-    relocation_type = to_string(static_cast<RELOC_x86_64>(entry.type()));
+  switch (entry.architecture()) {
+    case ARCH::EM_X86_64:
+      {
+        relocation_type = to_string(static_cast<RELOC_x86_64>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_386:
+      {
+        relocation_type = to_string(static_cast<RELOC_i386>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_ARM:
+      {
+        relocation_type = to_string(static_cast<RELOC_ARM>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_AARCH64:
+      {
+        relocation_type = to_string(static_cast<RELOC_AARCH64>(entry.type()));
+        break;
+      }
+
+    default:
+      {
+        relocation_type = std::to_string(entry.type());
+      }
   }
+
+
 
   os << std::setw(10) << entry.address()
      << std::setw(10) << relocation_type

@@ -33,6 +33,7 @@ DLL_PUBLIC const char* to_string(SYMBOL_TYPES e);
 DLL_PUBLIC const char* to_string(RELOC_x86_64 e);
 DLL_PUBLIC const char* to_string(RELOC_ARM e);
 DLL_PUBLIC const char* to_string(RELOC_i386 e);
+DLL_PUBLIC const char* to_string(RELOC_AARCH64 e);
 DLL_PUBLIC const char* to_string(ELF_CLASS e);
 DLL_PUBLIC const char* to_string(ELF_DATA e);
 DLL_PUBLIC const char* to_string(OS_ABI e);

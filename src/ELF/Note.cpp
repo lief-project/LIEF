@@ -140,27 +140,30 @@ std::ostream& operator<<(std::ostream& os, const Note& note) {
 
   // ABI TAG
   if (static_cast<NOTE_TYPES>(note.type()) == NOTE_TYPES::NT_GNU_ABI_TAG) {
-    std::tuple<uint32_t, uint32_t, uint32_t> version = note.version();
-    std::string version_str = "";
-    // Major
-    version_str += std::to_string(std::get<0>(version));
-    version_str += ".";
+    try {
+      std::tuple<uint32_t, uint32_t, uint32_t> version = note.version();
+      std::string version_str = "";
+      // Major
+      version_str += std::to_string(std::get<0>(version));
+      version_str += ".";
 
-    // Minor
-    version_str += std::to_string(std::get<1>(version));
-    version_str += ".";
+      // Minor
+      version_str += std::to_string(std::get<1>(version));
+      version_str += ".";
 
-    // Patch
-    version_str += std::to_string(std::get<2>(version));
+      // Patch
+      version_str += std::to_string(std::get<2>(version));
 
-    os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(note.abi()) << std::endl;
-    os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
+      os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(note.abi()) << std::endl;
+      os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
+    } catch (const corrupted&) {
+    }
   }
 
 
   // GOLD VERSION
   if (static_cast<NOTE_TYPES>(note.type()) == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
-    std::string version_str{reinterpret_cast<const char*>(description.data())};
+    std::string version_str{reinterpret_cast<const char*>(description.data()), description.size()};
     os << std::setw(33) << std::setfill(' ') << "Version:" << version_str << std::endl;
   }
 
