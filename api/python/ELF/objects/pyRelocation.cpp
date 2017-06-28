@@ -66,6 +66,10 @@ void init_ELF_Relocation_class(py::module& m) {
       static_cast<getter_t<bool>>(&Relocation::is_rel),
       "``True`` if the relocation doesn't use the :attr:`~lief.ELF.Relocation.addend` proprety")
 
+    .def_property_readonly("size",
+      static_cast<getter_t<uint32_t>>(&Relocation::size),
+      "Size in **bits** of the value patched by the relocation")
+
 
     .def("__eq__", &Relocation::operator==)
     .def("__ne__", &Relocation::operator!=)

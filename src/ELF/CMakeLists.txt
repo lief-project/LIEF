@@ -59,6 +59,7 @@ set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Header.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Parser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocation.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/RelocationSizes.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Section.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Segment.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Symbol.hpp"

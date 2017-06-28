@@ -176,10 +176,10 @@ def print_relocations(binary):
     ## Dynamic relocations ##
     if len(dynamicrelocations) > 0:
         print("== Dynamic Relocations ==\n")
-        f_title = "|{:<10} | {:<10}| {:<30} |"
-        f_value = "|0x{:<8x} | {:<10}| {:<30} |"
+        f_title = "|{:<10} | {:<10}| {:<8}| {:<30} |"
+        f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<30} |"
 
-        print(f_title.format("Address", "Type", "Symbol"))
+        print(f_title.format("Address", "Type", "Size", "Symbol"))
 
         for relocation in dynamicrelocations:
             type = str(relocation.type)
@@ -189,19 +189,24 @@ def print_relocations(binary):
                 type = str(ELF.RELOCATION_i386(relocation.type))
             elif binary.header.machine_type == ELF.ARCH.ARM:
                 type = str(ELF.RELOCATION_ARM(relocation.type))
-            try:
-                s = relocation.symbol
-                print(f_value.format(relocation.address, type.split(".")[-1], str(relocation.symbol.name)))
-            except lief.not_found:
-                pass
+            elif binary.header.machine_type == ELF.ARCH.AARCH64:
+                type = str(ELF.RELOCATION_AARCH64(relocation.type))
+
+            symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
+
+            print(f_value.format(
+                relocation.address,
+                type.split(".")[-1],
+                relocation.size,
+                symbol_name))
 
 
     if len(pltgot_relocations) > 0:
         print("== PLT/GOT Relocations ==\n")
-        f_title = "|{:<10} | {:<10} |{:<30}|"
-        f_value = "|0x{:<8x} | {:<10} | {:<30}|"
+        f_title = "|{:<10} | {:<10}| {:<8}| {:<30} |"
+        f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<30} |"
 
-        print(f_title.format("Address", "Type", "Symbol"))
+        print(f_title.format("Address", "Type", "Size", "Symbol"))
 
         for relocation in pltgot_relocations:
             type = str(relocation.type)
@@ -211,9 +216,15 @@ def print_relocations(binary):
                 type = str(ELF.RELOCATION_i386(relocation.type))
             elif binary.header.machine_type == ELF.ARCH.ARM:
                 type = str(ELF.RELOCATION_ARM(relocation.type))
+            elif binary.header.machine_type == ELF.ARCH.AARCH64:
+                type = str(ELF.RELOCATION_AARCH64(relocation.type))
 
             symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
-            print(f_value.format(relocation.address, type.split(".")[-1], symbol_name))
+            print(f_value.format(
+                relocation.address,
+                type.split(".")[-1],
+                relocation.size,
+                symbol_name))
 
 def print_exported_symbols(binary):
     symbols = binary.exported_symbols
@@ -311,15 +322,22 @@ def print_notes(binary):
         print("Note #{:d}".format(idx))
 
         print(format_str.format("Name:",        note.name))
-        print(format_str.format("Type:",        ELF.NOTE_TYPES(note.type)))
+        print(format_str.format("Type:",        str(ELF.NOTE_TYPES(note.type)).split(".")[-1]))
         print(format_str.format("Description:", description_str))
 
         if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.ABI_TAG:
-            version = note.version
-            version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
+            try:
+                version = note.version
+                version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
 
-            print(format_str.format("ABI:",     note.abi))
-            print(format_str.format("Version:", version_str))
+                print(format_str.format("ABI:",     note.abi))
+                print(format_str.format("Version:", version_str))
+            except lief.corrupted:
+                pass
+
+        if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.GOLD_VERSION:
+            print(format_str.format("Version:", "".join(map(chr, note.description))))
+
 
         print("\n")
 

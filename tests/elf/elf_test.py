@@ -8,7 +8,7 @@ import stat
 import os
 import logging
 import random
-
+import itertools
 
 from subprocess import Popen
 
@@ -137,6 +137,56 @@ class TestELF(TestCase):
 
         self.assertEqual("".join(map(chr, n3.description)), "gold 1.12")
 
+    def test_relocation_size(self):
+        aarch64_toybox = lief.parse(get_sample('ELF/ELF64_AARCH64_piebinary_toybox.pie'))
+        arm_ls         = lief.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
+        x86_ls         = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
+        x86_64_ls      = lief.parse(get_sample('ELF/ELF64_x86-64_binary_ld.bin'))
+
+        for r in itertools.chain(aarch64_toybox.dynamic_relocations, aarch64_toybox.pltgot_relocations):
+            if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.RELATIVE:
+                self.assertEqual(r.size, 64)
+
+            if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.GLOB_DAT:
+                self.assertEqual(r.size, 64)
+
+            if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.JUMP_SLOT:
+                self.assertEqual(r.size, 64)
+
+        for r in itertools.chain(arm_ls.dynamic_relocations, arm_ls.pltgot_relocations):
+            if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.RELATIVE:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.GLOB_DAT:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.ABS32:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.JUMP_SLOT:
+                self.assertEqual(r.size, 32)
+
+
+        for r in itertools.chain(x86_ls.dynamic_relocations, x86_ls.pltgot_relocations):
+            if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.GLOB_DAT:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.COPY:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.JUMP_SLOT:
+                self.assertEqual(r.size, 32)
+
+
+        for r in itertools.chain(x86_64_ls.dynamic_relocations, x86_64_ls.pltgot_relocations):
+            if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.GLOB_DAT:
+                self.assertEqual(r.size, 64)
+
+            if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.COPY:
+                self.assertEqual(r.size, 32)
+
+            if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.JUMP_SLOT:
+                self.assertEqual(r.size, 64)
 
     def test_sectionless(self):
         sample = "ELF/ELF64_x86-64_binary_rvs.bin"

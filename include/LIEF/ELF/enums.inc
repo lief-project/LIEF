@@ -280,7 +280,7 @@ enum  RELOC_i386 {
 };
 
 /* ELF Relocation types for PPC32 */
-enum {
+enum RELOC_POWERPC32 {
    #include "LIEF/ELF/Relocations/PowerPC.def"
 };
 
@@ -300,12 +300,12 @@ enum {
 };
 
 /* ELF Relocation types for PPC64 */
-enum {
+enum RELOC_POWERPC64 {
    #include "LIEF/ELF/Relocations/PowerPC64.def"
 };
 
 /* ELF Relocation types for AArch64 */
-enum {
+enum RELOC_AARCH64 {
    #include "LIEF/ELF/Relocations/AArch64.def"
 };
 
@@ -391,7 +391,7 @@ enum {
 };
 
 /* ELF Relocation types for Mips */
-enum {
+enum RELOC_MIPS {
   #include "LIEF/ELF/Relocations/Mips.def"
 };
 
@@ -449,17 +449,17 @@ enum {
 };
 
 /* ELF Relocation types for Hexagon */
-enum {
+enum RELOC_HEXAGON {
   #include "LIEF/ELF/Relocations/Hexagon.def"
 };
 
 /* ELF Relocation types for S390/zSeries */
-enum {
+enum RELOC_SYSTEMZ {
   #include "LIEF/ELF/Relocations/SystemZ.def"
 };
 
 /* ELF Relocation type for Sparc. */
-enum {
+enum RELOC_SPARC {
   #include "LIEF/ELF/Relocations/Sparc.def"
 };
 

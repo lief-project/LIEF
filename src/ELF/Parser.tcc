@@ -1554,7 +1554,7 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     }
 
     std::string name = {this->stream_->read_string(current_offset, namesz), namesz - 1};
-    LOG(DEBUG) << "Name: " << name;
+    LOG(DEBUG) << "Name: " << name << std::endl;
     current_offset += namesz;
     current_offset = align(current_offset, sizeof(uint32_t));
 
