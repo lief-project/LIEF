@@ -60,9 +60,9 @@ const char* to_string(ARCHITECTURES e) {
 const char* to_string(MODES e) {
   const std::map<MODES, const char*> enumStrings {
     { MODES::MODE_NONE,          "NONE"  },
-    { MODES::MODE_16,            "16"  },
-    { MODES::MODE_32,            "32"    },
-    { MODES::MODE_64,            "64"   },
+    { MODES::MODE_16,            "M16"  },
+    { MODES::MODE_32,            "M32"    },
+    { MODES::MODE_64,            "M64"   },
     { MODES::MODE_ARM,           "ARM" },
     { MODES::MODE_THUMB,         "THUMB"  },
     { MODES::MODE_MCLASS,        "MCLASS" },
