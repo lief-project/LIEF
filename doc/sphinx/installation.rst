@@ -81,10 +81,71 @@ LIEF makes use of ``and, or, not`` C++ keywords. As **MSVC** doesn't support the
 
   Add ``iso646.h`` file
 
+OSX SDK
+-------
+
+To integrate LIEF within a XCode project, one needs to follow these steps:
+
+First we create a new project:
+
+.. figure:: _static/xcode_integration/step1.png
+  :align: center
+
+  New Project
+
+For this example we select a *Command Line Tool*:
+
+.. figure:: _static/xcode_integration/step2.png
+  :align: center
+
+  Command Line Tool
 
 
+.. figure:: _static/xcode_integration/step3.png
+  :align: center
+
+  Project options
+
+Then we need to add the static library ``libLIEF.a`` or the shared one (``libLIEF.dylib``)
+
+.. figure:: _static/xcode_integration/step4.png
+  :align: center
+
+  Project configuration - Build Phases
 
 
+.. figure:: _static/xcode_integration/step5.png
+  :align: center
+
+  Project configuration - Build Phases
+
+
+.. figure:: _static/xcode_integration/step6.png
+  :align: center
+
+  Project configuration - Build Phases
+
+In the `Build Settings - Search Paths` one needs to specify the paths to the **include directory** and to location of the LIEF libraries (``libLIEF.a`` and/or ``libLIEF.dylib``)
+
+.. figure:: _static/xcode_integration/step7.png
+  :align: center
+
+  Libraries and Include search paths
+
+Once the new project configured we can use LIEF:
+
+
+.. figure:: _static/xcode_integration/code.png
+  :align: center
+
+  Source code
+
+and run it:
+
+.. figure:: _static/xcode_integration/result.png
+  :align: center
+
+  Output
 
 
 
