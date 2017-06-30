@@ -63,6 +63,9 @@ void init_PE_Symbol_class(py::module& m) {
         static_cast<no_const_getter<Section&>>(&Symbol::section),
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("has_section",
+        &Symbol::has_section,
+        "``True`` if symbols are located in a section")
 
     .def("__eq__", &Symbol::operator==)
     .def("__ne__", &Symbol::operator!=)
