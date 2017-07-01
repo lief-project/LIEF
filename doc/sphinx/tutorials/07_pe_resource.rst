@@ -3,6 +3,8 @@
 
 This tutorial gives an overview of the resource structure in a PE file and how they can be manipulated using LIEF
 
+Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/07_PE_resource>`_
+
 ------
 
 Unlike **ELF** and **Mach-O** formats, **PE** enables to embed *resources* (icons, images, raw, dialog ...) within an

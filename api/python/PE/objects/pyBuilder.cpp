@@ -34,6 +34,7 @@ void init_PE_Builder_class(py::module& m) {
     .def("build_imports",
         &Builder::build_imports,
         "Rebuild the import table in another section",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("patch_imports",
@@ -41,31 +42,37 @@ void init_PE_Builder_class(py::module& m) {
         "Patch the original import table in order to redirect functions to "
         "the new import table.\n\n"
         "This setting should be used with ``build_imports`` set to ``True``",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("build_relocations",
         &Builder::build_relocations,
         "Rebuild the relocation table in another section",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("build_tls",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_tls),
         "Rebuild TLS object in another section",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("build_resources",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_resources),
         "Rebuid the resources in another section",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("build_overlay",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_overlay),
         "Rebuild the binary's overlay",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("build_dos_stub",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_dos_stub),
         "Rebuild the DOS stub",
+        py::arg("enable") = true,
         py::return_value_policy::reference)
 
     .def("write",

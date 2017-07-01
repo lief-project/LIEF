@@ -69,7 +69,8 @@ void init_LIEF_Binary_class(py::module& m) {
 
     .def("get_function_address",
         &Binary::get_function_address,
-        "Return the address of the given function name")
+        "Return the address of the given function name",
+        "function_name"_a)
 
     .def("patch_address",
         static_cast<void (Binary::*) (uint64_t, const std::vector<uint8_t>&)>(&Binary::patch_address),
@@ -84,7 +85,8 @@ void init_LIEF_Binary_class(py::module& m) {
 
    .def("get_content_from_virtual_address",
         &Binary::get_content_from_virtual_address,
-       "Return the content located at virtual address")
+       "Return the content located at virtual address",
+       "virtual_address"_a, "size"_a)
 
 
     .def("__str__",

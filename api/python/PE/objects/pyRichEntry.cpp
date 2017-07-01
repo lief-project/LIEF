@@ -30,7 +30,12 @@ using setter_t = void (RichEntry::*)(T);
 void init_PE_RichEntry_class(py::module& m) {
   py::class_<RichEntry>(m, "RichEntry")
     .def(py::init<>())
-    .def(py::init<uint16_t, uint16_t, uint32_t>())
+    .def(py::init<uint16_t, uint16_t, uint32_t>(),
+        "Contructor from "
+        ":attr:`~lief.PE.RichEntry.id`, "
+        ":attr:`~lief.PE.RichEntry.build_id` and "
+        ":attr:`~lief.PE.RichEntry.count`",
+        "id"_a, "build_id"_a, "count"_a)
 
     .def_property("id",
         static_cast<getter_t<uint16_t>>(&RichEntry::id),

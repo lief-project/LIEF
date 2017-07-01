@@ -85,6 +85,7 @@ void init_PE_Binary_class(py::module& m) {
     .def("section_from_rva",
         static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_rva),
         "Return the " RST_CLASS_REF(lief.PE.Section) " which contains the **relative** virtual address",
+        "rva"_a,
         py::return_value_policy::reference)
 
     .def_property("tls",
@@ -109,7 +110,7 @@ void init_PE_Binary_class(py::module& m) {
         "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.TLS) " object")
 
     .def_property_readonly("has_imports", &Binary::has_imports,
-        "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Import) " object")
+        "``True`` if the current binary import libraries (" RST_CLASS_REF(lief.PE.Import) ")")
 
     .def_property_readonly("has_exports", &Binary::has_exports,
         "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Export) " object")
@@ -118,16 +119,16 @@ void init_PE_Binary_class(py::module& m) {
         "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Resources) " object")
 
     .def_property_readonly("has_exceptions", &Binary::has_exceptions,
-        "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Execptions) " object")
+        "``True`` if the current binary has ``Exceptions``")
 
     .def_property_readonly("has_relocations", &Binary::has_relocations,
-        "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Relocation) "")
+        "``True`` if the current binary use " RST_CLASS_REF(lief.PE.Relocation) "")
 
     .def_property_readonly("has_configurations", &Binary::has_configuration,
-        "``True`` if the current binary has a " RST_CLASS_REF(lief.PE.Configuration) "")
+        "``True`` if the current binary has " RST_CLASS_REF(lief.PE.Configuration) "")
 
     .def_property_readonly("has_signature", &Binary::has_signature,
-        "Check if the current binary has a " RST_CLASS_REF(lief.PE.Signature) "")
+        "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
 
     .def("predict_function_rva", &Binary::predict_function_rva,
         "Try to predict the RVA of the given function name in the given import library name",
@@ -173,7 +174,7 @@ void init_PE_Binary_class(py::module& m) {
 
     .def_property_readonly("relocations",
         static_cast<no_const_getter<it_relocations>>(&Binary::relocations),
-        "Return an iterator to the " RST_CLASS_REF(lief.PE.Relocation) "",
+        "Return an iterator on the " RST_CLASS_REF(lief.PE.Relocation) "",
         py::return_value_policy::reference)
 
     .def("add_relocation",
@@ -185,7 +186,7 @@ void init_PE_Binary_class(py::module& m) {
 
     .def_property_readonly("data_directories",
         static_cast<no_const_getter<it_data_directories>>(&Binary::data_directories),
-        "Return an iterator to the " RST_CLASS_REF(lief.PE.DataDirectory) "",
+        "Return an iterator on the " RST_CLASS_REF(lief.PE.DataDirectory) "",
         py::return_value_policy::reference)
 
     .def("data_directory",
@@ -196,7 +197,7 @@ void init_PE_Binary_class(py::module& m) {
 
     .def_property_readonly("imports",
         static_cast<no_const_getter<it_imports>>(&Binary::imports),
-        "Return an iterator to the " RST_CLASS_REF(lief.PE.Import) " libraries",
+        "Return an iterator on the " RST_CLASS_REF(lief.PE.Import) " libraries",
         py::return_value_policy::reference)
 
     .def("has_import",
@@ -221,13 +222,13 @@ void init_PE_Binary_class(py::module& m) {
 
     .def_property_readonly("overlay",
         static_cast<no_const_getter<std::vector<uint8_t>&>>(&Binary::overlay),
-        "Return the overlay content",
+        "Return the overlay content as a ``list`` of bytes",
         py::return_value_policy::reference)
 
     .def_property("dos_stub",
         static_cast<getter_t<const std::vector<uint8_t>&>>(&Binary::dos_stub),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&Binary::dos_stub),
-        "DOS stub content")
+        "DOS stub content as a ``list`` of bytes")
 
     .def("add_import_function",
         &Binary::add_import_function,
@@ -263,7 +264,7 @@ void init_PE_Binary_class(py::module& m) {
 
     .def("remove_all_libraries",
         &Binary::remove_all_libraries,
-        "Remove all libraries imported")
+        "Remove all imported libraries")
 
     .def("write",
         &Binary::write,

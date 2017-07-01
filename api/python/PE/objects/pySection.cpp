@@ -31,8 +31,18 @@ using setter_t = void (Section::*)(T);
 void init_PE_Section_class(py::module& m) {
   py::class_<Section, LIEF::Section>(m, "Section")
     .def(py::init<>())
-    .def(py::init<const std::vector<uint8_t>&, const std::string&, uint32_t>())
-    .def(py::init<const std::string&>())
+    .def(py::init<const std::vector<uint8_t>&, const std::string&, uint32_t>(),
+        "Constructor from "
+        ":attr:`~lief.PE.Section.content`, "
+        ":attr:`~lief.PE.Section.name` and "
+        ":attr:`~lief.PE.Section.characteristics`",
+        "content"_a, py::arg("name") = "", py::arg("characteristics") = 0)
+
+    .def(py::init<const std::string&>(),
+        "Constructor from "
+        ":attr:`~lief.PE.Section.name`",
+        "name"_a)
+
     .def_property("virtual_size",
         static_cast<getter_t<uint32_t>>(&Section::virtual_size),
         static_cast<setter_t<uint32_t>>(&Section::virtual_size),

@@ -24,5 +24,6 @@ void init_LIEF_Parser_class(py::module& m) {
     m.def("parse",
       &LIEF::Parser::parse,
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      "filepath"_a,
       py::return_value_policy::take_ownership);
 }
