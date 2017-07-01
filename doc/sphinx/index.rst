@@ -41,5 +41,6 @@ Welcome to LIEF's documentation!
 
   formats/index.rst
   references.rst
+  changelog.rst
 
 
