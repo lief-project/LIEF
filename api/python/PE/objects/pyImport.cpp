@@ -76,7 +76,9 @@ void init_PE_Import_class(py::module& m) {
         "contains a :attr:`~lief.PE.ImportEntry.name` or :attr:`~lief.PE.ImportEntry.ordinal` for each import.")
 
     .def("get_function_rva_from_iat",
-        &Import::get_function_rva_from_iat)
+        &Import::get_function_rva_from_iat,
+        "Return the relative virtual address of the given function within the *Import Address Table*"
+        "function_name"_a)
 
     .def("add_entry",
         static_cast<ImportEntry& (Import::*)(const ImportEntry&)>(&Import::add_entry),

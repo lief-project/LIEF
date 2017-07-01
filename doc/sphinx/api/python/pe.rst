@@ -361,6 +361,17 @@ Rich Entry
 
 ----------
 
+Debug
+*****
+
+.. autoclass:: lief.PE.Debug
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Enums
 *****
 

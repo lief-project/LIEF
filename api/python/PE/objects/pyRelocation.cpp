@@ -40,7 +40,9 @@ void init_PE_Relocation_class(py::module& m) {
         py::return_value_policy::reference)
 
     .def("add_entry",
-        &Relocation::add_entry)
+        &Relocation::add_entry,
+        "Add a new " RST_CLASS_REF(lief.PE.RelocationEntry) "",
+        "new_entry"_a)
 
 
     .def("__eq__", &Relocation::operator==)
