@@ -1,18 +1,6 @@
 Changelog
 =========
 
-v0.6.1: Minor fixes
-  * Fix spelling in the documentation. Thanks to Philippe Teuwen for the review. (@doegox)
-  * Fix typo: signature_alogrithm --> signature_algorithm
-  * Do not rely on section entry size to parse dynamic symbols (004c6769bec37e303bbe7aaceb49f4b05c8eec84)
-  * Fix Unicode error in the Python API (88fb60a50ea35eb5bc147e3429c6eddff51c5d35)
-  * [issue #1] Fix conflict between ``lief.PE.TLS`` object and ``lief.PE.SECTION_TYPES.TLS`` (e5c384384e9b2b479a23d8c4c22b6e3d5dcf3999)
-  * [issue #4] Fix missing C headers in pre-built packages (18a7c66e51cf19c0a3c84cd2beff1b9df0f41439)
-  * [issue #8] Fix encoding error on OSX (ab9a051ccfeed0698dcb2c7fbaa0ff291271eb54)
-  * Add missing documentation for the ``lief.ELF.GnuHash`` object
-  * Add help for the Windows SDK (https://lief.quarkslab.com/doc/installation.html#windows-sdk)
 
-v0.6:
-  * First public release
-
+see doc/sphinx/changelog.rst
 
