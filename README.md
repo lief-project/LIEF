@@ -16,7 +16,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.6.1-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.7.0-brightgreen.svg?style=default">
   </a>
 
 </p>
