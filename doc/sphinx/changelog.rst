@@ -138,7 +138,7 @@ API
     * :attr:`lief.MachO.Binary.uuid`
     * :class:`lief.MachO.UUIDCommand`
 
-  :Main Cmmand:
+  :Main Command:
 
     * :attr:`lief.MachO.Binary.has_main_command`
     * :attr:`lief.MachO.Binary.main_command`
