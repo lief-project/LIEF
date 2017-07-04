@@ -33,12 +33,12 @@ Section::Section(const Section&) = default;
 Section::~Section(void) = default;
 
 Section::Section(void) :
-  segmentName_{""},
+  segment_name_{""},
   address_{0},
   original_size_{0},
   align_{0},
-  relocationOffset_{0},
-  nbRelocations_{0},
+  relocations_offset_{0},
+  nbof_relocations_{0},
   flags_{0},
   reserved1_{0},
   reserved2_{0},
@@ -51,12 +51,12 @@ Section::Section(void) :
 }
 
 Section::Section(const section_32 *sectionCmd) :
-  segmentName_{sectionCmd->segname},
+  segment_name_{sectionCmd->segname},
   address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
-  relocationOffset_{sectionCmd->reloff},
-  nbRelocations_{sectionCmd->nreloc},
+  relocations_offset_{sectionCmd->reloff},
+  nbof_relocations_{sectionCmd->nreloc},
   flags_{sectionCmd->flags},
   reserved1_{sectionCmd->reserved1},
   reserved2_{sectionCmd->reserved2},
@@ -69,12 +69,12 @@ Section::Section(const section_32 *sectionCmd) :
 }
 
 Section::Section(const section_64 *sectionCmd) :
-  segmentName_{sectionCmd->segname},
+  segment_name_{sectionCmd->segname},
   address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
-  relocationOffset_{sectionCmd->reloff},
-  nbRelocations_{sectionCmd->nreloc},
+  relocations_offset_{sectionCmd->reloff},
+  nbof_relocations_{sectionCmd->nreloc},
   flags_{sectionCmd->flags},
   reserved1_{sectionCmd->reserved1},
   reserved2_{sectionCmd->reserved2},
@@ -111,7 +111,7 @@ const std::string& Section::segment_name(void) const {
   if (this->segment_ != nullptr) {
     return this->segment_->name();
   } else {
-    return this->segmentName_;
+    return this->segment_name_;
   }
 }
 
@@ -124,11 +124,11 @@ uint32_t Section::alignment(void) const {
 }
 
 uint32_t Section::relocation_offset(void) const {
-  return relocationOffset_;
+  return relocations_offset_;
 }
 
 uint32_t Section::numberof_relocations(void) const {
-  return nbRelocations_;
+  return nbof_relocations_;
 }
 
 uint32_t Section::flags(void) const {
@@ -175,7 +175,7 @@ std::set<SECTION_FLAGS> Section::flags_list(void) const {
 }
 
 void Section::segment_name(const std::string& name) {
-  this->segmentName_ = name;
+  this->segment_name_ = name;
   if (this->segment_ != nullptr) {
     return this->segment_->name(name);
   }
@@ -190,11 +190,11 @@ void Section::alignment(uint32_t align) {
 }
 
 void Section::relocation_offset(uint32_t relocOffset) {
-  this->relocationOffset_ = relocOffset;
+  this->relocations_offset_ = relocOffset;
 }
 
 void Section::numberof_relocations(uint32_t nbReloc) {
-  this->nbRelocations_ = nbReloc;
+  this->nbof_relocations_ = nbReloc;
 }
 
 void Section::flags(uint32_t flags) {
