@@ -89,12 +89,12 @@ class DLL_PUBLIC Section : public LIEF::Section {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
-    std::string segmentName_;
+    std::string segment_name_;
     uint64_t address_;
     uint64_t original_size_;
     uint32_t align_;
-    uint32_t relocationOffset_;
-    uint32_t nbRelocations_;
+    uint32_t relocations_offset_;
+    uint32_t nbof_relocations_;
     //! @brief `flags_` attribute holds both section's type and section's *flags*
     //!
     //! * Type:  `flags_[7:0]`
