@@ -161,6 +161,13 @@ class DLL_PUBLIC Visitor {
     }
   }
 
+  template<typename T, typename U>
+  void visit(const std::pair<T, U>& p) {
+    this->visit(std::get<0>(p));
+    this->visit(std::get<1>(p));
+  }
+
+
   virtual void visit(size_t n);
   virtual void visit(const std::string& str);
   virtual void visit(const std::u16string& str);
