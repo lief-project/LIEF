@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/DyldInfo.hpp"
 #include "easylogging++.h"
 
 namespace LIEF {
@@ -229,45 +230,61 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
-      case LOAD_COMMAND_TYPES::LC_TWOLEVEL_HINTS:
+      // ===============
+      // Dyd Info
+      // ===============
+      case LOAD_COMMAND_TYPES::LC_DYLD_INFO:
+      case LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY:
         {
-          LOG(DEBUG) << "[+] Parsing LC_TWOLEVEL_HINTS";
+          LOG(DEBUG) << "[+] Parsing dyld information";
+          const dyld_info_command* cmd =
+            reinterpret_cast<const dyld_info_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(dyld_info_command)));
 
-          load_command = new LoadCommand{command};
+          load_command = new DyldInfo{cmd};
           break;
         }
 
-      case LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_SUB_FRAMEWORK";
 
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_TWOLEVEL_HINTS:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_TWOLEVEL_HINTS";
 
-      case LOAD_COMMAND_TYPES::LC_SUB_UMBRELLA:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_SUB_UMBRELLA";
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_SUB_FRAMEWORK";
 
-      case LOAD_COMMAND_TYPES::LC_SUB_LIBRARY:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_SUB_LIBRARY";
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_SUB_UMBRELLA:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_SUB_UMBRELLA";
 
-      case LOAD_COMMAND_TYPES::LC_SUB_CLIENT:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_SUB_CLIENT";
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_SUB_LIBRARY:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_SUB_LIBRARY";
+
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
+
+      //case LOAD_COMMAND_TYPES::LC_SUB_CLIENT:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_SUB_CLIENT";
+
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
       // =======
       // LC_MAIN
@@ -284,19 +301,19 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
-      case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
-      case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
-        {
-          LOG(DEBUG) << "[+] Parsing LC_CODE_SIGNATURE";
-          load_command = new LoadCommand{command};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
+      //  {
+      //    LOG(DEBUG) << "[+] Parsing LC_CODE_SIGNATURE";
+      //    load_command = new LoadCommand{command};
+      //    break;
+      //  }
 
       default:
         {

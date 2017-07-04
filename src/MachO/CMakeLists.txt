@@ -31,6 +31,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/MainCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylibCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylinkerCommand.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/DyldInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/BinaryParser.tcc")
@@ -52,6 +53,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SymbolCommand.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/utils.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DyldInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/UUIDCommand.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/Structures.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp")

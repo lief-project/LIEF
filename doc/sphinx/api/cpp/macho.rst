@@ -116,3 +116,11 @@ UUIDCommand
 
 .. doxygenclass:: LIEF::MachO::UUIDCommand
    :project: lief
+
+----------
+
+Dyld Info
+*********
+
+.. doxygenclass:: LIEF::MachO::DyldInfo
+   :project: lief
