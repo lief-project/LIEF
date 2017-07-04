@@ -111,8 +111,6 @@ MainCommand
 ----------
 
 
-
-
 Symbol
 ******
 
@@ -121,9 +119,18 @@ Symbol
   :inherited-members:
   :undoc-members:
 
+----------
 
+Dyld Info
+*********
+
+.. autoclass:: lief.MachO.DyldInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
 
 ----------
+
 
 
 Enum
