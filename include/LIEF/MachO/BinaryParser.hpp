@@ -54,6 +54,8 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
     Binary* get_binary(void);
 
   private:
+    static std::pair<uint64_t, uint64_t> decode_uleb128(const VectorStream& stream, uint64_t offset);
+
     BinaryParser(std::unique_ptr<VectorStream>&& stream);
 
     void parse(void);

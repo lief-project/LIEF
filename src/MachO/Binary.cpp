@@ -540,6 +540,20 @@ const DyldInfo& Binary::dyld_info(void) const {
   return this->get_command<DyldInfo>();
 }
 
+// Function Starts
+// +++++++++++++++
+bool Binary::has_function_starts(void) const {
+  return this->has_command<FunctionStarts>();
+}
+
+FunctionStarts& Binary::function_starts(void) {
+  return this->get_command<FunctionStarts>();
+}
+
+const FunctionStarts& Binary::function_starts(void) const {
+  return this->get_command<FunctionStarts>();
+}
+
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {

@@ -12,6 +12,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyMainCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDylinker.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDyldInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyFunctionStarts.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyMachOStructures.cpp"
 )
 

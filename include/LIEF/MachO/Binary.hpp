@@ -36,6 +36,7 @@
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -190,9 +191,16 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief ``true`` if the binary has a MachO::DyldInfo command.
     bool has_dyld_info(void) const;
 
-    //! @brief Return the MachO::Dyl
+    //! @brief Return the MachO::Dyld command
     DyldInfo&       dyld_info(void);
     const DyldInfo& dyld_info(void) const;
+
+    //! @brief ``true`` if the binary has a MachO::FunctionStarts command.
+    bool has_function_starts(void) const;
+
+    //! @brief Return the MachO::FunctionStarts command
+    FunctionStarts&       function_starts(void);
+    const FunctionStarts& function_starts(void) const;
 
     template<class T>
     bool has_command(void) const;

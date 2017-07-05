@@ -134,6 +134,17 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.DyldInfo) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_function_starts",
+        &Binary::has_function_starts,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.FunctionStarts) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("function_starts",
+        static_cast<no_const_getter<FunctionStarts&>>(&Binary::function_starts),
+        "Return binary's " RST_CLASS_REF(lief.MachO.FunctionStarts) " if any.",
+        py::return_value_policy::reference)
+
+
 
     .def("__str__",
         [] (const Binary& binary)

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+
 #include "easylogging++.h"
 
 namespace LIEF {
@@ -301,12 +303,35 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
-      //case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
-      //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
+      // ==================
+      // LC_FUNCTION_STARTS
+      // ==================
+      case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
+        {
+          LOG(DEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
+          const linkedit_data_command* cmd =
+            reinterpret_cast<const linkedit_data_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          load_command = new FunctionStarts{cmd};
+
+          uint64_t offset = cmd->dataoff;
+          std::pair<uint64_t, uint64_t> value_delta;
+          uint64_t value = 0;
+
+          do {
+            value_delta = BinaryParser::decode_uleb128(*this->stream_.get(), offset);
+            if (std::get<0>(value_delta) == 0) {
+              break;
+            }
+            value  += std::get<0>(value_delta);
+            offset += std::get<1>(value_delta);
+
+            LOG(DEBUG) << "Value: " << std::hex << value;
+            dynamic_cast<FunctionStarts*>(load_command)->add_function(value);
+          } while(offset < (cmd->dataoff + cmd->datasize) and std::get<0>(value_delta) > 0);
+
+          break;
+        }
 
       //case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
       //  {

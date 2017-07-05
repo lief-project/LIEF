@@ -156,6 +156,8 @@ def print_uuid(binary):
     uuid_str = " ".join(map(lambda e : "{:02x}".format(e), cmd.uuid))
     print("UUID: {}".format(uuid_str))
 
+    print("")
+
 
 def print_main_command(binary):
 
@@ -169,10 +171,32 @@ def print_main_command(binary):
     print(format_hex.format("Entry point:", cmd.entrypoint))
     print(format_hex.format("Stack size:", cmd.stack_size))
 
+    print("")
+
 
 def print_dylinker(binary):
     print("== Dylinker ==")
     print("Path: {}".format(binary.dylinker.name))
+
+    print("")
+
+def print_function_starts(binary):
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Function Starts ==")
+
+    fstarts = binary.function_starts
+
+    print(format_hex.format("Offset:", fstarts.data_offset))
+    print(format_hex.format("Size:",   fstarts.data_size))
+    print("Functions: ({:d})".format(len(fstarts.functions)))
+    for idx, address in enumerate(fstarts.functions):
+        print("    [{:d}] __TEXT + 0x{:x}".format(idx, address))
+
+    print("")
+
 
 
 def print_dyld_info(binary):
@@ -188,7 +212,6 @@ def print_dyld_info(binary):
     print(f_value.format("Weak Bind", dyld_info.weak_bind[0],   dyld_info.weak_bind[1]))
     print(f_value.format("Lazy Bind", dyld_info.lazy_bind[0],   dyld_info.lazy_bind[1]))
     print(f_value.format("Export",    dyld_info.export_info[0], dyld_info.export_info[1]))
-
 
     print("")
 
@@ -238,6 +261,10 @@ def main():
             action='store_true', dest='show_dyldinfo',
             help='Display the DyldInfo command')
 
+    parser.add_argument('--function-starts',
+            action='store_true', dest='show_function_starts',
+            help='Display the FunctionStarts command')
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -284,6 +311,9 @@ def main():
 
         if (args.show_dyldinfo or args.show_all) and binary.has_dyld_info:
             print_dyld_info(binary)
+
+        if (args.show_function_starts or args.show_all) and binary.has_function_starts:
+            print_function_starts(binary)
 
 
 if __name__ == "__main__":
