@@ -97,7 +97,6 @@ bool is_64(const std::string& file) {
 
 }
 
-
 }
 }
 

@@ -34,7 +34,9 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DyldInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
-  "${CMAKE_CURRENT_LIST_DIR}/BinaryParser.tcc")
+  "${CMAKE_CURRENT_LIST_DIR}/BinaryParser.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/FunctionStarts.cpp"
+)
 
 set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Binary.hpp"
@@ -55,8 +57,10 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/utils.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DyldInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/UUIDCommand.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/FunctionStarts.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp")
+  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp"
+  )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})
 source_group("Source Files\\MachO" FILES ${LIEF_MACHO_SRC})

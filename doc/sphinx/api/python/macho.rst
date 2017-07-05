@@ -131,6 +131,15 @@ Dyld Info
 
 ----------
 
+Function starts
+***************
+
+.. autoclass:: lief.MachO.FunctionStarts
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
 
 
 Enum

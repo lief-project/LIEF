@@ -124,5 +124,21 @@ Binary* BinaryParser::get_binary(void) {
 }
 
 
+std::pair<uint64_t, uint64_t> BinaryParser::decode_uleb128(const VectorStream& stream, uint64_t offset) {
+  uint64_t value = 0;
+  unsigned shift = 0;
+  uint64_t current_offset = offset - sizeof(uint8_t);
+  do {
+    current_offset += sizeof(uint8_t);
+    value += static_cast<uint64_t>(stream.read_integer<uint8_t>(current_offset) & 0x7f) << shift;
+    shift += 7;
+  } while (stream.read_integer<uint8_t>(current_offset) >= 128);
+
+  uint64_t delta = current_offset - offset;
+  delta++;
+  return {value, delta};
+}
+
+
 } // namespace MachO
 } // namespace LIEF

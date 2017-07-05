@@ -26,6 +26,7 @@ namespace MachO {
 DLL_PUBLIC bool is_macho(const std::string& file);
 DLL_PUBLIC bool is_fat(const std::string& file);
 DLL_PUBLIC bool is_64(const std::string& file);
+DLL_PUBLIC uint64_t decode_uleb128(const std::string& file);
 }
 }
 
