@@ -124,6 +124,15 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.DylinkerCommand) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_dyld_info",
+        &Binary::has_dyld_info,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldInfo) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("dyld_info",
+        static_cast<no_const_getter<DyldInfo&>>(&Binary::dyld_info),
+        "Return binary's " RST_CLASS_REF(lief.MachO.DyldInfo) " if any.",
+        py::return_value_policy::reference)
 
 
     .def("__str__",

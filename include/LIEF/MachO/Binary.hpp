@@ -35,6 +35,7 @@
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -172,19 +173,26 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     UUIDCommand&       uuid(void);
     const UUIDCommand& uuid(void) const;
 
-    //! @brief ``true`` if the binary has an MachO::MainCommand command.
+    //! @brief ``true`` if the binary has a MachO::MainCommand command.
     bool has_main_command(void) const;
 
     //! @brief Return the MachO::MainCommand
     MainCommand&       main_command(void);
     const MainCommand& main_command(void) const;
 
-    //! @brief ``true`` if the binary has an MachO::DylinkerCommand.
+    //! @brief ``true`` if the binary has a MachO::DylinkerCommand.
     bool has_dylinker(void) const;
 
     //! @brief Return the MachO::DylinkerCommand
     DylinkerCommand&       dylinker(void);
     const DylinkerCommand& dylinker(void) const;
+
+    //! @brief ``true`` if the binary has a MachO::DyldInfo command.
+    bool has_dyld_info(void) const;
+
+    //! @brief Return the MachO::Dyl
+    DyldInfo&       dyld_info(void);
+    const DyldInfo& dyld_info(void) const;
 
     template<class T>
     bool has_command(void) const;
