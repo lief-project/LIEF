@@ -88,6 +88,7 @@ API
   * :meth:`lief.PE.Binary.get_content_from_virtual_address` takes either an **Absolute** virtual address or a **Relative** virtual address
   * ``lief.PE.Binary.section_from_virtual_address`` has been renamed to :meth:`lief.PE.Binary.section_from_rva`.
   * ``lief.PE.parse_from_raw`` has been removed. One can use :func:`lief.PE.parse`.
+  * ``lief.PE.Section.data`` has been **removed**. Please use :attr:`lief.PE.Section.content`
 
 
   :Dos Stub:
