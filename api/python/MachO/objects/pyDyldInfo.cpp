@@ -137,7 +137,7 @@ void init_MachO_DyldInfo_class(py::module& m) {
         "If there is no exported symbol, the byte is zero. If there\n"
         "is exported info, it follows the length byte. The exported\n"
         "info normally consists of a flags and offset both encoded\n"
-        "in uleb128. The offset is location of the content named\n"
+        "in `uleb128 <https://en.wikipedia.org/wiki/LEB128>`_. The offset is location of the content named\n"
         "by the symbol. It is the offset from the mach_header for\n"
         "the image.\n\n"
 

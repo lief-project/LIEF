@@ -217,6 +217,10 @@ def main():
             action='store_true', dest='show_dylinker',
             help='Display the Dylinker command')
 
+    parser.add_argument('--dyldinfo',
+            action='store_true', dest='show_dyldinfo',
+            help='Display the DyldInfo command')
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')

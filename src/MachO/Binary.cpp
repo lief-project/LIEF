@@ -526,6 +526,19 @@ const DylinkerCommand& Binary::dylinker(void) const {
   return this->get_command<DylinkerCommand>();
 }
 
+// DyldInfo
+// ++++++++
+bool Binary::has_dyld_info(void) const {
+  return this->has_command<DyldInfo>();
+}
+
+DyldInfo& Binary::dyld_info(void) {
+  return this->get_command<DyldInfo>();
+}
+
+const DyldInfo& Binary::dyld_info(void) const {
+  return this->get_command<DyldInfo>();
+}
 
 
 
