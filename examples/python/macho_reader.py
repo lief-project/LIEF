@@ -175,6 +175,23 @@ def print_dylinker(binary):
     print("Path: {}".format(binary.dylinker.name))
 
 
+def print_dyld_info(binary):
+    print("== Dyld Info ==")
+    f_title = "|{:<12}|{:<11}|{:<11}|"
+    f_value = "|{:<12}|0x{:<8x} |0x{:<8x} |"
+
+    dyld_info = binary.dyld_info
+
+    print(f_title.format("Type", "Offset", "Size"))
+    print(f_value.format("Rebase",    dyld_info.rebase[0],      dyld_info.rebase[1]))
+    print(f_value.format("Bind",      dyld_info.bind[0],        dyld_info.bind[1]))
+    print(f_value.format("Weak Bind", dyld_info.weak_bind[0],   dyld_info.weak_bind[1]))
+    print(f_value.format("Lazy Bind", dyld_info.lazy_bind[0],   dyld_info.lazy_bind[1]))
+    print(f_value.format("Export",    dyld_info.export_info[0], dyld_info.export_info[1]))
+
+
+    print("")
+
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
     parser.add_argument('-a', '--all',
@@ -264,6 +281,9 @@ def main():
 
         if (args.show_dylinker or args.show_all) and binary.has_dylinker:
             print_dylinker(binary)
+
+        if (args.show_dyldinfo or args.show_all) and binary.has_dyld_info:
+            print_dyld_info(binary)
 
 
 if __name__ == "__main__":
