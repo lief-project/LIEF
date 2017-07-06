@@ -29,7 +29,11 @@ DyldInfo::DyldInfo(const DyldInfo&) = default;
 DyldInfo::~DyldInfo(void) = default;
 
 DyldInfo::DyldInfo(const dyld_info_command *dyld_info_cmd) :
-  rebase_{dyld_info_cmd->rebase_off, dyld_info_cmd->rebase_size}
+  rebase_{dyld_info_cmd->rebase_off, dyld_info_cmd->rebase_size},
+  bind_{dyld_info_cmd->bind_off, dyld_info_cmd->bind_size},
+  weak_bind_{dyld_info_cmd->weak_bind_off, dyld_info_cmd->weak_bind_size},
+  lazy_bind_{dyld_info_cmd->lazy_bind_off, dyld_info_cmd->lazy_bind_size},
+  export_{dyld_info_cmd->export_off, dyld_info_cmd->export_size}
 {
   this->command_ = static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd->cmd);
   this->size_    = dyld_info_cmd->cmdsize;
