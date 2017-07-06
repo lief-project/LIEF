@@ -11,6 +11,10 @@
     <img src="https://travis-ci.org/lief-project/LIEF.svg?branch=master">
   </a>
   &nbsp;
+  <a href="https://circleci.com/gh/lief-project/LIEF/tree/master">
+    <img src="https://circleci.com/gh/lief-project/LIEF/tree/master.svg?style=svg">
+  </a>
+  &nbsp;
   <a href="https://ci.appveyor.com/project/Romain/lief/branch/master">
     <img src="https://ci.appveyor.com/api/projects/status/0ijlcujac5vh8cas/branch/master?svg=true">
   </a>
@@ -18,7 +22,6 @@
   <a href="https://github.com/lief-project/LIEF/releases">
     <img src="https://img.shields.io/badge/release-0.7.0-brightgreen.svg?style=default">
   </a>
-
 </p>
 
 The purpose of this project is to provide a cross platform library which can parse, modify and abstract ELF, PE and MachO formats.
