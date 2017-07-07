@@ -12,8 +12,32 @@ from lief.PE import oid_to_string
 
 from optparse import OptionParser
 import sys
+import traceback
 
+class exceptions_handler(object):
+    func = None
 
+    def __init__(self, exceptions, on_except_callback=None):
+        self.exceptions         = exceptions
+        self.on_except_callback = on_except_callback
+
+    def __call__(self, *args, **kwargs):
+        if self.func is None:
+            self.func = args[0]
+            return self
+        try:
+            return self.func(*args, **kwargs)
+        except self.exceptions as e:
+            if self.on_except_callback is not None:
+                self.on_except_callback(e)
+            else:
+                print("-" * 60)
+                print("Exception in {}: {}".format(self.func.__name__, e))
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_tb(exc_traceback)
+                print("-" * 60)
+
+@exceptions_handler(Exception)
 def print_header(binary):
     dos_header       = binary.dos_header
     header           = binary.header
@@ -95,6 +119,7 @@ def print_header(binary):
     print(format_dec.format("Number of RVA and size:",         optional_header.numberof_rva_and_size))
     print("")
 
+@exceptions_handler(Exception)
 def print_data_directories(binary):
     data_directories = binary.data_directories
 
@@ -109,6 +134,7 @@ def print_data_directories(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_sections(binary):
     sections = binary.sections
 
@@ -125,6 +151,7 @@ def print_sections(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_symbols(binary):
     symbols = binary.symbols
     if len(symbols) > 0:
@@ -152,6 +179,7 @@ def print_symbols(binary):
                 str(symbol.complex_type).split(".")[-1],
                 str(symbol.storage_class).split(".")[-1]))
 
+@exceptions_handler(Exception)
 def print_imports(binary):
     print("== Imports ==")
     imports = binary.imports
@@ -164,6 +192,7 @@ def print_imports(binary):
             print(f_value.format(entry.name, entry.data, entry.iat_value, entry.hint))
     print("")
 
+@exceptions_handler(Exception)
 def print_tls(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
@@ -188,6 +217,7 @@ def print_tls(binary):
     print(format_str.format("Data directory:",    str(tls.directory.type)))
     print("")
 
+@exceptions_handler(Exception)
 def print_relocations(binary):
     relocations = binary.relocations
     print("== Relocations ==")
@@ -198,6 +228,7 @@ def print_relocations(binary):
             print("  0x{:<8x} {:<8}".format(entry.position, str(entry.type).split(".")[-1]))
     print("")
 
+@exceptions_handler(Exception)
 def print_export(binary):
     print("== Exports ==")
     exports = binary.get_export()
@@ -210,6 +241,7 @@ def print_export(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_debug(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
@@ -227,6 +259,8 @@ def print_debug(binary):
     print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
     print("")
 
+
+@exceptions_handler(Exception)
 def print_signature(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
@@ -272,6 +306,7 @@ def print_signature(binary):
     print(format_str.format("Url:",                 signer_info.authenticated_attributes.more_info))
     print("")
 
+@exceptions_handler(Exception)
 def print_rich_header(binary):
     print("== Rich Header ==")
     header = binary.rich_header

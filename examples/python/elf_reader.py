@@ -10,6 +10,7 @@ from lief import ELF
 
 import sys
 import os
+import traceback
 
 from optparse import OptionParser
 terminal_rows, terminal_columns = 100, 100
@@ -21,7 +22,31 @@ except ValueError:
 terminal_columns = int(terminal_columns)
 terminal_rows    = int(terminal_rows)
 
+class exceptions_handler(object):
+    func = None
 
+    def __init__(self, exceptions, on_except_callback=None):
+        self.exceptions         = exceptions
+        self.on_except_callback = on_except_callback
+
+    def __call__(self, *args, **kwargs):
+        if self.func is None:
+            self.func = args[0]
+            return self
+        try:
+            return self.func(*args, **kwargs)
+        except self.exceptions as e:
+            if self.on_except_callback is not None:
+                self.on_except_callback(e)
+            else:
+                print("-" * 60)
+                print("Exception in {}: {}".format(self.func.__name__, e))
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_tb(exc_traceback)
+                print("-" * 60)
+
+
+@exceptions_handler(Exception)
 def print_header(binary):
     header = binary.header
     identity = header.identity
@@ -51,6 +76,7 @@ def print_header(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_sections(binary):
     sections = binary.sections
     if len(sections) > 0:
@@ -73,6 +99,7 @@ def print_sections(binary):
     else:
         print("No sections")
 
+@exceptions_handler(Exception)
 def print_segments(binary):
     segments = binary.segments
     # Segments
@@ -97,6 +124,7 @@ def print_segments(binary):
     else:
         print("No segments")
 
+@exceptions_handler(Exception)
 def print_dynamic_entries(binary):
     dynamicEntries = binary.dynamic_entries
     # Dynamic entries
@@ -117,6 +145,7 @@ def print_dynamic_entries(binary):
 
         print("")
 
+@exceptions_handler(Exception)
 def print_symbols(binary):
 
     static_symbols       = binary.static_symbols
@@ -169,6 +198,7 @@ def print_symbols(binary):
                 symbol.value,
                 str(symbol_version)))
 
+@exceptions_handler(Exception)
 def print_relocations(binary):
     dynamicrelocations = binary.dynamic_relocations
     pltgot_relocations = binary.pltgot_relocations
@@ -226,6 +256,7 @@ def print_relocations(binary):
                 relocation.size,
                 symbol_name))
 
+@exceptions_handler(Exception)
 def print_exported_symbols(binary):
     symbols = binary.exported_symbols
     f_title = "|{:<30} | {:<7}| {:<8}| {:<15}|"
@@ -242,6 +273,7 @@ def print_exported_symbols(binary):
             symbol.value,
             str(symbol_version)))
 
+@exceptions_handler(Exception)
 def print_imported_symbols(binary):
     symbols = binary.imported_symbols
     f_title = "|{:<30} | {:<7}| {:<8}| {:<15}|"
@@ -258,6 +290,7 @@ def print_imported_symbols(binary):
             symbol.value,
             str(symbol_version)))
 
+@exceptions_handler(Exception)
 def print_information(binary):
     print("== Information ==\n")
     format_str = "{:<30} {:<30}"
@@ -267,6 +300,7 @@ def print_information(binary):
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_hex.format("Virtual size:", binary.virtual_size))
 
+@exceptions_handler(Exception)
 def print_gnu_hash(binary):
     print("== GNU Hash ==\n")
 
@@ -287,6 +321,7 @@ def print_gnu_hash(binary):
     print(format_str.format("Hash values:",        gnu_hash.hash_values))
 
 
+@exceptions_handler(Exception)
 def print_sysv_hash(binary):
     print("== SYSV Hash ==\n")
 
@@ -305,6 +340,7 @@ def print_sysv_hash(binary):
     print(format_str.format("Chains:",            sysv_hash.chains))
 
 
+@exceptions_handler(Exception)
 def print_notes(binary):
     print("== Notes ==\n")
 
