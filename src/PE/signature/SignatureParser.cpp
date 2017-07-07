@@ -478,7 +478,11 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
   // u8 -> u16 due to endiness
   std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
   std::u16string progname;
-  utf8::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
+  try {
+    utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
+  } catch (const utf8::exception&) {
+    LOG(WARNING) << "utf8 error when parsing progname";
+  }
 
   authenticated_attributes.program_name_ = progname;
   LOG(DEBUG) << "ProgName " << u16tou8(progname);
