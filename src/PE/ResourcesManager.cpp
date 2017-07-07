@@ -55,10 +55,12 @@ ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) {
 }
 
 const ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
+  if (!this->resources_) {
+      throw not_found(std::string("No resources to get node"));
+  }
   if (not this->has_type(type)) {
     throw not_found(std::string("Can't find the node with type '") + to_string(type) + "'");
   }
-
   it_childs nodes = this->resources_->childs();
   auto&& it_node = std::find_if(
       std::begin(nodes),
@@ -72,6 +74,9 @@ const ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
 
 std::set<RESOURCE_TYPES> ResourcesManager::get_types_available(void) const {
   std::set<RESOURCE_TYPES> types;
+  if (!this->resources_) {
+      return types;
+  }
   for (const ResourceNode& node : this->resources_->childs()) {
     auto&& it = std::find_if(
         std::begin(resource_types_array),
@@ -89,6 +94,9 @@ std::set<RESOURCE_TYPES> ResourcesManager::get_types_available(void) const {
 
 std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available(void) const {
   std::set<RESOURCE_LANGS> langs;
+  if (!this->resources_) {
+      return langs;
+  }
   for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
       for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
@@ -113,6 +121,9 @@ std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available(void) const {
 
 std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available(void) const {
   std::set<RESOURCE_SUBLANGS> sublangs;
+  if (!this->resources_) {
+      return sublangs;
+  }
   for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
       for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
@@ -136,6 +147,9 @@ std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available(void) const
 }
 
 bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
+  if (!this->resources_) {
+      return false;
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_node = std::find_if(
       std::begin(nodes),
@@ -152,6 +166,9 @@ bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
 // ========
 
 bool ResourcesManager::has_manifest(void) const {
+  if (!this->resources_) {
+      return false;
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_manifest = std::find_if(
       std::begin(nodes),
@@ -164,10 +181,9 @@ bool ResourcesManager::has_manifest(void) const {
 }
 
 std::string ResourcesManager::manifest(void) const {
-  if (not this->has_manifest()) {
+  if (not this->has_manifest() || !this->resources_) {
     throw not_found("No manifest found in the resources");
   }
-
   it_childs nodes = this->resources_->childs();
   auto&& it_manifest = std::find_if(
       std::begin(nodes),
@@ -205,6 +221,9 @@ void ResourcesManager::manifest(const std::string& manifest) {
 // Resource Version
 // ================
 bool ResourcesManager::has_version(void) const {
+  if (!this->resources_) {
+      return false;
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_version = std::find_if(
       std::begin(nodes),
@@ -553,7 +572,9 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 // =====
 
 bool ResourcesManager::has_icons(void) const {
-
+  if (!this->resources_) {
+      return false;
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
       std::begin(nodes),
@@ -584,7 +605,9 @@ bool ResourcesManager::has_icons(void) const {
 }
 
 std::vector<ResourceIcon> ResourcesManager::icons(void) const {
-
+  if (!this->resources_) {
+      throw not_found(std::string("No resources to find icons"));
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
       std::begin(nodes),
@@ -667,6 +690,9 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
 
 
 void ResourcesManager::add_icon(const ResourceIcon& icon) {
+  if (!this->resources_) {
+      throw not_found(std::string("No resource to find icon"));
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
       std::begin(nodes),
@@ -738,6 +764,9 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
 
 
 void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceIcon& newone) {
+  if (!this->resources_) {
+	throw not_found(std::string("No resource to change icon"));
+  }
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
       std::begin(nodes),
@@ -1023,7 +1052,9 @@ std::string ResourcesManager::print(uint32_t depth) const {
   std::ostringstream oss;
   oss << rang::control::forceColor;
   uint32_t current_depth = 0;
-  this->print_tree(*this->resources_, oss, current_depth, depth);
+  if (this->resources_) {
+      this->print_tree(*this->resources_, oss, current_depth, depth);
+  }
   return oss.str();
 }
 
