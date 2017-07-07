@@ -253,6 +253,17 @@ def print_dyld_info(binary):
 
     print("")
 
+@exceptions_handler(Exception)
+def print_source_version(binary):
+    print("== Source Version ==")
+
+    version = binary.source_version.version
+
+    print("Version: {:d}.{:d}.{:d}.{:d}.{:d}".format(*version))
+
+    print("")
+
+
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
     parser.add_argument('-a', '--all',
@@ -303,6 +314,10 @@ def main():
             action='store_true', dest='show_function_starts',
             help='Display the FunctionStarts command')
 
+    parser.add_argument('--source-version',
+            action='store_true', dest='show_source_version',
+            help="Display the 'Source Version' command")
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -352,6 +367,9 @@ def main():
 
         if (args.show_function_starts or args.show_all) and binary.has_function_starts:
             print_function_starts(binary)
+
+        if (args.show_source_version or args.show_all) and binary.has_source_version:
+            print_source_version(binary)
 
 
 if __name__ == "__main__":

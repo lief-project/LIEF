@@ -144,6 +144,16 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.FunctionStarts) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_source_version",
+        &Binary::has_source_version,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SourceVersion) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("source_version",
+        static_cast<no_const_getter<SourceVersion&>>(&Binary::source_version),
+        "Return binary's " RST_CLASS_REF(lief.MachO.SourceVersion) " if any.",
+        py::return_value_policy::reference)
+
 
 
     .def("__str__",

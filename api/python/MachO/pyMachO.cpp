@@ -39,6 +39,7 @@ void init_MachO_module(py::module& m) {
   init_MachO_DylinkerCommand_class(LIEF_MachO_module);
   init_MachO_DyldInfo_class(LIEF_MachO_module);
   init_MachO_FunctionStarts_class(LIEF_MachO_module);
+  init_MachO_SourceVersion_class(LIEF_MachO_module);
 
 
   // Enums

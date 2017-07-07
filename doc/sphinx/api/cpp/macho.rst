@@ -124,3 +124,19 @@ Dyld Info
 
 .. doxygenclass:: LIEF::MachO::DyldInfo
    :project: lief
+
+
+Function starts
+***************
+
+.. doxygenclass:: LIEF::MachO::FunctionStarts
+   :project: lief
+
+
+----------
+
+Source Version
+**************
+
+.. doxygenclass:: LIEF::MachO::SourceVersion
+   :project: lief
