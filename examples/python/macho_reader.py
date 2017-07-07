@@ -8,6 +8,7 @@
 import sys
 import os
 import argparse
+import traceback
 
 from lief import MachO
 
@@ -20,6 +21,32 @@ except ValueError:
 terminal_columns = int(terminal_columns)
 terminal_rows    = int(terminal_rows)
 
+class exceptions_handler(object):
+    func = None
+
+    def __init__(self, exceptions, on_except_callback=None):
+        self.exceptions         = exceptions
+        self.on_except_callback = on_except_callback
+
+    def __call__(self, *args, **kwargs):
+        if self.func is None:
+            self.func = args[0]
+            return self
+        try:
+            return self.func(*args, **kwargs)
+        except self.exceptions as e:
+            if self.on_except_callback is not None:
+                self.on_except_callback(e)
+            else:
+                print("-" * 60)
+                print("Exception in {}: {}".format(self.func.__name__, e))
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_tb(exc_traceback)
+                print("-" * 60)
+
+
+
+@exceptions_handler(Exception)
 def print_information(binary):
     print("== Information ==")
     format_str = "{:<30} {:<30}"
@@ -29,6 +56,7 @@ def print_information(binary):
     print(format_hex.format("Address base:", binary.imagebase))
     print("")
 
+@exceptions_handler(Exception)
 def print_header(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
@@ -50,6 +78,7 @@ def print_header(binary):
     print(format_hex.format("Size of commands:",   header.sizeof_cmds))
     print(format_hex.format("Reserved:",           header.reserved))
 
+@exceptions_handler(Exception)
 def print_commands(binary):
 
     f_title = "|{:<20}|{:<11}|{:<11}|"
@@ -63,6 +92,7 @@ def print_commands(binary):
             command.size))
     print("")
 
+@exceptions_handler(Exception)
 def print_libraries(binary):
 
     f_title = "|{:<30}|{:<10}|{:<16}|{:<22}|"
@@ -77,6 +107,7 @@ def print_libraries(binary):
             library.compatibility_version))
     print("")
 
+@exceptions_handler(Exception)
 def print_segments(binary):
 
     f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:16}|{:16}|{}"
@@ -99,6 +130,7 @@ def print_segments(binary):
             sections))
     print("")
 
+@exceptions_handler(Exception)
 def print_sections(binary):
 
     f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:22}|{:19}|{:25}|"
@@ -120,6 +152,7 @@ def print_sections(binary):
             str(section.type).split(".")[-1]))
     print("")
 
+@exceptions_handler(Exception)
 def print_symbols(binary):
     symbols = binary.symbols
     if len(symbols) == 0:
@@ -150,6 +183,7 @@ def print_symbols(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_uuid(binary):
     print("== UUID ==")
     cmd = binary.uuid
@@ -159,6 +193,7 @@ def print_uuid(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_main_command(binary):
 
     format_str = "{:<13} {:<30}"
@@ -174,12 +209,14 @@ def print_main_command(binary):
     print("")
 
 
+@exceptions_handler(Exception)
 def print_dylinker(binary):
     print("== Dylinker ==")
     print("Path: {}".format(binary.dylinker.name))
 
     print("")
 
+@exceptions_handler(Exception)
 def print_function_starts(binary):
     format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
@@ -199,6 +236,7 @@ def print_function_starts(binary):
 
 
 
+@exceptions_handler(Exception)
 def print_dyld_info(binary):
     print("== Dyld Info ==")
     f_title = "|{:<12}|{:<11}|{:<11}|"
