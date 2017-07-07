@@ -554,6 +554,21 @@ const FunctionStarts& Binary::function_starts(void) const {
   return this->get_command<FunctionStarts>();
 }
 
+// Source Version
+// ++++++++++++++
+bool Binary::has_source_version(void) const {
+  return this->has_command<SourceVersion>();
+}
+
+SourceVersion& Binary::source_version(void) {
+  return this->get_command<SourceVersion>();
+}
+
+const SourceVersion& Binary::source_version(void) const {
+  return this->get_command<SourceVersion>();
+}
+
+
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {

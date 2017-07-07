@@ -141,6 +141,17 @@ Function starts
 
 ----------
 
+Source Version
+**************
+
+.. autoclass:: lief.MachO.SourceVersion
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 
 Enum
 ****

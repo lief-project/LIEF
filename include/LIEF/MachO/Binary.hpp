@@ -37,6 +37,7 @@
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/SourceVersion.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -201,6 +202,13 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Return the MachO::FunctionStarts command
     FunctionStarts&       function_starts(void);
     const FunctionStarts& function_starts(void) const;
+
+    //! @brief ``true`` if the binary has a MachO::SourceVersion command.
+    bool has_source_version(void) const;
+
+    //! @brief Return the MachO::SourceVersion command
+    SourceVersion&       source_version(void);
+    const SourceVersion& source_version(void) const;
 
     template<class T>
     bool has_command(void) const;

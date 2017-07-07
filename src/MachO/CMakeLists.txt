@@ -36,6 +36,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/BinaryParser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/FunctionStarts.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SourceVersion.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -60,6 +61,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/FunctionStarts.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/Structures.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SourceVersion.hpp"
   )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})
