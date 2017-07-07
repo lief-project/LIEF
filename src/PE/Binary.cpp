@@ -318,7 +318,7 @@ bool Binary::has_exports(void) const {
 }
 
 bool Binary::has_resources(void) const {
-  return this->has_resources_;
+  return this->has_resources_ and this->resources_ != nullptr;
 }
 
 bool Binary::has_exceptions(void) const {
@@ -1097,10 +1097,16 @@ void Binary::rich_header(const RichHeader& rich_header) {
 // ===============
 
 ResourcesManager Binary::get_resources_manager(void) {
+  if (this->resources_ == nullptr or not this->has_resources()) {
+    throw not_found("There is no resources in the binary");
+  }
   return ResourcesManager{this->resources_};
 }
 
 const ResourcesManager Binary::get_resources_manager(void) const {
+  if (this->resources_ == nullptr or not this->has_resources()) {
+    throw not_found("There is no resources in the binary");
+  }
   return ResourcesManager{this->resources_};
 }
 
