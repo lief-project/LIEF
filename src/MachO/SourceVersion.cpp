@@ -42,11 +42,11 @@ SourceVersion::SourceVersion(const source_version_command *version_cmd) :
 }
 
 
- const version_t& SourceVersion::version(void) const {
+ const SourceVersion::version_t& SourceVersion::version(void) const {
    return this->version_;
  }
 
- void SourceVersion::version(const version_t& version) {
+ void SourceVersion::version(const SourceVersion::version_t& version) {
    this->version_ = version;
  }
 
@@ -69,7 +69,7 @@ bool SourceVersion::operator!=(const SourceVersion& rhs) const {
 
 std::ostream& SourceVersion::print(std::ostream& os) const {
   LoadCommand::print(os);
-  const version_t& version = this->version();
+  const SourceVersion::version_t& version = this->version();
   os << "Version: " << std::dec
      << version[0] << "."
      << version[1] << "."
