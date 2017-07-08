@@ -169,7 +169,7 @@ This script setup LIEF as an *external project*
   set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
   # LIEF's version to be used (can be 'master')
-  set(LIEF_VERSION 0.6.1)
+  set(LIEF_VERSION 0.7.0)
 
   # LIEF compilation config
   set(LIEF_CMAKE_ARGS
@@ -183,7 +183,7 @@ This script setup LIEF as an *external project*
   )
 
   ExternalProject_Add(LIEF
-    PREFIX           "${PACKER_LIEF_PREFIX}"
+    PREFIX           "${LIEF_PREFIX}"
     GIT_REPOSITORY   ${LIEF_GIT_URL}
     GIT_TAG          ${LIEF_VERSION}
     INSTALL_DIR      ${LIEF_INSTALL_DIR}
