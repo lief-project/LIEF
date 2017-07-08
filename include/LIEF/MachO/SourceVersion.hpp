@@ -27,10 +27,13 @@
 
 namespace LIEF {
 namespace MachO {
-using version_t = std::array<uint32_t, 5>;
 
 class DLL_PUBLIC SourceVersion : public LoadCommand {
+
   public:
+    //! @brief Version is an array of **5** integers
+    using version_t = std::array<uint32_t, 5>;
+
     SourceVersion(void);
     SourceVersion(const source_version_command *version_cmd);
 
@@ -39,8 +42,9 @@ class DLL_PUBLIC SourceVersion : public LoadCommand {
 
     virtual ~SourceVersion(void);
 
-    const version_t& version(void) const;
-    void            version(const version_t& version);
+    //! @brief Return the version as an array
+    const SourceVersion::version_t& version(void) const;
+    void version(const SourceVersion::version_t& version);
 
     bool operator==(const SourceVersion& rhs) const;
     bool operator!=(const SourceVersion& rhs) const;
@@ -50,7 +54,7 @@ class DLL_PUBLIC SourceVersion : public LoadCommand {
     virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    version_t version_;
+    SourceVersion::version_t version_;
 };
 
 }

@@ -35,9 +35,9 @@ void init_MachO_SourceVersion_class(py::module& m) {
   py::class_<SourceVersion, LoadCommand>(m, "SourceVersion")
 
     .def_property("version",
-        static_cast<getter_t<const version_t&>>(&SourceVersion::version),
-        static_cast<setter_t<const version_t&>>(&SourceVersion::version),
-        "TODO",
+        static_cast<getter_t<const SourceVersion::version_t&>>(&SourceVersion::version),
+        static_cast<setter_t<const SourceVersion::version_t&>>(&SourceVersion::version),
+        "Version as a tuple of **5** integers",
         py::return_value_policy::reference_internal)
 
 
