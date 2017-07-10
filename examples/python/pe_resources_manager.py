@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+import sys
 import lief
 
-b = lief.parse("/home/romain/dev/LIEF/LIEF/tests/samples/PE/PE64_x86-64_binary_mfc-application.exe")
+b = lief.parse(sys.argv[1])
 manager = b.resources_manager
 print(manager)
 print(manager.manifest)
