@@ -411,6 +411,35 @@ it_const_pltgot_relocations Binary::get_pltgot_relocations(void) const {
   };
 }
 
+
+// objects
+// -------
+it_object_relocations Binary::get_object_relocations(void) {
+  return filter_iterator<relocations_t>{std::ref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT;
+    }
+  };
+}
+
+it_const_object_relocations Binary::get_object_relocations(void) const {
+  return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT;
+    }
+  };
+}
+
+// All relocations
+// ---------------
+it_relocations Binary::get_relocations(void) {
+  return this->relocations_;
+}
+
+it_const_relocations Binary::get_relocations(void) const {
+  return this->relocations_;
+}
+
 LIEF::symbols_t Binary::get_abstract_symbols(void) {
   return {std::begin(this->dynamic_symbols_), std::end(this->dynamic_symbols_)};
 }
