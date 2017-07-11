@@ -199,62 +199,51 @@ def print_symbols(binary):
                 str(symbol_version)))
 
 @exceptions_handler(Exception)
-def print_relocations(binary):
+def print_relocations(binary, relocations):
+    f_title = "|{:<10} | {:<10}| {:<8}| {:<15}| {:<30} |"
+    f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<15}| {:<30} |"
+
+    print(f_title.format("Address", "Type", "Size", "Purpose", "Symbol"))
+
+    for relocation in relocations:
+        type = str(relocation.type)
+        if binary.header.machine_type == ELF.ARCH.x86_64:
+            type = str(ELF.RELOCATION_X86_64(relocation.type))
+        elif binary.header.machine_type == ELF.ARCH.i386:
+            type = str(ELF.RELOCATION_i386(relocation.type))
+        elif binary.header.machine_type == ELF.ARCH.ARM:
+            type = str(ELF.RELOCATION_ARM(relocation.type))
+        elif binary.header.machine_type == ELF.ARCH.AARCH64:
+            type = str(ELF.RELOCATION_AARCH64(relocation.type))
+
+        symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
+
+        print(f_value.format(
+            relocation.address,
+            type.split(".")[-1],
+            relocation.size,
+            str(relocation.purpose).split(".")[-1],
+            symbol_name))
+
+
+@exceptions_handler(Exception)
+def print_all_relocations(binary):
     dynamicrelocations = binary.dynamic_relocations
     pltgot_relocations = binary.pltgot_relocations
+    object_relocations = binary.object_relocations
 
-    ## Dynamic relocations ##
     if len(dynamicrelocations) > 0:
         print("== Dynamic Relocations ==\n")
-        f_title = "|{:<10} | {:<10}| {:<8}| {:<30} |"
-        f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<30} |"
-
-        print(f_title.format("Address", "Type", "Size", "Symbol"))
-
-        for relocation in dynamicrelocations:
-            type = str(relocation.type)
-            if binary.header.machine_type == ELF.ARCH.x86_64:
-                type = str(ELF.RELOCATION_X86_64(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.i386:
-                type = str(ELF.RELOCATION_i386(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.ARM:
-                type = str(ELF.RELOCATION_ARM(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.AARCH64:
-                type = str(ELF.RELOCATION_AARCH64(relocation.type))
-
-            symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
-
-            print(f_value.format(
-                relocation.address,
-                type.split(".")[-1],
-                relocation.size,
-                symbol_name))
+        print_relocations(binary, dynamicrelocations)
 
 
     if len(pltgot_relocations) > 0:
         print("== PLT/GOT Relocations ==\n")
-        f_title = "|{:<10} | {:<10}| {:<8}| {:<30} |"
-        f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<30} |"
+        print_relocations(binary, pltgot_relocations)
 
-        print(f_title.format("Address", "Type", "Size", "Symbol"))
-
-        for relocation in pltgot_relocations:
-            type = str(relocation.type)
-            if binary.header.machine_type == ELF.ARCH.x86_64:
-                type = str(ELF.RELOCATION_X86_64(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.i386:
-                type = str(ELF.RELOCATION_i386(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.ARM:
-                type = str(ELF.RELOCATION_ARM(relocation.type))
-            elif binary.header.machine_type == ELF.ARCH.AARCH64:
-                type = str(ELF.RELOCATION_AARCH64(relocation.type))
-
-            symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
-            print(f_value.format(
-                relocation.address,
-                type.split(".")[-1],
-                relocation.size,
-                symbol_name))
+    if len(object_relocations) > 0:
+        print("== Object Relocations ==\n")
+        print_relocations(binary, object_relocations)
 
 @exceptions_handler(Exception)
 def print_exported_symbols(binary):
@@ -444,7 +433,6 @@ def main():
             action='store_true', dest='show_notes',
             help='Display Notes')
 
-
     options, args = optparser.parse_args()
 
     if options.help or len(args) == 0:
@@ -480,7 +468,7 @@ def main():
         print_symbols(binary)
 
     if options.show_relocs or options.show_all:
-        print_relocations(binary)
+        print_all_relocations(binary)
 
     if options.show_imported_symbols or options.show_all:
         print_imported_symbols(binary)
@@ -488,10 +476,10 @@ def main():
     if options.show_exported_symbols or options.show_all:
         print_exported_symbols(binary)
 
-    if options.show_gnu_hash or options.show_all:
+    if (options.show_gnu_hash or options.show_all) and binary.use_gnu_hash:
         print_gnu_hash(binary)
 
-    if options.show_sysv_hash or options.show_all:
+    if (options.show_sysv_hash or options.show_all) and binary.use_sysv_hash:
         print_sysv_hash(binary)
 
     if options.show_notes or options.show_all:

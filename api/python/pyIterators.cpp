@@ -33,6 +33,7 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::ELF::it_symbols>(m);
   init_ref_iterator<LIEF::filter_iterator<LIEF::ELF::relocations_t>>(m);
   init_ref_iterator<LIEF::ELF::it_symbols_version>(m);
+  init_ref_iterator<LIEF::ELF::it_relocations>(m);
   init_ref_iterator<LIEF::ELF::it_symbols_version_requirement>(m);
   init_ref_iterator<LIEF::ELF::it_symbols_version_definition>(m);
   init_ref_iterator<LIEF::filter_iterator<LIEF::ELF::symbols_t>>(m);

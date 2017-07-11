@@ -160,6 +160,15 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     template<typename ELF_T>
     void parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRela);
 
+
+    //! @brief Parse relocations using LIEF::ELF::Section.
+    //!
+    //! Parser::parse_dynamic_relocations and Parser::parse_pltgot_relocations
+    //! use parse relocations by using LIEF::ELF::Segment. This method parse relocations
+    //! that are not reachable through segments (For example Object file).
+    template<typename ELF_T>
+    void parse_section_relocations(uint64_t offset, uint64_t size, bool isRela);
+
     //! @brief Parse SymbolVersionRequirement
     //!
     //! We use the virtual address stored in the

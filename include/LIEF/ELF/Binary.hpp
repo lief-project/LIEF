@@ -131,6 +131,14 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_pltgot_relocations                  get_pltgot_relocations(void);
     it_const_pltgot_relocations            get_pltgot_relocations(void) const;
 
+    //! @brief Return relocations used in an object file (``*.o``)
+    it_object_relocations                  get_object_relocations(void);
+    it_const_object_relocations            get_object_relocations(void) const;
+
+    //! @brief Return **all** relocations present in the binary
+    it_relocations                         get_relocations(void);
+    it_const_relocations                   get_relocations(void) const;
+
     //! @brief ``true`` if GNU hash is used
     //!
     //! @see get_gnu_hash and use_sysv_hash

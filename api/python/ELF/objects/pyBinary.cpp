@@ -78,12 +78,22 @@ void init_ELF_Binary_class(py::module& m) {
 
     .def_property_readonly("dynamic_relocations",
         static_cast<no_const_getter<it_dynamic_relocations>>(&Binary::get_dynamic_relocations),
-        "Return an iterator to PLT/GOT " RST_CLASS_REF(lief.ELF.Relocation) "",
+        "Return an iterator over PLT/GOT " RST_CLASS_REF(lief.ELF.Relocation) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("pltgot_relocations",
         static_cast<no_const_getter<it_pltgot_relocations>>(&Binary::get_pltgot_relocations),
-        "Return an iterator to dynamics " RST_CLASS_REF(lief.ELF.Relocation) "",
+        "Return an iterator over dynamics " RST_CLASS_REF(lief.ELF.Relocation) "",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("object_relocations",
+        static_cast<no_const_getter<it_object_relocations>>(&Binary::get_object_relocations),
+        "Return an iterator over object " RST_CLASS_REF(lief.ELF.Relocation) "",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("relocations",
+        static_cast<no_const_getter<it_relocations>>(&Binary::get_relocations),
+        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) "s",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("symbols_version",
