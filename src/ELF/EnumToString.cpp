@@ -933,6 +933,19 @@ const char* to_string(NOTE_ABIS e) {
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
+
+const char* to_string(RELOCATION_PURPOSES e) {
+  const std::map<RELOCATION_PURPOSES, const char*> enumStrings {
+    { RELOCATION_PURPOSES::RELOC_PURPOSE_NONE,    "NONE"},
+    { RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT,  "PLTGOT"},
+    { RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC, "DYNAMIC"},
+    { RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT,  "OBJECT"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
 } // namespace ELF
 } // namespace LIEF
 

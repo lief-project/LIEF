@@ -319,28 +319,35 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
 
   // Update relocations
   auto&& it_relocation = std::find_if(
-      std::begin(this->pltgot_relocations_),
-      std::end(this->pltgot_relocations_),
+      std::begin(this->relocations_),
+      std::end(this->relocations_),
       [&symbol] (const Relocation* relocation) {
-        return relocation != nullptr and relocation->has_symbol() and relocation->symbol() == *symbol;
+        return relocation != nullptr and
+        relocation->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT and
+        relocation->has_symbol() and
+        relocation->symbol() == *symbol;
       });
 
-  if (it_relocation != std::end(this->pltgot_relocations_)) {
+  if (it_relocation != std::end(this->relocations_)) {
     delete *it_relocation;
-    this->pltgot_relocations_.erase(it_relocation);
+    this->relocations_.erase(it_relocation);
   } else {
   }
 
 
   it_relocation = std::find_if(
-      std::begin(this->dynamic_relocations_),
-      std::end(this->dynamic_relocations_),
+      std::begin(this->relocations_),
+      std::end(this->relocations_),
       [&symbol] (const Relocation* relocation) {
-        return relocation != nullptr and relocation->has_symbol() and relocation->symbol() == *symbol;
+        return relocation != nullptr and
+        relocation->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC and
+        relocation->has_symbol() and
+        relocation->symbol() == *symbol;
       });
-  if (it_relocation != std::end(this->dynamic_relocations_)) {
+
+  if (it_relocation != std::end(this->relocations_)) {
     delete *it_relocation;
-    this->dynamic_relocations_.erase(it_relocation);
+    this->relocations_.erase(it_relocation);
   }
 
   // Update symbol versions
@@ -368,22 +375,40 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
 // Dynamics
 // --------
 
-it_relocations Binary::get_dynamic_relocations(void) {
-  return it_relocations{std::ref(this->dynamic_relocations_)};
+it_dynamic_relocations Binary::get_dynamic_relocations(void) {
+  return filter_iterator<relocations_t>{std::ref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC;
+    }
+  };
+
 }
 
-it_const_relocations Binary::get_dynamic_relocations(void) const {
-  return it_const_relocations{std::cref(this->dynamic_relocations_)};
+it_const_dynamic_relocations Binary::get_dynamic_relocations(void) const {
+  return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC;
+    }
+  };
+
 }
 
 // plt/got
 // -------
-it_relocations Binary::get_pltgot_relocations(void) {
-  return it_relocations{std::ref(this->pltgot_relocations_)};
+it_pltgot_relocations Binary::get_pltgot_relocations(void) {
+  return filter_iterator<relocations_t>{std::ref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT;
+    }
+  };
 }
 
-it_const_relocations Binary::get_pltgot_relocations(void) const {
-  return it_const_relocations{std::cref(this->pltgot_relocations_)};
+it_const_pltgot_relocations Binary::get_pltgot_relocations(void) const {
+  return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
+    [] (const Relocation* reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT;
+    }
+  };
 }
 
 LIEF::symbols_t Binary::get_abstract_symbols(void) {
@@ -788,18 +813,19 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 
 
 void Binary::patch_pltgot(const Symbol& symbol, uint64_t address) {
+  it_pltgot_relocations pltgot_relocations = this->get_pltgot_relocations();
   auto&& it_relocation = std::find_if(
-      std::begin(this->pltgot_relocations_),
-      std::end(this->pltgot_relocations_),
-      [&symbol] (const Relocation* relocation) {
-        return relocation->has_symbol() and relocation->symbol() == symbol;
+      std::begin(pltgot_relocations),
+      std::end(pltgot_relocations),
+      [&symbol] (const Relocation& relocation) {
+        return relocation.has_symbol() and relocation.symbol() == symbol;
       });
 
-  if (it_relocation == std::end(this->pltgot_relocations_)) {
+  if (it_relocation == std::end(pltgot_relocations)) {
     throw not_found("Unable to find the relocation associated with symbol '" + symbol.name() + "'");
   }
 
-  uint64_t got_address = (*it_relocation)->address();
+  uint64_t got_address = (*it_relocation).address();
   this->patch_address(got_address, address, sizeof(uint64_t));
   //(*it_relocation)->address(0);
   //delete *it_relocation;
@@ -1641,12 +1667,7 @@ std::ostream& Binary::print(std::ostream& os) const {
 
 Binary::~Binary(void) {
 
-  for (Relocation* relocation : this->pltgot_relocations_) {
-    delete relocation;
-  }
-
-
-  for (Relocation* relocation : this->dynamic_relocations_) {
+  for (Relocation* relocation : this->relocations_) {
     delete relocation;
   }
 

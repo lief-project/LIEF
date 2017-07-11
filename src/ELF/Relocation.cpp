@@ -33,7 +33,8 @@ Relocation::Relocation(void) :
   addend_{0},
   isRela_{false},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -44,7 +45,8 @@ Relocation::Relocation(const Relocation& other) :
   addend_{other.addend_},
   isRela_{other.isRela_},
   symbol_{nullptr},
-  architecture_{other.architecture_}
+  architecture_{other.architecture_},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {
 }
 
@@ -60,7 +62,8 @@ Relocation::Relocation(const Elf32_Rel* header) :
   addend_{0},
   isRela_{false},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -70,7 +73,8 @@ Relocation::Relocation(const Elf32_Rela* header) :
   addend_{header->r_addend},
   isRela_{true},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -80,7 +84,8 @@ Relocation::Relocation(const Elf64_Rel* header) :
   addend_{0},
   isRela_{false},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -90,7 +95,8 @@ Relocation::Relocation(const Elf64_Rela* header)  :
   addend_{header->r_addend},
   isRela_{true},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -100,7 +106,8 @@ Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isR
   addend_{addend},
   isRela_{isRela},
   symbol_{nullptr},
-  architecture_{ARCH::EM_NONE}
+  architecture_{ARCH::EM_NONE},
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
 {}
 
 
@@ -111,6 +118,7 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->isRela_,       other.isRela_);
   std::swap(this->symbol_,       other.symbol_);
   std::swap(this->architecture_, other.architecture_);
+  std::swap(this->purpose_,      other.purpose_);
 }
 
 uint64_t Relocation::address(void) const {
@@ -153,6 +161,11 @@ bool Relocation::is_rel(void) const {
 
 ARCH Relocation::architecture(void) const {
   return this->architecture_;
+}
+
+
+RELOCATION_PURPOSES Relocation::purpose(void) const {
+  return this->purpose_;
 }
 
 
@@ -227,11 +240,16 @@ void Relocation::type(uint32_t type) {
 }
 
 
+void Relocation::purpose(RELOCATION_PURPOSES purpose) {
+  this->purpose_ = purpose;
+}
+
 void Relocation::accept(Visitor& visitor) const {
   visitor.visit(this->address());
   visitor.visit(this->addend());
   visitor.visit(this->type());
   visitor.visit(this->architecture());
+  visitor.visit(this->purpose());
   if (this->has_symbol()) {
     visitor(this->symbol());
   }
@@ -300,6 +318,7 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
 
   os << std::setw(10) << entry.address()
      << std::setw(10) << relocation_type
+     << std::setw(10) << to_string(entry.purpose())
      << std::setw(10) << symbol_name;
 
   return os;

@@ -157,7 +157,7 @@ TEST_CASE("Test parse", "[elf][parser]")
   SECTION("Dynamic relocations") {
     if (parameters["DynamicReloc"]) {
       REQUIRE(parameters["DynamicReloc"].size() == binary->get_dynamic_relocations().size());
-      it_const_relocations relocations = binary->get_dynamic_relocations();
+      it_const_dynamic_relocations relocations = binary->get_dynamic_relocations();
       for (size_t i = 0; i < parameters["DynamicReloc"].size(); ++i) {
         const Relocation& relocation = relocations[i];
         REQUIRE(parameters["DynamicReloc"][i]["name"].as<std::string>() == relocation.symbol().name().substr(0, 22));
@@ -172,7 +172,7 @@ TEST_CASE("Test parse", "[elf][parser]")
   SECTION(".plt.got relocations") {
     if (parameters["PltGotReloc"]) {
       REQUIRE(parameters["PltGotReloc"].size() == binary->get_pltgot_relocations().size());
-      it_const_relocations relocations = binary->get_pltgot_relocations();
+      it_const_pltgot_relocations relocations = binary->get_pltgot_relocations();
       for (size_t i = 0; i < parameters["PltGotReloc"].size(); ++i) {
         const Relocation& relocation = relocations[i];
         if (parameters["PltGotReloc"][i]["name"].as<std::string>().size() > 0) {

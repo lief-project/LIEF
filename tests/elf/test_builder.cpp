@@ -147,8 +147,8 @@ TEST_CASE("Test parse", "[elf][builder]")
   }
 
   SECTION("Dynamic relocations") {
-    it_relocations dynamic_relocations_lhs = binary_original->get_dynamic_relocations();
-    it_relocations dynamic_relocations_rhs = binary_build->get_dynamic_relocations();
+    it_dynamic_relocations dynamic_relocations_lhs = binary_original->get_dynamic_relocations();
+    it_dynamic_relocations dynamic_relocations_rhs = binary_build->get_dynamic_relocations();
     REQUIRE(dynamic_relocations_lhs.size() == dynamic_relocations_rhs.size());
 
     for (size_t i = 0; i < dynamic_relocations_lhs.size(); ++i) {
@@ -157,8 +157,8 @@ TEST_CASE("Test parse", "[elf][builder]")
   }
 
   SECTION(".plt.got relocations") {
-    it_relocations pltgot_relocations_lhs = binary_original->get_pltgot_relocations();
-    it_relocations pltgot_relocations_rhs = binary_build->get_pltgot_relocations();
+    it_pltgot_relocations pltgot_relocations_lhs = binary_original->get_pltgot_relocations();
+    it_pltgot_relocations pltgot_relocations_rhs = binary_build->get_pltgot_relocations();
     REQUIRE(pltgot_relocations_lhs.size() == pltgot_relocations_rhs.size());
 
     for (size_t i = 0; i < pltgot_relocations_lhs.size(); ++i) {

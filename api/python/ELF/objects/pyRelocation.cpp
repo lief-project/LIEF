@@ -40,6 +40,11 @@ void init_ELF_Relocation_class(py::module& m) {
         static_cast<setter_t<int64_t>>(&Relocation::addend),
         "Additional value")
 
+    .def_property("purpose",
+        static_cast<getter_t<RELOCATION_PURPOSES>>(&Relocation::purpose),
+        static_cast<setter_t<RELOCATION_PURPOSES>>(&Relocation::purpose),
+        "Purpose (" RST_CLASS_REF(lief.ELF.RELOCATION_PURPOSES) ") of the relocation")
+
     .def_property("type",
         static_cast<getter_t<uint32_t>>(&Relocation::type),
         static_cast<setter_t<uint32_t>>(&Relocation::type),

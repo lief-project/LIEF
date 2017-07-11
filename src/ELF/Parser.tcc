@@ -806,7 +806,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
   // Already parsed
-  if (this->binary_->dynamic_relocations_.size() > 0) {
+  if (this->binary_->get_dynamic_relocations().size() > 0) {
     return;
   }
 
@@ -820,6 +820,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
 
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
+      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
       reloc->architecture_ = this->binary_->get_header().machine_type();
       const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx < this->binary_->dynamic_symbols_.size()) {
@@ -830,7 +831,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
                      << reloc;
       }
 
-      this->binary_->dynamic_relocations_.push_back(reloc);
+      this->binary_->relocations_.push_back(reloc);
       relocEntry++;
     }
   } else {
@@ -841,6 +842,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
 
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
+      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
       reloc->architecture_ = this->binary_->get_header().machine_type();
       uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx < this->binary_->dynamic_symbols_.size()) {
@@ -851,7 +853,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
                      << reloc;
       }
 
-      this->binary_->dynamic_relocations_.push_back(reloc);
+      this->binary_->relocations_.push_back(reloc);
       relocEntry++;
     }
   }
@@ -1246,7 +1248,7 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRel
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
   // Already Parsed
-  if (this->binary_->pltgot_relocations_.size() > 0) {
+  if (this->binary_->get_pltgot_relocations().size() > 0) {
     return;
   }
 
@@ -1261,13 +1263,14 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRel
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->architecture_ = this->binary_->header_.machine_type();
+      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
 
       const uint32_t idx  = static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
       }
 
-      this->binary_->pltgot_relocations_.push_back(reloc);
+      this->binary_->relocations_.push_back(reloc);
       relocEntry++;
     }
   } else {
@@ -1277,13 +1280,14 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRel
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->architecture_ = this->binary_->header_.machine_type();
+      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
 
       const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
       }
 
-      this->binary_->pltgot_relocations_.push_back(reloc);
+      this->binary_->relocations_.push_back(reloc);
       relocEntry++;
     }
   }

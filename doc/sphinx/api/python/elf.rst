@@ -385,6 +385,15 @@ Note ABIs
   :inherited-members:
   :undoc-members:
 
+Relocation purposes
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.RELOCATION_PURPOSES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
 
 
 

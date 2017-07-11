@@ -50,11 +50,11 @@ void Builder::build(void) {
     }
   }
 
-  if (this->binary_->dynamic_relocations_.size() > 0) {
+  if (this->binary_->get_dynamic_relocations().size() > 0) {
     this->build_dynamic_relocations<ELF_T>();
   }
 
-  if (this->binary_->pltgot_relocations_.size() > 0) {
+  if (this->binary_->get_pltgot_relocations().size() > 0) {
     this->build_pltgot_relocations<ELF_T>();
   }
 
@@ -831,12 +831,14 @@ void Builder::build_dynamic_relocations(void) {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
   LOG(DEBUG) << "[+] Building dynamic relocations";
 
-  bool isRela = this->binary_->dynamic_relocations_[0]->is_rela();
+  it_dynamic_relocations dynamic_relocations = this->binary_->get_dynamic_relocations();
+
+  bool isRela = dynamic_relocations[0].is_rela();
   if (not std::all_of(
-        std::begin(this->binary_->dynamic_relocations_),
-        std::end(this->binary_->dynamic_relocations_),
-        [isRela] (const Relocation* relocation) {
-          return relocation != nullptr and relocation->is_rela() == isRela;
+        std::begin(dynamic_relocations),
+        std::end(dynamic_relocations),
+        [isRela] (const Relocation& relocation) {
+          return relocation.is_rela() == isRela;
         })) {
       throw LIEF::type_error("Relocation are not of the same type");
   }
@@ -889,9 +891,9 @@ void Builder::build_dynamic_relocations(void) {
   Section& relocation_section = this->binary_->section_from_virtual_address((*it_dyn_relocation)->value());
 
   if (isRela) {
-    (*it_dyn_relocation_size)->value(this->binary_->dynamic_relocations_.size() * sizeof(Elf_Rela));
+    (*it_dyn_relocation_size)->value(dynamic_relocations.size() * sizeof(Elf_Rela));
   } else {
-    (*it_dyn_relocation_size)->value(this->binary_->dynamic_relocations_.size() * sizeof(Elf_Rel));
+    (*it_dyn_relocation_size)->value(dynamic_relocations.size() * sizeof(Elf_Rel));
   }
 
   std::vector<uint8_t> content;
@@ -961,13 +963,16 @@ void Builder::build_pltgot_relocations(void) {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
 
   LOG(DEBUG) << "[+] Building .plt.got relocations";
-  bool isRela = this->binary_->pltgot_relocations_[0]->is_rela();
+
+  it_pltgot_relocations pltgot_relocations = this->binary_->get_pltgot_relocations();
+
+  bool isRela = pltgot_relocations[0].is_rela();
 
   if (not std::all_of(
-        std::begin(this->binary_->pltgot_relocations_),
-        std::end(this->binary_->pltgot_relocations_),
-        [isRela] (const Relocation* relocation) {
-          return relocation != nullptr and relocation->is_rela() == isRela;
+        std::begin(pltgot_relocations),
+        std::end(pltgot_relocations),
+        [isRela] (const Relocation& relocation) {
+          return relocation.is_rela() == isRela;
         })) {
       throw LIEF::type_error("Relocation are not of the same type");
   }
@@ -999,9 +1004,9 @@ void Builder::build_pltgot_relocations(void) {
 
   Section& relocation_section = this->binary_->section_from_virtual_address((*it_dyn_relocation)->value());
   if (isRela) {
-    (*it_dyn_relocation_size)->value(this->binary_->pltgot_relocations_.size() * sizeof(Elf_Rela));
+    (*it_dyn_relocation_size)->value(pltgot_relocations.size() * sizeof(Elf_Rela));
   } else {
-    (*it_dyn_relocation_size)->value(this->binary_->pltgot_relocations_.size() * sizeof(Elf_Rel));
+    (*it_dyn_relocation_size)->value(pltgot_relocations.size() * sizeof(Elf_Rel));
   }
 
   std::vector<uint8_t> content; // Section's content

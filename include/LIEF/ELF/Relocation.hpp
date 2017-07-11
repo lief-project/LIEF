@@ -53,6 +53,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     bool     is_rela(void) const;
     bool     is_rel(void) const;
     ARCH architecture(void) const;
+    RELOCATION_PURPOSES purpose(void) const;
 
     //! @brief Return the **bit** size of the value to patch
     uint32_t size(void) const;
@@ -64,6 +65,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     void address(uint64_t address);
     void addend(int64_t addend);
     void type(uint32_t type);
+    void purpose(RELOCATION_PURPOSES purpose);
 
     virtual void accept(Visitor& visitor) const override;
 
@@ -73,12 +75,13 @@ class DLL_PUBLIC Relocation : public Visitable {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
-    uint64_t address_;
-    uint32_t type_;
-    int64_t  addend_;
-    bool     isRela_;
-    Symbol*  symbol_;
-    ARCH     architecture_;
+    uint64_t            address_;
+    uint32_t            type_;
+    int64_t             addend_;
+    bool                isRela_;
+    Symbol*             symbol_;
+    ARCH                architecture_;
+    RELOCATION_PURPOSES purpose_;
 };
 
 }
