@@ -124,12 +124,12 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_const_symbols_version_requirement   get_symbols_version_requirement(void) const;
 
     //! @brief Return dynamic relocations
-    it_relocations                         get_dynamic_relocations(void);
-    it_const_relocations                   get_dynamic_relocations(void) const;
+    it_dynamic_relocations                 get_dynamic_relocations(void);
+    it_const_dynamic_relocations           get_dynamic_relocations(void) const;
 
     //! @brief Return `plt.got` relocations
-    it_relocations                         get_pltgot_relocations(void);
-    it_const_relocations                   get_pltgot_relocations(void) const;
+    it_pltgot_relocations                  get_pltgot_relocations(void);
+    it_const_pltgot_relocations            get_pltgot_relocations(void) const;
 
     //! @brief ``true`` if GNU hash is used
     //!
@@ -411,11 +411,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! A list of static symbols
     symbols_t                     static_symbols_;
 
-    //! The binary's dynamic Relocations if any
-    relocations_t                 dynamic_relocations_;
-
-    //! .rela.plt
-    relocations_t                 pltgot_relocations_;
+    relocations_t                 relocations_;
 
     //! .gnu.version
     symbols_version_t             symbol_version_table_;

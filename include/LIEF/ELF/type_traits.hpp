@@ -50,8 +50,12 @@ using it_symbols                               = ref_iterator<symbols_t&>;
 using it_const_symbols                         = const_ref_iterator<const symbols_t&>;
 
 using relocations_t                            = std::vector<Relocation*>;
-using it_relocations                           = ref_iterator<relocations_t&>;
-using it_const_relocations                     = const_ref_iterator<const relocations_t&>;
+
+using it_pltgot_relocations                    = filter_iterator<relocations_t>;
+using it_const_pltgot_relocations              = const_filter_iterator<const relocations_t>;
+
+using it_dynamic_relocations                   = filter_iterator<relocations_t>;
+using it_const_dynamic_relocations             = const_filter_iterator<const relocations_t>;
 
 using symbols_version_t                        = std::vector<SymbolVersion*>;
 using it_symbols_version                       = ref_iterator<symbols_version_t&>;

@@ -211,3 +211,6 @@ Enums
 
 .. doxygenenum:: LIEF::ELF::NOTE_ABIS
    :project: lief
+
+.. doxygenenum:: LIEF::ELF::RELOCATION_PURPOSES
+   :project: lief

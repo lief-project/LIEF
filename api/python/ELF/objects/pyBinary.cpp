@@ -30,7 +30,7 @@ void init_ELF_Binary_class(py::module& m) {
 
   // Binary object
   py::class_<Binary, LIEF::Binary>(m, "Binary", "ELF binary representation")
-    .def(py::init<const std::string &, ELF_CLASS>())
+    .def(py::init<const std::string&, ELF_CLASS>())
 
     .def_property_readonly("type",
         &Binary::type,
@@ -77,12 +77,12 @@ void init_ELF_Binary_class(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("dynamic_relocations",
-        static_cast<no_const_getter<it_relocations>>(&Binary::get_dynamic_relocations),
+        static_cast<no_const_getter<it_dynamic_relocations>>(&Binary::get_dynamic_relocations),
         "Return an iterator to PLT/GOT " RST_CLASS_REF(lief.ELF.Relocation) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("pltgot_relocations",
-        static_cast<no_const_getter<it_relocations>>(&Binary::get_pltgot_relocations),
+        static_cast<no_const_getter<it_pltgot_relocations>>(&Binary::get_pltgot_relocations),
         "Return an iterator to dynamics " RST_CLASS_REF(lief.ELF.Relocation) "",
         py::return_value_policy::reference_internal)
 
