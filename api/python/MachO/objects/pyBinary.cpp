@@ -154,6 +154,10 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.SourceVersion) " if any.",
         py::return_value_policy::reference)
 
+    .def("virtual_address_to_offset",
+        &Binary::virtual_address_to_offset,
+        "Convert the virtual address to an offset in the binary",
+        "virtual_address"_a)
 
 
     .def("__str__",
