@@ -40,6 +40,13 @@ Pre-built packages are automatically generated and uploaded by continuous integr
 
 Latest version can be downloaded in the [Release](https://github.com/lief-project/LIEF/releases) section.
 
+Here one can find guides to install or integrate LIEF:
+
+  * [Python](https://lief.quarkslab.com/doc/installation.html#python)
+  * [VisualStudio](https://lief.quarkslab.com/doc/installation.html#visual-studio-integration)
+  * [XCode](https://lief.quarkslab.com/doc/installation.html#xcode-integration)
+  * [CMake](https://lief.quarkslab.com/doc/installation.html#cmake-integration)
+
 ## Getting started
 
 ### Python
