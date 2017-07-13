@@ -93,7 +93,7 @@ void init_ELF_Binary_class(py::module& m) {
 
     .def_property_readonly("relocations",
         static_cast<no_const_getter<it_relocations>>(&Binary::get_relocations),
-        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) "s",
+        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) " s",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("symbols_version",
