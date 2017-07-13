@@ -11,6 +11,10 @@ platform:
 - x64
 
 environment:
+ LIEF_AUTOMATIC_BUILDS_KEY:
+    secure: TT7SXISIifq2/tf02n2ATgPj+Ky4Cjl3Fg44BAfyI4yRa4i87UAQIx5EFeV63+Xv2rhcU7JcMgl+An7QBrV6ofuQ9jxbuw+Gd1GqcCrAIyY=
+ LIEF_AUTOMATIC_BUILDS_IV:
+    secure: /S6Vbt3vEisoC81siFbkqOXQeVnwxLZZPMYp1r79G7h+HFjLlWUZSidxxpsAgHNE
  matrix:
     # Python 2.7
     - PYTHON_VERSION:   "2.7"
@@ -46,6 +50,7 @@ environment:
       PYTHON64_INCLUDE: "C:\\Python36-x64\\include"
       PYTHON64_BINARY:  "C:\\Python36-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python36-x64\\libs\\python36.lib"
+
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -83,6 +88,7 @@ after_build:
   - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
   - ps: gci dist\*.zip | % { rename-item –path $_.Fullname –Newname ( "windows_" + $env:PLATFORM + "_" + $_.basename + "_py" + $env:PYTHON_VERSION + $_.extension) }
   - cd ..\..
+  - bash ./.github/deploy.sh
 
 artifacts:
   - path: '*.zip'
