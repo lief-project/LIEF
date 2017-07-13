@@ -42,7 +42,7 @@ Latest **tagged** version can be downloaded in the [Release](https://github.com/
 
 Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/master)'s **latest commit** are automatically in the [*lief-project/packages*](https://github.com/lief-project/packages) repository:
 
-:warning: *master* packages have a same name as *tagged* packages (e.g. ``LIEF-0.7.0-Linux.tar.gz``, ``windows_x64_lief-0.7.0_py3.5.zip``)
+:warning: *master* packages have a same name as *tagged* packages (e.g. ``LIEF-0.7.0-Linux.tar.gz``, ``windows_x64_lief-0.7.0_py3.5.zip``) :warning:
 
 <table>
 <tr><td colspan="4"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></td></tr>
