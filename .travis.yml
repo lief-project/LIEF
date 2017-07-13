@@ -14,7 +14,7 @@ matrix:
           env: [ CXX_COMPILER=g++-5, C_COMPILER=gcc-5, PYTHON_VERSION=2.7, PYTHON_INCLUDE_DIR=/usr/include/python2.7, PYTHON_LIBRARY=/usr/lib/libpython2.7.so, PYTHON_BINARY=/usr/bin/python2.7 ]
 
 
-        ## Linux gcc 5.0 - Python 3.5
+        # Linux gcc 5.0 - Python 3.5
         - os: linux
           dist: trusty
           compiler: gcc
@@ -129,7 +129,7 @@ install:
 
 
 script:
-  - cmake -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DPYTHON_VERSION=$PYTHON_VERSION -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_EXECUTABLE=$PYTHON_BINARY -DLIEF_TESTS=on  -DLIEF_DOC=${LIEF_DOC:-OFF} ..
+  - cmake -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DPYTHON_VERSION=$PYTHON_VERSION -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_EXECUTABLE=$PYTHON_BINARY -DLIEF_TESTS=on -DLIEF_PYTHON_API=on -DLIEF_DOC=${LIEF_DOC:-OFF} ..
   - make -j2
   - sudo make check-lief
 
@@ -141,6 +141,8 @@ after_success:
   - $PYTHON_BINARY setup.py sdist
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash -c 'cd dist && for f in *.tar.gz; do mv $f "linux_${f%.tar.gz}_py${PYTHON_VERSION}.tar.gz"; done' ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash -c 'cd dist && for f in *.tar.gz; do mv $f "osx_${f%.tar.gz}_py$PYTHON_VERSION.tar.gz"; done' ;fi
+  - cd $TRAVIS_BUILD_DIR
+  - bash ./.github/deploy.sh
 
 
 deploy:
