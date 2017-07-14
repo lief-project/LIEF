@@ -561,92 +561,94 @@ void Parser::build_exports(void) {
 
   this->binary_->has_exports_ = true;
 
-  uint32_t exportsRVA    = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA();
-  uint32_t exportsOffset = this->binary_->rva_to_offset(exportsRVA);
-  uint32_t exportsSize   = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).size();
-  std::pair<uint32_t, uint32_t> range = {exportsOffset, exportsOffset + exportsSize};
+  uint32_t exports_rva    = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA();
+  uint32_t exports_offset = this->binary_->rva_to_offset(exports_rva);
+  uint32_t exports_size   = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).size();
+  std::pair<uint32_t, uint32_t> range = {exports_rva, exports_rva + exports_size};
 
   // First Export directory
-  const auto* exportDirectoryTable = reinterpret_cast<const pe_export_directory_table*>(
-      this->stream_->read(exportsOffset, sizeof(pe_export_directory_table)));
+  const pe_export_directory_table* export_directory_table = reinterpret_cast<const pe_export_directory_table*>(
+      this->stream_->read(exports_offset, sizeof(pe_export_directory_table)));
 
-  Export exportObject = {exportDirectoryTable};
-  uint32_t nameOffset = this->binary_->rva_to_offset(exportDirectoryTable->NameRVA);
+  Export export_object = {export_directory_table};
+  uint32_t name_offset = this->binary_->rva_to_offset(export_directory_table->NameRVA);
 
   try {
-    exportObject.name_  = this->stream_->read_string(nameOffset);
+    export_object.name_  = this->stream_->read_string(name_offset);
   } catch (const LIEF::read_out_of_bound& e) {
     LOG(WARNING) << e.what();
-    //TODO
   }
 
 
-  // Parse ordinal name table
-  uint32_t ordinalNameTableOffset  = this->binary_->rva_to_offset(exportDirectoryTable->OrdinalTableRVA);
-  const uint32_t nbof_name_ptr = exportDirectoryTable->NumberOfNamePointers;
-  const uint16_t *ordinalTable     = reinterpret_cast<const uint16_t*>(
-      this->stream_->read(ordinalNameTableOffset, nbof_name_ptr * sizeof(uint16_t)));
+  // Parse Ordinal name table
+  uint32_t ordinal_table_offset  = this->binary_->rva_to_offset(export_directory_table->OrdinalTableRVA);
+  const uint32_t nbof_name_ptr = export_directory_table->NumberOfNamePointers;
+  const uint16_t *ordinal_table = reinterpret_cast<const uint16_t*>(
+      this->stream_->read(ordinal_table_offset, nbof_name_ptr * sizeof(uint16_t)));
 
 
   // Parse Address table
-  uint32_t offsetExportTableAddress = this->binary_->rva_to_offset(
-      exportDirectoryTable->ExportAddressTableRVA);
-  const uint32_t nbof_addr_entries = exportDirectoryTable->AddressTableEntries;
-  const uint32_t *addressTable = reinterpret_cast<const uint32_t*>(
-      this->stream_->read(offsetExportTableAddress, nbof_addr_entries * sizeof(uint32_t)));
+  uint32_t address_table_offset = this->binary_->rva_to_offset(export_directory_table->ExportAddressTableRVA);
+  const uint32_t nbof_addr_entries = export_directory_table->AddressTableEntries;
+  const uint32_t *address_table = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(address_table_offset, nbof_addr_entries * sizeof(uint32_t)));
 
   if (nbof_addr_entries < nbof_name_ptr) {
     throw corrupted("More exported names than addresses");
   }
 
+  // Parse Export name table
+  uint32_t name_table_offset = this->binary_->rva_to_offset(export_directory_table->NamePointerRVA);
+  const uint32_t *name_table  = reinterpret_cast<const uint32_t*>(
+      this->stream_->read(name_table_offset, nbof_name_ptr * sizeof(uint32_t)));
+
+
+
+  // Export address table (EXTERN)
+  // =============================
   for (size_t i = 0; i < nbof_addr_entries; ++i) {
-    const uint32_t value = addressTable[i];
+    const uint32_t value = address_table[i];
     // If value is inside export directory => 'external' function
-    if (value >= range.first and value < range.second) {
-      uint32_t nameOffset = this->binary_->rva_to_offset(value);
+    if (value >= std::get<0>(range) and value < std::get<1>(range)) {
+      uint32_t name_offset = this->binary_->rva_to_offset(value);
 
       ExportEntry entry;
       try {
-        entry.name_   = this->stream_->read_string(nameOffset);
+        entry.name_ = this->stream_->read_string(name_offset);
       } catch (const LIEF::read_out_of_bound& e) {
         LOG(WARNING) << e.what();
       }
-
+      entry.address_   = 0;
       entry.is_extern_ = true;
-      entry.address_  = 0;
-      entry.ordinal_  = i + exportDirectoryTable->OrdinalBase;
-      exportObject.entries_.push_back(std::move(entry));
+      entry.ordinal_   = i + export_directory_table->OrdinalBase;
+      export_object.entries_.push_back(std::move(entry));
 
     }
   }
 
-  // Parse export name table
-  uint32_t offsetToNamePointer = this->binary_->rva_to_offset(exportDirectoryTable->NamePointerRVA);
-  const uint32_t *pointerName  = reinterpret_cast<const uint32_t*>(
-      this->stream_->read(offsetToNamePointer, nbof_name_ptr * sizeof(uint32_t)));
 
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
-    if (ordinalTable[i] >= nbof_addr_entries) {
+    if (ordinal_table[i] >= nbof_addr_entries) {
       throw corrupted("Export ordinal is outside the address table");
     }
 
-    uint32_t nameOffset = this->binary_->rva_to_offset(pointerName[i]);
+    uint32_t name_offset = this->binary_->rva_to_offset(name_table[i]);
     std::string name  = "";
     try {
-      name = this->stream_->read_string(nameOffset);
+      name = this->stream_->read_string(name_offset);
     } catch (const LIEF::read_out_of_bound& e) {
       LOG(WARNING) << e.what();
     }
 
     ExportEntry entry;
-    entry.name_     = name;
+    entry.name_      = name;
     entry.is_extern_ = false;
-    entry.ordinal_  = ordinalTable[i] + exportDirectoryTable->OrdinalBase;
-    entry.address_  = addressTable[ordinalTable[i]];
-    exportObject.entries_.push_back(std::move(entry));
+    entry.ordinal_   = ordinal_table[i] + export_directory_table->OrdinalBase;
+    entry.address_   = address_table[ordinal_table[i]];
+    export_object.entries_.push_back(std::move(entry));
   }
 
-  this->binary_->export_ = std::move(exportObject);
+  this->binary_->export_ = std::move(export_object);
 
 }
 
