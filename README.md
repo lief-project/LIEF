@@ -40,7 +40,7 @@ Pre-built packages are automatically generated and uploaded by continuous integr
 
 Latest **tagged** version can be downloaded in the [Release](https://github.com/lief-project/LIEF/releases) section.
 
-Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/master)'s **latest commit** are automatically in the [*lief-project/packages*](https://github.com/lief-project/packages) repository:
+Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/master)'s **latest commit** are automatically uploaded in the [*lief-project/packages*](https://github.com/lief-project/packages) repository:
 
 :warning: *master* packages have a same name as *tagged* packages (e.g. ``LIEF-0.7.0-Linux.tar.gz``, ``windows_x64_lief-0.7.0_py3.5.zip``) :warning:
 
