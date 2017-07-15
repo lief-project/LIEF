@@ -32,7 +32,9 @@ void init_PE_ExportEntry_class(py::module& m) {
     .def(py::init<>())
 
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&ExportEntry::name),
+        [] (const ExportEntry& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&ExportEntry::name))
 
     .def_property("ordinal",

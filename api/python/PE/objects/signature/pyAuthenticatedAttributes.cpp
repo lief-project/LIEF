@@ -44,12 +44,14 @@ void init_PE_AuthenticatedAttributes_class(py::module& m) {
 
     .def_property_readonly("program_name",
         [] (const AuthenticatedAttributes& authenticated_attributes) {
-          return u16tou8(authenticated_attributes.program_name());
+          return safe_string_converter(u16tou8(authenticated_attributes.program_name()));
         },
         "Return the program description (if any)")
 
     .def_property_readonly("more_info",
-        &AuthenticatedAttributes::more_info,
+        [] (const AuthenticatedAttributes& obj) {
+          return safe_string_converter(obj.more_info());
+        },
         "Return an URL to website with more information about the signer")
 
     .def("__str__",

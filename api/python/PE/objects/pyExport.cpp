@@ -35,7 +35,9 @@ void init_PE_Export_class(py::module& m) {
     .def(py::init<>())
 
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&Export::name),
+        [] (const Export& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&Export::name))
 
     .def_property("export_flags",

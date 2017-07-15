@@ -34,7 +34,9 @@ void init_ELF_SymbolVersionAux_class(py::module& m) {
       "Class which modelize an Auxiliary Symbol version")
 
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&SymbolVersionAux::name),
+        [] (const SymbolVersionAux& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<getter_t<const std::string&>>(&SymbolVersionAux::name),
         "Symbol's name")
 

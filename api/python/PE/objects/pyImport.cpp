@@ -47,8 +47,11 @@ void init_PE_Import_class(py::module& m) {
         "Iterator to the imported " RST_CLASS_REF(lief.PE.ImportEntry) " (functions)",
         py::return_value_policy::reference)
 
-    .def_property_readonly("name",
-        static_cast<no_const_getter<std::string&>>(&Import::name),
+    .def_property("name",
+        [] (const Import& obj) {
+          return safe_string_converter(obj.name());
+        },
+        static_cast<setter_t<const std::string&>>(&Import::name),
         "Library name (e.g. ``kernel32.dll``)",
         py::return_value_policy::reference)
 

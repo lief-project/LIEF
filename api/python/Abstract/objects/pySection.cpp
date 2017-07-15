@@ -27,7 +27,9 @@ void init_LIEF_Section_class(py::module& m) {
     .def(py::init())
 
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&LIEF::Section::name),
+        [] (const LIEF::Section& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&LIEF::Section::name),
         "Section's name")
 

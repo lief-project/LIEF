@@ -36,7 +36,9 @@ void init_ELF_DynamicSharedObject_class(py::module& m) {
   //
   py::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject")
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&DynamicSharedObject::name),
+        [] (const DynamicSharedObject& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicSharedObject::name),
         "Return the library name")
 

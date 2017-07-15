@@ -57,12 +57,16 @@ void init_PE_x509_class(py::module& m) {
 
 
     .def_property_readonly("issuer",
-        &x509::issuer,
+        [] (const x509& object) {
+          return safe_string_converter(object.issuer());
+        },
         "Issuer informations")
 
 
     .def_property_readonly("subject",
-        &x509::subject,
+        [] (const x509& object) {
+          return safe_string_converter(object.subject());
+        },
         "Subject informations")
 
 

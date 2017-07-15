@@ -13,29 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_H_
-#define PY_LIEF_H_
+#ifndef PY_LIEF_ENCODING_H_
+#define PY_LIEF_ENCODING_H_
+
 
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <functional>
-
-#include "encoding.hpp"
-
-#include "pyIterators.hpp"
+#include <pybind11/eval.h>
 
 namespace py = pybind11;
 
-using namespace pybind11::literals;
-
-void init_LIEF_exceptions(py::module&);
-void init_LIEF_module(py::module&);
-void init_ELF_module(py::module&);
-void init_PE_module(py::module&);
-void init_MachO_module(py::module&);
-void init_utils_functions(py::module&);
-void init_json_functions(py::module&);
-
-#define RST_CLASS_REF(X) ":class:`~"#X"`"
+py::object safe_string_converter(const std::string& str);
 
 #endif

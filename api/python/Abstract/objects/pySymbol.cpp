@@ -46,7 +46,9 @@ void init_LIEF_Symbol_class(py::module& m) {
     .def(py::init())
 
     .def_property("name",
-        static_cast<getter_t<std::string>>(&LIEF::Symbol::name),
+        [] (const LIEF::Symbol& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<std::string>>(&LIEF::Symbol::name),
         "Symbol's name")
 

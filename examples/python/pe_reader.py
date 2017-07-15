@@ -4,7 +4,6 @@
 # Description
 # -----------
 # Print information about a PE file
-
 import lief
 from lief import PE
 from lief.PE import oid_to_string

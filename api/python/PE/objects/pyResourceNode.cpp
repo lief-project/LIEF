@@ -50,7 +50,7 @@ void init_PE_ResourceNode_class(py::module& m) {
 
     .def_property("name",
         [] (const ResourceNode& node) {
-          return u16tou8(node.name());
+          return safe_string_converter(u16tou8(node.name()));
         },
         static_cast<void (ResourceNode::*)(const std::string&)>(&ResourceNode::name),
         "Resource name")

@@ -40,7 +40,9 @@ void init_PE_ResourcesManager_class(py::module& m) {
         "``True`` if resources contain Manifest element")
 
     .def_property("manifest",
-        static_cast<getter_t<std::string>>(&ResourcesManager::manifest),
+        [] (const ResourcesManager& obj) {
+          return safe_string_converter(obj.manifest());
+        },
         static_cast<setter_t<const std::string&>>(&ResourcesManager::manifest),
         "Manifest as a ``string``")
 

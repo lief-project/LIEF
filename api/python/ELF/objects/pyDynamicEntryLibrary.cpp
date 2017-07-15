@@ -37,7 +37,9 @@ void init_ELF_DynamicEntryLibrary_class(py::module& m) {
   py::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary")
     .def(py::init<const std::string &>())
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&DynamicEntryLibrary::name),
+        [] (const DynamicEntryLibrary& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicEntryLibrary::name),
         "Return library's name")
 

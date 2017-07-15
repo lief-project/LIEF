@@ -37,12 +37,16 @@ void init_ELF_DynamicEntryRpath_class(py::module& m) {
   py::class_<DynamicEntryRpath, DynamicEntry>(m, "DynamicEntryRpath")
     .def(py::init<const std::string &>())
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&DynamicEntryRpath::name),
+        [] (const DynamicEntryRpath& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::name),
         "Return path value")
 
     .def_property("rpath",
-        static_cast<getter_t<const std::string&>>(&DynamicEntryRpath::rpath),
+        [] (const DynamicEntryRpath& obj) {
+          return safe_string_converter(obj.rpath());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::rpath),
         "Return path value")
 

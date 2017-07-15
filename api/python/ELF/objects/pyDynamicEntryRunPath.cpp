@@ -37,12 +37,16 @@ void init_ELF_DynamicEntryRunPath_class(py::module& m) {
   py::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath")
     .def(py::init<const std::string &>())
     .def_property("name",
-        static_cast<getter_t<const std::string&>>(&DynamicEntryRunPath::name),
+        [] (const DynamicEntryRunPath& obj) {
+          return safe_string_converter(obj.name());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRunPath::name),
         "Return path value")
 
     .def_property("runpath",
-        static_cast<getter_t<const std::string&>>(&DynamicEntryRunPath::runpath),
+        [] (const DynamicEntryRunPath& obj) {
+          return safe_string_converter(obj.runpath());
+        },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRunPath::runpath),
         "Return path value")
 

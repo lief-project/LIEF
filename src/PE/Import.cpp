@@ -166,8 +166,12 @@ const std::string& Import::name(void) const {
   return this->name_;
 }
 
-std::string& Import::name(void) {
-  return const_cast<std::string&>(static_cast<const Import*>(this)->name());
+//std::string& Import::name(void) {
+//  return const_cast<std::string&>(static_cast<const Import*>(this)->name());
+//}
+
+void Import::name(const std::string& name) {
+  this->name_ = name;
 }
 
 

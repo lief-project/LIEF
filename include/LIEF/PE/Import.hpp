@@ -87,7 +87,7 @@ class DLL_PUBLIC Import : public Visitable {
   //!
   //! e.g. `kernel32.dll`
   const std::string& name(void) const;
-  std::string&       name(void);
+  void               name(const std::string& name);
 
   //! @brief Return the @link PE::DataDirectory Data directory@endlink associated.
   //! It should be the one at index PE::DATA_DIRECTORY::IMPORT_TABLE
