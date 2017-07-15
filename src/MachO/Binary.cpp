@@ -466,6 +466,10 @@ const std::string& Binary::get_loader(void) const {
   return this->dylinker().name();
 }
 
+uint64_t Binary::fat_offset(void) const {
+  return this->fat_offset_;
+}
+
 
 LIEF::Header Binary::get_abstract_header(void) const {
   LIEF::Header header;
