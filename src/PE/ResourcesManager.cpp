@@ -219,6 +219,7 @@ ResourceVersion ResourcesManager::version(void) const {
   if (not this->has_version()) {
     throw not_found("Resource version not found");
   }
+
   it_childs nodes = this->resources_->childs();
   auto&& it_version = std::find_if(
       std::begin(nodes),
@@ -1161,24 +1162,36 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
   if (rsrc.has_version()) {
     os << "Version" << std::endl;
     os << "=======" << std::endl << std::endl;
-    os << rsrc.version();
+    try {
+      os << rsrc.version();
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
     os << std::endl;
   }
 
   if (rsrc.has_icons()) {
-    const std::vector<ResourceIcon>& icons = rsrc.icons();
-    for (size_t i = 0; i < icons.size(); ++i) {
-      os << "Icon #" << std::dec << i << " : " << std::endl;
-      os << icons[i] << std::endl;
+    try {
+      const std::vector<ResourceIcon>& icons = rsrc.icons();
+      for (size_t i = 0; i < icons.size(); ++i) {
+        os << "Icon #" << std::dec << i << " : " << std::endl;
+        os << icons[i] << std::endl;
+      }
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
     }
   }
 
 
   if (rsrc.has_dialogs()) {
-    const std::vector<ResourceDialog>& dialogs = rsrc.dialogs();
-    for (size_t i = 0; i < dialogs.size(); ++i) {
-      os << "Dialog #" << std::dec << i << " : " << std::endl;
-      os << dialogs[i] << std::endl;
+    try {
+      const std::vector<ResourceDialog>& dialogs = rsrc.dialogs();
+      for (size_t i = 0; i < dialogs.size(); ++i) {
+        os << "Dialog #" << std::dec << i << " : " << std::endl;
+        os << dialogs[i] << std::endl;
+      }
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
     }
   }
 
