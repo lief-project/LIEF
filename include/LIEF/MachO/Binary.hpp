@@ -128,6 +128,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     SegmentCommand&       segment_from_offset(uint64_t offset);
     const SegmentCommand& segment_from_offset(uint64_t offset) const;
 
+    uint64_t fat_offset() const { return fat_offset_; }
 
     // @brief Return binary's @link MachO::SegmentCommand segment command
     // which hold the virtual address
@@ -238,6 +239,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     Header     header_;
     commands_t commands_;
     symbols_t  symbols_;
+
+  protected:
+    uint64_t fat_offset_ = 0;
 };
 
 } // namespace MachO

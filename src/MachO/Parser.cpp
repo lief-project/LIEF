@@ -87,7 +87,7 @@ void Parser::build_fat(void) {
 
     std::vector<uint8_t> data = {raw, raw + size};
 
-    Binary *binary = BinaryParser{std::move(data)}.get_binary();
+    Binary *binary = BinaryParser{std::move(data), offset}.get_binary();
     this->binaries_.push_back(binary);
   }
 }
