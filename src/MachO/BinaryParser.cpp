@@ -46,20 +46,22 @@ namespace MachO {
 BinaryParser::BinaryParser(void) = default;
 BinaryParser::~BinaryParser(void) = default;
 
-BinaryParser::BinaryParser(const std::vector<uint8_t>& data) :
+BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset) :
   stream_{new VectorStream{data}}
 {
 
   this->binary_ = new Binary{};
+  this->binary_->fat_offset_ = fat_offset;
   this->parse();
 }
 
 
-BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream) :
+BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset) :
   stream_{std::move(stream)}
 {
 
   this->binary_ = new Binary{};
+  this->binary_->fat_offset_ = fat_offset;
   this->parse();
 }
 
@@ -80,6 +82,7 @@ BinaryParser::BinaryParser(const std::string& file) :
 
   this->binary_ = new Binary{};
   this->binary_->name_ = filesystem::path(file).filename();
+  this->binary_->fat_offset_ = 0;
 
   this->parse();
 }

@@ -73,6 +73,11 @@ void init_MachO_Binary_class(py::module& m) {
         where segments are mapped (without PIE)",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("fat_offset",
+        &Binary::fat_offset,
+        "Return binary's *fat offset*. ``0`` if not relevant.",
+        py::return_value_policy::copy)
+
     .def("section_from_offset",
         static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_offset),
         "Return the " RST_CLASS_REF(lief.MachO.Section) " which contains the offset",
