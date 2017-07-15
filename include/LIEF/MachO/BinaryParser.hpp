@@ -43,7 +43,7 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
 
   public:
     BinaryParser(const std::string& file);
-    BinaryParser(const std::vector<uint8_t>& data);
+    BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0);
     BinaryParser(void);
 
     BinaryParser& operator=(const BinaryParser& copy) = delete;
@@ -56,7 +56,7 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
   private:
     static std::pair<uint64_t, uint64_t> decode_uleb128(const VectorStream& stream, uint64_t offset);
 
-    BinaryParser(std::unique_ptr<VectorStream>&& stream);
+    BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0);
 
     void parse(void);
 
