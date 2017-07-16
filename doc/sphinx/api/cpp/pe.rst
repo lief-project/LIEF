@@ -304,6 +304,38 @@ Rich Entry
 
 ----------
 
+Utilities
+*********
+
+.. doxygenfunction:: LIEF::PE::get_type(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::get_type(const std::vector< uint8_t > &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::is_pe(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::is_pe(const std::vector< uint8_t > &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::u16tou8
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::u8tou16
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::get_imphash
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::resolve_ordinals
+  :project: lief
+
+.. doxygenfunction:: LIEF::PE::oid_to_string
+  :project: lief
+
+----------
+
 Enums
 *****
 

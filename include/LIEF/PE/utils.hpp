@@ -34,17 +34,38 @@ DLL_PUBLIC bool is_pe(const std::string& file);
 //! @brief check if the raw data is a PE file
 DLL_PUBLIC bool is_pe(const std::vector<uint8_t>& raw);
 
-//! @brief if the `file` is PE, return `PE32` or `PE32+`
+//! @brief if the input `file` is a PE one, return `PE32` or `PE32+`
 DLL_PUBLIC PE_TYPE get_type(const std::string& file);
 
 //! @brief Return `PE32` or `PE32+`
 DLL_PUBLIC PE_TYPE get_type(const std::vector<uint8_t>& raw);
 
-//! Convert a UTF-16 string to a UTF-8 one
+//! @brief Convert a UTF-16 string to a UTF-8 one
 DLL_PUBLIC std::string u16tou8(const std::u16string& string);
 
-//! Convert a UTF-8 string to a UTF-16 one
+//! @brief Convert a UTF-8 string to a UTF-16 one
 DLL_PUBLIC std::u16string u8tou16(const std::string& string);
+
+//! @brief Compute the hash of imported functions
+//!
+//! Properties of the hash generated:
+//!   * Order agnostic
+//!   * Casse agnostic
+//!   * Ordinal (**in some extent**) agnostic
+//!
+//! @see https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
+DLL_PUBLIC std::string get_imphash(const Binary& binary);
+
+//! @brief Take a PE::Import as entry and try to resolve imports
+//! by ordinal.
+//!
+//! The ``strict`` boolean parameter enables to throw an LIEF::not_found exception
+//! if the ordinal can't be resolved. Otherwise it skips the entry.
+//!
+//! @param[in]  import Import to resolve
+//! @param[in]  strict If set to ``true``, throw an exception if the import can't be resolved
+//! @param[out] Import The import resolved: PE::ImportEntry::name is set
+DLL_PUBLIC Import resolve_ordinals(const Import& import, bool strict=false);
 }
 }
 #endif

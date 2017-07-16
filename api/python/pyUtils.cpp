@@ -34,7 +34,9 @@ void init_utils_functions(py::module& m) {
 #endif
 
 #if defined(LIEF_MACHO_MODULE)
-    m.def("is_macho", &LIEF::MachO::is_macho, "Check if the given binary is ``MachO``");
+    m.def("is_macho",
+        &LIEF::MachO::is_macho,
+        "Check if the given binary is ``MachO``");
 #endif
 
 }

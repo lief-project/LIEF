@@ -1,4 +1,6 @@
 set(LIEF_PYTHON_PE_SRC
+  "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"
+
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceNode.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceData.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceDirectory.cpp"

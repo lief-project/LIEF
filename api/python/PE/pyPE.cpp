@@ -31,6 +31,9 @@ void init_PE_module(py::module& m) {
   // Enums
   init_PE_Structures_enum(LIEF_PE_module);
 
+  // utils
+  init_PE_utils(LIEF_PE_module);
+
   // Objects
   init_PE_Parser_class(LIEF_PE_module);
   init_PE_Binary_class(LIEF_PE_module);

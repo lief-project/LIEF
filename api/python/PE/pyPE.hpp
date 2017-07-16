@@ -26,6 +26,9 @@
 
 using namespace LIEF::PE;
 
+// utils
+void init_PE_utils(py::module&);
+
 void init_PE_Parser_class(py::module&);
 void init_PE_Binary_class(py::module&);
 void init_PE_DataDirectory_class(py::module&);

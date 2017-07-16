@@ -1,8 +1,6 @@
 PE
 --
 
-.. autofunction:: lief.PE.oid_to_string
-
 Parser
 *******
 
@@ -371,6 +369,19 @@ Debug
 
 ----------
 
+Utilities
+*********
+
+
+.. autofunction:: lief.PE.is_pe
+
+.. autofunction:: lief.PE.get_type
+
+.. autofunction:: lief.PE.get_imphash
+
+.. autofunction:: lief.PE.resolve_ordinals
+
+-----------
 
 Enums
 *****

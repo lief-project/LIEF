@@ -31,6 +31,15 @@ using setter_t = void (ImportEntry::*)(T);
 void init_PE_ImportEntry_class(py::module& m) {
   py::class_<ImportEntry>(m, "ImportEntry")
     .def(py::init<>())
+
+    .def(py::init<const std::string&>(),
+        "Constructor by :attr:`~lief.PE.ImportEntry.name`",
+        "import_name"_a)
+
+    .def(py::init<uint64_t, const std::string&>(),
+        "Constructor by :attr:`~lief.PE.ImportEntry.data` and optionally :attr:`~lief.PE.ImportEntry.name`",
+        "data"_a, "name"_a = "")
+
     .def_property("name",
         [] (const ImportEntry& obj) {
           return safe_string_converter(obj.name());

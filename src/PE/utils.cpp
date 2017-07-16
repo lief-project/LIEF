@@ -18,11 +18,23 @@
 #include <iterator>
 #include <exception>
 #include <string.h>
+#include <numeric>
+#include <iomanip>
+#include <sstream>
+#include <string>
+
+#include "easylogging++.h"
+#include "mbedtls/md5.h"
 
 #include "LIEF/utf8.h"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Import.hpp"
+
+
+#include "utils/ordinals_lookup_tables/libraries_table.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -149,5 +161,115 @@ std::u16string u8tou16(const std::string& string) {
   utf8::utf8to16(std::begin(string), std::end(string), std::back_inserter(name));
   return name;
 }
+
+std::string get_imphash(const Binary& binary) {
+  uint8_t md5_buffer[16];
+  if (not binary.has_imports()) {
+    return std::to_string(0);
+  }
+
+  auto to_lower = [] (const std::string& str) {
+    std::string lower = str;
+    std::transform(
+      std::begin(str),
+      std::end(str),
+      std::begin(lower),
+      ::tolower);
+    return lower;
+  };
+  it_const_imports imports = binary.imports();
+
+  std::string import_list;
+  for (const Import& imp : imports) {
+    Import resolved = resolve_ordinals(imp);
+    size_t point_index = resolved.name().find_last_of(".");
+    std::string name_without_ext = resolved.name().substr(0, point_index);
+    std::string ext = resolved.name().substr(point_index, resolved.name().size());
+    std::string entries_string;
+    for (const ImportEntry& e : resolved.entries()) {
+      if (e.is_ordinal()) {
+        entries_string += name_without_ext + ".#" + std::to_string(e.ordinal());
+      } else {
+        entries_string += name_without_ext + "." + e.name();
+      }
+    }
+    import_list += to_lower(entries_string);
+  }
+
+  std::sort(
+      std::begin(import_list),
+      std::end(import_list),
+      std::less<char>());
+
+  mbedtls_md5(
+      reinterpret_cast<const uint8_t*>(import_list.data()),
+      import_list.size(),
+      md5_buffer);
+
+  std::string output_hex = std::accumulate(
+      std::begin(md5_buffer),
+      std::end(md5_buffer),
+      std::string{},
+      [] (const std::string& a, uint8_t b) {
+        std::stringstream ss;
+        ss << std::hex;
+        ss << std::setw(2) << std::setfill('0') << static_cast<uint32_t>(b);
+        return a + ss.str();
+      });
+
+  return output_hex;
+}
+
+
+Import resolve_ordinals(const Import& import, bool strict) {
+
+  it_const_import_entries entries = import.entries();
+
+  if (std::all_of(
+        std::begin(entries),
+        std::end(entries),
+        [] (const ImportEntry& entry) {
+          return not entry.is_ordinal();
+        })) {
+    LOG(DEBUG) << "All imports use name. No ordinal!";
+    return import;
+  }
+
+  std::string name = import.name();
+  std::transform(
+      std::begin(name),
+      std::end(name),
+      std::begin(name),
+      ::tolower);
+
+  auto&& it_library_lookup = ordinals_library_tables.find(name);
+  if (it_library_lookup == std::end(ordinals_library_tables)) {
+    std::string msg = "Ordinal lookup table for '" + name + "' not implemented";
+    if (strict) {
+      throw not_found(msg);
+    }
+    LOG(DEBUG) << msg;
+    return import;
+  }
+  Import resolved_import = import;
+  for (ImportEntry& entry : resolved_import.entries()) {
+    if (entry.is_ordinal()) {
+      LOG(DEBUG) << "Dealing with: " << entry;
+      auto&& it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
+      if (it_entry == std::end(it_library_lookup->second)) {
+        if (strict) {
+          throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
+        }
+        LOG(DEBUG) << "Unable to resolve ordinal:" << std::hex << entry.ordinal();
+        continue;
+      }
+      entry.data(0);
+      entry.name(it_entry->second);
+    }
+  }
+
+  return resolved_import;
+}
+
 }
 }

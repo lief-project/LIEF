@@ -42,7 +42,7 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceStringFileInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/LangCodeItem.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceIcon.cpp"
-  )
+)
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/enums.inc"      LIEF_PE_ENUMS)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/structures.inc" LIEF_PE_STRUCTURES)
@@ -89,7 +89,8 @@ set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/TLS.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/undef.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/utils.hpp")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/utils.hpp"
+)
 
 set(LIEF_PE_SIG_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/AuthenticatedAttributes.hpp"
@@ -100,7 +101,8 @@ set(LIEF_PE_SIG_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/SignerInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/types.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/x509.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/signature/pkcs7.h")
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/signature/pkcs7.h"
+)
 
 set(LIEF_PE_RESOURCES_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
@@ -111,12 +113,21 @@ set(LIEF_PE_RESOURCES_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVarFileInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceStringFileInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/LangCodeItem.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceIcon.hpp")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceIcon.hpp"
+)
 
-source_group("Source Files\\PE"            FILES ${LIEF_PE_SRC})
-source_group("Header Files\\PE"            FILES ${LIEF_PE_INCLUDE_FILES})
-source_group("Header Files\\PE\\signature" FILES ${LIEF_PE_SIG_INCLUDE_FILES})
-source_group("Header Files\\PE\\resources" FILES ${LIEF_PE_RESOURCES_INCLUDE_FILES})
+set(LIEF_PE_UTILS_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/utils/ordinals_lookup_tables/libraries_table.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/utils/ordinals_lookup_tables/kernel32_dll_lookup.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/utils/ordinals_lookup_tables/ntdll_dll_lookup.hpp"
+)
 
-target_sources(LIB_LIEF_STATIC PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES})
-target_sources(LIB_LIEF_SHARED PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES})
+
+source_group("Source Files\\PE"                                FILES ${LIEF_PE_SRC})
+source_group("Header Files\\PE"                                FILES ${LIEF_PE_INCLUDE_FILES})
+source_group("Header Files\\PE\\signature"                     FILES ${LIEF_PE_SIG_INCLUDE_FILES})
+source_group("Header Files\\PE\\resources"                     FILES ${LIEF_PE_RESOURCES_INCLUDE_FILES})
+source_group("Header Files\\PE\\utils\\Ordinals Lookup Tables" FILES ${LIEF_PE_UTILS_INCLUDE_FILES})
+
+target_sources(LIB_LIEF_STATIC PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES} ${LIEF_PE_UTILS_INCLUDE_FILES})
+target_sources(LIB_LIEF_SHARED PRIVATE ${LIEF_PE_SRC} ${LIEF_PE_INCLUDE_FILES} ${LIEF_PE_SIG_INCLUDE_FILES} ${LIEF_PE_RESOURCES_INCLUDE_FILES} ${LIEF_PE_UTILS_INCLUDE_FILES})

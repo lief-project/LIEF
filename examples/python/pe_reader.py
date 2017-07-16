@@ -37,6 +37,16 @@ class exceptions_handler(object):
                 print("-" * 60)
 
 @exceptions_handler(Exception)
+def print_information(binary):
+    print("== Information ==\n")
+    format_str = "{:<30} {:<30}"
+    format_hex = "{:<30} 0x{:<28x}"
+    format_dec = "{:<30} {:<30d}"
+    print(format_str.format("Name:",         binary.name))
+    print(format_hex.format("Virtual size:", binary.virtual_size))
+    print(format_str.format("Imphash:",      PE.get_imphash(binary)))
+
+@exceptions_handler(Exception)
 def print_header(binary):
     dos_header       = binary.dos_header
     header           = binary.header
@@ -179,11 +189,14 @@ def print_symbols(binary):
                 str(symbol.storage_class).split(".")[-1]))
 
 @exceptions_handler(Exception)
-def print_imports(binary):
+def print_imports(binary, resolve=False):
     print("== Imports ==")
     imports = binary.imports
 
     for import_ in imports:
+        if resolve:
+            import_ = lief.PE.resolve_ordinals(import_)
+
         print(import_.name)
         entries = import_.entries
         f_value = "  {:<33} 0x{:<14x} 0x{:<14x} 0x{:<16x}"
@@ -345,6 +358,10 @@ def main():
             action='store_true', dest='show_imports',
             help='Display imported functions and libraries')
 
+    optparser.add_option('--resolve-ordinals',
+            action='store_true', dest='resolve_ordinals',
+            help="When used with --import, it attempts to resolve names of ordinal imports")
+
     optparser.add_option('-r', '--relocs',
             action='store_true', dest='show_relocs',
             help='Display the relocations (if present)')
@@ -385,6 +402,8 @@ def main():
         sys.exit(1)
 
 
+    print_information(binary)
+
     if options.show_data_directories or options.show_all:
         print_data_directories(binary)
 
@@ -392,7 +411,7 @@ def main():
         print_header(binary)
 
     if (options.show_imports or options.show_all) and binary.has_imports:
-        print_imports(binary)
+        print_imports(binary, resolve=options.resolve_ordinals)
 
     if (options.show_relocs or options.show_all) and binary.has_relocations:
         print_relocations(binary)

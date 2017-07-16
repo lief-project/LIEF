@@ -126,6 +126,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_resources.py")
 
+  ADD_PYTHON_TEST(PE_PYTHON_imphash
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_imphash.py")
+
 endif()
 
 
