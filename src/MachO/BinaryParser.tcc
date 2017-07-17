@@ -22,6 +22,21 @@
 namespace LIEF {
 namespace MachO {
 
+template<class MACHO_T>
+void BinaryParser::parse(void) {
+  this->parse_header<MACHO_T>();
+  if (this->binary_->header().nb_cmds() > 0) {
+    this->parse_load_commands<MACHO_T>();
+  }
+
+  for (Section& section : this->binary_->sections()) {
+    try {
+      this->parse_relocations<MACHO_T>(section);
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
+  }
+}
 
 template<class MACHO_T>
 void BinaryParser::parse_header(void) {
@@ -398,5 +413,65 @@ void BinaryParser::parse_load_commands(void) {
     loadcommands_offset += command->cmdsize;
   }
 }
+
+
+template<class MACHO_T>
+void BinaryParser::parse_relocations(Section& section) {
+  if (section.numberof_relocations() == 0) {
+    LOG(DEBUG) << "No relocations in " << section.name();
+    return;
+  }
+
+  LOG(DEBUG) << "Parse '" << section.name() << "' relocations (" << std::dec << section.numberof_relocations() << ")";
+
+  uint64_t current_reloc_offset = section.relocation_offset();
+  section.relocations_.resize(section.numberof_relocations());
+  for (size_t i = 0; i < section.numberof_relocations(); ++i) {
+    int32_t address = this->stream_->read_integer<int32_t>(current_reloc_offset);
+    bool is_scattered = static_cast<bool>(address & R_SCATTERED);
+    if (is_scattered) {
+      const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
+          this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
+      section.relocations_[i] = {reloc_info};
+    } else {
+      const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
+          this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
+      section.relocations_[i] = {reloc_info};
+
+      if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
+        if (reloc_info->r_symbolnum < this->binary_->symbols().size()) {
+          Symbol& symbol = this->binary_->symbols()[reloc_info->r_symbolnum];
+          Relocation& relocation = section.relocations()[i];
+          relocation.symbol_ = &symbol;
+
+          LOG(DEBUG) << "Symbol: " << symbol.name();
+        } else {
+          LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " symbol index is out-of-bound";
+        }
+      }
+
+      if (reloc_info->r_extern == 0) {
+        if (reloc_info->r_symbolnum < this->binary_->sections().size()) {
+          Section& relsec = this->binary_->sections()[reloc_info->r_symbolnum];
+          Relocation& relocation = section.relocations()[i];
+          relocation.section_ = &relsec;
+
+          LOG(DEBUG) << "Section: " << relsec.name();
+        } else {
+          LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " seems corrupted";
+        }
+      }
+    }
+
+    if (not section.relocations_[i].has_section()) {
+      section.relocations_[i].section_ = &section;
+    }
+    section.relocations_[i].architecture_ = this->binary_->header().cpu_type();
+    LOG(DEBUG) << section.relocations_.back();;
+    current_reloc_offset += 2 * sizeof(uint32_t);
+  }
+
+}
+
 }
 }

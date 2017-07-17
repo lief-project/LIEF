@@ -126,6 +126,7 @@ class DylinkerCommand;
 class DylibCommand;
 
 class Symbol;
+class Relocation;
 
 
 }
@@ -398,6 +399,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::MachO::Symbol
   virtual void visit(const MachO::Symbol& symbol);
+
+  //! @brief Method to visit a LIEF::MachO::Relocation
+  virtual void visit(const MachO::Relocation& relocation);
 
 
   template<class T>

@@ -152,12 +152,22 @@ Source Version
 ----------
 
 
+Relocation
+**********
 
-Enum
-****
+.. autoclass:: lief.MachO.Relocation
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
 
 
-CPU types
+Enums
+*****
+
+
+CPU_TYPES
 ~~~~~~~~~
 
 .. autoclass:: lief.MachO.CPU_TYPES
@@ -208,6 +218,78 @@ SECTION_TYPES
   :members:
   :inherited-members:
   :undoc-members:
+
+----------
+
+
+MACHO_TYPES
+~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.MACHO_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+X86_RELOCATION
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.X86_RELOCATION
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+X86_64_RELOCATION
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.X86_64_RELOCATION
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+PPC_RELOCATION
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.PPC_RELOCATION
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+ARM_RELOCATION
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.ARM_RELOCATION
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+ARM64_RELOCATION
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.ARM64_RELOCATION
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+
+
+
+
 
 
 

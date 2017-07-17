@@ -26,6 +26,8 @@
 #include "LIEF/Abstract/Section.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/MachO/Relocation.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -70,6 +72,9 @@ class DLL_PUBLIC Section : public LIEF::Section {
     std::set<SECTION_FLAGS> flags_list(void) const;
     uint32_t                raw_flags(void) const;
 
+    it_relocations relocations(void);
+    it_const_relocations relocations(void) const;
+
     void segment_name(const std::string& name);
     void address(uint64_t address);
     void alignment(uint32_t align);
@@ -106,6 +111,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     std::vector<uint8_t> content_;
     //! @brief Pointer to the segment holding this section.
     SegmentCommand *segment_;
+    relocations_t relocations_;
 };
 
 }

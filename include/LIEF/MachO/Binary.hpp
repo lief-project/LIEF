@@ -110,6 +110,15 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Return binary's loader (e.g. ``/usr/lib/dyld``)
     const std::string& get_loader(void) const;
 
+    //! @brief Check if a section with the given name exists
+    bool has_section(const std::string& name) const;
+
+    //! @brief Return the section from the given name
+    Section& get_section(const std::string& name);
+
+    //! @brief Return the section from the given name
+    const Section& get_section(const std::string& name) const;
+
     // ======
     // Helper
     // ======

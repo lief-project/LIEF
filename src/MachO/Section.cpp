@@ -44,7 +44,8 @@ Section::Section(void) :
   reserved2_{0},
   reserved3_{0},
   content_{},
-  segment_{nullptr}
+  segment_{nullptr},
+  relocations_{}
 {
   this->size_   = 0;
   this->offset_ = 0;
@@ -61,7 +62,8 @@ Section::Section(const section_32 *sectionCmd) :
   reserved1_{sectionCmd->reserved1},
   reserved2_{sectionCmd->reserved2},
   reserved3_{0},
-  segment_{nullptr}
+  segment_{nullptr},
+  relocations_{}
 {
   this->name_   = sectionCmd->sectname;
   this->size_   = sectionCmd->size;
@@ -79,7 +81,8 @@ Section::Section(const section_64 *sectionCmd) :
   reserved1_{sectionCmd->reserved1},
   reserved2_{sectionCmd->reserved2},
   reserved3_{sectionCmd->reserved3},
-  segment_{nullptr}
+  segment_{nullptr},
+  relocations_{}
 {
   this->name_   = sectionCmd->sectname;
   this->size_   = sectionCmd->size;
@@ -150,6 +153,14 @@ uint32_t Section::reserved3(void) const {
 
 uint32_t Section::raw_flags(void) const {
   return this->flags_;
+}
+
+it_relocations Section::relocations(void) {
+  return this->relocations_;
+}
+
+it_const_relocations Section::relocations(void) const {
+  return this->relocations_;
 }
 
 SECTION_TYPES Section::type(void) const {
@@ -234,6 +245,10 @@ void Section::accept(Visitor& visitor) const {
   visitor.visit(this->reserved2());
   visitor.visit(this->reserved3());
   visitor.visit(this->raw_flags());
+
+  for (const Relocation& relocation : this->relocations()) {
+    visitor(relocation);
+  }
 }
 
 bool Section::operator==(const Section& rhs) const {
@@ -276,6 +291,15 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
   if (section.segment_ != nullptr) {
     //os << std::setw(10) << section.segment_->name();
   }
+
+  if (section.relocations().size() > 0)  {
+    os << std::endl;
+    os << "Relocations associated with the section :" << std::endl;
+    for (const Relocation& relocation : section.relocations()) {
+      os << "    " << relocation << std::endl;
+    }
+  }
+
 
   return os;
 }

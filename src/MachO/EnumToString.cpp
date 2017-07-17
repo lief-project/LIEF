@@ -254,6 +254,98 @@ const char* to_string(SYMBOL_DESCRIPTIONS e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
+const char* to_string(X86_RELOCATION e) {
+  const std::map<X86_RELOCATION, const char*> enumStrings {
+    { X86_RELOCATION::GENERIC_RELOC_VANILLA,        "VANILLA"        },
+    { X86_RELOCATION::GENERIC_RELOC_PAIR,           "PAIR"           },
+    { X86_RELOCATION::GENERIC_RELOC_SECTDIFF,       "SECTDIFF"       },
+    { X86_RELOCATION::GENERIC_RELOC_PB_LA_PTR,      "PB_LA_PTR"      },
+    { X86_RELOCATION::GENERIC_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
+    { X86_RELOCATION::GENERIC_RELOC_TLV,            "TLV"            },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(X86_64_RELOCATION e) {
+  const std::map<X86_64_RELOCATION, const char*> enumStrings {
+    { X86_64_RELOCATION::X86_64_RELOC_UNSIGNED,   "UNSIGNED"   },
+    { X86_64_RELOCATION::X86_64_RELOC_SIGNED,     "SIGNED"     },
+    { X86_64_RELOCATION::X86_64_RELOC_BRANCH,     "BRANCH"     },
+    { X86_64_RELOCATION::X86_64_RELOC_GOT_LOAD,   "GOT_LOAD"   },
+    { X86_64_RELOCATION::X86_64_RELOC_GOT,        "GOT"        },
+    { X86_64_RELOCATION::X86_64_RELOC_SUBTRACTOR, "SUBTRACTOR" },
+    { X86_64_RELOCATION::X86_64_RELOC_SIGNED_1,   "SIGNED_1"   },
+    { X86_64_RELOCATION::X86_64_RELOC_SIGNED_2,   "SIGNED_2"   },
+    { X86_64_RELOCATION::X86_64_RELOC_SIGNED_4,   "SIGNED_4"   },
+    { X86_64_RELOCATION::X86_64_RELOC_TLV,        "TLV"        },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(PPC_RELOCATION e) {
+  const std::map<PPC_RELOCATION, const char*> enumStrings {
+    { PPC_RELOCATION::PPC_RELOC_VANILLA,        "VANILLA"        },
+    { PPC_RELOCATION::PPC_RELOC_PAIR,           "PAIR"           },
+    { PPC_RELOCATION::PPC_RELOC_BR14,           "BR14"           },
+    { PPC_RELOCATION::PPC_RELOC_BR24,           "BR24"           },
+    { PPC_RELOCATION::PPC_RELOC_HI16,           "HI16"           },
+    { PPC_RELOCATION::PPC_RELOC_LO16,           "LO16"           },
+    { PPC_RELOCATION::PPC_RELOC_HA16,           "HA16"           },
+    { PPC_RELOCATION::PPC_RELOC_LO14,           "LO14"           },
+    { PPC_RELOCATION::PPC_RELOC_SECTDIFF,       "SECTDIFF"       },
+    { PPC_RELOCATION::PPC_RELOC_PB_LA_PTR,      "PB_LA_PTR"      },
+    { PPC_RELOCATION::PPC_RELOC_HI16_SECTDIFF,  "HI16_SECTDIFF"  },
+    { PPC_RELOCATION::PPC_RELOC_LO16_SECTDIFF,  "LO16_SECTDIFF"  },
+    { PPC_RELOCATION::PPC_RELOC_HA16_SECTDIFF,  "HA16_SECTDIFF"  },
+    { PPC_RELOCATION::PPC_RELOC_JBSR,           "JBSR"           },
+    { PPC_RELOCATION::PPC_RELOC_LO14_SECTDIFF,  "LO14_SECTDIFF"  },
+    { PPC_RELOCATION::PPC_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(ARM_RELOCATION e) {
+  const std::map<ARM_RELOCATION, const char*> enumStrings {
+    { ARM_RELOCATION::ARM_RELOC_VANILLA,        "VANILLA"        },
+    { ARM_RELOCATION::ARM_RELOC_PAIR,           "PAIR"           },
+    { ARM_RELOCATION::ARM_RELOC_SECTDIFF,       "SECTDIFF"       },
+    { ARM_RELOCATION::ARM_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
+    { ARM_RELOCATION::ARM_RELOC_PB_LA_PTR,      "PB_LA_PTR"      },
+    { ARM_RELOCATION::ARM_RELOC_BR24,           "BR24"           },
+    { ARM_RELOCATION::ARM_THUMB_RELOC_BR22,     "RELOC_BR22"     },
+    { ARM_RELOCATION::ARM_THUMB_32BIT_BRANCH,   "32BIT_BRANCH"   },
+    { ARM_RELOCATION::ARM_RELOC_HALF,           "HALF"           },
+    { ARM_RELOCATION::ARM_RELOC_HALF_SECTDIFF,  "HALF_SECTDIFF"  },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(ARM64_RELOCATION e) {
+  const std::map<ARM64_RELOCATION, const char*> enumStrings {
+    { ARM64_RELOCATION::ARM64_RELOC_UNSIGNED,            "UNSIGNED"            },
+    { ARM64_RELOCATION::ARM64_RELOC_SUBTRACTOR,          "SUBTRACTOR"          },
+    { ARM64_RELOCATION::ARM64_RELOC_BRANCH26,            "BRANCH26"            },
+    { ARM64_RELOCATION::ARM64_RELOC_PAGE21,              "PAGE21"              },
+    { ARM64_RELOCATION::ARM64_RELOC_PAGEOFF12,           "PAGEOFF12"           },
+    { ARM64_RELOCATION::ARM64_RELOC_GOT_LOAD_PAGE21,     "GOT_LOAD_PAGE21"     },
+    { ARM64_RELOCATION::ARM64_RELOC_GOT_LOAD_PAGEOFF12,  "GOT_LOAD_PAGEOFF12"  },
+    { ARM64_RELOCATION::ARM64_RELOC_POINTER_TO_GOT,      "POINTER_TO_GOT"      },
+    { ARM64_RELOCATION::ARM64_RELOC_TLVP_LOAD_PAGE21,    "TLVP_LOAD_PAGE21"    },
+    { ARM64_RELOCATION::ARM64_RELOC_TLVP_LOAD_PAGEOFF12, "TLVP_LOAD_PAGEOFF12" },
+    { ARM64_RELOCATION::ARM64_RELOC_ADDEND,              "ADDEND"              },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
 
 }
 }

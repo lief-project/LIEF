@@ -367,22 +367,33 @@ enum {
   R_SCATTERED = 0x80000000
 };
 
-enum RelocationInfoType {
-  // Constant values for the r_type field in an
-  // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
-  // structure.
-  GENERIC_RELOC_VANILLA        = 0,
-  GENERIC_RELOC_PAIR           = 1,
-  GENERIC_RELOC_SECTDIFF       = 2,
-  GENERIC_RELOC_PB_LA_PTR      = 3,
-  GENERIC_RELOC_LOCAL_SECTDIFF = 4,
-  GENERIC_RELOC_TLV            = 5,
+enum X86_RELOCATION {
+  GENERIC_RELOC_VANILLA        = 0, /**< A generic relocation entry for both addresses contained in data and addresses contained in CPU instructions. */
+  GENERIC_RELOC_PAIR           = 1, /**< The second relocation entry of a pair. */
+  GENERIC_RELOC_SECTDIFF       = 2, /**< A relocation entry for an item that contains the difference of two section addresses. This is generally used for position-independent code generation. */
+  GENERIC_RELOC_PB_LA_PTR      = 3, /**< contains the address from which to subtract; it must be followed by a X86_RELOCATION::GENERIC_RELOC_PAIR containing the address to subtract.*/
+  GENERIC_RELOC_LOCAL_SECTDIFF = 4, /**< Similar to X86_RELOCATION::GENERIC_RELOC_SECTDIFF except that this entry refers specifically to the address in this item. If the address is that of a globally visible coalesced symbol, this relocation entry does not change if the symbol is overridden. This is used to associate stack unwinding information with the object code this relocation entry describes.*/
+  GENERIC_RELOC_TLV            = 5, /**< A relocation entry for a prebound lazy pointer. This is always a scattered relocation entry. The @link MachO::Relocation::value value @endlink field contains the non-prebound value of the lazy pointer.*/
+};
 
-  // Constant values for the r_type field in a PowerPC architecture
-  // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
-  // structure.
-  PPC_RELOC_VANILLA            = GENERIC_RELOC_VANILLA,
-  PPC_RELOC_PAIR               = GENERIC_RELOC_PAIR,
+
+enum X86_64_RELOCATION {
+  X86_64_RELOC_UNSIGNED        = 0, /**< A CALL/JMP instruction with 32-bit displacement. */
+  X86_64_RELOC_SIGNED          = 1, /**< A MOVQ load of a GOT entry. */
+  X86_64_RELOC_BRANCH          = 2, /**< Other GOT references. */
+  X86_64_RELOC_GOT_LOAD        = 3, /**< Signed 32-bit displacement. */
+  X86_64_RELOC_GOT             = 4, /**< Absolute address. */
+  X86_64_RELOC_SUBTRACTOR      = 5, /**< Must be followed by a X86_64_RELOCATION::X86_64_RELOC_UNSIGNED relocation. */
+  X86_64_RELOC_SIGNED_1        = 6, /**< */
+  X86_64_RELOC_SIGNED_2        = 7, /**< */
+  X86_64_RELOC_SIGNED_4        = 8, /**< */
+  X86_64_RELOC_TLV             = 9, /**< */
+};
+
+
+enum PPC_RELOCATION {
+  PPC_RELOC_VANILLA            = 0,
+  PPC_RELOC_PAIR               = 1,
   PPC_RELOC_BR14               = 2,
   PPC_RELOC_BR24               = 3,
   PPC_RELOC_HI16               = 4,
@@ -397,13 +408,13 @@ enum RelocationInfoType {
   PPC_RELOC_JBSR               = 13,
   PPC_RELOC_LO14_SECTDIFF      = 14,
   PPC_RELOC_LOCAL_SECTDIFF     = 15,
+};
 
-  // Constant values for the r_type field in an ARM architecture
-  // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
-  // structure.
-  ARM_RELOC_VANILLA            = GENERIC_RELOC_VANILLA,
-  ARM_RELOC_PAIR               = GENERIC_RELOC_PAIR,
-  ARM_RELOC_SECTDIFF           = GENERIC_RELOC_SECTDIFF,
+
+enum ARM_RELOCATION {
+  ARM_RELOC_VANILLA            = 0,
+  ARM_RELOC_PAIR               = 1,
+  ARM_RELOC_SECTDIFF           = 2,
   ARM_RELOC_LOCAL_SECTDIFF     = 3,
   ARM_RELOC_PB_LA_PTR          = 4,
   ARM_RELOC_BR24               = 5,
@@ -411,47 +422,21 @@ enum RelocationInfoType {
   ARM_THUMB_32BIT_BRANCH       = 7, // obsolete
   ARM_RELOC_HALF               = 8,
   ARM_RELOC_HALF_SECTDIFF      = 9,
+};
 
-  // Constant values for the r_type field in an ARM64 architecture
-  // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
-  // structure.
 
-  // For pointers.
-  ARM64_RELOC_UNSIGNED            = 0,
-  // Must be followed by an ARM64_RELOC_UNSIGNED
-  ARM64_RELOC_SUBTRACTOR          = 1,
-  // A B/BL instruction with 26-bit displacement.
-  ARM64_RELOC_BRANCH26            = 2,
-  // PC-rel distance to page of target.
-  ARM64_RELOC_PAGE21              = 3,
-  // Offset within page, scaled by r_length.
-  ARM64_RELOC_PAGEOFF12           = 4,
-  // PC-rel distance to page of GOT slot.
-  ARM64_RELOC_GOT_LOAD_PAGE21     = 5,
-  // Offset within page of GOT slot, scaled by r_length.
-  ARM64_RELOC_GOT_LOAD_PAGEOFF12  = 6,
-  // For pointers to GOT slots.
-  ARM64_RELOC_POINTER_TO_GOT      = 7,
-  // PC-rel distance to page of TLVP slot.
-  ARM64_RELOC_TLVP_LOAD_PAGE21    = 8,
-  // Offset within page of TLVP slot, scaled by r_length.
-  ARM64_RELOC_TLVP_LOAD_PAGEOFF12 = 9,
-  // Must be followed by ARM64_RELOC_PAGE21 or ARM64_RELOC_PAGEOFF12.
-  ARM64_RELOC_ADDEND              = 10,
-
-  // Constant values for the r_type field in an x86_64 architecture
-  // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
-  // structure
-  X86_64_RELOC_UNSIGNED        = 0,
-  X86_64_RELOC_SIGNED          = 1,
-  X86_64_RELOC_BRANCH          = 2,
-  X86_64_RELOC_GOT_LOAD        = 3,
-  X86_64_RELOC_GOT             = 4,
-  X86_64_RELOC_SUBTRACTOR      = 5,
-  X86_64_RELOC_SIGNED_1        = 6,
-  X86_64_RELOC_SIGNED_2        = 7,
-  X86_64_RELOC_SIGNED_4        = 8,
-  X86_64_RELOC_TLV             = 9
+enum ARM64_RELOCATION {
+  ARM64_RELOC_UNSIGNED            = 0,  /**< For pointers. */
+  ARM64_RELOC_SUBTRACTOR          = 1,  /**< Must be followed by an ARM64_RELOCATION::ARM64_RELOC_UNSIGNED */
+  ARM64_RELOC_BRANCH26            = 2,  /**< A B/BL instruction with 26-bit displacement. */
+  ARM64_RELOC_PAGE21              = 3,  /**< PC-rel distance to page of target. */
+  ARM64_RELOC_PAGEOFF12           = 4,  /**< Offset within page, scaled by @link MachO::Relocation::size size @endlink. */
+  ARM64_RELOC_GOT_LOAD_PAGE21     = 5,  /**< PC-rel distance to page of GOT slot */
+  ARM64_RELOC_GOT_LOAD_PAGEOFF12  = 6,  /**< Offset within page of GOT slot, scaled by @link MachO::Relocation::size size @endlink. */
+  ARM64_RELOC_POINTER_TO_GOT      = 7,  /**< For pointers to GOT slots. */
+  ARM64_RELOC_TLVP_LOAD_PAGE21    = 8,  /**< PC-rel distance to page of TLVP slot. */
+  ARM64_RELOC_TLVP_LOAD_PAGEOFF12 = 9,  /**< Offset within page of TLVP slot, scaled by @link MachO::Relocation::size size @endlink.*/
+  ARM64_RELOC_ADDEND              = 10, /**< Must be followed by ARM64_RELOCATION::ARM64_RELOC_PAGE21 or ARM64_RELOCATION::ARM64_RELOC_PAGEOFF12. */
 };
 
 // Values for segment_command.initprot.

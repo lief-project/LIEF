@@ -61,6 +61,7 @@ void init_LIEF_iterators(py::module& m) {
   // MachO
   // =====
 #if defined(LIEF_MACHO_MODULE)
+  init_ref_iterator<LIEF::MachO::it_relocations>(m);
   init_ref_iterator<LIEF::MachO::it_commands>(m);
   init_ref_iterator<LIEF::MachO::it_symbols>(m);
   init_ref_iterator<LIEF::filter_iterator<LIEF::MachO::symbols_t>>(m);

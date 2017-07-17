@@ -25,14 +25,15 @@ class Symbol;
 class SegmentCommand;
 class DylibCommand;
 class Section;
+class Relocation;
 
 using commands_t                = std::vector<LoadCommand*>;
 using it_commands               = ref_iterator<commands_t>;
 using it_const_commands         = const_ref_iterator<commands_t>;
 
 using symbols_t                 = std::vector<Symbol*>;
-using it_symbols                = ref_iterator<symbols_t>;
-using it_const_symbols          = const_ref_iterator<symbols_t>;
+using it_symbols                = ref_iterator<symbols_t&>;
+using it_const_symbols          = const_ref_iterator<const symbols_t&>;
 
 using it_exported_symbols       = filter_iterator<symbols_t>;
 using it_const_exported_symbols = const_filter_iterator<symbols_t>;
@@ -51,6 +52,10 @@ using it_const_segments         = const_ref_iterator<segments_t>;
 using sections_t                = std::vector<Section*>;
 using it_sections               = ref_iterator<sections_t>;
 using it_const_sections         = const_ref_iterator<sections_t>;
+
+using relocations_t             = std::vector<Relocation>;
+using it_relocations            = ref_iterator<relocations_t&>;
+using it_const_relocations      = const_ref_iterator<const relocations_t&>;
 }
 }
 

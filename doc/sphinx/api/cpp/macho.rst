@@ -140,3 +140,68 @@ Source Version
 
 .. doxygenclass:: LIEF::MachO::SourceVersion
    :project: lief
+
+----------
+
+Relocation
+**********
+
+.. doxygenclass:: LIEF::MachO::Relocation
+   :project: lief
+
+----------
+
+
+Enums
+*****
+
+.. doxygenenum:: LIEF::MachO::MACHO_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::FILE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::HEADER_FLAGS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::LOAD_COMMAND_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SEGMENTS_FLAGS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SECTION_FLAGS_HELPER
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SECTION_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SECTION_FLAGS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SYMBOL_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::SYMBOL_DESCRIPTIONS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::X86_RELOCATION
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::X86_64_RELOCATION
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::PPC_RELOCATION
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::ARM_RELOCATION
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::ARM64_RELOCATION
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::CPU_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::CPU_SUBTYPES_X86
+   :project: lief

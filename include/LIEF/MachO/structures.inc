@@ -418,19 +418,11 @@ struct relocation_info {
 
 
 struct scattered_relocation_info {
-  #if defined(BYTE_ORDER) && defined(BIG_ENDIAN) && (BYTE_ORDER == BIG_ENDIAN)
-  uint32_t r_scattered:1,
-           r_pcrel:1,
-           r_length:2,
-           r_type:4,
-           r_address:24;
-  #else
   uint32_t r_address:24,
            r_type:4,
            r_length:2,
            r_pcrel:1,
            r_scattered:1;
-  #endif
   int32_t r_value;
 };
 

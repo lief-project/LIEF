@@ -29,6 +29,9 @@ using getter_t = T (Section::*)(void) const;
 template<class T>
 using setter_t = void (Section::*)(T);
 
+template<class T>
+using no_const_getter = T (Section::*)(void);
+
 void init_MachO_Section_class(py::module& m) {
 
   py::class_<Section, LIEF::Section>(m, "Section")
@@ -53,6 +56,11 @@ void init_MachO_Section_class(py::module& m) {
         static_cast<getter_t<SECTION_TYPES>>(&Section::type),
         static_cast<setter_t<SECTION_TYPES>>(&Section::type),
         "")
+
+    .def_property_readonly("relocations",
+        static_cast<no_const_getter<it_relocations>>(&Section::relocations),
+        "Iterator over " RST_CLASS_REF(lief.MachO.Relocation) " (if any)",
+        py::return_value_policy::reference_internal)
 
 
     .def("__eq__", &Section::operator==)

@@ -445,6 +445,38 @@ bool Binary::disable_pie(void) {
 }
 
 
+
+bool Binary::has_section(const std::string& name) const {
+  it_const_sections sections = this->sections();
+
+  auto&& it_section = std::find_if(
+      std::begin(sections),
+      std::end(sections),
+      [&name] (const Section& sec) {
+        return sec.name() == name;
+      });
+
+  return it_section != sections.cend();
+}
+
+Section& Binary::get_section(const std::string& name) {
+  return const_cast<Section&>(static_cast<const Binary*>(this)->get_section(name));
+}
+
+const Section& Binary::get_section(const std::string& name) const {
+  if (not this->has_section(name)) {
+    throw not_found("'" + name + "' not found in the binary");
+  }
+  it_const_sections sections = this->sections();
+  auto&& it_section = std::find_if(
+      std::begin(sections),
+      std::end(sections),
+      [&name] (const Section& sec) {
+        return sec.name() == name;
+      });
+  return *it_section;
+}
+
 uint64_t Binary::imagebase(void) const {
   it_const_segments segments = this->segments();
   auto&& it_text_segment = std::find_if(

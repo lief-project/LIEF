@@ -150,6 +150,39 @@ def print_sections(binary):
             section.numberof_relocations,
             section.relocation_offset,
             str(section.type).split(".")[-1]))
+        if len(section.relocations) > 0:
+            for idx, reloc in enumerate(section.relocations):
+                name = reloc.symbol.name if reloc.has_symbol else ""
+                secname = " - " + reloc.section.name if reloc.has_section else ""
+                type = str(reloc.type)
+                if reloc.architecture == MachO.CPU_TYPES.x86:
+                    type = str(MachO.X86_RELOCATION(reloc.type))
+
+                if reloc.architecture == MachO.CPU_TYPES.x86_64:
+                    type = str(MachO.X86_64_RELOCATION(reloc.type))
+
+                if reloc.architecture == MachO.CPU_TYPES.ARM:
+                    type = str(MachO.ARM_RELOCATION(reloc.type))
+
+                if reloc.architecture == MachO.CPU_TYPES.ARM64:
+                    type = str(MachO.ARM64_RELOCATION(reloc.type))
+
+                if reloc.architecture == MachO.CPU_TYPES.POWERPC:
+                    type = str(MachO.PPC_RELOCATION(reloc.type))
+
+
+                print("    [Reloc #{:d} {section}] {name:<10} 0x{address:<6x} {type:<20} {size:d} {pcrel} {scat}".format(
+                    idx,
+                    section=secname,
+                    name=name,
+                    address=reloc.address,
+                    type=type.split(".")[-1],
+                    size=reloc.size,
+                    pcrel=str(reloc.pc_relative),
+                    scat=str(reloc.is_scattered)))
+            print("")
+
+
     print("")
 
 @exceptions_handler(Exception)

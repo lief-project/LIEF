@@ -348,6 +348,10 @@ void Visitor::visit(const MachO::Symbol& symbol) {
   symbol.accept(*this);
 }
 
+void Visitor::visit(const MachO::Relocation& relocation) {
+  relocation.accept(*this);
+}
+
 
 
 

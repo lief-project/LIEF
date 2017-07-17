@@ -58,6 +58,9 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
 
     BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0);
 
+    void init(void);
+
+    template<class MACHO_T>
     void parse(void);
 
     template<class MACHO_T>
@@ -65,6 +68,9 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
 
     template<class MACHO_T>
     void parse_load_commands(void);
+
+    template<class MACHO_T>
+    void parse_relocations(Section& section);
 
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_ ;

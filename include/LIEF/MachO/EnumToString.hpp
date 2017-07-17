@@ -31,6 +31,13 @@ DLL_PUBLIC const char* to_string(SECTION_FLAGS e);
 DLL_PUBLIC const char* to_string(SYMBOL_TYPES e);
 DLL_PUBLIC const char* to_string(N_LIST_TYPES e);
 DLL_PUBLIC const char* to_string(SYMBOL_DESCRIPTIONS e);
+
+DLL_PUBLIC const char* to_string(X86_RELOCATION e);
+DLL_PUBLIC const char* to_string(X86_64_RELOCATION e);
+DLL_PUBLIC const char* to_string(PPC_RELOCATION e);
+DLL_PUBLIC const char* to_string(ARM_RELOCATION e);
+DLL_PUBLIC const char* to_string(ARM64_RELOCATION e);
+
 } // namespace MachO
 } // namespace LIEF
 

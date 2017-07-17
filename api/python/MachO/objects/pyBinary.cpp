@@ -164,6 +164,17 @@ void init_MachO_Binary_class(py::module& m) {
         "Convert the virtual address to an offset in the binary",
         "virtual_address"_a)
 
+    .def("has_section",
+        &Binary::has_section,
+        "Check if a section with the given name exists",
+        "name"_a)
+
+    .def("get_section",
+        static_cast<Section& (Binary::*)(const std::string&)>(&Binary::get_section),
+        "Return the section from the given name",
+        "name"_a,
+        py::return_value_policy::reference)
+
 
     .def("__str__",
         [] (const Binary& binary)

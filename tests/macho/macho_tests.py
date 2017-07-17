@@ -43,6 +43,58 @@ class TestMachO(TestCase):
 
         self.assertEqual(functions, list(functions_dd))
 
+    def test_relocations(self):
+        helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))
+
+        # __text Section
+        text_section = helloworld.get_section("__text")
+        relocations  = text_section.relocations
+        self.assertEqual(len(relocations), 2)
+
+        # 0
+        self.assertEqual(relocations[0].address, 0x23)
+        self.assertEqual(relocations[0].type,    2)
+        self.assertEqual(relocations[0].size,    2)
+
+        self.assertEqual(relocations[0].is_scattered, False)
+
+        self.assertEqual(relocations[0].has_symbol,  True)
+        self.assertEqual(relocations[0].symbol.name, "_printf")
+
+        self.assertEqual(relocations[0].has_section,  True)
+        self.assertEqual(relocations[0].section.name, text_section.name)
+
+        # 1
+        self.assertEqual(relocations[1].address, 0x0b)
+        self.assertEqual(relocations[1].type,    1)
+        self.assertEqual(relocations[1].size,    2)
+
+        self.assertEqual(relocations[1].is_scattered, False)
+
+        self.assertEqual(relocations[1].has_symbol,  False)
+
+        self.assertEqual(relocations[1].has_section,  True)
+        self.assertEqual(relocations[1].section.name, text_section.name)
+
+        # __compact_unwind__LD  Section
+        cunwind_section = helloworld.get_section("__compact_unwind__LD")
+        relocations  = cunwind_section.relocations
+        self.assertEqual(len(relocations), 1)
+
+        # 0
+        self.assertEqual(relocations[0].address, 0x0)
+        self.assertEqual(relocations[0].type,    0)
+        self.assertEqual(relocations[0].size,    3)
+
+        self.assertEqual(relocations[0].is_scattered, False)
+
+        self.assertEqual(relocations[0].has_symbol,  False)
+
+        self.assertEqual(relocations[0].has_section,  True)
+        self.assertEqual(relocations[0].section.name, "__cstring")
+
+
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()

@@ -156,10 +156,8 @@ Enums
 .. doxygenenum:: LIEF::ELF::ARCH
    :project: lief
 
-
 .. doxygenenum:: LIEF::ELF::IDENTITY
    :project: lief
-
 
 .. doxygenenum:: LIEF::ELF::E_TYPE
    :project: lief

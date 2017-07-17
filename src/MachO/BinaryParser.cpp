@@ -47,22 +47,20 @@ BinaryParser::BinaryParser(void) = default;
 BinaryParser::~BinaryParser(void) = default;
 
 BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset) :
-  stream_{new VectorStream{data}}
+  stream_{new VectorStream{data}},
+  binary_{new Binary{}}
 {
-
-  this->binary_ = new Binary{};
   this->binary_->fat_offset_ = fat_offset;
-  this->parse();
+  this->init();
 }
 
 
 BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset) :
-  stream_{std::move(stream)}
+  stream_{std::move(stream)},
+  binary_{new Binary{}}
 {
-
-  this->binary_ = new Binary{};
   this->binary_->fat_offset_ = fat_offset;
-  this->parse();
+  this->init();
 }
 
 BinaryParser::BinaryParser(const std::string& file) :
@@ -84,11 +82,10 @@ BinaryParser::BinaryParser(const std::string& file) :
   this->binary_->name_ = filesystem::path(file).filename();
   this->binary_->fat_offset_ = 0;
 
-  this->parse();
+  this->init();
 }
 
-
-void BinaryParser::parse(void) {
+void BinaryParser::init(void) {
   LOG(DEBUG) << "Parsing MachO" << std::endl;
   MACHO_TYPES type = static_cast<MACHO_TYPES>(
       *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
@@ -107,20 +104,12 @@ void BinaryParser::parse(void) {
   this->type_          = type;
 
   if (this->is64_) {
-    this->parse_header<MachO64>();
-    if (this->binary_->header().nb_cmds() > 0) {
-      this->parse_load_commands<MachO64>();
-    }
+    this->parse<MachO64>();
   } else {
-    this->parse_header<MachO32>();
-
-    if (this->binary_->header().nb_cmds() > 0) {
-      this->parse_load_commands<MachO32>();
-    }
+    this->parse<MachO32>();
   }
 
 }
-
 
 Binary* BinaryParser::get_binary(void) {
   return this->binary_;
