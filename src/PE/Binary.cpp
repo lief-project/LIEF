@@ -923,7 +923,8 @@ std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
   std::vector<std::string> result;
   if (this->has_imports()) {
     for (const Import& import : this->imports()) {
-      for (const ImportEntry& entry : import.entries()) {
+      const Import& resolved = resolve_ordinals(import);
+      for (const ImportEntry& entry : resolved.entries()) {
         const std::string& name = entry.name();
         if(not name.empty()) {
           result.push_back(name);
