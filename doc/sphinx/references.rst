@@ -167,6 +167,7 @@ Tools
 | bearparser     | C++        | https://github.com/hasherezade/bearparser              | PE              | Portable Executable parsing  |
 |                |            |                                                        |                 |  library with a GUI          |
 +----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-
+| IAT patcher    | C++        | http://hasherezade.github.io/IAT_patcher               | PE              | IAT hooking application      |
++----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
 
 
