@@ -104,7 +104,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Remove ``PIE`` flag
     bool disable_pie(void);
 
-    //! @brief Return binary's imagebase
+    //! @brief Return binary's imagebase. ``0`` if not relevant
     uint64_t imagebase(void) const;
 
     //! @brief Return binary's loader (e.g. ``/usr/lib/dyld``)

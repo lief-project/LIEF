@@ -455,7 +455,7 @@ uint64_t Binary::imagebase(void) const {
       });
 
   if (it_text_segment == segments.cend()) {
-    throw LIEF::not_found("Unable to find __TEXT");
+    return 0;
   }
 
   return it_text_segment->virtual_address();
