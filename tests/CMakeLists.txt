@@ -317,5 +317,8 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/elf")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
 
+# /!\ Bad Hack /!\
+add_dependencies(test_iterators lief_samples)
+
 add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
   DEPENDS lief_samples)
