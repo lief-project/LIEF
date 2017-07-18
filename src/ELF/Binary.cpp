@@ -172,21 +172,15 @@ it_const_symbols Binary::get_dynamic_symbols(void) const {
 // Exported
 // --------
 
-bool Binary::is_exported(const Symbol& symbol) {
-  return ((symbol.binding() == SYMBOL_BINDINGS::STB_GLOBAL or
-        symbol.binding() == SYMBOL_BINDINGS::STB_WEAK) and
-        symbol.shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF);
-}
-
 it_exported_symbols Binary::get_exported_symbols(void) {
   return {this->dynamic_symbols_,
-    [] (const Symbol* symbol) { return is_exported(*symbol); }
+    [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
 }
 
 it_const_exported_symbols Binary::get_exported_symbols(void) const {
   return {this->dynamic_symbols_,
-    [] (const Symbol* symbol) { return is_exported(*symbol); }
+    [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
 }
 
@@ -195,19 +189,15 @@ it_const_exported_symbols Binary::get_exported_symbols(void) const {
 // Imported
 // --------
 
-bool Binary::is_imported(const Symbol& symbol) {
-  return symbol.shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
-}
-
 it_imported_symbols Binary::get_imported_symbols(void) {
   return filter_iterator<symbols_t>{std::ref(this->dynamic_symbols_),
-    [] (const Symbol* symbol) { return is_imported(*symbol); }
+    [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
 }
 
 it_const_imported_symbols Binary::get_imported_symbols(void) const {
   return const_filter_iterator<symbols_t>{std::cref(this->dynamic_symbols_),
-    [] (const Symbol* symbol) { return is_imported(*symbol); }
+    [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
 }
 

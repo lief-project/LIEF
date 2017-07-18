@@ -53,20 +53,52 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     Symbol(const Symbol& other);
     void swap(Symbol& other);
 
-    SYMBOL_TYPES         type(void) const;
-    SYMBOL_BINDINGS      binding(void) const;
-    uint8_t              information(void) const;
-    uint8_t              other(void) const;
-    uint16_t             section_idx(void) const;
-    Section&             section(void);
-    uint64_t             value(void) const;
-    uint64_t             size(void) const;
-    uint16_t             shndx(void) const;
-    bool                 has_version(void) const;
+    //! @brief A symbol's type provides a general classification for the associated entity
+    SYMBOL_TYPES type(void) const;
+
+    //! @brief A symbol's binding determines the linkage visibility and behavior
+    SYMBOL_BINDINGS binding(void) const;
+
+    //! @brief This member specifies the symbol's type and binding attributes.
+    uint8_t information(void) const;
+
+    //! @brief This member currently holds ``0`` and has no defined meaning.
+    uint8_t other(void) const;
+
+    //! @brief @link ELF::Section section@endlink index associated with the symbol
+    uint16_t section_idx(void) const;
+
+    Section& section(void);
+
+    //! This member have slightly different interpretations:
+    //!   * In relocatable files, `value` holds alignment constraints for a symbol whose section index
+    //!     is SHN_COMMON
+    //!   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
+    //!     offset from the beginning of the section associated with this symbol.
+    //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
+    //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
+    //!     a virtual address (memory interpretation) for which the section number is irrelevant.
+    uint64_t value(void) const;
+
+    //! @brief Symbol size
+    //!
+    //! Many symbols have associated sizes. For example, a data object's size is the number of
+    //! bytes contained in the object. This member holds `0` if the symbol has no size or
+    //! an unknown size.
+    uint64_t size(void) const;
+
+    //! @brief @see Symbol::section_idx
+    uint16_t shndx(void) const;
+
+    //! @brief Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
+    bool has_version(void) const;
+
+    //! @brief Return the @link ELF::SymbolVersion symbol version @endlink associated with this symbol
     SymbolVersion&       symbol_version(void);
     const SymbolVersion& symbol_version(void) const;
 
-    std::string          demangled_name(void) const;
+    //! @brief Symbol's unmangled name
+    std::string demangled_name(void) const;
 
     void type(SYMBOL_TYPES type);
     void binding(SYMBOL_BINDINGS binding);
@@ -75,6 +107,18 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     void size(uint64_t size);
     void information(uint8_t info);
     void shndx(uint16_t idx);
+
+    //! @brief Check if the current symbol is exported
+    bool is_exported(void) const;
+
+    //! @brief Set whether or not the symbol is exported
+    void set_exported(bool flag = true);
+
+    //! @brief Check if the current symbol is imported
+    bool is_imported(void) const;
+
+    //! @brief Set whether or not the symbol is imported
+    void set_imported(bool flag = true);
 
     virtual void accept(Visitor& visitor) const override;
 

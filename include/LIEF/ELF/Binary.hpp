@@ -63,12 +63,6 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Binary& operator=(const Binary& copy) = delete;
     Binary(const Binary& copy)            = delete;
 
-    //! @brief Check if the given symbol is exported
-    static bool is_exported(const Symbol& symbol);
-
-    //! @brief Check if the given symbol is imported
-    static bool is_imported(const Symbol& symbol);
-
     //! @brief Return binary's class (ELF32 or ELF64)
     ELF_CLASS type(void) const;
 

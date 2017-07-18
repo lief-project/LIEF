@@ -213,6 +213,36 @@ std::string Symbol::demangled_name(void) const {
 #endif
 }
 
+bool Symbol::is_exported(void) const {
+  return ((this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
+        this->binding() == SYMBOL_BINDINGS::STB_WEAK) and
+        this->shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF);
+}
+
+void Symbol::set_exported(bool flag) {
+  if (flag) {
+    this->shndx(1);
+    this->binding(SYMBOL_BINDINGS::STB_GLOBAL);
+  } else {
+    this->shndx(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+    this->binding(SYMBOL_BINDINGS::STB_LOCAL);
+  }
+}
+
+bool Symbol::is_imported(void) const {
+  return this->shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
+}
+
+void Symbol::set_imported(bool flag) {
+  if (flag) {
+    this->shndx(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+  } else {
+    this->shndx(1);
+  }
+}
+
+
+
 void Symbol::accept(Visitor& visitor) const {
 
   LIEF::Symbol::accept(visitor);

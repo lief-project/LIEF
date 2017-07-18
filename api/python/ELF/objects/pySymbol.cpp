@@ -46,17 +46,17 @@ void init_ELF_Symbol_class(py::module& m) {
     .def_property("binding",
         static_cast<getter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
         static_cast<setter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
-        "A symbol’s binding determines the linkage visibility and behavior")
+        "A symbol's binding determines the linkage visibility and behavior")
 
     .def_property("information",
         static_cast<getter_t<uint8_t>>(&Symbol::information),
         static_cast<setter_t<uint8_t>>(&Symbol::information),
-        "This member specifies the symbol's type and binding attributes.\n")
+        "This member specifies the symbol's type and binding attributes")
 
     .def_property("other",
         static_cast<getter_t<uint8_t>>(&Symbol::other),
         static_cast<setter_t<uint8_t>>(&Symbol::other),
-        "This member currently holds 0 and has no defined meaning.")
+        "This member currently holds ``0`` and has no defined meaning.")
 
     .def_property("value",
         static_cast<getter_t<uint64_t>>(&Symbol::value),
@@ -80,7 +80,7 @@ void init_ELF_Symbol_class(py::module& m) {
     .def_property("shndx",
         static_cast<getter_t<uint16_t>>(&Symbol::shndx),
         static_cast<setter_t<uint16_t>>(&Symbol::shndx),
-        "Section associated with the symbol")
+        "Section index associated with the symbol")
 
     .def_property_readonly("has_version",
         &Symbol::has_version,
@@ -90,6 +90,16 @@ void init_ELF_Symbol_class(py::module& m) {
         static_cast<SymbolVersion& (Symbol::*)(void)>(&Symbol::symbol_version),
         "Return the " RST_CLASS_REF(lief.ELF.SymbolVersion) " associated with this symbol",
         py::return_value_policy::reference_internal)
+
+    .def_property("exported",
+        &Symbol::is_exported,
+        &Symbol::set_exported,
+        "Whether or not the symbol is **exported**")
+
+    .def_property("imported",
+        &Symbol::is_imported,
+        &Symbol::set_imported,
+        "Whether or not the symbol is **imported**")
 
     .def("__eq__", &Symbol::operator==)
     .def("__ne__", &Symbol::operator!=)
