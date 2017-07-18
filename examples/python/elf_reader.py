@@ -145,58 +145,51 @@ def print_dynamic_entries(binary):
 
         print("")
 
+
 @exceptions_handler(Exception)
-def print_symbols(binary):
+def print_symbols(symbols):
+    try:
+        maxsize = max([len(symbol.demangled_name) for symbol in symbols])
+    except:
+        maxsize = max([len(symbol.name) for symbol in symbols])
+    maxsize = min(maxsize, terminal_columns - 54) if terminal_columns > 54 else terminal_columns
 
-    static_symbols       = binary.static_symbols
-    dynamic_symbols      = binary.dynamic_symbols
+    f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}| {:<17}| {:<4}|"
+    f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}| {:<17}| {:<4}|"
 
-    if len(static_symbols) > 0:
+    print(f_title.format("Name", "Type", "Value", "Version", "I/E"))
+
+    for symbol in symbols:
+        symbol_version = symbol.symbol_version if symbol.has_version else ""
+
+        import_export = ""
+        if symbol.imported:
+            import_export = "I"
+
+        if symbol.exported:
+            import_export = "E"
+
         try:
-            maxsize = max([len(symbol.demangled_name) for symbol in static_symbols])
+            symbol_name = symbol.demangled_name
         except:
-            maxsize = max([len(symbol.name) for symbol in static_symbols])
-        maxsize = min(maxsize, terminal_columns - 50) if terminal_columns > 50 else terminal_columns
-        f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}|"
-        f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}|"
+            symbol_name = symbol.name
+        print(f_value.format(
+            symbol_name,
+            str(symbol.type).split(".")[-1],
+            symbol.value,
+            str(symbol_version),
+            import_export))
 
-        # Static symbols
-        print("== Static symbols ==\n")
-        print(f_title.format("Name", "Type", "Value", "Version"))
-        for symbol in static_symbols:
-            try:
-                symbol_name = symbol.demangled_name
-            except:
-                symbol_name = symbol.name
-            print(f_value.format(symbol_name, str(symbol.type).split(".")[-1], symbol.value))
+@exceptions_handler(Exception)
+def print_dynamic_symbols(binary):
+    print("== Dynamic symbols ==\n")
+    print_symbols(binary.dynamic_symbols)
 
 
-    if len(dynamic_symbols) > 0:
-        try:
-            maxsize = max([len(symbol.demangled_name) for symbol in dynamic_symbols])
-        except:
-            maxsize = max([len(symbol.name) for symbol in dynamic_symbols])
-        maxsize = min(maxsize, terminal_columns - 50) if terminal_columns > 50 else terminal_columns
-
-        f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}|"
-        f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}|"
-
-        # Dynamic symbols
-        print("== Dynamic symbols ==\n")
-        print(f_title.format("Name", "Type", "Value", "Version"))
-
-        for symbol in dynamic_symbols:
-            symbol_version = symbol.symbol_version if symbol.has_version else ""
-
-            try:
-                symbol_name = symbol.demangled_name
-            except:
-                symbol_name = symbol.name
-            print(f_value.format(
-                symbol_name,
-                str(symbol.type).split(".")[-1],
-                symbol.value,
-                str(symbol_version)))
+@exceptions_handler(Exception)
+def print_static_symbols(binary):
+    print("== Static symbols ==\n")
+    print_symbols(binary.static_symbols)
 
 @exceptions_handler(Exception)
 def print_relocations(binary, relocations):
@@ -409,6 +402,14 @@ def main():
             action='store_true', dest='show_symbols',
             help='Display the symbol table')
 
+    optparser.add_option('--dynamic-symbols', '--dsyms',
+            action='store_true', dest='show_dynamic_symbols',
+            help='Display the dynamic symbols')
+
+    optparser.add_option('--static-symbols', '--ssyms',
+            action='store_true', dest='show_static_symbols',
+            help='Display the static symbols')
+
     optparser.add_option('-r', '--relocs',
             action='store_true', dest='show_relocs',
             help='Display the relocations (if present)')
@@ -464,8 +465,11 @@ def main():
     if options.show_dynamic_tags or options.show_all:
         print_dynamic_entries(binary)
 
-    if options.show_symbols or options.show_all:
-        print_symbols(binary)
+    if (options.show_symbols or options.show_all or options.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
+        print_dynamic_symbols(binary)
+
+    if (options.show_symbols or options.show_all or options.show_static_symbols) and len(binary.static_symbols) > 0:
+        print_static_symbols(binary)
 
     if options.show_relocs or options.show_all:
         print_all_relocations(binary)
