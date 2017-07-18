@@ -35,6 +35,8 @@ void init_c_dynamic_symbols(Elf_Binary_t* c_binary, Binary* binary) {
     c_binary->dynamic_symbols[i]->value       = b_sym.value();
     c_binary->dynamic_symbols[i]->size        = b_sym.size();
     c_binary->dynamic_symbols[i]->information = b_sym.information();
+    c_binary->dynamic_symbols[i]->is_exported = b_sym.is_exported();
+    c_binary->dynamic_symbols[i]->is_imported = b_sym.is_imported();
   }
   c_binary->dynamic_symbols[dyn_symb.size()] = nullptr;
 
@@ -60,6 +62,8 @@ void init_c_static_symbols(Elf_Binary_t* c_binary, Binary* binary) {
     c_binary->static_symbols[i]->value       = b_sym.value();
     c_binary->static_symbols[i]->size        = b_sym.size();
     c_binary->static_symbols[i]->information = b_sym.information();
+    c_binary->static_symbols[i]->is_exported = b_sym.is_exported();
+    c_binary->static_symbols[i]->is_imported = b_sym.is_imported();
   }
   c_binary->static_symbols[static_symb.size()] = nullptr;
 

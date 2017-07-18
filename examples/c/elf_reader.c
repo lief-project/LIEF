@@ -76,6 +76,16 @@ int main(int argc, char **argv) {
   Elf_Symbol_t** dynamic_symbols = elf_binary->dynamic_symbols;
   for (i = 0; dynamic_symbols[i] != NULL; ++i) {
     Elf_Symbol_t* symbol = dynamic_symbols[i];
+    const char* import_export = "";
+
+    if (symbol->is_imported) {
+      import_export = "I";
+    }
+
+    if (symbol->is_imported) {
+      import_export = "E";
+    }
+
     fprintf(stdout, ""
         "%-20s "
         "%-10s "
@@ -84,6 +94,7 @@ int main(int argc, char **argv) {
         "0x%02x"
         "0x%010" PRIx64 " "
         "0x%06" PRIx64 " "
+        "%-3s "
         "\n",
         symbol->name,
         SYMBOL_TYPES_to_string(symbol->type),
@@ -91,7 +102,8 @@ int main(int argc, char **argv) {
         symbol->other,
         symbol->shndx,
         symbol->value,
-        symbol->size
+        symbol->size,
+        import_export
         );
   }
 
@@ -100,6 +112,17 @@ int main(int argc, char **argv) {
   Elf_Symbol_t** static_symbols = elf_binary->static_symbols;
   for (i = 0; static_symbols[i] != NULL; ++i) {
     Elf_Symbol_t* symbol = static_symbols[i];
+
+    const char* import_export = "";
+
+    if (symbol->is_imported) {
+      import_export = "I";
+    }
+
+    if (symbol->is_imported) {
+      import_export = "E";
+    }
+
     fprintf(stdout, ""
         "%-20s "
         "%-10s "
@@ -108,6 +131,7 @@ int main(int argc, char **argv) {
         "0x%02x"
         "0x%010" PRIx64 " "
         "0x%06" PRIx64 " "
+        "%-3s "
         "\n",
         symbol->name,
         SYMBOL_TYPES_to_string(symbol->type),
@@ -115,7 +139,8 @@ int main(int argc, char **argv) {
         symbol->other,
         symbol->shndx,
         symbol->value,
-        symbol->size
+        symbol->size,
+        import_export
         );
   }
 
