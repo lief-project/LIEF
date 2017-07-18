@@ -27,6 +27,7 @@
 #include <stddef.h>
 
 #include "LIEF/visibility.h"
+#include "LIEF/types.h"
 
 
 #ifdef __cplusplus
