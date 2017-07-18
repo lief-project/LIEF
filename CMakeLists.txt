@@ -547,9 +547,7 @@ endif()
 # Tests
 # =====
 if(LIEF_TESTS)
-  enable_testing()
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests")
-  add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure)
 endif()
 
 # CPP Check

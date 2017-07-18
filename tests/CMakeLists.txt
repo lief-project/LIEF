@@ -1,3 +1,26 @@
+find_package(Git REQUIRED)
+enable_testing()
+
+# Tests samples
+# =============
+set(SAMPLES_GIT_URL "https://github.com/lief-project/samples.git" CACHE STRING "URL to tests samples")
+set(SAMPLES_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/lief-samples")
+set(SAMPLES_TAG master)
+
+ExternalProject_Add(lief_samples
+  PREFIX            ${SAMPLES_PREFIX}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  GIT_REPOSITORY    ${SAMPLES_GIT_URL}
+  GIT_TAG           ${SAMPLES_TAG}
+  UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+)
+
+ExternalProject_Get_Property(lief_samples source_dir)
+set(LIEF_SAMPLES_DIRECTORY "${source_dir}" CACHE INTERNAL "Path to LIEF samples")
+message(STATUS "Samples directory: ${LIEF_SAMPLES_DIRECTORY}")
+
 # Tests options
 # =============
 option(LIEF_FUZZING "Fuzz LIEF" OFF)
@@ -8,17 +31,22 @@ endif()
 
 set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
 set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
-set(LIEF_SAMPLES_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/samples")
+#set(LIEF_SAMPLES_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/samples")
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/config.yaml.in"
   "${CMAKE_CURRENT_BINARY_DIR}/config.yaml"
   @ONLY)
 
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
+  "${PROJECT_BINARY_DIR}/api/python/utils.py"
+  @ONLY)
+
 add_definitions(-DPATH_TO_CONFIG="${CMAKE_CURRENT_BINARY_DIR}")
 add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
 
-find_package(Git REQUIRED)
 
 # YAML CPP
 # ========
@@ -285,8 +313,9 @@ if (LIEF_PYTHON_API)
 
 endif()
 
-enable_testing()
-
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/elf")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
+
+add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+  DEPENDS lief_samples)
