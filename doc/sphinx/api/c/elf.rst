@@ -93,3 +93,10 @@ Elf_DynamicEntry_RunPath_t
 
 .. doxygenstruct:: Elf_DynamicEntry_RunPath_t
    :project: lief
+
+
+Utilities
+*********
+
+.. doxygengroup:: elf_utils_c_api
+   :project: lief

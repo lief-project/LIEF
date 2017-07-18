@@ -10,7 +10,9 @@ set(LIEF_C_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/ELF/DynamicEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ELF/Header.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ELF/Binary.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ELF/EnumToString.cpp")
+  "${CMAKE_CURRENT_LIST_DIR}/ELF/EnumToString.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ELF/utils.cpp"
+)
 
 
 set(LIEF_C_PE_SRC
@@ -47,7 +49,9 @@ set(LIEF_C_ELF_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/Symbol.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/ELF/Symbol.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/structures.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.h")
+  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/utils.h"
+)
 
 set(LIEF_C_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/Binary.h"
@@ -87,7 +91,9 @@ set(LIEF_C_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/LIEF.h")
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/LIEF.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/types.h"
+)
 
 set(LIEF_C_SRC ${LIEF_C_INCLUDE_FILES})
 
