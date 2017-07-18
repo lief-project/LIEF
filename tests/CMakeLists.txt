@@ -39,10 +39,17 @@ configure_file(
   @ONLY)
 
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
-  "${PROJECT_BINARY_DIR}/api/python/utils.py"
-  @ONLY)
+if (MSVC)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
+    "${PROJECT_BINARY_DIR}/api/python/release/utils.py"
+    @ONLY)
+else()
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
+    "${PROJECT_BINARY_DIR}/api/python/utils.py"
+    @ONLY)
+endif()
 
 add_definitions(-DPATH_TO_CONFIG="${CMAKE_CURRENT_BINARY_DIR}")
 add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
