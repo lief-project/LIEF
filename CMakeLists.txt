@@ -537,11 +537,7 @@ endif()
 # Examples
 # ========
 if(LIEF_EXAMPLES)
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/examples/cpp")
-
-  if (LIEF_C_API)
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/examples/c")
-  endif()
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/examples")
 endif()
 
 # Tests
@@ -597,6 +593,12 @@ install(
   DESTINATION include
   COMPONENT headers
   FILES_MATCHING REGEX "(.*).(hpp|h|def)$")
+
+install(
+  FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
+  DESTINATION share/LIEF/cmake
+  COMPONENT CMakeScripts
+)
 
 # Package
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")

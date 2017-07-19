@@ -73,3 +73,11 @@ foreach(example ${LIEF_C_EXAMPLES})
 endforeach()
 endif()
 
+
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DESTINATION share/LIEF/examples/c
+  COMPONENT examples
+  FILES_MATCHING REGEX "(.*).(hpp|h|c)$"
+)
+

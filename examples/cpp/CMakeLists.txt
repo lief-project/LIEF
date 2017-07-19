@@ -74,3 +74,11 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   target_link_libraries("${output_name}_shared" PUBLIC LIB_LIEF_SHARED)
 endforeach()
 
+
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DESTINATION share/LIEF/examples/cpp
+  COMPONENT examples
+  FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
+)
+

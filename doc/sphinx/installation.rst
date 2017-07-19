@@ -151,81 +151,49 @@ and run it:
 CMake Integration
 -----------------
 
-By using `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_, integration of LIEF is quiet simple.
 
-This script setup LIEF as an *external project*
+External Project
+****************
 
-.. code-block:: cmake
+Using `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_:
 
-  set(LIEF_PREFIX       "${CMAKE_CURRENT_BINARY_DIR}/LIEF")
-  set(LIEF_INSTALL_DIR  "${LIEF_PREFIX}")
-  set(LIEF_INCLUDE_DIRS "${LIEF_PREFIX}/include")
-
-  # LIEF static library
-  set(LIB_LIEF_STATIC
-    "${LIEF_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LIEF${CMAKE_STATIC_LIBRARY_SUFFIX}")
-
-  # URL of the LIEF repo (Can be your fork)
-  set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
-
-  # LIEF's version to be used (can be 'master')
-  set(LIEF_VERSION 0.7.0)
-
-  # LIEF compilation config
-  set(LIEF_CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-    -DLIEF_DOC=off
-    -DLIEF_PYTHON_API=off
-    -DLIEF_EXAMPLES=off
-    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-  )
-
-  ExternalProject_Add(LIEF
-    PREFIX           "${LIEF_PREFIX}"
-    GIT_REPOSITORY   ${LIEF_GIT_URL}
-    GIT_TAG          ${LIEF_VERSION}
-    INSTALL_DIR      ${LIEF_INSTALL_DIR}
-    CMAKE_ARGS       ${LIEF_CMAKE_ARGS}
-    BUILD_BYPRODUCTS ${LIEF_LIBRARIES}
-    UPDATE_COMMAND   ""
-  )
+.. literalinclude:: _static/CMakeExternalProject.cmake
+   :language: cmake
+   :lines: 1-42
 
 And now, to be integrated within a project:
 
-.. code-block:: cmake
-
-  add_executable(HelloLIEF main.cpp)
-
-  if (MSVC)
-    # Used for the 'and', 'or' ... keywords - See: http://www.cplusplus.com/reference/ciso646/
-    target_compile_options(HelloLIEF PUBLIC /FIiso646.h)
-    set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-  endif()
-
-  # Setup the LIEF include directory
-  target_include_directories(HelloLIEF
-    PUBLIC
-    ${LIEF_INCLUDE_DIRS}
-  )
-
-  # Enable C++11
-  set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD           11)
-  set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD_REQUIRED  ON)
-
-  # Link the executable with LIEF
-  target_link_libraries(HelloLIEF PUBLIC ${LIB_LIEF_STATIC})
-
-  add_dependencies(HelloLIEF LIEF)
+.. literalinclude:: _static/CMakeExternalProject.cmake
+   :language: cmake
+   :lines: 47-
 
 For the compilation:
 
-.. code-block:: console
+.. literalinclude:: _static/ReadmeExternalProject.rst
+   :language: rst
+   :lines: 1-42
 
-  $ mkdir build
-  $ cd build
-  $ cmake ..
-  $ make -j3 # and wait...
+A *full* example is available in the ``examples/cmake/external_project`` directory.
 
-A *full* example is available in the ``examples/cmake`` directory.
+
+find_package()
+**************
+
+Using `CMake find_package() <https://cmake.org/cmake/help/v3.0/command/find_package.html>`_:
+
+.. literalinclude:: _static/CMakeFindPackage.cmake
+   :language: cmake
+   :lines: 5-19
+
+And now, to be integrated within a project:
+
+.. literalinclude:: _static/CMakeFindPackage.cmake
+   :language: cmake
+   :lines: 20-
+
+For the compilation:
+
+.. literalinclude:: _static/ReadmeFindPackage.rst
+   :language: rst
+
+A *full* example is available in the ``examples/cmake/find_package`` directory.

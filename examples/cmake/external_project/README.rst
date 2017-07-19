@@ -1,5 +1,5 @@
-LIEF CMake Integration Example
-==============================
+LIEF CMake Integration Example - ExternalProject
+================================================
 
 
 .. code-block:: console
