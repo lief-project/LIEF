@@ -1,11 +1,17 @@
 machine:
   python:
     version: 2.7.5
+  environment:
+    PATH: "${HOME}/cmake-3.7.2-Linux-x86_64/bin:${PATH}"
+    PYTHON_VERSION: "2.7"
+    PYTHON_INCLUDE_DIR: "/usr/include/python2.7"
+    PYTHON_LIBRARY: "/usr/lib/libpython2.7.so"
+    PYTHON_BINARY: "/usr/bin/python2.7"
 
 compile:
   pre:
     - mkdir build
-    - ../cmake-3.7.2-Linux-x86_64/bin/cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DPYTHON_VERSION=2.7 -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so, -DPYTHON_BINARY=/usr/bin/python2.7 -DLIEF_TESTS=on ..:
+    - cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DPYTHON_VERSION=${PYTHON_VERSION} -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} -DPYTHON_LIBRARY=${PYTHON_LIBRARY} -DPYTHON_EXECUTABLE=${PYTHON_BINARY} -DLIEF_TESTS=on ..:
         pwd:
           build
   override:
@@ -24,7 +30,7 @@ dependencies:
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 100
   override:
     - wget --no-check-certificate http://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz
-    - tar -xzf cmake-3.7.2-Linux-x86_64.tar.gz
+    - tar -xzf cmake-3.7.2-Linux-x86_64.tar.gz -C ${HOME}
 test:
   override:
     - make check-lief:
