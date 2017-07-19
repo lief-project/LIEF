@@ -314,7 +314,7 @@ if (LIEF_PYTHON_API)
 
     ADD_PYTHON_TEST(UNITTEST_PYTHON_abstract
       ${PYTHON_EXECUTABLE}
-      "${CMAKE_CURRENT_SOURCE_DIR}/abstract_tests.py")
+      "${CMAKE_CURRENT_SOURCE_DIR}/abstract/abstract_tests.py")
   endif()
 
 
