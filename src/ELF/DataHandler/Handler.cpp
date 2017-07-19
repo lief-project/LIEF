@@ -69,7 +69,7 @@ std::vector<uint8_t> Handler::content(uint64_t offset, uint64_t size, Node::Type
  * Then we check if a node exist for this data. If yes, we replace the raw data with the new data
  * if not we create a node to hold this data and then we insert data
  */
-void Handler::content(uint64_t offset, std::vector<uint8_t> content, Node::Type type) {
+void Handler::content(uint64_t offset, const std::vector<uint8_t>& content, Node::Type type) {
 
   if (this->data_.size() < (offset + content.size())) {
     this->data_.resize(offset + content.size());

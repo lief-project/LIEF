@@ -34,7 +34,7 @@ class DLL_PUBLIC Handler {
     const std::vector<uint8_t>& content(void) const;
     std::vector<uint8_t> content(uint64_t offset, uint64_t size, Node::Type type);
     void add_node(const Node& node);
-    void content(uint64_t offset, std::vector<uint8_t> content, Node::Type type);
+    void content(uint64_t offset, const std::vector<uint8_t>& content, Node::Type type);
 
     Node& find(uint64_t offset, uint64_t size, bool insert, Node::Type type);
     void move(Node& node, uint64_t newOffset);
