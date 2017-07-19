@@ -202,7 +202,6 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     void parse_symbol_gnu_hash(uint64_t offset);
 
     //! @brief Parse Note (.gnu.note)
-    template<typename ELF_T>
     void parse_notes(uint64_t offset, uint64_t size);
 
     //! @brief Parse Symbols's SYSV hash

@@ -38,8 +38,8 @@ class DLL_PUBLIC Debug : public Visitable {
   public:
     Debug(void);
     Debug(const pe_debug* debug_s);
-    Debug(const Debug& other);
-    Debug& operator=(const Debug& other);
+    Debug(const Debug&);
+    Debug& operator=(const Debug&);
     virtual ~Debug(void);
 
     uint32_t characteristics(void) const;

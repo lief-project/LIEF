@@ -49,9 +49,9 @@ static const std::map<ELF_DATA, ENDIANNESS> endi_elf_to_lief {
 };
 
 
-Header& Header::operator=(const Header& copy) = default;
-Header::Header(const Header& copy)            = default;
-Header::~Header(void)                         = default;
+Header& Header::operator=(const Header&) = default;
+Header::Header(const Header&)            = default;
+Header::~Header(void)                    = default;
 
 Header::Header(void) :
   fileType_{E_TYPE::ET_NONE},

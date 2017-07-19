@@ -28,8 +28,8 @@ class DLL_PUBLIC Handler {
     Handler(const std::vector<uint8_t>& content);
     ~Handler(void);
 
-    Handler& operator=(const Handler& copy);
-    Handler(const Handler& copy);
+    Handler& operator=(const Handler&);
+    Handler(const Handler&);
 
     const std::vector<uint8_t>& content(void) const;
     std::vector<uint8_t> content(uint64_t offset, uint64_t size, Node::Type type);

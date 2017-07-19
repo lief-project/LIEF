@@ -268,6 +268,58 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
 }
 
+void Parser::parse_notes(uint64_t offset, uint64_t size) {
+  LOG(DEBUG) << "Parsing Note segment";
+  uint64_t current_offset = offset;
+  uint64_t last_offset = offset + size;
+
+  while(current_offset < last_offset) {
+    uint32_t namesz = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Name size: " << std::hex << namesz;
+
+    uint32_t descsz = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Description size: " << std::hex << descsz;
+
+    uint32_t type = this->stream_->read_integer<uint32_t>(current_offset);
+    current_offset += sizeof(uint32_t);
+    LOG(DEBUG) << "Type: " << std::hex << type;
+
+    if (namesz == 0) { // System reserves
+      break;
+    }
+
+    std::string name = {this->stream_->read_string(current_offset, namesz), namesz - 1};
+    LOG(DEBUG) << "Name: " << name << std::endl;
+    current_offset += namesz;
+    current_offset = align(current_offset, sizeof(uint32_t));
+
+    std::vector<uint8_t> description;
+    if (descsz > 0) {
+      const uint8_t* desc_ptr = reinterpret_cast<const uint8_t*>(
+        this->stream_->read(current_offset, descsz));
+
+      description = {desc_ptr, desc_ptr + descsz};
+
+      current_offset += descsz;
+      current_offset = align(current_offset, sizeof(uint32_t));
+    }
+    Note note{name, type, std::move(description)};
+    auto&& it_note = std::find_if(
+        std::begin(this->binary_->notes_),
+        std::end(this->binary_->notes_),
+        [&note] (const Note& n) {
+          return n == note;
+        });
+    if (it_note == std::end(this->binary_->notes_)) {
+      this->binary_->notes_.push_back(std::move(note));
+    }
+  }
+
+}
+
+
 
 }
 }

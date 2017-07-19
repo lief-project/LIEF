@@ -149,9 +149,6 @@ ContentInfo SignatureParser::parse_content_info(void) {
 
   int ret = 0;
   size_t tag;
-  char oid_str[256] = { 0 };
-  mbedtls_asn1_buf alg_oid;
-  mbedtls_asn1_buf content_type_oid;
 
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {

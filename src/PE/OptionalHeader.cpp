@@ -34,8 +34,8 @@ namespace LIEF {
 namespace PE {
 
 OptionalHeader::~OptionalHeader(void) = default;
-OptionalHeader& OptionalHeader::operator=(const OptionalHeader& copy) = default;
-OptionalHeader::OptionalHeader(const OptionalHeader& copy) = default;
+OptionalHeader& OptionalHeader::operator=(const OptionalHeader&) = default;
+OptionalHeader::OptionalHeader(const OptionalHeader&) = default;
 
 OptionalHeader::OptionalHeader(void) :
   magic_{},

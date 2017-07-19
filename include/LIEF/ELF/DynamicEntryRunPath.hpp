@@ -33,8 +33,8 @@ class DLL_PUBLIC DynamicEntryRunPath : public DynamicEntry {
 
     DynamicEntryRunPath(const std::string& name = "");
 
-    DynamicEntryRunPath& operator=(const DynamicEntryRunPath& copy);
-    DynamicEntryRunPath(const DynamicEntryRunPath& copy);
+    DynamicEntryRunPath& operator=(const DynamicEntryRunPath&);
+    DynamicEntryRunPath(const DynamicEntryRunPath&);
 
     virtual const std::string& name(void) const override;
     virtual void name(const std::string& name) override;

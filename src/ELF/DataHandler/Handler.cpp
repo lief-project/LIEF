@@ -28,8 +28,8 @@ namespace DataHandler {
 
 Handler::Handler(void) = default;
 Handler::~Handler(void) = default;
-Handler& Handler::operator=(const Handler& copy) = default;
-Handler::Handler(const Handler& copy) = default;
+Handler& Handler::operator=(const Handler&) = default;
+Handler::Handler(const Handler&) = default;
 
 Handler::Handler(const std::vector<uint8_t>& content) :
   data_{content}

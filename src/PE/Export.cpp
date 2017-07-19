@@ -23,8 +23,8 @@ namespace LIEF {
 namespace PE {
 
 Export::~Export(void) = default;
-Export::Export(const Export& copy) = default;
-Export& Export::operator=(const Export& copy) = default;
+Export::Export(const Export&) = default;
+Export& Export::operator=(const Export&) = default;
 
 Export::Export(void) :
   exportFlags_{0},

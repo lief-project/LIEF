@@ -40,8 +40,8 @@ class DLL_PUBLIC ExportEntry : public Visitable {
 
   public:
   ExportEntry(void);
-  ExportEntry(const ExportEntry& copy);
-  ExportEntry& operator=(const ExportEntry& copy);
+  ExportEntry(const ExportEntry&);
+  ExportEntry& operator=(const ExportEntry&);
   virtual ~ExportEntry(void);
 
   const std::string& name(void) const;

@@ -23,8 +23,8 @@
 namespace LIEF {
 namespace PE {
 
-Debug::Debug(const Debug& other) = default;
-Debug& Debug::operator=(const Debug& other) = default;
+Debug::Debug(const Debug&) = default;
+Debug& Debug::operator=(const Debug&) = default;
 Debug::~Debug(void) = default;
 
 Debug::Debug(void) :

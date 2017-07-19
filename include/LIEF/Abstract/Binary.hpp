@@ -38,8 +38,8 @@ class DLL_PUBLIC Binary : public Visitable {
     Binary(void);
     virtual ~Binary(void);
 
-    Binary& operator=(const Binary& copy);
-    Binary(const Binary& copy);
+    Binary& operator=(const Binary&);
+    Binary(const Binary&);
 
     //! @brief Return the abstract header of the binary
     Header get_header(void) const;

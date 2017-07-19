@@ -19,8 +19,8 @@ namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 
-Node& Node::operator=(const Node& copy) = default;
-Node::Node(const Node& copy) = default;
+Node& Node::operator=(const Node&) = default;
+Node::Node(const Node&) = default;
 
 Node::Node(void) :
   size_{0},

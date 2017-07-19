@@ -39,8 +39,8 @@ class DLL_PUBLIC Header : public Visitable {
     Header(const Elf32_Ehdr *header);
     Header(const Elf64_Ehdr *header);
 
-    Header& operator=(const Header& copy);
-    Header(const Header& copy);
+    Header& operator=(const Header&);
+    Header(const Header&);
 
     virtual ~Header(void);
 

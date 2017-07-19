@@ -41,6 +41,7 @@ ResourceNode& ResourceNode::operator=(ResourceNode other) {
 }
 
 ResourceNode::ResourceNode(const ResourceNode& other) :
+  Visitable{other},
   id_{other.id_},
   name_{other.name_},
   depth_{other.depth_}

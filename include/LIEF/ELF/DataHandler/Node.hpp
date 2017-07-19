@@ -34,8 +34,8 @@ class DLL_PUBLIC Node {
     Node(void);
     Node(uint64_t offset, uint64_t size, Type type);
 
-    Node& operator=(const Node& copy);
-    Node(const Node& copy);
+    Node& operator=(const Node&);
+    Node(const Node&);
 
     uint64_t size(void) const;
     uint64_t offset(void) const;

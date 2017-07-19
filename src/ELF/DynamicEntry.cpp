@@ -27,9 +27,9 @@ namespace ELF {
 
 DynamicEntry::DynamicEntry(void) = default;
 
-DynamicEntry& DynamicEntry::operator=(const DynamicEntry& copy) = default;
+DynamicEntry& DynamicEntry::operator=(const DynamicEntry&) = default;
 
-DynamicEntry::DynamicEntry(const DynamicEntry& copy) = default;
+DynamicEntry::DynamicEntry(const DynamicEntry&) = default;
 
 DynamicEntry::~DynamicEntry(void) = default;
 

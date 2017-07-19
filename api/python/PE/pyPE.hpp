@@ -77,8 +77,8 @@ void init_PE_Structures_enum(py::module&);
 
 
 // Opaque containers
-PYBIND11_MAKE_OPAQUE(std::vector<LangCodeItem>);
+PYBIND11_MAKE_OPAQUE(std::vector<LangCodeItem>)
 using dict_langcode_item = std::map<std::u16string, std::u16string>;
-PYBIND11_MAKE_OPAQUE(dict_langcode_item);
+PYBIND11_MAKE_OPAQUE(dict_langcode_item)
 
 #endif

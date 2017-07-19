@@ -22,8 +22,8 @@ namespace LIEF {
 namespace ELF {
 
 DynamicEntryArray::DynamicEntryArray(void) = default;
-DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray& copy) = default;
-DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray& copy) = default;
+DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = default;
+DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
 
 DynamicEntryArray::DynamicEntryArray(const Elf64_Dyn* header) :
   DynamicEntry{header}

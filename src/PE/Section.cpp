@@ -46,8 +46,8 @@ Section::Section(void) :
 {}
 
 
-Section& Section::operator=(const Section& copy) = default;
-Section::Section(const Section& copy) = default;
+Section& Section::operator=(const Section&) = default;
+Section::Section(const Section&) = default;
 
 Section::Section(const pe_section* header) :
   virtualSize_{header->VirtualSize},

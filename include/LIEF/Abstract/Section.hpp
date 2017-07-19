@@ -31,8 +31,8 @@ class DLL_PUBLIC Section : public Visitable {
     Section(void);
     virtual ~Section(void);
 
-    Section& operator=(const Section& copy);
-    Section(const Section& copy);
+    Section& operator=(const Section&);
+    Section(const Section&);
 
     //! @brief section's name
     virtual const std::string& name(void) const;

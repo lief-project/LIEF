@@ -35,8 +35,8 @@ class DLL_PUBLIC Header : public Visitable {
     Header(const pe_header *header);
     virtual ~Header(void);
 
-    Header& operator=(const Header& copy);
-    Header(const Header& copy);
+    Header& operator=(const Header&);
+    Header(const Header&);
 
     const signature_t& signature(void) const;
     MACHINE_TYPES      machine(void) const;

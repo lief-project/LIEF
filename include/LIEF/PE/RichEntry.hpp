@@ -31,8 +31,8 @@ class DLL_PUBLIC RichEntry : public Visitable {
 
     RichEntry(void);
     RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
-    RichEntry(const RichEntry& copy);
-    RichEntry& operator=(const RichEntry& copy);
+    RichEntry(const RichEntry&);
+    RichEntry& operator=(const RichEntry&);
     virtual ~RichEntry(void);
 
     //! @brief Entry type

@@ -32,8 +32,8 @@ class DLL_PUBLIC OptionalHeader : public Visitable {
     OptionalHeader(const pe64_optional_header *header);
     virtual ~OptionalHeader(void);
 
-    OptionalHeader& operator=(const OptionalHeader& copy);
-    OptionalHeader(const OptionalHeader& copy);
+    OptionalHeader& operator=(const OptionalHeader&);
+    OptionalHeader(const OptionalHeader&);
 
     PE_TYPE   magic(void) const;
     uint8_t   major_linker_version(void) const;

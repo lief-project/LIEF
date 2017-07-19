@@ -33,8 +33,8 @@ class DLL_PUBLIC RichHeader : public Visitable {
   public:
 
     RichHeader(void);
-    RichHeader(const RichHeader& copy);
-    RichHeader& operator=(const RichHeader& copy);
+    RichHeader(const RichHeader&);
+    RichHeader& operator=(const RichHeader&);
     virtual ~RichHeader(void);
 
     //! @brief Key used to encode the header (xor operation)

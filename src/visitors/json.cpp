@@ -26,8 +26,8 @@ JsonVisitor::JsonVisitor(const json& node) :
   node_{node}
 {}
 
-JsonVisitor::JsonVisitor(const JsonVisitor& other)            = default;
-JsonVisitor& JsonVisitor::operator=(const JsonVisitor& other) = default;
+JsonVisitor::JsonVisitor(const JsonVisitor&)            = default;
+JsonVisitor& JsonVisitor::operator=(const JsonVisitor&) = default;
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;

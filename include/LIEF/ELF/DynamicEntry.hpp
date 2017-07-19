@@ -35,8 +35,8 @@ class DLL_PUBLIC DynamicEntry : public Visitable {
     DynamicEntry(const Elf32_Dyn* header);
     DynamicEntry(void);
 
-    DynamicEntry& operator=(const DynamicEntry& copy);
-    DynamicEntry(const DynamicEntry& copy);
+    DynamicEntry& operator=(const DynamicEntry&);
+    DynamicEntry(const DynamicEntry&);
     virtual ~DynamicEntry(void);
 
     DYNAMIC_TAGS tag(void) const;

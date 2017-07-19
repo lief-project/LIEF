@@ -23,8 +23,8 @@ namespace LIEF {
 namespace PE {
 
 RichHeader::~RichHeader(void) = default;
-RichHeader::RichHeader(const RichHeader& copy) = default;
-RichHeader& RichHeader::operator=(const RichHeader& copy) = default;
+RichHeader::RichHeader(const RichHeader&) = default;
+RichHeader& RichHeader::operator=(const RichHeader&) = default;
 
 RichHeader::RichHeader(void) :
   key_{0},

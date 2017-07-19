@@ -40,8 +40,8 @@ class DLL_PUBLIC SymbolVersion : public Visitable {
     SymbolVersion(void);
     virtual ~SymbolVersion(void);
 
-    SymbolVersion& operator=(const SymbolVersion& copy);
-    SymbolVersion(const SymbolVersion& copy);
+    SymbolVersion& operator=(const SymbolVersion&);
+    SymbolVersion(const SymbolVersion&);
 
     uint16_t                value(void) const;
     bool                    has_auxiliary_version(void) const;

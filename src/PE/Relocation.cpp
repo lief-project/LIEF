@@ -22,9 +22,9 @@
 namespace LIEF {
 namespace PE {
 
-Relocation::Relocation(const Relocation& other)            = default;
-Relocation& Relocation::operator=(const Relocation& other) = default;
-Relocation::~Relocation(void)                              = default;
+Relocation::Relocation(const Relocation&)            = default;
+Relocation& Relocation::operator=(const Relocation&) = default;
+Relocation::~Relocation(void)                        = default;
 
 
 Relocation::Relocation(void) :

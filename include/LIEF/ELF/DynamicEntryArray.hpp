@@ -31,8 +31,8 @@ class DLL_PUBLIC DynamicEntryArray : public DynamicEntry {
     DynamicEntryArray(const Elf32_Dyn* header);
     DynamicEntryArray(void);
 
-    DynamicEntryArray& operator=(const DynamicEntryArray& copy);
-    DynamicEntryArray(const DynamicEntryArray& copy);
+    DynamicEntryArray& operator=(const DynamicEntryArray&);
+    DynamicEntryArray(const DynamicEntryArray&);
 
     virtual std::vector<uint64_t>& array(void) override;
     const std::vector<uint64_t>& array(void) const;

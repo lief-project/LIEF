@@ -33,8 +33,8 @@ class DLL_PUBLIC DosHeader : public Visitable {
 
     DosHeader(const pe_dos_header* header);
     DosHeader(void);
-    DosHeader(const DosHeader& copy);
-    DosHeader& operator=(const DosHeader& copy);
+    DosHeader(const DosHeader&);
+    DosHeader& operator=(const DosHeader&);
     virtual ~DosHeader(void);
 
     uint16_t    magic(void) const;

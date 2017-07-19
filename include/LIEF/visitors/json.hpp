@@ -28,8 +28,8 @@ class DLL_PUBLIC JsonVisitor : public Visitor {
 
   JsonVisitor(void);
   JsonVisitor(const json& node);
-  JsonVisitor(const JsonVisitor& other);
-  JsonVisitor& operator=(const JsonVisitor& other);
+  JsonVisitor(const JsonVisitor&);
+  JsonVisitor& operator=(const JsonVisitor&);
 
   virtual void visit(const Binary&  binary)  override;
   virtual void visit(const Header&  header)  override;

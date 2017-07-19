@@ -33,8 +33,8 @@ class DLL_PUBLIC DynamicEntryLibrary : public DynamicEntry {
 
     DynamicEntryLibrary(const std::string& name = "");
 
-    DynamicEntryLibrary& operator=(const DynamicEntryLibrary& copy);
-    DynamicEntryLibrary(const DynamicEntryLibrary& copy);
+    DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
+    DynamicEntryLibrary(const DynamicEntryLibrary&);
 
     virtual const std::string& name(void) const override;
     virtual void name(const std::string& name) override;

@@ -23,8 +23,8 @@ namespace LIEF {
 namespace PE {
 
 DosHeader::~DosHeader(void) = default;
-DosHeader::DosHeader(const DosHeader& copy) = default;
-DosHeader& DosHeader::operator=(const DosHeader& copy) = default;
+DosHeader::DosHeader(const DosHeader&) = default;
+DosHeader& DosHeader::operator=(const DosHeader&) = default;
 
 DosHeader::DosHeader(void) :
   magic_{0x5a4d},

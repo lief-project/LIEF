@@ -34,8 +34,8 @@ class DLL_PUBLIC DynamicEntryRpath : public DynamicEntry {
 
     DynamicEntryRpath(const std::string& name = "");
 
-    DynamicEntryRpath& operator=(const DynamicEntryRpath& copy);
-    DynamicEntryRpath(const DynamicEntryRpath& copy);
+    DynamicEntryRpath& operator=(const DynamicEntryRpath&);
+    DynamicEntryRpath(const DynamicEntryRpath&);
 
     virtual const std::string& name(void) const override;
     virtual void name(const std::string& name) override;

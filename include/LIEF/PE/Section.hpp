@@ -46,8 +46,8 @@ class DLL_PUBLIC Section : public LIEF::Section {
     Section(const std::vector<uint8_t>& data, const std::string& name = "", uint32_t characteristics = 0);
     Section(const std::string& name);
 
-    Section& operator=(const Section& copy);
-    Section(const Section& copy);
+    Section& operator=(const Section&);
+    Section(const Section&);
     virtual ~Section(void);
 
     //! @brief Return the size of the data in the section.

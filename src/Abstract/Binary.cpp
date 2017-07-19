@@ -21,8 +21,8 @@ Binary::Binary(void) :
   original_size_{0}
 {}
 Binary::~Binary(void) = default;
-Binary& Binary::operator=(const Binary& copy) = default;
-Binary::Binary(const Binary& copy) = default;
+Binary& Binary::operator=(const Binary&) = default;
+Binary::Binary(const Binary&) = default;
 
 
 Header Binary::get_header(void) const {

@@ -31,9 +31,9 @@ SymbolVersion::SymbolVersion(void) :
 
 SymbolVersion::~SymbolVersion(void) = default;
 
-SymbolVersion& SymbolVersion::operator=(const SymbolVersion& copy) = default;
+SymbolVersion& SymbolVersion::operator=(const SymbolVersion&) = default;
 
-SymbolVersion::SymbolVersion(const SymbolVersion& copy) = default;
+SymbolVersion::SymbolVersion(const SymbolVersion&) = default;
 
 SymbolVersion::SymbolVersion(uint16_t value) :
   value_{value},

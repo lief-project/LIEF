@@ -26,8 +26,8 @@ namespace LIEF {
 namespace PE {
 
 Header::~Header(void) = default;
-Header& Header::operator=(const Header& copy) = default;
-Header::Header(const Header& copy) = default;
+Header& Header::operator=(const Header&) = default;
+Header::Header(const Header&) = default;
 
 Header::Header(void) :
   machine_{MACHINE_TYPES::IMAGE_FILE_MACHINE_UNKNOWN},

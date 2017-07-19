@@ -21,8 +21,8 @@ namespace LIEF {
 namespace ELF {
 
 DynamicEntryRpath::DynamicEntryRpath(void) = default;
-DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath& copy) = default;
-DynamicEntryRpath::DynamicEntryRpath(const DynamicEntryRpath& copy) = default;
+DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath&) = default;
+DynamicEntryRpath::DynamicEntryRpath(const DynamicEntryRpath&) = default;
 
 DynamicEntryRpath::DynamicEntryRpath(const Elf64_Dyn* header) :
   DynamicEntry{header}

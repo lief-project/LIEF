@@ -70,6 +70,7 @@ Relocation& Relocation::operator=(Relocation other) {
 }
 
 Relocation::Relocation(const Relocation& other) :
+  Visitable{other},
   address_{other.address_},
   symbol_{nullptr},
   is_pcrel_{other.is_pcrel_},

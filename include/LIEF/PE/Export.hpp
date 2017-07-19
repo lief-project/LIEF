@@ -43,8 +43,8 @@ class DLL_PUBLIC Export : public Visitable {
   public:
   Export(void);
   Export(const pe_export_directory_table *header);
-  Export(const Export& copy);
-  Export& operator=(const Export& copy);
+  Export(const Export&);
+  Export& operator=(const Export&);
   virtual ~Export(void);
 
   uint32_t                      export_flags(void) const;

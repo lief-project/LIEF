@@ -37,8 +37,8 @@ class DLL_PUBLIC Relocation : public Visitable {
 
   public:
     Relocation(void);
-    Relocation(const Relocation& other);
-    Relocation& operator=(const Relocation& other);
+    Relocation(const Relocation&);
+    Relocation& operator=(const Relocation&);
     Relocation(const pe_base_relocation_block* header);
     virtual ~Relocation(void);
 

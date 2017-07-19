@@ -21,8 +21,8 @@
 namespace LIEF {
 namespace PE {
 ExportEntry::~ExportEntry(void) = default;
-ExportEntry::ExportEntry(const ExportEntry& copy) = default;
-ExportEntry& ExportEntry::operator=(const ExportEntry& copy) = default;
+ExportEntry::ExportEntry(const ExportEntry&) = default;
+ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 
 ExportEntry::ExportEntry(void) :
   name_{""},

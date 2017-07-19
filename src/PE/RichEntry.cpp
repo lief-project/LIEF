@@ -23,8 +23,8 @@ namespace LIEF {
 namespace PE {
 
 RichEntry::~RichEntry(void) = default;
-RichEntry::RichEntry(const RichEntry& copy) = default;
-RichEntry& RichEntry::operator=(const RichEntry& copy) = default;
+RichEntry::RichEntry(const RichEntry&) = default;
+RichEntry& RichEntry::operator=(const RichEntry&) = default;
 
 RichEntry::RichEntry(void) :
   id_{0},
