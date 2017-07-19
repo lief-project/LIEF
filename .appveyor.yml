@@ -10,6 +10,16 @@ platform:
 - x86
 - x64
 
+cache:
+  - rang_cpp_color-prefix -> CMakeLists.txt
+  - mbed_tls -> CMakeLists.txt
+  - libjson-prefix -> CMakeLists.txt
+  - easyloggingpp-prefix -> CMakeLists.txt
+  - tests\YAMLCPP -> tests\CMakeLists.txt
+  - tests\lief-samples -> tests\CMakeLists.txt
+  - tests\catch -> tests\CMakeLists.txt
+  - api\python\pybind11-prefix -> api\python\CMakeLists.txt
+
 environment:
  LIEF_AUTOMATIC_BUILDS_KEY:
     secure: TT7SXISIifq2/tf02n2ATgPj+Ky4Cjl3Fg44BAfyI4yRa4i87UAQIx5EFeV63+Xv2rhcU7JcMgl+An7QBrV6ofuQ9jxbuw+Gd1GqcCrAIyY=

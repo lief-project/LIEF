@@ -69,6 +69,14 @@ sudo: required
 cache:
   - apt
   - ccache
+  - build/rang_cpp_color-prefix
+  - build/mbed_tls
+  - build/libjson-prefix
+  - build/easyloggingpp-prefix
+  - build/tests/YAMLCPP
+  - build/tests/lief-samples
+  - build/tests/catch
+  - build/api/python/pybind11-prefix
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -q; fi
@@ -77,6 +85,8 @@ before_install:
   - export CXX="$CXX_COMPILER"
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PREFIX="/usr/local"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs2"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv root; fi
