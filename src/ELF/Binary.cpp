@@ -805,6 +805,9 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   Segment& segment_topatch = this->segment_from_virtual_address(address);
   const uint64_t offset = address - segment_topatch.virtual_address();
   std::vector<uint8_t> content = segment_topatch.content();
+  if ((offset + patch_value.size()) > content.size()) {
+    content.resize(offset + patch_value.size());
+  }
   std::copy(
       std::begin(patch_value),
       std::end(patch_value),
