@@ -184,7 +184,7 @@ set(mbedtls_src_tls
 set(ELG_GIT_URL "https://github.com/easylogging/easyloggingpp.git" CACHE STRING "URL to the easyloggingpp lib repo")
 ExternalProject_Add(easyloggingpp
   GIT_REPOSITORY    ${ELG_GIT_URL}
-  GIT_TAG           4e9757660072a84b2c76d9230b3c578a3a6f5afb
+  GIT_TAG           v9.94.2
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
