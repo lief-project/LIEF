@@ -326,6 +326,18 @@ def print_rich_header(binary):
 
     for entry in header.entries:
         print("  - ID: {:04x} Build ID: {:04x} Count: {:d}".format(entry.id, entry.build_id, entry.count))
+    print("")
+
+
+@exceptions_handler(Exception)
+def print_resources(binary):
+    print("== Resources ==")
+    manager = binary.resources_manager
+
+    print(manager)
+
+    print("")
+
 
 
 def main():
@@ -369,6 +381,10 @@ def main():
     optparser.add_option('-R', '--rich-header',
             action='store_true', dest='show_richheader',
             help='Display the Rich Header')
+
+    optparser.add_option('--resources', '--rsrc',
+            action='store_true', dest='show_resources',
+            help='Display the resources (if present)')
 
     optparser.add_option('-S', '--section-headers', '--sections',
             action='store_true', dest='show_section_header',
@@ -436,6 +452,9 @@ def main():
 
     if (options.show_richheader or options.show_all) and binary.has_rich_header:
         print_rich_header(binary)
+
+    if (options.show_resources or options.show_all) and binary.has_resources:
+        print_resources(binary)
 
 if __name__ == "__main__":
     main()
