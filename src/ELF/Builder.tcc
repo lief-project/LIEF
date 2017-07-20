@@ -17,6 +17,8 @@
 
 #include "easylogging++.h"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
 namespace LIEF {
 namespace ELF {
 
@@ -25,21 +27,40 @@ void Builder::build(void) {
 
   std::string type = ((this->binary_->type_ == ELFCLASS32) ? "ELF32" : "ELF64");
   LOG(DEBUG) << "== Re-building " << type << " ==";
+  try {
+    this->build_hash_table<ELF_T>();
+  } catch (const LIEF::exception& e) {
+    LOG(ERROR) << e.what();
+  }
 
-  this->build_hash_table<ELF_T>();
-
-  this->build_dynamic<ELF_T>();
+  try {
+    this->build_dynamic<ELF_T>();
+  } catch (const LIEF::exception& e) {
+    LOG(ERROR) << e.what();
+  }
 
   if (this->binary_->symbol_version_table_.size() > 0) {
-    this->build_symbol_version();
+    try {
+      this->build_symbol_version();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
   }
 
   if (this->binary_->symbol_version_requirements_.size() > 0) {
-    this->build_symbol_requirement<ELF_T>();
+    try {
+      this->build_symbol_requirement<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
   }
 
   if (this->binary_->symbol_version_definition_.size() > 0) {
-    this->build_symbol_definition<ELF_T>();
+    try {
+      this->build_symbol_definition<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
   }
 
   if (this->binary_->static_symbols_.size() > 0) {
@@ -51,11 +72,19 @@ void Builder::build(void) {
   }
 
   if (this->binary_->get_dynamic_relocations().size() > 0) {
-    this->build_dynamic_relocations<ELF_T>();
+    try {
+      this->build_dynamic_relocations<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
   }
 
   if (this->binary_->get_pltgot_relocations().size() > 0) {
-    this->build_pltgot_relocations<ELF_T>();
+    try {
+      this->build_pltgot_relocations<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
   }
 
   if (this->binary_->get_header().program_headers_offset() > 0) {
@@ -489,9 +518,10 @@ void Builder::build_symbol_hash(void) {
   }
 
   std::vector<uint8_t> content = (*it_hash_section)->content();
-  uint32_t* hashtable = reinterpret_cast<uint32_t*>(content.data());
-  uint32_t nbucket    = *hashtable++;
-  uint32_t nchain     = *hashtable++;
+  VectorStream hashtable_stream{content};
+
+  uint32_t nbucket = hashtable_stream.read_integer<uint32_t>(0);
+  uint32_t nchain  = hashtable_stream.read_integer<uint32_t>(0 + sizeof(uint32_t));
 
 
   std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), STN_UNDEF);
