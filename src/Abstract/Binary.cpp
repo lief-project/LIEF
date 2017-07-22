@@ -16,14 +16,35 @@
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/exception.hpp"
 
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/MachO/Binary.hpp"
+
 namespace LIEF {
 Binary::Binary(void) :
+  name_{""},
   original_size_{0}
 {}
+
 Binary::~Binary(void) = default;
 Binary& Binary::operator=(const Binary&) = default;
 Binary::Binary(const Binary&) = default;
 
+EXE_FORMATS Binary::format(void) const {
+  if (typeid(*this) == typeid(LIEF::ELF::Binary)) {
+    return EXE_FORMATS::FORMAT_ELF;
+  }
+
+  if (typeid(*this) == typeid(LIEF::PE::Binary)) {
+    return EXE_FORMATS::FORMAT_PE;
+  }
+
+  if (typeid(*this) == typeid(LIEF::MachO::Binary)) {
+    return EXE_FORMATS::FORMAT_MACHO;
+  }
+
+  return EXE_FORMATS::FORMAT_UNKNOWN;
+}
 
 Header Binary::get_header(void) const {
   return this->get_abstract_header();

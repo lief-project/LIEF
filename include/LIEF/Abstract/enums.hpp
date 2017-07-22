@@ -20,10 +20,11 @@
 
 namespace LIEF {
 
-enum FILE_FORMATS {
-  FORMAT_ELF   = 0,
-  FORMAT_PE    = 1,
-  FORMAT_MACHO = 2
+enum EXE_FORMATS {
+  FORMAT_UNKNOWN = 0,
+  FORMAT_ELF     = 1,
+  FORMAT_PE      = 2,
+  FORMAT_MACHO   = 3,
 };
 
 enum OBJECT_TYPES {

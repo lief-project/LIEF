@@ -50,6 +50,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   this->node_["name"]               = binary.name();
   this->node_["entrypoint"]         = binary.entrypoint();
+  this->node_["format"]             = to_string(binary.format());
   this->node_["original_size"]      = binary.original_size();
   this->node_["exported_functions"] = binary.get_exported_functions();
   this->node_["imported_libraries"] = binary.get_imported_libraries();

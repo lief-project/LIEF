@@ -41,6 +41,9 @@ class DLL_PUBLIC Binary : public Visitable {
     Binary& operator=(const Binary&);
     Binary(const Binary&);
 
+    //! @brief Executable format (ELF, PE, Mach-O) of the underlying binary
+    EXE_FORMATS format(void) const;
+
     //! @brief Return the abstract header of the binary
     Header get_header(void) const;
 

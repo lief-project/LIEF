@@ -20,10 +20,11 @@
 #define PY_ENUM(x) LIEF::to_string(x), x
 
 void init_LIEF_Enum(py::module& m) {
-  py::enum_<LIEF::FILE_FORMATS>(m, "FILE_FORMATS")
-    .value(PY_ENUM(LIEF::FILE_FORMATS::FORMAT_ELF))
-    .value(PY_ENUM(LIEF::FILE_FORMATS::FORMAT_PE))
-    .value(PY_ENUM(LIEF::FILE_FORMATS::FORMAT_MACHO))
+  py::enum_<LIEF::EXE_FORMATS>(m, "EXE_FORMATS")
+    .value(PY_ENUM(LIEF::EXE_FORMATS::FORMAT_UNKNOWN))
+    .value(PY_ENUM(LIEF::EXE_FORMATS::FORMAT_ELF))
+    .value(PY_ENUM(LIEF::EXE_FORMATS::FORMAT_PE))
+    .value(PY_ENUM(LIEF::EXE_FORMATS::FORMAT_MACHO))
     .export_values();
 
   py::enum_<LIEF::OBJECT_TYPES>(m, "OBJECT_TYPES")

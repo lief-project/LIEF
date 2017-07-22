@@ -53,10 +53,10 @@ Enums
 *****
 
 
-File Formats
-~~~~~~~~~~~~
+Executable formats
+~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: lief.FILE_FORMATS
+.. autoclass:: lief.EXE_FORMATS
   :members:
   :inherited-members:
   :undoc-members:

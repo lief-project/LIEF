@@ -44,7 +44,7 @@ Symbol
 Enums
 *****
 
-.. doxygenenum:: LIEF::FILE_FORMATS
+.. doxygenenum:: LIEF::EXE_FORMATS
    :project: lief
 
 .. doxygenenum:: LIEF::OBJECT_TYPES

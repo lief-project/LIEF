@@ -32,6 +32,11 @@ using it_t = T (Binary::*)(void);
 
 void init_LIEF_Binary_class(py::module& m) {
   py::class_<Binary>(m, "Binary")
+
+    .def_property_readonly("format",
+        &Binary::format,
+        "File format " RST_CLASS_REF(lief.EXE_FORMATS) " of the underlying binary.")
+
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Binary::name),
         static_cast<setter_t<const std::string&>>(&Binary::name),

@@ -18,11 +18,12 @@
 
 namespace LIEF {
 
-const char* to_string(FILE_FORMATS e) {
-  const std::map<FILE_FORMATS, const char*> enumStrings {
-    { FILE_FORMATS::FORMAT_ELF,   "ELF"   },
-    { FILE_FORMATS::FORMAT_PE,    "PE"    },
-    { FILE_FORMATS::FORMAT_MACHO, "MACHO" },
+const char* to_string(EXE_FORMATS e) {
+  const std::map<EXE_FORMATS, const char*> enumStrings {
+    { EXE_FORMATS::FORMAT_UNKNOWN, "UNKNOWN" },
+    { EXE_FORMATS::FORMAT_ELF,     "ELF"     },
+    { EXE_FORMATS::FORMAT_PE,      "PE"      },
+    { EXE_FORMATS::FORMAT_MACHO,   "MACHO"   },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
