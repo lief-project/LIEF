@@ -165,7 +165,7 @@ void Builder::build_header(void) {
   ehdr.e_ehsize    = static_cast<Elf_Half>(header.header_size());
   ehdr.e_phentsize = static_cast<Elf_Half>(header.program_header_size());
   ehdr.e_phnum     = static_cast<Elf_Half>(header.numberof_segments());
-  ehdr.e_shentsize = static_cast<Elf_Half>(header.sizeof_section_header());
+  ehdr.e_shentsize = static_cast<Elf_Half>(header.section_header_size());
   ehdr.e_shnum     = static_cast<Elf_Half>(header.numberof_sections());
   ehdr.e_shstrndx  = static_cast<Elf_Half>(header.section_name_table_idx());
 

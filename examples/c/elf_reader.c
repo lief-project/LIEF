@@ -35,8 +35,7 @@ int main(int argc, char **argv) {
   fprintf(stdout, "Header Size: %x\n",                header.header_size);
   fprintf(stdout, "Program header size: %x\n",        header.program_header_size);
   fprintf(stdout, "Nb segments: %d\n",                header.numberof_segments);
-  fprintf(stdout, "Section header size: %x\n",        header.sizeof_section_header);
-  fprintf(stdout, "Section header size: %x\n",        header.sizeof_section_header);
+  fprintf(stdout, "Section header size: %x\n",        header.section_header_size);
   fprintf(stdout, "Nb sections: %d\n",                header.numberof_sections);
   fprintf(stdout, "Name string table idx: %d\n",      header.name_string_table_idx);
 

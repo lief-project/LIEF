@@ -71,6 +71,7 @@ def print_header(binary):
     print(format_hex.format("Processor flags:",       header.processor_flag))
     print(format_dec.format("Header Size:",           header.header_size))
     print(format_dec.format("Program Header Size:",   header.program_header_size))
+    print(format_dec.format("Section Header Size:",   header.section_header_size))
     print(format_dec.format("Number of segments:",    header.numberof_segments))
     print(format_dec.format("Number of sections:",    header.numberof_sections))
     print("")

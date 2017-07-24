@@ -30,7 +30,7 @@ void init_c_header(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->header.header_size            = hdr.header_size();
   c_binary->header.program_header_size    = hdr.program_header_size();
   c_binary->header.numberof_segments      = hdr.numberof_segments();
-  c_binary->header.sizeof_section_header  = hdr.sizeof_section_header();
+  c_binary->header.section_header_size    = hdr.section_header_size();
   c_binary->header.numberof_sections      = hdr.numberof_sections();
   c_binary->header.name_string_table_idx  = hdr.section_name_table_idx();
   c_binary->header.entrypoint             = hdr.entrypoint();

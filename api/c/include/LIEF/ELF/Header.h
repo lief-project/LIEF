@@ -42,7 +42,7 @@ struct Elf_Header_t {
   uint32_t     header_size;
   uint32_t     program_header_size;
   uint32_t     numberof_segments;
-  uint32_t     sizeof_section_header;
+  uint32_t     section_header_size;
   uint32_t     numberof_sections;
   uint32_t     name_string_table_idx;
 };

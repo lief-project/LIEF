@@ -204,11 +204,9 @@ uint32_t Header::numberof_segments(void) const {
   return this->numberof_segments_;
 }
 
-//! @todo rename
-uint32_t Header::sizeof_section_header(void) const {
+uint32_t Header::section_header_size(void) const {
   return this->sizeOfSectionHeaderEntries_;
 }
-
 
 uint32_t Header::numberof_sections(void) const {
   return this->numberof_sections_;
@@ -294,7 +292,7 @@ void Header::numberof_segments(uint32_t n) {
 }
 
 
-void Header::sizeof_section_header(uint32_t sizeOfSectionHeaderEntries) {
+void Header::section_header_size(uint32_t sizeOfSectionHeaderEntries) {
   this->sizeOfSectionHeaderEntries_ = sizeOfSectionHeaderEntries;
 }
 
@@ -352,7 +350,7 @@ void Header::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->header_size());
   visitor.visit(this->program_header_size());
   visitor.visit(this->numberof_segments());
-  visitor.visit(this->sizeof_section_header());
+  visitor.visit(this->section_header_size());
   visitor.visit(this->section_name_table_idx());
   visitor.visit(this->identity_class());
   visitor.visit(this->identity_data());
@@ -397,9 +395,9 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   os << std::setw(33) << std::setfill(' ') << "Section header offset:"     << hdr.section_headers_offset() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Processor Flag"             << hdr.processor_flag() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Header size:"               << hdr.header_size() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Program header size:"       << hdr.program_header_size() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Size of program header :"   << hdr.program_header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Number of program header:"  << hdr.numberof_segments() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Size of section header:"    << hdr.sizeof_section_header() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Size of section header:"    << hdr.section_header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Number of section headers:" << hdr.numberof_sections() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Section Name Table idx:"    << hdr.section_name_table_idx() << std::endl;
 

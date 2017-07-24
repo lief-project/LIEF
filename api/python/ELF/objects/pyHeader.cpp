@@ -117,10 +117,10 @@ void init_ELF_Header_class(py::module& m) {
         static_cast<setter_t<uint32_t>>(&Header::numberof_segments),
         "Return the number of program headers (segments)")
 
-    .def_property("sizeof_section_header",
-        static_cast<getter_t<uint32_t>>(&Header::sizeof_section_header),
-        static_cast<setter_t<uint32_t>>(&Header::sizeof_section_header),
-        "Return the size of an section header entry")
+    .def_property("section_header_size",
+        static_cast<getter_t<uint32_t>>(&Header::section_header_size),
+        static_cast<setter_t<uint32_t>>(&Header::section_header_size),
+        "Return the size of a section header entry")
 
     .def_property("numberof_sections",
         static_cast<getter_t<uint32_t>>(&Header::numberof_sections),

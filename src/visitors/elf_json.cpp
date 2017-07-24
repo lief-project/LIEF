@@ -171,7 +171,7 @@ void JsonVisitor::visit(const Header& header) {
   this->node_["header_size"]                     = header.header_size();
   this->node_["program_header_size"]             = header.program_header_size();
   this->node_["processornumberof_segments_flag"] = header.numberof_segments();
-  this->node_["sizeof_section_header"]           = header.sizeof_section_header();
+  this->node_["section_header_size"]             = header.section_header_size();
   this->node_["numberof_sections"]               = header.numberof_sections();
   this->node_["section_name_table_idx"]          = header.section_name_table_idx();
   this->node_["identity_class"]                  = to_string(header.identity_class());

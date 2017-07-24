@@ -87,7 +87,7 @@ class DLL_PUBLIC Header : public Visitable {
     //!
     //! This size should be 64 for a ``ELF64`` binary and 40 for
     //! a ``ELF32`` one.
-    uint32_t sizeof_section_header(void) const;
+    uint32_t section_header_size(void) const;
 
     //! @brief Return the the number of sections's headers
     //! registred in the header
@@ -125,7 +125,7 @@ class DLL_PUBLIC Header : public Visitable {
     void header_size(uint32_t headerSize);
     void program_header_size(uint32_t programHeaderSize);
     void numberof_segments(uint32_t n);
-    void sizeof_section_header(uint32_t sizeOfSectionHeaderEntries);
+    void section_header_size(uint32_t sizeOfSectionHeaderEntries);
     void numberof_sections(uint32_t n);
     void section_name_table_idx(uint32_t sectionNameStringTableIdx);
     void identity(const std::string& identity);

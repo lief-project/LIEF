@@ -84,7 +84,7 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
   hdr.header_size(binary->header.header_size);
   hdr.program_header_size(binary->header.program_header_size);
   hdr.numberof_segments(binary->header.numberof_segments);
-  hdr.sizeof_section_header(binary->header.sizeof_section_header);
+  hdr.section_header_size(binary->header.section_header_size);
   hdr.numberof_sections(binary->header.numberof_sections);
   hdr.section_name_table_idx(binary->header.name_string_table_idx);
   hdr.entrypoint(binary->header.entrypoint);
