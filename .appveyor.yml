@@ -95,14 +95,21 @@ test_script:
 after_build:
   - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
   - cd api\python
-  - python.exe .\setup.py sdist --formats=zip && exit 0 # Ignore warnings...
-  - ps: gci dist\*.zip | % { rename-item –path $_.Fullname –Newname ( "windows_" + $env:PLATFORM + "_" + $_.basename + "_py" + $env:PYTHON_VERSION + $_.extension) }
+  - python.exe .\setup.py bdist_egg && exit 0 # Ignore warnings...
+  - ps: if ($env:APPVEYOR_REPO_TAG -eq "true") { python.exe .\setup.py sdist --formats=zip } # Ignore warnings...
+  - ps: if ($env:APPVEYOR_REPO_TAG -eq "false") { python.exe .\setup.py sdist --dev --formats=zip } # Ignore warnings...
   - cd ..\..
   - bash ./.github/deploy.sh
 
 artifacts:
   - path: '*.zip'
+    name: sdk
+
   - path: 'api\python\dist\*.zip'
+    name: python-src
+
+  - path: 'api\python\dist\*.egg'
+    name: python-egg
 
 
 deploy:
@@ -110,7 +117,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
-  artifact: /.*\.zip/
+  artifact: sdk;python-src;python-egg
   draft: false
   prerelease: false
   force_update: true

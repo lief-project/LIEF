@@ -10,6 +10,30 @@ include(Findcppcheck)
 include(CppcheckTargets)
 include(ExternalProject)
 
+find_package(Git REQUIRED)
+
+execute_process(
+  COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE LIEF_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+  COMMAND ${GIT_EXECUTABLE} rev-list --count ${LIEF_COMMIT_HASH}
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE LIEF_COMMIT_COUNT
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+  COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE LIEF_GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+
 # LIEF version
 set(LIEF_VERSION_MAJOR 0)
 set(LIEF_VERSION_MINOR 7)
@@ -47,7 +71,6 @@ endif()
 
 # Dependencies
 # ============
-find_package(Git REQUIRED)
 
 # Json
 # ----

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 #include "LIEF/logging.hpp"
+#include "LIEF/version.h"
 #include "pyLIEF.hpp"
 
-PYBIND11_PLUGIN(lief) {
+PYBIND11_PLUGIN(_pylief) {
 
-  py::module LIEF_module("lief", "Python API for LIEF");
+  py::module LIEF_module("_pylief", "Python API for LIEF");
+
+  LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
 
   init_LIEF_iterators(LIEF_module);
 

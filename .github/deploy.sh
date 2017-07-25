@@ -119,11 +119,13 @@ fi
 
 git ls-files -v
 
+
+/bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.zip .
+/bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.egg .
+
 if [[ -n $APPVEYOR_JOB_ID ]]; then
-    /bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.zip .
     /bin/cp -rf $LIEF_BUILDDIR/*.zip .
 else
-    /bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.tar.gz .
     /bin/cp -rf $LIEF_BUILDDIR/*.tar.gz .
 fi
 

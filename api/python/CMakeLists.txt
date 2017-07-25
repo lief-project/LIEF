@@ -145,7 +145,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(pyLIEF PRIVATE ${PYLIEF_COMPILE_FLAGS})
 endif()
 
-set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
+#set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
+set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
 add_dependencies(pyLIEF pybind11)
 
 if(APPLE)
@@ -170,12 +171,18 @@ endif()
 target_link_libraries(pyLIEF PUBLIC ${PYLIEF_DEPS_LIBRARIES})
 
 add_custom_command(TARGET pyLIEF POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/lief
 )
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in" "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/__init__.py")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README.in" "${CMAKE_CURRENT_BINARY_DIR}/README")
+if (MSVC)
+  add_custom_command(TARGET pyLIEF POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${CMAKE_CURRENT_BINARY_DIR}
+  )
+endif()
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README.in"      "${CMAKE_CURRENT_BINARY_DIR}/README")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in.in" "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
 
 MESSAGE(STATUS "OS: ${CMAKE_HOST_SYSTEM}")

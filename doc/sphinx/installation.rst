@@ -16,6 +16,33 @@ To install the static or shared library one have to copy them in the right folde
 Python
 ------
 
+
+From 0.8.0
+**********
+
+To install the **dev** package (master release):
+
+.. code-block:: console
+
+  $ pip install pylief-VERSION.dev.zip
+
+Dev packages can be found here: `lief-master-latest <https://github.com/lief-project/packages/tree/lief-master-latest>`_
+
+
+To install **release** package
+
+
+.. code-block:: console
+
+  $ pip install pylief-VERSION.zip
+
+Release packages can be found here: `Releases <https://github.com/lief-project/LIEF/releases>`_
+
+
+
+Before 0.8.0
+************
+
 To install the Python API (example with ``Python 3.5``):
 
 .. code-block:: console
