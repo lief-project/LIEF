@@ -208,7 +208,7 @@ void JsonVisitor::visit(const Segment& segment) {
 
   // TODO: sections
   this->node_["type"]             = to_string(segment.type());
-  this->node_["flag"]             = segment.flag();
+  this->node_["flags"]            = segment.flags();
   this->node_["file_offset"]      = segment.file_offset();
   this->node_["virtual_address"]  = segment.virtual_address();
   this->node_["physical_address"] = segment.physical_address();

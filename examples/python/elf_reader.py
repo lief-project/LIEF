@@ -109,14 +109,25 @@ def print_segments(binary):
         f_title = "|{:<30} | {:<10}| {:<18}| {:<17}| {:<17}| {:<17}| {:<19}|"
         f_value = "|{:<30} | {:<10}| 0x{:<16x}| 0x{:<15x}| 0x{:<15x}| 0x{:<15x}| {}"
         print(f_title.format("Type",
-            "Flag", "File offset", "Virtual Address", "Virtual Size", "Size", "Sections"))
+            "Flags", "File offset", "Virtual Address", "Virtual Size", "Size", "Sections"))
 
         for segment in segments:
             sections = segment.sections
             s = ", ".join([section.name for section in sections])
+            flags_str = ["-"] * 3
+            if ELF.SEGMENT_FLAGS.PF_R in segment:
+                flags_str[0] = "r"
+
+            if ELF.SEGMENT_FLAGS.PF_W in segment:
+                flags_str[1] = "w"
+
+            if ELF.SEGMENT_FLAGS.PF_X in segment:
+                flags_str[2] = "x"
+            flags_str = "".join(flags_str)
+
             print(f_value.format(
                 str(segment.type).split(".")[-1],
-                segment.flag,
+                flags_str,
                 segment.file_offset,
                 segment.virtual_address,
                 segment.virtual_size,

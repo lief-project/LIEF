@@ -54,7 +54,7 @@ class DLL_PUBLIC Segment : public Visitable {
     void swap(Segment& other);
 
     SEGMENT_TYPES type(void) const;
-    uint32_t flag(void) const;
+    uint32_t flags(void) const;
     uint64_t file_offset(void) const;
     uint64_t virtual_address(void) const;
     uint64_t physical_address(void) const;
@@ -65,7 +65,7 @@ class DLL_PUBLIC Segment : public Visitable {
     std::vector<uint8_t> content(void) const;
 
     void type(SEGMENT_TYPES type);
-    void flag(uint32_t flags);
+    void flags(uint32_t flags);
     void add_flag(SEGMENT_FLAGS flag);
     void remove_flag(SEGMENT_FLAGS flag);
     void clear_flags(void);

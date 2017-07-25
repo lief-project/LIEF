@@ -268,7 +268,7 @@ void Builder::build_segments(void) {
   for (const Segment* segment : this->binary_->segments_) {
       Elf_Phdr phdr;
       phdr.p_type   = static_cast<Elf_Word>(segment->type());
-      phdr.p_flags  = static_cast<Elf_Word>(segment->flag());
+      phdr.p_flags  = static_cast<Elf_Word>(segment->flags());
       phdr.p_offset = static_cast<Elf_Off>(segment->file_offset());
       phdr.p_vaddr  = static_cast<Elf_Addr>(segment->virtual_address());
       phdr.p_paddr  = static_cast<Elf_Addr>(segment->physical_address());

@@ -44,9 +44,9 @@ void init_ELF_Segment_class(py::module& m) {
         static_cast<setter_t<SEGMENT_TYPES>>(&Segment::type),
         "Segment's " RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) "")
 
-    .def_property("flag",
-        static_cast<getter_t<uint32_t>>(&Segment::flag),
-        static_cast<setter_t<uint32_t>>(&Segment::flag),
+    .def_property("flags",
+        static_cast<getter_t<uint32_t>>(&Segment::flags),
+        static_cast<setter_t<uint32_t>>(&Segment::flags),
         "Segment's flags")
 
     .def_property("file_offset",
@@ -89,6 +89,12 @@ void init_ELF_Segment_class(py::module& m) {
         static_cast<getter_t<std::vector<uint8_t>>>(&Segment::content),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&Segment::content),
         "Segment's raw data")
+
+    .def("add_flag",
+        &Segment::add_flag,
+        "Add the given " RST_CLASS_REF(lief.ELF.SEGMENT_FLAGS) " to the list of "
+        ":attr:`~lief.ELF.Segment.flags`",
+        "flag"_a)
 
     .def_property_readonly("sections",
       static_cast<no_const_getter<it_sections>>(&Segment::sections),

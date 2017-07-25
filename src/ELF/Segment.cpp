@@ -134,7 +134,7 @@ SEGMENT_TYPES Segment::type(void) const {
 }
 
 
-uint32_t Segment::flag(void) const {
+uint32_t Segment::flags(void) const {
   return this->flags_;
 }
 
@@ -193,7 +193,7 @@ bool Segment::has_flag(SEGMENT_FLAGS flag) const {
 }
 
 
-void Segment::flag(uint32_t flags) {
+void Segment::flags(uint32_t flags) {
   this->flags_ = flags;
 }
 
@@ -265,7 +265,7 @@ void Segment::content(const std::vector<uint8_t>& content) {
 void Segment::accept(Visitor& visitor) const {
 
   visitor.visit(this->type());
-  visitor.visit(this->flag());
+  visitor.visit(this->flags());
   visitor.visit(this->file_offset());
   visitor.visit(this->virtual_address());
   visitor.visit(this->physical_address());
@@ -288,24 +288,24 @@ bool Segment::operator!=(const Segment& rhs) const {
 std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {
 
 
-  std::string flag = "";
+  std::string flags = "---";
 
   if (segment.has_flag(SEGMENT_FLAGS::PF_R)) {
-    flag += "R";
+    flags[0] = 'r';
   }
 
   if (segment.has_flag(SEGMENT_FLAGS::PF_W)) {
-    flag += "W";
+    flags[1] = 'w';
   }
 
   if (segment.has_flag(SEGMENT_FLAGS::PF_X)) {
-    flag += "X";
+    flags[2] = 'x';
   }
 
   os << std::hex;
   os << std::left
      << std::setw(18) << to_string(segment.type())
-     << std::setw(10) << flag
+     << std::setw(10) << flags
      << std::setw(10) << segment.file_offset()
      << std::setw(10) << segment.virtual_address()
      << std::setw(10) << segment.physical_address()
