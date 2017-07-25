@@ -1,5 +1,5 @@
 @echo off
 
 
-set PYTHONPATH=%PYTHONPATH%;@PROJECT_BINARY_DIR@/api/python/release
+set PYTHONPATH=%PYTHONPATH%;@PROJECT_BINARY_DIR@/api/python
 %1 %~2
