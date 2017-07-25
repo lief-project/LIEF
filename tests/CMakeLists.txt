@@ -42,7 +42,7 @@ configure_file(
 if (MSVC)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
-    "${PROJECT_BINARY_DIR}/api/python/release/utils.py"
+    "${PROJECT_BINARY_DIR}/api/python/utils.py"
     @ONLY)
 else()
   configure_file(
