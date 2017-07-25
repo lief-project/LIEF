@@ -212,3 +212,15 @@ Enums
 
 .. doxygenenum:: LIEF::ELF::RELOCATION_PURPOSES
    :project: lief
+
+.. doxygenenum:: LIEF::ELF::RELOC_x86_64
+   :project: lief
+
+.. doxygenenum:: LIEF::ELF::RELOC_i386
+   :project: lief
+
+.. doxygenenum:: LIEF::ELF::RELOC_ARM
+   :project: lief
+
+.. doxygenenum:: LIEF::ELF::RELOC_AARCH64
+   :project: lief

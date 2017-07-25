@@ -359,6 +359,15 @@ Relocations ARM
   :undoc-members:
 
 
+Relocations AARCH64
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.RELOCATION_AARCH64
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
 Dynamic symbols counting
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
