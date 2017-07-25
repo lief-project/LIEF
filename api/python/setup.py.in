@@ -80,7 +80,7 @@ class lief_sdist(sdist):
 
     def run(self):
         if self.dev:
-            suffix = '.dev{:s}'.format("@LIEF_COMMIT_COUNT@")
+            suffix = '.dev-{:s}'.format("@LIEF_COMMIT_HASH@")
             self.distribution.metadata.version += suffix
         sdist.run(self)
 
