@@ -604,6 +604,21 @@ const SourceVersion& Binary::source_version(void) const {
   return this->get_command<SourceVersion>();
 }
 
+// Version Min
+// +++++++++++
+bool Binary::has_version_min(void) const {
+  return this->has_command<VersionMin>();
+}
+
+VersionMin& Binary::version_min(void) {
+  return this->get_command<VersionMin>();
+}
+
+const VersionMin& Binary::version_min(void) const {
+  return this->get_command<VersionMin>();
+}
+
+
 
 
 

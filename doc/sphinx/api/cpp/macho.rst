@@ -143,6 +143,15 @@ Source Version
 
 ----------
 
+
+Version Min
+***********
+
+.. doxygenclass:: LIEF::MachO::VersionMin
+   :project: lief
+
+----------
+
 Relocation
 **********
 

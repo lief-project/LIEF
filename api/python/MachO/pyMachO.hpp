@@ -40,6 +40,7 @@ void init_MachO_DylinkerCommand_class(py::module&);
 void init_MachO_DyldInfo_class(py::module&);
 void init_MachO_FunctionStarts_class(py::module&);
 void init_MachO_SourceVersion_class(py::module&);
+void init_MachO_VersionMin_class(py::module&);
 void init_MachO_Relocation_class(py::module&);
 
 // Enums

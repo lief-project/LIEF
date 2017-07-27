@@ -152,6 +152,17 @@ Source Version
 ----------
 
 
+Version Min
+***********
+
+.. autoclass:: lief.MachO.VersionMin
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Relocation
 **********
 

@@ -43,6 +43,13 @@ class TestMachO(TestCase):
 
         self.assertEqual(functions, list(functions_dd))
 
+
+    def test_version_min(self):
+        sshd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin'))
+        self.assertEqual(sshd.version_min.version, [10, 11, 0])
+        self.assertEqual(sshd.version_min.sdk, [10, 11, 0])
+
+
     def test_relocations(self):
         helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))
 

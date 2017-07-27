@@ -297,6 +297,19 @@ def print_source_version(binary):
     print("")
 
 
+@exceptions_handler(Exception)
+def print_version_min(binary):
+    print("== Version Min ==")
+
+    version = binary.version_min.version
+    sdk     = binary.version_min.sdk
+
+    print("Version: {:d}.{:d}.{:d}".format(*version))
+    print("SDK: {:d}.{:d}.{:d}".format(*sdk))
+
+    print("")
+
+
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
     parser.add_argument('-a', '--all',
@@ -351,6 +364,10 @@ def main():
             action='store_true', dest='show_source_version',
             help="Display the 'Source Version' command")
 
+    parser.add_argument('--version-min',
+            action='store_true', dest='show_version_min',
+            help="Display the 'Version Min' command")
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -403,6 +420,9 @@ def main():
 
         if (args.show_source_version or args.show_all) and binary.has_source_version:
             print_source_version(binary)
+
+        if (args.show_version_min or args.show_all) and binary.has_version_min:
+            print_version_min(binary)
 
 
 if __name__ == "__main__":

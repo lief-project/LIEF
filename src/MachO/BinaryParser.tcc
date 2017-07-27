@@ -16,6 +16,7 @@
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
+#include "LIEF/MachO/VersionMin.hpp"
 
 #include "easylogging++.h"
 
@@ -279,20 +280,20 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
-      //case LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX:
-      //case LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS:
-      //  {
-      //    LOG(DEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd));
+      case LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX:
+      case LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS:
+        {
+          LOG(DEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd));
 
-      //    const version_min_command* cmd =
-      //      reinterpret_cast<const version_min_command*>(
-      //        this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
-      //    LOG(DEBUG) << "Version: " << std::hex << cmd->version;
-      //    LOG(DEBUG) << "SDK: "     << std::hex << cmd->sdk;
+          const version_min_command* cmd =
+            reinterpret_cast<const version_min_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
+          LOG(DEBUG) << "Version: " << std::hex << cmd->version;
+          LOG(DEBUG) << "SDK: "     << std::hex << cmd->sdk;
 
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
+          load_command = new VersionMin{cmd};
+          break;
+        }
 
 
 

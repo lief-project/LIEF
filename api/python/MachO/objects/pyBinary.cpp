@@ -159,6 +159,16 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.SourceVersion) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_version_min",
+        &Binary::has_version_min,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.VersionMin) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("version_min",
+        static_cast<no_const_getter<VersionMin&>>(&Binary::version_min),
+        "Return binary's " RST_CLASS_REF(lief.MachO.VersionMin) " if any.",
+        py::return_value_policy::reference)
+
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,
         "Convert the virtual address to an offset in the binary",

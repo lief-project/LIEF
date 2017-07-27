@@ -38,6 +38,7 @@
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
+#include "LIEF/MachO/VersionMin.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -220,6 +221,13 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Return the MachO::SourceVersion command
     SourceVersion&       source_version(void);
     const SourceVersion& source_version(void) const;
+
+    //! @brief ``true`` if the binary has a MachO::VersionMin command.
+    bool has_version_min(void) const;
+
+    //! @brief Return the MachO::VersionMin command
+    VersionMin&       version_min(void);
+    const VersionMin& version_min(void) const;
 
     template<class T>
     bool has_command(void) const;
