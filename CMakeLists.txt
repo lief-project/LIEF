@@ -75,28 +75,28 @@ endif()
 # Json
 # ----
 set(LIBJSON_GIT_URL "https://github.com/nlohmann/json.git" CACHE STRING "URL to the JSON lib repo")
-ExternalProject_Add(libjson
+ExternalProject_Add(lief_libjson
   GIT_REPOSITORY    ${LIBJSON_GIT_URL}
   GIT_TAG           v2.0.8
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
 
-ExternalProject_get_property(libjson SOURCE_DIR)
+ExternalProject_get_property(lief_libjson SOURCE_DIR)
 set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # Rang
 # ----
 set(LIBRANG_GIT_URL "https://github.com/agauniyal/rang.git" CACHE STRING "URL to the Rang lib repo")
-ExternalProject_Add(rang_cpp_color
+ExternalProject_Add(lief_rang_cpp_color
   GIT_REPOSITORY    ${LIBRANG_GIT_URL}
   GIT_TAG           7f2143809b9ac90a1a8a2e779fb357d8709448c2
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
 
-ExternalProject_get_property(rang_cpp_color SOURCE_DIR)
+ExternalProject_get_property(lief_rang_cpp_color SOURCE_DIR)
 set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 
@@ -107,7 +107,7 @@ set(MBED_TLS_GIT_URL "https://github.com/ARMmbed/mbedtls.git" CACHE STRING "URL 
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
 
-ExternalProject_Add(mbed_tls
+ExternalProject_Add(lief_mbed_tls
   PREFIX            ${MBED_TLS_PREFIX}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
@@ -117,7 +117,7 @@ ExternalProject_Add(mbed_tls
   UPDATE_COMMAND    "" # repetitive update are a pain
   BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
 
-ExternalProject_get_property(mbed_tls SOURCE_DIR)
+ExternalProject_get_property(lief_mbed_tls SOURCE_DIR)
 set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
 set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
 
@@ -205,14 +205,14 @@ set(mbedtls_src_tls
 # easyloggingpp
 # -------------
 set(ELG_GIT_URL "https://github.com/easylogging/easyloggingpp.git" CACHE STRING "URL to the easyloggingpp lib repo")
-ExternalProject_Add(easyloggingpp
+ExternalProject_Add(lief_easyloggingpp
   GIT_REPOSITORY    ${ELG_GIT_URL}
   GIT_TAG           v9.94.2
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
 
-ExternalProject_get_property(easyloggingpp SOURCE_DIR)
+ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)
 set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
 
 
@@ -373,17 +373,17 @@ target_include_directories(LIB_LIEF_SHARED
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 
-add_dependencies(LIB_LIEF_STATIC libjson)
-add_dependencies(LIB_LIEF_SHARED libjson)
+add_dependencies(LIB_LIEF_STATIC lief_libjson)
+add_dependencies(LIB_LIEF_SHARED lief_libjson)
 
-add_dependencies(LIB_LIEF_STATIC easyloggingpp)
-add_dependencies(LIB_LIEF_SHARED easyloggingpp)
+add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
+add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)
 
-add_dependencies(LIB_LIEF_STATIC rang_cpp_color)
-add_dependencies(LIB_LIEF_SHARED rang_cpp_color)
+add_dependencies(LIB_LIEF_STATIC lief_rang_cpp_color)
+add_dependencies(LIB_LIEF_SHARED lief_rang_cpp_color)
 
-add_dependencies(LIB_LIEF_STATIC mbed_tls)
-add_dependencies(LIB_LIEF_SHARED mbed_tls)
+add_dependencies(LIB_LIEF_STATIC lief_mbed_tls)
+add_dependencies(LIB_LIEF_SHARED lief_mbed_tls)
 
 # Flags definition
 # ----------------
