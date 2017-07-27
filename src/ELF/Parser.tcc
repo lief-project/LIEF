@@ -1579,7 +1579,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   const uint32_t dynsymcount = static_cast<uint32_t>(this->binary_->dynamic_symbols_.size());
   //LOG(DEBUG) << "dynsymcount: %" PRId32 "", dynsymcount;
-  if (dynsymcount <= symndx) {
+  if (dynsymcount < symndx) {
     throw corrupted("GNU Hash, symndx corrupted");
   }
 
