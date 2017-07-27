@@ -273,6 +273,18 @@ void Parser::build_import_table(void) {
     const uint64_t offsetName = this->binary_->rva_to_offset(import.name_RVA_);
     import.name_              = this->stream_->read_string(offsetName);
 
+
+    // We assume that a DLL name should be at least 4 length size and "printable
+    if (import.name().size() < MIN_DLL_NAME_SIZE or not
+        std::all_of(
+          std::begin(import.name()),
+          std::end(import.name()),
+          std::bind(std::isprint<char>, std::placeholders::_1, std::locale("C"))))
+    {
+      header++;
+      continue; // skip
+    }
+
     // Offset to import lookup table
     uint64_t LT_offset      = 0;
     if (import.import_lookup_table_RVA_ > 0) {
@@ -306,6 +318,7 @@ void Parser::build_import_table(void) {
       }
 
     }
+
     size_t idx = 0;
     while (table != nullptr and *table != 0) {
       ImportEntry entry;

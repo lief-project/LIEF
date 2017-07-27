@@ -39,6 +39,10 @@
 namespace LIEF {
 namespace PE {
 class DLL_PUBLIC Parser : public LIEF::Parser {
+
+  //! @brief Minimum size for a DLL's name
+  constexpr static unsigned MIN_DLL_NAME_SIZE = 4;
+
   public:
     static Binary* parse(const std::string& filename);
     static Binary* parse(const std::vector<uint8_t>& data, const std::string& name = "");
