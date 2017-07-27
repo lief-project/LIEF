@@ -40,13 +40,13 @@ message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
 
 
 set(PYBIND11_GIT_URL "https://github.com/pybind/pybind11.git" CACHE STRING "URL to the Pybind11 repo")
-ExternalProject_Add(pybind11
+ExternalProject_Add(lief_pybind11
   GIT_REPOSITORY ${PYBIND11_GIT_URL}
   GIT_TAG           "v2.1.1"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
-ExternalProject_get_property(pybind11 SOURCE_DIR)
+ExternalProject_get_property(lief_pybind11 SOURCE_DIR)
 set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 
 
@@ -147,7 +147,7 @@ endif()
 
 #set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
-add_dependencies(pyLIEF pybind11)
+add_dependencies(pyLIEF lief_pybind11)
 
 if(APPLE)
     set_target_properties(pyLIEF PROPERTIES MACOSX_RPATH ".")
