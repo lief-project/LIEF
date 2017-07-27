@@ -24,19 +24,40 @@ void init_utils_functions(py::module& m) {
 #if defined(LIEF_PE_MODULE)
     m.def("is_pe",
         static_cast<bool (*)(const std::string&)>(&LIEF::PE::is_pe),
-        "Check if the given file is a ``PE``");
+        "Check if the given file is a ``PE`` (from filename)",
+        "filename"_a);
+
+    m.def("is_pe",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::PE::is_pe),
+        "Check if the given raw data is a ``PE``",
+        "raw"_a);
 #endif
 
 #if defined(LIEF_ELF_MODULE)
     m.def("is_elf",
-        &LIEF::ELF::is_elf,
-        "Check if the given file is an ``ELF``");
+        static_cast<bool (*)(const std::string&)>(&LIEF::ELF::is_elf),
+        "Check if the given file is an ``ELF``",
+        "filename"_a);
+
+
+    m.def("is_elf",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::ELF::is_elf),
+        "Check if the given raw data is an ``ELF``",
+        "raw"_a);
 #endif
 
 #if defined(LIEF_MACHO_MODULE)
     m.def("is_macho",
-        &LIEF::MachO::is_macho,
-        "Check if the given binary is ``MachO``");
+        static_cast<bool (*)(const std::string&)>(&LIEF::MachO::is_macho),
+        "Check if the given file is a ``MachO`` (from filename)",
+        "filename"_a);
+
+
+    m.def("is_macho",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::MachO::is_macho),
+        "Check if the given raw data is a ``MachO``",
+        "raw"_a);
+
 #endif
 
 }

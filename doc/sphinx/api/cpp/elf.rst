@@ -149,6 +149,18 @@ Note
 ----------
 
 
+Utilities
+*********
+
+.. doxygenfunction:: LIEF::ELF::is_elf(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::ELF::is_elf(const std::vector< uint8_t > &)
+  :project: lief
+
+----------
+
+
 
 Enums
 *****

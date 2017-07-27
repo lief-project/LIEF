@@ -28,7 +28,10 @@
 
 namespace LIEF {
 Parser::~Parser(void) = default;
-Parser::Parser(void)  = default;
+Parser::Parser(void) :
+  binary_size_{0},
+  binary_name_{""}
+{}
 
 Binary* Parser::parse(const std::string& filename) {
 
@@ -49,6 +52,39 @@ Binary* Parser::parse(const std::string& filename) {
   if (MachO::is_macho(filename)) {
     // For fat binary we take the last one...
     std::vector<MachO::Binary*> binaries = MachO::Parser::parse(filename);
+    MachO::Binary* binary_return = binaries.back();
+    binaries.pop_back();
+    // delete others
+    for (MachO::Binary* binary : binaries) {
+      delete binary;
+    }
+    return binary_return;
+  }
+#endif
+
+  throw bad_file("Unknown format");
+
+}
+
+Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
+
+#if defined(LIEF_ELF_MODULE)
+  if (ELF::is_elf(raw)) {
+    return ELF::Parser::parse(raw, name);
+  }
+#endif
+
+
+#if defined(LIEF_PE_MODULE)
+  if (PE::is_pe(raw)) {
+     return PE::Parser::parse(raw, name);
+  }
+#endif
+
+#if defined(LIEF_MACHO_MODULE)
+  if (MachO::is_macho(raw)) {
+    // For fat binary we take the last one...
+    std::vector<MachO::Binary*> binaries = MachO::Parser::parse(raw, name);
     MachO::Binary* binary_return = binaries.back();
     binaries.pop_back();
     // delete others

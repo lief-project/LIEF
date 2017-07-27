@@ -23,6 +23,13 @@ class TestAbstract(TestCase):
     def get_abstract_binary(binary):
         return super(binary.__class__, binary)
 
+    @staticmethod
+    def get_raw(path):
+        raw = None
+        with open(path, "rb") as f:
+            raw = f.read()
+        return list(raw)
+
     def test_endianness(self):
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin')))
         header = binary.header
@@ -53,6 +60,22 @@ class TestAbstract(TestCase):
 
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')))
         self.assertEqual(binary.format, lief.EXE_FORMATS.PE)
+
+
+    #def test_parser(self):
+    #    binary = lief.parse(TestAbstract.get_raw(get_sample('ELF/ELF32_x86_binary_ls.bin')))
+    #    self.assertTrue(isinstance(binary, lief.ELF.Binary))
+
+
+    #    binary = lief.parse(TestAbstract.get_raw(get_sample('MachO/MachO64_x86-64_binary_id.bin')))
+    #    self.assertTrue(isinstance(binary, lief.MachO.Binary))
+
+    #    binary = lief.parse(TestAbstract.get_raw(get_sample('MachO/FAT_MachO_x86_x86-64_library_libc.dylib')))
+    #    self.assertTrue(isinstance(binary, lief.MachO.Binary))
+
+
+    #    binary = lief.parse(TestAbstract.get_raw(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')))
+    #    self.assertTrue(isinstance(binary, lief.PE.Binary))
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@
 #define LIEF_ELF_UTILS_H_
 
 #include <string>
+#include <vector>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -26,6 +27,10 @@ namespace ELF {
 
 //! @brief Check if the given file is an ELF one.
 DLL_PUBLIC bool is_elf(const std::string& file);
+
+//! @brief check if the raw data is a ELF file
+DLL_PUBLIC bool is_elf(const std::vector<uint8_t>& raw);
+
 DLL_PUBLIC unsigned long hash32(const char* name);
 DLL_PUBLIC unsigned long hash64(const char* name);
 DLL_PUBLIC uint32_t dl_new_hash(const char* name);

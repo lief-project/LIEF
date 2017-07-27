@@ -38,10 +38,11 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     ~Parser(void);
 
     static std::vector<Binary*> parse(const std::string& filename);
+    static std::vector<Binary*> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 
   private:
     Parser(const std::string& file);
-    Parser(const std::vector<uint8_t>& data);
+    Parser(const std::vector<uint8_t>& data, const std::string& name);
     Parser(void);
 
     void build(void);

@@ -36,27 +36,52 @@ namespace MachO {
 Parser::Parser(void) = default;
 Parser::~Parser(void) = default;
 
-Parser::Parser(const std::string& file) :
-  LIEF::Parser{file}
-{
 
-  if (not is_macho(file)) {
-    throw bad_file("'" + file + "' is not a MachO binary");
+// From File
+Parser::Parser(const std::string& file) :
+  LIEF::Parser{file},
+  stream_{std::unique_ptr<VectorStream>(new VectorStream{file})},
+  binaries_{}
+{
+  this->build();
+  for (Binary* binary : this->binaries_) {
+    binary->name(filesystem::path(file).filename());
   }
 
-  this->stream_ = std::unique_ptr<VectorStream>(new VectorStream{file});
-  this->build();
 }
 
 
 std::vector<Binary*> Parser::parse(const std::string& filename) {
-  Parser parser{filename};
-  for (Binary* binary : parser.binaries_) {
-    binary->name(filesystem::path(filename).filename());
+  if (not is_macho(filename)) {
+    throw bad_file("'" + filename + "' is not a MachO binary");
   }
 
+  Parser parser{filename};
   return parser.binaries_;
 }
+
+// From Vector
+Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
+  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
+  binaries_{}
+{
+  this->build();
+
+  for (Binary* binary : this->binaries_) {
+    binary->name(name);
+  }
+}
+
+
+std::vector<Binary*> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+  if (not is_macho(data)) {
+    throw bad_file("'" + name + "' is not a MachO binary");
+  }
+
+  Parser parser{data, name};
+  return parser.binaries_;
+}
+
 
 
 void Parser::build_fat(void) {

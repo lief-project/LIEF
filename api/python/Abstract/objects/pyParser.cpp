@@ -22,8 +22,14 @@
 void init_LIEF_Parser_class(py::module& m) {
 
     m.def("parse",
-      &LIEF::Parser::parse,
+      static_cast<LIEF::Binary* (*) (const std::string&)>(&LIEF::Parser::parse),
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "filepath"_a,
+      py::return_value_policy::take_ownership);
+
+  m.def("parse",
+      static_cast<LIEF::Binary* (*) (const std::vector<uint8_t>&, const std::string&)>(&LIEF::Parser::parse),
+      "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 }

@@ -55,10 +55,6 @@ Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
   type_{0},
   count_mtd_{count_mtd}
 {
-  if (not is_elf(file)) {
-    throw LIEF::bad_format("'" + file + "' is not an ELF");
-  }
-
   this->stream_ = std::unique_ptr<VectorStream>(new VectorStream{file});
   this->init(filesystem::path(file).filename());
 }
@@ -97,6 +93,10 @@ void Parser::init(const std::string& name) {
 }
 
 Binary* Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
+  if (not is_elf(filename)) {
+    throw LIEF::bad_format("'" + filename + "' is not an ELF");
+  }
+
   Parser parser{filename, count_mtd};
   return parser.binary_;
 }
@@ -105,6 +105,11 @@ Binary* Parser::parse(
     const std::vector<uint8_t>& data,
     const std::string& name,
     DYNSYM_COUNT_METHODS count_mtd) {
+
+  if (not is_elf(data)) {
+    throw LIEF::bad_format("'" + name + "' is not an ELF");
+  }
+
   Parser parser{data, name, count_mtd};
   return parser.binary_;
 }

@@ -151,6 +151,26 @@ Relocation
 
 ----------
 
+Utilities
+*********
+
+.. doxygenfunction:: LIEF::MachO::is_macho(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::MachO::is_macho(const std::vector< uint8_t > &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::MachO::is_fat(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::MachO::is_64(const std::string &)
+  :project: lief
+
+.. doxygenfunction:: LIEF::MachO::decode_uleb128(const std::string &)
+  :project: lief
+
+----------
+
 
 Enums
 *****

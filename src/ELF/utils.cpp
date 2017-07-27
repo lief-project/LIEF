@@ -39,6 +39,23 @@ bool is_elf(const std::string& file) {
   return std::equal(std::begin(magic), std::end(magic), std::begin(ElfMagic));
 }
 
+bool is_elf(const std::vector<uint8_t>& raw) {
+
+  char magic[sizeof(ElfMagic)];
+
+  if (raw.size() < sizeof(ElfMagic)) {
+    return false;
+  }
+
+
+  std::copy(
+    reinterpret_cast<const uint8_t*>(raw.data()),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(ElfMagic),
+    magic);
+
+  return std::equal(std::begin(magic), std::end(magic), std::begin(ElfMagic));
+}
+
 //! SYSV hash function
 unsigned long hash32(const char* name) {
   unsigned long h = 0, g;

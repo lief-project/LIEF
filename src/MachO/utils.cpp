@@ -49,6 +49,31 @@ bool is_macho(const std::string& file) {
   return false;
 }
 
+bool is_macho(const std::vector<uint8_t>& raw) {
+
+  if (raw.size() < sizeof(MACHO_TYPES)) {
+    return false;
+  }
+
+  MACHO_TYPES magic;
+
+  std::copy(
+    reinterpret_cast<const uint8_t*>(raw.data()),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(MACHO_TYPES),
+    reinterpret_cast<uint8_t*>(&magic));
+
+  if (magic == MACHO_TYPES::MH_MAGIC or
+      magic == MACHO_TYPES::MH_CIGAM or
+      magic == MACHO_TYPES::MH_MAGIC_64 or
+      magic == MACHO_TYPES::MH_CIGAM_64 or
+      magic == MACHO_TYPES::FAT_MAGIC or
+      magic == MACHO_TYPES::FAT_CIGAM)
+  {
+    return true;
+  }
+  return false;
+}
+
 bool is_fat(const std::string& file) {
   if (not is_macho(file)) {
     throw LIEF::bad_format("'" + file + "' is not a MachO");
