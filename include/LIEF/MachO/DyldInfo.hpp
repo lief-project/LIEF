@@ -24,16 +24,22 @@
 #include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/type_traits.hpp"
+
+#include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-
+class BinaryParser;
 
 //! LC_DYLD_INFO and LC_DYLD_INFO_ONLY command model
 class DLL_PUBLIC DyldInfo : public LoadCommand {
-  public:
 
+  friend class BinaryParser;
+
+  public:
     //! @brief Tuple of ``offset`` and ``size``
     using info_t = std::pair<uint32_t, uint32_t>;
 
@@ -60,6 +66,13 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //! @see ``/usr/include/mach-o/loader.h``
     const info_t& rebase(void) const;
 
+    //! @brief Return Rebase's opcodes as raw data
+    const buffer_t& rebase_opcodes(void) const;
+    buffer_t&       rebase_opcodes(void);
+
+    //! @brief Set new opcodes
+    void rebase_opcodes(const buffer_t& raw);
+
     //! @brief *Bind* information
     //!
     //! Dyld binds an image during the loading process, if the image
@@ -75,6 +88,13 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //!
     //! @see ``/usr/include/mach-o/loader.h``
     const info_t& bind(void) const;
+
+    //! @brief Return Binding's opcodes as raw data
+    const buffer_t& bind_opcodes(void) const;
+    buffer_t&       bind_opcodes(void);
+
+    //! @brief Set new opcodes
+    void bind_opcodes(const buffer_t& raw);
 
     //! @brief *Weak Bind* information
     //!
@@ -95,6 +115,13 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //! @see ``/usr/include/mach-o/loader.h``
     const info_t& weak_bind(void) const;
 
+    //! @brief Return **Weak** Binding's opcodes as raw data
+    const buffer_t& weak_bind_opcodes(void) const;
+    buffer_t&       weak_bind_opcodes(void);
+
+    //! @brief Set new opcodes
+    void weak_bind_opcodes(const buffer_t& raw);
+
     //! @brief *Lazy Bind* information
     //!
     //! Some uses of external symbols do not need to be bound immediately.
@@ -110,6 +137,17 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //!
     //! @see ``/usr/include/mach-o/loader.h``
     const info_t& lazy_bind(void) const;
+
+    //! @brief Return **Lazy** Binding's opcodes as raw data
+    const buffer_t& lazy_bind_opcodes(void) const;
+    buffer_t&       lazy_bind_opcodes(void);
+
+    //! @brief Set new opcodes
+    void lazy_bind_opcodes(const buffer_t& raw);
+
+    //! @brief Iterator over BindingInfo entries
+    it_binding_info       bindings(void);
+    it_const_binding_info bindings(void) const;
 
     //! @brief *Export* information
     //!
@@ -138,6 +176,17 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //!
     //! @see ``/usr/include/mach-o/loader.h``
     const info_t& export_info(void) const;
+
+    //! @brief Iterator over ExportInfo entries
+    it_export_info       exports(void);
+    it_const_export_info exports(void) const;
+
+    //! @brief Return Export's trie as raw data
+    const buffer_t& export_trie(void) const;
+    buffer_t&       export_trie(void);
+
+    //! @brief Set new trie
+    void export_trie(const buffer_t& raw);
 
     void rebase(const info_t& info);
     void bind(const info_t& info);
@@ -168,11 +217,23 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    info_t rebase_;
-    info_t bind_;
-    info_t weak_bind_;
-    info_t lazy_bind_;
-    info_t export_;
+    info_t   rebase_;
+    buffer_t rebase_opcodes_;
+
+    info_t   bind_;
+    buffer_t bind_opcodes_;
+
+    info_t   weak_bind_;
+    buffer_t weak_bind_opcodes_;
+
+    info_t   lazy_bind_;
+    buffer_t lazy_bind_opcodes_;
+
+    info_t   export_;
+    buffer_t export_trie_;
+
+    export_info_t  export_info_;
+    binding_info_t binding_info_;
 
 };
 

@@ -111,26 +111,89 @@ void BinaryParser::init(void) {
 
 }
 
+
+void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) {
+  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
+  if (current_offset >= end) {
+    return;
+  }
+
+  const uint8_t terminal_size = this->stream_->read_integer<uint8_t>(current_offset);
+  current_offset += sizeof(uint8_t);
+
+  uint64_t children_offset = current_offset + terminal_size;
+
+  if (terminal_size != 0) {
+    uint64_t offset = current_offset - start;
+
+    value_delta     = this->stream_->read_uleb128(current_offset);
+    uint64_t flags  = std::get<0>(value_delta);
+    current_offset += std::get<1>(value_delta);
+
+    value_delta       = this->stream_->read_uleb128(current_offset);
+    uint64_t address  = std::get<0>(value_delta);
+    current_offset   += std::get<1>(value_delta);
+
+    const std::string& symbol_name = prefix;
+    ExportInfo* export_info = new ExportInfo{address, flags, offset};
+    if (this->binary_->has_symbol(symbol_name)) {
+      Symbol& symbol = this->binary_->get_symbol(symbol_name);
+      export_info->symbol_ = &symbol;
+      symbol.export_info_ = export_info;
+      //if (symbol.is_external()) {
+      //  //LOG(WARNING) << "FOOOOO " << symbol_name;
+      //  //TODO
+      //}
+    } else {
+      LOG(WARNING) << "'" << symbol_name << "' is not registred";
+    }
+    this->binary_->dyld_info().export_info_.push_back(export_info);
+
+  }
+
+	const uint8_t nb_children = this->stream_->read_integer<uint8_t>(children_offset);
+  children_offset += sizeof(uint8_t);
+  for (size_t i = 0; i < nb_children; ++i) {
+    std::string suffix = this->stream_->read_string(children_offset);
+    std::string name   = prefix + suffix;
+
+    children_offset += suffix.size() + 1;
+
+    value_delta                = this->stream_->read_uleb128(children_offset);
+    uint32_t child_node_offet  = static_cast<uint32_t>(std::get<0>(value_delta));
+    children_offset           += std::get<1>(value_delta);
+    this->parse_export_trie(start, start + child_node_offet, end, name);
+  }
+
+}
+
+void BinaryParser::parse_dyldinfo_export(void) {
+
+  DyldInfo& dyldinfo = this->binary_->dyld_info();
+
+  uint32_t offset = std::get<0>(dyldinfo.export_info());
+  uint32_t size   = std::get<1>(dyldinfo.export_info());
+
+  if (offset == 0 or size == 0) {
+    return;
+  }
+
+  uint64_t current_offset = offset;
+  uint64_t end_offset     = offset + size;
+
+  try {
+    const uint8_t* raw_trie = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    dyldinfo.export_trie({raw_trie, raw_trie + size});
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
+  }
+
+  this->parse_export_trie(offset, current_offset, end_offset, "");
+}
+
 Binary* BinaryParser::get_binary(void) {
   return this->binary_;
 }
-
-
-std::pair<uint64_t, uint64_t> BinaryParser::decode_uleb128(const VectorStream& stream, uint64_t offset) {
-  uint64_t value = 0;
-  unsigned shift = 0;
-  uint64_t current_offset = offset - sizeof(uint8_t);
-  do {
-    current_offset += sizeof(uint8_t);
-    value += static_cast<uint64_t>(stream.read_integer<uint8_t>(current_offset) & 0x7f) << shift;
-    shift += 7;
-  } while (stream.read_integer<uint8_t>(current_offset) >= 128);
-
-  uint64_t delta = current_offset - offset;
-  delta++;
-  return {value, delta};
-}
-
 
 } // namespace MachO
 } // namespace LIEF

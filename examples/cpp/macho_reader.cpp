@@ -84,6 +84,11 @@ void print_binary(const Binary* binary) {
   }
 
 
+  std::cout << "== Relocations ==" << std::endl;
+  for (const Relocation& relocation : binary->relocations()) {
+    std::cout << relocation << std::endl;
+  }
+
 
 
 }

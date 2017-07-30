@@ -31,16 +31,20 @@ namespace MachO {
 
 class BinaryParser;
 
+//! @brief Object modeling relocation
+//!
+//! @see:
+//!   * MachO::RelocationObject
+//!   * MachO::RelocationDyld
 class DLL_PUBLIC Relocation : public Visitable {
 
   friend class BinaryParser;
 
   public:
     Relocation(void);
-    Relocation(const relocation_info *relocinfo);
-    Relocation(const scattered_relocation_info *scattered_relocinfo);
+    Relocation(uint64_t address, uint8_t type);
 
-    Relocation& operator=(Relocation other);
+    //Relocation& operator=(Relocation other);
     Relocation(const Relocation& other);
     void swap(Relocation& other);
 
@@ -49,26 +53,21 @@ class DLL_PUBLIC Relocation : public Visitable {
     //! @brief For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
     //! offset from the start of the @link MachO::Section section @endlink
     //! to the item containing the address requiring relocation.
-    uint32_t address(void) const;
+    virtual uint64_t address(void) const;
 
     //! @brief Indicates whether the item containing the address to be
     //! relocated is part of a CPU instruction that uses PC-relative addressing.
     //!
     //! For addresses contained in PC-relative instructions, the CPU adds the address of
     //! the instruction to the address contained in the instruction.
-    bool is_pc_relative(void) const;
+    virtual bool is_pc_relative(void) const = 0;
 
     //! @brief Indicates the length of the item containing the address to be relocated.
-    //! The following table lists values and the corresponding address length.
-    //!
-    //! * 0: 1 byte
-    //! * 1: 2 bytes
-    //! * 2: 4 bytes
-    //! * 3: 4 bytes
-    uint8_t size(void) const;
+    virtual uint8_t size(void) const;
 
     //! @brief Type of the relocation according to the
-    //! @link Relocation::architecture architecture @endlink
+    //! @link Relocation::architecture architecture@endlink and/or
+    //! @link Relocation::origin origin@endlink
     //!
     //! See:
     //!   * MachO::X86_RELOCATION
@@ -76,23 +75,14 @@ class DLL_PUBLIC Relocation : public Visitable {
     //!   * MachO::PPC_RELOCATION
     //!   * MachO::ARM_RELOCATION
     //!   * MachO::ARM64_RELOCATION
-    uint8_t type(void) const;
-
-    //! @brief ``true`` if the relocation is a scattered one
-    bool is_scattered(void) const;
-
-    //! @brief For **scattered** relocations,
-    //! The address of the relocatable expression for the item in the file that needs
-    //! to be updated if the address is changed.
-    //!
-    //! For relocatable expressions with the difference of two section addresses,
-    //! the address from which to subtract (in mathematical terms, the minuend)
-    //! is contained in the first relocation entry and the address to subtract (the subtrahend)
-    //! is contained in the second relocation entry.
-    int32_t value(void) const;
+    //!   * MachO::REBASE_TYPES
+    virtual uint8_t type(void) const;
 
     //! @brief @link Relocation::architecture architecture @endlink of the relocation
     CPU_TYPES architecture(void) const;
+
+    //! @brief Origin of the relocation
+    virtual RELOCATION_ORIGINS origin(void) const = 0;
 
     //! @brief ``true`` if the relocation has a symbol associated with
     bool has_symbol(void) const;
@@ -108,29 +98,35 @@ class DLL_PUBLIC Relocation : public Visitable {
     Section& section(void);
     const Section& section(void) const;
 
-    void address(uint32_t address);
-    void pc_relative(bool val);
-    void size(uint8_t size);
-    void type(uint8_t type);
-    void value(int32_t value);
+    //! @brief ``true`` if the relocation has a SegmentCommand associated with
+    bool has_segment(void) const;
+
+    //! @brief SegmentCommand associated with the relocation (if any)
+    SegmentCommand& segment(void);
+    const SegmentCommand& segment(void) const;
+
+    virtual void address(uint64_t address);
+    virtual void pc_relative(bool val) = 0;
+    virtual void size(uint8_t size);
+    virtual void type(uint8_t type);
 
     bool operator==(const Relocation& rhs) const;
     bool operator!=(const Relocation& rhs) const;
 
     virtual void accept(Visitor& visitor) const override;
 
+    virtual std::ostream& print(std::ostream& os) const;
+
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
-  private:
-    uint32_t  address_;
-    Symbol*   symbol_;
-    bool      is_pcrel_;
-    uint8_t   size_;
-    uint8_t   type_;
-    CPU_TYPES architecture_;
-    bool      is_scattered_;
-    int32_t   value_;
-    Section*  section_;
+  protected:
+    uint64_t           address_;
+    Symbol*            symbol_;
+    uint8_t            size_;
+    uint8_t            type_;
+    CPU_TYPES          architecture_;
+    Section*           section_;
+    SegmentCommand*    segment_;
 
 };
 

@@ -25,7 +25,11 @@ namespace MachO {
 SegmentCommand::SegmentCommand(void) = default;
 SegmentCommand& SegmentCommand::operator=(const SegmentCommand&) = default;
 SegmentCommand::SegmentCommand(const SegmentCommand&) = default;
-SegmentCommand::~SegmentCommand(void) = default;
+SegmentCommand::~SegmentCommand(void) {
+  for (Relocation* reloc : this->relocations_) {
+    delete reloc;
+  }
+}
 
 SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
   name_{segmentCmd->segname},
@@ -36,7 +40,8 @@ SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
   maxProtection_{segmentCmd->maxprot},
   initProtection_{segmentCmd->initprot},
   nbSections_{segmentCmd->nsects},
-  flags_{segmentCmd->flags}
+  flags_{segmentCmd->flags},
+  relocations_{}
 {
   this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT;
   this->size_    = segmentCmd->cmdsize;
@@ -51,7 +56,8 @@ SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
   maxProtection_{segmentCmd->maxprot},
   initProtection_{segmentCmd->initprot},
   nbSections_{segmentCmd->nsects},
-  flags_{segmentCmd->flags}
+  flags_{segmentCmd->flags},
+  relocations_{}
 {
   this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT_64;
   this->size_    = segmentCmd->cmdsize;
@@ -109,6 +115,15 @@ it_const_sections SegmentCommand::sections(void) const {
     result.push_back(const_cast<Section*>(&s));
   }
   return it_const_sections{result};
+}
+
+
+it_relocations SegmentCommand::relocations(void) {
+  return this->relocations_;
+}
+
+it_const_relocations SegmentCommand::relocations(void) const {
+  return this->relocations_;
 }
 
 const std::vector<uint8_t>& SegmentCommand::content(void) const {

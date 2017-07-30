@@ -91,6 +91,11 @@ void init_MachO_SegmentCommand_class(py::module& m) {
         "Segment's sections"
         )
 
+    .def_property_readonly("relocations",
+        static_cast<no_const_getter<it_relocations>>(&SegmentCommand::relocations),
+        "Segment's relocations"
+        )
+
     .def_property("content",
         static_cast<getter_t<const std::vector<uint8_t>&>>(&SegmentCommand::content),
         static_cast<setter_t<const std::vector<uint8_t>&>>(&SegmentCommand::content),

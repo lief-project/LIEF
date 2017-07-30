@@ -219,7 +219,6 @@ it_const_libraries Binary::libraries(void) const {
   return it_const_libraries{result};
 }
 
-//! @brief Return binary's @link MachO::SegmentCommand segments @endlink
 it_segments Binary::segments(void) {
   segments_t result{};
 
@@ -242,7 +241,6 @@ it_const_segments Binary::segments(void) const {
   return it_const_segments{result};
 }
 
-//! @brief Return binary's @link MachO::Section sections @endlink
 it_sections Binary::sections(void) {
   sections_t result;
   for (SegmentCommand& segment : this->segments()) {
@@ -263,8 +261,48 @@ it_const_sections Binary::sections(void) const {
   return it_const_sections{result};
 }
 
+
+// Relocations
+it_relocations Binary::relocations(void) {
+  relocations_t result;
+  for (SegmentCommand& segment : this->segments()) {
+    for (Relocation& r: segment.relocations()) {
+      result.push_back(&r);
+    }
+  }
+
+  for (Section& section : this->sections()) {
+    for (Relocation& r: section.relocations()) {
+      result.push_back(&r);
+    }
+  }
+
+  return it_relocations{result};
+}
+
+it_const_relocations Binary::relocations(void) const {
+  relocations_t result;
+  for (const SegmentCommand& segment : this->segments()) {
+    for (const Relocation& r: segment.relocations()) {
+      result.push_back(const_cast<Relocation*>(&r));
+    }
+  }
+
+  for (const Section& section : this->sections()) {
+    for (const Relocation& r: section.relocations()) {
+      result.push_back(const_cast<Relocation*>(&r));
+    }
+  }
+
+  return it_const_relocations{result};
+}
+
+
+// Symbols
+// =======
+
 bool Binary::is_exported(const Symbol& symbol) {
-  return not symbol.is_external();
+  return not symbol.is_external() and symbol.has_export_info();
 }
 
 it_exported_symbols Binary::get_exported_symbols(void) {
@@ -282,7 +320,7 @@ it_const_exported_symbols Binary::get_exported_symbols(void) const {
 
 
 bool Binary::is_imported(const Symbol& symbol) {
-  return symbol.is_external();
+  return symbol.is_external() and not symbol.has_export_info();
 }
 
 it_imported_symbols Binary::get_imported_symbols(void) {
@@ -296,6 +334,36 @@ it_const_imported_symbols Binary::get_imported_symbols(void) const {
   return const_filter_iterator<symbols_t>{std::cref(this->symbols_),
     [] (const Symbol* symbol) { return is_imported(*symbol); }
   };
+}
+
+
+bool Binary::has_symbol(const std::string& name) const {
+  auto&& it_symbol = std::find_if(
+      std::begin(this->symbols_),
+      std::end(this->symbols_),
+      [&name] (const Symbol* sym) {
+        return sym->name() == name;
+      });
+  return it_symbol != std::end(this->symbols_);
+}
+
+const Symbol& Binary::get_symbol(const std::string& name) const {
+  if (not this->has_symbol(name)) {
+    throw not_found("Unable to find the symbol '" + name + "'");
+  }
+
+  auto&& it_symbol = std::find_if(
+      std::begin(this->symbols_),
+      std::end(this->symbols_),
+      [&name] (const Symbol* sym) {
+        return sym->name() == name;
+      });
+
+  return *(*it_symbol);
+}
+
+Symbol& Binary::get_symbol(const std::string& name) {
+  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
 }
 
 // =====
@@ -338,7 +406,9 @@ const SegmentCommand& Binary::segment_from_virtual_address(uint64_t virtual_addr
       });
 
   if (it_segment == segments.cend()) {
-    throw not_found("Unable to find the section");
+    std::stringstream ss;
+    ss << "0x" << std::hex << virtual_address;
+    throw not_found("Unable to find the segment from address " + ss.str());
   }
 
   return *it_segment;
@@ -412,25 +482,12 @@ std::vector<uint8_t> Binary::raw(void) {
   return builder.get_build();
 }
 
-uint64_t Binary::virtual_address_to_offset(uint64_t virtualAddress) const {
+uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
 
-  it_const_segments segments = this->segments();
-  auto&& it_segment = std::find_if(
-      segments.cbegin(),
-      segments.cend(),
-      [virtualAddress] (const SegmentCommand& segment)
-      {
-      return (
-          segment.virtual_address() <= virtualAddress and
-          segment.virtual_address() + segment.virtual_size() >= virtualAddress
-          );
-      });
+  const SegmentCommand& segment = segment_from_virtual_address(virtual_address);
 
-  if (it_segment == segments.cend()) {
-    throw conversion_error("Unable to convert virtual address to offset");
-  }
-  uint64_t baseAddress = (*it_segment).virtual_address() - (*it_segment).file_offset();
-  uint64_t offset      = virtualAddress - baseAddress;
+  uint64_t base_address = segment.virtual_address() - segment.file_offset();
+  uint64_t offset       = virtual_address - base_address;
 
   return offset;
 }

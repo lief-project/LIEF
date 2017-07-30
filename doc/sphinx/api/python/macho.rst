@@ -174,6 +174,50 @@ Relocation
 ----------
 
 
+Relocation Object
+*****************
+
+.. autoclass:: lief.MachO.RelocationObject
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Relocation Dyld
+***************
+
+.. autoclass:: lief.MachO.RelocationDyld
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Binding Info
+************
+
+.. autoclass:: lief.MachO.BindingInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Export Info
+***********
+
+.. autoclass:: lief.MachO.ExportInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Enums
 *****
 
@@ -287,7 +331,6 @@ ARM_RELOCATION
 
 ----------
 
-
 ARM64_RELOCATION
 ~~~~~~~~~~~~~~~~
 
@@ -297,11 +340,101 @@ ARM64_RELOCATION
   :undoc-members:
 
 
+----------
+
+RELOCATION_ORIGINS
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.RELOCATION_ORIGINS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+REBASE_TYPES
+~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.REBASE_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
 
 
 
+----------
+
+BINDING_CLASS
+~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.BINDING_CLASS
+  :members:
+  :inherited-members:
+  :undoc-members:
 
 
+----------
+
+REBASE_OPCODES
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.REBASE_OPCODES
+  :members:
+  :inherited-members:
+  :undoc-members:
 
 
+----------
 
+BIND_TYPES
+~~~~~~~~~~
+
+.. autoclass:: lief.MachO.BIND_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+BIND_SPECIAL_DYLIB
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.BIND_SPECIAL_DYLIB
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+BIND_OPCODES
+~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.BIND_OPCODES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+EXPORT_SYMBOL_KINDS
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.EXPORT_SYMBOL_KINDS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+VM_PROTECTIONS
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.VM_PROTECTIONS
+  :members:
+  :inherited-members:
+  :undoc-members:

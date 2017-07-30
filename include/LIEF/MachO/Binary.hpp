@@ -67,13 +67,21 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     it_symbols       symbols(void);
     it_const_symbols symbols(void) const;
 
-    static bool                 is_exported(const Symbol& symbol);
+    //! @brief If a symbol with the given name exists
+    bool has_symbol(const std::string& name) const;
+
+    //! @brief Return Symbol from the given name
+    const Symbol& get_symbol(const std::string& name) const;
+    Symbol& get_symbol(const std::string& name);
+
+    //! @brief Check if the given symbol is an exported one
+    static bool is_exported(const Symbol& symbol);
 
     //! @brief Return binary's exported symbols
     it_exported_symbols       get_exported_symbols(void);
     it_const_exported_symbols get_exported_symbols(void) const;
 
-    //! @brief Check if the given symbol is a imported one
+    //! @brief Check if the given symbol is an imported one
     static bool is_imported(const Symbol& symbol);
 
     //! @brief Return binary's imported symbols
@@ -91,6 +99,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Return binary's @link MachO::Section sections @endlink
     it_sections       sections(void);
     it_const_sections sections(void) const;
+
+    //! @brief Return binary's @link MachO::Relocation relocations @endlink
+    it_relocations       relocations(void);
+    it_const_relocations relocations(void) const;
 
     //! @brief Reconstruct the binary object and write it in `filename`
     //! @param filename Path to write the reconstructed binary

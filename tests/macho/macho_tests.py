@@ -27,13 +27,13 @@ class TestMachO(TestCase):
             0x100001581, 0x1000016cc, 0x1000017cc,
             0x1000019e3, 0x100001a03, 0x100001a1d,
             0x1000020ad, 0x1000022f6, 0x1000023ef,
-	    0x10000246b, 0x10000248c, 0x1000026da,
+            0x10000246b, 0x10000248c, 0x1000026da,
             0x100002754, 0x10000286b, 0x100002914,
-	    0x100002bd8, 0x100002be8, 0x100002c2b,
-	    0x100002c62, 0x100002d24, 0x100002d5a,
-	    0x100002d91, 0x100002dd5, 0x100002de6,
-	    0x100002dfc, 0x100002e40, 0x100002e51,
-	    0x100002e67, 0x100002f9e
+            0x100002bd8, 0x100002be8, 0x100002c2b,
+            0x100002c62, 0x100002d24, 0x100002d5a,
+            0x100002d91, 0x100002dd5, 0x100002de6,
+            0x100002dfc, 0x100002e40, 0x100002e51,
+            0x100002e67, 0x100002f9e
         ]
 
         self.assertEqual(dd.function_starts.data_offset, 21168)
@@ -61,7 +61,7 @@ class TestMachO(TestCase):
         # 0
         self.assertEqual(relocations[0].address, 0x23)
         self.assertEqual(relocations[0].type,    2)
-        self.assertEqual(relocations[0].size,    2)
+        self.assertEqual(relocations[0].size,    32)
 
         self.assertEqual(relocations[0].is_scattered, False)
 
@@ -74,7 +74,7 @@ class TestMachO(TestCase):
         # 1
         self.assertEqual(relocations[1].address, 0x0b)
         self.assertEqual(relocations[1].type,    1)
-        self.assertEqual(relocations[1].size,    2)
+        self.assertEqual(relocations[1].size,    32)
 
         self.assertEqual(relocations[1].is_scattered, False)
 
@@ -91,7 +91,7 @@ class TestMachO(TestCase):
         # 0
         self.assertEqual(relocations[0].address, 0x0)
         self.assertEqual(relocations[0].type,    0)
-        self.assertEqual(relocations[0].size,    3)
+        self.assertEqual(relocations[0].size,    32)
 
         self.assertEqual(relocations[0].is_scattered, False)
 

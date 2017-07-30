@@ -68,6 +68,8 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::MachO::it_libraries>(m);
   init_ref_iterator<LIEF::MachO::it_segments>(m);
   init_ref_iterator<LIEF::MachO::it_sections>(m);
+  init_ref_iterator<LIEF::MachO::it_binding_info>(m);
+  init_ref_iterator<LIEF::MachO::it_export_info>(m);
 #endif
 
 }

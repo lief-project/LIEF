@@ -20,6 +20,7 @@
 #include <climits>
 #include <vector>
 #include <istream>
+#include <utility>
 
 class BinaryStream {
   public:
@@ -30,6 +31,9 @@ class BinaryStream {
 
     template<typename T>
     T read_integer(uint64_t offset, bool swap = false) const;
+
+    std::pair<uint64_t, uint64_t> read_uleb128(uint64_t offset) const;
+    std::pair<int64_t, uint64_t>  read_sleb128(uint64_t offset) const;
 
     template<typename T>
     static T swap_endian(T u);

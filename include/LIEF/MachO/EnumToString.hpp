@@ -37,6 +37,16 @@ DLL_PUBLIC const char* to_string(X86_64_RELOCATION e);
 DLL_PUBLIC const char* to_string(PPC_RELOCATION e);
 DLL_PUBLIC const char* to_string(ARM_RELOCATION e);
 DLL_PUBLIC const char* to_string(ARM64_RELOCATION e);
+DLL_PUBLIC const char* to_string(RELOCATION_ORIGINS e);
+
+DLL_PUBLIC const char* to_string(REBASE_TYPES e);
+DLL_PUBLIC const char* to_string(BINDING_CLASS e);
+DLL_PUBLIC const char* to_string(REBASE_OPCODES e);
+DLL_PUBLIC const char* to_string(BIND_TYPES e);
+DLL_PUBLIC const char* to_string(BIND_SPECIAL_DYLIB e);
+DLL_PUBLIC const char* to_string(BIND_OPCODES e);
+DLL_PUBLIC const char* to_string(EXPORT_SYMBOL_KINDS e);
+DLL_PUBLIC const char* to_string(VM_PROTECTIONS e);
 
 } // namespace MachO
 } // namespace LIEF

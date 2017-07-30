@@ -17,3 +17,42 @@
 
 BinaryStream::~BinaryStream(void) = default;
 
+
+std::pair<uint64_t, uint64_t> BinaryStream::read_uleb128(uint64_t offset) const {
+  uint64_t value = 0;
+  unsigned shift = 0;
+  uint64_t current_offset = offset - sizeof(uint8_t);
+  do {
+    current_offset += sizeof(uint8_t);
+    value += static_cast<uint64_t>(this->read_integer<uint8_t>(current_offset) & 0x7f) << shift;
+    shift += 7;
+  } while (this->read_integer<uint8_t>(current_offset) >= 128);
+
+  uint64_t delta = current_offset - offset;
+  delta++;
+  return {value, delta};
+}
+
+
+std::pair<int64_t, uint64_t> BinaryStream::read_sleb128(uint64_t offset) const {
+  int64_t  value = 0;
+  unsigned shift = 0;
+  uint64_t current_offset = offset - sizeof(uint8_t);
+  do {
+    current_offset += sizeof(uint8_t);
+    value += static_cast<uint64_t>(this->read_integer<uint8_t>(current_offset) & 0x7f) << shift;
+    shift += 7;
+  } while (this->read_integer<uint8_t>(current_offset) >= 128);
+
+
+  // Sign extend
+  if ((value & 0x40) != 0) {
+    value |= static_cast<int64_t>(-1) << shift;
+  }
+
+  uint64_t delta = current_offset - offset;
+  delta++;
+
+  return {value, delta};
+}
+

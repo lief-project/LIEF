@@ -83,12 +83,12 @@ std::ostream& VersionMin::print(std::ostream& os) const {
   LoadCommand::print(os);
   const VersionMin::version_t& version = this->version();
   const VersionMin::version_t& sdk = this->sdk();
-  os << "Version: " << std::dec
+  os << std::setw(10) << "Version: " << std::dec
      << version[0] << "."
      << version[1] << "."
      << version[2] << std::endl;
 
-  os << "SDK: " << std::dec
+  os << std::setw(10) << "SDK: " << std::dec
      << sdk[0] << "."
      << sdk[1] << "."
      << sdk[2] << std::endl;

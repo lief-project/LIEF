@@ -60,6 +60,10 @@ class DLL_PUBLIC SegmentCommand : public LoadCommand {
     uint32_t flags(void) const;
     it_sections       sections(void);
     it_const_sections sections(void) const;
+
+    it_relocations       relocations(void);
+    it_const_relocations relocations(void) const;
+
     const std::vector<uint8_t>& content(void) const;
 
     void name(const std::string& name);
@@ -108,6 +112,10 @@ class DLL_PUBLIC SegmentCommand : public LoadCommand {
     std::vector<uint8_t> data_;
 
     std::vector<Section> sections_;
+
+    relocations_t relocations_;
+
+
 };
 
 }

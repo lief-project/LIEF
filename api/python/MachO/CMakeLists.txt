@@ -16,6 +16,10 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDyldInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyFunctionStarts.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocation.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocationObject.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocationDyld.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyBindingInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyExportInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyMachOStructures.cpp"
 )
 

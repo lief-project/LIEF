@@ -19,6 +19,7 @@
 #include "LIEF/visitors/Hash.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 
@@ -30,91 +31,53 @@ Relocation::~Relocation(void) = default;
 Relocation::Relocation(void) :
   address_{0},
   symbol_{nullptr},
-  is_pcrel_{0},
   size_{0},
   type_{0},
   architecture_{CPU_TYPES::CPU_TYPE_ANY},
-  is_scattered_{false},
-  value_{0},
-  section_{nullptr}
+  section_{nullptr},
+  segment_{nullptr}
 {}
 
-Relocation::Relocation(const relocation_info *relocinfo) :
-  address_{static_cast<uint32_t>(relocinfo->r_address)},
-  symbol_{nullptr},
-  is_pcrel_{static_cast<bool>(relocinfo->r_pcrel)},
-  size_{static_cast<uint8_t>(relocinfo->r_length)},
-  type_{static_cast<uint8_t>(relocinfo->r_type)},
-  architecture_{CPU_TYPES::CPU_TYPE_ANY},
-  is_scattered_{false},
-  value_{0},
-  section_{nullptr}
+
+Relocation::Relocation(uint64_t address, uint8_t type) :
+  Relocation{}
 {
-}
-
-Relocation::Relocation(const scattered_relocation_info *scattered_relocinfo) :
-  address_{scattered_relocinfo->r_address},
-  symbol_{nullptr},
-  is_pcrel_{static_cast<bool>(scattered_relocinfo->r_pcrel)},
-  size_{static_cast<uint8_t>(scattered_relocinfo->r_length)},
-  type_{static_cast<uint8_t>(scattered_relocinfo->r_type)},
-  architecture_{CPU_TYPES::CPU_TYPE_ANY},
-  is_scattered_{true},
-  value_{scattered_relocinfo->r_value},
-  section_{nullptr}
-{}
-
-Relocation& Relocation::operator=(Relocation other) {
-  this->swap(other);
-  return *this;
+  this->address_ = address;
+  this->type_    = type;
 }
 
 Relocation::Relocation(const Relocation& other) :
   Visitable{other},
   address_{other.address_},
   symbol_{nullptr},
-  is_pcrel_{other.is_pcrel_},
   size_{other.size_},
   type_{other.type_},
   architecture_{other.architecture_},
-  is_scattered_{other.is_scattered_},
-  value_{other.value_},
-  section_{nullptr}
+  section_{nullptr},
+  segment_{nullptr}
 {}
 
 void Relocation::swap(Relocation& other) {
   std::swap(this->address_,      other.address_);
   std::swap(this->symbol_,       other.symbol_);
-  std::swap(this->is_pcrel_,     other.is_pcrel_);
   std::swap(this->size_,         other.size_);
   std::swap(this->type_,         other.type_);
   std::swap(this->architecture_, other.architecture_);
-  std::swap(this->is_scattered_, other.is_scattered_);
-  std::swap(this->value_,        other.value_);
   std::swap(this->section_,      other.section_);
+  std::swap(this->segment_,      other.segment_);
 }
 
-uint32_t Relocation::address(void) const {
+uint64_t Relocation::address(void) const {
   return this->address_;
 }
-bool Relocation::is_pc_relative(void) const {
-  return this->is_pcrel_;
-}
+
+
 uint8_t Relocation::size(void) const {
   return this->size_;
 }
+
 uint8_t Relocation::type(void) const {
   return this->type_;
-}
-bool Relocation::is_scattered(void) const {
-  return this->is_scattered_;
-}
-
-int32_t Relocation::value(void) const {
-  if (not this->is_scattered()) {
-    throw not_found("This relocation is not a 'scattered' one");
-  }
-  return this->value_;
 }
 
 CPU_TYPES Relocation::architecture(void) const {
@@ -137,6 +100,8 @@ const Symbol& Relocation::symbol(void) const {
 }
 
 
+// Section
+// =======
 bool Relocation::has_section(void) const {
   return (this->section_ != nullptr);
 }
@@ -153,12 +118,26 @@ const Section& Relocation::section(void) const {
 }
 
 
-void Relocation::address(uint32_t address) {
-  this->address_ = address;
+// Segment
+// =======
+bool Relocation::has_segment(void) const {
+  return (this->segment_ != nullptr);
 }
 
-void Relocation::pc_relative(bool val) {
-  this->is_pcrel_ = val;
+SegmentCommand& Relocation::segment(void) {
+  return const_cast<SegmentCommand&>(static_cast<const Relocation*>(this)->segment());
+}
+
+const SegmentCommand& Relocation::segment(void) const {
+  if (not this->has_segment()) {
+    throw not_found("No segment associated with this relocation");
+  }
+  return *this->segment_;
+}
+
+
+void Relocation::address(uint64_t address) {
+  this->address_ = address;
 }
 
 void Relocation::size(uint8_t size) {
@@ -169,22 +148,14 @@ void Relocation::type(uint8_t type) {
   this->type_ = type;
 }
 
-void Relocation::value(int32_t value) {
-  if (not this->is_scattered()) {
-    throw not_found("This relocation is not a 'scattered' one");
-  }
-  this->value_ = value;
-}
-
 void Relocation::accept(Visitor& visitor) const {
+  visitor(*this); // Double dispatch to avoid down-casting
+
   visitor.visit(this->address());
   visitor.visit(this->is_pc_relative());
   visitor.visit(this->size());
   visitor.visit(this->type());
-  visitor.visit(this->is_scattered());
-  if (this->is_scattered()) {
-    visitor.visit(this->value());
-  }
+  visitor.visit(this->origin());
 
   if (this->has_symbol()) {
     visitor(this->symbol());
@@ -192,6 +163,10 @@ void Relocation::accept(Visitor& visitor) const {
 
   if (this->has_section()) {
     visitor(this->section());
+  }
+
+  if (this->has_segment()) {
+    visitor(this->segment());
   }
 }
 
@@ -207,69 +182,102 @@ bool Relocation::operator!=(const Relocation& rhs) const {
 }
 
 
-std::ostream& operator<<(std::ostream& os, const Relocation& relocation) {
+std::ostream& Relocation::print(std::ostream& os) const {
   os << std::hex;
   os << std::left;
 
   std::string symbol_name = "";
-  if (relocation.has_symbol()) {
-    symbol_name = relocation.symbol().name();
+  if (this->has_symbol()) {
+    symbol_name = this->symbol().name();
   }
 
   std::string section_name = "";
-  if (relocation.has_section()) {
-    section_name = relocation.section().name();
+  if (this->has_section()) {
+    section_name = this->section().name();
+  }
+
+  std::string segment_name = "";
+  if (this->has_segment()) {
+    segment_name = this->segment().name();
+  }
+
+  std::string segment_section_name = "";
+  if (section_name.size() > 0 and segment_name.size() > 0) {
+    segment_section_name = segment_name + "." + section_name;
   }
 
   std::string relocation_type = "";
-  switch (relocation.architecture()) {
-    case CPU_TYPES::CPU_TYPE_X86:
-      {
-        relocation_type = to_string(static_cast<X86_RELOCATION>(relocation.type()));
-        break;
-      }
+  if (this->origin() == RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE) {
+    switch (this->architecture()) {
+      case CPU_TYPES::CPU_TYPE_X86:
+        {
+          relocation_type = to_string(static_cast<X86_RELOCATION>(this->type()));
+          break;
+        }
 
-    case CPU_TYPES::CPU_TYPE_X86_64:
-      {
-        relocation_type = to_string(static_cast<X86_64_RELOCATION>(relocation.type()));
-        break;
-      }
+      case CPU_TYPES::CPU_TYPE_X86_64:
+        {
+          relocation_type = to_string(static_cast<X86_64_RELOCATION>(this->type()));
+          break;
+        }
 
-    case CPU_TYPES::CPU_TYPE_ARM:
-      {
-        relocation_type = to_string(static_cast<ARM_RELOCATION>(relocation.type()));
-        break;
-      }
+      case CPU_TYPES::CPU_TYPE_ARM:
+        {
+          relocation_type = to_string(static_cast<ARM_RELOCATION>(this->type()));
+          break;
+        }
 
-    case CPU_TYPES::CPU_TYPE_ARM64:
-      {
-        relocation_type = to_string(static_cast<ARM64_RELOCATION>(relocation.type()));
-        break;
-      }
+      case CPU_TYPES::CPU_TYPE_ARM64:
+        {
+          relocation_type = to_string(static_cast<ARM64_RELOCATION>(this->type()));
+          break;
+        }
 
-    case CPU_TYPES::CPU_TYPE_POWERPC:
-      {
-        relocation_type = to_string(static_cast<PPC_RELOCATION>(relocation.type()));
-        break;
-      }
+      case CPU_TYPES::CPU_TYPE_POWERPC:
+        {
+          relocation_type = to_string(static_cast<PPC_RELOCATION>(this->type()));
+          break;
+        }
 
-    default:
-      {
-        relocation_type = std::to_string(relocation.type());
-      }
+      default:
+        {
+          relocation_type = std::to_string(this->type());
+        }
+    }
+  }
+
+  if (this->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
+    relocation_type = to_string(static_cast<REBASE_TYPES>(this->type()));
   }
 
 
-  os << std::setw(4) << relocation.address()
+  os << std::setw(10) << this->address()
      << std::setw(20) << relocation_type
-     << std::setw(4) << std::dec << static_cast<uint32_t>(relocation.size())
-     << std::setw(6) << std::boolalpha << relocation.is_pc_relative()
-     << std::setw(6) << std::boolalpha << relocation.is_scattered()
-     << std::setw(10) << symbol_name
-     << std::setw(10) << section_name;
+     << std::setw(4) << std::dec << static_cast<uint32_t>(this->size());
 
+  os << std::setw(10) << to_string(this->origin());
+
+  if (segment_section_name.size() > 0) {
+      os << segment_section_name;
+  } else {
+    if (section_name.size() > 0) {
+      os << section_name;
+    }
+
+    if (segment_name.size() > 0) {
+      os << section_name;
+    }
+  }
+
+  os << " ";
+  os << std::setw(10) << symbol_name;
 
   return os;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Relocation& reloc) {
+  return reloc.print(os);
 }
 
 

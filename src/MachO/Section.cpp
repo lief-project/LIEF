@@ -30,7 +30,11 @@ namespace MachO {
 
 Section& Section::operator=(const Section&) = default;
 Section::Section(const Section&) = default;
-Section::~Section(void) = default;
+Section::~Section(void) {
+  for (Relocation* reloc : this->relocations_) {
+    delete reloc;
+  }
+}
 
 Section::Section(void) :
   segment_name_{""},

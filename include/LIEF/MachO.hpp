@@ -20,5 +20,7 @@
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/RelocationObject.hpp"
+#include "LIEF/MachO/RelocationDyld.hpp"
 
 #endif

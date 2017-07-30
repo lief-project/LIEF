@@ -17,6 +17,9 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/RelocationObject.hpp"
+#include "LIEF/MachO/RelocationDyld.hpp"
 
 #include "easylogging++.h"
 
@@ -36,6 +39,28 @@ void BinaryParser::parse(void) {
     } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
+  }
+
+  if (this->binary_->has_dyld_info()) {
+
+    try {
+      this->parse_dyldinfo_binds<MACHO_T>();
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
+
+    try {
+      this->parse_dyldinfo_export();
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
+
+    try {
+      this->parse_dyldinfo_rebases<MACHO_T>();
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
+
   }
 }
 
@@ -369,7 +394,7 @@ void BinaryParser::parse_load_commands(void) {
           uint64_t value = 0;
 
           do {
-            value_delta = BinaryParser::decode_uleb128(*this->stream_.get(), offset);
+            value_delta = this->stream_->read_uleb128(offset);
             if (std::get<0>(value_delta) == 0) {
               break;
             }
@@ -433,11 +458,11 @@ void BinaryParser::parse_relocations(Section& section) {
     if (is_scattered) {
       const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
-      section.relocations_[i] = {reloc_info};
+      section.relocations_[i] = new RelocationObject{reloc_info};
     } else {
       const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
-      section.relocations_[i] = {reloc_info};
+      section.relocations_[i] = new RelocationObject{reloc_info};
 
       if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
         if (reloc_info->r_symbolnum < this->binary_->symbols().size()) {
@@ -464,15 +489,932 @@ void BinaryParser::parse_relocations(Section& section) {
       }
     }
 
-    if (not section.relocations_[i].has_section()) {
-      section.relocations_[i].section_ = &section;
+    if (not section.relocations_[i]->has_section()) {
+      section.relocations_[i]->section_ = &section;
     }
-    section.relocations_[i].architecture_ = this->binary_->header().cpu_type();
-    LOG(DEBUG) << section.relocations_.back();;
+    section.relocations_[i]->architecture_ = this->binary_->header().cpu_type();
+    LOG(DEBUG) << *section.relocations_.back();;
     current_reloc_offset += 2 * sizeof(uint32_t);
   }
 
 }
+
+template<class MACHO_T>
+void BinaryParser::parse_dyldinfo_rebases() {
+  using pint_t = typename MACHO_T::uint;
+
+  DyldInfo& dyldinfo = this->binary_->dyld_info();
+  uint32_t offset = std::get<0>(dyldinfo.rebase());
+  uint32_t size   = std::get<1>(dyldinfo.rebase());
+
+  if (offset == 0 or size == 0) {
+    return;
+  }
+
+  try {
+    const uint8_t* raw_rebase = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    dyldinfo.rebase_opcodes({raw_rebase, raw_rebase + size});
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
+  }
+
+  uint64_t current_offset = offset;
+  uint64_t end_offset = offset + size;
+
+  bool     done = false;
+	uint8_t  type = 0;
+	uint32_t segment_index = 0;
+	uint64_t segment_offset = 0;
+	uint32_t count = 0;
+	uint32_t skip = 0;
+  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
+
+  while (not done and current_offset < end_offset) {
+    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_IMMEDIATE_MASK;
+    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_OPCODE_MASK;
+    current_offset += sizeof(uint8_t);
+
+    switch(static_cast<REBASE_OPCODES>(opcode)) {
+      case REBASE_OPCODES::REBASE_OPCODE_DONE:
+        {
+  				done = true;
+	  			break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM:
+        {
+  				type = imm;
+	  			break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+        {
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+  				segment_index   = imm;
+          segment_offset  = std::get<0>(value_delta);
+
+          current_offset += std::get<1>(value_delta);
+
+		  		break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
+        {
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+          segment_offset += std::get<0>(value_delta);
+
+          current_offset += std::get<1>(value_delta);
+	  			break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+        {
+				  segment_offset += (imm * sizeof(pint_t));
+				  break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+        {
+          for (size_t i = 0; i < imm; ++i) {
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+				    segment_offset += sizeof(pint_t);
+				  }
+				  break;
+        }
+			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+        {
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+          count           = std::get<0>(value_delta);
+
+          current_offset += std::get<1>(value_delta);
+
+				  for (size_t i = 0; i < count; ++i) {
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+					  segment_offset += sizeof(pint_t);
+				  }
+				  break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+        {
+
+          this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
+
+          current_offset += std::get<1>(value_delta);
+				  break;
+        }
+
+			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+        {
+          // Count
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+          count          += std::get<0>(value_delta);
+
+          current_offset += std::get<1>(value_delta);
+
+          // Skip
+          value_delta     = this->stream_->read_uleb128(current_offset);
+
+          skip           += std::get<0>(value_delta);
+
+          current_offset += std::get<1>(value_delta);
+
+				  for (size_t i = 0; i < count; ++i) {
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+					  segment_offset += skip + sizeof(pint_t);
+				  }
+
+				  break;
+        }
+
+			default:
+        {
+          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          break;
+        }
+    }
+  }
+
+  it_segments segments = this->binary_->segments();
+  // Tie segments and relocations
+  // The **OWNER**: Segment (destructor)
+  for (SegmentCommand& segment : segments) {
+    for (Relocation& relocation : segment.relocations()) {
+      relocation.segment_ = &segment;
+    }
+  }
+
+  // Tie sections and relocations
+  for (SegmentCommand& segment : segments) {
+    uint64_t offset = 0;
+
+    for (Relocation& relocation : segment.relocations()) {
+      try {
+        offset = this->binary_->virtual_address_to_offset(relocation.address());
+        Section& section = this->binary_->section_from_offset(offset);
+        relocation.section_ = &section;
+      } catch (const not_found& e) {
+        LOG(DEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << relocation.address() << " - 0x" << offset;
+      }
+    }
+  }
+
+
+  // Tie symbols and relocations
+  for (Relocation& relocation : this->binary_->relocations()) {
+    uint64_t address = relocation.address();
+    auto&& it_symbol = std::find_if(
+        std::begin(this->binary_->symbols_),
+        std::end(this->binary_->symbols_),
+        [&address] (const Symbol* sym) {
+          return sym->value() == address;
+        });
+
+    if (it_symbol != std::end(this->binary_->symbols_)) {
+      relocation.symbol_ = *it_symbol;
+    }
+  }
+}
+
+
+template<class MACHO_T>
+void BinaryParser::parse_dyldinfo_binds() {
+
+  try {
+    this->parse_dyldinfo_generic_bind<MACHO_T>();
+  } catch (const exception& e) {
+    throw corrupted(e.what());
+  }
+
+
+  try {
+    this->parse_dyldinfo_weak_bind<MACHO_T>();
+  } catch (const exception& e) {
+    throw corrupted(e.what());
+  }
+
+
+  try {
+    this->parse_dyldinfo_lazy_bind<MACHO_T>();
+  } catch (const exception& e) {
+    throw corrupted(e.what());
+  }
+
+}
+
+// Generic bindings
+// ================
+template<class MACHO_T>
+void BinaryParser::parse_dyldinfo_generic_bind() {
+  using pint_t = typename MACHO_T::uint;
+
+  DyldInfo& dyldinfo = this->binary_->dyld_info();
+
+  uint32_t offset = std::get<0>(dyldinfo.bind());
+  uint32_t size   = std::get<1>(dyldinfo.bind());
+
+  if (offset == 0 or size == 0) {
+    return;
+  }
+
+  try {
+    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    dyldinfo.bind_opcodes({raw_binding, raw_binding + size});
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
+  }
+
+  uint64_t current_offset = offset;
+  uint64_t end_offset = offset + size;
+
+	uint8_t     type = 0;
+	uint8_t     segment_idx = 0;
+	uint64_t    segment_offset = 0;
+  std::string symbol_name = "";
+	int         library_ordinal = 0;
+
+	int64_t     addend = 0;
+	uint32_t    count = 0;
+	uint32_t    skip = 0;
+
+  bool        is_weak_import = false;
+	bool        done = false;
+
+  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
+  std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
+
+  while (not done and current_offset < end_offset) {
+    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
+    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    current_offset += sizeof(uint8_t);
+
+		switch (opcode) {
+		  case BIND_OPCODE_DONE:
+        {
+				  done = true;
+					break;
+        }
+
+      case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+        {
+				  library_ordinal = imm;
+					break;
+        }
+
+			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+        {
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          library_ordinal = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					break;
+        }
+
+			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+        {
+					// the special ordinals are negative numbers
+					if (imm == 0) {
+						library_ordinal = 0;
+          } else {
+						int8_t sign_extended = BIND_OPCODE_MASK | imm;
+						library_ordinal = sign_extended;
+					}
+					break;
+        }
+
+      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+        {
+				  symbol_name = this->stream_->read_string(current_offset);
+          current_offset += symbol_name.size() + 1;
+
+          if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
+						is_weak_import = true;
+          } else {
+						is_weak_import = false;
+          }
+					break;
+        }
+
+      case BIND_OPCODE_SET_TYPE_IMM:
+        {
+					type = imm;
+					break;
+        }
+
+			case BIND_OPCODE_SET_ADDEND_SLEB:
+        {
+          svalue_delta    = this->stream_->read_sleb128(current_offset);
+          addend          = std::get<0>(svalue_delta);
+          current_offset += std::get<1>(svalue_delta);
+					break;
+        }
+
+			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+        {
+					segment_idx  = imm;
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset  = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					break;
+        }
+
+			case BIND_OPCODE_ADD_ADDR_ULEB:
+        {
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+					break;
+        }
+
+      case BIND_OPCODE_DO_BIND:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_STANDARD,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              library_ordinal,
+              addend,
+              is_weak_import);
+					segment_offset += sizeof(pint_t);
+					break;
+        }
+
+      case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_STANDARD,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              library_ordinal,
+              addend,
+              is_weak_import);
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
+          current_offset += std::get<1>(value_delta);
+					break;
+        }
+
+			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_STANDARD,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              library_ordinal,
+              addend,
+              is_weak_import);
+          segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
+					break;
+        }
+
+      case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+        {
+
+          // Count
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          count           = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+          // Skip
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          skip            = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					for (size_t i = 0; i < count; ++i) {
+            this->do_bind<MACHO_T>(
+                BINDING_CLASS::BIND_CLASS_STANDARD,
+                type,
+                segment_idx,
+                segment_offset,
+                symbol_name,
+                library_ordinal,
+                addend,
+                is_weak_import);
+            segment_offset += skip + sizeof(pint_t);
+					}
+					break;
+        }
+
+			default:
+        {
+          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          break;
+        }
+			}
+  }
+
+}
+
+// Weak binding
+// ============
+template<class MACHO_T>
+void BinaryParser::parse_dyldinfo_weak_bind() {
+  using pint_t = typename MACHO_T::uint;
+
+  DyldInfo& dyldinfo = this->binary_->dyld_info();
+
+  uint32_t offset = std::get<0>(dyldinfo.weak_bind());
+  uint32_t size   = std::get<1>(dyldinfo.weak_bind());
+
+  if (offset == 0 or size == 0) {
+    return;
+  }
+
+  try {
+    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    dyldinfo.weak_bind_opcodes({raw_binding, raw_binding + size});
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
+  }
+
+  uint64_t current_offset = offset;
+  uint64_t end_offset = offset + size;
+
+	uint8_t     type = 0;
+	uint8_t     segment_idx = 0;
+	uint64_t    segment_offset = 0;
+  std::string symbol_name = "";
+
+	int64_t     addend = 0;
+	uint32_t    count = 0;
+	uint32_t    skip = 0;
+
+  bool        is_weak_import = true;
+	bool        done = false;
+
+  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
+  std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
+
+  while (not done and current_offset < end_offset) {
+    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
+    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    current_offset += sizeof(uint8_t);
+
+		switch (opcode) {
+		  case BIND_OPCODE_DONE:
+        {
+				  done = true;
+					break;
+        }
+
+
+      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+        {
+				  symbol_name = this->stream_->read_string(current_offset);
+          current_offset += symbol_name.size() + 1;
+
+          if ((imm & BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION) != 0) {
+            // TODO: STRONG
+          }
+					break;
+        }
+
+      case BIND_OPCODE_SET_TYPE_IMM:
+        {
+					type = imm;
+					break;
+        }
+
+
+			case BIND_OPCODE_SET_ADDEND_SLEB:
+        {
+          svalue_delta    = this->stream_->read_sleb128(current_offset);
+          addend          = std::get<0>(svalue_delta);
+          current_offset += std::get<1>(svalue_delta);
+					break;
+        }
+
+
+			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+        {
+					segment_idx  = imm;
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset  = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					break;
+        }
+
+
+			case BIND_OPCODE_ADD_ADDR_ULEB:
+        {
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+					break;
+        }
+
+
+      case BIND_OPCODE_DO_BIND:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_WEAK,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              0,
+              addend,
+              is_weak_import);
+					segment_offset += sizeof(pint_t);
+					break;
+        }
+
+
+      case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_WEAK,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              0,
+              addend,
+              is_weak_import);
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
+          current_offset += std::get<1>(value_delta);
+					break;
+        }
+
+
+			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_WEAK,
+              type,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              0,
+              addend,
+              is_weak_import);
+          segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
+					break;
+        }
+
+
+      case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+        {
+
+          // Count
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          count           = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+          // Skip
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          skip            = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					for (size_t i = 0; i < count; ++i) {
+            this->do_bind<MACHO_T>(
+                BINDING_CLASS::BIND_CLASS_WEAK,
+                type,
+                segment_idx,
+                segment_offset,
+                symbol_name,
+                0,
+                addend,
+                is_weak_import);
+            segment_offset += skip + sizeof(pint_t);
+					}
+					break;
+        }
+
+
+
+			default:
+        {
+          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          break;
+        }
+			}
+  }
+
+}
+
+// Lazy binding
+// ============
+template<class MACHO_T>
+void BinaryParser::parse_dyldinfo_lazy_bind() {
+  using pint_t = typename MACHO_T::uint;
+
+  DyldInfo& dyldinfo = this->binary_->dyld_info();
+
+  uint32_t offset = std::get<0>(dyldinfo.lazy_bind());
+  uint32_t size   = std::get<1>(dyldinfo.lazy_bind());
+
+  if (offset == 0 or size == 0) {
+    return;
+  }
+
+  try {
+    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    dyldinfo.lazy_bind_opcodes({raw_binding, raw_binding + size});
+  } catch (const exception& e) {
+    LOG(WARNING) << e.what();
+  }
+
+  uint64_t current_offset = offset;
+  uint64_t end_offset     = offset + size;
+
+  uint32_t    lazy_offset     = 0;
+	uint8_t     segment_idx     = 0;
+	uint64_t    segment_offset  = 0;
+  std::string symbol_name     = "";
+	int32_t     library_ordinal = 0;
+	int64_t     addend          = 0;
+  bool        is_weak_import  = false;
+
+  std::pair<uint64_t, uint64_t> value_delta  = {0, 0};
+  std::pair< int64_t, uint64_t> svalue_delta = {0, 0};
+
+  while (current_offset < end_offset) {
+    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
+    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    current_offset += sizeof(uint8_t);
+
+		switch (opcode) {
+		  case BIND_OPCODE_DONE:
+        {
+				  lazy_offset = current_offset - offset;
+					break;
+        }
+
+      case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+        {
+				  library_ordinal = imm;
+					break;
+        }
+
+			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+        {
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          library_ordinal = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					break;
+        }
+
+			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+        {
+					// the special ordinals are negative numbers
+					if (imm == 0) {
+						library_ordinal = 0;
+          } else {
+						int8_t sign_extended = BIND_OPCODE_MASK | imm;
+						library_ordinal = sign_extended;
+					}
+					break;
+        }
+
+      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+        {
+				  symbol_name = this->stream_->read_string(current_offset);
+          current_offset += symbol_name.size() + 1;
+
+          if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
+						is_weak_import = true;
+          } else {
+						is_weak_import = false;
+          }
+					break;
+        }
+
+			case BIND_OPCODE_SET_ADDEND_SLEB:
+        {
+          svalue_delta    = this->stream_->read_sleb128(current_offset);
+          addend          = std::get<0>(svalue_delta);
+          current_offset += std::get<1>(svalue_delta);
+					break;
+        }
+
+			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+        {
+					segment_idx  = imm;
+
+          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset  = std::get<0>(value_delta);
+          current_offset += std::get<1>(value_delta);
+
+					break;
+        }
+
+      case BIND_OPCODE_DO_BIND:
+        {
+          this->do_bind<MACHO_T>(
+              BINDING_CLASS::BIND_CLASS_LAZY,
+              BIND_TYPES::BIND_TYPE_POINTER,
+              segment_idx,
+              segment_offset,
+              symbol_name,
+              library_ordinal,
+              addend,
+              is_weak_import);
+					segment_offset += sizeof(pint_t);
+					break;
+        }
+
+			default:
+        {
+          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          break;
+        }
+			}
+  }
+}
+
+template<class MACHO_T>
+void BinaryParser::do_bind(BINDING_CLASS cls,
+        uint8_t type,
+        uint8_t segment_idx,
+        uint64_t segment_offset,
+        const std::string& symbol_name,
+        int32_t ord,
+        int64_t addend,
+        bool is_weak) {
+
+
+  using pint_t = typename MACHO_T::uint;
+
+  it_segments segments = this->binary_->segments();
+  if (segment_idx >= segments.size()) {
+    LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
+    return;
+  }
+  SegmentCommand& segment = segments[segment_idx];
+  // Address to bind
+  uint64_t address = segment.virtual_address() + segment_offset;
+
+  // Check if a relocation already exists:
+  Relocation* reloc = nullptr;
+  bool reloc_exists = false;
+
+  auto&& it_reloc = std::find_if(
+      std::begin(segment.relocations_),
+      std::end(segment.relocations_),
+      [address] (const Relocation* r) {
+        return r->address() == address;
+      });
+
+  if (it_reloc != std::end(segment.relocations_)) {
+    reloc = *it_reloc;
+    reloc_exists = true;
+  } else {
+    reloc = new RelocationDyld{address, type};
+  }
+
+  reloc->architecture_ = this->binary_->header().cpu_type();
+
+  switch (static_cast<BIND_TYPES>(type)) {
+    case BIND_TYPES::BIND_TYPE_POINTER:
+      {
+        // *address = value + addend;
+        reloc->size_ = sizeof(pint_t) * 8;
+        break;
+      }
+
+    case BIND_TYPES::BIND_TYPE_TEXT_ABSOLUTE32:
+      {
+
+        reloc->size_ = sizeof(uint32_t) * 8;
+        // *address = value + addend;
+        break;
+      }
+
+    case BIND_TYPES::BIND_TYPE_TEXT_PCREL32:
+      {
+
+        reloc->size_ = sizeof(uint32_t) * 8;
+        //*address = value - (address + 4);
+        break;
+      }
+
+    default:
+      {
+        LOG(ERROR) << "Unsuported binding type: 0x" << std::hex << type;
+      }
+  }
+
+  // Create a BindingInfo object
+  BindingInfo* binding_info = new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak};
+  binding_info->segment_ = &segment;
+
+
+  it_libraries libraries = this->binary_->libraries();
+  if (0 < ord and static_cast<size_t>(ord) <= libraries.size()) {
+    binding_info->library_ = &libraries[ord - 1];
+  }
+
+  try {
+    uint64_t offset = this->binary_->virtual_address_to_offset(reloc->address());
+    Section& section = this->binary_->section_from_offset(offset);
+    reloc->section_ = &section;
+  } catch (const not_found& e) {
+    LOG(DEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
+  }
+
+  if (this->binary_->has_symbol(symbol_name)) {
+    Symbol& symbol = this->binary_->get_symbol(symbol_name);
+    reloc->symbol_ = &symbol;
+    //symbol.value(address);
+    binding_info->symbol_ = &symbol;
+    symbol.binding_info_ = binding_info;
+  } else {
+    LOG(ERROR) << "New symbol found: " << symbol_name;
+  }
+
+  if (not reloc_exists) {
+    segment.relocations_.push_back(reloc);
+  }
+  this->binary_->dyld_info().binding_info_.push_back(binding_info);
+  LOG(DEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
+}
+
+template<class MACHO_T>
+void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset) {
+  using pint_t = typename MACHO_T::uint;
+
+  it_segments segments = this->binary_->segments();
+
+  if (segment_idx >= segments.size()) {
+    LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
+    return;
+  }
+
+  SegmentCommand& segment = segments[segment_idx];
+  uint64_t address = segment.virtual_address() + segment_offset;
+
+  // Check if a relocation already exists:
+  Relocation* reloc = nullptr;
+  bool reloc_exists = false;
+
+  auto&& it_reloc = std::find_if(
+      std::begin(segment.relocations_),
+      std::end(segment.relocations_),
+      [&address] (const Relocation* r) {
+        return r->address() == address;
+      });
+
+  if (it_reloc != std::end(segment.relocations_)) {
+    reloc = *it_reloc;
+    reloc_exists = true;
+  } else {
+    reloc = new RelocationDyld{address, type};
+  }
+
+  reloc->architecture_ = this->binary_->header().cpu_type();
+
+  switch (static_cast<REBASE_TYPES>(type)) {
+    case REBASE_TYPES::REBASE_TYPE_POINTER:
+      {
+        reloc->size_ = sizeof(pint_t) * 8;
+        break;
+      }
+
+
+    case REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32:
+    case REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32:
+      {
+        reloc->size_ = sizeof(uint32_t) * 8;
+        break;
+      }
+
+    default:
+      {
+        LOG(ERROR) << "Unsuported relocation type: 0x" << std::hex << type;
+      }
+  }
+
+  if (not reloc_exists) {
+    segment.relocations_.push_back(reloc);
+  }
+};
+
+
+
 
 }
 }

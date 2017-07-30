@@ -35,11 +35,15 @@ void init_MachO_Relocation_class(py::module& m) {
   py::class_<Relocation>(m, "Relocation")
 
     .def_property("address",
-        static_cast<getter_t<uint32_t>>(&Relocation::address),
-        static_cast<setter_t<uint32_t>>(&Relocation::address),
-        "For :attr:`~lief.MachO.FILE_TYPES.OBJECT` this is an "
+        static_cast<getter_t<uint64_t>>(&Relocation::address),
+        static_cast<setter_t<uint64_t>>(&Relocation::address),
+        "For :attr:`~lief.MachO.FILE_TYPES.OBJECT` or (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`) this is an "
         "offset from the start of the " RST_CLASS_REF(lief.MachO.Section) " "
-        "to the item containing the address requiring relocation.",
+        "to the item containing the address requiring relocation.\n\n"
+
+        "For :attr:`~lief.MachO.FILE_TYPES.EXECUTE` / :attr:`~lief.MachO.FILE_TYPES.DYLIB` or "
+        "(:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`) "
+        " this is an :attr:`~lief.MachO.SegmentCommand.virtual_address`",
         py::return_value_policy::reference_internal)
 
     .def_property("pc_relative",
@@ -55,48 +59,32 @@ void init_MachO_Relocation_class(py::module& m) {
     .def_property("size",
         static_cast<getter_t<uint8_t>>(&Relocation::size),
         static_cast<setter_t<uint8_t>>(&Relocation::size),
-        "Indicates the length of the item containing the address to be relocated.\n\n"
-
-        "The following table lists values and the corresponding address length:\n"
-        "\t * 0: 1 byte\n"
-        "\t * 1: 2 byte\n"
-        "\t * 2: 4 byte\n"
-        "\t * 3: 4 byte\n",
+        "Indicates the length (in bits) of the item containing the address to be relocated.",
         py::return_value_policy::reference_internal)
 
     .def_property("type",
         static_cast<getter_t<uint8_t>>(&Relocation::type),
         static_cast<setter_t<uint8_t>>(&Relocation::type),
-        "Type of the relocation according to the :attr:`~lief.MachO.Relocation.architecture`\n\n"
+        "Type of the relocation according to the :attr:`~lief.MachO.Relocation.architecture` and/or :attr:`~lief.MachO.Relocation.origin` \n\n"
+
+        "If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`: \n\n"
 
         "See:\n"
         "\t * " RST_CLASS_REF(lief.MachO.X86_RELOCATION)    "\n"
         "\t * " RST_CLASS_REF(lief.MachO.X86_64_RELOCATION) "\n"
         "\t * " RST_CLASS_REF(lief.MachO.PPC_RELOCATION)    "\n"
         "\t * " RST_CLASS_REF(lief.MachO.ARM_RELOCATION)    "\n"
-        "\t * " RST_CLASS_REF(lief.MachO.ARM64_RELOCATION)  "\n",
+        "\t * " RST_CLASS_REF(lief.MachO.ARM64_RELOCATION)  "\n\n"
+
+        "If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`: \n\n"
+
+        "See:\n"
+        "\t * " RST_CLASS_REF(lief.MachO.REBASE_TYPES)    "\n",
         py::return_value_policy::reference_internal)
-
-    .def_property("value",
-        static_cast<getter_t<int32_t>>(&Relocation::value),
-        static_cast<setter_t<int32_t>>(&Relocation::value),
-        "For **scattered** relocations, the address of the relocatable expression "
-        "for the item in the file that needs to be updated if the address is changed.\n\n"
-
-        "For relocatable expressions with the difference of two section addresses, "
-        "the address from which to subtract (in mathematical terms, the minuend) "
-        "is contained in the first relocation entry and the address to subtract (the subtrahend) "
-        "is contained in the second relocation entry.",
-        py::return_value_policy::reference_internal)
-
 
     .def_property_readonly("architecture",
         &Relocation::architecture,
         "" RST_CLASS_REF(lief.MachO.CPU_TYPES) " of the relocation")
-
-    .def_property_readonly("is_scattered",
-        &Relocation::is_scattered,
-        "``True`` if the relocation is a scattered one")
 
     .def_property_readonly("has_symbol",
         &Relocation::has_symbol,
@@ -114,6 +102,23 @@ void init_MachO_Relocation_class(py::module& m) {
     .def_property_readonly("section",
         static_cast<Section& (Relocation::*)(void)>(&Relocation::section),
         "" RST_CLASS_REF(lief.MachO.Section) " associated with the relocation (if any)",
+        py::return_value_policy::reference)
+
+
+    .def_property_readonly("origin",
+        &Relocation::origin,
+        "" RST_CLASS_REF(lief.MachO.RELOCATION_ORIGINS) " of the relocation\n\n"
+
+        "For :attr:`~lief.MachO.FILE_TYPES.OBJECT` file it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE` "
+        "for :attr:`~lief.MachO.FILE_TYPES.EXECUTE` / :attr:`~lief.MachO.FILE_TYPES.DYLIB` it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`")
+
+    .def_property_readonly("has_segment",
+        &Relocation::has_segment,
+        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with")
+
+    .def_property_readonly("segment",
+        static_cast<SegmentCommand& (Relocation::*)(void)>(&Relocation::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the relocation (if any)",
         py::return_value_policy::reference)
 
     .def("__eq__", &Relocation::operator==)

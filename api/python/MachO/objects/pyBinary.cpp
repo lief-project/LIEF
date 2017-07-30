@@ -23,6 +23,9 @@
 template<class T>
 using no_const_getter = T (Binary::*)(void);
 
+template<class T, class P>
+using no_const_func = T (Binary::*)(P);
+
 void init_MachO_Binary_class(py::module& m) {
 
 
@@ -35,6 +38,11 @@ void init_MachO_Binary_class(py::module& m) {
     .def_property_readonly("sections",
         static_cast<no_const_getter<it_sections>>(&Binary::sections),
         "Return binary's " RST_CLASS_REF(lief.MachO.Section) "",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("relocations",
+        static_cast<no_const_getter<it_relocations>>(&Binary::relocations),
+        "Return an iterator over binary's " RST_CLASS_REF(lief.MachO.Relocation) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("segments",
@@ -51,6 +59,17 @@ void init_MachO_Binary_class(py::module& m) {
         static_cast<no_const_getter<it_symbols>>(&Binary::symbols),
         "Return binary's " RST_CLASS_REF(lief.MachO.Symbol) "",
         py::return_value_policy::reference_internal)
+
+    .def("has_symbol",
+        &Binary::has_symbol,
+        "Check if a " RST_CLASS_REF(lief.MachO.Symbol) " with the given name exists",
+        "name"_a)
+
+    .def("get_symbol",
+        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
+        "Return the " RST_CLASS_REF(lief.MachO.Symbol) " from the given name",
+        "name"_a,
+        py::return_value_policy::reference)
 
     .def_property_readonly("imported_symbols",
         static_cast<no_const_getter<it_imported_symbols>>(&Binary::get_imported_symbols),

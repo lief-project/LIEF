@@ -27,24 +27,62 @@
 namespace LIEF {
 namespace MachO {
 
-Symbol::Symbol(void) = default;
-Symbol& Symbol::operator=(const Symbol&) = default;
-Symbol::Symbol(const Symbol&) = default;
 Symbol::~Symbol(void) = default;
+
+Symbol::Symbol(void) :
+  type_{0},
+  numberof_sections_{0},
+  description_{0},
+  value_{0},
+  binding_info_{nullptr},
+  export_info_{nullptr}
+{}
+
+Symbol& Symbol::operator=(Symbol other) {
+  this->swap(other);
+  return *this;
+}
+
+Symbol::Symbol(const Symbol& other) :
+  LIEF::Symbol{other},
+  type_{other.type_},
+  numberof_sections_{other.numberof_sections_},
+  description_{other.description_},
+  value_{other.value_},
+  binding_info_{nullptr},
+  export_info_{nullptr}
+{}
+
 
 Symbol::Symbol(const nlist_32 *cmd) :
   type_{cmd->n_type},
   numberof_sections_{cmd->n_sect},
   description_{static_cast<uint16_t>(cmd->n_desc)},
-  value_{cmd->n_value}
+  value_{cmd->n_value},
+  binding_info_{nullptr},
+  export_info_{nullptr}
 {}
 
 Symbol::Symbol(const nlist_64 *cmd) :
   type_{cmd->n_type},
   numberof_sections_{cmd->n_sect},
   description_{cmd->n_desc},
-  value_{cmd->n_value}
+  value_{cmd->n_value},
+  binding_info_{nullptr},
+  export_info_{nullptr}
 {}
+
+
+void Symbol::swap(Symbol& other) {
+  std::swap(this->name_,              other.name_);
+
+  std::swap(this->type_,              other.type_);
+  std::swap(this->numberof_sections_, other.numberof_sections_);
+  std::swap(this->description_,       other.description_);
+  std::swap(this->value_,             other.value_);
+  std::swap(this->binding_info_,      other.binding_info_);
+  std::swap(this->export_info_,       other.export_info_);
+}
 
 uint8_t Symbol::type(void) const {
   return this->type_;
@@ -85,6 +123,36 @@ bool Symbol::is_external(void) const {
 }
 
 
+bool Symbol::has_export_info(void) const {
+  return this->export_info_ != nullptr;
+}
+
+const ExportInfo& Symbol::export_info(void) const {
+  if (not this->has_export_info()) {
+    throw not_found("'" + this->name() + "' hasn't export info");
+  }
+  return *this->export_info_;
+}
+
+ExportInfo& Symbol::export_info(void) {
+  return const_cast<ExportInfo&>(static_cast<const Symbol*>(this)->export_info());
+}
+
+bool Symbol::has_binding_info(void) const {
+  return this->binding_info_ != nullptr;
+}
+const BindingInfo& Symbol::binding_info(void) const {
+  if (not this->has_binding_info()) {
+    throw not_found("'" + this->name() + "' hasn't binding info");
+  }
+  return *this->binding_info_;
+}
+
+BindingInfo& Symbol::binding_info(void) {
+  return const_cast<BindingInfo&>(static_cast<const Symbol*>(this)->binding_info());
+}
+
+
 std::string Symbol::demangled_name(void) const {
 #if defined(__unix__)
   int status;
@@ -109,6 +177,14 @@ void Symbol::accept(Visitor& visitor) const {
   visitor.visit(this->numberof_sections());
   visitor.visit(this->description());
   visitor.visit(this->value());
+
+  if (this->has_binding_info()) {
+    visitor(this->binding_info());
+  }
+
+  if (this->has_export_info()) {
+    visitor(this->export_info());
+  }
 }
 
 
@@ -141,10 +217,10 @@ std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
 
   os << std::hex;
   os << std::left;
-  os << std::setw(30) << symbol.name_
+  os << std::setw(30) << symbol.name()
      << std::setw(10) << type
-     << std::setw(10) << symbol.description_
-     << std::setw(20) << symbol.value_;
+     << std::setw(10) << symbol.description()
+     << std::setw(20) << symbol.value();
   return os;
 
 }

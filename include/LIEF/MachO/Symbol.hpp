@@ -25,24 +25,43 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
+#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
+
 
 namespace LIEF {
 namespace MachO {
+
+class BinaryParser;
+
 class DLL_PUBLIC Symbol : public LIEF::Symbol {
+
+  friend class BinaryParser;
+
   public:
     Symbol(void);
 
     Symbol(const nlist_32 *cmd);
     Symbol(const nlist_64 *cmd);
 
-    Symbol& operator=(const Symbol& copy);
-    Symbol(const Symbol& copy);
+    Symbol& operator=(Symbol other);
+    Symbol(const Symbol& other);
+    void swap(Symbol& other);
+
     virtual ~Symbol(void);
 
     uint8_t  type(void) const;
     uint8_t  numberof_sections(void) const;
     uint16_t description(void) const;
     uint64_t value(void) const;
+
+    bool has_export_info(void) const;
+    const ExportInfo& export_info(void) const;
+    ExportInfo& export_info(void);
+
+    bool has_binding_info(void) const;
+    const BindingInfo& binding_info(void) const;
+    BindingInfo& binding_info(void);
 
     std::string demangled_name(void) const;
 
@@ -65,6 +84,9 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     uint8_t  numberof_sections_;
     uint16_t description_;
     uint64_t value_;
+
+    BindingInfo* binding_info_;
+    ExportInfo* export_info_;
 };
 
 }

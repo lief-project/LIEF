@@ -42,6 +42,10 @@ void init_MachO_module(py::module& m) {
   init_MachO_SourceVersion_class(LIEF_MachO_module);
   init_MachO_VersionMin_class(LIEF_MachO_module);
   init_MachO_Relocation_class(LIEF_MachO_module);
+  init_MachO_RelocationObject_class(LIEF_MachO_module);
+  init_MachO_RelocationDyld_class(LIEF_MachO_module);
+  init_MachO_BindingInfo_class(LIEF_MachO_module);
+  init_MachO_ExportInfo_class(LIEF_MachO_module);
 
 
   // Enums

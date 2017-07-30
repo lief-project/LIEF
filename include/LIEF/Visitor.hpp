@@ -127,8 +127,11 @@ class DylibCommand;
 
 class Symbol;
 class Relocation;
+class RelocationObject;
+class RelocationDyld;
 
-
+class BindingInfo;
+class ExportInfo;
 }
 // =====================
 
@@ -402,6 +405,18 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::MachO::Relocation
   virtual void visit(const MachO::Relocation& relocation);
+
+  //! @brief Method to visit a LIEF::MachO::RelocationObject
+  virtual void visit(const MachO::RelocationObject& relocation);
+
+  //! @brief Method to visit a LIEF::MachO::RelocationDyld
+  virtual void visit(const MachO::RelocationDyld& relocation);
+
+  //! @brief Method to visit a LIEF::MachO::BindingInfo
+  virtual void visit(const MachO::BindingInfo& binding_info);
+
+  //! @brief Method to visit a LIEF::MachO::ExportInfo
+  virtual void visit(const MachO::ExportInfo& export_info);
 
 
   template<class T>

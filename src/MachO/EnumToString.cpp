@@ -346,6 +346,120 @@ const char* to_string(ARM64_RELOCATION e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
+const char* to_string(RELOCATION_ORIGINS e) {
+  const std::map<RELOCATION_ORIGINS, const char*> enumStrings {
+    { RELOCATION_ORIGINS::ORIGIN_UNKNOWN,     "UNKNOWN"     },
+    { RELOCATION_ORIGINS::ORIGIN_DYLDINFO,    "DYLDINFO"    },
+    { RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE, "RELOC_TABLE" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+const char* to_string(REBASE_TYPES e) {
+  const std::map<REBASE_TYPES, const char*> enumStrings {
+    { REBASE_TYPES::REBASE_TYPE_POINTER,          "POINTER"         },
+    { REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32,  "TEXT_ABSOLUTE32" },
+    { REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32,     "TEXT_PCREL32"    },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(BINDING_CLASS e) {
+  const std::map<BINDING_CLASS, const char*> enumStrings {
+    { BINDING_CLASS::BIND_CLASS_WEAK,     "WEAK"      },
+    { BINDING_CLASS::BIND_CLASS_LAZY,     "LAZY"      },
+    { BINDING_CLASS::BIND_CLASS_STANDARD, "STANDARD"  },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(REBASE_OPCODES e) {
+  const std::map<REBASE_OPCODES, const char*> enumStrings {
+    { REBASE_OPCODES::REBASE_OPCODE_DONE,                               "DONE"                               },
+    { REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM,                       "SET_TYPE_IMM"                       },
+    { REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB,        "SET_SEGMENT_AND_OFFSET_ULEB"        },
+    { REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB,                      "ADD_ADDR_ULEB"                      },
+    { REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED,                "ADD_ADDR_IMM_SCALED"                },
+    { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES,                "DO_REBASE_IMM_TIMES"                },
+    { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES,               "DO_REBASE_ULEB_TIMES"               },
+    { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB,            "DO_REBASE_ADD_ADDR_ULEB"            },
+    { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB, "DO_REBASE_ULEB_TIMES_SKIPPING_ULEB" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(BIND_TYPES e) {
+  const std::map<BIND_TYPES, const char*> enumStrings {
+    { BIND_TYPES::BIND_TYPE_POINTER,         "POINTER"         },
+    { BIND_TYPES::BIND_TYPE_TEXT_ABSOLUTE32, "TEXT_ABSOLUTE32" },
+    { BIND_TYPES::BIND_TYPE_TEXT_PCREL32,    "TEXT_PCREL32"    },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(BIND_SPECIAL_DYLIB e) {
+  const std::map<BIND_SPECIAL_DYLIB, const char*> enumStrings {
+    { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_SELF,            "SELF"            },
+    { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE, "MAIN_EXECUTABLE" },
+    { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_FLAT_LOOKUP,     "FLAT_LOOKUP"     },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(BIND_OPCODES e) {
+  const std::map<BIND_OPCODES, const char*> enumStrings {
+    { BIND_OPCODES::BIND_OPCODE_DONE,                             "DONE"                             },
+    { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM,            "SET_DYLIB_ORDINAL_IMM"            },
+    { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB,           "SET_DYLIB_ORDINAL_ULEB"           },
+    { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM,            "SET_DYLIB_SPECIAL_IMM"            },
+    { BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM,    "SET_SYMBOL_TRAILING_FLAGS_IMM"    },
+    { BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM,                     "SET_TYPE_IMM"                     },
+    { BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB,                  "SET_ADDEND_SLEB"                  },
+    { BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB,      "SET_SEGMENT_AND_OFFSET_ULEB"      },
+    { BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB,                    "ADD_ADDR_ULEB"                    },
+    { BIND_OPCODES::BIND_OPCODE_DO_BIND,                          "DO_BIND"                          },
+    { BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB,            "DO_BIND_ADD_ADDR_ULEB"            },
+    { BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED,      "DO_BIND_ADD_ADDR_IMM_SCALED"      },
+    { BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB, "DO_BIND_ULEB_TIMES_SKIPPING_ULEB" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(EXPORT_SYMBOL_KINDS e) {
+  const std::map<EXPORT_SYMBOL_KINDS, const char*> enumStrings {
+    { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_REGULAR,      "REGULAR"      },
+    { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL, "THREAD_LOCAL" },
+    { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE,     "ABSOLUTE"     },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(VM_PROTECTIONS e) {
+  const std::map<VM_PROTECTIONS, const char*> enumStrings {
+    { VM_PROTECTIONS::VM_PROT_READ,    "READ"    },
+    { VM_PROTECTIONS::VM_PROT_WRITE,   "WRITE"   },
+    { VM_PROTECTIONS::VM_PROT_EXECUTE, "EXECUTE" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
 
 }
 }

@@ -196,7 +196,7 @@ enum DataRegionType {
   DICE_KIND_ABS_JUMP_TABLE32 = 5u
 };
 
-enum RebaseType {
+enum REBASE_TYPES {
   REBASE_TYPE_POINTER         = 1u,
   REBASE_TYPE_TEXT_ABSOLUTE32 = 2u,
   REBASE_TYPE_TEXT_PCREL32    = 3u
@@ -207,25 +207,38 @@ enum {
   REBASE_IMMEDIATE_MASK = 0x0Fu
 };
 
-enum RebaseOpcode {
-  REBASE_OPCODE_DONE                               = 0x00u,
-  REBASE_OPCODE_SET_TYPE_IMM                       = 0x10u,
-  REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB        = 0x20u,
-  REBASE_OPCODE_ADD_ADDR_ULEB                      = 0x30u,
-  REBASE_OPCODE_ADD_ADDR_IMM_SCALED                = 0x40u,
-  REBASE_OPCODE_DO_REBASE_IMM_TIMES                = 0x50u,
-  REBASE_OPCODE_DO_REBASE_ULEB_TIMES               = 0x60u,
-  REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB            = 0x70u,
-  REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u
+
+//! @brief Opcodes used by Dyld info to rebase a Mach-O image
+enum REBASE_OPCODES {
+  REBASE_OPCODE_DONE                               = 0x00u, ///< It's finished
+  REBASE_OPCODE_SET_TYPE_IMM                       = 0x10u, ///< Set type to immediate (lower 4-bits). Used for ordinal numbers from 0-15
+  REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB        = 0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's offset to following ULEB128 encoding.
+  REBASE_OPCODE_ADD_ADDR_ULEB                      = 0x30u, ///< Add segment's offset with the following ULEB128 encoding.
+  REBASE_OPCODE_ADD_ADDR_IMM_SCALED                = 0x40u, ///< Add segment's offset with immediate scaling
+  REBASE_OPCODE_DO_REBASE_IMM_TIMES                = 0x50u, ///< Rebase in the range of ``[segment's offset; segment's offset + immediate * sizeof(ptr)]``
+  REBASE_OPCODE_DO_REBASE_ULEB_TIMES               = 0x60u, ///< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is replaced with ULEB128 value
+  REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB            = 0x70u, ///< Rebase and increment segment's offset with following ULEB128 encoding + pointer's size
+  REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u  ///< Rebase and skip several bytes
 };
 
-enum BindType {
+
+//! @brief Within the dyld_info_command there are
+//! differents area of binding. These enums
+//! tag these area
+enum BINDING_CLASS {
+  BIND_CLASS_WEAK     = 1u,
+  BIND_CLASS_LAZY     = 2u,
+  BIND_CLASS_STANDARD = 3u,
+};
+
+
+enum BIND_TYPES {
   BIND_TYPE_POINTER         = 1u,
   BIND_TYPE_TEXT_ABSOLUTE32 = 2u,
   BIND_TYPE_TEXT_PCREL32    = 3u
 };
 
-enum BindSpecialDylib {
+enum BIND_SPECIAL_DYLIB {
   BIND_SPECIAL_DYLIB_SELF            =  0,
   BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE = -1,
   BIND_SPECIAL_DYLIB_FLAT_LOOKUP     = -2
@@ -239,30 +252,31 @@ enum {
   BIND_IMMEDIATE_MASK                   = 0x0Fu
 };
 
-enum BindOpcode {
-  BIND_OPCODE_DONE                             = 0x00u,
-  BIND_OPCODE_SET_DYLIB_ORDINAL_IMM            = 0x10u,
-  BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB           = 0x20u,
-  BIND_OPCODE_SET_DYLIB_SPECIAL_IMM            = 0x30u,
-  BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM    = 0x40u,
-  BIND_OPCODE_SET_TYPE_IMM                     = 0x50u,
-  BIND_OPCODE_SET_ADDEND_SLEB                  = 0x60u,
-  BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB      = 0x70u,
-  BIND_OPCODE_ADD_ADDR_ULEB                    = 0x80u,
-  BIND_OPCODE_DO_BIND                          = 0x90u,
-  BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB            = 0xA0u,
-  BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED      = 0xB0u,
-  BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 0xC0u
+//! @brief Opcodes used by Dyld info to bind symbols
+enum BIND_OPCODES {
+  BIND_OPCODE_DONE                             = 0x00u, ///< It's finished
+  BIND_OPCODE_SET_DYLIB_ORDINAL_IMM            = 0x10u, ///< Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from 0-15
+  BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB           = 0x20u, ///< Set ordinal to following ULEB128 encoding. Used for ordinal numbers from 16+
+  BIND_OPCODE_SET_DYLIB_SPECIAL_IMM            = 0x30u, ///< Set ordinal, with 0 or negative number as immediate. the value is sign extended.
+  BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM    = 0x40u, ///< Set the following symbol (NULL-terminated char*).
+  BIND_OPCODE_SET_TYPE_IMM                     = 0x50u, ///< Set the type to immediate (lower 4-bits). See BIND_TYPES
+  BIND_OPCODE_SET_ADDEND_SLEB                  = 0x60u, ///< Set the addend field to the following SLEB128 encoding.
+  BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB      = 0x70u, ///< Set Segment to immediate value, and address to the following SLEB128 encoding
+  BIND_OPCODE_ADD_ADDR_ULEB                    = 0x80u, ///< Set the address field to the following SLEB128 encoding.
+  BIND_OPCODE_DO_BIND                          = 0x90u, ///< Perform binding of current table row
+  BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB            = 0xA0u, ///< Perform binding, also add following ULEB128 as address
+  BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED      = 0xB0u, ///< Perform binding, also add immediate (lower 4-bits) using scaling
+  BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 0xC0u, ///< Perform binding for several symbols (as following ULEB128), and skip several bytes.
 };
 
-enum {
+enum EXPORT_SYMBOL_FLAGS {
   EXPORT_SYMBOL_FLAGS_KIND_MASK           = 0x03u,
   EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION     = 0x04u,
   EXPORT_SYMBOL_FLAGS_REEXPORT            = 0x08u,
   EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER   = 0x10u
 };
 
-enum ExportSymbolKind {
+enum EXPORT_SYMBOL_KINDS {
   EXPORT_SYMBOL_FLAGS_KIND_REGULAR        = 0x00u,
   EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL   = 0x01u,
   EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE       = 0x02u
@@ -367,6 +381,12 @@ enum {
   R_SCATTERED = 0x80000000
 };
 
+enum RELOCATION_ORIGINS {
+  ORIGIN_UNKNOWN     = 0,
+  ORIGIN_DYLDINFO    = 1,
+  ORIGIN_RELOC_TABLE = 2,
+};
+
 enum X86_RELOCATION {
   GENERIC_RELOC_VANILLA        = 0, /**< A generic relocation entry for both addresses contained in data and addresses contained in CPU instructions. */
   GENERIC_RELOC_PAIR           = 1, /**< The second relocation entry of a pair. */
@@ -439,12 +459,12 @@ enum ARM64_RELOCATION {
   ARM64_RELOC_ADDEND              = 10, /**< Must be followed by ARM64_RELOCATION::ARM64_RELOC_PAGE21 or ARM64_RELOCATION::ARM64_RELOC_PAGEOFF12. */
 };
 
-// Values for segment_command.initprot.
-// From <mach/vm_prot.h>
-enum {
-  VM_PROT_READ    = 0x1,
-  VM_PROT_WRITE   = 0x2,
-  VM_PROT_EXECUTE = 0x4
+//! Values for segment_command.initprot.
+//! From <mach/vm_prot.h>
+enum VM_PROTECTIONS {
+  VM_PROT_READ    = 0x1, ///< Reading data within the segment is allowed
+  VM_PROT_WRITE   = 0x2, ///< Writing data within the segment is allowed
+  VM_PROT_EXECUTE = 0x4, ///< Executing data within the segment is allowed
 };
 
 

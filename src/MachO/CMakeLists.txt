@@ -39,6 +39,10 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/SourceVersion.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/VersionMin.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Relocation.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RelocationObject.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/RelocationDyld.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/BindingInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ExportInfo.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -66,6 +70,10 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SourceVersion.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/VersionMin.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Relocation.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/RelocationObject.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/RelocationDyld.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/BindingInfo.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ExportInfo.hpp"
   )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})

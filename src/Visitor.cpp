@@ -352,6 +352,22 @@ void Visitor::visit(const MachO::Relocation& relocation) {
   relocation.accept(*this);
 }
 
+void Visitor::visit(const MachO::RelocationObject& relocation) {
+  relocation.accept(*this);
+}
+
+void Visitor::visit(const MachO::RelocationDyld& relocation) {
+  relocation.accept(*this);
+}
+
+void Visitor::visit(const MachO::BindingInfo& binding_info) {
+  binding_info.accept(*this);
+}
+
+void Visitor::visit(const MachO::ExportInfo& export_info) {
+  export_info.accept(*this);
+}
+
 
 
 

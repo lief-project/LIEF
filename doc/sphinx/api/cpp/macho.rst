@@ -160,6 +160,42 @@ Relocation
 
 ----------
 
+
+Relocation Object
+*****************
+
+.. doxygenclass:: LIEF::MachO::RelocationObject
+   :project: lief
+
+----------
+
+
+Relocation Dyld
+***************
+
+.. doxygenclass:: LIEF::MachO::RelocationDyld
+   :project: lief
+
+----------
+
+
+Binding Info
+************
+
+.. doxygenclass:: LIEF::MachO::BindingInfo
+   :project: lief
+
+----------
+
+
+Export Info
+***********
+
+.. doxygenclass:: LIEF::MachO::ExportInfo
+   :project: lief
+
+----------
+
 Utilities
 *********
 
@@ -234,3 +270,31 @@ Enums
 
 .. doxygenenum:: LIEF::MachO::CPU_SUBTYPES_X86
    :project: lief
+
+.. doxygenenum:: LIEF::MachO::RELOCATION_ORIGINS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::REBASE_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::BINDING_CLASS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::REBASE_OPCODES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::BIND_TYPES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::BIND_SPECIAL_DYLIB
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::BIND_OPCODES
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::EXPORT_SYMBOL_KINDS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::VM_PROTECTIONS
+   :project: lief
+

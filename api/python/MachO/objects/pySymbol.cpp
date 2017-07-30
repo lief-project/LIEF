@@ -53,6 +53,25 @@ void init_MachO_Symbol_class(py::module& m) {
         static_cast<getter_t<uint64_t>>(&Symbol::value),
         static_cast<setter_t<uint64_t>>(&Symbol::value))
 
+
+    .def_property_readonly("has_export_info",
+        &Symbol::has_export_info,
+        "``True`` if the symbol has a " RST_CLASS_REF(lief.MachO.ExportInfo) " associated with")
+
+    .def_property_readonly("export_info",
+        static_cast<ExportInfo& (Symbol::*)(void)>(&Symbol::export_info),
+        "" RST_CLASS_REF(lief.MachO.ExportInfo) " associated with the symbol (if any)",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_binding_info",
+        &Symbol::has_binding_info,
+        "``True`` if the symbol has an " RST_CLASS_REF(lief.MachO.BindingInfo) " associated with")
+
+    .def_property_readonly("binding_info",
+        static_cast<BindingInfo& (Symbol::*)(void)>(&Symbol::binding_info),
+        "" RST_CLASS_REF(lief.MachO.BindingInfo) " associated with the symbol (if any)",
+        py::return_value_policy::reference)
+
     .def("__eq__", &Symbol::operator==)
     .def("__ne__", &Symbol::operator!=)
     .def("__hash__",
