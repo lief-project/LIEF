@@ -231,7 +231,7 @@ Import resolve_ordinals(const Import& import, bool strict) {
         [] (const ImportEntry& entry) {
           return not entry.is_ordinal();
         })) {
-    LOG(DEBUG) << "All imports use name. No ordinal!";
+    VLOG(3) << "All imports use name. No ordinal!";
     return import;
   }
 
@@ -248,19 +248,19 @@ Import resolve_ordinals(const Import& import, bool strict) {
     if (strict) {
       throw not_found(msg);
     }
-    LOG(DEBUG) << msg;
+    VLOG(3) << msg;
     return import;
   }
   Import resolved_import = import;
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
-      LOG(DEBUG) << "Dealing with: " << entry;
+      VLOG(3) << "Dealing with: " << entry;
       auto&& it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
       if (it_entry == std::end(it_library_lookup->second)) {
         if (strict) {
           throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
         }
-        LOG(DEBUG) << "Unable to resolve ordinal:" << std::hex << entry.ordinal();
+        VLOG(3) << "Unable to resolve ordinal:" << std::hex << entry.ordinal();
         continue;
       }
       entry.data(0);

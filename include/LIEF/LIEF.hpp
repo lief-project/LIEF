@@ -20,6 +20,7 @@
 #include <LIEF/ELF.hpp>
 #include <LIEF/PE.hpp>
 #include <LIEF/MachO.hpp>
+#include <LIEF/logging.hpp>
 
 
 #endif

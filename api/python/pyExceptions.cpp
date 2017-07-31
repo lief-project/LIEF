@@ -23,6 +23,7 @@ void init_LIEF_exceptions(py::module& m) {
   py::register_exception<LIEF::not_implemented>(m, "not_implemented", exception.ptr());
   py::register_exception<LIEF::not_supported>(m, "not_supported", exception.ptr());
   py::register_exception<LIEF::read_out_of_bound>(m, "read_out_of_bound", exception.ptr());
+  py::register_exception<LIEF::integrity_error>(m, "integrity_error", exception.ptr());
   py::register_exception<LIEF::not_found>(m, "not_found", exception.ptr());
   py::register_exception<LIEF::corrupted>(m, "corrupted", exception.ptr());
   py::register_exception<LIEF::conversion_error>(m, "conversion_error", exception.ptr());

@@ -25,6 +25,8 @@ PYBIND11_PLUGIN(_pylief) {
 
   init_LIEF_iterators(LIEF_module);
 
+  init_LIEF_Logger(LIEF_module);
+
   // Init custom LIEF exceptions
   init_LIEF_exceptions(LIEF_module);
 

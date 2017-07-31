@@ -63,9 +63,9 @@ uint64_t VectorStream::size(void) const {
 const void* VectorStream::read(uint64_t offset, uint64_t size) const {
 
   if (offset > this->size() or (offset + size) > this->size()) {
-    LOG(DEBUG) << "Offset: "      << std::hex << offset;
-    LOG(DEBUG) << "Size: "        << std::hex << size;
-    LOG(DEBUG) << "Binary Size: " << std::hex << this->size();
+    VLOG(3) << "Offset: "      << std::hex << offset;
+    VLOG(3) << "Size: "        << std::hex << size;
+    VLOG(3) << "Binary Size: " << std::hex << this->size();
 
     if (offset > this->size()) {
       throw LIEF::read_out_of_bound(offset);

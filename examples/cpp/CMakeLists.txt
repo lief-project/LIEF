@@ -22,6 +22,7 @@ set(LIEF_MACHO_CPP_EXAMPLES
 
 set(LIEF_CPP_EXAMPLES
   abstract_reader.cpp
+  logging.cpp
 )
 
 if (LIEF_ELF)

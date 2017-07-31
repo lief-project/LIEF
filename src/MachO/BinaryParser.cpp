@@ -86,7 +86,7 @@ BinaryParser::BinaryParser(const std::string& file) :
 }
 
 void BinaryParser::init(void) {
-  LOG(DEBUG) << "Parsing MachO" << std::endl;
+  VLOG(3) << "Parsing MachO" << std::endl;
   MACHO_TYPES type = static_cast<MACHO_TYPES>(
       *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
 

@@ -60,7 +60,7 @@ Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
 }
 
 void Parser::init(const std::string& name) {
-  LOG(DEBUG) << "Parsing binary: " << name << std::endl;
+  VLOG(3) << "Parsing binary: " << name << std::endl;
   this->binary_ = new Binary{};
   this->binary_->original_size_ = this->binary_size_;
   this->binary_->name(name);
@@ -116,9 +116,9 @@ Binary* Parser::parse(
 
 
 void Parser::parse_symbol_version(uint64_t symbol_version_offset) {
-  LOG(DEBUG) << "[+] Parsing symbol version" << std::endl;
+  VLOG(3) << "[+] Parsing symbol version" << std::endl;
 
-  LOG(DEBUG) << "Symbol version offset: 0x" << std::hex << symbol_version_offset << std::endl;
+  VLOG(3) << "Symbol version offset: 0x" << std::hex << symbol_version_offset << std::endl;
 
   const uint32_t nb_entries = static_cast<uint32_t>(this->binary_->dynamic_symbols_.size());
   const uint16_t* array = reinterpret_cast<const uint16_t*>(
@@ -223,7 +223,7 @@ void Parser::link_symbol_version(void) {
 
 void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
-  LOG(DEBUG) << "[+] Build symbol SYSV hash";
+  VLOG(3) << "[+] Build symbol SYSV hash";
   SysvHash sysvhash;
 
   uint64_t current_offset = offset;
@@ -274,29 +274,29 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 }
 
 void Parser::parse_notes(uint64_t offset, uint64_t size) {
-  LOG(DEBUG) << "Parsing Note segment";
+  VLOG(3) << "Parsing Note segment";
   uint64_t current_offset = offset;
   uint64_t last_offset = offset + size;
 
   while(current_offset < last_offset) {
     uint32_t namesz = this->stream_->read_integer<uint32_t>(current_offset);
     current_offset += sizeof(uint32_t);
-    LOG(DEBUG) << "Name size: " << std::hex << namesz;
+    VLOG(3) << "Name size: " << std::hex << namesz;
 
     uint32_t descsz = this->stream_->read_integer<uint32_t>(current_offset);
     current_offset += sizeof(uint32_t);
-    LOG(DEBUG) << "Description size: " << std::hex << descsz;
+    VLOG(3) << "Description size: " << std::hex << descsz;
 
     uint32_t type = this->stream_->read_integer<uint32_t>(current_offset);
     current_offset += sizeof(uint32_t);
-    LOG(DEBUG) << "Type: " << std::hex << type;
+    VLOG(3) << "Type: " << std::hex << type;
 
     if (namesz == 0) { // System reserves
       break;
     }
 
     std::string name = {this->stream_->read_string(current_offset, namesz), namesz - 1};
-    LOG(DEBUG) << "Name: " << name << std::endl;
+    VLOG(3) << "Name: " << name << std::endl;
     current_offset += namesz;
     current_offset = align(current_offset, sizeof(uint32_t));
 

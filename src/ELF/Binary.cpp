@@ -625,7 +625,7 @@ Section& Binary::add_section(const Section& section, bool loaded) {
     if (it_progbit_section == std::end(this->sections_)) {
       throw not_found("Can't find a SHT_PROGBITS section.");
     }
-    LOG(DEBUG) << "First SHT_PROGBITS: " << **it_progbit_section << std::endl;
+    VLOG(3) << "First SHT_PROGBITS: " << **it_progbit_section << std::endl;
 
     new_section_index = static_cast<uint32_t>(std::distance(std::begin(this->sections_), it_progbit_section));
     const Section* progbit_section = *it_progbit_section;
@@ -645,8 +645,8 @@ Section& Binary::add_section(const Section& section, bool loaded) {
     new_section->file_offset(new_section_offset);
   }
 
-  LOG(DEBUG) << "New section offset: 0x" << std::hex << new_section->file_offset();
-  LOG(DEBUG) << "New section index: " << std::dec << new_section_index;
+  VLOG(3) << "New section offset: 0x" << std::hex << new_section->file_offset();
+  VLOG(3) << "New section index: " << std::dec << new_section_index;
 
   // The section size must align on a pagesize
   const uint64_t psize        = static_cast<uint64_t>(getpagesize());
@@ -993,7 +993,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
 
   Section *progbit_section = *it_first_progbit;
 
-  LOG(DEBUG) << "Data will be inserted before the section: " << *progbit_section;
+  VLOG(3) << "Data will be inserted before the section: " << *progbit_section;
 
   // We align on page size
   const uint64_t psize = static_cast<uint64_t>(getpagesize());
@@ -1002,12 +1002,12 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
   // Virtual address of data inserted
   const uint64_t stub_virtual_address = progbit_section->virtual_address();
 
-  LOG(DEBUG) << "New data VA 0x" << std::hex << stub_virtual_address;
+  VLOG(3) << "New data VA 0x" << std::hex << stub_virtual_address;
 
   // Offset of data inserted
   const uint64_t sectionOffset = progbit_section->file_offset();
 
-  LOG(DEBUG) << "New data offset 0x" << std::hex << sectionOffset;
+  VLOG(3) << "New data offset 0x" << std::hex << sectionOffset;
 
   // To remove if we don't want to include data in the section
   progbit_section->size(progbit_section->size() + new_section_size);
@@ -1190,7 +1190,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
 
     if(arch == ARCH::EM_ARM and relocation.type() == RELOC_ARM::R_ARM_RELATIVE) {
       const uint64_t address = relocation.address();
-      LOG(DEBUG) << "Patch ARM relative relocation at address: 0x" << std::hex << address;
+      VLOG(3) << "Patch ARM relative relocation at address: 0x" << std::hex << address;
       Section& section = this->section_from_virtual_address(address);
       const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
       std::vector<uint8_t> section_content = section.content();
@@ -1203,7 +1203,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
 
     if(arch == ARCH::EM_386 and relocation.type() == RELOC_i386::R_386_RELATIVE) {
       const uint64_t address = relocation.address();
-      LOG(DEBUG) << "Patch i386 relative relocation at address: " << std::hex << address;
+      VLOG(3) << "Patch i386 relative relocation at address: " << std::hex << address;
       Section& section = this->section_from_virtual_address(address);
       const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
       std::vector<uint8_t> section_content = section.content();
@@ -1217,7 +1217,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
     if((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and
         relocation.type() == RELOC_x86_64::R_X86_64_RELATIVE) {
       const uint64_t address = relocation.address();
-      LOG(DEBUG) << "Patch R_X86_64_RELATIVE relocation at address: 0x" << std::hex << address;
+      VLOG(3) << "Patch R_X86_64_RELATIVE relocation at address: 0x" << std::hex << address;
       Section& section = this->section_from_virtual_address(address);
       const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
       std::vector<uint8_t> section_content = section.content();
@@ -1233,7 +1233,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
   // PLT/GOT Relocations
   // -------------------
 
-  LOG(DEBUG) << "Patching plt/got relocations";
+  VLOG(3) << "Patching plt/got relocations";
   for (Relocation& relocation : this->get_pltgot_relocations()) {
     if (relocation.address() >= stub_virtual_address) {
       relocation.address(relocation.address() + new_section_size);
@@ -1241,7 +1241,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
 
     // R_X86_64_IRELATIVE
     if ((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and relocation.type() == RELOC_x86_64::R_X86_64_IRELATIVE) {
-      LOG(DEBUG) << "Patching R_X86_64_IRELATIVE";
+      VLOG(3) << "Patching R_X86_64_IRELATIVE";
       if (static_cast<uint64_t>(relocation.addend()) >= stub_virtual_address) {
         relocation.addend(relocation.addend() + new_section_size);
       }
@@ -1250,13 +1250,13 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
     if (((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and relocation.type() == RELOC_x86_64::R_X86_64_JUMP_SLOT) or
         (arch == ARCH::EM_ARM and                                relocation.type() == RELOC_ARM::R_ARM_JUMP_SLOT) or
         (arch == ARCH::EM_386 and                                relocation.type() == RELOC_i386::R_386_JUMP_SLOT)) {
-      LOG(DEBUG) << "Patching JUMP_SLOT";
+      VLOG(3) << "Patching JUMP_SLOT";
       const uint64_t address = relocation.address();
       Section& section = this->section_from_virtual_address(address);
       std::vector<uint8_t> content = section.content();
       const uint64_t relative_offset = address - section.virtual_address();
 
-      LOG(DEBUG) << "Section associated with the relocation: " << section.name();
+      VLOG(3) << "Section associated with the relocation: " << section.name();
 
       if (this->type_ == ELF_CLASS::ELFCLASS64) {
         uint64_t* value = reinterpret_cast<uint64_t*>(content.data() + relative_offset);
@@ -1322,7 +1322,7 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
       });
 
   if (it_segment == std::end(this->segments_)) {
-    LOG(DEBUG) << "Address: 0x" << std::hex << virtual_address;
+    VLOG(3) << "Address: 0x" << std::hex << virtual_address;
     throw conversion_error("Invalid virtual address");
   }
   uint64_t baseAddress = (*it_segment)->virtual_address() - (*it_segment)->file_offset();

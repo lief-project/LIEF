@@ -124,7 +124,7 @@ void Builder::build_empty_symbol_gnuhash(void) {
 
 void Builder::build_symbol_version(void) {
 
-  LOG(DEBUG) << "[+] Building symbol version" << std::endl;
+  VLOG(3) << "[+] Building symbol version" << std::endl;
 
   if (this->binary_->symbol_version_table_.size() != this->binary_->dynamic_symbols_.size()) {
     LOG(WARNING) << "The number of symbol version is different from the number of dynamic symbols ("

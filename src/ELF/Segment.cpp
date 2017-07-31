@@ -170,10 +170,10 @@ uint64_t Segment::alignment(void) const {
 
 std::vector<uint8_t> Segment::content(void) const {
   if (this->datahandler_ == nullptr) {
-    LOG(DEBUG) << "Content from cache";
+    VLOG(3) << "Content from cache";
     return this->content_c_;
   } else {
-    LOG(DEBUG) << std::hex << "Content from Data Handler [0x" << this->file_offset() << ", 0x" << this->physical_size() << "]";
+    VLOG(3) << std::hex << "Content from Data Handler [0x" << this->file_offset() << ", 0x" << this->physical_size() << "]";
     return this->datahandler_->content(this->file_offset(), this->physical_size(), DataHandler::Node::SEGMENT);
   }
 }
@@ -252,10 +252,10 @@ void Segment::type(SEGMENT_TYPES type) {
 
 void Segment::content(const std::vector<uint8_t>& content) {
   if (this->datahandler_ == nullptr) {
-    LOG(DEBUG) << "Set content in the cache";
+    VLOG(3) << "Set content in the cache";
     this->content_c_ = content;
   } else {
-    LOG(DEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
+    VLOG(3) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
     this->datahandler_->content(this->file_offset(), content, DataHandler::Node::SEGMENT);
   }
 
