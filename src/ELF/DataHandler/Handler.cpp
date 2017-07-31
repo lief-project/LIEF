@@ -49,9 +49,9 @@ const std::vector<uint8_t>& Handler::content(void) const {
  */
 std::vector<uint8_t> Handler::content(uint64_t offset, uint64_t size, Node::Type type) {
   if (offset > this->data_.size() or (offset + size) > this->data_.size()) {
-    VLOG(3) << "Offset: 0x" << std::hex << offset;
-    VLOG(3) << "Size: 0x" << std::hex << size;
-    VLOG(3) << "Data size" << std::hex << this->data_.size();
+    VLOG(VDEBUG) << "Offset: 0x" << std::hex << offset;
+    VLOG(VDEBUG) << "Size: 0x" << std::hex << size;
+    VLOG(VDEBUG) << "Data size" << std::hex << this->data_.size();
     throw std::runtime_error("Invalid data access");
   }
   Node& node = this->find(offset, size, false, type);

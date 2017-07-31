@@ -352,6 +352,8 @@ source_group("easylogging" FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
 # Library definition
 # ==================
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
+add_definitions(-DVDEBUG=9)
+
 if (LIEF_ELF)
   add_definitions(-DLIEF_ELF_MODULE)
 endif()

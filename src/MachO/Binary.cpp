@@ -442,7 +442,7 @@ SegmentCommand& Binary::segment_from_offset(uint64_t offset) {
 
 
 LoadCommand& Binary::insert_command(const LoadCommand& command) {
-  VLOG(3) << "Insert command" << std::endl;
+  VLOG(VDEBUG) << "Insert command" << std::endl;
 
   //this->header().nb_cmds(this->header().nb_cmds() + 1);
 
@@ -469,7 +469,7 @@ LoadCommand& Binary::insert_command(const LoadCommand& command) {
   //    });
 
 
-  //VLOG(3) << "Last offset: %x", last_offset << std::endl;
+  //VLOG(VDEBUG) << "Last offset: %x", last_offset << std::endl;
   //command.command_offset(last_offset);
   //this->header().sizeof_cmds(this->header().sizeof_cmds() + command.size());
   //this->commands_.push_back(command);

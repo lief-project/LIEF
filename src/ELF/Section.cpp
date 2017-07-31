@@ -183,15 +183,15 @@ uint64_t Section::alignment(void) const {
 
 std::vector<uint8_t> Section::content(void) const {
   if (this->size() == 0 or this->type() == SECTION_TYPES::SHT_NOBITS) {
-    VLOG(3) << "Section '" << this->name() << "' is empty";
+    VLOG(VDEBUG) << "Section '" << this->name() << "' is empty";
     return {};
   }
 
   if (this->datahandler_ == nullptr) {
-    VLOG(3) << "Content from cache";
+    VLOG(VDEBUG) << "Content from cache";
     return this->content_c_;
   } else {
-    VLOG(3) << std::hex << "Content from Data Handler [0x" << this->offset_ << ", 0x" << this->size_ << "]";
+    VLOG(VDEBUG) << std::hex << "Content from Data Handler [0x" << this->offset_ << ", 0x" << this->size_ << "]";
     return this->datahandler_->content(this->offset_, this->size_, DataHandler::Node::SECTION);
   }
 }

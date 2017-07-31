@@ -98,10 +98,10 @@ void Builder::write(const std::string& filename) const {
 
 void Builder::build(void) {
 
-  VLOG(3) << "Rebuilding" << std::endl;
+  VLOG(VDEBUG) << "Rebuilding" << std::endl;
 
   if (this->binary_->has_tls() and this->build_tls_) {
-    VLOG(3) << "[+] Rebuilding TLS" << std::endl;
+    VLOG(VDEBUG) << "[+] Rebuilding TLS" << std::endl;
     if (this->binary_->type() == PE_TYPE::PE32) {
       this->build_tls<PE32>();
     } else {
@@ -110,12 +110,12 @@ void Builder::build(void) {
   }
 
   if (this->binary_->has_relocations() and this->build_relocations_) {
-    VLOG(3) << "[+] Rebuilding relocations" << std::endl;
+    VLOG(VDEBUG) << "[+] Rebuilding relocations" << std::endl;
     this->build_relocation();
   }
 
   if (this->binary_->has_resources() and this->binary_->resources_ != nullptr and this->build_resources_) {
-    VLOG(3) << "[+] Rebuilding resources" << std::endl;
+    VLOG(VDEBUG) << "[+] Rebuilding resources" << std::endl;
     try {
       this->build_resources();
     } catch (not_found&) {
@@ -123,7 +123,7 @@ void Builder::build(void) {
   }
 
   if (this->binary_->has_imports() and this->build_imports_) {
-    VLOG(3) << "[+] Rebuilding Import" << std::endl;
+    VLOG(VDEBUG) << "[+] Rebuilding Import" << std::endl;
     if (this->binary_->type() == PE_TYPE::PE32) {
       this->build_import_table<PE32>();
     } else {
@@ -131,7 +131,7 @@ void Builder::build(void) {
     }
   }
 
-  VLOG(3) << "[+] Rebuilding headers" << std::endl;
+  VLOG(VDEBUG) << "[+] Rebuilding headers" << std::endl;
 
   *this << this->binary_->dos_header()
         << this->binary_->header()
@@ -147,18 +147,18 @@ void Builder::build(void) {
 
   *this << last_one;
 
-  VLOG(3) << "[+] Rebuilding sections" << std::endl;
+  VLOG(VDEBUG) << "[+] Rebuilding sections" << std::endl;
 
   for (const Section& section : this->binary_->get_sections()) {
-    VLOG(3) << "Building section " << section.name();
+    VLOG(VDEBUG) << "Building section " << section.name();
     *this << section;
   }
 
-  VLOG(3) << "[+] Rebuilding symbols" << std::endl;
+  VLOG(VDEBUG) << "[+] Rebuilding symbols" << std::endl;
   //this->build_symbols();
 
 
-  VLOG(3) << "[+] Rebuilding string table" << std::endl;
+  VLOG(VDEBUG) << "[+] Rebuilding string table" << std::endl;
   //this->build_string_table();
 
   if (this->binary_->overlay().size() > 0 and this->build_overlay_) {
@@ -233,7 +233,7 @@ void Builder::build_relocation(void) {
 // Build resources
 //
 void Builder::build_resources(void) {
-  VLOG(3) << "Building RSRC" << std::endl;
+  VLOG(VDEBUG) << "Building RSRC" << std::endl;
   ResourceNode& node = this->binary_->get_resources();
   //std::cout << ResourcesManager{this->binary_->resources_} << std::endl;
 
@@ -379,7 +379,7 @@ void Builder::construct_resources(
     }
 
   } else {
-    //VLOG(3) << "Building Data" << std::endl;
+    //VLOG(VDEBUG) << "Building Data" << std::endl;
     ResourceData *rsrc_data = dynamic_cast<ResourceData*>(&node);
 
     pe_resource_data_entry data_header;
@@ -416,7 +416,7 @@ void Builder::build_string_table(void) {
 }
 
 void Builder::build_overlay(void) {
-  VLOG(3) << "Building overlay";
+  VLOG(VDEBUG) << "Building overlay";
 
   const uint64_t last_section_offset = std::accumulate(
       std::begin(this->binary_->sections_),
@@ -425,8 +425,8 @@ void Builder::build_overlay(void) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
 
-  VLOG(3) << "Overlay offset: 0x" << std::hex << last_section_offset;
-  VLOG(3) << "Overlay size: " << std::dec << this->binary_->overlay().size();
+  VLOG(VDEBUG) << "Overlay offset: 0x" << std::hex << last_section_offset;
+  VLOG(VDEBUG) << "Overlay size: " << std::dec << this->binary_->overlay().size();
 
   const size_t saved_offset = this->ios_.tellp();
   this->ios_.seekp(last_section_offset);
@@ -476,7 +476,7 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
 
 
 Builder& Builder::operator<<(const Header& bHeader) {
-  VLOG(3) << "Building standard Header" << std::endl;
+  VLOG(VDEBUG) << "Building standard Header" << std::endl;
   // Standard Header
   pe_header header;
   header.Machine               = static_cast<uint16_t>(bHeader.machine());

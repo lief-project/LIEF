@@ -89,7 +89,7 @@ void Parser::build_fat(void) {
   const fat_header *header = reinterpret_cast<const fat_header*>(
       this->stream_->read(0, sizeof(fat_header)));
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
-  VLOG(3) << "In this Fat binary there is " << std::dec << nb_arch << " archs" << std::endl;
+  VLOG(VDEBUG) << "In this Fat binary there is " << std::dec << nb_arch << " archs" << std::endl;
 
   if (nb_arch > 10) {
     throw parser_error("Too much architectures");
@@ -103,9 +103,9 @@ void Parser::build_fat(void) {
     const uint32_t offset = BinaryStream::swap_endian(arch[i].offset);
     const uint32_t size   = BinaryStream::swap_endian(arch[i].size);
 
-    VLOG(3) << "Dealing with arch[" << std::dec << i << "]" << std::endl;
-    VLOG(3) << "[" << std::dec << i << "] offset: 0x" << std::hex << offset << std::endl;
-    VLOG(3) << "[" << std::dec << i << "] size:   0x" << std::hex << size << std::endl;
+    VLOG(VDEBUG) << "Dealing with arch[" << std::dec << i << "]" << std::endl;
+    VLOG(VDEBUG) << "[" << std::dec << i << "] offset: 0x" << std::hex << offset << std::endl;
+    VLOG(VDEBUG) << "[" << std::dec << i << "] size:   0x" << std::hex << size << std::endl;
 
     const uint8_t* raw = reinterpret_cast<const uint8_t*>(
       this->stream_->read(offset, size));

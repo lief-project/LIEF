@@ -78,7 +78,7 @@ void Logger::set_level(LOGGING_LEVEL level) {
   el::Loggers::setLoggingLevel(static_cast<el::Level>(level));
 
   if (level == LOGGING_LEVEL::LOG_DEBUG) {
-    set_verbose_level(3);
+    set_verbose_level(VDEBUG);
   }
  }
 

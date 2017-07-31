@@ -238,12 +238,12 @@ ResourceVersion ResourcesManager::version(void) const {
   // Size of the current "struct"
   const uint16_t length = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
   offset += sizeof(uint16_t);
-  VLOG(3) << "Lenght of the struct: 0x" << std::hex << length;
+  VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << length;
 
   // Size of the fixed file info struct
   const uint16_t value_length = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
   offset += sizeof(uint16_t);
-  VLOG(3) << "Size of the 'FixedFileInfo' struct" << std::hex << value_length;
+  VLOG(VDEBUG) << "Size of the 'FixedFileInfo' struct" << std::hex << value_length;
 
   // Type of the data in the version resource
   // 1: Text data
@@ -285,23 +285,23 @@ ResourceVersion ResourcesManager::version(void) const {
 
 
   { // First entry
-    VLOG(3) << "Parsing first entry";
+    VLOG(VDEBUG) << "Parsing first entry";
     const uint16_t struct_file_info_length = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
     uint64_t local_offset = offset;
-    VLOG(3) << "Length: " << std::hex << struct_file_info_length;
+    VLOG(VDEBUG) << "Length: " << std::hex << struct_file_info_length;
     if (struct_file_info_length > 0) {
       local_offset += sizeof(uint16_t);
 
       const uint16_t struct_length = *reinterpret_cast<const uint16_t*>(stream.read(local_offset, sizeof(uint16_t)));
       local_offset += sizeof(uint16_t);
-      VLOG(3) << "Lenght of the struct: 0x" << std::hex << struct_length;
+      VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << struct_length;
 
       const uint16_t type = *reinterpret_cast<const uint16_t*>(stream.read(local_offset, sizeof(uint16_t)));
       local_offset += sizeof(uint16_t);
-      VLOG(3) << "Type of the struct: " << std::dec << type;
+      VLOG(VDEBUG) << "Type of the struct: " << std::dec << type;
 
       std::u16string key = {reinterpret_cast<const char16_t*>(content.data() + local_offset)};
-      VLOG(3) << "First entry (key) " << u16tou8(key);
+      VLOG(VDEBUG) << "First entry (key) " << u16tou8(key);
       if (u16tou8(key) == "StringFileInfo") {
         try {
           version.string_file_info_ = this->get_string_file_info(stream, offset);
@@ -325,25 +325,25 @@ ResourceVersion ResourcesManager::version(void) const {
 
   { // Second entry
 
-    VLOG(3) << "Parsing second entry";
+    VLOG(VDEBUG) << "Parsing second entry";
     const uint16_t struct_file_info_length = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
     uint64_t local_offset = offset;
-    VLOG(3) << "Length: " << std::hex << struct_file_info_length;
+    VLOG(VDEBUG) << "Length: " << std::hex << struct_file_info_length;
 
     if (struct_file_info_length > 0) {
       local_offset += sizeof(uint16_t);
 
       const uint16_t struct_length = *reinterpret_cast<const uint16_t*>(stream.read(local_offset, sizeof(uint16_t)));
       local_offset += sizeof(uint16_t);
-      VLOG(3) << "Lenght of the struct: 0x" << std::hex << struct_length;
+      VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << struct_length;
 
       const uint16_t type = *reinterpret_cast<const uint16_t*>(stream.read(local_offset, sizeof(uint16_t)));
       local_offset += sizeof(uint16_t);
-      VLOG(3) << "Type of the struct: " << std::dec << type;
+      VLOG(VDEBUG) << "Type of the struct: " << std::dec << type;
 
       std::u16string key = {reinterpret_cast<const char16_t*>(content.data() + local_offset)};
 
-      VLOG(3) << "Second entry (key) " << u16tou8(key);
+      VLOG(VDEBUG) << "Second entry (key) " << u16tou8(key);
       if (u16tou8(key) == "StringFileInfo") {
         try {
           version.string_file_info_ = this->get_string_file_info(stream, offset);
@@ -369,7 +369,7 @@ ResourceVersion ResourcesManager::version(void) const {
 
 
 ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream& stream, uint64_t& offset) const {
-  VLOG(3) << "Getting StringFileInfo object";
+  VLOG(VDEBUG) << "Getting StringFileInfo object";
 
   // String File Info
   // ================
@@ -381,10 +381,10 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
     const uint16_t value_length = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
     str_local_offset += sizeof(uint16_t);
-    VLOG(3) << "Value length: " << std::dec << value_length << " (should be 0)";
+    VLOG(VDEBUG) << "Value length: " << std::dec << value_length << " (should be 0)";
 
     const uint16_t type = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
-    VLOG(3) << "Type: " << std::dec << type;
+    VLOG(VDEBUG) << "Type: " << std::dec << type;
 
     str_local_offset += sizeof(uint16_t);
     string_file_info.type_ = type;
@@ -400,7 +400,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
     // Parse 'StringTable' childs
     // ==========================
-    VLOG(3) << "Parsing 'StringTable' struct";
+    VLOG(VDEBUG) << "Parsing 'StringTable' struct";
     while (str_local_offset < offset + string_file_info_length * sizeof(uint8_t)) {
       LangCodeItem lang_code_item;
       const uint16_t stringtable_length = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
@@ -413,10 +413,10 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       const uint16_t stringtable_value_length = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
       str_local_offset += sizeof(uint16_t);
 
-      VLOG(3) << "Value length: " << std::dec << stringtable_value_length << " (should be 0)";
+      VLOG(VDEBUG) << "Value length: " << std::dec << stringtable_value_length << " (should be 0)";
 
       const uint16_t stringtable_type = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
-      VLOG(3) << "Type: " << std::dec << stringtable_type;
+      VLOG(VDEBUG) << "Type: " << std::dec << stringtable_type;
       str_local_offset += sizeof(uint16_t);
 
       // 1: Text data
@@ -429,7 +429,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
       std::u16string key = {reinterpret_cast<const char16_t*>(stream.content().data() + str_local_offset)};
       lang_code_item.key_ = key;
-      VLOG(3) << "ID: " << u16tou8(key);
+      VLOG(VDEBUG) << "ID: " << u16tou8(key);
 
       std::string key_str = u16tou8(key);
 
@@ -438,8 +438,8 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       } else {
         uint64_t lang_id   = std::stoul(u16tou8(key.substr(0, 4)), 0, 16);
         uint64_t code_page = std::stoul(u16tou8(key.substr(4, 8)), 0, 16);
-        VLOG(3) << "Lang ID: "   << std::dec << lang_id;
-        VLOG(3) << "Code page: " << std::hex << code_page;
+        VLOG(VDEBUG) << "Lang ID: "   << std::dec << lang_id;
+        VLOG(VDEBUG) << "Code page: " << std::hex << code_page;
       }
 
       str_local_offset += (key.size() + 1) * sizeof(char16_t);
@@ -450,23 +450,23 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       while (str_local_offset < end_offset) {
         const uint16_t string_length = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
         str_local_offset += sizeof(uint16_t);
-        VLOG(3) << "Length of the 'string' struct: 0x" << std::hex << string_length;
+        VLOG(VDEBUG) << "Length of the 'string' struct: 0x" << std::hex << string_length;
 
         const uint16_t string_value_length = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
         str_local_offset += sizeof(uint16_t);
-        VLOG(3) << "Size of the 'value' member: 0x" << std::hex << string_value_length;
+        VLOG(VDEBUG) << "Size of the 'value' member: 0x" << std::hex << string_value_length;
 
         const uint16_t string_type = *reinterpret_cast<const uint16_t*>(stream.read(str_local_offset, sizeof(uint16_t)));
         str_local_offset += sizeof(uint16_t);
-        VLOG(3) << "Type of the 'string' struct: " << std::dec << string_type;
+        VLOG(VDEBUG) << "Type of the 'string' struct: " << std::dec << string_type;
 
         std::u16string key = {reinterpret_cast<const char16_t*>(stream.content().data() + str_local_offset)};
-        VLOG(3) << "Key: " << u16tou8(key);
+        VLOG(VDEBUG) << "Key: " << u16tou8(key);
         str_local_offset += (key.size() + 1) * sizeof(char16_t);
         str_local_offset = align(str_local_offset, sizeof(uint32_t));
 
         std::u16string value = {reinterpret_cast<const char16_t*>(stream.content().data() + str_local_offset)};
-        VLOG(3) << "Value: " << u16tou8(value);
+        VLOG(VDEBUG) << "Value: " << u16tou8(value);
         str_local_offset += (value.size() + 1) * sizeof(char16_t);
 
         str_local_offset = align(str_local_offset, sizeof(uint32_t));
@@ -482,7 +482,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
 
 ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stream, uint64_t& offset) const {
-  VLOG(3) << "Getting VarFileInfo object";
+  VLOG(VDEBUG) << "Getting VarFileInfo object";
   // Var file info
   // =============
   ResourceVarFileInfo var_file_info;
@@ -494,12 +494,12 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 
     const uint16_t value_length = *reinterpret_cast<const uint16_t*>(stream.read(var_local_offset, sizeof(uint16_t)));
     var_local_offset += sizeof(uint16_t);
-    VLOG(3) << "Value length: " << std::dec << value_length << " (should be 0)";
+    VLOG(VDEBUG) << "Value length: " << std::dec << value_length << " (should be 0)";
 
     const uint16_t type = *reinterpret_cast<const uint16_t*>(stream.read(var_local_offset, sizeof(uint16_t)));
     var_local_offset += sizeof(uint16_t);
     var_file_info.type_ = type;
-    VLOG(3) << "Type: " << std::dec << type;
+    VLOG(VDEBUG) << "Type: " << std::dec << type;
 
     std::u16string key = {reinterpret_cast<const char16_t*>(stream.content().data() + var_local_offset)};
     if (u16tou8(key) != "VarFileInfo") {
@@ -512,19 +512,19 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 
     // Parse 'Var' childs
     // ==================
-    VLOG(3) << "Parsing 'Var' childs";
+    VLOG(VDEBUG) << "Parsing 'Var' childs";
     while (var_local_offset < offset + var_file_info_length * sizeof(uint8_t)) {
       const uint16_t var_length = *reinterpret_cast<const uint16_t*>(stream.read(var_local_offset, sizeof(uint16_t)));
       var_local_offset += sizeof(uint16_t);
-      VLOG(3) << "Size of the 'Var' struct: 0x" << std::hex << var_length;
+      VLOG(VDEBUG) << "Size of the 'Var' struct: 0x" << std::hex << var_length;
 
       const uint16_t var_value_length = *reinterpret_cast<const uint16_t*>(stream.read(var_local_offset, sizeof(uint16_t)));
       var_local_offset += sizeof(uint16_t);
-      VLOG(3) << "Size of the 'Value' member: 0x" << std::hex << var_value_length;
+      VLOG(VDEBUG) << "Size of the 'Value' member: 0x" << std::hex << var_value_length;
 
       const uint16_t var_type = *reinterpret_cast<const uint16_t*>(stream.read(var_local_offset, sizeof(uint16_t)));
       var_local_offset += sizeof(uint16_t);
-      VLOG(3) << "Type: " << std::dec << var_type;
+      VLOG(VDEBUG) << "Type: " << std::dec << var_type;
 
       std::u16string key = {reinterpret_cast<const char16_t*>(stream.content().data() + var_local_offset)};
       if (u16tou8(key) != "Translation") {
@@ -537,7 +537,7 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
       const uint32_t *value_array = reinterpret_cast<const uint32_t*>(stream.read(var_local_offset, var_value_length * sizeof(uint8_t)));
       const size_t nb_items = var_value_length / sizeof(uint32_t);
       for (size_t i = 0; i < nb_items; ++i) {
-        VLOG(3) << "item[" << std::dec << i << "] = " << std::hex << value_array[i];
+        VLOG(VDEBUG) << "item[" << std::dec << i << "] = " << std::hex << value_array[i];
         var_file_info.translations_.push_back(value_array[i]);
       }
       var_local_offset += var_value_length;
@@ -618,8 +618,8 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
 
       const pe_resource_icon_dir* group_icon_header = reinterpret_cast<const pe_resource_icon_dir*>(icon_group_content.data());
 
-      VLOG(3) << "Number of icons: " << std::dec << static_cast<uint32_t>(group_icon_header->count);
-      VLOG(3) << "Type: "            << std::dec << static_cast<uint32_t>(group_icon_header->type);
+      VLOG(VDEBUG) << "Number of icons: " << std::dec << static_cast<uint32_t>(group_icon_header->count);
+      VLOG(VDEBUG) << "Type: "            << std::dec << static_cast<uint32_t>(group_icon_header->type);
 
       // Some checks
       if (group_icon_header->type != 1) {
@@ -777,7 +777,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
             i * sizeof(pe_resource_icon_group));
 
         if (icon_header->ID == original.id()) {
-          VLOG(3) << "Group found: " << std::dec << i << "-nth";
+          VLOG(VDEBUG) << "Group found: " << std::dec << i << "-nth";
           group = icon_header;
           icon_header->width       = newone.width();
           icon_header->height      = newone.height();
@@ -863,7 +863,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         switch(menu_hint) {
           case 0x0000:
             {
-              VLOG(3) << "Dialog has not menu";
+              VLOG(VDEBUG) << "Dialog has not menu";
               break;
             }
 
@@ -871,13 +871,13 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
             {
               const uint16_t menu_ordinal = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
               offset += sizeof(uint16_t);
-              VLOG(3) << "Menu uses ordinal number " << std::dec << menu_ordinal;
+              VLOG(VDEBUG) << "Menu uses ordinal number " << std::dec << menu_ordinal;
               break;
             }
 
           default:
             {
-              VLOG(3) << "Menu uses unicode string";
+              VLOG(VDEBUG) << "Menu uses unicode string";
               std::u16string menu_name = {reinterpret_cast<const char16_t*>(content.data() + offset)};
               offset += (menu_name.size() + 1)* sizeof(char16_t);
             }
@@ -890,14 +890,14 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         switch(window_class_hint) {
           case 0x0000:
             {
-              VLOG(3) << "Windows class uses predefined dialog box";
+              VLOG(VDEBUG) << "Windows class uses predefined dialog box";
               break;
             }
 
           case 0xFFFF:
             {
               const uint16_t windows_class_ordinal = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
-              VLOG(3) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
+              VLOG(VDEBUG) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
               offset += sizeof(uint16_t);
               break;
             }
@@ -905,7 +905,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           default:
             {
 
-              VLOG(3) << "Windows class uses unicode string";
+              VLOG(VDEBUG) << "Windows class uses unicode string";
               std::u16string window_class_name = {reinterpret_cast<const char16_t*>(content.data() + offset)};
               offset += (window_class_name.size() + 1) * sizeof(char16_t);
             }
@@ -913,7 +913,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
 
         // Title
         // =====
-        VLOG(3) << "Title offset: " << std::hex << offset;
+        VLOG(VDEBUG) << "Title offset: " << std::hex << offset;
         new_dialog.title_ = std::u16string{reinterpret_cast<const char16_t*>(content.data() + offset)};
         offset += sizeof(uint16_t) * (new_dialog.title().size() + 1);
 
@@ -941,21 +941,21 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           offset += (new_dialog.typeface().size() + 1) * sizeof(char16_t);
         }
 
-        VLOG(3) << "Offset to the items: 0x" << std::hex << offset;
-        VLOG(3) << std::endl << std::endl << "####### Items #######" << std::endl;
+        VLOG(VDEBUG) << "Offset to the items: 0x" << std::hex << offset;
+        VLOG(VDEBUG) << std::endl << std::endl << "####### Items #######" << std::endl;
 
         // Items
         // =====
         for (size_t i = 0; i < header->nbof_items; ++i) {
           offset = align(offset, sizeof(uint32_t));
-          VLOG(3) << "item[" << std::dec << i << "] offset: 0x" << std::hex << offset;
+          VLOG(VDEBUG) << "item[" << std::dec << i << "] offset: 0x" << std::hex << offset;
           ResourceDialogItem dialog_item;
 
           if (new_dialog.is_extended()) {
             const pe_dialog_item_template_ext* item_header = reinterpret_cast<const pe_dialog_item_template_ext*>(stream.read(offset, sizeof(pe_dialog_item_template_ext)));
             offset += sizeof(pe_dialog_item_template_ext);
             dialog_item = {item_header};
-            VLOG(3) << "Item ID: " << std::dec << item_header->id;
+            VLOG(VDEBUG) << "Item ID: " << std::dec << item_header->id;
           } else {
             const pe_dialog_item_template* item_header = reinterpret_cast<const pe_dialog_item_template*>(stream.read(offset, sizeof(pe_dialog_item_template)));
             offset += sizeof(pe_dialog_item_template);
@@ -970,10 +970,10 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           offset += sizeof(uint16_t);
           if (window_class_hint == 0xFFFF) {
             const uint16_t windows_class_ordinal = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
-            VLOG(3) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
+            VLOG(VDEBUG) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
             offset += sizeof(uint16_t);
           } else {
-            VLOG(3) << "Windows class uses unicode string";
+            VLOG(VDEBUG) << "Windows class uses unicode string";
             std::u16string window_class_name = {reinterpret_cast<const char16_t*>(stream.read(offset, sizeof(uint16_t)))};
             offset += (window_class_name.size() + 1) * sizeof(char16_t);
           }
@@ -986,12 +986,12 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           if (title_hint == 0xFFFF) {
             offset += sizeof(uint16_t);
             const uint16_t title_ordinal = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
-            VLOG(3) << "Title uses ordinal number " << std::dec <<  title_ordinal;
+            VLOG(VDEBUG) << "Title uses ordinal number " << std::dec <<  title_ordinal;
             offset += sizeof(uint16_t);
           } else {
             std::u16string title_name = {reinterpret_cast<const char16_t*>(content.data() + offset)};
             offset += (title_name.size() + 1) * sizeof(char16_t);
-            VLOG(3) << "Title uses unicode string: \"" << u16tou8(title_name) << "\"";
+            VLOG(VDEBUG) << "Title uses unicode string: \"" << u16tou8(title_name) << "\"";
             dialog_item.title_ = std::u16string{title_name};
           }
 
@@ -999,7 +999,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           // -----------
           const uint16_t extra_count = *reinterpret_cast<const uint16_t*>(stream.read(offset, sizeof(uint16_t)));
           offset += sizeof(uint16_t);
-          VLOG(3) << "Extra count: " << std::hex << extra_count << std::endl;
+          VLOG(VDEBUG) << "Extra count: " << std::hex << extra_count << std::endl;
           dialog_item.extra_count_ = extra_count;
           offset += extra_count * sizeof(uint8_t);
           new_dialog.items_.push_back(std::move(dialog_item));

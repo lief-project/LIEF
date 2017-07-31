@@ -17,4 +17,5 @@
 #define LIEF_TYPES_H_
 #include <stdint.h>
 #include <inttypes.h>
+
 #endif

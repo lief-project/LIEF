@@ -526,7 +526,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
         return std::max<uint64_t>(s->pointerto_raw_data() + s->sizeof_raw_data(), offset);
       }), this->optional_header().file_alignment());
 
-  VLOG(3) << "New section offset: 0x" << std::hex << new_section_offset;
+  VLOG(VDEBUG) << "New section offset: 0x" << std::hex << new_section_offset;
 
 
   // Compute new section Virtual address
@@ -537,7 +537,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
         return std::max<uint64_t>(s->virtual_address() + s->virtual_size(), va);
       }), this->optional_header().section_alignment());
 
-  VLOG(3) << "New section va: 0x" << std::hex << new_section_va;
+  VLOG(VDEBUG) << "New section va: 0x" << std::hex << new_section_va;
 
   new_section->add_type(type);
 

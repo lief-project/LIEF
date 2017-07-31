@@ -64,7 +64,7 @@ void Builder::build(void) {
 
 
 void Builder::build_header(void) {
-  VLOG(3) << "[+] Building header" << std::endl;
+  VLOG(VDEBUG) << "[+] Building header" << std::endl;
   const Header& binary_header = this->binary_->header();
   if (this->binary_->is64_) {
     mach_header_64 header;
@@ -101,7 +101,7 @@ void Builder::build_header(void) {
 
 
 void Builder::build_load_commands(void) {
-  VLOG(3) << "[+] Building load segments" << std::endl;
+  VLOG(VDEBUG) << "[+] Building load segments" << std::endl;
 
   const auto& binary = this->binaries_.back();
   // Check if the number of segments is correct
@@ -122,11 +122,11 @@ void Builder::build_load_commands(void) {
     auto& data = command.data();
     LOAD_COMMAND_TYPES cmd_type = command.command();
     uint64_t loadCommandsOffset = command.command_offset();
-    VLOG(3) << "[+] Command offset: 0x" << std::hex << loadCommandsOffset << std::endl;
+    VLOG(VDEBUG) << "[+] Command offset: 0x" << std::hex << loadCommandsOffset << std::endl;
     switch (cmd_type) {
       //case LOAD_COMMAND_TYPES::LC_SYMTAB:
       //  {
-      //    VLOG(3) << "\tProcessing Symbols %x", command->command() << std::endl;
+      //    VLOG(VDEBUG) << "\tProcessing Symbols %x", command->command() << std::endl;
       //    auto symbol_command = static_cast<SymbolCommand*>(command);
       //    symtab_command command;
 
@@ -195,7 +195,7 @@ void Builder::build_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SEGMENT_64:
       case LOAD_COMMAND_TYPES::LC_SEGMENT:
         {
-          VLOG(3) << "\tProcessing Load command " << to_string(cmd_type) << std::endl;
+          VLOG(VDEBUG) << "\tProcessing Load command " << to_string(cmd_type) << std::endl;
           if (this->rawBinary_.size() < (loadCommandsOffset + data.size())) {
             this->rawBinary_.resize(loadCommandsOffset + data.size());
           }
