@@ -26,7 +26,6 @@
 #include "LIEF/filesystem/filesystem.h"
 #include "LIEF/exception.hpp"
 
-
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "BinaryParser.tcc"
 

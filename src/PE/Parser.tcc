@@ -27,7 +27,7 @@ void Parser::build(void) {
     LOG(WARNING) << e.what();
   }
 
-  LOG(DEBUG) << "[+] Retreive Dos stub";
+  VLOG(3) << "[+] Retreive Dos stub";
 
   this->build_dos_stub();
 
@@ -37,7 +37,7 @@ void Parser::build(void) {
     LOG(WARNING) << e.what();
   }
 
-  LOG(DEBUG) << "[+] Decomposing Sections";
+  VLOG(3) << "[+] Decomposing Sections";
 
   try {
     this->build_sections();
@@ -45,7 +45,7 @@ void Parser::build(void) {
     LOG(WARNING) << e.what();
   }
 
-  LOG(DEBUG) << "[+] Decomposing Data directories";
+  VLOG(3) << "[+] Decomposing Data directories";
   try {
     this->build_data_directories<PE_T>();
   } catch (const exception& e) {
@@ -100,7 +100,7 @@ template<typename PE_T>
 void Parser::build_data_directories(void) {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
-  LOG(DEBUG) << "[+] Parsing data directories";
+  VLOG(3) << "[+] Parsing data directories";
 
   const uint32_t dirOffset =
       this->binary_->dos_header().addressof_new_exeheader() +
@@ -121,9 +121,9 @@ void Parser::build_data_directories(void) {
   for (size_t i = 0; i < nbof_datadir; ++i) {
     DataDirectory* directory = new DataDirectory{&dataDirectory[i], static_cast<DATA_DIRECTORY>(i)};
 
-    LOG(DEBUG) << "Processing directory: " << to_string(static_cast<DATA_DIRECTORY>(i));
-    LOG(DEBUG) << "- RVA: 0x" << std::hex << dataDirectory[i].RelativeVirtualAddress;
-    LOG(DEBUG) << "- Size: 0x" << std::hex << dataDirectory[i].Size;
+    VLOG(3) << "Processing directory: " << to_string(static_cast<DATA_DIRECTORY>(i));
+    VLOG(3) << "- RVA: 0x" << std::hex << dataDirectory[i].RelativeVirtualAddress;
+    VLOG(3) << "- Size: 0x" << std::hex << dataDirectory[i].Size;
     if (directory->RVA() > 0) {
       // Data directory is not always associated with section
       const uint64_t offset = this->binary_->rva_to_offset(directory->RVA());
@@ -140,7 +140,7 @@ void Parser::build_data_directories(void) {
   try {
     // Import Table
     if (this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA() > 0) {
-      LOG(DEBUG) << "[+] Decomposing Import Table";
+      VLOG(3) << "[+] Decomposing Import Table";
       const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
       const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
 
@@ -158,7 +158,7 @@ void Parser::build_data_directories(void) {
 
   // Exports
   if (this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0) {
-    LOG(DEBUG) << "[+] Decomposing Exports";
+    VLOG(3) << "[+] Decomposing Exports";
 
     try {
       this->build_exports();
@@ -179,7 +179,7 @@ void Parser::build_data_directories(void) {
 
   // TLS
   if (this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA() > 0) {
-    LOG(DEBUG) << "[+] Decomposing TLS";
+    VLOG(3) << "[+] Decomposing TLS";
 
     const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
     const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
@@ -197,7 +197,7 @@ void Parser::build_data_directories(void) {
   // Relocations
   if (this->binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA() > 0) {
 
-    LOG(DEBUG) << "[+] Decomposing relocations";
+    VLOG(3) << "[+] Decomposing relocations";
     const uint32_t relocation_rva = this->binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA();
     const uint64_t offset         = this->binary_->rva_to_offset(relocation_rva);
     try {
@@ -215,7 +215,7 @@ void Parser::build_data_directories(void) {
   // Debug
   if (this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA() > 0) {
 
-    LOG(DEBUG) << "[+] Decomposing debug";
+    VLOG(3) << "[+] Decomposing debug";
     const uint32_t rva    = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA();
     const uint64_t offset = this->binary_->rva_to_offset(rva);
     try {
@@ -233,7 +233,7 @@ void Parser::build_data_directories(void) {
   // Resources
   if (this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA() > 0) {
 
-    LOG(DEBUG) << "[+] Decomposing resources";
+    VLOG(3) << "[+] Decomposing resources";
     const uint32_t resources_rva = this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA();
     const uint64_t offset        = this->binary_->rva_to_offset(resources_rva);
     try {
@@ -353,7 +353,7 @@ void Parser::build_tls(void) {
   using pe_tls = typename PE_T::pe_tls;
   using uint__ = typename PE_T::uint;
 
-  LOG(DEBUG) << "[+] Parsing TLS";
+  VLOG(3) << "[+] Parsing TLS";
 
   this->binary_->has_tls_ = true;
 

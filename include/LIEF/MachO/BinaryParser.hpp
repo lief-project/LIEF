@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <limits>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -40,6 +41,9 @@ class Parser;
 class DLL_PUBLIC BinaryParser : public LIEF::Parser {
 
   friend class MachO::Parser;
+
+  //! @brief Maximum number of relocations
+  constexpr static unsigned MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
 
   public:
     BinaryParser(const std::string& file);

@@ -20,7 +20,7 @@ namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
 void Parser::parse_binary(void) {
-  LOG(DEBUG) << "Start parsing";
+  VLOG(3) << "Start parsing";
   // Parse header
   // ============
   try {
@@ -453,7 +453,7 @@ template<typename ELF_T>
 void Parser::parse_header(void) {
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
-  LOG(DEBUG) << "[+] Parsing Header";
+  VLOG(3) << "[+] Parsing Header";
   try {
     this->binary_->header_ = {reinterpret_cast<const Elf_Ehdr*>(
         this->stream_->read(0, sizeof(Elf_Ehdr)))};
@@ -708,7 +708,7 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
 template<typename ELF_T>
 void Parser::parse_sections(void) {
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
-  LOG(DEBUG) << "[+] Parsing Section";
+  VLOG(3) << "[+] Parsing Section";
 
   const uint64_t headers_offset    = this->binary_->header_.section_headers_offset();
   const uint32_t numberof_sections = this->binary_->header_.numberof_sections();
@@ -719,7 +719,7 @@ void Parser::parse_sections(void) {
 
   for (size_t i = 0; i < numberof_sections; ++i) {
 
-    LOG(DEBUG) << "\t Parsing section " << std::dec << i;
+    VLOG(3) << "\t Parsing section " << std::dec << i;
     const Elf_Shdr* hdr = &(section_headers[i]);
     Section* section = new Section{hdr};
     section->datahandler_ = this->binary_->datahandler_;
@@ -768,7 +768,7 @@ template<typename ELF_T>
 void Parser::parse_segments(void) {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
 
-  LOG(DEBUG) << "[+] Parse Segments";
+  VLOG(3) << "[+] Parse Segments";
   const uint64_t segment_headers_offset = this->binary_->get_header().program_headers_offset();
   const uint32_t nbof_segments          = this->binary_->get_header().numberof_segments();
 
@@ -817,7 +817,7 @@ void Parser::parse_segments(void) {
 
 template<typename ELF_T>
 void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size, bool isRela) {
-  LOG(DEBUG) << "[+] Parsing dynamic relocations";
+  VLOG(3) << "[+] Parsing dynamic relocations";
   using Elf_Rela = typename ELF_T::Elf_Rela;
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
@@ -881,7 +881,7 @@ template<typename ELF_T>
 void Parser::parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Section* string_section) {
 
   using Elf_Sym = typename ELF_T::Elf_Sym;
-  LOG(DEBUG) << "[+] Parsing static symbols";
+  VLOG(3) << "[+] Parsing static symbols";
 
   const Elf_Sym* symbol_headers = reinterpret_cast<const Elf_Sym*>(
       this->stream_->read(offset, nbSymbols * sizeof(Elf_Sym)));
@@ -903,7 +903,7 @@ void Parser::parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Sec
 template<typename ELF_T>
 void Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
-  LOG(DEBUG) << "[+] Parsing dynamics symbols";
+  VLOG(3) << "[+] Parsing dynamics symbols";
 
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
 
@@ -939,13 +939,13 @@ template<typename ELF_T>
 void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
   using Elf_Dyn = typename ELF_T::Elf_Dyn;
   using uint__  = typename ELF_T::uint;
-  LOG(DEBUG) << "[+] Parsing dynamic section";
+  VLOG(3) << "[+] Parsing dynamic section";
 
   const uint64_t nb_entries = size / sizeof(Elf_Dyn);
 
-  LOG(DEBUG) << "Size of the dynamic section: 0x" << std::hex << size;
-  LOG(DEBUG) << "offset of the dynamic section: 0x" << std::hex << offset;
-  LOG(DEBUG) << "Nb of entrie in DynSec = " << std::dec << nb_entries;
+  VLOG(3) << "Size of the dynamic section: 0x" << std::hex << size;
+  VLOG(3) << "offset of the dynamic section: 0x" << std::hex << offset;
+  VLOG(3) << "Nb of entrie in DynSec = " << std::dec << nb_entries;
 
   uint64_t dynamic_string_offset = 0;
   try {
@@ -1368,11 +1368,11 @@ void Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entri
   using Elf_Verneed = typename ELF_T::Elf_Verneed;
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
 
-  LOG(DEBUG) << "[+] Build Symbol version requirement";
+  VLOG(3) << "[+] Build Symbol version requirement";
 
   const uint64_t svr_offset = offset;
 
-  LOG(DEBUG) << "Symbol version requirement offset: 0x" << std::hex << svr_offset;
+  VLOG(3) << "Symbol version requirement offset: 0x" << std::hex << svr_offset;
 
   const uint64_t string_offset = this->get_dynamic_string_table();
 
@@ -1519,7 +1519,7 @@ template<typename ELF_T>
 void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   using uint__  = typename ELF_T::uint;
 
-  LOG(DEBUG) << "[+] Build symbol GNU hash";
+  VLOG(3) << "[+] Build symbol GNU hash";
   GnuHash gnuhash;
 
   uint64_t current_offset = offset;
@@ -1541,10 +1541,10 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
     LOG(WARNING) << "maskwords is not a power of 2";
   }
 
-  //LOG(DEBUG) << "nbuckets: %d",nbuckets;
-  //LOG(DEBUG) << "symndx: %d",  symndx;
-  //LOG(DEBUG) << "maskwords: %" PRIx32 "", maskwords;
-  //LOG(DEBUG) << "shift2: %" PRIx32 "",    shift2;
+  //VLOG(3) << "nbuckets: %d",nbuckets;
+  //VLOG(3) << "symndx: %d",  symndx;
+  //VLOG(3) << "maskwords: %" PRIx32 "", maskwords;
+  //VLOG(3) << "shift2: %" PRIx32 "",    shift2;
 
   try {
     std::vector<uint64_t> bloom_filters(maskwords);
@@ -1578,7 +1578,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   gnuhash.buckets_ = std::move(buckets);
 
   const uint32_t dynsymcount = static_cast<uint32_t>(this->binary_->dynamic_symbols_.size());
-  //LOG(DEBUG) << "dynsymcount: %" PRId32 "", dynsymcount;
+  //VLOG(3) << "dynsymcount: %" PRId32 "", dynsymcount;
   if (dynsymcount < symndx) {
     throw corrupted("GNU Hash, symndx corrupted");
   }

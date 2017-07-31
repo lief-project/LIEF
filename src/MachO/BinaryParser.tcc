@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "easylogging++.h"
+
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
@@ -21,7 +24,6 @@
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 
-#include "easylogging++.h"
 
 namespace LIEF {
 namespace MachO {
@@ -77,7 +79,7 @@ void BinaryParser::parse_load_commands(void) {
   using segment_command_t = typename MACHO_T::segment_command;
   using section_t         = typename MACHO_T::section;
 
-  LOG(DEBUG) << "[+] Building Load commands";
+  VLOG(3) << "[+] Building Load commands";
   uint64_t loadcommands_offset = sizeof(header_t);
 
   for (size_t i = 0; i < this->binary_->header().nb_cmds(); ++i) {
@@ -147,7 +149,7 @@ void BinaryParser::parse_load_commands(void) {
       // ====
       case LOAD_COMMAND_TYPES::LC_UUID:
         {
-          LOG(DEBUG) << "[+] Building UUID";
+          VLOG(3) << "[+] Building UUID";
           const uuid_command* cmd =
             reinterpret_cast<const uuid_command*>(
               this->stream_->read(loadcommands_offset, sizeof(uuid_command)));
@@ -180,7 +182,7 @@ void BinaryParser::parse_load_commands(void) {
       // ==============
       case LOAD_COMMAND_TYPES::LC_PREBOUND_DYLIB:
         {
-          LOG(DEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
+          VLOG(3) << "[+] Parsing LC_PREBOUND_DYLIB";
 
           load_command = new LoadCommand{command};
           const prebound_dylib_command* cmd =
@@ -203,14 +205,14 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_THREAD:
       case LOAD_COMMAND_TYPES::LC_UNIXTHREAD:
         {
-          LOG(DEBUG) << "[+] Parsing LC_THREAD";
+          VLOG(3) << "[+] Parsing LC_THREAD";
 
           load_command = new LoadCommand{command};
           const thread_command* cmd =
             reinterpret_cast<const thread_command*>(
               this->stream_->read(loadcommands_offset, sizeof(thread_command)));
 
-          LOG(DEBUG) << "FLAVOR: " << cmd->flavor << std::endl
+          VLOG(3) << "FLAVOR: " << cmd->flavor << std::endl
                      << "COUNT:  " << cmd->count;
           break;
         }
@@ -222,7 +224,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_ROUTINES_64:
         {
 
-          LOG(DEBUG) << "[+] Parsing LC_ROUTINE";
+          VLOG(3) << "[+] Parsing LC_ROUTINE";
 
           load_command = new LoadCommand{command};
           break;
@@ -234,7 +236,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SYMTAB:
         {
           using nlist_t = typename MACHO_T::nlist;
-          LOG(DEBUG) << "[+] Parsing symbols";
+          VLOG(3) << "[+] Parsing symbols";
 
           const symtab_command* cmd =
             reinterpret_cast<const symtab_command*>(
@@ -265,7 +267,7 @@ void BinaryParser::parse_load_commands(void) {
       // ===============
       case LOAD_COMMAND_TYPES::LC_DYSYMTAB:
         {
-          LOG(DEBUG) << "[+] Parsing dynamic symbols";
+          VLOG(3) << "[+] Parsing dynamic symbols";
           const dysymtab_command* cmd =
             reinterpret_cast<const dysymtab_command*>(
               this->stream_->read(loadcommands_offset, sizeof(dysymtab_command)));
@@ -280,7 +282,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_DYLD_INFO:
       case LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY:
         {
-          LOG(DEBUG) << "[+] Parsing dyld information";
+          VLOG(3) << "[+] Parsing dyld information";
           const dyld_info_command* cmd =
             reinterpret_cast<const dyld_info_command*>(
               this->stream_->read(loadcommands_offset, sizeof(dyld_info_command)));
@@ -294,27 +296,27 @@ void BinaryParser::parse_load_commands(void) {
       // ===============
       case LOAD_COMMAND_TYPES::LC_SOURCE_VERSION:
         {
-          LOG(DEBUG) << "[+] Parsing LC_SOURCE_VERSION";
+          VLOG(3) << "[+] Parsing LC_SOURCE_VERSION";
 
           const source_version_command* cmd =
             reinterpret_cast<const source_version_command*>(
               this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
 
           load_command = new SourceVersion{cmd};
-          LOG(DEBUG) << "Version: " << std::hex << cmd->version;
+          VLOG(3) << "Version: " << std::hex << cmd->version;
           break;
         }
 
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX:
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS:
         {
-          LOG(DEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd));
+          VLOG(3) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd));
 
           const version_min_command* cmd =
             reinterpret_cast<const version_min_command*>(
               this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
-          LOG(DEBUG) << "Version: " << std::hex << cmd->version;
-          LOG(DEBUG) << "SDK: "     << std::hex << cmd->sdk;
+          VLOG(3) << "Version: " << std::hex << cmd->version;
+          VLOG(3) << "SDK: "     << std::hex << cmd->sdk;
 
           load_command = new VersionMin{cmd};
           break;
@@ -325,7 +327,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_TWOLEVEL_HINTS:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_TWOLEVEL_HINTS";
+      //    VLOG(3) << "[+] Parsing LC_TWOLEVEL_HINTS";
 
       //    load_command = new LoadCommand{command};
       //    break;
@@ -333,7 +335,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_SUB_FRAMEWORK";
+      //    VLOG(3) << "[+] Parsing LC_SUB_FRAMEWORK";
 
       //    load_command = new LoadCommand{command};
       //    break;
@@ -341,7 +343,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_SUB_UMBRELLA:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_SUB_UMBRELLA";
+      //    VLOG(3) << "[+] Parsing LC_SUB_UMBRELLA";
 
       //    load_command = new LoadCommand{command};
       //    break;
@@ -349,7 +351,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_SUB_LIBRARY:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_SUB_LIBRARY";
+      //    VLOG(3) << "[+] Parsing LC_SUB_LIBRARY";
 
       //    load_command = new LoadCommand{command};
       //    break;
@@ -357,7 +359,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_SUB_CLIENT:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_SUB_CLIENT";
+      //    VLOG(3) << "[+] Parsing LC_SUB_CLIENT";
 
       //    load_command = new LoadCommand{command};
       //    break;
@@ -368,7 +370,7 @@ void BinaryParser::parse_load_commands(void) {
       // =======
       case LOAD_COMMAND_TYPES::LC_MAIN:
         {
-          LOG(DEBUG) << "[+] Parsing LC_MAIN";
+          VLOG(3) << "[+] Parsing LC_MAIN";
 
           const entry_point_command* cmd =
             reinterpret_cast<const entry_point_command*>(
@@ -383,7 +385,7 @@ void BinaryParser::parse_load_commands(void) {
       // ==================
       case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
         {
-          LOG(DEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
+          VLOG(3) << "[+] Parsing LC_FUNCTION_STARTS";
           const linkedit_data_command* cmd =
             reinterpret_cast<const linkedit_data_command*>(
               this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
@@ -401,7 +403,7 @@ void BinaryParser::parse_load_commands(void) {
             value  += std::get<0>(value_delta);
             offset += std::get<1>(value_delta);
 
-            LOG(DEBUG) << "Value: " << std::hex << value;
+            VLOG(3) << "Value: " << std::hex << value;
             dynamic_cast<FunctionStarts*>(load_command)->add_function(value);
           } while(offset < (cmd->dataoff + cmd->datasize) and std::get<0>(value_delta) > 0);
 
@@ -410,7 +412,7 @@ void BinaryParser::parse_load_commands(void) {
 
       //case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
       //  {
-      //    LOG(DEBUG) << "[+] Parsing LC_CODE_SIGNATURE";
+      //    VLOG(3) << "[+] Parsing LC_CODE_SIGNATURE";
       //    load_command = new LoadCommand{command};
       //    break;
       //  }
@@ -444,33 +446,41 @@ void BinaryParser::parse_load_commands(void) {
 template<class MACHO_T>
 void BinaryParser::parse_relocations(Section& section) {
   if (section.numberof_relocations() == 0) {
-    LOG(DEBUG) << "No relocations in " << section.name();
+    VLOG(3) << "No relocations in " << section.name();
     return;
   }
 
-  LOG(DEBUG) << "Parse '" << section.name() << "' relocations (" << std::dec << section.numberof_relocations() << ")";
+  VLOG(3) << "Parse '" << section.name() << "' relocations (" << std::dec << section.numberof_relocations() << ")";
 
   uint64_t current_reloc_offset = section.relocation_offset();
-  section.relocations_.resize(section.numberof_relocations());
-  for (size_t i = 0; i < section.numberof_relocations(); ++i) {
+  size_t numberof_relocations = section.numberof_relocations();
+  if (section.numberof_relocations() > BinaryParser::MAX_RELOCATIONS) {
+    numberof_relocations = BinaryParser::MAX_RELOCATIONS;
+    LOG(WARNING) << "Huge number of relocations (" << std::dec << section.relocation_offset() << "). "
+                 << "Only the first " << std::dec << numberof_relocations << " will be parsed";
+
+  }
+
+  section.relocations_.reserve(numberof_relocations);
+  for (size_t i = 0; i < numberof_relocations; ++i) {
     int32_t address = this->stream_->read_integer<int32_t>(current_reloc_offset);
     bool is_scattered = static_cast<bool>(address & R_SCATTERED);
     if (is_scattered) {
       const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
-      section.relocations_[i] = new RelocationObject{reloc_info};
+      section.relocations_.push_back(new RelocationObject{reloc_info});
     } else {
       const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
-      section.relocations_[i] = new RelocationObject{reloc_info};
+      section.relocations_.push_back(new RelocationObject{reloc_info});
 
       if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
         if (reloc_info->r_symbolnum < this->binary_->symbols().size()) {
           Symbol& symbol = this->binary_->symbols()[reloc_info->r_symbolnum];
-          Relocation& relocation = section.relocations()[i];
-          relocation.symbol_ = &symbol;
+          Relocation* relocation = section.relocations_.back();
+          relocation->symbol_ = &symbol;
 
-          LOG(DEBUG) << "Symbol: " << symbol.name();
+          VLOG(3) << "Symbol: " << symbol.name();
         } else {
           LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " symbol index is out-of-bound";
         }
@@ -479,10 +489,10 @@ void BinaryParser::parse_relocations(Section& section) {
       if (reloc_info->r_extern == 0) {
         if (reloc_info->r_symbolnum < this->binary_->sections().size()) {
           Section& relsec = this->binary_->sections()[reloc_info->r_symbolnum];
-          Relocation& relocation = section.relocations()[i];
-          relocation.section_ = &relsec;
+          Relocation* relocation = section.relocations_.back();
+          relocation->section_ = &relsec;
 
-          LOG(DEBUG) << "Section: " << relsec.name();
+          VLOG(3) << "Section: " << relsec.name();
         } else {
           LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " seems corrupted";
         }
@@ -493,7 +503,7 @@ void BinaryParser::parse_relocations(Section& section) {
       section.relocations_[i]->section_ = &section;
     }
     section.relocations_[i]->architecture_ = this->binary_->header().cpu_type();
-    LOG(DEBUG) << *section.relocations_.back();;
+    VLOG(3) << *section.relocations_.back();;
     current_reloc_offset += 2 * sizeof(uint32_t);
   }
 
@@ -663,7 +673,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
         Section& section = this->binary_->section_from_offset(offset);
         relocation.section_ = &section;
       } catch (const not_found& e) {
-        LOG(DEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << relocation.address() << " - 0x" << offset;
+        VLOG(3) << "Unable to tie a section with dyld relocation at 0x" << std::hex << relocation.address() << " - 0x" << offset;
       }
     }
   }
@@ -1333,7 +1343,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     Section& section = this->binary_->section_from_offset(offset);
     reloc->section_ = &section;
   } catch (const not_found& e) {
-    LOG(DEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
+    VLOG(3) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
   }
 
   if (this->binary_->has_symbol(symbol_name)) {
@@ -1350,7 +1360,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     segment.relocations_.push_back(reloc);
   }
   this->binary_->dyld_info().binding_info_.push_back(binding_info);
-  LOG(DEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
+  VLOG(3) << to_string(cls) << segment.name() << " - " << symbol_name;
 }
 
 template<class MACHO_T>
