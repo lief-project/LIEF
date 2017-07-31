@@ -66,6 +66,11 @@ void init_ELF_Binary_class(py::module& m) {
         "Return an iterator to dynamic  " RST_CLASS_REF(lief.ELF.Symbol) "",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("symbols",
+        static_cast<no_const_getter<it_symbols>>(&Binary::get_symbols),
+        "Return an iterator over both **static** and **dynamic**  " RST_CLASS_REF(lief.ELF.Symbol) "",
+        py::return_value_policy::reference_internal)
+
     .def_property_readonly("exported_symbols",
         static_cast<no_const_getter<it_exported_symbols>>(&Binary::get_exported_symbols),
         "Return dynamic " RST_CLASS_REF(lief.ELF.Symbol) " which are exported",

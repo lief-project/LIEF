@@ -151,22 +151,53 @@ it_const_dynamic_entries Binary::get_dynamic_entries(void) const {
 // -------
 
 it_symbols Binary::get_static_symbols(void) {
-  return it_symbols{std::ref(this->static_symbols_)};
+  return this->static_symbols_;
 }
 
 it_const_symbols Binary::get_static_symbols(void) const {
-  return it_const_symbols{std::cref(this->static_symbols_)};
+  return this->static_symbols_;
 }
 
 // Dynamics
 // --------
 
 it_symbols Binary::get_dynamic_symbols(void) {
-  return it_symbols{std::ref(this->dynamic_symbols_)};
+  return this->dynamic_symbols_;
 }
 
 it_const_symbols Binary::get_dynamic_symbols(void) const {
-  return it_const_symbols{std::cref(this->dynamic_symbols_)};
+  return this->dynamic_symbols_;
+}
+
+
+it_symbols Binary::get_symbols(void) {
+  symbols_t symbols;
+  symbols.reserve(this->get_dynamic_symbols().size() + this->get_static_symbols().size());
+  for (Symbol& s : this->get_dynamic_symbols()) {
+    symbols.push_back(&s);
+  }
+
+  for (Symbol& s : this->get_static_symbols()) {
+    symbols.push_back(&s);
+  }
+
+  return it_symbols{symbols};
+}
+
+it_const_symbols Binary::get_symbols(void) const {
+  symbols_t symbols;
+
+  symbols.reserve(this->get_dynamic_symbols().size() + this->get_static_symbols().size());
+
+  for (const Symbol& s : this->get_dynamic_symbols()) {
+    symbols.push_back(const_cast<Symbol*>(&s));
+  }
+
+  for (const Symbol& s : this->get_static_symbols()) {
+    symbols.push_back(const_cast<Symbol*>(&s));
+  }
+
+  return it_const_symbols{symbols};
 }
 
 // Exported

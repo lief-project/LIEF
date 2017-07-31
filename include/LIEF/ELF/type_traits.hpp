@@ -46,8 +46,8 @@ using it_dynamic_entries                       = ref_iterator<dynamic_entries_t&
 using it_const_dynamic_entries                 = const_ref_iterator<const dynamic_entries_t&>;
 
 using symbols_t                                = std::vector<Symbol*>;
-using it_symbols                               = ref_iterator<symbols_t&>;
-using it_const_symbols                         = const_ref_iterator<const symbols_t&>;
+using it_symbols                               = ref_iterator<symbols_t>;
+using it_const_symbols                         = const_ref_iterator<symbols_t>;
 
 using relocations_t                            = std::vector<Relocation*>;
 

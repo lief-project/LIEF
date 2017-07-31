@@ -185,7 +185,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Return ELF interprer if any. (e.g. `/lib64/ld-linux-x86-64.so.2`)
     std::string get_interpreter(void) const;
 
-    //! @brief Return static symbols and dynamic symbols
+    //! @brief Return both static and dynamic symbols
     it_symbols       get_symbols(void);
     it_const_symbols get_symbols(void) const;
 

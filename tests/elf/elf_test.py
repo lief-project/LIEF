@@ -137,6 +137,16 @@ class TestELF(TestCase):
 
         self.assertEqual("".join(map(chr, n3.description)), "gold 1.12")
 
+    def test_symbols_access(self):
+        hello = lief.parse(get_sample('ELF/ELF64_x86-64_binary_hello-gdb.bin'))
+
+        symbols         = hello.symbols
+        dynamic_symbols = hello.dynamic_symbols
+        static_symbols  = hello.static_symbols
+
+        self.assertTrue(all(s in symbols for s in dynamic_symbols))
+        self.assertTrue(all(s in symbols for s in static_symbols))
+
     def test_relocation_size(self):
         aarch64_toybox = lief.parse(get_sample('ELF/ELF64_AARCH64_piebinary_toybox.pie'))
         arm_ls         = lief.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
