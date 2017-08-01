@@ -64,16 +64,13 @@ def print_header(binary):
 
     print("== Header ==")
     header = binary.header
-    flags = ""
-    for flag in header.flags:
-        flag = str(flag).split(".")[-1]
-        flags += (flag if len(flags) == 0 else " - " + flag)
+    flags_str =  " - ".join([str(s).split(".")[-1] for s in header.flags_list])
 
     print(format_str.format("Magic:",              str(header.magic).split(".")[-1]))
     print(format_str.format("CPU Type:",           str(header.cpu_type).split(".")[-1]))
     print(format_hex.format("CPU sub-type:",       header.cpu_subtype))
     print(format_str.format("File Type:",          str(header.file_type).split(".")[-1]))
-    print(format_str.format("Flags:",              flags))
+    print(format_str.format("Flags:",              flags_str))
     print(format_dec.format("Number of commands:", header.nb_cmds))
     print(format_hex.format("Size of commands:",   header.sizeof_cmds))
     print(format_hex.format("Reserved:",           header.reserved))

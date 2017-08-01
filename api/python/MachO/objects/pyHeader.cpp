@@ -54,7 +54,7 @@ void init_MachO_Header_class(py::module& m) {
         "Binary's type ( " RST_CLASS_REF(lief.MachO.FILE_TYPES) ")")
 
     .def_property("flags",
-        &Header::flags_list,
+        static_cast<getter_t<uint32_t>>(&Header::flags),
         static_cast<setter_t<uint32_t>>(&Header::flags),
         "Binary's flags ( " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) ")")
 
@@ -73,6 +73,26 @@ void init_MachO_Header_class(py::module& m) {
         static_cast<setter_t<uint32_t>>(&Header::reserved),
         "")
 
+    .def_property_readonly("flags_list",
+        &Header::flags_list,
+        "" RST_CLASS_REF(lief.PE.HEADER_FLAGS) " as a list")
+
+    .def("add",
+        static_cast<void (Header::*)(HEADER_FLAGS)>(&Header::add),
+        "Add the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) "",
+        "flag"_a)
+
+    .def("remove",
+        static_cast<void (Header::*)(HEADER_FLAGS)>(&Header::remove),
+        "Remove the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) "",
+        "flag"_a)
+
+    .def("has",
+        static_cast<bool (Header::*)(HEADER_FLAGS) const>(&Header::has),
+        "``True`` if the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) " is in the "
+        ":attr:`~lief.MachO.Header.flags`",
+        "flag"_a)
+
 
     .def("__eq__", &Header::operator==)
     .def("__ne__", &Header::operator!=)
@@ -80,6 +100,13 @@ void init_MachO_Header_class(py::module& m) {
         [] (const Header& header) {
           return LIEF::Hash::hash(header);
         })
+
+    .def(py::self += HEADER_FLAGS())
+    .def(py::self -= HEADER_FLAGS())
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(HEADER_FLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) " is present")
 
 
     .def("__str__",

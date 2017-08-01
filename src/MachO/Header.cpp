@@ -153,27 +153,27 @@ ENDIANNESS Header::abstract_endianness(void) const {
 std::set<HEADER_FLAGS> Header::flags_list(void) const {
   std::set<HEADER_FLAGS> flags;
 
-  auto has_flag = [this] (HEADER_FLAGS flag) {
-    return (static_cast<uint32_t>(flag) & this->flags_) > 0;
-  };
-
   std::copy_if(
       std::begin(header_flags_array),
       std::end(header_flags_array),
       std::inserter(flags, std::begin(flags)),
-      has_flag);
+      std::bind(&Header::has, this, std::placeholders::_1));
 
   return flags;
 }
 
 
-bool Header::has_flag(HEADER_FLAGS flag) const {
-  return (this->flags_ & static_cast<uint32_t>(flag)) > 0;
+bool Header::has(HEADER_FLAGS flag) const {
+  return (this->flags() & static_cast<uint32_t>(flag)) > 0;
 }
 
 
-void Header::remove_flag(HEADER_FLAGS flag) {
-  this->flags_ &= ~static_cast<uint32_t>(flag);
+void Header::add(HEADER_FLAGS flag) {
+  this->flags(this->flags() | static_cast<uint32_t>(flag));
+}
+
+void Header::remove(HEADER_FLAGS flag) {
+  this->flags(this->flags() & ~static_cast<uint32_t>(flag));
 }
 
 
@@ -230,6 +230,16 @@ bool Header::operator!=(const Header& rhs) const {
   return not (*this == rhs);
 }
 
+
+Header& Header::operator+=(HEADER_FLAGS c) {
+  this->add(c);
+  return *this;
+}
+
+Header& Header::operator-=(HEADER_FLAGS c) {
+  this->remove(c);
+  return *this;
+}
 
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
