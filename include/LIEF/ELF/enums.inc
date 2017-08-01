@@ -748,7 +748,7 @@ enum DYNAMIC_TAGS {
   DT_RELACOUNT                  = 0x6FFFFFF9, /**< ELF32_Rela count. */
   DT_RELCOUNT                   = 0x6FFFFFFA, /**< ELF32_Rel count. */
 
-  DT_FLAGS_1                    = 0X6FFFFFFB, /**< Flags_1. */
+  DT_FLAGS_1                    = 0x6FFFFFFB, /**< Flags_1. */
   DT_VERSYM                     = 0x6FFFFFF0, /**< The address of .gnu.version section. */
   DT_VERDEF                     = 0X6FFFFFFC, /**< The address of the version definition table. */
   DT_VERDEFNUM                  = 0X6FFFFFFD, /**< The number of entries in DT_VERDEF. */
@@ -813,33 +813,33 @@ enum DYNAMIC_FLAGS {
 };
 
 /* State flags selectable in the `d_un.d_val' element of the DT_FLAGS_1 entry. */
-enum {
-  DF_1_NOW        = 0x00000001, /* Set RTLD_NOW for this object. */
-  DF_1_GLOBAL     = 0x00000002, /* Set RTLD_GLOBAL for this object. */
-  DF_1_GROUP      = 0x00000004, /* Set RTLD_GROUP for this object. */
-  DF_1_NODELETE   = 0x00000008, /* Set RTLD_NODELETE for this object. */
-  DF_1_LOADFLTR   = 0x00000010, /* Trigger filtee loading at runtime. */
-  DF_1_INITFIRST  = 0x00000020, /* Set RTLD_INITFIRST for this object. */
-  DF_1_NOOPEN     = 0x00000040, /* Set RTLD_NOOPEN for this object. */
-  DF_1_ORIGIN     = 0x00000080, /* $ORIGIN must be handled. */
-  DF_1_DIRECT     = 0x00000100, /* Direct binding enabled. */
+enum DYNAMIC_FLAGS_1 {
+  DF_1_NOW        = 0x00000001, /**< Set RTLD_NOW for this object. */
+  DF_1_GLOBAL     = 0x00000002, /**< Set RTLD_GLOBAL for this object. */
+  DF_1_GROUP      = 0x00000004, /**< Set RTLD_GROUP for this object. */
+  DF_1_NODELETE   = 0x00000008, /**< Set RTLD_NODELETE for this object. */
+  DF_1_LOADFLTR   = 0x00000010, /**< Trigger filtee loading at runtime. */
+  DF_1_INITFIRST  = 0x00000020, /**< Set RTLD_INITFIRST for this object. */
+  DF_1_NOOPEN     = 0x00000040, /**< Set RTLD_NOOPEN for this object. */
+  DF_1_ORIGIN     = 0x00000080, /**< $ORIGIN must be handled. */
+  DF_1_DIRECT     = 0x00000100, /**< Direct binding enabled. */
   DF_1_TRANS      = 0x00000200,
-  DF_1_INTERPOSE  = 0x00000400, /* Object is used to interpose. */
-  DF_1_NODEFLIB   = 0x00000800, /* Ignore default lib search path. */
-  DF_1_NODUMP     = 0x00001000, /* Object can't be dldump'ed. */
-  DF_1_CONFALT    = 0x00002000, /* Configuration alternative created. */
-  DF_1_ENDFILTEE  = 0x00004000, /* Filtee terminates filters search. */
-  DF_1_DISPRELDNE = 0x00008000, /* Disp reloc applied at build time. */
-  DF_1_DISPRELPND = 0x00010000, /* Disp reloc applied at run-time. */
-  DF_1_NODIRECT   = 0x00020000, /* Object has no-direct binding. */
+  DF_1_INTERPOSE  = 0x00000400, /**< Object is used to interpose. */
+  DF_1_NODEFLIB   = 0x00000800, /**< Ignore default lib search path. */
+  DF_1_NODUMP     = 0x00001000, /**< Object can't be dldump'ed. */
+  DF_1_CONFALT    = 0x00002000, /**< Configuration alternative created. */
+  DF_1_ENDFILTEE  = 0x00004000, /**< Filtee terminates filters search. */
+  DF_1_DISPRELDNE = 0x00008000, /**< Disp reloc applied at build time. */
+  DF_1_DISPRELPND = 0x00010000, /**< Disp reloc applied at run-time. */
+  DF_1_NODIRECT   = 0x00020000, /**< Object has no-direct binding. */
   DF_1_IGNMULDEF  = 0x00040000,
   DF_1_NOKSYMS    = 0x00080000,
   DF_1_NOHDR      = 0x00100000,
-  DF_1_EDITED     = 0x00200000, /* Object is modified after built. */
+  DF_1_EDITED     = 0x00200000, /**< Object is modified after built. */
   DF_1_NORELOC    = 0x00400000,
-  DF_1_SYMINTPOSE = 0x00800000, /* Object has individual interposers. */
-  DF_1_GLOBAUDIT  = 0x01000000, /* Global auditing required. */
-  DF_1_SINGLETON  = 0x02000000  /* Singleton symbols are used. */
+  DF_1_SYMINTPOSE = 0x00800000, /**< Object has individual interposers. */
+  DF_1_GLOBAUDIT  = 0x01000000, /**< Global auditing required. */
+  DF_1_SINGLETON  = 0x02000000  /**< Singleton symbols are used. */
 };
 
 /* DT_MIPS_FLAGS values. */

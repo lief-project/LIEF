@@ -1048,6 +1048,57 @@ const char* to_string(HEXAGON_EFLAGS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
+const char* to_string(IDENTITY e) {
+  const std::map<IDENTITY, const char*> enumStrings {
+    { IDENTITY::EI_MAG0,       "MAG0"       },
+    { IDENTITY::EI_MAG1,       "MAG1"       },
+    { IDENTITY::EI_MAG2,       "MAG2"       },
+    { IDENTITY::EI_MAG3,       "MAG3"       },
+    { IDENTITY::EI_CLASS,      "CLASS"      },
+    { IDENTITY::EI_DATA,       "DATA"       },
+    { IDENTITY::EI_VERSION,    "VERSION"    },
+    { IDENTITY::EI_OSABI,      "OSABI"      },
+    { IDENTITY::EI_ABIVERSION, "ABIVERSION" },
+    { IDENTITY::EI_PAD,        "PAD"        },
+    { IDENTITY::EI_NIDENT,     "NIDENT"     },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+const char* to_string(SYMBOL_SECTION_INDEX e) {
+  const std::map<SYMBOL_SECTION_INDEX, const char*> enumStrings {
+    { SYMBOL_SECTION_INDEX::SHN_UNDEF,     "UNDEF"     },
+    { SYMBOL_SECTION_INDEX::SHN_LORESERVE, "LORESERVE" },
+    { SYMBOL_SECTION_INDEX::SHN_LOPROC,    "LOPROC"    },
+    { SYMBOL_SECTION_INDEX::SHN_HIPROC,    "HIPROC"    },
+    { SYMBOL_SECTION_INDEX::SHN_LOOS,      "LOOS"      },
+    { SYMBOL_SECTION_INDEX::SHN_HIOS,      "HIOS"      },
+    { SYMBOL_SECTION_INDEX::SHN_ABS,       "ABS"       },
+    { SYMBOL_SECTION_INDEX::SHN_COMMON,    "COMMON"    },
+    { SYMBOL_SECTION_INDEX::SHN_XINDEX,    "XINDEX"    },
+    { SYMBOL_SECTION_INDEX::SHN_HIRESERVE, "HIRESERVE" },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
+const char* to_string(DYNAMIC_FLAGS e) {
+  const std::map<DYNAMIC_FLAGS, const char*> enumStrings {
+    { DYNAMIC_FLAGS::DF_ORIGIN,     "ORIGIN"     },
+    { DYNAMIC_FLAGS::DF_SYMBOLIC,   "SYMBOLIC"   },
+    { DYNAMIC_FLAGS::DF_TEXTREL,    "TEXTREL"    },
+    { DYNAMIC_FLAGS::DF_BIND_NOW,   "BIND_NOW"   },
+    { DYNAMIC_FLAGS::DF_STATIC_TLS, "STATIC_TLS" },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
 
 
 } // namespace ELF

@@ -165,74 +165,197 @@ Utilities
 Enums
 *****
 
+Architectures
+~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::ARCH
    :project: lief
+
+----------
+
+Identity
+~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::IDENTITY
    :project: lief
 
+----------
+
+Binary types
+~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::E_TYPE
    :project: lief
+
+----------
+
+Version
+~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::VERSION
    :project: lief
 
+----------
+
+ELF Class
+~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::ELF_CLASS
    :project: lief
+
+----------
+
+ELF Data
+~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::ELF_DATA
    :project: lief
 
+----------
+
+ELF OS/ABI
+~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::OS_ABI
    :project: lief
+
+----------
+
+Symbol section index
+~~~~~~~~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::SYMBOL_SECTION_INDEX
    :project: lief
 
+----------
+
+Section types
+~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::SECTION_TYPES
    :project: lief
+
+----------
+
+Section flags
+~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::SECTION_FLAGS
    :project: lief
 
+----------
+
+Symbol bindings
+~~~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::SYMBOL_BINDINGS
    :project: lief
+
+----------
+
+Symbol types
+~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::SYMBOL_TYPES
    :project: lief
 
+----------
+
+
+Segment types
+~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::SEGMENT_TYPES
    :project: lief
+
+----------
+
+Segment flags
+~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::SEGMENT_FLAGS
    :project: lief
 
+----------
+
+Dynamic tags
+~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::DYNAMIC_TAGS
    :project: lief
 
+----------
+
+Dynamic flags
+~~~~~~~~~~~~~
 .. doxygenenum:: LIEF::ELF::DYNAMIC_FLAGS
    :project: lief
+
+----------
+
+Dynamic symbols counting
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::DYNSYM_COUNT_METHODS
    :project: lief
 
+----------
+
+
+Note types
+~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::NOTE_TYPES
    :project: lief
+
+----------
+
+
+Note ABIs
+~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::NOTE_ABIS
    :project: lief
 
+
+----------
+
+
+Relocation purpose
+~~~~~~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::RELOCATION_PURPOSES
    :project: lief
+
+----------
+
+Relocations x86-64
+~~~~~~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::RELOC_x86_64
    :project: lief
 
+----------
+
+
+Relocations x86 (i386)
+~~~~~~~~~~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::RELOC_i386
    :project: lief
 
+----------
+
+Relocations ARM
+~~~~~~~~~~~~~~~
+
 .. doxygenenum:: LIEF::ELF::RELOC_ARM
    :project: lief
+
+----------
+
+Relocations AARCH64
+~~~~~~~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::RELOC_AARCH64
    :project: lief

@@ -41,6 +41,9 @@ DLL_PUBLIC const char* to_string(DYNSYM_COUNT_METHODS e);
 DLL_PUBLIC const char* to_string(NOTE_TYPES e);
 DLL_PUBLIC const char* to_string(NOTE_ABIS e);
 DLL_PUBLIC const char* to_string(RELOCATION_PURPOSES e);
+DLL_PUBLIC const char* to_string(IDENTITY e);
+DLL_PUBLIC const char* to_string(SYMBOL_SECTION_INDEX e);
+DLL_PUBLIC const char* to_string(DYNAMIC_FLAGS e);
 
 DLL_PUBLIC const char* to_string(PPC64_EFLAGS e);
 DLL_PUBLIC const char* to_string(ARM_EFLAGS e);
