@@ -45,6 +45,7 @@ def print_information(binary):
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("Imphash:",      PE.get_imphash(binary)))
+    print(format_str.format("PIE:",          str(binary.is_pie)))
 
 @exceptions_handler(Exception)
 def print_header(binary):

@@ -37,6 +37,10 @@ void init_LIEF_Binary_class(py::module& m) {
         &Binary::format,
         "File format " RST_CLASS_REF(lief.EXE_FORMATS) " of the underlying binary.")
 
+    .def_property_readonly("is_pie",
+        &Binary::is_pie,
+        "Check if the binary is position independent")
+
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Binary::name),
         static_cast<setter_t<const std::string&>>(&Binary::name),

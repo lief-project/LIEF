@@ -61,6 +61,19 @@ class TestAbstract(TestCase):
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')))
         self.assertEqual(binary.format, lief.EXE_FORMATS.PE)
 
+    def test_pie(self):
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF32_ARM_binary-pie_ls.bin')))
+        self.assertEqual(binary.is_pie, True)
+
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('MachO/MachO64_x86-64_binary_nm.bin')))
+        self.assertEqual(binary.is_pie, True)
+
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('PE/PE32_x86_binary_cmd.exe')))
+        self.assertEqual(binary.is_pie, True)
+
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_x86-64_binary_ls.bin')))
+        self.assertEqual(binary.is_pie, False)
+
 
     #def test_parser(self):
     #    binary = lief.parse(TestAbstract.get_raw(get_sample('ELF/ELF32_x86_binary_ls.bin')))

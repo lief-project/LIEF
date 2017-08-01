@@ -113,6 +113,10 @@ uint64_t Binary::entrypoint(void) const {
   return this->imagebase() + main_command->entrypoint();
 }
 
+bool Binary::is_pie(void) const {
+  return this->header().has(HEADER_FLAGS::MH_PIE);
+}
+
 
 bool Binary::has_entrypoint(void) const {
   auto&& it_main_command = std::find_if(
@@ -494,8 +498,8 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
 
 
 bool Binary::disable_pie(void) {
-  if (this->header().has_flag(HEADER_FLAGS::MH_PIE)) {
-    this->header().remove_flag(HEADER_FLAGS::MH_PIE);
+  if (this->is_pie()) {
+    this->header().remove(HEADER_FLAGS::MH_PIE);
     return true;
   }
   return false;

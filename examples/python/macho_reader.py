@@ -54,6 +54,7 @@ def print_information(binary):
     format_dec = "{:<30} {:<30d}"
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Address base:", binary.imagebase))
+    print(format_str.format("PIE:",          str(binary.is_pie)))
     print("")
 
 @exceptions_handler(Exception)

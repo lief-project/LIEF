@@ -316,6 +316,7 @@ def print_information(binary):
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_hex.format("Virtual size:", binary.virtual_size))
+    print(format_str.format("PIE:",          str(binary.is_pie)))
 
 @exceptions_handler(Exception)
 def print_gnu_hash(binary):

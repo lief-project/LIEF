@@ -1049,6 +1049,10 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
 
 }
 
+bool Binary::is_pie(void) const {
+  return this->optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE);
+}
+
 // Overlay
 // =======
 

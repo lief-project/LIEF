@@ -321,7 +321,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //!
     //! To do so we check if there is a `PT_INTERP` segment and if
     //! the binary type is `ET_DYN` (Shared object)
-    bool is_pie(void) const;
+    virtual bool is_pie(void) const override;
 
     //! @brief Return the @link ELF::Section Section @endlink
     //! from the @p offset
