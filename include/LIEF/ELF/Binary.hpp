@@ -35,6 +35,7 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"

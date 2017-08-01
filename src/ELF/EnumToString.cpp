@@ -306,7 +306,7 @@ const char* to_string(DYNAMIC_TAGS e) {
     { DYNAMIC_TAGS::DT_FINI_ARRAYSZ,               "FINI_ARRAYSZ"},
     { DYNAMIC_TAGS::DT_RUNPATH,                    "RUNPATH"},
     { DYNAMIC_TAGS::DT_FLAGS,                      "FLAGS"},
-    { DYNAMIC_TAGS::DT_ENCODING,                   "ENCODING"},
+    //{ DYNAMIC_TAGS::DT_ENCODING,                   "ENCODING"}, // SKIPED
     { DYNAMIC_TAGS::DT_PREINIT_ARRAY,              "PREINIT_ARRAY"},
     { DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ,            "PREINIT_ARRAYSZ"},
     { DYNAMIC_TAGS::DT_LOOS,                       "LOOS"},
@@ -1087,16 +1087,50 @@ const char* to_string(SYMBOL_SECTION_INDEX e) {
 
 
 const char* to_string(DYNAMIC_FLAGS e) {
-  const std::map<DYNAMIC_FLAGS, const char*> enumStrings {
-    { DYNAMIC_FLAGS::DF_ORIGIN,     "ORIGIN"     },
-    { DYNAMIC_FLAGS::DF_SYMBOLIC,   "SYMBOLIC"   },
-    { DYNAMIC_FLAGS::DF_TEXTREL,    "TEXTREL"    },
-    { DYNAMIC_FLAGS::DF_BIND_NOW,   "BIND_NOW"   },
-    { DYNAMIC_FLAGS::DF_STATIC_TLS, "STATIC_TLS" },
+  const std::map<DYNAMIC_FLAGS, const char*> enum_strings {
+    { DYNAMIC_FLAGS::DF_ORIGIN,     "ORIGIN"         },
+    { DYNAMIC_FLAGS::DF_SYMBOLIC,   "SYMBOLIC"       },
+    { DYNAMIC_FLAGS::DF_TEXTREL,    "TEXTREL"        },
+    { DYNAMIC_FLAGS::DF_BIND_NOW,   "BIND_NOW"       },
+    { DYNAMIC_FLAGS::DF_STATIC_TLS, "STATIC_TLS"     },
   };
 
-  auto   it  = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+  auto   it  = enum_strings.find(e);
+  return it == enum_strings.end() ? "UNDEFINED" : it->second;
+}
+
+const char* to_string(DYNAMIC_FLAGS_1 e) {
+  const std::map<DYNAMIC_FLAGS_1, const char*> enum_strings_flags1 {
+    { DYNAMIC_FLAGS_1::DF_1_NOW,        "NOW"        },
+    { DYNAMIC_FLAGS_1::DF_1_GLOBAL,     "GLOBAL"     },
+    { DYNAMIC_FLAGS_1::DF_1_GROUP,      "GROUP"      },
+    { DYNAMIC_FLAGS_1::DF_1_NODELETE,   "NODELETE"   },
+    { DYNAMIC_FLAGS_1::DF_1_LOADFLTR,   "LOADFLTR"   },
+    { DYNAMIC_FLAGS_1::DF_1_INITFIRST,  "INITFIRST"  },
+    { DYNAMIC_FLAGS_1::DF_1_NOOPEN,     "NOOPEN"     },
+    { DYNAMIC_FLAGS_1::DF_1_ORIGIN,     "ORIGIN"     },
+    { DYNAMIC_FLAGS_1::DF_1_DIRECT,     "DIRECT"     },
+    { DYNAMIC_FLAGS_1::DF_1_TRANS,      "TRANS"      },
+    { DYNAMIC_FLAGS_1::DF_1_INTERPOSE,  "INTERPOSE"  },
+    { DYNAMIC_FLAGS_1::DF_1_NODEFLIB,   "NODEFLIB"   },
+    { DYNAMIC_FLAGS_1::DF_1_NODUMP,     "NODUMP"     },
+    { DYNAMIC_FLAGS_1::DF_1_CONFALT,    "CONFALT"    },
+    { DYNAMIC_FLAGS_1::DF_1_ENDFILTEE,  "ENDFILTEE"  },
+    { DYNAMIC_FLAGS_1::DF_1_DISPRELDNE, "DISPRELDNE" },
+    { DYNAMIC_FLAGS_1::DF_1_DISPRELPND, "DISPRELPND" },
+    { DYNAMIC_FLAGS_1::DF_1_NODIRECT,   "NODIRECT"   },
+    { DYNAMIC_FLAGS_1::DF_1_IGNMULDEF,  "IGNMULDEF"  },
+    { DYNAMIC_FLAGS_1::DF_1_NOKSYMS,    "NOKSYMS"    },
+    { DYNAMIC_FLAGS_1::DF_1_NOHDR,      "NOHDR"      },
+    { DYNAMIC_FLAGS_1::DF_1_EDITED,     "EDITED"     },
+    { DYNAMIC_FLAGS_1::DF_1_NORELOC,    "NORELOC"    },
+    { DYNAMIC_FLAGS_1::DF_1_SYMINTPOSE, "SYMINTPOSE" },
+    { DYNAMIC_FLAGS_1::DF_1_GLOBAUDIT,  "GLOBAUDIT"  },
+    { DYNAMIC_FLAGS_1::DF_1_SINGLETON,  "SINGLETON"  },
+  };
+
+  auto   it  = enum_strings_flags1.find(e);
+  return it == enum_strings_flags1.end() ? "UNDEFINED" : it->second;
 }
 
 

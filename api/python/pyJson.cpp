@@ -33,6 +33,7 @@ void init_json_functions(py::module& m) {
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntryRpath,           LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntryRunPath,         LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicSharedObject,         LIEF::ELF::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::ELF::DynamicEntryFlags,           LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Symbol,                      LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Relocation,                  LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::SymbolVersion,               LIEF::ELF::JsonVisitor>);

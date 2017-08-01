@@ -110,6 +110,17 @@ Dynamic Entry Array
 
 ----------
 
+Dynamic Entry Flags
+*******************
+
+.. autoclass:: lief.ELF.DynamicEntryFlags
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
 Relocations
 ***********
 
@@ -344,6 +355,17 @@ Dynamic flags
 ~~~~~~~~~~~~~
 
 .. autoclass:: lief.ELF.DYNAMIC_FLAGS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Dynamic flags 1
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.DYNAMIC_FLAGS_1
   :members:
   :inherited-members:
   :undoc-members:

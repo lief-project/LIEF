@@ -54,6 +54,7 @@ class DynamicEntryLibrary;
 class DynamicSharedObject;
 class DynamicEntryRunPath;
 class DynamicEntryRpath;
+class DynamicEntryFlags;
 
 class Symbol;
 class SymbolVersion;
@@ -228,6 +229,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::ELF::DynamicEntryRpath
   virtual void visit(const ELF::DynamicEntryRpath& rpath);
+
+  //! @brief Method to visit a LIEF::ELF::DynamicEntryFlags
+  virtual void visit(const ELF::DynamicEntryFlags& flags);
 
   //! @brief Method to visit a LIEF::ELF::Symbol
   virtual void visit(const ELF::Symbol& symbol);

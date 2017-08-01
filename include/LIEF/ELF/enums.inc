@@ -803,16 +803,15 @@ enum DYNAMIC_TAGS {
   DT_MIPS_RWPLT                 = 0x70000034  /**< Points to the base of a writable PLT. */
 };
 
-/** DT_FLAGS values. */
+/** DT_FLAGS and DT_FLAGS_1 values. */
 enum DYNAMIC_FLAGS {
-  DF_ORIGIN     = 0x01, /**< The object may reference $ORIGIN. */
-  DF_SYMBOLIC   = 0x02, /**< Search the shared lib before searching the exe. */
-  DF_TEXTREL    = 0x04, /**< Relocations may modify a non-writable segment. */
-  DF_BIND_NOW   = 0x08, /**< Process all relocations on load. */
-  DF_STATIC_TLS = 0x10  /**< Reject attempts to load dynamically. */
+  DF_ORIGIN       = 0x00000001, /**< The object may reference $ORIGIN. */
+  DF_SYMBOLIC     = 0x00000002, /**< Search the shared lib before searching the exe. */
+  DF_TEXTREL      = 0x00000004, /**< Relocations may modify a non-writable segment. */
+  DF_BIND_NOW     = 0x00000008, /**< Process all relocations on load. */
+  DF_STATIC_TLS   = 0x00000010, /**< Reject attempts to load dynamically. */
 };
 
-/* State flags selectable in the `d_un.d_val' element of the DT_FLAGS_1 entry. */
 enum DYNAMIC_FLAGS_1 {
   DF_1_NOW        = 0x00000001, /**< Set RTLD_NOW for this object. */
   DF_1_GLOBAL     = 0x00000002, /**< Set RTLD_GLOBAL for this object. */

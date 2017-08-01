@@ -204,15 +204,14 @@ class TestELF(TestCase):
         dynsym = list(rvs.dynamic_symbols)
         self.assertEqual(len(dynsym), 10)
 
+    def test_dynamic_flags(self):
+        sample = "ELF/ELF32_ARM_binary_ls.bin"
+        ls = lief.parse(get_sample(sample))
+        d_flags = ls.dynamic_entry_from_tag(lief.ELF.DYNAMIC_TAGS.FLAGS)
+        d_flags_1 = ls.dynamic_entry_from_tag(lief.ELF.DYNAMIC_TAGS.FLAGS_1)
 
-
-
-
-
-
-
-
-
+        self.assertIn(lief.ELF.DYNAMIC_FLAGS.BIND_NOW, d_flags)
+        self.assertIn(lief.ELF.DYNAMIC_FLAGS_1.NOW, d_flags_1)
 
 if __name__ == '__main__':
 

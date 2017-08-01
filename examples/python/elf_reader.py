@@ -152,24 +152,33 @@ def print_segments(binary):
 
 @exceptions_handler(Exception)
 def print_dynamic_entries(binary):
-    dynamicEntries = binary.dynamic_entries
+    dynamic_entries = binary.dynamic_entries
     # Dynamic entries
-    if len(dynamicEntries) > 0:
-        print("== Dynamic entries ==\n")
-        f_title = "|{:<12} | {:<10}| {:<20}|"
-        f_value = "|{:<12} | 0x{:<8x}| {:<20}|"
-        print(f_title.format("Tag", "Value", "Info"))
-        for dynEntry in dynamicEntries:
-            if dynEntry.tag == ELF.DYNAMIC_TAGS.NULL:
-                continue
-            if dynEntry.tag in [ELF.DYNAMIC_TAGS.SONAME, ELF.DYNAMIC_TAGS.NEEDED, ELF.DYNAMIC_TAGS.RUNPATH, ELF.DYNAMIC_TAGS.RPATH]:
-                print(f_value.format(str(dynEntry.tag).split(".")[-1], dynEntry.value, dynEntry.name))
-            elif dynEntry.tag in [ELF.DYNAMIC_TAGS.INIT_ARRAY,ELF.DYNAMIC_TAGS.FINI_ARRAY]:
-                print(f_value.format(str(dynEntry.tag).split(".")[-1], dynEntry.value, ", ".join(map(hex, dynEntry.array))))
-            else:
-                print(f_value.format(str(dynEntry.tag).split(".")[-1], dynEntry.value, ""))
+    if len(dynamic_entries) == 0:
+        return
 
-        print("")
+    print("== Dynamic entries ==\n")
+    f_title = "|{:<16} | {:<10}| {:<20}|"
+    f_value = "|{:<16} | 0x{:<8x}| {:<20}|"
+    print(f_title.format("Tag", "Value", "Info"))
+    for entry in dynamic_entries:
+        if entry.tag == ELF.DYNAMIC_TAGS.NULL:
+            continue
+
+        if entry.tag in [ELF.DYNAMIC_TAGS.SONAME, ELF.DYNAMIC_TAGS.NEEDED, ELF.DYNAMIC_TAGS.RUNPATH, ELF.DYNAMIC_TAGS.RPATH]:
+            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, entry.name))
+        elif type(entry) is ELF.DynamicEntryArray: # [ELF.DYNAMIC_TAGS.INIT_ARRAY,ELF.DYNAMIC_TAGS.FINI_ARRAY]:
+            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ", ".join(map(hex, entry.array))))
+        elif entry.tag == ELF.DYNAMIC_TAGS.FLAGS:
+            flags_str = " - ".join([str(ELF.DYNAMIC_FLAGS(s)).split(".")[-1] for s in entry.flags])
+            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
+        elif entry.tag == ELF.DYNAMIC_TAGS.FLAGS_1:
+            flags_str = " - ".join([str(ELF.DYNAMIC_FLAGS_1(s)).split(".")[-1] for s in entry.flags])
+            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
+        else:
+            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ""))
+
+    print("")
 
 
 @exceptions_handler(Exception)

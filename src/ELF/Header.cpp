@@ -17,6 +17,7 @@
 #include <map>
 #include <iomanip>
 #include <sstream>
+#include <numeric>
 
 #include "LIEF/exception.hpp"
 #include "LIEF/visitors/Hash.hpp"
@@ -567,6 +568,52 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   ss << static_cast<uint32_t>(identity[IDENTITY::EI_MAG3]) << " ";
   const std::string& ident_magic = ss.str();
 
+  std::string processor_flags_str = "";
+
+  if (hdr.machine_type() == ARCH::EM_ARM) {
+    const arm_flags_list_t& flags = hdr.arm_flags_list();
+    processor_flags_str = std::accumulate(
+     std::begin(flags),
+     std::end(flags), std::string{},
+     [] (const std::string& a, ARM_EFLAGS b) {
+         return a.empty() ? to_string(b) : a + " " + to_string(b);
+     });
+  }
+
+
+  if (hdr.machine_type() == ARCH::EM_PPC64) {
+    const ppc64_flags_list_t& flags = hdr.ppc64_flags_list();
+    processor_flags_str = std::accumulate(
+     std::begin(flags),
+     std::end(flags), std::string{},
+     [] (const std::string& a, PPC64_EFLAGS b) {
+         return a.empty() ? to_string(b) : a + " " + to_string(b);
+     });
+  }
+
+  if (hdr.machine_type() == ARCH::EM_HEXAGON) {
+    const hexagon_flags_list_t& flags = hdr.hexagon_flags_list();
+    processor_flags_str = std::accumulate(
+     std::begin(flags),
+     std::end(flags), std::string{},
+     [] (const std::string& a, HEXAGON_EFLAGS b) {
+         return a.empty() ? to_string(b) : a + " " + to_string(b);
+     });
+  }
+
+
+  if (hdr.machine_type() == ARCH::EM_MIPS or
+      hdr.machine_type() == ARCH::EM_MIPS_RS3_LE or
+      hdr.machine_type() == ARCH::EM_MIPS_X) {
+    const mips_flags_list_t& flags = hdr.mips_flags_list();
+    processor_flags_str = std::accumulate(
+     std::begin(flags),
+     std::end(flags), std::string{},
+     [] (const std::string& a, MIPS_EFLAGS b) {
+         return a.empty() ? to_string(b) : a + " " + to_string(b);
+     });
+  }
+
   os << std::hex << std::left;
   os << std::setw(33) << std::setfill(' ') << "Magic:"                     << ident_magic << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Class"                      << to_string(hdr.identity_class()) << std::endl;
@@ -579,7 +626,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   os << std::setw(33) << std::setfill(' ') << "Entry Point:"               << "0x" << hdr.entrypoint() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Program header offset:"     << "0x" << hdr.program_headers_offset() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Section header offset:"     << hdr.section_headers_offset() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Processor Flag"             << hdr.processor_flag() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Processor Flag"             << hdr.processor_flag() << " " << processor_flags_str << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Header size:"               << hdr.header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Size of program header :"   << hdr.program_header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Number of program header:"  << hdr.numberof_segments() << std::endl;

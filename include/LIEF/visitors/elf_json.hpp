@@ -38,6 +38,7 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const DynamicEntryRpath& entry)        override;
   virtual void visit(const DynamicEntryRunPath& entry)      override;
   virtual void visit(const DynamicSharedObject& entry)      override;
+  virtual void visit(const DynamicEntryFlags& entry)        override;
   virtual void visit(const Symbol& symbol)                  override;
   virtual void visit(const Relocation& relocation)          override;
   virtual void visit(const SymbolVersion& sv)               override;

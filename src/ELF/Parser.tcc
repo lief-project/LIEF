@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 #include "easylogging++.h"
+
 #include "LIEF/utils.hpp"
+
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -1019,8 +1022,14 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           break;
         }
 
+      case DYNAMIC_TAGS::DT_FLAGS_1:
+      case DYNAMIC_TAGS::DT_FLAGS:
+        {
+          dynamic_entry = new DynamicEntryFlags{entry};
+          break;
+        }
 
-      case DYNAMIC_TAGS::DT_SYMTAB :
+      case DYNAMIC_TAGS::DT_SYMTAB:
         {
           dynamic_entry = new DynamicEntry{entry};
           break;

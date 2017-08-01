@@ -92,6 +92,14 @@ Dynamic Entry Array
 
 ----------
 
+Dynamic Entry Flags
+*******************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryFlags
+   :project: lief
+
+----------
+
 Relocations
 ***********
 
@@ -289,6 +297,13 @@ Dynamic tags
 Dynamic flags
 ~~~~~~~~~~~~~
 .. doxygenenum:: LIEF::ELF::DYNAMIC_FLAGS
+   :project: lief
+
+----------
+
+Dynamic flags 1
+~~~~~~~~~~~~~~~
+.. doxygenenum:: LIEF::ELF::DYNAMIC_FLAGS_1
    :project: lief
 
 ----------

@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_TYPE_TRAITS_H_
 #define LIEF_ELF_TYPE_TRAITS_H_
 #include <vector>
+#include <set>
 #include "LIEF/iterators.hpp"
 
 #include "LIEF/ELF/Structures.hpp"
@@ -102,6 +103,8 @@ using arm_flags_list_t     = flags_list_t<ARM_EFLAGS>;
 using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
 using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
 using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
+
+using dynamic_flags_list_t = flags_list_t<uint32_t>;
 }
 }
 

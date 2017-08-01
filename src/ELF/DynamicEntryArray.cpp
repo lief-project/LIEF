@@ -67,7 +67,7 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
          [] (std::string& s, uint64_t x) {
           std::stringstream ss;
           ss << "0x" << std::hex << x;
-            return s.empty() ? ss.str() : " ," + ss.str();
+            return s.empty() ? ss.str() : s + ", " + ss.str();
          })
      << "]";
 

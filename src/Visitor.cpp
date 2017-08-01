@@ -108,6 +108,10 @@ void Visitor::visit(const ELF::DynamicEntryRpath& rpath) {
   rpath.accept(*this);
 }
 
+void Visitor::visit(const ELF::DynamicEntryFlags& flags) {
+  flags.accept(*this);
+}
+
 void Visitor::visit(const ELF::Symbol& symbol) {
   symbol.accept(*this);
 }

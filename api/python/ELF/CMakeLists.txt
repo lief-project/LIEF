@@ -11,6 +11,7 @@ set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyHeader.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbolVersionAux.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicEntryArray.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicEntryFlags.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySegment.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySection.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicEntryRpath.cpp"

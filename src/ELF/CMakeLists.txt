@@ -40,6 +40,7 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/SymbolVersionDefinition.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryRpath.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryFlags.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc")
 
@@ -49,6 +50,7 @@ set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Builder.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntry.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntryArray.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntryFlags.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntryLibrary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntryRpath.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntryRunPath.hpp"

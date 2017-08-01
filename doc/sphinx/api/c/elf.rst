@@ -94,6 +94,14 @@ Elf_DynamicEntry_RunPath_t
 .. doxygenstruct:: Elf_DynamicEntry_RunPath_t
    :project: lief
 
+----------
+
+Elf_DynamicEntry_Flags_t
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenstruct:: Elf_DynamicEntry_Flags_t
+   :project: lief
+
 
 Utilities
 *********

@@ -249,6 +249,34 @@ void JsonVisitor::visit(const DynamicSharedObject& entry) {
   this->node_["library"] = entry.name();
 }
 
+
+void JsonVisitor::visit(const DynamicEntryFlags& entry) {
+
+  const dynamic_flags_list_t& flags = entry.flags();
+  std::vector<std::string> flags_str;
+  flags_str.reserve(flags.size());
+
+  if (entry.tag() == DYNAMIC_TAGS::DT_FLAGS) {
+    std::transform(
+        std::begin(flags), std::end(flags),
+        std::back_inserter(flags_str),
+        [] (uint32_t f) {
+          return to_string(static_cast<DYNAMIC_FLAGS>(f));
+        });
+  }
+
+  if (entry.tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
+    std::transform(
+        std::begin(flags), std::end(flags),
+        std::back_inserter(flags_str),
+        [] (uint32_t f) {
+          return to_string(static_cast<DYNAMIC_FLAGS_1>(f));
+        });
+  }
+
+  this->node_["flags"] = flags_str;
+}
+
 void JsonVisitor::visit(const Symbol& symbol) {
   this->node_["type"]        = to_string(symbol.type());
   this->node_["binding"]     = to_string(symbol.binding());
