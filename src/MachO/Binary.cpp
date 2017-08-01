@@ -494,8 +494,8 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
 
 
 bool Binary::disable_pie(void) {
-  if (this->header().has_flag(HEADER_FLAGS::MH_PIE)) {
-    this->header().remove_flag(HEADER_FLAGS::MH_PIE);
+  if (this->header().has(HEADER_FLAGS::MH_PIE)) {
+    this->header().remove(HEADER_FLAGS::MH_PIE);
     return true;
   }
   return false;
