@@ -70,4 +70,12 @@ extern "C"
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::OS_ABI>(e));
   }
 
+  const char* DYNAMIC_FLAGS_to_string(enum DYNAMIC_FLAGS e) {
+    return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_FLAGS>(e));
+  }
+
+  const char* DYNAMIC_FLAGS_1_to_string(enum DYNAMIC_FLAGS_1 e) {
+    return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_FLAGS_1>(e));
+  }
+
 }

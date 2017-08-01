@@ -36,6 +36,8 @@ DLL_PUBLIC const char* SYMBOL_TYPES_to_string(enum SYMBOL_TYPES e);
 DLL_PUBLIC const char* ELF_CLASS_to_string(enum ELF_CLASS e);
 DLL_PUBLIC const char* ELF_DATA_to_string(enum ELF_DATA e);
 DLL_PUBLIC const char* OS_ABI_to_string(enum OS_ABI e);
+DLL_PUBLIC const char* DYNAMIC_FLAGS_to_string(enum DYNAMIC_FLAGS e);
+DLL_PUBLIC const char* DYNAMIC_FLAGS_1_to_string(enum DYNAMIC_FLAGS_1 e);
 
 #ifdef __cplusplus
 }

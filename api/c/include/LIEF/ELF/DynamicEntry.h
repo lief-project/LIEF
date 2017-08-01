@@ -68,12 +68,21 @@ struct Elf_DynamicEntry_RunPath_t {
   const char*       runpath;
 };
 
+
+struct Elf_DynamicEntry_Flags_t {
+  enum DYNAMIC_TAGS    tag;
+  uint64_t             value;
+  enum DYNAMIC_FLAGS   *flags;
+  enum DYNAMIC_FLAGS_1 *flags_1;
+};
+
 typedef struct Elf_DynamicEntry_t              Elf_DynamicEntry_t;
 typedef struct Elf_DynamicEntry_Library_t      Elf_DynamicEntry_Library_t;
 typedef struct Elf_DynamicEntry_SharedObject_t Elf_DynamicEntry_SharedObject_t;
 typedef struct Elf_DynamicEntry_Array_t        Elf_DynamicEntry_Array_t;
 typedef struct Elf_DynamicEntry_Rpath_t        Elf_DynamicEntry_Rpath_t;
 typedef struct Elf_DynamicEntry_RunPath_t      Elf_DynamicEntry_RunPath_t;
+typedef struct Elf_DynamicEntry_Flags_t        Elf_DynamicEntry_Flags_t;
 
 #ifdef __cplusplus
 }

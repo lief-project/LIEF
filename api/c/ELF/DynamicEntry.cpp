@@ -102,6 +102,56 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           break;
         }
+
+      case DYNAMIC_TAGS::DT_FLAGS:
+        {
+          Elf_DynamicEntry_Flags_t* e = static_cast<Elf_DynamicEntry_Flags_t*>(
+              malloc(sizeof(Elf_DynamicEntry_Flags_t)));
+
+          e->tag   = static_cast<enum ::DYNAMIC_TAGS>(entry.tag());
+          e->value = entry.value();
+          const dynamic_flags_list_t& flags = dynamic_cast<DynamicEntryFlags*>(&entry)->flags();
+          e->flags   = static_cast<enum ::DYNAMIC_FLAGS*>(malloc((flags.size() + 1) * sizeof(DYNAMIC_FLAGS)));
+          e->flags_1 = nullptr;
+
+          auto&& it = std::begin(flags);
+
+          for (size_t i = 0; it != std::end(flags); ++i, ++it) {
+            e->flags[i] = static_cast<enum ::DYNAMIC_FLAGS>(*it);
+          }
+
+          e->flags[flags.size()] = static_cast<enum ::DYNAMIC_FLAGS>(0);
+          c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
+
+          break;
+        }
+
+      case DYNAMIC_TAGS::DT_FLAGS_1:
+        {
+          Elf_DynamicEntry_Flags_t* e = static_cast<Elf_DynamicEntry_Flags_t*>(
+              malloc(sizeof(Elf_DynamicEntry_Flags_t)));
+
+          e->tag   = static_cast<enum ::DYNAMIC_TAGS>(entry.tag());
+          e->value = entry.value();
+          const dynamic_flags_list_t& flags = dynamic_cast<DynamicEntryFlags*>(&entry)->flags();
+          e->flags_1 = static_cast<enum ::DYNAMIC_FLAGS_1*>(malloc((flags.size() + 1) * sizeof(DYNAMIC_FLAGS_1)));
+          e->flags   = nullptr;
+
+          auto&& it = std::begin(flags);
+
+          for (size_t i = 0; it != std::end(flags); ++i, ++it) {
+            e->flags_1[i] = static_cast<enum ::DYNAMIC_FLAGS_1>(*it);
+          }
+
+          e->flags_1[flags.size()] = static_cast<enum ::DYNAMIC_FLAGS_1>(0);
+          c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
+
+          break;
+        }
+
+
+
+
       default:
         {
           c_binary->dynamic_entries[i] =
@@ -155,6 +205,14 @@ void destroy_dynamic_entries(Elf_Binary_t* c_binary) {
           free(reinterpret_cast<Elf_DynamicEntry_Array_t*>(dynamic_entries[idx]));
           break;
         }
+
+      case DYNAMIC_TAGS::DT_FLAGS:
+      case DYNAMIC_TAGS::DT_FLAGS_1:
+        {
+          free(reinterpret_cast<Elf_DynamicEntry_Flags_t*>(dynamic_entries[idx]));
+          break;
+        }
+
       default:
         {
 

@@ -234,6 +234,43 @@ int main(int argc, char **argv) {
           break;
         }
 
+      case DT_FLAGS:
+        {
+          Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
+          fprintf(stdout, ""
+            "%-20s "
+            "0x%010" PRIx64 " ",
+            DYNAMIC_TAGS_to_string(e->tag),
+            e->value);
+
+          enum DYNAMIC_FLAGS* flags = e->flags;
+          for (j = 0; flags[j] != 0; ++j) {
+            fprintf(stdout, "%s ", DYNAMIC_FLAGS_to_string(flags[j]));
+          }
+
+          fprintf(stdout, "\n");
+          break;
+        }
+
+      case DT_FLAGS_1:
+        {
+          Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
+          fprintf(stdout, ""
+            "%-20s "
+            "0x%010" PRIx64 " ",
+            DYNAMIC_TAGS_to_string(e->tag),
+            e->value);
+
+          enum DYNAMIC_FLAGS_1* flags = e->flags_1;
+          for (j = 0; flags[j] != 0; ++j) {
+            fprintf(stdout, "%s ", DYNAMIC_FLAGS_1_to_string(flags[j]));
+          }
+
+          fprintf(stdout, "\n");
+          break;
+        }
+
+
       case DT_INIT_ARRAY:
       case DT_FINI_ARRAY:
       case DT_PREINIT_ARRAY:
