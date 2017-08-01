@@ -284,15 +284,6 @@ enum RELOC_POWERPC32 {
    #include "LIEF/ELF/Relocations/PowerPC.def"
 };
 
-/* Specific e_flags for PPC64 */
-enum {
-  /* e_flags bits specifying ABI: */
-  /* 1 for original ABI using function descriptors, */
-  /* 2 for revised ABI without function descriptors, */
-  /* 0 for unspecified or not using any features affected by the differences. */
-  EF_PPC64_ABI = 3
-};
-
 /* Special values for the st_other field in the symbol table entry for PPC64. */
 enum {
   STO_PPC64_LOCAL_BIT = 5,
@@ -309,26 +300,93 @@ enum RELOC_AARCH64 {
    #include "LIEF/ELF/Relocations/AArch64.def"
 };
 
-/* ARM Specific e_flags */
-enum {
-  EF_ARM_SOFT_FLOAT =     0x00000200U,
-  EF_ARM_VFP_FLOAT =      0x00000400U,
-  EF_ARM_EABI_UNKNOWN =   0x00000000U,
-  EF_ARM_EABI_VER1 =      0x01000000U,
-  EF_ARM_EABI_VER2 =      0x02000000U,
-  EF_ARM_EABI_VER3 =      0x03000000U,
-  EF_ARM_EABI_VER4 =      0x04000000U,
-  EF_ARM_EABI_VER5 =      0x05000000U,
-  EF_ARM_EABIMASK =       0xFF000000U
-};
 
 /* ELF Relocation types for ARM */
 enum RELOC_ARM {
   #include "LIEF/ELF/Relocations/ARM.def"
 };
 
-/* Mips Specific e_flags */
+/* ELF Relocation types for Mips */
+enum RELOC_MIPS {
+  #include "LIEF/ELF/Relocations/Mips.def"
+};
+
+/* Special values for the st_other field in the symbol table entry for MIPS. */
 enum {
+  STO_MIPS_OPTIONAL        = 0x04,  /* Symbol whose definition is optional */
+  STO_MIPS_PLT             = 0x08,  /* PLT entry related dynamic table record */
+  STO_MIPS_PIC             = 0x20,  /* PIC func in an object mixes PIC/non-PIC */
+  STO_MIPS_MICROMIPS       = 0x80,  /* MIPS Specific ISA for MicroMips */
+  STO_MIPS_MIPS16          = 0xf0   /* MIPS Specific ISA for Mips16 */
+};
+
+/* .MIPS.options section descriptor kinds */
+enum {
+  ODK_NULL       = 0,   /* Undefined */
+  ODK_REGINFO    = 1,   /* Register usage information */
+  ODK_EXCEPTIONS = 2,   /* Exception processing options */
+  ODK_PAD        = 3,   /* Section padding options */
+  ODK_HWPATCH    = 4,   /* Hardware patches applied */
+  ODK_FILL       = 5,   /* Linker fill value */
+  ODK_TAGS       = 6,   /* Space for tool identification */
+  ODK_HWAND      = 7,   /* Hardware AND patches applied */
+  ODK_HWOR       = 8,   /* Hardware OR patches applied */
+  ODK_GP_GROUP   = 9,   /* GP group to use for text/data sections */
+  ODK_IDENT      = 10,  /* ID information */
+  ODK_PAGESIZE   = 11   /* Page size information */
+};
+
+/* Hexagon specific Section indexes for common small data */
+/* Release 5 ABI */
+enum {
+  SHN_HEXAGON_SCOMMON     = 0xff00,       /* Other access sizes */
+  SHN_HEXAGON_SCOMMON_1   = 0xff01,       /* Byte-sized access */
+  SHN_HEXAGON_SCOMMON_2   = 0xff02,       /* Half-word-sized access */
+  SHN_HEXAGON_SCOMMON_4   = 0xff03,       /* Word-sized access */
+  SHN_HEXAGON_SCOMMON_8   = 0xff04        /* Double-word-size access */
+};
+
+/* ELF Relocation types for Hexagon */
+enum RELOC_HEXAGON {
+  #include "LIEF/ELF/Relocations/Hexagon.def"
+};
+
+/* ELF Relocation types for S390/zSeries */
+enum RELOC_SYSTEMZ {
+  #include "LIEF/ELF/Relocations/SystemZ.def"
+};
+
+/* ELF Relocation type for Sparc. */
+enum RELOC_SPARC {
+  #include "LIEF/ELF/Relocations/Sparc.def"
+};
+
+#undef ELF_RELOC
+
+/* Specific e_flags for PPC64 */
+enum PPC64_EFLAGS {
+  /* e_flags bits specifying ABI: */
+  /* 1 for original ABI using function descriptors, */
+  /* 2 for revised ABI without function descriptors, */
+  /* 0 for unspecified or not using any features affected by the differences. */
+  EF_PPC64_ABI = 3
+};
+
+/* ARM Specific e_flags */
+enum ARM_EFLAGS {
+  EF_ARM_SOFT_FLOAT   = 0x00000200U,
+  EF_ARM_VFP_FLOAT    = 0x00000400U,
+  EF_ARM_EABI_UNKNOWN = 0x00000000U,
+  EF_ARM_EABI_VER1    = 0x01000000U,
+  EF_ARM_EABI_VER2    = 0x02000000U,
+  EF_ARM_EABI_VER3    = 0x03000000U,
+  EF_ARM_EABI_VER4    = 0x04000000U,
+  EF_ARM_EABI_VER5    = 0x05000000U,
+  EF_ARM_EABIMASK     = 0xFF000000U
+};
+
+/* Mips Specific e_flags */
+enum MIPS_EFLAGS {
   EF_MIPS_NOREORDER = 0x00000001, /* Don't reorder instructions */
   EF_MIPS_PIC       = 0x00000002, /* Position independent code */
   EF_MIPS_CPIC      = 0x00000004, /* Call object with Position independent code */
@@ -368,12 +426,10 @@ enum {
   EF_MIPS_MACH         = 0x00ff0000, /* EF_MIPS_MACH_xxx selection mask */
 
   /* ARCH_ASE */
-  EF_MIPS_MICROMIPS = 0x02000000, /* microMIPS */
-  EF_MIPS_ARCH_ASE_M16 =
-    0x04000000, /* Has Mips-16 ISA extensions */
-  EF_MIPS_ARCH_ASE_MDMX =
-    0x08000000, /* Has MDMX multimedia extensions */
-  EF_MIPS_ARCH_ASE  = 0x0f000000, /* Mask for EF_MIPS_ARCH_ASE_xxx flags */
+  EF_MIPS_MICROMIPS     = 0x02000000, /* microMIPS */
+  EF_MIPS_ARCH_ASE_M16  = 0x04000000, /* Has Mips-16 ISA extensions */
+  EF_MIPS_ARCH_ASE_MDMX = 0x08000000, /* Has MDMX multimedia extensions */
+  EF_MIPS_ARCH_ASE      = 0x0f000000, /* Mask for EF_MIPS_ARCH_ASE_xxx flags */
 
   /* ARCH */
   EF_MIPS_ARCH_1    = 0x00000000, /* MIPS1 instruction set */
@@ -390,39 +446,9 @@ enum {
   EF_MIPS_ARCH      = 0xf0000000  /* Mask for applying EF_MIPS_ARCH_ variant */
 };
 
-/* ELF Relocation types for Mips */
-enum RELOC_MIPS {
-  #include "LIEF/ELF/Relocations/Mips.def"
-};
-
-/* Special values for the st_other field in the symbol table entry for MIPS. */
-enum {
-  STO_MIPS_OPTIONAL        = 0x04,  /* Symbol whose definition is optional */
-  STO_MIPS_PLT             = 0x08,  /* PLT entry related dynamic table record */
-  STO_MIPS_PIC             = 0x20,  /* PIC func in an object mixes PIC/non-PIC */
-  STO_MIPS_MICROMIPS       = 0x80,  /* MIPS Specific ISA for MicroMips */
-  STO_MIPS_MIPS16          = 0xf0   /* MIPS Specific ISA for Mips16 */
-};
-
-/* .MIPS.options section descriptor kinds */
-enum {
-  ODK_NULL       = 0,   /* Undefined */
-  ODK_REGINFO    = 1,   /* Register usage information */
-  ODK_EXCEPTIONS = 2,   /* Exception processing options */
-  ODK_PAD        = 3,   /* Section padding options */
-  ODK_HWPATCH    = 4,   /* Hardware patches applied */
-  ODK_FILL       = 5,   /* Linker fill value */
-  ODK_TAGS       = 6,   /* Space for tool identification */
-  ODK_HWAND      = 7,   /* Hardware AND patches applied */
-  ODK_HWOR       = 8,   /* Hardware OR patches applied */
-  ODK_GP_GROUP   = 9,   /* GP group to use for text/data sections */
-  ODK_IDENT      = 10,  /* ID information */
-  ODK_PAGESIZE   = 11   /* Page size information */
-};
-
 /* Hexagon Specific e_flags */
 /* Release 5 ABI */
-enum {
+enum HEXAGON_EFLAGS {
   /* Object processor version flags, bits[3:0] */
   EF_HEXAGON_MACH_V2      = 0x00000001,   /* Hexagon V2 */
   EF_HEXAGON_MACH_V3      = 0x00000002,   /* Hexagon V3 */
@@ -438,32 +464,7 @@ enum {
   EF_HEXAGON_ISA_V5       = 0x00000040    /* Hexagon V5 ISA */
 };
 
-/* Hexagon specific Section indexes for common small data */
-/* Release 5 ABI */
-enum {
-  SHN_HEXAGON_SCOMMON     = 0xff00,       /* Other access sizes */
-  SHN_HEXAGON_SCOMMON_1   = 0xff01,       /* Byte-sized access */
-  SHN_HEXAGON_SCOMMON_2   = 0xff02,       /* Half-word-sized access */
-  SHN_HEXAGON_SCOMMON_4   = 0xff03,       /* Word-sized access */
-  SHN_HEXAGON_SCOMMON_8   = 0xff04        /* Double-word-size access */
-};
 
-/* ELF Relocation types for Hexagon */
-enum RELOC_HEXAGON {
-  #include "LIEF/ELF/Relocations/Hexagon.def"
-};
-
-/* ELF Relocation types for S390/zSeries */
-enum RELOC_SYSTEMZ {
-  #include "LIEF/ELF/Relocations/SystemZ.def"
-};
-
-/* ELF Relocation type for Sparc. */
-enum RELOC_SPARC {
-  #include "LIEF/ELF/Relocations/Sparc.def"
-};
-
-#undef ELF_RELOC
 
 
 /** Special section indices. */

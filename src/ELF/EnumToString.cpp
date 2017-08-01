@@ -946,6 +946,110 @@ const char* to_string(RELOCATION_PURPOSES e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
+
+const char* to_string(PPC64_EFLAGS e) {
+  const std::map<PPC64_EFLAGS, const char*> enumStrings {
+    { PPC64_EFLAGS::EF_PPC64_ABI, "ABI"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
+const char* to_string(ARM_EFLAGS e) {
+  const std::map<ARM_EFLAGS, const char*> enumStrings {
+    { ARM_EFLAGS::EF_ARM_SOFT_FLOAT,   "SOFT_FLOAT" },
+    { ARM_EFLAGS::EF_ARM_VFP_FLOAT,    "VFP_FLOAT"  },
+    { ARM_EFLAGS::EF_ARM_EABI_UNKNOWN, "UNKNOWN"    },
+    { ARM_EFLAGS::EF_ARM_EABI_VER1,    "EABI_VER1"  },
+    { ARM_EFLAGS::EF_ARM_EABI_VER2,    "EABI_VER2"  },
+    { ARM_EFLAGS::EF_ARM_EABI_VER3,    "EABI_VER3"  },
+    { ARM_EFLAGS::EF_ARM_EABI_VER4,    "EABI_VER4"  },
+    { ARM_EFLAGS::EF_ARM_EABI_VER5,    "EABI_VER5" },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+const char* to_string(MIPS_EFLAGS e) {
+  const std::map<MIPS_EFLAGS, const char*> enumStrings {
+    { MIPS_EFLAGS::EF_MIPS_NOREORDER,     "NOREORDER"     },
+    { MIPS_EFLAGS::EF_MIPS_PIC,           "PIC"           },
+    { MIPS_EFLAGS::EF_MIPS_CPIC,          "CPIC"          },
+    { MIPS_EFLAGS::EF_MIPS_ABI2,          "ABI2"          },
+    { MIPS_EFLAGS::EF_MIPS_32BITMODE,     "_32BITMODE"    },
+    { MIPS_EFLAGS::EF_MIPS_FP64,          "FP64"          },
+    { MIPS_EFLAGS::EF_MIPS_NAN2008,       "NAN2008"       },
+
+    { MIPS_EFLAGS::EF_MIPS_ABI_O32,       "ABI_O32"       },
+    { MIPS_EFLAGS::EF_MIPS_ABI_O64,       "ABI_O64"       },
+    { MIPS_EFLAGS::EF_MIPS_ABI_EABI32,    "ABI_EABI32"    },
+    { MIPS_EFLAGS::EF_MIPS_ABI_EABI64,    "ABI_EABI64"    },
+
+    { MIPS_EFLAGS::EF_MIPS_MACH_3900,     "MACH_3900"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_4010,     "MACH_4010"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_4100,     "MACH_4100"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_4650,     "MACH_4650"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_4120,     "MACH_4120"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_4111,     "MACH_4111"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_SB1,      "MACH_SB1"      },
+    { MIPS_EFLAGS::EF_MIPS_MACH_OCTEON,   "MACH_OCTEON"   },
+    { MIPS_EFLAGS::EF_MIPS_MACH_XLR,      "MACH_XLR"      },
+    { MIPS_EFLAGS::EF_MIPS_MACH_OCTEON2,  "MACH_OCTEON2"  },
+    { MIPS_EFLAGS::EF_MIPS_MACH_OCTEON3,  "MACH_OCTEON3"  },
+    { MIPS_EFLAGS::EF_MIPS_MACH_5400,     "MACH_5400"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_5900,     "MACH_5900"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_5500,     "MACH_5500"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_9000,     "MACH_9000"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_LS2E,     "MACH_LS2E"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_LS2F,     "MACH_LS2F"     },
+    { MIPS_EFLAGS::EF_MIPS_MACH_LS3A,     "MACH_LS3A"     },
+
+    { MIPS_EFLAGS::EF_MIPS_MICROMIPS,     "MICROMIPS"     },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_ASE_M16,  "ARCH_ASE_M16"  },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_ASE_MDMX, "ARCH_ASE_MDMX" },
+
+    { MIPS_EFLAGS::EF_MIPS_ARCH_1,        "ARCH_1"        },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_2,        "ARCH_2"        },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_3,        "ARCH_3"        },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_4,        "ARCH_4"        },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_5,        "ARCH_5"        },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_32,       "ARCH_32"       },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_64,       "ARCH_64"       },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_32R2,     "ARCH_32R2"     },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_64R2,     "ARCH_64R2"     },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_32R6,     "ARCH_32R6"     },
+    { MIPS_EFLAGS::EF_MIPS_ARCH_64R6,     "ARCH_64R6"     },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
+const char* to_string(HEXAGON_EFLAGS e) {
+  const std::map<HEXAGON_EFLAGS, const char*> enumStrings {
+    { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V2,   "MACH_V2"  },
+    { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V3,   "MACH_V3"  },
+    { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V4,   "MACH_V4"  },
+    { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V5,   "MACH_V5"  },
+
+    { HEXAGON_EFLAGS::EF_HEXAGON_ISA_MACH,  "ISA_MACH" },
+
+    { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V2,    "ISA_V2"   },
+    { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V3,    "ISA_V3"   },
+    { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V4,    "ISA_V4"   },
+    { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V5,    "ISA_V5"   },
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
+
 } // namespace ELF
 } // namespace LIEF
 

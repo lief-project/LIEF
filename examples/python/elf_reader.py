@@ -54,9 +54,23 @@ def print_header(binary):
 
     print("== Header ==\n")
     format_str = "{:<30} {:<30}"
-    format_hex = "{:<30} 0x{:<28x}"
+    format_hex = "{:<30} 0x{:<13x}"
     format_dec = "{:<30} {:<30d}"
     format_ide = "{:<30} {:<02x} {:<02x} {:<02x} {:<02x}"
+
+    eflags_str = ""
+    if header.machine_type == lief.ELF.ARCH.ARM:
+        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.arm_flags_list])
+
+    if header.machine_type in [lief.ELF.ARCH.MIPS, lief.ELF.ARCH.MIPS_RS3_LE, lief.ELF.ARCH.MIPS_X]:
+        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.mips_flags_list])
+
+    if header.machine_type == lief.ELF.ARCH.PPC64:
+        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.ppc64_flags_list])
+
+    if header.machine_type == lief.ELF.ARCH.HEXAGON:
+        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.hexagon_flags_list])
+
     print(format_ide.format("Magic:",                 identity[0], identity[1], identity[2], identity[3]))
     print(format_str.format("Class:",                 str(header.identity_class).split(".")[-1]))
     print(format_str.format("Endianness:",            str(header.identity_data).split(".")[-1]))
@@ -68,7 +82,7 @@ def print_header(binary):
     print(format_hex.format("Entry Point:",           header.entrypoint))
     print(format_hex.format("Program Header Offset:", header.program_header_offset))
     print(format_hex.format("Section Header Offset:", header.section_header_offset))
-    print(format_hex.format("Processor flags:",       header.processor_flag))
+    print(format_hex.format("Processor flags:",       header.processor_flag) + eflags_str)
     print(format_dec.format("Header Size:",           header.header_size))
     print(format_dec.format("Program Header Size:",   header.program_header_size))
     print(format_dec.format("Section Header Size:",   header.section_header_size))

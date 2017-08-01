@@ -22,6 +22,7 @@
 
 #include "LIEF/Visitable.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/ELF/type_traits.hpp"
 
 #include "LIEF/Abstract/enums.hpp"
 
@@ -45,13 +46,13 @@ class DLL_PUBLIC Header : public Visitable {
     virtual ~Header(void);
 
     //! @brief Define the object file type. (e.g. executable, library...)
-    E_TYPE    file_type(void) const;
+    E_TYPE file_type(void) const;
 
     //! @brief LIEF abstract object type
     OBJECT_TYPES abstract_object_type(void) const;
 
     //! @brief Target architecture
-    ARCH      machine_type(void) const;
+    ARCH machine_type(void) const;
 
     //! @brief LIEF abstract architecture
     std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
@@ -60,11 +61,43 @@ class DLL_PUBLIC Header : public Visitable {
     ENDIANNESS abstract_endianness(void) const;
 
     //! @brief Version of the object file format
-    VERSION   object_file_version(void) const;
-    uint64_t  entrypoint(void) const;
-    uint64_t  program_headers_offset(void) const;
-    uint64_t  section_headers_offset(void) const;
-    uint32_t  processor_flag(void) const;
+    VERSION object_file_version(void) const;
+
+    //! @brief Executable entrypoint
+    uint64_t entrypoint(void) const;
+
+    //! @brief Offset of program table
+    uint64_t program_headers_offset(void) const;
+
+    //! @brief Offset of section table
+    uint64_t section_headers_offset(void) const;
+
+    //! @brief processor-specific flags
+    uint32_t processor_flag(void) const;
+
+    //! @brief Check if the given flag is present in processor_flag()
+    bool has(ARM_EFLAGS f) const;
+
+    //! @brief Return a list of ARM_EFLAGS present in processor_flag()
+    arm_flags_list_t arm_flags_list(void) const;
+
+    //! @brief Check if the given flag is present in processor_flag()
+    bool has(MIPS_EFLAGS f) const;
+
+    //! @brief Return a list of MIPS_EFLAGS present in processor_flag()
+    mips_flags_list_t mips_flags_list(void) const;
+
+    //! @brief Check if the given flag is present in processor_flag()
+    bool has(PPC64_EFLAGS f) const;
+
+    //! @brief Return a list of PPC64_EFLAGS present in processor_flag()
+    ppc64_flags_list_t ppc64_flags_list(void) const;
+
+    //! @brief Check if the given flag is present in processor_flag()
+    bool has(HEXAGON_EFLAGS f) const;
+
+    //! @brief Return a list of HEXAGON_EFLAGS present in processor_flag()
+    hexagon_flags_list_t hexagon_flags_list(void) const;
 
     //! @brief Size of the current header
     //!
@@ -81,7 +114,6 @@ class DLL_PUBLIC Header : public Visitable {
     //! @brief Return the the number of segment's headers
     //! registred in the header
     uint32_t numberof_segments(void) const;
-
 
     //! @brief Return the size of a ``Section header``
     //!
@@ -144,46 +176,46 @@ class DLL_PUBLIC Header : public Visitable {
 
   private:
     //! Field which represent ElfXX_Ehdr->e_ident
-    identity_t          identity_;
+    identity_t identity_;
 
     //! Field which represent ElfXX_Ehdr->e_type
-    E_TYPE  fileType_;
+    E_TYPE file_type_;
 
     //! Field which represent ElfXX_Ehdr->e_machine
-    ARCH    machineType_;
+    ARCH machine_type_;
 
     //! Field which represent ElfXX_Ehdr->e_version
-    VERSION objectFileVersion_;
+    VERSION object_file_version_;
 
     //! Field which represent ElfXX_Ehdr->e_entry
-    uint64_t            entryPoint_;
+    uint64_t entrypoint_;
 
     //! Field which represent ElfXX_Ehdr->e_phoff
-    uint64_t            programHeaderOffset_;
+    uint64_t program_headers_offset_;
 
     //! Field which represent ElfXX_Ehdr->e_shoff
-    uint64_t            sectionHeaderOffset_;
+    uint64_t section_headers_offset_;
 
     //! Field which represent ElfXX_Ehdr->e_flags
-    uint32_t            processorFlag_;
+    uint32_t processor_flags_;
 
     //! Field which represent ElfXX_Ehdr->e_ehsize
-    uint32_t            headerSize_;
+    uint32_t header_size_;
 
     //! Field which represent ElfXX_Ehdr->e_phentsize
-    uint32_t            programHeaderSize_;
+    uint32_t program_header_size_;
 
     //! Field which represent ElfXX_Ehdr->e_phnum
-    uint32_t            numberof_segments_;
+    uint32_t numberof_segments_;
 
     //! Field which represent ElfXX_Ehdr->e_shentsize
-    uint32_t            sizeOfSectionHeaderEntries_;
+    uint32_t section_header_size_;
 
     //! Field which represent ElfXX_Ehdr->e_shnum
-    uint32_t            numberof_sections_;
+    uint32_t numberof_sections_;
 
     //! Field which represent ElfXX_Ehdr->e_shstrndx
-    uint32_t            sectionNameStringTableIdx_;
+    uint32_t section_string_table_idx_;
 
 };
 }

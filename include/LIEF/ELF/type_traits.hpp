@@ -18,6 +18,8 @@
 #include <vector>
 #include "LIEF/iterators.hpp"
 
+#include "LIEF/ELF/Structures.hpp"
+
 namespace LIEF {
 namespace ELF {
 class Section;
@@ -92,6 +94,14 @@ using it_const_symbols_version_aux_requirement = const_ref_iterator<const symbol
 using notes_t                                  = std::vector<Note>;
 using it_notes                                 = ref_iterator<notes_t&>;
 using it_const_notes                           = const_ref_iterator<const notes_t&>;
+
+template<class T>
+using flags_list_t = std::set<T>;
+
+using arm_flags_list_t     = flags_list_t<ARM_EFLAGS>;
+using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
+using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
+using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
 }
 }
 

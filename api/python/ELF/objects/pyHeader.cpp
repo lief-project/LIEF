@@ -102,6 +102,30 @@ void init_ELF_Header_class(py::module& m) {
         static_cast<getter_t<uint32_t>>(&Header::processor_flag),
         static_cast<setter_t<uint32_t>>(&Header::processor_flag))
 
+    .def_property_readonly("arm_flags_list",
+        &Header::arm_flags_list,
+        "Return list of " RST_CLASS_REF(lief.ELF.ARM_EFLAGS) " present in "
+        ":attr:`~lief.ELF.Header.processor_flag`",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("mips_flags_list",
+        &Header::mips_flags_list,
+        "Return list of " RST_CLASS_REF(lief.ELF.MIPS_EFLAGS) " present in "
+        ":attr:`~lief.ELF.Header.processor_flag`",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("ppc64_flags_list",
+        &Header::ppc64_flags_list,
+        "Return list of " RST_CLASS_REF(lief.ELF.PPC64_EFLAGS) " present in "
+        ":attr:`~lief.ELF.Header.processor_flag`",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("hexagon_flags_list",
+        &Header::hexagon_flags_list,
+        "Return list of " RST_CLASS_REF(lief.ELF.HEXAGON_EFLAGS) " present in "
+        ":attr:`~lief.ELF.Header.processor_flag`",
+        py::return_value_policy::reference_internal)
+
     .def_property("header_size",
         static_cast<getter_t<uint32_t>>(&Header::header_size),
         static_cast<setter_t<uint32_t>>(&Header::header_size),
@@ -138,6 +162,29 @@ void init_ELF_Header_class(py::module& m) {
         [] (const Header& header) {
           return LIEF::Hash::hash(header);
         })
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(ARM_EFLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.ARM_EFLAGS) " is present in "
+        ":attr:`~lief.ELF.Header.processor_flag`")
+
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(MIPS_EFLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.MIPS_EFLAGS) " is present in "
+        ":attr:`~lief.ELF.Header.processor_flag`")
+
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(PPC64_EFLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.PPC64_EFLAGS) " is present in "
+        ":attr:`~lief.ELF.Header.processor_flag`")
+
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(HEXAGON_EFLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.HEXAGON_EFLAGS) " is present in "
+        ":attr:`~lief.ELF.Header.processor_flag`")
 
     .def("__str__",
         [] (const Header& header)
