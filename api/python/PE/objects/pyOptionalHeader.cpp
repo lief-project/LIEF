@@ -206,14 +206,24 @@ void init_PE_OptionalHeader_class(py::module& m) {
         static_cast<setter_t<uint32_t>>(&OptionalHeader::dll_characteristics),
         "The " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " characteristics")
 
+    .def("add",
+        static_cast<void (OptionalHeader::*)(DLL_CHARACTERISTICS)>(&OptionalHeader::add),
+        "Add the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) "",
+        "characteristic"_a)
+
+    .def("remove",
+        static_cast<void (OptionalHeader::*)(DLL_CHARACTERISTICS)>(&OptionalHeader::remove),
+        "Remove the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) "",
+        "characteristic"_a)
 
     .def_property_readonly("dll_characteristics_lists",
         &OptionalHeader::dll_characteristics_list,
         "" RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " as a list")
 
-    .def("has_dll_characteristics",
-        &OptionalHeader::has_dll_characteristics,
-        "``True`` if the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " is in the :attr:`~lief.PE.OptionalHeader.dll_characteristics`",
+    .def("has",
+        static_cast<bool (OptionalHeader::*)(DLL_CHARACTERISTICS) const>(&OptionalHeader::has),
+        "``True`` if the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " is in the "
+        ":attr:`~lief.PE.OptionalHeader.dll_characteristics`",
         "characteristics"_a)
 
     .def_property("sizeof_stack_reserve",
@@ -264,6 +274,13 @@ void init_PE_OptionalHeader_class(py::module& m) {
         [] (const OptionalHeader& optional_header) {
           return LIEF::Hash::hash(optional_header);
         })
+
+    .def(py::self += DLL_CHARACTERISTICS())
+    .def(py::self -= DLL_CHARACTERISTICS())
+
+    .def("__contains__",
+        static_cast<bool (OptionalHeader::*)(DLL_CHARACTERISTICS) const>(&OptionalHeader::has),
+        "Check if the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " is present")
 
     .def("__str__", [] (const OptionalHeader& header)
         {

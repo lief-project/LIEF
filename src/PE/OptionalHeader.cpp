@@ -293,9 +293,18 @@ uint32_t OptionalHeader::numberof_rva_and_size(void) const {
   return this->numberOfRvaAndSize_;
 }
 
-bool OptionalHeader::has_dll_characteristics(DLL_CHARACTERISTICS c) const {
-  return (this->DLLCharacteristics_ & static_cast<uint32_t>(c)) > 0;
+bool OptionalHeader::has(DLL_CHARACTERISTICS c) const {
+  return (this->dll_characteristics() & static_cast<uint32_t>(c)) > 0;
 }
+
+void OptionalHeader::add(DLL_CHARACTERISTICS c) {
+  this->dll_characteristics(this->dll_characteristics() | static_cast<uint32_t>(c));
+}
+
+void OptionalHeader::remove(DLL_CHARACTERISTICS c) {
+  this->dll_characteristics(this->dll_characteristics() & (~ static_cast<uint32_t>(c)));
+}
+
 
 std::set<DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list(void) const {
   std::set<DLL_CHARACTERISTICS> dll_charac;
@@ -303,7 +312,7 @@ std::set<DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list(void) con
       std::begin(dll_characteristics_array),
       std::end(dll_characteristics_array),
       std::inserter(dll_charac, std::begin(dll_charac)),
-      std::bind(&OptionalHeader::has_dll_characteristics, this, std::placeholders::_1));
+      std::bind(&OptionalHeader::has, this, std::placeholders::_1));
 
   return dll_charac;
 }
@@ -497,6 +506,17 @@ void OptionalHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->sizeof_heap_commit());
   visitor.visit(this->loader_flags());
   visitor.visit(this->numberof_rva_and_size());
+}
+
+
+OptionalHeader& OptionalHeader::operator+=(DLL_CHARACTERISTICS c) {
+  this->add(c);
+  return *this;
+}
+
+OptionalHeader& OptionalHeader::operator-=(DLL_CHARACTERISTICS c) {
+  this->remove(c);
+  return *this;
 }
 
 bool OptionalHeader::operator==(const OptionalHeader& rhs) const {

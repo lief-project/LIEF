@@ -65,8 +65,11 @@ class DLL_PUBLIC OptionalHeader : public Visitable {
     uint64_t  sizeof_heap_commit(void) const;
     uint32_t  loader_flags(void) const;
     uint32_t  numberof_rva_and_size(void) const;
-    bool      has_dll_characteristics(DLL_CHARACTERISTICS c) const;
+    bool      has(DLL_CHARACTERISTICS c) const;
     std::set<DLL_CHARACTERISTICS> dll_characteristics_list(void) const;
+
+    void add(DLL_CHARACTERISTICS c);
+    void remove(DLL_CHARACTERISTICS c);
 
     void magic(PE_TYPE magic);
     void major_linker_version(uint8_t majorLinkerVersion);
@@ -100,6 +103,9 @@ class DLL_PUBLIC OptionalHeader : public Visitable {
     void numberof_rva_and_size(uint32_t numberOfRvaAndSize);
 
     virtual void accept(Visitor& visitor) const override;
+
+    OptionalHeader& operator+=(DLL_CHARACTERISTICS c);
+    OptionalHeader& operator-=(DLL_CHARACTERISTICS c);
 
     bool operator==(const OptionalHeader& rhs) const;
     bool operator!=(const OptionalHeader& rhs) const;
