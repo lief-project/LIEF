@@ -1053,6 +1053,10 @@ bool Binary::is_pie(void) const {
   return this->optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE);
 }
 
+bool Binary::has_nx(void) const {
+  return this->optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_NX_COMPAT);
+}
+
 // Overlay
 // =======
 

@@ -111,6 +111,9 @@ class DLL_PUBLIC Binary : public Visitable {
     //! @brief Check if the binary is position independent
     virtual bool is_pie(void) const = 0;
 
+    //! @brief Check if the binary uses ``NX`` protection
+    virtual bool has_nx(void) const = 0;
+
     virtual std::ostream& print(std::ostream& os) const;
 
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Binary& binary);

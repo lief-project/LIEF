@@ -744,6 +744,23 @@ bool Binary::is_pie(void) const {
   }
 }
 
+
+bool Binary::has_nx(void) const {
+  it_const_segments segments = this->get_segments();
+  auto&& it_stack = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [] (const Segment& segment) {
+        return segment.type() == SEGMENT_TYPES::PT_GNU_STACK;
+      });
+  if (it_stack == std::end(segments)) {
+    return false;
+  }
+
+  return not it_stack->has(SEGMENT_FLAGS::PF_X);
+
+}
+
 Segment& Binary::add_segment(const Segment& segment, uint64_t base, bool force_note) {
   const std::vector<uint8_t>& content = segment.content();
   Segment* new_segment = new Segment{segment};
@@ -1500,7 +1517,13 @@ LIEF::Header Binary::get_abstract_header(void) const {
   header.architecture(am.first);
   header.modes(am.second);
   header.entrypoint(this->get_header().entrypoint());
-  header.object_type(this->get_header().abstract_object_type());
+
+  if (this->get_header().file_type() == E_TYPE::ET_DYN and this->has_interpreter()) { // PIE
+    header.object_type(OBJECT_TYPES::TYPE_EXECUTABLE);
+  } else {
+    header.object_type(this->get_header().abstract_object_type());
+  }
+
   header.endianness(this->get_header().abstract_endianness());
 
   return header;

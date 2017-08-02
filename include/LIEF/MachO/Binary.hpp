@@ -190,6 +190,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Check if the binary is position independent
     virtual bool is_pie(void) const override;
 
+    //! @brief Check if the binary uses ``NX`` protection
+    virtual bool has_nx(void) const override;
+
     //! @brief ``true`` if the binary has an entrypoint.
     //!
     //! Basically for libraries it will return ``false``

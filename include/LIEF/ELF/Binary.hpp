@@ -323,6 +323,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! the binary type is `ET_DYN` (Shared object)
     virtual bool is_pie(void) const override;
 
+    //! @brief Check if the binary uses ``NX`` protection
+    virtual bool has_nx(void) const override;
+
     //! @brief Return the @link ELF::Section Section @endlink
     //! from the @p offset
     const Section& section_from_offset(uint64_t offset) const;

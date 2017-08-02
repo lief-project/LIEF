@@ -8,6 +8,8 @@ import lief
 from lief import PE
 from lief.PE import oid_to_string
 
+from lief import Logger
+Logger.set_level(lief.LOGGING_LEVEL.GLOBAL)
 
 from optparse import OptionParser
 import sys
@@ -46,6 +48,7 @@ def print_information(binary):
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("Imphash:",      PE.get_imphash(binary)))
     print(format_str.format("PIE:",          str(binary.is_pie)))
+    print(format_str.format("NX:",           str(binary.has_nx)))
 
 @exceptions_handler(Exception)
 def print_header(binary):

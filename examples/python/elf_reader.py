@@ -12,6 +12,9 @@ import sys
 import os
 import traceback
 
+from lief import Logger
+Logger.set_level(lief.LOGGING_LEVEL.GLOBAL)
+
 from optparse import OptionParser
 terminal_rows, terminal_columns = 100, 100
 try:
@@ -317,6 +320,7 @@ def print_information(binary):
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("PIE:",          str(binary.is_pie)))
+    print(format_str.format("NX:",           str(binary.has_nx)))
 
 @exceptions_handler(Exception)
 def print_gnu_hash(binary):

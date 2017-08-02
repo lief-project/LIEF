@@ -41,6 +41,10 @@ void init_LIEF_Binary_class(py::module& m) {
         &Binary::is_pie,
         "Check if the binary is position independent")
 
+    .def_property_readonly("has_nx",
+        &Binary::has_nx,
+        "Check if the binary uses ``NX`` protection")
+
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Binary::name),
         static_cast<setter_t<const std::string&>>(&Binary::name),

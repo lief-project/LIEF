@@ -118,6 +118,14 @@ bool Binary::is_pie(void) const {
 }
 
 
+bool Binary::has_nx(void) const {
+  if (not this->header().has(HEADER_FLAGS::MH_NO_HEAP_EXECUTION)) {
+    LOG(INFO) << "Heap could be executable";
+  }
+  return not this->header().has(HEADER_FLAGS::MH_ALLOW_STACK_EXECUTION);
+}
+
+
 bool Binary::has_entrypoint(void) const {
   auto&& it_main_command = std::find_if(
       std::begin(this->commands_),

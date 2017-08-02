@@ -12,6 +12,9 @@ import traceback
 import lief
 from lief import MachO
 
+from lief import Logger
+Logger.set_level(lief.LOGGING_LEVEL.GLOBAL)
+
 terminal_rows, terminal_columns = 100, 100
 try:
     terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
@@ -55,6 +58,7 @@ def print_information(binary):
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_str.format("PIE:",          str(binary.is_pie)))
+    print(format_str.format("NX:",           str(binary.has_nx)))
     print("")
 
 @exceptions_handler(Exception)
