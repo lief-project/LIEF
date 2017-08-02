@@ -163,15 +163,14 @@ bool Section::has(SECTION_FLAGS flag) const {
 
 
 bool Section::has(const Segment& segment) const {
-  it_const_segments segments = this->segments();
 
   auto&& it_segment = std::find_if(
-      std::begin(segments),
-      std::end(segments),
-      [&segment] (const Segment& s) {
-        return s == segment;
+      std::begin(this->segments_),
+      std::end(this->segments_),
+      [&segment] (Segment* s) {
+        return *s == segment;
       });
-  return it_segment != std::end(segments);
+  return it_segment != std::end(this->segments_);
 }
 
 uint64_t Section::file_offset(void) const {

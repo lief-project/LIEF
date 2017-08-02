@@ -180,12 +180,12 @@ std::vector<uint8_t> Segment::content(void) const {
 
 
 it_const_sections Segment::sections(void) const {
-  return this->sections_;
+  return {this->sections_};
 }
 
 
 it_sections Segment::sections(void) {
-  return this->sections_;
+  return {this->sections_};
 }
 
 bool Segment::has(SEGMENT_FLAGS flag) const {
@@ -194,15 +194,14 @@ bool Segment::has(SEGMENT_FLAGS flag) const {
 
 
 bool Segment::has(const Section& section) const {
-  it_const_sections sections = this->sections();
 
   auto&& it_section = std::find_if(
-      std::begin(sections),
-      std::end(sections),
-      [&section] (const Section& s) {
-        return s == section;
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&section] (Section* s) {
+        return *s == section;
       });
-  return it_section != std::end(sections);
+  return it_section != std::end(this->sections_);
 }
 
 

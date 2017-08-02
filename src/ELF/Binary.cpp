@@ -746,18 +746,17 @@ bool Binary::is_pie(void) const {
 
 
 bool Binary::has_nx(void) const {
-  it_const_segments segments = this->get_segments();
   auto&& it_stack = std::find_if(
-      std::begin(segments),
-      std::end(segments),
-      [] (const Segment& segment) {
-        return segment.type() == SEGMENT_TYPES::PT_GNU_STACK;
+      std::begin(this->segments_),
+      std::end(this->segments_),
+      [] (Segment* segment) {
+        return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_GNU_STACK;
       });
-  if (it_stack == std::end(segments)) {
+  if (it_stack == std::end(this->segments_)) {
     return false;
   }
 
-  return not it_stack->has(SEGMENT_FLAGS::PF_X);
+  return not (*it_stack)->has(SEGMENT_FLAGS::PF_X);
 
 }
 
