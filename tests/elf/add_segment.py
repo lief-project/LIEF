@@ -34,7 +34,7 @@ class TestAddSegment(TestCase):
         ls = lief.parse(sample_path)
         segment = Segment()
         segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
-        segment.flags     = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
+        segment.flags     = lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.W | lief.ELF.SEGMENT_FLAGS.X
         segment.content   = STUB.segments[0].content # First LOAD segment which holds payload
         segment.alignment = 8
         segment           = ls.add_segment(segment, base=0xA00000, force_note=True)
@@ -59,7 +59,7 @@ class TestAddSegment(TestCase):
         gcc = lief.parse(sample_path)
         segment = Segment()
         segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
-        segment.flags     = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
+        segment.flags     = lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.W | lief.ELF.SEGMENT_FLAGS.X
         segment.content   = STUB.segments[0].content # First LOAD segment which holds payload
         segment.alignment = 8
         segment           = gcc.add_segment(segment, base=0xA00000, force_note=True)
