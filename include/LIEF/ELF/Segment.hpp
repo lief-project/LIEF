@@ -61,13 +61,17 @@ class DLL_PUBLIC Segment : public Visitable {
     uint64_t physical_size(void) const;
     uint64_t virtual_size(void) const;
     uint64_t alignment(void) const;
-    bool has_flag(SEGMENT_FLAGS flag) const;
     std::vector<uint8_t> content(void) const;
+
+    bool has(SEGMENT_FLAGS flag) const;
+    bool has(const Section& section) const;
+    bool has(const std::string& section_name) const;
+
+    void add(SEGMENT_FLAGS c);
+    void remove(SEGMENT_FLAGS c);
 
     void type(SEGMENT_TYPES type);
     void flags(uint32_t flags);
-    void add_flag(SEGMENT_FLAGS flag);
-    void remove_flag(SEGMENT_FLAGS flag);
     void clear_flags(void);
     void file_offset(uint64_t fileOffset);
     void virtual_address(uint64_t virtualAddress);
@@ -81,6 +85,9 @@ class DLL_PUBLIC Segment : public Visitable {
     it_const_sections sections(void) const;
 
     virtual void accept(Visitor& visitor) const override;
+
+    Segment& operator+=(SEGMENT_FLAGS c);
+    Segment& operator-=(SEGMENT_FLAGS c);
 
     bool operator==(const Segment& rhs) const;
     bool operator!=(const Segment& rhs) const;

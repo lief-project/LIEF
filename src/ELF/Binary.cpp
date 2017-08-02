@@ -658,7 +658,7 @@ Section& Binary::add_section(const Section& section, bool loaded) {
     for (Segment* segment : this->segments_) {
       if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
 
-        //segment->add_flag(SEGMENT_FLAGS::PF_W);
+        //segment->add(SEGMENT_FLAGS::PF_W);
         segment->virtual_size(segment->virtual_size()         + new_section->size());
         segment->virtual_address(segment->virtual_address()   - new_section->size());
 
@@ -1042,7 +1042,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
   // ==============
   for (Segment* segment : this->segments_) {
     if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
-      segment->add_flag(SEGMENT_FLAGS::PF_W); // TODO: Improve
+      segment->add(SEGMENT_FLAGS::PF_W); // TODO: Improve
     }
 
     if (segment->file_offset() > sectionOffset) {

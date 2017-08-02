@@ -180,16 +180,40 @@ std::vector<uint8_t> Segment::content(void) const {
 
 
 it_const_sections Segment::sections(void) const {
-  return it_const_sections{this->sections_};
+  return this->sections_;
 }
 
 
 it_sections Segment::sections(void) {
-  return it_sections{this->sections_};
+  return this->sections_;
 }
 
-bool Segment::has_flag(SEGMENT_FLAGS flag) const {
-  return ((this->flags_ & static_cast<uint32_t>(flag)) != 0);
+bool Segment::has(SEGMENT_FLAGS flag) const {
+  return ((this->flags() & static_cast<uint32_t>(flag)) != 0);
+}
+
+
+bool Segment::has(const Section& section) const {
+  it_const_sections sections = this->sections();
+
+  auto&& it_section = std::find_if(
+      std::begin(sections),
+      std::end(sections),
+      [&section] (const Section& s) {
+        return s == section;
+      });
+  return it_section != std::end(sections);
+}
+
+
+bool Segment::has(const std::string& name) const {
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&name] (Section* s) {
+        return s->name() == name;
+      });
+  return it_section != std::end(this->sections_);
 }
 
 
@@ -198,13 +222,13 @@ void Segment::flags(uint32_t flags) {
 }
 
 
-void Segment::add_flag(SEGMENT_FLAGS flag) {
-  this->flags_ |= static_cast<uint32_t>(flag);
+void Segment::add(SEGMENT_FLAGS flag) {
+  this->flags(this->flags() | static_cast<uint32_t>(flag));
 }
 
 
-void Segment::remove_flag(SEGMENT_FLAGS flag) {
-  this->flags_ &= ~ static_cast<uint32_t>(flag);
+void Segment::remove(SEGMENT_FLAGS flag) {
+  this->flags(this->flags() & ~ static_cast<uint32_t>(flag));
 }
 
 
@@ -275,6 +299,17 @@ void Segment::accept(Visitor& visitor) const {
   visitor.visit(this->content());
 }
 
+
+Segment& Segment::operator+=(SEGMENT_FLAGS c) {
+  this->add(c);
+  return *this;
+}
+
+Segment& Segment::operator-=(SEGMENT_FLAGS c) {
+  this->remove(c);
+  return *this;
+}
+
 bool Segment::operator==(const Segment& rhs) const {
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
@@ -290,15 +325,15 @@ std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {
 
   std::string flags = "---";
 
-  if (segment.has_flag(SEGMENT_FLAGS::PF_R)) {
+  if (segment.has(SEGMENT_FLAGS::PF_R)) {
     flags[0] = 'r';
   }
 
-  if (segment.has_flag(SEGMENT_FLAGS::PF_W)) {
+  if (segment.has(SEGMENT_FLAGS::PF_W)) {
     flags[1] = 'w';
   }
 
-  if (segment.has_flag(SEGMENT_FLAGS::PF_X)) {
+  if (segment.has(SEGMENT_FLAGS::PF_X)) {
     flags[2] = 'x';
   }
 
