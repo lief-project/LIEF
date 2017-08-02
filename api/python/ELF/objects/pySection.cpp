@@ -103,12 +103,30 @@ void init_ELF_Section_class(py::module& m) {
       "Return segment(s) associated with the given section",
       py::return_value_policy::reference_internal)
 
-    .def("__contains__",
-        [] (const Section &section, SECTION_FLAGS flag)
-        {
-          return section.has_flag(flag);
-        }, "Test if the current section has the given flag")
 
+    .def("add",
+        &Section::add,
+        "Add the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " to the list of "
+        ":attr:`~lief.ELF.Section.flags`",
+        "flag"_a)
+
+    .def("remove",
+        &Section::remove,
+        "Remove the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " to the list of "
+        ":attr:`~lief.ELF.Section.flags`",
+        "flag"_a)
+
+
+    .def("has",
+        static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present",
+        "flag"_a)
+
+    .def("has",
+        static_cast<bool (Section::*)(const Segment&) const>(&Section::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.Segment) " is present "
+        "in :attr:`~lief.ELF.Section.segments`",
+        "segment"_a)
 
     .def("__eq__", &Section::operator==)
     .def("__ne__", &Section::operator!=)
@@ -116,6 +134,19 @@ void init_ELF_Section_class(py::module& m) {
         [] (const Section& section) {
           return LIEF::Hash::hash(section);
         })
+
+    .def(py::self += SECTION_FLAGS())
+    .def(py::self -= SECTION_FLAGS())
+
+    .def("__contains__",
+        static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present")
+
+
+    .def("__contains__",
+        static_cast<bool (Section::*)(const Segment&) const>(&Section::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.Segment) " is present "
+        "in :attr:`~lief.ELF.Section.segments`")
 
     .def("__str__",
         [] (const Section& section)

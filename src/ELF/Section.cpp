@@ -157,8 +157,21 @@ uint64_t Section::flags(void) const {
   return this->flags_;
 }
 
-bool Section::has_flag(SECTION_FLAGS flag) const {
-  return (this->flags_ & static_cast<uint64_t>(flag)) != 0;
+bool Section::has(SECTION_FLAGS flag) const {
+  return (this->flags() & static_cast<uint64_t>(flag)) != 0;
+}
+
+
+bool Section::has(const Segment& segment) const {
+  it_const_segments segments = this->segments();
+
+  auto&& it_segment = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&segment] (const Segment& s) {
+        return s == segment;
+      });
+  return it_segment != std::end(segments);
 }
 
 uint64_t Section::file_offset(void) const {
@@ -206,7 +219,7 @@ std::set<SECTION_FLAGS> Section::flags_list(void) const {
       std::begin(section_flags_array),
       std::end(section_flags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(&Section::has_flag, this, std::placeholders::_1));
+      std::bind(static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has), this, std::placeholders::_1));
 
   return flags;
 }
@@ -243,16 +256,16 @@ void Section::flags(uint64_t flags) {
   this->flags_ = flags;
 }
 
-void Section::add_flag(SECTION_FLAGS flag) {
-  this->flags_ = (this->flags_ | static_cast<uint64_t>(flag));
+void Section::add(SECTION_FLAGS flag) {
+  this->flags(this->flags() | static_cast<uint64_t>(flag));
 }
 
-void Section::remove_flag(SECTION_FLAGS flag) {
-  this->flags_ = (this->flags_ & (~ static_cast<uint64_t>(flag)));
+void Section::remove(SECTION_FLAGS flag) {
+  this->flags(this->flags() & (~ static_cast<uint64_t>(flag)));
 }
 
 void Section::clear_flags(void) {
-  this->flags_ = 0;
+  this->flags(0);
 }
 
 void Section::file_offset(uint64_t offset) {
@@ -294,6 +307,17 @@ void Section::accept(Visitor& visitor) const {
   visitor.visit(this->information());
   visitor.visit(this->alignment());
   visitor.visit(this->content());
+}
+
+
+Section& Section::operator+=(SECTION_FLAGS c) {
+  this->add(c);
+  return *this;
+}
+
+Section& Section::operator-=(SECTION_FLAGS c) {
+  this->remove(c);
+  return *this;
 }
 
 

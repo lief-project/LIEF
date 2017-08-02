@@ -75,7 +75,10 @@ class DLL_PUBLIC Section : public LIEF::Section {
     //! @brief ``True`` if the section has the given flag
     //!
     //! @param[in] flag flag to test
-    bool has_flag(SECTION_FLAGS flag) const;
+    bool has(SECTION_FLAGS flag) const;
+
+    //! @brief ``True`` if the section is in the given segment
+    bool has(const Segment& segment) const;
 
     //! @brief Return section flags as a ``std::set``
     std::set<SECTION_FLAGS> flags_list(void) const;
@@ -89,10 +92,11 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint32_t link(void) const;
 
 
+    void add(SECTION_FLAGS flag);
+    void remove(SECTION_FLAGS flag);
+
     void type(SECTION_TYPES type);
     void flags(uint64_t flags);
-    void add_flag(SECTION_FLAGS flag);
-    void remove_flag(SECTION_FLAGS flag);
     void clear_flags(void);
     void file_offset(uint64_t offset);
     void link(uint32_t link);
@@ -104,6 +108,9 @@ class DLL_PUBLIC Section : public LIEF::Section {
     it_const_segments segments(void) const;
 
     virtual void accept(Visitor& visitor) const override;
+
+    Section& operator+=(SECTION_FLAGS c);
+    Section& operator-=(SECTION_FLAGS c);
 
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
