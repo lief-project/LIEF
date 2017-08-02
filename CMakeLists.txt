@@ -54,6 +54,7 @@ option(LIEF_COVERAGE       "Perform code coverage"                      OFF)
 option(LIEF_USE_CCACHE     "Use ccache to speed up compilation"         ON)
 option(LIEF_EXTRA_WARNINGS "Enable extra warning from the compiler"     OFF)
 option(LIEF_LOGGING        "Enable logging"                             ON)
+option(LIEF_ENABLE_JSON    "Enable JSON-related APIs"                   ON)
 
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
@@ -74,17 +75,23 @@ endif()
 
 # Json
 # ----
-set(LIBJSON_GIT_URL "https://github.com/nlohmann/json.git" CACHE STRING "URL to the JSON lib repo")
-ExternalProject_Add(lief_libjson
-  GIT_REPOSITORY    ${LIBJSON_GIT_URL}
-  GIT_TAG           v2.0.8
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   "")
+if (LIEF_ENABLE_JSON)
+  set(LIBJSON_GIT_URL "https://github.com/nlohmann/json.git" CACHE STRING "URL to the JSON lib repo")
+  ExternalProject_Add(lief_libjson
+    GIT_REPOSITORY    ${LIBJSON_GIT_URL}
+    GIT_TAG           v2.0.8
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   "")
 
-ExternalProject_get_property(lief_libjson SOURCE_DIR)
-set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
-
+  ExternalProject_get_property(lief_libjson SOURCE_DIR)
+  set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
+  message(STATUS "Enable JSON support")
+  set(ENABLE_JSON_SUPPORT 1)
+else()
+  message(STATUS "Disable JSON support")
+  set(ENABLE_JSON_SUPPORT 0)
+endif()
 
 # Rang
 # ----
@@ -330,6 +337,12 @@ configure_file(
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/version.h"
 )
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/config.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/config.h"
+  @ONLY
+)
+
 set (LIEF_PUBLIC_INCLUDE_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}/include/"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
@@ -375,8 +388,10 @@ target_include_directories(LIB_LIEF_SHARED
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 
-add_dependencies(LIB_LIEF_STATIC lief_libjson)
-add_dependencies(LIB_LIEF_SHARED lief_libjson)
+if (LIEF_ENABLE_JSON)
+  add_dependencies(LIB_LIEF_STATIC lief_libjson)
+  add_dependencies(LIB_LIEF_SHARED lief_libjson)
+endif()
 
 add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
 add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)

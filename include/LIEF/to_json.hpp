@@ -16,6 +16,10 @@
 #ifndef LIEF_TO_JSON_H_
 #define LIEF_TO_JSON_H_
 
+#include "LIEF/config.h"
+
+#ifdef LIEF_JSON_SUPPORT
+
 #include "LIEF/json.hpp"
 
 #include "LIEF/visitors/json.hpp"
@@ -40,5 +44,7 @@ std::string to_json_str(const T& obj) {
 }
 
 } // namespace LIEF
+
+#endif // LIEF_JSON_SUPPORT
 
 #endif

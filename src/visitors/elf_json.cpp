@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "LIEF/config.h"
+
+#ifdef LIEF_JSON_SUPPORT
+
 #include "LIEF/visitors/elf_json.hpp"
 #include "LIEF/ELF.hpp"
 namespace LIEF {
@@ -411,3 +416,5 @@ void JsonVisitor::visit(const LIEF::Section& section) {
 
 } // namespace ELF
 } // namespace LIEF
+
+#endif // LIEF_JSON_SUPPORT

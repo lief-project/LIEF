@@ -16,6 +16,10 @@
 #ifndef LIEF_VISITOR_JSONS_H_
 #define LIEF_VISITOR_JSONS_H_
 
+#include "LIEF/config.h"
+
+#ifdef LIEF_JSON_SUPPORT
+
 #include "LIEF/visibility.h"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/json.hpp"
@@ -46,5 +50,6 @@ class DLL_PUBLIC JsonVisitor : public Visitor {
 
 }
 
+#endif // LIEF_JSON_SUPPORT
 
 #endif
