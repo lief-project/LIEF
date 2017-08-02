@@ -129,13 +129,13 @@ def print_segments(binary):
             sections = segment.sections
             s = ", ".join([section.name for section in sections])
             flags_str = ["-"] * 3
-            if ELF.SEGMENT_FLAGS.PF_R in segment:
+            if ELF.SEGMENT_FLAGS.R in segment:
                 flags_str[0] = "r"
 
-            if ELF.SEGMENT_FLAGS.PF_W in segment:
+            if ELF.SEGMENT_FLAGS.W in segment:
                 flags_str[1] = "w"
 
-            if ELF.SEGMENT_FLAGS.PF_X in segment:
+            if ELF.SEGMENT_FLAGS.X in segment:
                 flags_str[2] = "x"
             flags_str = "".join(flags_str)
 

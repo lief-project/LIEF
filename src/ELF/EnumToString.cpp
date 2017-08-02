@@ -1133,6 +1133,18 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
   return it == enum_strings_flags1.end() ? "UNDEFINED" : it->second;
 }
 
+const char* to_string(SEGMENT_FLAGS e) {
+  const std::map<SEGMENT_FLAGS, const char*> enum_strings {
+    { SEGMENT_FLAGS::PF_X, "X" },
+    { SEGMENT_FLAGS::PF_W, "W" },
+    { SEGMENT_FLAGS::PF_R, "R" },
+  };
+
+  auto   it  = enum_strings.find(e);
+  return it == enum_strings.end() ? "UNDEFINED" : it->second;
+}
+
+
 
 
 } // namespace ELF

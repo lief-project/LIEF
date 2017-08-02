@@ -392,11 +392,9 @@ void init_ELF_Structures_enum(py::module& m) {
 
   //! Enum for the *p_flags* field of ElfXX_Phdr
   py::enum_<SEGMENT_FLAGS>(m, "SEGMENT_FLAGS", py::arithmetic())
-    .value("PF_X",           SEGMENT_FLAGS::PF_X)
-    .value("PF_W",           SEGMENT_FLAGS::PF_W)
-    .value("PF_R",           SEGMENT_FLAGS::PF_R)
-    .value("PF_MASKOS",      SEGMENT_FLAGS::PF_MASKOS)
-    .value("PF_MASKPROC",    SEGMENT_FLAGS::PF_MASKPROC)
+    .value(PY_ENUM(SEGMENT_FLAGS::PF_X))
+    .value(PY_ENUM(SEGMENT_FLAGS::PF_W))
+    .value(PY_ENUM(SEGMENT_FLAGS::PF_R))
     .export_values();
 
 
