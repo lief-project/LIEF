@@ -19,6 +19,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <functional>
 
 #include "LIEF/Visitable.hpp"
 #include "LIEF/visibility.h"

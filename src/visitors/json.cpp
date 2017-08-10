@@ -16,6 +16,11 @@
 #include "LIEF/Abstract/Abstract.hpp"
 #include "LIEF/visitors/json.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
+
+#include "LIEF/config.h"
+
+#ifdef LIEF_JSON_SUPPORT
+
 namespace LIEF {
 
 JsonVisitor::JsonVisitor(void) :
@@ -92,3 +97,5 @@ const json& JsonVisitor::get(void) const {
 }
 
 }
+
+#endif // LIEF_JSON_SUPPORT
