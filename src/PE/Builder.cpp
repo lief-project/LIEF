@@ -218,6 +218,7 @@ void Builder::build_relocation(void) {
   new_relocation_section.characteristics(0x42000040);
   const size_t size_aligned = align(content.size(), this->binary_->optional_header().file_alignment());
 
+  new_relocation_section.virtual_size(content.size());
   // Pad with 0
   content.insert(
       std::end(content),

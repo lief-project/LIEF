@@ -17,41 +17,48 @@ namespace LIEF {
 namespace PE {
 
 template<typename PE_T>
-std::vector<uint8_t> Builder::build_jmp(uint64_t address) {
+std::vector<uint8_t> Builder::build_jmp(uint64_t from, uint64_t address) {
   using uint__ = typename PE_T::uint;
-  std::vector<uint8_t> instruction; // 48 A1 XX XX XX XX XX XX XX XX FF E0
+  std::vector<uint8_t> instruction;
+  //call $+5
+  instruction.push_back(0xe8);
+  instruction.push_back(0x00);
+  instruction.push_back(0x00);
+  instruction.push_back(0x00);
+  instruction.push_back(0x00);
+
+  //pop eax/pop rax
+  instruction.push_back(0x58);
+
+  //add rax/eax, ???
   if (std::is_same<PE_T, PE64>::value) {
     instruction.push_back(0x48); //x64
   }
+  instruction.push_back(0x05);
 
-  instruction.push_back(0xa1); // mov rax, [0xc0ffee]
-  for (size_t i = 0; i < sizeof(uint__); ++i) {
-    instruction.push_back(static_cast<uint8_t>((address >> (8 * i)) & 0xFF));
+  uint64_t diff = address - (from + 5);
+
+  for (size_t i = 0; i < 4; ++i) {
+    instruction.push_back(static_cast<uint8_t>((diff >> (8 * i)) & 0xFF));
   }
-  // jmp rax
+  // jmp [rax/eax]
   instruction.push_back(0xff);
-  instruction.push_back(0xe0);
+  instruction.push_back(0x20);
 
   return instruction;
 }
 
 
 template<typename PE_T>
-std::vector<uint8_t> Builder::build_jmp_hook(uint64_t address) {
+std::vector<uint8_t> Builder::build_jmp_hook(uint64_t from, uint64_t address) {
   using uint__ = typename PE_T::uint;
-  std::vector<uint8_t> instruction; // 48 A1 XX XX XX XX XX XX XX XX FF E0
-  if (std::is_same<PE_T, PE64>::value) {
-    instruction.push_back(0x48); //x64
-  }
-  instruction.push_back(0xb8); // mov rax, 0xc0ffee
+  std::vector<uint8_t> instruction;
+  instruction.push_back(0xe9); // jmp xxxx
+  uint64_t disp = address - from - 5;
 
-  for (size_t i = 0; i < sizeof(uint__); ++i) {
-    instruction.push_back(static_cast<uint8_t>((address >> (8 * i)) & 0xFF));
+  for (size_t i = 0; i < 4; ++i) {
+    instruction.push_back(static_cast<uint8_t>((disp >> (8 * i)) & 0xFF));
   }
-
-  // jmp rax
-  instruction.push_back(0xff);
-  instruction.push_back(0xe0);
 
   return instruction;
 }
@@ -105,7 +112,7 @@ void Builder::build_import_table(void) {
   uint32_t trampolines_size = 0;
 
   // Size of the instructions in the trampoline
-  uint32_t trampoline_size = build_jmp<PE_T>(0).size();
+  uint32_t trampoline_size = build_jmp<PE_T>(0, 0).size();
 
   // Compute size of each imports's sections
   for (const Import& import : this->binary_->imports()) {
@@ -237,9 +244,9 @@ void Builder::build_import_table(void) {
         uint64_t address = this->binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
         if (this->binary_->hooks_.count(import_name) > 0 and this->binary_->hooks_[import_name].count(entry.name())) {
           address = this->binary_->hooks_[import_name][entry.name()];
-          instructions = Builder::build_jmp_hook<PE_T>(address);
+          instructions = Builder::build_jmp_hook<PE_T>(this->binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
         } else {
-          instructions = Builder::build_jmp<PE_T>(address);
+          instructions = Builder::build_jmp<PE_T>(this->binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
         }
         std::copy(
             std::begin(instructions),
