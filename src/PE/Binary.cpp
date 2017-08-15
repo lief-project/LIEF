@@ -592,7 +592,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
 
   if (type == SECTION_TYPES::RELOCATION) {
     this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA(new_section->virtual_address());
-    this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).size(new_section->sizeof_raw_data());
+    this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).size(new_section->virtual_size());
     this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).section_ = new_section;
   }
 
