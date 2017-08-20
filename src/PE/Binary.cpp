@@ -1005,13 +1005,11 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   // Find the section associated with the virtual address
   Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
-  //std::vector<uint8_t> content = section_topatch.content();
-  std::vector<uint8_t>& content = section_topatch.content_ref();
+  std::vector<uint8_t>& content = section_topatch.content();
   std::copy(
       std::begin(patch_value),
       std::end(patch_value),
       content.data() + offset);
-  //section_topatch.content(content);
 
 }
 
@@ -1022,14 +1020,12 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 
   Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
-  //std::vector<uint8_t> content = section_topatch.content();
-  std::vector<uint8_t>& content = section_topatch.content_ref();
+  std::vector<uint8_t>& content = section_topatch.content();
 
   std::copy(
       reinterpret_cast<uint8_t*>(&patch_value),
       reinterpret_cast<uint8_t*>(&patch_value) + size,
       content.data() + offset);
-  //section_topatch.content(content);
 
 }
 

@@ -90,15 +90,13 @@ uint32_t Section::sizeof_raw_data(void) const {
   return this->size();
 }
 
-
 std::vector<uint8_t> Section::content(void) const {
   return this->content_;
 }
-std::vector<uint8_t>& Section::content_ref(void){
+
+std::vector<uint8_t>& Section::content(void){
   return this->content_;
 }
-
-
 
 uint32_t Section::pointerto_raw_data(void) const {
   return this->offset();
