@@ -18,19 +18,19 @@ namespace PE {
 
 template<typename PE_T>
 std::vector<uint8_t> Builder::build_jmp(uint64_t from, uint64_t address) {
-  using uint__ = typename PE_T::uint;
   std::vector<uint8_t> instruction;
-  //call $+5
+
+  // call $+5
   instruction.push_back(0xe8);
   instruction.push_back(0x00);
   instruction.push_back(0x00);
   instruction.push_back(0x00);
   instruction.push_back(0x00);
 
-  //pop eax/pop rax
-  instruction.push_back(0x58);
+  // pop eax/pop rax
+  instruction.push_back(0x58); // eax/rax holds the current PC
 
-  //add rax/eax, ???
+  // add rax/eax (signed)
   if (std::is_same<PE_T, PE64>::value) {
     instruction.push_back(0x48); //x64
   }
@@ -51,7 +51,6 @@ std::vector<uint8_t> Builder::build_jmp(uint64_t from, uint64_t address) {
 
 template<typename PE_T>
 std::vector<uint8_t> Builder::build_jmp_hook(uint64_t from, uint64_t address) {
-  using uint__ = typename PE_T::uint;
   std::vector<uint8_t> instruction;
   instruction.push_back(0xe9); // jmp xxxx
   uint64_t disp = address - from - 5;
