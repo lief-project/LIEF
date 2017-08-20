@@ -58,6 +58,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     // LIEF::Section implementation
     // ============================
     virtual std::vector<uint8_t> content(void) const override;
+    std::vector<uint8_t>& content(void);
 
 
     uint32_t pointerto_raw_data(void) const;
