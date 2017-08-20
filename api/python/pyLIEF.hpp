@@ -21,9 +21,13 @@
 #include <pybind11/operators.h>
 #include <functional>
 
+#include <LIEF/config.h>
+
 #include "encoding.hpp"
 
 #include "pyIterators.hpp"
+
+#define RST_CLASS_REF(X) ":class:`~"#X"`"
 
 namespace py = pybind11;
 
@@ -36,8 +40,10 @@ void init_ELF_module(py::module&);
 void init_PE_module(py::module&);
 void init_MachO_module(py::module&);
 void init_utils_functions(py::module&);
-void init_json_functions(py::module&);
 
-#define RST_CLASS_REF(X) ":class:`~"#X"`"
+#if defined(LIEF_JSON_SUPPORT)
+void init_json_functions(py::module&);
+#endif
+
 
 #endif

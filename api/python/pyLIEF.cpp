@@ -51,7 +51,10 @@ PYBIND11_PLUGIN(_pylief) {
   // Init util functions
   init_utils_functions(LIEF_module);
 
+
+#if defined(LIEF_JSON_SUPPORT)
   init_json_functions(LIEF_module);
+#endif
 
   return LIEF_module.ptr();
 }
