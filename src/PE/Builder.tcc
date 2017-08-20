@@ -38,7 +38,7 @@ std::vector<uint8_t> Builder::build_jmp(uint64_t from, uint64_t address) {
 
   uint64_t diff = address - (from + 5);
 
-  for (size_t i = 0; i < 4; ++i) {
+  for (size_t i = 0; i < sizeof(uint32_t); ++i) {
     instruction.push_back(static_cast<uint8_t>((diff >> (8 * i)) & 0xFF));
   }
   // jmp [rax/eax]
@@ -56,7 +56,7 @@ std::vector<uint8_t> Builder::build_jmp_hook(uint64_t from, uint64_t address) {
   instruction.push_back(0xe9); // jmp xxxx
   uint64_t disp = address - from - 5;
 
-  for (size_t i = 0; i < 4; ++i) {
+  for (size_t i = 0; i < sizeof(uint32_t); ++i) {
     instruction.push_back(static_cast<uint8_t>((disp >> (8 * i)) & 0xFF));
   }
 
