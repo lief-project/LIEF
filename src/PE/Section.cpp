@@ -42,7 +42,7 @@ Section::Section(void) :
   numberOfRelocations_{0},
   numberOfLineNumbers_{0},
   characteristics_{0},
-  types_{SECTION_TYPES::UNKNOWN}
+  types_{PE_SECTION_TYPES::UNKNOWN}
 {}
 
 
@@ -56,7 +56,7 @@ Section::Section(const pe_section* header) :
   numberOfRelocations_{header->NumberOfRelocations},
   numberOfLineNumbers_{header->NumberOfLineNumbers},
   characteristics_{header->Characteristics},
-  types_{SECTION_TYPES::UNKNOWN}
+  types_{PE_SECTION_TYPES::UNKNOWN}
 {
   this->name_            = header->Name;
   this->virtual_address_ = header->VirtualAddress;
@@ -125,12 +125,12 @@ uint32_t Section::characteristics(void) const {
 }
 
 
-const std::set<SECTION_TYPES>& Section::types(void) const {
+const std::set<PE_SECTION_TYPES>& Section::types(void) const {
   return this->types_;
 }
 
 
-bool Section::is_type(SECTION_TYPES type) const {
+bool Section::is_type(PE_SECTION_TYPES type) const {
   return this->types_.count(type) != 0;
 }
 
@@ -198,17 +198,17 @@ void Section::sizeof_raw_data(uint32_t sizeOfRawData) {
 }
 
 
-void Section::type(SECTION_TYPES type) {
+void Section::type(PE_SECTION_TYPES type) {
   this->types_ = {type};
 }
 
 
-void Section::remove_type(SECTION_TYPES type) {
+void Section::remove_type(PE_SECTION_TYPES type) {
   this->types_.erase(type);
 }
 
 
-void Section::add_type(SECTION_TYPES type) {
+void Section::add_type(PE_SECTION_TYPES type) {
   this->types_.insert(type);
 }
 

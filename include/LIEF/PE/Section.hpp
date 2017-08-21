@@ -68,8 +68,8 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint16_t numberof_line_numbers(void) const;
     uint32_t characteristics(void) const;
 
-    bool                              is_type(SECTION_TYPES type) const;
-    const std::set<SECTION_TYPES>&    types(void) const;
+    bool                              is_type(PE_SECTION_TYPES type) const;
+    const std::set<PE_SECTION_TYPES>& types(void) const;
     bool                              has_characteristic(SECTION_CHARACTERISTICS c) const;
     std::set<SECTION_CHARACTERISTICS> characteristics_list(void) const;
 
@@ -84,9 +84,9 @@ class DLL_PUBLIC Section : public LIEF::Section {
     void numberof_line_numbers(uint16_t numberOfLineNumbers);
     void sizeof_raw_data(uint32_t sizeOfRawData);
     void characteristics(uint32_t characteristics);
-    void type(SECTION_TYPES type);
-    void add_type(SECTION_TYPES type);
-    void remove_type(SECTION_TYPES type);
+    void type(PE_SECTION_TYPES type);
+    void add_type(PE_SECTION_TYPES type);
+    void remove_type(PE_SECTION_TYPES type);
     void add_characteristic(SECTION_CHARACTERISTICS characteristic);
     void remove_characteristic(SECTION_CHARACTERISTICS characteristic);
 
@@ -105,7 +105,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint16_t                numberOfRelocations_;
     uint16_t                numberOfLineNumbers_;
     uint32_t                characteristics_;
-    std::set<SECTION_TYPES> types_;
+    std::set<PE_SECTION_TYPES> types_;
 };
 
 } // namespace PE

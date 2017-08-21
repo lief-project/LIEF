@@ -42,7 +42,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     Symbol(const Elf32_Sym* header);
     Symbol(const Elf64_Sym* header);
     Symbol(std::string name,
-        SYMBOL_TYPES type = SYMBOL_TYPES::STT_NOTYPE,
+        ELF_SYMBOL_TYPES type = ELF_SYMBOL_TYPES::STT_NOTYPE,
         SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK,
         uint8_t other = 0, uint16_t shndx = 0,
         uint64_t value = 0, uint64_t size = 0);
@@ -54,7 +54,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     void swap(Symbol& other);
 
     //! @brief A symbol's type provides a general classification for the associated entity
-    SYMBOL_TYPES type(void) const;
+    ELF_SYMBOL_TYPES type(void) const;
 
     //! @brief A symbol's binding determines the linkage visibility and behavior
     SYMBOL_BINDINGS binding(void) const;
@@ -100,7 +100,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     //! @brief Symbol's unmangled name
     std::string demangled_name(void) const;
 
-    void type(SYMBOL_TYPES type);
+    void type(ELF_SYMBOL_TYPES type);
     void binding(SYMBOL_BINDINGS binding);
     void other(uint8_t other);
     void value(uint64_t value);
@@ -128,14 +128,14 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
-    SYMBOL_TYPES    type_;
-    SYMBOL_BINDINGS binding_;
-    uint8_t         other_;
-    uint16_t        shndx_;
-    Section*        section_;
-    uint64_t        value_;
-    uint64_t        size_;
-    SymbolVersion*  symbol_version_;
+    ELF_SYMBOL_TYPES type_;
+    SYMBOL_BINDINGS  binding_;
+    uint8_t          other_;
+    uint16_t         shndx_;
+    Section*         section_;
+    uint64_t         value_;
+    uint64_t         size_;
+    SymbolVersion*   symbol_version_;
 
 };
 }

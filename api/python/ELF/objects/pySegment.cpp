@@ -104,7 +104,7 @@ void init_ELF_Segment_class(py::module& m) {
 
 
     .def("has",
-        static_cast<bool (Segment::*)(SEGMENT_FLAGS) const>(&Segment::has),
+        static_cast<bool (Segment::*)(ELF_SEGMENT_FLAGS) const>(&Segment::has),
         "Check if the given " RST_CLASS_REF(lief.ELF.SEGMENT_FLAGS) " is present",
         "flag"_a)
 
@@ -132,11 +132,11 @@ void init_ELF_Segment_class(py::module& m) {
           return LIEF::Hash::hash(segment);
         })
 
-    .def(py::self += SEGMENT_FLAGS())
-    .def(py::self -= SEGMENT_FLAGS())
+    .def(py::self += ELF_SEGMENT_FLAGS())
+    .def(py::self -= ELF_SEGMENT_FLAGS())
 
     .def("__contains__",
-        static_cast<bool (Segment::*)(SEGMENT_FLAGS) const>(&Segment::has),
+        static_cast<bool (Segment::*)(ELF_SEGMENT_FLAGS) const>(&Segment::has),
         "Check if the given " RST_CLASS_REF(lief.ELF.SEGMENT_FLAGS) " is present")
 
     .def("__contains__",

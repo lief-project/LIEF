@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include <LIEF/PE.h>
+#include <LIEF/LIEF.h>
 
 
 int main(int argc, char **argv) {

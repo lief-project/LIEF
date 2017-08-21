@@ -30,7 +30,7 @@ DLL_PUBLIC const char* to_string(SUBSYSTEM e);
 DLL_PUBLIC const char* to_string(DLL_CHARACTERISTICS e);
 
 DLL_PUBLIC const char* to_string(SECTION_CHARACTERISTICS e);
-DLL_PUBLIC const char* to_string(SECTION_TYPES e);
+DLL_PUBLIC const char* to_string(PE_SECTION_TYPES e);
 
 DLL_PUBLIC const char* to_string(SYMBOL_BASE_TYPES e);
 DLL_PUBLIC const char* to_string(SYMBOL_COMPLEX_TYPES e);

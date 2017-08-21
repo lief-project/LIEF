@@ -188,7 +188,7 @@ it_sections Segment::sections(void) {
   return {this->sections_};
 }
 
-bool Segment::has(SEGMENT_FLAGS flag) const {
+bool Segment::has(ELF_SEGMENT_FLAGS flag) const {
   return ((this->flags() & static_cast<uint32_t>(flag)) != 0);
 }
 
@@ -221,12 +221,12 @@ void Segment::flags(uint32_t flags) {
 }
 
 
-void Segment::add(SEGMENT_FLAGS flag) {
+void Segment::add(ELF_SEGMENT_FLAGS flag) {
   this->flags(this->flags() | static_cast<uint32_t>(flag));
 }
 
 
-void Segment::remove(SEGMENT_FLAGS flag) {
+void Segment::remove(ELF_SEGMENT_FLAGS flag) {
   this->flags(this->flags() & ~ static_cast<uint32_t>(flag));
 }
 
@@ -299,12 +299,12 @@ void Segment::accept(Visitor& visitor) const {
 }
 
 
-Segment& Segment::operator+=(SEGMENT_FLAGS c) {
+Segment& Segment::operator+=(ELF_SEGMENT_FLAGS c) {
   this->add(c);
   return *this;
 }
 
-Segment& Segment::operator-=(SEGMENT_FLAGS c) {
+Segment& Segment::operator-=(ELF_SEGMENT_FLAGS c) {
   this->remove(c);
   return *this;
 }
@@ -324,15 +324,15 @@ std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {
 
   std::string flags = "---";
 
-  if (segment.has(SEGMENT_FLAGS::PF_R)) {
+  if (segment.has(ELF_SEGMENT_FLAGS::PF_R)) {
     flags[0] = 'r';
   }
 
-  if (segment.has(SEGMENT_FLAGS::PF_W)) {
+  if (segment.has(ELF_SEGMENT_FLAGS::PF_W)) {
     flags[1] = 'w';
   }
 
-  if (segment.has(SEGMENT_FLAGS::PF_X)) {
+  if (segment.has(ELF_SEGMENT_FLAGS::PF_X)) {
     flags[2] = 'x';
   }
 

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include <LIEF/ELF.h>
+#include <LIEF/LIEF.h>
 
 
 int main(int argc, char **argv) {
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
         "%.6f "
         "\n",
         section->name,
-        SECTION_TYPES_to_string(section->type),
+        ELF_SECTION_TYPES_to_string(section->type),
         section->virtual_address,
         section->size,
         section->offset,
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
         "%-3s "
         "\n",
         symbol->name,
-        SYMBOL_TYPES_to_string(symbol->type),
+        ELF_SYMBOL_TYPES_to_string(symbol->type),
         SYMBOL_BINDINGS_to_string(symbol->binding),
         symbol->other,
         symbol->shndx,
@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
         "%-3s "
         "\n",
         symbol->name,
-        SYMBOL_TYPES_to_string(symbol->type),
+        ELF_SYMBOL_TYPES_to_string(symbol->type),
         SYMBOL_BINDINGS_to_string(symbol->binding),
         symbol->other,
         symbol->shndx,

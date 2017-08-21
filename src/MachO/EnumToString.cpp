@@ -160,59 +160,59 @@ const char* to_string(HEADER_FLAGS e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
-const char* to_string(SECTION_TYPES e) {
-  const std::map<SECTION_TYPES, const char*> enumStrings {
-      { SECTION_TYPES::S_REGULAR,                             "REGULAR"},
-      { SECTION_TYPES::S_ZEROFILL,                            "ZEROFILL"},
-      { SECTION_TYPES::S_CSTRING_LITERALS,                    "CSTRING_LITERALS"},
-      { SECTION_TYPES::S_4BYTE_LITERALS,                      "S_4BYTE_LITERALS"},
-      { SECTION_TYPES::S_8BYTE_LITERALS,                      "S_8BYTE_LITERALS"},
-      { SECTION_TYPES::S_LITERAL_POINTERS,                    "LITERAL_POINTERS"},
-      { SECTION_TYPES::S_NON_LAZY_SYMBOL_POINTERS,            "NON_LAZY_SYMBOL_POINTERS"},
-      { SECTION_TYPES::S_LAZY_SYMBOL_POINTERS,                "LAZY_SYMBOL_POINTERS"},
-      { SECTION_TYPES::S_SYMBOL_STUBS,                        "SYMBOL_STUBS"},
-      { SECTION_TYPES::S_MOD_INIT_FUNC_POINTERS,              "MOD_INIT_FUNC_POINTERS"},
-      { SECTION_TYPES::S_MOD_TERM_FUNC_POINTERS,              "MOD_TERM_FUNC_POINTERS"},
-      { SECTION_TYPES::S_COALESCED,                           "COALESCED"},
-      { SECTION_TYPES::S_GB_ZEROFILL,                         "GB_ZEROFILL"},
-      { SECTION_TYPES::S_INTERPOSING,                         "INTERPOSING"},
-      { SECTION_TYPES::S_16BYTE_LITERALS,                     "S_16BYTE_LITERALS"},
-      { SECTION_TYPES::S_DTRACE_DOF,                          "DTRACE_DOF"},
-      { SECTION_TYPES::S_LAZY_DYLIB_SYMBOL_POINTERS,          "LAZY_DYLIB_SYMBOL_POINTERS"},
-      { SECTION_TYPES::S_THREAD_LOCAL_REGULAR,                "THREAD_LOCAL_REGULAR"},
-      { SECTION_TYPES::S_THREAD_LOCAL_ZEROFILL,               "THREAD_LOCAL_ZEROFILL"},
-      { SECTION_TYPES::S_THREAD_LOCAL_VARIABLES,              "THREAD_LOCAL_VARIABLES"},
-      { SECTION_TYPES::S_THREAD_LOCAL_VARIABLE_POINTERS,      "THREAD_LOCAL_VARIABLE_POINTERS"},
-      { SECTION_TYPES::S_THREAD_LOCAL_INIT_FUNCTION_POINTERS, "THREAD_LOCAL_INIT_FUNCTION_POINTERS"}
+const char* to_string(MACHO_SECTION_TYPES e) {
+  const std::map<MACHO_SECTION_TYPES, const char*> enumStrings {
+      { MACHO_SECTION_TYPES::S_REGULAR,                             "REGULAR"},
+      { MACHO_SECTION_TYPES::S_ZEROFILL,                            "ZEROFILL"},
+      { MACHO_SECTION_TYPES::S_CSTRING_LITERALS,                    "CSTRING_LITERALS"},
+      { MACHO_SECTION_TYPES::S_4BYTE_LITERALS,                      "S_4BYTE_LITERALS"},
+      { MACHO_SECTION_TYPES::S_8BYTE_LITERALS,                      "S_8BYTE_LITERALS"},
+      { MACHO_SECTION_TYPES::S_LITERAL_POINTERS,                    "LITERAL_POINTERS"},
+      { MACHO_SECTION_TYPES::S_NON_LAZY_SYMBOL_POINTERS,            "NON_LAZY_SYMBOL_POINTERS"},
+      { MACHO_SECTION_TYPES::S_LAZY_SYMBOL_POINTERS,                "LAZY_SYMBOL_POINTERS"},
+      { MACHO_SECTION_TYPES::S_SYMBOL_STUBS,                        "SYMBOL_STUBS"},
+      { MACHO_SECTION_TYPES::S_MOD_INIT_FUNC_POINTERS,              "MOD_INIT_FUNC_POINTERS"},
+      { MACHO_SECTION_TYPES::S_MOD_TERM_FUNC_POINTERS,              "MOD_TERM_FUNC_POINTERS"},
+      { MACHO_SECTION_TYPES::S_COALESCED,                           "COALESCED"},
+      { MACHO_SECTION_TYPES::S_GB_ZEROFILL,                         "GB_ZEROFILL"},
+      { MACHO_SECTION_TYPES::S_INTERPOSING,                         "INTERPOSING"},
+      { MACHO_SECTION_TYPES::S_16BYTE_LITERALS,                     "S_16BYTE_LITERALS"},
+      { MACHO_SECTION_TYPES::S_DTRACE_DOF,                          "DTRACE_DOF"},
+      { MACHO_SECTION_TYPES::S_LAZY_DYLIB_SYMBOL_POINTERS,          "LAZY_DYLIB_SYMBOL_POINTERS"},
+      { MACHO_SECTION_TYPES::S_THREAD_LOCAL_REGULAR,                "THREAD_LOCAL_REGULAR"},
+      { MACHO_SECTION_TYPES::S_THREAD_LOCAL_ZEROFILL,               "THREAD_LOCAL_ZEROFILL"},
+      { MACHO_SECTION_TYPES::S_THREAD_LOCAL_VARIABLES,              "THREAD_LOCAL_VARIABLES"},
+      { MACHO_SECTION_TYPES::S_THREAD_LOCAL_VARIABLE_POINTERS,      "THREAD_LOCAL_VARIABLE_POINTERS"},
+      { MACHO_SECTION_TYPES::S_THREAD_LOCAL_INIT_FUNCTION_POINTERS, "THREAD_LOCAL_INIT_FUNCTION_POINTERS"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
-const char* to_string(SECTION_FLAGS e) {
-  const std::map<SECTION_FLAGS, const char*> enumStrings {
-    { SECTION_FLAGS::S_ATTR_PURE_INSTRUCTIONS,   "PURE_INSTRUCTIONS"},
-    { SECTION_FLAGS::S_ATTR_NO_TOC,              "NO_TOC"},
-    { SECTION_FLAGS::S_ATTR_STRIP_STATIC_SYMS,   "STRIP_STATIC_SYMS"},
-    { SECTION_FLAGS::S_ATTR_NO_DEAD_STRIP,       "NO_DEAD_STRIP"},
-    { SECTION_FLAGS::S_ATTR_LIVE_SUPPORT,        "LIVE_SUPPORT"},
-    { SECTION_FLAGS::S_ATTR_SELF_MODIFYING_CODE, "SELF_MODIFYING_CODE"},
-    { SECTION_FLAGS::S_ATTR_DEBUG,               "DEBUG"},
-    { SECTION_FLAGS::S_ATTR_SOME_INSTRUCTIONS,   "SOME_INSTRUCTIONS"},
-    { SECTION_FLAGS::S_ATTR_EXT_RELOC,           "EXT_RELOC"},
-    { SECTION_FLAGS::S_ATTR_LOC_RELOC,           "LOC_RELOC"}
+const char* to_string(MACHO_SECTION_FLAGS e) {
+  const std::map<MACHO_SECTION_FLAGS, const char*> enumStrings {
+    { MACHO_SECTION_FLAGS::S_ATTR_PURE_INSTRUCTIONS,   "PURE_INSTRUCTIONS"},
+    { MACHO_SECTION_FLAGS::S_ATTR_NO_TOC,              "NO_TOC"},
+    { MACHO_SECTION_FLAGS::S_ATTR_STRIP_STATIC_SYMS,   "STRIP_STATIC_SYMS"},
+    { MACHO_SECTION_FLAGS::S_ATTR_NO_DEAD_STRIP,       "NO_DEAD_STRIP"},
+    { MACHO_SECTION_FLAGS::S_ATTR_LIVE_SUPPORT,        "LIVE_SUPPORT"},
+    { MACHO_SECTION_FLAGS::S_ATTR_SELF_MODIFYING_CODE, "SELF_MODIFYING_CODE"},
+    { MACHO_SECTION_FLAGS::S_ATTR_DEBUG,               "DEBUG"},
+    { MACHO_SECTION_FLAGS::S_ATTR_SOME_INSTRUCTIONS,   "SOME_INSTRUCTIONS"},
+    { MACHO_SECTION_FLAGS::S_ATTR_EXT_RELOC,           "EXT_RELOC"},
+    { MACHO_SECTION_FLAGS::S_ATTR_LOC_RELOC,           "LOC_RELOC"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
 
-const char* to_string(SYMBOL_TYPES e) {
-  const std::map<SYMBOL_TYPES, const char*> enumStrings {
-    { SYMBOL_TYPES::N_STAB, "STAB"},
-    { SYMBOL_TYPES::N_PEXT, "PEXT"},
-    { SYMBOL_TYPES::N_TYPE, "TYPE"},
-    { SYMBOL_TYPES::N_EXT,  "EXT"}
+const char* to_string(MACHO_SYMBOL_TYPES e) {
+  const std::map<MACHO_SYMBOL_TYPES, const char*> enumStrings {
+    { MACHO_SYMBOL_TYPES::N_STAB, "STAB"},
+    { MACHO_SYMBOL_TYPES::N_PEXT, "PEXT"},
+    { MACHO_SYMBOL_TYPES::N_TYPE, "TYPE"},
+    { MACHO_SYMBOL_TYPES::N_EXT,  "EXT"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

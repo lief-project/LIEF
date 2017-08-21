@@ -482,7 +482,7 @@ enum SYMBOL_SECTION_INDEX {
 };
 
 /** Section types. */
-enum SECTION_TYPES {
+enum ELF_SECTION_TYPES {
   SHT_NULL                = 0,  /**< No associated section (inactive entry). */
   SHT_PROGBITS            = 1,  /**< Program-defined contents. */
   SHT_SYMTAB              = 2,  /**< Symbol table. */
@@ -529,7 +529,7 @@ enum SECTION_TYPES {
 
 
 /** Section flags. */
-enum SECTION_FLAGS {
+enum ELF_SECTION_FLAGS {
   SHF_NONE             = 0x0,
   SHF_WRITE            = 0x1,         /**< Section data should be writable during execution. */
   SHF_ALLOC            = 0x2,         /**< Section occupies memory during program execution. */
@@ -616,7 +616,7 @@ enum SYMBOL_BINDINGS {
 
 
 /* Symbol types. */
-enum SYMBOL_TYPES {
+enum ELF_SYMBOL_TYPES {
   STT_NOTYPE    = 0,   /* Symbol's type is not specified */
   STT_OBJECT    = 1,   /* Symbol is a data object (variable, array, etc.) */
   STT_FUNC      = 2,   /* Symbol is executable code (function, etc.) */
@@ -692,7 +692,7 @@ enum SEGMENT_TYPES {
 
 
 /** Segment flags. */
-enum SEGMENT_FLAGS {
+enum ELF_SEGMENT_FLAGS {
    PF_X        = 1,         /**< Execute */
    PF_W        = 2,         /**< Write */
    PF_R        = 4,         /**< Read */

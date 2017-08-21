@@ -167,16 +167,16 @@ it_const_relocations Section::relocations(void) const {
   return this->relocations_;
 }
 
-SECTION_TYPES Section::type(void) const {
-  return static_cast<SECTION_TYPES>(
+MACHO_SECTION_TYPES Section::type(void) const {
+  return static_cast<MACHO_SECTION_TYPES>(
       this->flags_ & SECTION_FLAGS_HELPER::SECTION_TYPE_MASK);
 }
 
-std::set<SECTION_FLAGS> Section::flags_list(void) const {
+std::set<MACHO_SECTION_FLAGS> Section::flags_list(void) const {
 
-  std::set<SECTION_FLAGS> flags;
+  std::set<MACHO_SECTION_FLAGS> flags;
 
-  auto has_flag = [this] (SECTION_FLAGS flag) {
+  auto has_flag = [this] (MACHO_SECTION_FLAGS flag) {
     return (static_cast<uint32_t>(flag) & this->flags_) > 0;
   };
 
@@ -228,7 +228,7 @@ void Section::reserved3(uint32_t reserved3) {
   this->reserved3_ = reserved3;
 }
 
-void Section::type(SECTION_TYPES type) {
+void Section::type(MACHO_SECTION_TYPES type) {
   this->flags_ =
     (this->flags_ & SECTION_FLAGS_HELPER::SECTION_FLAGS_MASK) | static_cast<uint8_t>(type);
 }
@@ -272,7 +272,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
    std::string flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},
-     [] (const std::string& a, SECTION_FLAGS b) {
+     [] (const std::string& a, MACHO_SECTION_FLAGS b) {
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });
 

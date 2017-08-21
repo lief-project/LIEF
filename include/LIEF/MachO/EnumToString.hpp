@@ -26,9 +26,9 @@ DLL_PUBLIC const char* to_string(MACHO_TYPES e);
 DLL_PUBLIC const char* to_string(FILE_TYPES e);
 DLL_PUBLIC const char* to_string(CPU_TYPES e);
 DLL_PUBLIC const char* to_string(HEADER_FLAGS e);
-DLL_PUBLIC const char* to_string(SECTION_TYPES e);
-DLL_PUBLIC const char* to_string(SECTION_FLAGS e);
-DLL_PUBLIC const char* to_string(SYMBOL_TYPES e);
+DLL_PUBLIC const char* to_string(MACHO_SECTION_TYPES e);
+DLL_PUBLIC const char* to_string(MACHO_SECTION_FLAGS e);
+DLL_PUBLIC const char* to_string(MACHO_SYMBOL_TYPES e);
 DLL_PUBLIC const char* to_string(N_LIST_TYPES e);
 DLL_PUBLIC const char* to_string(SYMBOL_DESCRIPTIONS e);
 

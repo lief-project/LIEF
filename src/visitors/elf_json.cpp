@@ -188,7 +188,7 @@ void JsonVisitor::visit(const Header& header) {
 
 void JsonVisitor::visit(const Section& section) {
   std::vector<json> flags;
-  for (SECTION_FLAGS f : section.flags_list()) {
+  for (ELF_SECTION_FLAGS f : section.flags_list()) {
     flags.emplace_back(to_string(f));
   }
 

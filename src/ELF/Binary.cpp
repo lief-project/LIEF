@@ -101,7 +101,7 @@ it_const_segments Binary::get_segments(void) const {
 std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
   std::vector<std::string> result;
   for (const Symbol& symbol : this->get_exported_symbols()) {
-    if (symbol.type() == SYMBOL_TYPES::STT_FUNC) {
+    if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
       result.push_back(symbol.name());
     }
   }
@@ -112,7 +112,7 @@ std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
 std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
   std::vector<std::string> result;
   for (const Symbol& symbol : this->get_imported_symbols()) {
-    if (symbol.type() == SYMBOL_TYPES::STT_FUNC) {
+    if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
       result.push_back(symbol.name());
     }
   }
@@ -497,7 +497,7 @@ Section& Binary::get_dynamic_section(void) {
       std::begin(this->sections_),
       std::end(this->sections_),
       [] (const Section* section) {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_DYNAMIC;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_DYNAMIC;
       });
 
   if (it_dynamic_section == std::end(this->sections_)) {
@@ -513,8 +513,8 @@ Section& Binary::get_hash_section(void) {
       std::begin(this->sections_),
       std::end(this->sections_),
       [] (const Section* section) {
-        return section != nullptr and (section->type() == SECTION_TYPES::SHT_HASH or
-            section->type() == SECTION_TYPES::SHT_GNU_HASH);
+        return section != nullptr and (section->type() == ELF_SECTION_TYPES::SHT_HASH or
+            section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH);
       });
 
   if (it_hash_section == std::end(this->sections_)) {
@@ -532,7 +532,7 @@ Section& Binary::get_static_symbols_section(void) {
       std::end(this->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_SYMTAB;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_SYMTAB;
       });
 
 
@@ -593,10 +593,10 @@ uint64_t Binary::get_function_address(const std::string& func_name, bool demangl
 
         if (demangled) {
           return (symbol->demangled_name() == func_name and
-                  symbol->type() == SYMBOL_TYPES::STT_FUNC);
+                  symbol->type() == ELF_SYMBOL_TYPES::STT_FUNC);
         } else {
           return (symbol->name() == func_name and
-                  symbol->type() == SYMBOL_TYPES::STT_FUNC);
+                  symbol->type() == ELF_SYMBOL_TYPES::STT_FUNC);
         }
       });
 
@@ -619,7 +619,7 @@ Section& Binary::add_section(const Section& section, bool loaded) {
       std::end(this->sections_),
       [] (const Section* s)
       {
-        return s->type() == SECTION_TYPES::SHT_PROGBITS;
+        return s->type() == ELF_SECTION_TYPES::SHT_PROGBITS;
       });
 
     if (it_progbit_section == std::end(this->sections_)) {
@@ -637,7 +637,7 @@ Section& Binary::add_section(const Section& section, bool loaded) {
         continue;
       }
 
-      if (s->type() != SECTION_TYPES::SHT_NOBITS) { // to avoid .bss section
+      if (s->type() != ELF_SECTION_TYPES::SHT_NOBITS) { // to avoid .bss section
         new_section_offset = std::max<uint64_t>(s->file_offset() + s->size(), new_section_offset);
       }
     }
@@ -658,7 +658,7 @@ Section& Binary::add_section(const Section& section, bool loaded) {
     for (Segment* segment : this->segments_) {
       if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
 
-        //segment->add(SEGMENT_FLAGS::PF_W);
+        //segment->add(ELF_SEGMENT_FLAGS::PF_W);
         segment->virtual_size(segment->virtual_size()         + new_section->size());
         segment->virtual_address(segment->virtual_address()   - new_section->size());
 
@@ -756,7 +756,7 @@ bool Binary::has_nx(void) const {
     return false;
   }
 
-  return not (*it_stack)->has(SEGMENT_FLAGS::PF_X);
+  return not (*it_stack)->has(ELF_SEGMENT_FLAGS::PF_X);
 
 }
 
@@ -997,7 +997,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
       std::end(this->sections_),
       [] (const Section* section)
       {
-        return (section->type() == SECTION_TYPES::SHT_PROGBITS) and
+        return (section->type() == ELF_SECTION_TYPES::SHT_PROGBITS) and
                 section->name() != ".interp";
       });
 
@@ -1058,7 +1058,7 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
   // ==============
   for (Segment* segment : this->segments_) {
     if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
-      segment->add(SEGMENT_FLAGS::PF_W); // TODO: Improve
+      segment->add(ELF_SEGMENT_FLAGS::PF_W); // TODO: Improve
     }
 
     if (segment->file_offset() > sectionOffset) {

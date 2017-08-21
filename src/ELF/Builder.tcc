@@ -242,7 +242,7 @@ void Builder::build_sections(void) {
     }
 
     // Write Section's content
-    if (section->type() != SECTION_TYPES::SHT_NOBITS) {
+    if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
         const std::vector<uint8_t>& content = section->content();
         // TODO: Assert sh_size == content.size()
         this->ios_.seekp(shdr.sh_offset);
@@ -510,7 +510,7 @@ void Builder::build_symbol_hash(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_HASH;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_HASH;
       });
 
   if (it_hash_section == std::end(this->binary_->sections_)) {
@@ -701,7 +701,7 @@ void Builder::build_symbol_gnuhash(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_GNU_HASH;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
       });
 
   if (it_gnuhash == std::end(this->binary_->sections_)) {
@@ -725,7 +725,7 @@ void Builder::build_hash_table(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_HASH;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_HASH;
       });
 
 
@@ -734,7 +734,7 @@ void Builder::build_hash_table(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_GNU_HASH;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
       });
 
   //TODO: To improve

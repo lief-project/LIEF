@@ -373,98 +373,98 @@ const char* to_string(DYNAMIC_TAGS e) {
 }
 
 
-const char* to_string(SECTION_TYPES e) {
-  const std::map<SECTION_TYPES, const char*> enumStrings {
-    { SECTION_TYPES::SHT_NULL,               "NULL"},
-    { SECTION_TYPES::SHT_PROGBITS,           "PROGBITS"},
-    { SECTION_TYPES::SHT_SYMTAB,             "SYMTAB"},
-    { SECTION_TYPES::SHT_STRTAB,             "STRTAB"},
-    { SECTION_TYPES::SHT_RELA,               "RELA"},
-    { SECTION_TYPES::SHT_HASH,               "HASH"},
-    { SECTION_TYPES::SHT_DYNAMIC,            "DYNAMIC"},
-    { SECTION_TYPES::SHT_NOTE,               "NOTE"},
-    { SECTION_TYPES::SHT_NOBITS,             "NOBITS"},
-    { SECTION_TYPES::SHT_REL,                "REL"},
-    { SECTION_TYPES::SHT_SHLIB,              "SHLIB"},
-    { SECTION_TYPES::SHT_DYNSYM,             "DYNSYM"},
-    { SECTION_TYPES::SHT_INIT_ARRAY,         "INIT_ARRAY"},
-    { SECTION_TYPES::SHT_FINI_ARRAY,         "FINI_ARRAY"},
-    { SECTION_TYPES::SHT_PREINIT_ARRAY,      "PREINIT_ARRAY"},
-    { SECTION_TYPES::SHT_GROUP,              "GROUP"},
-    { SECTION_TYPES::SHT_SYMTAB_SHNDX,       "SYMTAB_SHNDX"},
-    { SECTION_TYPES::SHT_LOOS,               "LOOS"},
-    { SECTION_TYPES::SHT_GNU_ATTRIBUTES,     "GNU_ATTRIBUTES"},
-    { SECTION_TYPES::SHT_GNU_HASH,           "GNU_HASH"},
-    { SECTION_TYPES::SHT_GNU_verdef,         "GNU_VERDEF"},
-    { SECTION_TYPES::SHT_GNU_verneed,        "GNU_VERNEED"},
-    { SECTION_TYPES::SHT_GNU_versym,         "GNU_VERSYM"},
-    { SECTION_TYPES::SHT_HIOS,               "HIOS"},
-    { SECTION_TYPES::SHT_LOPROC,             "LOPROC"},
-    { SECTION_TYPES::SHT_ARM_EXIDX,          "ARM_EXIDX"},
-    { SECTION_TYPES::SHT_ARM_PREEMPTMAP,     "ARM_PREEMPTMAP"},
-    { SECTION_TYPES::SHT_ARM_ATTRIBUTES,     "ARM_ATTRIBUTES"},
-    { SECTION_TYPES::SHT_ARM_DEBUGOVERLAY,   "ARM_DEBUGOVERLAY"},
-    { SECTION_TYPES::SHT_ARM_OVERLAYSECTION, "ARM_OVERLAYSECTION"},
-    { SECTION_TYPES::SHT_HEX_ORDERED,        "HEX_ORDERED"},
-    { SECTION_TYPES::SHT_X86_64_UNWIND,      "X86_64_UNWIND"},
-    { SECTION_TYPES::SHT_MIPS_REGINFO,       "MIPS_REGINFO"},
-    { SECTION_TYPES::SHT_MIPS_OPTIONS,       "MIPS_OPTIONS"},
-    { SECTION_TYPES::SHT_MIPS_ABIFLAGS,      "MIPS_ABIFLAGS"},
-    { SECTION_TYPES::SHT_HIPROC,             "HIPROC"},
-    { SECTION_TYPES::SHT_LOUSER,             "LOUSER"},
-    { SECTION_TYPES::SHT_HIUSER,             "HIUSER"}
+const char* to_string(ELF_SECTION_TYPES e) {
+  const std::map<ELF_SECTION_TYPES, const char*> enumStrings {
+    { ELF_SECTION_TYPES::SHT_NULL,               "NULL"},
+    { ELF_SECTION_TYPES::SHT_PROGBITS,           "PROGBITS"},
+    { ELF_SECTION_TYPES::SHT_SYMTAB,             "SYMTAB"},
+    { ELF_SECTION_TYPES::SHT_STRTAB,             "STRTAB"},
+    { ELF_SECTION_TYPES::SHT_RELA,               "RELA"},
+    { ELF_SECTION_TYPES::SHT_HASH,               "HASH"},
+    { ELF_SECTION_TYPES::SHT_DYNAMIC,            "DYNAMIC"},
+    { ELF_SECTION_TYPES::SHT_NOTE,               "NOTE"},
+    { ELF_SECTION_TYPES::SHT_NOBITS,             "NOBITS"},
+    { ELF_SECTION_TYPES::SHT_REL,                "REL"},
+    { ELF_SECTION_TYPES::SHT_SHLIB,              "SHLIB"},
+    { ELF_SECTION_TYPES::SHT_DYNSYM,             "DYNSYM"},
+    { ELF_SECTION_TYPES::SHT_INIT_ARRAY,         "INIT_ARRAY"},
+    { ELF_SECTION_TYPES::SHT_FINI_ARRAY,         "FINI_ARRAY"},
+    { ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,      "PREINIT_ARRAY"},
+    { ELF_SECTION_TYPES::SHT_GROUP,              "GROUP"},
+    { ELF_SECTION_TYPES::SHT_SYMTAB_SHNDX,       "SYMTAB_SHNDX"},
+    { ELF_SECTION_TYPES::SHT_LOOS,               "LOOS"},
+    { ELF_SECTION_TYPES::SHT_GNU_ATTRIBUTES,     "GNU_ATTRIBUTES"},
+    { ELF_SECTION_TYPES::SHT_GNU_HASH,           "GNU_HASH"},
+    { ELF_SECTION_TYPES::SHT_GNU_verdef,         "GNU_VERDEF"},
+    { ELF_SECTION_TYPES::SHT_GNU_verneed,        "GNU_VERNEED"},
+    { ELF_SECTION_TYPES::SHT_GNU_versym,         "GNU_VERSYM"},
+    { ELF_SECTION_TYPES::SHT_HIOS,               "HIOS"},
+    { ELF_SECTION_TYPES::SHT_LOPROC,             "LOPROC"},
+    { ELF_SECTION_TYPES::SHT_ARM_EXIDX,          "ARM_EXIDX"},
+    { ELF_SECTION_TYPES::SHT_ARM_PREEMPTMAP,     "ARM_PREEMPTMAP"},
+    { ELF_SECTION_TYPES::SHT_ARM_ATTRIBUTES,     "ARM_ATTRIBUTES"},
+    { ELF_SECTION_TYPES::SHT_ARM_DEBUGOVERLAY,   "ARM_DEBUGOVERLAY"},
+    { ELF_SECTION_TYPES::SHT_ARM_OVERLAYSECTION, "ARM_OVERLAYSECTION"},
+    { ELF_SECTION_TYPES::SHT_HEX_ORDERED,        "HEX_ORDERED"},
+    { ELF_SECTION_TYPES::SHT_X86_64_UNWIND,      "X86_64_UNWIND"},
+    { ELF_SECTION_TYPES::SHT_MIPS_REGINFO,       "MIPS_REGINFO"},
+    { ELF_SECTION_TYPES::SHT_MIPS_OPTIONS,       "MIPS_OPTIONS"},
+    { ELF_SECTION_TYPES::SHT_MIPS_ABIFLAGS,      "MIPS_ABIFLAGS"},
+    { ELF_SECTION_TYPES::SHT_HIPROC,             "HIPROC"},
+    { ELF_SECTION_TYPES::SHT_LOUSER,             "LOUSER"},
+    { ELF_SECTION_TYPES::SHT_HIUSER,             "HIUSER"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-const char* to_string(SECTION_FLAGS e) {
-  const std::map<SECTION_FLAGS, const char*> enumStrings {
-    { SECTION_FLAGS::SHF_NONE,             "NONE"},
-    { SECTION_FLAGS::SHF_WRITE,            "WRITE"},
-    { SECTION_FLAGS::SHF_ALLOC,            "ALLOC"},
-    { SECTION_FLAGS::SHF_EXECINSTR,        "EXECINSTR"},
-    { SECTION_FLAGS::SHF_MERGE,            "MERGE"},
-    { SECTION_FLAGS::SHF_STRINGS,          "STRINGS"},
-    { SECTION_FLAGS::SHF_INFO_LINK,        "INFO_LINK"},
-    { SECTION_FLAGS::SHF_LINK_ORDER,       "LINK_ORDER"},
-    { SECTION_FLAGS::SHF_OS_NONCONFORMING, "OS_NONCONFORMING"},
-    { SECTION_FLAGS::SHF_GROUP,            "GROUP"},
-    { SECTION_FLAGS::SHF_TLS,              "TLS"},
-    { SECTION_FLAGS::SHF_EXCLUDE,          "EXCLUDE"},
-    { SECTION_FLAGS::XCORE_SHF_CP_SECTION, "XCORE_SHF_CP_SECTION"},
-    { SECTION_FLAGS::XCORE_SHF_DP_SECTION, "XCORE_SHF_CP_SECTION"},
-    { SECTION_FLAGS::SHF_MASKOS,           "MASKOS"},
-    { SECTION_FLAGS::SHF_MASKPROC,         "MASKPROC"},
-    { SECTION_FLAGS::SHF_HEX_GPREL,        "HEX_GPREL"},
-    { SECTION_FLAGS::SHF_MIPS_NODUPES,     "MIPS_NODUPES"},
-    { SECTION_FLAGS::SHF_MIPS_NAMES,       "MIPS_NAMES"},
-    { SECTION_FLAGS::SHF_MIPS_LOCAL,       "MIPS_LOCAL"},
-    { SECTION_FLAGS::SHF_MIPS_NOSTRIP,     "MIPS_NOSTRIP"},
-    { SECTION_FLAGS::SHF_MIPS_GPREL,       "MIPS_GPREL"},
-    { SECTION_FLAGS::SHF_MIPS_MERGE,       "MIPS_MERGE"},
-    { SECTION_FLAGS::SHF_MIPS_ADDR,        "MIPS_ADDR"},
-    { SECTION_FLAGS::SHF_MIPS_STRING,      "MIPS_STRING"}
+const char* to_string(ELF_SECTION_FLAGS e) {
+  const std::map<ELF_SECTION_FLAGS, const char*> enumStrings {
+    { ELF_SECTION_FLAGS::SHF_NONE,             "NONE"},
+    { ELF_SECTION_FLAGS::SHF_WRITE,            "WRITE"},
+    { ELF_SECTION_FLAGS::SHF_ALLOC,            "ALLOC"},
+    { ELF_SECTION_FLAGS::SHF_EXECINSTR,        "EXECINSTR"},
+    { ELF_SECTION_FLAGS::SHF_MERGE,            "MERGE"},
+    { ELF_SECTION_FLAGS::SHF_STRINGS,          "STRINGS"},
+    { ELF_SECTION_FLAGS::SHF_INFO_LINK,        "INFO_LINK"},
+    { ELF_SECTION_FLAGS::SHF_LINK_ORDER,       "LINK_ORDER"},
+    { ELF_SECTION_FLAGS::SHF_OS_NONCONFORMING, "OS_NONCONFORMING"},
+    { ELF_SECTION_FLAGS::SHF_GROUP,            "GROUP"},
+    { ELF_SECTION_FLAGS::SHF_TLS,              "TLS"},
+    { ELF_SECTION_FLAGS::SHF_EXCLUDE,          "EXCLUDE"},
+    { ELF_SECTION_FLAGS::XCORE_SHF_CP_SECTION, "XCORE_SHF_CP_SECTION"},
+    { ELF_SECTION_FLAGS::XCORE_SHF_DP_SECTION, "XCORE_SHF_CP_SECTION"},
+    { ELF_SECTION_FLAGS::SHF_MASKOS,           "MASKOS"},
+    { ELF_SECTION_FLAGS::SHF_MASKPROC,         "MASKPROC"},
+    { ELF_SECTION_FLAGS::SHF_HEX_GPREL,        "HEX_GPREL"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_NODUPES,     "MIPS_NODUPES"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_NAMES,       "MIPS_NAMES"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_LOCAL,       "MIPS_LOCAL"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_NOSTRIP,     "MIPS_NOSTRIP"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_GPREL,       "MIPS_GPREL"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_MERGE,       "MIPS_MERGE"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_ADDR,        "MIPS_ADDR"},
+    { ELF_SECTION_FLAGS::SHF_MIPS_STRING,      "MIPS_STRING"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
 
-const char* to_string(SYMBOL_TYPES e) {
-  const std::map<SYMBOL_TYPES, const char*> enumStrings {
-    { SYMBOL_TYPES::STT_NOTYPE,    "NOTYPE"},
-    { SYMBOL_TYPES::STT_OBJECT,    "OBJECT"},
-    { SYMBOL_TYPES::STT_FUNC,      "FUNC"},
-    { SYMBOL_TYPES::STT_SECTION,   "SECTION"},
-    { SYMBOL_TYPES::STT_FILE,      "FILE"},
-    { SYMBOL_TYPES::STT_COMMON,    "COMMON"},
-    { SYMBOL_TYPES::STT_TLS,       "TLS"},
-    { SYMBOL_TYPES::STT_GNU_IFUNC, "GNU_IFUNC"},
-    { SYMBOL_TYPES::STT_LOOS,      "LOOS"},
-    { SYMBOL_TYPES::STT_HIOS,      "HIOS"},
-    { SYMBOL_TYPES::STT_LOPROC,    "LOPROC"},
-    { SYMBOL_TYPES::STT_HIPROC,    "HIPROC"}
+const char* to_string(ELF_SYMBOL_TYPES e) {
+  const std::map<ELF_SYMBOL_TYPES, const char*> enumStrings {
+    { ELF_SYMBOL_TYPES::STT_NOTYPE,    "NOTYPE"},
+    { ELF_SYMBOL_TYPES::STT_OBJECT,    "OBJECT"},
+    { ELF_SYMBOL_TYPES::STT_FUNC,      "FUNC"},
+    { ELF_SYMBOL_TYPES::STT_SECTION,   "SECTION"},
+    { ELF_SYMBOL_TYPES::STT_FILE,      "FILE"},
+    { ELF_SYMBOL_TYPES::STT_COMMON,    "COMMON"},
+    { ELF_SYMBOL_TYPES::STT_TLS,       "TLS"},
+    { ELF_SYMBOL_TYPES::STT_GNU_IFUNC, "GNU_IFUNC"},
+    { ELF_SYMBOL_TYPES::STT_LOOS,      "LOOS"},
+    { ELF_SYMBOL_TYPES::STT_HIOS,      "HIOS"},
+    { ELF_SYMBOL_TYPES::STT_LOPROC,    "LOPROC"},
+    { ELF_SYMBOL_TYPES::STT_HIPROC,    "HIPROC"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
@@ -1133,11 +1133,11 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
   return it == enum_strings_flags1.end() ? "UNDEFINED" : it->second;
 }
 
-const char* to_string(SEGMENT_FLAGS e) {
-  const std::map<SEGMENT_FLAGS, const char*> enum_strings {
-    { SEGMENT_FLAGS::PF_X, "X" },
-    { SEGMENT_FLAGS::PF_W, "W" },
-    { SEGMENT_FLAGS::PF_R, "R" },
+const char* to_string(ELF_SEGMENT_FLAGS e) {
+  const std::map<ELF_SEGMENT_FLAGS, const char*> enum_strings {
+    { ELF_SEGMENT_FLAGS::PF_X, "X" },
+    { ELF_SEGMENT_FLAGS::PF_W, "W" },
+    { ELF_SEGMENT_FLAGS::PF_R, "R" },
   };
 
   auto   it  = enum_strings.find(e);

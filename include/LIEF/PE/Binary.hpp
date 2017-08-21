@@ -204,7 +204,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Add a section to the binary and return the section added.
     Section& add_section(
         const Section& section,
-        SECTION_TYPES type = SECTION_TYPES::UNKNOWN);
+        PE_SECTION_TYPES type = PE_SECTION_TYPES::UNKNOWN);
 
     // =============================
     // Methods to manage relocations

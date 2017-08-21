@@ -240,7 +240,7 @@ Symbol section index
 Section types
 ~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::SECTION_TYPES
+.. doxygenenum:: LIEF::ELF::ELF_SECTION_TYPES
    :project: lief
 
 ----------
@@ -248,7 +248,7 @@ Section types
 Section flags
 ~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::SECTION_FLAGS
+.. doxygenenum:: LIEF::ELF::ELF_SECTION_FLAGS
    :project: lief
 
 ----------
@@ -264,7 +264,7 @@ Symbol bindings
 Symbol types
 ~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::SYMBOL_TYPES
+.. doxygenenum:: LIEF::ELF::ELF_SYMBOL_TYPES
    :project: lief
 
 ----------
@@ -281,7 +281,7 @@ Segment types
 Segment flags
 ~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::SEGMENT_FLAGS
+.. doxygenenum:: LIEF::ELF::ELF_SEGMENT_FLAGS
    :project: lief
 
 ----------

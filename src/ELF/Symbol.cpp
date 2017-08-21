@@ -31,7 +31,7 @@ namespace LIEF {
 namespace ELF {
 
 Symbol::Symbol(void) :
-  type_{SYMBOL_TYPES::STT_NOTYPE},
+  type_{ELF_SYMBOL_TYPES::STT_NOTYPE},
   binding_{SYMBOL_BINDINGS::STB_LOCAL},
   other_{0},
   shndx_{0},
@@ -72,7 +72,7 @@ void Symbol::swap(Symbol& other) {
 
 Symbol::Symbol(const Elf32_Sym* header) :
   LIEF::Symbol{},
-  type_{static_cast<SYMBOL_TYPES>(header->st_info & 0x0f)},
+  type_{static_cast<ELF_SYMBOL_TYPES>(header->st_info & 0x0f)},
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
@@ -83,7 +83,7 @@ Symbol::Symbol(const Elf32_Sym* header) :
 
 Symbol::Symbol(const Elf64_Sym* header) :
   LIEF::Symbol{},
-  type_{static_cast<SYMBOL_TYPES>(header->st_info & 0x0f)},
+  type_{static_cast<ELF_SYMBOL_TYPES>(header->st_info & 0x0f)},
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
@@ -93,7 +93,7 @@ Symbol::Symbol(const Elf64_Sym* header) :
 {}
 
 
-Symbol::Symbol(std::string name, SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
+Symbol::Symbol(std::string name, ELF_SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
     uint8_t other, uint16_t shndx,
     uint64_t value, uint64_t size) :
   LIEF::Symbol{name},
@@ -107,7 +107,7 @@ Symbol::Symbol(std::string name, SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
 {}
 
 
-SYMBOL_TYPES Symbol::type(void) const {
+ELF_SYMBOL_TYPES Symbol::type(void) const {
   return this->type_;
 }
 
@@ -165,7 +165,7 @@ SymbolVersion& Symbol::symbol_version(void) {
   return const_cast<SymbolVersion&>(static_cast<const Symbol*>(this)->symbol_version());
 }
 
-void Symbol::type(SYMBOL_TYPES type) {
+void Symbol::type(ELF_SYMBOL_TYPES type) {
   this->type_ = type;
 }
 
@@ -193,7 +193,7 @@ void Symbol::shndx(uint16_t idx) {
 
 void Symbol::information(uint8_t info) {
   this->binding_ = static_cast<SYMBOL_BINDINGS>(info >> 4);
-  this->type_    = static_cast<SYMBOL_TYPES>(info & 0x0f);
+  this->type_    = static_cast<ELF_SYMBOL_TYPES>(info & 0x0f);
 }
 
 

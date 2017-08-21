@@ -146,7 +146,7 @@ void Parser::build_data_directories(void) {
 
       try {
         Section& section = this->binary_->section_from_offset(offset);
-        section.add_type(SECTION_TYPES::IMPORT);
+        section.add_type(PE_SECTION_TYPES::IMPORT);
       } catch (const not_found&) {
         LOG(WARNING) << "Unable to find the section associated with Import Table";
       }
@@ -185,7 +185,7 @@ void Parser::build_data_directories(void) {
     const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
     try {
       Section& section = this->binary_->section_from_offset(offset);
-      section.add_type(SECTION_TYPES::TLS);
+      section.add_type(PE_SECTION_TYPES::TLS);
       this->build_tls<PE_T>();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with TLS";
@@ -202,7 +202,7 @@ void Parser::build_data_directories(void) {
     const uint64_t offset         = this->binary_->rva_to_offset(relocation_rva);
     try {
       Section& section = this->binary_->section_from_offset(offset);
-      section.add_type(SECTION_TYPES::RELOCATION);
+      section.add_type(PE_SECTION_TYPES::RELOCATION);
       this->build_relocations();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with relocations";
@@ -220,7 +220,7 @@ void Parser::build_data_directories(void) {
     const uint64_t offset = this->binary_->rva_to_offset(rva);
     try {
       Section& section = this->binary_->section_from_offset(offset);
-      section.add_type(SECTION_TYPES::DEBUG);
+      section.add_type(PE_SECTION_TYPES::DEBUG);
       this->build_debug();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with debug";
@@ -238,7 +238,7 @@ void Parser::build_data_directories(void) {
     const uint64_t offset        = this->binary_->rva_to_offset(resources_rva);
     try {
       Section& section  = this->binary_->section_from_offset(offset);
-      section.add_type(SECTION_TYPES::RESOURCE);
+      section.add_type(PE_SECTION_TYPES::RESOURCE);
       this->build_resources();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with resources";

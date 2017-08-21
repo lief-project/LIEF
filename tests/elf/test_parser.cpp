@@ -87,7 +87,7 @@ TEST_CASE("Test parse", "[elf][parser]")
         REQUIRE(parameters["Sections"][i]["nb"].as<unsigned int>() == i);
 
         if (parameters["Sections"][i]["size"].as<unsigned long long>() > 0 and
-            section.type() != LIEF::ELF::SECTION_TYPES::SHT_NOBITS) {
+            section.type() != LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS) {
           REQUIRE(
             std::vector<uint8_t>(
               raw.data() + parameters["Sections"][i]["offset"].as<unsigned long long>(),

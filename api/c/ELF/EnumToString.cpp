@@ -46,16 +46,16 @@ extern "C"
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_TAGS>(e));
   }
 
-  const char* SECTION_TYPES_to_string(enum SECTION_TYPES e) {
-    return LIEF::ELF::to_string(static_cast<LIEF::ELF::SECTION_TYPES>(e));
+  const char* ELF_SECTION_TYPES_to_string(enum ELF_SECTION_TYPES e) {
+    return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SECTION_TYPES>(e));
   }
 
-  const char* SECTION_FLAGS_to_string(enum SECTION_FLAGS e) {
-    return LIEF::ELF::to_string(static_cast<LIEF::ELF::SECTION_FLAGS>(e));
+  const char* ELF_SECTION_FLAGS_to_string(enum ELF_SECTION_FLAGS e) {
+    return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SECTION_FLAGS>(e));
   }
 
-  const char* SYMBOL_TYPES_to_string(enum SYMBOL_TYPES e) {
-    return LIEF::ELF::to_string(static_cast<LIEF::ELF::SYMBOL_TYPES>(e));
+  const char* ELF_SYMBOL_TYPES_to_string(enum ELF_SYMBOL_TYPES e) {
+    return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SYMBOL_TYPES>(e));
   }
 
   const char* ELF_CLASS_to_string(enum ELF_CLASS e) {

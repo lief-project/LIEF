@@ -232,19 +232,19 @@ Enums
 .. doxygenenum:: LIEF::MachO::LOAD_COMMAND_TYPES
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::SEGMENTS_FLAGS
+.. doxygenenum:: LIEF::MachO::MACHO_SEGMENTS_FLAGS
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::SECTION_FLAGS_HELPER
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::SECTION_TYPES
+.. doxygenenum:: LIEF::MachO::MACHO_SECTION_TYPES
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::SECTION_FLAGS
+.. doxygenenum:: LIEF::MachO::MACHO_SECTION_FLAGS
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::SYMBOL_TYPES
+.. doxygenenum:: LIEF::MachO::MACHO_SYMBOL_TYPES
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::SYMBOL_DESCRIPTIONS

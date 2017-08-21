@@ -244,7 +244,7 @@ void JsonVisitor::visit(const Section& section) {
   }
 
   std::vector<json> types;
-  for (SECTION_TYPES t : section.types()) {
+  for (PE_SECTION_TYPES t : section.types()) {
     types.emplace_back(to_string(t));
   }
 

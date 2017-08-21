@@ -114,7 +114,7 @@ enum {
   };
 
 
-enum SEGMENTS_FLAGS {
+enum MACHO_SEGMENTS_FLAGS {
   // Constant bits for the "flags" field in llvm::MachO::segment_command
   SG_HIGHVM              = 0x1u, ///< The file contents for this segment are for the high part of the virtual memory space; the low part is zero filled (for stacks in core files).
   SG_FVMLIB              = 0x2u, ///< this segment is the VM that is allocated by a fixed VM library, for overlap checking in the link editor.
@@ -133,7 +133,7 @@ enum SECTION_FLAGS_HELPER  {
 
 //! @brief These are the section type and attributes fields.  A MachO section can
 //! have only one Type, but can have any of the attributes specified.
-enum SECTION_TYPES {
+enum MACHO_SECTION_TYPES {
   // Constant masks for the "flags[7:0]" field in llvm::MachO::section and
   // llvm::MachO::section_64 (mask "flags" with SECTION_TYPE)
   S_REGULAR                             = 0x00u, ///< Regular section.
@@ -162,7 +162,7 @@ enum SECTION_TYPES {
   LAST_KNOWN_SECTION_TYPE = S_THREAD_LOCAL_INIT_FUNCTION_POINTERS
 };
 
-enum SECTION_FLAGS {
+enum MACHO_SECTION_FLAGS {
 
   // Constant masks for the "flags[31:24]" field in llvm::MachO::section and
   // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR)
@@ -282,7 +282,7 @@ enum EXPORT_SYMBOL_KINDS {
   EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE       = 0x02u
 };
 
-enum SYMBOL_TYPES {
+enum MACHO_SYMBOL_TYPES {
   N_STAB = 0xe0, ///< The symbol is symbolic debugging table
   N_PEXT = 0x10, ///< Limited global scope symbol.
   N_TYPE = 0x0e, ///< Define the type of the symbol. @see N_LIST_TYPES

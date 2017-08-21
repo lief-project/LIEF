@@ -193,18 +193,18 @@ const char* to_string(SECTION_CHARACTERISTICS e) {
 }
 
 
-const char* to_string(SECTION_TYPES e) {
-  const std::map<SECTION_TYPES, const char*> enumStrings {
-    { SECTION_TYPES::TEXT,       "TEXT"       },
-    { SECTION_TYPES::TLS,        "TLS_"       },
-    { SECTION_TYPES::IMPORT,     "IDATA"      },
-    { SECTION_TYPES::DATA,       "DATA"       },
-    { SECTION_TYPES::BSS,        "BSS"        },
-    { SECTION_TYPES::RESOURCE,   "RESOURCE"   },
-    { SECTION_TYPES::RELOCATION, "RELOCATION" },
-    { SECTION_TYPES::EXPORT,     "EXPORT"     },
-    { SECTION_TYPES::DEBUG,      "DEBUG"      },
-    { SECTION_TYPES::UNKNOWN,    "UNKNOWN"    },
+const char* to_string(PE_SECTION_TYPES e) {
+  const std::map<PE_SECTION_TYPES, const char*> enumStrings {
+    { PE_SECTION_TYPES::TEXT,       "TEXT"       },
+    { PE_SECTION_TYPES::TLS,        "TLS_"       },
+    { PE_SECTION_TYPES::IMPORT,     "IDATA"      },
+    { PE_SECTION_TYPES::DATA,       "DATA"       },
+    { PE_SECTION_TYPES::BSS,        "BSS"        },
+    { PE_SECTION_TYPES::RESOURCE,   "RESOURCE"   },
+    { PE_SECTION_TYPES::RELOCATION, "RELOCATION" },
+    { PE_SECTION_TYPES::EXPORT,     "EXPORT"     },
+    { PE_SECTION_TYPES::DEBUG,      "DEBUG"      },
+    { PE_SECTION_TYPES::UNKNOWN,    "UNKNOWN"    },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

@@ -49,8 +49,8 @@ void init_ELF_Section_class(py::module& m) {
         ".. warning:: The value will probably change when re-building binary.")
 
     .def_property("type",
-        static_cast<getter_t<SECTION_TYPES>>(&Section::type),
-        static_cast<setter_t<SECTION_TYPES>>(&Section::type),
+        static_cast<getter_t<ELF_SECTION_TYPES>>(&Section::type),
+        static_cast<setter_t<ELF_SECTION_TYPES>>(&Section::type),
         "Return a " RST_CLASS_REF(lief.ELF.SECTION_TYPES) "")
 
     .def_property("flags",
@@ -118,7 +118,7 @@ void init_ELF_Section_class(py::module& m) {
 
 
     .def("has",
-        static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has),
+        static_cast<bool (Section::*)(ELF_SECTION_FLAGS) const>(&Section::has),
         "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present",
         "flag"_a)
 
@@ -135,11 +135,11 @@ void init_ELF_Section_class(py::module& m) {
           return LIEF::Hash::hash(section);
         })
 
-    .def(py::self += SECTION_FLAGS())
-    .def(py::self -= SECTION_FLAGS())
+    .def(py::self += ELF_SECTION_FLAGS())
+    .def(py::self -= ELF_SECTION_FLAGS())
 
     .def("__contains__",
-        static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has),
+        static_cast<bool (Section::*)(ELF_SECTION_FLAGS) const>(&Section::has),
         "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present")
 
 

@@ -65,11 +65,11 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint32_t                relocation_offset(void) const;
     uint32_t                numberof_relocations(void) const;
     uint32_t                flags(void) const;
-    SECTION_TYPES           type(void) const;
+    MACHO_SECTION_TYPES     type(void) const;
     uint32_t                reserved1(void) const;
     uint32_t                reserved2(void) const;
     uint32_t                reserved3(void) const;
-    std::set<SECTION_FLAGS> flags_list(void) const;
+    std::set<MACHO_SECTION_FLAGS> flags_list(void) const;
     uint32_t                raw_flags(void) const;
 
     it_relocations relocations(void);
@@ -81,7 +81,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     void relocation_offset(uint32_t relocOffset);
     void numberof_relocations(uint32_t nbReloc);
     void flags(uint32_t flags);
-    void type(SECTION_TYPES type);
+    void type(MACHO_SECTION_TYPES type);
     void reserved1(uint32_t reserved1);
     void reserved2(uint32_t reserved2);
     void reserved3(uint32_t reserved3);

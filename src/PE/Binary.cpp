@@ -494,7 +494,7 @@ void Binary::delete_section(const std::string& name) {
       std::end(this->sections_));
 }
 
-Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
+Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
   // Check if a section of type **type** already exist
   auto&& it_section = std::find_if(
@@ -557,7 +557,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
     new_section->virtual_size(virtual_size);
   }
 
-  if (new_section->is_type(SECTION_TYPES::TEXT)) {
+  if (new_section->is_type(PE_SECTION_TYPES::TEXT)) {
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
@@ -565,7 +565,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
     this->optional_header().sizeof_code(new_section->sizeof_raw_data());
   }
 
-  if (new_section->is_type(SECTION_TYPES::DATA)) {
+  if (new_section->is_type(PE_SECTION_TYPES::DATA)) {
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE);
@@ -577,7 +577,7 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
   }
 
 
-  if (type == SECTION_TYPES::IMPORT) {
+  if (type == PE_SECTION_TYPES::IMPORT) {
 
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE);
@@ -590,19 +590,19 @@ Section& Binary::add_section(const Section& section, SECTION_TYPES type) {
     this->data_directory(DATA_DIRECTORY::IAT).size(0);
   }
 
-  if (type == SECTION_TYPES::RELOCATION) {
+  if (type == PE_SECTION_TYPES::RELOCATION) {
     this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA(new_section->virtual_address());
     this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).size(new_section->virtual_size());
     this->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).section_ = new_section;
   }
 
-  if (type == SECTION_TYPES::RESOURCE) {
+  if (type == PE_SECTION_TYPES::RESOURCE) {
     this->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA(new_section->virtual_address());
     this->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).size(new_section->size());
     this->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).section_ = new_section;
   }
 
-  if (type == SECTION_TYPES::TLS) {
+  if (type == PE_SECTION_TYPES::TLS) {
     this->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA(new_section->virtual_address());
     this->data_directory(DATA_DIRECTORY::TLS_TABLE).size(new_section->size());
     this->data_directory(DATA_DIRECTORY::TLS_TABLE).section_ = new_section;

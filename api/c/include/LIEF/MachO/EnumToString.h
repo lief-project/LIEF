@@ -28,8 +28,8 @@ DLL_PUBLIC const char* MACHO_TYPES_to_string(enum MACHO_TYPES e);
 DLL_PUBLIC const char* FILE_TYPES_to_string(enum FILE_TYPES e);
 DLL_PUBLIC const char* CPU_TYPES_to_string(enum CPU_TYPES e);
 DLL_PUBLIC const char* HEADER_FLAGS_to_string(enum HEADER_FLAGS e);
-DLL_PUBLIC const char* MachO_SECTION_TYPES_to_string(enum SECTION_TYPES e);
-DLL_PUBLIC const char* MachO_SYMBOL_TYPES_to_string(enum SYMBOL_TYPES e);
+DLL_PUBLIC const char* MACHO_SECTION_TYPES_to_string(enum MACHO_SECTION_TYPES e);
+DLL_PUBLIC const char* MACHO_SYMBOL_TYPES_to_string(enum MACHO_SYMBOL_TYPES e);
 DLL_PUBLIC const char* N_LIST_TYPES_to_string(enum N_LIST_TYPES e);
 DLL_PUBLIC const char* SYMBOL_DESCRIPTIONS_to_string(enum SYMBOL_DESCRIPTIONS e);
 

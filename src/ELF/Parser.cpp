@@ -185,7 +185,7 @@ uint64_t Parser::get_dynamic_string_table_from_sections(void) const {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->name() == ".dynstr" and section->type() == SECTION_TYPES::SHT_STRTAB;
+        return section != nullptr and section->name() == ".dynstr" and section->type() == ELF_SECTION_TYPES::SHT_STRTAB;
       });
 
 

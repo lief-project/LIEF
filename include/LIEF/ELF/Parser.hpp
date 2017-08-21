@@ -138,7 +138,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     //! @brief Parse static Symbol
     //!
     //! Parser find Symbols offset by using the file offset attribute of the
-    //! SECTION_TYPES::SHT_SYMTAB Section.
+    //! ELF_SECTION_TYPES::SHT_SYMTAB Section.
     //!
     //! The number of symbols is taken from the `information` attribute in the section header.
     //!

@@ -162,17 +162,17 @@ void Builder::build_import_table(void) {
       std::begin(this->binary_->sections_),
       std::end(this->binary_->sections_),
       [] (const Section* section) {
-        return section != nullptr and section->is_type(SECTION_TYPES::IMPORT);
+        return section != nullptr and section->is_type(PE_SECTION_TYPES::IMPORT);
       });
 
   // Remove 'import' type from the original section
   if (it_import_section != std::end(this->binary_->sections_)) {
-    (*it_import_section)->remove_type(SECTION_TYPES::IMPORT);
+    (*it_import_section)->remove_type(PE_SECTION_TYPES::IMPORT);
   }
 
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
   uint32_t offset_imports  = this->binary_->rva_to_offset(this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
-  Section& import_section = this->binary_->add_section(new_import_section, SECTION_TYPES::IMPORT);
+  Section& import_section = this->binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
 
 
   // Patch the original IAT with the address of the associated trampoline
@@ -407,8 +407,8 @@ void Builder::build_tls(void) {
     std::end(this->binary_->sections_),
     [] (const Section* section)
     {
-      const std::set<SECTION_TYPES>& types = section->types();
-      return types.size() == 1 and types.find(SECTION_TYPES::TLS) != std::end(types);
+      const std::set<PE_SECTION_TYPES>& types = section->types();
+      return types.size() == 1 and types.find(PE_SECTION_TYPES::TLS) != std::end(types);
     });
 
   Section *tls_section = nullptr;
@@ -441,7 +441,7 @@ void Builder::build_tls(void) {
     tls_section_size = align(tls_section_size, this->binary_->optional_header().file_alignment());
     new_section.content(std::vector<uint8_t>(tls_section_size, 0));
 
-    tls_section = &(this->binary_->add_section(new_section, SECTION_TYPES::TLS));
+    tls_section = &(this->binary_->add_section(new_section, PE_SECTION_TYPES::TLS));
   } else {
     tls_section = *it_tls;
   }

@@ -57,7 +57,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     void swap(Section& other);
 
     uint32_t                  name_idx(void) const;
-    SECTION_TYPES type(void) const;
+    ELF_SECTION_TYPES type(void) const;
 
     // ============================
     // LIEF::Section implementation
@@ -69,19 +69,19 @@ class DLL_PUBLIC Section : public LIEF::Section {
     //! @brief Set section content
     virtual void content(const std::vector<uint8_t>& data) override;
 
-    //! @brief Section flags LIEF::ELF::SECTION_FLAGS
+    //! @brief Section flags LIEF::ELF::ELF_SECTION_FLAGS
     uint64_t flags(void) const;
 
     //! @brief ``True`` if the section has the given flag
     //!
     //! @param[in] flag flag to test
-    bool has(SECTION_FLAGS flag) const;
+    bool has(ELF_SECTION_FLAGS flag) const;
 
     //! @brief ``True`` if the section is in the given segment
     bool has(const Segment& segment) const;
 
     //! @brief Return section flags as a ``std::set``
-    std::set<SECTION_FLAGS> flags_list(void) const;
+    std::set<ELF_SECTION_FLAGS> flags_list(void) const;
 
     //! @see offset
     uint64_t file_offset(void) const;
@@ -92,10 +92,10 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint32_t link(void) const;
 
 
-    void add(SECTION_FLAGS flag);
-    void remove(SECTION_FLAGS flag);
+    void add(ELF_SECTION_FLAGS flag);
+    void remove(ELF_SECTION_FLAGS flag);
 
-    void type(SECTION_TYPES type);
+    void type(ELF_SECTION_TYPES type);
     void flags(uint64_t flags);
     void clear_flags(void);
     void file_offset(uint64_t offset);
@@ -109,8 +109,8 @@ class DLL_PUBLIC Section : public LIEF::Section {
 
     virtual void accept(Visitor& visitor) const override;
 
-    Section& operator+=(SECTION_FLAGS c);
-    Section& operator-=(SECTION_FLAGS c);
+    Section& operator+=(ELF_SECTION_FLAGS c);
+    Section& operator-=(ELF_SECTION_FLAGS c);
 
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
@@ -121,7 +121,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
 
     // virtualAddress_, offset_ and size_ are inherited from LIEF::Section
     uint32_t              name_idx_;
-    SECTION_TYPES         type_;
+    ELF_SECTION_TYPES     type_;
     uint64_t              flags_;
     uint64_t              original_size_;
     uint32_t              link_;

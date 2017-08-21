@@ -39,8 +39,8 @@ void init_ELF_Symbol_class(py::module& m) {
         "Symbol's unmangled name")
 
     .def_property("type",
-        static_cast<getter_t<SYMBOL_TYPES>>(&Symbol::type),
-        static_cast<setter_t<SYMBOL_TYPES>>(&Symbol::type),
+        static_cast<getter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
+        static_cast<setter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
         "A symbol's type provides a general classification for the associated entity")
 
     .def_property("binding",

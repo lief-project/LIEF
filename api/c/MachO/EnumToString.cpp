@@ -48,13 +48,13 @@ const char* HEADER_FLAGS_to_string(enum HEADER_FLAGS e) {
 }
 
 
-const char* MachO_SECTION_TYPES_to_string(enum SECTION_TYPES e) {
-  return LIEF::MachO::to_string(static_cast<LIEF::MachO::SECTION_TYPES>(e));
+const char* MACHO_SECTION_TYPES_to_string(enum MACHO_SECTION_TYPES e) {
+  return LIEF::MachO::to_string(static_cast<LIEF::MachO::MACHO_SECTION_TYPES>(e));
 }
 
 
-const char* MachO_SYMBOL_TYPES_to_string(enum SYMBOL_TYPES e) {
-  return LIEF::MachO::to_string(static_cast<LIEF::MachO::SYMBOL_TYPES>(e));
+const char* MACHO_SYMBOL_TYPES_to_string(enum MACHO_SYMBOL_TYPES e) {
+  return LIEF::MachO::to_string(static_cast<LIEF::MachO::MACHO_SYMBOL_TYPES>(e));
 }
 
 

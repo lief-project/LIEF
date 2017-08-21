@@ -117,9 +117,9 @@ void Symbol::value(uint64_t value) {
 }
 
 bool Symbol::is_external(void) const {
-  return (this->type_ & SYMBOL_TYPES::N_TYPE) == N_LIST_TYPES::N_UNDF;
-    //(this->type_ & SYMBOL_TYPES::N_EXT) == SYMBOL_TYPES::N_EXT;
-    //(this->type_ & SYMBOL_TYPES::N_PEXT) == 0;
+  return (this->type_ & MACHO_SYMBOL_TYPES::N_TYPE) == N_LIST_TYPES::N_UNDF;
+    //(this->type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT;
+    //(this->type_ & MACHO_SYMBOL_TYPES::N_PEXT) == 0;
 }
 
 
@@ -202,15 +202,15 @@ bool Symbol::operator!=(const Symbol& rhs) const {
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
   std::string type;
 
-  if ((symbol.type_ & SYMBOL_TYPES::N_TYPE) == SYMBOL_TYPES::N_TYPE) {
+  if ((symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE) == MACHO_SYMBOL_TYPES::N_TYPE) {
     type = to_string(
-        static_cast<N_LIST_TYPES>(symbol.type_ & SYMBOL_TYPES::N_TYPE));
-  } else if((symbol.type_ & SYMBOL_TYPES::N_STAB) > 0) {
-    type = to_string(SYMBOL_TYPES::N_STAB);
-  } else if((symbol.type_ & SYMBOL_TYPES::N_PEXT) == SYMBOL_TYPES::N_PEXT) {
-    type = to_string(SYMBOL_TYPES::N_PEXT);
-  }  else if((symbol.type_ & SYMBOL_TYPES::N_EXT) == SYMBOL_TYPES::N_EXT) {
-    type = to_string(SYMBOL_TYPES::N_EXT);
+        static_cast<N_LIST_TYPES>(symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE));
+  } else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_STAB) > 0) {
+    type = to_string(MACHO_SYMBOL_TYPES::N_STAB);
+  } else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_PEXT) == MACHO_SYMBOL_TYPES::N_PEXT) {
+    type = to_string(MACHO_SYMBOL_TYPES::N_PEXT);
+  }  else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT) {
+    type = to_string(MACHO_SYMBOL_TYPES::N_EXT);
   }
 
 

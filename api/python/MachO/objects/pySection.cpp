@@ -53,8 +53,8 @@ void init_MachO_Section_class(py::module& m) {
         "")
 
     .def_property("type",
-        static_cast<getter_t<SECTION_TYPES>>(&Section::type),
-        static_cast<setter_t<SECTION_TYPES>>(&Section::type),
+        static_cast<getter_t<MACHO_SECTION_TYPES>>(&Section::type),
+        static_cast<setter_t<MACHO_SECTION_TYPES>>(&Section::type),
         "")
 
     .def_property_readonly("relocations",

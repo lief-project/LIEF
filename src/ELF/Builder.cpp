@@ -77,7 +77,7 @@ void Builder::build_empty_symbol_gnuhash(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_GNU_HASH;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
       });
 
   if (it_gnuhash == std::end(this->binary_->sections_)) {

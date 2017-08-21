@@ -38,7 +38,7 @@ Section::~Section(void) = default;
 Section::Section(const Elf64_Shdr* header) :
   LIEF::Section{},
   name_idx_{header->sh_name},
-  type_{static_cast<SECTION_TYPES>(header->sh_type)},
+  type_{static_cast<ELF_SECTION_TYPES>(header->sh_type)},
   flags_{header->sh_flags},
   original_size_{header->sh_size},
   link_{header->sh_link},
@@ -57,7 +57,7 @@ Section::Section(const Elf64_Shdr* header) :
 Section::Section(const Elf32_Shdr* header) :
   LIEF::Section{},
   name_idx_{header->sh_name},
-  type_{static_cast<SECTION_TYPES>(header->sh_type)},
+  type_{static_cast<ELF_SECTION_TYPES>(header->sh_type)},
   flags_{header->sh_flags},
   original_size_{header->sh_size},
   link_{header->sh_link},
@@ -76,7 +76,7 @@ Section::Section(const Elf32_Shdr* header) :
 Section::Section(void) :
   LIEF::Section{},
   name_idx_{0},
-  type_{SECTION_TYPES::SHT_PROGBITS},
+  type_{ELF_SECTION_TYPES::SHT_PROGBITS},
   flags_{0},
   original_size_{0},
   link_{0},
@@ -149,7 +149,7 @@ uint32_t Section::name_idx(void) const {
   return this->name_idx_;
 }
 
-SECTION_TYPES Section::type(void) const {
+ELF_SECTION_TYPES Section::type(void) const {
   return this->type_;
 }
 
@@ -157,7 +157,7 @@ uint64_t Section::flags(void) const {
   return this->flags_;
 }
 
-bool Section::has(SECTION_FLAGS flag) const {
+bool Section::has(ELF_SECTION_FLAGS flag) const {
   return (this->flags() & static_cast<uint64_t>(flag)) != 0;
 }
 
@@ -194,7 +194,7 @@ uint64_t Section::alignment(void) const {
 }
 
 std::vector<uint8_t> Section::content(void) const {
-  if (this->size() == 0 or this->type() == SECTION_TYPES::SHT_NOBITS) {
+  if (this->size() == 0 or this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
     VLOG(VDEBUG) << "Section '" << this->name() << "' is empty";
     return {};
   }
@@ -212,13 +212,13 @@ uint32_t Section::link(void) const {
   return this->link_;
 }
 
-std::set<SECTION_FLAGS> Section::flags_list(void) const {
-  std::set<SECTION_FLAGS> flags;
+std::set<ELF_SECTION_FLAGS> Section::flags_list(void) const {
+  std::set<ELF_SECTION_FLAGS> flags;
   std::copy_if(
       std::begin(section_flags_array),
       std::end(section_flags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(static_cast<bool (Section::*)(SECTION_FLAGS) const>(&Section::has), this, std::placeholders::_1));
+      std::bind(static_cast<bool (Section::*)(ELF_SECTION_FLAGS) const>(&Section::has), this, std::placeholders::_1));
 
   return flags;
 }
@@ -231,7 +231,7 @@ void Section::content(const std::vector<uint8_t>& data) {
               << this->original_size_ << "). It may lead to overaly" << std::endl;
   }
 
-  if (this->type() == SECTION_TYPES::SHT_NOBITS) {
+  if (this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
     LOG(WARNING) << "You insert data in section "
                  << this->name() << " which has SHT_NOBITS type !" << std::endl;
   }
@@ -247,7 +247,7 @@ void Section::content(const std::vector<uint8_t>& data) {
   this->size_ = data.size();
 }
 
-void Section::type(SECTION_TYPES type) {
+void Section::type(ELF_SECTION_TYPES type) {
   this->type_ = type;
 }
 
@@ -255,11 +255,11 @@ void Section::flags(uint64_t flags) {
   this->flags_ = flags;
 }
 
-void Section::add(SECTION_FLAGS flag) {
+void Section::add(ELF_SECTION_FLAGS flag) {
   this->flags(this->flags() | static_cast<uint64_t>(flag));
 }
 
-void Section::remove(SECTION_FLAGS flag) {
+void Section::remove(ELF_SECTION_FLAGS flag) {
   this->flags(this->flags() & (~ static_cast<uint64_t>(flag)));
 }
 
@@ -309,12 +309,12 @@ void Section::accept(Visitor& visitor) const {
 }
 
 
-Section& Section::operator+=(SECTION_FLAGS c) {
+Section& Section::operator+=(ELF_SECTION_FLAGS c) {
   this->add(c);
   return *this;
 }
 
-Section& Section::operator-=(SECTION_FLAGS c) {
+Section& Section::operator-=(ELF_SECTION_FLAGS c) {
   this->remove(c);
   return *this;
 }
@@ -337,7 +337,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section)
   std::string flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},
-     [] (const std::string& a, SECTION_FLAGS b) {
+     [] (const std::string& a, ELF_SECTION_FLAGS b) {
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });
 

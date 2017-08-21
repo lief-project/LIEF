@@ -164,7 +164,7 @@ void init_PE_Binary_class(py::module& m) {
     .def("add_section",
         &Binary::add_section,
         "Add a " RST_CLASS_REF(lief.PE.Section) " to the binary.",
-        "section"_a, py::arg("type") = SECTION_TYPES::UNKNOWN,
+        "section"_a, py::arg("type") = PE_SECTION_TYPES::UNKNOWN,
         py::return_value_policy::reference)
 
     //.def("delete_section", (void (Binary::*)(const std::string&)) &Binary::delete_section)

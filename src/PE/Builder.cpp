@@ -226,7 +226,7 @@ void Builder::build_relocation(void) {
 
   new_relocation_section.content(content);
 
-  this->binary_->add_section(new_relocation_section, SECTION_TYPES::RELOCATION);
+  this->binary_->add_section(new_relocation_section, PE_SECTION_TYPES::RELOCATION);
 }
 
 
@@ -256,7 +256,7 @@ void Builder::build_resources(void) {
   new_section_rsrc.characteristics(0x40000040);
   new_section_rsrc.content(content);
 
-  Section& rsrc_section = this->binary_->add_section(new_section_rsrc, SECTION_TYPES::RESOURCE);
+  Section& rsrc_section = this->binary_->add_section(new_section_rsrc, PE_SECTION_TYPES::RESOURCE);
 
   this->construct_resources(node, &content, &offsetToHeader, &offsetToData, &offsetToName, rsrc_section.virtual_address(), 0);
 

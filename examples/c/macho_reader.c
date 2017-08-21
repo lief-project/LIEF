@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include <LIEF/MachO.h>
+#include <LIEF/LIEF.h>
 
 
 void print_binary(Macho_Binary_t* binary) {
@@ -99,7 +99,7 @@ void print_binary(Macho_Binary_t* binary) {
         section->relocation_offset,
         section->numberof_relocations,
         section->flags,
-        MachO_SECTION_TYPES_to_string(section->type),
+        MACHO_SECTION_TYPES_to_string(section->type),
         section->reserved1,
         section->reserved2,
         section->reserved3,

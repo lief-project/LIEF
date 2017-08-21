@@ -311,7 +311,7 @@ void Parser::parse_binary(void) {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_SYMTAB;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_SYMTAB;
       });
 
   if (it_symtab_section != std::end(this->binary_->sections_)) {
@@ -396,7 +396,7 @@ void Parser::parse_binary(void) {
   // Parse Note Sections
   // ===================
   for (const Section& section : this->binary_->get_sections()) {
-    if (section.type() != SECTION_TYPES::SHT_NOTE) {
+    if (section.type() != ELF_SECTION_TYPES::SHT_NOTE) {
       continue;
     }
 
@@ -412,13 +412,13 @@ void Parser::parse_binary(void) {
 
   // Try to parse using sections
   for (const Section& section : this->binary_->get_sections()) {
-    if (section.type() == SECTION_TYPES::SHT_RELA or
-        section.type() == SECTION_TYPES::SHT_REL) {
+    if (section.type() == ELF_SECTION_TYPES::SHT_RELA or
+        section.type() == ELF_SECTION_TYPES::SHT_REL) {
       try {
         this->parse_section_relocations<ELF_T>(
           section.file_offset(),
           section.size(),
-          section.type() == SECTION_TYPES::SHT_RELA);
+          section.type() == ELF_SECTION_TYPES::SHT_RELA);
       } catch (const exception& e) {
         LOG(WARNING) << "Unable to parse relocations from section '"
                      << section.name() << "'"
@@ -429,22 +429,22 @@ void Parser::parse_binary(void) {
   }
   //for (const std::shared_ptr<Section>& section : this->binary_->sections_) {
   //  if (section->name() == ".rela.plt" and
-  //      (section->type() == SECTION_TYPES::SHT_RELA or
-  //       section->type() == SECTION_TYPES::SHT_REL)) {
+  //      (section->type() == ELF_SECTION_TYPES::SHT_RELA or
+  //       section->type() == ELF_SECTION_TYPES::SHT_REL)) {
 
   //    this->parse_pltgot_relocations<ELF_T>(
   //        section->file_offset(),
   //        section->size(),
-  //        section->type() == SECTION_TYPES::SHT_RELA);
+  //        section->type() == ELF_SECTION_TYPES::SHT_RELA);
   //  }
 
   //  if (section->name() == ".rela.dyn" and
-  //      (section->type() == SECTION_TYPES::SHT_RELA or
-  //       section->type() == SECTION_TYPES::SHT_REL)) {
+  //      (section->type() == ELF_SECTION_TYPES::SHT_RELA or
+  //       section->type() == ELF_SECTION_TYPES::SHT_REL)) {
   //    this->parse_dynamic_relocations<ELF_T>(
   //        section->virtual_address(),
   //        section->size(),
-  //        section->type() == SECTION_TYPES::SHT_RELA);
+  //        section->type() == ELF_SECTION_TYPES::SHT_RELA);
   //  }
   //}
 
@@ -585,7 +585,7 @@ uint32_t Parser::nb_dynsym_section(void) const {
       std::end(this->binary_->sections_),
       [] (const Section* section)
       {
-        return section != nullptr and section->type() == SECTION_TYPES::SHT_DYNSYM;
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_DYNSYM;
       });
 
   if (it_dynamic_section == std::end(this->binary_->sections_)) {
@@ -728,7 +728,7 @@ void Parser::parse_sections(void) {
     section->datahandler_ = this->binary_->datahandler_;
 
     // Only if it contains data (with bits)
-    if (section->type() != SECTION_TYPES::SHT_NOBITS) {
+    if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
       const uint64_t offset_to_content   = section->file_offset();
       const uint64_t size                = section->size();
       try {
