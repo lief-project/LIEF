@@ -34,6 +34,8 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
+#include "Binary.tcc"
+
 namespace LIEF {
 namespace ELF {
 Binary::Binary(void)  = default;
@@ -1191,104 +1193,36 @@ std::pair<uint64_t, uint64_t> Binary::insert_content(std::vector<uint8_t>& conte
   // Patch relocations
   // =================
 
-  // Dynamic relocations
-  // -------------------
-  for (Relocation& relocation : this->get_dynamic_relocations()) {
-
-    //TODO check addend
-    if (relocation.type() == RELOC_x86_64::R_X86_64_RELATIVE) {
-      relocation.addend(relocation.addend() + new_section_size);
-    }
-
-    if (relocation.address() >= stub_virtual_address) {
-      relocation.address(relocation.address() + new_section_size);
-    }
-
-    if(arch == ARCH::EM_ARM and relocation.type() == RELOC_ARM::R_ARM_RELATIVE) {
-      const uint64_t address = relocation.address();
-      VLOG(VDEBUG) << "Patch ARM relative relocation at address: 0x" << std::hex << address;
-      Section& section = this->section_from_virtual_address(address);
-      const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
-      std::vector<uint8_t> section_content = section.content();
-      uint32_t *reloc_address = reinterpret_cast<uint32_t*>(section_content.data() + relative_offset);
-      if (reloc_address != nullptr and *reloc_address >= stub_virtual_address) {
-        *reloc_address += new_section_size;
-      }
-      section.content(section_content);
-    }
-
-    if(arch == ARCH::EM_386 and relocation.type() == RELOC_i386::R_386_RELATIVE) {
-      const uint64_t address = relocation.address();
-      VLOG(VDEBUG) << "Patch i386 relative relocation at address: " << std::hex << address;
-      Section& section = this->section_from_virtual_address(address);
-      const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
-      std::vector<uint8_t> section_content = section.content();
-      uint32_t *reloc_address = reinterpret_cast<uint32_t*>(section_content.data() + relative_offset);
-      if (reloc_address != nullptr and *reloc_address >= stub_virtual_address) {
-        *reloc_address += new_section_size;
-      }
-      section.content(section_content);
-    }
-
-    if((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and
-        relocation.type() == RELOC_x86_64::R_X86_64_RELATIVE) {
-      const uint64_t address = relocation.address();
-      VLOG(VDEBUG) << "Patch R_X86_64_RELATIVE relocation at address: 0x" << std::hex << address;
-      Section& section = this->section_from_virtual_address(address);
-      const uint64_t relative_offset = this->virtual_address_to_offset(address) - section.offset();
-      std::vector<uint8_t> section_content = section.content();
-      uint64_t *reloc_address = reinterpret_cast<uint64_t*>(section_content.data() + relative_offset);
-      if (reloc_address != nullptr and *reloc_address >= stub_virtual_address) {
-        *reloc_address += new_section_size;
-      }
-      section.content(section_content);
-    }
-
-  }
-
-  // PLT/GOT Relocations
-  // -------------------
-
-  VLOG(VDEBUG) << "Patching plt/got relocations";
-  for (Relocation& relocation : this->get_pltgot_relocations()) {
-    if (relocation.address() >= stub_virtual_address) {
-      relocation.address(relocation.address() + new_section_size);
-    }
-
-    // R_X86_64_IRELATIVE
-    if ((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and relocation.type() == RELOC_x86_64::R_X86_64_IRELATIVE) {
-      VLOG(VDEBUG) << "Patching R_X86_64_IRELATIVE";
-      if (static_cast<uint64_t>(relocation.addend()) >= stub_virtual_address) {
-        relocation.addend(relocation.addend() + new_section_size);
-      }
-    }
-
-    if (((arch == ARCH::EM_X86_64 or arch == ARCH::EM_IA_64) and relocation.type() == RELOC_x86_64::R_X86_64_JUMP_SLOT) or
-        (arch == ARCH::EM_ARM and                                relocation.type() == RELOC_ARM::R_ARM_JUMP_SLOT) or
-        (arch == ARCH::EM_386 and                                relocation.type() == RELOC_i386::R_386_JUMP_SLOT)) {
-      VLOG(VDEBUG) << "Patching JUMP_SLOT";
-      const uint64_t address = relocation.address();
-      Section& section = this->section_from_virtual_address(address);
-      std::vector<uint8_t> content = section.content();
-      const uint64_t relative_offset = address - section.virtual_address();
-
-      VLOG(VDEBUG) << "Section associated with the relocation: " << section.name();
-
-      if (this->type_ == ELF_CLASS::ELFCLASS64) {
-        uint64_t* value = reinterpret_cast<uint64_t*>(content.data() + relative_offset);
-        if (value != nullptr and *value >= stub_virtual_address) {
-          *value += new_section_size;
-        }
+  switch(arch) {
+    case ARCH::EM_ARM:
+      {
+        this->patch_relocations<ARCH::EM_ARM>(stub_virtual_address, new_section_size);
+        break;
       }
 
-      if (this->type_ == ELF_CLASS::ELFCLASS32) {
-        uint32_t* value = reinterpret_cast<uint32_t*>(content.data() + relative_offset);
-        if (value != nullptr and *value >= stub_virtual_address) {
-          *value += new_section_size;
-        }
+
+    case ARCH::EM_AARCH64:
+      {
+        this->patch_relocations<ARCH::EM_AARCH64>(stub_virtual_address, new_section_size);
+        break;
       }
-      section.content(content);
-    }
+
+    case ARCH::EM_X86_64:
+      {
+        this->patch_relocations<ARCH::EM_X86_64>(stub_virtual_address, new_section_size);
+        break;
+      }
+
+    case ARCH::EM_386:
+      {
+        this->patch_relocations<ARCH::EM_386>(stub_virtual_address, new_section_size);
+        break;
+      }
+
+    default:
+      {
+        LOG(WARNING) << "Relocations for architecture " << to_string(arch) << " is not supported!";
+      }
   }
 
   // ===============================

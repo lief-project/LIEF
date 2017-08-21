@@ -1344,7 +1344,18 @@ void Parser::parse_section_relocations(uint64_t offset, uint64_t size, bool isRe
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
       }
 
-      this->binary_->relocations_.push_back(reloc);
+      if (std::find_if(
+            std::begin(this->binary_->relocations_),
+            std::end(this->binary_->relocations_),
+            [&reloc] (const Relocation* r) {
+              return r->address() == reloc->address() and
+                     r->type() == reloc->type() and
+                     r->addend() == reloc->addend();
+            }) != std::end(this->binary_->relocations_)) {
+        delete reloc;
+      } else {
+        this->binary_->relocations_.push_back(reloc);
+      }
       relocEntry++;
     }
   } else {
@@ -1365,7 +1376,18 @@ void Parser::parse_section_relocations(uint64_t offset, uint64_t size, bool isRe
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
       }
 
-      this->binary_->relocations_.push_back(reloc);
+      if (std::find_if(
+            std::begin(this->binary_->relocations_),
+            std::end(this->binary_->relocations_),
+            [&reloc] (const Relocation* r) {
+              return r->address() == reloc->address() and
+                     r->type() == reloc->type() and
+                     r->addend() == reloc->addend();
+            }) != std::end(this->binary_->relocations_)) {
+        delete reloc;
+      } else {
+        this->binary_->relocations_.push_back(reloc);
+      }
       relocEntry++;
     }
   }

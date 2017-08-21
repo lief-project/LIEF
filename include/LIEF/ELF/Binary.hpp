@@ -395,6 +395,12 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
     virtual LIEF::symbols_t          get_abstract_symbols(void) override;
 
+    template<int ARCH>
+    void patch_relocations(uint64_t from, uint64_t shift);
+
+    template<class T>
+    void patch_addend(Relocation& relocatio, uint64_t from, uint64_t shift);
+
     //! The binary type
     //! (i.e. `ELF32` or `ELF64`)
     ELF_CLASS         type_;

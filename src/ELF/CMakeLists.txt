@@ -42,7 +42,9 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryRpath.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryFlags.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
-  "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc")
+  "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
+)
 
 set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"

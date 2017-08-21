@@ -318,7 +318,8 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
 
   os << std::setw(10) << entry.address()
      << std::setw(10) << relocation_type
-     << std::setw(10) << std::dec << entry.size()
+     << std::setw(4) << std::dec << entry.size()
+     << std::setw(8) << std::hex << entry.addend()
      << std::setw(10) << to_string(entry.purpose())
      << std::setw(10) << symbol_name;
 
