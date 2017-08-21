@@ -55,16 +55,11 @@ Logger::Logger(void)
 
 void Logger::disable(void) {
   el::Configurations c;
-
-  c.parseFromText("* GLOBAL:\n ENABLED = false");
-  el::Loggers::reconfigureAllLoggers(c);
+  el::Loggers::setLoggingLevel(el::Level::Unknown);
 }
 
 void Logger::enable(void) {
   el::Configurations c;
-  c.parseFromText("* GLOBAL:\n ENABLED = true\n");
-  el::Loggers::reconfigureAllLoggers(c);
-
   el::Loggers::setLoggingLevel(el::Level::Global);
 }
 
