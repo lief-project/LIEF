@@ -58,6 +58,40 @@ it_const_symbols Binary::get_symbols(void) const {
   return it_const_symbols{const_cast<Binary*>(this)->get_abstract_symbols()};
 }
 
+
+bool Binary::has_symbol(const std::string& name) const {
+  symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
+  auto&& it_symbol = std::find_if(
+      std::begin(symbols),
+      std::end(symbols),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+
+  return it_symbol != std::end(symbols);
+}
+
+const Symbol& Binary::get_symbol(const std::string& name) const {
+  if (not this->has_symbol(name)) {
+    throw not_found("Symbol '" + name + "' not found!");
+  }
+
+  symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
+
+  auto&& it_symbol = std::find_if(
+      std::begin(symbols),
+      std::end(symbols),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+
+  return **it_symbol;
+}
+
+Symbol& Binary::get_symbol(const std::string& name) {
+  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
+}
+
 it_sections Binary::get_sections(void) {
   return it_sections{this->get_abstract_sections()};
 }

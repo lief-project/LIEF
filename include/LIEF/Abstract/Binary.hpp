@@ -48,10 +48,18 @@ class DLL_PUBLIC Binary : public Visitable {
     Header get_header(void) const;
 
     //! @brief Return list of symbols whose elements **can** be modified
-    it_symbols        get_symbols(void);
+    it_symbols get_symbols(void);
 
     //! @brief Return list of symbols whose elements **can't** be modified
     it_const_symbols  get_symbols(void) const;
+
+    //! @brief Check if a Symbol with the given name exists
+    bool has_symbol(const std::string& name) const;
+
+    //! @brief Return the Symbol with the given name
+    const Symbol& get_symbol(const std::string& name) const;
+
+    Symbol& get_symbol(const std::string& name);
 
     //! @brief Returns binary's sections
     it_sections       get_sections(void);
@@ -80,6 +88,8 @@ class DLL_PUBLIC Binary : public Visitable {
 
     //! @brief Method so that a ``visitor`` can visit us
     virtual void accept(Visitor& visitor) const override;
+
+
 
 
     //! @brief Patch the content at virtual address @p address with @p patch_value

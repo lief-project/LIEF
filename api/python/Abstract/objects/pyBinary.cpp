@@ -30,6 +30,9 @@ using setter_t = void (Binary::*)(T);
 template<class T>
 using it_t = T (Binary::*)(void);
 
+template<class T, class P>
+using no_const_func = T (Binary::*)(P);
+
 void init_LIEF_Binary_class(py::module& m) {
   py::class_<Binary>(m, "Binary")
 
@@ -79,6 +82,17 @@ void init_LIEF_Binary_class(py::module& m) {
         static_cast<it_t<it_symbols>>(&Binary::get_symbols),
         "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Symbol) "",
         py::return_value_policy::reference_internal)
+
+    .def("has_symbol",
+        &Binary::has_symbol,
+        "Check if a " RST_CLASS_REF(lief.Symbol) " with the given name exists",
+        "symbol_name"_a)
+
+    .def("get_symbol",
+        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
+        "Return the " RST_CLASS_REF(lief.Symbol) " with the given ``name``",
+        "symbol_name"_a,
+        py::return_value_policy::reference)
 
     .def("get_function_address",
         &Binary::get_function_address,
