@@ -56,7 +56,11 @@ void init_ELF_Section_class(py::module& m) {
     .def_property("flags",
         static_cast<getter_t<uint64_t>>(&Section::flags),
         static_cast<setter_t<uint64_t>>(&Section::flags),
-        "Return sections " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) "")
+        "Return section's flags as an integer")
+
+    .def_property_readonly("flags_list",
+        &Section::flags_list,
+        "Return section's flags as a list of " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) "")
 
     .def_property("virtual_address",
         static_cast<getter_t<uint64_t>>(&Section::virtual_address),
