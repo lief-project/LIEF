@@ -67,15 +67,49 @@ void init_LIEF_Binary_class(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("exported_functions",
-        &Binary::get_exported_functions,
+        [] (const Binary& binary) {
+          const std::vector<std::string>& exported_functions = binary.get_exported_functions();
+          std::vector<py::object> exported_functions_encoded;
+          exported_functions_encoded.reserve(exported_functions.size());
+
+          std::transform(
+              std::begin(exported_functions),
+              std::end(exported_functions),
+              std::back_inserter(exported_functions_encoded),
+              &safe_string_converter);
+          return exported_functions_encoded;
+
+        },
         "Return binary's exported functions (name)")
 
     .def_property_readonly("imported_functions",
-        &Binary::get_imported_functions,
+        [] (const Binary& binary) {
+          const std::vector<std::string>& imported_functions = binary.get_imported_functions();
+          std::vector<py::object> imported_functions_encoded;
+          imported_functions_encoded.reserve(imported_functions.size());
+
+          std::transform(
+              std::begin(imported_functions),
+              std::end(imported_functions),
+              std::back_inserter(imported_functions_encoded),
+              &safe_string_converter);
+          return imported_functions_encoded;
+        },
         "Return binary's imported functions (name)")
 
     .def_property_readonly("libraries",
-        &Binary::get_imported_libraries,
+        [] (const Binary& binary) {
+          const std::vector<std::string>& imported_libraries = binary.get_imported_libraries();
+          std::vector<py::object> imported_libraries_encoded;
+          imported_libraries_encoded.reserve(imported_libraries.size());
+
+          std::transform(
+              std::begin(imported_libraries),
+              std::end(imported_libraries),
+              std::back_inserter(imported_libraries_encoded),
+              &safe_string_converter);
+          return imported_libraries_encoded;
+        },
         "Return binary's imported libraries (name)")
 
     .def_property_readonly("symbols",
