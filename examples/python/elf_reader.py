@@ -231,10 +231,10 @@ def print_static_symbols(binary):
 
 @exceptions_handler(Exception)
 def print_relocations(binary, relocations):
-    f_title = "|{:<10} | {:<10}| {:<8}| {:<15}| {:<30} |"
-    f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<15}| {:<30} |"
+    f_title = "|{:<10} | {:<10}| {:<8}| {:<8}| {:<15}| {:<30} |"
+    f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<8x}| {:<15}| {:<30} |"
 
-    print(f_title.format("Address", "Type", "Size", "Purpose", "Symbol"))
+    print(f_title.format("Address", "Type", "Size", "Addend", "Purpose", "Symbol"))
 
     for relocation in relocations:
         type = str(relocation.type)
@@ -253,6 +253,7 @@ def print_relocations(binary, relocations):
             relocation.address,
             type.split(".")[-1],
             relocation.size,
+            relocation.addend,
             str(relocation.purpose).split(".")[-1],
             symbol_name))
 
