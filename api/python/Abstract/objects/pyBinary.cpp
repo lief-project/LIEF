@@ -149,6 +149,15 @@ void init_LIEF_Binary_class(py::module& m) {
        "Return the content located at virtual address",
        "virtual_address"_a, "size"_a)
 
+    .def_property_readonly("abstract",
+        [] (py::object& self) {
+          auto global =  py::dict(py::module::import("__main__").attr("__dict__"));
+          auto local  = py::dict();
+          local["current_binary"] = self;
+          return py::eval("super(current_binary.__class__, current_binary)", global, local);
+        },
+        "Return the " RST_CLASS_REF(lief.Binary) " object",
+        py::return_value_policy::reference)
 
     .def("__str__",
         [] (const Binary& binary)

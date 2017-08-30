@@ -21,7 +21,7 @@ class TestAbstract(TestCase):
 
     @staticmethod
     def get_abstract_binary(binary):
-        return super(binary.__class__, binary)
+        return binary.abstract
 
     @staticmethod
     def get_raw(path):
