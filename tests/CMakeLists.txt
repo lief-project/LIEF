@@ -85,7 +85,7 @@ set(YAMLCPP_GIT_URL "https://github.com/jbeder/yaml-cpp.git" CACHE STRING "URL t
 ExternalProject_Add(YAMLCPP
   PREFIX         ${YAMLCPP_PREFIX}
   GIT_REPOSITORY ${YAMLCPP_GIT_URL}
-  UPDATE_COMMAND ${GIT_EXECUTABLE} pull
+  GIT_TAG        beb44b872c07c74556314e730c6f20a00b32e8e5
   INSTALL_DIR    ${YAMLCPP_INSTALL_DIR}
   CMAKE_ARGS     ${YAMLCPP_CMAKE_ARGS}
   LOG_DOWNLOAD ON
@@ -107,8 +107,8 @@ set(CATCH_GIT_URL https://github.com/philsquared/Catch.git CACHE STRING "URL to 
 ExternalProject_Add(catch
     PREFIX         ${CATCH_PREFIX}
     GIT_REPOSITORY ${CATCH_GIT_URL}
+    GIT_TAG        "v1.10.0"
     TIMEOUT 10
-    UPDATE_COMMAND ${GIT_EXECUTABLE} pull
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
@@ -128,8 +128,8 @@ if (WIN32)
   ExternalProject_Add(dirent
       PREFIX         ${DIRENT_PREFIX}
       GIT_REPOSITORY ${DIRENT_GIT_URL}
+      GIT_TAG        "1.22"
       TIMEOUT 10
-      UPDATE_COMMAND ${GIT_EXECUTABLE} pull
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
