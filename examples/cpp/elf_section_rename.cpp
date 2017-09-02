@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 
   std::unique_ptr<LIEF::ELF::Binary> binary{LIEF::ELF::Parser::parse(argv[1])};
 
-  LIEF::ELF::Section& section = binary->get_sections()[0];
+  LIEF::ELF::Section& section = binary->sections()[0];
   section.name("toto");
   binary->write(argv[2]);
 

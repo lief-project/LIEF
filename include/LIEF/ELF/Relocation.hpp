@@ -30,9 +30,14 @@ namespace LIEF {
 namespace ELF {
 
 class Parser;
+class Binary;
+class Builder;
+
 class DLL_PUBLIC Relocation : public Visitable {
 
   friend class Parser;
+  friend class Binary;
+  friend class Builder;
 
   public:
     Relocation(const Elf32_Rel*  header);

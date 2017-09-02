@@ -19,7 +19,7 @@ namespace LIEF {
 namespace ELF {
 void init_c_sections(Elf_Binary_t* c_binary, Binary* binary) {
 
-  it_sections sections = binary->get_sections();
+  it_sections sections = binary->sections();
 
   c_binary->sections = static_cast<Elf_Section_t**>(
       malloc((sections.size() + 1) * sizeof(Elf_Section_t**)));

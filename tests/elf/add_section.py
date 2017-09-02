@@ -32,14 +32,16 @@ class TestAddSection(TestCase):
         output      = os.path.join(self.tmp_dir, "ls.section")
 
         ls = lief.parse(sample_path)
-        section = Section()
-        section.name      = "test"
-        section.type      = lief.ELF.SECTION_TYPES.PROGBITS
-        section.content   = STUB.segments[0].content # First LOAD segment which holds payload
-        section.alignment = 8
-        section = ls.add_section(section, True)
-
-        ls.header.entrypoint = section.virtual_address + STUB.header.entrypoint
+        for i in range(10):
+            section = Section(".test.{:d}".format(i), lief.ELF.SECTION_TYPES.PROGBITS)
+            section += lief.ELF.SECTION_FLAGS.EXECINSTR
+            section += lief.ELF.SECTION_FLAGS.WRITE
+            section.content   = STUB.segments[0].content # First LOAD segment which holds payload
+            if i % 2 == 0:
+                section = ls.add(section, loaded=True)
+                ls.header.entrypoint = section.virtual_address + STUB.header.entrypoint
+            else:
+                section = ls.add(section, loaded=False)
 
         ls.write(output)
 
@@ -58,14 +60,18 @@ class TestAddSection(TestCase):
         output      = os.path.join(self.tmp_dir, "gcc.section")
 
         gcc = lief.parse(sample_path)
-        section = Section()
-        section.name      = "test"
-        section.type      = lief.ELF.SECTION_TYPES.PROGBITS
-        section.content   = STUB.segments[0].content # First LOAD segment which holds payload
-        section.alignment = 8
-        section = gcc.add_section(section, True)
+        for i in range(10):
+            section = Section(".test.{:d}".format(i), lief.ELF.SECTION_TYPES.PROGBITS)
+            section.type     = lief.ELF.SECTION_TYPES.PROGBITS
+            section         += lief.ELF.SECTION_FLAGS.EXECINSTR
+            section         += lief.ELF.SECTION_FLAGS.WRITE
+            section.content  = STUB.segments[0].content # First LOAD segment which holds payload
 
-        gcc.header.entrypoint = section.virtual_address + STUB.header.entrypoint
+            if i % 2 == 0:
+                section = gcc.add(section, loaded=True)
+                gcc.header.entrypoint = section.virtual_address + STUB.header.entrypoint
+            else:
+                section = gcc.add(section, loaded=False)
 
         gcc.write(output)
 

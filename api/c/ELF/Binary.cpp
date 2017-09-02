@@ -39,7 +39,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->type        = static_cast<enum ::ELF_CLASS>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
-    std::string interp = binary->get_interpreter();
+    std::string interp = binary->interpreter();
     c_binary->interpreter = static_cast<char*>(malloc(interp.size() * sizeof(char)));
     std::memcpy(
         reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
@@ -73,7 +73,7 @@ Elf_Binary_t* elf_parse(const char *file) {
 // ==============
 
 int elf_binary_save_header(Elf_Binary_t* binary) {
-  Header& hdr = reinterpret_cast<Binary*>(binary->handler)->get_header();
+  Header& hdr = reinterpret_cast<Binary*>(binary->handler)->header();
 
   hdr.file_type(static_cast<LIEF::ELF::E_TYPE>(binary->header.file_type));
   hdr.machine_type(static_cast<LIEF::ELF::ARCH>(binary->header.machine_type));

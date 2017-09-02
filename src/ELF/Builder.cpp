@@ -72,6 +72,7 @@ void Builder::write(const std::string& filename) const {
 
 
 void Builder::build_empty_symbol_gnuhash(void) {
+  LOG(DEBUG) << "Build empty GNU Hash";
   auto&& it_gnuhash = std::find_if(
       std::begin(this->binary_->sections_),
       std::end(this->binary_->sections_),
@@ -83,6 +84,8 @@ void Builder::build_empty_symbol_gnuhash(void) {
   if (it_gnuhash == std::end(this->binary_->sections_)) {
     throw corrupted("Unable to find the .gnu.hash section");
   }
+
+  Section* gnu_hash_section = *it_gnuhash;
 
   std::vector<uint8_t> content;
   const uint32_t nb_buckets = 1;
@@ -113,10 +116,9 @@ void Builder::build_empty_symbol_gnuhash(void) {
   // fill with 0
   content.insert(
       std::end(content),
-      (*it_gnuhash)->size() - content.size(),
+      gnu_hash_section->size() - content.size(),
       0);
-  (*it_gnuhash)->content(content);
-
+  gnu_hash_section->content(content);
 
 }
 
@@ -132,7 +134,7 @@ void Builder::build_symbol_version(void) {
                  << this->binary_->dynamic_symbols_.size() << " ) " << std::endl;
   }
 
-  const uint64_t sv_address = this->binary_->dynamic_entry_from_tag(DYNAMIC_TAGS::DT_VERSYM).value();
+  const uint64_t sv_address = this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value();
 
   std::vector<uint8_t> sv_raw;
   sv_raw.reserve(this->binary_->symbol_version_table_.size() * sizeof(uint16_t));
@@ -147,6 +149,28 @@ void Builder::build_symbol_version(void) {
   }
 
  this->binary_->section_from_virtual_address(sv_address).content(sv_raw);
+
+}
+
+void Builder::build_interpreter(void) {
+  VLOG(VDEBUG) << "[+] Building Interpreter" << std::endl;
+  const std::string& inter_str = this->binary_->interpreter();
+
+  // Look for the PT_INTERP segment
+  auto&& it_pt_interp = std::find_if(
+      std::begin(this->binary_->segments_),
+      std::end(this->binary_->segments_),
+      [] (const Segment* s) {
+        return s->type() == SEGMENT_TYPES::PT_INTERP;
+      });
+
+  if (it_pt_interp == std::end(this->binary_->segments_)) {
+    throw not_found("Unable to find the INTERP segment");
+  }
+
+  Segment* interp_segment = *it_pt_interp;
+  interp_segment->content({std::begin(inter_str), std::end(inter_str)});
+
 
 }
 

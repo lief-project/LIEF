@@ -20,7 +20,6 @@
 //
 void init_ELF_module(py::module& m) {
   py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for ELF");
-
   // Enums
   init_ELF_Structures_enum(LIEF_ELF_module);
 
@@ -50,8 +49,8 @@ void init_ELF_module(py::module& m) {
   init_ELF_Note_class(LIEF_ELF_module);
 
   py::module LIEF_ELF32_module = LIEF_ELF_module.def_submodule("ELF32", "");
-  init_ELF32_Structures(LIEF_ELF32_module);
+  init_ELF32_sizes(LIEF_ELF32_module);
 
   py::module LIEF_ELF64_module = LIEF_ELF_module.def_submodule("ELF64", "");
-  init_ELF64_Structures(LIEF_ELF64_module);
+  init_ELF64_sizes(LIEF_ELF64_module);
 }

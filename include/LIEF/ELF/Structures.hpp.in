@@ -194,15 +194,6 @@ class ELF64 {
   typedef Elf64_Verdaux Elf_Verdaux;
  };
 
-template<typename T>
-struct Sizes {
-  const static uint32_t ehdr = sizeof(typename T::Elf_Ehdr);
-  const static uint32_t phdr = sizeof(typename T::Elf_Phdr);
-  const static uint32_t shdr = sizeof(typename T::Elf_Shdr);
-  const static uint32_t sym  = sizeof(typename T::Elf_Sym);
-};
-
-
 } /* end namespace ELF */
 } /* end namespace LIEF */
 #endif

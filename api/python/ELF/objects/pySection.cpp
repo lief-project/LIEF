@@ -35,7 +35,12 @@ void init_ELF_Section_class(py::module& m) {
 
   // Section object
   py::class_<Section, LIEF::Section>(m, "Section")
-    .def(py::init<>())
+    .def(py::init<>(),
+        "Default constructor")
+
+    .def(py::init<const std::string&, ELF_SECTION_TYPES>(),
+        "Constructor from name and type",
+        "name"_a, "type"_a = ELF_SECTION_TYPES::SHT_PROGBITS)
 
     .def("__init__",
         [] (Section& section, std::vector<uint8_t>& content, ELF_CLASS type)

@@ -20,7 +20,7 @@ namespace ELF {
 
 void init_c_header(Elf_Binary_t* c_binary, Binary* binary) {
 
-  const Header& hdr                       = binary->get_header();
+  const Header& hdr                       = binary->header();
   c_binary->header.file_type              = static_cast<enum ::E_TYPE>(hdr.file_type());
   c_binary->header.machine_type           = static_cast<enum ::ARCH>(hdr.machine_type());
   c_binary->header.object_file_version    = static_cast<enum ::VERSION>(hdr.object_file_version());

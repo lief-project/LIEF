@@ -97,10 +97,17 @@ class DLL_PUBLIC Builder {
 
     void build_symbol_version(void);
 
+    void build_interpreter(void);
+
     bool empties_gnuhash_;
+
+    template<typename ELF_T>
+    void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
 
     mutable vector_iostream ios_;
     Binary*           binary_;
+
+
 };
 
 } // namespace ELF

@@ -35,7 +35,10 @@ void init_ELF_DynamicEntryLibrary_class(py::module& m) {
   // Dynamic Entry Library object
   //
   py::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary")
-    .def(py::init<const std::string &>())
+    .def(py::init<const std::string &>(),
+        "Constructor from library name",
+        "library_name"_a)
+
     .def_property("name",
         [] (const DynamicEntryLibrary& obj) {
           return safe_string_converter(obj.name());

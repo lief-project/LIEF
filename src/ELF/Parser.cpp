@@ -223,7 +223,7 @@ void Parser::link_symbol_version(void) {
 
 void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
-  VLOG(VDEBUG) << "[+] Build symbol SYSV hash";
+  VLOG(VDEBUG) << "[+] Parse symbol SYSV hash";
   SysvHash sysvhash;
 
   uint64_t current_offset = offset;

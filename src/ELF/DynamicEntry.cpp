@@ -45,6 +45,12 @@ DynamicEntry::DynamicEntry(const Elf32_Dyn* header) :
 {}
 
 
+DynamicEntry::DynamicEntry(DYNAMIC_TAGS tag, uint64_t value) :
+  tag_{tag},
+  value_{value}
+{}
+
+
 DYNAMIC_TAGS DynamicEntry::tag(void) const {
   return this->tag_;
 }

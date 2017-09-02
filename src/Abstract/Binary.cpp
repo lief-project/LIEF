@@ -119,6 +119,18 @@ uint64_t Binary::get_function_address(const std::string&) const {
   throw not_implemented("Not implemented for this format");
 }
 
+std::vector<uint64_t> Binary::xref(uint64_t address) const {
+  std::vector<uint64_t> result;
+
+  for (Section* section : const_cast<Binary*>(this)->get_abstract_sections()) {
+    std::vector<size_t> founds = section->search_all(address);
+    for (size_t found : founds) {
+      result.push_back(section->virtual_address() + found);
+    }
+  }
+
+  return result;
+}
 
 void Binary::accept(Visitor& visitor) const {
   visitor(this->get_header());

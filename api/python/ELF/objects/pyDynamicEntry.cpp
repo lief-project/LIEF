@@ -31,11 +31,17 @@ void init_ELF_DynamicEntry_class(py::module& m) {
 
   // DynamicEntry object
   py::class_<DynamicEntry>(m, "DynamicEntry")
+    .def(py::init<>(),
+        "Default constructor")
+
+    .def(py::init<DYNAMIC_TAGS, uint64_t>(),
+        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
+        "tag"_a, "value"_a)
+
     .def_property("tag",
         static_cast<getter_t<DYNAMIC_TAGS>>(&DynamicEntry::tag),
         static_cast<setter_t<DYNAMIC_TAGS>>(&DynamicEntry::tag),
         "Return the entry's " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " which represent the entry type")
-
 
     .def_property("value",
         static_cast<getter_t<uint64_t>>(&DynamicEntry::value),

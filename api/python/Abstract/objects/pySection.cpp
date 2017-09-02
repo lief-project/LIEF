@@ -24,7 +24,12 @@ using setter_t = void (LIEF::Section::*)(T);
 
 void init_LIEF_Section_class(py::module& m) {
   py::class_<LIEF::Section>(m, "Section")
-    .def(py::init())
+    .def(py::init(),
+        "Default constructor")
+
+    .def(py::init<const std::string&>(),
+        "Constructor from section name",
+        "name"_a)
 
     .def_property("name",
         [] (const LIEF::Section& obj) {
@@ -55,5 +60,36 @@ void init_LIEF_Section_class(py::module& m) {
 
     .def_property_readonly("entropy",
         &LIEF::Section::entropy,
-        "Section's entropy");
+        "Section's entropy")
+
+    .def("search",
+        static_cast<size_t (LIEF::Section::*)(uint64_t, size_t, size_t) const>(&LIEF::Section::search),
+        "Look for **integer** within the current section",
+        "number"_a, "pos"_a = 0, "size"_a = 0)
+
+    .def("search",
+        static_cast<size_t (LIEF::Section::*)(const std::string&, size_t) const>(&LIEF::Section::search),
+        "Look for **string** within the current section",
+        "str"_a, "pos"_a = 0)
+
+    .def("search_all",
+        static_cast<std::vector<size_t> (LIEF::Section::*)(uint64_t, size_t) const>(&LIEF::Section::search_all),
+        "Look for **all** integers within the current section",
+        "number"_a, "size"_a = 0)
+
+    .def("search_all",
+        static_cast<std::vector<size_t> (LIEF::Section::*)(const std::string&) const>(&LIEF::Section::search_all),
+        "Look for all **strings** within the current section",
+        "str"_a)
+
+    .def("__str__",
+        [] (const LIEF::Section& section)
+        {
+          std::ostringstream stream;
+          stream << section;
+          std::string str =  stream.str();
+          return str;
+        });
+
+
 }

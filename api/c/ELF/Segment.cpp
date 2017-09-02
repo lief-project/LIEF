@@ -20,7 +20,7 @@ namespace ELF {
 
 void init_c_segments(Elf_Binary_t* c_binary, Binary* binary) {
 
-  it_segments segments = binary->get_segments();
+  it_segments segments = binary->segments();
   c_binary->segments = static_cast<Elf_Segment_t**>(
       malloc((segments.size() + 1) * sizeof(Elf_Segment_t**)));
   for (size_t i = 0; i < segments.size(); ++i) {

@@ -79,7 +79,7 @@ void Parser::parse_binary(void) {
 
     try {
       this->parse_dynamic_entries<ELF_T>(offset, size);
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -358,7 +358,7 @@ void Parser::parse_binary(void) {
       const uint64_t symbol_sys_hash_offset = this->binary_->virtual_address_to_offset((*it_symbol_hash)->value());
       this->parse_symbol_sysv_hash(symbol_sys_hash_offset);
     } catch (const conversion_error&) {
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -369,7 +369,7 @@ void Parser::parse_binary(void) {
       const uint64_t symbol_gnu_hash_offset = this->binary_->virtual_address_to_offset((*it_symbol_gnu_hash)->value());
       this->parse_symbol_gnu_hash<ELF_T>(symbol_gnu_hash_offset);
     } catch (const conversion_error&) {
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
@@ -388,14 +388,14 @@ void Parser::parse_binary(void) {
       const uint64_t note_offset = this->binary_->virtual_address_to_offset((*it_segment_note)->virtual_address());
       this->parse_notes(note_offset, (*it_segment_note)->physical_size());
     } catch (const conversion_error&) {
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
         LOG(WARNING) << e.what();
     }
   }
 
   // Parse Note Sections
   // ===================
-  for (const Section& section : this->binary_->get_sections()) {
+  for (const Section& section : this->binary_->sections()) {
     if (section.type() != ELF_SECTION_TYPES::SHT_NOTE) {
       continue;
     }
@@ -403,7 +403,7 @@ void Parser::parse_binary(void) {
     try {
       this->parse_notes(section.offset(), section.size());
     } catch (const conversion_error&) {
-    } catch (const corrupted& e) {
+    } catch (const exception& e) {
         LOG(WARNING) << e.what();
     }
 
@@ -411,7 +411,7 @@ void Parser::parse_binary(void) {
   }
 
   // Try to parse using sections
-  for (const Section& section : this->binary_->get_sections()) {
+  for (const Section& section : this->binary_->sections()) {
     if (section.type() == ELF_SECTION_TYPES::SHT_RELA or
         section.type() == ELF_SECTION_TYPES::SHT_REL) {
       try {
@@ -427,26 +427,6 @@ void Parser::parse_binary(void) {
 
     }
   }
-  //for (const std::shared_ptr<Section>& section : this->binary_->sections_) {
-  //  if (section->name() == ".rela.plt" and
-  //      (section->type() == ELF_SECTION_TYPES::SHT_RELA or
-  //       section->type() == ELF_SECTION_TYPES::SHT_REL)) {
-
-  //    this->parse_pltgot_relocations<ELF_T>(
-  //        section->file_offset(),
-  //        section->size(),
-  //        section->type() == ELF_SECTION_TYPES::SHT_RELA);
-  //  }
-
-  //  if (section->name() == ".rela.dyn" and
-  //      (section->type() == ELF_SECTION_TYPES::SHT_RELA or
-  //       section->type() == ELF_SECTION_TYPES::SHT_REL)) {
-  //    this->parse_dynamic_relocations<ELF_T>(
-  //        section->virtual_address(),
-  //        section->size(),
-  //        section->type() == ELF_SECTION_TYPES::SHT_RELA);
-  //  }
-  //}
 
   this->link_symbol_version();
 }
@@ -600,11 +580,11 @@ uint32_t Parser::nb_dynsym_section(void) const {
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_hash(void) const {
 
-  if (this->binary_->has_dynamic_entry(DYNAMIC_TAGS::DT_HASH)) {
+  if (this->binary_->has(DYNAMIC_TAGS::DT_HASH)) {
     return this->nb_dynsym_sysv_hash<ELF_T>();
   }
 
-  if (this->binary_->has_dynamic_entry(DYNAMIC_TAGS::DT_GNU_HASH)) {
+  if (this->binary_->has(DYNAMIC_TAGS::DT_GNU_HASH)) {
     return this->nb_dynsym_gnu_hash<ELF_T>();
   }
 
@@ -614,7 +594,7 @@ uint32_t Parser::nb_dynsym_hash(void) const {
 
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_sysv_hash(void) const {
-  const DynamicEntry& dyn_hash = this->binary_->dynamic_entry_from_tag(DYNAMIC_TAGS::DT_HASH);
+  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_HASH);
   const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
 
   uint64_t current_offset = offset;
@@ -635,7 +615,7 @@ template<typename ELF_T>
 uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   using uint__ = typename ELF_T::uint;
 
-  const DynamicEntry& dyn_hash = this->binary_->dynamic_entry_from_tag(DYNAMIC_TAGS::DT_GNU_HASH);
+  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
   const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
 
   uint64_t current_offset = offset;
@@ -727,11 +707,13 @@ void Parser::parse_sections(void) {
     Section* section = new Section{hdr};
     section->datahandler_ = this->binary_->datahandler_;
 
+    this->binary_->datahandler_->create(section->file_offset(), section->size(), DataHandler::Node::SECTION);
     // Only if it contains data (with bits)
-    if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+    if (section->size() > 0) {
       const uint64_t offset_to_content   = section->file_offset();
       const uint64_t size                = section->size();
       try {
+        this->binary_->datahandler_->reserve(section->file_offset(), section->size());
         const uint8_t* content = static_cast<const uint8_t*>(
             this->stream_->read(offset_to_content, size));
         section->content({content, content + size});
@@ -740,12 +722,6 @@ void Parser::parse_sections(void) {
       } catch (const std::bad_alloc&) {
         LOG(WARNING) << "Section's file offset and/or section's size is corrupted";
       }
-    } else { //Create a node which will hold nothing
-      DataHandler::Node empty_node{
-          section->file_offset(),
-          section->size(),
-          DataHandler::Node::SECTION};
-      this->binary_->datahandler_->add_node(empty_node);
     }
     this->binary_->sections_.push_back(section);
   }
@@ -772,8 +748,8 @@ void Parser::parse_segments(void) {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
 
   VLOG(VDEBUG) << "[+] Parse Segments";
-  const uint64_t segment_headers_offset = this->binary_->get_header().program_headers_offset();
-  const uint32_t nbof_segments          = this->binary_->get_header().numberof_segments();
+  const uint64_t segment_headers_offset = this->binary_->header().program_headers_offset();
+  const uint32_t nbof_segments          = this->binary_->header().numberof_segments();
 
   const Elf_Phdr* segment_headers = reinterpret_cast<const Elf_Phdr*>(
       this->stream_->read(segment_headers_offset, nbof_segments * sizeof(Elf_Phdr)));
@@ -788,12 +764,15 @@ void Parser::parse_segments(void) {
   for (size_t i = 0; i < nbof_segments; ++i) {
     Segment* segment = new Segment{&segment_headers[i]};
     segment->datahandler_ = this->binary_->datahandler_;
+    this->binary_->datahandler_->create(segment->file_offset(), segment->physical_size(), DataHandler::Node::SEGMENT);
+    LOG(DEBUG) << *segment;
     // If if a section is in the current segment
 
     if (segment->physical_size() > 0) {
       const uint64_t offset_to_content   = segment->file_offset();
       const uint64_t size                = segment->physical_size();
       try {
+        this->binary_->datahandler_->reserve(segment->file_offset(), segment->physical_size());
         const uint8_t* content = static_cast<const uint8_t*>(
             this->stream_->read(offset_to_content, size));
         segment->content({content, content + size});
@@ -825,7 +804,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
   // Already parsed
-  if (this->binary_->get_dynamic_relocations().size() > 0) {
+  if (this->binary_->dynamic_relocations().size() > 0) {
     return;
   }
 
@@ -840,7 +819,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
-      reloc->architecture_ = this->binary_->get_header().machine_type();
+      reloc->architecture_ = this->binary_->header().machine_type();
       const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx < this->binary_->dynamic_symbols_.size()) {
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
@@ -862,7 +841,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
-      reloc->architecture_ = this->binary_->get_header().machine_type();
+      reloc->architecture_ = this->binary_->header().machine_type();
       uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
       if (idx < this->binary_->dynamic_symbols_.size()) {
         reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
@@ -911,7 +890,7 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
 
   const uint64_t dynamic_symbols_offset = offset;
-  const uint64_t string_offset = this->get_dynamic_string_table();
+  const uint64_t string_offset          = this->get_dynamic_string_table();
 
   const Elf_Sym* symbol_headers = reinterpret_cast<const Elf_Sym*>(
       this->stream_->read(dynamic_symbols_offset, nb_symbols * sizeof(Elf_Sym)));
@@ -1273,7 +1252,7 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRel
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
   // Already Parsed
-  if (this->binary_->get_pltgot_relocations().size() > 0) {
+  if (this->binary_->pltgot_relocations().size() > 0) {
     return;
   }
 
@@ -1334,8 +1313,8 @@ void Parser::parse_section_relocations(uint64_t offset, uint64_t size, bool isRe
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->architecture_ = this->binary_->header_.machine_type();
-      if (this->binary_->get_header().file_type() == ELF::E_TYPE::ET_REL and
-          this->binary_->get_segments().size() == 0) {
+      if (this->binary_->header().file_type() == ELF::E_TYPE::ET_REL and
+          this->binary_->segments().size() == 0) {
         reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
       }
 
@@ -1365,8 +1344,8 @@ void Parser::parse_section_relocations(uint64_t offset, uint64_t size, bool isRe
     for (uint32_t i = 0; i < nb_entries; ++i) {
       Relocation* reloc = new Relocation{relocEntry};
       reloc->architecture_ = this->binary_->header_.machine_type();
-      if (this->binary_->get_header().file_type() == ELF::E_TYPE::ET_REL and
-          this->binary_->get_segments().size() == 0) {
+      if (this->binary_->header().file_type() == ELF::E_TYPE::ET_REL and
+          this->binary_->segments().size() == 0) {
         reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
       }
 
@@ -1399,7 +1378,7 @@ void Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entri
   using Elf_Verneed = typename ELF_T::Elf_Verneed;
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
 
-  VLOG(VDEBUG) << "[+] Build Symbol version requirement";
+  VLOG(VDEBUG) << "[+] Parser Symbol version requirement";
 
   const uint64_t svr_offset = offset;
 
@@ -1528,7 +1507,7 @@ void Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_entrie
   // Associate Symbol Version with auxiliary symbol
   // We mask the 15th bit because it sets if this symbol is a hidden on or not
   // but we don't care
-  for (SymbolVersionDefinition& svd : this->binary_->get_symbols_version_definition()) {
+  for (SymbolVersionDefinition& svd : this->binary_->symbols_version_definition()) {
     for (SymbolVersionAux* sva : svd.symbol_version_aux_) {
       std::for_each(
           std::begin(this->binary_->symbol_version_table_),
@@ -1550,7 +1529,7 @@ template<typename ELF_T>
 void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   using uint__  = typename ELF_T::uint;
 
-  VLOG(VDEBUG) << "[+] Build symbol GNU hash";
+  VLOG(VDEBUG) << "[+] Parser symbol GNU hash";
   GnuHash gnuhash;
 
   uint64_t current_offset = offset;

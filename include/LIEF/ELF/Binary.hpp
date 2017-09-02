@@ -68,87 +68,103 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     ELF_CLASS type(void) const;
 
     //! @brief Return @link ELF::Header Elf header @endlink
-    Header&       get_header(void);
-    const Header& get_header(void) const;
+    Header&       header(void);
+    const Header& header(void) const;
+
+    //! @brief Return the last offset used in binary
+    //! according to section headers
+    uint64_t last_offset_section(void) const;
+
+    //! @brief Return the last offset used in binary
+    //! according to segment headers
+    uint64_t last_offset_segment(void) const;
+
+    //! @brief Return the next virtual address available
+    uint64_t next_virtual_address(void) const;
 
     //! @brief Return binary's sections
     //!
     //! @warning
     //! This method return a vector of references thus you can
     //! modify vector's elements (section) but not add elements.
-    it_sections                            get_sections(void);
-    it_const_sections                      get_sections(void) const;
+    it_sections                            sections(void);
+    it_const_sections                      sections(void) const;
 
     //! @brief Return binary entrypoint
     virtual uint64_t                       entrypoint(void) const override;
 
     //! @brief Return binary's segments
-    it_segments                            get_segments(void);
-    it_const_segments                      get_segments(void) const;
+    it_segments                            segments(void);
+    it_const_segments                      segments(void) const;
 
     //! @brief Return binary's dynamic entries
-    it_dynamic_entries                     get_dynamic_entries(void);
-    it_const_dynamic_entries               get_dynamic_entries(void) const;
+    it_dynamic_entries                     dynamic_entries(void);
+    it_const_dynamic_entries               dynamic_entries(void) const;
+
+    DynamicEntry&                          add(const DynamicEntry& entry);
 
     //! @brief Return binary's dynamic symbols
-    it_symbols                             get_dynamic_symbols(void);
-    it_const_symbols                       get_dynamic_symbols(void) const;
+    it_symbols                             dynamic_symbols(void);
+    it_const_symbols                       dynamic_symbols(void) const;
 
     //! @brief Return symbols which are exported by the binary
-    it_exported_symbols                    get_exported_symbols(void);
-    it_const_exported_symbols              get_exported_symbols(void) const;
+    it_exported_symbols                    exported_symbols(void);
+    it_const_exported_symbols              exported_symbols(void) const;
 
     //! @brief Return symbols which are imported by the binary
-    it_imported_symbols                    get_imported_symbols(void);
-    it_const_imported_symbols              get_imported_symbols(void) const;
+    it_imported_symbols                    imported_symbols(void);
+    it_const_imported_symbols              imported_symbols(void) const;
 
     //! @brief Return statics symbols
-    it_symbols                             get_static_symbols(void);
-    it_const_symbols                       get_static_symbols(void) const;
+    it_symbols                             static_symbols(void);
+    it_const_symbols                       static_symbols(void) const;
 
     //! @brief Return symbol versions
-    it_symbols_version                     get_symbols_version(void);
-    it_const_symbols_version               get_symbols_version(void) const;
+    it_symbols_version                     symbols_version(void);
+    it_const_symbols_version               symbols_version(void) const;
 
     //! @brief Return symbols version definition
-    it_symbols_version_definition          get_symbols_version_definition(void);
-    it_const_symbols_version_definition    get_symbols_version_definition(void) const;
+    it_symbols_version_definition          symbols_version_definition(void);
+    it_const_symbols_version_definition    symbols_version_definition(void) const;
 
     //! @brief Return Symbol version requirement
-    it_symbols_version_requirement         get_symbols_version_requirement(void);
-    it_const_symbols_version_requirement   get_symbols_version_requirement(void) const;
+    it_symbols_version_requirement         symbols_version_requirement(void);
+    it_const_symbols_version_requirement   symbols_version_requirement(void) const;
 
     //! @brief Return dynamic relocations
-    it_dynamic_relocations                 get_dynamic_relocations(void);
-    it_const_dynamic_relocations           get_dynamic_relocations(void) const;
+    it_dynamic_relocations                 dynamic_relocations(void);
+    it_const_dynamic_relocations           dynamic_relocations(void) const;
+
+    Relocation&                            add_dynamic_relocation(const Relocation& relocation);
+    Relocation&                            add_pltgot_relocation(const Relocation& relocation);
 
     //! @brief Return `plt.got` relocations
-    it_pltgot_relocations                  get_pltgot_relocations(void);
-    it_const_pltgot_relocations            get_pltgot_relocations(void) const;
+    it_pltgot_relocations                  pltgot_relocations(void);
+    it_const_pltgot_relocations            pltgot_relocations(void) const;
 
     //! @brief Return relocations used in an object file (``*.o``)
-    it_object_relocations                  get_object_relocations(void);
-    it_const_object_relocations            get_object_relocations(void) const;
+    it_object_relocations                  object_relocations(void);
+    it_const_object_relocations            object_relocations(void) const;
 
     //! @brief Return **all** relocations present in the binary
-    it_relocations                         get_relocations(void);
-    it_const_relocations                   get_relocations(void) const;
+    it_relocations                         relocations(void);
+    it_const_relocations                   relocations(void) const;
 
     //! @brief ``true`` if GNU hash is used
     //!
-    //! @see get_gnu_hash and use_sysv_hash
+    //! @see gnu_hash and use_sysv_hash
     bool use_gnu_hash(void) const;
 
     //! @brief Return the GnuHash object in **readonly**
-    const GnuHash& get_gnu_hash(void) const;
+    const GnuHash& gnu_hash(void) const;
 
     //! @brief ``true`` if SYSV hash is used
     //!
-    //! @see get_sysv_hash and use_gnu_hash
+    //! @see sysv_hash and use_gnu_hash
     bool use_sysv_hash(void) const;
 
     //! @brief Return the SysvHash object in **readonly**
-    const SysvHash& get_sysv_hash(void) const;
+    const SysvHash& sysv_hash(void) const;
 
     //! @brief Check if a section with the given name exists in the binary
     bool has_section(const std::string& name) const;
@@ -158,37 +174,37 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Section& get_section(const std::string& name) const;
 
     //! @brief Return `.text` section
-    Section& get_text_section(void);
+    Section& text_section(void);
 
     //! @brief Return `.dynamic` section
-    Section& get_dynamic_section(void);
+    Section& dynamic_section(void);
 
     //! @brief Return hash section
-    Section& get_hash_section(void);
+    Section& hash_section(void);
 
     //! @brief Return section which holds static symbols
-    Section& get_static_symbols_section(void);
+    Section& static_symbols_section(void);
 
     //! @brief Return program image base. For instance 0x40000
     //!
     //! To compute the image base, we look for the PT_PHDR segment header (phdr),
     //! and we return phdr->p_vaddr - phdr->p_offset
-    uint64_t get_imagebase(void) const;
+    uint64_t imagebase(void) const;
 
     //! @brief Return the size of the mapped binary
-    uint64_t get_virtual_size(void) const;
+    uint64_t virtual_size(void) const;
 
 
     //! @brief Check if the binary uses a loader
-    //! @see get_interpreter
+    //! @see interpreter
     bool has_interpreter(void) const;
 
     //! @brief Return ELF interprer if any. (e.g. `/lib64/ld-linux-x86-64.so.2`)
-    std::string get_interpreter(void) const;
+    std::string interpreter(void) const;
 
     //! @brief Return both static and dynamic symbols
-    it_symbols       get_symbols(void);
-    it_const_symbols get_symbols(void) const;
+    it_symbols       symbols(void);
+    it_const_symbols symbols(void) const;
 
     //! @brief Remove symbols with the given name in boths
     //!   * dynamic symbols
@@ -225,30 +241,27 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @param[in] loaded  Boolean value to indicate that sections's data must be loaded
     //!
     //! @return The section added. The `size` and the `virtual address` may have changed.
-    //!
-    //! @warning
-    //! This function will change the following attributes:
-    //!
-    //! - Header
-    //!   + Header::section_headers_offset
-    //!   + Header::numberof_sections
-    //!   + Header::section_name_table_idx
-    //!
-    //! - Section
-    //!   + Section::file_offset
-    //!   + Section::virtual_address
-    //!   + Section::virtual_size
-    //!
-    //! - Segments
-    //!   + Segment::file_offset
-    //!   + Segment::virtual_address
-    //!   + Segment::virtual_size
-    //!   + Segment::physical_size
-    //!
-    Section& add_section(const Section& section, bool loaded = true);
+    Section& add(const Section& section, bool loaded = true);
+
+    Section& extend(const Section& section, uint64_t size);
 
     //! @brief Add a static symbol
     Symbol& add_static_symbol(const Symbol& symbol);
+
+    //! @brief Add a dynamic symbol
+    Symbol& add_dynamic_symbol(const Symbol& symbol);
+
+    //! @brief Add a library as dependency
+    DynamicEntryLibrary& add_library(const std::string& library_name);
+
+    //! @brief Get the library object (DynamicEntryLibrary) from the given name
+    DynamicEntryLibrary& get_library(const std::string& library_name);
+
+    //! @brief Get the library object (DynamicEntryLibrary) from the given name
+    const DynamicEntryLibrary& get_library(const std::string& library_name) const;
+
+    //! @brief Check if the given library name exists in the current binary
+    bool has_library(const std::string& name) const;
 
     //! @brief Add a new segment in the binary
     //!
@@ -256,18 +269,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @warning We assume that the binary is not position independent
     //!
     //! @return The segment added. `Virtual address` and `File Offset` may have changed
-    Segment& add_segment(const Segment& segment, uint64_t base = 0x400000, bool force_note = false);
+    Segment& add(const Segment& segment, uint64_t base = 0);
 
-    //! @brief This function insert data in the binary
-    //!
-    //! @warning This function should be use for shared library
-    //! whose the code is position independent (-fPIC).
-    //! There could be some problem for PIE binary
-    //!
-    //! @param[in] content The data ton insert
-    //! @return Return {offset, size} where offset is the content's offset
-    //! in the binary and size the content's aligned.
-    std::pair<uint64_t, uint64_t> insert_content(std::vector<uint8_t>& content);
+    Segment& replace(const Segment& new_segment, const Segment& original_segment, uint64_t base = 0);
+
+    Segment& extend(const Segment& segment, uint64_t size);
 
 
     //! @brief Patch the content at virtual address @p address with @p patch_value
@@ -347,12 +353,20 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Segment&       segment_from_offset(uint64_t offset);
 
     //! @brief Return the ELF::DynamicEntry associated with the given tag
-    const DynamicEntry& dynamic_entry_from_tag(DYNAMIC_TAGS tag) const;
-    DynamicEntry&       dynamic_entry_from_tag(DYNAMIC_TAGS tag);
+    const DynamicEntry& get(DYNAMIC_TAGS tag) const;
+    DynamicEntry&       get(DYNAMIC_TAGS tag);
 
-    //! @brief Check if ELF::DynamicEntry associated with the given tag
+    //! @brief Return the ELF::DynamicEntry associated with the given tag
+    const Segment& get(SEGMENT_TYPES tag) const;
+    Segment&       get(SEGMENT_TYPES tag);
+
+    //! @brief Check if an ELF::DynamicEntry associated with the given tag
     //! exists.
-    bool has_dynamic_entry(DYNAMIC_TAGS tag) const;
+    bool has(DYNAMIC_TAGS tag) const;
+
+    //! @brief Check if ELF::Segment associated with the given type
+    //! exists.
+    bool has(SEGMENT_TYPES tag) const;
 
     //! @brief Return the content located at virtual address
     virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const override;
@@ -382,6 +396,17 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     virtual std::ostream& print(std::ostream& os) const override;
 
+
+    Binary& operator+=(const DynamicEntry& entry);
+    Binary& operator+=(const Section& section);
+    Binary& operator+=(const Segment& segment);
+
+    Segment&       operator[](SEGMENT_TYPES type);
+    const Segment& operator[](SEGMENT_TYPES type) const;
+
+    DynamicEntry&       operator[](DYNAMIC_TAGS tag);
+    const DynamicEntry& operator[](DYNAMIC_TAGS tag) const;
+
   private:
     Binary(void);
 
@@ -400,6 +425,21 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     template<class T>
     void patch_addend(Relocation& relocatio, uint64_t from, uint64_t shift);
+
+    void shift_sections(uint64_t from, uint64_t shift);
+    void shift_segments(uint64_t from, uint64_t shift);
+    void shift_dynamic_entries(uint64_t from, uint64_t shift);
+    void shift_symbols(uint64_t from, uint64_t shift);
+    void shift_relocations(uint64_t from, uint64_t shift);
+
+    template<int OBJECT_TYPE, bool note = false>
+    Segment& add_segment(const Segment& segment, uint64_t base);
+
+    template<int PT>
+    Segment& extend_segment(const Segment& segment, uint64_t size);
+
+    template<bool LOADED>
+    Section& add_section(const Section& section);
 
     //! The binary type
     //! (i.e. `ELF32` or `ELF64`)

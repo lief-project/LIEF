@@ -13,10 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_TYPES_H_
-#define LIEF_TYPES_H_
-#include <stdint.h>
-#include <inttypes.h>
-#include <cstddef>
 
-#endif
+#include <limits>
+namespace LIEF {
+
+template<typename T>
+std::vector<size_t> Section::search_all_(const T& v) const {
+  std::vector<size_t> result;
+  size_t pos = this->search(v, 0);
+
+  if (pos == Section::npos) {
+    return result;
+  }
+
+  do {
+    result.push_back(pos);
+    pos = this->search(v, pos + 1);
+  } while(pos != Section::npos);
+
+  return result;
+}
+
+}

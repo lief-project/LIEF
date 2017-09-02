@@ -55,7 +55,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Header") {
-    const Header& header_lhs = binary->get_header();
+    const Header& header_lhs = binary->header();
     Header header_rhs = header_lhs;
     REQUIRE(header_lhs == header_rhs);
 
@@ -64,7 +64,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Section") {
-    for (const Section& section : binary->get_sections()) {
+    for (const Section& section : binary->sections()) {
       {
         const Section& section_lhs = section;
         const Section& section_rhs = section;
@@ -81,7 +81,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
 
 
   SECTION("Segments") {
-    for (const Segment& segment: binary->get_segments()) {
+    for (const Segment& segment: binary->segments()) {
       {
         const Segment& segment_lhs = segment;
         const Segment& segment_rhs = segment;
@@ -98,7 +98,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
 
 
   SECTION("Static Symbols") {
-    for (const Symbol& symbol: binary->get_static_symbols()) {
+    for (const Symbol& symbol: binary->static_symbols()) {
       {
         const Symbol& symbol_lhs = symbol;
         const Symbol& symbol_rhs = symbol;
@@ -115,7 +115,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
 
 
   SECTION("Dynamic Symbols") {
-    for (const Symbol& symbol: binary->get_dynamic_symbols()) {
+    for (const Symbol& symbol: binary->dynamic_symbols()) {
       {
         const Symbol& symbol_lhs = symbol;
         const Symbol& symbol_rhs = symbol;
@@ -131,7 +131,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Dynamic Relocations") {
-    for (const Relocation& relocation: binary->get_dynamic_relocations()) {
+    for (const Relocation& relocation: binary->dynamic_relocations()) {
       {
         const Relocation& relocation_lhs = relocation;
         const Relocation& relocation_rhs = relocation;
@@ -148,7 +148,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
 
 
   SECTION(".plt.got Relocations") {
-    for (const Relocation& relocation: binary->get_pltgot_relocations()) {
+    for (const Relocation& relocation: binary->pltgot_relocations()) {
       {
         const Relocation& relocation_lhs = relocation;
         const Relocation& relocation_rhs = relocation;
@@ -163,7 +163,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Symbols version") {
-    for (const SymbolVersion& sv: binary->get_symbols_version()) {
+    for (const SymbolVersion& sv: binary->symbols_version()) {
       {
         const SymbolVersion& sv_lhs = sv;
         const SymbolVersion& sv_rhs = sv;
@@ -178,7 +178,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Symbols version definition") {
-    for (const SymbolVersionDefinition& svd: binary->get_symbols_version_definition()) {
+    for (const SymbolVersionDefinition& svd: binary->symbols_version_definition()) {
       {
         const SymbolVersionDefinition& svd_lhs = svd;
         const SymbolVersionDefinition& svd_rhs = svd;
@@ -193,7 +193,7 @@ TEST_CASE("Test operator==", "[elf][internal]") {
   }
 
   SECTION("Symbols version requirement") {
-    for (const SymbolVersionRequirement& svr: binary->get_symbols_version_requirement()) {
+    for (const SymbolVersionRequirement& svr: binary->symbols_version_requirement()) {
       {
         const SymbolVersionRequirement& svr_lhs = svr;
         const SymbolVersionRequirement& svr_rhs = svr;

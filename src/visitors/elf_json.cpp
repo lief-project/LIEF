@@ -25,11 +25,11 @@ namespace ELF {
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
-  header_visitor(binary.get_header());
+  header_visitor(binary.header());
 
   // Sections
   std::vector<json> sections;
-  for (const Section& section : binary.get_sections()) {
+  for (const Section& section : binary.sections()) {
     JsonVisitor visitor;
     visitor(section);
     sections.emplace_back(visitor.get());
@@ -37,7 +37,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Segments
   std::vector<json> segments;
-  for (const Segment& segment : binary.get_segments()) {
+  for (const Segment& segment : binary.segments()) {
     JsonVisitor visitor;
     visitor(segment);
     segments.emplace_back(visitor.get());
@@ -45,7 +45,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Dynamic entries
   std::vector<json> dynamic_entries;
-  for (const DynamicEntry& entry : binary.get_dynamic_entries()) {
+  for (const DynamicEntry& entry : binary.dynamic_entries()) {
     JsonVisitor visitor;
     entry.accept(visitor);
     dynamic_entries.emplace_back(visitor.get());
@@ -54,7 +54,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Dynamic symbols
   std::vector<json> dynamic_symbols;
-  for (const Symbol& symbol : binary.get_dynamic_symbols()) {
+  for (const Symbol& symbol : binary.dynamic_symbols()) {
     JsonVisitor visitor;
     visitor(symbol);
     dynamic_symbols.emplace_back(visitor.get());
@@ -63,7 +63,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Static symbols
   std::vector<json> static_symbols;
-  for (const Symbol& symbol : binary.get_static_symbols()) {
+  for (const Symbol& symbol : binary.static_symbols()) {
     JsonVisitor visitor;
     visitor(symbol);
     static_symbols.emplace_back(visitor.get());
@@ -72,7 +72,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Dynamic relocations
   std::vector<json> dynamic_relocations;
-  for (const Relocation& reloc : binary.get_dynamic_relocations()) {
+  for (const Relocation& reloc : binary.dynamic_relocations()) {
     JsonVisitor visitor;
     visitor(reloc);
     dynamic_relocations.emplace_back(visitor.get());
@@ -81,7 +81,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // pltgot relocations
   std::vector<json> pltgot_relocations;
-  for (const Relocation& reloc : binary.get_pltgot_relocations()) {
+  for (const Relocation& reloc : binary.pltgot_relocations()) {
     JsonVisitor visitor;
     visitor(reloc);
     pltgot_relocations.emplace_back(visitor.get());
@@ -90,7 +90,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Symbol version
   std::vector<json> symbols_version;
-  for (const SymbolVersion& s : binary.get_symbols_version()) {
+  for (const SymbolVersion& s : binary.symbols_version()) {
     JsonVisitor visitor;
     visitor(s);
     symbols_version.emplace_back(visitor.get());
@@ -99,7 +99,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Symbols version requirement
   std::vector<json> symbols_version_requirement;
-  for (const SymbolVersionRequirement& s : binary.get_symbols_version_requirement()) {
+  for (const SymbolVersionRequirement& s : binary.symbols_version_requirement()) {
     JsonVisitor visitor;
     visitor(s);
     symbols_version_requirement.emplace_back(visitor.get());
@@ -108,7 +108,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Symbols version definition
   std::vector<json> symbols_version_definition;
-  for (const SymbolVersionDefinition& s : binary.get_symbols_version_definition()) {
+  for (const SymbolVersionDefinition& s : binary.symbols_version_definition()) {
     JsonVisitor visitor;
     visitor(s);
     symbols_version_definition.emplace_back(visitor.get());
@@ -127,12 +127,12 @@ void JsonVisitor::visit(const Binary& binary) {
 
   this->node_["name"]         = binary.name();
   this->node_["entrypoint"]   = binary.entrypoint();
-  this->node_["imagebase"]    = binary.get_imagebase();
-  this->node_["virtual_size"] = binary.get_virtual_size();
+  this->node_["imagebase"]    = binary.imagebase();
+  this->node_["virtual_size"] = binary.virtual_size();
   this->node_["is_pie"]       = binary.is_pie();
 
   if (binary.has_interpreter()) {
-    this->node_["interpreter"] = binary.get_interpreter();
+    this->node_["interpreter"] = binary.interpreter();
   }
 
   this->node_["header"]                      = header_visitor.get();
@@ -150,14 +150,14 @@ void JsonVisitor::visit(const Binary& binary) {
 
   if (binary.use_gnu_hash()) {
     JsonVisitor gnu_hash_visitor;
-    gnu_hash_visitor(binary.get_gnu_hash());
+    gnu_hash_visitor(binary.gnu_hash());
 
     this->node_["gnu_hash"] = gnu_hash_visitor.get();
   }
 
   if (binary.use_sysv_hash()) {
     JsonVisitor sysv_hash_visitor;
-    sysv_hash_visitor(binary.get_sysv_hash());
+    sysv_hash_visitor(binary.sysv_hash());
 
     this->node_["sysv_hash"] = sysv_hash_visitor.get();
   }

@@ -34,11 +34,11 @@ int main(int argc, char **argv) {
   std::unique_ptr<const Binary> binary{Parser::parse(argv[1])};
 
   std::cout << "== Exported Symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->get_exported_symbols()) {
+  for (const Symbol& symbol : binary->exported_symbols()) {
     std::cout << symbol << std::endl;
   }
   std::cout << "== Imported Symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->get_imported_symbols()) {
+  for (const Symbol& symbol : binary->imported_symbols()) {
     std::cout << symbol << std::endl;
   }
 

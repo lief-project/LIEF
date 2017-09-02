@@ -22,7 +22,6 @@ PYBIND11_PLUGIN(_pylief) {
   py::module LIEF_module("_pylief", "Python API for LIEF");
 
   LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
-
   init_LIEF_iterators(LIEF_module);
 
   init_LIEF_Logger(LIEF_module);
@@ -32,6 +31,7 @@ PYBIND11_PLUGIN(_pylief) {
 
   // Init the LIEF module
   init_LIEF_module(LIEF_module);
+
 
   // Init the ELF module
 #if defined(LIEF_ELF_MODULE)

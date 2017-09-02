@@ -19,38 +19,6 @@
 
 #define PY_ENUM(x) to_string(x), x
 
-void init_ELF32_Structures(py::module& m) {
-  //py::class_<Sizes<ELF32>>(m, "Sizes")
-  //  .def_property_readonly_static("ehdr",
-  //      [] (py::object) {return Sizes<ELF32>::ehdr;})
-
-  //  .def_property_readonly_static("phdr",
-  //      [] (py::object) {return Sizes<ELF32>::phdr;})
-
-  //  .def_property_readonly_static("shdr",
-  //      [] (py::object) {return Sizes<ELF32>::shdr;})
-
-  //  .def_property_readonly_static("sym",
-  //      [] (py::object) {return Sizes<ELF32>::sym;});
-
-}
-
-void init_ELF64_Structures(py::module& m) {
-  //py::class_<Sizes<ELF64>>(m, "Sizes")
-  //  .def_property_readonly_static("ehdr",
-  //      [] (py::object) {return Sizes<ELF64>::ehdr;})
-
-  //  .def_property_readonly_static("phdr",
-  //      [] (py::object) {return Sizes<ELF64>::phdr;})
-
-  //  .def_property_readonly_static("shdr",
-  //      [] (py::object) {return Sizes<ELF64>::shdr;})
-
-  //  .def_property_readonly_static("sym",
-  //      [] (py::object) {return Sizes<ELF64>::sym;});
-
-}
-
 void init_ELF_Structures_enum(py::module& m) {
 
   py::enum_<ELF_CLASS>(m, "ELF_CLASS")

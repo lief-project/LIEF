@@ -34,10 +34,9 @@ DynamicEntryRpath::DynamicEntryRpath(const Elf32_Dyn* header) :
 {}
 
 DynamicEntryRpath::DynamicEntryRpath(const std::string& rpath) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
   rpath_{rpath}
 {
-  this->tag_   = DYNAMIC_TAGS::DT_RPATH;
-  this->value_ = 0;
 }
 
 const std::string& DynamicEntryRpath::name(void) const {

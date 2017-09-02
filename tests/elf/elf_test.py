@@ -10,6 +10,10 @@ import logging
 import random
 import itertools
 
+from lief import Logger
+Logger.set_level(lief.LOGGING_LEVEL.WARNING)
+#Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
+
 from subprocess import Popen
 
 from unittest import TestCase
@@ -75,8 +79,8 @@ class TestELF(TestCase):
     def test_permutation(self):
         samples = [
                 "ELF/ELF64_x86-64_binary_ls.bin",
-                "ELF/ELF64_x86-64_binary_gcc.bin",
-                "ELF/ELF64_x86-64_binary_openssl.bin",
+                #"ELF/ELF64_x86-64_binary_gcc.bin",
+                #"ELF/ELF64_x86-64_binary_openssl.bin",
         ]
         tmp_dir = tempfile.mkdtemp(suffix='_lief_test_permutation')
         for sample in samples:
@@ -90,12 +94,15 @@ class TestELF(TestCase):
             permutation = [i for i in range(1, len(dynamic_symbols))]
             random.shuffle(permutation)
             permutation = [0] + permutation
+            binary.permute_dynamic_symbols(permutation)
 
             builder = lief.ELF.Builder(binary)
             builder.empties_gnuhash(True)
             builder.build()
             output = os.path.join(tmp_dir, "{}.permutated".format(binary.name))
-            binary.write(output)
+            self.logger.debug("Output: {}".format(output))
+            builder.write(output)
+
             if not sys.platform.startswith("linux"):
                 return
 
@@ -207,8 +214,8 @@ class TestELF(TestCase):
     def test_dynamic_flags(self):
         sample = "ELF/ELF32_ARM_binary_ls.bin"
         ls = lief.parse(get_sample(sample))
-        d_flags = ls.dynamic_entry_from_tag(lief.ELF.DYNAMIC_TAGS.FLAGS)
-        d_flags_1 = ls.dynamic_entry_from_tag(lief.ELF.DYNAMIC_TAGS.FLAGS_1)
+        d_flags = ls.get(lief.ELF.DYNAMIC_TAGS.FLAGS)
+        d_flags_1 = ls.get(lief.ELF.DYNAMIC_TAGS.FLAGS_1)
 
         self.assertIn(lief.ELF.DYNAMIC_FLAGS.BIND_NOW, d_flags)
         self.assertIn(lief.ELF.DYNAMIC_FLAGS_1.NOW, d_flags_1)

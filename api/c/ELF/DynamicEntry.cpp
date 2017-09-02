@@ -20,7 +20,7 @@ namespace ELF {
 
 void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
-  it_dynamic_entries dyn_entries = binary->get_dynamic_entries();
+  it_dynamic_entries dyn_entries = binary->dynamic_entries();
   c_binary->dynamic_entries = static_cast<Elf_DynamicEntry_t**>(
       malloc((dyn_entries.size() + 1) * sizeof(Elf_DynamicEntry_t**)));
 

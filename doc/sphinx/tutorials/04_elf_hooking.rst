@@ -39,21 +39,19 @@ The hooking function is as simple as:
 
 Compiled with :code:`gcc -Os -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook`.
 
-To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.insert_content` method
+To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.add` (segment) method
 
-.. automethod:: lief.ELF.Binary.insert_content
+.. automethod:: lief.ELF.Binary.add
   :noindex:
-
-This method will insert our stub into the library and returns a tuple ``(offset, size)`` where ``offset`` is the location of the stub in the library and ``size`` the stub's size aligned. As a side effect, assembly code is shifted and various offsets are patched.
 
 Once the stub is injected we just have to change the address of the ``exp`` symbol:
 
 .. code-block:: python
 
-  exp_symbol = next(filter(lambda e : e.name == "exp", libm.exported_symbols))
-  hook_symbol = next(filter(lambda e : e.name == "hook", hook.exported_symbols))
+  exp_symbol  = libm.get_symbol("exp")
+  hook_symbol = hook.get_symbol("hook")
 
-  exp_symbol.value = offset + hook_symbol.value
+  exp_symbol.value = segment_added.virtual_address + hook_symbol.value
 
 
 To test the patched library:

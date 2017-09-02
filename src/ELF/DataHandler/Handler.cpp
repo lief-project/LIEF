@@ -27,7 +27,6 @@ namespace ELF {
 namespace DataHandler {
 
 Handler::Handler(void) = default;
-Handler::~Handler(void) = default;
 Handler& Handler::operator=(const Handler&) = default;
 Handler::Handler(const Handler&) = default;
 
@@ -35,127 +34,98 @@ Handler::Handler(const std::vector<uint8_t>& content) :
   data_{content}
 {}
 
-//! \brief return the raw content
+
+Handler::Handler(std::vector<uint8_t>&& content) :
+  data_{std::move(content)}
+{}
+
 const std::vector<uint8_t>& Handler::content(void) const {
   return this->data_;
 }
 
-/*! \brief return the content from offset and size
- *
- * First we have to find the node which hold the content
- * if the node does not exist we throw an exception because we wants to read
- * something which is not hold by `section` or `segment`
- * if the node exist we return the raw content
- */
-std::vector<uint8_t> Handler::content(uint64_t offset, uint64_t size, Node::Type type) {
-  if (offset > this->data_.size() or (offset + size) > this->data_.size()) {
-    VLOG(VDEBUG) << "Offset: 0x" << std::hex << offset;
-    VLOG(VDEBUG) << "Size: 0x" << std::hex << size;
-    VLOG(VDEBUG) << "Data size" << std::hex << this->data_.size();
-    throw std::runtime_error("Invalid data access");
-  }
-  Node& node = this->find(offset, size, false, type);
-  uint64_t relativeOffset = offset - node.offset();
-    return {
-      this->data_.data() + node.offset() + relativeOffset,
-      this->data_.data() + node.offset() + relativeOffset + size
-    };
-
+std::vector<uint8_t>& Handler::content(void) {
+  return const_cast<std::vector<uint8_t>&>(static_cast<const Handler*>(this)->content());
 }
 
-/*! \brief Insert content in the raw data
- *
- * First we check if the container is large enough to insert the new data
- * Then we check if a node exist for this data. If yes, we replace the raw data with the new data
- * if not we create a node to hold this data and then we insert data
- */
-void Handler::content(uint64_t offset, const std::vector<uint8_t>& content, Node::Type type) {
-
-  if (this->data_.size() < (offset + content.size())) {
-    this->data_.resize(offset + content.size());
-  }
-
-  if (content.size() == 0) {
-    return;
-  }
-
-  try {
-    Node& node = this->find(offset, content.size(), true, type);
-    std::copy(std::begin(content), std::end(content), this->data_.data() + node.offset());
-  } catch (const not_found&) {
-    Node nodeCreated = {offset, content.size(), type};
-    std::copy(std::begin(content), std::end(content), this->data_.data() + nodeCreated.offset());
-    this->nodes_.push_back(std::move(nodeCreated));
-  }
-
+bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
+  Node tmp{offset, size, type};
+  auto&& it_node = std::find_if(
+      std::begin(this->nodes_),
+      std::end(this->nodes_),
+      [&tmp] (const Node* node)
+      {
+        return tmp == *node;
+      });
+  return it_node != std::end(this->nodes_);
 }
 
-/*! \brief Find the node associated with the following parameters
- *  \return `nullptr` if the node doesn't exist else the node
- *
- *  To complete
- *
- */
-Node& Handler::find(uint64_t offset, uint64_t size, bool insert, Node::Type type) {
+Node& Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
+  Node tmp{offset, size, type};
 
-  if (insert) {
-    auto&& itNode = std::find_if(
+  auto&& it_node = std::find_if(
         std::begin(this->nodes_),
         std::end(this->nodes_),
-        [&offset, &size, &type] (const Node& node)
+        [&tmp] (const Node* node)
         {
-          return node.type() == type and (node.offset() == offset) and ((offset + size) == (node.offset() + node.size()));
+          return tmp == *node;
         });
 
-    if (itNode != std::end(this->nodes_)) {
-      return *itNode;
-    } else {
-      throw LIEF::not_found("Node not found (set)");
-    }
+  if (it_node != std::end(this->nodes_)) {
+    return **it_node;
   } else {
-    auto&& itNode = std::find_if(
+    throw not_found("Unable to find node");
+  }
+}
+
+
+void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
+
+  Node tmp{offset, size, type};
+
+  auto&& it_node = std::find_if(
         std::begin(this->nodes_),
         std::end(this->nodes_),
-        [&offset, &size, &type] (const Node& node)
+        [&tmp] (const Node* node)
         {
-          return node.type() == type and (node.offset() <= offset) and ((offset + size) <= (node.offset() + node.size()));
+          return tmp == *node;
         });
 
-    if (itNode != std::end(this->nodes_)) {
-      return *itNode;
-    } else {
-      this->nodes_.emplace_back(offset, size, type);
-      return this->nodes_.back();
-    }
+  if (it_node != std::end(this->nodes_)) {
+    delete *it_node;
+    this->nodes_.erase(it_node);
+  } else {
+    throw not_found("Unable to find node");
   }
 }
 
-void Handler::move(Node& node, uint64_t newOffset) {
-  if (newOffset < node.offset()) {
-    throw LIEF::not_implemented("Handler::move shift << not implemented");
-  }
 
-  uint64_t originalOffset = node.offset();
-  uint64_t shift          = newOffset - originalOffset;
-
-  // Virtual shift. Use makeHole to physical shift
-  for (Node& child : this->nodes_) {
-    if (child.type() == node.type() and child.offset() > originalOffset) {
-      child.offset(child.offset() + shift);
-    }
-  }
-
+Node& Handler::create(uint64_t offset, uint64_t size, Node::Type type) {
+  this->nodes_.emplace_back(new Node{offset, size, type});
+  return *this->nodes_.back();
 }
 
-void Handler::add_node(const Node& node) {
-  this->nodes_.push_back(node);
+
+Node& Handler::add(const Node& node) {
+  this->nodes_.push_back(new Node{node});
+  return *this->nodes_.back();
 }
 
 void Handler::make_hole(uint64_t offset, uint64_t size) {
-  if (this->data_.size() < (offset + size)) {
-    this->data_.resize((offset + size));
-  }
+  this->reserve(offset, size);
   this->data_.insert(std::begin(this->data_) + offset, size, 0);
+}
+
+
+void Handler::reserve(uint64_t offset, uint64_t size) {
+  if (this->data_.size() < (offset + size)) {
+    this->data_.resize((offset + size), 0);
+  }
+}
+
+Handler::~Handler(void) {
+  for (Node* n : this->nodes_) {
+    delete n;
+  }
 }
 
 } // namespace DataHandler

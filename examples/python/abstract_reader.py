@@ -69,8 +69,7 @@ def print_imported_libraries(libraries):
 def read_binary(path):
     print("== Abstract Reader ==")
 
-    binary = lief.parse(path)
-    binary = super(binary.__class__, binary)
+    binary = lief.parse(path).abstract
     header = binary.header
     print(header)
 

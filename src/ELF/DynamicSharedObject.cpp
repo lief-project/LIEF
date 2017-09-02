@@ -34,6 +34,11 @@ DynamicSharedObject::DynamicSharedObject(const Elf32_Dyn* header) :
   DynamicEntry{header}
 {}
 
+DynamicSharedObject::DynamicSharedObject(const std::string& name) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
+  name_{name}
+{}
+
 
 const std::string& DynamicSharedObject::name(void) const {
   return this->name_;

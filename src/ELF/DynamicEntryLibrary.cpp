@@ -34,10 +34,9 @@ DynamicEntryLibrary::DynamicEntryLibrary(const Elf32_Dyn* header) :
 {}
 
 DynamicEntryLibrary::DynamicEntryLibrary(const std::string& name) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
   libname_{name}
 {
-  this->tag_   = DYNAMIC_TAGS::DT_NEEDED;
-  this->value_ = 0;
 }
 
 const std::string& DynamicEntryLibrary::name(void) const {

@@ -35,6 +35,10 @@ void init_ELF_DynamicSharedObject_class(py::module& m) {
   // Dynamic Shared Object object
   //
   py::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject")
+    .def(py::init<const std::string &>(),
+        "Constructor from library name",
+        "library_name"_a)
+
     .def_property("name",
         [] (const DynamicSharedObject& obj) {
           return safe_string_converter(obj.name());

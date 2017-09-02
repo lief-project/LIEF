@@ -121,18 +121,11 @@ The first step is to inject the hook into the binary. To do so we will add a :cl
   crackme = lief.parse("crackme.bin")
   hook    = lief.parse("hook")
 
-  segment           = lief.ELF.Segment()
-  segment.type      = lief.ELF.SEGMENT_TYPES.LOAD
-  segment.flag      = lief.ELF.SEGMENT_FLAGS.PF_R | lief.ELF.SEGMENT_FLAGS.PF_W | lief.ELF.SEGMENT_FLAGS.PF_X
-  segment.content   = hook.segments[0].content # First LOAD segment which holds payload
-  segment.alignment = 8
-  segment           = crackme.add_segment(segment, base=0xA0000000, force_note=True)
+  segment_added  = crackme.add(hook.segments[0])
 
-All assembly code of the hook stands in the first :attr:`~lief.ELF.SEGMENT_TYPES.LOAD` segment. To insert the newly created segment into binary,
-we will replace the :attr:`~lief.ELF.SEGMENT_TYPES.NOTE` entry. If there is not such :attr:`~lief.ELF.SEGMENT_TYPES.NOTE` entry we can use
-:func:`~lief.ELF.Binary.add_section`.
+All assembly code of the hook stands in the first :attr:`~lief.ELF.SEGMENT_TYPES.LOAD` segment of ``hook``.
 
-The hook virtual base address is ``0xA0000000`` and we can processed to the ``got`` patching.
+Once the hook added, its virtual address is :attr:`~lief.ELF.Segment.virtual_address` of ``segment_added``  and we can processed to the ``got`` patching.
 
 Patching the ``got``
 ~~~~~~~~~~~~~~~~~~~~
@@ -145,12 +138,12 @@ LIEF provides a function to easily patch the ``got`` entry associated with a :cl
 
 The offset of the ``memcmp`` function is stored in the :attr:`~lief.ELF.Symbol.value` attribute of the associated dynamic symbol. Thus its virtual address will be:
 
-  * ``my_memcpy``: :attr:`~lief.ELF.Symbol.value` + ``0xA0000000``
+  * ``my_memcpy``: :attr:`~lief.ELF.Symbol.value` + ``segment_added.virtual_address``
 
 .. code-block:: python
 
-  my_memcmp = next(filter(lambda s : s.name == "my_memcmp", hook.dynamic_symbols))
-  my_memcmp_addr = segment.virtual_address + my_memcmp.value
+  my_memcmp      = hook.get_symbol("my_memcmp")
+  my_memcmp_addr = segment_added.virtual_address + my_memcmp.value
 
 Finally we can patch the ``memcmp`` from the crakme with this value:
 

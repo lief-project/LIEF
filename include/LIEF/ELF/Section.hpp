@@ -37,17 +37,20 @@ namespace ELF {
 class Segment;
 class Parser;
 class Binary;
+class Builder;
 
 //! @brief Class wich represent sections
 class DLL_PUBLIC Section : public LIEF::Section {
 
   friend class Parser;
   friend class Binary;
+  friend class Builder;
 
  public:
     Section(uint8_t *data, ELF_CLASS type);
     Section(const Elf64_Shdr* header);
     Section(const Elf32_Shdr* header);
+    Section(const std::string& name, ELF_SECTION_TYPES type = ELF_SECTION_TYPES::SHT_PROGBITS);
 
     Section(void);
     ~Section(void);
@@ -56,7 +59,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     Section(const Section& other);
     void swap(Section& other);
 
-    uint32_t                  name_idx(void) const;
+    uint32_t          name_idx(void) const;
     ELF_SECTION_TYPES type(void) const;
 
     // ============================
@@ -82,6 +85,15 @@ class DLL_PUBLIC Section : public LIEF::Section {
 
     //! @brief Return section flags as a ``std::set``
     std::set<ELF_SECTION_FLAGS> flags_list(void) const;
+
+    virtual uint64_t size(void) const override;
+
+    virtual void size(uint64_t size) override;
+
+    virtual void offset(uint64_t offset) override;
+
+    virtual uint64_t offset(void) const override;
+
 
     //! @see offset
     uint64_t file_offset(void) const;

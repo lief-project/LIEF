@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     std::vector<uint8_t> d(4096, 0);
     new_section.name("test");
     new_section.content(d);
-    binary->add_section(new_section, true);
+    binary->add(new_section, true);
   }
 
 

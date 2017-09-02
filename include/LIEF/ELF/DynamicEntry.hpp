@@ -34,6 +34,7 @@ class DLL_PUBLIC DynamicEntry : public Visitable {
     DynamicEntry(const Elf64_Dyn* header);
     DynamicEntry(const Elf32_Dyn* header);
     DynamicEntry(void);
+    DynamicEntry(DYNAMIC_TAGS tag, uint64_t value);
 
     DynamicEntry& operator=(const DynamicEntry&);
     DynamicEntry(const DynamicEntry&);
@@ -62,7 +63,7 @@ class DLL_PUBLIC DynamicEntry : public Visitable {
 
   protected:
     DYNAMIC_TAGS tag_;
-    uint64_t                 value_;
+    uint64_t     value_;
 };
 }
 }

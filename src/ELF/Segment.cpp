@@ -172,10 +172,14 @@ std::vector<uint8_t> Segment::content(void) const {
   if (this->datahandler_ == nullptr) {
     VLOG(VDEBUG) << "Content from cache";
     return this->content_c_;
-  } else {
-    VLOG(VDEBUG) << std::hex << "Content from Data Handler [0x" << this->file_offset() << ", 0x" << this->physical_size() << "]";
-    return this->datahandler_->content(this->file_offset(), this->physical_size(), DataHandler::Node::SEGMENT);
   }
+
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->physical_size(),
+      DataHandler::Node::SEGMENT);
+  const std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
 }
 
 
@@ -236,8 +240,14 @@ void Segment::clear_flags(void) {
 }
 
 
-void Segment::file_offset(uint64_t fileOffset) {
-  this->file_offset_ = fileOffset;
+void Segment::file_offset(uint64_t file_offset) {
+  if (this->datahandler_ != nullptr) {
+    DataHandler::Node& node = this->datahandler_->get(
+        this->file_offset(), this->physical_size(),
+        DataHandler::Node::SEGMENT);
+    node.offset(file_offset);
+  }
+  this->file_offset_ = file_offset;
 }
 
 
@@ -253,7 +263,9 @@ void Segment::physical_address(uint64_t physicalAddress) {
 
 void Segment::physical_size(uint64_t physicalSize) {
   if (this->datahandler_ != nullptr) {
-    DataHandler::Node& node = this->datahandler_->find(this->file_offset(), this->size_, false, DataHandler::Node::SEGMENT);
+    DataHandler::Node& node = this->datahandler_->get(
+        this->file_offset(), this->physical_size(),
+        DataHandler::Node::SEGMENT);
     node.size(physicalSize);
   }
   this->size_ = physicalSize;
@@ -277,12 +289,32 @@ void Segment::content(const std::vector<uint8_t>& content) {
   if (this->datahandler_ == nullptr) {
     VLOG(VDEBUG) << "Set content in the cache";
     this->content_c_ = content;
-  } else {
-    VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
-    this->datahandler_->content(this->file_offset(), content, DataHandler::Node::SEGMENT);
+
+    this->physical_size(content.size());
+    return;
   }
 
-  this->physical_size(content.size());
+  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
+
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->physical_size(),
+      DataHandler::Node::SEGMENT);
+
+  std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  this->datahandler_->reserve(node.offset(), content.size());
+
+  if (node.size() < content.size()) {
+    LOG(WARNING) << "You insert data in segment '"
+                 << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+  }
+
+  this->physical_size(node.size());
+
+  std::copy(
+      std::begin(content),
+      std::end(content),
+      std::begin(binary_content) + node.offset());
 }
 
 void Segment::accept(Visitor& visitor) const {

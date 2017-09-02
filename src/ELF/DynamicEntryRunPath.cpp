@@ -34,10 +34,9 @@ DynamicEntryRunPath::DynamicEntryRunPath(const Elf32_Dyn* header) :
 {}
 
 DynamicEntryRunPath::DynamicEntryRunPath(const std::string& runpath) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
   runpath_{runpath}
 {
-  this->tag_   = DYNAMIC_TAGS::DT_RUNPATH;
-  this->value_ = 0;
 }
 
 const std::string& DynamicEntryRunPath::name(void) const {

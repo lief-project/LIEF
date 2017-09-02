@@ -31,8 +31,8 @@ symstr_section.entry_size = 1
 symstr_section.alignment  = 1
 symstr_section.content    = [0] * 100
 
-symtab_section = binary.add_section(symtab_section, False)
-symstr_section = binary.add_section(symstr_section, False)
+symtab_section = binary.add(symtab_section, loaded=False)
+symstr_section = binary.add(symstr_section, loaded=False)
 
 symbol         = ELF.Symbol()
 symbol.name    = ""

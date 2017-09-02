@@ -24,9 +24,20 @@
 
 #include "LIEF/Abstract/Section.hpp"
 
+#include "Section.tcc"
+
 namespace LIEF {
+
 Section::Section(void) :
   name_{""},
+  virtual_address_{0},
+  size_{0},
+  offset_{0}
+{}
+
+
+Section::Section(const std::string& name) :
+  name_{name},
   virtual_address_{0},
   size_{0},
   offset_{0}
@@ -66,8 +77,6 @@ void Section::size(uint64_t size) {
   this->size_ = size;
 }
 
-
-
 uint64_t Section::offset(void) const {
   return this->offset_;
 }
@@ -83,6 +92,92 @@ void Section::virtual_address(uint64_t virtual_address) {
 
 void Section::offset(uint64_t offset) {
   this->offset_ = offset;
+}
+
+
+// Search functions
+// ================
+size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
+  if (size > sizeof(integer)) {
+    throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
+  }
+
+  size_t minimal_size = size;
+  if (size == 0) {
+    if (integer < std::numeric_limits<uint8_t>::max()) {
+      minimal_size = sizeof(uint8_t);
+    }
+    else if (integer < std::numeric_limits<uint16_t>::max()) {
+      minimal_size = sizeof(uint16_t);
+    }
+    else if (integer < std::numeric_limits<uint32_t>::max()) {
+      minimal_size = sizeof(uint32_t);
+    }
+    else if (integer < std::numeric_limits<uint64_t>::max()) {
+      minimal_size = sizeof(uint64_t);
+    } else {
+      throw exception("Unable to find an appropriated type of " + std::to_string(integer));
+    }
+  }
+
+  std::vector<uint8_t> pattern(minimal_size, 0);
+
+  std::copy(
+      reinterpret_cast<const uint8_t*>(&integer),
+      reinterpret_cast<const uint8_t*>(&integer) + minimal_size,
+      pattern.data());
+
+  return this->search(pattern, pos);
+}
+
+size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
+  std::vector<uint8_t> content = this->content();
+
+  auto&& it_found = std::search(
+      std::begin(content) + pos, std::end(content),
+      std::begin(pattern), std::end(pattern)
+      );
+
+  if (it_found == std::end(content)) {
+    return Section::npos;
+  }
+
+  return std::distance(std::begin(content), it_found);
+}
+
+size_t Section::search(const std::string& pattern, size_t pos) const {
+  std::vector<uint8_t> pattern_formated = {std::begin(pattern), std::end(pattern)};
+  return this->search(pattern_formated, pos);
+}
+
+size_t Section::search(uint64_t integer, size_t pos) const {
+  return this->search(integer, pos, 0);
+}
+
+// Search all functions
+// ====================
+std::vector<size_t> Section::search_all(uint64_t v, size_t size) const {
+  std::vector<size_t> result;
+  size_t pos = this->search(v, 0, size);
+
+  if (pos == Section::npos) {
+    return result;
+  }
+
+  do {
+    result.push_back(pos);
+    pos = this->search(v, pos + 1, size);
+  } while(pos != Section::npos);
+
+  return result;
+}
+
+std::vector<size_t> Section::search_all(uint64_t v) const {
+  return this->search_all(v, 0);
+}
+
+std::vector<size_t> Section::search_all(const std::string& v) const {
+  return this->search_all_<std::string>(v);
 }
 
 

@@ -26,24 +26,33 @@ namespace DataHandler {
 class DLL_PUBLIC Handler {
   public:
     Handler(const std::vector<uint8_t>& content);
+    Handler(std::vector<uint8_t>&& content);
     ~Handler(void);
 
     Handler& operator=(const Handler&);
     Handler(const Handler&);
 
     const std::vector<uint8_t>& content(void) const;
-    std::vector<uint8_t> content(uint64_t offset, uint64_t size, Node::Type type);
-    void add_node(const Node& node);
-    void content(uint64_t offset, const std::vector<uint8_t>& content, Node::Type type);
+    std::vector<uint8_t>& content(void);
 
-    Node& find(uint64_t offset, uint64_t size, bool insert, Node::Type type);
-    void move(Node& node, uint64_t newOffset);
+    Node& add(const Node& node);
+
+    bool has(uint64_t offset, uint64_t size, Node::Type type);
+
+    Node& get(uint64_t offset, uint64_t size, Node::Type type);
+
+    Node& create(uint64_t offset, uint64_t size, Node::Type type);
+
+    void remove(uint64_t offset, uint64_t size, Node::Type type);
+
     void make_hole(uint64_t offset, uint64_t size);
+
+    void reserve(uint64_t offset, uint64_t size);
 
   private:
     Handler(void);
     std::vector<uint8_t> data_;
-    std::vector<Node>    nodes_;
+    std::vector<Node*>   nodes_;
 };
 } // namespace DataHandler
 } // namespace ELF

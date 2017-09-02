@@ -57,7 +57,7 @@ TEST_CASE("Test parse", "[elf][parser]")
   // Header
   // ======
   SECTION("Header") {
-    const Header& header = binary->get_header();
+    const Header& header = binary->header();
     REQUIRE(header.numberof_sections()      == parameters["Header"]["nbShdr"].as<unsigned int>());
     REQUIRE(header.numberof_segments()      == parameters["Header"]["nbPhdr"].as<unsigned int>());
     REQUIRE(header.entrypoint()             == parameters["Header"]["entryPoint"].as<unsigned long long>());
@@ -69,10 +69,10 @@ TEST_CASE("Test parse", "[elf][parser]")
   // ========
   SECTION("Sections") {
 
-    REQUIRE(binary->get_sections().size() == parameters["Header"]["nbShdr"].as<unsigned int>());
+    REQUIRE(binary->sections().size() == parameters["Header"]["nbShdr"].as<unsigned int>());
 
     if (parameters["Sections"]) {
-      it_const_sections sections = binary->get_sections();
+      it_const_sections sections = binary->sections();
       for (size_t i = 0; i < parameters["Sections"].size(); ++i) {
         const Section& section = sections[i];
         //name[:17] because readelf provide only the first 16 char
@@ -102,9 +102,9 @@ TEST_CASE("Test parse", "[elf][parser]")
   // Segments
   // ========
   SECTION("Segments") {
-    REQUIRE(binary->get_segments().size() == parameters["Header"]["nbPhdr"].as<unsigned int>());
+    REQUIRE(binary->segments().size() == parameters["Header"]["nbPhdr"].as<unsigned int>());
     if (parameters["Segments"]) {
-      it_const_segments segments = binary->get_segments();
+      it_const_segments segments = binary->segments();
       for (size_t i = 0; i < parameters["Segments"].size(); ++i) {
         const Segment& segment = segments[i];
         REQUIRE(parameters["Segments"][i]["fSize"].as<unsigned long long>()    == segment.physical_size());
@@ -129,9 +129,9 @@ TEST_CASE("Test parse", "[elf][parser]")
   SECTION("Dynamic Symbols") {
     if (parameters["DynamicSymbols"]) {
       // +1 for the null entry
-      REQUIRE(parameters["DynamicSymbols"].size() == binary->get_dynamic_symbols().size());
+      REQUIRE(parameters["DynamicSymbols"].size() == binary->dynamic_symbols().size());
 
-      it_const_symbols dynamic_symbols = binary->get_dynamic_symbols();
+      it_const_symbols dynamic_symbols = binary->dynamic_symbols();
       for (size_t i = 0; i < parameters["DynamicSymbols"].size(); ++i) {
         const Symbol& symbol = dynamic_symbols[i];
         REQUIRE(parameters["DynamicSymbols"][i]["name"].as<std::string>() == symbol.name().substr(0, 25));
@@ -143,7 +143,7 @@ TEST_CASE("Test parse", "[elf][parser]")
   // ===============
   SECTION("Static Symbols") {
     if (parameters["StaticSymbols"]) {
-      it_const_symbols static_symbols = binary->get_static_symbols();
+      it_const_symbols static_symbols = binary->static_symbols();
       for (size_t i = 0; i < parameters["StaticSymbols"].size(); ++i) {
         const Symbol& symbol = static_symbols[parameters["StaticSymbols"][i]["num"].as<size_t>()];
         REQUIRE(parameters["StaticSymbols"][i]["name"].as<std::string>() == symbol.name().substr(0, 25));
@@ -156,8 +156,8 @@ TEST_CASE("Test parse", "[elf][parser]")
   // ===================
   SECTION("Dynamic relocations") {
     if (parameters["DynamicReloc"]) {
-      REQUIRE(parameters["DynamicReloc"].size() == binary->get_dynamic_relocations().size());
-      it_const_dynamic_relocations relocations = binary->get_dynamic_relocations();
+      REQUIRE(parameters["DynamicReloc"].size() == binary->dynamic_relocations().size());
+      it_const_dynamic_relocations relocations = binary->dynamic_relocations();
       for (size_t i = 0; i < parameters["DynamicReloc"].size(); ++i) {
         const Relocation& relocation = relocations[i];
         REQUIRE(parameters["DynamicReloc"][i]["name"].as<std::string>() == relocation.symbol().name().substr(0, 22));
@@ -171,8 +171,8 @@ TEST_CASE("Test parse", "[elf][parser]")
   // ====================
   SECTION(".plt.got relocations") {
     if (parameters["PltGotReloc"]) {
-      REQUIRE(parameters["PltGotReloc"].size() == binary->get_pltgot_relocations().size());
-      it_const_pltgot_relocations relocations = binary->get_pltgot_relocations();
+      REQUIRE(parameters["PltGotReloc"].size() == binary->pltgot_relocations().size());
+      it_const_pltgot_relocations relocations = binary->pltgot_relocations();
       for (size_t i = 0; i < parameters["PltGotReloc"].size(); ++i) {
         const Relocation& relocation = relocations[i];
         if (parameters["PltGotReloc"][i]["name"].as<std::string>().size() > 0) {

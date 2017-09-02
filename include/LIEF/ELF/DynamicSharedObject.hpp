@@ -30,6 +30,7 @@ class DLL_PUBLIC DynamicSharedObject : public DynamicEntry {
     DynamicSharedObject(const Elf64_Dyn* header);
     DynamicSharedObject(const Elf32_Dyn* header);
     DynamicSharedObject(void);
+    DynamicSharedObject(const std::string& name);
 
     DynamicSharedObject& operator=(const DynamicSharedObject&);
     DynamicSharedObject(const DynamicSharedObject&);

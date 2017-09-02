@@ -60,6 +60,7 @@ option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
 option(LIEF_MACHO          "Build LIEF with MachO module"               ON)
 
+
 # CCACHE
 # ======
 find_program(CCACHE_FOUND ccache)
@@ -255,6 +256,7 @@ set(LIEF_ABSTRACT_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/EnumToString.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Header.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.tcc"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Parser.cpp")
 
 # Grouping basic LIEF source files
@@ -451,11 +453,14 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(LIB_LIEF_COMPILE_FLAGS
       -Wall -Wextra -Wpedantic
       -fno-stack-protector
-      -fomit-frame-pointer -fno-strict-aliasing
+      -fno-strict-aliasing
+      -fomit-frame-pointer
       -fexceptions
       -fvisibility=hidden)
+
+
     if (HAS_NO_EXPANSION_TO_DEFINED)
-      set(LIB_LIEF_COMPILE_FLAGS ${LIB_LIEF_COMPILE_FLAGS} -Wno-expansion-to-defined)
+      list(APPEND LIB_LIEF_COMPILE_FLAGS  -Wno-expansion-to-defined)
     endif()
     target_compile_options(LIB_LIEF_STATIC PRIVATE ${LIB_LIEF_COMPILE_FLAGS})
     target_compile_options(LIB_LIEF_SHARED PRIVATE ${LIB_LIEF_COMPILE_FLAGS})
@@ -501,7 +506,6 @@ if(APPLE)
   set_target_properties(LIB_LIEF_STATIC PROPERTIES MACOSX_RPATH ".")
   set_target_properties(LIB_LIEF_SHARED PROPERTIES MACOSX_RPATH ".")
 endif()
-
 
 # API
 # ===

@@ -89,8 +89,7 @@ class DLL_PUBLIC Binary : public Visitable {
     //! @brief Method so that a ``visitor`` can visit us
     virtual void accept(Visitor& visitor) const override;
 
-
-
+    std::vector<uint64_t> xref(uint64_t address) const;
 
     //! @brief Patch the content at virtual address @p address with @p patch_value
     //!

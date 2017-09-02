@@ -245,6 +245,7 @@ const char* to_string(ARCH e) {
 
 const char* to_string(SEGMENT_TYPES e) {
   const std::map<SEGMENT_TYPES, const char*> enumStrings {
+    { SEGMENT_TYPES::PT_NULL,          "NULL" },
     { SEGMENT_TYPES::PT_LOAD,          "LOAD" },
     { SEGMENT_TYPES::PT_DYNAMIC,       "DYNAMIC" },
     { SEGMENT_TYPES::PT_INTERP,        "INTERP" },

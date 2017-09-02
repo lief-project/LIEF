@@ -35,7 +35,10 @@ void init_ELF_DynamicEntryRunPath_class(py::module& m) {
   // Dynamic Entry RUNPATH object
   //
   py::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath")
-    .def(py::init<const std::string &>())
+    .def(py::init<const std::string &>(),
+        "Constructor from (run)path",
+        "path"_a)
+
     .def_property("name",
         [] (const DynamicEntryRunPath& obj) {
           return safe_string_converter(obj.name());

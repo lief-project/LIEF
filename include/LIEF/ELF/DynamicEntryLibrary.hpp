@@ -30,7 +30,6 @@ class DLL_PUBLIC DynamicEntryLibrary : public DynamicEntry {
     DynamicEntryLibrary(const Elf64_Dyn* header);
     DynamicEntryLibrary(const Elf32_Dyn* header);
     DynamicEntryLibrary(void);
-
     DynamicEntryLibrary(const std::string& name = "");
 
     DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);

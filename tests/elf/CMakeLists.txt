@@ -186,6 +186,16 @@ if (PYTHON_TESTS_ENABLED)
     "${CMAKE_CURRENT_SOURCE_DIR}/add_content.py")
 
 
+  ADD_PYTHON_TEST(ELF_PYTHON_replace_segment
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/replace_segment.py")
+
+
+  ADD_PYTHON_TEST(ELF_PYTHON_test_dynamic
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_dynamic.py")
+
+
   ADD_PYTHON_TEST(ELF_PYTHON_hash_test
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/hash_tests.py")

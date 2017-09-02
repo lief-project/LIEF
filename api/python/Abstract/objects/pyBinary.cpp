@@ -159,6 +159,11 @@ void init_LIEF_Binary_class(py::module& m) {
         "Return the " RST_CLASS_REF(lief.Binary) " object",
         py::return_value_policy::reference)
 
+    .def("xref",
+        &Binary::xref,
+        "Return all **virtual address** that *use* the ``address`` given in parameter"
+       "virtual_address"_a)
+
     .def("__str__",
         [] (const Binary& binary)
         {

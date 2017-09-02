@@ -56,7 +56,7 @@ TEST_CASE("Test remove dynamic symbol", "[elf][modifier][symbol][dynamic]")
   INFO("Binary used: " << elf_file_str);
 
   std::unique_ptr<Binary> binary = std::unique_ptr<Binary>{Parser::parse(elf_file_str)};
-  it_symbols dynamic_symbols = binary->get_dynamic_symbols();
+  it_symbols dynamic_symbols = binary->dynamic_symbols();
 
   auto&& it_symbol = std::find_if(
       std::begin(dynamic_symbols),
@@ -96,7 +96,7 @@ TEST_CASE("Test remove dynamic symbol", "[elf][modifier][symbol][dynamic]")
   binary->write(output_name);
 
   std::unique_ptr<Binary> binary_updated = std::unique_ptr<Binary>{Parser::parse(output_name)};
-  dynamic_symbols = binary_updated->get_dynamic_symbols();
+  dynamic_symbols = binary_updated->dynamic_symbols();
   it_symbol = std::find_if(
       std::begin(dynamic_symbols),
       std::end(dynamic_symbols),
