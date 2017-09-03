@@ -22,7 +22,7 @@ uint64_t align(uint64_t value, uint64_t align_on);
 
 template<typename T>
 inline constexpr T round(T x) {
-  return static_cast<T>(round<size_t>(x));
+  return static_cast<T>(round<uint64_t>(x));
 }
 
 

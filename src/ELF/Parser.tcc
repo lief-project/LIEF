@@ -23,6 +23,9 @@ namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
 void Parser::parse_binary(void) {
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
+
   VLOG(VDEBUG) << "Start parsing";
   // Parse header
   // ============
@@ -74,8 +77,8 @@ void Parser::parse_binary(void) {
 
   if (it_segment_dynamic != std::end(this->binary_->segments_)) {
 
-    const uint64_t offset = (*it_segment_dynamic)->file_offset();
-    const uint64_t size   = (*it_segment_dynamic)->physical_size();
+    const Elf_Off offset = (*it_segment_dynamic)->file_offset();
+    const Elf_Off size   = (*it_segment_dynamic)->physical_size();
 
     try {
       this->parse_dynamic_entries<ELF_T>(offset, size);
@@ -503,6 +506,9 @@ uint32_t Parser::nb_dynsym_relocations(void) const {
   using Elf_Rela = typename ELF_T::Elf_Rela;
   using Elf_Rel  = typename ELF_T::Elf_Rel;
 
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
+
   auto&& it_pltgot_relocations_size = std::find_if(
       std::begin(this->binary_->dynamic_entries_),
       std::end(this->binary_->dynamic_entries_),
@@ -522,7 +528,7 @@ uint32_t Parser::nb_dynsym_relocations(void) const {
   }
 
   DYNAMIC_TAGS type;
-  const uint64_t size = (*it_pltgot_relocations_size)->value();
+  const Elf_Off size = (*it_pltgot_relocations_size)->value();
 
   if (it_pltgot_relocations_type != std::end(this->binary_->dynamic_entries_)) {
     type = static_cast<DYNAMIC_TAGS>((*it_pltgot_relocations_type)->value());
@@ -560,6 +566,9 @@ template<typename ELF_T>
 uint32_t Parser::nb_dynsym_section(void) const {
   using Elf_Sym = typename ELF_T::Elf_Sym;
 
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
+
   auto&& it_dynamic_section = std::find_if(
       std::begin(this->binary_->sections_),
       std::end(this->binary_->sections_),
@@ -572,7 +581,7 @@ uint32_t Parser::nb_dynsym_section(void) const {
     return 0;
   }
 
-  const uint64_t section_size = (*it_dynamic_section)->size();
+  const Elf_Off section_size = (*it_dynamic_section)->size();
   const uint32_t nb_symbols = static_cast<uint32_t>((section_size / sizeof(Elf_Sym)));
   return nb_symbols;
 }
@@ -594,10 +603,13 @@ uint32_t Parser::nb_dynsym_hash(void) const {
 
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_sysv_hash(void) const {
-  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_HASH);
-  const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
 
-  uint64_t current_offset = offset;
+  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_HASH);
+  const Elf_Off offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+
+  Elf_Off current_offset = offset;
 
   const uint32_t* header = reinterpret_cast<const uint32_t*>(
       this->stream_->read(current_offset, 2 * sizeof(uint32_t)));
@@ -615,10 +627,13 @@ template<typename ELF_T>
 uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   using uint__ = typename ELF_T::uint;
 
-  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
-  const uint64_t offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
 
-  uint64_t current_offset = offset;
+  const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
+  const Elf_Off offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+
+  Elf_Off current_offset = offset;
 
   const uint32_t* header = reinterpret_cast<const uint32_t*>(
       this->stream_->read(current_offset, 4 * sizeof(uint32_t)));
@@ -691,11 +706,14 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
 template<typename ELF_T>
 void Parser::parse_sections(void) {
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
+
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
   VLOG(VDEBUG) << "[+] Parsing Section";
 
-  const uint64_t headers_offset    = this->binary_->header_.section_headers_offset();
+  const Elf_Off headers_offset     = this->binary_->header_.section_headers_offset();
   const uint32_t numberof_sections = this->binary_->header_.numberof_sections();
-  const Elf_Shdr* section_headers = reinterpret_cast<const Elf_Shdr*>(
+  const Elf_Shdr* section_headers  = reinterpret_cast<const Elf_Shdr*>(
       this->stream_->read(
         headers_offset,
         numberof_sections * sizeof(Elf_Shdr)));
@@ -710,8 +728,8 @@ void Parser::parse_sections(void) {
     this->binary_->datahandler_->create(section->file_offset(), section->size(), DataHandler::Node::SECTION);
     // Only if it contains data (with bits)
     if (section->size() > 0) {
-      const uint64_t offset_to_content   = section->file_offset();
-      const uint64_t size                = section->size();
+      const Elf_Off offset_to_content   = section->file_offset();
+      const Elf_Off size                = section->size();
       try {
         this->binary_->datahandler_->reserve(section->file_offset(), section->size());
         const uint8_t* content = static_cast<const uint8_t*>(
@@ -747,8 +765,11 @@ template<typename ELF_T>
 void Parser::parse_segments(void) {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
 
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
+
   VLOG(VDEBUG) << "[+] Parse Segments";
-  const uint64_t segment_headers_offset = this->binary_->header().program_headers_offset();
+  const Elf_Off segment_headers_offset = this->binary_->header().program_headers_offset();
   const uint32_t nbof_segments          = this->binary_->header().numberof_segments();
 
   const Elf_Phdr* segment_headers = reinterpret_cast<const Elf_Phdr*>(
@@ -769,8 +790,8 @@ void Parser::parse_segments(void) {
     // If if a section is in the current segment
 
     if (segment->physical_size() > 0) {
-      const uint64_t offset_to_content   = segment->file_offset();
-      const uint64_t size                = segment->physical_size();
+      const Elf_Off offset_to_content   = segment->file_offset();
+      const Elf_Off size                = segment->physical_size();
       try {
         this->binary_->datahandler_->reserve(segment->file_offset(), segment->physical_size());
         const uint8_t* content = static_cast<const uint8_t*>(
@@ -885,12 +906,15 @@ void Parser::parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Sec
 template<typename ELF_T>
 void Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
+
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
   VLOG(VDEBUG) << "[+] Parsing dynamics symbols";
 
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
 
-  const uint64_t dynamic_symbols_offset = offset;
-  const uint64_t string_offset          = this->get_dynamic_string_table();
+  const Elf_Off dynamic_symbols_offset = offset;
+  const Elf_Off string_offset          = this->get_dynamic_string_table();
 
   const Elf_Sym* symbol_headers = reinterpret_cast<const Elf_Sym*>(
       this->stream_->read(dynamic_symbols_offset, nb_symbols * sizeof(Elf_Sym)));
@@ -919,17 +943,20 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
 
 template<typename ELF_T>
 void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
-  using Elf_Dyn = typename ELF_T::Elf_Dyn;
-  using uint__  = typename ELF_T::uint;
+  using Elf_Dyn  = typename ELF_T::Elf_Dyn;
+  using uint__   = typename ELF_T::uint;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
+
   VLOG(VDEBUG) << "[+] Parsing dynamic section";
 
-  const uint64_t nb_entries = size / sizeof(Elf_Dyn);
+  const uint32_t nb_entries = size / sizeof(Elf_Dyn);
 
   VLOG(VDEBUG) << "Size of the dynamic section: 0x" << std::hex << size;
   VLOG(VDEBUG) << "offset of the dynamic section: 0x" << std::hex << offset;
   VLOG(VDEBUG) << "Nb of entrie in DynSec = " << std::dec << nb_entries;
 
-  uint64_t dynamic_string_offset = 0;
+  Elf_Off dynamic_string_offset = 0;
   try {
     dynamic_string_offset = this->get_dynamic_string_table();
   } catch (const std::exception&) {
@@ -1143,9 +1170,9 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_initarray_size)->value() / sizeof(uint__));
       try {
-        const uint64_t offset = this->binary_->virtual_address_to_offset(dt_initarray_entry->value());
-        const uint__* rawArray = reinterpret_cast<const uint__*>(
-            this->stream_->read(offset, nb_functions * sizeof(uint__)));
+        const Elf_Off offset = this->binary_->virtual_address_to_offset(dt_initarray_entry->value());
+        const Elf_Addr* rawArray = reinterpret_cast<const Elf_Addr*>(
+            this->stream_->read(offset, nb_functions * sizeof(Elf_Addr)));
 
         for (size_t i = 0; i < nb_functions; ++i) {
           array.push_back(rawArray[i]);
@@ -1186,9 +1213,9 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       std::vector<uint64_t>& array = dt_finiarray_entry->array();
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_finiarray_size)->value() / sizeof(uint__));
       try {
-        const uint64_t offset = this->binary_->virtual_address_to_offset(dt_finiarray_entry->value());
-        const uint__ *rawArray = reinterpret_cast<const uint__*>(
-            this->stream_->read(offset, nb_functions * sizeof(uint__)));
+        const Elf_Off offset = this->binary_->virtual_address_to_offset(dt_finiarray_entry->value());
+        const Elf_Addr *rawArray = reinterpret_cast<const Elf_Addr*>(
+            this->stream_->read(offset, nb_functions * sizeof(Elf_Addr)));
 
         for (size_t i = 0; i < nb_functions; ++i) {
           array.push_back(rawArray[i]);
@@ -1229,9 +1256,9 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       std::vector<uint64_t>& array = dt_preinitarray_entry->array();
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_preinitarray_size)->value() / sizeof(uint__));
       try {
-        const uint64_t offset = this->binary_->virtual_address_to_offset(dt_preinitarray_entry->value());
-        const uint__ *rawArray = reinterpret_cast<const uint__*>(
-            this->stream_->read(offset, nb_functions * sizeof(uint__)));
+        const Elf_Off offset = this->binary_->virtual_address_to_offset(dt_preinitarray_entry->value());
+        const Elf_Addr *rawArray = reinterpret_cast<const Elf_Addr*>(
+            this->stream_->read(offset, nb_functions * sizeof(Elf_Addr)));
 
         for (size_t i = 0; i < nb_functions; ++i) {
           array.push_back(rawArray[i]);
@@ -1250,13 +1277,15 @@ template<typename ELF_T>
 void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRela) {
   using Elf_Rela = typename ELF_T::Elf_Rela;
   using Elf_Rel  = typename ELF_T::Elf_Rel;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
 
   // Already Parsed
   if (this->binary_->pltgot_relocations().size() > 0) {
     return;
   }
 
-  const uint64_t offset_relocations = offset;
+  const Elf_Off offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
   if (isRela) {

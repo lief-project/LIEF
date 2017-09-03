@@ -35,14 +35,11 @@ int main(int argc, char **argv) {
 
   std::unique_ptr<Binary> binary{Parser::parse(argv[1])};
   for (size_t i = 0; i < 2; ++i) {
-    Section new_section;
-    std::vector<uint8_t> d(4096, 0);
-    new_section.name("test");
-    new_section.content(d);
-    binary->add(new_section, true);
+    Section new_section{".test"};
+    std::vector<uint8_t> data(100, 0);
+    new_section.content(std::move(data));
+    binary->add(new_section);
   }
-
-
   binary->write(argv[2]);
 
   return 0;

@@ -46,8 +46,13 @@ macro(ADD_ELF_TEST name sources)
   target_link_libraries(${name}        PUBLIC LIB_LIEF_STATIC ${YAMLCPP_LIBRARY_RELEASE})
   target_link_libraries(${name}_shared PUBLIC LIB_LIEF_SHARED ${YAMLCPP_LIBRARY_RELEASE})
 
-  add_test(${name}         ${CMAKE_CURRENT_BINARY_DIR}/${name})
-  add_test(${name}_shared  ${CMAKE_CURRENT_BINARY_DIR}/${name}_shared)
+  if (LIEF_TEST_STATIC)
+    add_test(${name}         ${CMAKE_CURRENT_BINARY_DIR}/${name})
+  endif()
+
+  if (LIEF_TEST_SHARED)
+    add_test(${name}_shared  ${CMAKE_CURRENT_BINARY_DIR}/${name}_shared)
+  endif()
 
 endmacro()
 

@@ -209,7 +209,7 @@ void Builder::build_sections(void) {
   VLOG(VDEBUG) << "[+] Build sections";
 
   const Header& header = this->binary_->header();
-  const uint64_t section_headers_offset = header.section_headers_offset();
+  const Elf_Off section_headers_offset = header.section_headers_offset();
 
   std::vector<std::string> stringTableOpti =
     this->optimize<Section, decltype(this->binary_->sections_)>(this->binary_->sections_);
@@ -246,8 +246,6 @@ void Builder::build_sections(void) {
     // Write Section's content
     if (section->size() > 0) {
         const std::vector<uint8_t>& content = section->content();
-
-        // TODO: Assert sh_size == content.size()
         this->ios_.seekp(section->file_offset());
         this->ios_.write(content.data(), section->size());
     }
@@ -267,7 +265,7 @@ void Builder::build_sections(void) {
       throw LIEF::not_found(""); // TODO: msg
     }
 
-    const uint64_t offset_name = static_cast<uint64_t>(std::distance(std::begin(section_names), it_offset_name));
+    const Elf_Off offset_name = static_cast<Elf_Off>(std::distance(std::begin(section_names), it_offset_name));
 
     Elf_Shdr shdr;
     shdr.sh_name      = static_cast<Elf_Word>(offset_name);
@@ -288,7 +286,7 @@ void Builder::build_sections(void) {
     }
   }
 
-
+  string_names_section->content(section_names);
   // TODO: Assert sh_size == content.size()
   this->ios_.seekp(string_names_section->file_offset());
   this->ios_.write(section_names.data(), section_names.size());
@@ -344,33 +342,18 @@ void Builder::build_segments(void) {
 
   // Write segment content
   for (const Segment* segment : this->binary_->segments_) {
-    // If there isn't sections in the segments
-    // We have to insert data in the segments because
-    // we didn't do in `build_section()`
     if (segment->physical_size() > 0) {
       const std::vector<uint8_t>& content = segment->content();
       VLOG(VDEBUG) << "Write content for segment " << *segment;
       VLOG(VDEBUG) << "Offset: 0x" << std::hex << segment->file_offset();
       VLOG(VDEBUG) << "Size: 0x" << std::hex << content.size();
 
-      //VLOG(VDEBUG) << "Content: " << std::accumulate(
-      //  std::begin(content),
-      //  std::begin(content) + 10,
-      //  std::string(""),
-      //  [] (std::string lhs, uint8_t x) {
-      //    std::stringstream ss;
-      //    ss << std::hex << static_cast<uint32_t>(x);
-      //    return lhs.empty() ? ss.str() : lhs + " " + ss.str();
-      //  });
-
-
-      //TODO assert content.size == segmenthdr.physicalsize
       this->ios_.seekp(segment->file_offset());
       this->ios_.write(content);
     }
   }
 
-  const uint64_t segment_header_offset = this->binary_->header().program_headers_offset();
+  const Elf_Off segment_header_offset = this->binary_->header().program_headers_offset();
   this->ios_.seekp(segment_header_offset);
   this->ios_.write(pheaders);
 }
@@ -381,7 +364,7 @@ void Builder::build_static_symbols(void) {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Word = typename ELF_T::Elf_Word;
+  using Elf_Off  = typename ELF_T::Elf_Off;
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
   VLOG(VDEBUG) << "Build static symbols";
@@ -432,7 +415,7 @@ void Builder::build_static_symbols(void) {
       throw LIEF::not_found("Unable to find symbol '" + name + "' in the string table");
     }
 
-    const uint64_t name_offset = static_cast<uint64_t>(std::distance(std::begin(string_table), it_name));
+    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table), it_name));
 
     Elf_Sym sym_hdr;
     sym_hdr.st_name  = static_cast<Elf_Word>(name_offset);
@@ -479,7 +462,7 @@ void Builder::build_dynamic(void) {
 
 template<typename ELF_T>
 void Builder::build_dynamic_section(void) {
-  using uint__     = typename ELF_T::uint;
+  using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
 
@@ -487,7 +470,7 @@ void Builder::build_dynamic_section(void) {
 
   VLOG(VDEBUG) << "[+] Building dynamic section";
 
-  const uint64_t dyn_strtab_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
+  const Elf_Addr dyn_strtab_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
 
   Section& dyn_strtab_section = this->binary_->section_from_virtual_address(dyn_strtab_va);
   Section& dyn_section        = this->binary_->dynamic_section();
@@ -518,7 +501,7 @@ void Builder::build_dynamic_section(void) {
       case DYNAMIC_TAGS::DT_INIT_ARRAY:
       case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
         {
-          const uint64_t address = entry->value();
+          const Elf_Addr address = entry->value();
 
           DynamicEntry* dt_array_size = nullptr;
           switch (entry->tag()) {
@@ -551,7 +534,7 @@ void Builder::build_dynamic_section(void) {
           Section& array_section = this->binary_->section_from_virtual_address(address);
 
           const std::vector<uint64_t>& array = dynamic_cast<const DynamicEntryArray*>(entry)->array();
-          const size_t array_size = array.size() * sizeof(uint__);
+          const size_t array_size = array.size() * sizeof(Elf_Addr);
 
 
           if (array_section.original_size() < array_size) {
@@ -561,12 +544,12 @@ void Builder::build_dynamic_section(void) {
 
           std::vector<uint8_t> array_content(array_size, 0);
 
-          uint__* raw_array = reinterpret_cast<uint__*>(array_content.data());
+          Elf_Addr* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
           for(size_t i = 0; i < array.size(); ++i) {
-            raw_array[i] = static_cast<uint__>(array[i]);
+            raw_array[i] = static_cast<Elf_Addr>(array[i]);
           }
 
-          dt_array_size->value((array.size()) * sizeof(uint__));
+          dt_array_size->value((array.size()) * sizeof(Elf_Addr));
           array_section.content(array_content);
           break;
         }
@@ -906,10 +889,10 @@ void Builder::build_hash_table(void) {
 
 template<typename ELF_T>
 void Builder::build_dynamic_symbols(void) {
-
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Off  = typename ELF_T::Elf_Off;
   using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
@@ -917,8 +900,8 @@ void Builder::build_dynamic_symbols(void) {
 
   // Find useful sections
   // ====================
-  uint64_t symbol_table_va = this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value();
-  uint64_t string_table_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
+  Elf_Addr symbol_table_va = this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value();
+  Elf_Addr string_table_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
 
   // Find the section associated with the address
   Section& symbol_table_section = this->binary_->section_from_virtual_address(symbol_table_va);
@@ -956,7 +939,7 @@ void Builder::build_dynamic_symbols(void) {
     if (it_name == std::end(string_table_raw)) {
       throw LIEF::not_found("Unable to find the symbol in the string table");
     }
-    const uint64_t name_offset = static_cast<uint64_t>(std::distance(std::begin(string_table_raw), it_name));
+    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
 
     Elf_Sym sym_header;
     sym_header.st_name  = static_cast<Elf_Word>(name_offset);
@@ -1332,23 +1315,24 @@ template<typename ELF_T>
 void Builder::build_symbol_requirement(void) {
   using Elf_Half    = typename ELF_T::Elf_Half;
   using Elf_Word    = typename ELF_T::Elf_Word;
-  using Elf_Word    = typename ELF_T::Elf_Word;
+  using Elf_Off     = typename ELF_T::Elf_Off;
+  using Elf_Addr    = typename ELF_T::Elf_Addr;
 
   using Elf_Verneed = typename ELF_T::Elf_Verneed;
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
   VLOG(VDEBUG) << "[+] Building symbol requirement";
 
 
-  const uint64_t svr_address = this->binary_->get(DYNAMIC_TAGS::DT_VERNEED).value();
-  const uint64_t svr_offset  = this->binary_->virtual_address_to_offset(svr_address);
-  const uint64_t svr_nb      = this->binary_->get(DYNAMIC_TAGS::DT_VERNEEDNUM).value();
+  const Elf_Addr svr_address = this->binary_->get(DYNAMIC_TAGS::DT_VERNEED).value();
+  const Elf_Off  svr_offset  = this->binary_->virtual_address_to_offset(svr_address);
+  const uint32_t svr_nb     = static_cast<uint32_t>(this->binary_->get(DYNAMIC_TAGS::DT_VERNEEDNUM).value());
 
   if (svr_nb != this->binary_->symbol_version_requirements_.size()) {
     LOG(WARNING) << "The number of symbol version requirement \
       entries in the binary differ from the value in DT_VERNEEDNUM";
   }
 
-  const uint64_t dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
+  const Elf_Addr dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
 
   Section& dyn_str_section = this->binary_->section_from_virtual_address(dyn_str_va);
   std::vector<uint8_t> svr_raw;
@@ -1363,7 +1347,7 @@ void Builder::build_symbol_requirement(void) {
         name.c_str(),
         name.c_str() + name.size() + 1);
 
-    uint64_t name_offset = 0;
+    Elf_Off name_offset = 0;
 
     if (it_name_offset != std::end(dyn_str_raw)) {
       name_offset = static_cast<uint64_t>(std::distance(std::begin(dyn_str_raw), it_name_offset));
@@ -1376,7 +1360,7 @@ void Builder::build_symbol_requirement(void) {
 
     it_const_symbols_version_aux_requirement svars = svr.get_auxiliary_symbols();
 
-    uint64_t next_symbol_offset = 0;
+    Elf_Off next_symbol_offset = 0;
     if (svr_idx < (this->binary_->symbol_version_requirements_.size() - 1)) {
       next_symbol_offset = sizeof(Elf_Verneed) + svars.size() * sizeof(Elf_Vernaux);
     }
@@ -1403,10 +1387,10 @@ void Builder::build_symbol_requirement(void) {
           svar_name.c_str(),
           svar_name.c_str() + svar_name.size() + 1);
 
-      uint64_t svar_name_offset = 0;
+      Elf_Off svar_name_offset = 0;
 
       if (it_svar_name_offset != std::end(dyn_str_raw)) {
-        svar_name_offset = static_cast<uint64_t>(std::distance(std::begin(dyn_str_raw), it_svar_name_offset));
+        svar_name_offset = static_cast<Elf_Off>(std::distance(std::begin(dyn_str_raw), it_svar_name_offset));
       } else {
         dyn_str_raw.insert(std::end(dyn_str_raw), std::begin(svar_name), std::end(svar_name));
         dyn_str_raw.push_back(0);
@@ -1462,18 +1446,19 @@ void Builder::build_symbol_requirement(void) {
 
 template<typename ELF_T>
 void Builder::build_symbol_definition(void) {
-  using Elf_Half   = typename ELF_T::Elf_Half;
-  using Elf_Word   = typename ELF_T::Elf_Word;
-  using Elf_Word   = typename ELF_T::Elf_Word;
+  using Elf_Half    = typename ELF_T::Elf_Half;
+  using Elf_Word    = typename ELF_T::Elf_Word;
+  using Elf_Addr    = typename ELF_T::Elf_Addr;
+  using Elf_Off     = typename ELF_T::Elf_Off;
 
-  using Elf_Verdef   = typename ELF_T::Elf_Verdef;
-  using Elf_Verdaux   = typename ELF_T::Elf_Verdaux;
+  using Elf_Verdef  = typename ELF_T::Elf_Verdef;
+  using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
 
   VLOG(VDEBUG) << "[+] Building symbol definition";
 
-  const uint64_t svd_va     = this->binary_->get(DYNAMIC_TAGS::DT_VERDEF).value();
-  const uint64_t svd_offset = this->binary_->virtual_address_to_offset(svd_va);
-  const uint64_t svd_nb     = this->binary_->get(DYNAMIC_TAGS::DT_VERDEFNUM).value();
+  const Elf_Addr svd_va    = this->binary_->get(DYNAMIC_TAGS::DT_VERDEF).value();
+  const Elf_Off svd_offset = this->binary_->virtual_address_to_offset(svd_va);
+  const uint32_t svd_nb    = this->binary_->get(DYNAMIC_TAGS::DT_VERDEFNUM).value();
 
   if (svd_nb != this->binary_->symbol_version_definition_.size()) {
     LOG(WARNING) << "The number of symbol version definition entries\
@@ -1481,7 +1466,7 @@ void Builder::build_symbol_definition(void) {
   }
 
 
-  const uint64_t dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
+  const Elf_Addr dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
   Section& dyn_str_section = this->binary_->section_from_virtual_address(dyn_str_va);
 
   std::vector<uint8_t> svd_raw;
@@ -1492,7 +1477,7 @@ void Builder::build_symbol_definition(void) {
 
     it_const_symbols_version_aux svas = svd.symbols_aux();
 
-    uint64_t next_symbol_offset = 0;
+    Elf_Off next_symbol_offset = 0;
 
     if (svd_idx < (svd_nb - 1)) {
       next_symbol_offset = sizeof(Elf_Verdef) + svas.size() * sizeof(Elf_Verdaux);
@@ -1521,10 +1506,10 @@ void Builder::build_symbol_definition(void) {
           sva_name.c_str(),
           sva_name.c_str() + sva_name.size() + 1);
 
-      uint64_t sva_name_offset = 0;
+      Elf_Off sva_name_offset = 0;
 
       if (it_sva_name_offset != std::end(dyn_str_raw)) {
-        sva_name_offset = static_cast<uint64_t>(std::distance(std::begin(dyn_str_raw), it_sva_name_offset));
+        sva_name_offset = static_cast<Elf_Off>(std::distance(std::begin(dyn_str_raw), it_sva_name_offset));
       } else {
         dyn_str_raw.insert(std::end(dyn_str_raw), std::begin(sva_name), std::end(sva_name));
         dyn_str_raw.push_back(0);

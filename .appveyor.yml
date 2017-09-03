@@ -36,6 +36,8 @@ environment:
       PYTHON64_INCLUDE: "C:\\Python27-x64\\include"
       PYTHON64_BINARY:  "C:\\Python27-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python27-x64\\libs\\python27.lib"
+      LIEF_TEST_SHARED: "OFF"
+      LIEF_TEST_STATIC: "ON"
 
 
     # Python 3.5
@@ -48,6 +50,8 @@ environment:
       PYTHON64_INCLUDE: "C:\\Python35-x64\\include"
       PYTHON64_BINARY:  "C:\\Python35-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python35-x64\\libs\\python35.lib"
+      LIEF_TEST_SHARED: "ON"
+      LIEF_TEST_STATIC: "OFF"
 
 
     # Python 3.6
@@ -60,6 +64,8 @@ environment:
       PYTHON64_INCLUDE: "C:\\Python36-x64\\include"
       PYTHON64_BINARY:  "C:\\Python36-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python36-x64\\libs\\python36.lib"
+      LIEF_TEST_SHARED: "ON"
+      LIEF_TEST_STATIC: "ON"
 
 
 matrix:
@@ -85,8 +91,19 @@ install:
   - set PATH=%PYTHON_PATH%;%PATH%
 
 build_script:
-  - cmake -A "%CMAKE_ARCH%" -DLIEF_TESTS=on -DLIEF_PYTHON_API=on -DPYTHON_VERSION=%PYTHON_VERSION% -DPYTHON_INCLUDE_DIR=%PYTHON_INCLUDE% -DPYTHON_EXECUTABLE=%PYTHON_BINARY% -DPYTHON_LIBRARY=%PYTHON_LIBRARY%
+  - >
+      cmake -A "%CMAKE_ARCH%"
+      -DLIEF_TESTS=on
+      -DLIEF_PYTHON_API=on
+      -DPYTHON_VERSION=%PYTHON_VERSION%
+      -DPYTHON_INCLUDE_DIR=%PYTHON_INCLUDE%
+      -DPYTHON_EXECUTABLE=%PYTHON_BINARY%
+      -DPYTHON_LIBRARY=%PYTHON_LIBRARY%
+      -DLIEF_TEST_SHARED=%LIEF_TEST_SHARED%
+      -DLIEF_TEST_STATIC=%LIEF_TEST_STATIC%
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+  - cmake --build . --config Release --target lief_samples -- /v:m /logger:%MSBuildLogger%
+  - cmake .
   - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
 
 test_script:

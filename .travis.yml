@@ -11,7 +11,17 @@ matrix:
             apt:
               sources: ['ubuntu-toolchain-r-test']
               packages: ['g++-5', 'ccache', 'libpython2.7']
-          env: [ CXX_COMPILER=g++-5, C_COMPILER=gcc-5, PYTHON_VERSION=2.7, PYTHON_INCLUDE_DIR=/usr/include/python2.7, PYTHON_LIBRARY=/usr/lib/libpython2.7.so, PYTHON_BINARY=/usr/bin/python2.7 ]
+          env: >
+            [
+            CXX_COMPILER=g++-5                        ,
+            C_COMPILER=gcc-5                          ,
+            PYTHON_VERSION=2.7                        ,
+            PYTHON_INCLUDE_DIR=/usr/include/python2.7 ,
+            PYTHON_LIBRARY=/usr/lib/libpython2.7.so   ,
+            PYTHON_BINARY=/usr/bin/python2.7          ,
+            LIEF_TEST_STATIC=ON                       ,
+            LIEF_TEST_SHARED=OFF                      ,
+            ]
 
 
         # Linux gcc 5.0 - Python 3.5
@@ -22,7 +32,17 @@ matrix:
             apt:
               sources: ['ubuntu-toolchain-r-test', 'deadsnakes']
               packages: ['g++-5', 'gcc-5', 'ccache', 'python3.5-dev']
-          env: [ CXX_COMPILER=g++-5, C_COMPILER=gcc-5, PYTHON_VERSION=3.5, PYTHON_INCLUDE_DIR=/usr/include/python3.5m, PYTHON_LIBRARY=/usr/lib/libpython3.5m.so, PYTHON_BINARY=/usr/bin/python3.5]
+          env: >
+            [
+            CXX_COMPILER=g++-5                         ,
+            C_COMPILER=gcc-5                           ,
+            PYTHON_VERSION=3.5                         ,
+            PYTHON_INCLUDE_DIR=/usr/include/python3.5m ,
+            PYTHON_LIBRARY=/usr/lib/libpython3.5m.so   ,
+            PYTHON_BINARY=/usr/bin/python3.5           ,
+            LIEF_TEST_STATIC=OFF                       ,
+            LIEF_TEST_SHARED=ON                        ,
+            ]
 
 
         # Linux gcc 6 - Python 3.6
@@ -32,27 +52,58 @@ matrix:
           addons:
             apt:
               sources: ['ubuntu-toolchain-r-test', 'deadsnakes']
-              packages: ['g++-6', 'gcc-6', 'ccache', 'python3.6-dev', 'python-sphinx']
-          env: [ CXX_COMPILER=g++-6, C_COMPILER=gcc-6, PYTHON_VERSION=3.6, PYTHON_INCLUDE_DIR=/usr/include/python3.6m, PYTHON_LIBRARY=/usr/lib/libpython3.6m.so, PYTHON_BINARY=/usr/bin/python3.6, LIEF_DOC=OFF]
+              packages: ['g++-6', 'gcc-6', 'ccache', 'python3.6-dev']
+          env: >
+            [
+            CXX_COMPILER=g++-6                         ,
+            C_COMPILER=gcc-6                           ,
+            PYTHON_VERSION=3.6                         ,
+            PYTHON_INCLUDE_DIR=/usr/include/python3.6m ,
+            PYTHON_LIBRARY=/usr/lib/libpython3.6m.so   ,
+            PYTHON_BINARY=/usr/bin/python3.6           ,
+            LIEF_TEST_STATIC=ON                        ,
+            LIEF_TEST_SHARED=ON                        ,
+            ]
 
         # OSX 10.11 - xcode 7.3 - Python 2.7
         - os: osx
           osx_image: xcode7.3
           compiler: clang
-          env: [CXX_COMPILER=clang++, C_COMPILER=clang, PYTHON_VERSION=2.7]
+          env: >
+            [
+            CXX_COMPILER=clang++ ,
+            C_COMPILER=clang     ,
+            PYTHON_VERSION=2.7   ,
+            LIEF_TEST_STATIC=ON  ,
+            LIEF_TEST_SHARED=OFF ,
+            ]
 
         # OSX 10.12 - xcode 8.2 - Python 3.5
         - os: osx
           osx_image: xcode8.2
           compiler: clang
-          env: [ CXX_COMPILER=clang++, C_COMPILER=clang, PYTHON_VERSION=3.5]
+          env: >
+            [
+            CXX_COMPILER=clang++ ,
+            C_COMPILER=clang     ,
+            PYTHON_VERSION=3.5   ,
+            LIEF_TEST_STATIC=OFF ,
+            LIEF_TEST_SHARED=ON  ,
+            ]
 
 
         ## OSX 10.12 - xcode 8.2 - Python 3.6
         - os: osx
           osx_image: xcode8.2
           compiler: clang
-          env: [CXX_COMPILER=clang++, C_COMPILER=clang, PYTHON_VERSION=3.6]
+          env: >
+            [
+            CXX_COMPILER=clang++ ,
+            C_COMPILER=clang     ,
+            PYTHON_VERSION=3.6   ,
+            LIEF_TEST_STATIC=ON  ,
+            LIEF_TEST_SHARED=ON  ,
+            ]
 
 #branches:
 #  only:
@@ -117,13 +168,6 @@ install:
   - if [ "$GCOV" == "ON" ]; then tar xf lcov_1.13.orig.tar.gz; fi
   - if [ "$GCOV" == "ON" ]; then sudo make -C lcov-1.13/ install; fi
 
-  - if [[ "$LIEF_DOC" == "ON" ]]; then wget --no-check-certificate ftp://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.linux.bin.tar.gz; fi
-  - if [[ "$LIEF_DOC" == "ON" ]]; then tar -xzf doxygen-1.8.10.linux.bin.tar.gz; fi
-  - if [[ "$LIEF_DOC" == "ON" ]]; then cd doxygen-1.8.10; fi
-  - if [[ "$LIEF_DOC" == "ON" ]]; then ./configure --prefix /usr; fi
-  - if [[ "$LIEF_DOC" == "ON" ]]; then sudo make install; fi
-  - if [[ "$LIEF_DOC" == "ON" ]]; then cd ..; fi
-
   # Setup CMake 3.1 for Linux
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget --no-check-certificate http://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz   ;fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar -xzf cmake-3.7.2-Linux-x86_64.tar.gz                                                  ;fi
@@ -131,8 +175,6 @@ install:
 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py   ;fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo $PYTHON_BINARY ./get-pip.py ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$LIEF_DOC" == "ON" ]]; then sudo $PYTHON_BINARY -m pip install breathe ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$LIEF_DOC" == "ON" ]]; then sudo $PYTHON_BINARY -m pip install sphinx_rtd_theme ;fi
 
   # Prepare build
   - mkdir build
@@ -140,9 +182,26 @@ install:
 
 
 script:
-  - cmake -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DPYTHON_VERSION=$PYTHON_VERSION -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_EXECUTABLE=$PYTHON_BINARY -DLIEF_TESTS=on -DLIEF_PYTHON_API=on -DLIEF_DOC=${LIEF_DOC:-OFF} ..
-  - make -j2
-  - sudo make check-lief
+  - >
+    cmake
+    -DCMAKE_C_COMPILER=$C_COMPILER
+    -DCMAKE_CXX_COMPILER=$CXX_COMPILER
+    -DPYTHON_VERSION=$PYTHON_VERSION
+    -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
+    -DPYTHON_LIBRARY=$PYTHON_LIBRARY
+    -DPYTHON_EXECUTABLE=$PYTHON_BINARY
+    -DLIEF_TESTS=on
+    -DLIEF_PYTHON_API=on
+    -DLIEF_EXAMPLES=on
+    -DLIEF_TEST_SHARED=$LIEF_TEST_SHARED
+    -DLIEF_TEST_STATIC=$LIEF_TEST_STATIC
+    ..
+  - make -j3 lief_samples
+  - cmake ..
+  - make -j3 all
+  - make -j3 check-lief
+
+#- sudo make check-lief
 
 after_success:
   - make package

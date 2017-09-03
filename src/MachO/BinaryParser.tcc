@@ -1342,7 +1342,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     uint64_t offset = this->binary_->virtual_address_to_offset(reloc->address());
     Section& section = this->binary_->section_from_offset(offset);
     reloc->section_ = &section;
-  } catch (const not_found& e) {
+  } catch (const not_found&) {
     VLOG(VDEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
   }
 
