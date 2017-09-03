@@ -33,6 +33,11 @@ void init_ELF_DynamicEntryFlags_class(py::module& m) {
 
   py::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
     .def(py::init<>())
+
+    .def(py::init<DYNAMIC_TAGS, uint64_t>(),
+        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
+        "tag"_a, "value"_a)
+
     .def_property_readonly("flags",
         &DynamicEntryFlags::flags,
         "Return list of " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " or " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " (integer)",

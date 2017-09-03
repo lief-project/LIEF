@@ -28,6 +28,8 @@ namespace ELF {
 class DLL_PUBLIC DynamicEntryRpath : public DynamicEntry {
 
   public:
+    using DynamicEntry::DynamicEntry;
+
     DynamicEntryRpath(const Elf64_Dyn* header);
     DynamicEntryRpath(const Elf32_Dyn* header);
     DynamicEntryRpath(void);

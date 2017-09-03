@@ -34,6 +34,11 @@ void init_ELF_DynamicEntryArray_class(py::module& m) {
   // Dynamic Entry Array object
   py::class_<DynamicEntryArray, DynamicEntry>(m, "DynamicEntryArray")
     .def(py::init<>())
+
+    .def(py::init<DYNAMIC_TAGS, uint64_t>(),
+        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
+        "tag"_a, "value"_a)
+
     .def_property("array",
         static_cast<std::vector<uint64_t>& (DynamicEntryArray::*) (void)>(&DynamicEntryArray::array),
         static_cast<setter_t<const std::vector<uint64_t>&>>(&DynamicEntryArray::array),

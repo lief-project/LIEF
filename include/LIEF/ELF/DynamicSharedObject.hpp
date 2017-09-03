@@ -27,6 +27,8 @@ namespace ELF {
 class DLL_PUBLIC DynamicSharedObject : public DynamicEntry {
 
   public:
+    using DynamicEntry::DynamicEntry;
+
     DynamicSharedObject(const Elf64_Dyn* header);
     DynamicSharedObject(const Elf32_Dyn* header);
     DynamicSharedObject(void);

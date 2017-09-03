@@ -27,6 +27,8 @@ namespace ELF {
 class DLL_PUBLIC DynamicEntryRunPath : public DynamicEntry {
 
   public:
+    using DynamicEntry::DynamicEntry;
+
     DynamicEntryRunPath(const Elf64_Dyn* header);
     DynamicEntryRunPath(const Elf32_Dyn* header);
     DynamicEntryRunPath(void);

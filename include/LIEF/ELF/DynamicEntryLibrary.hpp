@@ -27,6 +27,8 @@ namespace ELF {
 class DLL_PUBLIC DynamicEntryLibrary : public DynamicEntry {
 
   public:
+    using DynamicEntry::DynamicEntry;
+
     DynamicEntryLibrary(const Elf64_Dyn* header);
     DynamicEntryLibrary(const Elf32_Dyn* header);
     DynamicEntryLibrary(void);
