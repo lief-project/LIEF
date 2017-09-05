@@ -24,5 +24,6 @@ void init_LIEF_Binary_class(py::module&);
 void init_LIEF_Section_class(py::module&);
 void init_LIEF_Symbol_class(py::module&);
 void init_LIEF_Parser_class(py::module&);
+void init_LIEF_Relocation_class(py::module&);
 
 #endif

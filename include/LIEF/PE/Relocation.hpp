@@ -21,6 +21,7 @@
 #include "LIEF/Visitable.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 
@@ -37,18 +38,21 @@ class DLL_PUBLIC Relocation : public Visitable {
 
   public:
     Relocation(void);
-    Relocation(const Relocation&);
-    Relocation& operator=(const Relocation&);
+    Relocation(const Relocation& other);
+    Relocation& operator=(Relocation other);
     Relocation(const pe_base_relocation_block* header);
     virtual ~Relocation(void);
 
+    void swap(Relocation& other);
+
     uint32_t virtual_address(void) const;
     uint32_t block_size(void) const;
-    const std::vector<RelocationEntry>& entries(void) const;
+    it_const_relocation_entries entries(void) const;
+    it_relocation_entries entries(void);
 
     void virtual_address(uint32_t virtual_address);
     void block_size(uint32_t block_size);
-    void add_entry(const RelocationEntry& entry);
+    RelocationEntry& add_entry(const RelocationEntry& entry);
 
     virtual void accept(Visitor& visitor) const override;
 
@@ -58,9 +62,9 @@ class DLL_PUBLIC Relocation : public Visitable {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   private:
-    uint32_t                     block_size_;
-    uint32_t                     virtual_address_;
-    std::vector<RelocationEntry> entries_;
+    uint32_t             block_size_;
+    uint32_t             virtual_address_;
+    relocation_entries_t entries_;
 };
 
 }

@@ -544,6 +544,18 @@ it_const_relocations Binary::relocations(void) const {
   return this->relocations_;
 }
 
+LIEF::relocations_t Binary::get_abstract_relocations(void) {
+  LIEF::relocations_t relocations;
+  relocations.reserve(this->relocations_.size());
+  std::copy(
+      std::begin(this->relocations_),
+      std::end(this->relocations_),
+      std::back_inserter(relocations));
+
+  return relocations;
+}
+
+
 LIEF::symbols_t Binary::get_abstract_symbols(void) {
   LIEF::symbols_t symbols;
   symbols.reserve(this->dynamic_symbols_.size() + this->static_symbols_.size());

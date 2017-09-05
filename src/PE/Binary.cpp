@@ -112,6 +112,10 @@ Binary::~Binary(void) {
     delete directory;
   }
 
+  for (Relocation *relocation : this->relocations_) {
+    delete relocation;
+  }
+
   if (this->resources_ != nullptr) {
     delete this->resources_;
   }
@@ -631,17 +635,19 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 //////////////////////////////////
 
 it_relocations Binary::relocations(void) {
-  return it_relocations{this->relocations_};
+  return this->relocations_;
 }
 
 
 it_const_relocations Binary::relocations(void) const {
-  return it_const_relocations{this->relocations_};
+  return this->relocations_;
 }
 
 
-void Binary::add_relocation(const Relocation& relocation) {
-  this->relocations_.push_back(relocation);
+Relocation& Binary::add_relocation(const Relocation& relocation) {
+  Relocation* newone = new Relocation{relocation};
+  this->relocations_.push_back(newone);
+  return *newone;
 }
 
 
@@ -651,7 +657,21 @@ void Binary::add_relocation(const Relocation& relocation) {
 
 
 void Binary::remove_all_relocations(void) {
+  for (Relocation* r : this->relocations_) {
+    delete r;
+  }
   this->relocations_.clear();
+}
+
+
+LIEF::relocations_t Binary::get_abstract_relocations(void) {
+  LIEF::relocations_t abstract_relocs;
+  for (Relocation& relocation : this->relocations()) {
+    for (RelocationEntry& entry : relocation.entries()) {
+      abstract_relocs.push_back(&entry);
+    }
+  }
+  return abstract_relocs;
 }
 
 // Imports

@@ -23,4 +23,5 @@ void init_LIEF_module(py::module& m) {
   init_LIEF_Section_class(m);
   init_LIEF_Symbol_class(m);
   init_LIEF_Parser_class(m);
+  init_LIEF_Relocation_class(m);
 }

@@ -45,11 +45,15 @@ class DLL_PUBLIC RelocationObject : public Relocation {
     RelocationObject& operator=(const RelocationObject&);
     RelocationObject(const RelocationObject&);
 
+    void swap(RelocationObject& other);
+
     virtual ~RelocationObject(void);
 
     virtual bool is_pc_relative(void) const override;
 
-    virtual uint8_t size(void) const override;
+    virtual size_t size(void) const override;
+
+    virtual uint64_t address(void) const override;
 
     //! @brief ``true`` if the relocation is a scattered one
     bool is_scattered(void) const;
@@ -68,7 +72,7 @@ class DLL_PUBLIC RelocationObject : public Relocation {
     virtual RELOCATION_ORIGINS origin(void) const override;
 
     virtual void pc_relative(bool val) override;
-    virtual void size(uint8_t size) override;
+    virtual void size(size_t size) override;
 
     void value(int32_t value);
 

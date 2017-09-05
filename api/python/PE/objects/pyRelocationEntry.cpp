@@ -28,20 +28,27 @@ template<class T>
 using setter_t = void (RelocationEntry::*)(T);
 
 void init_PE_RelocationEntry_class(py::module& m) {
-  py::class_<RelocationEntry>(m, "RelocationEntry")
+  py::class_<RelocationEntry, LIEF::Relocation>(m, "RelocationEntry")
     .def(py::init<>())
 
     .def_property("data",
         static_cast<getter_t<uint16_t>>(&RelocationEntry::data),
-        static_cast<setter_t<uint16_t>>(&RelocationEntry::data))
+        static_cast<setter_t<uint16_t>>(&RelocationEntry::data),
+        "Raw data of the relocation:\n\n"
+
+        "\t\t * The **high** 4 bits store the relocation :attr:`~lief.PE.RelocationEntry.type`\n\n"
+        "\t\t * The **low** 12 bits store the relocation offset (:attr:`~lief.PE.RelocationEntry.position`)\n\n"
+        )
 
     .def_property("position",
         static_cast<getter_t<uint16_t>>(&RelocationEntry::position),
-        static_cast<setter_t<uint16_t>>(&RelocationEntry::position))
+        static_cast<setter_t<uint16_t>>(&RelocationEntry::position),
+        "Offset - relative to :attr:`~lief.PE.Relocation.virtual_address` - where the relocation occurs")
 
     .def_property("type",
         static_cast<getter_t<RELOCATIONS_BASE_TYPES>>(&RelocationEntry::type),
-        static_cast<setter_t<RELOCATIONS_BASE_TYPES>>(&RelocationEntry::type))
+        static_cast<setter_t<RELOCATIONS_BASE_TYPES>>(&RelocationEntry::type),
+        "Type of the relocation")
 
 
     .def("__eq__", &RelocationEntry::operator==)

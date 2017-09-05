@@ -27,6 +27,9 @@ using getter_t = T (Relocation::*)(void) const;
 template<class T>
 using setter_t = void (Relocation::*)(T);
 
+template<class T>
+using it_t = T (Relocation::*)(void);
+
 void init_PE_Relocation_class(py::module& m) {
   py::class_<Relocation>(m, "Relocation")
     .def(py::init<>())
@@ -36,8 +39,8 @@ void init_PE_Relocation_class(py::module& m) {
         static_cast<setter_t<uint32_t>>(&Relocation::virtual_address))
 
     .def_property_readonly("entries",
-        &Relocation::entries,
-        py::return_value_policy::reference)
+        static_cast<it_t<it_relocation_entries>>(&Relocation::entries),
+        py::return_value_policy::reference_internal)
 
     .def("add_entry",
         &Relocation::add_entry,

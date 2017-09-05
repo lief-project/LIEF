@@ -214,7 +214,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_const_relocations relocations(void) const;
 
     //! @brief Add a @link PE::Relocation relocation @endlink
-    void add_relocation(const Relocation& relocation);
+    Relocation& add_relocation(const Relocation& relocation);
 
     //! @brief Remove all relocations
     void remove_all_relocations(void);
@@ -374,6 +374,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Return binary's section as LIEF::Section
     virtual LIEF::sections_t get_abstract_sections(void) override;
+
+    virtual LIEF::relocations_t get_abstract_relocations(void) override;
 
     virtual std::vector<std::string> get_abstract_exported_functions(void) const override;
     virtual std::vector<std::string> get_abstract_imported_functions(void) const override;

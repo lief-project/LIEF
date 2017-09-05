@@ -20,15 +20,19 @@
 namespace LIEF {
 class Symbol;
 class Section;
+class Relocation;
 
 using sections_t        = std::vector<Section*>;
 using it_sections       = ref_iterator<sections_t>;
 using it_const_sections = const_ref_iterator<sections_t>;
 
-
 using symbols_t         = std::vector<Symbol*>;
 using it_symbols        = ref_iterator<symbols_t>;
 using it_const_symbols  = const_ref_iterator<symbols_t>;
+
+using relocations_t        = std::vector<Relocation*>;          ///< Container used to transfert abstract relocations from binary formats
+using it_relocations       = ref_iterator<relocations_t>;       ///< Iterator over Abstract LIEF::Relocation (read only)
+using it_const_relocations = const_ref_iterator<relocations_t>; ///< Iterator over Abstract LIEF::Relocation (read/write)
 
 }
 #endif

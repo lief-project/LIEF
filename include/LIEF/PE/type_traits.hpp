@@ -42,9 +42,14 @@ using data_directories_t        = std::vector<DataDirectory*>;
 using it_data_directories       = ref_iterator<data_directories_t>;
 using it_const_data_directories = const_ref_iterator<data_directories_t>;
 
-using relocations_t             = std::vector<Relocation>;
+using relocations_t             = std::vector<Relocation*>;
 using it_relocations            = ref_iterator<relocations_t&>;
 using it_const_relocations      = const_ref_iterator<const relocations_t&>;
+
+
+using relocation_entries_t        = std::vector<RelocationEntry*>;
+using it_relocation_entries       = ref_iterator<relocation_entries_t&>;
+using it_const_relocation_entries = const_ref_iterator<const relocation_entries_t&>;
 
 using imports_t                 = std::vector<Import>;
 using it_imports                = ref_iterator<imports_t&>;

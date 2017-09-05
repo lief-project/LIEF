@@ -27,6 +27,7 @@
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Abstract/Section.hpp"
+#include "LIEF/Abstract/Relocation.hpp"
 
 //! LIEF namespace
 namespace LIEF {
@@ -64,6 +65,10 @@ class DLL_PUBLIC Binary : public Visitable {
     //! @brief Returns binary's sections
     it_sections       get_sections(void);
     it_const_sections get_sections(void) const;
+
+    //! @brief Returns binary's relocations
+    it_relocations       relocations(void);
+    it_const_relocations relocations(void) const;
 
     //! @brief Binary's entrypoint (if any)
     virtual uint64_t entrypoint(void) const = 0;
@@ -135,6 +140,7 @@ class DLL_PUBLIC Binary : public Visitable {
     virtual Header                    get_abstract_header(void) const = 0;
     virtual symbols_t                 get_abstract_symbols(void)      = 0;
     virtual sections_t                get_abstract_sections(void)     = 0;
+    virtual relocations_t             get_abstract_relocations(void)  = 0;
 
     virtual std::vector<std::string>  get_abstract_exported_functions(void) const = 0;
     virtual std::vector<std::string>  get_abstract_imported_functions(void) const = 0;

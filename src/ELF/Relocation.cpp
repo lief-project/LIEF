@@ -28,7 +28,7 @@ namespace ELF {
 Relocation::~Relocation(void) = default;
 
 Relocation::Relocation(void) :
-  address_{0},
+  LIEF::Relocation{},
   type_{0},
   addend_{0},
   isRela_{false},
@@ -39,8 +39,7 @@ Relocation::Relocation(void) :
 
 
 Relocation::Relocation(const Relocation& other) :
-  Visitable{other},
-  address_{other.address_},
+  LIEF::Relocation{other},
   type_{other.type_},
   addend_{other.addend_},
   isRela_{other.isRela_},
@@ -57,7 +56,7 @@ Relocation& Relocation::operator=(Relocation other) {
 }
 
 Relocation::Relocation(const Elf32_Rel* header) :
-  address_{header->r_offset},
+  LIEF::Relocation{header->r_offset, 0},
   type_{static_cast<uint32_t>(header->r_info & 0xff)},
   addend_{0},
   isRela_{false},
@@ -68,7 +67,7 @@ Relocation::Relocation(const Elf32_Rel* header) :
 
 
 Relocation::Relocation(const Elf32_Rela* header) :
-  address_{header->r_offset},
+  LIEF::Relocation{header->r_offset, 0},
   type_{static_cast<uint32_t>(header->r_info & 0xff)},
   addend_{header->r_addend},
   isRela_{true},
@@ -79,7 +78,7 @@ Relocation::Relocation(const Elf32_Rela* header) :
 
 
 Relocation::Relocation(const Elf64_Rel* header) :
-  address_{header->r_offset},
+  LIEF::Relocation{header->r_offset, 0},
   type_{static_cast<uint32_t>(header->r_info & 0xffffffff)},
   addend_{0},
   isRela_{false},
@@ -90,7 +89,7 @@ Relocation::Relocation(const Elf64_Rel* header) :
 
 
 Relocation::Relocation(const Elf64_Rela* header)  :
-  address_{header->r_offset},
+  LIEF::Relocation{header->r_offset, 0},
   type_{static_cast<uint32_t>(header->r_info & 0xffffffff)},
   addend_{header->r_addend},
   isRela_{true},
@@ -101,7 +100,7 @@ Relocation::Relocation(const Elf64_Rela* header)  :
 
 
 Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isRela) :
-  address_{address},
+  LIEF::Relocation{address, 0},
   type_{type},
   addend_{addend},
   isRela_{isRela},
@@ -120,11 +119,6 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->architecture_, other.architecture_);
   std::swap(this->purpose_,      other.purpose_);
 }
-
-uint64_t Relocation::address(void) const {
-  return this->address_;
-}
-
 
 int64_t Relocation::addend(void) const {
   return this->addend_;
@@ -173,7 +167,7 @@ bool Relocation::has_symbol(void) const {
   return this->symbol_ != nullptr;
 }
 
-uint32_t Relocation::size(void) const {
+size_t Relocation::size(void) const {
 
  switch (this->architecture()) {
     case ARCH::EM_X86_64:
@@ -222,11 +216,6 @@ uint32_t Relocation::size(void) const {
       }
   }
 
-}
-
-
-void Relocation::address(uint64_t address) {
-  this->address_ = address;
 }
 
 

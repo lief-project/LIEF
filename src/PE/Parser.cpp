@@ -249,7 +249,7 @@ void Parser::build_relocations(void) {
 
   uint32_t current_offset = offset;
   while (current_offset < max_offset and relocation_headers->PageRVA != 0) {
-    Relocation relocation{relocation_headers};
+    Relocation* relocation = new Relocation{relocation_headers};
 
     if (relocation_headers->BlockSize < sizeof(pe_base_relocation_block)) {
       throw corrupted("Relocation corrupted: BlockSize is too small");
@@ -261,7 +261,9 @@ void Parser::build_relocations(void) {
     const uint16_t* entries = reinterpret_cast<const uint16_t*>(
         this->stream_->read(current_offset + sizeof(pe_base_relocation_block), relocation_headers->BlockSize - sizeof(pe_base_relocation_block)));
     for (size_t i = 0; i < numberof_entries; ++i) {
-      relocation.entries_.emplace_back(entries[i]);
+      RelocationEntry* entry = new RelocationEntry{entries[i]};
+      entry->relocation_ = relocation;
+      relocation->entries_.push_back(entry);
     }
 
     this->binary_->relocations_.push_back(relocation);

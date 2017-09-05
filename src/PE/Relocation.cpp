@@ -22,9 +22,31 @@
 namespace LIEF {
 namespace PE {
 
-Relocation::Relocation(const Relocation&)            = default;
-Relocation& Relocation::operator=(const Relocation&) = default;
-Relocation::~Relocation(void)                        = default;
+Relocation::Relocation(const Relocation& other) :
+  block_size_{other.block_size_},
+  virtual_address_{other.virtual_address_},
+  entries_{}
+{
+  this->entries_.reserve(other.entries_.size());
+  for (RelocationEntry* r : other.entries_) {
+    RelocationEntry* copy = new RelocationEntry{*r};
+    copy->relocation_ = this;
+    this->entries_.push_back(copy);
+  }
+
+}
+
+Relocation& Relocation::operator=(Relocation other) {
+  this->swap(other);
+  return *this;
+}
+
+
+Relocation::~Relocation(void) {
+  for (RelocationEntry* entry : this->entries_) {
+    delete entry;
+  }
+}
 
 
 Relocation::Relocation(void) :
@@ -41,6 +63,13 @@ Relocation::Relocation(const pe_base_relocation_block* header) :
 {}
 
 
+void Relocation::swap(Relocation& other) {
+  std::swap(this->block_size_,      other.block_size_);
+  std::swap(this->virtual_address_, other.virtual_address_);
+  std::swap(this->entries_,         other.entries_);
+}
+
+
 uint32_t Relocation::virtual_address(void) const {
   return this->virtual_address_;
 }
@@ -50,13 +79,22 @@ uint32_t Relocation::block_size(void) const {
   return this->block_size_;
 }
 
-const std::vector<RelocationEntry>& Relocation::entries(void) const {
+it_const_relocation_entries Relocation::entries(void) const {
   return this->entries_;
 }
 
 
-void Relocation::add_entry(const RelocationEntry& entry) {
-  return this->entries_.push_back(entry);
+it_relocation_entries Relocation::entries(void) {
+  return this->entries_;
+}
+
+
+
+RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
+  RelocationEntry* newone = new RelocationEntry{entry};
+  newone->relocation_ = this;
+  this->entries_.push_back(newone);
+  return *newone;
 }
 
 
@@ -72,7 +110,7 @@ void Relocation::block_size(uint32_t block_size) {
 
 void Relocation::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->virtual_address());
-  for (const RelocationEntry& entry : this->entries_) {
+  for (const RelocationEntry& entry : this->entries()) {
     visitor(entry);
   }
 }

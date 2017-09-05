@@ -32,7 +32,7 @@ using setter_t = void (Relocation::*)(T);
 
 void init_MachO_Relocation_class(py::module& m) {
 
-  py::class_<Relocation>(m, "Relocation")
+  py::class_<Relocation, LIEF::Relocation>(m, "Relocation")
 
     .def_property("address",
         static_cast<getter_t<uint64_t>>(&Relocation::address),
@@ -54,12 +54,6 @@ void init_MachO_Relocation_class(py::module& m) {
 
         "For addresses contained in PC-relative instructions, the CPU adds the address of "
         "the instruction to the address contained in the instruction.",
-        py::return_value_policy::reference_internal)
-
-    .def_property("size",
-        static_cast<getter_t<uint8_t>>(&Relocation::size),
-        static_cast<setter_t<uint8_t>>(&Relocation::size),
-        "Indicates the length (in bits) of the item containing the address to be relocated.",
         py::return_value_policy::reference_internal)
 
     .def_property("type",

@@ -102,6 +102,15 @@ it_const_sections Binary::get_sections(void) const {
 }
 
 
+it_relocations Binary::relocations(void) {
+  return this->get_abstract_relocations();
+}
+
+it_const_relocations Binary::relocations(void) const {
+  return const_cast<Binary*>(this)->get_abstract_relocations();
+}
+
+
 std::vector<std::string> Binary::get_exported_functions(void) const {
   return this->get_abstract_exported_functions();
 }

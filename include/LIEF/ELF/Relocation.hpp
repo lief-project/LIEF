@@ -23,6 +23,8 @@
 #include "LIEF/Visitable.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/Abstract/Relocation.hpp"
+
 #include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 
@@ -33,7 +35,7 @@ class Parser;
 class Binary;
 class Builder;
 
-class DLL_PUBLIC Relocation : public Visitable {
+class DLL_PUBLIC Relocation : public LIEF::Relocation {
 
   friend class Parser;
   friend class Binary;
@@ -52,7 +54,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     Relocation(const Relocation& other);
     void swap(Relocation& other);
 
-    uint64_t address(void) const;
+    //uint64_t address(void) const;
     int64_t  addend(void) const;
     uint32_t type(void) const;
     bool     is_rela(void) const;
@@ -61,13 +63,13 @@ class DLL_PUBLIC Relocation : public Visitable {
     RELOCATION_PURPOSES purpose(void) const;
 
     //! @brief Return the **bit** size of the value to patch
-    uint32_t size(void) const;
+    virtual size_t size(void) const override;
 
     bool          has_symbol(void) const;
     Symbol&       symbol(void);
     const Symbol& symbol(void) const;
 
-    void address(uint64_t address);
+    //void address(uint64_t address);
     void addend(int64_t addend);
     void type(uint32_t type);
     void purpose(RELOCATION_PURPOSES purpose);
@@ -80,7 +82,6 @@ class DLL_PUBLIC Relocation : public Visitable {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
-    uint64_t            address_;
     uint32_t            type_;
     int64_t             addend_;
     bool                isRela_;

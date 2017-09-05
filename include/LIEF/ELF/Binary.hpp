@@ -419,6 +419,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     virtual std::vector<std::string> get_abstract_imported_functions(void) const override;
     virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
     virtual LIEF::symbols_t          get_abstract_symbols(void) override;
+    virtual LIEF::relocations_t      get_abstract_relocations(void) override;
 
     template<int ARCH>
     void patch_relocations(uint64_t from, uint64_t shift);

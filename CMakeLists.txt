@@ -232,7 +232,7 @@ set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.cc PROPERTIES GENERATED TRUE)
 
-set(LIEF_SRC
+set(LIBLIEF_SOURCE_FILES
   "${ELG_SOURCE_DIR}/easylogging++.cc"
   "${mbedtls_src_crypto}"
   "${mbedtls_src_x509}"
@@ -250,22 +250,6 @@ set(LIEF_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
-set(LIEF_ABSTRACT_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Binary.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Symbol.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/EnumToString.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Header.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Section.tcc"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/Parser.cpp")
-
-# Grouping basic LIEF source files
-# ================================
-source_group("Source Files\\Abstract" FILES ${LIEF_ABSTRACT_SRC})
-
-set(LIBLIEF_SOURCE_FILES
-  "${LIEF_SRC}"
-  "${LIEF_ABSTRACT_SRC}")
 
 # Grouping basic headers together
 # ===============================
@@ -295,37 +279,34 @@ set(LIEF_VISITOR_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/Hash.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/json.hpp")
 
-set(LIEF_ABSTRACT_INCLUDE_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Abstract.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Binary.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Symbol.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/EnumToString.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Header.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Section.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Parser.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/enums.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/type_traits.hpp")
 
 set(LIEF_INCLUDE_FILES
   ${LIEF_INC_FILES}
   ${LIEF_VISITOR_INCLUDE_FILES}
-  ${LIEF_ABSTRACT_INCLUDE_FILES})
+)
+
+source_group("Header Files" FILES ${LIEF_INC_FILES})
+source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
 
 source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
-source_group("Header Files\\Abstract" FILES ${LIEF_ABSTRACT_INCLUDE_FILES})
 
 add_library(LIB_LIEF_STATIC STATIC ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Static one
 add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
 
+# Abstract part
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
 
+# ELF Part
 if (LIEF_ELF)
   include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
 endif()
 
+# PE Part
 if (LIEF_PE)
   include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
 endif()
 
+# MachO part
 if (LIEF_MACHO)
   include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
 endif()
@@ -360,9 +341,9 @@ set(LIEF_PRIVATE_INCLUDE_DIR
 # Grouping external projects
 # ==========================
 source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
-source_group("mbedtls\\x509" FILES ${mbedtls_src_x509})
-source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
-source_group("easylogging" FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
+source_group("mbedtls\\x509"   FILES ${mbedtls_src_x509})
+source_group("mbedtls\\tls"    FILES ${mbedtls_src_tls})
+source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
 
 # Library definition
 # ==================

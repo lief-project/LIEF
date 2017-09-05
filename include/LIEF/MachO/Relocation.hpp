@@ -20,6 +20,8 @@
 #include <iostream>
 #include <array>
 
+#include "LIEF/Abstract/Relocation.hpp"
+
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 #include "LIEF/Visitable.hpp"
@@ -36,11 +38,14 @@ class BinaryParser;
 //! @see:
 //!   * MachO::RelocationObject
 //!   * MachO::RelocationDyld
-class DLL_PUBLIC Relocation : public Visitable {
+class DLL_PUBLIC Relocation : public LIEF::Relocation {
 
   friend class BinaryParser;
 
   public:
+    using LIEF::Relocation::address;
+    using LIEF::Relocation::size;
+
     Relocation(void);
     Relocation(uint64_t address, uint8_t type);
 
@@ -53,7 +58,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     //! @brief For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
     //! offset from the start of the @link MachO::Section section @endlink
     //! to the item containing the address requiring relocation.
-    virtual uint64_t address(void) const;
+    //virtual uint64_t address(void) const override;
 
     //! @brief Indicates whether the item containing the address to be
     //! relocated is part of a CPU instruction that uses PC-relative addressing.
@@ -61,9 +66,6 @@ class DLL_PUBLIC Relocation : public Visitable {
     //! For addresses contained in PC-relative instructions, the CPU adds the address of
     //! the instruction to the address contained in the instruction.
     virtual bool is_pc_relative(void) const = 0;
-
-    //! @brief Indicates the length of the item containing the address to be relocated.
-    virtual uint8_t size(void) const;
 
     //! @brief Type of the relocation according to the
     //! @link Relocation::architecture architecture@endlink and/or
@@ -105,9 +107,8 @@ class DLL_PUBLIC Relocation : public Visitable {
     SegmentCommand& segment(void);
     const SegmentCommand& segment(void) const;
 
-    virtual void address(uint64_t address);
+    //virtual void address(uint64_t address) override;
     virtual void pc_relative(bool val) = 0;
-    virtual void size(uint8_t size);
     virtual void type(uint8_t type);
 
     bool operator==(const Relocation& rhs) const;
@@ -120,9 +121,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   protected:
-    uint64_t           address_;
     Symbol*            symbol_;
-    uint8_t            size_;
     uint8_t            type_;
     CPU_TYPES          architecture_;
     Section*           section_;

@@ -67,24 +67,10 @@ if (LIEF_ENABLE_JSON)
   )
 endif()
 
-
-set(LIEF_PYTHON_ABSTRACT_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyBinary.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyHeader.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySection.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pyParser.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/objects/pySymbol.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/pyEnums.cpp"
-)
-
 set(LIEF_PYTHON_SRC
   ${LIEF_PYTHON_BASIC_SRC}
-  ${LIEF_PYTHON_ABSTRACT_SRC})
+)
 
-set(LIEF_PYTHON_ABSTRACT_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract/init.hpp")
 
 set(LIEF_PYTHON_BASIC_HDR
   "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.hpp"
@@ -94,21 +80,20 @@ set(LIEF_PYTHON_BASIC_HDR
 
 set(LIEF_PYTHON_HDR
   ${LIEF_PYTHON_BASIC_HDR}
-  ${LIEF_PYTHON_ABSTRACT_HDR})
+)
 
-source_group("Header Files\\Abstract" FILES ${LIEF_PYTHON_ABSTRACT_HDR})
 source_group("Header Files" FILES ${LIEF_PYTHON_BASIC_HDR})
-source_group("Source Files\\Abstract" FILES ${LIEF_PYTHON_ABSTRACT_SRC})
 
 add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
 
 target_include_directories(pyLIEF PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/"
-  "${CMAKE_CURRENT_SOURCE_DIR}/Abstract"
   "${PYTHON_INCLUDE_DIR}"
   "${PYBIND11_SOURCE_DIR}/include")
 
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/Abstract/CMakeLists.txt")
 
 if(LIEF_ELF)
   include("${CMAKE_CURRENT_SOURCE_DIR}/ELF/CMakeLists.txt")

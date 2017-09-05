@@ -37,6 +37,7 @@ class Binary;
 class Header;
 class Section;
 class Symbol;
+class Relocation;
 
 namespace ELF {
 class Binary;
@@ -193,6 +194,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::Symbol
   virtual void visit(const Symbol& symbol);
+
+  //! @brief Method to visit a LIEF::Relocation
+  virtual void visit(const Relocation& relocation);
 
   // ELF Part
   // ========

@@ -19,13 +19,14 @@
 #include "LIEF/visitors/Hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/Section.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-RelocationObject& RelocationObject::operator=(const RelocationObject&) = default;
-RelocationObject::RelocationObject(const RelocationObject&)      = default;
 
+RelocationObject& RelocationObject::operator=(const RelocationObject&) = default;
+RelocationObject::RelocationObject(const RelocationObject&) = default;
 RelocationObject::~RelocationObject(void) = default;
 
 RelocationObject::RelocationObject(void) :
@@ -58,11 +59,20 @@ RelocationObject::RelocationObject(const scattered_relocation_info *scattered_re
 }
 
 
+
+void RelocationObject::swap(RelocationObject& other) {
+  Relocation::swap(other);
+
+  std::swap(this->is_pcrel_,     other.is_pcrel_);
+  std::swap(this->is_scattered_, other.is_scattered_);
+  std::swap(this->value_,        other.value_);
+}
+
 bool RelocationObject::is_pc_relative(void) const {
   return this->is_pcrel_;
 }
 
-uint8_t RelocationObject::size(void) const {
+size_t RelocationObject::size(void) const {
   if (this->size_ < 2) {
     return (this->size_ + 1) * 8;
   } else {
@@ -73,6 +83,15 @@ uint8_t RelocationObject::size(void) const {
 
 bool RelocationObject::is_scattered(void) const {
   return this->is_scattered_;
+}
+
+
+uint64_t RelocationObject::address(void) const {
+  if (not this->has_section()) {
+    return Relocation::address();
+  }
+
+  return this->address_ + this->section().offset();
 }
 
 int32_t RelocationObject::value(void) const {
@@ -91,7 +110,7 @@ void RelocationObject::pc_relative(bool val) {
   this->is_pcrel_ = val;
 }
 
-void RelocationObject::size(uint8_t size) {
+void RelocationObject::size(size_t size) {
   switch(size) {
     case 8:
       {
@@ -124,6 +143,7 @@ void RelocationObject::value(int32_t value) {
   }
   this->value_ = value;
 }
+
 
 void RelocationObject::accept(Visitor& visitor) const {
   Relocation::accept(visitor);

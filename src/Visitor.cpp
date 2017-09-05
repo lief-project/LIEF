@@ -65,6 +65,10 @@ void Visitor::visit(const Symbol& symbol) {
   symbol.accept(*this);
 }
 
+void Visitor::visit(const Relocation& relocation) {
+  relocation.accept(*this);
+}
+
 
 // ELF part
 // --------

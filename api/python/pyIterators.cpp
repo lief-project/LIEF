@@ -23,6 +23,7 @@ void init_LIEF_iterators(py::module& m) {
   // ========
   init_ref_iterator<LIEF::it_sections>(m);
   init_ref_iterator<LIEF::it_symbols>(m);
+  init_ref_iterator<LIEF::it_relocations>(m);
 
   // ELF
   // ===
@@ -48,6 +49,7 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::PE::it_sections>(m);
   init_ref_iterator<LIEF::PE::it_data_directories>(m);
   init_ref_iterator<LIEF::PE::it_relocations>(m);
+  init_ref_iterator<LIEF::PE::it_relocation_entries>(m);
   init_ref_iterator<LIEF::PE::it_imports>(m);
   init_ref_iterator<LIEF::PE::it_import_entries>(m);
   init_ref_iterator<LIEF::PE::it_export_entries>(m);

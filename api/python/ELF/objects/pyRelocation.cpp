@@ -29,15 +29,10 @@ using setter_t = void (Relocation::*)(T);
 
 void init_ELF_Relocation_class(py::module& m) {
   // Relocation object
-  py::class_<Relocation>(m, "Relocation")
+  py::class_<Relocation, LIEF::Relocation>(m, "Relocation")
     .def(py::init<>())
     .def(py::init<uint64_t, uint32_t, int64_t, bool>(),
         "address"_a, "type"_a = 0, "addend"_a = 0, "is_rela"_a = false)
-
-    .def_property("address",
-        static_cast<getter_t<uint64_t>>(&Relocation::address),
-        static_cast<setter_t<uint64_t>>(&Relocation::address),
-        "Address (or offset) of the relocation")
 
     .def_property("addend",
         static_cast<getter_t<int64_t>>(&Relocation::addend),
@@ -74,11 +69,6 @@ void init_ELF_Relocation_class(py::module& m) {
     .def_property_readonly("is_rel",
       static_cast<getter_t<bool>>(&Relocation::is_rel),
       "``True`` if the relocation doesn't use the :attr:`~lief.ELF.Relocation.addend` proprety")
-
-    .def_property_readonly("size",
-      static_cast<getter_t<uint32_t>>(&Relocation::size),
-      "Size in **bits** of the value patched by the relocation")
-
 
     .def("__eq__", &Relocation::operator==)
     .def("__ne__", &Relocation::operator!=)

@@ -66,6 +66,11 @@ void init_LIEF_Binary_class(py::module& m) {
         "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Section) "",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("relocations",
+        static_cast<it_t<it_relocations>>(&Binary::relocations),
+        "Return an iterator over abstract " RST_CLASS_REF(lief.Relocation) "",
+        py::return_value_policy::reference_internal)
+
     .def_property_readonly("exported_functions",
         [] (const Binary& binary) {
           const std::vector<std::string>& exported_functions = binary.get_exported_functions();

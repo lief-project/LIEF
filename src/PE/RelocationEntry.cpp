@@ -15,34 +15,61 @@
  */
 #include <iomanip>
 
+#include "easylogging++.h"
+
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
 
 namespace LIEF {
 namespace PE {
 
-RelocationEntry::RelocationEntry(const RelocationEntry&) = default;
-RelocationEntry& RelocationEntry::operator=(const RelocationEntry&) = default;
+RelocationEntry::RelocationEntry(const RelocationEntry& other) :
+  LIEF::Relocation{other},
+  position_{other.position_},
+  type_{other.type_},
+  relocation_{nullptr}
+{}
+
+RelocationEntry& RelocationEntry::operator=(RelocationEntry other) {
+  this->swap(other);
+  return *this;
+}
+
 RelocationEntry::~RelocationEntry(void) = default;
 
 RelocationEntry::RelocationEntry(void) :
+  LIEF::Relocation{},
   position_{0},
-  type_{RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE}
+  type_{RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE},
+  relocation_{nullptr}
 {}
 
 RelocationEntry::RelocationEntry(uint16_t data) :
+  LIEF::Relocation{},
   position_{static_cast<uint16_t>(data & 0x0FFF)},
-  type_{static_cast<RELOCATIONS_BASE_TYPES>(data >> 12)}
+  type_{static_cast<RELOCATIONS_BASE_TYPES>(data >> 12)},
+  relocation_{nullptr}
 {}
 
 
 RelocationEntry::RelocationEntry(uint16_t position, RELOCATIONS_BASE_TYPES type) :
+  LIEF::Relocation{},
   position_{position},
-  type_{type}
+  type_{type},
+  relocation_{nullptr}
 {}
+
+
+void RelocationEntry::swap(RelocationEntry& other) {
+  LIEF::Relocation::swap(other);
+  std::swap(this->position_,   other.position_);
+  std::swap(this->type_,       other.type_);
+  std::swap(this->relocation_, other.relocation_);
+}
 
 
 uint16_t RelocationEntry::data(void) const {
@@ -73,6 +100,54 @@ void RelocationEntry::type(RELOCATIONS_BASE_TYPES type) {
   this->type_ = type;
 }
 
+
+
+uint64_t RelocationEntry::address(void) const {
+  if (this->relocation_ != nullptr) {
+    return this->relocation_->virtual_address() + this->position();
+  }
+
+  return this->position();
+}
+
+void RelocationEntry::address(uint64_t address) {
+  LOG(WARNING) << "Setting address of a PE relocation is not implemented!";
+}
+
+size_t RelocationEntry::size(void) const {
+  switch (this->type()) {
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_LOW:
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH:
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHADJ:
+      {
+        return 16;
+        break;
+      }
+
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHLOW: // Addr += delta
+      {
+        return 32;
+        break;
+      }
+
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_DIR64: // Addr += delta
+      {
+        return 64;
+        break;
+      }
+    case IMAGE_REL_BASED_ABSOLUTE:
+    default:
+      {
+        return 0;
+        break;
+      }
+  }
+  return 0;
+}
+void RelocationEntry::size(size_t size) {
+  LOG(WARNING) << "Setting size of a PE relocation is not implemented!";
+
+}
 
 void RelocationEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->data());

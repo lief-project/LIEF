@@ -20,5 +20,6 @@
 #include <LIEF/Abstract/enums.hpp>
 #include <LIEF/Abstract/EnumToString.hpp>
 #include <LIEF/Abstract/Parser.hpp>
+#include <LIEF/Abstract/Relocation.hpp>
 
 #endif

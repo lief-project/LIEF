@@ -468,11 +468,15 @@ void BinaryParser::parse_relocations(Section& section) {
     if (is_scattered) {
       const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
-      section.relocations_.push_back(new RelocationObject{reloc_info});
+      RelocationObject* reloc = new RelocationObject{reloc_info};
+      reloc->section_ = &section;
+      section.relocations_.push_back(reloc);
     } else {
       const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
-      section.relocations_.push_back(new RelocationObject{reloc_info});
+      RelocationObject* reloc = new RelocationObject{reloc_info};
+      reloc->section_ = &section;
+      section.relocations_.push_back(reloc);
 
       if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
         if (reloc_info->r_symbolnum < this->binary_->symbols().size()) {

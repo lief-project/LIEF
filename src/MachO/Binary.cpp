@@ -310,6 +310,19 @@ it_const_relocations Binary::relocations(void) const {
 }
 
 
+LIEF::relocations_t Binary::get_abstract_relocations(void) {
+  LIEF::relocations_t relocations;
+  it_relocations macho_relocations = this->relocations();
+  relocations.reserve(macho_relocations.size());
+
+  for (Relocation& r : macho_relocations) {
+    relocations.push_back(&r);
+  }
+
+  return relocations;
+}
+
+
 // Symbols
 // =======
 

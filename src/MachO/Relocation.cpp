@@ -29,9 +29,8 @@ namespace MachO {
 Relocation::~Relocation(void) = default;
 
 Relocation::Relocation(void) :
-  address_{0},
+  LIEF::Relocation{},
   symbol_{nullptr},
-  size_{0},
   type_{0},
   architecture_{CPU_TYPES::CPU_TYPE_ANY},
   section_{nullptr},
@@ -47,10 +46,8 @@ Relocation::Relocation(uint64_t address, uint8_t type) :
 }
 
 Relocation::Relocation(const Relocation& other) :
-  Visitable{other},
-  address_{other.address_},
+  LIEF::Relocation{other},
   symbol_{nullptr},
-  size_{other.size_},
   type_{other.type_},
   architecture_{other.architecture_},
   section_{nullptr},
@@ -58,22 +55,13 @@ Relocation::Relocation(const Relocation& other) :
 {}
 
 void Relocation::swap(Relocation& other) {
-  std::swap(this->address_,      other.address_);
+  LIEF::Relocation::swap(other);
+
   std::swap(this->symbol_,       other.symbol_);
-  std::swap(this->size_,         other.size_);
   std::swap(this->type_,         other.type_);
   std::swap(this->architecture_, other.architecture_);
   std::swap(this->section_,      other.section_);
   std::swap(this->segment_,      other.segment_);
-}
-
-uint64_t Relocation::address(void) const {
-  return this->address_;
-}
-
-
-uint8_t Relocation::size(void) const {
-  return this->size_;
 }
 
 uint8_t Relocation::type(void) const {
@@ -135,25 +123,15 @@ const SegmentCommand& Relocation::segment(void) const {
   return *this->segment_;
 }
 
-
-void Relocation::address(uint64_t address) {
-  this->address_ = address;
-}
-
-void Relocation::size(uint8_t size) {
-  this->size_ = size;
-}
-
 void Relocation::type(uint8_t type) {
   this->type_ = type;
 }
 
 void Relocation::accept(Visitor& visitor) const {
+  LIEF::Relocation::accept(visitor);
   visitor(*this); // Double dispatch to avoid down-casting
 
-  visitor.visit(this->address());
   visitor.visit(this->is_pc_relative());
-  visitor.visit(this->size());
   visitor.visit(this->type());
   visitor.visit(this->origin());
 
