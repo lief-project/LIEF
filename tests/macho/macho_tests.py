@@ -59,7 +59,7 @@ class TestMachO(TestCase):
         self.assertEqual(len(relocations), 2)
 
         # 0
-        self.assertEqual(relocations[0].address, 0x23)
+        self.assertEqual(relocations[0].address, 0x233)
         self.assertEqual(relocations[0].type,    2)
         self.assertEqual(relocations[0].size,    32)
 
@@ -72,7 +72,7 @@ class TestMachO(TestCase):
         self.assertEqual(relocations[0].section.name, text_section.name)
 
         # 1
-        self.assertEqual(relocations[1].address, 0x0b)
+        self.assertEqual(relocations[1].address, 0x21b)
         self.assertEqual(relocations[1].type,    1)
         self.assertEqual(relocations[1].size,    32)
 
@@ -89,7 +89,7 @@ class TestMachO(TestCase):
         self.assertEqual(len(relocations), 1)
 
         # 0
-        self.assertEqual(relocations[0].address, 0x0)
+        self.assertEqual(relocations[0].address, 0x247)
         self.assertEqual(relocations[0].type,    0)
         self.assertEqual(relocations[0].size,    32)
 
