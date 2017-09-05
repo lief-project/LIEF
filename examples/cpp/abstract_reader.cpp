@@ -56,6 +56,11 @@ int main(int argc, char **argv) {
     std::cout << name << std::endl;
   }
 
+  std::cout << "== Relocation ==" << std::endl;
+  for(const LIEF::Relocation& relocation : binary->relocations()) {
+    std::cout << relocation << std::endl;
+  }
+
   return 0;
 
 
