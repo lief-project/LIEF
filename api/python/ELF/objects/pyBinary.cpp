@@ -26,6 +26,12 @@ using no_const_getter = T (Binary::*)(void);
 template<class T, class P>
 using no_const_func = T (Binary::*)(P);
 
+template<class T>
+using getter_t = T (Binary::*)(void) const;
+
+template<class T>
+using setter_t = void (Binary::*)(T);
+
 void init_ELF_Binary_class(py::module& m) {
 
   // Binary object
@@ -166,9 +172,10 @@ void init_ELF_Binary_class(py::module& m) {
         &Binary::has_interpreter,
        "``True`` if the binary uses a loader")
 
-   .def_property_readonly("interpreter",
-        &Binary::interpreter,
-       "Return ELF interprer (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)")
+   .def_property("interpreter",
+        static_cast<getter_t<const std::string&>>(&Binary::interpreter),
+        static_cast<setter_t<const std::string&>>(&Binary::interpreter),
+       "ELF interprer (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)")
 
     .def("section_from_offset",
         static_cast<no_const_func<Section&, uint64_t>>(&Binary::section_from_offset),

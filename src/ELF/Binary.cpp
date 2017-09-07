@@ -1155,25 +1155,20 @@ bool Binary::has_interpreter(void) const {
         return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_INTERP;
       });
 
-  return it_segment_interp != std::end(this->segments_);
+  return it_segment_interp != std::end(this->segments_) and not this->interpreter_.empty();
 }
 
-std::string Binary::interpreter(void) const {
-  auto&& it_segment_interp = std::find_if(
-      std::begin(this->segments_),
-      std::end(this->segments_),
-      [] (const Segment* segment)
-      {
-        return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_INTERP;
-      });
-
-  if (it_segment_interp == std::end(this->segments_)) {
-    throw not_found("PT_INTERP not found");
+const std::string& Binary::interpreter(void) const {
+  if (not this->has_interpreter()) {
+    throw not_found("Interpreter not found!");
   }
-
-  const std::vector<uint8_t>& content = (*it_segment_interp)->content();
-  return reinterpret_cast<const char*>(content.data());
+  return this->interpreter_;
 }
+
+void Binary::interpreter(const std::string& interpreter) {
+  this->interpreter_ = interpreter;
+}
+
 
 void Binary::write(const std::string& filename) {
   Builder builder{this};

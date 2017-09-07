@@ -205,6 +205,11 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/hash_tests.py")
 
+
+  ADD_PYTHON_TEST(ELF_PYTHON_change_interpreter
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/change_interpreter.py")
+
   # Examples
   # --------
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_elf_reader_ls

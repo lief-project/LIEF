@@ -152,27 +152,6 @@ void Builder::build_symbol_version(void) {
 
 }
 
-void Builder::build_interpreter(void) {
-  VLOG(VDEBUG) << "[+] Building Interpreter" << std::endl;
-  const std::string& inter_str = this->binary_->interpreter();
-
-  // Look for the PT_INTERP segment
-  auto&& it_pt_interp = std::find_if(
-      std::begin(this->binary_->segments_),
-      std::end(this->binary_->segments_),
-      [] (const Segment* s) {
-        return s->type() == SEGMENT_TYPES::PT_INTERP;
-      });
-
-  if (it_pt_interp == std::end(this->binary_->segments_)) {
-    throw not_found("Unable to find the INTERP segment");
-  }
-
-  Segment* interp_segment = *it_pt_interp;
-  interp_segment->content({std::begin(inter_str), std::end(inter_str)});
-
-
-}
 
 
 

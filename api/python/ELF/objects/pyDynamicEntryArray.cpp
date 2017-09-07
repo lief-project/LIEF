@@ -42,7 +42,8 @@ void init_ELF_DynamicEntryArray_class(py::module& m) {
     .def_property("array",
         static_cast<std::vector<uint64_t>& (DynamicEntryArray::*) (void)>(&DynamicEntryArray::array),
         static_cast<setter_t<const std::vector<uint64_t>&>>(&DynamicEntryArray::array),
-        "Return the array")
+        "Return the array",
+        py::return_value_policy::reference)
 
     .def("__eq__", &DynamicEntryArray::operator==)
     .def("__ne__", &DynamicEntryArray::operator!=)

@@ -797,6 +797,9 @@ void Parser::parse_segments(void) {
         const uint8_t* content = static_cast<const uint8_t*>(
             this->stream_->read(offset_to_content, size));
         segment->content({content, content + size});
+        if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
+          this->binary_->interpreter_ = this->stream_->read_string(offset_to_content);
+        }
 
       } catch (const LIEF::read_out_of_bound&) {
         LOG(WARNING) << "Segment's file offset and/or segment's size is corrupted";

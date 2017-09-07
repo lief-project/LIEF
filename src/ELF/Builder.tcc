@@ -98,7 +98,7 @@ void Builder::build(void) {
   // Build Interpreter
   if (this->binary_->has_interpreter()) {
     try {
-      this->build_interpreter();
+      this->build_interpreter<ELF_T>();
     } catch (const LIEF::exception& e) {
       LOG(ERROR) << e.what();
     }
@@ -1598,7 +1598,7 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
 
   // /!\ 'entry' is updated by  call 'add (segment)' /!
   uint64_t original_init_va = entry_array.value();
-  LOG(DEBUG) << "Original Array address: " << std::hex << original_init_va << std::endl;
+  VLOG(VDEBUG) << "Original Array address: " << std::hex << original_init_va << std::endl;
   if (this->binary_->header().file_type() == E_TYPE::ET_DYN) {
     for (Relocation& r : this->binary_->dynamic_relocations()) {
 
@@ -1639,7 +1639,7 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
       }
 
       // We need to create a new RELATIVE relocation
-      LOG(DEBUG) << "Can't find relocation for '0x" << std::hex << array[i]  << "' (0x" << address_relocation << ")" << std::endl;
+      VLOG(VDEBUG) << "Can't find relocation for '0x" << std::hex << array[i]  << "' (0x" << address_relocation << ")" << std::endl;
       const bool is_rela = this->binary_->relocations_.back()->is_rela();
 
       switch (arch) {
@@ -1677,7 +1677,7 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
         relocation->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
         relocation->architecture_ = arch;
         this->binary_->relocations_.push_back(relocation);
-        LOG(DEBUG) << "Relocation added: " << *relocation << std::endl;
+        VLOG(VDEBUG) << "Relocation added: " << *relocation << std::endl;
       }
     }
   }
@@ -1685,5 +1685,66 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
   entry_array.value(new_segment.virtual_address());
 
 }
+
+template<typename ELF_T>
+void Builder::build_interpreter(void) {
+  VLOG(VDEBUG) << "[+] Building Interpreter" << std::endl;
+  const std::string& inter_str = this->binary_->interpreter();
+
+  // Look for the PT_INTERP segment
+  auto&& it_pt_interp = std::find_if(
+      std::begin(this->binary_->segments_),
+      std::end(this->binary_->segments_),
+      [] (const Segment* s) {
+        return s->type() == SEGMENT_TYPES::PT_INTERP;
+      });
+
+  // Look for the ".interp" section
+  auto&& it_section_interp = std::find_if(
+      std::begin(this->binary_->sections_),
+      std::end(this->binary_->sections_),
+      [] (const Section* s) {
+        return s->name() == ".interp";
+      });
+
+
+  if (it_pt_interp == std::end(this->binary_->segments_)) {
+    throw not_found("Unable to find the INTERP segment");
+  }
+
+  Segment* interp_segment = *it_pt_interp;
+  if (inter_str.size() > interp_segment->physical_size()) {
+    LOG(INFO) << "The 'interpreter' segment needs to be relocated";
+
+    // Create a LOAD segment for the new Interpreter:
+    Segment load_interpreter_segment;
+    load_interpreter_segment.type(SEGMENT_TYPES::PT_LOAD);
+    load_interpreter_segment.flags(ELF_SEGMENT_FLAGS::PF_R);
+    load_interpreter_segment.content({std::begin(inter_str), std::end(inter_str)});
+    Segment& new_interpreter_load = this->binary_->add(load_interpreter_segment);
+
+    interp_segment->virtual_address(new_interpreter_load.virtual_address());
+    interp_segment->virtual_size(new_interpreter_load.virtual_size());
+    interp_segment->physical_address(new_interpreter_load.physical_address());
+
+    interp_segment->file_offset(new_interpreter_load.file_offset());
+    interp_segment->physical_size(new_interpreter_load.physical_size());
+
+    if (it_section_interp != std::end(this->binary_->sections_)) {
+      Section* interp = *it_section_interp;
+      interp->virtual_address(new_interpreter_load.virtual_address());
+      interp->size(new_interpreter_load.physical_size());
+      interp->offset(new_interpreter_load.file_offset());
+      interp->content(new_interpreter_load.content());
+      interp->original_size_ = new_interpreter_load.physical_size();
+    }
+    return this->build<ELF_T>();
+  }
+  const char* inter_cstr = inter_str.c_str();
+  interp_segment->content({inter_cstr, inter_cstr + inter_str.size() + 1});
 }
-}
+
+
+
+} // namespace ELF
+} // namespace LIEF

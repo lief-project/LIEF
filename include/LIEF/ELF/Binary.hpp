@@ -200,7 +200,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     bool has_interpreter(void) const;
 
     //! @brief Return ELF interprer if any. (e.g. `/lib64/ld-linux-x86-64.so.2`)
-    std::string interpreter(void) const;
+    const std::string& interpreter(void) const;
+
+    //! @brief Change the interpreter
+    void interpreter(const std::string& interpreter);
 
     //! @brief Return both static and dynamic symbols
     it_symbols       symbols(void);
@@ -486,6 +489,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! object used to manage segments/sections
     DataHandler::Handler*         datahandler_;
+
+    std::string                   interpreter_;
 };
 
 }

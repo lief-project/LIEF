@@ -297,7 +297,7 @@ void Section::content(const std::vector<uint8_t>& content) {
   std::vector<uint8_t>& binary_content = this->datahandler_->content();
   this->datahandler_->reserve(node.offset(), content.size());
 
-  if (this->original_size() < content.size()) {
+  if (node.size() < content.size()) {
     LOG(WARNING) << "You insert data in section '"
                  << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
   }

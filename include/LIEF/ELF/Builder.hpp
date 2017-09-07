@@ -97,6 +97,7 @@ class DLL_PUBLIC Builder {
 
     void build_symbol_version(void);
 
+    template<typename ELF_T>
     void build_interpreter(void);
 
     bool empties_gnuhash_;
