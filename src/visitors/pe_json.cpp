@@ -28,7 +28,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   this->node_["name"]         = binary.name();
   this->node_["entrypoint"]   = binary.entrypoint();
-  this->node_["virtual_size"] = binary.get_virtual_size();
+  this->node_["virtual_size"] = binary.virtual_size();
 
   // DOS Header
   JsonVisitor dos_header_visitor;
@@ -65,7 +65,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Section
   std::vector<json> sections;
-  for (const Section& section : binary.get_sections()) {
+  for (const Section& section : binary.sections()) {
     JsonVisitor visitor;
     visitor(section);
     sections.emplace_back(visitor.get());
@@ -102,7 +102,7 @@ void JsonVisitor::visit(const Binary& binary) {
   // Debug
   if (binary.has_debug()) {
     JsonVisitor visitor;
-    visitor(binary.get_debug());
+    visitor(binary.debug());
     this->node_["debug"] = visitor.get();
   }
 
@@ -120,10 +120,10 @@ void JsonVisitor::visit(const Binary& binary) {
   // Resources
   if (binary.has_resources()) {
     JsonVisitor visitor;
-    binary.get_resources().accept(visitor);
+    binary.resources().accept(visitor);
 
     JsonVisitor manager_visitor;
-    binary.get_resources_manager().accept(manager_visitor);
+    binary.resources_manager().accept(manager_visitor);
 
     this->node_["resources_tree"]    = visitor.get();
     this->node_["resources_manager"] = manager_visitor.get();

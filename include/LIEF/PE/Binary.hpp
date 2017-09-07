@@ -77,8 +77,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Section& section_from_rva(uint64_t virtual_address) const;
 
     //! @brief Return binary's sections
-    it_sections       get_sections(void);
-    it_const_sections get_sections(void) const;
+    it_sections       sections(void);
+    it_const_sections sections(void) const;
 
     // =======
     // Headers
@@ -98,10 +98,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Compute the binary's virtual size.
     //! It should match with OptionalHeader::sizeof_image
-    uint64_t get_virtual_size(void) const;
+    uint64_t virtual_size(void) const;
 
     //! @brief Compute the size of all headers
-    uint32_t get_sizeof_headers(void) const;
+    uint32_t sizeof_headers(void) const;
 
     //! @brief Return a reference to the TLS object
     TLS&       tls(void);
@@ -169,8 +169,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const std::vector<Symbol>& symbols(void) const;
 
     //! @brief Return resources as a tree
-    ResourceNode&                  get_resources(void);
-    const ResourceNode&            get_resources(void) const;
+    ResourceNode&                  resources(void);
+    const ResourceNode&            resources(void) const;
 
     //! @brief Set a new resource tree
     void set_resources(const ResourceDirectory& resource);
@@ -179,8 +179,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     void set_resources(const ResourceData& resource);
 
     //! @brief Return the ResourcesManager (class to manage resources more easily than the tree one)
-    ResourcesManager               get_resources_manager(void);
-    const ResourcesManager         get_resources_manager(void) const;
+    ResourcesManager               resources_manager(void);
+    const ResourcesManager         resources_manager(void) const;
 
     // ==========================
     // Methods to manage sections
@@ -193,8 +193,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Section& get_section(const std::string& name) const;
 
     //! @brief Return the section associated with import table
-    const Section& get_import_section(void) const;
-    Section&       get_import_section(void);
+    const Section& import_section(void) const;
+    Section&       import_section(void);
 
     //! @brief Delete the section with the given name
     //!
@@ -232,8 +232,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const DataDirectory& data_directory(DATA_DIRECTORY index) const;
 
     //! @brief Return the Debug object
-    Debug&       get_debug(void);
-    const Debug& get_debug(void) const;
+    Debug&       debug(void);
+    const Debug& debug(void) const;
 
     // =======
     // Overlay

@@ -149,7 +149,7 @@ void Builder::build(void) {
 
   VLOG(VDEBUG) << "[+] Rebuilding sections" << std::endl;
 
-  for (const Section& section : this->binary_->get_sections()) {
+  for (const Section& section : this->binary_->sections()) {
     VLOG(VDEBUG) << "Building section " << section.name();
     *this << section;
   }
@@ -235,7 +235,7 @@ void Builder::build_relocation(void) {
 //
 void Builder::build_resources(void) {
   VLOG(VDEBUG) << "Building RSRC" << std::endl;
-  ResourceNode& node = this->binary_->get_resources();
+  ResourceNode& node = this->binary_->resources();
   //std::cout << ResourcesManager{this->binary_->resources_} << std::endl;
 
 

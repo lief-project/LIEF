@@ -74,12 +74,12 @@ void print_binary(const Binary* binary) {
 
 
   std::cout << "== Exported symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->get_exported_symbols()) {
+  for (const Symbol& symbol : binary->exported_symbols()) {
     std::cout << symbol << std::endl;
   }
 
   std::cout << "== Imported symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->get_imported_symbols()) {
+  for (const Symbol& symbol : binary->imported_symbols()) {
     std::cout << symbol << std::endl;
   }
 

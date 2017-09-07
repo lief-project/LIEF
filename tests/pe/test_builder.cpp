@@ -133,7 +133,7 @@ TEST_CASE("Test parse", "[pe][builder]")
 
   SECTION("Section") {
 
-    for (const Section& section_lhs : binary_original->get_sections()) {
+    for (const Section& section_lhs : binary_original->sections()) {
 
       INFO("Section " << section_lhs.name());
       const Section& section_rhs = binary_built->get_section(section_lhs.name());
@@ -166,7 +166,7 @@ TEST_CASE("Test parse", "[pe][builder]")
 
 
   SECTION("Debug") {
-    REQUIRE(binary_original->get_debug() == binary_built->get_debug());
+    REQUIRE(binary_original->debug() == binary_built->debug());
   }
 
 
@@ -174,10 +174,10 @@ TEST_CASE("Test parse", "[pe][builder]")
     if (not binary_original->has_resources()) {
       return;
     }
-    const ResourceNode& root_lhs = binary_original->get_resources();
-    const ResourceNode& root_rhs = binary_built->get_resources();
-    INFO("LHS: " << binary_original->get_resources_manager());
-    INFO("RHS: " << binary_built->get_resources_manager());
+    const ResourceNode& root_lhs = binary_original->resources();
+    const ResourceNode& root_rhs = binary_built->resources();
+    INFO("LHS: " << binary_original->resources_manager());
+    INFO("RHS: " << binary_built->resources_manager());
     //REQUIRE(root_lhs == root_rhs);
   }
 

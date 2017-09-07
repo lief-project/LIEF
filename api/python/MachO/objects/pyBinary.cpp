@@ -72,12 +72,12 @@ void init_MachO_Binary_class(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("imported_symbols",
-        static_cast<no_const_getter<it_imported_symbols>>(&Binary::get_imported_symbols),
+        static_cast<no_const_getter<it_imported_symbols>>(&Binary::imported_symbols),
         "Return binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are imported",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("exported_symbols",
-        static_cast<no_const_getter<it_exported_symbols>>(&Binary::get_exported_symbols),
+        static_cast<no_const_getter<it_exported_symbols>>(&Binary::exported_symbols),
         "Return binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are exported",
         py::return_value_policy::reference_internal)
 

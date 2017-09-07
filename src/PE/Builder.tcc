@@ -350,8 +350,8 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   // Build optional header
-  this->binary_->optional_header().sizeof_image(static_cast<uint32_t>(this->binary_->get_virtual_size()));
-  this->binary_->optional_header().sizeof_headers(static_cast<uint32_t>(this->binary_->get_sizeof_headers()));
+  this->binary_->optional_header().sizeof_image(static_cast<uint32_t>(this->binary_->virtual_size()));
+  this->binary_->optional_header().sizeof_headers(static_cast<uint32_t>(this->binary_->sizeof_headers()));
 
   pe_optional_header optional_header_raw;
   optional_header_raw.Magic                   = static_cast<uint16_t>(optional_header.magic());

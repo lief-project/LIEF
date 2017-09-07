@@ -46,13 +46,13 @@ class DLL_PUBLIC Binary : public Visitable {
     EXE_FORMATS format(void) const;
 
     //! @brief Return the abstract header of the binary
-    Header get_header(void) const;
+    Header header(void) const;
 
     //! @brief Return list of symbols whose elements **can** be modified
-    it_symbols get_symbols(void);
+    it_symbols symbols(void);
 
     //! @brief Return list of symbols whose elements **can't** be modified
-    it_const_symbols  get_symbols(void) const;
+    it_const_symbols  symbols(void) const;
 
     //! @brief Check if a Symbol with the given name exists
     bool has_symbol(const std::string& name) const;
@@ -63,8 +63,8 @@ class DLL_PUBLIC Binary : public Visitable {
     Symbol& get_symbol(const std::string& name);
 
     //! @brief Returns binary's sections
-    it_sections       get_sections(void);
-    it_const_sections get_sections(void) const;
+    it_sections       sections(void);
+    it_const_sections sections(void) const;
 
     //! @brief Returns binary's relocations
     it_relocations       relocations(void);
@@ -80,13 +80,13 @@ class DLL_PUBLIC Binary : public Visitable {
     uint64_t original_size(void) const;
 
     //! @brief Return functions's name exported by the binary
-    std::vector<std::string> get_exported_functions(void) const;
+    std::vector<std::string> exported_functions(void) const;
 
     //! @brief Return libraries which are imported by the binary
-    std::vector<std::string> get_imported_libraries(void) const;
+    std::vector<std::string> imported_libraries(void) const;
 
     //! @brief Return functions's name imported by the binary
-    std::vector<std::string> get_imported_functions(void) const;
+    std::vector<std::string> imported_functions(void) const;
 
     //! @brief Return the address of the given function name
     virtual uint64_t get_function_address(const std::string& func_name) const;

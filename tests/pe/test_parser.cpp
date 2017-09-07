@@ -220,7 +220,7 @@ TEST_CASE("Test parse", "[pe][parser]")
   // Sections
   // ========
   SECTION("Section") {
-    it_const_sections sections = binary->get_sections();
+    it_const_sections sections = binary->sections();
 
     REQUIRE(
       sections.size() ==

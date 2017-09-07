@@ -36,17 +36,17 @@ JsonVisitor& JsonVisitor::operator=(const JsonVisitor&) = default;
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
-  header_visitor(binary.get_header());
+  header_visitor(binary.header());
   std::vector<json> sections_json, symbols_json;
 
-  for (const Section& section : const_cast<Binary*>(&binary)->get_sections()) {
+  for (const Section& section : binary.sections()) {
     JsonVisitor section_visitor;
     section_visitor(section);
     sections_json.emplace_back(section_visitor.get());
   }
 
 
-  for (const Symbol& symbol : const_cast<Binary*>(&binary)->get_symbols()) {
+  for (const Symbol& symbol : binary.symbols()) {
     JsonVisitor visitor;
     visitor(symbol);
     symbols_json.emplace_back(visitor.get());
@@ -57,9 +57,9 @@ void JsonVisitor::visit(const Binary& binary) {
   this->node_["entrypoint"]         = binary.entrypoint();
   this->node_["format"]             = to_string(binary.format());
   this->node_["original_size"]      = binary.original_size();
-  this->node_["exported_functions"] = binary.get_exported_functions();
-  this->node_["imported_libraries"] = binary.get_imported_libraries();
-  this->node_["imported_functions"] = binary.get_imported_functions();
+  this->node_["exported_functions"] = binary.exported_functions();
+  this->node_["imported_libraries"] = binary.imported_libraries();
+  this->node_["imported_functions"] = binary.imported_functions();
   this->node_["header"]             = header_visitor.get();
   this->node_["sections"]           = sections_json;
   this->node_["symbols"]            = symbols_json;

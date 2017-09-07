@@ -77,7 +77,7 @@ TEST_CASE("Test operator== and operator!=", "[pe][internal]") {
   }
 
   SECTION("Sections") {
-    for (const Section& section_lhs : binary_lhs->get_sections()) {
+    for (const Section& section_lhs : binary_lhs->sections()) {
       Section section_rhs = section_lhs;
       REQUIRE(section_lhs == section_rhs);
 

@@ -78,15 +78,15 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     static bool is_exported(const Symbol& symbol);
 
     //! @brief Return binary's exported symbols
-    it_exported_symbols       get_exported_symbols(void);
-    it_const_exported_symbols get_exported_symbols(void) const;
+    it_exported_symbols       exported_symbols(void);
+    it_const_exported_symbols exported_symbols(void) const;
 
     //! @brief Check if the given symbol is an imported one
     static bool is_imported(const Symbol& symbol);
 
     //! @brief Return binary's imported symbols
-    it_imported_symbols       get_imported_symbols(void);
-    it_const_imported_symbols get_imported_symbols(void) const;
+    it_imported_symbols       imported_symbols(void);
+    it_const_imported_symbols imported_symbols(void) const;
 
     //! @brief Return binary imported libraries (MachO::DylibCommand)
     it_libraries       libraries(void);
@@ -121,7 +121,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     uint64_t imagebase(void) const;
 
     //! @brief Return binary's loader (e.g. ``/usr/lib/dyld``)
-    const std::string& get_loader(void) const;
+    const std::string& loader(void) const;
 
     //! @brief Check if a section with the given name exists
     bool has_section(const std::string& name) const;
@@ -251,10 +251,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     bool has_command(void) const;
 
     template<class T>
-    T& get_command(void);
+    T& command(void);
 
     template<class T>
-    const T& get_command(void) const;
+    const T& command(void) const;
 
     template<class T>
     size_t count_commands(void) const;

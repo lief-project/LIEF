@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "== Sections ==" << std::endl;
-  for (const Section& section : binary->get_sections()) {
+  for (const Section& section : binary->sections()) {
     std::cout << section << std::endl;
   }
 
@@ -87,13 +87,13 @@ int main(int argc, char **argv) {
 
   if (binary->has_debug()) {
     std::cout << "== Debug ==" << std::endl;
-    std::cout << binary->get_debug() << std::endl;
+    std::cout << binary->debug() << std::endl;
   }
 
 
   if (binary->has_resources()) {
     std::cout << "== Resources ==" << std::endl;
-    std::cout << binary->get_resources_manager() << std::endl;
+    std::cout << binary->resources_manager() << std::endl;
   }
 
 

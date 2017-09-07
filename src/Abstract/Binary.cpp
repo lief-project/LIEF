@@ -46,16 +46,16 @@ EXE_FORMATS Binary::format(void) const {
   return EXE_FORMATS::FORMAT_UNKNOWN;
 }
 
-Header Binary::get_header(void) const {
+Header Binary::header(void) const {
   return this->get_abstract_header();
 }
 
-it_symbols Binary::get_symbols(void) {
-  return it_symbols{this->get_abstract_symbols()};
+it_symbols Binary::symbols(void) {
+  return this->get_abstract_symbols();
 }
 
-it_const_symbols Binary::get_symbols(void) const {
-  return it_const_symbols{const_cast<Binary*>(this)->get_abstract_symbols()};
+it_const_symbols Binary::symbols(void) const {
+  return const_cast<Binary*>(this)->get_abstract_symbols();
 }
 
 
@@ -92,13 +92,13 @@ Symbol& Binary::get_symbol(const std::string& name) {
   return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
 }
 
-it_sections Binary::get_sections(void) {
-  return it_sections{this->get_abstract_sections()};
+it_sections Binary::sections(void) {
+  return this->get_abstract_sections();
 }
 
 
-it_const_sections Binary::get_sections(void) const {
-  return it_const_sections{const_cast<Binary*>(this)->get_abstract_sections()};
+it_const_sections Binary::sections(void) const {
+  return const_cast<Binary*>(this)->get_abstract_sections();
 }
 
 
@@ -111,16 +111,16 @@ it_const_relocations Binary::relocations(void) const {
 }
 
 
-std::vector<std::string> Binary::get_exported_functions(void) const {
+std::vector<std::string> Binary::exported_functions(void) const {
   return this->get_abstract_exported_functions();
 }
 
-std::vector<std::string> Binary::get_imported_functions(void) const {
+std::vector<std::string> Binary::imported_functions(void) const {
   return this->get_abstract_imported_functions();
 }
 
 
-std::vector<std::string> Binary::get_imported_libraries(void) const {
+std::vector<std::string> Binary::imported_libraries(void) const {
   return this->get_abstract_imported_libraries();
 }
 
@@ -142,13 +142,13 @@ std::vector<uint64_t> Binary::xref(uint64_t address) const {
 }
 
 void Binary::accept(Visitor& visitor) const {
-  visitor(this->get_header());
-  for (const Section& section : const_cast<Binary*>(this)->get_sections()) {
+  visitor(this->header());
+  for (const Section& section : this->sections()) {
     visitor(section);
   }
 
 
-  for (const Symbol& symbol : const_cast<Binary*>(this)->get_symbols()) {
+  for (const Symbol& symbol : this->symbols()) {
     visitor(symbol);
   }
 }

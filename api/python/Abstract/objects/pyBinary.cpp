@@ -54,7 +54,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Binary's name")
 
     .def_property_readonly("header",
-        &Binary::get_header,
+        &Binary::header,
         "Binary's header")
 
     .def_property_readonly("entrypoint",
@@ -62,7 +62,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Binary's entrypoint")
 
     .def_property_readonly("sections",
-        static_cast<it_t<it_sections>>(&Binary::get_sections),
+        static_cast<it_t<it_sections>>(&Binary::sections),
         "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Section) "",
         py::return_value_policy::reference_internal)
 
@@ -73,7 +73,7 @@ void init_LIEF_Binary_class(py::module& m) {
 
     .def_property_readonly("exported_functions",
         [] (const Binary& binary) {
-          const std::vector<std::string>& exported_functions = binary.get_exported_functions();
+          const std::vector<std::string>& exported_functions = binary.exported_functions();
           std::vector<py::object> exported_functions_encoded;
           exported_functions_encoded.reserve(exported_functions.size());
 
@@ -89,7 +89,7 @@ void init_LIEF_Binary_class(py::module& m) {
 
     .def_property_readonly("imported_functions",
         [] (const Binary& binary) {
-          const std::vector<std::string>& imported_functions = binary.get_imported_functions();
+          const std::vector<std::string>& imported_functions = binary.imported_functions();
           std::vector<py::object> imported_functions_encoded;
           imported_functions_encoded.reserve(imported_functions.size());
 
@@ -104,7 +104,7 @@ void init_LIEF_Binary_class(py::module& m) {
 
     .def_property_readonly("libraries",
         [] (const Binary& binary) {
-          const std::vector<std::string>& imported_libraries = binary.get_imported_libraries();
+          const std::vector<std::string>& imported_libraries = binary.imported_libraries();
           std::vector<py::object> imported_libraries_encoded;
           imported_libraries_encoded.reserve(imported_libraries.size());
 
@@ -118,7 +118,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Return binary's imported libraries (name)")
 
     .def_property_readonly("symbols",
-        static_cast<it_t<it_symbols>>(&Binary::get_symbols),
+        static_cast<it_t<it_symbols>>(&Binary::symbols),
         "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Symbol) "",
         py::return_value_policy::reference_internal)
 

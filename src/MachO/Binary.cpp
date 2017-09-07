@@ -144,7 +144,7 @@ LIEF::symbols_t Binary::get_abstract_symbols(void) {
 
 std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
   std::vector<std::string> result;
-  it_const_exported_symbols syms = this->get_exported_symbols();
+  it_const_exported_symbols syms = this->exported_symbols();
   std::transform(
       std::begin(syms),
       std::end(syms),
@@ -157,7 +157,7 @@ std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
 
 std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
   std::vector<std::string> result;
-  it_const_imported_symbols syms = this->get_imported_symbols();
+  it_const_imported_symbols syms = this->imported_symbols();
   std::transform(
       std::begin(syms),
       std::end(syms),
@@ -330,14 +330,14 @@ bool Binary::is_exported(const Symbol& symbol) {
   return not symbol.is_external() and symbol.has_export_info();
 }
 
-it_exported_symbols Binary::get_exported_symbols(void) {
+it_exported_symbols Binary::exported_symbols(void) {
   return filter_iterator<symbols_t>{std::ref(this->symbols_),
     [] (const Symbol* symbol) { return is_exported(*symbol); }
   };
 }
 
 
-it_const_exported_symbols Binary::get_exported_symbols(void) const {
+it_const_exported_symbols Binary::exported_symbols(void) const {
   return const_filter_iterator<symbols_t>{std::cref(this->symbols_),
     [] (const Symbol* symbol) { return is_exported(*symbol); }
   };
@@ -348,14 +348,14 @@ bool Binary::is_imported(const Symbol& symbol) {
   return symbol.is_external() and not symbol.has_export_info();
 }
 
-it_imported_symbols Binary::get_imported_symbols(void) {
+it_imported_symbols Binary::imported_symbols(void) {
   return filter_iterator<symbols_t>{std::ref(this->symbols_),
     [] (const Symbol* symbol) { return is_imported(*symbol); }
   };
 }
 
 
-it_const_imported_symbols Binary::get_imported_symbols(void) const {
+it_const_imported_symbols Binary::imported_symbols(void) const {
   return const_filter_iterator<symbols_t>{std::cref(this->symbols_),
     [] (const Symbol* symbol) { return is_imported(*symbol); }
   };
@@ -576,7 +576,7 @@ uint64_t Binary::imagebase(void) const {
 }
 
 
-const std::string& Binary::get_loader(void) const {
+const std::string& Binary::loader(void) const {
   return this->dylinker().name();
 }
 
@@ -609,11 +609,11 @@ bool Binary::has_uuid(void) const {
 }
 
 UUIDCommand& Binary::uuid(void) {
-  return this->get_command<UUIDCommand>();
+  return this->command<UUIDCommand>();
 }
 
 const UUIDCommand& Binary::uuid(void) const {
-  return this->get_command<UUIDCommand>();
+  return this->command<UUIDCommand>();
 }
 
 // MainCommand
@@ -623,11 +623,11 @@ bool Binary::has_main_command(void) const {
 }
 
 MainCommand& Binary::main_command(void) {
-  return this->get_command<MainCommand>();
+  return this->command<MainCommand>();
 }
 
 const MainCommand& Binary::main_command(void) const {
-  return this->get_command<MainCommand>();
+  return this->command<MainCommand>();
 }
 
 // DylinkerCommand
@@ -637,11 +637,11 @@ bool Binary::has_dylinker(void) const {
 }
 
 DylinkerCommand& Binary::dylinker(void) {
-  return this->get_command<DylinkerCommand>();
+  return this->command<DylinkerCommand>();
 }
 
 const DylinkerCommand& Binary::dylinker(void) const {
-  return this->get_command<DylinkerCommand>();
+  return this->command<DylinkerCommand>();
 }
 
 // DyldInfo
@@ -651,11 +651,11 @@ bool Binary::has_dyld_info(void) const {
 }
 
 DyldInfo& Binary::dyld_info(void) {
-  return this->get_command<DyldInfo>();
+  return this->command<DyldInfo>();
 }
 
 const DyldInfo& Binary::dyld_info(void) const {
-  return this->get_command<DyldInfo>();
+  return this->command<DyldInfo>();
 }
 
 // Function Starts
@@ -665,11 +665,11 @@ bool Binary::has_function_starts(void) const {
 }
 
 FunctionStarts& Binary::function_starts(void) {
-  return this->get_command<FunctionStarts>();
+  return this->command<FunctionStarts>();
 }
 
 const FunctionStarts& Binary::function_starts(void) const {
-  return this->get_command<FunctionStarts>();
+  return this->command<FunctionStarts>();
 }
 
 // Source Version
@@ -679,11 +679,11 @@ bool Binary::has_source_version(void) const {
 }
 
 SourceVersion& Binary::source_version(void) {
-  return this->get_command<SourceVersion>();
+  return this->command<SourceVersion>();
 }
 
 const SourceVersion& Binary::source_version(void) const {
-  return this->get_command<SourceVersion>();
+  return this->command<SourceVersion>();
 }
 
 // Version Min
@@ -693,11 +693,11 @@ bool Binary::has_version_min(void) const {
 }
 
 VersionMin& Binary::version_min(void) {
-  return this->get_command<VersionMin>();
+  return this->command<VersionMin>();
 }
 
 const VersionMin& Binary::version_min(void) const {
-  return this->get_command<VersionMin>();
+  return this->command<VersionMin>();
 }
 
 

@@ -164,8 +164,8 @@ Binary::Binary(const std::string& name, PE_TYPE type) :
   this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR});
   this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::CLR_RUNTIME_HEADER});
 
-  this->optional_header().sizeof_headers(this->get_sizeof_headers());
-  this->optional_header().sizeof_image(this->get_virtual_size());
+  this->optional_header().sizeof_headers(this->sizeof_headers());
+  this->optional_header().sizeof_image(this->virtual_size());
 }
 
 void Binary::write(const std::string& filename) {
@@ -358,13 +358,13 @@ LIEF::symbols_t Binary::get_abstract_symbols(void) {
 // Sections
 // ========
 
-it_sections Binary::get_sections(void) {
-  return it_sections{this->sections_};
+it_sections Binary::sections(void) {
+  return this->sections_;
 }
 
 
-it_const_sections Binary::get_sections(void) const {
-  return it_const_sections{this->sections_};
+it_const_sections Binary::sections(void) const {
+  return this->sections_;
 }
 
 LIEF::sections_t Binary::get_abstract_sections(void) {
@@ -392,7 +392,7 @@ const Section& Binary::get_section(const std::string& name) const {
 }
 
 
-const Section& Binary::get_import_section(void) const {
+const Section& Binary::import_section(void) const {
   if (not this->has_imports()) {
     throw not_found("Current binary doesn't have Import directory");
   }
@@ -401,8 +401,8 @@ const Section& Binary::get_import_section(void) const {
 }
 
 
-Section& Binary::get_import_section(void) {
-  return const_cast<Section&>(static_cast<const Binary*>(this)->get_import_section());
+Section& Binary::import_section(void) {
+  return const_cast<Section&>(static_cast<const Binary*>(this)->import_section());
 }
 
 // Headers
@@ -445,7 +445,7 @@ OptionalHeader& Binary::optional_header(void) {
 
 
 
-uint64_t Binary::get_virtual_size(void) const {
+uint64_t Binary::virtual_size(void) const {
   uint64_t size = 0;
   size += this->dos_header().addressof_new_exeheader();
   size += sizeof(pe_header);
@@ -462,7 +462,7 @@ uint64_t Binary::get_virtual_size(void) const {
 }
 
 
-uint32_t Binary::get_sizeof_headers(void) const {
+uint32_t Binary::sizeof_headers(void) const {
   uint32_t size = 0;
   size += this->dos_header().addressof_new_exeheader();
   size += sizeof(pe_header);
@@ -484,8 +484,8 @@ void Binary::delete_section(const std::string& name) {
 
   this->header().numberof_sections(this->header().numberof_sections() - 1);
 
-  this->optional_header().sizeof_headers(this->get_sizeof_headers());
-  this->optional_header().sizeof_image(static_cast<uint32_t>(this->get_virtual_size()));
+  this->optional_header().sizeof_headers(this->sizeof_headers());
+  this->optional_header().sizeof_image(static_cast<uint32_t>(this->virtual_size()));
 
   this->sections_.erase(
       std::remove_if(
@@ -525,7 +525,7 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
   // Compute new section offset
   uint64_t new_section_offset = align(std::accumulate(
       std::begin(this->sections_),
-      std::end(this->sections_), this->get_sizeof_headers(),
+      std::end(this->sections_), this->sizeof_headers(),
       [] (uint64_t offset, const Section* s) {
         return std::max<uint64_t>(s->pointerto_raw_data() + s->sizeof_raw_data(), offset);
       }), this->optional_header().file_alignment());
@@ -621,8 +621,8 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
   // Update headers
   this->header().numberof_sections(static_cast<uint16_t>(this->sections_.size()));
 
-  this->optional_header().sizeof_image(this->get_virtual_size());
-  this->optional_header().sizeof_headers(this->get_sizeof_headers());
+  this->optional_header().sizeof_image(this->virtual_size());
+  this->optional_header().sizeof_headers(this->sizeof_headers());
 
   return *(this->sections_.back());
 }
@@ -866,11 +866,11 @@ void Binary::set_resources(const ResourceData& resource) {
   this->resources_ = new ResourceData{resource};
 }
 
-ResourceNode& Binary::get_resources(void) {
-  return const_cast<ResourceNode&>(static_cast<const Binary*>(this)->get_resources());
+ResourceNode& Binary::resources(void) {
+  return const_cast<ResourceNode&>(static_cast<const Binary*>(this)->resources());
 }
 
-const ResourceNode& Binary::get_resources(void) const {
+const ResourceNode& Binary::resources(void) const {
   if (this->resources_ != nullptr) {
     return *this->resources_;
   } else {
@@ -893,12 +893,12 @@ it_const_data_directories Binary::data_directories(void) const {
 }
 
 
-Debug& Binary::get_debug(void) {
-  return const_cast<Debug&>(static_cast<const Binary*>(this)->get_debug());
+Debug& Binary::debug(void) {
+  return const_cast<Debug&>(static_cast<const Binary*>(this)->debug());
 }
 
 
-const Debug& Binary::get_debug(void) const {
+const Debug& Binary::debug(void) const {
   return this->debug_;
 }
 
@@ -1123,14 +1123,14 @@ void Binary::rich_header(const RichHeader& rich_header) {
 // Resource manager
 // ===============
 
-ResourcesManager Binary::get_resources_manager(void) {
+ResourcesManager Binary::resources_manager(void) {
   if (this->resources_ == nullptr or not this->has_resources()) {
     throw not_found("There is no resources in the binary");
   }
   return ResourcesManager{this->resources_};
 }
 
-const ResourcesManager Binary::get_resources_manager(void) const {
+const ResourcesManager Binary::resources_manager(void) const {
   if (this->resources_ == nullptr or not this->has_resources()) {
     throw not_found("There is no resources in the binary");
   }
@@ -1147,7 +1147,7 @@ void Binary::accept(Visitor& visitor) const {
     visitor(data_directory);
   }
 
-  for (const Section& section : this->get_sections()) {
+  for (const Section& section : this->sections()) {
     visitor(section);
   }
 
@@ -1164,7 +1164,7 @@ void Binary::accept(Visitor& visitor) const {
   }
 
   if (this->has_debug()) {
-    visitor(this->get_debug());
+    visitor(this->debug());
   }
 
 
@@ -1241,7 +1241,7 @@ std::ostream& Binary::print(std::ostream& os) const {
   os << "Sections" << std::endl;
   os << "========" << std::endl;
 
-  for (const Section& section : this->get_sections()) {
+  for (const Section& section : this->sections()) {
     os << section << std::endl;;
   }
   os << std::endl;
@@ -1276,7 +1276,7 @@ std::ostream& Binary::print(std::ostream& os) const {
   if (this->has_debug()) {
     os << "Debug" << std::endl;
     os << "=====" << std::endl;
-    os << this->get_debug() << std::endl;
+    os << this->debug() << std::endl;
     os << std::endl;
   }
 
@@ -1302,7 +1302,7 @@ std::ostream& Binary::print(std::ostream& os) const {
   if (this->has_resources()) {
     os << "Resources" << std::endl;
     os << "=========" << std::endl;
-    os << this->get_resources_manager() << std::endl;
+    os << this->resources_manager() << std::endl;
     os << std::endl;
   }
 

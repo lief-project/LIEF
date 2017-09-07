@@ -29,30 +29,30 @@ int main(int argc, char **argv) {
   std::unique_ptr<const LIEF::Binary> binary{LIEF::Parser::parse(argv[1])};
 
   std::cout << "== Header ==" << std::endl;
-  std::cout << binary->get_header() << std::endl;
+  std::cout << binary->header() << std::endl;
 
   std::cout << "== Sections ==" << std::endl;
-  for (const LIEF::Section& s : binary->get_sections()) {
+  for (const LIEF::Section& s : binary->sections()) {
     std::cout << s << std::endl;
   }
 
   std::cout << "== Symbols ==" << std::endl;
-  for (const LIEF::Symbol& s : binary->get_symbols()) {
+  for (const LIEF::Symbol& s : binary->symbols()) {
     std::cout << s << std::endl;
   }
 
   std::cout << "== Exported functions ==" << std::endl;
-  for(const std::string& name : binary->get_exported_functions()) {
+  for(const std::string& name : binary->exported_functions()) {
     std::cout << name << std::endl;
   }
 
   std::cout << "== Imported functions ==" << std::endl;
-  for(const std::string& name : binary->get_imported_functions()) {
+  for(const std::string& name : binary->imported_functions()) {
     std::cout << name << std::endl;
   }
 
   std::cout << "== Imported Libraries ==" << std::endl;
-  for(const std::string& name : binary->get_imported_libraries()) {
+  for(const std::string& name : binary->imported_libraries()) {
     std::cout << name << std::endl;
   }
 

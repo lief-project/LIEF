@@ -19,7 +19,7 @@ namespace LIEF {
 namespace PE {
 void init_c_sections(Pe_Binary_t* c_binary, Binary* binary) {
 
-  it_sections sections = binary->get_sections();
+  it_sections sections = binary->sections();
 
   c_binary->sections = static_cast<Pe_Section_t**>(
       malloc((sections.size() + 1) * sizeof(Pe_Section_t**)));
