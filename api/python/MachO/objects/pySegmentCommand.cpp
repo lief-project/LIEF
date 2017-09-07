@@ -103,6 +103,12 @@ void init_MachO_SegmentCommand_class(py::module& m) {
         )
 
 
+    .def_property("flags",
+        static_cast<getter_t<uint32_t>>(&SegmentCommand::flags),
+        static_cast<setter_t<uint32_t>>(&SegmentCommand::flags),
+        "Segment's flags"
+        )
+
     .def("__eq__", &SegmentCommand::operator==)
     .def("__ne__", &SegmentCommand::operator!=)
     .def("__hash__",
