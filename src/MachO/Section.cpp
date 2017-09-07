@@ -69,7 +69,7 @@ Section::Section(const section_32 *sectionCmd) :
   segment_{nullptr},
   relocations_{}
 {
-  this->name_   = sectionCmd->sectname;
+  this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
   this->size_   = sectionCmd->size;
   this->offset_ = sectionCmd->offset;
 }
@@ -88,7 +88,7 @@ Section::Section(const section_64 *sectionCmd) :
   segment_{nullptr},
   relocations_{}
 {
-  this->name_   = sectionCmd->sectname;
+  this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
   this->size_   = sectionCmd->size;
   this->offset_ = sectionCmd->offset;
 }

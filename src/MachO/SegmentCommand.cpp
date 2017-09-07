@@ -32,7 +32,7 @@ SegmentCommand::~SegmentCommand(void) {
 }
 
 SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
-  name_{segmentCmd->segname},
+  name_{segmentCmd->segname, sizeof(segmentCmd->segname)},
   virtualAddress_{segmentCmd->vmaddr},
   virtualSize_{segmentCmd->vmsize},
   fileOffset_{segmentCmd->fileoff},
@@ -48,7 +48,7 @@ SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
 }
 
 SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
-  name_{segmentCmd->segname},
+  name_{segmentCmd->segname, sizeof(segmentCmd->segname)},
   virtualAddress_{segmentCmd->vmaddr},
   virtualSize_{segmentCmd->vmsize},
   fileOffset_{segmentCmd->fileoff},
