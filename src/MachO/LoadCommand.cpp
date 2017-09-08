@@ -28,6 +28,13 @@ LoadCommand& LoadCommand::operator=(const LoadCommand&) = default;
 LoadCommand::LoadCommand(const LoadCommand&) = default;
 LoadCommand::~LoadCommand(void) = default;
 
+LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size) :
+  originalData_{},
+  command_{type},
+  size_{size},
+  commandOffset_{0}
+{}
+
 LoadCommand::LoadCommand(const load_command* command) :
   command_{static_cast<LOAD_COMMAND_TYPES>(command->cmd)},
   size_{command->cmdsize},

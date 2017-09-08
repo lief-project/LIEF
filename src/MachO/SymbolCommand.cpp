@@ -25,16 +25,13 @@ SymbolCommand& SymbolCommand::operator=(const SymbolCommand&) = default;
 SymbolCommand::SymbolCommand(const SymbolCommand&) = default;
 SymbolCommand::~SymbolCommand(void) = default;
 
-SymbolCommand::SymbolCommand(const symtab_command *command) :
-  symbolOffset_{command->symoff},
-  numberOfSymbols_{command->nsyms},
-  stringsOffset_{command->stroff},
-  stringsSize_{command->strsize}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(command->cmd);
-  this->size_    = command->cmdsize;
-}
-
+SymbolCommand::SymbolCommand(const symtab_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
+  symbolOffset_{cmd->symoff},
+  numberOfSymbols_{cmd->nsyms},
+  stringsOffset_{cmd->stroff},
+  stringsSize_{cmd->strsize}
+{}
 
 uint32_t SymbolCommand::symbol_offset(void) const {
   return this->symbolOffset_;

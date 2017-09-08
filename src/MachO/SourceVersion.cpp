@@ -29,6 +29,7 @@ SourceVersion::SourceVersion(const SourceVersion&) = default;
 SourceVersion::~SourceVersion(void) = default;
 
 SourceVersion::SourceVersion(const source_version_command *version_cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
   version_{{
     static_cast<uint32_t>((version_cmd->version >> 40) & 0xffffff),
     static_cast<uint32_t>((version_cmd->version >> 30) & 0x3ff),
@@ -36,10 +37,7 @@ SourceVersion::SourceVersion(const source_version_command *version_cmd) :
     static_cast<uint32_t>((version_cmd->version >> 10) & 0x3ff),
     static_cast<uint32_t>((version_cmd->version >>  0) & 0x3ff)
   }}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd);
-  this->size_    = version_cmd->cmdsize;
-}
+{}
 
 
  const SourceVersion::version_t& SourceVersion::version(void) const {

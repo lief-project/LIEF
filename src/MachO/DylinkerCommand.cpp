@@ -27,11 +27,9 @@ DylinkerCommand& DylinkerCommand::operator=(const DylinkerCommand&) = default;
 DylinkerCommand::DylinkerCommand(const DylinkerCommand&) = default;
 DylinkerCommand::~DylinkerCommand(void) = default;
 
-DylinkerCommand::DylinkerCommand(const dylinker_command *cmd)
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(cmd->cmd);
-  this->size_    = cmd->cmdsize;
-}
+DylinkerCommand::DylinkerCommand(const dylinker_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize}
+{}
 
 const std::string& DylinkerCommand::name(void) const {
   return this->name_;

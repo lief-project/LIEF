@@ -29,12 +29,10 @@ FunctionStarts::FunctionStarts(const FunctionStarts&) = default;
 FunctionStarts::~FunctionStarts(void) = default;
 
 FunctionStarts::FunctionStarts(const linkedit_data_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   data_offset_{cmd->dataoff},
   data_size_{cmd->datasize}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(cmd->cmd);
-  this->size_    = cmd->cmdsize;
-}
+{}
 
 uint32_t FunctionStarts::data_offset(void) const {
   return this->data_offset_;

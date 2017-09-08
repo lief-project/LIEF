@@ -32,6 +32,7 @@ SegmentCommand::~SegmentCommand(void) {
 }
 
 SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
+  LoadCommand{LOAD_COMMAND_TYPES::LC_SEGMENT, segmentCmd->cmdsize},
   name_{segmentCmd->segname, sizeof(segmentCmd->segname)},
   virtualAddress_{segmentCmd->vmaddr},
   virtualSize_{segmentCmd->vmsize},
@@ -43,13 +44,11 @@ SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
   flags_{segmentCmd->flags},
   relocations_{}
 {
-  this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT;
-  this->size_    = segmentCmd->cmdsize;
-
   this->name_ = std::string{this->name_.c_str()};
 }
 
 SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
+  LoadCommand{LOAD_COMMAND_TYPES::LC_SEGMENT_64, segmentCmd->cmdsize},
   name_{segmentCmd->segname, sizeof(segmentCmd->segname)},
   virtualAddress_{segmentCmd->vmaddr},
   virtualSize_{segmentCmd->vmsize},
@@ -61,9 +60,6 @@ SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
   flags_{segmentCmd->flags},
   relocations_{}
 {
-  this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT_64;
-  this->size_    = segmentCmd->cmdsize;
-
   this->name_ = std::string{this->name_.c_str()};
 }
 

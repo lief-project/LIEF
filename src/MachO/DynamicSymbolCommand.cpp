@@ -23,6 +23,7 @@ namespace LIEF {
 namespace MachO {
 
 DynamicSymbolCommand::DynamicSymbolCommand(void) :
+  LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_DYSYMTAB, 0},
   idxLocalSymbol_{0},
   nbLocalSymbol_{0},
   idxExternalDefineSymbol_{0},
@@ -41,11 +42,10 @@ DynamicSymbolCommand::DynamicSymbolCommand(void) :
   nbExternalRelocation_{0},
   localRelocationOffset_{0},
   nbLocRelocation_{0}
-{
-  this->command_ = LOAD_COMMAND_TYPES::LC_DYSYMTAB;
-}
+{}
 
 DynamicSymbolCommand::DynamicSymbolCommand(const dysymtab_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   idxLocalSymbol_{cmd->ilocalsym},
   nbLocalSymbol_{cmd->nlocalsym},
   idxExternalDefineSymbol_{cmd->iextdefsym},
@@ -64,10 +64,7 @@ DynamicSymbolCommand::DynamicSymbolCommand(const dysymtab_command *cmd) :
   nbExternalRelocation_{cmd->nextrel},
   localRelocationOffset_{cmd->locreloff},
   nbLocRelocation_{cmd->nlocrel}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(cmd->cmd);
-  this->size_    = cmd->cmdsize;
-}
+{}
 
 
 

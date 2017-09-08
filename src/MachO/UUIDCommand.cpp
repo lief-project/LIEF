@@ -28,9 +28,9 @@ UUIDCommand& UUIDCommand::operator=(const UUIDCommand&) = default;
 UUIDCommand::UUIDCommand(const UUIDCommand&) = default;
 UUIDCommand::~UUIDCommand(void) = default;
 
-UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) {
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(uuidCmd->cmd);
-  this->size_    = uuidCmd->cmdsize;
+UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(uuidCmd->cmd), uuidCmd->cmdsize}
+{
   std::copy(std::begin(uuidCmd->uuid), std::end(uuidCmd->uuid), std::begin(this->uuid_));
 }
 

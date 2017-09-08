@@ -29,6 +29,7 @@ VersionMin::VersionMin(const VersionMin&) = default;
 VersionMin::~VersionMin(void) = default;
 
 VersionMin::VersionMin(const version_min_command *version_cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
   version_{{
     static_cast<uint32_t>((version_cmd->version >> 16) & 0xFFFF),
     static_cast<uint32_t>((version_cmd->version >>  8) & 0xFF),
@@ -40,8 +41,6 @@ VersionMin::VersionMin(const version_min_command *version_cmd) :
     static_cast<uint32_t>((version_cmd->sdk >>  0) & 0xFF)
   }}
 {
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd);
-  this->size_    = version_cmd->cmdsize;
 }
 
 

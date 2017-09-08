@@ -27,17 +27,16 @@ MainCommand::MainCommand(const MainCommand&) = default;
 MainCommand::~MainCommand(void) = default;
 
 MainCommand::MainCommand(void) :
+  LoadCommand::LoadCommand{},
   entrypoint_{0},
   stackSize_{0}
 {}
 
 MainCommand::MainCommand(const entry_point_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   entrypoint_{cmd->entryoff},
   stackSize_{cmd->stacksize}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(cmd->cmd);
-  this->size_    = cmd->cmdsize;
-}
+{}
 
 
 uint64_t MainCommand::entrypoint(void) const {

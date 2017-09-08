@@ -41,6 +41,7 @@ DyldInfo::~DyldInfo(void) {
 }
 
 DyldInfo::DyldInfo(const dyld_info_command *dyld_info_cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd->cmd), dyld_info_cmd->cmdsize},
   rebase_{dyld_info_cmd->rebase_off, dyld_info_cmd->rebase_size},
   rebase_opcodes_{},
   bind_{dyld_info_cmd->bind_off, dyld_info_cmd->bind_size},
@@ -53,10 +54,7 @@ DyldInfo::DyldInfo(const dyld_info_command *dyld_info_cmd) :
   export_trie_{},
   export_info_{},
   binding_info_{}
-{
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd->cmd);
-  this->size_    = dyld_info_cmd->cmdsize;
-}
+{}
 
 
 // Rebase

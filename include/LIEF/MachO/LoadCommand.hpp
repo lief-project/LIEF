@@ -32,6 +32,7 @@ class DLL_PUBLIC LoadCommand : public Visitable {
   public:
     LoadCommand(void);
     LoadCommand(const load_command* command);
+    LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
 
     LoadCommand& operator=(const LoadCommand& copy);
     LoadCommand(const LoadCommand& copy);

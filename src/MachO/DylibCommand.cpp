@@ -28,12 +28,11 @@ DylibCommand::DylibCommand(const DylibCommand&) = default;
 DylibCommand::~DylibCommand(void) = default;
 
 DylibCommand::DylibCommand(const dylib_command *cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   timestamp_{cmd->dylib.timestamp},
   currentVersion_{cmd->dylib.current_version},
   compatibilityVersion_{cmd->dylib.compatibility_version}
 {
-  this->command_ = static_cast<LOAD_COMMAND_TYPES>(cmd->cmd);
-  this->size_    = cmd->cmdsize;
 }
 
 const std::string& DylibCommand::name(void) const {
