@@ -95,7 +95,6 @@ class DLL_PUBLIC Section : public LIEF::Section {
 
   private:
     std::string segment_name_;
-    uint64_t address_;
     uint64_t original_size_;
     uint32_t align_;
     uint32_t relocations_offset_;

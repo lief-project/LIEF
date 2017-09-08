@@ -37,8 +37,8 @@ Section::~Section(void) {
 }
 
 Section::Section(void) :
+  LIEF::Section{},
   segment_name_{""},
-  address_{0},
   original_size_{0},
   align_{0},
   relocations_offset_{0},
@@ -57,7 +57,6 @@ Section::Section(void) :
 
 Section::Section(const section_32 *sectionCmd) :
   segment_name_{sectionCmd->segname, sizeof(sectionCmd->sectname)},
-  address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
   relocations_offset_{sectionCmd->reloff},
@@ -69,9 +68,10 @@ Section::Section(const section_32 *sectionCmd) :
   segment_{nullptr},
   relocations_{}
 {
-  this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
-  this->size_   = sectionCmd->size;
-  this->offset_ = sectionCmd->offset;
+  this->name_            = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
+  this->size_            = sectionCmd->size;
+  this->offset_          = sectionCmd->offset;
+  this->virtual_address_ = sectionCmd->addr;
 
   this->name_         = std::string{this->name_.c_str()};
   this->segment_name_ = std::string{this->segment_name_.c_str()};
@@ -79,7 +79,6 @@ Section::Section(const section_32 *sectionCmd) :
 
 Section::Section(const section_64 *sectionCmd) :
   segment_name_{sectionCmd->segname, sizeof(sectionCmd->segname)},
-  address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
   relocations_offset_{sectionCmd->reloff},
@@ -91,9 +90,10 @@ Section::Section(const section_64 *sectionCmd) :
   segment_{nullptr},
   relocations_{}
 {
-  this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
-  this->size_   = sectionCmd->size;
-  this->offset_ = sectionCmd->offset;
+  this->name_            = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
+  this->size_            = sectionCmd->size;
+  this->offset_          = sectionCmd->offset;
+  this->virtual_address_ = sectionCmd->addr;
 
   this->name_         = std::string{this->name_.c_str()};
   this->segment_name_ = std::string{this->segment_name_.c_str()};
