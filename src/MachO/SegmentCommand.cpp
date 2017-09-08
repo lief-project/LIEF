@@ -45,6 +45,8 @@ SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
 {
   this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT;
   this->size_    = segmentCmd->cmdsize;
+
+  this->name_ = std::string{this->name_.c_str()};
 }
 
 SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
@@ -61,6 +63,8 @@ SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
 {
   this->command_ = LOAD_COMMAND_TYPES::LC_SEGMENT_64;
   this->size_    = segmentCmd->cmdsize;
+
+  this->name_ = std::string{this->name_.c_str()};
 }
 
 

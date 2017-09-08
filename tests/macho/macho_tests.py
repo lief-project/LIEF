@@ -84,7 +84,7 @@ class TestMachO(TestCase):
         self.assertEqual(relocations[1].section.name, text_section.name)
 
         # __compact_unwind__LD  Section
-        cunwind_section = helloworld.get_section("__compact_unwind__LD")
+        cunwind_section = helloworld.get_section("__compact_unwind")
         relocations  = cunwind_section.relocations
         self.assertEqual(len(relocations), 1)
 

@@ -56,7 +56,7 @@ Section::Section(void) :
 }
 
 Section::Section(const section_32 *sectionCmd) :
-  segment_name_{sectionCmd->segname},
+  segment_name_{sectionCmd->segname, sizeof(sectionCmd->sectname)},
   address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
@@ -72,10 +72,13 @@ Section::Section(const section_32 *sectionCmd) :
   this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
   this->size_   = sectionCmd->size;
   this->offset_ = sectionCmd->offset;
+
+  this->name_         = std::string{this->name_.c_str()};
+  this->segment_name_ = std::string{this->segment_name_.c_str()};
 }
 
 Section::Section(const section_64 *sectionCmd) :
-  segment_name_{sectionCmd->segname},
+  segment_name_{sectionCmd->segname, sizeof(sectionCmd->segname)},
   address_{sectionCmd->addr},
   original_size_{sectionCmd->size},
   align_{sectionCmd->align},
@@ -91,6 +94,9 @@ Section::Section(const section_64 *sectionCmd) :
   this->name_   = {sectionCmd->sectname, sizeof(sectionCmd->sectname)};
   this->size_   = sectionCmd->size;
   this->offset_ = sectionCmd->offset;
+
+  this->name_         = std::string{this->name_.c_str()};
+  this->segment_name_ = std::string{this->segment_name_.c_str()};
 }
 
 
