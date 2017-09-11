@@ -102,8 +102,8 @@ cd deploy || exit 1
 # CLONE - ADD - PUSH
 # ==================
 new_branch=0
-if ! git clone -b "$branch" --depth 3 --single-branch https://github.com/lief-project/packages.git; then
-    git  clone -b master    --depth 3 --single-branch https://github.com/lief-project/packages.git
+if ! git clone -b "$branch" --single-branch https://github.com/lief-project/packages.git; then
+    git  clone -b master    --single-branch https://github.com/lief-project/packages.git
     new_branch=1
 fi
 cd packages || exit 1
@@ -117,6 +117,7 @@ if [[ $new_branch == 1 ]]; then
     git reset --hard || true
 fi
 
+git reset --soft `git rev-list --all | tail -1`
 git ls-files -v
 
 
@@ -164,9 +165,9 @@ while true; do
         exit 1
     fi
     if [[ $new_branch == 1 ]]; then
-        if git push -u $ssh_repo "$branch"; then break; fi
+        if git push --force -u $ssh_repo "$branch"; then break; fi
     else
-        if git push    $ssh_repo "$branch"; then break; fi
+        if git push --force $ssh_repo "$branch"; then break; fi
     fi
     git branch -a -v
     git fetch -v origin "$branch"
