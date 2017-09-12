@@ -101,7 +101,14 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_dynamic_entries                     dynamic_entries(void);
     it_const_dynamic_entries               dynamic_entries(void) const;
 
+    //! @brief Add the given dynamic entry and return the entry added
     DynamicEntry&                          add(const DynamicEntry& entry);
+
+    //! @brief Remove the given dynamic entry
+    void                                   remove(const DynamicEntry& entry);
+
+    //! @brief Remove **all** dynamic entries with the given tag
+    void                                   remove(DYNAMIC_TAGS tag);
 
     //! @brief Return binary's dynamic symbols
     it_symbols                             dynamic_symbols(void);
@@ -257,6 +264,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Add a library as dependency
     DynamicEntryLibrary& add_library(const std::string& library_name);
 
+    //! @brief Remove the given library
+    void remove_library(const std::string& library_name);
+
     //! @brief Get the library object (DynamicEntryLibrary) from the given name
     DynamicEntryLibrary& get_library(const std::string& library_name);
 
@@ -403,6 +413,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Binary& operator+=(const DynamicEntry& entry);
     Binary& operator+=(const Section& section);
     Binary& operator+=(const Segment& segment);
+
+    Binary& operator-=(const DynamicEntry& entry);
+    Binary& operator-=(DYNAMIC_TAGS tag);
 
     Segment&       operator[](SEGMENT_TYPES type);
     const Segment& operator[](SEGMENT_TYPES type) const;

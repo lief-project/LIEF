@@ -90,7 +90,7 @@ void DynamicEntry::array(const std::vector<uint64_t>&) {
 }
 
 void DynamicEntry::accept(Visitor& visitor) const {
-  visitor.visit(*this); // Double dispatch to avoid down-casting
+  visitor(*this); // Double dispatch to avoid down-casting
   visitor.visit(this->value());
   visitor.visit(this->tag());
 }

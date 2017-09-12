@@ -137,11 +137,11 @@ std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
 // ===============
 
 it_dynamic_entries Binary::dynamic_entries(void) {
-  return it_dynamic_entries{std::ref(this->dynamic_entries_)};
+  return this->dynamic_entries_;
 }
 
 it_const_dynamic_entries Binary::dynamic_entries(void) const {
-  return it_const_dynamic_entries{std::cref(this->dynamic_entries_)};
+  return this->dynamic_entries_;
 }
 
 
@@ -209,6 +209,38 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
   this->dynamic_entries_.insert(it_new_place, new_one);
   return *new_one;
 
+}
+
+
+void Binary::remove(const DynamicEntry& entry) {
+  auto&& it_entry = std::find_if(
+      std::begin(this->dynamic_entries_),
+      std::end(this->dynamic_entries_),
+      [&entry] (const DynamicEntry* e) {
+        return *e == entry;
+      });
+
+  if (it_entry == std::end(this->dynamic_entries_)) {
+    std::stringstream ss;
+    ss << entry;
+    throw not_found("Can't find '" + ss.str() +  "' in the dynamic table!");
+  }
+
+  delete *it_entry;
+  this->dynamic_entries_.erase(it_entry);
+}
+
+
+void Binary::remove(DYNAMIC_TAGS tag) {
+  for (auto&& it = std::begin(this->dynamic_entries_);
+              it != std::end(this->dynamic_entries_);) {
+    if ((*it)->tag() == tag) {
+      delete *it;
+      it = this->dynamic_entries_.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
 // Symbols
@@ -1606,6 +1638,11 @@ DynamicEntryLibrary& Binary::add_library(const std::string& library_name) {
 }
 
 
+void Binary::remove_library(const std::string& library_name) {
+  this->remove(this->get_library(library_name));
+}
+
+
 DynamicEntryLibrary& Binary::get_library(const std::string& library_name) {
   return const_cast<DynamicEntryLibrary&>(static_cast<const Binary*>(this)->get_library(library_name));
 }
@@ -1636,7 +1673,8 @@ bool Binary::has_library(const std::string& name) const {
   return it_needed != std::end(this->dynamic_entries_);
 }
 
-
+// Operator+=
+// ==========
 Binary& Binary::operator+=(const DynamicEntry& entry) {
   this->add(entry);
   return *this;
@@ -1652,7 +1690,20 @@ Binary& Binary::operator+=(const Segment& segment) {
   return *this;
 }
 
+// Operator -=
+// ===========
+Binary& Binary::operator-=(const DynamicEntry& entry) {
+  this->remove(entry);
+  return *this;
+}
 
+Binary& Binary::operator-=(DYNAMIC_TAGS tag) {
+  this->remove(tag);
+  return *this;
+}
+
+// Operator[]
+// ==========
 Segment& Binary::operator[](SEGMENT_TYPES type) {
   return this->get(type);
 }

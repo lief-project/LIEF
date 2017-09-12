@@ -292,6 +292,16 @@ void init_ELF_Binary_class(py::module& m) {
         "segment"_a, "size"_a,
         py::return_value_policy::reference)
 
+    .def("remove",
+        static_cast<void (Binary::*)(const DynamicEntry&)>(&Binary::remove),
+        "Remove the given " RST_CLASS_REF(lief.ELF.DynamicEntry) " from the dynamic table",
+        "dynamic_entry"_a)
+
+    .def("remove",
+        static_cast<void (Binary::*)(DYNAMIC_TAGS)>(&Binary::remove),
+        "Remove **all** " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) "",
+        "tag"_a)
+
     .def_property_readonly("has_notes",
         &Binary::has_notes,
         "``True`` if the binary contains notes")
@@ -338,6 +348,11 @@ void init_ELF_Binary_class(py::module& m) {
         "Check if the given library name exists in the current binary",
         "library_name"_a)
 
+    .def("remove_library",
+        &Binary::remove_library,
+        "Remove the given library",
+        "library_name"_a)
+
     .def("get_library",
         static_cast<no_const_func<DynamicEntryLibrary&, const std::string&>>(&Binary::get_library),
         "Return the " RST_CLASS_REF(lief.ELF.DynamicEntryLibrary) " with the given ``name``",
@@ -349,6 +364,9 @@ void init_ELF_Binary_class(py::module& m) {
     .def(py::self += Section())
 
     .def(py::self += DynamicEntry())
+
+    .def(py::self -= DynamicEntry())
+    .def(py::self -= DYNAMIC_TAGS())
 
     .def("__getitem__",
         static_cast<Segment& (Binary::*)(SEGMENT_TYPES)>(&Binary::operator[]),

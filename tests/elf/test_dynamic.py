@@ -123,10 +123,39 @@ class LibAddSample(object):
         if os.path.isdir(self.directory):
             shutil.rmtree(self.directory)
 
+    def __del__(self):
+        self.remove()
+
 
 class TestDynamic(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
+
+
+    def test_remove_library(self):
+        sample = LibAddSample()
+        libadd = lief.parse(sample.libadd)
+        binadd = lief.parse(sample.binadd)
+
+        libadd_needed = binadd.get_library("libadd.so")
+        binadd -= libadd_needed
+        self.assertFalse(binadd.has_library("libadd.so"))
+
+
+    def test_remove_tag(self):
+        sample = LibAddSample()
+        libadd = lief.parse(sample.libadd)
+        binadd = lief.parse(sample.binadd)
+        self.logger.debug("BEFORE")
+        list(map(lambda e : self.logger.debug(e), binadd.dynamic_entries))
+        self.logger.debug("")
+        binadd -= lief.ELF.DYNAMIC_TAGS.NEEDED
+
+        self.logger.debug("AFTER")
+        list(map(lambda e : self.logger.debug(e), binadd.dynamic_entries))
+        self.logger.debug("")
+
+        self.assertTrue(all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries))
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
