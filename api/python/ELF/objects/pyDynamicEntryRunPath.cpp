@@ -37,21 +37,53 @@ void init_ELF_DynamicEntryRunPath_class(py::module& m) {
   py::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath")
     .def(py::init<const std::string &>(),
         "Constructor from (run)path",
-        "path"_a)
+        "path"_a = "")
+
+    .def(py::init<const std::vector<std::string> &>(),
+        "Constructor from a list of paths",
+        "paths"_a)
 
     .def_property("name",
         [] (const DynamicEntryRunPath& obj) {
           return safe_string_converter(obj.name());
         },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRunPath::name),
-        "Return path value")
+        "Runpath raw value")
 
     .def_property("runpath",
         [] (const DynamicEntryRunPath& obj) {
           return safe_string_converter(obj.runpath());
         },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRunPath::runpath),
-        "Return path value")
+        "Runpath raw value")
+
+    .def_property("paths",
+        static_cast<getter_t<std::vector<std::string> >>(&DynamicEntryRunPath::paths),
+        static_cast<setter_t<const std::vector<std::string>&>>(&DynamicEntryRunPath::paths),
+        "Paths as a list")
+
+    .def("insert",
+        &DynamicEntryRunPath::insert,
+        "Insert a ``path`` at the given ``position``",
+        "position"_a, "path"_a,
+        py::return_value_policy::reference)
+
+    .def("append",
+        &DynamicEntryRunPath::append,
+        "Append the given ``path`` ",
+        "path"_a,
+        py::return_value_policy::reference)
+
+
+    .def("remove",
+        &DynamicEntryRunPath::remove,
+        "Remove the given ``path`` ",
+        "path"_a,
+        py::return_value_policy::reference)
+
+
+    .def(py::self += std::string())
+    .def(py::self -= std::string())
 
     .def("__eq__", &DynamicEntryRunPath::operator==)
     .def("__ne__", &DynamicEntryRunPath::operator!=)

@@ -157,6 +157,50 @@ class TestDynamic(TestCase):
 
         self.assertTrue(all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries))
 
+    def test_runpath_api(self):
+        sample = LibAddSample()
+        libadd = lief.parse(sample.libadd)
+        binadd = lief.parse(sample.binadd)
+
+        rpath = lief.ELF.DynamicEntryRunPath()
+        rpath = binadd.add(rpath)
+        self.logger.debug(rpath)
+        rpath += "/tmp"
+
+        self.logger.debug(rpath)
+
+        self.assertEqual(rpath.paths, ["/tmp"])
+        self.assertEqual(rpath.runpath, "/tmp")
+
+        rpath.insert(0, "/foo")
+
+        self.assertEqual(rpath.paths, ["/foo", "/tmp"])
+        self.assertEqual(rpath.runpath, "/foo:/tmp")
+
+        rpath.paths = ["/foo", "/tmp", "/bar"]
+
+        self.logger.debug(rpath)
+
+        self.assertEqual(rpath.paths, ["/foo", "/tmp", "/bar"])
+        self.assertEqual(rpath.runpath, "/foo:/tmp:/bar")
+
+        rpath -= "/tmp"
+
+        self.logger.debug(rpath)
+
+        self.assertEqual(rpath.runpath, "/foo:/bar")
+
+        rpath.remove("/foo").remove("/bar")
+
+        self.logger.debug(rpath)
+
+        self.assertEqual(rpath.runpath, "")
+
+
+
+        self.logger.debug(rpath)
+
+
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_change_libname(self):
@@ -187,7 +231,7 @@ class TestDynamic(TestCase):
         libadd_needed.name = new_name
 
         # Add a RPATH entry
-        rpath = lief.ELF.DynamicEntryRpath(sample.directory)
+        rpath = lief.ELF.DynamicEntryRunPath(sample.directory)
         rpath = binadd.add(rpath)
         self.logger.debug(rpath)
 

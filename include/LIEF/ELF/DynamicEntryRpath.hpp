@@ -28,6 +28,7 @@ namespace ELF {
 class DLL_PUBLIC DynamicEntryRpath : public DynamicEntry {
 
   public:
+    static constexpr char delimiter = ':';
     using DynamicEntry::DynamicEntry;
 
     DynamicEntryRpath(const Elf64_Dyn* header);
@@ -35,6 +36,9 @@ class DLL_PUBLIC DynamicEntryRpath : public DynamicEntry {
     DynamicEntryRpath(void);
 
     DynamicEntryRpath(const std::string& name = "");
+
+    //! @brief Constructor from a list of paths
+    DynamicEntryRpath(const std::vector<std::string>& paths);
 
     DynamicEntryRpath& operator=(const DynamicEntryRpath&);
     DynamicEntryRpath(const DynamicEntryRpath&);
@@ -44,6 +48,22 @@ class DLL_PUBLIC DynamicEntryRpath : public DynamicEntry {
 
     const std::string& rpath(void) const;
     void rpath(const std::string& name);
+
+    //! @brief Paths as a list
+    std::vector<std::string> paths(void) const;
+    void paths(const std::vector<std::string>& paths);
+
+    //! @brief Insert a ``path`` at the given ``position``
+    DynamicEntryRpath& insert(size_t pos, const std::string path);
+
+    //! @brief Append the given ``path``
+    DynamicEntryRpath& append(const std::string& path);
+
+    //! @brief Remove the given ``path``
+    DynamicEntryRpath& remove(const std::string& path);
+
+    DynamicEntryRpath& operator+=(const std::string& path);
+    DynamicEntryRpath& operator-=(const std::string& path);
 
     virtual void accept(Visitor& visitor) const override;
 
