@@ -39,6 +39,24 @@ class DLL_PUBLIC DynamicEntryArray : public DynamicEntry {
     const std::vector<uint64_t>& array(void) const;
     virtual void array(const std::vector<uint64_t>& array) override;
 
+    //! @brief Insert the given callback at ``pos``
+    DynamicEntryArray& insert(size_t pos, uint64_t callback);
+
+    //! @brief Append the given callback
+    DynamicEntryArray& append(uint64_t callback);
+
+    //! @brief Remove the given callback
+    DynamicEntryArray& remove(uint64_t callback);
+
+    //! @brief Number of callback registred
+    size_t size(void) const;
+
+    DynamicEntryArray& operator+=(uint64_t value);
+    DynamicEntryArray& operator-=(uint64_t value);
+
+    const uint64_t& operator[](size_t idx) const;
+    uint64_t&       operator[](size_t idx);
+
     //! @brief Method so that the ``visitor`` can visit us
     virtual void accept(Visitor& visitor) const override;
 

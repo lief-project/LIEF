@@ -45,6 +45,36 @@ void init_ELF_DynamicEntryArray_class(py::module& m) {
         "Return the array",
         py::return_value_policy::reference)
 
+    .def("insert",
+        &DynamicEntryArray::insert,
+        "Insert a ``callback`` at the given ``position``",
+        "position"_a, "callback"_a,
+        py::return_value_policy::reference)
+
+    .def("append",
+        &DynamicEntryArray::append,
+        "Append the given ``callback`` ",
+        "callback"_a,
+        py::return_value_policy::reference)
+
+    .def("remove",
+        &DynamicEntryArray::remove,
+        "Remove the given ``callback`` ",
+        "callback"_a,
+        py::return_value_policy::reference)
+
+
+    .def(py::self += uint64_t())
+    .def(py::self -= uint64_t())
+
+
+    .def("__getitem__",
+        static_cast<uint64_t& (DynamicEntryArray::*)(size_t)>(&DynamicEntryArray::operator[]),
+        py::return_value_policy::reference)
+
+    .def("__len__",
+        &DynamicEntryArray::size)
+
     .def("__eq__", &DynamicEntryArray::operator==)
     .def("__ne__", &DynamicEntryArray::operator!=)
     .def("__hash__",

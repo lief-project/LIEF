@@ -132,6 +132,7 @@ class TestDynamic(TestCase):
         self.logger = logging.getLogger(__name__)
 
 
+    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_remove_library(self):
         sample = LibAddSample()
         libadd = lief.parse(sample.libadd)
@@ -142,6 +143,7 @@ class TestDynamic(TestCase):
         self.assertFalse(binadd.has_library("libadd.so"))
 
 
+    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_remove_tag(self):
         sample = LibAddSample()
         libadd = lief.parse(sample.libadd)
@@ -157,6 +159,7 @@ class TestDynamic(TestCase):
 
         self.assertTrue(all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries))
 
+    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_runpath_api(self):
         sample = LibAddSample()
         libadd = lief.parse(sample.libadd)
@@ -195,8 +198,6 @@ class TestDynamic(TestCase):
         self.logger.debug(rpath)
 
         self.assertEqual(rpath.runpath, "")
-
-
 
         self.logger.debug(rpath)
 

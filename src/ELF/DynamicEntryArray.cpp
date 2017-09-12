@@ -46,6 +46,57 @@ void DynamicEntryArray::array(const std::vector<uint64_t>& array) {
   this->array_ = array;
 }
 
+DynamicEntryArray& DynamicEntryArray::append(uint64_t value) {
+  this->array_.push_back(value);
+  return *this;
+}
+
+DynamicEntryArray& DynamicEntryArray::remove(uint64_t callback) {
+  this->array_.erase(std::remove_if(
+        std::begin(this->array_),
+        std::end(this->array_),
+        [callback] (uint64_t v) {
+          return v == callback;
+        }), std::end(this->array_));
+  return *this;
+}
+
+DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t value) {
+  if (pos == this->array_.size()) {
+    return this->append(value);
+  }
+
+  if (pos > this->array_.size()) {
+    throw corrupted(std::to_string(pos) + " is out of ranges");
+  }
+  this->array_.insert(std::begin(this->array_) + pos, value);
+  return *this;
+}
+
+
+size_t DynamicEntryArray::size(void) const {
+  return this->array_.size();
+}
+
+DynamicEntryArray& DynamicEntryArray::operator+=(uint64_t value) {
+  return this->append(value);
+}
+
+DynamicEntryArray& DynamicEntryArray::operator-=(uint64_t value) {
+  return this->remove(value);
+}
+
+const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
+  if (idx >= this->array_.size()) {
+    throw corrupted(std::to_string(idx) + " is out of ranges");
+  }
+  return this->array_[idx];
+}
+
+uint64_t& DynamicEntryArray::operator[](size_t idx) {
+  return const_cast<uint64_t&>(static_cast<const DynamicEntryArray*>(this)->operator[](idx));
+}
+
 void DynamicEntryArray::accept(Visitor& visitor) const {
   DynamicEntry::accept(visitor);
   visitor(*this); // Double dispatch to avoid down-casting
