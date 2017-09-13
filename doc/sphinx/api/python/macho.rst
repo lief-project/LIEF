@@ -218,6 +218,17 @@ Export Info
 ----------
 
 
+Thread Command
+**************
+
+.. autoclass:: lief.MachO.ThreadCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Enums
 *****
 

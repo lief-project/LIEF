@@ -43,6 +43,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/RelocationDyld.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/BindingInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ExportInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ThreadCommand.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -74,6 +75,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/RelocationDyld.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/BindingInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ExportInfo.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ThreadCommand.hpp"
   )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})

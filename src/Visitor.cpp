@@ -376,6 +376,10 @@ void Visitor::visit(const MachO::ExportInfo& export_info) {
   export_info.accept(*this);
 }
 
+void Visitor::visit(const MachO::ThreadCommand& thread) {
+  thread.accept(*this);
+}
+
 
 
 

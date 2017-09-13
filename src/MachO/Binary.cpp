@@ -100,17 +100,16 @@ uint64_t Binary::entrypoint(void) const {
     throw not_found("Entrypoint not found");
   }
 
-  // TODO: LC_THREAD
-  auto&& it_main_command = std::find_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
-      [] (const LoadCommand* command) {
-        return command != nullptr and command->command() == LOAD_COMMAND_TYPES::LC_MAIN;
-      });
+  if (this->has_main_command()) {
+    return this->imagebase() + this->main_command().entrypoint();
+  }
 
-  const MainCommand* main_command = dynamic_cast<const MainCommand*>(*it_main_command);
 
-  return this->imagebase() + main_command->entrypoint();
+  if (this->has_thread_command()) {
+    return this->imagebase() + this->thread_command().pc();
+  }
+
+  throw not_found("Entrypoint not found");
 }
 
 bool Binary::is_pie(void) const {
@@ -127,14 +126,7 @@ bool Binary::has_nx(void) const {
 
 
 bool Binary::has_entrypoint(void) const {
-  auto&& it_main_command = std::find_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
-      [] (const LoadCommand* command) {
-        return command != nullptr and command->command() == LOAD_COMMAND_TYPES::LC_MAIN;
-      });
-
-  return it_main_command != std::end(this->commands_);
+  return this->has_main_command() or this->has_thread_command();
 }
 
 LIEF::symbols_t Binary::get_abstract_symbols(void) {
@@ -700,6 +692,21 @@ const VersionMin& Binary::version_min(void) const {
   return this->command<VersionMin>();
 }
 
+
+
+// Thread command
+// ++++++++++++++
+bool Binary::has_thread_command(void) const {
+  return this->has_command<ThreadCommand>();
+}
+
+ThreadCommand& Binary::thread_command(void) {
+  return this->command<ThreadCommand>();
+}
+
+const ThreadCommand& Binary::thread_command(void) const {
+  return this->command<ThreadCommand>();
+}
 
 
 

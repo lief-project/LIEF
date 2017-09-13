@@ -196,6 +196,15 @@ Export Info
 
 ----------
 
+
+Thread Command
+**************
+
+.. doxygenclass:: LIEF::MachO::ThreadCommand
+   :project: lief
+
+----------
+
 Utilities
 *********
 

@@ -457,7 +457,7 @@ struct nlist_64 {
 };
 
 
-struct x86hread_state64 {
+struct x86_thread_state64_t {
   uint64_t rax;
   uint64_t rbx;
   uint64_t rcx;
@@ -481,123 +481,54 @@ struct x86hread_state64 {
   uint64_t gs;
 };
 
-
-struct fp_control_t {
-  unsigned short
-   invalid :1,
-   denorm  :1,
-   zdiv    :1,
-   ovrfl   :1,
-   undfl   :1,
-   precis  :1,
-           :2,
-   pc      :2,
-   rc      :2,
-           :1,
-           :3;
+struct x86_thread_state_t {
+  uint32_t eax;
+  uint32_t ebx;
+  uint32_t ecx;
+  uint32_t edx;
+  uint32_t edi;
+  uint32_t esi;
+  uint32_t ebp;
+  uint32_t esp;
+  uint32_t ss;
+  uint32_t eflags;
+  uint32_t eip;
+  uint32_t cs;
+  uint32_t ds;
+  uint32_t es;
+  uint32_t fs;
+  uint32_t gs;
 };
 
-struct fp_status_t {
-  unsigned short
-    invalid :1,
-    denorm  :1,
-    zdiv    :1,
-    ovrfl   :1,
-    undfl   :1,
-    precis  :1,
-    stkflt  :1,
-    errsumm :1,
-    c0      :1,
-    c1      :1,
-    c2      :1,
-    tos     :3,
-    c3      :1,
-    busy    :1;
+struct arm_thread_state_t {
+  uint32_t r0;
+  uint32_t r1;
+  uint32_t r2;
+  uint32_t r3;
+  uint32_t r4;
+  uint32_t r5;
+  uint32_t r6;
+  uint32_t r7;
+  uint32_t r8;
+  uint32_t r9;
+  uint32_t r10;
+  uint32_t r11;
+  uint32_t r12;
+  uint32_t r13;
+  uint32_t r14;
+  uint32_t r15;
+  uint32_t r16;   /* Apple's thread_state has this 17th reg, bug?? */
 };
 
-
-struct mmst_reg_t {
-  char mmst_reg[10];
-  char mmst_rsrv[6];
-};
-
-struct xmm_reg_t {
-  char xmm_reg[16];
-};
-
-struct x86_float_state64 {
-  int32_t fpu_reserved[2];
-  fp_control_t fpu_fcw;
-  fp_status_t fpu_fsw;
-  uint8_t fpu_ftw;
-  uint8_t fpu_rsrv1;
-  uint16_t fpu_fop;
-  uint32_t fpu_ip;
-  uint16_t fpu_cs;
-  uint16_t fpu_rsrv2;
-  uint32_t fpu_dp;
-  uint16_t fpu_ds;
-  uint16_t fpu_rsrv3;
-  uint32_t fpu_mxcsr;
-  uint32_t fpu_mxcsrmask;
-  mmst_reg_t fpu_stmm0;
-  mmst_reg_t fpu_stmm1;
-  mmst_reg_t fpu_stmm2;
-  mmst_reg_t fpu_stmm3;
-  mmst_reg_t fpu_stmm4;
-  mmst_reg_t fpu_stmm5;
-  mmst_reg_t fpu_stmm6;
-  mmst_reg_t fpu_stmm7;
-  xmm_reg_t fpu_xmm0;
-  xmm_reg_t fpu_xmm1;
-  xmm_reg_t fpu_xmm2;
-  xmm_reg_t fpu_xmm3;
-  xmm_reg_t fpu_xmm4;
-  xmm_reg_t fpu_xmm5;
-  xmm_reg_t fpu_xmm6;
-  xmm_reg_t fpu_xmm7;
-  xmm_reg_t fpu_xmm8;
-  xmm_reg_t fpu_xmm9;
-  xmm_reg_t fpu_xmm10;
-  xmm_reg_t fpu_xmm11;
-  xmm_reg_t fpu_xmm12;
-  xmm_reg_t fpu_xmm13;
-  xmm_reg_t fpu_xmm14;
-  xmm_reg_t fpu_xmm15;
-  char fpu_rsrv4[6*16];
-  uint32_t fpu_reserved1;
-};
-
-struct x86_exception_state64 {
-  uint16_t trapno;
-  uint16_t cpu;
-  uint32_t err;
-  uint64_t faultvaddr;
+struct arm_thread_state64_t {
+  uint64_t x[29]; // x0-x28
+  uint64_t fp;    // x29
+  uint64_t lr;    // x30
+  uint64_t sp;    // x31
+  uint64_t pc;    // pc
+  uint32_t cpsr;  // cpsr
 };
 
 
-struct x86_state_hdr_t {
-  uint32_t flavor;
-  uint32_t count;
-};
 
-struct x86hread_state_t {
-  x86_state_hdr_t tsh;
-  union {
-    x86hread_state64 ts64;
-  } uts;
-};
 
-struct x86_float_state_t {
-  x86_state_hdr_t fsh;
-  union {
-    x86_float_state64 fs64;
-  } ufs;
-};
-
-struct x86_exception_state_t {
-  x86_state_hdr_t esh;
-  union {
-    x86_exception_state64 es64;
-  } ues;
-};

@@ -13,7 +13,7 @@ import lief
 from lief import MachO
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.GLOBAL)
+Logger.set_level(lief.LOGGING_LEVEL.INFO)
 
 terminal_rows, terminal_columns = 100, 100
 try:
@@ -253,6 +253,23 @@ def print_main_command(binary):
 
 
 @exceptions_handler(Exception)
+def print_thread_command(binary):
+
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Thread Command ==")
+    cmd = binary.thread_command
+
+    print(format_hex.format("Flavor:", cmd.flavor))
+    print(format_hex.format("Count:",  cmd.count))
+    print(format_hex.format("PC:",     cmd.pc))
+
+    print("")
+
+
+@exceptions_handler(Exception)
 def print_dylinker(binary):
     print("== Dylinker ==")
     print("Path: {}".format(binary.dylinker.name))
@@ -483,6 +500,10 @@ def main():
             action='store_true', dest='show_version_min',
             help="Display the 'Version Min' command")
 
+    parser.add_argument('--thread-command',
+            action='store_true', dest='show_thread_command',
+            help="Display the 'Thread Command' command")
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -541,6 +562,9 @@ def main():
 
         if (args.show_relocs or args.show_all) and len(binary.relocations) > 0:
             print_relocations(binary)
+
+        if (args.show_thread_command or args.show_all) and binary.has_thread_command:
+            print_thread_command(binary)
 
 
 if __name__ == "__main__":

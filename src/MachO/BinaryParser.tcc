@@ -207,13 +207,51 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_THREAD";
 
-          load_command = new LoadCommand{command};
           const thread_command* cmd =
             reinterpret_cast<const thread_command*>(
               this->stream_->read(loadcommands_offset, sizeof(thread_command)));
-
+          load_command = new ThreadCommand{cmd};
+          dynamic_cast<ThreadCommand*>(load_command)->architecture_ = this->binary_->header().cpu_type();
           VLOG(VDEBUG) << "FLAVOR: " << cmd->flavor << std::endl
-                     << "COUNT:  " << cmd->count;
+                       << "COUNT:  " << cmd->count;
+          switch(this->binary_->header().cpu_type()) {
+            case CPU_TYPES::CPU_TYPE_X86:
+              {
+                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
+                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t)));
+                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
+
+                break;
+              }
+
+            case CPU_TYPES::CPU_TYPE_X86_64:
+              {
+                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
+                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t)));
+                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
+                break;
+              }
+
+            case CPU_TYPES::CPU_TYPE_ARM:
+              {
+                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
+                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t)));
+                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
+                break;
+              }
+
+            case CPU_TYPES::CPU_TYPE_ARM64:
+              {
+                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
+                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t)));
+                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
+                break;
+              }
+            default:
+              {
+                LOG(ERROR) << "Unknown architecture";
+              }
+          }
           break;
         }
 

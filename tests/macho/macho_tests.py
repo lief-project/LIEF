@@ -50,6 +50,15 @@ class TestMachO(TestCase):
         self.assertEqual(sshd.version_min.sdk, [10, 11, 0])
 
 
+    def test_thread_cmd(self):
+        micromacho = lief.parse(get_sample('MachO/MachO32_x86_binary_micromacho.bin'))
+        self.assertTrue(micromacho.has_thread_command)
+        self.assertEqual(micromacho.thread_command.pc, 0x68)
+        self.assertEqual(micromacho.thread_command.flavor, 1)
+        self.assertEqual(micromacho.thread_command.count, 16)
+        self.assertEqual(micromacho.entrypoint, 0x68)
+
+
     def test_relocations(self):
         helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))
 

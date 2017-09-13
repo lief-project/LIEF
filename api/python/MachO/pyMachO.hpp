@@ -46,6 +46,7 @@ void init_MachO_RelocationObject_class(py::module&);
 void init_MachO_RelocationDyld_class(py::module&);
 void init_MachO_BindingInfo_class(py::module&);
 void init_MachO_ExportInfo_class(py::module&);
+void init_MachO_ThreadCommand_class(py::module&);
 
 // Enums
 void init_MachO_Structures_enum(py::module&);

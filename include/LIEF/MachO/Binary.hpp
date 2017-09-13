@@ -39,6 +39,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
+#include "LIEF/MachO/ThreadCommand.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -246,6 +247,14 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     //! @brief Return the MachO::VersionMin command
     VersionMin&       version_min(void);
     const VersionMin& version_min(void) const;
+
+
+    //! @brief ``true`` if the binary has a MachO::ThreadCommand command.
+    bool has_thread_command(void) const;
+
+    //! @brief Return the MachO::ThreadCommand command
+    ThreadCommand&       thread_command(void);
+    const ThreadCommand& thread_command(void) const;
 
     template<class T>
     bool has_command(void) const;
