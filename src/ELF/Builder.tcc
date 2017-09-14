@@ -222,6 +222,7 @@ void Builder::build_sections(void) {
   }
 
   Section* string_names_section = this->binary_->sections_[header.section_name_table_idx()];
+  string_names_section->content(section_names);
 
   // **Should** be safe since .shstr is located at the end of the binary
   //if (string_names_section->size() < section_names.size()) {
@@ -286,7 +287,6 @@ void Builder::build_sections(void) {
     }
   }
 
-  string_names_section->content(section_names);
   // TODO: Assert sh_size == content.size()
   this->ios_.seekp(string_names_section->file_offset());
   this->ios_.write(section_names.data(), section_names.size());
@@ -1602,7 +1602,13 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
   if (this->binary_->header().file_type() == E_TYPE::ET_DYN) {
     for (Relocation& r : this->binary_->dynamic_relocations()) {
 
+      // Check if the relocation address is within the .init_array
       if (original_init_va < (r.address() + 1) and (r.address() - 1) < (original_init_va + original_init_size)) {
+        if (r.address() == (original_init_va + original_init_size)) {         // We are on the limit...
+          if (entry_array[entry_array.size() - 1] == 0 and r.addend() == 0) { // And there is a 0-end
+            continue;                                                         // Skip
+          }
+        }
         uint64_t new_address = array_section.virtual_address() + (r.address() - original_init_va);
         r.address(new_address);
       }
