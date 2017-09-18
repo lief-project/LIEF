@@ -579,31 +579,4 @@ enum CPU_SUBTYPES_POWERPC {
 };
 
 
-enum x86_fp_control_precis {
-  x86_FP_PREC_24B = 0,
-  x86_FP_PREC_53B = 2,
-  x86_FP_PREC_64B = 3
-};
 
-enum x86_fp_control_rc {
-  x86_FP_RND_NEAR = 0,
-  x86_FP_RND_DOWN = 1,
-  x86_FP_RND_UP = 2,
-  x86_FP_CHOP = 3
-};
-
-
-enum X86ThreadFlavors {
-  x86HREAD_STATE32    = 1,
-  x86_FLOAT_STATE32     = 2,
-  x86_EXCEPTION_STATE32 = 3,
-  x86HREAD_STATE64    = 4,
-  x86_FLOAT_STATE64     = 5,
-  x86_EXCEPTION_STATE64 = 6,
-  x86HREAD_STATE      = 7,
-  x86_FLOAT_STATE       = 8,
-  x86_EXCEPTION_STATE   = 9,
-  x86_DEBUG_STATE32     = 10,
-  x86_DEBUG_STATE64     = 11,
-  x86_DEBUG_STATE       = 12
-};

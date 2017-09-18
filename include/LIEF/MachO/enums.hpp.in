@@ -1,6 +1,8 @@
 #ifndef LIEF_MACHO_ENUMS_H_
 #define LIEF_MACHO_ENUMS_H_
 
+#include "LIEF/MachO/undef.h"
+
 namespace LIEF {
 namespace MachO {
 
