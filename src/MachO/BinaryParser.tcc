@@ -80,9 +80,22 @@ void BinaryParser::parse_load_commands(void) {
   using section_t         = typename MACHO_T::section;
 
   VLOG(VDEBUG) << "[+] Building Load commands";
+
+  const Header& header = this->binary_->header();
   uint64_t loadcommands_offset = sizeof(header_t);
 
-  for (size_t i = 0; i < this->binary_->header().nb_cmds(); ++i) {
+  if ((loadcommands_offset + header.sizeof_cmds()) > this->stream_->size()) {
+    throw corrupted("Commands are corrupted");
+  }
+
+  size_t nbcmds = header.nb_cmds();
+
+  if (header.nb_cmds() > BinaryParser::MAX_COMMANDS) {
+    nbcmds = BinaryParser::MAX_COMMANDS;
+    LOG(WARNING) << "Only the first " << std::dec << nbcmds << " will be parsed";
+  }
+
+  for (size_t i = 0; i < nbcmds; ++i) {
     const load_command* command = reinterpret_cast<const load_command*>(
         this->stream_->read(loadcommands_offset, sizeof(load_command)));
 

@@ -43,7 +43,8 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
   friend class MachO::Parser;
 
   //! @brief Maximum number of relocations
-  constexpr static unsigned MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
+  constexpr static size_t MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
+  constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint8_t>::max();
 
   public:
     BinaryParser(const std::string& file);
