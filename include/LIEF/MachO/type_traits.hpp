@@ -16,7 +16,9 @@
 #ifndef LIEF_MACHO_TYPE_TRAITS_H_
 #define LIEF_MACHO_TYPE_TRAITS_H_
 #include <vector>
+#include <set>
 #include "LIEF/iterators.hpp"
+#include "LIEF/Abstract/Relocation.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -29,6 +31,12 @@ class Relocation;
 
 class BindingInfo;
 class ExportInfo;
+
+template<class T>
+struct KeyCmp {
+  bool operator() (const T* lhs, const T* rhs) const { return *lhs < *rhs; };
+};
+
 
 using buffer_t                  = std::vector<uint8_t>; ///< Container used to store raw data
 
@@ -58,9 +66,9 @@ using sections_t                = std::vector<Section*>;
 using it_sections               = ref_iterator<sections_t>;
 using it_const_sections         = const_ref_iterator<sections_t>;
 
-using relocations_t             = std::vector<Relocation*>;          ///< Container used to store relocations
-using it_relocations            = ref_iterator<relocations_t>;       ///< Iterator's type for relocations
-using it_const_relocations      = const_ref_iterator<relocations_t>; ///< Iterator's type for relocations (const)
+using relocations_t             = std::set<Relocation*, KeyCmp<Relocation>>;  ///< Container used to store relocations
+using it_relocations            = ref_iterator<relocations_t&>;               ///< Iterator's type for relocations
+using it_const_relocations      = const_ref_iterator<const relocations_t&>;   ///< Iterator's type for relocations (const)
 
 using binding_info_t            = std::vector<BindingInfo*>;          ///< Container used to store BindinfInfo
 using it_binding_info           = ref_iterator<binding_info_t>;       ///< Iterator's type for binding_info_t
@@ -69,6 +77,7 @@ using it_const_binding_info     = const_ref_iterator<binding_info_t>; ///< Itera
 using export_info_t             = std::vector<ExportInfo*>;           ///< Container used to store ExportInfo
 using it_export_info            = ref_iterator<export_info_t>;        ///< Iterator's type for export_info_t
 using it_const_export_info      = const_ref_iterator<export_info_t>;  ///< Iterator's type for export_info_t (const)
+
 
 }
 }

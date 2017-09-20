@@ -85,12 +85,12 @@ uint32_t SymbolVersionRequirement::cnt(void) const {
 
 
 it_symbols_version_aux_requirement SymbolVersionRequirement::get_auxiliary_symbols(void) {
-  return {this->symbol_version_aux_requirement_};
+  return this->symbol_version_aux_requirement_;
 }
 
 
 it_const_symbols_version_aux_requirement SymbolVersionRequirement::get_auxiliary_symbols(void) const {
-  return {this->symbol_version_aux_requirement_};
+  return this->symbol_version_aux_requirement_;
 }
 
 

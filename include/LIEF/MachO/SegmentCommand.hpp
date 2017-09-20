@@ -32,12 +32,14 @@
 namespace LIEF {
 namespace MachO {
 class BinaryParser;
+class Binary;
 
 //! @class SegmentCommand
 //! @brief Class which represent a MachO Segment
 class DLL_PUBLIC SegmentCommand : public LoadCommand {
 
   friend class BinaryParser;
+  friend class Binary;
 
   public:
     SegmentCommand(void);

@@ -49,7 +49,7 @@ class DLL_PUBLIC Builder {
     void build(void);
 
     template<typename ELF_T>
-    void build_header(void);
+    void build(const Header& header);
 
     template<typename ELF_T>
     void build_sections(void);

@@ -44,17 +44,18 @@ class ref_iterator : public std::iterator<
   using DT = decay_t<T>;
 
   ref_iterator(T container) :
-    container_{std::forward<T>(container)}
+    container_{std::forward<T>(container)},
+    distance_{0}
   {
     this->it_ = std::begin(container_);
   }
 
   ref_iterator(const ref_iterator& copy) :
     container_{copy.container_},
-    it_{std::begin(container_)}
+    it_{std::begin(container_)},
+    distance_{copy.distance_}
   {
-    size_t d = std::distance(const_cast<ref_iterator&>(copy).container_.begin(), copy.it_);
-    std::advance(this->it_, d);
+    std::advance(this->it_, this->distance_);
   }
 
 
@@ -66,11 +67,13 @@ class ref_iterator : public std::iterator<
   void swap(ref_iterator& other) {
     std::swap(this->container_, other.container_);
     std::swap(this->it_, other.it_);
+    std::swap(this->distance_, other.distance_);
   }
 
 
   ref_iterator& operator++(void) {
-    it_++;
+    this->it_ = std::next(this->it_);
+    this->distance_++;
     return *this;
   }
 
@@ -82,7 +85,8 @@ class ref_iterator : public std::iterator<
 
   ref_iterator& operator--(void) {
     if (this->it_ != std::begin(container_)) {
-      this->it_--;
+      this->it_ = std::prev(this->it_);
+      this->distance_--;
     }
     return *this;
   }
@@ -96,6 +100,7 @@ class ref_iterator : public std::iterator<
 
   ref_iterator& operator+=(const typename ref_iterator::difference_type& movement) {
     std::advance(this->it_, movement);
+    this->distance_ += movement;
     return *this;
   }
 
@@ -145,7 +150,7 @@ class ref_iterator : public std::iterator<
 
 
   typename ref_iterator::difference_type operator-(const ref_iterator& rhs) const {
-    return std::distance(rhs, *this);
+    return this->distance_ - rhs.distance_;
   }
 
   bool operator<(const ref_iterator& rhs) const {
@@ -168,19 +173,18 @@ class ref_iterator : public std::iterator<
   }
 
   ref_iterator begin(void) {
-    return {this->container_};
+    return this->container_;
   }
 
   ref_iterator end(void)  {
     ref_iterator it = ref_iterator{this->container_};
     it.it_ = std::end(it.container_);
+    it.distance_ = it.size();
     return it;
   }
 
   bool operator==(const ref_iterator& other) const {
-    size_t d1 = static_cast<size_t>(std::distance(this->it_, const_cast<ref_iterator*>(this)->container_.end()));
-    size_t d2 = static_cast<size_t>(std::distance(other.it_, const_cast<ref_iterator&>(other).container_.end()));
-    return (this->size() == other.size() and d1 == d2);
+    return (this->size() == other.size() and this->distance_ == other.distance_);
   }
 
   bool operator!=(const ref_iterator& other) const {
@@ -225,6 +229,7 @@ class ref_iterator : public std::iterator<
   private:
   T container_;
   typename DT::iterator it_;
+  typename ref_iterator::difference_type distance_;
 };
 
 
@@ -239,11 +244,11 @@ class const_ref_iterator : public std::iterator<
                      const typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
                      const typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
   public:
-
   using DT = decay_t<CT>;
 
   const_ref_iterator(CT container) :
-    container_{std::forward<CT>(container)}
+    container_{std::forward<CT>(container)},
+    distance_{0}
   {
     this->it_ = this->container_.cbegin();
   }
@@ -251,10 +256,10 @@ class const_ref_iterator : public std::iterator<
 
   const_ref_iterator(const const_ref_iterator& copy) :
     container_{copy.container_},
-    it_{container_.cbegin()}
+    it_{container_.cbegin()},
+    distance_{copy.distance_}
   {
-    size_t d = std::distance(copy.container_.cbegin(), copy.it_);
-    std::advance(this->it_, d);
+    std::advance(this->it_, this->distance_);
   }
 
   const_ref_iterator operator=(const_ref_iterator other) {
@@ -265,12 +270,14 @@ class const_ref_iterator : public std::iterator<
   void swap(const_ref_iterator& other) {
     std::swap(this->container_, other.container_);
     std::swap(this->it_, other.it_);
+    std::swap(this->distance_, other.distance_);
   }
 
 
 
   const_ref_iterator& operator++() {
-    it_++;
+    this->it_ = std::next(this->it_);
+    this->distance_++;
     return *this;
   }
 
@@ -282,7 +289,8 @@ class const_ref_iterator : public std::iterator<
 
   const_ref_iterator& operator--(void) {
     if (this->it_ != container_.cbegin()) {
-      this->it_--;
+      this->it_ = std::prev(this->it_);
+      this->distance_--;
     }
     return *this;
   }
@@ -296,6 +304,7 @@ class const_ref_iterator : public std::iterator<
 
   const_ref_iterator& operator+=(const typename const_ref_iterator::difference_type& movement) {
     std::advance(this->it_, movement);
+    this->distance_ += movement;
     return *this;
   }
 
@@ -341,7 +350,7 @@ class const_ref_iterator : public std::iterator<
 
 
   typename const_ref_iterator::difference_type operator-(const const_ref_iterator& rhs) const {
-    return std::distance(rhs, *this);
+    return this->distance_ - rhs.distance_;
   }
 
   bool operator<(const const_ref_iterator& rhs) const {
@@ -363,12 +372,13 @@ class const_ref_iterator : public std::iterator<
   }
 
   const_ref_iterator cbegin(void) const {
-    return {this->container_};
+    return this->container_;
   }
 
   const_ref_iterator cend(void) const {
     const_ref_iterator it{this->container_};
     it.it_ = it.container_.cend();
+    it.distance_ = it.size();
     return it;
   }
 
@@ -381,9 +391,7 @@ class const_ref_iterator : public std::iterator<
   }
 
   bool operator==(const const_ref_iterator& other) const {
-    size_t d1 = static_cast<size_t>(std::distance(this->it_, this->container_.cend()));
-    size_t d2 = static_cast<size_t>(std::distance(other.it_, other.container_.cend()));
-    return (this->size() == other.size() and d1 == d2);
+    return (this->size() == other.size() and this->distance_ == other.distance_);
   }
 
   bool operator!=(const const_ref_iterator& other) const {
@@ -426,6 +434,7 @@ class const_ref_iterator : public std::iterator<
   private:
   T container_;
   typename decay_t<decltype(container_)>::const_iterator it_;
+  typename const_ref_iterator::difference_type distance_;
 };
 
 
@@ -446,7 +455,10 @@ class filter_iterator : public std::iterator<
   using filter_t = std::function<bool (const typename DT::value_type&)>;
 
   filter_iterator(T container, filter_t filter) :
-    size_c_{0}, container_{std::forward<T>(container)}, filter_{filter}
+    size_c_{0},
+    container_{std::forward<T>(container)},
+    filter_{filter},
+    distance_{0}
   {
 
     this->it_ = std::begin(this->container_);
@@ -462,10 +474,10 @@ class filter_iterator : public std::iterator<
     size_c_{0},
     container_{copy.container_},
     it_{std::begin(container_)},
-    filter_{copy.filter_}
+    filter_{copy.filter_},
+    distance_{copy.distance_}
   {
-    size_t d = std::distance(const_cast<filter_iterator&>(copy).container_.begin(), copy.it_);
-    std::advance(this->it_, d);
+    std::advance(this->it_, this->distance_);
   }
 
   filter_iterator operator=(filter_iterator other) {
@@ -478,6 +490,7 @@ class filter_iterator : public std::iterator<
     std::swap(this->it_,        other.it_);
     std::swap(this->filter_,    other.filter_);
     std::swap(this->size_c_,    other.size_c_);
+    std::swap(this->distance_,  other.distance_);
   }
 
 
@@ -504,7 +517,10 @@ class filter_iterator : public std::iterator<
 
   filter_iterator end(void) {
     filter_iterator it_end{this->container_, this->filter_};
-    it_end.it_ =  it_end.container_.end();
+
+    it_end.it_       =  it_end.container_.end();
+    it_end.distance_ = it_end.container_.size();
+
     return it_end;
   }
 
@@ -548,11 +564,7 @@ class filter_iterator : public std::iterator<
 
 
   bool operator==(const filter_iterator& other) const {
-
-    size_t d1 = std::distance(this->it_, const_cast<filter_iterator*>(this)->container_.end());
-    size_t d2 = std::distance(other.it_, const_cast<filter_iterator&>(other).container_.end());
-
-    return (this->container_.size() == other.container_.size() and d1 == d2);
+    return (this->container_.size() == other.container_.size() and this->distance_ == other.distance_);
   }
 
   bool operator!=(const filter_iterator& other) const {
@@ -562,13 +574,14 @@ class filter_iterator : public std::iterator<
   private:
   void next(void) {
     if (this->it_ == std::end(this->container_)) {
+      this->distance_ = this->container_.size();
       return;
     }
 
-    this->it_ = std::find_if(
-      std::next(this->it_),
-      std::end(this->container_),
-      this->filter_);
+    do {
+      this->it_ = std::next(this->it_);
+      this->distance_++;
+    } while(this->it_ != std::end(this->container_) and not this->filter_(*this->it_));
 
   }
 
@@ -577,6 +590,7 @@ class filter_iterator : public std::iterator<
   T container_;
   typename DT::iterator it_;
   filter_t filter_;
+  typename filter_iterator::difference_type distance_;
 };
 
 // Iterator which return a const ref on container's values given a predicated
@@ -596,7 +610,10 @@ class const_filter_iterator : public std::iterator<
   using filter_t = std::function<bool (const typename DT::value_type)>;
 
   const_filter_iterator(CT container, filter_t filter) :
-    size_c_{0}, container_{std::forward<CT>(container)}, filter_{filter}
+    size_c_{0},
+    container_{std::forward<CT>(container)},
+    filter_{filter},
+    distance_{0}
   {
     this->it_ = this->container_.cbegin();
 
@@ -611,10 +628,10 @@ class const_filter_iterator : public std::iterator<
     size_c_{0},
     container_{copy.container_},
     it_{container_.cbegin()},
-    filter_{copy.filter_}
+    filter_{copy.filter_},
+    distance_{copy.distance_}
   {
-    size_t d = std::distance(copy.container_.cbegin(), copy.it_);
-    std::advance(this->it_, d);
+    std::advance(this->it_, this->distance_);
   }
 
   const_filter_iterator operator=(const_filter_iterator other) {
@@ -627,6 +644,7 @@ class const_filter_iterator : public std::iterator<
     std::swap(this->it_,        other.it_);
     std::swap(this->filter_,    other.filter_);
     std::swap(this->size_c_,    other.size_c_);
+    std::swap(this->distance_,  other.distance_);
   }
 
 
@@ -654,7 +672,8 @@ class const_filter_iterator : public std::iterator<
 
   const_filter_iterator cend(void) const {
     const_filter_iterator it{this->container_, this->filter_};
-    it.it_ = it.container_.cend();
+    it.it_       = it.container_.cend();
+    it.distance_ = it.container_.size();
     return it;
   }
 
@@ -707,12 +726,8 @@ class const_filter_iterator : public std::iterator<
     return *it;
   }
 
-
-
   bool operator==(const const_filter_iterator& other) const {
-    size_t d1 = static_cast<size_t>(std::distance(this->it_, this->container_.cend()));
-    size_t d2 = static_cast<size_t>(std::distance(other.it_, other.container_.cend()));
-    return (this->container_.size() == other.container_.size() and d1 == d2);
+    return (this->container_.size() == other.container_.size() and this->distance_ == other.distance_);
   }
 
   bool operator!=(const const_filter_iterator& other) const {
@@ -723,19 +738,21 @@ class const_filter_iterator : public std::iterator<
   void next(void) {
 
     if (this->it_ == this->container_.cend()) {
+      this->distance_ = this->container_.size();
       return;
     }
 
-    this->it_ = std::find_if(
-      std::next(this->it_),
-      this->container_.cend(),
-      this->filter_);
+    do {
+      this->it_ = std::next(this->it_);
+      this->distance_++;
+    } while(this->it_ != this->container_.cend() and not this->filter_(*this->it_));
   }
 
   mutable size_t size_c_;
   T container_;
   typename decay_t<decltype(container_)>::const_iterator it_;
   filter_t filter_;
+  typename const_filter_iterator::difference_type distance_;
 };
 
 

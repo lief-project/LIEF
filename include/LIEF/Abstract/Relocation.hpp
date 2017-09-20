@@ -51,8 +51,20 @@ class DLL_PUBLIC Relocation : public Visitable {
     bool operator==(const Relocation& rhs) const;
     bool operator!=(const Relocation& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
+    //! @brief Comparaison based on the Relocation's **address**
+    bool operator<(const Relocation& rhs) const;
+
+    //! @brief Comparaison based on the Relocation's **address**
+    bool operator<=(const Relocation& rhs) const;
+
+    //! @brief Comparaison based on the Relocation's **address**
+    bool operator>(const Relocation& rhs) const;
+
+    //! @brief Comparaison based on the Relocation's **address**
+    bool operator>=(const Relocation& rhs) const;
+
+    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   protected:
     uint64_t address_;
@@ -60,5 +72,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     // type_;
 
 };
+
+
 }
 #endif

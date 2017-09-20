@@ -104,7 +104,8 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
         const std::string& symbol_name,
         int32_t ord,
         int64_t addend,
-        bool is_weak);
+        bool is_weak,
+        it_segments& segments);
 
 
     template<class MACHO_T>

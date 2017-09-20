@@ -142,9 +142,13 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     Section&       section_from_offset(uint64_t offset);
     const Section& section_from_offset(uint64_t offset) const;
 
+    //! @brief Return binary's @link MachO::Section section @endlink
+    //! which holds the given virtual address
+    Section&       section_from_virtual_address(uint64_t virtual_address);
+    const Section& section_from_virtual_address(uint64_t virtual_address) const;
+
     //! @brief Convert a virtual address to an offset in the file
     uint64_t virtual_address_to_offset(uint64_t virtualAddress) const;
-
 
     // @brief Return binary's @link MachO::SegmentCommand segment command
     // which hold the offset
@@ -158,6 +162,13 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     // which hold the virtual address
     SegmentCommand&       segment_from_virtual_address(uint64_t virtual_address);
     const SegmentCommand& segment_from_virtual_address(uint64_t virtual_address) const;
+
+    //! @brief Return the range of virtual addresses
+    std::pair<uint64_t, uint64_t> va_ranges(void) const;
+
+    //! @brief Check if the given address is comprise between the lowest
+    //! virtual address and the biggest one
+    bool is_valid_addr(uint64_t address) const;
 
     //! @brief Method so that the ``visitor`` can visit us
     virtual void accept(LIEF::Visitor& visitor) const override;
@@ -285,6 +296,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     Header     header_;
     commands_t commands_;
     symbols_t  symbols_;
+
+    // Cached relocations from segment / sections
+    mutable relocations_t relocations_;
 
   protected:
     uint64_t fat_offset_ = 0;

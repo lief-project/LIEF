@@ -114,7 +114,7 @@ void Builder::build(void) {
     LOG(WARNING) << "Segments offset is null";
   }
 
-  this->build_header<ELF_T>();
+  this->build<ELF_T>(this->binary_->header());
 
 }
 
@@ -162,7 +162,7 @@ std::vector<std::string> Builder::optimize(const HANDLER& e) {
 
 
 template<typename ELF_T>
-void Builder::build_header(void) {
+void Builder::build(const Header& header) {;
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
@@ -171,7 +171,6 @@ void Builder::build_header(void) {
 
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
-  const Header& header = this->binary_->header();
   Elf_Ehdr ehdr;
 
   ehdr.e_type      = static_cast<Elf_Half>(header.file_type());
@@ -246,9 +245,8 @@ void Builder::build_sections(void) {
 
     // Write Section's content
     if (section->size() > 0) {
-        const std::vector<uint8_t>& content = section->content();
-        this->ios_.seekp(section->file_offset());
-        this->ios_.write(content.data(), section->size());
+      this->ios_.seekp(section->file_offset());
+      this->ios_.write(section->content());
     }
   }
 
@@ -287,10 +285,8 @@ void Builder::build_sections(void) {
     }
   }
 
-  // TODO: Assert sh_size == content.size()
   this->ios_.seekp(string_names_section->file_offset());
-  this->ios_.write(section_names.data(), section_names.size());
-  //string_names_section->content(section_names);
+  this->ios_.write(std::move(section_names));
 
 
 }
@@ -349,13 +345,13 @@ void Builder::build_segments(void) {
       VLOG(VDEBUG) << "Size: 0x" << std::hex << content.size();
 
       this->ios_.seekp(segment->file_offset());
-      this->ios_.write(content);
+      this->ios_.write(std::move(content));
     }
   }
 
   const Elf_Off segment_header_offset = this->binary_->header().program_headers_offset();
   this->ios_.seekp(segment_header_offset);
-  this->ios_.write(pheaders);
+  this->ios_.write(std::move(pheaders));
 }
 
 
@@ -431,8 +427,8 @@ void Builder::build_static_symbols(void) {
         reinterpret_cast<uint8_t*>(&sym_hdr) + sizeof(Elf_Sym));
   }
 
-  symbol_str_section.content(string_table);
-  symbol_section.content(content);
+  symbol_str_section.content(std::move(string_table));
+  symbol_section.content(std::move(content));
 
 }
 
@@ -550,7 +546,7 @@ void Builder::build_dynamic_section(void) {
           }
 
           dt_array_size->value((array.size()) * sizeof(Elf_Addr));
-          array_section.content(array_content);
+          array_section.content(std::move(array_content));
           break;
         }
 
@@ -578,7 +574,7 @@ void Builder::build_dynamic_section(void) {
     Segment dynamic_load;
     dynamic_load.type(SEGMENT_TYPES::PT_LOAD);
     dynamic_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynamic_load.content(dynamic_table_raw);
+    dynamic_load.content(std::move(dynamic_table_raw));
     Segment& new_dynamic_load = this->binary_->add(dynamic_load);
 
     auto&& it_dynamic = std::find_if(
@@ -615,7 +611,7 @@ void Builder::build_dynamic_section(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dynamic_strings_raw);
+    dynstr.content(std::move(dynamic_strings_raw));
 
     Segment& new_segment = this->binary_->add(dynstr);
     dyn_strtab_section.virtual_address(new_segment.virtual_address());
@@ -633,8 +629,8 @@ void Builder::build_dynamic_section(void) {
   }
 
   VLOG(VDEBUG) << dyn_strtab_section;
-  dyn_strtab_section.content(dynamic_strings_raw);
-  dyn_section.content(dynamic_table_raw);
+  dyn_strtab_section.content(std::move(dynamic_strings_raw));
+  dyn_section.content(std::move(dynamic_table_raw));
 }
 
 
@@ -696,7 +692,7 @@ void Builder::build_symbol_hash(void) {
 
   }
 
-  (*it_hash_section)->content(new_hash_table);
+  (*it_hash_section)->content(std::move(new_hash_table));
 }
 
 // Mainly inspired from
@@ -845,7 +841,7 @@ void Builder::build_symbol_gnuhash(void) {
   }
 
   if (raw_gnuhash.size() <= (*it_gnuhash)->size()) {
-    return (*it_gnuhash)->content(raw_gnuhash);
+    return (*it_gnuhash)->content(std::move(raw_gnuhash));
   } else { // Write a "null hash table"
     this->build_empty_symbol_gnuhash();
   }
@@ -965,7 +961,7 @@ void Builder::build_dynamic_symbols(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(string_table_raw);
+    dynstr.content(std::move(string_table_raw));
 
     Segment& new_segment = this->binary_->add(dynstr);
 
@@ -987,7 +983,7 @@ void Builder::build_dynamic_symbols(void) {
     Segment dynsym_load;
     dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
     dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynsym_load.content(symbol_table_raw);
+    dynsym_load.content(std::move(symbol_table_raw));
     Segment& new_dynsym_load = this->binary_->add(dynsym_load);
 
     symbol_table_section.virtual_address(new_dynsym_load.virtual_address());
@@ -1005,8 +1001,8 @@ void Builder::build_dynamic_symbols(void) {
   }
 
   VLOG(VDEBUG) << "Write back symbol table";
-  string_table_section.content(string_table_raw);
-  symbol_table_section.content(symbol_table_raw);
+  string_table_section.content(std::move(string_table_raw));
+  symbol_table_section.content(std::move(symbol_table_raw));
 
 }
 
@@ -1151,7 +1147,7 @@ void Builder::build_dynamic_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content);
+    relocation_load.content(std::move(content));
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1169,7 +1165,7 @@ void Builder::build_dynamic_relocations(void) {
 
   }
 
-  relocation_section.content(content);
+  relocation_section.content(std::move(content));
 }
 
 template<typename ELF_T>
@@ -1290,7 +1286,7 @@ void Builder::build_pltgot_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content);
+    relocation_load.content(std::move(content));
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1307,7 +1303,7 @@ void Builder::build_pltgot_relocations(void) {
     return this->build_pltgot_relocations<ELF_T>();
   }
 
-  relocation_section.content(content);
+  relocation_section.content(std::move(content));
 }
 
 
@@ -1421,7 +1417,7 @@ void Builder::build_symbol_requirement(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dyn_str_raw);
+    dynstr.content(std::move(dyn_str_raw));
 
     Segment& new_segment = this->binary_->add(dynstr);
 
@@ -1439,8 +1435,8 @@ void Builder::build_symbol_requirement(void) {
     return this->build_symbol_requirement<ELF_T>();
   }
 
-  this->binary_->section_from_offset(svr_offset).content(svr_raw);
-  dyn_str_section.content(dyn_str_raw);
+  this->binary_->section_from_offset(svr_offset).content(std::move(svr_raw));
+  dyn_str_section.content(std::move(dyn_str_raw));
 
 }
 
@@ -1538,7 +1534,7 @@ void Builder::build_symbol_definition(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dyn_str_raw);
+    dynstr.content(std::move(dyn_str_raw));
 
     Segment& new_segment = this->binary_->add(dynstr);
 
@@ -1559,8 +1555,8 @@ void Builder::build_symbol_definition(void) {
   this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
   this->build_dynamic_section<ELF_T>();
 
-  this->binary_->section_from_offset(svd_offset).content(svd_raw);
-  dyn_str_section.content(dyn_str_raw);
+  this->binary_->section_from_offset(svd_offset).content(std::move(svd_raw));
+  dyn_str_section.content(std::move(dyn_str_raw));
 
 }
 

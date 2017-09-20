@@ -34,10 +34,12 @@ namespace MachO {
 
 class BinaryParser;
 class SegmentCommand;
+class Binary;
 
 class DLL_PUBLIC Section : public LIEF::Section {
 
   friend class BinaryParser;
+  friend class Binary;
 
   public:
     Section(void);

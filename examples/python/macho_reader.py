@@ -125,8 +125,8 @@ def print_segments(binary):
             segment.name,
             segment.virtual_address,
             segment.virtual_size,
-            segment.file_size,
             segment.file_offset,
+            segment.file_size,
             segment.max_protection,
             segment.init_protection,
             sections))
@@ -424,7 +424,6 @@ def print_relocations(binary):
 
             if reloc.has_section:
                 secseg_name = reloc.section.name
-
 
         print(f_value.format(
             address=reloc.address,

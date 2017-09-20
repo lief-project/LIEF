@@ -311,6 +311,46 @@ void Section::content(const std::vector<uint8_t>& content) {
 
 }
 
+
+void Section::content(std::vector<uint8_t>&& content) {
+  if (content.size() > 0 and this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
+    LOG(WARNING) << "You insert data (" << std::hex << content.size() << ") in section '"
+                 << this->name() << "' which has SHT_NOBITS type !" << std::endl;
+  }
+
+  if (this->datahandler_ == nullptr) {
+    VLOG(VDEBUG) << "Set content in the cache";
+    this->content_c_ = std::move(content);
+    this->size(content.size());
+    return;
+  }
+
+
+  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex
+               << this->file_offset() << ", 0x" << content.size() << "]";
+
+
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->size(),
+      DataHandler::Node::SECTION);
+
+  std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  this->datahandler_->reserve(node.offset(), content.size());
+
+  if (node.size() < content.size()) {
+    LOG(WARNING) << "You insert data in section '"
+                 << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
+  }
+
+  this->size(content.size());
+
+  std::move(
+      std::begin(content),
+      std::end(content),
+      std::begin(binary_content) + node.offset());
+}
+
 void Section::type(ELF_SECTION_TYPES type) {
   this->type_ = type;
 }
@@ -353,11 +393,11 @@ void Section::entry_size(uint64_t entry_size) {
 
 
 it_segments Section::segments(void) {
-  return it_segments{std::ref(this->segments_)};
+  return this->segments_;
 }
 
 it_const_segments Section::segments(void) const {
-  return it_const_segments{std::cref(this->segments_)};
+  return this->segments_;
 }
 
 void Section::accept(Visitor& visitor) const {

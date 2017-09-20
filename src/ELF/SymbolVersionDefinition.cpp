@@ -102,11 +102,11 @@ uint32_t SymbolVersionDefinition::hash(void) const {
 }
 
 it_symbols_version_aux SymbolVersionDefinition::symbols_aux(void) {
-  return it_symbols_version_aux{this->symbol_version_aux_};
+  return this->symbol_version_aux_;
 }
 
 it_const_symbols_version_aux SymbolVersionDefinition::symbols_aux(void) const {
-  return it_const_symbols_version_aux{this->symbol_version_aux_};
+  return this->symbol_version_aux_;
 
 }
 

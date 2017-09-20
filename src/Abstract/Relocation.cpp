@@ -77,6 +77,23 @@ bool Relocation::operator!=(const Relocation& rhs) const {
   return not (*this == rhs);
 }
 
+
+bool Relocation::operator<(const Relocation& rhs) const {
+  return this->address() < rhs.address();
+}
+
+bool Relocation::operator<=(const Relocation& rhs) const {
+  return not (this->address() > rhs.address());
+}
+
+bool Relocation::operator>(const Relocation& rhs) const {
+  return this->address() > rhs.address();
+}
+
+bool Relocation::operator>=(const Relocation& rhs) const {
+  return not (this->address() < rhs.address());
+}
+
 std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
   os << std::hex;
   os << std::left

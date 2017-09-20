@@ -102,6 +102,11 @@ void init_MachO_Binary_class(py::module& m) {
         "Return the " RST_CLASS_REF(lief.MachO.Section) " which contains the offset",
         py::return_value_policy::reference)
 
+    .def("section_from_virtual_address",
+        static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_virtual_address),
+        "Return the " RST_CLASS_REF(lief.MachO.Section) " which contains the virtual address",
+        py::return_value_policy::reference)
+
     .def("segment_from_offset",
         static_cast<SegmentCommand& (Binary::*)(uint64_t)>(&Binary::segment_from_offset),
         "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which contains the offset",
@@ -109,7 +114,7 @@ void init_MachO_Binary_class(py::module& m) {
 
     .def("segment_from_virtual_address",
         static_cast<SegmentCommand& (Binary::*)(uint64_t)>(&Binary::segment_from_virtual_address),
-        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which contains the (relative) virtual address",
+        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which contains the virtual address",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_entrypoint",
@@ -213,6 +218,16 @@ void init_MachO_Binary_class(py::module& m) {
         "Return the section from the given name",
         "name"_a,
         py::return_value_policy::reference)
+
+    .def_property_readonly("va_ranges",
+        &Binary::va_ranges,
+        "Return the range of virtual addresses as a tuple ``(va_start, va_end)``")
+
+    .def("is_valid_addr",
+        &Binary::is_valid_addr,
+        "Check if the given address is comprise between the lowest "
+        "virtual address and the biggest one",
+        "address"_a)
 
 
     .def("__str__",

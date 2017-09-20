@@ -63,9 +63,9 @@ vector_iostream& vector_iostream::write(std::vector<uint8_t>&& s) {
   }
   auto&& it = std::begin(this->raw_);
   std::advance(it, static_cast<size_t>(this->tellp()));
-  std::copy(
-      std::make_move_iterator(std::begin(s)),
-      std::make_move_iterator(std::end(s)), it);
+  std::move(
+      std::begin(s),
+      std::end(s), it);
 
   this->current_pos_ += s.size();
   return *this;

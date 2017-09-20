@@ -49,6 +49,10 @@ class TestMachO(TestCase):
         self.assertEqual(sshd.version_min.version, [10, 11, 0])
         self.assertEqual(sshd.version_min.sdk, [10, 11, 0])
 
+    def test_va2offset(self):
+        dd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin'))
+        self.assertEqual(dd.virtual_address_to_offset(0x100004054), 0x4054)
+
 
     def test_thread_cmd(self):
         micromacho = lief.parse(get_sample('MachO/MachO32_x86_binary_micromacho.bin'))
@@ -68,29 +72,30 @@ class TestMachO(TestCase):
         self.assertEqual(len(relocations), 2)
 
         # 0
-        self.assertEqual(relocations[0].address, 0x233)
-        self.assertEqual(relocations[0].type,    2)
+        self.assertEqual(relocations[0].address, 0x21b)
+        self.assertEqual(relocations[0].type,    1)
         self.assertEqual(relocations[0].size,    32)
 
         self.assertEqual(relocations[0].is_scattered, False)
 
-        self.assertEqual(relocations[0].has_symbol,  True)
-        self.assertEqual(relocations[0].symbol.name, "_printf")
+        self.assertEqual(relocations[0].has_symbol,  False)
 
         self.assertEqual(relocations[0].has_section,  True)
         self.assertEqual(relocations[0].section.name, text_section.name)
 
         # 1
-        self.assertEqual(relocations[1].address, 0x21b)
-        self.assertEqual(relocations[1].type,    1)
+        self.assertEqual(relocations[1].address, 0x233)
+        self.assertEqual(relocations[1].type,    2)
         self.assertEqual(relocations[1].size,    32)
 
         self.assertEqual(relocations[1].is_scattered, False)
 
-        self.assertEqual(relocations[1].has_symbol,  False)
+        self.assertEqual(relocations[1].has_symbol,  True)
+        self.assertEqual(relocations[1].symbol.name, "_printf")
 
         self.assertEqual(relocations[1].has_section,  True)
         self.assertEqual(relocations[1].section.name, text_section.name)
+
 
         # __compact_unwind__LD  Section
         cunwind_section = helloworld.get_section("__compact_unwind")

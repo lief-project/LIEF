@@ -72,6 +72,8 @@ class DLL_PUBLIC Section : public LIEF::Section {
     //! @brief Set section content
     virtual void content(const std::vector<uint8_t>& data) override;
 
+    void content(std::vector<uint8_t>&& data);
+
     //! @brief Section flags LIEF::ELF::ELF_SECTION_FLAGS
     uint64_t flags(void) const;
 

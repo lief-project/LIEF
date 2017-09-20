@@ -141,7 +141,7 @@ void Parser::parse_binary(void) {
     const uint64_t size            = (*it_dynamic_relocations_size)->value();
     try {
       uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
-      this->parse_dynamic_relocations<ELF_T>(offset, size, true);
+      this->parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rela>(offset, size);
     } catch (const LIEF::exception&) {
     }
   }
@@ -169,7 +169,7 @@ void Parser::parse_binary(void) {
     const uint64_t size            = (*it_dynamic_relocations_size)->value();
     try {
       const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
-      this->parse_dynamic_relocations<ELF_T>(offset, size, false);
+      this->parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rel>(offset, size);
     } catch (const LIEF::exception&) {
 
     }
@@ -217,9 +217,11 @@ void Parser::parse_binary(void) {
 
     try {
       const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
-      this->parse_pltgot_relocations<ELF_T>(
-        offset, size,
-        type == DYNAMIC_TAGS::DT_RELA ? true : false);
+      if (type == DYNAMIC_TAGS::DT_RELA) {
+        this->parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rela>(offset, size);
+      } else {
+        this->parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rel>(offset, size);
+      }
     } catch (const LIEF::exception& e) {
       LOG(WARNING) << e.what();
 
@@ -414,20 +416,24 @@ void Parser::parse_binary(void) {
   }
 
   // Try to parse using sections
-  for (const Section& section : this->binary_->sections()) {
-    if (section.type() == ELF_SECTION_TYPES::SHT_RELA or
-        section.type() == ELF_SECTION_TYPES::SHT_REL) {
+  if (this->binary_->relocations_.size() == 0) {
+    for (const Section& section : this->binary_->sections()) {
       try {
-        this->parse_section_relocations<ELF_T>(
-          section.file_offset(),
-          section.size(),
-          section.type() == ELF_SECTION_TYPES::SHT_RELA);
+        if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(
+            section.file_offset(), section.size());
+
+        }
+        else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(
+            section.file_offset(), section.size());
+        }
+
       } catch (const exception& e) {
         LOG(WARNING) << "Unable to parse relocations from section '"
                      << section.name() << "'"
                      << " (" << e.what() << ")";
       }
-
     }
   }
 
@@ -821,11 +827,11 @@ void Parser::parse_segments(void) {
 
 
 
-template<typename ELF_T>
-void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size, bool isRela) {
+template<typename ELF_T, typename REL_T>
+void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size) {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
+                std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
   VLOG(VDEBUG) << "[+] Parsing dynamic relocations";
-  using Elf_Rela = typename ELF_T::Elf_Rela;
-  using Elf_Rel  = typename ELF_T::Elf_Rel;
 
   // Already parsed
   if (this->binary_->dynamic_relocations().size() > 0) {
@@ -834,50 +840,26 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
 
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  if (isRela) {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rela));
+  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
-    const Elf_Rela* relocEntry = reinterpret_cast<const Elf_Rela*>(
-        this->stream_->read(relocations_offset, nb_entries * sizeof(Elf_Rela)));
+  const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
+        this->stream_->read(relocations_offset, nb_entries * sizeof(REL_T)));
 
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
-      reloc->architecture_ = this->binary_->header().machine_type();
-      const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      } else {
-        LOG(WARNING) << "Unable to find the symbol associated with the relocation (idx: "
-                     << std::dec << idx << ")" << std::endl
-                     << reloc;
-      }
-
-      this->binary_->relocations_.push_back(reloc);
-      relocEntry++;
+  for (uint32_t i = 0; i < nb_entries; ++i) {
+    Relocation* reloc = new Relocation{relocEntry};
+    reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
+    reloc->architecture_ = this->binary_->header().machine_type();
+    const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
+    if (idx < this->binary_->dynamic_symbols_.size()) {
+      reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
+    } else {
+      LOG(WARNING) << "Unable to find the symbol associated with the relocation (idx: "
+                   << std::dec << idx << ")" << std::endl
+                   << reloc;
     }
-  } else {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rel));
 
-    const Elf_Rel* relocEntry = reinterpret_cast<const Elf_Rel*>(
-       this->stream_->read(relocations_offset, nb_entries * sizeof(Elf_Rel)));
-
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
-      reloc->architecture_ = this->binary_->header().machine_type();
-      uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      } else {
-        LOG(WARNING) << "Unable to find the symbol associated with the relocation (idx: "
-                     << std::dec << idx << ")" << std::endl
-                     << reloc;
-      }
-
-      this->binary_->relocations_.push_back(reloc);
-      relocEntry++;
-    }
+    this->binary_->relocations_.push_back(reloc);
+    relocEntry++;
   }
 } // build_dynamic_reclocations
 
@@ -1276,10 +1258,10 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 }
 
 
-template<typename ELF_T>
-void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRela) {
-  using Elf_Rela = typename ELF_T::Elf_Rela;
-  using Elf_Rel  = typename ELF_T::Elf_Rel;
+template<typename ELF_T, typename REL_T>
+void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
+                std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
@@ -1291,116 +1273,65 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRel
   const Elf_Off offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  if (isRela) {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rela));
-    const Elf_Rela* relocEntry = reinterpret_cast<const Elf_Rela*>(
-        this->stream_->read(offset_relocations, nb_entries * sizeof(Elf_Rela)));
+  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
+      this->stream_->read(offset_relocations, nb_entries * sizeof(REL_T)));
 
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->architecture_ = this->binary_->header_.machine_type();
-      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
+  for (uint32_t i = 0; i < nb_entries; ++i) {
+    Relocation* reloc = new Relocation{relocEntry};
+    reloc->architecture_ = this->binary_->header_.machine_type();
+    reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
 
-      const uint32_t idx  = static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      }
-
-      this->binary_->relocations_.push_back(reloc);
-      relocEntry++;
+    const uint32_t idx  = static_cast<uint32_t>(relocEntry->r_info >> shift);
+    if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
+      reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
     }
-  } else {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rel));
-    const Elf_Rel* relocEntry = reinterpret_cast<const Elf_Rel*>(
-        this->stream_->read(offset_relocations, nb_entries * sizeof(Elf_Rel)));
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->architecture_ = this->binary_->header_.machine_type();
-      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
 
-      const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      }
-
-      this->binary_->relocations_.push_back(reloc);
-      relocEntry++;
-    }
+    this->binary_->relocations_.push_back(reloc);
+    relocEntry++;
   }
 }
 
-template<typename ELF_T>
-void Parser::parse_section_relocations(uint64_t offset, uint64_t size, bool isRela) {
-  using Elf_Rela = typename ELF_T::Elf_Rela;
-  using Elf_Rel  = typename ELF_T::Elf_Rel;
+template<typename ELF_T, typename REL_T>
+void Parser::parse_section_relocations(uint64_t offset, uint64_t size) {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
+                std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
 
   const uint64_t offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  if (isRela) {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rela));
-    const Elf_Rela* relocEntry = reinterpret_cast<const Elf_Rela*>(
-        this->stream_->read(offset_relocations, nb_entries * sizeof(Elf_Rela)));
+  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
+      this->stream_->read(offset_relocations, nb_entries * sizeof(REL_T)));
 
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->architecture_ = this->binary_->header_.machine_type();
-      if (this->binary_->header().file_type() == ELF::E_TYPE::ET_REL and
-          this->binary_->segments().size() == 0) {
-        reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
-      }
-
-      const uint32_t idx  = static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      }
-
-      if (std::find_if(
-            std::begin(this->binary_->relocations_),
-            std::end(this->binary_->relocations_),
-            [&reloc] (const Relocation* r) {
-              return r->address() == reloc->address() and
-                     r->type() == reloc->type() and
-                     r->addend() == reloc->addend();
-            }) != std::end(this->binary_->relocations_)) {
-        delete reloc;
-      } else {
-        this->binary_->relocations_.push_back(reloc);
-      }
-      relocEntry++;
+  for (uint32_t i = 0; i < nb_entries; ++i) {
+    Relocation* reloc = new Relocation{relocEntry};
+    reloc->architecture_ = this->binary_->header_.machine_type();
+    if (this->binary_->header().file_type() == ELF::E_TYPE::ET_REL and
+        this->binary_->segments().size() == 0) {
+      reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
     }
-  } else {
-    const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(Elf_Rel));
-    const Elf_Rel* relocEntry = reinterpret_cast<const Elf_Rel*>(
-        this->stream_->read(offset_relocations, nb_entries * sizeof(Elf_Rel)));
-    for (uint32_t i = 0; i < nb_entries; ++i) {
-      Relocation* reloc = new Relocation{relocEntry};
-      reloc->architecture_ = this->binary_->header_.machine_type();
-      if (this->binary_->header().file_type() == ELF::E_TYPE::ET_REL and
-          this->binary_->segments().size() == 0) {
-        reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
-      }
 
-
-      const uint32_t idx =  static_cast<uint32_t>(relocEntry->r_info >> shift);
-      if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
-        reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
-      }
-
-      if (std::find_if(
-            std::begin(this->binary_->relocations_),
-            std::end(this->binary_->relocations_),
-            [&reloc] (const Relocation* r) {
-              return r->address() == reloc->address() and
-                     r->type() == reloc->type() and
-                     r->addend() == reloc->addend();
-            }) != std::end(this->binary_->relocations_)) {
-        delete reloc;
-      } else {
-        this->binary_->relocations_.push_back(reloc);
-      }
-      relocEntry++;
+    const uint32_t idx  = static_cast<uint32_t>(relocEntry->r_info >> shift);
+    if (idx > 0 and idx < this->binary_->dynamic_symbols_.size()) {
+      reloc->symbol_ = this->binary_->dynamic_symbols_[idx];
+    } else if (idx < this->binary_->static_symbols_.size()) {
+      reloc->symbol_ = this->binary_->static_symbols_[idx];
     }
+
+    if (std::find_if(
+          std::begin(this->binary_->relocations_),
+          std::end(this->binary_->relocations_),
+          [&reloc] (const Relocation* r) {
+            return r->address() == reloc->address() and
+                   r->type() == reloc->type() and
+                   r->addend() == reloc->addend();
+          }) != std::end(this->binary_->relocations_)) {
+      delete reloc;
+    } else {
+      this->binary_->relocations_.push_back(reloc);
+    }
+    relocEntry++;
   }
 }
 

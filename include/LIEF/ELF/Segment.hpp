@@ -80,6 +80,7 @@ class DLL_PUBLIC Segment : public Visitable {
     void virtual_size(uint64_t virtualSize);
     void alignment(uint64_t alignment);
     void content(const std::vector<uint8_t>& content);
+    void content(std::vector<uint8_t>&& content);
 
     it_sections       sections(void);
     it_const_sections sections(void) const;

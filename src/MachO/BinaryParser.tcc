@@ -499,28 +499,25 @@ void BinaryParser::parse_relocations(Section& section) {
 
   }
 
-  section.relocations_.reserve(numberof_relocations);
   for (size_t i = 0; i < numberof_relocations; ++i) {
     int32_t address = this->stream_->read_integer<int32_t>(current_reloc_offset);
     bool is_scattered = static_cast<bool>(address & R_SCATTERED);
+    RelocationObject* reloc = nullptr;
     if (is_scattered) {
       const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
-      RelocationObject* reloc = new RelocationObject{reloc_info};
+      reloc = new RelocationObject{reloc_info};
       reloc->section_ = &section;
-      section.relocations_.push_back(reloc);
     } else {
       const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
-      RelocationObject* reloc = new RelocationObject{reloc_info};
+      reloc = new RelocationObject{reloc_info};
       reloc->section_ = &section;
-      section.relocations_.push_back(reloc);
 
       if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
         if (reloc_info->r_symbolnum < this->binary_->symbols().size()) {
           Symbol& symbol = this->binary_->symbols()[reloc_info->r_symbolnum];
-          Relocation* relocation = section.relocations_.back();
-          relocation->symbol_ = &symbol;
+          reloc->symbol_ = &symbol;
 
           VLOG(VDEBUG) << "Symbol: " << symbol.name();
         } else {
@@ -531,21 +528,22 @@ void BinaryParser::parse_relocations(Section& section) {
       if (reloc_info->r_extern == 0) {
         if (reloc_info->r_symbolnum < this->binary_->sections().size()) {
           Section& relsec = this->binary_->sections()[reloc_info->r_symbolnum];
-          Relocation* relocation = section.relocations_.back();
-          relocation->section_ = &relsec;
+          reloc->section_ = &relsec;
 
           VLOG(VDEBUG) << "Section: " << relsec.name();
         } else {
           LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " seems corrupted";
         }
       }
+
     }
 
-    if (not section.relocations_[i]->has_section()) {
-      section.relocations_[i]->section_ = &section;
+    if (not reloc->has_section()) {
+      reloc->section_ = &section;
     }
-    section.relocations_[i]->architecture_ = this->binary_->header().cpu_type();
-    VLOG(VDEBUG) << *section.relocations_.back();;
+    reloc->architecture_ = this->binary_->header().cpu_type();
+
+    section.relocations_.emplace(reloc);
     current_reloc_offset += 2 * sizeof(uint32_t);
   }
 
@@ -585,7 +583,6 @@ void BinaryParser::parse_dyldinfo_rebases() {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_IMMEDIATE_MASK;
     uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_OPCODE_MASK;
     current_offset += sizeof(uint8_t);
-
     switch(static_cast<REBASE_OPCODES>(opcode)) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
         {
@@ -704,15 +701,17 @@ void BinaryParser::parse_dyldinfo_rebases() {
       relocation.segment_ = &segment;
     }
   }
-
   // Tie sections and relocations
   for (SegmentCommand& segment : segments) {
     uint64_t offset = 0;
 
     for (Relocation& relocation : segment.relocations()) {
+      if (not this->binary_->is_valid_addr(relocation.address())) {
+        continue;
+      }
+
       try {
-        offset = this->binary_->virtual_address_to_offset(relocation.address());
-        Section& section = this->binary_->section_from_offset(offset);
+        Section& section = this->binary_->section_from_virtual_address(relocation.address());
         relocation.section_ = &section;
       } catch (const not_found& e) {
         VLOG(VDEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << relocation.address() << " - 0x" << offset;
@@ -721,8 +720,14 @@ void BinaryParser::parse_dyldinfo_rebases() {
   }
 
 
+
   // Tie symbols and relocations
   for (Relocation& relocation : this->binary_->relocations()) {
+
+    if (not this->binary_->is_valid_addr(relocation.address())) {
+      continue;
+    }
+
     uint64_t address = relocation.address();
     auto&& it_symbol = std::find_if(
         std::begin(this->binary_->symbols_),
@@ -735,6 +740,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
       relocation.symbol_ = *it_symbol;
     }
   }
+
 }
 
 
@@ -804,6 +810,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   std::pair<uint64_t, uint64_t> value_delta = {0, 0};
   std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
 
+  it_segments segments = this->binary_->segments();
   while (not done and current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
     uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
@@ -900,7 +907,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               symbol_name,
               library_ordinal,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
 					segment_offset += sizeof(pint_t);
 					break;
         }
@@ -915,7 +923,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               symbol_name,
               library_ordinal,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
           value_delta     = this->stream_->read_uleb128(current_offset);
           segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
           current_offset += std::get<1>(value_delta);
@@ -932,7 +941,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               symbol_name,
               library_ordinal,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
 					break;
         }
@@ -959,7 +969,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
                 symbol_name,
                 library_ordinal,
                 addend,
-                is_weak_import);
+                is_weak_import,
+                segments);
             segment_offset += skip + sizeof(pint_t);
 					}
 					break;
@@ -1014,6 +1025,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
   std::pair<uint64_t, uint64_t> value_delta = {0, 0};
   std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
+
+  it_segments segments = this->binary_->segments();
 
   while (not done and current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
@@ -1086,7 +1099,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               symbol_name,
               0,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
 					segment_offset += sizeof(pint_t);
 					break;
         }
@@ -1102,7 +1116,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               symbol_name,
               0,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
           value_delta     = this->stream_->read_uleb128(current_offset);
           segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
           current_offset += std::get<1>(value_delta);
@@ -1120,7 +1135,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               symbol_name,
               0,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
 					break;
         }
@@ -1148,7 +1164,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
                 symbol_name,
                 0,
                 addend,
-                is_weak_import);
+                is_weak_import,
+                segments);
             segment_offset += skip + sizeof(pint_t);
 					}
 					break;
@@ -1201,6 +1218,8 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
   std::pair<uint64_t, uint64_t> value_delta  = {0, 0};
   std::pair< int64_t, uint64_t> svalue_delta = {0, 0};
+
+  it_segments segments = this->binary_->segments();
 
   while (current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
@@ -1284,7 +1303,8 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
               symbol_name,
               library_ordinal,
               addend,
-              is_weak_import);
+              is_weak_import,
+              segments);
 					segment_offset += sizeof(pint_t);
 					break;
         }
@@ -1306,12 +1326,12 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
         const std::string& symbol_name,
         int32_t ord,
         int64_t addend,
-        bool is_weak) {
+        bool is_weak,
+        it_segments& segments) {
 
 
   using pint_t = typename MACHO_T::uint;
 
-  it_segments segments = this->binary_->segments();
   if (segment_idx >= segments.size()) {
     LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
     return;
@@ -1381,8 +1401,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   }
 
   try {
-    uint64_t offset = this->binary_->virtual_address_to_offset(reloc->address());
-    Section& section = this->binary_->section_from_offset(offset);
+    Section& section = this->binary_->section_from_virtual_address(reloc->address());
     reloc->section_ = &section;
   } catch (const not_found&) {
     VLOG(VDEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
@@ -1399,7 +1418,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   }
 
   if (not reloc_exists) {
-    segment.relocations_.push_back(reloc);
+    segment.relocations_.emplace(reloc);
   }
   this->binary_->dyld_info().binding_info_.push_back(binding_info);
   VLOG(VDEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
@@ -1423,18 +1442,12 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   Relocation* reloc = nullptr;
   bool reloc_exists = false;
 
-  auto&& it_reloc = std::find_if(
-      std::begin(segment.relocations_),
-      std::end(segment.relocations_),
-      [&address] (const Relocation* r) {
-        return r->address() == address;
-      });
-
+  reloc = new RelocationDyld{address, type};
+  auto&& it_reloc = segment.relocations_.find(reloc);
   if (it_reloc != std::end(segment.relocations_)) {
+    delete reloc;
     reloc = *it_reloc;
     reloc_exists = true;
-  } else {
-    reloc = new RelocationDyld{address, type};
   }
 
   reloc->architecture_ = this->binary_->header().cpu_type();
@@ -1459,11 +1472,10 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
         LOG(ERROR) << "Unsuported relocation type: 0x" << std::hex << type;
       }
   }
-
   if (not reloc_exists) {
-    segment.relocations_.push_back(reloc);
+    segment.relocations_.insert(it_reloc, reloc);
   }
-};
+}
 
 
 

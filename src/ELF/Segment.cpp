@@ -317,6 +317,39 @@ void Segment::content(const std::vector<uint8_t>& content) {
       std::begin(binary_content) + node.offset());
 }
 
+
+void Segment::content(std::vector<uint8_t>&& content) {
+  if (this->datahandler_ == nullptr) {
+    VLOG(VDEBUG) << "Set content in the cache";
+    this->content_c_ = std::move(content);
+
+    this->physical_size(content.size());
+    return;
+  }
+
+  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
+
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->physical_size(),
+      DataHandler::Node::SEGMENT);
+
+  std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  this->datahandler_->reserve(node.offset(), content.size());
+
+  if (node.size() < content.size()) {
+    LOG(WARNING) << "You insert data in segment '"
+                 << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+  }
+
+  this->physical_size(node.size());
+
+  std::move(
+      std::begin(content),
+      std::end(content),
+      std::begin(binary_content) + node.offset());
+}
+
 void Segment::accept(Visitor& visitor) const {
 
   visitor.visit(this->type());

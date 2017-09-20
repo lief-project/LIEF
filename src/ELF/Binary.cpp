@@ -80,23 +80,23 @@ LIEF::sections_t Binary::get_abstract_sections(void) {
 // ========
 
 it_sections Binary::sections(void) {
-  return it_sections{std::ref(this->sections_)};
+  return this->sections_;
 }
 
 
 it_const_sections Binary::sections(void) const {
-  return it_const_sections{std::cref(this->sections_)};
+  return this->sections_;
 }
 
 // Segments
 // ========
 
 it_segments Binary::segments(void) {
-  return it_segments{std::ref(this->segments_)};
+  return this->segments_;
 }
 
 it_const_segments Binary::segments(void) const {
-  return it_const_segments{std::ref(this->segments_)};
+  return this->segments_;
 }
 
 
@@ -336,33 +336,33 @@ it_const_imported_symbols Binary::imported_symbols(void) const {
 // --------------
 
 it_symbols_version Binary::symbols_version(void) {
-  return it_symbols_version{std::ref(this->symbol_version_table_)};
+  return this->symbol_version_table_;
 }
 
 it_const_symbols_version Binary::symbols_version(void) const {
-  return it_const_symbols_version{std::cref(this->symbol_version_table_)};
+  return this->symbol_version_table_;
 }
 
 // Symbol version definition
 // -------------------------
 
 it_symbols_version_definition Binary::symbols_version_definition(void) {
-  return it_symbols_version_definition{std::ref(this->symbol_version_definition_)};
+  return this->symbol_version_definition_;
 }
 
 it_const_symbols_version_definition Binary::symbols_version_definition(void) const {
-  return it_const_symbols_version_definition{std::cref(this->symbol_version_definition_)};
+  return this->symbol_version_definition_;
 }
 
 // Symbol version requirement
 // --------------------------
 
 it_symbols_version_requirement Binary::symbols_version_requirement(void) {
-  return it_symbols_version_requirement{std::ref(this->symbol_version_requirements_)};
+  return this->symbol_version_requirements_;
 }
 
 it_const_symbols_version_requirement Binary::symbols_version_requirement(void) const {
-  return it_const_symbols_version_requirement{std::cref(this->symbol_version_requirements_)};
+  return this->symbol_version_requirements_;
 }
 
 void Binary::remove_symbol(const std::string& name) {

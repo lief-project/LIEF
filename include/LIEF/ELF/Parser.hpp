@@ -149,16 +149,16 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     //! @brief Parse Dynamic relocations
     //!
     //! It use DT_REL/DT_RELA dynamic entries to parse it
-    template<typename ELF_T>
-    void parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size, bool isRela);
+    template<typename ELF_T, typename REL_T>
+    void parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size);
 
     //! @brief Parse `.plt.got`/`got` relocations
     //!
     //! For:
     //! * ELF32 it uses **DT_JMPREL** and **DT_PLTRELSZ**
     //! * ELF64 it uses **DT_PLTREL** and **DT_PLTRELSZ**
-    template<typename ELF_T>
-    void parse_pltgot_relocations(uint64_t offset, uint64_t size, bool isRela);
+    template<typename ELF_T, typename REL_T>
+    void parse_pltgot_relocations(uint64_t offset, uint64_t size);
 
 
     //! @brief Parse relocations using LIEF::ELF::Section.
@@ -166,8 +166,8 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     //! Parser::parse_dynamic_relocations and Parser::parse_pltgot_relocations
     //! use parse relocations by using LIEF::ELF::Segment. This method parse relocations
     //! that are not reachable through segments (For example Object file).
-    template<typename ELF_T>
-    void parse_section_relocations(uint64_t offset, uint64_t size, bool isRela);
+    template<typename ELF_T, typename REL_T>
+    void parse_section_relocations(uint64_t offset, uint64_t size);
 
     //! @brief Parse SymbolVersionRequirement
     //!

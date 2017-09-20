@@ -67,11 +67,11 @@ const std::string& Export::name(void) const {
 }
 
 it_export_entries Export::entries(void) {
-  return it_export_entries{std::ref(this->entries_)};
+  return this->entries_;
 }
 
 it_const_export_entries Export::entries(void) const {
-  return it_const_export_entries{std::cref(this->entries_)};
+  return this->entries_;
 }
 
 void Export::export_flags(uint32_t flags) {

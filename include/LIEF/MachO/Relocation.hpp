@@ -120,6 +120,8 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
 
     DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
+
+
   protected:
     Symbol*            symbol_;
     uint8_t            type_;
