@@ -546,7 +546,7 @@ void Builder::build_dynamic_section(void) {
           }
 
           dt_array_size->value((array.size()) * sizeof(Elf_Addr));
-          array_section.content(std::move(array_content));
+          array_section.content(array_content);
           break;
         }
 
@@ -574,7 +574,7 @@ void Builder::build_dynamic_section(void) {
     Segment dynamic_load;
     dynamic_load.type(SEGMENT_TYPES::PT_LOAD);
     dynamic_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynamic_load.content(std::move(dynamic_table_raw));
+    dynamic_load.content(dynamic_table_raw);
     Segment& new_dynamic_load = this->binary_->add(dynamic_load);
 
     auto&& it_dynamic = std::find_if(
@@ -611,7 +611,7 @@ void Builder::build_dynamic_section(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(std::move(dynamic_strings_raw));
+    dynstr.content(dynamic_strings_raw);
 
     Segment& new_segment = this->binary_->add(dynstr);
     dyn_strtab_section.virtual_address(new_segment.virtual_address());
@@ -961,7 +961,7 @@ void Builder::build_dynamic_symbols(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(std::move(string_table_raw));
+    dynstr.content(string_table_raw);
 
     Segment& new_segment = this->binary_->add(dynstr);
 
@@ -983,7 +983,7 @@ void Builder::build_dynamic_symbols(void) {
     Segment dynsym_load;
     dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
     dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynsym_load.content(std::move(symbol_table_raw));
+    dynsym_load.content(symbol_table_raw);
     Segment& new_dynsym_load = this->binary_->add(dynsym_load);
 
     symbol_table_section.virtual_address(new_dynsym_load.virtual_address());
@@ -1147,7 +1147,7 @@ void Builder::build_dynamic_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(std::move(content));
+    relocation_load.content(content);
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1286,7 +1286,7 @@ void Builder::build_pltgot_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(std::move(content));
+    relocation_load.content(content);
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1417,7 +1417,7 @@ void Builder::build_symbol_requirement(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(std::move(dyn_str_raw));
+    dynstr.content(dyn_str_raw);
 
     Segment& new_segment = this->binary_->add(dynstr);
 
@@ -1534,7 +1534,7 @@ void Builder::build_symbol_definition(void) {
     Segment dynstr;
     dynstr.type(SEGMENT_TYPES::PT_LOAD);
     dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(std::move(dyn_str_raw));
+    dynstr.content(dyn_str_raw);
 
     Segment& new_segment = this->binary_->add(dynstr);
 
