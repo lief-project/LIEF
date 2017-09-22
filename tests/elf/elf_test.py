@@ -76,6 +76,13 @@ class TestELF(TestCase):
                 0x12F7C433, 0xEB01FAB6, 0xECD54543, 0xAD3C9892, 0x72632CCF, 0x12F7A2B3, 0x7C92E3BB, 0x7C96F087]
         self.assertEqual(hash_values, hash_values_test)
 
+        #for s in list(ls.dynamic_symbols)[gnu_hash.symbol_index:]:
+        #    print(gnu_hash.check(s.name), s.name)
+        self.assertTrue(all(gnu_hash.check(x.name) for x in list(ls.dynamic_symbols)[gnu_hash.symbol_index:]))
+
+        self.assertFalse(gnu_hash.check("foofdsfdsfds"))
+        self.assertFalse(gnu_hash.check("fazertrvkdfsrezklqpfjeopqdi"))
+
     def test_permutation(self):
         samples = [
                 "ELF/ELF64_x86-64_binary_ls.bin",

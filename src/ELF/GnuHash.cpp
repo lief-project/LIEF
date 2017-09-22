@@ -19,6 +19,7 @@
 
 #include "LIEF/visitors/Hash.hpp"
 
+#include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 
 namespace LIEF {
@@ -32,7 +33,22 @@ GnuHash::GnuHash(void) :
   shift2_{0},
   bloom_filters_{0},
   buckets_{0},
-  hash_values_{0}
+  hash_values_{0},
+  c_{0}
+{}
+
+
+GnuHash::GnuHash(uint32_t symbol_idx,
+      uint32_t shift2,
+      const std::vector<uint64_t>& bloom_filters,
+      const std::vector<uint32_t>& buckets,
+      const std::vector<uint32_t>& hash_values) :
+  symbol_index_{symbol_idx},
+  shift2_{shift2},
+  bloom_filters_{bloom_filters},
+  buckets_{buckets},
+  hash_values_{hash_values},
+  c_{0}
 {}
 
 
@@ -64,6 +80,40 @@ const std::vector<uint32_t>& GnuHash::hash_values(void) const {
   return this->hash_values_;
 }
 
+bool GnuHash::check_bloom_filter(uint32_t hash) const {
+  const size_t C = this->c_;
+  const uint32_t h1 = hash;
+  const uint32_t h2 = hash >> this->shift2();
+
+  const uint32_t n1 = (h1 / C) % this->maskwords();
+
+  const uint32_t b1 = h1 % C;
+  const uint32_t b2 = h2 % C;
+  const uint64_t filter = this->bloom_filters()[n1];
+  return (filter >> b1) & (filter >> b2) & 1;
+}
+
+
+bool GnuHash::check_bucket(uint32_t hash) const {
+  return this->buckets()[hash % this->nb_buckets()] > 0;
+}
+
+bool GnuHash::check(const std::string& symbol_name) const {
+  uint32_t hash = dl_new_hash(symbol_name.c_str());
+  return this->check(hash);
+}
+
+
+bool GnuHash::check(uint32_t hash) const {
+  if (not this->check_bloom_filter(hash)) { // Bloom filter not passed
+    return false;
+  }
+
+  if (not this->check_bucket(hash)) { // hash buck not passed
+    return false;
+  }
+  return true;
+}
 
 bool GnuHash::operator==(const GnuHash& rhs) const {
   size_t hash_lhs = Hash::hash(*this);

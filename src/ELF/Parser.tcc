@@ -649,7 +649,7 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   const uint32_t nbuckets  = header[0];
   const uint32_t symndx    = header[1];
   const uint32_t maskwords = header[2];
-  //const uint32_t shift2    = header[3];
+  const uint32_t shift2    = header[3];
 
   if (maskwords & (maskwords - 1)) {
     LOG(WARNING) << "maskwords is not a power of 2";
@@ -692,21 +692,30 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
     return 0;
   }
 
-  nb_symbols = std::max(nb_symbols, symndx);
+  nb_symbols = symndx;
 
-  const uint32_t* hash_values = reinterpret_cast<const uint32_t*>(
-      this->stream_->read(current_offset, nb_symbols * sizeof(uint32_t)));
+  GnuHash gnuhash{symndx, shift2, bloom_filters, buckets};
+  gnuhash.c_ = sizeof(uint__) * 8;
 
 
-  // "It is set to 1 when a symbol is the last symbol in a given hash chain"
-  while (((*hash_values) & 1) == 0) {
-    ++nb_symbols;
-    ++hash_values;
+  // Register the size of symbols store a the buckets
+  std::vector<size_t> nbsym_buckets(nbuckets, 0);
+
+  for (size_t i = 0; i < nbuckets; ++i) {
+    uint32_t hash_value = 0;
+    size_t nsyms = 0;
+    do {
+      hash_value = this->stream_->read_integer<uint32_t>(current_offset);
+      current_offset += sizeof(uint32_t);
+
+      nsyms++;
+    } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
+
+    nbsym_buckets[i] = buckets[i] + nsyms;
   }
 
-  return ++nb_symbols;
-
-
+  nb_symbols = std::max<uint32_t>(nb_symbols, *std::max_element(std::begin(nbsym_buckets), std::end(nbsym_buckets)));
+  return nb_symbols;
 }
 
 template<typename ELF_T>
@@ -897,6 +906,7 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
   VLOG(VDEBUG) << "[+] Parsing dynamics symbols";
 
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
+  VLOG(VDEBUG) << "Number of symbols counted: " << nb_symbols;
 
   const Elf_Off dynamic_symbols_offset = offset;
   const Elf_Off string_offset          = this->get_dynamic_string_table();
@@ -1494,6 +1504,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   VLOG(VDEBUG) << "[+] Parser symbol GNU hash";
   GnuHash gnuhash;
+  gnuhash.c_ = sizeof(uint__) * 8;
 
   uint64_t current_offset = offset;
 

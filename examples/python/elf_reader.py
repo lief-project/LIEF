@@ -13,7 +13,7 @@ import os
 import traceback
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.WARNING)
+Logger.set_level(lief.LOGGING_LEVEL.INFO)
 
 from optparse import OptionParser
 terminal_rows, terminal_columns = 100, 100

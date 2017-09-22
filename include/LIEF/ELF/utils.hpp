@@ -35,6 +35,7 @@ DLL_PUBLIC unsigned long hash32(const char* name);
 DLL_PUBLIC unsigned long hash64(const char* name);
 DLL_PUBLIC uint32_t dl_new_hash(const char* name);
 
+
 }
 }
 

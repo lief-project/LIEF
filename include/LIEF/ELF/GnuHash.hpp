@@ -37,6 +37,13 @@ class DLL_PUBLIC GnuHash : public Visitable {
 
   public:
   GnuHash(void);
+  GnuHash(uint32_t symbol_idx,
+      uint32_t shift2,
+      const std::vector<uint64_t>& bloom_filters,
+      const std::vector<uint32_t>& buckets,
+      const std::vector<uint32_t>& hash_values = {});
+
+
   GnuHash& operator=(const GnuHash& copy);
   GnuHash(const GnuHash& copy);
   virtual ~GnuHash(void);
@@ -65,6 +72,24 @@ class DLL_PUBLIC GnuHash : public Visitable {
   //! @brief Hash values
   const std::vector<uint32_t>& hash_values(void) const;
 
+  //! @brief Check if the given hash pass the bloom filter
+  bool check_bloom_filter(uint32_t hash) const;
+
+  //! @brief Check if the given hash pass the bucket filter
+  bool check_bucket(uint32_t hash) const;
+
+  //! @brief Check if the symbol *probably* exists. If
+  //! the returned value is ``false`` you can assume at ``100%`` that
+  //! the symbol with the given name doesn't exists. If ``true`` you can't
+  //! do any assumption
+  bool check(const std::string& symbol_name) const;
+
+  //! @brief Check if the symbol associated with the given *probably* exists. If
+  //! the returned value is ``false`` you can assume at ``100%`` that
+  //! the symbol doesn't exists. If ``true`` you can't
+  //! do any assumption
+  bool check(uint32_t hash) const;
+
   bool operator==(const GnuHash& rhs) const;
   bool operator!=(const GnuHash& rhs) const;
 
@@ -79,6 +104,8 @@ class DLL_PUBLIC GnuHash : public Visitable {
   std::vector<uint64_t> bloom_filters_;
   std::vector<uint32_t> buckets_;
   std::vector<uint32_t> hash_values_;
+
+  size_t c_;
 };
 
 
