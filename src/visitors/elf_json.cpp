@@ -333,7 +333,7 @@ void JsonVisitor::visit(const SymbolVersionRequirement& svr) {
 
   std::vector<json> svar_json;
 
-  for (const SymbolVersionAuxRequirement& svar : svr.get_auxiliary_symbols()) {
+  for (const SymbolVersionAuxRequirement& svar : svr.auxiliary_symbols()) {
     JsonVisitor visitor;
     visitor(svar);
     svar_json.emplace_back(visitor.get());

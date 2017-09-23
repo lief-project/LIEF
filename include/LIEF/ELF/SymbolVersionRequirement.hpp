@@ -56,8 +56,8 @@ class DLL_PUBLIC SymbolVersionRequirement : public Visitable {
     uint32_t cnt(void) const;
 
     //! @brief Auxiliary entries
-    it_symbols_version_aux_requirement       get_auxiliary_symbols(void);
-    it_const_symbols_version_aux_requirement get_auxiliary_symbols(void) const;
+    it_symbols_version_aux_requirement       auxiliary_symbols(void);
+    it_const_symbols_version_aux_requirement auxiliary_symbols(void) const;
 
     const std::string& name(void) const;
 

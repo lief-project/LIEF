@@ -46,7 +46,7 @@ void init_ELF_SymbolVersionRequirement_class(py::module& m) {
         static_cast<setter_t<const std::string&>>(&SymbolVersionRequirement::name))
 
     .def("get_auxiliary_symbols",
-        static_cast<no_const_getter<it_symbols_version_aux_requirement>>(&SymbolVersionRequirement::get_auxiliary_symbols),
+        static_cast<no_const_getter<it_symbols_version_aux_requirement>>(&SymbolVersionRequirement::auxiliary_symbols),
         "Auxiliary entries",
         py::return_value_policy::reference_internal)
 

@@ -84,12 +84,12 @@ uint32_t SymbolVersionRequirement::cnt(void) const {
 }
 
 
-it_symbols_version_aux_requirement SymbolVersionRequirement::get_auxiliary_symbols(void) {
+it_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols(void) {
   return this->symbol_version_aux_requirement_;
 }
 
 
-it_const_symbols_version_aux_requirement SymbolVersionRequirement::get_auxiliary_symbols(void) const {
+it_const_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols(void) const {
   return this->symbol_version_aux_requirement_;
 }
 
@@ -114,7 +114,7 @@ void SymbolVersionRequirement::accept(Visitor& visitor) const {
   visitor.visit(this->cnt());
   visitor.visit(this->name());
 
-  for (const SymbolVersionAuxRequirement& svar : this->get_auxiliary_symbols()) {
+  for (const SymbolVersionAuxRequirement& svar : this->auxiliary_symbols()) {
     visitor(svar);
   }
 }

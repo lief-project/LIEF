@@ -1354,7 +1354,7 @@ void Builder::build_symbol_requirement(void) {
       name_offset = dyn_str_raw.size() - name.size() - 1;
     }
 
-    it_const_symbols_version_aux_requirement svars = svr.get_auxiliary_symbols();
+    it_const_symbols_version_aux_requirement svars = svr.auxiliary_symbols();
 
     Elf_Off next_symbol_offset = 0;
     if (svr_idx < (this->binary_->symbol_version_requirements_.size() - 1)) {
