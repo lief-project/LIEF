@@ -40,11 +40,12 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
     std::string interp = binary->interpreter();
-    c_binary->interpreter = static_cast<char*>(malloc(interp.size() * sizeof(char)));
+    c_binary->interpreter = static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
     std::memcpy(
         reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
         reinterpret_cast<const void*>(interp.data()),
         interp.size());
+    reinterpret_cast<char*>(const_cast<char*>(c_binary->interpreter))[interp.size()] = '\0';
   }
 
 

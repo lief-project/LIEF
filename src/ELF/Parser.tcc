@@ -23,7 +23,6 @@ namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
 void Parser::parse_binary(void) {
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   VLOG(VDEBUG) << "Start parsing";
@@ -481,39 +480,103 @@ uint32_t Parser::get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const {
     case DYNSYM_COUNT_METHODS::COUNT_AUTO:
     default:
       {
-        uint32_t nb_dynsym = 0;
-
-        nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_HASH);
-
-        if (nb_dynsym > 0) {
-          return nb_dynsym;
-        }
-
-        nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_SECTION);
-
-        if (nb_dynsym > 0) {
-          return nb_dynsym;
-        }
-
+        uint32_t nb_dynsym, nb_dynsym_tmp = 0;
 
         nb_dynsym = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS);
 
-        if (nb_dynsym > 0) {
-          return nb_dynsym;
+        nb_dynsym_tmp = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_SECTION);
+
+        if (nb_dynsym_tmp < Parser::NB_MAX_SYMBOLS and
+            nb_dynsym_tmp > nb_dynsym and
+            (nb_dynsym_tmp - nb_dynsym) < Parser::DELTA_NB_SYMBOLS) {
+          nb_dynsym = nb_dynsym_tmp;
         }
 
-        return 0;
+        nb_dynsym_tmp = this->get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_HASH);
+
+        if (nb_dynsym_tmp < Parser::NB_MAX_SYMBOLS and
+            nb_dynsym_tmp > nb_dynsym and
+            (nb_dynsym_tmp - nb_dynsym) < Parser::DELTA_NB_SYMBOLS) {
+          nb_dynsym = nb_dynsym_tmp;
+        }
+
+        return nb_dynsym;
       }
   }
 }
 
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_relocations(void) const {
-  using Elf_Rela = typename ELF_T::Elf_Rela;
-  using Elf_Rel  = typename ELF_T::Elf_Rel;
+  uint32_t nb_symbols = 0;
 
-  using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  // Dynamic Relocations
+  // ===================
+
+  // RELA
+  // ----
+  auto&& it_dynamic_relocations = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_RELA;
+      });
+
+  auto&& it_dynamic_relocations_size = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_RELASZ;
+      });
+
+  if (it_dynamic_relocations != std::end(this->binary_->dynamic_entries_) and
+      it_dynamic_relocations_size != std::end(this->binary_->dynamic_entries_)) {
+    const uint64_t virtual_address = (*it_dynamic_relocations)->value();
+    const uint64_t size            = (*it_dynamic_relocations_size)->value();
+    try {
+      uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
+      nb_symbols = std::max(nb_symbols, this->max_relocation_index<ELF_T, typename ELF_T::Elf_Rela>(offset, size));
+    } catch (const LIEF::exception&) {
+    }
+  }
+
+
+  // REL
+  // ---
+  it_dynamic_relocations = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_REL;
+      });
+
+  it_dynamic_relocations_size = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_RELSZ;
+      });
+
+  if (it_dynamic_relocations != std::end(this->binary_->dynamic_entries_) and
+      it_dynamic_relocations_size != std::end(this->binary_->dynamic_entries_)) {
+    const uint64_t virtual_address = (*it_dynamic_relocations)->value();
+    const uint64_t size            = (*it_dynamic_relocations_size)->value();
+    try {
+      const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
+      nb_symbols = std::max(nb_symbols, this->max_relocation_index<ELF_T, typename ELF_T::Elf_Rel>(offset, size));
+    } catch (const LIEF::exception&) {
+
+    }
+
+  }
+
+  // Parse PLT/GOT Relocations
+  // ==========================
+  auto&& it_pltgot_relocations = std::find_if(
+      std::begin(this->binary_->dynamic_entries_),
+      std::end(this->binary_->dynamic_entries_),
+      [] (const DynamicEntry* entry) {
+        return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_JMPREL;
+      });
 
   auto&& it_pltgot_relocations_size = std::find_if(
       std::begin(this->binary_->dynamic_entries_),
@@ -529,51 +592,63 @@ uint32_t Parser::nb_dynsym_relocations(void) const {
         return entry != nullptr and entry->tag() == DYNAMIC_TAGS::DT_PLTREL;
       });
 
-  if (it_pltgot_relocations_size == std::end(this->binary_->dynamic_entries_)) {
-    return 0;
-  }
-
-  DYNAMIC_TAGS type;
-  const Elf_Off size = (*it_pltgot_relocations_size)->value();
-
-  if (it_pltgot_relocations_type != std::end(this->binary_->dynamic_entries_)) {
-    type = static_cast<DYNAMIC_TAGS>((*it_pltgot_relocations_type)->value());
-  } else {
-    if (std::is_same<ELF_T, ELF64>::value) {
-      type = DYNAMIC_TAGS::DT_RELA;
+  if (it_pltgot_relocations != std::end(this->binary_->dynamic_entries_) and
+      it_pltgot_relocations_size != std::end(this->binary_->dynamic_entries_)) {
+    const uint64_t virtual_address = (*it_pltgot_relocations)->value();
+    const uint64_t size            = (*it_pltgot_relocations_size)->value();
+    DYNAMIC_TAGS type;
+    if (it_pltgot_relocations_type != std::end(this->binary_->dynamic_entries_)) {
+      type = static_cast<DYNAMIC_TAGS>((*it_pltgot_relocations_type)->value());
     } else {
-      type = DYNAMIC_TAGS::DT_REL;
+      // Try to guess: We assume that on ELF64 -> DT_RELA and on ELF32 -> DT_REL
+      if (std::is_same<ELF_T, ELF64>::value) {
+        type = DYNAMIC_TAGS::DT_RELA;
+      } else {
+        type = DYNAMIC_TAGS::DT_REL;
+      }
+    }
+
+    try {
+      const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
+      if (type == DYNAMIC_TAGS::DT_RELA) {
+        nb_symbols = std::max(nb_symbols, this->max_relocation_index<ELF_T, typename ELF_T::Elf_Rela>(offset, size));
+      } else {
+        nb_symbols = std::max(nb_symbols, this->max_relocation_index<ELF_T, typename ELF_T::Elf_Rel>(offset, size));
+      }
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+
     }
   }
 
-  switch(type) {
-    case DYNAMIC_TAGS::DT_RELA:
-      {
-        return static_cast<uint32_t>(size / sizeof(Elf_Rela));
-        break;
-      }
-
-    case DYNAMIC_TAGS::DT_REL:
-      {
-        return static_cast<uint32_t>(size / sizeof(Elf_Rel));
-        break;
-      }
-
-    default:
-      {
-        return 0;
-      }
-  }
-  return 0;
+  return nb_symbols;
 }
+
+template<typename ELF_T, typename REL_T>
+uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size) const {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
+                std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
+
+  const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
+
+  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+
+  const REL_T* reloc_entry = reinterpret_cast<const REL_T*>(
+        this->stream_->read(relocations_offset, nb_entries * sizeof(REL_T)));
+  uint32_t idx = 0;
+  for (uint32_t i = 0; i < nb_entries; ++i) {
+    idx = std::max(idx, static_cast<uint32_t>(reloc_entry->r_info >> shift));
+    reloc_entry++;
+  }
+  return (idx + 1);
+} // max_relocation_index
+
 
 
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_section(void) const {
   using Elf_Sym = typename ELF_T::Elf_Sym;
-
-  using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
   auto&& it_dynamic_section = std::find_if(
       std::begin(this->binary_->sections_),
@@ -609,7 +684,6 @@ uint32_t Parser::nb_dynsym_hash(void) const {
 
 template<typename ELF_T>
 uint32_t Parser::nb_dynsym_sysv_hash(void) const {
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_HASH);
@@ -633,7 +707,6 @@ template<typename ELF_T>
 uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   using uint__ = typename ELF_T::uint;
 
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
@@ -722,7 +795,6 @@ template<typename ELF_T>
 void Parser::parse_sections(void) {
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
 
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
   VLOG(VDEBUG) << "[+] Parsing Section";
 
@@ -780,7 +852,6 @@ template<typename ELF_T>
 void Parser::parse_segments(void) {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
 
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   VLOG(VDEBUG) << "[+] Parse Segments";
@@ -813,7 +884,7 @@ void Parser::parse_segments(void) {
             this->stream_->read(offset_to_content, size));
         segment->content({content, content + size});
         if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
-          this->binary_->interpreter_ = this->stream_->read_string(offset_to_content);
+          this->binary_->interpreter_ = this->stream_->read_string(offset_to_content, segment->physical_size());
         }
 
       } catch (const LIEF::read_out_of_bound&) {
@@ -901,7 +972,6 @@ template<typename ELF_T>
 void Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
 
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
   VLOG(VDEBUG) << "[+] Parsing dynamics symbols";
 
@@ -1272,7 +1342,6 @@ template<typename ELF_T, typename REL_T>
 void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
   static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
                 std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
-  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   // Already Parsed

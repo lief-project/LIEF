@@ -46,6 +46,9 @@ namespace ELF {
 class DLL_PUBLIC Parser : public LIEF::Parser {
   public:
 
+    static constexpr uint32_t NB_MAX_SYMBOLS = 1000000;
+    static constexpr uint32_t DELTA_NB_SYMBOLS = 3000;
+
     //! @brief Parse an ELF file an return a LIEF::ELF::Binary object
     //!
     //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
@@ -206,6 +209,10 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     //! @brief Parse Symbols's SYSV hash
     void parse_symbol_sysv_hash(uint64_t offset);
+
+
+    template<typename ELF_T, typename REL_T>
+    uint32_t max_relocation_index(uint64_t relocations_offset, uint64_t size) const;
 
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_;
