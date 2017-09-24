@@ -77,10 +77,10 @@ endif()
 # Json
 # ----
 if (LIEF_ENABLE_JSON)
-  set(LIBJSON_GIT_URL "https://github.com/nlohmann/json.git" CACHE STRING "URL to the JSON lib repo")
+  set(LIBJSON_VERSION v2.1.1)
+  set(LIBJSON_URL "https://github.com/nlohmann/json/archive/${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
   ExternalProject_Add(lief_libjson
-    GIT_REPOSITORY    ${LIBJSON_GIT_URL}
-    GIT_TAG           v2.0.8
+    URL               ${LIBJSON_URL}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND     ""
     INSTALL_COMMAND   "")
@@ -110,8 +110,8 @@ set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 # mbed TLS
 # --------
-set(MBED_TLS_TAG mbedtls-2.4.0)
-set(MBED_TLS_GIT_URL "https://github.com/ARMmbed/mbedtls.git" CACHE STRING "URL to MbedTLS")
+set(MBED_TLS_TAG mbedtls-2.6.0)
+set(MBED_TLS_URL "https://github.com/ARMmbed/mbedtls/archive/${MBED_TLS_TAG}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
 
@@ -120,8 +120,7 @@ ExternalProject_Add(lief_mbed_tls
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
-  GIT_REPOSITORY    ${MBED_TLS_GIT_URL}
-  GIT_TAG           ${MBED_TLS_TAG}
+  URL               ${MBED_TLS_URL}
   UPDATE_COMMAND    "" # repetitive update are a pain
   BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
 
@@ -212,10 +211,10 @@ set(mbedtls_src_tls
 
 # easyloggingpp
 # -------------
-set(ELG_GIT_URL "https://github.com/easylogging/easyloggingpp.git" CACHE STRING "URL to the easyloggingpp lib repo")
+set(ELG_VERSION v9.94.2)
+set(ELG_URL "https://github.com/muflihun/easyloggingpp/archive/${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
 ExternalProject_Add(lief_easyloggingpp
-  GIT_REPOSITORY    ${ELG_GIT_URL}
-  GIT_TAG           v9.94.2
+  URL               ${ELG_URL}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")

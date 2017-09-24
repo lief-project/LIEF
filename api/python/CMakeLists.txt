@@ -38,11 +38,10 @@ message(STATUS "Python version: ${PYTHONLIBS_VERSION_STRING}")
 message(STATUS "Python lib:     ${PYTHON_LIBRARY}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
 
-
-set(PYBIND11_GIT_URL "https://github.com/pybind/pybind11.git" CACHE STRING "URL to the Pybind11 repo")
+set(PYBIND11_VERSION v2.1.1)
+set(PYBIND11_URL "https://github.com/pybind/pybind11/archive/${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
 ExternalProject_Add(lief_pybind11
-  GIT_REPOSITORY ${PYBIND11_GIT_URL}
-  GIT_TAG           "v2.1.1"
+  URL               ${PYBIND11_URL}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
