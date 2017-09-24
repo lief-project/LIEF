@@ -135,6 +135,23 @@ int main(int argc, char **argv) {
   }
 
 
+  fprintf(stdout, "\nImports\n");
+  fprintf(stdout,   "========\n");
+  Pe_Import_t** imports = pe_binary->imports;
+  if (imports != NULL) {
+    for (size_t i = 0; imports[i] != NULL; ++i) {
+      fprintf(stdout, "Name: %s\n", imports[i]->name);
+      Pe_ImportEntry_t** entries = imports[i]->entries;
+      for (size_t i = 0; entries[i] != NULL; ++i) {
+        if (entries[i]->name != NULL) {
+          fprintf(stdout, "   %s\n", entries[i]->name);
+        }
+      }
+
+    }
+  }
+
+
 
   pe_binary_destroy(pe_binary);
 

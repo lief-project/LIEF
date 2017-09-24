@@ -26,6 +26,7 @@
 #include "OptionalHeader.hpp"
 #include "Section.hpp"
 #include "DataDirectory.hpp"
+#include "Import.hpp"
 
 using namespace LIEF::PE;
 
@@ -41,6 +42,7 @@ void init_c_binary(Pe_Binary_t* c_binary, Binary* binary) {
   init_c_optional_header(c_binary, binary);
   init_c_sections(c_binary, binary);
   init_c_data_directories(c_binary, binary);
+  init_c_imports(c_binary, binary);
 
 }
 
@@ -59,6 +61,7 @@ Pe_Binary_t* pe_parse(const char *file) {
 void pe_binary_destroy(Pe_Binary_t* binary) {
   destroy_sections(binary);
   destroy_data_directories(binary);
+  destroy_imports(binary);
   delete reinterpret_cast<Binary*>(binary->handler);
   free(binary);
 }
