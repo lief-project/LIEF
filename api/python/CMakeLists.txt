@@ -141,8 +141,8 @@ set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
 add_dependencies(pyLIEF lief_pybind11)
 
 if(APPLE)
-    set_target_properties(pyLIEF APPEND PROPERTIES MACOSX_RPATH ".")
-    set_target_properties(pyLIEF APPEND PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
+    set_target_properties(pyLIEF PROPERTIES MACOSX_RPATH ".")
+    set_target_properties(pyLIEF PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "")
