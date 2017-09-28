@@ -638,7 +638,7 @@ void Parser::build_exports(void) {
     uint32_t name_offset = this->binary_->rva_to_offset(name_table[i]);
     std::string name  = "";
     try {
-      name = this->stream_->read_string(name_offset);
+      name = this->stream_->get_string(name_offset);
     } catch (const LIEF::read_out_of_bound& e) {
       LOG(WARNING) << e.what();
     }

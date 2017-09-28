@@ -29,6 +29,10 @@ SegmentCommand::~SegmentCommand(void) {
   for (Relocation* reloc : this->relocations_) {
     delete reloc;
   }
+
+  for (Section* section : this->sections_) {
+    delete section;
+  }
 }
 
 SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
@@ -101,20 +105,12 @@ uint32_t SegmentCommand::flags(void) const {
 }
 
 it_sections SegmentCommand::sections(void) {
-  sections_t result;
-  for (Section& s : this->sections_) {
-    result.push_back(&s);
-  }
-  return it_sections{result};
+  return this->sections_;
 }
 
 
 it_const_sections SegmentCommand::sections(void) const {
-  sections_t result;
-  for (const Section& s : this->sections_) {
-    result.push_back(const_cast<Section*>(&s));
-  }
-  return it_const_sections{result};
+  return this->sections_;
 }
 
 

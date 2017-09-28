@@ -113,7 +113,7 @@ class DLL_PUBLIC SegmentCommand : public LoadCommand {
 
     std::vector<uint8_t> data_;
 
-    std::vector<Section> sections_;
+    sections_t    sections_;
 
     relocations_t relocations_;
 

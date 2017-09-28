@@ -45,6 +45,11 @@ Relocation::Relocation(uint64_t address, uint8_t type) :
   this->type_    = type;
 }
 
+
+//Relocation& Relocation::operator=(const Relocation& other) {
+//  return *other.clone();
+//}
+
 Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
   symbol_{nullptr},

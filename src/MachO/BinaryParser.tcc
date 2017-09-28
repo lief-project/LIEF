@@ -99,7 +99,7 @@ void BinaryParser::parse_load_commands(void) {
     const load_command* command = reinterpret_cast<const load_command*>(
         this->stream_->read(loadcommands_offset, sizeof(load_command)));
 
-    LoadCommand* load_command = nullptr;
+    std::unique_ptr<LoadCommand> load_command{nullptr};
     switch (command->cmd) {
 
       // ===============
@@ -109,13 +109,13 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SEGMENT:
         {
           uint64_t local_offset = loadcommands_offset;
-          load_command = new SegmentCommand{
+          load_command = std::unique_ptr<SegmentCommand>{new SegmentCommand{
                 reinterpret_cast<const segment_command_t*>(
-                    this->stream_->read(loadcommands_offset, sizeof(segment_command_t)))};
+                    this->stream_->read(loadcommands_offset, sizeof(segment_command_t)))}};
 
           local_offset += sizeof(segment_command_t);
 
-          SegmentCommand* segment = dynamic_cast<SegmentCommand*>(load_command);
+          SegmentCommand* segment = dynamic_cast<SegmentCommand*>(load_command.get());
 
           const uint8_t* content = static_cast<const uint8_t*>(
             this->stream_->read(segment->file_offset(), segment->file_size()));
@@ -129,9 +129,10 @@ void BinaryParser::parse_load_commands(void) {
           // Sections
           // --------
           for (size_t j = 0; j < segment->numberof_sections(); ++j) {
-            Section section{reinterpret_cast<const section_t*>(this->stream_->read(local_offset, sizeof(section_t)))};
-            section.segment_ = segment;
-            segment->sections_.push_back(std::move(section));
+            const section_t* section_header = reinterpret_cast<const section_t*>(this->stream_->read(local_offset, sizeof(section_t)));
+            std::unique_ptr<Section> section{new Section{section_header}};
+            section->segment_ = segment;
+            segment->sections_.push_back(section.release());
             local_offset += sizeof(section_t);
           }
           break;
@@ -149,11 +150,11 @@ void BinaryParser::parse_load_commands(void) {
             reinterpret_cast<const dylib_command*>(
               this->stream_->read(loadcommands_offset, sizeof(dylib_command)));
 
-          load_command = new DylibCommand{cmd};
+          load_command = std::unique_ptr<DylibCommand>{new DylibCommand{cmd}};
           const uint32_t str_name_offset = cmd->dylib.name;
           std::string name = {this->stream_->read_string(loadcommands_offset + str_name_offset)};
 
-          dynamic_cast<DylibCommand*>(load_command)->name(name);
+          dynamic_cast<DylibCommand*>(load_command.get())->name(name);
           break;
         }
 
@@ -166,7 +167,7 @@ void BinaryParser::parse_load_commands(void) {
           const uuid_command* cmd =
             reinterpret_cast<const uuid_command*>(
               this->stream_->read(loadcommands_offset, sizeof(uuid_command)));
-          load_command = new UUIDCommand{cmd};
+          load_command = std::unique_ptr<UUIDCommand>{new UUIDCommand{cmd}};
           break;
         }
 
@@ -185,8 +186,8 @@ void BinaryParser::parse_load_commands(void) {
              loadcommands_offset +
              linker_name_offset)};
 
-          load_command = new DylinkerCommand{cmd};
-          dynamic_cast<DylinkerCommand*>(load_command)->name(name);
+          load_command = std::unique_ptr<DylinkerCommand>{new DylinkerCommand{cmd}};
+          dynamic_cast<DylinkerCommand*>(load_command.get())->name(name);
           break;
         }
 
@@ -197,7 +198,7 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
 
-          load_command = new LoadCommand{command};
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
           const prebound_dylib_command* cmd =
             reinterpret_cast<const prebound_dylib_command*>(
               this->stream_->read(loadcommands_offset, sizeof(prebound_dylib_command)));
@@ -223,8 +224,10 @@ void BinaryParser::parse_load_commands(void) {
           const thread_command* cmd =
             reinterpret_cast<const thread_command*>(
               this->stream_->read(loadcommands_offset, sizeof(thread_command)));
-          load_command = new ThreadCommand{cmd};
-          dynamic_cast<ThreadCommand*>(load_command)->architecture_ = this->binary_->header().cpu_type();
+          load_command = std::unique_ptr<ThreadCommand>{new ThreadCommand{cmd}};
+
+          ThreadCommand* thread = dynamic_cast<ThreadCommand*>(load_command.get());
+          thread->architecture_ = this->binary_->header().cpu_type();
           VLOG(VDEBUG) << "FLAVOR: " << cmd->flavor << std::endl
                        << "COUNT:  " << cmd->count;
           switch(this->binary_->header().cpu_type()) {
@@ -232,7 +235,7 @@ void BinaryParser::parse_load_commands(void) {
               {
                 const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
                     this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t)));
-                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
+                thread->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
 
                 break;
               }
@@ -241,7 +244,7 @@ void BinaryParser::parse_load_commands(void) {
               {
                 const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
                     this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t)));
-                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
+                thread->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
                 break;
               }
 
@@ -249,7 +252,7 @@ void BinaryParser::parse_load_commands(void) {
               {
                 const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
                     this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t)));
-                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
+                thread->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
                 break;
               }
 
@@ -257,7 +260,7 @@ void BinaryParser::parse_load_commands(void) {
               {
                 const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
                     this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t)));
-                dynamic_cast<ThreadCommand*>(load_command)->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
+                thread->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
                 break;
               }
             default:
@@ -277,7 +280,7 @@ void BinaryParser::parse_load_commands(void) {
 
           VLOG(VDEBUG) << "[+] Parsing LC_ROUTINE";
 
-          load_command = new LoadCommand{command};
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
           break;
         }
 
@@ -294,20 +297,20 @@ void BinaryParser::parse_load_commands(void) {
               this->stream_->read(loadcommands_offset, sizeof(symtab_command)));
 
 
-          load_command = new SymbolCommand{cmd};
+          load_command = std::unique_ptr<SymbolCommand>{new SymbolCommand{cmd}};
 
 
           const nlist_t* nlist = reinterpret_cast<const nlist_t*>(
               this->stream_->read(cmd->symoff, sizeof(nlist_t)));
 
           for (size_t j = 0; j < cmd->nsyms; ++j) {
-            Symbol* symbol = new Symbol{&nlist[j]};
+            std::unique_ptr<Symbol> symbol{new Symbol{&nlist[j]}};
             uint32_t idx = nlist[j].n_strx;
             if (idx > 0) {
               symbol->name(
                   this->stream_->read_string(cmd->stroff + idx));
             }
-            this->binary_->symbols_.push_back(symbol);
+            this->binary_->symbols_.push_back(symbol.release());
           }
 
           break;
@@ -323,7 +326,7 @@ void BinaryParser::parse_load_commands(void) {
             reinterpret_cast<const dysymtab_command*>(
               this->stream_->read(loadcommands_offset, sizeof(dysymtab_command)));
 
-          load_command = new DynamicSymbolCommand{cmd};
+          load_command = std::unique_ptr<DynamicSymbolCommand>{new DynamicSymbolCommand{cmd}};
           break;
         }
 
@@ -338,7 +341,7 @@ void BinaryParser::parse_load_commands(void) {
             reinterpret_cast<const dyld_info_command*>(
               this->stream_->read(loadcommands_offset, sizeof(dyld_info_command)));
 
-          load_command = new DyldInfo{cmd};
+          load_command = std::unique_ptr<DyldInfo>{new DyldInfo{cmd}};
           break;
         }
 
@@ -353,7 +356,7 @@ void BinaryParser::parse_load_commands(void) {
             reinterpret_cast<const source_version_command*>(
               this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
 
-          load_command = new SourceVersion{cmd};
+          load_command = std::unique_ptr<SourceVersion>{new SourceVersion{cmd}};
           VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
           break;
         }
@@ -369,7 +372,7 @@ void BinaryParser::parse_load_commands(void) {
           VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
           VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
 
-          load_command = new VersionMin{cmd};
+          load_command = std::unique_ptr<VersionMin>{new VersionMin{cmd}};
           break;
         }
 
@@ -427,7 +430,7 @@ void BinaryParser::parse_load_commands(void) {
             reinterpret_cast<const entry_point_command*>(
               this->stream_->read(loadcommands_offset, sizeof(entry_point_command)));
 
-          load_command = new MainCommand{cmd};
+          load_command = std::unique_ptr<MainCommand>{new MainCommand{cmd}};
           break;
         }
 
@@ -440,12 +443,12 @@ void BinaryParser::parse_load_commands(void) {
           const linkedit_data_command* cmd =
             reinterpret_cast<const linkedit_data_command*>(
               this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
-          load_command = new FunctionStarts{cmd};
+          load_command = std::unique_ptr<FunctionStarts>{new FunctionStarts{cmd}};
 
           uint64_t offset = cmd->dataoff;
           std::pair<uint64_t, uint64_t> value_delta;
           uint64_t value = 0;
-
+          FunctionStarts* fstart = dynamic_cast<FunctionStarts*>(load_command.get());
           do {
             value_delta = this->stream_->read_uleb128(offset);
             if (std::get<0>(value_delta) == 0) {
@@ -455,7 +458,7 @@ void BinaryParser::parse_load_commands(void) {
             offset += std::get<1>(value_delta);
 
             VLOG(VDEBUG) << "Value: " << std::hex << value;
-            dynamic_cast<FunctionStarts*>(load_command)->add_function(value);
+            fstart->add_function(value);
           } while(offset < (cmd->dataoff + cmd->datasize) and std::get<0>(value_delta) > 0);
 
           break;
@@ -473,7 +476,7 @@ void BinaryParser::parse_load_commands(void) {
           LOG(WARNING) << "Command '" << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd))
                        << "' not parsed";
 
-          load_command = new LoadCommand{command};
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
         }
     }
 
@@ -487,7 +490,7 @@ void BinaryParser::parse_load_commands(void) {
       });
 
       load_command->command_offset(loadcommands_offset);
-      this->binary_->commands_.push_back(load_command);
+      this->binary_->commands_.push_back(load_command.release());
     }
     loadcommands_offset += command->cmdsize;
   }
@@ -511,20 +514,25 @@ void BinaryParser::parse_relocations(Section& section) {
                  << "Only the first " << std::dec << numberof_relocations << " will be parsed";
 
   }
+  if (current_reloc_offset + numberof_relocations * 2 * sizeof(uint32_t) > this->stream_->size()) {
+    LOG(WARNING) << "Relocations corrupted";
+    return;
+  }
 
+  std::unique_ptr<RelocationObject> reloc{nullptr};
   for (size_t i = 0; i < numberof_relocations; ++i) {
     int32_t address = this->stream_->read_integer<int32_t>(current_reloc_offset);
     bool is_scattered = static_cast<bool>(address & R_SCATTERED);
-    RelocationObject* reloc = nullptr;
+
     if (is_scattered) {
       const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
-          this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
-      reloc = new RelocationObject{reloc_info};
+        this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
+      reloc = std::unique_ptr<RelocationObject>{new RelocationObject{reloc_info}};
       reloc->section_ = &section;
     } else {
       const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
           this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
-      reloc = new RelocationObject{reloc_info};
+      reloc = std::unique_ptr<RelocationObject>{new RelocationObject{reloc_info}};
       reloc->section_ = &section;
 
       if (reloc_info->r_extern == 1 and reloc_info->r_symbolnum != R_ABS) {
@@ -548,15 +556,20 @@ void BinaryParser::parse_relocations(Section& section) {
           LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " seems corrupted";
         }
       }
-
     }
 
-    if (not reloc->has_section()) {
-      reloc->section_ = &section;
+    if (reloc) {
+      if (not reloc->has_section()) {
+        reloc->section_ = &section;
+      }
+      reloc->architecture_ = this->binary_->header().cpu_type();
+      RelocationObject *r = reloc.release();
+      auto&& result = section.relocations_.emplace(r);
+      if (not result.second) { // Not inserted (Relocation already present)
+        delete r;
+      }
     }
-    reloc->architecture_ = this->binary_->header().cpu_type();
 
-    section.relocations_.emplace(reloc);
     current_reloc_offset += 2 * sizeof(uint32_t);
   }
 
@@ -1355,6 +1368,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
 
   // Check if a relocation already exists:
   Relocation* reloc = nullptr;
+  std::unique_ptr<Relocation> new_relocation{nullptr};
   bool reloc_exists = false;
 
   auto&& it_reloc = std::find_if(
@@ -1368,7 +1382,8 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     reloc = *it_reloc;
     reloc_exists = true;
   } else {
-    reloc = new RelocationDyld{address, type};
+    new_relocation = std::unique_ptr<Relocation>{new RelocationDyld{address, type}};
+    reloc = new_relocation.get();
   }
 
   reloc->architecture_ = this->binary_->header().cpu_type();
@@ -1404,7 +1419,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   }
 
   // Create a BindingInfo object
-  BindingInfo* binding_info = new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak};
+  std::unique_ptr<BindingInfo> binding_info{new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak}};
   binding_info->segment_ = &segment;
 
 
@@ -1425,15 +1440,15 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     reloc->symbol_ = &symbol;
     //symbol.value(address);
     binding_info->symbol_ = &symbol;
-    symbol.binding_info_ = binding_info;
+    symbol.binding_info_ = binding_info.get();
   } else {
     LOG(ERROR) << "New symbol found: " << symbol_name;
   }
 
   if (not reloc_exists) {
-    segment.relocations_.emplace(reloc);
+    segment.relocations_.emplace(new_relocation.release());
   }
-  this->binary_->dyld_info().binding_info_.push_back(binding_info);
+  this->binary_->dyld_info().binding_info_.push_back(binding_info.release());
   VLOG(VDEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
 }
 

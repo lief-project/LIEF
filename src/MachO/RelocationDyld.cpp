@@ -34,6 +34,11 @@ bool RelocationDyld::is_pc_relative(void) const {
 }
 
 
+Relocation* RelocationDyld::clone(void) const {
+  return new RelocationDyld(*this);
+}
+
+
 RELOCATION_ORIGINS RelocationDyld::origin(void) const {
   return RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
 }

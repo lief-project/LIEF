@@ -284,7 +284,6 @@ if (LIEF_FUZZING)
 
   set_source_files_properties(${LIBFUZZER_SRC_FILES} PROPERTIES GENERATED TRUE)
 
-
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
 endif()
 

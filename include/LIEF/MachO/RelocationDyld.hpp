@@ -45,6 +45,8 @@ class DLL_PUBLIC RelocationDyld : public Relocation {
 
     virtual ~RelocationDyld(void);
 
+    virtual Relocation* clone(void) const override;
+
     //! @brief Indicates whether the item containing the address to be
     //! relocated is part of a CPU instruction that uses PC-relative addressing.
     //!

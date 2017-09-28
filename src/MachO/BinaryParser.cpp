@@ -86,26 +86,30 @@ BinaryParser::BinaryParser(const std::string& file) :
 
 void BinaryParser::init(void) {
   VLOG(VDEBUG) << "Parsing MachO" << std::endl;
-  MACHO_TYPES type = static_cast<MACHO_TYPES>(
-      *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
+  try {
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(
+        *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
 
-  if (type == MACHO_TYPES::MH_MAGIC_64 or
-      type == MACHO_TYPES::MH_CIGAM_64 )
-  {
-    this->is64_ = true;
-  }
-  else
-  {
-    this->is64_ = false;
-  }
+    if (type == MACHO_TYPES::MH_MAGIC_64 or
+        type == MACHO_TYPES::MH_CIGAM_64 )
+    {
+      this->is64_ = true;
+    }
+    else
+    {
+      this->is64_ = false;
+    }
 
-  this->binary_->is64_ = this->is64_;
-  this->type_          = type;
+    this->binary_->is64_ = this->is64_;
+    this->type_          = type;
 
-  if (this->is64_) {
-    this->parse<MachO64>();
-  } else {
-    this->parse<MachO32>();
+    if (this->is64_) {
+      this->parse<MachO64>();
+    } else {
+      this->parse<MachO32>();
+    }
+  } catch (const std::exception& e) {
+    VLOG(VDEBUG) << e.what();
   }
 
 }
@@ -114,6 +118,10 @@ void BinaryParser::init(void) {
 void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) {
   std::pair<uint64_t, uint64_t> value_delta = {0, 0};
   if (current_offset >= end) {
+    return;
+  }
+
+  if (start < current_offset) {
     return;
   }
 
@@ -134,11 +142,11 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
     current_offset   += std::get<1>(value_delta);
 
     const std::string& symbol_name = prefix;
-    ExportInfo* export_info = new ExportInfo{address, flags, offset};
+    std::unique_ptr<ExportInfo> export_info{new ExportInfo{address, flags, offset}};
     if (this->binary_->has_symbol(symbol_name)) {
       Symbol& symbol = this->binary_->get_symbol(symbol_name);
       export_info->symbol_ = &symbol;
-      symbol.export_info_ = export_info;
+      symbol.export_info_ = export_info.get();
       //if (symbol.is_external()) {
       //  //LOG(WARNING) << "FOOOOO " << symbol_name;
       //  //TODO
@@ -146,7 +154,7 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
     } else {
       LOG(WARNING) << "'" << symbol_name << "' is not registred";
     }
-    this->binary_->dyld_info().export_info_.push_back(export_info);
+    this->binary_->dyld_info().export_info_.push_back(export_info.release());
 
   }
 
@@ -161,6 +169,9 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
     value_delta                = this->stream_->read_uleb128(children_offset);
     uint32_t child_node_offet  = static_cast<uint32_t>(std::get<0>(value_delta));
     children_offset           += std::get<1>(value_delta);
+    if (start + child_node_offet == start) {
+      break;
+    }
     this->parse_export_trie(start, start + child_node_offet, end, name);
   }
 

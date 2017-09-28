@@ -118,16 +118,20 @@ void Parser::build_fat(void) {
 }
 
 void Parser::build(void) {
-  MACHO_TYPES type = static_cast<MACHO_TYPES>(
-      *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
+  try {
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(
+        *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
 
-  // Fat binary
-  if (type == MACHO_TYPES::FAT_MAGIC or
-      type == MACHO_TYPES::FAT_CIGAM) {
-    this->build_fat();
-  } else { // fit binary
-    Binary *binary = BinaryParser(std::move(this->stream_)).get_binary();
-    this->binaries_.push_back(binary);
+    // Fat binary
+    if (type == MACHO_TYPES::FAT_MAGIC or
+        type == MACHO_TYPES::FAT_CIGAM) {
+      this->build_fat();
+    } else { // fit binary
+      Binary *binary = BinaryParser(std::move(this->stream_)).get_binary();
+      this->binaries_.push_back(binary);
+    }
+  } catch (const std::exception& e) {
+    VLOG(VDEBUG) << e.what();
   }
 }
 

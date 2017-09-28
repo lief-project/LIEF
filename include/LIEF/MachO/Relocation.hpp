@@ -49,11 +49,13 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
     Relocation(void);
     Relocation(uint64_t address, uint8_t type);
 
-    //Relocation& operator=(Relocation other);
+    //Relocation& operator=(const Relocation& other);
     Relocation(const Relocation& other);
     void swap(Relocation& other);
 
     virtual ~Relocation(void);
+
+    virtual Relocation* clone(void) const = 0;
 
     //! @brief For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
     //! offset from the start of the @link MachO::Section section @endlink

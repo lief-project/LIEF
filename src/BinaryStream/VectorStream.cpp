@@ -86,12 +86,27 @@ const char* VectorStream::read_string(uint64_t offset, uint64_t size) const {
     throw LIEF::read_out_of_bound(offset);
   }
 
+
+  uint64_t max_size = this->size() - (offset + size);
   if (size > 0) {
-    return reinterpret_cast<const char*>(this->read(offset, size));
+    max_size = std::min<uint64_t>(max_size, size);
   }
 
-  return reinterpret_cast<const char*>(this->binary_.data() + offset);
+  return reinterpret_cast<const char*>(this->read(offset, max_size));
+}
 
+std::string VectorStream::get_string(uint64_t offset, uint64_t size) const {
+
+  if ((offset + size) > this->size()) {
+    throw LIEF::read_out_of_bound(offset);
+  }
+
+  uint64_t max_size = this->size() - (offset + size);
+  if (size > 0) {
+    max_size = std::min<uint64_t>(max_size, size);
+  }
+  std::string tmp{this->read_string(offset, max_size), max_size};
+  return tmp.c_str();
 }
 
 

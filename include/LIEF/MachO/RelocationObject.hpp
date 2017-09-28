@@ -42,12 +42,14 @@ class DLL_PUBLIC RelocationObject : public Relocation {
     RelocationObject(const relocation_info *relocinfo);
     RelocationObject(const scattered_relocation_info *scattered_relocinfo);
 
-    RelocationObject& operator=(const RelocationObject&);
-    RelocationObject(const RelocationObject&);
+    RelocationObject& operator=(RelocationObject other);
+    RelocationObject(const RelocationObject& other);
 
     void swap(RelocationObject& other);
 
     virtual ~RelocationObject(void);
+
+    virtual RelocationObject* clone(void) const override;
 
     virtual bool is_pc_relative(void) const override;
 

@@ -28,6 +28,7 @@ class BinaryStream {
     virtual uint64_t    size(void)                                  const = 0;
     virtual const void* read(uint64_t offset, uint64_t size)        const = 0;
     virtual const char* read_string(uint64_t offset, uint64_t size) const = 0;
+    virtual std::string get_string(uint64_t offset, uint64_t size) const = 0;
 
     template<typename T>
     T read_integer(uint64_t offset, bool swap = false) const;

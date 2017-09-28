@@ -25,8 +25,18 @@ namespace LIEF {
 namespace MachO {
 
 
-RelocationObject& RelocationObject::operator=(const RelocationObject&) = default;
-RelocationObject::RelocationObject(const RelocationObject&) = default;
+RelocationObject& RelocationObject::operator=(RelocationObject other) {
+  this->swap(other);
+  return *this;
+}
+
+RelocationObject::RelocationObject(const RelocationObject& other) :
+  Relocation{other},
+  is_pcrel_{other.is_pcrel_},
+  is_scattered_{other.is_scattered_},
+  value_{other.value_}
+{}
+
 RelocationObject::~RelocationObject(void) = default;
 
 RelocationObject::RelocationObject(void) :
@@ -58,6 +68,10 @@ RelocationObject::RelocationObject(const scattered_relocation_info *scattered_re
   this->type_    = static_cast<uint8_t>(scattered_relocinfo->r_type);
 }
 
+
+RelocationObject* RelocationObject::clone(void) const {
+  return new RelocationObject(*this);
+}
 
 
 void RelocationObject::swap(RelocationObject& other) {
