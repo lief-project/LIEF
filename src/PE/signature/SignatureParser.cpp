@@ -49,8 +49,11 @@ SignatureParser::SignatureParser(const std::vector<uint8_t>& data) :
   this->signature_ptr_ = reinterpret_cast<const uint8_t*>(this->stream_->read(8, this->stream_->size() - 8));
   this->end_ = this->signature_ptr_ + this->stream_->size() - 8;
   this->p_ = const_cast<uint8_t*>(this->signature_ptr_);
-
-  this->parse_signature();
+  try {
+    this->parse_signature();
+  } catch (const std::exception& e) {
+    VLOG(VDEBUG) << e.what();
+  }
 }
 
 
@@ -309,18 +312,19 @@ void SignatureParser::parse_certificates(void) {
   while (this->p_ < cert_end) {
     std::memset(buffer, 0, sizeof(buffer));
 
-    mbedtls_x509_crt* ca = new mbedtls_x509_crt{};
-    mbedtls_x509_crt_init(ca);
-    mbedtls_x509_crt_parse_der(ca, this->p_, this->end_ - this->p_);
+    std::unique_ptr<mbedtls_x509_crt> ca{new mbedtls_x509_crt{}};
+    mbedtls_x509_crt_init(ca.get());
+    mbedtls_x509_crt_parse_der(ca.get(), this->p_, this->end_ - this->p_);
     if (ca->raw.len <= 0) {
       break;
     }
-    this->signature_.certificates_.emplace_back(ca);
 
-    mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca);
+    mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca.get());
     VLOG(VDEBUG) << std::endl << buffer << std::endl;
 
+    this->signature_.certificates_.emplace_back(ca.get());
     this->p_ += ca->raw.len;
+    ca.release();
   }
 
 }

@@ -192,7 +192,7 @@ void Parser::build_sections(void) {
   }();
 
   for (size_t i = 0; i < numberof_sections; ++i) {
-    Section* section = new Section{&sections[i]};
+    std::unique_ptr<Section> section{new Section{&sections[i]}};
 
     uint32_t size_to_read = 0;
     uint32_t offset = sections[i].PointerToRawData;
@@ -224,7 +224,7 @@ void Parser::build_sections(void) {
       LOG(WARNING) << "Section " << section->name() << " corrupted: " << e.what();
     }
 
-    this->binary_->sections_.push_back(section);
+    this->binary_->sections_.push_back(section.release());
   }
 }
 
@@ -249,7 +249,7 @@ void Parser::build_relocations(void) {
 
   uint32_t current_offset = offset;
   while (current_offset < max_offset and relocation_headers->PageRVA != 0) {
-    Relocation* relocation = new Relocation{relocation_headers};
+    std::unique_ptr<Relocation> relocation{new Relocation{relocation_headers}};
 
     if (relocation_headers->BlockSize < sizeof(pe_base_relocation_block)) {
       throw corrupted("Relocation corrupted: BlockSize is too small");
@@ -261,12 +261,12 @@ void Parser::build_relocations(void) {
     const uint16_t* entries = reinterpret_cast<const uint16_t*>(
         this->stream_->read(current_offset + sizeof(pe_base_relocation_block), relocation_headers->BlockSize - sizeof(pe_base_relocation_block)));
     for (size_t i = 0; i < numberof_entries; ++i) {
-      RelocationEntry* entry = new RelocationEntry{entries[i]};
-      entry->relocation_ = relocation;
-      relocation->entries_.push_back(entry);
+      std::unique_ptr<RelocationEntry> entry{new RelocationEntry{entries[i]}};
+      entry->relocation_ = relocation.get();
+      relocation->entries_.push_back(entry.release());
     }
 
-    this->binary_->relocations_.push_back(relocation);
+    this->binary_->relocations_.push_back(relocation.release());
 
     current_offset += relocation_headers->BlockSize;
 
@@ -310,7 +310,7 @@ ResourceNode* Parser::build_resource_node(
 
   const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
 
-  ResourceDirectory* directory = new ResourceDirectory{directory_table};
+  std::unique_ptr<ResourceDirectory> directory{new ResourceDirectory{directory_table}};
 
   directory->depth_ = depth;
 
@@ -362,14 +362,14 @@ ResourceNode* Parser::build_resource_node(
           content_ptr,
           content_ptr + content_size};
 
-        ResourceNode* node = new ResourceData{content, code_page};
+        std::unique_ptr<ResourceNode> node{new ResourceData{content, code_page}};
 
         node->depth_ = depth + 1;
         node->id(id);
         node->name(name);
-        dynamic_cast<ResourceData*>(node)->offset_ = content_offset;
+        dynamic_cast<ResourceData*>(node.get())->offset_ = content_offset;
 
-        directory->childs_.push_back(node);
+        directory->childs_.push_back(node.release());
       } catch (const LIEF::read_out_of_bound&) { // Corrupted
         LOG(WARNING) << "The leaf is corrupted";
         break;
@@ -386,10 +386,10 @@ ResourceNode* Parser::build_resource_node(
         }
         this->resource_visited_.insert(offset);
 
-        ResourceNode* node = this->build_resource_node(nextDirectoryTable, base_offset, depth + 1);
+        std::unique_ptr<ResourceNode> node{this->build_resource_node(nextDirectoryTable, base_offset, depth + 1)};
         node->id(id);
         node->name(name);
-        directory->childs_.push_back(node);
+        directory->childs_.push_back(node.release());
       } catch (const LIEF::read_out_of_bound&) { // Corrupted
         LOG(WARNING) << "The directory is corrupted";
         break;
@@ -397,7 +397,7 @@ ResourceNode* Parser::build_resource_node(
     }
   }
 
-  return std::move(directory);
+  return directory.release();
 }
 
 //
@@ -455,7 +455,8 @@ void Parser::build_symbols(void) {
 
     std::string name;
     if ((symbolPtr->Name.Name.Zeroes & 0xffff) != 0) {
-      name = symbolPtr->Name.ShortName;
+      std::string shortname{symbolPtr->Name.ShortName, sizeof(symbolPtr->Name.ShortName)};
+      name = shortname.c_str();
     } else {
       uint32_t offset = symbolPtr->Name.Name.Offset;
       uint64_t offset_name =
@@ -864,14 +865,15 @@ void Parser::build_signature(void) {
   while (p < cert_end) {
     std::memset(buffer, 0, sizeof(buffer));
 
-    mbedtls_x509_crt* ca = new mbedtls_x509_crt{};
+    std::unique_ptr<mbedtls_x509_crt> ca{new mbedtls_x509_crt{}};
     mbedtls_x509_crt_init(ca);
     mbedtls_x509_crt_parse_der(ca, p, end - p);
 
-    signature.certificates_.emplace_back(ca);
 
-    mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca);
+    mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca.get());
     VLOG(VDEBUG) << std::endl << buffer << std::endl;
+
+    signature.certificates_.emplace_back(ca.release());
 
     if (ca->raw.len <= 0) {
       break;

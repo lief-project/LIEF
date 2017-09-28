@@ -119,7 +119,7 @@ void Parser::build_data_directories(void) {
 
   this->binary_->data_directories_.reserve(nbof_datadir);
   for (size_t i = 0; i < nbof_datadir; ++i) {
-    DataDirectory* directory = new DataDirectory{&dataDirectory[i], static_cast<DATA_DIRECTORY>(i)};
+    std::unique_ptr<DataDirectory> directory{new DataDirectory{&dataDirectory[i], static_cast<DATA_DIRECTORY>(i)}};
 
     VLOG(VDEBUG) << "Processing directory: " << to_string(static_cast<DATA_DIRECTORY>(i));
     VLOG(VDEBUG) << "- RVA: 0x" << std::hex << dataDirectory[i].RelativeVirtualAddress;
@@ -134,7 +134,7 @@ void Parser::build_data_directories(void) {
                        << to_string(static_cast<DATA_DIRECTORY>(i));
       }
     }
-    this->binary_->data_directories_.push_back(directory);
+    this->binary_->data_directories_.push_back(directory.release());
   }
 
   try {
