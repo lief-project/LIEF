@@ -18,6 +18,7 @@
 
 #include "LIEF/ELF/DataHandler/Node.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/utils.hpp"
 #include <vector>
 
 namespace LIEF {
@@ -25,6 +26,7 @@ namespace ELF {
 namespace DataHandler {
 class DLL_PUBLIC Handler {
   public:
+    static constexpr size_t MAX_SIZE = 10_GB;
     Handler(const std::vector<uint8_t>& content);
     Handler(std::vector<uint8_t>&& content);
     ~Handler(void);

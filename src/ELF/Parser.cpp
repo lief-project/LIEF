@@ -61,34 +61,38 @@ Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
 
 void Parser::init(const std::string& name) {
   VLOG(VDEBUG) << "Parsing binary: " << name << std::endl;
-  this->binary_ = new Binary{};
-  this->binary_->original_size_ = this->binary_size_;
-  this->binary_->name(name);
-  this->binary_->datahandler_ = new DataHandler::Handler{this->stream_->content()};
 
-  this->type_ = reinterpret_cast<const Elf32_Ehdr*>(
-      this->stream_->read(0, sizeof(Elf32_Ehdr)))->e_ident[IDENTITY::EI_CLASS];
+  try {
+    this->binary_ = new Binary{};
+    this->binary_->original_size_ = this->binary_size_;
+    this->binary_->name(name);
+    this->binary_->datahandler_ = new DataHandler::Handler{this->stream_->content()};
 
-  this->binary_->type_ = static_cast<ELF_CLASS>(this->type_);
+    this->type_ = reinterpret_cast<const Elf32_Ehdr*>(
+        this->stream_->read(0, sizeof(Elf32_Ehdr)))->e_ident[IDENTITY::EI_CLASS];
 
-  switch (this->binary_->type_) {
-    case ELFCLASS32:
-      {
-        this->parse_binary<ELF32>();
-        break;
-      }
+    this->binary_->type_ = static_cast<ELF_CLASS>(this->type_);
+    switch (this->binary_->type_) {
+      case ELFCLASS32:
+        {
+          this->parse_binary<ELF32>();
+          break;
+        }
 
-    case ELFCLASS64:
-      {
-        this->parse_binary<ELF64>();
-        break;
-      }
+      case ELFCLASS64:
+        {
+          this->parse_binary<ELF64>();
+          break;
+        }
 
-    case ELFCLASSNONE:
-    default:
-      LOG(WARNING) << "e_ident[EI_CLASS] seems corrupted." << std::endl;
-      //TODO try to guess with e_machine
-      throw LIEF::corrupted("e_ident[EI_CLASS] corrupted");
+      case ELFCLASSNONE:
+      default:
+        //TODO try to guess with e_machine
+        throw LIEF::corrupted("e_ident[EI_CLASS] corrupted");
+    }
+  } catch (const std::exception& e) {
+    LOG(WARNING) << e.what();
+    //delete this->binary_;
   }
 }
 

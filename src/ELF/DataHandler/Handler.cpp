@@ -117,6 +117,9 @@ void Handler::make_hole(uint64_t offset, uint64_t size) {
 
 
 void Handler::reserve(uint64_t offset, uint64_t size) {
+  if ((offset + size) > Handler::MAX_SIZE) {
+    throw std::bad_alloc();
+  }
   if (this->data_.size() < (offset + size)) {
     this->data_.resize((offset + size), 0);
   }
