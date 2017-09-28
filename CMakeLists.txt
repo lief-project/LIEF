@@ -60,6 +60,12 @@ option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
 option(LIEF_MACHO          "Build LIEF with MachO module"               ON)
 
+# Sanitizer
+option(LIEF_ASAN "Enable Address sanitizer"   OFF)
+option(LIEF_LSAN "Enable Leak sanitizer"      OFF)
+option(LIEF_TSAN "Enable Thread sanitizer"    OFF)
+option(LIEF_USAN "Enable undefined sanitizer" OFF)
+
 
 # CCACHE
 # ======
@@ -389,6 +395,52 @@ add_dependencies(LIB_LIEF_SHARED lief_mbed_tls)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD              11)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD_REQUIRED     ON)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY POSITION_INDEPENDENT_CODE ON)
+set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
+
+if (LIEF_ASAN)
+  message(STATUS "Address sanitizer enabled")
+  list(APPEND SANITIZER_FLAGS -fsanitize=address)
+
+  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=address)
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+endif()
+
+
+if (LIEF_LSAN)
+  message(STATUS "Leak sanitizer enabled")
+  list(APPEND SANITIZER_FLAGS -fsanitize=leak)
+
+  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=leak")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=leak")
+endif()
+
+
+if (LIEF_TSAN)
+  message(STATUS "Thread sanitizer enabled")
+  list(APPEND SANITIZER_FLAGS -fsanitize=thread)
+
+  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=thread")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=thread")
+endif()
+
+
+if (LIEF_USAN)
+  message(STATUS "Undefined sanitizer enabled")
+  list(APPEND SANITIZER_FLAGS -fsanitize=undefined)
+
+  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=undefined)
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+endif()
+
+if (LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
+  #message(STATUS "${SANITIZER_FLAGS}")
+  target_compile_options(LIB_LIEF_STATIC PRIVATE ${SANITIZER_FLAGS})
+  target_compile_options(LIB_LIEF_SHARED PRIVATE ${SANITIZER_FLAGS})
+endif()
 
 
 CHECK_CXX_COMPILER_FLAG("-Weverything" HAS_WARN_EVERY)
