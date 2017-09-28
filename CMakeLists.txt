@@ -66,6 +66,8 @@ option(LIEF_LSAN "Enable Leak sanitizer"      OFF)
 option(LIEF_TSAN "Enable Thread sanitizer"    OFF)
 option(LIEF_USAN "Enable undefined sanitizer" OFF)
 
+# Fuzzer
+option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
 # CCACHE
 # ======
@@ -228,6 +230,63 @@ ExternalProject_Add(lief_easyloggingpp
 ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)
 set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
 
+# Fuzzing
+# ~~~~~~~
+set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O1)
+set(FUZZING_LINKER_FLAGS)
+
+list(APPEND FUZZING_FLAGS -fsanitize=address -fsanitize-coverage=trace-pc-guard)
+list(APPEND FUZZING_LINKER_FLAGS -fsanitize=address -fsanitize-coverage=trace-pc-guard)
+
+set(LIBFUZZER_SRC_FILES)
+if (LIEF_FUZZING)
+  message(STATUS "Fuzzing Enabled")
+
+  set(LIBFUZZER_URL "http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer")
+  ExternalProject_Add(lief_libfuzzer
+  SVN_REPOSITORY    ${LIBFUZZER_URL}
+  CONFIGURE_COMMAND ""
+  UPDATE_COMMAND    ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   "")
+
+  ExternalProject_get_property(lief_libfuzzer SOURCE_DIR)
+  set(LIBFUZZER_SOURCE_DIR "${SOURCE_DIR}")
+
+  set(LIBFUZZER_SRC_FILES
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerSHA1.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilLinux.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerIO.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerMain.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerShmemWindows.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilWindows.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtil.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsDlsym.cpp"
+    #${LIBFUZZER_SOURCE_DIR}/afl/afl_driver.cpp
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerShmemPosix.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilDarwin.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerIOWindows.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsDlsymWin.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerCrossOver.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerDriver.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsWeak.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilPosix.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsWeakAlias.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerIOPosix.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerMerge.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerTracePC.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerMutate.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtraCounters.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerLoop.cpp"
+    "${LIBFUZZER_SOURCE_DIR}/FuzzerClangCounters.cpp"
+    )
+  list(APPEND LIBLIEF_SOURCE_FILES ${LIBFUZZER_SRC_FILES})
+
+  set_source_files_properties(${LIBFUZZER_SRC_FILES} PROPERTIES GENERATED TRUE)
+
+
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
+endif()
 
 
 # LIEF Source definition
@@ -242,6 +301,7 @@ set(LIBLIEF_SOURCE_FILES
   "${mbedtls_src_crypto}"
   "${mbedtls_src_x509}"
   "${mbedtls_src_tls}"
+  "${LIBFUZZER_SRC_FILES}"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
@@ -289,6 +349,8 @@ set(LIEF_INCLUDE_FILES
   ${LIEF_INC_FILES}
   ${LIEF_VISITOR_INCLUDE_FILES}
 )
+
+
 
 source_group("Header Files" FILES ${LIEF_INC_FILES})
 source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
@@ -395,15 +457,18 @@ add_dependencies(LIB_LIEF_SHARED lief_mbed_tls)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD              11)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD_REQUIRED     ON)
 set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY POSITION_INDEPENDENT_CODE ON)
-set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
 
+
+# ASAN - LSAN - TSAN - USAN
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
 if (LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=address)
 
   set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=address)
-  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+  target_link_libraries(LIB_LIEF_STATIC INTERFACE asan)
+  target_link_libraries(LIB_LIEF_SHARED INTERFACE asan)
 endif()
 
 
@@ -412,8 +477,9 @@ if (LIEF_LSAN)
   list(APPEND SANITIZER_FLAGS -fsanitize=leak)
 
   set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
-  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=leak")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=leak")
+
+  target_link_libraries(LIB_LIEF_STATIC INTERFACE lsan)
+  target_link_libraries(LIB_LIEF_SHARED INTERFACE lsan)
 endif()
 
 
@@ -422,8 +488,9 @@ if (LIEF_TSAN)
   list(APPEND SANITIZER_FLAGS -fsanitize=thread)
 
   set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
-  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=thread")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=thread")
+
+  target_link_libraries(LIB_LIEF_STATIC INTERFACE tsan)
+  target_link_libraries(LIB_LIEF_SHARED INTERFACE tsan)
 endif()
 
 
@@ -432,8 +499,9 @@ if (LIEF_USAN)
   list(APPEND SANITIZER_FLAGS -fsanitize=undefined)
 
   set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=undefined)
-  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+
+  target_link_libraries(LIB_LIEF_STATIC INTERFACE ubsan)
+  target_link_libraries(LIB_LIEF_SHARED INTERFACE ubsan)
 endif()
 
 if (LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
@@ -442,6 +510,21 @@ if (LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
   target_compile_options(LIB_LIEF_SHARED PRIVATE ${SANITIZER_FLAGS})
 endif()
 
+
+# Fuzzing
+# ~~~~~~~
+if (LIEF_FUZZING)
+  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
+
+  target_compile_options(LIB_LIEF_STATIC PRIVATE ${FUZZING_FLAGS})
+  target_compile_options(LIB_LIEF_SHARED PRIVATE ${FUZZING_FLAGS})
+
+  target_link_libraries(LIB_LIEF_STATIC asan pthread)
+  target_link_libraries(LIB_LIEF_SHARED asan pthread)
+
+  add_dependencies(LIB_LIEF_STATIC lief_libfuzzer)
+  add_dependencies(LIB_LIEF_SHARED lief_libfuzzer)
+endif()
 
 CHECK_CXX_COMPILER_FLAG("-Weverything" HAS_WARN_EVERY)
 CHECK_CXX_COMPILER_FLAG("-Wno-expansion-to-defined" HAS_NO_EXPANSION_TO_DEFINED)

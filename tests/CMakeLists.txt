@@ -26,7 +26,6 @@ message(STATUS "Samples directory: ${LIEF_SAMPLES_DIRECTORY}")
 
 # Tests options
 # =============
-option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
 if (NOT LIEF_ELF OR NOT LIEF_PE OR NOT LIEF_MACHO)
   message(FATAL_ERROR "Tests require all LIEF's modules activated" )

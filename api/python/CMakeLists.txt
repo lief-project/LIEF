@@ -137,34 +137,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(pyLIEF PRIVATE ${PYLIEF_COMPILE_FLAGS})
 endif()
 
-
-if (LIEF_ASAN)
-  set_property(TARGET pyLIEF APPEND PROPERTY LINK_FLAGS -fsanitize=address)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} asan)
-endif()
-
-
-if (LIEF_LSAN)
-  set_property(TARGET pyLIEF APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} lsan)
-endif()
-
-
-if (LIEF_TSAN)
-  set_property(TARGET pyLIEF APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} tsan)
-endif()
-
-
-if (LIEF_USAN)
-  #set_property(TARGET pyLIEF APPEND PROPERTY LINK_FLAGS -fsanitize=undefined)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} ubsan)
-endif()
-
-#if (LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
-#  target_compile_options(pyLIEF PRIVATE ${SANITIZER_FLAGS})
-#endif()
-
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
 add_dependencies(pyLIEF lief_pybind11)
 
