@@ -18,6 +18,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Binary.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/UUIDCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Symbol.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FatBinary.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/EnumToString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Header.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicSymbolCommand.cpp"
@@ -47,6 +48,7 @@ set(LIEF_MACHO_SRC
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/FatBinary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Binary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/BinaryParser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Builder.hpp"

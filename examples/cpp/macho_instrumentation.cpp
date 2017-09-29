@@ -30,10 +30,10 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  std::vector<MachO::Binary*> binaries = MachO::Parser::parse(argv[1]);
-  MachO::Binary*              binary   = binaries.back();
-  auto segments = binary->segments();
-  auto itSegment  = std::find_if(
+  std::unique_ptr<LIEF::MachO::FatBinary> binaries{MachO::Parser::parse(argv[1])};
+  MachO::Binary& binary = binaries->back();
+  auto&& segments = binary.segments();
+  auto&& itSegment  = std::find_if(
       std::begin(segments),
       std::end(segments),
       [] (const MachO::SegmentCommand& segment) {
@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
   segment_header.segname[segment_name.size()] = 0;
   segment_header.vmaddr   = 0x200050000;
   segment_header.vmsize   = 0x2000;
-  segment_header.fileoff  = binary->original_size();
+  segment_header.fileoff  = binary.original_size();
   segment_header.filesize = payload.size();
   segment_header.maxprot  = 7;
   segment_header.initprot = 3;
@@ -82,11 +82,8 @@ int main(int argc, char **argv) {
       reinterpret_cast<uint8_t*>(&segment_header) + sizeof(segment_header)
       });
   //binary->insert_command(std::move(segment));
-  binary->write(argv[2]);
+  binary.write(argv[2]);
 
-  for (MachO::Binary *b : binaries) {
-    delete b;
-  }
 
   return 0;
 }

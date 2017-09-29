@@ -2,6 +2,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyMachO.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDylibCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBinary.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyFatBinary.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyLoadCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySegmentCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyHeader.cpp"

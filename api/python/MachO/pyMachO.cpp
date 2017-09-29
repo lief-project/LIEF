@@ -23,10 +23,9 @@
 void init_MachO_module(py::module& m) {
   py::module LIEF_MachO_module = m.def_submodule("MachO", "Python API for MachO");
 
-  py::bind_vector<std::vector<Binary*>>(m, "macho_list");
-
   // Objects
   init_MachO_Parser_class(LIEF_MachO_module);
+  init_MachO_FatBinary_class(LIEF_MachO_module);
   init_MachO_Binary_class(LIEF_MachO_module);
   init_MachO_Header_class(LIEF_MachO_module);
   init_MachO_LoadCommand_class(LIEF_MachO_module);

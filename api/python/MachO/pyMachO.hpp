@@ -27,6 +27,7 @@ using namespace LIEF::MachO;
 PYBIND11_MAKE_OPAQUE(std::vector<Binary*>)
 
 void init_MachO_Parser_class(py::module&);
+void init_MachO_FatBinary_class(py::module&);
 void init_MachO_Binary_class(py::module&);
 void init_MachO_Header_class(py::module&);
 void init_MachO_LoadCommand_class(py::module&);

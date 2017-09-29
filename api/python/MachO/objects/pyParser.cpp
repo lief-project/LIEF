@@ -24,14 +24,14 @@ void init_MachO_Parser_class(py::module& m) {
 
   // Parser (Parser)
   m.def("parse",
-    static_cast<std::vector<Binary*> (*) (const std::string&)>(&LIEF::MachO::Parser::parse),
+    static_cast<FatBinary* (*) (const std::string&)>(&LIEF::MachO::Parser::parse),
     "Parse the given binary and return a **list** of " RST_CLASS_REF(lief.MachO.Binary) " objects",
     "filename"_a,
     py::return_value_policy::take_ownership);
 
 
   m.def("parse",
-    static_cast<std::vector<Binary*> (*) (const std::vector<uint8_t>&, const std::string&)>(&LIEF::MachO::Parser::parse),
+    static_cast<FatBinary* (*) (const std::vector<uint8_t>&, const std::string&)>(&LIEF::MachO::Parser::parse),
     "Parse the given binary (from raw) and return a **list** of " RST_CLASS_REF(lief.MachO.Binary) " objects",
     py::arg("raw"), py::arg("name") = "",
     py::return_value_policy::take_ownership);

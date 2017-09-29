@@ -1,3 +1,4 @@
+include(ProcessorCount)
 find_package(Git REQUIRED)
 enable_testing()
 
@@ -329,6 +330,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
 # /!\ Bad Hack /!\
 add_dependencies(LIB_LIEF_STATIC lief_samples)
 add_dependencies(LIB_LIEF_SHARED lief_samples)
+ProcessorCount(N)
+if(N EQUAL 0)
+  set(N 1)
+endif()
 
-add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+
+add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure
   DEPENDS lief_samples)

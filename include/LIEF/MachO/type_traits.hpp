@@ -38,6 +38,11 @@ struct KeyCmp {
 };
 
 
+using binaries_t                = std::vector<Binary*>;
+using it_binaries               = ref_iterator<binaries_t&>;
+using it_const_binaries         = const_ref_iterator<const binaries_t&>;
+
+
 using buffer_t                  = std::vector<uint8_t>; ///< Container used to store raw data
 
 using commands_t                = std::vector<LoadCommand*>;

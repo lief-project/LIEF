@@ -101,11 +101,13 @@ std::string VectorStream::get_string(uint64_t offset, uint64_t size) const {
     throw LIEF::read_out_of_bound(offset);
   }
 
-  uint64_t max_size = this->size() - (offset + size);
+  size_t max_size = static_cast<size_t>(this->size() - (offset + size));
   if (size > 0) {
-    max_size = std::min<uint64_t>(max_size, size);
+    max_size = std::min<size_t>(max_size, size);
   }
-  std::string tmp{this->read_string(offset, max_size), max_size};
+  const char* str = this->read_string(offset);
+  const char* it_null = std::find(str, str + max_size, '\0');
+  std::string tmp{str, it_null};
   return tmp.c_str();
 }
 

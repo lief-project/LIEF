@@ -271,7 +271,7 @@ void Parser::build_import_table(void) {
     }
     // Offset to the Import (Library) name
     const uint64_t offsetName = this->binary_->rva_to_offset(import.name_RVA_);
-    import.name_              = this->stream_->read_string(offsetName);
+    import.name_              = this->stream_->get_string(offsetName);
 
 
     // We assume that a DLL name should be at least 4 length size and "printable
@@ -329,7 +329,7 @@ void Parser::build_import_table(void) {
 
       if(not entry.is_ordinal()) {
 
-        entry.name_ = this->stream_->read_string(
+        entry.name_ = this->stream_->get_string(
             this->binary_->rva_to_offset(entry.hint_name_rva()) + sizeof(uint16_t));
 
         entry.hint_ = *reinterpret_cast<const uint16_t*>(
@@ -368,19 +368,26 @@ void Parser::build_tls(void) {
 
   const uint64_t imagebase = this->binary_->optional_header().imagebase();
 
-  try {
-    const uint64_t startDataRVA = tls_header->RawDataStartVA - imagebase;
-    const uint64_t stopDataRVA  = tls_header->RawDataEndVA - imagebase;
-    const uint__ offsetStartTemplate  = this->binary_->rva_to_offset(startDataRVA);
-    const uint__ offsetEndTemplate    = this->binary_->rva_to_offset(stopDataRVA);
+  const uint64_t start_data_rva = tls_header->RawDataStartVA - imagebase;
+  const uint64_t stop_data_rva  = tls_header->RawDataEndVA - imagebase;
 
-    const uint8_t* template_ptr = reinterpret_cast<const uint8_t*>(
-        this->stream_->read(offsetStartTemplate, offsetEndTemplate - offsetStartTemplate));
-    std::vector<uint8_t> templateData = {
-      template_ptr,
-      template_ptr + offsetEndTemplate - offsetStartTemplate
-    };
-    tls.data_template(templateData);
+  const uint__ start_template_offset  = this->binary_->rva_to_offset(start_data_rva);
+  const uint__ end_template_offset    = this->binary_->rva_to_offset(stop_data_rva);
+
+  const size_t size_to_read = end_template_offset - start_template_offset;
+
+  try {
+    if (size_to_read > Parser::MAX_DATA_SIZE) {
+      LOG(WARNING) << "TLS's template is too large!";
+    } else {
+      const uint8_t* template_ptr = reinterpret_cast<const uint8_t*>(
+        this->stream_->read(start_template_offset, size_to_read));
+      std::vector<uint8_t> template_data = {
+        template_ptr,
+        template_ptr + size_to_read
+      };
+      tls.data_template(std::move(template_data));
+    }
 
   } catch (const read_out_of_bound&) {
     throw corrupted("TLS corrupted (data template)");
@@ -388,13 +395,15 @@ void Parser::build_tls(void) {
     throw corrupted("TLS corrupted (data template)");
   }
 
-  const uint64_t offsetToCallbacks  = this->binary_->rva_to_offset(tls.addressof_callbacks() - imagebase);
-  const uint__ *rvaCallbacksAddress = reinterpret_cast<const uint__*>(
-      this->stream_->read(offsetToCallbacks, sizeof(uint__)));
+  uint64_t callbacks_offset  = this->binary_->rva_to_offset(tls.addressof_callbacks() - imagebase);
+  uint__ callback_rva = this->stream_->read_integer<uint__>(callbacks_offset);
+  callbacks_offset += sizeof(uint__);
 
-  while (*rvaCallbacksAddress != 0) {
-    tls.callbacks_.push_back(static_cast<uint64_t>(*rvaCallbacksAddress));
-    rvaCallbacksAddress++;
+  size_t count = 0;
+  while (callback_rva > 0 and count < Parser::MAX_TLS_CALLBACKS) {
+    tls.callbacks_.push_back(static_cast<uint64_t>(callback_rva));
+    callback_rva = this->stream_->read_integer<uint__>(callbacks_offset);
+    callbacks_offset += sizeof(uint__);
   }
 
   tls.directory_ = &(this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE));

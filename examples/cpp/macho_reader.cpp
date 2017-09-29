@@ -20,23 +20,23 @@
 
 using namespace LIEF::MachO;
 
-void print_binary(const Binary* binary) {
-  std::cout << binary->header() << std::endl;
+void print_binary(const Binary& binary) {
+  std::cout << binary.header() << std::endl;
 
   std::cout << "== Library ==" << std::endl;
-  for (const DylibCommand& library : binary->libraries()) {
+  for (const DylibCommand& library : binary.libraries()) {
     std::cout << library << std::endl;
   }
   std::cout << std::endl;
 
   std::cout << "== Sections ==" << std::endl;
-  for (const Section& section : binary->sections()) {
+  for (const Section& section : binary.sections()) {
     std::cout << section << std::endl;
   }
 
   //std::cout << "== Segments ==" << std::endl;
 
-  //for (SegmentCommand& segment : binary->segments()) {
+  //for (SegmentCommand& segment : binary.segments()) {
   //  std::cout << segment << std::endl;
   //  if (segment.sections().size() > 0) {
   //    //std::cout << std::hex;
@@ -61,31 +61,31 @@ void print_binary(const Binary* binary) {
   //}
   //std::cout << std::endl;
 
-  //auto commands = binary->commands();
-  for (const LoadCommand& cmd : binary->commands()) {
+  //auto commands = binary.commands();
+  for (const LoadCommand& cmd : binary.commands()) {
     std::cout << cmd << std::endl;
     std::cout << "======================" << std::endl;
   }
 
   std::cout << "== Symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->symbols()) {
+  for (const Symbol& symbol : binary.symbols()) {
     std::cout << symbol << std::endl;
   }
 
 
   std::cout << "== Exported symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->exported_symbols()) {
+  for (const Symbol& symbol : binary.exported_symbols()) {
     std::cout << symbol << std::endl;
   }
 
   std::cout << "== Imported symbols ==" << std::endl;
-  for (const Symbol& symbol : binary->imported_symbols()) {
+  for (const Symbol& symbol : binary.imported_symbols()) {
     std::cout << symbol << std::endl;
   }
 
 
   std::cout << "== Relocations ==" << std::endl;
-  for (const Relocation& relocation : binary->relocations()) {
+  for (const Relocation& relocation : binary.relocations()) {
     std::cout << relocation << std::endl;
   }
 
@@ -99,14 +99,10 @@ int main(int argc, char **argv) {
     std::cerr << "Usage: " << argv[0] << " <MachO binary>" << std::endl;
     return -1;
   }
-  std::vector<Binary*> binaries = Parser::parse(argv[1]);
-  for (const Binary* binary : binaries) {
+  std::unique_ptr<FatBinary> binaries{Parser::parse(argv[1])};
+  for (const Binary& binary : *binaries) {
     print_binary(binary);
     std::cout << std::endl;
-  }
-
-  for (Binary* binary : binaries) {
-    delete binary;
   }
 
   return 0;

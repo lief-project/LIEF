@@ -242,7 +242,8 @@ set(LIBFUZZER_SRC_FILES)
 if (LIEF_FUZZING)
   message(STATUS "Fuzzing Enabled")
 
-  set(LIBFUZZER_URL "http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer")
+  set(LIBFUZZER_VERSION 314494)
+  set(LIBFUZZER_URL     "http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer/") #\?p=${LIBFUZZER_VERSION}")
   ExternalProject_Add(lief_libfuzzer
   SVN_REPOSITORY    ${LIBFUZZER_URL}
   CONFIGURE_COMMAND ""

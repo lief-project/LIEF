@@ -161,7 +161,7 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
 	const uint8_t nb_children = this->stream_->read_integer<uint8_t>(children_offset);
   children_offset += sizeof(uint8_t);
   for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix = this->stream_->read_string(children_offset);
+    std::string suffix = this->stream_->get_string(children_offset);
     std::string name   = prefix + suffix;
 
     children_offset += suffix.size() + 1;

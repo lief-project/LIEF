@@ -26,6 +26,7 @@
 
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 
 namespace LIEF {
@@ -37,8 +38,8 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     ~Parser(void);
 
-    static std::vector<Binary*> parse(const std::string& filename);
-    static std::vector<Binary*> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+    static FatBinary* parse(const std::string& filename);
+    static FatBinary* parse(const std::vector<uint8_t>& data, const std::string& name = "");
 
   private:
     Parser(const std::string& file);

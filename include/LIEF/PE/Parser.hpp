@@ -21,6 +21,7 @@
 
 #include "LIEF/exception.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 
@@ -41,7 +42,13 @@ namespace PE {
 class DLL_PUBLIC Parser : public LIEF::Parser {
 
   //! @brief Minimum size for a DLL's name
-  constexpr static unsigned MIN_DLL_NAME_SIZE = 4;
+  static constexpr unsigned MIN_DLL_NAME_SIZE = 4;
+
+  //! @brief Maximum size of the data read
+  static constexpr size_t MAX_DATA_SIZE = 3_GB;
+
+  static constexpr size_t MAX_TLS_CALLBACKS = 3000;
+
 
   public:
     static Binary* parse(const std::string& filename);

@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 
 set PYTHONPATH=%PYTHONPATH%;@PROJECT_BINARY_DIR@/api/python

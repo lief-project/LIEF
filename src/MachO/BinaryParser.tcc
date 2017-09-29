@@ -152,7 +152,7 @@ void BinaryParser::parse_load_commands(void) {
 
           load_command = std::unique_ptr<DylibCommand>{new DylibCommand{cmd}};
           const uint32_t str_name_offset = cmd->dylib.name;
-          std::string name = {this->stream_->read_string(loadcommands_offset + str_name_offset)};
+          std::string name = this->stream_->get_string(loadcommands_offset + str_name_offset);
 
           dynamic_cast<DylibCommand*>(load_command.get())->name(name);
           break;
@@ -182,9 +182,9 @@ void BinaryParser::parse_load_commands(void) {
               this->stream_->read(loadcommands_offset, sizeof(dylinker_command)));
 
           const uint32_t linker_name_offset = cmd->name;
-          std::string name = {this->stream_->read_string(
+          std::string name = this->stream_->get_string(
              loadcommands_offset +
-             linker_name_offset)};
+             linker_name_offset);
 
           load_command = std::unique_ptr<DylinkerCommand>{new DylinkerCommand{cmd}};
           dynamic_cast<DylinkerCommand*>(load_command.get())->name(name);
@@ -204,9 +204,9 @@ void BinaryParser::parse_load_commands(void) {
               this->stream_->read(loadcommands_offset, sizeof(prebound_dylib_command)));
 
 
-          std::string name = {this->stream_->read_string(
+          std::string name = this->stream_->get_string(
              loadcommands_offset +
-             cmd->name)};
+             cmd->name);
 
           //uint32_t sizeof_linked_modules = (cmd->nmodules / 8) + (cmd->nmodules % 8);
 
@@ -308,7 +308,7 @@ void BinaryParser::parse_load_commands(void) {
             uint32_t idx = nlist[j].n_strx;
             if (idx > 0) {
               symbol->name(
-                  this->stream_->read_string(cmd->stroff + idx));
+                  this->stream_->get_string(cmd->stroff + idx));
             }
             this->binary_->symbols_.push_back(symbol.release());
           }
@@ -879,7 +879,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
       case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string(current_offset);
+				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
@@ -1069,7 +1069,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
       case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string(current_offset);
+				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
 
           if ((imm & BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION) != 0) {
@@ -1289,7 +1289,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
       case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string(current_offset);
+				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
@@ -1366,25 +1366,16 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   // Address to bind
   uint64_t address = segment.virtual_address() + segment_offset;
 
-  // Check if a relocation already exists:
-  Relocation* reloc = nullptr;
-  std::unique_ptr<Relocation> new_relocation{nullptr};
-  bool reloc_exists = false;
-
-  auto&& it_reloc = std::find_if(
-      std::begin(segment.relocations_),
-      std::end(segment.relocations_),
-      [address] (const Relocation* r) {
-        return r->address() == address;
-      });
-
-  if (it_reloc != std::end(segment.relocations_)) {
-    reloc = *it_reloc;
-    reloc_exists = true;
+  std::unique_ptr<RelocationDyld> new_relocation{new RelocationDyld{address, type}};
+  auto&& result = segment.relocations_.emplace(new_relocation.get());
+  Relocation* reloc = *result.first;
+  if (result.second) {
+    new_relocation.release();
   } else {
-    new_relocation = std::unique_ptr<Relocation>{new RelocationDyld{address, type}};
-    reloc = new_relocation.get();
+    delete new_relocation.release();
   }
+
+
 
   reloc->architecture_ = this->binary_->header().cpu_type();
 
@@ -1445,9 +1436,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     LOG(ERROR) << "New symbol found: " << symbol_name;
   }
 
-  if (not reloc_exists) {
-    segment.relocations_.emplace(new_relocation.release());
-  }
+
   this->binary_->dyld_info().binding_info_.push_back(binding_info.release());
   VLOG(VDEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
 }
@@ -1467,15 +1456,13 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   uint64_t address = segment.virtual_address() + segment_offset;
 
   // Check if a relocation already exists:
-  Relocation* reloc = nullptr;
-  bool reloc_exists = false;
-
-  reloc = new RelocationDyld{address, type};
-  auto&& it_reloc = segment.relocations_.find(reloc);
-  if (it_reloc != std::end(segment.relocations_)) {
-    delete reloc;
-    reloc = *it_reloc;
-    reloc_exists = true;
+  std::unique_ptr<RelocationDyld> new_relocation{new RelocationDyld{address, type}};
+  auto&& result = segment.relocations_.emplace(new_relocation.get());
+  Relocation* reloc = *result.first;
+  if (result.second) {
+    new_relocation.release();
+  } else {
+    delete new_relocation.release();
   }
 
   reloc->architecture_ = this->binary_->header().cpu_type();
@@ -1499,9 +1486,6 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
       {
         LOG(ERROR) << "Unsuported relocation type: 0x" << std::hex << type;
       }
-  }
-  if (not reloc_exists) {
-    segment.relocations_.insert(it_reloc, reloc);
   }
 }
 

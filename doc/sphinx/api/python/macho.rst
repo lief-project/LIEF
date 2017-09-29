@@ -10,6 +10,17 @@ Parser
 
 ----------
 
+FatBinary
+*********
+
+.. autoclass:: lief.MachO.FatBinary
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 .. _python-macho-binary-api-ref:
 
 Binary

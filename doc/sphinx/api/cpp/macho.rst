@@ -13,6 +13,14 @@ Parsers
 
 ----------
 
+FatBinary
+*********
+
+.. doxygenclass:: LIEF::MachO::FatBinary
+   :project: lief
+
+----------
+
 Binary
 ******
 

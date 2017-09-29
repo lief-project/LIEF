@@ -38,13 +38,9 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  std::vector<MachO::Binary*> binaries = MachO::Parser::parse(argv[1]);
-  MachO::Binary*              binary   = binaries.back();
-  binary->write(argv[2]);
-
-  for (MachO::Binary *b : binaries) {
-    delete b;
-  }
+  std::unique_ptr<LIEF::MachO::FatBinary> binaries{MachO::Parser::parse(argv[1])};
+  MachO::Binary& binary = binaries->back();
+  binary.write(argv[2]);
 
   return 0;
 }

@@ -1,3 +1,4 @@
+include(ProcessorCount)
 set(LIEF_FUZZER_SRC
   elf_fuzzer.cpp
   pe_fuzzer.cpp
@@ -33,7 +34,8 @@ ExternalProject_Add(lief_fuzzer_corpus
   INSTALL_COMMAND   ""
   GIT_REPOSITORY    ${SAMPLES_GIT_URL}
   GIT_TAG           ${SAMPLES_TAG}
-  UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+  #UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+  UPDATE_COMMAND    ""
 )
 
 ExternalProject_Get_Property(lief_fuzzer_corpus source_dir)
@@ -41,7 +43,9 @@ set(LIEF_CORUPUS_DIRECTORY "${source_dir}" CACHE INTERNAL "Path to LIEF samples"
 message(STATUS "Samples directory: ${LIEF_CORUPUS_DIRECTORY}")
 
 
-
+ProcessorCount(N)
+set(LIB_FUZZER_ARGS -detect_leaks=1 -rss_limit_mb=0 -print_final_stats=1 -jobs=${N})
+set(ASAN_OPTIONS allocator_may_return_null=1)
 # ELF
 # ===
 set(ELF_WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/elf-output)
@@ -50,7 +54,7 @@ add_custom_target(build-elf-fuzz-output
     COMMAND ${CMAKE_COMMAND} -E make_directory ${ELF_WORKING_DIR})
 
 add_custom_target("fuzz-elf"
-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/elf_fuzzer ${LIEF_CORUPUS_DIRECTORY}/ELF -detect_leaks=1 -print_final_stats=1
+  COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=${ASAN_OPTIONS} ${CMAKE_CURRENT_BINARY_DIR}/elf_fuzzer ${LIEF_CORUPUS_DIRECTORY}/ELF ${LIB_FUZZER_ARGS}
   DEPENDS elf_fuzzer LIB_LIEF_STATIC build-elf-fuzz-output lief_fuzzer_corpus
   WORKING_DIRECTORY ${ELF_WORKING_DIR}
   COMMENT "Run ELF fuzzer")
@@ -64,7 +68,7 @@ add_custom_target(build-pe-fuzz-output
     COMMAND ${CMAKE_COMMAND} -E make_directory ${PE_WORKING_DIR})
 
 add_custom_target("fuzz-pe"
-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/pe_fuzzer ${LIEF_CORUPUS_DIRECTORY}/PE -detect_leaks=1 -print_final_stats=1
+  COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS="${ASAN_OPTIONS}" ${CMAKE_CURRENT_BINARY_DIR}/pe_fuzzer ${LIEF_CORUPUS_DIRECTORY}/PE ${LIB_FUZZER_ARGS}
   DEPENDS pe_fuzzer LIB_LIEF_STATIC build-pe-fuzz-output lief_fuzzer_corpus
   WORKING_DIRECTORY ${PE_WORKING_DIR}
   COMMENT "Run PE fuzzer")
@@ -74,10 +78,10 @@ add_custom_target("fuzz-pe"
 set(MACHO_WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/macho-output)
 
 add_custom_target(build-macho-fuzz-output
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${MACHO_WORKING_DIR})
+    COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=${ASAN_OPTIONS} ${CMAKE_COMMAND} -E make_directory ${MACHO_WORKING_DIR})
 
 add_custom_target("fuzz-macho"
-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/macho_fuzzer ${LIEF_CORUPUS_DIRECTORY}/MachO -detect_leaks=1 -print_final_stats=1
+  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/macho_fuzzer ${LIEF_CORUPUS_DIRECTORY}/MachO ${LIB_FUZZER_ARGS}
   DEPENDS macho_fuzzer LIB_LIEF_STATIC build-macho-fuzz-output lief_fuzzer_corpus
   WORKING_DIRECTORY ${MACHO_WORKING_DIR}
   COMMENT "Run MachO fuzzer")

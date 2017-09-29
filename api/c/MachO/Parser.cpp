@@ -23,18 +23,18 @@
 using namespace LIEF::MachO;
 
 Macho_Binary_t** macho_parse(const char *file) {
-  std::vector<Binary*> macho_binaries{Parser::parse(file)};
+  FatBinary* macho_binaries = Parser::parse(file);
 
   Macho_Binary_t** c_macho_binaries = static_cast<Macho_Binary_t**>(
-      malloc((macho_binaries.size() + 1) * sizeof(Macho_Binary_t**)));
+      malloc((macho_binaries->size() + 1) * sizeof(Macho_Binary_t**)));
 
-  for (size_t i = 0; i < macho_binaries.size(); ++i) {
-    Binary* binary = macho_binaries [i];
+  for (size_t i = 0; i < macho_binaries->size(); ++i) {
+    Binary& binary = (*macho_binaries)[i];
     c_macho_binaries[i] = static_cast<Macho_Binary_t*>(malloc(sizeof(Macho_Binary_t)));
-    init_c_binary(c_macho_binaries[i], binary);
+    init_c_binary(c_macho_binaries[i], &binary);
   }
 
-  c_macho_binaries[macho_binaries.size()] = nullptr;
+  c_macho_binaries[macho_binaries->size()] = nullptr;
 
   return c_macho_binaries;
 }

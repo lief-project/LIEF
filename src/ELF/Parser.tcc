@@ -837,8 +837,8 @@ void Parser::parse_sections(void) {
     const Section* string_section = this->binary_->sections_[section_string_index];
     for (Section* section : this->binary_->sections_) {
       try {
-        section->name({this->stream_->read_string(
-              string_section->file_offset() + section->name_idx())});
+        section->name(this->stream_->get_string(
+              string_section->file_offset() + section->name_idx()));
       } catch (const LIEF::read_out_of_bound&) {
         LOG(WARNING) << "Section's name is corrupted";
       }
@@ -884,7 +884,7 @@ void Parser::parse_segments(void) {
             this->stream_->read(offset_to_content, size));
         segment->content({content, content + size});
         if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
-          this->binary_->interpreter_ = this->stream_->read_string(offset_to_content, segment->physical_size());
+          this->binary_->interpreter_ = this->stream_->get_string(offset_to_content, segment->physical_size());
         }
 
       } catch (const LIEF::read_out_of_bound&) {
@@ -957,8 +957,8 @@ void Parser::parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Sec
   for (uint32_t i = 0; i < nbSymbols; ++i) {
     std::unique_ptr<Symbol> symbol{new Symbol{&symbol_headers[i]}};
     try {
-      std::string symbol_name = {this->stream_->read_string(
-          string_section->file_offset() + symbol_headers[i].st_name)};
+      std::string symbol_name = this->stream_->get_string(
+          string_section->file_offset() + symbol_headers[i].st_name);
       symbol->name(symbol_name);
     } catch (const LIEF::read_out_of_bound& e) {
       LOG(WARNING) << e.what();
@@ -994,7 +994,7 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
       if (symbol_headers->st_name > 0) {
         try {
           std::string name{
-            this->stream_->read_string(string_offset + symbol_headers->st_name)};
+            this->stream_->get_string(string_offset + symbol_headers->st_name)};
           symbol->name(name);
         } catch (const exception& e) {
           VLOG(VDEBUG) << e.what();
@@ -1046,8 +1046,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           if (dynamic_string_offset == 0) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
-            std::string library_name = {
-              this->stream_->read_string(dynamic_string_offset + dynamic_entry->value())};
+            std::string library_name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
             dynamic_entry->name(library_name);
           }
           break;
@@ -1061,8 +1060,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           if (dynamic_string_offset == 0) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
-            std::string sharename = {
-              this->stream_->read_string(dynamic_string_offset + dynamic_entry->value())};
+            std::string sharename = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
             dynamic_entry->name(sharename);
           }
           break;
@@ -1075,8 +1073,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           if (dynamic_string_offset == 0) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
-            std::string name = {
-              this->stream_->read_string(dynamic_string_offset + dynamic_entry->value())};
+            std::string name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
             dynamic_entry->name(name);
           }
           break;
@@ -1090,8 +1087,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           if (dynamic_string_offset == 0) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
-            std::string name = {
-              this->stream_->read_string(dynamic_string_offset + dynamic_entry->value())};
+            std::string name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
             dynamic_entry->name(name);
           }
           break;
@@ -1378,8 +1374,8 @@ void Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entri
 
     std::unique_ptr<SymbolVersionRequirement> symbol_version_requirement{new SymbolVersionRequirement{header}};
     if (string_offset != 0) {
-      symbol_version_requirement->name({
-          this->stream_->read_string(string_offset + header->vn_file)});
+      symbol_version_requirement->name(
+          this->stream_->get_string(string_offset + header->vn_file));
     }
 
     const uint32_t nb_symbol_aux = header->vn_cnt;
@@ -1401,7 +1397,7 @@ void Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entri
 
         std::unique_ptr<SymbolVersionAuxRequirement> svar{new SymbolVersionAuxRequirement{aux_header}};
         if (string_offset != 0) {
-          svar->name({this->stream_->read_string(string_offset + aux_header->vna_name)});
+          svar->name(this->stream_->get_string(string_offset + aux_header->vna_name));
         }
 
         symbol_version_requirement->symbol_version_aux_requirement_.push_back(svar.release());
@@ -1463,7 +1459,7 @@ void Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_entrie
           offset + next_symbol_offset + svd_header->vd_aux + next_aux_offset,
           sizeof(Elf_Verdaux)));
       if (string_offset != 0) {
-        std::string name  = {this->stream_->read_string(string_offset + svda_header->vda_name)};
+        std::string name  = this->stream_->get_string(string_offset + svda_header->vda_name);
         symbol_version_definition->symbol_version_aux_.push_back(new SymbolVersionAux{name});
       }
 

@@ -51,13 +51,13 @@ Parser::Parser(const std::string& file) :
 }
 
 
-std::vector<Binary*> Parser::parse(const std::string& filename) {
+FatBinary* Parser::parse(const std::string& filename) {
   if (not is_macho(filename)) {
     throw bad_file("'" + filename + "' is not a MachO binary");
   }
 
   Parser parser{filename};
-  return parser.binaries_;
+  return new FatBinary{parser.binaries_};
 }
 
 // From Vector
@@ -73,13 +73,13 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
 }
 
 
-std::vector<Binary*> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+FatBinary* Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
   if (not is_macho(data)) {
     throw bad_file("'" + name + "' is not a MachO binary");
   }
 
   Parser parser{data, name};
-  return parser.binaries_;
+  return new FatBinary{parser.binaries_};
 }
 
 
