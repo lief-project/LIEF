@@ -214,9 +214,14 @@ std::string Symbol::demangled_name(void) const {
 }
 
 bool Symbol::is_exported(void) const {
-  return ((this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
-        this->binding() == SYMBOL_BINDINGS::STB_WEAK) and
-        this->shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF);
+  bool is_exported = this->shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF;
+  is_exported = is_exported and this->value() != 0;
+  is_exported = is_exported and (this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
+                                 this->binding() == SYMBOL_BINDINGS::STB_WEAK);
+  is_exported = is_exported and (this->type() == ELF_SYMBOL_TYPES::STT_FUNC or
+                                 this->type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC or
+                                 this->type() == ELF_SYMBOL_TYPES::STT_OBJECT);
+  return is_exported;
 }
 
 void Symbol::set_exported(bool flag) {
@@ -230,7 +235,15 @@ void Symbol::set_exported(bool flag) {
 }
 
 bool Symbol::is_imported(void) const {
-  return this->shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
+  bool is_imported = this->shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
+  is_imported = is_imported and this->value() == 0;
+  is_imported = is_imported and this->name().size() > 0;
+  is_imported = is_imported and (this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
+                                 this->binding() == SYMBOL_BINDINGS::STB_WEAK);
+  is_imported = is_imported and (this->type() == ELF_SYMBOL_TYPES::STT_FUNC or
+                                 this->type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC or
+                                 this->type() == ELF_SYMBOL_TYPES::STT_OBJECT);
+  return is_imported;
 }
 
 void Symbol::set_imported(bool flag) {
