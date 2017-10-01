@@ -17,9 +17,10 @@
 #include "LIEF/version.h"
 #include "pyLIEF.hpp"
 
-PYBIND11_PLUGIN(_pylief) {
+py::module LIEF_module("_pylief", "Python API for LIEF");
 
-  py::module LIEF_module("_pylief", "Python API for LIEF");
+PYBIND11_MODULE(_pylief, LIEF_module) {
+
 
   LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
   init_LIEF_iterators(LIEF_module);
@@ -56,5 +57,4 @@ PYBIND11_PLUGIN(_pylief) {
   init_json_functions(LIEF_module);
 #endif
 
-  return LIEF_module.ptr();
 }
