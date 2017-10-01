@@ -54,6 +54,15 @@ it_const_binaries FatBinary::end(void) const {
 }
 
 
+Binary* FatBinary::pop_back(void) {
+  if (this->binaries_.size() > 0) {
+    Binary* last = this->binaries_.back();
+    this->binaries_.pop_back();
+    return last;
+  }
+  return nullptr;
+}
+
 Binary& FatBinary::at(size_t index) {
   return const_cast<Binary&>(static_cast<const FatBinary*>(this)->at(index));
 }

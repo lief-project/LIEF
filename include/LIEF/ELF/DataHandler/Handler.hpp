@@ -26,7 +26,7 @@ namespace ELF {
 namespace DataHandler {
 class DLL_PUBLIC Handler {
   public:
-    static constexpr size_t MAX_SIZE = 3_GB;
+    static constexpr size_t MAX_SIZE = 1_GB;
     Handler(const std::vector<uint8_t>& content);
     Handler(std::vector<uint8_t>&& content);
     ~Handler(void);

@@ -46,8 +46,17 @@ namespace ELF {
 class DLL_PUBLIC Parser : public LIEF::Parser {
   public:
 
-    static constexpr uint32_t NB_MAX_SYMBOLS = 1000000;
-    static constexpr uint32_t DELTA_NB_SYMBOLS = 3000;
+    static constexpr uint32_t NB_MAX_SYMBOLS         = 1000000;
+    static constexpr uint32_t DELTA_NB_SYMBOLS       = 3000;
+    static constexpr uint32_t NB_MAX_BUCKETS         = NB_MAX_SYMBOLS;
+    static constexpr uint32_t NB_MAX_CHAINS          = 1000000;
+    static constexpr uint32_t NB_MAX_SECTION         = 10000;
+    static constexpr uint32_t NB_MAX_SEGMENTS        = 10000;
+    static constexpr uint32_t NB_MAX_RELOCATIONS     = 10000;
+    static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
+    static constexpr uint32_t NB_MAX_MASKWORD        = 512;
+    static constexpr uint32_t MAX_NOTE_DESCRIPTION   = 1_MB;
+
 
     //! @brief Parse an ELF file an return a LIEF::ELF::Binary object
     //!

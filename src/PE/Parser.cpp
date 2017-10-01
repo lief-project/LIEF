@@ -297,7 +297,7 @@ void Parser::build_resources(void) {
   const pe_resource_directory_table* directory_table = reinterpret_cast<const pe_resource_directory_table*>(
       this->stream_->read(offset, sizeof(pe_resource_directory_table)));
 
-  this->binary_->resources_ = this->build_resource_node(directory_table, offset);
+  this->binary_->resources_ = this->build_resource_node(directory_table, offset, offset);
 }
 
 
@@ -307,12 +307,16 @@ void Parser::build_resources(void) {
 ResourceNode* Parser::build_resource_node(
     const pe_resource_directory_table *directory_table,
     uint32_t base_offset,
+    uint32_t current_offset,
     uint32_t depth) {
 
   const uint32_t numberof_ID_entries   = directory_table->NumberOfIDEntries;
   const uint32_t numberof_name_entries = directory_table->NumberOfNameEntries;
 
-  const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
+  //const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
+  size_t directory_array_offset = current_offset + sizeof(pe_resource_directory_table);
+  const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(
+      this->stream_->read(directory_array_offset, sizeof(pe_resource_directory_entries)));
 
   std::unique_ptr<ResourceDirectory> directory{new ResourceDirectory{directory_table}};
 
@@ -321,8 +325,13 @@ ResourceNode* Parser::build_resource_node(
   // Iterate over the childs
   for (uint32_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx) {
 
-    uint32_t data_rva = entries_array[idx].RVA;
-    uint32_t id        = entries_array[idx].NameID.IntegerID;
+    uint32_t data_rva = entries_array->RVA;
+    uint32_t id       = entries_array->NameID.IntegerID;
+
+    directory_array_offset += sizeof(pe_resource_directory_entries);
+    entries_array = reinterpret_cast<const pe_resource_directory_entries*>(
+      this->stream_->read(directory_array_offset, sizeof(pe_resource_directory_entries)));
+
     std::u16string name;
 
     // Get the resource name
@@ -390,7 +399,7 @@ ResourceNode* Parser::build_resource_node(
         }
         this->resource_visited_.insert(offset);
 
-        std::unique_ptr<ResourceNode> node{this->build_resource_node(nextDirectoryTable, base_offset, depth + 1)};
+        std::unique_ptr<ResourceNode> node{this->build_resource_node(nextDirectoryTable, base_offset, offset, depth + 1)};
         node->id(id);
         node->name(name);
         directory->childs_.push_back(node.release());
@@ -399,6 +408,8 @@ ResourceNode* Parser::build_resource_node(
         break;
       }
     }
+
+
   }
 
   return directory.release();

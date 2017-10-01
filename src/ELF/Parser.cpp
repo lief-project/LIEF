@@ -36,6 +36,17 @@
 namespace LIEF {
 namespace ELF {
 
+constexpr uint32_t Parser::NB_MAX_SYMBOLS;
+constexpr uint32_t Parser::DELTA_NB_SYMBOLS;
+constexpr uint32_t Parser::NB_MAX_BUCKETS;
+constexpr uint32_t Parser::NB_MAX_CHAINS;
+constexpr uint32_t Parser::NB_MAX_SECTION;
+constexpr uint32_t Parser::NB_MAX_SEGMENTS;
+constexpr uint32_t Parser::NB_MAX_RELOCATIONS;
+constexpr uint32_t Parser::NB_MAX_DYNAMIC_ENTRIES;
+constexpr uint32_t Parser::NB_MAX_MASKWORD;
+constexpr uint32_t Parser::MAX_NOTE_DESCRIPTION;
+
 
 Parser::~Parser(void) = default;
 Parser::Parser(void)  = default;
@@ -237,8 +248,9 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
   current_offset += 2 * sizeof(uint32_t);
 
-  const uint32_t nbuckets = header[0];
-  const uint32_t nchain   = header[1];
+  const uint32_t nbuckets = std::min<uint32_t>(header[0], Parser::NB_MAX_BUCKETS);
+  const uint32_t nchain   = std::min<uint32_t>(header[1], Parser::NB_MAX_CHAINS);
+
   try {
     std::vector<uint32_t> buckets(nbuckets);
 
@@ -256,7 +268,7 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
     throw corrupted("SYSV Hash, nbuckets corrupted");
   }
 
-   try {
+  try {
     std::vector<uint32_t> chains(nchain);
 
     for (size_t i = 0; i < nchain; ++i) {
@@ -287,7 +299,8 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     current_offset += sizeof(uint32_t);
     VLOG(VDEBUG) << "Name size: " << std::hex << namesz;
 
-    uint32_t descsz = this->stream_->read_integer<uint32_t>(current_offset);
+    uint32_t descsz = std::min(this->stream_->read_integer<uint32_t>(current_offset), Parser::MAX_NOTE_DESCRIPTION);
+
     current_offset += sizeof(uint32_t);
     VLOG(VDEBUG) << "Description size: " << std::hex << descsz;
 

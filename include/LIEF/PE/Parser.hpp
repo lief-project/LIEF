@@ -100,7 +100,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     ResourceNode* build_resource_node(
         const pe_resource_directory_table *directory_table,
-        uint32_t base_offset, uint32_t depth = 0);
+        uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);
 
 
     std::unique_ptr<VectorStream> stream_;

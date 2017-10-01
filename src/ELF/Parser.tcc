@@ -267,11 +267,15 @@ void Parser::parse_binary(void) {
 
   if (it_symbol_version_requirement != std::end(this->binary_->dynamic_entries_) and
       it_symbol_version_requirement_size != std::end(this->binary_->dynamic_entries_)) {
-    const uint64_t virtual_address = (*it_symbol_version_requirement)->value();
-    const uint32_t size            = static_cast<uint32_t>((*it_symbol_version_requirement_size)->value());
+
+    const DynamicEntry* dt_verneed     = *it_symbol_version_requirement;
+    const DynamicEntry* dt_verneed_num = *it_symbol_version_requirement_size;
+
+    const uint64_t virtual_address = dt_verneed->value();
+    const uint32_t nb_entries = std::min(Parser::NB_MAX_SYMBOLS, static_cast<uint32_t>(dt_verneed_num->value()));
     try {
       const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
-      this->parse_symbol_version_requirement<ELF_T>(offset, size);
+      this->parse_symbol_version_requirement<ELF_T>(offset, nb_entries);
     } catch (const LIEF::exception& e) {
       LOG(WARNING) << e.what();
     }
@@ -719,9 +723,9 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
 
   current_offset += 4 * sizeof(uint32_t);
 
-  const uint32_t nbuckets  = header[0];
+  const uint32_t nbuckets  = std::min(header[0], Parser::NB_MAX_BUCKETS);
   const uint32_t symndx    = header[1];
-  const uint32_t maskwords = header[2];
+  const uint32_t maskwords = std::min(header[2], Parser::NB_MAX_MASKWORD);
   const uint32_t shift2    = header[3];
 
   if (maskwords & (maskwords - 1)) {
@@ -745,7 +749,7 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   }
 
   std::vector<uint32_t> buckets;
-  buckets.reserve(std::min<uint32_t>(nbuckets, 400));
+  buckets.reserve(nbuckets);
   try {
     const uint32_t* hash_buckets = reinterpret_cast<const uint32_t*>(
         this->stream_->read(current_offset, nbuckets * sizeof(uint32_t)));
@@ -799,7 +803,7 @@ void Parser::parse_sections(void) {
   VLOG(VDEBUG) << "[+] Parsing Section";
 
   const Elf_Off headers_offset     = this->binary_->header_.section_headers_offset();
-  const uint32_t numberof_sections = this->binary_->header_.numberof_sections();
+  const uint32_t numberof_sections = std::min<uint32_t>(this->binary_->header_.numberof_sections(), Parser::NB_MAX_SECTION);
   const Elf_Shdr* section_headers  = reinterpret_cast<const Elf_Shdr*>(
       this->stream_->read(
         headers_offset,
@@ -856,7 +860,7 @@ void Parser::parse_segments(void) {
 
   VLOG(VDEBUG) << "[+] Parse Segments";
   const Elf_Off segment_headers_offset = this->binary_->header().program_headers_offset();
-  const uint32_t nbof_segments          = this->binary_->header().numberof_segments();
+  const uint32_t nbof_segments         = std::min<uint32_t>(this->binary_->header().numberof_segments(), Parser::NB_MAX_SEGMENTS);
 
   const Elf_Phdr* segment_headers = reinterpret_cast<const Elf_Phdr*>(
       this->stream_->read(segment_headers_offset, nbof_segments * sizeof(Elf_Phdr)));
@@ -920,7 +924,9 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
 
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+
+  nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
   const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
         this->stream_->read(relocations_offset, nb_entries * sizeof(REL_T)));
@@ -976,6 +982,7 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
   VLOG(VDEBUG) << "[+] Parsing dynamics symbols";
 
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
+
   VLOG(VDEBUG) << "Number of symbols counted: " << nb_symbols;
 
   const Elf_Off dynamic_symbols_offset = offset;
@@ -1020,7 +1027,9 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
   VLOG(VDEBUG) << "[+] Parsing dynamic section";
 
-  const uint32_t nb_entries = size / sizeof(Elf_Dyn);
+  uint32_t nb_entries = size / sizeof(Elf_Dyn);
+  nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_DYNAMIC_ENTRIES);
+
 
   VLOG(VDEBUG) << "Size of the dynamic section: 0x" << std::hex << size;
   VLOG(VDEBUG) << "offset of the dynamic section: 0x" << std::hex << offset;
@@ -1285,7 +1294,8 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
   const Elf_Off offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
   const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
       this->stream_->read(offset_relocations, nb_entries * sizeof(REL_T)));
 
@@ -1312,7 +1322,9 @@ void Parser::parse_section_relocations(uint64_t offset, uint64_t size) {
   const uint64_t offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
+
   const REL_T* relocEntry = reinterpret_cast<const REL_T*>(
       this->stream_->read(offset_relocations, nb_entries * sizeof(REL_T)));
 
@@ -1513,9 +1525,9 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   current_offset += 4 * sizeof(uint32_t);
 
-  const uint32_t nbuckets  = header[0];
+  const uint32_t nbuckets  = std::min(header[0], Parser::NB_MAX_BUCKETS);
   const uint32_t symndx    = header[1];
-  const uint32_t maskwords = header[2];
+  const uint32_t maskwords = std::min(header[2], Parser::NB_MAX_MASKWORD);
   const uint32_t shift2    = header[3];
 
   gnuhash.symbol_index_ = symndx;
@@ -1548,7 +1560,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   }
 
   std::vector<uint32_t> buckets;
-  buckets.reserve(std::min<uint32_t>(nbuckets, 400));
+  buckets.reserve(nbuckets);
   try {
     const uint32_t* hash_buckets = reinterpret_cast<const uint32_t*>(
         this->stream_->read(current_offset, nbuckets * sizeof(uint32_t)));
@@ -1570,7 +1582,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   uint32_t nb_hash = dynsymcount - symndx;
 
   std::vector<uint32_t> hashvalues;
-  hashvalues.reserve(std::min<uint32_t>(nb_hash, 400));
+  hashvalues.reserve(nb_hash);
 
   try {
     const uint32_t* hash_values = reinterpret_cast<const uint32_t*>(

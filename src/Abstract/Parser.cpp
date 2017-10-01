@@ -51,13 +51,13 @@ Binary* Parser::parse(const std::string& filename) {
 #if defined(LIEF_MACHO_MODULE)
   if (MachO::is_macho(filename)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* binaries = MachO::Parser::parse(filename);
-    MachO::Binary& binary_return = (*binaries)[0];
-    // delete others
-    for (size_t i = 1; i < binaries->size(); ++i) {
-      delete binaries->binaries_[i];
+    MachO::FatBinary* fat = MachO::Parser::parse(filename);
+    MachO::Binary* binary_return = nullptr;
+    if (fat) {
+      binary_return = fat->pop_back();
+      delete fat;
     }
-    return &binary_return;
+    return binary_return;
   }
 #endif
 
@@ -83,13 +83,10 @@ Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) 
 #if defined(LIEF_MACHO_MODULE)
   if (MachO::is_macho(raw)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* binaries = MachO::Parser::parse(raw, name);
-    MachO::Binary& binary_return = (*binaries)[0];
-    // delete others
-    for (size_t i = 1; i < binaries->size(); ++i) {
-      delete binaries->binaries_[i];
-    }
-    return &binary_return;
+    MachO::FatBinary* fat = MachO::Parser::parse(raw, name);
+    MachO::Binary* binary_return = fat->pop_back();
+    delete fat;
+    return binary_return;
   }
 #endif
 

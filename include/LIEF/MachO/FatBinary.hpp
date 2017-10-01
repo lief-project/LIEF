@@ -51,6 +51,8 @@ class DLL_PUBLIC FatBinary {
   it_binaries end(void);
   it_const_binaries end(void) const;
 
+  Binary* pop_back(void);
+
   Binary&       at(size_t index);
   const Binary& at(size_t index) const;
 
