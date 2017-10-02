@@ -212,6 +212,12 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
 }
 
 
+Note& Binary::add(const Note& note) {
+  this->notes_.emplace_back(note);
+  return this->notes_.back();
+}
+
+
 void Binary::remove(const DynamicEntry& entry) {
   auto&& it_entry = std::find_if(
       std::begin(this->dynamic_entries_),
@@ -242,6 +248,79 @@ void Binary::remove(DYNAMIC_TAGS tag) {
     }
   }
 }
+
+void Binary::remove(const Section& section, bool clear) {
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&section] (const Section* s) {
+        return *s == section;
+      });
+
+  if (it_section == std::end(this->sections_)) {
+    throw not_found("Can't find '" + section.name() +  "'!");
+  }
+
+  size_t idx = std::distance(it_section, std::end(this->sections_));
+
+  Section* s = *it_section;
+
+  // Remove from segments:
+  for (Segment* segment : this->segments_) {
+    auto&& sections = segment->sections_;
+    sections.erase(std::remove_if(
+          std::begin(sections),
+          std::end(sections),
+          [&s] (Section* sec) { return *sec == *s; }),
+          std::end(sections));
+  }
+
+  if (clear) {
+    s->content(std::vector<uint8_t>(s->size(), 0));
+  }
+
+  this->datahandler_->remove(s->file_offset(), s->size(), DataHandler::Node::SECTION);
+
+  // Patch header
+  this->header().numberof_sections(this->header().numberof_sections() - 1);
+
+  if (idx < this->header().section_name_table_idx()) {
+    this->header().section_name_table_idx(this->header().section_name_table_idx() - 1);
+  }
+
+  delete s;
+  this->sections_.erase(it_section);
+}
+
+void Binary::remove(const Note& note) {
+
+  auto&& it_note = std::find_if(
+      std::begin(this->notes_),
+      std::end(this->notes_),
+      [&note] (const Note& n)
+      {
+        return note == n;
+      });
+
+  if (it_note == std::end(this->notes_)) {
+    throw not_found(std::string("Can't find note '") + to_string(static_cast<NOTE_TYPES>(note.type())) +  "'!");
+  }
+
+  this->notes_.erase(it_note);
+}
+
+void Binary::remove(NOTE_TYPES type) {
+  for (auto&& it = std::begin(this->notes_);
+              it != std::end(this->notes_);) {
+    if (it->type() == type) {
+      it = this->notes_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
+
 
 // Symbols
 // =======
@@ -1101,28 +1180,8 @@ Segment& Binary::segment_from_offset(uint64_t offset) {
   return const_cast<Segment&>(static_cast<const Binary*>(this)->segment_from_offset(offset));
 }
 
-void Binary::remove_section(const std::string& name) {
-  auto&& it_section = std::find_if(
-      std::begin(this->sections_),
-      std::end(this->sections_),
-      [&name] (const Section* section) {
-        return section != nullptr and section->name() == name;
-      });
-
-  if (it_section == std::end(this->sections_)) {
-    throw not_found("Unable to find the section");
-  }
-
-  Section* section = *it_section;
-
-  // First clear the content
-  section->content(std::vector<uint8_t>(section->size(), 0));
-
-  // Patch header
-  this->header().numberof_sections(this->header().numberof_sections() - 1);
-
-  // Remove from sections vector
-  this->sections_.erase(it_section);
+void Binary::remove_section(const std::string& name, bool clear) {
+  this->remove(this->get_section(name), clear);
 }
 
 bool Binary::has_section(const std::string& name) const {
@@ -1326,10 +1385,32 @@ const Segment& Binary::get(SEGMENT_TYPES type) const {
   return **it_segment;
 }
 
+
 Segment& Binary::get(SEGMENT_TYPES type) {
   return const_cast<Segment&>(static_cast<const Binary*>(this)->get(type));
 }
 
+const Note& Binary::get(NOTE_TYPES type) const {
+
+  if (not this->has(type)) {
+    throw not_found("Unable to find a note of type '" + std::string(to_string(type)) + "'.");
+  }
+
+  auto&& it_note = std::find_if(
+      std::begin(this->notes_),
+      std::end(this->notes_),
+      [type] (const Note& note)
+      {
+        return note.type() == type;
+      });
+
+  return *it_note;
+}
+
+
+Note& Binary::get(NOTE_TYPES type) {
+  return const_cast<Note&>(static_cast<const Binary*>(this)->get(type));
+}
 
 
 bool Binary::has(SEGMENT_TYPES type) const {
@@ -1342,6 +1423,19 @@ bool Binary::has(SEGMENT_TYPES type) const {
       });
 
   return it_segment != std::end(this->segments_);
+}
+
+
+bool Binary::has(NOTE_TYPES type) const {
+  auto&& it_note = std::find_if(
+      std::begin(this->notes_),
+      std::end(this->notes_),
+      [type] (const Note& note)
+      {
+        return note.type() == type;
+      });
+
+  return it_note != std::end(this->notes_);
 }
 
 
@@ -1690,6 +1784,11 @@ Binary& Binary::operator+=(const Segment& segment) {
   return *this;
 }
 
+Binary& Binary::operator+=(const Note& note) {
+  this->add(note);
+  return *this;
+}
+
 // Operator -=
 // ===========
 Binary& Binary::operator-=(const DynamicEntry& entry) {
@@ -1699,6 +1798,17 @@ Binary& Binary::operator-=(const DynamicEntry& entry) {
 
 Binary& Binary::operator-=(DYNAMIC_TAGS tag) {
   this->remove(tag);
+  return *this;
+}
+
+
+Binary& Binary::operator-=(const Note& note) {
+  this->remove(note);
+  return *this;
+}
+
+Binary& Binary::operator-=(NOTE_TYPES type) {
+  this->remove(type);
   return *this;
 }
 
@@ -1718,6 +1828,15 @@ DynamicEntry& Binary::operator[](DYNAMIC_TAGS tag) {
 
 const DynamicEntry& Binary::operator[](DYNAMIC_TAGS tag) const {
   return this->get(tag);
+}
+
+
+Note& Binary::operator[](NOTE_TYPES type) {
+  return this->get(type);
+}
+
+const Note& Binary::operator[](NOTE_TYPES type) const {
+  return this->get(type);
 }
 
 std::ostream& Binary::print(std::ostream& os) const {

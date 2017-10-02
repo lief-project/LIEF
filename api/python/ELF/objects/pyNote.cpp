@@ -30,8 +30,12 @@ using setter_t = void (Note::*)(T);
 void init_ELF_Note_class(py::module& m) {
 
   py::class_<Note>(m, "Note")
-    .def(py::init<>())
-    .def(py::init<const std::string&, uint32_t, const std::vector<uint8_t>&>())
+    .def(py::init<>(),
+        "Default ctor")
+
+    .def(py::init<const std::string&, NOTE_TYPES, const std::vector<uint8_t>&>(),
+        "Ctor from ``name``, ``type`` and ``description``",
+        "name"_a, "type"_a, "description"_a)
 
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Note::name),

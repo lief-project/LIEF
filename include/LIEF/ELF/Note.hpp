@@ -38,6 +38,7 @@ class DLL_PUBLIC Note : public Visitable {
   public:
   Note(void);
   Note(const std::string& name, uint32_t type, const std::vector<uint8_t>& description);
+  Note(const std::string& name, NOTE_TYPES type, const std::vector<uint8_t>& description);
   Note& operator=(const Note& copy);
   Note(const Note& copy);
   virtual ~Note(void);
@@ -60,6 +61,9 @@ class DLL_PUBLIC Note : public Visitable {
   void name(const std::string& name);
   void type(uint32_t type);
   void description(const std::vector<uint8_t>& description);
+
+  //! @brief Sizeof the **raw** note
+  uint64_t size(void) const;
 
   bool operator==(const Note& rhs) const;
   bool operator!=(const Note& rhs) const;

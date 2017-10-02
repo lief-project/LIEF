@@ -336,5 +336,20 @@ if(N EQUAL 0)
 endif()
 
 
-add_custom_target(check-lief COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure
-  DEPENDS lief_samples)
+if (CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+        --force-new-ctest-process --output-on-failure
+        --build-config "$<CONFIGURATION>")
+else()
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+        --force-new-ctest-process --output-on-failure)
+endif()
+if (CMAKE_CONFIGURATION_TYPES)
+  add_custom_target(check-lief
+    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure --build-config "$<CONFIGURATION>"
+    DEPENDS lief_samples)
+else()
+  add_custom_target(check-lief
+    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure
+    DEPENDS lief_samples)
+endif()

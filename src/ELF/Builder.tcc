@@ -104,6 +104,16 @@ void Builder::build(void) {
     }
   }
 
+  // Build Notes
+  if (this->binary_->has_notes()) {
+    try {
+      this->build_notes<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
+  }
+
+
   // Build sections
   this->build_sections<ELF_T>();
 
@@ -1744,6 +1754,84 @@ void Builder::build_interpreter(void) {
   }
   const char* inter_cstr = inter_str.c_str();
   interp_segment->content({inter_cstr, inter_cstr + inter_str.size() + 1});
+}
+
+template<typename ELF_T>
+void Builder::build_notes(void) {
+  if (not this->binary_->has(SEGMENT_TYPES::PT_NOTE)) {
+    return;
+  }
+
+  Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
+  std::vector<uint8_t> raw_notes;
+  for (const Note& note : this->binary_->notes()) {
+    // First we have to write the length of the Note's name
+    const uint32_t namesz = static_cast<uint32_t>(note.name().size() + 1);
+    raw_notes.insert(
+        std::end(raw_notes),
+        reinterpret_cast<const uint8_t*>(&namesz),
+        reinterpret_cast<const uint8_t*>(&namesz) + sizeof(uint32_t));
+
+    // Then the length of the Note's description
+    const uint32_t descsz = static_cast<uint32_t>(note.description().size());
+    //const uint32_t descsz = 20;
+    raw_notes.insert(
+        std::end(raw_notes),
+        reinterpret_cast<const uint8_t*>(&descsz),
+        reinterpret_cast<const uint8_t*>(&descsz) + sizeof(uint32_t));
+
+    // Then the note's type
+    const uint32_t type = note.type();
+    raw_notes.insert(
+        std::end(raw_notes),
+        reinterpret_cast<const uint8_t*>(&type),
+        reinterpret_cast<const uint8_t*>(&type) + sizeof(uint32_t));
+
+    // Then we write the note's name
+    const std::string& name = note.name();
+    raw_notes.insert(
+        std::end(raw_notes),
+        reinterpret_cast<const uint8_t*>(name.c_str()),
+        reinterpret_cast<const uint8_t*>(name.c_str()) + namesz);
+
+    // Alignment
+    raw_notes.resize(align(raw_notes.size(), sizeof(uint32_t)), 0);
+
+
+    // description content
+    const std::vector<uint8_t>& description = note.description();
+    raw_notes.insert(
+        std::end(raw_notes),
+        std::begin(description),
+        std::end(description));
+
+    // Alignment
+    raw_notes.resize(align(raw_notes.size(), sizeof(uint32_t)), 0);
+  }
+
+  if (segment_note.physical_size() < raw_notes.size()) {
+    LOG(INFO) << "Segment Note needs to be relocated";
+    Segment note = segment_note;
+    note.virtual_address(0);
+    note.file_offset(0);
+    note.physical_address(0);
+    note.physical_size(0);
+    note.virtual_size(0);
+    note.content(raw_notes);
+    this->binary_->replace(note, segment_note);
+    return this->build<ELF_T>();
+  }
+
+  segment_note.content(raw_notes);
+
+  // ".note.ABI-tag" // NOTE_TYPES::NT_GNU_ABI_TAG
+  // ===============
+  //TODO: .note.netbds etc
+  this->build(NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.ABI-tag");
+  this->build(NOTE_TYPES::NT_GNU_BUILD_ID,     ".note.gnu.build-id");
+  this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION, ".note.gnu.gold-version");
+
+
 }
 
 

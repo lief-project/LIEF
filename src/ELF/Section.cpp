@@ -32,6 +32,11 @@
 namespace LIEF {
 namespace ELF {
 
+
+Section operator"" _section(const char* name) {
+  return Section{name};
+}
+
 Section::~Section(void) = default;
 
 

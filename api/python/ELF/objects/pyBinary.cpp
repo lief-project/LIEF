@@ -213,6 +213,12 @@ void init_ELF_Binary_class(py::module& m) {
         "type"_a,
         py::return_value_policy::reference)
 
+    .def("get",
+        static_cast<no_const_func<Note&, NOTE_TYPES>>(&Binary::get),
+        "Return **first** binary's " RST_CLASS_REF(lief.ELF.Note) " given its " RST_CLASS_REF(lief.ELF.NOTE_TYPES) "",
+        "type"_a,
+        py::return_value_policy::reference)
+
     .def("has",
         static_cast<bool (Binary::*)(DYNAMIC_TAGS) const>(&Binary::has),
         "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists",
@@ -221,6 +227,11 @@ void init_ELF_Binary_class(py::module& m) {
     .def("has",
         static_cast<bool (Binary::*)(SEGMENT_TYPES) const>(&Binary::has),
         "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists",
+        "type"_a)
+
+    .def("has",
+        static_cast<bool (Binary::*)(NOTE_TYPES) const>(&Binary::has),
+        "Check if a " RST_CLASS_REF(lief.ELF.Note) " of *type* (" RST_CLASS_REF(lief.ELF.NOTE_TYPES) ") exists",
         "type"_a)
 
     .def("patch_pltgot",
@@ -274,6 +285,12 @@ void init_ELF_Binary_class(py::module& m) {
         "segment"_a, "base"_a = 0,
         py::return_value_policy::reference)
 
+    .def("add",
+        static_cast<Note& (Binary::*)(const Note&)>(&Binary::add),
+        "Add a new " RST_CLASS_REF(lief.ELF.Note) " in the binary",
+        "note"_a,
+        py::return_value_policy::reference)
+
     .def("replace",
         static_cast<Segment& (Binary::*)(const Segment&, const Segment&, uint64_t)>(&Binary::replace),
         "Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment",
@@ -301,6 +318,22 @@ void init_ELF_Binary_class(py::module& m) {
         static_cast<void (Binary::*)(DYNAMIC_TAGS)>(&Binary::remove),
         "Remove **all** " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) "",
         "tag"_a)
+
+    .def("remove",
+        static_cast<void (Binary::*)(const Section&, bool)>(&Binary::remove),
+        "Remove the given " RST_CLASS_REF(lief.ELF.Section) ". ``clear`` specify whether or not "
+        "we must fill its content with ``0`` before removing",
+        "section"_a, "clear"_a = false)
+
+    .def("remove",
+        static_cast<void (Binary::*)(const Note&)>(&Binary::remove),
+        "Remove the given " RST_CLASS_REF(lief.ELF.Note) "",
+        "note"_a)
+
+    .def("remove",
+        static_cast<void (Binary::*)(NOTE_TYPES)>(&Binary::remove),
+        "Remove **all** " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) "",
+        "type"_a)
 
     .def_property_readonly("has_notes",
         &Binary::has_notes,
@@ -353,6 +386,11 @@ void init_ELF_Binary_class(py::module& m) {
         "Remove the given library",
         "library_name"_a)
 
+    .def("remove_section",
+        &Binary::remove_section,
+        "Remove the given section from its name",
+        "library_name"_a, "clear"_a = false)
+
     .def("get_library",
         static_cast<no_const_func<DynamicEntryLibrary&, const std::string&>>(&Binary::get_library),
         "Return the " RST_CLASS_REF(lief.ELF.DynamicEntryLibrary) " with the given ``name``",
@@ -360,16 +398,23 @@ void init_ELF_Binary_class(py::module& m) {
         py::return_value_policy::reference)
 
     .def(py::self += Segment())
-
     .def(py::self += Section())
-
     .def(py::self += DynamicEntry())
+    .def(py::self += Note())
 
     .def(py::self -= DynamicEntry())
     .def(py::self -= DYNAMIC_TAGS())
 
+    .def(py::self -= Note())
+    .def(py::self -= NOTE_TYPES())
+
     .def("__getitem__",
         static_cast<Segment& (Binary::*)(SEGMENT_TYPES)>(&Binary::operator[]),
+        "",
+        py::return_value_policy::reference)
+
+    .def("__getitem__",
+        static_cast<Note& (Binary::*)(NOTE_TYPES)>(&Binary::operator[]),
         "",
         py::return_value_policy::reference)
 
@@ -385,6 +430,10 @@ void init_ELF_Binary_class(py::module& m) {
     .def("__contains__",
         static_cast<bool (Binary::*)(DYNAMIC_TAGS) const>(&Binary::has),
         "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists")
+
+    .def("__contains__",
+        static_cast<bool (Binary::*)(NOTE_TYPES) const>(&Binary::has),
+        "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " exists")
 
     .def("__str__",
         [] (const Binary& binary)

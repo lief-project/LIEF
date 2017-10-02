@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include "LIEF/exception.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/visitors/Hash.hpp"
 
@@ -42,6 +43,11 @@ Note::Note(const std::string& name, uint32_t type, const std::vector<uint8_t>& d
   name_{name},
   type_{type},
   description_{description}
+{}
+
+
+Note::Note(const std::string& name, NOTE_TYPES type, const std::vector<uint8_t>& description):
+  Note::Note{name, static_cast<uint32_t>(type), description}
 {}
 
 const std::string& Note::name(void) const {
@@ -94,6 +100,17 @@ void Note::type(uint32_t type) {
 
 void Note::description(const std::vector<uint8_t>& description) {
   this->description_ = description;
+}
+
+
+uint64_t Note::size(void) const {
+  uint64_t size = 0;
+  size += 3 * sizeof(uint32_t);
+  size += this->name().size() + 1;
+  size = align(size, sizeof(uint32_t));
+  size += this->description().size();
+  size = align(size, sizeof(uint32_t));
+  return size;
 }
 
 void Note::accept(Visitor& visitor) const {

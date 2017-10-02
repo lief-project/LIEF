@@ -107,7 +107,9 @@ build_script:
   - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
 
 test_script:
-  - cmake --build . --config Release --target RUN_TESTS -- /v:m /logger:%MSBuildLogger%
+  - cmake --build . --config Release --target lief_samples -- /v:m /logger:%MSBuildLogger%
+  - cmake .
+  - cmake --build . --config Release --target check-lief -- /v:m /logger:%MSBuildLogger%
 
 after_build:
   - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%

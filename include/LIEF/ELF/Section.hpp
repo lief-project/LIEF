@@ -39,6 +39,8 @@ class Parser;
 class Binary;
 class Builder;
 
+DLL_PUBLIC Section operator"" _section(const char* name);
+
 //! @brief Class wich represent sections
 class DLL_PUBLIC Section : public LIEF::Section {
 

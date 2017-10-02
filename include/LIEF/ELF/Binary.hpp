@@ -104,11 +104,23 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Add the given dynamic entry and return the entry added
     DynamicEntry&                          add(const DynamicEntry& entry);
 
+    //! @brief Add the given note and return the entry added
+    Note&                                  add(const Note& note);
+
     //! @brief Remove the given dynamic entry
     void                                   remove(const DynamicEntry& entry);
 
     //! @brief Remove **all** dynamic entries with the given tag
     void                                   remove(DYNAMIC_TAGS tag);
+
+    //! @brief Remove the given section
+    void                                   remove(const Section& section, bool clear = false);
+
+    //! @brief Remove the given note
+    void                                   remove(const Note& note);
+
+    //! @brief Remove **all** notes with the given type
+    void                                   remove(NOTE_TYPES tag);
 
     //! @brief Return binary's dynamic symbols
     it_symbols                             dynamic_symbols(void);
@@ -324,7 +336,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //!
     //! We clear data used by this section and it's removed from
     //! section table
-    void remove_section(const std::string& name);
+    void remove_section(const std::string& name, bool clear = false);
 
     //! @brief Reconstruct the binary object and write it in `filename`
     //! @param filename Path to write the reconstructed binary
@@ -365,13 +377,17 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Segment& segment_from_offset(uint64_t offset) const;
     Segment&       segment_from_offset(uint64_t offset);
 
-    //! @brief Return the ELF::DynamicEntry associated with the given tag
+    //! @brief Return the **first** ELF::DynamicEntry associated with the given tag
     const DynamicEntry& get(DYNAMIC_TAGS tag) const;
     DynamicEntry&       get(DYNAMIC_TAGS tag);
 
-    //! @brief Return the ELF::DynamicEntry associated with the given tag
-    const Segment& get(SEGMENT_TYPES tag) const;
-    Segment&       get(SEGMENT_TYPES tag);
+    //! @brief Return the **first** ELF::Segment associated with the given type
+    const Segment& get(SEGMENT_TYPES type) const;
+    Segment&       get(SEGMENT_TYPES type);
+
+    //! @brief Return the **first** ELF::Note associated with the given type
+    const Note& get(NOTE_TYPES type) const;
+    Note&       get(NOTE_TYPES type);
 
     //! @brief Check if an ELF::DynamicEntry associated with the given tag
     //! exists.
@@ -379,7 +395,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     //! @brief Check if ELF::Segment associated with the given type
     //! exists.
-    bool has(SEGMENT_TYPES tag) const;
+    bool has(SEGMENT_TYPES type) const;
+
+    //! @brief Check if a ELF::Note associated with the given type
+    //! exists.
+    bool has(NOTE_TYPES type) const;
 
     //! @brief Return the content located at virtual address
     virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const override;
@@ -413,15 +433,22 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Binary& operator+=(const DynamicEntry& entry);
     Binary& operator+=(const Section& section);
     Binary& operator+=(const Segment& segment);
+    Binary& operator+=(const Note& note);
 
     Binary& operator-=(const DynamicEntry& entry);
     Binary& operator-=(DYNAMIC_TAGS tag);
+
+    Binary& operator-=(const Note& note);
+    Binary& operator-=(NOTE_TYPES type);
 
     Segment&       operator[](SEGMENT_TYPES type);
     const Segment& operator[](SEGMENT_TYPES type) const;
 
     DynamicEntry&       operator[](DYNAMIC_TAGS tag);
     const DynamicEntry& operator[](DYNAMIC_TAGS tag) const;
+
+    Note&       operator[](NOTE_TYPES type);
+    const Note& operator[](NOTE_TYPES type) const;
 
   private:
     Binary(void);

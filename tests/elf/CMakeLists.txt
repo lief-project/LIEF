@@ -210,6 +210,11 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/change_interpreter.py")
 
+
+  ADD_PYTHON_TEST(ELF_PYTHON_notes
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_notes.py")
+
   # Examples
   # --------
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_elf_reader_ls

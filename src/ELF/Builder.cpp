@@ -21,6 +21,7 @@
 #include <functional>
 
 #include "LIEF/exception.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/ELF/Builder.hpp"
 #include "Builder.tcc"
@@ -153,6 +154,63 @@ void Builder::build_symbol_version(void) {
 }
 
 
+size_t Builder::note_offset(const Note& note) {
+  auto&& it_note = std::find_if(
+      std::begin(this->binary_->notes_),
+      std::end(this->binary_->notes_),
+      [&note] (const Note& n) {
+        return n == note;
+      });
+  if (it_note == std::end(this->binary_->notes_)) {
+    // TODO
+  }
+
+  size_t offset = std::accumulate(
+      std::begin(this->binary_->notes_),
+      it_note, 0,
+      [] (size_t offset, const Note& n) {
+        return offset + n.size();
+      });
+  return offset;
+}
+
+
+void Builder::build(NOTE_TYPES type, const std::string& section_name) {
+
+  Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
+
+  // Link section and notes
+  if (this->binary_->has(type) and
+      this->binary_->has_section(section_name))
+  {
+    Section& section = this->binary_->get_section(section_name);
+    const Note& note = this->binary_->get(type);
+    section.offset(segment_note.file_offset() + this->note_offset(note));
+    section.size(note.size());
+  }
+
+  // Remove the section
+  if (not this->binary_->has(type) and
+      this->binary_->has_section(section_name))
+  {
+    this->binary_->remove_section(section_name, true);
+  }
+
+  // Add a new section
+  if (this->binary_->has(type) and
+      not this->binary_->has_section(section_name))
+  {
+
+    const Note& note = this->binary_->get(type);
+
+    Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
+    section += ELF_SECTION_FLAGS::SHF_ALLOC;
+
+    Section& section_added = this->binary_->add(section, false);
+    section_added.offset(segment_note.file_offset() + this->note_offset(note));
+    section_added.size(note.size());
+  }
+}
 
 
 }

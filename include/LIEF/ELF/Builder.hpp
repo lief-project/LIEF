@@ -100,6 +100,13 @@ class DLL_PUBLIC Builder {
     template<typename ELF_T>
     void build_interpreter(void);
 
+    template<typename ELF_T>
+    void build_notes(void);
+
+    void build(NOTE_TYPES type, const std::string& section_name);
+
+    size_t note_offset(const Note& note);
+
     bool empties_gnuhash_;
 
     template<typename ELF_T>
