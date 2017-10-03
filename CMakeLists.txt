@@ -89,6 +89,7 @@ if (LIEF_ENABLE_JSON)
   set(LIBJSON_URL "https://github.com/nlohmann/json/archive/${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
   ExternalProject_Add(lief_libjson
     URL               ${LIBJSON_URL}
+    UPDATE_COMMAND    ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND     ""
     INSTALL_COMMAND   "")
@@ -104,10 +105,11 @@ endif()
 
 # Rang
 # ----
-set(LIBRANG_GIT_URL "https://github.com/agauniyal/rang.git" CACHE STRING "URL to the Rang lib repo")
+set(LIBRANG_VERSION 2.1)
+set(LIBRANG_URL     "https://github.com/agauniyal/rang/archive/${LIBRANG_VERSION}.zip")
 ExternalProject_Add(lief_rang_cpp_color
-  GIT_REPOSITORY    ${LIBRANG_GIT_URL}
-  GIT_TAG           7f2143809b9ac90a1a8a2e779fb357d8709448c2
+  URL               ${LIBRANG_URL}
+  UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
@@ -225,6 +227,7 @@ ExternalProject_Add(lief_easyloggingpp
   URL               ${ELG_URL}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
+  UPDATE_COMMAND    ""
   INSTALL_COMMAND   "")
 
 ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)

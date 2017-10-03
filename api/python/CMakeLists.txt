@@ -173,8 +173,9 @@ endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README.in"      "${CMAKE_CURRENT_BINARY_DIR}/README")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in.in" "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README"         "${CMAKE_CURRENT_BINARY_DIR}/README")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in"    "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg"      "${CMAKE_CURRENT_BINARY_DIR}/setup.cfg")
 
 MESSAGE(STATUS "OS: ${CMAKE_HOST_SYSTEM}")
 
