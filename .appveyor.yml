@@ -11,14 +11,14 @@ platform:
 - x64
 
 cache:
-  - rang_cpp_color-prefix -> CMakeLists.txt
-  - mbed_tls -> CMakeLists.txt
-  - libjson-prefix -> CMakeLists.txt
-  - easyloggingpp-prefix -> CMakeLists.txt
-  - tests\YAMLCPP -> tests\CMakeLists.txt
-  - tests\lief-samples -> tests\CMakeLists.txt
-  - tests\catch -> tests\CMakeLists.txt
-  - api\python\pybind11-prefix -> api\python\CMakeLists.txt
+#  - rang_cpp_color-prefix -> CMakeLists.txt
+#  - mbed_tls -> CMakeLists.txt
+#  - libjson-prefix -> CMakeLists.txt
+#  - easyloggingpp-prefix -> CMakeLists.txt
+#  - tests\YAMLCPP -> tests\CMakeLists.txt
+#  - tests\lief-samples -> tests\CMakeLists.txt
+#  - tests\catch -> tests\CMakeLists.txt
+#  - api\python\pybind11-prefix -> api\python\CMakeLists.txt
 
 environment:
  LIEF_AUTOMATIC_BUILDS_KEY:
