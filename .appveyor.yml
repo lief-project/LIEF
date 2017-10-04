@@ -90,6 +90,11 @@ install:
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_LIBRARY = $env:PYTHON32_LIBRARY }
   - set PATH=%PYTHON_PATH%;%PATH%
 
+  # Upgrade pip
+  - python.exe -m pip install --disable-pip-version-check --user --upgrade pip
+  - python.exe -m pip install --upgrade setuptools
+
+
 build_script:
   - >
       cmake -A "%CMAKE_ARCH%"
