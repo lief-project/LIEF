@@ -10,7 +10,7 @@ platform:
 - x86
 - x64
 
-cache:
+#cache:
 #  - rang_cpp_color-prefix -> CMakeLists.txt
 #  - mbed_tls -> CMakeLists.txt
 #  - libjson-prefix -> CMakeLists.txt

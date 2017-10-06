@@ -1,6 +1,103 @@
 Changelog
 =========
 
+0.8.0 - XXXX
+------------
+
+Features
+********
+
+
+:Abstract Layer:
+
+  * :class:`~lief.Relocation` are now abstracted from the 3 formats.
+  * ``PIE`` and ``NX`` are abstracted through the :attr:`~lief.Binary.is_pie` and :attr:`~lief.Binary.has_nx` properties
+
+:ELF:
+
+  * DT_FLAGS and DT_FLAGS_1
+
+:PE:
+
+  * import hash / resolve ordinals
+
+
+:MachO:
+
+  * The ``dyld`` structure is parsed into :class:`~lief.MachO.DyldInfo`. It includes:
+    * Binding opcodes
+    * Rebases opcodes
+    * Export trie
+
+  * Section's relocations are now parsed. See: :attr:`lief.MachO.Section.relocations`
+  * ``LC_FUNCTION_STARTS`` is parsed into :class:`~lief.MachO.FunctionStarts`
+  * ``LC_SOURCE_VERSION``, ``LC_VERSION_MIN_MACOSX`` and ``LC_VERSION_MIN_IPHONEOS`` are
+    parsed into :class:`~lief.MachO.SourceVersion` and :class:`~lief.MachO.VersionMin`
+
+
+Bug Fixes
+*********
+
+Fix enums conflicts 66b4cd4550ecf6cf3adb4900e6ad7ac33f1f7f32
+
+:ELF:
+
+:PE:
+
+  * Fix nullptr deref - `ce66916 <https://github.com/lief-project/LIEF/commit/ce6691682e231dbc9ebe97695229ee0afdc185a5>`_
+  * Handle encoding issues in the Python API - `8c7ceaf <https://github.com/lief-project/LIEF/commit/8c7ceafa823bda508259bf3c7cdc05b865f13d5c>`_
+
+  * Sanitize DLL name
+  * Relocations (117f8663e57ff81369630a575b4a4d0695db29b6)
+
+:MachO:
+
+
+
+API
+***
+
+Logger --> configuration
+
+:Abstract:
+
+  * parser can take a list of integer
+
+:ELF:
+
+  * Relocation gains the :attr:`~lief.ELF.Relocation.purpose` property - `b7b0bde <https://github.com/lief-project/LIEF/commit/b7b0bde4d51c54d8d226e5320b1b0d2cc48137c4>`_
+()
+  * C++ get_XXX -> XXX
+  * Header.sizeof_section_header -> section_header_size
+  * Segment.flags -> segment.flags
+  * Header flags (730d045e05dca7ef3cd6a51d1175f280be356c70)
+  * 3b200b30503847be4779447c76f5207d18daf77f
+  * 43bd06f8f32196454ee2305201f4e27b3a3c8a1e
+
+:PE:
+
+  * 5666351e07b7bf4a9624033f670d02b8806d2663
+
+:MachO:
+
+  * cbe835484751396daffe7f8d238cbb85d66470ab
+
+TODO: Findlief.cmake
+Make JSON related API optional
+
+Documentation
+*************
+
+:References:
+
+  * recomposer, bearparser, IAT_patcher, PEframe, Manalyze, MachOView, elf-dissector
+
+
+Acknowledgements
+****************
+
+alvaro, aguinet
+
 0.7.0 - July 3, 2017
 ---------------------
 
