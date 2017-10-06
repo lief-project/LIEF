@@ -35,6 +35,7 @@
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/LoadConfigurations.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
@@ -140,7 +141,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Check if the current binary has debugs
     bool has_debug(void) const;
 
-    //! @brief Check if the current binary has configuration
+    //! @brief Check if the current binary has a load configuration
     bool has_configuration(void) const;
 
     //! @brief Return the Signature object if the bianry is signed
@@ -234,6 +235,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Return the Debug object
     Debug&       debug(void);
     const Debug& debug(void) const;
+
+    //! @brief Retrun the LoadConfiguration object
+    const LoadConfiguration& load_configuration(void) const;
+    LoadConfiguration& load_configuration(void);
 
     // =======
     // Overlay
@@ -414,6 +419,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     Debug                debug_;
     std::vector<uint8_t> overlay_;
     std::vector<uint8_t> dos_stub_;
+
+    LoadConfiguration*   load_configuration_;
 
     std::map<std::string, std::map<std::string, uint64_t>> hooks_;
 };

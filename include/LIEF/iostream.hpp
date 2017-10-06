@@ -50,5 +50,26 @@ class vector_iostream {
   pos_type             current_pos_;
   std::vector<uint8_t> raw_;
 };
+
+
+// From https://stackoverflow.com/questions/27336335/c-cout-with-prefix
+class prefixbuf : public std::streambuf {
+  public:
+  prefixbuf(std::string const& prefix, std::streambuf* sbuf);
+
+  private:
+  std::string     prefix;
+  std::streambuf* sbuf;
+  bool            need_prefix;
+
+  int sync(void);
+  int overflow(int c);
+};
+
+class oprefixstream : private virtual prefixbuf, public std::ostream {
+  public:
+  oprefixstream(std::string const& prefix, std::ostream& out);
+};
+
 }
 #endif

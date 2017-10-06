@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 #include "easylogging++.h"
+#include "LIEF/PE/LoadConfigurations.hpp"
+
+#include "LoadConfigurations/LoadConfigurations.tcc"
 
 namespace LIEF {
 namespace PE {
 
 template<typename PE_T>
-void Parser::build(void) {
+void Parser::parse(void) {
 
   try {
-    this->build_headers<PE_T>();
+    this->parse_headers<PE_T>();
   } catch (const corrupted& e) {
     LOG(WARNING) << e.what();
   }
 
   VLOG(VDEBUG) << "[+] Retreive Dos stub";
 
-  this->build_dos_stub();
+  this->parse_dos_stub();
 
   try {
-    this->build_rich_header();
+    this->parse_rich_header();
   } catch (const corrupted& e) {
     LOG(WARNING) << e.what();
   }
@@ -40,29 +43,29 @@ void Parser::build(void) {
   VLOG(VDEBUG) << "[+] Decomposing Sections";
 
   try {
-    this->build_sections();
+    this->parse_sections();
   } catch (const corrupted& e) {
     LOG(WARNING) << e.what();
   }
 
   VLOG(VDEBUG) << "[+] Decomposing Data directories";
   try {
-    this->build_data_directories<PE_T>();
+    this->parse_data_directories<PE_T>();
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
   try {
-    this->build_symbols();
+    this->parse_symbols();
   } catch (const corrupted& e) {
     LOG(WARNING) << e.what();
   }
 
-  this->build_overlay();
+  this->parse_overlay();
 }
 
 template<typename PE_T>
-void Parser::build_headers(void) {
+void Parser::parse_headers(void) {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   //DOS Header
@@ -97,7 +100,7 @@ void Parser::build_headers(void) {
 }
 
 template<typename PE_T>
-void Parser::build_data_directories(void) {
+void Parser::parse_data_directories(void) {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   VLOG(VDEBUG) << "[+] Parsing data directories";
@@ -150,7 +153,7 @@ void Parser::build_data_directories(void) {
       } catch (const not_found&) {
         LOG(WARNING) << "Unable to find the section associated with Import Table";
       }
-      this->build_import_table<PE_T>();
+      this->parse_import_table<PE_T>();
     }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
@@ -161,7 +164,7 @@ void Parser::build_data_directories(void) {
     VLOG(VDEBUG) << "[+] Decomposing Exports";
 
     try {
-      this->build_exports();
+      this->parse_exports();
     } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
@@ -170,7 +173,7 @@ void Parser::build_data_directories(void) {
   // Signature
   if (this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
     try {
-      this->build_signature();
+      this->parse_signature();
     } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
@@ -181,18 +184,35 @@ void Parser::build_data_directories(void) {
   if (this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA() > 0) {
     VLOG(VDEBUG) << "[+] Decomposing TLS";
 
-    const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
-    const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
+    const uint32_t tls_rva = this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
+    const uint64_t offset  = this->binary_->rva_to_offset(tls_rva);
     try {
       Section& section = this->binary_->section_from_offset(offset);
       section.add_type(PE_SECTION_TYPES::TLS);
-      this->build_tls<PE_T>();
+      this->parse_tls<PE_T>();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with TLS";
     } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }
   }
+
+  // Load Config
+  if (this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA() > 0) {
+
+    const uint32_t load_config_rva = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
+    const uint64_t offset          = this->binary_->rva_to_offset(load_config_rva);
+    try {
+      Section& section = this->binary_->section_from_offset(offset);
+      section.add_type(PE_SECTION_TYPES::LOAD_CONFIG);
+      this->parse_load_config<PE_T>();
+    } catch (const not_found&) {
+      LOG(WARNING) << "Unable to find the section associated with Load Config";
+    } catch (const exception& e) {
+      LOG(WARNING) << e.what();
+    }
+  }
+
 
   // Relocations
   if (this->binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA() > 0) {
@@ -203,7 +223,7 @@ void Parser::build_data_directories(void) {
     try {
       Section& section = this->binary_->section_from_offset(offset);
       section.add_type(PE_SECTION_TYPES::RELOCATION);
-      this->build_relocations();
+      this->parse_relocations();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with relocations";
     } catch (const exception& e) {
@@ -221,7 +241,7 @@ void Parser::build_data_directories(void) {
     try {
       Section& section = this->binary_->section_from_offset(offset);
       section.add_type(PE_SECTION_TYPES::DEBUG);
-      this->build_debug();
+      this->parse_debug();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with debug";
     } catch (const exception& e) {
@@ -239,7 +259,7 @@ void Parser::build_data_directories(void) {
     try {
       Section& section  = this->binary_->section_from_offset(offset);
       section.add_type(PE_SECTION_TYPES::RESOURCE);
-      this->build_resources();
+      this->parse_resources();
     } catch (const not_found&) {
       LOG(WARNING) << "Unable to find the section associated with resources";
     } catch (const exception& e) {
@@ -250,7 +270,7 @@ void Parser::build_data_directories(void) {
 }
 
 template<typename PE_T>
-void Parser::build_import_table(void) {
+void Parser::parse_import_table(void) {
   using uint__ = typename PE_T::uint;
 
   this->binary_->has_imports_ = true;
@@ -349,7 +369,7 @@ void Parser::build_import_table(void) {
 }
 
 template<typename PE_T>
-void Parser::build_tls(void) {
+void Parser::parse_tls(void) {
   using pe_tls = typename PE_T::pe_tls;
   using uint__ = typename PE_T::uint;
 
@@ -414,7 +434,142 @@ void Parser::build_tls(void) {
   } catch (const not_found&) {
     LOG(WARNING) << "No section associated with TLS";
   }
+}
+
+
+template<typename PE_T>
+void Parser::parse_load_config(void) {
+  using load_configuration_t    = typename PE_T::load_configuration_t;
+  using load_configuration_v0_t = typename PE_T::load_configuration_v0_t;
+  using load_configuration_v1_t = typename PE_T::load_configuration_v1_t;
+  using load_configuration_v2_t = typename PE_T::load_configuration_v2_t;
+  using load_configuration_v3_t = typename PE_T::load_configuration_v3_t;
+  using load_configuration_v4_t = typename PE_T::load_configuration_v4_t;
+  using load_configuration_v5_t = typename PE_T::load_configuration_v5_t;
+  using load_configuration_v6_t = typename PE_T::load_configuration_v6_t;
+  using load_configuration_v7_t = typename PE_T::load_configuration_v7_t;
+
+  VLOG(VDEBUG) << "[+] Parsing Load Config";
+
+  const uint32_t directory_size = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).size();
+
+  const uint32_t ldc_rva = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
+  const uint64_t offset  = this->binary_->rva_to_offset(ldc_rva);
+
+  const uint32_t size_from_header = this->stream_->read_integer<uint32_t>(offset);
+
+  if (directory_size != size_from_header) {
+    LOG(WARNING) << "The size of directory '" << to_string(DATA_DIRECTORY::LOAD_CONFIG_TABLE)
+                 << "' is different from the size in the load configuration header";
+  }
+
+  const uint32_t size = std::min<uint32_t>(directory_size, size_from_header);
+  size_t current_size = 0;
+  WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
+  for (auto&& p : PE_T::load_configuration_sizes) {
+    if (p.second > current_size and p.second <= size) {
+      std::tie(version_found, current_size) = p;
+    }
+  }
+
+  VLOG(VDEBUG) << "Version found: " << std::dec << to_string(version_found) << "(Size: 0x" << std::hex << size << ")";
+  std::unique_ptr<LoadConfiguration> ld_conf;
+  switch (version_found) {
+
+    case WIN_VERSION::WIN_SEH:
+      {
+
+        const load_configuration_v0_t* header = reinterpret_cast<const load_configuration_v0_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v0_t)));
+        ld_conf = std::unique_ptr<LoadConfigurationV0>{new LoadConfigurationV0{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN8_1:
+      {
+
+        const load_configuration_v1_t* header = reinterpret_cast<const load_configuration_v1_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v1_t)));
+        ld_conf = std::unique_ptr<LoadConfigurationV1>{new LoadConfigurationV1{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_9879:
+      {
+
+        const load_configuration_v2_t* header = reinterpret_cast<const load_configuration_v2_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v2_t)));
+        ld_conf = std::unique_ptr<LoadConfigurationV2>{new LoadConfigurationV2{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_14286:
+      {
+
+        const load_configuration_v3_t* header = reinterpret_cast<const load_configuration_v3_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v3_t)));
+
+        ld_conf = std::unique_ptr<LoadConfigurationV3>{new LoadConfigurationV3{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_14383:
+      {
+
+        const load_configuration_v4_t* header = reinterpret_cast<const load_configuration_v4_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v4_t)));
+
+        ld_conf = std::unique_ptr<LoadConfigurationV4>{new LoadConfigurationV4{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_14901:
+      {
+
+        const load_configuration_v5_t* header = reinterpret_cast<const load_configuration_v5_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v5_t)));
+
+        ld_conf = std::unique_ptr<LoadConfigurationV5>{new LoadConfigurationV5{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_15002:
+      {
+
+        const load_configuration_v6_t* header = reinterpret_cast<const load_configuration_v6_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v6_t)));
+
+        ld_conf = std::unique_ptr<LoadConfigurationV6>{new LoadConfigurationV6{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN10_0_16237:
+      {
+
+        const load_configuration_v7_t* header = reinterpret_cast<const load_configuration_v7_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_v7_t)));
+
+        ld_conf = std::unique_ptr<LoadConfigurationV7>{new LoadConfigurationV7{header}};
+        break;
+      }
+
+    case WIN_VERSION::WIN_UNKNOWN:
+    default:
+      {
+
+        const load_configuration_t* header = reinterpret_cast<const load_configuration_t*>(
+          this->stream_->read(offset, sizeof(load_configuration_t)));
+        ld_conf = std::unique_ptr<LoadConfiguration>{new LoadConfiguration{header}};
+      }
+  }
+
+  this->binary_->load_configuration_ = ld_conf.release();
+  this->binary_->has_configuration_ = true;
+
+
 
 }
+
+
 }
 }

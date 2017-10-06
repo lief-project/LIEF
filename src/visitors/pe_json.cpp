@@ -137,6 +137,15 @@ void JsonVisitor::visit(const Binary& binary) {
     this->node_["signature"] = visitor.get();
   }
 
+  // Load Configuration
+  if (binary.has_configuration()) {
+    JsonVisitor visitor;
+    const LoadConfiguration& config = binary.load_configuration();
+    config.accept(visitor);
+    visitor.visit(config);
+    this->node_["load_configuration"] = visitor.get();
+  }
+
 }
 
 
@@ -643,6 +652,93 @@ void JsonVisitor::visit(const AuthenticatedAttributes& auth) {
   this->node_["program_name"] = u16tou8(auth.program_name());
   this->node_["url"]          = auth.more_info();
   this->node_["message_digest"] = auth.message_digest();
+}
+
+void JsonVisitor::visit(const CodeIntegrity& code_integrity) {
+  this->node_["flags"]          = code_integrity.flags();
+  this->node_["catalog"]        = code_integrity.catalog();
+  this->node_["catalog_offset"] = code_integrity.catalog_offset();
+  this->node_["reserved"]       = code_integrity.reserved();
+}
+
+void JsonVisitor::visit(const LoadConfiguration& config) {
+  this->node_["version"]                          = to_string(config.version());
+  this->node_["characteristics"]                  = config.characteristics();
+  this->node_["timedatestamp"]                    = config.timedatestamp();
+  this->node_["major_version"]                    = config.major_version();
+  this->node_["minor_version"]                    = config.minor_version();
+  this->node_["global_flags_clear"]               = config.global_flags_clear();
+  this->node_["global_flags_set"]                 = config.global_flags_set();
+  this->node_["critical_section_default_timeout"] = config.critical_section_default_timeout();
+  this->node_["decommit_free_block_threshold"]    = config.decommit_free_block_threshold();
+  this->node_["decommit_total_free_threshold"]    = config.decommit_total_free_threshold();
+  this->node_["lock_prefix_table"]                = config.lock_prefix_table();
+  this->node_["maximum_allocation_size"]          = config.maximum_allocation_size();
+  this->node_["virtual_memory_threshold"]         = config.virtual_memory_threshold();
+  this->node_["process_affinity_mask"]            = config.process_affinity_mask();
+  this->node_["process_heap_flags"]               = config.process_heap_flags();
+  this->node_["csd_version"]                      = config.csd_version();
+  this->node_["reserved1"]                        = config.reserved1();
+  this->node_["editlist"]                         = config.editlist();
+  this->node_["security_cookie"]                  = config.security_cookie();
+  config.accept(*this);
+}
+
+void JsonVisitor::visit(const LoadConfigurationV0& config) {
+  this->node_["se_handler_table"] = config.se_handler_table();
+  this->node_["se_handler_count"] = config.se_handler_count();
+}
+
+void JsonVisitor::visit(const LoadConfigurationV1& config) {
+  this->node_["guard_cf_check_function_pointer"]    = config.guard_cf_check_function_pointer();
+  this->node_["guard_cf_dispatch_function_pointer"] = config.guard_cf_dispatch_function_pointer();
+  this->node_["guard_cf_function_table"]            = config.guard_cf_function_table();
+  this->node_["guard_cf_function_count"]            = config.guard_cf_function_count();
+  this->node_["guard_flags"]                        = config.guard_flags();
+  this->visit(static_cast<const LoadConfigurationV0&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV2& config) {
+  JsonVisitor code_integrity_visitor;
+  code_integrity_visitor(config.code_integrity());
+
+  this->node_["code_integrity"] = code_integrity_visitor.get();
+  this->visit(static_cast<const LoadConfigurationV1&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV3& config) {
+  this->node_["guard_address_taken_iat_entry_table"] = config.guard_address_taken_iat_entry_table();
+  this->node_["guard_address_taken_iat_entry_count"] = config.guard_address_taken_iat_entry_count();
+  this->node_["guard_long_jump_target_table"]        = config.guard_long_jump_target_table();
+  this->node_["guard_long_jump_target_count"]        = config.guard_long_jump_target_count();
+  this->visit(static_cast<const LoadConfigurationV2&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV4& config) {
+  this->node_["dynamic_value_reloc_table"] = config.dynamic_value_reloc_table();
+  this->node_["hybrid_metadata_pointer"]   = config.hybrid_metadata_pointer();
+  this->visit(static_cast<const LoadConfigurationV3&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV5& config) {
+  this->node_["guard_rf_failure_routine"]                   = config.guard_rf_failure_routine();
+  this->node_["guard_rf_failure_routine_function_pointer"]  = config.guard_rf_failure_routine_function_pointer();
+  this->node_["dynamic_value_reloctable_offset"]            = config.dynamic_value_reloctable_offset();
+  this->node_["dynamic_value_reloctable_section"]           = config.dynamic_value_reloctable_section();
+  this->node_["reserved2"]                                  = config.guard_rf_failure_routine();
+  this->visit(static_cast<const LoadConfigurationV4&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV6& config) {
+  this->node_["guard_rf_verify_stackpointer_function_pointer"]  = config.guard_rf_verify_stackpointer_function_pointer();
+  this->node_["hotpatch_table_offset"]                          = config.hotpatch_table_offset();
+  this->visit(static_cast<const LoadConfigurationV5&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV7& config) {
+  this->node_["reserved3"]                = config.reserved3();
+  this->node_["addressof_unicode_string"] = config.addressof_unicode_string();
+  this->visit(static_cast<const LoadConfigurationV6&>(config));
 }
 
 

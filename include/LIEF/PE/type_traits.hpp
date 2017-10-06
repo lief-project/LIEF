@@ -17,6 +17,7 @@
 #define LIEF_PE_TYPE_TRAITS_H_
 #include <vector>
 #include "LIEF/iterators.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -82,6 +83,12 @@ using it_const_dialog_items     = const_ref_iterator<const dialog_items_t&>;
 using rich_entries_t            = std::vector<RichEntry>;
 using it_rich_entries           = ref_iterator<rich_entries_t&>;
 using it_const_rich_entries     = const_ref_iterator<const rich_entries_t&>;
+
+
+template<class T>
+using flags_list_t = std::set<T>;
+
+using guard_cf_flags_list_t = flags_list_t<GUARD_CF_FLAGS>;
 
 }
 }

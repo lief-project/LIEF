@@ -67,38 +67,41 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
     void init(const std::string& name = "");
 
     template<typename PE_T>
-    void build(void);
+    void parse(void);
 
-    void build_exports(void);
-    void build_sections(void);
-
-    template<typename PE_T>
-    void build_headers(void);
-
-    void build_configuration(void);
+    void parse_exports(void);
+    void parse_sections(void);
 
     template<typename PE_T>
-    void build_data_directories(void);
+    void parse_headers(void);
+
+    void parse_configuration(void);
 
     template<typename PE_T>
-    void build_import_table(void);
-
-    void build_export_table(void);
-    void build_debug(void);
+    void parse_data_directories(void);
 
     template<typename PE_T>
-    void build_tls(void);
+    void parse_import_table(void);
 
-    void build_relocations(void);
-    void build_resources(void);
-    void build_string_table(void);
-    void build_symbols(void);
-    void build_signature(void);
-    void build_overlay(void);
-    void build_dos_stub(void);
-    void build_rich_header(void);
+    void parse_export_table(void);
+    void parse_debug(void);
 
-    ResourceNode* build_resource_node(
+    template<typename PE_T>
+    void parse_tls(void);
+
+    template<typename PE_T>
+    void parse_load_config(void);
+
+    void parse_relocations(void);
+    void parse_resources(void);
+    void parse_string_table(void);
+    void parse_symbols(void);
+    void parse_signature(void);
+    void parse_overlay(void);
+    void parse_dos_stub(void);
+    void parse_rich_header(void);
+
+    ResourceNode* parse_resource_node(
         const pe_resource_directory_table *directory_table,
         uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);
 

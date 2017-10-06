@@ -9,7 +9,7 @@ from lief import PE
 from lief.PE import oid_to_string
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.GLOBAL)
+Logger.set_level(lief.LOGGING_LEVEL.INFO)
 
 from optparse import OptionParser
 import sys
@@ -342,7 +342,84 @@ def print_resources(binary):
 
     print("")
 
+@exceptions_handler(Exception)
+def print_load_configuration(binary):
+    format_str = "{:<45} {:<30}"
+    format_hex = "{:<45} 0x{:<28x}"
+    format_dec = "{:<45} {:<30d}"
 
+    print("== Load Configuration ==")
+    config = binary.load_configuration
+
+
+    print(format_str.format("Version:",                          str(config.version).split(".")[-1]))
+    print(format_dec.format("Characteristics:",                  config.characteristics))
+    print(format_dec.format("Timedatestamp:",                    config.timedatestamp))
+    print(format_dec.format("Major version:",                    config.major_version))
+    print(format_dec.format("Minor version:",                    config.minor_version))
+    print(format_hex.format("Global flags clear:",               config.global_flags_clear))
+    print(format_hex.format("Global flags set:",                 config.global_flags_set))
+    print(format_dec.format("Critical section default timeout:", config.critical_section_default_timeout))
+    print(format_hex.format("Decommit free block threshold:",    config.decommit_free_block_threshold))
+    print(format_hex.format("Decommit total free threshold:",    config.decommit_total_free_threshold))
+    print(format_hex.format("Lock prefix table:",                config.lock_prefix_table))
+    print(format_hex.format("Maximum allocation size:",          config.maximum_allocation_size))
+    print(format_hex.format("Virtual memory threshold:",         config.virtual_memory_threshold))
+    print(format_hex.format("Process affinity mask:",            config.process_affinity_mask))
+    print(format_hex.format("Process heap flags:",               config.process_heap_flags))
+    print(format_hex.format("CSD Version:",                      config.csd_version))
+    print(format_hex.format("Reserved 1:",                       config.reserved1))
+    print(format_hex.format("Edit list:",                        config.editlist))
+    print(format_hex.format("Security cookie:",                  config.security_cookie))
+
+    if isinstance(config, lief.PE.LoadConfigurationV0):
+        print(format_hex.format("SE handler table:", config.se_handler_table))
+        print(format_dec.format("SE handler count:", config.se_handler_count))
+
+    if isinstance(config, lief.PE.LoadConfigurationV1):
+        flags_str = " - ".join(map(lambda e : str(e).split(".")[-1], config.guard_cf_flags_list))
+        print(format_hex.format("GCF check function pointer:",    config.guard_cf_check_function_pointer))
+        print(format_hex.format("GCF dispatch function pointer:", config.guard_cf_dispatch_function_pointer))
+        print(format_hex.format("GCF function table :",           config.guard_cf_function_table))
+        print(format_dec.format("GCF Function count :",           config.guard_cf_function_count))
+        print("{:<45} {} (0x{:x})".format("Guard flags:", flags_str, config.guard_flags))
+
+    if isinstance(config, lief.PE.LoadConfigurationV2):
+        code_integrity = config.code_integrity
+        print("Code Integrity:")
+        print(format_dec.format(" " * 3 + "Flags:",          code_integrity.flags))
+        print(format_dec.format(" " * 3 + "Catalog:",        code_integrity.catalog))
+        print(format_hex.format(" " * 3 + "Catalog offset:", code_integrity.catalog_offset))
+        print(format_dec.format(" " * 3 + "Reserved:",       code_integrity.reserved))
+
+    if isinstance(config, lief.PE.LoadConfigurationV3):
+        print(format_hex.format("Guard address taken iat entry table:", config.guard_address_taken_iat_entry_table))
+        print(format_hex.format("Guard address taken iat entry count:", config.guard_address_taken_iat_entry_count))
+        print(format_hex.format("Guard long jump target table:",        config.guard_long_jump_target_table))
+        print(format_hex.format("Guard long jump target count:",        config.guard_long_jump_target_count))
+
+
+    if isinstance(config, lief.PE.LoadConfigurationV4):
+        print(format_hex.format("Dynamic value relocation table:", config.dynamic_value_reloc_table))
+        print(format_hex.format("Hybrid metadata pointer:",        config.hybrid_metadata_pointer))
+
+
+    if isinstance(config, lief.PE.LoadConfigurationV5):
+        print(format_hex.format("GRF failure routine:",                  config.guard_rf_failure_routine))
+        print(format_hex.format("GRF failure routine function pointer:", config.guard_rf_failure_routine_function_pointer))
+        print(format_hex.format("Dynamic value reloctable offset:",      config.dynamic_value_reloctable_offset))
+        print(format_hex.format("Dynamic value reloctable section:",     config.dynamic_value_reloctable_section))
+
+
+    if isinstance(config, lief.PE.LoadConfigurationV6):
+        print(format_hex.format("GRF verify stackpointer function pointer:", config.guard_rf_verify_stackpointer_function_pointer))
+        print(format_hex.format("Hotpatch table offset:",                    config.hotpatch_table_offset))
+
+
+    if isinstance(config, lief.PE.LoadConfigurationV7):
+        print(format_hex.format("Reserved 3:", config.reserved3))
+
+    print("")
 
 def main():
     optparser = OptionParser(
@@ -407,6 +484,11 @@ def main():
             help='Display exported functions/libraries')
 
 
+    optparser.add_option('--load-config',
+            action='store_true', dest='show_loadconfig',
+            help='Display load configuration')
+
+
 
     options, args = optparser.parse_args()
 
@@ -459,6 +541,9 @@ def main():
 
     if (options.show_resources or options.show_all) and binary.has_resources:
         print_resources(binary)
+
+    if (options.show_loadconfig or options.show_all) and binary.has_configuration:
+        print_load_configuration(binary)
 
 if __name__ == "__main__":
     main()

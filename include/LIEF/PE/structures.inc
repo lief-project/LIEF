@@ -441,6 +441,13 @@ struct pe_dialog_item_template {
   uint16_t id;
 };
 
+struct pe_code_integrity {
+  uint16_t Flags;
+  uint16_t Catalog;
+  uint32_t CatalogOffset;
+  uint32_t Reserved;
+};
+
 
 
 

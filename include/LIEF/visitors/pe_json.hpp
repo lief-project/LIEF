@@ -66,6 +66,17 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const SignerInfo& signerinfo)                override;
   virtual void visit(const ContentInfo& contentinfo)              override;
   virtual void visit(const AuthenticatedAttributes& auth)         override;
+  virtual void visit(const CodeIntegrity& code_integrity)         override;
+
+  virtual void visit(const LoadConfiguration& config)    override;
+  virtual void visit(const LoadConfigurationV0& config)  override;
+  virtual void visit(const LoadConfigurationV1& config)  override;
+  virtual void visit(const LoadConfigurationV2& config)  override;
+  virtual void visit(const LoadConfigurationV3& config)  override;
+  virtual void visit(const LoadConfigurationV4& config)  override;
+  virtual void visit(const LoadConfigurationV5& config)  override;
+  virtual void visit(const LoadConfigurationV6& config)  override;
+  virtual void visit(const LoadConfigurationV7& config)  override;
 
 
   virtual void visit(const LIEF::Binary& binary)   override;

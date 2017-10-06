@@ -58,6 +58,11 @@ DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_FLAGS e);
 DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_TYPES e);
 DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e);
 
+DLL_PUBLIC const char* to_string(WIN_VERSION e);
+
+DLL_PUBLIC const char* to_string(GUARD_CF_FLAGS e);
+DLL_PUBLIC const char* to_string(GUARD_RF_FLAGS e);
+
 } // namespace PE
 } // namespace LIEF
 #endif

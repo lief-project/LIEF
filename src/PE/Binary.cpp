@@ -100,7 +100,10 @@ Binary::Binary(void) :
   resources_{nullptr},
   imports_{},
   export_{},
-  debug_{}
+  debug_{},
+  overlay_{},
+  dos_stub_{},
+  load_configuration_{nullptr}
 {}
 
 Binary::~Binary(void) {
@@ -118,6 +121,10 @@ Binary::~Binary(void) {
 
   if (this->resources_ != nullptr) {
     delete this->resources_;
+  }
+
+  if (this->load_configuration_ != nullptr) {
+    delete this->load_configuration_;
   }
 }
 
@@ -340,7 +347,18 @@ bool Binary::has_debug(void) const {
 
 
 bool Binary::has_configuration(void) const {
-  return this->has_configuration_;
+  return this->has_configuration_ and this->load_configuration_ != nullptr;
+}
+
+const LoadConfiguration& Binary::load_configuration(void) const {
+  if (not this->has_configuration()) {
+    throw not_found("The binary doesn't have load configuration");
+  }
+  return *this->load_configuration_;
+}
+
+LoadConfiguration& Binary::load_configuration(void) {
+  return const_cast<LoadConfiguration&>(static_cast<const Binary*>(this)->load_configuration());
 }
 
 //
@@ -1313,6 +1331,17 @@ std::ostream& Binary::print(std::ostream& os) const {
     os << symbol << std::endl;;
   }
   os << std::endl;
+
+
+  if (this->has_configuration()) {
+    os << "Load Configuration" << std::endl;
+    os << "==================" << std::endl;
+
+    os << this->load_configuration();
+
+    os << std::endl;
+  }
+
 
 
   return os;

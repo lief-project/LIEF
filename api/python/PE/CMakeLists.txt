@@ -1,5 +1,6 @@
 set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/init_load_configurations.cpp"
 
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceNode.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceData.cpp"
@@ -20,6 +21,7 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyContentInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignature.cpp"
 
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyCodeIntegrity.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDataDirectory.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDosHeader.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRichHeader.cpp"
@@ -52,6 +54,9 @@ source_group("Header Files\\PE" FILES ${LIEF_PYTHON_PE_HDR})
 
 target_include_directories(pyLIEF PUBLIC "${CMAKE_CURRENT_LIST_DIR}")
 target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_PE_SRC}" "${LIEF_PYTHON_PE_HDR}")
+
+
+include("${CMAKE_CURRENT_LIST_DIR}/objects/LoadConfigurations/CMakeLists.txt")
 
 
 

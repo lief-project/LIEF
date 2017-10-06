@@ -847,3 +847,35 @@ enum CODE_PAGES {
   CP_UTF_7                   = 65000,	/**< Unicode (UTF-7) */
   CP_UTF_8                   = 65001,	/**< Unicode (UTF-8) */
 };
+
+enum WIN_VERSION {
+  WIN_UNKNOWN   = 0,
+  WIN_SEH       = 1,
+  WIN8_1        = 2,
+  WIN10_0_9879  = 3,
+  WIN10_0_14286 = 4,
+  WIN10_0_14383 = 5,
+  WIN10_0_14901 = 6,
+  WIN10_0_15002 = 7,
+  WIN10_0_16237 = 8,
+};
+
+enum GUARD_CF_FLAGS {
+  GCF_INSTRUMENTED                    = 0x00000100, /**< Module performs control flow integrity checks using system-supplied support */
+  GCF_W_INSTRUMENTED                  = 0x00000200, /**< Module performs control flow and write integrity checks */
+  GCF_FUNCTION_TABLE_PRESENT          = 0x00000400, /**< Module contains valid control flow target metadata */
+  GCF_EXPORT_SUPPRESSION_INFO_PRESENT = 0x00004000, /**< Module contains suppressed export information. This also infers that the address taken taken IAT table is also present in the load config. */
+  GCF_ENABLE_EXPORT_SUPPRESSION       = 0x00008000, /**< Module enables suppression of exports */
+  GCF_LONGJUMP_TABLE_PRESENT          = 0x00010000, /**< Module contains longjmp target information */
+};
+
+enum GUARD_RF_FLAGS {
+  GRF_INSTRUMENTED = 0x00020000, /**< Module contains return flow instrumentation and metadata */
+  GRF_ENABLE       = 0x00040000, /**< Module requests that the OS enable return flow protection */
+  GRF_STRICT       = 0x00080000, /**< Module requests that the OS enable return flow protection in strict mode */
+};
+
+
+
+
+

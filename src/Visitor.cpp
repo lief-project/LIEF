@@ -286,23 +286,68 @@ void Visitor::visit(const PE::Signature& signature) {
   signature.accept(*this);
 }
 
+
 void Visitor::visit(const PE::x509& x509) {
   x509.accept(*this);
 }
+
 
 void Visitor::visit(const PE::SignerInfo& signer_info) {
   signer_info.accept(*this);
 }
 
+
 void Visitor::visit(const PE::ContentInfo& content_info) {
   content_info.accept(*this);
 }
+
 
 void Visitor::visit(const PE::AuthenticatedAttributes& authenticated_attributes) {
   authenticated_attributes.accept(*this);
 }
 
 void Visitor::visit(const PE::issuer_t&) {
+}
+
+
+void Visitor::visit(const PE::LoadConfiguration& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV0& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV1& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV2& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV3& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV4& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV5& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV6& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::LoadConfigurationV7& config) {
+  config.accept(*this);
+}
+
+void Visitor::visit(const PE::CodeIntegrity& code_integrity) {
+  code_integrity.accept(*this);
 }
 
 // MachO part

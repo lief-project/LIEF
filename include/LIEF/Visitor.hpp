@@ -110,6 +110,18 @@ class x509;
 class SignerInfo;
 class ContentInfo;
 class AuthenticatedAttributes;
+
+class CodeIntegrity;
+
+class LoadConfiguration;
+class LoadConfigurationV0;
+class LoadConfigurationV1;
+class LoadConfigurationV2;
+class LoadConfigurationV3;
+class LoadConfigurationV4;
+class LoadConfigurationV5;
+class LoadConfigurationV6;
+class LoadConfigurationV7;
 }
 
 namespace MachO {
@@ -372,6 +384,36 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::issuer_t
   virtual void visit(const PE::issuer_t& issuer);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfiguration
+  virtual void visit(const PE::LoadConfiguration& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV0
+  virtual void visit(const PE::LoadConfigurationV0& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV1
+  virtual void visit(const PE::LoadConfigurationV1& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV2
+  virtual void visit(const PE::LoadConfigurationV2& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV3
+  virtual void visit(const PE::LoadConfigurationV3& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV4
+  virtual void visit(const PE::LoadConfigurationV4& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV5
+  virtual void visit(const PE::LoadConfigurationV5& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV6
+  virtual void visit(const PE::LoadConfigurationV6& config);
+
+  //! @brief Method to visit a LIEF::PE::LoadConfigurationV7
+  virtual void visit(const PE::LoadConfigurationV7& config);
+
+  //! @brief Method to visit a LIEF::PE::CodeIntegrity
+  virtual void visit(const PE::CodeIntegrity& code_integrity);
 
   // MachO part
   // ==========

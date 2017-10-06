@@ -13,5 +13,6 @@ LIEF makes use of the following open source projects:
  - filesystem - https://github.com/wjakob/filesystem
  - utf8-cpp - https://sourceforge.net/projects/utfcpp/
  - llvm - http://llvm.org/ - For the formats enums and structures
+ - virtualbox - https://www.virtualbox.org/ - For the PE 'LoadConfiguration' structures
 
 The logo is designed by Freepik

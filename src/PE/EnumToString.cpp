@@ -948,6 +948,48 @@ const char* to_string(CODE_PAGES e) {
 
 
 
+const char* to_string(WIN_VERSION e) {
+  const std::map<WIN_VERSION, const char*> enumStrings {
+    { WIN_VERSION::WIN_UNKNOWN,   "UNKNOWN"       },
+    { WIN_VERSION::WIN_SEH,       "SEH"           },
+    { WIN_VERSION::WIN8_1,        "WIN_8_1"       },
+    { WIN_VERSION::WIN10_0_9879,  "WIN10_0_9879"  },
+    { WIN_VERSION::WIN10_0_14286, "WIN10_0_14286" },
+    { WIN_VERSION::WIN10_0_14383, "WIN10_0_14383" },
+    { WIN_VERSION::WIN10_0_14901, "WIN10_0_14901" },
+    { WIN_VERSION::WIN10_0_15002, "WIN10_0_15002" },
+    { WIN_VERSION::WIN10_0_16237, "WIN10_0_16237" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(GUARD_CF_FLAGS e) {
+  const std::map<GUARD_CF_FLAGS, const char*> enumStrings {
+    { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "INSTRUMENTED"                    },
+    { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "W_INSTRUMENTED"                  },
+    { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "FUNCTION_TABLE_PRESENT"          },
+    { GUARD_CF_FLAGS::GCF_EXPORT_SUPPRESSION_INFO_PRESENT,  "EXPORT_SUPPRESSION_INFO_PRESENT" },
+    { GUARD_CF_FLAGS::GCF_ENABLE_EXPORT_SUPPRESSION,        "ENABLE_EXPORT_SUPPRESSION"       },
+    { GUARD_CF_FLAGS::GCF_LONGJUMP_TABLE_PRESENT,           "LONGJUMP_TABLE_PRESENT"          },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(GUARD_RF_FLAGS e) {
+  const std::map<GUARD_RF_FLAGS, const char*> enumStrings {
+    { GUARD_RF_FLAGS::GRF_INSTRUMENTED, "INSTRUMENTED" },
+    { GUARD_RF_FLAGS::GRF_ENABLE,       "ENABLE"       },
+    { GUARD_RF_FLAGS::GRF_STRICT,       "STRICT"       },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
 
 } // namespace PE
 } // namespace LIEF

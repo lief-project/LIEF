@@ -78,14 +78,14 @@ void Parser::init(const std::string& name) {
   this->binary_->type_ = this->type_;
 
   if (this->type_ == PE_TYPE::PE32) {
-    this->build<PE32>();
+    this->parse<PE32>();
   } else {
-    this->build<PE64>();
+    this->parse<PE64>();
   }
 
 }
 
-void Parser::build_dos_stub(void) {
+void Parser::parse_dos_stub(void) {
   const DosHeader& dos_header = this->binary_->dos_header();
 
   if (dos_header.addressof_new_exeheader() < sizeof(pe_dos_header)) {
@@ -102,7 +102,7 @@ void Parser::build_dos_stub(void) {
 }
 
 
-void Parser::build_rich_header(void) {
+void Parser::parse_rich_header(void) {
   VLOG(VDEBUG) << "Parsing Rich Header";
   const std::vector<uint8_t>& dos_stub = this->binary_->dos_stub();
   VectorStream stream{dos_stub};
@@ -169,10 +169,10 @@ void Parser::build_rich_header(void) {
 
 
 //
-// Build PE sections
+// parse PE sections
 //
 // TODO: Check offset etc
-void Parser::build_sections(void) {
+void Parser::parse_sections(void) {
 
   VLOG(VDEBUG) << "[+] Parsing sections";
 
@@ -234,9 +234,9 @@ void Parser::build_sections(void) {
 
 
 //
-// Build relocations
+// parse relocations
 //
-void Parser::build_relocations(void) {
+void Parser::parse_relocations(void) {
   VLOG(VDEBUG) << "[+] Parsing relocations";
 
   this->binary_->has_relocations_ = true;
@@ -281,9 +281,9 @@ void Parser::build_relocations(void) {
 
 
 //
-// Build ressources
+// parse ressources
 //
-void Parser::build_resources(void) {
+void Parser::parse_resources(void) {
   VLOG(VDEBUG) << "[+] Parsing resources";
 
   this->binary_->has_resources_ = true;
@@ -297,14 +297,14 @@ void Parser::build_resources(void) {
   const pe_resource_directory_table* directory_table = reinterpret_cast<const pe_resource_directory_table*>(
       this->stream_->read(offset, sizeof(pe_resource_directory_table)));
 
-  this->binary_->resources_ = this->build_resource_node(directory_table, offset, offset);
+  this->binary_->resources_ = this->parse_resource_node(directory_table, offset, offset);
 }
 
 
 //
-// Build the resources tree
+// parse the resources tree
 //
-ResourceNode* Parser::build_resource_node(
+ResourceNode* Parser::parse_resource_node(
     const pe_resource_directory_table *directory_table,
     uint32_t base_offset,
     uint32_t current_offset,
@@ -399,7 +399,7 @@ ResourceNode* Parser::build_resource_node(
         }
         this->resource_visited_.insert(offset);
 
-        std::unique_ptr<ResourceNode> node{this->build_resource_node(nextDirectoryTable, base_offset, offset, depth + 1)};
+        std::unique_ptr<ResourceNode> node{this->parse_resource_node(nextDirectoryTable, base_offset, offset, depth + 1)};
         node->id(id);
         node->name(name);
         directory->childs_.push_back(node.release());
@@ -416,9 +416,9 @@ ResourceNode* Parser::build_resource_node(
 }
 
 //
-// Build string table
+// parse string table
 //
-void Parser::build_string_table(void) {
+void Parser::parse_string_table(void) {
   VLOG(VDEBUG) << "[+] Parsing string table";
   uint32_t stringTableOffset =
     this->binary_->header().pointerto_symbol_table() +
@@ -440,9 +440,9 @@ void Parser::build_string_table(void) {
 
 
 //
-// Build Symbols
+// parse Symbols
 //
-void Parser::build_symbols(void) {
+void Parser::parse_symbols(void) {
   VLOG(VDEBUG) << "[+] Parsing symbols";
   uint32_t symbolTableOffset = this->binary_->header().pointerto_symbol_table();
   uint32_t numberOfSymbols   = this->binary_->header().numberof_symbols();
@@ -451,7 +451,7 @@ void Parser::build_symbols(void) {
   uint32_t idx = 0;
   while (idx < numberOfSymbols) {
     //if (offsetToNextSymbol >= this->rawBinary_.size()) {
-    //  throw LIEF::exception("Parser::build_symbols(): Symbol offset corrupted",
+    //  throw LIEF::exception("Parser::parse_symbols(): Symbol offset corrupted",
     //      LIEF::EXCEPTION_TYPES::CORRUPTED_OFFSET);
     //}
     //TODO: try catch
@@ -542,10 +542,10 @@ void Parser::build_symbols(void) {
 
 
 //
-// Build Debug
+// parse Debug
 //
 
-void Parser::build_debug(void) {
+void Parser::parse_debug(void) {
   VLOG(VDEBUG) << "[+] Parsing Debug";
 
   this->binary_->has_debug_ = true;
@@ -560,21 +560,11 @@ void Parser::build_debug(void) {
   this->binary_->debug_ = {debug_struct};
 }
 
-//
-// Build configuration
-//
-void Parser::build_configuration(void) {
-  VLOG(VDEBUG) << "[+] Parsing Load config";
-  this->binary_->has_configuration_ = true;
-  //uint32_t offset = rva_to_offset(this->binary_->sectionsList_, this->binary_->dataDirList_[LOAD_CONFIG_TABLE].getRVA());
-  //this->binary_->loadConfigure_ = *(reinterpret_cast<LoadConfiguration<uint32_t>*>(this->rawBinary_.data() + offset));
-}
-
 
 //
-// Build Export
+// parse Export
 //
-void Parser::build_exports(void) {
+void Parser::parse_exports(void) {
   VLOG(VDEBUG) << "[+] Parsing exports";
 
   this->binary_->has_exports_ = true;
@@ -670,7 +660,7 @@ void Parser::build_exports(void) {
 
 }
 
-void Parser::build_signature(void) {
+void Parser::parse_signature(void) {
   VLOG(VDEBUG) << "[+] Parsing signature";
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
@@ -1174,7 +1164,7 @@ void Parser::build_signature(void) {
 }
 
 
-void Parser::build_overlay(void) {
+void Parser::parse_overlay(void) {
   VLOG(VDEBUG) << "Parsing Overlay";
   const uint64_t last_section_offset = std::accumulate(
       std::begin(this->binary_->sections_),

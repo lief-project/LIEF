@@ -139,6 +139,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_builder.py")
 
+  ADD_PYTHON_TEST(PE_PYTHON_load_configuration
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_loadconfig.py")
+
 endif()
 
 

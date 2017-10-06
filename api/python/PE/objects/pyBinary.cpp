@@ -124,8 +124,8 @@ void init_PE_Binary_class(py::module& m) {
     .def_property_readonly("has_relocations", &Binary::has_relocations,
         "``True`` if the current binary use " RST_CLASS_REF(lief.PE.Relocation) "")
 
-    .def_property_readonly("has_configurations", &Binary::has_configuration,
-        "``True`` if the current binary has " RST_CLASS_REF(lief.PE.Configuration) "")
+    .def_property_readonly("has_configuration", &Binary::has_configuration,
+        "``True`` if the current binary has " RST_CLASS_REF(lief.PE.LoadConfiguration) "")
 
     .def_property_readonly("has_signature", &Binary::has_signature,
         "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
@@ -143,6 +143,11 @@ void init_PE_Binary_class(py::module& m) {
     .def_property_readonly("debug",
         static_cast<Debug& (Binary::*)(void)>(&Binary::debug),
         "Return the " RST_CLASS_REF(lief.PE.Debug) " object",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("load_configuration",
+        static_cast<LoadConfiguration& (Binary::*)(void)>(&Binary::load_configuration),
+        "Return the " RST_CLASS_REF(lief.PE.LoadConfiguration) " object",
         py::return_value_policy::reference)
 
     .def("get_export",

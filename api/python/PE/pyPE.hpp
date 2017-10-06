@@ -48,6 +48,8 @@ void init_PE_Export_class(py::module&);
 void init_PE_ExportEntry_class(py::module&);
 void init_PE_Builder_class(py::module&);
 void init_PE_Debug_class(py::module&);
+void init_PE_CodeIntegrity_class(py::module&);
+void init_PE_load_configurations(py::module&);
 
 void init_PE_Signature_class(py::module&);
 void init_PE_ContentInfo_class(py::module&);
@@ -74,6 +76,18 @@ void init_PE_ResourcesManager_class(py::module&);
 
 // Enums
 void init_PE_Structures_enum(py::module&);
+
+
+// Load Configurations
+void init_PE_LoadConfiguration_class(py::module&);
+void init_PE_LoadConfigurationV0_class(py::module&);
+void init_PE_LoadConfigurationV1_class(py::module&);
+void init_PE_LoadConfigurationV2_class(py::module&);
+void init_PE_LoadConfigurationV3_class(py::module&);
+void init_PE_LoadConfigurationV4_class(py::module&);
+void init_PE_LoadConfigurationV5_class(py::module&);
+void init_PE_LoadConfigurationV6_class(py::module&);
+void init_PE_LoadConfigurationV7_class(py::module&);
 
 
 // Opaque containers

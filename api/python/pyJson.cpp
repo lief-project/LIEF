@@ -79,6 +79,18 @@ void init_json_functions(py::module& m) {
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::SignerInfo,              LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::ContentInfo,             LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::AuthenticatedAttributes, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::AuthenticatedAttributes, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::CodeIntegrity,           LIEF::PE::JsonVisitor>);
+
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfiguration,   LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV0, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV1, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV2, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV3, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV4, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV5, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV6, LIEF::PE::JsonVisitor>);
+    m.def("to_json", &LIEF::to_json_str<LIEF::PE::LoadConfigurationV7, LIEF::PE::JsonVisitor>);
 #endif
 
     m.def("to_json",          &LIEF::to_json_str<LIEF::Binary>);
