@@ -279,7 +279,7 @@ std::set<ELF_SECTION_FLAGS> Section::flags_list(void) const {
 
 void Section::content(const std::vector<uint8_t>& content) {
   if (content.size() > 0 and this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
-    LOG(WARNING) << "You insert data (" << std::hex << content.size() << ") in section '"
+    LOG(WARNING) << "You inserted data (" << std::hex << content.size() << ") in section '"
                  << this->name() << "' which has SHT_NOBITS type !" << std::endl;
   }
 
@@ -303,7 +303,7 @@ void Section::content(const std::vector<uint8_t>& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You insert data in section '"
+    LOG(WARNING) << "You inserted data in section '"
                  << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
   }
 
@@ -319,7 +319,7 @@ void Section::content(const std::vector<uint8_t>& content) {
 
 void Section::content(std::vector<uint8_t>&& content) {
   if (content.size() > 0 and this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
-    LOG(WARNING) << "You insert data (" << std::hex << content.size() << ") in section '"
+    LOG(WARNING) << "You inserted data (" << std::hex << content.size() << ") in section '"
                  << this->name() << "' which has SHT_NOBITS type !" << std::endl;
   }
 
@@ -344,7 +344,7 @@ void Section::content(std::vector<uint8_t>&& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You insert data in section '"
+    LOG(WARNING) << "You inserted data in section '"
                  << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
   }
 

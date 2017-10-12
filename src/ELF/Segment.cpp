@@ -305,7 +305,7 @@ void Segment::content(const std::vector<uint8_t>& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You insert data in segment '"
+    LOG(WARNING) << "You inserted data in segment '"
                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
   }
 
@@ -338,7 +338,7 @@ void Segment::content(std::vector<uint8_t>&& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You insert data in segment '"
+    LOG(WARNING) << "You inserted data in segment '"
                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
   }
 
