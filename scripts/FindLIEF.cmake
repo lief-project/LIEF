@@ -39,7 +39,7 @@
 #
 # .. code-block:: cmake
 #
-#   find_package(LIEF 0.7.0 REQUIRED COMPONENTS STATIC)
+#   find_package(LIEF 0.8.0 REQUIRED COMPONENTS STATIC)
 
 
 

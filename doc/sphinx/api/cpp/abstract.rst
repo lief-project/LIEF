@@ -41,6 +41,15 @@ Symbol
    :project: lief
 
 
+----------
+
+Relocation
+**********
+
+.. doxygenclass:: LIEF::Relocation
+   :project: lief
+
+
 Enums
 *****
 

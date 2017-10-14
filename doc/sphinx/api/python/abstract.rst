@@ -49,6 +49,17 @@ Symbol
   :undoc-members:
 
 
+----------
+
+Relocation
+**********
+
+.. autoclass:: lief.Relocation
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
 Enums
 *****
 

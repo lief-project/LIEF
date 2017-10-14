@@ -15,6 +15,13 @@
 
 import sys
 import os
+import re
+import six
+
+from datetime import datetime
+from docutils import nodes
+from docutils.parsers.rst import directives
+from sphinx.util.compat import Directive
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -114,8 +121,39 @@ todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
+def commit_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    commit_link = nodes.reference(
+            "", text[:7], refuri="https://github.com/lief-project/LIEF/commit/{}".format(text), **options)
+
+    return [commit_link], []
+
+
+def pr_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    pr_link = nodes.reference(
+            "", '#' + text, refuri="https://github.com/lief-project/LIEF/pull/{}".format(text), **options)
+
+    return [pr_link], []
+
+
+def issue_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    issue_link = nodes.reference(
+            "", '#' + text, refuri="https://github.com/lief-project/LIEF/issues/{}".format(text), **options)
+
+    return [issue_link], []
+
+def github_user(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    issue_link = nodes.reference(
+            "", text, refuri="https://github.com/{}".format(text), **options)
+
+    return [issue_link], []
+
 def setup(app):
     app.add_stylesheet('css/custom.css')  # may also be an URL
+
+    app.add_role('commit', commit_role)
+    app.add_role('pr', pr_role)
+    app.add_role('issue', issue_role)
+    app.add_role('github_user', github_user)
 import sphinx_rtd_theme
 
 

@@ -20,7 +20,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.7.0-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.8.0-brightgreen.svg?style=default">
   </a>
 </p>
 
@@ -42,9 +42,9 @@ Latest **tagged** version can be downloaded in the [Release](https://github.com/
 
 Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/master)'s **latest commit** are automatically uploaded in the [*lief-project/packages*](https://github.com/lief-project/packages) repository:
 
-:warning: *master* **SDK** packages have a same name as *tagged* packages (e.g. ``LIEF-0.7.0-Linux.tar.gz``) :warning:
+:warning: *master* **SDK** packages have a same name as *tagged* packages (e.g. ``LIEF-0.8.0-Linux.tar.gz``) :warning:
 
-:warning: *master* **Python** package has ``dev`` suffix (e.g. ``pylief-0.7.0.dev.zip``) :warning:
+:warning: *master* **Python** package has ``dev`` suffix (e.g. ``pylief-0.8.0.dev.zip``) :warning:
 
 <table>
 <tr><td colspan="4"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></td></tr>
@@ -56,43 +56,27 @@ Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/m
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.7.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.7.0-win32.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.7.0-win64.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.7.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.0-win32.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.0-win64.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.0-Darwin.tar.gz">SDK</a></td>
 </tr>
 
 <tr>
-  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.7.0.dev.zip">Python</a></p></td>
+  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.0.dev.zip">Python</a></p></td>
 </tr>
 
-<tr><td colspan="4"><b><img src="https://img.shields.io/badge/release-0.7.0-brightgreen.svg?style=default"></b></td></tr>
+<tr><td colspan="4"><b><img src="https://img.shields.io/badge/release-0.8.0-brightgreen.svg?style=default"></b></td></tr>
 <tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/LIEF-0.7.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/LIEF-0.7.0-win32.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/LIEF-0.7.0-win64.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/LIEF-0.7.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-win32.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-win64.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Darwin.tar.gz">SDK</a></td>
 </tr>
 
-<tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/linux_lief-0.7.0_py2.7.tar.gz">Python 2.7</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x86_lief-0.7.0_py2.7.zip">Python 2.7</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x64_lief-0.7.0_py2.7.zip">Python 2.7</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/osx_lief-0.7.0_py2.7.tar.gz">Python 2.7</a></td>
-</tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/linux_lief-0.7.0_py3.5.tar.gz">Python 3.5</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x86_lief-0.7.0_py3.5.zip">Python 3.5</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x64_lief-0.7.0_py3.5.zip">Python 3.5</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/osx_lief-0.7.0_py3.5.tar.gz">Python 3.5</a></td>
-</tr>
-
-<tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/linux_lief-0.7.0_py3.6.tar.gz">Python 3.6</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x86_lief-0.7.0_py3.6.zip">Python 3.6</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/windows_x64_lief-0.7.0_py3.6.zip">Python 3.6</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.7.0/osx_lief-0.7.0_py3.6.tar.gz">Python 3.6</a></td>
+  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/pylief-0.8.0.zip">Python</a></p></td>
 </tr>
 
 

@@ -65,11 +65,7 @@ The Doxygen documentation will be located at ``build/doc/doxygen/html`` and the 
 Docker
 ------
 
-.. code-block:: console
-
-  $ docker build -t lief LIEF
-  $ docker run -i -t lief /bin/bash
-
+See the `Dockerlief <https://github.com/lief-project/Dockerlief>`_ repo.
 
 
 
