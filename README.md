@@ -2,7 +2,7 @@
 <img width="40%" src="http://romainthomas.fr/logo_blue_with_name_500.png"/><br />
 </p>
 <hr>
-<p>
+<p align="center">
   <a href="https://gitter.im/lief-project">
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg">
   </a>
@@ -36,15 +36,18 @@ Main features:
 
 ## Downloads / Install
 
-Pre-built packages are automatically generated and uploaded by continuous integration services.
+To install the latest **version**:
 
-Latest **tagged** version can be downloaded in the [Release](https://github.com/lief-project/LIEF/releases) section.
+```python
+pip install lief
+```
 
-Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/master)'s **latest commit** are automatically uploaded in the [*lief-project/packages*](https://github.com/lief-project/packages) repository:
+To install the latest **commit**:
 
-:warning: *master* **SDK** packages have a same name as *tagged* packages (e.g. ``LIEF-0.8.0-Linux.tar.gz``) :warning:
-
-:warning: *master* **Python** package has ``dev`` suffix (e.g. ``pylief-0.8.0.dev.zip``) :warning:
+```python
+pip install https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.0.dev.zip
+```
+### Packages
 
 <table>
 <tr><td colspan="4"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></td></tr>
