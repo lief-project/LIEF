@@ -65,13 +65,38 @@ Pre-built packages from the [master](https://github.com/lief-project/LIEF/tree/m
 <tr>
   <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.0.dev.zip">Python</a></p></td>
 </tr>
+</table>
 
-<tr><td colspan="4"><b><img src="https://img.shields.io/badge/release-0.8.0-brightgreen.svg?style=default"></b></td></tr>
+<table>
+<tr><td colspan="7"><b><img src="https://img.shields.io/badge/release-0.8.0-brightgreen.svg?style=default"></b></td></tr>
+<tr>
+    <th>Linux</th>
+    <th>Windows - x86</th>
+    <th>Windows - x86-64</th>
+    <th>OSX</th>
+    <th>CentOS</th>
+    <th>Android</th>
+  <th>Documentation</th>
+</tr>
+
 <tr>
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Linux.tar.gz">SDK</a></td>
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-win32.zip">SDK</a></td>
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-win64.zip">SDK</a></td>
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-CentOS.tar.gz">SDK</a></td>
+  
+  <td>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Android_x86_64.tar.gz">SDK - x86-64</a>
+  <br />
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Android_x86.tar.gz">SDK - x86</a>
+  <br />
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Android_armeabi-v7a.tar.gz">SDK - ARM</a>
+  <br />
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/LIEF-0.8.0-Android_aarch64.tar.gz">SDK - AARCH64</a>
+  </td>
+  
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.0/documentation-0.8.0.tar.gz">Sphinx + Doxygen</a></td>
 </tr>
 
 
