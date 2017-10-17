@@ -36,6 +36,12 @@ Main features:
 
 ## Downloads / Install
 
+First:
+
+```bash
+pip install setuptools --upgrade
+```
+
 To install the latest **version**:
 
 ```python
