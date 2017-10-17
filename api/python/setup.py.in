@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
-
+from distutils.dir_util import remove_tree, mkpath
 from setuptools.command.bdist_egg import bdist_egg
 from setuptools.command.bdist_egg import log as bdist_egg_log
 
@@ -117,7 +117,76 @@ class lief_sdist(sdist):
 class lief_bdist_egg(bdist_egg):
     def initialize_options(self):
         bdist_egg.initialize_options(self)
-        self.plat_name = get_lief_platform_name()
+
+        if not in_source_package:
+            self.plat_name = get_lief_platform_name()
+
+
+    def run(self):
+        if in_source_package:
+            self._build_from_source_package()
+        else:
+            bdist_egg.run(self)
+
+    def _build_from_source_package(self):
+        python_version       = sys.version_info
+        python_major_version = python_version[0]
+        os_version           = get_lief_platform_name()
+
+        url_branch_fmt  = "https://github.com/lief-project/packages/raw/lief-{branch}-latest/lief-{version}-py{pyversion}-{platform}.{ext}"
+        url_release_fmt = "https://github.com/lief-project/LIEF/releases/download/{version}/lief-{version}-py{pyversion}-{platform}.{ext}"
+        url_userpath    = "~/lief-{version}-py{pyversion}-{platform}.{ext}"
+
+        url = ""
+        if is_branch:
+            url = url_branch_fmt.format(
+                    branch='master',
+                    platform=os_version,
+                    version=lief_version,
+                    pyversion="{}.{}".format(python_version[0], python_version[1]),
+                    ext="egg")
+        else:
+            url = url_release_fmt.format(
+                    platform=os_version,
+                    version=lief_version,
+                    pyversion="{}.{}".format(python_version[0], python_version[1]),
+                    ext="egg")
+
+        bdist_egg_log.info("Url: {}".format(url))
+        egg_data = None
+        network_error = None
+        try:
+            egg_data = urlopen(url).read()
+        except Exception as e:
+            network_error = e
+
+
+        if network_error is not None:
+            bdist_egg_log.warn(network_error)
+            url = url_userpath.format(
+                    platform=os_version,
+                    version=lief_version,
+                    pyversion="{}.{}".format(python_version[0], python_version[1]),
+                    ext="egg")
+            url = os.path.expanduser(url)
+            if os.path.isfile(url):
+                with open(url, 'rb') as f:
+                    egg_data = f.read()
+            else:
+                raise Exception("Unable to find {}".format(url))
+
+
+        egg_file = BytesIO(egg_data)
+
+        mkpath(os.path.dirname(self.egg_output))
+
+        bdist_egg_log.info("Output: {}".format(self.egg_output))
+        with open(self.egg_output, 'wb') as f:
+            f.write(egg_file.getvalue())
+
+        getattr(self.distribution, 'dist_files', []).append(
+        ('bdist_egg', "{}.{}".format(python_version[0], python_version[1]), self.egg_output))
+
 
 
 class lief_build_ext(build_ext):
