@@ -225,6 +225,7 @@ void Builder::build_sections(void) {
 
   // Build section's name
   std::vector<uint8_t> section_names;
+  section_names.push_back(0);
   for (const std::string& name : stringTableOpti) {
     section_names.insert(std::end(section_names), std::begin(name), std::end(name));
     section_names.push_back(0);

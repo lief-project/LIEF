@@ -493,7 +493,7 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   // Patch SHDR
   Header& header = this->header();
-  const uint64_t new_section_hdr_offset = new_segment->file_offset() + new_segment->physical_size() + 1;
+  const uint64_t new_section_hdr_offset = new_segment->file_offset() + new_segment->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
   this->datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());

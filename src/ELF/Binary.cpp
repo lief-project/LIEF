@@ -976,7 +976,7 @@ Segment& Binary::replace(const Segment& new_segment, const Segment& original_seg
 
   // Patch shdr
   Header& header = this->header();
-  const uint64_t new_section_hdr_offset = new_segment_ptr->file_offset() + new_segment_ptr->physical_size() + 1;
+  const uint64_t new_section_hdr_offset = new_segment_ptr->file_offset() + new_segment_ptr->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
   this->segments_.push_back(new_segment_ptr);
@@ -1553,7 +1553,9 @@ void Binary::shift_sections(uint64_t from, uint64_t shift) {
     VLOG(VDEBUG) << "[BEFORE] " << *section;
     if (section->file_offset() >= from) {
       section->file_offset(section->file_offset() + shift);
-      section->virtual_address(section->virtual_address() + shift);
+      if (section->virtual_address() > 0) {
+        section->virtual_address(section->virtual_address() + shift);
+      }
     }
     VLOG(VDEBUG) << "[AFTER] " << *section << std::endl;
   }
