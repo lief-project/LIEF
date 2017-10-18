@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.8.1 - October 18, 2017
+------------------------
+
+  * Fix an alignment issue in the ELF builder. See :commit:`8db199c04e9e6bcdbda165ab5c42d88218a0beb6`
+  * Add assertion on the setuptools version: :commit:`62e5825e27bb637c2f42f4d05690a100213beb03`
+
+
 0.8.0 - October 16, 2017
 ------------------------
 
