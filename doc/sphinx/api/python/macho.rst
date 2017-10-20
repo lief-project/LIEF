@@ -7,8 +7,20 @@ Parser
 
 .. autofunction:: lief.MachO.parse
 
+.. autoclass:: lief.MachO.ParserConfig
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+.. code-block:: python
+
+  fatbinary_1 = lief.MachO.parse("/usr/bin/ls", config=lief.MachO.ParserConfig.deep)
+  # or
+  fatbinary_2 = lief.MachO.parse("/usr/bin/ls", config=lief.MachO.ParserConfig.quick)
+
 
 ----------
+
 
 FatBinary
 *********
@@ -238,7 +250,6 @@ Thread Command
   :undoc-members:
 
 ----------
-
 
 Enums
 *****

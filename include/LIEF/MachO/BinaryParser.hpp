@@ -26,6 +26,7 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 
+#include "LIEF/MachO/ParserConfig.hpp"
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -47,8 +48,8 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
   constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint8_t>::max();
 
   public:
-    BinaryParser(const std::string& file);
-    BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0);
+    BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
+    BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
     BinaryParser(void);
 
     BinaryParser& operator=(const BinaryParser& copy) = delete;
@@ -59,7 +60,7 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
     Binary* get_binary(void);
 
   private:
-    BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0);
+    BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
 
     void init(void);
 
@@ -122,6 +123,7 @@ class DLL_PUBLIC BinaryParser : public LIEF::Parser {
     Binary*                       binary_ ;
     MACHO_TYPES                   type_;
     bool                          is64_;
+    ParserConfig                  config_;
 };
 
 

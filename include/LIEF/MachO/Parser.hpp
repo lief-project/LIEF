@@ -24,6 +24,7 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 
+#include "LIEF/MachO/ParserConfig.hpp"
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
@@ -38,12 +39,12 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     ~Parser(void);
 
-    static FatBinary* parse(const std::string& filename);
-    static FatBinary* parse(const std::vector<uint8_t>& data, const std::string& name = "");
+    static FatBinary* parse(const std::string& filename, const ParserConfig& conf = ParserConfig::deep());
+    static FatBinary* parse(const std::vector<uint8_t>& data, const std::string& name = "", const ParserConfig& conf = ParserConfig::deep());
 
   private:
-    Parser(const std::string& file);
-    Parser(const std::vector<uint8_t>& data, const std::string& name);
+    Parser(const std::string& file, const ParserConfig& conf);
+    Parser(const std::vector<uint8_t>& data, const std::string& name, const ParserConfig& conf);
     Parser(void);
 
     void build(void);
@@ -51,6 +52,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     std::unique_ptr<VectorStream> stream_;
     std::vector<Binary*>          binaries_;
+    ParserConfig                  config_;
 };
 }
 }

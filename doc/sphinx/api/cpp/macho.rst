@@ -11,6 +11,10 @@ Parsers
 .. doxygenclass:: LIEF::MachO::BinaryParser
    :project: lief
 
+
+.. doxygenclass:: LIEF::MachO::ParserConfig
+   :project: lief
+
 ----------
 
 FatBinary

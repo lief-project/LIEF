@@ -22,6 +22,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBindingInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyExportInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyThreadCommand.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyParserConfig.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyMachOStructures.cpp"
 )
 

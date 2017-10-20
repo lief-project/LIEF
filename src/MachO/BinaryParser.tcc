@@ -43,7 +43,7 @@ void BinaryParser::parse(void) {
     }
   }
 
-  if (this->binary_->has_dyld_info()) {
+  if (this->binary_->has_dyld_info() and this->config_.parse_dyldinfo_deeply()) {
 
     try {
       this->parse_dyldinfo_binds<MACHO_T>();

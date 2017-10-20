@@ -45,25 +45,28 @@ namespace MachO {
 BinaryParser::BinaryParser(void) = default;
 BinaryParser::~BinaryParser(void) = default;
 
-BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset) :
+BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset, const ParserConfig& conf) :
   stream_{new VectorStream{data}},
-  binary_{new Binary{}}
+  binary_{new Binary{}},
+  config_{conf}
 {
   this->binary_->fat_offset_ = fat_offset;
   this->init();
 }
 
 
-BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset) :
+BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset, const ParserConfig& conf) :
   stream_{std::move(stream)},
-  binary_{new Binary{}}
+  binary_{new Binary{}},
+  config_{conf}
 {
   this->binary_->fat_offset_ = fat_offset;
   this->init();
 }
 
-BinaryParser::BinaryParser(const std::string& file) :
-  LIEF::Parser{file}
+BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
+  LIEF::Parser{file},
+  config_{conf}
 {
 
   if (not is_macho(file)) {
