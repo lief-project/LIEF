@@ -750,10 +750,10 @@ enum DYNAMIC_TAGS {
 
   DT_FLAGS_1                    = 0x6FFFFFFB, /**< Flags_1. */
   DT_VERSYM                     = 0x6FFFFFF0, /**< The address of .gnu.version section. */
-  DT_VERDEF                     = 0X6FFFFFFC, /**< The address of the version definition table. */
-  DT_VERDEFNUM                  = 0X6FFFFFFD, /**< The number of entries in DT_VERDEF. */
-  DT_VERNEED                    = 0X6FFFFFFE, /**< The address of the version Dependency table. */
-  DT_VERNEEDNUM                 = 0X6FFFFFFF, /**< The number of entries in DT_VERNEED. */
+  DT_VERDEF                     = 0x6FFFFFFC, /**< The address of the version definition table. */
+  DT_VERDEFNUM                  = 0x6FFFFFFD, /**< The number of entries in DT_VERDEF. */
+  DT_VERNEED                    = 0x6FFFFFFE, /**< The address of the version Dependency table. */
+  DT_VERNEEDNUM                 = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
 
   /* Mips specific dynamic table entry tags. */
   DT_MIPS_RLD_VERSION           = 0x70000001, /**< 32 bit version number for runtime linker interface. */
