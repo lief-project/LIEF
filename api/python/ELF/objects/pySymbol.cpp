@@ -41,12 +41,12 @@ void init_ELF_Symbol_class(py::module& m) {
     .def_property("type",
         static_cast<getter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
         static_cast<setter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
-        "A symbol's type provides a general classification for the associated entity")
+        "A symbol's type provides a general classification for the associated entity. See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) "")
 
     .def_property("binding",
         static_cast<getter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
         static_cast<setter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
-        "A symbol's binding determines the linkage visibility and behavior")
+        "A symbol's binding determines the linkage visibility and behavior. See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) "")
 
     .def_property("information",
         static_cast<getter_t<uint8_t>>(&Symbol::information),
