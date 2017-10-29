@@ -121,7 +121,7 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
     return;
   }
 
-  if (start < current_offset) {
+  if (start > current_offset) {
     return;
   }
 
