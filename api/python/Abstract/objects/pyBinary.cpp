@@ -155,13 +155,25 @@ void init_LIEF_Binary_class(py::module& m) {
        "virtual_address"_a, "size"_a)
 
     .def_property_readonly("abstract",
-        [] (py::object& self) {
-          auto global =  py::dict(py::module::import("__main__").attr("__dict__"));
-          auto local  = py::dict();
-          local["current_binary"] = self;
-          return py::eval("super(current_binary.__class__, current_binary)", global, local);
+        [m] (py::object& self) {
+          self.attr("__class__") = m.attr("Binary");
+          return self;
         },
-        "Return the " RST_CLASS_REF(lief.Binary) " object",
+        "Return the " RST_CLASS_REF(lief.Binary) " object\n\n"
+        ".. warning::\n\n"
+        "\tGetting this property modifies the ``__class__`` attribute so that "
+        "the current binary looks like a " RST_CLASS_REF(lief.Binary) ".\n\n"
+        "\tUse the " RST_ATTR_REF(lief.Binary.concrete) " to get back to the original binary.",
+        py::return_value_policy::reference)
+
+
+    .def_property_readonly("concrete",
+        [m] (py::object& self) {
+          self.attr("__class__") = py::cast(self.cast<Binary*>()).attr("__class__");
+          return self;
+        },
+        "Return either " RST_CLASS_REF_FULL(lief.ELF.Binary) ", " RST_CLASS_REF_FULL(lief.PE.Binary) ", " RST_CLASS_REF_FULL(lief.MachO.Binary) " object\n\n"
+        "",
         py::return_value_policy::reference)
 
     .def("xref",

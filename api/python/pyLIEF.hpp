@@ -28,7 +28,10 @@
 #include "pyIterators.hpp"
 
 #define RST_CLASS_REF(X) ":class:`~"#X"`"
+#define RST_CLASS_REF_FULL(X) ":class:`"#X"`"
+
 #define RST_ATTR_REF(X) ":attr:`~"#X"`"
+#define RST_ATTR_REF_FULL(X) ":attr:`"#X"`"
 
 namespace py = pybind11;
 
