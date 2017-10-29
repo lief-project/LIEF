@@ -20,7 +20,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.8.2-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.8.3-brightgreen.svg?style=default">
   </a>
 </p>
 
@@ -51,7 +51,7 @@ pip install lief
 To install the latest **commit**:
 
 ```python
-pip install https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.2.dev.zip
+pip install https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.3.dev.zip
 ```
 ### Packages
 
@@ -65,19 +65,19 @@ pip install https://github.com/lief-project/packages/raw/lief-master-latest/pyli
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.2-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.2-win32.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.2-win64.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.2-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.3-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.3-win32.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.3-win64.zip">SDK</a></td>
+  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.8.3-Darwin.tar.gz">SDK</a></td>
 </tr>
 
 <tr>
-  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.2.dev.zip">Python</a></p></td>
+  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.8.3.dev.zip">Python</a></p></td>
 </tr>
 </table>
 
 <table>
-<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.8.2-brightgreen.svg?style=default"></b></td></tr>
+<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.8.3-brightgreen.svg?style=default"></b></td></tr>
 <tr>
     <th>Linux</th>
     <th>Windows</th>
@@ -88,31 +88,31 @@ pip install https://github.com/lief-project/packages/raw/lief-master-latest/pyli
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Linux.tar.gz">SDK</a></td>
   <td>
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-win32.zip">SDK - x86</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-win32.zip">SDK - x86</a>
     <br />
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-win64.zip">SDK - x86-64</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-win64.zip">SDK - x86-64</a>
   </td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Darwin.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-CentOS.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-CentOS.tar.gz">SDK</a></td>
 
   <td>
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Android_x86_64.tar.gz">SDK - x86-64</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Android_x86_64.tar.gz">SDK - x86-64</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Android_x86.tar.gz">SDK - x86</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Android_x86.tar.gz">SDK - x86</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Android_armeabi-v7a.tar.gz">SDK - ARM</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Android_armeabi-v7a.tar.gz">SDK - ARM</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/LIEF-0.8.2-Android_aarch64.tar.gz">SDK - AARCH64</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/LIEF-0.8.3-Android_aarch64.tar.gz">SDK - AARCH64</a>
   </td>
 
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/documentation-0.8.2.tar.gz">Sphinx + Doxygen</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/documentation-0.8.3.tar.gz">Sphinx + Doxygen</a></td>
 </tr>
 
 
 <tr>
-  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.8.2/pylief-0.8.2.zip">Python</a></p></td>
+  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.8.3/pylief-0.8.3.zip">Python</a></p></td>
 </tr>
 
 
