@@ -1,6 +1,17 @@
 Changelog
 =========
 
+
+0.8.3
+-----
+
+  * [Mach-O] Fix typo on comparison operator - :commit:`abbc264833894973f601f700b3abcc109904f722`
+
+0.8.2
+-----
+
+  * [ELF] Increase the upper limit of relocation number - :commit:`077bc329bdcc249cb8ed0b8bcb9630e1c9eede94`
+
 0.8.1 - October 18, 2017
 ------------------------
 
@@ -107,8 +118,8 @@ Features
     .. code-block:: console
 
       $ readelf -d foo
-        0x0000000000000001 (NEEDED)  Bibliothèque partagée: [libfoo.so]
-        0x0000000000000001 (NEEDED)  Bibliothèque partagée: [libc.so.6]
+        0x0000000000000001 (NEEDED)  Shared library: [libfoo.so]
+        0x0000000000000001 (NEEDED)  Shared library: [libc.so.6]
         0x000000000000000c (INIT)    0x7b
         0x000000000000000c (INIT)    0x3600
         ...
