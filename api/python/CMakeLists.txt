@@ -4,44 +4,22 @@ include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 
 
-set(Python_ADDITIONAL_VERSIONS 2.7 2.7.6 3.4 3.5 3.6 3.7)
-if (NOT ${PYTHON_VERSION} STREQUAL "")
-  find_package(PythonLibs ${PYTHON_VERSION} EXACT)
-
-  if (NOT PythonLibs_FOUND)
-    find_package(PythonLibs ${PYTHON_VERSION})
-  endif()
-
-  set(PYTHONLIBS_VERSION_STRING "${PYTHON_VERSION}")
-  if (NOT PythonLibs_FOUND)
-    # WARNING: DIRTY HACK
-    # ^^^^^^^^^^^^^^^^^^^
-    if ((${PYTHON_VERSION} VERSION_GREATER "3") OR (${PYTHON_VERSION} VERSION_EQUAL "3"))
-      if (UNIX)
-        set(PYTHON_LIBRARY /usr/lib/libpython${PYTHON_VERSION}.so)
-        if(EXISTS "/usr/include/python${PYTHON_VERSION}" AND IS_DIRECTORY "/usr/include/python${PYTHON_VERSION}")
-          set(PYTHON_INCLUDE_DIR /usr/include/python${PYTHON_VERSION})
-          set(PYTHONLIBS_VERSION_STRING "${PYTHON_VERSION}")
-        elseif(EXISTS "/usr/include/python${PYTHON_VERSION}m" AND IS_DIRECTORY "/usr/include/python${PYTHON_VERSION}m")
-          set(PYTHON_INCLUDE_DIR /usr/include/python${PYTHON_VERSION}m)
-          set(PYTHONLIBS_VERSION_STRING "${PYTHON_VERSION}m")
-        endif()
-      endif()
-    endif()
-  endif()
-else()
-  find_package(PythonLibs REQUIRED)
-endif()
+unset(PYTHON_VERSION)
 
 
-message(STATUS "Python version: ${PYTHONLIBS_VERSION_STRING}")
+find_package(PythonLibsNew EXACT ${PYTHON_VERSION} MODULE REQUIRED)
+
+message(STATUS "Python version: ${PYTHON_VERSION}")
 message(STATUS "Python lib:     ${PYTHON_LIBRARY}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
+message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
 
-set(PYBIND11_VERSION v2.2.1)
-set(PYBIND11_URL "https://github.com/pybind/pybind11/archive/${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
+set(PYBIND11_VERSION 2.2.1)
+set(PYBIND11_SHA256 SHA256=53c373d7d0b0711fea96beba666a9985269dc9e43e6088ea73faaa89b07b972e)
+set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
 ExternalProject_Add(lief_pybind11
   URL               ${PYBIND11_URL}
+  URL_HASH          ${PYBIND11_SHA256}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   INSTALL_COMMAND   "")
@@ -117,7 +95,7 @@ if (MSVC)
 	set_property(TARGET pyLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 
-set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHONLIBS_VERSION_STRING})
+set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHON_VERSION})
 set(PYLIEF_DEPS_LIBRARIES LIB_LIEF_STATIC)
 
 if(LIEF_COVERAGE)
@@ -182,14 +160,8 @@ MESSAGE(STATUS "OS: ${CMAKE_HOST_SYSTEM}")
 find_program(ENV_BINARY "env")
 
 if (UNIX AND ENV_BINARY AND LIEF_INSTALL_PYTHON)
-  if ((${PYTHONLIBS_VERSION_STRING} VERSION_GREATER "3") OR (${PYTHONLIBS_VERSION_STRING} VERSION_EQUAL "3"))
-    install(CODE "execute_process(COMMAND ${ENV_BINARY} python3 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
+    install(CODE "execute_process(COMMAND ${ENV_BINARY} ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
       COMPONENT python)
-  else()
-    install(
-      CODE "execute_process(COMMAND ${ENV_BINARY} python2 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
-      COMPONENT python)
-  endif()
 endif()
 
 

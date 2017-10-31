@@ -66,6 +66,7 @@ option(LIEF_LSAN "Enable Leak sanitizer"      OFF)
 option(LIEF_TSAN "Enable Thread sanitizer"    OFF)
 option(LIEF_USAN "Enable undefined sanitizer" OFF)
 
+
 # Fuzzer
 option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
@@ -81,14 +82,16 @@ endif()
 
 # Dependencies
 # ============
-
+set(THIRD_PARTY_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/")
 # Json
 # ----
 if (LIEF_ENABLE_JSON)
-  set(LIBJSON_VERSION v2.1.1)
-  set(LIBJSON_URL "https://github.com/nlohmann/json/archive/${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
+  set(LIBJSON_VERSION 2.1.1)
+  set(LIBJSON_SHA256 SHA256=24dff077ec6c02d490d2d2d3d2d03e8566d9a1552d3556bb82fddfdc40c43cdb)
+  set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
   ExternalProject_Add(lief_libjson
     URL               ${LIBJSON_URL}
+    URL_HASH          ${LIBJSON_SHA256}
     UPDATE_COMMAND    ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND     ""
@@ -106,9 +109,11 @@ endif()
 # Rang
 # ----
 set(LIBRANG_VERSION 2.1)
-set(LIBRANG_URL     "https://github.com/agauniyal/rang/archive/${LIBRANG_VERSION}.zip")
+set(LIBRANG_SHA256 SHA256=32e0af3d3d4f628a26e7330d4384a93b16677e5fed57fbdf45ea267c525deba0)
+set(LIBRANG_URL     "${THIRD_PARTY_DIRECTORY}/rang-${LIBRANG_VERSION}.zip")
 ExternalProject_Add(lief_rang_cpp_color
   URL               ${LIBRANG_URL}
+  URL_HASH          ${LIBRANG_SHA256}
   UPDATE_COMMAND    ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
@@ -120,8 +125,9 @@ set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 # mbed TLS
 # --------
-set(MBED_TLS_TAG mbedtls-2.6.0)
-set(MBED_TLS_URL "https://github.com/ARMmbed/mbedtls/archive/${MBED_TLS_TAG}.zip" CACHE STRING "URL to MbedTLS")
+set(MBED_TLS_VERSION 2.6.0)
+set(MBED_TLS_SHA256 SHA256=695e88deb49373bed2a4dd53ce693066eb079135d59d5f30ec5a7a2603fd26ff)
+set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
 
@@ -131,6 +137,7 @@ ExternalProject_Add(lief_mbed_tls
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
   URL               ${MBED_TLS_URL}
+  URL_HASH          ${MBED_TLS_SHA256}
   UPDATE_COMMAND    "" # repetitive update are a pain
   BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
 
@@ -221,10 +228,12 @@ set(mbedtls_src_tls
 
 # easyloggingpp
 # -------------
-set(ELG_VERSION v9.94.2)
-set(ELG_URL "https://github.com/muflihun/easyloggingpp/archive/${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
+set(ELG_VERSION 9.94.2)
+set(ELG_SHA256 SHA256=f99adeb098e28cd6c97ebb7dfe8ddd55bf6b79578aa65b55c34b4b2527f1f235)
+set(ELG_URL "${THIRD_PARTY_DIRECTORY}/easyloggingpp-${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
 ExternalProject_Add(lief_easyloggingpp
   URL               ${ELG_URL}
+  URL_HASH          ${ELG_SHA256}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     ""
   UPDATE_COMMAND    ""
@@ -245,10 +254,12 @@ set(LIBFUZZER_SRC_FILES)
 if (LIEF_FUZZING)
   message(STATUS "Fuzzing Enabled")
 
-  set(LIBFUZZER_VERSION 314494)
-  set(LIBFUZZER_URL     "http://llvm.org/svn/llvm-project/llvm/trunk/lib/Fuzzer/") #\?p=${LIBFUZZER_VERSION}")
+  set(LIBFUZZER_VERSION 8ff5640b48c4c4a3b974daa10a5f445e86ed7428)
+  set(LIBFUZZER_SHA256  SHA256=ed067ebc72b993571854edb113e9f3ef74367dfb8bab1a252009aff72e287614)
+  set(LIBFUZZER_URL     "${THIRD_PARTY_DIRECTORY}/LibFuzzer-${LIBFUZZER_VERSION}.zip")
   ExternalProject_Add(lief_libfuzzer
-  SVN_REPOSITORY    ${LIBFUZZER_URL}
+  URL               ${LIBFUZZER_URL}
+  URL_HASH          ${LIBFUZZER_SHA256}
   CONFIGURE_COMMAND ""
   UPDATE_COMMAND    ""
   BUILD_COMMAND     ""
@@ -400,7 +411,7 @@ set (LIEF_PUBLIC_INCLUDE_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}/include/"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
   "${CMAKE_CURRENT_BINARY_DIR}/include/"
-  "${LIBJSON_SOURCE_DIR}/src/")
+  "${LIBJSON_SOURCE_DIR}/")
 
 set(LIEF_PRIVATE_INCLUDE_DIR
   "${LIEF_PUBLIC_INCLUDE_DIR}"
