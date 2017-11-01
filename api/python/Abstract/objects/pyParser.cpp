@@ -32,4 +32,12 @@ void init_LIEF_Parser_class(py::module& m) {
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
+
+
+  m.def("parse",
+      [] (py::object byteio) {
+      std::cout << "foo" << std::endl;
+      return nullptr;
+      },
+      py::return_value_policy::take_ownership);
 }

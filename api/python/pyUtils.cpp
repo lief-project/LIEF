@@ -21,6 +21,20 @@
 
 void init_utils_functions(py::module& m) {
 
+
+  m.def("shell",
+    [] (void) {
+      auto&& InteractiveShellEmbed = py::module::import("IPython").attr("terminal").attr("embed").attr("InteractiveShellEmbed");
+      auto&& ipshell = InteractiveShellEmbed("banner1"_a = "Dropping into IPython", "exit_msg"_a = "Leaving Interpreter, back to program.");
+      return ipshell();
+    });
+
+  m.def("breakp",
+      [] (void) {
+        py::object set_trace = py::module::import("pdb").attr("set_trace");
+        return set_trace();
+      });
+
 #if defined(LIEF_PE_MODULE)
     m.def("is_pe",
         static_cast<bool (*)(const std::string&)>(&LIEF::PE::is_pe),
