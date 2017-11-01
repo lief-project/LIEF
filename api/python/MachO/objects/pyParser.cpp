@@ -44,4 +44,43 @@ void init_MachO_Parser_class(py::module& m) {
     py::return_value_policy::take_ownership);
 
 
+    m.def("parse",
+      [] (py::object byteio, std::string name, const ParserConfig& config) {
+        auto&& io = py::module::import("io");
+        auto&& RawIOBase = io.attr("RawIOBase");
+        auto&& BufferedIOBase = io.attr("BufferedIOBase");
+        auto&& TextIOBase = io.attr("TextIOBase");
+
+        py::object rawio;
+
+
+        if (py::isinstance(byteio, RawIOBase)) {
+          rawio = byteio;
+        }
+
+        else if (py::isinstance(byteio, BufferedIOBase)) {
+          rawio = byteio.attr("raw");
+        }
+
+        else if (py::isinstance(byteio, TextIOBase)) {
+          rawio = byteio.attr("buffer").attr("raw");
+        }
+
+        else {
+          throw py::type_error(py::repr(byteio).cast<std::string>().c_str());
+        }
+
+        std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
+        std::vector<uint8_t> raw = {
+          std::make_move_iterator(std::begin(raw_str)),
+          std::make_move_iterator(std::end(raw_str))};
+
+        return LIEF::MachO::Parser::parse(std::move(raw), name, config);
+      },
+      "io"_a,
+      "name"_a = "",
+      "config"_a = ParserConfig::quick(),
+      py::return_value_policy::take_ownership);
+
+
 }

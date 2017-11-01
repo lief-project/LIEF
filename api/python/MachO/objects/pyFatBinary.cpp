@@ -32,7 +32,8 @@ void init_MachO_FatBinary_class(py::module& m) {
     .def("at",
       static_cast<Binary& (FatBinary::*)(size_t)>(&FatBinary::at),
       "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index",
-      "index"_a)
+      "index"_a,
+      py::return_value_policy::reference_internal)
 
     .def("__len__",
         &FatBinary::size)
@@ -41,7 +42,7 @@ void init_MachO_FatBinary_class(py::module& m) {
     .def("__getitem__",
         static_cast<Binary& (FatBinary::*)(size_t)>(&FatBinary::operator[]),
         "",
-        py::return_value_policy::reference)
+        py::return_value_policy::reference_internal)
 
     .def("__iter__",
         static_cast<it_binaries (FatBinary::*)(void)>(&FatBinary::begin),

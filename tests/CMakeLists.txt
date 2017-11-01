@@ -325,6 +325,7 @@ endif()
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/elf")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api")
 
 # /!\ Bad Hack /!\
 add_dependencies(LIB_LIEF_STATIC lief_samples)
