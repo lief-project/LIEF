@@ -28,43 +28,57 @@
 
 namespace LIEF {
 namespace MachO {
+class Builder;
 class LIEF_API LoadCommand : public Object {
+  friend class Builder;
   public:
-    LoadCommand(void);
-    LoadCommand(const load_command* command);
-    LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
+  using raw_t = std::vector<uint8_t>;
 
-    LoadCommand& operator=(const LoadCommand& copy);
-    LoadCommand(const LoadCommand& copy);
+  public:
+  LoadCommand(void);
+  LoadCommand(const load_command* command);
+  LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
 
-    void swap(LoadCommand& other);
+  LoadCommand& operator=(LoadCommand copy);
+  LoadCommand(const LoadCommand& copy);
 
-    virtual ~LoadCommand(void);
+  void swap(LoadCommand& other);
+  virtual LoadCommand* clone(void) const;
 
-    LOAD_COMMAND_TYPES          command(void) const;
-    uint32_t                    size(void) const;
-    const std::vector<uint8_t>& data(void) const;
-    uint64_t                    command_offset(void) const;
+  virtual ~LoadCommand(void);
 
-    void data(const std::vector<uint8_t>& data);
-    void command(LOAD_COMMAND_TYPES command);
-    void size(uint32_t size);
-    void command_offset(uint64_t offset);
 
-    virtual std::ostream& print(std::ostream& os) const;
+  //! Command type
+  LOAD_COMMAND_TYPES command(void) const;
 
-    bool operator==(const LoadCommand& rhs) const;
-    bool operator!=(const LoadCommand& rhs) const;
+  //! Size of the command (should be greather than ``sizeof(load_command)``)
+  uint32_t size(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  //! Raw command
+  const raw_t& data(void) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd);
+  //! Offset of the command within the *Load Command Table*
+  uint64_t command_offset(void) const;
+
+  void data(const raw_t& data);
+  void command(LOAD_COMMAND_TYPES command);
+  void size(uint32_t size);
+  void command_offset(uint64_t offset);
+
+  virtual std::ostream& print(std::ostream& os) const;
+
+  bool operator==(const LoadCommand& rhs) const;
+  bool operator!=(const LoadCommand& rhs) const;
+
+  virtual void accept(Visitor& visitor) const override;
+
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd);
 
   protected:
-    std::vector<uint8_t> originalData_;
-    LOAD_COMMAND_TYPES   command_;
-    uint32_t             size_;
-    uint64_t             commandOffset_;
+  raw_t               originalData_;
+  LOAD_COMMAND_TYPES  command_;
+  uint32_t            size_{0};
+  uint64_t            commandOffset_{0};
 };
 
 }

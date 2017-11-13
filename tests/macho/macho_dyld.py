@@ -27,10 +27,10 @@ class TestMachODyld(TestCase):
 
         self.assertEqual(len(exports), 6)
 
-        self.assertEqual(exports[0].address, 1)
+        self.assertEqual(exports[0].address, 0)
         self.assertEqual(exports[0].symbol.name, "_malloc")
 
-        self.assertEqual(exports[1].address, 1)
+        self.assertEqual(exports[1].address, 0)
         self.assertEqual(exports[1].symbol.name, "_myfree")
 
         self.assertEqual(exports[2].address, 0xf70)

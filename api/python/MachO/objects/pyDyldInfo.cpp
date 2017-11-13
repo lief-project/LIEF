@@ -263,7 +263,6 @@ void create<DyldInfo>(py::module& m) {
         &DyldInfo::set_export_size,
         "size"_a)
 
-
     .def("__eq__", &DyldInfo::operator==)
     .def("__ne__", &DyldInfo::operator!=)
     .def("__hash__",

@@ -39,6 +39,8 @@ class LIEF_API SubFramework : public LoadCommand {
   SubFramework& operator=(const SubFramework& copy);
   SubFramework(const SubFramework& copy);
 
+  virtual SubFramework* clone(void) const override;
+
   const std::string& umbrella(void) const;
   void umbrella(const std::string& u);
 

@@ -24,9 +24,21 @@ namespace LIEF {
 namespace MachO {
 
 LoadCommand::LoadCommand(void) = default;
-LoadCommand& LoadCommand::operator=(const LoadCommand&) = default;
-LoadCommand::LoadCommand(const LoadCommand&) = default;
+
 LoadCommand::~LoadCommand(void) = default;
+
+LoadCommand& LoadCommand::operator=(LoadCommand other) {
+  this->swap(other);
+  return *this;
+}
+
+LoadCommand::LoadCommand(const LoadCommand& other) :
+  originalData_{other.originalData_},
+  command_{other.command_},
+  size_{other.size_},
+  commandOffset_{other.commandOffset_}
+{}
+
 
 LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size) :
   originalData_{},
@@ -49,6 +61,10 @@ void LoadCommand::swap(LoadCommand& other) {
   std::swap(this->commandOffset_, other.commandOffset_);
 }
 
+LoadCommand* LoadCommand::clone(void) const {
+  return new LoadCommand{*this};
+}
+
 LOAD_COMMAND_TYPES LoadCommand::command(void) const {
   return this->command_;
 }
@@ -57,7 +73,7 @@ uint32_t LoadCommand::size(void) const {
   return this->size_;
 }
 
-const std::vector<uint8_t>& LoadCommand::data(void) const {
+const LoadCommand::raw_t& LoadCommand::data(void) const {
   return this->originalData_;
 }
 
@@ -66,7 +82,7 @@ uint64_t LoadCommand::command_offset(void) const {
   return this->commandOffset_;
 }
 
-void LoadCommand::data(const std::vector<uint8_t>& data) {
+void LoadCommand::data(const LoadCommand::raw_t& data) {
   this->originalData_ = std::move(data);
 }
 

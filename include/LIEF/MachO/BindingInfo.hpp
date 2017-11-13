@@ -39,7 +39,12 @@ class LIEF_API BindingInfo : public Object {
 
   public:
     BindingInfo(void);
-    BindingInfo(BINDING_CLASS cls, BIND_TYPES type, uint64_t address, int64_t addend = 0, int32_t oridnal = 0, bool is_weak = false);
+    BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
+        uint64_t address,
+        int64_t addend = 0,
+        int32_t oridnal = 0,
+        bool is_weak = false,
+        bool is_non_weak_definition = false);
 
     BindingInfo& operator=(BindingInfo other);
     BindingInfo(const BindingInfo& other);
@@ -88,6 +93,14 @@ class LIEF_API BindingInfo : public Object {
     bool is_weak_import(void) const;
     void set_weak_import(bool val = true);
 
+    inline bool is_non_weak_definition(void) const {
+      return this->is_non_weak_definition_;
+    }
+
+    inline void set_non_weak_definition(bool val) {
+      this->is_non_weak_definition_ = val;
+    }
+
     virtual ~BindingInfo(void);
 
     bool operator==(const BindingInfo& rhs) const;
@@ -100,12 +113,13 @@ class LIEF_API BindingInfo : public Object {
   private:
     BINDING_CLASS   class_; // STANDARD, WEAK, LAZY
     BIND_TYPES      binding_type_;
-    SegmentCommand* segment_;
-    Symbol*         symbol_;
+    SegmentCommand* segment_{nullptr};
+    Symbol*         symbol_{nullptr};
     int32_t         library_ordinal_;
     int64_t         addend_;
     bool            is_weak_import_;
-    DylibCommand*   library_;
+    bool            is_non_weak_definition_;
+    DylibCommand*   library_{nullptr};
     uint64_t        address_;
 
 

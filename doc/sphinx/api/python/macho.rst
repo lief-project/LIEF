@@ -568,6 +568,17 @@ EXPORT_SYMBOL_KINDS
 
 ----------
 
+EXPORT_SYMBOL_FLAGS
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.EXPORT_SYMBOL_FLAGS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
 VM_PROTECTIONS
 ~~~~~~~~~~~~~~
 
@@ -583,6 +594,16 @@ SYMBOL_ORIGINS
 ~~~~~~~~~~~~~~
 
 .. autoclass:: lief.MachO.SYMBOL_ORIGINS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+SECTION_FLAGS
+~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.SECTION_FLAGS
   :members:
   :inherited-members:
   :undoc-members:

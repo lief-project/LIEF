@@ -39,6 +39,10 @@ SourceVersion::SourceVersion(const source_version_command *version_cmd) :
   }}
 {}
 
+SourceVersion* SourceVersion::clone(void) const {
+  return new SourceVersion(*this);
+}
+
 
  const SourceVersion::version_t& SourceVersion::version(void) const {
    return this->version_;

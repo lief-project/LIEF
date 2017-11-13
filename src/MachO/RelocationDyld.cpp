@@ -76,6 +76,29 @@ bool RelocationDyld::operator!=(const RelocationDyld& rhs) const {
   return not (*this == rhs);
 }
 
+bool RelocationDyld::operator<(const RelocationDyld& rhs) const {
+  // From ld/OutputFile.h
+  if (this->type() != rhs.type()) {
+    return this->type() < rhs.type();
+  }
+  return this->address() < rhs.address();
+}
+
+bool RelocationDyld::operator>=(const RelocationDyld& rhs) const {
+  return not (*this < rhs);
+}
+
+bool RelocationDyld::operator>(const RelocationDyld& rhs) const {
+  if (this->type() != rhs.type()) {
+    return this->type() > rhs.type();
+  }
+  return this->address() > rhs.address();
+}
+
+bool RelocationDyld::operator<=(const RelocationDyld& rhs) const {
+  return not (*this > rhs);
+}
+
 
 std::ostream& RelocationDyld::print(std::ostream& os) const {
   return Relocation::print(os);

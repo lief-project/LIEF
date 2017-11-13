@@ -33,6 +33,10 @@ SubFramework::SubFramework(const sub_framework_command *cmd) :
   umbrella_{}
 {}
 
+SubFramework* SubFramework::clone(void) const {
+  return new SubFramework(*this);
+}
+
 const std::string& SubFramework::umbrella(void) const {
   return this->umbrella_;
 }

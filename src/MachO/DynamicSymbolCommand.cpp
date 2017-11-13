@@ -91,6 +91,10 @@ DynamicSymbolCommand::DynamicSymbolCommand(const DynamicSymbolCommand&) = defaul
 
 DynamicSymbolCommand::~DynamicSymbolCommand(void) = default;
 
+DynamicSymbolCommand* DynamicSymbolCommand::clone(void) const {
+  return new DynamicSymbolCommand(*this);
+}
+
 
 uint32_t DynamicSymbolCommand::idx_local_symbol(void) const {
   return this->idx_local_symbol_;

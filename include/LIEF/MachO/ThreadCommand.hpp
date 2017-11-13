@@ -39,6 +39,8 @@ class LIEF_API ThreadCommand : public LoadCommand {
     ThreadCommand& operator=(const ThreadCommand& copy);
     ThreadCommand(const ThreadCommand& copy);
 
+    virtual ThreadCommand* clone(void) const override;
+
     virtual ~ThreadCommand(void);
 
     uint32_t flavor(void) const;

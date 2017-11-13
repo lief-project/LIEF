@@ -322,9 +322,6 @@ Enums
 .. doxygenenum:: LIEF::MachO::MACHO_SEGMENTS_FLAGS
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::SECTION_FLAGS_HELPER
-   :project: lief
-
 .. doxygenenum:: LIEF::MachO::MACHO_SECTION_TYPES
    :project: lief
 
@@ -380,6 +377,9 @@ Enums
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::EXPORT_SYMBOL_KINDS
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::EXPORT_SYMBOL_FLAGS
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::VM_PROTECTIONS

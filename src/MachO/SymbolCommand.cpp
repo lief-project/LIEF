@@ -33,6 +33,10 @@ SymbolCommand::SymbolCommand(const symtab_command *cmd) :
   stringsSize_{cmd->strsize}
 {}
 
+SymbolCommand* SymbolCommand::clone(void) const {
+  return new SymbolCommand(*this);
+}
+
 uint32_t SymbolCommand::symbol_offset(void) const {
   return this->symbolOffset_;
 }

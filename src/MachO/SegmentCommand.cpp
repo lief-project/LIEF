@@ -23,8 +23,42 @@ namespace LIEF {
 namespace MachO {
 
 SegmentCommand::SegmentCommand(void) = default;
-SegmentCommand& SegmentCommand::operator=(const SegmentCommand&) = default;
-SegmentCommand::SegmentCommand(const SegmentCommand&) = default;
+SegmentCommand& SegmentCommand::operator=(SegmentCommand other) {
+  this->swap(other);
+  return *this;
+}
+
+SegmentCommand::SegmentCommand(const SegmentCommand& other) :
+  LoadCommand{other},
+  name_{other.name_},
+  virtualAddress_{other.virtualAddress_},
+  virtualSize_{other.virtualSize_},
+  fileOffset_{other.fileOffset_},
+  fileSize_{other.fileSize_},
+  maxProtection_{other.maxProtection_},
+  initProtection_{other.initProtection_},
+  nbSections_{other.nbSections_},
+  flags_{other.flags_},
+  data_{other.data_},
+  sections_{},
+  relocations_{}
+{
+
+  for (Section* section : other.sections_) {
+    Section* new_section = new Section{*section};
+    new_section->segment_ = this;
+    new_section->segment_name_ = this->name();
+    this->sections_.push_back(new_section);
+  }
+
+  // TODO:
+  //for (Relocation* relocation : other.relocations_) {
+  //  Relocation* new_relocation = relocation->clone();
+  //  //this->relocations_.push_back(new_relocation);
+  //}
+}
+
+
 SegmentCommand::~SegmentCommand(void) {
   for (Relocation* reloc : this->relocations_) {
     delete reloc;
@@ -46,6 +80,7 @@ SegmentCommand::SegmentCommand(const segment_command_32 *segmentCmd) :
   initProtection_{segmentCmd->initprot},
   nbSections_{segmentCmd->nsects},
   flags_{segmentCmd->flags},
+  sections_{},
   relocations_{}
 {
   this->name_ = std::string{this->name_.c_str()};
@@ -62,11 +97,46 @@ SegmentCommand::SegmentCommand(const segment_command_64 *segmentCmd) :
   initProtection_{segmentCmd->initprot},
   nbSections_{segmentCmd->nsects},
   flags_{segmentCmd->flags},
+  sections_{},
   relocations_{}
 {
   this->name_ = std::string{this->name_.c_str()};
 }
 
+void SegmentCommand::swap(SegmentCommand& other) {
+  LoadCommand::swap(other);
+
+  std::swap(this->virtualAddress_, other.virtualAddress_);
+  std::swap(this->virtualSize_,    other.virtualSize_);
+  std::swap(this->fileOffset_,     other.fileOffset_);
+  std::swap(this->fileSize_,       other.fileSize_);
+  std::swap(this->maxProtection_,  other.maxProtection_);
+  std::swap(this->initProtection_, other.initProtection_);
+  std::swap(this->nbSections_,     other.nbSections_);
+  std::swap(this->flags_,          other.flags_);
+  std::swap(this->data_,           other.data_);
+  std::swap(this->sections_,       other.sections_);
+  std::swap(this->relocations_,    other.relocations_);
+}
+
+SegmentCommand* SegmentCommand::clone(void) const {
+  return new SegmentCommand(*this);
+}
+
+
+SegmentCommand::SegmentCommand(const std::string& name, const content_t& content) :
+  SegmentCommand{}
+{
+  this->name(name);
+  this->content(std::move(content));
+}
+
+
+SegmentCommand::SegmentCommand(const std::string& name) :
+  SegmentCommand{}
+{
+  this->name(name);
+}
 
 const std::string& SegmentCommand::name(void) const {
   return this->name_;
@@ -122,7 +192,7 @@ it_const_relocations SegmentCommand::relocations(void) const {
   return this->relocations_;
 }
 
-const std::vector<uint8_t>& SegmentCommand::content(void) const {
+const SegmentCommand::content_t& SegmentCommand::content(void) const {
   return this->data_;
 }
 
@@ -163,11 +233,7 @@ void SegmentCommand::flags(uint32_t flags) {
 }
 
 
-//void SegmentCommand::add_section(const Section& section) {
-//  this->sections_.push_back(section);
-//}
-
-void SegmentCommand::content(const std::vector<uint8_t>& data) {
+void SegmentCommand::content(const SegmentCommand::content_t& data) {
   this->data_ = data;
 }
 
@@ -175,6 +241,59 @@ void SegmentCommand::content(const std::vector<uint8_t>& data) {
 void SegmentCommand::remove_all_sections(void) {
   this->numberof_sections(0);
   this->sections_ = {};
+}
+
+Section& SegmentCommand::add_section(const Section& section) {
+  std::unique_ptr<Section> new_section{new Section{section}};
+
+  new_section->segment_ = this;
+  new_section->segment_name_ = this->name();
+
+  new_section->size(section.content().size());
+
+  new_section->offset(this->file_offset() + this->file_size());
+
+  if (section.virtual_address() == 0) {
+    new_section->virtual_address(this->virtual_address() + new_section->offset());
+  }
+
+  this->file_size(this->file_size() + new_section->size());
+
+  const size_t relative_offset = new_section->offset() - this->file_offset();
+  if ((relative_offset + new_section->size()) >= this->data_.size()) {
+    this->data_.resize(relative_offset + new_section->size());
+  }
+
+  const Section::content_t& content = section.content();
+  std::move(
+      std::begin(content),
+      std::end(content),
+      std::begin(this->data_) + relative_offset);
+
+  this->file_size(this->data_.size());
+  this->sections_.push_back(new_section.release());
+  return *this->sections_.back();
+}
+
+bool SegmentCommand::has(const Section& section) const {
+
+  auto&& it = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&section] (const Section* sec) {
+        return *sec == section;
+      });
+  return it != std::end(this->sections_);
+}
+
+bool SegmentCommand::has_section(const std::string& section_name) const {
+  auto&& it = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&section_name] (const Section* sec) {
+        return sec->name() == section_name;
+      });
+  return it != std::end(this->sections_);
 }
 
 

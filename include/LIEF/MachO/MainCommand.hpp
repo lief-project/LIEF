@@ -35,6 +35,8 @@ class LIEF_API MainCommand : public LoadCommand {
     MainCommand& operator=(const MainCommand& copy);
     MainCommand(const MainCommand& copy);
 
+    virtual MainCommand* clone(void) const override;
+
     virtual ~MainCommand(void);
 
     uint64_t entrypoint(void) const;

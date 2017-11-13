@@ -45,6 +45,8 @@ class LIEF_API DataInCode : public LoadCommand {
   DataInCode& operator=(const DataInCode&);
   DataInCode(const DataInCode&);
 
+  virtual DataInCode* clone(void) const override;
+
   uint32_t data_offset(void) const;
   uint32_t data_size(void) const;
 

@@ -38,6 +38,10 @@ MainCommand::MainCommand(const entry_point_command *cmd) :
   stackSize_{cmd->stacksize}
 {}
 
+MainCommand* MainCommand::clone(void) const {
+  return new MainCommand(*this);
+}
+
 
 uint64_t MainCommand::entrypoint(void) const {
   return this->entrypoint_;

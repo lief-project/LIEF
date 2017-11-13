@@ -46,17 +46,17 @@ void create<LoadCommand>(py::module& m) {
     .def_property("size",
         static_cast<getter_t<uint32_t>>(&LoadCommand::size),
         static_cast<setter_t<uint32_t>>(&LoadCommand::size),
-        "Command size")
+        "Size of the command (should be greather than ``sizeof(load_command)``)")
 
     .def_property("data",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&LoadCommand::data),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&LoadCommand::data),
+        static_cast<getter_t<const LoadCommand::raw_t&>>(&LoadCommand::data),
+        static_cast<setter_t<const LoadCommand::raw_t&>>(&LoadCommand::data),
         "Command's data")
 
     .def_property("command_offset",
         static_cast<getter_t<uint64_t>>(&LoadCommand::command_offset),
         static_cast<setter_t<uint64_t>>(&LoadCommand::command_offset),
-        "Offset to the comand")
+        "Offset of the command within the *Load Command Table*")
 
     .def("__eq__", &LoadCommand::operator==)
     .def("__ne__", &LoadCommand::operator!=)

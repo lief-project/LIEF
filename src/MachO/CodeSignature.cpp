@@ -34,6 +34,11 @@ CodeSignature::CodeSignature(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
+
+CodeSignature* CodeSignature::clone(void) const {
+  return new CodeSignature(*this);
+}
+
 uint32_t CodeSignature::data_offset(void) const {
   return this->data_offset_;
 }

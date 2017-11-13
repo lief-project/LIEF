@@ -72,6 +72,14 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
     bool is_external(void) const;
 
+    inline const DylibCommand* library(void) const {
+      return this->library_;
+    }
+
+    inline DylibCommand* library(void) {
+      return this->library_;
+    }
+
     SYMBOL_ORIGINS origin(void) const;
 
     virtual void accept(Visitor& visitor) const override;
@@ -82,13 +90,19 @@ class LIEF_API Symbol : public LIEF::Symbol {
     LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
 
   private:
+    inline void library(DylibCommand& library) {
+      this->library_ = &library;
+    }
+
     uint8_t  type_;
     uint8_t  numberof_sections_;
     uint16_t description_;
     uint64_t value_;
 
-    BindingInfo* binding_info_;
-    ExportInfo* export_info_;
+    BindingInfo* binding_info_{nullptr};
+    ExportInfo* export_info_{nullptr};
+
+    DylibCommand* library_{nullptr};
 
     SYMBOL_ORIGINS origin_;
 };

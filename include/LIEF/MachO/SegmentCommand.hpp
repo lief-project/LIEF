@@ -42,80 +42,94 @@ class LIEF_API SegmentCommand : public LoadCommand {
   friend class Binary;
 
   public:
-    SegmentCommand(void);
-    SegmentCommand(const segment_command_32 *segmentCmd);
-    SegmentCommand(const segment_command_64 *segmentCmd);
+  using content_t = std::vector<uint8_t>;
 
-    SegmentCommand& operator=(const SegmentCommand& copy);
-    SegmentCommand(const SegmentCommand& copy);
+  public:
+  SegmentCommand(void);
+  SegmentCommand(const segment_command_32 *segmentCmd);
+  SegmentCommand(const segment_command_64 *segmentCmd);
 
-    virtual ~SegmentCommand(void);
+  SegmentCommand& operator=(SegmentCommand other);
+  SegmentCommand(const SegmentCommand& copy);
 
-    const std::string& name(void) const;
-    uint64_t virtual_address(void) const;
-    uint64_t virtual_size(void) const;
-    uint64_t file_size(void) const;
-    uint64_t file_offset(void) const;
-    uint32_t max_protection(void) const;
-    uint32_t init_protection(void) const;
-    uint32_t numberof_sections(void) const;
-    uint32_t flags(void) const;
-    it_sections       sections(void);
-    it_const_sections sections(void) const;
+  SegmentCommand(const std::string& name, const content_t& content);
+  SegmentCommand(const std::string& name);
 
-    it_relocations       relocations(void);
-    it_const_relocations relocations(void) const;
+  void swap(SegmentCommand& other);
 
-    const std::vector<uint8_t>& content(void) const;
+  virtual SegmentCommand* clone(void) const override;
 
-    void name(const std::string& name);
-    void virtual_address(uint64_t virtualAddress);
-    void virtual_size(uint64_t virtualSize);
-    void file_offset(uint64_t fileOffset);
-    void file_size(uint64_t fileSize);
-    void max_protection(uint32_t maxProtection);
-    void init_protection(uint32_t initProtection);
-    void numberof_sections(uint32_t nbSections);
-    void flags(uint32_t flags);
-    //void add_section(const Section& section);
-    void content(const std::vector<uint8_t>& data);
+  virtual ~SegmentCommand(void);
 
-    void remove_all_sections(void);
+  const std::string& name(void) const;
+  uint64_t virtual_address(void) const;
+  uint64_t virtual_size(void) const;
+  uint64_t file_size(void) const;
+  uint64_t file_offset(void) const;
+  uint32_t max_protection(void) const;
+  uint32_t init_protection(void) const;
+  uint32_t numberof_sections(void) const;
+  uint32_t flags(void) const;
+  it_sections       sections(void);
+  it_const_sections sections(void) const;
 
-    bool operator==(const SegmentCommand& rhs) const;
-    bool operator!=(const SegmentCommand& rhs) const;
+  it_relocations       relocations(void);
+  it_const_relocations relocations(void) const;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  const content_t& content(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  void name(const std::string& name);
+  void virtual_address(uint64_t virtualAddress);
+  void virtual_size(uint64_t virtualSize);
+  void file_offset(uint64_t fileOffset);
+  void file_size(uint64_t fileSize);
+  void max_protection(uint32_t maxProtection);
+  void init_protection(uint32_t initProtection);
+  void numberof_sections(uint32_t nbSections);
+  void flags(uint32_t flags);
+  void content(const content_t& data);
+
+  Section& add_section(const Section& section);
+
+  void remove_all_sections(void);
+
+  bool has(const Section& section) const;
+  bool has_section(const std::string& section_name) const;
+
+  bool operator==(const SegmentCommand& rhs) const;
+  bool operator!=(const SegmentCommand& rhs) const;
+
+  virtual std::ostream& print(std::ostream& os) const override;
+
+  virtual void accept(Visitor& visitor) const override;
 
   private:
-    std::string name_;
+  std::string name_;
 
-    //! @brief Indicates the starting virtual memory address of this segmen
-    uint64_t virtualAddress_;
+  //! @brief Indicates the starting virtual memory address of this segmen
+  uint64_t virtualAddress_{0};
 
-    //! @brief Indicates the number of bytes of virtual memory occupied by this segment. See also the description of filesize, below.
-    uint64_t virtualSize_;
+  //! @brief Indicates the number of bytes of virtual memory occupied by this segment. See also the description of filesize, below.
+  uint64_t virtualSize_{0};
 
-    //! @brief Indicates the offset in this file of the data to be mapped at virtualAddress_.
-    uint64_t fileOffset_;
+  //! @brief Indicates the offset in this file of the data to be mapped at virtualAddress_.
+  uint64_t fileOffset_{0};
 
-    uint64_t fileSize_;
+  uint64_t fileSize_{0};
 
-    uint32_t maxProtection_;
+  uint32_t maxProtection_{0};
 
-    uint32_t initProtection_;
+  uint32_t initProtection_{0};
 
-    uint32_t nbSections_;
+  uint32_t nbSections_{0};
 
-    uint32_t flags_;
+  uint32_t flags_{0};
 
-    std::vector<uint8_t> data_;
+  content_t data_;
 
-    sections_t    sections_;
+  sections_t    sections_;
 
-    relocations_t relocations_;
+  relocations_t relocations_;
 
 
 };

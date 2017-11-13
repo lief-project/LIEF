@@ -25,7 +25,8 @@
 namespace LIEF {
 class vector_iostream {
   public:
-
+  static size_t uleb128_size(uint64_t value);
+  static size_t sleb128_size(int64_t value);
   using pos_type = std::streampos;
   using off_type = std::streamoff;
 
@@ -45,6 +46,26 @@ class vector_iostream {
   vector_iostream& write_conv_array(const std::vector<T>& v);
 
   vector_iostream& align(size_t size, uint8_t val = 0);
+
+  template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
+  vector_iostream& write(Integer integer) {
+    if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + sizeof(Integer))) {
+      this->raw_.resize(static_cast<size_t>(this->tellp()) + sizeof(Integer));
+    }
+
+    auto&& it = std::begin(this->raw_);
+    std::advance(it, static_cast<size_t>(this->tellp()));
+    std::copy(
+        reinterpret_cast<const Integer*>(&integer),
+        reinterpret_cast<const Integer*>(&integer) + sizeof(Integer),
+        it);
+
+    this->current_pos_ += sizeof(Integer);
+    return *this;
+  }
+
+  vector_iostream& write_uleb128(uint64_t value);
+  vector_iostream& write_sleb128(int64_t value);
 
   vector_iostream& get(std::vector<uint8_t>& c);
 

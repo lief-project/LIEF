@@ -39,6 +39,8 @@ class LIEF_API CodeSignature : public LoadCommand {
     CodeSignature& operator=(const CodeSignature& copy);
     CodeSignature(const CodeSignature& copy);
 
+    virtual CodeSignature* clone(void) const override;
+
     uint32_t data_offset(void) const;
 
     uint32_t data_size(void) const;

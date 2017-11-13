@@ -72,6 +72,32 @@ size_t Binary::count_commands(void) const {
 
 }
 
+template<class T>
+void Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift) {
+
+  SegmentCommand* segment = this->segment_from_virtual_address(relocation.address());
+
+  const uint64_t relative_offset = this->virtual_address_to_offset(relocation.address()) - segment->file_offset();
+  std::vector<uint8_t> segment_content = segment->content();
+  const size_t segment_size = segment_content.size();
+
+  if (segment_size == 0) {
+    LOG(WARNING) << "Segment is empty nothing to do";
+    return;
+  }
+
+  if (relative_offset >= segment_size or (relative_offset + sizeof(T)) >= segment_size) {
+    VLOG(VDEBUG) << "Offset out of bound for relocation: " << relocation;
+    return;
+  }
+
+  T* ptr_value = reinterpret_cast<T*>(segment_content.data() + relative_offset);
+  if (*ptr_value >= from and this->is_valid_addr(*ptr_value)) {
+    *ptr_value += shift;
+  }
+  segment->content(std::move(segment_content));
+}
+
 
 }
 }

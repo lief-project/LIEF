@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
-
+#include "LIEF/utils.hpp"
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/DylibCommand.hpp"
@@ -42,9 +42,13 @@ DylibCommand::~DylibCommand(void) = default;
 DylibCommand::DylibCommand(const dylib_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   timestamp_{cmd->dylib.timestamp},
-  currentVersion_{cmd->dylib.current_version},
-  compatibilityVersion_{cmd->dylib.compatibility_version}
-{
+  current_version_{cmd->dylib.current_version},
+  compatibility_version_{cmd->dylib.compatibility_version}
+{}
+
+
+DylibCommand* DylibCommand::clone(void) const {
+  return new DylibCommand(*this);
 }
 
 const std::string& DylibCommand::name(void) const {
@@ -56,11 +60,11 @@ uint32_t DylibCommand::timestamp(void) const {
 }
 
 DylibCommand::version_t DylibCommand::current_version(void) const {
-  return int2version(this->currentVersion_);
+  return int2version(this->current_version_);
 }
 
 DylibCommand::version_t DylibCommand::compatibility_version(void) const {
-  return int2version(this->compatibilityVersion_);
+  return int2version(this->compatibility_version_);
 }
 
 void DylibCommand::name(const std::string& name) {
@@ -72,11 +76,11 @@ void DylibCommand::timestamp(uint32_t timestamp) {
 }
 
 void DylibCommand::current_version(DylibCommand::version_t currentVersion) {
-  this->currentVersion_ = version2int(currentVersion);
+  this->current_version_ = version2int(currentVersion);
 }
 
 void DylibCommand::compatibility_version(DylibCommand::version_t compatibilityVersion) {
-  this->compatibilityVersion_ = version2int(compatibilityVersion);
+  this->compatibility_version_ = version2int(compatibilityVersion);
 }
 
 
@@ -120,6 +124,97 @@ std::ostream& DylibCommand::print(std::ostream& os) const {
 std::ostream& operator<<(std::ostream& os, const DylibCommand& command) {
   return command.print(os);
 }
+
+// Static functions
+// ================
+
+DylibCommand DylibCommand::create(LOAD_COMMAND_TYPES type,
+    const std::string& name,
+    uint32_t timestamp,
+    uint32_t current_version,
+    uint32_t compat_version) {
+
+  dylib_command raw_cmd;
+  raw_cmd.cmd                         = static_cast<uint32_t>(type);
+  raw_cmd.cmdsize                     = align(sizeof(dylib_command) + name.size() + 1, sizeof(uint64_t));
+  raw_cmd.dylib.timestamp             = timestamp;
+  raw_cmd.dylib.current_version       = current_version;
+  raw_cmd.dylib.compatibility_version = compat_version;
+
+  DylibCommand dylib{&raw_cmd};
+  dylib.name(name);
+  dylib.data(LoadCommand::raw_t(raw_cmd.cmdsize, 0));
+
+  return dylib;
+}
+
+DylibCommand DylibCommand::load_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_LOAD_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
+DylibCommand DylibCommand::weak_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_LOAD_WEAK_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
+DylibCommand DylibCommand::id_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_ID_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
+DylibCommand DylibCommand::reexport_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_REEXPORT_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
+DylibCommand DylibCommand::load_upward_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_LOAD_UPWARD_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
+
+DylibCommand DylibCommand::lazy_load_dylib(const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version)
+{
+
+  return DylibCommand::create(
+      LOAD_COMMAND_TYPES::LC_LAZY_LOAD_DYLIB, name,
+      timestamp, current_version, compat_version);
+}
+
 
 }
 }

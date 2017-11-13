@@ -211,22 +211,22 @@ void BinaryParser::parse_load_commands(void) {
       // ==============
       // Prebound Dylib
       // ==============
-      case LOAD_COMMAND_TYPES::LC_PREBOUND_DYLIB:
-        {
-          VLOG(VDEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
+      //case LOAD_COMMAND_TYPES::LC_PREBOUND_DYLIB:
+      //  {
+      //    VLOG(VDEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
 
-          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
-          const prebound_dylib_command* cmd = &this->stream_->peek<prebound_dylib_command>(loadcommands_offset);
+      //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
+      //    const prebound_dylib_command* cmd = &this->stream_->peek<prebound_dylib_command>(loadcommands_offset);
 
 
-          std::string name = this->stream_->peek_string_at(
-             loadcommands_offset +
-             cmd->name);
+      //    std::string name = this->stream_->peek_string_at(
+      //       loadcommands_offset +
+      //       cmd->name);
 
-          //uint32_t sizeof_linked_modules = (cmd->nmodules / 8) + (cmd->nmodules % 8);
+      //    //uint32_t sizeof_linked_modules = (cmd->nmodules / 8) + (cmd->nmodules % 8);
 
-          break;
-        }
+      //    break;
+      //  }
 
       // ======
       // Thread
@@ -294,15 +294,13 @@ void BinaryParser::parse_load_commands(void) {
       // ===============
       // Routine command
       // ===============
-      case LOAD_COMMAND_TYPES::LC_ROUTINES:
-      case LOAD_COMMAND_TYPES::LC_ROUTINES_64:
-        {
-
-          VLOG(VDEBUG) << "[+] Parsing LC_ROUTINE";
-
-          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
-          break;
-        }
+      //case LOAD_COMMAND_TYPES::LC_ROUTINES:
+      //case LOAD_COMMAND_TYPES::LC_ROUTINES_64:
+      //  {
+      //    VLOG(VDEBUG) << "[+] Parsing LC_ROUTINE";
+      //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
+      //    break;
+      //  }
 
       // =============
       // Symbols table
@@ -393,6 +391,7 @@ void BinaryParser::parse_load_commands(void) {
       // =================
       // Code Signature
       // =================
+      case LOAD_COMMAND_TYPES::LC_DYLIB_CODE_SIGN_DRS:
       case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
         {
 
@@ -669,6 +668,9 @@ void BinaryParser::parse_dyldinfo_rebases() {
 	uint32_t count = 0;
 	uint32_t skip = 0;
 
+  it_segments segments = this->binary_->segments();
+  const SegmentCommand* current_segmment = nullptr;
+
   this->stream_->setpos(offset);
 
   while (not done and this->stream_->pos() < end_offset) {
@@ -693,6 +695,13 @@ void BinaryParser::parse_dyldinfo_rebases() {
   				segment_index   = imm;
           segment_offset  = this->stream_->read_uleb128();
 
+          if (segment_index < segments.size()) {
+            current_segmment = &segments[segment_index];
+          } else {
+            LOG(ERROR) << "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB: Bad index";
+            done = true;
+          }
+
 		  		break;
         }
 
@@ -700,12 +709,22 @@ void BinaryParser::parse_dyldinfo_rebases() {
         {
           segment_offset += this->stream_->read_uleb128();
 
+          if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+            LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
+                       << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+          }
+
 	  			break;
         }
 
 			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
         {
 				  segment_offset += (imm * sizeof(pint_t));
+
+          if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+            LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
+                       << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+          }
 				  break;
         }
 
@@ -714,6 +733,11 @@ void BinaryParser::parse_dyldinfo_rebases() {
           for (size_t i = 0; i < imm; ++i) {
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 				    segment_offset += sizeof(pint_t);
+
+            if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+              LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
+                         << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+            }
 				  }
 				  break;
         }
@@ -722,6 +746,11 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
           count = this->stream_->read_uleb128();
 				  for (size_t i = 0; i < count; ++i) {
+
+            if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+                LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
+                           << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+            }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 					  segment_offset += sizeof(pint_t);
 				  }
@@ -731,6 +760,10 @@ void BinaryParser::parse_dyldinfo_rebases() {
 			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
         {
 
+          if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+              LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
+                         << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+          }
           this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
@@ -748,6 +781,11 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
 
 				  for (size_t i = 0; i < count; ++i) {
+
+            if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
+                LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
+                           << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+            }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 					  segment_offset += skip + sizeof(pint_t);
 				  }
@@ -763,34 +801,6 @@ void BinaryParser::parse_dyldinfo_rebases() {
     }
   }
 
-  it_segments segments = this->binary_->segments();
-  // Tie segments and relocations
-  // The **OWNER**: Segment (destructor)
-  for (SegmentCommand& segment : segments) {
-    for (Relocation& relocation : segment.relocations()) {
-      relocation.segment_ = &segment;
-    }
-  }
-  // Tie sections and relocations
-  for (SegmentCommand& segment : segments) {
-    uint64_t offset = 0;
-
-    for (Relocation& relocation : segment.relocations()) {
-      if (not this->binary_->is_valid_addr(relocation.address())) {
-        continue;
-      }
-
-      try {
-        Section& section = this->binary_->section_from_virtual_address(relocation.address());
-        relocation.section_ = &section;
-      } catch (const not_found& e) {
-        VLOG(VDEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << relocation.address() << " - 0x" << offset;
-      }
-    }
-  }
-
-
-
   // Tie symbols and relocations
   for (Relocation& relocation : this->binary_->relocations()) {
 
@@ -798,17 +808,6 @@ void BinaryParser::parse_dyldinfo_rebases() {
       continue;
     }
 
-    uint64_t address = relocation.address();
-    auto&& it_symbol = std::find_if(
-        std::begin(this->binary_->symbols_),
-        std::end(this->binary_->symbols_),
-        [&address] (const Symbol* sym) {
-          return sym->value() == address;
-        });
-
-    if (it_symbol != std::end(this->binary_->symbols_)) {
-      relocation.symbol_ = *it_symbol;
-    }
   }
 
 }
@@ -968,6 +967,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               library_ordinal,
               addend,
               is_weak_import,
+              false,
               segments);
 					segment_offset += sizeof(pint_t);
 					break;
@@ -984,6 +984,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               library_ordinal,
               addend,
               is_weak_import,
+              false,
               segments);
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 					break;
@@ -1000,6 +1001,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               library_ordinal,
               addend,
               is_weak_import,
+              false,
               segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
 					break;
@@ -1024,6 +1026,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
                 library_ordinal,
                 addend,
                 is_weak_import,
+                false,
                 segments);
             segment_offset += skip + sizeof(pint_t);
 					}
@@ -1077,6 +1080,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 	uint32_t    skip = 0;
 
   bool        is_weak_import = true;
+  bool        is_non_weak_definition = false;
 	bool        done = false;
 
   it_segments segments = this->binary_->segments();
@@ -1100,7 +1104,9 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 				  symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION) != 0) {
-            // TODO: STRONG
+            is_non_weak_definition = true;
+          } else {
+            is_non_weak_definition = false;
           }
 					break;
         }
@@ -1146,6 +1152,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               0,
               addend,
               is_weak_import,
+              is_non_weak_definition,
               segments);
 					segment_offset += sizeof(pint_t);
 					break;
@@ -1163,6 +1170,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               0,
               addend,
               is_weak_import,
+              is_non_weak_definition,
               segments);
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 					break;
@@ -1180,6 +1188,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               0,
               addend,
               is_weak_import,
+              is_non_weak_definition,
               segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
 					break;
@@ -1205,6 +1214,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
                 0,
                 addend,
                 is_weak_import,
+                is_non_weak_definition,
                 segments);
             segment_offset += skip + sizeof(pint_t);
 					}
@@ -1334,6 +1344,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
               library_ordinal,
               addend,
               is_weak_import,
+              false,
               segments);
 					segment_offset += sizeof(pint_t);
 					break;
@@ -1357,6 +1368,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
         int32_t ord,
         int64_t addend,
         bool is_weak,
+        bool is_non_weak_definition,
         it_segments& segments) {
 
 
@@ -1370,51 +1382,14 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   // Address to bind
   uint64_t address = segment.virtual_address() + segment_offset;
 
-  std::unique_ptr<RelocationDyld> new_relocation{new RelocationDyld{address, type}};
-  auto&& result = segment.relocations_.emplace(new_relocation.get());
-  Relocation* reloc = *result.first;
-  if (result.second) {
-    new_relocation.release();
-  } else {
-    delete new_relocation.release();
+  if (address > (segment.virtual_address() + segment.virtual_size())) {
+    LOG(ERROR) << "Bad address: " << std::hex << std::showbase << address;
+    return;
   }
 
-
-
-  reloc->architecture_ = this->binary_->header().cpu_type();
-
-  switch (static_cast<BIND_TYPES>(type)) {
-    case BIND_TYPES::BIND_TYPE_POINTER:
-      {
-        // *address = value + addend;
-        reloc->size_ = sizeof(pint_t) * 8;
-        break;
-      }
-
-    case BIND_TYPES::BIND_TYPE_TEXT_ABSOLUTE32:
-      {
-
-        reloc->size_ = sizeof(uint32_t) * 8;
-        // *address = value + addend;
-        break;
-      }
-
-    case BIND_TYPES::BIND_TYPE_TEXT_PCREL32:
-      {
-
-        reloc->size_ = sizeof(uint32_t) * 8;
-        //*address = value - (address + 4);
-        break;
-      }
-
-    default:
-      {
-        LOG(ERROR) << "Unsuported binding type: 0x" << std::hex << type;
-      }
-  }
 
   // Create a BindingInfo object
-  std::unique_ptr<BindingInfo> binding_info{new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak}};
+  std::unique_ptr<BindingInfo> binding_info{new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak, is_non_weak_definition}};
   binding_info->segment_ = &segment;
 
 
@@ -1423,16 +1398,9 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     binding_info->library_ = &libraries[ord - 1];
   }
 
-  try {
-    Section& section = this->binary_->section_from_virtual_address(reloc->address());
-    reloc->section_ = &section;
-  } catch (const not_found&) {
-    VLOG(VDEBUG) << "Unable to tie a section with dyld relocation at 0x" << std::hex << reloc->address();
-  }
 
   if (this->binary_->has_symbol(symbol_name)) {
     Symbol& symbol = this->binary_->get_symbol(symbol_name);
-    reloc->symbol_ = &symbol;
     //symbol.value(address);
     binding_info->symbol_ = &symbol;
     symbol.binding_info_ = binding_info.get();
@@ -1459,17 +1427,41 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   SegmentCommand& segment = segments[segment_idx];
   uint64_t address = segment.virtual_address() + segment_offset;
 
+  if (address > (segment.virtual_address() + segment.virtual_size())) {
+    LOG(ERROR) << "Bad rebase address: " << std::hex << std::showbase << address;
+    return;
+  }
+
   // Check if a relocation already exists:
   std::unique_ptr<RelocationDyld> new_relocation{new RelocationDyld{address, type}};
   auto&& result = segment.relocations_.emplace(new_relocation.get());
   Relocation* reloc = *result.first;
+
+  // result.second is true if the insertion succeed
   if (result.second) {
     new_relocation.release();
   } else {
     delete new_relocation.release();
   }
-
   reloc->architecture_ = this->binary_->header().cpu_type();
+
+  // Tie section and segment
+  reloc->segment_ = &segment;
+  Section* section = this->binary_->section_from_virtual_address(address);
+  DCHECK_NE(section, nullptr);
+  reloc->section_ = section;
+
+  // Tie symbol
+  auto&& it_symbol = std::find_if(
+      std::begin(this->binary_->symbols_),
+      std::end(this->binary_->symbols_),
+      [address] (const Symbol* sym) {
+        return sym->value() == address;
+      });
+
+  if (it_symbol != std::end(this->binary_->symbols_)) {
+    reloc->symbol_ = *it_symbol;
+  }
 
   switch (static_cast<REBASE_TYPES>(type)) {
     case REBASE_TYPES::REBASE_TYPE_POINTER:

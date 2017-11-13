@@ -55,6 +55,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/SubFramework.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DyldEnvironment.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/EncryptionInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/TrieNode.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -98,7 +99,8 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SubFramework.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DyldEnvironment.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/EncryptionInfo.hpp"
-  )
+  "${CMAKE_CURRENT_LIST_DIR}/TrieNode.hpp"
+)
 
 # JSON Part
 # =========

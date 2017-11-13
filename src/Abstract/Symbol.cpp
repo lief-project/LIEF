@@ -32,6 +32,10 @@ const std::string& Symbol::name(void) const {
   return this->name_;
 }
 
+std::string& Symbol::name(void) {
+  return this->name_;
+}
+
 void Symbol::name(const std::string& name) {
   this->name_ = name;
 }

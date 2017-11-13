@@ -37,6 +37,10 @@ ThreadCommand::ThreadCommand(const thread_command *cmd) :
   state_{}
 {}
 
+ThreadCommand* ThreadCommand::clone(void) const {
+  return new ThreadCommand(*this);
+}
+
 
 uint32_t ThreadCommand::flavor(void) const {
   return this->flavor_;

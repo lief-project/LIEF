@@ -51,18 +51,17 @@ class LIEF_API Relocation : public Object {
     bool operator==(const Relocation& rhs) const;
     bool operator!=(const Relocation& rhs) const;
 
+    //! @brief Comparaison based on the Relocation's **address**
+    virtual bool operator<(const Relocation& rhs) const;
 
     //! @brief Comparaison based on the Relocation's **address**
-    bool operator<(const Relocation& rhs) const;
+    virtual bool operator<=(const Relocation& rhs) const;
 
     //! @brief Comparaison based on the Relocation's **address**
-    bool operator<=(const Relocation& rhs) const;
+    virtual bool operator>(const Relocation& rhs) const;
 
     //! @brief Comparaison based on the Relocation's **address**
-    bool operator>(const Relocation& rhs) const;
-
-    //! @brief Comparaison based on the Relocation's **address**
-    bool operator>=(const Relocation& rhs) const;
+    virtual bool operator>=(const Relocation& rhs) const;
 
     LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 

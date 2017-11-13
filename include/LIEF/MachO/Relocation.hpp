@@ -125,11 +125,11 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
 
   protected:
-    Symbol*            symbol_;
+    Symbol*            symbol_{nullptr};
     uint8_t            type_;
     CPU_TYPES          architecture_;
-    Section*           section_;
-    SegmentCommand*    segment_;
+    Section*           section_{nullptr};
+    SegmentCommand*    segment_{nullptr};
 
 };
 

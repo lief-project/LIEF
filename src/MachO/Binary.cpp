@@ -15,9 +15,10 @@
  */
 
 #include "LIEF/logging++.hpp"
-
+#include "LIEF/utils.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Builder.hpp"
+#include "Object.tcc"
 #include "Binary.tcc"
 
 #include "LIEF/MachO/hash.hpp"
@@ -57,38 +58,55 @@ LIEF::sections_t Binary::get_abstract_sections(void) {
 
 void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES) {
   // Find the segment associated with the virtual address
-  SegmentCommand& segment_topatch = this->segment_from_virtual_address(address);
-  const uint64_t offset = address - segment_topatch.virtual_address();
-  std::vector<uint8_t> content = segment_topatch.content();
+  SegmentCommand* segment_topatch = this->segment_from_virtual_address(address);
+  if (segment_topatch == nullptr) {
+    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << address;
+    return;
+  }
+  const uint64_t offset = address - segment_topatch->virtual_address();
+  std::vector<uint8_t> content = segment_topatch->content();
   std::copy(
       std::begin(patch_value),
       std::end(patch_value),
       content.data() + offset);
-  segment_topatch.content(content);
+  segment_topatch->content(content);
 
 }
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
   if (size > sizeof(patch_value)) {
-    throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
+    LOG(ERROR) << "Invalid size: " << std::hex << std::showbase << size;
+    return;
   }
 
-  SegmentCommand& segment_topatch = this->segment_from_virtual_address(address);
-  const uint64_t offset = address - segment_topatch.virtual_address();
-  std::vector<uint8_t> content = segment_topatch.content();
+  SegmentCommand* segment_topatch = this->segment_from_virtual_address(address);
+
+  if (segment_topatch == nullptr) {
+    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << address;
+    return;
+  }
+  const uint64_t offset = address - segment_topatch->virtual_address();
+  std::vector<uint8_t> content = segment_topatch->content();
 
   std::copy(
       reinterpret_cast<uint8_t*>(&patch_value),
       reinterpret_cast<uint8_t*>(&patch_value) + size,
       content.data() + offset);
-  segment_topatch.content(content);
+  segment_topatch->content(content);
 
 }
 
 std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size, LIEF::Binary::VA_TYPES) const {
-  const SegmentCommand& segment = this->segment_from_virtual_address(virtual_address);
-  const std::vector<uint8_t>& content = segment.content();
-  const uint64_t offset = virtual_address - segment.virtual_address();
+  const SegmentCommand* segment = this->segment_from_virtual_address(virtual_address);
+
+  if (segment == nullptr) {
+    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << virtual_address;
+    return {};
+  }
+
+  const std::vector<uint8_t>& content = segment->content();
+  const uint64_t offset = virtual_address - segment->virtual_address();
+
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {
     checked_size = checked_size - (offset + checked_size - content.size());
@@ -211,7 +229,7 @@ it_libraries Binary::libraries(void) {
       result.push_back(dynamic_cast<DylibCommand*>(library));
     }
   }
-  return it_libraries{result};
+  return result;
 }
 
 it_const_libraries Binary::libraries(void) const {
@@ -223,7 +241,7 @@ it_const_libraries Binary::libraries(void) const {
       result.push_back(dynamic_cast<DylibCommand*>(library));
     }
   }
-  return it_const_libraries{result};
+  return result;
 }
 
 it_segments Binary::segments(void) {
@@ -270,7 +288,7 @@ it_const_sections Binary::sections(void) const {
 
 
 // Relocations
-it_relocations Binary::relocations(void) {
+it_relocations Binary::relocations() {
   relocations_t result;
   for (SegmentCommand& segment : this->segments()) {
     result.insert(std::begin(segment.relocations_), std::end(segment.relocations_));
@@ -280,14 +298,14 @@ it_relocations Binary::relocations(void) {
     result.insert(std::begin(section.relocations_), std::end(section.relocations_));
   }
 
-  if (result.size() != this->relocations_.size()) {
-    this->relocations_ = std::move(result);
-  }
+  //if (reload or result.size() != this->relocations_.size()) {
+  this->relocations_ = std::move(result);
+  //}
 
   return this->relocations_;
 }
 
-it_const_relocations Binary::relocations(void) const {
+it_const_relocations Binary::relocations() const {
   relocations_t result;
   for (const SegmentCommand& segment : this->segments()) {
     result.insert(std::begin(segment.relocations_), std::end(segment.relocations_));
@@ -297,9 +315,9 @@ it_const_relocations Binary::relocations(void) const {
     result.insert(std::begin(section.relocations_), std::end(section.relocations_));
   }
 
-  if (result.size() != this->relocations_.size()) {
-    this->relocations_ = std::move(result);
-  }
+  //if (reload or result.size() != this->relocations_.size()) {
+  this->relocations_ = std::move(result);
+  //}
 
   return this->relocations_;
 }
@@ -394,7 +412,7 @@ void Binary::write(const std::string& filename) {
 }
 
 
-const Section& Binary::section_from_offset(uint64_t offset) const {
+const Section* Binary::section_from_offset(uint64_t offset) const {
   it_const_sections sections = this->sections();
   auto&& it_section = std::find_if(
       sections.cbegin(),
@@ -405,39 +423,39 @@ const Section& Binary::section_from_offset(uint64_t offset) const {
       });
 
   if (it_section == sections.cend()) {
-    throw not_found("Unable to find the section");
+    return nullptr;
   }
 
-  return *it_section;
+  return &(*it_section);
 }
 
-Section& Binary::section_from_offset(uint64_t offset) {
-  return const_cast<Section&>(static_cast<const Binary*>(this)->section_from_offset(offset));
+Section* Binary::section_from_offset(uint64_t offset) {
+  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
 }
 
 
-const Section& Binary::section_from_virtual_address(uint64_t address) const {
+const Section* Binary::section_from_virtual_address(uint64_t address) const {
   it_const_sections sections = this->sections();
   auto&& it_section = std::find_if(
-      sections.cbegin(),
-      sections.cend(),
-      [&address] (const Section& section) {
+      std::begin(sections),
+      std::end(sections),
+      [address] (const Section& section) {
         return ((section.virtual_address() <= address) and
             address < (section.virtual_address() + section.size()));
       });
 
   if (it_section == sections.cend()) {
-    throw not_found("Unable to find the section");
+    return nullptr;
   }
 
-  return *it_section;
+  return &(*it_section);
 }
 
-Section& Binary::section_from_virtual_address(uint64_t address) {
-  return const_cast<Section&>(static_cast<const Binary*>(this)->section_from_virtual_address(address));
+Section* Binary::section_from_virtual_address(uint64_t address) {
+  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(address));
 }
 
-const SegmentCommand& Binary::segment_from_virtual_address(uint64_t virtual_address) const {
+const SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) const {
   it_const_segments segments = this->segments();
   auto&& it_segment = std::find_if(
       std::begin(segments),
@@ -448,19 +466,28 @@ const SegmentCommand& Binary::segment_from_virtual_address(uint64_t virtual_addr
       });
 
   if (it_segment == segments.cend()) {
-    std::stringstream ss;
-    ss << "0x" << std::hex << virtual_address;
-    throw not_found("Unable to find the segment from address " + ss.str());
+    return nullptr;
   }
 
-  return *it_segment;
+  return &(*it_segment);
 }
 
-SegmentCommand& Binary::segment_from_virtual_address(uint64_t virtual_address) {
-  return const_cast<SegmentCommand&>(static_cast<const Binary*>(this)->segment_from_virtual_address(virtual_address));
+size_t Binary::segment_index(const SegmentCommand& segment) const {
+  auto&& segments = this->segments();
+  auto&& it = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&segment] (const SegmentCommand& s) {
+        return s == segment;
+      });
+  return std::distance(std::begin(segments), it);
 }
 
-const SegmentCommand& Binary::segment_from_offset(uint64_t offset) const {
+SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) {
+  return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_virtual_address(virtual_address));
+}
+
+const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
   it_const_segments segments = this->segments();
   auto&& it_segment = std::find_if(
       std::begin(segments),
@@ -471,53 +498,694 @@ const SegmentCommand& Binary::segment_from_offset(uint64_t offset) const {
       });
 
   if (it_segment == segments.cend()) {
-    throw not_found("Unable to find the section");
+    return nullptr;
   }
 
-  return *it_segment;
+  return &(*it_segment);
 }
 
-SegmentCommand& Binary::segment_from_offset(uint64_t offset) {
-  return const_cast<SegmentCommand&>(static_cast<const Binary*>(this)->segment_from_offset(offset));
+SegmentCommand* Binary::segment_from_offset(uint64_t offset) {
+  return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
+}
+
+void Binary::shift_command(size_t width, size_t from_offset) {
+  const SegmentCommand* segment = this->segment_from_offset(from_offset);
+  const SegmentCommand* __text_segment = this->get_segment("__TEXT");
+
+  size_t __text_base_addr = 0;
+  size_t virtual_address = 0;
+
+  if (segment != nullptr) {
+    virtual_address = segment->virtual_address() + from_offset;
+  }
+
+  if (__text_segment != nullptr) {
+    __text_base_addr = __text_segment->virtual_address();
+  }
+
+
+  // Shift symbols command
+  // =====================
+  if (this->has_symbol_command()) {
+    SymbolCommand& symcmd = this->symbol_command();
+
+    if (symcmd.symbol_offset() > from_offset) {
+      symcmd.symbol_offset(symcmd.symbol_offset() + width);
+    }
+
+    if (symcmd.strings_offset() > from_offset) {
+      symcmd.strings_offset(symcmd.strings_offset() + width);
+    }
+  }
+
+  // Data In Code
+  // ============
+  if (this->has_data_in_code()) {
+    DataInCode& dcmd = this->data_in_code();
+
+    if (dcmd.data_offset() > from_offset) {
+      dcmd.data_offset(dcmd.data_offset() + width);
+    }
+  }
+
+
+  // Code Signature
+  // ==============
+  if (this->has_code_signature()) {
+    CodeSignature& sig = this->code_signature();
+
+    if (sig.data_offset() > from_offset) {
+      sig.data_offset(sig.data_offset() + width);
+    }
+  }
+
+  if (this->has_segment_split_info()) {
+    SegmentSplitInfo& ssi = this->segment_split_info();
+
+    if (ssi.data_offset() > from_offset) {
+      ssi.data_offset(ssi.data_offset() + width);
+    }
+  }
+
+  // Shift Main Command
+  // ==================
+  if (this->has_main_command()) {
+     if ((__text_base_addr + this->main_command().entrypoint()) > virtual_address) {
+      this->main_command().entrypoint(this->main_command().entrypoint() + width);
+    }
+  }
+
+  // Patch function starts
+  // =====================
+  if (this->has_function_starts()) {
+    FunctionStarts& fs = this->function_starts();
+    fs.data_offset(fs.data_offset() + width);
+    for (uint64_t& address : this->function_starts().functions()) {
+      if ((__text_base_addr + address) > virtual_address) {
+        address += width;
+      }
+    }
+  }
+
+  // Dynamic symbol command
+  // ======================
+  if (this->has_dynamic_symbol_command()) {
+    DynamicSymbolCommand& dsymcmd = this->dynamic_symbol_command();
+    if (dsymcmd.toc_offset() > from_offset) {
+      dsymcmd.toc_offset(dsymcmd.toc_offset() + width);
+    }
+
+    if (dsymcmd.module_table_offset() > from_offset) {
+      dsymcmd.module_table_offset(dsymcmd.module_table_offset() + width);
+    }
+
+    if (dsymcmd.external_reference_symbol_offset() > from_offset) {
+      dsymcmd.external_reference_symbol_offset(dsymcmd.external_reference_symbol_offset() + width);
+    }
+
+    if (dsymcmd.indirect_symbol_offset() > from_offset) {
+      dsymcmd.indirect_symbol_offset(dsymcmd.indirect_symbol_offset() + width);
+    }
+
+    if (dsymcmd.external_relocation_offset() > from_offset) {
+      dsymcmd.external_relocation_offset(dsymcmd.external_relocation_offset() + width);
+    }
+
+    if (dsymcmd.local_relocation_offset() > from_offset) {
+      dsymcmd.local_relocation_offset(dsymcmd.local_relocation_offset() + width);
+    }
+  }
+
+  // Patch Dyld
+  // ==========
+  if (this->has_dyld_info()) {
+    DyldInfo& dyld = this->dyld_info();
+
+    // Shift underlying containers offset
+    if (dyld.rebase().first > from_offset) {
+      dyld.set_rebase_offset(dyld.rebase().first + width);
+    }
+
+    if (dyld.bind().first > from_offset) {
+      dyld.set_bind_offset(dyld.bind().first + width);
+    }
+
+    if (dyld.weak_bind().first > from_offset) {
+      dyld.set_weak_bind_offset(dyld.weak_bind().first + width);
+    }
+
+    if (dyld.lazy_bind().first > from_offset) {
+      dyld.set_lazy_bind_offset(dyld.lazy_bind().first + width);
+    }
+
+    if (dyld.export_info().first > from_offset) {
+      dyld.set_export_offset(dyld.export_info().first + width);
+    }
+
+
+    // Shift Relocations
+    // -----------------
+    // TODO: Optimize this code
+    for (Relocation& reloc : this->relocations()) {
+      if (reloc.address() > virtual_address) {
+        if (this->is64_) {
+          this->patch_relocation<uint64_t>(reloc, /* from */ virtual_address, /* shift */ width);
+        } else {
+          this->patch_relocation<uint32_t>(reloc, /* from */ virtual_address, /* shift */ width);
+        }
+        reloc.address(reloc.address() + width);
+      }
+    }
+
+    // Shift Export Info
+    // -----------------
+    for (ExportInfo& info : dyld.exports()) {
+      if (info.address() > virtual_address) {
+        info.address(info.address() + width);
+      }
+    }
+
+    // Shift bindings
+    // --------------
+    for (BindingInfo& info : dyld.bindings()) {
+      if (info.address() > virtual_address) {
+        info.address(info.address() + width);
+      }
+    }
+  }
+
+
 }
 
 
+void Binary::shift(size_t value) {
 
-LoadCommand& Binary::insert_command(const LoadCommand& command) {
-  VLOG(VDEBUG) << "Insert command" << std::endl;
+  Header& header = this->header();
+  const uint64_t loadcommands_start = this->is64_ ? sizeof(mach_header_64) : sizeof(mach_header);
+  const uint64_t loadcommands_end   = loadcommands_start + header.sizeof_cmds();
 
-  //this->header().nb_cmds(this->header().nb_cmds() + 1);
+  //header.sizeof_cmds(header.sizeof_cmds() + value);
 
-  //const uint32_t sizeof_header = this->is64_ ? sizeof(mach_header_64) : sizeof(mach_header);
+  // Segment containing load commands
+  SegmentCommand* load_cmd_segment = this->segment_from_offset(loadcommands_end);
+  CHECK_NE(load_cmd_segment, nullptr);
+  std::vector<uint8_t> content = load_cmd_segment->content();
 
-
-  ////align
-  //if (dynamic_cast<const SegmentCommand*>(&command) != nullptr) {
-  //  const SegmentCommand& segment = dynamic_cast<const SegmentCommand&>(command);
-  //  const uint64_t psize = static_cast<uint64_t>(getpagesize());
-  //  if ((segment.file_offset() % psize) > 0) {
-  //    uint64_t offset_aligned = segment.file_offset() + (psize - segment.file_offset() % psize);
-  //    segment.file_offset(offset_aligned);
-  //  }
-  //}
-
-  //// Find last offset
-  //uint64_t last_offset = std::accumulate(
-  //    std::begin(this->commands_),
-  //    std::end(this->commands_),
-  //    sizeof_header,
-  //    [] (uint32_t x, const LoadCommand* cmd) {
-  //      return x + cmd->size();
-  //    });
+  content.insert(std::begin(content) + loadcommands_end, value, 0);
+  load_cmd_segment->content(std::move(content));
 
 
-  //VLOG(VDEBUG) << "Last offset: %x", last_offset << std::endl;
-  //command.command_offset(last_offset);
-  //this->header().sizeof_cmds(this->header().sizeof_cmds() + command.size());
-  //this->commands_.push_back(command);
+  // 1. Shift all commands
+  // =====================
+  for (LoadCommand* cmd : this->commands_) {
+    if (cmd->command_offset() >= loadcommands_end) {
+      cmd->command_offset(cmd->command_offset() + value);
+    }
+  }
+
+  this->shift_command(value, loadcommands_end);
+
+  // Shift Segment and sections
+  // ==========================
+  for (SegmentCommand& segment : this->segments()) {
+    // Extend the virtual size of the segment containing our shift
+    if (segment.file_offset() <= loadcommands_end and loadcommands_end < (segment.file_offset() + segment.file_size())) {
+      segment.virtual_size(segment.virtual_size() + value);
+      segment.file_size(segment.file_size() + value);
+
+      for (Section& section : segment.sections()) {
+        if (section.offset() >= loadcommands_end) {
+          section.offset(section.offset() + value);
+          section.virtual_address(section.virtual_address() + value);
+        }
+      }
+    } else {
+
+      if (segment.file_offset() >= loadcommands_end) {
+        segment.file_offset(segment.file_offset() + value);
+        segment.virtual_address(segment.virtual_address() + value);
+      }
+
+      for (Section& section : segment.sections()) {
+        if (section.offset() >= loadcommands_end) {
+          section.offset(section.offset() + value);
+          section.virtual_address(section.virtual_address() + value);
+        }
+
+        if (section.type() == MACHO_SECTION_TYPES::S_ZEROFILL) {
+          section.virtual_address(section.virtual_address() + value);
+        }
+      }
+    }
+  }
+
+}
+
+
+LoadCommand& Binary::add(const LoadCommand& command) {
+  static constexpr uint32_t shift_value = 0x10000;
+  const int32_t size_aligned = align(command.size(), this->pointer_size());
+
+  // Check there is enough spaces between the load command table
+  // and the raw content
+  if (this->available_command_space_ < size_aligned) {
+    this->shift(shift_value);
+    this->available_command_space_ += shift_value;
+    return this->add(command);
+  }
+
+  this->available_command_space_ -= size_aligned;
+
+  Header& header = this->header();
+
+  // Get border of the load command table
+  const uint64_t loadcommands_start = this->is64_ ? sizeof(mach_header_64) : sizeof(mach_header);
+  const uint64_t loadcommands_end   = loadcommands_start + header.sizeof_cmds();
+
+  // Update the Header according to the command that will be added
+  header.sizeof_cmds(header.sizeof_cmds() + size_aligned);
+  header.nb_cmds(header.nb_cmds() + 1);
+
+  // Get the segment handling the LC table
+  SegmentCommand* load_cmd_segment = this->segment_from_offset(loadcommands_end);
+  CHECK_NE(load_cmd_segment, nullptr);
+
+  std::vector<uint8_t> content = load_cmd_segment->content();
+
+  // Copy the command data
+  std::copy(
+      std::begin(command.data()),
+      std::end(command.data()),
+      std::begin(content) + loadcommands_end);
+
+  load_cmd_segment->content(std::move(content));
+
+  // Add the command in the Binary
+  LoadCommand* copy = command.clone();
+  copy->command_offset(loadcommands_end);
+
+  this->commands_.push_back(copy);
   return *this->commands_.back();
-
 }
+
+LoadCommand& Binary::add(const LoadCommand& command, size_t index) {
+  static constexpr uint32_t shift_value = 0x10000;
+
+  // If index is "too" large <=> push_back
+  if (index >= this->commands_.size()) {
+    return this->add(command);
+  }
+
+  int32_t size_aligned = align(command.size(), this->pointer_size());
+
+  // Check that we have enough space
+  if (this->available_command_space_ < size_aligned) {
+    this->shift(shift_value);
+    this->available_command_space_ += shift_value;
+    return this->add(command, index);
+  }
+
+  this->available_command_space_ -= size_aligned;
+
+
+  // Update the Header according to the new command
+  Header& header = this->header();
+
+  header.sizeof_cmds(header.sizeof_cmds() + size_aligned);
+  header.nb_cmds(header.nb_cmds() + 1);
+
+  // Get offset of the LC border
+  LoadCommand* cmd_border = this->commands_[index];
+  size_t border_off = cmd_border->command_offset();
+
+  LoadCommand* copy = command.clone();
+  copy->command_offset(cmd_border->command_offset());
+
+  // Patch LC offsets that follow the LC border
+  for (LoadCommand* lc : this->commands_) {
+    if (lc->command_offset() >= border_off) {
+      lc->command_offset(lc->command_offset() + size_aligned);
+    }
+  }
+
+  this->commands_.insert(std::begin(this->commands_) + index, copy);
+  return *copy;
+}
+
+bool Binary::remove(const LoadCommand& command) {
+
+  auto&& it = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [&command] (const LoadCommand* cmd) {
+        return *cmd == command;
+      });
+
+  if (it == std::end(this->commands_)) {
+    LOG(ERROR) << "Unable to find command: " << command;
+    return false;
+  }
+
+  LoadCommand* cmd_rm = *it;
+  const size_t cmd_rm_offset = cmd_rm->command_offset();
+  for (LoadCommand* cmd : this->commands_) {
+    if (cmd->command_offset() >= cmd_rm_offset) {
+      cmd->command_offset(cmd->command_offset() - cmd_rm->size());
+    }
+  }
+
+
+  Header& header = this->header();
+  header.sizeof_cmds(header.sizeof_cmds() - cmd_rm->size());
+  header.nb_cmds(header.nb_cmds() - 1);
+  this->available_command_space_ += cmd_rm->size();
+
+  delete cmd_rm;
+  this->commands_.erase(it);
+
+  return true;
+}
+
+
+bool Binary::remove(LOAD_COMMAND_TYPES type) {
+  if (not this->has(type)) {
+    return false;
+  }
+
+  bool done = false;
+  while (not done) {
+    done = not this->remove(this->get(type));
+  }
+  return true;
+}
+
+bool Binary::remove_command(size_t index) {
+  if (index >= this->commands_.size()) {
+    return false;
+  }
+  return this->remove(*this->commands_[index]);
+}
+
+bool Binary::has(LOAD_COMMAND_TYPES type) const {
+  auto&& it = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [type] (const LoadCommand* cmd) {
+        return cmd->command() == type;
+      });
+  return it != std::end(this->commands_);
+}
+
+const LoadCommand& Binary::get(LOAD_COMMAND_TYPES type) const {
+  if (not this->has(type)) {
+    throw not_found(std::string("Can't find '") + to_string(type) + "'");
+  }
+
+  auto&& it = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [type] (const LoadCommand* cmd) {
+        return cmd->command() == type;
+      });
+  return **it;
+}
+
+LoadCommand& Binary::get(LOAD_COMMAND_TYPES type) {
+  return const_cast<LoadCommand&>(static_cast<const Binary*>(this)->get(type));
+}
+
+bool Binary::extend(const LoadCommand& command, uint64_t size) {
+  static constexpr uint32_t shift_value = 0x10000;
+
+  auto&& it = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [&command] (const LoadCommand* cmd) {
+        return *cmd == command;
+      });
+
+  if (it == std::end(this->commands_)) {
+    LOG(ERROR) << "Unable to find command: " << command;
+    return false;
+  }
+
+  LoadCommand* cmd = *it;
+  const int32_t size_aligned = align(cmd->size() + size, this->pointer_size());
+  const uint32_t extension = size_aligned - cmd->size();
+  if (this->available_command_space_ < size_aligned) {
+    this->shift(shift_value);
+    this->available_command_space_ += shift_value;
+    return this->extend(command, size);
+  }
+
+  for (LoadCommand* lc : this->commands_) {
+    if (lc->command_offset() > cmd->command_offset()) {
+      lc->command_offset(lc->command_offset() + extension);
+    }
+  }
+
+  cmd->size(size_aligned);
+
+  // Update Header
+  // =============
+  Header& header = this->header();
+  header.sizeof_cmds(header.sizeof_cmds() + extension);
+
+  return true;
+}
+
+
+bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
+
+  auto&& segments = this->segments();
+  auto&& it_segment = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&segment] (const SegmentCommand& s) {
+        return segment == s;
+      });
+
+  if (it_segment == std::end(segments)) {
+    LOG(ERROR) << "Unable to find segment: '" << segment.name() << "'";
+    return false;
+  }
+
+  SegmentCommand& target_segment = *it_segment;
+  const size_t last_offset = target_segment.file_offset() + target_segment.file_size();
+  const size_t last_va     = target_segment.virtual_address() + target_segment.virtual_size();
+
+  const int32_t size_aligned = align(size, this->pointer_size());
+
+  this->shift_command(size_aligned, last_offset - 4);
+
+  // Shift Segment and sections
+  // ==========================
+  for (SegmentCommand& segment : this->segments()) {
+    if (segment.file_offset() >= last_offset) {
+      segment.file_offset(segment.file_offset() + size_aligned);
+      segment.virtual_address(segment.virtual_address() + size_aligned);
+    }
+
+    for (Section& section : segment.sections()) {
+      if (section.offset() >= last_offset) {
+        section.offset(section.offset() + size_aligned);
+        section.virtual_address(section.virtual_address() + size_aligned);
+      }
+
+      if (section.type() == MACHO_SECTION_TYPES::S_ZEROFILL and section.virtual_address() > last_va) {
+        section.virtual_address(section.virtual_address() + size_aligned);
+      }
+    }
+  }
+
+
+  target_segment.virtual_size(target_segment.virtual_size() + size_aligned);
+  target_segment.file_size(target_segment.file_size() + size_aligned);
+  target_segment.data_.resize(target_segment.file_size());
+  return true;
+}
+
+Section* Binary::add_section(const Section& section) {
+  SegmentCommand* __TEXT_segment = this->get_segment("__TEXT");
+  if (__TEXT_segment == nullptr) {
+    LOG(ERROR) << "Unable to get '__TEXT' segment";
+    return nullptr;
+  }
+  return this->add_section(*__TEXT_segment, section);
+}
+
+
+Section* Binary::add_section(const SegmentCommand& segment, const Section& section) {
+
+  auto&& segments = this->segments();
+  auto&& it_segment = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&segment] (const SegmentCommand& s) {
+        return segment == s;
+      });
+
+  if (it_segment == std::end(segments)) {
+    LOG(ERROR) << "Unable to find segment: '" << segment.name() << "'";
+    return nullptr;
+  }
+  SegmentCommand& target_segment = *it_segment;
+
+  const Section::content_t& content = section.content();
+
+  const size_t sec_size = this->is64_ ? sizeof(section_64) : sizeof(section_32);
+  const size_t data_size = content.size();
+  const int32_t needed_size = align(sec_size + data_size, getpagesize());
+  if (this->available_command_space_ < needed_size) {
+    this->shift(needed_size);
+    this->available_command_space_ += needed_size;
+    return this->add_section(segment, section);
+  }
+
+  if (not this->extend(target_segment, sec_size)) {
+    LOG(ERROR) << "Unable to extend segment '" << segment.name() << "' by "
+               << std::hex << std::showbase << sec_size;
+    return nullptr;
+  }
+
+  this->available_command_space_ -= needed_size;
+
+  Section* new_section = new Section{section};
+  // Compute offset, virtual address etc for the new section
+  // =======================================================
+
+  // Section raw data will be located just after commands table
+  if (section.offset() == 0) {
+
+    uint64_t new_offset = this->is64_ ? sizeof(mach_header_64) : sizeof(mach_header);
+    new_offset += this->header().sizeof_cmds();
+    new_offset += this->available_command_space_;
+    new_section->offset(new_offset);
+  }
+
+  if (section.size() == 0) {
+    new_section->size(data_size);
+  }
+
+  if (section.virtual_address() == 0) {
+    new_section->virtual_address(target_segment.virtual_address() + new_section->offset());
+  }
+
+  new_section->segment_ = &target_segment;
+  target_segment.sections_.push_back(new_section);
+  target_segment.numberof_sections(target_segment.numberof_sections() + 1);
+
+  // Copy data to segment
+  const size_t relative_offset = new_section->offset() - target_segment.file_offset();
+
+  std::move(
+      std::begin(content),
+      std::end(content),
+      std::begin(target_segment.data_) + relative_offset);
+
+  return new_section;
+}
+
+
+LoadCommand& Binary::add(const SegmentCommand& segment) {
+  SegmentCommand new_segment = segment;
+
+  range_t va_ranges  = this->va_ranges();
+
+
+  if (new_segment.file_size() == 0) {
+    const uint64_t new_size = segment.content().size();
+    new_segment.file_size(new_size);
+  }
+
+  if (new_segment.virtual_size() == 0) {
+    const uint64_t new_size = align(new_segment.file_size(), getpagesize());
+    new_segment.virtual_size(new_size);
+  }
+
+  if (segment.sections().size() > 0) {
+    new_segment.nbSections_ = segment.sections().size();
+  }
+
+  if (this->is64_) {
+    new_segment.command(LOAD_COMMAND_TYPES::LC_SEGMENT_64);
+    size_t needed_size = sizeof(segment_command_64);
+    needed_size += new_segment.numberof_sections() * sizeof(section_64);
+    new_segment.size(needed_size);
+  } else {
+    new_segment.command(LOAD_COMMAND_TYPES::LC_SEGMENT);
+    size_t needed_size = sizeof(segment_command_32);
+    needed_size += new_segment.numberof_sections() * sizeof(section_32);
+    new_segment.size(needed_size);
+  }
+
+
+  // Insert the segment before __LINKEDIT
+  auto&& it_linkedit = std::find_if(
+      std::begin(this->commands_),
+      std::end(this->commands_),
+      [] (const LoadCommand* cmd) {
+        if (not cmd->is<SegmentCommand>()) {
+          return false;
+        }
+
+        const SegmentCommand* sc = cmd->as<SegmentCommand>();
+        return sc->name() == "__LINKEDIT";
+      });
+
+  size_t pos = std::distance(std::begin(this->commands_), it_linkedit);
+  SegmentCommand& segment_added = *this->add(new_segment, pos).as<SegmentCommand>();
+
+  // As virtual address should be shifted after "add" we need to re-update the virtual address after this operation
+  range_t new_va_ranges  = this->va_ranges();
+  range_t new_off_ranges = this->off_ranges();
+
+  const bool should_patch = (new_va_ranges.second - segment_added.virtual_size()) != va_ranges.second;
+  if (segment.virtual_address() == 0 and should_patch) {
+    const uint64_t new_va = align(new_va_ranges.second, getpagesize());
+    segment_added.virtual_address(new_va);
+    size_t current_va = segment_added.virtual_address();
+    for (Section& section : segment_added.sections()) {
+      section.virtual_address(current_va);
+      current_va += section.size();
+    }
+
+  }
+
+  if (segment.file_offset() == 0 and should_patch) {
+    const uint64_t new_offset = align(new_off_ranges.second, getpagesize());
+    segment_added.file_offset(new_offset);
+    size_t current_offset = new_offset;
+    for (Section& section : segment_added.sections()) {
+      section.offset(current_offset);
+
+      current_offset += section.size();
+    }
+  }
+
+  return segment_added;
+}
+
+
+bool Binary::remove_signature(void) {
+
+  if (not this->has_code_signature()) {
+    LOG(WARNING) << "No signature found!";
+    return false;
+  }
+
+  const CodeSignature& cs = this->code_signature();
+  return this->remove(cs);
+}
+
+LoadCommand& Binary::add(const DylibCommand& library) {
+  return this->add(*library.as<LoadCommand>());
+}
+
+LoadCommand& Binary::add_library(const std::string& name) {
+  return this->add(DylibCommand::load_dylib(name));
+}
+
 
 std::vector<uint8_t> Binary::raw(void) {
   Builder builder{this};
@@ -525,8 +1193,11 @@ std::vector<uint8_t> Binary::raw(void) {
 }
 
 uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
-  const SegmentCommand& segment = segment_from_virtual_address(virtual_address);
-  const uint64_t base_address = segment.virtual_address() - segment.file_offset();
+  const SegmentCommand* segment = segment_from_virtual_address(virtual_address);
+  if (segment == nullptr) {
+    return static_cast<uint64_t>(-1);
+  }
+  const uint64_t base_address = segment->virtual_address() - segment->file_offset();
   return virtual_address - base_address;
 }
 
@@ -572,6 +1243,38 @@ const Section& Binary::get_section(const std::string& name) const {
   return *it_section;
 }
 
+
+bool Binary::has_segment(const std::string& name) const {
+  it_const_segments segments = this->segments();
+
+  auto&& it_segment = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&name] (const SegmentCommand& seg) {
+        return seg.name() == name;
+      });
+  return it_segment != std::end(segments);
+}
+
+const SegmentCommand* Binary::get_segment(const std::string& name) const {
+  if (not this->has_segment(name)) {
+    return nullptr;
+  }
+
+  it_const_segments segments = this->segments();
+  auto&& it_segment = std::find_if(
+      std::begin(segments),
+      std::end(segments),
+      [&name] (const SegmentCommand& seg) {
+        return seg.name() == name;
+      });
+  return &(*it_segment);
+}
+
+SegmentCommand* Binary::get_segment(const std::string& name) {
+  return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->get_segment(name));
+}
+
 uint64_t Binary::imagebase(void) const {
   it_const_segments segments = this->segments();
   auto&& it_text_segment = std::find_if(
@@ -599,31 +1302,55 @@ uint64_t Binary::fat_offset(void) const {
 
 
 bool Binary::is_valid_addr(uint64_t address) const {
-  std::pair<uint64_t, uint64_t> r = this->va_ranges();
+  range_t r = this->va_ranges();
   return address <= r.second and address >= r.first;
 }
 
 
-std::pair<uint64_t, uint64_t> Binary::va_ranges(void) const {
+Binary::range_t Binary::va_ranges(void) const {
 
   it_const_segments segments = this->segments();
-  uint64_t min = std::accumulate(
-      std::begin(segments),
-      std::end(segments), uint64_t(-1),
-      [] (uint64_t va, const SegmentCommand& segment) {
-        return std::min<uint64_t>(segment.virtual_address(), va);
+  auto&& it_min = std::min_element(
+      std::begin(segments), std::end(segments),
+      [] (const SegmentCommand& lhs, const SegmentCommand& rhs) {
+        if (lhs.virtual_address() == 0 or rhs.virtual_address() == 0) {
+          return true;
+        }
+        return lhs.virtual_address() < rhs.virtual_address();
       });
 
 
-  uint64_t max = std::accumulate(
-      std::begin(segments),
-      std::end(segments), 0,
-      [] (uint64_t va, const SegmentCommand& segment) {
-        return std::max<uint64_t>(segment.virtual_address() + segment.virtual_size(), va);
+  auto&& it_max = std::min_element(
+      std::begin(segments), std::end(segments),
+      [] (const SegmentCommand& lhs, const SegmentCommand& rhs) {
+        return (lhs.virtual_address() + lhs.virtual_size()) > (rhs.virtual_address() + rhs.virtual_size());
       });
 
-  return {min, max};
+  return {it_min->virtual_address(), it_max->virtual_address() + it_max->virtual_size()};
 }
+
+Binary::range_t Binary::off_ranges(void) const {
+
+  it_const_segments segments = this->segments();
+  auto&& it_min = std::min_element(
+      std::begin(segments), std::end(segments),
+      [] (const SegmentCommand& lhs, const SegmentCommand& rhs) {
+        if (lhs.file_offset() == 0 or rhs.file_offset() == 0) {
+          return true;
+        }
+        return lhs.file_offset() < rhs.file_offset();
+      });
+
+
+  auto&& it_max = std::min_element(
+      std::begin(segments), std::end(segments),
+      [] (const SegmentCommand& lhs, const SegmentCommand& rhs) {
+        return (lhs.file_offset() + lhs.file_size()) > (rhs.file_offset() + rhs.file_size());
+      });
+
+  return {it_min->file_offset(), it_max->file_offset() + it_max->file_size()};
+}
+
 
 
 LIEF::Header Binary::get_abstract_header(void) const {
@@ -910,8 +1637,13 @@ const EncryptionInfo& Binary::encryption_info(void) const {
 }
 
 
+LoadCommand& Binary::operator[](LOAD_COMMAND_TYPES type) {
+  return this->get(type);
+}
 
-
+const LoadCommand& Binary::operator[](LOAD_COMMAND_TYPES type) const {
+  return this->get(type);
+}
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {

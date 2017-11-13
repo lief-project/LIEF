@@ -21,7 +21,10 @@
 #include <array>
 
 #include "LIEF/visibility.h"
+#include "LIEF/Object.hpp"
 #include "LIEF/types.hpp"
+
+#include "LIEF/MachO/enums.hpp"
 
 
 namespace LIEF {
@@ -34,6 +37,8 @@ class LIEF_API ExportInfo : public Object {
   friend class BinaryParser;
 
   public:
+    using flag_list_t = std::vector<EXPORT_SYMBOL_FLAGS>;
+
     ExportInfo(void);
     ExportInfo(uint64_t address, uint64_t flags, uint64_t offset = 0);
 
@@ -46,6 +51,14 @@ class LIEF_API ExportInfo : public Object {
     uint64_t flags(void) const;
     void flags(uint64_t flags);
 
+    flag_list_t flags_list(void) const;
+
+    bool has(EXPORT_SYMBOL_FLAGS flag) const;
+
+    EXPORT_SYMBOL_KINDS kind(void) const;
+
+    uint64_t other(void) const;
+
     uint64_t address(void) const;
     void address(uint64_t addr);
 
@@ -53,6 +66,13 @@ class LIEF_API ExportInfo : public Object {
 
     const Symbol& symbol(void) const;
     Symbol& symbol(void);
+
+    Symbol* alias(void);
+    const Symbol* alias(void) const;
+
+    DylibCommand* alias_library(void);
+    const DylibCommand* alias_library(void) const;
+
 
     virtual ~ExportInfo(void);
 
@@ -67,7 +87,11 @@ class LIEF_API ExportInfo : public Object {
     uint64_t node_offset_;
     uint64_t flags_;
     uint64_t address_;
-    Symbol* symbol_;
+    uint64_t other_;
+    Symbol* symbol_{nullptr};
+
+    Symbol* alias_{nullptr};
+    DylibCommand* alias_location_{nullptr};
 
 
 };

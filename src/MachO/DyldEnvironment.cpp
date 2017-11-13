@@ -32,6 +32,10 @@ DyldEnvironment::DyldEnvironment(const dylinker_command *cmd) :
   value_{}
 {}
 
+DyldEnvironment* DyldEnvironment::clone(void) const {
+  return new DyldEnvironment(*this);
+}
+
 const std::string& DyldEnvironment::value(void) const {
   return this->value_;
 }

@@ -36,6 +36,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
     FunctionStarts& operator=(const FunctionStarts& copy);
     FunctionStarts(const FunctionStarts& copy);
 
+    virtual FunctionStarts* clone(void) const override;
+
     //! @brief Offset in the binary where *start functions* are located
     uint32_t data_offset(void) const;
 

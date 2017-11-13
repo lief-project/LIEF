@@ -34,6 +34,10 @@ FunctionStarts::FunctionStarts(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
+FunctionStarts* FunctionStarts::clone(void) const {
+  return new FunctionStarts(*this);
+}
+
 uint32_t FunctionStarts::data_offset(void) const {
   return this->data_offset_;
 }

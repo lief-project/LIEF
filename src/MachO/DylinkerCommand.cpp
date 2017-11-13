@@ -31,6 +31,10 @@ DylinkerCommand::DylinkerCommand(const dylinker_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize}
 {}
 
+DylinkerCommand* DylinkerCommand::clone(void) const {
+  return new DylinkerCommand(*this);
+}
+
 const std::string& DylinkerCommand::name(void) const {
   return this->name_;
 }

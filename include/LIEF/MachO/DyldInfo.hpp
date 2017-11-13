@@ -33,12 +33,14 @@
 namespace LIEF {
 namespace MachO {
 
+class Builder;
 class BinaryParser;
 
 //! LC_DYLD_INFO and LC_DYLD_INFO_ONLY command model
 class LIEF_API DyldInfo : public LoadCommand {
 
   friend class BinaryParser;
+  friend class Builder;
 
   public:
     //! @brief Tuple of ``offset`` and ``size``
@@ -51,6 +53,8 @@ class LIEF_API DyldInfo : public LoadCommand {
     DyldInfo(const DyldInfo& copy);
 
     void swap(DyldInfo& other);
+
+    virtual DyldInfo* clone(void) const override;
 
     virtual ~DyldInfo(void);
 
@@ -236,9 +240,20 @@ class LIEF_API DyldInfo : public LoadCommand {
     virtual std::ostream& print(std::ostream& os) const override;
 
   private:
+    using bind_container_t = std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
+
     void show_bindings(std::ostream& os, const buffer_t& buffer, bool is_lazy = false) const;
 
     void show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
+
+    DyldInfo& update_standard_bindings(const bind_container_t& bindings);
+    DyldInfo& update_weak_bindings(const bind_container_t& bindings);
+    DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
+
+    DyldInfo& update_rebase_info(void);
+    DyldInfo& update_binding_info(void);
+    DyldInfo& update_export_trie(void);
+
 
     info_t   rebase_;
     buffer_t rebase_opcodes_;

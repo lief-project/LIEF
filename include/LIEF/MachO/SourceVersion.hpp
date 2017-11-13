@@ -40,6 +40,8 @@ class LIEF_API SourceVersion : public LoadCommand {
     SourceVersion& operator=(const SourceVersion& copy);
     SourceVersion(const SourceVersion& copy);
 
+    virtual SourceVersion* clone(void) const override;
+
     virtual ~SourceVersion(void);
 
     //! @brief Return the version as an array

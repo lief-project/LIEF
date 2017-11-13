@@ -43,6 +43,10 @@ VersionMin::VersionMin(const version_min_command *version_cmd) :
 {
 }
 
+VersionMin* VersionMin::clone(void) const {
+  return new VersionMin(*this);
+}
+
 
  const VersionMin::version_t& VersionMin::version(void) const {
    return this->version_;

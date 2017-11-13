@@ -14,7 +14,6 @@ set(LIEF_PE_CPP_EXAMPLES
 
 set(LIEF_MACHO_CPP_EXAMPLES
   macho_reader.cpp
-  macho_instrumentation.cpp
   macho_builder.cpp
 )
 

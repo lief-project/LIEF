@@ -34,6 +34,10 @@ DataInCode::DataInCode(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
+DataInCode* DataInCode::clone(void) const {
+  return new DataInCode(*this);
+}
+
 uint32_t DataInCode::data_offset(void) const {
   return this->data_offset_;
 }

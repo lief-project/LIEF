@@ -34,6 +34,10 @@ UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) :
   std::copy(std::begin(uuidCmd->uuid), std::end(uuidCmd->uuid), std::begin(this->uuid_));
 }
 
+UUIDCommand* UUIDCommand::clone(void) const {
+  return new UUIDCommand(*this);
+}
+
 uuid_t UUIDCommand::uuid(void) const {
   return this->uuid_;
 }

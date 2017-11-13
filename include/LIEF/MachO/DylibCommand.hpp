@@ -32,41 +32,96 @@ class LIEF_API DylibCommand : public LoadCommand {
   using version_t = std::array<uint16_t, 3>;
 
   public:
+
+  //! Helper to convert an integer into a version array
   static version_t int2version(uint32_t version);
+
+  //! Helper to convert a version array into an integer
   static uint32_t version2int(version_t version);
 
+  //! Factory function to generate a LC_LOAD_WEAK_DYLIB library
+  static DylibCommand weak_dylib(const std::string& name,
+      uint32_t timestamp = 0,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
+  //! Factory function to generate a LC_ID_DYLIB library
+  static DylibCommand id_dylib(const std::string& name,
+      uint32_t timestamp = 0,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
+  //! Factory function to generate a LC_LOAD_DYLIB library
+  static DylibCommand load_dylib(const std::string& name,
+      uint32_t timestamp = 2,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
+  //! Factory function to generate a LC_REEXPORT_DYLIB library
+  static DylibCommand reexport_dylib(const std::string& name,
+      uint32_t timestamp = 0,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
+  //! Factory function to generate a LC_LOAD_UPWARD_DYLIB library
+  static DylibCommand load_upward_dylib(const std::string& name,
+      uint32_t timestamp = 0,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
+  //! Factory function to generate a LC_LAZY_LOAD_DYLIB library
+  static DylibCommand lazy_load_dylib(const std::string& name,
+      uint32_t timestamp = 0,
+      uint32_t current_version = 0,
+      uint32_t compat_version = 0);
+
   public:
-    DylibCommand(void);
-    DylibCommand(const dylib_command *cmd);
+  DylibCommand(void);
+  DylibCommand(const dylib_command *cmd);
 
-    DylibCommand& operator=(const DylibCommand& copy);
-    DylibCommand(const DylibCommand& copy);
+  DylibCommand& operator=(const DylibCommand& copy);
+  DylibCommand(const DylibCommand& copy);
 
-    virtual ~DylibCommand(void);
+  virtual ~DylibCommand(void);
 
-    const std::string& name(void) const;
-    uint32_t timestamp(void) const;
-    version_t current_version(void) const;
-    version_t compatibility_version(void) const;
+  virtual DylibCommand* clone(void) const override;
 
-    void name(const std::string& name);
-    void timestamp(uint32_t timestamp);
-    void current_version(version_t currentVersion);
-    void compatibility_version(version_t compatibilityVersion);
+  //! Library name
+  const std::string& name(void) const;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  //! Date and Time when the shared library was built
+  uint32_t timestamp(void) const;
 
-    bool operator==(const DylibCommand& rhs) const;
-    bool operator!=(const DylibCommand& rhs) const;
+  //! Current version of the shared library
+  version_t current_version(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  //! Compatibility version of the shared library
+  version_t compatibility_version(void) const;
+
+  void name(const std::string& name);
+  void timestamp(uint32_t timestamp);
+  void current_version(version_t currentVersion);
+  void compatibility_version(version_t compatibilityVersion);
+
+  virtual std::ostream& print(std::ostream& os) const override;
+
+  bool operator==(const DylibCommand& rhs) const;
+  bool operator!=(const DylibCommand& rhs) const;
+
+  virtual void accept(Visitor& visitor) const override;
 
 
   private:
-    std::string name_;
-    uint32_t timestamp_;
-    uint32_t currentVersion_;
-    uint32_t compatibilityVersion_;
+  static DylibCommand create(LOAD_COMMAND_TYPES type,
+      const std::string& name,
+      uint32_t timestamp,
+      uint32_t current_version,
+      uint32_t compat_version);
+
+  std::string name_;
+  uint32_t    timestamp_;
+  uint32_t    current_version_;
+  uint32_t    compatibility_version_;
 };
 
 

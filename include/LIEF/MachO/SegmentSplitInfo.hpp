@@ -39,6 +39,8 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
     SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
     SegmentSplitInfo(const SegmentSplitInfo& copy);
 
+    virtual SegmentSplitInfo* clone(void) const override;
+
     uint32_t data_offset(void) const;
     uint32_t data_size(void) const;
 

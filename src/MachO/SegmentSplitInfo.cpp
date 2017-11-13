@@ -34,6 +34,10 @@ SegmentSplitInfo::SegmentSplitInfo(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
+SegmentSplitInfo* SegmentSplitInfo::clone(void) const {
+  return new SegmentSplitInfo(*this);
+}
+
 uint32_t SegmentSplitInfo::data_offset(void) const {
   return this->data_offset_;
 }

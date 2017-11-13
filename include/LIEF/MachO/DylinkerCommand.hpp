@@ -34,6 +34,8 @@ class LIEF_API DylinkerCommand : public LoadCommand {
     DylinkerCommand& operator=(const DylinkerCommand& copy);
     DylinkerCommand(const DylinkerCommand& copy);
 
+    virtual DylinkerCommand* clone(void) const override;
+
     virtual ~DylinkerCommand(void);
 
     virtual std::ostream& print(std::ostream& os) const override;

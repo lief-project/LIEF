@@ -40,6 +40,14 @@ void create<Section>(py::module& m) {
   py::class_<Section, LIEF::Section>(m, "Section")
     .def(py::init<>())
 
+    .def(py::init<const std::string&>(),
+        "Constructor with the section name",
+        "section_name"_a)
+
+    .def(py::init<const std::string&, const Section::content_t&>(),
+        "Constructor with the section name and its content",
+        "section_name"_a, "content"_a)
+
     .def_property("alignment",
         static_cast<getter_t<uint32_t>>(&Section::alignment),
         static_cast<setter_t<uint32_t>>(&Section::alignment),
@@ -64,6 +72,53 @@ void create<Section>(py::module& m) {
         static_cast<no_const_getter<it_relocations>>(&Section::relocations),
         "Iterator over " RST_CLASS_REF(lief.MachO.Relocation) " (if any)",
         py::return_value_policy::reference_internal)
+
+    .def_property("reserved1",
+        static_cast<getter_t<uint32_t>>(&Section::reserved1),
+        static_cast<setter_t<uint32_t>>(&Section::reserved1),
+        "")
+
+    .def_property("reserved2",
+        static_cast<getter_t<uint32_t>>(&Section::reserved2),
+        static_cast<setter_t<uint32_t>>(&Section::reserved2),
+        "")
+
+    .def_property("reserved3",
+        static_cast<getter_t<uint32_t>>(&Section::reserved3),
+        static_cast<setter_t<uint32_t>>(&Section::reserved3),
+        "")
+
+    .def_property("flags",
+        static_cast<getter_t<uint32_t>>(&Section::flags),
+        static_cast<setter_t<uint32_t>>(&Section::flags),
+        "")
+
+    .def_property_readonly("flags_list",
+        static_cast<getter_t<Section::flag_list_t>>(&Section::flags_list),
+        py::return_value_policy::reference_internal)
+
+    .def("has",
+        static_cast<bool(Section::*)(MACHO_SECTION_FLAGS) const>(&Section::has),
+        "Check if the section has the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) "",
+        "flag"_a)
+
+    .def("add",
+        static_cast<void(Section::*)(MACHO_SECTION_FLAGS)>(&Section::add),
+        "Add the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) "",
+        "flag"_a)
+
+    .def("remove",
+        static_cast<void(Section::*)(MACHO_SECTION_FLAGS)>(&Section::remove),
+        "Remove the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) "",
+        "flag"_a)
+
+    .def(py::self += MACHO_SECTION_FLAGS())
+    .def(py::self -= MACHO_SECTION_FLAGS())
+
+    .def("__contains__",
+        static_cast<bool (Section::*)(MACHO_SECTION_FLAGS) const>(&Section::has),
+        "Check if the given " RST_CLASS_REF(lief.MachO.MACHO_SECTION_FLAGS) " is present")
+
 
 
     .def("__eq__", &Section::operator==)

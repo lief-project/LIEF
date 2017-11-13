@@ -142,14 +142,21 @@ def print_segments(binary):
 @exceptions_handler(Exception)
 def print_sections(binary):
 
-    f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:22}|{:19}|{:25}|"
-    f_value = "|{:<20}|0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<19x} |0x{:<16x} |{:<25}|"
+    f_title = "|{:<20}|{:<16}|{:<16}|{:<16}|{:16}|{:22}|{:19}|{:25}|{:25}|"
+    f_value = "|{:<20}|0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<13x} |0x{:<19x} |0x{:<16x} |{:<25}|{:<25}"
+
     print("== Sections ==")
+
     print(f_title.format(
         "Name", "Virtual Address", "Offset", "Size",
         "Alignement", "Number of Relocations", "Relocation offset",
-        "Type"))
+        "Type", "Flags"))
+
+
+
+
     for section in binary.sections:
+        flags_str =  " - ".join([str(s).split(".")[-1] for s in section.flags_list])
         print(f_value.format(
             section.name,
             section.virtual_address,
@@ -158,7 +165,8 @@ def print_sections(binary):
             section.alignment,
             section.numberof_relocations,
             section.relocation_offset,
-            str(section.type).split(".")[-1]))
+            str(section.type).split(".")[-1],
+            flags_str))
         if len(section.relocations) > 0:
             for idx, reloc in enumerate(section.relocations):
                 name = reloc.symbol.name if reloc.has_symbol else ""
@@ -474,11 +482,18 @@ def print_dyld_info(binary):
     print("Exports")
     print("-------")
     for idx, einfo in enumerate(dyld_info.exports):
-        print("{:10}: {:<10x}".format("Address", einfo.address))
-        print("{:10}: {:<10x}".format("Flags", einfo.flags))
+        output = "0x{:08x} - {}".format(einfo.address, einfo.symbol.name)
+        if einfo.alias:
+            output += " - {}".format(einfo.alias.name)
+            if einfo.alias_library:
+                output += " from {}".format(einfo.alias_library.name)
+        print(output)
 
-        if binfo.has_symbol:
-            print("{:10}: {}".format("Symbol", einfo.symbol.name))
+        #print("{:10}: {:<10x}".format("Address", einfo.address))
+        #print("{:10}: {:<10x}".format("Flags", einfo.flags))
+
+        #if binfo.has_symbol:
+        #    print("{:10}: {}".format("Symbol", einfo.symbol.name))
 
         print("")
 

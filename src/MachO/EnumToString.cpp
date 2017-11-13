@@ -448,6 +448,16 @@ const char* to_string(EXPORT_SYMBOL_KINDS e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
+const char* to_string(EXPORT_SYMBOL_FLAGS e) {
+  CONST_MAP(EXPORT_SYMBOL_FLAGS, const char*, 3) enumStrings {
+    { EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION,   "WEAK_DEFINITION"   },
+    { EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT,          "REEXPORT"          },
+    { EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER, "STUB_AND_RESOLVER" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
 
 const char* to_string(VM_PROTECTIONS e) {
   CONST_MAP(VM_PROTECTIONS, const char*, 3) enumStrings {

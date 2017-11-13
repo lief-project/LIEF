@@ -38,6 +38,10 @@ void create<RelocationDyld>(py::module& m) {
 
   py::class_<RelocationDyld, Relocation>(m, "RelocationDyld")
 
+    .def("__le__", &RelocationDyld::operator<=)
+    .def("__lt__", &RelocationDyld::operator<)
+    .def("__ge__", &RelocationDyld::operator>=)
+    .def("__gt__", &RelocationDyld::operator>)
     .def("__eq__", &RelocationDyld::operator==)
     .def("__ne__", &RelocationDyld::operator!=)
     .def("__hash__",

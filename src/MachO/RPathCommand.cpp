@@ -30,7 +30,10 @@ RPathCommand::~RPathCommand(void) = default;
 
 RPathCommand::RPathCommand(const rpath_command *rpathCmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpathCmd->cmd), rpathCmd->cmdsize}
-{
+{}
+
+RPathCommand* RPathCommand::clone(void) const {
+  return new RPathCommand(*this);
 }
 
 const std::string& RPathCommand::path(void) const {

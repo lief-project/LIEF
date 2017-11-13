@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <iterator>
 
+#include "LIEF/logging++.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/MachO/hash.hpp"
 
@@ -28,8 +29,28 @@
 namespace LIEF {
 namespace MachO {
 
-Section& Section::operator=(const Section&) = default;
-Section::Section(const Section&) = default;
+Section& Section::operator=(Section other) {
+  this->swap(other);
+  return *this;
+}
+
+Section::Section(const Section& other) :
+  LIEF::Section{other},
+  segment_name_{other.segment_name_},
+  original_size_{other.original_size_},
+  align_{other.align_},
+  relocations_offset_{other.relocations_offset_},
+  nbof_relocations_{other.nbof_relocations_},
+  flags_{other.flags_},
+  reserved1_{other.reserved1_},
+  reserved2_{other.reserved2_},
+  reserved3_{other.reserved3_},
+  content_{other.content_},
+  segment_{nullptr},
+  relocations_{}
+{}
+
+
 Section::~Section(void) {
   for (Relocation* reloc : this->relocations_) {
     delete reloc;
@@ -100,7 +121,42 @@ Section::Section(const section_64 *sectionCmd) :
 }
 
 
-std::vector<uint8_t> Section::content(void) const {
+void Section::swap(Section& other) {
+  std::swap(this->name_,            other.name_);
+  std::swap(this->virtual_address_, other.virtual_address_);
+  std::swap(this->size_,            other.size_);
+  std::swap(this->offset_,          other.offset_);
+
+  std::swap(this->segment_name_,        other.segment_name_);
+  std::swap(this->original_size_,       other.original_size_);
+  std::swap(this->align_,               other.align_);
+  std::swap(this->relocations_offset_,  other.relocations_offset_);
+  std::swap(this->nbof_relocations_,    other.nbof_relocations_);
+  std::swap(this->flags_,               other.flags_);
+  std::swap(this->reserved1_,           other.reserved1_);
+  std::swap(this->reserved2_,           other.reserved2_);
+  std::swap(this->reserved3_,           other.reserved3_);
+  std::swap(this->content_,             other.content_);
+  std::swap(this->segment_,             other.segment_);
+  std::swap(this->relocations_,         other.relocations_);
+
+}
+
+
+Section::Section(const std::string& name) :
+  Section{}
+{
+  this->name(name);
+}
+
+Section::Section(const std::string& name, const Section::content_t& content) :
+  Section{}
+{
+  this->name(name);
+  this->content(content);
+}
+
+Section::content_t Section::content(void) const {
   if (this->segment_ == nullptr) {
     return this->content_;
   }
@@ -118,6 +174,31 @@ std::vector<uint8_t> Section::content(void) const {
     content.data() + relative_offset,
     content.data() + relative_offset + this->size_};
   return section_content;
+}
+
+void Section::content(const Section::content_t& data) {
+  if (this->segment_ == nullptr) {
+    this->content_ = data;
+    return;
+  }
+
+  if (this->size_ == 0 or this->offset_ == 0) { // bss section for instance
+    LOG(ERROR) << "Offset or size is null";
+    return;
+  }
+
+
+  uint64_t relative_offset = this->offset_ - this->segment_->file_offset();
+
+  std::vector<uint8_t> content = this->segment_->content();
+
+  if (data.size() > content.size()) {
+    LOG(ERROR) << "New data are bigger than the original one";
+    return;
+  }
+
+  std::move(std::begin(data), std::end(data), std::begin(content) + relative_offset);
+  this->segment_->content(content);
 }
 
 const std::string& Section::segment_name(void) const {
@@ -145,7 +226,8 @@ uint32_t Section::numberof_relocations(void) const {
 }
 
 uint32_t Section::flags(void) const {
-  return (this->flags_ >> 8);
+  static constexpr size_t SECTION_FLAGS_MASK = 0xffffff00u;
+  return (this->flags_ & SECTION_FLAGS_MASK);
 }
 
 uint32_t Section::reserved1(void) const {
@@ -178,19 +260,15 @@ MACHO_SECTION_TYPES Section::type(void) const {
   return static_cast<MACHO_SECTION_TYPES>(this->flags_ & SECTION_TYPE_MASK);
 }
 
-std::set<MACHO_SECTION_FLAGS> Section::flags_list(void) const {
+Section::flag_list_t Section::flags_list(void) const {
 
-  std::set<MACHO_SECTION_FLAGS> flags;
-
-  auto has_flag = [this] (MACHO_SECTION_FLAGS flag) {
-    return (static_cast<uint32_t>(flag) & this->flags_) > 0;
-  };
+  Section::flag_list_t flags;
 
   std::copy_if(
       std::begin(section_flags_array),
       std::end(section_flags_array),
       std::inserter(flags, std::begin(flags)),
-      has_flag);
+      std::bind(static_cast<bool (Section::*)(MACHO_SECTION_FLAGS) const>(&Section::has), this, std::placeholders::_1));
 
   return flags;
 }
@@ -219,7 +297,7 @@ void Section::numberof_relocations(uint32_t nbReloc) {
 }
 
 void Section::flags(uint32_t flags) {
-  this->flags_ = this->flags_ | (flags << 8);
+  this->flags_ = this->flags_ | flags;
 }
 
 void Section::reserved1(uint32_t reserved1) {
@@ -237,6 +315,29 @@ void Section::reserved3(uint32_t reserved3) {
 void Section::type(MACHO_SECTION_TYPES type) {
   static constexpr size_t SECTION_FLAGS_MASK = 0xffffff00u;
   this->flags_ = (this->flags_ & SECTION_FLAGS_MASK) | static_cast<uint8_t>(type);
+}
+
+
+bool Section::has(MACHO_SECTION_FLAGS flag) const {
+  return (static_cast<uint32_t>(flag) & this->flags()) > 0;
+}
+
+void Section::add(MACHO_SECTION_FLAGS flag) {
+  this->flags(this->raw_flags() | static_cast<uint32_t>(flag));
+}
+
+void Section::remove(MACHO_SECTION_FLAGS flag) {
+  this->flags_= this->raw_flags() & (~ static_cast<uint32_t>(flag));
+}
+
+Section& Section::operator+=(MACHO_SECTION_FLAGS flag) {
+  this->add(flag);
+  return *this;
+}
+
+Section& Section::operator-=(MACHO_SECTION_FLAGS flag) {
+  this->remove(flag);
+  return *this;
 }
 
 

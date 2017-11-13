@@ -21,9 +21,10 @@
 #include "LIEF/logging++.hpp"
 
 #include "LIEF/MachO/Builder.hpp"
-#include "Builder.tcc"
-
 #include "LIEF/exception.hpp"
+
+#include "Builder.tcc"
+#include "Object.tcc"
 
 
 namespace LIEF {
@@ -32,34 +33,113 @@ namespace MachO {
 Builder::~Builder(void) = default;
 
 Builder::Builder(Binary *binary) {
+  this->raw_.reserve(binary->original_size());
   this->binaries_.push_back(std::move(binary));
   this->binary_ = binary;
-  this->build();
+  if (this->binary_->is64_) {
+    this->build<MachO64>();
+  } else {
+    this->build<MachO32>();
+  }
 }
 
 Builder::Builder(std::vector<Binary*> binaries) {
   this->binaries_ = binaries;
   this->binary_   = this->binaries_.back();
-  this->build();
+  if (this->binary_->is64_) {
+    this->build<MachO64>();
+  } else {
+    this->build<MachO32>();
+  }
 }
 
+
+template <typename T>
 void Builder::build(void) {
   if (this->binaries_.size() > 1) {
     throw not_supported("Actually, builder only support single binary");
   }
 
 
-  this->build_load_commands();
-  if (this->binary_->is64_) {
-    this->build_segments<MachO64>();
-    this->build_symbols<MachO64>();
-  } else {
-    this->build_segments<MachO32>();
-    this->build_symbols<MachO32>();
+  this->build_uuid();
+
+  for (LoadCommand* cmd : this->binary_->commands_) {
+    if (cmd->is<DylibCommand>()) {
+      this->build<T>(cmd->as<DylibCommand>());
+      continue;
+    }
+
+    if (cmd->is<DylinkerCommand>()) {
+      this->build<T>(cmd->as<DylinkerCommand>());
+      continue;
+    }
+
+    if (cmd->is<VersionMin>()) {
+      this->build<T>(cmd->as<VersionMin>());
+      continue;
+    }
+
+    if (cmd->is<SourceVersion>()) {
+      this->build<T>(cmd->as<SourceVersion>());
+      continue;
+    }
+
+    if (cmd->is<MainCommand>()) {
+      this->build<T>(cmd->as<MainCommand>());
+      continue;
+    }
+
+    if (cmd->is<DyldInfo>()) {
+      this->build<T>(cmd->as<DyldInfo>());
+      continue;
+    }
+
+    if (cmd->is<FunctionStarts>()) {
+      this->build<T>(cmd->as<FunctionStarts>());
+      continue;
+    }
+
+    if (cmd->is<SymbolCommand>()) {
+      this->build<T>(cmd->as<SymbolCommand>());
+      continue;
+    }
+
+    if (cmd->is<DynamicSymbolCommand>()) {
+      this->build<T>(cmd->as<DynamicSymbolCommand>());
+      continue;
+    }
+
+    if (cmd->is<DataInCode>()) {
+      this->build<T>(cmd->as<DataInCode>());
+      continue;
+    }
+
+    if (cmd->is<CodeSignature>()) {
+      this->build<T>(cmd->as<CodeSignature>());
+      continue;
+    }
+
+    if (cmd->is<SegmentSplitInfo>()) {
+      this->build<T>(cmd->as<SegmentSplitInfo>());
+      continue;
+    }
+
+    if (cmd->is<SubFramework>()) {
+      this->build<T>(cmd->as<SubFramework>());
+      continue;
+    }
+
+    if (cmd->is<DyldEnvironment>()) {
+      this->build<T>(cmd->as<DyldEnvironment>());
+      continue;
+    }
   }
 
+  this->build_segments<T>();
+  this->build_load_commands();
+  //this->build_symbols<T>();
+
   this->build_header();
-  this->build_uuid();
 }
 
 
@@ -76,11 +156,9 @@ void Builder::build_header(void) {
     header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
     header.flags      = static_cast<uint32_t>(binary_header.flags());
     header.reserved   = static_cast<uint32_t>(binary_header.reserved());
-    std::copy(
-      reinterpret_cast<uint8_t*>(&header),
-      reinterpret_cast<uint8_t*>(&header) + sizeof(mach_header_64),
-      std::begin(this->rawBinary_)
-      );
+
+    this->raw_.seekp(0);
+    this->raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(mach_header_64));
   } else {
     mach_header header;
     header.magic      = static_cast<uint32_t>(binary_header.magic());
@@ -90,11 +168,9 @@ void Builder::build_header(void) {
     header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
     header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
     header.flags      = static_cast<uint32_t>(binary_header.flags());
-    std::copy(
-      reinterpret_cast<uint8_t*>(&header),
-      reinterpret_cast<uint8_t*>(&header) + sizeof(mach_header),
-      std::begin(this->rawBinary_)
-      );
+
+    this->raw_.seekp(0);
+    this->raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(mach_header));
   }
 
 }
@@ -111,138 +187,62 @@ void Builder::build_load_commands(void) {
     throw LIEF::builder_error("");
   }
 
-  //uint64_t loadCommandsOffset = this->rawBinary_.size();
 
-  uint64_t segments_size = binary->header().sizeof_cmds();
-  if (this->rawBinary_.size() < segments_size) {
-    this->rawBinary_.resize(segments_size, 0);
+  for (const SegmentCommand& segment : binary->segments()) {
+    const std::vector<uint8_t>& segment_content = segment.content();
+    this->raw_.seekp(segment.file_offset());
+    this->raw_.write(segment_content);
   }
 
+  //uint64_t loadCommandsOffset = this->raw_.size();
   for (const LoadCommand& command : binary->commands()) {
     auto& data = command.data();
-    LOAD_COMMAND_TYPES cmd_type = command.command();
     uint64_t loadCommandsOffset = command.command_offset();
     VLOG(VDEBUG) << "[+] Command offset: 0x" << std::hex << loadCommandsOffset << std::endl;
-    switch (cmd_type) {
-      //case LOAD_COMMAND_TYPES::LC_SYMTAB:
-      //  {
-      //    VLOG(VDEBUG) << "\tProcessing Symbols %x", command->command() << std::endl;
-      //    auto symbol_command = static_cast<SymbolCommand*>(command);
-      //    symtab_command command;
-
-      //    command.cmd     = static_cast<uint32_t>(symbol_command->command());
-      //    command.cmdsize = static_cast<uint32_t>(symbol_command->size());
-      //    command.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());
-      //    command.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
-      //    command.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());
-      //    command.strsize = static_cast<uint32_t>(symbol_command->strings_size());
-      //    if (this->rawBinary_.size() < (loadCommandsOffset + data.size())) {
-      //      this->rawBinary_.resize(loadCommandsOffset + data.size());
-      //    }
-
-      //    std::copy(
-      //        reinterpret_cast<uint8_t*>(&command),
-      //        reinterpret_cast<uint8_t*>(&command) + sizeof(symtab_command),
-      //        std::next(std::begin(this->rawBinary_), loadCommandsOffset)
-      //        );
-
-      //    if(binary->is64_) {
-      //      uint32_t string_idx = 1;
-      //      for (size_t i = 0; i < binary->symbols_.size(); ++i) {
-      //        nlist_64 symbol;
-      //        auto& binary_symbol = binary->symbols_[i];
-      //        if (not binary_symbol->name().empty()) {
-      //          const auto& name = binary_symbol->name();
-      //          uint32_t name_offset = symbol_command->strings_offset() + string_idx;
-
-      //          if (this->rawBinary_.size() < (name_offset + name.size())) {
-      //            this->rawBinary_.resize(name_offset + name.size());
-      //          }
-
-      //          std::copy(
-      //              std::begin(name),
-      //              std::end(name),
-      //              std::next(std::begin(this->rawBinary_), name_offset)
-      //              );
-
-      //          symbol.n_strx  = string_idx;
-      //          string_idx += name.size() + 1;
-
-      //        }
-      //        symbol.n_type  = static_cast<uint8_t>(binary_symbol->type());
-      //        symbol.n_sect  = static_cast<uint8_t>(binary_symbol->numberof_sections());
-      //        symbol.n_desc  = static_cast<uint16_t>(binary_symbol->description());
-      //        symbol.n_value = static_cast<uint64_t>(binary_symbol->value());
-
-      //        uint32_t offset = symbol_command->symbol_offset() + i * sizeof(nlist_64);
-      //        std::copy(
-      //          reinterpret_cast<uint8_t*>(&symbol),
-      //          reinterpret_cast<uint8_t*>(&symbol) + sizeof(nlist_64),
-      //          std::next(std::begin(this->rawBinary_), offset)
-      //        );
-      //      }
-
-
-      //    } else {
-      //      throw std::runtime_error("todo");
-      //    }
-      //    loadCommandsOffset += sizeof(symtab_command);
-
-
-      //    break;
-      //  }
-
-      case LOAD_COMMAND_TYPES::LC_SEGMENT_64:
-      case LOAD_COMMAND_TYPES::LC_SEGMENT:
-        {
-          VLOG(VDEBUG) << "\tProcessing Load command " << to_string(cmd_type) << std::endl;
-          if (this->rawBinary_.size() < (loadCommandsOffset + data.size())) {
-            this->rawBinary_.resize(loadCommandsOffset + data.size());
-          }
-
-          std::copy(
-              std::begin(data),
-              std::end(data),
-              this->rawBinary_.data() + loadCommandsOffset);
-
-          const SegmentCommand& segment = static_cast<const SegmentCommand&>(command);
-          auto segment_content = segment.content();
-
-          if (this->rawBinary_.size() < (segment.file_offset() + segment_content.size())) {
-            this->rawBinary_.resize(segment.file_offset() + segment_content.size());
-          }
-
-          std::copy(
-              std::begin(segment_content),
-              std::end(segment_content),
-              this->rawBinary_.data() + segment.file_offset());
-
-          break;
-
-        }
-
-      default:
-        {
-          if (this->rawBinary_.size() < (loadCommandsOffset + data.size())) {
-            this->rawBinary_.resize(loadCommandsOffset + data.size(), 0);
-          }
-
-          std::copy(
-              std::begin(data),
-              std::end(data),
-              this->rawBinary_.data() + loadCommandsOffset);
-
-        }
-    }
+    this->raw_.seekp(loadCommandsOffset);
+    this->raw_.write(data);
   }
 }
 
 void Builder::build_uuid(void) {
+  auto&& uuid_it = std::find_if(
+        std::begin(this->binary_->commands_),
+        std::end(this->binary_->commands_),
+        [] (const LoadCommand* command) {
+          return (typeid(*command) == typeid(UUIDCommand));
+        });
+  if (uuid_it == std::end(this->binary_->commands_)) {
+    VLOG(VDEBUG) << "[-] No uuid" << std::endl;
+    return;
+  }
+
+  UUIDCommand* uuid_cmd = dynamic_cast<UUIDCommand*>(*uuid_it);
+  uuid_command raw_cmd;
+  std::fill(
+      reinterpret_cast<uint8_t*>(&raw_cmd),
+      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
+      0);
+
+  raw_cmd.cmd     = static_cast<uint32_t>(uuid_cmd->command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(uuid_cmd->size()); // sizeof(uuid_command)
+
+  const uuid_t& uuid = uuid_cmd->uuid();
+  std::copy(std::begin(uuid), std::end(uuid), raw_cmd.uuid);
+
+  if (uuid_cmd->size() < sizeof(uuid_command)) {
+    LOG(WARNING) << "Size of original data is different for " << to_string(uuid_cmd->command()) << ": Skip!";
+    return;
+  }
+
+  std::copy(
+      reinterpret_cast<uint8_t*>(&raw_cmd),
+      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
+      uuid_cmd->originalData_.data());
 }
 
 
 const std::vector<uint8_t>& Builder::get_build(void) {
-  return this->rawBinary_;
+  return this->raw_.raw();
 }
 
 
@@ -253,12 +253,16 @@ void Builder::write(MachO::Binary *binary, const std::string& filename) {
 
 void Builder::write(const std::string& filename) const {
 
-  std::ofstream outputFile{filename, std::ios::out | std::ios::binary | std::ios::trunc};
-  std::copy(
-      std::begin(this->rawBinary_),
-      std::end(this->rawBinary_),
-      std::ostreambuf_iterator<char>(outputFile));
-  outputFile.close();
+  std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
+  if (output_file) {
+    std::vector<uint8_t> content;
+    this->raw_.get(content);
+
+    std::copy(
+        std::begin(content),
+        std::end(content),
+        std::ostreambuf_iterator<char>(output_file));
+  }
 
 }
 

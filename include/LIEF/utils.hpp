@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
-
+#include <vector>
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
@@ -71,6 +71,13 @@ LIEF_API std::u16string u8tou16(const std::string& string);
 LIEF_API std::string hex_str(uint8_t c);
 
 
+}
+
+
+namespace LIEF {
+namespace LEB128 {
+std::vector<uint8_t> uencode(uint64_t value);
+}
 }
 
 #endif

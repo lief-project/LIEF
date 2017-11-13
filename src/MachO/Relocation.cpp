@@ -57,7 +57,8 @@ Relocation::Relocation(const Relocation& other) :
   architecture_{other.architecture_},
   section_{nullptr},
   segment_{nullptr}
-{}
+{
+}
 
 void Relocation::swap(Relocation& other) {
   LIEF::Relocation::swap(other);
@@ -170,6 +171,12 @@ std::ostream& Relocation::print(std::ostream& os) const {
   std::string segment_section_name = "";
   if (section_name.size() > 0 and segment_name.size() > 0) {
     segment_section_name = segment_name + "." + section_name;
+  }
+  else if (segment_name.size() > 0) {
+    segment_section_name = segment_name;
+  }
+  else if (section_name.size() > 0) {
+    segment_section_name = section_name;
   }
 
   std::string relocation_type = "";

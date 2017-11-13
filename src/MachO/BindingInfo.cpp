@@ -35,12 +35,14 @@ BindingInfo::BindingInfo(void) :
   library_ordinal_{0},
   addend_{0},
   is_weak_import_{false},
+  is_non_weak_definition_{false},
   library_{nullptr},
   address_{0}
 {}
 
 
-BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type, uint64_t address, int64_t addend, int32_t oridnal, bool is_weak) :
+BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
+    uint64_t address, int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition) :
   class_{cls},
   binding_type_{type},
   segment_{nullptr},
@@ -48,6 +50,7 @@ BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type, uint64_t address, i
   library_ordinal_{oridnal},
   addend_{addend},
   is_weak_import_{is_weak},
+  is_non_weak_definition_{is_non_weak_definition},
   library_{nullptr},
   address_{address}
 {}
@@ -67,20 +70,22 @@ BindingInfo::BindingInfo(const BindingInfo& other) :
   library_ordinal_{other.library_ordinal_},
   addend_{other.addend_},
   is_weak_import_{other.is_weak_import_},
+  is_non_weak_definition_{other.is_non_weak_definition_},
   library_{nullptr},
   address_{other.address_}
 {}
 
 void BindingInfo::swap(BindingInfo& other) {
-  std::swap(this->class_,           other.class_);
-  std::swap(this->binding_type_,    other.binding_type_);
-  std::swap(this->segment_,         other.segment_);
-  std::swap(this->symbol_,          other.symbol_);
-  std::swap(this->library_ordinal_, other.library_ordinal_);
-  std::swap(this->addend_,          other.addend_);
-  std::swap(this->is_weak_import_,  other.is_weak_import_);
-  std::swap(this->library_,         other.library_);
-  std::swap(this->address_,         other.address_);
+  std::swap(this->class_,                   other.class_);
+  std::swap(this->binding_type_,            other.binding_type_);
+  std::swap(this->segment_,                 other.segment_);
+  std::swap(this->symbol_,                  other.symbol_);
+  std::swap(this->library_ordinal_,         other.library_ordinal_);
+  std::swap(this->addend_,                  other.addend_);
+  std::swap(this->is_weak_import_,          other.is_weak_import_);
+  std::swap(this->is_non_weak_definition_,  other.is_non_weak_definition_);
+  std::swap(this->library_,                 other.library_);
+  std::swap(this->address_,                 other.address_);
 }
 
 

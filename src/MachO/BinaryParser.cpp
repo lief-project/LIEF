@@ -136,10 +136,10 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
     uint64_t offset = this->stream_->pos() - start;
 
     uint64_t flags   = this->stream_->read_uleb128();
-    uint64_t address = this->stream_->read_uleb128();
+    //uint64_t address = this->stream_->read_uleb128();
 
     const std::string& symbol_name = prefix;
-    std::unique_ptr<ExportInfo> export_info{new ExportInfo{address, flags, offset}};
+    std::unique_ptr<ExportInfo> export_info{new ExportInfo{0, flags, offset}};
     if (this->binary_->has_symbol(symbol_name)) {
       Symbol& symbol = this->binary_->get_symbol(symbol_name);
       export_info->symbol_ = &symbol;
@@ -158,6 +158,55 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
       export_info->symbol_       = symbol.get();
       this->binary_->symbols_.push_back(symbol.release());
     }
+
+    // REEXPORT
+    // ========
+    if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+      const uint64_t ordinal = this->stream_->read_uleb128();
+      export_info->other_ = ordinal;
+
+      std::string imported_name = this->stream_->peek_string();
+      if (imported_name.empty()) {
+        imported_name = export_info->symbol().name();
+      }
+
+      if (this->binary_->has_symbol(imported_name)) {
+        Symbol& symbol = this->binary_->get_symbol(imported_name);
+        export_info->alias_ = &symbol;
+        symbol.export_info_ = export_info.get();
+      } else {
+        std::unique_ptr<Symbol> symbol{new Symbol{}};
+        symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT;
+        symbol->value_             = export_info->address();
+        symbol->type_              = 0;
+        symbol->numberof_sections_ = 0;
+        symbol->description_       = 0;
+        symbol->name(symbol_name);
+
+        // Weak bind of the pointer
+        symbol->export_info_      = export_info.get();
+        export_info->alias_       = symbol.get();
+        this->binary_->symbols_.push_back(symbol.release());
+      }
+
+
+      if (ordinal < this->binary_->libraries().size()) {
+        DylibCommand& lib = this->binary_->libraries()[ordinal];
+        export_info->alias_location_ = &lib;
+      } else {
+        // TODO: Corrupted library name
+      }
+    } else {
+      uint64_t address = this->stream_->read_uleb128();
+      export_info->address(address);
+    }
+
+    // STUB_AND_RESOLVER
+    // =================
+    if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
+      export_info->other_ = this->stream_->read_uleb128();
+    }
+
     this->binary_->dyld_info().export_info_.push_back(export_info.release());
 
   }

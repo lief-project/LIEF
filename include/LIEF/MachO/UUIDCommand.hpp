@@ -37,6 +37,8 @@ class LIEF_API UUIDCommand : public LoadCommand {
     UUIDCommand& operator=(const UUIDCommand& copy);
     UUIDCommand(const UUIDCommand& copy);
 
+    virtual UUIDCommand* clone(void) const override;
+
     virtual ~UUIDCommand(void);
 
     uuid_t uuid(void) const;

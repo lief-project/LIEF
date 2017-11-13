@@ -23,6 +23,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/exception.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
@@ -44,9 +45,53 @@ class LIEF_API Builder {
     static void write(Binary *binary, const std::string& filename);
 
   private:
+    template<typename T>
     void build(void);
+
     void build_header(void);
     void build_load_commands(void);
+
+    template<typename T>
+    void build(DylibCommand* library);
+
+    template<typename T>
+    void build(DylinkerCommand* linker);
+
+    template<class T>
+    void build(VersionMin* version_min);
+
+    template<class T>
+    void build(SourceVersion* source_version);
+
+    template<class T>
+    void build(FunctionStarts* function_starts);
+
+    template<class T>
+    void build(MainCommand* main_cmd);
+
+    template<class T>
+    void build(DyldInfo* dyld_info);
+
+    template<class T>
+    void build(SymbolCommand* symbol_command);
+
+    template<class T>
+    void build(DynamicSymbolCommand* symbol_command);
+
+    template<class T>
+    void build(DataInCode* datacode);
+
+    template<class T>
+    void build(CodeSignature* code_signature);
+
+    template<class T>
+    void build(SegmentSplitInfo* ssi);
+
+    template<class T>
+    void build(SubFramework* sf);
+
+    template<class T>
+    void build(DyldEnvironment* de);
 
     template <typename T>
     void build_segments(void);
@@ -58,7 +103,7 @@ class LIEF_API Builder {
 
     std::vector<Binary*> binaries_;
     Binary*              binary_;
-    std::vector<uint8_t> rawBinary_;
+    mutable vector_iostream raw_;
 };
 
 } // namespace MachO

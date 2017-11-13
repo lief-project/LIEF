@@ -14,10 +14,34 @@
  * limitations under the License.
  */
 #include <iterator>
+#include <iostream>
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {
 vector_iostream::vector_iostream(bool endian_swap) : endian_swap_{endian_swap} {}
+
+size_t vector_iostream::uleb128_size(uint64_t value) {
+  size_t size = 0;
+  do {
+    value >>= 7;
+    size += sizeof(int8_t);
+  } while(value);
+  return size;
+}
+
+size_t vector_iostream::sleb128_size(int64_t value) {
+  size_t size = 0;
+  int sign = value >> (8 * sizeof(value) - 1);
+  bool is_more;
+  do {
+    size_t byte = value & 0x7F;
+    value >>= 7;
+    is_more = value != sign or ((byte ^ sign) & 0x40) != 0;
+    size += sizeof(int8_t);
+  } while (is_more);
+  return size;
+}
+
 
 void vector_iostream::reserve(size_t size) {
   this->raw_.reserve(size);
@@ -71,43 +95,58 @@ vector_iostream& vector_iostream::write(std::vector<uint8_t>&& s) {
   return *this;
 }
 
-
 vector_iostream& vector_iostream::write(const std::string& s) {
-  size_t sz = s.size() + 1; // Size to write (+1 for '\0')
-
-  // Check that we have enough spaces
-  if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + sz)) {
-    this->raw_.resize(static_cast<size_t>(this->tellp()) + sz);
+  if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + s.size() + 1)) {
+    this->raw_.resize(static_cast<size_t>(this->tellp()) + s.size() + 1);
   }
 
   auto&& it = std::begin(this->raw_);
   std::advance(it, static_cast<size_t>(this->tellp()));
+  std::copy(std::begin(s), std::end(s), it);
 
-  std::move(
-      std::begin(s),
-      std::end(s), it);
-  this->current_pos_ += sz;
-  this->raw_[static_cast<size_t>(this->tellp()) - 1] = 0;
+  this->current_pos_ += s.size() + 1;
+  return *this;
+}
+
+
+vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
+  uint8_t byte;
+	do {
+    byte = value & 0x7F;
+		value &= ~0x7F;
+		if (value != 0) {
+		  byte |= 0x80;
+    }
+    this->write<uint8_t>(byte);
+		value = value >> 7;
+	} while (byte >= 0x80);
 
   return *this;
 }
 
-vector_iostream& vector_iostream::align(size_t align_on, uint8_t val) {
-  // Already aligned
-  if (align_on == 0 or (this->current_pos_ % align_on) == 0) {
-    return *this;
-  }
+vector_iostream& vector_iostream::write_sleb128(int64_t value) {
 
-  size_t new_pos = ((static_cast<size_t>(this->tellp()) - 1) / align_on + 1) * align_on;
-  if (this->raw_.size() < new_pos) {
-      this->raw_.resize(new_pos, val);
-  } else {
-    std::fill(this->raw_.begin() + this->current_pos_, this->raw_.begin() + new_pos, val);
-  }
-  this->current_pos_ = new_pos;
+  bool is_neg = (value < 0);
+	uint8_t byte;
+	bool more;
+	do {
+	  byte = value & 0x7F;
+		value = value >> 7;
+
+    if (is_neg) {
+		  more = ((value != -1) || ((byte & 0x40) == 0));
+    } else {
+		  more = ((value != 0) || ((byte & 0x40) != 0));
+    }
+		if (more) {
+		  byte |= 0x80;
+      this->write<uint8_t>(byte);
+    }
+	} while (more);
 
   return *this;
 }
+
 
 vector_iostream& vector_iostream::get(std::vector<uint8_t>& c) {
   c = this->raw_;
@@ -160,6 +199,18 @@ vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_ba
       {
         break;
       }
+  }
+
+  return *this;
+}
+
+vector_iostream& vector_iostream::align(size_t alignment, uint8_t fill) {
+  if (this->raw_.size() % alignment == 0) {
+    return *this;
+  }
+
+  while (this->raw_.size() % alignment != 0) {
+    this->write<uint8_t>(fill);
   }
 
   return *this;

@@ -34,6 +34,8 @@ class LIEF_API DyldEnvironment : public LoadCommand {
   DyldEnvironment& operator=(const DyldEnvironment& copy);
   DyldEnvironment(const DyldEnvironment& copy);
 
+  virtual DyldEnvironment* clone(void) const override;
+
   virtual ~DyldEnvironment(void);
 
   virtual std::ostream& print(std::ostream& os) const override;

@@ -34,6 +34,8 @@ class LIEF_API SymbolCommand : public LoadCommand {
     SymbolCommand& operator=(const SymbolCommand& copy);
     SymbolCommand(const SymbolCommand& copy);
 
+    virtual SymbolCommand* clone(void) const override;
+
     virtual ~SymbolCommand(void);
 
     //! Offset from the start of the file to the n_list associated with the command

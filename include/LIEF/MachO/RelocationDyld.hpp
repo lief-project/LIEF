@@ -63,6 +63,12 @@ class LIEF_API RelocationDyld : public Relocation {
     bool operator==(const RelocationDyld& rhs) const;
     bool operator!=(const RelocationDyld& rhs) const;
 
+    bool operator<(const RelocationDyld& rhs) const;
+    bool operator>=(const RelocationDyld& rhs) const;
+
+    bool operator>(const RelocationDyld& rhs) const;
+    bool operator<=(const RelocationDyld& rhs) const;
+
     virtual void accept(Visitor& visitor) const override;
 
     virtual std::ostream& print(std::ostream& os) const override;

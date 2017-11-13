@@ -33,6 +33,8 @@ class LIEF_API Symbol : public Object {
     //! @brief Return symbol name
     virtual const std::string& name(void) const;
 
+    virtual std::string& name(void);
+
     //! @brief Set symbol name
     virtual void name(const std::string& name);
 

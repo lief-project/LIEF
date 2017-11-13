@@ -26,6 +26,26 @@ uint64_t align(uint64_t value, uint64_t align_on) {
     return value;
   }
 }
+}
+
+
+namespace LIEF {
+namespace LEB128 {
+std::vector<uint8_t> uencode(uint64_t value) {
+  std::vector<uint8_t> result;
+  do {
+    uint8_t b = value & 0x7F;
+    value >>= 7;
+    if (value > 0) {
+      b |= 0x80;
+    }
+    result.push_back(b);
+  } while (value != 0);
+  return result;
+}
+
+
+}
 
 std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::string name;

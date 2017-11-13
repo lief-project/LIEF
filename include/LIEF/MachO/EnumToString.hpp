@@ -49,7 +49,9 @@ LIEF_API const char* to_string(BIND_OPCODES e);
 LIEF_API const char* to_string(EXPORT_SYMBOL_KINDS e);
 LIEF_API const char* to_string(VM_PROTECTIONS e);
 LIEF_API const char* to_string(SYMBOL_ORIGINS e);
+LIEF_API const char* to_string(EXPORT_SYMBOL_FLAGS e);
 LIEF_API const char* to_string(DataCodeEntry::TYPES e);
+
 
 } // namespace MachO
 } // namespace LIEF

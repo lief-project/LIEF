@@ -40,6 +40,8 @@ void create<SegmentCommand>(py::module& m) {
 
   py::class_<SegmentCommand, LoadCommand>(m, "SegmentCommand")
     .def(py::init<>())
+    .def(py::init<const std::string&>())
+    .def(py::init<const std::string&, const SegmentCommand::content_t&>())
 
     .def_property("name",
         [] (const SegmentCommand& obj) {
@@ -102,8 +104,8 @@ void create<SegmentCommand>(py::module& m) {
         )
 
     .def_property("content",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&SegmentCommand::content),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&SegmentCommand::content),
+        static_cast<getter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
+        static_cast<setter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
         "Segment's content"
         )
 
@@ -113,6 +115,22 @@ void create<SegmentCommand>(py::module& m) {
         static_cast<setter_t<uint32_t>>(&SegmentCommand::flags),
         "Segment's flags"
         )
+
+    .def("has",
+        static_cast<bool(SegmentCommand::*)(const Section&) const>(&SegmentCommand::has),
+        "Check if the given " RST_CLASS_REF(lief.MachO.Section) " belongs to the current segment",
+        "section"_a)
+
+    .def("has_section",
+        static_cast<bool(SegmentCommand::*)(const std::string&) const>(&SegmentCommand::has_section),
+        "Check if the given section name belongs to the current segment",
+        "section_name"_a)
+
+    .def("add_section",
+        static_cast<Section& (SegmentCommand::*)(const Section&)>(&SegmentCommand::add_section),
+        "",
+        "section"_a,
+        py::return_value_policy::reference)
 
     .def("__eq__", &SegmentCommand::operator==)
     .def("__ne__", &SegmentCommand::operator!=)

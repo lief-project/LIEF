@@ -28,6 +28,7 @@ Welcome to LIEF's documentation!
   tutorials/08_elf_bin2lib
   tutorials/09_frida_lief
   tutorials/10_android_formats
+  tutorials/11_macho_modification
 
 
 .. toctree::
