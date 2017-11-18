@@ -21,20 +21,6 @@
 
 namespace LIEF {
 
-//! @brief Default logging configuration
-static const char* logging_config = R"config(
-* GLOBAL:
-   FORMAT               = "%msg"
-   ENABLED              = true
-   TO_STANDARD_OUTPUT   = true
-   TO_FILE              = false
-   PERFORMANCE_TRACKING = true
-
-* DEBUG:
-   FORMAT  = "%func %msg"
-   Enabled = true
-)config";
-
 //! @brief **Hierarchical** logging level
 //!
 //! From a given level set, all levels below this

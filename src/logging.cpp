@@ -16,11 +16,27 @@
 #include "easylogging++.h"
 #include "LIEF/logging.hpp"
 
+
 INITIALIZE_EASYLOGGINGPP
 
 static LIEF::Logger logger;
 
+
+
 namespace LIEF {
+
+const char* logging_config = R"config(
+* GLOBAL:
+   FORMAT               = "%msg"
+   ENABLED              = true
+   TO_STANDARD_OUTPUT   = true
+   TO_FILE              = false
+   PERFORMANCE_TRACKING = true
+
+* DEBUG:
+   FORMAT  = "%func %msg"
+   Enabled = true
+)config";
 
 Logger::~Logger(void) = default;
 
