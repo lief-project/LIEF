@@ -15,10 +15,19 @@
  */
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/exception.hpp"
+#include "LIEF/config.h"
 
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/Binary.hpp"
+#endif
+
+#if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/Binary.hpp"
+#endif
+
+#if defined(LIEF_MACHO_SUPPORT)
 #include "LIEF/MachO/Binary.hpp"
+#endif
 
 namespace LIEF {
 Binary::Binary(void) :
@@ -31,17 +40,25 @@ Binary& Binary::operator=(const Binary&) = default;
 Binary::Binary(const Binary&) = default;
 
 EXE_FORMATS Binary::format(void) const {
+
+#if defined(LIEF_ELF_SUPPORT)
   if (typeid(*this) == typeid(LIEF::ELF::Binary)) {
     return EXE_FORMATS::FORMAT_ELF;
   }
+#endif
 
+
+#if defined(LIEF_PE_SUPPORT)
   if (typeid(*this) == typeid(LIEF::PE::Binary)) {
     return EXE_FORMATS::FORMAT_PE;
   }
+#endif
 
+#if defined(LIEF_MACHO_SUPPORT)
   if (typeid(*this) == typeid(LIEF::MachO::Binary)) {
     return EXE_FORMATS::FORMAT_MACHO;
   }
+#endif
 
   return EXE_FORMATS::FORMAT_UNKNOWN;
 }

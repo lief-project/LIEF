@@ -27,6 +27,7 @@ class Relocation;
 class Symbol;
 class ExportEntry;
 class RichEntry;
+class RelocationEntry;
 
 class Import;
 class ImportEntry;

@@ -7,6 +7,7 @@ set(LIEF_ABSTRACT_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Section.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Relocation.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Visitor.cpp"
 )
 
 set(LIEF_ABSTRACT_INCLUDE_FILES

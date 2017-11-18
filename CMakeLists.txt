@@ -324,8 +324,6 @@ set(LIBLIEF_SOURCE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/pe_json.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
@@ -354,7 +352,6 @@ set(LIEF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp")
 
 set(LIEF_VISITOR_INCLUDE_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/elf_json.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/Hash.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/json.hpp")
 
@@ -378,24 +375,76 @@ add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}
 include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
 
 # ELF Part
+# ========
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
 if (LIEF_ELF)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
+  set(ENABLE_ELF_SUPPORT 1)
+else()
+  set(ENABLE_ELF_SUPPORT 0)
 endif()
 
+
+if (LIEF_ELF AND LIEF_ENABLE_JSON)
+  target_sources(LIB_LIEF_STATIC PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/elf_json.hpp"
+  )
+
+  target_sources(LIB_LIEF_SHARED PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/elf_json.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/elf_json.hpp"
+  )
+endif()
+
+
 # PE Part
+# =======
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
 if (LIEF_PE)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
+  set(ENABLE_PE_SUPPORT 1)
+else()
+  set(ENABLE_PE_SUPPORT 0)
+endif()
+
+if (LIEF_PE AND LIEF_ENABLE_JSON)
+  target_sources(LIB_LIEF_STATIC PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/pe_json.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/pe_json.hpp"
+  )
+
+  target_sources(LIB_LIEF_SHARED PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/pe_json.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitors/pe_json.hpp"
+  )
 endif()
 
 # MachO part
+# ==========
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
 if (LIEF_MACHO)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
+  set(ENABLE_MACHO_SUPPORT 1)
+else()
+  set(ENABLE_MACHO_SUPPORT 0)
+endif()
+
+
+# Logging Configuration
+# =====================
+add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
+add_definitions(-DVDEBUG=9)
+
+if (LIEF_LOGGING)
+  set(ENABLE_LOGGING_SUPPORT 1)
+else()
+  set(ENABLE_LOGGING_SUPPORT 0)
+  add_definitions(-DELPP_DISABLE_LOGS)
+  add_definitions(-DELPP_NO_LOG_TO_FILE)
+  add_definitions(-DELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 endif()
 
 
 # LIEF includes
 # =============
-
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/version.h"
@@ -428,20 +477,8 @@ source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
 
 # Library definition
 # ==================
-add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
-add_definitions(-DVDEBUG=9)
 
-if (LIEF_ELF)
-  add_definitions(-DLIEF_ELF_MODULE)
-endif()
 
-if (LIEF_PE)
-  add_definitions(-DLIEF_PE_MODULE)
-endif()
-
-if (LIEF_MACHO)
-  add_definitions(-DLIEF_MACHO_MODULE)
-endif()
 
 target_include_directories(LIB_LIEF_STATIC
   PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"

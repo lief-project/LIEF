@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 #include "easylogging++.h"
+#include "LIEF/config.h"
 #include "LIEF/logging.hpp"
 
-
+#if defined(LIEF_LOGGING_SUPPORT)
 INITIALIZE_EASYLOGGINGPP
+#endif
 
 static LIEF::Logger logger;
-
-
 
 namespace LIEF {
 
@@ -58,6 +58,7 @@ const char* to_string(LOGGING_LEVEL e) {
 
 Logger::Logger(void)
 {
+#if defined(LIEF_LOGGING_SUPPORT)
   el::Logger* default_logger = el::Loggers::getLogger("default");
   el::Configurations conf;
   conf.setToDefault();
@@ -66,34 +67,46 @@ Logger::Logger(void)
 
   el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
   el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+#endif
 }
 
 
 void Logger::disable(void) {
+
+#if defined(LIEF_LOGGING_SUPPORT)
   el::Configurations c;
   el::Loggers::setLoggingLevel(el::Level::Unknown);
+#endif
 }
 
 void Logger::enable(void) {
+
+#if defined(LIEF_LOGGING_SUPPORT)
   el::Configurations c;
   el::Loggers::setLoggingLevel(el::Level::Global);
+#endif
 }
 
 
 void Logger::set_verbose_level(uint32_t level) {
+
+#if defined(LIEF_LOGGING_SUPPORT)
   el::Loggers::setVerboseLevel(level);
+#endif
 }
 
 
 void Logger::set_level(LOGGING_LEVEL level) {
+
+#if defined(LIEF_LOGGING_SUPPORT)
   el::Loggers::setLoggingLevel(static_cast<el::Level>(level));
 
   if (level == LOGGING_LEVEL::LOG_DEBUG) {
     set_verbose_level(VDEBUG);
   }
- }
-
+#endif
 }
 
+}
 
 

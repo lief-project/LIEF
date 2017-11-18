@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MAIN_HEADER_H_
-#define LIEF_MAIN_HEADER_H_
-#include <LIEF/config.h>
+#include "LIEF/Visitor.hpp"
 
-#include <LIEF/Abstract/Abstract.hpp>
+#include "LIEF/Abstract/Abstract.hpp"
 
-#include <LIEF/ELF.hpp>
-#include <LIEF/PE.hpp>
-#include <LIEF/MachO.hpp>
-#include <LIEF/logging.hpp>
+namespace LIEF {
 
+// Abstract part
+// -------------
+void Visitor::visit(const Binary& binary) {
+  binary.accept(*this);
+}
 
-#endif
+void Visitor::visit(const Header& header) {
+  header.accept(*this);
+}
+
+void Visitor::visit(const Section& section) {
+  section.accept(*this);
+}
+
+void Visitor::visit(const Symbol& symbol) {
+  symbol.accept(*this);
+}
+
+void Visitor::visit(const Relocation& relocation) {
+  relocation.accept(*this);
+}
+}

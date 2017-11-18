@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_VISITOR_H_
 #define LIEF_VISITOR_H_
-
 #include <set>
 #include <vector>
 #include <array>
@@ -23,6 +22,8 @@
 #include <functional>
 #include <iostream>
 #include <utility>
+
+#include "LIEF/config.h"
 
 #include "LIEF/visibility.h"
 
@@ -39,6 +40,8 @@ class Section;
 class Symbol;
 class Relocation;
 
+
+#if defined(LIEF_ELF_SUPPORT)
 namespace ELF {
 class Binary;
 class Header;
@@ -64,7 +67,9 @@ class SymbolVersionAuxRequirement;
 class SymbolVersionRequirement;
 class SymbolVersionDefinition;
 }
+#endif
 
+#if defined(LIEF_PE_SUPPORT)
 namespace PE {
 class Binary;
 
@@ -123,7 +128,9 @@ class LoadConfigurationV5;
 class LoadConfigurationV6;
 class LoadConfigurationV7;
 }
+#endif
 
+#if defined(LIEF_MACHO_SUPPORT)
 namespace MachO {
 class Binary;
 
@@ -148,6 +155,7 @@ class RelocationDyld;
 class BindingInfo;
 class ExportInfo;
 }
+#endif
 // =====================
 
 
@@ -213,7 +221,7 @@ class DLL_PUBLIC Visitor {
 
   // ELF Part
   // ========
-
+#if defined(LIEF_ELF_SUPPORT)
   //! @brief Method to visit a LIEF::ELF::Binary
   virtual void visit(const ELF::Binary& binary);
 
@@ -276,10 +284,11 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::ELF::SysvHash
   virtual void visit(const ELF::SysvHash& sysvhash);
+#endif
 
   // PE Part
   // =======
-
+#if defined(LIEF_PE_SUPPORT)
   //! @brief Method to visit a LIEF::PE::Binary
   virtual void visit(const PE::Binary& binary);
 
@@ -414,10 +423,11 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::CodeIntegrity
   virtual void visit(const PE::CodeIntegrity& code_integrity);
+#endif
 
   // MachO part
   // ==========
-
+#if defined(LIEF_MACHO_SUPPORT)
   //! @brief Method to visit a LIEF::MachO::Binary
   virtual void visit(const MachO::Binary& binary);
 
@@ -471,7 +481,7 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::MachO::ThreadCommand
   virtual void visit(const MachO::ThreadCommand& thread);
-
+#endif
 
   template<class T>
   void dispatch(const T& obj);

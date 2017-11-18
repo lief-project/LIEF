@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/config.h"
 #include "LIEF/to_json.hpp"
 
 #include "pyLIEF.hpp"
 
 void init_json_functions(py::module& m) {
 
-#if defined(LIEF_ELF_MODULE)
+#if defined(LIEF_ELF_SUPPORT)
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Binary,                      LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Header,                      LIEF::ELF::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::ELF::Section,                     LIEF::ELF::JsonVisitor>);
@@ -44,7 +45,7 @@ void init_json_functions(py::module& m) {
 #endif
 
 
-#if defined(LIEF_PE_MODULE)
+#if defined(LIEF_PE_SUPPORT)
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::Binary,                  LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::DosHeader,               LIEF::PE::JsonVisitor>);
     m.def("to_json", &LIEF::to_json_str<LIEF::PE::RichHeader,              LIEF::PE::JsonVisitor>);

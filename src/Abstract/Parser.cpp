@@ -15,6 +15,7 @@
  */
 #include "LIEF/Abstract/Parser.hpp"
 
+
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
 
@@ -35,20 +36,20 @@ Parser::Parser(void) :
 
 Binary* Parser::parse(const std::string& filename) {
 
-#if defined(LIEF_ELF_MODULE)
+#if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(filename)) {
     return ELF::Parser::parse(filename);
   }
 #endif
 
 
-#if defined(LIEF_PE_MODULE)
+#if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(filename)) {
      return PE::Parser::parse(filename);
   }
 #endif
 
-#if defined(LIEF_MACHO_MODULE)
+#if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(filename)) {
     // For fat binary we take the last one...
     MachO::FatBinary* fat = MachO::Parser::parse(filename);
@@ -67,20 +68,20 @@ Binary* Parser::parse(const std::string& filename) {
 
 Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
 
-#if defined(LIEF_ELF_MODULE)
+#if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(raw)) {
     return ELF::Parser::parse(raw, name);
   }
 #endif
 
 
-#if defined(LIEF_PE_MODULE)
+#if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(raw)) {
      return PE::Parser::parse(raw, name);
   }
 #endif
 
-#if defined(LIEF_MACHO_MODULE)
+#if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(raw)) {
     // For fat binary we take the last one...
     MachO::FatBinary* fat = MachO::Parser::parse(raw, name);

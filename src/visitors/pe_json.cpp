@@ -16,11 +16,10 @@
 
 #include "LIEF/config.h"
 
-#ifdef LIEF_JSON_SUPPORT
-
 #include "LIEF/visitors/pe_json.hpp"
 #include "LIEF/visitors/Hash.hpp"
 #include "LIEF/PE.hpp"
+
 namespace LIEF {
 namespace PE {
 
@@ -763,4 +762,3 @@ void JsonVisitor::visit(const LIEF::Section& section) {
 } // namespace PE
 } // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT

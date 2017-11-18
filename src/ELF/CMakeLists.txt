@@ -1,3 +1,4 @@
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/enums.inc"      LIEF_ELF_ENUMS)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/structures.inc" LIEF_ELF_STRUCTURES)
 
@@ -41,6 +42,7 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryRpath.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryFlags.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Visitor.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
@@ -103,9 +105,12 @@ source_group("Header Files\\ELF" FILES ${LIEF_ELF_INC_FILES})
 source_group("Header Files\\ELF\\DataHandler" FILES ${LIEF_ELF_DATA_HANDLER_INCLUDE_FILES})
 #source_group("Header Files\\ELF\\Relocations" FILES ${LIEF_ELF_RELOC_INCLUDE_FILES})
 
-target_sources(LIB_LIEF_STATIC PRIVATE
-  ${LIEF_ELF_SRC}
-  ${LIEF_ELF_INCLUDE_FILES})
-target_sources(LIB_LIEF_SHARED PRIVATE
-  ${LIEF_ELF_SRC}
-  ${LIEF_ELF_INCLUDE_FILES})
+if (LIEF_ELF)
+  target_sources(LIB_LIEF_STATIC PRIVATE
+    ${LIEF_ELF_SRC}
+    ${LIEF_ELF_INCLUDE_FILES})
+
+  target_sources(LIB_LIEF_SHARED PRIVATE
+    ${LIEF_ELF_SRC}
+    ${LIEF_ELF_INCLUDE_FILES})
+endif()

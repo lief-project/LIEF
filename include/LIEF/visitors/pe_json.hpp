@@ -19,10 +19,6 @@
 #include "LIEF/visibility.h"
 #include "LIEF/visitors/json.hpp"
 
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
-
 namespace LIEF {
 namespace PE {
 class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
@@ -86,7 +82,5 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
 
 }
 }
-
-#endif // LIEF_JSON_SUPPORT
 
 #endif

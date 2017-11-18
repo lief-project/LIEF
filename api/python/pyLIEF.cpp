@@ -35,17 +35,17 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 
 
   // Init the ELF module
-#if defined(LIEF_ELF_MODULE)
+#if defined(LIEF_ELF_SUPPORT)
   init_ELF_module(LIEF_module);
 #endif
 
   // Init the PE module
-#if defined(LIEF_PE_MODULE)
+#if defined(LIEF_PE_SUPPORT)
   init_PE_module(LIEF_module);
 #endif
 
   // Init the MachO  module
-#if defined(LIEF_MACHO_MODULE)
+#if defined(LIEF_MACHO_SUPPORT)
   init_MachO_module(LIEF_module);
 #endif
 

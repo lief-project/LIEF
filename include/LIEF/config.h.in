@@ -21,4 +21,20 @@
 #define LIEF_JSON_SUPPORT
 #endif
 
+#if @ENABLE_PE_SUPPORT@
+#define LIEF_PE_SUPPORT
+#endif
+
+#if @ENABLE_ELF_SUPPORT@
+#define LIEF_ELF_SUPPORT
+#endif
+
+#if @ENABLE_MACHO_SUPPORT@
+#define LIEF_MACHO_SUPPORT
+#endif
+
+#if @ENABLE_LOGGING_SUPPORT@
+#define LIEF_LOGGING_SUPPORT
+#endif
+
 #endif

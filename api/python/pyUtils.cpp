@@ -37,7 +37,7 @@ void init_utils_functions(py::module& m) {
       },
       "Trigger 'pdb.set_trace()'");
 
-#if defined(LIEF_PE_MODULE)
+#if defined(LIEF_PE_SUPPORT)
     m.def("is_pe",
         static_cast<bool (*)(const std::string&)>(&LIEF::PE::is_pe),
         "Check if the given file is a ``PE`` (from filename)",
@@ -49,7 +49,7 @@ void init_utils_functions(py::module& m) {
         "raw"_a);
 #endif
 
-#if defined(LIEF_ELF_MODULE)
+#if defined(LIEF_ELF_SUPPORT)
     m.def("is_elf",
         static_cast<bool (*)(const std::string&)>(&LIEF::ELF::is_elf),
         "Check if the given file is an ``ELF``",
@@ -62,7 +62,7 @@ void init_utils_functions(py::module& m) {
         "raw"_a);
 #endif
 
-#if defined(LIEF_MACHO_MODULE)
+#if defined(LIEF_MACHO_SUPPORT)
     m.def("is_macho",
         static_cast<bool (*)(const std::string&)>(&LIEF::MachO::is_macho),
         "Check if the given file is a ``MachO`` (from filename)",

@@ -24,6 +24,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Import.hpp"
 
 namespace LIEF {
 namespace PE {
