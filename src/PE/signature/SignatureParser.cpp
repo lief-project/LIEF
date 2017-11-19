@@ -24,6 +24,8 @@
 
 #include "pkcs7.h"
 
+#include <cstring>
+
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/utils.hpp"

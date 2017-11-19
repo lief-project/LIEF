@@ -6,4 +6,5 @@
 #include <iostream>
 #define VLOG(...) std::cout
 #define LOG(...) std::cout
+#define LOG_IF(...) std::cout
 #endif
