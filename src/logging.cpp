@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 #include "LIEF/config.h"
 #include "LIEF/logging.hpp"
+#include <map>
 
 #if defined(LIEF_LOGGING_SUPPORT)
 INITIALIZE_EASYLOGGINGPP

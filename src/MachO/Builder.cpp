@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iterator>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 
 #include "LIEF/MachO/Builder.hpp"
 #include "Builder.tcc"

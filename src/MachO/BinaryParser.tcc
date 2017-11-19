@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
