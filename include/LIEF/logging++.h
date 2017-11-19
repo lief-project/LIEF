@@ -1,3 +1,5 @@
+#pragma once
+
 #if defined(LIEF_LOGGING_SUPPORT)
 #include "easylogging++.h"
 #else
