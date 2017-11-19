@@ -19,8 +19,9 @@
 #include <fstream>
 #include <cassert>
 #include <sstream>
+#include <algorithm> 
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"

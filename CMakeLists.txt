@@ -228,19 +228,21 @@ set(mbedtls_src_tls
 
 # easyloggingpp
 # -------------
-set(ELG_VERSION 9.94.2)
-set(ELG_SHA256 SHA256=f99adeb098e28cd6c97ebb7dfe8ddd55bf6b79578aa65b55c34b4b2527f1f235)
-set(ELG_URL "${THIRD_PARTY_DIRECTORY}/easyloggingpp-${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
-ExternalProject_Add(lief_easyloggingpp
-  URL               ${ELG_URL}
-  URL_HASH          ${ELG_SHA256}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  UPDATE_COMMAND    ""
-  INSTALL_COMMAND   "")
+if (LIEF_LOGGING)
+  set(ELG_VERSION 9.94.2)
+  set(ELG_SHA256 SHA256=f99adeb098e28cd6c97ebb7dfe8ddd55bf6b79578aa65b55c34b4b2527f1f235)
+  set(ELG_URL "${THIRD_PARTY_DIRECTORY}/easyloggingpp-${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
+  ExternalProject_Add(lief_easyloggingpp
+    URL               ${ELG_URL}
+    URL_HASH          ${ELG_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    INSTALL_COMMAND   "")
 
-ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)
-set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
+  ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)
+  set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
+endif()
 
 # Fuzzing
 # ~~~~~~~
@@ -308,10 +310,13 @@ endif()
 set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
+if (LIEF_LOGGING)
 set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.cc PROPERTIES GENERATED TRUE)
+set(ELG_CC_PATH "${ELG_SOURCE_DIR}/easylogging++.cc")
+endif()
 
 set(LIBLIEF_SOURCE_FILES
-  "${ELG_SOURCE_DIR}/easylogging++.cc"
+  "${ELG_CC_PATH}"
   "${mbedtls_src_crypto}"
   "${mbedtls_src_x509}"
   "${mbedtls_src_tls}"
@@ -473,7 +478,9 @@ set(LIEF_PRIVATE_INCLUDE_DIR
 source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
 source_group("mbedtls\\x509"   FILES ${mbedtls_src_x509})
 source_group("mbedtls\\tls"    FILES ${mbedtls_src_tls})
+if (LIEF_LOGGING)
 source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
+endif()
 
 # Library definition
 # ==================
@@ -494,8 +501,10 @@ if (LIEF_ENABLE_JSON)
   add_dependencies(LIB_LIEF_SHARED lief_libjson)
 endif()
 
-add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
-add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)
+if (LIEF_LOGGING)
+  add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
+  add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)
+endif()
 
 add_dependencies(LIB_LIEF_STATIC lief_rang_cpp_color)
 add_dependencies(LIB_LIEF_SHARED lief_rang_cpp_color)

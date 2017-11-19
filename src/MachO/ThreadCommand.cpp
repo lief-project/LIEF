@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"

@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <functional>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 
 #include "LIEF/filesystem/filesystem.h"
 #include "LIEF/exception.hpp"

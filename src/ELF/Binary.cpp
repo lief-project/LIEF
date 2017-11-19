@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <iterator>
 #include <numeric>
+#include <sstream>
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
@@ -25,7 +26,7 @@
 
 #include <stdexcept>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"

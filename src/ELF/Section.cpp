@@ -20,7 +20,7 @@
 #include <functional>
 #include <iterator>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 
 #include "LIEF/visitors/Hash.hpp"
 
