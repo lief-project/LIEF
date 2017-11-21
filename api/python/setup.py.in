@@ -55,7 +55,7 @@ if in_source_package:
     with open(pkg_info, "r") as f:
         major, minor, patch, branch = re.findall(version_re, f.read(), re.MULTILINE)[0]
         lief_version = "{:d}.{:d}.{:d}".format(int(major), int(minor), int(patch))
-        is_branch = len(branch) > 0
+        is_branch = len(branch.strip()) > 0
 else:
     lief_version = "@LIEF_VERSION_MAJOR@.@LIEF_VERSION_MINOR@.@LIEF_VERSION_PATCH@"
 
