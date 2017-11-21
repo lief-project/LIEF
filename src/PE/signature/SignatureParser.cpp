@@ -20,9 +20,11 @@
 
 #include "LIEF/utf8.h"
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 
 #include "pkcs7.h"
+
+#include <cstring>
 
 #include "LIEF/exception.hpp"
 

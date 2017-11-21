@@ -20,7 +20,7 @@
 #include <numeric>
 #include <limits>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 
 #include "LIEF/visitors/Hash.hpp"
 #include "LIEF/exception.hpp"

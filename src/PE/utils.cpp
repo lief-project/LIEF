@@ -23,7 +23,7 @@
 #include <sstream>
 #include <string>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 #include "mbedtls/md5.h"
 
 #include "LIEF/utf8.h"

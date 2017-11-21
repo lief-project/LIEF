@@ -15,7 +15,7 @@
  */
 
 
-#include "easylogging++.h"
+#include "LIEF/logging++.h"
 
 #include "LIEF/MachO/ParserConfig.hpp"
 
