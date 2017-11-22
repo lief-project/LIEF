@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include "LoadConfigurations/LoadConfigurations.tcc"
