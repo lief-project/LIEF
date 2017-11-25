@@ -511,7 +511,12 @@ const char* to_string(RELOC_x86_64 e) {
     { RELOC_x86_64::R_X86_64_GOTPC32_TLSDESC, "GOTPC32_TLSDESC"},
     { RELOC_x86_64::R_X86_64_TLSDESC_CALL,    "TLSDESC_CALL"},
     { RELOC_x86_64::R_X86_64_TLSDESC,         "TLSDESC"},
-    { RELOC_x86_64::R_X86_64_IRELATIVE,       "IRELATIVE"}
+    { RELOC_x86_64::R_X86_64_IRELATIVE,       "IRELATIVE"},
+    { RELOC_x86_64::R_X86_64_RELATIVE64,      "RELATIVE64"},
+    { RELOC_x86_64::R_X86_64_PC32_BND,        "PC32_BND"},
+    { RELOC_x86_64::R_X86_64_PLT32_BND,       "PLT32_BND"},
+    { RELOC_x86_64::R_X86_64_GOTPCRELX,       "GOTPCRELX"},
+    { RELOC_x86_64::R_X86_64_REX_GOTPCRELX,   "REX_GOTPCRELX"},
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;

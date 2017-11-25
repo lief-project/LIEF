@@ -63,6 +63,11 @@ static const std::map<RELOC_x86_64, uint32_t> relocation_x86_64_sizes {
   {RELOC_x86_64::R_X86_64_TLSDESC_CALL,     0 },
   {RELOC_x86_64::R_X86_64_TLSDESC,         64 },
   {RELOC_x86_64::R_X86_64_IRELATIVE,       64 },
+  {RELOC_x86_64::R_X86_64_RELATIVE64,      64 },
+  {RELOC_x86_64::R_X86_64_PC32_BND,        32 },
+  {RELOC_x86_64::R_X86_64_PLT32_BND,       32 },
+  {RELOC_x86_64::R_X86_64_GOTPCRELX,       32 },
+  {RELOC_x86_64::R_X86_64_REX_GOTPCRELX,   32 },
 };
 
 static const std::map<RELOC_i386, uint32_t> relocation_i386_sizes {

@@ -530,6 +530,12 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_TLSDESC_CALL))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_TLSDESC))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_IRELATIVE))
+
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_RELATIVE64))
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_PC32_BND))
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_PLT32_BND))
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_GOTPCRELX))
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_REX_GOTPCRELX))
     .export_values();
 
 
