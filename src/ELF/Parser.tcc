@@ -983,34 +983,39 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
 
   uint32_t nb_symbols = this->get_numberof_dynamic_symbols<ELF_T>(this->count_mtd_);
 
-  VLOG(VDEBUG) << "Number of symbols counted: " << nb_symbols;
 
   const Elf_Off dynamic_symbols_offset = offset;
   const Elf_Off string_offset          = this->get_dynamic_string_table();
 
-  const Elf_Sym* symbol_headers = reinterpret_cast<const Elf_Sym*>(
-      this->stream_->read(dynamic_symbols_offset, nb_symbols * sizeof(Elf_Sym)));
+  VLOG(VDEBUG) << "Number of symbols counted: " << nb_symbols;
+  VLOG(VDEBUG) << "Table Offset: " << std::hex << std::showbase << dynamic_symbols_offset;
+  VLOG(VDEBUG) << "String Table Offset: " << std::hex << std::showbase << string_offset;
 
   if (string_offset == 0) {
     LOG(WARNING) << "Unable to find the .dynstr section";
-  } else {
-    for (size_t i = 0; i < nb_symbols; ++i) {
-    //while (symbolHdr->st_other == 0 and (idx++) < maxSymbols) { // Check: Could be wrong ?
-      std::unique_ptr<Symbol> symbol{new Symbol{symbol_headers}};
+    return;
+  }
+  for (size_t i = 0; i < nb_symbols; ++i) {
+    try {
+      const Elf_Sym* symbol_header = reinterpret_cast<const Elf_Sym*>(
+        this->stream_->read(dynamic_symbols_offset + i * sizeof(Elf_Sym), sizeof(Elf_Sym)));
 
-      if (symbol_headers->st_name > 0) {
+      std::unique_ptr<Symbol> symbol{new Symbol{symbol_header}};
+
+      if (symbol_header->st_name > 0) {
         try {
           std::string name{
-            this->stream_->get_string(string_offset + symbol_headers->st_name)};
+            this->stream_->get_string(string_offset + symbol_header->st_name)};
           symbol->name(name);
         } catch (const exception& e) {
           VLOG(VDEBUG) << e.what();
           break;
         }
       }
-
       this->binary_->dynamic_symbols_.push_back(symbol.release());
-      symbol_headers++;
+    } catch (const exception& e) {
+      VLOG(VDEBUG) << e.what();
+      break;
     }
   }
 } // build_dynamic_sybols
