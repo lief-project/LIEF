@@ -10,3 +10,5 @@ C
   elf.rst
   pe.rst
   macho.rst
+  logging.rst
+

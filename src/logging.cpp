@@ -69,6 +69,8 @@ Logger::Logger(void)
 
   el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
   el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+
+  el::Loggers::setLoggingLevel(el::Level::Unknown);
 #endif
 }
 

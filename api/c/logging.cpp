@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef C_LIEF_H_
-#define C_LIEF_H_
+#include "LIEF/logging.hpp"
+#include "LIEF/logging.h"
 
-#include <LIEF/MachO.h>
-#include <LIEF/PE.h>
-#include <LIEF/ELF.h>
-#include <LIEF/logging.h>
+using namespace LIEF;
 
-#endif
+void lief_logging_disable(void) {
+  Logger::disable();
+}
+
+void lief_logging_enable(void) {
+  Logger::enable();
+}
+
+void lief_logging_set_level(uint32_t level) {
+  Logger::set_level(static_cast<LOGGING_LEVEL>(level));
+}
+
+void lief_logging_set_verbose_level(uint32_t level) {
+  Logger::set_verbose_level(level);
+}
