@@ -90,7 +90,7 @@ To have a better granularity on the location of the imported function in librari
 .. code-block:: python
 
   for imported_library in binary.imports:
-    print("Library name: " + imported_library
+    print("Library name: " + imported_library.name)
     for func in imported_library.entries:
       if not func.is_ordinal:
         print(func.name)
