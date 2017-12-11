@@ -58,7 +58,7 @@ void init_PE_ImportEntry_class(py::module& m) {
 
     .def_property_readonly("ordinal",
         &ImportEntry::ordinal,
-        "``True`` if ordinal is used")
+        "Ordinal value (if any). See: :attr:`~lief.PE.ImportEntry.is_ordinal`")
 
     .def_property_readonly("hint",
         &ImportEntry::hint,
