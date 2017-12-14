@@ -93,4 +93,8 @@ void Visitor::visit(const MachO::ThreadCommand& thread) {
   thread.accept(*this);
 }
 
+void Visitor::visit(const MachO::RPathCommand& rpath_command) {
+  rpath_command.accept(*this);
+}
+
 }
