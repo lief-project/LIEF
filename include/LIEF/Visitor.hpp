@@ -146,6 +146,7 @@ class DynamicSymbolCommand;
 class DylinkerCommand;
 class DylibCommand;
 class ThreadCommand;
+class RPathCommand;
 
 class Symbol;
 class Relocation;
@@ -481,6 +482,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::MachO::ThreadCommand
   virtual void visit(const MachO::ThreadCommand& thread);
+
+  //! @brief Method to visit a LIEF::MachO::RPathCommand
+  virtual void visit(const MachO::RPathCommand& rpath_command);
 #endif
 
   template<class T>

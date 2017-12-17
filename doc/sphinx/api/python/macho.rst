@@ -251,6 +251,17 @@ Thread Command
 
 ----------
 
+RPath Command
+*************
+
+.. autoclass:: lief.MachO.RPathCommand
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+
 Enums
 *****
 

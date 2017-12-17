@@ -47,7 +47,7 @@ void init_MachO_module(py::module& m) {
   init_MachO_BindingInfo_class(LIEF_MachO_module);
   init_MachO_ExportInfo_class(LIEF_MachO_module);
   init_MachO_ThreadCommand_class(LIEF_MachO_module);
-
+  init_MachO_RPathCommand_class(LIEF_MachO_module);
 
   // Enums
   init_MachO_Structures_enum(LIEF_MachO_module);

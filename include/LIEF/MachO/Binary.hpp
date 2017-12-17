@@ -40,6 +40,7 @@
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/RPathCommand.hpp"
 
 namespace LIEF {
 namespace MachO {

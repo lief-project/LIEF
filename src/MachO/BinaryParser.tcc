@@ -158,6 +158,23 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
+      // =============
+      // RPath Command
+      // =============
+      case LOAD_COMMAND_TYPES::LC_RPATH:
+        {
+          const rpath_command* cmd =
+            reinterpret_cast<const rpath_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(rpath_command)));
+
+          load_command = std::unique_ptr<RPathCommand>{new RPathCommand{cmd}};
+          const uint32_t str_path_offset = cmd->path;
+          std::string path = this->stream_->get_string(loadcommands_offset + str_path_offset);
+
+          dynamic_cast<RPathCommand*>(load_command.get())->path(path);
+          break;
+        }
+
       // ====
       // UUID
       // ====

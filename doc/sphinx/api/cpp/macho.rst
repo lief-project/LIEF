@@ -217,6 +217,14 @@ Thread Command
 
 ----------
 
+RPath Command
+*************
+
+.. doxygenclass:: LIEF::MachO::RPathCommand
+   :project: lief
+
+----------
+
 Utilities
 *********
 
