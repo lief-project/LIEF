@@ -268,6 +268,21 @@ def print_thread_command(binary):
 
     print("")
 
+@exceptions_handler(Exception)
+def print_rpath_command(binary):
+
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Rpath Command ==")
+    cmd = binary.rpath
+    print("Path: {}".format(cmd.path))
+
+
+    print("")
+
+
 
 @exceptions_handler(Exception)
 def print_dylinker(binary):
@@ -503,6 +518,10 @@ def main():
             action='store_true', dest='show_thread_command',
             help="Display the 'Thread Command' command")
 
+    parser.add_argument('--rpath-command',
+            action='store_true', dest='show_rpath_command',
+            help="Display the 'Rpath Command' command")
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -564,6 +583,9 @@ def main():
 
         if (args.show_thread_command or args.show_all) and binary.has_thread_command:
             print_thread_command(binary)
+
+        if (args.show_rpath_command or args.show_all) and binary.has_rpath:
+            print_rpath_command(binary)
 
 
 if __name__ == "__main__":

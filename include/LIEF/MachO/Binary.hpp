@@ -268,6 +268,13 @@ class DLL_PUBLIC Binary : public LIEF::Binary  {
     ThreadCommand&       thread_command(void);
     const ThreadCommand& thread_command(void) const;
 
+    //! @brief ``true`` if the binary has a MachO::RPathCommand command.
+    bool has_rpath(void) const;
+
+    //! @brief Return the MachO::RPathCommand command
+    RPathCommand&       rpath(void);
+    const RPathCommand& rpath(void) const;
+
     template<class T>
     bool has_command(void) const;
 

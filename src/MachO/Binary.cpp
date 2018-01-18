@@ -755,6 +755,21 @@ const ThreadCommand& Binary::thread_command(void) const {
   return this->command<ThreadCommand>();
 }
 
+// RPath command
+// +++++++++++++
+bool Binary::has_rpath(void) const {
+  return this->has_command<RPathCommand>();
+}
+
+RPathCommand& Binary::rpath(void) {
+  return this->command<RPathCommand>();
+}
+
+const RPathCommand& Binary::rpath(void) const {
+  return this->command<RPathCommand>();
+}
+
+
 
 
 

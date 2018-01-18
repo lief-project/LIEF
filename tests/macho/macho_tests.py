@@ -64,9 +64,7 @@ class TestMachO(TestCase):
 
     def test_rpath_cmd(self):
         rpathmacho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_rpathtest.bin'))
-        load_cmds = list(rpathmacho.commands)
-        rpath_cmd = load_cmds[-3]
-        self.assertEqual(rpath_cmd.path, "@executable_path/../lib")
+        self.assertEqual(rpathmacho.rpath.path, "@executable_path/../lib")
 
     def test_relocations(self):
         helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))

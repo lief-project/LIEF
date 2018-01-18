@@ -203,6 +203,17 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.ThreadCommand) " if any.",
         py::return_value_policy::reference)
 
+
+    .def_property_readonly("has_rpath",
+        &Binary::has_rpath,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.RPathCommand) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("rpath",
+        static_cast<no_const_getter<RPathCommand&>>(&Binary::rpath),
+        "Return binary's " RST_CLASS_REF(lief.MachO.RPathCommand) " if any.",
+        py::return_value_policy::reference)
+
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,
         "Convert the virtual address to an offset in the binary",
