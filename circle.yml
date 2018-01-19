@@ -5,9 +5,12 @@ machine:
     PATH: "${HOME}/cmake-3.7.2-Linux-x86_64/bin:${PATH}"
     PYTHON_VERSION: "2.7"
 
+checkout:
+  post:
+    - git fetch --unshallow && git pull
+
 compile:
   pre:
-    - checkout
     - mkdir build
     - cmake -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DPYTHON_VERSION=${PYTHON_VERSION} -DLIEF_TESTS=on ..:
         pwd:
