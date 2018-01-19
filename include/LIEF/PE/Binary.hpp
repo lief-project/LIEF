@@ -372,6 +372,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
   private:
     Binary(void);
 
+    //! @brief Make space between the last section header and the beginning of the
+    //! content of first section
+    void make_space_for_new_section(void);
+
     //! @brief Return binary's symbols as LIEF::Symbol
     virtual LIEF::symbols_t  get_abstract_symbols(void) override;
 
@@ -394,6 +398,8 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     RichHeader           rich_header_;
     Header               header_;
     OptionalHeader       optional_header_;
+
+    int32_t             available_sections_space_;
 
     bool                 has_rich_header_;
     bool                 has_tls_;

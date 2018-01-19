@@ -81,6 +81,7 @@ Binary::Binary(void) :
   rich_header_{},
   header_{},
   optional_header_{},
+  available_sections_space_{0},
   has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
@@ -516,7 +517,25 @@ void Binary::delete_section(const std::string& name) {
       std::end(this->sections_));
 }
 
+void Binary::make_space_for_new_section(void) {
+  const uint32_t shift = align(sizeof(pe_section), this->optional_header().file_alignment());
+  VLOG(VDEBUG) << "Making space for a new section header";
+  VLOG(VDEBUG) << "Shifting all sections by " << std::hex << std::showbase << shift;
+
+  // Shift offset of the section content by the size of
+  // a section header aligned on "file alignment"
+  for (Section* section : this->sections_) {
+    section->pointerto_raw_data(section->pointerto_raw_data() + shift);
+  }
+  this->available_sections_space_++;
+}
+
 Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
+
+  if (this->available_sections_space_ < 0) {
+    this->make_space_for_new_section();
+    return this->add_section(section, type);
+  }
 
   // Check if a section of type **type** already exist
   auto&& it_section = std::find_if(
@@ -634,6 +653,8 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
   if (this->sections_.size() >= std::numeric_limits<uint16_t>::max()) {
     throw pe_error("Binary reachs its maximum number of sections");
   }
+
+  this->available_sections_space_--;
   this->sections_.push_back(new_section);
 
   // Update headers
@@ -641,7 +662,6 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
   this->optional_header().sizeof_image(this->virtual_size());
   this->optional_header().sizeof_headers(this->sizeof_headers());
-
   return *(this->sections_.back());
 }
 

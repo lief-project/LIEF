@@ -181,6 +181,8 @@ void Parser::parse_sections(void) {
     sizeof(pe_header) +
     this->binary_->header().sizeof_optional_header();
 
+  uint32_t first_section_offset = -1u;
+
   const uint32_t numberof_sections = this->binary_->header().numberof_sections();
   const pe_section* sections = [&]() {
     try {
@@ -196,6 +198,7 @@ void Parser::parse_sections(void) {
 
     uint32_t size_to_read = 0;
     uint32_t offset = sections[i].PointerToRawData;
+    first_section_offset = std::min(first_section_offset, offset);
 
     if (sections[i].VirtualSize > 0) {
       size_to_read = std::min(sections[i].VirtualSize, sections[i].SizeOfRawData); // According to Corkami
@@ -227,9 +230,11 @@ void Parser::parse_sections(void) {
     } catch (const read_out_of_bound& e) {
       LOG(WARNING) << "Section " << section->name() << " corrupted: " << e.what();
     }
-
     this->binary_->sections_.push_back(section.release());
   }
+  const uint32_t last_section_header_offset = sections_offset + numberof_sections * sizeof(pe_section);
+  this->binary_->available_sections_space_ = (first_section_offset - last_section_header_offset) / sizeof(pe_section) - 1;
+  VLOG(VDEBUG) << "Number of sections that could be added: " << std::dec << this->binary_->available_sections_space_;
 }
 
 

@@ -30,6 +30,47 @@ class TestBuilder(TestCase):
             SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
             ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
 
+    def test_add_multiples_sections(self):
+        sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
+        sample_dir  = os.path.join(self.tmp_dir, "Notepad++")
+
+        sample = os.path.join(sample_dir, "notepad++.exe")
+        output = os.path.join(sample_dir, "notepad++_sections.exe")
+
+        zip_ref = zipfile.ZipFile(sample_file, 'r')
+        zip_ref.extractall(self.tmp_dir)
+        zip_ref.close()
+
+        notepadpp = lief.parse(sample)
+
+        # Add 20 sections to the binary
+        for i in range(20):
+            section = lief.PE.Section(".section_{}".format(i))
+            section.content = [i & 0xFF for i in range(0x200)]
+            notepadpp.add_section(section)
+
+        builder = lief.PE.Builder(notepadpp)
+        builder.build()
+
+        builder.write(output)
+
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
+
+        if sys.platform.startswith("win"):
+            subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
+            p = Popen(["START", output], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
+            time.sleep(3)
+            q = Popen(["taskkill", "/im", "notepad++_sections.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+            stdout, _ = p.communicate()
+            self.logger.debug(stdout.decode("utf8"))
+
+            stdout, _ = q.communicate()
+            self.logger.debug(stdout.decode("utf8"))
+
+            self.assertEqual(q.returncode, 0)
+
 
     def test_imports_notepadpp(self):
         sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
