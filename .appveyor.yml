@@ -4,7 +4,7 @@ clone_folder: c:\projects\lief
 
 configuration: Release
 
-clone_depth: 3
+#clone_depth: 3
 
 platform:
 - x86
