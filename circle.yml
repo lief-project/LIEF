@@ -7,7 +7,7 @@ machine:
 
 checkout:
   post:
-    - git fetch --unshallow && git pull
+    - git fetch && git pull
 
 compile:
   pre:
