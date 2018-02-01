@@ -213,6 +213,7 @@ after_success:
   - if [[ -n "$TRAVIS_TAG" ]]; then $PYTHON_BINARY setup.py sdist --formats=zip       ;fi
   - cd $TRAVIS_BUILD_DIR
   - bash ./.github/deploy.sh
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$PYTHON_VERSION" == "3.6" ]]; then $PYTHON_BINARY ./.github/trigger_docker.py ;fi
 
 
 deploy:
