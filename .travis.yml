@@ -206,6 +206,7 @@ script:
 after_success:
   - make package
   - sudo $PYTHON_BINARY -m pip install setuptools
+  - sudo $PYTHON_BINARY -m pip install requests
   - sudo $PYTHON_BINARY -m pip install --upgrade setuptools
   - cd api/python
   - $PYTHON_BINARY setup.py bdist_egg
