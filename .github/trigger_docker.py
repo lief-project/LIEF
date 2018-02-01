@@ -18,7 +18,11 @@ logging.getLogger().setLevel(LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 
-AUTH_TOKEN = os.getenv("TRAVIS_TOKEN", sys.argv[1] if len(sys.argv) > 0 else None)
+AUTH_TOKEN = os.getenv("TRAVIS_TOKEN", sys.argv[1] if len(sys.argv) > 1 else None)
+
+if not AUTH_TOKEN:
+    logger.fatal("No token found!")
+    sys.exit(1)
 
 LIEF_ID   = 12579556
 DOCKER_ID = 15139981
