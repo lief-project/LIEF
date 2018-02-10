@@ -49,6 +49,7 @@ libpylief = {
         'Windows': "_pylief.pyd",
         'Darwin': "_pylief.so",
         'Linux': "_pylief.so",
+        'FreeBSD': "_pylief.so",
         }
 version_re = r"Version:\s+(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)\.?(.*)"
 if in_source_package:
@@ -72,6 +73,9 @@ def get_lief_platform_name():
         return "osx" if arch == 64 else "osx_x32"
     elif system == 'Linux':
         return "linux" if arch == 64 else "linux_x32"
+    elif system == 'FreeBSD':
+        return "freebsd" if arch == 64 else "freebsd_x32"
+
 
 
 class lief_sdist(sdist):
