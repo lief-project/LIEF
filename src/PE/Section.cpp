@@ -35,6 +35,7 @@ namespace PE {
 Section::~Section(void) = default;
 
 Section::Section(void) :
+  LIEF::Section{},
   virtualSize_{0},
   content_{},
   pointerToRelocations_{0},
@@ -71,6 +72,7 @@ Section::Section(const std::vector<uint8_t>& data, const std::string& name, uint
   this->characteristics_ = characteristics;
   this->name_            = name;
   this->size_            = data.size();
+  this->content_         = data;
 }
 
 Section::Section(const std::string& name) :
