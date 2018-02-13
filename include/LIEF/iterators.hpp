@@ -421,7 +421,7 @@ class filter_iterator : public std::iterator<
     if (this->size_c_ > 0) {
       return this->size_c_;
     }
-    filter_iterator it = *this;
+    filter_iterator it = this->begin();
     size_t size = 0;
 
     while (it++ != std::end(it)) size++;
