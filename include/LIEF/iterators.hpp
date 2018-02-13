@@ -43,7 +43,7 @@ template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator : public std::iterator<
                      std::bidirectional_iterator_tag,
                      typename decay_t<T>::value_type,
-                     ssize_t,
+                     ptrdiff_t,
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
   public:
@@ -250,7 +250,7 @@ template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
 class filter_iterator : public std::iterator<
                      std::forward_iterator_tag,
                      typename decay_t<T>::value_type,
-                     ssize_t,
+                     ptrdiff_t,
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
 
