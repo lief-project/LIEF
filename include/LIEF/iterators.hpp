@@ -17,6 +17,7 @@
 #define LIEF_ITERATORS_H_
 #include <iostream>
 #include <cmath>
+#include <cstddef>
 #include <iterator>
 #include <functional>
 #include <algorithm>
