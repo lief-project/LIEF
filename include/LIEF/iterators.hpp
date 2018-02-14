@@ -74,7 +74,7 @@ class ref_iterator : public std::iterator<
   }
 
   void swap(ref_iterator& other) {
-    std::swap(this->container_, other.container_);
+    std::swap(const_cast<remove_const_t<DT>&>(this->container_), const_cast<remove_const_t<DT>&>(other.container_));
     std::swap(this->it_, other.it_);
     std::swap(this->distance_, other.distance_);
   }
@@ -322,7 +322,7 @@ class filter_iterator : public std::iterator<
   }
 
   void swap(filter_iterator& other) {
-    std::swap(this->container_, other.container_);
+    std::swap(const_cast<remove_const_t<DT>&>(this->container_), const_cast<remove_const_t<DT>&>(other.container_));
     std::swap(this->it_,        other.it_);
     std::swap(this->filters_,   other.filters_);
     std::swap(this->size_c_,    other.size_c_);
