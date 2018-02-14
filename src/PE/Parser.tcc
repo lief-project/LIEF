@@ -388,31 +388,34 @@ void Parser::parse_tls(void) {
 
   const uint64_t imagebase = this->binary_->optional_header().imagebase();
 
-  const uint64_t start_data_rva = tls_header->RawDataStartVA - imagebase;
-  const uint64_t stop_data_rva  = tls_header->RawDataEndVA - imagebase;
 
-  const uint__ start_template_offset  = this->binary_->rva_to_offset(start_data_rva);
-  const uint__ end_template_offset    = this->binary_->rva_to_offset(stop_data_rva);
+  if (tls_header->RawDataStartVA > 0 and tls_header->RawDataEndVA > tls_header->RawDataStartVA) {
+    const uint64_t start_data_rva = tls_header->RawDataStartVA - imagebase;
+    const uint64_t stop_data_rva  = tls_header->RawDataEndVA - imagebase;
 
-  const size_t size_to_read = end_template_offset - start_template_offset;
+    const uint__ start_template_offset  = this->binary_->rva_to_offset(start_data_rva);
+    const uint__ end_template_offset    = this->binary_->rva_to_offset(stop_data_rva);
 
-  try {
-    if (size_to_read > Parser::MAX_DATA_SIZE) {
-      LOG(WARNING) << "TLS's template is too large!";
-    } else {
-      const uint8_t* template_ptr = reinterpret_cast<const uint8_t*>(
-        this->stream_->read(start_template_offset, size_to_read));
-      std::vector<uint8_t> template_data = {
-        template_ptr,
-        template_ptr + size_to_read
-      };
-      tls.data_template(std::move(template_data));
+    const size_t size_to_read = end_template_offset - start_template_offset;
+
+    try {
+      if (size_to_read > Parser::MAX_DATA_SIZE) {
+        LOG(WARNING) << "TLS's template is too large!";
+      } else {
+        const uint8_t* template_ptr = reinterpret_cast<const uint8_t*>(
+          this->stream_->read(start_template_offset, size_to_read));
+        std::vector<uint8_t> template_data = {
+          template_ptr,
+          template_ptr + size_to_read
+        };
+        tls.data_template(std::move(template_data));
+      }
+
+    } catch (const read_out_of_bound&) {
+      LOG(WARNING) << "TLS corrupted (data template)";
+    } catch (const std::bad_alloc&) {
+      LOG(WARNING) << "TLS corrupted (data template)";
     }
-
-  } catch (const read_out_of_bound&) {
-    throw corrupted("TLS corrupted (data template)");
-  } catch (const std::bad_alloc&) {
-    throw corrupted("TLS corrupted (data template)");
   }
 
   uint64_t callbacks_offset  = this->binary_->rva_to_offset(tls.addressof_callbacks() - imagebase);
@@ -420,7 +423,7 @@ void Parser::parse_tls(void) {
   callbacks_offset += sizeof(uint__);
 
   size_t count = 0;
-  while (callback_rva > 0 and count < Parser::MAX_TLS_CALLBACKS) {
+  while (static_cast<uint32_t>(callback_rva) > 0 and count < Parser::MAX_TLS_CALLBACKS) {
     tls.callbacks_.push_back(static_cast<uint64_t>(callback_rva));
     callback_rva = this->stream_->read_integer<uint__>(callbacks_offset);
     callbacks_offset += sizeof(uint__);
