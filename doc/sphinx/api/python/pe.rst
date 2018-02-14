@@ -289,6 +289,19 @@ Resource Dialog
 
 ----------
 
+Resource Dialog Item
+*********************
+
+.. autoclass:: lief.PE.ResourceDialogItem
+
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+
 Resource Version
 ****************
 
