@@ -36,6 +36,9 @@ using add_const_t = typename std::add_const<T>::type;
 template<class T>
 using remove_const_t = typename std::remove_const<T>::type;
 
+template< class T >
+using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
+
 
 // Iterator which return ref on container's values
 // ===============================================
@@ -74,7 +77,7 @@ class ref_iterator : public std::iterator<
   }
 
   void swap(ref_iterator& other) {
-    std::swap(const_cast<remove_const_t<DT>&>(this->container_), const_cast<remove_const_t<DT>&>(other.container_));
+    std::swap(const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(this->container_), const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_));
     std::swap(this->it_, other.it_);
     std::swap(this->distance_, other.distance_);
   }
