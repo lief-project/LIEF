@@ -141,7 +141,8 @@ void Parser::parse_binary(void) {
     try {
       uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
       this->parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rela>(offset, size);
-    } catch (const LIEF::exception&) {
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
     }
   }
 
@@ -169,8 +170,8 @@ void Parser::parse_binary(void) {
     try {
       const uint64_t offset = this->binary_->virtual_address_to_offset(virtual_address);
       this->parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rel>(offset, size);
-    } catch (const LIEF::exception&) {
-
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
     }
 
   }
