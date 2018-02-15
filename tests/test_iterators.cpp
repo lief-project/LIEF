@@ -497,7 +497,11 @@ TEST_CASE("Test const filter ref iterators", "[lief][iterators][filter][const_re
     it_filter_const_ref     bar_filtred     = foo.get_bar_filter();
     it_filter_const_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
 
+    CHECK(bar_filtred[1] == "6");
     CHECK(bar_filtred[0] == "1");
+
+    CHECK(bar_ptr_filtred[1] == "6");
+    CHECK(bar_ptr_filtred[0] == "6");
   }
 
 

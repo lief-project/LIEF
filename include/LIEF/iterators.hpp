@@ -132,9 +132,19 @@ class ref_iterator : public std::iterator<
     if (n >= this->size()) {
       throw integrity_error(std::to_string(n) + " is out of bound");
     }
-    auto it = this->begin();
-    std::advance(it, n);
-    return const_cast<add_const_t<ref_t>>(*it);
+
+    ref_iterator* no_const_this = const_cast<ref_iterator*>(this);
+
+	  typename ref_iterator::difference_type saved_dist = std::distance(std::begin(no_const_this->container_), no_const_this->it_);
+    no_const_this->it_ = std::begin(no_const_this->container_);
+	  std::advance(no_const_this->it_, n);
+
+    auto&& v = const_cast<add_const_t<ref_t>>(no_const_this->operator*());
+
+	  no_const_this->it_ = std::begin(no_const_this->container_);
+	  std::advance(no_const_this->it_, saved_dist);
+
+    return v;
   }
 
   ref_iterator operator+(typename ref_iterator::difference_type n) const {
