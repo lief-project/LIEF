@@ -381,6 +381,28 @@ Debug
 
 ----------
 
+
+Code View
+*********
+
+.. autoclass:: lief.PE.CodeView
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Code View PDB
+**************
+
+.. autoclass:: lief.PE.CodeViewPDB
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Code Integrity
 **************
 

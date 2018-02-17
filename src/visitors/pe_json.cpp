@@ -405,6 +405,36 @@ void JsonVisitor::visit(const Debug& debug) {
   this->node_["sizeof_data"]       = debug.sizeof_data();
   this->node_["addressof_rawdata"] = debug.addressof_rawdata();
   this->node_["pointerto_rawdata"] = debug.pointerto_rawdata();
+
+  if (debug.has_code_view()) {
+    JsonVisitor codeview_visitor;
+    const CodeView& codeview = debug.code_view();
+    CODE_VIEW_SIGNATURES signature = codeview.cv_signature();
+    switch (signature) {
+      case CODE_VIEW_SIGNATURES::CVS_PDB_70:
+        {
+          codeview_visitor(dynamic_cast<const CodeViewPDB&>(codeview));
+          break;
+        }
+
+      default:
+        {
+          codeview_visitor(codeview);
+        }
+    }
+    this->node_["code_view"] = codeview_visitor.get();
+  }
+}
+
+void JsonVisitor::visit(const CodeView& cv) {
+  this->node_["cv_signature"] = cv.cv_signature();
+}
+
+void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
+  this->visit(static_cast<const CodeView&>(cvpdb));
+  this->node_["signature"] = cvpdb.signature();
+  this->node_["age"]       = cvpdb.age();
+  this->node_["filename"]  = cvpdb.filename();
 }
 
 void JsonVisitor::visit(const Import& import) {

@@ -85,6 +85,7 @@ class DLL_PUBLIC Parser : public LIEF::Parser {
 
     void parse_export_table(void);
     void parse_debug(void);
+    void parse_debug_code_view(void);
 
     template<typename PE_T>
     void parse_tls(void);

@@ -385,17 +385,22 @@ const char* to_string(RELOCATIONS_BASE_TYPES e) {
 
 const char* to_string(DEBUG_TYPES e) {
   const std::map<DEBUG_TYPES, const char*> enumStrings {
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,       "UNKNOWN"   },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,          "COFF"      },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,      "CODEVIEW"  },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FPO,           "FPO"       },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MISC,          "MISC"      },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_EXCEPTION,     "EXCEPTION" },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FIXUP,         "FIXUP"     },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_TO_SRC,   "SRC"       },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_FROM_SRC, "SRC"       },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_BORLAND,       "BORLAND"   },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CLSID,         "CLSID"     },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,       "UNKNOWN"    },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,          "COFF"       },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,      "CODEVIEW"   },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FPO,           "FPO"        },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MISC,          "MISC"       },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_EXCEPTION,     "EXCEPTION"  },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FIXUP,         "FIXUP"      },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_TO_SRC,   "SRC"        },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_FROM_SRC, "SRC"        },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_BORLAND,       "BORLAND"    },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CLSID,         "CLSID"      },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_VC_FEATURE,    "VC_FEATURE" },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO,          "POGO"       },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_ILTCG,         "ILTCG"      },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MPX,           "MPX"        },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO,         "REPRO"      },
   };
 
   auto   it  = enumStrings.find(e);
@@ -987,6 +992,19 @@ const char* to_string(GUARD_RF_FLAGS e) {
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+
+const char* to_string(CODE_VIEW_SIGNATURES e) {
+  const std::map<CODE_VIEW_SIGNATURES, const char*> enumStrings {
+    { CODE_VIEW_SIGNATURES::CVS_UNKNOWN, "UNKNOWN" },
+    { CODE_VIEW_SIGNATURES::CVS_PDB_70,  "PDB_70"  },
+    { CODE_VIEW_SIGNATURES::CVS_PDB_20,  "PDB_20"  },
+    { CODE_VIEW_SIGNATURES::CVS_CV_50,   "CV_50"   },
+    { CODE_VIEW_SIGNATURES::CVS_CV_41,   "CV_41"   },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? to_string(CODE_VIEW_SIGNATURES::CVS_UNKNOWN) : it->second;
 }
 
 

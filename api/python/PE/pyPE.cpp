@@ -54,6 +54,8 @@ void init_PE_module(py::module& m) {
   init_PE_ExportEntry_class(LIEF_PE_module);
   init_PE_Builder_class(LIEF_PE_module);
   init_PE_Debug_class(LIEF_PE_module);
+  init_PE_CodeView_class(LIEF_PE_module);
+  init_PE_CodeViewPDB_class(LIEF_PE_module);
   init_PE_CodeIntegrity_class(LIEF_PE_module);
   init_PE_load_configurations(LIEF_PE_module);
 

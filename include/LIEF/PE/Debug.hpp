@@ -23,6 +23,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/CodeView.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -38,18 +39,41 @@ class DLL_PUBLIC Debug : public Visitable {
   public:
     Debug(void);
     Debug(const pe_debug* debug_s);
-    Debug(const Debug&);
-    Debug& operator=(const Debug&);
+    Debug(const Debug& copy);
+    Debug& operator=(Debug copy);
+
+    void swap(Debug& other);
+
     virtual ~Debug(void);
 
+    //! Reserved should be 0
     uint32_t characteristics(void) const;
+
+    //! The time and date that the debug data was created.
     uint32_t timestamp(void) const;
+
+    //! The major version number of the debug data format.
     uint16_t major_version(void) const;
+
+    //! The minor version number of the debug data format.
     uint16_t minor_version(void) const;
+
+    //! The format DEBUG_TYPES of the debugging information
     DEBUG_TYPES type(void) const;
+
+    //! Size of the debug data
     uint32_t sizeof_data(void) const;
+
+    //! Address of the debug data relative to the image base
     uint32_t addressof_rawdata(void) const;
+
+    //! File offset of the debug data
     uint32_t pointerto_rawdata(void) const;
+
+    bool has_code_view(void) const;
+
+    const CodeView& code_view(void) const;
+    CodeView& code_view(void);
 
 
     void characteristics(uint32_t characteristics);
@@ -79,6 +103,9 @@ class DLL_PUBLIC Debug : public Visitable {
     uint32_t    sizeof_data_;
     uint32_t    addressof_rawdata_;
     uint32_t    pointerto_rawdata_;
+
+    CodeView* code_view_;
+
 
 
 };

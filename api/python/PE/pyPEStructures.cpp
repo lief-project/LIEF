@@ -786,4 +786,12 @@ void init_PE_Structures_enum(py::module& m) {
     .value(PY_ENUM(LIEF::PE::GUARD_RF_FLAGS::GRF_ENABLE))
     .value(PY_ENUM(LIEF::PE::GUARD_RF_FLAGS::GRF_STRICT))
     .export_values();
+
+  py::enum_<LIEF::PE::CODE_VIEW_SIGNATURES>(m, "CODE_VIEW_SIGNATURES")
+    .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_UNKNOWN))
+    .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_PDB_70))
+    .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_PDB_20))
+    .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_CV_50))
+    .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_CV_41))
+    .export_values();
 }

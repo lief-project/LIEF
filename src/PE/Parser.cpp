@@ -34,6 +34,9 @@
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 
+
+#include "LIEF/PE/CodeViewPDB.hpp"
+
 #include "LIEF/PE/Parser.hpp"
 #include "Parser.tcc"
 
@@ -562,7 +565,51 @@ void Parser::parse_debug(void) {
   const pe_debug* debug_struct = reinterpret_cast<const pe_debug*>(
       this->stream_->read(debugoffset, sizeof(pe_debug)));
 
-  this->binary_->debug_ = {debug_struct};
+  this->binary_->debug_ = debug_struct;
+
+  DEBUG_TYPES type = this->binary_->debug().type();
+
+  switch (type) {
+    case DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW:
+      {
+        this->parse_debug_code_view();
+      }
+    default:
+      {
+      }
+  }
+}
+
+void Parser::parse_debug_code_view() {
+  VLOG(VDEBUG) << "Parsing Debug Code View";
+  Debug& debug_info = this->binary_->debug();
+
+  const uint32_t debug_off = debug_info.pointerto_rawdata();
+  const CODE_VIEW_SIGNATURES signature = static_cast<CODE_VIEW_SIGNATURES>(this->stream_->read_integer<uint32_t>(debug_off));
+
+  switch (signature) {
+    case CODE_VIEW_SIGNATURES::CVS_PDB_70:
+      {
+
+        const pe_pdb_70* pdb_s = reinterpret_cast<const pe_pdb_70*>(
+            this->stream_->read(debug_off, sizeof(pe_pdb_70)));
+
+        std::string path = this->stream_->get_string(debug_off + offsetof(pe_pdb_70, filename));
+
+        CodeViewPDB::signature_t sig;
+        std::copy(std::begin(pdb_s->signature), std::end(pdb_s->signature), std::begin(sig));
+        std::unique_ptr<CodeViewPDB> codeview{new CodeViewPDB{CodeViewPDB::from_pdb70(sig, pdb_s->age, path)}};
+
+        debug_info.code_view_ = codeview.release();
+      }
+
+    default:
+      {
+        LOG(WARNING) << to_string(signature) << " is not implemented yet!";
+      }
+  }
+
+
 }
 
 

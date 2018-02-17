@@ -33,35 +33,54 @@ void init_PE_Debug_class(py::module& m) {
 
     .def_property("characteristics",
         static_cast<getter_t<uint32_t>>(&Debug::characteristics),
-        static_cast<setter_t<uint32_t>>(&Debug::characteristics))
+        static_cast<setter_t<uint32_t>>(&Debug::characteristics),
+        "Reserved should be 0")
 
     .def_property("timestamp",
         static_cast<getter_t<uint32_t>>(&Debug::timestamp),
-        static_cast<setter_t<uint32_t>>(&Debug::timestamp))
+        static_cast<setter_t<uint32_t>>(&Debug::timestamp),
+        "The time and date that the debug data was created.")
 
     .def_property("major_version",
         static_cast<getter_t<uint16_t>>(&Debug::major_version),
-        static_cast<setter_t<uint16_t>>(&Debug::major_version))
+        static_cast<setter_t<uint16_t>>(&Debug::major_version),
+        "The major version number of the debug data format.")
 
     .def_property("minor_version",
         static_cast<getter_t<uint16_t>>(&Debug::minor_version),
-        static_cast<setter_t<uint16_t>>(&Debug::minor_version))
+        static_cast<setter_t<uint16_t>>(&Debug::minor_version),
+        "The minor version number of the debug data format.")
 
     .def_property("type",
         static_cast<getter_t<DEBUG_TYPES>>(&Debug::type),
-        static_cast<setter_t<DEBUG_TYPES>>(&Debug::type))
+        static_cast<setter_t<DEBUG_TYPES>>(&Debug::type),
+        "The format (" RST_CLASS_REF(lief.PE.DEBUG_TYPES) ") of the debugging information")
 
     .def_property("sizeof_data",
         static_cast<getter_t<uint32_t>>(&Debug::sizeof_data),
-        static_cast<setter_t<uint32_t>>(&Debug::sizeof_data))
+        static_cast<setter_t<uint32_t>>(&Debug::sizeof_data),
+        "Size of the debug data")
 
     .def_property("addressof_rawdata",
         static_cast<getter_t<uint32_t>>(&Debug::addressof_rawdata),
-        static_cast<setter_t<uint32_t>>(&Debug::addressof_rawdata))
+        static_cast<setter_t<uint32_t>>(&Debug::addressof_rawdata),
+        "Address of the debug data relative to the image base")
 
     .def_property("pointerto_rawdata",
         static_cast<getter_t<uint32_t>>(&Debug::pointerto_rawdata),
-        static_cast<setter_t<uint32_t>>(&Debug::pointerto_rawdata))
+        static_cast<setter_t<uint32_t>>(&Debug::pointerto_rawdata),
+        "File offset of the debug data")
+
+    .def_property_readonly("has_code_view",
+        &Debug::has_code_view,
+        "Whether or not a code view is present")
+
+    .def_property_readonly("code_view",
+        static_cast<CodeView& (Debug::*)(void)>(&Debug::code_view),
+        "Return an object which subclass " RST_CLASS_REF(lief.PE.CodeView) " representing the code view \n\n"
+        "The subclassed object can be one of: \n\n"
+        "    * " RST_CLASS_REF(lief.PE.CodeViewPDB) "\n",
+        py::return_value_policy::reference)
 
     .def("__eq__", &Debug::operator==)
     .def("__ne__", &Debug::operator!=)

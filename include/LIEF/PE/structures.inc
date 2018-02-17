@@ -269,6 +269,22 @@ struct pe_debug {
 };
 
 
+struct pe_pdb_70 {
+  uint32_t cv_signature;
+  uint8_t  signature[16];
+  uint32_t age;
+  char*    filename;
+};
+
+struct pe_pdb_20 {
+  uint32_t cv_signature;
+  uint32_t offset;
+  uint32_t signature;
+  uint32_t age;
+  char*    filename;
+};
+
+
 struct pe_resource_directory_table {
   uint32_t Characteristics;
   uint32_t TimeDateStamp;

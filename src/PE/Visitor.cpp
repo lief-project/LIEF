@@ -82,6 +82,14 @@ void Visitor::visit(const PE::Debug& debug) {
   debug.accept(*this);
 }
 
+void Visitor::visit(const PE::CodeView& cv) {
+  cv.accept(*this);
+}
+
+void Visitor::visit(const PE::CodeViewPDB& cvpdb) {
+  cvpdb.accept(*this);
+}
+
 void Visitor::visit(const PE::Import& import) {
   import.accept(*this);
 }

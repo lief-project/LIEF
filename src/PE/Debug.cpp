@@ -23,9 +23,45 @@
 namespace LIEF {
 namespace PE {
 
-Debug::Debug(const Debug&) = default;
-Debug& Debug::operator=(const Debug&) = default;
-Debug::~Debug(void) = default;
+Debug::Debug(const Debug& copy) :
+  characteristics_{copy.characteristics_},
+  timestamp_{copy.timestamp_},
+  majorversion_{copy.majorversion_},
+  minorversion_{copy.minorversion_},
+  type_{copy.type_},
+  sizeof_data_{copy.sizeof_data_},
+  addressof_rawdata_{copy.addressof_rawdata_},
+  pointerto_rawdata_{copy.pointerto_rawdata_},
+  code_view_{nullptr}
+{
+  if (copy.has_code_view()) {
+    this->code_view_ = copy.code_view().clone();
+  }
+}
+
+Debug& Debug::operator=(Debug other) {
+  this->swap(other);
+  return *this;
+}
+
+
+void Debug::swap(Debug& other) {
+  std::swap(this->characteristics_,   other.characteristics_);
+  std::swap(this->timestamp_,         other.timestamp_);
+  std::swap(this->majorversion_,      other.majorversion_);
+  std::swap(this->minorversion_,      other.minorversion_);
+  std::swap(this->type_,              other.type_);
+  std::swap(this->sizeof_data_,       other.sizeof_data_);
+  std::swap(this->addressof_rawdata_, other.addressof_rawdata_);
+  std::swap(this->pointerto_rawdata_, other.pointerto_rawdata_);
+  std::swap(this->code_view_,         other.code_view_);
+}
+
+Debug::~Debug(void) {
+  if (this->code_view_ != nullptr) {
+    delete this->code_view_;
+  }
+}
 
 Debug::Debug(void) :
   characteristics_{0},
@@ -35,7 +71,8 @@ Debug::Debug(void) :
   type_{DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN},
   sizeof_data_{0},
   addressof_rawdata_{0},
-  pointerto_rawdata_{0}
+  pointerto_rawdata_{0},
+  code_view_{nullptr}
 {}
 
 Debug::Debug(const pe_debug* debug_s) :
@@ -46,7 +83,8 @@ Debug::Debug(const pe_debug* debug_s) :
   type_{static_cast<DEBUG_TYPES>(debug_s->Type)},
   sizeof_data_{debug_s->SizeOfData},
   addressof_rawdata_{debug_s->AddressOfRawData},
-  pointerto_rawdata_{debug_s->PointerToRawData}
+  pointerto_rawdata_{debug_s->PointerToRawData},
+  code_view_{nullptr}
 {}
 
 
@@ -81,6 +119,24 @@ uint32_t Debug::addressof_rawdata(void) const {
 
 uint32_t Debug::pointerto_rawdata(void) const {
   return this->pointerto_rawdata_;
+}
+
+
+bool Debug::has_code_view(void) const {
+  return this->code_view_ != nullptr;
+}
+
+const CodeView& Debug::code_view(void) const {
+  if (not this->has_code_view()) {
+    throw not_found("Can't find code view");
+  }
+
+  return *this->code_view_;
+
+}
+
+CodeView& Debug::code_view(void) {
+  return const_cast<CodeView&>(static_cast<const Debug*>(this)->code_view());
 }
 
 
@@ -126,6 +182,10 @@ void Debug::accept(LIEF::Visitor& visitor) const {
   visitor.visit(this->sizeof_data());
   visitor.visit(this->addressof_rawdata());
   visitor.visit(this->pointerto_rawdata());
+
+  if (this->has_code_view()) {
+    visitor(this->code_view());
+  }
 }
 
 bool Debug::operator==(const Debug& rhs) const {
@@ -153,6 +213,12 @@ std::ostream& operator<<(std::ostream& os, const Debug& entry) {
   os << std::setw(20) << "Size of data:"       << entry.sizeof_data()                 << std::endl;
   os << std::setw(20) << "Address of rawdata:" << entry.addressof_rawdata()           << std::endl;
   os << std::setw(20) << "Pointer to rawdata:" << entry.pointerto_rawdata()           << std::endl;
+
+  if (entry.has_code_view()) {
+    os << std::endl;
+    os << entry.code_view();
+    os << std::endl;
+  }
   return os;
 }
 

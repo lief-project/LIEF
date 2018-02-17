@@ -91,6 +91,8 @@ class ExportEntry;
 class TLS;
 class Symbol;
 class Debug;
+class CodeView;
+class CodeViewPDB;
 
 class Import;
 class ImportEntry;
@@ -334,6 +336,12 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::PE::Debug
   virtual void visit(const PE::Debug& debug);
+
+  //! @brief Method to visit a LIEF::PE::CodeView
+  virtual void visit(const PE::CodeView& cv);
+
+  //! @brief Method to visit a LIEF::PE::CodeViewPDB
+  virtual void visit(const PE::CodeViewPDB& cvpdb);
 
   //! @brief Method to visit a LIEF::PE::Import
   virtual void visit(const PE::Import& import);

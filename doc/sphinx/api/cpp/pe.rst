@@ -75,6 +75,31 @@ TLS
 
 ----------
 
+Debug
+*****
+
+.. doxygenclass:: LIEF::PE::Debug
+  :project: lief
+
+----------
+
+Code View
+*********
+
+.. doxygenclass:: LIEF::PE::CodeView
+  :project: lief
+
+----------
+
+Code View PDB
+*************
+
+.. doxygenclass:: LIEF::PE::CodeViewPDB
+  :project: lief
+
+----------
+
+
 Symbol
 *******
 

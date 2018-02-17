@@ -20,6 +20,7 @@
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/CodeViewPDB.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 #include "LIEF/PE/utils.hpp"

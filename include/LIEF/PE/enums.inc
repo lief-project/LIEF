@@ -252,16 +252,32 @@ enum DLL_CHARACTERISTICS {
 
 enum DEBUG_TYPES {
   IMAGE_DEBUG_TYPE_UNKNOWN       = 0,
-  IMAGE_DEBUG_TYPE_COFF          = 1,
-  IMAGE_DEBUG_TYPE_CODEVIEW      = 2,
-  IMAGE_DEBUG_TYPE_FPO           = 3,
-  IMAGE_DEBUG_TYPE_MISC          = 4,
-  IMAGE_DEBUG_TYPE_EXCEPTION     = 5,
-  IMAGE_DEBUG_TYPE_FIXUP         = 6,
-  IMAGE_DEBUG_TYPE_OMAP_TO_SRC   = 7,
-  IMAGE_DEBUG_TYPE_OMAP_FROM_SRC = 8,
-  IMAGE_DEBUG_TYPE_BORLAND       = 9,
-  IMAGE_DEBUG_TYPE_CLSID         = 11
+  IMAGE_DEBUG_TYPE_COFF          = 1, ///< COFF debug information
+  IMAGE_DEBUG_TYPE_CODEVIEW      = 2, ///< CodeView debug information (pdb & cie)
+  IMAGE_DEBUG_TYPE_FPO           = 3, ///< Frame pointer omission information
+  IMAGE_DEBUG_TYPE_MISC          = 4, ///< CodeView Debug Information
+  IMAGE_DEBUG_TYPE_EXCEPTION     = 5, ///< A copy of .pdata section.
+  IMAGE_DEBUG_TYPE_FIXUP         = 6, ///< Reserved.
+  IMAGE_DEBUG_TYPE_OMAP_TO_SRC   = 7, ///< The mapping from an RVA in image to an RVA in source image.
+  IMAGE_DEBUG_TYPE_OMAP_FROM_SRC = 8, ///< The mapping from an RVA in source image to an RVA in image.
+  IMAGE_DEBUG_TYPE_BORLAND       = 9, ///< Reserved for Borland.
+  IMAGE_DEBUG_TYPE_CLSID         = 11,
+  IMAGE_DEBUG_TYPE_VC_FEATURE    = 12,
+  IMAGE_DEBUG_TYPE_POGO          = 13,
+  IMAGE_DEBUG_TYPE_ILTCG         = 14,
+  IMAGE_DEBUG_TYPE_MPX           = 15,
+  IMAGE_DEBUG_TYPE_REPRO         = 16,
+};
+
+
+//! Code view signatures
+//! @see: http://llvm.org/doxygen/CVDebugRecord_8h_source.html
+enum CODE_VIEW_SIGNATURES {
+  CVS_UNKNOWN = 0,
+  CVS_PDB_70 = 0x53445352, // RSDS
+  CVS_PDB_20 = 0x3031424e, // NB10
+  CVS_CV_50  = 0x3131424e, // NB11
+  CVS_CV_41  = 0x3930424e, // NB09
 };
 
 enum ImportType {

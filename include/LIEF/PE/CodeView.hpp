@@ -1,0 +1,61 @@
+/* Copyright 2017 R. Thomas
+ * Copyright 2017 Quarkslab
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#ifndef LIEF_PE_CODE_VIEW_H_
+#define LIEF_PE_CODE_VIEW_H_
+#include <array>
+#include <set>
+#include <functional>
+#include <algorithm>
+#include <iostream>
+
+#include "LIEF/Visitable.hpp"
+#include "LIEF/visibility.h"
+
+#include "LIEF/PE/Structures.hpp"
+
+namespace LIEF {
+namespace PE {
+class DLL_PUBLIC CodeView : public Visitable {
+  public:
+
+  CodeView(void);
+  CodeView(CODE_VIEW_SIGNATURES cv_signature);
+
+  CodeView(const CodeView&);
+  CodeView& operator=(const CodeView&);
+
+  virtual CodeView* clone(void) const = 0;
+
+  //! The Code View signature
+  CODE_VIEW_SIGNATURES cv_signature(void) const;
+
+  virtual void accept(Visitor& visitor) const override;
+
+  bool operator==(const CodeView& rhs) const;
+  bool operator!=(const CodeView& rhs) const;
+
+  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
+
+  virtual ~CodeView(void);
+
+  protected:
+  CODE_VIEW_SIGNATURES cv_signature_;
+};
+
+} // Namespace PE
+} // Namespace LIEF
+
+#endif

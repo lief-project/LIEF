@@ -43,6 +43,7 @@ DLL_PUBLIC const char* to_string(RELOCATIONS_AMD64 e);
 DLL_PUBLIC const char* to_string(RELOCATIONS_ARM e);
 
 DLL_PUBLIC const char* to_string(DEBUG_TYPES e);
+DLL_PUBLIC const char* to_string(CODE_VIEW_SIGNATURES e);
 
 DLL_PUBLIC const char* to_string(RESOURCE_TYPES e);
 DLL_PUBLIC const char* to_string(RESOURCE_LANGS e);

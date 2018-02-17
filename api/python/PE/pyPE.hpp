@@ -48,6 +48,8 @@ void init_PE_Export_class(py::module&);
 void init_PE_ExportEntry_class(py::module&);
 void init_PE_Builder_class(py::module&);
 void init_PE_Debug_class(py::module&);
+void init_PE_CodeView_class(py::module&);
+void init_PE_CodeViewPDB_class(py::module&);
 void init_PE_CodeIntegrity_class(py::module&);
 void init_PE_load_configurations(py::module&);
 
