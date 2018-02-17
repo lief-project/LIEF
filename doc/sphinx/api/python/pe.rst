@@ -790,3 +790,13 @@ GUARD_RF_FLAGS
   :members:
   :inherited-members:
   :undoc-members:
+
+----------
+
+CODE_VIEW_SIGNATURES
+~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.CODE_VIEW_SIGNATURES
+  :members:
+  :inherited-members:
+  :undoc-members:
