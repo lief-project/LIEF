@@ -108,6 +108,8 @@ class DLL_PUBLIC Section : public LIEF::Section {
     uint32_t link(void) const;
 
 
+    //! Clear the content of the section with the given ``value``
+    Section& clear(uint8_t value = 0);
     void add(ELF_SECTION_FLAGS flag);
     void remove(ELF_SECTION_FLAGS flag);
 

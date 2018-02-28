@@ -325,12 +325,7 @@ void Parser::parse_binary(void) {
 
   if (it_symtab_section != std::end(this->binary_->sections_)) {
     const Section* section = *it_symtab_section;
-    uint32_t nb_entries = 0;
-    if (this->type_ == ELFCLASS32) {
-      nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf32_Sym)));
-    } else {
-      nb_entries = static_cast<uint32_t>((section->size() / sizeof(Elf64_Sym)));
-    }
+    uint32_t nb_entries = static_cast<uint32_t>((section->size() / sizeof(typename ELF_T::Elf_Sym)));
 
     if (section->link() == 0 or section->link() >= this->binary_->sections_.size()) {
       LOG(WARNING) << "section->link() is not valid !";
@@ -868,7 +863,7 @@ void Parser::parse_segments(void) {
 
   auto check_section_in_segment =
     [] (const Section* section, const Segment* segment) {
-      return section->virtual_address() >= segment->virtual_address() and
+      return section->virtual_address() > 0 and section->virtual_address() >= segment->virtual_address() and
         (section->virtual_address() + section->size()) <=
         (segment->virtual_address() + segment->virtual_size());
     };

@@ -27,6 +27,7 @@ namespace ELF {
 template<class ELF_T>
 void Builder::build(void) {
 
+
   std::string type = ((this->binary_->type_ == ELFCLASS32) ? "ELF32" : "ELF64");
   VLOG(VDEBUG) << "== Re-building " << type << " ==";
   try {
@@ -34,6 +35,7 @@ void Builder::build(void) {
   } catch (const LIEF::exception& e) {
     LOG(ERROR) << e.what();
   }
+
 
   try {
     this->build_dynamic<ELF_T>();
@@ -63,7 +65,7 @@ void Builder::build(void) {
   // Build symbols version
   if (this->binary_->symbol_version_table_.size() > 0) {
     try {
-      this->build_symbol_version();
+      this->build_symbol_version<ELF_T>();
     } catch (const LIEF::exception& e) {
       LOG(ERROR) << e.what();
     }
@@ -464,7 +466,6 @@ void Builder::build_dynamic(void) {
   if (this->binary_->dynamic_symbols_.size() > 0) {
     this->build_dynamic_symbols<ELF_T>();
   }
-
 }
 
 template<typename ELF_T>
@@ -484,6 +485,7 @@ void Builder::build_dynamic_section(void) {
 
   std::vector<uint8_t> dynamic_strings_raw;
   std::vector<uint8_t> dynamic_table_raw;
+  dynamic_strings_raw.push_back(0);
 
   for (DynamicEntry* entry : this->binary_->dynamic_entries_) {
 
@@ -499,7 +501,7 @@ void Builder::build_dynamic_section(void) {
               std::begin(name),
               std::end(name));
           dynamic_strings_raw.push_back(0);
-          entry->value(dynamic_strings_raw.size() - name.size() - 1);
+          entry->value(dynamic_strings_raw.size() - (name.size() + 1));
           break;
         }
 
@@ -700,10 +702,33 @@ void Builder::build_symbol_hash(void) {
       chain[value] = idx;
     }
     ++idx;
-
   }
 
-  (*it_hash_section)->content(std::move(new_hash_table));
+  Section& h_section = **it_hash_section;
+  if (new_hash_table.size() > h_section.size()) {
+    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section";
+
+    VLOG(VDEBUG) << std::dec << new_hash_table.size() <<  " > " << h_section.size();
+
+    Segment syvhash;
+    syvhash.type(SEGMENT_TYPES::PT_LOAD);
+    syvhash.flags(ELF_SEGMENT_FLAGS::PF_R);
+    syvhash.content(new_hash_table);
+
+    Segment& new_segment = this->binary_->add(syvhash);
+
+    h_section.virtual_address(new_segment.virtual_address());
+    h_section.size(new_segment.physical_size());
+    h_section.offset(new_segment.file_offset());
+    h_section.content(new_segment.content());
+
+    h_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_HASH).value(new_segment.virtual_address());
+    return this->build<ELF_T>();
+  }
+
+  h_section.content(std::move(new_hash_table));
 }
 
 // Mainly inspired from
@@ -851,12 +876,32 @@ void Builder::build_symbol_gnuhash(void) {
     throw corrupted("Unable to find the .gnu.hash section");
   }
 
-  if (raw_gnuhash.size() <= (*it_gnuhash)->size()) {
-    return (*it_gnuhash)->content(std::move(raw_gnuhash));
-  } else { // Write a "null hash table"
-    this->build_empty_symbol_gnuhash();
+  Section& h_section = **it_gnuhash;
+  if (raw_gnuhash.size() > h_section.size()) {
+    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section";
+
+    VLOG(VDEBUG) << std::dec << raw_gnuhash.size() <<  " > " << h_section.size();
+
+    Segment gnuhash;
+    gnuhash.type(SEGMENT_TYPES::PT_LOAD);
+    gnuhash.flags(ELF_SEGMENT_FLAGS::PF_R);
+    gnuhash.content(raw_gnuhash);
+
+    Segment& new_segment = this->binary_->add(gnuhash);
+
+    h_section.virtual_address(new_segment.virtual_address());
+    h_section.size(new_segment.physical_size());
+    h_section.offset(new_segment.file_offset());
+    h_section.content(new_segment.content());
+
+    h_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH).value(new_segment.virtual_address());
+    return this->build<ELF_T>();
   }
 
+
+  return h_section.content(std::move(raw_gnuhash));
 
 }
 
@@ -966,7 +1011,7 @@ void Builder::build_dynamic_symbols(void) {
 
   // Relocation .dynstr section
   if (string_table_raw.size() > string_table_section.original_size()) {
-    VLOG(VDEBUG) << "Need to relocate the '.dynstr' section";
+    LOG(INFO) << "Need to relocate the '" << string_table_section.name() << "' section";
     VLOG(VDEBUG) << std::dec << string_table_raw.size() <<  " > " << string_table_section.size();
 
     Segment dynstr;
@@ -990,7 +1035,8 @@ void Builder::build_dynamic_symbols(void) {
 
   // Relocation the .dynsym section
   if (symbol_table_raw.size() > symbol_table_section.original_size()) {
-    // Need relocation of the reloc section
+    LOG(INFO) << "Need to relocate the '" << symbol_table_section.name() << "' section";
+
     Segment dynsym_load;
     dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
     dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
@@ -1004,9 +1050,8 @@ void Builder::build_dynamic_symbols(void) {
 
     symbol_table_section.original_size_ = new_dynsym_load.physical_size();
 
-    this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value(new_dynsym_load.virtual_address());
-
     this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(symbol_table_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value(new_dynsym_load.virtual_address());
 
     return this->build_dynamic<ELF_T>();
   }
@@ -1171,8 +1216,7 @@ void Builder::build_dynamic_relocations(void) {
     dt_reloc_addr->value(new_relocation_load.virtual_address());
     dt_reloc_size->value(content.size());
 
-    this->build_dynamic<ELF_T>();
-    return this->build_dynamic_relocations<ELF_T>();
+    return this->build<ELF_T>();
 
   }
 
@@ -1310,8 +1354,7 @@ void Builder::build_pltgot_relocations(void) {
     dt_reloc_addr->value(new_relocation_load.virtual_address());
     dt_reloc_size->value(content.size());
 
-    this->build_dynamic<ELF_T>();
-    return this->build_pltgot_relocations<ELF_T>();
+    return this->build<ELF_T>();
   }
 
   relocation_section.content(std::move(content));
@@ -1422,7 +1465,7 @@ void Builder::build_symbol_requirement(void) {
     ++svr_idx;
   }
   if (dyn_str_raw.size() > dyn_str_section.original_size()) {
-    VLOG(VDEBUG) << "Need to relocate the '.dynstr' section";
+    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section";
     VLOG(VDEBUG) << std::dec << dyn_str_raw.size() <<  " > " << dyn_str_section.size();
 
     Segment dynstr;
@@ -1442,8 +1485,7 @@ void Builder::build_symbol_requirement(void) {
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
     this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
 
-    this->build_dynamic<ELF_T>();
-    return this->build_symbol_requirement<ELF_T>();
+    return this->build<ELF_T>();
   }
 
   this->binary_->section_from_offset(svr_offset).content(std::move(svr_raw));
@@ -1539,7 +1581,7 @@ void Builder::build_symbol_definition(void) {
   }
 
   if (dyn_str_raw.size() > dyn_str_section.original_size()) {
-    VLOG(VDEBUG) << "Need to relocate the '.dynstr' section";
+    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section";
     VLOG(VDEBUG) << std::dec << dyn_str_raw.size() <<  " > " << dyn_str_section.size();
 
     Segment dynstr;
@@ -1559,12 +1601,8 @@ void Builder::build_symbol_definition(void) {
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
     this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
 
-    this->build_dynamic<ELF_T>();
-    return this->build_symbol_definition<ELF_T>();
+    return this->build<ELF_T>();
   }
-
-  this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
-  this->build_dynamic_section<ELF_T>();
 
   this->binary_->section_from_offset(svd_offset).content(std::move(svd_raw));
   dyn_str_section.content(std::move(dyn_str_raw));
@@ -1834,6 +1872,60 @@ void Builder::build_notes(void) {
 
 
 }
+
+template<class ELF_T>
+void Builder::build_symbol_version(void) {
+
+  VLOG(VDEBUG) << "[+] Building symbol version" << std::endl;
+
+  if (this->binary_->symbol_version_table_.size() != this->binary_->dynamic_symbols_.size()) {
+    LOG(WARNING) << "The number of symbol version is different from the number of dynamic symbols ("
+                 << std::dec << this->binary_->symbol_version_table_.size() << " != "
+                 << this->binary_->dynamic_symbols_.size() << " ) " << std::endl;
+  }
+
+  const uint64_t sv_address = this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value();
+
+  std::vector<uint8_t> sv_raw;
+  sv_raw.reserve(this->binary_->symbol_version_table_.size() * sizeof(uint16_t));
+
+  //for (const SymbolVersion* sv : this->binary_->symbol_version_table_) {
+  for (const Symbol* symbol : this->binary_->dynamic_symbols_) {
+    const SymbolVersion& sv = symbol->symbol_version();
+    const uint16_t value = sv.value();
+    sv_raw.insert(
+        std::end(sv_raw),
+        reinterpret_cast<const uint8_t*>(&value),
+        reinterpret_cast<const uint8_t*>(&value) + sizeof(uint16_t));
+
+  }
+
+  Section& sv_section = this->binary_->section_from_virtual_address(sv_address);
+
+  if (sv_raw.size() > sv_section.original_size()) {
+    LOG(INFO) << "Need to relocate the '" << sv_section.name() << "' section";
+
+    Segment sv_load;
+    sv_load.type(SEGMENT_TYPES::PT_LOAD);
+    sv_load.flags(ELF_SEGMENT_FLAGS::PF_R);
+    sv_load.content(sv_raw);
+    Segment& new_sv_load = this->binary_->add(sv_load);
+
+    sv_section.virtual_address(new_sv_load.virtual_address());
+    sv_section.size(new_sv_load.physical_size());
+    sv_section.offset(new_sv_load.file_offset());
+    sv_section.content(new_sv_load.content());
+
+    sv_section.original_size_ = new_sv_load.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value(new_sv_load.virtual_address());
+    return this->build<ELF_T>();
+  }
+  sv_section.content(std::move(sv_raw));
+
+
+}
+
 
 
 

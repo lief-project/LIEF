@@ -126,33 +126,6 @@ void Builder::build_empty_symbol_gnuhash(void) {
 
 
 
-void Builder::build_symbol_version(void) {
-
-  VLOG(VDEBUG) << "[+] Building symbol version" << std::endl;
-
-  if (this->binary_->symbol_version_table_.size() != this->binary_->dynamic_symbols_.size()) {
-    LOG(WARNING) << "The number of symbol version is different from the number of dynamic symbols ("
-                 << std::dec << this->binary_->symbol_version_table_.size() << " != "
-                 << this->binary_->dynamic_symbols_.size() << " ) " << std::endl;
-  }
-
-  const uint64_t sv_address = this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value();
-
-  std::vector<uint8_t> sv_raw;
-  sv_raw.reserve(this->binary_->symbol_version_table_.size() * sizeof(uint16_t));
-
-  for (const SymbolVersion* sv : this->binary_->symbol_version_table_) {
-    const uint16_t value = sv->value();
-    sv_raw.insert(
-        std::end(sv_raw),
-        reinterpret_cast<const uint8_t*>(&value),
-        reinterpret_cast<const uint8_t*>(&value) + sizeof(uint16_t));
-
-  }
-
- this->binary_->section_from_virtual_address(sv_address).content(sv_raw);
-
-}
 
 
 size_t Builder::note_offset(const Note& note) {

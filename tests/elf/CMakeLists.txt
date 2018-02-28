@@ -215,6 +215,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_notes.py")
 
+  ADD_PYTHON_TEST(ELF_PYTHON_bin2lib
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_bin2lib.py")
+
   # Examples
   # --------
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_elf_reader_ls

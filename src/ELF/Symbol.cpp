@@ -148,6 +148,11 @@ uint16_t Symbol::shndx(void) const {
 }
 
 
+ELF_SYMBOL_VISIBILITY Symbol::visibility(void) const {
+  return static_cast<ELF_SYMBOL_VISIBILITY>(this->other_);
+}
+
+
 bool Symbol::has_version(void) const {
   return this->symbol_version_ != nullptr;
 }
@@ -188,6 +193,10 @@ void Symbol::size(uint64_t size) {
 
 void Symbol::shndx(uint16_t idx) {
   this->shndx_ = idx;
+}
+
+void Symbol::visibility(ELF_SYMBOL_VISIBILITY visibility) {
+  this->other_ = static_cast<uint8_t>(visibility);
 }
 
 

@@ -1153,6 +1153,20 @@ const char* to_string(ELF_SEGMENT_FLAGS e) {
 }
 
 
+const char* to_string(ELF_SYMBOL_VISIBILITY e) {
+  const std::map<ELF_SYMBOL_VISIBILITY, const char*> enum_strings {
+    { ELF_SYMBOL_VISIBILITY::STV_DEFAULT,   "DEFAULT"   },
+    { ELF_SYMBOL_VISIBILITY::STV_HIDDEN,    "HIDDEN"    },
+    { ELF_SYMBOL_VISIBILITY::STV_INTERNAL,  "INTERNAL"  },
+    { ELF_SYMBOL_VISIBILITY::STV_PROTECTED, "PROTECTED" },
+  };
+
+  auto   it  = enum_strings.find(e);
+  return it == enum_strings.end() ? "UNDEFINED" : it->second;
+}
+
+
+
 
 
 } // namespace ELF

@@ -112,6 +112,11 @@ void init_ELF_Section_class(py::module& m) {
       "Return segment(s) associated with the given section",
       py::return_value_policy::reference_internal)
 
+    .def("clear",
+      &Section::clear,
+      "Clear the content of the section with the given ``value``",
+      "value"_a = 0,
+      py::return_value_policy::reference)
 
     .def("add",
         &Section::add,

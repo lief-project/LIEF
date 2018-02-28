@@ -56,7 +56,16 @@ void init_ELF_Symbol_class(py::module& m) {
     .def_property("other",
         static_cast<getter_t<uint8_t>>(&Symbol::other),
         static_cast<setter_t<uint8_t>>(&Symbol::other),
-        "This member currently holds ``0`` and has no defined meaning.")
+        "This member **should** holds ``0`` and **should** not have defined meaning.\n\n"
+
+        "See: " RST_ATTR_REF(lief.ELF.Symbol.visibility) "")
+
+    .def_property("visibility",
+        static_cast<getter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
+        static_cast<setter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
+        "Symbol " RST_CLASS_REF(lief.ELF.SYMBOL_VISIBILITY) ". \n\n"
+
+        "It's basically an alias on " RST_ATTR_REF(lief.ELF.Symbol.other) "")
 
     .def_property("value",
         static_cast<getter_t<uint64_t>>(&Symbol::value),

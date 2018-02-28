@@ -277,7 +277,7 @@ void Binary::remove(const Section& section, bool clear) {
   }
 
   if (clear) {
-    s->content(std::vector<uint8_t>(s->size(), 0));
+    s->clear(0);
   }
 
   this->datahandler_->remove(s->file_offset(), s->size(), DataHandler::Node::SECTION);
@@ -380,6 +380,175 @@ it_const_symbols Binary::symbols(void) const {
 
   return it_const_symbols{symbols};
 }
+
+
+Symbol& Binary::export_symbol(const Symbol& symbol) {
+
+  // Chck if the symbol is in the dynamic symbol table
+  auto&& it_symbol = std::find_if(
+      std::begin(this->dynamic_symbols_),
+      std::end(this->dynamic_symbols_),
+      [&symbol] (const Symbol* s) {
+        return *s == symbol;
+      });
+
+  if (it_symbol == std::end(this->dynamic_symbols_)) {
+    // Create a new one
+    Symbol& new_sym = this->add_dynamic_symbol(symbol, SymbolVersion::local());
+    return this->export_symbol(new_sym);
+  }
+
+  auto&& it_text = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [] (const Section* s) {
+        return s->name() == ".text";
+      });
+  size_t text_idx = std::distance(std::begin(this->sections_), it_text);
+
+  Symbol& s = **it_symbol;
+  if (s.binding() != SYMBOL_BINDINGS::STB_WEAK or s.binding() != SYMBOL_BINDINGS::STB_GLOBAL) {
+    s.binding(SYMBOL_BINDINGS::STB_GLOBAL);
+  }
+
+  if (s.type() == ELF_SYMBOL_TYPES::STT_NOTYPE) {
+    s.type(ELF_SYMBOL_TYPES::STT_COMMON);
+  }
+
+  if (s.shndx() == 0) {
+    s.shndx(text_idx);
+  }
+
+  s.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
+  return s;
+}
+
+Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
+  if (this->has_dynamic_symbol(symbol_name)) {
+    Symbol& s = this->get_dynamic_symbol(symbol_name);
+    if (value > 0) {
+      s.value(value);
+    }
+    return this->export_symbol(s);
+  }
+
+  if (this->has_static_symbol(symbol_name)) {
+    Symbol& s = this->get_static_symbol(symbol_name);
+    if (value > 0) {
+      s.value(value);
+    }
+    return this->export_symbol(s);
+  }
+
+  // Create a new one
+  Symbol newsym;
+  newsym.name(symbol_name);
+  newsym.type(ELF_SYMBOL_TYPES::STT_COMMON);
+  newsym.binding(SYMBOL_BINDINGS::STB_GLOBAL);
+  newsym.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
+  newsym.value(value);
+  return this->export_symbol(newsym);
+}
+
+
+Symbol& Binary::add_exported_function(uint64_t address, const std::string& name) {
+  std::string funcname = name;
+  if (funcname.size() == 0) {
+    std::stringstream ss;
+    ss << "func_" << std::hex << address;
+    funcname = ss.str();
+  }
+
+  // First: Check if a symbol with the given 'name' exists in the **dynamic** table
+  if (this->has_dynamic_symbol(funcname)) {
+    Symbol& s = this->get_dynamic_symbol(funcname);
+    s.type(ELF_SYMBOL_TYPES::STT_FUNC);
+    s.binding(SYMBOL_BINDINGS::STB_GLOBAL);
+    s.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
+    s.value(address);
+    return this->export_symbol(s);
+  }
+
+  // Second: Check if a symbol with the given 'name' exists in the **static**
+  if (this->has_static_symbol(funcname)) {
+    Symbol& s = this->get_static_symbol(funcname);
+    s.type(ELF_SYMBOL_TYPES::STT_FUNC);
+    s.binding(SYMBOL_BINDINGS::STB_GLOBAL);
+    s.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
+    s.value(address);
+    return this->export_symbol(s);
+  }
+
+  // Create a new Symbol
+  Symbol funcsym;
+  funcsym.name(funcname);
+  funcsym.type(ELF_SYMBOL_TYPES::STT_FUNC);
+  funcsym.binding(SYMBOL_BINDINGS::STB_GLOBAL);
+  funcsym.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
+  funcsym.value(address);
+
+  return this->export_symbol(funcsym);
+
+}
+
+
+bool Binary::has_dynamic_symbol(const std::string& name) const {
+  auto&& it_symbol = std::find_if(
+      std::begin(this->dynamic_symbols_),
+      std::end(this->dynamic_symbols_),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+  return it_symbol != std::end(this->dynamic_symbols_);
+}
+
+const Symbol& Binary::get_dynamic_symbol(const std::string& name) const {
+  if (not this->has_dynamic_symbol(name)) {
+    throw not_found("Symbol '" + name + "' not found!");
+  }
+
+  auto&& it_symbol = std::find_if(
+      std::begin(this->dynamic_symbols_),
+      std::end(this->dynamic_symbols_),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+  return **it_symbol;
+}
+
+Symbol& Binary::get_dynamic_symbol(const std::string& name) {
+  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_dynamic_symbol(name));
+}
+
+bool Binary::has_static_symbol(const std::string& name) const {
+  auto&& it_symbol = std::find_if(
+      std::begin(this->static_symbols_),
+      std::end(this->static_symbols_),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+  return it_symbol != std::end(this->static_symbols_);
+}
+
+const Symbol& Binary::get_static_symbol(const std::string& name) const {
+  if (not this->has_static_symbol(name)) {
+    throw not_found("Symbol '" + name + "' not found!");
+  }
+
+  auto&& it_symbol = std::find_if(
+      std::begin(this->static_symbols_),
+      std::end(this->static_symbols_),
+      [&name] (const Symbol* s) {
+        return s->name() == name;
+      });
+  return **it_symbol;
+
+}
+
+Symbol& Binary::get_static_symbol(const std::string& name) {
+  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_static_symbol(name));
+}
+
 
 // Exported
 // --------
@@ -1198,6 +1367,17 @@ bool Binary::has_section(const std::string& name) const {
 
 void Binary::strip(void) {
   this->static_symbols_ = {};
+
+  //for (Section* sec : this->sections_) {
+  //  if (sec->segments().size() == 0 and sec->name() != ".shstrtab" and sec->type() != ELF_SECTION_TYPES::SHT_NULL) {
+  //    this->remove(*sec, /* clear */ true);
+  //    return strip();
+  //  }
+  //}
+  if (this->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
+    Section& symtab = this->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+    this->remove(symtab, /* clear */ true);
+  }
 }
 
 
@@ -1207,8 +1387,13 @@ Symbol& Binary::add_static_symbol(const Symbol& symbol) {
 }
 
 
-Symbol& Binary::add_dynamic_symbol(const Symbol& symbol) {
-  this->dynamic_symbols_.push_back(new Symbol{symbol});
+Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion& version) {
+  Symbol* sym = new Symbol{symbol};
+  SymbolVersion* symver = new SymbolVersion{version};
+  sym->symbol_version_ = symver;
+
+  this->dynamic_symbols_.push_back(sym);
+  this->symbol_version_table_.push_back(symver);
   return *(this->dynamic_symbols_.back());
 }
 
@@ -1415,6 +1600,29 @@ Note& Binary::get(NOTE_TYPES type) {
   return const_cast<Note&>(static_cast<const Binary*>(this)->get(type));
 }
 
+const Section& Binary::get(ELF_SECTION_TYPES type) const {
+
+  if (not this->has(type)) {
+    throw not_found("Unable to find a section of type '" + std::string(to_string(type)) + "'.");
+  }
+
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [type] (const Section* section)
+      {
+        return section->type() == type;
+      });
+
+  return **it_section;
+}
+
+
+Section& Binary::get(ELF_SECTION_TYPES type) {
+  return const_cast<Section&>(static_cast<const Binary*>(this)->get(type));
+}
+
+
 
 bool Binary::has(SEGMENT_TYPES type) const {
   auto&& it_segment = std::find_if(
@@ -1440,6 +1648,19 @@ bool Binary::has(NOTE_TYPES type) const {
 
   return it_note != std::end(this->notes_);
 }
+
+bool Binary::has(ELF_SECTION_TYPES type) const {
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [type] (const Section* section)
+      {
+        return section->type() == type;
+      });
+
+  return it_section != std::end(this->sections_);
+}
+
 
 
 void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
@@ -1835,12 +2056,19 @@ const DynamicEntry& Binary::operator[](DYNAMIC_TAGS tag) const {
   return this->get(tag);
 }
 
-
 Note& Binary::operator[](NOTE_TYPES type) {
   return this->get(type);
 }
 
 const Note& Binary::operator[](NOTE_TYPES type) const {
+  return this->get(type);
+}
+
+Section& Binary::operator[](ELF_SECTION_TYPES type) {
+  return this->get(type);
+}
+
+const Section& Binary::operator[](ELF_SECTION_TYPES type) const {
   return this->get(type);
 }
 

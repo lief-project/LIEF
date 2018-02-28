@@ -68,6 +68,8 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     //! @brief @link ELF::Section section@endlink index associated with the symbol
     uint16_t section_idx(void) const;
 
+    ELF_SYMBOL_VISIBILITY visibility(void) const;
+
     Section& section(void);
 
     //! This member have slightly different interpretations:
@@ -103,6 +105,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     void type(ELF_SYMBOL_TYPES type);
     void binding(SYMBOL_BINDINGS binding);
     void other(uint8_t other);
+    void visibility(ELF_SYMBOL_VISIBILITY visibility);
     void value(uint64_t value);
     void size(uint64_t size);
     void information(uint8_t info);

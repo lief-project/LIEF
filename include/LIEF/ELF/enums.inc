@@ -631,7 +631,7 @@ enum ELF_SYMBOL_TYPES {
   STT_HIPROC    = 15   /* Highest processor-specific symbol type */
 };
 
-enum {
+enum ELF_SYMBOL_VISIBILITY {
   STV_DEFAULT   = 0,  /* Visibility is specified by binding type */
   STV_INTERNAL  = 1,  /* Defined by processor supplements */
   STV_HIDDEN    = 2,  /* Not visible to other components */

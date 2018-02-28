@@ -9,38 +9,39 @@ Welcome to LIEF's documentation!
 .. toctree::
   :maxdepth: 2
 
-  Intro.rst
-  installation.rst
-  getting_started.rst
-  compilation.rst
+  Intro
+  installation
+  getting_started
+  compilation
 
 .. toctree::
   :caption: Tutorials
   :maxdepth: 1
 
-  tutorials/01_play_with_formats.rst
-  tutorials/02_pe_from_scratch.rst
-  tutorials/03_elf_change_symbols.rst
-  tutorials/04_elf_hooking.rst
-  tutorials/05_elf_infect_plt_got.rst
-  tutorials/06_pe_hooking.rst
-  tutorials/07_pe_resource.rst
+  tutorials/01_play_with_formats
+  tutorials/02_pe_from_scratch
+  tutorials/03_elf_change_symbols
+  tutorials/04_elf_hooking
+  tutorials/05_elf_infect_plt_got
+  tutorials/06_pe_hooking
+  tutorials/07_pe_resource
+  tutorials/08_elf_bin2lib
 
 
 .. toctree::
   :caption: API
   :maxdepth: 1
 
-  api/python/index.rst
-  api/cpp/index.rst
-  api/c/index.rst
+  api/python/index
+  api/cpp/index
+  api/c/index
 
 .. toctree::
   :caption: Extra Information
   :maxdepth: 1
 
-  formats/index.rst
-  references.rst
-  changelog.rst
+  formats/index
+  references
+  changelog
 
 

@@ -25,13 +25,13 @@ void init_ELF_module(py::module& m) {
 
   // Objects
   init_ELF_Parser_class(LIEF_ELF_module);
+  init_ELF_SymbolVersion_class(LIEF_ELF_module);
   init_ELF_Binary_class(LIEF_ELF_module);
   init_ELF_Header_class(LIEF_ELF_module);
   init_ELF_Section_class(LIEF_ELF_module);
   init_ELF_Segment_class(LIEF_ELF_module);
   init_ELF_Symbol_class(LIEF_ELF_module);
   init_ELF_Relocation_class(LIEF_ELF_module);
-  init_ELF_SymbolVersion_class(LIEF_ELF_module);
   init_ELF_SymbolVersionAux_class(LIEF_ELF_module);
   init_ELF_SymbolVersionAuxRequirement_class(LIEF_ELF_module);
   init_ELF_SymbolVersionDefinition_class(LIEF_ELF_module);

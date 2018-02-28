@@ -228,6 +228,28 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     it_symbols       symbols(void);
     it_const_symbols symbols(void) const;
 
+    //! Export the given symbol and create it if it doesn't exist
+    Symbol& export_symbol(const Symbol& symbol);
+
+    //! Export the symbol with the given name and create it if it doesn't exist
+    Symbol& export_symbol(const std::string& symbol_name, uint64_t value = 0);
+
+    //! Check if the symbol with the given ``name`` exists in the dynamic symbol table
+    bool has_dynamic_symbol(const std::string& name) const;
+
+    //! Get the dynamic symbol from the given name
+    const Symbol& get_dynamic_symbol(const std::string& name) const;
+
+    Symbol& get_dynamic_symbol(const std::string& name);
+
+    //! Check if the symbol with the given ``name`` exists in the static symbol table
+    bool has_static_symbol(const std::string& name) const;
+
+    //! Get the static symbol from the given name
+    const Symbol& get_static_symbol(const std::string& name) const;
+
+    Symbol& get_static_symbol(const std::string& name);
+
     //! @brief Remove symbols with the given name in boths
     //!   * dynamic symbols
     //!   * static symbols
@@ -270,8 +292,11 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Add a static symbol
     Symbol& add_static_symbol(const Symbol& symbol);
 
-    //! @brief Add a dynamic symbol
-    Symbol& add_dynamic_symbol(const Symbol& symbol);
+    //! @brief Add a dynamic symbol with the associated SymbolVersion
+    Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion& version = SymbolVersion::global());
+
+    //! Create a symbol for the function at the given address and export it
+    Symbol& add_exported_function(uint64_t address, const std::string& name = "");
 
     //! @brief Add a library as dependency
     DynamicEntryLibrary& add_library(const std::string& library_name);
@@ -389,6 +414,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     const Note& get(NOTE_TYPES type) const;
     Note&       get(NOTE_TYPES type);
 
+    //! @brief Return the **first** ELF::Section associated with the given type
+    const Section& get(ELF_SECTION_TYPES type) const;
+    Section&       get(ELF_SECTION_TYPES type);
+
     //! @brief Check if an ELF::DynamicEntry associated with the given tag
     //! exists.
     bool has(DYNAMIC_TAGS tag) const;
@@ -400,6 +429,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     //! @brief Check if a ELF::Note associated with the given type
     //! exists.
     bool has(NOTE_TYPES type) const;
+
+    //! @brief Check if a ELF::Section associated with the given type
+    //! exists.
+    bool has(ELF_SECTION_TYPES type) const;
 
     //! @brief Return the content located at virtual address
     virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const override;
@@ -449,6 +482,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     Note&       operator[](NOTE_TYPES type);
     const Note& operator[](NOTE_TYPES type) const;
+
+    Section&       operator[](ELF_SECTION_TYPES type);
+    const Section& operator[](ELF_SECTION_TYPES type) const;
 
   private:
     Binary(void);

@@ -219,6 +219,12 @@ void init_ELF_Binary_class(py::module& m) {
         "type"_a,
         py::return_value_policy::reference)
 
+    .def("get",
+        static_cast<no_const_func<Section&, ELF_SECTION_TYPES>>(&Binary::get),
+        "Return **first** binary's " RST_CLASS_REF(lief.ELF.Section) " given its " RST_CLASS_REF(lief.ELF.ELF_SECTION_TYPES) "",
+        "type"_a,
+        py::return_value_policy::reference)
+
     .def("has",
         static_cast<bool (Binary::*)(DYNAMIC_TAGS) const>(&Binary::has),
         "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists",
@@ -232,6 +238,11 @@ void init_ELF_Binary_class(py::module& m) {
     .def("has",
         static_cast<bool (Binary::*)(NOTE_TYPES) const>(&Binary::has),
         "Check if a " RST_CLASS_REF(lief.ELF.Note) " of *type* (" RST_CLASS_REF(lief.ELF.NOTE_TYPES) ") exists",
+        "type"_a)
+
+    .def("has",
+        static_cast<bool (Binary::*)(ELF_SECTION_TYPES) const>(&Binary::has),
+        "Check if a " RST_CLASS_REF(lief.ELF.Section) " of *type* (" RST_CLASS_REF(lief.ELF.ECTION_TYPES) ") exists",
         "type"_a)
 
     .def("patch_pltgot",
@@ -262,9 +273,9 @@ void init_ELF_Binary_class(py::module& m) {
         py::return_value_policy::reference)
 
     .def("add_dynamic_symbol",
-        &Binary::add_dynamic_symbol,
+        static_cast<Symbol& (Binary::*)(const Symbol&, const SymbolVersion&)>(&Binary::add_dynamic_symbol),
         "Add a **dynamic** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary",
-        "symbol"_a,
+        "symbol"_a, "symbol_version"_a = SymbolVersion::local(),
         py::return_value_policy::reference)
 
     .def("virtual_address_to_offset",
@@ -389,13 +400,58 @@ void init_ELF_Binary_class(py::module& m) {
     .def("remove_section",
         &Binary::remove_section,
         "Remove the given section from its name",
-        "library_name"_a, "clear"_a = false)
+        "section_name"_a, "clear"_a = false)
 
     .def("get_library",
         static_cast<no_const_func<DynamicEntryLibrary&, const std::string&>>(&Binary::get_library),
         "Return the " RST_CLASS_REF(lief.ELF.DynamicEntryLibrary) " with the given ``name``",
         "library_name"_a,
         py::return_value_policy::reference)
+
+    .def("has_dynamic_symbol",
+        &Binary::has_dynamic_symbol,
+        "Check if the symbol with the given ``name`` exists in the **dynamic** symbol table",
+        "symbol_name"_a)
+
+    .def("get_dynamic_symbol",
+        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_dynamic_symbol),
+        "Get the dynamic symbol from the given name",
+        "symbol_name"_a,
+        py::return_value_policy::reference)
+
+    .def("has_static_symbol",
+        &Binary::has_static_symbol,
+        "Check if the symbol with the given ``name`` exists in the **static** symbol table",
+        "symbol_name"_a)
+
+    .def("get_static_symbol",
+        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_static_symbol),
+        "Get the **dynamic** symbol from the given ``name``",
+        "symbol_name"_a,
+        py::return_value_policy::reference)
+
+
+    .def("add_exported_function",
+        &Binary::add_exported_function,
+        "Create a symbol for the function at the given ``address`` and export it",
+        "address"_a, "name"_a = "",
+        py::return_value_policy::reference)
+
+
+    .def("export_symbol",
+        static_cast<Symbol& (Binary::*)(const Symbol&)>(&Binary::export_symbol),
+        "Export the given symbol and create it if it doesn't exist",
+        "symbol"_a,
+        py::return_value_policy::reference)
+
+
+    .def("export_symbol",
+        static_cast<Symbol& (Binary::*)(const std::string&, uint64_t)>(&Binary::export_symbol),
+        "Export the symbol with the given name and create it if it doesn't exist",
+        "symbol_name"_a, "value"_a = 0,
+        py::return_value_policy::reference)
+
+
 
     .def(py::self += Segment())
     .def(py::self += Section())
@@ -423,6 +479,12 @@ void init_ELF_Binary_class(py::module& m) {
         "",
         py::return_value_policy::reference)
 
+
+    .def("__getitem__",
+        static_cast<Section& (Binary::*)(ELF_SECTION_TYPES)>(&Binary::operator[]),
+        "",
+        py::return_value_policy::reference)
+
     .def("__contains__",
         static_cast<bool (Binary::*)(SEGMENT_TYPES) const>(&Binary::has),
         "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists")
@@ -434,6 +496,10 @@ void init_ELF_Binary_class(py::module& m) {
     .def("__contains__",
         static_cast<bool (Binary::*)(NOTE_TYPES) const>(&Binary::has),
         "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " exists")
+
+    .def("__contains__",
+        static_cast<bool (Binary::*)(ELF_SECTION_TYPES) const>(&Binary::has),
+        "Check if the " RST_CLASS_REF(lief.ELF.Section) " associated with the given " RST_CLASS_REF(lief.ELF.SECTION_TYPES) " exists")
 
     .def("__str__",
         [] (const Binary& binary)

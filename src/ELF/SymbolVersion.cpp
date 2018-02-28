@@ -40,6 +40,15 @@ SymbolVersion::SymbolVersion(uint16_t value) :
   symbol_aux_{nullptr}
 {}
 
+
+SymbolVersion SymbolVersion::local(void) {
+  return SymbolVersion{0};
+}
+
+SymbolVersion SymbolVersion::global(void) {
+  return SymbolVersion{1};
+}
+
 uint16_t SymbolVersion::value(void) const {
   return this->value_;
 }

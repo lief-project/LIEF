@@ -38,13 +38,30 @@ class DLL_PUBLIC SymbolVersion : public Visitable {
   public:
     SymbolVersion(uint16_t value);
     SymbolVersion(void);
+
+    //! Generate a *local* SymbolVersion
+    static SymbolVersion local(void);
+
+    //! Generate a *global* SymbolVersion
+    static SymbolVersion global(void);
+
     virtual ~SymbolVersion(void);
 
     SymbolVersion& operator=(const SymbolVersion&);
     SymbolVersion(const SymbolVersion&);
 
-    uint16_t                value(void) const;
-    bool                    has_auxiliary_version(void) const;
+    //! Value associated with the symbol
+    //!
+    //! If the given SymbolVersion hasn't Auxiliary version:
+    //!
+    //! * ``0`` means **Local**
+    //! * ``1`` means **Global**
+    uint16_t value(void) const;
+
+    //! Whether or not the current SymbolVersion has an auxiliary one
+    bool has_auxiliary_version(void) const;
+
+    //! SymbolVersionAux associated with the current Version (if any)
     SymbolVersionAux&       symbol_version_auxiliary(void);
     const SymbolVersionAux& symbol_version_auxiliary(void) const;
 

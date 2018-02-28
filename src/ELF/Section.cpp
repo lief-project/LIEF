@@ -405,6 +405,28 @@ it_const_segments Section::segments(void) const {
   return this->segments_;
 }
 
+
+Section& Section::clear(uint8_t value) {
+
+  if (this->datahandler_ == nullptr) {
+    std::fill(
+        std::begin(this->content_c_),
+        std::end(this->content_c_),
+        value);
+    return *this;
+  }
+
+  std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->size(),
+      DataHandler::Node::SECTION);
+
+  std::fill_n(std::begin(binary_content) + node.offset(), this->size(), value);
+  return *this;
+
+}
+
 void Section::accept(Visitor& visitor) const {
 
   LIEF::Section::accept(visitor);

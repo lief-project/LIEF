@@ -95,6 +95,7 @@ class DLL_PUBLIC Builder {
     template<typename T, typename HANDLER>
     std::vector<std::string> optimize(const HANDLER& e);
 
+    template<typename ELF_T>
     void build_symbol_version(void);
 
     template<typename ELF_T>

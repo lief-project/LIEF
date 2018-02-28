@@ -1030,4 +1030,12 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_SINGLETON))
     .export_values();
 
+
+  py::enum_<ELF_SYMBOL_VISIBILITY>(m, "SYMBOL_VISIBILITY")
+    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_DEFAULT))
+    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_HIDDEN))
+    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_INTERNAL))
+    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_PROTECTED))
+    .export_values();
+
 }
