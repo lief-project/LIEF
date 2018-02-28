@@ -21,6 +21,8 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
+#include "LIEF/logging++.hpp"
+
 #include "LIEF/visitors/Hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
@@ -29,6 +31,8 @@
 
 namespace LIEF {
 namespace ELF {
+constexpr Note::version_t Note::UNKNOWN_VERSION;
+
 Note& Note::operator=(const Note&) = default;
 Note::Note(const Note&)            = default;
 Note::~Note(void)                  = default;
@@ -39,14 +43,14 @@ Note::Note(void) :
   description_{}
 {}
 
-Note::Note(const std::string& name, uint32_t type, const std::vector<uint8_t>& description):
+Note::Note(const std::string& name, uint32_t type, const description_t& description):
   name_{name},
   type_{type},
   description_{description}
 {}
 
 
-Note::Note(const std::string& name, NOTE_TYPES type, const std::vector<uint8_t>& description):
+Note::Note(const std::string& name, NOTE_TYPES type, const description_t& description):
   Note::Note{name, static_cast<uint32_t>(type), description}
 {}
 
@@ -58,36 +62,42 @@ uint32_t Note::type(void) const {
   return this->type_;
 }
 
-const std::vector<uint8_t>& Note::description(void) const {
+const Note::description_t& Note::description(void) const {
+  return this->description_;
+}
+
+Note::description_t& Note::description(void) {
   return this->description_;
 }
 
 
 NOTE_ABIS Note::abi(void) const {
   if (static_cast<NOTE_TYPES>(this->type()) != NOTE_TYPES::NT_GNU_ABI_TAG) {
-    throw type_error(std::string("This note is not a ") + to_string(NOTE_TYPES::NT_GNU_ABI_TAG) + " one!");
+    return NOTE_ABIS::ELF_NOTE_UNKNOWN;
   }
 
-  const std::vector<uint8_t>& description = this->description();
+  const Note::description_t& description = this->description();
   if (description.size() < sizeof(uint32_t)) {
-    throw corrupted("The description of the note seems corrupted");
+    LOG(WARNING) << "The description of the note seems corrupted";
+    return NOTE_ABIS::ELF_NOTE_UNKNOWN;
   }
 
   return static_cast<NOTE_ABIS>(*reinterpret_cast<const uint32_t*>(description.data()));
 }
 
-std::tuple<uint32_t, uint32_t, uint32_t> Note::version(void) const {
+Note::version_t Note::version(void) const {
   if (static_cast<NOTE_TYPES>(this->type()) != NOTE_TYPES::NT_GNU_ABI_TAG) {
-    throw type_error(std::string("This note is not a ") + to_string(NOTE_TYPES::NT_GNU_ABI_TAG) + " one!");
+    return Note::UNKNOWN_VERSION;
   }
 
-  const std::vector<uint8_t>& description = this->description();
+  const Note::description_t& description = this->description();
   if (description.size() < (sizeof(uint32_t) + 3 * sizeof(uint32_t))) {
-    throw corrupted("The description of the note seems corrupted");
+    LOG(WARNING) << "The description of the note seems corrupted";
+    return Note::UNKNOWN_VERSION;
   }
 
   const uint32_t* version = reinterpret_cast<const uint32_t*>(description.data());
-  return std::tuple<uint32_t, uint32_t, uint32_t>{version[1], version[2], version[3]};
+  return Note::version_t{{version[1], version[2], version[3]}};
 }
 
 
@@ -98,7 +108,7 @@ void Note::type(uint32_t type) {
   this->type_ = type;
 }
 
-void Note::description(const std::vector<uint8_t>& description) {
+void Note::description(const Note::description_t& description) {
   this->description_ = description;
 }
 
@@ -131,9 +141,8 @@ bool Note::operator!=(const Note& rhs) const {
 }
 
 
-std::ostream& operator<<(std::ostream& os, const Note& note) {
-
-  const std::vector<uint8_t>& description = note.description();
+void Note::dump(std::ostream& os) const {
+  const Note::description_t& description = this->description();
 
   std::string description_str = std::accumulate(
       std::begin(description),
@@ -150,43 +159,40 @@ std::ostream& operator<<(std::ostream& os, const Note& note) {
   }
   description_str += "]";
   os << std::hex << std::left;
-  os << std::setw(33) << std::setfill(' ') << "Name:" << note.name() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Type:" << to_string(static_cast<NOTE_TYPES>(note.type())) << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Name:" << this->name() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Type:" << to_string(static_cast<NOTE_TYPES>(this->type())) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Description:" << description_str << std::endl;
 
 
   // ABI TAG
-  if (static_cast<NOTE_TYPES>(note.type()) == NOTE_TYPES::NT_GNU_ABI_TAG) {
-    try {
-      std::tuple<uint32_t, uint32_t, uint32_t> version = note.version();
-      std::string version_str = "";
-      // Major
-      version_str += std::to_string(std::get<0>(version));
-      version_str += ".";
+  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_ABI_TAG) {
+    Note::version_t version = this->version();
+    std::string version_str = "";
+    // Major
+    version_str += std::to_string(std::get<0>(version));
+    version_str += ".";
 
-      // Minor
-      version_str += std::to_string(std::get<1>(version));
-      version_str += ".";
+    // Minor
+    version_str += std::to_string(std::get<1>(version));
+    version_str += ".";
 
-      // Patch
-      version_str += std::to_string(std::get<2>(version));
+    // Patch
+    version_str += std::to_string(std::get<2>(version));
 
-      os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(note.abi()) << std::endl;
-      os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
-    } catch (const corrupted&) {
-    }
+    os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(this->abi()) << std::endl;
+    os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
   }
 
 
   // GOLD VERSION
-  if (static_cast<NOTE_TYPES>(note.type()) == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
+  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
     std::string version_str{reinterpret_cast<const char*>(description.data()), description.size()};
     os << std::setw(33) << std::setfill(' ') << "Version:" << version_str << std::endl;
   }
 
 
   // BUILD ID
-  if (static_cast<NOTE_TYPES>(note.type()) == NOTE_TYPES::NT_GNU_BUILD_ID) {
+  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_BUILD_ID) {
     std::string hash = std::accumulate(
       std::begin(description),
       std::end(description), std::string{},
@@ -200,6 +206,11 @@ std::ostream& operator<<(std::ostream& os, const Note& note) {
 
     os << std::setw(33) << std::setfill(' ') << "ID Hash:" << hash << std::endl;
   }
+
+}
+
+std::ostream& operator<<(std::ostream& os, const Note& note) {
+  note.dump(os);
   return os;
 
 }

@@ -156,6 +156,14 @@ Note
 
 ----------
 
+Android Note
+************
+
+.. doxygenclass:: LIEF::ELF::AndroidNote
+   :project: lief
+
+----------
+
 
 Utilities
 *********

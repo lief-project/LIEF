@@ -103,7 +103,7 @@ class DLL_PUBLIC Builder {
     template<typename ELF_T>
     void build_notes(void);
 
-    void build(NOTE_TYPES type, const std::string& section_name);
+    void build(NOTE_TYPES type);
 
     size_t note_offset(const Note& note);
 

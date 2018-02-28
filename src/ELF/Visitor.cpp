@@ -96,6 +96,10 @@ void Visitor::visit(const ELF::Note& note) {
   note.accept(*this);
 }
 
+void Visitor::visit(const ELF::AndroidNote& android_note) {
+  android_note.accept(*this);
+}
+
 void Visitor::visit(const ELF::GnuHash& gnuhash) {
   gnuhash.accept(*this);
 }

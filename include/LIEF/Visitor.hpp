@@ -48,9 +48,11 @@ class Header;
 class Section;
 class Segment;
 class Relocation;
-class Note;
 class GnuHash;
 class SysvHash;
+
+class Note;
+class AndroidNote;
 
 class DynamicEntry;
 class DynamicEntryArray;
@@ -281,6 +283,9 @@ class DLL_PUBLIC Visitor {
 
   //! @brief Method to visit a LIEF::ELF::Note
   virtual void visit(const ELF::Note& note);
+
+  //! @brief Method to visit a LIEF::ELF::AndroidNote
+  virtual void visit(const ELF::AndroidNote& android_note);
 
   //! @brief Method to visit a LIEF::ELF::GnuHash
   virtual void visit(const ELF::GnuHash& gnuhash);

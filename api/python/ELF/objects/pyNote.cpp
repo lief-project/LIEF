@@ -50,8 +50,8 @@ void init_ELF_Note_class(py::module& m) {
         )
 
     .def_property("description",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&Note::description),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&Note::description),
+        static_cast<getter_t<const Note::description_t&>>(&Note::description),
+        static_cast<setter_t<const Note::description_t&>>(&Note::description),
         "Return the description associated with the note"
         )
 
@@ -61,7 +61,7 @@ void init_ELF_Note_class(py::module& m) {
         )
 
     .def_property_readonly("version",
-        static_cast<getter_t<std::tuple<uint32_t, uint32_t, uint32_t>>>(&Note::version),
+        static_cast<getter_t<Note::version_t>>(&Note::version),
         "Return the target version as ``(Major, Minor, Patch)``. Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
         )
 

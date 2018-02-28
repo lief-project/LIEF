@@ -28,6 +28,7 @@
 
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "LIEF/ELF/AndroidNote.hpp"
 
 
 #include "Parser.tcc"
@@ -46,6 +47,8 @@ constexpr uint32_t Parser::NB_MAX_RELOCATIONS;
 constexpr uint32_t Parser::NB_MAX_DYNAMIC_ENTRIES;
 constexpr uint32_t Parser::NB_MAX_MASKWORD;
 constexpr uint32_t Parser::MAX_NOTE_DESCRIPTION;
+
+constexpr const char AndroidNote::NAME[];
 
 
 Parser::~Parser(void) = default;
@@ -327,15 +330,21 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
       current_offset += descsz;
       current_offset = align(current_offset, sizeof(uint32_t));
     }
-    Note note{name, type, std::move(description)};
+    std::unique_ptr<Note> note;
+
+    if (name == AndroidNote::NAME and type == NOTE_TYPES::NT_GNU_ABI_TAG) {
+      note = std::unique_ptr<AndroidNote>{new AndroidNote{name, type, std::move(description)}};
+    } else {
+      note = std::unique_ptr<Note>{new Note{name, type, std::move(description)}};
+    }
     auto&& it_note = std::find_if(
         std::begin(this->binary_->notes_),
         std::end(this->binary_->notes_),
-        [&note] (const Note& n) {
-          return n == note;
+        [&note] (const Note* n) {
+          return *n == *note;
         });
     if (it_note == std::end(this->binary_->notes_)) {
-      this->binary_->notes_.push_back(std::move(note));
+      this->binary_->notes_.push_back(note.release());
     }
   }
 

@@ -19,6 +19,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <functional>
+#include <map>
 
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
@@ -158,8 +159,8 @@ size_t Builder::note_offset(const Note& note) {
   auto&& it_note = std::find_if(
       std::begin(this->binary_->notes_),
       std::end(this->binary_->notes_),
-      [&note] (const Note& n) {
-        return n == note;
+      [&note] (const Note* n) {
+        return *n == note;
       });
   if (it_note == std::end(this->binary_->notes_)) {
     // TODO
@@ -168,20 +169,47 @@ size_t Builder::note_offset(const Note& note) {
   size_t offset = std::accumulate(
       std::begin(this->binary_->notes_),
       it_note, 0,
-      [] (size_t offset, const Note& n) {
-        return offset + n.size();
+      [] (size_t offset, const Note* n) {
+        return offset + n->size();
       });
   return offset;
 }
 
 
-void Builder::build(NOTE_TYPES type, const std::string& section_name) {
+void Builder::build(NOTE_TYPES type) {
+  using note_to_section_map_t = std::multimap<NOTE_TYPES, const char*>;
+  using value_t = typename note_to_section_map_t::value_type;
+
+  static const note_to_section_map_t note_to_section_map = {
+    { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.ABI-tag"          },
+    { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.android.ident"    },
+
+    { NOTE_TYPES::NT_GNU_BUILD_ID,     ".note.gnu.build-id"     },
+    { NOTE_TYPES::NT_GNU_GOLD_VERSION, ".note.gnu.gold-version" },
+  };
 
   Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
 
+  auto&& range_secname = note_to_section_map.equal_range(type);
+
+  auto&& it_section_name = std::find_if(
+      range_secname.first, range_secname.second,
+      [this] (value_t p) {
+        return this->binary_->has_section(p.second);
+      });
+
+  bool has_section = (it_section_name != range_secname.second);
+
+  std::string section_name;
+  if (has_section) {
+    section_name = it_section_name->second;
+  } else {
+    section_name = range_secname.first->second;
+  }
+
   // Link section and notes
   if (this->binary_->has(type) and
-      this->binary_->has_section(section_name))
+      has_section)
   {
     Section& section = this->binary_->get_section(section_name);
     const Note& note = this->binary_->get(type);
@@ -191,14 +219,14 @@ void Builder::build(NOTE_TYPES type, const std::string& section_name) {
 
   // Remove the section
   if (not this->binary_->has(type) and
-      this->binary_->has_section(section_name))
+      has_section)
   {
     this->binary_->remove_section(section_name, true);
   }
 
   // Add a new section
   if (this->binary_->has(type) and
-      not this->binary_->has_section(section_name))
+      not has_section)
   {
 
     const Note& note = this->binary_->get(type);

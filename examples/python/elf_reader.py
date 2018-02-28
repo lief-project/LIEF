@@ -385,14 +385,17 @@ def print_notes(binary):
         print(format_str.format("Description:", description_str))
 
         if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.ABI_TAG:
-            try:
-                version = note.version
+
+            if type(note) == lief.ELF.AndroidNote:
+                print(format_dec.format("SDK Version:",      note.sdk_version))
+                print(format_str.format("NDK Version:",      note.ndk_version))
+                print(format_str.format("NDK build number:", note.ndk_build_number))
+            else:
+                version     = note.version
                 version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
 
                 print(format_str.format("ABI:",     note.abi))
                 print(format_str.format("Version:", version_str))
-            except lief.corrupted:
-                pass
 
         if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.GOLD_VERSION:
             print(format_str.format("Version:", "".join(map(chr, note.description))))

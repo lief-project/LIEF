@@ -1828,9 +1828,9 @@ void Builder::build_notes(void) {
   // ".note.ABI-tag" // NOTE_TYPES::NT_GNU_ABI_TAG
   // ===============
   //TODO: .note.netbds etc
-  this->build(NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.ABI-tag");
-  this->build(NOTE_TYPES::NT_GNU_BUILD_ID,     ".note.gnu.build-id");
-  this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION, ".note.gnu.gold-version");
+  this->build(NOTE_TYPES::NT_GNU_ABI_TAG);
+  this->build(NOTE_TYPES::NT_GNU_BUILD_ID);
+  this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION);
 
 
 }

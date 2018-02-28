@@ -46,6 +46,7 @@ void init_ELF_GnuHash_class(py::module&);
 void init_ELF_SysvHash_class(py::module&);
 void init_ELF_Builder_class(py::module&);
 void init_ELF_Note_class(py::module&);
+void init_ELF_AndroidNote_class(py::module&);
 
 // Enums
 void init_ELF_Structures_enum(py::module&);

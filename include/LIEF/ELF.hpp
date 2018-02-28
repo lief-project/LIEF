@@ -23,6 +23,7 @@
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/AndroidNote.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
 #endif

@@ -214,8 +214,8 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
 
 
 Note& Binary::add(const Note& note) {
-  this->notes_.emplace_back(note);
-  return this->notes_.back();
+  this->notes_.emplace_back(new Note{note});
+  return *this->notes_.back();
 }
 
 
@@ -298,22 +298,24 @@ void Binary::remove(const Note& note) {
   auto&& it_note = std::find_if(
       std::begin(this->notes_),
       std::end(this->notes_),
-      [&note] (const Note& n)
+      [&note] (const Note* n)
       {
-        return note == n;
+        return note == *n;
       });
 
   if (it_note == std::end(this->notes_)) {
     throw not_found(std::string("Can't find note '") + to_string(static_cast<NOTE_TYPES>(note.type())) +  "'!");
   }
-
+  delete *it_note;
   this->notes_.erase(it_note);
 }
 
 void Binary::remove(NOTE_TYPES type) {
   for (auto&& it = std::begin(this->notes_);
               it != std::end(this->notes_);) {
-    if (it->type() == type) {
+    Note* n = *it;
+    if (n->type() == type) {
+      delete n;
       it = this->notes_.erase(it);
     } else {
       ++it;
@@ -1400,12 +1402,12 @@ const Note& Binary::get(NOTE_TYPES type) const {
   auto&& it_note = std::find_if(
       std::begin(this->notes_),
       std::end(this->notes_),
-      [type] (const Note& note)
+      [type] (const Note* note)
       {
-        return note.type() == type;
+        return note->type() == type;
       });
 
-  return *it_note;
+  return **it_note;
 }
 
 
@@ -1431,9 +1433,9 @@ bool Binary::has(NOTE_TYPES type) const {
   auto&& it_note = std::find_if(
       std::begin(this->notes_),
       std::end(this->notes_),
-      [type] (const Note& note)
+      [type] (const Note* note)
       {
-        return note.type() == type;
+        return note->type() == type;
       });
 
   return it_note != std::end(this->notes_);
@@ -1494,11 +1496,11 @@ bool Binary::has_notes(void) const {
 }
 
 it_const_notes Binary::notes(void) const {
-  return {this->notes_};
+  return this->notes_;
 }
 
 it_notes Binary::notes(void) {
-  return {this->notes_};
+  return this->notes_;
 }
 
 
@@ -2024,6 +2026,10 @@ Binary::~Binary(void) {
 
   for (SymbolVersionRequirement* svr : this->symbol_version_requirements_) {
     delete svr;
+  }
+
+  for (Note* note : this->notes_) {
+    delete note;
   }
 
   delete datahandler_;

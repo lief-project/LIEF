@@ -916,6 +916,7 @@ const char* to_string(DYNSYM_COUNT_METHODS e) {
 
 const char* to_string(NOTE_TYPES e) {
   const std::map<NOTE_TYPES, const char*> enumStrings {
+    { NOTE_TYPES::NT_UNKNOWN,          "UNKNOWN"},
     { NOTE_TYPES::NT_GNU_ABI_TAG,      "ABI_TAG"},
     { NOTE_TYPES::NT_GNU_HWCAP,        "HWCAP"},
     { NOTE_TYPES::NT_GNU_BUILD_ID,     "BUILD_ID"},
@@ -928,6 +929,7 @@ const char* to_string(NOTE_TYPES e) {
 
 const char* to_string(NOTE_ABIS e) {
   const std::map<NOTE_ABIS, const char*> enumStrings {
+    { NOTE_ABIS::ELF_NOTE_UNKNOWN,     "UNKNOWN"},
     { NOTE_ABIS::ELF_NOTE_OS_LINUX,    "LINUX"},
     { NOTE_ABIS::ELF_NOTE_OS_GNU,      "GNU"},
     { NOTE_ABIS::ELF_NOTE_OS_SOLARIS2, "SOLARIS2"},

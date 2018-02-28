@@ -18,6 +18,12 @@
 
 #include "LIEF/Visitor.hpp"
 
+template< class T >
+using add_pointer_t = typename std::add_pointer<T>::type;
+
+template< class T >
+using decay_t = typename std::decay<T>::type;
+
 namespace LIEF {
 
 class Visitable {
@@ -25,6 +31,17 @@ class Visitable {
   Visitable(void);
   Visitable(const Visitable& other);
   Visitable& operator=(const Visitable& other);
+
+  template<class T>
+  bool is(void) {
+    return typeid(*this) == typeid(T);
+  }
+
+  template<class T>
+  add_pointer_t<decay_t<T>> as(void) {
+    return dynamic_cast<add_pointer_t<decay_t<T>>>(this);
+  }
+
   virtual ~Visitable(void);
   virtual void accept(Visitor& visitor) const = 0;
 };

@@ -15,7 +15,6 @@ configure_file(
 )
 
 set(LIEF_ELF_SRC
-  "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryArray.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SymbolVersionRequirement.cpp"
@@ -49,7 +48,6 @@ set(LIEF_ELF_SRC
 )
 
 set(LIEF_ELF_INC_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Binary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Builder.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DynamicEntry.hpp"
@@ -83,17 +81,21 @@ set(LIEF_ELF_DATA_HANDLER_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Handler.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Node.hpp")
 
-#set(LIEF_ELF_RELOC_INCLUDE_FILES
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/ARM.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/AArch64.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/Hexagon.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/i386.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/Mips.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/PowerPC.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/PowerPC64.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/Sparc.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/SystemZ.def"
-#  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Relocations/x86_64.def")
+
+# Notes part
+# ==========
+set(LIEF_ELF_NOTE_SRC
+  "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/AndroidNote.cpp"
+)
+
+set(LIEF_ELF_NOTE_INCLUDE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/AndroidNote.hpp"
+)
+
+list(APPEND LIEF_ELF_SRC ${LIEF_ELF_NOTE_SRC})
+list(APPEND LIEF_ELF_INC_FILES ${LIEF_ELF_NOTE_INCLUDE_FILES})
 
 set(LIEF_ELF_INCLUDE_FILES
   ${LIEF_ELF_INC_FILES}

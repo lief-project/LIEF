@@ -862,6 +862,7 @@ void init_ELF_Structures_enum(py::module& m) {
 
 
   py::enum_<NOTE_TYPES>(m, "NOTE_TYPES")
+    .value(PY_ENUM(NOTE_TYPES::NT_UNKNOWN))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_ABI_TAG))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_HWCAP))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_BUILD_ID))
@@ -870,6 +871,7 @@ void init_ELF_Structures_enum(py::module& m) {
 
 
   py::enum_<NOTE_ABIS>(m, "NOTE_ABIS")
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_UNKNOWN))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_LINUX))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_GNU))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SOLARIS2))

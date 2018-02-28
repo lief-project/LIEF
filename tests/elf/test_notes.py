@@ -88,6 +88,41 @@ class TestNotes(TestCase):
         self.safe_delete(output)
 
 
+    def test_android_note(self):
+        _, output = tempfile.mkstemp(prefix="android_note_")
+        self.logger.info("Output will be: {}".format(output))
+
+        ndkr16 = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
+        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+        print(note)
+
+        self.assertEqual(note.sdk_version, 21)
+        self.assertEqual(note.ndk_version[:4], "r16b")
+        self.assertEqual(note.ndk_build_number[:7], "4479499")
+
+        note.sdk_version = 15
+        note.ndk_version = "r15c"
+        note.ndk_build_number = "123456"
+
+        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+
+        self.assertEqual(note.sdk_version, 15)
+        self.assertEqual(note.ndk_version[:4], "r15c")
+        self.assertEqual(note.ndk_build_number[:6], "123456")
+
+        ndkr16.write(output)
+
+        ndkr15 = lief.parse(output)
+
+        note = ndkr15.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+
+        self.assertEqual(note.sdk_version, 15)
+        self.assertEqual(note.ndk_version[:4], "r15c")
+        self.assertEqual(note.ndk_build_number[:6], "123456")
+
+        self.safe_delete(output)
+
+
 
 
 if __name__ == '__main__':

@@ -960,6 +960,7 @@ enum DYNSYM_COUNT_METHODS {
 };
 
 enum NOTE_TYPES {
+  NT_UNKNOWN          = 0,
   NT_GNU_ABI_TAG      = 1,
   NT_GNU_HWCAP        = 2,
   NT_GNU_BUILD_ID     = 3,
@@ -968,6 +969,7 @@ enum NOTE_TYPES {
 
 
 enum NOTE_ABIS {
+  ELF_NOTE_UNKNOWN     = -1u,
   ELF_NOTE_OS_LINUX    = 0,
   ELF_NOTE_OS_GNU      = 1,
   ELF_NOTE_OS_SOLARIS2 = 2,

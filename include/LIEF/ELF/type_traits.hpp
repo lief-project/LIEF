@@ -92,7 +92,7 @@ using symbols_version_aux_requirement_t        = std::vector<SymbolVersionAuxReq
 using it_symbols_version_aux_requirement       = ref_iterator<symbols_version_aux_requirement_t&>;
 using it_const_symbols_version_aux_requirement = const_ref_iterator<const symbols_version_aux_requirement_t&>;
 
-using notes_t                                  = std::vector<Note>;
+using notes_t                                  = std::vector<Note*>;
 using it_notes                                 = ref_iterator<notes_t&>;
 using it_const_notes                           = const_ref_iterator<const notes_t&>;
 

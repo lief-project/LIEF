@@ -203,6 +203,16 @@ Note
 
 ----------
 
+Android Note
+*************
+
+.. autoclass:: lief.ELF.AndroidNote
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 Builder
 *******
