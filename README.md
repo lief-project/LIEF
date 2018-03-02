@@ -1,5 +1,5 @@
 <p align="center" >
-<img width="40%" src="http://romainthomas.fr/logo_blue_with_name_500.png"/><br />
+<img width="90%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/architecture.png"/><br />
 </p>
 <hr>
 <p align="center">
@@ -130,73 +130,22 @@ Here one can find guides to install or integrate LIEF:
 
 ### Python
 
-```python
-import lief
-# ELF
-binary = lief.parse("/usr/bin/ls")
-print(binary)
-
-# PE
-binary = lief.parse("C:\\Windows\\explorer.exe")
-print(binary)
-
-# Mach-O
-binary = lief.parse("/usr/bin/ls")
-print(binary)
-
-```
+<p align="center" >
+<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/pythonapi.png"/><br />
+</p>
 
 ### C++
 
-```cpp
-#include <LIEF/LIEF.hpp>
-int main(int argc, const char** argv) {
-  LIEF::ELF::Binary*   elf   = LIEF::ELF::Parser::parse("/usr/bin/ls");
-  LIEF::PE::Binary*    pe    = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
-  LIEF::MachO::Binary* macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
-
-  std::cout << *elf   << std::endl;
-  std::cout << *pe    << std::endl;
-  std::cout << *macho << std::endl;
-
-  delete elf;
-  delete pe;
-  delete macho;
-}
-```
+<p align="center" >
+<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/cpp.png"/><br />
+</p>
 
 ### C
 
-```cpp
-#include <LIEF/LIEF.h>
-int main(int argc, const char** argv) {
+<p align="center" >
+<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/capi.png"/><br />
+</p>
 
-  Elf_Binary_t*    elf_binary     = elf_parse("/usr/bin/ls");
-  Pe_Binary_t*     pe_binary      = pe_parse("C:\\Windows\\explorer.exe");
-  Macho_Binary_t** macho_binaries = macho_parse("/usr/bin/ls");
-
-  Pe_Section_t**    pe_sections    = pe_binary->sections;
-  Elf_Section_t**   elf_sections   = elf_binary->sections;
-  Macho_Section_t** macho_sections = macho_binaries[0]->sections;
-
-  for (size_t i = 0; pe_sections[i] != NULL; ++i) {
-    printf("%s\n", pe_sections[i]->name)
-  }
-
-  for (size_t i = 0; elf_sections[i] != NULL; ++i) {
-    printf("%s\n", elf_sections[i]->name)
-  }
-
-  for (size_t i = 0; macho_sections[i] != NULL; ++i) {
-    printf("%s\n", macho_sections[i]->name)
-  }
-
-  elf_binary_destroy(elf_binary);
-  pe_binary_destroy(pe_binary);
-  macho_binaries_destroy(macho_binaries);
-}
-
-```
 ## Documentation
 
 * [Main documentation](http://lief.quarkslab.com/doc/index.html)
