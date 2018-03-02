@@ -20,6 +20,7 @@
 #include <iostream>
 #include <array>
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 
@@ -46,8 +47,10 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     DyldInfo(void);
     DyldInfo(const dyld_info_command *dyld_info_cmd);
 
-    DyldInfo& operator=(const DyldInfo& copy);
+    DyldInfo& operator=(DyldInfo other);
     DyldInfo(const DyldInfo& copy);
+
+    void swap(DyldInfo& other);
 
     virtual ~DyldInfo(void);
 
@@ -73,6 +76,10 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //! @brief Set new opcodes
     void rebase_opcodes(const buffer_t& raw);
 
+
+    //! Return the rebase opcodes in a humman-readable way
+    std::string show_rebases_opcodes(void) const;
+
     //! @brief *Bind* information
     //!
     //! Dyld binds an image during the loading process, if the image
@@ -95,6 +102,9 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
 
     //! @brief Set new opcodes
     void bind_opcodes(const buffer_t& raw);
+
+    //! Return the bind opcodes in a humman-readable way
+    std::string show_bind_opcodes(void) const;
 
     //! @brief *Weak Bind* information
     //!
@@ -122,6 +132,9 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //! @brief Set new opcodes
     void weak_bind_opcodes(const buffer_t& raw);
 
+    //! Return the bind opcodes in a humman-readable way
+    std::string show_weak_bind_opcodes(void) const;
+
     //! @brief *Lazy Bind* information
     //!
     //! Some uses of external symbols do not need to be bound immediately.
@@ -144,6 +157,9 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
 
     //! @brief Set new opcodes
     void lazy_bind_opcodes(const buffer_t& raw);
+
+    //! Return the lazy opcodes in a humman-readable way
+    std::string show_lazy_bind_opcodes(void) const;
 
     //! @brief Iterator over BindingInfo entries
     it_binding_info       bindings(void);
@@ -188,6 +204,9 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     //! @brief Set new trie
     void export_trie(const buffer_t& raw);
 
+    //! Return the export trie in a humman-readable way
+    std::string show_export_trie(void) const;
+
     void rebase(const info_t& info);
     void bind(const info_t& info);
     void weak_bind(const info_t& info);
@@ -217,6 +236,10 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
     virtual std::ostream& print(std::ostream& os) const override;
 
   private:
+    void show_bindings(std::ostream& os, const buffer_t& buffer, bool is_lazy = false) const;
+
+    void show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) const;
+
     info_t   rebase_;
     buffer_t rebase_opcodes_;
 
@@ -234,6 +257,8 @@ class DLL_PUBLIC DyldInfo : public LoadCommand {
 
     export_info_t  export_info_;
     binding_info_t binding_info_;
+
+    Binary* binary_{nullptr};
 
 };
 

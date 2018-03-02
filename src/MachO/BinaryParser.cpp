@@ -150,12 +150,19 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
       Symbol& symbol = this->binary_->get_symbol(symbol_name);
       export_info->symbol_ = &symbol;
       symbol.export_info_ = export_info.get();
-      //if (symbol.is_external()) {
-      //  //LOG(WARNING) << "FOOOOO " << symbol_name;
-      //  //TODO
-      //}
-    } else {
-      LOG(WARNING) << "'" << symbol_name << "' is not registred";
+    } else { // Register it into the symbol table
+      std::unique_ptr<Symbol> symbol{new Symbol{}};
+      symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT;
+      symbol->value_             = export_info->address();
+      symbol->type_              = 0;
+      symbol->numberof_sections_ = 0;
+      symbol->description_       = 0;
+      symbol->name(symbol_name);
+
+      // Weak bind of the pointer
+      symbol->export_info_       = export_info.get();
+      export_info->symbol_       = symbol.get();
+      this->binary_->symbols_.push_back(symbol.release());
     }
     this->binary_->dyld_info().export_info_.push_back(export_info.release());
 

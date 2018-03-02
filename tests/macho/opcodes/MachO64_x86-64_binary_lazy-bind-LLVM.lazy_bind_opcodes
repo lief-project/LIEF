@@ -1,0 +1,40 @@
+[SET_SEGMENT_AND_OFFSET_ULEB]
+    Segment := __DATA
+    Segment Offset := 0x10
+[SET_DYLIB_ORDINAL_IMM]
+    Library Ordinal := 1
+[SET_SYMBOL_TRAILING_FLAGS_IMM]
+    Symbol name := _foo
+    Is Weak ? false
+[DO_BIND]
+    bind(POINTER, __DATA, 0x10, _foo, library_ordinal=libfoo.dylib, addend=0, is_weak_import=false)
+    Segment Offset += 0x8 (0x18)
+[DONE]
+[SET_SEGMENT_AND_OFFSET_ULEB]
+    Segment := __DATA
+    Segment Offset := 0x18
+[SET_DYLIB_ORDINAL_IMM]
+    Library Ordinal := 2
+[SET_SYMBOL_TRAILING_FLAGS_IMM]
+    Symbol name := _bar
+    Is Weak ? false
+[DO_BIND]
+    bind(POINTER, __DATA, 0x18, _bar, library_ordinal=libbar.dylib, addend=0, is_weak_import=false)
+    Segment Offset += 0x8 (0x20)
+[DONE]
+[SET_SEGMENT_AND_OFFSET_ULEB]
+    Segment := __DATA
+    Segment Offset := 0x20
+[SET_DYLIB_ORDINAL_IMM]
+    Library Ordinal := 3
+[SET_SYMBOL_TRAILING_FLAGS_IMM]
+    Symbol name := _malloc
+    Is Weak ? false
+[DO_BIND]
+    bind(POINTER, __DATA, 0x20, _malloc, library_ordinal=/usr/lib/libSystem.B.dylib, addend=0, is_weak_import=false)
+    Segment Offset += 0x8 (0x28)
+[DONE]
+[DONE]
+[DONE]
+[DONE]
+[DONE]

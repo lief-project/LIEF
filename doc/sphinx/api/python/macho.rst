@@ -482,3 +482,14 @@ VM_PROTECTIONS
   :members:
   :inherited-members:
   :undoc-members:
+
+
+----------
+
+SYMBOL_ORIGINS
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.SYMBOL_ORIGINS
+  :members:
+  :inherited-members:
+  :undoc-members:

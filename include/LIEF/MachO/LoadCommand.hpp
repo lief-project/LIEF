@@ -37,6 +37,8 @@ class DLL_PUBLIC LoadCommand : public Visitable {
     LoadCommand& operator=(const LoadCommand& copy);
     LoadCommand(const LoadCommand& copy);
 
+    void swap(LoadCommand& other);
+
     virtual ~LoadCommand(void);
 
     LOAD_COMMAND_TYPES          command(void) const;

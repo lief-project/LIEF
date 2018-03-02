@@ -23,6 +23,7 @@ except ValueError:
 
 terminal_columns = int(terminal_columns)
 terminal_rows    = int(terminal_rows)
+EXIT_STATUS = 0
 
 class exceptions_handler(object):
     func = None
@@ -38,6 +39,9 @@ class exceptions_handler(object):
         try:
             return self.func(*args, **kwargs)
         except self.exceptions as e:
+            global EXIT_STATUS
+            print("{} raised: {}".format(self.func.__name__, e))
+            EXIT_STATUS = 1
             if self.on_except_callback is not None:
                 self.on_except_callback(e)
             else:
@@ -363,6 +367,47 @@ def print_dyld_info(binary):
 
     print("")
 
+
+@exceptions_handler(Exception)
+def print_rebase_opcodes(binary):
+    print("== Rebase opcodes ==")
+
+    print(binary.dyld_info.show_rebases_opcodes)
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_bind_opcodes(binary):
+    print("== Bind opcodes ==")
+
+    print(binary.dyld_info.show_bind_opcodes)
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_weak_bind_opcodes(binary):
+    print("== Weak bind opcodes ==")
+
+    print(binary.dyld_info.show_weak_bind_opcodes)
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_lazy_bind_opcodes(binary):
+    print("== Lazy bind opcodes ==")
+
+    print(binary.dyld_info.show_lazy_bind_opcodes)
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_export_trie(binary):
+    print("== Export trie ==")
+
+    print(binary.dyld_info.show_export_trie)
+
+    print("")
+
 @exceptions_handler(Exception)
 def print_source_version(binary):
     print("== Source Version ==")
@@ -506,6 +551,10 @@ def main():
             action='store_true', dest='show_function_starts',
             help='Display the FunctionStarts command')
 
+    parser.add_argument('--rebase-opcodes',
+            action='store_true', dest='show_rebase_opcodes',
+            help='Display the "Rebase" opcodes')
+
     parser.add_argument('--source-version',
             action='store_true', dest='show_source_version',
             help="Display the 'Source Version' command")
@@ -521,6 +570,26 @@ def main():
     parser.add_argument('--rpath-command',
             action='store_true', dest='show_rpath_command',
             help="Display the 'Rpath Command' command")
+
+    parser.add_argument('--bind-opcodes',
+            action='store_true', dest='show_bind_opcodes',
+            help='Display the "Bind" opcodes')
+
+    parser.add_argument('--weak-bind-opcodes',
+            action='store_true', dest='show_weak_bind_opcodes',
+            help='Display the "Weak Bind" opcodes')
+
+    parser.add_argument('--lazy-bind-opcodes',
+            action='store_true', dest='show_lazy_bind_opcodes',
+            help='Display the "Lazy Bind" opcodes')
+
+    parser.add_argument('--export-trie',
+            action='store_true', dest='show_export_trie',
+            help='Display the export trie')
+
+    parser.add_argument('--opcodes',
+            action='store_true', dest='show_opcodes',
+            help='Display the bind and rebase opcodes')
 
     parser.add_argument("binary",
             metavar="<macho-file>",
@@ -586,6 +655,23 @@ def main():
 
         if (args.show_rpath_command or args.show_all) and binary.has_rpath:
             print_rpath_command(binary)
+
+        if (args.show_rebase_opcodes or args.show_opcodes) and binary.has_dyld_info:
+            print_rebase_opcodes(binary)
+
+        if (args.show_bind_opcodes  or args.show_opcodes) and binary.has_dyld_info:
+            print_bind_opcodes(binary)
+
+        if (args.show_weak_bind_opcodes or args.show_opcodes) and binary.has_dyld_info:
+            print_weak_bind_opcodes(binary)
+
+        if (args.show_lazy_bind_opcodes or args.show_opcodes) and binary.has_dyld_info:
+            print_lazy_bind_opcodes(binary)
+
+        if (args.show_export_trie or args.show_opcodes) and binary.has_dyld_info:
+            print_export_trie(binary)
+
+        sys.exit(EXIT_STATUS)
 
 
 if __name__ == "__main__":

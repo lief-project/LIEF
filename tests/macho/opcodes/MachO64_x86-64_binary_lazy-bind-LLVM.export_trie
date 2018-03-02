@@ -1,0 +1,7 @@
+    _@off.0x5
+        __mh_execute_header@off.0x1b
+        __mh_execute_header{addr: 0, flags: 0}
+
+        _main@off.0x21
+        _main{addr: 0xf20, flags: 0}
+

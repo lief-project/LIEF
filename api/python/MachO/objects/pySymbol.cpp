@@ -58,6 +58,10 @@ void init_MachO_Symbol_class(py::module& m) {
         &Symbol::has_export_info,
         "``True`` if the symbol has a " RST_CLASS_REF(lief.MachO.ExportInfo) " associated with")
 
+    .def_property_readonly("origin",
+        &Symbol::origin,
+        "Return the " RST_CLASS_REF(lief.MachO.SYMBOL_ORIGINS) " of this symbol")
+
     .def_property_readonly("export_info",
         static_cast<ExportInfo& (Symbol::*)(void)>(&Symbol::export_info),
         "" RST_CLASS_REF(lief.MachO.ExportInfo) " associated with the symbol (if any)",

@@ -47,6 +47,7 @@ DLL_PUBLIC const char* to_string(BIND_SPECIAL_DYLIB e);
 DLL_PUBLIC const char* to_string(BIND_OPCODES e);
 DLL_PUBLIC const char* to_string(EXPORT_SYMBOL_KINDS e);
 DLL_PUBLIC const char* to_string(VM_PROTECTIONS e);
+DLL_PUBLIC const char* to_string(SYMBOL_ORIGINS e);
 
 } // namespace MachO
 } // namespace LIEF

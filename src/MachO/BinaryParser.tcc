@@ -359,6 +359,7 @@ void BinaryParser::parse_load_commands(void) {
               this->stream_->read(loadcommands_offset, sizeof(dyld_info_command)));
 
           load_command = std::unique_ptr<DyldInfo>{new DyldInfo{cmd}};
+          dynamic_cast<DyldInfo*>(load_command.get())->binary_ = this->binary_;
           break;
         }
 

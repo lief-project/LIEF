@@ -72,6 +72,8 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
 
     bool is_external(void) const;
 
+    SYMBOL_ORIGINS origin(void) const;
+
     virtual void accept(Visitor& visitor) const override;
 
     bool operator==(const Symbol& rhs) const;
@@ -87,6 +89,8 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
 
     BindingInfo* binding_info_;
     ExportInfo* export_info_;
+
+    SYMBOL_ORIGINS origin_;
 };
 
 }

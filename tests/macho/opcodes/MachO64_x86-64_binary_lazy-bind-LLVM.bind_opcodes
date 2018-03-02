@@ -1,0 +1,14 @@
+[SET_DYLIB_ORDINAL_IMM]
+    Library Ordinal := 3
+[SET_SYMBOL_TRAILING_FLAGS_IMM]
+    Symbol name := dyld_stub_binder
+    Is Weak ? false
+[SET_TYPE_IMM]
+    Type := POINTER
+[SET_SEGMENT_AND_OFFSET_ULEB]
+    Segment := __DATA
+    Segment Offset := 0
+[DO_BIND]
+    bind(POINTER, __DATA, 0, dyld_stub_binder, library_ordinal=/usr/lib/libSystem.B.dylib, addend=0, is_weak_import=false)
+    Segment Offset += 0x8 (0x8)
+[DONE]

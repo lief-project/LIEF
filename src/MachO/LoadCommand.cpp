@@ -41,6 +41,14 @@ LoadCommand::LoadCommand(const load_command* command) :
   commandOffset_{0}
 {}
 
+
+void LoadCommand::swap(LoadCommand& other) {
+  std::swap(this->originalData_,  other.originalData_);
+  std::swap(this->command_,       other.command_);
+  std::swap(this->size_,          other.size_);
+  std::swap(this->commandOffset_, other.commandOffset_);
+}
+
 LOAD_COMMAND_TYPES LoadCommand::command(void) const {
   return this->command_;
 }

@@ -327,3 +327,6 @@ Enums
 .. doxygenenum:: LIEF::MachO::VM_PROTECTIONS
    :project: lief
 
+.. doxygenenum:: LIEF::MachO::SYMBOL_ORIGINS
+   :project: lief
+

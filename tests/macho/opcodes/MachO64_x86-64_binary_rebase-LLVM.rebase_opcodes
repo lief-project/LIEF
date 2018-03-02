@@ -1,0 +1,42 @@
+[SET_TYPE_IMM] Type: POINTER
+[SET_SEGMENT_AND_OFFSET_ULEB] Segment Index := 1 (__DATA) Segment Offset := 0x10
+[DO_REBASE_ADD_ADDR_ULEB]
+    rebase(POINTER, __DATA, 0x10)
+    Segment Offset += 0x18 (0x28)
+[DO_REBASE_IMM_TIMES]
+    for i in range(4):
+        rebase(POINTER, __DATA, 0x28)
+        Segment Offset += 0x8 (0x30)
+
+        rebase(POINTER, __DATA, 0x30)
+        Segment Offset += 0x8 (0x38)
+
+        rebase(POINTER, __DATA, 0x38)
+        Segment Offset += 0x8 (0x40)
+
+        rebase(POINTER, __DATA, 0x40)
+        Segment Offset += 0x8 (0x48)
+
+
+[ADD_ADDR_ULEB] Segment Offset += 0x210 (0x258)
+[DO_REBASE_ADD_ADDR_ULEB]
+    rebase(POINTER, __DATA, 0x258)
+    Segment Offset += 0x20 (0x278)
+[DO_REBASE_ULEB_TIMES_SKIPPING_ULEB]
+    for i in range(3):
+        rebase(POINTER, __DATA, 0x278)
+        Segment Offset += 0x8 + 0x8 (0x288)
+
+        rebase(POINTER, __DATA, 0x288)
+        Segment Offset += 0x8 + 0x8 (0x298)
+
+        rebase(POINTER, __DATA, 0x298)
+        Segment Offset += 0x8 + 0x8 (0x2a8)
+
+[DO_REBASE_IMM_TIMES]
+    for i in range(1):
+        rebase(POINTER, __DATA, 0x2a8)
+        Segment Offset += 0x8 (0x2b0)
+
+
+[DONE]

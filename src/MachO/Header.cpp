@@ -120,19 +120,19 @@ uint32_t Header::reserved(void) const {
 }
 
 std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) const {
-  try {
+  if (arch_macho_to_lief.count(this->cpu_type()) != 0) {
     return arch_macho_to_lief.at(this->cpu_type());
-  } catch (const std::out_of_range&) {
-    throw not_implemented(to_string(this->cpu_type()));
+  } else {
+    return {ARCHITECTURES::ARCH_NONE, {}};
   }
 }
 
 
 OBJECT_TYPES Header::abstract_object_type(void) const {
-  try {
+  if (obj_macho_to_lief.count(this->file_type()) != 0) {
     return obj_macho_to_lief.at(this->file_type());
-  } catch (const std::out_of_range&) {
-    throw not_implemented(to_string(this->file_type()));
+  } else {
+    return OBJECT_TYPES::TYPE_NONE;
   }
 }
 

@@ -35,7 +35,8 @@ Symbol::Symbol(void) :
   description_{0},
   value_{0},
   binding_info_{nullptr},
-  export_info_{nullptr}
+  export_info_{nullptr},
+  origin_{SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN}
 {}
 
 Symbol& Symbol::operator=(Symbol other) {
@@ -50,7 +51,8 @@ Symbol::Symbol(const Symbol& other) :
   description_{other.description_},
   value_{other.value_},
   binding_info_{nullptr},
-  export_info_{nullptr}
+  export_info_{nullptr},
+  origin_{other.origin_}
 {}
 
 
@@ -60,7 +62,8 @@ Symbol::Symbol(const nlist_32 *cmd) :
   description_{static_cast<uint16_t>(cmd->n_desc)},
   value_{cmd->n_value},
   binding_info_{nullptr},
-  export_info_{nullptr}
+  export_info_{nullptr},
+  origin_{SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB}
 {}
 
 Symbol::Symbol(const nlist_64 *cmd) :
@@ -69,7 +72,8 @@ Symbol::Symbol(const nlist_64 *cmd) :
   description_{cmd->n_desc},
   value_{cmd->n_value},
   binding_info_{nullptr},
-  export_info_{nullptr}
+  export_info_{nullptr},
+  origin_{SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB}
 {}
 
 
@@ -82,6 +86,7 @@ void Symbol::swap(Symbol& other) {
   std::swap(this->value_,             other.value_);
   std::swap(this->binding_info_,      other.binding_info_);
   std::swap(this->export_info_,       other.export_info_);
+  std::swap(this->origin_,            other.origin_);
 }
 
 uint8_t Symbol::type(void) const {
@@ -98,6 +103,10 @@ uint16_t Symbol::description(void) const {
 
 uint64_t Symbol::value(void) const {
   return this->value_;
+}
+
+SYMBOL_ORIGINS Symbol::origin(void) const {
+  return this->origin_;
 }
 
 void Symbol::type(uint8_t type) {

@@ -460,6 +460,15 @@ const char* to_string(VM_PROTECTIONS e) {
 }
 
 
+const char* to_string(SYMBOL_ORIGINS e) {
+  const std::map<SYMBOL_ORIGINS, const char*> enumStrings {
+    { SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN,     "UNKNOWN"     },
+    { SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT, "DYLD_EXPORT" },
+    { SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB,   "LC_SYMTAB"   },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
 
 }
 }

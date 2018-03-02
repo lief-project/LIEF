@@ -316,6 +316,13 @@ void init_MachO_Structures_enum(py::module& m) {
     .export_values();
 
 
+  py::enum_<LIEF::MachO::SYMBOL_ORIGINS>(m, "SYMBOL_ORIGINS")
+    .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN))
+    .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT))
+    .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB))
+    .export_values();
+
+
 
 
 
