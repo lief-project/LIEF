@@ -11,6 +11,7 @@ from lief import ELF
 import sys
 import os
 import traceback
+import textwrap
 
 from lief import Logger
 Logger.set_level(lief.LOGGING_LEVEL.INFO)
@@ -185,17 +186,20 @@ def print_dynamic_entries(binary):
 
 
 @exceptions_handler(Exception)
-def print_symbols(symbols):
+def print_symbols(symbols, no_trunc):
     try:
         maxsize = max([len(symbol.demangled_name) for symbol in symbols])
     except:
         maxsize = max([len(symbol.name) for symbol in symbols])
-    maxsize = min(maxsize, terminal_columns - 54) if terminal_columns > 54 else terminal_columns
 
-    f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}| {:<17}| {:<4}|"
-    f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}| {:<17}| {:<4}|"
+    SIZE = 70
+    maxsize = min(maxsize, terminal_columns - SIZE) if terminal_columns > SIZE else terminal_columns
+    print(maxsize, terminal_columns)
 
-    print(f_title.format("Name", "Type", "Value", "Version", "I/E"))
+    f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}| {:<10}| {:<8}| {:<4}| {:<14}|"
+    f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}| {:<10}| {:<8}| {:<4}| {:<14}|"
+
+    print(f_title.format("Name", "Type", "Value", "Visibility", "Binding", "I/E", "Version"))
 
     for symbol in symbols:
         symbol_version = symbol.symbol_version if symbol.has_version else ""
@@ -211,23 +215,34 @@ def print_symbols(symbols):
             symbol_name = symbol.demangled_name
         except:
             symbol_name = symbol.name
+
+        wrapped = textwrap.wrap(symbol_name, maxsize)
+
+        if len(wrapped) <= 1 or no_trunc:
+            symbol_name = symbol_name
+        else:
+            symbol_name = wrapped[0][:-3] + "..."
+
         print(f_value.format(
             symbol_name,
             str(symbol.type).split(".")[-1],
             symbol.value,
-            str(symbol_version),
-            import_export))
+            str(symbol.visibility).split(".")[-1],
+            str(symbol.binding).split(".")[-1],
+            import_export,
+            str(symbol_version)
+            ))
 
 @exceptions_handler(Exception)
-def print_dynamic_symbols(binary):
+def print_dynamic_symbols(binary, args):
     print("== Dynamic symbols ==\n")
-    print_symbols(binary.dynamic_symbols)
+    print_symbols(binary.dynamic_symbols, args.no_trunc)
 
 
 @exceptions_handler(Exception)
-def print_static_symbols(binary):
+def print_static_symbols(binary, args):
     print("== Static symbols ==\n")
-    print_symbols(binary.static_symbols)
+    print_symbols(binary.static_symbols, args.no_trunc)
 
 @exceptions_handler(Exception)
 def print_relocations(binary, relocations):
@@ -278,38 +293,24 @@ def print_all_relocations(binary):
         print_relocations(binary, object_relocations)
 
 @exceptions_handler(Exception)
-def print_exported_symbols(binary):
+def print_exported_symbols(binary, args):
     symbols = binary.exported_symbols
-    f_title = "|{:<30} | {:<7}| {:<8}| {:<15}|"
-    f_value = "|{:<30} | {:<7}| {:<8x}| {:<15}|"
+
     print("== Exported symbols ==\n")
-    print(f_title.format("Name", "Type", "Value", "Version"))
-
-    for symbol in symbols:
-        symbol_version = symbol.symbol_version if symbol.has_version else ""
-
-        print(f_value.format(
-            str(symbol.name),
-            str(symbol.type).split(".")[-1],
-            symbol.value,
-            str(symbol_version)))
+    if len(symbols) == 0:
+        print("No exports!")
+        return
+    print_symbols(symbols, args.no_trunc)
 
 @exceptions_handler(Exception)
-def print_imported_symbols(binary):
+def print_imported_symbols(binary, args):
     symbols = binary.imported_symbols
-    f_title = "|{:<30} | {:<7}| {:<8}| {:<15}|"
-    f_value = "|{:<30} | {:<7}| {:<8x}| {:<15}|"
     print("== Imported symbols ==\n")
-    print(f_title.format("Name", "Type", "Value", "Version"))
 
-    for symbol in symbols:
-        symbol_version = symbol.symbol_version if symbol.has_version else ""
-
-        print(f_value.format(
-            str(symbol.name),
-            str(symbol.type).split(".")[-1],
-            symbol.value,
-            str(symbol_version)))
+    if len(symbols) == 0:
+        print("No imports!")
+        return
+    print_symbols(symbols, args.no_trunc)
 
 @exceptions_handler(Exception)
 def print_information(binary):
@@ -478,6 +479,11 @@ def main():
             action='store_true', dest='show_notes',
             help='Display Notes')
 
+    optparser.add_option('--no-trunc',
+            action='store_true', dest='no_trunc',
+            default=False,
+            help='Do not trunc symbol names ...')
+
     options, args = optparser.parse_args()
 
     if options.help or len(args) == 0:
@@ -510,19 +516,19 @@ def main():
         print_dynamic_entries(binary)
 
     if (options.show_symbols or options.show_all or options.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
-        print_dynamic_symbols(binary)
+        print_dynamic_symbols(binary, options)
 
     if (options.show_symbols or options.show_all or options.show_static_symbols) and len(binary.static_symbols) > 0:
-        print_static_symbols(binary)
+        print_static_symbols(binary, options)
 
     if options.show_relocs or options.show_all:
         print_all_relocations(binary)
 
     if options.show_imported_symbols or options.show_all:
-        print_imported_symbols(binary)
+        print_imported_symbols(binary, options)
 
     if options.show_exported_symbols or options.show_all:
-        print_exported_symbols(binary)
+        print_exported_symbols(binary, options)
 
     if (options.show_gnu_hash or options.show_all) and binary.use_gnu_hash:
         print_gnu_hash(binary)

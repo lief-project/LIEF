@@ -123,6 +123,22 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     //! @brief Set whether or not the symbol is imported
     void set_imported(bool flag = true);
 
+
+    //! True if the symbol is a static one
+    inline bool is_static(void) const {
+      return this->binding() == SYMBOL_BINDINGS::STB_GLOBAL;
+    }
+
+    //! True if the symbol represent a function
+    inline bool is_function(void) const {
+      return this->type() == ELF_SYMBOL_TYPES::STT_FUNC;
+    }
+
+    //! True if the symbol represent a variable
+    inline bool is_variable(void) const {
+      return this->type() == ELF_SYMBOL_TYPES::STT_OBJECT;
+    }
+
     virtual void accept(Visitor& visitor) const override;
 
     bool operator==(const Symbol& rhs) const;

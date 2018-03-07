@@ -100,6 +100,19 @@ void init_ELF_Symbol_class(py::module& m) {
         "Return the " RST_CLASS_REF(lief.ELF.SymbolVersion) " associated with this symbol",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("is_static",
+        &Symbol::is_static,
+        "True if the symbol is a static one")
+
+    .def_property_readonly("is_function",
+        &Symbol::is_function,
+        "True if the symbol is a function")
+
+    .def_property_readonly("is_variable",
+        &Symbol::is_variable,
+        "True if the symbol is a variable")
+
+
     .def_property("exported",
         &Symbol::is_exported,
         &Symbol::set_exported,

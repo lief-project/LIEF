@@ -224,9 +224,15 @@ std::string Symbol::demangled_name(void) const {
 
 bool Symbol::is_exported(void) const {
   bool is_exported = this->shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF;
+
+  // An export must have an address
   is_exported = is_exported and this->value() != 0;
+
+  // An export must be bind to GLOBAL or WEAK
   is_exported = is_exported and (this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
                                  this->binding() == SYMBOL_BINDINGS::STB_WEAK);
+
+  // An export must have one of theses types:
   is_exported = is_exported and (this->type() == ELF_SYMBOL_TYPES::STT_FUNC or
                                  this->type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC or
                                  this->type() == ELF_SYMBOL_TYPES::STT_OBJECT);
@@ -244,11 +250,20 @@ void Symbol::set_exported(bool flag) {
 }
 
 bool Symbol::is_imported(void) const {
+  // An import must not be defined in a section
   bool is_imported = this->shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
+
+  // An import must not have an address
   is_imported = is_imported and this->value() == 0;
-  is_imported = is_imported and this->name().size() > 0;
+
+  // its name must not be empty
+  is_imported = is_imported and not this->name().empty();
+
+  // It must have a GLOBAL or WEAK bind
   is_imported = is_imported and (this->binding() == SYMBOL_BINDINGS::STB_GLOBAL or
                                  this->binding() == SYMBOL_BINDINGS::STB_WEAK);
+
+  // It must be a FUNC or an OBJECT
   is_imported = is_imported and (this->type() == ELF_SYMBOL_TYPES::STT_FUNC or
                                  this->type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC or
                                  this->type() == ELF_SYMBOL_TYPES::STT_OBJECT);
