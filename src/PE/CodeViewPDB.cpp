@@ -45,10 +45,10 @@ CodeViewPDB::CodeViewPDB(void) :
 
 
 CodeViewPDB::CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig, uint32_t age, const std::string& filename) :
-  CodeView{cv_signature},
-  signature_{sig},
-  age_{age},
-  filename_{filename}
+  CodeView(cv_signature),
+  signature_(sig),
+  age_(age),
+  filename_(filename)
 {}
 
 
