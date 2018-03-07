@@ -351,6 +351,7 @@ set(LIBLIEF_SOURCE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitable.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitable.tcc"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
