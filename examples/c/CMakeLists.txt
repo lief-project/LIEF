@@ -38,7 +38,12 @@ foreach(example ${LIEF_C_EXAMPLES})
 	  set_property(TARGET "${output_target}"        PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 	  set_property(TARGET "${output_target}_shared" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 
-	  target_compile_options("${output_target}_shared" PUBLIC /MT)
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+      target_compile_options("${output_target}_shared" PUBLIC /MTd)
+    else()
+      target_compile_options("${output_target}_shared" PUBLIC /MT)
+    endif()
+
   endif()
 
   set(LIEF_EXAMPLES_C_FLAGS)

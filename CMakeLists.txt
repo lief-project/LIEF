@@ -642,7 +642,11 @@ if (MSVC)
   target_compile_options(LIB_LIEF_STATIC PUBLIC /FIiso646.h)
   target_compile_options(LIB_LIEF_SHARED PUBLIC /FIiso646.h)
 
-  target_compile_options(LIB_LIEF_STATIC PUBLIC /MT)
+  if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    target_compile_options(LIB_LIEF_STATIC PUBLIC /MTd)
+  else()
+    target_compile_options(LIB_LIEF_STATIC PUBLIC /MT)
+  endif()
 
 endif()
 

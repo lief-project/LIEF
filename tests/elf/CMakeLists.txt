@@ -12,7 +12,12 @@ macro(ADD_ELF_TEST name sources)
     target_compile_options(${name}        PUBLIC /FIiso646.h)
     target_compile_options(${name}_shared PUBLIC /FIiso646.h)
 
-	  target_compile_options(${name}_shared PUBLIC /MT)
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+      target_compile_options("${name}_shared" PUBLIC /MTd)
+    else()
+      target_compile_options("${name}_shared" PUBLIC /MT)
+    endif()
+
 	  set_property(TARGET ${name} ${name}_shared PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
   endif()
 

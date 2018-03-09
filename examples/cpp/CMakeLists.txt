@@ -53,7 +53,12 @@ foreach(example ${LIEF_CPP_EXAMPLES})
     target_compile_options("${output_name}"        PUBLIC /FIiso646.h)
     target_compile_options("${output_name}_shared" PUBLIC /FIiso646.h)
 
-	  target_compile_options("${output_name}_shared" PUBLIC /MT)
+    if (CMAKE_BUILD_TYPE MATCHES "Debug")
+      target_compile_options("${output_name}_shared" PUBLIC /MTd)
+    else()
+      target_compile_options("${output_name}_shared" PUBLIC /MT)
+    endif()
+
 	  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
   endif()
 
