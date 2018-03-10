@@ -466,7 +466,7 @@ Load Configuration V4
 Load Configuration V5
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: lief.PE.LoadConfigurationV4
+.. autoclass:: lief.PE.LoadConfigurationV5
   :members:
   :show-inheritance:
   :undoc-members:
