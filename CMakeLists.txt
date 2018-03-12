@@ -329,6 +329,21 @@ if (LIEF_FUZZING)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
 endif()
 
+# Frozen
+# ======
+set(FROZEN_URL "https://github.com/serge-sans-paille/frozen.git" CACHE STRING "URL to the Frozen lib repo")
+ExternalProject_Add(lief_frozen
+GIT_REPOSITORY    ${FROZEN_URL}
+UPDATE_COMMAND    ""
+CONFIGURE_COMMAND ""
+BUILD_COMMAND     ""
+INSTALL_COMMAND   "")
+
+ExternalProject_get_property(lief_frozen SOURCE_DIR)
+set(FROZEN_SOURCE_DIR "${SOURCE_DIR}")
+include_directories(${FROZEN_SOURCE_DIR}/include)
+
+
 
 # LIEF Source definition
 # ======================
@@ -401,6 +416,9 @@ source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
 
 add_library(LIB_LIEF_STATIC STATIC ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Static one
 add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
+
+target_compile_features(LIB_LIEF_STATIC PRIVATE cxx_std_14)
+target_compile_features(LIB_LIEF_SHARED PRIVATE cxx_std_14)
 
 # Abstract part
 include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")

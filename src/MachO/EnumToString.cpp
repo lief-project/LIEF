@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/config.h"
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+
+#if __cplusplus > 199711L
+#include <frozen/map.h>
+#define CONST_MAP(KEY, VAL, NUM) constexpr frozen::map<KEY, VAL, NUM>
+#else
 #include <map>
+#define CONST_MAP(KEY, VAL, NUM) const std::map<KEY, VAL>
+#endif
+
 
 namespace LIEF {
 namespace MachO {
 
 
 const char* to_string(MACHO_TYPES e) {
-  const std::map<MACHO_TYPES, const char*> enumStrings {
+  CONST_MAP(MACHO_TYPES, const char*, 6) enumStrings {
       { MACHO_TYPES::MH_MAGIC,    "MAGIC"},
       { MACHO_TYPES::MH_CIGAM,    "CIGAM"},
       { MACHO_TYPES::MH_MAGIC_64, "MAGIC_64"},
@@ -36,7 +45,7 @@ const char* to_string(MACHO_TYPES e) {
 
 
 const char* to_string(FILE_TYPES e) {
-  const std::map<FILE_TYPES, const char*> enumStrings {
+  CONST_MAP(FILE_TYPES, const char*, 11) enumStrings {
       { FILE_TYPES::MH_OBJECT,        "OBJECT"},
       { FILE_TYPES::MH_EXECUTE,       "EXECUTE"},
       { FILE_TYPES::MH_FVMLIB,        "FVMLIB"},
@@ -54,7 +63,7 @@ const char* to_string(FILE_TYPES e) {
 }
 
 const char* to_string(LOAD_COMMAND_TYPES e) {
-  const std::map<LOAD_COMMAND_TYPES, const char*> enumStrings {
+  CONST_MAP(LOAD_COMMAND_TYPES, const char*, 49) enumStrings {
       { LOAD_COMMAND_TYPES::LC_SEGMENT,                  "SEGMENT"},
       { LOAD_COMMAND_TYPES::LC_SYMTAB,                   "SYMTAB"},
       { LOAD_COMMAND_TYPES::LC_SYMSEG,                   "SYMSEG"},
@@ -110,7 +119,7 @@ const char* to_string(LOAD_COMMAND_TYPES e) {
 }
 
 const char* to_string(CPU_TYPES e) {
-  const std::map<CPU_TYPES, const char*> enumStrings {
+  CONST_MAP(CPU_TYPES, const char*, 10) enumStrings {
       { CPU_TYPES::CPU_TYPE_ANY,       "ANY"},
       { CPU_TYPES::CPU_TYPE_X86,       "x86"},
       { CPU_TYPES::CPU_TYPE_I386,      "i386"},
@@ -128,7 +137,7 @@ const char* to_string(CPU_TYPES e) {
 }
 
 const char* to_string(HEADER_FLAGS e) {
-  const std::map<HEADER_FLAGS, const char*> enumStrings {
+  CONST_MAP(HEADER_FLAGS, const char*, 26) enumStrings {
       { HEADER_FLAGS::MH_NOUNDEFS                ,"NOUNDEFS"},
       { HEADER_FLAGS::MH_INCRLINK                ,"INCRLINK"},
       { HEADER_FLAGS::MH_DYLDLINK                ,"DYLDLINK"},
@@ -161,7 +170,7 @@ const char* to_string(HEADER_FLAGS e) {
 }
 
 const char* to_string(MACHO_SECTION_TYPES e) {
-  const std::map<MACHO_SECTION_TYPES, const char*> enumStrings {
+  CONST_MAP(MACHO_SECTION_TYPES, const char*, 22) enumStrings {
       { MACHO_SECTION_TYPES::S_REGULAR,                             "REGULAR"},
       { MACHO_SECTION_TYPES::S_ZEROFILL,                            "ZEROFILL"},
       { MACHO_SECTION_TYPES::S_CSTRING_LITERALS,                    "CSTRING_LITERALS"},
@@ -190,7 +199,7 @@ const char* to_string(MACHO_SECTION_TYPES e) {
 }
 
 const char* to_string(MACHO_SECTION_FLAGS e) {
-  const std::map<MACHO_SECTION_FLAGS, const char*> enumStrings {
+  CONST_MAP(MACHO_SECTION_FLAGS, const char*, 10) enumStrings {
     { MACHO_SECTION_FLAGS::S_ATTR_PURE_INSTRUCTIONS,   "PURE_INSTRUCTIONS"},
     { MACHO_SECTION_FLAGS::S_ATTR_NO_TOC,              "NO_TOC"},
     { MACHO_SECTION_FLAGS::S_ATTR_STRIP_STATIC_SYMS,   "STRIP_STATIC_SYMS"},
@@ -208,7 +217,7 @@ const char* to_string(MACHO_SECTION_FLAGS e) {
 
 
 const char* to_string(MACHO_SYMBOL_TYPES e) {
-  const std::map<MACHO_SYMBOL_TYPES, const char*> enumStrings {
+  CONST_MAP(MACHO_SYMBOL_TYPES, const char*, 4) enumStrings {
     { MACHO_SYMBOL_TYPES::N_STAB, "STAB"},
     { MACHO_SYMBOL_TYPES::N_PEXT, "PEXT"},
     { MACHO_SYMBOL_TYPES::N_TYPE, "TYPE"},
@@ -219,7 +228,7 @@ const char* to_string(MACHO_SYMBOL_TYPES e) {
 }
 
 const char* to_string(N_LIST_TYPES e) {
-  const std::map<N_LIST_TYPES, const char*> enumStrings {
+  CONST_MAP(N_LIST_TYPES, const char*, 5) enumStrings {
     { N_LIST_TYPES::N_UNDF, "UNDF"},
     { N_LIST_TYPES::N_ABS,  "ABS"},
     { N_LIST_TYPES::N_SECT, "SECT"},
@@ -231,7 +240,7 @@ const char* to_string(N_LIST_TYPES e) {
 }
 
 const char* to_string(SYMBOL_DESCRIPTIONS e) {
-  const std::map<SYMBOL_DESCRIPTIONS, const char*> enumStrings {
+  CONST_MAP(SYMBOL_DESCRIPTIONS, const char*, 17) enumStrings {
     { SYMBOL_DESCRIPTIONS::REFERENCE_FLAG_UNDEFINED_NON_LAZY,         "FLAG_UNDEFINED_NON_LAZY"},
     { SYMBOL_DESCRIPTIONS::REFERENCE_FLAG_UNDEFINED_LAZY,             "FLAG_UNDEFINED_LAZY"},
     { SYMBOL_DESCRIPTIONS::REFERENCE_FLAG_DEFINED,                    "FLAG_DEFINED"},
@@ -255,7 +264,7 @@ const char* to_string(SYMBOL_DESCRIPTIONS e) {
 }
 
 const char* to_string(X86_RELOCATION e) {
-  const std::map<X86_RELOCATION, const char*> enumStrings {
+  CONST_MAP(X86_RELOCATION, const char*, 6) enumStrings {
     { X86_RELOCATION::GENERIC_RELOC_VANILLA,        "VANILLA"        },
     { X86_RELOCATION::GENERIC_RELOC_PAIR,           "PAIR"           },
     { X86_RELOCATION::GENERIC_RELOC_SECTDIFF,       "SECTDIFF"       },
@@ -269,7 +278,7 @@ const char* to_string(X86_RELOCATION e) {
 
 
 const char* to_string(X86_64_RELOCATION e) {
-  const std::map<X86_64_RELOCATION, const char*> enumStrings {
+  CONST_MAP(X86_64_RELOCATION, const char*, 10) enumStrings {
     { X86_64_RELOCATION::X86_64_RELOC_UNSIGNED,   "UNSIGNED"   },
     { X86_64_RELOCATION::X86_64_RELOC_SIGNED,     "SIGNED"     },
     { X86_64_RELOCATION::X86_64_RELOC_BRANCH,     "BRANCH"     },
@@ -287,7 +296,7 @@ const char* to_string(X86_64_RELOCATION e) {
 
 
 const char* to_string(PPC_RELOCATION e) {
-  const std::map<PPC_RELOCATION, const char*> enumStrings {
+  CONST_MAP(PPC_RELOCATION, const char*, 16) enumStrings {
     { PPC_RELOCATION::PPC_RELOC_VANILLA,        "VANILLA"        },
     { PPC_RELOCATION::PPC_RELOC_PAIR,           "PAIR"           },
     { PPC_RELOCATION::PPC_RELOC_BR14,           "BR14"           },
@@ -311,7 +320,7 @@ const char* to_string(PPC_RELOCATION e) {
 
 
 const char* to_string(ARM_RELOCATION e) {
-  const std::map<ARM_RELOCATION, const char*> enumStrings {
+  CONST_MAP(ARM_RELOCATION, const char*, 10) enumStrings {
     { ARM_RELOCATION::ARM_RELOC_VANILLA,        "VANILLA"        },
     { ARM_RELOCATION::ARM_RELOC_PAIR,           "PAIR"           },
     { ARM_RELOCATION::ARM_RELOC_SECTDIFF,       "SECTDIFF"       },
@@ -329,7 +338,7 @@ const char* to_string(ARM_RELOCATION e) {
 
 
 const char* to_string(ARM64_RELOCATION e) {
-  const std::map<ARM64_RELOCATION, const char*> enumStrings {
+  CONST_MAP(ARM64_RELOCATION, const char*, 11) enumStrings {
     { ARM64_RELOCATION::ARM64_RELOC_UNSIGNED,            "UNSIGNED"            },
     { ARM64_RELOCATION::ARM64_RELOC_SUBTRACTOR,          "SUBTRACTOR"          },
     { ARM64_RELOCATION::ARM64_RELOC_BRANCH26,            "BRANCH26"            },
@@ -347,7 +356,7 @@ const char* to_string(ARM64_RELOCATION e) {
 }
 
 const char* to_string(RELOCATION_ORIGINS e) {
-  const std::map<RELOCATION_ORIGINS, const char*> enumStrings {
+  CONST_MAP(RELOCATION_ORIGINS, const char*, 3) enumStrings {
     { RELOCATION_ORIGINS::ORIGIN_UNKNOWN,     "UNKNOWN"     },
     { RELOCATION_ORIGINS::ORIGIN_DYLDINFO,    "DYLDINFO"    },
     { RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE, "RELOC_TABLE" },
@@ -357,7 +366,7 @@ const char* to_string(RELOCATION_ORIGINS e) {
 }
 
 const char* to_string(REBASE_TYPES e) {
-  const std::map<REBASE_TYPES, const char*> enumStrings {
+  CONST_MAP(REBASE_TYPES, const char*, 3) enumStrings {
     { REBASE_TYPES::REBASE_TYPE_POINTER,          "POINTER"         },
     { REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32,  "TEXT_ABSOLUTE32" },
     { REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32,     "TEXT_PCREL32"    },
@@ -368,7 +377,7 @@ const char* to_string(REBASE_TYPES e) {
 
 
 const char* to_string(BINDING_CLASS e) {
-  const std::map<BINDING_CLASS, const char*> enumStrings {
+  CONST_MAP(BINDING_CLASS, const char*, 3) enumStrings {
     { BINDING_CLASS::BIND_CLASS_WEAK,     "WEAK"      },
     { BINDING_CLASS::BIND_CLASS_LAZY,     "LAZY"      },
     { BINDING_CLASS::BIND_CLASS_STANDARD, "STANDARD"  },
@@ -379,7 +388,7 @@ const char* to_string(BINDING_CLASS e) {
 
 
 const char* to_string(REBASE_OPCODES e) {
-  const std::map<REBASE_OPCODES, const char*> enumStrings {
+  CONST_MAP(REBASE_OPCODES, const char*, 9) enumStrings {
     { REBASE_OPCODES::REBASE_OPCODE_DONE,                               "DONE"                               },
     { REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM,                       "SET_TYPE_IMM"                       },
     { REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB,        "SET_SEGMENT_AND_OFFSET_ULEB"        },
@@ -396,7 +405,7 @@ const char* to_string(REBASE_OPCODES e) {
 
 
 const char* to_string(BIND_TYPES e) {
-  const std::map<BIND_TYPES, const char*> enumStrings {
+  CONST_MAP(BIND_TYPES, const char*, 3) enumStrings {
     { BIND_TYPES::BIND_TYPE_POINTER,         "POINTER"         },
     { BIND_TYPES::BIND_TYPE_TEXT_ABSOLUTE32, "TEXT_ABSOLUTE32" },
     { BIND_TYPES::BIND_TYPE_TEXT_PCREL32,    "TEXT_PCREL32"    },
@@ -407,7 +416,7 @@ const char* to_string(BIND_TYPES e) {
 
 
 const char* to_string(BIND_SPECIAL_DYLIB e) {
-  const std::map<BIND_SPECIAL_DYLIB, const char*> enumStrings {
+  CONST_MAP(BIND_SPECIAL_DYLIB, const char*, 3) enumStrings {
     { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_SELF,            "SELF"            },
     { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE, "MAIN_EXECUTABLE" },
     { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_FLAT_LOOKUP,     "FLAT_LOOKUP"     },
@@ -418,7 +427,7 @@ const char* to_string(BIND_SPECIAL_DYLIB e) {
 
 
 const char* to_string(BIND_OPCODES e) {
-  const std::map<BIND_OPCODES, const char*> enumStrings {
+  CONST_MAP(BIND_OPCODES, const char*, 13) enumStrings {
     { BIND_OPCODES::BIND_OPCODE_DONE,                             "DONE"                             },
     { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM,            "SET_DYLIB_ORDINAL_IMM"            },
     { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB,           "SET_DYLIB_ORDINAL_ULEB"           },
@@ -439,7 +448,7 @@ const char* to_string(BIND_OPCODES e) {
 
 
 const char* to_string(EXPORT_SYMBOL_KINDS e) {
-  const std::map<EXPORT_SYMBOL_KINDS, const char*> enumStrings {
+  CONST_MAP(EXPORT_SYMBOL_KINDS, const char*, 3) enumStrings {
     { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_REGULAR,      "REGULAR"      },
     { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL, "THREAD_LOCAL" },
     { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE,     "ABSOLUTE"     },
@@ -450,7 +459,7 @@ const char* to_string(EXPORT_SYMBOL_KINDS e) {
 
 
 const char* to_string(VM_PROTECTIONS e) {
-  const std::map<VM_PROTECTIONS, const char*> enumStrings {
+  CONST_MAP(VM_PROTECTIONS, const char*, 3) enumStrings {
     { VM_PROTECTIONS::VM_PROT_READ,    "READ"    },
     { VM_PROTECTIONS::VM_PROT_WRITE,   "WRITE"   },
     { VM_PROTECTIONS::VM_PROT_EXECUTE, "EXECUTE" },
@@ -461,7 +470,7 @@ const char* to_string(VM_PROTECTIONS e) {
 
 
 const char* to_string(SYMBOL_ORIGINS e) {
-  const std::map<SYMBOL_ORIGINS, const char*> enumStrings {
+  CONST_MAP(SYMBOL_ORIGINS, const char*, 3) enumStrings {
     { SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN,     "UNKNOWN"     },
     { SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT, "DYLD_EXPORT" },
     { SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB,   "LC_SYMTAB"   },

@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/config.h"
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+
+#if __cplusplus > 199711L
+#include <frozen/map.h>
+#define CONST_MAP(KEY, VAL, NUM) constexpr frozen::map<KEY, VAL, NUM>
+#else
 #include <map>
+#define CONST_MAP(KEY, VAL, NUM) const std::map<KEY, VAL>
+#endif
 
 namespace LIEF {
 namespace PE {
 
 const char* to_string(PE_TYPE e) {
-  const std::map<PE_TYPE, const char*> enumStrings {
+  CONST_MAP(PE_TYPE, const char*, 2) enumStrings {
     { PE_TYPE::PE32,     "PE32" },
     { PE_TYPE::PE32_PLUS,"PE32_PLUS" },
   };
@@ -30,7 +38,7 @@ const char* to_string(PE_TYPE e) {
 }
 
 const char* to_string(DATA_DIRECTORY e) {
-  const std::map<DATA_DIRECTORY, const char*> enumStrings {
+  CONST_MAP(DATA_DIRECTORY, const char*, 15) enumStrings {
     { DATA_DIRECTORY::EXPORT_TABLE,            "EXPORT_TABLE" },
     { DATA_DIRECTORY::IMPORT_TABLE,            "IMPORT_TABLE" },
     { DATA_DIRECTORY::RESOURCE_TABLE,          "RESOURCE_TABLE" },
@@ -53,7 +61,7 @@ const char* to_string(DATA_DIRECTORY e) {
 
 
 const char* to_string(MACHINE_TYPES e) {
-  const std::map<MACHINE_TYPES, const char*> enumStrings {
+  CONST_MAP(MACHINE_TYPES, const char*, 25) enumStrings {
     { MACHINE_TYPES::MT_Invalid,                   "INVALID" },
     { MACHINE_TYPES::IMAGE_FILE_MACHINE_UNKNOWN,   "UNKNOWN" },
     { MACHINE_TYPES::IMAGE_FILE_MACHINE_AM33,      "AM33" },
@@ -87,7 +95,7 @@ const char* to_string(MACHINE_TYPES e) {
 
 
 const char* to_string(HEADER_CHARACTERISTICS e) {
-  const std::map<HEADER_CHARACTERISTICS, const char*> enumStrings {
+  CONST_MAP(HEADER_CHARACTERISTICS, const char*, 15) enumStrings {
     { HEADER_CHARACTERISTICS::IMAGE_FILE_RELOCS_STRIPPED,         "RELOCS_STRIPPED" },
     { HEADER_CHARACTERISTICS::IMAGE_FILE_EXECUTABLE_IMAGE,        "EXECUTABLE_IMAGE" },
     { HEADER_CHARACTERISTICS::IMAGE_FILE_LINE_NUMS_STRIPPED,      "LINE_NUMS_STRIPPED" },
@@ -110,7 +118,7 @@ const char* to_string(HEADER_CHARACTERISTICS e) {
 
 
 const char* to_string(SUBSYSTEM e) {
-  const std::map<SUBSYSTEM, const char*> enumStrings {
+  CONST_MAP(SUBSYSTEM, const char*, 14) enumStrings {
     { SUBSYSTEM::IMAGE_SUBSYSTEM_UNKNOWN,                  "UNKNOWN" },
     { SUBSYSTEM::IMAGE_SUBSYSTEM_NATIVE,                   "NATIVE" },
     { SUBSYSTEM::IMAGE_SUBSYSTEM_WINDOWS_GUI,              "WINDOWS_GUI" },
@@ -132,7 +140,7 @@ const char* to_string(SUBSYSTEM e) {
 
 
 const char* to_string(DLL_CHARACTERISTICS e) {
-  const std::map<DLL_CHARACTERISTICS, const char*> enumStrings {
+  CONST_MAP(DLL_CHARACTERISTICS, const char*, 11) enumStrings {
     { DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_HIGH_ENTROPY_VA,       "HIGH_ENTROPY_VA" },
     { DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE,          "DYNAMIC_BASE" },
     { DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY,       "FORCE_INTEGRITY" },
@@ -151,7 +159,7 @@ const char* to_string(DLL_CHARACTERISTICS e) {
 
 
 const char* to_string(SECTION_CHARACTERISTICS e) {
-  const std::map<SECTION_CHARACTERISTICS, const char*> enumStrings {
+  CONST_MAP(SECTION_CHARACTERISTICS, const char*, 35) enumStrings {
       { SECTION_CHARACTERISTICS::IMAGE_SCN_TYPE_NO_PAD,            "TYPE_NO_PAD" },
       { SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE,               "CNT_CODE" },
       { SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA,   "CNT_INITIALIZED_DATA" },
@@ -194,7 +202,7 @@ const char* to_string(SECTION_CHARACTERISTICS e) {
 
 
 const char* to_string(PE_SECTION_TYPES e) {
-  const std::map<PE_SECTION_TYPES, const char*> enumStrings {
+  CONST_MAP(PE_SECTION_TYPES, const char*, 10) enumStrings {
     { PE_SECTION_TYPES::TEXT,       "TEXT"       },
     { PE_SECTION_TYPES::TLS,        "TLS_"       },
     { PE_SECTION_TYPES::IMPORT,     "IDATA"      },
@@ -211,7 +219,7 @@ const char* to_string(PE_SECTION_TYPES e) {
 }
 
 const char* to_string(SYMBOL_BASE_TYPES e) {
-  const std::map<SYMBOL_BASE_TYPES, const char*> enumStrings {
+  CONST_MAP(SYMBOL_BASE_TYPES, const char*, 16) enumStrings {
     { SYMBOL_BASE_TYPES::IMAGE_SYM_TYPE_NULL,   "NULL"   },
     { SYMBOL_BASE_TYPES::IMAGE_SYM_TYPE_VOID,   "VOID"   },
     { SYMBOL_BASE_TYPES::IMAGE_SYM_TYPE_CHAR,   "CHAR"   },
@@ -234,7 +242,7 @@ const char* to_string(SYMBOL_BASE_TYPES e) {
 }
 
 const char* to_string(SYMBOL_COMPLEX_TYPES e) {
-  const std::map<SYMBOL_COMPLEX_TYPES, const char*> enumStrings {
+  CONST_MAP(SYMBOL_COMPLEX_TYPES, const char*, 5) enumStrings {
     { SYMBOL_COMPLEX_TYPES::IMAGE_SYM_DTYPE_NULL,     "NULL"               },
     { SYMBOL_COMPLEX_TYPES::IMAGE_SYM_DTYPE_POINTER,  "POINTER"            },
     { SYMBOL_COMPLEX_TYPES::IMAGE_SYM_DTYPE_FUNCTION, "FUNCTION"           },
@@ -247,7 +255,7 @@ const char* to_string(SYMBOL_COMPLEX_TYPES e) {
 
 
 const char* to_string(SYMBOL_SECTION_NUMBER e) {
-  const std::map<SYMBOL_SECTION_NUMBER, const char*> enumStrings {
+  CONST_MAP(SYMBOL_SECTION_NUMBER, const char*, 3) enumStrings {
     { SYMBOL_SECTION_NUMBER::IMAGE_SYM_DEBUG,     "DEBUG"     },
     { SYMBOL_SECTION_NUMBER::IMAGE_SYM_ABSOLUTE,  "ABSOLUTE"  },
     { SYMBOL_SECTION_NUMBER::IMAGE_SYM_UNDEFINED, "UNDEFINED" },
@@ -258,7 +266,7 @@ const char* to_string(SYMBOL_SECTION_NUMBER e) {
 
 
 const char* to_string(SYMBOL_STORAGE_CLASS e) {
-  const std::map<SYMBOL_STORAGE_CLASS, const char*> enumStrings {
+  CONST_MAP(SYMBOL_STORAGE_CLASS, const char*, 24) enumStrings {
     { SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_END_OF_FUNCTION,  "END_OF_FUNCTION"  },
     { SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_NULL,             "NULL"             },
     { SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_AUTOMATIC,        "AUTOMATIC"        },
@@ -290,7 +298,7 @@ const char* to_string(SYMBOL_STORAGE_CLASS e) {
 
 
 const char* to_string(RELOCATIONS_I386 e) {
-  const std::map<RELOCATIONS_I386, const char*> enumStrings {
+  CONST_MAP(RELOCATIONS_I386, const char*, 11) enumStrings {
     { RELOCATIONS_I386::IMAGE_REL_I386_ABSOLUTE,  "ABSOLUTE" },
     { RELOCATIONS_I386::IMAGE_REL_I386_DIR16,     "DIR16"    },
     { RELOCATIONS_I386::IMAGE_REL_I386_REL16,     "REL16"    },
@@ -311,7 +319,7 @@ const char* to_string(RELOCATIONS_I386 e) {
 
 
 const char* to_string(RELOCATIONS_AMD64 e) {
-  const std::map<RELOCATIONS_AMD64, const char*> enumStrings {
+  CONST_MAP(RELOCATIONS_AMD64, const char*, 17) enumStrings {
     { RELOCATIONS_AMD64::IMAGE_REL_AMD64_ABSOLUTE, "ABSOLUTE" },
     { RELOCATIONS_AMD64::IMAGE_REL_AMD64_ADDR64,   "ADDR64"   },
     { RELOCATIONS_AMD64::IMAGE_REL_AMD64_ADDR32,   "ADDR32"   },
@@ -338,7 +346,7 @@ const char* to_string(RELOCATIONS_AMD64 e) {
 
 
 const char* to_string(RELOCATIONS_ARM e) {
-  const std::map<RELOCATIONS_ARM, const char*> enumStrings {
+  CONST_MAP(RELOCATIONS_ARM, const char*, 15) enumStrings {
     { RELOCATIONS_ARM::IMAGE_REL_ARM_ABSOLUTE,  "ABSOLUTE"  },
     { RELOCATIONS_ARM::IMAGE_REL_ARM_ADDR32,    "ADDR32"    },
     { RELOCATIONS_ARM::IMAGE_REL_ARM_ADDR32NB,  "ADDR32NB"  },
@@ -362,7 +370,7 @@ const char* to_string(RELOCATIONS_ARM e) {
 
 
 const char* to_string(RELOCATIONS_BASE_TYPES e) {
-  const std::map<RELOCATIONS_BASE_TYPES, const char*> enumStrings {
+  CONST_MAP(RELOCATIONS_BASE_TYPES, const char*, 12) enumStrings {
     { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE,       "ABSOLUTE"  },
     { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH,           "HIGH"      },
     { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_LOW,            "LOW"       },
@@ -384,7 +392,7 @@ const char* to_string(RELOCATIONS_BASE_TYPES e) {
 
 
 const char* to_string(DEBUG_TYPES e) {
-  const std::map<DEBUG_TYPES, const char*> enumStrings {
+  CONST_MAP(DEBUG_TYPES, const char*, 16) enumStrings {
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,       "UNKNOWN"    },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,          "COFF"       },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,      "CODEVIEW"   },
@@ -409,7 +417,7 @@ const char* to_string(DEBUG_TYPES e) {
 
 
 const char* to_string(RESOURCE_TYPES e) {
-  const std::map<RESOURCE_TYPES, const char*> enumStrings {
+  CONST_MAP(RESOURCE_TYPES, const char*, 21) enumStrings {
     { RESOURCE_TYPES::CURSOR,       "CURSOR"       },
     { RESOURCE_TYPES::BITMAP,       "BITMAP"       },
     { RESOURCE_TYPES::ICON,         "ICON"         },
@@ -438,7 +446,7 @@ const char* to_string(RESOURCE_TYPES e) {
 }
 
 const char* to_string(RESOURCE_LANGS e) {
-  const std::map<RESOURCE_LANGS, const char*> enumStrings {
+  CONST_MAP(RESOURCE_LANGS, const char*, 94) enumStrings {
     { RESOURCE_LANGS::LANG_NEUTRAL,        "NEUTRAL" },
     { RESOURCE_LANGS::LANG_INVARIANT,      "INVARIANT" },
     { RESOURCE_LANGS::LANG_AFRIKAANS,      "AFRIKAANS" },
@@ -540,7 +548,7 @@ const char* to_string(RESOURCE_LANGS e) {
 }
 
 const char* to_string(RESOURCE_SUBLANGS e) {
-  const std::map<RESOURCE_SUBLANGS, const char*> enumStrings {
+  CONST_MAP(RESOURCE_SUBLANGS, const char*, 103) enumStrings {
     { RESOURCE_SUBLANGS::SUBLANG_NEUTRAL,                    "NEUTRAL" },
     { RESOURCE_SUBLANGS::SUBLANG_DEFAULT,                    "DEFAULT" },
     { RESOURCE_SUBLANGS::SUBLANG_SYS_DEFAULT,                "SYS_DEFAULT" },
@@ -651,7 +659,7 @@ const char* to_string(RESOURCE_SUBLANGS e) {
 }
 
 const char* to_string(EXTENDED_WINDOW_STYLES e) {
-  const std::map<EXTENDED_WINDOW_STYLES, const char*> enumStrings {
+  CONST_MAP(EXTENDED_WINDOW_STYLES, const char*, 19) enumStrings {
     { EXTENDED_WINDOW_STYLES::WS_EX_DLGMODALFRAME,  "DLGMODALFRAME"  },
     { EXTENDED_WINDOW_STYLES::WS_EX_NOPARENTNOTIFY, "NOPARENTNOTIFY" },
     { EXTENDED_WINDOW_STYLES::WS_EX_TOPMOST,        "TOPMOST"        },
@@ -679,7 +687,7 @@ const char* to_string(EXTENDED_WINDOW_STYLES e) {
 
 
 const char* to_string(WINDOW_STYLES e) {
-  const std::map<WINDOW_STYLES, const char*> enumStrings {
+  CONST_MAP(WINDOW_STYLES, const char*, 20) enumStrings {
     { WINDOW_STYLES::WS_OVERLAPPED,   "OVERLAPPED"   },
     { WINDOW_STYLES::WS_POPUP,        "POPUP"        },
     { WINDOW_STYLES::WS_CHILD,        "CHILD"        },
@@ -708,7 +716,7 @@ const char* to_string(WINDOW_STYLES e) {
 
 
 const char* to_string(DIALOG_BOX_STYLES e) {
-  const std::map<DIALOG_BOX_STYLES, const char*> enumStrings {
+  CONST_MAP(DIALOG_BOX_STYLES, const char*, 15) enumStrings {
     { DIALOG_BOX_STYLES::DS_ABSALIGN,      "ABSALIGN"      },
     { DIALOG_BOX_STYLES::DS_SYSMODAL,      "SYSMODAL"      },
     { DIALOG_BOX_STYLES::DS_LOCALEDIT,     "LOCALEDIT"     },
@@ -732,7 +740,7 @@ const char* to_string(DIALOG_BOX_STYLES e) {
 
 
 const char* to_string(FIXED_VERSION_OS e) {
-  const std::map<FIXED_VERSION_OS, const char*> enumStrings {
+  CONST_MAP(FIXED_VERSION_OS, const char*, 14) enumStrings {
     { FIXED_VERSION_OS::VOS_UNKNOWN,       "UNKNOWN"       },
     { FIXED_VERSION_OS::VOS_DOS,           "DOS"           },
     { FIXED_VERSION_OS::VOS_NT,            "NT"            },
@@ -754,7 +762,7 @@ const char* to_string(FIXED_VERSION_OS e) {
 
 
 const char* to_string(FIXED_VERSION_FILE_FLAGS e) {
-  const std::map<FIXED_VERSION_FILE_FLAGS, const char*> enumStrings {
+  CONST_MAP(FIXED_VERSION_FILE_FLAGS, const char*, 6) enumStrings {
     { FIXED_VERSION_FILE_FLAGS::VS_FF_DEBUG,        "DEBUG"        },
     { FIXED_VERSION_FILE_FLAGS::VS_FF_INFOINFERRED, "INFOINFERRED" },
     { FIXED_VERSION_FILE_FLAGS::VS_FF_PATCHED,      "PATCHED"      },
@@ -768,7 +776,7 @@ const char* to_string(FIXED_VERSION_FILE_FLAGS e) {
 
 
 const char* to_string(FIXED_VERSION_FILE_TYPES e) {
-  const std::map<FIXED_VERSION_FILE_TYPES, const char*> enumStrings {
+  CONST_MAP(FIXED_VERSION_FILE_TYPES, const char*, 7) enumStrings {
     { FIXED_VERSION_FILE_TYPES::VFT_APP,        "APP"        },
     { FIXED_VERSION_FILE_TYPES::VFT_DLL,        "DLL"        },
     { FIXED_VERSION_FILE_TYPES::VFT_DRV,        "DRV"        },
@@ -783,7 +791,7 @@ const char* to_string(FIXED_VERSION_FILE_TYPES e) {
 
 
 const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e) {
-  const std::map<FIXED_VERSION_FILE_SUB_TYPES, const char*> enumStrings {
+  CONST_MAP(FIXED_VERSION_FILE_SUB_TYPES, const char*, 15) enumStrings {
     { FIXED_VERSION_FILE_SUB_TYPES::VFT2_DRV_COMM,              "DRV_COMM"              },
     { FIXED_VERSION_FILE_SUB_TYPES::VFT2_DRV_DISPLAY,           "DRV_DISPLAY"           },
     { FIXED_VERSION_FILE_SUB_TYPES::VFT2_DRV_INSTALLABLE,       "DRV_INSTALLABLE"       },
@@ -805,7 +813,7 @@ const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e) {
 }
 
 const char* to_string(CODE_PAGES e) {
-  const std::map<CODE_PAGES, const char*> enumStrings {
+  CONST_MAP(CODE_PAGES, const char*, 140) enumStrings {
     { CODE_PAGES::CP_IBM037,                  "IBM037"},
     { CODE_PAGES::CP_IBM437,                  "IBM437"},
     { CODE_PAGES::CP_IBM500,                  "IBM500"},
@@ -954,7 +962,7 @@ const char* to_string(CODE_PAGES e) {
 
 
 const char* to_string(WIN_VERSION e) {
-  const std::map<WIN_VERSION, const char*> enumStrings {
+  CONST_MAP(WIN_VERSION, const char*, 9) enumStrings {
     { WIN_VERSION::WIN_UNKNOWN,   "UNKNOWN"       },
     { WIN_VERSION::WIN_SEH,       "SEH"           },
     { WIN_VERSION::WIN8_1,        "WIN_8_1"       },
@@ -971,7 +979,7 @@ const char* to_string(WIN_VERSION e) {
 
 
 const char* to_string(GUARD_CF_FLAGS e) {
-  const std::map<GUARD_CF_FLAGS, const char*> enumStrings {
+  CONST_MAP(GUARD_CF_FLAGS, const char*, 6) enumStrings {
     { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "INSTRUMENTED"                    },
     { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "W_INSTRUMENTED"                  },
     { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "FUNCTION_TABLE_PRESENT"          },
@@ -985,7 +993,7 @@ const char* to_string(GUARD_CF_FLAGS e) {
 
 
 const char* to_string(GUARD_RF_FLAGS e) {
-  const std::map<GUARD_RF_FLAGS, const char*> enumStrings {
+  CONST_MAP(GUARD_RF_FLAGS, const char*, 3) enumStrings {
     { GUARD_RF_FLAGS::GRF_INSTRUMENTED, "INSTRUMENTED" },
     { GUARD_RF_FLAGS::GRF_ENABLE,       "ENABLE"       },
     { GUARD_RF_FLAGS::GRF_STRICT,       "STRICT"       },
@@ -996,7 +1004,7 @@ const char* to_string(GUARD_RF_FLAGS e) {
 
 
 const char* to_string(CODE_VIEW_SIGNATURES e) {
-  const std::map<CODE_VIEW_SIGNATURES, const char*> enumStrings {
+  CONST_MAP(CODE_VIEW_SIGNATURES, const char*, 5) enumStrings {
     { CODE_VIEW_SIGNATURES::CVS_UNKNOWN, "UNKNOWN" },
     { CODE_VIEW_SIGNATURES::CVS_PDB_70,  "PDB_70"  },
     { CODE_VIEW_SIGNATURES::CVS_PDB_20,  "PDB_20"  },
