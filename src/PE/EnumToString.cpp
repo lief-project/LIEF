@@ -17,7 +17,7 @@
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
-#ifdef LIEF_FROZEN_SUPPORT
+#if __cplusplus > 199711L
 #include <frozen/map.h>
 #define CONST_MAP(KEY, VAL, NUM) constexpr frozen::map<KEY, VAL, NUM>
 #else

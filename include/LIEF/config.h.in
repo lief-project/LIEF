@@ -37,7 +37,4 @@
 #define LIEF_LOGGING_SUPPORT
 #endif
 
-#if @ENABLE_FROZEN_SUPPORT@
-#define LIEF_FROZEN_SUPPORT
-#endif
 #endif

@@ -116,8 +116,3 @@ if (LIEF_ELF)
     ${LIEF_ELF_SRC}
     ${LIEF_ELF_INCLUDE_FILES})
 endif()
-
-if(ENABLE_FROZEN_SUPPORT)
-    target_compile_features(LIB_LIEF_STATIC PRIVATE cxx_std_14)
-    target_compile_features(LIB_LIEF_SHARED PRIVATE cxx_std_14)
-endif()
