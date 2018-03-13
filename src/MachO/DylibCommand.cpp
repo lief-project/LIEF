@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/DylibCommand.hpp"
 
@@ -69,12 +69,7 @@ void DylibCommand::compatibility_version(uint32_t compatibilityVersion) {
 
 
 void DylibCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-
-  visitor.visit(this->name());
-  visitor.visit(this->timestamp());
-  visitor.visit(this->current_version());
-  visitor.visit(this->compatibility_version());
+  visitor.visit(*this);
 }
 
 bool DylibCommand::operator==(const DylibCommand& rhs) const {

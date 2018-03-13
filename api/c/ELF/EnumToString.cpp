@@ -22,59 +22,59 @@
 
 extern "C"
 {
-  const char* E_TYPE_to_string(enum E_TYPE e) {
+  const char* E_TYPE_to_string(enum LIEF_ELF_E_TYPE e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::E_TYPE>(e));
   }
 
-  const char* SYMBOL_BINDINGS_to_string(enum SYMBOL_BINDINGS e) {
+  const char* SYMBOL_BINDINGS_to_string(enum LIEF_ELF_SYMBOL_BINDINGS e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::SYMBOL_BINDINGS>(e));
   }
 
-  const char* VERSION_to_string(enum VERSION e) {
+  const char* VERSION_to_string(enum LIEF_ELF_VERSION e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::VERSION>(e));
   }
 
-  const char* ARCH_to_string(enum ARCH e) {
+  const char* ARCH_to_string(enum LIEF_ELF_ARCH e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ARCH>(e));
   }
 
-  const char* SEGMENT_TYPES_to_string(enum SEGMENT_TYPES e) {
+  const char* SEGMENT_TYPES_to_string(enum LIEF_ELF_SEGMENT_TYPES e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::SEGMENT_TYPES>(e));
   }
 
-  const char* DYNAMIC_TAGS_to_string(enum DYNAMIC_TAGS e) {
+  const char* DYNAMIC_TAGS_to_string(enum LIEF_ELF_DYNAMIC_TAGS e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_TAGS>(e));
   }
 
-  const char* ELF_SECTION_TYPES_to_string(enum ELF_SECTION_TYPES e) {
+  const char* ELF_SECTION_TYPES_to_string(enum LIEF_ELF_ELF_SECTION_TYPES e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SECTION_TYPES>(e));
   }
 
-  const char* ELF_SECTION_FLAGS_to_string(enum ELF_SECTION_FLAGS e) {
+  const char* ELF_SECTION_FLAGS_to_string(enum LIEF_ELF_ELF_SECTION_FLAGS e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SECTION_FLAGS>(e));
   }
 
-  const char* ELF_SYMBOL_TYPES_to_string(enum ELF_SYMBOL_TYPES e) {
+  const char* ELF_SYMBOL_TYPES_to_string(enum LIEF_ELF_ELF_SYMBOL_TYPES e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_SYMBOL_TYPES>(e));
   }
 
-  const char* ELF_CLASS_to_string(enum ELF_CLASS e) {
+  const char* ELF_CLASS_to_string(enum LIEF_ELF_ELF_CLASS e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_CLASS>(e));
   }
 
-  const char* ELF_DATA_to_string(enum ELF_DATA e) {
+  const char* ELF_DATA_to_string(enum LIEF_ELF_ELF_DATA e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::ELF_DATA>(e));
   }
 
-  const char* OS_ABI_to_string(enum OS_ABI e) {
+  const char* OS_ABI_to_string(enum LIEF_ELF_OS_ABI e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::OS_ABI>(e));
   }
 
-  const char* DYNAMIC_FLAGS_to_string(enum DYNAMIC_FLAGS e) {
+  const char* DYNAMIC_FLAGS_to_string(enum LIEF_ELF_DYNAMIC_FLAGS e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_FLAGS>(e));
   }
 
-  const char* DYNAMIC_FLAGS_1_to_string(enum DYNAMIC_FLAGS_1 e) {
+  const char* DYNAMIC_FLAGS_1_to_string(enum LIEF_ELF_DYNAMIC_FLAGS_1 e) {
     return LIEF::ELF::to_string(static_cast<LIEF::ELF::DYNAMIC_FLAGS_1>(e));
   }
 

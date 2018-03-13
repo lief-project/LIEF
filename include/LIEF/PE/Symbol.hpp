@@ -21,7 +21,7 @@
 #include <vector>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Symbol.hpp"
@@ -36,7 +36,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC Symbol : public LIEF::Symbol {
+class LIEF_API Symbol : public LIEF::Symbol {
 
   friend class Parser;
   friend class Builder;
@@ -70,7 +70,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     bool operator==(const Symbol& rhs) const;
     bool operator!=(const Symbol& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
     uint32_t             value_;

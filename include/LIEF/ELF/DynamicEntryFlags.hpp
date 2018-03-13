@@ -25,7 +25,10 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC DynamicEntryFlags : public DynamicEntry {
+class LIEF_API DynamicEntryFlags : public DynamicEntry {
+
+  public:
+  using flags_list_t = std::set<uint32_t>;
 
   public:
     using DynamicEntry::DynamicEntry;
@@ -41,7 +44,7 @@ class DLL_PUBLIC DynamicEntryFlags : public DynamicEntry {
     bool has(DYNAMIC_FLAGS_1 f) const;
 
     //! @brief Return flags as a list of integers
-    dynamic_flags_list_t flags(void) const;
+    flags_list_t flags(void) const;
 
     //! @brief Add the given DYNAMIC_FLAGS
     void add(DYNAMIC_FLAGS f);

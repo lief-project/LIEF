@@ -22,11 +22,11 @@
 #include <iostream>
 
 #include "LIEF/types.hpp"
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
-class DLL_PUBLIC Section : public Visitable {
+class LIEF_API Section : public Object {
   public:
 
     static constexpr size_t npos = -1;
@@ -91,7 +91,7 @@ class DLL_PUBLIC Section : public Visitable {
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Section& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& entry);
 
   protected:
     std::string name_;

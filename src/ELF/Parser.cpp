@@ -57,7 +57,7 @@ Parser::Parser(void)  = default;
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
   binary_{nullptr},
-  type_{0},
+  type_{ELF_CLASS::ELFCLASSNONE},
   count_mtd_{count_mtd}
 {
   this->init(name);
@@ -66,7 +66,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM
 Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
   LIEF::Parser{file},
   binary_{nullptr},
-  type_{0},
+  type_{ELF_CLASS::ELFCLASSNONE},
   count_mtd_{count_mtd}
 {
   this->stream_ = std::unique_ptr<VectorStream>(new VectorStream{file});
@@ -82,24 +82,24 @@ void Parser::init(const std::string& name) {
     this->binary_->name(name);
     this->binary_->datahandler_ = new DataHandler::Handler{this->stream_->content()};
 
-    this->type_ = reinterpret_cast<const Elf32_Ehdr*>(
-        this->stream_->read(0, sizeof(Elf32_Ehdr)))->e_ident[IDENTITY::EI_CLASS];
+    uint32_t type = reinterpret_cast<const Elf32_Ehdr*>(
+        this->stream_->read(0, sizeof(Elf32_Ehdr)))->e_ident[static_cast<size_t>(IDENTITY::EI_CLASS)];
 
-    this->binary_->type_ = static_cast<ELF_CLASS>(this->type_);
+    this->binary_->type_ = static_cast<ELF_CLASS>(type);
     switch (this->binary_->type_) {
-      case ELFCLASS32:
+      case ELF_CLASS::ELFCLASS32:
         {
           this->parse_binary<ELF32>();
           break;
         }
 
-      case ELFCLASS64:
+      case ELF_CLASS::ELFCLASS64:
         {
           this->parse_binary<ELF64>();
           break;
         }
 
-      case ELFCLASSNONE:
+      case ELF_CLASS::ELFCLASSNONE:
       default:
         //TODO try to guess with e_machine
         throw LIEF::corrupted("e_ident[EI_CLASS] corrupted");
@@ -164,7 +164,7 @@ uint64_t Parser::get_dynamic_string_table_from_segments(void) const {
     uint64_t offset = (*it_segment_dynamic)->file_offset();
     uint64_t size   = (*it_segment_dynamic)->physical_size();
 
-    if (this->type_ == ELFCLASS32) {
+    if (this->type_ == ELF_CLASS::ELFCLASS32) {
 
       size_t nb_entries = size / sizeof(Elf32_Dyn);
       const Elf32_Dyn* entries = reinterpret_cast<const Elf32_Dyn*>(
@@ -307,9 +307,9 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     current_offset += sizeof(uint32_t);
     VLOG(VDEBUG) << "Description size: " << std::hex << descsz;
 
-    uint32_t type = this->stream_->read_integer<uint32_t>(current_offset);
+    NOTE_TYPES type = static_cast<NOTE_TYPES>(this->stream_->read_integer<uint32_t>(current_offset));
     current_offset += sizeof(uint32_t);
-    VLOG(VDEBUG) << "Type: " << std::hex << type;
+    VLOG(VDEBUG) << "Type: " << std::hex << static_cast<size_t>(type);
 
     if (namesz == 0) { // System reserves
       break;

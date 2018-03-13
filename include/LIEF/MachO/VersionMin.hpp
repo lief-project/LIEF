@@ -28,7 +28,7 @@
 namespace LIEF {
 namespace MachO {
 
-class DLL_PUBLIC VersionMin : public LoadCommand {
+class LIEF_API VersionMin : public LoadCommand {
 
   public:
     //! @brief Version is an array of **3** integers

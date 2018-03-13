@@ -34,7 +34,7 @@ namespace ELF {
 class Parser;
 class Binary;
 
-class DLL_PUBLIC Symbol : public LIEF::Symbol {
+class LIEF_API Symbol : public LIEF::Symbol {
   friend class Parser;
   friend class Binary;
 
@@ -111,6 +111,10 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     void information(uint8_t info);
     void shndx(uint16_t idx);
 
+    inline void shndx(SYMBOL_SECTION_INDEX idx) {
+      this->shndx_ = static_cast<uint16_t>(idx);
+    }
+
     //! @brief Check if the current symbol is exported
     bool is_exported(void) const;
 
@@ -144,7 +148,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     bool operator==(const Symbol& rhs) const;
     bool operator!=(const Symbol& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
     ELF_SYMBOL_TYPES type_;

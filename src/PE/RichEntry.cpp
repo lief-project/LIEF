@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/RichEntry.hpp"
 
@@ -64,9 +64,7 @@ void RichEntry::count(uint32_t count) {
 }
 
 void RichEntry::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->id());
-  visitor.visit(this->build_id());
-  visitor.visit(this->count());
+  visitor.visit(*this);
 }
 
 bool RichEntry::operator==(const RichEntry& rhs) const {

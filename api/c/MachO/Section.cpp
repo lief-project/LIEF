@@ -39,7 +39,7 @@ void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
     c_binary->sections[i]->relocation_offset    = section.relocation_offset();
     c_binary->sections[i]->numberof_relocations = section.numberof_relocations();
     c_binary->sections[i]->flags                = section.flags();
-    c_binary->sections[i]->type                 = static_cast<enum ::MACHO_SECTION_TYPES>(section.type());
+    c_binary->sections[i]->type                 = static_cast<enum LIEF_MACHO_MACHO_SECTION_TYPES>(section.type());
     c_binary->sections[i]->reserved1            = section.reserved1();
     c_binary->sections[i]->reserved2            = section.reserved2();
     c_binary->sections[i]->reserved3            = section.reserved3();

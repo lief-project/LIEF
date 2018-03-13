@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/ImportEntry.hpp"
@@ -101,14 +101,7 @@ void ImportEntry::data(uint64_t data) {
 
 
 void ImportEntry::accept(LIEF::Visitor& visitor) const {
-  if(this->is_ordinal()) {
-    visitor.visit(this->ordinal());
-  }
-  visitor.visit(this->hint_name_rva());
-  visitor.visit(this->hint());
-  visitor.visit(this->iat_value());
-  visitor.visit(this->name());
-  visitor.visit(this->data());
+  visitor.visit(*this);
 }
 
 bool ImportEntry::operator==(const ImportEntry& rhs) const {

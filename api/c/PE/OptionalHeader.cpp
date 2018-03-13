@@ -21,7 +21,7 @@ namespace PE {
 void init_c_optional_header(Pe_Binary_t* c_binary, Binary* binary) {
 
   const OptionalHeader& optional_header = binary->optional_header();
-  c_binary->optional_header.magic                          = static_cast<enum PE_TYPES>(optional_header.magic());
+  c_binary->optional_header.magic                          = static_cast<enum LIEF_PE_PE_TYPES>(optional_header.magic());
   c_binary->optional_header.major_linker_version           = optional_header.major_linker_version();
   c_binary->optional_header.minor_linker_version           = optional_header.minor_linker_version();
   c_binary->optional_header.sizeof_code                    = optional_header.sizeof_code();
@@ -47,7 +47,7 @@ void init_c_optional_header(Pe_Binary_t* c_binary, Binary* binary) {
   c_binary->optional_header.sizeof_image                   = optional_header.sizeof_image();
   c_binary->optional_header.sizeof_headers                 = optional_header.sizeof_headers();
   c_binary->optional_header.checksum                       = optional_header.checksum();
-  c_binary->optional_header.subsystem                      = static_cast<enum ::SUBSYSTEM>(optional_header.subsystem());
+  c_binary->optional_header.subsystem                      = static_cast<enum LIEF_PE_SUBSYSTEM>(optional_header.subsystem());
   c_binary->optional_header.dll_characteristics            = optional_header.dll_characteristics();
   c_binary->optional_header.sizeof_stack_reserve           = optional_header.sizeof_stack_reserve();
   c_binary->optional_header.sizeof_stack_commit            = optional_header.sizeof_stack_commit();

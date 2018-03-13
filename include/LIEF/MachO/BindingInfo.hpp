@@ -33,7 +33,7 @@ namespace MachO {
 
 class BinaryParser;
 
-class DLL_PUBLIC BindingInfo : public Visitable {
+class LIEF_API BindingInfo : public Object {
 
   friend class BinaryParser;
 
@@ -95,7 +95,7 @@ class DLL_PUBLIC BindingInfo : public Visitable {
 
     virtual void accept(Visitor& visitor) const override;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
 
   private:
     BINDING_CLASS   class_; // STANDARD, WEAK, LAZY

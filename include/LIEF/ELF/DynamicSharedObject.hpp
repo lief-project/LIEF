@@ -24,21 +24,18 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC DynamicSharedObject : public DynamicEntry {
+class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   public:
     using DynamicEntry::DynamicEntry;
-
-    DynamicSharedObject(const Elf64_Dyn* header);
-    DynamicSharedObject(const Elf32_Dyn* header);
     DynamicSharedObject(void);
     DynamicSharedObject(const std::string& name);
 
     DynamicSharedObject& operator=(const DynamicSharedObject&);
     DynamicSharedObject(const DynamicSharedObject&);
 
-    virtual const std::string& name(void) const override;
-    virtual void name(const std::string& name) override;
+    const std::string& name(void) const;
+    void name(const std::string& name);
 
     virtual void accept(Visitor& visitor) const override;
 

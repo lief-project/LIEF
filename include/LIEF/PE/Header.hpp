@@ -21,14 +21,14 @@
 #include <algorithm>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC Header : public Visitable {
+class LIEF_API Header : public Object {
   public:
     using signature_t = std::array<uint8_t, sizeof(PE_Magic)>;
     Header(void);
@@ -45,7 +45,7 @@ class DLL_PUBLIC Header : public Visitable {
     uint32_t           pointerto_symbol_table(void) const;
     uint32_t           numberof_symbols(void) const;
     uint16_t           sizeof_optional_header(void) const;
-    uint16_t           characteristics(void) const;
+    HEADER_CHARACTERISTICS           characteristics(void) const;
 
     bool has_characteristic(HEADER_CHARACTERISTICS c) const;
     std::set<HEADER_CHARACTERISTICS> characteristics_list(void) const;
@@ -56,7 +56,7 @@ class DLL_PUBLIC Header : public Visitable {
     void pointerto_symbol_table(uint32_t pointerToSymbol);
     void numberof_symbols(uint32_t nbOfSymbols);
     void sizeof_optional_header(uint16_t sizeOfOptionalHdr);
-    void characteristics(uint16_t characteristics);
+    void characteristics(HEADER_CHARACTERISTICS characteristics);
     void signature(const signature_t& sig);
 
     void add_characteristic(HEADER_CHARACTERISTICS c);
@@ -67,7 +67,7 @@ class DLL_PUBLIC Header : public Visitable {
     bool operator==(const Header& rhs) const;
     bool operator!=(const Header& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& entry);
   private:
     signature_t   signature_;
     MACHINE_TYPES machine_;
@@ -76,7 +76,7 @@ class DLL_PUBLIC Header : public Visitable {
     uint32_t      pointerToSymbolTable_;
     uint32_t      numberOfSymbols_;
     uint16_t      sizeOfOptionalHeader_;
-    uint16_t      characteristics_;
+    HEADER_CHARACTERISTICS characteristics_;
 
 };
 }

@@ -38,7 +38,7 @@ x509::x509(mbedtls_x509_crt* ca) :
 {}
 
 x509::x509(const x509& other) :
-  Visitable::Visitable{other}
+  Object::Object{other}
 {
   mbedtls_x509_crt* crt = new mbedtls_x509_crt{};
   mbedtls_x509_crt_init(crt);
@@ -110,13 +110,7 @@ std::string x509::subject(void) const {
 
 
 void x509::accept(Visitor& visitor) const {
-  visitor.visit(this->subject());
-  visitor.visit(this->issuer());
-  visitor.visit(this->valid_to());
-  visitor.visit(this->valid_from());
-  visitor.visit(this->signature_algorithm());
-  visitor.visit(this->serial_number());
-  visitor.visit(this->version());
+  visitor.visit(*this);
 }
 
 x509::~x509(void) {

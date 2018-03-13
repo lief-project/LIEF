@@ -33,7 +33,7 @@ extern "C" {
 
 struct Pe_Header_t {
   uint8_t            signature[4];
-  enum MACHINE_TYPES machine;
+  enum LIEF_PE_MACHINE_TYPES machine;
   uint16_t           numberof_sections;
   uint32_t           time_date_stamp;
   uint32_t           pointerto_symbol_table;

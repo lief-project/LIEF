@@ -28,7 +28,7 @@
 namespace LIEF {
 namespace MachO {
 
-class DLL_PUBLIC FunctionStarts : public LoadCommand {
+class LIEF_API FunctionStarts : public LoadCommand {
   public:
     FunctionStarts(void);
     FunctionStarts(const linkedit_data_command *cmd);

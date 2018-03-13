@@ -20,7 +20,7 @@
 #include <map>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Relocation.hpp"
@@ -35,7 +35,7 @@ class Parser;
 class Binary;
 class Builder;
 
-class DLL_PUBLIC Relocation : public LIEF::Relocation {
+class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class Parser;
   friend class Binary;
@@ -47,6 +47,12 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
     Relocation(const Elf64_Rel*  header);
     Relocation(const Elf64_Rela* header);
     Relocation(uint64_t address, uint32_t type = 0, int64_t addend = 0, bool isRela = false);
+
+    template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
+    Relocation(uint64_t address, T type, int64_t addend = 0, bool isRela = false) :
+      Relocation{address, static_cast<uint32_t>(type), addend, isRela}
+    {}
+
     Relocation(void);
     virtual ~Relocation(void);
 
@@ -79,7 +85,7 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
     bool operator==(const Relocation& rhs) const;
     bool operator!=(const Relocation& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
     uint32_t            type_;
@@ -89,6 +95,8 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
     ARCH                architecture_;
     RELOCATION_PURPOSES purpose_;
 };
+
+
 
 }
 }

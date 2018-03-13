@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/Section.hpp"
@@ -160,14 +160,7 @@ void RelocationObject::value(int32_t value) {
 
 
 void RelocationObject::accept(Visitor& visitor) const {
-  Relocation::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-
-  visitor.visit(this->is_scattered());
-
-  if (this->is_scattered()) {
-    visitor.visit(this->value());
-  }
+  visitor.visit(*this);
 }
 
 

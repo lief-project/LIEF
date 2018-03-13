@@ -22,7 +22,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 
@@ -36,7 +36,7 @@ class ResourcesManager;
 //! @see LIEF::PE::ResourceStringFileInfo
 //!
 //! see: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646992(v=vs.85).aspx
-class DLL_PUBLIC LangCodeItem : public Visitable {
+class LIEF_API LangCodeItem : public Object {
 
   friend class ResourcesManager;
 
@@ -88,7 +88,7 @@ class DLL_PUBLIC LangCodeItem : public Visitable {
   bool operator==(const LangCodeItem& rhs) const;
   bool operator!=(const LangCodeItem& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const LangCodeItem& item);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LangCodeItem& item);
 
   private:
   uint16_t       type_;

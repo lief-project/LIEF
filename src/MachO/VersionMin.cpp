@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/VersionMin.hpp"
 
@@ -61,9 +61,7 @@ VersionMin::VersionMin(const version_min_command *version_cmd) :
  }
 
 void VersionMin::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor(this->version());
-  visitor(this->sdk());
+  visitor.visit(*this);
 }
 
 

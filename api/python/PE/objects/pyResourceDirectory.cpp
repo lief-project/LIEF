@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
 
 #include <string>
@@ -75,7 +75,7 @@ void init_PE_ResourceDirectory_class(py::module& m) {
 
     .def("__hash__",
         [] (const ResourceDirectory& node) {
-          return LIEF::Hash::hash(node);
+          return Hash::hash(node);
         })
 
     .def("__str__",

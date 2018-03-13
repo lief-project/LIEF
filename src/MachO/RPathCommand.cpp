@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/RPathCommand.hpp"
 
@@ -43,8 +43,7 @@ void RPathCommand::path(const std::string& path) {
 
 
 void RPathCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor.visit(this->path());
+  visitor.visit(*this);
 }
 
 

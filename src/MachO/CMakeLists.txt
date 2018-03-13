@@ -45,9 +45,9 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/BindingInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ExportInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ThreadCommand.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/RPathCommand.cpp"  
+  "${CMAKE_CURRENT_LIST_DIR}/RPathCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ParserConfig.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Visitor.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/hash.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -83,6 +83,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/RPathCommand.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ThreadCommand.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ParserConfig.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/hash.hpp"
   )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})

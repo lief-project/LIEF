@@ -24,7 +24,7 @@
 
 namespace LIEF {
 
-class DLL_PUBLIC exception : public std::exception {
+class LIEF_API exception : public std::exception {
   public:
 
     exception(const exception& other);
@@ -38,37 +38,37 @@ class DLL_PUBLIC exception : public std::exception {
 
 };
 
-class DLL_PUBLIC bad_file : public exception {
+class LIEF_API bad_file : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC bad_format : public bad_file {
+class LIEF_API bad_format : public bad_file {
   public:
   using bad_file::bad_file;
   using bad_file::what;
 };
 
-class DLL_PUBLIC not_implemented : public exception {
+class LIEF_API not_implemented : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC not_supported : public exception {
+class LIEF_API not_supported : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC integrity_error : public exception {
+class LIEF_API integrity_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC read_out_of_bound : public exception {
+class LIEF_API read_out_of_bound : public exception {
   public:
   using exception::exception;
   using exception::what;
@@ -77,49 +77,49 @@ class DLL_PUBLIC read_out_of_bound : public exception {
 
 };
 
-class DLL_PUBLIC not_found : public exception {
+class LIEF_API not_found : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC corrupted : public exception {
+class LIEF_API corrupted : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC conversion_error : public exception {
+class LIEF_API conversion_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC type_error : public exception {
+class LIEF_API type_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC builder_error : public exception {
+class LIEF_API builder_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC parser_error : public exception {
+class LIEF_API parser_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC pe_error : public exception {
+class LIEF_API pe_error : public exception {
   public:
   using exception::exception;
   using exception::what;
 };
 
-class DLL_PUBLIC pe_bad_section_name : public pe_error {
+class LIEF_API pe_bad_section_name : public pe_error {
   public:
   using pe_error::pe_error;
   using pe_error::what;

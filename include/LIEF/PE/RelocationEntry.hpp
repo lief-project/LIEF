@@ -21,7 +21,7 @@
 
 #include "LIEF/Abstract/Relocation.hpp"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
@@ -33,7 +33,7 @@ class Parser;
 class Builder;
 class Relocation;
 
-class DLL_PUBLIC RelocationEntry : public LIEF::Relocation {
+class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   friend class Parser;
   friend class Builder;
@@ -78,7 +78,7 @@ class DLL_PUBLIC RelocationEntry : public LIEF::Relocation {
     bool operator==(const RelocationEntry& rhs) const;
     bool operator!=(const RelocationEntry& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
 
   private:
     uint16_t               position_;

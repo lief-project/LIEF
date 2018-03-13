@@ -22,7 +22,7 @@
 #include "LIEF/logging++.hpp"
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -157,7 +157,7 @@ bool ResourcesManager::has_manifest(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::MANIFEST;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
   return it_manifest != std::end(nodes);
 
@@ -173,7 +173,7 @@ std::string ResourcesManager::manifest(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::MANIFEST;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
   const ResourceData* manifest_node = dynamic_cast<ResourceData*>(&((*it_manifest).childs()[0].childs()[0]));
   const std::vector<uint8_t>& content = manifest_node->content();
@@ -194,7 +194,7 @@ void ResourcesManager::manifest(const std::string& manifest) {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::MANIFEST;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
 
   ResourceData* manifest_node = dynamic_cast<ResourceData*>(&((*it_manifest).childs()[0].childs()[0]));
@@ -210,7 +210,7 @@ bool ResourcesManager::has_version(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::VERSION;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::VERSION;
       });
   return it_version != std::end(nodes);
 }
@@ -225,7 +225,7 @@ ResourceVersion ResourcesManager::version(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::VERSION;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::VERSION;
       });
 
   const ResourceData* version_node = dynamic_cast<ResourceData*>(&((*it_version).childs()[0].childs()[0]));
@@ -560,7 +560,7 @@ bool ResourcesManager::has_icons(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
@@ -568,7 +568,7 @@ bool ResourcesManager::has_icons(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::GROUP_ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
 
 
@@ -591,7 +591,7 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
@@ -599,7 +599,7 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::GROUP_ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
 
   if (it_icon == std::end(nodes)) {
@@ -673,7 +673,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
@@ -681,7 +681,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::GROUP_ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
 
   if (it_icon == std::end(nodes)) {
@@ -730,7 +730,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   new_icon_dir_node.id(new_id);
 
   ResourceData new_icon_data_node{icon.pixels(), 0};
-  new_icon_data_node.id(icon.sublang() << 10 | icon.lang());
+  new_icon_data_node.id(static_cast<int>(icon.sublang()) << 10 | static_cast<int>(icon.lang()));
   new_icon_dir_node.add_child(new_icon_data_node);
 
   it_icon->add_child(new_icon_dir_node);
@@ -744,7 +744,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
@@ -752,7 +752,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
       std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return node.id() == RESOURCE_TYPES::GROUP_ICON;
+        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
 
   if (it_icon == std::end(nodes)) {
@@ -804,7 +804,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   new_icon_dir_node.id(newone.id());
 
   ResourceData new_icon_data_node{newone.pixels(), 0};
-  new_icon_data_node.id(newone.sublang() << 10 | newone.lang());
+  new_icon_data_node.id(static_cast<int>(newone.sublang()) << 10 | static_cast<int>(newone.lang()));
   new_icon_dir_node.add_child(new_icon_data_node);
 
   it_icon->add_child(new_icon_dir_node);
@@ -1077,26 +1077,7 @@ void ResourcesManager::print_tree(
 }
 
 void ResourcesManager::accept(Visitor& visitor) const {
-  if (this->has_manifest()) {
-    visitor.visit(this->manifest());
-  }
-
-  if (this->has_version()) {
-    visitor(this->version());
-  }
-
-  if (this->has_icons()) {
-    for (const ResourceIcon& icon : this->icons()) {
-      visitor(icon);
-    }
-  }
-
-  if (this->has_dialogs()) {
-    for (const ResourceDialog& dialog : this->dialogs()) {
-      visitor(dialog);
-    }
-  }
-
+  visitor.visit(*this);
 }
 
 bool ResourcesManager::operator==(const ResourcesManager& rhs) const {

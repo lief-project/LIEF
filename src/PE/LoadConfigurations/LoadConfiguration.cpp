@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -225,26 +225,7 @@ void LoadConfiguration::security_cookie(uint32_t security_cookie) {
 }
 
 void LoadConfiguration::accept(Visitor& visitor) const {
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->characteristics());
-  visitor.visit(this->timedatestamp());
-  visitor.visit(this->major_version());
-  visitor.visit(this->minor_version());
-  visitor.visit(this->global_flags_clear());
-  visitor.visit(this->global_flags_set());
-  visitor.visit(this->critical_section_default_timeout());
-  visitor.visit(this->decommit_free_block_threshold());
-  visitor.visit(this->decommit_total_free_threshold());
-  visitor.visit(this->lock_prefix_table());
-  visitor.visit(this->maximum_allocation_size());
-
-  visitor.visit(this->virtual_memory_threshold());
-  visitor.visit(this->process_affinity_mask());
-  visitor.visit(this->process_heap_flags());
-  visitor.visit(this->csd_version());
-  visitor.visit(this->reserved1());
-  visitor.visit(this->editlist());
-  visitor.visit(this->security_cookie());
+  visitor.visit(*this);
 }
 
 bool LoadConfiguration::operator==(const LoadConfiguration& rhs) const {

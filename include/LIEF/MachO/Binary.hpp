@@ -49,7 +49,7 @@ class BinaryParser;
 class Builder;
 
 //! @brief Class which represent a MachO binary
-class DLL_PUBLIC Binary : public LIEF::Binary  {
+class LIEF_API Binary : public LIEF::Binary  {
 
   friend class BinaryParser;
   friend class Builder;

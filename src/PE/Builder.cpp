@@ -214,7 +214,7 @@ void Builder::build_relocation(void) {
   //    reinterpret_cast<uint8_t*>(&relocHeader),
   //    reinterpret_cast<uint8_t*>(&relocHeader) + sizeof(pe_base_relocation_block));
 
-  Section new_relocation_section{".l" + std::to_string(DATA_DIRECTORY::BASE_RELOCATION_TABLE)}; // .l5 -> lief.relocation
+  Section new_relocation_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::BASE_RELOCATION_TABLE))}; // .l5 -> lief.relocation
   new_relocation_section.characteristics(0x42000040);
   const size_t size_aligned = align(content.size(), this->binary_->optional_header().file_alignment());
 
@@ -252,7 +252,7 @@ void Builder::build_resources(void) {
   uint32_t offsetToName   = headerSize;
   uint32_t offsetToData   = headerSize + nameSize;
 
-  Section new_section_rsrc{".l" + std::to_string(DATA_DIRECTORY::RESOURCE_TABLE)};
+  Section new_section_rsrc{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::RESOURCE_TABLE))};
   new_section_rsrc.characteristics(0x40000040);
   new_section_rsrc.content(content);
 

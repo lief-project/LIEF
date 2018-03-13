@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/UUIDCommand.hpp"
 
@@ -44,8 +44,7 @@ void UUIDCommand::uuid(const uuid_t& uuid) {
 
 
 void UUIDCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor.visit(this->uuid());
+  visitor.visit(*this);
 }
 
 

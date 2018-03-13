@@ -35,7 +35,10 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
+#include "LIEF/ELF/hash.hpp"
+
 #include "Binary.tcc"
+#include "Object.tcc"
 
 namespace LIEF {
 namespace ELF {
@@ -65,7 +68,7 @@ ELF_CLASS Binary::type(void) const {
 }
 
 size_t Binary::hash(const std::string& name) {
-  if (this->type_ == ELFCLASS32) {
+  if (this->type_ == ELF_CLASS::ELFCLASS32) {
     return hash32(name.c_str());
   } else {
     return hash32(name.c_str());
@@ -314,7 +317,7 @@ void Binary::remove(NOTE_TYPES type) {
   for (auto&& it = std::begin(this->notes_);
               it != std::end(this->notes_);) {
     Note* n = *it;
-    if (n->type() == type) {
+    if (static_cast<NOTE_TYPES>(n->type()) == type) {
       delete n;
       it = this->notes_.erase(it);
     } else {
@@ -1164,7 +1167,7 @@ Segment& Binary::extend(const Segment& segment, uint64_t size) {
     case SEGMENT_TYPES::PT_PHDR:
     case SEGMENT_TYPES::PT_LOAD:
       {
-        return this->extend_segment<PT_LOAD>(segment, size);
+        return this->extend_segment<SEGMENT_TYPES::PT_LOAD>(segment, size);
         break;
       }
 
@@ -1589,7 +1592,7 @@ const Note& Binary::get(NOTE_TYPES type) const {
       std::end(this->notes_),
       [type] (const Note* note)
       {
-        return note->type() == type;
+        return static_cast<NOTE_TYPES>(note->type()) == type;
       });
 
   return **it_note;
@@ -1643,7 +1646,7 @@ bool Binary::has(NOTE_TYPES type) const {
       std::end(this->notes_),
       [type] (const Note* note)
       {
-        return note->type() == type;
+        return static_cast<NOTE_TYPES>(note->type()) == type;
       });
 
   return it_note != std::end(this->notes_);
@@ -1725,7 +1728,8 @@ it_notes Binary::notes(void) {
 }
 
 
-void Binary::accept(LIEF::Visitor&) const {
+void Binary::accept(LIEF::Visitor& visitor) const {
+  visitor.visit(*this);
 }
 
 bool Binary::use_gnu_hash(void) const {
@@ -1834,7 +1838,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
       case DYNAMIC_TAGS::DT_FINI_ARRAY:
       case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
         {
-          std::vector<uint64_t>& array = entry->array();
+          DynamicEntryArray::array_t& array = entry->as<DynamicEntryArray>()->array();
           for (uint64_t& address : array) {
             if (address >= from) {
               if (
@@ -2070,6 +2074,16 @@ Section& Binary::operator[](ELF_SECTION_TYPES type) {
 
 const Section& Binary::operator[](ELF_SECTION_TYPES type) const {
   return this->get(type);
+}
+
+bool Binary::operator==(const Binary& rhs) const {
+  size_t hash_lhs = Hash::hash(*this);
+  size_t hash_rhs = Hash::hash(rhs);
+  return hash_lhs == hash_rhs;
+}
+
+bool Binary::operator!=(const Binary& rhs) const {
+  return not (*this == rhs);
 }
 
 std::ostream& Binary::print(std::ostream& os) const {

@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -50,7 +50,7 @@ void init_ELF_DynamicEntryLibrary_class(py::module& m) {
     .def("__ne__", &DynamicEntryLibrary::operator!=)
     .def("__hash__",
         [] (const DynamicEntryLibrary& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
 

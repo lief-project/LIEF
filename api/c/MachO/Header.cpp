@@ -19,10 +19,10 @@ namespace LIEF {
 namespace MachO {
 void init_c_header(Macho_Binary_t* c_binary, Binary* binary) {
   Header& header = binary->header();
-  c_binary->header.magic       = header.magic();
-  c_binary->header.cpu_type    = static_cast<enum ::CPU_TYPES>(header.cpu_type());
+  c_binary->header.magic       = static_cast<uint32_t>(header.magic());
+  c_binary->header.cpu_type    = static_cast<enum LIEF_MACHO_CPU_TYPES>(header.cpu_type());
   c_binary->header.cpu_subtype = header.cpu_subtype();
-  c_binary->header.file_type   = static_cast<enum ::FILE_TYPES>(header.file_type());
+  c_binary->header.file_type   = static_cast<enum LIEF_MACHO_FILE_TYPES>(header.file_type());
   c_binary->header.nb_cmds     = header.nb_cmds();
   c_binary->header.sizeof_cmds = header.sizeof_cmds();
   c_binary->header.flags       = header.flags();

@@ -25,9 +25,9 @@ extern "C" {
 #endif
 
 
-DLL_PUBLIC const char* PE_TYPES_to_string(enum PE_TYPES e);
-DLL_PUBLIC const char* MACHINE_TYPES_to_string(enum MACHINE_TYPES e);
-DLL_PUBLIC const char* SUBSYSTEM_to_string(enum SUBSYSTEM e);
+LIEF_API const char* PE_TYPES_to_string(enum LIEF_PE_PE_TYPES e);
+LIEF_API const char* MACHINE_TYPES_to_string(enum LIEF_PE_MACHINE_TYPES e);
+LIEF_API const char* SUBSYSTEM_to_string(enum LIEF_PE_SUBSYSTEM e);
 
 #ifdef __cplusplus
 }

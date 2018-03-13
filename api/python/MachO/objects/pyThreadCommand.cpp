@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 
 #include "pyMachO.hpp"

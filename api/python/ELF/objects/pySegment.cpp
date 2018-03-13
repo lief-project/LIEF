@@ -17,7 +17,7 @@
 #include <sstream>
 #include <vector>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Segment.hpp"
 
 #include "pyELF.hpp"
@@ -33,7 +33,7 @@ using no_const_getter = T (Segment::*)(void);
 
 
 void init_ELF_Segment_class(py::module& m) {
-  py::class_<Segment>(m, "Segment")
+  py::class_<Segment, LIEF::Object>(m, "Segment")
 
     .def(py::init<>())
     .def(py::init<const std::vector<uint8_t>&>())
@@ -45,8 +45,8 @@ void init_ELF_Segment_class(py::module& m) {
         "Segment's " RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) "")
 
     .def_property("flags",
-        static_cast<getter_t<uint32_t>>(&Segment::flags),
-        static_cast<setter_t<uint32_t>>(&Segment::flags),
+        static_cast<getter_t<ELF_SEGMENT_FLAGS>>(&Segment::flags),
+        static_cast<setter_t<ELF_SEGMENT_FLAGS>>(&Segment::flags),
         "Segment's flags")
 
     .def_property("file_offset",
@@ -129,7 +129,7 @@ void init_ELF_Segment_class(py::module& m) {
     .def("__ne__", &Segment::operator!=)
     .def("__hash__",
         [] (const Segment& segment) {
-          return LIEF::Hash::hash(segment);
+          return Hash::hash(segment);
         })
 
     .def(py::self += ELF_SEGMENT_FLAGS())

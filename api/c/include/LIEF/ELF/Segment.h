@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 struct Elf_Segment_t {
-  enum SEGMENT_TYPES type;
+  enum LIEF_ELF_SEGMENT_TYPES type;
   uint32_t           flags;
   uint64_t           virtual_address;
   uint64_t           virtual_size;

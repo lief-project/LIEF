@@ -19,7 +19,7 @@
 #include <iterator>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
@@ -174,8 +174,8 @@ it_const_relocations Section::relocations(void) const {
 }
 
 MACHO_SECTION_TYPES Section::type(void) const {
-  return static_cast<MACHO_SECTION_TYPES>(
-      this->flags_ & SECTION_FLAGS_HELPER::SECTION_TYPE_MASK);
+  static constexpr size_t SECTION_TYPE_MASK = 0xFF;
+  return static_cast<MACHO_SECTION_TYPES>(this->flags_ & SECTION_TYPE_MASK);
 }
 
 std::set<MACHO_SECTION_FLAGS> Section::flags_list(void) const {
@@ -235,30 +235,13 @@ void Section::reserved3(uint32_t reserved3) {
 }
 
 void Section::type(MACHO_SECTION_TYPES type) {
-  this->flags_ =
-    (this->flags_ & SECTION_FLAGS_HELPER::SECTION_FLAGS_MASK) | static_cast<uint8_t>(type);
+  static constexpr size_t SECTION_FLAGS_MASK = 0xffffff00u;
+  this->flags_ = (this->flags_ & SECTION_FLAGS_MASK) | static_cast<uint8_t>(type);
 }
 
 
 void Section::accept(Visitor& visitor) const {
-  LIEF::Section::accept(visitor);
-
-  visitor.visit(this->content());
-  visitor.visit(this->segment_name());
-  visitor.visit(this->address());
-  visitor.visit(this->alignment());
-  visitor.visit(this->relocation_offset());
-  visitor.visit(this->numberof_relocations());
-  visitor.visit(this->flags());
-  visitor.visit(this->type());
-  visitor.visit(this->reserved1());
-  visitor.visit(this->reserved2());
-  visitor.visit(this->reserved3());
-  visitor.visit(this->raw_flags());
-
-  for (const Relocation& relocation : this->relocations()) {
-    visitor(relocation);
-  }
+  visitor.visit(*this);
 }
 
 bool Section::operator==(const Section& rhs) const {

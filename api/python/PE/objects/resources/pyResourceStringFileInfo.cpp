@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (ResourceStringFileInfo::*)(T);
 
 void init_PE_ResourceStringFileInfo_class(py::module& m) {
-  py::class_<ResourceStringFileInfo>(m, "ResourceStringFileInfo",
+  py::class_<ResourceStringFileInfo, LIEF::Object>(m, "ResourceStringFileInfo",
       "Modelization of the ``StringFileInfo`` structure\n\n"
       "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646989(v=vs.85).aspx")
 
@@ -57,7 +57,7 @@ void init_PE_ResourceStringFileInfo_class(py::module& m) {
     .def("__ne__", &ResourceStringFileInfo::operator!=)
     .def("__hash__",
         [] (const ResourceStringFileInfo& string_file_info) {
-          return LIEF::Hash::hash(string_file_info);
+          return Hash::hash(string_file_info);
         })
 
     .def("__str__",

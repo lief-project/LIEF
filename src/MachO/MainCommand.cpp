@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/MainCommand.hpp"
 
@@ -56,10 +56,7 @@ void MainCommand::stack_size(uint64_t stacksize) {
 }
 
 void MainCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-
-  visitor.visit(this->entrypoint());
-  visitor.visit(this->stack_size());
+  visitor.visit(*this);
 }
 
 bool MainCommand::operator==(const MainCommand& rhs) const {

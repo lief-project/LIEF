@@ -20,6 +20,8 @@
 #include "LIEF/MachO/Builder.hpp"
 #include "Binary.tcc"
 
+#include "LIEF/MachO/hash.hpp"
+
 #include "LIEF/exception.hpp"
 
 #include <algorithm>
@@ -774,14 +776,7 @@ const RPathCommand& Binary::rpath(void) const {
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {
-  visitor(this->header());
-  for (const LoadCommand& cmd : this->commands()) {
-    visitor(cmd);
-  }
-
-  for (const Symbol& symbol : this->symbols()) {
-    visitor(symbol);
-  }
+  visitor.visit(*this);
 }
 
 

@@ -19,7 +19,7 @@
 #include <iostream>
 #include <set>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/enums.hpp"
@@ -28,7 +28,7 @@
 
 namespace LIEF {
 namespace MachO {
-class DLL_PUBLIC Header : public Visitable {
+class LIEF_API Header : public Object {
   public:
     Header(void);
     Header(const mach_header_64 *header);
@@ -78,7 +78,7 @@ class DLL_PUBLIC Header : public Visitable {
 
     virtual void accept(Visitor& visitor) const override;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   private:
     MACHO_TYPES magic_;

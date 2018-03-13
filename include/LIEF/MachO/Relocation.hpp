@@ -24,7 +24,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/MachO/Structures.hpp"
 
@@ -38,7 +38,7 @@ class BinaryParser;
 //! @see:
 //!   * MachO::RelocationObject
 //!   * MachO::RelocationDyld
-class DLL_PUBLIC Relocation : public LIEF::Relocation {
+class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class BinaryParser;
 
@@ -120,7 +120,7 @@ class DLL_PUBLIC Relocation : public LIEF::Relocation {
 
     virtual std::ostream& print(std::ostream& os) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
 
 

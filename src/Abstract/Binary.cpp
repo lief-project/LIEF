@@ -159,15 +159,7 @@ std::vector<uint64_t> Binary::xref(uint64_t address) const {
 }
 
 void Binary::accept(Visitor& visitor) const {
-  visitor(this->header());
-  for (const Section& section : this->sections()) {
-    visitor(section);
-  }
-
-
-  for (const Symbol& symbol : this->symbols()) {
-    visitor(symbol);
-  }
+  visitor.visit(*this);
 }
 
 const std::string& Binary::name(void) const {

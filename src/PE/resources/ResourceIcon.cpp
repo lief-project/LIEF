@@ -19,7 +19,7 @@
 
 #include "LIEF/exception.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 
@@ -227,18 +227,7 @@ void ResourceIcon::save(const std::string& filename) const {
 }
 
 void ResourceIcon::accept(Visitor& visitor) const {
-  if (this->id() != static_cast<uint32_t>(-1)) {
-    visitor.visit(this->id());
-  }
-  visitor.visit(this->lang());
-  visitor.visit(this->sublang());
-  visitor.visit(this->width());
-  visitor.visit(this->height());
-  visitor.visit(this->color_count());
-  visitor.visit(this->reserved());
-  visitor.visit(this->planes());
-  visitor.visit(this->bit_count());
-  visitor.visit(this->pixels());
+  visitor.visit(*this);
 }
 
 bool ResourceIcon::operator==(const ResourceIcon& rhs) const {

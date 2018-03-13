@@ -22,7 +22,7 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
@@ -303,7 +303,7 @@ DataDirectory& Binary::data_directory(DATA_DIRECTORY index) {
 
 const DataDirectory& Binary::data_directory(DATA_DIRECTORY index) const {
   if (static_cast<size_t>(index) < this->data_directories_.size() and this->data_directories_[static_cast<size_t>(index)] != nullptr) {
-    return *this->data_directories_[index];
+    return *this->data_directories_[static_cast<size_t>(index)];
   } else {
     throw not_found("Data directory doesn't exist");
   }
@@ -1177,51 +1177,7 @@ const ResourcesManager Binary::resources_manager(void) const {
 
 
 void Binary::accept(Visitor& visitor) const {
-  visitor(this->dos_header());
-  visitor(this->header());
-  visitor(this->optional_header());
-
-  for (const DataDirectory& data_directory : this->data_directories()) {
-    visitor(data_directory);
-  }
-
-  for (const Section& section : this->sections()) {
-    visitor(section);
-  }
-
-  if (this->has_imports()) {
-    for (const Import& import : this->imports()) {
-      visitor(import);
-    }
-  }
-
-  if (this->has_relocations()) {
-    for (const Relocation& relocation : this->relocations()) {
-      visitor(relocation);
-    }
-  }
-
-  if (this->has_debug()) {
-    visitor(this->debug());
-  }
-
-
-  if (this->has_exports()) {
-    visitor(this->get_export());
-  }
-
-  for (const Symbol& symbol : this->symbols()) {
-    visitor(symbol);
-  }
-
-  if (this->has_tls()) {
-    visitor(this->tls());
-  }
-
-  if (this->has_rich_header()) {
-    visitor(this->rich_header());
-  }
-
+  visitor.visit(*this);
 }
 
 

@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_VISITOR_JSONS_H_
-#define LIEF_ELF_VISITOR_JSONS_H_
-
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
+#ifndef LIEF_ELF_HASH_H_
+#define LIEF_ELF_HASH_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/visitors/json.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/ELF.hpp"
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
-  public:
-  using LIEF::JsonVisitor::JsonVisitor;
-  using LIEF::JsonVisitor::operator=;
-  using LIEF::JsonVisitor::visit;
-  using LIEF::JsonVisitor::get;
 
+class LIEF_API Hash : public LIEF::Hash {
+  public:
+  static size_t hash(const Object& obj);
+
+  public:
+  using LIEF::Hash::Hash;
+  using LIEF::Hash::visit;
+
+  public:
   virtual void visit(const Binary& binary)                  override;
   virtual void visit(const Header& header)                  override;
   virtual void visit(const Section& section)                override;
@@ -51,18 +51,14 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const SymbolVersionRequirement& svr)   override;
   virtual void visit(const SymbolVersionDefinition& svd)    override;
   virtual void visit(const Note& note)                      override;
+  virtual void visit(const AndroidNote& note)               override;
   virtual void visit(const GnuHash& gnuhash)                override;
   virtual void visit(const SysvHash& sysvhash)              override;
 
-
-  virtual void visit(const LIEF::Binary& binary)   override;
-  virtual void visit(const LIEF::Symbol& symbol)   override;
-  virtual void visit(const LIEF::Section& section) override;
+  virtual ~Hash(void);
 };
 
 }
 }
-
-#endif // LIEF_JSON_SUPPORT
 
 #endif

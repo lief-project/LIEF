@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 #include "pyPE.hpp"
@@ -31,7 +31,7 @@ using setter_t = void (ContentInfo::*)(T);
 
 void init_PE_ContentInfo_class(py::module& m) {
 
-  py::class_<ContentInfo>(m, "ContentInfo")
+  py::class_<ContentInfo, LIEF::Object>(m, "ContentInfo")
 
     .def_property_readonly("content_type",
         &ContentInfo::content_type,

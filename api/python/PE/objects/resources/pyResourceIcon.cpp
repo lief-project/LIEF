@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (ResourceIcon::*)(T);
 
 void init_PE_ResourcesIcon_class(py::module& m) {
-  py::class_<ResourceIcon>(m, "ResourceIcon")
+  py::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
     .def(py::init<const std::string&>(),
         "Constructor that takes a icon path as input",
         "icon_path"_a)
@@ -92,7 +92,7 @@ void init_PE_ResourcesIcon_class(py::module& m) {
     .def("__ne__", &ResourceIcon::operator!=)
     .def("__hash__",
         [] (const ResourceIcon& icon) {
-          return LIEF::Hash::hash(icon);
+          return Hash::hash(icon);
         })
 
     .def("__str__",

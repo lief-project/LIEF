@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_AUTHENTICATED_ATTRIBUTES_H_
 #define LIEF_PE_AUTHENTICATED_ATTRIBUTES_H_
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/signature/types.hpp"
@@ -27,7 +27,7 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-class DLL_PUBLIC AuthenticatedAttributes : public Visitable {
+class LIEF_API AuthenticatedAttributes : public Object {
 
   friend class Parser;
   friend class SignatureParser;
@@ -53,7 +53,7 @@ class DLL_PUBLIC AuthenticatedAttributes : public Visitable {
 
   virtual ~AuthenticatedAttributes(void);
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authenticated_attributes);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authenticated_attributes);
 
   private:
   oid_t content_type_; // should holds 1.2.840.113549.1.9.4

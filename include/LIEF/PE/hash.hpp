@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_VISITOR_JSONS_H_
-#define LIEF_PE_VISITOR_JSONS_H_
+#ifndef LIEF_PE_HASH_H_
+#define LIEF_PE_HASH_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/visitors/json.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/PE.hpp"
+#include "LIEF/Abstract/hash.hpp"
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
-  public:
-  using LIEF::JsonVisitor::JsonVisitor;
-  using LIEF::JsonVisitor::operator=;
-  using LIEF::JsonVisitor::visit;
-  using LIEF::JsonVisitor::get;
 
+class LIEF_API Hash : public LIEF::Hash {
+  public:
+  static size_t hash(const Object& obj);
+
+  public:
+  using LIEF::Hash::Hash;
+  using LIEF::Hash::hash;
+  using LIEF::Hash::visit;
+
+  public:
   virtual void visit(const Binary& Binary)                        override;
   virtual void visit(const DosHeader& dos_header)                 override;
   virtual void visit(const RichHeader& rich_header)               override;
@@ -62,7 +68,7 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const Signature& signature)                  override;
   virtual void visit(const x509& x509)                            override;
   virtual void visit(const SignerInfo& signerinfo)                override;
-  virtual void visit(const ContentInfo& contentinfo)              override;
+  //virtual void visit(const ContentInfo& contentinfo)              override;
   virtual void visit(const AuthenticatedAttributes& auth)         override;
   virtual void visit(const CodeIntegrity& code_integrity)         override;
 
@@ -76,10 +82,7 @@ class DLL_PUBLIC JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const LoadConfigurationV6& config)  override;
   virtual void visit(const LoadConfigurationV7& config)  override;
 
-
-  virtual void visit(const LIEF::Binary& binary)   override;
-  virtual void visit(const LIEF::Symbol& symbol)   override;
-  virtual void visit(const LIEF::Section& section) override;
+  virtual ~Hash(void);
 };
 
 }

@@ -23,15 +23,15 @@
 extern "C" {
 #endif
 
-DLL_PUBLIC const char* LOAD_COMMAND_TYPES_to_string(enum LOAD_COMMAND_TYPES e);
-DLL_PUBLIC const char* MACHO_TYPES_to_string(enum MACHO_TYPES e);
-DLL_PUBLIC const char* FILE_TYPES_to_string(enum FILE_TYPES e);
-DLL_PUBLIC const char* CPU_TYPES_to_string(enum CPU_TYPES e);
-DLL_PUBLIC const char* HEADER_FLAGS_to_string(enum HEADER_FLAGS e);
-DLL_PUBLIC const char* MACHO_SECTION_TYPES_to_string(enum MACHO_SECTION_TYPES e);
-DLL_PUBLIC const char* MACHO_SYMBOL_TYPES_to_string(enum MACHO_SYMBOL_TYPES e);
-DLL_PUBLIC const char* N_LIST_TYPES_to_string(enum N_LIST_TYPES e);
-DLL_PUBLIC const char* SYMBOL_DESCRIPTIONS_to_string(enum SYMBOL_DESCRIPTIONS e);
+LIEF_API const char* LOAD_COMMAND_TYPES_to_string(enum LIEF_MACHO_LOAD_COMMAND_TYPES e);
+LIEF_API const char* MACHO_TYPES_to_string(enum LIEF_MACHO_MACHO_TYPES e);
+LIEF_API const char* FILE_TYPES_to_string(enum LIEF_MACHO_FILE_TYPES e);
+LIEF_API const char* CPU_TYPES_to_string(enum LIEF_MACHO_CPU_TYPES e);
+LIEF_API const char* HEADER_FLAGS_to_string(enum LIEF_MACHO_HEADER_FLAGS e);
+LIEF_API const char* MACHO_SECTION_TYPES_to_string(enum LIEF_MACHO_MACHO_SECTION_TYPES e);
+LIEF_API const char* MACHO_SYMBOL_TYPES_to_string(enum LIEF_MACHO_MACHO_SYMBOL_TYPES e);
+LIEF_API const char* N_LIST_TYPES_to_string(enum LIEF_MACHO_N_LIST_TYPES e);
+LIEF_API const char* SYMBOL_DESCRIPTIONS_to_string(enum LIEF_MACHO_SYMBOL_DESCRIPTIONS e);
 
 #ifdef __cplusplus
 }

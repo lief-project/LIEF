@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 namespace LIEF {
@@ -65,10 +65,7 @@ void ExportEntry::is_extern(bool is_extern) {
 }
 
 void ExportEntry::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->name());
-  visitor.visit(this->ordinal());
-  visitor.visit(this->address());
-  visitor.visit(this->is_extern());
+  visitor.visit(*this);
 }
 
 bool ExportEntry::operator==(const ExportEntry& rhs) const {

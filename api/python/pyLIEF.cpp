@@ -23,6 +23,8 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 
 
   LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
+  init_LIEF_Object_class(LIEF_module);
+
   init_LIEF_iterators(LIEF_module);
 
   init_LIEF_Logger(LIEF_module);

@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (OptionalHeader::*)(T);
 
 void init_PE_OptionalHeader_class(py::module& m) {
-  py::class_<OptionalHeader>(m, "OptionalHeader")
+  py::class_<OptionalHeader, LIEF::Object>(m, "OptionalHeader")
     .def(py::init<>())
     .def_property("magic",
         static_cast<getter_t<PE_TYPE>>(&OptionalHeader::magic),
@@ -272,7 +272,7 @@ void init_PE_OptionalHeader_class(py::module& m) {
     .def("__ne__", &OptionalHeader::operator!=)
     .def("__hash__",
         [] (const OptionalHeader& optional_header) {
-          return LIEF::Hash::hash(optional_header);
+          return Hash::hash(optional_header);
         })
 
     .def(py::self += DLL_CHARACTERISTICS())

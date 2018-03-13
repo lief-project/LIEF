@@ -19,6 +19,8 @@
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 
+#include "Object.tcc"
+
 namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
@@ -1057,7 +1059,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
             std::string library_name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
-            dynamic_entry->name(library_name);
+            dynamic_entry->as<DynamicEntryLibrary>()->name(library_name);
           }
           break;
         }
@@ -1071,7 +1073,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
             std::string sharename = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
-            dynamic_entry->name(sharename);
+            dynamic_entry->as<DynamicSharedObject>()->name(sharename);
           }
           break;
         }
@@ -1084,7 +1086,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
             std::string name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
-            dynamic_entry->name(name);
+            dynamic_entry->as<DynamicEntryRpath>()->name(name);
           }
           break;
         }
@@ -1098,7 +1100,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
             LOG(WARNING) << "Unable to find the .dynstr section";
           } else {
             std::string name = this->stream_->get_string(dynamic_string_offset + dynamic_entry->value());
-            dynamic_entry->name(name);
+            dynamic_entry->as<DynamicEntryRunPath>()->name(name);
           }
           break;
         }
@@ -1174,7 +1176,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
     DynamicEntry* dt_initarray_entry = *it_dt_initarray;
 
     if (it_dt_initarray_size != std::end(this->binary_->dynamic_entries_)) {
-      std::vector<uint64_t>& array = dt_initarray_entry->array();
+      std::vector<uint64_t>& array = dt_initarray_entry->as<DynamicEntryArray>()->array();
 
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_initarray_size)->value() / sizeof(uint__));
       try {
@@ -1218,7 +1220,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
       DynamicEntry* dt_finiarray_entry = *it_dt_finiarray;
 
-      std::vector<uint64_t>& array = dt_finiarray_entry->array();
+      std::vector<uint64_t>& array = dt_finiarray_entry->as<DynamicEntryArray>()->array();
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_finiarray_size)->value() / sizeof(uint__));
       try {
         const Elf_Off offset = this->binary_->virtual_address_to_offset(dt_finiarray_entry->value());
@@ -1261,7 +1263,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
       DynamicEntry* dt_preinitarray_entry = *it_dt_preinitarray;
 
-      std::vector<uint64_t>& array = dt_preinitarray_entry->array();
+      std::vector<uint64_t>& array = dt_preinitarray_entry->as<DynamicEntryArray>()->array();
       const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_preinitarray_size)->value() / sizeof(uint__));
       try {
         const Elf_Off offset = this->binary_->virtual_address_to_offset(dt_preinitarray_entry->value());

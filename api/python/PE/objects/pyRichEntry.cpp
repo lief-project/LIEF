@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichEntry.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (RichEntry::*)(T);
 
 void init_PE_RichEntry_class(py::module& m) {
-  py::class_<RichEntry>(m, "RichEntry")
+  py::class_<RichEntry, LIEF::Object>(m, "RichEntry")
     .def(py::init<>())
     .def(py::init<uint16_t, uint16_t, uint32_t>(),
         "Contructor from "
@@ -56,7 +56,7 @@ void init_PE_RichEntry_class(py::module& m) {
     .def("__ne__", &RichEntry::operator!=)
     .def("__hash__",
         [] (const RichEntry& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
     .def("__str__", [] (const RichEntry& entry)

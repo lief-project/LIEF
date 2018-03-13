@@ -29,7 +29,7 @@ namespace MachO {
 
 class BinaryParser;
 
-class DLL_PUBLIC ExportInfo : public Visitable {
+class LIEF_API ExportInfo : public Object {
 
   friend class BinaryParser;
 
@@ -61,7 +61,7 @@ class DLL_PUBLIC ExportInfo : public Visitable {
 
     virtual void accept(Visitor& visitor) const override;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
 
   private:
     uint64_t node_offset_;

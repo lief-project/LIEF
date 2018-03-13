@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 
 #include "pyMachO.hpp"
@@ -45,7 +45,7 @@ void init_MachO_SourceVersion_class(py::module& m) {
     .def("__ne__", &SourceVersion::operator!=)
     .def("__hash__",
         [] (const SourceVersion& version) {
-          return LIEF::Hash::hash(version);
+          return Hash::hash(version);
         })
 
 

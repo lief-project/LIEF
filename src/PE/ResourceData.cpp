@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/ResourceData.hpp"
 
@@ -34,9 +34,12 @@ ResourceData::ResourceData(const ResourceData& other) :
   reserved_{other.reserved_}
 {}
 
+ResourceData* ResourceData::clone(void) const {
+  return new ResourceData{*this};
+}
 
 void ResourceData::swap(ResourceData& other) {
-  ResourceNode::swap(static_cast<ResourceNode&>(other));
+  ResourceNode::swap(other);
 
   std::swap(this->content_,    other.content_);
   std::swap(this->code_page_,  other.code_page_);
@@ -93,11 +96,7 @@ void ResourceData::reserved(uint32_t value) {
 }
 
 void ResourceData::accept(Visitor& visitor) const {
-  ResourceNode::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-
-  visitor.visit(this->code_page());
-  visitor.visit(this->content());
+  visitor.visit(*this);
 }
 
 bool ResourceData::operator==(const ResourceData& rhs) const {

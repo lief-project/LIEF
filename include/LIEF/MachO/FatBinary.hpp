@@ -31,7 +31,7 @@ namespace MachO {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC FatBinary {
+class LIEF_API FatBinary {
 
   friend class LIEF::Parser;
   friend class Parser;
@@ -62,7 +62,7 @@ class DLL_PUBLIC FatBinary {
   Binary&       operator[](size_t index);
   const Binary& operator[](size_t index) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
 
   private:
   FatBinary(void);

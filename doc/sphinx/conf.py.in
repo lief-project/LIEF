@@ -20,8 +20,8 @@ import six
 
 from datetime import datetime
 from docutils import nodes
-from docutils.parsers.rst import directives
-from sphinx.util.compat import Directive
+#from docutils.parsers.rst import directives
+#from sphinx.util.compat import Directive
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

@@ -17,7 +17,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
@@ -78,10 +78,7 @@ void CodeIntegrity::reserved(uint32_t reserved) {
 }
 
 void CodeIntegrity::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->flags());
-  visitor.visit(this->catalog());
-  visitor.visit(this->catalog_offset());
-  visitor.visit(this->reserved());
+  visitor.visit(*this);
 }
 
 bool CodeIntegrity::operator==(const CodeIntegrity& rhs) const {

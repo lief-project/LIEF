@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 
 #include "pyMachO.hpp"
@@ -55,7 +55,7 @@ void init_MachO_RelocationObject_class(py::module& m) {
     .def("__ne__", &RelocationObject::operator!=)
     .def("__hash__",
         [] (const RelocationObject& relocation) {
-          return LIEF::Hash::hash(relocation);
+          return Hash::hash(relocation);
         })
 
 

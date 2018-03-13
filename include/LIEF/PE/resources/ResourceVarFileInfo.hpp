@@ -20,7 +20,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 
@@ -33,7 +33,7 @@ class ResourceVersion;
 //! @brief This object describes information about languages supported by the application
 //!
 //! @see LIEF::PE::ResourceVersion
-class DLL_PUBLIC ResourceVarFileInfo : public Visitable {
+class LIEF_API ResourceVarFileInfo : public Object {
 
   friend class ResourcesManager;
   friend class ResourceVersion;
@@ -72,7 +72,7 @@ class DLL_PUBLIC ResourceVarFileInfo : public Visitable {
   bool operator==(const ResourceVarFileInfo& rhs) const;
   bool operator!=(const ResourceVarFileInfo& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
 
   private:
   ResourceVarFileInfo(void);

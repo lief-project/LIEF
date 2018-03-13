@@ -21,14 +21,14 @@
 #include <algorithm>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC CodeIntegrity : public Visitable {
+class LIEF_API CodeIntegrity : public Object {
   public:
   static constexpr size_t PRINT_WIDTH = 20;
   CodeIntegrity(void);
@@ -58,7 +58,7 @@ class DLL_PUBLIC CodeIntegrity : public Visitable {
   bool operator==(const CodeIntegrity& rhs) const;
   bool operator!=(const CodeIntegrity& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry);
 
   private:
   uint16_t flags_;

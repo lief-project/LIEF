@@ -22,7 +22,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Relocation.hpp"
@@ -32,7 +32,7 @@ namespace MachO {
 
 class BinaryParser;
 
-class DLL_PUBLIC RelocationObject : public Relocation {
+class LIEF_API RelocationObject : public Relocation {
 
   friend class BinaryParser;
 

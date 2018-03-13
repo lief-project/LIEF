@@ -19,7 +19,7 @@
 #include <string>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -27,7 +27,7 @@ namespace ELF {
 class Parser;
 
 //! @brief Class which modelize an Auxiliary Symbol version
-class DLL_PUBLIC SymbolVersionAux : public Visitable {
+class LIEF_API SymbolVersionAux : public Object {
   friend class Parser;
   public:
     SymbolVersionAux(const std::string& name);
@@ -47,7 +47,7 @@ class DLL_PUBLIC SymbolVersionAux : public Visitable {
     bool operator==(const SymbolVersionAux& rhs) const;
     bool operator!=(const SymbolVersionAux& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux);
 
   protected:
     std::string name_;

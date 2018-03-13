@@ -15,7 +15,7 @@
  */
 #include <iostream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
@@ -85,10 +85,7 @@ void LoadCommand::command_offset(uint64_t offset) {
 
 
 void LoadCommand::accept(Visitor& visitor) const {
-  visitor.visit(this->command());
-  visitor.visit(this->size());
-  visitor.visit(this->data());
-  visitor.visit(this->command_offset());
+  visitor.visit(*this);
 }
 
 bool LoadCommand::operator==(const LoadCommand& rhs) const {

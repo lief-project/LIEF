@@ -21,6 +21,8 @@
 
 #include "LIEF/ELF/EnumToString.hpp"
 
+#include "Object.tcc"
+
 namespace LIEF {
 namespace ELF {
 
@@ -28,7 +30,7 @@ template<class ELF_T>
 void Builder::build(void) {
 
 
-  std::string type = ((this->binary_->type_ == ELFCLASS32) ? "ELF32" : "ELF64");
+  std::string type = ((this->binary_->type_ == ELF_CLASS::ELFCLASS32) ? "ELF32" : "ELF64");
   VLOG(VDEBUG) << "== Re-building " << type << " ==";
   try {
     this->build_hash_table<ELF_T>();
@@ -491,11 +493,44 @@ void Builder::build_dynamic_section(void) {
 
     switch (entry->tag()) {
       case DYNAMIC_TAGS::DT_NEEDED:
+        {
+          const std::string& name = entry->as<DynamicEntryLibrary>()->name();
+          dynamic_strings_raw.insert(
+              std::end(dynamic_strings_raw),
+              std::begin(name),
+              std::end(name));
+          dynamic_strings_raw.push_back(0);
+          entry->value(dynamic_strings_raw.size() - (name.size() + 1));
+          break;
+        }
+
       case DYNAMIC_TAGS::DT_SONAME:
+        {
+          const std::string& name = entry->as<DynamicSharedObject>()->name();
+          dynamic_strings_raw.insert(
+              std::end(dynamic_strings_raw),
+              std::begin(name),
+              std::end(name));
+          dynamic_strings_raw.push_back(0);
+          entry->value(dynamic_strings_raw.size() - (name.size() + 1));
+          break;
+        }
+
       case DYNAMIC_TAGS::DT_RPATH:
+        {
+          const std::string& name = entry->as<DynamicEntryRpath>()->name();
+          dynamic_strings_raw.insert(
+              std::end(dynamic_strings_raw),
+              std::begin(name),
+              std::end(name));
+          dynamic_strings_raw.push_back(0);
+          entry->value(dynamic_strings_raw.size() - (name.size() + 1));
+          break;
+        }
+
       case DYNAMIC_TAGS::DT_RUNPATH:
         {
-          const std::string& name = entry->name();
+          const std::string& name = entry->as<DynamicEntryRunPath>()->name();
           dynamic_strings_raw.insert(
               std::end(dynamic_strings_raw),
               std::begin(name),
@@ -542,7 +577,7 @@ void Builder::build_dynamic_section(void) {
 
           Section& array_section = this->binary_->section_from_virtual_address(address);
 
-          const std::vector<uint64_t>& array = dynamic_cast<const DynamicEntryArray*>(entry)->array();
+          const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
           const size_t array_size = array.size() * sizeof(Elf_Addr);
 
 
@@ -669,7 +704,7 @@ void Builder::build_symbol_hash(void) {
   uint32_t nchain  = hashtable_stream.read_integer<uint32_t>(0 + sizeof(uint32_t));
 
 
-  std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), STN_UNDEF);
+  std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);
   uint32_t *new_hash_table_ptr = reinterpret_cast<uint32_t*>(new_hash_table.data());
 
   new_hash_table_ptr[0] = nbucket;
@@ -681,17 +716,17 @@ void Builder::build_symbol_hash(void) {
   for (const Symbol* symbol : this->binary_->dynamic_symbols_) {
     uint32_t hash = 0;
 
-    if (this->binary_->type_ == ELFCLASS32) {
+    if (this->binary_->type_ == ELF_CLASS::ELFCLASS32) {
       hash = hash32(symbol->name().c_str());
     } else {
       hash = hash64(symbol->name().c_str());
     }
 
-    if(bucket[hash % nbucket] ==  STN_UNDEF) {
+    if(bucket[hash % nbucket] == 0) {
       bucket[hash % nbucket] = idx;
     } else {
       uint32_t value = bucket[hash % nbucket];
-      while (chain[value] != STN_UNDEF) {
+      while (chain[value] != 0) {
         value = chain[value];
         if (value >= (new_hash_table.size() / sizeof(uint32_t))) {
           LOG(ERROR) << "Out-of-bound for symbol" << symbol->name() << std::endl
@@ -1820,7 +1855,7 @@ void Builder::build_notes(void) {
         reinterpret_cast<const uint8_t*>(&descsz) + sizeof(uint32_t));
 
     // Then the note's type
-    const uint32_t type = note.type();
+    const NOTE_TYPES type = note.type();
     raw_notes.insert(
         std::end(raw_notes),
         reinterpret_cast<const uint8_t*>(&type),

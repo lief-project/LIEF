@@ -36,7 +36,7 @@ class Binary;
 
 //! @class SegmentCommand
 //! @brief Class which represent a MachO Segment
-class DLL_PUBLIC SegmentCommand : public LoadCommand {
+class LIEF_API SegmentCommand : public LoadCommand {
 
   friend class BinaryParser;
   friend class Binary;

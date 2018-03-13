@@ -31,10 +31,10 @@ extern "C" {
 #endif
 
 struct Elf_Header_t {
-  uint8_t      identity[EI_NIDENT];
-  enum E_TYPE  file_type;
-  enum ARCH    machine_type;
-  enum VERSION object_file_version;
+  uint8_t      identity[LIEF_ELF_EI_NIDENT];
+  enum LIEF_ELF_E_TYPE  file_type;
+  enum LIEF_ELF_ARCH    machine_type;
+  enum LIEF_ELF_VERSION object_file_version;
   uint64_t     entrypoint;
   uint64_t     program_headers_offset;
   uint64_t     section_headers_offset;

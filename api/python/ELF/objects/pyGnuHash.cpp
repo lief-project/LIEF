@@ -18,7 +18,7 @@
 
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 
 
@@ -30,7 +30,7 @@ using setter_t = void (GnuHash::*)(T);
 
 void init_ELF_GnuHash_class(py::module& m) {
 
-  py::class_<GnuHash>(m, "GnuHash")
+  py::class_<GnuHash, LIEF::Object>(m, "GnuHash")
     .def(py::init<>())
 
     .def_property_readonly("nb_buckets",
@@ -95,7 +95,7 @@ void init_ELF_GnuHash_class(py::module& m) {
     .def("__ne__", &GnuHash::operator!=)
     .def("__hash__",
         [] (const GnuHash& gnuhash) {
-          return LIEF::Hash::hash(gnuhash);
+          return Hash::hash(gnuhash);
         })
 
     .def("__str__",

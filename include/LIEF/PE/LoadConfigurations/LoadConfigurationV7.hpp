@@ -27,14 +27,14 @@
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC LoadConfigurationV7 : public LoadConfigurationV6 {
+class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   public:
 
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_16237;
   LoadConfigurationV7(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV7(const load_configuration_v7<T>* header);
+  LIEF_LOCAL LoadConfigurationV7(const load_configuration_v7<T>* header);
 
   LoadConfigurationV7& operator=(const LoadConfigurationV7&);
   LoadConfigurationV7(const LoadConfigurationV7&);

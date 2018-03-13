@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/iostream.hpp"
 
@@ -47,8 +47,7 @@ CodeIntegrity& LoadConfigurationV2::code_integrity(void) {
 }
 
 void LoadConfigurationV2::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV1*>(this));
-  visitor.visit(this->code_integrity());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV2::operator==(const LoadConfigurationV2& rhs) const {

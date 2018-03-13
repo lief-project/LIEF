@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace MachO {
 
-class DLL_PUBLIC ParserConfig {
+class LIEF_API ParserConfig {
   public:
     ParserConfig(void);
     ParserConfig& operator=(const ParserConfig&);

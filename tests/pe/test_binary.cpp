@@ -18,7 +18,6 @@
 #include <yaml-cpp/yaml.h>
 
 #include <LIEF/PE.hpp>
-#include <LIEF/visitors/Hash.hpp>
 
 #include "utils.hpp"
 

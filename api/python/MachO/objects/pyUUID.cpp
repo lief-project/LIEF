@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -45,7 +45,7 @@ void init_MachO_UUIDCommand_class(py::module& m) {
     .def("__ne__", &UUIDCommand::operator!=)
     .def("__hash__",
         [] (const UUIDCommand& uuid) {
-          return LIEF::Hash::hash(uuid);
+          return Hash::hash(uuid);
         })
 
 

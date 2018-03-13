@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/RichHeader.hpp"
 
@@ -56,10 +56,7 @@ void RichHeader::add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
 }
 
 void RichHeader::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->key());
-  for (const RichEntry& entry : this->entries()) {
-    visitor(entry);
-  }
+  visitor.visit(*this);
 }
 
 bool RichHeader::operator==(const RichHeader& rhs) const {

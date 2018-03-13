@@ -13,35 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VISITABLE_H_
-#define LIEF_VISITABLE_H_
-
-#include "LIEF/Visitor.hpp"
-#include "LIEF/visibility.h"
-
-template< class T >
-using add_pointer_t = typename std::add_pointer<T>::type;
-
-template< class T >
-using decay_t = typename std::decay<T>::type;
+#include "LIEF/Object.hpp"
 
 namespace LIEF {
-
-class Visitable {
-  public:
-  Visitable(void);
-  Visitable(const Visitable& other);
-  Visitable& operator=(const Visitable& other);
-
-  template<class T>
-  DLL_LOCAL bool is(void);
-
-  template<class T>
-  DLL_LOCAL add_pointer_t<decay_t<T>> as(void);
-
-  virtual ~Visitable(void);
-  virtual void accept(Visitor& visitor) const = 0;
-};
+Object::Object(void) = default;
+Object::Object(const Object&) = default;
+Object& Object::operator=(const Object&) = default;
+Object::~Object(void) = default;
 }
-
-#endif

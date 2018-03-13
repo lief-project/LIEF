@@ -17,7 +17,7 @@ def main():
     args = parser.parse_args()
 
     binary    = lief.parse(args.binary)
-    json_data = json.loads(lief.abstract_to_json(binary))
+    json_data = json.loads(lief.to_json_from_abstract(binary))
     print(json.dumps(json_data, sort_keys = True, indent = 4))
 
 if __name__ == "__main__":

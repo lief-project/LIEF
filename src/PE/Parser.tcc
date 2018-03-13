@@ -109,7 +109,7 @@ void Parser::parse_data_directories(void) {
       this->binary_->dos_header().addressof_new_exeheader() +
       sizeof(pe_header) +
       sizeof(pe_optional_header);
-  const uint32_t nbof_datadir = DATA_DIRECTORY::NUM_DATA_DIRECTORIES;
+  const uint32_t nbof_datadir = static_cast<uint32_t>(DATA_DIRECTORY::NUM_DATA_DIRECTORIES);
 
   const pe_data_directory* dataDirectory = [&] () {
     try {

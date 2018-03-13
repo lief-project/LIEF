@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (ResourceVersion::*)(T);
 
 void init_PE_ResourceVersion_class(py::module& m) {
-  py::class_<ResourceVersion>(m, "ResourceVersion",
+  py::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
       "Modelization of the data associated with the ``RT_VERSION`` entry\n"
       "See: `VS_VERSIONINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms647001(v=vs.85).aspx>`_")
 
@@ -92,7 +92,7 @@ void init_PE_ResourceVersion_class(py::module& m) {
     .def("__ne__", &ResourceVersion::operator!=)
     .def("__hash__",
         [] (const ResourceVersion& version) {
-          return LIEF::Hash::hash(version);
+          return Hash::hash(version);
         })
 
     .def("__str__",

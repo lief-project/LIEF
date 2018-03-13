@@ -34,7 +34,7 @@ void init_c_commands(Macho_Binary_t* c_binary, Binary* binary) {
         std::end(cmd_content),
         content);
 
-    c_binary->commands[i]->command = static_cast<enum ::LOAD_COMMAND_TYPES>(cmd.command());
+    c_binary->commands[i]->command = static_cast<enum LIEF_MACHO_LOAD_COMMAND_TYPES>(cmd.command());
     c_binary->commands[i]->size    = cmd.size();
     c_binary->commands[i]->data    = content;
     c_binary->commands[i]->offset  = cmd.command_offset();

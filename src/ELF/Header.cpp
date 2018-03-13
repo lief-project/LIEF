@@ -20,7 +20,7 @@
 #include <numeric>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
@@ -88,7 +88,7 @@ Header::Header(const Elf32_Ehdr *header):
 {
  std::copy(
      reinterpret_cast<const uint8_t*>(header->e_ident),
-     reinterpret_cast<const uint8_t*>(header->e_ident) + IDENTITY::EI_NIDENT,
+     reinterpret_cast<const uint8_t*>(header->e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
      std::begin(this->identity_));
 }
 
@@ -107,28 +107,12 @@ Header::Header(const Elf64_Ehdr *header):
   numberof_sections_(header->e_shnum),
   section_string_table_idx_(header->e_shstrndx)
 {
-  std::copy(
-      reinterpret_cast<const uint8_t*>(header->e_ident),
-      reinterpret_cast<const uint8_t*>(header->e_ident) + IDENTITY::EI_NIDENT,
-      std::begin(this->identity_));
+ std::copy(
+     reinterpret_cast<const uint8_t*>(header->e_ident),
+     reinterpret_cast<const uint8_t*>(header->e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
+     std::begin(this->identity_));
 }
 
-
-Header::Header(const std::vector<uint8_t>& header) {
-  //TODO: Add more check
-  if (header[1] == 'E' and header[2] == 'L' and header[3] == 'F') {
-      uint32_t type = reinterpret_cast<const Elf32_Ehdr*>(header.data())->e_ident[IDENTITY::EI_CLASS];
-      if (type == ELFCLASS32) {
-        *this = Header{reinterpret_cast<const Elf32_Ehdr*>(header.data())};
-      } else if(type == ELFCLASS64) {
-        *this = Header{reinterpret_cast<const Elf64_Ehdr*>(header.data())};
-      } else {
-        throw corrupted("Incorrect header (Wrong ELFCLASS)");
-      }
-  } else {
-    throw corrupted("Incorrect header (Wrong magic)");
-  }
-}
 
 E_TYPE Header::file_type(void) const {
   return this->file_type_;
@@ -203,12 +187,12 @@ bool Header::has(ARM_EFLAGS f) const {
     case ARM_EFLAGS::EF_ARM_EABI_VER4:
     case ARM_EFLAGS::EF_ARM_EABI_VER5:
       {
-        return (this->processor_flag() & ARM_EFLAGS::EF_ARM_EABIMASK) == f;
+        return (this->processor_flag() & static_cast<uint32_t>(ARM_EFLAGS::EF_ARM_EABIMASK)) == static_cast<uint32_t>(f);
         break;
       }
     default:
       {
-        return (this->processor_flag() & f) > 0;
+        return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
       }
   }
 }
@@ -227,6 +211,8 @@ arm_flags_list_t Header::arm_flags_list(void) const {
 }
 
 bool Header::has(MIPS_EFLAGS f) const {
+
+  uint32_t fn = static_cast<uint32_t>(f);
   if (this->machine_type() != ARCH::EM_MIPS) {
     return false;
   }
@@ -248,7 +234,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_FP64:
     case MIPS_EFLAGS::EF_MIPS_NAN2008:
       {
-        return (this->processor_flag() & f) > 0;
+        return (this->processor_flag() & fn) > 0;
         break;
       }
 
@@ -257,7 +243,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ABI_EABI32:
     case MIPS_EFLAGS::EF_MIPS_ABI_EABI64:
       {
-        return ((this->processor_flag() & MIPS_EFLAGS::EF_MIPS_ABI) & f) > 0;
+        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ABI)) & fn) > 0;
         break;
       }
 
@@ -280,7 +266,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_MACH_LS2F:
     case MIPS_EFLAGS::EF_MIPS_MACH_LS3A:
       {
-        return ((this->processor_flag() & MIPS_EFLAGS::EF_MIPS_MACH) & f) > 0;
+        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_MACH)) & fn) > 0;
         break;
       }
 
@@ -289,7 +275,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ARCH_ASE_M16:
     case MIPS_EFLAGS::EF_MIPS_ARCH_ASE_MDMX:
       {
-        return ((this->processor_flag() & MIPS_EFLAGS::EF_MIPS_ARCH_ASE) & f) > 0;
+        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH_ASE)) & fn) > 0;
         break;
       }
 
@@ -305,18 +291,18 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ARCH_32R6:
     case MIPS_EFLAGS::EF_MIPS_ARCH_64R6:
       {
-        return (this->processor_flag() & MIPS_EFLAGS::EF_MIPS_ARCH) == f;
+        return (this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH)) == fn;
         break;
       }
 
     default:
       {
-        return (this->processor_flag() & f) > 0;
+        return (this->processor_flag() & fn) > 0;
       }
   }
 
 
-  return (this->processor_flag() & f) > 0;
+  return (this->processor_flag() & fn) > 0;
 }
 
 mips_flags_list_t Header::mips_flags_list(void) const {
@@ -338,7 +324,7 @@ bool Header::has(PPC64_EFLAGS f) const {
     return false;
   }
 
-  return (this->processor_flag() & f) > 0;
+  return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
 ppc64_flags_list_t Header::ppc64_flags_list(void) const {
@@ -360,7 +346,7 @@ bool Header::has(HEXAGON_EFLAGS f) const {
     return false;
   }
 
-  return (this->processor_flag() & f) > 0;
+  return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
 hexagon_flags_list_t Header::hexagon_flags_list(void) const {
@@ -414,19 +400,19 @@ Header::identity_t& Header::identity(void) {
 }
 
 ELF_CLASS Header::identity_class(void) const {
-  return static_cast<ELF_CLASS>(this->identity_[IDENTITY::EI_CLASS]);
+  return static_cast<ELF_CLASS>(this->identity_[static_cast<size_t>(IDENTITY::EI_CLASS)]);
 }
 
 ELF_DATA Header::identity_data(void) const {
-  return static_cast<ELF_DATA>(this->identity_[IDENTITY::EI_DATA]);
+  return static_cast<ELF_DATA>(this->identity_[static_cast<size_t>(IDENTITY::EI_DATA)]);
 }
 
 VERSION Header::identity_version(void) const {
-  return static_cast<VERSION>(this->identity_[IDENTITY::EI_VERSION]);
+  return static_cast<VERSION>(this->identity_[static_cast<size_t>(IDENTITY::EI_VERSION)]);
 }
 
 OS_ABI Header::identity_os_abi(void) const {
-  return static_cast<OS_ABI>(this->identity_[IDENTITY::EI_OSABI]);
+  return static_cast<OS_ABI>(this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)]);
 }
 
 void Header::file_type(E_TYPE type) {
@@ -509,40 +495,24 @@ void Header::identity(const Header::identity_t& identity) {
 }
 
 void Header::identity_class(ELF_CLASS i_class) {
-  this->identity_[IDENTITY::EI_CLASS] = static_cast<uint8_t>(i_class);
+  this->identity_[static_cast<size_t>(IDENTITY::EI_CLASS)] = static_cast<uint8_t>(i_class);
 }
 
 void Header::identity_data(ELF_DATA data) {
-  this->identity_[IDENTITY::EI_DATA] = static_cast<uint8_t>(data);
+  this->identity_[static_cast<size_t>(IDENTITY::EI_DATA)] = static_cast<uint8_t>(data);
 }
 
 void Header::identity_version(VERSION version) {
-  this->identity_[IDENTITY::EI_VERSION] = static_cast<uint8_t>(version);
+  this->identity_[static_cast<size_t>(IDENTITY::EI_VERSION)] = static_cast<uint8_t>(version);
 }
 
 void Header::identity_os_abi(OS_ABI osabi) {
-  this->identity_[IDENTITY::EI_OSABI] = static_cast<uint8_t>(osabi);
+  this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)] = static_cast<uint8_t>(osabi);
 }
 
 
 void Header::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->entrypoint());
-  visitor.visit(this->file_type());
-  visitor.visit(this->machine_type());
-  visitor.visit(this->object_file_version());
-  visitor.visit(this->entrypoint());
-  visitor.visit(this->program_headers_offset());
-  visitor.visit(this->section_headers_offset());
-  visitor.visit(this->processor_flag());
-  visitor.visit(this->header_size());
-  visitor.visit(this->program_header_size());
-  visitor.visit(this->numberof_segments());
-  visitor.visit(this->section_header_size());
-  visitor.visit(this->section_name_table_idx());
-  visitor.visit(this->identity_class());
-  visitor.visit(this->identity_data());
-  visitor.visit(this->identity_version());
-  visitor.visit(this->identity_os_abi());
+  visitor.visit(*this);
 }
 
 bool Header::operator==(const Header& rhs) const {
@@ -562,10 +532,10 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   const Header::identity_t& identity = const_cast<Header*>(&hdr)->identity();
   std::stringstream ss;
   ss << std::hex;
-  ss << static_cast<uint32_t>(identity[IDENTITY::EI_MAG0]) << " ";
-  ss << static_cast<uint32_t>(identity[IDENTITY::EI_MAG1]) << " ";
-  ss << static_cast<uint32_t>(identity[IDENTITY::EI_MAG2]) << " ";
-  ss << static_cast<uint32_t>(identity[IDENTITY::EI_MAG3]) << " ";
+  ss << static_cast<uint32_t>(identity[static_cast<size_t>(IDENTITY::EI_MAG0)]) << " ";
+  ss << static_cast<uint32_t>(identity[static_cast<size_t>(IDENTITY::EI_MAG1)]) << " ";
+  ss << static_cast<uint32_t>(identity[static_cast<size_t>(IDENTITY::EI_MAG2)]) << " ";
+  ss << static_cast<uint32_t>(identity[static_cast<size_t>(IDENTITY::EI_MAG3)]) << " ";
   const std::string& ident_magic = ss.str();
 
   std::string processor_flags_str = "";

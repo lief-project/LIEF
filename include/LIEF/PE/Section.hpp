@@ -33,7 +33,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC Section : public LIEF::Section {
+class LIEF_API Section : public LIEF::Section {
 
   friend class Parser;
   friend class Builder;
@@ -95,7 +95,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Section& section);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
     uint32_t                virtualSize_;

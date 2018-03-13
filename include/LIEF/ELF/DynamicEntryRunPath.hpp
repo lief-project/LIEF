@@ -24,18 +24,16 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC DynamicEntryRunPath : public DynamicEntry {
+class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   public:
     static constexpr char delimiter = ':';
     using DynamicEntry::DynamicEntry;
 
-    DynamicEntryRunPath(const Elf64_Dyn* header);
-    DynamicEntryRunPath(const Elf32_Dyn* header);
     DynamicEntryRunPath(void);
 
     //! @brief Constructor from (run)path
-    DynamicEntryRunPath(const std::string& name = "");
+    DynamicEntryRunPath(const std::string& name);
 
     //! @brief Constructor from a list of paths
     DynamicEntryRunPath(const std::vector<std::string>& paths);
@@ -44,8 +42,8 @@ class DLL_PUBLIC DynamicEntryRunPath : public DynamicEntry {
     DynamicEntryRunPath(const DynamicEntryRunPath&);
 
     //! @brief Runpath raw value
-    virtual const std::string& name(void) const override;
-    virtual void name(const std::string& name) override;
+    const std::string& name(void) const;
+    void name(const std::string& name);
 
     //! @brief Runpath raw value
     const std::string& runpath(void) const;

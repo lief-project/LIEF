@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (CodeIntegrity::*)(T);
 
 void init_PE_CodeIntegrity_class(py::module& m) {
-  py::class_<CodeIntegrity>(m, "CodeIntegrity")
+  py::class_<CodeIntegrity, LIEF::Object>(m, "CodeIntegrity")
     .def(py::init<>())
 
     .def_property("flags",
@@ -56,7 +56,7 @@ void init_PE_CodeIntegrity_class(py::module& m) {
     .def("__ne__", &CodeIntegrity::operator!=)
     .def("__hash__",
         [] (const CodeIntegrity& code) {
-          return LIEF::Hash::hash(code);
+          return Hash::hash(code);
         })
 
 

@@ -30,14 +30,14 @@ namespace LIEF {
 namespace PE {
 
 //! @brief Load Configuration enhanced with Hotpatch and improved RFG
-class DLL_PUBLIC LoadConfigurationV6 : public LoadConfigurationV5 {
+class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_15002;
 
   LoadConfigurationV6(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV6(const load_configuration_v6<T>* header);
+  LIEF_LOCAL LoadConfigurationV6(const load_configuration_v6<T>* header);
 
   LoadConfigurationV6& operator=(const LoadConfigurationV6&);
   LoadConfigurationV6(const LoadConfigurationV6&);

@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/FunctionStarts.hpp"
 
@@ -67,12 +67,7 @@ void FunctionStarts::add_function(uint64_t address) {
 }
 
 void FunctionStarts::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor.visit(this->data_offset());
-  visitor.visit(this->data_size());
-  for (uint64_t v : this->functions()) {
-    visitor.visit(v);
-  }
+  visitor.visit(*this);
 }
 
 

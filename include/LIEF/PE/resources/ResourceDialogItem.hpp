@@ -22,7 +22,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 
@@ -30,7 +30,7 @@ namespace LIEF {
 namespace PE {
 class ResourcesManager;
 
-class DLL_PUBLIC ResourceDialogItem : public Visitable {
+class LIEF_API ResourceDialogItem : public Object {
 
   friend class ResourcesManager;
 
@@ -95,7 +95,7 @@ class DLL_PUBLIC ResourceDialogItem : public Visitable {
   bool operator==(const ResourceDialogItem& rhs) const;
   bool operator!=(const ResourceDialogItem& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceDialogItem& dialog_item);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialogItem& dialog_item);
 
   private:
   bool     is_extended_;

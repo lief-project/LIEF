@@ -16,6 +16,9 @@
 #ifndef LIEF_PE_UNDEF_H_
 #define LIEF_PE_UNDEF_H_
 
+#ifdef IMAGE_FILE_MACHINE_UNKNOWN
+#pragma message("LIEF will disable #define enums. Please use LIEF_PE_XXXX or LIEF::PE::XXXX instead!")
+#endif
 
 #undef IMAGE_FILE_MACHINE_UNKNOWN
 #undef IMAGE_FILE_MACHINE_AM33

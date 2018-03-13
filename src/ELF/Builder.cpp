@@ -41,7 +41,7 @@ Builder::Builder(Binary *binary) :
 }
 
 void Builder::build(void) {
-  if(this->binary_->type() == ELFCLASS32) {
+  if(this->binary_->type() == ELF_CLASS::ELFCLASS32) {
     this->build<ELF32>();
   } else {
     this->build<ELF64>();

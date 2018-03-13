@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 
 #include "pyMachO.hpp"
@@ -263,7 +263,7 @@ void init_MachO_DyldInfo_class(py::module& m) {
     .def("__ne__", &DyldInfo::operator!=)
     .def("__hash__",
         [] (const DyldInfo& info) {
-          return LIEF::Hash::hash(info);
+          return Hash::hash(info);
         })
 
 

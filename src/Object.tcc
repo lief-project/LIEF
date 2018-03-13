@@ -18,13 +18,18 @@
 namespace LIEF {
 
 template<class T>
-bool Visitable::is(void) {
+bool Object::is(void) const {
   return typeid(*this) == typeid(T);
 }
 
 template<class T>
-add_pointer_t<decay_t<T>> Visitable::as(void) {
-  return dynamic_cast<add_pointer_t<decay_t<T>>>(this);
+Object::output_t<T> Object::as(void) {
+  return dynamic_cast<Object::output_t<T>>(this);
+}
+
+template<class T>
+Object::output_const_t<T> Object::as(void) const {
+  return dynamic_cast<Object::output_const_t<T>>(this);
 }
 
 

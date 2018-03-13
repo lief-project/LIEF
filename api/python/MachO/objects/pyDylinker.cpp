@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DylinkerCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -43,7 +43,7 @@ void init_MachO_DylinkerCommand_class(py::module& m) {
     .def("__ne__", &DylinkerCommand::operator!=)
     .def("__hash__",
         [] (const DylinkerCommand& dylinker) {
-          return LIEF::Hash::hash(dylinker);
+          return Hash::hash(dylinker);
         })
 
 

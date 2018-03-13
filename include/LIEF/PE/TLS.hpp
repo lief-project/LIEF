@@ -21,7 +21,7 @@
 #include <memory>
 #include <utility>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
@@ -35,7 +35,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC TLS : public Visitable {
+class LIEF_API TLS : public Object {
   friend class Parser;
   friend class Builder;
 
@@ -80,7 +80,7 @@ class DLL_PUBLIC TLS : public Visitable {
     bool operator==(const TLS& rhs) const;
     bool operator!=(const TLS& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const TLS& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const TLS& entry);
 
   private:
     std::vector<uint64_t>         callbacks_;

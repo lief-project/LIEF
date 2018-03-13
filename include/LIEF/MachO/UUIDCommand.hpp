@@ -29,7 +29,7 @@ namespace LIEF {
 namespace MachO {
 using uuid_t = std::array<uint8_t, 16>;
 
-class DLL_PUBLIC UUIDCommand : public LoadCommand {
+class LIEF_API UUIDCommand : public LoadCommand {
   public:
     UUIDCommand(void);
     UUIDCommand(const uuid_command *uuidCmd);

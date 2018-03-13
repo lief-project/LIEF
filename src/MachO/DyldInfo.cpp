@@ -23,7 +23,7 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/EnumToString.hpp"
 
@@ -414,7 +414,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
   uint64_t current_offset = 0;
   uint64_t end_offset = bind_opcodes.size();
 
-  uint8_t     type = is_lazy ? BIND_TYPES::BIND_TYPE_POINTER : 0;
+  uint8_t     type = is_lazy ? static_cast<uint8_t>(BIND_TYPES::BIND_TYPE_POINTER) : 0;
   uint8_t     segment_idx = 0;
   uint64_t    segment_offset = 0;
   std::string symbol_name = "";
@@ -439,10 +439,13 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
   while (not done and current_offset < end_offset) {
     uint8_t imm    = bind_stream.read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    uint8_t opcode = bind_stream.read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(
+        bind_stream.read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
+
     current_offset += sizeof(uint8_t);
+
     switch (opcode) {
-      case BIND_OPCODE_DONE:
+      case BIND_OPCODES::BIND_OPCODE_DONE:
         {
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
           if (not is_lazy) {
@@ -451,7 +454,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
@@ -461,7 +464,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -475,7 +478,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -483,7 +486,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           if (imm == 0) {
             library_ordinal = 0;
           } else {
-            int8_t sign_extended = BIND_OPCODE_MASK | imm;
+            int8_t sign_extended = static_cast<int8_t>(BIND_OPCODE_MASK) | imm;
             library_ordinal = sign_extended;
           }
 
@@ -491,7 +494,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -509,7 +512,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
@@ -520,7 +523,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -532,7 +535,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -548,7 +551,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -561,7 +564,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -591,7 +594,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -621,7 +624,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -650,7 +653,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           break;
         }
 
-      case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
@@ -924,21 +927,7 @@ void DyldInfo::set_export_size(uint32_t size) {
 }
 
 void DyldInfo::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor.visit(this->rebase());
-  visitor.visit(this->bind());
-  visitor.visit(this->weak_bind());
-  visitor.visit(this->lazy_bind());
-  visitor.visit(this->export_info());
-
-  for (const BindingInfo& binfo : this->bindings()) {
-    visitor(binfo);
-  }
-
-
-  for (const ExportInfo& einfo : this->exports()) {
-    visitor(einfo);
-  }
+  visitor.visit(*this);
 }
 
 

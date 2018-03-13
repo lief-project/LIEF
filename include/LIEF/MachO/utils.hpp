@@ -24,13 +24,13 @@
 
 namespace LIEF {
 namespace MachO {
-DLL_PUBLIC bool is_macho(const std::string& file);
+LIEF_API bool is_macho(const std::string& file);
 
-DLL_PUBLIC bool is_macho(const std::vector<uint8_t>& raw);
+LIEF_API bool is_macho(const std::vector<uint8_t>& raw);
 
-DLL_PUBLIC bool is_fat(const std::string& file);
-DLL_PUBLIC bool is_64(const std::string& file);
-DLL_PUBLIC uint64_t decode_uleb128(const std::string& file);
+LIEF_API bool is_fat(const std::string& file);
+LIEF_API bool is_64(const std::string& file);
+LIEF_API uint64_t decode_uleb128(const std::string& file);
 }
 }
 

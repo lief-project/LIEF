@@ -18,7 +18,7 @@
 #include <vector>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/type_traits.hpp"
@@ -31,7 +31,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC Relocation : public Visitable {
+class LIEF_API Relocation : public Object {
 
   friend class Parser;
   friend class Builder;
@@ -59,7 +59,7 @@ class DLL_PUBLIC Relocation : public Visitable {
     bool operator==(const Relocation& rhs) const;
     bool operator!=(const Relocation& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   private:
     uint32_t             block_size_;

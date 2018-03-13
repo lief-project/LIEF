@@ -17,7 +17,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Header.hpp"
@@ -36,7 +36,7 @@ Header::Header(void) :
   pointerToSymbolTable_{0},
   numberOfSymbols_{0},
   sizeOfOptionalHeader_{0},
-  characteristics_{IMAGE_FILE_EXECUTABLE_IMAGE}
+  characteristics_{HEADER_CHARACTERISTICS::IMAGE_FILE_EXECUTABLE_IMAGE}
 {
   std::copy(
       std::begin(PE_Magic),
@@ -52,7 +52,7 @@ Header::Header(const pe_header *header) :
   pointerToSymbolTable_(header->PointerToSymbolTable),
   numberOfSymbols_(header->NumberOfSymbols),
   sizeOfOptionalHeader_(header->SizeOfOptionalHeader),
-  characteristics_(header->Characteristics)
+  characteristics_(static_cast<HEADER_CHARACTERISTICS>(header->Characteristics))
 
 {
   std::copy(
@@ -96,13 +96,13 @@ uint16_t Header::sizeof_optional_header(void) const {
 }
 
 
-uint16_t Header::characteristics(void) const {
+HEADER_CHARACTERISTICS Header::characteristics(void) const {
   return this->characteristics_;
 }
 
 
 bool Header::has_characteristic(HEADER_CHARACTERISTICS c) const {
-  return this->characteristics_ & static_cast<uint16_t>(c);
+  return (this->characteristics_ & c) != HEADER_CHARACTERISTICS::IMAGE_FILE_INVALID;
 }
 
 
@@ -148,18 +148,18 @@ void Header::sizeof_optional_header(uint16_t sizeOfOptionalHdr) {
 }
 
 
-void Header::characteristics(uint16_t characteristics) {
+void Header::characteristics(HEADER_CHARACTERISTICS characteristics) {
   this->characteristics_ = characteristics;
 }
 
 
 void Header::add_characteristic(HEADER_CHARACTERISTICS c) {
-  this->characteristics_ |= static_cast<uint16_t>(c);
+  this->characteristics_ |= c;
 }
 
 
 void Header::remove_characteristic(HEADER_CHARACTERISTICS c) {
-  this->characteristics_ &= ~static_cast<uint16_t>(c);
+  this->characteristics_ &= ~c;
 }
 
 
@@ -171,14 +171,7 @@ void Header::signature(const Header::signature_t& sig) {
 }
 
 void Header::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->signature());
-  visitor.visit(this->machine());
-  visitor.visit(this->numberof_sections());
-  visitor.visit(this->time_date_stamp());
-  visitor.visit(this->pointerto_symbol_table());
-  visitor.visit(this->numberof_symbols());
-  visitor.visit(this->sizeof_optional_header());
-  visitor.visit(this->characteristics());
+  visitor.visit(*this);
 }
 
 bool Header::operator==(const Header& rhs) const {

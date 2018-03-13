@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
 #include "pyMachO.hpp"
@@ -52,7 +52,7 @@ void init_MachO_VersionMin_class(py::module& m) {
     .def("__ne__", &VersionMin::operator!=)
     .def("__hash__",
         [] (const VersionMin& version) {
-          return LIEF::Hash::hash(version);
+          return Hash::hash(version);
         })
 
 

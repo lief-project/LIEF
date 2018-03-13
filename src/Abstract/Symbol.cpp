@@ -38,7 +38,7 @@ void Symbol::name(const std::string& name) {
 
 
 void Symbol::accept(Visitor& visitor) const {
-  visitor.visit(this->name());
+  visitor.visit(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {

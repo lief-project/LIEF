@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Header.hpp"
 
 #include "pyMachO.hpp"
@@ -29,7 +29,7 @@ using setter_t = void (Header::*)(T);
 
 void init_MachO_Header_class(py::module& m) {
 
-  py::class_<Header>(m, "Header")
+  py::class_<Header, LIEF::Object>(m, "Header")
     .def(py::init<>())
 
     .def_property("magic",
@@ -98,7 +98,7 @@ void init_MachO_Header_class(py::module& m) {
     .def("__ne__", &Header::operator!=)
     .def("__hash__",
         [] (const Header& header) {
-          return LIEF::Hash::hash(header);
+          return Hash::hash(header);
         })
 
     .def(py::self += HEADER_FLAGS())

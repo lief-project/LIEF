@@ -19,7 +19,7 @@
 #include <memory>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
@@ -33,7 +33,7 @@ class Builder;
 class Parser;
 class Binary;
 
-class DLL_PUBLIC DataDirectory : public Visitable {
+class LIEF_API DataDirectory : public Object {
 
   friend class Builder;
   friend class Parser;
@@ -64,7 +64,7 @@ class DLL_PUBLIC DataDirectory : public Visitable {
   bool operator==(const DataDirectory& rhs) const;
   bool operator!=(const DataDirectory& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
 
   private:
   uint32_t       rva_;

@@ -24,7 +24,7 @@
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
-class DLL_PUBLIC Node {
+class LIEF_API Node {
   public:
     enum Type : uint8_t {
       SECTION = 0,

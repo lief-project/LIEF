@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -55,9 +55,7 @@ void LoadConfigurationV6::hotpatch_table_offset(uint32_t value) {
 }
 
 void LoadConfigurationV6::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV5*>(this));
-  visitor.visit(this->guard_rf_verify_stackpointer_function_pointer());
-  visitor.visit(this->hotpatch_table_offset());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV6::operator==(const LoadConfigurationV6& rhs) const {

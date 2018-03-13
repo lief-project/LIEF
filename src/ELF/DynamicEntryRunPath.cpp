@@ -22,24 +22,19 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryRunPath::DynamicEntryRunPath(void) = default;
+
 DynamicEntryRunPath& DynamicEntryRunPath::operator=(const DynamicEntryRunPath&) = default;
 DynamicEntryRunPath::DynamicEntryRunPath(const DynamicEntryRunPath&) = default;
 
-DynamicEntryRunPath::DynamicEntryRunPath(const Elf64_Dyn* header) :
-  DynamicEntry{header}
-{}
-
-
-DynamicEntryRunPath::DynamicEntryRunPath(const Elf32_Dyn* header) :
-  DynamicEntry{header}
+DynamicEntryRunPath::DynamicEntryRunPath(void) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
+  runpath_{}
 {}
 
 DynamicEntryRunPath::DynamicEntryRunPath(const std::string& runpath) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
   runpath_{runpath}
-{
-}
+{}
 
 
 DynamicEntryRunPath::DynamicEntryRunPath(const std::vector<std::string>& paths) :
@@ -133,9 +128,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::operator-=(const std::string& path) {
 }
 
 void DynamicEntryRunPath::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->runpath());
+  visitor.visit(*this);
 }
 
 std::ostream& DynamicEntryRunPath::print(std::ostream& os) const {

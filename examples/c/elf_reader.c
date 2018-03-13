@@ -22,10 +22,10 @@ int main(int argc, char **argv) {
   fprintf(stdout, "Header\n");
   fprintf(stdout, "======\n");
   fprintf(stdout, "Magic: %x %x %x %x\n",             identity[0], identity[1], identity[2], identity[3]);
-  fprintf(stdout, "Class: %s\n",                      ELF_CLASS_to_string(identity[EI_CLASS]));
-  fprintf(stdout, "Endianness: %s\n",                 ELF_DATA_to_string(identity[EI_DATA]));
-  fprintf(stdout, "Version: %s\n",                    VERSION_to_string(identity[EI_VERSION]));
-  fprintf(stdout, "OS/ABI: %s\n",                     OS_ABI_to_string(identity[EI_OSABI]));
+  fprintf(stdout, "Class: %s\n",                      ELF_CLASS_to_string(identity[LIEF_ELF_EI_CLASS]));
+  fprintf(stdout, "Endianness: %s\n",                 ELF_DATA_to_string(identity[LIEF_ELF_EI_DATA]));
+  fprintf(stdout, "Version: %s\n",                    VERSION_to_string(identity[LIEF_ELF_EI_VERSION]));
+  fprintf(stdout, "OS/ABI: %s\n",                     OS_ABI_to_string(identity[LIEF_ELF_EI_OSABI]));
   fprintf(stdout, "File type: %s\n",                  E_TYPE_to_string(header.file_type));
   fprintf(stdout, "Architecture: %s\n",               ARCH_to_string(header.machine_type));
   fprintf(stdout, "Version: %s\n",                    VERSION_to_string(header.object_file_version));
@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
   for (i = 0; dynamic_entries[i] != NULL; ++i) {
     Elf_DynamicEntry_t* entry = dynamic_entries[i];
     switch(entry->tag) {
-      case DT_NEEDED:
+      case LIEF_ELF_DT_NEEDED:
         {
           Elf_DynamicEntry_Library_t* e = (Elf_DynamicEntry_Library_t*)entry;
           fprintf(stdout, ""
@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
             );
           break;
         }
-      case DT_SONAME:
+      case LIEF_ELF_DT_SONAME:
         {
           Elf_DynamicEntry_SharedObject_t* e = (Elf_DynamicEntry_SharedObject_t*)entry;
           fprintf(stdout, ""
@@ -204,7 +204,7 @@ int main(int argc, char **argv) {
           break;
         }
 
-      case DT_RPATH:
+      case LIEF_ELF_DT_RPATH:
         {
           Elf_DynamicEntry_Rpath_t* e = (Elf_DynamicEntry_Rpath_t*)entry;
           fprintf(stdout, ""
@@ -219,7 +219,7 @@ int main(int argc, char **argv) {
           break;
         }
 
-      case DT_RUNPATH:
+      case LIEF_ELF_DT_RUNPATH:
         {
           Elf_DynamicEntry_RunPath_t* e = (Elf_DynamicEntry_RunPath_t*)entry;
           fprintf(stdout, ""
@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
           break;
         }
 
-      case DT_FLAGS:
+      case LIEF_ELF_DT_FLAGS:
         {
           Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
           fprintf(stdout, ""
@@ -243,7 +243,7 @@ int main(int argc, char **argv) {
             DYNAMIC_TAGS_to_string(e->tag),
             e->value);
 
-          enum DYNAMIC_FLAGS* flags = e->flags;
+          enum LIEF_ELF_DYNAMIC_FLAGS* flags = e->flags;
           for (j = 0; flags[j] != 0; ++j) {
             fprintf(stdout, "%s ", DYNAMIC_FLAGS_to_string(flags[j]));
           }
@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
           break;
         }
 
-      case DT_FLAGS_1:
+      case LIEF_ELF_DT_FLAGS_1:
         {
           Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
           fprintf(stdout, ""
@@ -261,7 +261,7 @@ int main(int argc, char **argv) {
             DYNAMIC_TAGS_to_string(e->tag),
             e->value);
 
-          enum DYNAMIC_FLAGS_1* flags = e->flags_1;
+          enum LIEF_ELF_DYNAMIC_FLAGS_1* flags = e->flags_1;
           for (j = 0; flags[j] != 0; ++j) {
             fprintf(stdout, "%s ", DYNAMIC_FLAGS_1_to_string(flags[j]));
           }
@@ -271,9 +271,9 @@ int main(int argc, char **argv) {
         }
 
 
-      case DT_INIT_ARRAY:
-      case DT_FINI_ARRAY:
-      case DT_PREINIT_ARRAY:
+      case LIEF_ELF_DT_INIT_ARRAY:
+      case LIEF_ELF_DT_FINI_ARRAY:
+      case LIEF_ELF_DT_PREINIT_ARRAY:
         {
           Elf_DynamicEntry_Array_t* e = (Elf_DynamicEntry_Array_t*)entry;
           fprintf(stdout, ""

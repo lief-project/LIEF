@@ -39,10 +39,10 @@ class Parser;
 class Binary;
 class Builder;
 
-DLL_PUBLIC Section operator"" _section(const char* name);
+LIEF_API Section operator"" _section(const char* name);
 
 //! @brief Class wich represent sections
-class DLL_PUBLIC Section : public LIEF::Section {
+class LIEF_API Section : public LIEF::Section {
 
   friend class Parser;
   friend class Binary;
@@ -133,7 +133,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Section& section);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
 

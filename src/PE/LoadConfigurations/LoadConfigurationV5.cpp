@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -84,11 +84,7 @@ void LoadConfigurationV5::reserved2(uint16_t value) {
 
 
 void LoadConfigurationV5::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV4*>(this));
-  visitor.visit(this->guard_rf_failure_routine());
-  visitor.visit(this->guard_rf_failure_routine_function_pointer());
-  visitor.visit(this->dynamic_value_reloctable_offset());
-  visitor.visit(this->dynamic_value_reloctable_section());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV5::operator==(const LoadConfigurationV5& rhs) const {

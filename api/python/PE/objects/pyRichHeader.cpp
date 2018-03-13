@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 
 #include <string>
@@ -60,7 +60,7 @@ void init_PE_RichHeader_class(py::module& m) {
     .def("__ne__", &RichHeader::operator!=)
     .def("__hash__",
         [] (const RichHeader& rich_header) {
-          return LIEF::Hash::hash(rich_header);
+          return Hash::hash(rich_header);
         })
 
     .def("__str__", [] (const RichHeader& rich_header)

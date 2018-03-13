@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -55,9 +55,7 @@ void LoadConfigurationV0::se_handler_count(uint64_t se_handler_count) {
 }
 
 void LoadConfigurationV0::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfiguration*>(this)); // Double dispatch to avoid down-casting
-  visitor.visit(this->se_handler_table());
-  visitor.visit(this->se_handler_count());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV0::operator==(const LoadConfigurationV0& rhs) const {

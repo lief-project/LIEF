@@ -21,7 +21,7 @@
 #include <vector>
 #include <memory>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/type_traits.hpp"
@@ -33,7 +33,7 @@ namespace ELF {
 class Parser;
 
 //! @brief Class which modelize an entry in ``DT_VERNEED`` or ``.gnu.version_r`` table
-class DLL_PUBLIC SymbolVersionRequirement : public Visitable {
+class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 
   public:
@@ -69,7 +69,7 @@ class DLL_PUBLIC SymbolVersionRequirement : public Visitable {
     bool operator==(const SymbolVersionRequirement& rhs) const;
     bool operator!=(const SymbolVersionRequirement& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr);
 
   private:
     symbols_version_aux_requirement_t symbol_version_aux_requirement_;

@@ -24,7 +24,7 @@ LoadConfigurationV1::LoadConfigurationV1(const load_configuration_v1<T>* header)
   guard_cf_dispatch_function_pointer_{header->GuardCFDispatchFunctionPointer},
   guard_cf_function_table_{header->GuardCFFunctionTable},
   guard_cf_function_count_{header->GuardCFFunctionCount},
-  guard_flags_{header->GuardFlags}
+  guard_flags_{static_cast<GUARD_CF_FLAGS>(header->GuardFlags)}
 {
 }
 

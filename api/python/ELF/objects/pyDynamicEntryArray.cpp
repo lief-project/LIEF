@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -79,7 +79,7 @@ void init_ELF_DynamicEntryArray_class(py::module& m) {
     .def("__ne__", &DynamicEntryArray::operator!=)
     .def("__hash__",
         [] (const DynamicEntryArray& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
 

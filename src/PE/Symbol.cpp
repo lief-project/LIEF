@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/Symbol.hpp"
@@ -125,19 +125,7 @@ bool Symbol::has_section(void) const {
 }
 
 void Symbol::accept(LIEF::Visitor& visitor) const {
-
-  LIEF::Symbol::accept(visitor);
-
-  visitor.visit(this->value());
-  visitor.visit(this->section_number());
-  visitor.visit(this->type());
-  visitor.visit(this->base_type());
-  visitor.visit(this->complex_type());
-  visitor.visit(this->storage_class());
-  visitor.visit(this->numberof_aux_symbols());
-  if (this->has_section()) {
-    visitor(this->section());
-  }
+  visitor.visit(*this);
 }
 
 bool Symbol::operator==(const Symbol& rhs) const {

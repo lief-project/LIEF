@@ -35,7 +35,7 @@ extern "C" {
 struct Elf_Section_t {
   const char*            name;
   uint32_t               flags;
-  enum ELF_SECTION_TYPES type;
+  enum LIEF_ELF_ELF_SECTION_TYPES type;
   uint64_t               virtual_address;
   uint64_t               offset;
   uint64_t               original_size;

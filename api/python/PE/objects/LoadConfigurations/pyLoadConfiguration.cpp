@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (LoadConfiguration::*)(T);
 
 void init_PE_LoadConfiguration_class(py::module& m) {
-  py::class_<LoadConfiguration>(m, "LoadConfiguration",
+  py::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
     "Class modeling the default PE's ``LoadConfiguration``\n\n"
     "It's the base class for any future version of the structure"
     )
@@ -136,7 +136,7 @@ void init_PE_LoadConfiguration_class(py::module& m) {
     .def("__ne__", &LoadConfiguration::operator!=)
     .def("__hash__",
         [] (const LoadConfiguration& config) {
-          return LIEF::Hash::hash(config);
+          return Hash::hash(config);
         })
 
 

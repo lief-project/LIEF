@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/TLS.hpp"
@@ -26,7 +26,7 @@ namespace PE {
 TLS::~TLS(void) = default;
 
 TLS::TLS(void) :
-  Visitable{},
+  Object{},
   callbacks_{},
   VAOfRawData_{std::make_pair<uint64_t>(0, 0)},
   addressof_index_{0},
@@ -39,7 +39,7 @@ TLS::TLS(void) :
 {}
 
 TLS::TLS(const TLS& copy) :
-  Visitable{copy},
+  Object{copy},
   callbacks_{copy.callbacks_},
   VAOfRawData_{copy.VAOfRawData_},
   addressof_index_{copy.addressof_index_},
@@ -198,25 +198,7 @@ void TLS::data_template(const std::vector<uint8_t>& dataTemplate) {
 
 
 void TLS::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->addressof_raw_data().first);
-  visitor.visit(this->addressof_raw_data().second);
-  visitor.visit(this->addressof_index());
-  visitor.visit(this->addressof_callbacks());
-  visitor.visit(this->sizeof_zero_fill());
-  visitor.visit(this->characteristics());
-  visitor.visit(this->data_template());
-
-  if (this->has_section()) {
-    visitor(this->section());
-  }
-
-  if (this->has_data_directory()) {
-    visitor(this->directory());
-  }
-
-  for (uint64_t callback : this->callbacks()) {
-    visitor.visit(callback);
-  }
+  visitor.visit(*this);
 }
 
 bool TLS::operator==(const TLS& rhs) const {

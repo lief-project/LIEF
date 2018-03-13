@@ -24,21 +24,19 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC DynamicEntryLibrary : public DynamicEntry {
+class LIEF_API DynamicEntryLibrary : public DynamicEntry {
 
   public:
     using DynamicEntry::DynamicEntry;
 
-    DynamicEntryLibrary(const Elf64_Dyn* header);
-    DynamicEntryLibrary(const Elf32_Dyn* header);
     DynamicEntryLibrary(void);
-    DynamicEntryLibrary(const std::string& name = "");
+    DynamicEntryLibrary(const std::string& name);
 
     DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
     DynamicEntryLibrary(const DynamicEntryLibrary&);
 
-    virtual const std::string& name(void) const override;
-    virtual void name(const std::string& name) override;
+    const std::string& name(void) const;
+    void name(const std::string& name);
 
     virtual void accept(Visitor& visitor) const override;
 

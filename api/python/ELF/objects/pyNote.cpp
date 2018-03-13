@@ -18,7 +18,7 @@
 
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Note.hpp"
 
 template<class T>
@@ -29,7 +29,7 @@ using setter_t = void (Note::*)(T);
 
 void init_ELF_Note_class(py::module& m) {
 
-  py::class_<Note>(m, "Note")
+  py::class_<Note, LIEF::Object>(m, "Note")
     .def(py::init<>(),
         "Default ctor")
 
@@ -44,8 +44,8 @@ void init_ELF_Note_class(py::module& m) {
         )
 
     .def_property("type",
-        static_cast<getter_t<uint32_t>>(&Note::type),
-        static_cast<setter_t<uint32_t>>(&Note::type),
+        static_cast<getter_t<NOTE_TYPES>>(&Note::type),
+        static_cast<setter_t<NOTE_TYPES>>(&Note::type),
         "Return the type of the note. Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
         )
 
@@ -69,7 +69,7 @@ void init_ELF_Note_class(py::module& m) {
     .def("__ne__", &Note::operator!=)
     .def("__hash__",
         [] (const Note& note) {
-          return LIEF::Hash::hash(note);
+          return Hash::hash(note);
         })
 
     .def("__str__",

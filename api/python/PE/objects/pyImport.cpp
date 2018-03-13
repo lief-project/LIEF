@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Import.hpp"
 
 #include <string>
@@ -34,7 +34,7 @@ template<class T, class P>
 using no_const_func = T (Import::*)(P);
 
 void init_PE_Import_class(py::module& m) {
-  py::class_<Import>(m, "Import")
+  py::class_<Import, LIEF::Object>(m, "Import")
     .def(py::init<>(),
         "Default constructor with a library name")
 
@@ -106,7 +106,7 @@ void init_PE_Import_class(py::module& m) {
     .def("__ne__", &Import::operator!=)
     .def("__hash__",
         [] (const Import& import) {
-          return LIEF::Hash::hash(import);
+          return Hash::hash(import);
         })
 
 

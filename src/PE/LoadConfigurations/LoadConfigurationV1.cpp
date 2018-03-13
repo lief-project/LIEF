@@ -16,7 +16,7 @@
 #include <iomanip>
 #include <numeric>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -34,7 +34,7 @@ LoadConfigurationV1::LoadConfigurationV1(void) :
   guard_cf_dispatch_function_pointer_{0},
   guard_cf_function_table_{0},
   guard_cf_function_count_{0},
-  guard_flags_{0}
+  guard_flags_{GUARD_CF_FLAGS::GCF_NONE}
 {}
 
 
@@ -58,13 +58,13 @@ uint64_t LoadConfigurationV1::guard_cf_function_count(void) const {
   return this->guard_cf_function_count_;
 }
 
-uint32_t LoadConfigurationV1::guard_flags(void) const {
+GUARD_CF_FLAGS LoadConfigurationV1::guard_flags(void) const {
   return this->guard_flags_;
 }
 
 
 bool LoadConfigurationV1::has(GUARD_CF_FLAGS flag) const {
-  return (this->guard_flags() & flag) > 0;
+  return (this->guard_flags() & flag) != GUARD_CF_FLAGS::GCF_NONE;
 }
 
 guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list(void) const {
@@ -97,17 +97,12 @@ void LoadConfigurationV1::guard_cf_function_count(uint64_t guard_cf_function_cou
   this->guard_cf_function_count_ = guard_cf_function_count;
 }
 
-void LoadConfigurationV1::guard_flags(uint32_t guard_flags) {
+void LoadConfigurationV1::guard_flags(GUARD_CF_FLAGS guard_flags) {
   this->guard_flags_ = guard_flags;
 }
 
 void LoadConfigurationV1::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV0*>(this));
-  visitor.visit(this->guard_cf_check_function_pointer());
-  visitor.visit(this->guard_cf_dispatch_function_pointer());
-  visitor.visit(this->guard_cf_function_table());
-  visitor.visit(this->guard_cf_function_count());
-  visitor.visit(this->guard_flags());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV1::operator==(const LoadConfigurationV1& rhs) const {
@@ -136,7 +131,7 @@ std::ostream& LoadConfigurationV1::print(std::ostream& os) const {
   os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF dispatch function pointer:" << std::hex << this->guard_cf_dispatch_function_pointer() << std::endl;
   os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF function table :"           << std::hex << this->guard_cf_function_table()            << std::endl;
   os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF Function count:"            << std::dec << this->guard_cf_function_count()            << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard flags:"                   << std::hex << flags_str << " (" << this->guard_flags() << ")" << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard flags:"                   << std::hex << flags_str << " (" << static_cast<size_t>(this->guard_flags()) << ")" << std::endl;
   return os;
 }
 

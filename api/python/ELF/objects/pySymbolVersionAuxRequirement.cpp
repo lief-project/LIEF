@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 #include <string>
@@ -49,7 +49,7 @@ void init_ELF_SymbolVersionAuxRequirement_class(py::module& m) {
     .def("__ne__", &SymbolVersionAuxRequirement::operator!=)
     .def("__hash__",
         [] (const SymbolVersionAuxRequirement& svar) {
-          return LIEF::Hash::hash(svar);
+          return Hash::hash(svar);
         })
 
     .def("__str__",

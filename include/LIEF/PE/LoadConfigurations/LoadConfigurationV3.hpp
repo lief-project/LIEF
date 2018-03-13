@@ -30,7 +30,7 @@ namespace LIEF {
 namespace PE {
 
 //! @brief LoadConfiguration with Control Flow Guard improved
-class DLL_PUBLIC LoadConfigurationV3 : public LoadConfigurationV2 {
+class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
   public:
 
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14286;
@@ -38,7 +38,7 @@ class DLL_PUBLIC LoadConfigurationV3 : public LoadConfigurationV2 {
   LoadConfigurationV3(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV3(const load_configuration_v3<T>* header);
+  LIEF_LOCAL LoadConfigurationV3(const load_configuration_v3<T>* header);
 
   LoadConfigurationV3& operator=(const LoadConfigurationV3&);
   LoadConfigurationV3(const LoadConfigurationV3&);

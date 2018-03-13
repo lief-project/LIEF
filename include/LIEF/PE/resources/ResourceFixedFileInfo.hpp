@@ -20,7 +20,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 
@@ -29,7 +29,7 @@ namespace PE {
 
 //! @brief Modelization of the @link VS_FIXEDFILEINFO https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997(v=vs.85).aspx @endlink
 //! Structure
-class DLL_PUBLIC ResourceFixedFileInfo : public Visitable {
+class LIEF_API ResourceFixedFileInfo : public Object {
 
   public:
   ResourceFixedFileInfo(void);
@@ -111,7 +111,7 @@ class DLL_PUBLIC ResourceFixedFileInfo : public Visitable {
   bool operator==(const ResourceFixedFileInfo& rhs) const;
   bool operator!=(const ResourceFixedFileInfo& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_info);
 
   private:
   uint32_t                     signature_;

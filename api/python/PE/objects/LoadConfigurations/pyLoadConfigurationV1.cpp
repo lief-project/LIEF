@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
@@ -56,8 +56,8 @@ void init_PE_LoadConfigurationV1_class(py::module& m) {
         "The count of unique RVAs in the :attr:`~lief.PE.LoadConfigurationV1.guard_cf_function_table`")
 
     .def_property("guard_flags",
-        static_cast<getter_t<uint32_t>>(&LoadConfigurationV1::guard_flags),
-        static_cast<setter_t<uint32_t>>(&LoadConfigurationV1::guard_flags),
+        static_cast<getter_t<GUARD_CF_FLAGS>>(&LoadConfigurationV1::guard_flags),
+        static_cast<setter_t<GUARD_CF_FLAGS>>(&LoadConfigurationV1::guard_flags),
         "Control Flow Guard related flags.")
 
     .def("has",
@@ -76,7 +76,7 @@ void init_PE_LoadConfigurationV1_class(py::module& m) {
     .def("__ne__", &LoadConfigurationV1::operator!=)
     .def("__hash__",
         [] (const LoadConfigurationV1& config) {
-          return LIEF::Hash::hash(config);
+          return Hash::hash(config);
         })
 
 

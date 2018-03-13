@@ -23,6 +23,7 @@ from utils import get_sample
 class TestPe(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
+        self.maxDiff = None
 
 
     def test_code_view_pdb(self):
@@ -48,7 +49,7 @@ class TestPe(TestCase):
             'characteristics': 0,
             'code_view': {
                 'age': 1,
-                'cv_signature': 1396986706,
+                'cv_signature': 'PDB_70',
                 'filename': 'c:\\users\\romain\\documents\\visual studio 2015\\Projects\\HelloWorld\\x64\\Release\\ConsoleApplication1.pdb',
                 'signature': [245, 217, 227, 182, 71, 113, 1, 79, 162, 3, 170, 71, 124, 74, 186, 84]
             },

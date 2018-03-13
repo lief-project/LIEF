@@ -30,7 +30,7 @@ namespace MachO {
 
 class BinaryParser;
 
-class DLL_PUBLIC ThreadCommand : public LoadCommand {
+class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
   public:
     ThreadCommand(void);

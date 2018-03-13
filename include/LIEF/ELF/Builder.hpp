@@ -30,7 +30,7 @@ namespace LIEF {
 namespace ELF {
 
 //! @brief Class which take a ELF::Binary object and reconstruct a valid binary
-class DLL_PUBLIC Builder {
+class LIEF_API Builder {
   public:
     Builder(Binary *binary);
 

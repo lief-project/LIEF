@@ -43,10 +43,7 @@ const std::string& AuthenticatedAttributes::more_info(void) const {
 }
 
 void AuthenticatedAttributes::accept(Visitor& visitor) const {
-  visitor.visit(this->content_type());
-  visitor.visit(this->message_digest());
-  visitor.visit(u16tou8(this->program_name()));
-  visitor.visit(this->more_info());
+  visitor.visit(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authenticated_attributes) {

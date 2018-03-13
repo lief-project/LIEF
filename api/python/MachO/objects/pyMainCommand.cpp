@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -51,7 +51,7 @@ void init_MachO_MainCommand_class(py::module& m) {
     .def("__ne__", &MainCommand::operator!=)
     .def("__hash__",
         [] (const MainCommand& main) {
-          return LIEF::Hash::hash(main);
+          return Hash::hash(main);
         })
 
 

@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 
 #include <string>
@@ -74,7 +74,7 @@ void init_ELF_Relocation_class(py::module& m) {
     .def("__ne__", &Relocation::operator!=)
     .def("__hash__",
         [] (const Relocation& relocation) {
-          return LIEF::Hash::hash(relocation);
+          return Hash::hash(relocation);
         })
 
     .def("__str__",

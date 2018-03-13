@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/DylinkerCommand.hpp"
 
@@ -41,9 +41,7 @@ void DylinkerCommand::name(const std::string& name) {
 
 
 void DylinkerCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-
-  visitor.visit(this->name());
+  visitor.visit(*this);
 }
 
 

@@ -18,14 +18,14 @@
 #include <iostream>
 #include <set>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC OptionalHeader : public Visitable {
+class LIEF_API OptionalHeader : public Object {
   public:
     OptionalHeader(void);
     OptionalHeader(const pe32_optional_header *header);
@@ -110,7 +110,7 @@ class DLL_PUBLIC OptionalHeader : public Visitable {
     bool operator==(const OptionalHeader& rhs) const;
     bool operator!=(const OptionalHeader& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry);
 
   private:
     PE_TYPE   magic_;

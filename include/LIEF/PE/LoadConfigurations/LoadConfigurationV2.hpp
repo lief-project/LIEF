@@ -31,7 +31,7 @@ namespace LIEF {
 namespace PE {
 
 //! @brief LoadConfiguration enhanced with code integrity
-class DLL_PUBLIC LoadConfigurationV2 : public LoadConfigurationV1 {
+class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_9879;
   LoadConfigurationV2(void);
@@ -40,7 +40,7 @@ class DLL_PUBLIC LoadConfigurationV2 : public LoadConfigurationV1 {
   LoadConfigurationV2(const LoadConfigurationV2&);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV2(const load_configuration_v2<T>* header);
+  LIEF_LOCAL LoadConfigurationV2(const load_configuration_v2<T>* header);
 
   virtual WIN_VERSION version(void) const override;
 

@@ -20,24 +20,18 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryLibrary::DynamicEntryLibrary(void) = default;
 DynamicEntryLibrary& DynamicEntryLibrary::operator=(const DynamicEntryLibrary&) = default;
 DynamicEntryLibrary::DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
 
-DynamicEntryLibrary::DynamicEntryLibrary(const Elf64_Dyn* header) :
-  DynamicEntry{header}
-{}
-
-
-DynamicEntryLibrary::DynamicEntryLibrary(const Elf32_Dyn* header) :
-  DynamicEntry{header}
+DynamicEntryLibrary::DynamicEntryLibrary(void) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
+  libname_{}
 {}
 
 DynamicEntryLibrary::DynamicEntryLibrary(const std::string& name) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
   libname_{name}
-{
-}
+{}
 
 const std::string& DynamicEntryLibrary::name(void) const {
   return this->libname_;
@@ -50,9 +44,7 @@ void DynamicEntryLibrary::name(const std::string& name) {
 
 
 void DynamicEntryLibrary::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->name());
+  visitor.visit(*this);
 }
 
 std::ostream& DynamicEntryLibrary::print(std::ostream& os) const {

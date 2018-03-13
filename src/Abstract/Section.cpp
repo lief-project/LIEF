@@ -19,7 +19,7 @@
 #include <cmath>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/Abstract/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
@@ -200,16 +200,13 @@ double Section::entropy(void) const {
 
 
 void Section::accept(Visitor& visitor) const {
-  visitor.visit(this->name());
-  visitor.visit(this->virtual_address());
-  visitor.visit(this->offset());
-  visitor.visit(this->size());
+  visitor.visit(*this);
 }
 
 
 bool Section::operator==(const Section& rhs) const {
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
+  size_t hash_lhs = AbstractHash::hash(*this);
+  size_t hash_rhs = AbstractHash::hash(rhs);
   return hash_lhs == hash_rhs;
 }
 

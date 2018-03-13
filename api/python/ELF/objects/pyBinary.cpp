@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "pyELF.hpp"
@@ -463,6 +464,13 @@ void init_ELF_Binary_class(py::module& m) {
 
     .def(py::self -= Note())
     .def(py::self -= NOTE_TYPES())
+
+    .def("__eq__", &Binary::operator==)
+    .def("__ne__", &Binary::operator!=)
+    .def("__hash__",
+        [] (const Binary& binary) {
+          return Hash::hash(binary);
+        })
 
     .def("__getitem__",
         static_cast<Segment& (Binary::*)(SEGMENT_TYPES)>(&Binary::operator[]),

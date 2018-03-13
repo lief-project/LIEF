@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -68,7 +68,7 @@ void init_ELF_DynamicEntryFlags_class(py::module& m) {
     .def("__ne__", &DynamicEntryFlags::operator!=)
     .def("__hash__",
         [] (const DynamicEntryFlags& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
     .def(py::self += DYNAMIC_FLAGS())

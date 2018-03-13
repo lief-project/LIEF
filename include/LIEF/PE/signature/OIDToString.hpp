@@ -22,7 +22,7 @@ namespace LIEF {
 namespace PE {
 
 //! @brief Convert an OID to a human-readable string
-DLL_PUBLIC const char* oid_to_string(const oid_t& oid);
+LIEF_API const char* oid_to_string(const oid_t& oid);
 
 }
 }

@@ -23,7 +23,7 @@
 
 #include "LIEF/exception.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Header.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
@@ -210,14 +210,7 @@ void Header::reserved(uint32_t reserved) {
 
 
 void Header::accept(Visitor& visitor) const {
-  visitor.visit(this->magic());
-  visitor.visit(this->cpu_type());
-  visitor.visit(this->cpu_subtype());
-  visitor.visit(this->file_type());
-  visitor.visit(this->nb_cmds());
-  visitor.visit(this->sizeof_cmds());
-  visitor.visit(this->flags());
-  visitor.visit(this->reserved());
+  visitor.visit(*this);
 }
 
 bool Header::operator==(const Header& rhs) const {

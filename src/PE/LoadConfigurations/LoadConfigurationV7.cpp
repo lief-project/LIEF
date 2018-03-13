@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -54,9 +54,7 @@ void LoadConfigurationV7::addressof_unicode_string(uint64_t value) {
 }
 
 void LoadConfigurationV7::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV7*>(this));
-  visitor.visit(this->reserved3());
-  visitor.visit(this->addressof_unicode_string());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV7::operator==(const LoadConfigurationV7& rhs) const {

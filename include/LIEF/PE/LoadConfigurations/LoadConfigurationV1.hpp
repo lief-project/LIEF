@@ -33,14 +33,14 @@ namespace PE {
 //! @brief LoadConfiguration enhanced with Control Flow Guard
 //!
 //! This structure is available from Windows 8.1
-class DLL_PUBLIC LoadConfigurationV1 : public LoadConfigurationV0 {
+class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN8_1;
 
   LoadConfigurationV1(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV1(const load_configuration_v1<T>* header);
+  LIEF_LOCAL LoadConfigurationV1(const load_configuration_v1<T>* header);
 
   LoadConfigurationV1& operator=(const LoadConfigurationV1&);
   LoadConfigurationV1(const LoadConfigurationV1&);
@@ -62,7 +62,7 @@ class DLL_PUBLIC LoadConfigurationV1 : public LoadConfigurationV0 {
   uint64_t guard_cf_function_count(void) const;
 
   //! @brief Control Flow Guard related flags.
-  uint32_t guard_flags(void) const;
+  GUARD_CF_FLAGS guard_flags(void) const;
 
   //! @brief Check if the given flag is present in LoadConfigurationV1::guard_flags
   bool has(GUARD_CF_FLAGS flag) const;
@@ -74,7 +74,7 @@ class DLL_PUBLIC LoadConfigurationV1 : public LoadConfigurationV0 {
   void guard_cf_dispatch_function_pointer(uint64_t guard_cf_dispatch_function_pointer);
   void guard_cf_function_table(uint64_t guard_cf_function_table);
   void guard_cf_function_count(uint64_t guard_cf_function_count);
-  void guard_flags(uint32_t guard_flags);
+  void guard_flags(GUARD_CF_FLAGS guard_flags);
 
   virtual ~LoadConfigurationV1(void);
 
@@ -90,7 +90,7 @@ class DLL_PUBLIC LoadConfigurationV1 : public LoadConfigurationV0 {
   uint64_t guard_cf_dispatch_function_pointer_;
   uint64_t guard_cf_function_table_;
   uint64_t guard_cf_function_count_;
-  uint32_t guard_flags_;
+  GUARD_CF_FLAGS guard_flags_;
 };
 }
 }

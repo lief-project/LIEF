@@ -18,10 +18,24 @@
 
 #ifdef LIEF_JSON_SUPPORT
 
-#include "LIEF/visitors/elf_json.hpp"
+#include "LIEF/ELF/json.hpp"
+
 #include "LIEF/ELF.hpp"
 namespace LIEF {
 namespace ELF {
+
+
+json to_json(const Object& v) {
+  JsonVisitor visitor;
+  visitor(v);
+  return visitor.get();
+}
+
+
+std::string to_json_str(const Object& v) {
+  return ELF::to_json(v).dump();
+}
+
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
@@ -123,8 +137,6 @@ void JsonVisitor::visit(const Binary& binary) {
     notes.emplace_back(visitor.get());
   }
 
-
-
   this->node_["name"]         = binary.name();
   this->node_["entrypoint"]   = binary.entrypoint();
   this->node_["imagebase"]    = binary.imagebase();
@@ -213,7 +225,7 @@ void JsonVisitor::visit(const Segment& segment) {
 
   // TODO: sections
   this->node_["type"]             = to_string(segment.type());
-  this->node_["flags"]            = segment.flags();
+  this->node_["flags"]            = static_cast<size_t>(segment.flags());
   this->node_["file_offset"]      = segment.file_offset();
   this->node_["virtual_address"]  = segment.virtual_address();
   this->node_["physical_address"] = segment.physical_address();
@@ -231,33 +243,39 @@ void JsonVisitor::visit(const DynamicEntry& entry) {
 
 
 void JsonVisitor::visit(const DynamicEntryArray& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
   this->node_["array"] = entry.array();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryLibrary& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
   this->node_["library"] = entry.name();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryRpath& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
   this->node_["rpath"] = entry.rpath();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryRunPath& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
   this->node_["runpath"] = entry.runpath();
 }
 
 
 void JsonVisitor::visit(const DynamicSharedObject& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
   this->node_["library"] = entry.name();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryFlags& entry) {
+  this->visit(static_cast<const DynamicEntry&>(entry));
 
-  const dynamic_flags_list_t& flags = entry.flags();
+  const DynamicEntryFlags::flags_list_t& flags = entry.flags();
   std::vector<std::string> flags_str;
   flags_str.reserve(flags.size());
 
@@ -396,23 +414,6 @@ void JsonVisitor::visit(const SysvHash& sysvhash) {
 }
 
 
-// LIEF Abstract
-void JsonVisitor::visit(const LIEF::Binary& binary) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::ELF::Binary*>(&binary));
-}
-
-
-void JsonVisitor::visit(const LIEF::Symbol& symbol) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::ELF::Symbol*>(&symbol));
-}
-
-
-void JsonVisitor::visit(const LIEF::Section& section) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::ELF::Section*>(&section));
-}
 
 } // namespace ELF
 } // namespace LIEF

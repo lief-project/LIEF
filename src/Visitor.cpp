@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/Visitor.hpp"
+#include "LIEF/Object.hpp"
 
 namespace LIEF {
 Visitor::Visitor(void) = default;
@@ -23,22 +24,8 @@ Visitor::~Visitor(void) = default;
 void Visitor::operator()(void) {
 }
 
-
-// visit methods
-// =============
-
-// Fundamental types
-// =================
-void Visitor::visit(size_t) {
-}
-
-void Visitor::visit(const std::string&) {
-}
-
-void Visitor::visit(const std::u16string&) {
-}
-
-void Visitor::visit(const std::vector<uint8_t>&) {
+void Visitor::visit(const Object& v) {
+  v.accept(*this);
 }
 
 

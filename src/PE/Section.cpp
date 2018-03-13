@@ -21,7 +21,7 @@
 #include <numeric>
 #include <iterator>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
@@ -230,19 +230,7 @@ void Section::add_characteristic(SECTION_CHARACTERISTICS characteristic) {
 }
 
 void Section::accept(LIEF::Visitor& visitor) const {
-
-  LIEF::Section::accept(visitor);
-
-  visitor.visit(this->sizeof_raw_data());
-  visitor.visit(this->virtual_size());
-  visitor.visit(this->virtual_address());
-  visitor.visit(this->pointerto_raw_data());
-  visitor.visit(this->pointerto_relocation());
-  visitor.visit(this->pointerto_line_numbers());
-  visitor.visit(this->numberof_relocations());
-  visitor.visit(this->numberof_line_numbers());
-  visitor.visit(this->characteristics());
-  visitor.visit(this->content());
+  visitor.visit(*this);
 }
 
 bool Section::operator==(const Section& rhs) const {

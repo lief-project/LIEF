@@ -37,7 +37,7 @@ struct Macho_Section_t {
   uint32_t                 relocation_offset;
   uint32_t                 numberof_relocations;
   uint32_t                 flags;
-  enum MACHO_SECTION_TYPES type;
+  enum LIEF_MACHO_MACHO_SECTION_TYPES type;
   uint32_t                 reserved1;
   uint32_t                 reserved2;
   uint32_t                 reserved3;

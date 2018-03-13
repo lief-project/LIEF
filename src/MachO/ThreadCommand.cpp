@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include "LIEF/logging++.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 
@@ -101,10 +101,7 @@ void ThreadCommand::count(uint32_t count) {
 }
 
 void ThreadCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor.visit(this->flavor());
-  visitor.visit(this->count());
-  visitor.visit(this->state());
+  visitor.visit(*this);
 }
 
 

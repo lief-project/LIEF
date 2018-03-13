@@ -26,7 +26,7 @@
 namespace LIEF {
 namespace MachO {
 
-class DLL_PUBLIC RPathCommand : public LoadCommand {
+class LIEF_API RPathCommand : public LoadCommand {
   public:
     RPathCommand(void);
     RPathCommand(const rpath_command *rpathCmd);

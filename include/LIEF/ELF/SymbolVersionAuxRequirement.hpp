@@ -26,7 +26,7 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC SymbolVersionAuxRequirement : public SymbolVersionAux {
+class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   public:
     using SymbolVersionAux::name;
 
@@ -61,7 +61,7 @@ class DLL_PUBLIC SymbolVersionAuxRequirement : public SymbolVersionAux {
     bool operator==(const SymbolVersionAuxRequirement& rhs) const;
     bool operator!=(const SymbolVersionAuxRequirement& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
 
   private:
     uint32_t hash_;

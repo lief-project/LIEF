@@ -22,7 +22,7 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
 
@@ -428,16 +428,7 @@ Section& Section::clear(uint8_t value) {
 }
 
 void Section::accept(Visitor& visitor) const {
-
-  LIEF::Section::accept(visitor);
-
-  visitor.visit(this->type());
-  visitor.visit(this->flags());
-  visitor.visit(this->link());
-  visitor.visit(this->information());
-  visitor.visit(this->entry_size());
-  visitor.visit(this->alignment());
-  visitor.visit(this->content());
+  visitor.visit(*this);
 }
 
 

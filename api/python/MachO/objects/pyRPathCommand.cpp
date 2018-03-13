@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -45,7 +45,7 @@ void init_MachO_RPathCommand_class(py::module& m) {
     .def("__ne__", &RPathCommand::operator!=)
     .def("__hash__",
         [] (const RPathCommand& rpath_command) {
-          return LIEF::Hash::hash(rpath_command);
+          return Hash::hash(rpath_command);
         })
 
 

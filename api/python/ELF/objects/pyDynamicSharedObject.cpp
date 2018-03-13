@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -50,7 +50,7 @@ void init_ELF_DynamicSharedObject_class(py::module& m) {
     .def("__ne__", &DynamicSharedObject::operator!=)
     .def("__hash__",
         [] (const DynamicSharedObject& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
     .def("__str__",

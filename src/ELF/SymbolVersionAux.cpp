@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
@@ -41,7 +41,7 @@ void SymbolVersionAux::name(const std::string& name) {
 }
 
 void SymbolVersionAux::accept(Visitor& visitor) const {
-  visitor.visit(this->name());
+  visitor.visit(*this);
 }
 
 bool SymbolVersionAux::operator==(const SymbolVersionAux& rhs) const {

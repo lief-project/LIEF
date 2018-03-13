@@ -20,7 +20,7 @@
 #include <vector>
 #include <memory>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/type_traits.hpp"
@@ -35,18 +35,20 @@ class ResourceData;
 class Parser;
 class Builder;
 
-class DLL_PUBLIC ResourceNode : public Visitable {
+class LIEF_API ResourceNode : public Object {
 
   friend class Parser;
   friend class Builder;
 
   public:
   ResourceNode(const ResourceNode& other);
-  ResourceNode& operator=(ResourceNode other);
+  //ResourceNode& operator=(ResourceNode other);
 
   void swap(ResourceNode& other);
 
   virtual ~ResourceNode(void);
+
+  virtual ResourceNode* clone(void) const = 0;
 
   //! @brief Integer that identifies the Type, Name, or
   //! Language ID entry.
@@ -95,7 +97,7 @@ class DLL_PUBLIC ResourceNode : public Visitable {
   bool operator==(const ResourceNode& rhs) const;
   bool operator!=(const ResourceNode& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
 
   protected:
   ResourceNode(void);

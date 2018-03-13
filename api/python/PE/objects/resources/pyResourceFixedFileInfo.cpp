@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (ResourceFixedFileInfo::*)(T);
 
 void init_PE_ResourceFixedFileInfo_class(py::module& m) {
-  py::class_<ResourceFixedFileInfo>(m, "ResourceFixedFileInfo",
+  py::class_<ResourceFixedFileInfo, LIEF::Object>(m, "ResourceFixedFileInfo",
       "Modelization of the `VS_FIXEDFILEINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997(v=vs.85).aspx>`_")
 
     .def_property("signature",
@@ -114,7 +114,7 @@ void init_PE_ResourceFixedFileInfo_class(py::module& m) {
     .def("__ne__", &ResourceFixedFileInfo::operator!=)
     .def("__hash__",
         [] (const ResourceFixedFileInfo& fixed_file_info) {
-          return LIEF::Hash::hash(fixed_file_info);
+          return Hash::hash(fixed_file_info);
         })
 
     .def("__str__",

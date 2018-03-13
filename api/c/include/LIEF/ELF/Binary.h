@@ -45,7 +45,7 @@ struct Elf_Binary_t {
   void*              handler;
   const char*        name;
   const char*        interpreter;
-  enum ELF_CLASS     type;
+  enum LIEF_ELF_ELF_CLASS     type;
   Elf_Header_t       header;
   Elf_Section_t      **sections;
   Elf_Segment_t      **segments;
@@ -57,16 +57,16 @@ struct Elf_Binary_t {
 typedef struct Elf_Binary_t Elf_Binary_t;
 
 /** @brief Wrapper for LIEF::ELF::Parser::parse */
-DLL_PUBLIC Elf_Binary_t* elf_parse(const char *file);
+LIEF_API Elf_Binary_t* elf_parse(const char *file);
 
-DLL_PUBLIC void elf_binary_destroy(Elf_Binary_t* binary);
+LIEF_API void elf_binary_destroy(Elf_Binary_t* binary);
 
 /* ELF::Binary methods
  * ==================
  */
 
 /** @brief Update LIEF::ELF::Header object */
-DLL_PUBLIC int elf_binary_save_header(Elf_Binary_t* binary);
+LIEF_API int elf_binary_save_header(Elf_Binary_t* binary);
 
 
 

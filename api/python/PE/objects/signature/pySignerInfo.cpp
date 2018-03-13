@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
 
 #include "pyPE.hpp"
@@ -31,7 +31,7 @@ using setter_t = void (SignerInfo::*)(T);
 
 void init_PE_SignerInfo_class(py::module& m) {
 
-  py::class_<SignerInfo>(m, "SignerInfo")
+  py::class_<SignerInfo, LIEF::Object>(m, "SignerInfo")
 
     .def_property_readonly("version",
         &SignerInfo::version,

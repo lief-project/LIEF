@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-
-#include "LIEF/visitors/pe_json.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/json.hpp"
+#include "LIEF/hash.hpp"
 #include "LIEF/PE.hpp"
 
 namespace LIEF {
 namespace PE {
+
+json to_json(const Object& v) {
+  JsonVisitor visitor;
+  visitor(v);
+  return visitor.get();
+}
+
+std::string to_json_str(const Object& v) {
+  return PE::to_json(v).dump();
+}
 
 void JsonVisitor::visit(const Binary& binary) {
 
@@ -140,63 +148,7 @@ void JsonVisitor::visit(const Binary& binary) {
   if (binary.has_configuration()) {
     JsonVisitor visitor;
     const LoadConfiguration& config = binary.load_configuration();
-    WIN_VERSION version = config.version();
-    switch(version) {
-      case WIN_VERSION::WIN_SEH:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV0*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN8_1:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV1*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_9879:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV2*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_14286:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV3*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_14383:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV4*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_14901:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV5*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_15002:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV6*>(&config));
-          break;
-        }
-
-      case WIN_VERSION::WIN10_0_16237:
-        {
-          visitor(*dynamic_cast<const LoadConfigurationV7*>(&config));
-          break;
-        }
-
-
-      case WIN_VERSION::WIN_UNKNOWN:
-      default:
-        {
-          visitor(config);
-        }
-    }
+    config.accept(visitor);
     this->node_["load_configuration"] = visitor.get();
   }
 
@@ -252,7 +204,7 @@ void JsonVisitor::visit(const Header& header) {
   this->node_["pointerto_symbol_table"] = header.pointerto_symbol_table();
   this->node_["numberof_symbols"]       = header.numberof_symbols();
   this->node_["sizeof_optional_header"] = header.sizeof_optional_header();
-  this->node_["characteristics"]        = header.characteristics();
+  this->node_["characteristics"]        = static_cast<size_t>(header.characteristics());
 }
 
 void JsonVisitor::visit(const OptionalHeader& optional_header) {
@@ -409,25 +361,13 @@ void JsonVisitor::visit(const Debug& debug) {
   if (debug.has_code_view()) {
     JsonVisitor codeview_visitor;
     const CodeView& codeview = debug.code_view();
-    CODE_VIEW_SIGNATURES signature = codeview.cv_signature();
-    switch (signature) {
-      case CODE_VIEW_SIGNATURES::CVS_PDB_70:
-        {
-          codeview_visitor(dynamic_cast<const CodeViewPDB&>(codeview));
-          break;
-        }
-
-      default:
-        {
-          codeview_visitor(codeview);
-        }
-    }
+    codeview.accept(codeview_visitor);
     this->node_["code_view"] = codeview_visitor.get();
   }
 }
 
 void JsonVisitor::visit(const CodeView& cv) {
-  this->node_["cv_signature"] = cv.cv_signature();
+  this->node_["cv_signature"] = to_string(cv.cv_signature());
 }
 
 void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
@@ -615,8 +555,8 @@ void JsonVisitor::visit(const ResourceVersion& resource_version) {
 
 void JsonVisitor::visit(const ResourceIcon& resource_icon) {
   this->node_["id"]          = resource_icon.id();
-  this->node_["lang"]        = resource_icon.lang();
-  this->node_["sublang"]     = resource_icon.sublang();
+  this->node_["lang"]        = to_string(resource_icon.lang());
+  this->node_["sublang"]     = to_string(resource_icon.sublang());
   this->node_["width"]       = resource_icon.width();
   this->node_["height"]      = resource_icon.height();
   this->node_["color_count"] = resource_icon.color_count();
@@ -779,7 +719,7 @@ void JsonVisitor::visit(const LoadConfigurationV1& config) {
   this->node_["guard_cf_dispatch_function_pointer"] = config.guard_cf_dispatch_function_pointer();
   this->node_["guard_cf_function_table"]            = config.guard_cf_function_table();
   this->node_["guard_cf_function_count"]            = config.guard_cf_function_count();
-  this->node_["guard_flags"]                        = config.guard_flags();
+  this->node_["guard_flags"]                        = static_cast<size_t>(config.guard_flags());
   this->visit(static_cast<const LoadConfigurationV0&>(config));
 }
 

@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/Relocation.hpp"
 
@@ -23,6 +23,7 @@ namespace LIEF {
 namespace PE {
 
 Relocation::Relocation(const Relocation& other) :
+  Object{other},
   block_size_{other.block_size_},
   virtual_address_{other.virtual_address_},
   entries_{}
@@ -109,10 +110,7 @@ void Relocation::block_size(uint32_t block_size) {
 
 
 void Relocation::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->virtual_address());
-  for (const RelocationEntry& entry : this->entries()) {
-    visitor(entry);
-  }
+  visitor.visit(*this);
 }
 
 bool Relocation::operator==(const Relocation& rhs) const {

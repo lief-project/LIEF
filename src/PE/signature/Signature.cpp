@@ -51,14 +51,7 @@ const std::vector<uint8_t>& Signature::original_signature(void) const {
 }
 
 void Signature::accept(Visitor& visitor) const {
-  visitor.visit(this->version());
-  visitor.visit(this->digest_algorithm());
-  visitor(this->content_info());
-  for (const x509& x509_crt : this->certificates()) {
-    visitor(x509_crt);
-  }
-  visitor(this->signer_info());
-  visitor.visit(this->original_signature());
+  visitor.visit(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const Signature& signature) {

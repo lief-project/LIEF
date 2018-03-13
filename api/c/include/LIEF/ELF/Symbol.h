@@ -34,8 +34,8 @@ extern "C" {
 
 struct Elf_Symbol_t {
   const char*           name;
-  enum ELF_SYMBOL_TYPES type;
-  enum SYMBOL_BINDINGS  binding;
+  enum LIEF_ELF_ELF_SYMBOL_TYPES type;
+  enum LIEF_ELF_SYMBOL_BINDINGS  binding;
   uint8_t               information;
   uint8_t               other;
   uint16_t              shndx;

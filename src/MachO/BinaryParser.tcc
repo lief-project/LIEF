@@ -100,7 +100,7 @@ void BinaryParser::parse_load_commands(void) {
         this->stream_->read(loadcommands_offset, sizeof(load_command)));
 
     std::unique_ptr<LoadCommand> load_command{nullptr};
-    switch (command->cmd) {
+    switch (static_cast<LOAD_COMMAND_TYPES>(command->cmd)) {
 
       // ===============
       // Segment command
@@ -857,23 +857,23 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   it_segments segments = this->binary_->segments();
   while (not done and current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
     current_offset += sizeof(uint8_t);
 
 		switch (opcode) {
-		  case BIND_OPCODE_DONE:
+		  case BIND_OPCODES::BIND_OPCODE_DONE:
         {
 				  done = true;
 					break;
         }
 
-      case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
 				  library_ordinal = imm;
 					break;
         }
 
-			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
 
           value_delta     = this->stream_->read_uleb128(current_offset);
@@ -883,7 +883,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
 					// the special ordinals are negative numbers
 					if (imm == 0) {
@@ -895,7 +895,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
@@ -908,13 +908,13 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-      case BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
 					type = imm;
 					break;
         }
 
-			case BIND_OPCODE_SET_ADDEND_SLEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           svalue_delta    = this->stream_->read_sleb128(current_offset);
           addend          = std::get<0>(svalue_delta);
@@ -922,7 +922,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
 					segment_idx  = imm;
 
@@ -933,7 +933,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-			case BIND_OPCODE_ADD_ADDR_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
           value_delta     = this->stream_->read_uleb128(current_offset);
           segment_offset += std::get<0>(value_delta);
@@ -941,7 +941,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-      case BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_STANDARD,
@@ -957,7 +957,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-      case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_STANDARD,
@@ -975,7 +975,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+			case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_STANDARD,
@@ -991,7 +991,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 					break;
         }
 
-      case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
 
           // Count
@@ -1074,18 +1074,18 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
   while (not done and current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
     current_offset += sizeof(uint8_t);
 
 		switch (opcode) {
-		  case BIND_OPCODE_DONE:
+		  case BIND_OPCODES::BIND_OPCODE_DONE:
         {
 				  done = true;
 					break;
         }
 
 
-      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
@@ -1096,14 +1096,14 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 					break;
         }
 
-      case BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
 					type = imm;
 					break;
         }
 
 
-			case BIND_OPCODE_SET_ADDEND_SLEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           svalue_delta    = this->stream_->read_sleb128(current_offset);
           addend          = std::get<0>(svalue_delta);
@@ -1112,7 +1112,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
 					segment_idx  = imm;
 
@@ -1124,7 +1124,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-			case BIND_OPCODE_ADD_ADDR_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
           value_delta     = this->stream_->read_uleb128(current_offset);
           segment_offset += std::get<0>(value_delta);
@@ -1133,7 +1133,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-      case BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_WEAK,
@@ -1150,7 +1150,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-      case BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_WEAK,
@@ -1169,7 +1169,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-			case BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+			case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_WEAK,
@@ -1186,7 +1186,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         }
 
 
-      case BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
 
           // Count
@@ -1267,23 +1267,23 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
   while (current_offset < end_offset) {
     uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
     current_offset += sizeof(uint8_t);
 
 		switch (opcode) {
-		  case BIND_OPCODE_DONE:
+		  case BIND_OPCODES::BIND_OPCODE_DONE:
         {
 				  lazy_offset = current_offset - offset;
 					break;
         }
 
-      case BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
 				  library_ordinal = imm;
 					break;
         }
 
-			case BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
 
           value_delta     = this->stream_->read_uleb128(current_offset);
@@ -1293,7 +1293,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 					break;
         }
 
-			case BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
 					// the special ordinals are negative numbers
 					if (imm == 0) {
@@ -1305,7 +1305,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 					break;
         }
 
-      case BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 				  symbol_name = this->stream_->get_string(current_offset);
           current_offset += symbol_name.size() + 1;
@@ -1318,7 +1318,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 					break;
         }
 
-			case BIND_OPCODE_SET_ADDEND_SLEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           svalue_delta    = this->stream_->read_sleb128(current_offset);
           addend          = std::get<0>(svalue_delta);
@@ -1326,7 +1326,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 					break;
         }
 
-			case BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
 					segment_idx  = imm;
 
@@ -1337,11 +1337,11 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 					break;
         }
 
-      case BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_LAZY,
-              BIND_TYPES::BIND_TYPE_POINTER,
+              static_cast<uint8_t>(BIND_TYPES::BIND_TYPE_POINTER),
               segment_idx,
               segment_offset,
               symbol_name,

@@ -23,7 +23,7 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
 
@@ -39,13 +39,13 @@ Note::~Note(void)                  = default;
 
 Note::Note(void) :
   name_{""},
-  type_{0},
+  type_{NOTE_TYPES::NT_UNKNOWN},
   description_{}
 {}
 
 Note::Note(const std::string& name, uint32_t type, const description_t& description):
   name_{name},
-  type_{type},
+  type_{static_cast<NOTE_TYPES>(type)},
   description_{description}
 {}
 
@@ -58,7 +58,7 @@ const std::string& Note::name(void) const {
   return this->name_;
 }
 
-uint32_t Note::type(void) const {
+NOTE_TYPES Note::type(void) const {
   return this->type_;
 }
 
@@ -72,7 +72,7 @@ Note::description_t& Note::description(void) {
 
 
 NOTE_ABIS Note::abi(void) const {
-  if (static_cast<NOTE_TYPES>(this->type()) != NOTE_TYPES::NT_GNU_ABI_TAG) {
+  if (this->type() != NOTE_TYPES::NT_GNU_ABI_TAG) {
     return NOTE_ABIS::ELF_NOTE_UNKNOWN;
   }
 
@@ -86,7 +86,7 @@ NOTE_ABIS Note::abi(void) const {
 }
 
 Note::version_t Note::version(void) const {
-  if (static_cast<NOTE_TYPES>(this->type()) != NOTE_TYPES::NT_GNU_ABI_TAG) {
+  if (this->type() != NOTE_TYPES::NT_GNU_ABI_TAG) {
     return Note::UNKNOWN_VERSION;
   }
 
@@ -104,7 +104,7 @@ Note::version_t Note::version(void) const {
 void Note::name(const std::string& name) {
   this->name_ = name;
 }
-void Note::type(uint32_t type) {
+void Note::type(NOTE_TYPES type) {
   this->type_ = type;
 }
 
@@ -124,9 +124,7 @@ uint64_t Note::size(void) const {
 }
 
 void Note::accept(Visitor& visitor) const {
-  visitor.visit(this->name());
-  visitor.visit(this->type());
-  visitor.visit(this->description());
+  visitor.visit(*this);
 }
 
 
@@ -160,12 +158,12 @@ void Note::dump(std::ostream& os) const {
   description_str += "]";
   os << std::hex << std::left;
   os << std::setw(33) << std::setfill(' ') << "Name:" << this->name() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Type:" << to_string(static_cast<NOTE_TYPES>(this->type())) << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Type:" << to_string(this->type()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Description:" << description_str << std::endl;
 
 
   // ABI TAG
-  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_ABI_TAG) {
+  if (this->type() == NOTE_TYPES::NT_GNU_ABI_TAG) {
     Note::version_t version = this->version();
     std::string version_str = "";
     // Major
@@ -185,14 +183,14 @@ void Note::dump(std::ostream& os) const {
 
 
   // GOLD VERSION
-  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
+  if (this->type() == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
     std::string version_str{reinterpret_cast<const char*>(description.data()), description.size()};
     os << std::setw(33) << std::setfill(' ') << "Version:" << version_str << std::endl;
   }
 
 
   // BUILD ID
-  if (static_cast<NOTE_TYPES>(this->type()) == NOTE_TYPES::NT_GNU_BUILD_ID) {
+  if (this->type() == NOTE_TYPES::NT_GNU_BUILD_ID) {
     std::string hash = std::accumulate(
       std::begin(description),
       std::end(description), std::string{},

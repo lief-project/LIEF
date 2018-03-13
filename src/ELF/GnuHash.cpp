@@ -17,7 +17,7 @@
 #include <numeric>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
@@ -126,20 +126,7 @@ bool GnuHash::operator!=(const GnuHash& rhs) const {
 }
 
 void GnuHash::accept(Visitor& visitor) const {
-  visitor.visit(this->symbol_index());
-  visitor.visit(this->shift2());
-  for (uint64_t v : this->bloom_filters()) {
-    visitor.visit(v);
-  }
-
-  for (uint64_t v : this->buckets()) {
-    visitor.visit(v);
-  }
-
-  for (uint64_t v : this->hash_values()) {
-    visitor.visit(v);
-  }
-
+  visitor.visit(*this);
 }
 
 

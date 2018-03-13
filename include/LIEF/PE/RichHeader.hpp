@@ -18,7 +18,7 @@
 #include <array>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
@@ -29,7 +29,7 @@
 namespace LIEF {
 namespace PE {
 
-class DLL_PUBLIC RichHeader : public Visitable {
+class LIEF_API RichHeader : public Object {
   public:
 
     RichHeader(void);
@@ -56,7 +56,7 @@ class DLL_PUBLIC RichHeader : public Visitable {
     bool operator==(const RichHeader& rhs) const;
     bool operator!=(const RichHeader& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header);
 
   private:
     uint32_t       key_;

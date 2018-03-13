@@ -20,7 +20,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 
@@ -37,7 +37,7 @@ class ResourceVersion;
 //! It contains version information that can be displayed for a particular language and code page.
 //!
 //! See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646989(v=vs.85).aspx
-class DLL_PUBLIC ResourceStringFileInfo : public Visitable {
+class LIEF_API ResourceStringFileInfo : public Object {
 
   friend class ResourcesManager;
   friend class ResourceVersion;
@@ -76,7 +76,7 @@ class DLL_PUBLIC ResourceStringFileInfo : public Visitable {
   bool operator==(const ResourceStringFileInfo& rhs) const;
   bool operator!=(const ResourceStringFileInfo& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
 
   private:
   ResourceStringFileInfo(void);

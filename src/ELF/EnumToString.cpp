@@ -1143,9 +1143,10 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
 
 const char* to_string(ELF_SEGMENT_FLAGS e) {
   const std::map<ELF_SEGMENT_FLAGS, const char*> enum_strings {
-    { ELF_SEGMENT_FLAGS::PF_X, "X" },
-    { ELF_SEGMENT_FLAGS::PF_W, "W" },
-    { ELF_SEGMENT_FLAGS::PF_R, "R" },
+    { ELF_SEGMENT_FLAGS::PF_NONE, "NONE" },
+    { ELF_SEGMENT_FLAGS::PF_X,    "X" },
+    { ELF_SEGMENT_FLAGS::PF_W,    "W" },
+    { ELF_SEGMENT_FLAGS::PF_R,    "R" },
   };
 
   auto   it  = enum_strings.find(e);

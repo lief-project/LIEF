@@ -17,7 +17,7 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Relocation.hpp"
@@ -135,7 +135,7 @@ size_t RelocationEntry::size(void) const {
         return 64;
         break;
       }
-    case IMAGE_REL_BASED_ABSOLUTE:
+    case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE:
     default:
       {
         return 0;
@@ -149,10 +149,8 @@ void RelocationEntry::size(size_t size) {
 
 }
 
-void RelocationEntry::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->data());
-  visitor.visit(this->position());
-  visitor.visit(this->type());
+void RelocationEntry::accept(Visitor& visitor) const {
+  visitor.visit(*this);
 }
 
 bool RelocationEntry::operator==(const RelocationEntry& rhs) const {

@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -73,11 +73,7 @@ void LoadConfigurationV3::guard_long_jump_target_count(uint64_t value) {
 
 
 void LoadConfigurationV3::accept(Visitor& visitor) const {
-  visitor.visit(*static_cast<const LoadConfigurationV2*>(this));
-  visitor.visit(this->guard_address_taken_iat_entry_table());
-  visitor.visit(this->guard_address_taken_iat_entry_count());
-  visitor.visit(this->guard_long_jump_target_table());
-  visitor.visit(this->guard_long_jump_target_count());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV3::operator==(const LoadConfigurationV3& rhs) const {

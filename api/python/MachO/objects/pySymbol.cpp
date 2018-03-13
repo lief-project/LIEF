@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Section.hpp"
 
 #include "pyMachO.hpp"
@@ -80,7 +80,7 @@ void init_MachO_Symbol_class(py::module& m) {
     .def("__ne__", &Symbol::operator!=)
     .def("__hash__",
         [] (const Symbol& symbol) {
-          return LIEF::Hash::hash(symbol);
+          return Hash::hash(symbol);
         })
 
 

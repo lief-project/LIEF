@@ -25,20 +25,17 @@
 #include "LIEF/json.hpp"
 
 namespace LIEF {
-class DLL_PUBLIC JsonVisitor : public Visitor {
+
+LIEF_API json to_json(const Object& v);
+LIEF_API std::string to_json_str(const Object& v);
+
+class LIEF_API JsonVisitor : public Visitor {
 
   public:
-  using LIEF::Visitor::visit;
-
   JsonVisitor(void);
   JsonVisitor(const json& node);
   JsonVisitor(const JsonVisitor&);
   JsonVisitor& operator=(const JsonVisitor&);
-
-  virtual void visit(const Binary&  binary)  override;
-  virtual void visit(const Header&  header)  override;
-  virtual void visit(const Section& section) override;
-  virtual void visit(const Symbol&  symbol)  override;
 
   const json& get(void) const;
 

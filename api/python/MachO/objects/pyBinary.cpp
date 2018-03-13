@@ -18,6 +18,8 @@
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/MachO/Binary.hpp"
 
+#include "LIEF/MachO/hash.hpp"
+
 #include "pyMachO.hpp"
 
 template<class T>

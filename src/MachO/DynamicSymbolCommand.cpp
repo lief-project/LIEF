@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 
@@ -76,8 +76,7 @@ DynamicSymbolCommand::~DynamicSymbolCommand(void) = default;
 
 
 void DynamicSymbolCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  //TODO
+  visitor.visit(*this);
 }
 
 

@@ -19,14 +19,14 @@
 #include <iostream>
 #include <set>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 
 #include "LIEF/Abstract/enums.hpp"
 
 namespace LIEF {
-class DLL_PUBLIC Header : public Visitable {
+class LIEF_API Header : public Object {
   public:
   Header(void);
   Header(const Header&);
@@ -56,7 +56,7 @@ class DLL_PUBLIC Header : public Visitable {
   void entrypoint(uint64_t entrypoint);
   void endianness(ENDIANNESS endianness);
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   protected:
   ARCHITECTURES   architecture_;

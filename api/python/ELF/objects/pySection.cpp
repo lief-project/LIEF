@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/ELF/Section.hpp"
 
@@ -146,7 +146,7 @@ void init_ELF_Section_class(py::module& m) {
     .def("__ne__", &Section::operator!=)
     .def("__hash__",
         [] (const Section& section) {
-          return LIEF::Hash::hash(section);
+          return Hash::hash(section);
         })
 
     .def(py::self += ELF_SECTION_FLAGS())

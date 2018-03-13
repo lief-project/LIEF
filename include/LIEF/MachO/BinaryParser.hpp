@@ -39,7 +39,7 @@ class Parser;
 
 //! @brief Class used to parse **single** binary (i.e. **not** FAT)
 //! @see MachO::Parser
-class DLL_PUBLIC BinaryParser : public LIEF::Parser {
+class LIEF_API BinaryParser : public LIEF::Parser {
 
   friend class MachO::Parser;
 

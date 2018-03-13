@@ -25,24 +25,23 @@ DynamicEntryArray::DynamicEntryArray(void) = default;
 DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = default;
 DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
 
-DynamicEntryArray::DynamicEntryArray(const Elf64_Dyn* header) :
-  DynamicEntry{header}
+
+DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array) :
+  DynamicEntry::DynamicEntry{tag, 0},
+  array_{array}
 {}
 
-DynamicEntryArray::DynamicEntryArray(const Elf32_Dyn* header) :
-  DynamicEntry{header}
-{}
 
-std::vector<uint64_t>& DynamicEntryArray::array(void) {
-  return const_cast<std::vector<uint64_t>&>(static_cast<const DynamicEntryArray*>(this)->array());
+DynamicEntryArray::array_t& DynamicEntryArray::array(void) {
+  return const_cast<DynamicEntryArray::array_t&>(static_cast<const DynamicEntryArray*>(this)->array());
 }
 
 
-const std::vector<uint64_t>& DynamicEntryArray::array(void) const {
+const DynamicEntryArray::array_t& DynamicEntryArray::array(void) const {
   return this->array_;
 }
 
-void DynamicEntryArray::array(const std::vector<uint64_t>& array) {
+void DynamicEntryArray::array(const DynamicEntryArray::array_t& array) {
   this->array_ = array;
 }
 
@@ -98,15 +97,11 @@ uint64_t& DynamicEntryArray::operator[](size_t idx) {
 }
 
 void DynamicEntryArray::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-  for (uint64_t x : this->array()) {
-    visitor.visit(x);
-  }
+  visitor.visit(*this);
 }
 
 std::ostream& DynamicEntryArray::print(std::ostream& os) const {
-  const std::vector<uint64_t>& array = this->array();
+  const DynamicEntryArray::array_t& array = this->array();
   DynamicEntry::print(os);
   os << std::hex
      << std::left
@@ -125,6 +120,9 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
 
   return os;
 }
+
+
+DynamicEntryArray::~DynamicEntryArray(void) = default;
 
 }
 }

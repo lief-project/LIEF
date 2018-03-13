@@ -17,7 +17,7 @@
 
 #include "LIEF/ELF/Symbol.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
 
 
@@ -127,7 +127,7 @@ void init_ELF_Symbol_class(py::module& m) {
     .def("__ne__", &Symbol::operator!=)
     .def("__hash__",
         [] (const Symbol& symbol) {
-          return LIEF::Hash::hash(symbol);
+          return Hash::hash(symbol);
         })
 
 

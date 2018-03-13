@@ -18,7 +18,7 @@
 
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/AndroidNote.hpp"
 
 template<class T>
@@ -53,7 +53,7 @@ void init_ELF_AndroidNote_class(py::module& m) {
     .def("__ne__", &AndroidNote::operator!=)
     .def("__hash__",
         [] (const AndroidNote& note) {
-          return LIEF::Hash::hash(note);
+          return Hash::hash(note);
         })
 
     .def("__str__",

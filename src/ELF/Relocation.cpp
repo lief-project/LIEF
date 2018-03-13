@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/RelocationSizes.hpp"
@@ -234,15 +234,7 @@ void Relocation::purpose(RELOCATION_PURPOSES purpose) {
 }
 
 void Relocation::accept(Visitor& visitor) const {
-  visitor.visit(this->address());
-  visitor.visit(this->addend());
-  visitor.visit(this->type());
-  visitor.visit(this->architecture());
-  visitor.visit(this->purpose());
-  if (this->has_symbol()) {
-    visitor(this->symbol());
-  }
-
+  visitor.visit(*this);
 }
 
 

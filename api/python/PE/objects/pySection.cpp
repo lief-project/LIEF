@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/PE/Section.hpp"
 
@@ -109,7 +109,7 @@ void init_PE_Section_class(py::module& m) {
     .def("__ne__", &Section::operator!=)
     .def("__hash__",
         [] (const Section& section) {
-          return LIEF::Hash::hash(section);
+          return Hash::hash(section);
         })
 
     .def("__str__",

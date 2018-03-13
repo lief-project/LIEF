@@ -21,7 +21,7 @@
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/Abstract/type_traits.hpp"
 #include "LIEF/Abstract/Header.hpp"
@@ -33,7 +33,7 @@
 namespace LIEF {
 
 //! @brief Abstract binary
-class DLL_PUBLIC Binary : public Visitable {
+class LIEF_API Binary : public Object {
 
   public:
     Binary(void);
@@ -130,7 +130,7 @@ class DLL_PUBLIC Binary : public Visitable {
 
     virtual std::ostream& print(std::ostream& os) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 
   protected:
     std::string name_;

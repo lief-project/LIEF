@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/ResourceDirectory.hpp"
 
@@ -44,7 +44,7 @@ ResourceDirectory::ResourceDirectory(const ResourceDirectory& other) :
 
 
 void ResourceDirectory::swap(ResourceDirectory& other) {
-  ResourceNode::swap(static_cast<ResourceNode&>(other));
+  ResourceNode::swap(other);
   std::swap(this->characteristics_,     other.characteristics_);
   std::swap(this->timeDateStamp_,       other.timeDateStamp_);
   std::swap(this->majorVersion_,        other.majorVersion_);
@@ -72,6 +72,10 @@ ResourceDirectory::ResourceDirectory(const pe_resource_directory_table* header) 
   numberOfNameEntries_(header->NumberOfNameEntries),
   numberOfIDEntries_(header->NumberOfIDEntries)
 {}
+
+ResourceDirectory* ResourceDirectory::clone(void) const {
+  return new ResourceDirectory{*this};
+}
 
 
 uint32_t ResourceDirectory::characteristics(void) const {
@@ -129,15 +133,7 @@ void ResourceDirectory::numberof_id_entries(uint16_t numberof_id_entries) {
 }
 
 void ResourceDirectory::accept(Visitor& visitor) const {
-  ResourceNode::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-
-  visitor.visit(this->characteristics());
-  visitor.visit(this->time_date_stamp());
-  visitor.visit(this->major_version());
-  visitor.visit(this->minor_version());
-  visitor.visit(this->numberof_name_entries());
-  visitor.visit(this->numberof_id_entries());
+  visitor.visit(*this);
 }
 
 bool ResourceDirectory::operator==(const ResourceDirectory& rhs) const {

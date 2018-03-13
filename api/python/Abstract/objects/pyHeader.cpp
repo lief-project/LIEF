@@ -25,7 +25,7 @@ template<class T>
 using setter_t = void (LIEF::Header::*)(T);
 
 void init_LIEF_Header_class(py::module& m) {
-  py::class_<LIEF::Header>(m, "Header")
+  py::class_<LIEF::Header, LIEF::Object>(m, "Header")
     .def(py::init())
 
     .def_property("architecture",

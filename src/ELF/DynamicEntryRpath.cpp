@@ -22,18 +22,14 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryRpath::DynamicEntryRpath(void) = default;
+DynamicEntryRpath::DynamicEntryRpath(void) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
+  rpath_{}
+{}
+
 DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath&) = default;
 DynamicEntryRpath::DynamicEntryRpath(const DynamicEntryRpath&) = default;
 
-DynamicEntryRpath::DynamicEntryRpath(const Elf64_Dyn* header) :
-  DynamicEntry{header}
-{}
-
-
-DynamicEntryRpath::DynamicEntryRpath(const Elf32_Dyn* header) :
-  DynamicEntry{header}
-{}
 
 DynamicEntryRpath::DynamicEntryRpath(const std::string& rpath) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
@@ -132,9 +128,7 @@ DynamicEntryRpath& DynamicEntryRpath::operator-=(const std::string& path) {
 }
 
 void DynamicEntryRpath::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->rpath());
+  visitor.visit(*this);
 }
 
 std::ostream& DynamicEntryRpath::print(std::ostream& os) const {

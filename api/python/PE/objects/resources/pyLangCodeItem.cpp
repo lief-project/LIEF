@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (LangCodeItem::*)(T);
 
 void init_PE_LangCodeItem_class(py::module& m) {
-  py::class_<LangCodeItem>(m, "LangCodeItem",
+  py::class_<LangCodeItem, LIEF::Object>(m, "LangCodeItem",
       "Class which modelize the childs of the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) "\n\n"
       "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646992(v=vs.85).aspx")
 
@@ -77,7 +77,7 @@ void init_PE_LangCodeItem_class(py::module& m) {
     .def("__ne__", &LangCodeItem::operator!=)
     .def("__hash__",
         [] (const LangCodeItem& item) {
-          return LIEF::Hash::hash(item);
+          return Hash::hash(item);
         })
 
     .def("__str__",

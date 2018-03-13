@@ -18,7 +18,7 @@
 
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
 
@@ -30,7 +30,7 @@ using setter_t = void (SysvHash::*)(T);
 
 void init_ELF_SysvHash_class(py::module& m) {
 
-  py::class_<SysvHash>(m, "SysvHash")
+  py::class_<SysvHash, LIEF::Object>(m, "SysvHash")
     .def(py::init<>())
 
     .def_property_readonly("nbucket",
@@ -55,7 +55,7 @@ void init_ELF_SysvHash_class(py::module& m) {
     .def("__ne__", &SysvHash::operator!=)
     .def("__hash__",
         [] (const SysvHash& sysvhash) {
-          return LIEF::Hash::hash(sysvhash);
+          return Hash::hash(sysvhash);
         })
 
 

@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 
 #include <string>
@@ -55,7 +55,7 @@ void init_PE_RelocationEntry_class(py::module& m) {
     .def("__ne__", &RelocationEntry::operator!=)
     .def("__hash__",
         [] (const RelocationEntry& relocation_entry) {
-          return LIEF::Hash::hash(relocation_entry);
+          return Hash::hash(relocation_entry);
         })
 
     .def("__str__", [] (const RelocationEntry& relocation)

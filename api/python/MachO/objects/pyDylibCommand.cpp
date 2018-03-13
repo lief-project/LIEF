@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -62,7 +62,7 @@ void init_MachO_DylibCommand_class(py::module& m) {
     .def("__ne__", &DylibCommand::operator!=)
     .def("__hash__",
         [] (const DylibCommand& dylib_command) {
-          return LIEF::Hash::hash(dylib_command);
+          return Hash::hash(dylib_command);
         })
 
 

@@ -29,142 +29,118 @@
 
 #include "LIEF/PE/signature/types.hpp"
 
-namespace LIEF {
+#include "LIEF/visitor_macros.hpp"
 
+
+namespace LIEF {
 // Forward declarations
 // ====================
+class Object;
+LIEF_ABSTRACT_FORWARD(Binary)
+LIEF_ABSTRACT_FORWARD(Header)
+LIEF_ABSTRACT_FORWARD(Section)
+LIEF_ABSTRACT_FORWARD(Symbol)
+LIEF_ABSTRACT_FORWARD(Relocation)
 
-class Binary;
-class Header;
-class Section;
-class Symbol;
-class Relocation;
+// PE
+// ===============================
+LIEF_PE_FORWARD(Binary)
+LIEF_PE_FORWARD(DosHeader)
+LIEF_PE_FORWARD(Header)
+LIEF_PE_FORWARD(OptionalHeader)
+LIEF_PE_FORWARD(RichHeader)
+LIEF_PE_FORWARD(RichEntry)
+LIEF_PE_FORWARD(DataDirectory)
+LIEF_PE_FORWARD(Section)
+LIEF_PE_FORWARD(Relocation)
+LIEF_PE_FORWARD(RelocationEntry)
+LIEF_PE_FORWARD(Export)
+LIEF_PE_FORWARD(ExportEntry)
+LIEF_PE_FORWARD(TLS)
+LIEF_PE_FORWARD(Symbol)
+LIEF_PE_FORWARD(Debug)
+LIEF_PE_FORWARD(CodeView)
+LIEF_PE_FORWARD(CodeViewPDB)
+LIEF_PE_FORWARD(Import)
+LIEF_PE_FORWARD(ImportEntry)
+LIEF_PE_FORWARD(ResourceNode)
+LIEF_PE_FORWARD(ResourceData)
+LIEF_PE_FORWARD(ResourceDirectory)
+LIEF_PE_FORWARD(ResourcesManager)
+LIEF_PE_FORWARD(ResourceVersion)
+LIEF_PE_FORWARD(ResourceStringFileInfo)
+LIEF_PE_FORWARD(ResourceFixedFileInfo)
+LIEF_PE_FORWARD(ResourceVarFileInfo)
+LIEF_PE_FORWARD(LangCodeItem)
+LIEF_PE_FORWARD(ResourceIcon)
+LIEF_PE_FORWARD(ResourceDialog)
+LIEF_PE_FORWARD(ResourceDialogItem)
+LIEF_PE_FORWARD(Signature)
+LIEF_PE_FORWARD(x509)
+LIEF_PE_FORWARD(SignerInfo)
+LIEF_PE_FORWARD(ContentInfo)
+LIEF_PE_FORWARD(AuthenticatedAttributes)
+LIEF_PE_FORWARD(CodeIntegrity)
+LIEF_PE_FORWARD(LoadConfiguration)
+LIEF_PE_FORWARD(LoadConfigurationV0)
+LIEF_PE_FORWARD(LoadConfigurationV1)
+LIEF_PE_FORWARD(LoadConfigurationV2)
+LIEF_PE_FORWARD(LoadConfigurationV3)
+LIEF_PE_FORWARD(LoadConfigurationV4)
+LIEF_PE_FORWARD(LoadConfigurationV5)
+LIEF_PE_FORWARD(LoadConfigurationV6)
+LIEF_PE_FORWARD(LoadConfigurationV7)
 
-
-#if defined(LIEF_ELF_SUPPORT)
-namespace ELF {
-class Binary;
-class Header;
-class Section;
-class Segment;
-class Relocation;
-class GnuHash;
-class SysvHash;
-
-class Note;
-class AndroidNote;
-
-class DynamicEntry;
-class DynamicEntryArray;
-class DynamicEntryLibrary;
-class DynamicSharedObject;
-class DynamicEntryRunPath;
-class DynamicEntryRpath;
-class DynamicEntryFlags;
-
-class Symbol;
-class SymbolVersion;
-class SymbolVersionAux;
-class SymbolVersionAuxRequirement;
-class SymbolVersionRequirement;
-class SymbolVersionDefinition;
-}
-#endif
-
-#if defined(LIEF_PE_SUPPORT)
-namespace PE {
-class Binary;
-
-class DosHeader;
-class Header;
-class OptionalHeader;
-class RichHeader;
-class RichEntry;
-
-class DataDirectory;
-class Section;
-
-class Relocation;
-class RelocationEntry;
-
-class Export;
-class ExportEntry;
-
-class TLS;
-class Symbol;
-class Debug;
-class CodeView;
-class CodeViewPDB;
-
-class Import;
-class ImportEntry;
-
-class ResourceNode;
-class ResourceData;
-class ResourceDirectory;
-
-class ResourcesManager;
-class ResourceVersion;
-class ResourceStringFileInfo;
-class ResourceFixedFileInfo;
-class ResourceVarFileInfo;
-class LangCodeItem;
-
-class ResourceIcon;
-class ResourceDialog;
-class ResourceDialogItem;
-
-class Signature;
-class x509;
-class SignerInfo;
-class ContentInfo;
-class AuthenticatedAttributes;
-
-class CodeIntegrity;
-
-class LoadConfiguration;
-class LoadConfigurationV0;
-class LoadConfigurationV1;
-class LoadConfigurationV2;
-class LoadConfigurationV3;
-class LoadConfigurationV4;
-class LoadConfigurationV5;
-class LoadConfigurationV6;
-class LoadConfigurationV7;
-}
-#endif
-
-#if defined(LIEF_MACHO_SUPPORT)
-namespace MachO {
-class Binary;
-
-class Header;
-
-class LoadCommand;
-class UUIDCommand;
-class SymbolCommand;
-class SegmentCommand;
-class Section;
-class MainCommand;
-class DynamicSymbolCommand;
-class DylinkerCommand;
-class DylibCommand;
-class ThreadCommand;
-class RPathCommand;
-
-class Symbol;
-class Relocation;
-class RelocationObject;
-class RelocationDyld;
-
-class BindingInfo;
-class ExportInfo;
-}
-#endif
-// =====================
+// ELF
+// ==================================
+LIEF_ELF_FORWARD(Binary)
+LIEF_ELF_FORWARD(Header)
+LIEF_ELF_FORWARD(Section)
+LIEF_ELF_FORWARD(Segment)
+LIEF_ELF_FORWARD(DynamicEntry)
+LIEF_ELF_FORWARD(DynamicEntryArray)
+LIEF_ELF_FORWARD(DynamicEntryLibrary)
+LIEF_ELF_FORWARD(DynamicSharedObject)
+LIEF_ELF_FORWARD(DynamicEntryRunPath)
+LIEF_ELF_FORWARD(DynamicEntryRpath)
+LIEF_ELF_FORWARD(DynamicEntryFlags)
+LIEF_ELF_FORWARD(Symbol)
+LIEF_ELF_FORWARD(Relocation)
+LIEF_ELF_FORWARD(SymbolVersion)
+LIEF_ELF_FORWARD(SymbolVersionRequirement)
+LIEF_ELF_FORWARD(SymbolVersionDefinition)
+LIEF_ELF_FORWARD(SymbolVersionAux)
+LIEF_ELF_FORWARD(SymbolVersionAuxRequirement)
+LIEF_ELF_FORWARD(Note)
+LIEF_ELF_FORWARD(AndroidNote)
+LIEF_ELF_FORWARD(GnuHash)
+LIEF_ELF_FORWARD(SysvHash)
 
 
-class DLL_PUBLIC Visitor {
+// MACHO
+// ===============================
+LIEF_MACHO_FORWARD(Binary)
+LIEF_MACHO_FORWARD(Header)
+LIEF_MACHO_FORWARD(LoadCommand)
+LIEF_MACHO_FORWARD(UUIDCommand)
+LIEF_MACHO_FORWARD(SymbolCommand)
+LIEF_MACHO_FORWARD(SegmentCommand)
+LIEF_MACHO_FORWARD(Section)
+LIEF_MACHO_FORWARD(MainCommand)
+LIEF_MACHO_FORWARD(DynamicSymbolCommand)
+LIEF_MACHO_FORWARD(DylinkerCommand)
+LIEF_MACHO_FORWARD(DylibCommand)
+LIEF_MACHO_FORWARD(ThreadCommand)
+LIEF_MACHO_FORWARD(RPathCommand)
+LIEF_MACHO_FORWARD(Symbol)
+LIEF_MACHO_FORWARD(Relocation)
+LIEF_MACHO_FORWARD(RelocationObject)
+LIEF_MACHO_FORWARD(RelocationDyld)
+LIEF_MACHO_FORWARD(BindingInfo)
+LIEF_MACHO_FORWARD(ExportInfo)
+
+
+class LIEF_API Visitor {
   public:
   Visitor(void);
   virtual ~Visitor(void);
@@ -174,338 +150,256 @@ class DLL_PUBLIC Visitor {
   template<typename Arg1, typename... Args>
   void operator()(Arg1&& arg1, Args&&... args);
 
-  // Visit Fundamental types
-  // =======================
-  template<
-    typename T,
-    typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-  void visit(T n) {
-    this->visit(static_cast<size_t>(n));
-  }
-
-  template<
-    typename T,
-    size_t N,
-    typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-  void visit(const std::array<T, N>& array) {
-    for (const T& v : array) {
-      this->visit(static_cast<size_t>(v));
-    }
-  }
-
-  template<typename T, typename U>
-  void visit(const std::pair<T, U>& p) {
-    this->visit(std::get<0>(p));
-    this->visit(std::get<1>(p));
-  }
-
-
-  virtual void visit(size_t n);
-  virtual void visit(const std::string& str);
-  virtual void visit(const std::u16string& str);
-  virtual void visit(const std::vector<uint8_t>& raw);
-
+  virtual void visit(const Object&);
 
   // Abstract Part
   // =============
 
   //! @brief Method to visit a LIEF::Binary
-  virtual void visit(const Binary& binary);
+  LIEF_ABSTRACT_VISITABLE(Binary)
 
   //! @brief Method to visit a LIEF::Header
-  virtual void visit(const Header& header);
+  LIEF_ABSTRACT_VISITABLE(Header)
 
   //! @brief Method to visit a LIEF::Section
-  virtual void visit(const Section& section);
+  LIEF_ABSTRACT_VISITABLE(Section)
 
   //! @brief Method to visit a LIEF::Symbol
-  virtual void visit(const Symbol& symbol);
+  LIEF_ABSTRACT_VISITABLE(Symbol)
 
   //! @brief Method to visit a LIEF::Relocation
-  virtual void visit(const Relocation& relocation);
+  LIEF_ABSTRACT_VISITABLE(Relocation)
 
-  // ELF Part
-  // ========
-#if defined(LIEF_ELF_SUPPORT)
-  //! @brief Method to visit a LIEF::ELF::Binary
-  virtual void visit(const ELF::Binary& binary);
-
-  //! @brief Method to visit a LIEF::ELF::Header
-  virtual void visit(const ELF::Header& header);
-
-  //! @brief Method to visit a LIEF::ELF::Section
-  virtual void visit(const ELF::Section& section);
-
-  //! @brief Method to visit a LIEF::ELF::Segment
-  virtual void visit(const ELF::Segment& segment);
-
-  //! @brief Method to visit a LIEF::ELF::Relocation
-  virtual void visit(const ELF::Relocation& relocation);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntry
-  virtual void visit(const ELF::DynamicEntry& entry);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntryArray
-  virtual void visit(const ELF::DynamicEntryArray& array);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntryLibrary
-  virtual void visit(const ELF::DynamicEntryLibrary& library);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicSharedObject
-  virtual void visit(const ELF::DynamicSharedObject& shared);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntryRunPath
-  virtual void visit(const ELF::DynamicEntryRunPath& runpath);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntryRpath
-  virtual void visit(const ELF::DynamicEntryRpath& rpath);
-
-  //! @brief Method to visit a LIEF::ELF::DynamicEntryFlags
-  virtual void visit(const ELF::DynamicEntryFlags& flags);
-
-  //! @brief Method to visit a LIEF::ELF::Symbol
-  virtual void visit(const ELF::Symbol& symbol);
-
-  //! @brief Method to visit a LIEF::ELF::SymbolVersion
-  virtual void visit(const ELF::SymbolVersion& sv);
-
-  //! @brief Method to visit a LIEF::ELF::SymbolVersionAux
-  virtual void visit(const ELF::SymbolVersionAux& sva);
-
-  //! @brief Method to visit a LIEF::ELF::SymbolVersionAuxRequirement
-  virtual void visit(const ELF::SymbolVersionAuxRequirement& svar);
-
-  //! @brief Method to visit a LIEF::ELF::SymbolVersionRequirement
-  virtual void visit(const ELF::SymbolVersionRequirement& svr);
-
-  //! @brief Method to visit a LIEF::ELF::SymbolVersionDefinition
-  virtual void visit(const ELF::SymbolVersionDefinition& svd);
-
-  //! @brief Method to visit a LIEF::ELF::Note
-  virtual void visit(const ELF::Note& note);
-
-  //! @brief Method to visit a LIEF::ELF::AndroidNote
-  virtual void visit(const ELF::AndroidNote& android_note);
-
-  //! @brief Method to visit a LIEF::ELF::GnuHash
-  virtual void visit(const ELF::GnuHash& gnuhash);
-
-  //! @brief Method to visit a LIEF::ELF::SysvHash
-  virtual void visit(const ELF::SysvHash& sysvhash);
-#endif
+  LIEF_ELF_VISITABLE(Binary)
+  LIEF_ELF_VISITABLE(Header)
+  LIEF_ELF_VISITABLE(Section)
+  LIEF_ELF_VISITABLE(Segment)
+  LIEF_ELF_VISITABLE(DynamicEntry)
+  LIEF_ELF_VISITABLE(DynamicEntryArray)
+  LIEF_ELF_VISITABLE(DynamicEntryLibrary)
+  LIEF_ELF_VISITABLE(DynamicSharedObject)
+  LIEF_ELF_VISITABLE(DynamicEntryRunPath)
+  LIEF_ELF_VISITABLE(DynamicEntryRpath)
+  LIEF_ELF_VISITABLE(DynamicEntryFlags)
+  LIEF_ELF_VISITABLE(Symbol)
+  LIEF_ELF_VISITABLE(Relocation)
+  LIEF_ELF_VISITABLE(SymbolVersion)
+  LIEF_ELF_VISITABLE(SymbolVersionRequirement)
+  LIEF_ELF_VISITABLE(SymbolVersionDefinition)
+  LIEF_ELF_VISITABLE(SymbolVersionAux)
+  LIEF_ELF_VISITABLE(SymbolVersionAuxRequirement)
+  LIEF_ELF_VISITABLE(Note)
+  LIEF_ELF_VISITABLE(AndroidNote)
+  LIEF_ELF_VISITABLE(GnuHash)
+  LIEF_ELF_VISITABLE(SysvHash)
 
   // PE Part
   // =======
-#if defined(LIEF_PE_SUPPORT)
   //! @brief Method to visit a LIEF::PE::Binary
-  virtual void visit(const PE::Binary& binary);
+  LIEF_PE_VISITABLE(Binary)
 
   //! @brief Method to visit a LIEF::PE::DosHeader
-  virtual void visit(const PE::DosHeader& dos_header);
+  LIEF_PE_VISITABLE(DosHeader)
 
   //! @brief Method to visit a LIEF::PE:RichHeader
-  virtual void visit(const PE::RichHeader& rich_header);
+  LIEF_PE_VISITABLE(RichHeader)
 
   //! @brief Method to visit a LIEF::PE:RichEntry
-  virtual void visit(const PE::RichEntry& rich_entry);
+  LIEF_PE_VISITABLE(RichEntry)
 
   //! @brief Method to visit a LIEF::PE::Header
-  virtual void visit(const PE::Header& header);
+  LIEF_PE_VISITABLE(Header)
 
   //! @brief Method to visit a LIEF::PE::OptionalHeader
-  virtual void visit(const PE::OptionalHeader& optional_header);
+  LIEF_PE_VISITABLE(OptionalHeader)
 
   //! @brief Method to visit a LIEF::PE::DataDirectory
-  virtual void visit(const PE::DataDirectory& data_directory);
+  LIEF_PE_VISITABLE(DataDirectory)
 
   //! @brief Method to visit a LIEF::PE::TLS
-  virtual void visit(const PE::TLS& tls);
+  LIEF_PE_VISITABLE(TLS)
 
   //! @brief Method to visit a LIEF::PE::Symbol
-  virtual void visit(const PE::Symbol& symbol);
+  LIEF_PE_VISITABLE(Symbol)
 
   //! @brief Method to visit a LIEF::PE::Section
-  virtual void visit(const PE::Section& section);
+  LIEF_PE_VISITABLE(Section)
 
   //! @brief Method to visit a LIEF::PE::Relocation
-  virtual void visit(const PE::Relocation& relocation);
+  LIEF_PE_VISITABLE(Relocation)
 
   //! @brief Method to visit a LIEF::PE::RelocationEntry
-  virtual void visit(const PE::RelocationEntry& relocation_entry);
+  LIEF_PE_VISITABLE(RelocationEntry)
 
   //! @brief Method to visit a LIEF::PE::Export
-  virtual void visit(const PE::Export& exp);
+  LIEF_PE_VISITABLE(Export)
 
   //! @brief Method to visit a LIEF::PE::ExportEntry
-  virtual void visit(const PE::ExportEntry& export_entry);
+  LIEF_PE_VISITABLE(ExportEntry)
 
   //! @brief Method to visit a LIEF::PE::Debug
-  virtual void visit(const PE::Debug& debug);
+  LIEF_PE_VISITABLE(Debug)
 
   //! @brief Method to visit a LIEF::PE::CodeView
-  virtual void visit(const PE::CodeView& cv);
+  LIEF_PE_VISITABLE(CodeView)
 
   //! @brief Method to visit a LIEF::PE::CodeViewPDB
-  virtual void visit(const PE::CodeViewPDB& cvpdb);
+  LIEF_PE_VISITABLE(CodeViewPDB)
 
   //! @brief Method to visit a LIEF::PE::Import
-  virtual void visit(const PE::Import& import);
+  LIEF_PE_VISITABLE(Import)
 
   //! @brief Method to visit a LIEF::PE::ImportEntry
-  virtual void visit(const PE::ImportEntry& import_entry);
+  LIEF_PE_VISITABLE(ImportEntry)
 
   //! @brief Method to visit a LIEF::PE::ResourceNode
-  virtual void visit(const PE::ResourceNode& node);
+  LIEF_PE_VISITABLE(ResourceNode)
 
   //! @brief Method to visit a LIEF::PE::ResourceData
-  virtual void visit(const PE::ResourceData& data);
+  LIEF_PE_VISITABLE(ResourceData)
 
   //! @brief Method to visit a LIEF::PE::ResourceDirectory
-  virtual void visit(const PE::ResourceDirectory& directory);
+  LIEF_PE_VISITABLE(ResourceDirectory)
 
   //! @brief Method to visit a LIEF::PE::ResourceVersion
-  virtual void visit(const PE::ResourcesManager& resources_manager);
+  LIEF_PE_VISITABLE(ResourcesManager)
 
   //! @brief Method to visit a LIEF::PE::ResourceVersion
-  virtual void visit(const PE::ResourceVersion& resource_version);
+  LIEF_PE_VISITABLE(ResourceVersion)
 
   //! @brief Method to visit a LIEF::PE::ResourceStringFileInfo
-  virtual void visit(const PE::ResourceStringFileInfo& resource_string_file_info);
+  LIEF_PE_VISITABLE(ResourceStringFileInfo)
 
   //! @brief Method to visit a LIEF::PE::ResourceFixedFileInfo
-  virtual void visit(const PE::ResourceFixedFileInfo& resource_fixed_file_info);
+  LIEF_PE_VISITABLE(ResourceFixedFileInfo)
 
   //! @brief Method to visit a LIEF::PE::ResourceVarFileInfo
-  virtual void visit(const PE::ResourceVarFileInfo& resource_var_file_info);
+  LIEF_PE_VISITABLE(ResourceVarFileInfo)
 
   //! @brief Method to visit a LIEF::PE::LangCodeItem
-  virtual void visit(const PE::LangCodeItem& lang_code_item);
+  LIEF_PE_VISITABLE(LangCodeItem)
 
   //! @brief Method to visit a LIEF::PE::ResourceIcon
-  virtual void visit(const PE::ResourceIcon& resource_icon);
+  LIEF_PE_VISITABLE(ResourceIcon)
 
   //! @brief Method to visit a LIEF::PE::ResourceDialog
-  virtual void visit(const PE::ResourceDialog& resource_dialog);
+  LIEF_PE_VISITABLE(ResourceDialog)
 
   //! @brief Method to visit a LIEF::PE::ResourceDialogItem
-  virtual void visit(const PE::ResourceDialogItem& resource_dialogitem);
+  LIEF_PE_VISITABLE(ResourceDialogItem)
 
   //! @brief Method to visit a LIEF::PE::Signature
-  virtual void visit(const PE::Signature& signature);
+  LIEF_PE_VISITABLE(Signature)
 
   //! @brief Method to visit a LIEF::PE::x509
-  virtual void visit(const PE::x509& x509);
+  LIEF_PE_VISITABLE(x509)
 
   //! @brief Method to visit a LIEF::PE::SignerInfo
-  virtual void visit(const PE::SignerInfo& signer_info);
+  LIEF_PE_VISITABLE(SignerInfo)
 
   //! @brief Method to visit a LIEF::PE::ContentInfo
-  virtual void visit(const PE::ContentInfo& content_info);
+  LIEF_PE_VISITABLE(ContentInfo)
 
   //! @brief Method to visit a LIEF::PE::AuthenticatedAttributes
-  virtual void visit(const PE::AuthenticatedAttributes& authenticated_attributes);
+  LIEF_PE_VISITABLE(AuthenticatedAttributes)
 
   //! @brief Method to visit a LIEF::PE::issuer_t
-  virtual void visit(const PE::issuer_t& issuer);
+  LIEF_PE_VISITABLE(issuer_t)
 
   //! @brief Method to visit a LIEF::PE::LoadConfiguration
-  virtual void visit(const PE::LoadConfiguration& config);
+  LIEF_PE_VISITABLE(LoadConfiguration)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV0
-  virtual void visit(const PE::LoadConfigurationV0& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV0)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV1
-  virtual void visit(const PE::LoadConfigurationV1& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV1)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV2
-  virtual void visit(const PE::LoadConfigurationV2& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV2)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV3
-  virtual void visit(const PE::LoadConfigurationV3& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV3)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV4
-  virtual void visit(const PE::LoadConfigurationV4& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV4)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV5
-  virtual void visit(const PE::LoadConfigurationV5& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV5)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV6
-  virtual void visit(const PE::LoadConfigurationV6& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV6)
 
   //! @brief Method to visit a LIEF::PE::LoadConfigurationV7
-  virtual void visit(const PE::LoadConfigurationV7& config);
+  LIEF_PE_VISITABLE(LoadConfigurationV7)
 
   //! @brief Method to visit a LIEF::PE::CodeIntegrity
-  virtual void visit(const PE::CodeIntegrity& code_integrity);
-#endif
+  LIEF_PE_VISITABLE(CodeIntegrity)
 
   // MachO part
   // ==========
-#if defined(LIEF_MACHO_SUPPORT)
   //! @brief Method to visit a LIEF::MachO::Binary
-  virtual void visit(const MachO::Binary& binary);
+  LIEF_MACHO_VISITABLE(Binary)
 
   //! @brief Method to visit a LIEF::MachO::Header
-  virtual void visit(const MachO::Header& header);
+  LIEF_MACHO_VISITABLE(Header)
 
   //! @brief Method to visit a LIEF::MachO::LoadCommand
-  virtual void visit(const MachO::LoadCommand& load_command);
+  LIEF_MACHO_VISITABLE(LoadCommand)
 
   //! @brief Method to visit a LIEF::MachO::UUIDCommand
-  virtual void visit(const MachO::UUIDCommand& uuid_command);
+  LIEF_MACHO_VISITABLE(UUIDCommand)
 
   //! @brief Method to visit a LIEF::MachO::SymbolCommand
-  virtual void visit(const MachO::SymbolCommand& symbol_command);
+  LIEF_MACHO_VISITABLE(SymbolCommand)
 
   //! @brief Method to visit a LIEF::MachO::SegmentCommand
-  virtual void visit(const MachO::SegmentCommand& segment_command);
+  LIEF_MACHO_VISITABLE(SegmentCommand)
 
   //! @brief Method to visit a LIEF::MachO::Section
-  virtual void visit(const MachO::Section& section);
+  LIEF_MACHO_VISITABLE(Section)
 
   //! @brief Method to visit a LIEF::MachO::MainCommand
-  virtual void visit(const MachO::MainCommand& main_command);
+  LIEF_MACHO_VISITABLE(MainCommand)
 
   //! @brief Method to visit a LIEF::MachO::DynamicSymbolCommand
-  virtual void visit(const MachO::DynamicSymbolCommand& dyn_sym_cmd);
+  LIEF_MACHO_VISITABLE(DynamicSymbolCommand)
 
   //! @brief Method to visit a LIEF::MachO::DylinkerCommand
-  virtual void visit(const MachO::DylinkerCommand& dylinker_command);
+  LIEF_MACHO_VISITABLE(DylinkerCommand)
 
   //! @brief Method to visit a LIEF::MachO::DylibCommand
-  virtual void visit(const MachO::DylibCommand& dylib_command);
-
-  //! @brief Method to visit a LIEF::MachO::Symbol
-  virtual void visit(const MachO::Symbol& symbol);
-
-  //! @brief Method to visit a LIEF::MachO::Relocation
-  virtual void visit(const MachO::Relocation& relocation);
-
-  //! @brief Method to visit a LIEF::MachO::RelocationObject
-  virtual void visit(const MachO::RelocationObject& relocation);
-
-  //! @brief Method to visit a LIEF::MachO::RelocationDyld
-  virtual void visit(const MachO::RelocationDyld& relocation);
-
-  //! @brief Method to visit a LIEF::MachO::BindingInfo
-  virtual void visit(const MachO::BindingInfo& binding_info);
-
-  //! @brief Method to visit a LIEF::MachO::ExportInfo
-  virtual void visit(const MachO::ExportInfo& export_info);
+  LIEF_MACHO_VISITABLE(DylibCommand)
 
   //! @brief Method to visit a LIEF::MachO::ThreadCommand
-  virtual void visit(const MachO::ThreadCommand& thread);
+  LIEF_MACHO_VISITABLE(ThreadCommand)
 
   //! @brief Method to visit a LIEF::MachO::RPathCommand
-  virtual void visit(const MachO::RPathCommand& rpath_command);
-#endif
+  LIEF_MACHO_VISITABLE(RPathCommand)
+
+  //! @brief Method to visit a LIEF::MachO::Symbol
+  LIEF_MACHO_VISITABLE(Symbol)
+
+  //! @brief Method to visit a LIEF::MachO::Relocation
+  LIEF_MACHO_VISITABLE(Relocation)
+
+  //! @brief Method to visit a LIEF::MachO::RelocationObject
+  LIEF_MACHO_VISITABLE(RelocationObject)
+
+  //! @brief Method to visit a LIEF::MachO::RelocationDyld
+  LIEF_MACHO_VISITABLE(RelocationDyld)
+
+  //! @brief Method to visit a LIEF::MachO::BindingInfo
+  LIEF_MACHO_VISITABLE(BindingInfo)
+
+  //! @brief Method to visit a LIEF::MachO::ExportInfo
+  LIEF_MACHO_VISITABLE(ExportInfo)
 
   template<class T>
   void dispatch(const T& obj);
 
 
   private:
-
   std::set<size_t> visited_;
 };
 
@@ -520,10 +414,13 @@ void Visitor::operator()(Arg1&& arg1, Args&&... args) {
 template<class T>
 void Visitor::dispatch(const T& obj) {
   size_t hash = reinterpret_cast<size_t>(&obj);
-  if (this->visited_.find(hash) == std::end(this->visited_)) {
-    this->visited_.insert(hash);
-    this->visit(obj);
+  if (this->visited_.find(hash) != std::end(this->visited_)) {
+    // Already visited
+    return;
   }
+
+  this->visited_.insert(hash);
+  this->visit(obj);
 }
 
 }

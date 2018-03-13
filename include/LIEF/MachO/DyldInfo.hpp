@@ -36,7 +36,7 @@ namespace MachO {
 class BinaryParser;
 
 //! LC_DYLD_INFO and LC_DYLD_INFO_ONLY command model
-class DLL_PUBLIC DyldInfo : public LoadCommand {
+class LIEF_API DyldInfo : public LoadCommand {
 
   friend class BinaryParser;
 

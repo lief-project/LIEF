@@ -23,7 +23,7 @@ template<class T>
 using setter_t = void (LIEF::Section::*)(T);
 
 void init_LIEF_Section_class(py::module& m) {
-  py::class_<LIEF::Section>(m, "Section")
+  py::class_<LIEF::Section, LIEF::Object>(m, "Section")
     .def(py::init(),
         "Default constructor")
 

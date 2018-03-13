@@ -17,7 +17,7 @@
 #include <sstream>
 #include <numeric>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
@@ -72,11 +72,7 @@ void ResourceVarFileInfo::translations(const std::vector<uint32_t>& translations
 }
 
 void ResourceVarFileInfo::accept(Visitor& visitor) const {
-  visitor.visit(this->type());
-  visitor.visit(this->key());
-  for (uint32_t t : this->translations()) {
-    visitor.visit(t);
-  }
+  visitor.visit(*this);
 }
 
 

@@ -21,7 +21,7 @@
 #include <list>
 #include <memory>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/Structures.hpp"
@@ -32,7 +32,7 @@ namespace ELF {
 class Parser;
 
 //! @brief Class which modelization of an entry defined in ``DT_VERSYM``
-class DLL_PUBLIC SymbolVersion : public Visitable {
+class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
   public:
@@ -72,7 +72,7 @@ class DLL_PUBLIC SymbolVersion : public Visitable {
     bool operator==(const SymbolVersion& rhs) const;
     bool operator!=(const SymbolVersion& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
 
   private:
     uint16_t          value_;

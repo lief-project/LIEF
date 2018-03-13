@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 
@@ -168,19 +168,7 @@ void ResourceFixedFileInfo::file_date_LS(uint32_t file_date_LS) {
 }
 
 void ResourceFixedFileInfo::accept(Visitor& visitor) const {
-  visitor.visit(this->signature());
-  visitor.visit(this->struct_version());
-  visitor.visit(this->file_version_MS());
-  visitor.visit(this->file_version_LS());
-  visitor.visit(this->product_version_MS());
-  visitor.visit(this->product_version_LS());
-  visitor.visit(this->file_flags_mask());
-  visitor.visit(this->file_flags());
-  visitor.visit(this->file_os());
-  visitor.visit(this->file_type());
-  visitor.visit(this->file_subtype());
-  visitor.visit(this->file_date_MS());
-  visitor.visit(this->file_date_LS());
+  visitor.visit(*this);
 }
 
 

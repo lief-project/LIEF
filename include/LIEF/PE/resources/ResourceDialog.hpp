@@ -22,7 +22,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/type_traits.hpp"
@@ -41,7 +41,7 @@ class ResourcesManager;
 //!
 //! ResourceDialog::is_extended checks
 //! the type of the Dialog
-class DLL_PUBLIC ResourceDialog : public Visitable {
+class LIEF_API ResourceDialog : public Object {
 
   friend class ResourcesManager;
 
@@ -136,7 +136,7 @@ class DLL_PUBLIC ResourceDialog : public Visitable {
   bool operator==(const ResourceDialog& rhs) const;
   bool operator!=(const ResourceDialog& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog);
 
   private:
   uint16_t version_;

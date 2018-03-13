@@ -24,7 +24,7 @@
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
-class DLL_PUBLIC Handler {
+class LIEF_API Handler {
   public:
     static constexpr size_t MAX_SIZE = 1_GB;
     Handler(const std::vector<uint8_t>& content);

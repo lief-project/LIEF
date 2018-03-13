@@ -16,7 +16,7 @@
 #include "pyMachO.hpp"
 
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 
 #include <string>
@@ -113,7 +113,7 @@ void init_MachO_SegmentCommand_class(py::module& m) {
     .def("__ne__", &SegmentCommand::operator!=)
     .def("__hash__",
         [] (const SegmentCommand& segment_command) {
-          return LIEF::Hash::hash(segment_command);
+          return Hash::hash(segment_command);
         })
 
 

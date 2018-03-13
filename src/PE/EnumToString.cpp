@@ -972,6 +972,7 @@ const char* to_string(WIN_VERSION e) {
 
 const char* to_string(GUARD_CF_FLAGS e) {
   const std::map<GUARD_CF_FLAGS, const char*> enumStrings {
+    { GUARD_CF_FLAGS::GCF_NONE,                             "NONE"                            },
     { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "INSTRUMENTED"                    },
     { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "W_INSTRUMENTED"                  },
     { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "FUNCTION_TABLE_PRESENT"          },

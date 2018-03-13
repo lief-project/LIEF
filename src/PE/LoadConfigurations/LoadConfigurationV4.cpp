@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
@@ -54,9 +54,7 @@ void LoadConfigurationV4::hybrid_metadata_pointer(uint64_t value) {
 }
 
 void LoadConfigurationV4::accept(Visitor& visitor) const {
-  visitor(*static_cast<const LoadConfigurationV3*>(this));
-  visitor.visit(this->dynamic_value_reloc_table());
-  visitor.visit(this->hybrid_metadata_pointer());
+  visitor.visit(*this);
 }
 
 bool LoadConfigurationV4::operator==(const LoadConfigurationV4& rhs) const {

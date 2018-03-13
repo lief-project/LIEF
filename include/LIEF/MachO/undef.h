@@ -16,6 +16,10 @@
 #ifndef LIEF_MACHO_UNDEF_H_
 #define LIEF_MACHO_UNDEF_H_
 
+#ifdef MH_MAGIC
+#pragma message("LIEF will disable #define enums. Please use LIEF_MACHO_XXXX or LIEF::MACHO::XXXX instead!")
+#endif
+
 #undef  MH_MAGIC
 #undef  MH_CIGAM
 #undef  MH_MAGIC_64

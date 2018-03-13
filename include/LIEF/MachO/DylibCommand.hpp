@@ -26,7 +26,7 @@
 
 namespace LIEF {
 namespace MachO {
-class DLL_PUBLIC DylibCommand : public LoadCommand {
+class LIEF_API DylibCommand : public LoadCommand {
   public:
     DylibCommand(void);
     DylibCommand(const dylib_command *cmd);

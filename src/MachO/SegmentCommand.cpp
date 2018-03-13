@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/SegmentCommand.hpp"
 
@@ -179,22 +179,7 @@ void SegmentCommand::remove_all_sections(void) {
 
 
 void SegmentCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-
-  visitor.visit(this->name());
-  visitor.visit(this->virtual_address());
-  visitor.visit(this->virtual_size());
-  visitor.visit(this->file_size());
-  visitor.visit(this->file_offset());
-  visitor.visit(this->max_protection());
-  visitor.visit(this->init_protection());
-  visitor.visit(this->numberof_sections());
-  visitor.visit(this->flags());
-  visitor.visit(this->content());
-
-  for (const Section& section : this->sections()) {
-    visitor(section);
-  }
+  visitor.visit(*this);
 }
 
 bool SegmentCommand::operator==(const SegmentCommand& rhs) const {

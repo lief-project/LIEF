@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
@@ -69,30 +69,8 @@ void DynamicEntry::value(uint64_t value) {
   this->value_ = value;
 }
 
-
-const std::string& DynamicEntry::name(void) const {
-  throw LIEF::not_found("This dynamic hasn't name field");
-}
-
-
-void DynamicEntry::name(const std::string&) {
-  throw LIEF::not_found("This dynamic hasn't name field");
-}
-
-
-std::vector<uint64_t>& DynamicEntry::array(void) {
-  throw LIEF::not_found("This dynamic entry hasn't array");
-}
-
-
-void DynamicEntry::array(const std::vector<uint64_t>&) {
-  throw LIEF::not_found("This dynamic entry hasn't array");
-}
-
 void DynamicEntry::accept(Visitor& visitor) const {
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->value());
-  visitor.visit(this->tag());
+  visitor.visit(*this);
 }
 
 

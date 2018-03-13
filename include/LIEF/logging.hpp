@@ -39,9 +39,9 @@ enum LOGGING_LEVEL {
   LOG_UNKNOWN = 1010,
 };
 
-DLL_PUBLIC const char* to_string(LOGGING_LEVEL e);
+LIEF_API const char* to_string(LOGGING_LEVEL e);
 
-class DLL_PUBLIC Logger {
+class LIEF_API Logger {
   public:
   Logger(void);
   Logger(const Logger&) = delete;

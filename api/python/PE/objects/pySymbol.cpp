@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Symbol.hpp"
 
 #include <string>
@@ -71,7 +71,7 @@ void init_PE_Symbol_class(py::module& m) {
     .def("__ne__", &Symbol::operator!=)
     .def("__hash__",
         [] (const Symbol& symbol) {
-          return LIEF::Hash::hash(symbol);
+          return Hash::hash(symbol);
         })
 
 

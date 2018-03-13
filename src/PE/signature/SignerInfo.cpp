@@ -59,12 +59,7 @@ const std::vector<uint8_t>& SignerInfo::encrypted_digest(void) const {
 }
 
 void SignerInfo::accept(Visitor& visitor) const {
-  visitor.visit(this->version());
-  visitor.visit(this->issuer());
-  visitor.visit(this->digest_algorithm());
-  visitor(this->authenticated_attributes());
-  visitor.visit(this->signature_algorithm());
-  visitor.visit(this->encrypted_digest());
+  visitor.visit(*this);
 }
 
 

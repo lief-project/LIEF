@@ -21,7 +21,7 @@
 #include <vector>
 #include <functional>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/type_traits.hpp"
 
@@ -31,13 +31,12 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC Header : public Visitable {
+class LIEF_API Header : public Object {
 
   public:
-    using identity_t = std::array<uint8_t, IDENTITY::EI_NIDENT>;
+    using identity_t = std::array<uint8_t, 16>;
 
     Header(void);
-    Header(const std::vector<uint8_t>& header);
     Header(const Elf32_Ehdr *header);
     Header(const Elf64_Ehdr *header);
 
@@ -173,7 +172,7 @@ class DLL_PUBLIC Header : public Visitable {
     bool operator==(const Header& rhs) const;
     bool operator!=(const Header& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   private:
     //! Field which represent ElfXX_Ehdr->e_ident

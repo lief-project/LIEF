@@ -502,7 +502,7 @@ void Parser::parse_symbols(void) {
       // * Storage class : EXTERNAL
       // * Type          : 0x20 (Function)
       // * Section Number: > 0
-      if (symbol.storage_class() == IMAGE_SYM_CLASS_EXTERNAL and
+      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_EXTERNAL and
           symbol.type() == 0x20 and symbol.section_number() > 0) {
         VLOG(VDEBUG) << "Format1";
       }
@@ -510,7 +510,7 @@ void Parser::parse_symbols(void) {
 
       // Auxiliary Format 2: .bf and .ef Symbols
       // * Storage class : FUNCTION
-      if (symbol.storage_class() == IMAGE_SYM_CLASS_FUNCTION) {
+      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_FUNCTION) {
         VLOG(VDEBUG) << "Function";
       }
 
@@ -518,22 +518,22 @@ void Parser::parse_symbols(void) {
       // * Storage class : EXTERNAL
       // * Section Number: UNDEF
       // * Value         : 0
-      if (symbol.storage_class() == IMAGE_SYM_CLASS_EXTERNAL and
-          symbol.value() == 0 and symbol.section_number() == IMAGE_SYM_UNDEFINED) {
+      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_EXTERNAL and
+          symbol.value() == 0 and static_cast<SYMBOL_SECTION_NUMBER>(symbol.section_number()) == SYMBOL_SECTION_NUMBER::IMAGE_SYM_UNDEFINED) {
         VLOG(VDEBUG) << "Format 3";
       }
 
       // Auxiliary Format 4: Files
       // * Storage class     : FILE
       // * Name **SHOULD** be: .file
-      if (symbol.storage_class() == IMAGE_SYM_CLASS_FILE) {
+      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_FILE) {
         VLOG(VDEBUG) << "Format 4";
         //std::cout << reinterpret_cast<char*>(
       }
 
       // Auxiliary Format 5: Section Definitions
       // * Storage class     : STATIC
-      if (symbol.storage_class() == IMAGE_SYM_CLASS_STATIC) {
+      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_STATIC) {
         VLOG(VDEBUG) << "Format 5";
       }
 
@@ -601,6 +601,7 @@ void Parser::parse_debug_code_view() {
         std::unique_ptr<CodeViewPDB> codeview{new CodeViewPDB{CodeViewPDB::from_pdb70(sig, pdb_s->age, path)}};
 
         debug_info.code_view_ = codeview.release();
+        break;
       }
 
     default:

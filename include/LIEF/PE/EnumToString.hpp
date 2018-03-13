@@ -21,48 +21,48 @@
 
 namespace LIEF {
 namespace PE {
-DLL_PUBLIC const char* to_string(PE_TYPE e);
-DLL_PUBLIC const char* to_string(DATA_DIRECTORY e);
+LIEF_API const char* to_string(PE_TYPE e);
+LIEF_API const char* to_string(DATA_DIRECTORY e);
 
-DLL_PUBLIC const char* to_string(MACHINE_TYPES e);
-DLL_PUBLIC const char* to_string(HEADER_CHARACTERISTICS e);
-DLL_PUBLIC const char* to_string(SUBSYSTEM e);
-DLL_PUBLIC const char* to_string(DLL_CHARACTERISTICS e);
+LIEF_API const char* to_string(MACHINE_TYPES e);
+LIEF_API const char* to_string(HEADER_CHARACTERISTICS e);
+LIEF_API const char* to_string(SUBSYSTEM e);
+LIEF_API const char* to_string(DLL_CHARACTERISTICS e);
 
-DLL_PUBLIC const char* to_string(SECTION_CHARACTERISTICS e);
-DLL_PUBLIC const char* to_string(PE_SECTION_TYPES e);
+LIEF_API const char* to_string(SECTION_CHARACTERISTICS e);
+LIEF_API const char* to_string(PE_SECTION_TYPES e);
 
-DLL_PUBLIC const char* to_string(SYMBOL_BASE_TYPES e);
-DLL_PUBLIC const char* to_string(SYMBOL_COMPLEX_TYPES e);
-DLL_PUBLIC const char* to_string(SYMBOL_SECTION_NUMBER e);
-DLL_PUBLIC const char* to_string(SYMBOL_STORAGE_CLASS e);
+LIEF_API const char* to_string(SYMBOL_BASE_TYPES e);
+LIEF_API const char* to_string(SYMBOL_COMPLEX_TYPES e);
+LIEF_API const char* to_string(SYMBOL_SECTION_NUMBER e);
+LIEF_API const char* to_string(SYMBOL_STORAGE_CLASS e);
 
-DLL_PUBLIC const char* to_string(RELOCATIONS_BASE_TYPES e);
-DLL_PUBLIC const char* to_string(RELOCATIONS_I386 e);
-DLL_PUBLIC const char* to_string(RELOCATIONS_AMD64 e);
-DLL_PUBLIC const char* to_string(RELOCATIONS_ARM e);
+LIEF_API const char* to_string(RELOCATIONS_BASE_TYPES e);
+LIEF_API const char* to_string(RELOCATIONS_I386 e);
+LIEF_API const char* to_string(RELOCATIONS_AMD64 e);
+LIEF_API const char* to_string(RELOCATIONS_ARM e);
 
-DLL_PUBLIC const char* to_string(DEBUG_TYPES e);
-DLL_PUBLIC const char* to_string(CODE_VIEW_SIGNATURES e);
+LIEF_API const char* to_string(DEBUG_TYPES e);
+LIEF_API const char* to_string(CODE_VIEW_SIGNATURES e);
 
-DLL_PUBLIC const char* to_string(RESOURCE_TYPES e);
-DLL_PUBLIC const char* to_string(RESOURCE_LANGS e);
-DLL_PUBLIC const char* to_string(RESOURCE_SUBLANGS e);
-DLL_PUBLIC const char* to_string(CODE_PAGES e);
+LIEF_API const char* to_string(RESOURCE_TYPES e);
+LIEF_API const char* to_string(RESOURCE_LANGS e);
+LIEF_API const char* to_string(RESOURCE_SUBLANGS e);
+LIEF_API const char* to_string(CODE_PAGES e);
 
-DLL_PUBLIC const char* to_string(EXTENDED_WINDOW_STYLES e);
-DLL_PUBLIC const char* to_string(WINDOW_STYLES e);
-DLL_PUBLIC const char* to_string(DIALOG_BOX_STYLES e);
+LIEF_API const char* to_string(EXTENDED_WINDOW_STYLES e);
+LIEF_API const char* to_string(WINDOW_STYLES e);
+LIEF_API const char* to_string(DIALOG_BOX_STYLES e);
 
-DLL_PUBLIC const char* to_string(FIXED_VERSION_OS e);
-DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_FLAGS e);
-DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_TYPES e);
-DLL_PUBLIC const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e);
+LIEF_API const char* to_string(FIXED_VERSION_OS e);
+LIEF_API const char* to_string(FIXED_VERSION_FILE_FLAGS e);
+LIEF_API const char* to_string(FIXED_VERSION_FILE_TYPES e);
+LIEF_API const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e);
 
-DLL_PUBLIC const char* to_string(WIN_VERSION e);
+LIEF_API const char* to_string(WIN_VERSION e);
 
-DLL_PUBLIC const char* to_string(GUARD_CF_FLAGS e);
-DLL_PUBLIC const char* to_string(GUARD_RF_FLAGS e);
+LIEF_API const char* to_string(GUARD_CF_FLAGS e);
+LIEF_API const char* to_string(GUARD_RF_FLAGS e);
 
 } // namespace PE
 } // namespace LIEF

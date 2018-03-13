@@ -18,7 +18,7 @@
 
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 
 template<class T>
@@ -32,7 +32,7 @@ using no_const_getter = T (SymbolVersionDefinition::*)(void);
 
 void init_ELF_SymbolVersionDefinition_class(py::module& m) {
 
-  py::class_<SymbolVersionDefinition>(m, "SymbolVersionDefinition",
+  py::class_<SymbolVersionDefinition, LIEF::Object>(m, "SymbolVersionDefinition",
       "Class which modelization of an entry defined in ``DT_VERDEF`` (or ``.gnu.version_d``)")
 
     .def_property("version",
@@ -56,7 +56,7 @@ void init_ELF_SymbolVersionDefinition_class(py::module& m) {
     .def("__ne__", &SymbolVersionDefinition::operator!=)
     .def("__hash__",
         [] (const SymbolVersionDefinition& svd) {
-          return LIEF::Hash::hash(svd);
+          return Hash::hash(svd);
         })
 
     .def("__str__",

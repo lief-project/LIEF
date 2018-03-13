@@ -24,20 +24,20 @@
 extern "C" {
 #endif
 
-DLL_PUBLIC const char* SYMBOL_BINDINGS_to_string(enum SYMBOL_BINDINGS e);
-DLL_PUBLIC const char* E_TYPE_to_string(enum E_TYPE e);
-DLL_PUBLIC const char* VERSION_to_string(enum VERSION e);
-DLL_PUBLIC const char* ARCH_to_string(enum ARCH e);
-DLL_PUBLIC const char* SEGMENT_TYPES_to_string(enum SEGMENT_TYPES e);
-DLL_PUBLIC const char* DYNAMIC_TAGS_to_string(enum DYNAMIC_TAGS e);
-DLL_PUBLIC const char* ELF_SECTION_TYPES_to_string(enum ELF_SECTION_TYPES e);
-DLL_PUBLIC const char* ELF_SECTION_FLAGS_to_string(enum ELF_SECTION_FLAGS e);
-DLL_PUBLIC const char* ELF_SYMBOL_TYPES_to_string(enum ELF_SYMBOL_TYPES e);
-DLL_PUBLIC const char* ELF_CLASS_to_string(enum ELF_CLASS e);
-DLL_PUBLIC const char* ELF_DATA_to_string(enum ELF_DATA e);
-DLL_PUBLIC const char* OS_ABI_to_string(enum OS_ABI e);
-DLL_PUBLIC const char* DYNAMIC_FLAGS_to_string(enum DYNAMIC_FLAGS e);
-DLL_PUBLIC const char* DYNAMIC_FLAGS_1_to_string(enum DYNAMIC_FLAGS_1 e);
+LIEF_API const char* SYMBOL_BINDINGS_to_string(enum LIEF_ELF_SYMBOL_BINDINGS e);
+LIEF_API const char* E_TYPE_to_string(enum LIEF_ELF_E_TYPE e);
+LIEF_API const char* VERSION_to_string(enum LIEF_ELF_VERSION e);
+LIEF_API const char* ARCH_to_string(enum LIEF_ELF_ARCH e);
+LIEF_API const char* SEGMENT_TYPES_to_string(enum LIEF_ELF_SEGMENT_TYPES e);
+LIEF_API const char* DYNAMIC_TAGS_to_string(enum LIEF_ELF_DYNAMIC_TAGS e);
+LIEF_API const char* ELF_SECTION_TYPES_to_string(enum LIEF_ELF_ELF_SECTION_TYPES e);
+LIEF_API const char* ELF_SECTION_FLAGS_to_string(enum LIEF_ELF_ELF_SECTION_FLAGS e);
+LIEF_API const char* ELF_SYMBOL_TYPES_to_string(enum LIEF_ELF_ELF_SYMBOL_TYPES e);
+LIEF_API const char* ELF_CLASS_to_string(enum LIEF_ELF_ELF_CLASS e);
+LIEF_API const char* ELF_DATA_to_string(enum LIEF_ELF_ELF_DATA e);
+LIEF_API const char* OS_ABI_to_string(enum LIEF_ELF_OS_ABI e);
+LIEF_API const char* DYNAMIC_FLAGS_to_string(enum LIEF_ELF_DYNAMIC_FLAGS e);
+LIEF_API const char* DYNAMIC_FLAGS_1_to_string(enum LIEF_ELF_DYNAMIC_FLAGS_1 e);
 
 #ifdef __cplusplus
 }

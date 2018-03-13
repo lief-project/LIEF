@@ -26,7 +26,7 @@
 
 namespace LIEF {
 namespace MachO {
-class DLL_PUBLIC SymbolCommand : public LoadCommand {
+class LIEF_API SymbolCommand : public LoadCommand {
   public:
     SymbolCommand(void);
     SymbolCommand(const symtab_command *command);

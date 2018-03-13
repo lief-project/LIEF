@@ -23,47 +23,47 @@
 extern "C"
 {
 
-const char* LOAD_COMMAND_TYPES_to_string(enum LOAD_COMMAND_TYPES e) {
+const char* LOAD_COMMAND_TYPES_to_string(enum LIEF_MACHO_LOAD_COMMAND_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::LOAD_COMMAND_TYPES>(e));
 }
 
 
-const char* MACHO_TYPES_to_string(enum MACHO_TYPES e) {
+const char* MACHO_TYPES_to_string(enum LIEF_MACHO_MACHO_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::MACHO_TYPES>(e));
 }
 
 
-const char* FILE_TYPES_to_string(enum FILE_TYPES e) {
+const char* FILE_TYPES_to_string(enum LIEF_MACHO_FILE_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::FILE_TYPES>(e));
 }
 
 
-const char* CPU_TYPES_to_string(enum CPU_TYPES e) {
+const char* CPU_TYPES_to_string(enum LIEF_MACHO_CPU_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::CPU_TYPES>(e));
 }
 
 
-const char* HEADER_FLAGS_to_string(enum HEADER_FLAGS e) {
+const char* HEADER_FLAGS_to_string(enum LIEF_MACHO_HEADER_FLAGS e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::HEADER_FLAGS>(e));
 }
 
 
-const char* MACHO_SECTION_TYPES_to_string(enum MACHO_SECTION_TYPES e) {
+const char* MACHO_SECTION_TYPES_to_string(enum LIEF_MACHO_MACHO_SECTION_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::MACHO_SECTION_TYPES>(e));
 }
 
 
-const char* MACHO_SYMBOL_TYPES_to_string(enum MACHO_SYMBOL_TYPES e) {
+const char* MACHO_SYMBOL_TYPES_to_string(enum LIEF_MACHO_MACHO_SYMBOL_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::MACHO_SYMBOL_TYPES>(e));
 }
 
 
-const char* N_LIST_TYPES_to_string(enum N_LIST_TYPES e) {
+const char* N_LIST_TYPES_to_string(enum LIEF_MACHO_N_LIST_TYPES e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::N_LIST_TYPES>(e));
 }
 
 
-const char* SYMBOL_DESCRIPTIONS_to_string(enum SYMBOL_DESCRIPTIONS e) {
+const char* SYMBOL_DESCRIPTIONS_to_string(enum LIEF_MACHO_SYMBOL_DESCRIPTIONS e) {
   return LIEF::MachO::to_string(static_cast<LIEF::MachO::SYMBOL_DESCRIPTIONS>(e));
 }
 

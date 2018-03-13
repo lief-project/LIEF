@@ -18,11 +18,11 @@
 
 #include <string>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
-class DLL_PUBLIC Symbol : public Visitable {
+class LIEF_API Symbol : public Object {
   public:
     Symbol(void);
     Symbol(const std::string& name);
@@ -39,7 +39,7 @@ class DLL_PUBLIC Symbol : public Visitable {
     //! @brief Method so that the ``visitor`` can visit us
     virtual void accept(Visitor& visitor) const override;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   protected:
     std::string name_;

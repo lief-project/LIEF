@@ -34,7 +34,7 @@ namespace MachO {
 
 class BinaryParser;
 
-class DLL_PUBLIC Symbol : public LIEF::Symbol {
+class LIEF_API Symbol : public LIEF::Symbol {
 
   friend class BinaryParser;
 
@@ -79,7 +79,7 @@ class DLL_PUBLIC Symbol : public LIEF::Symbol {
     bool operator==(const Symbol& rhs) const;
     bool operator!=(const Symbol& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
 
   private:
     uint8_t  type_;

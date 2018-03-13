@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (ExportEntry::*)(T);
 
 void init_PE_ExportEntry_class(py::module& m) {
-  py::class_<ExportEntry>(m, "ExportEntry")
+  py::class_<ExportEntry, LIEF::Object>(m, "ExportEntry")
     .def(py::init<>())
 
     .def_property("name",
@@ -53,7 +53,7 @@ void init_PE_ExportEntry_class(py::module& m) {
     .def("__ne__", &ExportEntry::operator!=)
     .def("__hash__",
         [] (const ExportEntry& export_entry) {
-          return LIEF::Hash::hash(export_entry);
+          return Hash::hash(export_entry);
         })
 
     .def("__str__", [] (const ExportEntry& entry)

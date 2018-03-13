@@ -17,7 +17,7 @@
 #include <sstream>
 #include <numeric>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/CodeView.hpp"
@@ -46,8 +46,7 @@ CODE_VIEW_SIGNATURES CodeView::cv_signature(void) const {
 
 
 void CodeView::accept(LIEF::Visitor& visitor) const {
-  visitor(*this);
-  visitor.visit(this->cv_signature());
+  visitor.visit(*this);
 }
 
 bool CodeView::operator==(const CodeView& rhs) const {

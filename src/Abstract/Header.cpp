@@ -70,13 +70,7 @@ ENDIANNESS Header::endianness(void) const {
 
 
 void Header::accept(Visitor& visitor) const {
-  visitor.visit(this->architecture());
-  visitor.visit(this->object_type());
-  visitor.visit(this->entrypoint());
-  visitor.visit(this->endianness());
-  for (MODES m : this->modes()) {
-    visitor.visit(m);
-  }
+  visitor.visit(*this);
 }
 
 

@@ -94,7 +94,6 @@ class TestNotes(TestCase):
 
         ndkr16 = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
         note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
-        print(note)
 
         self.assertEqual(note.sdk_version, 21)
         self.assertEqual(note.ndk_version[:4], "r16b")

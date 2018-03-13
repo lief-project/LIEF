@@ -104,7 +104,6 @@ using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
 using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
 using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
 
-using dynamic_flags_list_t = flags_list_t<uint32_t>;
 }
 }
 

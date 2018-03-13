@@ -34,7 +34,7 @@ template<class T, class P>
 using no_const_func = T (Binary::*)(P);
 
 void init_LIEF_Binary_class(py::module& m) {
-  py::class_<Binary>(m, "Binary")
+  py::class_<Binary, Object>(m, "Binary")
 
     .def_property_readonly("format",
         &Binary::format,

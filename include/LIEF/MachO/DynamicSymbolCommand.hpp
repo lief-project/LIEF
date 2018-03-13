@@ -27,7 +27,7 @@
 
 namespace LIEF {
 namespace MachO {
-class DLL_PUBLIC DynamicSymbolCommand : public LoadCommand {
+class LIEF_API DynamicSymbolCommand : public LoadCommand {
   public:
     DynamicSymbolCommand(void);
     DynamicSymbolCommand(const dysymtab_command *cmd);

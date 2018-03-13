@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 
@@ -30,7 +30,7 @@ RelocationDyld& RelocationDyld::operator=(const RelocationDyld&) = default;
 RelocationDyld::RelocationDyld(const RelocationDyld&) = default;
 
 bool RelocationDyld::is_pc_relative(void) const {
-  return static_cast<REBASE_TYPES>(this->type()) == REBASE_TYPE_TEXT_PCREL32;
+  return static_cast<REBASE_TYPES>(this->type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
 }
 
 
@@ -49,21 +49,20 @@ void RelocationDyld::pc_relative(bool val) {
   }
 
   if (val == true) {
-    this->type_ = REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
+    this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32);
   }
 
   if (val == false) {
     if (this->size() == 32) {
-      this->type_ = REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32;
+      this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32);
     } else {
-      this->type_ = REBASE_TYPES::REBASE_TYPE_POINTER;
+      this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_POINTER);
     }
   }
 }
 
 void RelocationDyld::accept(Visitor& visitor) const {
-  Relocation::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
+  visitor.visit(*this);
 }
 
 

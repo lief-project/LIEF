@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 struct Pe_OptionalHeader_t {
-  enum PE_TYPES  magic;
+  enum LIEF_PE_PE_TYPES  magic;
   uint8_t        major_linker_version;
   uint8_t        minor_linker_version;
   uint32_t       sizeof_code;
@@ -53,7 +53,7 @@ struct Pe_OptionalHeader_t {
   uint32_t       sizeof_image;
   uint32_t       sizeof_headers;
   uint32_t       checksum;
-  enum SUBSYSTEM subsystem;
+  enum LIEF_PE_SUBSYSTEM subsystem;
   uint32_t       dll_characteristics;
   uint64_t       sizeof_stack_reserve;
   uint64_t       sizeof_stack_commit;

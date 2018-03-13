@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Debug.hpp"
@@ -24,6 +24,7 @@ namespace LIEF {
 namespace PE {
 
 Debug::Debug(const Debug& copy) :
+  Object{copy},
   characteristics_{copy.characteristics_},
   timestamp_{copy.timestamp_},
   majorversion_{copy.majorversion_},
@@ -174,18 +175,7 @@ void Debug::pointerto_rawdata(uint32_t pointerto_rawdata) {
 
 
 void Debug::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->characteristics());
-  visitor.visit(this->timestamp());
-  visitor.visit(this->major_version());
-  visitor.visit(this->minor_version());
-  visitor.visit(this->type());
-  visitor.visit(this->sizeof_data());
-  visitor.visit(this->addressof_rawdata());
-  visitor.visit(this->pointerto_rawdata());
-
-  if (this->has_code_view()) {
-    visitor(this->code_view());
-  }
+  visitor.visit(*this);
 }
 
 bool Debug::operator==(const Debug& rhs) const {

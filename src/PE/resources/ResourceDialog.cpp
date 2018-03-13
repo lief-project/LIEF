@@ -22,7 +22,7 @@
 
 #include "LIEF/exception.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
@@ -256,30 +256,7 @@ const std::u16string& ResourceDialog::typeface(void) const {
 }
 
 void ResourceDialog::accept(Visitor& visitor) const {
-  visitor.visit(this->x());
-  visitor.visit(this->y());
-  visitor.visit(this->cx());
-  visitor.visit(this->cy());
-  visitor.visit(this->style());
-  visitor.visit(this->extended_style());
-
-  for (const ResourceDialogItem& item : this->items()) {
-    visitor(item);
-  }
-
-
-  if (this->is_extended()) {
-    visitor.visit(this->version());
-    visitor.visit(this->signature());
-    visitor.visit(this->help_id());
-    visitor.visit(this->weight());
-    visitor.visit(this->point_size());
-    visitor.visit(this->is_italic());
-    visitor.visit(this->charset());
-    visitor.visit(this->title());
-    visitor.visit(this->typeface());
-  }
-
+  visitor.visit(*this);
 }
 
 bool ResourceDialog::operator==(const ResourceDialog& rhs) const {

@@ -21,7 +21,7 @@
 
 #include "LIEF/exception.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
@@ -32,7 +32,7 @@ namespace ELF {
 
 Segment::~Segment(void) = default;
 Segment::Segment(const Segment& other) :
-  Visitable{other},
+  Object{other},
   type_{other.type_},
   flags_{other.flags_},
   file_offset_{other.file_offset_},
@@ -50,7 +50,7 @@ Segment::Segment(const Segment& other) :
 
 Segment::Segment(const Elf64_Phdr* header) :
   type_{static_cast<SEGMENT_TYPES>(header->p_type)},
-  flags_{header->p_flags},
+  flags_{static_cast<ELF_SEGMENT_FLAGS>(header->p_flags)},
   file_offset_{header->p_offset},
   virtual_address_{header->p_vaddr},
   physical_address_{header->p_paddr},
@@ -64,7 +64,7 @@ Segment::Segment(const Elf64_Phdr* header) :
 
 Segment::Segment(const Elf32_Phdr* header) :
   type_{static_cast<SEGMENT_TYPES>(header->p_type)},
-  flags_{header->p_flags},
+  flags_{static_cast<ELF_SEGMENT_FLAGS>(header->p_flags)},
   file_offset_{header->p_offset},
   virtual_address_{header->p_vaddr},
   physical_address_{header->p_paddr},
@@ -78,7 +78,7 @@ Segment::Segment(const Elf32_Phdr* header) :
 
 Segment::Segment(void) :
   type_{static_cast<SEGMENT_TYPES>(0)},
-  flags_{0},
+  flags_{ELF_SEGMENT_FLAGS::PF_NONE},
   file_offset_{0},
   virtual_address_{0},
   physical_address_{0},
@@ -134,7 +134,7 @@ SEGMENT_TYPES Segment::type(void) const {
 }
 
 
-uint32_t Segment::flags(void) const {
+ELF_SEGMENT_FLAGS Segment::flags(void) const {
   return this->flags_;
 }
 
@@ -193,7 +193,7 @@ it_sections Segment::sections(void) {
 }
 
 bool Segment::has(ELF_SEGMENT_FLAGS flag) const {
-  return ((this->flags() & static_cast<uint32_t>(flag)) != 0);
+  return ((this->flags() & flag) != ELF_SEGMENT_FLAGS::PF_NONE);
 }
 
 
@@ -220,23 +220,23 @@ bool Segment::has(const std::string& name) const {
 }
 
 
-void Segment::flags(uint32_t flags) {
+void Segment::flags(ELF_SEGMENT_FLAGS flags) {
   this->flags_ = flags;
 }
 
 
 void Segment::add(ELF_SEGMENT_FLAGS flag) {
-  this->flags(this->flags() | static_cast<uint32_t>(flag));
+  this->flags(this->flags() | flag);
 }
 
 
 void Segment::remove(ELF_SEGMENT_FLAGS flag) {
-  this->flags(this->flags() & ~ static_cast<uint32_t>(flag));
+  this->flags(this->flags() & ~flag);
 }
 
 
 void Segment::clear_flags(void) {
-  this->flags_ = 0;
+  this->flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
 }
 
 
@@ -351,16 +351,7 @@ void Segment::content(std::vector<uint8_t>&& content) {
 }
 
 void Segment::accept(Visitor& visitor) const {
-
-  visitor.visit(this->type());
-  visitor.visit(this->flags());
-  visitor.visit(this->file_offset());
-  visitor.visit(this->virtual_address());
-  visitor.visit(this->physical_address());
-  visitor.visit(this->physical_size());
-  visitor.visit(this->virtual_size());
-  visitor.visit(this->alignment());
-  visitor.visit(this->content());
+  visitor.visit(*this);
 }
 
 

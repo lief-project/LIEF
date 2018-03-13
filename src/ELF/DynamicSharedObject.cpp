@@ -19,20 +19,14 @@
 
 namespace LIEF {
 namespace ELF {
-DynamicSharedObject::DynamicSharedObject(void) = default;
+DynamicSharedObject::DynamicSharedObject(void) :
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
+  name_{}
+{}
 
 DynamicSharedObject& DynamicSharedObject::operator=(const DynamicSharedObject&) = default;
 
 DynamicSharedObject::DynamicSharedObject(const DynamicSharedObject&) = default;
-
-DynamicSharedObject::DynamicSharedObject(const Elf64_Dyn* header) :
-  DynamicEntry{header}
-{}
-
-
-DynamicSharedObject::DynamicSharedObject(const Elf32_Dyn* header) :
-  DynamicEntry{header}
-{}
 
 DynamicSharedObject::DynamicSharedObject(const std::string& name) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
@@ -50,9 +44,7 @@ void DynamicSharedObject::name(const std::string& name) {
 }
 
 void DynamicSharedObject::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-  visitor.visit(this->name());
+  visitor.visit(*this);
 }
 
 

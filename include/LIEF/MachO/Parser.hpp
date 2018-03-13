@@ -32,7 +32,7 @@
 
 namespace LIEF {
 namespace MachO {
-class DLL_PUBLIC Parser : public LIEF::Parser {
+class LIEF_API Parser : public LIEF::Parser {
   public:
     Parser& operator=(const Parser& copy) = delete;
     Parser(const Parser& copy)            = delete;

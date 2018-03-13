@@ -31,7 +31,7 @@ namespace LIEF {
 namespace MachO {
 
 
-class DLL_PUBLIC Builder {
+class LIEF_API Builder {
   public:
     Builder(Binary *binary);
     Builder(std::vector<Binary*> binaries);

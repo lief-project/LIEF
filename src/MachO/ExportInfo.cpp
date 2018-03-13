@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
@@ -48,7 +48,7 @@ ExportInfo& ExportInfo::operator=(ExportInfo other) {
 }
 
 ExportInfo::ExportInfo(const ExportInfo& other) :
-  Visitable{other},
+  Object{other},
   node_offset_{other.node_offset_},
   flags_{other.flags_},
   address_{other.address_},
@@ -100,13 +100,7 @@ Symbol& ExportInfo::symbol(void) {
 }
 
 void ExportInfo::accept(Visitor& visitor) const {
-  visitor.visit(this->node_offset());
-  visitor.visit(this->flags());
-  visitor.visit(this->address());
-
-  if (this->has_symbol()) {
-    visitor(this->symbol());
-  }
+  visitor.visit(*this);
 }
 
 

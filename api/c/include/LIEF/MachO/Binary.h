@@ -55,9 +55,9 @@ struct Macho_Binary_t {
 typedef struct Macho_Binary_t Macho_Binary_t;
 
 /** @brief Wrapper on LIEF::MachO::Parser::parse */
-DLL_PUBLIC Macho_Binary_t** macho_parse(const char *file);
+LIEF_API Macho_Binary_t** macho_parse(const char *file);
 
-DLL_PUBLIC void macho_binaries_destroy(Macho_Binary_t** binaries);
+LIEF_API void macho_binaries_destroy(Macho_Binary_t** binaries);
 
 #ifdef __cplusplus
 }

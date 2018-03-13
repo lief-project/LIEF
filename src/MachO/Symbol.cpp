@@ -19,7 +19,7 @@
   #include <cxxabi.h>
 #endif
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
@@ -126,7 +126,8 @@ void Symbol::value(uint64_t value) {
 }
 
 bool Symbol::is_external(void) const {
-  return (this->type_ & MACHO_SYMBOL_TYPES::N_TYPE) == N_LIST_TYPES::N_UNDF;
+  static constexpr size_t N_TYPE = 0x0e;
+  return static_cast<N_LIST_TYPES>(this->type_ & N_TYPE) == N_LIST_TYPES::N_UNDF;
     //(this->type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT;
     //(this->type_ & MACHO_SYMBOL_TYPES::N_PEXT) == 0;
 }
@@ -179,21 +180,7 @@ std::string Symbol::demangled_name(void) const {
 }
 
 void Symbol::accept(Visitor& visitor) const {
-
-  LIEF::Symbol::accept(visitor);
-
-  visitor.visit(this->type());
-  visitor.visit(this->numberof_sections());
-  visitor.visit(this->description());
-  visitor.visit(this->value());
-
-  if (this->has_binding_info()) {
-    visitor(this->binding_info());
-  }
-
-  if (this->has_export_info()) {
-    visitor(this->export_info());
-  }
+  visitor.visit(*this);
 }
 
 
@@ -211,16 +198,16 @@ bool Symbol::operator!=(const Symbol& rhs) const {
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
   std::string type;
 
-  if ((symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE) == MACHO_SYMBOL_TYPES::N_TYPE) {
-    type = to_string(
-        static_cast<N_LIST_TYPES>(symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE));
-  } else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_STAB) > 0) {
-    type = to_string(MACHO_SYMBOL_TYPES::N_STAB);
-  } else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_PEXT) == MACHO_SYMBOL_TYPES::N_PEXT) {
-    type = to_string(MACHO_SYMBOL_TYPES::N_PEXT);
-  }  else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT) {
-    type = to_string(MACHO_SYMBOL_TYPES::N_EXT);
-  }
+  //if ((symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE) == MACHO_SYMBOL_TYPES::N_TYPE) {
+  //  type = to_string(
+  //      static_cast<N_LIST_TYPES>(symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE));
+  //} else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_STAB) > 0) {
+  //  type = to_string(MACHO_SYMBOL_TYPES::N_STAB);
+  //} else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_PEXT) == MACHO_SYMBOL_TYPES::N_PEXT) {
+  //  type = to_string(MACHO_SYMBOL_TYPES::N_PEXT);
+  //}  else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT) {
+  //  type = to_string(MACHO_SYMBOL_TYPES::N_EXT);
+  //}
 
 
 

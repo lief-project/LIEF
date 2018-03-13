@@ -15,7 +15,7 @@
  */
 #include "pyELF.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -89,7 +89,7 @@ void init_ELF_DynamicEntryRunPath_class(py::module& m) {
     .def("__ne__", &DynamicEntryRunPath::operator!=)
     .def("__hash__",
         [] (const DynamicEntryRunPath& entry) {
-          return LIEF::Hash::hash(entry);
+          return Hash::hash(entry);
         })
 
     .def("__str__",

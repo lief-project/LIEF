@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 /** @brief Check if the given file is an ELF one. */
-DLL_PUBLIC bool is_elf(const char* file);
+LIEF_API bool is_elf(const char* file);
 
 #ifdef __cplusplus
 }

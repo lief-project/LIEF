@@ -21,7 +21,7 @@ static const char ElfMagic[] = {'\x7f', 'E', 'L', 'F'};
 
 /** 32-bits ELF header */
 struct Elf32_Ehdr {
-  unsigned char e_ident[EI_NIDENT]; /**< ELF Identification bytes */
+  unsigned char e_ident[16];        /**< ELF Identification bytes */
   Elf32_Half    e_type;             /**< Type of file (see ET_* below) */
   Elf32_Half    e_machine;          /**< Required architecture for this file (see EM_*) */
   Elf32_Word    e_version;          /**< Must be equal to 1 */
@@ -44,7 +44,7 @@ struct Elf32_Ehdr {
  * @see Elf32_Ehdr
  */
 struct Elf64_Ehdr {
-  unsigned char e_ident[EI_NIDENT];
+  unsigned char e_ident[16];
   Elf64_Half    e_type;
   Elf64_Half    e_machine;
   Elf64_Word    e_version;

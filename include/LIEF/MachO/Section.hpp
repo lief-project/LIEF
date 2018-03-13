@@ -36,7 +36,7 @@ class BinaryParser;
 class SegmentCommand;
 class Binary;
 
-class DLL_PUBLIC Section : public LIEF::Section {
+class LIEF_API Section : public LIEF::Section {
 
   friend class BinaryParser;
   friend class Binary;
@@ -93,7 +93,7 @@ class DLL_PUBLIC Section : public LIEF::Section {
     bool operator==(const Section& rhs) const;
     bool operator!=(const Section& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Section& section);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
     std::string segment_name_;

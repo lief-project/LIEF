@@ -53,7 +53,11 @@ class TestLoadConfig(TestCase):
         self.assertEqual(lconf.guard_cf_dispatch_function_pointer, 0x140012010)
         self.assertEqual(lconf.guard_cf_function_table, 0x140011000)
         self.assertEqual(lconf.guard_cf_function_count, 15)
-        self.assertEqual(lconf.guard_flags, 0x10500)
+
+        expected_flags  = lief.PE.GUARD_CF_FLAGS.LONGJUMP_TABLE_PRESENT
+        expected_flags |= lief.PE.GUARD_CF_FLAGS.FUNCTION_TABLE_PRESENT
+        expected_flags |= lief.PE.GUARD_CF_FLAGS.INSTRUMENTED
+        self.assertEqual(lconf.guard_flags, lief.PE.GUARD_CF_FLAGS(expected_flags))
 
         # V2
         code_integrity = lconf.code_integrity

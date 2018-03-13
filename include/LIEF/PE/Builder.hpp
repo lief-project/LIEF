@@ -37,7 +37,7 @@ namespace LIEF {
 namespace PE {
 
 //! @brief Class which reconstruct a PE binary from a PE::Binary object
-class DLL_PUBLIC Builder
+class LIEF_API Builder
 {
   public:
     Builder(void) = delete;
@@ -90,7 +90,7 @@ class DLL_PUBLIC Builder
     //! @brief Write the build result into the ``output`` file
     void write(const std::string& filename) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Builder& b);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Builder& b);
 
     Builder& operator<<(const DosHeader& dos_header);
     Builder& operator<<(const Header& bHeader);

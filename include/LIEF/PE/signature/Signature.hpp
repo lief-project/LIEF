@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_SIGNATURE_H_
 #define LIEF_PE_SIGNATURE_H_
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/signature/x509.hpp"
@@ -30,7 +30,7 @@ namespace PE {
 
 class SignatureParser;
 
-class DLL_PUBLIC Signature : public Visitable {
+class LIEF_API Signature : public Object {
 
   friend class SignatureParser;
   friend class Parser;
@@ -63,7 +63,7 @@ class DLL_PUBLIC Signature : public Visitable {
 
   virtual ~Signature(void);
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Signature& signature);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Signature& signature);
 
   private:
 

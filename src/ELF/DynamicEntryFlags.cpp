@@ -34,7 +34,7 @@ bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
     return false;
   }
 
-  return (f & this->value()) > 0;
+  return (static_cast<uint64_t>(f) & this->value()) > 0;
 }
 
 
@@ -42,25 +42,28 @@ bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
   if (this->tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
     return false;
   }
-  return (f & this->value()) > 0;
+  return (static_cast<uint64_t>(f) & this->value()) > 0;
 }
 
-dynamic_flags_list_t DynamicEntryFlags::flags(void) const {
-  dynamic_flags_list_t flags;
+DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags(void) const {
+  DynamicEntryFlags::flags_list_t flags;
 
-  std::copy_if(
-    std::begin(dynamic_flags_array),
-    std::end(dynamic_flags_array),
-    std::inserter(flags, std::begin(flags)),
-    std::bind(static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS) const>(&DynamicEntryFlags::has),
-      this, std::placeholders::_1));
 
-  std::copy_if(
-    std::begin(dynamic_flags_1_array),
-    std::end(dynamic_flags_1_array),
-    std::inserter(flags, std::begin(flags)),
-    std::bind(static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1) const>(&DynamicEntryFlags::has),
-      this, std::placeholders::_1));
+  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS) {
+    for (DYNAMIC_FLAGS f : dynamic_flags_array) {
+      if (this->has(f)) {
+        flags.insert(static_cast<uint32_t>(f));
+      }
+    }
+  }
+
+  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
+    for (DYNAMIC_FLAGS_1 f : dynamic_flags_1_array) {
+      if (this->has(f)) {
+        flags.insert(static_cast<uint32_t>(f));
+      }
+    }
+  }
 
   return flags;
 }
@@ -119,27 +122,22 @@ DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS_1 f) {
 }
 
 void DynamicEntryFlags::accept(Visitor& visitor) const {
-  DynamicEntry::accept(visitor);
-  visitor(*this); // Double dispatch to avoid down-casting
-
-  for (uint32_t f : this->flags()) {
-    visitor.visit(f);
-  }
+  visitor.visit(*this);
 }
 
 std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   DynamicEntry::print(os);
 
-  const dynamic_flags_list_t& flags = this->flags();
+  const flags_list_t& flags = this->flags();
   std::string flags_str = "";
 
   if (this->tag() == DYNAMIC_TAGS::DT_FLAGS) {
     flags_str = std::accumulate(
        std::begin(flags),
        std::end(flags), std::string{},
-       [] (const std::string& a, uint32_t b) {
-          DYNAMIC_FLAGS flag = static_cast<DYNAMIC_FLAGS>(b);
-          return a.empty() ? to_string(flag) : a + " - " + to_string(flag);
+       [] (const std::string& a, const uint32_t flag) {
+          DYNAMIC_FLAGS f = static_cast<DYNAMIC_FLAGS>(flag);
+          return a.empty() ? to_string(f) : a + " - " + to_string(f);
        });
   }
 
@@ -147,9 +145,9 @@ std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
     flags_str = std::accumulate(
        std::begin(flags),
        std::end(flags), std::string{},
-       [] (const std::string& a, uint32_t b) {
-          DYNAMIC_FLAGS_1 flag = static_cast<DYNAMIC_FLAGS_1>(b);
-          return a.empty() ? to_string(flag) : a + " - " + to_string(flag);
+       [] (const std::string& a, const uint32_t flag) {
+          DYNAMIC_FLAGS_1 f = static_cast<DYNAMIC_FLAGS_1>(flag);
+          return a.empty() ? to_string(f) : a + " - " + to_string(f);
        });
   }
 

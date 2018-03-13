@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 
 #include <string>
@@ -61,7 +61,7 @@ void init_PE_ResourceData_class(py::module& m) {
 
     .def("__hash__",
         [] (const ResourceData& node) {
-          return LIEF::Hash::hash(node);
+          return Hash::hash(node);
         })
 
     .def("__str__",

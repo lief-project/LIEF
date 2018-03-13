@@ -21,7 +21,7 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
 
@@ -110,9 +110,7 @@ void AndroidNote::ndk_build_number(const std::string& ndk_build_number) {
 }
 
 void AndroidNote::accept(Visitor& visitor) const {
-  visitor.visit(this->sdk_version());
-  visitor.visit(this->ndk_version());
-  visitor.visit(this->ndk_build_number());
+  visitor.visit(*this);
 }
 
 

@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/DosHeader.hpp"
 
 #include <string>
@@ -31,7 +31,7 @@ using getter_t = getter_abs_t<uint16_t>;
 using setter_t = setter_abs_t<uint16_t>;
 
 void init_PE_DosHeader_class(py::module& m) {
-  py::class_<DosHeader>(m, "DosHeader")
+  py::class_<DosHeader, LIEF::Object>(m, "DosHeader")
     .def(py::init<>())
     .def_property("magic",
         static_cast<getter_t>(&DosHeader::magic),
@@ -106,7 +106,7 @@ void init_PE_DosHeader_class(py::module& m) {
     .def("__ne__", &DosHeader::operator!=)
     .def("__hash__",
         [] (const DosHeader& dos_header) {
-          return LIEF::Hash::hash(dos_header);
+          return Hash::hash(dos_header);
         })
 
     .def("__str__", [] (const DosHeader& header)

@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersion.hpp"
 
@@ -76,11 +76,7 @@ void SymbolVersion::value(uint16_t value) {
 }
 
 void SymbolVersion::accept(Visitor& visitor) const {
-  visitor.visit(this->value());
-
-  if (this->has_auxiliary_version()) {
-    visitor(this->symbol_version_auxiliary());
-  }
+  visitor.visit(*this);
 }
 
 bool SymbolVersion::operator==(const SymbolVersion& rhs) const {

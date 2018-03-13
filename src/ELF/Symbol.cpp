@@ -21,7 +21,7 @@
 
 #include "LIEF/exception.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
@@ -223,7 +223,7 @@ std::string Symbol::demangled_name(void) const {
 }
 
 bool Symbol::is_exported(void) const {
-  bool is_exported = this->shndx() != SYMBOL_SECTION_INDEX::SHN_UNDEF;
+  bool is_exported = this->shndx() != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
   // An export must have an address
   is_exported = is_exported and this->value() != 0;
@@ -251,7 +251,7 @@ void Symbol::set_exported(bool flag) {
 
 bool Symbol::is_imported(void) const {
   // An import must not be defined in a section
-  bool is_imported = this->shndx() == SYMBOL_SECTION_INDEX::SHN_UNDEF;
+  bool is_imported = this->shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
   // An import must not have an address
   is_imported = is_imported and this->value() == 0;
@@ -281,20 +281,7 @@ void Symbol::set_imported(bool flag) {
 
 
 void Symbol::accept(Visitor& visitor) const {
-
-  LIEF::Symbol::accept(visitor);
-
-  visitor.visit(this->type());
-  visitor.visit(this->binding());
-  visitor.visit(this->information());
-  visitor.visit(this->other());
-  visitor.visit(this->section_idx());
-  visitor.visit(this->value());
-  visitor.visit(this->size());
-
-  if(this->has_version()) {
-    visitor(this->symbol_version());
-  }
+  visitor.visit(*this);
 }
 
 bool Symbol::operator==(const Symbol& rhs) const {

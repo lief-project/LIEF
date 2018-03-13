@@ -30,7 +30,7 @@ namespace LIEF {
 namespace PE {
 
 //! @brief LoadConfiguration enhanced with SEH
-class DLL_PUBLIC LoadConfigurationV0 : public LoadConfiguration {
+class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_SEH;
 
@@ -40,7 +40,7 @@ class DLL_PUBLIC LoadConfigurationV0 : public LoadConfiguration {
   LoadConfigurationV0(const LoadConfigurationV0&);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV0(const load_configuration_v0<T>* header);
+  LIEF_LOCAL LoadConfigurationV0(const load_configuration_v0<T>* header);
 
   virtual WIN_VERSION version(void) const override;
 

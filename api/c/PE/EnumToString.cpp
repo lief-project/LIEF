@@ -23,17 +23,17 @@
 extern "C"
 {
 
-const char* PE_TYPES_to_string(enum PE_TYPES e) {
+const char* PE_TYPES_to_string(enum LIEF_PE_PE_TYPES e) {
   return LIEF::PE::to_string(static_cast<LIEF::PE::PE_TYPE>(e));
 }
 
 
-const char* MACHINE_TYPES_to_string(enum MACHINE_TYPES e) {
+const char* MACHINE_TYPES_to_string(enum LIEF_PE_MACHINE_TYPES e) {
   return LIEF::PE::to_string(static_cast<LIEF::PE::MACHINE_TYPES>(e));
 }
 
 
-const char* SUBSYSTEM_to_string(enum SUBSYSTEM e) {
+const char* SUBSYSTEM_to_string(enum LIEF_PE_SUBSYSTEM e) {
   return LIEF::PE::to_string(static_cast<LIEF::PE::SUBSYSTEM>(e));
 }
 

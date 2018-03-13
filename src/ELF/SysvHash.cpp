@@ -17,7 +17,7 @@
 #include <numeric>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SysvHash.hpp"
 
@@ -61,14 +61,7 @@ bool SysvHash::operator!=(const SysvHash& rhs) const {
 
 
 void SysvHash::accept(Visitor& visitor) const {
-  for (uint32_t v : this->buckets()) {
-    visitor.visit(v);
-  }
-
-  for (uint32_t v : this->chains()) {
-    visitor.visit(v);
-  }
-
+  visitor.visit(*this);
 }
 
 

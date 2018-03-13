@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 #include "pyMachO.hpp"
@@ -30,7 +30,7 @@ using setter_t = void (LoadCommand::*)(T);
 
 void init_MachO_LoadCommand_class(py::module& m) {
 
-  py::class_<LoadCommand>(m, "LoadCommand")
+  py::class_<LoadCommand, LIEF::Object>(m, "LoadCommand")
     .def(py::init<>())
 
     .def_property("command",
@@ -58,7 +58,7 @@ void init_MachO_LoadCommand_class(py::module& m) {
     .def("__ne__", &LoadCommand::operator!=)
     .def("__hash__",
         [] (const LoadCommand& load_command) {
-          return LIEF::Hash::hash(load_command);
+          return Hash::hash(load_command);
         })
 
     .def("__str__",

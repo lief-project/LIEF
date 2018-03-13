@@ -30,13 +30,13 @@ namespace LIEF {
 namespace PE {
 
 //! @brief Load Configuration enhanced with Return Flow Guard
-class DLL_PUBLIC LoadConfigurationV5 : public LoadConfigurationV4 {
+class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14901;
   LoadConfigurationV5(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV5(const load_configuration_v5<T>* header);
+  LIEF_LOCAL LoadConfigurationV5(const load_configuration_v5<T>* header);
 
   LoadConfigurationV5& operator=(const LoadConfigurationV5&);
   LoadConfigurationV5(const LoadConfigurationV5&);

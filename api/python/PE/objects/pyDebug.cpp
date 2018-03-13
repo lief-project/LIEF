@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Debug.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (Debug::*)(T);
 
 void init_PE_Debug_class(py::module& m) {
-  py::class_<Debug>(m, "Debug")
+  py::class_<Debug, LIEF::Object>(m, "Debug")
     .def(py::init<>())
 
     .def_property("characteristics",
@@ -86,7 +86,7 @@ void init_PE_Debug_class(py::module& m) {
     .def("__ne__", &Debug::operator!=)
     .def("__hash__",
         [] (const Debug& debug) {
-          return LIEF::Hash::hash(debug);
+          return Hash::hash(debug);
         })
 
     .def("__str__", [] (const Debug& debug)

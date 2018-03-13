@@ -54,7 +54,7 @@ class Parser;
 class Builder;
 
 //! @brief Class which represent an ELF binary
-class DLL_PUBLIC Binary : public LIEF::Binary {
+class LIEF_API Binary : public LIEF::Binary {
   friend class Parser;
   friend class Builder;
 
@@ -462,6 +462,9 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
 
     virtual std::ostream& print(std::ostream& os) const override;
 
+    bool operator==(const Binary& rhs) const;
+    bool operator!=(const Binary& rhs) const;
+
 
     Binary& operator+=(const DynamicEntry& entry);
     Binary& operator+=(const Section& section);
@@ -500,7 +503,7 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     virtual LIEF::symbols_t          get_abstract_symbols(void) override;
     virtual LIEF::relocations_t      get_abstract_relocations(void) override;
 
-    template<int ARCH>
+    template<ELF::ARCH ARCH>
     void patch_relocations(uint64_t from, uint64_t shift);
 
     template<class T>
@@ -512,10 +515,10 @@ class DLL_PUBLIC Binary : public LIEF::Binary {
     void shift_symbols(uint64_t from, uint64_t shift);
     void shift_relocations(uint64_t from, uint64_t shift);
 
-    template<int OBJECT_TYPE, bool note = false>
+    template<E_TYPE OBJECT_TYPE, bool note = false>
     Segment& add_segment(const Segment& segment, uint64_t base);
 
-    template<int PT>
+    template<SEGMENT_TYPES PT>
     Segment& extend_segment(const Segment& segment, uint64_t size);
 
     template<bool LOADED>

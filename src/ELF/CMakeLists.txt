@@ -41,10 +41,11 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryRpath.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryFlags.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Visitor.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/json.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/hash.cpp"
 )
 
 set(LIEF_ELF_INC_FILES
@@ -74,13 +75,20 @@ set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/SymbolVersionRequirement.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/utils.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/hash.hpp"
+
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp")
+  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp"
+  )
 
 set(LIEF_ELF_DATA_HANDLER_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Handler.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Node.hpp")
 
+# JSON Part
+# =========
+set(LIEF_ELF_JSON_SRC "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
+set(LIEF_ELF_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/json.hpp")
 
 # Notes part
 # ==========
@@ -96,6 +104,12 @@ set(LIEF_ELF_NOTE_INCLUDE_FILES
 
 list(APPEND LIEF_ELF_SRC ${LIEF_ELF_NOTE_SRC})
 list(APPEND LIEF_ELF_INC_FILES ${LIEF_ELF_NOTE_INCLUDE_FILES})
+
+
+if (LIEF_ENABLE_JSON)
+  list(APPEND LIEF_ELF_SRC       ${LIEF_ELF_JSON_SRC})
+  list(APPEND LIEF_ELF_INC_FILES ${LIEF_ELF_JSON_HDR})
+endif()
 
 set(LIEF_ELF_INCLUDE_FILES
   ${LIEF_ELF_INC_FILES}

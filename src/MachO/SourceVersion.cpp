@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/SourceVersion.hpp"
 
@@ -49,8 +49,7 @@ SourceVersion::SourceVersion(const source_version_command *version_cmd) :
  }
 
 void SourceVersion::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-  visitor(this->version());
+  visitor.visit(*this);
 }
 
 

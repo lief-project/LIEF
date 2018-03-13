@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/Abstract/hash.hpp"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
@@ -62,14 +62,13 @@ void Relocation::size(size_t size) {
 }
 
 void Relocation::accept(Visitor& visitor) const {
-  visitor.visit(this->address());
-  visitor.visit(this->size());
+  visitor.visit(*this);
 }
 
 
 bool Relocation::operator==(const Relocation& rhs) const {
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
+  size_t hash_lhs = AbstractHash::hash(*this);
+  size_t hash_rhs = AbstractHash::hash(rhs);
   return hash_lhs == hash_rhs;
 }
 

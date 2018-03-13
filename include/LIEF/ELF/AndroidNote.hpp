@@ -19,7 +19,7 @@
 #include <vector>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
 
@@ -33,7 +33,7 @@ class Binary;
 //! Class representing the ".note.android.ident" section
 //!
 //! @See: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
-class DLL_PUBLIC AndroidNote : public Note {
+class LIEF_API AndroidNote : public Note {
 
   friend class Parser;
   friend class Builder;
@@ -67,7 +67,7 @@ class DLL_PUBLIC AndroidNote : public Note {
 
   virtual ~AndroidNote(void);
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
 };
 
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/SymbolCommand.hpp"
 
@@ -66,12 +66,7 @@ void SymbolCommand::strings_size(uint32_t size) {
 }
 
 void SymbolCommand::accept(Visitor& visitor) const {
-  LoadCommand::accept(visitor);
-
-  visitor.visit(this->symbol_offset());
-  visitor.visit(this->numberof_symbols());
-  visitor.visit(this->strings_offset());
-  visitor.visit(this->strings_size());
+  visitor.visit(*this);
 }
 
 

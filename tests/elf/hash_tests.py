@@ -117,7 +117,7 @@ class TestHash(TestCase):
 
         # change library name in the binary
         for entry in binadd.dynamic_entries:
-            if entry.tag == lief.ELF.NEEDED and entry.name == "libadd.so":
+            if entry.tag == lief.ELF.DYNAMIC_TAGS.NEEDED and entry.name == "libadd.so":
                 entry.name = "libabc.so"
 
         libadd_modified = os.path.join(self.tmp_dir, "libabc.so")

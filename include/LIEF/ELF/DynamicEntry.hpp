@@ -21,14 +21,14 @@
 #include <iostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-class DLL_PUBLIC DynamicEntry : public Visitable {
+class LIEF_API DynamicEntry : public Object {
   public:
 
     DynamicEntry(const Elf64_Dyn* header);
@@ -46,12 +46,6 @@ class DLL_PUBLIC DynamicEntry : public Visitable {
     void tag(DYNAMIC_TAGS tag);
     void value(uint64_t value);
 
-    virtual const std::string& name(void) const;
-    virtual void name(const std::string& name);
-
-    virtual std::vector<uint64_t>& array(void);
-    virtual void array(const std::vector<uint64_t>& array);
-
     virtual void accept(Visitor& visitor) const override;
 
     virtual std::ostream& print(std::ostream& os) const;
@@ -59,7 +53,7 @@ class DLL_PUBLIC DynamicEntry : public Visitable {
     bool operator==(const DynamicEntry& rhs) const;
     bool operator!=(const DynamicEntry& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
 
   protected:
     DYNAMIC_TAGS tag_;

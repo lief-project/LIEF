@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
 
@@ -267,25 +267,7 @@ void DosHeader::addressof_new_exeheader(uint32_t addressOfNewExeHeader) {
 }
 
 void DosHeader::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(this->magic());
-  visitor.visit(this->used_bytes_in_the_last_page());
-  visitor.visit(this->file_size_in_pages());
-  visitor.visit(this->numberof_relocation());
-  visitor.visit(this->header_size_in_paragraphs());
-  visitor.visit(this->minimum_extra_paragraphs());
-  visitor.visit(this->maximum_extra_paragraphs());
-  visitor.visit(this->initial_relative_ss());
-  visitor.visit(this->initial_sp());
-  visitor.visit(this->checksum());
-  visitor.visit(this->initial_ip());
-  visitor.visit(this->initial_relative_cs());
-  visitor.visit(this->addressof_relocation_table());
-  visitor.visit(this->overlay_number());
-  visitor.visit(this->reserved());
-  visitor.visit(this->oem_id());
-  visitor.visit(this->oem_info());
-  visitor.visit(this->reserved2());
-  visitor.visit(this->addressof_new_exeheader());
+  visitor.visit(*this);
 }
 
 bool DosHeader::operator==(const DosHeader& rhs) const {

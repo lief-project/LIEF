@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
@@ -75,10 +75,7 @@ void SymbolVersionAuxRequirement::other(uint16_t other) {
 }
 
 void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
-  visitor.visit(this->hash());
-  visitor.visit(this->flags());
-  visitor.visit(this->other());
-
+  visitor.visit(*this);
 }
 
 bool SymbolVersionAuxRequirement::operator==(const SymbolVersionAuxRequirement& rhs) const {

@@ -16,7 +16,7 @@
 #include <numeric>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
@@ -59,7 +59,7 @@ BindingInfo& BindingInfo::operator=(BindingInfo other) {
 }
 
 BindingInfo::BindingInfo(const BindingInfo& other) :
-  Visitable{other},
+  Object{other},
   class_{other.class_},
   binding_type_{other.binding_type_},
   segment_{nullptr},
@@ -184,24 +184,7 @@ void BindingInfo::address(uint64_t addr) {
 }
 
 void BindingInfo::accept(Visitor& visitor) const {
-  visitor.visit(this->binding_class());
-  visitor.visit(this->binding_type());
-  visitor.visit(this->library_ordinal());
-  visitor.visit(this->addend());
-  visitor.visit(this->is_weak_import());
-  visitor.visit(this->address());
-
-  if (this->has_symbol()) {
-    visitor(this->symbol());
-  }
-
-  if (this->has_library()) {
-    visitor(this->library());
-  }
-
-  if (this->has_segment()) {
-    visitor(this->segment());
-  }
+  visitor.visit(*this);
 }
 
 

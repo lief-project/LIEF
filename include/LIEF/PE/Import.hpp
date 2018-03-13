@@ -21,7 +21,7 @@
 #include <memory>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
@@ -35,7 +35,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC Import : public Visitable {
+class LIEF_API Import : public Object {
 
   friend class Parser;
   friend class Builder;
@@ -115,7 +115,7 @@ class DLL_PUBLIC Import : public Visitable {
   bool operator==(const Import& rhs) const;
   bool operator!=(const Import& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Import& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Import& entry);
 
   private:
   import_entries_t entries_;

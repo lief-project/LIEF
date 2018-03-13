@@ -29,7 +29,7 @@ namespace PE {
 
 class Parser;
 
-class DLL_PUBLIC SignatureParser {
+class LIEF_API SignatureParser {
 
   friend class Parser;
 

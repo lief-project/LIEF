@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/CodeView.hpp"
@@ -29,7 +29,7 @@
 
 namespace LIEF {
 namespace PE {
-class DLL_PUBLIC CodeViewPDB : public CodeView {
+class LIEF_API CodeViewPDB : public CodeView {
   public:
   using signature_t = std::array<uint8_t, 16>;
 
@@ -58,7 +58,7 @@ class DLL_PUBLIC CodeViewPDB : public CodeView {
   bool operator==(const CodeViewPDB& rhs) const;
   bool operator!=(const CodeViewPDB& rhs) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
 
   virtual ~CodeViewPDB(void);
 

@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 
 #include "pyMachO.hpp"
@@ -32,7 +32,7 @@ using setter_t = void (BindingInfo::*)(T);
 
 void init_MachO_BindingInfo_class(py::module& m) {
 
-  py::class_<BindingInfo>(m, "BindingInfo")
+  py::class_<BindingInfo, LIEF::Object>(m, "BindingInfo")
 
     .def_property("binding_class",
         static_cast<getter_t<BINDING_CLASS>>(&BindingInfo::binding_class),
@@ -105,7 +105,7 @@ void init_MachO_BindingInfo_class(py::module& m) {
     .def("__ne__", &BindingInfo::operator!=)
     .def("__hash__",
         [] (const BindingInfo& binding_info) {
-          return LIEF::Hash::hash(binding_info);
+          return Hash::hash(binding_info);
         })
 
 

@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Header.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ template<class T>
 using setter_t = void (Header::*)(T);
 
 void init_PE_Header_class(py::module& m) {
-  py::class_<Header>(m, "Header")
+  py::class_<Header, LIEF::Object>(m, "Header")
     .def(py::init<>())
 
     .def_property("signature",
@@ -73,8 +73,8 @@ void init_PE_Header_class(py::module& m) {
         "required for executable files")
 
     .def_property("characteristics",
-        static_cast<getter_t<uint16_t>>(&Header::characteristics),
-        static_cast<getter_t<uint16_t>>(&Header::characteristics),
+        static_cast<getter_t<HEADER_CHARACTERISTICS>>(&Header::characteristics),
+        static_cast<getter_t<HEADER_CHARACTERISTICS>>(&Header::characteristics),
         "The " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " that indicate the attributes of the file.")
 
     .def("has_characteristic",
@@ -101,7 +101,7 @@ void init_PE_Header_class(py::module& m) {
     .def("__ne__", &Header::operator!=)
     .def("__hash__",
         [] (const Header& header) {
-          return LIEF::Hash::hash(header);
+          return Hash::hash(header);
         })
 
 

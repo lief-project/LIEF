@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 struct Macho_Command_t {
-  enum LOAD_COMMAND_TYPES command;
+  enum LIEF_MACHO_LOAD_COMMAND_TYPES command;
   uint32_t                size;
   uint8_t*                data;
   uint32_t                offset;

@@ -15,7 +15,7 @@
  */
 #include "pyPE.hpp"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceDialogItem.hpp"
 
 #include <string>
@@ -29,7 +29,7 @@ template<class T>
 using setter_t = void (ResourceDialogItem::*)(T);
 
 void init_PE_ResourcesDialogItem_class(py::module& m) {
-  py::class_<ResourceDialogItem>(m, "ResourceDialogItem")
+  py::class_<ResourceDialogItem, LIEF::Object>(m, "ResourceDialogItem")
 
     .def_property_readonly("is_extended",
         &ResourceDialogItem::is_extended,
@@ -77,7 +77,7 @@ void init_PE_ResourcesDialogItem_class(py::module& m) {
     .def("__ne__", &ResourceDialogItem::operator!=)
     .def("__hash__",
         [] (const ResourceDialogItem& dialog) {
-          return LIEF::Hash::hash(dialog);
+          return Hash::hash(dialog);
         })
 
     .def("__str__",

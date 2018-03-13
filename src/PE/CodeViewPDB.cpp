@@ -17,7 +17,7 @@
 #include <sstream>
 #include <numeric>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/CodeViewPDB.hpp"
@@ -112,10 +112,7 @@ void CodeViewPDB::filename(const std::string& filename) {
 
 
 void CodeViewPDB::accept(LIEF::Visitor& visitor) const {
-  CodeView::accept(visitor);
-  visitor.visit(this->signature());
-  visitor.visit(this->age());
-  visitor.visit(this->filename());
+  visitor.visit(*this);
 }
 
 bool CodeViewPDB::operator==(const CodeViewPDB& rhs) const {

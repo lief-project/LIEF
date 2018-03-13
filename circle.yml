@@ -7,7 +7,7 @@ machine:
 
 checkout:
   post:
-    - git fetch && git pull
+    - git fetch && git pull origin ${CIRCLE_BRANCH}
 
 compile:
   pre:

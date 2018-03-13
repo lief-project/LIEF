@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace MachO {
 
-class DLL_PUBLIC MainCommand : public LoadCommand {
+class LIEF_API MainCommand : public LoadCommand {
   public:
     MainCommand(void);
     MainCommand(const entry_point_command *cmd);

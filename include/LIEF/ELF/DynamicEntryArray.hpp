@@ -24,46 +24,52 @@
 
 namespace LIEF {
 namespace ELF {
-class DLL_PUBLIC DynamicEntryArray : public DynamicEntry {
+class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   public:
-    using DynamicEntry::DynamicEntry;
-    DynamicEntryArray(const Elf64_Dyn* header);
-    DynamicEntryArray(const Elf32_Dyn* header);
-    DynamicEntryArray(void);
+  using array_t = std::vector<uint64_t>;
 
-    DynamicEntryArray& operator=(const DynamicEntryArray&);
-    DynamicEntryArray(const DynamicEntryArray&);
+  public:
+  using DynamicEntry::DynamicEntry;
 
-    virtual std::vector<uint64_t>& array(void) override;
-    const std::vector<uint64_t>& array(void) const;
-    virtual void array(const std::vector<uint64_t>& array) override;
+  DynamicEntryArray(void);
+  DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array);
 
-    //! @brief Insert the given callback at ``pos``
-    DynamicEntryArray& insert(size_t pos, uint64_t callback);
+  DynamicEntryArray& operator=(const DynamicEntryArray&);
+  DynamicEntryArray(const DynamicEntryArray&);
 
-    //! @brief Append the given callback
-    DynamicEntryArray& append(uint64_t callback);
+  array_t& array(void);
+  const array_t& array(void) const;
+  void array(const array_t& array);
 
-    //! @brief Remove the given callback
-    DynamicEntryArray& remove(uint64_t callback);
+  //! @brief Insert the given callback at ``pos``
+  DynamicEntryArray& insert(size_t pos, uint64_t callback);
 
-    //! @brief Number of callback registred
-    size_t size(void) const;
+  //! @brief Append the given callback
+  DynamicEntryArray& append(uint64_t callback);
 
-    DynamicEntryArray& operator+=(uint64_t value);
-    DynamicEntryArray& operator-=(uint64_t value);
+  //! @brief Remove the given callback
+  DynamicEntryArray& remove(uint64_t callback);
 
-    const uint64_t& operator[](size_t idx) const;
-    uint64_t&       operator[](size_t idx);
+  //! @brief Number of callback registred
+  size_t size(void) const;
 
-    //! @brief Method so that the ``visitor`` can visit us
-    virtual void accept(Visitor& visitor) const override;
+  DynamicEntryArray& operator+=(uint64_t value);
+  DynamicEntryArray& operator-=(uint64_t value);
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  const uint64_t& operator[](size_t idx) const;
+  uint64_t&       operator[](size_t idx);
+
+  //! @brief Method so that the ``visitor`` can visit us
+  virtual void accept(Visitor& visitor) const override;
+
+  virtual std::ostream& print(std::ostream& os) const override;
+
+  virtual ~DynamicEntryArray(void);
 
   private:
-    std::vector<uint64_t> array_;
+  array_t array_;
+
 };
 }
 }

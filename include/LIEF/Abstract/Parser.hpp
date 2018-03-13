@@ -24,7 +24,7 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
-class DLL_PUBLIC Parser
+class LIEF_API Parser
 {
   public:
     //! @brief Construct an LIEF::Binary from the given filename

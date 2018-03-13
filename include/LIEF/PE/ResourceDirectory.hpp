@@ -30,7 +30,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class DLL_PUBLIC ResourceDirectory : public ResourceNode {
+class LIEF_API ResourceDirectory : public ResourceNode {
 
   friend class Parser;
   friend class Builder;
@@ -45,6 +45,8 @@ class DLL_PUBLIC ResourceDirectory : public ResourceNode {
     void swap(ResourceDirectory& other);
 
     virtual ~ResourceDirectory(void);
+
+    virtual ResourceDirectory* clone(void) const override;
 
     //! @brief Resource flags. This field is reserved for future use.
     //! It is currently set to zero.
@@ -83,7 +85,7 @@ class DLL_PUBLIC ResourceDirectory : public ResourceNode {
     bool operator==(const ResourceDirectory& rhs) const;
     bool operator!=(const ResourceDirectory& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 
   private:
     uint32_t characteristics_;

@@ -20,11 +20,11 @@
 #include "LIEF/Abstract/enums.hpp"
 
 namespace LIEF {
-DLL_PUBLIC const char* to_string(EXE_FORMATS e);
-DLL_PUBLIC const char* to_string(ARCHITECTURES e);
-DLL_PUBLIC const char* to_string(OBJECT_TYPES e);
-DLL_PUBLIC const char* to_string(MODES e);
-DLL_PUBLIC const char* to_string(ENDIANNESS e);
+LIEF_API const char* to_string(EXE_FORMATS e);
+LIEF_API const char* to_string(ARCHITECTURES e);
+LIEF_API const char* to_string(OBJECT_TYPES e);
+LIEF_API const char* to_string(MODES e);
+LIEF_API const char* to_string(ENDIANNESS e);
 } // namespace LIEF
 
 #endif

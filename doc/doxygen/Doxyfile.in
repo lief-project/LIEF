@@ -795,7 +795,7 @@ INPUT_ENCODING         = UTF-8
 # *.m, *.markdown, *.md, *.mm, *.dox, *.py, *.f90, *.f, *.for, *.tcl, *.vhd,
 # *.vhdl, *.ucf, *.qsf, *.as and *.js.
 
-FILE_PATTERNS          = *.cpp *.hpp *.h *.c *.def
+FILE_PATTERNS          = *.cpp *.hpp *.h *.c *.def *.tcc
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -1067,7 +1067,8 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @CMAKE_CURRENT_BINARY_DIR@/doxygen/header.html
+#HTML_HEADER            = @CMAKE_CURRENT_BINARY_DIR@/doxygen/header.html
+HTML_HEADER            =
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1077,7 +1078,8 @@ HTML_HEADER            = @CMAKE_CURRENT_BINARY_DIR@/doxygen/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @CMAKE_CURRENT_BINARY_DIR@/doxygen/footer.html
+#HTML_FOOTER            = @CMAKE_CURRENT_BINARY_DIR@/doxygen/footer.html
+HTML_FOOTER            =
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1969,7 +1971,7 @@ MACRO_EXPANSION        = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = YES
+EXPAND_ONLY_PREDEF     = NO
 
 # If the SEARCH_INCLUDES tag is set to YES, the include files in the
 # INCLUDE_PATH will be searched if a #include is found.
@@ -1983,7 +1985,11 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           = @PROJECT_SOURCE_DIR@/include/LIEF/ELF/Relocations
+INCLUDE_PATH           = \
+  @PROJECT_SOURCE_DIR@/include/LIEF/ELF/Relocations  \
+  @PROJECT_BINARY_DIR@/include                       \
+  @PROJECT_SOURCE_DIR@/include                       \
+  @PROJECT_SOURCE_DIR@/api/c/include                 \
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
@@ -1991,7 +1997,7 @@ INCLUDE_PATH           = @PROJECT_SOURCE_DIR@/include/LIEF/ELF/Relocations
 # used.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-INCLUDE_FILE_PATTERNS  =
+INCLUDE_FILE_PATTERNS  = *.inc *.hpp *.h *.def
 
 # The PREDEFINED tag can be used to specify one or more macro names that are
 # defined before the preprocessor is started (similar to the -D option of e.g.
@@ -2004,7 +2010,16 @@ INCLUDE_FILE_PATTERNS  =
 #PREDEFINED             = DISABE_DOX
 
 # Disable protected memebers
-PREDEFINED = protected=private
+PREDEFINED = "protected=private"      \
+             "__attribute__(x)="      \
+             "LIEF_API="              \
+             "LIEF_LOCAL="            \
+             "LIEF_JSON_SUPPORT=1"    \
+             "LIEF_PE_SUPPORT=1"      \
+             "LIEF_MACHO_SUPPORT=1"   \
+             "LIEF_LOGGING_SUPPORT=1" \
+             __cplusplus
+
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
@@ -2013,7 +2028,17 @@ PREDEFINED = protected=private
 # definition found in the source code.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_AS_DEFINED      =
+EXPAND_AS_DEFINED      =  _LIEF_EI
+EXPAND_AS_DEFINED      += _LIEF_EN
+EXPAND_AS_DEFINED      += _LIEF_EN_2
+EXPAND_AS_DEFINED      += LIEF_PE_FORWARD
+EXPAND_AS_DEFINED      += LIEF_PE_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_ELF_FORWARD
+EXPAND_AS_DEFINED      += LIEF_ELF_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_MACHO_FORWARD
+EXPAND_AS_DEFINED      += LIEF_MACHO_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_ABSTRACT_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_ABSTRACT_FORWARD
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES then doxygen's preprocessor will
 # remove all references to function-like macros that are alone on a line, have

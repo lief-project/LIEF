@@ -19,7 +19,7 @@
 #include <vector>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -29,7 +29,7 @@ class Parser;
 class Builder;
 class Binary;
 
-class DLL_PUBLIC SysvHash : public Visitable {
+class LIEF_API SysvHash : public Object {
 
   friend class Parser;
   friend class Builder;
@@ -58,7 +58,7 @@ class DLL_PUBLIC SysvHash : public Visitable {
 
   virtual void accept(Visitor& visitor) const override;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
 
   private:
   std::vector<uint32_t> buckets_;

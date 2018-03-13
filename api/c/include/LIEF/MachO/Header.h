@@ -32,9 +32,9 @@ extern "C" {
 
 struct Macho_Header_t {
   uint32_t        magic;
-  enum CPU_TYPES  cpu_type;
+  enum LIEF_MACHO_CPU_TYPES  cpu_type;
   uint32_t        cpu_subtype;
-  enum FILE_TYPES file_type;
+  enum LIEF_MACHO_FILE_TYPES file_type;
   uint32_t        nb_cmds;
   uint32_t        sizeof_cmds;
   uint32_t        flags;

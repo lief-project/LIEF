@@ -153,7 +153,7 @@ void Builder::build_import_table(void) {
   content.insert(std::end(content), content_size_aligned - content.size(), 0);
 
   // Create a new section to handle imports
-  Section new_import_section{".l" + std::to_string(DATA_DIRECTORY::IMPORT_TABLE)};
+  Section new_import_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::IMPORT_TABLE))};
   new_import_section.content(content);
 
   new_import_section.add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
@@ -418,7 +418,7 @@ void Builder::build_tls(void) {
 
   // No .tls section register in the binary. We have to create it
   if (it_tls == std::end(this->binary_->sections_)) {
-    Section new_section{".l" + std::to_string(DATA_DIRECTORY::TLS_TABLE)}; // .l9 -> lief.tls
+    Section new_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::TLS_TABLE))}; // .l9 -> lief.tls
     new_section.characteristics(0xC0300040);
     uint64_t tls_section_size = sizeof(pe_tls);
 

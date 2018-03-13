@@ -16,7 +16,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/utils.hpp"
 
@@ -35,25 +35,20 @@ ResourceNode::ResourceNode(void) :
 {}
 
 
-ResourceNode& ResourceNode::operator=(ResourceNode other) {
-  this->swap(other);
-  return *this;
-}
+//ResourceNode& ResourceNode::operator=(ResourceNode other) {
+//  this->swap(other);
+//  return *this;
+//}
 
 ResourceNode::ResourceNode(const ResourceNode& other) :
-  Visitable{other},
+  Object{other},
   id_{other.id_},
   name_{other.name_},
   depth_{other.depth_}
 {
+  this->childs_.reserve(other.childs_.size());
   for (const ResourceNode* node : other.childs_) {
-    if (const ResourceDirectory* directory = dynamic_cast<const ResourceDirectory*>(node)) {
-      this->childs_.push_back(new ResourceDirectory{*directory});
-    }
-
-    if (const ResourceData* data = dynamic_cast<const ResourceData*>(node)) {
-      this->childs_.push_back(new ResourceData{*data});
-    }
+    this->childs_.push_back(node->clone());
   }
 }
 
@@ -211,17 +206,7 @@ void ResourceNode::sort_by_id(void) {
 }
 
 void ResourceNode::accept(Visitor& visitor) const {
-  visitor(*this); // Double dispatch to avoid down-casting
-
-  visitor.visit(this->id());
-  if (this->has_name()) {
-    visitor.visit(this->name());
-  }
-
-  for (const ResourceNode& child : this->childs()) {
-    visitor(child);
-  }
-
+  visitor.visit(*this);
 }
 
 bool ResourceNode::operator==(const ResourceNode& rhs) const {

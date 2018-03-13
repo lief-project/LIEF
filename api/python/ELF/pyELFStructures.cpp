@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include "pyELF.hpp"
+#include "enums_wrapper.hpp"
+
 #include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
@@ -21,20 +23,18 @@
 
 void init_ELF_Structures_enum(py::module& m) {
 
-  py::enum_<ELF_CLASS>(m, "ELF_CLASS")
+  LIEF::enum_<ELF_CLASS>(m, "ELF_CLASS")
     .value(PY_ENUM(ELF_CLASS::ELFCLASSNONE))
     .value(PY_ENUM(ELF_CLASS::ELFCLASS32))
-    .value(PY_ENUM(ELF_CLASS::ELFCLASS64))
-    .export_values();
+    .value(PY_ENUM(ELF_CLASS::ELFCLASS64));
 
 
-  py::enum_<ELF_DATA>(m, "ELF_DATA")
+  LIEF::enum_<ELF_DATA>(m, "ELF_DATA")
     .value(PY_ENUM(ELF_DATA::ELFDATANONE))
     .value(PY_ENUM(ELF_DATA::ELFDATA2LSB))
-    .value(PY_ENUM(ELF_DATA::ELFDATA2MSB))
-    .export_values();
+    .value(PY_ENUM(ELF_DATA::ELFDATA2MSB));
 
-  py::enum_<OS_ABI>(m, "OS_ABI")
+  LIEF::enum_<OS_ABI>(m, "OS_ABI")
     .value(PY_ENUM(OS_ABI::ELFOSABI_SYSTEMV))
     .value(PY_ENUM(OS_ABI::ELFOSABI_HPUX))
     .value(PY_ENUM(OS_ABI::ELFOSABI_NETBSD))
@@ -57,28 +57,25 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(OS_ABI::ELFOSABI_AMDGPU_HSA))
     .value(PY_ENUM(OS_ABI::ELFOSABI_C6000_LINUX))
     .value(PY_ENUM(OS_ABI::ELFOSABI_ARM))
-    .value(PY_ENUM(OS_ABI::ELFOSABI_STANDALONE))
-    .export_values();
+    .value(PY_ENUM(OS_ABI::ELFOSABI_STANDALONE));
 
   // Enum for the *e_type* of ElfXX_Ehdr
-  py::enum_<E_TYPE>(m, "E_TYPE")
+  LIEF::enum_<E_TYPE>(m, "E_TYPE")
     .value(PY_ENUM(E_TYPE::ET_NONE))
     .value(PY_ENUM(E_TYPE::ET_REL))
     .value(PY_ENUM(E_TYPE::ET_EXEC))
     .value(PY_ENUM(E_TYPE::ET_DYN))
     .value(PY_ENUM(E_TYPE::ET_CORE))
     .value(PY_ENUM(E_TYPE::ET_LOPROC))
-    .value(PY_ENUM(E_TYPE::ET_HIPROC))
-    .export_values();
+    .value(PY_ENUM(E_TYPE::ET_HIPROC));
 
   //! Enum for the *e_version* of ElfXX_Ehdr;
-  py::enum_<VERSION>(m, "VERSION")
+  LIEF::enum_<VERSION>(m, "VERSION")
     .value(PY_ENUM(VERSION::EV_NONE))
-    .value(PY_ENUM(VERSION::EV_CURRENT))
-    .export_values();
+    .value(PY_ENUM(VERSION::EV_CURRENT));
 
   // Enum for the *e_machine* of ElfXX_Ehdr
-  py::enum_<ARCH>(m, "ARCH")
+  LIEF::enum_<ARCH>(m, "ARCH")
     .value(PY_ENUM(ARCH::EM_NONE))
     .value(PY_ENUM(ARCH::EM_M32))
     .value(PY_ENUM(ARCH::EM_SPARC))
@@ -253,12 +250,11 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ARCH::EM_COOL))
     .value(PY_ENUM(ARCH::EM_NORC))
     .value(PY_ENUM(ARCH::EM_CSR_KALIMBA))
-    .value(PY_ENUM(ARCH::EM_AMDGPU))
-    .export_values();
+    .value(PY_ENUM(ARCH::EM_AMDGPU));
 
 
   //! Enum for the *sh_type* of ElfXX_Shdr;
-  py::enum_<ELF_SECTION_TYPES>(m, "SECTION_TYPES")
+  LIEF::enum_<ELF_SECTION_TYPES>(m, "SECTION_TYPES")
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_NULL))
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_PROGBITS))
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_SYMTAB))
@@ -296,12 +292,11 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_MIPS_ABIFLAGS))
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_HIPROC))
     .value(PY_ENUM(ELF_SECTION_TYPES::SHT_LOUSER))
-    .value(PY_ENUM(ELF_SECTION_TYPES::SHT_HIUSER))
-    .export_values();
+    .value(PY_ENUM(ELF_SECTION_TYPES::SHT_HIUSER));
 
 
   //! Enum for the *sh_flags* field of ElfXX_Shdr;
-  py::enum_<ELF_SECTION_FLAGS>(m, "SECTION_FLAGS", py::arithmetic())
+  LIEF::enum_<ELF_SECTION_FLAGS>(m, "SECTION_FLAGS", py::arithmetic())
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_NONE))
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_WRITE))
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_ALLOC))
@@ -326,12 +321,11 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_MIPS_GPREL))
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_MIPS_MERGE))
     .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_MIPS_ADDR))
-    .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_MIPS_STRING))
-    .export_values();
+    .value(PY_ENUM(ELF_SECTION_FLAGS::SHF_MIPS_STRING));
 
 
   //! Enum for the *p_type* field of ElfXX_Phdr
-  py::enum_<SEGMENT_TYPES>(m, "SEGMENT_TYPES")
+  LIEF::enum_<SEGMENT_TYPES>(m, "SEGMENT_TYPES")
     .value(PY_ENUM(SEGMENT_TYPES::PT_NULL))
     .value(PY_ENUM(SEGMENT_TYPES::PT_LOAD))
     .value(PY_ENUM(SEGMENT_TYPES::PT_DYNAMIC))
@@ -355,19 +349,18 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(SEGMENT_TYPES::PT_MIPS_REGINFO))
     .value(PY_ENUM(SEGMENT_TYPES::PT_MIPS_RTPROC))
     .value(PY_ENUM(SEGMENT_TYPES::PT_MIPS_OPTIONS))
-    .value(PY_ENUM(SEGMENT_TYPES::PT_MIPS_ABIFLAGS))
-    .export_values();
+    .value(PY_ENUM(SEGMENT_TYPES::PT_MIPS_ABIFLAGS));
 
   //! Enum for the *p_flags* field of ElfXX_Phdr
-  py::enum_<ELF_SEGMENT_FLAGS>(m, "SEGMENT_FLAGS", py::arithmetic())
+  LIEF::enum_<ELF_SEGMENT_FLAGS>(m, "SEGMENT_FLAGS", py::arithmetic())
+    .value(PY_ENUM(ELF_SEGMENT_FLAGS::PF_NONE))
     .value(PY_ENUM(ELF_SEGMENT_FLAGS::PF_X))
     .value(PY_ENUM(ELF_SEGMENT_FLAGS::PF_W))
-    .value(PY_ENUM(ELF_SEGMENT_FLAGS::PF_R))
-    .export_values();
+    .value(PY_ENUM(ELF_SEGMENT_FLAGS::PF_R));
 
 
 
-  py::enum_<DYNAMIC_TAGS>(m, "DYNAMIC_TAGS")
+  LIEF::enum_<DYNAMIC_TAGS>(m, "DYNAMIC_TAGS")
     .value(PY_ENUM(DYNAMIC_TAGS::DT_NULL))
     .value(PY_ENUM(DYNAMIC_TAGS::DT_NEEDED))
     .value(PY_ENUM(DYNAMIC_TAGS::DT_PLTRELSZ))
@@ -459,11 +452,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(DYNAMIC_TAGS::DT_MIPS_GP_VALUE))
     .value(PY_ENUM(DYNAMIC_TAGS::DT_MIPS_AUX_DYNAMIC))
     .value(PY_ENUM(DYNAMIC_TAGS::DT_MIPS_PLTGOT))
-    .value(PY_ENUM(DYNAMIC_TAGS::DT_MIPS_RWPLT))
-    .export_values();
+    .value(PY_ENUM(DYNAMIC_TAGS::DT_MIPS_RWPLT));
 
 
-  py::enum_<ELF_SYMBOL_TYPES>(m, "SYMBOL_TYPES")
+  LIEF::enum_<ELF_SYMBOL_TYPES>(m, "SYMBOL_TYPES")
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_NOTYPE))
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_OBJECT))
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_FUNC))
@@ -475,11 +467,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_LOOS))
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_HIOS))
     .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_LOPROC))
-    .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_HIPROC))
-    .export_values();
+    .value(PY_ENUM(ELF_SYMBOL_TYPES::STT_HIPROC));
 
 
-  py::enum_<SYMBOL_BINDINGS>(m, "SYMBOL_BINDINGS")
+  LIEF::enum_<SYMBOL_BINDINGS>(m, "SYMBOL_BINDINGS")
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_LOCAL))
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_GLOBAL))
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_WEAK))
@@ -487,11 +478,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_LOOS))
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_HIOS))
     .value(PY_ENUM(SYMBOL_BINDINGS::STB_LOPROC))
-    .value(PY_ENUM(SYMBOL_BINDINGS::STB_HIPROC))
-    .export_values();
+    .value(PY_ENUM(SYMBOL_BINDINGS::STB_HIPROC));
 
 
-  py::enum_<RELOC_x86_64>(m, "RELOCATION_X86_64")
+  LIEF::enum_<RELOC_x86_64>(m, "RELOCATION_X86_64")
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_NONE))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_64))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_PC32))
@@ -535,11 +525,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_PC32_BND))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_PLT32_BND))
     .value(PY_ENUM(RELOC_x86_64::R_X86_64_GOTPCRELX))
-    .value(PY_ENUM(RELOC_x86_64::R_X86_64_REX_GOTPCRELX))
-    .export_values();
+    .value(PY_ENUM(RELOC_x86_64::R_X86_64_REX_GOTPCRELX));
 
 
-  py::enum_<RELOC_ARM>(m, "RELOCATION_ARM")
+  LIEF::enum_<RELOC_ARM>(m, "RELOCATION_ARM")
     .value(PY_ENUM(RELOC_ARM::R_ARM_NONE))
     .value(PY_ENUM(RELOC_ARM::R_ARM_PC24))
     .value(PY_ENUM(RELOC_ARM::R_ARM_ABS32))
@@ -677,11 +666,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_ARM::R_ARM_THM_RPC22))
     .value(PY_ENUM(RELOC_ARM::R_ARM_RREL32))
     .value(PY_ENUM(RELOC_ARM::R_ARM_RPC24))
-    .value(PY_ENUM(RELOC_ARM::R_ARM_RBASE))
-    .export_values();
+    .value(PY_ENUM(RELOC_ARM::R_ARM_RBASE));
 
 
-  py::enum_<RELOC_i386>(m, "RELOCATION_i386")
+  LIEF::enum_<RELOC_i386>(m, "RELOCATION_i386")
     .value(PY_ENUM(RELOC_i386::R_386_NONE))
     .value(PY_ENUM(RELOC_i386::R_386_32))
     .value(PY_ENUM(RELOC_i386::R_386_PC32))
@@ -722,11 +710,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_i386::R_386_TLS_DESC_CALL))
     .value(PY_ENUM(RELOC_i386::R_386_TLS_DESC))
     .value(PY_ENUM(RELOC_i386::R_386_IRELATIVE))
-    .value(PY_ENUM(RELOC_i386::R_386_NUM))
-    .export_values();
+    .value(PY_ENUM(RELOC_i386::R_386_NUM));
 
 
-  py::enum_<RELOC_AARCH64>(m, "RELOCATION_AARCH64")
+  LIEF::enum_<RELOC_AARCH64>(m, "RELOCATION_AARCH64")
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_NONE))
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_ABS64))
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_ABS32))
@@ -849,47 +836,42 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_TLS_DTPMOD64))
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_TLS_TPREL64))
     .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_TLSDESC))
-    .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_IRELATIVE))
-    .export_values();
+    .value(PY_ENUM(RELOC_AARCH64::R_AARCH64_IRELATIVE));
 
 
-  py::enum_<DYNSYM_COUNT_METHODS>(m, "DYNSYM_COUNT_METHODS")
+  LIEF::enum_<DYNSYM_COUNT_METHODS>(m, "DYNSYM_COUNT_METHODS")
     .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_AUTO))
     .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_SECTION))
     .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_HASH))
-    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS))
-    .export_values();
+    .value(PY_ENUM(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS));
 
 
-  py::enum_<NOTE_TYPES>(m, "NOTE_TYPES")
+  LIEF::enum_<NOTE_TYPES>(m, "NOTE_TYPES")
     .value(PY_ENUM(NOTE_TYPES::NT_UNKNOWN))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_ABI_TAG))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_HWCAP))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_BUILD_ID))
-    .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION))
-    .export_values();
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION));
 
 
-  py::enum_<NOTE_ABIS>(m, "NOTE_ABIS")
+  LIEF::enum_<NOTE_ABIS>(m, "NOTE_ABIS")
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_UNKNOWN))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_LINUX))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_GNU))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SOLARIS2))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_FREEBSD))
     .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_NETBSD))
-    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SYLLABLE))
-    .export_values();
+    .value(PY_ENUM(NOTE_ABIS::ELF_NOTE_OS_SYLLABLE));
 
 
-  py::enum_<RELOCATION_PURPOSES>(m, "RELOCATION_PURPOSES")
+  LIEF::enum_<RELOCATION_PURPOSES>(m, "RELOCATION_PURPOSES")
     .value(PY_ENUM(RELOCATION_PURPOSES::RELOC_PURPOSE_NONE))
     .value(PY_ENUM(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT))
     .value(PY_ENUM(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC))
-    .value(PY_ENUM(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT))
-    .export_values();
+    .value(PY_ENUM(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT));
 
 
-  py::enum_<ARM_EFLAGS>(m, "ARM_EFLAGS")
+  LIEF::enum_<ARM_EFLAGS>(m, "ARM_EFLAGS", py::arithmetic())
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_SOFT_FLOAT))
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_VFP_FLOAT))
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_UNKNOWN))
@@ -897,15 +879,13 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_VER2))
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_VER3))
     .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_VER4))
-    .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_VER5))
-    .export_values();
+    .value(PY_ENUM(ARM_EFLAGS::EF_ARM_EABI_VER5));
 
 
-  py::enum_<PPC64_EFLAGS>(m, "PPC64_EFLAGS")
-    .value(PY_ENUM(PPC64_EFLAGS::EF_PPC64_ABI))
-    .export_values();
+  LIEF::enum_<PPC64_EFLAGS>(m, "PPC64_EFLAGS", py::arithmetic())
+    .value(PY_ENUM(PPC64_EFLAGS::EF_PPC64_ABI));
 
-  py::enum_<MIPS_EFLAGS>(m, "MIPS_EFLAGS")
+  LIEF::enum_<MIPS_EFLAGS>(m, "MIPS_EFLAGS", py::arithmetic())
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_NOREORDER))
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_PIC))
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_CPIC))
@@ -948,10 +928,9 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_ARCH_32R2))
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_ARCH_64R2))
     .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_ARCH_32R6))
-    .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_ARCH_64R6))
-    .export_values();
+    .value(PY_ENUM(MIPS_EFLAGS::EF_MIPS_ARCH_64R6));
 
-  py::enum_<HEXAGON_EFLAGS>(m, "HEXAGON_EFLAGS")
+  LIEF::enum_<HEXAGON_EFLAGS>(m, "HEXAGON_EFLAGS", py::arithmetic())
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_MACH_V2))
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_MACH_V3))
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_MACH_V4))
@@ -960,11 +939,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_ISA_V2))
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_ISA_V3))
     .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_ISA_V4))
-    .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_ISA_V5))
-    .export_values();
+    .value(PY_ENUM(HEXAGON_EFLAGS::EF_HEXAGON_ISA_V5));
 
 
-  py::enum_<IDENTITY>(m, "IDENTITY")
+  LIEF::enum_<IDENTITY>(m, "IDENTITY")
     .value(PY_ENUM(IDENTITY::EI_MAG0))
     .value(PY_ENUM(IDENTITY::EI_MAG1))
     .value(PY_ENUM(IDENTITY::EI_MAG2))
@@ -975,11 +953,10 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(IDENTITY::EI_OSABI))
     .value(PY_ENUM(IDENTITY::EI_ABIVERSION))
     .value(PY_ENUM(IDENTITY::EI_PAD))
-    .value(PY_ENUM(IDENTITY::EI_NIDENT))
-    .export_values();
+    .value(PY_ENUM(IDENTITY::EI_NIDENT));
 
 
-  py::enum_<SYMBOL_SECTION_INDEX>(m, "SYMBOL_SECTION_INDEX")
+  LIEF::enum_<SYMBOL_SECTION_INDEX>(m, "SYMBOL_SECTION_INDEX")
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_UNDEF))
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_LORESERVE))
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_LOPROC))
@@ -989,19 +966,17 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_ABS))
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_COMMON))
     .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_XINDEX))
-    .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_HIRESERVE))
-    .export_values();
+    .value(PY_ENUM(SYMBOL_SECTION_INDEX::SHN_HIRESERVE));
 
 
-  py::enum_<DYNAMIC_FLAGS>(m, "DYNAMIC_FLAGS")
+  LIEF::enum_<DYNAMIC_FLAGS>(m, "DYNAMIC_FLAGS", py::arithmetic())
     .value(PY_ENUM(DYNAMIC_FLAGS::DF_ORIGIN))
     .value(PY_ENUM(DYNAMIC_FLAGS::DF_SYMBOLIC))
     .value(PY_ENUM(DYNAMIC_FLAGS::DF_TEXTREL))
     .value(PY_ENUM(DYNAMIC_FLAGS::DF_BIND_NOW))
-    .value(PY_ENUM(DYNAMIC_FLAGS::DF_STATIC_TLS))
-    .export_values();
+    .value(PY_ENUM(DYNAMIC_FLAGS::DF_STATIC_TLS));
 
-  py::enum_<DYNAMIC_FLAGS_1>(m, "DYNAMIC_FLAGS_1")
+  LIEF::enum_<DYNAMIC_FLAGS_1>(m, "DYNAMIC_FLAGS_1", py::arithmetic())
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_NOW))
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_GLOBAL))
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_GROUP))
@@ -1027,15 +1002,13 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_NORELOC))
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_SYMINTPOSE))
     .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_GLOBAUDIT))
-    .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_SINGLETON))
-    .export_values();
+    .value(PY_ENUM(DYNAMIC_FLAGS_1::DF_1_SINGLETON));
 
 
-  py::enum_<ELF_SYMBOL_VISIBILITY>(m, "SYMBOL_VISIBILITY")
+  LIEF::enum_<ELF_SYMBOL_VISIBILITY>(m, "SYMBOL_VISIBILITY")
     .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_DEFAULT))
     .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_HIDDEN))
     .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_INTERNAL))
-    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_PROTECTED))
-    .export_values();
+    .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_PROTECTED));
 
 }

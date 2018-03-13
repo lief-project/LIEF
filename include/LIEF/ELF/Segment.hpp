@@ -21,7 +21,7 @@
 #include <iostream>
 #include <memory>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/type_traits.hpp"
@@ -35,7 +35,7 @@ class Parser;
 class Binary;
 
 //! @brief Class which represent segments
-class DLL_PUBLIC Segment : public Visitable {
+class LIEF_API Segment : public Object {
 
   friend class Parser;
   friend class Section;
@@ -54,7 +54,7 @@ class DLL_PUBLIC Segment : public Visitable {
     void swap(Segment& other);
 
     SEGMENT_TYPES type(void) const;
-    uint32_t flags(void) const;
+    ELF_SEGMENT_FLAGS flags(void) const;
     uint64_t file_offset(void) const;
     uint64_t virtual_address(void) const;
     uint64_t physical_address(void) const;
@@ -71,7 +71,7 @@ class DLL_PUBLIC Segment : public Visitable {
     void remove(ELF_SEGMENT_FLAGS c);
 
     void type(SEGMENT_TYPES type);
-    void flags(uint32_t flags);
+    void flags(ELF_SEGMENT_FLAGS flags);
     void clear_flags(void);
     void file_offset(uint64_t fileOffset);
     void virtual_address(uint64_t virtualAddress);
@@ -93,11 +93,11 @@ class DLL_PUBLIC Segment : public Visitable {
     bool operator==(const Segment& rhs) const;
     bool operator!=(const Segment& rhs) const;
 
-    DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 
   private:
     SEGMENT_TYPES         type_;
-    uint32_t              flags_;
+    ELF_SEGMENT_FLAGS     flags_;
     uint64_t              file_offset_;
     uint64_t              virtual_address_;
     uint64_t              physical_address_;

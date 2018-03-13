@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "LIEF/Visitable.hpp"
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/Structures.hpp"
@@ -32,7 +32,7 @@ namespace PE {
 //! @brief Class modeling the default PE's ``LoadConfiguration``
 //!
 //! It's the base class for any future version of the structure
-class DLL_PUBLIC LoadConfiguration : public Visitable {
+class LIEF_API LoadConfiguration : public Object {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_UNKNOWN;
   static constexpr size_t PRINT_WIDTH = 45;
@@ -153,7 +153,7 @@ class DLL_PUBLIC LoadConfiguration : public Visitable {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  DLL_PUBLIC friend std::ostream& operator<<(std::ostream& os, const LoadConfiguration& config);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadConfiguration& config);
 
 
   protected:

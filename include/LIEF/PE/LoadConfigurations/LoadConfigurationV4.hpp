@@ -32,14 +32,14 @@ namespace PE {
 //! @brief Load Configuration enhanced with
 //! * Kind of dynamic relocations
 //! * *Hybrid Metadata Pointer*
-class DLL_PUBLIC LoadConfigurationV4 : public LoadConfigurationV3 {
+class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14383;
 
   LoadConfigurationV4(void);
 
   template<class T>
-  DLL_LOCAL LoadConfigurationV4(const load_configuration_v4<T>* header);
+  LIEF_LOCAL LoadConfigurationV4(const load_configuration_v4<T>* header);
 
   LoadConfigurationV4& operator=(const LoadConfigurationV4&);
   LoadConfigurationV4(const LoadConfigurationV4&);

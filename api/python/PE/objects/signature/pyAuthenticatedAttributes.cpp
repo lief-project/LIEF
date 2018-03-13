@@ -17,7 +17,7 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/AuthenticatedAttributes.hpp"
 
 #include "pyPE.hpp"
@@ -32,7 +32,7 @@ using setter_t = void (AuthenticatedAttributes::*)(T);
 
 void init_PE_AuthenticatedAttributes_class(py::module& m) {
 
-  py::class_<AuthenticatedAttributes>(m, "AuthenticatedAttributes")
+  py::class_<AuthenticatedAttributes, LIEF::Object>(m, "AuthenticatedAttributes")
 
     .def_property_readonly("content_type",
         &AuthenticatedAttributes::content_type,

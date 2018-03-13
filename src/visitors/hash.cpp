@@ -18,9 +18,11 @@
 
 #include "mbedtls/sha256.h"
 
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/hash.hpp"
 
 namespace LIEF {
+
+Hash::~Hash(void) = default;
 
 Hash::Hash(void) :
   value_{0}
@@ -30,20 +32,33 @@ Hash::Hash(size_t init_value) :
   value_{init_value}
 {}
 
-void Hash::visit(size_t n) {
-  this->value_ = combine(this->value_, std::hash<size_t>{}(n));
+
+Hash& Hash::process(const Object& obj) {
+  Hash hasher;
+  obj.accept(hasher);
+  this->value_ = combine(this->value_, hasher.value());
+  return *this;
 }
 
-void Hash::visit(const std::string& str) {
+Hash& Hash::process(size_t integer) {
+  this->value_ = combine(this->value_, std::hash<size_t>{}(integer));
+  return *this;
+}
+
+Hash& Hash::process(const std::string& str) {
   this->value_ = combine(this->value_, std::hash<std::string>{}(str));
+  return *this;
 }
 
-void Hash::visit(const std::u16string& str) {
+
+Hash& Hash::process(const std::u16string& str) {
   this->value_ = combine(this->value_, std::hash<std::u16string>{}(str));
+  return *this;
 }
 
-void Hash::visit(const std::vector<uint8_t>& raw) {
+Hash& Hash::process(const std::vector<uint8_t>& raw) {
   this->value_ = combine(this->value_, Hash::hash(raw));
+  return *this;
 }
 
 size_t Hash::value(void) const {

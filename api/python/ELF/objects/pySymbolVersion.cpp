@@ -16,7 +16,7 @@
 #include "pyELF.hpp"
 
 #include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/visitors/Hash.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include <string>
 #include <sstream>
@@ -29,7 +29,7 @@ using setter_t = void (SymbolVersion::*)(T);
 
 void init_ELF_SymbolVersion_class(py::module& m) {
 
-  py::class_<SymbolVersion>(m, "SymbolVersion")
+  py::class_<SymbolVersion, LIEF::Object>(m, "SymbolVersion")
     .def(py::init<>(),"Default constructor")
     .def(py::init<uint16_t>(), "Constructor from :attr:`~lief.SymbolVersion.value`")
 
@@ -69,7 +69,7 @@ void init_ELF_SymbolVersion_class(py::module& m) {
     .def("__ne__", &SymbolVersion::operator!=)
     .def("__hash__",
         [] (const SymbolVersion& sv) {
-          return LIEF::Hash::hash(sv);
+          return Hash::hash(sv);
         })
 
     .def("__str__",
