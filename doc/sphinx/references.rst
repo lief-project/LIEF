@@ -1,6 +1,15 @@
 References
 ==========
 
+Blog posts related to LIEF
+--------------------------
+
+  * 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
+  * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
+  * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
+  * 2017-04-04: `LIEF Library to Instrument Executable Formats  <https://blog.quarkslab.com/lief-library-to-instrument-executable-formats.html>`_
+
+
 Projects using LIEF
 -------------------
 
@@ -13,6 +22,10 @@ Projects using LIEF
 | gym-malware    | Python     | https://github.com/endgameinc/gym-malware              | Machine Learning | Learn how to bypass AV through |
 |                |            |                                                        |                  | machine learning.              |
 +----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+| MISP           | Python     | https://github.com/MISP/MISP                           | Malware          | Malware Information Sharing    |
+|                |            |                                                        |                  | Platform and Threat Sharing    |
++----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+
 
 Similar Projects
 ----------------
@@ -103,7 +116,7 @@ PE
 +---------------+--------------+----------------------------------------------------------------------+
 | pelook        | C ?          | http://bytepointer.com/tools/index.htm#pelook                        |
 +---------------+--------------+----------------------------------------------------------------------+
-| PortEx        | Java         | http://katjahahn.github.io/PortE x                                   |
+| PortEx        | Java         | http://katjahahn.github.io/PortEx                                    |
 +---------------+--------------+----------------------------------------------------------------------+
 | metasm        | Ruby         | https://github.com/jjyg/metasm                                       |
 +---------------+--------------+----------------------------------------------------------------------+
@@ -142,52 +155,59 @@ Mach-O
 Tools
 -----
 
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-|    Name        | Language   |   Link                                                 | Format          | Summarize                    |
-+================+============+========================================================+=================+==============================+
-| Dress          | Python     | https://github.com/docileninja/dress                   | ELF             | Add static symbols           |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| objconv        | C++        | http://www.agner.org/optimize/#objconv                 | ELF/PE/MachO    | Format converter             |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| PEDetour       | C++        | https://github.com/chen-charles/PEDetour               | PE              | Hook exported functions      |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| python-elf     | Python     | https://github.com/tbursztyka/python-elf               | ELF             | ELF binary format            |
-|                |            |                                                        |                 | manipulation                 |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| PEDetour       | C++        | https://github.com/chen-charles/PEDetour               | PE              | Hook exported functions      |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| libmaelf       | C          | https://github.com/tiago4orion/libmalelf               | ELF             | Library for Dissect and      |
-|                |            |                                                        |                 | Infect ELF Binaries.         |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| peinjector     | C          | https://github.com/JonDoNym/peinjector                 | PE              | MITM PE file infector        |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| backdoor       | C++        | https://github.com/secretsquirrel/the-backdoor-factory | ELF/PE/MachO    | Patch PE, ELF, Mach-O        |
-| factory        |            |                                                        |                 | binaries with shellcode      |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| RePEconstruct  | C          | https://github.com/DavidKorczynski/RePEconstruct       | PE              | PE Unpacker                  |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| patchkit       | Python     | https://github.com/lunixbochs/patchkit                 | ELF             | Patch binary                 |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| unstrip        | Python     | https://github.com/pzread/unstrip                      | ELF             | Unstrip static binary        |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| sym2elf        | Python     | https://github.com/danigargu/syms2elf                  | ELF             | Export IDA's symbols to      |
-|                |            |                                                        |                 | the original binary          |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| elfhash        | C          | https://github.com/cjacker/elfhash                     | ELF             | Manipulate ELF's hash        |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| recomposer     | Python     | https://github.com/secretsquirrel/recomposer           | PE              | Change some parts of a       |
-|                |            |                                                        |                 | PE ile in order to bypass    |
-|                |            |                                                        |                 | Antivirus                    |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| bearparser     | C++        | https://github.com/hasherezade/bearparser              | PE              | Portable Executable parsing  |
-|                |            |                                                        |                 | library with a GUI           |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| IAT patcher    | C++        | http://hasherezade.github.io/IAT_patcher               | PE              | IAT hooking application      |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| PEframe        | Python     | https://github.com/guelfoweb/peframe                   | PE              | PE Static analyzer           |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| Manalyze       | C++        | https://github.com/JusticeRage/Manalyze                | PE              | PE Static analyzer           |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
-| elf-dissector  | C++        | https://github.com/KDE/elf-dissector                   | ELF             | Tool to inspect ELF files    |
-+----------------+------------+--------------------------------------------------------+-----------------+------------------------------+
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+|    Name            | Language   |   Link                                                 | Format          | Summarize                    |
++====================+============+========================================================+=================+==============================+
+| Dress              | Python     | https://github.com/docileninja/dress                   | ELF             | Add static symbols           |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| objconv            | C++        | http://www.agner.org/optimize/#objconv                 | ELF/PE/MachO    | Format converter             |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| PEDetour           | C++        | https://github.com/chen-charles/PEDetour               | PE              | Hook exported functions      |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| python-elf         | Python     | https://github.com/tbursztyka/python-elf               | ELF             | ELF binary format            |
+|                    |            |                                                        |                 | manipulation                 |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| PEDetour           | C++        | https://github.com/chen-charles/PEDetour               | PE              | Hook exported functions      |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| libmaelf           | C          | https://github.com/tiago4orion/libmalelf               | ELF             | Library for Dissect and      |
+|                    |            |                                                        |                 | Infect ELF Binaries.         |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| peinjector         | C          | https://github.com/JonDoNym/peinjector                 | PE              | MITM PE file infector        |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| backdoor           | C++        | https://github.com/secretsquirrel/the-backdoor-factory | ELF/PE/MachO    | Patch PE, ELF, Mach-O        |
+| factory            |            |                                                        |                 | binaries with shellcode      |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| RePEconstruct      | C          | https://github.com/DavidKorczynski/RePEconstruct       | PE              | PE Unpacker                  |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| patchkit           | Python     | https://github.com/lunixbochs/patchkit                 | ELF             | Patch binary                 |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| unstrip            | Python     | https://github.com/pzread/unstrip                      | ELF             | Unstrip static binary        |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| sym2elf            | Python     | https://github.com/danigargu/syms2elf                  | ELF             | Export IDA's symbols to      |
+|                    |            |                                                        |                 | the original binary          |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| elfhash            | C          | https://github.com/cjacker/elfhash                     | ELF             | Manipulate ELF's hash        |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| recomposer         | Python     | https://github.com/secretsquirrel/recomposer           | PE              | Change some parts of a       |
+|                    |            |                                                        |                 | PE ile in order to bypass    |
+|                    |            |                                                        |                 | Antivirus                    |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| bearparser         | C++        | https://github.com/hasherezade/bearparser              | PE              | Portable Executable parsing  |
+|                    |            |                                                        |                 | library with a GUI           |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| IAT patcher        | C++        | http://hasherezade.github.io/IAT_patcher               | PE              | IAT hooking application      |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| PEframe            | Python     | https://github.com/guelfoweb/peframe                   | PE              | PE Static analyzer           |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| Manalyze           | C++        | https://github.com/JusticeRage/Manalyze                | PE              | PE Static analyzer           |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| elf-dissector      | C++        | https://github.com/KDE/elf-dissector                   | ELF             | Tool to inspect ELF files    |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| InfectPE           | C++        | https://github.com/secrary/InfectPE                    | PE              | Inject code into PE file     |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| termux-elf-cleaner | C++        | https://github.com/termux/termux-elf-cleaner           | ELF             | Utility to remove unused ELF |
+|                    |            |                                                        |                 | sections causing warnings.   |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+
+
 
