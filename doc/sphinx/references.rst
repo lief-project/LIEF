@@ -13,19 +13,20 @@ Blog posts related to LIEF
 Projects using LIEF
 -------------------
 
-+----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
-|    Name        | Language   |   Link                                                 | Topic            | Summarize                      |
-+================+============+========================================================+==================+================================+
-| youarespecial  | Python     | https://github.com/endgameinc/youarespecial            | Machine Learning | Machine learning models on     |
-|                |            |                                                        |                  | Malwares                       |
-+----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
-| gym-malware    | Python     | https://github.com/endgameinc/gym-malware              | Machine Learning | Learn how to bypass AV through |
-|                |            |                                                        |                  | machine learning.              |
-+----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
-| MISP           | Python     | https://github.com/MISP/MISP                           | Malware          | Malware Information Sharing    |
-|                |            |                                                        |                  | Platform and Threat Sharing    |
-+----------------+------------+--------------------------------------------------------+------------------+--------------------------------+
-
++-----------------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+|    Name               | Language   |   Link                                                 | Topic            | Summarize                      |
++=======================+============+========================================================+==================+================================+
+| youarespecial         | Python     | https://github.com/endgameinc/youarespecial            | Machine Learning | Machine learning models on     |
+|                       |            |                                                        |                  | Malwares                       |
++-----------------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+| gym-malware           | Python     | https://github.com/endgameinc/gym-malware              | Machine Learning | Learn how to bypass AV through |
+|                       |            |                                                        |                  | machine learning.              |
++-----------------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+| MISP                  | Python     | https://github.com/MISP/MISP                           | Malware          | Malware Information Sharing    |
+|                       |            |                                                        |                  | Platform and Threat Sharing    |
++-----------------------+------------+--------------------------------------------------------+------------------+--------------------------------+
+| Virus Disinfector KIT | Python     | https://github.com/Fare9/Virus_Disinfector_KIT         | Malware          | Tool to disinfect PE files     |
++-----------------------+------------+--------------------------------------------------------+------------------+--------------------------------+
 
 Similar Projects
 ----------------
