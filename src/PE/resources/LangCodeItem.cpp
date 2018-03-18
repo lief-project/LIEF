@@ -72,7 +72,7 @@ RESOURCE_SUBLANGS LangCodeItem::sublang(void) const {
   }
 
   uint64_t lang_id = std::stoul(u16tou8(this->key().substr(0, 4)), 0, 16);
-  RESOURCE_SUBLANGS sublang = static_cast<RESOURCE_SUBLANGS>(lang_id >> 10);
+  RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(this->lang(), (lang_id >> 10));
   return sublang;
 }
 

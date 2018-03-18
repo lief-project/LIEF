@@ -98,7 +98,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
        CODE_PAGES cp = static_cast<CODE_PAGES>(msb);
 
        RESOURCE_LANGS lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
-       RESOURCE_SUBLANGS sublang = static_cast<RESOURCE_SUBLANGS>(lsb >> 10);
+       RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(lang, (lsb >> 10));
 
        ss << to_string(cp) << "/" << to_string(lang) << "/" << to_string(sublang);
        return a.empty() ? ss.str() : a + " - " + ss.str();

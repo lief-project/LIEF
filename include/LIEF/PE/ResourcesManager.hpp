@@ -37,6 +37,9 @@ namespace PE {
 //! manipulate the resource tree.
 class LIEF_API ResourcesManager : public Object {
   public:
+  static RESOURCE_SUBLANGS sub_lang(RESOURCE_LANGS lang, size_t index);
+
+  public:
   ResourcesManager(void) = delete;
   ResourcesManager(ResourceNode *rsrc);
 
