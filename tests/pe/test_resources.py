@@ -114,7 +114,7 @@ class TestResource(TestCase):
         langcode_item = string_file_info.langcode_items[0]
         self.assertEqual(langcode_item.type, 1)
         self.assertEqual(langcode_item.lang, lief.PE.RESOURCE_LANGS.FRENCH)
-        self.assertEqual(langcode_item.sublang, lief.PE.RESOURCE_SUBLANGS.DEFAULT)
+        self.assertEqual(langcode_item.sublang, lief.PE.RESOURCE_SUBLANGS.FRENCH)
         self.assertEqual(langcode_item.code_page, lief.PE.CODE_PAGES.UTF_16)
         items = langcode_item.items
         self.assertIn('CompanyName', items)
