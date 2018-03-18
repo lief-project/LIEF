@@ -372,7 +372,7 @@
 #undef LANG_MALTESE
 #undef LANG_MAORI
 #undef LANG_RHAETO_ROMANCE
-#undef LANG_SAAMI
+#undef LANG_SAMI
 #undef LANG_SORBIAN
 #undef LANG_SUTU
 #undef LANG_TSONGA
