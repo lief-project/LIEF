@@ -46,6 +46,15 @@ ResourcesManager::ResourcesManager(ResourceNode *rsrc) :
   resources_{rsrc}
 {}
 
+RESOURCE_LANGS ResourcesManager::lang_from_id(size_t id) {
+  return static_cast<RESOURCE_LANGS>(id & 0x3ff);
+}
+
+RESOURCE_SUBLANGS ResourcesManager::sublang_from_id(size_t id) {
+  const size_t index = id >> 10;
+  const RESOURCE_LANGS lang = ResourcesManager::lang_from_id(id);
+  return ResourcesManager::sub_lang(lang, index);
+}
 
 RESOURCE_SUBLANGS ResourcesManager::sub_lang(RESOURCE_LANGS lang, size_t index) {
   // From https://msdn.microsoft.com/en-us/library/windows/desktop/dd318693(v=vs.85).aspx
@@ -286,8 +295,7 @@ std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available(void) const
   for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
       for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
-        RESOURCE_LANGS lang        = static_cast<RESOURCE_LANGS>(node_lvl_3.id() & 0x3ff);
-        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sub_lang(lang, (node_lvl_3.id() >> 10));
+        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sublang_from_id(node_lvl_3.id());
         sublangs.insert(sub_lang);
       }
     }
@@ -799,9 +807,9 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
         const uint32_t id = icon_header->ID;
 
         ResourceIcon icon{icon_header};
-        icon.lang_    = static_cast<RESOURCE_LANGS>(grp_icon_lvl3.id() & 0x3fff);
+        icon.lang_    = ResourcesManager::lang_from_id(grp_icon_lvl3.id());
+        icon.sublang_ = ResourcesManager::sublang_from_id(grp_icon_lvl3.id());
 
-        icon.sublang_ = ResourcesManager::sub_lang(icon.lang_, (grp_icon_lvl3.id() >> 10));
         it_childs sub_nodes_icons = it_icon->childs();
 
         auto&& it_icon_dir = std::find_if(
@@ -1016,6 +1024,8 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         const pe_dialog_template_ext* header = reinterpret_cast<const pe_dialog_template_ext*>(stream.read(0, sizeof(pe_dialog_template_ext)));
 
         ResourceDialog new_dialog{header};
+        new_dialog.lang(ResourcesManager::lang_from_id(data_node->id()));
+        new_dialog.sub_lang(ResourcesManager::sublang_from_id(data_node->id()));
 
         size_t offset = sizeof(pe_dialog_template_ext);
 
@@ -1227,8 +1237,8 @@ void ResourcesManager::print_tree(
       }
 
       if (current_depth == 2) {
-        RESOURCE_LANGS lang        = static_cast<RESOURCE_LANGS>(child_node.id() & 0x3ff);
-        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sub_lang(lang, (child_node.id() >> 10));
+        RESOURCE_LANGS lang        = ResourcesManager::lang_from_id(child_node.id());
+        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sublang_from_id(child_node.id());
         output << " - " << to_string(lang) << "/" << to_string(sub_lang);
       }
       output << std::setfill(' ');

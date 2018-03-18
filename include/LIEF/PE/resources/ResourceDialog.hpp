@@ -96,6 +96,15 @@ class LIEF_API ResourceDialog : public Object {
   //! @brief Iterator on the controls (ResourceDialogItem) that define the Dialog (Button, Label...)
   it_const_dialog_items items(void) const;
 
+  //! RESOURCE_LANGS associated with the Dialog
+  RESOURCE_LANGS lang(void) const;
+
+  //! RESOURCE_SUBLANGS associated with the Dialog
+  RESOURCE_SUBLANGS sub_lang(void) const;
+
+  void lang(RESOURCE_LANGS lang);
+  void sub_lang(RESOURCE_SUBLANGS sub_lang);
+
 
   // Extended API
   // ============
@@ -161,6 +170,9 @@ class LIEF_API ResourceDialog : public Object {
   std::u16string typeface_;
 
   std::vector<ResourceDialogItem> items_;
+
+  RESOURCE_LANGS lang_;
+  RESOURCE_SUBLANGS sublang_;
 
 
 };
