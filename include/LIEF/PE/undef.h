@@ -305,6 +305,7 @@
 #undef LANG_CATALAN
 #undef LANG_CHINESE
 #undef LANG_CROATIAN
+#undef LANG_BOSNIAN
 #undef LANG_CZECH
 #undef LANG_DANISH
 #undef LANG_DIVEHI
