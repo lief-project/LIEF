@@ -823,7 +823,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 // ====================================================================
 std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
   if (not this->has_dialogs()) {
-    throw not_found("No dialogs found!");
+    return {};
   }
   std::vector<ResourceDialog> dialogs;
   const ResourceDirectory* dialog_dir = dynamic_cast<const ResourceDirectory*>(&this->get_node_type(RESOURCE_TYPES::DIALOG));
@@ -841,13 +841,15 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
 
 
       if (content.size() < std::min(sizeof(pe_dialog_template_ext), sizeof(pe_dialog_template))) {
-        throw corrupted("Dialog is corrupted!");
+        LOG(WARNING) << "Dialog is corrupted!";
+        return {};
       }
 
       if (content[2] == 0xFF and content[3] == 0xFF) {
 
         if (content.size() < sizeof(pe_dialog_template_ext)) {
-          throw corrupted("Dialog is corrupted!");
+          LOG(WARNING) << "Dialog is corrupted!";
+          return {};
         }
 
         const pe_dialog_template_ext* header = reinterpret_cast<const pe_dialog_template_ext*>(stream.read(0, sizeof(pe_dialog_template_ext)));
