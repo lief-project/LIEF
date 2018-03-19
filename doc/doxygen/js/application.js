@@ -1,4 +1,0 @@
-
-$(function () {
-	$('a').tooltip();
-});
