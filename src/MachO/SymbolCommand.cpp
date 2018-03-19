@@ -53,7 +53,7 @@ void SymbolCommand::symbol_offset(uint32_t offset) {
   this->symbolOffset_ = offset;
 }
 
-void SymbolCommand::numberof_symbol(uint32_t nb) {
+void SymbolCommand::numberof_symbols(uint32_t nb) {
   this->numberOfSymbols_ = nb;
 }
 

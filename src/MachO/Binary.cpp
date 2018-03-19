@@ -771,6 +771,20 @@ const RPathCommand& Binary::rpath(void) const {
   return this->command<RPathCommand>();
 }
 
+// SymbolCommand command
+// +++++++++++++++++++++
+bool Binary::has_symbol_command(void) const {
+  return this->has_command<SymbolCommand>();
+}
+
+SymbolCommand& Binary::symbol_command(void) {
+  return this->command<SymbolCommand>();
+}
+
+const SymbolCommand& Binary::symbol_command(void) const {
+  return this->command<SymbolCommand>();
+}
+
 
 
 

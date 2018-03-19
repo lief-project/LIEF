@@ -211,7 +211,7 @@ class LIEF_API Binary : public LIEF::Binary  {
     //! Basically for libraries it will return ``false``
     bool has_entrypoint(void) const;
 
-    //! @brief ``true`` if the binary has an MachO::UUIDCommand command.
+    //! @brief ``true`` if the binary has a MachO::UUIDCommand command.
     bool has_uuid(void) const;
 
     //! @brief Return the MachO::UUIDCommand
@@ -275,14 +275,21 @@ class LIEF_API Binary : public LIEF::Binary  {
     RPathCommand&       rpath(void);
     const RPathCommand& rpath(void) const;
 
-    template<class T>
-    bool has_command(void) const;
+    //! @brief ``true`` if the binary has a MachO::SymbolCommand command.
+    bool has_symbol_command(void) const;
+
+    //! @brief Return the MachO::SymbolCommand
+    SymbolCommand&       symbol_command(void);
+    const SymbolCommand& symbol_command(void) const;
 
     template<class T>
-    T& command(void);
+    LIEF_LOCAL bool has_command(void) const;
 
     template<class T>
-    const T& command(void) const;
+    LIEF_LOCAL T& command(void);
+
+    template<class T>
+    LIEF_LOCAL const T& command(void) const;
 
     template<class T>
     size_t count_commands(void) const;

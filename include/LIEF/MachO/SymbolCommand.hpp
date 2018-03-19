@@ -36,13 +36,20 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
     virtual ~SymbolCommand(void);
 
+    //! Offset from the start of the file to the n_list associated with the command
     uint32_t symbol_offset(void) const;
+
+    //! Number of symbols registered
     uint32_t numberof_symbols(void) const;
+
+    //! Offset from the start of the file to the string table
     uint32_t strings_offset(void) const;
+
+    //! Size of the size string table
     uint32_t strings_size(void) const;
 
     void symbol_offset(uint32_t offset);
-    void numberof_symbol(uint32_t nb);
+    void numberof_symbols(uint32_t nb);
     void strings_offset(uint32_t offset);
     void strings_size(uint32_t size);
 

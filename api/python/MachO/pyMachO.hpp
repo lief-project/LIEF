@@ -36,6 +36,7 @@ void init_MachO_DylibCommand_class(py::module&);
 void init_MachO_SegmentCommand_class(py::module&);
 void init_MachO_Section_class(py::module&);
 void init_MachO_Symbol_class(py::module&);
+void init_MachO_SymbolCommand_class(py::module&);
 void init_MachO_UUIDCommand_class(py::module&);
 void init_MachO_MainCommand_class(py::module&);
 void init_MachO_DylinkerCommand_class(py::module&);

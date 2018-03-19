@@ -144,6 +144,17 @@ Symbol
 
 ----------
 
+
+Symbol Command
+**************
+
+.. autoclass:: lief.MachO.SymbolCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Dyld Info
 *********
 

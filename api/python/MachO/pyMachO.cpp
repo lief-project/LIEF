@@ -34,6 +34,7 @@ void init_MachO_module(py::module& m) {
   init_MachO_SegmentCommand_class(LIEF_MachO_module);
   init_MachO_Section_class(LIEF_MachO_module);
   init_MachO_Symbol_class(LIEF_MachO_module);
+  init_MachO_SymbolCommand_class(LIEF_MachO_module);
   init_MachO_UUIDCommand_class(LIEF_MachO_module);
   init_MachO_MainCommand_class(LIEF_MachO_module);
   init_MachO_DylinkerCommand_class(LIEF_MachO_module);
