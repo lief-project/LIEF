@@ -423,7 +423,7 @@ const Section& Binary::section_from_virtual_address(uint64_t address) const {
       sections.cend(),
       [&address] (const Section& section) {
         return ((section.virtual_address() <= address) and
-            address <= (section.virtual_address() + section.size()));
+            address < (section.virtual_address() + section.size()));
       });
 
   if (it_section == sections.cend()) {
@@ -444,7 +444,7 @@ const SegmentCommand& Binary::segment_from_virtual_address(uint64_t virtual_addr
       std::end(segments),
       [&virtual_address] (const SegmentCommand& segment) {
         return ((segment.virtual_address() <= virtual_address) and
-            virtual_address <= (segment.virtual_address() + segment.virtual_size()));
+            virtual_address < (segment.virtual_address() + segment.virtual_size()));
       });
 
   if (it_segment == segments.cend()) {
@@ -467,7 +467,7 @@ const SegmentCommand& Binary::segment_from_offset(uint64_t offset) const {
       std::end(segments),
       [&offset] (const SegmentCommand& segment) {
         return ((segment.file_offset() <= offset) and
-            offset <= (segment.file_offset() + segment.file_size()));
+            offset < (segment.file_offset() + segment.file_size()));
       });
 
   if (it_segment == segments.cend()) {
