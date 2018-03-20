@@ -1063,7 +1063,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   // Find the section associated with the virtual address
   Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
-  std::vector<uint8_t>& content = section_topatch.content();
+  std::vector<uint8_t>& content = section_topatch.content_ref();
   std::copy(
       std::begin(patch_value),
       std::end(patch_value),
@@ -1078,7 +1078,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 
   Section& section_topatch = this->section_from_rva(address);
   const uint64_t offset = address - section_topatch.virtual_address();
-  std::vector<uint8_t>& content = section_topatch.content();
+  std::vector<uint8_t>& content = section_topatch.content_ref();
 
   std::copy(
       reinterpret_cast<uint8_t*>(&patch_value),
@@ -1094,7 +1094,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
     rva -= this->optional_header().imagebase();
   }
   const Section& section = this->section_from_rva(rva);
-  const std::vector<uint8_t>& content = section.content();
+  std::vector<uint8_t> content = section.content();
   const uint64_t offset = rva - section.virtual_address();
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {

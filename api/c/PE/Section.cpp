@@ -27,9 +27,9 @@ void init_c_sections(Pe_Binary_t* c_binary, Binary* binary) {
   for (size_t i = 0; i < sections.size(); ++i) {
     Section& b_section = sections[i];
     c_binary->sections[i] = static_cast<Pe_Section_t*>(malloc(sizeof(Pe_Section_t)));
-    const std::vector<uint8_t>& section_content = b_section.content();
+    std::vector<uint8_t> section_content = b_section.content();
     uint8_t* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
-    std::copy(
+    std::move(
         std::begin(section_content),
         std::end(section_content),
         content);

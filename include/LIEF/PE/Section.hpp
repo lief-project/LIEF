@@ -32,11 +32,13 @@ namespace PE {
 
 class Parser;
 class Builder;
+class Binary;
 
 class LIEF_API Section : public LIEF::Section {
 
   friend class Parser;
   friend class Builder;
+  friend class Binary;
 
   public:
     using LIEF::Section::name;
@@ -58,7 +60,6 @@ class LIEF_API Section : public LIEF::Section {
     // LIEF::Section implementation
     // ============================
     virtual std::vector<uint8_t> content(void) const override;
-    std::vector<uint8_t>& content(void);
 
 
     uint32_t pointerto_raw_data(void) const;
@@ -98,6 +99,8 @@ class LIEF_API Section : public LIEF::Section {
     LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
+    std::vector<uint8_t>& content_ref(void);
+
     uint32_t                virtualSize_;
     std::vector<uint8_t>    content_;
     uint32_t                pointerToRelocations_;

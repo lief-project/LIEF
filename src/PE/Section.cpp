@@ -96,7 +96,7 @@ std::vector<uint8_t> Section::content(void) const {
   return this->content_;
 }
 
-std::vector<uint8_t>& Section::content(void){
+std::vector<uint8_t>& Section::content_ref(void) {
   return this->content_;
 }
 
