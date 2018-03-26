@@ -5,6 +5,9 @@ The objective of this tutorial is to hook an imported function in an ELF binary.
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/05_ELF_infect_plt-got>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 -----
 
 Hooking imported functions by infecting the ``.got`` section is a well-known technique [#f1]_ [#f2]_ and this tutorial will be focused

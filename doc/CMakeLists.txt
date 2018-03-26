@@ -2,7 +2,7 @@ find_package(Doxygen)
 find_package(Sphinx)
 
 if(NOT DOXYGEN_FOUND)
-    message(STATUS "Doc disabled: doxygen not found")
+  message(STATUS "Doc disabled: doxygen not found")
 elseif(NOT SPHINX_FOUND)
   message(FATAL "Doc disabled: sphinx-build not found")
 elseif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})

@@ -5,6 +5,9 @@ The objective of this tutorial is show how we can hook imported functions
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/06_PE_hooking>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 ------
 
 The targeted binary is a simple ``PE64`` *HelloWorld* which prints the first argument on in the console:

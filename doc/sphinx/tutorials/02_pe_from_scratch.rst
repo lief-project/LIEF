@@ -7,6 +7,9 @@ In this tutorial we will see how to create a simple PE executable from scratch
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/02_PE_from_Scratch>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 ----------
 
 LIEF enables to create simple PE from scratch. The aim of this tutorial is to create an executable which pop a ``MessageBoxA`` with "Hello Word"

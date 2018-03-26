@@ -26,6 +26,7 @@ Welcome to LIEF's documentation!
   tutorials/06_pe_hooking
   tutorials/07_pe_resource
   tutorials/08_elf_bin2lib
+  tutorials/09_frida_lief
 
 
 .. toctree::

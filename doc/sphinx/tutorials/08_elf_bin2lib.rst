@@ -5,6 +5,9 @@ In this tutorial, we will see how to convert a **PIE** executable into a library
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/08_ELF_bin2lib>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 ------
 
 Introduction

@@ -5,6 +5,9 @@ In this tutorial we will see how to modify dynamic symbols in both a binary and 
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_change_symbols>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 -----
 
 When a binary in linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the

@@ -3,6 +3,8 @@
 
 The objective of this tutorial is to give an overview of the LIEF's API to parse and manipulate formats
 
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 -----
 
 ELF

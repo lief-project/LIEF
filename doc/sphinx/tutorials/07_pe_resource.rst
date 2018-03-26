@@ -5,6 +5,9 @@ This tutorial gives an overview of the resource structure in a PE file and how t
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/07_PE_resource>`_
 
+
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 ------
 
 Unlike **ELF** and **Mach-O** formats, **PE** enables to embed *resources* (icons, images, raw, dialog ...) within an

@@ -5,6 +5,8 @@ The objective of this tutorial is to hook a library function
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_hooking>`_
 
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+
 ------
 
 In the previous tutorial we saw how to swap symbols names from a shared library, we will now see the mechanism to hook a function in a shared library.
