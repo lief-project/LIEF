@@ -36,11 +36,12 @@ namespace LIEF {
 class LIEF_API Binary : public Object {
 
   public:
+
     //! Type of a virtual address
     enum class VA_TYPES {
-      AUTO = 0, //! Guess if it's relative or not
-      RVA  = 1, //! Relative
-      VA   = 2, //! Absolute
+      AUTO = 0, ///< Guess if it's relative or not
+      RVA  = 1, ///< Relative
+      VA   = 2, ///< Absolute
     };
 
   public:
