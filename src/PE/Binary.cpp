@@ -1059,10 +1059,20 @@ uint64_t Binary::entrypoint(void) const {
   return this->optional_header().imagebase() + this->optional_header().addressof_entrypoint();
 }
 
-void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value) {
+void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES addr_type) {
+  uint64_t rva = address;
+
+  if (addr_type == LIEF::Binary::VA_TYPES::VA or addr_type == LIEF::Binary::VA_TYPES::AUTO) {
+    const int64_t delta = address - this->optional_header().imagebase();
+
+    if (delta > 0 or addr_type == LIEF::Binary::VA_TYPES::VA) {
+      rva -= this->optional_header().imagebase();
+    }
+  }
+
   // Find the section associated with the virtual address
-  Section& section_topatch = this->section_from_rva(address);
-  const uint64_t offset = address - section_topatch.virtual_address();
+  Section& section_topatch = this->section_from_rva(rva);
+  const uint64_t offset = rva - section_topatch.virtual_address();
   std::vector<uint8_t>& content = section_topatch.content_ref();
   std::copy(
       std::begin(patch_value),
@@ -1071,13 +1081,23 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 }
 
-void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) {
+void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES addr_type) {
   if (size > sizeof(patch_value)) {
     throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
   }
 
-  Section& section_topatch = this->section_from_rva(address);
-  const uint64_t offset = address - section_topatch.virtual_address();
+  uint64_t rva = address;
+
+  if (addr_type == LIEF::Binary::VA_TYPES::VA or addr_type == LIEF::Binary::VA_TYPES::AUTO) {
+    const int64_t delta = address - this->optional_header().imagebase();
+
+    if (delta > 0 or addr_type == LIEF::Binary::VA_TYPES::VA) {
+      rva -= this->optional_header().imagebase();
+    }
+  }
+
+  Section& section_topatch = this->section_from_rva(rva);
+  const uint64_t offset = rva - section_topatch.virtual_address();
   std::vector<uint8_t>& content = section_topatch.content_ref();
 
   std::copy(
@@ -1087,11 +1107,15 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 
 }
 
-std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
+std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size, LIEF::Binary::VA_TYPES addr_type) const {
   uint64_t rva = virtual_address;
-  const int64_t delta = virtual_address - this->optional_header().imagebase();
-  if (delta > 0) {
-    rva -= this->optional_header().imagebase();
+
+  if (addr_type == LIEF::Binary::VA_TYPES::VA or addr_type == LIEF::Binary::VA_TYPES::AUTO) {
+    const int64_t delta = virtual_address - this->optional_header().imagebase();
+
+    if (delta > 0 or addr_type == LIEF::Binary::VA_TYPES::VA) {
+      rva -= this->optional_header().imagebase();
+    }
   }
   const Section& section = this->section_from_rva(rva);
   std::vector<uint8_t> content = section.content();

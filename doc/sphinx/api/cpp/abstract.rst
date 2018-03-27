@@ -68,5 +68,8 @@ Enums
 .. doxygenenum:: LIEF::ENDIANNESS
    :project: lief
 
+.. doxygenenum:: LIEF::Binary::VA_TYPES
+   :project: lief
+
 
 

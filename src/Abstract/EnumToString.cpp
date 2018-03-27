@@ -90,6 +90,16 @@ const char* to_string(ENDIANNESS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
+const char* to_string(Binary::VA_TYPES e) {
+  const std::map<Binary::VA_TYPES, const char*> enumStrings {
+    { LIEF::Binary::VA_TYPES::AUTO, "AUTO" },
+    { LIEF::Binary::VA_TYPES::RVA,  "RVA"  },
+    { LIEF::Binary::VA_TYPES::VA,   "VA"   },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
 
 
 } // namespace LIEF

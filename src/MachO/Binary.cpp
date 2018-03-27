@@ -55,7 +55,7 @@ LIEF::sections_t Binary::get_abstract_sections(void) {
 // LIEF Interface
 // ==============
 
-void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value) {
+void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES) {
   // Find the segment associated with the virtual address
   SegmentCommand& segment_topatch = this->segment_from_virtual_address(address);
   const uint64_t offset = address - segment_topatch.virtual_address();
@@ -68,7 +68,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 }
 
-void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) {
+void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
   if (size > sizeof(patch_value)) {
     throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
   }
@@ -85,7 +85,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size) 
 
 }
 
-std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
+std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size, LIEF::Binary::VA_TYPES) const {
   const SegmentCommand& segment = this->segment_from_virtual_address(virtual_address);
   const std::vector<uint8_t>& content = segment.content();
   const uint64_t offset = virtual_address - segment.virtual_address();

@@ -342,7 +342,8 @@ class LIEF_API Binary : public LIEF::Binary {
     //!
     //! @param[in] address Address to patch
     //! @param[in] patch_value Patch to apply
-    virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value) override;
+    //! @param[in] addr_type Type of the Virtual address: VA or RVA. Default: Auto
+    virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
 
     //! @brief Patch the address with the given value
@@ -350,10 +351,16 @@ class LIEF_API Binary : public LIEF::Binary {
     //! @param[in] address Address to patch
     //! @param[in] patch_value Patch to apply
     //! @param[in] size Size of the value in **bytes** (1, 2, ... 8)
-    virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t)) override;
+    //! @param[in] addr_type Type of the Virtual address: VA or RVA. Default: Auto
+    virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t), LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
     //! @brief Return the content located at virtual address
-    virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const override;
+    //
+    //! @param[in] virtual_address Virtual address of the data to retrieve
+    //! @param[in] size Size in bytes of the data to retrieve
+    //! @param[in] addr_type Type of the Virtual address: VA or RVA. Default: Auto
+    virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
+        LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
 
     //! @brief Return the binary's entrypoint
     virtual uint64_t entrypoint(void) const override;

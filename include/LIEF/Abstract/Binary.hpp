@@ -36,6 +36,14 @@ namespace LIEF {
 class LIEF_API Binary : public Object {
 
   public:
+    //! Type of a virtual address
+    enum class VA_TYPES {
+      AUTO = 0, //! Guess if it's relative or not
+      RVA  = 1, //! Relative
+      VA   = 2, //! Absolute
+    };
+
+  public:
     Binary(void);
     virtual ~Binary(void);
 
@@ -100,17 +108,17 @@ class LIEF_API Binary : public Object {
     //!
     //! @param[in] address Address to patch
     //! @param[in] patch_value Patch to apply
-    virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value) = 0;
+    virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
     //! @brief Patch the address with the given value
     //!
     //! @param[in] address Address to patch
     //! @param[in] patch_value Patch to apply
     //! @param[in] size Size of the value in **bytes** (1, 2, ... 8)
-    virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t)) = 0;
+    virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t), VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
     //! @brief Return the content located at virtual address
-    virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const = 0;
+    virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size, VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
 
     //! @brief Change binary's name
     void name(const std::string& name);

@@ -114,3 +114,14 @@ Endianness
   :inherited-members:
   :undoc-members:
 
+----------
+
+Virtual Address Types
+~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.Binary.VA_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
