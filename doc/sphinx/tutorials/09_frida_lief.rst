@@ -85,7 +85,7 @@ To explain the process, we will inject frida gadget in the Telegram application.
   * It's a real app
 
 
-About the environment, we will use the version ``4.8.4-12207`` of Telegram (February 18, 2018) on an Android 6.0.1 device with an AArch64 architecture (Samsung Galaxy S6)
+Regarding the environment, we will use the version ``4.8.4-12207`` of Telegram (February 18, 2018) on an Android 6.0.1 device with an AArch64 architecture (Samsung Galaxy S6)
 
 Injection with LIEF
 ###################
