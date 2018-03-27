@@ -153,7 +153,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Patch the address with the given value",
         "Virtual address is specified in the first argument and the content in the second (as a list of bytes).\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) "",
+        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
         "address"_a, "patch_value"_a, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
 
     .def("patch_address",
@@ -161,7 +161,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Patch the address with the given value",
         "Virtual address is specified in the first argument, integer in the second and sizeof the integer in third one.\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) "",
+        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
         "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
 
 
@@ -170,7 +170,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Return the content located at virtual address.\n\n"
         "Virtual address is specified in the first argument and size to read (in bytes) in the second.\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) "",
+        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
         "virtual_address"_a, "size"_a, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
 
     .def_property_readonly("abstract",
