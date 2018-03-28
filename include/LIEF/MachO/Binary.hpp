@@ -283,6 +283,13 @@ class LIEF_API Binary : public LIEF::Binary  {
     SymbolCommand&       symbol_command(void);
     const SymbolCommand& symbol_command(void) const;
 
+    //! @brief ``true`` if the binary has a MachO::DynamicSymbolCommand command.
+    bool has_dynamic_symbol_command(void) const;
+
+    //! @brief Return the MachO::SymbolCommand
+    DynamicSymbolCommand&       dynamic_symbol_command(void);
+    const DynamicSymbolCommand& dynamic_symbol_command(void) const;
+
     template<class T>
     LIEF_LOCAL bool has_command(void) const;
 

@@ -229,6 +229,63 @@ def print_symbols(binary):
             libname))
     print("")
 
+@exceptions_handler(Exception)
+def print_symbol_command(binary):
+    print("== Symbol Command ==")
+
+    scmd = binary.symbol_command
+
+    format_str = "{:<17} {:<30}"
+    format_hex = "{:<17} 0x{:<28x}"
+    format_dec = "{:<17} {:<30d}"
+
+    print(format_hex.format("Symbol offset", scmd.symbol_offset))
+    print(format_dec.format("Number of symbols", scmd.numberof_symbols))
+
+    print(format_hex.format("String offset", scmd.strings_offset))
+    print(format_hex.format("String size", scmd.strings_size))
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_dynamic_symbol_command(binary):
+    print("== Dynamic Symbol Command ==")
+
+    dyscmd = binary.dynamic_symbol_command
+
+    format_str = "{:<36} {:<30}"
+    format_hex = "{:<36} 0x{:<28x}"
+    format_dec = "{:<36} {:<30d}"
+
+    print(format_dec.format("First local symbol index", dyscmd.idx_local_symbol))
+    print(format_dec.format("Number of local symbols", dyscmd.nb_local_symbols))
+
+    print(format_dec.format("External symbol index", dyscmd.idx_external_define_symbol))
+    print(format_dec.format("Number of external symbols", dyscmd.nb_external_define_symbols))
+
+    print(format_dec.format("Undefined symbol index", dyscmd.idx_undefined_symbol))
+    print(format_dec.format("Number of undefined symbols", dyscmd.nb_undefined_symbols))
+
+    print(format_dec.format("Table of content offset", dyscmd.toc_offset))
+    print(format_dec.format("Number of entries in TOC", dyscmd.nb_toc))
+
+    print(format_hex.format("Module table offset", dyscmd.module_table_offset))
+    print(format_dec.format("Number of entries in module table", dyscmd.nb_module_table))
+
+    print(format_hex.format("External reference table offset", dyscmd.external_reference_symbol_offset))
+    print(format_dec.format("Number of external reference", dyscmd.nb_external_reference_symbols))
+
+    print(format_hex.format("Indirect symbols offset", dyscmd.indirect_symbol_offset))
+    print(format_dec.format("Number of indirect symbols", dyscmd.nb_indirect_symbols))
+
+    print(format_hex.format("External relocation offset", dyscmd.external_relocation_offset))
+    print(format_dec.format("Number of external relocations", dyscmd.nb_external_relocations))
+
+    print(format_hex.format("Local relocation offset", dyscmd.local_relocation_offset))
+    print(format_dec.format("Number of local relocations", dyscmd.nb_local_relocations))
+
+    print("")
+
 
 @exceptions_handler(Exception)
 def print_uuid(binary):
@@ -571,6 +628,14 @@ def main():
             action='store_true', dest='show_rpath_command',
             help="Display the 'Rpath Command' command")
 
+    parser.add_argument('--symbol-command',
+            action='store_true', dest='show_symbol_command',
+            help="Display the 'Symbol Command' command")
+
+    parser.add_argument('--dynamic-symbol-command',
+            action='store_true', dest='show_dynamic_symbol_command',
+            help="Display the 'Symbol Command' command")
+
     parser.add_argument('--bind-opcodes',
             action='store_true', dest='show_bind_opcodes',
             help='Display the "Bind" opcodes')
@@ -652,6 +717,15 @@ def main():
 
         if (args.show_thread_command or args.show_all) and binary.has_thread_command:
             print_thread_command(binary)
+
+        if (args.show_rpath_command or args.show_all) and binary.has_rpath:
+            print_rpath_command(binary)
+
+        if (args.show_symbol_command or args.show_all) and binary.has_symbol_command:
+            print_symbol_command(binary)
+
+        if (args.show_dynamic_symbol_command or args.show_all) and binary.has_dynamic_symbol_command:
+            print_dynamic_symbol_command(binary)
 
         if (args.show_rpath_command or args.show_all) and binary.has_rpath:
             print_rpath_command(binary)

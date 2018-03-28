@@ -25,6 +25,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyThreadCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRPathCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyParserConfig.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicSymbolCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyMachOStructures.cpp"
 )
 

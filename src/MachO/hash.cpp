@@ -109,8 +109,32 @@ void Hash::visit(const MainCommand& maincmd) {
 }
 
 void Hash::visit(const DynamicSymbolCommand& dynamic_symbol) {
-  //TODO
-  this->process(reinterpret_cast<size_t>(&dynamic_symbol));
+  this->process(dynamic_symbol.idx_local_symbol());
+  this->process(dynamic_symbol.nb_local_symbols());
+
+  this->process(dynamic_symbol.idx_external_define_symbol());
+  this->process(dynamic_symbol.nb_external_define_symbols());
+
+  this->process(dynamic_symbol.idx_undefined_symbol());
+  this->process(dynamic_symbol.nb_undefined_symbols());
+
+  this->process(dynamic_symbol.toc_offset());
+  this->process(dynamic_symbol.nb_toc());
+
+  this->process(dynamic_symbol.module_table_offset());
+  this->process(dynamic_symbol.nb_module_table());
+
+  this->process(dynamic_symbol.external_reference_symbol_offset());
+  this->process(dynamic_symbol.nb_external_reference_symbols());
+
+  this->process(dynamic_symbol.indirect_symbol_offset());
+  this->process(dynamic_symbol.nb_indirect_symbols());
+
+  this->process(dynamic_symbol.external_relocation_offset());
+  this->process(dynamic_symbol.nb_external_relocations());
+
+  this->process(dynamic_symbol.local_relocation_offset());
+  this->process(dynamic_symbol.nb_local_relocations());
 }
 
 void Hash::visit(const DylinkerCommand& dylinker) {

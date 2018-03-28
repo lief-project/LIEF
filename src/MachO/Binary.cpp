@@ -785,6 +785,19 @@ const SymbolCommand& Binary::symbol_command(void) const {
   return this->command<SymbolCommand>();
 }
 
+// DynamicSymbolCommand command
+// ++++++++++++++++++++++++++++
+bool Binary::has_dynamic_symbol_command(void) const {
+  return this->has_command<SymbolCommand>();
+}
+
+DynamicSymbolCommand& Binary::dynamic_symbol_command(void) {
+  return this->command<DynamicSymbolCommand>();
+}
+
+const DynamicSymbolCommand& Binary::dynamic_symbol_command(void) const {
+  return this->command<DynamicSymbolCommand>();
+}
 
 
 

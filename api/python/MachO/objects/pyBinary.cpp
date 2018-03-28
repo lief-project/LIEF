@@ -216,13 +216,23 @@ void init_MachO_Binary_class(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("has_symbol_command",
-        &Binary::has_rpath,
+        &Binary::has_symbol_command,
         "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SymbolCommand) " command.",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("symbol_command",
         static_cast<no_const_getter<SymbolCommand&>>(&Binary::symbol_command),
         "Return binary's " RST_CLASS_REF(lief.MachO.SymbolCommand) " if any.",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_dynamic_symbol_command",
+        &Binary::has_dynamic_symbol_command,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " command.",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("dynamic_symbol_command",
+        static_cast<no_const_getter<DynamicSymbolCommand&>>(&Binary::dynamic_symbol_command),
+        "Return binary's " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " if any.",
         py::return_value_policy::reference)
 
 

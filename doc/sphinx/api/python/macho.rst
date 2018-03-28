@@ -155,6 +155,16 @@ Symbol Command
 
 ----------
 
+Dynamic Symbol Command
+**********************
+
+.. autoclass:: lief.MachO.DynamicSymbolCommand
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Dyld Info
 *********
 
