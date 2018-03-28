@@ -341,6 +341,28 @@ endif()
 # =============
 include(LIEFCompilerFlags)
 
+# Profiling flags
+# ---------------
+if (LIEF_PROFILING)
+  set(PROFILING_FLAGS
+    -fno-builtin-malloc
+    -fno-builtin-calloc
+    -fno-builtin-realloc
+    -fno-builtin-free
+    -fno-omit-frame-pointer
+    -g
+  )
+  target_compile_options(LIB_LIEF_STATIC PUBLIC ${PROFILING_FLAGS})
+  target_compile_options(LIB_LIEF_SHARED PUBLIC ${PROFILING_FLAGS})
+
+
+  add_executable(elf_profiler profiling/elf_profiler.cpp)
+  target_compile_options(elf_profiler PUBLIC ${PROFILING_FLAGS})
+  target_link_libraries(elf_profiler PRIVATE LIB_LIEF_STATIC)
+endif()
+
+# Coverage flags
+# --------------
 if(LIEF_COVERAGE)
   target_compile_options(LIB_LIEF_STATIC PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
   target_compile_options(LIB_LIEF_SHARED PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)

@@ -31,3 +31,6 @@ option(LIEF_USAN "Enable undefined sanitizer" OFF)
 # Fuzzer
 option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
+# Profiling
+option(LIEF_PROFILING "Enable performance profiling" OFF)
+
