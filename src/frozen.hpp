@@ -1,4 +1,4 @@
-/* Copyright 2017 A. Guinet
+/* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,32 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef LIEF_FROZEN_H_
+#define LIEF_FROZEN_H_
+#include "LIEF/config.h"
+#include "compiler_support.h"
 
-#ifndef LIEF_CONFIG_H_
-#define LIEF_CONFIG_H_
-
-#if @ENABLE_JSON_SUPPORT@
-#define LIEF_JSON_SUPPORT
-#endif
-
-#if @ENABLE_PE_SUPPORT@
-#define LIEF_PE_SUPPORT
-#endif
-
-#if @ENABLE_ELF_SUPPORT@
-#define LIEF_ELF_SUPPORT
-#endif
-
-#if @ENABLE_MACHO_SUPPORT@
-#define LIEF_MACHO_SUPPORT
-#endif
-
-#if @ENABLE_LOGGING_SUPPORT@
-#define LIEF_LOGGING_SUPPORT
-#endif
-
-#if @LIEF_FROZEN_ENABLED@
-#define LIEF_FROZEN_ENABLED
+#ifdef LIEF_FROZEN_ENABLED
+#include <frozen/map.h>
+#define CONST_MAP(KEY, VAL, NUM) constexpr frozen::map<KEY, VAL, NUM>
+#else
+#include <map>
+#define CONST_MAP(KEY, VAL, NUM) static const std::map<KEY, VAL>
 #endif
 
 #endif

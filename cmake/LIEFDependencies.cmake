@@ -225,3 +225,26 @@ if (LIEF_FUZZING)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
 endif()
 
+
+# Frozen
+# ------
+set(LIEF_FROZEN_ENABLED 0)
+
+if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
+  message(STATUS "Enable Frozen (C++14 support)")
+  set(LIEF_FROZEN_ENABLED 1)
+  set(FROZEN_VERSION 2f608b5)
+  set(FROZEN_SHA256 SHA256=e72a59976beb55f4d608d195745b9fbd51f8bcff20a23060b18f20a46873bddf)
+  set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
+  ExternalProject_Add(lief_frozen
+    URL               ${FROZEN_URL}
+    URL_HASH          ${FROZEN_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    INSTALL_COMMAND   "")
+
+  ExternalProject_get_property(lief_frozen SOURCE_DIR)
+  set(FROZEN_INCLUDE_DIR "${SOURCE_DIR}/include")
+endif()
+

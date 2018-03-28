@@ -69,6 +69,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
     RELOCATION_PURPOSES purpose(void) const;
 
     //! @brief Return the **bit** size of the value to patch
+    //!
+    //! Return -1 if it fails
     virtual size_t size(void) const override;
 
     bool          has_symbol(void) const;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.6)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -24,6 +24,9 @@ message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
 # LIEF options
 # =============
 include(LIEFOptions)
+
+# Compiler detection (C++14, C++17, ...)
+include(LIEFCompilerDetection)
 
 # CCACHE
 # ======
@@ -98,7 +101,9 @@ set(LIEF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Visitor.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitor_macros.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/BinaryStream.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp")
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp"
+)
 
 set(LIEF_VISITOR_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/hash.hpp")
@@ -131,6 +136,10 @@ add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}
 
 target_compile_definitions(LIB_LIEF_STATIC PRIVATE -DLIEF_STATIC)
 target_compile_definitions(LIB_LIEF_SHARED PRIVATE -DLIEF_EXPORTS)
+if (LIEF_SUPPORT_CXX14)
+  target_compile_features(LIB_LIEF_STATIC PRIVATE cxx_std_14)
+  target_compile_features(LIB_LIEF_SHARED PRIVATE cxx_std_14)
+endif()
 
 # Abstract part
 include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
@@ -177,6 +186,11 @@ else()
   add_definitions(-DELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 endif()
 
+# Frozen Configuration
+# ====================
+if (LIEF_FROZEN_ENABLED)
+  list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${FROZEN_INCLUDE_DIR}")
+endif()
 
 # LIEF includes
 # =============
@@ -202,8 +216,10 @@ list(APPEND LIEF_PRIVATE_INCLUDE_DIR
   "${LIEF_PUBLIC_INCLUDE_DIR}"
   "${LIBRANG_SOURCE_DIR}/include"
   "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  "${CMAKE_BINARY_DIR}"
   "${ELG_SOURCE_DIR}"
-  "${MBEDTLS_INCLUDE_DIRS}")
+  "${MBEDTLS_INCLUDE_DIRS}"
+)
 
 
 # Grouping external projects
@@ -212,7 +228,7 @@ source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
 source_group("mbedtls\\x509"   FILES ${mbedtls_src_x509})
 source_group("mbedtls\\tls"    FILES ${mbedtls_src_tls})
 if (LIEF_LOGGING)
-source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
+  source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
 endif()
 
 # Library definition
@@ -234,6 +250,11 @@ endif()
 if (LIEF_LOGGING)
   add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
   add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)
+endif()
+
+if (LIEF_FROZEN_ENABLED)
+  add_dependencies(LIB_LIEF_STATIC lief_frozen)
+  add_dependencies(LIB_LIEF_SHARED lief_frozen)
 endif()
 
 add_dependencies(LIB_LIEF_STATIC lief_rang_cpp_color)

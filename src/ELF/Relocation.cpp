@@ -19,8 +19,10 @@
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
-#include "LIEF/ELF/RelocationSizes.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+
+#include "RelocationSizes.hpp"
+#include "LIEF/logging++.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -172,47 +174,48 @@ size_t Relocation::size(void) const {
  switch (this->architecture()) {
     case ARCH::EM_X86_64:
       {
-        try {
-          return relocation_x86_64_sizes.at(static_cast<RELOC_x86_64>(this->type()));
-        } catch (const std::out_of_range&) {
-          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_x86_64>(this->type())));
+        auto&& it = relocation_x86_64_sizes.find(static_cast<RELOC_x86_64>(this->type()));
+        if (it == std::end(relocation_x86_64_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_x86_64>(this->type()));
+          return -1u;
         }
-        break;
+        return it->second;
       }
 
     case ARCH::EM_386:
       {
-        try {
-          return relocation_i386_sizes.at(static_cast<RELOC_i386>(this->type()));
-        } catch (const std::out_of_range&) {
-          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_i386>(this->type())));
+        auto&& it = relocation_i386_sizes.find(static_cast<RELOC_i386>(this->type()));
+        if (it == std::end(relocation_i386_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_i386>(this->type()));
+          return -1u;
         }
-        break;
+        return it->second;
       }
 
     case ARCH::EM_ARM:
       {
-        try {
-          return relocation_ARM_sizes.at(static_cast<RELOC_ARM>(this->type()));
-        } catch (const std::out_of_range&) {
-          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_ARM>(this->type())));
+        auto&& it = relocation_ARM_sizes.find(static_cast<RELOC_ARM>(this->type()));
+        if (it == std::end(relocation_ARM_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_ARM>(this->type()));
+          return -1u;
         }
-        break;
+        return it->second;
       }
 
     case ARCH::EM_AARCH64:
       {
-        try {
-          return relocation_AARCH64_sizes.at(static_cast<RELOC_AARCH64>(this->type()));
-        } catch (const std::out_of_range&) {
-          throw not_implemented(to_string(this->architecture()) + std::string(" - ") + to_string(static_cast<RELOC_AARCH64>(this->type())));
+        auto&& it = relocation_AARCH64_sizes.find(static_cast<RELOC_AARCH64>(this->type()));
+        if (it == std::end(relocation_AARCH64_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_AARCH64>(this->type()));
+          return -1u;
         }
-        break;
+        return it->second;
       }
 
     default:
       {
-        throw not_implemented(to_string(this->architecture()));
+        LOG(ERROR) << to_string(this->architecture()) << " not implemented";
+        return -1u;
       }
   }
 

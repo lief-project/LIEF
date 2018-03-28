@@ -35,7 +35,9 @@ class LIEF_API Header : public Object {
 
   public:
     using identity_t = std::array<uint8_t, 16>;
+    using abstract_architecture_t = std::pair<ARCHITECTURES, std::set<MODES>>;
 
+    public:
     Header(void);
     Header(const Elf32_Ehdr *header);
     Header(const Elf64_Ehdr *header);
@@ -55,7 +57,9 @@ class LIEF_API Header : public Object {
     ARCH machine_type(void) const;
 
     //! @brief LIEF abstract architecture
-    std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
+    //!
+    //! Empty it can't be abstracted
+    abstract_architecture_t abstract_architecture(void) const;
 
     //! @brief LIEF abstract endianness
     ENDIANNESS abstract_endianness(void) const;

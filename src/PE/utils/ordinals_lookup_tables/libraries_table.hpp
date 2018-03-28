@@ -17,6 +17,7 @@
 #define LIEF_PE_UTILS_LIBRARY_TABLE_H_
 
 #include <map>
+#include "frozen.hpp"
 
 #include "kernel32_dll_lookup.hpp"
 #include "ntdll_dll_lookup.hpp"

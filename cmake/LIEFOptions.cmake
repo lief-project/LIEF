@@ -16,6 +16,8 @@ option(LIEF_EXTRA_WARNINGS "Enable extra warning from the compiler"     OFF)
 option(LIEF_LOGGING        "Enable logging"                             ON)
 option(LIEF_ENABLE_JSON    "Enable JSON-related APIs"                   ON)
 
+option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
+
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
 option(LIEF_MACHO          "Build LIEF with MachO module"               ON)

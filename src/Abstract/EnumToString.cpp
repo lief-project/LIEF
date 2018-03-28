@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 #include "LIEF/Abstract/EnumToString.hpp"
-#include <map>
+#include "frozen.hpp"
 
 namespace LIEF {
 
 const char* to_string(EXE_FORMATS e) {
-  const std::map<EXE_FORMATS, const char*> enumStrings {
+  CONST_MAP(EXE_FORMATS, const char*, 4) enumStrings {
     { EXE_FORMATS::FORMAT_UNKNOWN, "UNKNOWN" },
     { EXE_FORMATS::FORMAT_ELF,     "ELF"     },
     { EXE_FORMATS::FORMAT_PE,      "PE"      },
@@ -30,7 +30,7 @@ const char* to_string(EXE_FORMATS e) {
 }
 
 const char* to_string(OBJECT_TYPES e) {
-  const std::map<OBJECT_TYPES, const char*> enumStrings {
+  CONST_MAP(OBJECT_TYPES, const char*, 4) enumStrings {
     { OBJECT_TYPES::TYPE_NONE,       "NONE"       },
     { OBJECT_TYPES::TYPE_EXECUTABLE, "EXECUTABLE" },
     { OBJECT_TYPES::TYPE_LIBRARY,    "LIBRARY"    },
@@ -41,7 +41,7 @@ const char* to_string(OBJECT_TYPES e) {
 }
 
 const char* to_string(ARCHITECTURES e) {
-  const std::map<ARCHITECTURES, const char*> enumStrings {
+  CONST_MAP(ARCHITECTURES, const char*, 10) enumStrings {
     { ARCHITECTURES::ARCH_NONE,  "NONE"  },
     { ARCHITECTURES::ARCH_ARM,   "ARM"   },
     { ARCHITECTURES::ARCH_ARM64, "ARM64" },
@@ -59,7 +59,7 @@ const char* to_string(ARCHITECTURES e) {
 
 
 const char* to_string(MODES e) {
-  const std::map<MODES, const char*> enumStrings {
+  CONST_MAP(MODES, const char*, 15) enumStrings {
     { MODES::MODE_NONE,          "NONE"  },
     { MODES::MODE_16,            "M16"  },
     { MODES::MODE_32,            "M32"    },
@@ -81,7 +81,7 @@ const char* to_string(MODES e) {
 }
 
 const char* to_string(ENDIANNESS e) {
-  const std::map<ENDIANNESS, const char*> enumStrings {
+  CONST_MAP(ENDIANNESS, const char*, 3) enumStrings {
     { ENDIANNESS::ENDIAN_NONE,   "NONE"   },
     { ENDIANNESS::ENDIAN_BIG,    "BIG"    },
     { ENDIANNESS::ENDIAN_LITTLE, "LITTLE" },
@@ -91,7 +91,7 @@ const char* to_string(ENDIANNESS e) {
 }
 
 const char* to_string(Binary::VA_TYPES e) {
-  const std::map<Binary::VA_TYPES, const char*> enumStrings {
+  CONST_MAP(Binary::VA_TYPES, const char*, 3) enumStrings {
     { LIEF::Binary::VA_TYPES::AUTO, "AUTO" },
     { LIEF::Binary::VA_TYPES::RVA,  "RVA"  },
     { LIEF::Binary::VA_TYPES::VA,   "VA"   },

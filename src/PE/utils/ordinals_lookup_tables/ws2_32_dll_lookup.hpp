@@ -17,6 +17,7 @@
 #define LIEF_PE_WS2_32_DLL_LOOKUP_H_
 
 #include <map>
+#include "frozen.hpp"
 
 namespace LIEF {
 namespace PE {

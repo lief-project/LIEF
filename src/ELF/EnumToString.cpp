@@ -15,13 +15,14 @@
  */
 #include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "frozen.hpp"
 #include <map>
 
 namespace LIEF {
 namespace ELF {
 
 const char* to_string(SYMBOL_BINDINGS e) {
-  const std::map<SYMBOL_BINDINGS, const char*> enumStrings {
+  CONST_MAP(SYMBOL_BINDINGS, const char*, 8) enumStrings {
     { SYMBOL_BINDINGS::STB_LOCAL,      "LOCAL" },
     { SYMBOL_BINDINGS::STB_GLOBAL,     "GLOBAL" },
     { SYMBOL_BINDINGS::STB_WEAK,       "WEAK" },
@@ -37,7 +38,7 @@ const char* to_string(SYMBOL_BINDINGS e) {
 
 
 const char* to_string(E_TYPE e) {
-  const std::map<E_TYPE, const char*> enumStrings {
+  CONST_MAP(E_TYPE, const char*, 7) enumStrings {
     { E_TYPE::ET_NONE,   "NONE" },
     { E_TYPE::ET_REL,    "RELOCATABLE" },
     { E_TYPE::ET_EXEC,   "EXECUTABLE" },
@@ -52,7 +53,7 @@ const char* to_string(E_TYPE e) {
 
 
 const char* to_string(VERSION e) {
-  const std::map<VERSION, const char*> enumStrings {
+  CONST_MAP(VERSION, const char*, 2) enumStrings {
     { VERSION::EV_NONE,    "NONE" },
     { VERSION::EV_CURRENT, "CURRENT" }
   };
@@ -62,7 +63,7 @@ const char* to_string(VERSION e) {
 
 
 const char* to_string(ARCH e) {
-  const std::map<ARCH, const char*> enumStrings {
+  CONST_MAP(ARCH, const char*, 175) enumStrings {
     { ARCH::EM_NONE,          "None" },
     { ARCH::EM_M32,           "M32"},
     { ARCH::EM_SPARC,         "SPARC"},
@@ -244,7 +245,7 @@ const char* to_string(ARCH e) {
 }
 
 const char* to_string(SEGMENT_TYPES e) {
-  const std::map<SEGMENT_TYPES, const char*> enumStrings {
+  CONST_MAP(SEGMENT_TYPES, const char*, 24) enumStrings {
     { SEGMENT_TYPES::PT_NULL,          "NULL" },
     { SEGMENT_TYPES::PT_LOAD,          "LOAD" },
     { SEGMENT_TYPES::PT_DYNAMIC,       "DYNAMIC" },
@@ -275,7 +276,7 @@ const char* to_string(SEGMENT_TYPES e) {
 }
 
 const char* to_string(DYNAMIC_TAGS e) {
-  const std::map<DYNAMIC_TAGS, const char*> enumStrings {
+  CONST_MAP(DYNAMIC_TAGS, const char*, 91) enumStrings {
     { DYNAMIC_TAGS::DT_NULL,                       "NULL"},
     { DYNAMIC_TAGS::DT_NEEDED,                     "NEEDED"},
     { DYNAMIC_TAGS::DT_PLTRELSZ,                   "PLTRELSZ"},
@@ -375,7 +376,7 @@ const char* to_string(DYNAMIC_TAGS e) {
 
 
 const char* to_string(ELF_SECTION_TYPES e) {
-  const std::map<ELF_SECTION_TYPES, const char*> enumStrings {
+  CONST_MAP(ELF_SECTION_TYPES, const char*, 38) enumStrings {
     { ELF_SECTION_TYPES::SHT_NULL,               "NULL"},
     { ELF_SECTION_TYPES::SHT_PROGBITS,           "PROGBITS"},
     { ELF_SECTION_TYPES::SHT_SYMTAB,             "SYMTAB"},
@@ -420,7 +421,7 @@ const char* to_string(ELF_SECTION_TYPES e) {
 }
 
 const char* to_string(ELF_SECTION_FLAGS e) {
-  const std::map<ELF_SECTION_FLAGS, const char*> enumStrings {
+  CONST_MAP(ELF_SECTION_FLAGS, const char*, 25) enumStrings {
     { ELF_SECTION_FLAGS::SHF_NONE,             "NONE"},
     { ELF_SECTION_FLAGS::SHF_WRITE,            "WRITE"},
     { ELF_SECTION_FLAGS::SHF_ALLOC,            "ALLOC"},
@@ -453,7 +454,7 @@ const char* to_string(ELF_SECTION_FLAGS e) {
 
 
 const char* to_string(ELF_SYMBOL_TYPES e) {
-  const std::map<ELF_SYMBOL_TYPES, const char*> enumStrings {
+  CONST_MAP(ELF_SYMBOL_TYPES, const char*, 12) enumStrings {
     { ELF_SYMBOL_TYPES::STT_NOTYPE,    "NOTYPE"},
     { ELF_SYMBOL_TYPES::STT_OBJECT,    "OBJECT"},
     { ELF_SYMBOL_TYPES::STT_FUNC,      "FUNC"},
@@ -473,7 +474,7 @@ const char* to_string(ELF_SYMBOL_TYPES e) {
 
 
 const char* to_string(RELOC_x86_64 e) {
-  const std::map<RELOC_x86_64, const char*> enumStrings {
+  CONST_MAP(RELOC_x86_64, const char*, 43) enumStrings {
     { RELOC_x86_64::R_X86_64_NONE,            "NONE"},
     { RELOC_x86_64::R_X86_64_64,              "R64"},
     { RELOC_x86_64::R_X86_64_PC32,            "PC32"},
@@ -523,7 +524,7 @@ const char* to_string(RELOC_x86_64 e) {
 }
 
 const char* to_string(RELOC_ARM e) {
-  const std::map<RELOC_ARM, const char*> enumStrings {
+  CONST_MAP(RELOC_ARM, const char*, 138) enumStrings {
     { RELOC_ARM::R_ARM_NONE,               "NONE"},
     { RELOC_ARM::R_ARM_PC24,               "PC24"},
     { RELOC_ARM::R_ARM_ABS32,              "ABS32"},
@@ -668,7 +669,7 @@ const char* to_string(RELOC_ARM e) {
 }
 
 const char* to_string(RELOC_AARCH64 e) {
-  const std::map<RELOC_AARCH64, const char*> enumStrings {
+  CONST_MAP(RELOC_AARCH64, const char*, 123) enumStrings {
     { RELOC_AARCH64::R_AARCH64_NONE,                         "NONE"},
     { RELOC_AARCH64::R_AARCH64_ABS64,                        "ABS64"},
     { RELOC_AARCH64::R_AARCH64_ABS32,                        "ABS32"},
@@ -800,7 +801,7 @@ const char* to_string(RELOC_AARCH64 e) {
 
 
 const char* to_string(RELOC_i386 e) {
-  const std::map<RELOC_i386, const char*> enumStrings {
+  CONST_MAP(RELOC_i386, const char*, 41) enumStrings {
     { RELOC_i386::R_386_NONE,          "NONE"},
     { RELOC_i386::R_386_32,            "R32"},
     { RELOC_i386::R_386_PC32,          "PC32"},
@@ -848,7 +849,7 @@ const char* to_string(RELOC_i386 e) {
 }
 
 const char* to_string(ELF_CLASS e) {
-  const std::map<ELF_CLASS, const char*> enumStrings {
+  CONST_MAP(ELF_CLASS, const char*, 3) enumStrings {
     { ELF_CLASS::ELFCLASSNONE, "NONE"},
     { ELF_CLASS::ELFCLASS32,   "CLASS32"},
     { ELF_CLASS::ELFCLASS64,   "CLASS64"},
@@ -859,7 +860,7 @@ const char* to_string(ELF_CLASS e) {
 }
 
 const char* to_string(ELF_DATA e) {
-  const std::map<ELF_DATA, const char*> enumStrings {
+  CONST_MAP(ELF_DATA, const char*, 3) enumStrings {
     { ELF_DATA::ELFDATANONE, "NONE"},
     { ELF_DATA::ELFDATA2LSB, "LSB"},
     { ELF_DATA::ELFDATA2MSB, "MSB"},
@@ -870,7 +871,7 @@ const char* to_string(ELF_DATA e) {
 }
 
 const char* to_string(OS_ABI e) {
-  const std::map<OS_ABI, const char*> enumStrings {
+  CONST_MAP(OS_ABI, const char*, 23) enumStrings {
     { OS_ABI::ELFOSABI_SYSTEMV,      "SYSTEMV"},
     { OS_ABI::ELFOSABI_HPUX,         "HPUX"},
     { OS_ABI::ELFOSABI_NETBSD,       "NETBSD"},
@@ -902,7 +903,7 @@ const char* to_string(OS_ABI e) {
 
 
 const char* to_string(DYNSYM_COUNT_METHODS e) {
-  const std::map<DYNSYM_COUNT_METHODS, const char*> enumStrings {
+  CONST_MAP(DYNSYM_COUNT_METHODS, const char*, 4) enumStrings {
     { DYNSYM_COUNT_METHODS::COUNT_AUTO,        "AUTO"},
     { DYNSYM_COUNT_METHODS::COUNT_SECTION,     "SECTION"},
     { DYNSYM_COUNT_METHODS::COUNT_HASH,        "HASH"},
@@ -915,7 +916,7 @@ const char* to_string(DYNSYM_COUNT_METHODS e) {
 
 
 const char* to_string(NOTE_TYPES e) {
-  const std::map<NOTE_TYPES, const char*> enumStrings {
+  CONST_MAP(NOTE_TYPES, const char*, 5) enumStrings {
     { NOTE_TYPES::NT_UNKNOWN,          "UNKNOWN"},
     { NOTE_TYPES::NT_GNU_ABI_TAG,      "ABI_TAG"},
     { NOTE_TYPES::NT_GNU_HWCAP,        "HWCAP"},
@@ -928,7 +929,7 @@ const char* to_string(NOTE_TYPES e) {
 }
 
 const char* to_string(NOTE_ABIS e) {
-  const std::map<NOTE_ABIS, const char*> enumStrings {
+  CONST_MAP(NOTE_ABIS, const char*, 7) enumStrings {
     { NOTE_ABIS::ELF_NOTE_UNKNOWN,     "UNKNOWN"},
     { NOTE_ABIS::ELF_NOTE_OS_LINUX,    "LINUX"},
     { NOTE_ABIS::ELF_NOTE_OS_GNU,      "GNU"},
@@ -943,7 +944,7 @@ const char* to_string(NOTE_ABIS e) {
 }
 
 const char* to_string(RELOCATION_PURPOSES e) {
-  const std::map<RELOCATION_PURPOSES, const char*> enumStrings {
+  CONST_MAP(RELOCATION_PURPOSES, const char*, 4) enumStrings {
     { RELOCATION_PURPOSES::RELOC_PURPOSE_NONE,    "NONE"},
     { RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT,  "PLTGOT"},
     { RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC, "DYNAMIC"},
@@ -956,7 +957,7 @@ const char* to_string(RELOCATION_PURPOSES e) {
 
 
 const char* to_string(PPC64_EFLAGS e) {
-  const std::map<PPC64_EFLAGS, const char*> enumStrings {
+  CONST_MAP(PPC64_EFLAGS, const char*, 1) enumStrings {
     { PPC64_EFLAGS::EF_PPC64_ABI, "ABI"},
   };
 
@@ -966,7 +967,7 @@ const char* to_string(PPC64_EFLAGS e) {
 
 
 const char* to_string(ARM_EFLAGS e) {
-  const std::map<ARM_EFLAGS, const char*> enumStrings {
+  CONST_MAP(ARM_EFLAGS, const char*, 8) enumStrings {
     { ARM_EFLAGS::EF_ARM_SOFT_FLOAT,   "SOFT_FLOAT" },
     { ARM_EFLAGS::EF_ARM_VFP_FLOAT,    "VFP_FLOAT"  },
     { ARM_EFLAGS::EF_ARM_EABI_UNKNOWN, "UNKNOWN"    },
@@ -982,7 +983,7 @@ const char* to_string(ARM_EFLAGS e) {
 }
 
 const char* to_string(MIPS_EFLAGS e) {
-  const std::map<MIPS_EFLAGS, const char*> enumStrings {
+  CONST_MAP(MIPS_EFLAGS, const char*, 43) enumStrings {
     { MIPS_EFLAGS::EF_MIPS_NOREORDER,     "NOREORDER"     },
     { MIPS_EFLAGS::EF_MIPS_PIC,           "PIC"           },
     { MIPS_EFLAGS::EF_MIPS_CPIC,          "CPIC"          },
@@ -1038,7 +1039,7 @@ const char* to_string(MIPS_EFLAGS e) {
 
 
 const char* to_string(HEXAGON_EFLAGS e) {
-  const std::map<HEXAGON_EFLAGS, const char*> enumStrings {
+  CONST_MAP(HEXAGON_EFLAGS, const char*, 9) enumStrings {
     { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V2,   "MACH_V2"  },
     { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V3,   "MACH_V3"  },
     { HEXAGON_EFLAGS::EF_HEXAGON_MACH_V4,   "MACH_V4"  },
@@ -1057,7 +1058,7 @@ const char* to_string(HEXAGON_EFLAGS e) {
 }
 
 const char* to_string(IDENTITY e) {
-  const std::map<IDENTITY, const char*> enumStrings {
+  CONST_MAP(IDENTITY, const char*, 11) enumStrings {
     { IDENTITY::EI_MAG0,       "MAG0"       },
     { IDENTITY::EI_MAG1,       "MAG1"       },
     { IDENTITY::EI_MAG2,       "MAG2"       },
@@ -1076,7 +1077,7 @@ const char* to_string(IDENTITY e) {
 }
 
 const char* to_string(SYMBOL_SECTION_INDEX e) {
-  const std::map<SYMBOL_SECTION_INDEX, const char*> enumStrings {
+  CONST_MAP(SYMBOL_SECTION_INDEX, const char*, 10) enumStrings {
     { SYMBOL_SECTION_INDEX::SHN_UNDEF,     "UNDEF"     },
     { SYMBOL_SECTION_INDEX::SHN_LORESERVE, "LORESERVE" },
     { SYMBOL_SECTION_INDEX::SHN_LOPROC,    "LOPROC"    },
@@ -1095,7 +1096,7 @@ const char* to_string(SYMBOL_SECTION_INDEX e) {
 
 
 const char* to_string(DYNAMIC_FLAGS e) {
-  const std::map<DYNAMIC_FLAGS, const char*> enum_strings {
+  CONST_MAP(DYNAMIC_FLAGS, const char*, 5) enum_strings {
     { DYNAMIC_FLAGS::DF_ORIGIN,     "ORIGIN"         },
     { DYNAMIC_FLAGS::DF_SYMBOLIC,   "SYMBOLIC"       },
     { DYNAMIC_FLAGS::DF_TEXTREL,    "TEXTREL"        },
@@ -1108,7 +1109,7 @@ const char* to_string(DYNAMIC_FLAGS e) {
 }
 
 const char* to_string(DYNAMIC_FLAGS_1 e) {
-  const std::map<DYNAMIC_FLAGS_1, const char*> enum_strings_flags1 {
+  CONST_MAP(DYNAMIC_FLAGS_1, const char*, 26) enum_strings_flags1 {
     { DYNAMIC_FLAGS_1::DF_1_NOW,        "NOW"        },
     { DYNAMIC_FLAGS_1::DF_1_GLOBAL,     "GLOBAL"     },
     { DYNAMIC_FLAGS_1::DF_1_GROUP,      "GROUP"      },
@@ -1142,7 +1143,7 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
 }
 
 const char* to_string(ELF_SEGMENT_FLAGS e) {
-  const std::map<ELF_SEGMENT_FLAGS, const char*> enum_strings {
+  CONST_MAP(ELF_SEGMENT_FLAGS, const char*, 4) enum_strings {
     { ELF_SEGMENT_FLAGS::PF_NONE, "NONE" },
     { ELF_SEGMENT_FLAGS::PF_X,    "X" },
     { ELF_SEGMENT_FLAGS::PF_W,    "W" },
@@ -1155,7 +1156,7 @@ const char* to_string(ELF_SEGMENT_FLAGS e) {
 
 
 const char* to_string(ELF_SYMBOL_VISIBILITY e) {
-  const std::map<ELF_SYMBOL_VISIBILITY, const char*> enum_strings {
+  CONST_MAP(ELF_SYMBOL_VISIBILITY, const char*, 4) enum_strings {
     { ELF_SYMBOL_VISIBILITY::STV_DEFAULT,   "DEFAULT"   },
     { ELF_SYMBOL_VISIBILITY::STV_HIDDEN,    "HIDDEN"    },
     { ELF_SYMBOL_VISIBILITY::STV_INTERNAL,  "INTERNAL"  },

@@ -19,16 +19,20 @@
 #include <sstream>
 #include <numeric>
 
+#include "frozen.hpp"
+
 #include "LIEF/exception.hpp"
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
+#include "LIEF/logging++.hpp"
+
 namespace LIEF {
 namespace ELF {
 
-static const std::map<ARCH, std::pair<ARCHITECTURES, std::set<MODES>>> arch_elf_to_lief {
+static const std::map<ARCH, Header::abstract_architecture_t> arch_elf_to_lief {
   {ARCH::EM_NONE,      {ARCH_NONE,  {}}},
   {ARCH::EM_X86_64,    {ARCH_X86,   {MODE_64}}},
   {ARCH::EM_ARM,       {ARCH_ARM,   {MODE_32}}},
@@ -132,12 +136,13 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
 }
 
 
-std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) const {
-  try {
-    return arch_elf_to_lief.at(this->machine_type());
-  } catch (const std::out_of_range&) {
-    throw not_implemented(to_string(this->machine_type()));
+Header::abstract_architecture_t Header::abstract_architecture(void) const {
+  auto&& it = arch_elf_to_lief.find(this->machine_type());
+  if (it == std::end(arch_elf_to_lief)) {
+    LOG(ERROR) << to_string(this->machine_type()) << " is not supported!";
+    return {};
   }
+  return it->second;
 }
 
 
