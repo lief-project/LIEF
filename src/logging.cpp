@@ -61,16 +61,9 @@ const char* to_string(LOGGING_LEVEL e) {
 Logger::Logger(void)
 {
 #if defined(LIEF_LOGGING_SUPPORT)
-  el::Logger* default_logger = el::Loggers::getLogger("default");
-  el::Configurations conf;
-  conf.setToDefault();
-  conf.parseFromText(logging_config);
-  el::Loggers::setDefaultConfigurations(conf, true);
-
-  el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
-  el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-
-  el::Loggers::setLoggingLevel(el::Level::Unknown);
+  el::Loggers::getLogger("default");
+  this->enable();
+  this->disable();
 #endif
 }
 
@@ -84,10 +77,15 @@ void Logger::disable(void) {
 }
 
 void Logger::enable(void) {
-
 #if defined(LIEF_LOGGING_SUPPORT)
-  el::Configurations c;
-  el::Loggers::setLoggingLevel(el::Level::Global);
+  el::Configurations conf;
+  conf.setToDefault();
+  conf.parseFromText(logging_config);
+  el::Loggers::setDefaultConfigurations(conf, true);
+
+  el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
+  el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+  el::Loggers::setLoggingLevel(el::Level::Fatal);
 #endif
 }
 
