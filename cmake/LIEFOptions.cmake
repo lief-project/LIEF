@@ -15,6 +15,7 @@ option(LIEF_USE_CCACHE     "Use ccache to speed up compilation"         ON)
 option(LIEF_EXTRA_WARNINGS "Enable extra warning from the compiler"     OFF)
 option(LIEF_LOGGING        "Enable logging"                             ON)
 option(LIEF_ENABLE_JSON    "Enable JSON-related APIs"                   ON)
+option(LIEF_SHARED_LIB     "Enable shared lib"                          ON)
 
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
