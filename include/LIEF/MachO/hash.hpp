@@ -53,6 +53,8 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const ExportInfo& einfo)                     override;
   virtual void visit(const FunctionStarts& fs)                    override;
   virtual void visit(const CodeSignature& cs)                     override;
+  virtual void visit(const DataInCode& dic)                       override;
+  virtual void visit(const DataCodeEntry& dce)                    override;
 
   virtual ~Hash(void);
 };

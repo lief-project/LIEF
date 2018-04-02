@@ -370,6 +370,25 @@ def print_function_starts(binary):
 
     print("")
 
+@exceptions_handler(Exception)
+def print_data_in_code(binary):
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Data In Code ==")
+
+    datacode = binary.data_in_code
+
+    print(format_hex.format("Offset:", datacode.data_offset))
+    print(format_hex.format("Size:",   datacode.data_size))
+    print("")
+    for entry in datacode.entries:
+        type_str = str(entry.type).split(".")[-1]
+        print("- {:<14}: 0x{:x} ({:d} bytes)".format(type_str, entry.offset, entry.length))
+    print("")
+
+
 
 
 @exceptions_handler(Exception)
@@ -636,6 +655,10 @@ def main():
             action='store_true', dest='show_dynamic_symbol_command',
             help="Display the 'Symbol Command' command")
 
+    parser.add_argument('--data-in-code',
+            action='store_true', dest='show_data_in_code',
+            help="Display the 'Data In Code' command")
+
     parser.add_argument('--bind-opcodes',
             action='store_true', dest='show_bind_opcodes',
             help='Display the "Bind" opcodes')
@@ -726,6 +749,9 @@ def main():
 
         if (args.show_dynamic_symbol_command or args.show_all) and binary.has_dynamic_symbol_command:
             print_dynamic_symbol_command(binary)
+
+        if (args.show_data_in_code or args.show_all) and binary.has_data_in_code:
+            print_data_in_code(binary)
 
         if (args.show_rpath_command or args.show_all) and binary.has_rpath:
             print_rpath_command(binary)

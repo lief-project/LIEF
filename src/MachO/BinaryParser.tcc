@@ -411,6 +411,23 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
+      case LOAD_COMMAND_TYPES::LC_DATA_IN_CODE:
+        {
+
+          const linkedit_data_command* cmd =
+            reinterpret_cast<const linkedit_data_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          load_command = std::unique_ptr<DataInCode>{new DataInCode{cmd}};
+          DataInCode* datacode = load_command.get()->as<DataInCode>();
+
+          const data_in_code_entry* entries = reinterpret_cast<const data_in_code_entry*>(this->stream_->read(datacode->data_offset(), datacode->data_size()));
+          const size_t nb_entries = datacode->data_size() / sizeof(data_in_code_entry);
+          for (size_t i = 0; i < nb_entries; ++i) {
+            datacode->add(&entries[i]);
+          }
+          break;
+        }
+
 
 
 

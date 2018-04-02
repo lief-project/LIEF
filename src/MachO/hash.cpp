@@ -245,6 +245,19 @@ void Hash::visit(const CodeSignature& cs) {
   this->process(cs.data_size());
 }
 
+void Hash::visit(const DataInCode& dic) {
+  this->process(dic.data_offset());
+  this->process(dic.data_size());
+  this->process(std::begin(dic.entries()), std::end(dic.entries()));
+}
+
+void Hash::visit(const DataCodeEntry& dce) {
+  this->process(dce.offset());
+  this->process(dce.length());
+  this->process(dce.type());
+}
+
+
 
 
 

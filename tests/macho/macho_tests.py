@@ -117,6 +117,33 @@ class TestMachO(TestCase):
         self.assertEqual(relocations[0].has_section,  True)
         self.assertEqual(relocations[0].section.name, "__cstring")
 
+    def test_data_in_code(self):
+        binary = lief.parse(get_sample('MachO/MachO32_ARM_binary_data-in-code-LLVM.bin'))
+
+        self.assertTrue(binary.has_data_in_code)
+        dcode = binary.data_in_code
+
+        self.assertEqual(dcode.data_offset, 0x11c)
+        self.assertEqual(dcode.data_size, 0x20)
+
+        self.assertEqual(len(dcode.entries), 4)
+
+        self.assertEqual(dcode.entries[0].type, lief.MachO.DataCodeEntry.TYPES.DATA)
+        self.assertEqual(dcode.entries[0].offset, 0)
+        self.assertEqual(dcode.entries[0].length, 4)
+
+        self.assertEqual(dcode.entries[1].type, lief.MachO.DataCodeEntry.TYPES.JUMP_TABLE_32)
+        self.assertEqual(dcode.entries[1].offset, 4)
+        self.assertEqual(dcode.entries[1].length, 4)
+
+        self.assertEqual(dcode.entries[2].type, lief.MachO.DataCodeEntry.TYPES.JUMP_TABLE_16)
+        self.assertEqual(dcode.entries[2].offset, 8)
+        self.assertEqual(dcode.entries[2].length, 2)
+
+        self.assertEqual(dcode.entries[3].type, lief.MachO.DataCodeEntry.TYPES.JUMP_TABLE_8)
+        self.assertEqual(dcode.entries[3].offset, 10)
+        self.assertEqual(dcode.entries[3].length, 1)
+
 
 
 if __name__ == '__main__':

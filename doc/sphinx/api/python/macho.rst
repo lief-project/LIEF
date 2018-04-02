@@ -293,6 +293,35 @@ Code Signature
 
 ----------
 
+Data In Code
+************
+
+.. autoclass:: lief.MachO.DataInCode
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Data Code Entry
+***************
+
+.. autoclass:: lief.MachO.DataCodeEntry
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+
+TYPES
+~~~~~
+
+.. autoclass:: lief.MachO.DataCodeEntry.TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 Enums
 *****

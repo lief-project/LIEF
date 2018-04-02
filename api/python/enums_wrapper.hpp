@@ -20,6 +20,8 @@
 
 #include "LIEF/visibility.h"
 
+namespace py = pybind11;
+
 namespace LIEF {
 
 template <class Type>

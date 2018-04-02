@@ -42,6 +42,7 @@
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -297,6 +298,13 @@ class LIEF_API Binary : public LIEF::Binary  {
     //! @brief Return the MachO::Signature
     CodeSignature&       code_signature(void);
     const CodeSignature& code_signature(void) const;
+
+    //! @brief ``true`` if the binaryhas a MachO::DataInCode command.
+    bool has_data_in_code(void) const;
+
+    //! @brief Return the MachO::Signature
+    DataInCode&       data_in_code(void);
+    const DataInCode& data_in_code(void) const;
 
     template<class T>
     LIEF_LOCAL bool has_command(void) const;

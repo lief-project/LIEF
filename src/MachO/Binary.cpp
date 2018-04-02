@@ -814,6 +814,21 @@ const CodeSignature& Binary::code_signature(void) const {
 }
 
 
+// DataInCode command
+// +++++++++++++++++++++
+bool Binary::has_data_in_code(void) const {
+  return this->has_command<DataInCode>();
+}
+
+DataInCode& Binary::data_in_code(void) {
+  return this->command<DataInCode>();
+}
+
+const DataInCode& Binary::data_in_code(void) const {
+  return this->command<DataInCode>();
+}
+
+
 
 
 void Binary::accept(LIEF::Visitor& visitor) const {

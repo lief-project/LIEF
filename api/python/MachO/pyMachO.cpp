@@ -52,6 +52,9 @@ void init_MachO_module(py::module& m) {
   init_MachO_DynamicSymbolCommand_class(LIEF_MachO_module);
   init_MachO_CodeSignature_class(LIEF_MachO_module);
 
+  init_MachO_DataInCode_class(LIEF_MachO_module);
+  init_MachO_DataCodeEntry_class(LIEF_MachO_module);
+
   // Enums
   init_MachO_Structures_enum(LIEF_MachO_module);
 }

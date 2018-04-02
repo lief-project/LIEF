@@ -470,5 +470,19 @@ const char* to_string(SYMBOL_ORIGINS e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
+
+const char* to_string(DataCodeEntry::TYPES e) {
+  CONST_MAP(DataCodeEntry::TYPES, const char*, 6) enumStrings {
+    { DataCodeEntry::TYPES::UNKNOWN,           "UNKNOWN"           },
+    { DataCodeEntry::TYPES::DATA,              "DATA"              },
+    { DataCodeEntry::TYPES::JUMP_TABLE_8,      "JUMP_TABLE_8"      },
+    { DataCodeEntry::TYPES::JUMP_TABLE_16,     "JUMP_TABLE_16"     },
+    { DataCodeEntry::TYPES::JUMP_TABLE_32,     "JUMP_TABLE_32"     },
+    { DataCodeEntry::TYPES::ABS_JUMP_TABLE_32, "ABS_JUMP_TABLE_32" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
 }
 }

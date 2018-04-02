@@ -234,6 +234,25 @@ Code Signature
 
 ----------
 
+Data In Code
+************
+
+.. doxygenclass:: LIEF::MachO::DataInCode
+   :project: lief
+
+----------
+
+Data Code Entry
+****************
+
+.. doxygenclass:: LIEF::MachO::DataCodeEntry
+   :project: lief
+
+.. doxygenenum:: LIEF::MachO::DataCodeEntry::TYPES
+   :project: lief
+
+----------
+
 Utilities
 *********
 
