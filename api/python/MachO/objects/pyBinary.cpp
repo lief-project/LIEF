@@ -235,6 +235,16 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_code_signature",
+        &Binary::has_dynamic_symbol_command,
+        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignature) " command)",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("code_signature",
+        static_cast<no_const_getter<CodeSignature&>>(&Binary::code_signature),
+        "Return binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any.",
+        py::return_value_policy::reference)
+
 
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,

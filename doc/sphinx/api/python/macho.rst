@@ -283,6 +283,17 @@ RPath Command
 ----------
 
 
+Code Signature
+**************
+
+.. autoclass:: lief.MachO.CodeSignature
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+
 Enums
 *****
 

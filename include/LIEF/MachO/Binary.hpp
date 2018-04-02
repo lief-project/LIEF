@@ -41,6 +41,7 @@
 #include "LIEF/MachO/VersionMin.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -289,6 +290,13 @@ class LIEF_API Binary : public LIEF::Binary  {
     //! @brief Return the MachO::SymbolCommand
     DynamicSymbolCommand&       dynamic_symbol_command(void);
     const DynamicSymbolCommand& dynamic_symbol_command(void) const;
+
+    //! @brief ``true`` if the binary is signed.
+    bool has_code_signature(void) const;
+
+    //! @brief Return the MachO::Signature
+    CodeSignature&       code_signature(void);
+    const CodeSignature& code_signature(void) const;
 
     template<class T>
     LIEF_LOCAL bool has_command(void) const;

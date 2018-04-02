@@ -799,6 +799,20 @@ const DynamicSymbolCommand& Binary::dynamic_symbol_command(void) const {
   return this->command<DynamicSymbolCommand>();
 }
 
+// CodeSignature command
+// +++++++++++++++++++++
+bool Binary::has_code_signature(void) const {
+  return this->has_command<CodeSignature>();
+}
+
+CodeSignature& Binary::code_signature(void) {
+  return this->command<CodeSignature>();
+}
+
+const CodeSignature& Binary::code_signature(void) const {
+  return this->command<CodeSignature>();
+}
+
 
 
 

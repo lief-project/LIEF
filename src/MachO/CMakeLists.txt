@@ -48,6 +48,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/RPathCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ParserConfig.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/hash.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/CodeSignature.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -84,6 +85,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ThreadCommand.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/ParserConfig.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/hash.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/CodeSignature.hpp"
   )
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})

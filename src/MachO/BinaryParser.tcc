@@ -24,6 +24,8 @@
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 
+#include "Object.tcc"
+
 
 namespace LIEF {
 namespace MachO {
@@ -391,6 +393,21 @@ void BinaryParser::parse_load_commands(void) {
           VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
 
           load_command = std::unique_ptr<VersionMin>{new VersionMin{cmd}};
+          break;
+        }
+
+      case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
+        {
+
+          const linkedit_data_command* cmd =
+            reinterpret_cast<const linkedit_data_command*>(
+              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          load_command = std::unique_ptr<CodeSignature>{new CodeSignature{cmd}};
+          CodeSignature* sig = load_command.get()->as<CodeSignature>();
+
+          const uint8_t* content = reinterpret_cast<const uint8_t*>(this->stream_->read(sig->data_offset(), sig->data_size()));
+          sig->raw_signature_ = {content, content + sig->data_size()};
+
           break;
         }
 

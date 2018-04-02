@@ -225,6 +225,15 @@ RPath Command
 
 ----------
 
+
+Code Signature
+**************
+
+.. doxygenclass:: LIEF::MachO::CodeSignature
+   :project: lief
+
+----------
+
 Utilities
 *********
 

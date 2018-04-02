@@ -52,6 +52,7 @@ void init_MachO_ExportInfo_class(py::module&);
 void init_MachO_ThreadCommand_class(py::module&);
 void init_MachO_RPathCommand_class(py::module&);
 void init_MachO_DynamicSymbolCommand_class(py::module&);
+void init_MachO_CodeSignature_class(py::module&);
 
 // Enums
 void init_MachO_Structures_enum(py::module&);

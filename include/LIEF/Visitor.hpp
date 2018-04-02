@@ -138,6 +138,8 @@ LIEF_MACHO_FORWARD(RelocationObject)
 LIEF_MACHO_FORWARD(RelocationDyld)
 LIEF_MACHO_FORWARD(BindingInfo)
 LIEF_MACHO_FORWARD(ExportInfo)
+LIEF_MACHO_FORWARD(FunctionStarts)
+LIEF_MACHO_FORWARD(CodeSignature)
 
 
 class LIEF_API Visitor {
@@ -394,6 +396,12 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO::ExportInfo
   LIEF_MACHO_VISITABLE(ExportInfo)
+
+  //! @brief Method to visit a LIEF::MachO::FunctionStarts
+  LIEF_MACHO_VISITABLE(FunctionStarts)
+
+  //! @brief Method to visit a LIEF::MachO::CodeSignature
+  LIEF_MACHO_VISITABLE(CodeSignature)
 
   template<class T>
   void dispatch(const T& obj);

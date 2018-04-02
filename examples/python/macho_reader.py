@@ -13,7 +13,7 @@ import lief
 from lief import MachO
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
+Logger.set_level(lief.LOGGING_LEVEL.FATAL)
 
 terminal_rows, terminal_columns = 100, 100
 try:

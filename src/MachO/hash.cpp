@@ -233,6 +233,18 @@ void Hash::visit(const ExportInfo& einfo) {
   }
 }
 
+void Hash::visit(const FunctionStarts& fs) {
+  this->process(fs.data_offset());
+  this->process(fs.data_size());
+  this->process(fs.functions());
+
+}
+
+void Hash::visit(const CodeSignature& cs) {
+  this->process(cs.data_offset());
+  this->process(cs.data_size());
+}
+
 
 
 
