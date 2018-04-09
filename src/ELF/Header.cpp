@@ -39,6 +39,8 @@ static const std::map<ARCH, Header::abstract_architecture_t> arch_elf_to_lief {
   {ARCH::EM_AARCH64,   {ARCH_ARM64, {MODE_64}}},
   {ARCH::EM_386,       {ARCH_X86,   {MODE_32}}},
   {ARCH::EM_IA_64,     {ARCH_INTEL, {MODE_64}}},
+  {ARCH::EM_PPC,       {ARCH_PPC,   {MODE_32}}},
+  {ARCH::EM_PPC64,     {ARCH_PPC,   {MODE_64}}},
 };
 
 static const std::map<E_TYPE, OBJECT_TYPES> obj_elf_to_lief {

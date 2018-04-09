@@ -1753,6 +1753,22 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
           break;
         }
 
+        /*
+        case ARCH::EM_PPC:
+        {
+          relocation = new Relocation(address_relocation, RELOC_POWERPC32::R_PPC_RELATIVE, array[i], is_rela);
+          break;
+        }
+        */
+
+        /*
+        case ARCH::EM_PPC64:
+        {
+          relocation = new Relocation(address_relocation, RELOC_POWERPC64::R_PPC64_RELATIVE, array[i], is_rela);
+          break;
+        }
+        */
+
         default:
         {
           LOG(WARNING) << to_string(arch) << " is not supported";
