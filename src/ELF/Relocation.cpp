@@ -212,6 +212,26 @@ size_t Relocation::size(void) const {
         return it->second;
       }
 
+    case ARCH::EM_PPC:
+      {
+        auto&& it = relocation_PPC_sizes.find(static_cast<RELOC_POWERPC32>(this->type()));
+        if (it == std::end(relocation_PPC_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_POWERPC32>(this->type()));
+          return -1u;
+        }
+        return it->second;
+      }
+
+    case ARCH::EM_PPC64:
+      {
+        auto&& it = relocation_PPC64_sizes.find(static_cast<RELOC_POWERPC64>(this->type()));
+        if (it == std::end(relocation_PPC64_sizes)) {
+          LOG(ERROR) << to_string(this->architecture()) << std::string(" - ") << to_string(static_cast<RELOC_POWERPC64>(this->type()));
+          return -1u;
+        }
+        return it->second;
+      }
+
     default:
       {
         LOG(ERROR) << to_string(this->architecture()) << " not implemented";
@@ -289,6 +309,18 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
     case ARCH::EM_AARCH64:
       {
         relocation_type = to_string(static_cast<RELOC_AARCH64>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_PPC:
+      {
+        relocation_type = to_string(static_cast<RELOC_POWERPC32>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_PPC64:
+      {
+        relocation_type = to_string(static_cast<RELOC_POWERPC64>(entry.type()));
         break;
       }
 
