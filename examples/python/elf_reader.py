@@ -14,7 +14,7 @@ import traceback
 import textwrap
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
+Logger.set_level(lief.LOGGING_LEVEL.FATAL)
 
 from optparse import OptionParser
 terminal_rows, terminal_columns = 100, 100

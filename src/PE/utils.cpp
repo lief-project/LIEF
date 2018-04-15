@@ -150,9 +150,13 @@ PE_TYPE get_type(const std::vector<uint8_t>& raw) {
 }
 
 
-std::string u16tou8(const std::u16string& string) {
+std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::string name;
   utf8::utf16to8(std::begin(string), std::end(string), std::back_inserter(name));
+  if (remove_null_char) {
+    return std::string{name.c_str()};
+  }
+
   return name;
 }
 

@@ -238,7 +238,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   private:
     void show_bindings(std::ostream& os, const buffer_t& buffer, bool is_lazy = false) const;
 
-    void show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) const;
+    void show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
 
     info_t   rebase_;
     buffer_t rebase_opcodes_;

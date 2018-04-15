@@ -96,12 +96,9 @@ TEST_CASE("Test parse", "[pe][parser]")
       for (size_t j = 0; j < entries_lhs.size(); ++j) {
         if (not entries_lhs[j].is_ordinal()) {
           INFO("Library: " << imports_lhs[i].name() << ". Function: " << entries_lhs[j].name());
-          try {
-            uint64_t address = binary_original->predict_function_rva(imports_lhs[i].name(), entries_lhs[j].name());
+          uint64_t address = binary_original->predict_function_rva(imports_lhs[i].name(), entries_lhs[j].name());
+          if (address > 0) {
             CHECK(address == entries_rhs[j].iat_address());
-          } catch (const LIEF::not_supported& e) {
-            WARN(e.what());
-
           }
         }
       }

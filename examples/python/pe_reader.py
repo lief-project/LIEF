@@ -9,7 +9,7 @@ from lief import PE
 from lief.PE import oid_to_string
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
+Logger.set_level(lief.LOGGING_LEVEL.FATAL)
 
 from optparse import OptionParser
 import sys

@@ -529,6 +529,22 @@ struct arm_thread_state64_t {
   uint32_t cpsr;  // cpsr
 };
 
+struct code_directory {
+  uint32_t version;
+  uint32_t flags;
+  uint32_t hash_offset;
+  uint32_t ident_offset;
+  uint32_t nb_special_slots;
+  uint32_t nb_code_slots;
+  uint32_t code_limit;
+  uint8_t  hash_size;
+  uint8_t  hash_type;
+  uint8_t  reserved;
+  uint8_t  page_size;
+  uint32_t reserved2;
+  uint32_t scatter_offset;
+};
+
 
 
 

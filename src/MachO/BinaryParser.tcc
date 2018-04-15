@@ -71,7 +71,7 @@ void BinaryParser::parse(void) {
 template<class MACHO_T>
 void BinaryParser::parse_header(void) {
   using header_t = typename MACHO_T::header;
-  this->binary_->header_ = {reinterpret_cast<const header_t*>(this->stream_->read(0, sizeof(header_t)))};
+  this->binary_->header_ = &this->stream_->peek<header_t>(0);
 }
 
 
@@ -98,11 +98,13 @@ void BinaryParser::parse_load_commands(void) {
   }
 
   for (size_t i = 0; i < nbcmds; ++i) {
-    const load_command* command = reinterpret_cast<const load_command*>(
-        this->stream_->read(loadcommands_offset, sizeof(load_command)));
+    if (not this->stream_->can_read<load_command>(loadcommands_offset)) {
+      break;
+    }
+    const load_command& command = this->stream_->peek<load_command>(loadcommands_offset);
 
     std::unique_ptr<LoadCommand> load_command{nullptr};
-    switch (static_cast<LOAD_COMMAND_TYPES>(command->cmd)) {
+    switch (static_cast<LOAD_COMMAND_TYPES>(command.cmd)) {
 
       // ===============
       // Segment command
@@ -111,16 +113,13 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SEGMENT:
         {
           uint64_t local_offset = loadcommands_offset;
-          load_command = std::unique_ptr<SegmentCommand>{new SegmentCommand{
-                reinterpret_cast<const segment_command_t*>(
-                    this->stream_->read(loadcommands_offset, sizeof(segment_command_t)))}};
+          load_command = std::unique_ptr<SegmentCommand>{new SegmentCommand{&this->stream_->peek<segment_command_t>(loadcommands_offset)}};
 
           local_offset += sizeof(segment_command_t);
 
           SegmentCommand* segment = dynamic_cast<SegmentCommand*>(load_command.get());
 
-          const uint8_t* content = static_cast<const uint8_t*>(
-            this->stream_->read(segment->file_offset(), segment->file_size()));
+          const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size());
 
           segment->content({
               content,
@@ -131,7 +130,7 @@ void BinaryParser::parse_load_commands(void) {
           // Sections
           // --------
           for (size_t j = 0; j < segment->numberof_sections(); ++j) {
-            const section_t* section_header = reinterpret_cast<const section_t*>(this->stream_->read(local_offset, sizeof(section_t)));
+            const section_t* section_header = &this->stream_->peek<section_t>(local_offset);
             std::unique_ptr<Section> section{new Section{section_header}};
             section->segment_ = segment;
             segment->sections_.push_back(section.release());
@@ -148,13 +147,11 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_ID_DYLIB:
       case LOAD_COMMAND_TYPES::LC_LOAD_DYLIB:
         {
-          const dylib_command* cmd =
-            reinterpret_cast<const dylib_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(dylib_command)));
+          const dylib_command* cmd = &this->stream_->peek<dylib_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DylibCommand>{new DylibCommand{cmd}};
           const uint32_t str_name_offset = cmd->dylib.name;
-          std::string name = this->stream_->get_string(loadcommands_offset + str_name_offset);
+          std::string name = this->stream_->peek_string_at(loadcommands_offset + str_name_offset);
 
           dynamic_cast<DylibCommand*>(load_command.get())->name(name);
           break;
@@ -165,13 +162,11 @@ void BinaryParser::parse_load_commands(void) {
       // =============
       case LOAD_COMMAND_TYPES::LC_RPATH:
         {
-          const rpath_command* cmd =
-            reinterpret_cast<const rpath_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(rpath_command)));
+          const rpath_command* cmd = &this->stream_->peek<rpath_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<RPathCommand>{new RPathCommand{cmd}};
           const uint32_t str_path_offset = cmd->path;
-          std::string path = this->stream_->get_string(loadcommands_offset + str_path_offset);
+          std::string path = this->stream_->peek_string_at(loadcommands_offset + str_path_offset);
 
           dynamic_cast<RPathCommand*>(load_command.get())->path(path);
           break;
@@ -183,9 +178,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_UUID:
         {
           VLOG(VDEBUG) << "[+] Building UUID";
-          const uuid_command* cmd =
-            reinterpret_cast<const uuid_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(uuid_command)));
+          const uuid_command* cmd = &this->stream_->peek<uuid_command>(loadcommands_offset);
           load_command = std::unique_ptr<UUIDCommand>{new UUIDCommand{cmd}};
           break;
         }
@@ -196,12 +189,10 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER:
       case LOAD_COMMAND_TYPES::LC_ID_DYLINKER:
         {
-          const dylinker_command* cmd =
-            reinterpret_cast<const dylinker_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(dylinker_command)));
+          const dylinker_command* cmd = &this->stream_->peek<dylinker_command>(loadcommands_offset);
 
           const uint32_t linker_name_offset = cmd->name;
-          std::string name = this->stream_->get_string(
+          std::string name = this->stream_->peek_string_at(
              loadcommands_offset +
              linker_name_offset);
 
@@ -217,13 +208,11 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
 
-          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
-          const prebound_dylib_command* cmd =
-            reinterpret_cast<const prebound_dylib_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(prebound_dylib_command)));
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
+          const prebound_dylib_command* cmd = &this->stream_->peek<prebound_dylib_command>(loadcommands_offset);
 
 
-          std::string name = this->stream_->get_string(
+          std::string name = this->stream_->peek_string_at(
              loadcommands_offset +
              cmd->name);
 
@@ -240,9 +229,7 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_THREAD";
 
-          const thread_command* cmd =
-            reinterpret_cast<const thread_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(thread_command)));
+          const thread_command* cmd = &this->stream_->peek<thread_command>(loadcommands_offset);
           load_command = std::unique_ptr<ThreadCommand>{new ThreadCommand{cmd}};
 
           ThreadCommand* thread = dynamic_cast<ThreadCommand*>(load_command.get());
@@ -252,8 +239,7 @@ void BinaryParser::parse_load_commands(void) {
           switch(this->binary_->header().cpu_type()) {
             case CPU_TYPES::CPU_TYPE_X86:
               {
-                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
-                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t)));
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t));
                 thread->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
 
                 break;
@@ -261,24 +247,21 @@ void BinaryParser::parse_load_commands(void) {
 
             case CPU_TYPES::CPU_TYPE_X86_64:
               {
-                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
-                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t)));
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t));
                 thread->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
                 break;
               }
 
             case CPU_TYPES::CPU_TYPE_ARM:
               {
-                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
-                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t)));
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t));
                 thread->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
                 break;
               }
 
             case CPU_TYPES::CPU_TYPE_ARM64:
               {
-                const uint8_t* pstart = reinterpret_cast<const uint8_t*>(
-                    this->stream_->read(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t)));
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t));
                 thread->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
                 break;
               }
@@ -299,7 +282,7 @@ void BinaryParser::parse_load_commands(void) {
 
           VLOG(VDEBUG) << "[+] Parsing LC_ROUTINE";
 
-          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
           break;
         }
 
@@ -311,23 +294,20 @@ void BinaryParser::parse_load_commands(void) {
           using nlist_t = typename MACHO_T::nlist;
           VLOG(VDEBUG) << "[+] Parsing symbols";
 
-          const symtab_command* cmd =
-            reinterpret_cast<const symtab_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(symtab_command)));
+          const symtab_command* cmd = &this->stream_->peek<symtab_command>(loadcommands_offset);
 
 
           load_command = std::unique_ptr<SymbolCommand>{new SymbolCommand{cmd}};
 
 
-          const nlist_t* nlist = reinterpret_cast<const nlist_t*>(
-              this->stream_->read(cmd->symoff, sizeof(nlist_t)));
+          const nlist_t* nlist = this->stream_->peek_array<nlist_t>(cmd->symoff, cmd->nsyms);
 
           for (size_t j = 0; j < cmd->nsyms; ++j) {
             std::unique_ptr<Symbol> symbol{new Symbol{&nlist[j]}};
             uint32_t idx = nlist[j].n_strx;
             if (idx > 0) {
               symbol->name(
-                  this->stream_->get_string(cmd->stroff + idx));
+                  this->stream_->peek_string_at(cmd->stroff + idx));
             }
             this->binary_->symbols_.push_back(symbol.release());
           }
@@ -341,9 +321,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_DYSYMTAB:
         {
           VLOG(VDEBUG) << "[+] Parsing dynamic symbols";
-          const dysymtab_command* cmd =
-            reinterpret_cast<const dysymtab_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(dysymtab_command)));
+          const dysymtab_command* cmd = &this->stream_->peek<dysymtab_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DynamicSymbolCommand>{new DynamicSymbolCommand{cmd}};
           break;
@@ -356,9 +334,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY:
         {
           VLOG(VDEBUG) << "[+] Parsing dyld information";
-          const dyld_info_command* cmd =
-            reinterpret_cast<const dyld_info_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(dyld_info_command)));
+          const dyld_info_command* cmd = &this->stream_->peek<dyld_info_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DyldInfo>{new DyldInfo{cmd}};
           dynamic_cast<DyldInfo*>(load_command.get())->binary_ = this->binary_;
@@ -372,9 +348,7 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_SOURCE_VERSION";
 
-          const source_version_command* cmd =
-            reinterpret_cast<const source_version_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
+          const source_version_command* cmd = &this->stream_->peek<source_version_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<SourceVersion>{new SourceVersion{cmd}};
           VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
@@ -384,11 +358,9 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX:
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS:
         {
-          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd));
+          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
 
-          const version_min_command* cmd =
-            reinterpret_cast<const version_min_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(version_min_command)));
+          const version_min_command* cmd = &this->stream_->peek<version_min_command>(loadcommands_offset);
           VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
           VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
 
@@ -399,13 +371,11 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
         {
 
-          const linkedit_data_command* cmd =
-            reinterpret_cast<const linkedit_data_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          const linkedit_data_command* cmd = &this->stream_->peek<linkedit_data_command>(loadcommands_offset);
           load_command = std::unique_ptr<CodeSignature>{new CodeSignature{cmd}};
           CodeSignature* sig = load_command.get()->as<CodeSignature>();
 
-          const uint8_t* content = reinterpret_cast<const uint8_t*>(this->stream_->read(sig->data_offset(), sig->data_size()));
+          const uint8_t* content = this->stream_->peek_array<uint8_t>(sig->data_offset(), sig->data_size());
           sig->raw_signature_ = {content, content + sig->data_size()};
 
           break;
@@ -414,14 +384,12 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_DATA_IN_CODE:
         {
 
-          const linkedit_data_command* cmd =
-            reinterpret_cast<const linkedit_data_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          const linkedit_data_command* cmd = &this->stream_->peek<linkedit_data_command>(loadcommands_offset);
           load_command = std::unique_ptr<DataInCode>{new DataInCode{cmd}};
           DataInCode* datacode = load_command.get()->as<DataInCode>();
 
-          const data_in_code_entry* entries = reinterpret_cast<const data_in_code_entry*>(this->stream_->read(datacode->data_offset(), datacode->data_size()));
           const size_t nb_entries = datacode->data_size() / sizeof(data_in_code_entry);
+          const data_in_code_entry* entries = this->stream_->peek_array<data_in_code_entry>(datacode->data_offset(), nb_entries);
           for (size_t i = 0; i < nb_entries; ++i) {
             datacode->add(&entries[i]);
           }
@@ -478,9 +446,7 @@ void BinaryParser::parse_load_commands(void) {
         {
           VLOG(VDEBUG) << "[+] Parsing LC_MAIN";
 
-          const entry_point_command* cmd =
-            reinterpret_cast<const entry_point_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(entry_point_command)));
+          const entry_point_command* cmd = &this->stream_->peek<entry_point_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<MainCommand>{new MainCommand{cmd}};
           break;
@@ -492,26 +458,23 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
         {
           VLOG(VDEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
-          const linkedit_data_command* cmd =
-            reinterpret_cast<const linkedit_data_command*>(
-              this->stream_->read(loadcommands_offset, sizeof(linkedit_data_command)));
+          const linkedit_data_command* cmd = &this->stream_->peek<linkedit_data_command>(loadcommands_offset);
           load_command = std::unique_ptr<FunctionStarts>{new FunctionStarts{cmd}};
 
-          uint64_t offset = cmd->dataoff;
-          std::pair<uint64_t, uint64_t> value_delta;
           uint64_t value = 0;
           FunctionStarts* fstart = dynamic_cast<FunctionStarts*>(load_command.get());
+          this->stream_->setpos(cmd->dataoff);
+
           do {
-            value_delta = this->stream_->read_uleb128(offset);
-            if (std::get<0>(value_delta) == 0) {
+            uint64_t val = this->stream_->read_uleb128();
+            if (val == 0) {
               break;
             }
-            value  += std::get<0>(value_delta);
-            offset += std::get<1>(value_delta);
+            value += val;
 
             VLOG(VDEBUG) << "Value: " << std::hex << value;
             fstart->add_function(value);
-          } while(offset < (cmd->dataoff + cmd->datasize) and std::get<0>(value_delta) > 0);
+          } while(this->stream_->pos() < (cmd->dataoff + cmd->datasize));
 
           break;
         }
@@ -525,26 +488,25 @@ void BinaryParser::parse_load_commands(void) {
 
       default:
         {
-          LOG(WARNING) << "Command '" << to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd))
+          LOG(WARNING) << "Command '" << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd))
                        << "' not parsed";
 
-          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
+          load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
         }
     }
 
     if (load_command != nullptr) {
-      const uint8_t* content = static_cast<const uint8_t*>(
-        this->stream_->read(loadcommands_offset, command->cmdsize));
+      const uint8_t* content = this->stream_->peek_array<uint8_t>(loadcommands_offset, command.cmdsize);
 
       load_command->data({
         content,
-        content + command->cmdsize
+        content + command.cmdsize
       });
 
       load_command->command_offset(loadcommands_offset);
       this->binary_->commands_.push_back(load_command.release());
     }
-    loadcommands_offset += command->cmdsize;
+    loadcommands_offset += command.cmdsize;
   }
 }
 
@@ -573,17 +535,15 @@ void BinaryParser::parse_relocations(Section& section) {
 
   std::unique_ptr<RelocationObject> reloc{nullptr};
   for (size_t i = 0; i < numberof_relocations; ++i) {
-    int32_t address = this->stream_->read_integer<int32_t>(current_reloc_offset);
+    int32_t address = this->stream_->peek<int32_t>(current_reloc_offset);
     bool is_scattered = static_cast<bool>(address & R_SCATTERED);
 
     if (is_scattered) {
-      const scattered_relocation_info* reloc_info = reinterpret_cast<const scattered_relocation_info*>(
-        this->stream_->read(current_reloc_offset, sizeof(scattered_relocation_info)));
+      const scattered_relocation_info* reloc_info = &this->stream_->peek<scattered_relocation_info>(current_reloc_offset);
       reloc = std::unique_ptr<RelocationObject>{new RelocationObject{reloc_info}};
       reloc->section_ = &section;
     } else {
-      const relocation_info* reloc_info = reinterpret_cast<const relocation_info*>(
-          this->stream_->read(current_reloc_offset, sizeof(relocation_info)));
+      const relocation_info* reloc_info = &this->stream_->peek<relocation_info>(current_reloc_offset);
       reloc = std::unique_ptr<RelocationObject>{new RelocationObject{reloc_info}};
       reloc->section_ = &section;
 
@@ -640,13 +600,12 @@ void BinaryParser::parse_dyldinfo_rebases() {
   }
 
   try {
-    const uint8_t* raw_rebase = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    const uint8_t* raw_rebase = this->stream_->peek_array<uint8_t>(offset, size);
     dyldinfo.rebase_opcodes({raw_rebase, raw_rebase + size});
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
-  uint64_t current_offset = offset;
   uint64_t end_offset = offset + size;
 
   bool     done = false;
@@ -655,12 +614,13 @@ void BinaryParser::parse_dyldinfo_rebases() {
 	uint64_t segment_offset = 0;
 	uint32_t count = 0;
 	uint32_t skip = 0;
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
 
-  while (not done and current_offset < end_offset) {
-    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_IMMEDIATE_MASK;
-    uint8_t opcode = this->stream_->read_integer<uint8_t>(current_offset) & REBASE_OPCODE_MASK;
-    current_offset += sizeof(uint8_t);
+  this->stream_->setpos(offset);
+
+  while (not done and this->stream_->pos() < end_offset) {
+    uint8_t imm    = this->stream_->peek<uint8_t>() & REBASE_IMMEDIATE_MASK;
+    uint8_t opcode = this->stream_->read<uint8_t>() & REBASE_OPCODE_MASK;
+
     switch(static_cast<REBASE_OPCODES>(opcode)) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
         {
@@ -676,23 +636,16 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
 			case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-          value_delta     = this->stream_->read_uleb128(current_offset);
-
   				segment_index   = imm;
-          segment_offset  = std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
+          segment_offset  = this->stream_->read_uleb128();
 
 		  		break;
         }
 
 			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
         {
-          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += this->stream_->read_uleb128();
 
-          segment_offset += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
 	  			break;
         }
 
@@ -713,12 +666,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
 			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
         {
 
-          value_delta     = this->stream_->read_uleb128(current_offset);
-
-          count           = std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
-
+          count = this->stream_->read_uleb128();
 				  for (size_t i = 0; i < count; ++i) {
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 					  segment_offset += sizeof(pint_t);
@@ -731,29 +679,19 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
           this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 
-          value_delta     = this->stream_->read_uleb128(current_offset);
+          segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 
-          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
-
-          current_offset += std::get<1>(value_delta);
 				  break;
         }
 
 			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
           // Count
-          value_delta     = this->stream_->read_uleb128(current_offset);
-
-          count          += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
+          count += this->stream_->read_uleb128();
 
           // Skip
-          value_delta     = this->stream_->read_uleb128(current_offset);
+          skip += this->stream_->read_uleb128();
 
-          skip           += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
 
 				  for (size_t i = 0; i < count; ++i) {
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
@@ -863,13 +801,12 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
     dyldinfo.bind_opcodes({raw_binding, raw_binding + size});
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
-  uint64_t current_offset = offset;
   uint64_t end_offset = offset + size;
 
 	uint8_t     type = 0;
@@ -885,14 +822,12 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   bool        is_weak_import = false;
 	bool        done = false;
 
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
-  std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
 
   it_segments segments = this->binary_->segments();
-  while (not done and current_offset < end_offset) {
-    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
-    current_offset += sizeof(uint8_t);
+  this->stream_->setpos(offset);
+  while (not done and this->stream_->pos() < end_offset) {
+    uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
 
 		switch (opcode) {
 		  case BIND_OPCODES::BIND_OPCODE_DONE:
@@ -910,9 +845,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
 
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          library_ordinal = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          library_ordinal = this->stream_->read_uleb128();
 
 					break;
         }
@@ -931,8 +864,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->get_string(current_offset);
-          current_offset += symbol_name.size() + 1;
+				  symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
 						is_weak_import = true;
@@ -950,28 +882,21 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
 			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
-          svalue_delta    = this->stream_->read_sleb128(current_offset);
-          addend          = std::get<0>(svalue_delta);
-          current_offset += std::get<1>(svalue_delta);
+          addend = this->stream_->read_sleb128();
 					break;
         }
 
 			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx  = imm;
-
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset  = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+					segment_idx    = imm;
+          segment_offset = this->stream_->read_uleb128();
 
 					break;
         }
 
 			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          segment_offset += this->stream_->read_uleb128();
 					break;
         }
 
@@ -1003,9 +928,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               addend,
               is_weak_import,
               segments);
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
-          current_offset += std::get<1>(value_delta);
+          segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 					break;
         }
 
@@ -1029,14 +952,10 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
         {
 
           // Count
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          count           = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          count           = this->stream_->read_uleb128();
 
           // Skip
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          skip            = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          skip            = this->stream_->read_uleb128();
 
 					for (size_t i = 0; i < count; ++i) {
             this->do_bind<MACHO_T>(
@@ -1080,13 +999,12 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
     dyldinfo.weak_bind_opcodes({raw_binding, raw_binding + size});
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
-  uint64_t current_offset = offset;
   uint64_t end_offset = offset + size;
 
 	uint8_t     type = 0;
@@ -1101,15 +1019,13 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
   bool        is_weak_import = true;
 	bool        done = false;
 
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
-  std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
-
   it_segments segments = this->binary_->segments();
 
-  while (not done and current_offset < end_offset) {
-    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
-    current_offset += sizeof(uint8_t);
+  this->stream_->setpos(offset);
+
+  while (not done and this->stream_->pos() < end_offset) {
+    uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
 
 		switch (opcode) {
 		  case BIND_OPCODES::BIND_OPCODE_DONE:
@@ -1121,8 +1037,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->get_string(current_offset);
-          current_offset += symbol_name.size() + 1;
+				  symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION) != 0) {
             // TODO: STRONG
@@ -1139,20 +1054,15 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
 			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
-          svalue_delta    = this->stream_->read_sleb128(current_offset);
-          addend          = std::get<0>(svalue_delta);
-          current_offset += std::get<1>(svalue_delta);
+          addend = this->stream_->read_sleb128();
 					break;
         }
 
 
 			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx  = imm;
-
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset  = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+					segment_idx    = imm;
+          segment_offset = this->stream_->read_uleb128();
 
 					break;
         }
@@ -1160,9 +1070,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
 			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          segment_offset += this->stream_->read_uleb128();
 					break;
         }
 
@@ -1196,9 +1104,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               addend,
               is_weak_import,
               segments);
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta) + sizeof(pint_t);
-          current_offset += std::get<1>(value_delta);
+          segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 					break;
         }
 
@@ -1224,14 +1130,10 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
         {
 
           // Count
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          count           = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          count   = this->stream_->read_uleb128();
 
           // Skip
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          skip            = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          skip    = this->stream_->read_uleb128();
 
 					for (size_t i = 0; i < count; ++i) {
             this->do_bind<MACHO_T>(
@@ -1277,7 +1179,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
     dyldinfo.lazy_bind_opcodes({raw_binding, raw_binding + size});
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
@@ -1286,7 +1188,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
   uint64_t current_offset = offset;
   uint64_t end_offset     = offset + size;
 
-  uint32_t    lazy_offset     = 0;
+  //uint32_t    lazy_offset     = 0;
 	uint8_t     segment_idx     = 0;
 	uint64_t    segment_offset  = 0;
   std::string symbol_name     = "";
@@ -1294,20 +1196,17 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 	int64_t     addend          = 0;
   bool        is_weak_import  = false;
 
-  std::pair<uint64_t, uint64_t> value_delta  = {0, 0};
-  std::pair< int64_t, uint64_t> svalue_delta = {0, 0};
-
   it_segments segments = this->binary_->segments();
-
-  while (current_offset < end_offset) {
-    uint8_t imm    = this->stream_->read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
+  this->stream_->setpos(offset);
+  while (this->stream_->pos() < end_offset) {
+    uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
     current_offset += sizeof(uint8_t);
 
 		switch (opcode) {
 		  case BIND_OPCODES::BIND_OPCODE_DONE:
         {
-				  lazy_offset = current_offset - offset;
+				  //lazy_offset = current_offset - offset;
 					break;
         }
 
@@ -1319,11 +1218,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
 			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
-
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          library_ordinal = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
-
+          library_ordinal = this->stream_->read_uleb128();
 					break;
         }
 
@@ -1341,8 +1236,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->get_string(current_offset);
-          current_offset += symbol_name.size() + 1;
+				  symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
 						is_weak_import = true;
@@ -1354,19 +1248,14 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
 			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
-          svalue_delta    = this->stream_->read_sleb128(current_offset);
-          addend          = std::get<0>(svalue_delta);
-          current_offset += std::get<1>(svalue_delta);
+          addend = this->stream_->read_sleb128();;
 					break;
         }
 
 			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx  = imm;
-
-          value_delta     = this->stream_->read_uleb128(current_offset);
-          segment_offset  = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+					segment_idx    = imm;
+          segment_offset = this->stream_->read_uleb128();
 
 					break;
         }

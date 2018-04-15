@@ -20,6 +20,8 @@
 #include <functional>
 #include <iterator>
 
+#include "LIEF/ELF/Parser.hpp"
+
 #include "LIEF/logging++.hpp"
 
 #include "LIEF/ELF/hash.hpp"
@@ -246,16 +248,19 @@ void Section::offset(uint64_t offset) {
 
 std::vector<uint8_t> Section::content(void) const {
   if (this->size() == 0) {
-    VLOG(VDEBUG) << "Section '" << this->name() << "' is empty";
+    //VLOG(VDEBUG) << "Section '" << this->name() << "' is empty";
     return {};
   }
 
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Content from cache";
+    //VLOG(VDEBUG) << "Content from cache";
     return this->content_c_;
   }
 
-  VLOG(VDEBUG) << std::hex << "Content from Data Handler [0x" << this->offset_ << ", 0x" << this->size_ << "]";
+  //VLOG(VDEBUG) << std::hex << "Content from Data Handler [0x" << this->offset_ << ", 0x" << this->size_ << "]";
+  if (this->size() > Parser::MAX_SECTION_SIZE) {
+    return {};
+  }
 
   DataHandler::Node& node = this->datahandler_->get(this->offset(), this->size(), DataHandler::Node::SECTION);
   const std::vector<uint8_t>& binary_content = this->datahandler_->content();

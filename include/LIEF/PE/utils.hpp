@@ -42,7 +42,7 @@ LIEF_API PE_TYPE get_type(const std::string& file);
 LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
 
 //! @brief Convert a UTF-16 string to a UTF-8 one
-LIEF_API std::string u16tou8(const std::u16string& string);
+LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
 
 //! @brief Convert a UTF-8 string to a UTF-16 one
 LIEF_API std::u16string u8tou16(const std::string& string);

@@ -23,28 +23,20 @@
 #include "LIEF/json.hpp"
 
 #include "LIEF/visitors/json.hpp"
+
+#ifdef LIEF_ELF_SUPPORT
 #include "LIEF/ELF/json.hpp"
+#endif
+
+#ifdef LIEF_PE_SUPPORT
 #include "LIEF/PE/json.hpp"
+#endif
+
 #include "LIEF/Abstract/json.hpp"
 
 #include "LIEF/Abstract.hpp"
 #include "LIEF/ELF.hpp"
 #include "LIEF/PE.hpp"
-
-namespace LIEF {
-//template<class T, class VISITOR = JsonVisitor>
-//json to_json(const T& obj) {
-//  VISITOR visitor;
-//  visitor(obj);
-//  return visitor.get();
-//}
-//
-//template<class T, class VISITOR = JsonVisitor>
-//std::string to_json_str(const T& obj) {
-//  return to_json<T, VISITOR>(obj).dump();
-//}
-
-} // namespace LIEF
 
 #endif // LIEF_JSON_SUPPORT
 

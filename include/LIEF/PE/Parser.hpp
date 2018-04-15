@@ -73,7 +73,7 @@ class LIEF_API Parser : public LIEF::Parser {
     void parse_sections(void);
 
     template<typename PE_T>
-    void parse_headers(void);
+    bool parse_headers(void);
 
     void parse_configuration(void);
 

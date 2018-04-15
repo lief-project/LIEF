@@ -19,7 +19,7 @@
 #include <fstream>
 #include <cassert>
 #include <sstream>
-#include <algorithm> 
+#include <algorithm>
 
 #include "LIEF/logging++.hpp"
 
@@ -61,61 +61,21 @@ uint64_t VectorStream::size(void) const {
 }
 
 
-const void* VectorStream::read(uint64_t offset, uint64_t size) const {
+const void* VectorStream::read_at(uint64_t offset, uint64_t size) const {
 
   if (offset > this->size() or (offset + size) > this->size()) {
-    VLOG(VDEBUG) << "Offset: "      << std::hex << offset;
-    VLOG(VDEBUG) << "Size: "        << std::hex << size;
-    VLOG(VDEBUG) << "Binary Size: " << std::hex << this->size();
-
-    if (offset > this->size()) {
-      throw LIEF::read_out_of_bound(offset);
-    }
-
-    if ((offset + size) > this->size()) {
-      throw LIEF::read_out_of_bound(offset, size);
-    }
+    size_t out_size = (offset + size) - this->size();
+    LOG(ERROR) << "Can't read "
+               << std::dec << size << " bytes at "
+               << std::hex << std::showbase << offset
+               << " (" << std::hex << (out_size) << " bytes out of bound)";
+    //throw LIEF::read_out_of_bound(offset, size);
+    return nullptr;
   }
   return this->binary_.data() + offset;
-
 }
 
 
-const char* VectorStream::read_string(uint64_t offset, uint64_t size) const {
-
-  if ((offset + size) > this->size()) {
-    throw LIEF::read_out_of_bound(offset);
-  }
-
-
-  uint64_t max_size = this->size() - (offset + size);
-  if (size > 0) {
-    max_size = std::min<uint64_t>(max_size, size);
-  }
-
-  return reinterpret_cast<const char*>(this->read(offset, max_size));
-}
-
-std::string VectorStream::get_string(uint64_t offset, uint64_t size) const {
-
-  if ((offset + size) > this->size()) {
-    throw LIEF::read_out_of_bound(offset);
-  }
-
-  size_t max_size = static_cast<size_t>(this->size() - (offset + size));
-  if (size > 0) {
-    max_size = std::min<size_t>(max_size, size);
-  }
-  const char* str = this->read_string(offset);
-  const char* end = str + max_size;
-  const char* it_null = std::find(str, end, '\0');
-  if (it_null == end) {
-    throw LIEF::read_out_of_bound(offset);
-  }
-  std::string tmp{str, it_null};
-  tmp.push_back('\0');
-  return tmp.c_str();
-}
 
 
 const std::vector<uint8_t>& VectorStream::content(void) const {

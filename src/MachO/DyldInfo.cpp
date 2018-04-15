@@ -156,9 +156,6 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
   std::ostringstream output;
   const buffer_t& rebase_opcodes = this->rebase_opcodes();
 
-  uint64_t current_offset = 0;
-  uint64_t end_offset = rebase_opcodes.size();
-
   bool     done = false;
   uint8_t  type = 0;
   uint32_t segment_index = 0;
@@ -166,15 +163,13 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
   uint32_t count = 0;
   uint32_t skip = 0;
   VectorStream rebase_stream{rebase_opcodes};
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
   const std::string tab = "    ";
 
   it_segments segments = this->binary_->segments();
 
-  while (not done and current_offset < end_offset) {
-    uint8_t imm    = rebase_stream.read_integer<uint8_t>(current_offset) & REBASE_IMMEDIATE_MASK;
-    uint8_t opcode = rebase_stream.read_integer<uint8_t>(current_offset) & REBASE_OPCODE_MASK;
-    current_offset += sizeof(uint8_t);
+  while (not done and rebase_stream.pos() < rebase_opcodes.size()) {
+    uint8_t imm    = rebase_stream.peek<uint8_t>() & REBASE_IMMEDIATE_MASK;
+    uint8_t opcode = rebase_stream.read<uint8_t>() & REBASE_OPCODE_MASK;
 
     switch(static_cast<REBASE_OPCODES>(opcode)) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
@@ -195,12 +190,10 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
 
       case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-          value_delta     = rebase_stream.read_uleb128(current_offset);
 
           segment_index   = imm;
-          segment_offset  = std::get<0>(value_delta);
+          segment_offset  = rebase_stream.read_uleb128();
 
-          current_offset += std::get<1>(value_delta);
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
           output << "Segment Index := " << std::dec << segment_index << " (" << segments[segment_index].name() << ") ";
@@ -212,14 +205,12 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
 
       case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
         {
-          value_delta     = rebase_stream.read_uleb128(current_offset);
 
-          segment_offset += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
+          uint64_t val = rebase_stream.read_uleb128();
+          segment_offset += val;
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
-          output << "Segment Offset += " << std::hex << std::showbase << std::get<0>(value_delta) << " (" << segment_offset << ")";
+          output << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")";
           output << std::endl;
           break;
         }
@@ -260,12 +251,7 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
         {
 
-          value_delta     = rebase_stream.read_uleb128(current_offset);
-
-          count           = std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
-
+          count = rebase_stream.read_uleb128();
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
 
@@ -305,14 +291,12 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
           output << std::hex << std::showbase << segment_offset;
           output << ")" << std::endl;
 
-          value_delta     = rebase_stream.read_uleb128(current_offset);
+          uint64_t val = rebase_stream.read_uleb128();
+          segment_offset += val + pint_v;
 
-          segment_offset += std::get<0>(value_delta) + pint_v;
-
-          current_offset += std::get<1>(value_delta);
 
           output << tab;
-          output << "Segment Offset += " << std::hex << std::showbase << (std::get<0>(value_delta) + pint_v) << " (" << segment_offset << ")";
+          output << "Segment Offset += " << std::hex << std::showbase << (val + pint_v) << " (" << segment_offset << ")";
           output << std::endl;
 
           break;
@@ -324,18 +308,10 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
 
           // Count
-          value_delta     = rebase_stream.read_uleb128(current_offset);
-
-          count          += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
+          count          += rebase_stream.read_uleb128();
 
           // Skip
-          value_delta     = rebase_stream.read_uleb128(current_offset);
-
-          skip           += std::get<0>(value_delta);
-
-          current_offset += std::get<1>(value_delta);
+          skip           += rebase_stream.read_uleb128();
 
           output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
           for (size_t i = 0; i < count; ++i) {
@@ -411,9 +387,6 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
   size_t pint_v = static_cast<LIEF::Binary*>(this->binary_)->header().is_64() ? sizeof(uint64_t) : sizeof(uint32_t);
 
-  uint64_t current_offset = 0;
-  uint64_t end_offset = bind_opcodes.size();
-
   uint8_t     type = is_lazy ? static_cast<uint8_t>(BIND_TYPES::BIND_TYPE_POINTER) : 0;
   uint8_t     segment_idx = 0;
   uint64_t    segment_offset = 0;
@@ -427,9 +400,6 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
   bool        is_weak_import = false;
   bool        done = false;
 
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
-  std::pair<int64_t, uint64_t> svalue_delta = {0, 0};
-
   it_segments segments = this->binary_->segments();
   it_libraries libraries = this->binary_->libraries();
 
@@ -437,12 +407,9 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
   VectorStream bind_stream{bind_opcodes};
 
-  while (not done and current_offset < end_offset) {
-    uint8_t imm    = bind_stream.read_integer<uint8_t>(current_offset) & BIND_IMMEDIATE_MASK;
-    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(
-        bind_stream.read_integer<uint8_t>(current_offset) & BIND_OPCODE_MASK);
-
-    current_offset += sizeof(uint8_t);
+  while (not done and bind_stream.pos() < bind_opcodes.size()) {
+    uint8_t imm  = bind_stream.peek<uint8_t>() & BIND_IMMEDIATE_MASK;
+    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(bind_stream.read<uint8_t>() & BIND_OPCODE_MASK);
 
     switch (opcode) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
@@ -469,9 +436,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          library_ordinal = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          library_ordinal = bind_stream.read_uleb128();
 
           output << tab << "Library Ordinal := " << std::dec << library_ordinal << std::endl;
 
@@ -498,8 +463,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
-          symbol_name = bind_stream.get_string(current_offset);
-          current_offset += symbol_name.size() + 1;
+          symbol_name = bind_stream.read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
             is_weak_import = true;
@@ -527,9 +491,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
         {
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
-          svalue_delta    = bind_stream.read_sleb128(current_offset);
-          addend          = std::get<0>(svalue_delta);
-          current_offset += std::get<1>(svalue_delta);
+          addend          = bind_stream.read_sleb128();
 
           output << tab << "Addend := " << std::dec << addend << std::endl;
           break;
@@ -541,9 +503,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
           segment_idx  = imm;
 
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          segment_offset  = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          segment_offset  = bind_stream.read_uleb128();
 
           output << tab << "Segment := " << segments[segment_idx].name() << std::endl;
           output << tab << "Segment Offset := " << std::hex << std::showbase << segment_offset << std::endl;
@@ -556,11 +516,10 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          uint64_t val = bind_stream.read_uleb128();
+          segment_offset += val;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase << std::get<0>(value_delta) << " (" << segment_offset << ")" << std::endl;
+          output << tab << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")" << std::endl;
           break;
         }
 
@@ -616,11 +575,10 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           output << std::boolalpha << is_weak_import;
           output << ")" << std::endl;
 
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          segment_offset += std::get<0>(value_delta) + pint_v;
-          current_offset += std::get<1>(value_delta);
+          uint64_t v = bind_stream.read_uleb128();
+          segment_offset += v + pint_v;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase << std::get<0>(value_delta) + pint_v << " (" << segment_offset << ")" << std::endl;
+          output << tab << "Segment Offset += " << std::hex << std::showbase << v + pint_v << " (" << segment_offset << ")" << std::endl;
           break;
         }
 
@@ -658,14 +616,10 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
           // Count
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          count           = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          count           = bind_stream.read_uleb128();
 
           // Skip
-          value_delta     = bind_stream.read_uleb128(current_offset);
-          skip            = std::get<0>(value_delta);
-          current_offset += std::get<1>(value_delta);
+          skip            = bind_stream.read_uleb128();;
 
           output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
           for (size_t i = 0; i < count; ++i) {
@@ -790,38 +744,30 @@ std::string DyldInfo::show_export_trie(void) const {
 
   VectorStream stream{buffer};
 
-  this->show_trie(output, "", stream, 0, 0, end_offset, "");
+  this->show_trie(output, "", stream, 0, end_offset, "");
   return output.str();
 
 
 }
 
-void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) const {
+void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const {
 
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
-  if (current_offset >= end) {
+  if (stream.pos() >= end) {
     return;
   }
 
-  if (start > current_offset) {
+  if (start > stream.pos()) {
     return;
   }
-  const uint64_t saved_offset = current_offset;
-  const uint8_t terminal_size = stream.read_integer<uint8_t>(current_offset);
-  current_offset += sizeof(uint8_t);
 
-  uint64_t children_offset = current_offset + terminal_size;
+  const uint8_t terminal_size = stream.read<uint8_t>();
+
+  uint64_t children_offset = stream.pos() + terminal_size;
 
   if (terminal_size != 0) {
-    uint64_t offset = current_offset - start;
 
-    value_delta     = stream.read_uleb128(current_offset);
-    uint64_t flags  = std::get<0>(value_delta);
-    current_offset += std::get<1>(value_delta);
-
-    value_delta       = stream.read_uleb128(current_offset);
-    uint64_t address  = std::get<0>(value_delta);
-    current_offset   += std::get<1>(value_delta);
+    uint64_t flags   = stream.read_uleb128();
+    uint64_t address = stream.read_uleb128();
 
     const std::string& symbol_name = prefix;
     output << output_prefix;
@@ -838,25 +784,26 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
     output << std::endl;
 
   }
-
-  const uint8_t nb_children = stream.read_integer<uint8_t>(children_offset);
-  children_offset += sizeof(uint8_t);
+  stream.setpos(children_offset);
+  const uint8_t nb_children = stream.read<uint8_t>();
 
   output_prefix += "    ";
   for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix = stream.get_string(children_offset);
+    std::string suffix = stream.read_string();
     std::string name   = prefix + suffix;
 
-    children_offset += suffix.size() + 1;
+    uint32_t child_node_offet  = static_cast<uint32_t>(stream.read_uleb128());
 
-    value_delta                = stream.read_uleb128(children_offset);
-    uint32_t child_node_offet  = static_cast<uint32_t>(std::get<0>(value_delta));
-    children_offset           += std::get<1>(value_delta);
-    if (start + child_node_offet == start) {
+    if (child_node_offet == 0) {
       break;
     }
-    output << output_prefix << name << "@off." << std::hex << std::showbase << children_offset << std::endl;
-    this->show_trie(output, output_prefix, stream, start, start + child_node_offet, end, name);
+
+    output << output_prefix << name << "@off." << std::hex << std::showbase << stream.pos() << std::endl;
+
+    size_t current_pos = stream.pos();
+    stream.setpos(start + child_node_offet);
+    this->show_trie(output, output_prefix, stream, start, end, name);
+    stream.setpos(current_pos);
   }
 }
 

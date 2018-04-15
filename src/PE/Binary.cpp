@@ -767,7 +767,8 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
       });
 
   if (it_import == std::end(this->imports_)) {
-    throw not_found("Unable to find library '" + library + "'");
+    LOG(ERROR) << "Unable to find library '" << library << "'";
+    return 0;
   }
 
   it_const_import_entries entries = it_import->entries();
@@ -782,11 +783,13 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
       });
 
   if (nb_functions == 0) {
-    throw not_found("Unable to find the function '" + function + "' in '" + library + "'.");
+    LOG(ERROR) << "Unable to find the function '" << function << "' in '" << library + "'.";
+    return 0;
   }
 
   if (nb_functions > 1) {
-    throw not_supported("'" + function + "' is defined " + std::to_string(nb_functions) + " in '" + library + "'.");
+    LOG(ERROR) << "'" << function << "' is defined " << std::to_string(nb_functions) << " in '" << library << "'.";
+    return 0;
   }
 
   uint32_t import_table_size = static_cast<uint32_t>((this->imports().size() + 1) * sizeof(pe_import)); // +1 for the null entry
@@ -878,11 +881,7 @@ Export& Binary::get_export(void) {
 
 
 const Export& Binary::get_export(void) const {
-  if (this->has_exports()) {
-    return this->export_;
-  } else {
-    throw not_found("The binary doesn't have exports");
-  }
+  return this->export_;
 }
 
 /////////////////////////////////////
@@ -892,14 +891,12 @@ const Export& Binary::get_export(void) const {
 /////////////////////////////////////
 
 void Binary::set_resources(const ResourceDirectory& resource) {
-  // TODO: DELETE !!!!!!!!!
   delete this->resources_;
   this->resources_ = new ResourceDirectory{resource};
 }
 
 
 void Binary::set_resources(const ResourceData& resource) {
-  // TODO: DELETE !!!!!!!!!
   delete this->resources_;
   this->resources_ = new ResourceData{resource};
 }
@@ -947,9 +944,6 @@ const Debug& Binary::debug(void) const {
 /////////////////////
 
 const Signature& Binary::signature(void) const {
-  if (not this->has_signature()) {
-    throw not_found("Signature not found");
-  }
   return this->signature_;
 }
 
@@ -1045,7 +1039,7 @@ void Binary::hook_function(const std::string& function, uint64_t address) {
     }
   }
 
-  throw not_found("Unable to find library associated with function '" + function + "'");
+  LOG(WARNING) << "Unable to find library associated with function '" << function << "'";
 }
 
 
@@ -1083,7 +1077,8 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES addr_type) {
   if (size > sizeof(patch_value)) {
-    throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
+    LOG(ERROR) << "Invalid size (" << std::to_string(size) << ")";
+    return;
   }
 
   uint64_t rva = address;
@@ -1171,9 +1166,6 @@ RichHeader& Binary::rich_header(void) {
 }
 
 const RichHeader& Binary::rich_header(void) const {
-  if (not this->has_rich_header()) {
-    throw not_found("Rich Header not found");
-  }
   return this->rich_header_;
 }
 

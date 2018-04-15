@@ -56,6 +56,8 @@ class LIEF_API Parser : public LIEF::Parser {
     static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
     static constexpr uint32_t NB_MAX_MASKWORD        = 512;
     static constexpr uint32_t MAX_NOTE_DESCRIPTION   = 1_MB;
+    static constexpr uint32_t MAX_SECTION_SIZE       = 100_MB;
+    static constexpr uint32_t MAX_SEGMENT_SIZE       = MAX_SECTION_SIZE;
 
 
     //! @brief Parse an ELF file an return a LIEF::ELF::Binary object
@@ -96,7 +98,7 @@ class LIEF_API Parser : public LIEF::Parser {
     void parse_binary(void);
 
     template<typename ELF_T>
-    void parse_header(void);
+    bool parse_header(void);
 
     //! @brief Parse binary's Section
     //!

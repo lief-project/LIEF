@@ -48,7 +48,7 @@ SignatureParser::SignatureParser(const std::vector<uint8_t>& data) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
 {
 
-  this->signature_ptr_ = reinterpret_cast<const uint8_t*>(this->stream_->read(8, this->stream_->size() - 8));
+  this->signature_ptr_ = this->stream_->peek_array<uint8_t>(8, this->stream_->size() - 8);
   this->end_ = this->signature_ptr_ + this->stream_->size() - 8;
   this->p_ = const_cast<uint8_t*>(this->signature_ptr_);
   try {

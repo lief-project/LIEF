@@ -90,8 +90,7 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
 void BinaryParser::init(void) {
   VLOG(VDEBUG) << "Parsing MachO" << std::endl;
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(
-        *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
 
     if (type == MACHO_TYPES::MH_MAGIC_64 or
         type == MACHO_TYPES::MH_CIGAM_64 )
@@ -118,31 +117,23 @@ void BinaryParser::init(void) {
 }
 
 
-void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix) {
-  std::pair<uint64_t, uint64_t> value_delta = {0, 0};
-  if (current_offset >= end) {
+void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix) {
+  if (this->stream_->pos() >= end) {
     return;
   }
 
-  if (start > current_offset) {
+  if (start > this->stream_->pos()) {
     return;
   }
 
-  const uint8_t terminal_size = this->stream_->read_integer<uint8_t>(current_offset);
-  current_offset += sizeof(uint8_t);
-
-  uint64_t children_offset = current_offset + terminal_size;
+  const uint8_t terminal_size = this->stream_->read<uint8_t>();
+  uint64_t children_offset = this->stream_->pos() + terminal_size;
 
   if (terminal_size != 0) {
-    uint64_t offset = current_offset - start;
+    uint64_t offset = this->stream_->pos() - start;
 
-    value_delta     = this->stream_->read_uleb128(current_offset);
-    uint64_t flags  = std::get<0>(value_delta);
-    current_offset += std::get<1>(value_delta);
-
-    value_delta       = this->stream_->read_uleb128(current_offset);
-    uint64_t address  = std::get<0>(value_delta);
-    current_offset   += std::get<1>(value_delta);
+    uint64_t flags   = this->stream_->read_uleb128();
+    uint64_t address = this->stream_->read_uleb128();
 
     const std::string& symbol_name = prefix;
     std::unique_ptr<ExportInfo> export_info{new ExportInfo{address, flags, offset}};
@@ -167,22 +158,21 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t current_offset, ui
     this->binary_->dyld_info().export_info_.push_back(export_info.release());
 
   }
-
-	const uint8_t nb_children = this->stream_->read_integer<uint8_t>(children_offset);
-  children_offset += sizeof(uint8_t);
+  this->stream_->setpos(children_offset);
+	const uint8_t nb_children = this->stream_->read<uint8_t>();
   for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix = this->stream_->get_string(children_offset);
+    std::string suffix = this->stream_->read_string();
     std::string name   = prefix + suffix;
 
-    children_offset += suffix.size() + 1;
+    uint32_t child_node_offet = static_cast<uint32_t>(this->stream_->read_uleb128());
 
-    value_delta                = this->stream_->read_uleb128(children_offset);
-    uint32_t child_node_offet  = static_cast<uint32_t>(std::get<0>(value_delta));
-    children_offset           += std::get<1>(value_delta);
-    if (start + child_node_offet == start) {
+    if (child_node_offet == 0) {
       break;
     }
-    this->parse_export_trie(start, start + child_node_offet, end, name);
+    size_t current_pos = this->stream_->pos();
+    this->stream_->setpos(start + child_node_offet);
+    this->parse_export_trie(start, end, name);
+    this->stream_->setpos(current_pos);
   }
 
 }
@@ -198,17 +188,17 @@ void BinaryParser::parse_dyldinfo_export(void) {
     return;
   }
 
-  uint64_t current_offset = offset;
-  uint64_t end_offset     = offset + size;
+  uint64_t end_offset = offset + size;
 
   try {
-    const uint8_t* raw_trie = reinterpret_cast<const uint8_t*>(this->stream_->read(offset, size));
+    const uint8_t* raw_trie = this->stream_->peek_array<uint8_t>(offset, size);
     dyldinfo.export_trie({raw_trie, raw_trie + size});
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
 
-  this->parse_export_trie(offset, current_offset, end_offset, "");
+  this->stream_->setpos(offset);
+  this->parse_export_trie(offset, end_offset, "");
 }
 
 Binary* BinaryParser::get_binary(void) {

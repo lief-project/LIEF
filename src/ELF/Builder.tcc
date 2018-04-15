@@ -699,9 +699,9 @@ void Builder::build_symbol_hash(void) {
 
   std::vector<uint8_t> content = (*it_hash_section)->content();
   VectorStream hashtable_stream{content};
-
-  uint32_t nbucket = hashtable_stream.read_integer<uint32_t>(0);
-  uint32_t nchain  = hashtable_stream.read_integer<uint32_t>(0 + sizeof(uint32_t));
+  hashtable_stream.setpos(0);
+  uint32_t nbucket = hashtable_stream.read<uint32_t>();
+  uint32_t nchain  = hashtable_stream.read<uint32_t>();
 
 
   std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);

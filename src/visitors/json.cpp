@@ -17,8 +17,13 @@
 #include "LIEF/visitors/json.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
 
+#if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/json.hpp"
+#endif
+
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/json.hpp"
+#endif
 
 #include "LIEF/config.h"
 

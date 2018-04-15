@@ -130,9 +130,10 @@ void init_PE_Binary_class(py::module& m) {
     .def_property_readonly("has_signature", &Binary::has_signature,
         "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
 
-    .def("predict_function_rva", &Binary::predict_function_rva,
+    .def("predict_function_rva",
+        static_cast<uint32_t(Binary::*)(const std::string&, const std::string&)>(&Binary::predict_function_rva),
         "Try to predict the RVA of the given function name in the given import library name",
-        py::arg("library"), py::arg("function"))
+        "library"_a, "function"_a)
 
     .def_property_readonly("signature",
         static_cast<const Signature& (Binary::*)(void) const>(&Binary::signature),

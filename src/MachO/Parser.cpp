@@ -88,8 +88,7 @@ FatBinary* Parser::parse(const std::vector<uint8_t>& data, const std::string& na
 
 void Parser::build_fat(void) {
 
-  const fat_header *header = reinterpret_cast<const fat_header*>(
-      this->stream_->read(0, sizeof(fat_header)));
+  const fat_header *header = &this->stream_->peek<fat_header>(0);
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
   VLOG(VDEBUG) << "In this Fat binary there is " << std::dec << nb_arch << " archs" << std::endl;
 
@@ -97,8 +96,7 @@ void Parser::build_fat(void) {
     throw parser_error("Too much architectures");
   }
 
-  const fat_arch* arch = reinterpret_cast<const fat_arch*>(
-      this->stream_->read(sizeof(fat_header), sizeof(fat_arch)));
+  const fat_arch* arch = &this->stream_->peek<fat_arch>(sizeof(fat_header));
 
   for (size_t i = 0; i < nb_arch; ++i) {
 
@@ -109,8 +107,7 @@ void Parser::build_fat(void) {
     VLOG(VDEBUG) << "[" << std::dec << i << "] offset: 0x" << std::hex << offset << std::endl;
     VLOG(VDEBUG) << "[" << std::dec << i << "] size:   0x" << std::hex << size << std::endl;
 
-    const uint8_t* raw = reinterpret_cast<const uint8_t*>(
-      this->stream_->read(offset, size));
+    const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size);
 
     std::vector<uint8_t> data = {raw, raw + size};
 
@@ -121,8 +118,7 @@ void Parser::build_fat(void) {
 
 void Parser::build(void) {
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(
-        *reinterpret_cast<const uint32_t*>(this->stream_->read(0, sizeof(uint32_t))));
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
 
     // Fat binary
     if (type == MACHO_TYPES::FAT_MAGIC or

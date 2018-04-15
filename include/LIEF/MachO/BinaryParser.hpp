@@ -117,7 +117,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
     // -------
     void parse_dyldinfo_export(void);
 
-    void parse_export_trie(uint64_t start, uint64_t current_offset, uint64_t end, const std::string& prefix);
+    void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 
     std::unique_ptr<VectorStream> stream_;
     Binary*                       binary_ ;
