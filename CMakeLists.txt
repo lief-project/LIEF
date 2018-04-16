@@ -138,6 +138,11 @@ else()
   add_library(LIB_LIEF_SHARED SHARED EXCLUDE_FROM_ALL ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
 endif()
 
+
+if(WINDOWS)
+  target_link_libraries(LIB_LIEF_SHARED ws2_32)
+endif()
+
 target_compile_definitions(LIB_LIEF_STATIC PRIVATE -DLIEF_STATIC)
 target_compile_definitions(LIB_LIEF_SHARED PRIVATE -DLIEF_EXPORTS)
 if (LIEF_SUPPORT_CXX14)
