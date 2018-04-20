@@ -77,6 +77,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
     Symbol&       symbol(void);
     const Symbol& symbol(void) const;
 
+    bool           has_applies_to(void) const;
+    Section&       applies_to(void);
+    const Section& applies_to(void) const;
+    
     //void address(uint64_t address);
     void addend(int64_t addend);
     void type(uint32_t type);
@@ -96,6 +100,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     Symbol*             symbol_;
     ARCH                architecture_;
     RELOCATION_PURPOSES purpose_;
+    Section*            applies_to_;
 };
 
 
