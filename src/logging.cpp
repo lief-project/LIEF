@@ -40,6 +40,22 @@ const char* logging_config = R"config(
    Enabled = true
 )config";
 
+const char* logging_config_disabled = R"config(
+* GLOBAL:
+   FORMAT               = "%msg"
+   ENABLED              = false
+   TO_STANDARD_OUTPUT   = false
+   TO_FILE              = false
+   PERFORMANCE_TRACKING = false
+
+* DEBUG:
+   FORMAT  = "%func %msg"
+   Enabled = false
+)config";
+
+
+
+
 Logger::~Logger(void) = default;
 
 const char* to_string(LOGGING_LEVEL e) {
@@ -71,8 +87,12 @@ Logger::Logger(void)
 void Logger::disable(void) {
 
 #if defined(LIEF_LOGGING_SUPPORT)
-  el::Configurations c;
+
   el::Loggers::setLoggingLevel(el::Level::Unknown);
+  el::Configurations conf;
+  conf.setToDefault();
+  conf.parseFromText(logging_config_disabled);
+  el::Loggers::reconfigureAllLoggers(conf);
 #endif
 }
 
