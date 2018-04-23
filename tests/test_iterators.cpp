@@ -78,6 +78,10 @@ struct Foo {
     return {this->bar};
   }
 
+  it_filter_ref filter_always_true(void) {
+    return {this->bar, [] (const std::string& v) { return true; }};
+  }
+
   it_filter_ref get_bar_filter(void) {
     return {this->bar, [] (const std::string& v) { return v == "6" or v == "1" or v == "foo"; }};
   }
@@ -410,6 +414,11 @@ TEST_CASE("Test ref iterators", "[lief][iterators][ref]") {
 
 TEST_CASE("Test filter ref iterators", "[lief][iterators][filter][ref]") {
   Foo foo;
+
+  SECTION("Always true") {
+    it_filter_ref true_list = foo.filter_always_true();
+    CHECK(true_list.size() == 8);
+  }
 
   SECTION("operator++") {
 
