@@ -355,33 +355,11 @@ it_const_symbols Binary::dynamic_symbols(void) const {
 
 
 it_symbols Binary::symbols(void) {
-  symbols_t symbols;
-  symbols.reserve(this->dynamic_symbols().size() + this->static_symbols().size());
-  for (Symbol& s : this->dynamic_symbols()) {
-    symbols.push_back(&s);
-  }
-
-  for (Symbol& s : this->static_symbols()) {
-    symbols.push_back(&s);
-  }
-
-  return it_symbols{symbols};
+  return this->static_dyn_symbols();
 }
 
 it_const_symbols Binary::symbols(void) const {
-  symbols_t symbols;
-
-  symbols.reserve(this->dynamic_symbols().size() + this->static_symbols().size());
-
-  for (const Symbol& s : this->dynamic_symbols()) {
-    symbols.push_back(const_cast<Symbol*>(&s));
-  }
-
-  for (const Symbol& s : this->static_symbols()) {
-    symbols.push_back(const_cast<Symbol*>(&s));
-  }
-
-  return it_const_symbols{symbols};
+  return this->static_dyn_symbols();
 }
 
 
@@ -553,17 +531,31 @@ Symbol& Binary::get_static_symbol(const std::string& name) {
 }
 
 
+symbols_t Binary::static_dyn_symbols(void) const {
+  symbols_t symbols;
+  symbols.reserve(this->dynamic_symbols().size() + this->static_symbols().size());
+  for (Symbol& s : this->dynamic_symbols()) {
+    symbols.push_back(&s);
+  }
+
+  for (Symbol& s : this->static_symbols()) {
+    symbols.push_back(&s);
+  }
+  return symbols;
+}
+
 // Exported
 // --------
 
 it_exported_symbols Binary::exported_symbols(void) {
-  return {this->dynamic_symbols_,
+
+  return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
 }
 
 it_const_exported_symbols Binary::exported_symbols(void) const {
-  return {this->dynamic_symbols_,
+  return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
 }
@@ -574,13 +566,13 @@ it_const_exported_symbols Binary::exported_symbols(void) const {
 // --------
 
 it_imported_symbols Binary::imported_symbols(void) {
-  return filter_iterator<symbols_t>{std::ref(this->dynamic_symbols_),
+  return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
 }
 
 it_const_imported_symbols Binary::imported_symbols(void) const {
-  return const_filter_iterator<symbols_t>{std::cref(this->dynamic_symbols_),
+  return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
 }

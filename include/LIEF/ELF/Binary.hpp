@@ -524,6 +524,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
     template<bool LOADED>
     Section& add_section(const Section& section);
+    symbols_t static_dyn_symbols(void) const;
 
     //! The binary type
     //! (i.e. `ELF32` or `ELF64`)
