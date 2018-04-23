@@ -194,7 +194,6 @@ def print_symbols(symbols, no_trunc):
 
     SIZE = 70
     maxsize = min(maxsize, terminal_columns - SIZE) if terminal_columns > SIZE else terminal_columns
-    print(maxsize, terminal_columns)
 
     f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}| {:<10}| {:<8}| {:<4}| {:<14}|"
     f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}| {:<10}| {:<8}| {:<4}| {:<14}|"
