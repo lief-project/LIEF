@@ -381,7 +381,7 @@ CONST_MAP(RELOC_AARCH64, uint32_t, 123) relocation_AARCH64_sizes {
   { RELOC_AARCH64::R_AARCH64_IRELATIVE,                    64 },
 };
 
-CONST_MAP(RELOC_POWERPC32, uint32_t, 56) relocation_PPC_sizes {
+CONST_MAP(RELOC_POWERPC32, uint32_t, 57) relocation_PPC_sizes {
   { RELOC_POWERPC32::R_PPC_NONE,              0 },
   { RELOC_POWERPC32::R_PPC_ADDR32,            32 },
   { RELOC_POWERPC32::R_PPC_ADDR24,            32 },
@@ -402,6 +402,7 @@ CONST_MAP(RELOC_POWERPC32, uint32_t, 56) relocation_PPC_sizes {
   { RELOC_POWERPC32::R_PPC_GOT16_HA,          16 },
   { RELOC_POWERPC32::R_PPC_PLTREL24,          32 },
   { RELOC_POWERPC32::R_PPC_JMP_SLOT,          0 },
+  { RELOC_POWERPC32::R_PPC_RELATIVE,          32 },
   { RELOC_POWERPC32::R_PPC_LOCAL24PC,         32 },
   { RELOC_POWERPC32::R_PPC_REL32,             32 },
   { RELOC_POWERPC32::R_PPC_TLS,               32 },
@@ -440,7 +441,7 @@ CONST_MAP(RELOC_POWERPC32, uint32_t, 56) relocation_PPC_sizes {
   { RELOC_POWERPC32::R_PPC_REL16_HA,          16 },
 };
 
-CONST_MAP(RELOC_POWERPC64, uint32_t, 83) relocation_PPC64_sizes {
+CONST_MAP(RELOC_POWERPC64, uint32_t, 84) relocation_PPC64_sizes {
   { RELOC_POWERPC64::R_PPC64_NONE,                 0 },
   { RELOC_POWERPC64::R_PPC64_ADDR32,              32 },
   { RELOC_POWERPC64::R_PPC64_ADDR24,              32 },
@@ -460,6 +461,7 @@ CONST_MAP(RELOC_POWERPC64, uint32_t, 83) relocation_PPC64_sizes {
   { RELOC_POWERPC64::R_PPC64_GOT16_HI,            16 },
   { RELOC_POWERPC64::R_PPC64_GOT16_HA,            16 },
   { RELOC_POWERPC64::R_PPC64_JMP_SLOT,            64 },
+  { RELOC_POWERPC64::R_PPC64_RELATIVE,            64 },
   { RELOC_POWERPC64::R_PPC64_REL32,               32 },
   { RELOC_POWERPC64::R_PPC64_ADDR64,              64 },
   { RELOC_POWERPC64::R_PPC64_ADDR16_HIGHER,       16 },

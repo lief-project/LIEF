@@ -849,7 +849,7 @@ const char* to_string(RELOC_i386 e) {
 }
 
 const char* to_string(RELOC_POWERPC32 e) {
-  CONST_MAP(RELOC_POWERPC32, const char*, 56) enumStrings {
+  CONST_MAP(RELOC_POWERPC32, const char*, 57) enumStrings {
   { RELOC_POWERPC32::R_PPC_NONE,              "NONE" },
   { RELOC_POWERPC32::R_PPC_ADDR32,            "ADDR32" },
   { RELOC_POWERPC32::R_PPC_ADDR24,            "ADDR24" },
@@ -870,6 +870,7 @@ const char* to_string(RELOC_POWERPC32 e) {
   { RELOC_POWERPC32::R_PPC_GOT16_HA,          "GOT16_HA" },
   { RELOC_POWERPC32::R_PPC_PLTREL24,          "PLTREL24" },
   { RELOC_POWERPC32::R_PPC_JMP_SLOT,          "JMP_SLOT" },
+  { RELOC_POWERPC32::R_PPC_RELATIVE,          "RELATIVE" },
   { RELOC_POWERPC32::R_PPC_LOCAL24PC,         "LOCAL24PC" },
   { RELOC_POWERPC32::R_PPC_REL32,             "REL32" },
   { RELOC_POWERPC32::R_PPC_TLS,               "TLS" },
@@ -912,7 +913,7 @@ const char* to_string(RELOC_POWERPC32 e) {
 }
 
 const char* to_string(RELOC_POWERPC64 e) {
-  CONST_MAP(RELOC_POWERPC64, const char*, 83) enumStrings {
+  CONST_MAP(RELOC_POWERPC64, const char*, 84) enumStrings {
   { RELOC_POWERPC64::R_PPC64_NONE,                "NONE" },
   { RELOC_POWERPC64::R_PPC64_ADDR32,              "ADDR32" },
   { RELOC_POWERPC64::R_PPC64_ADDR24,              "ADDR24" },
@@ -932,6 +933,7 @@ const char* to_string(RELOC_POWERPC64 e) {
   { RELOC_POWERPC64::R_PPC64_GOT16_HI,            "GOT16_HI" },
   { RELOC_POWERPC64::R_PPC64_GOT16_HA,            "GOT16_HA" },
   { RELOC_POWERPC64::R_PPC64_JMP_SLOT,            "JMP_SLOT" },
+  { RELOC_POWERPC64::R_PPC64_RELATIVE,            "RELATIVE"},
   { RELOC_POWERPC64::R_PPC64_REL32,               "REL32" },
   { RELOC_POWERPC64::R_PPC64_ADDR64,              "ADDR64" },
   { RELOC_POWERPC64::R_PPC64_ADDR16_HIGHER,       "ADDR16_HIGHER" },
