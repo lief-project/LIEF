@@ -671,7 +671,7 @@ void Builder::build_dynamic_section(void) {
     VLOG(VDEBUG) << std::dec << "New '.dynstr' size: " << dyn_strtab_section.size();
 
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dynamic_strings_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
 
     return this->build_dynamic<ELF_T>();
   }
@@ -1064,7 +1064,7 @@ void Builder::build_dynamic_symbols(void) {
     string_table_section.original_size_ = new_segment.physical_size();
 
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(string_table_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
     return this->build_dynamic<ELF_T>();
   }
 
@@ -1085,7 +1085,7 @@ void Builder::build_dynamic_symbols(void) {
 
     symbol_table_section.original_size_ = new_dynsym_load.physical_size();
 
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(symbol_table_raw.size());
+    //this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(symbol_table_raw.size());
     this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value(new_dynsym_load.virtual_address());
 
     return this->build_dynamic<ELF_T>();
@@ -1518,7 +1518,7 @@ void Builder::build_symbol_requirement(void) {
     dyn_str_section.original_size_ = new_segment.physical_size();
 
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
 
     return this->build<ELF_T>();
   }
@@ -1634,7 +1634,7 @@ void Builder::build_symbol_definition(void) {
     dyn_str_section.original_size_ = new_segment.physical_size();
 
     this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
 
     return this->build<ELF_T>();
   }
