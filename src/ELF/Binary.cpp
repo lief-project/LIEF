@@ -763,6 +763,18 @@ Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   relocation_ptr->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
   relocation_ptr->architecture_ = this->header().machine_type();
   this->relocations_.push_back(relocation_ptr);
+
+  // Update the Dynamic Section (Thanks to @yd0b0N)
+  bool is_rela = relocation.is_rela();
+  DYNAMIC_TAGS tag_sz  = is_rela ? DYNAMIC_TAGS::DT_RELASZ  : DYNAMIC_TAGS::DT_RELSZ;
+  DYNAMIC_TAGS tag_ent = is_rela ? DYNAMIC_TAGS::DT_RELAENT : DYNAMIC_TAGS::DT_RELENT;
+
+  if (this->has(tag_sz) and this->has(tag_ent)) {
+   DynamicEntry &dt_sz  = this->get(tag_sz);
+   DynamicEntry &dt_ent = this->get(tag_ent);
+   dt_sz.value(dt_sz.value() + dt_ent.value());
+  }
+
   return *relocation_ptr;
 }
 

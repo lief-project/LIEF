@@ -408,7 +408,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
 
 
 // =======================
-// ET_DYN (PIE/Libraryies)
+// ET_DYN (PIE/Libraries)
 // =======================
 template<>
 Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t base) {
