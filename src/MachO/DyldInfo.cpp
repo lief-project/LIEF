@@ -17,7 +17,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "easylogging++.h"
+#include "LIEF/logging++.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
