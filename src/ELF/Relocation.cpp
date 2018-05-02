@@ -36,7 +36,8 @@ Relocation::Relocation(void) :
   isRela_{false},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -47,7 +48,8 @@ Relocation::Relocation(const Relocation& other) :
   isRela_{other.isRela_},
   symbol_{nullptr},
   architecture_{other.architecture_},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{other.applies_to_}
 {
 }
 
@@ -64,7 +66,8 @@ Relocation::Relocation(const Elf32_Rel* header) :
   isRela_{false},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -75,7 +78,8 @@ Relocation::Relocation(const Elf32_Rela* header) :
   isRela_{true},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -86,7 +90,8 @@ Relocation::Relocation(const Elf64_Rel* header) :
   isRela_{false},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -97,7 +102,8 @@ Relocation::Relocation(const Elf64_Rela* header)  :
   isRela_{true},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -108,7 +114,8 @@ Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isR
   isRela_{isRela},
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE}
+  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
+  applies_to_{nullptr}
 {}
 
 
@@ -120,6 +127,7 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->symbol_,       other.symbol_);
   std::swap(this->architecture_, other.architecture_);
   std::swap(this->purpose_,      other.purpose_);
+  std::swap(this->applies_to_,   other.applies_to_);
 }
 
 int64_t Relocation::addend(void) const {
@@ -144,6 +152,17 @@ Symbol& Relocation::symbol(void) {
   return const_cast<Symbol&>(static_cast<const Relocation*>(this)->symbol());
 }
 
+const Section& Relocation::applies_to(void) const {
+  if (this->applies_to_ != nullptr) {
+    return *this->applies_to_;
+  } else {
+    throw not_found("No section associated with this relocation");
+  }
+}
+
+Section& Relocation::applies_to(void) {
+  return const_cast<Section&>(static_cast<const Relocation*>(this)->applies_to());
+}
 
 bool Relocation::is_rela(void) const {
   return this->isRela_;
@@ -167,6 +186,10 @@ RELOCATION_PURPOSES Relocation::purpose(void) const {
 
 bool Relocation::has_symbol(void) const {
   return this->symbol_ != nullptr;
+}
+
+bool Relocation::has_applies_to(void) const {
+  return this->applies_to_ != nullptr;
 }
 
 size_t Relocation::size(void) const {
