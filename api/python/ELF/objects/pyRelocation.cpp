@@ -62,6 +62,15 @@ void init_ELF_Relocation_class(py::module& m) {
         "" RST_CLASS_REF(lief.ELF.Symbol) " associated with the relocation",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("has_section",
+        &Relocation::has_section,
+        "``True`` if a this relocation has a " RST_CLASS_REF(lief.ELF.Section) " associated")
+
+    .def_property_readonly("section",
+        static_cast<Section& (Relocation::*)(void)>(&Relocation::section),
+        "" RST_CLASS_REF(lief.ELF.Section) " to which the relocation applies",
+        py::return_value_policy::reference)
+
     .def_property_readonly("is_rela",
       static_cast<getter_t<bool>>(&Relocation::is_rela),
       "``True`` if the relocation uses the :attr:`~lief.ELF.Relocation.addend` proprety")

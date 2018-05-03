@@ -318,6 +318,7 @@ void JsonVisitor::visit(const Symbol& symbol) {
 void JsonVisitor::visit(const Relocation& relocation) {
   std::string relocation_type = "NOT_TO_STRING";
   std::string symbol_name     = "";
+  std::string section_name    = "";
 
   if (relocation.has_symbol()) {
     const Symbol& s = relocation.symbol();
@@ -328,6 +329,10 @@ void JsonVisitor::visit(const Relocation& relocation) {
     }
   }
 
+  if (relocation.has_section()) {
+    section_name = relocation.section().name();
+  }
+
 
   if (relocation.architecture() == ARCH::EM_X86_64) {
     relocation_type = to_string(static_cast<RELOC_x86_64>(relocation.type()));
@@ -336,6 +341,7 @@ void JsonVisitor::visit(const Relocation& relocation) {
   this->node_["symbol_name"] = symbol_name;
   this->node_["address"]     = relocation.address();
   this->node_["type"]        = relocation_type;
+  this->node_["section"]     = section_name;
 
 }
 

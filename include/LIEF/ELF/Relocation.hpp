@@ -77,6 +77,13 @@ class LIEF_API Relocation : public LIEF::Relocation {
     Symbol&       symbol(void);
     const Symbol& symbol(void) const;
 
+    //! True if the relocation has a section associated
+    bool           has_section(void) const;
+
+    //! Section associated with this relocation
+    Section&       section(void);
+    const Section& section(void) const;
+
     //void address(uint64_t address);
     void addend(int64_t addend);
     void type(uint32_t type);
@@ -93,9 +100,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
     uint32_t            type_;
     int64_t             addend_;
     bool                isRela_;
-    Symbol*             symbol_;
+    Symbol*             symbol_{nullptr};
     ARCH                architecture_;
     RELOCATION_PURPOSES purpose_;
+    Section*            section_{nullptr};
 };
 
 
