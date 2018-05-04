@@ -53,6 +53,8 @@ dex2dex_info_t File::dex2dex_info(void) const {
 }
 
 std::string File::dex2dex_json_info(void) {
+
+#if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
   for (DEX::File* dex_file : this->dex_files_) {
@@ -61,6 +63,9 @@ std::string File::dex2dex_json_info(void) {
   }
 
   return mapping.dump();
+#else
+  return "";
+#endif
 }
 
 void File::accept(Visitor& visitor) const {

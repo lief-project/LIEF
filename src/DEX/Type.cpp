@@ -40,16 +40,19 @@ Type::Type(const Type& other) :
             std::begin(other.array()),
             std::end(other.array()),
             std::back_inserter(*this->array_));
+        break;
       }
 
     case TYPES::CLASS:
       {
         this->cls_ = other.cls_;
+        break;
       }
 
     case TYPES::PRIMITIVE:
       {
         this->basic_ = new PRIMITIVES{other.primitive()};
+        break;
       }
 
     default:

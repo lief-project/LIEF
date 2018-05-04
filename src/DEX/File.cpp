@@ -433,6 +433,8 @@ dex2dex_info_t File::dex2dex_info(void) const {
 }
 
 std::string File::dex2dex_json_info(void) {
+
+#if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
   // Iter over the class quickened
@@ -456,6 +458,9 @@ std::string File::dex2dex_json_info(void) {
     }
   }
   return mapping.dump();
+#else
+  return "";
+#endif
 }
 
 it_const_methods File::methods(void) const {

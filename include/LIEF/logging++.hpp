@@ -7,6 +7,7 @@
 #include <iostream>
 #define NULL_STREAM if(1){} else std::cerr
 #define VLOG(...) NULL_STREAM
+#define VLOG_IF(...) NULL_STREAM
 #define CVLOG(...) NULL_STREAM
 #define LOG(...) NULL_STREAM
 #define LOG_IF(...) NULL_STREAM
