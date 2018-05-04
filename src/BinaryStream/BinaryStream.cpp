@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/utils.hpp"
+#include <iomanip>
+#include <sstream>
 
 BinaryStream::~BinaryStream(void) = default;
 BinaryStream::BinaryStream(void) = default;
@@ -168,4 +171,50 @@ size_t BinaryStream::align(size_t align_on) const {
   return padding;
 }
 
+
+std::string BinaryStream::read_mutf8(size_t maxsize) const {
+  std::u16string u16str;
+
+  for (size_t i = 0; i < maxsize; ++i) {
+    char16_t a = this->read<char>();
+
+    if (static_cast<uint8_t>(a) < 0x80) {
+      if (a == 0) {
+        break;
+      }
+      u16str.push_back(a);
+    } else if ((a & 0xe0) == 0xc0) {
+
+      int b = this->read<int8_t>() & 0xFF;
+
+      if ((b & 0xC0) != 0x80) {
+        break;
+      }
+      u16str.push_back(static_cast<char16_t>((((a & 0x1F) << 6) | (b & 0x3F))));
+    } else if ((a & 0xf0) == 0xe0) {
+        int b = this->read<int8_t>() & 0xFF;
+        int c = this->read<int8_t>() & 0xFF;
+
+        if (((b & 0xC0) != 0x80) or ((c & 0xC0) != 0x80)) {
+          break;
+        }
+        u16str.push_back(static_cast<char16_t>(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+    } else {
+      break;
+    }
+  }
+
+  std::string u8str = LIEF::u16tou8(u16str);
+  std::string u8str_clean;
+  for (size_t i = 0; i < u8str.size(); ++i) {
+    if (::isprint(u8str[i])) {
+      u8str_clean.push_back(u8str[i]);
+    } else {
+      std::stringstream ss;
+      ss << std::hex << "\\x" << std::setw(2) << std::setfill('0') << static_cast<uint32_t>(u8str[i] & 0xFF);
+      u8str_clean += ss.str();
+    }
+  }
+  return u8str_clean;
+}
 

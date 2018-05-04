@@ -17,10 +17,29 @@
 #include "LIEF/version.h"
 #include "pyLIEF.hpp"
 
+#if defined(LIEF_OAT_SUPPORT)
+  #include "OAT/pyOAT.hpp"
+#endif
+
+#if defined(LIEF_VDEX_SUPPORT)
+  #include "VDEX/pyVDEX.hpp"
+#endif
+
+#if defined(LIEF_DEX_SUPPORT)
+  #include "DEX/pyDEX.hpp"
+#endif
+
+#if defined(LIEF_ART_SUPPORT)
+  #include "ART/pyART.hpp"
+#endif
+
+
+#include "platforms/android/pyAndroid.hpp"
+
+
 py::module LIEF_module("_pylief", "Python API for LIEF");
 
 PYBIND11_MODULE(_pylief, LIEF_module) {
-
 
   LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
   init_LIEF_Object_class(LIEF_module);
@@ -34,6 +53,8 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 
   // Init the LIEF module
   init_LIEF_module(LIEF_module);
+
+  init_hash_functions(LIEF_module);
 
 
   // Init the ELF module
@@ -50,6 +71,29 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 #if defined(LIEF_MACHO_SUPPORT)
   init_MachO_module(LIEF_module);
 #endif
+
+
+// Init the OAT  module
+#if defined(LIEF_OAT_SUPPORT)
+  LIEF::OAT::init_python_module(LIEF_module);
+#endif
+
+// Init the VDEX module
+#if defined(LIEF_VDEX_SUPPORT)
+  LIEF::VDEX::init_python_module(LIEF_module);
+#endif
+
+// Init the DEX module
+#if defined(LIEF_DEX_SUPPORT)
+  LIEF::DEX::init_python_module(LIEF_module);
+#endif
+
+// Init the ART module
+#if defined(LIEF_ART_SUPPORT)
+  LIEF::ART::init_python_module(LIEF_module);
+#endif
+
+  LIEF::Android::init_python_module(LIEF_module);
 
   // Init util functions
   init_utils_functions(LIEF_module);

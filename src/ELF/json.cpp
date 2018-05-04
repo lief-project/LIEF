@@ -223,7 +223,6 @@ void JsonVisitor::visit(const Segment& segment) {
     sections.emplace_back(section.name());
   }
 
-  // TODO: sections
   this->node_["type"]             = to_string(segment.type());
   this->node_["flags"]            = static_cast<size_t>(segment.flags());
   this->node_["file_offset"]      = segment.file_offset();

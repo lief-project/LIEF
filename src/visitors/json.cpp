@@ -25,6 +25,22 @@
 #include "LIEF/ELF/json.hpp"
 #endif
 
+#if defined(LIEF_OAT_SUPPORT)
+#include "LIEF/OAT/json.hpp"
+#endif
+
+#if defined(LIEF_ART_SUPPORT)
+#include "LIEF/ART/json.hpp"
+#endif
+
+#if defined(LIEF_DEX_SUPPORT)
+#include "LIEF/DEX/json.hpp"
+#endif
+
+#if defined(LIEF_VDEX_SUPPORT)
+#include "LIEF/VDEX/json.hpp"
+#endif
+
 #include "LIEF/config.h"
 
 namespace LIEF {
@@ -48,6 +64,47 @@ json to_json(const Object& v) {
     node.update(std::move(elfjson));
   }
 #endif
+
+
+#if defined(LIEF_OAT_SUPPORT)
+  OAT::JsonVisitor oat_visitor;
+  oat_visitor(v);
+  const json& oatjson = oat_visitor.get();
+  if (oatjson.type() != json::value_t::null) {
+    node.update(std::move(oatjson));
+  }
+#endif
+
+
+#if defined(LIEF_ART_SUPPORT)
+  ART::JsonVisitor art_visitor;
+  art_visitor(v);
+  const json& artjson = art_visitor.get();
+  if (artjson.type() != json::value_t::null) {
+    node.update(std::move(artjson));
+  }
+#endif
+
+#if defined(LIEF_DEX_SUPPORT)
+  DEX::JsonVisitor dex_visitor;
+  dex_visitor(v);
+  const json& dexjson = dex_visitor.get();
+  if (dexjson.type() != json::value_t::null) {
+    node.update(std::move(dexjson));
+  }
+#endif
+
+
+#if defined(LIEF_VDEX_SUPPORT)
+  VDEX::JsonVisitor vdex_visitor;
+  vdex_visitor(v);
+  const json& vdexjson = vdex_visitor.get();
+  if (vdexjson.type() != json::value_t::null) {
+    node.update(std::move(vdexjson));
+  }
+#endif
+
+
   return node;
 }
 

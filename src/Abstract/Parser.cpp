@@ -15,6 +15,8 @@
  */
 #include "LIEF/Abstract/Parser.hpp"
 
+#include "LIEF/OAT/utils.hpp"
+#include "LIEF/OAT/Parser.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
@@ -35,6 +37,12 @@ Parser::Parser(void) :
 {}
 
 Binary* Parser::parse(const std::string& filename) {
+
+#if defined(LIEF_OAT_SUPPORT)
+  if (OAT::is_oat(filename)) {
+    return OAT::Parser::parse(filename);
+  }
+#endif
 
 #if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(filename)) {
@@ -67,6 +75,12 @@ Binary* Parser::parse(const std::string& filename) {
 }
 
 Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
+
+#if defined(LIEF_OAT_SUPPORT)
+  if (OAT::is_oat(raw)) {
+    return OAT::Parser::parse(raw, name);
+  }
+#endif
 
 #if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(raw)) {

@@ -16,14 +16,30 @@
 #include <sstream>
 
 #include "LIEF/exception.hpp"
+#include "LIEF/logging++.hpp"
+#include "LIEF/config.h"
 
 
 namespace LIEF {
 exception::exception(const exception&) = default;
 exception::~exception() noexcept = default;
 
-exception::exception(const std::string& msg) : msg_{msg} {}
-exception::exception(const char* msg)        : msg_{msg} {}
+exception::exception(const std::string& msg) : msg_{msg} {
+
+#if defined(LIEF_LOGGING_SUPPORT)
+//std::ostringstream oss;
+//oss << std::endl << el::base::debug::StackTrace();
+//this->msg_ += oss.str();
+#endif
+
+}
+exception::exception(const char* msg) : msg_{msg} {
+#if defined(LIEF_LOGGING_SUPPORT)
+//std::ostringstream oss;
+//oss << std::endl << el::base::debug::StackTrace();
+//this->msg_ += oss.str();
+#endif
+}
 
 const char* exception::what(void) const noexcept {
   return this->msg_.c_str();
@@ -35,13 +51,13 @@ read_out_of_bound::read_out_of_bound(uint64_t offset, uint64_t size) : LIEF::exc
   oss << "Try to read 0x" << std::hex << size
       << " bytes from 0x" << std::hex << offset
       << " (" << std::hex << offset + size << ") which is bigger than the binary's size";
-  this->msg_ = oss.str();
+  this->msg_ += oss.str();
 }
 
 read_out_of_bound::read_out_of_bound(uint64_t offset) : LIEF::exception("") {
   std::ostringstream oss;
   oss << "Offset: 0x" << std::hex << offset << " is bigger than the binary size";
-  this->msg_ = oss.str();
+  this->msg_ += oss.str();
 }
 
 }

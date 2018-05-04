@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include <iomanip>
+
+#include "LIEF/utils.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/signature/AuthenticatedAttributes.hpp"
 

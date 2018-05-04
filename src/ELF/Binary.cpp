@@ -1317,7 +1317,7 @@ const Segment& Binary::segment_from_virtual_address(uint64_t address) const {
           return false;
         }
         return ((segment->virtual_address() <= address) and
-            (segment->virtual_address() + segment->virtual_size()) >= address);
+            (segment->virtual_address() + segment->virtual_size()) > address);
       });
 
   if (it_segment == this->segments_.cend()) {
@@ -1518,6 +1518,7 @@ Section& Binary::section_from_virtual_address(uint64_t address) {
 
 std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address, uint64_t size, LIEF::Binary::VA_TYPES) const {
   const Segment& segment = this->segment_from_virtual_address(virtual_address);
+
   const std::vector<uint8_t>& content = segment.content();
   const uint64_t offset = virtual_address - segment.virtual_address();
   uint64_t checked_size = size;
@@ -2237,7 +2238,6 @@ std::ostream& Binary::print(std::ostream& os) const {
 
 
 Binary::~Binary(void) {
-
   for (Relocation* relocation : this->relocations_) {
     delete relocation;
   }

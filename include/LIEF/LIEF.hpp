@@ -19,10 +19,15 @@
 
 #include <LIEF/Abstract.hpp>
 
+#include <LIEF/OAT.hpp>
+#include <LIEF/VDEX.hpp>
+#include <LIEF/ART.hpp>
+#include <LIEF/DEX.hpp>
 #include <LIEF/ELF.hpp>
 #include <LIEF/PE.hpp>
 #include <LIEF/MachO.hpp>
 #include <LIEF/logging.hpp>
+#include <LIEF/platforms.hpp>
 
 
 #endif

@@ -16,6 +16,7 @@
 #include "pyPE.hpp"
 
 #include "LIEF/PE/hash.hpp"
+#include "LIEF/utils.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 
 #include <string>
@@ -50,7 +51,7 @@ void init_PE_ResourceNode_class(py::module& m) {
 
     .def_property("name",
         [] (const ResourceNode& node) {
-          return safe_string_converter(u16tou8(node.name()));
+          return safe_string_converter(LIEF::u16tou8(node.name()));
         },
         static_cast<void (ResourceNode::*)(const std::string&)>(&ResourceNode::name),
         "Resource name")

@@ -22,6 +22,10 @@ option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
 option(LIEF_MACHO          "Build LIEF with MachO module"               ON)
+option(LIEF_OAT            "Build LIEF with OAT module"                 ON)
+option(LIEF_DEX            "Build LIEF with DEX module"                 ON)
+option(LIEF_VDEX           "Build LIEF with VDEX module"                ON)
+option(LIEF_ART            "Build LIEF with ART module"                 ON)
 
 # Sanitizer
 option(LIEF_ASAN "Enable Address sanitizer"   OFF)

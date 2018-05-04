@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 #include "LIEF/utils.hpp"
+#include "LIEF/utf8.h"
+#include <iomanip>
+#include <sstream>
+#include <iostream>
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on) {
   if ((align_on > 0) and (value % align_on) > 0) {
@@ -23,6 +27,29 @@ uint64_t align(uint64_t value, uint64_t align_on) {
   }
 }
 
+std::string u16tou8(const std::u16string& string, bool remove_null_char) {
+  std::string name;
 
+  utf8::unchecked::utf16to8(std::begin(string), std::end(string), std::back_inserter(name));
 
+  if (remove_null_char) {
+    return std::string{name.c_str()};
+  }
+  return name;
 }
+
+std::u16string u8tou16(const std::string& string) {
+  std::u16string name;
+  utf8::utf8to16(std::begin(string), std::end(string), std::back_inserter(name));
+  return name;
+}
+
+std::string hex_str(uint8_t c) {
+  std::stringstream ss;
+  ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(c);
+  return ss.str();
+}
+
+
+
+} // namespace LIEF

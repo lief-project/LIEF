@@ -17,6 +17,10 @@ Python
   elf.rst
   pe.rst
   macho.rst
+  oat.rst
+  dex.rst
+  vdex.rst
+  art.rst
 
 
 Exceptions

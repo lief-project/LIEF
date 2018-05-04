@@ -61,8 +61,8 @@ class LIEF_API Binary : public LIEF::Binary {
   public:
     Binary(const std::string& name, ELF_CLASS type);
 
-    Binary& operator=(const Binary& copy) = delete;
-    Binary(const Binary& copy)            = delete;
+    Binary& operator=(const Binary& ) = delete;
+    Binary(const Binary& copy) = delete;
 
     //! @brief Return binary's class (ELF32 or ELF64)
     ELF_CLASS type(void) const;
@@ -490,7 +490,7 @@ class LIEF_API Binary : public LIEF::Binary {
     Section&       operator[](ELF_SECTION_TYPES type);
     const Section& operator[](ELF_SECTION_TYPES type) const;
 
-  private:
+  protected:
     Binary(void);
 
     //! @brief Return an abstraction of binary's section: LIEF::Section

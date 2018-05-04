@@ -7,17 +7,31 @@ set(LIEF_ELF_CPP_EXAMPLES
   elf_symbols.cpp
 )
 
-
 set(LIEF_PE_CPP_EXAMPLES
   pe_builder.cpp
   pe_reader.cpp
 )
 
-
 set(LIEF_MACHO_CPP_EXAMPLES
   macho_reader.cpp
   macho_instrumentation.cpp
   macho_builder.cpp
+)
+
+set(LIEF_OAT_CPP_EXAMPLES
+  oat_reader.cpp
+)
+
+set(LIEF_VDEX_CPP_EXAMPLES
+  vdex_reader.cpp
+)
+
+set(LIEF_ART_CPP_EXAMPLES
+  art_reader.cpp
+)
+
+set(LIEF_DEX_CPP_EXAMPLES
+  dex_reader.cpp
 )
 
 set(LIEF_CPP_EXAMPLES
@@ -30,14 +44,28 @@ if (LIEF_ELF)
   set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_ELF_CPP_EXAMPLES}")
 endif()
 
-
 if (LIEF_PE)
   set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_PE_CPP_EXAMPLES}")
 endif()
 
-
 if (LIEF_MACHO)
   set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_MACHO_CPP_EXAMPLES}")
+endif()
+
+if (LIEF_OAT)
+  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_OAT_CPP_EXAMPLES})
+endif()
+
+if (LIEF_VDEX)
+  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_VDEX_CPP_EXAMPLES})
+endif()
+
+if (LIEF_ART)
+  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_ART_CPP_EXAMPLES})
+endif()
+
+if (LIEF_DEX)
+  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_DEX_CPP_EXAMPLES})
 endif()
 
 

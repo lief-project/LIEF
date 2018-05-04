@@ -51,6 +51,7 @@ class ref_iterator : public std::iterator<
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
   public:
+  using container_type = T;
   using DT        = decay_t<T>;
   using ref_t     = typename ref_iterator::reference;
   using pointer_t = typename ref_iterator::pointer;
@@ -269,7 +270,7 @@ class filter_iterator : public std::iterator<
                      typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
 
   public:
-
+  using container_type = T;
   using DT        = decay_t<T>;
   using ref_t     = typename filter_iterator::reference;
   using pointer_t = typename filter_iterator::pointer;

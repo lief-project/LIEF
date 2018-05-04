@@ -15,7 +15,12 @@
  */
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
+
 #include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
+
+#include <string>
+
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on);
 
@@ -55,6 +60,15 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
 {
     return 1024 * 1024 * 1024 * gbs;
 }
+
+
+//! @brief Convert a UTF-16 string to a UTF-8 one
+LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
+
+//! @brief Convert a UTF-8 string to a UTF-16 one
+LIEF_API std::u16string u8tou16(const std::string& string);
+
+LIEF_API std::string hex_str(uint8_t c);
 
 
 }

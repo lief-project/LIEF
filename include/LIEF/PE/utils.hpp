@@ -41,12 +41,6 @@ LIEF_API PE_TYPE get_type(const std::string& file);
 //! @brief Return `PE32` or `PE32+`
 LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
 
-//! @brief Convert a UTF-16 string to a UTF-8 one
-LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
-
-//! @brief Convert a UTF-8 string to a UTF-16 one
-LIEF_API std::u16string u8tou16(const std::string& string);
-
 //! @brief Compute the hash of imported functions
 //!
 //! Properties of the hash generated:

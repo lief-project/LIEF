@@ -61,6 +61,68 @@
   #define LIEF_MACHO_VISITABLE(OBJ)
 #endif
 
+
+// OAT Support
+// ===========
+#if defined(LIEF_OAT_SUPPORT)
+  #define LIEF_OAT_FORWARD(OBJ) \
+    namespace OAT   {           \
+    class OBJ;                 \
+    }
+  #define LIEF_OAT_VISITABLE(OBJ) \
+    virtual void visit(const OAT::OBJ&) {}
+#else
+  #define LIEF_OAT_FORWARD(OBJ)
+  #define LIEF_OAT_VISITABLE(OBJ)
+#endif
+
+
+// DEX Support
+// ===========
+#if defined(LIEF_DEX_SUPPORT)
+  #define LIEF_DEX_FORWARD(OBJ) \
+    namespace DEX   {           \
+    class OBJ;                 \
+    }
+  #define LIEF_DEX_VISITABLE(OBJ) \
+    virtual void visit(const DEX::OBJ&) {}
+#else
+  #define LIEF_DEX_FORWARD(OBJ)
+  #define LIEF_DEX_VISITABLE(OBJ)
+#endif
+
+
+// VDEX Support
+// ===========
+#if defined(LIEF_VDEX_SUPPORT)
+  #define LIEF_VDEX_FORWARD(OBJ) \
+    namespace VDEX   {           \
+    class OBJ;                 \
+    }
+  #define LIEF_VDEX_VISITABLE(OBJ) \
+    virtual void visit(const VDEX::OBJ&) {}
+#else
+  #define LIEF_VDEX_FORWARD(OBJ)
+  #define LIEF_VDEX_VISITABLE(OBJ)
+#endif
+
+
+// ART Support
+// ===========
+#if defined(LIEF_ART_SUPPORT)
+  #define LIEF_ART_FORWARD(OBJ) \
+    namespace ART   {           \
+    class OBJ;                 \
+    }
+  #define LIEF_ART_VISITABLE(OBJ) \
+    virtual void visit(const ART::OBJ&) {}
+#else
+  #define LIEF_ART_FORWARD(OBJ)
+  #define LIEF_ART_VISITABLE(OBJ)
+#endif
+
+// Abstract
+// ========
 #define LIEF_ABSTRACT_FORWARD(OBJ) \
   class OBJ;
 

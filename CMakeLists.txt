@@ -187,6 +187,7 @@ endif()
 if (LIEF_LOGGING)
   add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
   add_definitions(-DVDEBUG=9)
+  add_definitions(-DELPP_FEATURE_CRASH_LOG)
   set(ENABLE_LOGGING_SUPPORT 1)
 else()
   set(ENABLE_LOGGING_SUPPORT 0)
@@ -200,6 +201,48 @@ endif()
 if (LIEF_FROZEN_ENABLED)
   list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${FROZEN_INCLUDE_DIR}")
 endif()
+
+# OAT part
+# ========
+if (LIEF_OAT)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/src/OAT/CMakeLists.txt)
+  set(ENABLE_OAT_SUPPORT 1)
+else()
+  set(ENABLE_OAT_SUPPORT 0)
+endif()
+
+# DEX part
+# ========
+if (LIEF_DEX)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/src/DEX/CMakeLists.txt)
+  set(ENABLE_DEX_SUPPORT 1)
+else()
+  set(ENABLE_DEX_SUPPORT 0)
+endif()
+
+
+# VDEX part
+# =========
+if (LIEF_VDEX)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/src/VDEX/CMakeLists.txt)
+  set(ENABLE_VDEX_SUPPORT 1)
+else()
+  set(ENABLE_VDEX_SUPPORT 0)
+endif()
+
+
+# ART part
+# ========
+if (LIEF_ART)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/src/ART/CMakeLists.txt)
+  set(ENABLE_ART_SUPPORT 1)
+else()
+  set(ENABLE_ART_SUPPORT 0)
+endif()
+
+# Platforms
+# =========
+include(${CMAKE_CURRENT_SOURCE_DIR}/src/platforms/CMakeLists.txt)
 
 # LIEF includes
 # =============

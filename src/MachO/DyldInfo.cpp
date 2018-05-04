@@ -736,15 +736,13 @@ std::string DyldInfo::show_export_trie(void) const {
     LOG(WARNING) << "Can't print bind opcodes";
     return "";
   }
+
   std::ostringstream output;
   const buffer_t& buffer = this->export_trie();
 
-  uint64_t current_offset = 0;
-  uint64_t end_offset     = buffer.size();
-
   VectorStream stream{buffer};
+  this->show_trie(output, "", stream, 0, buffer.size(), "");
 
-  this->show_trie(output, "", stream, 0, end_offset, "");
   return output.str();
 
 

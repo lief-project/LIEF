@@ -19,6 +19,7 @@
 #include <mbedtls/x509_crt.h>
 
 #include "LIEF/utf8.h"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/logging++.hpp"
 

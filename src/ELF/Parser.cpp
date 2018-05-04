@@ -54,21 +54,32 @@ constexpr const char AndroidNote::NAME[];
 Parser::~Parser(void) = default;
 Parser::Parser(void)  = default;
 
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd) :
+Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd, Binary* output) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
   binary_{nullptr},
   type_{ELF_CLASS::ELFCLASSNONE},
   count_mtd_{count_mtd}
 {
+  if (output) {
+    this->binary_ = output;
+  } else {
+    this->binary_ = new Binary{};
+  }
   this->init(name);
 }
 
-Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
+Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd, Binary* output) :
   LIEF::Parser{file},
   binary_{nullptr},
   type_{ELF_CLASS::ELFCLASSNONE},
   count_mtd_{count_mtd}
 {
+  if (output) {
+    this->binary_ = output;
+  } else {
+    this->binary_ = new Binary{};
+  }
+
   this->stream_ = std::unique_ptr<VectorStream>(new VectorStream{file});
   this->init(filesystem::path(file).filename());
 }
@@ -77,7 +88,6 @@ void Parser::init(const std::string& name) {
   VLOG(VDEBUG) << "Parsing binary: " << name << std::endl;
 
   try {
-    this->binary_ = new Binary{};
     this->binary_->original_size_ = this->binary_size_;
     this->binary_->name(name);
     this->binary_->datahandler_ = new DataHandler::Handler{this->stream_->content()};

@@ -24,6 +24,9 @@
 
 
 namespace LIEF {
+LIEF_API size_t hash(const Object& v);
+LIEF_API size_t hash(const std::vector<uint8_t>& raw);
+
 class LIEF_API Hash : public Visitor {
 
   public:
@@ -74,6 +77,13 @@ class LIEF_API Hash : public Visitor {
   template<class T>
   Hash& process(const std::set<T>& set) {
     this->process(std::begin(set), std::end(set));
+    return *this;
+  }
+
+  template<class U, class V>
+  Hash& process(const std::pair<U, V>& p) {
+    this->process(p.first);
+    this->process(p.second);
     return *this;
   }
 

@@ -38,6 +38,8 @@ class BinaryStream {
   std::u16string read_u16string(void) const;
   std::u16string peek_u16string(void) const;
 
+  std::string read_mutf8(size_t maxsize = -1ull) const;
+
   std::u16string read_u16string(size_t length) const;
   std::u16string peek_u16string(size_t length) const;
   std::u16string peek_u16string_at(size_t offset, size_t length) const;

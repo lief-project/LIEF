@@ -258,8 +258,8 @@ TEST_CASE("Test const ref iterators", "[lief][iterators][const_ref]") {
 
     it_const_ref_t bar_operator_equal{bars};
     bar_operator_equal += 2;
-    bar_operator_equal.operator=(bars);
-    REQUIRE(bar_operator_equal == bars);
+    //bar_operator_equal.operator=(bars);
+    //REQUIRE(bar_operator_equal == bars);
 
   }
 }

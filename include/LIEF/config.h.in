@@ -33,6 +33,22 @@
 #define LIEF_MACHO_SUPPORT
 #endif
 
+#if @ENABLE_OAT_SUPPORT@
+#define LIEF_OAT_SUPPORT
+#endif
+
+#if @ENABLE_DEX_SUPPORT@
+#define LIEF_DEX_SUPPORT
+#endif
+
+#if @ENABLE_VDEX_SUPPORT@
+#define LIEF_VDEX_SUPPORT
+#endif
+
+#if @ENABLE_ART_SUPPORT@
+#define LIEF_ART_SUPPORT
+#endif
+
 #if @ENABLE_LOGGING_SUPPORT@
 #define LIEF_LOGGING_SUPPORT
 #endif

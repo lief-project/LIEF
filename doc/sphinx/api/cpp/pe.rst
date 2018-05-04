@@ -410,12 +410,6 @@ Utilities
 .. doxygenfunction:: LIEF::PE::is_pe(const std::vector< uint8_t > &)
   :project: lief
 
-.. doxygenfunction:: LIEF::PE::u16tou8
-  :project: lief
-
-.. doxygenfunction:: LIEF::PE::u8tou16
-  :project: lief
-
 .. doxygenfunction:: LIEF::PE::get_imphash
   :project: lief
 

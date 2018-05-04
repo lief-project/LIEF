@@ -40,10 +40,16 @@
 #include "LIEF/ELF/GnuHash.hpp"
 
 namespace LIEF {
+
+namespace OAT {
+class Parser;
+}
 namespace ELF {
+
 
 //! @brief Class which parse an ELF file and transform into a ELF::Binary
 class LIEF_API Parser : public LIEF::Parser {
+  friend class OAT::Parser;
   public:
 
     static constexpr uint32_t NB_MAX_SYMBOLS         = 1000000;
@@ -84,8 +90,8 @@ class LIEF_API Parser : public LIEF::Parser {
 
   private:
     Parser(void);
-    Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
-    Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+    Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
+    Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
     ~Parser(void);
 
     void init(const std::string& name = "");

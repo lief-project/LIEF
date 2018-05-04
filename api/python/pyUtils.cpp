@@ -16,6 +16,7 @@
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "LIEF/OAT/utils.hpp"
 
 #include "pyLIEF.hpp"
 
@@ -75,5 +76,118 @@ void init_utils_functions(py::module& m) {
         "raw"_a);
 
 #endif
+
+
+#if defined(LIEF_OAT_SUPPORT)
+    m.def("is_oat",
+        static_cast<bool (*)(const std::string&)>(&LIEF::OAT::is_oat),
+        "Check if the given file is an ``OAT`` (from filename)",
+        "filename"_a);
+
+
+    m.def("is_oat",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::OAT::is_oat),
+        "Check if the given raw data is an ``OAT``",
+        "raw"_a);
+
+    m.def("is_oat",
+        static_cast<bool (*)(const LIEF::ELF::Binary&)>(&LIEF::OAT::is_oat),
+        "Check if the given " RST_CLASS_REF(lief.ELF.Binary) " is an ``OAT``",
+        "elf"_a);
+
+
+    m.def("oat_version",
+        static_cast<LIEF::OAT::oat_version_t (*)(const std::string&)>(&LIEF::OAT::version),
+        "Return the OAT version of the given file",
+        "filename"_a);
+
+
+    m.def("oat_version",
+        static_cast<LIEF::OAT::oat_version_t (*)(const std::vector<uint8_t>&)>(&LIEF::OAT::version),
+        "Return the OAT version of the raw data",
+        "raw"_a);
+
+    m.def("oat_version",
+        static_cast<LIEF::OAT::oat_version_t (*)(const LIEF::ELF::Binary&)>(&LIEF::OAT::version),
+        "Return the OAT version of the given " RST_CLASS_REF(lief.ELF.Binary) "",
+        "elf"_a);
+
+#endif
+
+#if defined(LIEF_DEX_SUPPORT)
+    m.def("is_dex",
+        static_cast<bool (*)(const std::string&)>(&LIEF::DEX::is_dex),
+        "Check if the given file is a ``DEX`` (from filename)",
+        "filename"_a);
+
+
+    m.def("is_dex",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::DEX::is_dex),
+        "Check if the given raw data is a ``DEX``",
+        "raw"_a);
+
+    m.def("dex_version",
+        static_cast<LIEF::DEX::dex_version_t (*)(const std::string&)>(&LIEF::DEX::version),
+        "Return the OAT version of the given file",
+        "filename"_a);
+
+
+    m.def("dex_version",
+        static_cast<LIEF::DEX::dex_version_t (*)(const std::vector<uint8_t>&)>(&LIEF::DEX::version),
+        "Return the DEX version of the raw data",
+        "raw"_a);
+
+#endif
+
+
+#if defined(LIEF_VDEX_SUPPORT)
+    m.def("is_vdex",
+        static_cast<bool (*)(const std::string&)>(&LIEF::VDEX::is_vdex),
+        "Check if the given file is a ``VDEX`` (from filename)",
+        "filename"_a);
+
+    m.def("is_vdex",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::VDEX::is_vdex),
+        "Check if the given raw data is a ``VDEX``",
+        "raw"_a);
+
+    m.def("vdex_version",
+        static_cast<LIEF::VDEX::vdex_version_t (*)(const std::string&)>(&LIEF::VDEX::version),
+        "Return the VDEX version of the given file",
+        "filename"_a);
+
+
+    m.def("vdex_version",
+        static_cast<LIEF::VDEX::vdex_version_t (*)(const std::vector<uint8_t>&)>(&LIEF::VDEX::version),
+        "Return the VDEX version of the raw data",
+        "raw"_a);
+
+#endif
+
+
+#if defined(LIEF_ART_SUPPORT)
+    m.def("is_art",
+        static_cast<bool (*)(const std::string&)>(&LIEF::ART::is_art),
+        "Check if the given file is an ``ART`` (from filename)",
+        "filename"_a);
+
+    m.def("is_art",
+        static_cast<bool (*)(const std::vector<uint8_t>&)>(&LIEF::ART::is_art),
+        "Check if the given raw data is an ``ART``",
+        "raw"_a);
+
+    m.def("art_version",
+        static_cast<LIEF::ART::art_version_t (*)(const std::string&)>(&LIEF::ART::version),
+        "Return the ART version of the given file",
+        "filename"_a);
+
+
+    m.def("art_version",
+        static_cast<LIEF::ART::art_version_t (*)(const std::vector<uint8_t>&)>(&LIEF::ART::version),
+        "Return the ART version of the raw data",
+        "raw"_a);
+
+#endif
+
 
 }

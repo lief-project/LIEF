@@ -2016,6 +2016,8 @@ PREDEFINED = "protected=private"      \
              "LIEF_JSON_SUPPORT=1"    \
              "LIEF_PE_SUPPORT=1"      \
              "LIEF_MACHO_SUPPORT=1"   \
+             "LIEF_MACHO_SUPPORT=1"   \
+             "LIEF_OAT_SUPPORT=1"     \
              "LIEF_LOGGING_SUPPORT=1" \
              __cplusplus
 
@@ -2038,6 +2040,14 @@ EXPAND_AS_DEFINED      += LIEF_MACHO_FORWARD
 EXPAND_AS_DEFINED      += LIEF_MACHO_VISITABLE
 EXPAND_AS_DEFINED      += LIEF_ABSTRACT_VISITABLE
 EXPAND_AS_DEFINED      += LIEF_ABSTRACT_FORWARD
+EXPAND_AS_DEFINED      += LIEF_OAT_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_OAT_FORWARD
+EXPAND_AS_DEFINED      += LIEF_DEX_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_DEX_FORWARD
+EXPAND_AS_DEFINED      += LIEF_VDEX_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_VDEX_FORWARD
+EXPAND_AS_DEFINED      += LIEF_ART_VISITABLE
+EXPAND_AS_DEFINED      += LIEF_ART_FORWARD
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES then doxygen's preprocessor will
 # remove all references to function-like macros that are alone on a line, have

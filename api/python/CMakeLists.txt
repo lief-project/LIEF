@@ -46,6 +46,7 @@ set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLogger.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyHash.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyObject.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/encoding.cpp"
 )
@@ -97,6 +98,24 @@ endif()
 if(LIEF_MACHO)
   include("${CMAKE_CURRENT_SOURCE_DIR}/MachO/CMakeLists.txt")
 endif()
+
+if(LIEF_OAT)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/OAT/CMakeLists.txt")
+endif()
+
+if(LIEF_DEX)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/DEX/CMakeLists.txt")
+endif()
+
+if(LIEF_VDEX)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/VDEX/CMakeLists.txt")
+endif()
+
+if(LIEF_ART)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/ART/CMakeLists.txt")
+endif()
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/platforms/CMakeLists.txt")
 
 
 target_compile_features(pyLIEF PRIVATE cxx_attribute_deprecated)

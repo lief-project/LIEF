@@ -7,15 +7,26 @@ from _pylief import *
 __version__ = _pylief.__version__
 
 if @ENABLE_PE_SUPPORT@:
-    sys.modules["lief.PE"]    = _pylief.PE
-
+    sys.modules.setdefault("lief.PE", _pylief.PE)
 
 if @ENABLE_ELF_SUPPORT@:
-    sys.modules["lief.ELF"]   = _pylief.ELF
+    sys.modules.setdefault("lief.ELF", _pylief.ELF)
 
-    sys.modules["lief.ELF.ELF32"]   = _pylief.ELF.ELF32
-    sys.modules["lief.ELF.ELF64"]   = _pylief.ELF.ELF64
+    sys.modules.setdefault("lief.ELF.ELF32", _pylief.ELF.ELF32)
+    sys.modules.setdefault("lief.ELF.ELF64", _pylief.ELF.ELF64)
 
 if @ENABLE_MACHO_SUPPORT@:
-    sys.modules["lief.MachO"] = _pylief.MachO
+    sys.modules.setdefault("lief.MachO", _pylief.MachO)
+
+if @ENABLE_OAT_SUPPORT@:
+    sys.modules.setdefault("lief.OAT",  _pylief.OAT)
+
+if @ENABLE_DEX_SUPPORT@:
+    sys.modules.setdefault("lief.DEX",  _pylief.DEX)
+
+if @ENABLE_VDEX_SUPPORT@:
+    sys.modules.setdefault("lief.VDEX",  _pylief.VDEX)
+
+if @ENABLE_VDEX_SUPPORT@:
+    sys.modules.setdefault("lief.ART",  _pylief.ART)
 

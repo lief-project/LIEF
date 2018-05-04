@@ -143,6 +143,36 @@ LIEF_MACHO_FORWARD(CodeSignature)
 LIEF_MACHO_FORWARD(DataInCode)
 LIEF_MACHO_FORWARD(DataCodeEntry)
 
+// OAT
+// ===============================
+LIEF_OAT_FORWARD(Binary)
+LIEF_OAT_FORWARD(Header)
+LIEF_OAT_FORWARD(DexFile)
+LIEF_OAT_FORWARD(Method)
+LIEF_OAT_FORWARD(Class)
+
+// DEX
+// ===============================
+LIEF_DEX_FORWARD(File)
+LIEF_DEX_FORWARD(Method)
+LIEF_DEX_FORWARD(Header)
+LIEF_DEX_FORWARD(Class)
+LIEF_DEX_FORWARD(CodeInfo)
+LIEF_DEX_FORWARD(Type)
+LIEF_DEX_FORWARD(Prototype)
+LIEF_DEX_FORWARD(MapItem)
+LIEF_DEX_FORWARD(MapList)
+
+// VDEX
+// ===============================
+LIEF_VDEX_FORWARD(File)
+LIEF_VDEX_FORWARD(Header)
+
+// ART
+// ===============================
+LIEF_ART_FORWARD(File)
+LIEF_ART_FORWARD(Header)
+
 
 class LIEF_API Visitor {
   public:
@@ -159,19 +189,19 @@ class LIEF_API Visitor {
   // Abstract Part
   // =============
 
-  //! @brief Method to visit a LIEF::Binary
+  //! Method to visit a LIEF::Binary
   LIEF_ABSTRACT_VISITABLE(Binary)
 
-  //! @brief Method to visit a LIEF::Header
+  //! Method to visit a LIEF::Header
   LIEF_ABSTRACT_VISITABLE(Header)
 
-  //! @brief Method to visit a LIEF::Section
+  //! Method to visit a LIEF::Section
   LIEF_ABSTRACT_VISITABLE(Section)
 
-  //! @brief Method to visit a LIEF::Symbol
+  //! Method to visit a LIEF::Symbol
   LIEF_ABSTRACT_VISITABLE(Symbol)
 
-  //! @brief Method to visit a LIEF::Relocation
+  //! Method to visit a LIEF::Relocation
   LIEF_ABSTRACT_VISITABLE(Relocation)
 
   LIEF_ELF_VISITABLE(Binary)
@@ -199,204 +229,204 @@ class LIEF_API Visitor {
 
   // PE Part
   // =======
-  //! @brief Method to visit a LIEF::PE::Binary
+  //! Method to visit a LIEF::PE::Binary
   LIEF_PE_VISITABLE(Binary)
 
-  //! @brief Method to visit a LIEF::PE::DosHeader
+  //! Method to visit a LIEF::PE::DosHeader
   LIEF_PE_VISITABLE(DosHeader)
 
-  //! @brief Method to visit a LIEF::PE:RichHeader
+  //! Method to visit a LIEF::PE:RichHeader
   LIEF_PE_VISITABLE(RichHeader)
 
-  //! @brief Method to visit a LIEF::PE:RichEntry
+  //! Method to visit a LIEF::PE:RichEntry
   LIEF_PE_VISITABLE(RichEntry)
 
-  //! @brief Method to visit a LIEF::PE::Header
+  //! Method to visit a LIEF::PE::Header
   LIEF_PE_VISITABLE(Header)
 
-  //! @brief Method to visit a LIEF::PE::OptionalHeader
+  //! Method to visit a LIEF::PE::OptionalHeader
   LIEF_PE_VISITABLE(OptionalHeader)
 
-  //! @brief Method to visit a LIEF::PE::DataDirectory
+  //! Method to visit a LIEF::PE::DataDirectory
   LIEF_PE_VISITABLE(DataDirectory)
 
-  //! @brief Method to visit a LIEF::PE::TLS
+  //! Method to visit a LIEF::PE::TLS
   LIEF_PE_VISITABLE(TLS)
 
-  //! @brief Method to visit a LIEF::PE::Symbol
+  //! Method to visit a LIEF::PE::Symbol
   LIEF_PE_VISITABLE(Symbol)
 
-  //! @brief Method to visit a LIEF::PE::Section
+  //! Method to visit a LIEF::PE::Section
   LIEF_PE_VISITABLE(Section)
 
-  //! @brief Method to visit a LIEF::PE::Relocation
+  //! Method to visit a LIEF::PE::Relocation
   LIEF_PE_VISITABLE(Relocation)
 
-  //! @brief Method to visit a LIEF::PE::RelocationEntry
+  //! Method to visit a LIEF::PE::RelocationEntry
   LIEF_PE_VISITABLE(RelocationEntry)
 
-  //! @brief Method to visit a LIEF::PE::Export
+  //! Method to visit a LIEF::PE::Export
   LIEF_PE_VISITABLE(Export)
 
-  //! @brief Method to visit a LIEF::PE::ExportEntry
+  //! Method to visit a LIEF::PE::ExportEntry
   LIEF_PE_VISITABLE(ExportEntry)
 
-  //! @brief Method to visit a LIEF::PE::Debug
+  //! Method to visit a LIEF::PE::Debug
   LIEF_PE_VISITABLE(Debug)
 
-  //! @brief Method to visit a LIEF::PE::CodeView
+  //! Method to visit a LIEF::PE::CodeView
   LIEF_PE_VISITABLE(CodeView)
 
-  //! @brief Method to visit a LIEF::PE::CodeViewPDB
+  //! Method to visit a LIEF::PE::CodeViewPDB
   LIEF_PE_VISITABLE(CodeViewPDB)
 
-  //! @brief Method to visit a LIEF::PE::Import
+  //! Method to visit a LIEF::PE::Import
   LIEF_PE_VISITABLE(Import)
 
-  //! @brief Method to visit a LIEF::PE::ImportEntry
+  //! Method to visit a LIEF::PE::ImportEntry
   LIEF_PE_VISITABLE(ImportEntry)
 
-  //! @brief Method to visit a LIEF::PE::ResourceNode
+  //! Method to visit a LIEF::PE::ResourceNode
   LIEF_PE_VISITABLE(ResourceNode)
 
-  //! @brief Method to visit a LIEF::PE::ResourceData
+  //! Method to visit a LIEF::PE::ResourceData
   LIEF_PE_VISITABLE(ResourceData)
 
-  //! @brief Method to visit a LIEF::PE::ResourceDirectory
+  //! Method to visit a LIEF::PE::ResourceDirectory
   LIEF_PE_VISITABLE(ResourceDirectory)
 
-  //! @brief Method to visit a LIEF::PE::ResourceVersion
+  //! Method to visit a LIEF::PE::ResourceVersion
   LIEF_PE_VISITABLE(ResourcesManager)
 
-  //! @brief Method to visit a LIEF::PE::ResourceVersion
+  //! Method to visit a LIEF::PE::ResourceVersion
   LIEF_PE_VISITABLE(ResourceVersion)
 
-  //! @brief Method to visit a LIEF::PE::ResourceStringFileInfo
+  //! Method to visit a LIEF::PE::ResourceStringFileInfo
   LIEF_PE_VISITABLE(ResourceStringFileInfo)
 
-  //! @brief Method to visit a LIEF::PE::ResourceFixedFileInfo
+  //! Method to visit a LIEF::PE::ResourceFixedFileInfo
   LIEF_PE_VISITABLE(ResourceFixedFileInfo)
 
-  //! @brief Method to visit a LIEF::PE::ResourceVarFileInfo
+  //! Method to visit a LIEF::PE::ResourceVarFileInfo
   LIEF_PE_VISITABLE(ResourceVarFileInfo)
 
-  //! @brief Method to visit a LIEF::PE::LangCodeItem
+  //! Method to visit a LIEF::PE::LangCodeItem
   LIEF_PE_VISITABLE(LangCodeItem)
 
-  //! @brief Method to visit a LIEF::PE::ResourceIcon
+  //! Method to visit a LIEF::PE::ResourceIcon
   LIEF_PE_VISITABLE(ResourceIcon)
 
-  //! @brief Method to visit a LIEF::PE::ResourceDialog
+  //! Method to visit a LIEF::PE::ResourceDialog
   LIEF_PE_VISITABLE(ResourceDialog)
 
-  //! @brief Method to visit a LIEF::PE::ResourceDialogItem
+  //! Method to visit a LIEF::PE::ResourceDialogItem
   LIEF_PE_VISITABLE(ResourceDialogItem)
 
-  //! @brief Method to visit a LIEF::PE::Signature
+  //! Method to visit a LIEF::PE::Signature
   LIEF_PE_VISITABLE(Signature)
 
-  //! @brief Method to visit a LIEF::PE::x509
+  //! Method to visit a LIEF::PE::x509
   LIEF_PE_VISITABLE(x509)
 
-  //! @brief Method to visit a LIEF::PE::SignerInfo
+  //! Method to visit a LIEF::PE::SignerInfo
   LIEF_PE_VISITABLE(SignerInfo)
 
-  //! @brief Method to visit a LIEF::PE::ContentInfo
+  //! Method to visit a LIEF::PE::ContentInfo
   LIEF_PE_VISITABLE(ContentInfo)
 
-  //! @brief Method to visit a LIEF::PE::AuthenticatedAttributes
+  //! Method to visit a LIEF::PE::AuthenticatedAttributes
   LIEF_PE_VISITABLE(AuthenticatedAttributes)
 
-  //! @brief Method to visit a LIEF::PE::issuer_t
+  //! Method to visit a LIEF::PE::issuer_t
   LIEF_PE_VISITABLE(issuer_t)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfiguration
+  //! Method to visit a LIEF::PE::LoadConfiguration
   LIEF_PE_VISITABLE(LoadConfiguration)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV0
+  //! Method to visit a LIEF::PE::LoadConfigurationV0
   LIEF_PE_VISITABLE(LoadConfigurationV0)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV1
+  //! Method to visit a LIEF::PE::LoadConfigurationV1
   LIEF_PE_VISITABLE(LoadConfigurationV1)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV2
+  //! Method to visit a LIEF::PE::LoadConfigurationV2
   LIEF_PE_VISITABLE(LoadConfigurationV2)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV3
+  //! Method to visit a LIEF::PE::LoadConfigurationV3
   LIEF_PE_VISITABLE(LoadConfigurationV3)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV4
+  //! Method to visit a LIEF::PE::LoadConfigurationV4
   LIEF_PE_VISITABLE(LoadConfigurationV4)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV5
+  //! Method to visit a LIEF::PE::LoadConfigurationV5
   LIEF_PE_VISITABLE(LoadConfigurationV5)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV6
+  //! Method to visit a LIEF::PE::LoadConfigurationV6
   LIEF_PE_VISITABLE(LoadConfigurationV6)
 
-  //! @brief Method to visit a LIEF::PE::LoadConfigurationV7
+  //! Method to visit a LIEF::PE::LoadConfigurationV7
   LIEF_PE_VISITABLE(LoadConfigurationV7)
 
-  //! @brief Method to visit a LIEF::PE::CodeIntegrity
+  //! Method to visit a LIEF::PE::CodeIntegrity
   LIEF_PE_VISITABLE(CodeIntegrity)
 
   // MachO part
   // ==========
-  //! @brief Method to visit a LIEF::MachO::Binary
+  //! Method to visit a LIEF::MachO::Binary
   LIEF_MACHO_VISITABLE(Binary)
 
-  //! @brief Method to visit a LIEF::MachO::Header
+  //! Method to visit a LIEF::MachO::Header
   LIEF_MACHO_VISITABLE(Header)
 
-  //! @brief Method to visit a LIEF::MachO::LoadCommand
+  //! Method to visit a LIEF::MachO::LoadCommand
   LIEF_MACHO_VISITABLE(LoadCommand)
 
-  //! @brief Method to visit a LIEF::MachO::UUIDCommand
+  //! Method to visit a LIEF::MachO::UUIDCommand
   LIEF_MACHO_VISITABLE(UUIDCommand)
 
-  //! @brief Method to visit a LIEF::MachO::SymbolCommand
+  //! Method to visit a LIEF::MachO::SymbolCommand
   LIEF_MACHO_VISITABLE(SymbolCommand)
 
-  //! @brief Method to visit a LIEF::MachO::SegmentCommand
+  //! Method to visit a LIEF::MachO::SegmentCommand
   LIEF_MACHO_VISITABLE(SegmentCommand)
 
-  //! @brief Method to visit a LIEF::MachO::Section
+  //! Method to visit a LIEF::MachO::Section
   LIEF_MACHO_VISITABLE(Section)
 
-  //! @brief Method to visit a LIEF::MachO::MainCommand
+  //! Method to visit a LIEF::MachO::MainCommand
   LIEF_MACHO_VISITABLE(MainCommand)
 
-  //! @brief Method to visit a LIEF::MachO::DynamicSymbolCommand
+  //! Method to visit a LIEF::MachO::DynamicSymbolCommand
   LIEF_MACHO_VISITABLE(DynamicSymbolCommand)
 
-  //! @brief Method to visit a LIEF::MachO::DylinkerCommand
+  //! Method to visit a LIEF::MachO::DylinkerCommand
   LIEF_MACHO_VISITABLE(DylinkerCommand)
 
-  //! @brief Method to visit a LIEF::MachO::DylibCommand
+  //! Method to visit a LIEF::MachO::DylibCommand
   LIEF_MACHO_VISITABLE(DylibCommand)
 
-  //! @brief Method to visit a LIEF::MachO::ThreadCommand
+  //! Method to visit a LIEF::MachO::ThreadCommand
   LIEF_MACHO_VISITABLE(ThreadCommand)
 
-  //! @brief Method to visit a LIEF::MachO::RPathCommand
+  //! Method to visit a LIEF::MachO::RPathCommand
   LIEF_MACHO_VISITABLE(RPathCommand)
 
-  //! @brief Method to visit a LIEF::MachO::Symbol
+  //! Method to visit a LIEF::MachO::Symbol
   LIEF_MACHO_VISITABLE(Symbol)
 
-  //! @brief Method to visit a LIEF::MachO::Relocation
+  //! Method to visit a LIEF::MachO::Relocation
   LIEF_MACHO_VISITABLE(Relocation)
 
-  //! @brief Method to visit a LIEF::MachO::RelocationObject
+  //! Method to visit a LIEF::MachO::RelocationObject
   LIEF_MACHO_VISITABLE(RelocationObject)
 
-  //! @brief Method to visit a LIEF::MachO::RelocationDyld
+  //! Method to visit a LIEF::MachO::RelocationDyld
   LIEF_MACHO_VISITABLE(RelocationDyld)
 
-  //! @brief Method to visit a LIEF::MachO::BindingInfo
+  //! Method to visit a LIEF::MachO::BindingInfo
   LIEF_MACHO_VISITABLE(BindingInfo)
 
-  //! @brief Method to visit a LIEF::MachO::ExportInfo
+  //! Method to visit a LIEF::MachO::ExportInfo
   LIEF_MACHO_VISITABLE(ExportInfo)
 
   //! @brief Method to visit a LIEF::MachO::FunctionStarts
@@ -410,6 +440,73 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO::DataCodeEntry
   LIEF_MACHO_VISITABLE(DataCodeEntry)
+
+  // OAT part
+  // ========
+
+  //! Method to visit a LIEF::OAT::Binary
+  LIEF_OAT_VISITABLE(Binary);
+
+  //! Method to visit a LIEF::OAT::Header
+  LIEF_OAT_VISITABLE(Header);
+
+  //! Method to visit a LIEF::OAT::DexFile
+  LIEF_OAT_VISITABLE(DexFile);
+
+  //! Method to visit a LIEF::OAT::Class
+  LIEF_OAT_VISITABLE(Class);
+
+  //! Method to visit a LIEF::OAT::Method
+  LIEF_OAT_VISITABLE(Method);
+
+
+  // DEX part
+  // ========
+
+  //! Method to visit a LIEF::DEX::File
+  LIEF_DEX_VISITABLE(File);
+
+  //! Method to visit a LIEF::DEX::Method
+  LIEF_DEX_VISITABLE(Method);
+
+  //! Method to visit a LIEF::DEX::Header
+  LIEF_DEX_VISITABLE(Header);
+
+  //! Method to visit a LIEF::DEX::Class
+  LIEF_DEX_VISITABLE(Class);
+
+  //! Method to visit a LIEF::DEX::CodeInfo
+  LIEF_DEX_VISITABLE(CodeInfo);
+
+  //! Method to visit a LIEF::DEX::Type
+  LIEF_DEX_VISITABLE(Type);
+
+  //! Method to visit a LIEF::DEX:Prototype:
+  LIEF_DEX_VISITABLE(Prototype);
+
+  //! Method to visit a LIEF::DEX:MapList:
+  LIEF_DEX_VISITABLE(MapList);
+
+  //! Method to visit a LIEF::DEX:MapItem:
+  LIEF_DEX_VISITABLE(MapItem);
+
+  // VDEX part
+  // =========
+
+  //! Method to visit a LIEF::VDEX::File
+  LIEF_VDEX_VISITABLE(File);
+
+  //! Method to visit a LIEF::VDEX::Header
+  LIEF_VDEX_VISITABLE(Header);
+
+  // ART part
+  // =========
+
+  //! Method to visit a LIEF::ART::File
+  LIEF_ART_VISITABLE(File);
+
+  //! Method to visit a LIEF::ART::Header
+  LIEF_ART_VISITABLE(Header);
 
   template<class T>
   void dispatch(const T& obj);
