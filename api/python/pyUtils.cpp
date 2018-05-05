@@ -16,7 +16,11 @@
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/ELF/utils.hpp"
-#include "LIEF/OAT/utils.hpp"
+
+#include "LIEF/OAT.hpp"
+#include "LIEF/DEX.hpp"
+#include "LIEF/VDEX.hpp"
+#include "LIEF/ART.hpp"
 
 #include "pyLIEF.hpp"
 

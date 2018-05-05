@@ -16,6 +16,9 @@
 #ifndef LIEF_OAT_H_
 #define LIEF_OAT_H_
 
+#include "LIEF/config.h"
+
+#if defined(LIEF_OAT_SUPPORT)
 #include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/utils.hpp"
 #include "LIEF/OAT/Binary.hpp"
@@ -23,5 +26,6 @@
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
+#endif
 
 #endif

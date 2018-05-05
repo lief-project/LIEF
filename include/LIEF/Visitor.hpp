@@ -445,68 +445,68 @@ class LIEF_API Visitor {
   // ========
 
   //! Method to visit a LIEF::OAT::Binary
-  LIEF_OAT_VISITABLE(Binary);
+  LIEF_OAT_VISITABLE(Binary)
 
   //! Method to visit a LIEF::OAT::Header
-  LIEF_OAT_VISITABLE(Header);
+  LIEF_OAT_VISITABLE(Header)
 
   //! Method to visit a LIEF::OAT::DexFile
-  LIEF_OAT_VISITABLE(DexFile);
+  LIEF_OAT_VISITABLE(DexFile)
 
   //! Method to visit a LIEF::OAT::Class
-  LIEF_OAT_VISITABLE(Class);
+  LIEF_OAT_VISITABLE(Class)
 
   //! Method to visit a LIEF::OAT::Method
-  LIEF_OAT_VISITABLE(Method);
+  LIEF_OAT_VISITABLE(Method)
 
 
   // DEX part
   // ========
 
   //! Method to visit a LIEF::DEX::File
-  LIEF_DEX_VISITABLE(File);
+  LIEF_DEX_VISITABLE(File)
 
   //! Method to visit a LIEF::DEX::Method
-  LIEF_DEX_VISITABLE(Method);
+  LIEF_DEX_VISITABLE(Method)
 
   //! Method to visit a LIEF::DEX::Header
-  LIEF_DEX_VISITABLE(Header);
+  LIEF_DEX_VISITABLE(Header)
 
   //! Method to visit a LIEF::DEX::Class
-  LIEF_DEX_VISITABLE(Class);
+  LIEF_DEX_VISITABLE(Class)
 
   //! Method to visit a LIEF::DEX::CodeInfo
-  LIEF_DEX_VISITABLE(CodeInfo);
+  LIEF_DEX_VISITABLE(CodeInfo)
 
   //! Method to visit a LIEF::DEX::Type
-  LIEF_DEX_VISITABLE(Type);
+  LIEF_DEX_VISITABLE(Type)
 
   //! Method to visit a LIEF::DEX:Prototype:
-  LIEF_DEX_VISITABLE(Prototype);
+  LIEF_DEX_VISITABLE(Prototype)
 
   //! Method to visit a LIEF::DEX:MapList:
-  LIEF_DEX_VISITABLE(MapList);
+  LIEF_DEX_VISITABLE(MapList)
 
   //! Method to visit a LIEF::DEX:MapItem:
-  LIEF_DEX_VISITABLE(MapItem);
+  LIEF_DEX_VISITABLE(MapItem)
 
   // VDEX part
   // =========
 
   //! Method to visit a LIEF::VDEX::File
-  LIEF_VDEX_VISITABLE(File);
+  LIEF_VDEX_VISITABLE(File)
 
   //! Method to visit a LIEF::VDEX::Header
-  LIEF_VDEX_VISITABLE(Header);
+  LIEF_VDEX_VISITABLE(Header)
 
   // ART part
   // =========
 
   //! Method to visit a LIEF::ART::File
-  LIEF_ART_VISITABLE(File);
+  LIEF_ART_VISITABLE(File)
 
   //! Method to visit a LIEF::ART::Header
-  LIEF_ART_VISITABLE(Header);
+  LIEF_ART_VISITABLE(Header)
 
   template<class T>
   void dispatch(const T& obj);

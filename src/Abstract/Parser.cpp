@@ -15,8 +15,7 @@
  */
 #include "LIEF/Abstract/Parser.hpp"
 
-#include "LIEF/OAT/utils.hpp"
-#include "LIEF/OAT/Parser.hpp"
+#include "LIEF/OAT.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"

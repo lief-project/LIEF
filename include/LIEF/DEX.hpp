@@ -15,7 +15,9 @@
  */
 #ifndef LIEF_DEX_H_
 #define LIEF_DEX_H_
+#include "LIEF/config.h"
 
+#if defined(LIEF_DEX_SUPPORT)
 #include "LIEF/DEX/Parser.hpp"
 #include "LIEF/DEX/utils.hpp"
 #include "LIEF/DEX/File.hpp"
@@ -23,5 +25,6 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/Method.hpp"
+#endif
 
 #endif

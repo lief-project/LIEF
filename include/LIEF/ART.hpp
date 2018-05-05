@@ -16,8 +16,12 @@
 #ifndef LIEF_ART_H_
 #define LIEF_ART_H_
 
+#include "LIEF/config.h"
+
+#if defined(LIEF_ART_SUPPORT)
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
 #include "LIEF/ART/File.hpp"
+#endif
 
 #endif

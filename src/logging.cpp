@@ -113,6 +113,7 @@ void Logger::enable(void) {
 void Logger::set_verbose_level(uint32_t level) {
 
 #if defined(LIEF_LOGGING_SUPPORT)
+  this->enable();
   el::Loggers::setVerboseLevel(level);
 #endif
 }
@@ -121,6 +122,7 @@ void Logger::set_verbose_level(uint32_t level) {
 void Logger::set_level(LOGGING_LEVEL level) {
 
 #if defined(LIEF_LOGGING_SUPPORT)
+  this->enable();
   el::Loggers::setLoggingLevel(static_cast<el::Level>(level));
 
   if (level == LOGGING_LEVEL::LOG_DEBUG) {

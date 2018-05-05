@@ -16,8 +16,12 @@
 #ifndef LIEF_VDEX_H_
 #define LIEF_VDEX_H_
 
+#include "LIEF/config.h"
+
+#if defined(LIEF_VDEX_SUPPORT)
 #include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
 #include "LIEF/VDEX/File.hpp"
+#endif
 
 #endif
