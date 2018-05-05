@@ -4,6 +4,7 @@ References
 Blog posts related to LIEF
 --------------------------
 
+  * 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
   * 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
   * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
   * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
