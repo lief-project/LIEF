@@ -38,3 +38,36 @@ Header
   :inherited-members:
   :undoc-members:
 
+
+----------
+
+DexFile
+*******
+
+.. autoclass:: lief.OAT.DexFile
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+Class
+*****
+
+.. autoclass:: lief.OAT.Class
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+Method
+******
+
+.. autoclass:: lief.OAT.Method
+  :members:
+  :inherited-members:
+  :undoc-members:
+

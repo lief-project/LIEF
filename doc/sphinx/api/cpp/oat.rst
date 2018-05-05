@@ -36,4 +36,31 @@ Header
    :project: lief
 
 
+----------
+
+DexFile
+*******
+
+.. doxygenclass:: LIEF::OAT::DexFile
+   :project: lief
+
+
+----------
+
+Class
+*****
+
+.. doxygenclass:: LIEF::OAT::Class
+   :project: lief
+
+
+----------
+
+Method
+******
+
+.. doxygenclass:: LIEF::OAT::Method
+   :project: lief
+
+
 
