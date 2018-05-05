@@ -56,7 +56,7 @@ void init_utils(py::module& m) {
 
   m.def("android_version",
       &android_version,
-      "Return a " );
+      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given OAT version");
 }
 
 }

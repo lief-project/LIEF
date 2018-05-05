@@ -63,4 +63,43 @@ Method
    :project: lief
 
 
+----------
+
+Enums
+*****
+
+
+OAT Class types
+~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::OAT_CLASS_TYPES
+   :project: lief
+
+----------
+
+
+OAT Class Status
+~~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::OAT_CLASS_STATUS
+   :project: lief
+
+----------
+
+
+Header Keys
+~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::HEADER_KEYS
+   :project: lief
+
+----------
+
+
+Instruction sets
+~~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::INSTRUCTION_SETS
+   :project: lief
+
 

@@ -40,7 +40,7 @@ void init_versions(py::module& m) {
 
   m.def("version_string",
       &version_string,
-      "Return the Android version as a string.\n"
+      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " as a string.\n"
 
       "For example: ``7.0.1``",
       "version"_a);

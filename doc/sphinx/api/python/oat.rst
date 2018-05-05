@@ -71,3 +71,50 @@ Method
   :inherited-members:
   :undoc-members:
 
+----------
+
+Enums
+*****
+
+OAT Class types
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.OAT.OAT_CLASS_TYPES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+
+OAT Class Status
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.OAT.OAT_CLASS_STATUS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+Header Keys
+~~~~~~~~~~~
+
+.. autoclass:: lief.OAT.HEADER_KEYS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+Instruction sets
+~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.OAT.INSTRUCTION_SETS
+  :members:
+  :inherited-members:
+  :undoc-members:
+

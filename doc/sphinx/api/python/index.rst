@@ -22,6 +22,12 @@ Python
   vdex.rst
   art.rst
 
+.. toctree::
+  :caption: Platforms
+  :maxdepth: 2
+
+  platforms/android.rst
+
 
 Exceptions
 ----------
