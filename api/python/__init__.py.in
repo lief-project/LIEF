@@ -30,3 +30,5 @@ if @ENABLE_VDEX_SUPPORT@:
 if @ENABLE_VDEX_SUPPORT@:
     sys.modules.setdefault("lief.ART",  _pylief.ART)
 
+sys.modules.setdefault("lief.Android",  _pylief.Android)
+

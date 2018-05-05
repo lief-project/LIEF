@@ -5,10 +5,13 @@ Utilities
 *********
 
 .. doxygenfunction:: lief::OAT::is_oat
+   :project: lief
 
 .. doxygenfunction:: lief::OAT::version
+   :project: lief
 
 .. doxygenfunction:: lief::OAT::android_version
+   :project: lief
 
 ----------
 
