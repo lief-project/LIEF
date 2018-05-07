@@ -38,15 +38,15 @@ void create<Class>(py::module& m) {
 
     .def_property_readonly("fullname",
         &Class::fullname,
-        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``")
+        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;`)`")
 
     .def_property_readonly("pretty_name",
         &Class::pretty_name,
-        "Demangled class name (e.g. ``com.example.android.MyActivity``")
+        "Demangled class name (e.g. ``com.example.android.MyActivity``)")
 
     .def_property_readonly("name",
         &Class::name,
-        "Class name (e.g. ``MyActivity``")
+        "Class name (e.g. ``MyActivity``)")
 
     .def_property_readonly("source_filename",
         &Class::source_filename,
@@ -54,7 +54,7 @@ void create<Class>(py::module& m) {
 
     .def_property_readonly("package_name",
         &Class::package_name,
-        "Package Name (e.g. ``com.example.android``")
+        "Package Name (e.g. ``com.example.android``)")
 
     .def_property_readonly("has_parent",
         &Class::has_parent,
