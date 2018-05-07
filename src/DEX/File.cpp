@@ -534,10 +534,11 @@ bool File::operator!=(const File& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const File& file) {
-  os << "DEX File " << file.name() << " " << std::dec << file.version();
+  os << "DEX File " << file.name() << " Version: " << std::dec << file.version();
   if (not file.location().empty()) {
     os << " - " << file.location();
   }
+  os << std::endl;
 
   os << "Header" << std::endl;
   os << "======" << std::endl;
