@@ -1,7 +1,7 @@
 <p align="center" >
 <img width="90%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/architecture.png"/><br />
 </p>
-<hr>
+
 <p align="center">
   <a href="https://gitter.im/lief-project">
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg">
@@ -24,6 +24,8 @@
   </a>
 </p>
 
+# About 
+
 The purpose of this project is to provide a cross platform library which can parse, modify and abstract ELF, PE and MachO formats.
 
 Main features:
@@ -33,6 +35,25 @@ Main features:
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
   * **API**: LIEF can be used in C, C++ and Python
 
+# Content
+- [About](#about)
+- [Download / Install](#downloads--install)
+- [Getting started](#getting-started)
+- [Documentation](#documentation)
+  - [Sphinx](https://lief.quarkslab.com/doc/stable/index.html)
+  - [Doxygen](https://lief.quarkslab.com/doc/latest/doxygen/index.html)
+  - Tutorials:
+    - [Parse and manipulate formats](https://lief.quarkslab.com/doc/latest/tutorials/01_play_with_formats.html)
+    - [Create a PE from scratch](https://lief.quarkslab.com/doc/latest/tutorials/02_pe_from_scratch.html)
+    - [Play with ELF symbols](https://lief.quarkslab.com/doc/latest/tutorials/03_elf_change_symbols.html)
+    - [ELF Hooking](https://lief.quarkslab.com/doc/latest/tutorials/04_elf_hooking.html)
+    - [Infecting the plt/got](https://lief.quarkslab.com/doc/latest/tutorials/05_elf_infect_plt_got.html)
+    - [PE Hooking](https://lief.quarkslab.com/doc/latest/tutorials/06_pe_hooking.html)
+    - [PE Resources](https://lief.quarkslab.com/doc/latest/tutorials/07_pe_resource.html)
+    - [Transforming an ELF executable into a library](https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html)
+    - [How to use frida on a non-rooted device](https://lief.quarkslab.com/doc/latest/tutorials/09_frida_lief.html)
+- [Contact](#contact)
+- [Authors](#authors)
 
 ## Downloads / Install
 
