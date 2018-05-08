@@ -41,7 +41,8 @@ namespace PE {
 bool is_pe(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
   if (not binary) {
-    throw LIEF::bad_file("Unable to open the file");
+    LOG(ERROR) << "Unable to open the file!";
+    return false;
   }
 
   uint64_t file_size;
@@ -49,6 +50,12 @@ bool is_pe(const std::string& file) {
   binary.seekg(0, std::ios::end);
   file_size = binary.tellg();
   binary.seekg(0, std::ios::beg);
+
+
+  if (file_size < sizeof(pe_dos_header)) {
+    LOG(ERROR) << "File too small";
+    return false;
+  }
 
   char magic[2];
   pe_dos_header dos_header;

@@ -62,6 +62,11 @@ void Parser::parse_dex_files(void) {
 
     const DEX::header& dex_hdr = this->stream_->peek<DEX::header>(current_offset);
     const uint8_t* data = this->stream_->peek_array<uint8_t>(current_offset, dex_hdr.file_size);
+    if (data == nullptr) {
+      LOG(WARNING) << "File #" << std::dec << i << " is corrupted!";
+      continue;
+    }
+
     std::vector<uint8_t> data_v = {data, data + dex_hdr.file_size};
 
     if (DEX::is_dex(data_v)) {

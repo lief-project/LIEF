@@ -80,7 +80,7 @@ class BinaryStream {
   size_t align(size_t align_on) const;
 
   protected:
-  virtual const void* read_at(uint64_t offset, uint64_t size) const = 0;
+  virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const = 0;
   mutable size_t pos_{0};
 };
 
@@ -114,7 +114,7 @@ const T& BinaryStream::read(void) const {
 
 template<class T>
 const T& BinaryStream::peek(void) const {
-  const void* raw = this->read_at(this->pos(), sizeof(T));
+  const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
   return *reinterpret_cast<const T*>(raw);
 }
 
@@ -131,7 +131,7 @@ const T& BinaryStream::peek(size_t offset) const {
 
 template<class T>
 const T* BinaryStream::peek_array(size_t size) const {
-  const void* raw = this->read_at(this->pos(), sizeof(T) * size);
+  const void* raw = this->read_at(this->pos(), sizeof(T) * size, /* throw error*/ false);
   return reinterpret_cast<const T*>(raw);
 }
 
@@ -147,14 +147,14 @@ const T* BinaryStream::peek_array(size_t offset, size_t size) const {
 
 template<typename T>
 bool BinaryStream::can_read(void) const {
-  const void* raw = this->read_at(this->pos_, sizeof(T));
+  const void* raw = this->read_at(this->pos_, sizeof(T), /* throw error*/ false);
   return raw != nullptr;
 }
 
 
 template<typename T>
 bool BinaryStream::can_read(size_t offset) const {
-  const void* raw = this->read_at(offset, sizeof(T));
+  const void* raw = this->read_at(offset, sizeof(T), /* throw error*/ false);
   return raw != nullptr;
 }
 

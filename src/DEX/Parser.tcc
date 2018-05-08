@@ -443,9 +443,10 @@ void Parser::parse_code_info(uint32_t offset, Method* method) {
   method->code_info_ = &codeitem;
 
   const uint8_t* bytecode = this->stream_->peek_array<uint8_t>(offset + sizeof(code_item), codeitem.insns_size * sizeof(uint16_t));
-
   method->code_offset_ = offset + sizeof(code_item);
-  method->bytecode_ = {bytecode, bytecode + codeitem.insns_size * sizeof(uint16_t)};
+  if (bytecode != nullptr) {
+    method->bytecode_ = {bytecode, bytecode + codeitem.insns_size * sizeof(uint16_t)};
+  }
 }
 
 

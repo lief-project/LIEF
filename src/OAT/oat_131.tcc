@@ -50,7 +50,12 @@ void Parser::parse_dex_files<OAT131_t>(void) {
     uint32_t location_size = this->stream_->read<uint32_t>();
 
     const char* loc_cstr = this->stream_->read_array<char>(location_size);
-    std::string location{loc_cstr, location_size};
+    std::string location;
+
+    if (loc_cstr != nullptr) {
+      location = {loc_cstr, location_size};
+    }
+
     dex_file->location(location);
 
     uint32_t checksum = this->stream_->read<uint32_t>();

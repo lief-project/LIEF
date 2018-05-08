@@ -61,7 +61,7 @@ uint64_t VectorStream::size(void) const {
 }
 
 
-const void* VectorStream::read_at(uint64_t offset, uint64_t size) const {
+const void* VectorStream::read_at(uint64_t offset, uint64_t size, bool throw_error) const {
 
   if (offset > this->size() or (offset + size) > this->size()) {
     size_t out_size = (offset + size) - this->size();
@@ -69,7 +69,9 @@ const void* VectorStream::read_at(uint64_t offset, uint64_t size) const {
                << std::dec << size << " bytes at "
                << std::hex << std::showbase << offset
                << " (" << std::hex << (out_size) << " bytes out of bound)";
-    //throw LIEF::read_out_of_bound(offset, size);
+    if (throw_error) {
+      throw LIEF::read_out_of_bound(offset, size);
+    }
     return nullptr;
   }
   return this->binary_.data() + offset;

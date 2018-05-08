@@ -109,6 +109,11 @@ void Parser::build_fat(void) {
 
     const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size);
 
+    if (raw == nullptr) {
+      LOG(ERROR) << "MachO #" << std::dec << i << " corrupted!";
+      continue;
+    }
+
     std::vector<uint8_t> data = {raw, raw + size};
 
     Binary *binary = BinaryParser{std::move(data), offset, this->config_}.get_binary();

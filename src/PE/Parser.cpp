@@ -669,6 +669,11 @@ void Parser::parse_exports(void) {
   uint32_t name_table_offset = this->binary_->rva_to_offset(export_directory_table.NamePointerRVA);
   const uint32_t *name_table = this->stream_->peek_array<uint32_t>(name_table_offset, nbof_name_ptr);
 
+  if (name_table == nullptr) {
+    LOG(ERROR) << "Name table corrupted!";
+    return;
+  }
+
 
   // Export address table (EXTERN)
   // =============================
