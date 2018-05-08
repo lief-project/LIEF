@@ -203,17 +203,17 @@ std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size, bool check) cons
   
   std::unique_ptr<T[]> uptr(new T[size]);
 
-  if (this->endian_swap_) {
-	  for (size_t i = 0; i < size; i++) {
-	    uptr[i] = t[i];
-      LIEF::Convert::swap_endian<T>(& uptr[i]);
-    }
-  } /* else no conversion, just provide the copied data */
+  for (size_t i = 0; i < size; i++) {
+    uptr[i] = t[i];
+    if (this->endian_swap_) {
+        LIEF::Convert::swap_endian<T>(& uptr[i]);
+    } /* else no conversion, just provide the copied data */
+  } 
   return uptr;
 }
 
 
-template<class T>
+template<typename T>
 T BinaryStream::peek_conv(size_t offset) const {
   T t = this->peek<T>(offset);
 
@@ -224,18 +224,18 @@ T BinaryStream::peek_conv(size_t offset) const {
 }
 
 
-template<class T>
+template<typename T>
 std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, bool check) const {
-  const T *t = this->peek_array<T>(size, check);
+  const T *t = this->peek_array<T>(offset, size, check);
   
   std::unique_ptr<T[]> uptr(new T[size]);
 
-  if (this->endian_swap_) {
-	  for (size_t i = 0; i < size; i++) {
-	    uptr[i] = t[i];
+  for (size_t i = 0; i < size; i++) {
+    uptr[i] = t[i];
+    if (this->endian_swap_) {
       LIEF::Convert::swap_endian<T>(& uptr[i]);
-    }
-  } /* else no conversion, just provide the copied data */
+    } /* else no conversion, just provide the copied data */
+  }
   return uptr;
 }
 
