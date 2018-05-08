@@ -3,7 +3,7 @@
 
 This tutorial introduces Android formats as well as the API to use them. We are talking about DEX, OAT, VDEX and ART.
 
-Files used in this tutorial are available on the `tutorials repository <https://github.com/lief-project/tutorials/tree/master/10_Android_formats>`_
+Files used in this tutorial are available on the `tutorials repository <https://github.com/lief-project/tutorials/tree/master/10_android_formats>`_
 
 By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
