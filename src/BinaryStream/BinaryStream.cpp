@@ -146,7 +146,7 @@ std::u16string BinaryStream::peek_u16string(size_t length) const {
   if (length == static_cast<size_t>(-1u)) {
     return this->peek_u16string();
   }
-  const char16_t* raw = this->peek_array<char16_t>(this->pos(), length);
+  const char16_t* raw = this->peek_array<char16_t>(this->pos(), length, /* check */false);
   if (raw == nullptr) {
     return {};
   }

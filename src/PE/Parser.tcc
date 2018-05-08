@@ -104,7 +104,7 @@ void Parser::parse_data_directories(void) {
       sizeof(pe_optional_header);
   const uint32_t nbof_datadir = static_cast<uint32_t>(DATA_DIRECTORY::NUM_DATA_DIRECTORIES);
 
-  const pe_data_directory* data_directory = this->stream_->peek_array<pe_data_directory>(directories_offset, nbof_datadir);
+  const pe_data_directory* data_directory = this->stream_->peek_array<pe_data_directory>(directories_offset, nbof_datadir, /* check */false);
   if (data_directory == nullptr) {
     LOG(ERROR) << "Data Directories corrupted!";
     return;
@@ -401,7 +401,7 @@ void Parser::parse_tls(void) {
     if (size_to_read > Parser::MAX_DATA_SIZE) {
       LOG(WARNING) << "TLS's template is too large!";
     } else {
-      const uint8_t* template_ptr = this->stream_->peek_array<uint8_t>(start_template_offset, size_to_read);
+      const uint8_t* template_ptr = this->stream_->peek_array<uint8_t>(start_template_offset, size_to_read, /* check */false);
       if (template_ptr == nullptr) {
         LOG(WARNING) << "TLS's template corrupted";
       } else {

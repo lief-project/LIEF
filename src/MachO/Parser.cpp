@@ -107,7 +107,7 @@ void Parser::build_fat(void) {
     VLOG(VDEBUG) << "[" << std::dec << i << "] offset: 0x" << std::hex << offset << std::endl;
     VLOG(VDEBUG) << "[" << std::dec << i << "] size:   0x" << std::hex << size << std::endl;
 
-    const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size);
+    const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
 
     if (raw == nullptr) {
       LOG(ERROR) << "MachO #" << std::dec << i << " corrupted!";

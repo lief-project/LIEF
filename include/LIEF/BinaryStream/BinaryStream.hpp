@@ -51,7 +51,7 @@ class BinaryStream {
   operator bool() const;
 
   template<class T>
-  const T* read_array(size_t size) const;
+  const T* read_array(size_t size, bool check = true) const;
 
   template<class T>
   const T& peek(void) const;
@@ -60,10 +60,10 @@ class BinaryStream {
   const T& peek(size_t offset) const;
 
   template<class T>
-  const T* peek_array(size_t size) const;
+  const T* peek_array(size_t size, bool check = true) const;
 
   template<class T>
-  const T* peek_array(size_t offset, size_t size) const;
+  const T* peek_array(size_t offset, size_t size, bool check = true) const;
 
   template<class T>
   const T& read(void) const;
@@ -130,16 +130,16 @@ const T& BinaryStream::peek(size_t offset) const {
 
 
 template<class T>
-const T* BinaryStream::peek_array(size_t size) const {
-  const void* raw = this->read_at(this->pos(), sizeof(T) * size, /* throw error*/ false);
+const T* BinaryStream::peek_array(size_t size, bool check) const {
+  const void* raw = this->read_at(this->pos(), sizeof(T) * size, /* throw error*/ check);
   return reinterpret_cast<const T*>(raw);
 }
 
 template<class T>
-const T* BinaryStream::peek_array(size_t offset, size_t size) const {
+const T* BinaryStream::peek_array(size_t offset, size_t size, bool check) const {
   size_t saved_offset = this->pos();
   this->setpos(offset);
-  const T* r = this->peek_array<T>(size);
+  const T* r = this->peek_array<T>(size, check);
   this->setpos(saved_offset);
   return r;
 }
@@ -160,8 +160,8 @@ bool BinaryStream::can_read(size_t offset) const {
 
 
 template<class T>
-const T* BinaryStream::read_array(size_t size) const {
-  const T* tmp = this->peek_array<T>(size);
+const T* BinaryStream::read_array(size_t size, bool check) const {
+  const T* tmp = this->peek_array<T>(size, check);
   this->increment_pos(sizeof(T) * size);
   return tmp;
 }

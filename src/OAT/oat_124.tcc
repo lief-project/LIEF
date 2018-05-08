@@ -50,7 +50,7 @@ void Parser::parse_dex_files<OAT124_t>(void) {
 
     uint32_t location_size = this->stream_->read<uint32_t>();
 
-    const char* loc_cstr = this->stream_->read_array<char>(location_size);
+    const char* loc_cstr = this->stream_->read_array<char>(location_size, /* check */false);
     std::string location;
 
     if (loc_cstr != nullptr) {

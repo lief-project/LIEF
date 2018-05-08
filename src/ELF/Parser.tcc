@@ -852,7 +852,7 @@ void Parser::parse_sections(void) {
 
       this->binary_->datahandler_->reserve(section->file_offset(), section->size());
 
-      const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size);
+      const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size, /* check */false);
       if (content == nullptr) {
         LOG(ERROR) << "\tUnable to get content of section #" << std::dec << i;
       } else {
@@ -911,7 +911,7 @@ void Parser::parse_segments(void) {
       const Elf_Off offset_to_content   = segment->file_offset();
       const Elf_Off size                = segment->physical_size();
       this->binary_->datahandler_->reserve(segment->file_offset(), segment->physical_size());
-      const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size);
+      const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size, /* check */false);
       if (content != nullptr) {
         segment->content({content, content + size});
         if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
@@ -1531,7 +1531,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   this->stream_->setpos(offset);
 
-  const uint32_t* header = this->stream_->read_array<uint32_t>(4);
+  const uint32_t* header = this->stream_->read_array<uint32_t>(4, /* check */false);
 
   if (header == nullptr) {
     LOG(ERROR) << "Can't read GNU Hash header";
@@ -1574,7 +1574,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   std::vector<uint32_t> buckets;
   buckets.reserve(nbuckets);
 
-  const uint32_t* hash_buckets = this->stream_->read_array<uint32_t>(nbuckets);
+  const uint32_t* hash_buckets = this->stream_->read_array<uint32_t>(nbuckets, /* check */false);
 
   if (hash_buckets != nullptr) {
     buckets = {hash_buckets, hash_buckets + nbuckets};
@@ -1593,7 +1593,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
     if (nb_hash < MAX_NB_HASH) {
       std::vector<uint32_t> hashvalues;
       hashvalues.reserve(nb_hash);
-      const uint32_t* hash_values = this->stream_->read_array<uint32_t>(nb_hash);
+      const uint32_t* hash_values = this->stream_->read_array<uint32_t>(nb_hash, /* check */false);
       if (hash_values == nullptr) {
         LOG(ERROR) << "Can't read hash table";
       } else {
