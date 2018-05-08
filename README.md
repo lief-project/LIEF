@@ -24,7 +24,7 @@
   </a>
 </p>
 
-# About 
+# About
 
 The purpose of this project is to provide a cross platform library which can parse, modify and abstract ELF, PE and MachO formats.
 
@@ -52,6 +52,7 @@ Main features:
     - [PE Resources](https://lief.quarkslab.com/doc/latest/tutorials/07_pe_resource.html)
     - [Transforming an ELF executable into a library](https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html)
     - [How to use frida on a non-rooted device](https://lief.quarkslab.com/doc/latest/tutorials/09_frida_lief.html)
+    - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
 - [Contact](#contact)
 - [Authors](#authors)
 
