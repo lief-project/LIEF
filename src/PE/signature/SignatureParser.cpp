@@ -49,13 +49,16 @@ SignatureParser::SignatureParser(const std::vector<uint8_t>& data) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
 {
 
-  this->signature_ptr_ = this->stream_->peek_array<uint8_t>(8, this->stream_->size() - 8);
-  this->end_ = this->signature_ptr_ + this->stream_->size() - 8;
-  this->p_ = const_cast<uint8_t*>(this->signature_ptr_);
-  try {
-    this->parse_signature();
-  } catch (const std::exception& e) {
-    VLOG(VDEBUG) << e.what();
+  const uint8_t* sig = this->stream_->peek_array<uint8_t>(8, this->stream_->size() - 8, /* check */false);
+  if (sig != nullptr) {
+    this->signature_ptr_ = sig;
+    this->end_ = this->signature_ptr_ + this->stream_->size() - 8;
+    this->p_ = const_cast<uint8_t*>(this->signature_ptr_);
+    try {
+      this->parse_signature();
+    } catch (const std::exception& e) {
+      VLOG(VDEBUG) << e.what();
+    }
   }
 }
 

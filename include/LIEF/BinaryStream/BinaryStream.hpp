@@ -54,7 +54,7 @@ class BinaryStream {
   operator bool() const;
 
   template<class T>
-  const T* read_array(size_t size) const;
+  const T* read_array(size_t size, bool check = true) const;
 
   template<class T>
   const T& peek(void) const;
@@ -63,10 +63,10 @@ class BinaryStream {
   const T& peek(size_t offset) const;
 
   template<class T>
-  const T* peek_array(size_t size) const;
+  const T* peek_array(size_t size, bool check = true) const;
 
   template<class T>
-  const T* peek_array(size_t offset, size_t size) const;
+  const T* peek_array(size_t offset, size_t size, bool check = true) const;
 
   template<class T>
   const T& read(void) const;
@@ -88,18 +88,18 @@ class BinaryStream {
 
   /* Read an array of values and adjust endianness as needed */
   template<typename T>
-  std::unique_ptr<T[]> read_conv_array(size_t size) const;
+  std::unique_ptr<T[]> read_conv_array(size_t size, bool check = true) const;
 
   template<typename T>
   T peek_conv(size_t offset) const;
 
   template<typename T>
-  std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size) const;
+  std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size, bool check = true) const;
 
   void set_endian_swap(bool swap);
 
   protected:
-  virtual const void* read_at(uint64_t offset, uint64_t size) const = 0;
+  virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const = 0;
   mutable size_t pos_{0};
   bool endian_swap_{false};
 };
@@ -134,7 +134,7 @@ const T& BinaryStream::read(void) const {
 
 template<class T>
 const T& BinaryStream::peek(void) const {
-  const void* raw = this->read_at(this->pos(), sizeof(T));
+  const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
   return *reinterpret_cast<const T*>(raw);
 }
 
@@ -150,16 +150,16 @@ const T& BinaryStream::peek(size_t offset) const {
 
 
 template<class T>
-const T* BinaryStream::peek_array(size_t size) const {
-  const void* raw = this->read_at(this->pos(), sizeof(T) * size);
+const T* BinaryStream::peek_array(size_t size, bool check) const {
+  const void* raw = this->read_at(this->pos(), sizeof(T) * size, /* throw error*/ check);
   return reinterpret_cast<const T*>(raw);
 }
 
 template<class T>
-const T* BinaryStream::peek_array(size_t offset, size_t size) const {
+const T* BinaryStream::peek_array(size_t offset, size_t size, bool check) const {
   size_t saved_offset = this->pos();
   this->setpos(offset);
-  const T* r = this->peek_array<T>(size);
+  const T* r = this->peek_array<T>(size, check);
   this->setpos(saved_offset);
   return r;
 }
@@ -167,21 +167,21 @@ const T* BinaryStream::peek_array(size_t offset, size_t size) const {
 
 template<typename T>
 bool BinaryStream::can_read(void) const {
-  const void* raw = this->read_at(this->pos_, sizeof(T));
+  const void* raw = this->read_at(this->pos_, sizeof(T), /* throw error*/ false);
   return raw != nullptr;
 }
 
 
 template<typename T>
 bool BinaryStream::can_read(size_t offset) const {
-  const void* raw = this->read_at(offset, sizeof(T));
+  const void* raw = this->read_at(offset, sizeof(T), /* throw error*/ false);
   return raw != nullptr;
 }
 
 
 template<class T>
-const T* BinaryStream::read_array(size_t size) const {
-  const T* tmp = this->peek_array<T>(size);
+const T* BinaryStream::read_array(size_t size, bool check) const {
+  const T* tmp = this->peek_array<T>(size, check);
   this->increment_pos(sizeof(T) * size);
   return tmp;
 }
@@ -198,8 +198,8 @@ T BinaryStream::read_conv(void) const {
 
 
 template<typename T>
-std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size) const {
-  const T *t = this->read_array<T>(size);
+std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size, bool check) const {
+  const T *t = this->read_array<T>(size, check);
   
   std::unique_ptr<T[]> uptr(new T[size]);
 
@@ -212,6 +212,7 @@ std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size) const {
   return uptr;
 }
 
+
 template<class T>
 T BinaryStream::peek_conv(size_t offset) const {
   T t = this->peek<T>(offset);
@@ -222,9 +223,10 @@ T BinaryStream::peek_conv(size_t offset) const {
   return t;
 }
 
+
 template<class T>
-std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size) const {
-  const T *t = this->peek_array<T>(size);
+std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, bool check) const {
+  const T *t = this->peek_array<T>(size, check);
   
   std::unique_ptr<T[]> uptr(new T[size]);
 

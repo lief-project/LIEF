@@ -277,7 +277,7 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
   SysvHash sysvhash;
 
   this->stream_->setpos(offset);
-  std::unique_ptr<uint32_t[]> header = this->stream_->read_conv_array<uint32_t>(2);
+  std::unique_ptr<uint32_t[]> header = this->stream_->read_conv_array<uint32_t>(2, /* check */false);
 
   if (header == nullptr) {
     LOG(ERROR) << "Can't read SYSV Hash header";
@@ -351,7 +351,8 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     std::vector<uint8_t> description;
     if (descsz > 0) {
       const size_t nb_chunks = (descsz - 1) / sizeof(uint32_t) + 1;
-      std::unique_ptr<uint32_t[]> desc_ptr = this->stream_->read_conv_array<uint32_t>(nb_chunks);
+      std::unique_ptr<uint32_t[]> desc_ptr =
+        this->stream_->read_conv_array<uint32_t>(nb_chunks, /* check */false);
       if (desc_ptr != nullptr) {
         description = {
           reinterpret_cast<uint8_t *>(desc_ptr.get()),

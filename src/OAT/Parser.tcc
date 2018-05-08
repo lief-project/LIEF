@@ -298,7 +298,7 @@ void Parser::parse_header_keys(void) {
 
   std::string key_values;
 
-  const char* keys_start = this->stream_->peek_array<char>(keys_offset, keys_size);
+  const char* keys_start = this->stream_->peek_array<char>(keys_offset, keys_size, /* check */false);
   if (keys_start != nullptr) {
     key_values = {keys_start, keys_size};
   }
@@ -384,7 +384,7 @@ void Parser::parse_oat_classes(void) {
         method_bitmap_size = this->stream_->read<uint32_t>();
         const uint32_t nb_entries = method_bitmap_size / sizeof(uint32_t);
 
-        const uint32_t* raw = this->stream_->read_array<uint32_t>(nb_entries);
+        const uint32_t* raw = this->stream_->read_array<uint32_t>(nb_entries, /* check */false);
         if (raw != nullptr) {
           bitmap = {raw, raw + nb_entries};
         }
@@ -432,7 +432,7 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class* clazz, const DEX
 
     if (quick_header.code_size > 0) {
 
-      const uint8_t* code = this->stream_->peek_array<uint8_t>(code_off, quick_header.code_size);
+      const uint8_t* code = this->stream_->peek_array<uint8_t>(code_off, quick_header.code_size, /* check */false);
       if (code != nullptr) {
         oat_method->quick_code_ = {code, code + quick_header.code_size};
       }

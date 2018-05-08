@@ -52,8 +52,13 @@ void Parser::parse_dex_files<OAT79_t>(void) {
 
     uint32_t location_size = this->stream_->read<uint32_t>();
 
-    const char* loc_cstr = this->stream_->read_array<char>(location_size);
-    std::string location{loc_cstr, location_size};
+    const char* loc_cstr = this->stream_->read_array<char>(location_size, /* check */false);
+
+    std::string location;
+
+    if (loc_cstr != nullptr) {
+      location = {loc_cstr, location_size};
+    }
 
     dex_file->location(location);
 
@@ -79,9 +84,11 @@ void Parser::parse_dex_files<OAT79_t>(void) {
 
     const dex35_header_t& dex_hdr = this->stream_->peek<dex35_header_t>(offset);
 
-    const uint8_t* data = this->stream_->peek_array<uint8_t>(offset, dex_hdr.file_size);
-
-    std::vector<uint8_t> data_v = {data, data + dex_hdr.file_size};
+    std::vector<uint8_t> data_v;
+    const uint8_t* data = this->stream_->peek_array<uint8_t>(offset, dex_hdr.file_size, /* check */false);
+    if (data != nullptr) {
+      data_v = {data, data + dex_hdr.file_size};
+    }
 
     std::string name = "classes";
     if (i > 0) {

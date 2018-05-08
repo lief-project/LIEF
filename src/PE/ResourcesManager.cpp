@@ -645,7 +645,12 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
     stream.align(sizeof(uint32_t));
 
     const size_t nb_items = var_value_length / sizeof(uint32_t);
-    const uint32_t *value_array = stream.read_array<uint32_t>(nb_items);
+    const uint32_t *value_array = stream.read_array<uint32_t>(nb_items, /* check */false);
+    if (value_array == nullptr) {
+      LOG(ERROR) << "Unable to read items";
+      return var_file_info;
+    }
+
     for (size_t i = 0; i < nb_items; ++i) {
       VLOG(VDEBUG) << "item[" << std::dec << i << "] = " << std::hex << value_array[i];
       var_file_info.translations_.push_back(value_array[i]);

@@ -98,7 +98,7 @@ void Parser::parse_dos_stub(void) {
 
   VLOG(VDEBUG) << "Size of dos stub: " << std::hex << sizeof_dos_stub;
 
-  const uint8_t* ptr_to_dos_stub = this->stream_->peek_array<uint8_t>(sizeof(pe_dos_header), sizeof_dos_stub);
+  const uint8_t* ptr_to_dos_stub = this->stream_->peek_array<uint8_t>(sizeof(pe_dos_header), sizeof_dos_stub, /* check */false);
   if (ptr_to_dos_stub == nullptr) {
     LOG(ERROR) << "Dost stub corrupted!";
   } else {
@@ -198,7 +198,7 @@ void Parser::parse_sections(void) {
   uint32_t first_section_offset = -1u;
 
   const uint32_t numberof_sections = this->binary_->header().numberof_sections();
-  const pe_section* sections = this->stream_->peek_array<pe_section>(sections_offset, numberof_sections);
+  const pe_section* sections = this->stream_->peek_array<pe_section>(sections_offset, numberof_sections, /* check */false);
   if (sections == nullptr) {
     LOG(ERROR) << "Sections corrupted!";
     return;
@@ -226,7 +226,7 @@ void Parser::parse_sections(void) {
     if (size_to_read > Parser::MAX_DATA_SIZE) {
       LOG(WARNING) << "Section '" << section->name() << "' data is too large!";
     } else {
-      const uint8_t* ptr_to_rawdata = this->stream_->peek_array<uint8_t>(offset, size_to_read);
+      const uint8_t* ptr_to_rawdata = this->stream_->peek_array<uint8_t>(offset, size_to_read, /* check */false);
       if (ptr_to_rawdata == nullptr) {
         LOG(ERROR) << "Section #" << std::dec << i << " corrupted!";
       } else {
@@ -276,7 +276,7 @@ void Parser::parse_relocations(void) {
     }
 
     const uint32_t numberof_entries = (relocation_headers.BlockSize - sizeof(pe_base_relocation_block)) / sizeof(uint16_t);
-    const uint16_t* entries = this->stream_->peek_array<uint16_t>(current_offset + sizeof(pe_base_relocation_block), numberof_entries);
+    const uint16_t* entries = this->stream_->peek_array<uint16_t>(current_offset + sizeof(pe_base_relocation_block), numberof_entries, /* check */false);
 
     if (entries == nullptr) {
       break;
@@ -387,7 +387,7 @@ ResourceNode* Parser::parse_resource_node(
       uint32_t content_size   = data_entry.Size;
       uint32_t code_page      = data_entry.Codepage;
 
-      const uint8_t* content_ptr = this->stream_->peek_array<uint8_t>(content_offset, content_size);
+      const uint8_t* content_ptr = this->stream_->peek_array<uint8_t>(content_offset, content_size, /* check */false);
       if (content_ptr != nullptr) {
 
         std::vector<uint8_t> content = {
@@ -642,7 +642,7 @@ void Parser::parse_exports(void) {
   // Parse Ordinal name table
   uint32_t ordinal_table_offset = this->binary_->rva_to_offset(export_directory_table.OrdinalTableRVA);
   const uint32_t nbof_name_ptr  = export_directory_table.NumberOfNamePointers;
-  const uint16_t *ordinal_table = this->stream_->peek_array<uint16_t>(ordinal_table_offset, nbof_name_ptr);
+  const uint16_t *ordinal_table = this->stream_->peek_array<uint16_t>(ordinal_table_offset, nbof_name_ptr, /* check */false);
 
   if (ordinal_table == nullptr) {
     LOG(ERROR) << "Ordinal table corrupted";
@@ -653,7 +653,7 @@ void Parser::parse_exports(void) {
   // Parse Address table
   uint32_t address_table_offset    = this->binary_->rva_to_offset(export_directory_table.ExportAddressTableRVA);
   const uint32_t nbof_addr_entries = export_directory_table.AddressTableEntries;
-  const uint32_t *address_table    = this->stream_->peek_array<uint32_t>(address_table_offset, nbof_addr_entries);
+  const uint32_t *address_table    = this->stream_->peek_array<uint32_t>(address_table_offset, nbof_addr_entries, /* check */false);
 
   if (address_table == nullptr) {
     LOG(ERROR) << "Address table corrupted";
@@ -667,7 +667,12 @@ void Parser::parse_exports(void) {
 
   // Parse Export name table
   uint32_t name_table_offset = this->binary_->rva_to_offset(export_directory_table.NamePointerRVA);
-  const uint32_t *name_table = this->stream_->peek_array<uint32_t>(name_table_offset, nbof_name_ptr);
+  const uint32_t *name_table = this->stream_->peek_array<uint32_t>(name_table_offset, nbof_name_ptr, /* check */false);
+
+  if (name_table == nullptr) {
+    LOG(ERROR) << "Name table corrupted!";
+    return;
+  }
 
 
   // Export address table (EXTERN)
@@ -721,7 +726,7 @@ void Parser::parse_signature(void) {
   VLOG(VDEBUG) << "Signature Offset: 0x" << std::hex << signature_offset;
   VLOG(VDEBUG) << "Signature Size: 0x" << std::hex << signature_size;
 
-  const uint8_t* signature_ptr = this->stream_->peek_array<uint8_t>(signature_offset, signature_size);
+  const uint8_t* signature_ptr = this->stream_->peek_array<uint8_t>(signature_offset, signature_size, /* check */false);
   if (signature_ptr == nullptr) {
     return;
   }
@@ -749,12 +754,13 @@ void Parser::parse_overlay(void) {
 
     VLOG(VDEBUG) << "Overlay size: " << std::dec << overlay_size;
 
-    const uint8_t* ptr_to_overlay = this->stream_->peek_array<uint8_t>(last_section_offset, overlay_size);
-
-    this->binary_->overlay_ = {
-        ptr_to_overlay,
-        ptr_to_overlay + overlay_size
-      };
+    const uint8_t* ptr_to_overlay = this->stream_->peek_array<uint8_t>(last_section_offset, overlay_size, /* check */false);
+    if (ptr_to_overlay != nullptr) {
+      this->binary_->overlay_ = {
+          ptr_to_overlay,
+          ptr_to_overlay + overlay_size
+        };
+    }
   } else {
     this->binary_->overlay_ = {};
   }

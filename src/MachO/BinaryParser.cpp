@@ -191,8 +191,10 @@ void BinaryParser::parse_dyldinfo_export(void) {
   uint64_t end_offset = offset + size;
 
   try {
-    const uint8_t* raw_trie = this->stream_->peek_array<uint8_t>(offset, size);
-    dyldinfo.export_trie({raw_trie, raw_trie + size});
+    const uint8_t* raw_trie = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+    if (raw_trie != nullptr) {
+      dyldinfo.export_trie({raw_trie, raw_trie + size});
+    }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }

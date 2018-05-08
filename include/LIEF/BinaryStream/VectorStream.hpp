@@ -32,7 +32,7 @@ class VectorStream : public BinaryStream {
   const std::vector<uint8_t>& content(void) const;
 
   protected:
-  virtual const void* read_at(uint64_t offset, uint64_t size) const override;
+  virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
   std::vector<uint8_t> binary_;
   uint64_t size_;
 };

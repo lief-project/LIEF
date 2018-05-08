@@ -119,12 +119,15 @@ void BinaryParser::parse_load_commands(void) {
 
           SegmentCommand* segment = dynamic_cast<SegmentCommand*>(load_command.get());
 
-          const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size());
-
-          segment->content({
-              content,
-              content + segment->file_size()
-              });
+          const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size(), /* check */ false);
+          if (content != nullptr) {
+            segment->content({
+                content,
+                content + segment->file_size()
+                });
+          } else {
+            LOG(ERROR) << "Segment content corrupted!";
+          }
 
           // --------
           // Sections
@@ -239,30 +242,41 @@ void BinaryParser::parse_load_commands(void) {
           switch(this->binary_->header().cpu_type()) {
             case CPU_TYPES::CPU_TYPE_X86:
               {
-                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t));
-                thread->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state_t), /* check */ false);
+                if (pstart != nullptr) {
+                  thread->state_ = {pstart, pstart + sizeof(x86_thread_state_t)};
+                }
 
                 break;
               }
 
             case CPU_TYPES::CPU_TYPE_X86_64:
               {
-                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t));
-                thread->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(x86_thread_state64_t), /* check */ false);
+
+                if (pstart != nullptr) {
+                  thread->state_ = {pstart, pstart + sizeof(x86_thread_state64_t)};
+                }
                 break;
               }
 
             case CPU_TYPES::CPU_TYPE_ARM:
               {
-                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t));
-                thread->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state_t), /* check */ false);
+
+                if (pstart != nullptr) {
+                  thread->state_ = {pstart, pstart + sizeof(arm_thread_state_t)};
+                }
                 break;
               }
 
             case CPU_TYPES::CPU_TYPE_ARM64:
               {
-                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t));
-                thread->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
+                const uint8_t* pstart = this->stream_->peek_array<uint8_t>(loadcommands_offset + sizeof(thread_command), sizeof(arm_thread_state64_t), /* check */ false);
+
+                if (pstart != nullptr) {
+                  thread->state_ = {pstart, pstart + sizeof(arm_thread_state64_t)};
+                }
                 break;
               }
             default:
@@ -300,7 +314,11 @@ void BinaryParser::parse_load_commands(void) {
           load_command = std::unique_ptr<SymbolCommand>{new SymbolCommand{cmd}};
 
 
-          const nlist_t* nlist = this->stream_->peek_array<nlist_t>(cmd->symoff, cmd->nsyms);
+          const nlist_t* nlist = this->stream_->peek_array<nlist_t>(cmd->symoff, cmd->nsyms, /* check */ false);
+          if (nlist == nullptr) {
+            LOG(ERROR) << "Symbols corrupted!";
+            break;
+          }
 
           for (size_t j = 0; j < cmd->nsyms; ++j) {
             std::unique_ptr<Symbol> symbol{new Symbol{&nlist[j]}};
@@ -375,8 +393,10 @@ void BinaryParser::parse_load_commands(void) {
           load_command = std::unique_ptr<CodeSignature>{new CodeSignature{cmd}};
           CodeSignature* sig = load_command.get()->as<CodeSignature>();
 
-          const uint8_t* content = this->stream_->peek_array<uint8_t>(sig->data_offset(), sig->data_size());
-          sig->raw_signature_ = {content, content + sig->data_size()};
+          const uint8_t* content = this->stream_->peek_array<uint8_t>(sig->data_offset(), sig->data_size(), /* check */ false);
+          if (content != nullptr) {
+            sig->raw_signature_ = {content, content + sig->data_size()};
+          }
 
           break;
         }
@@ -389,9 +409,11 @@ void BinaryParser::parse_load_commands(void) {
           DataInCode* datacode = load_command.get()->as<DataInCode>();
 
           const size_t nb_entries = datacode->data_size() / sizeof(data_in_code_entry);
-          const data_in_code_entry* entries = this->stream_->peek_array<data_in_code_entry>(datacode->data_offset(), nb_entries);
-          for (size_t i = 0; i < nb_entries; ++i) {
-            datacode->add(&entries[i]);
+          const data_in_code_entry* entries = this->stream_->peek_array<data_in_code_entry>(datacode->data_offset(), nb_entries, /* check */ false);
+          if (entries != nullptr) {
+            for (size_t i = 0; i < nb_entries; ++i) {
+              datacode->add(&entries[i]);
+            }
           }
           break;
         }
@@ -496,12 +518,13 @@ void BinaryParser::parse_load_commands(void) {
     }
 
     if (load_command != nullptr) {
-      const uint8_t* content = this->stream_->peek_array<uint8_t>(loadcommands_offset, command.cmdsize);
-
-      load_command->data({
-        content,
-        content + command.cmdsize
-      });
+      const uint8_t* content = this->stream_->peek_array<uint8_t>(loadcommands_offset, command.cmdsize, /* check */ false);
+      if (content != nullptr) {
+        load_command->data({
+          content,
+          content + command.cmdsize
+        });
+      }
 
       load_command->command_offset(loadcommands_offset);
       this->binary_->commands_.push_back(load_command.release());
@@ -600,8 +623,10 @@ void BinaryParser::parse_dyldinfo_rebases() {
   }
 
   try {
-    const uint8_t* raw_rebase = this->stream_->peek_array<uint8_t>(offset, size);
-    dyldinfo.rebase_opcodes({raw_rebase, raw_rebase + size});
+    const uint8_t* raw_rebase = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+    if (raw_rebase != nullptr) {
+      dyldinfo.rebase_opcodes({raw_rebase, raw_rebase + size});
+    }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
@@ -801,8 +826,11 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
-    dyldinfo.bind_opcodes({raw_binding, raw_binding + size});
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+
+    if (raw_binding != nullptr) {
+      dyldinfo.bind_opcodes({raw_binding, raw_binding + size});
+    }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
@@ -999,8 +1027,11 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
-    dyldinfo.weak_bind_opcodes({raw_binding, raw_binding + size});
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+
+    if (raw_binding != nullptr) {
+      dyldinfo.weak_bind_opcodes({raw_binding, raw_binding + size});
+    }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
@@ -1179,8 +1210,11 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
   }
 
   try {
-    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size);
-    dyldinfo.lazy_bind_opcodes({raw_binding, raw_binding + size});
+    const uint8_t* raw_binding = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+
+    if (raw_binding != nullptr) {
+      dyldinfo.lazy_bind_opcodes({raw_binding, raw_binding + size});
+    }
   } catch (const exception& e) {
     LOG(WARNING) << e.what();
   }
