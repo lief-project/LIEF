@@ -117,7 +117,6 @@ The process of converting Java sources into the OAT can be simplified with the f
 
 
 .. figure:: ../_static/tutorial/10/java2oat.png
-  :scale: 100%
   :align: center
 
 
