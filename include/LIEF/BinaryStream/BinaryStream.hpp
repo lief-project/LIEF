@@ -21,6 +21,9 @@
 #include <vector>
 #include <istream>
 #include <utility>
+#include <memory>
+
+#include "Convert.hpp"
 
 class BinaryStream {
   public:
@@ -79,9 +82,26 @@ class BinaryStream {
 
   size_t align(size_t align_on) const;
 
+  /* Read an integer value and adjust endianness as needed */
+  template<typename T>
+  T read_conv() const;
+
+  /* Read an array of values and adjust endianness as needed */
+  template<typename T>
+  std::unique_ptr<T[]> read_conv_array(size_t size) const;
+
+  template<typename T>
+  T peek_conv(size_t offset) const;
+
+  template<typename T>
+  std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size) const;
+
+  void set_endian_swap(bool swap);
+
   protected:
   virtual const void* read_at(uint64_t offset, uint64_t size) const = 0;
   mutable size_t pos_{0};
+  bool endian_swap_{false};
 };
 
 
@@ -167,5 +187,54 @@ const T* BinaryStream::read_array(size_t size) const {
 }
 
 
+template<typename T>
+T BinaryStream::read_conv(void) const {
+  T t = this->read<T>();
+  if (this->endian_swap_) {
+    LIEF::Convert::swap_endian<T>(& t);
+  }
+  return t;
+}
+
+
+template<typename T>
+std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size) const {
+  const T *t = this->read_array<T>(size);
+  
+  std::unique_ptr<T[]> uptr(new T[size]);
+
+  if (this->endian_swap_) {
+	  for (size_t i = 0; i < size; i++) {
+	    uptr[i] = t[i];
+      LIEF::Convert::swap_endian<T>(& uptr[i]);
+    }
+  } /* else no conversion, just provide the copied data */
+  return uptr;
+}
+
+template<class T>
+T BinaryStream::peek_conv(size_t offset) const {
+  T t = this->peek<T>(offset);
+
+  if (this->endian_swap_) {
+    LIEF::Convert::swap_endian(&t);
+  }
+  return t;
+}
+
+template<class T>
+std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size) const {
+  const T *t = this->peek_array<T>(size);
+  
+  std::unique_ptr<T[]> uptr(new T[size]);
+
+  if (this->endian_swap_) {
+	  for (size_t i = 0; i < size; i++) {
+	    uptr[i] = t[i];
+      LIEF::Convert::swap_endian<T>(& uptr[i]);
+    }
+  } /* else no conversion, just provide the copied data */
+  return uptr;
+}
 
 #endif
