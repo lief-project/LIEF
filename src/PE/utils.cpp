@@ -91,13 +91,11 @@ bool is_pe(const std::vector<uint8_t>& raw) {
     return false;
   }
 
-  char signature[sizeof(PE_Magic)];
-  std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data() + dos_header->AddressOfNewExeHeader),
-    reinterpret_cast<const uint8_t*>(raw.data() + dos_header->AddressOfNewExeHeader) + sizeof(signature),
-    signature);
+  VectorStream raw_stream(raw);
+  raw_stream.setpos(dos_header->AddressOfNewExeHeader);
+  auto signature = raw_stream.read_array<char>(sizeof(PE_Magic), /* check bounds */ true);
 
-  return std::equal(std::begin(signature), std::end(signature), std::begin(PE_Magic));
+  return std::equal(signature, signature + sizeof(PE_Magic), std::begin(PE_Magic));
 }
 
 
@@ -136,14 +134,11 @@ PE_TYPE get_type(const std::vector<uint8_t>& raw) {
     throw LIEF::bad_format("This file is not a PE binary");
   }
 
-  const pe_dos_header*          dos_header;
-  const pe32_optional_header*   optional_header;
+  VectorStream raw_stream = VectorStream(raw);
 
-  dos_header      = reinterpret_cast<const pe_dos_header*>(raw.data());
-  optional_header = reinterpret_cast<const pe32_optional_header*>(
-      raw.data() +
-      dos_header->AddressOfNewExeHeader +
-      sizeof(pe_header));
+  const pe_dos_header* dos_header = &raw_stream.read<pe_dos_header>();
+  raw_stream.setpos(dos_header->AddressOfNewExeHeader + sizeof(pe_header));
+  const pe32_optional_header* optional_header = &raw_stream.read<pe32_optional_header>();
 
   PE_TYPE type = static_cast<PE_TYPE>(optional_header->Magic);
 
