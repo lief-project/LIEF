@@ -112,6 +112,25 @@ MapItem
   :undoc-members:
 
 
+----------
+
+Enums
+*****
+
+
+Access Flags
+~~~~~~~~~~~~
+
+.. autoclass:: lief.DEX.ACCESS_FLAGS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+
+
+
+
 
 
 
