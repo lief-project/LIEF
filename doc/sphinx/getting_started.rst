@@ -19,6 +19,22 @@ Python
   binary = lief.parse("/usr/bin/ls")
   print(binary)
 
+  # OAT
+  binary = lief.parse("android.odex")
+  print(binary)
+
+  # DEX
+  dex = lief.DEX.parse("classes.dex")
+  print(dex)
+
+  # VDEX
+  vdex = lief.VDEX.parse("classes.vdex")
+  print(vdex)
+
+  # ART
+  art = lief.ART.parse("boot.art")
+  print(art)
+
 Python API documentation is available here: :ref:`python-api-ref`
 
 C++
@@ -32,13 +48,27 @@ C++
     LIEF::PE::Binary*    pe    = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
     LIEF::MachO::Binary* macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
 
+    LIEF::OAT::Binary*   oat   = LIEF::OAT::Parser::parse("android.odex");
+    LIEF::DEX::File*     dex   = LIEF::DEX::Parser::parse("classes.dex");
+    LIEF::OAT::File*     vdex  = LIEF::VDEX::Parser::parse("classes.vdex");
+    LIEF::OAT::File*     art   = LIEF::ART::Parser::parse("boot.art");
+
     std::cout << *elf   << std::endl;
     std::cout << *pe    << std::endl;
     std::cout << *macho << std::endl;
 
+    std::cout << *oat << std::endl;
+    std::cout << *dex << std::endl;
+    std::cout << *vdex << std::endl;
+    std::cout << *art << std::endl;
+
     delete elf;
     delete pe;
     delete macho;
+    delete oat;
+    delete dex;
+    delete vdex;
+    delete art;
   }
 
 
