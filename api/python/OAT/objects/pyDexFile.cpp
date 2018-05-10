@@ -38,21 +38,26 @@ void create<DexFile>(py::module& m) {
 
     .def_property("location",
         static_cast<getter_t<const std::string&>>(&DexFile::location),
-        static_cast<setter_t<const std::string&>>(&DexFile::location))
+        static_cast<setter_t<const std::string&>>(&DexFile::location),
+        "Original location of the DEX file")
 
     .def_property("checksum",
         static_cast<getter_t<uint32_t>>(&DexFile::checksum),
-        static_cast<setter_t<uint32_t>>(&DexFile::checksum))
+        static_cast<setter_t<uint32_t>>(&DexFile::checksum),
+        "Checksum of the underlying DEX file")
 
     .def_property("dex_offset",
         static_cast<getter_t<uint32_t>>(&DexFile::dex_offset),
-        static_cast<setter_t<uint32_t>>(&DexFile::dex_offset))
+        static_cast<setter_t<uint32_t>>(&DexFile::dex_offset),
+        "Offset to the raw " RST_CLASS_REF_FULL(lief.DEX.File) "")
 
     .def_property_readonly("has_dex_file",
-        &DexFile::has_dex_file)
+        &DexFile::has_dex_file,
+        "Check if the " RST_CLASS_REF_FULL(lief.DEX.File) " is present")
 
     .def_property_readonly("dex_file",
-        static_cast<no_const_getter<LIEF::DEX::File&>>(&DexFile::dex_file))
+        static_cast<no_const_getter<LIEF::DEX::File&>>(&DexFile::dex_file),
+        "Associated " RST_CLASS_REF_FULL(lief.DEX.File) "")
 
     .def("__eq__", &DexFile::operator==)
     .def("__ne__", &DexFile::operator!=)
