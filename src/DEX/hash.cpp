@@ -86,11 +86,13 @@ void Hash::visit(const Type& type) {
     case Type::TYPES::PRIMITIVE:
       {
         this->process(type.primitive());
+        break;
       }
 
     case Type::TYPES::CLASS:
       {
         this->process(type.cls().fullname());
+        break;
       }
 
     case Type::TYPES::UNKNOWN:
