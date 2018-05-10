@@ -43,7 +43,7 @@ void create<Header>(py::module& m) {
 
     .def_property_readonly("keys",
         &Header::keys,
-        "List of " RSA_CLASS_REF(lief.OAT.HEADER_KEYS) " present",
+        "List of " RST_CLASS_REF(lief.OAT.HEADER_KEYS) " present",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("values",
