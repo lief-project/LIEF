@@ -43,28 +43,37 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   Binary& operator=(const Binary& copy) = delete;
   Binary(const Binary& copy)            = delete;
 
+  //! OAT Header
   const Header& header(void) const;
   Header& header(void);
 
+  //! Iterator over LIEF::DEX::File
   DEX::it_dex_files dex_files(void);
   DEX::it_const_dex_files dex_files(void) const;
 
+  //! Iterator over LIEF::OAT::DexFile
   it_dex_files       oat_dex_files(void);
   it_const_dex_files oat_dex_files(void) const;
 
+  //! Iterator over LIEF::OAT::Class
   it_const_classes classes(void) const;
   it_classes classes(void);
 
+  //! Check the current OAT has the given class
   bool has_class(const std::string& class_name) const;
 
+
+  //! Return the LIEF::OAT::Class with the given name
   const Class& get_class(const std::string& class_name) const;
 
   Class& get_class(const std::string& class_name);
 
+  //! Return the LIEF::OAT::Class at the given index
   const Class& get_class(size_t index) const;
 
   Class& get_class(size_t index);
 
+  //! Iterator over LIEF::OAT::Method
   it_const_methods methods(void) const;
   it_methods methods(void);
 
