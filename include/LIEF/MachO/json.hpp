@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_HASH_H_
-#define LIEF_MACHO_HASH_H_
+#ifndef LIEF_MACHO_VISITOR_JSONS_H_
+#define LIEF_MACHO_VISITOR_JSONS_H_
+
+#include "LIEF/config.h"
+
+#ifdef LIEF_JSON_SUPPORT
 
 #include "LIEF/visibility.h"
-#include "LIEF/hash.hpp"
+#include "LIEF/visitors/json.hpp"
 #include "LIEF/MachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-class LIEF_API Hash : public LIEF::Hash {
-  public:
-  static size_t hash(const Object& obj);
+LIEF_API json to_json(const Object& v);
+LIEF_API std::string to_json_str(const Object& v);
 
+
+class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   public:
-  using LIEF::Hash::Hash;
-  using LIEF::Hash::visit;
+  using LIEF::JsonVisitor::JsonVisitor;
 
   public:
   virtual void visit(const Binary& binary)                        override;
@@ -55,13 +59,13 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const CodeSignature& cs)                     override;
   virtual void visit(const DataInCode& dic)                       override;
   virtual void visit(const DataCodeEntry& dce)                    override;
-  virtual void visit(const VersionMin& vmin)                      override;
   virtual void visit(const SourceVersion& sv)                     override;
-
-  virtual ~Hash(void);
+  virtual void visit(const VersionMin& vmin)                      override;
 };
 
 }
 }
+
+#endif // LIEF_JSON_SUPPORT
 
 #endif

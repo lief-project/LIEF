@@ -25,6 +25,10 @@
 #include "LIEF/ELF/json.hpp"
 #endif
 
+#if defined(LIEF_MACHO_SUPPORT)
+#include "LIEF/MachO/json.hpp"
+#endif
+
 #if defined(LIEF_OAT_SUPPORT)
 #include "LIEF/OAT/json.hpp"
 #endif
@@ -62,6 +66,15 @@ json to_json(const Object& v) {
   const json& elfjson = elf_visitor.get();
   if (elfjson.type() != json::value_t::null) {
     node.update(std::move(elfjson));
+  }
+#endif
+
+#if defined(LIEF_MACHO_SUPPORT)
+  MachO::JsonVisitor macho_visitor;
+  macho_visitor(v);
+  const json& machojson = macho_visitor.get();
+  if (machojson.type() != json::value_t::null) {
+    node.update(std::move(machojson));
   }
 #endif
 
