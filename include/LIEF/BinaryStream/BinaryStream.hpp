@@ -200,6 +200,10 @@ T BinaryStream::read_conv(void) const {
 template<typename T>
 std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size, bool check) const {
   const T *t = this->read_array<T>(size, check);
+
+  if (t == nullptr) {
+	  return nullptr;
+  }
   
   std::unique_ptr<T[]> uptr(new T[size]);
 
@@ -228,6 +232,10 @@ template<typename T>
 std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, bool check) const {
   const T *t = this->peek_array<T>(offset, size, check);
   
+  if (t == nullptr) {
+	  return nullptr;
+  }
+
   std::unique_ptr<T[]> uptr(new T[size]);
 
   for (size_t i = 0; i < size; i++) {
