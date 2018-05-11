@@ -1579,7 +1579,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
   std::unique_ptr<uint32_t[]> hash_buckets =
     this->stream_->read_conv_array<uint32_t>(nbuckets, /* check */false);
 
-  if (hash_buckets) {
+  if (hash_buckets != nullptr) {
     buckets = {hash_buckets.get(), hash_buckets.get() + nbuckets};
   } else {
     LOG(ERROR) << "GNU Hash, hash_buckets corrupted";
@@ -1598,7 +1598,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
       hashvalues.reserve(nb_hash);
       std::unique_ptr<uint32_t[]> hash_values =
         this->stream_->read_conv_array<uint32_t>(nb_hash, /* check */false);
-      if (hash_values) {
+      if (hash_values == nullptr) {
         LOG(ERROR) << "Can't read hash table";
       } else {
         hashvalues = {hash_values.get(), hash_values.get() + nb_hash};
