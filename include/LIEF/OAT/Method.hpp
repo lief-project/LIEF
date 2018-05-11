@@ -46,19 +46,27 @@ class LIEF_API Method : public Object {
   //! Method's name
   std::string name(void) const;
 
+  //! OAT Class associated with this Method
   const Class& oat_class(void) const;
   Class& oat_class(void);
 
+  //! Check if a LIEF::DEX::Method is associated with
+  //! this Method
   bool has_dex_method(void) const;
 
+  //! LIEF::DEX::Method associated (if any)
   const DEX::Method& dex_method(void) const;
   DEX::Method& dex_method(void);
 
+  //! True if the optimization is DEX
   bool is_dex2dex_optimized(void) const;
+
+  // True if the optimization is native
   bool is_compiled(void) const;
 
   const DEX::dex2dex_method_info_t& dex2dex_info(void) const;
 
+  //! Quick code associated with the method
   const quick_code_t& quick_code(void) const;
   void quick_code(const quick_code_t& code);
 

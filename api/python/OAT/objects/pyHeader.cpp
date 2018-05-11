@@ -38,37 +38,44 @@ void create<Header>(py::module& m) {
 
     .def_property_readonly("key_values",
         static_cast<no_const_getter<Header::it_key_values_t>>(&Header::key_values),
-        py::return_value_policy::reference_internal
-        )
+        "Configuration used for the ``dex2oat`` transformation",
+        py::return_value_policy::reference_internal)
 
     .def_property_readonly("keys",
         &Header::keys,
-        py::return_value_policy::reference_internal
-        )
-
+        "List of " RST_CLASS_REF(lief.OAT.HEADER_KEYS) " present",
+        py::return_value_policy::reference_internal)
 
     .def_property_readonly("values",
         &Header::values,
-        py::return_value_policy::move
-        )
+        "List of values associated with " RST_ATTR_REF(lief.OAT.Header.keys) "",
+        py::return_value_policy::move)
 
     .def_property_readonly("magic",
-        static_cast<getter_t<Header::magic_t>>(&Header::magic))
+        static_cast<getter_t<Header::magic_t>>(&Header::magic),
+        "Magic number: ``oat\\x0A``")
 
     .def_property_readonly("version",
-        static_cast<getter_t<oat_version_t>>(&Header::version))
+        static_cast<getter_t<oat_version_t>>(&Header::version),
+        "Underlying version of the OAT file")
 
     .def_property_readonly("checksum",
-        static_cast<getter_t<uint32_t>>(&Header::checksum))
+        static_cast<getter_t<uint32_t>>(&Header::checksum),
+        "Checksum of the OAT file")
 
     .def_property_readonly("instruction_set",
-        static_cast<getter_t<INSTRUCTION_SETS>>(&Header::instruction_set))
+        static_cast<getter_t<INSTRUCTION_SETS>>(&Header::instruction_set),
+        "List of " RST_CLASS_REF(lief.OAT.INSTRUCTION_SETS) "")
 
     .def_property_readonly("nb_dex_files",
-        static_cast<getter_t<uint32_t>>(&Header::nb_dex_files))
+        static_cast<getter_t<uint32_t>>(&Header::nb_dex_files),
+        "Number of " RST_CLASS_REF_FULL(lief.DEX.File) " registred in the current OAT")
 
     .def_property_readonly("oat_dex_files_offset",
-        static_cast<getter_t<uint32_t>>(&Header::oat_dex_files_offset))
+        static_cast<getter_t<uint32_t>>(&Header::oat_dex_files_offset),
+        "Offset to the raw " RST_CLASS_REF_FULL(lief.OAT.DexFile) "\n\n"
+        ".. warning::\n\n"
+        "\tThis attribute is only relevant for OAT whose version is above 131")
 
     .def_property_readonly("executable_offset",
         static_cast<getter_t<uint32_t>>(&Header::executable_offset))

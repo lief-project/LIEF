@@ -85,7 +85,6 @@ void Parser::parse_dex_files(void) {
 template<typename VDEX_T>
 void Parser::parse_verifier_deps(void) {
   using vdex_header = typename VDEX_T::vdex_header;
-  using uleb128_t = std::pair<uint64_t, uint64_t>;
 
   uint64_t deps_offset = align(sizeof(vdex_header) + this->file_->header().dex_size(), sizeof(uint32_t));
 
@@ -323,7 +322,7 @@ void Parser::parse_quickening_info<VDEX10>(void) {
             }
           case DEX::OPCODES::OP_NOP:
             {
-              if (static_cast<int32_t>(index_value) == -1) {
+              if (index_value == static_cast<uint16_t>(-1)) {
                 nb_indexes--;
               } else {
                 if (nb_indexes > 1) {

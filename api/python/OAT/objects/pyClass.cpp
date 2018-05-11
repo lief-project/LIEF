@@ -37,31 +37,45 @@ void create<Class>(py::module& m) {
     .def(py::init<>())
 
     .def("has_dex_class",
-        &Class::has_dex_class)
+        &Class::has_dex_class,
+        "True if a " RST_CLASS_REF_FULL(lief.DEX.Class) " object "
+        "is associated with this **OAT** Class")
 
     .def_property_readonly("status",
-        &Class::status)
+        &Class::status,
+        "Class " RST_CLASS_REF(lief.OAT.OAT_CLASS_STATUS) "")
 
     .def_property_readonly("type",
-        &Class::type)
+        &Class::type,
+        "Information (" RST_CLASS_REF(lief.OAT.OAT_CLASS_TYPES) ") about how methods "
+        "are optimized")
 
     .def_property_readonly("fullname",
-        &Class::fullname)
+        &Class::fullname,
+        "Class mangled name (e.g. ``Lcom/android/MyActivity;``)")
 
     .def_property_readonly("index",
-        &Class::index)
+        &Class::index,
+        "Index the **DEX** classes pool (" RST_ATTR_REF_FULL(lief.DEX.File.classes) ")")
 
     .def_property_readonly("methods",
-        static_cast<no_const_getter<it_methods>>(&Class::methods))
+        static_cast<no_const_getter<it_methods>>(&Class::methods),
+        "Iterator over " RST_CLASS_REF_FULL(lief.OAT.Method) "")
 
     .def_property_readonly("bitmap",
-        &Class::bitmap)
+        &Class::bitmap,
+        "Bitmap information used to quickly find which methods are "
+        "optimized")
 
     .def("is_quickened",
-        static_cast<bool(Class::*)(const LIEF::DEX::Method&) const>(&Class::is_quickened))
+        static_cast<bool(Class::*)(const LIEF::DEX::Method&) const>(&Class::is_quickened),
+        "Check if the given " RST_CLASS_REF_FULL(lief.DEX.Method) " is compiled into native code",
+        "dex_method"_a)
 
     .def("is_quickened",
-        static_cast<bool(Class::*)(uint32_t relative_index) const>(&Class::is_quickened))
+        static_cast<bool(Class::*)(uint32_t relative_index) const>(&Class::is_quickened),
+        "Check if the Method at the given index is compiled into native code",
+        "method_index"_a)
 
     .def("method_offsets_index",
         static_cast<uint32_t(Class::*)(const LIEF::DEX::Method&) const>(&Class::method_offsets_index))

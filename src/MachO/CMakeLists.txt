@@ -92,6 +92,17 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DataCodeEntry.hpp"
   )
 
+# JSON Part
+# =========
+set(LIEF_MACHO_JSON_SRC "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
+set(LIEF_MACHO_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/json.hpp")
+
+
+if (LIEF_ENABLE_JSON)
+  list(APPEND LIEF_MACHO_SRC           ${LIEF_MACHO_JSON_SRC})
+  list(APPEND LIEF_MACHO_INCLUDE_FILES ${LIEF_MACHO_JSON_HDR})
+endif()
+
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})
 source_group("Source Files\\MachO" FILES ${LIEF_MACHO_SRC})
 

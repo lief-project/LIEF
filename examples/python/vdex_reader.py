@@ -12,7 +12,7 @@ import lief
 from lief import VDEX
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
+Logger.set_level(lief.LOGGING_LEVEL.INFO)
 
 
 EXIT_STATUS = 0

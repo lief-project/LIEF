@@ -12,7 +12,7 @@ import lief
 from lief import OAT
 
 from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
+Logger.set_level(lief.LOGGING_LEVEL.INFO)
 EXIT_STATUS = 0
 terminal_rows, terminal_columns = 100, 100
 try:

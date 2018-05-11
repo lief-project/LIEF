@@ -38,7 +38,7 @@ void create<Class>(py::module& m) {
 
     .def_property_readonly("fullname",
         &Class::fullname,
-        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;`)`")
+        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)")
 
     .def_property_readonly("pretty_name",
         &Class::pretty_name,
