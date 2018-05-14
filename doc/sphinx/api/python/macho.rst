@@ -311,7 +311,6 @@ Data Code Entry
    :inherited-members:
    :undoc-members:
 
-
 TYPES
 ~~~~~
 
@@ -319,6 +318,36 @@ TYPES
   :members:
   :inherited-members:
   :undoc-members:
+
+----------
+
+Segment Split Info
+******************
+
+.. autoclass:: lief.MachO.SegmentSplitInfo
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Sub Framework
+*************
+
+.. autoclass:: lief.MachO.SubFramework
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Dyld Environment
+****************
+
+.. autoclass:: lief.MachO.DyldEnvironment
+   :members:
+   :inherited-members:
+   :undoc-members:
 
 ----------
 

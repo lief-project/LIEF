@@ -255,6 +255,36 @@ void init_MachO_Binary_class(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.DataInCode) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_segment_split_info",
+        &Binary::has_segment_split_info,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " command",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("segment_split_info",
+        static_cast<no_const_getter<SegmentSplitInfo&>>(&Binary::segment_split_info),
+        "Return binary's " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " if any.",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_sub_framework",
+        &Binary::has_sub_framework,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubFramework) " command",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("sub_framework",
+        static_cast<no_const_getter<SubFramework&>>(&Binary::sub_framework),
+        "Return binary's " RST_CLASS_REF(lief.MachO.SubFramework) " if any.",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_dyld_environment",
+        &Binary::has_dyld_environment,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldEnvironment) " command",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("dyld_environment",
+        static_cast<no_const_getter<DyldEnvironment&>>(&Binary::dyld_environment),
+        "Return binary's " RST_CLASS_REF(lief.MachO.DyldEnvironment) " if any.",
+        py::return_value_policy::reference)
+
 
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,

@@ -389,6 +389,47 @@ def print_data_in_code(binary):
     print("")
 
 
+@exceptions_handler(Exception)
+def print_segment_split_info(binary):
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Segment Split Info ==")
+
+    sinfo = binary.segment_split_info
+
+    print(format_hex.format("Offset:", sinfo.data_offset))
+    print(format_hex.format("Size:",   sinfo.data_size))
+
+    print("")
+
+
+@exceptions_handler(Exception)
+def print_sub_framework(binary):
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Sub Framework ==")
+
+    sinfo = binary.sub_framework
+    print(format_str.format("Umbrella:", sinfo.umbrella))
+
+    print("")
+
+@exceptions_handler(Exception)
+def print_dyld_environment(binary):
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Dyld Environment ==")
+
+    env = binary.dyld_environment
+    print(format_str.format("Value:", env.value))
+
+    print("")
 
 
 @exceptions_handler(Exception)
@@ -659,6 +700,18 @@ def main():
             action='store_true', dest='show_data_in_code',
             help="Display the 'Data In Code' command")
 
+    parser.add_argument('--segment-split-info',
+            action='store_true', dest='show_segment_split_info',
+            help="Display the 'Segment Split Info' command")
+
+    parser.add_argument('--sub-framework',
+            action='store_true', dest='show_sub_framework',
+            help="Display the 'Sub Framework' command")
+
+    parser.add_argument('--dyld-environment',
+            action='store_true', dest='show_dyld_env',
+            help="Display the 'Dyld Environment' command")
+
     parser.add_argument('--bind-opcodes',
             action='store_true', dest='show_bind_opcodes',
             help='Display the "Bind" opcodes')
@@ -752,6 +805,15 @@ def main():
 
         if (args.show_data_in_code or args.show_all) and binary.has_data_in_code:
             print_data_in_code(binary)
+
+        if (args.show_segment_split_info or args.show_all) and binary.has_segment_split_info:
+            print_segment_split_info(binary)
+
+        if (args.show_sub_framework or args.show_all) and binary.has_sub_framework:
+            print_sub_framework(binary)
+
+        if (args.show_dyld_env or args.show_all) and binary.has_dyld_environment:
+            print_dyld_environment(binary)
 
         if (args.show_rpath_command or args.show_all) and binary.has_rpath:
             print_rpath_command(binary)

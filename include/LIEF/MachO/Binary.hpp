@@ -43,6 +43,9 @@
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/DyldEnvironment.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -305,6 +308,27 @@ class LIEF_API Binary : public LIEF::Binary  {
     //! @brief Return the MachO::Signature
     DataInCode&       data_in_code(void);
     const DataInCode& data_in_code(void) const;
+
+    //! @brief ``true`` if the binary has segment split info.
+    bool has_segment_split_info(void) const;
+
+    //! @brief Return the MachO::SegmentSplitInfo
+    SegmentSplitInfo&       segment_split_info(void);
+    const SegmentSplitInfo& segment_split_info(void) const;
+
+    //! @brief ``true`` if the binary has a sub framework command.
+    bool has_sub_framework(void) const;
+
+    //! @brief Return the MachO::SubFramework
+    SubFramework&       sub_framework(void);
+    const SubFramework& sub_framework(void) const;
+
+    //! @brief ``true`` if the binary has Dyld envrionment variables.
+    bool has_dyld_environment(void) const;
+
+    //! @brief Return the MachO::DyldEnvironment
+    DyldEnvironment&       dyld_environment(void);
+    const DyldEnvironment& dyld_environment(void) const;
 
     template<class T>
     LIEF_LOCAL bool has_command(void) const;

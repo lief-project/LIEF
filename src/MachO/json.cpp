@@ -439,6 +439,22 @@ void JsonVisitor::visit(const VersionMin& vmin) {
   this->node_["sdk"]     = vmin.sdk();
 }
 
+void JsonVisitor::visit(const SegmentSplitInfo& ssi) {
+  this->visit(*ssi.as<LoadCommand>());
+  this->node_["data_offset"] = ssi.data_offset();
+  this->node_["data_size"]   = ssi.data_size();
+}
+
+void JsonVisitor::visit(const SubFramework& sf) {
+  this->visit(*sf.as<LoadCommand>());
+  this->node_["umbrella"] = sf.umbrella();
+}
+
+void JsonVisitor::visit(const DyldEnvironment& dv) {
+  this->visit(*dv.as<LoadCommand>());
+  this->node_["value"] = dv.value();
+}
+
 
 
 

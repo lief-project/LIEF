@@ -144,6 +144,9 @@ LIEF_MACHO_FORWARD(DataInCode)
 LIEF_MACHO_FORWARD(DataCodeEntry)
 LIEF_MACHO_FORWARD(SourceVersion)
 LIEF_MACHO_FORWARD(VersionMin)
+LIEF_MACHO_FORWARD(SegmentSplitInfo)
+LIEF_MACHO_FORWARD(SubFramework)
+LIEF_MACHO_FORWARD(DyldEnvironment)
 
 // OAT
 // ===============================
@@ -448,6 +451,15 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO::VersionMin
   LIEF_MACHO_VISITABLE(VersionMin)
+
+  //! @brief Method to visit a LIEF::MachO::SegmentSplitInfo
+  LIEF_MACHO_VISITABLE(SegmentSplitInfo)
+
+  //! @brief Method to visit a LIEF::MachO::SubFramework
+  LIEF_MACHO_VISITABLE(SubFramework)
+
+  //! @brief Method to visit a LIEF::MachO::DyldEnvironment
+  LIEF_MACHO_VISITABLE(DyldEnvironment)
 
   // OAT part
   // ========

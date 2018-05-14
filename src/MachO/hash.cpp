@@ -272,6 +272,21 @@ void Hash::visit(const SourceVersion& sv) {
   this->process(sv.version());
 }
 
+void Hash::visit(const SegmentSplitInfo& ssi) {
+  this->visit(*ssi.as<LoadCommand>());
+  this->process(ssi.data_offset());
+  this->process(ssi.data_size());
+}
+
+void Hash::visit(const SubFramework& sf) {
+  this->visit(*sf.as<LoadCommand>());
+  this->process(sf.umbrella());
+}
+
+void Hash::visit(const DyldEnvironment& de) {
+  this->visit(*de.as<LoadCommand>());
+  this->process(de.value());
+}
 
 
 

@@ -145,6 +145,25 @@ class TestMachO(TestCase):
         self.assertEqual(dcode.entries[3].length, 1)
 
 
+    def test_segment_split_info(self):
+        binary = lief.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib'))
+
+        self.assertTrue(binary.has_segment_split_info)
+        ssi = binary.segment_split_info
+        self.assertEqual(ssi.data_offset, 32852)
+        self.assertEqual(ssi.data_size, 292)
+
+    def test_dyld_environment(self):
+        binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+        self.assertTrue(binary.has_dyld_environment)
+        self.assertEqual(binary.dyld_environment.value, "DYLD_VERSIONED_FRAMEWORK_PATH=/System/Library/StagedFrameworks/Safari")
+
+    def test_sub_framework(self):
+        binary = lief.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib'))
+        self.assertTrue(binary.has_sub_framework)
+        self.assertEqual(binary.sub_framework.umbrella, "System")
+
+
 
 if __name__ == '__main__':
 

@@ -23,6 +23,7 @@
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
 
 #include "Object.tcc"
 
@@ -149,6 +150,9 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_LOAD_WEAK_DYLIB:
       case LOAD_COMMAND_TYPES::LC_ID_DYLIB:
       case LOAD_COMMAND_TYPES::LC_LOAD_DYLIB:
+      case LOAD_COMMAND_TYPES::LC_REEXPORT_DYLIB:
+      case LOAD_COMMAND_TYPES::LC_LOAD_UPWARD_DYLIB:
+      case LOAD_COMMAND_TYPES::LC_LAZY_LOAD_DYLIB:
         {
           const dylib_command* cmd = &this->stream_->peek<dylib_command>(loadcommands_offset);
 
@@ -386,6 +390,9 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
+      // =================
+      // Code Signature
+      // =================
       case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
         {
 
@@ -401,6 +408,9 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
+      // ==============
+      // Data in Code
+      // ==============
       case LOAD_COMMAND_TYPES::LC_DATA_IN_CODE:
         {
 
@@ -418,48 +428,6 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
-
-
-
-      //case LOAD_COMMAND_TYPES::LC_TWOLEVEL_HINTS:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_TWOLEVEL_HINTS";
-
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
-
-      //case LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_SUB_FRAMEWORK";
-
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
-
-      //case LOAD_COMMAND_TYPES::LC_SUB_UMBRELLA:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_SUB_UMBRELLA";
-
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
-
-      //case LOAD_COMMAND_TYPES::LC_SUB_LIBRARY:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_SUB_LIBRARY";
-
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
-
-      //case LOAD_COMMAND_TYPES::LC_SUB_CLIENT:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_SUB_CLIENT";
-
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
 
       // =======
       // LC_MAIN
@@ -500,13 +468,61 @@ void BinaryParser::parse_load_commands(void) {
 
           break;
         }
+      case LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO:
+        {
+          //static constexpr uint8_t DYLD_CACHE_ADJ_V2_FORMAT = 0x7F;
+          VLOG(VDEBUG) << "[+] Parsing LC_SEGMENT_SPLIT_INFO";
+          const linkedit_data_command& cmd = this->stream_->peek<linkedit_data_command>(loadcommands_offset);
+          load_command = std::unique_ptr<SegmentSplitInfo>{new SegmentSplitInfo{&cmd}};
+          //const uint32_t start = cmd->dataoff;
+          //const uint32_t size  = cmd->datasize;
 
-      //case LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE:
-      //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_CODE_SIGNATURE";
-      //    load_command = new LoadCommand{command};
-      //    break;
-      //  }
+          //load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
+
+          //const size_t saved_pos = this->stream_->pos();
+          //this->stream_->setpos(start);
+
+          //// 1. Type
+          //uint8_t kind = this->stream_->peek<uint8_t>();
+          //if (kind == DYLD_CACHE_ADJ_V2_FORMAT) {
+          //  std::cout  << "V2 Format" << std::endl;
+          //} else {
+          //  std::cout  << "V1 Format" << std::endl;
+          //  while (this->stream_->pos() < (start + size)) {
+          //    uint8_t kind = this->stream_->read<uint8_t>();
+          //    uint64_t cache_offset = 0;
+          //    while (uint64_t delta = this->stream_->read_uleb128()) {
+          //      cache_offset += delta;
+          //    }
+          //  }
+          //}
+          //this->stream_->setpos(saved_pos);
+          break;
+
+        }
+
+      case LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK:
+        {
+          const sub_framework_command& cmd = this->stream_->peek<sub_framework_command>(loadcommands_offset);
+          std::string u = this->stream_->peek_string_at(loadcommands_offset + cmd.umbrella);
+          std::unique_ptr<SubFramework> sf{new SubFramework{&cmd}};
+          sf->umbrella(u);
+          load_command = std::move(sf);
+          break;
+        }
+
+
+      case LOAD_COMMAND_TYPES::LC_DYLD_ENVIRONMENT:
+        {
+          const dylinker_command& cmd = this->stream_->peek<dylinker_command>(loadcommands_offset);
+
+          std::string value = this->stream_->peek_string_at(loadcommands_offset + cmd.name);
+          std::unique_ptr<DyldEnvironment> env{new DyldEnvironment{&cmd}};
+          env->value(value);
+          load_command = std::move(env);
+          break;
+        }
+
 
       default:
         {

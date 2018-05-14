@@ -61,6 +61,9 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const DataCodeEntry& dce)                    override;
   virtual void visit(const SourceVersion& sv)                     override;
   virtual void visit(const VersionMin& vmin)                      override;
+  virtual void visit(const SegmentSplitInfo& ssi)                 override;
+  virtual void visit(const SubFramework& sf)                      override;
+  virtual void visit(const DyldEnvironment& sf)                      override;
 };
 
 }

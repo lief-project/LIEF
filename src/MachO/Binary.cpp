@@ -815,7 +815,7 @@ const CodeSignature& Binary::code_signature(void) const {
 
 
 // DataInCode command
-// +++++++++++++++++++++
+// ++++++++++++++++++
 bool Binary::has_data_in_code(void) const {
   return this->has_command<DataInCode>();
 }
@@ -827,6 +827,51 @@ DataInCode& Binary::data_in_code(void) {
 const DataInCode& Binary::data_in_code(void) const {
   return this->command<DataInCode>();
 }
+
+
+// SegmentSplitInfo command
+// ++++++++++++++++++++++++
+bool Binary::has_segment_split_info(void) const {
+  return this->has_command<SegmentSplitInfo>();
+}
+
+SegmentSplitInfo& Binary::segment_split_info(void) {
+  return this->command<SegmentSplitInfo>();
+}
+
+const SegmentSplitInfo& Binary::segment_split_info(void) const {
+  return this->command<SegmentSplitInfo>();
+}
+
+
+// SubFramework command
+// ++++++++++++++++++++
+bool Binary::has_sub_framework(void) const {
+  return this->has_command<SubFramework>();
+}
+
+SubFramework& Binary::sub_framework(void) {
+  return this->command<SubFramework>();
+}
+
+const SubFramework& Binary::sub_framework(void) const {
+  return this->command<SubFramework>();
+}
+
+// DyldEnvironment command
+// +++++++++++++++++++++++
+bool Binary::has_dyld_environment(void) const {
+  return this->has_command<DyldEnvironment>();
+}
+
+DyldEnvironment& Binary::dyld_environment(void) {
+  return this->command<DyldEnvironment>();
+}
+
+const DyldEnvironment& Binary::dyld_environment(void) const {
+  return this->command<DyldEnvironment>();
+}
+
 
 
 

@@ -51,6 +51,9 @@ void init_MachO_module(py::module& m) {
   init_MachO_RPathCommand_class(LIEF_MachO_module);
   init_MachO_DynamicSymbolCommand_class(LIEF_MachO_module);
   init_MachO_CodeSignature_class(LIEF_MachO_module);
+  init_MachO_SegmentSplitInfo_class(LIEF_MachO_module);
+  init_MachO_SubFramework_class(LIEF_MachO_module);
+  init_MachO_DyldEnvironment_class(LIEF_MachO_module);
 
   init_MachO_DataInCode_class(LIEF_MachO_module);
   init_MachO_DataCodeEntry_class(LIEF_MachO_module);

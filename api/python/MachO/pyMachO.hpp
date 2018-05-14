@@ -55,6 +55,9 @@ void init_MachO_DynamicSymbolCommand_class(py::module&);
 void init_MachO_CodeSignature_class(py::module&);
 void init_MachO_DataInCode_class(py::module&);
 void init_MachO_DataCodeEntry_class(py::module&);
+void init_MachO_SegmentSplitInfo_class(py::module&);
+void init_MachO_SubFramework_class(py::module&);
+void init_MachO_DyldEnvironment_class(py::module&);
 
 // Enums
 void init_MachO_Structures_enum(py::module&);

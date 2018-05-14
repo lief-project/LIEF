@@ -253,6 +253,30 @@ Data Code Entry
 
 ----------
 
+Segment Split Info
+******************
+
+.. doxygenclass:: LIEF::MachO::SegmentSplitInfo
+   :project: lief
+
+----------
+
+Sub-Framework
+*************
+
+.. doxygenclass:: LIEF::MachO::SubFramework
+   :project: lief
+
+----------
+
+Dyld Environment
+****************
+
+.. doxygenclass:: LIEF::MachO::DyldEnvironment
+   :project: lief
+
+----------
+
 Utilities
 *********
 
