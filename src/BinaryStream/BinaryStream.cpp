@@ -218,3 +218,7 @@ std::string BinaryStream::read_mutf8(size_t maxsize) const {
   return u8str_clean;
 }
 
+void BinaryStream::set_endian_swap(bool swap) {
+  this->endian_swap_ = swap;
+}
+
