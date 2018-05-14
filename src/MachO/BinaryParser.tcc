@@ -712,10 +712,10 @@ void BinaryParser::parse_dyldinfo_rebases() {
 			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
           // Count
-          count += this->stream_->read_uleb128();
+          count = this->stream_->read_uleb128();
 
           // Skip
-          skip += this->stream_->read_uleb128();
+          skip = this->stream_->read_uleb128();
 
 
 				  for (size_t i = 0; i < count; ++i) {

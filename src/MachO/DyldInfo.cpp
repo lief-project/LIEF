@@ -308,10 +308,10 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
 
           // Count
-          count          += rebase_stream.read_uleb128();
+          count = rebase_stream.read_uleb128();
 
           // Skip
-          skip           += rebase_stream.read_uleb128();
+          skip = rebase_stream.read_uleb128();
 
           output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
           for (size_t i = 0; i < count; ++i) {
