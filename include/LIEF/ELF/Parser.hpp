@@ -96,6 +96,8 @@ class LIEF_API Parser : public LIEF::Parser {
 
     void init(const std::string& name = "");
 
+    bool should_swap(void) const;
+
     // map, dynamic_symbol.version <----> symbol_version
     // symbol_version comes from symbol_version table
     void link_symbol_version(void);

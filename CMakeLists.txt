@@ -77,6 +77,7 @@ set(LIBLIEF_SOURCE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/Convert.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
 
@@ -102,6 +103,7 @@ set(LIEF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visitor_macros.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/BinaryStream.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/Convert.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp"
 )
 

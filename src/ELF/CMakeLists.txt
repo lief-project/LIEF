@@ -15,6 +15,7 @@ configure_file(
 )
 
 set(LIEF_ELF_SRC
+  "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryArray.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SymbolVersionRequirement.cpp"
