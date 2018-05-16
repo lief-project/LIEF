@@ -27,6 +27,14 @@
 namespace LIEF {
 namespace MachO {
 class LIEF_API DylibCommand : public LoadCommand {
+
+  public:
+  using version_t = std::array<uint16_t, 3>;
+
+  public:
+  static version_t int2version(uint32_t version);
+  static uint32_t version2int(version_t version);
+
   public:
     DylibCommand(void);
     DylibCommand(const dylib_command *cmd);
@@ -38,13 +46,13 @@ class LIEF_API DylibCommand : public LoadCommand {
 
     const std::string& name(void) const;
     uint32_t timestamp(void) const;
-    uint32_t current_version(void) const;
-    uint32_t compatibility_version(void) const;
+    version_t current_version(void) const;
+    version_t compatibility_version(void) const;
 
     void name(const std::string& name);
     void timestamp(uint32_t timestamp);
-    void current_version(uint32_t currentVersion);
-    void compatibility_version(uint32_t compatibilityVersion);
+    void current_version(version_t currentVersion);
+    void compatibility_version(version_t compatibilityVersion);
 
     virtual std::ostream& print(std::ostream& os) const override;
 

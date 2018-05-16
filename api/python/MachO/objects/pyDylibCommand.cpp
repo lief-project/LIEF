@@ -46,14 +46,14 @@ void init_MachO_DylibCommand_class(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property("current_version",
-        static_cast<getter_t<uint32_t>>(&DylibCommand::current_version),
-        static_cast<setter_t<uint32_t>>(&DylibCommand::current_version),
+        static_cast<getter_t<DylibCommand::version_t>>(&DylibCommand::current_version),
+        static_cast<setter_t<DylibCommand::version_t>>(&DylibCommand::current_version),
         "Library's current version",
         py::return_value_policy::reference_internal)
 
     .def_property("compatibility_version",
-        static_cast<getter_t<uint32_t>>(&DylibCommand::compatibility_version),
-        static_cast<setter_t<uint32_t>>(&DylibCommand::compatibility_version),
+        static_cast<getter_t<DylibCommand::version_t>>(&DylibCommand::compatibility_version),
+        static_cast<setter_t<DylibCommand::version_t>>(&DylibCommand::compatibility_version),
         "Library's compatibility version",
         py::return_value_policy::reference_internal)
 

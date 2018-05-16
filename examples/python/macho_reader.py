@@ -102,15 +102,17 @@ def print_commands(binary):
 def print_libraries(binary):
 
     f_title = "|{:<30}|{:<10}|{:<16}|{:<22}|"
-    f_value = "|{:<30}|{:<10d}|{:<16x}|{:<22x}|"
+    f_value = "|{:<30}|{:<10d}|{:<16}|{:<22}|"
     print("== Libraries ==")
     print(f_title.format("Name", "Timestamp", "Current Version", "Compatibility Version"))
     for library in binary.libraries:
+        current_version_str = "{:d}.{:d}.{:d}".format(*library.current_version)
+        compatibility_version_str = "{:d}.{:d}.{:d}".format(*library.compatibility_version)
         print(f_value.format(
             library.name,
             library.timestamp,
-            library.current_version,
-            library.compatibility_version))
+            current_version_str,
+            compatibility_version_str))
     print("")
 
 @exceptions_handler(Exception)

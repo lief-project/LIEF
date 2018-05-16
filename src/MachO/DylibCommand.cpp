@@ -22,6 +22,18 @@
 namespace LIEF {
 namespace MachO {
 
+DylibCommand::version_t DylibCommand::int2version(uint32_t version) {
+  return {{
+    static_cast<uint16_t>(version >> 16),
+    static_cast<uint16_t>((version >> 8) & 0xFF),
+    static_cast<uint16_t>(version & 0xFF),
+  }};
+}
+
+uint32_t DylibCommand::version2int(DylibCommand::version_t version) {
+  return (version[2]) | (version[1] << 8) | (version[0] << 16);
+}
+
 DylibCommand::DylibCommand(void) = default;
 DylibCommand& DylibCommand::operator=(const DylibCommand&) = default;
 DylibCommand::DylibCommand(const DylibCommand&) = default;
@@ -43,12 +55,12 @@ uint32_t DylibCommand::timestamp(void) const {
   return this->timestamp_;
 }
 
-uint32_t DylibCommand::current_version(void) const {
-  return this->currentVersion_;
+DylibCommand::version_t DylibCommand::current_version(void) const {
+  return int2version(this->currentVersion_);
 }
 
-uint32_t DylibCommand::compatibility_version(void) const {
-  return this->compatibilityVersion_;
+DylibCommand::version_t DylibCommand::compatibility_version(void) const {
+  return int2version(this->compatibilityVersion_);
 }
 
 void DylibCommand::name(const std::string& name) {
@@ -59,12 +71,12 @@ void DylibCommand::timestamp(uint32_t timestamp) {
   this->timestamp_ = timestamp;
 }
 
-void DylibCommand::current_version(uint32_t currentVersion) {
-  this->currentVersion_ = currentVersion;
+void DylibCommand::current_version(DylibCommand::version_t currentVersion) {
+  this->currentVersion_ = version2int(currentVersion);
 }
 
-void DylibCommand::compatibility_version(uint32_t compatibilityVersion) {
-  this->compatibilityVersion_ = compatibilityVersion;
+void DylibCommand::compatibility_version(DylibCommand::version_t compatibilityVersion) {
+  this->compatibilityVersion_ = version2int(compatibilityVersion);
 }
 
 
@@ -84,14 +96,24 @@ bool DylibCommand::operator!=(const DylibCommand& rhs) const {
 
 
 std::ostream& DylibCommand::print(std::ostream& os) const {
+  const DylibCommand::version_t& current_version       = this->current_version();
+  const DylibCommand::version_t& compatibility_version = this->compatibility_version();
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
      << std::setw(35) << this->name()
-     << std::setw(10) << this->timestamp()
-     << std::setw(10) << this->current_version()
-     << std::setw(10) << this->compatibility_version();
+     << this->timestamp()
+     << " - "
 
+     << std::dec
+     << current_version[0] << "."
+     << current_version[1] << "."
+     << current_version[2]
+     << " - "
+
+     << compatibility_version[0] << "."
+     << compatibility_version[1] << "."
+     << compatibility_version[2];
   return os;
 }
 
