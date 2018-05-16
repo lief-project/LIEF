@@ -17,8 +17,7 @@ macro(ADD_FLAG_IF_SUPPORTED flag name)
   endif()
 endmacro()
 
-unset(PYTHON_VERSION)
-
+set(PYTHON_VERSION "3.5" CACHE STRING "Python Version to use")
 find_package(PythonLibsNew EXACT ${PYTHON_VERSION} MODULE REQUIRED)
 
 message(STATUS "Python version: ${PYTHON_VERSION}")
