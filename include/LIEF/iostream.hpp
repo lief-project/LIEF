@@ -20,6 +20,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "LIEF/BinaryStream/Convert.hpp"
+
 namespace LIEF {
 class vector_iostream {
   public:
@@ -27,17 +29,28 @@ class vector_iostream {
   using pos_type = std::streampos;
   using off_type = std::streamoff;
 
-  vector_iostream(void);
+  vector_iostream(bool endian_swap=false);
   void reserve(size_t size);
 
   vector_iostream& put(uint8_t c);
   vector_iostream& write(const uint8_t* s, std::streamsize n);
   vector_iostream& write(const std::vector<uint8_t>& s);
   vector_iostream& write(std::vector<uint8_t>&& s);
+  vector_iostream& write(const std::string& s);
+
+  template<typename T>
+  vector_iostream& write_conv(const T& t);
+
+  template<typename T>
+  vector_iostream& write_conv_array(const std::vector<T>& v);
+
+  vector_iostream& align(size_t size, uint8_t val = 0);
 
   vector_iostream& get(std::vector<uint8_t>& c);
 
   vector_iostream& flush();
+
+  size_t size(void) const;
 
   // seeks:
   pos_type tellp(void);
@@ -46,11 +59,44 @@ class vector_iostream {
 
   const std::vector<uint8_t>& raw(void) const;
 
+  void set_endian_swap(bool swap);
+
   private:
   pos_type             current_pos_;
   std::vector<uint8_t> raw_;
+  bool                 endian_swap_{false};
 };
 
+
+template<typename T>
+vector_iostream& vector_iostream::write_conv(const T& t) {
+  const uint8_t *ptr = nullptr;
+  if (this->endian_swap_) {
+    T tmp = t;
+    LIEF::Convert::swap_endian<T>(&tmp);
+    ptr = reinterpret_cast<const uint8_t*>(&tmp);
+  } else {
+    ptr = reinterpret_cast<const uint8_t*>(&t);
+  }
+  this->write(ptr, sizeof(T));
+  return *this;
+}
+
+template<typename T>
+vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
+  for (const T& i: v) {
+    const uint8_t* ptr = nullptr;
+    if (this->endian_swap_) {
+      T t = i;
+      LIEF::Convert::swap_endian<T>(&t);
+      ptr = reinterpret_cast<const uint8_t*>(&t);
+    } else {
+      ptr = reinterpret_cast<const uint8_t*>(&i);
+    }
+    this->write(ptr, sizeof(T));
+  }
+  return *this;
+}
 
 // From https://stackoverflow.com/questions/27336335/c-cout-with-prefix
 class prefixbuf : public std::streambuf {

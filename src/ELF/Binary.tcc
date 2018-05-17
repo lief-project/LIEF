@@ -194,6 +194,35 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
 }
 
 
+// ==================
+// PPC_32 Relocations
+// ==================
+template<>
+void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
+  for (Relocation& relocation : this->relocations()) {
+    if (relocation.address() >= from) {
+      relocation.address(relocation.address() + shift);
+    }
+
+    const RELOC_POWERPC32 type = static_cast<RELOC_POWERPC32>(relocation.type());
+
+    switch (type) {
+      case RELOC_POWERPC32::R_PPC_RELATIVE:
+        {
+          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          this->patch_addend<uint32_t>(relocation, from, shift);
+          break;
+        }
+
+      default:
+        {
+          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+        }
+    }
+  }
+}
+
+
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
 

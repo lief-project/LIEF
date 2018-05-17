@@ -17,7 +17,7 @@
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {
-vector_iostream::vector_iostream(void) = default;
+vector_iostream::vector_iostream(bool endian_swap) : endian_swap_{endian_swap} {}
 
 void vector_iostream::reserve(size_t size) {
   this->raw_.reserve(size);
@@ -72,6 +72,43 @@ vector_iostream& vector_iostream::write(std::vector<uint8_t>&& s) {
 }
 
 
+vector_iostream& vector_iostream::write(const std::string& s) {
+  size_t sz = s.size() + 1; // Size to write (+1 for '\0')
+
+  // Check that we have enough spaces
+  if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + sz)) {
+    this->raw_.resize(static_cast<size_t>(this->tellp()) + sz);
+  }
+
+  auto&& it = std::begin(this->raw_);
+  std::advance(it, static_cast<size_t>(this->tellp()));
+
+  std::move(
+      std::begin(s),
+      std::end(s), it);
+  this->current_pos_ += sz;
+  this->raw_[static_cast<size_t>(this->tellp()) - 1] = 0;
+
+  return *this;
+}
+
+vector_iostream& vector_iostream::align(size_t align_on, uint8_t val) {
+  // Already aligned
+  if (align_on == 0 or (this->current_pos_ % align_on) == 0) {
+    return *this;
+  }
+
+  size_t new_pos = ((static_cast<size_t>(this->tellp()) - 1) / align_on + 1) * align_on;
+  if (this->raw_.size() < new_pos) {
+      this->raw_.resize(new_pos, val);
+  } else {
+    std::fill(this->raw_.begin() + this->current_pos_, this->raw_.begin() + new_pos, val);
+  }
+  this->current_pos_ = new_pos;
+
+  return *this;
+}
+
 vector_iostream& vector_iostream::get(std::vector<uint8_t>& c) {
   c = this->raw_;
   return *this;
@@ -83,6 +120,10 @@ vector_iostream& vector_iostream::flush() {
 
 const std::vector<uint8_t>& vector_iostream::raw(void) const {
   return this->raw_;
+}
+
+size_t vector_iostream::size(void) const {
+  return this->raw_.size();
 }
 
 // seeks:
@@ -124,6 +165,10 @@ vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_ba
   return *this;
 }
 
+
+void vector_iostream::set_endian_swap(bool swap) {
+  this->endian_swap_ = swap;
+}
 
 
 // Prefixbuf
