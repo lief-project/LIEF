@@ -113,6 +113,8 @@ class LIEF_API Builder {
     template<typename ELF_T>
     void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
 
+    bool should_swap(void) const;
+
     mutable vector_iostream ios_;
     Binary*           binary_;
 
