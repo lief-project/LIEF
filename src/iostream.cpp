@@ -82,18 +82,21 @@ vector_iostream& vector_iostream::write(const std::string& s) {
   std::move(
       std::begin(s),
       std::end(s), it);
-  this->raw_.push_back(0);
-
   this->current_pos_ += sz;
+  this->raw_[static_cast<size_t>(this->tellp()) - 1] = 0;
+
   return *this;
 }
 
 vector_iostream& vector_iostream::align(size_t align_on, uint8_t val) {
   if (not(align_on == 0 or (this->current_pos_ % align_on) == 0)) {
-    size_t sz = this->raw_.size();
-    size_t new_sz = ((sz - 1) / align_on + 1) * align_on; 
-    this->raw_.resize(new_sz, val);
-    this->current_pos_ = new_sz;
+    size_t new_pos = ((static_cast<size_t>(this->tellp()) - 1) / align_on + 1) * align_on; 
+    if (this->raw_.size() < new_pos) {
+      this->raw_.resize(new_pos, val);
+    } else {
+      std::fill(this->raw_.begin() + this->current_pos_, this->raw_.begin() + new_pos, val);
+    }
+    this->current_pos_ = new_pos;
   }
   return *this;
 }

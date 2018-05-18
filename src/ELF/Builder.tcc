@@ -1840,7 +1840,7 @@ void Builder::build_notes(void) {
     if (description.size() % sizeof(uint32_t) != 0) {
       uint32_t padded = 0;
       uint8_t *ptr = reinterpret_cast<uint8_t *>(&padded);
-      memcpy(ptr, desc_ptr + i, sizeof(uint32_t) - (description.size() % sizeof(uint32_t)));
+      memcpy(ptr, desc_ptr + i, description.size() % sizeof(uint32_t));
       raw_notes.write_conv<uint32_t>(padded);
     }
   }
