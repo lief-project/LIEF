@@ -621,6 +621,7 @@ void Parser::parse_debug_code_view() {
 //
 void Parser::parse_exports(void) {
   VLOG(VDEBUG) << "[+] Parsing exports";
+  static constexpr uint32_t NB_ENTRIES_LIMIT = 0x1000000;
 
   uint32_t exports_rva    = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA();
   uint32_t exports_offset = this->binary_->rva_to_offset(exports_rva);
@@ -644,6 +645,12 @@ void Parser::parse_exports(void) {
   const uint32_t nbof_name_ptr  = export_directory_table.NumberOfNamePointers;
   const uint16_t *ordinal_table = this->stream_->peek_array<uint16_t>(ordinal_table_offset, nbof_name_ptr, /* check */false);
 
+  if (nbof_name_ptr > NB_ENTRIES_LIMIT) {
+    LOG(ERROR) << "Too many name pointer entries (" << std::dec << nbof_name_ptr << ")";
+    return;
+  }
+
+  // Parse Ordinal name table
   if (ordinal_table == nullptr) {
     LOG(ERROR) << "Ordinal table corrupted";
     return;
@@ -653,7 +660,13 @@ void Parser::parse_exports(void) {
   // Parse Address table
   uint32_t address_table_offset    = this->binary_->rva_to_offset(export_directory_table.ExportAddressTableRVA);
   const uint32_t nbof_addr_entries = export_directory_table.AddressTableEntries;
-  const uint32_t *address_table    = this->stream_->peek_array<uint32_t>(address_table_offset, nbof_addr_entries, /* check */false);
+
+  if (nbof_addr_entries > NB_ENTRIES_LIMIT) {
+    LOG(ERROR) << "Too many address entries (" << std::dec << nbof_addr_entries << ")";
+    return;
+  }
+
+  const uint32_t *address_table = this->stream_->peek_array<uint32_t>(address_table_offset, nbof_addr_entries, /* check */false);
 
   if (address_table == nullptr) {
     LOG(ERROR) << "Address table corrupted";
