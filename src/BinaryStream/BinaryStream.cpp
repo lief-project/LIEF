@@ -15,8 +15,10 @@
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/utils.hpp"
+#include "LIEF/utf8/checked.h"
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 BinaryStream::~BinaryStream(void) = default;
 BinaryStream::BinaryStream(void) = default;
@@ -173,41 +175,44 @@ size_t BinaryStream::align(size_t align_on) const {
 
 
 std::string BinaryStream::read_mutf8(size_t maxsize) const {
-  std::u16string u16str;
+  std::u32string u32str;
 
   for (size_t i = 0; i < maxsize; ++i) {
-    char16_t a = this->read<char>();
+    uint8_t a = this->read<char>();
 
     if (static_cast<uint8_t>(a) < 0x80) {
       if (a == 0) {
         break;
       }
-      u16str.push_back(a);
+      u32str.push_back(a);
     } else if ((a & 0xe0) == 0xc0) {
 
-      int b = this->read<int8_t>() & 0xFF;
+      uint8_t b = this->read<int8_t>() & 0xFF;
 
       if ((b & 0xC0) != 0x80) {
         break;
       }
-      u16str.push_back(static_cast<char16_t>((((a & 0x1F) << 6) | (b & 0x3F))));
+      u32str.push_back(static_cast<char32_t>((((a & 0x1F) << 6) | (b & 0x3F))));
     } else if ((a & 0xf0) == 0xe0) {
-        int b = this->read<int8_t>() & 0xFF;
-        int c = this->read<int8_t>() & 0xFF;
+        uint8_t b = this->read<uint8_t>() & 0xFF;
+        uint8_t c = this->read<uint8_t>() & 0xFF;
 
         if (((b & 0xC0) != 0x80) or ((c & 0xC0) != 0x80)) {
           break;
         }
-        u16str.push_back(static_cast<char16_t>(((a & 0x0F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+        u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
     } else {
       break;
     }
   }
 
-  std::string u8str = LIEF::u16tou8(u16str);
+  std::string u8str;
+  utf8::utf32to8(std::begin(u32str), std::end(u32str), std::back_inserter(u8str));
+
   std::string u8str_clean;
   for (size_t i = 0; i < u8str.size(); ++i) {
-    if (::isprint(u8str[i])) {
+    //if (::isprint(u8str[i])) {
+    if (u8str[i] != -1) {
       u8str_clean.push_back(u8str[i]);
     } else {
       std::stringstream ss;

@@ -106,7 +106,6 @@ void Parser::parse_strings(void) {
     this->stream_->setpos(string_offset);
     size_t str_size = this->stream_->read_uleb128(); // Code point count
     std::string string_value = this->stream_->read_mutf8(str_size);
-    string_value.resize(str_size);
     this->file_->strings_.push_back(new std::string{std::move(string_value)});
   }
 }
