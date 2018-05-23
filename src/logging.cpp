@@ -105,6 +105,7 @@ void Logger::enable(void) {
   el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
   el::Loggers::addFlag(el::LoggingFlag::ImmediateFlush);
   el::Loggers::addFlag(el::LoggingFlag::CreateLoggerAutomatically);
+  el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
   el::Loggers::setLoggingLevel(el::Level::Fatal);
 #endif
 }
