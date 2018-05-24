@@ -16,8 +16,10 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/utf8/checked.h"
+
 #include <iomanip>
 #include <sstream>
+#include <algorithm>
 #include <iostream>
 
 BinaryStream::~BinaryStream(void) = default;
@@ -207,11 +209,18 @@ std::string BinaryStream::read_mutf8(size_t maxsize) const {
   }
 
   std::string u8str;
+
+  std::replace_if(
+      std::begin(u32str),
+      std::end(u32str),
+      [] (const char32_t c) {
+        return not utf8::internal::is_code_point_valid(c);
+      }, '.');
+
   utf8::utf32to8(std::begin(u32str), std::end(u32str), std::back_inserter(u8str));
 
   std::string u8str_clean;
   for (size_t i = 0; i < u8str.size(); ++i) {
-    //if (::isprint(u8str[i])) {
     if (u8str[i] != -1) {
       u8str_clean.push_back(u8str[i]);
     } else {
