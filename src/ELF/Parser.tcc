@@ -339,7 +339,20 @@ void Parser::parse_binary(void) {
           nb_entries,
           this->binary_->sections_[section->link()]);
     }
+
+    it_symtab_section = std::find_if(
+        it_symtab_section + 1,
+        std::end(this->binary_->sections_),
+        [] (const Section* section)
+        {
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_SYMTAB;
+        });
+
+    if (it_symtab_section != std::end(this->binary_->sections_)) {
+      LOG(WARNING) << "Support for multiple SHT_SYMTAB section is not implemented\n";
+    }
   }
+
 
   // Parse Symbols's hash
   // ====================
@@ -418,21 +431,14 @@ void Parser::parse_binary(void) {
   // Try to parse using sections
   if (this->binary_->relocations_.size() == 0) {
     for (const Section& section : this->binary_->sections()) {
-      Section* section_associated = nullptr;
-      if (section.information() > 0 and section.information() < this->binary_->sections_.size()) {
-        const size_t sh_info = section.information();
-        section_associated = this->binary_->sections_[sh_info];
-      }
 
       try {
         if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
 
-          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(
-            section.file_offset(), section.size(), section_associated);
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(section);
         }
         else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
-          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(
-            section.file_offset(), section.size(), section_associated);
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(section);
         }
 
       } catch (const exception& e) {
@@ -1326,17 +1332,34 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
 }
 
 template<typename ELF_T, typename REL_T>
-void Parser::parse_section_relocations(uint64_t offset, uint64_t size, Section *applies_to) {
+void Parser::parse_section_relocations(Section const& section) {
   using Elf_Rel = typename ELF_T::Elf_Rel;
   using Elf_Rela = typename ELF_T::Elf_Rela;
 
   static_assert(std::is_same<REL_T, Elf_Rel>::value or
                 std::is_same<REL_T, Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
 
-  const uint64_t offset_relocations = offset;
+  // A relocation section can reference two other sections: a symbol table,
+  // identified by the sh_info section header entry, and a section to modify,
+  // identified by the sh_link
+  // BUT: in practice sh_info and sh_link are inverted
+  Section* applies_to = nullptr;
+  if (section.information() > 0 and section.information() < this->binary_->sections_.size()) {
+    const size_t sh_info = section.information();
+    applies_to = this->binary_->sections_[sh_info];
+  }
+
+  // FIXME: Use it
+  // Section* section_associated = nullptr;
+  // if (section.link() > 0 and section.link() < this->binary_->sections_.size()) {
+  //   const size_t sh_link = section.link();
+  //   section_associated = this->binary_->sections_[sh_link];
+  // }
+
+  const uint64_t offset_relocations = section.file_offset();
   const uint8_t shift = std::is_same<ELF_T, ELF32>::value ? 8 : 32;
 
-  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  uint32_t nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
   this->stream_->setpos(offset_relocations);

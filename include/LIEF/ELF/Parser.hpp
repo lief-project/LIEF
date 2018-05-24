@@ -189,7 +189,7 @@ class LIEF_API Parser : public LIEF::Parser {
     //! use parse relocations by using LIEF::ELF::Segment. This method parse relocations
     //! that are not reachable through segments (For example Object file).
     template<typename ELF_T, typename REL_T>
-    void parse_section_relocations(uint64_t offset, uint64_t size, Section *applies_to = nullptr);
+    void parse_section_relocations(Section const& section);
 
     //! @brief Parse SymbolVersionRequirement
     //!
