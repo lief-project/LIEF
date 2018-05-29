@@ -744,7 +744,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
 			default:
         {
-          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          LOG(ERROR) << "Unsupported opcode: " << std::showbase << std::hex << static_cast<uint32_t>(opcode);
           break;
         }
     }

@@ -118,6 +118,8 @@ void BinaryParser::init(void) {
 
 
 void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix) {
+  static std::set<uint64_t> visited;
+
   if (this->stream_->pos() >= end) {
     return;
   }
@@ -169,6 +171,11 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
     if (child_node_offet == 0) {
       break;
     }
+
+    if (visited.count(start + child_node_offet) > 0) {
+      break;
+    }
+    visited.insert(start + child_node_offet);
     size_t current_pos = this->stream_->pos();
     this->stream_->setpos(start + child_node_offet);
     this->parse_export_trie(start, end, name);
