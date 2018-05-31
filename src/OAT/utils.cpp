@@ -36,6 +36,10 @@ bool is_oat(const std::string& file) {
     return false;
   }
 
+  if (elf_binary == nullptr) {
+    return false;
+  }
+
   return is_oat(*elf_binary);
 
 }
@@ -46,6 +50,9 @@ bool is_oat(const std::vector<uint8_t>& raw) {
   try {
     elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(raw)};
   } catch (const LIEF::exception&) {
+    return false;
+  }
+  if (elf_binary == nullptr) {
     return false;
   }
   return is_oat(*elf_binary);
@@ -84,6 +91,10 @@ oat_version_t version(const std::string& file) {
     return 0;
   }
 
+  if (elf_binary == nullptr) {
+    return false;
+  }
+
   return version(*elf_binary);
 }
 
@@ -97,6 +108,10 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
     elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(raw)};
   } catch (const LIEF::exception&) {
     return 0;
+  }
+
+  if (elf_binary == nullptr) {
+    return false;
   }
 
   return version(*elf_binary);
