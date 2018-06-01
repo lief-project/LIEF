@@ -311,14 +311,6 @@ Data Code Entry
    :inherited-members:
    :undoc-members:
 
-TYPES
-~~~~~
-
-.. autoclass:: lief.MachO.DataCodeEntry.TYPES
-  :members:
-  :inherited-members:
-  :undoc-members:
-
 ----------
 
 Segment Split Info

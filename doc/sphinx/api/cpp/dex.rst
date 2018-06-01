@@ -4,9 +4,17 @@ DEX
 Utilities
 *********
 
-.. doxygenfunction:: lief::DEX::is_dex
+.. doxygenfunction:: LIEF::DEX::is_dex(const std::string&)
+  :project: lief
 
-.. doxygenfunction:: lief::DEX::version
+.. doxygenfunction:: LIEF::DEX::is_dex(const std::vector<uint8_t>&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::DEX::version(const std::string&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::DEX::version(const std::vector<uint8_t>&)
+  :project: lief
 
 
 ----------

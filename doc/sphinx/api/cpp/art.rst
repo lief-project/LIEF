@@ -4,11 +4,20 @@ ART
 Utilities
 *********
 
-.. doxygenfunction:: lief::ART::is_art
+.. doxygenfunction:: LIEF::ART::is_art(const std::string&)
+  :project: lief
 
-.. doxygenfunction:: lief::ART::version
+.. doxygenfunction:: LIEF::ART::is_art(const std::vector<uint8_t>&)
+  :project: lief
 
-.. doxygenfunction:: lief::ART::android_version
+.. doxygenfunction:: LIEF::ART::version(const std::string&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::ART::version(const std::vector<uint8_t>&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::ART::android_version
+  :project: lief
 
 ----------
 

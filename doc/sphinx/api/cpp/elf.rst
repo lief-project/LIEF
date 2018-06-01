@@ -168,10 +168,10 @@ Android Note
 Utilities
 *********
 
-.. doxygenfunction:: LIEF::ELF::is_elf(const std::string &)
+.. doxygenfunction:: LIEF::ELF::is_elf(const std::string&)
   :project: lief
 
-.. doxygenfunction:: LIEF::ELF::is_elf(const std::vector< uint8_t > &)
+.. doxygenfunction:: LIEF::ELF::is_elf(const std::vector<uint8_t>&)
   :project: lief
 
 ----------
@@ -272,7 +272,7 @@ Symbol bindings
 Symbol visibility
 ~~~~~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::SYMBOL_VISIBILITY
+.. doxygenenum:: LIEF::ELF::ELF_SYMBOL_VISIBILITY
    :project: lief
 
 ----------

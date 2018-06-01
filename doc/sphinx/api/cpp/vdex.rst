@@ -4,11 +4,20 @@ VDEX
 Utilities
 *********
 
-.. doxygenfunction:: lief::VDEX::is_vdex
+.. doxygenfunction:: LIEF::VDEX::is_vdex(const std::string&)
+  :project: lief
 
-.. doxygenfunction:: lief::VDEX::version
+.. doxygenfunction:: LIEF::VDEX::is_vdex(const std::vector<uint8_t>&)
+  :project: lief
 
-.. doxygenfunction:: lief::VDEX::android_version
+.. doxygenfunction:: LIEF::VDEX::version(const std::string&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::VDEX::version(const std::vector<uint8_t>&)
+  :project: lief
+
+.. doxygenfunction:: LIEF::VDEX::android_version
+  :project: lief
 
 ----------
 
