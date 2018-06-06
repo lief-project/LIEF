@@ -65,6 +65,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     uint32_t type(void) const;
     bool     is_rela(void) const;
     bool     is_rel(void) const;
+    uint32_t info(void) const;
     ARCH architecture(void) const;
     RELOCATION_PURPOSES purpose(void) const;
 
@@ -88,6 +89,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     void addend(int64_t addend);
     void type(uint32_t type);
     void purpose(RELOCATION_PURPOSES purpose);
+    void info(uint32_t v);
 
     virtual void accept(Visitor& visitor) const override;
 
@@ -104,6 +106,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     ARCH                architecture_;
     RELOCATION_PURPOSES purpose_;
     Section*            section_{nullptr};
+    uint32_t            info_;
 };
 
 

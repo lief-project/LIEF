@@ -1198,18 +1198,23 @@ void Builder::build_dynamic_relocations(void) {
       idx = static_cast<uint32_t>(std::distance(std::begin(this->binary_->dynamic_symbols_), it_name));
     }
 
-
-    Elf_Xword info = 0;
-    if (std::is_same<ELF_T, ELF32>::value) {
-      info = (static_cast<Elf_Xword>(idx) << 8) | relocation.type();
-    } else {
-      info = (static_cast<Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
+    uint32_t info = relocation.info();
+    if (idx > 0) {
+      info = idx;
     }
+
+    Elf_Xword r_info = 0;
+    if (std::is_same<ELF_T, ELF32>::value) {
+      r_info = (static_cast<Elf_Xword>(info) << 8) | relocation.type();
+    } else {
+      r_info = (static_cast<Elf_Xword>(info) << 32) | (relocation.type() & 0xffffffffL);
+    }
+
 
     if (isRela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relahdr.r_info   = static_cast<Elf_Xword>(info);
+      relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
       content.insert(
@@ -1220,7 +1225,7 @@ void Builder::build_dynamic_relocations(void) {
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relhdr.r_info   = static_cast<Elf_Xword>(info);
+      relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
       content.insert(
           std::end(content),

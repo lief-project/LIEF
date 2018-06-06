@@ -37,7 +37,8 @@ Relocation::Relocation(void) :
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{0}
 {}
 
 
@@ -49,7 +50,8 @@ Relocation::Relocation(const Relocation& other) :
   symbol_{nullptr},
   architecture_{other.architecture_},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{0}
 {
 }
 
@@ -67,7 +69,8 @@ Relocation::Relocation(const Elf32_Rel* header) :
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{static_cast<uint32_t>(header->r_info >> 8)}
 {}
 
 
@@ -79,7 +82,8 @@ Relocation::Relocation(const Elf32_Rela* header) :
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{static_cast<uint32_t>(header->r_info >> 8)}
 {}
 
 
@@ -91,7 +95,8 @@ Relocation::Relocation(const Elf64_Rel* header) :
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{static_cast<uint32_t>(header->r_info >> 32)}
 {}
 
 
@@ -103,7 +108,8 @@ Relocation::Relocation(const Elf64_Rela* header)  :
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{static_cast<uint32_t>(header->r_info >> 32)}
 {}
 
 
@@ -115,7 +121,8 @@ Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isR
   symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr}
+  section_{nullptr},
+  info_{0}
 {}
 
 
@@ -128,6 +135,7 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->architecture_, other.architecture_);
   std::swap(this->purpose_,      other.purpose_);
   std::swap(this->section_,      other.section_);
+  std::swap(this->info_,         other.info_);
 }
 
 int64_t Relocation::addend(void) const {
@@ -190,6 +198,10 @@ bool Relocation::has_symbol(void) const {
 
 bool Relocation::has_section(void) const {
   return this->section_ != nullptr;
+}
+
+uint32_t Relocation::info(void) const {
+  return this->info_;
 }
 
 size_t Relocation::size(void) const {
@@ -272,6 +284,10 @@ void Relocation::addend(int64_t addend) {
 
 void Relocation::type(uint32_t type) {
   this->type_ = type;
+}
+
+void Relocation::info(uint32_t v) {
+  this->info_ = v;
 }
 
 
@@ -358,7 +374,8 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
   os << std::setw(10) << entry.address()
      << std::setw(10) << relocation_type
      << std::setw(4) << std::dec << entry.size()
-     << std::setw(8) << std::hex << entry.addend()
+     << std::setw(10) << std::hex << entry.addend()
+     << std::setw(10) << std::hex << entry.info()
      << std::setw(10) << to_string(entry.purpose())
      << std::setw(10) << symbol_name;
 
