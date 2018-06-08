@@ -80,7 +80,7 @@ TEST_CASE("Test parse", "[pe][builder]")
   builder.write(output_name);
   INFO("Output: " << output_name);
 
-  binary_original.reset(Parser::parse(pe_file_str));
+  binary_original.reset(Parser::parse(pe_file_str).release());
   std::unique_ptr<Binary> binary_built{Parser::parse(output_name)};
 
   SECTION("Checks functions") {
