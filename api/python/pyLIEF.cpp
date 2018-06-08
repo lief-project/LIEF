@@ -21,6 +21,14 @@
   #include "ELF/pyELF.hpp"
 #endif
 
+#if defined(LIEF_PE_SUPPORT)
+  #include "PE/pyPE.hpp"
+#endif
+
+#if defined(LIEF_MACHO_SUPPORT)
+  #include "MachO/pyMachO.hpp"
+#endif
+
 #if defined(LIEF_OAT_SUPPORT)
   #include "OAT/pyOAT.hpp"
 #endif
@@ -68,14 +76,13 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 
   // Init the PE module
 #if defined(LIEF_PE_SUPPORT)
-  init_PE_module(LIEF_module);
+  LIEF::PE::init_python_module(LIEF_module);
 #endif
 
   // Init the MachO  module
 #if defined(LIEF_MACHO_SUPPORT)
-  init_MachO_module(LIEF_module);
+  LIEF::MachO::init_python_module(LIEF_module);
 #endif
-
 
 // Init the OAT  module
 #if defined(LIEF_OAT_SUPPORT)

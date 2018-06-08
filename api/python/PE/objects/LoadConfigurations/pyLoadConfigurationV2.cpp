@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfigurationV2::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfigurationV2::*)(T);
 
-void init_PE_LoadConfigurationV2_class(py::module& m) {
+
+template<>
+void create<LoadConfigurationV2>(py::module& m) {
   py::class_<LoadConfigurationV2, LoadConfigurationV1>(m, "LoadConfigurationV2",
     "" RST_CLASS_REF(lief.PE.LoadConfigurationV1) " enhanced with *code integrity*. \n\n"
     "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
@@ -55,6 +60,7 @@ void init_PE_LoadConfigurationV2_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

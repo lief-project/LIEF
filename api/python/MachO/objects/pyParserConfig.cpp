@@ -19,7 +19,11 @@
 
 #include "pyMachO.hpp"
 
-void init_MachO_ParserConfig_class(py::module& m) {
+namespace LIEF {
+namespace MachO {
+
+template<>
+void create<ParserConfig>(py::module& m) {
 
   py::class_<ParserConfig>(m, "ParserConfig", "Configuration of MachO's parser")
     .def(py::init<>())
@@ -36,11 +40,7 @@ void init_MachO_ParserConfig_class(py::module& m) {
     .def_property_readonly_static("quick",
       [] (py::object /* self */) { return ParserConfig::quick(); },
       "");
+}
 
-
-
-
-
-
-
+}
 }

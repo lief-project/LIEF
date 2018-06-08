@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ResourceIcon::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (ResourceIcon::*)(void) const;
 template<class T>
 using setter_t = void (ResourceIcon::*)(T);
 
-void init_PE_ResourcesIcon_class(py::module& m) {
+
+template<>
+void create<ResourceIcon>(py::module& m) {
   py::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
     .def(py::init<const std::string&>(),
         "Constructor that takes a icon path as input",
@@ -102,5 +106,8 @@ void init_PE_ResourcesIcon_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

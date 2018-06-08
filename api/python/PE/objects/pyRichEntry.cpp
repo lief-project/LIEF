@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (RichEntry::*)(void) const;
 
 template<class T>
 using setter_t = void (RichEntry::*)(T);
 
-void init_PE_RichEntry_class(py::module& m) {
+
+template<>
+void create<RichEntry>(py::module& m) {
   py::class_<RichEntry, LIEF::Object>(m, "RichEntry")
     .def(py::init<>())
     .def(py::init<uint16_t, uint16_t, uint32_t>(),
@@ -66,7 +71,7 @@ void init_PE_RichEntry_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
-
+}
 }

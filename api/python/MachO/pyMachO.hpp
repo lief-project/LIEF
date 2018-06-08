@@ -20,47 +20,68 @@
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Builder.hpp"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl_bind.h>
+
 #include "pyLIEF.hpp"
 
-using namespace LIEF::MachO;
+#define SPECIALIZE_CREATE(X)      \
+  template<>                      \
+  void create<X>(py::module&)
 
-PYBIND11_MAKE_OPAQUE(std::vector<Binary*>)
+#define CREATE(X,Y) create<X>(Y)
 
-void init_MachO_ParserConfig_class(py::module&);
-void init_MachO_Parser_class(py::module&);
-void init_MachO_FatBinary_class(py::module&);
-void init_MachO_Binary_class(py::module&);
-void init_MachO_Header_class(py::module&);
-void init_MachO_LoadCommand_class(py::module&);
-void init_MachO_DylibCommand_class(py::module&);
-void init_MachO_SegmentCommand_class(py::module&);
-void init_MachO_Section_class(py::module&);
-void init_MachO_Symbol_class(py::module&);
-void init_MachO_SymbolCommand_class(py::module&);
-void init_MachO_UUIDCommand_class(py::module&);
-void init_MachO_MainCommand_class(py::module&);
-void init_MachO_DylinkerCommand_class(py::module&);
-void init_MachO_DyldInfo_class(py::module&);
-void init_MachO_FunctionStarts_class(py::module&);
-void init_MachO_SourceVersion_class(py::module&);
-void init_MachO_VersionMin_class(py::module&);
-void init_MachO_Relocation_class(py::module&);
-void init_MachO_RelocationObject_class(py::module&);
-void init_MachO_RelocationDyld_class(py::module&);
-void init_MachO_BindingInfo_class(py::module&);
-void init_MachO_ExportInfo_class(py::module&);
-void init_MachO_ThreadCommand_class(py::module&);
-void init_MachO_RPathCommand_class(py::module&);
-void init_MachO_DynamicSymbolCommand_class(py::module&);
-void init_MachO_CodeSignature_class(py::module&);
-void init_MachO_DataInCode_class(py::module&);
-void init_MachO_DataCodeEntry_class(py::module&);
-void init_MachO_SegmentSplitInfo_class(py::module&);
-void init_MachO_SubFramework_class(py::module&);
-void init_MachO_DyldEnvironment_class(py::module&);
 
-// Enums
-void init_MachO_Structures_enum(py::module&);
+namespace LIEF {
+namespace MachO {
+
+template<class T>
+void create(py::module&);
+
+void init_python_module(py::module& m);
+void init_objects(py::module&);
+void init_enums(py::module&);
+
+
+SPECIALIZE_CREATE(Parser);
+SPECIALIZE_CREATE(ParserConfig);
+
+SPECIALIZE_CREATE(FatBinary);
+SPECIALIZE_CREATE(Binary);
+SPECIALIZE_CREATE(Header);
+SPECIALIZE_CREATE(LoadCommand);
+SPECIALIZE_CREATE(UUIDCommand);
+SPECIALIZE_CREATE(SymbolCommand);
+SPECIALIZE_CREATE(SegmentCommand);
+SPECIALIZE_CREATE(Section);
+SPECIALIZE_CREATE(MainCommand);
+SPECIALIZE_CREATE(DynamicSymbolCommand);
+SPECIALIZE_CREATE(DylinkerCommand);
+SPECIALIZE_CREATE(DylibCommand);
+SPECIALIZE_CREATE(ThreadCommand);
+SPECIALIZE_CREATE(RPathCommand);
+SPECIALIZE_CREATE(Symbol);
+SPECIALIZE_CREATE(Relocation);
+SPECIALIZE_CREATE(RelocationObject);
+SPECIALIZE_CREATE(RelocationDyld);
+SPECIALIZE_CREATE(BindingInfo);
+SPECIALIZE_CREATE(ExportInfo);
+SPECIALIZE_CREATE(FunctionStarts);
+SPECIALIZE_CREATE(CodeSignature);
+SPECIALIZE_CREATE(DataInCode);
+SPECIALIZE_CREATE(DataCodeEntry);
+SPECIALIZE_CREATE(SourceVersion);
+SPECIALIZE_CREATE(VersionMin);
+SPECIALIZE_CREATE(SegmentSplitInfo);
+SPECIALIZE_CREATE(SubFramework);
+SPECIALIZE_CREATE(DyldEnvironment);
+
+}
+}
+
+
+// Opaque containers
+PYBIND11_MAKE_OPAQUE(std::vector<LIEF::MachO::Binary*>)
 
 
 #endif

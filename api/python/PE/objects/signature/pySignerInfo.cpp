@@ -21,6 +21,8 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (SignerInfo::*)(void) const;
@@ -29,7 +31,8 @@ template<class T>
 using setter_t = void (SignerInfo::*)(T);
 
 
-void init_PE_SignerInfo_class(py::module& m) {
+template<>
+void create<SignerInfo>(py::module& m) {
 
   py::class_<SignerInfo, LIEF::Object>(m, "SignerInfo")
 
@@ -68,5 +71,8 @@ void init_PE_SignerInfo_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }
 

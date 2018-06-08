@@ -21,6 +21,8 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ContentInfo::*)(void) const;
@@ -29,7 +31,8 @@ template<class T>
 using setter_t = void (ContentInfo::*)(T);
 
 
-void init_PE_ContentInfo_class(py::module& m) {
+template<>
+void create<ContentInfo>(py::module& m) {
 
   py::class_<ContentInfo, LIEF::Object>(m, "ContentInfo")
 
@@ -58,6 +61,8 @@ void init_PE_ContentInfo_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
 
+}
 }
 

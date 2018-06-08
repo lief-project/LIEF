@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfigurationV4::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfigurationV4::*)(T);
 
-void init_PE_LoadConfigurationV4_class(py::module& m) {
+
+template<>
+void create<LoadConfigurationV4>(py::module& m) {
   py::class_<LoadConfigurationV4, LoadConfigurationV3>(m, "LoadConfigurationV4",
     "" RST_CLASS_REF(lief.PE.LoadConfigurationV3) " enhanced with:\n\n"
     "\t\t * Kind of dynamic relocations\n\n"
@@ -62,6 +67,7 @@ void init_PE_LoadConfigurationV4_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

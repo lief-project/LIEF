@@ -21,7 +21,12 @@
 #include <sstream>
 
 
-void init_PE_Builder_class(py::module& m) {
+namespace LIEF {
+namespace PE {
+
+template<>
+void create<Builder>(py::module& m) {
+
   py::class_<Builder>(m, "Builder")
     .def(py::init<Binary*>(),
         "Constructor that takes a " RST_CLASS_REF(lief.PE.Binary) "",
@@ -94,6 +99,7 @@ void init_PE_Builder_class(py::module& m) {
           return str;
         });
 
+}
 
-
+}
 }

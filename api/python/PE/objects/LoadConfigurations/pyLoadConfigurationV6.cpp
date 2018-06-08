@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfigurationV6::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfigurationV6::*)(T);
 
-void init_PE_LoadConfigurationV6_class(py::module& m) {
+
+template<>
+void create<LoadConfigurationV6>(py::module& m) {
   py::class_<LoadConfigurationV6, LoadConfigurationV5>(m, "LoadConfigurationV6",
     "" RST_CLASS_REF(lief.PE.LoadConfigurationV5) " enhanced with Hotpatch and improved RFG. \n\n"
     "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
@@ -61,6 +66,7 @@ void init_PE_LoadConfigurationV6_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

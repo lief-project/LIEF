@@ -32,7 +32,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDataCodeEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySubFramework.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDyldEnvironment.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyMachOStructures.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
 )
 
 set(LIEF_PYTHON_MACHO_HDR

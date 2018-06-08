@@ -21,13 +21,18 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (DataDirectory::*)(void) const;
 
 template<class T>
 using setter_t = void (DataDirectory::*)(T);
 
-void init_PE_DataDirectory_class(py::module& m) {
+
+template<>
+void create<DataDirectory>(py::module& m) {
   py::class_<DataDirectory, LIEF::Object>(m, "DataDirectory")
     .def(py::init<>())
     .def_property("rva",
@@ -68,6 +73,7 @@ void init_PE_DataDirectory_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
 
-
+}
 }

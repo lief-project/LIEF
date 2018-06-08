@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ResourceVersion::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (ResourceVersion::*)(void) const;
 template<class T>
 using setter_t = void (ResourceVersion::*)(T);
 
-void init_PE_ResourceVersion_class(py::module& m) {
+
+template<>
+void create<ResourceVersion>(py::module& m) {
   py::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
       "Modelization of the data associated with the ``RT_VERSION`` entry\n"
       "See: `VS_VERSIONINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms647001(v=vs.85).aspx>`_")
@@ -102,5 +106,8 @@ void init_PE_ResourceVersion_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

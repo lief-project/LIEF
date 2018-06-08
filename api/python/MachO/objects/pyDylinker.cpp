@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DylinkerCommand::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (DylinkerCommand::*)(T);
 
 
-void init_MachO_DylinkerCommand_class(py::module& m) {
+template<>
+void create<DylinkerCommand>(py::module& m) {
 
   py::class_<DylinkerCommand, LoadCommand>(m, "DylinkerCommand")
     .def_property("name",
@@ -56,4 +60,7 @@ void init_MachO_DylinkerCommand_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

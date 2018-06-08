@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (TLS::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_t = void (TLS::*)(T);
 template<class T>
 using no_const_getter = T (TLS::*)(void);
 
-void init_PE_TLS_class(py::module& m) {
+
+template<>
+void create<TLS>(py::module& m) {
   py::class_<TLS, LIEF::Object>(m, "TLS")
     .def(py::init<>(),
         "Default constructor")
@@ -124,6 +129,7 @@ void init_PE_TLS_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

@@ -21,6 +21,8 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (x509::*)(void) const;
@@ -29,7 +31,8 @@ template<class T>
 using setter_t = void (x509::*)(T);
 
 
-void init_PE_x509_class(py::module& m) {
+template<>
+void create<x509>(py::module& m) {
 
   py::class_<x509, LIEF::Object>(m, "x509")
 
@@ -78,6 +81,8 @@ void init_PE_x509_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
 
+}
 }
 

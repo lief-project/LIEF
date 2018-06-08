@@ -23,6 +23,10 @@
 
 #include "pyMachO.hpp"
 
+
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DylibCommand::*)(void) const;
 
@@ -30,7 +34,8 @@ template<class T>
 using setter_t = void (DylibCommand::*)(T);
 
 
-void init_MachO_DylibCommand_class(py::module& m) {
+template<>
+void create<DylibCommand>(py::module& m) {
 
   py::class_<DylibCommand, LoadCommand>(m, "DylibCommand")
     .def_property("name",
@@ -75,4 +80,7 @@ void init_MachO_DylibCommand_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

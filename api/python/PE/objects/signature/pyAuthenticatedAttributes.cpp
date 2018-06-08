@@ -23,6 +23,8 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (AuthenticatedAttributes::*)(void) const;
@@ -31,7 +33,8 @@ template<class T>
 using setter_t = void (AuthenticatedAttributes::*)(T);
 
 
-void init_PE_AuthenticatedAttributes_class(py::module& m) {
+template<>
+void create<AuthenticatedAttributes>(py::module& m) {
 
   py::class_<AuthenticatedAttributes, LIEF::Object>(m, "AuthenticatedAttributes")
 
@@ -63,6 +66,8 @@ void init_PE_AuthenticatedAttributes_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
 
+}
 }
 

@@ -17,72 +17,78 @@
 
 #include "pyPE.hpp"
 
-//
-// PE modules
-//
-void init_PE_module(py::module& m) {
+namespace LIEF {
+namespace PE {
+
+void init_python_module(py::module& m) {
   py::module LIEF_PE_module = m.def_submodule("PE", "Python API for PE");
+
+  init_enums(LIEF_PE_module);
+  init_objects(LIEF_PE_module);
+  init_utils(LIEF_PE_module);
 
  LIEF_PE_module.def("oid_to_string",
       &oid_to_string,
       "Convert an OID to a human-readable string");
 
 
-  // Enums
-  init_PE_Structures_enum(LIEF_PE_module);
-
-  // utils
-  init_PE_utils(LIEF_PE_module);
-
-  // Objects
-  init_PE_Parser_class(LIEF_PE_module);
-  init_PE_Binary_class(LIEF_PE_module);
-  init_PE_DataDirectory_class(LIEF_PE_module);
-  init_PE_Header_class(LIEF_PE_module);
-  init_PE_DosHeader_class(LIEF_PE_module);
-  init_PE_RichHeader_class(LIEF_PE_module);
-  init_PE_RichEntry_class(LIEF_PE_module);
-  init_PE_OptionalHeader_class(LIEF_PE_module);
-  init_PE_Section_class(LIEF_PE_module);
-  init_PE_Import_class(LIEF_PE_module);
-  init_PE_ImportEntry_class(LIEF_PE_module);
-  init_PE_TLS_class(LIEF_PE_module);
-  init_PE_Symbol_class(LIEF_PE_module);
-  init_PE_Relocation_class(LIEF_PE_module);
-  init_PE_RelocationEntry_class(LIEF_PE_module);
-  init_PE_Export_class(LIEF_PE_module);
-  init_PE_ExportEntry_class(LIEF_PE_module);
-  init_PE_Builder_class(LIEF_PE_module);
-  init_PE_Debug_class(LIEF_PE_module);
-  init_PE_CodeView_class(LIEF_PE_module);
-  init_PE_CodeViewPDB_class(LIEF_PE_module);
-  init_PE_CodeIntegrity_class(LIEF_PE_module);
-  init_PE_load_configurations(LIEF_PE_module);
-
-  init_PE_Signature_class(LIEF_PE_module);
-  init_PE_ContentInfo_class(LIEF_PE_module);
-  init_PE_x509_class(LIEF_PE_module);
-  init_PE_SignerInfo_class(LIEF_PE_module);
-  init_PE_AuthenticatedAttributes_class(LIEF_PE_module);
-
-  init_PE_ResourceNode_class(LIEF_PE_module);
-  init_PE_ResourceData_class(LIEF_PE_module);
-  init_PE_ResourceDirectory_class(LIEF_PE_module);
-
-  init_PE_ResourcesIcon_class(LIEF_PE_module);
-
-  init_PE_ResourceVersion_class(LIEF_PE_module);
-  init_PE_ResourceFixedFileInfo_class(LIEF_PE_module);
-  init_PE_ResourceVarFileInfo_class(LIEF_PE_module);
-  init_PE_ResourceStringFileInfo_class(LIEF_PE_module);
-  init_PE_LangCodeItem_class(LIEF_PE_module);
-
-  init_PE_ResourcesDialog_class(LIEF_PE_module);
-  init_PE_ResourcesDialogItem_class(LIEF_PE_module);
-
-  init_PE_ResourcesManager_class(LIEF_PE_module);
-
   // Opaque containers
   py::bind_vector<std::vector<LangCodeItem>>(m, "ListLangCodeItem");
   py::bind_map<dict_langcode_item>(m, "DictStringVersion");
+}
+
+void init_objects(py::module& m) {
+  CREATE(Parser, m);
+  CREATE(Binary, m);
+  CREATE(DosHeader, m);
+  CREATE(Header, m);
+  CREATE(OptionalHeader, m);
+  CREATE(RichHeader, m);
+  CREATE(RichEntry, m);
+  CREATE(DataDirectory, m);
+  CREATE(Section, m);
+  CREATE(Relocation, m);
+  CREATE(RelocationEntry, m);
+  CREATE(Export, m);
+  CREATE(ExportEntry, m);
+  CREATE(TLS, m);
+  CREATE(Symbol, m);
+  CREATE(Debug, m);
+  CREATE(CodeView, m);
+  CREATE(CodeViewPDB, m);
+  CREATE(Import, m);
+  CREATE(ImportEntry, m);
+  CREATE(ResourcesManager, m);
+  CREATE(ResourceNode, m);
+  CREATE(ResourceData, m);
+  CREATE(ResourceDirectory, m);
+  CREATE(ResourceVersion, m);
+  CREATE(ResourceStringFileInfo, m);
+  CREATE(ResourceFixedFileInfo, m);
+  CREATE(ResourceVarFileInfo, m);
+  CREATE(LangCodeItem, m);
+  CREATE(ResourceIcon, m);
+  CREATE(ResourceDialog, m);
+  CREATE(ResourceDialogItem, m);
+  CREATE(Signature, m);
+  CREATE(x509, m);
+  CREATE(SignerInfo, m);
+  CREATE(ContentInfo, m);
+  CREATE(AuthenticatedAttributes, m);
+  CREATE(CodeIntegrity, m);
+
+  CREATE(LoadConfiguration, m);
+  CREATE(LoadConfigurationV0, m);
+  CREATE(LoadConfigurationV1, m);
+  CREATE(LoadConfigurationV2, m);
+  CREATE(LoadConfigurationV3, m);
+  CREATE(LoadConfigurationV4, m);
+  CREATE(LoadConfigurationV5, m);
+  CREATE(LoadConfigurationV6, m);
+  CREATE(LoadConfigurationV7, m);
+
+}
+
+
+}
 }

@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Import::*)(void) const;
 
@@ -33,7 +36,9 @@ using no_const_getter = T (Import::*)(void);
 template<class T, class P>
 using no_const_func = T (Import::*)(P);
 
-void init_PE_Import_class(py::module& m) {
+
+template<>
+void create<Import>(py::module& m) {
   py::class_<Import, LIEF::Object>(m, "Import")
     .def(py::init<>(),
         "Default constructor with a library name")
@@ -117,6 +122,6 @@ void init_PE_Import_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

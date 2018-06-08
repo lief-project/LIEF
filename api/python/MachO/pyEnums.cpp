@@ -20,7 +20,10 @@
 
 #define PY_ENUM(x) LIEF::MachO::to_string(x), x
 
-void init_MachO_Structures_enum(py::module& m) {
+namespace LIEF {
+namespace MachO {
+
+void init_enums(py::module& m) {
 
   LIEF::enum_<LIEF::MachO::CPU_TYPES>(m, "CPU_TYPES")
     .value(PY_ENUM(LIEF::MachO::CPU_TYPES::CPU_TYPE_ANY))
@@ -301,16 +304,7 @@ void init_MachO_Structures_enum(py::module& m) {
     .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN))
     .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT))
     .value(PY_ENUM(LIEF::MachO::SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB));
+}
 
-
-
-
-
-
-
-
-
-
-
-
+}
 }

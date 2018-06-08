@@ -21,7 +21,8 @@
 
 #include "pyMachO.hpp"
 
-
+namespace LIEF {
+namespace MachO {
 
 template<class T>
 using getter_t = T (Section::*)(void) const;
@@ -32,7 +33,9 @@ using setter_t = void (Section::*)(T);
 template<class T>
 using no_const_getter = T (Section::*)(void);
 
-void init_MachO_Section_class(py::module& m) {
+
+template<>
+void create<Section>(py::module& m) {
 
   py::class_<Section, LIEF::Section>(m, "Section")
     .def(py::init<>())
@@ -82,5 +85,6 @@ void init_MachO_Section_class(py::module& m) {
 
 }
 
-
+}
+}
 

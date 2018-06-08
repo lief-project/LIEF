@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (ThreadCommand::*)(void) const;
 
@@ -30,7 +33,9 @@ template<class T>
 using setter_t = void (ThreadCommand::*)(T);
 
 
-void init_MachO_ThreadCommand_class(py::module& m) {
+
+template<>
+void create<ThreadCommand>(py::module& m) {
 
   py::class_<ThreadCommand, LoadCommand>(m, "ThreadCommand")
 
@@ -75,4 +80,7 @@ void init_MachO_ThreadCommand_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

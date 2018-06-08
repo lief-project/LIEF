@@ -22,6 +22,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (SegmentCommand::*)(void) const;
 
@@ -31,7 +34,9 @@ using setter_t = void (SegmentCommand::*)(T);
 template<class T>
 using no_const_getter = T (SegmentCommand::*)(void);
 
-void init_MachO_SegmentCommand_class(py::module& m) {
+
+template<>
+void create<SegmentCommand>(py::module& m) {
 
   py::class_<SegmentCommand, LoadCommand>(m, "SegmentCommand")
     .def(py::init<>())
@@ -128,5 +133,7 @@ void init_MachO_SegmentCommand_class(py::module& m) {
 
 }
 
+}
+}
 
 

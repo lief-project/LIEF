@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (CodeIntegrity::*)(void) const;
 
 template<class T>
 using setter_t = void (CodeIntegrity::*)(T);
 
-void init_PE_CodeIntegrity_class(py::module& m) {
+
+template<>
+void create<CodeIntegrity>(py::module& m) {
   py::class_<CodeIntegrity, LIEF::Object>(m, "CodeIntegrity")
     .def(py::init<>())
 
@@ -67,6 +72,7 @@ void init_PE_CodeIntegrity_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

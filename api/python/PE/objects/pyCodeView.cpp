@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (CodeView::*)(void) const;
 
 template<class T>
 using setter_t = void (CodeView::*)(T);
 
-void init_PE_CodeView_class(py::module& m) {
+
+template<>
+void create<CodeView>(py::module& m) {
   py::class_<CodeView, LIEF::Object>(m, "CodeView")
     .def_property_readonly("cv_signature",
         static_cast<getter_t<CODE_VIEW_SIGNATURES>>(&CodeView::cv_signature),
@@ -46,6 +51,7 @@ void init_PE_CodeView_class(py::module& m) {
           stream << cv;
           return stream.str();
         });
+}
 
-
+}
 }

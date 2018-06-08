@@ -22,13 +22,18 @@
 #include <sstream>
 
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ResourceFixedFileInfo::*)(void) const;
 
 template<class T>
 using setter_t = void (ResourceFixedFileInfo::*)(T);
 
-void init_PE_ResourceFixedFileInfo_class(py::module& m) {
+
+template<>
+void create<ResourceFixedFileInfo>(py::module& m) {
   py::class_<ResourceFixedFileInfo, LIEF::Object>(m, "ResourceFixedFileInfo",
       "Modelization of the `VS_FIXEDFILEINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997(v=vs.85).aspx>`_")
 
@@ -124,5 +129,8 @@ void init_PE_ResourceFixedFileInfo_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

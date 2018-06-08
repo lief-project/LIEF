@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (CodeViewPDB::*)(void) const;
 
 template<class T>
 using setter_t = void (CodeViewPDB::*)(T);
 
-void init_PE_CodeViewPDB_class(py::module& m) {
+
+template<>
+void create<CodeViewPDB>(py::module& m) {
   py::class_<CodeViewPDB, CodeView>(m, "CodeViewPDB")
     .def(py::init<>())
 
@@ -56,6 +61,7 @@ void init_PE_CodeViewPDB_class(py::module& m) {
           stream << cv;
           return stream.str();
         });
+}
 
-
+}
 }

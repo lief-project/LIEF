@@ -22,13 +22,18 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ImportEntry::*)(void) const;
 
 template<class T>
 using setter_t = void (ImportEntry::*)(T);
 
-void init_PE_ImportEntry_class(py::module& m) {
+
+template<>
+void create<ImportEntry>(py::module& m) {
   py::class_<ImportEntry, LIEF::Object>(m, "ImportEntry")
     .def(py::init<>())
 
@@ -88,6 +93,6 @@ void init_PE_ImportEntry_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

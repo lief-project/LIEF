@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ResourceStringFileInfo::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (ResourceStringFileInfo::*)(void) const;
 template<class T>
 using setter_t = void (ResourceStringFileInfo::*)(T);
 
-void init_PE_ResourceStringFileInfo_class(py::module& m) {
+
+template<>
+void create<ResourceStringFileInfo>(py::module& m) {
   py::class_<ResourceStringFileInfo, LIEF::Object>(m, "ResourceStringFileInfo",
       "Modelization of the ``StringFileInfo`` structure\n\n"
       "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646989(v=vs.85).aspx")
@@ -67,5 +71,8 @@ void init_PE_ResourceStringFileInfo_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

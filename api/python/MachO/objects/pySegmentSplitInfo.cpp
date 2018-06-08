@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (SegmentSplitInfo::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (SegmentSplitInfo::*)(T);
 
 
-void init_MachO_SegmentSplitInfo_class(py::module& m) {
+template<>
+void create<SegmentSplitInfo>(py::module& m) {
 
   py::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo")
 
@@ -60,5 +64,7 @@ void init_MachO_SegmentSplitInfo_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
+}
 }

@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (SourceVersion::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (SourceVersion::*)(T);
 
 
-void init_MachO_SourceVersion_class(py::module& m) {
+template<>
+void create<SourceVersion>(py::module& m) {
 
   py::class_<SourceVersion, LoadCommand>(m, "SourceVersion")
 
@@ -57,5 +61,7 @@ void init_MachO_SourceVersion_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
+}
 }

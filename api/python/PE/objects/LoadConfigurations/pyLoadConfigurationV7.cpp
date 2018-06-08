@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfigurationV7::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfigurationV7::*)(T);
 
-void init_PE_LoadConfigurationV7_class(py::module& m) {
+template<>
+void create<LoadConfigurationV7>(py::module& m) {
   py::class_<LoadConfigurationV7, LoadConfigurationV6>(m, "LoadConfigurationV7")
     .def(py::init<>())
 
@@ -57,6 +62,7 @@ void init_PE_LoadConfigurationV7_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

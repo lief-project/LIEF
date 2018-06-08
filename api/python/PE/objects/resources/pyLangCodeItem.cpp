@@ -22,13 +22,18 @@
 #include <sstream>
 
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LangCodeItem::*)(void) const;
 
 template<class T>
 using setter_t = void (LangCodeItem::*)(T);
 
-void init_PE_LangCodeItem_class(py::module& m) {
+
+template<>
+void create<LangCodeItem>(py::module& m) {
   py::class_<LangCodeItem, LIEF::Object>(m, "LangCodeItem",
       "Class which modelize the childs of the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) "\n\n"
       "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646992(v=vs.85).aspx")
@@ -87,5 +92,8 @@ void init_PE_LangCodeItem_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

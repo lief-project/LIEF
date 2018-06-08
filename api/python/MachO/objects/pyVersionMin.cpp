@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (VersionMin::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (VersionMin::*)(T);
 
 
-void init_MachO_VersionMin_class(py::module& m) {
+template<>
+void create<VersionMin>(py::module& m) {
 
   py::class_<VersionMin, LoadCommand>(m, "VersionMin")
 
@@ -65,4 +69,7 @@ void init_MachO_VersionMin_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

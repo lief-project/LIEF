@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Relocation::*)(void) const;
 
@@ -30,7 +33,8 @@ using setter_t = void (Relocation::*)(T);
 template<class T>
 using it_t = T (Relocation::*)(void);
 
-void init_PE_Relocation_class(py::module& m) {
+template<>
+void create<Relocation>(py::module& m) {
   py::class_<Relocation, LIEF::Object>(m, "Relocation")
     .def(py::init<>())
 
@@ -62,6 +66,6 @@ void init_PE_Relocation_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

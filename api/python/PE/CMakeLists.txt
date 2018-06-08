@@ -1,6 +1,5 @@
 set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/init_load_configurations.cpp"
 
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceNode.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyResourceData.cpp"
@@ -44,7 +43,7 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyImportEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbol.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyTLS.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyPEStructures.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyPE.cpp"
 )
 

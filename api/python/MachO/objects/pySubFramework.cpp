@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (SubFramework::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (SubFramework::*)(T);
 
 
-void init_MachO_SubFramework_class(py::module& m) {
+template<>
+void create<SubFramework>(py::module& m) {
 
   py::class_<SubFramework, LoadCommand>(m, "SubFramework")
 
@@ -56,4 +60,7 @@ void init_MachO_SubFramework_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

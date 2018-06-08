@@ -20,6 +20,8 @@
 
 #include "pyPE.hpp"
 
+namespace LIEF {
+namespace PE {
 
 template<class T, class P>
 using no_const_func = T (Binary::*)(P);
@@ -33,7 +35,10 @@ using getter_t = T (Binary::*)(void) const;
 template<class T>
 using setter_t = void (Binary::*)(T);
 
-void init_PE_Binary_class(py::module& m) {
+
+template<>
+void create<Binary>(py::module& m) {
+
   py::class_<Binary, LIEF::Binary>(m, "Binary")
     .def(py::init<const std::string &, PE_TYPE>())
 
@@ -286,4 +291,7 @@ void init_PE_Binary_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

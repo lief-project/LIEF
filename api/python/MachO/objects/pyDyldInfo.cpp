@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DyldInfo::*)(void) const;
 
@@ -32,7 +35,9 @@ using setter_t = void (DyldInfo::*)(T);
 template<class T>
 using no_const_getter = T (DyldInfo::*)(void);
 
-void init_MachO_DyldInfo_class(py::module& m) {
+
+template<>
+void create<DyldInfo>(py::module& m) {
 
   py::class_<DyldInfo, LoadCommand>(m, "DyldInfo")
 
@@ -276,4 +281,7 @@ void init_MachO_DyldInfo_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

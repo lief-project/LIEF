@@ -23,6 +23,10 @@
 
 #include "pyMachO.hpp"
 
+
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (BindingInfo::*)(void) const;
 
@@ -30,7 +34,8 @@ template<class T>
 using setter_t = void (BindingInfo::*)(T);
 
 
-void init_MachO_BindingInfo_class(py::module& m) {
+template<>
+void create<BindingInfo>(py::module& m) {
 
   py::class_<BindingInfo, LIEF::Object>(m, "BindingInfo")
 
@@ -118,4 +123,7 @@ void init_MachO_BindingInfo_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

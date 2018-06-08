@@ -19,7 +19,11 @@
 
 #include <string>
 
-void init_PE_Parser_class(py::module& m) {
+namespace LIEF {
+namespace PE {
+
+template<>
+void create<Parser>(py::module& m) {
 
     m.def("parse",
     static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
@@ -70,4 +74,7 @@ void init_PE_Parser_class(py::module& m) {
       "io"_a,
       "name"_a = "",
       py::return_value_policy::take_ownership);
+}
+
+}
 }

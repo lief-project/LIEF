@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (RelocationDyld::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (RelocationDyld::*)(T);
 
 
-void init_MachO_RelocationDyld_class(py::module& m) {
+template<>
+void create<RelocationDyld>(py::module& m) {
 
   py::class_<RelocationDyld, Relocation>(m, "RelocationDyld")
 
@@ -50,4 +54,7 @@ void init_MachO_RelocationDyld_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

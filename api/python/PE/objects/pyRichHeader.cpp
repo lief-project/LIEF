@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (RichHeader::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_t = void (RichHeader::*)(T);
 template<class T>
 using no_const_getter = T (RichHeader::*)(void);
 
-void init_PE_RichHeader_class(py::module& m) {
+
+template<>
+void create<RichHeader>(py::module& m) {
   py::class_<RichHeader>(m, "RichHeader")
     .def(py::init<>())
     .def_property("key",
@@ -70,7 +75,7 @@ void init_PE_RichHeader_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
-
+}
 }

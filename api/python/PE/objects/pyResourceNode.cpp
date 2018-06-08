@@ -22,13 +22,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ResourceNode::*)(void) const;
 
 template<class T>
 using setter_t = void (ResourceNode::*)(T);
 
-void init_PE_ResourceNode_class(py::module& m) {
+
+template<>
+void create<ResourceNode>(py::module& m) {
   py::class_<ResourceNode, LIEF::Object>(m, "ResourceNode")
 
     .def_property("id",
@@ -103,7 +108,7 @@ void init_PE_ResourceNode_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
-
+}
 }

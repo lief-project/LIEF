@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ExportEntry::*)(void) const;
 
 template<class T>
 using setter_t = void (ExportEntry::*)(T);
 
-void init_PE_ExportEntry_class(py::module& m) {
+
+template<>
+void create<ExportEntry>(py::module& m) {
   py::class_<ExportEntry, LIEF::Object>(m, "ExportEntry")
     .def(py::init<>())
 
@@ -63,6 +68,6 @@ void init_PE_ExportEntry_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

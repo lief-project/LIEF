@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (CodeSignature::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (CodeSignature::*)(T);
 
 
-void init_MachO_CodeSignature_class(py::module& m) {
+template<>
+void create<CodeSignature>(py::module& m) {
 
   py::class_<CodeSignature, LoadCommand>(m, "CodeSignature")
 
@@ -61,4 +65,7 @@ void init_MachO_CodeSignature_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

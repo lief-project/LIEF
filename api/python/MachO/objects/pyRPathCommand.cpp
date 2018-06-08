@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (RPathCommand::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (RPathCommand::*)(T);
 
 
-void init_MachO_RPathCommand_class(py::module& m) {
+template<>
+void create<RPathCommand>(py::module& m) {
 
   py::class_<RPathCommand, LoadCommand>(m, "RPathCommand")
 
@@ -58,4 +62,7 @@ void init_MachO_RPathCommand_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

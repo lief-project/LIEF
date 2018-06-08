@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (FunctionStarts::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (FunctionStarts::*)(T);
 
 
-void init_MachO_FunctionStarts_class(py::module& m) {
+template<>
+void create<FunctionStarts>(py::module& m) {
 
   py::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts")
 
@@ -77,4 +81,7 @@ void init_MachO_FunctionStarts_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

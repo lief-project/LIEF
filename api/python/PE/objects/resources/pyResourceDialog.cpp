@@ -22,13 +22,18 @@
 #include <sstream>
 
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ResourceDialog::*)(void) const;
 
 template<class T>
 using setter_t = void (ResourceDialog::*)(T);
 
-void init_PE_ResourcesDialog_class(py::module& m) {
+
+template<>
+void create<ResourceDialog>(py::module& m) {
   py::class_<ResourceDialog, LIEF::Object>(m, "ResourceDialog")
 
     .def_property_readonly("is_extended",
@@ -154,5 +159,8 @@ void init_PE_ResourcesDialog_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (ResourceData::*)(void) const;
 
 template<class T>
 using setter_t = void (ResourceData::*)(T);
 
-void init_PE_ResourceData_class(py::module& m) {
+
+template<>
+void create<ResourceData>(py::module& m) {
   py::class_<ResourceData, ResourceNode>(m, "ResourceData")
     .def(py::init<>(),
         "Default constructor")
@@ -71,4 +76,7 @@ void init_PE_ResourceData_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }

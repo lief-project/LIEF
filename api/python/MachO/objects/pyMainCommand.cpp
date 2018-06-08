@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (MainCommand::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (MainCommand::*)(T);
 
 
-void init_MachO_MainCommand_class(py::module& m) {
+template<>
+void create<MainCommand>(py::module& m) {
 
   py::class_<MainCommand, LoadCommand>(m, "MainCommand")
 
@@ -64,4 +68,7 @@ void init_MachO_MainCommand_class(py::module& m) {
           return str;
         });
 
+}
+
+}
 }

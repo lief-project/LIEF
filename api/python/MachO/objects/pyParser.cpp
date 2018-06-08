@@ -20,7 +20,11 @@
 
 #include "pyMachO.hpp"
 
-void init_MachO_Parser_class(py::module& m) {
+namespace LIEF {
+namespace MachO {
+
+template<>
+void create<Parser>(py::module& m) {
 
   // Parser (Parser)
   m.def("parse",
@@ -81,6 +85,7 @@ void init_MachO_Parser_class(py::module& m) {
       "name"_a = "",
       "config"_a = ParserConfig::quick(),
       py::return_value_policy::take_ownership);
+}
 
-
+}
 }

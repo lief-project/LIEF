@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ResourceVarFileInfo::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (ResourceVarFileInfo::*)(void) const;
 template<class T>
 using setter_t = void (ResourceVarFileInfo::*)(T);
 
-void init_PE_ResourceVarFileInfo_class(py::module& m) {
+
+template<>
+void create<ResourceVarFileInfo>(py::module& m) {
   py::class_<ResourceVarFileInfo, LIEF::Object>(m, "ResourceVarFileInfo",
       "This object describes information about languages supported by the application")
 
@@ -67,5 +71,8 @@ void init_PE_ResourceVarFileInfo_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }
 

@@ -20,7 +20,11 @@
 #include "pyMachO.hpp"
 
 
-void init_MachO_FatBinary_class(py::module& m) {
+namespace LIEF {
+namespace MachO {
+
+template<>
+void create<FatBinary>(py::module& m) {
 
 
   py::class_<FatBinary>(m, "FatBinary")
@@ -59,3 +63,5 @@ void init_MachO_FatBinary_class(py::module& m) {
 
 }
 
+}
+}

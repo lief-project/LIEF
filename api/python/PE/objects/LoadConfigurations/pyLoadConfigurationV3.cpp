@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfigurationV3::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfigurationV3::*)(T);
 
-void init_PE_LoadConfigurationV3_class(py::module& m) {
+
+template<>
+void create<LoadConfigurationV3>(py::module& m) {
   py::class_<LoadConfigurationV3, LoadConfigurationV2>(m, "LoadConfigurationV3",
     "" RST_CLASS_REF(lief.PE.LoadConfigurationV2) " with Control Flow Guard improved. \n\n"
     "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
@@ -70,6 +75,7 @@ void init_PE_LoadConfigurationV3_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

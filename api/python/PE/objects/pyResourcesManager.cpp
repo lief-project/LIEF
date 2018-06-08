@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
 
 template<class T>
 using getter_t = T (ResourcesManager::*)(void) const;
@@ -31,7 +33,9 @@ using setter_t = void (ResourcesManager::*)(T);
 template<class T, class P>
 using no_const_func = T (ResourcesManager::*)(P);
 
-void init_PE_ResourcesManager_class(py::module& m) {
+
+template<>
+void create<ResourcesManager>(py::module& m) {
   py::class_<ResourcesManager, LIEF::Object>(m, "ResourcesManager",
       "The Resource Manager provides an enhanced API to manipulate the resource tree")
 
@@ -114,5 +118,7 @@ void init_PE_ResourcesManager_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+}
 }
 

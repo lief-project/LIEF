@@ -21,6 +21,8 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
 
 template<class T>
 using getter_t = T (LoadCommand::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (LoadCommand::*)(void) const;
 template<class T>
 using setter_t = void (LoadCommand::*)(T);
 
-void init_MachO_LoadCommand_class(py::module& m) {
+
+template<>
+void create<LoadCommand>(py::module& m) {
 
   py::class_<LoadCommand, LIEF::Object>(m, "LoadCommand")
     .def(py::init<>())
@@ -69,4 +73,8 @@ void init_MachO_LoadCommand_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+
+}
 }

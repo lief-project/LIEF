@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (LoadConfiguration::*)(void) const;
 
 template<class T>
 using setter_t = void (LoadConfiguration::*)(T);
 
-void init_PE_LoadConfiguration_class(py::module& m) {
+
+template<>
+void create<LoadConfiguration>(py::module& m) {
   py::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
     "Class modeling the default PE's ``LoadConfiguration``\n\n"
     "It's the base class for any future version of the structure"
@@ -147,6 +152,7 @@ void init_PE_LoadConfiguration_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

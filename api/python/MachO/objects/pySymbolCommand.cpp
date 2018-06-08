@@ -21,6 +21,8 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
 
 template<class T>
 using getter_t = T (SymbolCommand::*)(void) const;
@@ -28,7 +30,9 @@ using getter_t = T (SymbolCommand::*)(void) const;
 template<class T>
 using setter_t = void (SymbolCommand::*)(T);
 
-void init_MachO_SymbolCommand_class(py::module& m) {
+
+template<>
+void create<SymbolCommand>(py::module& m) {
 
   py::class_<SymbolCommand, LoadCommand>(m, "SymbolCommand")
     .def(py::init<>())
@@ -72,5 +76,7 @@ void init_MachO_SymbolCommand_class(py::module& m) {
 
 }
 
+}
+}
 
 

@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Debug::*)(void) const;
 
 template<class T>
 using setter_t = void (Debug::*)(T);
 
-void init_PE_Debug_class(py::module& m) {
+
+template<>
+void create<Debug>(py::module& m) {
   py::class_<Debug, LIEF::Object>(m, "Debug")
     .def(py::init<>())
 
@@ -96,6 +101,7 @@ void init_PE_Debug_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

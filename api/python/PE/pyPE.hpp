@@ -16,7 +16,9 @@
 #ifndef PY_LIEF_PE_H_
 #define PY_LIEF_PE_H_
 
+#include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
+
 #include <map>
 #include <string>
 
@@ -24,76 +26,81 @@
 
 #include "pyLIEF.hpp"
 
-using namespace LIEF::PE;
+#define SPECIALIZE_CREATE(X)      \
+  template<>                      \
+  void create<X>(py::module&)
 
-// utils
-void init_PE_utils(py::module&);
+#define CREATE(X,Y) create<X>(Y)
 
-void init_PE_Parser_class(py::module&);
-void init_PE_Binary_class(py::module&);
-void init_PE_DataDirectory_class(py::module&);
-void init_PE_Header_class(py::module&);
-void init_PE_DosHeader_class(py::module&);
-void init_PE_RichHeader_class(py::module&);
-void init_PE_RichEntry_class(py::module&);
-void init_PE_Section_class(py::module&);
-void init_PE_OptionalHeader_class(py::module&);
-void init_PE_Import_class(py::module&);
-void init_PE_ImportEntry_class(py::module&);
-void init_PE_TLS_class(py::module&);
-void init_PE_Symbol_class(py::module&);
-void init_PE_Relocation_class(py::module&);
-void init_PE_RelocationEntry_class(py::module&);
-void init_PE_Export_class(py::module&);
-void init_PE_ExportEntry_class(py::module&);
-void init_PE_Builder_class(py::module&);
-void init_PE_Debug_class(py::module&);
-void init_PE_CodeView_class(py::module&);
-void init_PE_CodeViewPDB_class(py::module&);
-void init_PE_CodeIntegrity_class(py::module&);
-void init_PE_load_configurations(py::module&);
+namespace LIEF {
+namespace PE {
 
-void init_PE_Signature_class(py::module&);
-void init_PE_ContentInfo_class(py::module&);
-void init_PE_x509_class(py::module&);
-void init_PE_SignerInfo_class(py::module&);
-void init_PE_AuthenticatedAttributes_class(py::module&);
+template<class T>
+void create(py::module&);
 
-void init_PE_ResourceNode_class(py::module&);
-void init_PE_ResourceData_class(py::module&);
-void init_PE_ResourceDirectory_class(py::module&);
+void init_python_module(py::module& m);
+void init_objects(py::module&);
+void init_enums(py::module&);
+void init_utils(py::module&);
 
-void init_PE_ResourcesIcon_class(py::module&);
+SPECIALIZE_CREATE(Parser);
 
-void init_PE_ResourceVersion_class(py::module&);
-void init_PE_ResourceFixedFileInfo_class(py::module&);
-void init_PE_ResourceVarFileInfo_class(py::module&);
-void init_PE_ResourceStringFileInfo_class(py::module&);
-void init_PE_LangCodeItem_class(py::module&);
+SPECIALIZE_CREATE(Binary);
+SPECIALIZE_CREATE(DosHeader);
+SPECIALIZE_CREATE(Header);
+SPECIALIZE_CREATE(OptionalHeader);
+SPECIALIZE_CREATE(RichHeader);
+SPECIALIZE_CREATE(RichEntry);
+SPECIALIZE_CREATE(DataDirectory);
+SPECIALIZE_CREATE(Section);
+SPECIALIZE_CREATE(Relocation);
+SPECIALIZE_CREATE(RelocationEntry);
+SPECIALIZE_CREATE(Export);
+SPECIALIZE_CREATE(ExportEntry);
+SPECIALIZE_CREATE(TLS);
+SPECIALIZE_CREATE(Symbol);
+SPECIALIZE_CREATE(Debug);
+SPECIALIZE_CREATE(CodeView);
+SPECIALIZE_CREATE(CodeViewPDB);
+SPECIALIZE_CREATE(Import);
+SPECIALIZE_CREATE(ImportEntry);
+SPECIALIZE_CREATE(ResourceNode);
+SPECIALIZE_CREATE(ResourceData);
+SPECIALIZE_CREATE(ResourceDirectory);
+SPECIALIZE_CREATE(ResourcesManager);
+SPECIALIZE_CREATE(ResourceVersion);
+SPECIALIZE_CREATE(ResourceStringFileInfo);
+SPECIALIZE_CREATE(ResourceFixedFileInfo);
+SPECIALIZE_CREATE(ResourceVarFileInfo);
+SPECIALIZE_CREATE(LangCodeItem);
+SPECIALIZE_CREATE(ResourceIcon);
+SPECIALIZE_CREATE(ResourceDialog);
+SPECIALIZE_CREATE(ResourceDialogItem);
+SPECIALIZE_CREATE(Signature);
+SPECIALIZE_CREATE(x509);
+SPECIALIZE_CREATE(SignerInfo);
+SPECIALIZE_CREATE(ContentInfo);
+SPECIALIZE_CREATE(AuthenticatedAttributes);
+SPECIALIZE_CREATE(CodeIntegrity);
 
-void init_PE_ResourcesDialog_class(py::module&);
-void init_PE_ResourcesDialogItem_class(py::module&);
+SPECIALIZE_CREATE(LoadConfiguration);
+SPECIALIZE_CREATE(LoadConfigurationV0);
+SPECIALIZE_CREATE(LoadConfigurationV1);
+SPECIALIZE_CREATE(LoadConfigurationV2);
+SPECIALIZE_CREATE(LoadConfigurationV3);
+SPECIALIZE_CREATE(LoadConfigurationV4);
+SPECIALIZE_CREATE(LoadConfigurationV5);
+SPECIALIZE_CREATE(LoadConfigurationV6);
+SPECIALIZE_CREATE(LoadConfigurationV7);
 
-void init_PE_ResourcesManager_class(py::module&);
+SPECIALIZE_CREATE(ResourcesManager);
 
-// Enums
-void init_PE_Structures_enum(py::module&);
-
-
-// Load Configurations
-void init_PE_LoadConfiguration_class(py::module&);
-void init_PE_LoadConfigurationV0_class(py::module&);
-void init_PE_LoadConfigurationV1_class(py::module&);
-void init_PE_LoadConfigurationV2_class(py::module&);
-void init_PE_LoadConfigurationV3_class(py::module&);
-void init_PE_LoadConfigurationV4_class(py::module&);
-void init_PE_LoadConfigurationV5_class(py::module&);
-void init_PE_LoadConfigurationV6_class(py::module&);
-void init_PE_LoadConfigurationV7_class(py::module&);
+}
+}
 
 
 // Opaque containers
-PYBIND11_MAKE_OPAQUE(std::vector<LangCodeItem>)
+PYBIND11_MAKE_OPAQUE(std::vector<LIEF::PE::LangCodeItem>)
 using dict_langcode_item = std::map<std::u16string, std::u16string>;
 PYBIND11_MAKE_OPAQUE(dict_langcode_item)
 

@@ -23,6 +23,10 @@
 
 #include "pyMachO.hpp"
 
+
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DataInCode::*)(void) const;
 
@@ -30,7 +34,8 @@ template<class T>
 using setter_t = void (DataInCode::*)(T);
 
 
-void init_MachO_DataInCode_class(py::module& m) {
+template<>
+void create<DataInCode>(py::module& m) {
 
   // Init Iterator
   init_ref_iterator<DataInCode::it_entries>(m);
@@ -73,4 +78,6 @@ void init_MachO_DataInCode_class(py::module& m) {
           return str;
         });
 
+}
+}
 }

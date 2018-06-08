@@ -20,8 +20,11 @@
 
 #define PY_ENUM(x) LIEF::PE::to_string(x), x
 
+namespace LIEF {
+namespace PE {
 
-void init_PE_Structures_enum(py::module& m) {
+
+void init_enums(py::module& m) {
 
   LIEF::enum_<LIEF::PE::PE_TYPE>(m, "PE_TYPE")
     .value(PY_ENUM(LIEF::PE::PE_TYPE::PE32))
@@ -903,4 +906,7 @@ void init_PE_Structures_enum(py::module& m) {
     .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_PDB_20))
     .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_CV_50))
     .value(PY_ENUM(LIEF::PE::CODE_VIEW_SIGNATURES::CVS_CV_41));
+}
+
+}
 }

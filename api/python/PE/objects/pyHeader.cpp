@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Header::*)(void) const;
 
 template<class T>
 using setter_t = void (Header::*)(T);
 
-void init_PE_Header_class(py::module& m) {
+
+template<>
+void create<Header>(py::module& m) {
   py::class_<Header, LIEF::Object>(m, "Header")
     .def(py::init<>())
 
@@ -112,6 +117,6 @@ void init_PE_Header_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

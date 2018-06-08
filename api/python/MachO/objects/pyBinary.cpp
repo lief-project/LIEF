@@ -22,13 +22,18 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using no_const_getter = T (Binary::*)(void);
 
 template<class T, class P>
 using no_const_func = T (Binary::*)(P);
 
-void init_MachO_Binary_class(py::module& m) {
+
+template<>
+void create<Binary>(py::module& m) {
 
 
   py::class_<Binary, LIEF::Binary>(m, "Binary")
@@ -321,6 +326,8 @@ void init_MachO_Binary_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
+}
 }
 

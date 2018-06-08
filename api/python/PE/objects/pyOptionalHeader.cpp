@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (OptionalHeader::*)(void) const;
 
 template<class T>
 using setter_t = void (OptionalHeader::*)(T);
 
-void init_PE_OptionalHeader_class(py::module& m) {
+
+template<>
+void create<OptionalHeader>(py::module& m) {
   py::class_<OptionalHeader, LIEF::Object>(m, "OptionalHeader")
     .def(py::init<>())
     .def_property("magic",
@@ -289,6 +294,6 @@ void init_PE_OptionalHeader_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
-
+}
+}
 }

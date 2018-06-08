@@ -17,7 +17,11 @@
 
 #include "LIEF/PE/utils.hpp"
 
-void init_PE_utils(py::module& m) {
+
+namespace LIEF {
+namespace PE {
+
+void init_utils(py::module& m) {
 
 
   m.def("is_pe",
@@ -62,4 +66,7 @@ void init_PE_utils(py::module& m) {
       "if the ordinal can't be resolved. Otherwise it skips the entry.",
       "import"_a, "strict"_a = false,
       py::return_value_policy::copy);
+}
+
+}
 }

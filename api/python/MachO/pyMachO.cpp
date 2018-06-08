@@ -17,47 +17,52 @@
 
 #include "pyMachO.hpp"
 
-//
-// MachO modules
-//
-void init_MachO_module(py::module& m) {
+
+namespace LIEF {
+namespace MachO {
+
+void init_python_module(py::module& m) {
   py::module LIEF_MachO_module = m.def_submodule("MachO", "Python API for MachO");
 
-  // Objects
-  init_MachO_ParserConfig_class(LIEF_MachO_module);
-  init_MachO_Parser_class(LIEF_MachO_module);
-  init_MachO_FatBinary_class(LIEF_MachO_module);
-  init_MachO_Binary_class(LIEF_MachO_module);
-  init_MachO_Header_class(LIEF_MachO_module);
-  init_MachO_LoadCommand_class(LIEF_MachO_module);
-  init_MachO_DylibCommand_class(LIEF_MachO_module);
-  init_MachO_SegmentCommand_class(LIEF_MachO_module);
-  init_MachO_Section_class(LIEF_MachO_module);
-  init_MachO_Symbol_class(LIEF_MachO_module);
-  init_MachO_SymbolCommand_class(LIEF_MachO_module);
-  init_MachO_UUIDCommand_class(LIEF_MachO_module);
-  init_MachO_MainCommand_class(LIEF_MachO_module);
-  init_MachO_DylinkerCommand_class(LIEF_MachO_module);
-  init_MachO_DyldInfo_class(LIEF_MachO_module);
-  init_MachO_FunctionStarts_class(LIEF_MachO_module);
-  init_MachO_SourceVersion_class(LIEF_MachO_module);
-  init_MachO_VersionMin_class(LIEF_MachO_module);
-  init_MachO_Relocation_class(LIEF_MachO_module);
-  init_MachO_RelocationObject_class(LIEF_MachO_module);
-  init_MachO_RelocationDyld_class(LIEF_MachO_module);
-  init_MachO_BindingInfo_class(LIEF_MachO_module);
-  init_MachO_ExportInfo_class(LIEF_MachO_module);
-  init_MachO_ThreadCommand_class(LIEF_MachO_module);
-  init_MachO_RPathCommand_class(LIEF_MachO_module);
-  init_MachO_DynamicSymbolCommand_class(LIEF_MachO_module);
-  init_MachO_CodeSignature_class(LIEF_MachO_module);
-  init_MachO_SegmentSplitInfo_class(LIEF_MachO_module);
-  init_MachO_SubFramework_class(LIEF_MachO_module);
-  init_MachO_DyldEnvironment_class(LIEF_MachO_module);
+  init_enums(LIEF_MachO_module);
+  init_objects(LIEF_MachO_module);
+}
 
-  init_MachO_DataInCode_class(LIEF_MachO_module);
-  init_MachO_DataCodeEntry_class(LIEF_MachO_module);
+void init_objects(py::module& m) {
 
-  // Enums
-  init_MachO_Structures_enum(LIEF_MachO_module);
+  CREATE(ParserConfig, m);
+  CREATE(Parser, m);
+
+  CREATE(FatBinary, m);
+  CREATE(Binary, m);
+  CREATE(Header, m);
+  CREATE(LoadCommand, m);
+  CREATE(UUIDCommand, m);
+  CREATE(SymbolCommand, m);
+  CREATE(SegmentCommand, m);
+  CREATE(Section, m);
+  CREATE(MainCommand, m);
+  CREATE(DynamicSymbolCommand, m);
+  CREATE(DylinkerCommand, m);
+  CREATE(DylibCommand, m);
+  CREATE(ThreadCommand, m);
+  CREATE(RPathCommand, m);
+  CREATE(Symbol, m);
+  CREATE(Relocation, m);
+  CREATE(RelocationObject, m);
+  CREATE(RelocationDyld, m);
+  CREATE(BindingInfo, m);
+  CREATE(ExportInfo, m);
+  CREATE(FunctionStarts, m);
+  CREATE(CodeSignature, m);
+  CREATE(DataInCode, m);
+  CREATE(DataCodeEntry, m);
+  CREATE(SourceVersion, m);
+  CREATE(VersionMin, m);
+  CREATE(SegmentSplitInfo, m);
+  CREATE(SubFramework, m);
+  CREATE(DyldEnvironment, m);
+}
+
+}
 }

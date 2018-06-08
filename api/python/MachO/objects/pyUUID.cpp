@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (UUIDCommand::*)(void) const;
 
@@ -30,7 +33,8 @@ template<class T>
 using setter_t = void (UUIDCommand::*)(T);
 
 
-void init_MachO_UUIDCommand_class(py::module& m) {
+template<>
+void create<UUIDCommand>(py::module& m) {
 
   py::class_<UUIDCommand, LoadCommand>(m, "UUIDCommand")
 
@@ -57,5 +61,7 @@ void init_MachO_UUIDCommand_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
+}
 }

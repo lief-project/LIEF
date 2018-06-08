@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_abs_t = T (DosHeader::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_abs_t = void (DosHeader::*)(T);
 using getter_t = getter_abs_t<uint16_t>;
 using setter_t = setter_abs_t<uint16_t>;
 
-void init_PE_DosHeader_class(py::module& m) {
+
+template<>
+void create<DosHeader>(py::module& m) {
   py::class_<DosHeader, LIEF::Object>(m, "DosHeader")
     .def(py::init<>())
     .def_property("magic",
@@ -117,6 +122,7 @@ void init_PE_DosHeader_class(py::module& m) {
           return str;
         });
 
+}
 
-
+}
 }

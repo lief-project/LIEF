@@ -21,6 +21,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Export::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_t = void (Export::*)(T);
 template<class T>
 using no_const_getter = T (Export::*)(void);
 
-void init_PE_Export_class(py::module& m) {
+
+template<>
+void create<Export>(py::module& m) {
   py::class_<Export, LIEF::Object>(m, "Export")
     .def(py::init<>())
 
@@ -79,6 +84,7 @@ void init_PE_Export_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
 
-
+}
 }

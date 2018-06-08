@@ -28,6 +28,9 @@
 
 #define PY_ENUM(x) LIEF::MachO::to_string(x), x
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DataCodeEntry::*)(void) const;
 
@@ -35,7 +38,8 @@ template<class T>
 using setter_t = void (DataCodeEntry::*)(T);
 
 
-void init_MachO_DataCodeEntry_class(py::module& m) {
+template<>
+void create<DataCodeEntry>(py::module& m) {
 
 
   py::class_<DataCodeEntry, LIEF::Object> cls(m, "DataCodeEntry");
@@ -83,4 +87,7 @@ void init_MachO_DataCodeEntry_class(py::module& m) {
     .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_32))
     .value(PY_ENUM(DataCodeEntry::TYPES::ABS_JUMP_TABLE_32));
 
+}
+
+}
 }

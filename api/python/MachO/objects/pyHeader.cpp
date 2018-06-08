@@ -21,13 +21,18 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (Header::*)(void) const;
 
 template<class T>
 using setter_t = void (Header::*)(T);
 
-void init_MachO_Header_class(py::module& m) {
+
+template<>
+void create<Header>(py::module& m) {
 
   py::class_<Header, LIEF::Object>(m, "Header")
     .def(py::init<>())
@@ -117,4 +122,7 @@ void init_MachO_Header_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

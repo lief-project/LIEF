@@ -23,6 +23,9 @@
 
 #include "pyMachO.hpp"
 
+namespace LIEF {
+namespace MachO {
+
 template<class T>
 using getter_t = T (DynamicSymbolCommand::*)(void) const;
 
@@ -32,7 +35,9 @@ using setter_t = void (DynamicSymbolCommand::*)(T);
 template<class T>
 using no_const_getter = T (DynamicSymbolCommand::*)(void);
 
-void init_MachO_DynamicSymbolCommand_class(py::module& m) {
+
+template<>
+void create<DynamicSymbolCommand>(py::module& m) {
 
   py::class_<DynamicSymbolCommand, LoadCommand>(m, "DynamicSymbolCommand")
 
@@ -191,4 +196,7 @@ void init_MachO_DynamicSymbolCommand_class(py::module& m) {
           return stream.str();
         });
 
+}
+
+}
 }

@@ -22,13 +22,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace PE {
+
 template<class T>
 using getter_t = T (Section::*)(void) const;
 
 template<class T>
 using setter_t = void (Section::*)(T);
 
-void init_PE_Section_class(py::module& m) {
+
+template<>
+void create<Section>(py::module& m) {
   py::class_<Section, LIEF::Section>(m, "Section")
     .def(py::init<>())
     .def(py::init<const std::vector<uint8_t>&, const std::string&, uint32_t>(),
@@ -119,6 +124,7 @@ void init_PE_Section_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
 
-
+}
 }
