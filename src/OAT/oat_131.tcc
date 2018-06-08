@@ -71,9 +71,9 @@ void Parser::parse_dex_files<OAT131_t>(void) {
 
     dex_file->lookup_table_offset(type_lookup_offset);
 
-    uint32_t dex_sections_layout_offset = this->stream_->read<uint32_t>();
+    /* uint32_t dex_sections_layout_offset = */ this->stream_->read<uint32_t>();
 
-    uint32_t method_bss_mapping_offset = this->stream_->read<uint32_t>();
+    /* uint32_t method_bss_mapping_offset =  */ this->stream_->read<uint32_t>();
 
     this->oat_binary_->oat_dex_files_.push_back(dex_file.release());
   }

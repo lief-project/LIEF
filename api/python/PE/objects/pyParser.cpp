@@ -22,13 +22,13 @@
 void init_PE_Parser_class(py::module& m) {
 
     m.def("parse",
-    static_cast<Binary* (*) (const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
     "Parse the given binary and return a " RST_CLASS_REF(lief.PE.Binary) " object",
     py::arg("filename"),
     py::return_value_policy::take_ownership);
 
     m.def("parse",
-    static_cast<Binary* (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
     "Parse the given binary and return a " RST_CLASS_REF(lief.PE.Binary) " object",
     py::arg("raw"), py::arg("name") = "",
     py::return_value_policy::take_ownership);

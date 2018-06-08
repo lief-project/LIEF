@@ -21,13 +21,18 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Note.hpp"
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (Note::*)(void) const;
 
 template<class T>
 using setter_t = void (Note::*)(T);
 
-void init_ELF_Note_class(py::module& m) {
+
+template<>
+void create<Note>(py::module& m) {
 
   py::class_<Note, LIEF::Object>(m, "Note")
     .def(py::init<>(),
@@ -80,4 +85,7 @@ void init_ELF_Note_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }

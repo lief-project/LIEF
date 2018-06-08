@@ -23,13 +23,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (DynamicSharedObject::*)(void) const;
 
 template<class T>
 using setter_t = void (DynamicSharedObject::*)(T);
 
-void init_ELF_DynamicSharedObject_class(py::module& m) {
+
+template<>
+void create<DynamicSharedObject>(py::module& m) {
 
   //
   // Dynamic Shared Object object
@@ -61,4 +66,7 @@ void init_ELF_DynamicSharedObject_class(py::module& m) {
         std::string str =  stream.str();
         return str;
         });
+}
+
+}
 }

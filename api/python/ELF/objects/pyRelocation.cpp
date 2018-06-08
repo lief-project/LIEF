@@ -21,13 +21,19 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (Relocation::*)(void) const;
 
 template<class T>
 using setter_t = void (Relocation::*)(T);
 
-void init_ELF_Relocation_class(py::module& m) {
+
+template<>
+void create<Relocation>(py::module& m) {
+
   // Relocation object
   py::class_<Relocation, LIEF::Relocation>(m, "Relocation")
     .def(py::init<>())
@@ -99,4 +105,7 @@ void init_ELF_Relocation_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

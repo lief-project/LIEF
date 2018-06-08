@@ -22,7 +22,7 @@ set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyGnuHash.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySysvHash.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBuilder.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyELFStructures.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pySizes.cpp"
 )
 

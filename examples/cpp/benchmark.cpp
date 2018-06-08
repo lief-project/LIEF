@@ -29,11 +29,10 @@ int main(int argc, char **argv) {
   std::chrono::time_point<std::chrono::system_clock> start, end;
   start = std::chrono::system_clock::now();
 
-  const LIEF::Binary* binary = LIEF::Parser::parse(argv[1]);
+  std::unique_ptr<const LIEF::Binary> binary = LIEF::Parser::parse(argv[1]);
 
   end = std::chrono::system_clock::now();
 
-  delete binary;
 
   size_t elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
   std::cout << "[Parser] Time: " << std::dec << elapsed_seconds << "s" << std::endl;

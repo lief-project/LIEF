@@ -24,7 +24,7 @@ void init_MachO_Parser_class(py::module& m) {
 
   // Parser (Parser)
   m.def("parse",
-    static_cast<FatBinary* (*) (const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
+    static_cast<std::unique_ptr<FatBinary> (*) (const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
     "Parse the given binary and return a " RST_CLASS_REF(lief.MachO.FatBinary) " object\n\n"
 
     "One can configure the parsing with the ``config`` parameter. See " RST_CLASS_REF(lief.MachO.ParserConfig) "",
@@ -34,7 +34,7 @@ void init_MachO_Parser_class(py::module& m) {
 
 
   m.def("parse",
-    static_cast<FatBinary* (*) (const std::vector<uint8_t>&, const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
+    static_cast<std::unique_ptr<FatBinary> (*) (const std::vector<uint8_t>&, const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
     "Parse the given binary (from raw) and return a " RST_CLASS_REF(lief.MachO.FatBinary) " objects\n\n"
 
     "One can configure the parsing with the ``config`` parameter. See " RST_CLASS_REF(lief.MachO.ParserConfig) "",

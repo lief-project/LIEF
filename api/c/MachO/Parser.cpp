@@ -23,7 +23,7 @@
 using namespace LIEF::MachO;
 
 Macho_Binary_t** macho_parse(const char *file) {
-  FatBinary* macho_binaries = Parser::parse(file);
+  FatBinary* macho_binaries = Parser::parse(file).release();
 
   Macho_Binary_t** c_macho_binaries = static_cast<Macho_Binary_t**>(
       malloc((macho_binaries->size() + 1) * sizeof(Macho_Binary_t**)));

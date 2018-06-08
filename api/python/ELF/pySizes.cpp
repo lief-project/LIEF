@@ -1,6 +1,8 @@
 #include "pyELF.hpp"
 #include "LIEF/ELF/Structures.hpp"
 
+namespace LIEF {
+namespace ELF {
 void init_ELF32_sizes(py::module& m) {
   enum SIZES : size_t {};
   py::enum_<SIZES>(m, "SIZES")
@@ -48,4 +50,7 @@ void init_ELF64_sizes(py::module& m) {
     .value("VERDEF",  static_cast<SIZES>(sizeof(Elf64_Verdef)))
     .value("VERDAUX", static_cast<SIZES>(sizeof(Elf64_Verdaux)))
     .export_values();
+}
+
+}
 }

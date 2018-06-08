@@ -370,14 +370,14 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
   // =============
   for (size_t field_idx = 0, i = 0; i < static_fields_size; ++i) {
     field_idx += this->stream_->read_uleb128();
-    uint64_t access_flags = this->stream_->read_uleb128();
+    /* uint64_t access_flags = */ this->stream_->read_uleb128();
   }
 
   // Instances
   // =========
   for (size_t field_idx = 0, i = 0; i < instance_fields_size; ++i) {
     field_idx += this->stream_->read_uleb128();
-    uint64_t access_flags = this->stream_->read_uleb128();
+    /* uint64_t access_flags = */ this->stream_->read_uleb128();
   }
 
   // Direct Methods

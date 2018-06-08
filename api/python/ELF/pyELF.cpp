@@ -15,43 +15,48 @@
  */
 #include "pyELF.hpp"
 
-//
-// ELF modules
-//
-void init_ELF_module(py::module& m) {
-  py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for ELF");
-  // Enums
-  init_ELF_Structures_enum(LIEF_ELF_module);
 
-  // Objects
-  init_ELF_Parser_class(LIEF_ELF_module);
-  init_ELF_SymbolVersion_class(LIEF_ELF_module);
-  init_ELF_Binary_class(LIEF_ELF_module);
-  init_ELF_Header_class(LIEF_ELF_module);
-  init_ELF_Section_class(LIEF_ELF_module);
-  init_ELF_Segment_class(LIEF_ELF_module);
-  init_ELF_Symbol_class(LIEF_ELF_module);
-  init_ELF_Relocation_class(LIEF_ELF_module);
-  init_ELF_SymbolVersionAux_class(LIEF_ELF_module);
-  init_ELF_SymbolVersionAuxRequirement_class(LIEF_ELF_module);
-  init_ELF_SymbolVersionDefinition_class(LIEF_ELF_module);
-  init_ELF_SymbolVersionRequirement_class(LIEF_ELF_module);
-  init_ELF_DynamicEntry_class(LIEF_ELF_module);
-  init_ELF_DynamicEntryLibrary_class(LIEF_ELF_module);
-  init_ELF_DynamicSharedObject_class(LIEF_ELF_module);
-  init_ELF_DynamicEntryArray_class(LIEF_ELF_module);
-  init_ELF_DynamicEntryRpath_class(LIEF_ELF_module);
-  init_ELF_DynamicEntryRunPath_class(LIEF_ELF_module);
-  init_ELF_DynamicEntryFlags_class(LIEF_ELF_module);
-  init_ELF_GnuHash_class(LIEF_ELF_module);
-  init_ELF_SysvHash_class(LIEF_ELF_module);
-  init_ELF_Builder_class(LIEF_ELF_module);
-  init_ELF_Note_class(LIEF_ELF_module);
-  init_ELF_AndroidNote_class(LIEF_ELF_module);
+namespace LIEF {
+namespace ELF {
+void init_python_module(py::module& m) {
+  py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for ELF format");
+
+  init_enums(LIEF_ELF_module);
+  init_objects(LIEF_ELF_module);
 
   py::module LIEF_ELF32_module = LIEF_ELF_module.def_submodule("ELF32", "");
   init_ELF32_sizes(LIEF_ELF32_module);
 
   py::module LIEF_ELF64_module = LIEF_ELF_module.def_submodule("ELF64", "");
   init_ELF64_sizes(LIEF_ELF64_module);
+}
+
+void init_objects(py::module& m) {
+  CREATE(Parser, m);
+  CREATE(SymbolVersion, m);
+  CREATE(Binary, m);
+  CREATE(Header, m);
+  CREATE(Section, m);
+  CREATE(Segment, m);
+  CREATE(Symbol, m);
+  CREATE(Relocation, m);
+  CREATE(SymbolVersionAux, m);
+  CREATE(SymbolVersionAuxRequirement, m);
+  CREATE(SymbolVersionDefinition,m );
+  CREATE(SymbolVersionRequirement, m);
+  CREATE(DynamicEntry, m);
+  CREATE(DynamicEntryLibrary, m);
+  CREATE(DynamicSharedObject, m);
+  CREATE(DynamicEntryArray, m);
+  CREATE(DynamicEntryRpath, m);
+  CREATE(DynamicEntryRunPath, m);
+  CREATE(DynamicEntryFlags, m);
+  CREATE(GnuHash, m);
+  CREATE(SysvHash, m);
+  CREATE(Builder, m);
+  CREATE(Note, m);
+  CREATE(AndroidNote, m);
+}
+
+}
 }

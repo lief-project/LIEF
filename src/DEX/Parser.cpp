@@ -29,14 +29,14 @@ namespace DEX {
 Parser::~Parser(void) = default;
 Parser::Parser(void)  = default;
 
-File* Parser::parse(const std::string& filename) {
+std::unique_ptr<File> Parser::parse(const std::string& filename) {
   Parser parser{filename};
-  return parser.file_;
+  return std::unique_ptr<File>{parser.file_};
 }
 
-File* Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
   Parser parser{data, name};
-  return parser.file_;
+  return std::unique_ptr<File>{parser.file_};
 }
 
 

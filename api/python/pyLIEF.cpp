@@ -17,6 +17,10 @@
 #include "LIEF/version.h"
 #include "pyLIEF.hpp"
 
+#if defined(LIEF_ELF_SUPPORT)
+  #include "ELF/pyELF.hpp"
+#endif
+
 #if defined(LIEF_OAT_SUPPORT)
   #include "OAT/pyOAT.hpp"
 #endif
@@ -59,7 +63,7 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
 
   // Init the ELF module
 #if defined(LIEF_ELF_SUPPORT)
-  init_ELF_module(LIEF_module);
+  LIEF::ELF::init_python_module(LIEF_module);
 #endif
 
   // Init the PE module

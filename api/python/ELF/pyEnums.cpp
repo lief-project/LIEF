@@ -21,7 +21,10 @@
 
 #define PY_ENUM(x) to_string(x), x
 
-void init_ELF_Structures_enum(py::module& m) {
+namespace LIEF {
+namespace ELF {
+
+void init_enums(py::module& m) {
 
   LIEF::enum_<ELF_CLASS>(m, "ELF_CLASS")
     .value(PY_ENUM(ELF_CLASS::ELFCLASSNONE))
@@ -1156,4 +1159,7 @@ void init_ELF_Structures_enum(py::module& m) {
     .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_INTERNAL))
     .value(PY_ENUM(ELF_SYMBOL_VISIBILITY::STV_PROTECTED));
 
+}
+
+}
 }

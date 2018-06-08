@@ -21,6 +21,9 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (SymbolVersionDefinition::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_t = void (SymbolVersionDefinition::*)(T);
 template<class T>
 using no_const_getter = T (SymbolVersionDefinition::*)(void);
 
-void init_ELF_SymbolVersionDefinition_class(py::module& m) {
+
+template<>
+void create<SymbolVersionDefinition>(py::module& m) {
 
   py::class_<SymbolVersionDefinition, LIEF::Object>(m, "SymbolVersionDefinition",
       "Class which modelization of an entry defined in ``DT_VERDEF`` (or ``.gnu.version_d``)")
@@ -67,4 +72,7 @@ void init_ELF_SymbolVersionDefinition_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

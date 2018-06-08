@@ -26,7 +26,7 @@ namespace ART {
 template<typename ART_T>
 void Parser::parse_file(void) {
   VLOG(VDEBUG) << "Parsing ART version " << std::dec << ART_T::art_version;
-  const size_t ptr_size = this->parse_header<ART_T>();
+  /* const size_t ptr_size = */ this->parse_header<ART_T>();
 }
 
 template<typename ART_T>

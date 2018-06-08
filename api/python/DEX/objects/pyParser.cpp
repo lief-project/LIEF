@@ -26,13 +26,13 @@ template<>
 void create<Parser>(py::module& m) {
 
   m.def("parse",
-    static_cast<File* (*) (const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<File> (*) (const std::string&)>(&Parser::parse),
     "Parse the given filename and return a " RST_CLASS_REF(lief.DEX.File) " object"
     "filename"_a,
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<File* (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<File> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
     "Parse the given raw data and return a " RST_CLASS_REF(lief.DEX.File) " object\n\n"
     "raw"_a, py::arg("name") = "",
     py::return_value_policy::take_ownership);

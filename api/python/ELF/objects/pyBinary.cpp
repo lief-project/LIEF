@@ -21,6 +21,9 @@
 
 #include "pyELF.hpp"
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using no_const_getter = T (Binary::*)(void);
 
@@ -33,7 +36,9 @@ using getter_t = T (Binary::*)(void) const;
 template<class T>
 using setter_t = void (Binary::*)(T);
 
-void init_ELF_Binary_class(py::module& m) {
+
+template<>
+void create<Binary>(py::module& m) {
 
   // Binary object
   py::class_<Binary, LIEF::Binary>(m, "Binary", "ELF binary representation")
@@ -517,4 +522,6 @@ void init_ELF_Binary_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+}
 }

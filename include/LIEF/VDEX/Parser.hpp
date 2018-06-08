@@ -32,8 +32,8 @@ namespace VDEX {
 //! @brief Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
   public:
-    static File* parse(const std::string& file);
-    static File* parse(const std::vector<uint8_t>& data, const std::string& name = "");
+    static std::unique_ptr<File> parse(const std::string& file);
+    static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 
     Parser& operator=(const Parser& copy) = delete;
     Parser(const Parser& copy)            = delete;

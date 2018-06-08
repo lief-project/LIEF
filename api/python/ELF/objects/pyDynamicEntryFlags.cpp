@@ -23,13 +23,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (DynamicEntryFlags::*)(void) const;
 
 template<class T>
 using setter_t = void (DynamicEntryFlags::*)(T);
 
-void init_ELF_DynamicEntryFlags_class(py::module& m) {
+
+template<>
+void create<DynamicEntryFlags>(py::module& m) {
 
   py::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
     .def(py::init<>())
@@ -95,4 +100,7 @@ void init_ELF_DynamicEntryFlags_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

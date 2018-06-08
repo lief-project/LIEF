@@ -146,17 +146,17 @@ void Parser::init(const std::string& name) {
   }
 }
 
-Binary* Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
+std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
   if (not is_elf(filename)) {
     LOG(ERROR) << filename << " is not an ELF";
     return nullptr;
   }
 
   Parser parser{filename, count_mtd};
-  return parser.binary_;
+  return std::unique_ptr<Binary>{parser.binary_};
 }
 
-Binary* Parser::parse(
+std::unique_ptr<Binary> Parser::parse(
     const std::vector<uint8_t>& data,
     const std::string& name,
     DYNSYM_COUNT_METHODS count_mtd) {
@@ -167,7 +167,7 @@ Binary* Parser::parse(
   }
 
   Parser parser{data, name, count_mtd};
-  return parser.binary_;
+  return std::unique_ptr<Binary>{parser.binary_};
 }
 
 

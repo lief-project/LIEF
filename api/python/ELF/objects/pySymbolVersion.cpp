@@ -21,13 +21,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (SymbolVersion::*)(void) const;
 
 template<class T>
 using setter_t = void (SymbolVersion::*)(T);
 
-void init_ELF_SymbolVersion_class(py::module& m) {
+
+template<>
+void create<SymbolVersion>(py::module& m) {
 
   py::class_<SymbolVersion, LIEF::Object>(m, "SymbolVersion")
     .def(py::init<>(),"Default constructor")
@@ -80,4 +85,7 @@ void init_ELF_SymbolVersion_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

@@ -21,39 +21,57 @@
 #include "LIEF/ELF/Builder.hpp"
 
 #include "pyLIEF.hpp"
-using namespace LIEF::ELF;
 
-void init_ELF_Parser_class(py::module&);
-void init_ELF_Binary_class(py::module&);
-void init_ELF_Header_class(py::module&);
-void init_ELF_Section_class(py::module&);
-void init_ELF_Segment_class(py::module&);
-void init_ELF_Symbol_class(py::module&);
-void init_ELF_Relocation_class(py::module&);
-void init_ELF_SymbolVersion_class(py::module&);
-void init_ELF_SymbolVersionAux_class(py::module&);
-void init_ELF_SymbolVersionRequirement_class(py::module&);
-void init_ELF_SymbolVersionDefinition_class(py::module&);
-void init_ELF_SymbolVersionAuxRequirement_class(py::module&);
-void init_ELF_DynamicEntry_class(py::module&);
-void init_ELF_DynamicEntryLibrary_class(py::module&);
-void init_ELF_DynamicSharedObject_class(py::module&);
-void init_ELF_DynamicEntryArray_class(py::module&);
-void init_ELF_DynamicEntryRpath_class(py::module&);
-void init_ELF_DynamicEntryRunPath_class(py::module&);
-void init_ELF_DynamicEntryFlags_class(py::module&);
-void init_ELF_GnuHash_class(py::module&);
-void init_ELF_SysvHash_class(py::module&);
-void init_ELF_Builder_class(py::module&);
-void init_ELF_Note_class(py::module&);
-void init_ELF_AndroidNote_class(py::module&);
 
-// Enums
-void init_ELF_Structures_enum(py::module&);
+#define SPECIALIZE_CREATE(X)      \
+  template<>                      \
+  void create<X>(py::module&)
+
+#define CREATE(X,Y) create<X>(Y)
+
+
+namespace LIEF {
+namespace ELF {
+
+template<class T>
+void create(py::module&);
+
+void init_python_module(py::module& m);
+void init_objects(py::module&);
+void init_enums(py::module&);
 
 void init_ELF32_sizes(py::module&);
 void init_ELF64_sizes(py::module&);
 
+SPECIALIZE_CREATE(Parser);
+SPECIALIZE_CREATE(Binary);
+SPECIALIZE_CREATE(Header);
+SPECIALIZE_CREATE(Section);
+SPECIALIZE_CREATE(Segment);
+SPECIALIZE_CREATE(Symbol);
+SPECIALIZE_CREATE(Relocation);
+SPECIALIZE_CREATE(SymbolVersion);
+SPECIALIZE_CREATE(SymbolVersionAux);
+SPECIALIZE_CREATE(SymbolVersionRequirement);
+SPECIALIZE_CREATE(SymbolVersionDefinition);
+SPECIALIZE_CREATE(SymbolVersionAuxRequirement);
+SPECIALIZE_CREATE(DynamicEntry);
+SPECIALIZE_CREATE(DynamicEntryLibrary);
+SPECIALIZE_CREATE(DynamicSharedObject);
+SPECIALIZE_CREATE(DynamicEntryArray);
+SPECIALIZE_CREATE(DynamicEntryRpath);
+SPECIALIZE_CREATE(DynamicEntryRunPath);
+SPECIALIZE_CREATE(DynamicEntryFlags);
+SPECIALIZE_CREATE(GnuHash);
+SPECIALIZE_CREATE(SysvHash);
+SPECIALIZE_CREATE(Builder);
+SPECIALIZE_CREATE(Note);
+SPECIALIZE_CREATE(AndroidNote);
+
+
+
+}
+}
 
 
 #endif

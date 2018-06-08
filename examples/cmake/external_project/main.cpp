@@ -7,7 +7,6 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  LIEF::Binary* binary = LIEF::Parser::parse(argv[1]);
+  std::unique_ptr<LIEF::Binary> binary = LIEF::Parser::parse(argv[1]);
   std::cout << *binary << std::endl;
-  delete binary;
 }

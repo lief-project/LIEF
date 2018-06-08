@@ -22,6 +22,9 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (Section::*)(void) const;
 
@@ -31,7 +34,9 @@ using setter_t = void (Section::*)(T);
 template<class T>
 using no_const_getter = T (Section::*)(void);
 
-void init_ELF_Section_class(py::module& m) {
+
+template<>
+void create<Section>(py::module& m) {
 
   // Section object
   py::class_<Section, LIEF::Section>(m, "Section")
@@ -172,3 +177,6 @@ void init_ELF_Section_class(py::module& m) {
         });
 }
 
+
+}
+}

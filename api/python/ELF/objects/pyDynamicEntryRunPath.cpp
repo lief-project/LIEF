@@ -23,13 +23,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (DynamicEntryRunPath::*)(void) const;
 
 template<class T>
 using setter_t = void (DynamicEntryRunPath::*)(T);
 
-void init_ELF_DynamicEntryRunPath_class(py::module& m) {
+
+template<>
+void create<DynamicEntryRunPath>(py::module& m) {
 
   //
   // Dynamic Entry RUNPATH object
@@ -100,4 +105,7 @@ void init_ELF_DynamicEntryRunPath_class(py::module& m) {
           std::string str = stream.str();
           return str;
         });
+}
+
+}
 }

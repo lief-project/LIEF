@@ -23,13 +23,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (DynamicEntryArray::*)(void) const;
 
 template<class T>
 using setter_t = void (DynamicEntryArray::*)(T);
 
-void init_ELF_DynamicEntryArray_class(py::module& m) {
+
+template<>
+void create<DynamicEntryArray>(py::module& m) {
 
   // Dynamic Entry Array object
   py::class_<DynamicEntryArray, DynamicEntry>(m, "DynamicEntryArray")
@@ -91,4 +96,7 @@ void init_ELF_DynamicEntryArray_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

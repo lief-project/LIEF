@@ -86,6 +86,15 @@ bool DataCodeEntry::operator!=(const DataCodeEntry& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry) {
+  os << std::hex;
+  os << std::left
+     << std::showbase
+
+     << entry.offset() << " "
+     << entry.length() << " "
+     << to_string(entry.type());
+
+
   return os;
 }
 

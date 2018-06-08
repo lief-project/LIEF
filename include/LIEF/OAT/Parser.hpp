@@ -40,10 +40,10 @@ namespace OAT {
 class LIEF_API Parser : public LIEF::Parser {
   public:
     //! Parse an OAT file
-    static Binary* parse(const std::string& oat_file);
-    static Binary* parse(const std::string& oat_file, const std::string& vdex_file);
+    static std::unique_ptr<Binary> parse(const std::string& oat_file);
+    static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
 
-    static Binary* parse(const std::vector<uint8_t>& data, const std::string& name = "");
+    static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 
     Parser& operator=(const Parser& copy) = delete;
     Parser(const Parser& copy)            = delete;

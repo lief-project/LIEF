@@ -63,7 +63,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
 }
 
 Elf_Binary_t* elf_parse(const char *file) {
-  Binary* binary = Parser::parse(file);
+  Binary* binary = Parser::parse(file).release();
   Elf_Binary_t* c_binary = static_cast<Elf_Binary_t*>(malloc(sizeof(Elf_Binary_t)));
   memset(c_binary, 0, sizeof(Elf_Binary_t));
   init_c_binary(c_binary, binary);

@@ -21,6 +21,8 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
+namespace LIEF {
+namespace ELF {
 
 template<class T>
 using getter_t = T (SysvHash::*)(void) const;
@@ -28,7 +30,8 @@ using getter_t = T (SysvHash::*)(void) const;
 template<class T>
 using setter_t = void (SysvHash::*)(T);
 
-void init_ELF_SysvHash_class(py::module& m) {
+template<>
+void create<SysvHash>(py::module& m) {
 
   py::class_<SysvHash, LIEF::Object>(m, "SysvHash")
     .def(py::init<>())
@@ -72,3 +75,5 @@ void init_ELF_SysvHash_class(py::module& m) {
 
 }
 
+}
+}

@@ -21,6 +21,9 @@
 
 #include "pyELF.hpp"
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (SymbolVersionRequirement::*)(void) const;
 
@@ -30,7 +33,9 @@ using setter_t = void (SymbolVersionRequirement::*)(T);
 template<class T>
 using no_const_getter = T (SymbolVersionRequirement::*)(void);
 
-void init_ELF_SymbolVersionRequirement_class(py::module& m) {
+
+template<>
+void create<SymbolVersionRequirement>(py::module& m) {
 
   // Symbol Version Requirement object
   py::class_<SymbolVersionRequirement, LIEF::Object>(m, "SymbolVersionRequirement",
@@ -65,4 +70,7 @@ void init_ELF_SymbolVersionRequirement_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

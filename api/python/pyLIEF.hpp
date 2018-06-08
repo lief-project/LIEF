@@ -43,10 +43,6 @@ void init_LIEF_exceptions(py::module&);
 void init_LIEF_module(py::module&);
 void init_hash_functions(py::module&);
 
-#if defined(LIEF_ELF_SUPPORT)
-void init_ELF_module(py::module&);
-#endif
-
 #if defined(LIEF_PE_SUPPORT)
 void init_PE_module(py::module&);
 #endif

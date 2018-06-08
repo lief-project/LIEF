@@ -17,7 +17,7 @@ Parser::~Parser(void) = default;
 Parser::Parser(void)  = default;
 
 
-Binary* Parser::parse(const std::string& oat_file) {
+std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
   if (not is_oat(oat_file)) {
     LOG(FATAL) << "'" + oat_file + "' is not an OAT";
     return nullptr;
@@ -25,11 +25,11 @@ Binary* Parser::parse(const std::string& oat_file) {
 
   Parser parser{oat_file};
   parser.init(oat_file);
-  return parser.oat_binary_;
+  return std::unique_ptr<Binary>{parser.oat_binary_};
 }
 
 
-Binary* Parser::parse(const std::string& oat_file, const std::string& vdex_file) {
+std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::string& vdex_file) {
   if (not is_oat(oat_file)) {
     return nullptr;
   }
@@ -38,16 +38,16 @@ Binary* Parser::parse(const std::string& oat_file, const std::string& vdex_file)
     return nullptr;
   }
   Parser parser{oat_file};
-  parser.set_vdex(VDEX::Parser::parse(vdex_file));
+  parser.set_vdex(VDEX::Parser::parse(vdex_file).release());
   parser.init(oat_file);
-  return parser.oat_binary_;
+  return std::unique_ptr<Binary>{parser.oat_binary_};
 
 }
 
-Binary* Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
   Parser parser{data, name};
   parser.init(name);
-  return parser.oat_binary_;
+  return std::unique_ptr<Binary>{parser.oat_binary_};
 }
 
 

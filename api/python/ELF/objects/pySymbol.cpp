@@ -24,13 +24,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (Symbol::*)(void) const;
 
 template<class T>
 using setter_t = void (Symbol::*)(T);
 
-void init_ELF_Symbol_class(py::module& m) {
+
+template<>
+void create<Symbol>(py::module& m) {
 
   py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
     .def(py::init<>())
@@ -139,4 +144,7 @@ void init_ELF_Symbol_class(py::module& m) {
         std::string str =  stream.str();
         return str;
       });
+}
+
+}
 }

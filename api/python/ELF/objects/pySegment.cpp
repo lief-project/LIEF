@@ -22,6 +22,9 @@
 
 #include "pyELF.hpp"
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (Segment::*)(void) const;
 
@@ -32,7 +35,8 @@ template<class T>
 using no_const_getter = T (Segment::*)(void);
 
 
-void init_ELF_Segment_class(py::module& m) {
+template<>
+void create<Segment>(py::module& m) {
   py::class_<Segment, LIEF::Object>(m, "Segment")
 
     .def(py::init<>())
@@ -157,4 +161,7 @@ void init_ELF_Segment_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

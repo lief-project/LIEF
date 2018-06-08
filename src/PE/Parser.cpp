@@ -782,15 +782,15 @@ void Parser::parse_overlay(void) {
 //
 // Return the Binary constructed
 //
-Binary* Parser::parse(const std::string& filename) {
+std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   Parser parser{filename};
-  return parser.binary_;
+  return std::unique_ptr<Binary>{parser.binary_};
 }
 
 
-Binary* Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
   Parser parser{data, name};
-  return parser.binary_;
+  return std::unique_ptr<Binary>{parser.binary_};
 }
 
 }

@@ -23,13 +23,18 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (DynamicEntryRpath::*)(void) const;
 
 template<class T>
 using setter_t = void (DynamicEntryRpath::*)(T);
 
-void init_ELF_DynamicEntryRpath_class(py::module& m) {
+
+template<>
+void create<DynamicEntryRpath>(py::module& m) {
 
   //
   // Dynamic Entry RPATH object
@@ -101,4 +106,7 @@ void init_ELF_DynamicEntryRpath_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

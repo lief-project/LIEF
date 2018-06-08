@@ -39,8 +39,8 @@ class LIEF_API Parser : public LIEF::Parser {
 
     ~Parser(void);
 
-    static FatBinary* parse(const std::string& filename, const ParserConfig& conf = ParserConfig::deep());
-    static FatBinary* parse(const std::vector<uint8_t>& data, const std::string& name = "", const ParserConfig& conf = ParserConfig::deep());
+    static std::unique_ptr<FatBinary> parse(const std::string& filename, const ParserConfig& conf = ParserConfig::deep());
+    static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data, const std::string& name = "", const ParserConfig& conf = ParserConfig::deep());
 
   private:
     Parser(const std::string& file, const ParserConfig& conf);

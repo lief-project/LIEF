@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/logging++.hpp"
 #include "LIEF/Abstract/Parser.hpp"
 
 #include "LIEF/OAT.hpp"
@@ -35,7 +36,7 @@ Parser::Parser(void) :
   binary_name_{""}
 {}
 
-Binary* Parser::parse(const std::string& filename) {
+std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(filename)) {
@@ -59,21 +60,22 @@ Binary* Parser::parse(const std::string& filename) {
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(filename)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* fat = MachO::Parser::parse(filename);
+    MachO::FatBinary* fat = MachO::Parser::parse(filename).release();
     MachO::Binary* binary_return = nullptr;
     if (fat) {
       binary_return = fat->pop_back();
       delete fat;
     }
-    return binary_return;
+    return std::unique_ptr<Binary>{binary_return};
   }
 #endif
 
-  throw bad_file("Unknown format");
+  LOG(ERROR) << "Unknown format";
+  return nullptr;
 
 }
 
-Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
 
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(raw)) {
@@ -97,14 +99,19 @@ Binary* Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) 
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(raw)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* fat = MachO::Parser::parse(raw, name);
-    MachO::Binary* binary_return = fat->pop_back();
-    delete fat;
-    return binary_return;
+    MachO::FatBinary* fat = MachO::Parser::parse(raw, name).release();
+    MachO::Binary* binary_return = nullptr;
+
+    if (fat) {
+      binary_return = fat->pop_back();
+      delete fat;
+    }
+    return std::unique_ptr<Binary>{binary_return};
   }
 #endif
 
-  throw bad_file("Unknown format");
+  LOG(ERROR) << "Unknown format";
+  return nullptr;
 
 }
 

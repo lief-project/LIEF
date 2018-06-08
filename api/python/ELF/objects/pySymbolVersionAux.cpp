@@ -21,13 +21,17 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
+
 template<class T>
 using getter_t = T (SymbolVersionAux::*)(void) const;
 
 template<class T>
 using setter_t = void (SymbolVersionAux::*)(T);
 
-void init_ELF_SymbolVersionAux_class(py::module& m) {
+template<>
+void create<SymbolVersionAux>(py::module& m) {
 
   // Symbol Version Auxiliary object
   py::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
@@ -55,4 +59,7 @@ void init_ELF_SymbolVersionAux_class(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
+}
+
+}
 }

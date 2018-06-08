@@ -20,8 +20,11 @@
 #include <string>
 #include <sstream>
 
+namespace LIEF {
+namespace ELF {
 
-void init_ELF_Builder_class(py::module& m) {
+template<>
+void create<Builder>(py::module& m) {
   py::class_<Builder>(m, "Builder")
     .def(py::init<Binary*>(),
         "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) "",
@@ -46,4 +49,6 @@ void init_ELF_Builder_class(py::module& m) {
         "Return the build result as a ``list`` of bytes",
         py::return_value_policy::reference_internal);
 
+}
+}
 }
