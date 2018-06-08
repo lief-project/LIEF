@@ -95,6 +95,8 @@ SPECIALIZE_CREATE(LoadConfigurationV7);
 
 SPECIALIZE_CREATE(ResourcesManager);
 
+SPECIALIZE_CREATE(Builder);
+
 }
 }
 

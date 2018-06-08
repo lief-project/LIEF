@@ -39,6 +39,7 @@ void init_python_module(py::module& m) {
 
 void init_objects(py::module& m) {
   CREATE(Parser, m);
+
   CREATE(Binary, m);
   CREATE(DosHeader, m);
   CREATE(Header, m);
@@ -86,6 +87,8 @@ void init_objects(py::module& m) {
   CREATE(LoadConfigurationV5, m);
   CREATE(LoadConfigurationV6, m);
   CREATE(LoadConfigurationV7, m);
+
+  CREATE(Builder, m);
 
 }
 
