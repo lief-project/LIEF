@@ -44,6 +44,7 @@ void init_objects(py::module& m) {
   CREATE(MainCommand, m);
   CREATE(DynamicSymbolCommand, m);
   CREATE(DylinkerCommand, m);
+  CREATE(DyldInfo, m);
   CREATE(DylibCommand, m);
   CREATE(ThreadCommand, m);
   CREATE(RPathCommand, m);
