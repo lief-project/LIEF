@@ -167,6 +167,12 @@ void JsonVisitor::visit(const Binary& binary) {
     v(binary.data_in_code());
     this->node_["data_in_code"] = v.get();
   }
+
+  if (binary.has_encryption_info()) {
+    JsonVisitor v;
+    v(binary.encryption_info());
+    this->node_["encryption_info"] = v.get();
+  }
 }
 
 
@@ -453,6 +459,14 @@ void JsonVisitor::visit(const SubFramework& sf) {
 void JsonVisitor::visit(const DyldEnvironment& dv) {
   this->visit(*dv.as<LoadCommand>());
   this->node_["value"] = dv.value();
+}
+
+
+void JsonVisitor::visit(const EncryptionInfo& e) {
+  this->visit(*e.as<LoadCommand>());
+  this->node_["crypt_offset"] = e.crypt_offset();
+  this->node_["crypt_size"]   = e.crypt_size();
+  this->node_["crypt_id"]     = e.crypt_id();
 }
 
 

@@ -615,6 +615,23 @@ def print_relocations(binary):
 
     print("")
 
+@exceptions_handler(Exception)
+def print_encryption_info(binary):
+
+    format_str = "{:<13} {:<30}"
+    format_hex = "{:<13} 0x{:<28x}"
+    format_dec = "{:<13} {:<30d}"
+
+    print("== Encryption Info ==")
+    cmd = binary.encryption_info
+
+    print(format_hex.format("Offset:", cmd.crypt_offset))
+    print(format_hex.format("Size:",   cmd.crypt_size))
+    print(format_dec.format("ID:",     cmd.crypt_id))
+
+    print("")
+
+
 
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
@@ -713,6 +730,10 @@ def main():
     parser.add_argument('--dyld-environment',
             action='store_true', dest='show_dyld_env',
             help="Display the 'Dyld Environment' command")
+
+    parser.add_argument('--encryption-info',
+            action='store_true', dest='show_encrypt_info',
+            help="Display the 'Encryption Info' command")
 
     parser.add_argument('--bind-opcodes',
             action='store_true', dest='show_bind_opcodes',
@@ -816,6 +837,9 @@ def main():
 
         if (args.show_dyld_env or args.show_all) and binary.has_dyld_environment:
             print_dyld_environment(binary)
+
+        if (args.show_encrypt_info or args.show_all) and binary.has_encryption_info:
+            print_encryption_info(binary)
 
         if (args.show_rpath_command or args.show_all) and binary.has_rpath:
             print_rpath_command(binary)

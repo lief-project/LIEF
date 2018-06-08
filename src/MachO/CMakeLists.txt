@@ -54,6 +54,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DataCodeEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SubFramework.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DyldEnvironment.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/EncryptionInfo.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES
@@ -96,6 +97,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DataCodeEntry.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SubFramework.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DyldEnvironment.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/EncryptionInfo.hpp"
   )
 
 # JSON Part

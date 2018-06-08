@@ -288,6 +288,13 @@ void Hash::visit(const DyldEnvironment& de) {
   this->process(de.value());
 }
 
+void Hash::visit(const EncryptionInfo& e) {
+  this->visit(*e.as<EncryptionInfo>());
+  this->process(e.crypt_offset());
+  this->process(e.crypt_size());
+  this->process(e.crypt_id());
+}
+
 
 
 

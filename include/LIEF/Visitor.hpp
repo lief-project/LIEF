@@ -147,6 +147,7 @@ LIEF_MACHO_FORWARD(VersionMin)
 LIEF_MACHO_FORWARD(SegmentSplitInfo)
 LIEF_MACHO_FORWARD(SubFramework)
 LIEF_MACHO_FORWARD(DyldEnvironment)
+LIEF_MACHO_FORWARD(EncryptionInfo)
 
 // OAT
 // ===============================
@@ -460,6 +461,9 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO::DyldEnvironment
   LIEF_MACHO_VISITABLE(DyldEnvironment)
+
+  //! @brief Method to visit a LIEF::MachO::DyldEnvironment
+  LIEF_MACHO_VISITABLE(EncryptionInfo)
 
   // OAT part
   // ========

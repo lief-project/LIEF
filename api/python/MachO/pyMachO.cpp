@@ -63,6 +63,7 @@ void init_objects(py::module& m) {
   CREATE(SegmentSplitInfo, m);
   CREATE(SubFramework, m);
   CREATE(DyldEnvironment, m);
+  CREATE(EncryptionInfo, m);
 }
 
 }

@@ -524,6 +524,19 @@ void BinaryParser::parse_load_commands(void) {
         }
 
 
+      // ================
+      // Encryption Info
+      // ================
+      case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO:
+      case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO_64:
+        {
+          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
+          const encryption_info_command* cmd = &this->stream_->peek<encryption_info_command>(loadcommands_offset);
+          load_command = std::unique_ptr<EncryptionInfo>{new EncryptionInfo{cmd}};
+          break;
+        }
+
+
       default:
         {
           LOG(WARNING) << "Command '" << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd))

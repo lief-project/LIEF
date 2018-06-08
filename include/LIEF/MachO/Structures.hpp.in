@@ -68,7 +68,6 @@ namespace MachO {
     using section                 = section_32;
     using routines_command        = routines_command_32;
     using dylib_module            = dylib_module_32;
-    using encryption_info_command = encryption_info_command_32;
     using nlist                   = nlist_32;
 
     using uint                    = uint32_t;
@@ -81,7 +80,6 @@ namespace MachO {
     using section                 = section_64;
     using routines_command        = routines_command_64;
     using dylib_module            = dylib_module_64;
-    using encryption_info_command = encryption_info_command_64;
     using nlist                   = nlist_64;
 
     using uint                    = uint64_t;

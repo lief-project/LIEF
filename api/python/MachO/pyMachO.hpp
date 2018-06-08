@@ -76,6 +76,7 @@ SPECIALIZE_CREATE(VersionMin);
 SPECIALIZE_CREATE(SegmentSplitInfo);
 SPECIALIZE_CREATE(SubFramework);
 SPECIALIZE_CREATE(DyldEnvironment);
+SPECIALIZE_CREATE(EncryptionInfo);
 
 }
 }

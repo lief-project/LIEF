@@ -277,6 +277,14 @@ Dyld Environment
 
 ----------
 
+Encryption Info
+***************
+
+.. doxygenclass:: LIEF::MachO::EncryptionInfo
+   :project: lief
+
+----------
+
 Utilities
 *********
 

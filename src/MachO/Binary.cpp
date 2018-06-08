@@ -872,6 +872,21 @@ const DyldEnvironment& Binary::dyld_environment(void) const {
   return this->command<DyldEnvironment>();
 }
 
+// EncryptionInfo command
+// +++++++++++++++++++++++
+bool Binary::has_encryption_info(void) const {
+  return this->has_command<EncryptionInfo>();
+}
+
+EncryptionInfo& Binary::encryption_info(void) {
+  return this->command<EncryptionInfo>();
+}
+
+const EncryptionInfo& Binary::encryption_info(void) const {
+  return this->command<EncryptionInfo>();
+}
+
+
 
 
 

@@ -290,6 +290,16 @@ void create<Binary>(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.DyldEnvironment) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_encryption_info",
+        &Binary::has_encryption_info,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.EncryptionInfo) " command",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("encryption_info",
+        static_cast<no_const_getter<EncryptionInfo&>>(&Binary::encryption_info),
+        "Return binary's " RST_CLASS_REF(lief.MachO.EncryptionInfo) " if any.",
+        py::return_value_policy::reference)
+
 
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,

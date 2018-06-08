@@ -302,21 +302,12 @@ struct source_version_command {
   uint64_t version;
 };
 
-struct encryption_info_command_32 {
+struct encryption_info_command {
   uint32_t cmd;
   uint32_t cmdsize;
   uint32_t cryptoff;
   uint32_t cryptsize;
   uint32_t cryptid;
-};
-
-struct encryption_info_command_64 {
-  uint32_t cmd;
-  uint32_t cmdsize;
-  uint32_t cryptoff;
-  uint32_t cryptsize;
-  uint32_t cryptid;
-  uint32_t pad;
 };
 
 struct version_min_command {

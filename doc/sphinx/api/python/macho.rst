@@ -343,6 +343,17 @@ Dyld Environment
 
 ----------
 
+Encryption Info
+***************
+
+.. autoclass:: lief.MachO.EncryptionInfo
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+
 
 Enums
 *****

@@ -46,6 +46,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/DyldEnvironment.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -329,6 +330,13 @@ class LIEF_API Binary : public LIEF::Binary  {
     //! @brief Return the MachO::DyldEnvironment
     DyldEnvironment&       dyld_environment(void);
     const DyldEnvironment& dyld_environment(void) const;
+
+    //! @brief ``true`` if the binary has Encryption Info.
+    bool has_encryption_info(void) const;
+
+    //! @brief Return the MachO::DyldEnvironment
+    EncryptionInfo&       encryption_info(void);
+    const EncryptionInfo& encryption_info(void) const;
 
     template<class T>
     LIEF_LOCAL bool has_command(void) const;
