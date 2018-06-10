@@ -1,6 +1,60 @@
 Changelog
 =========
 
+0.9.0 - June 11, 2018
+---------------------
+
+LIEF 0.9 comes with new formats related to Android: OAT, DEX, VDEX and ART. It also fixes bugs and thanks to
+:github_user:`yd0b0N`, ELF parser now supports big and little endian binaries. We also completed the JSON serialization of LIEF objects.
+
+
+Features
+********
+
+:MachO:
+
+  * Enable to configure the Mach-O parser for quick parsing: :commit:`880b99aeef825786dd65aed286d7c4d23b62f564`
+  * Add :class:`lief.MachO.EncryptionInfo` command: :commit:`f4e2d81bfe84238d463bdb65297c296635e783b1`
+  * Add :class:`lief.MachO.RPathCommand` command: :commit:`196994dc089885ff2f1268e51f5514f7fcbc5cff`
+  * Add :class:`lief.MachO.DataInCode` command: :commit:`a16e1c4d13c7071fabe6a5a46b6d6c0fd9565b72`
+  * Add :class:`lief.MachO.SubFramework` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * Add :class:`lief.MachO.SegmentSplitInfo` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * Add :class:`lief.MachO.DyldEnvironment` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * API to show export-trie, rebase and binding opcodes: :commit:`5d56141061bfc27e3c971e9e474dc86fdaf0c6a9`
+
+
+:PE:
+
+  * Add PE Code View: :commit:`eab4a7614fdf6e9a180b1c638903310da0b83118`
+
+
+:ELF:
+
+  * Add support for ``.note.android.ident`` section: :commit:`d13db18214006ce654b723a882f70c3d7eabd20d`
+  * Enable to add unlimited number of dynamic entries: :commit:`a40da3e3b4b985b18a6e6026d594f524b7bae963`
+  * Add support for PPC relocations: :commit:`08b514191f661eeabbdf8ecacd1d7dd35a67ca54`
+  * Endianness support: :commit:`e794ac1502ee7636755bd441923368f88525a7d0`
+
+API
+***
+
+  * :func:`lief.breakp` and :func:`lief.shell`
+  * :func:`lief.parse` now support ``io`` streams as input
+  * Parser now returns a ``std::unique_ptr`` instead of a raw pointer: :commit:`cd1cc457cf3d63cfc5faa945657887200cedb8b3`
+
+Misc
+****
+
+  * Use `frozen <https://github.com/serge-sans-paille/frozen>`_ for some internal ``std::map`` (If C++14 is supported by the compiler)
+
+Acknowledgements
+****************
+
+  * :github_user:`yd0b0N` for :pr:`162` and :pr:`166` (Endianness support and PPC relocations)
+  * :github_user:`0xbf00` for :pr:`128` (``LC_RPATH`` command)
+  * :github_user:`illera88` for :pr:`118`
+
+
 
 0.8.3
 -----
