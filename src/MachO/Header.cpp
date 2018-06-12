@@ -150,8 +150,8 @@ ENDIANNESS Header::abstract_endianness(void) const {
 }
 
 
-std::set<HEADER_FLAGS> Header::flags_list(void) const {
-  std::set<HEADER_FLAGS> flags;
+Header::flags_list_t Header::flags_list(void) const {
+  Header::flags_list_t flags;
 
   std::copy_if(
       std::begin(header_flags_array),
