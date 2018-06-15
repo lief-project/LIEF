@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/utils.hpp"
-#include "LIEF/utf8.h"
+#include "utf8.h"
 #include <iomanip>
 #include <sstream>
 #include <iostream>
