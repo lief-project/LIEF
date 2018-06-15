@@ -25,7 +25,6 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/filesystem/filesystem.h"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -41,6 +40,8 @@
 #include "Parser.tcc"
 
 #include "LIEF/PE/utils.hpp"
+
+#include "filesystem/filesystem.h"
 
 #include "signature/pkcs7.h"
 

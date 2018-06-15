@@ -95,7 +95,6 @@ set(LIEF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/types.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/utf8.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/utils.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/visibility.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Object.hpp"

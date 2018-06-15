@@ -23,13 +23,13 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/filesystem/filesystem.h"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/utils.hpp"
 
+#include "filesystem/filesystem.h"
 
 namespace LIEF {
 namespace MachO {

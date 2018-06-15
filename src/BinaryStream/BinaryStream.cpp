@@ -15,7 +15,7 @@
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/utf8/checked.h"
+#include "utf8/checked.h"
 
 #include <iomanip>
 #include <sstream>

@@ -21,7 +21,7 @@
 
 #include "LIEF/logging++.hpp"
 
-#include "LIEF/utf8.h"
+#include "utf8.h"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/Builder.hpp"

@@ -17,6 +17,7 @@
 #define LIEF_ASSOCIATIVE_ITERATORS_H_
 #include <iostream>
 #include <cmath>
+#include <cassert>
 #include <iterator>
 #include <functional>
 #include <algorithm>
@@ -191,9 +192,7 @@ class dict_iterator : public std::iterator<
 
 
   //add_const_t<ref_t> operator[](size_t n) const {
-  //  if (n >= this->size()) {
-  //    throw integrity_error(std::to_string(n) + " is out of bound");
-  //  }
+  //  assert(n < this->size() && "integrity_error: out of bound")
   //  auto it = this->begin();
   //  std::advance(it, n);
   //  return const_cast<add_const_t<ref_t>>(*it);
@@ -274,9 +273,7 @@ class dict_iterator : public std::iterator<
   template<typename U = typename DT::value_type>
   typename std::enable_if<std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
-    if (*this->it_ == nullptr) {
-      throw integrity_error("nullptr");
-    }
+    assert(*this->it_ && "integrity error: nupptr");
     return const_cast<add_const_t<ref_t>>(**it_);
   }
 
