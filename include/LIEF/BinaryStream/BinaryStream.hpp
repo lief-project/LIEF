@@ -109,7 +109,7 @@ template<typename T>
 T BinaryStream::swap_endian(T u) {
   // From http://stackoverflow.com/a/4956493
   static_assert(CHAR_BIT == 8, "CHAR_BIT != 8");
-  static_assert(std::is_integral<T>::value, "Interger required");
+  static_assert(std::is_integral<T>::value, "Integer required");
   union {
     T u;
     unsigned char u8[sizeof(T)];

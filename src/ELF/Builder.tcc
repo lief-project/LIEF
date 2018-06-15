@@ -207,7 +207,7 @@ void Builder::build(const Header& header) {;
     std::begin(ehdr.e_ident));
 
   this->ios_.seekp(0);
-  this->ios_.write(reinterpret_cast<const uint8_t*>(&ehdr), sizeof(Elf_Ehdr));
+  this->ios_.write_conv<Elf_Ehdr>(ehdr);
 }
 
 
@@ -296,7 +296,7 @@ void Builder::build_sections(void) {
     // Write Section'header
     if (section_headers_offset > 0) {
       this->ios_.seekp(section_headers_offset + i * sizeof(Elf_Shdr));
-      this->ios_.write(reinterpret_cast<const uint8_t*>(&shdr), sizeof(Elf_Shdr));
+      this->ios_.write_conv<Elf_Shdr>(shdr);
     }
   }
 
@@ -317,7 +317,7 @@ void Builder::build_segments(void) {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
   VLOG(VDEBUG) << "[+] Build segments";
 
-  std::vector<uint8_t> pheaders;
+  vector_iostream pheaders(this->should_swap());
   pheaders.reserve(this->binary_->segments_.size() * sizeof(Elf_Phdr));
 
   for (const Segment* segment : this->binary_->segments_) {
@@ -331,10 +331,7 @@ void Builder::build_segments(void) {
       phdr.p_memsz  = static_cast<Elf_Word>(segment->virtual_size());
       phdr.p_align  = static_cast<Elf_Word>(segment->alignment());
 
-      pheaders.insert(
-          std::end(pheaders),
-          reinterpret_cast<uint8_t*>(&phdr),
-          reinterpret_cast<uint8_t*>(&phdr) + sizeof(Elf_Phdr));
+      pheaders.write_conv<Elf_Phdr>(phdr);
   }
 
 
@@ -347,7 +344,7 @@ void Builder::build_segments(void) {
       });
 
   if (it_segment_phdr != std::end(this->binary_->segments_)) {
-    (*it_segment_phdr)->content(pheaders);
+    (*it_segment_phdr)->content(pheaders.raw());
   }
 
 
@@ -366,7 +363,7 @@ void Builder::build_segments(void) {
 
   const Elf_Off segment_header_offset = this->binary_->header().program_headers_offset();
   this->ios_.seekp(segment_header_offset);
-  this->ios_.write(std::move(pheaders));
+  this->ios_.write(std::move(pheaders.raw()));
 }
 
 
@@ -393,7 +390,7 @@ void Builder::build_static_symbols(void) {
   }
   Section& symbol_str_section = *(this->binary_->sections_[symbol_section.link()]);
 
-  std::vector<uint8_t> content;
+  vector_iostream content(this->should_swap());
   content.reserve(this->binary_->static_symbols_.size() * sizeof(Elf_Sym));
   std::vector<uint8_t> string_table;
 
@@ -436,14 +433,11 @@ void Builder::build_static_symbols(void) {
     sym_hdr.st_value = static_cast<Elf_Addr>(symbol->value());
     sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
 
-    content.insert(
-        std::end(content),
-        reinterpret_cast<uint8_t*>(&sym_hdr),
-        reinterpret_cast<uint8_t*>(&sym_hdr) + sizeof(Elf_Sym));
+    content.write_conv<Elf_Sym>(sym_hdr);
   }
 
   symbol_str_section.content(std::move(string_table));
-  symbol_section.content(std::move(content));
+  symbol_section.content(std::move(content.raw()));
 
 }
 
@@ -486,7 +480,7 @@ void Builder::build_dynamic_section(void) {
   Section& dyn_section        = this->binary_->dynamic_section();
 
   std::vector<uint8_t> dynamic_strings_raw;
-  std::vector<uint8_t> dynamic_table_raw;
+  vector_iostream dynamic_table_raw(this->should_swap());
   dynamic_strings_raw.push_back(0);
 
   for (DynamicEntry* entry : this->binary_->dynamic_entries_) {
@@ -607,10 +601,7 @@ void Builder::build_dynamic_section(void) {
     dynhdr.d_tag       = static_cast<Elf_Sxword>(entry->tag());
     dynhdr.d_un.d_val  = static_cast<Elf_Xword>(entry->value());
 
-    dynamic_table_raw.insert(
-      std::end(dynamic_table_raw),
-      reinterpret_cast<uint8_t*>(&dynhdr),
-      reinterpret_cast<uint8_t*>(&dynhdr) + sizeof(Elf_Dyn));
+    dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
   }
 
 
@@ -622,7 +613,7 @@ void Builder::build_dynamic_section(void) {
     Segment dynamic_load;
     dynamic_load.type(SEGMENT_TYPES::PT_LOAD);
     dynamic_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynamic_load.content(dynamic_table_raw);
+    dynamic_load.content(dynamic_table_raw.raw());
     Segment& new_dynamic_load = this->binary_->add(dynamic_load);
 
     auto&& it_dynamic = std::find_if(
@@ -678,7 +669,7 @@ void Builder::build_dynamic_section(void) {
 
   VLOG(VDEBUG) << dyn_strtab_section;
   dyn_strtab_section.content(std::move(dynamic_strings_raw));
-  dyn_section.content(std::move(dynamic_table_raw));
+  dyn_section.content(std::move(dynamic_table_raw.raw()));
 }
 
 
@@ -699,9 +690,10 @@ void Builder::build_symbol_hash(void) {
 
   std::vector<uint8_t> content = (*it_hash_section)->content();
   VectorStream hashtable_stream{content};
+  hashtable_stream.set_endian_swap(this->should_swap());
   hashtable_stream.setpos(0);
-  uint32_t nbucket = hashtable_stream.read<uint32_t>();
-  uint32_t nchain  = hashtable_stream.read<uint32_t>();
+  uint32_t nbucket = hashtable_stream.read_conv<uint32_t>();
+  uint32_t nchain  = hashtable_stream.read_conv<uint32_t>();
 
 
   std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);
@@ -737,6 +729,13 @@ void Builder::build_symbol_hash(void) {
       chain[value] = idx;
     }
     ++idx;
+  }
+
+  // to be improved...?
+  if (this->should_swap()) {
+    for (size_t i = 0; i < nbucket + nchain + 2; i++) {
+      Convert::swap_endian(&new_hash_table_ptr[i]);
+    }
   }
 
   Section& h_section = **it_hash_section;
@@ -804,7 +803,7 @@ void Builder::build_symbol_gnuhash(void) {
 
   it_symbols dynamic_symbols = this->binary_->dynamic_symbols();
 
-  std::vector<uint8_t> raw_gnuhash;
+  vector_iostream raw_gnuhash(this->should_swap());
   raw_gnuhash.reserve(
       4 * sizeof(uint32_t) +          // header
       maskwords * sizeof(uint__) +    // bloom filters
@@ -816,24 +815,16 @@ void Builder::build_symbol_gnuhash(void) {
   // ==============
 
   // nb_buckets
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<const uint8_t*>(&nb_buckets),
-    reinterpret_cast<const uint8_t*>(&nb_buckets) + sizeof(uint32_t));
+  raw_gnuhash.write_conv<uint32_t>(nb_buckets);
 
   // symndx
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<const uint8_t*>(&symndx),
-    reinterpret_cast<const uint8_t*>(&symndx) + sizeof(uint32_t));
+  raw_gnuhash.write_conv<uint32_t>(symndx);
 
   // maskwords
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<const uint8_t*>(&maskwords),
-    reinterpret_cast<const uint8_t*>(&maskwords) + sizeof(uint32_t));
+  raw_gnuhash.write_conv<uint32_t>(maskwords);
 
   // shift2
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<const uint8_t*>(&shift2),
-    reinterpret_cast<const uint8_t*>(&shift2) + sizeof(uint32_t));
+  raw_gnuhash.write_conv<uint32_t>(shift2);
 
 
 
@@ -853,11 +844,9 @@ void Builder::build_symbol_gnuhash(void) {
     VLOG(VDEBUG) << "Bloom filter [" << std::dec << idx << "]: " << std::hex << bloom_filters[idx];
   }
 
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<uint8_t*>(bloom_filters.data()),
-    reinterpret_cast<uint8_t*>(bloom_filters.data() + bloom_filters.size()));
+  raw_gnuhash.write_conv_array(bloom_filters);
 
-
+  
   // Write buckets and hash
   // ======================
   int previous_bucket = -1;
@@ -891,13 +880,9 @@ void Builder::build_symbol_gnuhash(void) {
     hash_values[hash_value_idx - 1] |= 1;
   }
 
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<uint8_t*>(buckets.data()),
-    reinterpret_cast<uint8_t*>(buckets.data() + buckets.size()));
-
-  raw_gnuhash.insert(std::end(raw_gnuhash),
-    reinterpret_cast<uint8_t*>(hash_values.data()),
-    reinterpret_cast<uint8_t*>(hash_values.data() + hash_values.size()));
+  raw_gnuhash.write_conv_array<uint32_t>(buckets);
+  
+  raw_gnuhash.write_conv_array<uint32_t>(hash_values);
 
   auto&& it_gnuhash = std::find_if(
       std::begin(this->binary_->sections_),
@@ -920,7 +905,7 @@ void Builder::build_symbol_gnuhash(void) {
     Segment gnuhash;
     gnuhash.type(SEGMENT_TYPES::PT_LOAD);
     gnuhash.flags(ELF_SEGMENT_FLAGS::PF_R);
-    gnuhash.content(raw_gnuhash);
+    gnuhash.content(raw_gnuhash.raw());
 
     Segment& new_segment = this->binary_->add(gnuhash);
 
@@ -936,7 +921,7 @@ void Builder::build_symbol_gnuhash(void) {
   }
 
 
-  return h_section.content(std::move(raw_gnuhash));
+  return h_section.content(std::move(raw_gnuhash.raw()));
 
 }
 
@@ -1013,7 +998,7 @@ void Builder::build_dynamic_symbols(void) {
   //
   // Build symbols
   //
-  std::vector<uint8_t> symbol_table_raw;
+  vector_iostream symbol_table_raw(this->should_swap());
   for (const Symbol* symbol : this->binary_->dynamic_symbols_) {
     const std::string& name = symbol->name();
     // Check if name is already pressent
@@ -1036,10 +1021,7 @@ void Builder::build_dynamic_symbols(void) {
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
     sym_header.st_size  = static_cast<Elf_Word>(symbol->size());
 
-    symbol_table_raw.insert(
-        std::end(symbol_table_raw),
-        reinterpret_cast<uint8_t*>(&sym_header),
-        reinterpret_cast<uint8_t*>(&sym_header) + sizeof(Elf_Sym));
+    symbol_table_raw.write_conv(sym_header);
   }
 
   VLOG(VDEBUG) << "Set raw string table";
@@ -1075,7 +1057,7 @@ void Builder::build_dynamic_symbols(void) {
     Segment dynsym_load;
     dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
     dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynsym_load.content(symbol_table_raw);
+    dynsym_load.content(symbol_table_raw.raw());
     Segment& new_dynsym_load = this->binary_->add(dynsym_load);
 
     symbol_table_section.virtual_address(new_dynsym_load.virtual_address());
@@ -1093,7 +1075,7 @@ void Builder::build_dynamic_symbols(void) {
 
   VLOG(VDEBUG) << "Write back symbol table";
   string_table_section.content(std::move(string_table_raw));
-  symbol_table_section.content(std::move(symbol_table_raw));
+  symbol_table_section.content(std::move(symbol_table_raw.raw()));
 
 }
 
@@ -1176,7 +1158,7 @@ void Builder::build_dynamic_relocations(void) {
     dt_reloc_size->value(dynamic_relocations.size() * sizeof(Elf_Rel));
   }
 
-  std::vector<uint8_t> content;
+  vector_iostream content(this->should_swap());
   for (const Relocation& relocation : this->binary_->dynamic_relocations()) {
 
     // look for symbol index
@@ -1217,20 +1199,13 @@ void Builder::build_dynamic_relocations(void) {
       relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
-      content.insert(
-          std::end(content),
-          reinterpret_cast<uint8_t*>(&relahdr),
-          reinterpret_cast<uint8_t*>(&relahdr) + sizeof(Elf_Rela));
-
+      content.write_conv<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
       relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
-      content.insert(
-          std::end(content),
-          reinterpret_cast<uint8_t*>(&relhdr),
-          reinterpret_cast<uint8_t*>(&relhdr) + sizeof(Elf_Rel));
+      content.write_conv<Elf_Rel>(relhdr);
     }
 
   }
@@ -1243,7 +1218,7 @@ void Builder::build_dynamic_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content);
+    relocation_load.content(content.raw());
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1260,7 +1235,7 @@ void Builder::build_dynamic_relocations(void) {
 
   }
 
-  relocation_section.content(std::move(content));
+  relocation_section.content(std::move(content.raw()));
 }
 
 template<typename ELF_T>
@@ -1322,7 +1297,7 @@ void Builder::build_pltgot_relocations(void) {
     dt_reloc_size->value(pltgot_relocations.size() * sizeof(Elf_Rel));
   }
 
-  std::vector<uint8_t> content; // Section's content
+  vector_iostream content(this->should_swap()); // Section's content
   for (const Relocation& relocation : this->binary_->pltgot_relocations()) {
 
 
@@ -1358,20 +1333,13 @@ void Builder::build_pltgot_relocations(void) {
       relahdr.r_info   = static_cast<Elf_Xword>(info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
-      content.insert(
-          std::end(content),
-          reinterpret_cast<uint8_t*>(&relahdr),
-          reinterpret_cast<uint8_t*>(&relahdr) + sizeof(Elf_Rela));
-
+      content.write_conv<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
       relhdr.r_info   = static_cast<Elf_Xword>(info);
 
-      content.insert(
-          std::end(content),
-          reinterpret_cast<uint8_t*>(&relhdr),
-          reinterpret_cast<uint8_t*>(&relhdr) + sizeof(Elf_Rel));
+      content.write_conv<Elf_Rel>(relhdr);
     }
   }
 
@@ -1381,7 +1349,7 @@ void Builder::build_pltgot_relocations(void) {
     Segment relocation_load;
     relocation_load.type(SEGMENT_TYPES::PT_LOAD);
     relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content);
+    relocation_load.content(content.raw());
     Segment& new_relocation_load = this->binary_->add(relocation_load);
 
     relocation_section.virtual_address(new_relocation_load.virtual_address());
@@ -1397,7 +1365,7 @@ void Builder::build_pltgot_relocations(void) {
     return this->build<ELF_T>();
   }
 
-  relocation_section.content(std::move(content));
+  relocation_section.content(std::move(content.raw()));
 }
 
 
@@ -1425,7 +1393,7 @@ void Builder::build_symbol_requirement(void) {
   const Elf_Addr dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
 
   Section& dyn_str_section = this->binary_->section_from_virtual_address(dyn_str_va);
-  std::vector<uint8_t> svr_raw;
+  vector_iostream svr_raw(this->should_swap());
   std::vector<uint8_t> dyn_str_raw = dyn_str_section.content();
 
   uint32_t svr_idx = 0;
@@ -1462,10 +1430,7 @@ void Builder::build_symbol_requirement(void) {
     header.vn_aux     = static_cast<Elf_Word>(svars.size() > 0 ? sizeof(Elf_Verneed) : 0);
     header.vn_next    = static_cast<Elf_Word>(next_symbol_offset);
 
-    svr_raw.insert(
-        std::end(svr_raw),
-        reinterpret_cast<uint8_t*>(&header),
-        reinterpret_cast<uint8_t*>(&header) + sizeof(Elf_Verneed));
+    svr_raw.write_conv<Elf_Verneed>(header);
 
 
     uint32_t svar_idx = 0;
@@ -1494,10 +1459,7 @@ void Builder::build_symbol_requirement(void) {
       aux_header.vna_name  = static_cast<Elf_Word>(svar_name_offset);
       aux_header.vna_next  = static_cast<Elf_Word>(svar_idx < (svars.size() - 1) ? sizeof(Elf_Vernaux) : 0);
 
-      svr_raw.insert(
-          std::end(svr_raw),
-          reinterpret_cast<uint8_t*>(&aux_header),
-          reinterpret_cast<uint8_t*>(&aux_header) + sizeof(Elf_Vernaux));
+      svr_raw.write_conv<Elf_Vernaux>(aux_header);
 
       ++svar_idx;
     }
@@ -1528,7 +1490,7 @@ void Builder::build_symbol_requirement(void) {
     return this->build<ELF_T>();
   }
 
-  this->binary_->section_from_offset(svr_offset).content(std::move(svr_raw));
+  this->binary_->section_from_offset(svr_offset).content(std::move(svr_raw.raw()));
   dyn_str_section.content(std::move(dyn_str_raw));
 
 }
@@ -1558,7 +1520,7 @@ void Builder::build_symbol_definition(void) {
   const Elf_Addr dyn_str_va = this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value();
   Section& dyn_str_section = this->binary_->section_from_virtual_address(dyn_str_va);
 
-  std::vector<uint8_t> svd_raw;
+  vector_iostream svd_raw(this->should_swap());
   std::vector<uint8_t> dyn_str_raw = dyn_str_section.content();
 
   uint32_t svd_idx = 0;
@@ -1581,9 +1543,7 @@ void Builder::build_symbol_definition(void) {
     header.vd_aux     = static_cast<Elf_Word>(svas.size() > 0 ? sizeof(Elf_Verdef) : 0);
     header.vd_next    = static_cast<Elf_Word>(next_symbol_offset);
 
-    svd_raw.insert(std::end(svd_raw),
-        reinterpret_cast<uint8_t*>(&header),
-        reinterpret_cast<uint8_t*>(&header) + sizeof(Elf_Verdef));
+    svd_raw.write_conv<Elf_Verdef>(header);
 
 
     uint32_t sva_idx = 0;
@@ -1610,10 +1570,7 @@ void Builder::build_symbol_definition(void) {
       aux_header.vda_name  = static_cast<Elf_Word>(sva_name_offset);
       aux_header.vda_next  = static_cast<Elf_Word>(sva_idx < (svas.size() - 1) ? sizeof(Elf_Verdaux) : 0);
 
-      svd_raw.insert(
-          std::end(svd_raw),
-          reinterpret_cast<uint8_t*>(&aux_header),
-          reinterpret_cast<uint8_t*>(&aux_header) + sizeof(Elf_Verdaux));
+      svd_raw.write_conv<Elf_Verdaux>(aux_header);
 
       ++sva_idx;
     }
@@ -1644,7 +1601,7 @@ void Builder::build_symbol_definition(void) {
     return this->build<ELF_T>();
   }
 
-  this->binary_->section_from_offset(svd_offset).content(std::move(svd_raw));
+  this->binary_->section_from_offset(svd_offset).content(std::move(svd_raw.raw()));
   dyn_str_section.content(std::move(dyn_str_raw));
 
 }
@@ -1758,13 +1715,11 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
           break;
         }
 
-        /*
         case ARCH::EM_PPC:
         {
           relocation = new Relocation(address_relocation, RELOC_POWERPC32::R_PPC_RELATIVE, array[i], is_rela);
           break;
         }
-        */
 
         /*
         case ARCH::EM_PPC64:
@@ -1858,50 +1813,41 @@ void Builder::build_notes(void) {
   }
 
   Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
-  std::vector<uint8_t> raw_notes;
+  vector_iostream raw_notes(this->should_swap());
   for (const Note& note : this->binary_->notes()) {
     // First we have to write the length of the Note's name
     const uint32_t namesz = static_cast<uint32_t>(note.name().size() + 1);
-    raw_notes.insert(
-        std::end(raw_notes),
-        reinterpret_cast<const uint8_t*>(&namesz),
-        reinterpret_cast<const uint8_t*>(&namesz) + sizeof(uint32_t));
+    raw_notes.write_conv<uint32_t>(namesz);
 
     // Then the length of the Note's description
     const uint32_t descsz = static_cast<uint32_t>(note.description().size());
     //const uint32_t descsz = 20;
-    raw_notes.insert(
-        std::end(raw_notes),
-        reinterpret_cast<const uint8_t*>(&descsz),
-        reinterpret_cast<const uint8_t*>(&descsz) + sizeof(uint32_t));
+    raw_notes.write_conv<uint32_t>(descsz);
 
     // Then the note's type
     const NOTE_TYPES type = note.type();
-    raw_notes.insert(
-        std::end(raw_notes),
-        reinterpret_cast<const uint8_t*>(&type),
-        reinterpret_cast<const uint8_t*>(&type) + sizeof(uint32_t));
+    raw_notes.write_conv<uint32_t>(static_cast<uint32_t>(type));
 
     // Then we write the note's name
     const std::string& name = note.name();
-    raw_notes.insert(
-        std::end(raw_notes),
-        reinterpret_cast<const uint8_t*>(name.c_str()),
-        reinterpret_cast<const uint8_t*>(name.c_str()) + namesz);
+    raw_notes.write(name);
 
     // Alignment
-    raw_notes.resize(align(raw_notes.size(), sizeof(uint32_t)), 0);
+    raw_notes.align(sizeof(uint32_t), 0);
 
-
-    // description content
+    // description content (manipulated in 4 byte/uint32_t chunks)
     const std::vector<uint8_t>& description = note.description();
-    raw_notes.insert(
-        std::end(raw_notes),
-        std::begin(description),
-        std::end(description));
-
-    // Alignment
-    raw_notes.resize(align(raw_notes.size(), sizeof(uint32_t)), 0);
+    const uint32_t *desc_ptr = reinterpret_cast<const uint32_t *>(description.data()) ;
+    size_t i = 0;
+    for (; i < description.size() / sizeof(uint32_t); i++) {
+      raw_notes.write_conv<uint32_t>(*(desc_ptr + i));
+    }
+    if (description.size() % sizeof(uint32_t) != 0) {
+      uint32_t padded = 0;
+      uint8_t *ptr = reinterpret_cast<uint8_t *>(&padded);
+      memcpy(ptr, desc_ptr + i, description.size() % sizeof(uint32_t));
+      raw_notes.write_conv<uint32_t>(padded);
+    }
   }
 
   if (segment_note.physical_size() < raw_notes.size()) {
@@ -1912,12 +1858,12 @@ void Builder::build_notes(void) {
     note.physical_address(0);
     note.physical_size(0);
     note.virtual_size(0);
-    note.content(raw_notes);
+    note.content(raw_notes.raw());
     this->binary_->replace(note, segment_note);
     return this->build<ELF_T>();
   }
 
-  segment_note.content(raw_notes);
+  segment_note.content(raw_notes.raw());
 
   // ".note.ABI-tag" // NOTE_TYPES::NT_GNU_ABI_TAG
   // ===============
@@ -1942,18 +1888,14 @@ void Builder::build_symbol_version(void) {
 
   const uint64_t sv_address = this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value();
 
-  std::vector<uint8_t> sv_raw;
+  vector_iostream sv_raw(this->should_swap());
   sv_raw.reserve(this->binary_->symbol_version_table_.size() * sizeof(uint16_t));
 
   //for (const SymbolVersion* sv : this->binary_->symbol_version_table_) {
   for (const Symbol* symbol : this->binary_->dynamic_symbols_) {
     const SymbolVersion& sv = symbol->symbol_version();
     const uint16_t value = sv.value();
-    sv_raw.insert(
-        std::end(sv_raw),
-        reinterpret_cast<const uint8_t*>(&value),
-        reinterpret_cast<const uint8_t*>(&value) + sizeof(uint16_t));
-
+    sv_raw.write_conv<uint16_t>(value);
   }
 
   Section& sv_section = this->binary_->section_from_virtual_address(sv_address);
@@ -1964,7 +1906,7 @@ void Builder::build_symbol_version(void) {
     Segment sv_load;
     sv_load.type(SEGMENT_TYPES::PT_LOAD);
     sv_load.flags(ELF_SEGMENT_FLAGS::PF_R);
-    sv_load.content(sv_raw);
+    sv_load.content(sv_raw.raw());
     Segment& new_sv_load = this->binary_->add(sv_load);
 
     sv_section.virtual_address(new_sv_load.virtual_address());
@@ -1977,7 +1919,7 @@ void Builder::build_symbol_version(void) {
     this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value(new_sv_load.virtual_address());
     return this->build<ELF_T>();
   }
-  sv_section.content(std::move(sv_raw));
+  sv_section.content(std::move(sv_raw.raw()));
 
 
 }

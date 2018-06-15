@@ -38,7 +38,26 @@ Builder::Builder(Binary *binary) :
   binary_{binary}
 {
   this->ios_.reserve(binary->original_size());
+  this->ios_.set_endian_swap(this->should_swap());
 }
+
+
+bool Builder::should_swap(void) const {
+  switch (this->binary_->header().abstract_endianness()) {
+#ifdef __BYTE_ORDER__
+#if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+    case ENDIANNESS::ENDIAN_BIG:
+#elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+    case ENDIANNESS::ENDIAN_LITTLE:
+#endif
+      return true;
+#endif // __BYTE_ORDER__
+    default:
+      // we're good (or don't know what to do), consider bytes are in the expected order
+      return false;
+  }
+}
+
 
 void Builder::build(void) {
   if(this->binary_->type() == ELF_CLASS::ELFCLASS32) {
@@ -89,38 +108,27 @@ void Builder::build_empty_symbol_gnuhash(void) {
 
   Section* gnu_hash_section = *it_gnuhash;
 
-  std::vector<uint8_t> content;
+  vector_iostream content(this->should_swap());
   const uint32_t nb_buckets = 1;
   const uint32_t shift2     = 0;
   const uint32_t maskwords  = 1;
   const uint32_t symndx     = 1; // 0 is reserved
 
   // nb_buckets
-  content.insert(std::end(content),
-    reinterpret_cast<const uint8_t*>(&nb_buckets),
-    reinterpret_cast<const uint8_t*>(&nb_buckets) + sizeof(uint32_t));
+  content.write_conv<uint32_t>(nb_buckets);
 
   // symndx
-  content.insert(std::end(content),
-    reinterpret_cast<const uint8_t*>(&symndx),
-    reinterpret_cast<const uint8_t*>(&symndx) + sizeof(uint32_t));
+  content.write_conv<uint32_t>(symndx);
 
   // maskwords
-  content.insert(std::end(content),
-    reinterpret_cast<const uint8_t*>(&maskwords),
-    reinterpret_cast<const uint8_t*>(&maskwords) + sizeof(uint32_t));
+  content.write_conv<uint32_t>(maskwords);
 
   // shift2
-  content.insert(std::end(content),
-    reinterpret_cast<const uint8_t*>(&shift2),
-    reinterpret_cast<const uint8_t*>(&shift2) + sizeof(uint32_t));
+  content.write_conv<uint32_t>(shift2);
 
   // fill with 0
-  content.insert(
-      std::end(content),
-      gnu_hash_section->size() - content.size(),
-      0);
-  gnu_hash_section->content(content);
+  content.align(gnu_hash_section->size(), 0);
+  gnu_hash_section->content(content.raw());
 
 }
 
