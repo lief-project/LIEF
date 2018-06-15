@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstddef>
+#include <cassert>
 #include <iterator>
 #include <functional>
 #include <algorithm>
@@ -130,9 +131,7 @@ class ref_iterator : public std::iterator<
 
 
   add_const_t<ref_t> operator[](size_t n) const {
-    if (n >= this->size()) {
-      throw integrity_error(std::to_string(n) + " is out of bound");
-    }
+    assert(n < this->size() && "integrity error: out of bound");
 
     ref_iterator* no_const_this = const_cast<ref_iterator*>(this);
 
@@ -223,9 +222,7 @@ class ref_iterator : public std::iterator<
   template<typename U = typename DT::value_type>
   typename std::enable_if<std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
-    if (*this->it_ == nullptr) {
-      throw integrity_error("nullptr");
-    }
+    assert(*this->it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(**it_);
   }
 
@@ -390,9 +387,7 @@ class filter_iterator : public std::iterator<
   template<typename U = typename DT::value_type>
   typename std::enable_if<std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
-    if (*this->it_ == nullptr) {
-      throw integrity_error("nullptr");
-    }
+    assert(*this->it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(**it_);
   }
 
@@ -409,9 +404,7 @@ class filter_iterator : public std::iterator<
   }
 
   add_const_t<ref_t> operator[](size_t n) const {
-    if (n >= this->size()) {
-      throw integrity_error(std::to_string(n) + " is out of bound");
-    }
+    assert(n < this->size() && "integrity error: out of bound");
 
     auto it = this->begin();
     std::advance(it, n);
