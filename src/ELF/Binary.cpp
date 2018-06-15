@@ -1913,6 +1913,20 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
         break;
       }
 
+    case ARCH::EM_PPC:
+      {
+        this->patch_relocations<ARCH::EM_PPC>(from, shift);
+        break;
+      }
+
+      /*
+    case ARCH::EM_PPC64:
+      {
+        this->patch_relocations<ARCH::EM_PPC64>(from, shift);
+        break;
+      }
+      */
+      
     default:
       {
         LOG(WARNING) << "Relocations for architecture " << to_string(arch) << " is not supported!";
