@@ -23,7 +23,6 @@
 
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/filesystem/filesystem.h"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/MachO/BinaryParser.hpp"
@@ -38,6 +37,8 @@
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+
+#include "filesystem/filesystem.h"
 
 namespace LIEF {
 namespace MachO {

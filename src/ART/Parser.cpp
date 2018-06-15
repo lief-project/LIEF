@@ -15,11 +15,12 @@
  */
 
 #include "LIEF/logging++.hpp"
-#include "LIEF/filesystem/filesystem.h"
 
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
 #include "LIEF/ART/Structures.hpp"
+
+#include "filesystem/filesystem.h"
 
 #include "Header.tcc"
 #include "Parser.tcc"
