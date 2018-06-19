@@ -224,6 +224,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_bin2lib.py")
 
+  ADD_PYTHON_TEST(ELF_PYTHON_modify_relocations
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/modify_relocations.py")
+
   # Examples
   # --------
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_elf_reader_ls

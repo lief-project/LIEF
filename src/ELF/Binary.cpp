@@ -764,15 +764,36 @@ Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   relocation_ptr->architecture_ = this->header().machine_type();
   this->relocations_.push_back(relocation_ptr);
 
+  // Add symbol
+  if (relocation.has_symbol()) {
+    const Symbol& associated_sym = relocation.symbol();
+    Symbol* inner_sym = nullptr;
+    if (not this->has_dynamic_symbol(associated_sym.name())) {
+      inner_sym = &(this->add_dynamic_symbol(associated_sym));
+    } else {
+      inner_sym = &(this->get_dynamic_symbol(associated_sym.name()));
+    }
+
+    auto&& it_sym = std::find_if(
+        std::begin(this->dynamic_symbols_),
+        std::end(this->dynamic_symbols_),
+        [&inner_sym] (const Symbol* s) {
+          return s->name() == inner_sym->name();
+        });
+    const size_t idx = std::distance(std::begin(this->dynamic_symbols_), it_sym);
+    relocation_ptr->info(idx);
+    relocation_ptr->symbol(inner_sym);
+  }
+
   // Update the Dynamic Section (Thanks to @yd0b0N)
   bool is_rela = relocation.is_rela();
   DYNAMIC_TAGS tag_sz  = is_rela ? DYNAMIC_TAGS::DT_RELASZ  : DYNAMIC_TAGS::DT_RELSZ;
   DYNAMIC_TAGS tag_ent = is_rela ? DYNAMIC_TAGS::DT_RELAENT : DYNAMIC_TAGS::DT_RELENT;
 
   if (this->has(tag_sz) and this->has(tag_ent)) {
-   DynamicEntry &dt_sz  = this->get(tag_sz);
-   DynamicEntry &dt_ent = this->get(tag_ent);
-   dt_sz.value(dt_sz.value() + dt_ent.value());
+    DynamicEntry &dt_sz  = this->get(tag_sz);
+    DynamicEntry &dt_ent = this->get(tag_ent);
+    dt_sz.value(dt_sz.value() + dt_ent.value());
   }
 
   return *relocation_ptr;
@@ -783,6 +804,52 @@ Relocation& Binary::add_pltgot_relocation(const Relocation& relocation) {
   Relocation* relocation_ptr = new Relocation{relocation};
   relocation_ptr->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
   relocation_ptr->architecture_ = this->header().machine_type();
+
+  // Add symbol
+  if (relocation.has_symbol()) {
+    const Symbol& associated_sym = relocation.symbol();
+    Symbol* inner_sym = nullptr;
+    if (not this->has_dynamic_symbol(associated_sym.name())) {
+      inner_sym = &(this->add_dynamic_symbol(associated_sym));
+    } else {
+      inner_sym = &(this->get_dynamic_symbol(associated_sym.name()));
+    }
+
+    auto&& it_sym = std::find_if(
+        std::begin(this->dynamic_symbols_),
+        std::end(this->dynamic_symbols_),
+        [&inner_sym] (const Symbol* s) {
+          return s->name() == inner_sym->name();
+        });
+    const size_t idx = std::distance(std::begin(this->dynamic_symbols_), it_sym);
+    relocation_ptr->info(idx);
+    relocation_ptr->symbol(inner_sym);
+  }
+
+  // Update the Dynamic Section
+  const bool is_rela = relocation.is_rela();
+  const bool is64    = (this->type() == ELF_CLASS::ELFCLASS64);
+
+  size_t reloc_size = 0;
+  if (is_rela) {
+    if (is64) {
+      reloc_size = sizeof(Elf64_Rela);
+    } else {
+      reloc_size = sizeof(Elf32_Rela);
+    }
+  } else {
+    if (is64) {
+      reloc_size = sizeof(Elf64_Rel);
+    } else {
+      reloc_size = sizeof(Elf32_Rel);
+    }
+  }
+
+  if (this->has(DYNAMIC_TAGS::DT_PLTRELSZ) and this->has(DYNAMIC_TAGS::DT_JMPREL)) {
+    DynamicEntry &dt_sz = this->get(DYNAMIC_TAGS::DT_PLTRELSZ);
+    dt_sz.value(dt_sz.value() + reloc_size);
+  }
+
   this->relocations_.push_back(relocation_ptr);
   return *relocation_ptr;
 }
@@ -1926,7 +1993,7 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
         break;
       }
       */
-      
+
     default:
       {
         LOG(WARNING) << "Relocations for architecture " << to_string(arch) << " is not supported!";

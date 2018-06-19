@@ -290,6 +290,10 @@ void Relocation::info(uint32_t v) {
   this->info_ = v;
 }
 
+void Relocation::symbol(Symbol* sym) {
+  this->symbol_ = sym;
+}
+
 
 void Relocation::purpose(RELOCATION_PURPOSES purpose) {
   this->purpose_ = purpose;

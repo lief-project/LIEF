@@ -68,10 +68,11 @@ void create<Relocation>(py::module& m) {
         &Relocation::has_symbol,
         "``True`` if a " RST_CLASS_REF(lief.ELF.Symbol) " is associated with the relocations")
 
-    .def_property_readonly("symbol",
+    .def_property("symbol",
         static_cast<Symbol& (Relocation::*)(void)>(&Relocation::symbol),
+        static_cast<void (Relocation::*)(Symbol*)>(&Relocation::symbol),
         "" RST_CLASS_REF(lief.ELF.Symbol) " associated with the relocation",
-        py::return_value_policy::reference_internal)
+        py::return_value_policy::reference)
 
     .def_property_readonly("has_section",
         &Relocation::has_section,
