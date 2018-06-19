@@ -79,7 +79,6 @@ class TestRelocations(TestCase):
     def test_all32(self):
         sample_path = get_sample('ELF/ELF32_x86_binary_all.bin')
         output      = os.path.join(self.tmp_dir, "all32.relocation")
-        output      = "/tmp/foo"
 
         target = lief.parse(sample_path)
 
@@ -106,8 +105,7 @@ class TestRelocations(TestCase):
     def tearDown(self):
         # Delete it
         if os.path.isdir(self.tmp_dir):
-            #shutil.rmtree(self.tmp_dir)
-            pass
+            shutil.rmtree(self.tmp_dir)
 
 if __name__ == '__main__':
 
