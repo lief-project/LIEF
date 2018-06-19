@@ -433,6 +433,15 @@ def print_load_configuration(binary):
 
     print("")
 
+
+@exceptions_handler(Exception)
+def print_ctor(binary):
+    print("== Constructors ==\n")
+
+    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    for idx, address in enumerate(binary.ctor_functions):
+        print("    [{:d}] 0x{:x}".format(idx, address))
+
 def main():
     optparser = OptionParser(
             usage='Usage: %prog [options] <pe-file>',
@@ -500,6 +509,10 @@ def main():
             action='store_true', dest='show_loadconfig',
             help='Display load configuration')
 
+    optparser.add_option('--ctor',
+            action='store_true', dest='show_ctor',
+            help='Constructor functions')
+
 
 
     options, args = optparser.parse_args()
@@ -556,6 +569,9 @@ def main():
 
     if (options.show_loadconfig or options.show_all) and binary.has_configuration:
         print_load_configuration(binary)
+
+    if options.show_ctor or options.show_all:
+        print_ctor(binary)
 
 if __name__ == "__main__":
     main()

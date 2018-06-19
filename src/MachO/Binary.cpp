@@ -643,6 +643,29 @@ LIEF::Header Binary::get_abstract_header(void) const {
   return header;
 }
 
+
+LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
+  LIEF::Binary::ctor_t functions;
+  for (const Section& section : this->sections()) {
+    if (section.type() != MACHO_SECTION_TYPES::S_MOD_INIT_FUNC_POINTERS) {
+      continue;
+    }
+
+    const std::vector<uint8_t>& content = section.content();
+    if (this->is64_) {
+      const size_t nb_fnc = content.size() / sizeof(uint64_t);
+      const uint64_t* aptr = reinterpret_cast<const uint64_t*>(content.data());
+      std::move(aptr, aptr + nb_fnc, std::back_inserter(functions));
+
+    } else {
+      const size_t nb_fnc = content.size() / sizeof(uint32_t);
+      const uint32_t* aptr = reinterpret_cast<const uint32_t*>(content.data());
+      std::move(aptr, aptr + nb_fnc, std::back_inserter(functions));
+    }
+  }
+  return functions;
+}
+
 // UUID
 // ++++
 bool Binary::has_uuid(void) const {

@@ -2083,6 +2083,105 @@ bool Binary::has_library(const std::string& name) const {
   return it_needed != std::end(this->dynamic_entries_);
 }
 
+
+LIEF::Binary::ctor_t Binary::ctor_functions(DYNAMIC_TAGS tag) const {
+  LIEF::Binary::ctor_t functions;
+  if (this->has(tag)) {
+    const DynamicEntryArray::array_t& array = this->get(tag).as<DynamicEntryArray>()->array();
+
+    //const uint64_t address = this->get(tag).value();
+    //for (size_t i = 0; i < array.size(); ++i) {
+    //  const uint64_t entry_addr = address + i * sizeof(uint64_t);
+    //  std::cout << std::hex << entry_addr << std::endl;
+    //  const Relocation* relocation = this->get_relocation(entry_addr);
+    //  if (relocation != nullptr and relocation->addend() > 0) {
+    //    functions.push_back(entry_addr + relocation->addend());
+    //  } else {
+    //    functions.push_back(array[i]);
+    //  }
+    //}
+    std::move(
+        std::begin(array),
+        std::end(array),
+        std::back_inserter(functions));
+
+  }
+  return functions;
+}
+
+// Ctor
+LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
+  LIEF::Binary::ctor_t functions;
+
+  LIEF::Binary::ctor_t init = this->ctor_functions(DYNAMIC_TAGS::DT_FINI_ARRAY);
+  std::move(
+      std::begin(init),
+      std::end(init),
+      std::back_inserter(functions));
+
+  LIEF::Binary::ctor_t preinit = this->ctor_functions(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
+  std::move(
+      std::begin(preinit),
+      std::end(preinit),
+      std::back_inserter(functions));
+
+  if (this->has(DYNAMIC_TAGS::DT_INIT)) {
+    functions.push_back(this->get(DYNAMIC_TAGS::DT_INIT).value());
+  }
+  return functions;
+}
+
+
+const Relocation* Binary::get_relocation(uint64_t address) const {
+  auto&& it = std::find_if(
+      std::begin(this->relocations_),
+      std::end(this->relocations_),
+      [address] (const Relocation* r) {
+        return r->address() == address;
+      });
+
+  if (it != std::end(this->relocations_)) {
+    return *it;
+  }
+
+  return nullptr;
+
+}
+
+Relocation* Binary::get_relocation(uint64_t address) {
+  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(address));
+}
+
+const Relocation* Binary::get_relocation(const Symbol& symbol) const {
+  auto&& it = std::find_if(
+      std::begin(this->relocations_),
+      std::end(this->relocations_),
+      [&symbol] (const Relocation* r) {
+        return r->has_symbol() and r->symbol() == symbol;
+      });
+
+  if (it != std::end(this->relocations_)) {
+    return *it;
+  }
+
+  return nullptr;
+}
+
+Relocation* Binary::get_relocation(const Symbol& symbol) {
+  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol));
+}
+
+const Relocation* Binary::get_relocation(const std::string& symbol_name) const {
+  if (not this->has_symbol(symbol_name)) {
+    return nullptr;
+  }
+  return this->get_relocation(*(this->get_symbol(symbol_name).as<Symbol>()));
+}
+
+Relocation* Binary::get_relocation(const std::string& symbol_name) {
+  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol_name));
+}
+
 // Operator+=
 // ==========
 Binary& Binary::operator+=(const DynamicEntry& entry) {

@@ -632,6 +632,15 @@ def print_encryption_info(binary):
     print("")
 
 
+@exceptions_handler(Exception)
+def print_ctor(binary):
+    print("== Constructors ==\n")
+
+    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    for idx, address in enumerate(binary.ctor_functions):
+        print("    [{:d}] 0x{:x}".format(idx, address))
+
+
 
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
@@ -755,6 +764,10 @@ def main():
             action='store_true', dest='show_opcodes',
             help='Display the bind and rebase opcodes')
 
+    parser.add_argument('--ctor',
+            action='store_true', dest='show_ctor',
+            help='Constructor functions')
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -858,6 +871,9 @@ def main():
 
         if (args.show_export_trie or args.show_opcodes) and binary.has_dyld_info:
             print_export_trie(binary)
+
+        if args.show_ctor or args.show_all:
+            print_ctor(binary)
 
         sys.exit(EXIT_STATUS)
 

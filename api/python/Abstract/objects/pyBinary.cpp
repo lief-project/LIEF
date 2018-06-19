@@ -195,6 +195,10 @@ void init_LIEF_Binary_class(py::module& m) {
         "",
         py::return_value_policy::reference)
 
+    .def_property_readonly("ctor_functions",
+        &Binary::ctor_functions,
+        "Constructor functions that are called prior any other functions")
+
     .def("xref",
         &Binary::xref,
         "Return all **virtual address** that *use* the ``address`` given in parameter"

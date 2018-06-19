@@ -458,6 +458,25 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
 
+    .def("get_relocation",
+        static_cast<no_const_func<Relocation*, const std::string&>>(&Binary::get_relocation),
+        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given symbol name",
+        "symbol_name"_a,
+        py::return_value_policy::reference)
+
+    .def("get_relocation",
+        static_cast<no_const_func<Relocation*, const Symbol&>>(&Binary::get_relocation),
+        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given " RST_CLASS_REF(lief.ELF.Symbol) "",
+        "symbol"_a,
+        py::return_value_policy::reference)
+
+    .def("get_relocation",
+        static_cast<no_const_func<Relocation*, uint64_t>>(&Binary::get_relocation),
+        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given address",
+        "address"_a,
+        py::return_value_policy::reference)
+
+
 
     .def(py::self += Segment())
     .def(py::self += Section())

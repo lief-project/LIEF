@@ -75,6 +75,20 @@ class TestAbstract(TestCase):
         self.assertEqual(binary.is_pie, False)
 
 
+    def test_ctor(self):
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('PE/PE32_x86_binary_winhello-mingw.exe')))
+        self.assertEqual(binary.ctor_functions, [0x4018e0, 0x401890])
+
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('MachO/MachO64_x86-64_binary_all.bin')))
+        self.assertEqual(binary.ctor_functions, [0x100000dd0])
+
+        binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin')))
+        self.assertEqual(binary.ctor_functions, [0x403090, 0x4025a0])
+
+        #binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin')))
+        #self.assertEqual(binary.ctor_functions, [0x4030b0, 0x402f50])
+
+
     #def test_parser(self):
     #    binary = lief.parse(TestAbstract.get_raw(get_sample('ELF/ELF32_x86_binary_ls.bin')))
     #    self.assertTrue(isinstance(binary, lief.ELF.Binary))

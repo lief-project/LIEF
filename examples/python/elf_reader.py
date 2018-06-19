@@ -405,6 +405,16 @@ def print_notes(binary):
         print("\n")
 
 
+@exceptions_handler(Exception)
+def print_ctor(binary):
+    print("== Constructors ==\n")
+
+    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    for idx, address in enumerate(binary.ctor_functions):
+        print("    [{:d}] 0x{:x}".format(idx, address))
+
+
+
 def main():
     optparser = OptionParser(
             usage='Usage: %prog [options] <elf-file>',
@@ -484,6 +494,10 @@ def main():
             default=False,
             help='Do not trunc symbol names ...')
 
+    optparser.add_option('--ctor',
+            action='store_true', dest='show_ctor',
+            help='Constructor functions')
+
     options, args = optparser.parse_args()
 
     if options.help or len(args) == 0:
@@ -538,6 +552,9 @@ def main():
 
     if options.show_notes or options.show_all:
         print_notes(binary)
+
+    if options.show_ctor or options.show_all:
+        print_ctor(binary)
 
 
 

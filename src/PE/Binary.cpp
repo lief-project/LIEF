@@ -1192,6 +1192,20 @@ const ResourcesManager Binary::resources_manager(void) const {
 }
 
 
+LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
+  LIEF::Binary::ctor_t functions;
+
+  if (this->has_tls()) {
+    const std::vector<uint64_t>& clbs = this->tls().callbacks();
+    std::move(
+        std::begin(clbs),
+        std::end(clbs),
+        std::back_inserter(functions));
+  }
+  return functions;
+}
+
+
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
