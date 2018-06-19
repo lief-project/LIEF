@@ -540,14 +540,20 @@ Builder& Builder::operator<<(const Section& section) {
   std::copy(name, name + sizeof(header.Name), std::begin(header.Name));
   this->ios_.write(reinterpret_cast<uint8_t*>(&header), sizeof(pe_section));
 
+
   if (section.content().size() > section.size()) {
     LOG(WARNING) << section.name()
                  << " content size is bigger than section's header size"
                  << std::endl;
   }
+
+  // Pad section content with zeroes
+  std::vector<uint8_t> zero_pad (section.size() - section.content().size(), 0);
+
   const size_t saved_offset = this->ios_.tellp();
   this->ios_.seekp(section.offset());
   this->ios_.write(section.content());
+  this->ios_.write(zero_pad);
   this->ios_.seekp(saved_offset);
   return *this;
 }
