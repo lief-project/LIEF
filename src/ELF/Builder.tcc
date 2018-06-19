@@ -670,6 +670,12 @@ void Builder::build_dynamic_section(void) {
   VLOG(VDEBUG) << dyn_strtab_section;
   dyn_strtab_section.content(std::move(dynamic_strings_raw));
   dyn_section.content(std::move(dynamic_table_raw.raw()));
+
+  // Update the dynamic section acording to the PT_DYNAMIC segment
+  const Segment& pt_dynamic = this->binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
+  dyn_section.virtual_address(pt_dynamic.virtual_address());
+  dyn_section.size(pt_dynamic.physical_size());
+  dyn_section.offset(pt_dynamic.file_offset());
 }
 
 
