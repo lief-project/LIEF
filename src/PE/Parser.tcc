@@ -281,7 +281,7 @@ void Parser::parse_import_table(void) {
     import.type_            = this->type_;
 
     if (import.name_RVA_ == 0) {
-      LOG(ERROR) << "Name's RVA is null";
+      LOG(WARNING) << "Name's RVA is null";
       break;
     }
 
