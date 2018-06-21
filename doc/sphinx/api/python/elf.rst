@@ -151,6 +151,16 @@ Symbol Version
 
 ----------
 
+Symbol Version Auxiliary
+************************
+
+.. autoclass:: lief.ELF.SymbolVersionAux
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Symbol Version Definition
 *************************
 
