@@ -19,7 +19,7 @@ A basic Mach-O binary (i.e. not FAT) can be represented in fours parts that are 
   :align: center
 
 
-The first part begins with a header that can be accessed through the :attr:`lief.MachO.Binary.header` attribute. In the second part, we have the load commands table which can be iterated using :attr:`lief.MachO.Binary.load_commands`.
+The first part begins with a header that can be accessed through the :attr:`lief.MachO.Binary.header` attribute. In the second part, we have the load commands table which can be iterated using :attr:`lief.MachO.Binary.load_commands`
 , then we can optionally have padding or free space. Finally, we have the raw data (assembly code, rebase bytecode, signature, ...)
 
 Load commands like :class:`~lief.MachO.SegmentCommand` or :class:`~lief.MachO.DyldInfo` can be associated with *raw data* that are located after the load command table and the padding section.
