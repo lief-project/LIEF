@@ -174,7 +174,7 @@ Here one can find guides to install or integrate LIEF:
 * [Main documentation](https://lief.quarkslab.com/doc/latest/index.html)
 * [Tutorial](https://lief.quarkslab.com/doc/latest/tutorials/index.html)
 * [API](https://lief.quarkslab.com/doc/latest/api/index.html)
-* [Doxygen](https://lief.quarkslab.com/doc/doxygen/index.html)
+* [Doxygen](https://lief.quarkslab.com/doc/latest/doxygen/index.html)
 
 ## Contact
 
