@@ -53,6 +53,7 @@ Main features:
     - [Transforming an ELF executable into a library](https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html)
     - [How to use frida on a non-rooted device](https://lief.quarkslab.com/doc/latest/tutorials/09_frida_lief.html)
     - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
+    - [Mach-O modification](https://lief.quarkslab.com/doc/latest/tutorials/11_macho_modification.html)
 - [Contact](#contact)
 - [Authors](#authors)
 
@@ -170,10 +171,10 @@ Here one can find guides to install or integrate LIEF:
 
 ## Documentation
 
-* [Main documentation](http://lief.quarkslab.com/doc/index.html)
-* [Tutorial](http://lief.quarkslab.com/doc/tutorials/index.html)
-* [API](http://lief.quarkslab.com/doc/api/index.html)
-* [Doxygen](http://lief.quarkslab.com/doxygen/index.html)
+* [Main documentation](https://lief.quarkslab.com/doc/latest/index.html)
+* [Tutorial](https://lief.quarkslab.com/doc/latest/tutorials/index.html)
+* [API](https://lief.quarkslab.com/doc/latest/api/index.html)
+* [Doxygen](https://lief.quarkslab.com/doc/doxygen/index.html)
 
 ## Contact
 
