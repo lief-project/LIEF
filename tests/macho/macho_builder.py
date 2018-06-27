@@ -45,9 +45,6 @@ class TestMachOBuilder(TestCase):
 
         self.check_consistency(original, modified)
 
-        if os.path.isfile(output):
-            os.remove(output)
-
     def check_consistency(self, original, modified):
         # Header
         self.assertEqual(original.header, modified.header)
@@ -236,9 +233,6 @@ class TestLibraryInjection(TestCase):
             return
 
         logger = logging.getLogger(__name__)
-        if os.path.isfile(output):
-            os.remove(output)
-
         extra_flags = extra_flags if extra_flags else []
         _, srcpath = tempfile.mkstemp(prefix="libexample_", suffix=".c")
 
