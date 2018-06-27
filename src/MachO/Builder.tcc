@@ -693,7 +693,7 @@ void Builder::build(SymbolCommand* symbol_command) {
       reinterpret_cast<uint8_t*>(&symtab) + sizeof(symtab_command),
       0);
 
-  const uint32_t size_needed = sizeof(symtab_command) + nlist_table.size() + raw_symbol_names.size();
+  //const uint32_t size_needed = sizeof(symtab_command) + nlist_table.size() + raw_symbol_names.size();
   symtab.cmd     = static_cast<uint32_t>(symbol_command->command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command->size());
   symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset()); // After the header

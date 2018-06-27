@@ -1372,8 +1372,6 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
         it_segments& segments) {
 
 
-  using pint_t = typename MACHO_T::uint;
-
   if (segment_idx >= segments.size()) {
     LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
     return;

@@ -33,6 +33,7 @@ LoadCommand& LoadCommand::operator=(LoadCommand other) {
 }
 
 LoadCommand::LoadCommand(const LoadCommand& other) :
+  Object{other},
   originalData_{other.originalData_},
   command_{other.command_},
   size_{other.size_},
