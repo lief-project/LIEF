@@ -83,7 +83,7 @@ class TestAbstract(TestCase):
         self.assertEqual(binary.ctor_functions, [0x100000dd0])
 
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin')))
-        self.assertEqual(binary.ctor_functions, [0x403090, 0x4025a0])
+        self.assertEqual(binary.ctor_functions, [4206768, 4206416, 4203936])
 
         #binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin')))
         #self.assertEqual(binary.ctor_functions, [0x4030b0, 0x402f50])
