@@ -371,7 +371,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @brief Check if the binary uses ``NX`` protection
   virtual bool has_nx(void) const override;
 
-  virtual LIEF::Binary::ctor_t ctor_functions(void) const override;
+  virtual LIEF::Binary::functions_t ctor_functions(void) const override;
 
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;

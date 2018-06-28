@@ -477,6 +477,11 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
 
+    .def_property_readonly("dtor_functions",
+        &Binary::dtor_functions,
+        "Destuctor functions that are called the main execution")
+
+
 
     .def(py::self += Segment())
     .def(py::self += Section())

@@ -1371,8 +1371,8 @@ LIEF::Header Binary::get_abstract_header(void) const {
 }
 
 
-LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
-  LIEF::Binary::ctor_t functions;
+LIEF::Binary::functions_t Binary::ctor_functions(void) const {
+  LIEF::Binary::functions_t functions;
   for (const Section& section : this->sections()) {
     if (section.type() != MACHO_SECTION_TYPES::S_MOD_INIT_FUNC_POINTERS) {
       continue;

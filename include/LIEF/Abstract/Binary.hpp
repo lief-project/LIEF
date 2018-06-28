@@ -44,7 +44,7 @@ class LIEF_API Binary : public Object {
     VA   = 2, ///< Absolute
   };
 
-  using ctor_t = std::vector<uint64_t>;
+  using functions_t = std::vector<uint64_t>;
 
   public:
   Binary(void);
@@ -140,7 +140,7 @@ class LIEF_API Binary : public Object {
   virtual bool has_nx(void) const = 0;
 
   //! Constructor functions that are called prior any other functions
-  virtual LIEF::Binary::ctor_t ctor_functions(void) const = 0;
+  virtual LIEF::Binary::functions_t ctor_functions(void) const = 0;
 
   virtual std::ostream& print(std::ostream& os) const;
 

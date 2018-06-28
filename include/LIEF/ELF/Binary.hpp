@@ -460,7 +460,8 @@ class LIEF_API Binary : public LIEF::Binary {
   //! to ``true``
   void permute_dynamic_symbols(const std::vector<size_t>& permutation);
 
-  virtual LIEF::Binary::ctor_t ctor_functions(void) const override;
+  virtual LIEF::Binary::functions_t ctor_functions(void) const override;
+  LIEF::Binary::functions_t dtor_functions(void) const;
 
   //! @brief ``true`` if the binary embed notes
   bool has_notes(void) const;
@@ -540,7 +541,7 @@ class LIEF_API Binary : public LIEF::Binary {
   Section& add_section(const Section& section);
   symbols_t static_dyn_symbols(void) const;
 
-  LIEF::Binary::ctor_t ctor_functions(DYNAMIC_TAGS tag) const;
+  LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 
   //! The binary type
   //! (i.e. `ELF32` or `ELF64`)

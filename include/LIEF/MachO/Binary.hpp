@@ -416,7 +416,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   LoadCommand&       operator[](LOAD_COMMAND_TYPES type);
   const LoadCommand& operator[](LOAD_COMMAND_TYPES type) const;
 
-  virtual LIEF::Binary::ctor_t ctor_functions(void) const override;
+  virtual LIEF::Binary::functions_t ctor_functions(void) const override;
 
   private:
   //! Default constructor

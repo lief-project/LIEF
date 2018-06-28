@@ -2084,42 +2084,34 @@ bool Binary::has_library(const std::string& name) const {
 }
 
 
-LIEF::Binary::ctor_t Binary::ctor_functions(DYNAMIC_TAGS tag) const {
-  LIEF::Binary::ctor_t functions;
+LIEF::Binary::functions_t Binary::tor_functions(DYNAMIC_TAGS tag) const {
+  LIEF::Binary::functions_t functions;
   if (this->has(tag)) {
     const DynamicEntryArray::array_t& array = this->get(tag).as<DynamicEntryArray>()->array();
-
-    //const uint64_t address = this->get(tag).value();
-    //for (size_t i = 0; i < array.size(); ++i) {
-    //  const uint64_t entry_addr = address + i * sizeof(uint64_t);
-    //  std::cout << std::hex << entry_addr << std::endl;
-    //  const Relocation* relocation = this->get_relocation(entry_addr);
-    //  if (relocation != nullptr and relocation->addend() > 0) {
-    //    functions.push_back(entry_addr + relocation->addend());
-    //  } else {
-    //    functions.push_back(array[i]);
-    //  }
-    //}
-    std::move(
-        std::begin(array),
-        std::end(array),
-        std::back_inserter(functions));
-
+    functions.reserve(array.size());
+    for (uint64_t x : array) {
+      if (x != 0 and
+          static_cast<uint32_t>(x) != static_cast<uint32_t>(-1) and
+          x != static_cast<uint64_t>(-1)
+        ) {
+        functions.push_back(x);
+      }
+    }
   }
   return functions;
 }
 
 // Ctor
-LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
-  LIEF::Binary::ctor_t functions;
+LIEF::Binary::functions_t Binary::ctor_functions(void) const {
+  LIEF::Binary::functions_t functions;
 
-  LIEF::Binary::ctor_t init = this->ctor_functions(DYNAMIC_TAGS::DT_INIT_ARRAY);
+  LIEF::Binary::functions_t init = this->tor_functions(DYNAMIC_TAGS::DT_INIT_ARRAY);
   std::move(
       std::begin(init),
       std::end(init),
       std::back_inserter(functions));
 
-  LIEF::Binary::ctor_t preinit = this->ctor_functions(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
+  LIEF::Binary::functions_t preinit = this->tor_functions(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
   std::move(
       std::begin(preinit),
       std::end(preinit),
@@ -2129,6 +2121,24 @@ LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
     functions.push_back(this->get(DYNAMIC_TAGS::DT_INIT).value());
   }
   return functions;
+}
+
+
+LIEF::Binary::functions_t Binary::dtor_functions(void) const {
+
+  LIEF::Binary::functions_t functions;
+
+  LIEF::Binary::functions_t fini = this->tor_functions(DYNAMIC_TAGS::DT_FINI_ARRAY);
+  std::move(
+      std::begin(fini),
+      std::end(fini),
+      std::back_inserter(functions));
+
+  if (this->has(DYNAMIC_TAGS::DT_FINI)) {
+    functions.push_back(this->get(DYNAMIC_TAGS::DT_FINI).value());
+  }
+  return functions;
+
 }
 
 
