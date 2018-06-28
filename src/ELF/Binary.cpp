@@ -2113,7 +2113,7 @@ LIEF::Binary::ctor_t Binary::ctor_functions(DYNAMIC_TAGS tag) const {
 LIEF::Binary::ctor_t Binary::ctor_functions(void) const {
   LIEF::Binary::ctor_t functions;
 
-  LIEF::Binary::ctor_t init = this->ctor_functions(DYNAMIC_TAGS::DT_FINI_ARRAY);
+  LIEF::Binary::ctor_t init = this->ctor_functions(DYNAMIC_TAGS::DT_INIT_ARRAY);
   std::move(
       std::begin(init),
       std::end(init),
