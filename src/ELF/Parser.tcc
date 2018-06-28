@@ -1389,9 +1389,12 @@ void Parser::parse_section_relocations(Section const& section) {
           std::begin(this->binary_->relocations_),
           std::end(this->binary_->relocations_),
           [&reloc] (const Relocation* r) {
-            return r->address() == reloc->address() and
-                   r->type() == reloc->type() and
-                   r->addend() == reloc->addend();
+            bool is_same = r->address() == reloc->address() and
+                    r->type() == reloc->type() and
+                    r->addend() == reloc->addend();
+            if(r->has_symbol())
+              is_same &= reloc->has_symbol() and reloc->symbol() == r->symbol();
+            return is_same;
           }) == std::end(this->binary_->relocations_)) {
       this->binary_->relocations_.push_back(reloc.release());
     }
