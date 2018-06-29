@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#if defined(LIEF_PE_UNDEF_H_) || defined(LIEF_PE_FORCE_UNDEF)
+#if !defined(LIEF_PE_UNDEF_H_) || defined(LIEF_PE_FORCE_UNDEF)
 #define LIEF_PE_UNDEF_H_
 
 #ifdef IMAGE_FILE_MACHINE_UNKNOWN
