@@ -45,6 +45,13 @@
 
 #include "signature/pkcs7.h"
 
+
+// Issue with VS2017
+#if defined(IMAGE_FILE_MACHINE_UNKNOWN)
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
+#endif
+
 namespace LIEF {
 namespace PE {
 
