@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on) {
   if ((align_on > 0) and (value % align_on) > 0) {
@@ -50,7 +51,12 @@ std::vector<uint8_t> uencode(uint64_t value) {
 std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::string name;
 
-  utf8::unchecked::utf16to8(std::begin(string), std::end(string), std::back_inserter(name));
+  std::u16string clean_string;
+  std::copy_if(std::begin(string), std::end(string),
+      std::back_inserter(clean_string),
+      utf8::internal::is_code_point_valid<char16_t>);
+
+  utf8::unchecked::utf16to8(std::begin(clean_string), std::end(clean_string), std::back_inserter(name));
 
   if (remove_null_char) {
     return std::string{name.c_str()};
