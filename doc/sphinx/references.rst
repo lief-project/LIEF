@@ -223,5 +223,8 @@ Tools
 | optool             | Obj-C      | https://github.com/alexzielenski/optool                | Mach-O          | Modify Mach-O commands:      |
 |                    |            |                                                        |                 | Resign, insert commands, ... |
 +--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
+| reflective-        | C          | https://github.com/zeroSteiner/reflective-polymorphism | PE              | Transform PE files between   |
+| polymorphism       |            |                                                        |                 | EXE and DLL                  |
++--------------------+------------+--------------------------------------------------------+-----------------+------------------------------+
 
 
