@@ -326,10 +326,10 @@ void Parser::parse_import_table(void) {
     }
 
     size_t idx = 0;
-    while (table != 0) {
+    while (table != 0 or IAT != 0) {
       ImportEntry entry;
       entry.iat_value_ = IAT;
-      entry.data_      = table;
+      entry.data_      = table > 0 ? table : IAT;
       entry.type_      = this->type_;
       entry.rva_       = import.import_address_table_RVA_ + sizeof(uint__) * (idx++);
 
