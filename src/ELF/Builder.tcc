@@ -119,7 +119,9 @@ void Builder::build(void) {
 
 
   // Build sections
-  this->build_sections<ELF_T>();
+  if (this->binary_->sections_.size() > 0) {
+    this->build_sections<ELF_T>();
+  }
 
   // Build PHDR
   if (this->binary_->header().program_headers_offset() > 0) {
