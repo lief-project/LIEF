@@ -526,6 +526,11 @@ Builder& Builder::operator<<(const DataDirectory& data_directory) {
 Builder& Builder::operator<<(const Section& section) {
 
   pe_section header;
+  std::fill(
+      reinterpret_cast<uint8_t*>(&header),
+      reinterpret_cast<uint8_t*>(&header) + sizeof(pe_section),
+      0);
+
   header.VirtualAddress       = static_cast<uint32_t>(section.virtual_address());
   header.VirtualSize          = static_cast<uint32_t>(section.virtual_size());
   header.SizeOfRawData        = static_cast<uint32_t>(section.size());
@@ -537,7 +542,8 @@ Builder& Builder::operator<<(const Section& section) {
   header.Characteristics      = static_cast<uint32_t>(section.characteristics());
   const char* name            = section.name().c_str();
 
-  std::copy(name, name + sizeof(header.Name), std::begin(header.Name));
+  uint32_t name_length = std::min<uint32_t>(section.name().size(), sizeof(header.Name));
+  std::copy(name, name + name_length, std::begin(header.Name));
   this->ios_.write(reinterpret_cast<uint8_t*>(&header), sizeof(pe_section));
 
   size_t pad_length = 0;
