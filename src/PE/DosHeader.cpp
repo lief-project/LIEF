@@ -41,8 +41,10 @@ DosHeader::DosHeader(void) :
   initialRelativeCS_{0},
   addressOfRelocationTable_{0x40},
   overlayNumber_{0},
+  reserved_{0},
   oEMid_{0},
   oEMinfo_{0},
+  reserved2_{0},
   addressOfNewExeHeader_{0xF0} // or 0xE8
 {}
 
