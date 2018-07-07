@@ -83,8 +83,6 @@ void Hash::visit(const SegmentCommand& segment) {
 }
 
 void Hash::visit(const Section& section) {
-  this->visit(*section.as<LoadCommand>());
-
   this->process(section.content());
   this->process(section.segment_name());
   this->process(section.address());
