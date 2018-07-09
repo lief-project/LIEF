@@ -140,8 +140,8 @@ vector_iostream& vector_iostream::write_sleb128(int64_t value) {
     }
 		if (more) {
 		  byte |= 0x80;
-      this->write<uint8_t>(byte);
     }
+    this->write<uint8_t>(byte);
 	} while (more);
 
   return *this;
