@@ -233,6 +233,14 @@ void Section::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+
+void Section::clear(uint8_t c) {
+  std::fill(
+      std::begin(this->content_),
+      std::end(this->content_),
+      c);
+}
+
 bool Section::operator==(const Section& rhs) const {
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);

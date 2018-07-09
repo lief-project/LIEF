@@ -154,6 +154,8 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! or the last one
   Section* add_section(const SegmentCommand& segment, const Section& section);
 
+  virtual void remove_section(const std::string& name, bool clear = false) override;
+
   //! Remove the given command
   bool remove(const LoadCommand& command);
 

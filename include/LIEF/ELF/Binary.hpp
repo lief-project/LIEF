@@ -374,7 +374,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! We clear data used by this section and it's removed from
   //! section table
-  void remove_section(const std::string& name, bool clear = false);
+  virtual void remove_section(const std::string& name, bool clear = false) override;
 
   //! @brief Reconstruct the binary object and write it in `filename`
   //! @param filename Path to write the reconstructed binary

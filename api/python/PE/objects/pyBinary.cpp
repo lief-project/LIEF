@@ -178,7 +178,6 @@ void create<Binary>(py::module& m) {
         "section"_a, py::arg("type") = PE_SECTION_TYPES::UNKNOWN,
         py::return_value_policy::reference)
 
-    //.def("delete_section", (void (Binary::*)(const std::string&)) &Binary::delete_section)
     //.def("get_import_section",
     //    static_cast<no_const_getter<Section&>>(&Binary::get_import_section),
     //    py::return_value_policy::reference_internal)

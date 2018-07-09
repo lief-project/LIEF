@@ -403,11 +403,6 @@ void create<Binary>(py::module& m) {
         "Remove the given library",
         "library_name"_a)
 
-    .def("remove_section",
-        &Binary::remove_section,
-        "Remove the given section from its name",
-        "section_name"_a, "clear"_a = false)
-
     .def("get_library",
         static_cast<no_const_func<DynamicEntryLibrary&, const std::string&>>(&Binary::get_library),
         "Return the " RST_CLASS_REF(lief.ELF.DynamicEntryLibrary) " with the given ``name``",

@@ -1005,6 +1005,49 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   return true;
 }
 
+void Binary::remove_section(const std::string& name, bool clear) {
+  if (not this->has_section(name)) {
+    LOG(WARNING) << "Section '" << name << "' not found!";
+    return;
+  }
+
+  Section& sec_to_delete = this->get_section(name);
+  SegmentCommand& segment = sec_to_delete.segment();
+
+  if (clear) {
+    sec_to_delete.clear(0);
+  }
+
+
+  segment.numberof_sections(segment.numberof_sections() - 1);
+  auto&& it_section = std::find_if(
+      std::begin(segment.sections_),
+      std::end(segment.sections_),
+      [&sec_to_delete] (const Section* s) {
+        return *s == sec_to_delete;
+      });
+  CHECK_NE(it_section, std::end(segment.sections_));
+
+  const size_t lc_offset = segment.command_offset();
+  const size_t section_struct_size = this->is64_ ? sizeof(section_64) : sizeof(section_32);
+  segment.size_ -= section_struct_size;
+
+  this->header().sizeof_cmds(this->header().sizeof_cmds() - section_struct_size);
+
+  for (LoadCommand* lc : this->commands_) {
+    if (lc->command_offset() > lc_offset) {
+      lc->command_offset(lc->command_offset() - section_struct_size);
+    }
+  }
+
+  this->available_command_space_ += section_struct_size;
+
+
+
+  delete *it_section;
+  segment.sections_.erase(it_section);
+}
+
 Section* Binary::add_section(const Section& section) {
   SegmentCommand* __TEXT_segment = this->get_segment("__TEXT");
   if (__TEXT_segment == nullptr) {

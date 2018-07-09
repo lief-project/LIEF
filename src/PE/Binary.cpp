@@ -498,23 +498,29 @@ uint32_t Binary::sizeof_headers(void) const {
 
 }
 
-void Binary::delete_section(const std::string& name) {
-  Section& section_to_delete = this->get_section(name);
+void Binary::remove_section(const std::string& name, bool clear) {
 
   this->header().numberof_sections(this->header().numberof_sections() - 1);
 
   this->optional_header().sizeof_headers(this->sizeof_headers());
   this->optional_header().sizeof_image(static_cast<uint32_t>(this->virtual_size()));
 
-  this->sections_.erase(
-      std::remove_if(
-        std::begin(this->sections_),
-        std::end(this->sections_),
-        [&section_to_delete](const Section* section)
-        {
-          return section->name() == section_to_delete.name();
-        }),
-      std::end(this->sections_));
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&name] (const Section* section) {
+        return section->name() == name;
+      });
+  if (it_section == std::end(this->sections_)) {
+    LOG(ERROR) << "Unable to find section: '" << name << "'" << std::endl;
+  }
+
+  Section* to_remove = *it_section;
+  if (clear) {
+    to_remove->clear(0);
+  }
+  delete to_remove;
+  this->sections_.erase(it_section);
 }
 
 void Binary::make_space_for_new_section(void) {

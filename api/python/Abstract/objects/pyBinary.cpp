@@ -71,6 +71,11 @@ void init_LIEF_Binary_class(py::module& m) {
         &Binary::entrypoint,
         "Binary's entrypoint")
 
+    .def("remove_section",
+        static_cast<void (Binary::*)(const std::string&, bool)>(&Binary::remove_section),
+        "Remove the section with the given name",
+        "name"_a, "clear"_a = false)
+
     .def_property_readonly("sections",
         static_cast<it_t<it_sections>>(&Binary::sections),
         "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Section) "",

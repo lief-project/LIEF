@@ -341,6 +341,28 @@ Section& Section::operator-=(MACHO_SECTION_FLAGS flag) {
 }
 
 
+void Section::clear(uint8_t v) {
+  Section::content_t clear(this->size(), v);
+  this->content(std::move(clear));
+}
+
+
+bool Section::has_segment(void) const {
+  return this->segment_ != nullptr;
+}
+
+SegmentCommand& Section::segment(void) {
+  return const_cast<SegmentCommand&>(static_cast<const Section*>(this)->segment());
+}
+
+const SegmentCommand& Section::segment(void) const {
+  if (not this->has_segment()) {
+    throw not_found("No segment associated with this section");
+  }
+  return *this->segment_;
+}
+
+
 void Section::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

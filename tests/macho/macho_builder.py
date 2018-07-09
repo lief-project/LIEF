@@ -344,6 +344,23 @@ class TestShellCodeInjection(TestCase):
             self.assertIsNotNone(re.search(r'Hello World!', stdout))
 
 
+class TestRemoveSection(TestCase):
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+
+    def test_simple(self):
+        original = lief.parse(get_sample('MachO/MachO64_x86-64_binary_section_to_remove.bin'))
+        _, output = tempfile.mkstemp(prefix="lief_sec_remove_")
+
+        original.remove_section("__to_remove")
+        original.write(output)
+
+        if sys.platform.startswith("darwin"):
+            stdout = run_program(output)
+            self.logger.debug(stdout)
+            self.assertIsNotNone(re.search(r'Hello World', stdout))
+
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()

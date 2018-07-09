@@ -97,6 +97,15 @@ void create<Section>(py::module& m) {
         static_cast<getter_t<Section::flag_list_t>>(&Section::flags_list),
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("segment",
+        static_cast<SegmentCommand& (Section::*)(void)>(&Section::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " segment associated with the section",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_segment",
+        &Section::has_segment,
+        "True if the current section has a segment associated with")
+
     .def("has",
         static_cast<bool(Section::*)(MACHO_SECTION_FLAGS) const>(&Section::has),
         "Check if the section has the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) "",

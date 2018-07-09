@@ -86,6 +86,12 @@ class LIEF_API Section : public LIEF::Section {
   flag_list_t             flags_list(void) const;
   uint32_t                raw_flags(void) const;
 
+  bool                    has_segment(void) const;
+  SegmentCommand&         segment(void);
+  const SegmentCommand&   segment(void) const;
+
+  void clear(uint8_t v);
+
   it_relocations relocations(void);
   it_const_relocations relocations(void) const;
 

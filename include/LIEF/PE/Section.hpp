@@ -73,6 +73,7 @@ class LIEF_API Section : public LIEF::Section {
     const std::set<PE_SECTION_TYPES>& types(void) const;
     bool                              has_characteristic(SECTION_CHARACTERISTICS c) const;
     std::set<SECTION_CHARACTERISTICS> characteristics_list(void) const;
+    void clear(uint8_t c);
 
 
     virtual void name(const std::string& name) override;

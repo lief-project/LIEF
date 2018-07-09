@@ -54,6 +54,7 @@ void Builder::build_segments(void) {
     //this->raw_.seekp(segment.file_offset());
     //this->raw_.write(content);
 
+    //const size_t original_size = segment.originalData_.size();
     segment.originalData_.clear();
 
     std::move(
@@ -104,7 +105,6 @@ void Builder::build_segments(void) {
         std::back_inserter(segment.originalData_));
 
     }
-
   }
 
 } // build_segment

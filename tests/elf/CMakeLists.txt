@@ -228,6 +228,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/modify_relocations.py")
 
+  ADD_PYTHON_TEST(ELF_PYTHON_remove_section
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/remove_section.py")
+
   # Examples
   # --------
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_elf_reader_ls

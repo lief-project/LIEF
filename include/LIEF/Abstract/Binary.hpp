@@ -77,6 +77,8 @@ class LIEF_API Binary : public Object {
   it_sections       sections(void);
   it_const_sections sections(void) const;
 
+  virtual void remove_section(const std::string& name, bool clear = false) = 0;
+
   //! @brief Returns binary's relocations
   it_relocations       relocations(void);
   it_const_relocations relocations(void) const;
