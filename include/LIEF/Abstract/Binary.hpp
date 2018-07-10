@@ -146,6 +146,8 @@ class LIEF_API Binary : public Object {
 
   virtual std::ostream& print(std::ostream& os) const;
 
+  virtual void write(const std::string& name) = 0;
+
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 
   protected:
