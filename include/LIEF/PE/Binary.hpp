@@ -330,7 +330,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! Rebuild a PE binary from the current Binary object.
   //! When rebuilding, import table and relocations are not rebuilt.
-  void write(const std::string& filename);
+  void write(const std::string& filename) override;
 
   virtual void accept(Visitor& visitor) const override;
 
