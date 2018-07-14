@@ -55,6 +55,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/macho_builder.py")
 
+  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_fat_builder
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/macho_fat_builder.py")
+
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_macho_reader_ls
     ${PYTHON_EXECUTABLE}
     "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all \

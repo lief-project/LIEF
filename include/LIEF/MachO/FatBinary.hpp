@@ -62,6 +62,13 @@ class LIEF_API FatBinary {
   Binary&       operator[](size_t index);
   const Binary& operator[](size_t index) const;
 
+  //! Reconstruct the Fat binary object and write it in `filename`
+  //! @param filename Path to write the reconstructed binary
+  void write(const std::string& filename);
+
+  //! Reconstruct the Fat binary object and return his content as bytes
+  std::vector<uint8_t> raw(void);
+
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
 
   private:

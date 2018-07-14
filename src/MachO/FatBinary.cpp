@@ -17,6 +17,7 @@
 #include <iomanip>
 
 #include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Builder.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -89,6 +90,16 @@ const Binary& FatBinary::operator[](size_t index) const {
   return this->at(index);
 }
 
+
+void FatBinary::write(const std::string& filename) {
+  Builder::write(this, filename);
+}
+
+std::vector<uint8_t> FatBinary::raw(void) {
+  Builder builder{this};
+  builder();
+  return builder.get_build();
+}
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   for (const Binary& binary : fatbinary) {

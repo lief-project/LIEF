@@ -161,6 +161,10 @@ const std::vector<uint8_t>& vector_iostream::raw(void) const {
   return this->raw_;
 }
 
+std::vector<uint8_t>& vector_iostream::raw(void) {
+  return this->raw_;
+}
+
 size_t vector_iostream::size(void) const {
   return this->raw_.size();
 }

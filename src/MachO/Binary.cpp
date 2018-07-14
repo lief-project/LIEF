@@ -1232,7 +1232,7 @@ LoadCommand& Binary::add_library(const std::string& name) {
 
 std::vector<uint8_t> Binary::raw(void) {
   Builder builder{this};
-  return builder.get_build();
+  return builder();
 }
 
 uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {

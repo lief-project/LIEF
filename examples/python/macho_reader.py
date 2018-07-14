@@ -797,6 +797,9 @@ def main():
         print(e)
         sys.exit(1)
 
+    if len(binaries) > 1:
+        print("Fat Mach-O: {:d} binaries".format(len(binaries)))
+
     for binary in binaries:
         print_information(binary)
 

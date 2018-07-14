@@ -32,20 +32,40 @@ namespace MachO {
 
 Builder::~Builder(void) = default;
 
-Builder::Builder(Binary *binary) {
+Builder::Builder(Binary *binary) :
+  binaries_{},
+  binary_{binary},
+  raw_{}
+{
   this->raw_.reserve(binary->original_size());
   this->binaries_.push_back(std::move(binary));
-  this->binary_ = binary;
-  if (this->binary_->is64_) {
-    this->build<MachO64>();
-  } else {
-    this->build<MachO32>();
-  }
+  this->build();
 }
 
-Builder::Builder(std::vector<Binary*> binaries) {
-  this->binaries_ = binaries;
-  this->binary_   = this->binaries_.back();
+Builder::Builder(std::vector<Binary*> binaries) :
+  binaries_{binaries},
+  binary_{nullptr},
+  raw_{}
+{
+  this->build_fat();
+}
+
+Builder::Builder(FatBinary* fat) :
+  binaries_{fat->binaries_},
+  binary_{nullptr},
+  raw_{}
+{
+  this->binaries_ = fat->binaries_;
+  this->build_fat();
+}
+
+
+std::vector<uint8_t> Builder::operator()(void) {
+  this->build();
+  return this->get_build();
+}
+
+void Builder::build(void) {
   if (this->binary_->is64_) {
     this->build<MachO64>();
   } else {
@@ -140,6 +160,53 @@ void Builder::build(void) {
   //this->build_symbols<T>();
 
   this->build_header();
+}
+
+
+void Builder::build_fat(void) {
+
+  // If there is only one binary don't build a FAT
+  if (this->binaries_.size() == 1) {
+    Builder builder{this->binaries_.back()};
+    builder();
+    return;
+  }
+  this->build_fat_header();
+
+  for (size_t i = 0; i < this->binaries_.size(); ++i) {
+    fat_arch* arch = reinterpret_cast<fat_arch*>(this->raw_.raw().data() + sizeof(fat_header) + i * sizeof(fat_arch));
+    Builder builder{this->binaries_[i]};
+    std::vector<uint8_t> raw = builder();
+    uint32_t offset = align(this->raw_.size(), 1 << arch->align);
+
+    arch->offset = BinaryStream::swap_endian<uint32_t>(offset);
+    arch->size   = BinaryStream::swap_endian<uint32_t>(raw.size());
+    this->raw_.seekp(offset);
+    this->raw_.write(std::move(raw));
+  }
+}
+
+void Builder::build_fat_header(void) {
+  VLOG(VDEBUG) << "[+] Building Fat Header" << std::endl;
+  static constexpr uint32_t ALIGNMENT = 12; // 4096 / 0x1000
+  fat_header header;
+  header.magic     = static_cast<uint32_t>(MACHO_TYPES::FAT_CIGAM);
+  header.nfat_arch = BinaryStream::swap_endian<uint32_t>(this->binaries_.size());
+
+  this->raw_.seekp(0);
+  this->raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(fat_header));
+
+  for (Binary* binary : this->binaries_) {
+    const Header& header = binary->header();
+    fat_arch arch_header;
+    arch_header.cputype    = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_type()));
+    arch_header.cpusubtype = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_subtype()));
+    arch_header.offset     = 0;
+    arch_header.size       = 0;
+    arch_header.align      = ALIGNMENT;
+    this->raw_.write(reinterpret_cast<const uint8_t*>(&arch_header), sizeof(fat_arch));
+  }
+
 }
 
 
@@ -248,6 +315,11 @@ const std::vector<uint8_t>& Builder::get_build(void) {
 
 void Builder::write(MachO::Binary *binary, const std::string& filename) {
   Builder builder{binary};
+  builder.write(filename);
+}
+
+void Builder::write(FatBinary* fatbinary, const std::string& filename) {
+  Builder builder{fatbinary};
   builder.write(filename);
 }
 

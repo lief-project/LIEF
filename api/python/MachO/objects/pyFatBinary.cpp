@@ -39,9 +39,17 @@ void create<FatBinary>(py::module& m) {
       "index"_a,
       py::return_value_policy::reference_internal)
 
+    .def("write",
+        &FatBinary::write,
+        "Build a Mach-O universal binary",
+        "filename"_a)
+
+    .def("raw",
+        &FatBinary::raw,
+        "Build a Mach-O universal binary and return its bytes")
+
     .def("__len__",
         &FatBinary::size)
-
 
     .def("__getitem__",
         static_cast<Binary& (FatBinary::*)(size_t)>(&FatBinary::operator[]),

@@ -26,6 +26,7 @@
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 
 namespace LIEF {
@@ -34,76 +35,85 @@ namespace MachO {
 
 class LIEF_API Builder {
   public:
-    Builder(Binary *binary);
-    Builder(std::vector<Binary*> binaries);
+  static void write(Binary *binary, const std::string& filename);
+  static void write(FatBinary* fatbinary, const std::string& filename);
 
-    Builder(void) = delete;
-    ~Builder(void);
+  public:
+  Builder(Binary *binary);
+  Builder(std::vector<Binary*> binaries);
+  Builder(FatBinary* fat);
 
-    const std::vector<uint8_t>& get_build(void);
-    void write(const std::string& filename) const;
-    static void write(Binary *binary, const std::string& filename);
+  Builder(void) = delete;
+  ~Builder(void);
+
+  std::vector<uint8_t> operator()(void);
+  void build(void);
+
+  const std::vector<uint8_t>& get_build(void);
+  void write(const std::string& filename) const;
 
   private:
-    template<typename T>
-    void build(void);
+  template<typename T>
+  void build(void);
 
-    void build_header(void);
-    void build_load_commands(void);
+  void build_fat(void);
+  void build_fat_header(void);
+  void build_header(void);
+  void build_load_commands(void);
 
-    template<typename T>
-    void build(DylibCommand* library);
+  template<typename T>
+  void build(DylibCommand* library);
 
-    template<typename T>
-    void build(DylinkerCommand* linker);
+  template<typename T>
+  void build(DylinkerCommand* linker);
 
-    template<class T>
-    void build(VersionMin* version_min);
+  template<class T>
+  void build(VersionMin* version_min);
 
-    template<class T>
-    void build(SourceVersion* source_version);
+  template<class T>
+  void build(SourceVersion* source_version);
 
-    template<class T>
-    void build(FunctionStarts* function_starts);
+  template<class T>
+  void build(FunctionStarts* function_starts);
 
-    template<class T>
-    void build(MainCommand* main_cmd);
+  template<class T>
+  void build(MainCommand* main_cmd);
 
-    template<class T>
-    void build(DyldInfo* dyld_info);
+  template<class T>
+  void build(DyldInfo* dyld_info);
 
-    template<class T>
-    void build(SymbolCommand* symbol_command);
+  template<class T>
+  void build(SymbolCommand* symbol_command);
 
-    template<class T>
-    void build(DynamicSymbolCommand* symbol_command);
+  template<class T>
+  void build(DynamicSymbolCommand* symbol_command);
 
-    template<class T>
-    void build(DataInCode* datacode);
+  template<class T>
+  void build(DataInCode* datacode);
 
-    template<class T>
-    void build(CodeSignature* code_signature);
+  template<class T>
+  void build(CodeSignature* code_signature);
 
-    template<class T>
-    void build(SegmentSplitInfo* ssi);
+  template<class T>
+  void build(SegmentSplitInfo* ssi);
 
-    template<class T>
-    void build(SubFramework* sf);
+  template<class T>
+  void build(SubFramework* sf);
 
-    template<class T>
-    void build(DyldEnvironment* de);
+  template<class T>
+  void build(DyldEnvironment* de);
 
-    template <typename T>
-    void build_segments(void);
+  template <typename T>
+  void build_segments(void);
 
-    void build_uuid(void);
+  void build_uuid(void);
 
-    template <typename T>
-    void build_symbols(void);
+  template <typename T>
+  void build_symbols(void);
 
-    std::vector<Binary*> binaries_;
-    Binary*              binary_;
-    mutable vector_iostream raw_;
+  std::vector<Binary*> binaries_;
+  Binary*              binary_{nullptr};
+  mutable vector_iostream raw_;
 };
 
 } // namespace MachO

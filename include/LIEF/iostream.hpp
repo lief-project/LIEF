@@ -79,6 +79,7 @@ class vector_iostream {
   vector_iostream& seekp(vector_iostream::off_type p, std::ios_base::seekdir dir);
 
   const std::vector<uint8_t>& raw(void) const;
+  std::vector<uint8_t>& raw(void);
 
   void set_endian_swap(bool swap);
 
