@@ -185,10 +185,13 @@ endif()
 
 # Logging Configuration
 # =====================
+
+add_definitions(-DELPP_HANDLE_SIGABRT=0)
+add_definitions(-DELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 if (LIEF_LOGGING)
   add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
   add_definitions(-DVDEBUG=9)
-  add_definitions(-DELPP_FEATURE_CRASH_LOG)
+  #add_definitions(-DELPP_FEATURE_CRASH_LOG)
   set(ENABLE_LOGGING_SUPPORT 1)
 else()
   set(ENABLE_LOGGING_SUPPORT 0)
