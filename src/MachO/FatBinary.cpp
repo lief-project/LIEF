@@ -97,8 +97,7 @@ void FatBinary::write(const std::string& filename) {
 
 std::vector<uint8_t> FatBinary::raw(void) {
   Builder builder{this};
-  builder();
-  return builder.get_build();
+  return builder();
 }
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {

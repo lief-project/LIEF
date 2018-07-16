@@ -55,7 +55,6 @@ Builder::Builder(FatBinary* fat) :
   binary_{nullptr},
   raw_{}
 {
-  this->binaries_ = fat->binaries_;
   this->build_fat();
 }
 
