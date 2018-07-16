@@ -890,7 +890,7 @@ def main():
         if args.show_ctor or args.show_all:
             print_ctor(binary)
 
-        sys.exit(EXIT_STATUS)
+    sys.exit(EXIT_STATUS)
 
 
 if __name__ == "__main__":
