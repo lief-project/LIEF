@@ -673,6 +673,9 @@ Section& Binary::add_section<false>(const Section& section) {
   new_section->offset(last_offset);
   new_section->size(section.size());
 
+  // Copy original content in the data handler
+  new_section->content(section.content());
+
   this->header().numberof_sections(this->header().numberof_sections() + 1);
 
   Header& header = this->header();
