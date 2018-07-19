@@ -121,13 +121,13 @@ pip install https://github.com/lief-project/packages/raw/lief-master-latest/pyli
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-CentOS.tar.gz">SDK</a></td>
 
   <td>
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android_x86_64.tar.gz">SDK - x86-64</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-x86_64.tar.gz">SDK - x86-64</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android_x86.tar.gz">SDK - x86</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-x86.tar.gz">SDK - x86</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android_armeabi-v7a.tar.gz">SDK - ARM</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-armeabi-v7a.tar.gz">SDK - ARM</a>
   <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android_aarch64.tar.gz">SDK - AARCH64</a>
+  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-aarch64.tar.gz">SDK - AARCH64</a>
   </td>
 
   <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/documentation-0.9.0.tar.gz">Sphinx + Doxygen</a></td>
@@ -144,10 +144,10 @@ pip install https://github.com/lief-project/packages/raw/lief-master-latest/pyli
 
 Here one can find guides to install or integrate LIEF:
 
-  * [Python](https://lief.quarkslab.com/doc/installation.html#python)
-  * [VisualStudio](https://lief.quarkslab.com/doc/installation.html#visual-studio-integration)
-  * [XCode](https://lief.quarkslab.com/doc/installation.html#xcode-integration)
-  * [CMake](https://lief.quarkslab.com/doc/installation.html#cmake-integration)
+  * [Python](https://lief.quarkslab.com/doc/latest/installation.html#python)
+  * [VisualStudio](https://lief.quarkslab.com/doc/latest/installation.html#visual-studio-integration)
+  * [XCode](https://lief.quarkslab.com/doc/latest/installation.html#xcode-integration)
+  * [CMake](https://lief.quarkslab.com/doc/latest/installation.html#cmake-integration)
 
 ## Getting started
 
