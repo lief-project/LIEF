@@ -23,6 +23,8 @@
 
 #include "Object.tcc"
 
+#include <cassert>
+
 namespace LIEF {
 namespace ELF {
 
@@ -117,6 +119,13 @@ void Builder::build(void) {
     }
   }
 
+  if (this->binary_->object_relocations().size() > 0) {
+    try {
+      this->build_section_relocations<ELF_T>();
+    } catch (const LIEF::exception& e) {
+      LOG(ERROR) << e.what();
+    }
+  }
 
   // Build sections
   if (this->binary_->sections_.size() > 0) {
@@ -223,7 +232,8 @@ void Builder::build_sections(void) {
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
   VLOG(VDEBUG) << "[+] Build sections";
 
-  const Header& header = this->binary_->header();
+  // FIXME: Keep it global const and local non const
+  Header& header = this->binary_->header();
   const Elf_Off section_headers_offset = header.section_headers_offset();
 
   std::vector<std::string> stringTableOpti =
@@ -238,27 +248,55 @@ void Builder::build_sections(void) {
   }
 
   Section* string_names_section = this->binary_->sections_[header.section_name_table_idx()];
+
+  auto&& it_symtab_section = std::find_if(
+      std::begin(this->binary_->sections_),
+      std::end(this->binary_->sections_),
+      [] (const Section* section)
+      {
+        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_SYMTAB;
+      });
+
+  // If there is already a symtab section with a str_section that is the same
+  // as the str_section of sections, create a new one for str_section of sections
+  if (it_symtab_section != std::end(this->binary_->sections_)) {
+    Section& symbol_section = **it_symtab_section;
+    Section* symbol_str_section = nullptr;
+    if (symbol_section.link() != 0 or
+        symbol_section.link() < this->binary_->sections_.size()) {
+      symbol_str_section = this->binary_->sections_[symbol_section.link()];
+    }
+
+    if(symbol_str_section == string_names_section)
+    {
+      Section sec_str_section(".shstrtab", ELF_SECTION_TYPES::SHT_STRTAB);
+      sec_str_section.content(section_names);
+
+      auto& new_str_section = this->binary_->add(sec_str_section, false);
+
+      auto it = std::find_if(std::begin(this->binary_->sections_),
+          std::end(this->binary_->sections_),
+          [&new_str_section](Section* S) {
+            return S == &new_str_section;
+          });
+      assert(it != std::end(this->binary_->sections_));
+
+      // FIXME: We should remove the old section
+      header.section_name_table_idx(std::distance(std::begin(this->binary_->sections_), it));
+
+      return this->build<ELF_T>();
+    }
+  }
+
+  // FIXME: Handle if we add sections names and we shoudl increase section size
   string_names_section->content(section_names);
 
-  // **Should** be safe since .shstr is located at the end of the binary
-  //if (string_names_section->size() < section_names.size()) {
-  // string_names_section = &(this->binary_->extend_section(*string_names_section, section_names.size() - string_names_section->size() + 1));
-  //}
-
+  // First write every section and then the header because if we do all of it
+  // in a row, we will write the old header section after some new header so they
+  // will be remove
   for (size_t i = 0; i < this->binary_->sections_.size(); i++) {
     const Section* section = this->binary_->sections_[i];
     VLOG(VDEBUG) << "Writing back '" << section->name() << "'";
-
-    auto&& it_offset_name = std::search(
-        std::begin(section_names),
-        std::end(section_names),
-        section->name().c_str(),
-        section->name().c_str() + section->name().size() + 1);
-
-    if (it_offset_name == std::end(section_names)) {
-      throw LIEF::not_found(""); // TODO: msg
-    }
-
 
     // Write Section's content
     if (section->size() > 0) {
@@ -278,7 +316,7 @@ void Builder::build_sections(void) {
         section->name().c_str() + section->name().size() + 1);
 
     if (it_offset_name == std::end(section_names)) {
-      throw LIEF::not_found(""); // TODO: msg
+      throw LIEF::not_found("Section name not found");
     }
 
     const Elf_Off offset_name = static_cast<Elf_Off>(std::distance(std::begin(section_names), it_offset_name));
@@ -438,6 +476,7 @@ void Builder::build_static_symbols(void) {
     content.write_conv<Elf_Sym>(sym_hdr);
   }
 
+  // FIXME: Handle increase of size in symbol_str_section
   symbol_str_section.content(std::move(string_table));
   symbol_section.content(std::move(content.raw()));
 
@@ -1096,6 +1135,131 @@ void Builder::build_dynamic_symbols(void) {
   string_table_section.content(std::move(string_table_raw));
   symbol_table_section.content(std::move(symbol_table_raw.raw()));
 
+}
+
+template<typename ELF_T>
+void Builder::build_section_relocations(void) {
+  using Elf_Addr   = typename ELF_T::Elf_Addr;
+  using Elf_Xword  = typename ELF_T::Elf_Xword;
+  using Elf_Sxword = typename ELF_T::Elf_Sxword;
+
+  using Elf_Rela   = typename ELF_T::Elf_Rela;
+  using Elf_Rel    = typename ELF_T::Elf_Rel;
+  VLOG(VDEBUG) << "[+] Building object relocations";
+
+  it_object_relocations  object_relocations = this->binary_->object_relocations();
+
+  bool isRela = object_relocations[0].is_rela();
+  if (not std::all_of(
+        std::begin(object_relocations),
+        std::end(object_relocations),
+        [isRela] (const Relocation& relocation) {
+          return relocation.is_rela() == isRela;
+        })) {
+      throw LIEF::type_error("Object relocations are not of the same type");
+  }
+
+  it_sections sections = this->binary_->sections();
+
+  std::vector<Section*> rel_section;
+  for(Section& S: sections)
+    if(S.type() == ((isRela)?ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL))
+      rel_section.push_back(&S);
+
+
+  //  FIXME: Warn if not rel section found?
+
+  for(Section* section: rel_section) {
+
+    if (section->information() == 0 or section->information() >= sections.size())
+      throw LIEF::not_found("Unable to find associated section for SHT_REL{A} section");
+
+    const size_t sh_info = section->information();
+
+    Section& AssociatedSection = sections[sh_info];
+
+    std::vector<uint8_t> content;
+    for (const Relocation& relocation : this->binary_->object_relocations()) {
+
+      // Only write relocation in the matching section
+      // (relocation for .text in .rela.text)
+      // FIXME: static relocation on a new section will be ignored (SILENTLY!!)
+      if(relocation.section_ != &AssociatedSection)
+        continue;
+
+      uint32_t idx = 0;
+      if (relocation.has_symbol()) {
+        const Symbol& symbol    = relocation.symbol();
+        auto it_name  = std::find_if(
+            std::begin(this->binary_->dynamic_symbols_),
+            std::end(this->binary_->dynamic_symbols_),
+            [&symbol] (const Symbol* s) {
+            return s == &symbol;
+            });
+
+        if (it_name == std::end(this->binary_->dynamic_symbols_)) {
+          // FIXME: Do we have a way to walk both?
+          auto it_name  = std::find_if(
+              std::begin(this->binary_->static_symbols_),
+              std::end(this->binary_->static_symbols_),
+              [&symbol] (const Symbol* s) {
+              return s == &symbol;
+              });
+
+          if (it_name == std::end(this->binary_->static_symbols_)) {
+            throw not_found("Unable to find the symbol associated with the relocation");
+          }
+          idx = static_cast<uint32_t>(std::distance(std::begin(this->binary_->static_symbols_), it_name));
+        } else
+          idx = static_cast<uint32_t>(std::distance(std::begin(this->binary_->dynamic_symbols_), it_name));
+      }
+
+
+      Elf_Xword info = 0;
+      if (std::is_same<ELF_T, ELF32>::value) {
+        info = (static_cast<Elf_Xword>(idx) << 8) | relocation.type();
+      } else {
+        info = (static_cast<Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
+      }
+
+      if (isRela) {
+        Elf_Rela relahdr;
+        relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
+        relahdr.r_info   = static_cast<Elf_Xword>(info);
+        relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
+
+        content.insert(
+            std::end(content),
+            reinterpret_cast<uint8_t*>(&relahdr),
+            reinterpret_cast<uint8_t*>(&relahdr) + sizeof(Elf_Rela));
+
+      } else {
+        Elf_Rel relhdr;
+        relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
+        relhdr.r_info   = static_cast<Elf_Xword>(info);
+
+        content.insert(
+            std::end(content),
+            reinterpret_cast<uint8_t*>(&relhdr),
+            reinterpret_cast<uint8_t*>(&relhdr) + sizeof(Elf_Rel));
+      }
+
+    }
+
+    VLOG(VDEBUG) << "Section associated with object relocations: " << section->name();
+    VLOG(VDEBUG) << "Is Rela: " << std::boolalpha << isRela;
+    // Relocation the '.rela.xxxx' section
+    if (content.size() > section->original_size()) {
+      Section rela_section(section->name(), (isRela)?ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL);
+      rela_section.content(content);
+      this->binary_->add(rela_section, false);
+      this->binary_->remove(*section, true);
+
+      return this->build<ELF_T>();
+
+    }
+    section->content(std::move(content));
+  }
 }
 
 template<typename ELF_T>
