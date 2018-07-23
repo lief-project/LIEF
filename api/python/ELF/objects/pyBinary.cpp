@@ -432,6 +432,10 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
 
+    .def("remove_static_symbol",
+        static_cast<void(Binary::*)(Symbol* s)>(&Binary::remove_static_symbol),
+        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " in the ``.symtab`` section")
+
     .def("add_exported_function",
         &Binary::add_exported_function,
         "Create a symbol for the function at the given ``address`` and export it",
