@@ -76,6 +76,9 @@ class LIEF_API Builder {
     void build_pltgot_relocations(void);
 
     template<typename ELF_T>
+    void build_section_relocations(void);
+
+    template<typename ELF_T>
     void build_hash_table(void);
 
     template<typename ELF_T>
