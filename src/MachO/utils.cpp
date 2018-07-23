@@ -17,6 +17,7 @@
 #include "LIEF/MachO/Structures.hpp"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/logging++.hpp"
 
 #include <fstream>
 #include <iterator>
@@ -30,7 +31,8 @@ namespace MachO {
 bool is_macho(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
   if (not binary) {
-    throw LIEF::bad_file("Unable to open the '" + file + "'");
+    LOG(ERROR) << "Unable to open the '" << file << "'";
+    return false;
   }
 
   MACHO_TYPES magic;
@@ -76,13 +78,15 @@ bool is_macho(const std::vector<uint8_t>& raw) {
 
 bool is_fat(const std::string& file) {
   if (not is_macho(file)) {
-    throw LIEF::bad_format("'" + file + "' is not a MachO");
+    LOG(ERROR) << "'" << file << "' is not a MachO";
+    return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
   if (not binary) {
-    throw LIEF::bad_file("Unable to open the '" + file + "'");
+    LOG(ERROR) << "Unable to open the '" << file << "'";
+    return false;
   }
 
   MACHO_TYPES magic;
@@ -100,13 +104,15 @@ bool is_fat(const std::string& file) {
 
 bool is_64(const std::string& file) {
  if (not is_macho(file)) {
-    throw LIEF::bad_format("'" + file + "' is not a MachO");
+    LOG(ERROR) << "'" << file << "' is not a MachO";
+    return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
   if (not binary) {
-    throw LIEF::bad_file("Unable to open the '" + file + "'");
+    LOG(ERROR) << "Unable to open the '" << file << "'";
+    return false;
   }
 
   MACHO_TYPES magic;
