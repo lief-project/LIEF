@@ -316,7 +316,7 @@ void Builder::build_sections(void) {
         section->name().c_str() + section->name().size() + 1);
 
     if (it_offset_name == std::end(section_names)) {
-      throw LIEF::not_found("Section name not found"); // TODO: msg
+      throw LIEF::not_found("Section name not found");
     }
 
     const Elf_Off offset_name = static_cast<Elf_Off>(std::distance(std::begin(section_names), it_offset_name));
@@ -1167,7 +1167,7 @@ void Builder::build_section_relocations(void) {
       rel_section.push_back(&S);
 
 
-//  FIXME: Warn if not rel section found?
+  //  FIXME: Warn if not rel section found?
 
   for(Section* section: rel_section) {
 
