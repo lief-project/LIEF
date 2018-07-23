@@ -265,7 +265,7 @@ void Binary::remove(const Section& section, bool clear) {
     throw not_found("Can't find '" + section.name() +  "'!");
   }
 
-  size_t idx = std::distance(it_section, std::end(this->sections_));
+  size_t idx = std::distance(std::begin(this->sections_), it_section);
 
   Section* s = *it_section;
 
@@ -279,9 +279,23 @@ void Binary::remove(const Section& section, bool clear) {
           std::end(sections));
   }
 
+  // Patch Section link
+  for (Section* section : this->sections_) {
+    if (section->link() == idx) {
+      section->link(0);
+      continue;
+    }
+
+    if (section->link() > idx) {
+      section->link(section->link() - 1);
+      continue;
+    }
+  }
+
   if (clear) {
     s->clear(0);
   }
+
 
   this->datahandler_->remove(s->file_offset(), s->size(), DataHandler::Node::SECTION);
 
@@ -646,7 +660,7 @@ void Binary::remove_static_symbol(Symbol* symbol) {
   }
 
   delete *it_symbol;
-  this->dynamic_symbols_.erase(it_symbol);
+  this->static_symbols_.erase(it_symbol);
 
   symbol = nullptr;
 
