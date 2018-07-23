@@ -794,6 +794,17 @@ void Builder::build_symbol_gnuhash(void) {
   const uint32_t maskwords  = gnu_hash.maskwords();
   const uint32_t shift2     = gnu_hash.shift2();
 
+  const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
+  if (filters.size() > 0 and filters[0] == 0) {
+    VLOG(VDEBUG) << "Bloom filter is null: nothing to do!";
+    return;
+  }
+
+  if (shift2 == 0) {
+    VLOG(VDEBUG) << "Shift2 is null: nothing to do!";
+    return;
+  }
+
   VLOG(VDEBUG) << "Number of buckets " << std::dec << nb_buckets;
   VLOG(VDEBUG) << "First symbol idx  " << std::dec << symndx;
   VLOG(VDEBUG) << "Number of bloom filters  " << std::dec << maskwords;
