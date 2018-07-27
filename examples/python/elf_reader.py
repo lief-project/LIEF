@@ -413,6 +413,16 @@ def print_ctor(binary):
     for idx, address in enumerate(binary.ctor_functions):
         print("    [{:d}] 0x{:x}".format(idx, address))
 
+@exceptions_handler(Exception)
+def print_strings(binary):
+    print("== Strings ==\n")
+
+
+    strings = binary.strings
+    print("Strings: ({:d})".format(len(binary.strings)))
+    for s in strings:
+        print("    {}".format(s))
+
 
 
 def main():
@@ -498,6 +508,10 @@ def main():
             action='store_true', dest='show_ctor',
             help='Constructor functions')
 
+    optparser.add_option('--strings',
+            action='store_true', dest='show_strings',
+            help='Strings present in the current ELF')
+
     options, args = optparser.parse_args()
 
     if options.help or len(args) == 0:
@@ -555,6 +569,9 @@ def main():
 
     if options.show_ctor or options.show_all:
         print_ctor(binary)
+
+    if options.show_strings or options.show_all:
+        print_strings(binary)
 
 
 

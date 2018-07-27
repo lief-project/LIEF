@@ -540,6 +540,45 @@ const Symbol& Binary::get_static_symbol(const std::string& name) const {
 
 }
 
+
+Binary::string_list_t Binary::strings(void) const {
+  static constexpr size_t MIN_STRING_SIZE = 5;
+  Binary::string_list_t list;
+  if (not this->has_section(".rodata")) {
+    return list;
+  }
+
+  const Section& rodata = this->get_section(".rodata");
+  const std::vector<uint8_t>& data = rodata.content();
+  std::string current;
+  current.reserve(100);
+
+  for (size_t i = 0; i < data.size(); ++i) {
+    char c = static_cast<char>(data[i]);
+
+    // Terminator
+    if (c == '\0') {
+      if (current.size() >= MIN_STRING_SIZE) {
+        list.push_back(std::move(current));
+        continue;
+      }
+      current.clear();
+      continue;
+    }
+
+    // Valid char
+    if (not std::isprint(c)) {
+      current.clear();
+      continue;
+    }
+
+    current.push_back(c);
+  }
+
+
+  return list;
+}
+
 Symbol& Binary::get_static_symbol(const std::string& name) {
   return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_static_symbol(name));
 }

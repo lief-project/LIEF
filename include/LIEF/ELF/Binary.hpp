@@ -59,6 +59,9 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class Builder;
 
   public:
+  using string_list_t = std::vector<std::string>;
+
+  public:
   Binary(const std::string& name, ELF_CLASS type);
 
   Binary& operator=(const Binary& ) = delete;
@@ -262,6 +265,11 @@ class LIEF_API Binary : public LIEF::Binary {
   const Symbol& get_static_symbol(const std::string& name) const;
 
   Symbol& get_static_symbol(const std::string& name);
+
+  //! Return list of strings used by the ELF binrary.
+  //!
+  //! Basically we look for string in the ``.roadata``
+  string_list_t strings(void) const;
 
   //! @brief Remove symbols with the given name in boths
   //!   * dynamic symbols
