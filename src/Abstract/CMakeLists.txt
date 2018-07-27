@@ -37,10 +37,6 @@ endif()
 source_group("Source Files\\Abstract" FILES ${LIEF_ABSTRACT_SRC})
 source_group("Header Files\\Abstract" FILES ${LIEF_ABSTRACT_INCLUDE_FILES})
 
-target_sources(LIB_LIEF_STATIC PRIVATE
-  ${LIEF_ABSTRACT_SRC}
-  ${LIEF_ABSTRACT_INCLUDE_FILES})
-
-target_sources(LIB_LIEF_SHARED PRIVATE
+target_sources(LIB_LIEF PRIVATE
   ${LIEF_ABSTRACT_SRC}
   ${LIEF_ABSTRACT_INCLUDE_FILES})

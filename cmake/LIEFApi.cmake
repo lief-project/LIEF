@@ -57,11 +57,7 @@ if(LIEF_C_API)
     @ONLY
   )
 
-  target_include_directories(LIB_LIEF_STATIC
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include")
-
-  target_include_directories(LIB_LIEF_SHARED
+  target_include_directories(LIB_LIEF
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include")
 

@@ -42,9 +42,4 @@ set(LIEF_C_ELF_INC "${LIEF_API_C_ELF_INCLUDE_FILES_C}" "${LIEF_API_C_ELF_INCLUDE
 source_group("Source Files\\C API\\ELF" FILES ${LIEF_API_C_ELF_SRC})
 source_group("Header Files\\C API\\ELF" FILES ${LIEF_C_ELF_INC})
 
-target_sources(LIB_LIEF_STATIC PRIVATE "${LIEF_C_ELF_SRC}" "${LIEF_C_ELF_INC}")
-target_sources(LIB_LIEF_SHARED PRIVATE "${LIEF_C_ELF_SRC}" "${LIEF_C_ELF_INC}")
-
-
-
-
+target_sources(LIB_LIEF PRIVATE "${LIEF_C_ELF_SRC}" "${LIEF_C_ELF_INC}")

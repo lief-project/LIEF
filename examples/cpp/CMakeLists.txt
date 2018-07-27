@@ -71,41 +71,29 @@ endif()
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
   add_executable("${output_name}"        "${example}")
-  add_executable("${output_name}_shared" "${example}")
 
   # Don't use default include dir
-  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY INCLUDE_DIRECTORIES "")
+  set_property(TARGET "${output_name}" PROPERTY INCLUDE_DIRECTORIES "")
 
   if (MSVC)
     target_compile_options("${output_name}"        PUBLIC /FIiso646.h)
-    target_compile_options("${output_name}_shared" PUBLIC /FIiso646.h)
-
-    if (CMAKE_BUILD_TYPE MATCHES "Debug")
-      target_compile_options("${output_name}_shared" PUBLIC /MTd)
-    else()
-      target_compile_options("${output_name}_shared" PUBLIC /MT)
-    endif()
-
-	  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+	  set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
   endif()
 
-  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY CXX_STANDARD           11)
-  set_property(TARGET "${output_name}" "${output_name}_shared" PROPERTY CXX_STANDARD_REQUIRED  ON)
+  set_property(TARGET "${output_name}" PROPERTY CXX_STANDARD           11)
+  set_property(TARGET "${output_name}" PROPERTY CXX_STANDARD_REQUIRED  ON)
 
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (UNIX)
       if (LIEF_FORCE32)
         target_compile_options("${output_name}"        PRIVATE -m32)
-        target_compile_options("${output_name}_shared" PRIVATE -m32)
 
         set_property(TARGET "${output_name}"        PROPERTY LINK_FLAGS -m32)
-        set_property(TARGET "${output_name}_shared" PROPERTY LINK_FLAGS -m32)
       endif()
     endif()
   endif()
 
-  target_link_libraries("${output_name}"        PUBLIC LIB_LIEF_STATIC)
-  target_link_libraries("${output_name}_shared" PUBLIC LIB_LIEF_SHARED)
+  target_link_libraries("${output_name}"        PUBLIC LIB_LIEF)
 endforeach()
 
 

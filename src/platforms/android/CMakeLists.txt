@@ -10,12 +10,7 @@ set(LIEF_ANDROID_INC_FILES
 source_group("Source Files\\Platforms\\Android" FILES ${LIEF_ANDROID_SRC})
 source_group("Header Files\\Platforms\\Android" FILES ${LIEF_ANDROID_INC_FILES})
 
-target_sources(LIB_LIEF_STATIC PRIVATE
-  ${LIEF_ANDROID_SRC}
-  ${LIEF_ANDROID_INC_FILES}
-)
-
-target_sources(LIB_LIEF_SHARED PRIVATE
+target_sources(LIB_LIEF PRIVATE
   ${LIEF_ANDROID_SRC}
   ${LIEF_ANDROID_INC_FILES}
 )

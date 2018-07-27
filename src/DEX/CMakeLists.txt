@@ -67,12 +67,7 @@ source_group("Source Files\\DEX" FILES ${LIEF_DEX_SRC})
 source_group("Header Files\\DEX" FILES ${LIEF_DEX_INC_FILES})
 
 if (LIEF_DEX)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_DEX_SRC}
-    ${LIEF_DEX_INC_FILES}
-  )
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_DEX_SRC}
     ${LIEF_DEX_INC_FILES}
   )
