@@ -4,6 +4,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+if (MSVC)
+  include(ChooseMSVCCRT)
+endif()
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(Findcppcheck)
@@ -132,23 +135,16 @@ source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
 
 source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
 
-add_library(LIB_LIEF_STATIC STATIC ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Static one
-if(LIEF_SHARED_LIB)
-  add_library(LIB_LIEF_SHARED SHARED ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
-else()
-  add_library(LIB_LIEF_SHARED SHARED EXCLUDE_FROM_ALL ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES}) # Shared one
+add_library(LIB_LIEF ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES})
+
+
+if(WINDOWS AND BUILD_SHARED_LIBS)
+  target_link_libraries(LIB_LIEF ws2_32)
 endif()
 
-
-if(WINDOWS)
-  target_link_libraries(LIB_LIEF_SHARED ws2_32)
-endif()
-
-target_compile_definitions(LIB_LIEF_STATIC PRIVATE -DLIEF_STATIC)
-target_compile_definitions(LIB_LIEF_SHARED PRIVATE -DLIEF_EXPORTS)
+target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 if (LIEF_SUPPORT_CXX14)
-  target_compile_features(LIB_LIEF_STATIC PRIVATE cxx_std_14)
-  target_compile_features(LIB_LIEF_SHARED PRIVATE cxx_std_14)
+  target_compile_features(LIB_LIEF PRIVATE cxx_std_14)
 endif()
 
 # Abstract part
@@ -289,41 +285,31 @@ endif()
 
 # Library definition
 # ==================
-target_include_directories(LIB_LIEF_STATIC
+target_include_directories(LIB_LIEF
   PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
-
-target_include_directories(LIB_LIEF_SHARED
-  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
-  PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
-
 
 if (LIEF_ENABLE_JSON)
-  add_dependencies(LIB_LIEF_STATIC lief_libjson)
-  add_dependencies(LIB_LIEF_SHARED lief_libjson)
+  add_dependencies(LIB_LIEF lief_libjson)
 endif()
 
 if (LIEF_LOGGING)
-  add_dependencies(LIB_LIEF_STATIC lief_easyloggingpp)
-  add_dependencies(LIB_LIEF_SHARED lief_easyloggingpp)
+  add_dependencies(LIB_LIEF lief_easyloggingpp)
 endif()
 
 if (LIEF_FROZEN_ENABLED)
-  add_dependencies(LIB_LIEF_STATIC lief_frozen)
-  add_dependencies(LIB_LIEF_SHARED lief_frozen)
+  add_dependencies(LIB_LIEF lief_frozen)
 endif()
 
-add_dependencies(LIB_LIEF_STATIC lief_rang_cpp_color)
-add_dependencies(LIB_LIEF_SHARED lief_rang_cpp_color)
+add_dependencies(LIB_LIEF lief_rang_cpp_color)
 
-add_dependencies(LIB_LIEF_STATIC lief_mbed_tls)
-add_dependencies(LIB_LIEF_SHARED lief_mbed_tls)
+add_dependencies(LIB_LIEF lief_mbed_tls)
 
 # Flags definition
 # ----------------
-set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD              11)
-set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY CXX_STANDARD_REQUIRED     ON)
-set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET LIB_LIEF PROPERTY CXX_STANDARD              11)
+set_property(TARGET LIB_LIEF PROPERTY CXX_STANDARD_REQUIRED     ON)
+set_property(TARGET LIB_LIEF PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 # ASAN - LSAN - TSAN - USAN
@@ -333,9 +319,8 @@ if (LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=address)
 
-  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=address)
-  target_link_libraries(LIB_LIEF_STATIC INTERFACE asan)
-  target_link_libraries(LIB_LIEF_SHARED INTERFACE asan)
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_FLAGS -fsanitize=address)
+  target_link_libraries(LIB_LIEF INTERFACE asan)
 endif()
 
 
@@ -343,10 +328,9 @@ if (LIEF_LSAN)
   message(STATUS "Leak sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=leak)
 
-  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
 
-  target_link_libraries(LIB_LIEF_STATIC INTERFACE lsan)
-  target_link_libraries(LIB_LIEF_SHARED INTERFACE lsan)
+  target_link_libraries(LIB_LIEF INTERFACE lsan)
 endif()
 
 
@@ -354,10 +338,9 @@ if (LIEF_TSAN)
   message(STATUS "Thread sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=thread)
 
-  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
 
-  target_link_libraries(LIB_LIEF_STATIC INTERFACE tsan)
-  target_link_libraries(LIB_LIEF_SHARED INTERFACE tsan)
+  target_link_libraries(LIB_LIEF INTERFACE tsan)
 endif()
 
 
@@ -365,32 +348,27 @@ if (LIEF_USAN)
   message(STATUS "Undefined sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=undefined)
 
-  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS -fsanitize=undefined)
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_FLAGS -fsanitize=undefined)
 
-  target_link_libraries(LIB_LIEF_STATIC INTERFACE ubsan)
-  target_link_libraries(LIB_LIEF_SHARED INTERFACE ubsan)
+  target_link_libraries(LIB_LIEF INTERFACE ubsan)
 endif()
 
 if (LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
   #message(STATUS "${SANITIZER_FLAGS}")
-  target_compile_options(LIB_LIEF_STATIC PRIVATE ${SANITIZER_FLAGS})
-  target_compile_options(LIB_LIEF_SHARED PRIVATE ${SANITIZER_FLAGS})
+  target_compile_options(LIB_LIEF PRIVATE ${SANITIZER_FLAGS})
 endif()
 
 
 # Fuzzing
 # ~~~~~~~
 if (LIEF_FUZZING)
-  set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
 
-  target_compile_options(LIB_LIEF_STATIC PRIVATE ${FUZZING_FLAGS})
-  target_compile_options(LIB_LIEF_SHARED PRIVATE ${FUZZING_FLAGS})
+  target_compile_options(LIB_LIEF PRIVATE ${FUZZING_FLAGS})
 
-  target_link_libraries(LIB_LIEF_STATIC asan pthread)
-  target_link_libraries(LIB_LIEF_SHARED asan pthread)
+  target_link_libraries(LIB_LIEF asan pthread)
 
-  add_dependencies(LIB_LIEF_STATIC lief_libfuzzer)
-  add_dependencies(LIB_LIEF_SHARED lief_libfuzzer)
+  add_dependencies(LIB_LIEF lief_libfuzzer)
 endif()
 
 # Compile Flags
@@ -408,33 +386,25 @@ if (LIEF_PROFILING)
     -fno-omit-frame-pointer
     -g
   )
-  target_compile_options(LIB_LIEF_STATIC PUBLIC ${PROFILING_FLAGS})
-  target_compile_options(LIB_LIEF_SHARED PUBLIC ${PROFILING_FLAGS})
+  target_compile_options(LIB_LIEF PUBLIC ${PROFILING_FLAGS})
 
 
   add_executable(elf_profiler profiling/elf_profiler.cpp)
   target_compile_options(elf_profiler PUBLIC ${PROFILING_FLAGS})
-  target_link_libraries(elf_profiler PRIVATE LIB_LIEF_STATIC)
+  target_link_libraries(elf_profiler PRIVATE LIB_LIEF)
 endif()
 
 # Coverage flags
 # --------------
 if(LIEF_COVERAGE)
-  target_compile_options(LIB_LIEF_STATIC PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
-  target_compile_options(LIB_LIEF_SHARED PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
-  target_link_libraries(LIB_LIEF_STATIC gcov)
-  target_link_libraries(LIB_LIEF_SHARED gcov)
+  target_compile_options(LIB_LIEF PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
+  target_link_libraries(LIB_LIEF gcov)
 endif()
 
 find_package(cppcheck)
 
 set_target_properties(
-  LIB_LIEF_STATIC
-  PROPERTIES OUTPUT_NAME LIEF
-  CLEAN_DIRECT_OUTPUT 1)
-
-set_target_properties(
-  LIB_LIEF_SHARED
+  LIB_LIEF
   PROPERTIES OUTPUT_NAME LIEF
   CLEAN_DIRECT_OUTPUT 1)
 
@@ -452,8 +422,7 @@ message(STATUS "Build Types: ${CMAKE_BUILD_TYPE}")
 
 
 if(APPLE)
-  set_target_properties(LIB_LIEF_STATIC PROPERTIES MACOSX_RPATH ".")
-  set_target_properties(LIB_LIEF_SHARED PROPERTIES MACOSX_RPATH ".")
+  set_target_properties(LIB_LIEF PROPERTIES MACOSX_RPATH ".")
 endif()
 
 # API
@@ -478,7 +447,7 @@ endif()
 # =========
 set(CPPCHECK_TEMPLATE_ARG "[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)")
 set(_cppcheck_args "--enable=warning,performance,portability,information")
-#add_cppcheck(LIB_LIEF_STATIC FORCE)
+#add_cppcheck(LIB_LIEF FORCE)
 
 
 # Documentation
@@ -501,21 +470,14 @@ endif()
 # Installation
 # ============
 
-install(TARGETS LIB_LIEF_STATIC
+install(TARGETS LIB_LIEF
   ARCHIVE
   DESTINATION lib
   LIBRARY
   DESTINATION lib
+  RUNTIME
+  DESTINATION lib
   COMPONENT libraries)
-
-if(LIEF_SHARED_LIB)
-  install(TARGETS LIB_LIEF_SHARED
-    ARCHIVE
-    DESTINATION lib
-    LIBRARY
-    DESTINATION lib
-    COMPONENT libraries)
-endif()
 
 install(
   DIRECTORY ${LIEF_PUBLIC_INCLUDE_DIR}

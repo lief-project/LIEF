@@ -2,9 +2,6 @@ include(ProcessorCount)
 find_package(Git REQUIRED)
 enable_testing()
 
-option(LIEF_TEST_SHARED "Test LIEF using the SHARED library" ON)
-option(LIEF_TEST_STATIC "Test LIEF using the STATIC library" ON)
-
 # Tests samples
 # =============
 set(SAMPLES_GIT_URL "https://github.com/lief-project/samples.git" CACHE STRING "URL to tests samples")
@@ -79,7 +76,6 @@ endif()
 
 
 if (WIN32)
-set(CXX_FLAGS "/MT /EHsc")
   set(YAMLCPP_CMAKE_ARGS ${YAMLCPP_CMAKE_ARGS} -DCMAKE_CXX_FLAGS=${CXX_FLAGS} )
 endif()
 
@@ -223,7 +219,7 @@ set_property(TARGET test_iterators PROPERTY CXX_STANDARD          11)
 set_property(TARGET test_iterators PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(test_iterators PUBLIC
-  $<TARGET_PROPERTY:LIB_LIEF_STATIC,INCLUDE_DIRECTORIES>
+  $<TARGET_PROPERTY:LIB_LIEF,INCLUDE_DIRECTORIES>
   ${CATCH_INCLUDE_DIR})
 
 if (LIEF_COVERAGE)
@@ -231,9 +227,9 @@ if (LIEF_COVERAGE)
   target_link_libraries(test_iterators gcov)
 endif()
 
-add_dependencies(test_iterators catch LIB_LIEF_STATIC)
+add_dependencies(test_iterators catch LIB_LIEF)
 
-target_link_libraries(test_iterators LIB_LIEF_STATIC)
+target_link_libraries(test_iterators LIB_LIEF)
 
 add_test(test_iterators ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
 
@@ -332,8 +328,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api")
 
 # /!\ Bad Hack /!\
-add_dependencies(LIB_LIEF_STATIC lief_samples)
-add_dependencies(LIB_LIEF_SHARED lief_samples)
+add_dependencies(LIB_LIEF lief_samples)
 ProcessorCount(N)
 if(N EQUAL 0)
   set(N 1)

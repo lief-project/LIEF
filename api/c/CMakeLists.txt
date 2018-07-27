@@ -28,6 +28,5 @@ endif()
 
 source_group("Header Files\\C API" FILES ${LIEF_C_INCLUDE_FILES})
 
-target_sources(LIB_LIEF_STATIC PRIVATE "${LIEF_C_SRC}"  ${LIEF_C_INCLUDE_FILES})
-target_sources(LIB_LIEF_SHARED PRIVATE "${LIEF_C_SRC}"  ${LIEF_C_INCLUDE_FILES})
+target_sources(LIB_LIEF PRIVATE "${LIEF_C_SRC}"  ${LIEF_C_INCLUDE_FILES})
 
