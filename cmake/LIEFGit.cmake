@@ -19,7 +19,7 @@ execute_process(
 )
 
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} describe --abbrev=0 --tags HEAD
+  COMMAND ${GIT_EXECUTABLE} describe --abbrev=0 --tags HEAD --always
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   OUTPUT_VARIABLE LIEF_GIT_TAG
   OUTPUT_STRIP_TRAILING_WHITESPACE
