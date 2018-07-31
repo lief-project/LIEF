@@ -76,6 +76,7 @@ endif()
 
 
 if (WIN32)
+  set(CXX_FLAGS "${LIEF_CRT} /EHsc")
   set(YAMLCPP_CMAKE_ARGS ${YAMLCPP_CMAKE_ARGS} -DCMAKE_CXX_FLAGS=${CXX_FLAGS} )
 endif()
 

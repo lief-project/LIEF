@@ -70,14 +70,15 @@ endif()
 
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
-  add_executable("${output_name}"        "${example}")
+  add_executable("${output_name}" "${example}")
 
   # Don't use default include dir
   set_property(TARGET "${output_name}" PROPERTY INCLUDE_DIRECTORIES "")
 
   if (MSVC)
-    target_compile_options("${output_name}"        PUBLIC /FIiso646.h)
+    target_compile_options("${output_name}" PUBLIC /FIiso646.h)
 	  set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+	  target_compile_options("${output_name}" PUBLIC ${LIEF_CRT})
   endif()
 
   set_property(TARGET "${output_name}" PROPERTY CXX_STANDARD           11)
@@ -86,14 +87,14 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (UNIX)
       if (LIEF_FORCE32)
-        target_compile_options("${output_name}"        PRIVATE -m32)
+        target_compile_options("${output_name}" PRIVATE -m32)
 
-        set_property(TARGET "${output_name}"        PROPERTY LINK_FLAGS -m32)
+        set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS -m32)
       endif()
     endif()
   endif()
 
-  target_link_libraries("${output_name}"        PUBLIC LIB_LIEF)
+  target_link_libraries("${output_name}" PUBLIC LIB_LIEF)
 endforeach()
 
 

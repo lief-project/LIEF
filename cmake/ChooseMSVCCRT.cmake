@@ -53,7 +53,7 @@ macro(set_flag_in_var flagsvar regex flag)
   set(${flagsvar} "${${flagsvar}}" CACHE STRING "${flagsvar_docs}" FORCE)
 endmacro(set_flag_in_var)
 
-
+set(LIEF_CRT "")
 macro(choose_msvc_crt MSVC_CRT)
   if(LIEF_USE_CRT)
     message(FATAL_ERROR
@@ -97,7 +97,9 @@ variables (LIEF_USE_CRT_DEBUG, etc) instead.")
   endforeach(build_type)
 endmacro(choose_msvc_crt MSVC_CRT)
 
-
+string(TOUPPER ${CMAKE_BUILD_TYPE} build)
+set(LIEF_CRT "/${LIEF_USE_CRT_${build}}")
+message(STATUS "LIEF_CRT: ${LIEF_CRT}")
 # List of valid CRTs for MSVC
 set(MSVC_CRT
   MD
