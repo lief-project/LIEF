@@ -394,7 +394,7 @@ def print_load_configuration(binary):
         print(format_hex.format("GCF dispatch function pointer:", config.guard_cf_dispatch_function_pointer))
         print(format_hex.format("GCF function table :",           config.guard_cf_function_table))
         print(format_dec.format("GCF Function count :",           config.guard_cf_function_count))
-        print("{:<45} {} (0x{:x})".format("Guard flags:", flags_str, config.guard_flags))
+        print("{:<45} {} (0x{:x})".format("Guard flags:", flags_str, int(config.guard_flags)))
 
     if isinstance(config, lief.PE.LoadConfigurationV2):
         code_integrity = config.code_integrity
