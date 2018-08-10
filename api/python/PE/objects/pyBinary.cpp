@@ -194,6 +194,11 @@ void create<Binary>(py::module& m) {
 
     .def("remove_all_relocations", &Binary::remove_all_relocations)
 
+    .def("remove",
+        static_cast<void(Binary::*)(const Section&, bool)>(&Binary::remove),
+        "Remove the " RST_CLASS_REF(lief.PE.Section) " given in first parameter",
+        "section"_a, "clear"_a = false)
+
     .def_property_readonly("data_directories",
         static_cast<no_const_getter<it_data_directories>>(&Binary::data_directories),
         "Return an iterator on the " RST_CLASS_REF(lief.PE.DataDirectory) "",

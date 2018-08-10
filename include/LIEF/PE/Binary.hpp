@@ -202,6 +202,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param[in] name Name of section to delete
   virtual void remove_section(const std::string& name, bool clear = false) override;
 
+  //! Remove the given section
+  void remove(const Section& section, bool clear = false);
+
   //! @brief Add a section to the binary and return the section added.
   Section& add_section(
       const Section& section,

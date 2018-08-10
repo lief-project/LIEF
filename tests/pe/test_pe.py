@@ -14,6 +14,7 @@ import time
 import ctypes
 import zipfile
 import json
+import re
 
 from subprocess import Popen
 
@@ -24,6 +25,14 @@ class TestPe(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
         self.maxDiff = None
+
+        self.tmp_dir = tempfile.mkdtemp(suffix='_lief_tests')
+        self.logger.debug("temp dir: {}".format(self.tmp_dir))
+
+
+        if sys.platform.startswith("win"):
+            SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
+            ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
 
 
     def test_code_view_pdb(self):
@@ -60,6 +69,39 @@ class TestPe(TestCase):
             'timestamp': 1459952944,
             'type': 'CODEVIEW'
         })
+
+    def test_remove_section(self):
+        path = get_sample('PE/PE64_x86-64_remove_section.exe')
+        sample = lief.parse(path)
+
+        output = os.path.join(self.tmp_dir, "section_removed.exe")
+
+        sample.remove_section("lief")
+        sample.write(output)
+
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
+
+        if sys.platform.startswith("win"):
+            subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
+            p = Popen([output], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
+
+            stdout, _ = p.communicate()
+            self.logger.debug(stdout.decode("utf8"))
+            self.assertIn("Hello World", stdout)
+
+
+    def tearDown(self):
+        # Delete it
+        try:
+            if os.path.isdir(self.tmp_dir):
+                shutil.rmtree(self.tmp_dir)
+        except Exception as e:
+            self.logger.error(e)
+
+
+
+
 
 
 

@@ -500,10 +500,6 @@ uint32_t Binary::sizeof_headers(void) const {
 
 void Binary::remove_section(const std::string& name, bool clear) {
 
-  this->header().numberof_sections(this->header().numberof_sections() - 1);
-
-  this->optional_header().sizeof_headers(this->sizeof_headers());
-  this->optional_header().sizeof_image(static_cast<uint32_t>(this->virtual_size()));
 
   auto&& it_section = std::find_if(
       std::begin(this->sections_),
@@ -511,16 +507,52 @@ void Binary::remove_section(const std::string& name, bool clear) {
       [&name] (const Section* section) {
         return section->name() == name;
       });
+
   if (it_section == std::end(this->sections_)) {
     LOG(ERROR) << "Unable to find section: '" << name << "'" << std::endl;
+    return;
+  }
+
+  return this->remove(**it_section, clear);
+}
+
+
+void Binary::remove(const Section& section, bool clear) {
+  auto&& it_section = std::find_if(
+      std::begin(this->sections_),
+      std::end(this->sections_),
+      [&section] (const Section* s) {
+        return *s == section;
+      });
+  if (it_section == std::end(this->sections_)) {
+    LOG(ERROR) << "Unable to find section: '" << section.name() << "'" << std::endl;
+    return;
   }
 
   Section* to_remove = *it_section;
+  const size_t section_index = std::distance(std::begin(this->sections_), it_section);
+
+  if (section_index < (this->sections_.size() - 1) and section_index > 0) {
+    Section* previous = this->sections_[section_index - 1];
+    const size_t raw_size_gap = (to_remove->offset() + to_remove->size()) - (previous->offset() + previous->size());
+    previous->size(previous->size() + raw_size_gap);
+
+    const size_t vsize_size_gap = (to_remove->virtual_address() + to_remove->virtual_size()) - (previous->virtual_address() + previous->virtual_size());
+    previous->virtual_size(previous->virtual_size() + vsize_size_gap);
+  }
+
+
   if (clear) {
     to_remove->clear(0);
   }
+
   delete to_remove;
   this->sections_.erase(it_section);
+
+  this->header().numberof_sections(this->header().numberof_sections() - 1);
+
+  this->optional_header().sizeof_headers(this->sizeof_headers());
+  this->optional_header().sizeof_image(static_cast<uint32_t>(this->virtual_size()));
 }
 
 void Binary::make_space_for_new_section(void) {
