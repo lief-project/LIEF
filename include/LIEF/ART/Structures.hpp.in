@@ -37,6 +37,8 @@
 //
 // Android 8.0.0: ART 44
 // Android 8.1.0: ART 46
+//
+// Android 9.0.0 ART 56
 // ======================
 
 namespace LIEF {
@@ -375,6 +377,86 @@ using header = ART_44::header;
 
 } // Namespace ART_46
 
+// ==============================
+// ART 56
+//   - Android 9.0.0
+// ==============================
+namespace ART_56 {
+
+static constexpr art_version_t art_version = 56;
+static constexpr uint32_t nb_sections      = 10;
+static constexpr uint32_t nb_image_roots   = 3;
+static constexpr uint32_t nb_image_methods = 9; // Android 9.0.0 - +=2
+struct ALIGNED_(4) header {
+
+  uint8_t magic[4];
+  uint8_t version[4];
+
+  // Required base address for mapping the image.
+  uint32_t image_begin;
+
+  // Image size, not page aligned.
+  uint32_t image_size;
+
+  // Checksum of the oat file we link to for load time sanity check.
+  uint32_t oat_checksum;
+
+  // Start address for oat file. Will be before oat_data_begin_ for .so files.
+  uint32_t oat_file_begin;
+
+  // Required oat address expected by image Method::GetCode() pointers.
+  uint32_t oat_data_begin;
+
+  // End of oat data address range for this image file.
+  uint32_t oat_data_end;
+
+  // End of oat file address range. will be after oat_data_end_ for
+  // .so files. Used for positioning a following alloc spaces.
+  uint32_t oat_file_end;
+
+  // Boot image begin and end (app image headers only).
+  uint32_t boot_image_begin;
+  uint32_t boot_image_size;
+
+  // Boot oat begin and end (app image headers only).
+  uint32_t boot_oat_begin;
+  uint32_t boot_oat_size;
+
+  // The total delta that this image has been patched.
+  int32_t patch_delta;
+
+  // Absolute address of an Object[] of objects needed to reinitialize from an image.
+  uint32_t image_roots;
+
+  // Pointer size, this affects the size of the ArtMethods.
+  uint32_t pointer_size;
+
+  // Boolean (0 or 1) to denote if the image was compiled with --compile-pic option
+  uint32_t compile_pic;
+
+  // Boolean (0 or 1) to denote if the image can be mapped at a random address, this only refers to
+  // the .art file. Currently, app oat files do not depend on their app image. There are no pointers
+  // from the app oat code to the app image.
+  uint32_t is_pic;
+
+  // Image sections
+  image_section_t sections[nb_sections];
+
+  // Image methods.
+  uint64_t image_methods[nb_image_methods];
+
+  // Storage method for the image, the image may be compressed.
+  uint32_t storage_mode;
+
+  // Data size for the image data excluding the bitmap and the header. For compressed images, this
+  // is the compressed size in the file.
+  uint32_t data_size;
+};
+
+
+} // Namespace ART_56
+
+
 class ART17 {
   public:
   using art_header_t                         = ART_17::header;
@@ -519,6 +601,36 @@ class ART46 {
   template<class T = no_brooks_read_barrier_t>
   using jdex_cache_t = ART_46::Java::jdex_cache_t<T>;
 };
+
+class ART56 {
+  public:
+  using art_header_t                         = ART_56::header;
+  static constexpr art_version_t art_version = ART_56::art_version;
+  static constexpr uint32_t nb_image_roots   = ART_56::nb_image_roots;
+
+  using IMAGE_SECTIONS                       = ART_46::IMAGE_SECTIONS;
+  using IMAGE_METHODS                        = ART_46::IMAGE_METHODS;
+  using IMAGE_ROOTS                          = ART_46::IMAGE_ROOTS;
+
+  // =====================
+  // Java
+  // =====================
+  template<class T = no_brooks_read_barrier_t>
+  using jobject_t = ART_56::Java::jobject_t<T>;
+
+  template<class T = no_brooks_read_barrier_t>
+  using jarray_t = ART_56::Java::jarray_t<T>;
+
+  template<class T = no_brooks_read_barrier_t>
+  using jclass_t = ART_56::Java::jclass_t<T>;
+
+  template<class T = no_brooks_read_barrier_t>
+  using jstring_t = ART_56::Java::jstring_t<T>;
+
+  template<class T = no_brooks_read_barrier_t>
+  using jdex_cache_t = ART_56::Java::jdex_cache_t<T>;
+};
+
 
 @LIEF_ART_STRUCTURES@
 

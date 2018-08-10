@@ -34,6 +34,8 @@
 //
 // Android 8.0.0: OAT 126
 // Android 8.1.0: OAT 131
+//
+// Android 9.0.0  OAT 138
 // ======================
 
 namespace LIEF {
@@ -233,6 +235,18 @@ using OAT_124::oat_quick_method_header;
 using OAT_124::lookup_table_entry_t;
 }
 
+
+// OAT 138  - Android 9.0.0
+namespace OAT_138  {
+static constexpr oat_version_t oat_version = 138;
+using OAT_131::oat_header;
+using OAT_131::oat_dex_file;
+using OAT_131::dex_file;
+
+using OAT_131::oat_quick_method_header;
+using OAT_131::lookup_table_entry_t;
+}
+
 class OAT64_t {
   public:
   static constexpr oat_version_t oat_version = OAT_064::oat_version;
@@ -285,6 +299,16 @@ class OAT131_t {
   using oat_quick_method_header = OAT_124::oat_quick_method_header;
 
   using lookup_table_entry_t = OAT_131::lookup_table_entry_t;
+};
+
+class OAT138_t {
+  public:
+  static constexpr oat_version_t oat_version = OAT_138::oat_version;
+  using oat_header              = OAT_138::oat_header;
+  using oat_dex_file            = OAT_138::oat_dex_file;
+  using dex_file                = OAT_138::dex_file;
+  using oat_quick_method_header = OAT_138::oat_quick_method_header;
+  using lookup_table_entry_t    = OAT_138::lookup_table_entry_t;
 };
 
 @LIEF_OAT_STRUCTURES@

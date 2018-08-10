@@ -357,6 +357,35 @@ using jdex_cache_t = ART_44::Java::jdex_cache_t<T>;
 } // Namespace Java
 } // Namespace ART_46
 
+// ======================
+// Android 9.0.0 - ART 66
+// ======================
+namespace ART_56 {
+
+//! @brief Namespace related to the Java part of ART 46
+namespace Java {
+
+using heap_reference_t      = ART_46::Java::heap_reference_t;
+using brooks_read_barrier_t = ART_46::Java::brooks_read_barrier_t;
+
+template<class T = no_brooks_read_barrier_t>
+using jobject_t = ART_46::Java::jobject_t<T>;
+
+template<class T = no_brooks_read_barrier_t>
+using jarray_t = ART_46::Java::jarray_t<T>;
+
+template<class T = no_brooks_read_barrier_t>
+using jclass_t = ART_46::Java::jclass_t<T>;
+
+template<class T = no_brooks_read_barrier_t>
+using jstring_t = ART_46::Java::jstring_t<T>;
+
+template<class T = no_brooks_read_barrier_t>
+using jdex_cache_t = ART_46::Java::jdex_cache_t<T>;
+
+} // Namespace Java
+} // Namespace ART_56
+
 } // Namespace ART
 } // Namespace LIEF
 

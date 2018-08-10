@@ -23,12 +23,14 @@ constexpr art_version_t ART29::art_version;
 constexpr art_version_t ART30::art_version;
 constexpr art_version_t ART44::art_version;
 constexpr art_version_t ART46::art_version;
+constexpr art_version_t ART56::art_version;
 
 constexpr uint32_t ART17::nb_image_roots;
 constexpr uint32_t ART29::nb_image_roots;
 constexpr uint32_t ART30::nb_image_roots;
 constexpr uint32_t ART44::nb_image_roots;
 constexpr uint32_t ART46::nb_image_roots;
+constexpr uint32_t ART56::nb_image_roots;
 
 } // Namespace ART
 } // Namespace LIEF

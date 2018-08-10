@@ -36,17 +36,18 @@ Header::Header(void) :
 
 std::string Header::key_to_string(HEADER_KEYS key) {
   const static std::map<HEADER_KEYS, const char*> keys2str = {
-    { HEADER_KEYS::KEY_IMAGE_LOCATION,     "image-location"     },
-    { HEADER_KEYS::KEY_DEX2OAT_CMD_LINE,   "dex2oat-cmdline"    },
-    { HEADER_KEYS::KEY_DEX2OAT_HOST,       "dex2oat-host"       },
-    { HEADER_KEYS::KEY_PIC,                "pic"                },
-    { HEADER_KEYS::KEY_HAS_PATCH_INFO,     "has-patch-info"     },
-    { HEADER_KEYS::KEY_DEBUGGABLE,         "debuggable"         },
-    { HEADER_KEYS::KEY_NATIVE_DEBUGGABLE,  "native-debuggable"  },
-    { HEADER_KEYS::KEY_COMPILER_FILTER,    "compiler-filter"    },
-    { HEADER_KEYS::KEY_CLASS_PATH,         "classpath"          },
-    { HEADER_KEYS::KEY_BOOT_CLASS_PATH,    "bootclasspath"      },
-    { HEADER_KEYS::KEY_CONCURRENT_COPYING, "concurrent-copying" },
+    { HEADER_KEYS::KEY_IMAGE_LOCATION,     "image-location"      },
+    { HEADER_KEYS::KEY_DEX2OAT_CMD_LINE,   "dex2oat-cmdline"     },
+    { HEADER_KEYS::KEY_DEX2OAT_HOST,       "dex2oat-host"        },
+    { HEADER_KEYS::KEY_PIC,                "pic"                 },
+    { HEADER_KEYS::KEY_HAS_PATCH_INFO,     "has-patch-info"      },
+    { HEADER_KEYS::KEY_DEBUGGABLE,         "debuggable"          },
+    { HEADER_KEYS::KEY_NATIVE_DEBUGGABLE,  "native-debuggable"   },
+    { HEADER_KEYS::KEY_COMPILER_FILTER,    "compiler-filter"     },
+    { HEADER_KEYS::KEY_CLASS_PATH,         "classpath"           },
+    { HEADER_KEYS::KEY_BOOT_CLASS_PATH,    "bootclasspath"       },
+    { HEADER_KEYS::KEY_CONCURRENT_COPYING, "concurrent-copying"  },
+    { HEADER_KEYS::KE_COMPILATION_REASON,   "compilation-reason" },
   };
 
   auto   it  = keys2str.find(key);

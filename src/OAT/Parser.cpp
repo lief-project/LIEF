@@ -110,6 +110,10 @@ void Parser::init(const std::string& name) {
     return this->parse_binary<OAT131_t>();
   }
 
+  if (version <= OAT_138::oat_version) {
+    return this->parse_binary<OAT138_t>();
+  }
+
 }
 
 

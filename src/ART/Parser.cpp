@@ -94,6 +94,10 @@ void Parser::init(const std::string& name, art_version_t version) {
   if (version <= ART_46::art_version) {
     return this->parse_file<ART46>();
   }
+
+  if (version <= ART_56::art_version) {
+    return this->parse_file<ART56>();
+  }
 }
 
 } // namespace ART

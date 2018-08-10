@@ -164,6 +164,23 @@ static constexpr uint8_t magic[] = { 'd', 'e', 'x', '\n', '0', '3', '8', '\0' };
 
 }
 
+namespace DEX_39 {
+
+using header           = DEX::header;
+using class_def_item   = DEX::class_def_item;
+using method_id_item   = DEX::method_id_item;
+using field_id_item    = DEX::field_id_item;
+using string_data_item = DEX::string_data_item;
+using map_items        = DEX::map_items;
+using map              = DEX::map;
+using proto_id_item    = DEX::proto_id_item;
+using code_item        = DEX::code_item;
+
+static constexpr dex_version_t dex_version = 39;
+static constexpr uint8_t magic[] = { 'd', 'e', 'x', '\n', '0', '3', '9', '\0' };
+
+}
+
 
 class DEX35 {
   public:
@@ -209,6 +226,22 @@ class DEX38 {
 
   static constexpr dex_version_t dex_version = DEX_38::dex_version;
 };
+
+class DEX39 {
+  public:
+  using dex_header       = DEX_39::header;
+  using class_def_item   = DEX_39::class_def_item;
+  using method_id_item   = DEX_39::method_id_item;
+  using field_id_item    = DEX_39::field_id_item;
+  using string_data_item = DEX_39::string_data_item;
+  using map_items        = DEX_39::map_items;
+  using map              = DEX_39::map;
+  using proto_id_item    = DEX_39::proto_id_item;
+  using code_item        = DEX_39::code_item;
+
+  static constexpr dex_version_t dex_version = DEX_39::dex_version;
+};
+
 
 
 

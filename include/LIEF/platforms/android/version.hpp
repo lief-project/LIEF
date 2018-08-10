@@ -30,6 +30,8 @@ enum class ANDROID_VERSIONS {
 
   VERSION_800     = 5,
   VERSION_810     = 6,
+
+  VERSION_900     = 7,
 };
 
 LIEF_API const char* code_name(ANDROID_VERSIONS version);

@@ -411,6 +411,38 @@ class TestOAT131(TestCase):
         self.assertEqual(method.name, "getIMEI")
         self.assertEqual(method.oat_class, CallDeviceId.get_class("Lre/android/art/CallDeviceId;"))
 
+class TestOAT138(TestCase):
+
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+
+    def test_header(self):
+        CallDeviceId = lief.parse(get_sample("OAT/OAT_138_AArch64_android.uid.systemui.oat"))
+        header = CallDeviceId.header
+
+        self.assertEqual(header.magic, [111, 97, 116, 10])
+        self.assertEqual(header.version, 138)
+        self.assertEqual(header.checksum, 0x5c64d148)
+        self.assertEqual(header.instruction_set, lief.OAT.INSTRUCTION_SETS.ARM_64)
+        self.assertEqual(header.nb_dex_files, 1)
+
+        self.assertEqual(header.oat_dex_files_offset, 3289146)
+
+        self.assertEqual(header.executable_offset, 0x324000)
+        self.assertEqual(header.i2i_bridge_offset, 0)
+        self.assertEqual(header.i2c_code_bridge_offset, 0)
+        self.assertEqual(header.jni_dlsym_lookup_offset, 0)
+        self.assertEqual(header.quick_generic_jni_trampoline_offset, 0)
+        self.assertEqual(header.quick_imt_conflict_trampoline_offset, 0)
+        self.assertEqual(header.quick_resolution_trampoline_offset, 0)
+        self.assertEqual(header.quick_to_interpreter_bridge_offset, 0)
+
+        self.assertEqual(header.image_patch_delta, 0)
+
+        self.assertEqual(header.image_file_location_oat_checksum, 0x8eb74f9a)
+        self.assertEqual(header.image_file_location_oat_data_begin, 0x71242000)
+
+
 
 class TestOAT(TestCase):
 

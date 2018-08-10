@@ -49,6 +49,12 @@ class TestART(TestCase):
         print(boot.header)
         return
 
+    def test_art56(self):
+        boot = lief.ART.parse(get_sample("ART/ART_056_AArch64_boot.art"))
+
+        print(boot.header)
+        return
+
 
 
 

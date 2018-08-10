@@ -87,6 +87,10 @@ void Parser::init(const std::string& name, dex_version_t version) {
     return this->parse_file<DEX38>();
   }
 
+  if (version == DEX_39::dex_version) {
+    return this->parse_file<DEX39>();
+  }
+
 }
 
 void Parser::resolve_inheritance(void) {

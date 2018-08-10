@@ -101,6 +101,7 @@ LIEF::Android::ANDROID_VERSIONS android_version(art_version_t version) {
     { 30, LIEF::Android::ANDROID_VERSIONS::VERSION_712 },
     { 44, LIEF::Android::ANDROID_VERSIONS::VERSION_800 },
     { 46, LIEF::Android::ANDROID_VERSIONS::VERSION_810 },
+    { 56, LIEF::Android::ANDROID_VERSIONS::VERSION_900 },
 
   };
   auto   it  = oat2android.lower_bound(version);

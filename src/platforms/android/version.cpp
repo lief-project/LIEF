@@ -27,6 +27,7 @@ const char* code_name(ANDROID_VERSIONS version) {
     { ANDROID_VERSIONS::VERSION_712,      "Nougat"      },
     { ANDROID_VERSIONS::VERSION_800,      "Oreo"        },
     { ANDROID_VERSIONS::VERSION_810,      "Oreo"        },
+    { ANDROID_VERSIONS::VERSION_900,      "Pie"        },
 
   };
   auto   it  = version2code.find(version);
@@ -42,6 +43,7 @@ const char* version_string(ANDROID_VERSIONS version) {
     { ANDROID_VERSIONS::VERSION_712,      "7.1.2"   },
     { ANDROID_VERSIONS::VERSION_800,      "8.0.0"   },
     { ANDROID_VERSIONS::VERSION_810,      "8.1.0"   },
+    { ANDROID_VERSIONS::VERSION_900,      "9.0.0"   },
 
   };
   auto   it  = version2code.find(version);
@@ -57,6 +59,7 @@ const char* to_string(ANDROID_VERSIONS version) {
     { ANDROID_VERSIONS::VERSION_712,      "VERSION_712" },
     { ANDROID_VERSIONS::VERSION_800,      "VERSION_800" },
     { ANDROID_VERSIONS::VERSION_810,      "VERSION_810" },
+    { ANDROID_VERSIONS::VERSION_900,      "VERSION_900" },
 
   };
   auto   it  = enumStrings.find(version);

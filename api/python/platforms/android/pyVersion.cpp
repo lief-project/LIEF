@@ -29,7 +29,8 @@ void init_versions(py::module& m) {
     .value(PY_ENUM(ANDROID_VERSIONS::VERSION_710))
     .value(PY_ENUM(ANDROID_VERSIONS::VERSION_712))
     .value(PY_ENUM(ANDROID_VERSIONS::VERSION_800))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810));
+    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810))
+    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_900));
 
   m.def("code_name",
       &code_name,

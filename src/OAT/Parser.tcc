@@ -274,6 +274,12 @@ void Parser::parse_binary<OAT131_t>(void) {
 }
 
 
+template<>
+void Parser::parse_binary<OAT138_t>(void) {
+  return this->parse_binary<OAT131_t>();
+}
+
+
 
 template<typename OAT_T>
 void Parser::parse_header(void) {
