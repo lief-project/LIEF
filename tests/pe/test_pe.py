@@ -87,7 +87,8 @@ class TestPe(TestCase):
             p = Popen([output], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
 
             stdout, _ = p.communicate()
-            self.logger.debug(stdout.decode("utf8"))
+            stdout = stdout.decode("utf8")
+            self.logger.debug(stdout)
             self.assertIn("Hello World", stdout)
 
 
