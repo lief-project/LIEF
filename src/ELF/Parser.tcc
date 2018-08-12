@@ -849,24 +849,28 @@ void Parser::parse_sections(void) {
     std::unique_ptr<Section> section{new Section{&shdr}};
     section->datahandler_ = this->binary_->datahandler_;
 
+    uint64_t section_end = section->file_offset();
+    section_end += section->size();
+
+    if (section_end > this->stream_->size() + 200_MB) {
+      LOG(ERROR) << "Section " << std::dec << i << " corrupted!";
+      continue;
+    }
+
+    this->binary_->datahandler_->create(section->file_offset(), section->size(), DataHandler::Node::SECTION);
 
     // Only if it contains data (with bits)
     if (section->size() > 0 and section->size() < Parser::MAX_SECTION_SIZE) {
 
       const Elf_Off offset_to_content   = section->file_offset();
       const Elf_Off size                = section->size();
-      if ((section->file_offset() + section->size()) > this->stream_->size()) {
-        LOG(ERROR) << "Section #" << std::dec << i << " corrupted!";
-      } else {
-        this->binary_->datahandler_->create(section->file_offset(), section->size(), DataHandler::Node::SECTION);
-        this->binary_->datahandler_->reserve(section->file_offset(), section->size());
+      this->binary_->datahandler_->reserve(section->file_offset(), section->size());
 
-        const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size, /* check */false);
-        if (content == nullptr) {
-          LOG(ERROR) << "\tUnable to get content of section #" << std::dec << i;
-        } else {
-          section->content({content, content + size});
-        }
+      const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size, /* check */false);
+      if (content == nullptr) {
+        LOG(ERROR) << "\tUnable to get content of section #" << std::dec << i;
+      } else {
+        section->content({content, content + size});
       }
     }
     this->binary_->sections_.push_back(section.release());
