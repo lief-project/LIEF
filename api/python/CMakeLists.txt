@@ -172,6 +172,19 @@ if (MSVC)
   )
 endif()
 
+
+if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX)
+  add_custom_command(
+    TARGET pyLIEF
+    COMMENT "Strip LIEF Python bindings"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+      -DTARGET_FILE=$<TARGET_FILE:pyLIEF>
+      -DCMAKE_STRIP="${CMAKE_STRIP}"
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/strip.cmake
+  )
+endif()
+
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README"         "${CMAKE_CURRENT_BINARY_DIR}/README")
