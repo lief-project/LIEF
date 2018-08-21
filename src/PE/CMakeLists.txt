@@ -201,17 +201,7 @@ source_group("Header Files\\PE\\Load Configuration"            FILES ${LIEF_PE_L
 source_group("Header Files\\PE\\utils\\Ordinals Lookup Tables" FILES ${LIEF_PE_UTILS_INCLUDE_FILES})
 
 if (LIEF_PE)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_PE_SRC}
-    ${LIEF_PE_INCLUDE_FILES}
-    ${LIEF_PE_SIG_INCLUDE_FILES}
-    ${LIEF_PE_RESOURCES_INCLUDE_FILES}
-    ${LIEF_PE_UTILS_INCLUDE_FILES}
-    ${LIEF_PE_LOAD_CONFIGURATION_SRC}
-    ${LIEF_PE_LOAD_CONFIGURATION_INCLUDE}
-  )
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_PE_SRC}
     ${LIEF_PE_INCLUDE_FILES}
     ${LIEF_PE_SIG_INCLUDE_FILES}

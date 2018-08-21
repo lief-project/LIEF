@@ -29,20 +29,12 @@ foreach(example ${LIEF_C_EXAMPLES})
   string(REGEX REPLACE ".c\$" "" output_name "${example}")
 
   add_executable("${output_target}"        "${example}")
-  add_executable("${output_target}_shared" "${example}")
 
   target_include_directories(${output_target} PUBLIC
-    $<TARGET_PROPERTY:LIB_LIEF_STATIC,INCLUDE_DIRECTORIES>)
+    $<TARGET_PROPERTY:LIB_LIEF,INCLUDE_DIRECTORIES>)
 
   if (MSVC)
 	  set_property(TARGET "${output_target}"        PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-	  set_property(TARGET "${output_target}_shared" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-
-    if (CMAKE_BUILD_TYPE MATCHES "Debug")
-      target_compile_options("${output_target}_shared" PUBLIC /MTd)
-    else()
-      target_compile_options("${output_target}_shared" PUBLIC /MT)
-    endif()
 
   endif()
 
@@ -52,18 +44,16 @@ foreach(example ${LIEF_C_EXAMPLES})
     set(LIEF_EXAMPLES_C_FLAGS ${LIEF_EXAMPLES_C_FLAGS} -ansi)
   endif()
 
-  set_property(TARGET "${output_target}" "${output_target}_shared" PROPERTY C_STANDARD          99)
-  set_property(TARGET "${output_target}" "${output_target}_shared" PROPERTY C_STANDARD_REQUIRED ON)
+  set_property(TARGET "${output_target}" PROPERTY C_STANDARD          99)
+  set_property(TARGET "${output_target}" PROPERTY C_STANDARD_REQUIRED ON)
 
   target_compile_options("${output_target}"        PRIVATE ${LIEF_EXAMPLES_C_FLAGS})
-  target_compile_options("${output_target}_shared" PRIVATE ${LIEF_EXAMPLES_C_FLAGS})
 
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (UNIX)
       if (LIEF_FORCE32)
         target_compile_options("${output_target}" PRIVATE -m32)
-        target_compile_options("${output_target}_shared" PRIVATE -m32)
-        set_property(TARGET "${output_target}" "${output_target}_shared" PROPERTY LINK_FLAGS -m32)
+        set_property(TARGET "${output_target}" PROPERTY LINK_FLAGS -m32)
       endif()
     endif()
   endif()
@@ -71,10 +61,7 @@ foreach(example ${LIEF_C_EXAMPLES})
 
 
   set_target_properties("${output_target}"        PROPERTIES OUTPUT_NAME "${output_name}")
-  set_target_properties("${output_target}_shared" PROPERTIES OUTPUT_NAME "${output_name}_shared")
-
-  target_link_libraries ("${output_target}"        LIB_LIEF_STATIC)
-  target_link_libraries ("${output_target}_shared" LIB_LIEF_SHARED)
+  target_link_libraries ("${output_target}"        LIB_LIEF)
 endforeach()
 endif()
 

@@ -63,12 +63,7 @@ source_group("Source Files\\OAT" FILES ${LIEF_OAT_SRC})
 source_group("Header Files\\OAT" FILES ${LIEF_OAT_INC_FILES})
 
 if (LIEF_OAT)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_OAT_SRC}
-    ${LIEF_OAT_INC_FILES}
-  )
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_OAT_SRC}
     ${LIEF_OAT_INC_FILES}
   )

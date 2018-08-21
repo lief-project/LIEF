@@ -83,7 +83,7 @@ else()
   add_custom_target(doc-lief ALL
       COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile
       COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}" ${SPHINX_EXECUTABLE} -a -E ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src sphinx-doc
-      DEPENDS pyLIEF LIB_LIEF_STATIC
+      DEPENDS pyLIEF LIB_LIEF
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating documentation with Doxygen and Sphinx" VERBATIM)
 

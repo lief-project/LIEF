@@ -128,7 +128,7 @@ if (MSVC)
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHON_VERSION})
-set(PYLIEF_DEPS_LIBRARIES LIB_LIEF_STATIC)
+set(PYLIEF_DEPS_LIBRARIES LIB_LIEF)
 
 if(LIEF_COVERAGE)
   target_compile_options(pyLIEF PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)

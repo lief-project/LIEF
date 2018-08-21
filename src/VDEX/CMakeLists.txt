@@ -51,12 +51,7 @@ source_group("Source Files\\VDEX" FILES ${LIEF_VDEX_SRC})
 source_group("Header Files\\VDEX" FILES ${LIEF_VDEX_INC_FILES})
 
 if (LIEF_VDEX)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_VDEX_SRC}
-    ${LIEF_VDEX_INC_FILES}
-  )
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_VDEX_SRC}
     ${LIEF_VDEX_INC_FILES}
   )

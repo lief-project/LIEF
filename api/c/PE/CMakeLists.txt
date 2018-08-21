@@ -46,6 +46,4 @@ set(LIEF_C_PE_INC "${LIEF_API_C_PE_INCLUDE_FILES_C}" "${LIEF_API_C_PE_INCLUDE_FI
 source_group("Source Files\\C API\\PE" FILES ${LIEF_API_C_PE_SRC})
 source_group("Header Files\\C API\\PE" FILES ${LIEF_C_PE_INC})
 
-target_sources(LIB_LIEF_STATIC PRIVATE "${LIEF_API_C_PE_SRC}" "${LIEF_C_PE_INC}")
-target_sources(LIB_LIEF_SHARED PRIVATE "${LIEF_API_C_PE_SRC}" "${LIEF_C_PE_INC}")
-
+target_sources(LIB_LIEF PRIVATE "${LIEF_API_C_PE_SRC}" "${LIEF_C_PE_INC}")
