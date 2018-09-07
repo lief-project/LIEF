@@ -11,7 +11,7 @@ set(LIEF_INSTALL_DIR  "${LIEF_PREFIX}")
 set(LIEF_INCLUDE_DIRS "${LIEF_PREFIX}/include")
 
 # LIEF static library
-set(LIB_LIEF_STATIC
+set(LIB_LIEF
   "${LIEF_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LIEF${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 # URL of the LIEF repo (Can be your fork)
@@ -63,6 +63,6 @@ set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD           11)
 set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD_REQUIRED  ON)
 
 # Link the executable with LIEF
-target_link_libraries(HelloLIEF PUBLIC ${LIB_LIEF_STATIC})
+target_link_libraries(HelloLIEF PUBLIC ${LIB_LIEF})
 
 add_dependencies(HelloLIEF LIEF)

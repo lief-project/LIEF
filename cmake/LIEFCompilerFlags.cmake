@@ -24,13 +24,11 @@ macro(ADD_FLAG_IF_SUPPORTED flag name)
   CHECK_CXX_COMPILER_FLAG("${flag}" "CXX_SUPPORTS_${name}")
 
   if (C_SUPPORTS_${name})
-    target_compile_options(LIB_LIEF_STATIC PRIVATE ${flag})
-    target_compile_options(LIB_LIEF_SHARED PRIVATE ${flag})
+    target_compile_options(LIB_LIEF PRIVATE ${flag})
   endif()
 
   if (CXX_SUPPORTS_${name})
-    target_compile_options(LIB_LIEF_STATIC PRIVATE ${flag})
-    target_compile_options(LIB_LIEF_SHARED PRIVATE ${flag})
+    target_compile_options(LIB_LIEF PRIVATE ${flag})
   endif()
 endmacro()
 
@@ -38,24 +36,15 @@ endmacro()
 
 if (MSVC)
   add_definitions(-DNOMINMAX)
-  target_compile_options(LIB_LIEF_STATIC PUBLIC /FIiso646.h)
-  target_compile_options(LIB_LIEF_SHARED PUBLIC /FIiso646.h)
-
-  if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    target_compile_options(LIB_LIEF_STATIC PUBLIC /MTd)
-  else()
-    target_compile_options(LIB_LIEF_STATIC PUBLIC /MT)
-  endif()
-
+  target_compile_options(LIB_LIEF PUBLIC /FIiso646.h)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   if (UNIX)
     if (LIEF_FORCE32)
-      target_compile_options(LIB_LIEF_STATIC PRIVATE -m32)
-      target_compile_options(LIB_LIEF_SHARED PRIVATE -m32)
+      target_compile_options(LIB_LIEF PRIVATE -m32)
 
-      set_property(TARGET LIB_LIEF_STATIC LIB_LIEF_SHARED PROPERTY LINK_FLAGS -m32)
+      set_property(TARGET LIB_LIEF PROPERTY LINK_FLAGS -m32)
     endif()
   endif()
 
@@ -147,8 +136,7 @@ if (MSVC)
   string(REGEX REPLACE " /W[0-4]" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REGEX REPLACE " /W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   #foreach(flag ${msvc_warning_flags})
-  #  target_compile_options(LIB_LIEF_STATIC PRIVATE ${flag})
-  #  target_compile_options(LIB_LIEF_SHARED PRIVATE ${flag})
+  #  target_compile_options(LIB_LIEF PRIVATE ${flag})
   #endforeach(flag)
 endif()
 

@@ -123,11 +123,7 @@ source_group("Header Files\\ELF\\DataHandler" FILES ${LIEF_ELF_DATA_HANDLER_INCL
 #source_group("Header Files\\ELF\\Relocations" FILES ${LIEF_ELF_RELOC_INCLUDE_FILES})
 
 if (LIEF_ELF)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_ELF_SRC}
-    ${LIEF_ELF_INCLUDE_FILES})
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_ELF_SRC}
     ${LIEF_ELF_INCLUDE_FILES})
 endif()

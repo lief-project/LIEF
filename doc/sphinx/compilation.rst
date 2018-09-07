@@ -27,6 +27,14 @@ Libraries only (SDK)
   $ cmake --build . --target LIB_LIEF_STATIC --config Release
   $ cmake --build . --target LIB_LIEF_SHARED --config Release # for the shared one
 
+.. warning::
+
+  On Windows with can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
+
+  .. code-block:: console
+
+    $ cmake -DCMAKE_BUILD_TYPE=Release -DLIEF_USE_CRT_RELEASE=MT ..
+
 Library and Python bindings
 ---------------------------
 

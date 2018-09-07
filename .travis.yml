@@ -21,8 +21,6 @@ matrix:
             PYTHON_INCLUDE_DIR=/usr/include/python2.7 ,
             PYTHON_LIBRARY=/usr/lib/libpython2.7.so   ,
             PYTHON_BINARY=/usr/bin/python2.7          ,
-            LIEF_TEST_STATIC=ON                       ,
-            LIEF_TEST_SHARED=OFF                      ,
             ]
 
 
@@ -42,8 +40,6 @@ matrix:
             PYTHON_INCLUDE_DIR=/usr/include/python3.5m ,
             PYTHON_LIBRARY=/usr/lib/libpython3.5m.so   ,
             PYTHON_BINARY=/usr/bin/python3.5           ,
-            LIEF_TEST_STATIC=OFF                       ,
-            LIEF_TEST_SHARED=ON                        ,
             ]
 
 
@@ -63,9 +59,26 @@ matrix:
             PYTHON_INCLUDE_DIR=/usr/include/python3.6m ,
             PYTHON_LIBRARY=/usr/lib/libpython3.6m.so   ,
             PYTHON_BINARY=/usr/bin/python3.6           ,
-            LIEF_TEST_STATIC=ON                        ,
-            LIEF_TEST_SHARED=ON                        ,
             ]
+
+
+        # Linux gcc 6 - Python 3.7
+        #- os: linux
+        #  dist: trusty
+        #  compiler: gcc
+        #  addons:
+        #    apt:
+        #      sources: ['ubuntu-toolchain-r-test', 'deadsnakes']
+        #      packages: ['g++-6', 'gcc-6', 'ccache', 'python3.7-dev']
+        #  env: >
+        #    [
+        #    CXX_COMPILER=g++-6                         ,
+        #    C_COMPILER=gcc-6                           ,
+        #    PYTHON_VERSION=3.7                         ,
+        #    PYTHON_INCLUDE_DIR=/usr/include/python3.7m ,
+        #    PYTHON_LIBRARY=/usr/lib/libpython3.7m.so   ,
+        #    PYTHON_BINARY=/usr/bin/python3.7           ,
+        #    ]
 
         # OSX 10.11 - xcode 7.3 - Python 2.7
         - os: osx
@@ -76,36 +89,42 @@ matrix:
             CXX_COMPILER=clang++ ,
             C_COMPILER=clang     ,
             PYTHON_VERSION=2.7   ,
-            LIEF_TEST_STATIC=ON  ,
-            LIEF_TEST_SHARED=OFF ,
             ]
 
-        # OSX 10.12 - xcode 8.2 - Python 3.5
+        # OSX 10.12 - xcode 8.3 - Python 3.5
         - os: osx
-          osx_image: xcode8.2
+          osx_image: xcode8.3
           compiler: clang
           env: >
             [
             CXX_COMPILER=clang++ ,
             C_COMPILER=clang     ,
             PYTHON_VERSION=3.5   ,
-            LIEF_TEST_STATIC=OFF ,
-            LIEF_TEST_SHARED=ON  ,
             ]
 
 
-        ## OSX 10.12 - xcode 8.2 - Python 3.6
+        # OSX 10.12 - xcode 8.3 - Python 3.6
         - os: osx
-          osx_image: xcode8.2
+          osx_image: xcode8.3
           compiler: clang
           env: >
             [
             CXX_COMPILER=clang++ ,
             C_COMPILER=clang     ,
             PYTHON_VERSION=3.6   ,
-            LIEF_TEST_STATIC=ON  ,
-            LIEF_TEST_SHARED=ON  ,
             ]
+
+
+        # OSX 10.12 - xcode 8.3 - Python 3.7
+        #- os: osx
+        #  osx_image: xcode8.3
+        #  compiler: clang
+        #  env: >
+        #    [
+        #    CXX_COMPILER=clang++ ,
+        #    C_COMPILER=clang     ,
+        #    PYTHON_VERSION=3.7   ,
+        #    ]
 
 #branches:
 #  only:
@@ -149,12 +168,11 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then pyenv install 2.7.12; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then pyenv install 3.5.0; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then pyenv install 3.6.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then pyenv install 3.7-dev; fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/2.7.12/include/python2.7  ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/2.7.12/lib/libpython2.7.dylib ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/2.7.12/bin/python2.7           ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then $PYTHON_BINARY -m pip install --upgrade pip                                ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then $PYTHON_BINARY -m pip install --upgrade setuptools                         ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.5.0/include/python3.5m ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.5.0/lib/libpython3.dylib   ;fi
@@ -163,6 +181,13 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.6.0/include/python3.6m ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.6.0/lib/libpython3.dylib   ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/3.6.0/bin/python3.6           ;fi
+
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.7.0/include/python3.7m ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.7.0/lib/libpython3.dylib   ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/3.7.0/bin/python3.7           ;fi
+
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $PYTHON_BINARY -m pip install --upgrade pip        ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $PYTHON_BINARY -m pip install --upgrade setuptools ;fi
 
 install:
   - if [ "$GCOV" == "ON" ]; then sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov; fi
@@ -176,7 +201,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=$PWD/cmake-3.7.2-Linux-x86_64/bin:$PATH                                       ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py   ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo $PYTHON_BINARY ./get-pip.py ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo -H $PYTHON_BINARY ./get-pip.py ;fi
 
   # Prepare build
   - mkdir build
@@ -195,15 +220,11 @@ script:
     -DLIEF_TESTS=on
     -DLIEF_PYTHON_API=on
     -DLIEF_EXAMPLES=on
-    -DLIEF_TEST_SHARED=$LIEF_TEST_SHARED
-    -DLIEF_TEST_STATIC=$LIEF_TEST_STATIC
     ..
   - make -j3 lief_samples
   - cmake ..
   - make -j3 all
   - make -j3 check-lief
-
-#- sudo make check-lief
 
 after_success:
   - make package

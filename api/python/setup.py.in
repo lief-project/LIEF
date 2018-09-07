@@ -82,7 +82,7 @@ class lief_sdist(sdist):
 
     user_options = sdist.user_options + [
             ('dev', None, "Add a dev marker")
-            ]
+    ]
 
     def initialize_options(self):
         sdist.initialize_options(self)
@@ -200,8 +200,6 @@ class lief_bdist_egg(bdist_egg):
 
 
 class lief_build_ext(build_ext):
-
-
     def build_extension(self, ext):
         self.target = self.get_ext_fullpath(ext.name)
         target_dir  = os.path.dirname(self.target)
@@ -263,10 +261,6 @@ class lief_build_ext(build_ext):
                     egg_data = f.read()
             else:
                 raise Exception("Unable to find {}".format(url))
-
-
-
-
 
         egg_file = BytesIO(egg_data)
 

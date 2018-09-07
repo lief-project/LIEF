@@ -51,12 +51,7 @@ source_group("Source Files\\ART" FILES ${LIEF_ART_SRC})
 source_group("Header Files\\ART" FILES ${LIEF_ART_INC_FILES})
 
 if (LIEF_ART)
-  target_sources(LIB_LIEF_STATIC PRIVATE
-    ${LIEF_ART_SRC}
-    ${LIEF_ART_INC_FILES}
-  )
-
-  target_sources(LIB_LIEF_SHARED PRIVATE
+  target_sources(LIB_LIEF PRIVATE
     ${LIEF_ART_SRC}
     ${LIEF_ART_INC_FILES}
   )
