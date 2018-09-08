@@ -107,6 +107,7 @@ class TestAddContent(TestCase):
         libadd = lief.parse(self.libadd_so)
         for i in range(10):
             segment = libadd.add(STUB.segments[0])
+            segment.alignment = 0x1000
 
             new_ep = (STUB.header.entrypoint - STUB.segments[0].virtual_address) + segment.virtual_address
 
