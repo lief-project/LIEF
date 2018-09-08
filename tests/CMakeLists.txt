@@ -14,6 +14,7 @@ ExternalProject_Add(lief_samples
   BUILD_COMMAND     ""
   INSTALL_COMMAND   ""
   GIT_REPOSITORY    ${SAMPLES_GIT_URL}
+  GIT_SHALLOW       1
   GIT_TAG           ${SAMPLES_TAG}
   UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
 )
@@ -33,12 +34,6 @@ set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
 set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
 #set(LIEF_SAMPLES_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/samples")
 
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/config.yaml.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/config.yaml"
-  @ONLY)
-
-
 if (MSVC)
   configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
@@ -55,56 +50,11 @@ add_definitions(-DPATH_TO_CONFIG="${CMAKE_CURRENT_BINARY_DIR}")
 add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
 
 
-# YAML CPP
-# ========
-set(YAMLCPP_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/YAMLCPP")
-set(YAMLCPP_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/YAMLCPP")
-
-set(
-  YAMLCPP_CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX=${YAMLCPP_INSTALL_DIR}
-  -DCMAKE_BUILD_TYPE=Release
-  -DYAML_CPP_BUILD_TOOLS=off
-  -DYAML_CPP_BUILD_CONTRIB=off
-  )
-
-if(LIEF_FORCE32)
-  set(YAMLCPP_CMAKE_ARGS ${YAMLCPP_CMAKE_ARGS}
-    -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -m32"
-    -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -m32")
-endif()
-
-
-if (WIN32)
-  set(CXX_FLAGS "${CXX_FLAGS} ${LIEF_CRT} /EHsc")
-  set(YAMLCPP_CMAKE_ARGS ${YAMLCPP_CMAKE_ARGS} -DCMAKE_CXX_FLAGS=${CXX_FLAGS} )
-endif()
-
-set(YAMLCPP_VERSION 0.6.2)
-set(YAMLCPP_SHA256 SHA256=fa4677e13de0e71bab052a92f4fb527ef35c75fb18bd0177c3f0013aeaa13981)
-set(YAMLCPP_URL "${THIRD_PARTY_DIRECTORY}/yaml-cpp-${YAMLCPP_VERSION}.zip" CACHE STRING "URL to the YAMLCPP repo")
-
-ExternalProject_Add(YAMLCPP
-  PREFIX         ${YAMLCPP_PREFIX}
-  URL            ${YAMLCPP_URL}
-  URL_HASH       ${YAMLCPP_SHA256}
-  INSTALL_DIR    ${YAMLCPP_INSTALL_DIR}
-  CMAKE_ARGS     ${YAMLCPP_CMAKE_ARGS}
-)
-
-set(YAMLCPP_INCLUDE_DIRS "${YAMLCPP_INSTALL_DIR}/include")
-if(WIN32)
-  set(YAMLCPP_LIBRARY_RELEASE "${YAMLCPP_INSTALL_DIR}/lib/libyaml-cppmd${CMAKE_STATIC_LIBRARY_SUFFIX}")
-else()
-  set(YAMLCPP_LIBRARY_RELEASE "${YAMLCPP_INSTALL_DIR}/lib/libyaml-cpp${CMAKE_STATIC_LIBRARY_SUFFIX}")
-endif()
-
 # Catch
 # =====
-
-set(CATCH_VERSION 1.10.0)
-set(CATCH_SHA256 SHA256=a24b2c7bfa15bd117bf1a6b2cfe68a656f786d232c30eee7a0a08324ecc4fa88)
-set(CATCH_URL "${THIRD_PARTY_DIRECTORY}/Catch-${CATCH_VERSION}.zip" CACHE STRING "URL to the Catch repo")
+set(CATCH_VERSION 2.2.3)
+set(CATCH_SHA256 SHA256=46606cb0eae047a4a5f70f0794244d26c51f72e695b52f4f11c54ea1d1421360)
+set(CATCH_URL "${THIRD_PARTY_DIRECTORY}/Catch2-${CATCH_VERSION}.zip" CACHE STRING "URL to the Catch repo")
 
 ExternalProject_Add(catch
     PREFIX         ${CATCH_PREFIX}
@@ -118,32 +68,6 @@ ExternalProject_Add(catch
 )
 ExternalProject_Get_Property(catch source_dir)
 set(CATCH_INCLUDE_DIR "${source_dir}/include" CACHE INTERNAL "Path to include folder for Catch")
-
-
-# Dirent
-# ======
-set(DIRENT_INCLUDE_DIR "")
-if (WIN32)
-
-  set(DIRENT_VERSION 1.22)
-  set(DIRENT_SHA256 SHA256=3e4ad607ac53a502e184ee48a177790855127ebaadf54faa0e2fd1e77a8881bf)
-  set(DIRENT_URL "${THIRD_PARTY_DIRECTORY}/dirent-${DIRENT_VERSION}.zip" CACHE STRING "URL to the Dirent package")
-
-  ExternalProject_Add(dirent
-      PREFIX         ${DIRENT_PREFIX}
-      URL            ${DIRENT_URL}
-      URL_HASH       ${DIRENT_SHA256}
-      TIMEOUT 10
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND ""
-      INSTALL_COMMAND ""
-      LOG_DOWNLOAD ON
-  )
-
-  ExternalProject_Get_Property(dirent source_dir)
-  set(DIRENT_INCLUDE_DIR "${source_dir}/include" CACHE INTERNAL "Path to include folder for dirent")
-endif()
-
 
 
 

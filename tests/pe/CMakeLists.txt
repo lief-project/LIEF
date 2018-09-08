@@ -1,63 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 include(ExternalProject)
 
-macro(ADD_PE_TEST name sources)
-
-  add_executable(${name} ${sources} ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp)
-  set_property(TARGET ${name} PROPERTY INCLUDE_DIRECTORIES "")
-
-  if (MSVC)
-    target_compile_options(${name} PUBLIC /FIiso646.h)
-    set_property(TARGET ${name} PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-  endif()
-
-  set_property(TARGET ${name} PROPERTY CXX_STANDARD          11)
-  set_property(TARGET ${name} PROPERTY CXX_STANDARD_REQUIRED ON)
-
-  target_include_directories(${name} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${DIRENT_INCLUDE_DIR}
-    ${YAMLCPP_INCLUDE_DIRS}
-    ${CATCH_INCLUDE_DIR})
-
-  add_dependencies(${name} catch YAMLCPP)
-
-  if (WIN32)
-    add_dependencies(${name} dirent)
-	  target_compile_options("${name}" PUBLIC ${LIEF_CRT})
-  endif()
-
-  target_link_libraries(${name} PUBLIC LIB_LIEF ${YAMLCPP_LIBRARY_RELEASE})
-  add_test(${name} ${CMAKE_CURRENT_BINARY_DIR}/${name})
-
-endmacro()
-
-
-# Targets
-# =======
-
-set(test_parser_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_parser.cpp)
-
-
-set(test_equality_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_equality.cpp)
-
-
-set(test_builder_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_builder.cpp)
-
-
-set(test_binary_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_binary.cpp)
-
-ADD_PE_TEST(pe_test_parser   ${test_parser_sources})
-ADD_PE_TEST(pe_test_equality ${test_equality_sources})
-ADD_PE_TEST(pe_test_builder  ${test_builder_sources})
-ADD_PE_TEST(pe_test_binary   ${test_binary_sources})
-
-
-
 # Examples tests
 # ==============
 if (LIEF_EXAMPLES)
