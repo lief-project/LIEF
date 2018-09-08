@@ -67,7 +67,7 @@ ExternalProject_Add(catch
     LOG_DOWNLOAD ON
 )
 ExternalProject_Get_Property(catch source_dir)
-set(CATCH_INCLUDE_DIR "${source_dir}/include" CACHE INTERNAL "Path to include folder for Catch")
+set(CATCH_INCLUDE_DIR "${source_dir}" CACHE INTERNAL "Path to include folder for Catch")
 
 
 
