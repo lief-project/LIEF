@@ -42,6 +42,7 @@ LOCAL int add_hidden(int a, int b) {
   return a + b;
 }
 
+
 int main(int argc, char** argv) {
 
   if (argc != 3) {
@@ -127,7 +128,7 @@ class TestBin2Lib(unittest.TestCase):
         compiler = "/usr/bin/cc"
 
         # Compile libadd
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
@@ -148,7 +149,7 @@ class TestBin2Lib(unittest.TestCase):
         lib_directory = os.path.dirname(libadd2)
         libname = os.path.basename(libadd2)[3:-3] # libadd.so ---> add
 
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
             compiler=compiler,
             libdir=lib_directory,
             libadd2=libname,
@@ -193,7 +194,7 @@ class TestBin2Lib(unittest.TestCase):
         compiler = "/usr/bin/cc"
 
         # Compile libadd
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
@@ -206,7 +207,7 @@ class TestBin2Lib(unittest.TestCase):
         lib_directory = os.path.dirname(libadd2)
         libname = os.path.basename(libadd2)[3:-3] # libadd.so ---> add
 
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
             compiler=compiler,
             libdir=lib_directory,
             libadd2=libname,
@@ -251,7 +252,7 @@ class TestBin2Lib(unittest.TestCase):
         compiler = "/usr/bin/cc"
 
         # Compile libadd
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
@@ -265,7 +266,7 @@ class TestBin2Lib(unittest.TestCase):
         lib_directory = os.path.dirname(libadd2)
         libname = os.path.basename(libadd2)[3:-3] # libadd.so ---> add
 
-        r = self.run_cmd("{compiler} -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
+        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
             compiler=compiler,
             libdir=lib_directory,
             libadd2=libname,
