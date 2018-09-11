@@ -1536,7 +1536,7 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
         return (
           segment->type() == SEGMENT_TYPES::PT_LOAD and
           segment->virtual_address() <= virtual_address and
-          segment->virtual_address() + segment->virtual_size() >= virtual_address
+          segment->virtual_address() + segment->virtual_size() > virtual_address
           );
       });
 
