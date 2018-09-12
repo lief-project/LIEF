@@ -34,6 +34,8 @@ class BinaryStream {
   uint64_t read_uleb128(void) const;
   uint64_t read_sleb128(void) const;
 
+  int64_t read_dwarf_encoded(uint8_t encoding);
+
   std::string read_string(size_t maxsize = -1u) const;
   std::string peek_string(size_t maxsize = -1u) const;
   std::string peek_string_at(size_t offset, size_t maxsize = -1u) const;

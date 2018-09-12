@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MAIN_HEADER_H_
-#define LIEF_MAIN_HEADER_H_
-#include <LIEF/config.h>
+#ifndef LIEF_DWARF_H_
+#define LIEF_DWARF_H_
 
-#include <LIEF/Abstract.hpp>
-
-#include <LIEF/OAT.hpp>
-#include <LIEF/VDEX.hpp>
-#include <LIEF/ART.hpp>
-#include <LIEF/DEX.hpp>
-#include <LIEF/ELF.hpp>
-#include <LIEF/PE.hpp>
-#include <LIEF/MachO.hpp>
-#include <LIEF/DWARF.hpp>
-#include <LIEF/logging.hpp>
-#include <LIEF/platforms.hpp>
-
+#include "LIEF/DWARF/enums.hpp"
 
 #endif

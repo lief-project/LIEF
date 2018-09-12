@@ -42,13 +42,13 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "== Exported functions ==" << std::endl;
-  for(const std::string& name : binary->exported_functions()) {
-    std::cout << name << std::endl;
+  for(const LIEF::Function& func : binary->exported_functions()) {
+    std::cout << func << std::endl;
   }
 
   std::cout << "== Imported functions ==" << std::endl;
-  for(const std::string& name : binary->imported_functions()) {
-    std::cout << name << std::endl;
+  for(const LIEF::Function& func : binary->imported_functions()) {
+    std::cout << func << std::endl;
   }
 
   std::cout << "== Imported Libraries ==" << std::endl;

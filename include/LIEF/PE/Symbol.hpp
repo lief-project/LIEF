@@ -42,43 +42,41 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class Builder;
 
   public:
-    Symbol(const pe_symbol* header);
+  Symbol(const pe_symbol* header);
 
-    Symbol(void);
-    virtual ~Symbol(void);
+  Symbol(void);
+  virtual ~Symbol(void);
 
-    Symbol& operator=(Symbol other);
-    Symbol(const Symbol& copy);
-    void swap(Symbol& other);
+  Symbol& operator=(Symbol other);
+  Symbol(const Symbol& copy);
+  void swap(Symbol& other);
 
-    uint32_t             value(void) const;
-    int16_t              section_number(void) const;
-    uint16_t             type(void) const;
-    SYMBOL_BASE_TYPES    base_type(void) const;
-    SYMBOL_COMPLEX_TYPES complex_type(void) const;
-    SYMBOL_STORAGE_CLASS storage_class(void) const;
-    uint8_t              numberof_aux_symbols(void) const;
-    std::wstring         wname(void) const;
-    Section&             section(void);
-    const Section&       section(void) const;
+  int16_t              section_number(void) const;
+  uint16_t             type(void) const;
+  SYMBOL_BASE_TYPES    base_type(void) const;
+  SYMBOL_COMPLEX_TYPES complex_type(void) const;
+  SYMBOL_STORAGE_CLASS storage_class(void) const;
+  uint8_t              numberof_aux_symbols(void) const;
+  std::wstring         wname(void) const;
+  Section&             section(void);
+  const Section&       section(void) const;
 
-    //! @brief ``True`` if symbols are located in a section
-    bool                 has_section(void) const;
+  //! @brief ``True`` if symbols are located in a section
+  bool                 has_section(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const Symbol& rhs) const;
-    bool operator!=(const Symbol& rhs) const;
+  bool operator==(const Symbol& rhs) const;
+  bool operator!=(const Symbol& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
-    uint32_t             value_;
-    int16_t              section_number_;
-    uint16_t             type_;
-    SYMBOL_STORAGE_CLASS storage_class_;
-    uint8_t              numberof_aux_symbols_;
-    Section*             section_;
+  int16_t              section_number_;
+  uint16_t             type_;
+  SYMBOL_STORAGE_CLASS storage_class_;
+  uint8_t              numberof_aux_symbols_;
+  Section*             section_{nullptr};
 
 };
 

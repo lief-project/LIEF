@@ -464,6 +464,26 @@ struct pe_code_integrity {
   uint32_t Reserved;
 };
 
+struct pe_exception_entry_x64 {
+  uint32_t address_start_rva;
+  uint32_t address_end_rva;
+  uint32_t unwind_info_rva;
+};
+
+
+struct pe_exception_entry_mips {
+  uint32_t address_start_va;
+  uint32_t address_end_va;
+  uint32_t exception_handler;
+  uint32_t handler_data;
+  uint32_t prolog_end_address;
+};
+
+struct pe_exception_entry_arm {
+  uint32_t address_start_va;
+  uint32_t data;
+};
+
 
 
 

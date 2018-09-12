@@ -19,42 +19,46 @@
 #include <string>
 #include <sstream>
 
+#define PY_ENUM(x) LIEF::to_string(x), x
+
 namespace LIEF {
 
 template<class T>
-using getter_t = T (Symbol::*)(void) const;
+using getter_t = T (Function::*)(void) const;
 
 template<class T>
-using setter_t = void (Symbol::*)(T);
+using setter_t = void (Function::*)(T);
 
 template<>
-void create<Symbol>(py::module& m) {
+void create<Function>(py::module& m) {
 
-  py::class_<Symbol, Object>(m, "Symbol")
+  py::class_<Function, Symbol> pyfunction(m, "Function");
+
+  py::enum_<Function::FLAGS>(pyfunction, "FLAGS")
+    .value(PY_ENUM(Function::FLAGS::IMPORTED))
+    .value(PY_ENUM(Function::FLAGS::EXPORTED))
+    .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
+    .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
+    .value(PY_ENUM(Function::FLAGS::DEBUG));
+
+    pyfunction
     .def(py::init())
+    .def(py::init<const std::string&>())
+    .def(py::init<uint64_t>())
+    .def(py::init<const std::string&, uint64_t>())
 
-    .def_property("name",
-        [] (const Symbol& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&Symbol::name),
-        "Symbol's name")
 
-    .def_property("value",
-        static_cast<getter_t<uint64_t>>(&Symbol::value),
-        static_cast<setter_t<uint64_t>>(&Symbol::value),
+    .def_property("address",
+        static_cast<getter_t<uint64_t>>(&Function::address),
+        static_cast<setter_t<uint64_t>>(&Function::address),
         "Symbol's value")
 
-    .def_property("size",
-        static_cast<getter_t<uint64_t>>(&Symbol::size),
-        static_cast<setter_t<uint64_t>>(&Symbol::size),
-        "Symbol's size")
 
     .def("__str__",
-        [] (const Symbol& symbol)
+        [] (const Function& f)
         {
           std::ostringstream stream;
-          stream << symbol;
+          stream << f;
           std::string str = stream.str();
           return str;
         });

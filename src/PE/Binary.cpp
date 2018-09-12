@@ -309,6 +309,17 @@ const DataDirectory& Binary::data_directory(DATA_DIRECTORY index) const {
   }
 }
 
+
+bool Binary::has(DATA_DIRECTORY index) const {
+  auto&& it = std::find_if(
+      std::begin(this->data_directories_),
+      std::end(this->data_directories_),
+      [index] (const DataDirectory* d) {
+        return d->type() == index;
+      });
+  return it != std::end(this->data_directories_);
+}
+
 bool Binary::has_rich_header(void) const {
   return this->has_rich_header_;
 }
@@ -334,7 +345,8 @@ bool Binary::has_resources(void) const {
 }
 
 bool Binary::has_exceptions(void) const {
-  return this->has_exceptions_;
+  return this->has(DATA_DIRECTORY::EXPORT_TABLE);
+  //return this->has_exceptions_;
 }
 
 
@@ -996,28 +1008,28 @@ const std::vector<Symbol>& Binary::symbols(void) const {
 }
 
 
-std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+  LIEF::Binary::functions_t result;
   if (this->has_exports()) {
     for (const ExportEntry& entry : this->get_export().entries()) {
       const std::string& name = entry.name();
       if(not name.empty()) {
-        result.push_back(name);
+        result.emplace_back(name, entry.address(), Function::flags_list_t{Function::FLAGS::EXPORTED});
       }
     }
   }
   return result;
 }
 
-std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+  LIEF::Binary::functions_t result;
   if (this->has_imports()) {
     for (const Import& import : this->imports()) {
       const Import& resolved = resolve_ordinals(import);
       for (const ImportEntry& entry : resolved.entries()) {
         const std::string& name = entry.name();
         if(not name.empty()) {
-          result.push_back(name);
+          result.emplace_back(name, entry.iat_address(), Function::flags_list_t{Function::FLAGS::IMPORTED});
         }
       }
     }
@@ -1235,10 +1247,70 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
 
   if (this->has_tls()) {
     const std::vector<uint64_t>& clbs = this->tls().callbacks();
-    std::move(
-        std::begin(clbs),
-        std::end(clbs),
-        std::back_inserter(functions));
+    for (size_t i = 0; i < clbs.size(); ++i) {
+      functions.emplace_back(
+          "tls_" + std::to_string(i),
+          clbs[i],
+          Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+
+    }
+  }
+  return functions;
+}
+
+
+LIEF::Binary::functions_t Binary::functions(void) const {
+
+  static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
+    return lhs.address() < rhs.address();
+  };
+  std::set<Function, decltype(func_cmd)> functions_set(func_cmd);
+
+  LIEF::Binary::functions_t exception_functions = this->exception_functions();
+  LIEF::Binary::functions_t exported            = this->get_abstract_exported_functions();
+  LIEF::Binary::functions_t ctors               = this->ctor_functions();
+
+  std::move(
+      std::begin(exception_functions),
+      std::end(exception_functions),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(exported),
+      std::end(exported),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(ctors),
+      std::end(ctors),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  return {std::begin(functions_set), std::end(functions_set)};
+}
+
+LIEF::Binary::functions_t Binary::exception_functions(void) const {
+  LIEF::Binary::functions_t functions;
+  if (not this->has_exceptions()) {
+    return functions;
+  }
+
+
+  const DataDirectory& exception_dir = this->data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
+  std::vector<uint8_t> exception_data = this->get_content_from_virtual_address(exception_dir.RVA(), exception_dir.size());
+  VectorStream vs{std::move(exception_data)};
+  const size_t nb_entries = vs.size() / sizeof(pe_exception_entry_x64); // TODO: Handle other architectures
+
+  for (size_t i = 0; i < nb_entries; ++i) {
+    if (not vs.can_read<pe_exception_entry_x64>()) {
+      LOG(ERROR) << "Corrupted entry at " << std::dec << i;
+      break;
+    }
+    const pe_exception_entry_x64& entry = vs.read<pe_exception_entry_x64>();
+    Function f{entry.address_start_rva};
+    if (entry.address_end_rva > entry.address_start_rva) {
+      f.size(entry.address_end_rva - entry.address_start_rva);
+    }
+    functions.push_back(std::move(f));
   }
   return functions;
 }

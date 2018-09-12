@@ -163,6 +163,21 @@ class TestMachO(TestCase):
         self.assertTrue(binary.has_sub_framework)
         self.assertEqual(binary.sub_framework.umbrella, "System")
 
+    def test_unwind(self):
+        binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin'))
+
+        functions = sorted(binary.functions, key=lambda f: f.address)
+
+        self.assertEqual(len(functions), 2619)
+
+        self.assertEqual(functions[0].address, 2624)
+        self.assertEqual(functions[0].size,    0)
+        self.assertEqual(functions[0].name,    "")
+
+        self.assertEqual(functions[-1].address, 0x1000a4f65)
+        self.assertEqual(functions[-1].size,    0)
+        self.assertEqual(functions[-1].name,    "ctor_0")
+
 
 
 if __name__ == '__main__':

@@ -441,6 +441,14 @@ void create<Binary>(py::module& m) {
         "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) "",
         "type"_a)
 
+    .def_property_readonly("unwind_functions",
+        &Binary::unwind_functions,
+        "Return list of " RST_CLASS_REF(lief.Function) " found in the ``__unwind_info`` section")
+
+    .def_property_readonly("functions",
+        &Binary::functions,
+        "Return list of **all** " RST_CLASS_REF(lief.Function) " found")
+
     .def("__getitem__",
         static_cast<LoadCommand& (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::operator[]),
         "",

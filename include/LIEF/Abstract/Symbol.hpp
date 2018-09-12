@@ -24,27 +24,40 @@
 namespace LIEF {
 class LIEF_API Symbol : public Object {
   public:
-    Symbol(void);
-    Symbol(const std::string& name);
-    Symbol(const Symbol&);
-    Symbol& operator=(const Symbol&);
-    virtual ~Symbol(void);
+  Symbol(void);
+  Symbol(const std::string& name);
+  Symbol(const std::string& name, uint64_t value);
+  Symbol(const std::string& name, uint64_t value, uint64_t size);
+  Symbol(const Symbol&);
+  Symbol& operator=(const Symbol&);
+  virtual ~Symbol(void);
 
-    //! @brief Return symbol name
-    virtual const std::string& name(void) const;
+  void swap(Symbol& other);
 
-    virtual std::string& name(void);
+  //! @brief Return symbol name
+  virtual const std::string& name(void) const;
 
-    //! @brief Set symbol name
-    virtual void name(const std::string& name);
+  virtual std::string& name(void);
 
-    //! @brief Method so that the ``visitor`` can visit us
-    virtual void accept(Visitor& visitor) const override;
+  //! @brief Set symbol name
+  virtual void name(const std::string& name);
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+  // Symbol's value
+  virtual uint64_t value(void) const;
+  virtual void     value(uint64_t value);
+
+  virtual uint64_t size(void) const;
+  virtual void     size(uint64_t value);
+
+  //! @brief Method so that the ``visitor`` can visit us
+  virtual void accept(Visitor& visitor) const override;
+
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   protected:
-    std::string name_;
+  std::string name_;
+  uint64_t value_;
+  uint64_t size_;
 };
 }
 

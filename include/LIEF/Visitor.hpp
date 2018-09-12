@@ -41,6 +41,7 @@ LIEF_ABSTRACT_FORWARD(Header)
 LIEF_ABSTRACT_FORWARD(Section)
 LIEF_ABSTRACT_FORWARD(Symbol)
 LIEF_ABSTRACT_FORWARD(Relocation)
+LIEF_ABSTRACT_FORWARD(Function)
 
 // PE
 // ===============================
@@ -209,6 +210,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::Relocation
   LIEF_ABSTRACT_VISITABLE(Relocation)
+
+  //! Method to visit a LIEF::Function
+  LIEF_ABSTRACT_VISITABLE(Function)
 
   LIEF_ELF_VISITABLE(Binary)
   LIEF_ELF_VISITABLE(Header)

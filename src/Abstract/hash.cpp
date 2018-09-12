@@ -17,6 +17,8 @@
 #include "LIEF/Abstract/hash.hpp"
 #include "LIEF/Abstract.hpp"
 
+#include "Object.tcc"
+
 namespace LIEF {
 
 AbstractHash::~AbstractHash(void) = default;
@@ -51,11 +53,19 @@ void AbstractHash::visit(const Section& section) {
 
 void AbstractHash::visit(const Symbol& symbol) {
   this->process(symbol.name());
+  this->process(symbol.value());
+  this->process(symbol.size());
 }
 
 void AbstractHash::visit(const Relocation& relocation) {
   this->process(relocation.address());
   this->process(relocation.size());
+}
+
+void AbstractHash::visit(const Function& function) {
+  this->visit(*function.as<LIEF::Symbol>());
+  Function::flags_list_t flags = function.flags();
+  this->process(std::begin(flags), std::end(flags));
 }
 
 

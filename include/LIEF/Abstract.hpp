@@ -21,5 +21,7 @@
 #include <LIEF/Abstract/EnumToString.hpp>
 #include <LIEF/Abstract/Parser.hpp>
 #include <LIEF/Abstract/Relocation.hpp>
+#include <LIEF/Abstract/Function.hpp>
+#include <LIEF/Abstract/Symbol.hpp>
 
 #endif

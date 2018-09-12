@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "init.hpp"
+#include "pyAbstract.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 
 #include <string>
 
-void init_LIEF_Parser_class(py::module& m) {
+namespace LIEF {
+template<>
+void create<Parser>(py::module& m) {
 
     m.def("parse",
-      static_cast<std::unique_ptr<LIEF::Binary> (*) (const std::string&)>(&LIEF::Parser::parse),
+      static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "filepath"_a,
       py::return_value_policy::take_ownership);
 
   m.def("parse",
-      static_cast<std::unique_ptr<LIEF::Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&LIEF::Parser::parse),
+      static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
@@ -65,9 +67,10 @@ void init_LIEF_Parser_class(py::module& m) {
           std::make_move_iterator(std::begin(raw_str)),
           std::make_move_iterator(std::end(raw_str))};
 
-        return LIEF::Parser::parse(std::move(raw), name);
+        return Parser::parse(std::move(raw), name);
       },
       "io"_a,
       "name"_a = "",
       py::return_value_policy::take_ownership);
+}
 }

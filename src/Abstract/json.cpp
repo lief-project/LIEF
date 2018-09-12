@@ -111,13 +111,30 @@ void AbstractJsonVisitor::visit(const Binary& binary) {
     visitor.visit(relocation);
     relocations.emplace_back(visitor.get());
   }
+
+
+  std::vector<json> imports;
+  for (const Function& f : binary.imported_functions()) {
+    AbstractJsonVisitor visitor;
+    visitor.visit(f);
+    relocations.emplace_back(visitor.get());
+  }
+
+  std::vector<json> exports;
+  for (const Function& f : binary.exported_functions()) {
+    AbstractJsonVisitor visitor;
+    visitor.visit(f);
+    relocations.emplace_back(visitor.get());
+  }
+
+
   this->node_["name"]               = binary.name();
   this->node_["entrypoint"]         = binary.entrypoint();
   this->node_["format"]             = to_string(binary.format());
   this->node_["original_size"]      = binary.original_size();
-  this->node_["exported_functions"] = binary.exported_functions();
+  this->node_["exported_functions"] = exports;
   this->node_["imported_libraries"] = binary.imported_libraries();
-  this->node_["imported_functions"] = binary.imported_functions();
+  this->node_["imported_functions"] = imports;
   this->node_["header"]             = header_visitor.get();
   this->node_["sections"]           = sections;
   this->node_["symbols"]            = symbols;
@@ -145,12 +162,31 @@ void AbstractJsonVisitor::visit(const Section& section) {
 }
 
 void AbstractJsonVisitor::visit(const Symbol& symbol) {
-  this->node_["name"] = symbol.name();
+  this->node_["name"]  = symbol.name();
+  this->node_["value"] = symbol.value();
+  this->node_["size"]  = symbol.size();
 }
 
 void AbstractJsonVisitor::visit(const Relocation& relocation) {
   this->node_["address"] = relocation.address();
   this->node_["size"]    = relocation.size();
+}
+
+
+void AbstractJsonVisitor::visit(const Function& function) {
+
+  std::vector<std::string> flags_str;
+  Function::flags_list_t flags = function.flags();
+  flags_str.reserve(flags.size());
+  for (Function::FLAGS f : flags) {
+    flags_str.push_back(to_string(f));
+  }
+
+  this->node_["address"] = function.address();
+  this->node_["size"]    = function.size();
+  this->node_["name"]    = function.name();
+  this->node_["flags"]   = flags_str;
+
 }
 
 

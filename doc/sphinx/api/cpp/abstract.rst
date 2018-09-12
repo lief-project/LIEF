@@ -49,6 +49,14 @@ Relocation
 .. doxygenclass:: LIEF::Relocation
    :project: lief
 
+----------
+
+Function
+********
+
+.. doxygenclass:: LIEF::Function
+   :project: lief
+
 
 Enums
 *****

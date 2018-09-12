@@ -537,5 +537,58 @@ struct code_directory {
 };
 
 
+// Unwind structures
+// =================
+// Taken from libunwind-35.3/include/mach-o/compact_unwind_encoding.h
+struct unwind_info_section_header {
+  uint32_t version;            // unwind_section_version
+  uint32_t common_encodings_array_section_offset;
+  uint32_t common_encodings_arraycount;
+  uint32_t personality_array_section_offset;
+  uint32_t personality_array_count;
+  uint32_t index_section_offset;
+  uint32_t index_count;
+  // compact_unwind_encoding_t[]
+  // uintptr_t personalities[]
+  // unwind_info_section_header_index_entry[]
+  // unwind_info_section_header_lsda_index_entry[]
+};
+
+
+struct unwind_info_section_header_index_entry {
+  uint32_t function_offset;
+  uint32_t second_level_pages_section_offset;  // section offset to start of regular or compress page
+  uint32_t lsda_index_array_section_offset;    // section offset to start of lsda_index array for this range
+};
+
+struct unwind_info_section_header_lsda_index_entry {
+  uint32_t function_offset;
+  uint32_t lsda_offset;
+};
+
+
+struct unwind_info_regular_second_level_entry {
+  uint32_t function_offset;
+  uint32_t encoding;
+};
+
+struct unwind_info_regular_second_level_page_header {
+  uint32_t kind;    // UNWIND_SECOND_LEVEL_REGULAR
+  uint16_t entry_page_offset;
+  uint16_t entry_count;
+  // entry array
+};
+
+
+struct unwind_info_compressed_second_level_page_header {
+  uint32_t kind;    // unwind_second_level_compressed
+  uint16_t entry_page_offset;
+  uint16_t entry_count;
+  uint16_t encodings_page_offset;
+  uint16_t encodings_count;
+  // 32-bit entry array
+  // encodings array
+};
+
 
 

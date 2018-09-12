@@ -28,6 +28,7 @@
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
+#include "LIEF/Abstract/Function.hpp"
 
 //! LIEF namespace
 namespace LIEF {
@@ -44,7 +45,7 @@ class LIEF_API Binary : public Object {
     VA   = 2, ///< Absolute
   };
 
-  using functions_t = std::vector<uint64_t>;
+  using functions_t = std::vector<Function>;
 
   public:
   Binary(void);
@@ -93,13 +94,13 @@ class LIEF_API Binary : public Object {
   uint64_t original_size(void) const;
 
   //! @brief Return functions's name exported by the binary
-  std::vector<std::string> exported_functions(void) const;
+  functions_t exported_functions(void) const;
 
   //! @brief Return libraries which are imported by the binary
   std::vector<std::string> imported_libraries(void) const;
 
   //! @brief Return functions's name imported by the binary
-  std::vector<std::string> imported_functions(void) const;
+  functions_t imported_functions(void) const;
 
   //! @brief Return the address of the given function name
   virtual uint64_t get_function_address(const std::string& func_name) const;
@@ -160,8 +161,8 @@ class LIEF_API Binary : public Object {
   virtual sections_t                get_abstract_sections(void)     = 0;
   virtual relocations_t             get_abstract_relocations(void)  = 0;
 
-  virtual std::vector<std::string>  get_abstract_exported_functions(void) const = 0;
-  virtual std::vector<std::string>  get_abstract_imported_functions(void) const = 0;
+  virtual functions_t  get_abstract_exported_functions(void) const = 0;
+  virtual functions_t  get_abstract_imported_functions(void) const = 0;
   virtual std::vector<std::string>  get_abstract_imported_libraries(void) const = 0;
 
 

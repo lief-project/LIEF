@@ -439,8 +439,26 @@ def print_ctor(binary):
     print("== Constructors ==\n")
 
     print("Functions: ({:d})".format(len(binary.ctor_functions)))
-    for idx, address in enumerate(binary.ctor_functions):
-        print("    [{:d}] 0x{:x}".format(idx, address))
+    for idx, f in enumerate(binary.ctor_functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+
+
+@exceptions_handler(Exception)
+def print_exception_functions(binary):
+    print("== Exception functions ==\n")
+
+    print("Functions: ({:d})".format(len(binary.exception_functions)))
+    for idx, f in enumerate(binary.exception_functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+
+
+@exceptions_handler(Exception)
+def print_functions(binary):
+    print("== Functions ==\n")
+
+    print("Functions: ({:d})".format(len(binary.functions)))
+    for idx, f in enumerate(binary.functions):
+        print("    [{:d}] {}: 0x{:x} ({:d} bytes)".format(idx, f.name, f.address, f.size))
 
 def main():
     optparser = OptionParser(
@@ -513,6 +531,14 @@ def main():
             action='store_true', dest='show_ctor',
             help='Constructor functions')
 
+    optparser.add_option('-f', '--functions',
+            action='store_true', dest='show_functions',
+            help='Display all functions found in the binary')
+
+    optparser.add_option('--exception-functions',
+            action='store_true', dest='show_pfunctions',
+            help='Display functions found in the exception directory')
+
 
 
     options, args = optparser.parse_args()
@@ -572,6 +598,12 @@ def main():
 
     if options.show_ctor or options.show_all:
         print_ctor(binary)
+
+    if options.show_functions or options.show_all:
+        print_functions(binary)
+
+    if options.show_pfunctions or options.show_all:
+        print_exception_functions(binary)
 
 if __name__ == "__main__":
     main()

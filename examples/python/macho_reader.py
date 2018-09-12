@@ -652,8 +652,25 @@ def print_ctor(binary):
     print("== Constructors ==\n")
 
     print("Functions: ({:d})".format(len(binary.ctor_functions)))
-    for idx, address in enumerate(binary.ctor_functions):
-        print("    [{:d}] 0x{:x}".format(idx, address))
+    for idx, f in enumerate(binary.ctor_functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+
+
+@exceptions_handler(Exception)
+def print_unwind_functions(binary):
+    print("== Unwind functions ==\n")
+
+    print("Functions: ({:d})".format(len(binary.unwind_functions)))
+    for idx, f in enumerate(binary.unwind_functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+
+@exceptions_handler(Exception)
+def print_functions(binary):
+    print("== Functions ==\n")
+
+    print("Functions: ({:d})".format(len(binary.functions)))
+    for idx, f in enumerate(binary.functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
 
 
 
@@ -783,6 +800,14 @@ def main():
             action='store_true', dest='show_ctor',
             help='Constructor functions')
 
+    parser.add_argument('--unwind-functions',
+            action='store_true', dest='show_ufunctions',
+            help='Functions from unwind info')
+
+    parser.add_argument('--functions',
+            action='store_true', dest='show_functions',
+            help='All functions found in the binary')
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -892,6 +917,12 @@ def main():
 
         if args.show_ctor or args.show_all:
             print_ctor(binary)
+
+        if args.show_ufunctions or args.show_all:
+            print_unwind_functions(binary)
+
+        if args.show_functions or args.show_all:
+            print_functions(binary)
 
     sys.exit(EXIT_STATUS)
 

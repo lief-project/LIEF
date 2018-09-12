@@ -43,9 +43,6 @@ void create<Symbol>(py::module& m) {
         static_cast<getter_t<std::wstring>>      (&Symbol::wname),
         static_cast<setter_t<const std::string&>>(&Symbol::name))
 
-    .def_property_readonly("value",
-        &Symbol::value)
-
     .def_property_readonly("section_number",
         &Symbol::section_number)
 

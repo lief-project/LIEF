@@ -227,6 +227,44 @@ class TestELF(TestCase):
         self.assertIn(lief.ELF.DYNAMIC_FLAGS.BIND_NOW, d_flags)
         self.assertIn(lief.ELF.DYNAMIC_FLAGS_1.NOW, d_flags_1)
 
+
+    def test_unwind_arm(self):
+        sample = "ELF/ELF32_ARM_binary_ls.bin"
+        ls = lief.parse(get_sample(sample))
+
+        functions = sorted(ls.functions, key=lambda f: f.address)
+
+        self.assertEqual(len(functions), 265)
+
+        self.assertEqual(functions[0].address, 19684)
+        self.assertEqual(functions[0].size,    0)
+        self.assertEqual(functions[0].name,    "open")
+
+        self.assertEqual(functions[-1].address, 102372)
+        self.assertEqual(functions[-1].size,    0)
+        self.assertEqual(functions[-1].name,    "")
+
+
+    def test_unwind_x86(self):
+        sample = "ELF/ELF64_x86-64_binary_ld.bin"
+        ld = lief.parse(get_sample(sample))
+
+        functions = sorted(ld.functions, key=lambda f: f.address)
+
+        self.assertEqual(len(functions), 503)
+
+        self.assertEqual(functions[0].address, 4209304)
+        self.assertEqual(functions[0].size,    0)
+        self.assertEqual(functions[0].name,    "_init")
+
+        self.assertEqual(functions[10].size,    174)
+        self.assertEqual(functions[10].name,    "")
+
+        self.assertEqual(functions[-1].address, 4409396)
+        self.assertEqual(functions[-1].size,    0)
+        self.assertEqual(functions[-1].name,    "_fini")
+
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()

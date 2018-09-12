@@ -135,6 +135,14 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("has_signature", &Binary::has_signature,
         "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
 
+    .def_property_readonly("functions",
+        &Binary::functions,
+        "**All** " RST_CLASS_REF(lief.Function) " found in the binary")
+
+    .def_property_readonly("exception_functions",
+        &Binary::exception_functions,
+        "" RST_CLASS_REF(lief.Function) " found in the Exception directory")
+
     .def("predict_function_rva",
         static_cast<uint32_t(Binary::*)(const std::string&, const std::string&)>(&Binary::predict_function_rva),
         "Try to predict the RVA of the given function name in the given import library name",

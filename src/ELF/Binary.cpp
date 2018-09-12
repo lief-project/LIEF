@@ -17,6 +17,9 @@
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <map>
+
+#include "LIEF/DWARF/enums.hpp"
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
@@ -104,22 +107,22 @@ it_const_segments Binary::segments(void) const {
 }
 
 
-std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+  LIEF::Binary::functions_t result;
   for (const Symbol& symbol : this->exported_symbols()) {
     if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
-      result.push_back(symbol.name());
+      result.emplace_back(symbol.name(), symbol.value(), Function::flags_list_t{Function::FLAGS::EXPORTED});
     }
   }
   return result;
 }
 
 
-std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+  LIEF::Binary::functions_t result;
   for (const Symbol& symbol : this->imported_symbols()) {
     if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
-      result.push_back(symbol.name());
+      result.emplace_back(symbol.name(), symbol.value(), Function::flags_list_t{Function::FLAGS::IMPORTED});
     }
   }
   return result;
@@ -2147,7 +2150,7 @@ LIEF::Binary::functions_t Binary::tor_functions(DYNAMIC_TAGS tag) const {
           static_cast<uint32_t>(x) != static_cast<uint32_t>(-1) and
           x != static_cast<uint64_t>(-1)
         ) {
-        functions.push_back(x);
+        functions.emplace_back(x);
       }
     }
   }
@@ -2159,19 +2162,32 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
   LIEF::Binary::functions_t functions;
 
   LIEF::Binary::functions_t init = this->tor_functions(DYNAMIC_TAGS::DT_INIT_ARRAY);
-  std::move(
-      std::begin(init),
-      std::end(init),
-      std::back_inserter(functions));
+  std::transform(
+      std::make_move_iterator(std::begin(init)),
+      std::make_move_iterator(std::end(init)),
+      std::back_inserter(functions),
+      [] (Function&& f) {
+        f.add(Function::FLAGS::CONSTRUCTOR);
+        f.name("__dt_init_array");
+        return f;
+      });
 
   LIEF::Binary::functions_t preinit = this->tor_functions(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
-  std::move(
-      std::begin(preinit),
-      std::end(preinit),
-      std::back_inserter(functions));
+  std::transform(
+      std::make_move_iterator(std::begin(preinit)),
+      std::make_move_iterator(std::end(preinit)),
+      std::back_inserter(functions),
+      [] (Function&& f) {
+        f.add(Function::FLAGS::CONSTRUCTOR);
+        f.name("__dt_preinit_array");
+        return f;
+      });
 
   if (this->has(DYNAMIC_TAGS::DT_INIT)) {
-    functions.push_back(this->get(DYNAMIC_TAGS::DT_INIT).value());
+    functions.emplace_back(
+        "__dt_init",
+        this->get(DYNAMIC_TAGS::DT_INIT).value(),
+        Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
   }
   return functions;
 }
@@ -2182,13 +2198,22 @@ LIEF::Binary::functions_t Binary::dtor_functions(void) const {
   LIEF::Binary::functions_t functions;
 
   LIEF::Binary::functions_t fini = this->tor_functions(DYNAMIC_TAGS::DT_FINI_ARRAY);
-  std::move(
-      std::begin(fini),
-      std::end(fini),
-      std::back_inserter(functions));
+  std::transform(
+      std::make_move_iterator(std::begin(fini)),
+      std::make_move_iterator(std::end(fini)),
+      std::back_inserter(functions),
+      [] (Function&& f) {
+        f.add(Function::FLAGS::DESTRUCTOR);
+        f.name("__dt_fini_array");
+        return f;
+      });
 
   if (this->has(DYNAMIC_TAGS::DT_FINI)) {
-    functions.push_back(this->get(DYNAMIC_TAGS::DT_FINI).value());
+
+    functions.emplace_back(
+        "__dt_fini",
+        this->get(DYNAMIC_TAGS::DT_FINI).value(),
+        Function::flags_list_t{Function::FLAGS::DESTRUCTOR});
   }
   return functions;
 
@@ -2244,6 +2269,305 @@ const Relocation* Binary::get_relocation(const std::string& symbol_name) const {
 Relocation* Binary::get_relocation(const std::string& symbol_name) {
   return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol_name));
 }
+
+
+LIEF::Binary::functions_t Binary::armexid_functions(void) const {
+  LIEF::Binary::functions_t funcs;
+
+  static const auto expand_prel31 = [] (uint32_t word, uint32_t base) {
+    uint32_t offset = word & 0x7fffffff;
+    if (offset & 0x40000000) {
+      offset |= ~static_cast<uint32_t>(0x7fffffff);
+    }
+    return base + offset;
+  };
+
+  if (this->has(SEGMENT_TYPES::PT_ARM_EXIDX)) {
+    const Segment& exidx = this->get(SEGMENT_TYPES::PT_ARM_EXIDX);
+    const std::vector<uint8_t>& content = exidx.content();
+    const size_t nb_functions = content.size() / (2 * sizeof(uint32_t));
+    funcs.reserve(nb_functions);
+
+    const uint32_t* entries = reinterpret_cast<const uint32_t*>(content.data());
+    for (size_t i = 0; i < 2 * nb_functions; i += 2) {
+      uint32_t first_word  = entries[i];
+      uint32_t second_word = entries[i + 1];
+
+      if ((first_word & 0x80000000) == 0) {
+        uint32_t prs_data = expand_prel31(first_word, exidx.virtual_address() + i * sizeof(uint32_t));
+        funcs.emplace_back(prs_data);
+      }
+    }
+  }
+  return funcs;
+}
+
+
+LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
+  LIEF::Binary::functions_t functions;
+
+  if (not this->has(SEGMENT_TYPES::PT_GNU_EH_FRAME)) {
+    return functions;
+  }
+
+  uint64_t eh_frame_addr = this->get(SEGMENT_TYPES::PT_GNU_EH_FRAME).virtual_address();
+  uint64_t eh_frame_off  = this->virtual_address_to_offset(eh_frame_addr);
+  auto&& it_load_segment = std::find_if(
+      std::begin(this->segments_),
+      std::end(this->segments_),
+      [eh_frame_addr] (const Segment* s) {
+        return s->type() == SEGMENT_TYPES::PT_LOAD and
+          s->virtual_address() <= eh_frame_addr and eh_frame_addr < (s->virtual_address() + s->virtual_size());
+      });
+
+  if (it_load_segment == std::end(this->segments_)) {
+    LOG(ERROR) << "Unable to find the LOAD segment associated with PT_GNU_EH_FRAME";
+    return functions;
+  }
+  const Segment* load_segment = *it_load_segment;
+
+  const bool is64 = (this->type() == ELF_CLASS::ELFCLASS64);
+
+  VectorStream vs{std::move(load_segment->content())};
+  vs.setpos(eh_frame_off);
+
+  if (vs.size() < 4 * sizeof(uint8_t)) {
+    LOG(WARNING) << "Unable to read EH frame header";
+    return functions;
+  }
+
+  // Read Eh Frame header
+  uint8_t version          = vs.read<uint8_t>();
+  uint8_t eh_frame_ptr_enc = vs.read<uint8_t>(); // How pointers are encoded
+  uint8_t fde_count_enc    = vs.read<uint8_t>();
+  uint8_t table_enc        = vs.read<uint8_t>();
+
+  int64_t eh_frame_ptr = vs.read_dwarf_encoded(eh_frame_ptr_enc);
+  int64_t fde_count    = -1;
+
+  if (static_cast<DWARF::EH_ENCODING>(fde_count_enc) != DWARF::EH_ENCODING::OMIT) {
+    fde_count = vs.read_dwarf_encoded(fde_count_enc);
+  }
+
+  if (version != 1) {
+    LOG(WARNING) << "EH Frame header version is not 1 " << std::dec
+                 << "(" << version << ") structure may have been corrupted!";
+  }
+
+  if (fde_count < 0) {
+    LOG(WARNING) << "fde_count is corrupted (negative value)";
+    fde_count = 0;
+  }
+
+
+
+  VLOG(VDEBUG) << std::showbase << std::left
+             << std::setw(20) << std::setfill(' ') << "eh_frame_ptr_enc: " << std::hex << static_cast<uint32_t>(eh_frame_ptr_enc) << std::endl
+             << std::setw(20) << std::setfill(' ') << "fde_count_enc: "    << std::hex << static_cast<uint32_t>(fde_count_enc) << std::endl
+             << std::setw(20) << std::setfill(' ') << "table_enc: "        << std::hex << static_cast<uint32_t>(table_enc) << std::endl;
+
+  VLOG(VDEBUG) << std::setw(20) << std::setfill(' ') << "eh_frame_ptr: " << std::hex << eh_frame_ptr << std::endl;
+  VLOG(VDEBUG) << std::setw(20) << std::setfill(' ') << "fde_count: " << fde_count << std::endl;
+
+  DWARF::EH_ENCODING table_bias = static_cast<DWARF::EH_ENCODING>(table_enc & 0xF0);
+
+  for (size_t i = 0; i < static_cast<size_t>(fde_count); ++i) {
+
+    // Read Function address / FDE address within the
+    // Binary search table
+    uint32_t initial_location = vs.read_dwarf_encoded(table_enc);
+    uint32_t address          = vs.read_dwarf_encoded(table_enc);
+    uint64_t bias             = 0;
+
+    switch (table_bias) {
+      case DWARF::EH_ENCODING::PCREL:
+        {
+          bias = (eh_frame_addr + vs.pos());
+          break;
+        }
+
+      case DWARF::EH_ENCODING::TEXTREL:
+        {
+          LOG(WARNING) << "EH_ENCODING::TEXTREL is not supported";
+          break;
+        }
+
+      case DWARF::EH_ENCODING::DATAREL:
+        {
+          bias = eh_frame_addr;
+          break;
+        }
+
+      case DWARF::EH_ENCODING::FUNCREL:
+        {
+          LOG(WARNING) << "EH_ENCODING::FUNCREL is not supported";
+          break;
+        }
+
+      case DWARF::EH_ENCODING::ALIGNED:
+        {
+          LOG(WARNING) << "EH_ENCODING::ALIGNED is not supported";
+          break;
+        }
+
+      default:
+        {
+          LOG(WARNING) << "Encoding not supported!";
+          break;
+        }
+    }
+    initial_location += bias;
+    address          += bias;
+
+    VLOG(VDEBUG) << "Initial location: " << initial_location;
+    VLOG(VDEBUG) << "Address: "          << address;
+    VLOG(VDEBUG) << "Bias: "             << std::hex << bias;
+    const size_t saved_pos = vs.pos();
+
+    // Go to the FDE structure
+    vs.setpos(eh_frame_off + address - bias);
+    {
+
+      // Beginning of the FDE structure (to continue)
+      uint64_t fde_length  = vs.read<uint32_t>();
+      fde_length = fde_length == static_cast<uint32_t>(-1) ? vs.read<uint64_t>() : fde_length;
+
+      uint32_t cie_pointer = vs.read<uint32_t>();
+
+      if (cie_pointer == 0) {
+        LOG(WARNING) << "cie_pointer is null!";
+        vs.setpos(saved_pos);
+        continue;
+      }
+
+      uint32_t cie_offset  = vs.pos() - cie_pointer - sizeof(uint32_t);
+
+
+      VLOG(VDEBUG) << "fde_length@"  << std::hex << address - bias << ": " << fde_length;
+      VLOG(VDEBUG) << "cie_pointer " << std::hex << cie_pointer;
+      VLOG(VDEBUG) << "cie_offset "  << cie_offset;
+
+
+      // Go to CIE structure
+      //uint8_t augmentation_data = static_cast<uint8_t>(DWARF::EH_ENCODING::OMIT);
+
+      const size_t saved_pos = vs.pos();
+      uint8_t augmentation_data = 0;
+      vs.setpos(cie_offset);
+      {
+        uint64_t cie_length = vs.read<uint32_t>();
+        cie_length = cie_length == static_cast<uint32_t>(-1) ? vs.read<uint64_t>() : cie_length;
+
+        uint32_t cie_id     = vs.read<uint32_t>();
+        uint32_t version    = vs.read<uint8_t>();
+
+        if (cie_id != 0) {
+          LOG(WARNING) << "CIE ID is not 0 "
+                       << std::dec << "(" << cie_id << ")";
+        }
+
+        if (version != 1) {
+          LOG(WARNING) << "CIE Version is not 1 "
+                       << std::dec << "(" << version << ")";
+        }
+
+        VLOG(VDEBUG) << "cie_length:" << cie_length;
+        VLOG(VDEBUG) << "ID: "      << cie_id;
+        VLOG(VDEBUG) << "Version: " << version;
+
+        std::string cie_augmentation_string = vs.read_string();
+        if (cie_augmentation_string.find("eh") != std::string::npos) {
+          if (is64) {
+            /* uint64_t eh_data = */ vs.read<uint64_t>();
+          } else {
+            /* uint32_t eh_data = */ vs.read<uint32_t>();
+          }
+        }
+
+        /* uint64_t code_alignment         = */ vs.read_uleb128();
+        /* int64_t  data_alignment         = */ vs.read_sleb128();
+        /* uint64_t return_addres_register = */ vs.read_uleb128();
+        if (cie_augmentation_string.find('z') != std::string::npos) {
+          /* int64_t  augmentation_length    = */ vs.read_uleb128();
+        }
+        VLOG(VDEBUG) << cie_augmentation_string;
+
+
+        if (cie_augmentation_string.size() > 0 and cie_augmentation_string[0] == 'z') {
+          if (cie_augmentation_string.find('R') != std::string::npos) {
+            augmentation_data = vs.read<uint8_t>();
+          } else {
+            LOG(WARNING) << "Augmentation string '" << cie_augmentation_string << "' is not supported";
+          }
+        }
+      }
+      VLOG(VDEBUG) << "Augmentation data "  << std::hex << static_cast<uint32_t>(augmentation_data) << std::endl;
+
+      // Go back to FDE Structure
+      vs.setpos(saved_pos);
+      int32_t function_begin = eh_frame_addr + vs.pos() + vs.read_dwarf_encoded(augmentation_data);
+      int32_t size           = vs.read_dwarf_encoded(augmentation_data);
+
+      // Create the function
+      Function f{static_cast<uint64_t>(initial_location)};
+      f.size(size);
+      functions.push_back(std::move(f));
+      VLOG(VDEBUG) << "PC BEGIN/SIZE: " << std::hex << function_begin << " : " << size  << std::endl;
+    }
+    vs.setpos(saved_pos);
+  }
+
+  return functions;
+}
+
+
+LIEF::Binary::functions_t Binary::functions(void) const {
+
+  static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
+    return lhs.address() < rhs.address();
+  };
+  std::set<Function, decltype(func_cmd)> functions_set(func_cmd);
+
+  LIEF::Binary::functions_t eh_frame_functions = this->eh_frame_functions();
+  LIEF::Binary::functions_t armexid_functions  = this->armexid_functions();
+  LIEF::Binary::functions_t ctors              = this->ctor_functions();
+  LIEF::Binary::functions_t dtors              = this->dtor_functions();
+
+  for (const Symbol& s : this->symbols()) {
+    if (s.type() == ELF_SYMBOL_TYPES::STT_FUNC and s.value() > 0) {
+      Function f{s.name(), s.value()};
+      f.size(s.size());
+      functions_set.insert(f);
+    }
+  }
+
+  std::move(
+      std::begin(ctors),
+      std::end(ctors),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(dtors),
+      std::end(dtors),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(eh_frame_functions),
+      std::end(eh_frame_functions),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(armexid_functions),
+      std::end(armexid_functions),
+      std::inserter(functions_set, std::end(functions_set)));
+
+
+
+
+
+  return {std::begin(functions_set), std::end(functions_set)};
+}
+
 
 // Operator+=
 // ==========
@@ -2333,6 +2657,8 @@ bool Binary::operator==(const Binary& rhs) const {
 bool Binary::operator!=(const Binary& rhs) const {
   return not (*this == rhs);
 }
+
+
 
 std::ostream& Binary::print(std::ostream& os) const {
 

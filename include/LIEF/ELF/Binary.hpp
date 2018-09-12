@@ -471,6 +471,8 @@ class LIEF_API Binary : public LIEF::Binary {
   virtual LIEF::Binary::functions_t ctor_functions(void) const override;
   LIEF::Binary::functions_t dtor_functions(void) const;
 
+  LIEF::Binary::functions_t functions(void) const;
+
   //! @brief ``true`` if the binary embed notes
   bool has_notes(void) const;
 
@@ -521,8 +523,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   virtual LIEF::Header             get_abstract_header(void) const override;
 
-  virtual std::vector<std::string> get_abstract_exported_functions(void) const override;
-  virtual std::vector<std::string> get_abstract_imported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_exported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_imported_functions(void) const override;
   virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
   virtual LIEF::symbols_t          get_abstract_symbols(void) override;
   virtual LIEF::relocations_t      get_abstract_relocations(void) override;
@@ -538,6 +540,9 @@ class LIEF_API Binary : public LIEF::Binary {
   void shift_dynamic_entries(uint64_t from, uint64_t shift);
   void shift_symbols(uint64_t from, uint64_t shift);
   void shift_relocations(uint64_t from, uint64_t shift);
+
+  LIEF::Binary::functions_t eh_frame_functions(void) const;
+  LIEF::Binary::functions_t armexid_functions(void) const;
 
   template<E_TYPE OBJECT_TYPE, bool note = false>
   Segment& add_segment(const Segment& segment, uint64_t base);

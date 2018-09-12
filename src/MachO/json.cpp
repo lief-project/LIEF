@@ -315,11 +315,13 @@ void JsonVisitor::visit(const RPathCommand& rpath) {
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {
+  this->node_["value"]             = symbol.value();
+  this->node_["size"]              = symbol.size();
   this->node_["name"]              = symbol.name();
+
   this->node_["type"]              = symbol.type();
   this->node_["numberof_sections"] = symbol.numberof_sections();
   this->node_["description"]       = symbol.description();
-  this->node_["value"]             = symbol.value();
   this->node_["origin"]            = to_string(symbol.origin());
   this->node_["is_external"]       = symbol.is_external();
 

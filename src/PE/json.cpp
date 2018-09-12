@@ -334,14 +334,17 @@ void JsonVisitor::visit(const TLS& tls) {
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {
+
   this->node_["value"]                = symbol.value();
+  this->node_["size"]                 = symbol.size();
+  this->node_["name"]                 = symbol.name();
+
   this->node_["section_number"]       = symbol.section_number();
   this->node_["type"]                 = symbol.type();
   this->node_["base_type"]            = to_string(symbol.base_type());
   this->node_["complex_type"]         = to_string(symbol.complex_type());
   this->node_["storage_class"]        = to_string(symbol.storage_class());
   this->node_["numberof_aux_symbols"] = symbol.numberof_aux_symbols();
-  this->node_["name"]                 = symbol.name();
 
   if (symbol.has_section()) {
     this->node_["section"] = symbol.section().name();

@@ -27,7 +27,7 @@ namespace LIEF {
 namespace PE {
 
 Symbol::Symbol(void) :
-  value_{0},
+  LIEF::Symbol{},
   section_number_{0},
   type_{0},
   storage_class_{SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_INVALID},
@@ -39,7 +39,6 @@ Symbol::~Symbol(void) = default;
 
 Symbol::Symbol(const Symbol& other) :
   LIEF::Symbol{other},
-  value_{other.value_},
   section_number_{other.section_number_},
   type_{other.type_},
   storage_class_{other.storage_class_},
@@ -54,7 +53,8 @@ Symbol& Symbol::operator=(Symbol other) {
 }
 
 void Symbol::swap(Symbol& other) {
-  std::swap(this->value_,                 other.value_);
+  LIEF::Symbol::swap(other);
+
   std::swap(this->section_number_,        other.section_number_);
   std::swap(this->type_,                  other.type_);
   std::swap(this->storage_class_,         other.storage_class_);
@@ -63,18 +63,16 @@ void Symbol::swap(Symbol& other) {
 }
 
 Symbol::Symbol(const pe_symbol* header) :
-  value_(header->Value),
+  LIEF::Symbol{},
   section_number_(header->SectionNumber),
   type_(header->Type),
   storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header->StorageClass)),
   numberof_aux_symbols_(header->NumberOfAuxSymbols),
   section_{nullptr}
-{}
-
-
-uint32_t Symbol::value(void) const {
-  return this->value_;
+{
+  this->value_ = header->Value;
 }
+
 
 int16_t Symbol::section_number(void) const {
   return this->section_number_;

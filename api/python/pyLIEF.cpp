@@ -16,6 +16,7 @@
 #include "LIEF/logging.hpp"
 #include "LIEF/version.h"
 #include "pyLIEF.hpp"
+#include "pyAbstract.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "ELF/pyELF.hpp"
@@ -64,7 +65,7 @@ PYBIND11_MODULE(_pylief, LIEF_module) {
   init_LIEF_exceptions(LIEF_module);
 
   // Init the LIEF module
-  init_LIEF_module(LIEF_module);
+  LIEF::init_python_module(LIEF_module);
 
   init_hash_functions(LIEF_module);
 

@@ -30,10 +30,10 @@ namespace MachO {
 Symbol::~Symbol(void) = default;
 
 Symbol::Symbol(void) :
+  LIEF::Symbol{},
   type_{0},
   numberof_sections_{0},
   description_{0},
-  value_{0},
   binding_info_{nullptr},
   export_info_{nullptr},
   origin_{SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN}
@@ -49,7 +49,6 @@ Symbol::Symbol(const Symbol& other) :
   type_{other.type_},
   numberof_sections_{other.numberof_sections_},
   description_{other.description_},
-  value_{other.value_},
   binding_info_{nullptr},
   export_info_{nullptr},
   origin_{other.origin_}
@@ -57,33 +56,36 @@ Symbol::Symbol(const Symbol& other) :
 
 
 Symbol::Symbol(const nlist_32 *cmd) :
+  LIEF::Symbol{},
   type_{cmd->n_type},
   numberof_sections_{cmd->n_sect},
   description_{static_cast<uint16_t>(cmd->n_desc)},
-  value_{cmd->n_value},
   binding_info_{nullptr},
   export_info_{nullptr},
   origin_{SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB}
-{}
+{
+  this->value_ = cmd->n_value;
+}
 
 Symbol::Symbol(const nlist_64 *cmd) :
+  LIEF::Symbol{},
   type_{cmd->n_type},
   numberof_sections_{cmd->n_sect},
   description_{cmd->n_desc},
-  value_{cmd->n_value},
   binding_info_{nullptr},
   export_info_{nullptr},
   origin_{SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB}
-{}
+{
+  this->value_ = cmd->n_value;
+}
 
 
 void Symbol::swap(Symbol& other) {
-  std::swap(this->name_,              other.name_);
+  LIEF::Symbol::swap(other);
 
   std::swap(this->type_,              other.type_);
   std::swap(this->numberof_sections_, other.numberof_sections_);
   std::swap(this->description_,       other.description_);
-  std::swap(this->value_,             other.value_);
   std::swap(this->binding_info_,      other.binding_info_);
   std::swap(this->export_info_,       other.export_info_);
   std::swap(this->origin_,            other.origin_);
@@ -101,10 +103,6 @@ uint16_t Symbol::description(void) const {
   return this->description_;
 }
 
-uint64_t Symbol::value(void) const {
-  return this->value_;
-}
-
 SYMBOL_ORIGINS Symbol::origin(void) const {
   return this->origin_;
 }
@@ -119,10 +117,6 @@ void Symbol::numberof_sections(uint8_t nbsections) {
 
 void Symbol::description(uint16_t desc) {
   this->description_ = desc;
-}
-
-void Symbol::value(uint64_t value) {
-  this->value_ = value;
 }
 
 bool Symbol::is_external(void) const {

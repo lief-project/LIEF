@@ -39,72 +39,69 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class BinaryParser;
 
   public:
-    Symbol(void);
+  Symbol(void);
 
-    Symbol(const nlist_32 *cmd);
-    Symbol(const nlist_64 *cmd);
+  Symbol(const nlist_32 *cmd);
+  Symbol(const nlist_64 *cmd);
 
-    Symbol& operator=(Symbol other);
-    Symbol(const Symbol& other);
-    void swap(Symbol& other);
+  Symbol& operator=(Symbol other);
+  Symbol(const Symbol& other);
+  void swap(Symbol& other);
 
-    virtual ~Symbol(void);
+  virtual ~Symbol(void);
 
-    uint8_t  type(void) const;
-    uint8_t  numberof_sections(void) const;
-    uint16_t description(void) const;
-    uint64_t value(void) const;
+  uint8_t  type(void) const;
+  uint8_t  numberof_sections(void) const;
+  uint16_t description(void) const;
 
-    bool has_export_info(void) const;
-    const ExportInfo& export_info(void) const;
-    ExportInfo& export_info(void);
+  bool has_export_info(void) const;
+  const ExportInfo& export_info(void) const;
+  ExportInfo& export_info(void);
 
-    bool has_binding_info(void) const;
-    const BindingInfo& binding_info(void) const;
-    BindingInfo& binding_info(void);
+  bool has_binding_info(void) const;
+  const BindingInfo& binding_info(void) const;
+  BindingInfo& binding_info(void);
 
-    std::string demangled_name(void) const;
+  std::string demangled_name(void) const;
 
-    void type(uint8_t type);
-    void numberof_sections(uint8_t nbsections);
-    void description(uint16_t desc);
-    void value(uint64_t);
+  void type(uint8_t type);
+  void numberof_sections(uint8_t nbsections);
+  void description(uint16_t desc);
 
-    bool is_external(void) const;
+  bool is_external(void) const;
 
-    inline const DylibCommand* library(void) const {
-      return this->library_;
-    }
+  inline const DylibCommand* library(void) const {
+    return this->library_;
+  }
 
-    inline DylibCommand* library(void) {
-      return this->library_;
-    }
+  inline DylibCommand* library(void) {
+    return this->library_;
+  }
 
-    SYMBOL_ORIGINS origin(void) const;
+  SYMBOL_ORIGINS origin(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const Symbol& rhs) const;
-    bool operator!=(const Symbol& rhs) const;
+  bool operator==(const Symbol& rhs) const;
+  bool operator!=(const Symbol& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
 
   private:
-    inline void library(DylibCommand& library) {
-      this->library_ = &library;
-    }
+  inline void library(DylibCommand& library) {
+    this->library_ = &library;
+  }
 
-    uint8_t  type_;
-    uint8_t  numberof_sections_;
-    uint16_t description_;
-    uint64_t value_;
+  uint8_t  type_;
+  uint8_t  numberof_sections_;
+  uint16_t description_;
 
-    BindingInfo* binding_info_{nullptr};
-    ExportInfo* export_info_{nullptr};
+  BindingInfo* binding_info_{nullptr};
+  ExportInfo* export_info_{nullptr};
 
-    DylibCommand* library_{nullptr};
+  DylibCommand* library_{nullptr};
 
-    SYMBOL_ORIGINS origin_;
+  SYMBOL_ORIGINS origin_;
 };
 
 }

@@ -410,8 +410,8 @@ def print_ctor(binary):
     print("== Constructors ==\n")
 
     print("Functions: ({:d})".format(len(binary.ctor_functions)))
-    for idx, address in enumerate(binary.ctor_functions):
-        print("    [{:d}] 0x{:x}".format(idx, address))
+    for idx, f in enumerate(binary.ctor_functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
 
 @exceptions_handler(Exception)
 def print_strings(binary):
@@ -423,6 +423,15 @@ def print_strings(binary):
     for s in strings:
         print("    {}".format(s))
 
+
+@exceptions_handler(Exception)
+def print_functions(binary):
+    print("== Functions ==\n")
+
+    functions = binary.functions
+    print("Functions: ({:d})".format(len(functions)))
+    for idx, f in enumerate(functions):
+        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
 
 
 def main():
@@ -512,6 +521,10 @@ def main():
             action='store_true', dest='show_strings',
             help='Strings present in the current ELF')
 
+    optparser.add_option('--functions',
+            action='store_true', dest='show_functions',
+            help='List all function addresses found')
+
     options, args = optparser.parse_args()
 
     if options.help or len(args) == 0:
@@ -572,6 +585,9 @@ def main():
 
     if options.show_strings or options.show_all:
         print_strings(binary)
+
+    if options.show_functions:
+        print_functions(binary)
 
 
 

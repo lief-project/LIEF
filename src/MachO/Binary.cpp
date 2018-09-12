@@ -155,28 +155,28 @@ LIEF::symbols_t Binary::get_abstract_symbols(void) {
 }
 
 
-std::vector<std::string> Binary::get_abstract_exported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+  LIEF::Binary::functions_t result;
   it_const_exported_symbols syms = this->exported_symbols();
   std::transform(
       std::begin(syms),
       std::end(syms),
       std::back_inserter(result),
       [] (const Symbol& s) {
-        return s.name();
+        return Function{s.name(), s.value(), Function::flags_list_t{Function::FLAGS::EXPORTED}};
       });
   return result;
 }
 
-std::vector<std::string> Binary::get_abstract_imported_functions(void) const {
-  std::vector<std::string> result;
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+  LIEF::Binary::functions_t result;
   it_const_imported_symbols syms = this->imported_symbols();
   std::transform(
       std::begin(syms),
       std::end(syms),
       std::back_inserter(result),
       [] (const Symbol& s) {
-      return s.name();
+        return Function{s.name(), s.value(), Function::flags_list_t{Function::FLAGS::IMPORTED}};
       });
   return result;
 }
@@ -1425,15 +1425,143 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
     if (this->is64_) {
       const size_t nb_fnc = content.size() / sizeof(uint64_t);
       const uint64_t* aptr = reinterpret_cast<const uint64_t*>(content.data());
-      std::move(aptr, aptr + nb_fnc, std::back_inserter(functions));
+      for (size_t i = 0; i < nb_fnc; ++i) {
+        functions.emplace_back(
+            "ctor_" + std::to_string(i),
+            aptr[i],
+            Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+      }
 
     } else {
       const size_t nb_fnc = content.size() / sizeof(uint32_t);
       const uint32_t* aptr = reinterpret_cast<const uint32_t*>(content.data());
-      std::move(aptr, aptr + nb_fnc, std::back_inserter(functions));
+      for (size_t i = 0; i < nb_fnc; ++i) {
+        functions.emplace_back(
+            "ctor_" + std::to_string(i),
+            aptr[i],
+            Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+      }
     }
   }
   return functions;
+}
+
+
+LIEF::Binary::functions_t Binary::functions(void) const {
+  static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
+    return lhs.address() < rhs.address();
+  };
+  std::set<Function, decltype(func_cmd)> functions_set(func_cmd);
+
+  LIEF::Binary::functions_t unwind_functions = this->unwind_functions();
+  LIEF::Binary::functions_t ctor_functions   = this->ctor_functions();
+  LIEF::Binary::functions_t exported         = this->get_abstract_exported_functions();
+
+  std::move(
+      std::begin(unwind_functions),
+      std::end(unwind_functions),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  std::move(
+      std::begin(ctor_functions),
+      std::end(ctor_functions),
+      std::inserter(functions_set, std::end(functions_set)));
+
+
+  std::move(
+      std::begin(exported),
+      std::end(exported),
+      std::inserter(functions_set, std::end(functions_set)));
+
+  return {std::begin(functions_set), std::end(functions_set)};
+
+}
+
+LIEF::Binary::functions_t Binary::unwind_functions(void) const {
+  static constexpr size_t UNWIND_COMPRESSED = 3;
+  static constexpr size_t UNWIND_UNCOMPRESSED = 2;
+
+  // Set container to have functions with unique address
+  static const auto fcmd = [] (const Function& l, const Function& r) {
+    return l.address() < r.address();
+  };
+  std::set<Function, decltype(fcmd)> functions(fcmd);
+
+  // Look for the __unwind_info section
+  if (not this->has_section("__unwind_info")) {
+    return {};
+  }
+  const Section& unwind_section = this->get_section("__unwind_info");
+  const std::vector<uint8_t>& unwind_data = unwind_section.content();
+  VectorStream vs{unwind_data};
+
+  if (not vs.can_read<unwind_info_section_header>()) {
+    LOG(ERROR) << "Can't read unwind section header!";
+    return {};
+  }
+
+  // Get section content
+  const unwind_info_section_header& hdr = vs.read<unwind_info_section_header>();
+  vs.setpos(hdr.index_section_offset);
+
+  size_t lsda_start = -1lu;
+  size_t lsda_stop = 0;
+  for (size_t i = 0; i < hdr.index_count; ++i) {
+    if (not vs.can_read<unwind_info_section_header_index_entry>()) {
+      LOG(ERROR) << "Can't read function information at index" << std::dec << i << std::endl;
+      break;
+    }
+    const unwind_info_section_header_index_entry& section_hdr = vs.read<unwind_info_section_header_index_entry>();
+
+    functions.emplace(section_hdr.function_offset);
+    const size_t second_lvl_off = section_hdr.second_level_pages_section_offset;
+    const size_t lsda_off       = section_hdr.lsda_index_array_section_offset;
+
+    lsda_start = std::min(lsda_off, lsda_start);
+    lsda_stop  = std::max(lsda_off, lsda_stop);
+
+    if (second_lvl_off > 0 and vs.can_read<unwind_info_regular_second_level_page_header>(second_lvl_off)) {
+      const size_t saved_pos = vs.pos();
+      {
+        vs.setpos(second_lvl_off);
+        const unwind_info_regular_second_level_page_header& lvl_hdr = vs.peek<unwind_info_regular_second_level_page_header>(second_lvl_off);
+        if (lvl_hdr.kind == UNWIND_COMPRESSED) {
+          const unwind_info_compressed_second_level_page_header& lvl_compressed_hdr = vs.read<unwind_info_compressed_second_level_page_header>();
+
+          vs.setpos(second_lvl_off + lvl_compressed_hdr.entry_page_offset);
+          for (size_t j = 0; j < lvl_compressed_hdr.entry_count; ++j) {
+            uint32_t entry    = vs.read<uint32_t>();
+            uint32_t func_off = section_hdr.function_offset + (entry & 0xffffff);
+            functions.emplace(func_off);
+          }
+        }
+        else if (lvl_hdr.kind == UNWIND_UNCOMPRESSED) {
+          LOG(WARNING) << "UNWIND_UNCOMPRESSED is not supported yet!";
+        }
+        else {
+          LOG(WARNING) << "Unknown 2nd level kind (" << std::dec << lvl_hdr.kind << ")";
+        }
+      }
+      vs.setpos(saved_pos);
+    }
+
+  }
+
+  const size_t nb_lsda = lsda_stop > lsda_start ? (lsda_stop - lsda_start) / sizeof(unwind_info_section_header_lsda_index_entry) : 0;
+  vs.setpos(lsda_start);
+  for (size_t i = 0; i < nb_lsda; ++i) {
+    if (not vs.can_read<unwind_info_section_header_lsda_index_entry>()) {
+      LOG(ERROR) << "Can't read LSDA at index " << std::dec << i;
+      break;
+    }
+    const unwind_info_section_header_lsda_index_entry& hdr = vs.read<unwind_info_section_header_lsda_index_entry>();
+    functions.emplace(hdr.function_offset);
+  }
+
+  return {
+    std::begin(functions),
+    std::end(functions)
+  };
 }
 
 // UUID

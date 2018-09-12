@@ -60,6 +60,18 @@ Relocation
   :undoc-members:
 
 
+----------
+
+Function
+********
+
+.. autoclass:: lief.Function
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+
 Enums
 *****
 
@@ -114,14 +126,6 @@ Endianness
   :inherited-members:
   :undoc-members:
 
-----------
 
-Virtual Address Types
-~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.Binary.VA_TYPES
-  :members:
-  :inherited-members:
-  :undoc-members:
 
 

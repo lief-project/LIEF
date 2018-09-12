@@ -77,13 +77,13 @@ class TestAbstract(TestCase):
 
     def test_ctor(self):
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('PE/PE32_x86_binary_winhello-mingw.exe')))
-        self.assertEqual(binary.ctor_functions, [0x4018e0, 0x401890])
+        self.assertEqual([f.address for f in binary.ctor_functions], [0x4018e0, 0x401890])
 
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('MachO/MachO64_x86-64_binary_all.bin')))
-        self.assertEqual(binary.ctor_functions, [0x100000dd0])
+        self.assertEqual([f.address for f in binary.ctor_functions], [0x100000dd0])
 
         binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin')))
-        self.assertEqual(binary.ctor_functions, [4206768, 4206416, 4203936])
+        self.assertEqual([f.address for f in binary.ctor_functions], [4206768, 4206416, 4203936])
 
         #binary = TestAbstract.get_abstract_binary(lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin')))
         #self.assertEqual(binary.ctor_functions, [0x4030b0, 0x402f50])

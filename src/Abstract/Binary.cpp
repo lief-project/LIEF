@@ -128,11 +128,11 @@ it_const_relocations Binary::relocations(void) const {
 }
 
 
-std::vector<std::string> Binary::exported_functions(void) const {
+Binary::functions_t Binary::exported_functions(void) const {
   return this->get_abstract_exported_functions();
 }
 
-std::vector<std::string> Binary::imported_functions(void) const {
+Binary::functions_t Binary::imported_functions(void) const {
   return this->get_abstract_imported_functions();
 }
 

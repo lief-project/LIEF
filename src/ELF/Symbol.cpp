@@ -31,12 +31,11 @@ namespace LIEF {
 namespace ELF {
 
 Symbol::Symbol(void) :
+  LIEF::Symbol{},
   type_{ELF_SYMBOL_TYPES::STT_NOTYPE},
   binding_{SYMBOL_BINDINGS::STB_LOCAL},
   other_{0},
   shndx_{0},
-  value_{0},
-  size_{0},
   symbol_version_{nullptr}
 {}
 
@@ -53,20 +52,16 @@ Symbol::Symbol(const Symbol& other) : LIEF::Symbol{other},
   binding_{other.binding_},
   other_{other.other_},
   shndx_{other.shndx_},
-  value_{other.value_},
-  size_{other.size_},
   symbol_version_{nullptr}
 {}
 
 
 void Symbol::swap(Symbol& other) {
-  std::swap(this->name_,           other.name_);
+  LIEF::Symbol::swap(other);
   std::swap(this->type_,           other.type_);
   std::swap(this->binding_,        other.binding_);
   std::swap(this->other_,          other.other_);
   std::swap(this->shndx_,          other.shndx_);
-  std::swap(this->value_,          other.value_);
-  std::swap(this->size_,           other.size_);
   std::swap(this->symbol_version_, other.symbol_version_);
 }
 
@@ -76,10 +71,11 @@ Symbol::Symbol(const Elf32_Sym* header) :
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
-  value_{header->st_value},
-  size_{header->st_size},
   symbol_version_{nullptr}
-{}
+{
+  this->value_ = header->st_value;
+  this->size_  = header->st_size;
+}
 
 Symbol::Symbol(const Elf64_Sym* header) :
   LIEF::Symbol{},
@@ -87,22 +83,21 @@ Symbol::Symbol(const Elf64_Sym* header) :
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
-  value_{header->st_value},
-  size_{header->st_size},
   symbol_version_{nullptr}
-{}
+{
+  this->value_ = header->st_value;
+  this->size_  = header->st_size;
+}
 
 
 Symbol::Symbol(std::string name, ELF_SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
     uint8_t other, uint16_t shndx,
     uint64_t value, uint64_t size) :
-  LIEF::Symbol{name},
+  LIEF::Symbol{name, value, size},
   type_{type},
   binding_{binding},
   other_{other},
   shndx_{shndx},
-  value_{value},
-  size_{size},
   symbol_version_{nullptr}
 {}
 
@@ -133,14 +128,6 @@ Section& Symbol::section(void) {
   } else {
     return *this->section_;
   }
-}
-
-uint64_t Symbol::value(void) const {
-  return this->value_;
-}
-
-uint64_t Symbol::size(void) const {
-  return this->size_;
 }
 
 uint16_t Symbol::shndx(void) const {
@@ -181,15 +168,6 @@ void Symbol::binding(SYMBOL_BINDINGS binding) {
 void Symbol::other(uint8_t other) {
   this->other_ = other;
 }
-
-void Symbol::value(uint64_t value) {
-  this->value_ = value;
-}
-
-void Symbol::size(uint64_t size) {
-  this->size_ = size;
-}
-
 
 void Symbol::shndx(uint16_t idx) {
   this->shndx_ = idx;

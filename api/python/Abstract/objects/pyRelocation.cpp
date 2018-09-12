@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "init.hpp"
+#include "pyAbstract.hpp"
 
 #include "LIEF/Abstract/hash.hpp"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
+namespace LIEF {
 template<class T>
-using getter_t = T (LIEF::Relocation::*)(void) const;
+using getter_t = T (Relocation::*)(void) const;
 
 template<class T>
-using setter_t = void (LIEF::Relocation::*)(T);
+using setter_t = void (Relocation::*)(T);
 
-void init_LIEF_Relocation_class(py::module& m) {
-  py::class_<LIEF::Relocation, LIEF::Object>(m, "Relocation")
+template<>
+void create<Relocation>(py::module& m) {
+  py::class_<Relocation, Object>(m, "Relocation")
     .def(py::init(),
         "Default constructor")
 
@@ -35,30 +37,29 @@ void init_LIEF_Relocation_class(py::module& m) {
         "address"_a, "size"_a)
 
     .def_property("address",
-        static_cast<getter_t<uint64_t>>(&LIEF::Relocation::address),
-        static_cast<setter_t<uint64_t>>(&LIEF::Relocation::address),
+        static_cast<getter_t<uint64_t>>(&Relocation::address),
+        static_cast<setter_t<uint64_t>>(&Relocation::address),
         "Relocation's address")
 
     .def_property("size",
-        static_cast<getter_t<size_t>>(&LIEF::Relocation::size),
-        static_cast<setter_t<size_t>>(&LIEF::Relocation::size),
+        static_cast<getter_t<size_t>>(&Relocation::size),
+        static_cast<setter_t<size_t>>(&Relocation::size),
         "Relocation's size (in **bits**)")
 
-    .def("__eq__", &LIEF::Relocation::operator==)
-    .def("__ne__", &LIEF::Relocation::operator!=)
+    .def("__eq__", &Relocation::operator==)
+    .def("__ne__", &Relocation::operator!=)
     .def("__hash__",
-        [] (const LIEF::Relocation& relocation) {
-          return LIEF::AbstractHash::hash(relocation);
+        [] (const Relocation& relocation) {
+          return AbstractHash::hash(relocation);
         })
 
     .def("__str__",
-        [] (const LIEF::Relocation& entry)
+        [] (const Relocation& entry)
         {
           std::ostringstream stream;
           stream << entry;
           std::string str =  stream.str();
           return str;
         });
-
-
+}
 }

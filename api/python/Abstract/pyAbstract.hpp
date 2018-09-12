@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyLIEF.hpp"
-#include "init.hpp"
+#ifndef PY_LIEF_ABSTRACT_H_
+#define PY_LIEF_ABSTRACT_H_
 
-void init_LIEF_module(py::module& m) {
-  init_LIEF_Enum(m);
-  init_LIEF_Header_class(m);
-  init_LIEF_Binary_class(m);
-  init_LIEF_Section_class(m);
-  init_LIEF_Symbol_class(m);
-  init_LIEF_Parser_class(m);
-  init_LIEF_Relocation_class(m);
+#include "pyLIEF.hpp"
+
+#define SPECIALIZE_CREATE(X)      \
+  template<>                      \
+  void create<X>(py::module&)
+
+#define CREATE(X,Y) create<X>(Y)
+
+namespace LIEF {
+template<class T>
+void create(py::module&);
+
+void init_python_module(py::module& m);
+void init_objects(py::module&);
+void init_enums(py::module&);
+
+SPECIALIZE_CREATE(Header);
+SPECIALIZE_CREATE(Binary);
+SPECIALIZE_CREATE(Section);
+SPECIALIZE_CREATE(Symbol);
+SPECIALIZE_CREATE(Parser);
+SPECIALIZE_CREATE(Relocation);
+SPECIALIZE_CREATE(Function);
 }
+#endif

@@ -164,10 +164,12 @@ void Hash::visit(const RPathCommand& rpath) {
 
 void Hash::visit(const Symbol& symbol) {
   this->process(symbol.name());
+  this->process(symbol.value());
+  this->process(symbol.size());
+
   this->process(symbol.type());
   this->process(symbol.numberof_sections());
   this->process(symbol.description());
-  this->process(symbol.value());
 
   if (symbol.has_binding_info()) {
     this->process(symbol.binding_info());

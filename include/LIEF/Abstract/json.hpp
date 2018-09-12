@@ -40,6 +40,7 @@ class LIEF_API AbstractJsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const Section& section)       override;
   virtual void visit(const Symbol& symbol)         override;
   virtual void visit(const Relocation& relocation) override;
+  virtual void visit(const Function& f)            override;
 };
 
 }

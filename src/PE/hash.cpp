@@ -202,9 +202,10 @@ void Hash::visit(const TLS& tls) {
 
 void Hash::visit(const Symbol& symbol) {
 
-  //LIEF::Symbol::accept(visitor);
-
+  this->process(symbol.name());
   this->process(symbol.value());
+  this->process(symbol.size());
+
   this->process(symbol.section_number());
   this->process(symbol.type());
   this->process(symbol.base_type());

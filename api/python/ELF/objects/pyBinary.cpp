@@ -178,6 +178,10 @@ void create<Binary>(py::module& m) {
         &Binary::has_interpreter,
        "``True`` if the binary uses a loader")
 
+   .def_property_readonly("functions",
+        &Binary::functions,
+       "")
+
    .def_property("interpreter",
         static_cast<getter_t<const std::string&>>(&Binary::interpreter),
         static_cast<setter_t<const std::string&>>(&Binary::interpreter),

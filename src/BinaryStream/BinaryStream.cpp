@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/DWARF/enums.hpp"
 #include "LIEF/utils.hpp"
 #include "utf8/checked.h"
 
@@ -43,6 +44,46 @@ size_t BinaryStream::pos(void) const {
 }
 
 
+int64_t BinaryStream::read_dwarf_encoded(uint8_t encoding) {
+  LIEF::DWARF::EH_ENCODING encodevalue =  static_cast<LIEF::DWARF::EH_ENCODING>(encoding & 0x0F);
+
+  switch (encodevalue) {
+    case LIEF::DWARF::EH_ENCODING::ULEB128:
+      {
+        return this->read_uleb128();
+      }
+
+    case LIEF::DWARF::EH_ENCODING::SDATA2:
+    case LIEF::DWARF::EH_ENCODING::UDATA2:
+      {
+        return this->read<int16_t>();
+      }
+
+    case LIEF::DWARF::EH_ENCODING::SDATA4:
+    case LIEF::DWARF::EH_ENCODING::UDATA4:
+      {
+        return this->read<int32_t>();
+      }
+
+    case LIEF::DWARF::EH_ENCODING::SDATA8:
+    case LIEF::DWARF::EH_ENCODING::UDATA8:
+      {
+        return this->read<int64_t>();
+      }
+
+    case LIEF::DWARF::EH_ENCODING::SLEB128:
+      {
+        return this->read_sleb128();
+      }
+
+    default:
+      {
+        return 0;
+      }
+
+  }
+
+}
 
 uint64_t BinaryStream::read_uleb128(void) const {
   uint64_t value = 0;

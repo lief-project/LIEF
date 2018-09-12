@@ -25,8 +25,28 @@ Symbol& Symbol::operator=(const Symbol&) = default;
 Symbol::~Symbol(void) = default;
 
 Symbol::Symbol(const std::string& name) :
-  name_{name}
+  name_{name},
+  value_{0},
+  size_{0}
 {}
+
+Symbol::Symbol(const std::string& name, uint64_t value) :
+  name_{name},
+  value_{value},
+  size_{0}
+{}
+
+Symbol::Symbol(const std::string& name, uint64_t value, uint64_t size) :
+  name_{name},
+  value_{value},
+  size_{size}
+{}
+
+void Symbol::swap(Symbol& other) {
+  std::swap(this->name_,   other.name_);
+  std::swap(this->value_,  other.value_);
+  std::swap(this->size_,   other.size_);
+}
 
 const std::string& Symbol::name(void) const {
   return this->name_;
@@ -38,6 +58,22 @@ std::string& Symbol::name(void) {
 
 void Symbol::name(const std::string& name) {
   this->name_ = name;
+}
+
+uint64_t Symbol::value(void) const {
+  return this->value_;
+}
+
+void Symbol::value(uint64_t value) {
+  this->value_ = value;
+}
+
+uint64_t Symbol::size(void) const {
+  return this->size_;
+}
+
+void Symbol::size(uint64_t value) {
+  this->size_ = value;
 }
 
 

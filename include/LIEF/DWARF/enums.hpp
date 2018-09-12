@@ -13,17 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_INIT_H_
-#define PY_LIEF_INIT_H_
+#ifndef LIEF_DWARF_ENUMS_H_
+#define LIEF_DWARF_ENUMS_H_
 
-#include "pyLIEF.hpp"
+namespace LIEF {
+namespace DWARF {
 
-void init_LIEF_Enum(py::module&);
-void init_LIEF_Header_class(py::module&);
-void init_LIEF_Binary_class(py::module&);
-void init_LIEF_Section_class(py::module&);
-void init_LIEF_Symbol_class(py::module&);
-void init_LIEF_Parser_class(py::module&);
-void init_LIEF_Relocation_class(py::module&);
+ enum class EH_ENCODING  {
+    ABSPTR	 = 0x00,
+    OMIT	   = 0xff,
+    ULEB128  = 0x01,
+    UDATA2	 = 0x02,
+    UDATA4	 = 0x03,
+    UDATA8	 = 0x04,
+    SLEB128  = 0x09,
+    SDATA2	 = 0x0a,
+    SDATA4	 = 0x0b,
+    SDATA8	 = 0x0c,
+    SIGNED	 = 0x09,
+
+    PCREL	   = 0x10,
+    INDIRECT = 0x80,
+    TEXTREL  = 0x20,
+    DATAREL  = 0x30,
+    FUNCREL  = 0x40,
+    ALIGNED  = 0x50,
+ };
+
+} // DWARF
+} // LIEF
 
 #endif

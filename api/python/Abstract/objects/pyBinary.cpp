@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "init.hpp"
+#include "pyAbstract.hpp"
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/ELF/Binary.hpp"
 
 #include <algorithm>
 
-using namespace LIEF;
 
 #define PY_ENUM(x) LIEF::to_string(x), x
+
+namespace LIEF {
 
 template<class T>
 using getter_t = T (Binary::*)(void) const;
@@ -35,15 +36,14 @@ using it_t = T (Binary::*)(void);
 template<class T, class P>
 using no_const_func = T (Binary::*)(P);
 
-void init_LIEF_Binary_class(py::module& m) {
-
-
+template<>
+void create<Binary>(py::module& m) {
   py::class_<Binary, Object> pybinary(m, "Binary");
 
-  py::enum_<LIEF::Binary::VA_TYPES>(pybinary, "VA_TYPES")
-    .value(PY_ENUM(LIEF::Binary::VA_TYPES::AUTO))
-    .value(PY_ENUM(LIEF::Binary::VA_TYPES::VA))
-    .value(PY_ENUM(LIEF::Binary::VA_TYPES::RVA));
+  py::enum_<Binary::VA_TYPES>(pybinary, "VA_TYPES")
+    .value(PY_ENUM(Binary::VA_TYPES::AUTO))
+    .value(PY_ENUM(Binary::VA_TYPES::VA))
+    .value(PY_ENUM(Binary::VA_TYPES::RVA));
 
     pybinary
     .def_property_readonly("format",
@@ -87,35 +87,12 @@ void init_LIEF_Binary_class(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("exported_functions",
-        [] (const Binary& binary) {
-          const std::vector<std::string>& exported_functions = binary.exported_functions();
-          std::vector<py::object> exported_functions_encoded;
-          exported_functions_encoded.reserve(exported_functions.size());
-
-          std::transform(
-              std::begin(exported_functions),
-              std::end(exported_functions),
-              std::back_inserter(exported_functions_encoded),
-              &safe_string_converter);
-          return exported_functions_encoded;
-
-        },
-        "Return binary's exported functions (name)")
+        &Binary::exported_functions,
+        "Return binary's exported " RST_CLASS_REF(lief.Function) "")
 
     .def_property_readonly("imported_functions",
-        [] (const Binary& binary) {
-          const std::vector<std::string>& imported_functions = binary.imported_functions();
-          std::vector<py::object> imported_functions_encoded;
-          imported_functions_encoded.reserve(imported_functions.size());
-
-          std::transform(
-              std::begin(imported_functions),
-              std::end(imported_functions),
-              std::back_inserter(imported_functions_encoded),
-              &safe_string_converter);
-          return imported_functions_encoded;
-        },
-        "Return binary's imported functions (name)")
+        &Binary::imported_functions,
+        "Return binary's imported " RST_CLASS_REF(lief.Function) " (name)")
 
     .def_property_readonly("libraries",
         [] (const Binary& binary) {
@@ -154,20 +131,20 @@ void init_LIEF_Binary_class(py::module& m) {
         "function_name"_a)
 
     .def("patch_address",
-        static_cast<void (Binary::*) (uint64_t, const std::vector<uint8_t>&, LIEF::Binary::VA_TYPES)>(&Binary::patch_address),
+        static_cast<void (Binary::*) (uint64_t, const std::vector<uint8_t>&, Binary::VA_TYPES)>(&Binary::patch_address),
         "Patch the address with the given value",
         "Virtual address is specified in the first argument and the content in the second (as a list of bytes).\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
         " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
-        "address"_a, "patch_value"_a, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
+        "address"_a, "patch_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("patch_address",
-        static_cast<void (Binary::*) (uint64_t, uint64_t, size_t, LIEF::Binary::VA_TYPES)>(&Binary::patch_address),
+        static_cast<void (Binary::*) (uint64_t, uint64_t, size_t, Binary::VA_TYPES)>(&Binary::patch_address),
         "Patch the address with the given value",
         "Virtual address is specified in the first argument, integer in the second and sizeof the integer in third one.\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
         " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
-        "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
+        "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
 
 
    .def("get_content_from_virtual_address",
@@ -176,7 +153,7 @@ void init_LIEF_Binary_class(py::module& m) {
         "Virtual address is specified in the first argument and size to read (in bytes) in the second.\n"
         "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
         " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
-        "virtual_address"_a, "size"_a, "va_type"_a = LIEF::Binary::VA_TYPES::AUTO)
+        "virtual_address"_a, "size"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def_property_readonly("abstract",
         [m] (py::object& self) {
@@ -220,5 +197,5 @@ void init_LIEF_Binary_class(py::module& m) {
 
 }
 
-
+}
 

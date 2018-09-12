@@ -80,14 +80,14 @@ class LIEF_API Symbol : public LIEF::Symbol {
     //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
     //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
     //!     a virtual address (memory interpretation) for which the section number is irrelevant.
-    uint64_t value(void) const;
+    //uint64_t value(void) const;
 
     //! @brief Symbol size
     //!
     //! Many symbols have associated sizes. For example, a data object's size is the number of
     //! bytes contained in the object. This member holds `0` if the symbol has no size or
     //! an unknown size.
-    uint64_t size(void) const;
+    //uint64_t size(void) const;
 
     //! @brief @see Symbol::section_idx
     uint16_t shndx(void) const;
@@ -106,8 +106,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
     void binding(SYMBOL_BINDINGS binding);
     void other(uint8_t other);
     void visibility(ELF_SYMBOL_VISIBILITY visibility);
-    void value(uint64_t value);
-    void size(uint64_t size);
     void information(uint8_t info);
     void shndx(uint16_t idx);
 
@@ -156,8 +154,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
     uint8_t          other_;
     uint16_t         shndx_;
     Section*         section_;
-    uint64_t         value_;
-    uint64_t         size_;
     SymbolVersion*   symbol_version_;
 
 };

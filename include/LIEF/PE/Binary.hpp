@@ -235,6 +235,8 @@ class LIEF_API Binary : public LIEF::Binary {
   DataDirectory&       data_directory(DATA_DIRECTORY index);
   const DataDirectory& data_directory(DATA_DIRECTORY index) const;
 
+  bool has(DATA_DIRECTORY index) const;
+
   //! @brief Return the Debug object
   Debug&       debug(void);
   const Debug& debug(void) const;
@@ -376,6 +378,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   virtual LIEF::Binary::functions_t ctor_functions(void) const override;
 
+  //! **All** functions found in the binary
+  LIEF::Binary::functions_t functions(void) const;
+
+  //! Functions found in the Exception table directory
+  LIEF::Binary::functions_t exception_functions(void) const;
+
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
 
@@ -398,8 +406,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   virtual LIEF::relocations_t get_abstract_relocations(void) override;
 
-  virtual std::vector<std::string> get_abstract_exported_functions(void) const override;
-  virtual std::vector<std::string> get_abstract_imported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_exported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_imported_functions(void) const override;
   virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
 
   void update_lookup_address_table_offset(void);

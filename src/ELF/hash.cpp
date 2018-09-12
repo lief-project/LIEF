@@ -138,7 +138,9 @@ void Hash::visit(const DynamicEntryFlags& entry) {
 }
 
 void Hash::visit(const Symbol& symbol) {
-  this->process(symbol.name());
+  process(symbol.name());
+  process(symbol.value());
+  process(symbol.size());
 
   process(symbol.type());
   process(symbol.binding());
@@ -147,7 +149,6 @@ void Hash::visit(const Symbol& symbol) {
   process(symbol.section_idx());
   process(symbol.visibility());
   process(symbol.value());
-  process(symbol.size());
   if (symbol.has_version()) {
     process(symbol.symbol_version());
   }

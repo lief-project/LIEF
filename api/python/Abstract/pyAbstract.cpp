@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MAIN_HEADER_H_
-#define LIEF_MAIN_HEADER_H_
-#include <LIEF/config.h>
+#include "pyLIEF.hpp"
+#include "pyAbstract.hpp"
+namespace LIEF {
 
-#include <LIEF/Abstract.hpp>
+void init_python_module(py::module& m) {
+  init_enums(m);
+  init_objects(m);
+}
 
-#include <LIEF/OAT.hpp>
-#include <LIEF/VDEX.hpp>
-#include <LIEF/ART.hpp>
-#include <LIEF/DEX.hpp>
-#include <LIEF/ELF.hpp>
-#include <LIEF/PE.hpp>
-#include <LIEF/MachO.hpp>
-#include <LIEF/DWARF.hpp>
-#include <LIEF/logging.hpp>
-#include <LIEF/platforms.hpp>
+void init_objects(py::module& m) {
+  CREATE(Header, m);
+  CREATE(Binary, m);
+  CREATE(Section, m);
+  CREATE(Symbol, m);
+  CREATE(Parser, m);
+  CREATE(Relocation, m);
+  CREATE(Function, m);
+}
 
 
-#endif
+}
+

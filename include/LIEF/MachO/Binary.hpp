@@ -419,6 +419,8 @@ class LIEF_API Binary : public LIEF::Binary  {
   const LoadCommand& operator[](LOAD_COMMAND_TYPES type) const;
 
   virtual LIEF::Binary::functions_t ctor_functions(void) const override;
+  LIEF::Binary::functions_t functions(void) const;
+  LIEF::Binary::functions_t unwind_functions(void) const;
 
   private:
   //! Default constructor
@@ -436,8 +438,8 @@ class LIEF_API Binary : public LIEF::Binary  {
   virtual LIEF::sections_t          get_abstract_sections(void) override;
   virtual LIEF::symbols_t           get_abstract_symbols(void) override;
   virtual LIEF::relocations_t       get_abstract_relocations(void) override;
-  virtual std::vector<std::string>  get_abstract_exported_functions(void) const override;
-  virtual std::vector<std::string>  get_abstract_imported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_exported_functions(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_imported_functions(void) const override;
   virtual std::vector<std::string>  get_abstract_imported_libraries(void) const override;
 
   inline relocations_t& relocations_list(void) {
