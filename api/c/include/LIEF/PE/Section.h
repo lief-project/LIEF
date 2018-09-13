@@ -43,6 +43,7 @@ struct Pe_Section_t {
   uint32_t    characteristics;
 
   uint8_t*    content;
+  uint64_t    content_size;
   double      entropy;
 
 };

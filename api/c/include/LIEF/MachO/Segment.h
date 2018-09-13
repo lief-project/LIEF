@@ -41,6 +41,7 @@ struct Macho_Segment_t {
   uint32_t          numberof_sections;
   uint32_t          flags;
   uint8_t*          content;
+  uint64_t          size;
   Macho_Section_t** sections;
 };
 

@@ -44,6 +44,7 @@ void init_c_segments(Macho_Binary_t* c_binary, Binary* binary) {
     c_binary->segments[i]->numberof_sections = segment.numberof_sections();
     c_binary->segments[i]->flags             = segment.flags();
     c_binary->segments[i]->content           = content;
+    c_binary->segments[i]->size              = segment_content.size();
     c_binary->segments[i]->sections          = nullptr; //TODO
   }
 
