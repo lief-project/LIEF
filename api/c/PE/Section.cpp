@@ -43,6 +43,7 @@ void init_c_sections(Pe_Binary_t* c_binary, Binary* binary) {
     c_binary->sections[i]->pointerto_line_numbers  = b_section.pointerto_line_numbers();
     c_binary->sections[i]->characteristics         = b_section.characteristics();
     c_binary->sections[i]->content                 = content;
+    c_binary->sections[i]->content_size            = section_content.size();
     c_binary->sections[i]->entropy                 = b_section.entropy();
   }
   c_binary->sections[sections.size()] = nullptr;
