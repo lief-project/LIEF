@@ -251,9 +251,10 @@ def print_export(binary):
     entries = exports.entries
     f_value = "{:<20} 0x{:<10x} 0x{:<10x} 0x{:<6x} 0x{:<6x} 0x{:<10x}"
     print(f_value.format(exports.name, exports.export_flags, exports.timestamp, exports.major_version, exports.minor_version, exports.ordinal_base))
+    entries = sorted(entries, key=lambda e : e.ordinal)
     for entry in entries:
         extern = "[EXTERN]" if entry.is_extern else ""
-        print("  {:<20} 0x{:<6x} 0x{:<10x} {:<13}".format(entry.name[:20], entry.ordinal, entry.address, extern))
+        print("  {:<20} {:d} 0x{:<10x} {:<13}".format(entry.name[:20], entry.ordinal, entry.address, extern))
     print("")
 
 
