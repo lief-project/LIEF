@@ -60,6 +60,11 @@ if (NOT MSVC)
   ADD_FLAG_IF_SUPPORTED("-fexceptions"              EXCEPTION)
   ADD_FLAG_IF_SUPPORTED("-fvisibility=hidden"       VISIBILITY)
   ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined" NO_EXPANSION_TO_DEFINED)
+
+  ADD_FLAG_IF_SUPPORTED("-fdiagnostics-color=always" DIAGNOSTICS_COLOR)
+  ADD_FLAG_IF_SUPPORTED("-fcolor-diagnostics"        COLOR_DIAGNOSTICS)
+
+
 endif()
 #ADD_FLAG_IF_SUPPORTED("-Wduplicated-cond"         HAS_DUPLICATED_COND)
 #ADD_FLAG_IF_SUPPORTED("-Wduplicated-branches"     HAS_DUPLICATED_BRANCHES)
