@@ -710,13 +710,19 @@ void Parser::parse_exports(void) {
       entry.is_extern_ = true;
       entry.ordinal_   = i + export_directory_table.OrdinalBase;
       export_object.entries_.push_back(std::move(entry));
-
+    } else {
+      ExportEntry entry;
+      entry.name_      = "";
+      entry.address_   = 0;
+      entry.is_extern_ = false;
+      entry.ordinal_   = i + export_directory_table.OrdinalBase;
+      export_object.entries_.push_back(std::move(entry));
     }
   }
 
 
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
-    if (ordinal_table[i] >= nbof_addr_entries) {
+    if (ordinal_table[i] >= export_object.entries_.size()) {
       LOG(ERROR) << "Export ordinal is outside the address table";
       break;
     }
@@ -724,12 +730,9 @@ void Parser::parse_exports(void) {
     uint32_t name_offset = this->binary_->rva_to_offset(name_table[i]);
     std::string name = this->stream_->peek_string_at(name_offset);
 
-    ExportEntry entry;
-    entry.name_      = name;
-    entry.is_extern_ = false;
-    entry.ordinal_   = ordinal_table[i] + export_directory_table.OrdinalBase;
-    entry.address_   = address_table[ordinal_table[i]];
-    export_object.entries_.push_back(std::move(entry));
+    ExportEntry& entry = export_object.entries_[ordinal_table[i]];
+    entry.name_        = name;
+    entry.address_     = address_table[ordinal_table[i]];
   }
 
   this->binary_->export_ = std::move(export_object);
