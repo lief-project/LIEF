@@ -23,7 +23,7 @@ First we have to create a :class:`~lief.PE.Binary` :
 
   binary32 = PE.Binary("pe_from_scratch", PE.PE_TYPE.PE32)
 
-The first parameter is the binary's name and the second one is the type: ``PE32`` or ``PE64`` (see :class:`~lief.PE.PE_TYPE`).
+The first parameter is the binary's name and the second one is the type: ``PE32`` or ``PE32_PLUS`` (see :class:`~lief.PE.PE_TYPE`).
 The :class:`~lief.PE.Binary`'s constructor creates automatically :class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`, :class:`~lief.PE.OptionalHeader` an empty :class:`~lief.PE.DataDirectory`.
 
 Now that we have a minimal binary, we have to add sections. We will have a first section holding assembly code (``.text``) and a second one containing strings (``.data``):
