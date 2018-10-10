@@ -42,7 +42,15 @@ void create<Binary>(py::module& m) {
 
   // Binary object
   py::class_<Binary, LIEF::Binary>(m, "Binary", "ELF binary representation")
-    .def(py::init<const std::string&, ELF_CLASS>())
+    //.def(py::init<const std::string&, ELF_CLASS>())
+    .def("create_lief_core",
+        &Binary::create_lief_core,
+        py::return_value_policy::take_ownership)
+
+    .def("create_lief_dyn",
+        &Binary::create_lief_dyn,
+        py::return_value_policy::take_ownership)
+
 
     .def_property_readonly("type",
         &Binary::type,

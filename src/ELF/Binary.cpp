@@ -41,20 +41,74 @@
 #include "LIEF/ELF/hash.hpp"
 
 #include "Binary.tcc"
+#include "BinaryDyn.tcc"
 #include "Object.tcc"
 
 namespace LIEF {
 namespace ELF {
 Binary::Binary(void)  = default;
 
-Binary::Binary(const std::string& name, ELF_CLASS type) : type_{type} {
-  this->name_ = name;
-  if (type_ == ELF_CLASS::ELFCLASS32) {
-  }
-  else if (type_ == ELF_CLASS::ELFCLASS32) {
+
+std::unique_ptr<Binary> Binary::create_lief_core(ARCH arch) {
+
+  switch (arch) {
+    case ARCH::EM_X86_64:
+      {
+        return create_lief_core_impl<ELF64>(arch, ELF_CLASS::ELFCLASS64);
+      }
+
+    case ARCH::EM_386:
+      {
+        return create_lief_core_impl<ELF32>(arch, ELF_CLASS::ELFCLASS32);
+      }
+
+    case ARCH::EM_ARM:
+      {
+        return create_lief_core_impl<ELF32>(arch, ELF_CLASS::ELFCLASS32);
+      }
+
+    case ARCH::EM_AARCH64:
+      {
+        return create_lief_core_impl<ELF64>(arch, ELF_CLASS::ELFCLASS64);
+      }
+
+    default:
+      {
+        return nullptr;
+      }
   }
 }
 
+
+std::unique_ptr<Binary> Binary::create_lief_dyn(ARCH arch) {
+
+  switch (arch) {
+    case ARCH::EM_X86_64:
+      {
+        return create_lief_dyn_impl<ELF64>(arch, ELF_CLASS::ELFCLASS64);
+      }
+
+    case ARCH::EM_386:
+      {
+        return create_lief_dyn_impl<ELF32>(arch, ELF_CLASS::ELFCLASS32);
+      }
+
+    case ARCH::EM_ARM:
+      {
+        return create_lief_dyn_impl<ELF32>(arch, ELF_CLASS::ELFCLASS32);
+      }
+
+    case ARCH::EM_AARCH64:
+      {
+        return create_lief_dyn_impl<ELF64>(arch, ELF_CLASS::ELFCLASS64);
+      }
+
+    default:
+      {
+        return nullptr;
+      }
+  }
+}
 
 Header& Binary::header(void) {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
@@ -1184,6 +1238,18 @@ Segment& Binary::add(const Segment& segment, uint64_t base) {
     case E_TYPE::ET_DYN:
       {
         return this->add_segment<E_TYPE::ET_DYN>(segment, new_base);
+        break;
+      }
+
+    case E_TYPE::ET_LIEF_CORE:
+      {
+        return this->add_segment<E_TYPE::ET_LIEF_CORE>(segment, new_base);
+        break;
+      }
+
+    case E_TYPE::ET_LIEF_DYN:
+      {
+        return this->add_segment<E_TYPE::ET_LIEF_DYN>(segment, new_base);
         break;
       }
 

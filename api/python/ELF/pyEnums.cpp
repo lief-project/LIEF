@@ -69,6 +69,13 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(E_TYPE::ET_EXEC))
     .value(PY_ENUM(E_TYPE::ET_DYN))
     .value(PY_ENUM(E_TYPE::ET_CORE))
+
+    .value(PY_ENUM(E_TYPE::ET_PSPEXEC))
+
+    .value(PY_ENUM(E_TYPE::ET_LIEF))
+    .value(PY_ENUM(E_TYPE::ET_LIEF_CORE))
+
+    .value(PY_ENUM(E_TYPE::ET_HIOS))
     .value(PY_ENUM(E_TYPE::ET_LOPROC))
     .value(PY_ENUM(E_TYPE::ET_HIPROC));
 

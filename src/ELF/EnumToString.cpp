@@ -39,14 +39,23 @@ const char* to_string(SYMBOL_BINDINGS e) {
 
 
 const char* to_string(E_TYPE e) {
-  CONST_MAP(E_TYPE, const char*, 7) enumStrings {
+  CONST_MAP(E_TYPE, const char*, 13) enumStrings {
     { E_TYPE::ET_NONE,   "NONE" },
-    { E_TYPE::ET_REL,    "RELOCATABLE" },
-    { E_TYPE::ET_EXEC,   "EXECUTABLE" },
-    { E_TYPE::ET_DYN,    "DYNAMIC" },
-    { E_TYPE::ET_CORE,   "CORE" },
-    { E_TYPE::ET_LOPROC, "LOPROC" },
-    { E_TYPE::ET_HIPROC, "HIPROC" }
+    { E_TYPE::ET_REL,    "RELOCATABLE"  },
+    { E_TYPE::ET_EXEC,   "EXECUTABLE"   },
+    { E_TYPE::ET_DYN,    "DYNAMIC"      },
+    { E_TYPE::ET_CORE,   "CORE"         },
+
+    { E_TYPE::ET_PSPEXEC,   "PSPEXEC"   },
+
+    { E_TYPE::ET_LIEF,      "LIEF"      },
+    { E_TYPE::ET_LIEF_CORE, "LIEF_CORE" },
+    { E_TYPE::ET_LIEF_EXEC, "LIEF_EXEC" },
+    { E_TYPE::ET_LIEF_DYN,  "LIEF_DYN"  },
+
+    { E_TYPE::ET_HIOS,   "HIOS"         },
+    { E_TYPE::ET_LOPROC, "LOPROC"       },
+    { E_TYPE::ET_HIPROC, "HIPROC"       }
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;

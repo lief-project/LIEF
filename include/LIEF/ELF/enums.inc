@@ -22,8 +22,17 @@ enum _LIEF_EN(E_TYPE) {
   _LIEF_EI(ET_EXEC)   = 2,      /**< Executable file */
   _LIEF_EI(ET_DYN)    = 3,      /**< Shared object file */
   _LIEF_EI(ET_CORE)   = 4,      /**< Core file */
-  _LIEF_EI(ET_LOPROC) = 0xff00, /**< Beginning of processor-specific codes */
-  _LIEF_EI(ET_HIPROC) = 0xffff  /**< Processor-specific */
+
+  _LIEF_EI(ET_PSPEXEC)   = 0xFFA0,  /**< Sony PSP executable file */
+
+  _LIEF_EI(ET_LIEF)      = 0xFF10,  /**< Custom LIEF format */
+  _LIEF_EI(ET_LIEF_CORE) = 0xFF11,  /**< Custom LIEF Core file */
+  _LIEF_EI(ET_LIEF_EXEC) = 0xFF12,  /**< Custom LIEF Executable file */
+  _LIEF_EI(ET_LIEF_DYN)  = 0xFF13,  /**< Custom LIEF Dynamic file */
+
+  _LIEF_EI(ET_HIOS)   = 0xFEFF,  /**< Operating system-specific */
+  _LIEF_EI(ET_LOPROC) = 0xFF00,  /**< Beginning of processor-specific codes */
+  _LIEF_EI(ET_HIPROC) = 0xFFFF,  /**< Processor-specific */
 };
 
 

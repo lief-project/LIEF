@@ -137,6 +137,8 @@ endif()
 
 
 ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
+ADD_FLAG_IF_SUPPORTED("-fdiagnostics-color=always"   DIAGNOSTICS_COLOR)
+ADD_FLAG_IF_SUPPORTED("-fcolor-diagnostics"          COLOR_DIAGNOSTICS)
 ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
@@ -144,7 +146,7 @@ add_dependencies(pyLIEF lief_pybind11)
 
 if(APPLE)
     set_target_properties(pyLIEF PROPERTIES MACOSX_RPATH ".")
-    set_target_properties(pyLIEF PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
+    set_target_properties(pyLIEF PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "")

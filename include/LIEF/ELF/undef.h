@@ -42,6 +42,7 @@
 #undef ET_CORE
 #undef ET_LOPROC
 #undef ET_HIPROC
+#undef ET_HIOS
 
 
 #undef EV_NONE

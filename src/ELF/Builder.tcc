@@ -198,9 +198,20 @@ void Builder::build(const Header& header) {;
 
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
-  Elf_Ehdr ehdr;
+  static const std::map<E_TYPE, E_TYPE> lief_type2elf_type = {
+    { E_TYPE::ET_LIEF_EXEC, E_TYPE::ET_EXEC },
+    { E_TYPE::ET_LIEF_DYN , E_TYPE::ET_DYN  },
+  };
 
-  ehdr.e_type      = static_cast<Elf_Half>(header.file_type());
+  Elf_Ehdr ehdr;
+  E_TYPE ftype = header.file_type();
+
+  auto&& it_translate = lief_type2elf_type.find(ftype);
+  if (it_translate != std::end(lief_type2elf_type)) {
+    ftype = it_translate->second;
+  }
+
+  ehdr.e_type      = static_cast<Elf_Half>(ftype);
   ehdr.e_machine   = static_cast<Elf_Half>(header.machine_type());
   ehdr.e_version   = static_cast<Elf_Word>(header.object_file_version());
   ehdr.e_entry     = static_cast<Elf_Addr>(header.entrypoint());
