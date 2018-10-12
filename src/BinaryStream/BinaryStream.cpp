@@ -104,13 +104,13 @@ uint64_t BinaryStream::read_sleb128(void) const {
   uint8_t byte_read;
   do {
     byte_read = this->read<uint8_t>();
-    value += static_cast<uint64_t>(byte_read & 0x7f) << shift;
+    value += static_cast<int64_t>(byte_read & 0x7f) << shift;
     shift += 7;
   } while (byte_read >= 128);
 
 
   // Sign extend
-  if ((value & 0x40) != 0) {
+  if ((byte_read & 0x40) != 0) {
     value |= static_cast<int64_t>(-1) << shift;
   }
 
