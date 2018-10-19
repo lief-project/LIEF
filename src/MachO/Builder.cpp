@@ -167,7 +167,7 @@ void Builder::build_fat(void) {
   // If there is only one binary don't build a FAT
   if (this->binaries_.size() == 1) {
     Builder builder{this->binaries_.back()};
-    builder();
+    this->raw_.write(builder());
     return;
   }
   this->build_fat_header();
@@ -333,7 +333,8 @@ void Builder::write(const std::string& filename) const {
         std::begin(content),
         std::end(content),
         std::ostreambuf_iterator<char>(output_file));
-  }
+  } else
+    LOG(ERROR) << "Fail to write binary file\n";
 
 }
 
