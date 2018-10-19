@@ -1753,9 +1753,8 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
 
 DyldInfo& DyldInfo::update_export_trie(void) {
   auto cmp = [] (const ExportInfo* lhs, const ExportInfo* rhs) {
-    //return lhs->address() < rhs->address();
-    // TODO: Recompute the order
-    return  lhs > rhs;
+    // see : https://github.com/aosm/ld64/blob/88428de93dab43bf5fc5baca9ee38226bc013269/src/abstraction/MachOTrie.hpp#L255-L261
+    return  lhs->node_offset() < rhs->node_offset();
   };
   using symbol_trie_container_t = std::set<ExportInfo*, decltype(cmp)>;
   symbol_trie_container_t entries{std::begin(this->export_info_), std::end(this->export_info_), cmp};
@@ -1763,11 +1762,13 @@ DyldInfo& DyldInfo::update_export_trie(void) {
   TrieNode* start = TrieNode::create("");
   std::vector<TrieNode*> nodes;
 
+  // Build the tree adding every symbole to the root.
   nodes.push_back(start);
   for (ExportInfo* info : entries) {
     start->add_symbol(*info, nodes);
   }
 
+  // Perform a poor topological sort to have parents before childs in ordered_nodes
   std::vector<TrieNode*> ordered_nodes;
   for (ExportInfo* info : entries) {
     start->add_ordered_nodes(*info, ordered_nodes);
