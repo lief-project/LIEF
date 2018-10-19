@@ -188,9 +188,11 @@ std::string Symbol::demangled_name(void) const {
 #if defined(__unix__)
   int status;
   const std::string& name = this->name().c_str();
-  auto realname = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+  char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
 
   if (status == 0) {
+    std::string realname = demangled_name;
+    free(demangled_name);
     return realname;
   } else {
     return name;
