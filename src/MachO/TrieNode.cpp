@@ -113,6 +113,7 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
 
 
 // Mainly inspired from LLVM: lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp - addOrderedNodes
+// Add info in nodes making sure every parents node is inserted before
 TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info, std::vector<TrieNode*>& nodes) {
   if (not this->ordered_) {
     nodes.push_back(this);
