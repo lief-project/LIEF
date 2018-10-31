@@ -148,6 +148,11 @@ if(WINDOWS AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF ws2_32)
 endif()
 
+if(MSVC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif(MSVC)
+
 target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 if (LIEF_SUPPORT_CXX14)
   target_compile_features(LIB_LIEF PRIVATE cxx_std_14)
