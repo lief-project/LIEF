@@ -13,11 +13,17 @@ include(Findcppcheck)
 include(CppcheckTargets)
 include(ExternalProject)
 
-find_package(Git REQUIRED)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+  find_package(Git REQUIRED)
 
-# Information from git
-# ====================
-include(LIEFGit)
+  # Information from git
+  # ====================
+  include(LIEFGit)
+else()
+  set(LIEF_VERSION_MAJOR "0")
+  set(LIEF_VERSION_MINOR "9")
+  set(LIEF_VERSION_PATCH "0")
+endif()
 
 # LIEF Project
 # ============
