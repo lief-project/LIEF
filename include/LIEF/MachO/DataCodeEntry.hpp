@@ -29,7 +29,7 @@ namespace LIEF {
 namespace MachO {
 
 //! Interface of an entry in DataInCode
-class DataCodeEntry : public LIEF::Object {
+class LIEF_API DataCodeEntry : public LIEF::Object {
   public:
   enum class TYPES {
     UNKNOWN           = 0,

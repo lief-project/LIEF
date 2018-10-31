@@ -13,11 +13,17 @@ include(Findcppcheck)
 include(CppcheckTargets)
 include(ExternalProject)
 
-find_package(Git REQUIRED)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+  find_package(Git REQUIRED)
 
-# Information from git
-# ====================
-include(LIEFGit)
+  # Information from git
+  # ====================
+  include(LIEFGit)
+else()
+  set(LIEF_VERSION_MAJOR "0")
+  set(LIEF_VERSION_MINOR "9")
+  set(LIEF_VERSION_PATCH "0")
+endif()
 
 # LIEF Project
 # ============
@@ -141,6 +147,11 @@ add_library(LIB_LIEF ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES})
 if(WINDOWS AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF ws2_32)
 endif()
+
+if(MSVC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif(MSVC)
 
 target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 if (LIEF_SUPPORT_CXX14)
