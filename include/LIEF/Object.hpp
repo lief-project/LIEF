@@ -30,7 +30,7 @@ using add_const_t = typename std::add_const<T>::type;
 
 namespace LIEF {
 
-class Object {
+class LIEF_API Object {
   public:
   template<class T>
   using output_t = add_pointer_t<decay_t<T>>;
