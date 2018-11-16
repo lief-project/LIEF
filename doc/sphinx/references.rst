@@ -4,6 +4,7 @@ References
 Blog posts related to LIEF
 --------------------------
 
+  * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
   * 2018-09-30: `[Write-up] DragonCTF-Teaser-Brutal Oldskull <http://z3r0s.com/2018/09/30/DragonCTF-Teaser/>`_ by `z3r0s <http://z3r0s.com/>`_
   * 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
   * 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
