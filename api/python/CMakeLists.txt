@@ -136,7 +136,8 @@ if(LIEF_COVERAGE)
 endif()
 
 
-ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined" NO_MACRO_REDEFINED)
+ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
+ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
 add_dependencies(pyLIEF lief_pybind11)
