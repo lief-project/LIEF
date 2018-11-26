@@ -55,7 +55,10 @@ Main features:
     - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
     - [Mach-O modification](https://lief.quarkslab.com/doc/latest/tutorials/11_macho_modification.html)
 - [Contact](#contact)
-- [Authors](#authors)
+- [About](#about)
+  - [Authors](#authors)
+  - [License](#license)
+  - [Bibtex](#bibtex)
 
 ## Downloads / Install
 
@@ -181,9 +184,28 @@ Here one can find guides to install or integrate LIEF:
 * **Mail**: lief at quarkslab com
 * **Gitter**: [lief-project](https://gitter.im/lief-project)
 
-## Authors
+## About
+
+### Authors
 
 Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://www.quarkslab.com)
+
+### License
+
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.9.0/LICENSE).
+
+### Bibtex
+
+```latex
+@MISC {LIEF,
+  author       = "Romain Thomas",
+  title        = "LIEF - Library to Instrument Executable Formats",
+  howpublished = "https://lief.quarkslab.com/",
+  month        = "April",
+  year         = "2017",
+}
+
+```
 
 ---------------
 
