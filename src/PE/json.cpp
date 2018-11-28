@@ -108,9 +108,13 @@ void JsonVisitor::visit(const Binary& binary) {
 
   // Debug
   if (binary.has_debug()) {
-    JsonVisitor visitor;
-    visitor(binary.debug());
-    this->node_["debug"] = visitor.get();
+    std::vector<json> debug_entries;
+    for (const Debug& debug : binary.debug()) {
+      JsonVisitor visitor;
+      visitor(debug);
+      debug_entries.emplace_back(visitor.get());
+    }
+    this->node_["debug"] = debug_entries;
   }
 
   // Imports

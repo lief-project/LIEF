@@ -237,9 +237,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   bool has(DATA_DIRECTORY index) const;
 
-  //! @brief Return the Debug object
-  Debug&       debug(void);
-  const Debug& debug(void) const;
+  //! @brief Return the debug_entries_t object
+  debug_entries_t&       debug(void);
+  const debug_entries_t& debug(void) const;
 
   //! @brief Retrun the LoadConfiguration object
   const LoadConfiguration& load_configuration(void) const;
@@ -442,7 +442,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ResourceNode*        resources_;
   imports_t            imports_;
   Export               export_;
-  Debug                debug_;
+  debug_entries_t      debug_;
   std::vector<uint8_t> overlay_;
   std::vector<uint8_t> dos_stub_;
 

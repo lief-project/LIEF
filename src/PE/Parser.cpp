@@ -565,28 +565,33 @@ void Parser::parse_debug(void) {
 
   uint32_t debugRVA    = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA();
   uint32_t debugoffset = this->binary_->rva_to_offset(debugRVA);
-  //uint32_t debugsize   = this->binary_->dataDirectories_[DATA_DIRECTORY::DEBUG]->size();
+  uint32_t debugsize   = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).size();
+  uint32_t size = 0;
 
-  const pe_debug& debug_struct = this->stream_->peek<pe_debug>(debugoffset);
 
-  this->binary_->debug_ = &debug_struct;
+  while (size < debugsize) {
+    const pe_debug& debug_struct = this->stream_->peek<pe_debug>(debugoffset + size);
+    this->binary_->debug_.push_back(&debug_struct);
 
-  DEBUG_TYPES type = this->binary_->debug().type();
+    DEBUG_TYPES type = this->binary_->debug().back().type();
 
-  switch (type) {
-    case DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW:
-      {
-        this->parse_debug_code_view();
-      }
-    default:
-      {
-      }
+    switch (type) {
+      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW:
+        {
+          this->parse_debug_code_view(this->binary_->debug().back());
+        }
+      default:
+        {
+        }
+    }
+
+    size += sizeof(debug_struct);
   }
 }
 
-void Parser::parse_debug_code_view() {
+void Parser::parse_debug_code_view(Debug& debug_info) {
   VLOG(VDEBUG) << "Parsing Debug Code View";
-  Debug& debug_info = this->binary_->debug();
+  //Debug& debug_info = this->binary_->debug();
 
   const uint32_t debug_off = debug_info.pointerto_rawdata();
   if (not this->stream_->can_read<uint32_t>(debug_off)) {

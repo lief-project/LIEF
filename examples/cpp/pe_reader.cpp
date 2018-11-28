@@ -89,7 +89,9 @@ int main(int argc, char **argv) {
 
   if (binary->has_debug()) {
     std::cout << "== Debug ==" << std::endl;
-    std::cout << binary->debug() << std::endl;
+    for (const Debug& debug : binary->debug()) {
+      std::cout << debug << std::endl;
+    }
   }
 
 

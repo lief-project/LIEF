@@ -202,7 +202,7 @@ const TLS& Binary::tls(void) const {
 void Binary::tls(const TLS& tls) {
   this->tls_ = tls;
   this->has_tls_ = true;
-}
+}    
 
 uint64_t Binary::va_to_offset(uint64_t VA) {
 
@@ -978,12 +978,12 @@ it_const_data_directories Binary::data_directories(void) const {
 }
 
 
-Debug& Binary::debug(void) {
-  return const_cast<Debug&>(static_cast<const Binary*>(this)->debug());
+debug_entries_t& Binary::debug(void) {
+  return const_cast<debug_entries_t&>(static_cast<const Binary*>(this)->debug());
 }
 
 
-const Debug& Binary::debug(void) const {
+const debug_entries_t& Binary::debug(void) const {
   return this->debug_;
 }
 
@@ -1410,7 +1410,9 @@ std::ostream& Binary::print(std::ostream& os) const {
   if (this->has_debug()) {
     os << "Debug" << std::endl;
     os << "=====" << std::endl;
-    os << this->debug() << std::endl;
+    for (const Debug& debug : this->debug()) {
+      os << debug << std::endl;
+    }
     os << std::endl;
   }
 

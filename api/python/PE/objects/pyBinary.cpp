@@ -155,8 +155,8 @@ void create<Binary>(py::module& m) {
 
 
     .def_property_readonly("debug",
-        static_cast<Debug& (Binary::*)(void)>(&Binary::debug),
-        "Return the " RST_CLASS_REF(lief.PE.Debug) " object",
+        static_cast<std::vector<Debug>& (Binary::*)(void)>(&Binary::debug),
+        "Return the " RST_CLASS_REF(lief.PE.Debug) "",
         py::return_value_policy::reference)
 
     .def_property_readonly("load_configuration",
