@@ -144,6 +144,11 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @brief Check if the current binary has a load configuration
   bool has_configuration(void) const;
 
+  //! @brief Check if the current binary has been built has reproducible, replacing timestamps by a compile hash.
+  //! 
+  //!  @see Debug 
+  bool is_reproducible_build(void) const;
+
   //! @brief Return the Signature object if the bianry is signed
   const Signature& signature(void) const;
 
@@ -431,6 +436,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool                 has_relocations_;
   bool                 has_debug_;
   bool                 has_configuration_;
+  bool                 is_reproducible_build_;
 
   Signature            signature_;
   TLS                  tls_;

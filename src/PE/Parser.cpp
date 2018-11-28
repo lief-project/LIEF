@@ -566,11 +566,11 @@ void Parser::parse_debug(void) {
   uint32_t debugRVA    = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA();
   uint32_t debugoffset = this->binary_->rva_to_offset(debugRVA);
   uint32_t debugsize   = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).size();
-  uint32_t size = 0;
 
 
-  while (size < debugsize) {
-    const pe_debug& debug_struct = this->stream_->peek<pe_debug>(debugoffset + size);
+  for (size_t i = 0 ; (i+1)*sizeof(pe_debug) <= debugsize; i++) {
+    
+    const pe_debug& debug_struct = this->stream_->peek<pe_debug>(debugoffset + i*sizeof(pe_debug));
     this->binary_->debug_.push_back(&debug_struct);
 
     DEBUG_TYPES type = this->binary_->debug().back().type();
@@ -580,12 +580,17 @@ void Parser::parse_debug(void) {
         {
           this->parse_debug_code_view(this->binary_->debug().back());
         }
+        break;
+      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO:
+        {
+          this->binary_->is_reproducible_build_ = true;
+        }
+        break;
       default:
         {
         }
+        break;
     }
-
-    size += sizeof(debug_struct);
   }
 }
 
