@@ -144,6 +144,11 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @brief Check if the current binary has a load configuration
   bool has_configuration(void) const;
 
+  //! @brief Check if the current binary has been built has reproducible, replacing timestamps by a compile hash.
+  //!
+  //!  @see Debug
+  bool is_reproducible_build(void) const;
+
   //! @brief Return the Signature object if the bianry is signed
   const Signature& signature(void) const;
 
@@ -237,9 +242,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   bool has(DATA_DIRECTORY index) const;
 
-  //! @brief Return the Debug object
-  Debug&       debug(void);
-  const Debug& debug(void) const;
+  //! @brief Return the debug_entries_t object
+  debug_entries_t&       debug(void);
+  const debug_entries_t& debug(void) const;
 
   //! @brief Retrun the LoadConfiguration object
   const LoadConfiguration& load_configuration(void) const;
@@ -431,6 +436,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool                 has_relocations_;
   bool                 has_debug_;
   bool                 has_configuration_;
+  bool                 is_reproducible_build_;
 
   Signature            signature_;
   TLS                  tls_;
@@ -442,7 +448,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ResourceNode*        resources_;
   imports_t            imports_;
   Export               export_;
-  Debug                debug_;
+  debug_entries_t      debug_;
   std::vector<uint8_t> overlay_;
   std::vector<uint8_t> dos_stub_;
 

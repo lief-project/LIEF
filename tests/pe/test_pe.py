@@ -41,10 +41,10 @@ class TestPe(TestCase):
 
         self.assertTrue(sample.has_debug)
 
-        debug = sample.debug
+        debug_code_view = list(filter(lambda deb: deb.has_code_view, sample.debug))
+        self.assertTrue(len(debug_code_view) == 1)
 
-        self.assertTrue(debug.has_code_view)
-
+        debug = debug_code_view[0]
         code_view = debug.code_view
 
         self.assertEqual(code_view.cv_signature, lief.PE.CODE_VIEW_SIGNATURES.PDB_70)

@@ -385,7 +385,7 @@ const char* to_string(RELOCATIONS_BASE_TYPES e) {
 
 
 const char* to_string(DEBUG_TYPES e) {
-  CONST_MAP(DEBUG_TYPES, const char*, 16) enumStrings {
+  CONST_MAP(DEBUG_TYPES, const char*, 17) enumStrings {
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,       "UNKNOWN"    },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,          "COFF"       },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,      "CODEVIEW"   },
@@ -396,6 +396,7 @@ const char* to_string(DEBUG_TYPES e) {
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_TO_SRC,   "SRC"        },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_FROM_SRC, "SRC"        },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_BORLAND,       "BORLAND"    },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_RESERVED10,    "RESERVED"   },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CLSID,         "CLSID"      },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_VC_FEATURE,    "VC_FEATURE" },
     { DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO,          "POGO"       },
