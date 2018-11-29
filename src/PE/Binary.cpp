@@ -92,6 +92,7 @@ Binary::Binary(void) :
   has_relocations_{false},
   has_debug_{false},
   has_configuration_{false},
+  is_reproducible_build_{false},
   tls_{},
   sections_{},
   data_directories_{},
@@ -358,6 +359,9 @@ bool Binary::has_debug(void) const {
   return this->has_debug_;
 }
 
+bool Binary::is_reproducible_build(void) const {
+  return this->is_reproducible_build_;
+}
 
 bool Binary::has_configuration(void) const {
   return this->has_configuration_ and this->load_configuration_ != nullptr;
@@ -978,12 +982,12 @@ it_const_data_directories Binary::data_directories(void) const {
 }
 
 
-Debug& Binary::debug(void) {
-  return const_cast<Debug&>(static_cast<const Binary*>(this)->debug());
+debug_entries_t& Binary::debug(void) {
+  return const_cast<debug_entries_t&>(static_cast<const Binary*>(this)->debug());
 }
 
 
-const Debug& Binary::debug(void) const {
+const debug_entries_t& Binary::debug(void) const {
   return this->debug_;
 }
 
@@ -1410,7 +1414,9 @@ std::ostream& Binary::print(std::ostream& os) const {
   if (this->has_debug()) {
     os << "Debug" << std::endl;
     os << "=====" << std::endl;
-    os << this->debug() << std::endl;
+    for (const Debug& debug : this->debug()) {
+      os << debug << std::endl;
+    }
     os << std::endl;
   }
 

@@ -65,6 +65,10 @@ using export_entries_t          = std::vector<ExportEntry>;
 using it_export_entries         = ref_iterator<export_entries_t&>;
 using it_const_export_entries   = const_ref_iterator<const export_entries_t&>;
 
+using debug_entries_t           = std::vector<Debug>;
+using it_debug_entries          = ref_iterator<debug_entries_t&>;
+using it_const_debug_entries    = const_ref_iterator<const debug_entries_t&>;
+
 using symbols_t                 = std::vector<Symbol>;
 using it_symbols                = ref_iterator<symbols_t&>;
 using it_const_symbols          = const_ref_iterator<const symbols_t&>;

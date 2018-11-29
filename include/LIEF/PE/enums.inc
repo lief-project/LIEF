@@ -266,6 +266,7 @@ enum _LIEF_EN(DEBUG_TYPES) {
   _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_TO_SRC)   = 7, ///< The mapping from an RVA in image to an RVA in source image.
   _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_FROM_SRC) = 8, ///< The mapping from an RVA in source image to an RVA in image.
   _LIEF_EI(IMAGE_DEBUG_TYPE_BORLAND)       = 9, ///< Reserved for Borland.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_RESERVED10)    = 10, ///< Reserved for future use.
   _LIEF_EI(IMAGE_DEBUG_TYPE_CLSID)         = 11,
   _LIEF_EI(IMAGE_DEBUG_TYPE_VC_FEATURE)    = 12,
   _LIEF_EI(IMAGE_DEBUG_TYPE_POGO)          = 13,

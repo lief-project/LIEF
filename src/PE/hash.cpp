@@ -39,7 +39,7 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.symbols()), std::end(binary.symbols()));
 
   if (binary.has_debug()) {
-    process(binary.debug());
+    process(std::begin(binary.debug()), std::end(binary.debug()));
   }
 
   if (binary.has_exports()) {
