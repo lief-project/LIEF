@@ -18,7 +18,7 @@ set(LIB_LIEF
 set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
 # LIEF's version to be used (can be 'master')
-set(LIEF_VERSION 0.7.0)
+set(LIEF_VERSION 0.9.0)
 
 # LIEF compilation config
 set(LIEF_CMAKE_ARGS
@@ -30,6 +30,10 @@ set(LIEF_CMAKE_ARGS
   -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
+
+if (MSVC)
+  list(APPEND ${LIEF_CMAKE_ARGS} -DLIEF_USE_CRT_RELEASE=MT)
+endif()
 
 ExternalProject_Add(LIEF
   PREFIX           "${PACKER_LIEF_PREFIX}"
@@ -47,9 +51,9 @@ ExternalProject_Add(LIEF
 add_executable(HelloLIEF main.cpp)
 
 if (MSVC)
-  # Used for the 'and', 'or' ... keywords - See: http://www.cplusplus.com/reference/ciso646/
+  # Used for the 'and', 'or' ... keywords - See: http://www.cplusplus.com/reference/ciso646/
   target_compile_options(HelloLIEF PUBLIC /FIiso646.h)
-	set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+  set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 
 # Setup the LIEF include directory
