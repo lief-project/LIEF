@@ -28,6 +28,7 @@ class Symbol;
 class ExportEntry;
 class RichEntry;
 class RelocationEntry;
+class Debug;
 
 class Import;
 class ImportEntry;
