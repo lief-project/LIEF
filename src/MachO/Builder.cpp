@@ -176,7 +176,8 @@ void Builder::build_fat(void) {
     fat_arch* arch = reinterpret_cast<fat_arch*>(this->raw_.raw().data() + sizeof(fat_header) + i * sizeof(fat_arch));
     Builder builder{this->binaries_[i]};
     std::vector<uint8_t> raw = builder();
-    uint32_t offset = align(this->raw_.size(), 1 << arch->align);
+    uint32_t alignment = BinaryStream::swap_endian<uint32_t>(arch->align);
+    uint32_t offset = align(this->raw_.size(), 1 << alignment);
 
     arch->offset = BinaryStream::swap_endian<uint32_t>(offset);
     arch->size   = BinaryStream::swap_endian<uint32_t>(raw.size());
@@ -187,7 +188,7 @@ void Builder::build_fat(void) {
 
 void Builder::build_fat_header(void) {
   VLOG(VDEBUG) << "[+] Building Fat Header" << std::endl;
-  static constexpr uint32_t ALIGNMENT = 12; // 4096 / 0x1000
+  static constexpr uint32_t ALIGNMENT = 14; // 4096 / 0x1000
   fat_header header;
   header.magic     = static_cast<uint32_t>(MACHO_TYPES::FAT_CIGAM);
   header.nfat_arch = BinaryStream::swap_endian<uint32_t>(this->binaries_.size());
@@ -198,11 +199,15 @@ void Builder::build_fat_header(void) {
   for (Binary* binary : this->binaries_) {
     const Header& header = binary->header();
     fat_arch arch_header;
+    std::fill(
+      reinterpret_cast<uint8_t*>(&arch_header),
+      reinterpret_cast<uint8_t*>(&arch_header) + sizeof(fat_arch),
+      0);
     arch_header.cputype    = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_type()));
     arch_header.cpusubtype = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_subtype()));
     arch_header.offset     = 0;
     arch_header.size       = 0;
-    arch_header.align      = ALIGNMENT;
+    arch_header.align      = BinaryStream::swap_endian<uint32_t>(ALIGNMENT);
     this->raw_.write(reinterpret_cast<const uint8_t*>(&arch_header), sizeof(fat_arch));
   }
 
