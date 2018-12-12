@@ -33,10 +33,15 @@ Debug::Debug(const Debug& copy) :
   sizeof_data_{copy.sizeof_data_},
   addressof_rawdata_{copy.addressof_rawdata_},
   pointerto_rawdata_{copy.pointerto_rawdata_},
-  code_view_{nullptr}
+  code_view_{nullptr},
+  pogo_{nullptr}
 {
   if (copy.has_code_view()) {
     this->code_view_ = copy.code_view().clone();
+  }
+
+  if (copy.has_pogo()) {
+    this->pogo_ = copy.pogo().clone();
   }
 }
 
@@ -56,11 +61,16 @@ void Debug::swap(Debug& other) {
   std::swap(this->addressof_rawdata_, other.addressof_rawdata_);
   std::swap(this->pointerto_rawdata_, other.pointerto_rawdata_);
   std::swap(this->code_view_,         other.code_view_);
+  std::swap(this->pogo_,              other.pogo_);
 }
 
 Debug::~Debug(void) {
   if (this->code_view_ != nullptr) {
     delete this->code_view_;
+  }
+
+  if (this->pogo_ != nullptr) {
+    delete this->pogo_;
   }
 }
 
@@ -73,7 +83,8 @@ Debug::Debug(void) :
   sizeof_data_{0},
   addressof_rawdata_{0},
   pointerto_rawdata_{0},
-  code_view_{nullptr}
+  code_view_{nullptr},
+  pogo_{nullptr}
 {}
 
 Debug::Debug(const pe_debug* debug_s) :
@@ -85,7 +96,8 @@ Debug::Debug(const pe_debug* debug_s) :
   sizeof_data_{debug_s->SizeOfData},
   addressof_rawdata_{debug_s->AddressOfRawData},
   pointerto_rawdata_{debug_s->PointerToRawData},
-  code_view_{nullptr}
+  code_view_{nullptr},
+  pogo_{nullptr}
 {}
 
 
@@ -138,6 +150,24 @@ const CodeView& Debug::code_view(void) const {
 
 CodeView& Debug::code_view(void) {
   return const_cast<CodeView&>(static_cast<const Debug*>(this)->code_view());
+}
+
+
+bool Debug::has_pogo(void) const {
+  return this->pogo_ != nullptr;
+}
+
+const Pogo& Debug::pogo(void) const {
+  if (not this->has_pogo()) {
+    throw not_found("Can't find pogo");
+  }
+
+  return *this->pogo_;
+
+}
+
+Pogo& Debug::pogo(void) {
+  return const_cast<Pogo&>(static_cast<const Debug*>(this)->pogo());
 }
 
 
@@ -209,6 +239,13 @@ std::ostream& operator<<(std::ostream& os, const Debug& entry) {
     os << entry.code_view();
     os << std::endl;
   }
+
+  if (entry.has_pogo()) {
+    os << std::endl;
+    os << entry.pogo();
+    os << std::endl;
+  }
+
   return os;
 }
 

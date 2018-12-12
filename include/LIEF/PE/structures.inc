@@ -284,6 +284,12 @@ struct pe_pdb_20 {
   char*    filename;
 };
 
+struct pe_pogo {
+  uint32_t start_rva;
+  uint32_t size;
+  char     name[1]; 
+};
+
 
 struct pe_resource_directory_table {
   uint32_t Characteristics;

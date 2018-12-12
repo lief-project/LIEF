@@ -22,6 +22,8 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Debug.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CodeView.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CodeViewPDB.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Pogo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/PogoEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ImportEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ResourceData.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/RelocationEntry.cpp"

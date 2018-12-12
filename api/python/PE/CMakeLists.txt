@@ -34,6 +34,8 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDebug.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyCodeView.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyCodeViewPDB.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyPogo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyPogoEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySection.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyExport.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyImport.cpp"
