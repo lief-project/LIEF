@@ -300,6 +300,16 @@ void create<Binary>(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.EncryptionInfo) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_build_version",
+        &Binary::has_build_version,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.BuildVersion) " command",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("build_version",
+        static_cast<no_const_getter<BuildVersion&>>(&Binary::build_version),
+        "Return binary's " RST_CLASS_REF(lief.MachO.BuildVersion) " if any.",
+        py::return_value_policy::reference)
+
 
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,

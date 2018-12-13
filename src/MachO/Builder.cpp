@@ -152,6 +152,11 @@ void Builder::build(void) {
       this->build<T>(cmd->as<DyldEnvironment>());
       continue;
     }
+
+    if (cmd->is<BuildVersion>()) {
+      this->build<T>(cmd->as<BuildVersion>());
+      continue;
+    }
   }
 
   this->build_segments<T>();
@@ -310,7 +315,6 @@ void Builder::build_uuid(void) {
       reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
       uuid_cmd->originalData_.data());
 }
-
 
 const std::vector<uint8_t>& Builder::get_build(void) {
   return this->raw_.raw();

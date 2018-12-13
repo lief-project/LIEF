@@ -928,6 +928,63 @@ void Builder::build(DyldEnvironment* de) {
 }
 
 
+template<class T>
+void Builder::build(BuildVersion* bv) {
+  build_version_command raw_cmd;
+  const BuildVersion::tools_list_t& tools = bv->tools();
+
+  const uint32_t raw_size    = sizeof(build_version_command) + tools.size() * sizeof(build_tool_version);
+  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t padding     = size_needed - raw_size;
+
+  if (bv->originalData_.size() != size_needed or
+      bv->size() != size_needed) {
+    //LOG(WARNING) << "Not enough spaces to rebuild " << bv->value() << ": Skip!";
+    //LOG(WARNING) << std::hex << bv->originalData_.size() << " vs " << size_needed;
+  }
+
+  const BuildVersion::version_t& minos    = bv->minos();
+  const BuildVersion::version_t& sdk      = bv->sdk();
+
+  std::fill(
+      reinterpret_cast<uint8_t*>(&raw_cmd),
+      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(build_version_command),
+      0);
+
+  raw_cmd.cmd      = static_cast<uint32_t>(bv->command());
+  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+
+  raw_cmd.minos    = static_cast<uint32_t>(minos[0] << 16 | minos[1] << 8 | minos[2]);
+  raw_cmd.sdk      = static_cast<uint32_t>(sdk[0] << 16 | sdk[1] << 8 | sdk[2]);
+  raw_cmd.platform = static_cast<uint32_t>(bv->platform());
+  raw_cmd.ntools   = tools.size();
+  //raw_cmd.name     = static_cast<uint32_t>(sizeof(build_version_command));
+  std::vector<uint8_t> raw_tools(raw_cmd.ntools * sizeof(build_tool_version), 0);
+  auto tools_array = reinterpret_cast<build_tool_version*>(raw_tools.data());
+  for (size_t i = 0; i < tools.size(); ++i) {
+    BuildToolVersion::version_t version = tools[i].version();
+    tools_array[i].tool    = static_cast<uint32_t>(tools[i].tool());
+    tools_array[i].version = static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
+  }
+
+  bv->size_ = size_needed;
+  bv->originalData_.clear();
+
+  // Write Header
+  std::move(
+    reinterpret_cast<uint8_t*>(&raw_cmd),
+    reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+    std::back_inserter(bv->originalData_));
+
+  std::move(
+    std::begin(raw_tools),
+    std::end(raw_tools),
+    std::back_inserter(bv->originalData_));
+
+  bv->originalData_.insert(std::end(bv->originalData_), padding, 0);
+}
+
+
 
 }
 }

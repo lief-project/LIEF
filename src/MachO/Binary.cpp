@@ -1808,6 +1808,21 @@ const EncryptionInfo& Binary::encryption_info(void) const {
 }
 
 
+// BuildVersion command
+// ++++++++++++++++++++
+bool Binary::has_build_version(void) const {
+  return this->has_command<BuildVersion>();
+}
+
+BuildVersion& Binary::build_version(void) {
+  return this->command<BuildVersion>();
+}
+
+const BuildVersion& Binary::build_version(void) const {
+  return this->command<BuildVersion>();
+}
+
+
 LoadCommand& Binary::operator[](LOAD_COMMAND_TYPES type) {
   return this->get(type);
 }

@@ -179,6 +179,23 @@ class TestMachO(TestCase):
         self.assertEqual(functions[-1].name,    "ctor_0")
 
 
+    def test_build_version(self):
+        binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin'))
+        target = binary[1]
+
+        self.assertTrue(target.has_build_version)
+        build_version = target.build_version
+
+        self.assertEqual(build_version.minos, [12, 1, 0])
+        self.assertEqual(build_version.sdk,   [12, 1, 0])
+        self.assertEqual(build_version.platform, lief.MachO.BuildVersion.PLATFORMS.IOS)
+
+        tools = build_version.tools
+        self.assertEqual(len(tools), 1)
+        self.assertEqual(tools[0].version, [409, 12, 0])
+        self.assertEqual(tools[0].tool, lief.MachO.BuildToolVersion.TOOLS.LD)
+
+
 
 if __name__ == '__main__':
 

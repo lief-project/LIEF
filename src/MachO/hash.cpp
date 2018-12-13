@@ -295,6 +295,21 @@ void Hash::visit(const EncryptionInfo& e) {
   this->process(e.crypt_id());
 }
 
+void Hash::visit(const BuildVersion& e) {
+  BuildVersion::tools_list_t tools = e.tools();
+
+  this->visit(*e.as<LoadCommand>());
+  this->process(e.platform());
+  this->process(e.minos());
+  this->process(e.sdk());
+  this->process(std::begin(tools), std::end(tools));
+}
+
+void Hash::visit(const BuildToolVersion& e) {
+  this->process(e.tool());
+  this->process(e.version());
+}
+
 
 
 

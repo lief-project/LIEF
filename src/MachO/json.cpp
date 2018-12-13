@@ -173,6 +173,12 @@ void JsonVisitor::visit(const Binary& binary) {
     v(binary.encryption_info());
     this->node_["encryption_info"] = v.get();
   }
+
+  if (binary.has_build_version()) {
+    JsonVisitor v;
+    v(binary.build_version());
+    this->node_["build_version"] = v.get();
+  }
 }
 
 
@@ -469,6 +475,30 @@ void JsonVisitor::visit(const EncryptionInfo& e) {
   this->node_["crypt_offset"] = e.crypt_offset();
   this->node_["crypt_size"]   = e.crypt_size();
   this->node_["crypt_id"]     = e.crypt_id();
+}
+
+
+void JsonVisitor::visit(const BuildVersion& e) {
+  this->visit(*e.as<LoadCommand>());
+
+  this->node_["platform"] = to_string(e.platform());
+  this->node_["minos"]    = e.minos();
+  this->node_["sdk"]      = e.sdk();
+
+  std::vector<json> tools;
+
+  for (const BuildToolVersion& toolv : e.tools()) {
+    JsonVisitor v;
+    v(toolv);
+    tools.emplace_back(std::move(v.get()));
+  }
+  this->node_["tools"] = tools;
+}
+
+
+void JsonVisitor::visit(const BuildToolVersion& e) {
+  this->node_["tool"]    = to_string(e.tool());
+  this->node_["version"] = e.version();
 }
 
 
