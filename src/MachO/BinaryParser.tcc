@@ -388,6 +388,29 @@ void BinaryParser::parse_load_commands(void) {
           break;
         }
 
+
+      case LOAD_COMMAND_TYPES::LC_BUILD_VERSION:
+        {
+          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
+
+          const auto cmd = &this->stream_->peek<build_version_command>(loadcommands_offset);
+          //VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
+          //VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
+
+          load_command = std::unique_ptr<BuildVersion>{new BuildVersion{cmd}};
+          BuildVersion* build_version = load_command->as<BuildVersion>();
+          for (size_t i = 0; i < cmd->ntools; ++i) {
+            const uint64_t cmd_offset = loadcommands_offset + sizeof(build_version_command) + i * sizeof(build_tool_version);
+            if (not this->stream_->can_read<build_tool_version>(cmd_offset)) {
+              break;
+            }
+
+            auto&& tool_struct = this->stream_->peek<build_tool_version>(cmd_offset);
+            build_version->tools_.emplace_back(tool_struct);
+          }
+          break;
+        }
+
       // =================
       // Code Signature
       // =================

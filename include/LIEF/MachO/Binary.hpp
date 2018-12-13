@@ -47,6 +47,7 @@
 #include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/DyldEnvironment.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -402,6 +403,13 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the MachO::DyldEnvironment
   DyldEnvironment&       dyld_environment(void);
   const DyldEnvironment& dyld_environment(void) const;
+
+  //! ``true`` if the binary has Build Version command.
+  bool has_build_version(void) const;
+
+  //! Return the MachO::BuildVersion
+  BuildVersion&       build_version(void);
+  const BuildVersion& build_version(void) const;
 
   template<class T>
   LIEF_LOCAL bool has_command(void) const;

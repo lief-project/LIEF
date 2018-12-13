@@ -106,7 +106,11 @@ class LIEF_API Builder {
   template <typename T>
   void build_segments(void);
 
+  template<class T>
+  void build(BuildVersion* bv);
+
   void build_uuid(void);
+
 
   template <typename T>
   void build_symbols(void);

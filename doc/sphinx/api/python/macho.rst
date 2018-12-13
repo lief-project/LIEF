@@ -353,6 +353,27 @@ Encryption Info
 
 ----------
 
+Build Version
+*************
+
+.. autoclass:: lief.MachO.BuildVersion
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Build Tool Version
+******************
+
+.. autoclass:: lief.MachO.BuildToolVersion
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+
 
 
 Enums

@@ -318,6 +318,22 @@ struct version_min_command {
   uint32_t sdk;       // X.Y.Z is encoded in nibbles xxxx.yy.zz
 };
 
+
+struct build_version_command {
+  uint32_t cmd;
+  uint32_t cmdsize;
+
+  uint32_t platform;
+  uint32_t minos;
+  uint32_t sdk;
+  uint32_t ntools;
+};
+
+struct build_tool_version {
+  uint32_t tool;
+  uint32_t version;
+};
+
 struct dyld_info_command {
   uint32_t cmd;
   uint32_t cmdsize;
@@ -589,6 +605,7 @@ struct unwind_info_compressed_second_level_page_header {
   // 32-bit entry array
   // encodings array
 };
+
 
 
 

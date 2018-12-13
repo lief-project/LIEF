@@ -54,7 +54,7 @@ const char* to_string(FILE_TYPES e) {
 }
 
 const char* to_string(LOAD_COMMAND_TYPES e) {
-  CONST_MAP(LOAD_COMMAND_TYPES, const char*, 49) enumStrings {
+  CONST_MAP(LOAD_COMMAND_TYPES, const char*, 51) enumStrings {
       { LOAD_COMMAND_TYPES::LC_SEGMENT,                  "SEGMENT"},
       { LOAD_COMMAND_TYPES::LC_SYMTAB,                   "SYMTAB"},
       { LOAD_COMMAND_TYPES::LC_SYMSEG,                   "SYMSEG"},
@@ -103,7 +103,9 @@ const char* to_string(LOAD_COMMAND_TYPES e) {
       { LOAD_COMMAND_TYPES::LC_LINKER_OPTION,            "LINKER_OPTION"},
       { LOAD_COMMAND_TYPES::LC_LINKER_OPTIMIZATION_HINT, "LINKER_OPTIMIZATION_HINT"},
       { LOAD_COMMAND_TYPES::LC_VERSION_MIN_TVOS,         "VERSION_MIN_TVOS"},
-      { LOAD_COMMAND_TYPES::LC_VERSION_MIN_WATCHOS,      "VERSION_MIN_WATCHOS"}
+      { LOAD_COMMAND_TYPES::LC_VERSION_MIN_WATCHOS,      "VERSION_MIN_WATCHOS"},
+      { LOAD_COMMAND_TYPES::LC_NOTE,                     "NOTE"},
+      { LOAD_COMMAND_TYPES::LC_BUILD_VERSION,            "BUILD_VERSION"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
@@ -489,6 +491,30 @@ const char* to_string(DataCodeEntry::TYPES e) {
     { DataCodeEntry::TYPES::JUMP_TABLE_16,     "JUMP_TABLE_16"     },
     { DataCodeEntry::TYPES::JUMP_TABLE_32,     "JUMP_TABLE_32"     },
     { DataCodeEntry::TYPES::ABS_JUMP_TABLE_32, "ABS_JUMP_TABLE_32" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
+const char* to_string(BuildVersion::PLATFORMS e) {
+  CONST_MAP(BuildVersion::PLATFORMS, const char*, 5) enumStrings {
+    { BuildVersion::PLATFORMS::UNKNOWN,   "UNKNOWN"   },
+    { BuildVersion::PLATFORMS::MACOS,     "MACOS"     },
+    { BuildVersion::PLATFORMS::IOS,       "IOS"       },
+    { BuildVersion::PLATFORMS::TVOS,      "TVOS"      },
+    { BuildVersion::PLATFORMS::WATCHOS,   "WATCHOS"   },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
+
+const char* to_string(BuildToolVersion::TOOLS e) {
+  CONST_MAP(BuildToolVersion::TOOLS, const char*, 4) enumStrings {
+    { BuildToolVersion::TOOLS::UNKNOWN, "UNKNOWN"   },
+    { BuildToolVersion::TOOLS::SWIFT,   "SWIFT"     },
+    { BuildToolVersion::TOOLS::CLANG,   "CLANG"     },
+    { BuildToolVersion::TOOLS::LD,      "LD"        },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;

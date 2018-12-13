@@ -61,6 +61,8 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const SubFramework& sf)                      override;
   virtual void visit(const DyldEnvironment& sf)                   override;
   virtual void visit(const EncryptionInfo& e)                     override;
+  virtual void visit(const BuildVersion& e)                       override;
+  virtual void visit(const BuildToolVersion& e)                   override;
 
   virtual ~Hash(void);
 };

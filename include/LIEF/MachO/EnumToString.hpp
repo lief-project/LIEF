@@ -19,6 +19,7 @@
 
 #include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -51,6 +52,8 @@ LIEF_API const char* to_string(VM_PROTECTIONS e);
 LIEF_API const char* to_string(SYMBOL_ORIGINS e);
 LIEF_API const char* to_string(EXPORT_SYMBOL_FLAGS e);
 LIEF_API const char* to_string(DataCodeEntry::TYPES e);
+LIEF_API const char* to_string(BuildVersion::PLATFORMS e);
+LIEF_API const char* to_string(BuildToolVersion::TOOLS e);
 
 
 } // namespace MachO

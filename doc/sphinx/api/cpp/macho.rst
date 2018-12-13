@@ -285,6 +285,24 @@ Encryption Info
 
 ----------
 
+
+Build Version
+*************
+
+.. doxygenclass:: LIEF::MachO::BuildVersion
+   :project: lief
+
+----------
+
+
+Build Tool Version
+******************
+
+.. doxygenclass:: LIEF::MachO::BuildToolVersion
+   :project: lief
+
+----------
+
 Utilities
 *********
 
