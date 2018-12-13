@@ -450,6 +450,7 @@ void Parser::parse_binary(void) {
   }
 
   this->link_symbol_version();
+  this->parse_overlay();
 }
 
 

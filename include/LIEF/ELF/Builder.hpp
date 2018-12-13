@@ -116,6 +116,9 @@ class LIEF_API Builder {
     template<typename ELF_T>
     void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
 
+    template<typename ELF_T>
+    void build_overlay(void);
+
     bool should_swap(void) const;
 
     mutable vector_iostream ios_;
