@@ -60,6 +60,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   public:
   using string_list_t = std::vector<std::string>;
+  using overlay_t     = std::vector<uint8_t>;
 
   public:
   Binary(const std::string& name, ELF_CLASS type);
@@ -482,6 +483,17 @@ class LIEF_API Binary : public LIEF::Binary {
 
   it_notes notes(void);
 
+  uint64_t eof_offset(void) const;
+
+  //! True if data are present at the end of the binary
+  bool has_overlay(void) const;
+
+  //! Overlay data (if any)
+  const overlay_t& overlay(void) const;
+
+  void overlay(overlay_t overlay);
+
+
   size_t hash(const std::string& name);
 
   virtual ~Binary(void);
@@ -602,6 +614,7 @@ class LIEF_API Binary : public LIEF::Binary {
   DataHandler::Handler*         datahandler_;
 
   std::string                   interpreter_;
+  overlay_t                     overlay_;
 };
 
 }

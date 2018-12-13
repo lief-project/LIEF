@@ -387,6 +387,31 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
 }
 
 
+void Parser::parse_overlay(void) {
+  const uint64_t last_offset = this->binary_->eof_offset();
+
+  if (last_offset > this->stream_->size()) {
+    return;
+  }
+  const uint64_t overlay_size = this->stream_->size() - last_offset;
+
+  if (overlay_size == 0) {
+    return;
+  }
+
+  LOG(INFO) << "Overlay detected at " << std::hex << std::showbase << last_offset << " ("
+             << std::dec << overlay_size << " bytes)" << std::endl;
+
+  const uint8_t* overlay = this->stream_->peek_array<uint8_t>(last_offset, overlay_size, /* check */ false);
+
+  if (overlay == nullptr) {
+    LOG(WARNING) << "Can't read overlay data";
+    return;
+  }
+  this->binary_->overlay_ = {overlay, overlay + overlay_size};
+}
+
+
 
 }
 }

@@ -33,23 +33,23 @@ class TestEquality64(TestCase):
 
     def test_sections(self):
         for l, r in zip(self.input.sections, self.output.sections):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_segments(self):
         for l, r in zip(self.input.segments, self.output.segments):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_relocations(self):
         for l, r in zip(self.input.relocations, self.output.relocations):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_symbols(self):
         for l, r in zip(self.input.symbols, self.output.symbols):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_dynamic_entries(self):
         for l, r in zip(self.input.dynamic_entries, self.output.dynamic_entries):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
 
 class TestEquality32(TestCase):
@@ -68,23 +68,23 @@ class TestEquality32(TestCase):
 
     def test_sections(self):
         for l, r in zip(self.input.sections, self.output.sections):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_segments(self):
         for l, r in zip(self.input.segments, self.output.segments):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_relocations(self):
         for l, r in zip(self.input.relocations, self.output.relocations):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_symbols(self):
         for l, r in zip(self.input.symbols, self.output.symbols):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
     def test_dynamic_entries(self):
         for l, r in zip(self.input.dynamic_entries, self.output.dynamic_entries):
-            self.assertEqual(l, r)
+            self.assertEqual(l, r, "\n{!s}\n{!s}".format(l, r))
 
 if __name__ == '__main__':
 

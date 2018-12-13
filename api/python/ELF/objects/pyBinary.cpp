@@ -489,6 +489,20 @@ void create<Binary>(py::module& m) {
         &Binary::dtor_functions,
         "Destuctor functions that are called the main execution")
 
+    .def_property_readonly("eof_offset",
+        &Binary::eof_offset,
+        "Last offset that is used by the ELF format. Data after this offset are "
+        "considered as overlay data")
+
+    .def_property_readonly("has_overlay",
+        &Binary::has_overlay,
+        "True if data are appended to the end of the binary")
+
+    .def_property("overlay",
+        static_cast<getter_t<const Binary::overlay_t&>>(&Binary::overlay),
+        static_cast<setter_t<Binary::overlay_t>>(&Binary::overlay),
+        "Overlay data that are not a part of the ELF format")
+
 
 
     .def(py::self += Segment())

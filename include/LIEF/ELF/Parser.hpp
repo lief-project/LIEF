@@ -229,6 +229,7 @@ class LIEF_API Parser : public LIEF::Parser {
     //! @brief Parse Symbols's SYSV hash
     void parse_symbol_sysv_hash(uint64_t offset);
 
+    void parse_overlay(void);
 
     template<typename ELF_T, typename REL_T>
     uint32_t max_relocation_index(uint64_t relocations_offset, uint64_t size) const;
