@@ -38,14 +38,13 @@ void create<Pogo>(py::module& m) {
   py::class_<Pogo, LIEF::Object>(m, "Pogo")
     .def(py::init<>())
 
-   .def_property_readonly("entries",
+    .def_property_readonly("entries",
         static_cast<no_const_getter<it_pogo_entries>>(&Pogo::entries),
         py::return_value_policy::reference_internal)
 
-
-    .def_property("signature",
-        static_cast<getter_t<uint32_t>>(&Pogo::signature),
-        static_cast<setter_t<uint32_t>>(&Pogo::signature))
+    .def_property_readonly("signature",
+        static_cast<getter_t<POGO_SIGNATURES>>(&Pogo::signature),
+        "Type of the pogo (" RST_CLASS_REF(lief.PE.POGO_SIGNATURES) ")")
 
 
     .def("__eq__", &Pogo::operator==)

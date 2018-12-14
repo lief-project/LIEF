@@ -44,18 +44,18 @@ class LIEF_API Pogo : public Object {
   public:
 
   Pogo(void);
-  Pogo(uint32_t signature, const std::vector<PogoEntry>& entries);
+  Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries);
 
   Pogo(const Pogo&);
   Pogo& operator=(const Pogo&);
 
   virtual Pogo* clone(void) const;
 
-  uint32_t                    signature() const;
+  POGO_SIGNATURES             signature() const;
   it_pogo_entries             entries(void);
   it_const_pogo_entries       entries(void) const;
 
-  void signature(uint32_t signature);
+  void signature(POGO_SIGNATURES signature);
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -67,7 +67,7 @@ class LIEF_API Pogo : public Object {
   virtual ~Pogo(void);
 
   protected:
-    uint32_t signature_;
+    POGO_SIGNATURES signature_;
     pogo_entries_t entries_;
 };
 

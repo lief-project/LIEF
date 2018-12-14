@@ -30,11 +30,11 @@ Pogo& Pogo::operator=(const Pogo&) = default;
 Pogo::~Pogo(void) = default;
 
 Pogo::Pogo(void) :
-  signature_{0}
+  signature_{POGO_SIGNATURES::POGO_UNKNOWN}
 {}
 
 
-Pogo::Pogo(uint32_t signature, const std::vector<PogoEntry>& entries) :
+Pogo::Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries) :
   signature_{signature}, 
   entries_{entries} 
 {}
@@ -44,7 +44,7 @@ Pogo* Pogo::clone(void) const {
 }
 
 
-uint32_t Pogo::signature() const {
+POGO_SIGNATURES Pogo::signature() const {
   return signature_;
 }
 
@@ -56,7 +56,7 @@ it_const_pogo_entries Pogo::entries(void) const {
   return this->entries_;
 }
 
-void Pogo::signature(uint32_t signature) {
+void Pogo::signature(POGO_SIGNATURES signature) {
   signature_ = signature;
 }
 
@@ -82,7 +82,7 @@ std::ostream& operator<<(std::ostream& os, const Pogo& pogo_entry) {
   os << std::left;
   os << std::setfill(' ');
 
-  os << std::setw(WIDTH) << "POGO Signature:"  << pogo_entry.signature() << std::endl;
+  os << std::setw(WIDTH) << "POGO Signature:"  << to_string(pogo_entry.signature()) << std::endl;
   for (const PogoEntry& entry : pogo_entry.entries()) {
     os << "  " << entry << std::endl;
   }
