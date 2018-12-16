@@ -5,8 +5,10 @@ Blog posts related to LIEF
 --------------------------
 
   * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
+  * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
   * 2018-09-30: `[Write-up] DragonCTF-Teaser-Brutal Oldskull <http://z3r0s.com/2018/09/30/DragonCTF-Teaser/>`_ by `z3r0s <http://z3r0s.com/>`_
   * 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
+  * 2018-07-02: `PWN problem patch method commonly used in competition  <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
   * 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
   * 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
   * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
@@ -54,45 +56,47 @@ Parsers/Modifiers
 ELF
 ~~~
 
-+--------------+------------+----------------------------------------------------------------------+
-|    Name      | Language   |   Link                                                               |
-+==============+============+======================================================================+
-| pyelftools   | Python     | https://github.com/eliben/pyelftools                                 |
-+--------------+------------+----------------------------------------------------------------------+
-| pylibelf     | Python     | https://github.com/crackinglandia/pylibelf                           |
-+--------------+------------+----------------------------------------------------------------------+
-| pydevtools   | Python     | https://github.com/arowser/pydevtools                                |
-+--------------+------------+----------------------------------------------------------------------+
-| elfparser    | C++ ?      | http://elfparser.com/index.html                                      |
-+--------------+------------+----------------------------------------------------------------------+
-| libelf       | C          | http://www.mr511.de/software/                                        |
-+--------------+------------+----------------------------------------------------------------------+
-| elfio        | C++        | http://elfio.sourceforge.net/                                        |
-+--------------+------------+----------------------------------------------------------------------+
-| radare2      | C/Python   | https://github.com/radare/radare2/tree/master/libr/bin/format/elf    |
-+--------------+------------+----------------------------------------------------------------------+
-| node-elf     | node.js    | https://github.com/sifteo/node-elf                                   |
-+--------------+------------+----------------------------------------------------------------------+
-| readelf      | C          | https://github.com/bminor/binutils-gdb/blob/master/binutils/readelf.c|
-+--------------+------------+----------------------------------------------------------------------+
-| elfesteem    | Python     | https://github.com/LRGH/elfesteem                                    |
-+--------------+------------+----------------------------------------------------------------------+
-| elfsharp     | C#         | http://elfsharp.hellsgate.pl/index.shtml                             |
-+--------------+------------+----------------------------------------------------------------------+
-| metasm       | Ruby       | https://github.com/jjyg/metasm                                       |
-+--------------+------------+----------------------------------------------------------------------+
-| amoco        | Python     | https://github.com/bdcht/amoco                                       |
-+--------------+------------+----------------------------------------------------------------------+
-| Goblin       | Rust       | https://github.com/m4b/goblin                                        |
-+--------------+------------+----------------------------------------------------------------------+
-| Mithril      | Ruby       | https://github.com/jbangert/mithril                                  |
-+--------------+------------+----------------------------------------------------------------------+
-| ELFkickers   | C          | http://www.muppetlabs.com/~breadbox/software/elfkickers.html         |
-+--------------+------------+----------------------------------------------------------------------+
-| libelfmaster | C          | https://github.com/elfmaster/libelfmaster                            |
-+--------------+------------+----------------------------------------------------------------------+
-| libelf.js    | JS         | https://github.com/AlexAltea/libelf.js                               |
-+--------------+------------+----------------------------------------------------------------------+
++--------------+----------+-----------------------------------------------------------------------+
+|    Name      | Language |   Link                                                                |
++==============+==========+=======================================================================+
+| pyelftools   | Python   | https://github.com/eliben/pyelftools                                  |
++--------------+----------+-----------------------------------------------------------------------+
+| pylibelf     | Python   | https://github.com/crackinglandia/pylibelf                            |
++--------------+----------+-----------------------------------------------------------------------+
+| pydevtools   | Python   | https://github.com/arowser/pydevtools                                 |
++--------------+----------+-----------------------------------------------------------------------+
+| elfparser    | C++ ?    | http://elfparser.com/index.html                                       |
++--------------+----------+-----------------------------------------------------------------------+
+| libelf       | C        | http://www.mr511.de/software/                                         |
++--------------+----------+-----------------------------------------------------------------------+
+| elfio        | C++      | http://elfio.sourceforge.net/                                         |
++--------------+----------+-----------------------------------------------------------------------+
+| radare2      | C/Python | https://github.com/radare/radare2/tree/master/libr/bin/format/elf     |
++--------------+----------+-----------------------------------------------------------------------+
+| node-elf     | node.js  | https://github.com/sifteo/node-elf                                    |
++--------------+----------+-----------------------------------------------------------------------+
+| readelf      | C        | https://github.com/bminor/binutils-gdb/blob/master/binutils/readelf.c |
++--------------+----------+-----------------------------------------------------------------------+
+| elfesteem    | Python   | https://github.com/LRGH/elfesteem                                     |
++--------------+----------+-----------------------------------------------------------------------+
+| elfsharp     | C#       | http://elfsharp.hellsgate.pl/index.shtml                              |
++--------------+----------+-----------------------------------------------------------------------+
+| metasm       | Ruby     | https://github.com/jjyg/metasm                                        |
++--------------+----------+-----------------------------------------------------------------------+
+| amoco        | Python   | https://github.com/bdcht/amoco                                        |
++--------------+----------+-----------------------------------------------------------------------+
+| Goblin       | Rust     | https://github.com/m4b/goblin                                         |
++--------------+----------+-----------------------------------------------------------------------+
+| Mithril      | Ruby     | https://github.com/jbangert/mithril                                   |
++--------------+----------+-----------------------------------------------------------------------+
+| ELFkickers   | C        | http://www.muppetlabs.com/~breadbox/software/elfkickers.html          |
++--------------+----------+-----------------------------------------------------------------------+
+| libelfmaster | C        | https://github.com/elfmaster/libelfmaster                             |
++--------------+----------+-----------------------------------------------------------------------+
+| libelf.js    | JS       | https://github.com/AlexAltea/libelf.js                                |
++--------------+----------+-----------------------------------------------------------------------+
+| elfy.io      | JS ?     | https://elfy.io/                                                      |
++--------------+----------+-----------------------------------------------------------------------+
 
 
 PE
