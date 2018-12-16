@@ -581,6 +581,12 @@ void Parser::parse_debug(void) {
           break;
         }
 
+      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO:
+        {
+          this->parse_debug_pogo(this->binary_->debug().back());
+          break;
+        }
+
       case DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO:
         {
           this->binary_->is_reproducible_build_ = true;
@@ -632,6 +638,52 @@ void Parser::parse_debug_code_view(Debug& debug_info) {
 
 }
 
+void Parser::parse_debug_pogo(Debug& debug_info) {
+  VLOG(VDEBUG) << "Parsing Debug POGO";
+
+  const uint32_t debug_size = debug_info.sizeof_data();
+  const uint32_t debug_off  = debug_info.pointerto_rawdata();
+  if (not this->stream_->can_read<uint32_t>(debug_off)) {
+    return;
+  }
+
+  const POGO_SIGNATURES signature = static_cast<POGO_SIGNATURES>(this->stream_->peek<uint32_t>(debug_off));
+
+  switch (signature) {
+    case POGO_SIGNATURES::POGO_LCTG:
+      {
+        std::unique_ptr<Pogo> pogo_object {new Pogo};
+        pogo_object->signature_ = signature;
+
+        uint32_t offset = sizeof(uint32_t);
+        while (offset + sizeof(pe_pogo) < debug_size)
+        {
+          const pe_pogo& pogo = this->stream_->peek<pe_pogo>(debug_off + offset);
+          std::string name = this->stream_->peek_string_at(debug_off + offset + offsetof(pe_pogo, name));
+
+          PogoEntry entry;
+
+          entry.start_rva_ = pogo.start_rva;
+          entry.size_      = pogo.size;
+          entry.name_      = name;
+
+          pogo_object->entries_.push_back(std::move(entry));
+
+          // pogo entries are 4-bytes aligned
+          offset += offsetof(pe_pogo, name) + name.length() + 1;
+          offset += ((4 - offset) % 4);
+        }
+
+        debug_info.pogo_ = pogo_object.release();
+        break;
+      }
+
+    default:
+      {
+        LOG(WARNING) << "PGO '" << to_string(signature) << "' is not implemented yet!";
+      }
+  }
+}
 
 //
 // Parse Export

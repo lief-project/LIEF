@@ -337,6 +337,21 @@ Code Integrity
 
 ----------
 
+Pogo
+****
+
+.. doxygenclass:: LIEF::PE::Pogo
+  :project: lief
+
+----------
+
+Pogo Entry
+**************
+
+.. doxygenclass:: LIEF::PE::PogoEntry
+  :project: lief
+
+----------
 
 Load Configuration
 ******************
@@ -503,4 +518,7 @@ Enums
    :project: lief
 
 .. doxygenenum:: LIEF::PE::GUARD_RF_FLAGS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::POGO_SIGNATURES
    :project: lief

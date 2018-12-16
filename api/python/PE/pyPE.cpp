@@ -57,6 +57,8 @@ void init_objects(py::module& m) {
   CREATE(Debug, m);
   CREATE(CodeView, m);
   CREATE(CodeViewPDB, m);
+  CREATE(Pogo, m);
+  CREATE(PogoEntry, m);
   CREATE(Import, m);
   CREATE(ImportEntry, m);
   CREATE(ResourcesManager, m);

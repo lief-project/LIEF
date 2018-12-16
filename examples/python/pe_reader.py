@@ -264,29 +264,38 @@ def print_debug(binary):
     format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
 
-    debug = binary.debug
-    print("== Debug ==")
-    print(format_hex.format("Characteristics:",     debug.characteristics))
-    print(format_hex.format("Timestamp:",           debug.timestamp))
-    print(format_dec.format("Major version:",       debug.major_version))
-    print(format_dec.format("Minor version:",       debug.minor_version))
-    print(format_str.format("type:",                str(debug.type).split(".")[-1]))
-    print(format_hex.format("Size of data:",        debug.sizeof_data))
-    print(format_hex.format("Address of raw data:", debug.addressof_rawdata))
-    print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
+    debugs = binary.debug
+    print("== Debug ({}) ==".format(len(debugs)))
+    for debug in debugs:
+        print(format_hex.format("Characteristics:",     debug.characteristics))
+        print(format_hex.format("Timestamp:",           debug.timestamp))
+        print(format_dec.format("Major version:",       debug.major_version))
+        print(format_dec.format("Minor version:",       debug.minor_version))
+        print(format_str.format("type:",                str(debug.type).split(".")[-1]))
+        print(format_hex.format("Size of data:",        debug.sizeof_data))
+        print(format_hex.format("Address of raw data:", debug.addressof_rawdata))
+        print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
 
-    if debug.has_code_view:
-        code_view = debug.code_view
-        cv_signature = code_view.cv_signature
+        if debug.has_code_view:
+            code_view = debug.code_view
+            cv_signature = code_view.cv_signature
 
-        if cv_signature in (lief.PE.CODE_VIEW_SIGNATURES.PDB_70, lief.PE.CODE_VIEW_SIGNATURES.PDB_70):
-            sig_str = " ".join(map(lambda e : "{:02x}".format(e), code_view.signature))
-            print(format_str.format("Code View Signature:", str(cv_signature).split(".")[-1]))
+            if cv_signature in (lief.PE.CODE_VIEW_SIGNATURES.PDB_70, lief.PE.CODE_VIEW_SIGNATURES.PDB_70):
+                sig_str = " ".join(map(lambda e : "{:02x}".format(e), code_view.signature))
+                print(format_str.format("Code View Signature:", str(cv_signature).split(".")[-1]))
+                print(format_str.format("Signature:", sig_str))
+                print(format_dec.format("Age:", code_view.age))
+                print(format_str.format("Filename:", code_view.filename))
+
+        if debug.has_pogo:
+            pogo = debug.pogo
+            sig_str = str(pogo.signature).split(".")[-1]
             print(format_str.format("Signature:", sig_str))
-            print(format_dec.format("Age:", code_view.age))
-            print(format_str.format("Filename:", code_view.filename))
+            print("Entries:")
+            for entry in pogo.entries:
+                print("    {:<20} 0x{:x} ({:d})".format(entry.name, entry.start_rva, entry.size))
 
-    print("")
+        print("\n")
 
 
 @exceptions_handler(Exception)

@@ -414,6 +414,28 @@ Code Integrity
 ----------
 
 
+Pogo
+****
+
+.. autoclass:: lief.PE.Pogo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Pogo Entry
+**********
+
+.. autoclass:: lief.PE.PogoEntry
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 Load Configuration
 ******************
 
@@ -797,6 +819,15 @@ CODE_VIEW_SIGNATURES
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: lief.PE.CODE_VIEW_SIGNATURES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+POGO_SIGNATURES
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.POGO_SIGNATURES
   :members:
   :inherited-members:
   :undoc-members:
