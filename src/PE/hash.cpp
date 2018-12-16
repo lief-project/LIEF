@@ -546,6 +546,20 @@ void Hash::visit(const LoadConfigurationV7& config) {
   this->process(config.addressof_unicode_string());
 }
 
+
+void Hash::visit(const Pogo& pogo) {
+  it_const_pogo_entries entries = pogo.entries();
+  this->process(pogo.signature());
+  this->process(std::begin(entries), std::end(entries));
+}
+
+
+void Hash::visit(const PogoEntry& entry) {
+  this->process(entry.name());
+  this->process(entry.start_rva());
+  this->process(entry.size());
+}
+
 } // namespace PE
 } // namespace LIEF
 

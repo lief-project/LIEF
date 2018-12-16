@@ -24,6 +24,7 @@
 
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/CodeView.hpp"
+#include "LIEF/PE/Pogo.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -75,6 +76,11 @@ class LIEF_API Debug : public Object {
     const CodeView& code_view(void) const;
     CodeView& code_view(void);
 
+    bool has_pogo(void) const;
+
+    const Pogo& pogo(void) const;
+    Pogo& pogo(void);
+
 
     void characteristics(uint32_t characteristics);
     void timestamp(uint32_t timestamp);
@@ -105,7 +111,7 @@ class LIEF_API Debug : public Object {
     uint32_t    pointerto_rawdata_;
 
     CodeView* code_view_;
-
+    Pogo* pogo_;
 
 
 };

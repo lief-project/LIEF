@@ -82,6 +82,9 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const LoadConfigurationV6& config)  override;
   virtual void visit(const LoadConfigurationV7& config)  override;
 
+  virtual void visit(const Pogo& pogo)        override;
+  virtual void visit(const PogoEntry& entry)  override;
+
   virtual ~Hash(void);
 };
 

@@ -87,6 +87,15 @@ void create<Debug>(py::module& m) {
         "    * " RST_CLASS_REF(lief.PE.CodeViewPDB) "\n",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_pogo",
+        &Debug::has_pogo,
+        "Whether or not a pogo is present")
+
+    .def_property_readonly("pogo",
+        static_cast<Pogo& (Debug::*)(void)>(&Debug::pogo),
+        "Return an object which subclass " RST_CLASS_REF(lief.PE.Pogo) " representing the pogo entry \n",
+        py::return_value_policy::reference)
+
     .def("__eq__", &Debug::operator==)
     .def("__ne__", &Debug::operator!=)
     .def("__hash__",

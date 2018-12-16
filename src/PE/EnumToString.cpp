@@ -1145,6 +1145,15 @@ const char* to_string(CODE_VIEW_SIGNATURES e) {
   return it == enumStrings.end() ? to_string(CODE_VIEW_SIGNATURES::CVS_UNKNOWN) : it->second;
 }
 
+const char* to_string(POGO_SIGNATURES e) {
+  CONST_MAP(POGO_SIGNATURES, const char*, 3) enumStrings {
+    { POGO_SIGNATURES::POGO_UNKNOWN, "UNKNOWN" },
+    { POGO_SIGNATURES::POGO_LCTG,    "LCTG"    },
+    { POGO_SIGNATURES::POGO_PGI,     "PGI"     },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? to_string(POGO_SIGNATURES::POGO_UNKNOWN) : it->second;
+}
 
 
 } // namespace PE

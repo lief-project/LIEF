@@ -86,6 +86,7 @@ class LIEF_API Parser : public LIEF::Parser {
     void parse_export_table(void);
     void parse_debug(void);
     void parse_debug_code_view(Debug& debug_info);
+    void parse_debug_pogo(Debug& debug_info);
 
     template<typename PE_T>
     void parse_tls(void);

@@ -44,6 +44,7 @@ LIEF_API const char* to_string(RELOCATIONS_ARM e);
 
 LIEF_API const char* to_string(DEBUG_TYPES e);
 LIEF_API const char* to_string(CODE_VIEW_SIGNATURES e);
+LIEF_API const char* to_string(POGO_SIGNATURES e);
 
 LIEF_API const char* to_string(RESOURCE_TYPES e);
 LIEF_API const char* to_string(RESOURCE_LANGS e);

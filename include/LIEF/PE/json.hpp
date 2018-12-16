@@ -79,6 +79,9 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const LoadConfigurationV6& config)  override;
   virtual void visit(const LoadConfigurationV7& config)  override;
 
+  virtual void visit(const Pogo& pogo)        override;
+  virtual void visit(const PogoEntry& entry)  override;
+
 
   virtual void visit(const LIEF::Binary& binary)   override;
   virtual void visit(const LIEF::Symbol& symbol)   override;

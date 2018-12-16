@@ -108,6 +108,28 @@ class TestPe(TestCase):
         self.assertEqual(functions[-1].size,    54)
         self.assertEqual(functions[-1].name,    "")
 
+    def test_pgo(self):
+        path   = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
+        sample = lief.parse(path)
+
+        debugs = sample.debug
+        self.assertEqual(len(debugs), 3)
+
+        debug_entry = debugs[2]
+
+        self.assertTrue(debug_entry.has_pogo)
+        pogo = debug_entry.pogo
+        self.assertEqual(pogo.signature, lief.PE.POGO_SIGNATURES.LCTG)
+
+        pogo_entries = pogo.entries
+        self.assertEqual(len(pogo_entries), 33)
+
+        self.assertEqual(pogo_entries[23].name,      ".xdata$x")
+        self.assertEqual(pogo_entries[23].start_rva, 0x8200)
+        self.assertEqual(pogo_entries[23].size,      820)
+
+
+
     def tearDown(self):
         # Delete it
         try:
