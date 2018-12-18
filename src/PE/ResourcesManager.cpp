@@ -589,6 +589,8 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
     // Parse 'String'
     // ==============
     while (stream.pos() < end_offset) {
+      const size_t string_offset = stream.pos();
+
       const uint16_t string_length = stream.read<uint16_t>();
       VLOG(VDEBUG) << "Length of the 'string' struct: 0x" << std::hex << string_length;
 
@@ -602,8 +604,13 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       VLOG(VDEBUG) << "Key: " << u16tou8(key);
       stream.align(sizeof(uint32_t));
 
-      std::u16string value = stream.read_u16string();
-      VLOG(VDEBUG) << "Value: " << u16tou8(value);
+      std::u16string value;
+      if (string_value_length > 0 && stream.pos() < string_offset + string_length) {
+        value = stream.read_u16string();
+        VLOG(VDEBUG) << "Value: " << u16tou8(value);
+      } else {
+        VLOG(VDEBUG) << "Value: (empty)";
+      }
 
       stream.align(sizeof(uint32_t));
       lang_code_item.items_.emplace(key, value);
