@@ -67,7 +67,7 @@ def get_lief_platform_name():
     system = platform.system()
     arch   = struct.calcsize('P') * 8
 
-    if system == 'Windows':
+    if system == 'Windows' or system.startswith('CYGWIN'):
         return "windows_x64" if arch == 64 else "windows_x32"
     elif system == 'Darwin':
         return "osx" if arch == 64 else "osx_x32"
