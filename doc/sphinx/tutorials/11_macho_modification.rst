@@ -149,7 +149,7 @@ The :attr:`lief.MachO.Binary.relocations` attribute returns an iterator over :cl
 .. code-block:: python
 
   for relocation in app.relocations:
-    print(relocations)
+    print(relocation)
 
 .. code-block:: text
 
