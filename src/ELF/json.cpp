@@ -195,6 +195,7 @@ void JsonVisitor::visit(const Header& header) {
   this->node_["identity_data"]                   = to_string(header.identity_data());
   this->node_["identity_version"]                = to_string(header.identity_version());
   this->node_["identity_os_abi"]                 = to_string(header.identity_os_abi());
+  this->node_["identity_abi_version"]            = header.identity_abi_version();
 }
 
 

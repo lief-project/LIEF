@@ -422,6 +422,10 @@ OS_ABI Header::identity_os_abi(void) const {
   return static_cast<OS_ABI>(this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)]);
 }
 
+uint32_t Header::identity_abi_version(void) const {
+  return static_cast<uint32_t>(this->identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)]);
+}
+
 void Header::file_type(E_TYPE type) {
   this->file_type_ = type;
 }
@@ -517,6 +521,10 @@ void Header::identity_os_abi(OS_ABI osabi) {
   this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)] = static_cast<uint8_t>(osabi);
 }
 
+void Header::identity_abi_version(uint32_t version) {
+  this->identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)] = static_cast<uint8_t>(version);
+}
+
 
 void Header::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -597,6 +605,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   os << std::setw(33) << std::setfill(' ') << "Endianness:"                << to_string(hdr.identity_data()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Version:"                   << to_string(hdr.identity_version()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "OS/ABI:"                    << to_string(hdr.identity_os_abi()) << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "ABI Version:"               << std::dec << hdr.identity_abi_version() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Machine type:"              << to_string(hdr.machine_type()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "File type:"                 << to_string(hdr.file_type()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Object file version:"       << to_string(hdr.object_file_version()) << std::endl;

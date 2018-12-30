@@ -74,12 +74,13 @@ def print_header(binary):
 
     if header.machine_type == lief.ELF.ARCH.HEXAGON:
         eflags_str = " - ".join([str(s).split(".")[-1] for s in header.hexagon_flags_list])
-
+    print(identity)
     print(format_ide.format("Magic:",                 identity[0], identity[1], identity[2], identity[3]))
     print(format_str.format("Class:",                 str(header.identity_class).split(".")[-1]))
     print(format_str.format("Endianness:",            str(header.identity_data).split(".")[-1]))
     print(format_str.format("Version:",               str(header.identity_version).split(".")[-1]))
     print(format_str.format("OS/ABI:",                str(header.identity_os_abi).split(".")[-1]))
+    print(format_dec.format("ABI Version:",           header.identity_abi_version))
     print(format_str.format("File Type:",             str(header.file_type).split(".")[-1]))
     print(format_str.format("Machine Type:",          str(header.machine_type).split(".")[-1]))
     print(format_str.format("Object File Version:",   str(header.object_file_version).split(".")[-1]))

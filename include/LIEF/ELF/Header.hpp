@@ -151,6 +151,9 @@ class LIEF_API Header : public Object {
     //! @brief Identifies the version of the ABI for which the object is prepared
     OS_ABI identity_os_abi(void) const;
 
+    //! @brief ABI Version
+    uint32_t identity_abi_version(void) const;
+
     void file_type(E_TYPE type);
     void machine_type(ARCH machineType);
     void object_file_version(VERSION version);
@@ -170,6 +173,7 @@ class LIEF_API Header : public Object {
     void identity_data(ELF_DATA data);
     void identity_version(VERSION version);
     void identity_os_abi(OS_ABI osabi);
+    void identity_abi_version(uint32_t version);
 
     virtual void accept(Visitor& visitor) const override;
 

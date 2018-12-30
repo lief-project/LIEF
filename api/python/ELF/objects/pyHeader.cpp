@@ -61,11 +61,33 @@ void create<Header>(py::module& m) {
         "Return header's " RST_CLASS_REF(lief.ELF.OS_ABI) "."
         )
 
-    .def_property_readonly("identity",
+    .def_property("identity_abi_version",
+        static_cast<getter_t<uint32_t>>(&Header::identity_abi_version),
+        static_cast<setter_t<uint32_t>>(&Header::identity_abi_version),
+        "Return ABI version (integer)."
+        )
+
+    .def_property("identity",
         static_cast<Header::identity_t& (Header::*)(void)>(&Header::identity),
+        [] (Header& header, const py::object& obj) {
+          if (py::isinstance<py::str>(obj)) {
+            header.identity(obj.cast<std::string>());
+            return;
+          }
+
+          if (py::isinstance<py::list>(obj)) {
+            header.identity(obj.cast<Header::identity_t>());
+            return;
+          }
+
+          std::string error_str = py::repr(obj).cast<std::string>();
+          error_str = error_str + " is not supported!";
+          throw py::type_error(error_str.c_str());
+
+        },
         "Return header's identity.",
         py::return_value_policy::reference_internal
-        )
+      )
 
     .def_property("file_type",
         static_cast<getter_t<E_TYPE>>(&Header::file_type),
