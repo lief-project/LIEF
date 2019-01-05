@@ -774,7 +774,7 @@ void Parser::parse_exports(void) {
     } else {
       ExportEntry entry;
       entry.name_      = "";
-      entry.address_   = 0;
+      entry.address_   = value;
       entry.is_extern_ = false;
       entry.ordinal_   = i + export_directory_table.OrdinalBase;
       export_object.entries_.push_back(std::move(entry));
@@ -793,7 +793,6 @@ void Parser::parse_exports(void) {
 
     ExportEntry& entry = export_object.entries_[ordinal_table[i]];
     entry.name_        = name;
-    entry.address_     = address_table[ordinal_table[i]];
   }
 
   this->binary_->export_ = std::move(export_object);
