@@ -637,6 +637,11 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
         VLOG(VDEBUG) << "Value: (empty)";
       }
 
+      const size_t expected_end = string_offset + string_length;
+
+      if (stream.pos() < expected_end && expected_end < end_offset) {
+        stream.setpos(expected_end);
+      }
       stream.align(sizeof(uint32_t));
       lang_code_item.items_.emplace(key, value);
     }
