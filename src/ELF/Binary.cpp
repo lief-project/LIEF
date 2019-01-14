@@ -544,8 +544,7 @@ const Symbol& Binary::get_static_symbol(const std::string& name) const {
 }
 
 
-Binary::string_list_t Binary::strings(void) const {
-  static constexpr size_t MIN_STRING_SIZE = 5;
+Binary::string_list_t Binary::strings(size_t min_size) const {
   Binary::string_list_t list;
   if (not this->has_section(".rodata")) {
     return list;
@@ -561,7 +560,7 @@ Binary::string_list_t Binary::strings(void) const {
 
     // Terminator
     if (c == '\0') {
-      if (current.size() >= MIN_STRING_SIZE) {
+      if (current.size() >= min_size) {
         list.push_back(std::move(current));
         continue;
       }
