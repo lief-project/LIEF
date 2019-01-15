@@ -1709,7 +1709,7 @@ const SymbolCommand& Binary::symbol_command(void) const {
 // DynamicSymbolCommand command
 // ++++++++++++++++++++++++++++
 bool Binary::has_dynamic_symbol_command(void) const {
-  return this->has_command<SymbolCommand>();
+  return this->has_command<DynamicSymbolCommand>();
 }
 
 DynamicSymbolCommand& Binary::dynamic_symbol_command(void) {
