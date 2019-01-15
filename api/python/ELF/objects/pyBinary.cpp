@@ -435,10 +435,19 @@ void create<Binary>(py::module& m) {
         "symbol_name"_a,
         py::return_value_policy::reference)
 
+    .def("get_strings",
+        static_cast<Binary::string_list_t (Binary::*)(const size_t) const>(&Binary::strings),
+        "Return list of strings used in the current ELF file with a minimal size given in first parameter (Default: 5)\n"
+        "It looks for strings in the ``.roadata`` section",
+        "min_size"_a = 5,
+        py::return_value_policy::move)
+
     .def_property_readonly("strings",
-        &Binary::strings,
+        [] (const Binary& bin) {
+          return bin.strings();
+        },
         "Return list of strings used in the current ELF file.\n"
-        "Basically we look for string in the ``.roadata`` section",
+        "Basically we look for strings in the ``.roadata`` section",
         py::return_value_policy::move)
 
     .def("remove_static_symbol",

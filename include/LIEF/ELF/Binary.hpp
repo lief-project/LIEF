@@ -270,7 +270,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return list of strings used by the ELF binrary.
   //!
   //! Basically we look for string in the ``.roadata``
-  string_list_t strings(void) const;
+  string_list_t strings(const size_t min_size = 5) const;
 
   //! @brief Remove symbols with the given name in boths
   //!   * dynamic symbols
