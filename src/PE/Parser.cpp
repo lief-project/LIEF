@@ -864,5 +864,39 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data, const st
   return std::unique_ptr<Binary>{parser.binary_};
 }
 
+bool Parser::is_valid_import_name(const std::string& name) {
+
+  // According to https://stackoverflow.com/a/23340781
+  static constexpr unsigned MAX_IMPORT_NAME_SIZE = 0x1000;
+
+  if (name.empty() or name.size() > MAX_IMPORT_NAME_SIZE) {
+    return false;
+  }
+
+  if (not is_printable(name)) {
+    return false;
+  }
+  return true;
+}
+
+
+bool Parser::is_valid_dll_name(const std::string& name) {
+  //! @brief Minimum size for a DLL's name
+  static constexpr unsigned MIN_DLL_NAME_SIZE = 4;
+
+  // According to https://stackoverflow.com/a/265782/87207
+  static constexpr unsigned MAX_DLL_NAME_SIZE = 255;
+
+  if (name.size() < MIN_DLL_NAME_SIZE or name.size() > MAX_DLL_NAME_SIZE) {
+    return false;
+  }
+
+  if (not is_printable(name)) {
+    return false;
+  }
+
+  return true;
+}
+
 }
 }

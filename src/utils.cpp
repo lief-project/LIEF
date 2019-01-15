@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/utils.hpp"
-#include "utf8.h"
 #include <iomanip>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <functional>
+
+#include "LIEF/utils.hpp"
+#include "utf8.h"
+
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on) {
   if ((align_on > 0) and (value % align_on) > 0) {
@@ -74,6 +77,12 @@ std::string hex_str(uint8_t c) {
   std::stringstream ss;
   ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(c);
   return ss.str();
+}
+
+
+bool is_printable(const std::string& str) {
+  return std::all_of(std::begin(str), std::end(str),
+          std::bind(std::isprint<char>, std::placeholders::_1, std::locale("C")));
 }
 
 

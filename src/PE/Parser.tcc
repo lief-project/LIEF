@@ -291,23 +291,20 @@ void Parser::parse_import_table(void) {
 
 
     // We assume that a DLL name should be at least 4 length size and "printable
-    if (import.name().size() < MIN_DLL_NAME_SIZE or not
-        std::all_of(
-          std::begin(import.name()),
-          std::end(import.name()),
-          std::bind(std::isprint<char>, std::placeholders::_1, std::locale("C"))))
-    {
+    if (not is_valid_dll_name(import.name())) {
       continue; // skip
     }
 
     // Offset to import lookup table
     uint64_t LT_offset = 0;
+
     if (import.import_lookup_table_RVA_ > 0) {
       LT_offset = this->binary_->rva_to_offset(import.import_lookup_table_RVA_);
     }
 
     // Offset to the import address table
     uint64_t IAT_offset = 0;
+
     if (import.import_address_table_RVA_ > 0) {
       IAT_offset = this->binary_->rva_to_offset(import.import_address_table_RVA_);
     }
@@ -321,15 +318,16 @@ void Parser::parse_import_table(void) {
     }
 
     if (LT_offset > 0 and this->stream_->can_read<uint__>(LT_offset)) {
-      table      = this->stream_->peek<uint__>(LT_offset);;
+      table      = this->stream_->peek<uint__>(LT_offset);
       LT_offset += sizeof(uint__);
     }
 
     size_t idx = 0;
+
     while (table != 0 or IAT != 0) {
       ImportEntry entry;
       entry.iat_value_ = IAT;
-      entry.data_      = table > 0 ? table : IAT;
+      entry.data_      = table > 0 ? table : IAT; // In some cases, ILT can be corrupted
       entry.type_      = this->type_;
       entry.rva_       = import.import_address_table_RVA_ + sizeof(uint__) * (idx++);
 
@@ -340,9 +338,14 @@ void Parser::parse_import_table(void) {
         if (this->stream_->can_read<uint16_t>(hint_off)) {
           entry.hint_ = this->stream_->peek<uint16_t>(hint_off);
         }
-      }
 
-      import.entries_.push_back(std::move(entry));
+        // Check that the import name is valid
+        if (is_valid_import_name(entry.name())) {
+          import.entries_.push_back(std::move(entry));
+        }
+      } else {
+        import.entries_.push_back(std::move(entry));
+      }
 
       if (IAT_offset > 0 and this->stream_->can_read<uint__>(IAT_offset)) {
         IAT = this->stream_->peek<uint__>(IAT_offset);

@@ -51,11 +51,21 @@ ImportEntry::ImportEntry(const std::string& name) :
 {}
 
 bool ImportEntry::is_ordinal(void) const {
-  if (this->type_ == PE_TYPE::PE32) {
-    return this->data_ & 0x80000000;
-  } else {
-    return this->data_ & 0x8000000000000000;
+  // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
+  const uint64_t ORDINAL_MASK = this->type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
+  bool ordinal_bit_is_set = static_cast<bool>(this->data_ & ORDINAL_MASK);
+
+  // Check that bit 31 / 63 is set
+  if (not ordinal_bit_is_set) {
+    return false;
   }
+  // Check that bits 30-15 / 62-15 are set to 0.
+  uint64_t val = (this->data_ & ~ORDINAL_MASK) >> 15;
+
+  if (val != 0) {
+    return false;
+  }
+  return true;
 }
 
 uint16_t ImportEntry::ordinal(void) const {
