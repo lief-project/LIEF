@@ -19,6 +19,12 @@
 #include <algorithm>
 #include <functional>
 
+#include <locale>
+#include <iterator>
+#include <iostream>
+#include <string>
+#include <numeric>
+
 #include "LIEF/utils.hpp"
 #include "utf8.h"
 
