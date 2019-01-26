@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-from os import pathsep, environ
-from pathlib import Path
-thisDir = Path(__file__).parent.absolute()
-runtimeLibsDir = thisDir / "runtimeLibs"
-if runtimeLibsDir.is_dir():
-    environ["PATH"] += pathsep + str(runtimeLibsDir)
+import os
+thisDir = os.path.abspath(os.path.dirname(__file__))
+runtimeLibsDir = os.path.join(thisDir, "runtimeLibs")
+if os.path.isdir(runtimeLibsDir):
+    environ["PATH"] += os.pathsep + str(runtimeLibsDir)
 
 import _pylief
 from _pylief import *
