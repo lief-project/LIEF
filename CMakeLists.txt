@@ -47,7 +47,7 @@ if(CCACHE_FOUND AND LIEF_USE_CCACHE)
 endif()
 
 
-# Dependencies
+# Dependencies
 # ============
 set(THIRD_PARTY_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/")
 include(LIEFDependencies)
@@ -324,7 +324,7 @@ set_property(TARGET LIB_LIEF PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 # ASAN - LSAN - TSAN - USAN
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
 set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
 if (LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
