@@ -502,5 +502,11 @@ install(
   COMPONENT CMakeScripts
 )
 
+export(
+  TARGETS
+    LIB_LIEF
+  FILE
+    LIEFExport.cmake)
+
 # Package
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")
