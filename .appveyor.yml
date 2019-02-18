@@ -95,6 +95,7 @@ install:
 
 
 build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
   - >
       cmake -A "%CMAKE_ARCH%"
       -DLIEF_TESTS=on
@@ -105,7 +106,7 @@ build_script:
       -DPYTHON_VERSION=%PYTHON_VERSION%
       -DPYTHON_INCLUDE_DIR=%PYTHON_INCLUDE%
       -DPYTHON_EXECUTABLE=%PYTHON_BINARY%
-      -DPYTHON_LIBRARY=%PYTHON_LIBRARY%
+      -DPYTHON_LIBRARY=%PYTHON_LIBRARY% .
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
   - cmake --build . --config Release --target lief_samples -- /v:m /logger:%MSBuildLogger%
   - cmake .
