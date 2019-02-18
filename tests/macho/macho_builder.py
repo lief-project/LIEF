@@ -381,9 +381,13 @@ class TestRemoveSymbol(TestCase):
         _, output = tempfile.mkstemp(prefix="lief_sym_remove_")
 
         for s in ["__ZL6BANNER", "_remove_me"]:
+            self.assertTrue(original.can_remove_symbol(s))
             original.remove_symbol(s)
 
         original.write(output)
+        new = lief.parse(output)
+        ok, err = lief.MachO.check_layout(new)
+        self.assertTrue(ok, err)
 
         if sys.platform.startswith("darwin"):
             stdout = run_program(output)
