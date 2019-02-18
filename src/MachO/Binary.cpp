@@ -1267,18 +1267,88 @@ bool Binary::remove(const Symbol& sym) {
     if (sym_cmd.numberof_symbols() > 0) {
       sym_cmd.numberof_symbols(sym_cmd.numberof_symbols() - 1);
     }
+
+    size_t size = this->is64_ ? sizeof(nlist_64) : sizeof(nlist_32);
+    sym_cmd.strings_offset(sym_cmd.strings_offset() - size);
   }
 
   // Remove from the dynamic symbol command
   // --------------------------------------
   if (this->has_dynamic_symbol_command()) {
     DynamicSymbolCommand& dynsym_cmd = this->dynamic_symbol_command();
+    std::vector<Symbol*> symtab;
+    symtab.reserve(this->symbols_.size());
+    for (Symbol* s : this->symbols_) {
+      if (s->origin() == SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB) {
+        symtab.push_back(s);
+      }
+    }
+    auto&& it_symtab = std::find_if(
+        std::begin(symtab),
+        std::end(symtab),
+        [symbol_to_remove] (const Symbol* symtab_sym) {
+          return *symbol_to_remove == *symtab_sym;
+        });
 
-    dynsym_cmd.nb_external_define_symbols(0);
-    dynsym_cmd.nb_undefined_symbols(0);
-    dynsym_cmd.nb_indirect_symbols(0);
-    dynsym_cmd.nb_local_symbols(0);
-    dynsym_cmd.nb_external_reference_symbols(0);
+    if (it_symtab != std::end(symtab)) {
+      size_t idx = std::distance(std::begin(symtab), it_symtab);
+
+      // Update local symbols
+      // ====================
+
+      // Check if ``idx`` is included in
+      // [idx_local_symbol, idx_local_symbol + nb_local_symbols [
+      if (idx >= dynsym_cmd.idx_local_symbol() and idx < (dynsym_cmd.idx_local_symbol() + dynsym_cmd.nb_local_symbols())) {
+        dynsym_cmd.nb_local_symbols(dynsym_cmd.nb_local_symbols() - 1);
+
+        if (idx == dynsym_cmd.idx_local_symbol()) {
+          dynsym_cmd.idx_local_symbol(dynsym_cmd.idx_local_symbol() + 1);
+        }
+      }
+
+
+      // External define symbols
+      // =======================
+      if (idx >= dynsym_cmd.idx_external_define_symbol() and idx < (dynsym_cmd.idx_external_define_symbol() + dynsym_cmd.nb_external_define_symbols())) {
+        dynsym_cmd.nb_external_define_symbols(dynsym_cmd.nb_external_define_symbols() - 1);
+        if (idx == dynsym_cmd.idx_external_define_symbol()) {
+          dynsym_cmd.idx_external_define_symbol(dynsym_cmd.idx_external_define_symbol() + 1);
+        }
+      }
+
+      // Undefned symbols
+      // ================
+      if (idx >= dynsym_cmd.idx_undefined_symbol() and idx < (dynsym_cmd.idx_undefined_symbol() + dynsym_cmd.nb_undefined_symbols())) {
+        dynsym_cmd.nb_undefined_symbols(dynsym_cmd.nb_undefined_symbols() - 1);
+        if (idx == dynsym_cmd.idx_undefined_symbol()) {
+          dynsym_cmd.idx_undefined_symbol(dynsym_cmd.idx_undefined_symbol() + 1);
+        }
+      }
+
+      if (idx < dynsym_cmd.idx_local_symbol()) {
+        dynsym_cmd.idx_local_symbol(dynsym_cmd.idx_local_symbol() - 1);
+      }
+
+      if (idx < dynsym_cmd.idx_external_define_symbol()) {
+        dynsym_cmd.idx_external_define_symbol(dynsym_cmd.idx_external_define_symbol() - 1);
+      }
+
+      if (idx < dynsym_cmd.idx_undefined_symbol()) {
+        dynsym_cmd.idx_undefined_symbol(dynsym_cmd.idx_undefined_symbol() - 1);
+      }
+
+      //if (dynsym_cmd.nb_indirect_symbols() > 0) {
+      //  dynsym_cmd.nb_indirect_symbols(dynsym_cmd.nb_indirect_symbols() - 1);
+      //}
+      // TODO: WIP
+      // ==========================================
+      if (dynsym_cmd.nb_indirect_symbols() > 0) {
+        size_t size = this->is64_ ? sizeof(nlist_64) : sizeof(nlist_32);
+        dynsym_cmd.indirect_symbol_offset( dynsym_cmd.indirect_symbol_offset() - size);
+      }
+
+      // ==================================
+    }
   }
 
 

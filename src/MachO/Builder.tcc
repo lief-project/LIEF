@@ -112,6 +112,7 @@ void Builder::build_segments(void) {
 
 template<typename T>
 void Builder::build_symbols(void) {
+#if 0
   using nlist_t  = typename T::nlist;
 
   auto itSymbolCommand = std::find_if(
@@ -134,7 +135,10 @@ void Builder::build_symbols(void) {
   command.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());
   command.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
   command.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());
-  command.strsize = static_cast<uint32_t>(symbol_command->strings_size());
+
+
+
+  command.strsize = static_cast<uint32_t>(symbol_command->strings_size() + delta);
 
   uint64_t loadCommandsOffset = symbol_command->command_offset();
 
@@ -170,6 +174,7 @@ void Builder::build_symbols(void) {
     this->raw_.seekp(offset);
     this->raw_.write(reinterpret_cast<const uint8_t*>(&symbol), sizeof(nlist_t));
   }
+#endif
 } // build_symbols
 
 
@@ -709,7 +714,15 @@ void Builder::build(SymbolCommand* symbol_command) {
   symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());    // **Usually** After the header
   symtab.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
   symtab.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());   // **Usually** After nlist table
-  symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size());
+
+
+  // TODO: Improve
+  // Update linkedit segment
+  SegmentCommand& linkedit = *this->binary_->get_segment("__LINKEDIT");
+  size_t delta = linkedit.file_offset() + linkedit.file_size();
+  delta = delta - (symbol_command->strings_offset() + symbol_command->strings_size());
+  //std::cout << std::hex << "delta:" << delta << std::endl;
+  symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size() + delta);
 
   symbol_command->originalData_.clear();
   symbol_command->originalData_.reserve(sizeof(symtab_command));

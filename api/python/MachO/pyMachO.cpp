@@ -26,6 +26,7 @@ void init_python_module(py::module& m) {
 
   init_enums(LIEF_MachO_module);
   init_objects(LIEF_MachO_module);
+  init_utils(LIEF_MachO_module);
 }
 
 void init_objects(py::module& m) {

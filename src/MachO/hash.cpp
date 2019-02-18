@@ -171,13 +171,13 @@ void Hash::visit(const Symbol& symbol) {
   this->process(symbol.numberof_sections());
   this->process(symbol.description());
 
-  if (symbol.has_binding_info()) {
-    this->process(symbol.binding_info());
-  }
+  //if (symbol.has_binding_info()) {
+  //  this->process(symbol.binding_info());
+  //}
 
-  if (symbol.has_export_info()) {
-    this->process(symbol.export_info());
-  }
+  //if (symbol.has_export_info()) {
+  //  this->process(symbol.export_info());
+  //}
 }
 
 void Hash::visit(const Relocation& relocation) {

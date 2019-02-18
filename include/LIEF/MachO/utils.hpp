@@ -18,19 +18,29 @@
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/MachO/Binary.hpp"
 
 #include <string>
 #include <vector>
 
 namespace LIEF {
 namespace MachO {
+
 LIEF_API bool is_macho(const std::string& file);
 
 LIEF_API bool is_macho(const std::vector<uint8_t>& raw);
 
+//! Check if the given Mach-O is fat
 LIEF_API bool is_fat(const std::string& file);
+
+//! Check if the given Mach-O is 64-bits
 LIEF_API bool is_64(const std::string& file);
+
 LIEF_API uint64_t decode_uleb128(const std::string& file);
+
+//! Check the layout of the given Mach-O binary. It checks if it can be signed
+//! according to cctools-921/libstuff/checkout.c
+LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
 }
 }
 

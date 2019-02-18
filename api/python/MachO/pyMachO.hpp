@@ -41,6 +41,7 @@ void create(py::module&);
 void init_python_module(py::module& m);
 void init_objects(py::module&);
 void init_enums(py::module&);
+void init_utils(py::module&);
 
 
 SPECIALIZE_CREATE(Parser);

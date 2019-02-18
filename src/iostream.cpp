@@ -257,6 +257,16 @@ oprefixstream::oprefixstream(std::string const& prefix, std::ostream& out) :
 {}
 
 
+vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
+    this->raw_.insert(
+        std::end(this->raw_),
+        /* count */ count,
+        /* value */ value
+    );
+    return *this;
+}
+
+
 
 }
 

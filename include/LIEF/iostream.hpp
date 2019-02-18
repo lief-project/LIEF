@@ -38,6 +38,7 @@ class vector_iostream {
   vector_iostream& write(const std::vector<uint8_t>& s);
   vector_iostream& write(std::vector<uint8_t>&& s);
   vector_iostream& write(const std::string& s);
+  vector_iostream& write(size_t count, uint8_t value);
 
   template<typename T>
   vector_iostream& write_conv(const T& t);

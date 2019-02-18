@@ -1796,6 +1796,17 @@ DyldInfo& DyldInfo::update_export_trie(void) {
     delete node;
   }
 
+
+  // TODO Improvement: Shift all the LC_COMMAND that
+  // follows the DYLD_INFO by "padding" because some
+  // Mach-O utilities perform checks on offsets:
+  // See: cctools-921/libstuff/checkout.c dyld_order:431
+  //
+  if (raw_output.size() < this->export_trie_.size()) {
+    const size_t padding = this->export_trie_.size() - raw_output.size();
+    raw_output.write(padding, 0);
+  }
+
   raw_output.align(this->binary_->pointer_size());
 
   this->export_trie_ = std::move(raw_output.raw());
