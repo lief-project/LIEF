@@ -704,7 +704,6 @@ void Binary::remove_static_symbol(Symbol* symbol) {
   this->static_symbols_.erase(it_symbol);
 
   symbol = nullptr;
-
 }
 
 

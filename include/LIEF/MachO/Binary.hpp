@@ -200,6 +200,18 @@ class LIEF_API Binary : public LIEF::Binary  {
   const SegmentCommand* get_segment(const std::string& name) const;
   SegmentCommand* get_segment(const std::string& name);
 
+  //! Remove symbol with the given name
+  bool remove_symbol(const std::string& name);
+
+  //! Remove the given symbol
+  bool remove(const Symbol& sym);
+
+  //! Remove the given symbol from the export table
+  bool unexport(const std::string& name);
+
+  //! Remove the given symbol from the export table
+  bool unexport(const Symbol& sym);
+
   // ======
   // Helper
   // ======

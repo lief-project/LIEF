@@ -394,6 +394,11 @@ void create<Binary>(py::module& m) {
         "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) "",
         "type"_a)
 
+    .def("remove",
+        static_cast<bool (Binary::*)(const Symbol&)>(&Binary::remove),
+        "Remove the given " RST_CLASS_REF(lief.MachO.Symbol)"",
+        "symbol"_a)
+
     .def("remove_command",
         static_cast<bool (Binary::*)(size_t)>(&Binary::remove_command),
         "Remove the " RST_CLASS_REF(lief.MachO.LoadCommand) " at ``index``",
@@ -402,6 +407,21 @@ void create<Binary>(py::module& m) {
     .def("remove_signature",
         static_cast<bool (Binary::*)(void)>(&Binary::remove_signature),
         "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)")
+
+    .def("remove_symbol",
+        static_cast<bool (Binary::*)(const std::string&)>(&Binary::remove_symbol),
+        "Remove all symbol(s) with the given name",
+        "name"_a)
+
+    .def("unexport",
+        static_cast<bool (Binary::*)(const std::string&)>(&Binary::unexport),
+        "Remove the symbol from the export table",
+        "name"_a)
+
+    .def("unexport",
+        static_cast<bool (Binary::*)(const Symbol&)>(&Binary::unexport),
+        "Remove the symbol from the export table",
+        "symbol"_a)
 
     .def("extend",
         static_cast<bool (Binary::*)(const LoadCommand&, uint64_t)>(&Binary::extend),

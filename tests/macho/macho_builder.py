@@ -360,6 +360,36 @@ class TestRemoveSection(TestCase):
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World', stdout))
 
+class TestRemoveSymbol(TestCase):
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+
+    def test_unexport(self):
+        original = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sym2remove.bin'))
+        _, output = tempfile.mkstemp(prefix="lief_sym_remove_")
+
+        original.unexport("_remove_me")
+        original.write(output)
+
+        if sys.platform.startswith("darwin"):
+            stdout = run_program(output)
+            self.logger.debug(stdout)
+            self.assertIsNotNone(re.search(r'Hello World', stdout))
+
+    def test_rm_symbol(self):
+        original = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sym2remove.bin'))
+        _, output = tempfile.mkstemp(prefix="lief_sym_remove_")
+
+        for s in ["__ZL6BANNER", "_remove_me"]:
+            original.remove_symbol(s)
+
+        original.write(output)
+
+        if sys.platform.startswith("darwin"):
+            stdout = run_program(output)
+            self.logger.debug(stdout)
+            self.assertIsNotNone(re.search(r'Hello World', stdout))
+
 
 if __name__ == '__main__':
 

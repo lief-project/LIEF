@@ -946,7 +946,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-	uint64_t address = static_cast<uint64_t>(-1);
+  uint64_t address = static_cast<uint64_t>(-1);
   std::vector<rebase_instruction> output;
 
   for (RelocationDyld* rebase : rebases) {
@@ -966,7 +966,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
         current_segment_end   = segment->virtual_address() + segment->virtual_size();
         current_segment_index = index;
 
-				output.emplace_back(LIEF_MACHO_REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB, current_segment_index, rebase->address() - current_segment_start);
+        output.emplace_back(LIEF_MACHO_REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB, current_segment_index, rebase->address() - current_segment_start);
       } else {
         output.emplace_back(LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_ULEB, rebase->address() - address);
       }
@@ -977,10 +977,10 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
     address += this->binary_->pointer_size();
 
     if (address >= current_segment_end) {
-			address = 0;
+      address = 0;
     }
   }
-	output.emplace_back(LIEF_MACHO_REBASE_OPCODE_DONE, 0);
+  output.emplace_back(LIEF_MACHO_REBASE_OPCODE_DONE, 0);
 
 
   // ===========================================
@@ -1004,7 +1004,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
       *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   // ===========================================
   // 2. Second optimization
@@ -1015,17 +1015,17 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   for (auto&& it = std::begin(output); it->opcode != LIEF_MACHO_REBASE_OPCODE_DONE; ++it) {
 
     if ((it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ULEB_TIMES)
-				and it->op1 == 1
-				and it[1].opcode == LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_ULEB) {
-			dst->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB;
-			dst->op1 = it[1].op1;
-			++it;
-			++dst;
-		} else {
-		  *dst++ = *it;
-		}
+        and it->op1 == 1
+        and it[1].opcode == LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_ULEB) {
+      dst->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB;
+      dst->op1 = it[1].op1;
+      ++it;
+      ++dst;
+    } else {
+      *dst++ = *it;
+    }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   // ===========================================
   // 3. Third optimization
@@ -1033,28 +1033,28 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   // ===========================================
   dst = std::begin(output);
   for (auto&& it = std::begin(output); it->opcode != LIEF_MACHO_REBASE_OPCODE_DONE; ++it) {
-		uint64_t delta = it->op1;
-		if ((it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-				and (it[1].opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-				and (it[2].opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-				and (it[1].op1 == delta)
-				and (it[2].op1 == delta) ) {
+    uint64_t delta = it->op1;
+    if ((it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+        and (it[1].opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+        and (it[2].opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+        and (it[1].op1 == delta)
+        and (it[2].op1 == delta) ) {
 
-			dst->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB;
-			dst->op1 = 1;
-			dst->op2 = delta;
-			++it;
-			while (it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB and it->op1 == delta) {
-				dst->op1++;
-				++it;
-			}
-			--it;
-			++dst;
+      dst->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB;
+      dst->op1 = 1;
+      dst->op2 = delta;
+      ++it;
+      while (it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB and it->op1 == delta) {
+        dst->op1++;
+        ++it;
+      }
+      --it;
+      ++dst;
     } else {
-		  *dst++ = *it;
+      *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   // ===========================================
   // 4. Fourth optimization
@@ -1064,12 +1064,12 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   const size_t pint_size = this->binary_->pointer_size();
   for (auto&& it = std::begin(output); it->opcode != LIEF_MACHO_REBASE_OPCODE_DONE; ++it) {
 
-		if (it->opcode == LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_ULEB and it->op1 < (15 * pint_size) and (it->op1 % pint_size) == 0) {
-			it->opcode = LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_IMM_SCALED;
-			it->op1 = it->op1 / pint_size;
-		} else if ( (it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ULEB_TIMES) and (it->op1 < 15) ) {
-			it->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_IMM_TIMES;
-		}
+    if (it->opcode == LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_ULEB and it->op1 < (15 * pint_size) and (it->op1 % pint_size) == 0) {
+      it->opcode = LIEF_MACHO_REBASE_OPCODE_ADD_ADDR_IMM_SCALED;
+      it->op1 = it->op1 / pint_size;
+    } else if ( (it->opcode == LIEF_MACHO_REBASE_OPCODE_DO_REBASE_ULEB_TIMES) and (it->op1 < 15) ) {
+      it->opcode = LIEF_MACHO_REBASE_OPCODE_DO_REBASE_IMM_TIMES;
+    }
   }
 
   vector_iostream raw_output;
@@ -1232,16 +1232,16 @@ DyldInfo& DyldInfo::update_binding_info(void) {
 }
 
 DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindings) {
-	std::vector<binding_instruction> instructions;
+  std::vector<binding_instruction> instructions;
 
   uint64_t current_segment_start = 0;
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
 
   uint8_t type = 0;
-	uint64_t address = static_cast<uint64_t>(-1);
+  uint64_t address = static_cast<uint64_t>(-1);
   std::string symbol_name = "";
-	int64_t addend = 0;
+  int64_t addend = 0;
   const size_t pint_size = this->binary_->pointer_size();
 
 
@@ -1305,7 +1305,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   // ===========================================
   // 2. Second optimization
@@ -1331,7 +1331,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
 
   // ===========================================
@@ -1349,7 +1349,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       it->opcode = LIEF_MACHO_BIND_OPCODE_SET_DYLIB_ORDINAL_IMM;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   bool done = false;
   vector_iostream raw_output;
@@ -1511,16 +1511,16 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
 
 DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& bindings) {
 
-	std::vector<binding_instruction> instructions;
+  std::vector<binding_instruction> instructions;
 
   uint64_t current_segment_start = 0;
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-	uint64_t address = static_cast<uint64_t>(-1);
-	int32_t ordinal = 0x80000000;
+  uint64_t address = static_cast<uint64_t>(-1);
+  int32_t ordinal = 0x80000000;
   std::string symbol_name = "";
-	int64_t addend = 0;
+  int64_t addend = 0;
   const size_t pint_size = this->binary_->pointer_size();
 
   for (BindingInfo* info : bindings) {
@@ -1592,7 +1592,7 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
       *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   // ===========================================
   // 2. Second optimization
@@ -1618,7 +1618,7 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
       *dst++ = *it;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
 
   // ===========================================
@@ -1636,7 +1636,7 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
       it->opcode = LIEF_MACHO_BIND_OPCODE_SET_DYLIB_ORDINAL_IMM;
     }
   }
-	dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
+  dst->opcode = LIEF_MACHO_REBASE_OPCODE_DONE;
 
   bool done = false;
   vector_iostream raw_output;

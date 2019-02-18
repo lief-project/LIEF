@@ -40,6 +40,7 @@ class BinaryParser;
 class LIEF_API DyldInfo : public LoadCommand {
 
   friend class BinaryParser;
+  friend class Binary;
   friend class Builder;
 
   public:

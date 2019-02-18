@@ -626,8 +626,18 @@ void Builder::build(SymbolCommand* symbol_command) {
     raw_symbol_names.push_back(0);
   }
 
+  // If the table is smaller than th original one, fill with 0
+  if (raw_symbol_names.size() < symbol_command->strings_size()) {
+    raw_symbol_names.insert(
+        std::end(raw_symbol_names),
+        symbol_command->strings_size() - raw_symbol_names.size() ,
+        0
+    );
+  }
+
   size_t padding = align(raw_symbol_names.size(), sizeof(uint)) - raw_symbol_names.size();
   raw_symbol_names.insert(std::end(raw_symbol_names), padding, 0);
+
 
   // To be removed later
   CHECK(raw_symbol_names.size() <= symbol_command->strings_size()) << std::hex << std::showbase << raw_symbol_names.size() << " vs " << symbol_command->strings_size();
@@ -696,9 +706,9 @@ void Builder::build(SymbolCommand* symbol_command) {
   //const uint32_t size_needed = sizeof(symtab_command) + nlist_table.size() + raw_symbol_names.size();
   symtab.cmd     = static_cast<uint32_t>(symbol_command->command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command->size());
-  symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset()); // After the header
+  symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());    // **Usually** After the header
   symtab.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
-  symtab.stroff  = static_cast<uint32_t>(symbol_command->strings_offset()); // After nlist table
+  symtab.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());   // **Usually** After nlist table
   symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size());
 
   symbol_command->originalData_.clear();
@@ -709,18 +719,6 @@ void Builder::build(SymbolCommand* symbol_command) {
       reinterpret_cast<const uint8_t*>(&symtab) + sizeof(symtab_command),
       std::back_inserter(symbol_command->originalData_)
   );
-
-  //std::move(
-  //  std::begin(nlist_table),
-  //  std::end(nlist_table),
-  //  std::back_inserter(symbol_command->originalData_)
-  //);
-
-  //std::move(
-  //  std::begin(raw_symbol_names),
-  //  std::end(raw_symbol_names),
-  //  std::back_inserter(symbol_command->originalData_)
-  //);
 
 }
 

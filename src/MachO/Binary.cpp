@@ -1209,6 +1209,82 @@ LoadCommand& Binary::add(const SegmentCommand& segment) {
   return segment_added;
 }
 
+bool Binary::unexport(const std::string& name) {
+  if (not this->has_symbol(name)) {
+    return false;
+  }
+  const Symbol& s = this->get_symbol(name);
+  return this->unexport(s);
+}
+
+bool Binary::unexport(const Symbol& sym) {
+  if (not this->has_dyld_info()) {
+    return false;
+  }
+
+  DyldInfo& dyld = this->dyld_info();
+  auto&& it_export = std::find_if(
+      std::begin(dyld.export_info_),
+      std::end(dyld.export_info_),
+      [&sym] (const ExportInfo* info) {
+        return info->has_symbol() and info->symbol() == sym;
+      });
+
+  if (it_export != std::end(dyld.export_info_)) {
+    delete *it_export;
+    dyld.export_info_.erase(it_export);
+    return true;
+  }
+
+  return false;
+}
+
+bool Binary::remove(const Symbol& sym) {
+  /* bool export_removed = */ this->unexport(sym);
+
+  auto&& it_symbol = std::find_if(
+      std::begin(this->symbols_),
+      std::end(this->symbols_),
+      [&sym] (const Symbol* s) {
+        return s->name() == sym.name();
+      });
+
+  // No Symbol
+  if (it_symbol == std::end(this->symbols_)) {
+    return false;
+  }
+
+  Symbol* symbol_to_remove = *it_symbol;
+
+  // Remove from the symbol command
+  // ------------------------------
+  if (this->has_symbol_command()) {
+    SymbolCommand& sym_cmd = this->symbol_command();
+    sym_cmd.numberof_symbols(sym_cmd.numberof_symbols() - 1);
+  }
+
+
+  // Remove from symbol table
+  // ------------------------
+  delete symbol_to_remove;
+  this->symbols_.erase(it_symbol);
+  symbol_to_remove = nullptr;
+  return true;
+}
+
+bool Binary::remove_symbol(const std::string& name) {
+  bool removed = false;
+  while (this->has_symbol(name)) {
+    const Symbol& s = this->get_symbol(name);
+    if (not this->remove(s)) {
+      break;
+    }
+
+    removed = true;
+  }
+  return removed;
+}
+
 
 bool Binary::remove_signature(void) {
 
