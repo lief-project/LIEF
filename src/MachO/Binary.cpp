@@ -1230,13 +1230,16 @@ bool Binary::unexport(const Symbol& sym) {
         return info->has_symbol() and info->symbol() == sym;
       });
 
-  if (it_export != std::end(dyld.export_info_)) {
-    delete *it_export;
-    dyld.export_info_.erase(it_export);
-    return true;
+  // The symbol is not exported
+  if (it_export == std::end(dyld.export_info_)) {
+    return false;
   }
 
-  return false;
+
+  delete *it_export;
+  dyld.export_info_.erase(it_export);
+
+  return true;
 }
 
 bool Binary::remove(const Symbol& sym) {
@@ -1256,11 +1259,26 @@ bool Binary::remove(const Symbol& sym) {
 
   Symbol* symbol_to_remove = *it_symbol;
 
+
   // Remove from the symbol command
   // ------------------------------
   if (this->has_symbol_command()) {
     SymbolCommand& sym_cmd = this->symbol_command();
-    sym_cmd.numberof_symbols(sym_cmd.numberof_symbols() - 1);
+    if (sym_cmd.numberof_symbols() > 0) {
+      sym_cmd.numberof_symbols(sym_cmd.numberof_symbols() - 1);
+    }
+  }
+
+  // Remove from the dynamic symbol command
+  // --------------------------------------
+  if (this->has_dynamic_symbol_command()) {
+    DynamicSymbolCommand& dynsym_cmd = this->dynamic_symbol_command();
+
+    dynsym_cmd.nb_external_define_symbols(0);
+    dynsym_cmd.nb_undefined_symbols(0);
+    dynsym_cmd.nb_indirect_symbols(0);
+    dynsym_cmd.nb_local_symbols(0);
+    dynsym_cmd.nb_external_reference_symbols(0);
   }
 
 
