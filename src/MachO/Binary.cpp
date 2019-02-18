@@ -1374,6 +1374,38 @@ bool Binary::remove_symbol(const std::string& name) {
 }
 
 
+bool Binary::can_remove(const Symbol& sym) const {
+  // Check if binding are associated with this symbol
+  if (not this->has_dyld_info()) {
+    return true;
+  }
+
+  const DyldInfo& dyld = this->dyld_info();
+  auto&& bindings = dyld.bindings();
+
+  for (const BindingInfo& binding : bindings) {
+    if (binding.has_symbol() and binding.symbol().name() == sym.name()) {
+      return false;
+    }
+  }
+  return true;
+
+}
+
+bool Binary::can_remove_symbol(const std::string& name) const {
+  std::vector<const Symbol*> syms;
+  for (const Symbol* s : this->symbols_) {
+    if (s->name() == name) {
+      syms.push_back(s);
+    }
+  }
+  return std::all_of(std::begin(syms), std::end(syms),
+      [this] (const Symbol* s) {
+        return this->can_remove(*s);
+      });
+}
+
+
 bool Binary::remove_signature(void) {
 
   if (not this->has_code_signature()) {

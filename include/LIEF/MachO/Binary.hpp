@@ -206,6 +206,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Remove the given symbol
   bool remove(const Symbol& sym);
 
+  //! Check if the given symbol can be safely removed.
+  bool can_remove(const Symbol& sym) const;
+
+  bool can_remove_symbol(const std::string& name) const;
+
   //! Remove the given symbol from the export table
   bool unexport(const std::string& name);
 

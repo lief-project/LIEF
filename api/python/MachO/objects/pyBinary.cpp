@@ -413,6 +413,16 @@ void create<Binary>(py::module& m) {
         "Remove all symbol(s) with the given name",
         "name"_a)
 
+    .def("can_remove",
+        static_cast<bool (Binary::*)(const Symbol&) const>(&Binary::can_remove),
+        "Check if the given symbol can be safely removed.",
+        "symbol"_a)
+
+    .def("can_remove_symbol",
+        static_cast<bool (Binary::*)(const std::string&) const>(&Binary::can_remove_symbol),
+        "Check if the given symbol name can be safely removed.",
+        "symbol_name"_a)
+
     .def("unexport",
         static_cast<bool (Binary::*)(const std::string&)>(&Binary::unexport),
         "Remove the symbol from the export table",
