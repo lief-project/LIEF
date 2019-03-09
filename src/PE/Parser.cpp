@@ -690,7 +690,8 @@ void Parser::parse_debug_pogo(Debug& debug_info) {
 //
 void Parser::parse_exports(void) {
   VLOG(VDEBUG) << "[+] Parsing exports";
-  static constexpr uint32_t NB_ENTRIES_LIMIT = 0x1000000;
+  static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
+  static constexpr size_t MAX_EXPORT_NAME_SIZE = 300;
 
   uint32_t exports_rva    = this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA();
   uint32_t exports_offset = this->binary_->rva_to_offset(exports_rva);
@@ -759,6 +760,7 @@ void Parser::parse_exports(void) {
 
   // Export address table (EXTERN)
   // =============================
+  std::set<size_t> corrupted_entries; // Ordinal value of corrupted entries
   for (size_t i = 0; i < nbof_addr_entries; ++i) {
     const uint32_t value = address_table[i];
     // If value is inside export directory => 'external' function
@@ -777,7 +779,14 @@ void Parser::parse_exports(void) {
       entry.address_   = value;
       entry.is_extern_ = false;
       entry.ordinal_   = i + export_directory_table.OrdinalBase;
+
+
+      if (value == 0) {
+        corrupted_entries.insert(entry.ordinal_);
+      }
+
       export_object.entries_.push_back(std::move(entry));
+
     }
   }
 
@@ -793,7 +802,23 @@ void Parser::parse_exports(void) {
 
     ExportEntry& entry = export_object.entries_[ordinal_table[i]];
     entry.name_        = name;
+
+    if (name.size() > MAX_EXPORT_NAME_SIZE) {
+      corrupted_entries.insert(entry.ordinal_);
+    }
   }
+
+  auto&& it_export = std::begin(export_object.entries_);
+  while (it_export != std::end(export_object.entries_)) {
+    const ExportEntry& entry = *it_export;
+    if (corrupted_entries.count(entry.ordinal()) == 0) {
+      ++it_export;
+      continue;
+    }
+
+    it_export = export_object.entries_.erase(it_export);
+  }
+
 
   this->binary_->export_ = std::move(export_object);
   this->binary_->has_exports_ = true;
