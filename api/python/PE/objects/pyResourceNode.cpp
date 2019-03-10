@@ -68,12 +68,14 @@ void create<ResourceNode>(py::module& m) {
     .def("add_directory_node",
         static_cast<ResourceNode& (ResourceNode::*)(const ResourceDirectory&)>(&ResourceNode::add_child),
         "Add a " RST_CLASS_REF(lief.PE.ResourceDirectory) " to the current node",
-        "resource_directory"_a)
+        "resource_directory"_a,
+        py::return_value_policy::reference)
 
     .def("add_data_node",
         static_cast<ResourceNode& (ResourceNode::*)(const ResourceData&)>(&ResourceNode::add_child),
         "Add a " RST_CLASS_REF(lief.PE.ResourceData) " to the current node",
-        "resource_data"_a)
+        "resource_data"_a,
+        py::return_value_policy::reference)
 
     .def("delete_child",
         static_cast<void (ResourceNode::*)(const ResourceNode&)>(&ResourceNode::delete_child),
