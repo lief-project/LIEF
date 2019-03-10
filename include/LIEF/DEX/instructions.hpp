@@ -16,7 +16,7 @@
 #ifndef LIEF_DEX_INSTRUCTIONS_H_
 #define LIEF_DEX_INSTRUCTIONS_H_
 #include "LIEF/visibility.h"
-#include "LIEF/types.h"
+#include "LIEF/types.hpp"
 #include <cstddef>
 
 namespace LIEF {
