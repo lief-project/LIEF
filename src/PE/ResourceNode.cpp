@@ -114,7 +114,7 @@ ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
   this->childs_.push_back(new_node);
 
   if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
-    if (this->has_name()) {
+    if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
@@ -131,7 +131,7 @@ ResourceNode& ResourceNode::add_child(const ResourceData& child) {
   this->childs_.push_back(new_node);
 
   if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
-    if (this->has_name()) {
+    if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
