@@ -172,7 +172,7 @@ void ResourceNode::delete_child(const ResourceNode& node) {
 
   if (this->is_directory()) {
     ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this);
-    if (this->has_name()) {
+    if ((*it_node)->has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() - 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() - 1);
