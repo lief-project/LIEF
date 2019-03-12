@@ -40,6 +40,7 @@ LIEF_API const char* to_string(ELF_DATA e);
 LIEF_API const char* to_string(OS_ABI e);
 LIEF_API const char* to_string(DYNSYM_COUNT_METHODS e);
 LIEF_API const char* to_string(NOTE_TYPES e);
+LIEF_API const char* to_string(NOTE_TYPES_CORE e);
 LIEF_API const char* to_string(NOTE_ABIS e);
 LIEF_API const char* to_string(RELOCATION_PURPOSES e);
 LIEF_API const char* to_string(IDENTITY e);

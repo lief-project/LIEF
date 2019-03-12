@@ -28,6 +28,7 @@
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/AndroidNote.hpp"
+#include "LIEF/ELF/Core.hpp"
 
 #include "filesystem/filesystem.h"
 
@@ -369,9 +370,11 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     std::unique_ptr<Note> note;
 
     if (name == AndroidNote::NAME and type == NOTE_TYPES::NT_GNU_ABI_TAG) {
-      note = std::unique_ptr<AndroidNote>{new AndroidNote{name, type, std::move(description)}};
+      note = std::unique_ptr<AndroidNote>{new AndroidNote{name, type, std::move(description), this->binary_}};
+    } else if (this->binary_->header().file_type() == E_TYPE::ET_CORE) {
+      note = std::unique_ptr<Note>{new Note{name, static_cast<NOTE_TYPES_CORE>(type), std::move(description), this->binary_}};
     } else {
-      note = std::unique_ptr<Note>{new Note{name, type, std::move(description)}};
+      note = std::unique_ptr<Note>{new Note{name, type, std::move(description), this->binary_}};
     }
     auto&& it_note = std::find_if(
         std::begin(this->binary_->notes_),

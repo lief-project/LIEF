@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_H_
-#define LIEF_ELF_H_
+#ifndef LIEF_ELF_CORE_H_
+#define LIEF_ELF_CORE_H_
 
-#include "LIEF/ELF/Parser.hpp"
-#include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Builder.hpp"
-#include "LIEF/ELF/AndroidNote.hpp"
-#include "LIEF/ELF/Core.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/CorePrPsInfo.hpp"
 
 #endif

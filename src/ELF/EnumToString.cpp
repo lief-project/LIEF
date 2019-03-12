@@ -1083,6 +1083,25 @@ const char* to_string(NOTE_TYPES e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
+
+const char* to_string(NOTE_TYPES_CORE e) {
+  CONST_MAP(NOTE_TYPES_CORE, const char*, 9) enumStrings {
+    { NOTE_TYPES_CORE::NT_CORE_UNKNOWN,     "UNKNOWN"},
+    { NOTE_TYPES_CORE::NT_PRSTATUS,         "PRSTATUS"},
+    { NOTE_TYPES_CORE::NT_PRFPREG,          "PRFPREG"},
+    { NOTE_TYPES_CORE::NT_PRPSINFO,         "PRPSINFO"},
+    { NOTE_TYPES_CORE::NT_TASKSTRUCT,       "TASKSTRUCT"},
+    { NOTE_TYPES_CORE::NT_AUXV,             "AUXV"},
+    { NOTE_TYPES_CORE::NT_SIGINFO,          "SIGINFO"},
+    { NOTE_TYPES_CORE::NT_FILE,             "FILE"},
+    { NOTE_TYPES_CORE::NT_PRXFPREG,         "PRXFPREG"},
+  };
+
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+
 const char* to_string(NOTE_ABIS e) {
   CONST_MAP(NOTE_ABIS, const char*, 7) enumStrings {
     { NOTE_ABIS::ELF_NOTE_UNKNOWN,     "UNKNOWN"},

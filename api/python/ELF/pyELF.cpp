@@ -55,7 +55,9 @@ void init_objects(py::module& m) {
   CREATE(SysvHash, m);
   CREATE(Builder, m);
   CREATE(Note, m);
+  CREATE(NoteDetails, m);
   CREATE(AndroidNote, m);
+  CREATE(CorePrPsInfo, m);
 }
 
 }

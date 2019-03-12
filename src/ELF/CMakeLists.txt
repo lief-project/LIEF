@@ -96,11 +96,16 @@ set(LIEF_ELF_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/json.hpp")
 set(LIEF_ELF_NOTE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/AndroidNote.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/NoteDetails.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/CorePrPsInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/CorePrPsInfo.tcc"
 )
 
 set(LIEF_ELF_NOTE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/AndroidNote.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/NoteDetails.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/CorePrPsInfo.hpp"
 )
 
 list(APPEND LIEF_ELF_SRC ${LIEF_ELF_NOTE_SRC})

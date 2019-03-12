@@ -666,6 +666,14 @@
 #undef NT_GNU_HWCAP
 #undef NT_GNU_BUILD_ID
 #undef NT_GNU_GOLD_VERSION
+#undef NT_PRSTATUS
+#undef NT_PRFPREG
+#undef NT_PRPSINFO
+#undef NT_TASKSTRUCT
+#undef NT_AUXV
+#undef NT_SIGINFO
+#undef NT_FILE
+#undef NT_PRXFPREG
 
 #undef ELF_NOTE_UNKNOWN
 #undef ELF_NOTE_OS_LINUX

@@ -899,6 +899,18 @@ enum _LIEF_EN(NOTE_TYPES) {
   _LIEF_EI(NT_GNU_GOLD_VERSION) = 4,
 };
 
+enum _LIEF_EN(NOTE_TYPES_CORE) {
+  _LIEF_EI(NT_CORE_UNKNOWN)     = 0,
+  _LIEF_EI(NT_PRSTATUS)         = 1,
+  _LIEF_EI(NT_PRFPREG)          = 2,
+  _LIEF_EI(NT_PRPSINFO)         = 3,
+  _LIEF_EI(NT_TASKSTRUCT)       = 4,
+  _LIEF_EI(NT_AUXV)             = 6,
+  _LIEF_EI(NT_SIGINFO)          = 0x53494749,
+  _LIEF_EI(NT_FILE)             = 0x46494c45,
+  _LIEF_EI(NT_PRXFPREG)         = 0x46e62b7f,
+};
+
 
 enum _LIEF_EN(NOTE_ABIS) {
   _LIEF_EI(ELF_NOTE_UNKNOWN)     = -1u,

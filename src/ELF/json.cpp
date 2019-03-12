@@ -397,9 +397,28 @@ void JsonVisitor::visit(const SymbolVersionAuxRequirement& svar) {
 
 void JsonVisitor::visit(const Note& note) {
   this->node_["name"]  = note.name();
-  this->node_["type"]  = to_string(static_cast<NOTE_TYPES>(note.type()));
+  const std::string type_str = note.is_core() ? to_string(note.type_core()) : to_string(note.type());
+  this->node_["type"]  = type_str;
+  JsonVisitor visitor;
+  const NoteDetails& d = note.details();
+  d.accept(visitor);
+  this->node_["details"] = visitor.get();
 }
 
+void JsonVisitor::visit(const NoteDetails&) {
+  this->node_ = json::object();
+}
+
+void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
+  this->node_["file_name"] = pinfo.file_name();
+  this->node_["flags"] = pinfo.flags();
+  this->node_["uid"] = pinfo.uid();
+  this->node_["gid"] = pinfo.gid();
+  this->node_["pid"] = pinfo.pid();
+  this->node_["ppid"] = pinfo.ppid();
+  this->node_["pgrp"] = pinfo.pgrp();
+  this->node_["sid"] = pinfo.sid();
+}
 
 void JsonVisitor::visit(const GnuHash& gnuhash) {
   this->node_["nb_buckets"]    = gnuhash.nb_buckets();

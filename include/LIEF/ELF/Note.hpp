@@ -28,12 +28,14 @@ namespace ELF {
 class Parser;
 class Builder;
 class Binary;
+class NoteDetails;
 
 class LIEF_API Note : public Object {
 
   friend class Parser;
   friend class Builder;
   friend class Binary;
+  friend class NoteDetails;
 
   public:
 
@@ -49,10 +51,12 @@ class LIEF_API Note : public Object {
   static constexpr version_t UNKNOWN_VERSION = {{0, 0, 0}};
 
   public:
-  Note(void);
-  Note(const std::string& name, uint32_t type, const description_t& description);
-  Note(const std::string& name, NOTE_TYPES type, const description_t& description);
+  Note();
+  Note(const std::string& name, uint32_t type, const description_t& description, Binary* binary=nullptr);
+  Note(const std::string& name, NOTE_TYPES type, const description_t& description, Binary* binary=nullptr);
+  Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& description, Binary* binary=nullptr);
   Note& operator=(const Note& copy);
+  Note& operator=(Note& copy);
   Note(const Note& copy);
   virtual ~Note(void);
 
@@ -61,6 +65,9 @@ class LIEF_API Note : public Object {
 
   //! @brief Return the type of the note. It could be one of the NOTE_TYPES values
   NOTE_TYPES type(void) const;
+
+  //! @brief Return the type of the note for core ELF (ET_CORE). It could be one of the NOTE_TYPES_CORE values
+  NOTE_TYPES_CORE type_core(void) const;
 
   //! @brief Return the description associated with the note
   const description_t& description(void) const;
@@ -73,8 +80,14 @@ class LIEF_API Note : public Object {
   //! @brief Return the target version as ``<Major, Minor, Patch>``.  Require a NT_GNU_ABI_TAG type
   version_t version(void) const;
 
+  bool is_core(void) const;
+
+  const NoteDetails& details(void) const;
+  NoteDetails& details(void);
+
   void name(const std::string& name);
   void type(NOTE_TYPES type);
+  void type_core(NOTE_TYPES_CORE type);
   void description(const description_t& description);
 
   //! @brief Sizeof the **raw** note
@@ -85,14 +98,23 @@ class LIEF_API Note : public Object {
   bool operator==(const Note& rhs) const;
   bool operator!=(const Note& rhs) const;
 
+  void swap(Note& other);
+  void copy(const Note& other);
+
   virtual void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Note& note);
 
   protected:
+  Binary*       binary_;
   std::string   name_;
   NOTE_TYPES    type_;
   description_t description_;
+
+  private:
+  bool          is_core_{false};
+
+  std::pair<NOTE_TYPES, std::unique_ptr<NoteDetails>> details_;
 };
 
 

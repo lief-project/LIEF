@@ -42,6 +42,11 @@ void create<Note>(py::module& m) {
         "Ctor from ``name``, ``type`` and ``description``",
         "name"_a, "type"_a, "description"_a)
 
+    .def_property_readonly("details",
+        static_cast<NoteDetails& (Note::*)(void)>(&Note::details),
+        "Parse the given note description and return a " RST_CLASS_REF(lief.ELF.NoteDetails) " object",
+        py::return_value_policy::reference_internal)
+
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Note::name),
         static_cast<setter_t<const std::string&>>(&Note::name),
@@ -52,6 +57,12 @@ void create<Note>(py::module& m) {
         static_cast<getter_t<NOTE_TYPES>>(&Note::type),
         static_cast<setter_t<NOTE_TYPES>>(&Note::type),
         "Return the type of the note. Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
+        )
+
+    .def_property("type_core",
+        static_cast<getter_t<NOTE_TYPES_CORE>>(&Note::type_core),
+        static_cast<setter_t<NOTE_TYPES_CORE>>(&Note::type_core),
+        "Return the type of the note for core ELF (ET_CORE). Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"
         )
 
     .def_property("description",

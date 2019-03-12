@@ -31,7 +31,7 @@ namespace LIEF {
 namespace ELF {
 
 uint32_t AndroidNote::sdk_version(void) const {
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
 
   if (description.size() < sizeof(uint32_t)) {
     return -1u;
@@ -45,7 +45,7 @@ std::string AndroidNote::ndk_version(void) const {
   static constexpr size_t offset = sizeof(uint32_t);
   static constexpr size_t size   = 64 * sizeof(char);
 
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
 
   if (description.size() < (offset + size)) {
     return "";
@@ -57,7 +57,7 @@ std::string AndroidNote::ndk_build_number(void) const {
   static constexpr size_t offset = sizeof(uint32_t) + 64 * sizeof(char);
   static constexpr size_t size   = 64 * sizeof(char);
 
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
 
   if (description.size() < (offset + size)) {
     return "";

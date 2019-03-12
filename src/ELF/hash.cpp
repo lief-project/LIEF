@@ -206,8 +206,23 @@ void Hash::visit(const Note& note) {
   process(note.description());
 }
 
+void Hash::visit(const NoteDetails& details) {
+  process(details.description());
+}
+
 void Hash::visit(const AndroidNote& note) {
   this->visit(static_cast<const Note&>(note));
+}
+
+void Hash::visit(const CorePrPsInfo& pinfo) {
+  process(pinfo.file_name());
+  process(pinfo.flags());
+  process(pinfo.uid());
+  process(pinfo.gid());
+  process(pinfo.pid());
+  process(pinfo.ppid());
+  process(pinfo.pgrp());
+  process(pinfo.sid());
 }
 
 void Hash::visit(const GnuHash& gnuhash) {

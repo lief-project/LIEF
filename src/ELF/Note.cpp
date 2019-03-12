@@ -28,31 +28,71 @@
 #include "LIEF/ELF/EnumToString.hpp"
 
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
 namespace ELF {
 constexpr Note::version_t Note::UNKNOWN_VERSION;
 
-Note& Note::operator=(const Note&) = default;
-Note::Note(const Note&)            = default;
-Note::~Note(void)                  = default;
+Note::~Note(void) = default;
 
-Note::Note(void) :
+Note& Note::operator=(Note& other) {
+  other.swap(*this);
+  return *this;
+}
+
+Note& Note::operator=(const Note& other) {
+  this->copy(other);
+  return *this;
+}
+
+Note::Note(const Note& other):
+  binary_(other.binary_),
+  name_(other.name_),
+  type_(other.type_),
+  description_(other.description_)
+{}
+
+void Note::swap(Note& other) {
+  std::swap(this->binary_, other.binary_);
+  std::swap(this->name_, other.name_);
+  std::swap(this->type_, other.type_);
+  std::swap(this->description_, other.description_);
+  std::swap(this->details_, other.details_);
+}
+
+void Note::copy(const Note& other) {
+  Note tmp(other);
+  this->swap(tmp);
+}
+
+Note::Note() :
+  binary_{nullptr},
   name_{""},
   type_{NOTE_TYPES::NT_UNKNOWN},
-  description_{}
+  description_{},
+  details_{std::make_pair(NOTE_TYPES::NT_UNKNOWN, std::unique_ptr<NoteDetails>(new NoteDetails()))}
 {}
 
-Note::Note(const std::string& name, uint32_t type, const description_t& description):
+Note::Note(const std::string& name, uint32_t type, const description_t& description, Binary* binary):
+  binary_{binary},
   name_{name},
   type_{static_cast<NOTE_TYPES>(type)},
-  description_{description}
+  description_{description},
+  details_{std::make_pair(NOTE_TYPES::NT_UNKNOWN, std::unique_ptr<NoteDetails>(new NoteDetails()))}
 {}
 
-
-Note::Note(const std::string& name, NOTE_TYPES type, const description_t& description):
-  Note::Note{name, static_cast<uint32_t>(type), description}
+Note::Note(const std::string& name, NOTE_TYPES type, const description_t& description, Binary* binary):
+  Note::Note{name, static_cast<uint32_t>(type), description, binary}
 {}
+
+Note::Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& description, Binary* binary):
+  Note::Note{name, static_cast<uint32_t>(type), description, binary}
+{
+  this->is_core_ = true;
+  this->details();
+}
+
 
 const std::string& Note::name(void) const {
   return this->name_;
@@ -60,6 +100,10 @@ const std::string& Note::name(void) const {
 
 NOTE_TYPES Note::type(void) const {
   return this->type_;
+}
+
+NOTE_TYPES_CORE Note::type_core(void) const {
+  return static_cast<NOTE_TYPES_CORE>(this->type_);
 }
 
 const Note::description_t& Note::description(void) const {
@@ -76,7 +120,7 @@ NOTE_ABIS Note::abi(void) const {
     return NOTE_ABIS::ELF_NOTE_UNKNOWN;
   }
 
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
   if (description.size() < sizeof(uint32_t)) {
     LOG(WARNING) << "The description of the note seems corrupted";
     return NOTE_ABIS::ELF_NOTE_UNKNOWN;
@@ -90,7 +134,7 @@ Note::version_t Note::version(void) const {
     return Note::UNKNOWN_VERSION;
   }
 
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
   if (description.size() < (sizeof(uint32_t) + 3 * sizeof(uint32_t))) {
     LOG(WARNING) << "The description of the note seems corrupted";
     return Note::UNKNOWN_VERSION;
@@ -100,18 +144,57 @@ Note::version_t Note::version(void) const {
   return Note::version_t{{version[1], version[2], version[3]}};
 }
 
+bool Note::is_core(void) const {
+  return this->is_core_;
+}
+
+const NoteDetails& Note::details(void) const {
+  return *(this->details_.second);
+}
+
+NoteDetails& Note::details(void) {
+  NOTE_TYPES type = this->type();
+  auto& dcache = this->details_;
+
+  // already in cache
+  if (dcache.first == type) {
+    return *(dcache.second);
+  }
+  std::unique_ptr<NoteDetails> details(new NoteDetails());
+  if (this->is_core()) {
+    NOTE_TYPES_CORE type_core = static_cast<NOTE_TYPES_CORE>(type);
+    switch(type_core) {
+      case NOTE_TYPES_CORE::NT_PRPSINFO:
+        details.reset(new CorePrPsInfo{CorePrPsInfo::make(*this)});
+        break;
+      default:
+        break;
+    }
+  }
+  // update cache
+  dcache.first = type;
+  dcache.second.swap(details);
+  return *details;
+}
 
 void Note::name(const std::string& name) {
   this->name_ = name;
 }
+
 void Note::type(NOTE_TYPES type) {
   this->type_ = type;
+  this->is_core_ = false;
 }
 
-void Note::description(const Note::description_t& description) {
+void Note::type_core(NOTE_TYPES_CORE type) {
+  this->type_ = static_cast<NOTE_TYPES>(type);
+  this->is_core_ = true;
+  this->details();
+}
+
+void Note::description(const description_t& description) {
   this->description_ = description;
 }
-
 
 uint64_t Note::size(void) const {
   uint64_t size = 0;
@@ -140,7 +223,7 @@ bool Note::operator!=(const Note& rhs) const {
 
 
 void Note::dump(std::ostream& os) const {
-  const Note::description_t& description = this->description();
+  const description_t& description = this->description();
 
   std::string description_str = std::accumulate(
       std::begin(description),
@@ -158,9 +241,15 @@ void Note::dump(std::ostream& os) const {
   description_str += "]";
   os << std::hex << std::left;
   os << std::setw(33) << std::setfill(' ') << "Name:" << this->name() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Type:" << to_string(this->type()) << std::endl;
+  const std::string type_str = this->is_core() ? to_string(this->type_core()) : to_string(this->type());
+  os << std::setw(33) << std::setfill(' ') << "Type:" << type_str << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Description:" << description_str << std::endl;
 
+  // early return if core
+  if (this->is_core()) {
+    this->details().dump(os);
+    return;
+  }
 
   // ABI TAG
   if (this->type() == NOTE_TYPES::NT_GNU_ABI_TAG) {
