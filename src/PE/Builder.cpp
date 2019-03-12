@@ -256,6 +256,9 @@ void Builder::build_resources(void) {
   new_section_rsrc.characteristics(0x40000040);
   new_section_rsrc.content(content);
 
+  if (this->binary_->has_resources()) {
+      this->binary_->remove(this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).section(), true);
+  }
   Section& rsrc_section = this->binary_->add_section(new_section_rsrc, PE_SECTION_TYPES::RESOURCE);
 
   this->construct_resources(node, &content, &offsetToHeader, &offsetToData, &offsetToName, rsrc_section.virtual_address(), 0);
