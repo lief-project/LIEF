@@ -59,6 +59,8 @@ void init_objects(py::module& m) {
   CREATE(AndroidNote, m);
   CREATE(NoteAbi, m);
   CREATE(CorePrPsInfo, m);
+  CREATE(CoreFile, m);
+  CREATE(CoreFileEntry, m);
 }
 
 }

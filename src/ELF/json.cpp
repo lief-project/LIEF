@@ -425,6 +425,21 @@ void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
   this->node_["sid"] = pinfo.sid();
 }
 
+void JsonVisitor::visit(const CoreFile& file) {
+  std::vector<json> files;
+  for (const CoreFileEntry& entry : file.files()) {
+    const json file = {
+      {"start", entry.start},
+      {"end", entry.end},
+      {"file_ofs", entry.file_ofs},
+      {"path", entry.path}
+    };
+    files.emplace_back(file);
+  }
+  this->node_["files"] = files;
+  this->node_["count"] = file.count();
+}
+
 void JsonVisitor::visit(const GnuHash& gnuhash) {
   this->node_["nb_buckets"]    = gnuhash.nb_buckets();
   this->node_["symbol_index"]  = gnuhash.symbol_index();

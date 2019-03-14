@@ -244,5 +244,22 @@ void swap_endian<LIEF::ELF::Elf64_Verdaux>(LIEF::ELF::Elf64_Verdaux *ver) {
   swap_endian_verdaux(ver);
 }
 
+template <typename Elf_FileEntry>
+void swap_endian_fileentry(Elf_FileEntry *entry) {
+  entry->start      = BinaryStream::swap_endian(entry->start);
+  entry->end        = BinaryStream::swap_endian(entry->end);
+  entry->file_ofs   = BinaryStream::swap_endian(entry->file_ofs);
+}
+
+template<>
+void swap_endian<LIEF::ELF::Elf32_FileEntry>(LIEF::ELF::Elf32_FileEntry *entry) {
+  swap_endian_fileentry(entry);
+}
+
+template<>
+void swap_endian<LIEF::ELF::Elf64_FileEntry>(LIEF::ELF::Elf64_FileEntry *entry) {
+  swap_endian_fileentry(entry);
+}
+
 }
 }

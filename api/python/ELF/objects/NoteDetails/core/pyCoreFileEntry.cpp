@@ -13,10 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_CORE_H_
-#define LIEF_ELF_NOTE_DETAILS_CORE_H_
+#include <string>
+#include <sstream>
+#include <vector>
 
-#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
+#include "pyELF.hpp"
 
-#endif
+namespace LIEF {
+namespace ELF {
+
+template<>
+void create<CoreFileEntry>(py::module& m) {
+
+  py::class_<CoreFileEntry>(m, "CoreFileEntry")
+
+    .def_readwrite("start", &CoreFileEntry::start,
+      "Start address of mapped file")
+
+    .def_readwrite("end", &CoreFileEntry::end,
+      "End address of mapped file")
+
+    .def_readwrite("file_ofs", &CoreFileEntry::file_ofs,
+      "Offset (in core) of mapped file")
+    
+    .def_readwrite("path", &CoreFileEntry::path,
+      "Path of mapped file");
+    
+}
+
+}
+}

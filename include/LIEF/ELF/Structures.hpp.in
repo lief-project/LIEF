@@ -165,6 +165,7 @@ class ELF32 {
   typedef Elf32_Verdaux Elf_Verdaux;
 
   typedef Elf32_Prpsinfo Elf_Prpsinfo;
+  typedef Elf32_FileEntry Elf_FileEntry;
 };
 
 
@@ -195,6 +196,7 @@ class ELF64 {
   typedef Elf64_Verdaux Elf_Verdaux;
 
   typedef Elf64_Prpsinfo Elf_Prpsinfo;
+  typedef Elf64_FileEntry Elf_FileEntry;
  };
 
 } /* end namespace ELF */

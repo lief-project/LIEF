@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_CORE_PSINFO_H_
-#define LIEF_ELF_CORE_PSINFO_H_
+#ifndef LIEF_ELF_CORE_FILE_H_
+#define LIEF_ELF_CORE_FILE_H_
 
 #include <vector>
 #include <iostream>
@@ -32,58 +32,40 @@ class Parser;
 class Builder;
 class Binary;
 
+struct CoreFileEntry {
+  uint64_t      start;
+  uint64_t      end;
+  uint64_t      file_ofs;
+  std::string   path;
+};
+
 //! Class representing core PrPsInfo object
-class LIEF_API CorePrPsInfo : public NoteDetails {
+class LIEF_API CoreFile : public NoteDetails {
 
   public:
   using NoteDetails::NoteDetails;
 
   public:
-  static CorePrPsInfo make(Note& note);
+  static CoreFile make(Note& note);
 
-  //! Process file name
-  std::string file_name(void) const;
+  //! Number of coredump file entries
+  uint64_t count(void) const;
 
-  //! Process flag
-  uint64_t flags(void) const;
+  //! Coredump file entries
+  std::vector<CoreFileEntry> files(void) const;
 
-  //! Process user id
-  uint32_t uid(void) const;
+  void files(const std::vector<CoreFileEntry>&);
 
-  //! Process group id
-  uint32_t gid(void) const;
-
-  //! Process ID
-  int32_t pid(void) const;
-
-  //! Process parent ID
-  int32_t ppid(void) const;
-
-  //! Process session group ID
-  int32_t pgrp(void) const;
-
-  //! Process session ID
-  int32_t sid(void) const;
-
-  void file_name(const std::string& file_name);
-  void flags(uint64_t);
-  void uid(uint32_t);
-  void gid(uint32_t);
-  void pid(int32_t);
-  void ppid(int32_t);
-  void pgrp(int32_t);
-  void sid(int32_t);
-
-  bool operator==(const CorePrPsInfo& rhs) const;
-  bool operator!=(const CorePrPsInfo& rhs) const;
+  bool operator==(const CoreFile& rhs) const;
+  bool operator!=(const CoreFile& rhs) const;
 
   virtual void dump(std::ostream& os) const override;
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~CorePrPsInfo(void);
+  virtual ~CoreFile(void);
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrPsInfo& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreFile& note);
 
   protected:
   template <typename ELF_T>
@@ -96,17 +78,11 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   virtual void build(void) override;
 
   private:
-  CorePrPsInfo(Note& note);
+  CoreFile(Note& note);
 
   private:
-  std::string file_name_;
-  uint64_t flags_;
-  uint32_t uid_;
-  uint32_t gid_;
-  int32_t pid_;
-  int32_t ppid_;
-  int32_t pgrp_;
-  int32_t sid_;
+  std::vector<CoreFileEntry> files_;
+  uint64_t                   page_size_;
 };
 
 } // namepsace ELF

@@ -229,6 +229,16 @@ void Hash::visit(const CorePrPsInfo& pinfo) {
   process(pinfo.sid());
 }
 
+void Hash::visit(const CoreFile& file) {
+  process(file.count());
+  for (const CoreFileEntry& entry : file.files()) {
+    process(entry.start);
+    process(entry.end);
+    process(entry.file_ofs);
+    process(entry.path);
+  }
+}
+
 void Hash::visit(const GnuHash& gnuhash) {
   process(gnuhash.nb_buckets());
   process(gnuhash.symbol_index());

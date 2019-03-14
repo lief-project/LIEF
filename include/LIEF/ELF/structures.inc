@@ -268,7 +268,7 @@ struct Elf32_Verdaux
   Elf32_Word	vda_next;		/**< Offset in bytes to next verdaux entry */
 };
 
-/** Structure for note type PRPSINFO */
+/** Structure for note type NT_PRPSINFO */
 struct Elf64_Prpsinfo
 {
   char     pr_state;       /**< Numeric process state */
@@ -302,6 +302,21 @@ struct Elf32_Prpsinfo
   int32_t  pr_sid;        /**< Process session ID */
   char     pr_fname[16];  /**< Filename of executable */
   char     pr_psargs[80]; /**< Initial part of arg list */
+};
+
+/** Structure for note type NT_FILE */
+struct Elf64_FileEntry
+{
+  uint64_t start;
+  uint64_t end;
+  uint64_t file_ofs;
+};
+
+struct Elf32_FileEntry
+{
+  uint32_t start;
+  uint32_t end;
+  uint32_t file_ofs;
 };
 
 #pragma pack(pop)
