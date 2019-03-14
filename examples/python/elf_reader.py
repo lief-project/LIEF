@@ -382,8 +382,11 @@ def print_notes(binary):
 
         print("Note #{:d}".format(idx))
 
+        type_str = note.type_core if note.is_core else note.type
+        type_str = str(type_str).split(".")[-1]
+
         print(format_str.format("Name:",        note.name))
-        print(format_str.format("Type:",        str(ELF.NOTE_TYPES(note.type)).split(".")[-1]))
+        print(format_str.format("Type:",        type_str))
         print(format_str.format("Description:", description_str))
 
         note_details = note.details
@@ -402,6 +405,9 @@ def print_notes(binary):
 
         if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.GOLD_VERSION:
             print(format_str.format("Version:", "".join(map(chr, note.description))))
+
+        if note.is_core:
+            print(note_details)
 
 
         print("\n")

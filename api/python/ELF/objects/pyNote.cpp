@@ -71,6 +71,14 @@ void create<Note>(py::module& m) {
         "Return the description associated with the note"
         )
 
+    .def_property_readonly("is_core",
+        &Note::is_core,
+        "True if the note is associated with a coredump")
+
+    .def_property_readonly("is_android",
+        &Note::is_android,
+        "True if the note is an Android one")
+
     .def("__eq__", &Note::operator==)
     .def("__ne__", &Note::operator!=)
     .def("__hash__",
