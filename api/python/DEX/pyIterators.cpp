@@ -26,6 +26,7 @@ void init_iterators(py::module& m) {
   init_ref_iterator<it_classes>(m, "lief.DEX.it_classes");
   init_ref_iterator<it_methods>(m, "lief.DEX.it_methods");
   init_ref_iterator<it_strings>(m, "lief.DEX.it_strings");
+  init_ref_iterator<it_protypes>(m, "lief.DEX.it_protypes");
 }
 
 }
