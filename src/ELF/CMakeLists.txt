@@ -46,6 +46,8 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/hash.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/NoteDetails.cpp"
 )
 
 set(LIEF_ELF_INC_FILES
@@ -75,6 +77,8 @@ set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/utils.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/hash.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/NoteDetails.hpp"
 
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/Structures.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp"
@@ -91,26 +95,9 @@ set(LIEF_ELF_DATA_HANDLER_INCLUDE_FILES
 set(LIEF_ELF_JSON_SRC "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
 set(LIEF_ELF_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/json.hpp")
 
-# Notes part
-# ==========
-set(LIEF_ELF_NOTE_SRC
-  "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/AndroidNote.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/NoteDetails.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CorePrPsInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CorePrPsInfo.tcc"
-)
-
-set(LIEF_ELF_NOTE_INCLUDE_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/AndroidNote.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/NoteDetails.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/CorePrPsInfo.hpp"
-)
-
-list(APPEND LIEF_ELF_SRC ${LIEF_ELF_NOTE_SRC})
-list(APPEND LIEF_ELF_INC_FILES ${LIEF_ELF_NOTE_INCLUDE_FILES})
-
+# Note Details Part
+# =================
+include("${CMAKE_CURRENT_LIST_DIR}/NoteDetails/CMakeLists.txt")
 
 if (LIEF_ENABLE_JSON)
   list(APPEND LIEF_ELF_SRC       ${LIEF_ELF_JSON_SRC})

@@ -409,6 +409,11 @@ void JsonVisitor::visit(const NoteDetails&) {
   this->node_ = json::object();
 }
 
+void JsonVisitor::visit(const NoteAbi& note_abi) {
+  this->node_["abi"]     = to_string(note_abi.abi());
+  this->node_["version"] = note_abi.version();
+}
+
 void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
   this->node_["file_name"] = pinfo.file_name();
   this->node_["flags"] = pinfo.flags();

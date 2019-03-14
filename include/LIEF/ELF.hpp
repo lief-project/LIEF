@@ -23,8 +23,10 @@
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Builder.hpp"
-#include "LIEF/ELF/AndroidNote.hpp"
-#include "LIEF/ELF/Core.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+
+#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/Core.hpp"
 
 #endif

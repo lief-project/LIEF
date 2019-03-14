@@ -19,7 +19,7 @@
 #include "pyELF.hpp"
 
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/CorePrPsInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 
 namespace LIEF {
 namespace ELF {

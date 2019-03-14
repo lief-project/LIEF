@@ -29,11 +29,11 @@ set(LIEF_PYTHON_ELF_SRC
 set(LIEF_PYTHON_ELF_NOTE
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyNote.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyNoteDetails.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/pyAndroidNote.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/pyCorePrPsInfo.cpp"
 )
 
 list(APPEND LIEF_PYTHON_ELF_SRC ${LIEF_PYTHON_ELF_NOTE})
+
+include("${CMAKE_CURRENT_LIST_DIR}/objects/NoteDetails/CMakeLists.txt")
 
 set(LIEF_PYTHON_ELF_HDR
   "${CMAKE_CURRENT_LIST_DIR}/pyELF.hpp")

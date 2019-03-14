@@ -29,11 +29,11 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
-#include "LIEF/ELF/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 
 namespace LIEF {
 namespace ELF {
-constexpr Note::version_t Note::UNKNOWN_VERSION;
 
 Note::~Note(void) = default;
 
@@ -105,36 +105,6 @@ Note::description_t& Note::description(void) {
   return this->description_;
 }
 
-
-NOTE_ABIS Note::abi(void) const {
-  if (this->type() != NOTE_TYPES::NT_GNU_ABI_TAG) {
-    return NOTE_ABIS::ELF_NOTE_UNKNOWN;
-  }
-
-  const description_t& description = this->description();
-  if (description.size() < sizeof(uint32_t)) {
-    LOG(WARNING) << "The description of the note seems corrupted";
-    return NOTE_ABIS::ELF_NOTE_UNKNOWN;
-  }
-
-  return static_cast<NOTE_ABIS>(*reinterpret_cast<const uint32_t*>(description.data()));
-}
-
-Note::version_t Note::version(void) const {
-  if (this->type() != NOTE_TYPES::NT_GNU_ABI_TAG) {
-    return Note::UNKNOWN_VERSION;
-  }
-
-  const description_t& description = this->description();
-  if (description.size() < (sizeof(uint32_t) + 3 * sizeof(uint32_t))) {
-    LOG(WARNING) << "The description of the note seems corrupted";
-    return Note::UNKNOWN_VERSION;
-  }
-
-  const uint32_t* version = reinterpret_cast<const uint32_t*>(description.data());
-  return Note::version_t{{version[1], version[2], version[3]}};
-}
-
 bool Note::is_core(void) const {
   return this->is_core_;
 }
@@ -157,7 +127,7 @@ NoteDetails& Note::details(void) {
     return *(dcache.second.get());
   }
 
-  std::unique_ptr<NoteDetails> details(new NoteDetails());
+  std::unique_ptr<NoteDetails> details = nullptr;
 
   if (this->is_android()) {
     details.reset(new AndroidNote{AndroidNote::make(*this)});
@@ -174,6 +144,22 @@ NoteDetails& Note::details(void) {
         }
       default:
         break;
+    }
+  }
+
+  if (not details) {
+    switch (type) {
+      case NOTE_TYPES::NT_GNU_ABI_TAG:
+        {
+          details.reset(new NoteAbi{NoteAbi::make(*this)});
+          break;
+        }
+
+      default:
+        {
+          details.reset(new NoteDetails());
+          break;
+        }
     }
   }
 
@@ -251,38 +237,11 @@ void Note::dump(std::ostream& os) const {
   os << std::setw(33) << std::setfill(' ') << "Type:" << type_str << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Description:" << description_str << std::endl;
 
-  // early return if core
-  if (this->is_core()) {
-    this->details().dump(os);
-    return;
-  }
-
-  // ABI TAG
-  if (this->type() == NOTE_TYPES::NT_GNU_ABI_TAG) {
-    Note::version_t version = this->version();
-    std::string version_str = "";
-    // Major
-    version_str += std::to_string(std::get<0>(version));
-    version_str += ".";
-
-    // Minor
-    version_str += std::to_string(std::get<1>(version));
-    version_str += ".";
-
-    // Patch
-    version_str += std::to_string(std::get<2>(version));
-
-    os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(this->abi()) << std::endl;
-    os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
-  }
-
-
   // GOLD VERSION
   if (this->type() == NOTE_TYPES::NT_GNU_GOLD_VERSION) {
     std::string version_str{reinterpret_cast<const char*>(description.data()), description.size()};
     os << std::setw(33) << std::setfill(' ') << "Version:" << version_str << std::endl;
   }
-
 
   // BUILD ID
   if (this->type() == NOTE_TYPES::NT_GNU_BUILD_ID) {
@@ -300,6 +259,7 @@ void Note::dump(std::ostream& os) const {
     os << std::setw(33) << std::setfill(' ') << "ID Hash:" << hash << std::endl;
   }
 
+  this->details().dump(os);
 }
 
 std::ostream& operator<<(std::ostream& os, const Note& note) {

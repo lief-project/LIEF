@@ -128,11 +128,11 @@ class TestSimple(TestCase):
         notes = self.binall.notes
         self.assertEqual(len(notes), 2)
 
-        self.assertEqual(notes[0].abi, lief.ELF.NOTE_ABIS.LINUX)
+        self.assertEqual(notes[0].details.abi, lief.ELF.NOTE_ABIS.LINUX)
         self.assertEqual(notes[0].description, [0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])
         self.assertEqual(notes[0].name, "GNU")
         self.assertEqual(notes[0].type, lief.ELF.NOTE_TYPES.ABI_TAG)
-        self.assertEqual(notes[0].version, [3, 2, 0])
+        self.assertEqual(notes[0].details.version, [3, 2, 0])
 
 
 class TestSectionless(TestCase):

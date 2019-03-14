@@ -214,6 +214,10 @@ void Hash::visit(const AndroidNote& note) {
   this->visit(static_cast<const NoteDetails&>(note));
 }
 
+void Hash::visit(const NoteAbi& note) {
+  this->visit(static_cast<const NoteDetails&>(note));
+}
+
 void Hash::visit(const CorePrPsInfo& pinfo) {
   process(pinfo.file_name());
   process(pinfo.flags());

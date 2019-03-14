@@ -18,7 +18,7 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/ELF/CorePrPsInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 
 
 namespace LIEF {

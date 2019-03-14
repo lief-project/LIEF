@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_CORE_H_
-#define LIEF_ELF_CORE_H_
+#ifndef LIEF_ELF_NOTE_DETAILS_CORE_H_
+#define LIEF_ELF_NOTE_DETAILS_CORE_H_
 
-#include "LIEF/ELF/CorePrPsInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 
 #endif

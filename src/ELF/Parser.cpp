@@ -27,8 +27,8 @@
 
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/AndroidNote.hpp"
-#include "LIEF/ELF/Core.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/Core.hpp"
 
 #include "filesystem/filesystem.h"
 

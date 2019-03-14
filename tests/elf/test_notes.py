@@ -94,16 +94,16 @@ class TestNotes(TestCase):
 
         ndkr16 = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
         note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+        details = note.details
+        self.assertEqual(details.sdk_version, 21)
+        self.assertEqual(details.ndk_version[:4], "r16b")
+        self.assertEqual(details.ndk_build_number[:7], "4479499")
 
-        self.assertEqual(note.sdk_version, 21)
-        self.assertEqual(note.ndk_version[:4], "r16b")
-        self.assertEqual(note.ndk_build_number[:7], "4479499")
+        details.sdk_version = 15
+        details.ndk_version = "r15c"
+        details.ndk_build_number = "123456"
 
-        note.sdk_version = 15
-        note.ndk_version = "r15c"
-        note.ndk_build_number = "123456"
-
-        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
 
         self.assertEqual(note.sdk_version, 15)
         self.assertEqual(note.ndk_version[:4], "r15c")
@@ -113,15 +113,13 @@ class TestNotes(TestCase):
 
         ndkr15 = lief.parse(output)
 
-        note = ndkr15.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+        note = ndkr15.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
 
         self.assertEqual(note.sdk_version, 15)
         self.assertEqual(note.ndk_version[:4], "r15c")
         self.assertEqual(note.ndk_build_number[:6], "123456")
 
         self.safe_delete(output)
-
-
 
 
 if __name__ == '__main__':

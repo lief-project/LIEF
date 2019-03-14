@@ -71,16 +71,6 @@ void create<Note>(py::module& m) {
         "Return the description associated with the note"
         )
 
-    .def_property_readonly("abi",
-        static_cast<getter_t<NOTE_ABIS>>(&Note::abi),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_TYPES) ". Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
-        )
-
-    .def_property_readonly("version",
-        static_cast<getter_t<Note::version_t>>(&Note::version),
-        "Return the target version as ``(Major, Minor, Patch)``. Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
-        )
-
     .def("__eq__", &Note::operator==)
     .def("__ne__", &Note::operator!=)
     .def("__hash__",

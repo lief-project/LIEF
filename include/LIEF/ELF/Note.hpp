@@ -38,17 +38,8 @@ class LIEF_API Note : public Object {
   friend class NoteDetails;
 
   public:
-
   //! Container used to handle the description data
   using description_t = std::vector<uint8_t>;
-
-  //! Type of version
-  using version_t = std::array<uint32_t, 3>;
-
-  public:
-
-  //! Default value if the version is unknown
-  static constexpr version_t UNKNOWN_VERSION = {{0, 0, 0}};
 
   public:
   Note();
@@ -74,12 +65,6 @@ class LIEF_API Note : public Object {
   const description_t& description(void) const;
 
   description_t& description(void);
-
-  //! @brief Return the target ABI. Require a NT_GNU_ABI_TAG type
-  NOTE_ABIS abi(void) const;
-
-  //! @brief Return the target version as ``<Major, Minor, Patch>``.  Require a NT_GNU_ABI_TAG type
-  version_t version(void) const;
 
   //! True if the current note is associated with a core dump
   bool is_core(void) const;

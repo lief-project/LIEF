@@ -243,6 +243,16 @@ Android Note
 
 ----------
 
+Note ABI
+********
+
+.. autoclass:: lief.ELF.NoteAbi
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 Builder
 *******

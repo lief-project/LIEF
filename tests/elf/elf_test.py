@@ -138,8 +138,8 @@ class TestELF(TestCase):
         self.assertEqual(n2.type, lief.ELF.NOTE_TYPES.BUILD_ID)
         self.assertEqual(n3.type, lief.ELF.NOTE_TYPES.GOLD_VERSION)
 
-        self.assertEqual(n1.abi, lief.ELF.NOTE_ABIS.LINUX)
-        self.assertEqual(n1.version, [2, 6, 32])
+        self.assertEqual(n1.details.abi, lief.ELF.NOTE_ABIS.LINUX)
+        self.assertEqual(n1.details.version, [2, 6, 32])
 
         self.assertEqual(list(n2.description), [
             0x7e, 0x68, 0x6c, 0x7d,

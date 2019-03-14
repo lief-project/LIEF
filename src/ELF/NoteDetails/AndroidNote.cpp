@@ -25,7 +25,7 @@
 
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/ELF/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 
 namespace LIEF {
 namespace ELF {
