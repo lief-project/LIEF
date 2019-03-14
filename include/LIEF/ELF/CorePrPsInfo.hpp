@@ -44,13 +44,28 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   public:
   static CorePrPsInfo make(Note& note);
 
+  //! Process file name
   std::string file_name(void) const;
+
+  //! Process flag
   uint64_t flags(void) const;
+
+  //! Process user id
   uint32_t uid(void) const;
+
+  //! Process group id
   uint32_t gid(void) const;
+
+  //! Process ID
   int32_t pid(void) const;
+
+  //! Process parent ID
   int32_t ppid(void) const;
+
+  //! Process session group ID
   int32_t pgrp(void) const;
+
+  //! Process session ID
   int32_t sid(void) const;
 
   void file_name(const std::string& file_name);
@@ -75,10 +90,10 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
 
   protected:
   template <typename ELF_T>
-  void parse_(void);
+  LIEF_LOCAL void parse_(void);
 
   template <typename ELF_T>
-  void build_(void);
+  LIEF_LOCAL void build_(void);
 
   virtual void parse(void) override;
   virtual void build(void) override;
