@@ -30,83 +30,104 @@
 namespace LIEF {
 namespace ELF {
 
+AndroidNote AndroidNote::make(Note& note) {
+  AndroidNote android_note = note;
+  android_note.parse();
+  return android_note;
+}
+
+AndroidNote::AndroidNote(Note& note) :
+  NoteDetails::NoteDetails{note},
+  sdk_version_{0},
+  ndk_version_{},
+  ndk_build_number_{}
+{}
+
 uint32_t AndroidNote::sdk_version(void) const {
-  const description_t& description = this->description();
-
-  if (description.size() < sizeof(uint32_t)) {
-    return -1u;
-  }
-  uint32_t version = *reinterpret_cast<const uint32_t*>(description.data());
-
-  return version;
+  return this->sdk_version_;
 }
 
 std::string AndroidNote::ndk_version(void) const {
-  static constexpr size_t offset = sizeof(uint32_t);
-  static constexpr size_t size   = 64 * sizeof(char);
-
-  const description_t& description = this->description();
-
-  if (description.size() < (offset + size)) {
-    return "";
-  }
-  return std::string{reinterpret_cast<const char*>(description.data()) + offset, size};
+  return this->ndk_version_;
 }
 
 std::string AndroidNote::ndk_build_number(void) const {
-  static constexpr size_t offset = sizeof(uint32_t) + 64 * sizeof(char);
-  static constexpr size_t size   = 64 * sizeof(char);
-
-  const description_t& description = this->description();
-
-  if (description.size() < (offset + size)) {
-    return "";
-  }
-  return std::string{reinterpret_cast<const char*>(description.data()) + offset, size};
+  return this->ndk_build_number_;
 }
 
 void AndroidNote::sdk_version(uint32_t version) {
-  description_t& description = this->description();
-
-  if (description.size() < sizeof(uint32_t)) {
-    description.resize(sizeof(uint32_t));
-  }
-
-  std::copy(
-      reinterpret_cast<const uint8_t*>(&version),
-      reinterpret_cast<const uint8_t*>(&version) + sizeof(uint32_t),
-      description.data());
-
+  this->sdk_version_ = version;
+  this->build();
 }
 
 void AndroidNote::ndk_version(const std::string& ndk_version) {
-  static constexpr size_t offset = sizeof(uint32_t);
-  static constexpr size_t size = 64 * sizeof(char);
-  description_t& description = this->description();
-
-  if (description.size() < (offset + size)) {
-    description.resize(offset + size);
-  }
-
-  std::copy(
-      reinterpret_cast<const uint8_t*>(ndk_version.data()),
-      reinterpret_cast<const uint8_t*>(ndk_version.data()) + ndk_version.size(),
-      description.data() + offset);
+  this->ndk_version_ = ndk_version;
+  this->build();
 }
 
 void AndroidNote::ndk_build_number(const std::string& ndk_build_number) {
-  static constexpr size_t offset = sizeof(uint32_t) + 64 * sizeof(char);
-  static constexpr size_t size   = 64 * sizeof(char);
+  this->ndk_build_number_ = ndk_build_number;
+  this->build();
+}
+
+
+void AndroidNote::parse(void) {
+  const description_t& description = this->description();
+
+  // Parse SDK Version
+  if (description.size() < (sdk_version_offset + sdk_version_size)) {
+    return;
+  }
+  this->sdk_version_ = *reinterpret_cast<const uint32_t*>(description.data() + sdk_version_offset);
+
+  // Parse NDK Version
+  if (description.size() < (ndk_version_offset + ndk_version_size)) {
+    return ;
+  }
+  this->ndk_version_ = std::string{reinterpret_cast<const char*>(description.data()) + ndk_version_offset, ndk_version_size};
+
+  // Parse NDK Build Number
+  if (description.size() < (ndk_build_number_offset + ndk_build_number_size)) {
+    return ;
+  }
+  this->ndk_build_number_ = std::string{reinterpret_cast<const char*>(description.data()) + ndk_build_number_offset, ndk_build_number_size};
+}
+
+void AndroidNote::build(void) {
   description_t& description = this->description();
 
-  if (description.size() < (offset + size)) {
-    description.resize(offset + size);
+  // Build SDK Version
+  // =================
+  if (description.size() < (sdk_version_offset + sdk_version_size)) {
+    description.resize(sdk_version_offset + sdk_version_size);
   }
 
   std::copy(
-      reinterpret_cast<const uint8_t*>(ndk_build_number.data()),
-      reinterpret_cast<const uint8_t*>(ndk_build_number.data()) + ndk_build_number.size(),
-      description.data() + offset);
+      reinterpret_cast<const uint8_t*>(&this->sdk_version_),
+      reinterpret_cast<const uint8_t*>(&this->sdk_version_) + sdk_version_size,
+      description.data() + sdk_version_offset);
+
+  // Build NDK Version
+  // =================
+  if (description.size() < (ndk_version_offset + ndk_version_size)) {
+    description.resize(ndk_version_offset + ndk_version_size);
+  }
+
+  std::copy(
+      reinterpret_cast<const uint8_t*>(this->ndk_version_.data()),
+      reinterpret_cast<const uint8_t*>(this->ndk_version_.data()) + this->ndk_version_.size(),
+      description.data() + ndk_version_offset);
+
+  // Build NDK Build Number
+  // ======================
+  if (description.size() < (ndk_build_number_offset + ndk_build_number_size)) {
+    description.resize(ndk_build_number_offset + ndk_build_number_size);
+  }
+
+  std::copy(
+      reinterpret_cast<const uint8_t*>(this->ndk_build_number_.data()),
+      reinterpret_cast<const uint8_t*>(this->ndk_build_number_.data()) + this->ndk_build_number_.size(),
+      description.data() + ndk_build_number_offset);
 }
 
 void AndroidNote::accept(Visitor& visitor) const {
@@ -124,10 +145,7 @@ bool AndroidNote::operator!=(const AndroidNote& rhs) const {
   return not (*this == rhs);
 }
 
-
 void AndroidNote::dump(std::ostream& os) const {
-  Note::dump(os);
-
   os << std::setw(33) << std::setfill(' ') << "SDK Version: " << std::dec << this->sdk_version() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "NDK Version: " << this->ndk_version() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "NDK Builder Number: " << this->ndk_build_number() << std::endl;

@@ -81,7 +81,13 @@ class LIEF_API Note : public Object {
   //! @brief Return the target version as ``<Major, Minor, Patch>``.  Require a NT_GNU_ABI_TAG type
   version_t version(void) const;
 
+  //! True if the current note is associated with a core dump
   bool is_core(void) const;
+
+  //! True if the current note is specific to Android.
+  //!
+  //! If true, ``details()`` returns a reference the LIEF::ELF::AndroidNote object
+  bool is_android(void) const;
 
   const NoteDetails& details(void) const;
   NoteDetails& details(void);

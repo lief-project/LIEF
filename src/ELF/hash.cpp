@@ -211,7 +211,7 @@ void Hash::visit(const NoteDetails& details) {
 }
 
 void Hash::visit(const AndroidNote& note) {
-  this->visit(static_cast<const Note&>(note));
+  this->visit(static_cast<const NoteDetails&>(note));
 }
 
 void Hash::visit(const CorePrPsInfo& pinfo) {

@@ -369,19 +369,19 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     }
     std::unique_ptr<Note> note;
 
-    if (name == AndroidNote::NAME and type == NOTE_TYPES::NT_GNU_ABI_TAG) {
-      note = std::unique_ptr<AndroidNote>{new AndroidNote{name, type, std::move(description), this->binary_}};
-    } else if (this->binary_->header().file_type() == E_TYPE::ET_CORE) {
+    if (this->binary_->header().file_type() == E_TYPE::ET_CORE) {
       note = std::unique_ptr<Note>{new Note{name, static_cast<NOTE_TYPES_CORE>(type), std::move(description), this->binary_}};
     } else {
       note = std::unique_ptr<Note>{new Note{name, type, std::move(description), this->binary_}};
     }
+
     auto&& it_note = std::find_if(
         std::begin(this->binary_->notes_),
         std::end(this->binary_->notes_),
         [&note] (const Note* n) {
           return *n == *note;
         });
+
     if (it_note == std::end(this->binary_->notes_)) {
       this->binary_->notes_.push_back(note.release());
     }

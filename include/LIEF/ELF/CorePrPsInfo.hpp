@@ -38,9 +38,6 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   public:
   using NoteDetails::NoteDetails;
 
-  private:
-  CorePrPsInfo(Note& note);
-
   public:
   static CorePrPsInfo make(Note& note);
 
@@ -97,6 +94,9 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
 
   virtual void parse(void) override;
   virtual void build(void) override;
+
+  private:
+  CorePrPsInfo(Note& note);
 
   private:
   std::string file_name_;

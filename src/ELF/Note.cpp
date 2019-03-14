@@ -29,6 +29,7 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/AndroidNote.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -138,6 +139,11 @@ bool Note::is_core(void) const {
   return this->is_core_;
 }
 
+
+bool Note::is_android(void) const {
+  return this->name() == AndroidNote::NAME;
+}
+
 const NoteDetails& Note::details(void) const {
   return *(this->details_.second);
 }
@@ -148,10 +154,15 @@ NoteDetails& Note::details(void) {
 
   // already in cache
   if (dcache.first == type) {
-    return *(dcache.second);
+    return *(dcache.second.get());
   }
 
   std::unique_ptr<NoteDetails> details(new NoteDetails());
+
+  if (this->is_android()) {
+    details.reset(new AndroidNote{AndroidNote::make(*this)});
+  }
+
   if (this->is_core()) {
     NOTE_TYPES_CORE type_core = static_cast<NOTE_TYPES_CORE>(type);
 
@@ -169,7 +180,7 @@ NoteDetails& Note::details(void) {
   // update cache
   dcache.first = type;
   dcache.second.swap(details);
-  return *details;
+  return *dcache.second.get();
 }
 
 void Note::name(const std::string& name) {
