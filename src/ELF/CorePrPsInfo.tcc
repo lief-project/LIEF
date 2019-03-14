@@ -33,16 +33,18 @@ void CorePrPsInfo::parse_(void) {
   if (description.size() < sizeof(Elf_Prpsinfo)) {
     return;
   }
+
   const Elf_Prpsinfo* info = reinterpret_cast<const Elf_Prpsinfo*>(description.data());
+
   // parse info structure
   this->file_name_ = info->pr_fname;
-  this->flags_ = info->pr_flag;
-  this->uid_ = info->pr_uid;
-  this->gid_ = info->pr_gid;
-  this->pid_ = info->pr_pid;
-  this->ppid_ = info->pr_ppid;
-  this->pgrp_ = info->pr_pgrp;
-  this->sid_ = info->pr_sid;
+  this->flags_     = info->pr_flag;
+  this->uid_       = info->pr_uid;
+  this->gid_       = info->pr_gid;
+  this->pid_       = info->pr_pid;
+  this->ppid_      = info->pr_ppid;
+  this->pgrp_      = info->pr_pgrp;
+  this->sid_       = info->pr_sid;
 }
 
 template <typename ELF_T>
@@ -56,16 +58,23 @@ void CorePrPsInfo::build_(void) {
 
   Elf_Prpsinfo* info = reinterpret_cast<Elf_Prpsinfo*>(description.data());
   // update info structure
-  size_t fname_size = sizeof(info->pr_fname) - 1;
-  std::strncpy(info->pr_fname, this->file_name_.c_str(), fname_size);
-  info->pr_fname[fname_size] = '\0';
+  const size_t fname_size = sizeof(info->pr_fname) - 1;
+
+  std::string fname = this->file_name_;
+  fname.resize(fname_size, 0);
+
+  std::move(
+      std::begin(this->file_name_),
+      std::end(this->file_name_),
+      info->pr_fname);
+
   info->pr_flag = this->flags_;
-  info->pr_uid = this->uid_;
-  info->pr_gid = this->gid_;
-  info->pr_pid = this->pid_;
+  info->pr_uid  = this->uid_;
+  info->pr_gid  = this->gid_;
+  info->pr_pid  = this->pid_;
   info->pr_ppid = this->ppid_;
   info->pr_pgrp = this->pgrp_;
-  info->pr_sid = this->sid_;
+  info->pr_sid  = this->sid_;
 }
 
 } // namespace ELF
