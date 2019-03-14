@@ -529,6 +529,17 @@ Note ABIs
 
 ----------
 
+
+Note Core types
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.NOTE_TYPES_CORE
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 ARM Processor flags
 ~~~~~~~~~~~~~~~~~~~
 

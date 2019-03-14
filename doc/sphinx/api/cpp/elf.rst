@@ -358,6 +358,14 @@ Note types
 
 ----------
 
+Note Core types
+~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::NOTE_TYPES_CORE
+   :project: lief
+
+----------
+
 
 Note ABIs
 ~~~~~~~~~
