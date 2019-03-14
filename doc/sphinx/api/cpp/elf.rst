@@ -156,6 +156,23 @@ Note
 
 ----------
 
+
+Note Details
+************
+
+.. doxygenclass:: LIEF::ELF::NoteDetails
+   :project: lief
+
+----------
+
+Core PrPsInfo
+*************
+
+.. doxygenclass:: LIEF::ELF::CorePrPsInfo
+   :project: lief
+
+----------
+
 Android Note
 ************
 

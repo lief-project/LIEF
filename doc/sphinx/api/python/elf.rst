@@ -213,6 +213,26 @@ Note
 
 ----------
 
+Note Details
+************
+
+.. autoclass:: lief.ELF.NoteDetails
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Core PrPsInfo
+*************
+
+.. autoclass:: lief.ELF.CorePrPsInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Android Note
 *************
 
