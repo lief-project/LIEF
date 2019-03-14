@@ -36,13 +36,8 @@ constexpr Note::version_t Note::UNKNOWN_VERSION;
 
 Note::~Note(void) = default;
 
-Note& Note::operator=(Note& other) {
-  other.swap(*this);
-  return *this;
-}
-
-Note& Note::operator=(const Note& other) {
-  this->copy(other);
+Note& Note::operator=(Note other) {
+  this->swap(other);
   return *this;
 }
 
@@ -54,16 +49,11 @@ Note::Note(const Note& other):
 {}
 
 void Note::swap(Note& other) {
-  std::swap(this->binary_, other.binary_);
-  std::swap(this->name_, other.name_);
-  std::swap(this->type_, other.type_);
+  std::swap(this->binary_,      other.binary_);
+  std::swap(this->name_,        other.name_);
+  std::swap(this->type_,        other.type_);
   std::swap(this->description_, other.description_);
-  std::swap(this->details_, other.details_);
-}
-
-void Note::copy(const Note& other) {
-  Note tmp(other);
-  this->swap(tmp);
+  std::swap(this->details_,     other.details_);
 }
 
 Note::Note() :
@@ -160,17 +150,22 @@ NoteDetails& Note::details(void) {
   if (dcache.first == type) {
     return *(dcache.second);
   }
+
   std::unique_ptr<NoteDetails> details(new NoteDetails());
   if (this->is_core()) {
     NOTE_TYPES_CORE type_core = static_cast<NOTE_TYPES_CORE>(type);
+
     switch(type_core) {
       case NOTE_TYPES_CORE::NT_PRPSINFO:
-        details.reset(new CorePrPsInfo{CorePrPsInfo::make(*this)});
-        break;
+        {
+          details.reset(new CorePrPsInfo{CorePrPsInfo::make(*this)});
+          break;
+        }
       default:
         break;
     }
   }
+
   // update cache
   dcache.first = type;
   dcache.second.swap(details);

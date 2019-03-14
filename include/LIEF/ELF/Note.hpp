@@ -55,9 +55,10 @@ class LIEF_API Note : public Object {
   Note(const std::string& name, uint32_t type, const description_t& description, Binary* binary=nullptr);
   Note(const std::string& name, NOTE_TYPES type, const description_t& description, Binary* binary=nullptr);
   Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& description, Binary* binary=nullptr);
-  Note& operator=(const Note& copy);
-  Note& operator=(Note& copy);
+
+  Note& operator=(Note copy);
   Note(const Note& copy);
+
   virtual ~Note(void);
 
   //! @brief Return the *name* of the note
@@ -99,14 +100,13 @@ class LIEF_API Note : public Object {
   bool operator!=(const Note& rhs) const;
 
   void swap(Note& other);
-  void copy(const Note& other);
 
   virtual void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Note& note);
 
   protected:
-  Binary*       binary_;
+  Binary*       binary_{nullptr};
   std::string   name_;
   NOTE_TYPES    type_;
   description_t description_;
