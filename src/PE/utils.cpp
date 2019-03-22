@@ -171,9 +171,13 @@ std::string get_imphash(const Binary& binary) {
   std::string import_list;
   for (const Import& imp : imports) {
     Import resolved = resolve_ordinals(imp);
-    size_t point_index = resolved.name().find_last_of(".");
-    std::string name_without_ext = resolved.name().substr(0, point_index);
-    std::string ext = resolved.name().substr(point_index, resolved.name().size());
+    size_t ext_idx = resolved.name().find_last_of(".");
+    std::string name_without_ext = resolved.name();
+
+    if (ext_idx != std::string::npos) {
+      name_without_ext = name_without_ext.substr(0, ext_idx);
+    }
+
     std::string entries_string;
     for (const ImportEntry& e : resolved.entries()) {
       if (e.is_ordinal()) {
