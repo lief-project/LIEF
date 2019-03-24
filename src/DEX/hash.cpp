@@ -54,7 +54,7 @@ void Hash::visit(const Header& header) {
   this->process(header.data());
 }
 
-void Hash::visit(const CodeInfo& code_info) {
+void Hash::visit(const CodeInfo& /*code_info*/) {
 }
 
 void Hash::visit(const Class& cls) {

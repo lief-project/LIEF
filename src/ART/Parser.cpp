@@ -73,7 +73,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-void Parser::init(const std::string& name, art_version_t version) {
+void Parser::init(const std::string& /*name*/, art_version_t version) {
 
   if (version <= ART_17::art_version) {
     return this->parse_file<ART17>();

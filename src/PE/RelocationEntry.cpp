@@ -110,7 +110,7 @@ uint64_t RelocationEntry::address(void) const {
   return this->position();
 }
 
-void RelocationEntry::address(uint64_t address) {
+void RelocationEntry::address(uint64_t /*address*/) {
   LOG(WARNING) << "Setting address of a PE relocation is not implemented!";
 }
 
@@ -144,7 +144,7 @@ size_t RelocationEntry::size(void) const {
   }
   return 0;
 }
-void RelocationEntry::size(size_t size) {
+void RelocationEntry::size(size_t /*size*/) {
   LOG(WARNING) << "Setting size of a PE relocation is not implemented!";
 
 }

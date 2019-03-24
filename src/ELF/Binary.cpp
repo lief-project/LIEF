@@ -2289,7 +2289,7 @@ LIEF::Binary::functions_t Binary::armexid_functions(void) const {
     const uint32_t* entries = reinterpret_cast<const uint32_t*>(content.data());
     for (size_t i = 0; i < 2 * nb_functions; i += 2) {
       uint32_t first_word  = entries[i];
-      uint32_t second_word = entries[i + 1];
+      /*uint32_t second_word = entries[i + 1]; */
 
       if ((first_word & 0x80000000) == 0) {
         uint32_t prs_data = expand_prel31(first_word, exidx.virtual_address() + i * sizeof(uint32_t));

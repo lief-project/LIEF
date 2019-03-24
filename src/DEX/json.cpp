@@ -76,7 +76,7 @@ void JsonVisitor::visit(const Header& header) {
   this->node_["data"]        = header.data();
 }
 
-void JsonVisitor::visit(const CodeInfo& code_info) {
+void JsonVisitor::visit(const CodeInfo& /*code_info*/) {
 }
 
 void JsonVisitor::visit(const Class& cls) {

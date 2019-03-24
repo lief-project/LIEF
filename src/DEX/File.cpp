@@ -330,11 +330,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
   return raw;
 }
 
-void File::deoptimize_nop(uint8_t* inst_ptr, uint32_t value) {
+void File::deoptimize_nop(uint8_t* inst_ptr, uint32_t /*value*/) {
   *inst_ptr = OPCODES::OP_CHECK_CAST;
 }
 
-void File::deoptimize_return(uint8_t* inst_ptr, uint32_t value) {
+void File::deoptimize_return(uint8_t* inst_ptr, uint32_t /*value*/) {
   *inst_ptr = OPCODES::OP_RETURN_VOID;
 }
 

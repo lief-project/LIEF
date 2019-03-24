@@ -78,8 +78,6 @@ void PogoEntry::name(const std::string& name){
 
 
 std::ostream& operator<<(std::ostream& os, const PogoEntry& entry) {
-  static constexpr size_t WIDTH = 22;
-
   os << std::hex;
   os << std::left;
   os << std::setfill(' ');

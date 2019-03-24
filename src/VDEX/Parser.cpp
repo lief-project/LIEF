@@ -73,7 +73,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-void Parser::init(const std::string& name, vdex_version_t version) {
+void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   VLOG(VDEBUG) << "VDEX version: " << std::dec << version;
 
   if (version <= VDEX_6::vdex_version) {
