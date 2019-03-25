@@ -47,11 +47,9 @@ void create<Section>(py::module& m) {
         "Constructor from name and type",
         "name"_a, "type"_a = ELF_SECTION_TYPES::SHT_PROGBITS)
 
-    .def("__init__",
-        [] (Section& section, std::vector<uint8_t>& content, ELF_CLASS type)
-        {
-          new (&section) Section(content.data(), type);
-        })
+    .def(py::init([] (Section& section, std::vector<uint8_t>& content, ELF_CLASS type) {
+          return new Section(content.data(), type);
+        }))
 
     .def_property_readonly("name_idx",
         static_cast<getter_t<uint32_t>>(&Section::name_idx),
