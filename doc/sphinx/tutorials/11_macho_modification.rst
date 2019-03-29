@@ -273,7 +273,7 @@ Code Injection with shared libraries
 
 As explained in the talk about format modification [1]_, one way to inject code within the memory space of a program is to force the loader to load a library (that was not previously linked) that contains a constructor function.
 
-For a Mach-O binary, is can be achieved by adding one of these load commands:
+For a Mach-O binary, it can be achieved by adding one of these load commands:
 
   * :attr:`~lief.MachO.LOAD_COMMAND_TYPES.ID_DYLIB`
   * :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB`
