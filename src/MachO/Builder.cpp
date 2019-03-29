@@ -153,6 +153,11 @@ void Builder::build(void) {
       continue;
     }
 
+    if (cmd->is<ThreadCommand>()) {
+      this->build<T>(cmd->as<ThreadCommand>());
+      continue;
+    }
+
     if (cmd->is<BuildVersion>()) {
       this->build<T>(cmd->as<BuildVersion>());
       continue;

@@ -536,6 +536,16 @@ void Binary::shift_command(size_t width, size_t from_offset) {
     if (symcmd.strings_offset() > from_offset) {
       symcmd.strings_offset(symcmd.strings_offset() + width);
     }
+
+    for (Symbol* s : this->symbols_) {
+      static constexpr size_t N_TYPE = 0x0e;
+      if (static_cast<N_LIST_TYPES>(s->type() & N_TYPE) == N_LIST_TYPES::N_SECT) {
+        uint64_t value = s->value();
+        if (value > from_offset) {
+          s->value(value + width);
+        }
+      }
+    }
   }
 
   // Data In Code
@@ -868,15 +878,11 @@ bool Binary::remove(const LoadCommand& command) {
 
 
 bool Binary::remove(LOAD_COMMAND_TYPES type) {
-  if (not this->has(type)) {
-    return false;
+  bool removed = false;
+  while (this->has(type)) {
+    removed = this->remove(this->get(type));
   }
-
-  bool done = false;
-  while (not done) {
-    done = not this->remove(this->get(type));
-  }
-  return true;
+  return removed;
 }
 
 bool Binary::remove_command(size_t index) {

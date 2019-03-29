@@ -938,6 +938,56 @@ void Builder::build(DyldEnvironment* de) {
   de->originalData_.insert(std::end(de->originalData_), padding, 0);
 }
 
+template<class T>
+void Builder::build(ThreadCommand* tc) {
+  thread_command raw_cmd;
+
+  const std::vector<uint8_t>& state = tc->state();
+
+  const uint32_t raw_size = sizeof(thread_command) + state.size();
+  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t padding = size_needed - raw_size;
+
+  if (tc->originalData_.size() != size_needed or
+      tc->size() != size_needed) {
+    LOG(WARNING) << "Not enough spaces to rebuild thread command: Skip!";
+    LOG(WARNING) << std::hex << tc->originalData_.size() << " vs " << size_needed;
+  }
+
+  const uint32_t state_size_needed = tc->count() * sizeof(uint32_t);
+  if (state.size() < state_size_needed) {
+    LOG(WARNING) << "Not enough data in state to rebuild thread command: Skip!";
+    LOG(WARNING) << std::hex << state.size() << " vs " << state_size_needed;
+  }
+
+  std::fill(
+    reinterpret_cast<uint8_t*>(&raw_cmd),
+    reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(dylinker_command),
+    0);
+
+  raw_cmd.cmd      = static_cast<uint32_t>(tc->command());
+  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+  raw_cmd.flavor   = static_cast<uint32_t>(tc->flavor());
+  raw_cmd.count    = static_cast<uint32_t>(tc->count());
+
+  tc->size_ = size_needed;
+  tc->originalData_.clear();
+
+  // Write Header
+  std::move(
+    reinterpret_cast<uint8_t*>(&raw_cmd),
+    reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+    std::back_inserter(tc->originalData_));
+
+  // Write state
+  std::move(
+    std::begin(state),
+    std::end(state),
+    std::back_inserter(tc->originalData_));
+  tc->originalData_.push_back(0);
+  tc->originalData_.insert(std::end(tc->originalData_), padding, 0);
+}
+
 
 template<class T>
 void Builder::build(BuildVersion* bv) {
