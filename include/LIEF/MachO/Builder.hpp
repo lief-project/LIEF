@@ -103,6 +103,9 @@ class LIEF_API Builder {
   template<class T>
   void build(DyldEnvironment* de);
 
+  template<class T>
+  void build(ThreadCommand* tc);
+
   template <typename T>
   void build_segments(void);
 

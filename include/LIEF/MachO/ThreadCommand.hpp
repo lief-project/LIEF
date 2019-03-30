@@ -34,7 +34,8 @@ class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
   public:
     ThreadCommand(void);
-    ThreadCommand(const thread_command *cmd);
+    ThreadCommand(const thread_command *cmd, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
+    ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
 
     ThreadCommand& operator=(const ThreadCommand& copy);
     ThreadCommand(const ThreadCommand& copy);
@@ -43,8 +44,9 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
     virtual ~ThreadCommand(void);
 
-    uint32_t flavor(void) const;
-    uint32_t count(void) const;
+    uint32_t  flavor(void) const;
+    uint32_t  count(void) const;
+    CPU_TYPES architecture(void) const;
 
     const std::vector<uint8_t>& state(void) const;
     std::vector<uint8_t>& state(void);
@@ -54,6 +56,7 @@ class LIEF_API ThreadCommand : public LoadCommand {
     void state(const std::vector<uint8_t>& state);
     void flavor(uint32_t flavor);
     void count(uint32_t count);
+    void architecture(CPU_TYPES arch);
 
     bool operator==(const ThreadCommand& rhs) const;
     bool operator!=(const ThreadCommand& rhs) const;

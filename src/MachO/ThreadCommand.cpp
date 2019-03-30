@@ -29,13 +29,23 @@ ThreadCommand& ThreadCommand::operator=(const ThreadCommand&) = default;
 ThreadCommand::ThreadCommand(const ThreadCommand&) = default;
 ThreadCommand::~ThreadCommand(void) = default;
 
-ThreadCommand::ThreadCommand(const thread_command *cmd) :
+ThreadCommand::ThreadCommand(const thread_command *cmd, CPU_TYPES arch) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   flavor_{cmd->flavor},
   count_{cmd->count},
-  architecture_{CPU_TYPES::CPU_TYPE_ANY},
+  architecture_{arch},
   state_{}
 {}
+
+ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(LIEF::MachO::LOAD_COMMAND_TYPES::LC_UNIXTHREAD),
+                           static_cast<uint32_t>(sizeof(LIEF::MachO::thread_command) + count * sizeof(uint32_t))},
+  flavor_{flavor},
+  count_{count},
+  architecture_{arch},
+  state_(this->size() - sizeof(LIEF::MachO::thread_command), 0)
+{
+}
 
 ThreadCommand* ThreadCommand::clone(void) const {
   return new ThreadCommand(*this);
@@ -48,6 +58,10 @@ uint32_t ThreadCommand::flavor(void) const {
 
 uint32_t ThreadCommand::count(void) const {
   return this->count_;
+}
+
+CPU_TYPES ThreadCommand::architecture(void) const {
+  return this->architecture_;
 }
 
 const std::vector<uint8_t>& ThreadCommand::state(void) const {
@@ -102,6 +116,10 @@ void ThreadCommand::flavor(uint32_t flavor) {
 
 void ThreadCommand::count(uint32_t count) {
   this->count_ = count;
+}
+
+void ThreadCommand::architecture(CPU_TYPES arch) {
+  this->architecture_ = arch;
 }
 
 void ThreadCommand::accept(Visitor& visitor) const {
