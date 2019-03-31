@@ -50,11 +50,14 @@
 #include "platforms/android/pyAndroid.hpp"
 
 
-py::module LIEF_module("_pylief", "Python API for LIEF");
+py::module LIEF_module("lief", "Python API for LIEF");
 
-PYBIND11_MODULE(_pylief, LIEF_module) {
+PYBIND11_MODULE(lief, LIEF_module) {
 
-  LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
+  LIEF_module.attr("__version__")   = py::str(LIEF_VERSION);
+  LIEF_module.attr("__tag__")       = py::str(LIEF_TAG);
+  LIEF_module.attr("__is_tagged__") = py::bool_(LIEF_TAGGED);
+
   init_LIEF_Object_class(LIEF_module);
 
   init_LIEF_iterators(LIEF_module);

@@ -4,29 +4,46 @@ Installation and Integration
 SDK
 ---
 
-For each platform there is a SDK which contains
+For each platform there is an SDK that contains:
 
   * Static library
-  * Shared library
   * Headers
+  * Examples
 
-To install the static or shared library one have to copy them in the right folder. For instance, on Linux it would be in ``/usr/lib`` and ``/usr/include``.
+Nightly build can be downloaded here: https://lief-project.github.io/packages/sdk while releases are available here: https://github.com/lief-project/LIEF/releases.
 
 
 Python
 ------
 
+Since 0.10.0
+************
 
-From 0.8.0
-**********
-
-To install the **dev** package (master release):
+To install nightly build (master):
 
 .. code-block:: console
 
-  $ pip install pylief-VERSION.dev.zip
+  $ pip install [--user] --index-url  https://lief-project.github.io/packages lief
 
-Dev packages can be found here: `lief-master-latest <https://github.com/lief-project/packages/tree/lief-master-latest>`_
+Python packages can be found here: https://lief-project.github.io/packages/lief
+
+
+To install **release** package
+
+.. code-block:: console
+
+  $ pip install lief
+
+Release packages can be found here: `Releases <https://github.com/lief-project/LIEF/releases>`_
+
+Using ``setup.py``, one can build and install lief as follows:
+
+.. code-block:: console
+
+   $ python ./setup.py [--user] install
+
+From 0.8.0 to 0.9.0
+*******************
 
 
 To install **release** package
@@ -37,7 +54,6 @@ To install **release** package
   $ pip install pylief-VERSION.zip
 
 Release packages can be found here: `Releases <https://github.com/lief-project/LIEF/releases>`_
-
 
 
 Before 0.8.0

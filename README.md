@@ -62,27 +62,27 @@ Main features:
 
 ## Downloads / Install
 
-First:
+First make sur to have an updated version of setuptools:
 
-```bash
+```console
 pip install setuptools --upgrade
 ```
 
-To install the latest **version**:
+To install the latest **version** (release):
 
-```python
+```console
 pip install lief
 ```
 
-To install the latest **commit**:
+To install nightlty build:
 
-```python
-pip install https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.9.0.dev.zip
+```console
+pip install [--user] --index-url  https://lief-project.github.io/packages lief
 ```
 ### Packages
 
 <table>
-<tr><td colspan="4"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></td></tr>
+<tr><td colspan="4"><a href="https://lief-project.github.io/packages/sdk"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></a></td></tr>
 <tr>
     <th>Linux</th>
     <th>Windows - x86</th>
@@ -91,14 +91,14 @@ pip install https://github.com/lief-project/packages/raw/lief-master-latest/pyli
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.9.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.9.0-win32.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.9.0-win64.zip">SDK</a></td>
-  <td><a href="https://github.com/lief-project/packages/raw/lief-master-latest/LIEF-0.9.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-win32.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-win64.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-Darwin.tar.gz">SDK</a></td>
 </tr>
 
 <tr>
-  <td colspan="4"><p align="center"><a href="https://github.com/lief-project/packages/raw/lief-master-latest/pylief-0.9.0.dev.zip">Python</a></p></td>
+  <td colspan="4"><p align="center"><a href="https://lief-project.github.io/packages/lief">Python</a></p></td>
 </tr>
 </table>
 

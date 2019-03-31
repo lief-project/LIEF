@@ -44,14 +44,14 @@ C++
 
   #include <LIEF/LIEF.hpp>
   int main(int argc, const char** argv) {
-    LIEF::ELF::Binary*   elf   = LIEF::ELF::Parser::parse("/usr/bin/ls");
-    LIEF::PE::Binary*    pe    = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
-    LIEF::MachO::Binary* macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
+    std::unique_ptr<LIEF::ELF::Binary>   elf   = LIEF::ELF::Parser::parse("/usr/bin/ls");
+    std::unique_ptr<LIEF::PE::Binary>    pe    = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
+    std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
 
-    LIEF::OAT::Binary*   oat   = LIEF::OAT::Parser::parse("android.odex");
-    LIEF::DEX::File*     dex   = LIEF::DEX::Parser::parse("classes.dex");
-    LIEF::OAT::File*     vdex  = LIEF::VDEX::Parser::parse("classes.vdex");
-    LIEF::OAT::File*     art   = LIEF::ART::Parser::parse("boot.art");
+    std::unique_ptr<LIEF::OAT::Binary>   oat   = LIEF::OAT::Parser::parse("android.odex");
+    std::unique_ptr<LIEF::DEX::File>     dex   = LIEF::DEX::Parser::parse("classes.dex");
+    std::unique_ptr<LIEF::OAT::File>     vdex  = LIEF::VDEX::Parser::parse("classes.vdex");
+    std::unique_ptr<LIEF::OAT::File>     art   = LIEF::ART::Parser::parse("boot.art");
 
     std::cout << *elf   << std::endl;
     std::cout << *pe    << std::endl;
@@ -61,14 +61,6 @@ C++
     std::cout << *dex << std::endl;
     std::cout << *vdex << std::endl;
     std::cout << *art << std::endl;
-
-    delete elf;
-    delete pe;
-    delete macho;
-    delete oat;
-    delete dex;
-    delete vdex;
-    delete art;
   }
 
 

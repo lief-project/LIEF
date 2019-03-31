@@ -25,11 +25,10 @@ Libraries only (SDK)
   $ cd build
   $ cmake -DLIEF_PYTHON_API=off -DCMAKE_BUILD_TYPE=Release ..
   $ cmake --build . --target LIB_LIEF_STATIC --config Release
-  $ cmake --build . --target LIB_LIEF_SHARED --config Release # for the shared one
 
 .. warning::
 
-  On Windows with can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
+  On Windows on can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
 
   .. code-block:: console
 
@@ -46,7 +45,6 @@ Library and Python bindings
   $ cd build
   $ cmake -DLIEF_PYTHON_API=on -DPYTHON_VERSION=3.6 -DCMAKE_BUILD_TYPE=Release ..
   $ cmake --build . --target LIB_LIEF_STATIC --config Release
-  $ cmake --build . --target LIB_LIEF_SHARED --config Release # for the shared one
   $ cmake --build . --target pyLIEF --config Release
 
 .. warning::
@@ -69,6 +67,11 @@ Library and Python bindings
 If you want to enable tests, add ``-DLIEF_TESTS=on`` at CMake configuration step.
 
 The Doxygen documentation will be located at ``build/doc/doxygen/html`` and the sphinx documentation at ``build/doc/sphinx-doc``
+
+CMake Options
+-------------
+
+.. literalinclude:: ../../../cmake/LIEFOptions.cmake
 
 Docker
 ------

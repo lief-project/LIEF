@@ -1,5 +1,5 @@
 # - Find python libraries
-# This module finds the libraries corresponding to the Python interpeter
+# This module finds the libraries corresponding to the Python interpreter
 # FindPythonInterp provides.
 # This code sets the following variables:
 #
@@ -100,11 +100,14 @@ if(NOT _PYTHON_SUCCESS MATCHES 0)
 endif()
 
 # Convert the process output into a list
+if(WIN32)
+    string(REGEX REPLACE "\\\\" "/" _PYTHON_VALUES ${_PYTHON_VALUES})
+endif()
 string(REGEX REPLACE ";" "\\\\;" _PYTHON_VALUES ${_PYTHON_VALUES})
 string(REGEX REPLACE "\n" ";" _PYTHON_VALUES ${_PYTHON_VALUES})
 list(GET _PYTHON_VALUES 0 _PYTHON_VERSION_LIST)
 list(GET _PYTHON_VALUES 1 PYTHON_PREFIX)
-list(GET _PYTHON_VALUES 2 _PYTHON_INCLUDE_DIR)
+list(GET _PYTHON_VALUES 2 PYTHON_INCLUDE_DIR)
 list(GET _PYTHON_VALUES 3 PYTHON_SITE_PACKAGES)
 list(GET _PYTHON_VALUES 4 PYTHON_MODULE_EXTENSION)
 list(GET _PYTHON_VALUES 5 PYTHON_IS_DEBUG)
@@ -135,18 +138,18 @@ list(GET _PYTHON_VERSION_LIST 2 PYTHON_VERSION_PATCH)
 
 # Make sure all directory separators are '/'
 string(REGEX REPLACE "\\\\" "/" PYTHON_PREFIX ${PYTHON_PREFIX})
-string(REGEX REPLACE "\\\\" "/" _PYTHON_INCLUDE_DIR ${_PYTHON_INCLUDE_DIR})
+string(REGEX REPLACE "\\\\" "/" PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
 string(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES})
 
 if(CMAKE_HOST_WIN32)
-    set(_PYTHON_LIBRARY
+    set(PYTHON_LIBRARY
         "${PYTHON_PREFIX}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
 
     # when run in a venv, PYTHON_PREFIX points to it. But the libraries remain in the
     # original python installation. They may be found relative to PYTHON_INCLUDE_DIR.
-    if(NOT EXISTS "${_PYTHON_LIBRARY}")
-        get_filename_component(_PYTHON_ROOT ${_PYTHON_INCLUDE_DIR} DIRECTORY)
-        set(_PYTHON_LIBRARY
+    if(NOT EXISTS "${PYTHON_LIBRARY}")
+        get_filename_component(_PYTHON_ROOT ${PYTHON_INCLUDE_DIR} DIRECTORY)
+        set(PYTHON_LIBRARY
             "${_PYTHON_ROOT}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
     endif()
 
@@ -164,14 +167,14 @@ else()
     #message(STATUS "Searching for Python libs in ${_PYTHON_LIBS_SEARCH}")
     # Probably this needs to be more involved. It would be nice if the config
     # information the python interpreter itself gave us were more complete.
-    find_library(_PYTHON_LIBRARY
+    find_library(PYTHON_LIBRARY
         NAMES "python${PYTHON_LIBRARY_SUFFIX}"
         PATHS ${_PYTHON_LIBS_SEARCH}
         NO_DEFAULT_PATH)
 
     # If all else fails, just set the name/version and let the linker figure out the path.
-    if(NOT _PYTHON_LIBRARY)
-        set(_PYTHON_LIBRARY python${PYTHON_LIBRARY_SUFFIX})
+    if(NOT PYTHON_LIBRARY)
+        set(PYTHON_LIBRARY python${PYTHON_LIBRARY_SUFFIX})
     endif()
 endif()
 
@@ -184,14 +187,12 @@ MARK_AS_ADVANCED(
 # cache entries because they are meant to specify the location of a single
 # library. We now set the variables listed by the documentation for this
 # module.
-SET(PYTHON_INCLUDE_DIRS    "${_PYTHON_INCLUDE_DIR}"   CACHE PATH "")
-SET(PYTHON_INCLUDE_DIR     "${_PYTHON_INCLUDE_DIR}"   CACHE PATH "")
-SET(PYTHON_LIBRARIES       "${_PYTHON_LIBRARY}"       CACHE PATH "")
-SET(PYTHON_LIBRARY         "${_PYTHON_LIBRARY}"       CACHE PATH "")
-SET(PYTHON_DEBUG_LIBRARIES "${_PYTHON_DEBUG_LIBRARY}" CACHE PATH "")
+SET(PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIR}")
+SET(PYTHON_LIBRARIES "${PYTHON_LIBRARY}")
+SET(PYTHON_DEBUG_LIBRARIES "${PYTHON_DEBUG_LIBRARY}")
 
 find_package_message(PYTHON
-    "Found PythonLibs: ${_PYTHON_LIBRARY}"
+    "Found PythonLibs: ${PYTHON_LIBRARY}"
     "${PYTHON_EXECUTABLE}${PYTHON_VERSION}")
 
 set(PYTHONLIBS_FOUND TRUE)
