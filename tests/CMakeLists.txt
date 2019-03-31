@@ -171,7 +171,7 @@ if(UNIX)
 	add_test(${name}
       "bash"
       "-c"
-      "PYTHONPATH=\"${PROJECT_BINARY_DIR}/api/python\" ${command} ${ARGN}")
+      "PYTHONPATH=\"${PROJECT_BINARY_DIR}/api/python:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\" ${command} ${ARGN}")
 endif()
 
 if(WIN32)

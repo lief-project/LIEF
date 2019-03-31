@@ -62,6 +62,7 @@ case $branch in
     devel*) ;;
     master*) ;;
     deploy*) ;;
+    "enhancement/setup") ;;
     *) exit 0;;
 esac
 
@@ -73,7 +74,7 @@ rev=$(git rev-parse --verify HEAD)
 timestamp=$(git log -n1 --format='%at' $rev)
 date=$(TZ=UTC0 date -d "@$timestamp" '+%Y%m%d-%H%M%S')
 #branch="$branch-$date-${rev:0:6}"
-branch="lief-$branch-latest"
+branch="gh-pages"
 if [[ -n $APPVEYOR_JOB_ID ]]; then
     branch="$branch"
     git_user="AppVeyor CI"
@@ -117,18 +118,28 @@ if [[ $new_branch == 1 ]]; then
     git reset --hard || true
 fi
 
-git reset --soft `git rev-list --all | tail -1`
+#git reset --soft `git rev-list --all | tail -1`
+git reset --soft ebacb6adf12a5866db66346ce591f634333bde24
 git ls-files -v
 
+mkdir -p lief && cd lief
+/bin/cp -rf ${LIEF_SRCDIR}/dist/*.zip . || true
+/bin/cp -rf ${LIEF_SRCDIR}/dist/*.egg . || true
+/bin/cp -rf ${LIEF_SRCDIR}/dist/*.whl . || true
 
-/bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.zip .
-/bin/cp -rf $LIEF_BUILDDIR/api/python/dist/*.egg .
+${PYTHON_BINARY} ${LIEF_SRCDIR}/.github/make_index.py --output=./index.html --base "packages/lief" .
+
+git add .
+
+cd .. && mkdir -p sdk && cd sdk
 
 if [[ -n $APPVEYOR_JOB_ID ]]; then
-    /bin/cp -rf $LIEF_BUILDDIR/*.zip .
+    /bin/cp -rf ${LIEF_SRCDIR}/build/*.zip . || true
 else
-    /bin/cp -rf $LIEF_BUILDDIR/*.tar.gz .
+    /bin/cp -rf ${LIEF_SRCDIR}/build/*.tar.gz . || true
 fi
+
+${PYTHON_BINARY} ${LIEF_SRCDIR}/.github/make_index.py --output=./index.html --base "packages/sdk" .
 
 git add .
 
@@ -143,6 +154,7 @@ git commit --date="$now" -m "Automatic build - ${rev:0:7} - Python ${PYTHON_VERS
 git ls-files -v
 git log --pretty=fuller
 
+cd ..
 umask 077
 [[ -d ~/.ssh ]] || mkdir ~/.ssh
 fix_home_ssh_perms

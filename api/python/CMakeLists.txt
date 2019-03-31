@@ -25,8 +25,8 @@ message(STATUS "Python lib:     ${PYTHON_LIBRARY}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
 message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
 
-set(PYBIND11_VERSION 2.2.1)
-set(PYBIND11_SHA256 SHA256=53c373d7d0b0711fea96beba666a9985269dc9e43e6088ea73faaa89b07b972e)
+set(PYBIND11_VERSION 2.2.4)
+set(PYBIND11_SHA256 SHA256=c62073cd8d4f9209ad64092279e757f5fd83327a5b17a72c04fd0fea27d0d593)
 set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
 ExternalProject_Add(lief_pybind11
   URL               ${PYBIND11_URL}
@@ -139,7 +139,7 @@ endif()
 ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
 ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
 
-set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "_pylief")
+set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
 add_dependencies(pyLIEF lief_pybind11)
 
 if(APPLE)
@@ -186,19 +186,19 @@ if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX)
   )
 endif()
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README"         "${CMAKE_CURRENT_BINARY_DIR}/README")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in"    "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg"      "${CMAKE_CURRENT_BINARY_DIR}/setup.cfg")
+#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
+#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README"         "${CMAKE_CURRENT_BINARY_DIR}/README")
+#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in"    "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
+#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg"      "${CMAKE_CURRENT_BINARY_DIR}/setup.cfg")
 
 MESSAGE(STATUS "OS: ${CMAKE_HOST_SYSTEM}")
 
-find_program(ENV_BINARY "env")
-
-if (UNIX AND ENV_BINARY AND LIEF_INSTALL_PYTHON)
-    install(CODE "execute_process(COMMAND ${ENV_BINARY} ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
-      COMPONENT python)
-endif()
+#find_program(ENV_BINARY "env")
+#
+#if (UNIX AND ENV_BINARY AND LIEF_INSTALL_PYTHON)
+#    install(CODE "execute_process(COMMAND ${ENV_BINARY} ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
+#      COMPONENT python)
+#endif()
 
 

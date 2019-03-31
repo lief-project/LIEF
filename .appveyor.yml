@@ -91,51 +91,24 @@ install:
 
   # Upgrade pip
   - python.exe -m pip install --disable-pip-version-check --user --upgrade pip
+  - python.exe -m pip install --user wheel mako
   - python.exe -m pip install --upgrade setuptools
 
 
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - >
-      cmake -A "%CMAKE_ARCH%"
-      -DLIEF_TESTS=on
-      -DLIEF_PYTHON_API=on
-      -DLIEF_COMPILER_JOBS=4
-      -DCMAKE_BUILD_TYPE=Release
-      -DLIEF_USE_CRT_RELEASE=MT
-      -DPYTHON_VERSION=%PYTHON_VERSION%
-      -DPYTHON_INCLUDE_DIR=%PYTHON_INCLUDE%
-      -DPYTHON_EXECUTABLE=%PYTHON_BINARY%
-      -DPYTHON_LIBRARY=%PYTHON_LIBRARY% .
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - cmake --build . --config Release --target lief_samples -- /v:m /logger:%MSBuildLogger%
-  - cmake .
-  - cmake --build . --config Release --target ALL_BUILD -- /v:m /logger:%MSBuildLogger%
-
-test_script:
-  - cmake --build . --config Release --target lief_samples -- /v:m /logger:%MSBuildLogger%
-  - cmake .
-  - cmake --build . --config Release --target check-lief -- /v:m /logger:%MSBuildLogger%
+  - python.exe .\setup.py --sdk --lief-test bdist_wheel && exit 0 # Ignore warnings...
 
 after_build:
-  - cmake --build . --config Release --target package -- /v:m /logger:%MSBuildLogger%
-  - cd api\python
-  - python.exe .\setup.py bdist_egg && exit 0 # Ignore warnings...
-  - ps: if ($env:APPVEYOR_REPO_TAG -eq "true") { python.exe .\setup.py sdist --formats=zip } # Ignore warnings...
-  - ps: if ($env:APPVEYOR_REPO_TAG -eq "false") { python.exe .\setup.py sdist --dev --formats=zip } # Ignore warnings...
-  - cd ..\..
   - bash ./.github/deploy.sh
 
 artifacts:
-  - path: '*.zip'
+  - path: 'dist\*.whl'
+    name: python-wheel
+
+  - path: 'build\*.zip'
     name: sdk
-
-  - path: 'api\python\dist\*.zip'
-    name: python-src
-
-  - path: 'api\python\dist\*.egg'
-    name: python-egg
-
 
 deploy:
   description: "LIEF version $(APPVEYOR_REPO_TAG_NAME)"
