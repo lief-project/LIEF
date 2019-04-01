@@ -962,7 +962,7 @@ void Builder::build(ThreadCommand* tc) {
 
   std::fill(
     reinterpret_cast<uint8_t*>(&raw_cmd),
-    reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(dylinker_command),
+    reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(thread_command),
     0);
 
   raw_cmd.cmd      = static_cast<uint32_t>(tc->command());
