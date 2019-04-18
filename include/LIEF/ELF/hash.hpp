@@ -51,7 +51,14 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const SymbolVersionRequirement& svr)   override;
   virtual void visit(const SymbolVersionDefinition& svd)    override;
   virtual void visit(const Note& note)                      override;
+  virtual void visit(const NoteDetails& details)            override;
   virtual void visit(const AndroidNote& note)               override;
+  virtual void visit(const NoteAbi& note)                   override;
+  virtual void visit(const CorePrPsInfo& pinfo)             override;
+  virtual void visit(const CorePrStatus& pstatus)           override;
+  virtual void visit(const CoreAuxv& auxv)                  override;
+  virtual void visit(const CoreSigInfo& siginfo)            override;
+  virtual void visit(const CoreFile& file)                  override;
   virtual void visit(const GnuHash& gnuhash)                override;
   virtual void visit(const SysvHash& sysvhash)              override;
 

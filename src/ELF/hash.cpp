@@ -206,8 +206,81 @@ void Hash::visit(const Note& note) {
   process(note.description());
 }
 
+void Hash::visit(const NoteDetails& details) {
+  process(details.description());
+}
+
 void Hash::visit(const AndroidNote& note) {
-  this->visit(static_cast<const Note&>(note));
+  this->visit(static_cast<const NoteDetails&>(note));
+}
+
+void Hash::visit(const NoteAbi& note) {
+  this->visit(static_cast<const NoteDetails&>(note));
+}
+
+void Hash::visit(const CorePrPsInfo& pinfo) {
+  process(pinfo.file_name());
+  process(pinfo.flags());
+  process(pinfo.uid());
+  process(pinfo.gid());
+  process(pinfo.pid());
+  process(pinfo.ppid());
+  process(pinfo.pgrp());
+  process(pinfo.sid());
+}
+
+void Hash::visit(const CorePrStatus& pstatus) {
+  process(pstatus.siginfo().si_code);
+  process(pstatus.siginfo().si_errno);
+  process(pstatus.siginfo().si_signo);
+
+  process(pstatus.current_sig());
+  process(pstatus.sigpend());
+  process(pstatus.sighold());
+  process(pstatus.pid());
+  process(pstatus.ppid());
+  process(pstatus.pgrp());
+  process(pstatus.sid());
+
+  process(pstatus.utime().tv_sec);
+  process(pstatus.utime().tv_usec);
+
+  process(pstatus.stime().tv_sec);
+  process(pstatus.stime().tv_usec);
+
+  process(pstatus.cutime().tv_sec);
+  process(pstatus.cutime().tv_usec);
+
+  process(pstatus.cstime().tv_sec);
+  process(pstatus.cstime().tv_usec);
+
+  for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
+    this->process(val.first);  // Register
+    this->process(val.second); // Value
+  }
+}
+
+void Hash::visit(const CoreAuxv& auxv) {
+  for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
+    this->process(val.first);  // Type
+    this->process(val.second); // Value
+  }
+}
+
+void Hash::visit(const CoreSigInfo& siginfo) {
+  this->process(siginfo.signo());
+  this->process(siginfo.sigcode());
+  this->process(siginfo.sigerrno());
+}
+
+void Hash::visit(const CoreFile& file) {
+  process(file.count());
+  for (const CoreFileEntry& entry : file.files()) {
+    process(entry.start);
+    process(entry.end);
+    process(entry.file_ofs);
+    process(entry.path);
+  }
 }
 
 void Hash::visit(const GnuHash& gnuhash) {

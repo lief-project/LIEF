@@ -54,6 +54,7 @@ Main features:
     - [How to use frida on a non-rooted device](https://lief.quarkslab.com/doc/latest/tutorials/09_frida_lief.html)
     - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
     - [Mach-O modification](https://lief.quarkslab.com/doc/latest/tutorials/11_macho_modification.html)
+    - [ELF Coredump](https://lief.quarkslab.com/doc/latest/tutorials/12_elf_coredump.html)
 - [Contact](#contact)
 - [About](#about)
   - [Authors](#authors)

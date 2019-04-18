@@ -19,7 +19,7 @@
 #include "pyELF.hpp"
 
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -33,7 +33,7 @@ using setter_t = void (AndroidNote::*)(T);
 template<>
 void create<AndroidNote>(py::module& m) {
 
-  py::class_<AndroidNote, Note>(m, "AndroidNote")
+  py::class_<AndroidNote, NoteDetails>(m, "AndroidNote")
 
     .def_property("sdk_version",
         static_cast<getter_t<uint32_t>>(&AndroidNote::sdk_version),

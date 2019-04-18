@@ -2059,9 +2059,11 @@ void Builder::build_notes(void) {
   // ".note.ABI-tag" // NOTE_TYPES::NT_GNU_ABI_TAG
   // ===============
   //TODO: .note.netbds etc
-  this->build(NOTE_TYPES::NT_GNU_ABI_TAG);
-  this->build(NOTE_TYPES::NT_GNU_BUILD_ID);
-  this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION);
+  if (this->binary_->header().file_type() != E_TYPE::ET_CORE) {
+    this->build(NOTE_TYPES::NT_GNU_ABI_TAG);
+    this->build(NOTE_TYPES::NT_GNU_BUILD_ID);
+    this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION);
+  }
 
 
 }

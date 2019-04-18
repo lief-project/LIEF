@@ -164,6 +164,11 @@ class ELF32 {
   typedef Elf32_Verdef  Elf_Verdef;
   typedef Elf32_Verdaux Elf_Verdaux;
 
+  typedef Elf32_Prpsinfo  Elf_Prpsinfo;
+  typedef Elf32_FileEntry Elf_FileEntry;
+  typedef Elf32_Prstatus  Elf_Prstatus;
+
+  typedef Elf32_timeval   Elf_timeval;
 };
 
 
@@ -192,6 +197,12 @@ class ELF64 {
   typedef Elf64_Auxv    Elf_Auxv;
   typedef Elf64_Verdef  Elf_Verdef;
   typedef Elf64_Verdaux Elf_Verdaux;
+
+  typedef Elf64_Prpsinfo  Elf_Prpsinfo;
+  typedef Elf64_FileEntry Elf_FileEntry;
+  typedef Elf64_Prstatus  Elf_Prstatus;
+
+  typedef Elf64_timeval   Elf_timeval;
  };
 
 } /* end namespace ELF */

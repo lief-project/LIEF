@@ -16,6 +16,9 @@
 #ifndef PY_LIEF_ELF_H_
 #define PY_LIEF_ELF_H_
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl_bind.h>
+
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
@@ -66,12 +69,19 @@ SPECIALIZE_CREATE(GnuHash);
 SPECIALIZE_CREATE(SysvHash);
 SPECIALIZE_CREATE(Builder);
 SPECIALIZE_CREATE(Note);
+SPECIALIZE_CREATE(NoteDetails);
 SPECIALIZE_CREATE(AndroidNote);
-
-
+SPECIALIZE_CREATE(NoteAbi);
+SPECIALIZE_CREATE(CorePrPsInfo);
+SPECIALIZE_CREATE(CoreFile);
+SPECIALIZE_CREATE(CoreFileEntry);
+SPECIALIZE_CREATE(CorePrStatus);
+SPECIALIZE_CREATE(CoreAuxv);
+SPECIALIZE_CREATE(CoreSigInfo);
 
 }
 }
 
+PYBIND11_MAKE_OPAQUE(LIEF::ELF::CoreFile::files_t);
 
 #endif

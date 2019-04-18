@@ -397,9 +397,94 @@ void JsonVisitor::visit(const SymbolVersionAuxRequirement& svar) {
 
 void JsonVisitor::visit(const Note& note) {
   this->node_["name"]  = note.name();
-  this->node_["type"]  = to_string(static_cast<NOTE_TYPES>(note.type()));
+  const std::string type_str = note.is_core() ? to_string(note.type_core()) : to_string(note.type());
+  this->node_["type"]  = type_str;
+  JsonVisitor visitor;
+  const NoteDetails& d = note.details();
+  d.accept(visitor);
+  this->node_["details"] = visitor.get();
 }
 
+void JsonVisitor::visit(const NoteDetails&) {
+  this->node_ = json::object();
+}
+
+void JsonVisitor::visit(const NoteAbi& note_abi) {
+  this->node_["abi"]     = to_string(note_abi.abi());
+  this->node_["version"] = note_abi.version();
+}
+
+void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
+  this->node_["file_name"] = pinfo.file_name();
+  this->node_["flags"]     = pinfo.flags();
+  this->node_["uid"]       = pinfo.uid();
+  this->node_["gid"]       = pinfo.gid();
+  this->node_["pid"]       = pinfo.pid();
+  this->node_["ppid"]      = pinfo.ppid();
+  this->node_["pgrp"]      = pinfo.pgrp();
+  this->node_["sid"]       = pinfo.sid();
+}
+
+
+void JsonVisitor::visit(const CorePrStatus& pstatus) {
+  this->node_["current_sig"] = pstatus.current_sig();
+  this->node_["sigpend"]     = pstatus.sigpend();
+  this->node_["sighold"]     = pstatus.sighold();
+  this->node_["pid"]         = pstatus.pid();
+  this->node_["ppid"]        = pstatus.ppid();
+  this->node_["pgrp"]        = pstatus.pgrp();
+  this->node_["sid"]         = pstatus.sid();
+  this->node_["sigpend"]     = pstatus.sigpend();
+
+  this->node_["utime"] = {
+    {"tv_sec",  pstatus.utime().tv_sec},
+    {"tv_usec", pstatus.utime().tv_usec}
+  };
+
+  this->node_["stime"] = {
+    {"tv_sec",  pstatus.stime().tv_sec},
+    {"tv_usec", pstatus.stime().tv_usec}
+  };
+
+  this->node_["stime"] = {
+    {"tv_sec",  pstatus.stime().tv_sec},
+    {"tv_usec", pstatus.stime().tv_usec}
+  };
+
+  json regs;
+  for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
+    regs[to_string(val.first)] = val.second;
+  };
+  this->node_["regs"] = regs;
+}
+
+void JsonVisitor::visit(const CoreAuxv& auxv) {
+  std::vector<json> values;
+  for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
+    this->node_[to_string(val.first)] = val.second;
+  }
+}
+
+void JsonVisitor::visit(const CoreSigInfo& siginfo) {
+  this->node_["signo"] = siginfo.signo();
+  this->node_["sigcode"] = siginfo.sigcode();
+  this->node_["sigerrno"] = siginfo.sigerrno();
+}
+
+void JsonVisitor::visit(const CoreFile& file) {
+  std::vector<json> files;
+  for (const CoreFileEntry& entry : file.files()) {
+    const json file = {
+      {"start",    entry.start},
+      {"end",      entry.end},
+      {"file_ofs", entry.file_ofs},
+      {"path",     entry.path}
+    };
+    files.emplace_back(file);
+  }
+  this->node_["files"] = files;
+  this->node_["count"] = file.count();
+}
 
 void JsonVisitor::visit(const GnuHash& gnuhash) {
   this->node_["nb_buckets"]    = gnuhash.nb_buckets();

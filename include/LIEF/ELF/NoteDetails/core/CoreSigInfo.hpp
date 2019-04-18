@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_ANDROID_NOTE_H_
-#define LIEF_ELF_ANDROID_NOTE_H_
+#ifndef LIEF_ELF_CORE_SIGINFO_H_
+#define LIEF_ELF_CORE_SIGINFO_H_
 
 #include <vector>
 #include <iostream>
+#include <map>
+#include <utility>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -30,44 +34,47 @@ class Parser;
 class Builder;
 class Binary;
 
-//! Class representing the ".note.android.ident" section
-//!
-//! @See: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
-class LIEF_API AndroidNote : public Note {
-
-  friend class Parser;
-  friend class Builder;
-  friend class Binary;
-  public:
-  static constexpr const char NAME[] = "Android";
+//! Class representing core siginfo object
+class LIEF_API CoreSigInfo : public NoteDetails {
 
   public:
-  using Note::Note;
+  using NoteDetails::NoteDetails;
 
+  public:
+  static CoreSigInfo make(Note& note);
 
-  //! Target SDK version
-  uint32_t sdk_version(void) const;
+  //! Signal number.
+  int32_t signo(void) const;
 
-  //! NDK version used
-  std::string ndk_version(void) const;
+  //! Signal code.
+  int32_t sigcode(void) const;
 
-  //! NDK build number
-  std::string ndk_build_number(void) const;
+  //! If non-zero, an errno value associated with this signal.
+  int32_t sigerrno(void) const;
 
-  void sdk_version(uint32_t version);
-  void ndk_version(const std::string& ndk_version);
-  void ndk_build_number(const std::string& ndk_build_number);
+  void signo(int32_t signo);
+  void sigcode(int32_t sigcode);
+  void sigerrno(int32_t sigerrno);
 
-  bool operator==(const AndroidNote& rhs) const;
-  bool operator!=(const AndroidNote& rhs) const;
+  bool operator==(const CoreSigInfo& rhs) const;
+  bool operator!=(const CoreSigInfo& rhs) const;
 
   virtual void dump(std::ostream& os) const override;
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~AndroidNote(void);
+  virtual ~CoreSigInfo(void);
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note);
+
+  protected:
+  virtual void parse(void) override;
+  virtual void build(void) override;
+
+  private:
+  CoreSigInfo(Note& note);
+
+  Elf_siginfo siginfo_;
 };
 
 

@@ -850,8 +850,8 @@ enum _LIEF_EN(AUX_TYPE) {
    _LIEF_EI(AT_PLATFORM)      = 15,    /**< String identifying platform.  */
    _LIEF_EI(AT_HWCAP)         = 16,    /**< Machine dependent hints about processor capabilities.  */
 
-   /* This entry g  ives some information about the FPU initialization
-      performed by   the kernel.  */
+   /* This entry gives some information about the FPU initialization
+      performed by the kernel. */
 
    _LIEF_EI(AT_FPUCW)        = 18,    /**< Used FPU control word.  */
 
@@ -860,17 +860,18 @@ enum _LIEF_EN(AUX_TYPE) {
    _LIEF_EI(AT_ICACHEBSIZE)   = 20,    /**< Instruction cache block size.  */
    _LIEF_EI(AT_UCACHEBSIZE)   = 21,    /**< Unified cache block size.  */
 
-   /* A special ig  nored value for PPC, used by the kernel to control the
-      interpretati  on of the AUXV. Must be > 16.  */
+   /* A special ignored value for PPC, used by the kernel to control the
+      interpretation of the AUXV. Must be > 16.  */
 
    _LIEF_EI(AT_IGNOREPPC)     = 22,    /**< Entry should be ignored.  */
    _LIEF_EI(AT_SECURE)        = 23,    /**< Boolean, was exec setuid-like?  */
    _LIEF_EI(AT_BASE_PLATFORM) = 24,    /**< String identifying real platforms.*/
    _LIEF_EI(AT_RANDOM)        = 25,    /**< Address of 16 random bytes.  */
+   _LIEF_EI(AT_HWCAP2)        = 26,    /**< Extension of AT_HWCAP.  */
    _LIEF_EI(AT_EXECFN)        = 31,    /**< Filename of executable.  */
 
    /* Pointer to the global system page used for system calls and other
-      nice things.  */
+      nice things. */
    _LIEF_EI(AT_SYSINFO)       = 32,
    _LIEF_EI(AT_SYSINFO_EHDR)  = 33,
 
@@ -897,6 +898,30 @@ enum _LIEF_EN(NOTE_TYPES) {
   _LIEF_EI(NT_GNU_HWCAP)        = 2,
   _LIEF_EI(NT_GNU_BUILD_ID)     = 3,
   _LIEF_EI(NT_GNU_GOLD_VERSION) = 4,
+};
+
+enum _LIEF_EN(NOTE_TYPES_CORE) {
+  _LIEF_EI(NT_CORE_UNKNOWN)     = 0,
+  _LIEF_EI(NT_PRSTATUS)         = 1,
+  _LIEF_EI(NT_PRFPREG)          = 2,
+  _LIEF_EI(NT_PRPSINFO)         = 3,
+  _LIEF_EI(NT_TASKSTRUCT)       = 4,
+  _LIEF_EI(NT_AUXV)             = 6,
+  _LIEF_EI(NT_SIGINFO)          = 0x53494749,
+  _LIEF_EI(NT_FILE)             = 0x46494c45,
+  _LIEF_EI(NT_PRXFPREG)         = 0x46e62b7f,
+
+  _LIEF_EI(NT_ARM_VFP)          = 0x400,
+  _LIEF_EI(NT_ARM_TLS)          = 0x401,
+  _LIEF_EI(NT_ARM_HW_BREAK)     = 0x402,
+  _LIEF_EI(NT_ARM_HW_WATCH)     = 0x403,
+  _LIEF_EI(NT_ARM_SYSTEM_CALL)  = 0x404,
+  _LIEF_EI(NT_ARM_SVE)          = 0x405,
+
+  _LIEF_EI(NT_386_TLS)          = 0x200,
+  _LIEF_EI(NT_386_IOPERM)       = 0x201,
+  _LIEF_EI(NT_386_XSTATE)       = 0x202,
+
 };
 
 

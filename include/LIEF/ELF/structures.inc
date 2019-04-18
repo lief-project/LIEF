@@ -268,6 +268,111 @@ struct Elf32_Verdaux
   Elf32_Word	vda_next;		/**< Offset in bytes to next verdaux entry */
 };
 
+/** Structure for note type NT_PRPSINFO */
+struct Elf64_Prpsinfo
+{
+  char     pr_state;       /**< Numeric process state */
+  char     pr_sname;       /**< Char for pr_state */
+  char     pr_zomb;        /**< Process is a zombie */
+  char     pr_nice;        /**< Nice value */
+  uint32_t pr_pad;
+  uint64_t pr_flag;        /**< Process flags */
+  uint32_t pr_uid;         /**< Process user ID */
+  uint32_t pr_gid;         /**< Process group ID */
+  int32_t  pr_pid;         /**< Process ID */
+  int32_t  pr_ppid;        /**< Process parent ID */
+  int32_t  pr_pgrp;        /**< Process group */
+  int32_t  pr_sid;         /**< Process session ID */
+  char     pr_fname[16];   /**< Filename of executable */
+  char     pr_psargs[80];  /**< Initial part of arg list */
+};
+
+struct Elf32_Prpsinfo
+{
+  char     pr_state;      /**< Numeric process state */
+  char     pr_sname;      /**< Char for pr_state */
+  char     pr_zomb;       /**< Process is a zombie */
+  char     pr_nice;       /**< Nice value */
+  uint32_t pr_flag;       /**< Process flags */
+  uint16_t pr_uid;        /**< Process user ID */
+  uint16_t pr_gid;        /**< Process group ID */
+  int32_t  pr_pid;        /**< Process ID */
+  int32_t  pr_ppid;       /**< Process parent ID */
+  int32_t  pr_pgrp;       /**< Process group */
+  int32_t  pr_sid;        /**< Process session ID */
+  char     pr_fname[16];  /**< Filename of executable */
+  char     pr_psargs[80]; /**< Initial part of arg list */
+};
+
+struct Elf_siginfo {
+  int32_t si_signo;
+  int32_t si_code;
+  int32_t si_errno;
+};
+
+struct Elf32_timeval {
+  uint32_t tv_sec;
+  uint32_t tv_usec;
+};
+
+struct Elf64_timeval {
+  uint64_t tv_sec;
+  uint64_t tv_usec;
+};
+
+/** Structure for note type NT_PRSTATUS */
+struct Elf32_Prstatus {
+  Elf_siginfo   pr_info;
+  uint16_t      pr_cursig;
+  uint16_t      reserved;
+
+  uint32_t      pr_sigpend;
+  uint32_t      pr_sighold;
+
+  int32_t       pr_pid;
+  int32_t       pr_ppid;
+  int32_t       pr_pgrp;
+  int32_t       pr_sid;
+
+  Elf32_timeval pr_utime;
+  Elf32_timeval pr_stime;
+  Elf32_timeval pr_cutime;
+  Elf32_timeval pr_cstime;
+};
+
+struct Elf64_Prstatus {
+  Elf_siginfo   pr_info;
+  uint16_t      pr_cursig;
+  uint16_t      reserved;
+
+  uint64_t      pr_sigpend;
+  uint64_t      pr_sighold;
+
+  int32_t       pr_pid;
+  int32_t       pr_ppid;
+  int32_t       pr_pgrp;
+  int32_t       pr_sid;
+
+  Elf64_timeval pr_utime;
+  Elf64_timeval pr_stime;
+  Elf64_timeval pr_cutime;
+  Elf64_timeval pr_cstime;
+};
+
+/** Structure for note type NT_FILE */
+struct Elf64_FileEntry
+{
+  uint64_t start;
+  uint64_t end;
+  uint64_t file_ofs;
+};
+
+struct Elf32_FileEntry
+{
+  uint32_t start;
+  uint32_t end;
+  uint32_t file_ofs;
+};
 
 #pragma pack(pop)
 

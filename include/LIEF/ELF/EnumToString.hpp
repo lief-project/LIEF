@@ -40,6 +40,7 @@ LIEF_API const char* to_string(ELF_DATA e);
 LIEF_API const char* to_string(OS_ABI e);
 LIEF_API const char* to_string(DYNSYM_COUNT_METHODS e);
 LIEF_API const char* to_string(NOTE_TYPES e);
+LIEF_API const char* to_string(NOTE_TYPES_CORE e);
 LIEF_API const char* to_string(NOTE_ABIS e);
 LIEF_API const char* to_string(RELOCATION_PURPOSES e);
 LIEF_API const char* to_string(IDENTITY e);
@@ -48,11 +49,13 @@ LIEF_API const char* to_string(DYNAMIC_FLAGS e);
 LIEF_API const char* to_string(DYNAMIC_FLAGS_1 e);
 LIEF_API const char* to_string(ELF_SEGMENT_FLAGS e);
 LIEF_API const char* to_string(ELF_SYMBOL_VISIBILITY e);
+LIEF_API const char* to_string(AUX_TYPE e);
 
 LIEF_API const char* to_string(PPC64_EFLAGS e);
 LIEF_API const char* to_string(ARM_EFLAGS e);
 LIEF_API const char* to_string(MIPS_EFLAGS e);
 LIEF_API const char* to_string(HEXAGON_EFLAGS e);
+
 
 
 } // namespace ELF

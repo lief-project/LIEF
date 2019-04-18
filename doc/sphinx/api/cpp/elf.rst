@@ -156,10 +156,78 @@ Note
 
 ----------
 
+
+Note Details
+************
+
+.. doxygenclass:: LIEF::ELF::NoteDetails
+   :project: lief
+
+----------
+
+Core PrPsInfo
+*************
+
+.. doxygenclass:: LIEF::ELF::CorePrPsInfo
+   :project: lief
+
+----------
+
+
+Core File
+*********
+
+.. doxygenclass:: LIEF::ELF::CoreFile
+   :project: lief
+
+----------
+
+
+Core File Entry
+***************
+
+.. doxygenclass:: LIEF::ELF::CoreFileEntry
+   :project: lief
+
+----------
+
+Core PrStatus
+*************
+
+.. doxygenclass:: LIEF::ELF::CorePrStatus
+   :project: lief
+
+----------
+
+
+Core Siginfo
+*************
+
+.. doxygenclass:: LIEF::ELF::CoreSigInfo
+   :project: lief
+
+----------
+
+Core Auxiliary Vector
+*********************
+
+.. doxygenclass:: LIEF::ELF::CoreAuxv
+   :project: lief
+
+----------
+
 Android Note
 ************
 
 .. doxygenclass:: LIEF::ELF::AndroidNote
+   :project: lief
+
+----------
+
+Note ABI
+********
+
+.. doxygenclass:: LIEF::ELF::NoteAbi
    :project: lief
 
 ----------
@@ -337,6 +405,14 @@ Note types
 ~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::NOTE_TYPES
+   :project: lief
+
+----------
+
+Note Core types
+~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::NOTE_TYPES_CORE
    :project: lief
 
 ----------

@@ -29,6 +29,7 @@ Welcome to LIEF's documentation!
   tutorials/09_frida_lief
   tutorials/10_android_formats
   tutorials/11_macho_modification
+  tutorials/12_elf_coredump
 
 
 .. toctree::

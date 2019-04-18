@@ -42,6 +42,11 @@ void create<Note>(py::module& m) {
         "Ctor from ``name``, ``type`` and ``description``",
         "name"_a, "type"_a, "description"_a)
 
+    .def_property_readonly("details",
+        static_cast<NoteDetails& (Note::*)(void)>(&Note::details),
+        "Parse the given note description and return a " RST_CLASS_REF(lief.ELF.NoteDetails) " object",
+        py::return_value_policy::reference_internal)
+
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Note::name),
         static_cast<setter_t<const std::string&>>(&Note::name),
@@ -54,21 +59,25 @@ void create<Note>(py::module& m) {
         "Return the type of the note. Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
         )
 
+    .def_property("type_core",
+        static_cast<getter_t<NOTE_TYPES_CORE>>(&Note::type_core),
+        static_cast<setter_t<NOTE_TYPES_CORE>>(&Note::type_core),
+        "Return the type of the note for core ELF (ET_CORE). Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"
+        )
+
     .def_property("description",
         static_cast<getter_t<const Note::description_t&>>(&Note::description),
         static_cast<setter_t<const Note::description_t&>>(&Note::description),
         "Return the description associated with the note"
         )
 
-    .def_property_readonly("abi",
-        static_cast<getter_t<NOTE_ABIS>>(&Note::abi),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_TYPES) ". Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
-        )
+    .def_property_readonly("is_core",
+        &Note::is_core,
+        "True if the note is associated with a coredump")
 
-    .def_property_readonly("version",
-        static_cast<getter_t<Note::version_t>>(&Note::version),
-        "Return the target version as ``(Major, Minor, Patch)``. Require a :attr:`~lief.ELF.NOTE_TYPES.ABI_TAG` :attr:`~lief.ELF.Note.type`"
-        )
+    .def_property_readonly("is_android",
+        &Note::is_android,
+        "True if the note is an Android one")
 
     .def("__eq__", &Note::operator==)
     .def("__ne__", &Note::operator!=)

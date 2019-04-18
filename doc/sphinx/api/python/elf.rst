@@ -213,10 +213,93 @@ Note
 
 ----------
 
+Note Details
+************
+
+.. autoclass:: lief.ELF.NoteDetails
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Core PrPsInfo
+*************
+
+.. autoclass:: lief.ELF.CorePrPsInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Core PrStatus
+*************
+
+.. autoclass:: lief.ELF.CorePrStatus
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Core File
+*********
+
+.. autoclass:: lief.ELF.CoreFile
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Core File Entry
+***************
+
+.. autoclass:: lief.ELF.CoreFileEntry
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Core Siginfo
+************
+
+.. autoclass:: lief.ELF.CoreSigInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Core Auxiliary Vector
+*********************
+
+.. autoclass:: lief.ELF.CoreAuxv
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Android Note
 *************
 
 .. autoclass:: lief.ELF.AndroidNote
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Note ABI
+********
+
+.. autoclass:: lief.ELF.NoteAbi
   :members:
   :inherited-members:
   :undoc-members:
@@ -503,6 +586,17 @@ Note ABIs
 ~~~~~~~~~
 
 .. autoclass:: lief.ELF.NOTE_ABIS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Note Core types
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.NOTE_TYPES_CORE
   :members:
   :inherited-members:
   :undoc-members:
