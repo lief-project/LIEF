@@ -73,7 +73,7 @@ class LIEF_API Parser : public LIEF::Parser {
     //! @param[in] file Path to the ELF binary
     //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
     //! @Return LIEF::ELF::Binary
-    static std::unique_ptr<Binary> parse(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+    LIEF_API static std::unique_ptr<Binary> parse(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
     //! @brief Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
     //!
@@ -83,7 +83,7 @@ class LIEF_API Parser : public LIEF::Parser {
     //! @param[in] name Binary name (optional)
     //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
     //! @Return LIEF::ELF::Binary
-    static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "", DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+    LIEF_API static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "", DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
     Parser& operator=(const Parser& copy) = delete;
     Parser(const Parser& copy)            = delete;
