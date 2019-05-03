@@ -53,7 +53,7 @@ void create<Section>(py::module& m) {
     .def_property("virtual_address",
         static_cast<getter_t<uint64_t>>(&Section::virtual_address),
         static_cast<setter_t<uint64_t>>(&Section::virtual_address),
-        "Section's size")
+        "Section's virtual address")
 
     .def_property("content",
         static_cast<getter_t<std::vector<uint8_t>>>(&Section::content),
