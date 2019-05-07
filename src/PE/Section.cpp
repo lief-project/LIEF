@@ -138,7 +138,7 @@ bool Section::is_type(PE_SECTION_TYPES type) const {
 
 
 void Section::name(const std::string& name) {
-  if (name.size() > STRUCT_SIZES::NameSize - 1) {
+  if (name.size() > STRUCT_SIZES::NameSize) {
     throw LIEF::pe_bad_section_name("Name is too big");
   }
   this->name_  = name;
