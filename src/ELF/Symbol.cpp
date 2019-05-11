@@ -36,6 +36,7 @@ Symbol::Symbol(void) :
   binding_{SYMBOL_BINDINGS::STB_LOCAL},
   other_{0},
   shndx_{0},
+  section_{nullptr},
   symbol_version_{nullptr}
 {}
 
@@ -52,6 +53,7 @@ Symbol::Symbol(const Symbol& other) : LIEF::Symbol{other},
   binding_{other.binding_},
   other_{other.other_},
   shndx_{other.shndx_},
+  section_{nullptr},
   symbol_version_{nullptr}
 {}
 
@@ -62,6 +64,7 @@ void Symbol::swap(Symbol& other) {
   std::swap(this->binding_,        other.binding_);
   std::swap(this->other_,          other.other_);
   std::swap(this->shndx_,          other.shndx_);
+  std::swap(this->section_,        other.section_);
   std::swap(this->symbol_version_, other.symbol_version_);
 }
 
@@ -71,6 +74,7 @@ Symbol::Symbol(const Elf32_Sym* header) :
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
+  section_{nullptr},
   symbol_version_{nullptr}
 {
   this->value_ = header->st_value;
@@ -83,6 +87,7 @@ Symbol::Symbol(const Elf64_Sym* header) :
   binding_{static_cast<SYMBOL_BINDINGS>(header->st_info >> 4)},
   other_{header->st_other},
   shndx_{header->st_shndx},
+  section_{nullptr},
   symbol_version_{nullptr}
 {
   this->value_ = header->st_value;
@@ -98,6 +103,7 @@ Symbol::Symbol(std::string name, ELF_SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
   binding_{binding},
   other_{other},
   shndx_{shndx},
+  section_{nullptr},
   symbol_version_{nullptr}
 {}
 
