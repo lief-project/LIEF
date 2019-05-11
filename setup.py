@@ -221,11 +221,16 @@ is_tagged_cmd = 'git tag --list --points-at=HEAD'
 fmt           = '{tag}.dev0'
 fmt_tagged    = '{tag}'
 
-def format_version(version, fmt=fmt):
+def format_version(version, fmt=fmt, is_dev=False):
     parts = version.split('-')
     assert len(parts) in (3, 4)
     dirty = len(parts) == 4
     tag, count, sha = parts[:3]
+    MA, MI, PA = map(int, tag.split(".")) # 0.9.0 -> (0, 9, 0)
+
+    if is_dev:
+        tag = "{}.{}.{}".format(MA, MI + 1, PA)
+
     if count == '0' and not dirty:
         return tag
     return fmt.format(tag=tag, gitsha=sha.lstrip('g'))
@@ -235,7 +240,7 @@ def get_git_version(is_tagged):
     git_version = subprocess.check_output(command.split()).decode('utf-8').strip()
     if is_tagged:
         return format_version(version=git_version, fmt=fmt_tagged)
-    return format_version(version=git_version, fmt=fmt)
+    return format_version(version=git_version, fmt=fmt, is_dev=True)
 
 def check_if_tagged():
     output = subprocess.check_output(is_tagged_cmd.split()).decode('utf-8').strip()
@@ -260,7 +265,7 @@ def get_version():
 
         try:
             return get_git_version(is_tagged)
-        except:
+        except Exception as e:
             pass
 
     if os.path.isfile(pkg_info):
@@ -269,6 +274,7 @@ def get_version():
 
 
 version = get_version()
+print(version)
 cmdclass = {
     'build_ext': BuildLibrary,
 }
