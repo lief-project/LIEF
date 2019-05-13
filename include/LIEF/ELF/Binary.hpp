@@ -566,6 +566,8 @@ class LIEF_API Binary : public LIEF::Binary {
   Section& add_section(const Section& section);
   symbols_t static_dyn_symbols(void) const;
 
+  std::string shstrtab_name(void) const;
+
   LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 
   //! The binary type

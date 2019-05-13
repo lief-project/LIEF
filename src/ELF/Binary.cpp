@@ -2606,6 +2606,16 @@ void Binary::overlay(Binary::overlay_t overlay) {
 }
 
 
+std::string Binary::shstrtab_name(void) const {
+  const Header& hdr = this->header();
+  const size_t shstrtab_idx = hdr.section_name_table_idx();
+  if (shstrtab_idx < this->sections_.size()) {
+    return this->sections_[shstrtab_idx]->name();
+  }
+  return ".shstrtab";
+}
+
+
 // Operator+=
 // ==========
 Binary& Binary::operator+=(const DynamicEntry& entry) {

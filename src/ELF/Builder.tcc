@@ -157,6 +157,8 @@ std::vector<std::string> Builder::optimize(const HANDLER& e) {
 
   std::vector<std::string> stringTableOpti;
 
+
+  // Insert all strings in a std::set<> ordered by size
   std::transform(
     std::begin(e),
     std::end(e),
@@ -167,19 +169,18 @@ std::vector<std::string> Builder::optimize(const HANDLER& e) {
 
   // Optimize the string table
   std::copy_if(
-  std::begin(stringTable),
-  std::end(stringTable),
-  std::back_inserter(stringTableOpti),
-  [&stringTableOpti] (const std::string& name)
-  {
-    auto it = std::find_if(
-        std::begin(stringTableOpti),
-        std::end(stringTableOpti),
-        [&name] (const std::string& nameOpti) {
-          return nameOpti.substr(nameOpti.size() - name.size()) == name ;
-        });
-
-    return (it == std::end(stringTableOpti));
+    std::begin(stringTable),
+    std::end(stringTable),
+    std::back_inserter(stringTableOpti),
+    [&stringTableOpti] (const std::string& name) {
+      // Check if the given string **IS** the suffix of another string
+      auto it = std::find_if(
+          std::begin(stringTableOpti),
+          std::end(stringTableOpti),
+          [&name] (const std::string& nameOpti) {
+            return nameOpti.substr(nameOpti.size() - name.size()) == name ;
+          });
+      return (it == std::end(stringTableOpti));
 
   });
 
@@ -237,13 +238,13 @@ void Builder::build_sections(void) {
   Header& header = this->binary_->header();
   const Elf_Off section_headers_offset = header.section_headers_offset();
 
-  std::vector<std::string> stringTableOpti =
+  std::vector<std::string> shstrtab_opt =
     this->optimize<Section, decltype(this->binary_->sections_)>(this->binary_->sections_);
 
   // Build section's name
   std::vector<uint8_t> section_names;
   section_names.push_back(0);
-  for (const std::string& name : stringTableOpti) {
+  for (const std::string& name : shstrtab_opt) {
     section_names.insert(std::end(section_names), std::begin(name), std::end(name));
     section_names.push_back(0);
   }
@@ -268,9 +269,8 @@ void Builder::build_sections(void) {
       symbol_str_section = this->binary_->sections_[symbol_section.link()];
     }
 
-    if(symbol_str_section == string_names_section)
-    {
-      Section sec_str_section(".shstrtab", ELF_SECTION_TYPES::SHT_STRTAB);
+    if (symbol_str_section == string_names_section) {
+      Section sec_str_section(this->binary_->shstrtab_name(), ELF_SECTION_TYPES::SHT_STRTAB);
       sec_str_section.content(section_names);
 
       auto& new_str_section = this->binary_->add(sec_str_section, false);
@@ -288,7 +288,6 @@ void Builder::build_sections(void) {
       return this->build<ELF_T>();
     }
   }
-
   // FIXME: Handle if we add sections names and we shoudl increase section size
   string_names_section->content(section_names);
 
