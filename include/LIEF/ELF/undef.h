@@ -675,6 +675,15 @@
 #undef NT_SIGINFO
 #undef NT_FILE
 #undef NT_PRXFPREG
+#undef NT_ARM_VFP
+#undef NT_ARM_TLS
+#undef NT_ARM_HW_BREAK
+#undef NT_ARM_HW_WATCH
+#undef NT_ARM_SYSTEM_CALL
+#undef NT_ARM_SVE
+#undef NT_386_TLS
+#undef NT_386_IOPERM
+#undef NT_386_XSTATE
 
 #undef ELF_NOTE_UNKNOWN
 #undef ELF_NOTE_OS_LINUX
