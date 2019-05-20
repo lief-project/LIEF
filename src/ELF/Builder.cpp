@@ -222,5 +222,22 @@ void Builder::build(NOTE_TYPES type) {
 }
 
 
+Section& Builder::array_section(uint64_t addr) {
+  static const std::set<ELF_SECTION_TYPES> ARRAY_TYPES = {
+    ELF_SECTION_TYPES::SHT_INIT_ARRAY,
+    ELF_SECTION_TYPES::SHT_FINI_ARRAY,
+    ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,
+  };
+
+  for (Section* section : this->binary_->sections_) {
+    if (section->virtual_address() >= addr and
+        addr < (section->virtual_address() + section->size())
+        and ARRAY_TYPES.count(section->type()) > 0) {
+      return *section;
+    }
+  }
+  throw not_found("Can find the section associated with DT_ARRAY");
+}
+
 }
 }

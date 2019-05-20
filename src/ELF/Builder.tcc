@@ -616,7 +616,7 @@ void Builder::build_dynamic_section(void) {
             throw not_found(std::string("Unable to find the 'DT_ARRAYSZ' associated with ") + to_string(entry->tag()));
           }
 
-          Section& array_section = this->binary_->section_from_virtual_address(address);
+          Section& array_section = this->array_section(address);
 
           const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
           const size_t array_size = array.size() * sizeof(Elf_Addr);

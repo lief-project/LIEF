@@ -121,6 +121,8 @@ class LIEF_API Builder {
 
     bool should_swap(void) const;
 
+    Section& array_section(uint64_t addr);
+
     mutable vector_iostream ios_;
     Binary*           binary_;
 
