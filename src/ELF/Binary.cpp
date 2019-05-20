@@ -1366,6 +1366,25 @@ Section& Binary::extend(const Section& section, uint64_t size) {
 // =====
 
 void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES) {
+
+  // Object file does not have segments
+  if (this->header().file_type() == E_TYPE::ET_REL) {
+    Section& section = this->section_from_offset(address);
+    std::vector<uint8_t> content = section.content();
+    const uint64_t offset = address - section.file_offset();
+
+    if ((offset + patch_value.size()) > content.size()) {
+      content.resize(offset + patch_value.size());
+    }
+    std::copy(
+        std::begin(patch_value),
+        std::end(patch_value),
+        content.data() + offset);
+    section.content(content);
+    return;
+
+  }
+
   // Find the segment associated with the virtual address
   Segment& segment_topatch = this->segment_from_virtual_address(address);
   const uint64_t offset = address - segment_topatch.virtual_address();
@@ -1385,6 +1404,22 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
   if (size > sizeof(patch_value)) {
     throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
   }
+
+  // Object file does not have segments
+  if (this->header().file_type() == E_TYPE::ET_REL) {
+    Section& section = this->section_from_offset(address);
+    std::vector<uint8_t> content = section.content();
+    const uint64_t offset = address - section.file_offset();
+
+    // TODO: Handle Endiness
+    std::copy(
+        reinterpret_cast<uint8_t*>(&patch_value),
+        reinterpret_cast<uint8_t*>(&patch_value) + size,
+        content.data() + offset);
+    section.content(content);
+    return;
+  }
+
 
   Segment& segment_topatch = this->segment_from_virtual_address(address);
   const uint64_t offset = address - segment_topatch.virtual_address();
