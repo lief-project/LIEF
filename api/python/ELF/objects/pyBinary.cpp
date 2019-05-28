@@ -270,6 +270,16 @@ void create<Binary>(py::module& m) {
         "Check if a section with the given name exists in the binary",
         "section_name"_a)
 
+    .def("has_section_with_offset",
+        &Binary::has_section_with_offset,
+        "Check if a section that handle the given offset exists",
+        "offset"_a)
+
+    .def("has_section_with_va",
+        &Binary::has_section_with_va,
+        "Check if a section that handle the given virtual address exists",
+        "va"_a)
+
     .def("get_section",
         static_cast<no_const_func<Section&, const std::string&>>(&Binary::get_section),
         "Return the " RST_CLASS_REF(lief.ELF.Section) " with the given ``name``",

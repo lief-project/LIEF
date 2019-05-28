@@ -1528,6 +1528,34 @@ bool Binary::has_section(const std::string& name) const {
       }) != std::end(this->sections_);
 }
 
+bool Binary::has_section_with_offset(uint64_t offset) const {
+  auto&& it_section = std::find_if(
+      this->sections_.cbegin(),
+      this->sections_.cend(),
+      [&offset] (const Section* section) {
+        if (section == nullptr) {
+          return false;
+        }
+        return ((section->offset() <= offset) and
+            (section->offset() + section->size()) > offset);
+      });
+  return it_section != this->sections_.cend();
+}
+
+bool Binary::has_section_with_va(uint64_t va) const {
+  auto&& it_section = std::find_if(
+      this->sections_.cbegin(),
+      this->sections_.cend(),
+      [&va] (const Section* section) {
+        if (section == nullptr) {
+          return false;
+        }
+        return ((section->virtual_address() <= va) and
+            (section->virtual_address() + section->size()) > va);
+      });
+  return it_section != this->sections_.cend();
+}
+
 void Binary::strip(void) {
   this->static_symbols_ = {};
 

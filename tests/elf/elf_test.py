@@ -265,6 +265,19 @@ class TestELF(TestCase):
         self.assertEqual(functions[-1].name,    "_fini")
 
 
+    def test_misc(self):
+        sample = "ELF/ELF64_x86-64_binary_ld.bin"
+        ld = lief.parse(get_sample(sample))
+
+        text = ld.get_section(".text")
+
+        self.assertFalse(ld.has_section_with_offset(0))
+        self.assertFalse(ld.has_section_with_va(0xFFFFFFFF))
+
+        self.assertTrue(ld.has_section_with_offset(text.offset + 10))
+        self.assertTrue(ld.has_section_with_va(text.virtual_address + 10))
+
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()

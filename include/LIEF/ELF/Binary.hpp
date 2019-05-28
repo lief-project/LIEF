@@ -205,6 +205,12 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @brief Check if a section with the given name exists in the binary
   bool has_section(const std::string& name) const;
 
+  //! Check if a section that handle the given offset exists
+  bool has_section_with_offset(uint64_t offset) const;
+
+  //! Check if a section that handle the given virtual address exists
+  bool has_section_with_va(uint64_t va) const;
+
   //! @brief Return Section with the given `name`
   Section&       get_section(const std::string& name);
   const Section& get_section(const std::string& name) const;
