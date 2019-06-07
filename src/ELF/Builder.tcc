@@ -2060,8 +2060,10 @@ void Builder::build_notes(void) {
   //TODO: .note.netbds etc
   if (this->binary_->header().file_type() != E_TYPE::ET_CORE) {
     this->build(NOTE_TYPES::NT_GNU_ABI_TAG);
+    this->build(NOTE_TYPES::NT_GNU_HWCAP);
     this->build(NOTE_TYPES::NT_GNU_BUILD_ID);
     this->build(NOTE_TYPES::NT_GNU_GOLD_VERSION);
+    this->build(NOTE_TYPES::NT_UNKNOWN);
   }
 
 
