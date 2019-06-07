@@ -37,6 +37,9 @@ CorePrStatus CorePrStatus::make(Note& note) {
   return pinfo;
 }
 
+CorePrStatus* CorePrStatus::clone(void) const {
+  return new CorePrStatus(*this);
+}
 
 const CorePrStatus::reg_context_t& CorePrStatus::reg_context(void) const {
   return this->ctx_;

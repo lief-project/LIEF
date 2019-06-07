@@ -43,6 +43,8 @@ class LIEF_API CoreSigInfo : public NoteDetails {
   public:
   static CoreSigInfo make(Note& note);
 
+  virtual CoreSigInfo* clone(void) const override;
+
   //! Signal number.
   int32_t signo(void) const;
 

@@ -54,6 +54,8 @@ class LIEF_API CoreFile : public NoteDetails {
   public:
   static CoreFile make(Note& note);
 
+  virtual CoreFile* clone(void) const override;
+
   //! Number of coredump file entries
   uint64_t count(void) const;
 

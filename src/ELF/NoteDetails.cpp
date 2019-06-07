@@ -43,6 +43,9 @@ NoteDetails::NoteDetails(Note& note):
   note_{&note}
 {}
 
+NoteDetails* NoteDetails::clone(void) const {
+  return new NoteDetails(*this);
+}
 
 const Note::description_t& NoteDetails::description(void) const {
   if (this->note_ == nullptr) {

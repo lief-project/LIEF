@@ -36,6 +36,10 @@ CoreFile CoreFile::make(Note& note) {
   return file;
 }
 
+CoreFile* CoreFile::clone(void) const {
+  return new CoreFile(*this);
+}
+
 
 uint64_t CoreFile::count(void) const {
   return this->files_.size();

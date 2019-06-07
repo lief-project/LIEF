@@ -52,6 +52,8 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   static NoteAbi make(Note& note);
 
+  virtual NoteAbi* clone(void) const override;
+
   public:
   using NoteDetails::NoteDetails;
   using description_t = typename Note::description_t;

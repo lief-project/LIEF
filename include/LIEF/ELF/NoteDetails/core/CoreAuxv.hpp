@@ -45,6 +45,8 @@ class LIEF_API CoreAuxv : public NoteDetails {
   public:
   static CoreAuxv make(Note& note);
 
+  virtual CoreAuxv* clone(void) const override;
+
   //! Auxiliary values
   const val_context_t& values(void) const;
 
