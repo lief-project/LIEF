@@ -47,7 +47,10 @@ Note::Note(const Note& other):
   name_(other.name_),
   type_(other.type_),
   description_(other.description_)
-{}
+{
+  auto&& details = other.details_;
+  this->details_ = std::make_pair(details.first, std::unique_ptr<NoteDetails>{details.second->clone()});
+}
 
 void Note::swap(Note& other) {
   std::swap(this->binary_,      other.binary_);

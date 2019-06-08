@@ -47,6 +47,8 @@ class LIEF_API NoteDetails : public Object {
   public:
   virtual ~NoteDetails(void);
 
+  virtual NoteDetails* clone(void) const;
+
   const Note::description_t& description(void) const;
 
   virtual void dump(std::ostream& os) const;

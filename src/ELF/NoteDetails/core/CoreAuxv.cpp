@@ -37,6 +37,10 @@ CoreAuxv CoreAuxv::make(Note& note) {
   return pinfo;
 }
 
+CoreAuxv* CoreAuxv::clone(void) const {
+  return new CoreAuxv(*this);
+}
+
 
 const CoreAuxv::val_context_t& CoreAuxv::values(void) const {
   return this->ctx_;

@@ -43,6 +43,10 @@ AndroidNote::AndroidNote(Note& note) :
   ndk_build_number_{}
 {}
 
+AndroidNote* AndroidNote::clone(void) const {
+  return new AndroidNote(*this);
+}
+
 uint32_t AndroidNote::sdk_version(void) const {
   return this->sdk_version_;
 }

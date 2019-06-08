@@ -36,6 +36,10 @@ CoreSigInfo CoreSigInfo::make(Note& note) {
   return pinfo;
 }
 
+CoreSigInfo* CoreSigInfo::clone(void) const {
+  return new CoreSigInfo(*this);
+}
+
 int32_t CoreSigInfo::signo(void) const {
   return this->siginfo_.si_signo;
 }

@@ -36,6 +36,10 @@ NoteAbi NoteAbi::make(Note& note) {
   return abi;
 }
 
+NoteAbi* NoteAbi::clone(void) const {
+  return new NoteAbi(*this);
+}
+
 NoteAbi::NoteAbi(Note& note) :
   NoteDetails::NoteDetails{note},
   version_{{0, 0, 0}},

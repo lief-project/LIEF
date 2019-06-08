@@ -43,6 +43,10 @@ CorePrPsInfo CorePrPsInfo::make(Note& note) {
   return pinfo;
 }
 
+CorePrPsInfo* CorePrPsInfo::clone(void) const {
+  return new CorePrPsInfo(*this);
+}
+
 std::string CorePrPsInfo::file_name(void) const {
   return this->file_name_;
 }

@@ -165,8 +165,11 @@ void Builder::build(NOTE_TYPES type) {
     { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.ABI-tag"          },
     { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.android.ident"    },
 
+    { NOTE_TYPES::NT_GNU_HWCAP,        ".note.gnu.hwcap"        },
     { NOTE_TYPES::NT_GNU_BUILD_ID,     ".note.gnu.build-id"     },
     { NOTE_TYPES::NT_GNU_GOLD_VERSION, ".note.gnu.gold-version" },
+
+    { NOTE_TYPES::NT_UNKNOWN,          ".note"                  },
   };
 
   Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
@@ -218,6 +221,7 @@ void Builder::build(NOTE_TYPES type) {
     Section& section_added = this->binary_->add(section, false);
     section_added.offset(segment_note.file_offset() + this->note_offset(note));
     section_added.size(note.size());
+    section_added.alignment(4);
   }
 }
 

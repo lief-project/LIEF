@@ -41,6 +41,8 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   public:
   static CorePrPsInfo make(Note& note);
 
+  virtual CorePrPsInfo* clone(void) const override;
+
   //! Process file name
   std::string file_name(void) const;
 

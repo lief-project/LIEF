@@ -58,6 +58,8 @@ class LIEF_API AndroidNote : public NoteDetails {
   using NoteDetails::NoteDetails;
   using description_t = typename Note::description_t;
 
+  virtual AndroidNote* clone(void) const override;
+
   //! Target SDK version
   uint32_t sdk_version(void) const;
 

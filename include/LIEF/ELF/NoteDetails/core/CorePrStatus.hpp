@@ -81,6 +81,8 @@ class LIEF_API CorePrStatus : public NoteDetails {
   public:
   static CorePrStatus make(Note& note);
 
+  virtual CorePrStatus* clone(void) const override;
+
   //! Info associated with the signal
   const Elf_siginfo& siginfo(void) const;
 

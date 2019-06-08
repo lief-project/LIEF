@@ -17,6 +17,8 @@ Logger.set_level(lief.LOGGING_LEVEL.WARNING)
 from unittest import TestCase
 from utils import get_sample
 
+from contextlib import redirect_stdout
+from io import StringIO
 
 class TestNotes(TestCase):
     LOGGER = logging.getLogger(__name__)
@@ -86,6 +88,12 @@ class TestNotes(TestCase):
         self.assertIn(lief.ELF.NOTE_TYPES.GOLD_VERSION, etterlog_updated)
 
         self.safe_delete(output)
+
+        # The string printed is largely irrelevant, but running print ensures no regression occurs in a previous Note::dump segfault
+        # https://github.com/lief-project/LIEF/issues/300
+        with StringIO() as temp_stdout:
+            with redirect_stdout(temp_stdout):
+                print(etterlog)
 
 
     def test_android_note(self):
