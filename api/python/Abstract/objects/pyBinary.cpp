@@ -123,7 +123,7 @@ void create<Binary>(py::module& m) {
         static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
         "Return the " RST_CLASS_REF(lief.Symbol) " with the given ``name``",
         "symbol_name"_a,
-        py::return_value_policy::reference)
+        py::return_value_policy::reference_internal)
 
     .def("get_function_address",
         &Binary::get_function_address,
