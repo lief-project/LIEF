@@ -17,13 +17,13 @@ from lief import Logger
 Logger.set_level(lief.LOGGING_LEVEL.ERROR)
 
 from optparse import OptionParser
-terminal_rows, terminal_columns = 100, 100
+terminal_rows, terminal_columns = 100, 110
 try:
     terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
 except ValueError:
     pass
 
-terminal_columns = int(terminal_columns)
+terminal_columns = int(terminal_columns) - 10
 terminal_rows    = int(terminal_rows)
 
 class exceptions_handler(object):
