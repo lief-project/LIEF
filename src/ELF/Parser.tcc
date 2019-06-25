@@ -18,6 +18,7 @@
 
 #include "LIEF/utils.hpp"
 
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 
 #include "Object.tcc"
@@ -1339,6 +1340,29 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
   }
 }
 
+struct RelocationKey {
+    uint64_t address;
+    uint32_t type;
+    int64_t addend;
+    size_t symbol;
+
+    bool operator==(const RelocationKey &o) const {
+        return address == o.address && type == o.type && addend == o.addend && symbol == o.symbol;
+    }
+
+    bool operator<(const RelocationKey &o) const {
+        return address < o.address || (address == o.address && type < o.type) ||
+            ((address == o.address && type == o.type) || addend < o .addend) ||
+            ((address == o.address && type == o.type && addend == o.addend) && symbol < o.symbol);
+    }
+
+    bool operator>(const RelocationKey &o) const {
+        return address > o.address || (address == o.address && type > o.type) ||
+            ((address == o.address && type == o.type) || addend > o.addend) ||
+            ((address == o.address && type == o.type && addend == o.addend) && symbol > o.symbol);
+    }
+};
+
 template<typename ELF_T, typename REL_T>
 void Parser::parse_section_relocations(Section const& section) {
   using Elf_Rel = typename ELF_T::Elf_Rel;
@@ -1370,6 +1394,8 @@ void Parser::parse_section_relocations(Section const& section) {
   uint32_t nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
+  std::map<RelocationKey, Relocation*> map;
+
   this->stream_->setpos(offset_relocations);
   for (uint32_t i = 0; i < nb_entries; ++i) {
     if (not this->stream_->can_read<REL_T>()) {
@@ -1392,19 +1418,16 @@ void Parser::parse_section_relocations(Section const& section) {
       reloc->symbol_ = this->binary_->static_symbols_[idx];
     }
 
-    // TODO: BAD CODE!!!!
-    if (std::find_if(
-          std::begin(this->binary_->relocations_),
-          std::end(this->binary_->relocations_),
-          [&reloc] (const Relocation* r) {
-            bool is_same = r->address() == reloc->address() and
-                    r->type() == reloc->type() and
-                    r->addend() == reloc->addend();
-            if(r->has_symbol())
-              is_same &= reloc->has_symbol() and reloc->symbol() == r->symbol();
-            return is_same;
-          }) == std::end(this->binary_->relocations_)) {
-      this->binary_->relocations_.push_back(reloc.release());
+    RelocationKey k = {
+        reloc->address(),
+        reloc->type(),
+        reloc->addend(),
+        reloc->has_symbol() ? LIEF::Hash::hash(reloc->symbol()) : 0
+    };
+
+    if (map[k] == nullptr) {
+        auto released = map[k] = reloc.release();
+        this->binary_->relocations_.push_back(released);
     }
   }
 }
