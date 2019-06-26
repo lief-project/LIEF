@@ -48,6 +48,8 @@ LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
 //!   * Casse agnostic
 //!   * Ordinal (**in some extent**) agnostic
 //!
+//! @warning The algorithm used to compute the *imphash* value has some variations compared to Yara, pefile, VT implementation
+//!
 //! @see https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
 LIEF_API std::string get_imphash(const Binary& binary);
 

@@ -54,6 +54,9 @@ void init_utils(py::module& m) {
       "\t* Casse agnostic\n"
       "\t* Ordinal (**in some extent**) agnostic\n\n"
 
+      ".. warning::\n\n"
+      "\tThe algorithm used to compute the *imphash* value has some variations compared to Yara, pefile, VT implementation\n"
+
       ".. seealso::\n\n"
       "\thttps://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html\n",
       "binary"_a);
