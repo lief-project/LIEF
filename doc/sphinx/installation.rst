@@ -81,9 +81,8 @@ As example we compile the following snippet with Visual Studio 2015
 
   int main()
   {
-    LIEF::PE::Binary* pe_binary = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
+    std::unique_ptr<LIEF::PE::Binary> pe_binary = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
     std::cout << *pe_binary << std::endl;
-    delete pe_binary;
     return 0;
   }
 
