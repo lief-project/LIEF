@@ -93,7 +93,6 @@ set(LIBLIEF_SOURCE_FILES
 # Grouping basic headers together
 # ===============================
 set(LIEF_INC_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Builder.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/exception.hpp"
