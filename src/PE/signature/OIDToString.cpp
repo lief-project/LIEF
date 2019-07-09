@@ -997,6 +997,7 @@ const char* oid_to_string(const oid_t& oid) {
     { "1.3.6.1.4.1.311.2.2.1",            "CTL_TRUSTED_CODESIGNING_CA_LIST" },
     { "1.3.6.1.4.1.311.2.2.2",            "CTL_TRUSTED_CLIENT_AUTH_CA_LIST" },
     { "1.3.6.1.4.1.311.2.2.3",            "CTL_TRUSTED_SERVER_AUTH_CA_LIST" },
+    { "1.3.6.1.4.1.311.2.4.1",            "SPC_NESTED_SIGNATURES" },
     { "1.3.6.1.4.1.311.3.2.1",            "TIMESTAMP_REQUEST" },
     { "1.3.6.1.4.1.311.10.1",             "CERT_TRUST_LIST" },
     { "1.3.6.1.4.1.311.10.1.1",           "SORTED_CTL" },

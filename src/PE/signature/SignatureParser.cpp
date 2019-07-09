@@ -156,8 +156,11 @@ std::string SignatureParser::get_signed_data_digest_algorithms(void) {
 ContentInfo SignatureParser::parse_content_info(void) {
   VLOG(VDEBUG) << "Parse signed data - content info";
 
+  mbedtls_asn1_buf content_type_oid;
+  mbedtls_asn1_buf alg_oid;
   int ret = 0;
   size_t tag;
+  char oid_str[256] = { 0 };
 
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
@@ -185,9 +188,6 @@ ContentInfo SignatureParser::parse_content_info(void) {
     throw corrupted("Signature corrupted");
   }
 
-  this->p_ += tag; // skip
-  return content_info;
-#if 0
   // SpcAttributeTypeAndOptionalValue
   // |_ SPC_PE_IMAGE_DATAOBJ
   // |_ SpcPeImageData
@@ -270,7 +270,6 @@ ContentInfo SignatureParser::parse_content_info(void) {
   this->p_ += tag;
 
   return content_info;
-#endif
 }
 
 
@@ -352,165 +351,138 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
     throw corrupted("Authenticated attributes corrupted");
   }
 
-  // contentType (1.2.840.113549.1.9.3)
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
+  uint8_t* p_end = this->p_ + tag;
+  while(this->p_ < p_end) {
+    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
+            MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
+      throw corrupted("Authenticated attributes corrupted");
+    }
+
+    content_type_oid.tag = *this->p_;
+    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
+      throw corrupted("Authenticated attributes corrupted");
+    }
+    content_type_oid.p = this->p_;
+
+    std::memset(oid_str, 0, sizeof(oid_str));
+    mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
+
+    this->p_ += content_type_oid.len;
+
+    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
+            MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
+      throw corrupted("Authenticated attributes corrupted");
+    }
+
+    if (std::string(oid_str) == "1.2.840.113549.1.9.3") {
+      // contentType
+      // |_ OID (PKCS #9 Message Digest)
+      // |_ SET -> OID
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      VLOG(VDEBUG) << "Parsing contentType (offset: "
+                 << std::dec << this->current_offset()
+                 << ")";
+      content_type_oid.tag = *this->p_;
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+      content_type_oid.p = this->p_;
+
+      std::memset(oid_str, 0, sizeof(oid_str));
+      mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
+      authenticated_attributes.content_type_ = oid_str;
+      this->p_ += content_type_oid.len;
+      continue;
+
+    } else if (std::string(oid_str) == "1.2.840.113549.1.9.4") {
+      // messageDigest (Octet string)
+      // |_ OID (PKCS #9 Message Digest)
+      // |_ SET -> OCTET STING
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      VLOG(VDEBUG) << "Parsing messageDigest (offset: "
+                 << std::dec << this->current_offset()
+                 << ")";
+      VLOG(VDEBUG) << oid_str << " (" << oid_to_string(oid_str) << ")"; // 1.2.840.113549.1.9.4
+
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_OCTET_STRING)) != 0) {
+        throw corrupted("Signature corrupted: Can't read 'ASN1_OCTET_STRING'");
+      }
+      authenticated_attributes.message_digest_ = {this->p_, this->p_ + tag};
+      this->p_ += tag;
+      continue;
+
+    } else if (std::string(oid_str) == "1.3.6.1.4.1.311.2.1.12") {
+      // SpcSpOpusInfo
+      // |_ programName (utf16)
+      // |_ moreInfo
+      // ~~~~~~~~~~~~~~~~~~~~~~
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
+              MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+
+      if (tag == 0) {
+          VLOG(VDEBUG) << "No program name or more info specified ";
+          authenticated_attributes.program_name_ = u"";
+          authenticated_attributes.more_info_ = "";
+          continue;
+      }
+
+      uint8_t *seq_end = this->p_ + tag;
+
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
+              MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+      VLOG(VDEBUG) << "Offset: " << std::dec << this->current_offset();
+      VLOG(VDEBUG) << "Size: " << std::dec << tag;
+
+      // u8 -> u16 due to endiness
+      std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
+      std::u16string progname;
+      try {
+        utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
+      } catch (const utf8::exception&) {
+        LOG(WARNING) << "utf8 error when parsing progname";
+      }
+
+      authenticated_attributes.program_name_ = progname;
+      VLOG(VDEBUG) << "ProgName " << u16tou8(progname);
+      this->p_ += tag;
+
+      if (this->p_ >= seq_end) {
+          VLOG(VDEBUG) << "No more info specified ";
+          authenticated_attributes.more_info_ = "";
+          continue;
+      }
+
+      // moreInfo
+      // ++++++++
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
+              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_BOOLEAN )) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+
+      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
+        throw corrupted("Authenticated attributes corrupted");
+      }
+
+      std::string more_info{reinterpret_cast<char*>(this->p_), tag}; // moreInfo
+      authenticated_attributes.more_info_ = more_info;
+      VLOG(VDEBUG) << more_info;
+      this->p_ += tag;
+      continue;
+
+    } else {
+      VLOG(VDEBUG) << "Skipping OID " << oid_str;
+      this->p_ += tag;
+      continue;
+    }
   }
-
-  content_type_oid.tag = *this->p_;
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-  content_type_oid.p = this->p_;
-
-  std::memset(oid_str, 0, sizeof(oid_str));
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-
-  VLOG(VDEBUG) << oid_str; // 1.2.840.113549.1.9.3 (PKCS #9 contentType)
-  if (std::string(oid_str) != "1.2.840.113549.1.9.3") {
-    throw corrupted("Authenticated attributes corrupted: Wrong Content type OID (" + std::string(oid_str) + ")");
-  }
-
-  this->p_ += content_type_oid.len;
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  content_type_oid.tag = *this->p_;
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  content_type_oid.p = this->p_;
-
-  std::memset(oid_str, 0, sizeof(oid_str));
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-  VLOG(VDEBUG) << oid_str; // 1.2.840.113549.1.9.4
-  this->p_ += content_type_oid.len;
-  //authenticated_attributes.content_type_ = oid_str;
-
-  // TODO
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Signature corrupted");
-  }
-  this->p_ += tag;
-
-
-  // messageDigest (Octet string)
-  // |_ OID (PKCS #9 Message Disgest)
-  // |_ SET -> OCTET STING
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  VLOG(VDEBUG) << "Parsing messageDigest (offset: "
-             << std::dec << this->current_offset()
-             << ")";
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  content_type_oid.tag = *this->p_;
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-  content_type_oid.p = this->p_;
-
-  std::memset(oid_str, 0, sizeof(oid_str));
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-  VLOG(VDEBUG) << oid_str << " (" << oid_to_string(oid_str) << ")"; // 1.2.840.113549.1.9.4
-  this->p_ += content_type_oid.len;
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_OCTET_STRING)) != 0) {
-    throw corrupted("Signature corrupted: Can't read 'ASN1_OCTET_STRING'");
-  }
-  authenticated_attributes.message_digest_ = {this->p_, this->p_ + tag};
-  this->p_ += tag;
-
-
-  // SpcSpOpusInfo
-  // |_ programName (utf16)
-  // |_ moreInfo
-  // ~~~~~~~~~~~~~~~~~~~~~~
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Signature corrupted");
-  }
-
-  content_type_oid.tag = *this->p_;
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
-    throw corrupted("Signature corrupted");
-  }
-
-  content_type_oid.p = this->p_;
-  std::memset(oid_str, 0, sizeof(oid_str));
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-  VLOG(VDEBUG) << oid_str; // 1.3.6.1.4.1.311.2.1.12 (SpcSpOpusInfoObjId)
-  this->p_ += content_type_oid.len;
-
-  // programName
-  // +++++++++++
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-  VLOG(VDEBUG) << "Offset: " << std::dec << this->current_offset();
-  VLOG(VDEBUG) << "Size: " << std::dec << tag;
-
-  // u8 -> u16 due to endiness
-  std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
-  std::u16string progname;
-  try {
-    utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
-  } catch (const utf8::exception&) {
-    LOG(WARNING) << "utf8 error when parsing progname";
-  }
-
-  authenticated_attributes.program_name_ = progname;
-  VLOG(VDEBUG) << "ProgName " << u16tou8(progname);
-  this->p_ += tag;
-
-  // moreInfo
-  // ++++++++
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-          MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_BOOLEAN )) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-
-  if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
-    throw corrupted("Authenticated attributes corrupted");
-  }
-
-  std::string more_info{reinterpret_cast<char*>(this->p_), tag}; // moreInfo
-  authenticated_attributes.more_info_ = more_info;
-  VLOG(VDEBUG) << more_info;
-  this->p_ += tag;
 
   return authenticated_attributes;
 }
@@ -587,10 +559,21 @@ SignerInfo SignatureParser::get_signer_info(void) {
     VLOG(VDEBUG) << "Component ID: " << oid_str;
     this->p_ += content_type_oid.len;
 
-    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_PRINTABLE_STRING)) != 0) {
+    if ( (p_end - this->p_) < 1 ) {
       throw corrupted("Signer info corrupted");
     }
 
+    if (*this->p_ != MBEDTLS_ASN1_UTF8_STRING &&
+        *this->p_ != MBEDTLS_ASN1_PRINTABLE_STRING &&
+        *this->p_ != MBEDTLS_ASN1_IA5_STRING) {
+      throw corrupted("Signer info corrupted");
+    }
+
+    this->p_ += 1;
+
+    if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
+      throw corrupted("Signer info corrupted");
+    }
     std::string name{reinterpret_cast<char*>(this->p_), tag};
     issuer_name.emplace_back(oid_str, name);
     VLOG(VDEBUG) << "Name: " << name;
