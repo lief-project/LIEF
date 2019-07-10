@@ -50,10 +50,22 @@ void AuthenticatedAttributes::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authenticated_attributes) {
   constexpr uint8_t wsize = 30;
+  std::string content_type = authenticated_attributes.content_type();
+  if (content_type.empty()) {
+    content_type = "N/A";
+  }
+  std::string program_name = u16tou8(authenticated_attributes.program_name());
+  if (program_name.empty()) {
+    program_name = "N/A";
+  }
+  std::string url = authenticated_attributes.more_info();
+  if (url.empty()) {
+    url = "N/A";
+  }
   os << std::hex << std::left;
-  os << std::setw(wsize) << std::setfill(' ') << "Content type: " << authenticated_attributes.content_type()          << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Program name: " << u16tou8(authenticated_attributes.program_name()) << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "URL : "         << authenticated_attributes.more_info()             << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Content type: " << content_type << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Program name: " << program_name << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "URL : "         << url          << std::endl;
 
   return os;
 }
