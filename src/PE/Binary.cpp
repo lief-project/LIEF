@@ -81,7 +81,7 @@ Binary::Binary(void) :
   rich_header_{},
   header_{},
   optional_header_{},
-  available_sections_space_{0},
+  available_sections_space_{0xc}, // (0x400 - 0x1f8) / sizeof(IMAGE_SECTION_HEADER)
   has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
