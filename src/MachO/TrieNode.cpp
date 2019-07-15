@@ -2,7 +2,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/iostream.hpp"
 #include "LIEF/logging++.hpp"
-#include "LIEF/MachO/enums.h"
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -137,14 +137,14 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info, std::vector<TrieNo
 bool TrieNode::update_offset(uint32_t& offset) {
   uint32_t node_size = 1;
   if (this->has_export_info_) {
-   if (this->flags_ & LIEF_MACHO_EXPORT_SYMBOL_FLAGS_REEXPORT) {
+   if (this->flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
       node_size = vector_iostream::uleb128_size(this->flags_);
       node_size += vector_iostream::uleb128_size(this->other_);
       node_size += this->imported_name_.size() + 1;
     } else {
       node_size = vector_iostream::uleb128_size(this->flags_);
       node_size += vector_iostream::uleb128_size(this->address_);
-      if (this->flags_ & LIEF_MACHO_EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) {
+      if (this->flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
         node_size += vector_iostream::uleb128_size(this->other_);
       }
     }
@@ -167,7 +167,7 @@ bool TrieNode::update_offset(uint32_t& offset) {
 
 TrieNode& TrieNode::write(vector_iostream& buffer) {
   if (this->has_export_info_) {
-    if (this->flags_ & LIEF_MACHO_EXPORT_SYMBOL_FLAGS_REEXPORT) {
+    if (this->flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
       if (not this->imported_name_.empty()) {
         uint32_t node_size = 0;
         node_size += vector_iostream::uleb128_size(this->flags_);
@@ -192,7 +192,7 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
           .write<uint8_t>('\0');
       }
     }
-    else if (this->flags_ & LIEF_MACHO_EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) {
+    else if (this->flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
       uint32_t node_size = 0;
       node_size += vector_iostream::uleb128_size(this->flags_);
       node_size += vector_iostream::uleb128_size(this->address_);

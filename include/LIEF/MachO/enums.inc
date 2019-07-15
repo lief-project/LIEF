@@ -211,7 +211,7 @@ enum {
 
 
 //! @brief Opcodes used by Dyld info to rebase a Mach-O image
-enum _LIEF_EN(REBASE_OPCODES) {
+enum _LIEF_EN_2(REBASE_OPCODES, uint8_t) {
   _LIEF_EI(REBASE_OPCODE_DONE)                               = 0x00u, ///< It's finished
   _LIEF_EI(REBASE_OPCODE_SET_TYPE_IMM)                       = 0x10u, ///< Set type to immediate (lower 4-bits). Used for ordinal numbers from 0-15
   _LIEF_EI(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB)        = 0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's offset to following ULEB128 encoding.
@@ -255,7 +255,7 @@ enum {
 };
 
 //! @brief Opcodes used by Dyld info to bind symbols
-enum _LIEF_EN(BIND_OPCODES) {
+enum _LIEF_EN_2(BIND_OPCODES, uint8_t) {
   _LIEF_EI(BIND_OPCODE_DONE)                             = 0x00u, ///< It's finished
   _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM)            = 0x10u, ///< Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from 0-15
   _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB)           = 0x20u, ///< Set ordinal to following ULEB128 encoding. Used for ordinal numbers from 16+

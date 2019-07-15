@@ -1469,7 +1469,9 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   // Tie section and segment
   reloc->segment_ = &segment;
   Section* section = this->binary_->section_from_virtual_address(address);
-  DCHECK_NE(section, nullptr);
+  if (section == nullptr) {
+    throw not_found("Unable to find section");
+  }
   reloc->section_ = section;
 
   // Tie symbol
