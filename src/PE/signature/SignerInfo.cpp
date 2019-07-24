@@ -85,7 +85,7 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
   os << std::hex << std::left;
 
   os << std::setw(wsize) << std::setfill(' ') << "Version: "             << signer_info.version() << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Issuer Serial Number: "<< sn_str << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Serial Number: "       << sn_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Issuer DN: "           << issuer_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Digest Algorithm: "    << oid_to_string(signer_info.digest_algorithm()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Signature algorithm: " << oid_to_string(signer_info.signature_algorithm()) << std::endl;

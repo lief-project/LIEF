@@ -549,12 +549,11 @@ SignerInfo SignatureParser::get_signer_info(void) {
   VLOG(VDEBUG) << "Issuer: " << issuer_name;
 
   mbedtls_x509_name *name_cur;
-  mbedtls_x509_name *name_prv;
 
   name_cur = name.next;
   while( name_cur != NULL )
   {
-    name_prv = name_cur;
+    mbedtls_x509_name *name_prv = name_cur;
     name_cur = name_cur->next;
     mbedtls_free( name_prv );
   }
