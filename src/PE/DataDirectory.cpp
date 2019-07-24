@@ -131,8 +131,8 @@ bool DataDirectory::operator!=(const DataDirectory& rhs) const {
 std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
   os << std::hex;
   os << "Data directory \"" << to_string(entry.type()) << "\"" << std::endl;
-  os << std::setw(10) << std::left << std::setfill(' ') << "RVA: "  << entry.RVA()  << std::endl;
-  os << std::setw(10) << std::left << std::setfill(' ') << "Size: " << entry.size() << std::endl;
+  os << std::setw(10) << std::left << std::setfill(' ') << "RVA: 0x"  << entry.RVA()  << std::endl;
+  os << std::setw(10) << std::left << std::setfill(' ') << "Size: 0x" << entry.size() << std::endl;
   if (entry.has_section()) {
     os << std::setw(10) << std::left << std::setfill(' ') << "Section: " << entry.section().name() << std::endl;
   }

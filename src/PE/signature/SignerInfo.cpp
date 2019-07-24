@@ -67,21 +67,25 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
 
   constexpr uint8_t wsize = 30;
   const issuer_t& issuer = signer_info.issuer();
+  std::string issuer_str = std::get<0>(issuer);
 
-  std::string issuer_str = std::accumulate(
-      std::begin(std::get<0>(issuer)),
-      std::end(std::get<0>(issuer)),
+  const std::vector<uint8_t>& sn = std::get<1>(issuer);;
+  std::string sn_str = std::accumulate(
+      std::begin(sn),
+      std::end(sn),
       std::string(""),
-      [] (std::string lhs, const std::pair<std::string, std::string>& p) {
-        std::string s = oid_to_string(std::get<0>(p)) + std::string("=") + std::get<1>(p);
-        return lhs.empty() ? s : lhs + " " + s;
+      [] (std::string lhs, uint8_t x) {
+        std::stringstream ss;
+        ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(x);
+        return lhs.empty() ? ss.str() : lhs + ":" + ss.str();
       });
+
 
   os << std::hex << std::left;
 
   os << std::setw(wsize) << std::setfill(' ') << "Version: "             << signer_info.version() << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Issuer: "              << issuer_str << std::endl;
-
+  os << std::setw(wsize) << std::setfill(' ') << "Issuer Serial Number: "<< sn_str << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Issuer DN: "           << issuer_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Digest Algorithm: "    << oid_to_string(signer_info.digest_algorithm()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Signature algorithm: " << oid_to_string(signer_info.signature_algorithm()) << std::endl;
 
