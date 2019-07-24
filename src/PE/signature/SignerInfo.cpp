@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <type_traits>
 #include <numeric>
+#include <sstream>
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
