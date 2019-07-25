@@ -26,7 +26,7 @@ namespace PE {
 class x509;
 
 using oid_t        = std::string;
-using issuer_t     = std::pair<std::vector<std::pair<std::string, std::string>>, std::vector<uint8_t>>;
+using issuer_t     = std::pair<std::string, std::vector<uint8_t>>;
 using it_const_crt = const_ref_iterator<const std::vector<x509>&>;
 }
 }

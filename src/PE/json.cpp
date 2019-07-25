@@ -666,17 +666,7 @@ void JsonVisitor::visit(const SignerInfo& signerinfo) {
   this->node_["digest_algorithm"]         = signerinfo.digest_algorithm();
   this->node_["signature_algorithm"]      = signerinfo.signature_algorithm();
   this->node_["authenticated_attributes"] = authenticated_attributes_visitor.get();
-  const issuer_t& issuer = signerinfo.issuer();
-
-  std::string issuer_str = std::accumulate(
-      std::begin(std::get<0>(issuer)),
-      std::end(std::get<0>(issuer)),
-      std::string(""),
-      [] (std::string lhs, const std::pair<std::string, std::string>& p) {
-        std::string s = oid_to_string(std::get<0>(p)) + std::string("=") + std::get<1>(p);
-        return lhs.empty() ? s : lhs + " " + s;
-      });
-  this->node_["issuer"] = issuer_str;
+  this->node_["issuer"] = std::get<0>(signerinfo.issuer());
 }
 
 void JsonVisitor::visit(const ContentInfo& contentinfo) {

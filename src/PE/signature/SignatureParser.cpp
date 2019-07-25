@@ -493,7 +493,6 @@ SignerInfo SignatureParser::get_signer_info(void) {
   size_t tag;
   char oid_str[256] = { 0 };
   mbedtls_asn1_buf alg_oid;
-  mbedtls_asn1_buf content_type_oid;
 
   SignerInfo signer_info;
   int32_t version;
@@ -533,51 +532,30 @@ SignerInfo SignatureParser::get_signer_info(void) {
 
   // Name
   // ~~~~
-  std::vector<std::pair<std::string, std::string>> issuer_name;
+  mbedtls_x509_name name;
+  char buffer[1024];
+
   uint8_t* p_end = this->p_ + tag;
-  while(this->p_ < p_end) {
-    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-            MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-      throw corrupted("Signer info corrupted");
-    }
 
-    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-            MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-      throw corrupted("Signer info corrupted");
-    }
+  std::memset(&name, 0, sizeof(name));
+  if ((ret = mbedtls_x509_get_name(&(this->p_), p_end, &name)) != 0) {
+    throw corrupted("Signer info corrupted");
+  }
 
-    content_type_oid.tag = *this->p_;
+  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &name);
 
-    if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
-      throw corrupted("Signer info corrupted");
-    }
-    content_type_oid.p = this->p_;
+  std::string issuer_name {buffer};
 
-    std::memset(oid_str, 0, sizeof(oid_str));
-    mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
+  VLOG(VDEBUG) << "Issuer: " << issuer_name;
 
-    VLOG(VDEBUG) << "Component ID: " << oid_str;
-    this->p_ += content_type_oid.len;
+  mbedtls_x509_name *name_cur;
 
-    if ( (p_end - this->p_) < 1 ) {
-      throw corrupted("Signer info corrupted");
-    }
-
-    if (*this->p_ != MBEDTLS_ASN1_UTF8_STRING &&
-        *this->p_ != MBEDTLS_ASN1_PRINTABLE_STRING &&
-        *this->p_ != MBEDTLS_ASN1_IA5_STRING) {
-      throw corrupted("Signer info corrupted");
-    }
-
-    this->p_ += 1;
-
-    if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
-      throw corrupted("Signer info corrupted");
-    }
-    std::string name{reinterpret_cast<char*>(this->p_), tag};
-    issuer_name.emplace_back(oid_str, name);
-    VLOG(VDEBUG) << "Name: " << name;
-    this->p_ += tag;
+  name_cur = name.next;
+  while( name_cur != NULL )
+  {
+    mbedtls_x509_name *name_prv = name_cur;
+    name_cur = name_cur->next;
+    mbedtls_free( name_prv );
   }
 
   // CertificateSerialNumber (issuer SN)

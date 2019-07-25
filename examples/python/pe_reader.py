@@ -335,9 +335,8 @@ def print_signature(binary):
 
     print("-- Signer Info --")
     signer_info = signature.signer_info
-    issuer_str = " ".join(map(lambda e : oid_to_string(e[0]) + " = " + e[1], signer_info.issuer[0]))
     print(format_dec.format("Version:",             signer_info.version))
-    print(format_str.format("Issuer:",              issuer_str))
+    print(format_str.format("Issuer:",              signer_info.issuer[0]))
     print(format_str.format("Digest Algorithm:",    oid_to_string(signer_info.digest_algorithm)))
     print(format_str.format("Signature algorithm:", oid_to_string(signer_info.signature_algorithm)))
     print(format_str.format("Program name:",        signer_info.authenticated_attributes.program_name))
