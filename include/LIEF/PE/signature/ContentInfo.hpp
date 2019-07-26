@@ -50,6 +50,9 @@ class LIEF_API ContentInfo : public Object {
   //! @brief The digest
   const std::vector<uint8_t>& digest(void) const;
 
+  //! @brief Return the raw bytes associated with the ContentInfo
+  const std::vector<uint8_t>& raw(void) const;
+
   virtual void accept(Visitor& visitor) const override;
 
   virtual ~ContentInfo(void);
@@ -64,7 +67,7 @@ class LIEF_API ContentInfo : public Object {
 
   oid_t digest_algorithm_; // algorithm used to hash the file (should match Signature::digest_algorithms_)
   std::vector<uint8_t> digest_; //hash value
-
+  std::vector<uint8_t> raw_; // raw bytes
 
 };
 

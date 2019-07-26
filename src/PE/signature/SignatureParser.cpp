@@ -188,6 +188,9 @@ ContentInfo SignatureParser::parse_content_info(void) {
     throw corrupted("Signature corrupted");
   }
 
+  // Save off raw now so that it covers everything else in the ContentInfo
+  content_info.raw_ = {this->p_, this->p_ + tag};
+
   // SpcAttributeTypeAndOptionalValue
   // |_ SPC_PE_IMAGE_DATAOBJ
   // |_ SpcPeImageData
@@ -350,6 +353,8 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
           MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
     throw corrupted("Authenticated attributes corrupted");
   }
+
+  authenticated_attributes.raw_ = {this->p_, this->p_ + tag};
 
   uint8_t* p_end = this->p_ + tag;
   while(this->p_ < p_end) {
