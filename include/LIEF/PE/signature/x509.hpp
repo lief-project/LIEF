@@ -65,6 +65,9 @@ class LIEF_API x509 : public Object {
   //! @brief Subject informations
   std::string subject(void) const;
 
+  //! @brief The raw x509 bytes (DER encoded)
+  std::vector<uint8_t> raw(void) const;
+
   virtual void accept(Visitor& visitor) const override;
 
   virtual ~x509(void);

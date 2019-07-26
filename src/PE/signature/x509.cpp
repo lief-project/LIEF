@@ -108,6 +108,9 @@ std::string x509::subject(void) const {
   return {buffer};
 }
 
+std::vector<uint8_t> x509::raw(void) const {
+  return {this->x509_cert_->raw.p, this->x509_cert_->raw.p + this->x509_cert_->raw.len};
+}
 
 void x509::accept(Visitor& visitor) const {
   visitor.visit(*this);

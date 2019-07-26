@@ -72,6 +72,9 @@ void create<x509>(py::module& m) {
         },
         "Subject informations")
 
+    .def_property_readonly("raw",
+        &x509::raw,
+        "The raw bytes associated with this x509 cert (DER encoded)")
 
     .def("__str__",
         [] (const x509& x509_crt)
