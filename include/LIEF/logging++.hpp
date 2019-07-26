@@ -24,6 +24,7 @@
 #define CHECK_STRCASEEQ(...) NULL_STREAM
 #define CHECK_STRCASENE(...) NULL_STREAM
 #define CHECK_BOUNDS(...) NULL_STREAM
+#define DCHECK_NE(...) NULL_STREAM
 #endif
 
 #endif
