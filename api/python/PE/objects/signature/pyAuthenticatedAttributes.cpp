@@ -58,6 +58,10 @@ void create<AuthenticatedAttributes>(py::module& m) {
         },
         "Return an URL to website with more information about the signer")
 
+    .def_property_readonly("raw",
+        &AuthenticatedAttributes::raw,
+        "Return the raw bytes associated with the AuthenticatedAttributes")
+
     .def("__str__",
         [] (const AuthenticatedAttributes& authenticated_attributes)
         {

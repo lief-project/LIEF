@@ -49,6 +49,9 @@ class LIEF_API AuthenticatedAttributes : public Object {
   //! @brief Return an URL to website with more information about the signer
   const std::string& more_info(void) const;
 
+  //! @brief Return the raw bytes associated with the AuthenticatedAttributes
+  const std::vector<uint8_t>& raw(void) const;
+
   virtual void accept(Visitor& visitor) const override;
 
   virtual ~AuthenticatedAttributes(void);
@@ -62,6 +65,7 @@ class LIEF_API AuthenticatedAttributes : public Object {
 
   std::u16string program_name_;
   std::string    more_info_;
+  std::vector<uint8_t> raw_;
 
 };
 

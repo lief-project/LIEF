@@ -52,6 +52,9 @@ void create<ContentInfo>(py::module& m) {
         &ContentInfo::digest,
         "The digest")
 
+    .def_property_readonly("raw",
+        &ContentInfo::raw,
+        "Return the raw bytes associated with the ContentInfo")
 
     .def("__str__",
         [] (const ContentInfo& content_info)
