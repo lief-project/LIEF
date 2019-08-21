@@ -36,6 +36,7 @@ Main features:
   * **API**: LIEF can be used in C, C++ and Python
 
 # Content
+
 - [About](#about)
 - [Download / Install](#downloads--install)
 - [Getting started](#getting-started)
@@ -63,7 +64,7 @@ Main features:
 
 ## Downloads / Install
 
-First make sur to have an updated version of setuptools:
+First make sure to have an updated version of setuptools:
 
 ```console
 pip install setuptools --upgrade
@@ -80,6 +81,16 @@ To install nightlty build:
 ```console
 pip install [--user] --index-url  https://lief-project.github.io/packages lief
 ```
+
+A beta version of **LIEF v0.10.0** is also available on [PyPI](https://pypi.org/project/lief/0.10.0.dev0/) so
+that Python 3.7 users can use it:
+
+```console
+pip install [--user] lief==0.10.0.dev0
+```
+
+
+
 ### Packages
 
 <table>
