@@ -106,29 +106,30 @@ endif()
 
 # Fuzzing
 # =======
-if(UNIX AND NOT APPLE)
+ if(UNIX AND NOT APPLE)
 
-  set(MELKOR_VERSION master)
-  set(MELKOR_SHA256 SHA256=8d8115117e87ee1fad81cb09e53524f7bee9a4803632ae3b0b1cfbb66c86a6f4)
-  set(MELKOR_URL "${THIRD_PARTY_DIRECTORY}/Melkor_ELF_Fuzzer-${MELKOR_VERSION}.zip" CACHE STRING "URL to the Melkor package")
+   set(MELKOR_VERSION master)
+   set(MELKOR_SHA256 SHA256=8d8115117e87ee1fad81cb09e53524f7bee9a4803632ae3b0b1cfbb66c86a6f4)
+   set(MELKOR_URL "${THIRD_PARTY_DIRECTORY}/Melkor_ELF_Fuzzer-${MELKOR_VERSION}.zip" CACHE STRING "URL to the Melkor package")
 
-  set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
-  set(MELKOR_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
-  ExternalProject_Add(MELKOR
-   PREFIX            ${MELKOR_PREFIX}
-   URL               ${MELKOR_URL}
-   URL_HASH          ${MELKOR_SHA256}
-   INSTALL_DIR       ${MELKOR_INSTALL_DIR}
-   UPDATE_COMMAND    ""
-   CONFIGURE_COMMAND ""
-   INSTALL_COMMAND   ""
-   BUILD_COMMAND     make clean && make
-   BUILD_IN_SOURCE   ON)
+   set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
+   set(MELKOR_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
+   ExternalProject_Add(MELKOR
+    PREFIX            ${MELKOR_PREFIX}
+    URL               ${MELKOR_URL}
+    URL_HASH          ${MELKOR_SHA256}
+    INSTALL_DIR       ${MELKOR_INSTALL_DIR}
+    UPDATE_COMMAND    ""
+    CONFIGURE_COMMAND ""
+    INSTALL_COMMAND   ""
+    BUILD_COMMAND     make clean && make
+    BUILD_IN_SOURCE   ON
+    PATCH_COMMAND     patch -p1 < ${THIRD_PARTY_DIRECTORY}/melkor-makefile-old-find.patch)
 
-  ExternalProject_get_property(MELKOR SOURCE_DIR)
-  set(MELKOR_BINARY "${SOURCE_DIR}/melkor")
-  message(STATUS "${MELKOR_BINARY}")
-endif()
+   ExternalProject_get_property(MELKOR SOURCE_DIR)
+   set(MELKOR_BINARY "${SOURCE_DIR}/melkor")
+   message(STATUS "${MELKOR_BINARY}")
+ endif()
 
 # Tests
 # =====

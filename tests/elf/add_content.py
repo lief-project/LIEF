@@ -14,7 +14,7 @@ import lief
 from lief.ELF import Section
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, get_compiler
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
@@ -62,11 +62,7 @@ class TestAddContent(TestCase):
         self.libadd_so  = os.path.join(self.tmp_dir, "libadd.so")
         self.binadd_bin = os.path.join(self.tmp_dir, "binadd.bin")
 
-        # self.compiler = shutil.which(os.environ.get('CC', 'cc')) # only for Python > 3
-        self.compiler = '/usr/bin/cc'
-        if self.compiler is None:
-            self.logger.error("Unable to find a compiler")
-            sys.exit(0)
+        self.compiler = get_compiler()
 
         self.logger.debug("Compiler: {}".format(self.compiler))
 
