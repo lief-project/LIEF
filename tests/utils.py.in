@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import os
+import re
+import subprocess
 
 def get_sample(filename):
     fullpath = os.path.join("@LIEF_SAMPLES_DIRECTORY@", filename)
@@ -9,3 +11,23 @@ def get_sample(filename):
 
     return fullpath
 
+def get_compiler():
+    compiler = os.getenv("CC", "/usr/bin/cc")
+    if not os.path.exists(compiler):
+        raise RuntimeError("Unable to find a compiler")
+    return compiler
+
+
+def has_recent_glibc():
+    """Check if we have at least GLIBC 2.17"""
+    try:
+        out = subprocess.check_output(["ldd", "--version"]).decode("ascii")
+        version_str = re.search(" (\d\.\d+)\n", out).group(1)
+        major, minor = version_str.split(".")
+    except (OSError, AttributeError):
+        pass
+    else:
+        if int(major) == 2 and int(minor) >= 17:
+            return True
+
+    return False

@@ -13,6 +13,8 @@ Logger.set_level(lief.LOGGING_LEVEL.INFO)
 from subprocess import Popen
 from unittest import TestCase
 
+from utils import get_compiler
+
 BINADD_C = """\
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,12 +53,7 @@ class LibAddSample(object):
         self.binadd_obj = os.path.join(self.tmp_dir, "binadd.o")
         self.binadd_bin = os.path.join(self.tmp_dir, "binadd.exe")
 
-        self.compiler = '/usr/bin/cc'
-
-        if self.compiler is None:
-            self.logger.error("Unable to find a compiler")
-            sys.exit(0)
-
+        self.compiler = get_compiler()
         self.logger.debug("Compiler: {}".format(self.compiler))
 
         with open(self.binadd_path, 'w') as f:

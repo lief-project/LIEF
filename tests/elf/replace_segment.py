@@ -16,7 +16,7 @@ from lief import Logger
 #Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, has_recent_glibc
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,6 +28,7 @@ class TestAddSegment(TestCase):
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_simple(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
         stub        = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
@@ -58,6 +59,7 @@ class TestAddSegment(TestCase):
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_gcc(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
         stub        = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
@@ -88,6 +90,7 @@ class TestAddSegment(TestCase):
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_ssh(self):
         stub        = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
         output      = os.path.join(self.tmp_dir, "ssh.replace_segment")
