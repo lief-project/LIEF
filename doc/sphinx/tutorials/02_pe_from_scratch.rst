@@ -3,7 +3,7 @@
 02 - Create a PE from scratch
 -----------------------------
 
-In this tutorial we will see how to create a simple PE executable from scratch
+In this tutorial we introduce LIEF API to create a simple PE executable from scratch
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/02_PE_from_Scratch>`_
 
@@ -14,7 +14,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 LIEF enables to create simple PE from scratch. The aim of this tutorial is to create an executable which pop a ``MessageBoxA`` with "Hello Word"
 
-First we have to create a :class:`~lief.PE.Binary` :
+First, we have to create a :class:`~lief.PE.Binary` :
 
 
 .. code-block:: python
@@ -23,7 +23,7 @@ First we have to create a :class:`~lief.PE.Binary` :
 
   binary32 = PE.Binary("pe_from_scratch", PE.PE_TYPE.PE32)
 
-The first parameter is the binary's name and the second one is the type: ``PE32`` or ``PE32_PLUS`` (see :class:`~lief.PE.PE_TYPE`).
+The first parameter is the binary's name and the second, the binary's type: ``PE32`` or ``PE32_PLUS`` (see :class:`~lief.PE.PE_TYPE`).
 The :class:`~lief.PE.Binary`'s constructor creates automatically :class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`, :class:`~lief.PE.OptionalHeader` an empty :class:`~lief.PE.DataDirectory`.
 
 Now that we have a minimal binary, we have to add sections. We will have a first section holding assembly code (``.text``) and a second one containing strings (``.data``):
@@ -38,7 +38,7 @@ Now that we have a minimal binary, we have to add sections. We will have a first
   section_data.content         = data
   section_data.virtual_address = 0x2000
 
-A ``MessageBoxA`` is composed of a title and a message. These two strings will be stored in the ``.data`` as follows:
+A ``MessageBoxA`` is composed of a title and a message. These two strings can be stored in the ``.data`` as follows:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ As a result, the virtual addresses of the strings are:
     call ExitProcess       ;
 
 As the code uses ``MessageBoxA``, we need to import ``user32.dll`` into the binary's :class:`~lief.PE.Import`\s and the ``MessageBoxA`` :class:`~lief.PE.ImportEntry`.
-To do so we can use the :meth:`~lief.PE.Binary.add_library` method combined with :meth:`~lief.PE.Import.add_entry`:
+To do so, we can use the :meth:`~lief.PE.Binary.add_library` method combined with :meth:`~lief.PE.Import.add_entry`:
 
 .. code-block:: python
 
@@ -95,7 +95,7 @@ Same for ``ExitProcess`` (``kernel32.dll``):
 
 Once needed libraries and functions are added to the binary, we have to determine their addresses (**I**\mport **A**\ddress **T**\able).
 
-For that we can use the :meth:`~lief.PE.Binary.predict_function_rva` method which will return the ``IAT`` address set by the :class:`~lief.PE.Builder`:
+For that, we can use the :meth:`~lief.PE.Binary.predict_function_rva` method which will return the ``IAT`` address set by the :class:`~lief.PE.Builder`:
 
 
 .. automethod:: lief.PE.Binary.predict_function_rva
@@ -112,10 +112,10 @@ For that we can use the :meth:`~lief.PE.Binary.predict_function_rva` method whic
 
 .. code-block:: console
 
-  Address of 'ExitProcess': 0x00304c
-  Address of 'MessageBoxA': 0x003054
+  Address of 'ExitProcess': 0x00306a
+  Address of 'MessageBoxA': 0x00305c
 
-Thus the **absolute** virtual addresses of ``MessageBoxA`` and ``ExitProcess`` are:
+Thus, the **absolute** virtual addresses of ``MessageBoxA`` and ``ExitProcess`` are:
 
   * ``MessageBoxA``: :attr:`~lief.PE.OptionalHeader.imagebase` + ``0x306a`` = ``0x40306a``
   * ``ExitProcess``: :attr:`~lief.PE.OptionalHeader.imagebase` + ``0x305c`` = ``0x40305c``
