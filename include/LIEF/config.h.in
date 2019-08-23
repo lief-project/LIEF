@@ -17,44 +17,37 @@
 #ifndef LIEF_CONFIG_H_
 #define LIEF_CONFIG_H_
 
-#if @ENABLE_JSON_SUPPORT@
-#define LIEF_JSON_SUPPORT
-#endif
+// Main formats
+#cmakedefine LIEF_PE_SUPPORT      @LIEF_PE_SUPPORT@
+#cmakedefine LIEF_ELF_SUPPORT     @LIEF_ELF_SUPPORT@
+#cmakedefine LIEF_MACHO_SUPPORT   @LIEF_MACHO_SUPPORT@
 
-#if @ENABLE_PE_SUPPORT@
-#define LIEF_PE_SUPPORT
-#endif
+// Android formats
+#cmakedefine LIEF_OAT_SUPPORT     @LIEF_OAT_SUPPORT@
+#cmakedefine LIEF_DEX_SUPPORT     @LIEF_DEX_SUPPORT@
+#cmakedefine LIEF_VDEX_SUPPORT    @LIEF_VDEX_SUPPORT@
+#cmakedefine LIEF_ART_SUPPORT     @LIEF_ART_SUPPORT@
 
-#if @ENABLE_ELF_SUPPORT@
-#define LIEF_ELF_SUPPORT
-#endif
+// LIEF options
+#cmakedefine LIEF_JSON_SUPPORT    @ENABLE_JSON_SUPPORT@
+#cmakedefine LIEF_LOGGING_SUPPORT @LIEF_LOGGING_SUPPORT@
+#cmakedefine LIEF_FROZEN_ENABLED  @LIEF_FROZEN_ENABLED@
 
-#if @ENABLE_MACHO_SUPPORT@
-#define LIEF_MACHO_SUPPORT
-#endif
+#ifdef __cplusplus
 
-#if @ENABLE_OAT_SUPPORT@
-#define LIEF_OAT_SUPPORT
-#endif
+static constexpr bool lief_pe_support      = @LIEF_PE_SUPPORT@;
+static constexpr bool lief_elf_support     = @LIEF_ELF_SUPPORT@;
+static constexpr bool lief_macho_support   = @LIEF_MACHO_SUPPORT@;
 
-#if @ENABLE_DEX_SUPPORT@
-#define LIEF_DEX_SUPPORT
-#endif
+static constexpr bool lief_oat_support     = @LIEF_OAT_SUPPORT@;
+static constexpr bool lief_dex_support     = @LIEF_DEX_SUPPORT@;
+static constexpr bool lief_vdex_support    = @LIEF_VDEX_SUPPORT@;
+static constexpr bool lief_art_support     = @LIEF_ART_SUPPORT@;
 
-#if @ENABLE_VDEX_SUPPORT@
-#define LIEF_VDEX_SUPPORT
-#endif
+static constexpr bool lief_json_support    = @LIEF_JSON_SUPPORT@;
+static constexpr bool lief_logging_support = @LIEF_LOGGING_SUPPORT@;
+static constexpr bool lief_frozen_enabled  = @LIEF_FROZEN_ENABLED@;
 
-#if @ENABLE_ART_SUPPORT@
-#define LIEF_ART_SUPPORT
-#endif
-
-#if @ENABLE_LOGGING_SUPPORT@
-#define LIEF_LOGGING_SUPPORT
-#endif
-
-#if @LIEF_FROZEN_ENABLED@
-#define LIEF_FROZEN_ENABLED
-#endif
+#endif // __cplusplus
 
 #endif

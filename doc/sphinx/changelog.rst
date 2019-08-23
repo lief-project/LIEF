@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.10.0 - Not released yet
+-------------------------
+
+:ELF:
+
+   * Add build support for ELF notes (:commit:`f`)
+   * Add coredump support (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
+
+:PE:
+
+   * Improve PE Authenticode parsing (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
+
+:Misc:
+
+   * Enhance Python install (see: :ref:`v10-label`)
+
 0.9.0 - June 11, 2018
 ---------------------
 

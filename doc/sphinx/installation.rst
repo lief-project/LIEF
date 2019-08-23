@@ -16,6 +16,8 @@ Nightly build can be downloaded here: https://lief-project.github.io/packages/sd
 Python
 ------
 
+.. _v10-label:
+
 Since 0.10.0
 ************
 
@@ -41,6 +43,25 @@ Using ``setup.py``, one can build and install lief as follows:
 .. code-block:: console
 
    $ python ./setup.py [--user] install
+
+LIEF modules can also be parameterized using the following options:
+
+   $ python ./setup.py --help
+   ...
+
+   --lief-test         Build and make tests
+   --ninja             Use Ninja as build system
+   --sdk               Build SDK package
+   --lief-no-json      Disable JSON module
+   --lief-no-logging   Disable logging module
+   --lief-no-elf       Disable ELF module
+   --lief-no-pe        Disable PE module
+   --lief-no-macho     Disable Mach-O module
+   --lief-no-android   Disable Android formats
+   --lief-no-art       Disable ART module
+   --lief-no-vdex      Disable VDEX module
+   --lief-no-oat       Disable OAT module
+   --lief-no-dex       Disable DEX module
 
 From 0.8.0 to 0.9.0
 *******************

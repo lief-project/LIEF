@@ -1,9 +1,7 @@
 import os
-import re
 import sys
 import platform
 import subprocess
-import glob
 import setuptools
 import pathlib
 from pkg_resources import Distribution, get_distribution
@@ -25,12 +23,39 @@ class LiefDistribution(setuptools.Distribution):
         ('lief-test', None, 'Build and make tests'),
         ('ninja', None, 'Use Ninja as build system'),
         ('sdk', None, 'Build SDK package'),
-        ]
+
+        ('lief-no-json', None, 'Disable JSON module'),
+        ('lief-no-logging', None, 'Disable logging module'),
+
+        ('lief-no-elf', None, 'Disable ELF module'),
+        ('lief-no-pe', None, 'Disable PE module'),
+        ('lief-no-macho', None, 'Disable Mach-O module'),
+
+        ('lief-no-android', None, 'Disable Android formats'),
+        ('lief-no-art', None, 'Disable ART module'),
+        ('lief-no-vdex', None, 'Disable VDEX module'),
+        ('lief-no-oat', None, 'Disable OAT module'),
+        ('lief-no-dex', None, 'Disable DEX module'),
+    ]
 
     def __init__(self, attrs=None):
-        self.lief_test = False
-        self.ninja     = False
-        self.sdk       = False
+        self.lief_test    = False
+        self.ninja        = False
+        self.sdk          = False
+
+        self.lief_no_json    = False
+        self.lief_no_logging = False
+
+        self.lief_no_elf    = False
+        self.lief_no_pe     = False
+        self.lief_no_macho  = False
+
+        self.lief_no_art   = False
+        self.lief_no_oat   = False
+        self.lief_no_dex   = False
+        self.lief_no_vdex  = False
+
+        self.lief_no_android  = False
         super().__init__(attrs)
 
 
@@ -43,7 +68,7 @@ class Module(Extension):
 class BuildLibrary(build_ext):
     def run(self):
         try:
-            out = subprocess.check_output(['cmake', '--version'])
+            subprocess.check_output(['cmake', '--version'])
         except OSError:
             raise RuntimeError("CMake must be installed to build the following extensions: " +
                                ", ".join(e.name for e in self.extensions))
@@ -94,8 +119,50 @@ class BuildLibrary(build_ext):
             '-DLIEF_PYTHON_API=on',
         ]
 
+        # LIEF options
+        # ============
         if self.distribution.lief_test:
             cmake_args += ["-DLIEF_TESTS=on"]
+
+        if self.distribution.lief_no_json:
+            log.info("LIEF JSON module disabled")
+            cmake_args += ["-DLIEF_ENABLE_JSON=off"]
+
+        if self.distribution.lief_no_logging:
+            log.info("LIEF logging module disabled")
+            cmake_args += ["-DLIEF_LOGGING=off"]
+
+        # Main formats
+        # ============
+        if self.distribution.lief_no_elf:
+            log.info("LIEF ELF module disabled")
+            cmake_args += ["-DLIEF_ELF=off"]
+
+        if self.distribution.lief_no_pe:
+            log.info("LIEF PE module disabled")
+            cmake_args += ["-DLIEF_PE=off"]
+
+        if self.distribution.lief_no_macho:
+            log.info("LIEF MACH-O module disabled")
+            cmake_args += ["-DLIEF_MACHO=off"]
+
+        # Android formats
+        # ===============
+        if self.distribution.lief_no_oat or self.distribution.lief_no_android:
+            log.info("LIEF OAT module disabled")
+            cmake_args += ["-DLIEF_OAT=off"]
+
+        if self.distribution.lief_no_dex or self.distribution.lief_no_android:
+            log.info("LIEF DEX module disabled")
+            cmake_args += ["-DLIEF_DEX=off"]
+
+        if self.distribution.lief_no_vdex or self.distribution.lief_no_android:
+            log.info("LIEF VDEX module disabled")
+            cmake_args += ["-DLIEF_VDEX=off"]
+
+        if self.distribution.lief_no_art or self.distribution.lief_no_android:
+            log.info("LIEF ART module disabled")
+            cmake_args += ["-DLIEF_ART=off"]
 
         build_args = ['--config', cfg]
 

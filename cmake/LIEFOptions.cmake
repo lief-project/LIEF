@@ -21,6 +21,7 @@ option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE  module"                 ON)
 option(LIEF_MACHO          "Build LIEF with MachO module"               ON)
+
 option(LIEF_OAT            "Build LIEF with OAT module"                 ON)
 option(LIEF_DEX            "Build LIEF with DEX module"                 ON)
 option(LIEF_VDEX           "Build LIEF with VDEX module"                ON)
@@ -37,4 +38,57 @@ option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
 # Profiling
 option(LIEF_PROFILING "Enable performance profiling" OFF)
+
+set(LIEF_ELF_SUPPORT 0)
+set(LIEF_PE_SUPPORT 0)
+set(LIEF_MACHO_SUPPORT 0)
+
+set(LIEF_OAT_SUPPORT 0)
+set(LIEF_DEX_SUPPORT 0)
+set(LIEF_VDEX_SUPPORT 0)
+set(LIEF_ART_SUPPORT 0)
+
+set(LIEF_JSON_SUPPORT 0)
+set(LIEF_LOGGING_SUPPORT 0)
+set(LIEF_FROZEN_ENABLED 0)
+
+if (LIEF_ELF)
+  set(LIEF_ELF_SUPPORT 1)
+endif()
+
+if (LIEF_PE)
+  set(LIEF_PE_SUPPORT 1)
+endif()
+
+if (LIEF_MACHO)
+  set(LIEF_MACHO_SUPPORT 1)
+endif()
+
+if (LIEF_OAT)
+  set(LIEF_OAT_SUPPORT 1)
+endif()
+
+if (LIEF_DEX)
+  set(LIEF_DEX_SUPPORT 1)
+endif()
+
+if (LIEF_VDEX)
+  set(LIEF_VDEX_SUPPORT 1)
+endif()
+
+if (LIEF_ART)
+  set(LIEF_ART_SUPPORT 1)
+endif()
+
+if (LIEF_ENABLE_JSON)
+  set(LIEF_JSON_SUPPORT 1)
+endif()
+
+if (LIEF_LOGGING)
+  set(LIEF_LOGGING_SUPPORT 1)
+endif()
+
+if (NOT LIEF_DISABLE_FROZEN)
+  set(LIEF_FROZEN_ENABLED 1)
+endif()
 
