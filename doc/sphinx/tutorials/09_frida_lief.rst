@@ -73,7 +73,7 @@ Adding such dependencies is as simple as:
 
   libnative = lief.parse("libnative.so")
   libnative.add_library("libgadget.so") # Injection!
-  libnative.write("libgadget.so")
+  libnative.write("libnative.so")
 
 Telegram
 ~~~~~~~~
