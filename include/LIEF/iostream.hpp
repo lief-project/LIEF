@@ -94,8 +94,8 @@ class vector_iostream {
 template<typename T>
 vector_iostream& vector_iostream::write_conv(const T& t) {
   const uint8_t *ptr = nullptr;
+  T tmp = t;
   if (this->endian_swap_) {
-    T tmp = t;
     LIEF::Convert::swap_endian<T>(&tmp);
     ptr = reinterpret_cast<const uint8_t*>(&tmp);
   } else {
@@ -109,10 +109,10 @@ template<typename T>
 vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
   for (const T& i: v) {
     const uint8_t* ptr = nullptr;
+    T tmp = i;
     if (this->endian_swap_) {
-      T t = i;
-      LIEF::Convert::swap_endian<T>(&t);
-      ptr = reinterpret_cast<const uint8_t*>(&t);
+      LIEF::Convert::swap_endian<T>(&tmp);
+      ptr = reinterpret_cast<const uint8_t*>(&tmp);
     } else {
       ptr = reinterpret_cast<const uint8_t*>(&i);
     }
