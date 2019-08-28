@@ -24,11 +24,11 @@ Libraries only (SDK)
   $ mkdir build
   $ cd build
   $ cmake -DLIEF_PYTHON_API=off -DCMAKE_BUILD_TYPE=Release ..
-  $ cmake --build . --target LIB_LIEF_STATIC --config Release
+  $ cmake --build . --target LIB_LIEF --config Release
 
 .. warning::
 
-  On Windows on can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
+  On Windows one can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
 
   .. code-block:: console
 
@@ -44,7 +44,7 @@ Library and Python bindings
   $ mkdir build
   $ cd build
   $ cmake -DLIEF_PYTHON_API=on -DPYTHON_VERSION=3.6 -DCMAKE_BUILD_TYPE=Release ..
-  $ cmake --build . --target LIB_LIEF_STATIC --config Release
+  $ cmake --build . --target LIB_LIEF --config Release
   $ cmake --build . --target pyLIEF --config Release
 
 .. warning::
@@ -52,7 +52,7 @@ Library and Python bindings
   Depending on your Python version, CMake could not
   find the right Python library to link against.
 
-  We suggest you to explicitly define path to the Python library,
+  We suggest to explicitly define path to the Python library,
   Python include directory and Python executable.
 
   .. code-block:: console
@@ -64,7 +64,7 @@ Library and Python bindings
       -DPYTHON_BINARY:FILEPATH=/usr/bin/python3.5
 
 
-If you want to enable tests, add ``-DLIEF_TESTS=on`` at CMake configuration step.
+If you want to enable tests, add ``-DLIEF_TESTS=on`` during the CMake configuration step.
 
 The Doxygen documentation will be located at ``build/doc/doxygen/html`` and the sphinx documentation at ``build/doc/sphinx-doc``
 
