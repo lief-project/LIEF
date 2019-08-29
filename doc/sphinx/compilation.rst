@@ -28,11 +28,18 @@ Libraries only (SDK)
 
 .. warning::
 
-  On Windows one can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
+   On Windows one can choose the CRT to use by setting the ``LIEF_USE_CRT_<RELEASE;DEBUG;..>`` variable:
 
-  .. code-block:: console
+   .. code-block:: console
 
-    $ cmake -DCMAKE_BUILD_TYPE=Release -DLIEF_USE_CRT_RELEASE=MT ..
+      $ cmake -DCMAKE_BUILD_TYPE=Release -DLIEF_USE_CRT_RELEASE=MT ..
+
+   For Debug, you should set the CRT to **MTd**:
+
+      $ cmake -DCMAKE_BUILD_TYPE=Debug -DLIEF_USE_CRT_DEBUG=MTd ..
+      $ cmake --build . --target LIB_LIEF --config Debug
+
+
 
 Library and Python bindings
 ---------------------------

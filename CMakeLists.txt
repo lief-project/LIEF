@@ -150,7 +150,15 @@ endif()
 if(MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-endif(MSVC)
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES Debug AND WINDOWS)
+  add_definitions(
+    -D_ITERATOR_DEBUG_LEVEL=0
+    -D_SECURE_SCL=0
+    -D_HAS_ITERATOR_DEBUGGING=0
+  )
+endif()
 
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_EXPORTS)
@@ -461,8 +469,8 @@ if(LIEF_TESTS)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests")
 endif()
 
-# CPP Check
-# =========
+# CPP Check
+# =========
 set(CPPCHECK_TEMPLATE_ARG "[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)")
 set(_cppcheck_args "--enable=warning,performance,portability,information")
 #add_cppcheck(LIB_LIEF FORCE)
