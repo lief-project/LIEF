@@ -36,6 +36,8 @@ Libraries only (SDK)
 
    For Debug, you should set the CRT to **MTd**:
 
+   .. code-block::
+
       $ cmake -DCMAKE_BUILD_TYPE=Debug -DLIEF_USE_CRT_DEBUG=MTd ..
       $ cmake --build . --target LIB_LIEF --config Debug
 
