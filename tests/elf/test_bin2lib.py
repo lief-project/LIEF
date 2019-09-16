@@ -10,6 +10,8 @@ import shutil
 import sys
 from collections import namedtuple
 
+from utils import get_compiler
+
 class CommandResult(object):
     def __init__(self, output, error, retcode, process=None):
         self.output = output
@@ -123,9 +125,7 @@ class TestBin2Lib(unittest.TestCase):
         with open(libaddc, 'w') as f:
             f.write(LIBADD)
 
-        #compiler = os.getenv("CC", "cc")
-        #compiler = shutil.which(compiler)
-        compiler = "/usr/bin/cc"
+        compiler = get_compiler()
 
         # Compile libadd
         r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
@@ -189,9 +189,7 @@ class TestBin2Lib(unittest.TestCase):
         with open(libaddc, 'w') as f:
             f.write(LIBADD)
 
-        #compiler = os.getenv("CC", "cc")
-        #compiler = shutil.which(compiler)
-        compiler = "/usr/bin/cc"
+        compiler = get_compiler()
 
         # Compile libadd
         r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
@@ -247,9 +245,7 @@ class TestBin2Lib(unittest.TestCase):
         with open(libaddc, 'w') as f:
             f.write(LIBADD)
 
-        #compiler = os.getenv("CC", "cc")
-        #compiler = shutil.which(compiler)
-        compiler = "/usr/bin/cc"
+        compiler = get_compiler()
 
         # Compile libadd
         r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(

@@ -17,7 +17,7 @@ Logger.set_level(lief.LOGGING_LEVEL.WARNING)
 from subprocess import Popen
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, has_recent_glibc
 
 class TestELF(TestCase):
 
@@ -83,6 +83,7 @@ class TestELF(TestCase):
         self.assertFalse(gnu_hash.check("foofdsfdsfds"))
         self.assertFalse(gnu_hash.check("fazertrvkdfsrezklqpfjeopqdi"))
 
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_permutation(self):
         samples = [
                 "ELF/ELF64_x86-64_binary_ls.bin",

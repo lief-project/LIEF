@@ -14,7 +14,7 @@ import lief
 from lief.ELF import Section
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, has_recent_glibc
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
@@ -27,6 +27,7 @@ class TestAddSection(TestCase):
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_simple(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
         output      = os.path.join(self.tmp_dir, "ls.section")
@@ -55,6 +56,7 @@ class TestAddSection(TestCase):
 
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_gcc(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
         output      = os.path.join(self.tmp_dir, "gcc.section")
