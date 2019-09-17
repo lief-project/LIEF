@@ -12,4 +12,5 @@ ENV CC=/opt/devtools-6.3/bin/gcc
 ENV CXX=/opt/devtools-6.3/bin/g++
 ENV CXXFLAGS=-static-libstdc++
 
+COPY . /src
 WORKDIR /src
