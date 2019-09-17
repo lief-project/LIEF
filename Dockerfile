@@ -1,5 +1,9 @@
 FROM quay.io/pypa/manylinux1_x86_64:latest
 
+RUN yum update -y \
+  && yum install -y ccache \
+  && yum clean all
+
 RUN /opt/python/cp37-cp37m/bin/pip install cmake==3.13.3
 ENV PATH=$PATH:/opt/python/cp37-cp37m/bin/
 
