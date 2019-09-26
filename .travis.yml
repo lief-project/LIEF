@@ -169,7 +169,7 @@ script:
 
 after_success:
   - make package
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHON_BINARY=python3; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHON_BINARY=python3; sudo apt-get update && sudo apt-get install -y python3-pip; fi
   - sudo $PYTHON_BINARY -m pip install --upgrade setuptools requests mako wheel
   - cd api/python
   - $PYTHON_BINARY setup.py bdist_egg
