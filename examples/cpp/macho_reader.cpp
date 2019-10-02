@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <LIEF/logging.hpp>
 #include <LIEF/MachO.hpp>
 #include <LIEF/logging.hpp>
 
@@ -95,7 +97,7 @@ void print_binary(const Binary& binary) {
 }
 
 int main(int argc, char **argv) {
-  LIEF::Logger::set_level(LIEF::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::Logger::set_level(LIEF::LOGGING_LEVEL::LOG_INFO);
   std::cout << "MachO Reader" << std::endl;
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <MachO binary>" << std::endl;
@@ -103,8 +105,8 @@ int main(int argc, char **argv) {
   }
   std::unique_ptr<FatBinary> binaries{Parser::parse(argv[1])};
   for (const Binary& binary : *binaries) {
-    print_binary(binary);
-    std::cout << std::endl;
+    //print_binary(binary);
+    //std::cout << std::endl;
   }
 
   return 0;

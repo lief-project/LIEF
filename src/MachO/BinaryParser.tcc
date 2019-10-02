@@ -427,6 +427,126 @@ void BinaryParser::parse_load_commands(void) {
             sig->raw_signature_ = {content, content + sig->data_size()};
           }
 
+          VectorStream sig_stream{std::vector<uint8_t>{content, content + sig->data_size()}};
+
+          sig_stream.set_endian_swap(true);
+
+          const super_blob& sb = sig_stream.read_conv<super_blob>();
+          std::cout << "magic: " << std::hex << sb.magic << std::endl;
+          std::cout << "count: " << std::hex << sb.count << std::endl;
+          std::cout << "length: " << std::hex << sb.length << std::endl;
+
+          for (size_t i = 0; i < sb.count; ++i) {
+            const blob_index& idx = sig_stream.read_conv<blob_index>();
+
+            uint32_t magic = sig_stream.peek_conv<uint32_t>(idx.offset);
+            switch (magic) {
+
+              // Code Directory
+              // See: lib/cscdefs.h
+              case 0xfade0c02:
+                {
+                  size_t saved_offset = sig_stream.pos();
+                  sig_stream.setpos(idx.offset);
+                  {
+                    const code_directory& cd = sig_stream.read_conv<code_directory>();
+
+                    std::cout << std::endl << std::endl;
+                    std::cout << "Code Directory Version: " << std::hex << cd.version << std::endl;
+                    std::cout << "Code Directory Flags: " << std::hex << cd.flags << std::endl;
+                    std::cout << "Code Directory hash_offset: " << std::hex << cd.hash_offset << std::endl;
+                    std::cout << "Code Directory ident_offset: " << std::hex << cd.ident_offset << std::endl;
+                    std::string ident = sig_stream.peek_string_at(idx.offset + cd.ident_offset);
+                    std::cout << ident << std::endl;
+
+                    // Standard slot
+                    for (size_t i = 0; i < cd.nb_code_slots; ++i) {
+                      const size_t hash_offset = idx.offset + cd.hash_offset + i * cd.hash_size;
+                      uint8_t msb = sig_stream.peek<uint8_t>(hash_offset);
+                    //  std::cout << std::hex << static_cast<uint32_t>(msb) << std::endl;
+                    }
+
+                    // Special slots
+                    for (size_t i = 1; i < (cd.nb_special_slots + 1); ++i) {
+                      const size_t hash_offset = idx.offset + cd.hash_offset - i * cd.hash_size;
+                      uint8_t msb = sig_stream.peek<uint8_t>(hash_offset);
+                      //std::cout << std::hex << static_cast<uint32_t>(msb) << std::endl;
+                    }
+                  }
+                  sig_stream.setpos(saved_offset);
+                  break;
+                }
+              case 0xfade7171: // Entitlement
+                {
+                  size_t saved_offset = sig_stream.pos();
+                  sig_stream.setpos(idx.offset);
+                  {
+                    uint32_t magic_number = sig_stream.read_conv<uint32_t>();
+                    uint32_t size         = sig_stream.read_conv<uint32_t>();
+
+                    std::cout << std::endl << std::endl;
+                    std::cout << "Entitlement magic: " << std::hex << std::showbase << magic_number << std::endl;
+                    std::cout << "Entitlement size: " << std::hex << std::showbase << size << std::endl;
+                    std::string entitlement = sig_stream.read_string(size);
+                    std::cout << entitlement << std::endl;
+                  }
+
+                  sig_stream.setpos(saved_offset);
+                  break;
+                }
+
+              case 0xfade0c01: //  Requirement set
+                {
+                  size_t saved_offset = sig_stream.pos();
+                  sig_stream.setpos(idx.offset);
+                  {
+                    super_blob requirement_sblob = sig_stream.read_conv<super_blob>();
+                    std::cout << std::endl << std::endl;
+                    std::cout << "Offset: " << std::hex << std::showbase << idx.offset << std::endl;
+                    std::cout << "Requirement magic: " << std::hex << std::showbase << requirement_sblob.magic << std::endl;
+                    std::cout << "Requirement length: " << std::hex << std::showbase << requirement_sblob.length << std::endl;
+                    std::cout << "Requirement count: " << std::hex << std::showbase << requirement_sblob.count << std::endl;
+
+                    for (size_t j = 0; j < requirement_sblob.count; ++j) {
+                      const blob_index& blob_idx = sig_stream.read_conv<blob_index>();
+                      std::cout << "Type: "   << blob_idx.type << std::endl;
+                      std::cout << "Offset: " << blob_idx.offset << std::endl;
+
+                      size_t saved_offset_req = sig_stream.pos();
+                      sig_stream.setpos(idx.offset + blob_idx.offset);
+                      {
+                        SIGNATURE_OPCODES op = static_cast<SIGNATURE_OPCODES>(sig_stream.read_conv<uint32_t>());
+                        std::cout << "OP: " << std::hex << static_cast<uint32_t>(op) << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        std::cout << "OP: " << std::hex << sig_stream.read_conv<uint32_t>() << std::endl;
+                        //switch (op) {
+                        //  case SIGNATURE_OPCODES::SIGNATURE_OPCODE_FALSE:
+
+                        //}
+                        //std::cout << "Kind: " << std::hex << kind << std::endl;
+
+                      }
+                      sig_stream.setpos(saved_offset_req);
+                    }
+                  }
+
+                  sig_stream.setpos(saved_offset);
+                  break;
+                }
+
+              default:
+                {
+                  LOG(INFO) << "Unsupported type: " << std::dec << idx.type << "@" << std::hex << std::showbase << idx.offset << "(" << magic << ")";
+                }
+            }
+
+          }
+
+
           break;
         }
 

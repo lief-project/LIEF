@@ -537,6 +537,8 @@ struct arm_thread_state64_t {
 };
 
 struct code_directory {
+  uint32_t magic;
+  uint32_t length;
   uint32_t version;
   uint32_t flags;
   uint32_t hash_offset;
@@ -550,6 +552,18 @@ struct code_directory {
   uint8_t  page_size;
   uint32_t reserved2;
   uint32_t scatter_offset;
+};
+
+struct blob_index {
+  uint32_t type;
+  uint32_t offset;
+};
+
+struct super_blob {
+  uint32_t magic;
+  uint32_t length;
+  uint32_t count;
+  //blob_index index[];
 };
 
 
