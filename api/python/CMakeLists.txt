@@ -185,20 +185,3 @@ if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX)
       -P ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/strip.cmake
   )
 endif()
-
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in"    "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/__init__.py.in" "${CMAKE_CURRENT_BINARY_DIR}/lief/__init__.py")
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/README"         "${CMAKE_CURRENT_BINARY_DIR}/README")
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in"    "${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in")
-#configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg"      "${CMAKE_CURRENT_BINARY_DIR}/setup.cfg")
-
-MESSAGE(STATUS "OS: ${CMAKE_HOST_SYSTEM}")
-
-#find_program(ENV_BINARY "env")
-#
-#if (UNIX AND ENV_BINARY AND LIEF_INSTALL_PYTHON)
-#    install(CODE "execute_process(COMMAND ${ENV_BINARY} ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install)"
-#      COMPONENT python)
-#endif()
-
-
