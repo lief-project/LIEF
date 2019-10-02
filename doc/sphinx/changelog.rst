@@ -6,7 +6,7 @@ Changelog
 
 :ELF:
 
-   * Add build support for ELF notes (:commit:`f`)
+   * Add build support for ELF notes
    * Add coredump support (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
 
 :PE:
@@ -16,6 +16,7 @@ Changelog
 :Misc:
 
    * Enhance Python install (see: :ref:`v10-label`)
+   * Thanks to :github_user:`lkollar`, Linux CI now produces **manylinux1-compliant wheels**
 
 0.9.0 - June 11, 2018
 ---------------------
