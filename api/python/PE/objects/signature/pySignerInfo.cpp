@@ -41,9 +41,12 @@ void create<SignerInfo>(py::module& m) {
         "Should be 1")
 
     .def_property_readonly("issuer",
-        &SignerInfo::issuer,
+        [] (const SignerInfo& object) {
+          const issuer_t& issuer = object.issuer();
+          return std::pair<py::object, std::vector<uint8_t>>{safe_string_converter(std::get<0>(issuer)), std::get<1>(issuer)};
+        },
         "Issuer and serial number",
-        py::return_value_policy::reference)
+        py::return_value_policy::copy)
 
     .def_property_readonly("digest_algorithm",
         &SignerInfo::digest_algorithm,

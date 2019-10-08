@@ -44,6 +44,9 @@ const std::vector<uint8_t>& ContentInfo::digest(void) const {
   return this->digest_;
 }
 
+const std::vector<uint8_t>& ContentInfo::raw(void) const {
+  return this->raw_;
+}
 
 void ContentInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);

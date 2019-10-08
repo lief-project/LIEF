@@ -188,6 +188,9 @@ ContentInfo SignatureParser::parse_content_info(void) {
     throw corrupted("Signature corrupted");
   }
 
+  // Save off raw now so that it covers everything else in the ContentInfo
+  content_info.raw_ = {this->p_, this->p_ + tag};
+
   // SpcAttributeTypeAndOptionalValue
   // |_ SPC_PE_IMAGE_DATAOBJ
   // |_ SpcPeImageData
@@ -332,6 +335,12 @@ void SignatureParser::parse_certificates(void) {
     ca.release();
   }
 
+  // If one of the certificates failed to parse for some reason, skip past
+  // the certificate section so that we have a chance of parsing the rest
+  // of the signature.
+  if (this->p_ < cert_end) {
+    this->p_ = cert_end;
+  }
 }
 
 AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
@@ -346,10 +355,15 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
   mbedtls_asn1_buf content_type_oid;
 
   AuthenticatedAttributes authenticated_attributes;
+
+  uint8_t *p_start = this->p_;
+
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
     throw corrupted("Authenticated attributes corrupted");
   }
+
+  authenticated_attributes.raw_ = {p_start, p_start + (this->p_ - p_start) + tag};
 
   uint8_t* p_end = this->p_ + tag;
   while(this->p_ < p_end) {
@@ -430,52 +444,104 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
 
       uint8_t *seq_end = this->p_ + tag;
 
-      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-              MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
-        throw corrupted("Authenticated attributes corrupted");
-      }
+      if (*this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) {
+          this->p_ += 1;
+          if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
+            VLOG(VDEBUG) << "Unexpected format for SpcSpOpusInfo [0] block ";
+            throw corrupted("Authenticated attributes corrupted");
+          }
 
-      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
-        throw corrupted("Authenticated attributes corrupted");
-      }
-      VLOG(VDEBUG) << "Offset: " << std::dec << this->current_offset();
-      VLOG(VDEBUG) << "Size: " << std::dec << tag;
+          // Two cases to handle here:
+          // SpcString ::= CHOICE {
+          //   unicode [0] IMPLICIT BMPSTRING,
+          //   ascii   [1] IMPLICIT IA5STRING
+          // }
 
-      // u8 -> u16 due to endiness
-      std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
-      std::u16string progname;
-      try {
-        utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
-      } catch (const utf8::exception&) {
-        LOG(WARNING) << "utf8 error when parsing progname";
-      }
+          if (*this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC) ||
+              *this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1)) {
+            this->p_ += 1;
+            if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
+              VLOG(VDEBUG) << "Unexpected format for SpcString block ";
+              throw corrupted("Authenticated attributes corrupted");
+            }
 
-      authenticated_attributes.program_name_ = progname;
-      VLOG(VDEBUG) << "ProgName " << u16tou8(progname);
-      this->p_ += tag;
+            VLOG(VDEBUG) << "Offset: " << std::dec << this->current_offset();
+            VLOG(VDEBUG) << "Size: " << std::dec << tag;
 
-      if (this->p_ >= seq_end) {
-          VLOG(VDEBUG) << "No more info specified ";
-          authenticated_attributes.more_info_ = "";
-          continue;
+            // u8 -> u16 due to endiness
+            std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
+            std::u16string progname;
+            try {
+              utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
+            } catch (const utf8::exception&) {
+              LOG(WARNING) << "utf8 error when parsing progname";
+            }
+
+            authenticated_attributes.program_name_ = progname;
+            VLOG(VDEBUG) << "ProgName " << u16tou8(progname);
+            this->p_ += tag;
+
+          } else {
+            VLOG(VDEBUG) << "Unexpected format for SpcString block ";
+            throw corrupted("Authenticated attributes corrupted");
+          }
+
+          if (this->p_ >= seq_end) {
+              VLOG(VDEBUG) << "No more info specified ";
+              authenticated_attributes.more_info_ = "";
+              continue;
+          }
+
+      } else {
+          VLOG(VDEBUG) << "No program name specified ";
+          authenticated_attributes.program_name_ = u"";
       }
 
       // moreInfo
       // ++++++++
-      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
-              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_BOOLEAN )) != 0) {
-        throw corrupted("Authenticated attributes corrupted");
-      }
+      if (*this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_BOOLEAN)) {
+          this->p_ += 1;
+          if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
+            VLOG(VDEBUG) << "Unexpected format for SpcSpOpusInfo [1] block ";
+            throw corrupted("Authenticated attributes corrupted");
+          }
 
-      if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_CONTEXT_SPECIFIC)) != 0) {
-        throw corrupted("Authenticated attributes corrupted");
-      }
+          uint8_t p_val = *this->p_;
 
-      std::string more_info{reinterpret_cast<char*>(this->p_), tag}; // moreInfo
-      authenticated_attributes.more_info_ = more_info;
-      VLOG(VDEBUG) << more_info;
-      this->p_ += tag;
-      continue;
+          this->p_ += 1;
+          if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
+            VLOG(VDEBUG) << "Unexpected format for SpcLink block ";
+            throw corrupted("Authenticated attributes corrupted");
+          }
+
+          // Three cases to handle here:
+          // SpcLink ::= CHOICE {
+          //   url                     [0] IMPLICIT IA5STRING,
+          //   moniker                 [1] IMPLICIT SpcSerializedObject,
+          //   file                    [2] EXPLICIT SpcString
+          // }
+
+          if (p_val == (MBEDTLS_ASN1_CONTEXT_SPECIFIC)) {
+
+            std::string more_info{reinterpret_cast<char*>(this->p_), tag}; // moreInfo
+            authenticated_attributes.more_info_ = more_info;
+            VLOG(VDEBUG) << more_info;
+            this->p_ += tag;
+
+          } else if (p_val == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1)) {
+            VLOG(VDEBUG) << "Parsing MoreInfo 'moniker' option not currently supported ";
+            authenticated_attributes.more_info_ = "";
+
+          } else if (p_val == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 2)) {
+            VLOG(VDEBUG) << "Parsing MoreInfo 'file' option not currently supported ";
+            authenticated_attributes.more_info_ = "";
+
+          } else {
+            VLOG(VDEBUG) << "Unexpected format for SpcLink block ";
+            throw corrupted("Authenticated attributes corrupted");
+          }
+          continue;
+      }
 
     } else {
       VLOG(VDEBUG) << "Skipping OID " << oid_str;
@@ -560,18 +626,13 @@ SignerInfo SignatureParser::get_signer_info(void) {
 
   // CertificateSerialNumber (issuer SN)
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  mbedtls_mpi certificate_number;
-  mbedtls_mpi_init(&certificate_number);
-  if ((ret = mbedtls_asn1_get_mpi(&(this->p_), this->end_, &certificate_number)) != 0) {
+  mbedtls_x509_buf serial;
+  if ((ret = mbedtls_x509_get_serial(&(this->p_), this->end_, &serial)) != 0) {
       throw corrupted("Signer info corrupted");
   }
-  std::vector<uint8_t> certificate_sn(mbedtls_mpi_size(&certificate_number), 0);
-  mbedtls_mpi_write_binary(&certificate_number, certificate_sn.data(), certificate_sn.size());
-  mbedtls_mpi_free(&certificate_number);
+  std::vector<uint8_t> certificate_sn = {serial.p, serial.p + serial.len};
 
   signer_info.issuer_ = {issuer_name, certificate_sn};
-
-
 
   // digestAlgorithm
   // ---------------

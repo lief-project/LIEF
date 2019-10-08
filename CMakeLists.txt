@@ -160,6 +160,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug AND WINDOWS)
   )
 endif()
 
+if (CMAKE_BUILD_TYPE MATCHES Debug AND UNIX)
+  target_compile_options(LIB_LIEF PRIVATE -g -O0)
+endif()
+
 if (BUILD_SHARED_LIBS)
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_EXPORTS)
 else()
@@ -244,7 +248,7 @@ endif()
 
 
 # VDEX part
-# =========
+# =========
 if (LIEF_VDEX)
   include(${CMAKE_CURRENT_SOURCE_DIR}/src/VDEX/CMakeLists.txt)
   set(ENABLE_VDEX_SUPPORT 1)
@@ -254,7 +258,7 @@ endif()
 
 
 # ART part
-# ========
+# ========
 if (LIEF_ART)
   include(${CMAKE_CURRENT_SOURCE_DIR}/src/ART/CMakeLists.txt)
   set(ENABLE_ART_SUPPORT 1)
@@ -267,7 +271,7 @@ endif()
 include(${CMAKE_CURRENT_SOURCE_DIR}/src/platforms/CMakeLists.txt)
 
 # LIEF includes
-# =============
+# =============
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/version.h"
@@ -336,6 +340,16 @@ set_property(TARGET LIB_LIEF PROPERTY CXX_VISIBILITY_PRESET     hidden)
 
 target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 
+# Enable support for MD2 and MD4 for parsing the Authenticode sigs
+# of older executables. Also, some older signed executables use certs
+# with the SpcSpAgencyInfo Critical Extension, which mbed TLS doesn't
+# support, so set MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION to
+# have it skip this extension.
+add_definitions(
+  -DMBEDTLS_MD2_C
+  -DMBEDTLS_MD4_C
+  -DMBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION
+)
 
 
 # ASAN - LSAN - TSAN - USAN
@@ -494,7 +508,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND UNIX)
 endif()
 
 # Installation
-# ============
+# ============
 
 install(TARGETS LIB_LIEF
   ARCHIVE

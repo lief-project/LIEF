@@ -44,6 +44,10 @@ const std::string& AuthenticatedAttributes::more_info(void) const {
   return this->more_info_;
 }
 
+const std::vector<uint8_t>& AuthenticatedAttributes::raw(void) const {
+  return this->raw_;
+}
+
 void AuthenticatedAttributes::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
