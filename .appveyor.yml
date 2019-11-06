@@ -72,6 +72,17 @@ environment:
       PYTHON64_BINARY:  "C:\\Python37-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python37-x64\\libs\\python37.lib"
 
+    # Python 3.8
+    - PYTHON_VERSION:   "3.8"
+      PYTHON32_PATH:    "C:\\Python38"
+      PYTHON32_INCLUDE: "C:\\Python38\\include"
+      PYTHON32_BINARY:  "C:\\Python38\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python38\\libs\\python38.lib"
+      PYTHON64_PATH:    "C:\\Python38-x64"
+      PYTHON64_INCLUDE: "C:\\Python38-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python38-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python38-x64\\libs\\python38.lib"
+
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
 
