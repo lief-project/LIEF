@@ -9,7 +9,7 @@ import os
 import argparse
 import traceback
 import lief
-from lief import VDEX
+from lief import VDEX, DEX
 
 from lief import Logger
 Logger.set_level(lief.LOGGING_LEVEL.INFO)
