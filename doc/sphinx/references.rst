@@ -4,6 +4,7 @@ References
 Blog posts related to LIEF
 --------------------------
 
+  * 2019-11-01: `Isolating the logic of an encrypted protocol with LIEF and kaitai <https://x-c3ll.github.io/posts/blackbox-lief-kaitai/>`_ by `@TheXC3LL <https://twitter.com/THEXC3LL>`_
   * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
   * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
   * 2018-09-30: `[Write-up] DragonCTF-Teaser-Brutal Oldskull <http://z3r0s.com/2018/09/30/DragonCTF-Teaser/>`_ by `z3r0s <http://z3r0s.com/>`_
