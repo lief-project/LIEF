@@ -56,7 +56,7 @@ class TestSimple(TestCase):
         self.assertEqual(LOAD_0.virtual_address, 0)
         self.assertEqual(LOAD_0.physical_size, 0x00b34)
         self.assertEqual(LOAD_0.virtual_size, 0x00b34)
-        self.assertEqual(LOAD_0.flags, lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.X)
+        self.assertEqual(int(LOAD_0.flags), lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.X)
 
         self.assertEqual(LOAD_1.type, lief.ELF.SEGMENT_TYPES.LOAD)
         self.assertEqual(LOAD_1.file_offset, 0x000ed8)
@@ -64,7 +64,7 @@ class TestSimple(TestCase):
         self.assertEqual(LOAD_1.physical_address, 0x00001ed8)
         self.assertEqual(LOAD_1.physical_size, 0x00148)
         self.assertEqual(LOAD_1.virtual_size, 0x0014c)
-        self.assertEqual(LOAD_1.flags, lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.W)
+        self.assertEqual(int(LOAD_1.flags), lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.W)
 
 
     def test_dynamic(self):
@@ -218,7 +218,7 @@ class TestTiny(TestCase):
         self.assertEqual(segment.virtual_address, 0x8048000)
         self.assertEqual(segment.physical_size, 0x5a)
         self.assertEqual(segment.virtual_size, 0x5a)
-        self.assertEqual(segment.flags, lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.X)
+        self.assertEqual(int(segment.flags), lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.X)
 
 
 

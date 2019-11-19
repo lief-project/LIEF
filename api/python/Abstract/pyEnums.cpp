@@ -25,15 +25,13 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(EXE_FORMATS::FORMAT_UNKNOWN))
     .value(PY_ENUM(EXE_FORMATS::FORMAT_ELF))
     .value(PY_ENUM(EXE_FORMATS::FORMAT_PE))
-    .value(PY_ENUM(EXE_FORMATS::FORMAT_MACHO))
-    .export_values();
+    .value(PY_ENUM(EXE_FORMATS::FORMAT_MACHO));
 
   py::enum_<OBJECT_TYPES>(m, "OBJECT_TYPES")
     .value(PY_ENUM(OBJECT_TYPES::TYPE_NONE))
     .value(PY_ENUM(OBJECT_TYPES::TYPE_EXECUTABLE))
     .value(PY_ENUM(OBJECT_TYPES::TYPE_LIBRARY))
-    .value(PY_ENUM(OBJECT_TYPES::TYPE_OBJECT))
-    .export_values();
+    .value(PY_ENUM(OBJECT_TYPES::TYPE_OBJECT));
 
   py::enum_<ARCHITECTURES>(m, "ARCHITECTURES")
     .value(PY_ENUM(ARCHITECTURES::ARCH_NONE))
@@ -45,8 +43,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(ARCHITECTURES::ARCH_SPARC))
     .value(PY_ENUM(ARCHITECTURES::ARCH_SYSZ))
     .value(PY_ENUM(ARCHITECTURES::ARCH_XCORE))
-    .value(PY_ENUM(ARCHITECTURES::ARCH_INTEL))
-    .export_values();
+    .value(PY_ENUM(ARCHITECTURES::ARCH_INTEL));
 
   py::enum_<MODES>(m, "MODES")
     .value(PY_ENUM(MODES::MODE_NONE))
@@ -64,13 +61,11 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(MODES::MODE_V8))
     .value(PY_ENUM(MODES::MODE_V9))
     .value(PY_ENUM(MODES::MODE_MIPS32))
-    .value(PY_ENUM(MODES::MODE_MIPS64))
-    .export_values();
+    .value(PY_ENUM(MODES::MODE_MIPS64));
 
   py::enum_<ENDIANNESS>(m, "ENDIANNESS")
     .value(PY_ENUM(ENDIANNESS::ENDIAN_NONE))
     .value(PY_ENUM(ENDIANNESS::ENDIAN_BIG))
-    .value(PY_ENUM(ENDIANNESS::ENDIAN_LITTLE))
-    .export_values();
+    .value(PY_ENUM(ENDIANNESS::ENDIAN_LITTLE));
 }
 }

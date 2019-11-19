@@ -112,10 +112,10 @@ const char* to_string(LOAD_COMMAND_TYPES e) {
 }
 
 const char* to_string(CPU_TYPES e) {
-  CONST_MAP(CPU_TYPES, const char*, 10) enumStrings {
+  CONST_MAP(CPU_TYPES, const char*, 9) enumStrings {
       { CPU_TYPES::CPU_TYPE_ANY,       "ANY"},
       { CPU_TYPES::CPU_TYPE_X86,       "x86"},
-      { CPU_TYPES::CPU_TYPE_I386,      "i386"},
+      //{ CPU_TYPES::CPU_TYPE_I386,      "i386"},
       { CPU_TYPES::CPU_TYPE_X86_64,    "x86_64"},
       //{ CPU_TYPES::CPU_TYPE_MIPS,      "MIPS"},
       { CPU_TYPES::CPU_TYPE_MC98000,   "MC98000"},

@@ -49,7 +49,7 @@ const char* to_string(MapItem::TYPES  e) {
 
 
 const char* to_string(ACCESS_FLAGS  e) {
-  CONST_MAP(ACCESS_FLAGS, const char*, 20) enumStrings {
+  CONST_MAP(ACCESS_FLAGS, const char*, 18) enumStrings {
     { ACCESS_FLAGS::ACC_UNKNOWN,               "UNKNOWN" },
     { ACCESS_FLAGS::ACC_PUBLIC,                "PUBLIC" },
     { ACCESS_FLAGS::ACC_PRIVATE,               "PRIVATE" },
@@ -58,8 +58,6 @@ const char* to_string(ACCESS_FLAGS  e) {
     { ACCESS_FLAGS::ACC_FINAL,                 "FINAL" },
     { ACCESS_FLAGS::ACC_SYNCHRONIZED,          "SYNCHRONIZED" },
     { ACCESS_FLAGS::ACC_VOLATILE,              "VOLATILE" },
-    { ACCESS_FLAGS::ACC_BRIDGE,                "BRIDGE" },
-    { ACCESS_FLAGS::ACC_TRANSIENT,             "TRANSIENT" },
     { ACCESS_FLAGS::ACC_VARARGS,               "VARARGS" },
     { ACCESS_FLAGS::ACC_NATIVE,                "NATIVE" },
     { ACCESS_FLAGS::ACC_INTERFACE,             "INTERFACE" },

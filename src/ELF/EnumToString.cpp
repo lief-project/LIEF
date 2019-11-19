@@ -23,15 +23,11 @@ namespace LIEF {
 namespace ELF {
 
 const char* to_string(SYMBOL_BINDINGS e) {
-  CONST_MAP(SYMBOL_BINDINGS, const char*, 8) enumStrings {
+  CONST_MAP(SYMBOL_BINDINGS, const char*, 4) enumStrings {
     { SYMBOL_BINDINGS::STB_LOCAL,      "LOCAL" },
     { SYMBOL_BINDINGS::STB_GLOBAL,     "GLOBAL" },
     { SYMBOL_BINDINGS::STB_WEAK,       "WEAK" },
     { SYMBOL_BINDINGS::STB_GNU_UNIQUE, "GNU_UNIQUE" },
-    { SYMBOL_BINDINGS::STB_LOOS,       "LOOS" },
-    { SYMBOL_BINDINGS::STB_HIOS,       "HIOS" },
-    { SYMBOL_BINDINGS::STB_LOPROC,     "LOPROC" },
-    { SYMBOL_BINDINGS::STB_HIPROC,     "HIPROC" }
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
@@ -277,7 +273,7 @@ const char* to_string(SEGMENT_TYPES e) {
 }
 
 const char* to_string(DYNAMIC_TAGS e) {
-  CONST_MAP(DYNAMIC_TAGS, const char*, 91) enumStrings {
+  CONST_MAP(DYNAMIC_TAGS, const char*, 87) enumStrings {
     { DYNAMIC_TAGS::DT_NULL,                       "NULL"},
     { DYNAMIC_TAGS::DT_NEEDED,                     "NEEDED"},
     { DYNAMIC_TAGS::DT_PLTRELSZ,                   "PLTRELSZ"},
@@ -312,10 +308,6 @@ const char* to_string(DYNAMIC_TAGS e) {
     //{ DYNAMIC_TAGS::DT_ENCODING,                   "ENCODING"}, // SKIPED
     { DYNAMIC_TAGS::DT_PREINIT_ARRAY,              "PREINIT_ARRAY"},
     { DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ,            "PREINIT_ARRAYSZ"},
-    { DYNAMIC_TAGS::DT_LOOS,                       "LOOS"},
-    { DYNAMIC_TAGS::DT_HIOS,                       "HIOS"},
-    { DYNAMIC_TAGS::DT_LOPROC,                     "LOPROC"},
-    { DYNAMIC_TAGS::DT_HIPROC,                     "HIPROC"},
     { DYNAMIC_TAGS::DT_GNU_HASH,                   "GNU_HASH"},
     { DYNAMIC_TAGS::DT_RELACOUNT,                  "RELACOUNT"},
     { DYNAMIC_TAGS::DT_RELCOUNT,                   "RELCOUNT"},
@@ -455,7 +447,7 @@ const char* to_string(ELF_SECTION_FLAGS e) {
 
 
 const char* to_string(ELF_SYMBOL_TYPES e) {
-  CONST_MAP(ELF_SYMBOL_TYPES, const char*, 12) enumStrings {
+  CONST_MAP(ELF_SYMBOL_TYPES, const char*, 8) enumStrings {
     { ELF_SYMBOL_TYPES::STT_NOTYPE,    "NOTYPE"},
     { ELF_SYMBOL_TYPES::STT_OBJECT,    "OBJECT"},
     { ELF_SYMBOL_TYPES::STT_FUNC,      "FUNC"},
@@ -464,10 +456,6 @@ const char* to_string(ELF_SYMBOL_TYPES e) {
     { ELF_SYMBOL_TYPES::STT_COMMON,    "COMMON"},
     { ELF_SYMBOL_TYPES::STT_TLS,       "TLS"},
     { ELF_SYMBOL_TYPES::STT_GNU_IFUNC, "GNU_IFUNC"},
-    { ELF_SYMBOL_TYPES::STT_LOOS,      "LOOS"},
-    { ELF_SYMBOL_TYPES::STT_HIOS,      "HIOS"},
-    { ELF_SYMBOL_TYPES::STT_LOPROC,    "LOPROC"},
-    { ELF_SYMBOL_TYPES::STT_HIPROC,    "HIPROC"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
@@ -855,7 +843,7 @@ const char* to_string(RELOC_POWERPC32 e) {
   { RELOC_POWERPC32::R_PPC_ADDR32,            "ADDR32" },
   { RELOC_POWERPC32::R_PPC_ADDR24,            "ADDR24" },
   { RELOC_POWERPC32::R_PPC_ADDR16,            "ADDR16" },
-  { RELOC_POWERPC32::R_PPC_ADDR16_LO,         "ADDR16" },
+  { RELOC_POWERPC32::R_PPC_ADDR16_LO,         "ADDR16_LO" },
   { RELOC_POWERPC32::R_PPC_ADDR16_HI,         "ADDR16_HI" },
   { RELOC_POWERPC32::R_PPC_ADDR16_HA,         "ADDR16_HA" },
   { RELOC_POWERPC32::R_PPC_ADDR14,            "ADDR14" },

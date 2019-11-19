@@ -103,7 +103,6 @@ void create<CoreAuxv>(py::module& m) {
 
   LIEF::enum_<AUX_TYPE>(cls, "TYPES")
     .value(PY_ENUM(AUX_TYPE::AT_NULL))
-    .value(PY_ENUM(AUX_TYPE::AT_NULL))
     .value(PY_ENUM(AUX_TYPE::AT_IGNORE))
     .value(PY_ENUM(AUX_TYPE::AT_EXECFD))
     .value(PY_ENUM(AUX_TYPE::AT_PHDR))

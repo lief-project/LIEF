@@ -30,8 +30,7 @@ void init_LIEF_Logger(py::module& m) {
     .value(PY_ENUM(LIEF::LOGGING_LEVEL::LOG_WARNING))
     .value(PY_ENUM(LIEF::LOGGING_LEVEL::LOG_INFO))
     .value(PY_ENUM(LIEF::LOGGING_LEVEL::LOG_VERBOSE))
-    .value(PY_ENUM(LIEF::LOGGING_LEVEL::LOG_UNKNOWN))
-    .export_values();
+    .value(PY_ENUM(LIEF::LOGGING_LEVEL::LOG_UNKNOWN));
 
   py::class_<LIEF::Logger>(m, "Logger")
     .def_static("disable",

@@ -28,8 +28,7 @@ void init_enums(py::module& m) {
   py::enum_<OAT_CLASS_TYPES>(m, "OAT_CLASS_TYPES")
     .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_ALL_COMPILED))
     .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_SOME_COMPILED))
-    .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED))
-    .export_values();
+    .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED));
 
   py::enum_<OAT_CLASS_STATUS>(m, "OAT_CLASS_STATUS")
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_RETIRED))
@@ -44,8 +43,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_VERIFYING_AT_RUNTIME))
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_VERIFIED))
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_INITIALIZING))
-    .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_INITIALIZED))
-    .export_values();
+    .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_INITIALIZED));
 
   py::enum_<HEADER_KEYS>(m, "HEADER_KEYS")
     .value(PY_ENUM(HEADER_KEYS::KEY_IMAGE_LOCATION))
@@ -58,8 +56,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(HEADER_KEYS::KEY_COMPILER_FILTER))
     .value(PY_ENUM(HEADER_KEYS::KEY_CLASS_PATH))
     .value(PY_ENUM(HEADER_KEYS::KEY_BOOT_CLASS_PATH))
-    .value(PY_ENUM(HEADER_KEYS::KEY_CONCURRENT_COPYING))
-    .export_values();
+    .value(PY_ENUM(HEADER_KEYS::KEY_CONCURRENT_COPYING));
 
 
   py::enum_<INSTRUCTION_SETS>(m, "INSTRUCTION_SETS")
@@ -70,8 +67,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_X86))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_X86_64))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_MIPS))
-    .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_MIPS_64))
-    .export_values();
+    .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_MIPS_64));
 
 }
 

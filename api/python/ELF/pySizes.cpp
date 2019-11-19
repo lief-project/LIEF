@@ -23,8 +23,7 @@ void init_ELF32_sizes(py::module& m) {
     .value("VERNAUX", static_cast<SIZES>(sizeof(Elf32_Vernaux)))
     .value("AUXV",    static_cast<SIZES>(sizeof(Elf32_Auxv)))
     .value("VERDEF",  static_cast<SIZES>(sizeof(Elf32_Verdef)))
-    .value("VERDAUX", static_cast<SIZES>(sizeof(Elf32_Verdaux)))
-    .export_values();
+    .value("VERDAUX", static_cast<SIZES>(sizeof(Elf32_Verdaux)));
 }
 
 
@@ -48,8 +47,7 @@ void init_ELF64_sizes(py::module& m) {
     .value("VERNAUX", static_cast<SIZES>(sizeof(Elf64_Vernaux)))
     .value("AUXV",    static_cast<SIZES>(sizeof(Elf64_Auxv)))
     .value("VERDEF",  static_cast<SIZES>(sizeof(Elf64_Verdef)))
-    .value("VERDAUX", static_cast<SIZES>(sizeof(Elf64_Verdaux)))
-    .export_values();
+    .value("VERDAUX", static_cast<SIZES>(sizeof(Elf64_Verdaux)));
 }
 
 }
