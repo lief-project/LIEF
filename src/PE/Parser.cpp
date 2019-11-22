@@ -385,7 +385,7 @@ ResourceNode* Parser::parse_resource_node(
     if ((0x80000000 & data_rva) == 0) { // We are on a leaf
       uint32_t offset = base_offset + data_rva;
 
-      if (not this->stream_->can_read<pe_resource_data_entry>()) {
+      if (not this->stream_->can_read<pe_resource_data_entry>(offset)) {
         break;
       }
 
