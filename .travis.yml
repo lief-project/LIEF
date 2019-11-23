@@ -151,7 +151,7 @@ before_install:
 
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs2"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv root; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew upgrade pyenv; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew upgrade pyenv||true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv install --list  ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then pyenv install 2.7.12; fi
@@ -194,8 +194,10 @@ script:
 
 after_success:
   - make package
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHON_BINARY=python3; sudo apt-get update && sudo apt-get install -y python3-pip; fi
-  - sudo $PYTHON_BINARY -m pip install --upgrade setuptools requests mako wheel
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PYTHON_BINARY=python3; sudo apt-get update && sudo apt-get install -y python3 python3-pip; fi
+  - sudo $PYTHON_BINARY -m pip install --upgrade pip
+  - sudo $PYTHON_BINARY -m pip install --upgrade setuptools
+  - sudo $PYTHON_BINARY -m pip install --upgrade requests mako wheel
     #- if [[ -z "$TRAVIS_TAG" ]]; then $PYTHON_BINARY setup.py sdist --dev --formats=zip ;fi
     #- if [[ -n "$TRAVIS_TAG" ]]; then $PYTHON_BINARY setup.py sdist --formats=zip       ;fi
   - cd $TRAVIS_BUILD_DIR
