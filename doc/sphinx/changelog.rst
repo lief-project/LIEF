@@ -7,16 +7,73 @@ Changelog
 :ELF:
 
    * Add build support for ELF notes
-   * Add coredump support (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
+   * Add coredump support (:commit:`9fc3a8a43358f608cf18ddbe341e1d94b13cb9e0`)
+   * Enable to bind a relocation with a symbol (:commit:`a9f3cb8f9b4a1f2cdaa95eee4568ff0b162f77cd`)
+
+     :Example:
+
+      .. code-block:: python
+
+        relocation = "..."
+
+        symbol = lief.ELF.Symbol()
+        symbol.name = "printf123"
+        relocation.symbol = symbol
+
+   * Add constructors  (:commit:`67d924a2206c36cb9979d8b1b194b03b2d592e71`)
+   * Expose ELF destructors (:commit:`957384cd361c4a485470f877658af2bf052dbe0a`)
+   * Add ``remove_static_symbol`` (:commit:`c6779702b1fec3c67b0c19a36576830fe18bd9d9`)
+   * Add support for static relocation writing (:commit:`d1b98d69ade662e2471ce2905bf3fb247dfc3143`)
+   * Expose function to get strings located in the ``.rodata`` section (:commit:`02f4851c9f0c2bfa6fb4f51dab393a1db83b4851`)
+   * Export ELF ABI version (:commit:`8d7ec26a93800b0729c2c05be8c55c8318ba3b20`)
 
 :PE:
 
    * Improve PE Authenticode parsing (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
+   * Fix alignment issue when removing a PE section (:commit:`04dddd371080d731fab965b127cb15a91c57d53c`)
+   * Parse PE debug data directory as a list of debug entries (by :github_user:`1orenz0` - :commit:`fcc75dd87982e52d77a1c7ee7e674741a199e41b`)
+   * Add support to parse POGO debug entries (by :github_user:`1orenz0` - :commit:`3537440b8d0da6c9c3d00c25f7da8a04f29154d2`)
+
+:Mach-O:
+
+   * Enhance Mach-O modifications by exposing an API to:
+
+     - Add load commands
+     - Add sections
+     - Add segments
+
+     See: :commit:`406115c8d097da0b61f00b2bb7b2442322ffc5d1`
+
+   * Enable ``write()`` on FAT Mach-O (:commit:`16595316fd588619ea39b942817d6527e0601fbd`)
+   * Introduce Mach-O Build Version command (:commit:`6f967238fcd369210839605ab08c30d647a09a65`)
+   * Enable to remove Mach-O symbols (:commit:`616d739da513092e9ab7446654414b0929d5d5cf`)
+   * Add support for adding ``LC_UNIXTHREAD`` commands in a MachO (by :github_user:`nezetic` - :commit:`64d2597284149441fc734b251648ca917cd816e3`)
+
+
+:Abstract Layer:
+
+   * Expose ``remove_section()`` in the abstract layer (:commit:`918438c6bee52c8421d809bc3b42974165e5fa0b`)
+   * Expose ``write()`` in the abstract layer (:commit:`af4d48ed2e1f1b96687644f2fc4661fcbdb979a6`)
+   * Expose API to list functions found in a binary (:commit:`b5a08463ad63811e9e9432812406aadd74ab8c09`)
+
+:Android:
+
+   * Add partial support for Android 9 (:commit:`bce9ebe17064b1ca16b00dc14eebb5d5dd440184`)
+
 
 :Misc:
 
+   * :github_user:`lkollar` added support for Python 3.8 in CI (Linux & OSX only)
+   * Update Pybind11 dependency to ``v2.4.3``
    * Enhance Python install (see: :ref:`v10-label`)
    * Thanks to :github_user:`lkollar`, Linux CI now produces **manylinux1-compliant wheels**
+
+Many thanks to the contributors: :github_user:`recvfrom`, :github_user:`pbrunet`,
+:github_user:`mackncheesiest`, :github_user:`wisk`, :github_user:`nezetic`,
+:github_user:`lkollar`, :github_user:`jbremer`, :github_user:`DaLynX`, :github_user:`1orenz0`,
+:github_user:`breadchris`, :github_user:`0xbf00`, :github_user:`unratito`, :github_user:`strazzere`,
+:github_user:`aguinetqb`, :github_user:`mingwandroid`, :github_user:`serge-sans-paille-qb`, :github_user:`yrp604`,
+:github_user:`majin42`, :github_user:`KOLANICH`
 
 0.9.0 - June 11, 2018
 ---------------------
