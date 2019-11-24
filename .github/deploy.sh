@@ -123,8 +123,6 @@ git reset --soft ebacb6adf12a5866db66346ce591f634333bde24
 git ls-files -v
 
 mkdir -p lief && cd lief
-/bin/cp -rf ${LIEF_SRCDIR}/dist/*.zip . || true
-/bin/cp -rf ${LIEF_SRCDIR}/dist/*.egg . || true
 /bin/cp -rf ${LIEF_SRCDIR}/dist/*.whl . || true
 
 ${PYTHON_BINARY} ${LIEF_SRCDIR}/.github/make_index.py --output=./index.html --base "packages/lief" .
