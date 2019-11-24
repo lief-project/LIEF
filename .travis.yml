@@ -211,11 +211,10 @@ deploy:
     - secure: "RlyaagAWt1BrcOBDSpmOnP+/FYUJqQiURlWw7JWvuBBWBDPBta+WI1zZvH6x5H+1bm8F77LrGdU1mRES/MAlhzb8o/VHgOAFhu2si/A+A7Xa9fAIOQw12jcGbtZQUQ7HCkRfa5VGrW4IlMI5+FJ7uFUU2lLoWOsA3u8pLEwApbdiB/LmtEY+kKhXzX0bT3h9cZATDWTeEoopXOseaBmTFC9IUATE3Ht1wVP49wXRUZHNJA10PJILbKtR1OITCAKm0iu1rVdLhoMzqH3T2dXDZ5ykF9TuYQaXJzKMFHaAeSe135JYOiIEWUUiif80q/mTWXiJAQ6gQXXOyDVu6R0Hi03TKsWXPlEKDBpDCRDu58I2hJyxsc5MPbFg8IAjraXkOLIQkIpgBOfV0JYVihikOLTfbCBKO+w9RFwrEVy91YsKCDosEAUa9p5nyRoV+k9Epmr/2atlHY8z7RyycB2fNQv3/NkHX8jZesiUFUwu5SHaZD76mKGELEZlf7LW8XwL4Cwfa2OB2vsKFcN1qyGUmXS57MODVBAUubQY4oTFwFJJUv28s06KA6BfZE4QqAeWoRSslDr9ORLUlsHHoCpZrAAY0uyl8kff/jL8IJMd8qng9bBTLu8hiK0yyQWKkebMvMWXhvAjssXeqWt3OeL2mssbUG5N1pXt6eHFmQvxqzs="
   file_glob: true
   file:
-    - ${TRAVIS_BUILD_DIR}/build/api/python/dist/*.egg
-    - ${TRAVIS_BUILD_DIR}/build/api/python/dist/*.zip
+    - ${TRAVIS_BUILD_DIR}/dist/*.whl
     - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
   skip_cleanup: true
   on:
-    #branch: master
-    tags: true
+    branch: master
+    #tags: true
 
