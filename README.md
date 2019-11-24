@@ -20,7 +20,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.9.0-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.10.0-brightgreen.svg?style=default">
   </a>
 </p>
 
@@ -64,7 +64,7 @@ Main features:
 
 ## Downloads / Install
 
-First make sure to have an updated version of setuptools:
+First, make sure to have an updated version of setuptools:
 
 ```console
 pip install setuptools --upgrade
@@ -82,15 +82,6 @@ To install nightlty build:
 pip install [--user] --index-url  https://lief-project.github.io/packages lief
 ```
 
-A beta version of **LIEF v0.10.0** is also available on [PyPI](https://pypi.org/project/lief/0.10.0.dev0/) so
-that Python 3.7 users can use it:
-
-```console
-pip install [--user] lief==0.10.0.dev0
-```
-
-
-
 ### Packages
 
 <table>
@@ -103,10 +94,10 @@ pip install [--user] lief==0.10.0.dev0
 </tr>
 
 <tr>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-win32.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-win64.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.9.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-win32.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-win64.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-Darwin.tar.gz">SDK</a></td>
 </tr>
 
 <tr>
@@ -115,49 +106,35 @@ pip install [--user] lief==0.10.0.dev0
 </table>
 
 <table>
-<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.9.0-brightgreen.svg?style=default"></b></td></tr>
+<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.10.0-brightgreen.svg?style=default"></b></td></tr>
 <tr>
     <th>Linux</th>
     <th>Windows</th>
     <th>OSX</th>
-    <th>CentOS</th>
-    <th>Android</th>
-  <th>Documentation</th>
+    <th>Documentation</th>
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-Linux.tar.gz">SDK</a></td>
   <td>
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-win32.zip">SDK - x86</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-win32.zip">SDK - x86</a>
     <br />
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-win64.zip">SDK - x86-64</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-win64.zip">SDK - x86-64</a>
   </td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Darwin.tar.gz">SDK</a></td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-CentOS.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-Darwin.tar.gz">SDK</a></td>
 
-  <td>
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-x86_64.tar.gz">SDK - x86-64</a>
-  <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-x86.tar.gz">SDK - x86</a>
-  <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-armeabi-v7a.tar.gz">SDK - ARM</a>
-  <br />
-  <a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/LIEF-0.9.0-Android-aarch64.tar.gz">SDK - AARCH64</a>
-  </td>
-
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/documentation-0.9.0.tar.gz">Sphinx + Doxygen</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/documentation-0.10.0.tar.gz">Sphinx + Doxygen</a></td>
 </tr>
 
 
 <tr>
-  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.9.0/pylief-0.9.0.zip">Python</a></p></td>
+  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/">Python</a></p></td>
 </tr>
 
 
 </table>
 
-
-Here one can find guides to install or integrate LIEF:
+Here are guides to install or integrate LIEF:
 
   * [Python](https://lief.quarkslab.com/doc/latest/installation.html#python)
   * [VisualStudio](https://lief.quarkslab.com/doc/latest/installation.html#visual-studio-integration)
@@ -204,7 +181,7 @@ Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://ww
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.9.0/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.10.0/LICENSE).
 
 ### Bibtex
 
