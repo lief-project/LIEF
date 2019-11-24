@@ -215,6 +215,6 @@ deploy:
     - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
   skip_cleanup: true
   on:
-    branch: master
-    #tags: true
+    #branch: master
+    tags: true
 

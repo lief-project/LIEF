@@ -128,7 +128,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
-  artifact: sdk;python-src;python-egg
+  artifact: sdk;python-wheel
   draft: false
   prerelease: false
   force_update: true
