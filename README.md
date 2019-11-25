@@ -94,10 +94,10 @@ pip install [--user] --index-url  https://lief-project.github.io/packages lief
 </tr>
 
 <tr>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-win32.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-win64.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.10.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-win32.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-win64.zip">SDK</a></td>
+  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-Darwin.tar.gz">SDK</a></td>
 </tr>
 
 <tr>
@@ -145,21 +145,59 @@ Here are guides to install or integrate LIEF:
 
 ### Python
 
-<p align="center" >
-<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/pythonapi.png"/><br />
-</p>
+```python
+import lief
+
+# ELF
+binary = lief.parse("/usr/bin/ls")
+print(binary)
+
+# PE
+binary = lief.parse("C:\\Windows\\explorer.exe")
+print(binary)
+
+# Mach-O
+binary = lief.parse("/usr/bin/ls")
+print(binary)
+```
 
 ### C++
 
-<p align="center" >
-<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/cpp.png"/><br />
-</p>
+```cpp
+#include <LIEF/LIEF.hpp>
 
-### C
+int main(int argc, char** argv) {
+  std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse("/usr/bin/ls");
+  std::cout << *elf << std::endl;
 
-<p align="center" >
-<img width="100%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/capi.png"/><br />
-</p>
+  std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
+  std::cout << *pe << std::endl;
+
+  std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
+  std::cout << *macho << std::endl;
+  return 0;
+}
+
+```
+
+### C (Limited API)
+
+```cpp
+#include <LIEF/LIEF.h>
+
+int main(int argc, char** argv) {
+  Elf_Binary_t* elf = elf_parse("/usr/bin/ls");
+
+  Elf_Section_t** sections = elf->sections;
+
+  for (size_t i = 0; sections[i] != NULL; ++i) {
+    printf("%s\n", sections[i]->name);
+  }
+
+  elf_binary_destroy(elf);
+  return 0;
+}
+```
 
 ## Documentation
 
