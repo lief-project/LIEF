@@ -22,6 +22,7 @@ class LiefDistribution(setuptools.Distribution):
         ('lief-test', None, 'Build and make tests'),
         ('ninja', None, 'Use Ninja as build system'),
         ('sdk', None, 'Build SDK package'),
+        ('doc', None, 'Build LIEF documentation'),
 
         ('lief-no-json', None, 'Disable JSON module'),
         ('lief-no-logging', None, 'Disable logging module'),
@@ -55,6 +56,7 @@ class LiefDistribution(setuptools.Distribution):
         self.lief_no_vdex  = False
 
         self.lief_no_android  = False
+        self.doc = False
         super().__init__(attrs)
 
 
@@ -125,6 +127,10 @@ class BuildLibrary(build_ext):
         if self.distribution.lief_no_logging:
             log.info("LIEF logging module disabled")
             cmake_args += ["-DLIEF_LOGGING=off"]
+
+        if self.distribution.doc:
+            log.info("LIEF documentation enabled")
+            cmake_args += ["-DLIEF_DOC=on"]
 
         # Main formats
         # ============
@@ -202,6 +208,9 @@ class BuildLibrary(build_ext):
         if self.distribution.sdk:
             targets['sdk'] = "package"
 
+        if self.distribution.doc:
+            targets['doc'] = "doc-lief"
+
         if platform.system() == "Windows":
             build_cmd = ['cmake', '--build', '.', '--target', "lief_samples"] + build_args
             #log.info(" ".join(build_cmd))
@@ -229,6 +238,12 @@ class BuildLibrary(build_ext):
 
                 if 'sdk' in targets:
                     subprocess.check_call(['ninja', targets['sdk']], cwd=self.build_temp)
+
+                if 'doc' in targets:
+                    try:
+                        subprocess.check_call(['ninja', targets['doc']], cwd=self.build_temp)
+                    except Exception as e:
+                        log.error("Documentation failed: %s" % e)
             else:
                 log.info("Using {} jobs".format(jobs))
                 if self.distribution.lief_test:
@@ -241,6 +256,12 @@ class BuildLibrary(build_ext):
 
                 if 'sdk' in targets:
                     subprocess.check_call(['make', '-j', str(jobs), targets['sdk']], cwd=self.build_temp)
+
+                if 'doc' in targets:
+                    try:
+                        subprocess.check_call(['make', '-j', str(jobs), targets['doc']], cwd=self.build_temp)
+                    except Exception as e:
+                        log.error("Documentation failed: %s" % e)
         pylief_dst  = os.path.join(self.build_lib, self.get_ext_filename(self.get_ext_fullname(ext.name)))
 
 
