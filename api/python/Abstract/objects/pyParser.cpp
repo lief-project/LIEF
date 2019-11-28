@@ -23,7 +23,20 @@ namespace LIEF {
 template<>
 void create<Parser>(py::module& m) {
 
-    m.def("parse",
+  m.def("parse",
+      [] (py::bytes bytes, const std::string& name) {
+        std::string raw_str = bytes;
+        std::vector<uint8_t> raw = {
+          std::make_move_iterator(std::begin(raw_str)),
+          std::make_move_iterator(std::end(raw_str))
+        };
+        return Parser::parse(std::move(raw), name);
+      },
+      "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      "raw"_a, "name"_a = "",
+      py::return_value_policy::take_ownership);
+
+  m.def("parse",
       static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "filepath"_a,
@@ -34,6 +47,7 @@ void create<Parser>(py::module& m) {
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
+
 
 
   m.def("parse",
@@ -65,7 +79,8 @@ void create<Parser>(py::module& m) {
         std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
         std::vector<uint8_t> raw = {
           std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))};
+          std::make_move_iterator(std::end(raw_str))
+        };
 
         return Parser::parse(std::move(raw), name);
       },
