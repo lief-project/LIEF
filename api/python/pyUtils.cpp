@@ -35,6 +35,23 @@ void init_utils_functions(py::module& m) {
     },
     "Drop into an IPython Interpreter");
 
+
+  m.def("demangle", [] (const std::string& name) -> py::object {
+  #if defined(__unix__)
+    int status;
+    char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+    if (status == 0) {
+      std::string realname = demangled_name;
+      free(demangled_name);
+      return py::str(realname);
+    } else {
+      return py::none();
+    }
+  #else
+      return nullptr;
+  #endif
+  });
+
   m.def("breakp",
       [] (void) {
         py::object set_trace = py::module::import("pdb").attr("set_trace");

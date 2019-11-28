@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.1 - Not released
+---------------------
+
+- Fix regression in parsing Python ``bytes``
+- Add Python API to demangle strings: ``lief.demangle``
+
+
 0.10.0 - November 24, 2019
 --------------------------
 

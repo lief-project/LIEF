@@ -26,3 +26,5 @@ Utilities
 .. autofunction:: lief.shell
 
 .. autofunction:: lief.breakp
+
+.. autofunction:: lief.demangle
