@@ -48,7 +48,7 @@ void init_utils_functions(py::module& m) {
       return py::none();
     }
   #else
-      return nullptr;
+      return py::none();
   #endif
   });
 
