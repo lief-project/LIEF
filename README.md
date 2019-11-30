@@ -20,7 +20,7 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.10.0-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/badge/release-0.10.1-brightgreen.svg?style=default">
   </a>
 </p>
 
@@ -106,7 +106,7 @@ pip install [--user] --index-url  https://lief-project.github.io/packages lief
 </table>
 
 <table>
-<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.10.0-brightgreen.svg?style=default"></b></td></tr>
+<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.10.1-brightgreen.svg?style=default"></b></td></tr>
 <tr>
     <th>Linux</th>
     <th>Windows</th>
@@ -115,20 +115,20 @@ pip install [--user] --index-url  https://lief-project.github.io/packages lief
 </tr>
 
 <tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-Linux.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-Linux.tar.gz">SDK</a></td>
   <td>
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-win32.zip">SDK - x86</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-win32.zip">SDK - x86</a>
     <br />
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-win64.zip">SDK - x86-64</a>
+    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-win64.zip">SDK - x86-64</a>
   </td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/LIEF-0.10.0-Darwin.tar.gz">SDK</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-Darwin.tar.gz">SDK</a></td>
 
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/documentation-0.10.0.tar.gz">Sphinx + Doxygen</a></td>
+  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/documentation-0.10.1.tar.gz">Sphinx + Doxygen</a></td>
 </tr>
 
 
 <tr>
-  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.10.0/">Python</a></p></td>
+  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/">Python</a></p></td>
 </tr>
 
 
@@ -219,7 +219,7 @@ Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://ww
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.10.0/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.10.1/LICENSE).
 
 ### Bibtex
 
