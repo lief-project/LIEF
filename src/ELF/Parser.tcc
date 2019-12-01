@@ -713,7 +713,8 @@ uint32_t Parser::nb_dynsym_sysv_hash(void) const {
 
   this->stream_->setpos(sysv_hash_offset + sizeof(uint32_t));
   if (this->stream_->can_read<uint32_t>()) {
-    return this->stream_->read_conv<uint32_t>();
+    const size_t nb_symbols = this->stream_->read_conv<uint32_t>();
+    return nb_symbols;
   }
 
   return 0;
@@ -1039,6 +1040,7 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
   this->stream_->setpos(dynamic_symbols_offset);
   for (size_t i = 0; i < nb_symbols; ++i) {
     if (not this->stream_->can_read<Elf_Sym>()) {
+      VLOG(VDEBUG) << "Break on symbol #" << std::dec << i << std::endl;
       return;
     }
 
@@ -1047,13 +1049,14 @@ void Parser::parse_dynamic_symbols(uint64_t offset) {
 
     if (symbol_header.st_name > 0) {
       if (not this->stream_->can_read<char>(string_offset + symbol_header.st_name)) {
+        VLOG(VDEBUG) << "Break on symbol #" << std::dec << i << std::endl;
         return;
       }
 
       std::string name = this->stream_->peek_string_at(string_offset + symbol_header.st_name);
 
       if (name.empty() and i > 0) {
-        return;
+        VLOG(VDEBUG) << "Symbol's name #" << std::dec << i << " is empty!" << std::endl;
       }
 
       symbol->name(name);
