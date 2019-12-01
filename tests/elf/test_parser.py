@@ -173,7 +173,7 @@ class TestCorrupted(TestCase):
         self.corrupted = lief.parse(get_sample('ELF/ELF32_x86_library_libshellx.so'))
 
     def test_symbols(self):
-        symbols = self.corrupted.dynamic_symbols
+        symbols = [sym for idx, sym in enumerate(self.corrupted.dynamic_symbols) if idx == 0 or len(sym.name) > 0]
         self.assertEqual(len(symbols), 48)
 
         self.assertEqual(symbols[2].name, "__cxa_atexit")
