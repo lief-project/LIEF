@@ -712,7 +712,7 @@ uint32_t Parser::nb_dynsym_sysv_hash(void) const {
   // From the doc: 'so nchain should equal the number of symbol table entries.'
 
   this->stream_->setpos(sysv_hash_offset + sizeof(uint32_t));
-  if (not this->stream_->can_read<uint32_t>()) {
+  if (this->stream_->can_read<uint32_t>()) {
     return this->stream_->read_conv<uint32_t>();
   }
 
