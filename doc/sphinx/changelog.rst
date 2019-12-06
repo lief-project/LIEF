@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.11.0 - Not Released
+---------------------
+
+- Add ``PT_GNU_PROPERTY`` enum
+
 0.10.1 - November 29, 2019
 --------------------------
 

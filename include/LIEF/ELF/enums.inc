@@ -605,6 +605,7 @@ enum _LIEF_EN(SEGMENT_TYPES) {
   _LIEF_EI(PT_SUNW_UNWIND)   = 0x6464e550,
 
   _LIEF_EI(PT_GNU_STACK)     = 0x6474e551, /**< Indicates stack executability. */
+  _LIEF_EI(PT_GNU_PROPERTY)  = 0x6474e553, /**< GNU property */
   _LIEF_EI(PT_GNU_RELRO)     = 0x6474e552, /**< Read-only after relocation. */
 
   /* ARM program header types. */
