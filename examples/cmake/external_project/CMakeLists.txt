@@ -18,7 +18,7 @@ set(LIB_LIEF
 set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
 # LIEF's version to be used (can be 'master')
-set(LIEF_VERSION 0.9.0)
+set(LIEF_VERSION 0.10.1)
 
 # LIEF compilation config
 set(LIEF_CMAKE_ARGS
