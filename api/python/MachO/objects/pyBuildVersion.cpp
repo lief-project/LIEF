@@ -50,7 +50,7 @@ void create<BuildVersion>(py::module& m) {
   tool_version_cls
     .def_property_readonly("tool",
         &BuildToolVersion::tool,
-        "" RST_CLASS_REF(.BuildeVersion.TOOLS) " type")
+        "" RST_CLASS_REF(.BuildVersion.TOOLS) " type")
 
     .def_property_readonly("version",
         &BuildToolVersion::version,
