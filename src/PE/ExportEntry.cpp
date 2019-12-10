@@ -31,6 +31,10 @@ ExportEntry::ExportEntry(void) :
   is_extern_{false}
 {}
 
+ExportEntry::forward_information_t::operator bool() const {
+  return library.size() > 0 or function.size() > 0;
+}
+
 
 const std::string& ExportEntry::name(void) const {
   return this->name_;
@@ -46,6 +50,22 @@ uint32_t ExportEntry::address(void) const {
 
 bool ExportEntry::is_extern(void) const {
   return this->is_extern_;
+}
+
+bool ExportEntry::is_forwarded(void) const {
+  return this->forward_info_;
+}
+
+ExportEntry::forward_information_t ExportEntry::forward_information(void) const {
+  if (not this->is_forwarded()) {
+    return {};
+  }
+  return this->forward_info_;
+}
+
+
+uint32_t ExportEntry::function_rva(void) const {
+  return this->function_rva_;
 }
 
 void ExportEntry::name(const std::string& name) {
@@ -78,20 +98,30 @@ bool ExportEntry::operator!=(const ExportEntry& rhs) const {
   return not (*this == rhs);
 }
 
+
+std::ostream& operator<<(std::ostream& os, const ExportEntry::forward_information_t& info) {
+  os << info.library << "." << info.function;
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {
   os << std::hex;
   os << std::left;
   std::string name = export_entry.name();
-  if (name.size() > 20) {
-    name = name.substr(0, 17) + "...";
+  if (name.size() > 30) {
+    name = name.substr(0, 27) + "... ";
   }
-  os << std::setw(23) << name;
+  os << std::setw(33) << name;
   os << std::setw(5)  << export_entry.ordinal();
 
   if (not export_entry.is_extern()) {
     os << std::setw(10) << export_entry.address();
   } else {
     os << std::setw(10) << "[Extern]";
+  }
+
+  if (export_entry.is_forwarded()) {
+    os << " " << export_entry.forward_information();
   }
   return os;
 }

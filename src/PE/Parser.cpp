@@ -766,19 +766,21 @@ void Parser::parse_exports(void) {
     // If value is inside export directory => 'external' function
     if (value >= std::get<0>(range) and value < std::get<1>(range)) {
       uint32_t name_offset = this->binary_->rva_to_offset(value);
-
       ExportEntry entry;
-      entry.name_      = this->stream_->peek_string_at(name_offset);
-      entry.address_   = 0;
-      entry.is_extern_ = true;
-      entry.ordinal_   = i + export_directory_table.OrdinalBase;
+      entry.name_         = this->stream_->peek_string_at(name_offset);
+      entry.address_      = 0;
+      entry.is_extern_    = true;
+      entry.ordinal_      = i + export_directory_table.OrdinalBase;
+      entry.function_rva_ = value;
+
       export_object.entries_.push_back(std::move(entry));
     } else {
       ExportEntry entry;
-      entry.name_      = "";
-      entry.address_   = value;
-      entry.is_extern_ = false;
-      entry.ordinal_   = i + export_directory_table.OrdinalBase;
+      entry.name_         = "";
+      entry.address_      = value;
+      entry.is_extern_    = false;
+      entry.ordinal_      = i + export_directory_table.OrdinalBase;
+      entry.function_rva_ = value;
 
 
       if (value == 0) {
@@ -801,7 +803,29 @@ void Parser::parse_exports(void) {
     std::string name = this->stream_->peek_string_at(name_offset);
 
     ExportEntry& entry = export_object.entries_[ordinal_table[i]];
-    entry.name_        = name;
+
+    // Check if the entry is 'extern' and if the export name is already set
+    if (entry.is_extern_ and not entry.name_.empty()) {
+      std::string fwd_str = entry.name_;
+
+      std::string function = fwd_str;
+      std::string library;
+
+      // Split on '.'
+      const size_t dot_pos = fwd_str.find('.');
+      if (dot_pos != std::string::npos) {
+        library  = fwd_str.substr(0, dot_pos);
+        function = fwd_str.substr(dot_pos + 1);
+      }
+
+      ExportEntry::forward_information_t finfo;
+      finfo.library  = library;
+      finfo.function = function;
+
+      entry.forward_info_ = finfo;
+    }
+
+    entry.name_ = name;
 
     if (name.size() > MAX_EXPORT_NAME_SIZE) {
       corrupted_entries.insert(entry.ordinal_);

@@ -68,6 +68,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_loadconfig.py")
 
+  ADD_PYTHON_TEST(PE_PYTHON_forwarded_exports
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_forward_information.py")
+
 endif()
 
 

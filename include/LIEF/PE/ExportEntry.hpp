@@ -39,6 +39,16 @@ class LIEF_API ExportEntry : public Object {
   friend class Parser;
 
   public:
+  struct LIEF_API forward_information_t {
+    std::string library;
+    std::string function;
+
+    operator bool() const;
+
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const forward_information_t& info);
+  };
+
+  public:
   ExportEntry(void);
   ExportEntry(const ExportEntry&);
   ExportEntry& operator=(const ExportEntry&);
@@ -48,6 +58,10 @@ class LIEF_API ExportEntry : public Object {
   uint16_t           ordinal(void) const;
   uint32_t           address(void) const;
   bool               is_extern(void) const;
+  bool               is_forwarded(void) const;
+  forward_information_t forward_information(void) const;
+
+  uint32_t function_rva(void) const;
 
   void name(const std::string& name);
   void ordinal(uint16_t ordinal);
@@ -63,9 +77,12 @@ class LIEF_API ExportEntry : public Object {
 
   private:
   std::string name_;
+  uint32_t    function_rva_;
   uint16_t    ordinal_;
   uint32_t    address_;
   bool        is_extern_;
+
+  forward_information_t forward_info_;
 
 };
 

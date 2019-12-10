@@ -33,7 +33,20 @@ using setter_t = void (ExportEntry::*)(T);
 
 template<>
 void create<ExportEntry>(py::module& m) {
-  py::class_<ExportEntry, LIEF::Object>(m, "ExportEntry")
+  py::class_<ExportEntry, LIEF::Object> export_entry(m, "ExportEntry");
+
+  py::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
+    .def_readwrite("library", &ExportEntry::forward_information_t::library)
+    .def_readwrite("function", &ExportEntry::forward_information_t::function)
+
+    .def("__str__", [] (const ExportEntry::forward_information_t& info)
+        {
+          std::ostringstream stream;
+          stream << info;
+          return  stream.str();
+        });
+
+  export_entry
     .def(py::init<>())
 
     .def_property("name",
@@ -53,6 +66,15 @@ void create<ExportEntry>(py::module& m) {
     .def_property("is_extern",
         static_cast<getter_t<bool>>(&ExportEntry::is_extern),
         static_cast<setter_t<bool>>(&ExportEntry::is_extern))
+
+    .def_property_readonly("is_forwarded",
+        &ExportEntry::is_forwarded)
+
+    .def_property_readonly("forward_information",
+        &ExportEntry::forward_information)
+
+    .def_property_readonly("function_rva",
+        &ExportEntry::function_rva)
 
     .def("__eq__", &ExportEntry::operator==)
     .def("__ne__", &ExportEntry::operator!=)

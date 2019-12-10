@@ -317,6 +317,14 @@ void JsonVisitor::visit(const ExportEntry& export_entry) {
   this->node_["ordinal"]   = export_entry.ordinal();
   this->node_["address"]   = export_entry.address();
   this->node_["is_extern"] = export_entry.is_extern();
+
+  if (export_entry.is_forwarded()) {
+    const ExportEntry::forward_information_t& fwd_info = export_entry.forward_information();
+    this->node_["forward_information"] = {
+      {"library",  fwd_info.library},
+      {"function", fwd_info.function},
+    };
+  }
 }
 
 void JsonVisitor::visit(const TLS& tls) {
