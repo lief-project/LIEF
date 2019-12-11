@@ -29,7 +29,7 @@ namespace LIEF {
 namespace MachO {
 
 
-class BuildToolVersion : public LIEF::Object {
+class LIEF_API BuildToolVersion : public LIEF::Object {
   public:
   //! @brief Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
