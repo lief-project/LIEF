@@ -38,11 +38,7 @@ VectorStream::VectorStream(const std::string& filename) {
 
     // reserve capacity
     this->binary_.resize(this->size() + 30, 0);
-    std::copy(
-      std::istreambuf_iterator<char>(binary),
-      std::istreambuf_iterator<char>(),
-      std::begin(this->binary_)
-    );
+    binary.read(reinterpret_cast<char*>(binary_.data()), this->size_);
     binary.close();
   } else {
     throw LIEF::bad_file("Unable to open " + filename);
