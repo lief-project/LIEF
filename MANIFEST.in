@@ -18,6 +18,9 @@ prune api/python/build
 # Global exclude
 recursive-exclude *.egg-info *.so
 
+# Install script
+recursive-include package *
+
 # Documentation
 recursive-include doc *
 
