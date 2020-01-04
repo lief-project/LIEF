@@ -146,45 +146,48 @@ void Builder::build(void) {
 
 
 template<typename T, typename HANDLER>
-std::vector<std::string> Builder::optimize(const HANDLER& e) {
+std::vector<std::string> Builder::optimize(const HANDLER& container) {
 
-  auto setPropertie = [] (const std::string& a, const std::string& b) {
-    return (a.size() >= b.size() and a != b);
-  };
+  std::set<std::string> string_table;
 
-  // Container which will hold the section name sorted by length
-  std::set<std::string, decltype(setPropertie)> stringTable{setPropertie};
-
-  std::vector<std::string> stringTableOpti;
-
+  std::vector<std::string> string_table_optimized;
 
   // Insert all strings in a std::set<> ordered by size
   std::transform(
-    std::begin(e),
-    std::end(e),
+    std::begin(container),
+    std::end(container),
     std::inserter(
-      stringTable,
-      std::end(stringTable)),
+      string_table,
+      std::end(string_table)),
     std::mem_fn(static_cast<const std::string& (T::*)(void) const>(&T::name)));
+
+  std::vector<std::string> sorted_table;
+  sorted_table.reserve(container.size());
+  std::move(std::begin(string_table), std::end(string_table),
+      std::back_inserter(sorted_table));
+
+  std::stable_sort(std::begin(sorted_table), std::end(sorted_table),
+    [] (const std::string& lhs, const std::string& rhs) {
+      return lhs.size() >= rhs.size();
+    });
 
   // Optimize the string table
   std::copy_if(
-    std::begin(stringTable),
-    std::end(stringTable),
-    std::back_inserter(stringTableOpti),
-    [&stringTableOpti] (const std::string& name) {
+    std::begin(sorted_table),
+    std::end(sorted_table),
+    std::back_inserter(string_table_optimized),
+    [&string_table_optimized] (const std::string& name) {
       // Check if the given string **IS** the suffix of another string
       auto it = std::find_if(
-          std::begin(stringTableOpti),
-          std::end(stringTableOpti),
+          std::begin(string_table_optimized),
+          std::end(string_table_optimized),
           [&name] (const std::string& nameOpti) {
             return nameOpti.substr(nameOpti.size() - name.size()) == name ;
           });
-      return (it == std::end(stringTableOpti));
-
+      return (it == std::end(string_table_optimized));
   });
 
-  return stringTableOpti;
+  return string_table_optimized;
 }
 
 
@@ -438,38 +441,37 @@ void Builder::build_static_symbols(void) {
 
   vector_iostream content(this->should_swap());
   content.reserve(this->binary_->static_symbols_.size() * sizeof(Elf_Sym));
-  std::vector<uint8_t> string_table;
+  std::vector<uint8_t> string_table_raw;
 
   // Container which will hold symbols name (optimized)
   std::vector<std::string> string_table_optimize =
     this->optimize<Symbol, decltype(this->binary_->static_symbols_)>(this->binary_->static_symbols_);
 
   // We can't start with a symbol name
-  string_table.push_back(0);
+  string_table_raw.push_back(0);
   for (const std::string& name : string_table_optimize) {
-    string_table.insert(std::end(string_table), std::begin(name), std::end(name));
-    string_table.push_back(0);
+    string_table_raw.insert(std::end(string_table_raw), std::begin(name), std::end(name));
+    string_table_raw.push_back(0);
   }
 
   // Fill `content`
   for (const Symbol* symbol : this->binary_->static_symbols_) {
     VLOG(VDEBUG) << "Dealing with symbol: " << symbol->name();
-    //TODO
     const std::string& name = symbol->name();
 
     // Check if name is already pressent
     auto&& it_name = std::search(
-        std::begin(string_table),
-        std::end(string_table),
+        std::begin(string_table_raw),
+        std::end(string_table_raw),
         name.c_str(),
         name.c_str() + name.size() + 1);
 
 
-    if (it_name == std::end(string_table)) {
+    if (it_name == std::end(string_table_raw)) {
       throw LIEF::not_found("Unable to find symbol '" + name + "' in the string table");
     }
 
-    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table), it_name));
+    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
 
     Elf_Sym sym_hdr;
     sym_hdr.st_name  = static_cast<Elf_Word>(name_offset);
@@ -483,7 +485,7 @@ void Builder::build_static_symbols(void) {
   }
 
   // FIXME: Handle increase of size in symbol_str_section
-  symbol_str_section.content(std::move(string_table));
+  symbol_str_section.content(std::move(string_table_raw));
   symbol_section.content(std::move(content.raw()));
 
 }
