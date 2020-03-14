@@ -430,24 +430,25 @@ void Parser::parse_binary(void) {
   }
 
   // Try to parse using sections
+  if (this->binary_->relocations_.size() == 0) {
+    for (const Section& section : this->binary_->sections()) {
 
-  for (const Section& section : this->binary_->sections()) {
+      try {
+        if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
 
-    try {
-      if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
-        this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(section);
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(section);
+        }
+        else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
+          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(section);
+        }
+
+      } catch (const exception& e) {
+        LOG(WARNING) << "Unable to parse relocations from section '"
+                     << section.name() << "'"
+                     << " (" << e.what() << ")";
       }
-      else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
-        this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(section);
-      }
-
-    } catch (const exception& e) {
-      LOG(WARNING) << "Unable to parse relocations from section '"
-                   << section.name() << "'"
-                   << " (" << e.what() << ")";
     }
   }
-
 
   this->link_symbol_version();
   this->parse_overlay();
