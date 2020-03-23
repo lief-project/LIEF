@@ -231,10 +231,6 @@ class TestAllRelocs(TestCase):
 
     def test_relocations(self):
         relocations = self.bin_with_relocs.relocations
-        i=0
-        for r in relocations:
-            self.logger.warn(str(i)+str(r))
-            i+=1
         self.assertEqual(len(relocations), 37)
         # check relocation from .rela.text
         self.assertEqual(relocations[12].symbol.name,"main")
