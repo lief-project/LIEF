@@ -220,7 +220,28 @@ class TestTiny(TestCase):
         self.assertEqual(segment.virtual_size, 0x5a)
         self.assertEqual(int(segment.flags), lief.ELF.SEGMENT_FLAGS.R | lief.ELF.SEGMENT_FLAGS.X)
 
+class TestAllRelocs(TestCase):
+    """
+    Test binary generated with all relocation sections.
+    """
 
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.bin_with_relocs = lief.parse(get_sample('ELF/ELF64_x86-64_hello-with-relocs.bin'))
+
+    def test_relocations(self):
+        relocations = self.bin_with_relocs.relocations
+        i=0
+        for r in relocations:
+            self.logger.warn(str(i)+str(r))
+            i+=1
+        self.assertEqual(len(relocations), 37)
+        # check relocation from .rela.text
+        self.assertEqual(relocations[12].symbol.name,"main")
+        self.assertEqual(relocations[12].address,0x1064)
+        # check relocation from .rela.eh_frame
+        self.assertTrue(relocations[30].has_section)
+        self.assertEqual(relocations[30].address,0x2068)
 
 if __name__ == '__main__':
 
