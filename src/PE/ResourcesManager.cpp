@@ -1107,7 +1107,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         // =====
         for (size_t i = 0; i < header->nbof_items; ++i) {
           stream.align(sizeof(uint32_t));
-          VLOG(VDEBUG) << "item[" << std::dec << i << "] offset: 0x" << std::hex << stream.pos();
+          VLOG(VDEBUG) << "item[" << std::dec << i << "] offset: " << std::hex << stream.pos();
           ResourceDialogItem dialog_item;
 
           if (new_dialog.is_extended()) {
@@ -1123,19 +1123,20 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           // window class
           // ------------
           stream.align(sizeof(uint32_t));
-          const uint16_t window_class_hint = stream.read<uint16_t>();
+          const uint16_t window_class_hint = stream.peek<uint16_t>();
 
           if (window_class_hint == 0xFFFF) {
+            stream.increment_pos(sizeof(uint16_t));
             const uint16_t windows_class_ordinal = stream.read<uint16_t>();
             VLOG(VDEBUG) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
           } else {
             VLOG(VDEBUG) << "Windows class uses unicode string";
             std::u16string window_class_name = stream.read_u16string();
+            VLOG(VDEBUG) << "[DEBUG] " << u16tou8(window_class_name);
           }
 
           // Title
           // -----
-          stream.align(sizeof(uint32_t));
           const uint16_t title_hint = stream.peek<uint16_t>();
 
           if (title_hint == 0xFFFF) {
