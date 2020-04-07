@@ -430,23 +430,26 @@ void Parser::parse_binary(void) {
   }
 
   // Try to parse using sections
-  if (this->binary_->relocations_.size() == 0) {
-    for (const Section& section : this->binary_->sections()) {
-
-      try {
-        if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
-
-          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(section);
-        }
-        else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
-          this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(section);
-        }
-
-      } catch (const exception& e) {
-        LOG(WARNING) << "Unable to parse relocations from section '"
-                     << section.name() << "'"
-                     << " (" << e.what() << ")";
+  // If we don't have any relocations, we parse all relocation sections
+  // otherwise, only the non-allocated sections to avoid parsing dynamic
+  // relocations (or plt relocations) twice.
+  bool skip_allocated_sections = this->binary_->relocations_.size() > 0;
+  for (const Section& section : this->binary_->sections()) {
+    if(skip_allocated_sections && section.has(ELF_SECTION_FLAGS::SHF_ALLOC)){
+      continue;
+    }
+    try {
+      if (section.type() == ELF_SECTION_TYPES::SHT_REL) {
+        this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rel>(section);
       }
+      else if (section.type() == ELF_SECTION_TYPES::SHT_RELA) {
+        this->parse_section_relocations<ELF_T, typename ELF_T::Elf_Rela>(section);
+      }
+
+    } catch (const exception& e) {
+      LOG(WARNING) << "Unable to parse relocations from section '"
+                   << section.name() << "'"
+                   << " (" << e.what() << ")";
     }
   }
 
