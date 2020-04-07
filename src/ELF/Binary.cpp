@@ -2388,7 +2388,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
   const Segment* load_segment = *it_load_segment;
 
   const bool is64 = (this->type() == ELF_CLASS::ELFCLASS64);
-
+  eh_frame_off = eh_frame_off - load_segment->file_offset();
   VectorStream vs{std::move(load_segment->content())};
   vs.setpos(eh_frame_off);
 
