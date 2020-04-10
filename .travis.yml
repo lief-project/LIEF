@@ -24,7 +24,6 @@ matrix:
         #    ]
 
 
-        - sudo: required
           services:
             - docker
           env: >
@@ -33,7 +32,6 @@ matrix:
             PYTHON_BINARY=/opt/python/cp35-cp35m/bin/python3.5 ,
             ]
 
-        - sudo: required
           services:
             - docker
           env: >
@@ -42,7 +40,6 @@ matrix:
             PYTHON_BINARY=/opt/python/cp36-cp36m/bin/python3.6 ,
             ]
 
-        - sudo: required
           services:
             - docker
           env: >
@@ -51,7 +48,6 @@ matrix:
             PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 ,
             ]
 
-        - sudo: required
           services:
             - docker
           env: >
@@ -126,8 +122,6 @@ notifications:
   email:
     on_success: never
     on_failure: always
-
-sudo: required
 
 cache:
   - apt
@@ -213,7 +207,6 @@ deploy:
   file:
     - ${TRAVIS_BUILD_DIR}/dist/*.whl
     - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
-  skip_cleanup: true
   on:
     #branch: master
     tags: true
