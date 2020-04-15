@@ -167,14 +167,30 @@ print(binary)
 #include <LIEF/LIEF.hpp>
 
 int main(int argc, char** argv) {
-  std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse("/usr/bin/ls");
-  std::cout << *elf << std::endl;
+  // ELF
+  try {
+    std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse("/bin/ls");
+    std::cout << *elf << std::endl;
+  } catch (const LIEF::exception& err) {
+    std::cerr << err.what() << std::endl;
+  }
 
-  std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
-  std::cout << *pe << std::endl;
+  // PE
+  try {
+    std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
+    std::cout << *pe << std::endl;
+  } catch (const LIEF::exception& err) {
+    std::cerr << err.what() << std::endl;
+  }
 
-  std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("/usr/bin/ls");
-  std::cout << *macho << std::endl;
+  // Mach-O
+  try {
+    std::unique_ptr<LIEF::MachO::FatBinary> macho = LIEF::MachO::Parser::parse("/bin/ls");
+    std::cout << *macho << std::endl;
+  } catch (const LIEF::exception& err) {
+    std::cerr << err.what() << std::endl;
+  }
+
   return 0;
 }
 
