@@ -70,7 +70,7 @@ Let's see how it works on a basic *crackme*:
   #define LOCAL    __attribute__ ((visibility ("hidden")))
   #define NOINLINE __attribute__ ((noinline))
 
-  NOINLINE LOCAL int check(char* input) {
+  NOINLINE LOCAL int check_found(char* input) {
     if (strcmp(input, "easy") == 0) {
       return 1;
     }
@@ -108,7 +108,7 @@ The *crackme* can be compiled with:
 
 .. code-block:: console
 
-  $ gcc crackme101.c -O0 -fPIE -pie -Wl,-strip-all -o crackme101.bin
+  $ gcc crackme101.c -O0 -fPIE -pie -Wl,-strip-all,--hash-style=sysv -o crackme101.bin
   $ ./crackme101.bin foo
   Wrong!
   $ ./crackme101.bin easy
