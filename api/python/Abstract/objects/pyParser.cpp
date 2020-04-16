@@ -30,20 +30,36 @@ void create<Parser>(py::module& m) {
           std::make_move_iterator(std::begin(raw_str)),
           std::make_move_iterator(std::end(raw_str))
         };
-        return Parser::parse(std::move(raw), name);
+        std::unique_ptr<Binary> binary;
+        Py_BEGIN_ALLOW_THREADS
+        binary = Parser::parse(std::move(raw), name);
+        Py_END_ALLOW_THREADS
+        return binary;
       },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 
   m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
+      [] (const std::string& name) {
+        std::unique_ptr<Binary> binary;
+        Py_BEGIN_ALLOW_THREADS
+        binary = Parser::parse(name);
+        Py_END_ALLOW_THREADS
+        return binary;
+      },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "filepath"_a,
       py::return_value_policy::take_ownership);
 
   m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+      [](const std::vector<uint8_t>& raw, const std::string& name) {
+        std::unique_ptr<Binary> binary;
+        Py_BEGIN_ALLOW_THREADS
+        binary = Parser::parse(raw, name);
+        Py_END_ALLOW_THREADS
+        return binary;
+      },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
@@ -82,7 +98,11 @@ void create<Parser>(py::module& m) {
           std::make_move_iterator(std::end(raw_str))
         };
 
-        return Parser::parse(std::move(raw), name);
+        std::unique_ptr<Binary> binary;
+        Py_BEGIN_ALLOW_THREADS
+        binary = Parser::parse(std::move(raw), name);
+        Py_END_ALLOW_THREADS
+        return binary;
       },
       "io"_a,
       "name"_a = "",
