@@ -1,117 +1,90 @@
 language: cpp
+
 git:
   depth: false
 
 
-matrix:
+jobs:
     include:
-        # Linux gcc 5.0 - Python 2.7
-        #- os: linux
-        #  dist: trusty
-        #  compiler: gcc
-        #  addons:
-        #    apt:
-        #      sources: ['ubuntu-toolchain-r-test']
-        #      packages: ['g++-5', 'ccache', 'libpython2.7']
-        #  env: >
-        #    [
-        #    CXX_COMPILER=g++-5                        ,
-        #    C_COMPILER=gcc-5                          ,
-        #    PYTHON_VERSION=2.7                        ,
-        #    PYTHON_INCLUDE_DIR=/usr/include/python2.7 ,
-        #    PYTHON_LIBRARY=/usr/lib/libpython2.7.so   ,
-        #    PYTHON_BINARY=/usr/bin/python2.7          ,
-        #    ]
+      - os: linux
+        dist: xenial
+        services: docker
+        env: >
+          [
+          PYTHON_VERSION=3.5                                 ,
+          PYTHON_BINARY=/opt/python/cp35-cp35m/bin/python3.5 ,
+          ]
 
+      - os: linux
+        dist: xenial
+        services: docker
+        env: >
+          [
+          PYTHON_VERSION=3.6                                 ,
+          PYTHON_BINARY=/opt/python/cp36-cp36m/bin/python3.6 ,
+          ]
 
-          services:
-            - docker
-          env: >
-            [
-            PYTHON_VERSION=3.5                                 ,
-            PYTHON_BINARY=/opt/python/cp35-cp35m/bin/python3.5 ,
-            ]
+      - os: linux
+        dist: xenial
+        services: docker
+        env: >
+          [
+          PYTHON_VERSION=3.7                                 ,
+          PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 ,
+          ]
 
-          services:
-            - docker
-          env: >
-            [
-            PYTHON_VERSION=3.6                                 ,
-            PYTHON_BINARY=/opt/python/cp36-cp36m/bin/python3.6 ,
-            ]
-
-          services:
-            - docker
-          env: >
-            [
-            PYTHON_VERSION=3.7                                 ,
-            PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 ,
-            ]
-
-          services:
-            - docker
-          env: >
-            [
-            PYTHON_VERSION=3.8                                 ,
-            PYTHON_BINARY=/opt/python/cp38-cp38/bin/python3.8 ,
-            ]
-
-        # OSX 10.11 - xcode 7.3 - Python 2.7
-        #- os: osx
-        #  osx_image: xcode7.3
-        #  compiler: clang
-        #  env: >
-        #    [
-        #    CXX_COMPILER=clang++ ,
-        #    C_COMPILER=clang     ,
-        #    PYTHON_VERSION=2.7   ,
-        #    ]
+      - services: docker
+        env: >
+          [
+          PYTHON_VERSION=3.8                                 ,
+          PYTHON_BINARY=/opt/python/cp38-cp38/bin/python3.8 ,
+          ]
 
         # OSX 10.12 - xcode 8.3 - Python 3.5
-        - os: osx
-          osx_image: xcode8.3
-          compiler: clang
-          env: >
-            [
-            CXX=clang++ ,
-            CC=clang     ,
-            PYTHON_VERSION=3.5   ,
-            ]
+      - os: osx
+        osx_image: xcode8.3
+        compiler: clang
+        env: >
+          [
+          CXX=clang++ ,
+          CC=clang     ,
+          PYTHON_VERSION=3.5   ,
+          ]
 
 
-        # OSX 10.12 - xcode 8.3 - Python 3.6
-        - os: osx
-          osx_image: xcode8.3
-          compiler: clang
-          env: >
-            [
-            CXX=clang++ ,
-            CC=clang     ,
-            PYTHON_VERSION=3.6   ,
-            ]
+      # OSX 10.12 - xcode 8.3 - Python 3.6
+      - os: osx
+        osx_image: xcode8.3
+        compiler: clang
+        env: >
+          [
+          CXX=clang++ ,
+          CC=clang     ,
+          PYTHON_VERSION=3.6   ,
+          ]
 
 
-        # OSX 10.12 - xcode 10.1 - Python 3.7
-        - os: osx
-          osx_image: xcode10.1
-          compiler: clang
-          env: >
-            [
-            CXX=clang++ ,
-            CC=clang     ,
-            PYTHON_VERSION=3.7   ,
-            ]
+      # OSX 10.12 - xcode 10.1 - Python 3.7
+      - os: osx
+        osx_image: xcode10.1
+        compiler: clang
+        env: >
+          [
+          CXX=clang++ ,
+          CC=clang     ,
+          PYTHON_VERSION=3.7   ,
+          ]
 
-        # OSX 10.12 - xcode 10.1 - Python 3.8
-        - os: osx
-          osx_image: xcode10.1
-          compiler: clang
-          env: >
-            [
-            CXX=clang++ ,
-            CC=clang     ,
-            PYTHON_VERSION=3.8   ,
-            ]
+      # OSX 10.12 - xcode 10.1 - Python 3.8
+      - os: osx
+        osx_image: xcode10.1
+        compiler: clang
+        env: >
+          [
+          CXX=clang++ ,
+          CC=clang     ,
+          PYTHON_VERSION=3.8   ,
+          ]
 
 #branches:
 #  only:
@@ -201,7 +174,7 @@ after_success:
 
 deploy:
   provider: releases
-  api_key:
+  token:
     - secure: LTJMZp9kJ9/tmv73YGktP3Bdhh3moettDNooiRlQfUEgUemRlp9K+ybbufN0ya0Md0bouOJ/7nWqFToWl1G5/kcRr4MjV/P2c+iH8W7mvWcFupLGdwm1+aqpin3hiGsdYz0a1TK37y6DANspFwHILjq1SPf5L8kGEHnYSIfyUFHaETbv7GHL+4gf1XG/55KVuyFa3vZ2BPa3sIXr4bRypdNsqssFOZ7qeoJawtcI3TbjmLqx+sOGR2aiG+9lX+/vcYVGECHOE4KdV5BbTFitDLkJ0toAQrgN4XuB6XMXEnijU0RGtpkvsUAYJUuYaNcV2ea4bwLPCKz0IJvzTw3gtyB/pioP4OUx0xY2csuNuGfppZ0Fb+BWhPx9wOg209lrPjtoWszK8vo4PywKlEUviNG+3hEYx9x382IbtbXvIxp+c2iYdRicudFIdjjSZt7fy1MwBvHhWoBRl1hVw5fpFvRIC6Q1/B6MV55Jc3LVYCs+QHPAXq2KJ1KWK/Q7mmlriG3O+dvswcE1l0/AmeqKuXLsgUMuzScYa4fMFvXL3l/B8bKw205ynMzKvbb61P3sGrJJ+AFDEoHDk8yNtSaTowoUveu75DbL1s1p02QjYeVt7AJS8AsqUm7QPcUU5iXW1gSgt50jD/46/uvK7NZCFj2LzkiVzM5JIbiUANx8pKA=
   file_glob: true
   file:
