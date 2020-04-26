@@ -132,9 +132,9 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/2.7.12/lib/libpython2.7.dylib ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/2.7.12/bin/python2.7           ;fi
 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.5.0/include/python3.5m ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.5.0/lib/libpython3.dylib   ;fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/3.5.0/bin/python3.5           ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.5.9/include/python3.5m ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.5.9/lib/libpython3.dylib   ;fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then export PYTHON_BINARY=$(pyenv root)/versions/3.5.9/bin/python3.5           ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/3.6.0/include/python3.6m ;fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then export PYTHON_LIBRARY=$(pyenv root)/versions/3.6.0/lib/libpython3.dylib   ;fi
