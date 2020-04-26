@@ -122,10 +122,10 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv install --list  ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then pyenv install 2.7.12; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then pyenv install 3.5.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then pyenv install 3.6.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then pyenv install 3.7.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.8" ]]; then pyenv install 3.8.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.5" ]]; then pyenv install --skip-existing 3.5.9; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.6" ]]; then pyenv install --skip-existing 3.6.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then pyenv install --skip-existing 3.7.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.8" ]]; then pyenv install --skip-existing 3.8.0; fi
   #- if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then ls -alR $(pyenv root)/versions/3.7.0a1; fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then export PYTHON_INCLUDE_DIR=$(pyenv root)/versions/2.7.12/include/python2.7  ;fi
