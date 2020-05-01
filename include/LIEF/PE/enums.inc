@@ -7,7 +7,7 @@ enum _LIEF_EN(PE_TYPES) {
 enum _LIEF_EN(MACHINE_TYPES) {
   _LIEF_EI(MT_Invalid) = 0xffff,
   _LIEF_EI(IMAGE_FILE_MACHINE_UNKNOWN)   = 0x0,
-  _LIEF_EI(IMAGE_FILE_MACHINE_AM33)      = 0x13,   /**< Matsushita AM33               */
+  _LIEF_EI(IMAGE_FILE_MACHINE_AM33)      = 0x1D3,  /**< Matsushita AM33               */
   _LIEF_EI(IMAGE_FILE_MACHINE_AMD64)     = 0x8664, /**< AMD x64                        */
   _LIEF_EI(IMAGE_FILE_MACHINE_ARM)       = 0x1C0,  /**< ARM little endian              */
   _LIEF_EI(IMAGE_FILE_MACHINE_ARMNT)     = 0x1C4,  /**< ARMv7 Thumb mode only          */
@@ -24,7 +24,7 @@ enum _LIEF_EN(MACHINE_TYPES) {
   _LIEF_EI(IMAGE_FILE_MACHINE_R4000)     = 0x166,  /**< MIPS with little endian        */
   _LIEF_EI(IMAGE_FILE_MACHINE_RISCV32)   = 0x5032, /**< RISC-V 32-bit address space    */
   _LIEF_EI(IMAGE_FILE_MACHINE_RISCV64)   = 0x5064, /**< RISC-V 64-bit address space    */
-  _LIEF_EI(IMAGE_FILE_MACHINE_RISCV128)  = 0x166,  /**< RISC-V 128-bit address space   */
+  _LIEF_EI(IMAGE_FILE_MACHINE_RISCV128)  = 0x5128,  /**< RISC-V 128-bit address space   */
   _LIEF_EI(IMAGE_FILE_MACHINE_SH3)       = 0x1A2,  /**< Hitachi SH3                    */
   _LIEF_EI(IMAGE_FILE_MACHINE_SH3DSP)    = 0x1A3,  /**< Hitachi SH3 DSP                */
   _LIEF_EI(IMAGE_FILE_MACHINE_SH4)       = 0x1A6,  /**< Hitachi SH4                    */
