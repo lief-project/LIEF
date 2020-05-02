@@ -382,7 +382,7 @@ it_const_symbols Binary::symbols(void) const {
 
 Symbol& Binary::export_symbol(const Symbol& symbol) {
 
-  // Chck if the symbol is in the dynamic symbol table
+  // Check if the symbol is in the dynamic symbol table
   auto&& it_symbol = std::find_if(
       std::begin(this->dynamic_symbols_),
       std::end(this->dynamic_symbols_),
@@ -392,7 +392,7 @@ Symbol& Binary::export_symbol(const Symbol& symbol) {
 
   if (it_symbol == std::end(this->dynamic_symbols_)) {
     // Create a new one
-    Symbol& new_sym = this->add_dynamic_symbol(symbol, SymbolVersion::local());
+    Symbol& new_sym = this->add_dynamic_symbol(symbol, SymbolVersion::global());
     return this->export_symbol(new_sym);
   }
 
@@ -445,6 +445,7 @@ Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
   newsym.binding(SYMBOL_BINDINGS::STB_GLOBAL);
   newsym.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
   newsym.value(value);
+  newsym.size(0x10);
   return this->export_symbol(newsym);
 }
 
@@ -484,6 +485,7 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
   funcsym.binding(SYMBOL_BINDINGS::STB_GLOBAL);
   funcsym.visibility(ELF_SYMBOL_VISIBILITY::STV_DEFAULT);
   funcsym.value(address);
+  funcsym.size(0x10);
 
   return this->export_symbol(funcsym);
 
@@ -1579,9 +1581,9 @@ Symbol& Binary::add_static_symbol(const Symbol& symbol) {
 
 
 Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion& version) {
-  Symbol* sym = new Symbol{symbol};
+  Symbol* sym           = new Symbol{symbol};
   SymbolVersion* symver = new SymbolVersion{version};
-  sym->symbol_version_ = symver;
+  sym->symbol_version_  = symver;
 
   this->dynamic_symbols_.push_back(sym);
   this->symbol_version_table_.push_back(symver);

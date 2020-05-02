@@ -474,12 +474,13 @@ void Builder::build_static_symbols(void) {
     const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
 
     Elf_Sym sym_hdr;
+    memset(&sym_hdr, sizeof(sym_hdr), 0);
     sym_hdr.st_name  = static_cast<Elf_Word>(name_offset);
     sym_hdr.st_info  = static_cast<unsigned char>(symbol->information());
     sym_hdr.st_other = static_cast<unsigned char>(symbol->other());
     sym_hdr.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_hdr.st_value = static_cast<Elf_Addr>(symbol->value());
-    sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
+    //sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
 
     content.write_conv<Elf_Sym>(sym_hdr);
   }
@@ -1080,12 +1081,15 @@ void Builder::build_dynamic_symbols(void) {
     const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
 
     Elf_Sym sym_header;
+
+    memset(&sym_header, sizeof(sym_header), 0);
+
     sym_header.st_name  = static_cast<Elf_Word>(name_offset);
     sym_header.st_info  = static_cast<unsigned char>(symbol->information());
     sym_header.st_other = static_cast<unsigned char>(symbol->other());
     sym_header.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
-    sym_header.st_size  = static_cast<Elf_Word>(symbol->size());
+    sym_header.st_size  = static_cast<Elf_Addr>(symbol->size());
 
     symbol_table_raw.write_conv(sym_header);
   }
