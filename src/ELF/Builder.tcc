@@ -474,7 +474,7 @@ void Builder::build_static_symbols(void) {
     const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
 
     Elf_Sym sym_hdr;
-    memset(&sym_hdr, sizeof(sym_hdr), 0);
+    memset(&sym_hdr, 0, sizeof(sym_hdr));
     sym_hdr.st_name  = static_cast<Elf_Word>(name_offset);
     sym_hdr.st_info  = static_cast<unsigned char>(symbol->information());
     sym_hdr.st_other = static_cast<unsigned char>(symbol->other());
@@ -1082,7 +1082,7 @@ void Builder::build_dynamic_symbols(void) {
 
     Elf_Sym sym_header;
 
-    memset(&sym_header, sizeof(sym_header), 0);
+    memset(&sym_header, 0, sizeof(sym_header));
 
     sym_header.st_name  = static_cast<Elf_Word>(name_offset);
     sym_header.st_info  = static_cast<unsigned char>(symbol->information());
