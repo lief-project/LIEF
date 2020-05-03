@@ -480,7 +480,7 @@ void Builder::build_static_symbols(void) {
     sym_hdr.st_other = static_cast<unsigned char>(symbol->other());
     sym_hdr.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_hdr.st_value = static_cast<Elf_Addr>(symbol->value());
-    //sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
+    sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
 
     content.write_conv<Elf_Sym>(sym_hdr);
   }
