@@ -392,24 +392,25 @@ const char* to_string(RELOCATIONS_BASE_TYPES e) {
 
 
 const char* to_string(DEBUG_TYPES e) {
-  CONST_MAP(DEBUG_TYPES, const char*, 17) enumStrings {
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,       "UNKNOWN"       },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,          "COFF"          },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,      "CODEVIEW"      },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FPO,           "FPO"           },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MISC,          "MISC"          },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_EXCEPTION,     "EXCEPTION"     },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FIXUP,         "FIXUP"         },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_TO_SRC,   "OMAP_TO_SRC"   },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_FROM_SRC, "OMAP_FROM_SRC" },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_BORLAND,       "BORLAND"       },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_RESERVED10,    "RESERVED"      },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CLSID,         "CLSID"         },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_VC_FEATURE,    "VC_FEATURE"    },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO,          "POGO"          },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_ILTCG,         "ILTCG"         },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MPX,           "MPX"           },
-    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO,         "REPRO"         },
+  CONST_MAP(DEBUG_TYPES, const char*, 18) enumStrings {
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN,               "UNKNOWN"               },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_COFF,                  "COFF"                  },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW,              "CODEVIEW"              },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FPO,                   "FPO"                   },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MISC,                  "MISC"                  },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_EXCEPTION,             "EXCEPTION"             },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_FIXUP,                 "FIXUP"                 },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_TO_SRC,           "OMAP_TO_SRC"           },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_OMAP_FROM_SRC,         "OMAP_FROM_SRC"         },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_BORLAND,               "BORLAND"               },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_RESERVED10,            "RESERVED"              },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_CLSID,                 "CLSID"                 },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_VC_FEATURE,            "VC_FEATURE"            },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO,                  "POGO"                  },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_ILTCG,                 "ILTCG"                 },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_MPX,                   "MPX"                   },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO,                 "REPRO"                 },
+    { DEBUG_TYPES::IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS, "EX_DLLCHARACTERISTICS" },
   };
 
   auto   it  = enumStrings.find(e);

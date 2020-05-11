@@ -263,23 +263,24 @@ enum _LIEF_EN(DLL_CHARACTERISTICS) {
 
 
 enum _LIEF_EN(DEBUG_TYPES) {
-  _LIEF_EI(IMAGE_DEBUG_TYPE_UNKNOWN)       = 0,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_COFF)          = 1, ///< COFF debug information
-  _LIEF_EI(IMAGE_DEBUG_TYPE_CODEVIEW)      = 2, ///< CodeView debug information (pdb & cie)
-  _LIEF_EI(IMAGE_DEBUG_TYPE_FPO)           = 3, ///< Frame pointer omission information
-  _LIEF_EI(IMAGE_DEBUG_TYPE_MISC)          = 4, ///< CodeView Debug Information
-  _LIEF_EI(IMAGE_DEBUG_TYPE_EXCEPTION)     = 5, ///< A copy of .pdata section.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_FIXUP)         = 6, ///< Reserved.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_TO_SRC)   = 7, ///< The mapping from an RVA in image to an RVA in source image.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_FROM_SRC) = 8, ///< The mapping from an RVA in source image to an RVA in image.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_BORLAND)       = 9, ///< Reserved for Borland.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_RESERVED10)    = 10, ///< Reserved for future use.
-  _LIEF_EI(IMAGE_DEBUG_TYPE_CLSID)         = 11,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_VC_FEATURE)    = 12,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_POGO)          = 13,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_ILTCG)         = 14,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_MPX)           = 15,
-  _LIEF_EI(IMAGE_DEBUG_TYPE_REPRO)         = 16,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_UNKNOWN)               = 0,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_COFF)                  = 1, ///< COFF debug information
+  _LIEF_EI(IMAGE_DEBUG_TYPE_CODEVIEW)              = 2, ///< CodeView debug information (pdb & cie)
+  _LIEF_EI(IMAGE_DEBUG_TYPE_FPO)                   = 3, ///< Frame pointer omission information
+  _LIEF_EI(IMAGE_DEBUG_TYPE_MISC)                  = 4, ///< CodeView Debug Information
+  _LIEF_EI(IMAGE_DEBUG_TYPE_EXCEPTION)             = 5, ///< A copy of .pdata section.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_FIXUP)                 = 6, ///< Reserved.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_TO_SRC)           = 7, ///< The mapping from an RVA in image to an RVA in source image.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_OMAP_FROM_SRC)         = 8, ///< The mapping from an RVA in source image to an RVA in image.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_BORLAND)               = 9, ///< Reserved for Borland.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_RESERVED10)            = 10, ///< Reserved for future use.
+  _LIEF_EI(IMAGE_DEBUG_TYPE_CLSID)                 = 11,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_VC_FEATURE)            = 12,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_POGO)                  = 13,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_ILTCG)                 = 14,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_MPX)                   = 15,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_REPRO)                 = 16,
+  _LIEF_EI(IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS) = 20,
 };
 
 
