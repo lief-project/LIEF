@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <map>
+#include <unordered_map>
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 namespace LIEF {
 namespace PE {
 const char* oid_to_string(const oid_t& oid) {
-  const std::map<oid_t, const char*> oid_to_str  {
+  const std::unordered_map<oid_t, const char*> oid_to_str  {
     { "0.2.262.1.10",                     "TELESEC" },
     { "0.2.262.1.10.0",                   "EXTENSION" },
     { "0.2.262.1.10.1",                   "MECHANISM" },
