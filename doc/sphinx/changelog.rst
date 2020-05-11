@@ -5,7 +5,7 @@ Changelog
 ---------------------
 
 - Bug fix in the symbols table reconstruction (ELF)
-- Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`)
+- Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`_)
 - Add ``PT_GNU_PROPERTY`` enum
 
 0.10.1 - November 29, 2019
