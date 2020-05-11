@@ -1,4 +1,4 @@
-include README.md setup.cfg CMakeLists.txt
+include README.md LICENSE setup.cfg CMakeLists.txt
 
 # Examples
 recursive-include examples *
