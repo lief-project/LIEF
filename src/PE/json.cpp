@@ -429,6 +429,14 @@ void JsonVisitor::visit(const ImportEntry& import_entry) {
   this->node_["hint"]        = import_entry.hint();
 }
 
+void JsonVisitor::visit(const ResourceData& resource_data) {
+  this->node_["code_page"] = resource_data.code_page();
+  this->node_["reserved"]  = resource_data.reserved();
+  this->node_["offset"]    = resource_data.offset();
+  this->node_["hash"]      = Hash::hash(resource_data.content());
+
+}
+
 void JsonVisitor::visit(const ResourceNode& resource_node) {
   this->node_["id"] = resource_node.id();
 
@@ -449,19 +457,30 @@ void JsonVisitor::visit(const ResourceNode& resource_node) {
 
 }
 
-void JsonVisitor::visit(const ResourceData& resource_data) {
-  this->node_["code_page"] = resource_data.code_page();
-  this->node_["hash"]      = Hash::hash(resource_data.content());
-
-}
-
 void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
+  this->node_["id"] = resource_directory.id();
+
+  if (resource_directory.has_name()) {
+    this->node_["name"] = u16tou8(resource_directory.name());
+  }
+
   this->node_["characteristics"]       = resource_directory.characteristics();
   this->node_["time_date_stamp"]       = resource_directory.time_date_stamp();
   this->node_["major_version"]         = resource_directory.major_version();
   this->node_["minor_version"]         = resource_directory.minor_version();
   this->node_["numberof_name_entries"] = resource_directory.numberof_name_entries();
   this->node_["numberof_id_entries"]   = resource_directory.numberof_id_entries();
+
+  if (resource_directory.childs().size() > 0) {
+    std::vector<json> childs;
+    for (const ResourceNode& rsrc : resource_directory.childs()) {
+      JsonVisitor visitor;
+      rsrc.accept(visitor);
+      childs.emplace_back(visitor.get());
+    }
+
+    this->node_["childs"] = childs;
+  }
 }
 
 
@@ -788,6 +807,7 @@ void JsonVisitor::visit(const Pogo& pogo) {
     v(entry);
     entries.emplace_back(v.get());
   }
+  this->node_["entries"] = entries;
 }
 
 void JsonVisitor::visit(const PogoEntry& entry) {
