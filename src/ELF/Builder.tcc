@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +15,7 @@
  * limitations under the License.
  */
 #include <numeric>
+#include <unordered_map>
 
 #include "LIEF/logging++.hpp"
 
@@ -144,15 +146,16 @@ void Builder::build(void) {
 
 }
 
-
 template<typename T, typename HANDLER>
-std::vector<std::string> Builder::optimize(const HANDLER& container) {
+std::vector<std::string> Builder::optimize(const HANDLER& container,
+                                           std::unordered_map<std::string, size_t> *of_map_p) {
 
   std::set<std::string> string_table;
-
   std::vector<std::string> string_table_optimized;
+  string_table_optimized.reserve(container.size());
 
-  // Insert all strings in a std::set<> ordered by size
+  // reverse all symbol names and sort them so we can merge then in the linear time:
+  // aaa, aadd, aaaa, cca, ca -> aaaa, aaa, acc, ac ddaa
   std::transform(
     std::begin(container),
     std::end(container),
@@ -161,31 +164,72 @@ std::vector<std::string> Builder::optimize(const HANDLER& container) {
       std::end(string_table)),
     std::mem_fn(static_cast<const std::string& (T::*)(void) const>(&T::name)));
 
-  std::vector<std::string> sorted_table;
-  sorted_table.reserve(container.size());
-  std::move(std::begin(string_table), std::end(string_table),
-      std::back_inserter(sorted_table));
+  for (auto &val: string_table) {
+    string_table_optimized.emplace_back(std::move(val));
+    std::reverse(std::begin(string_table_optimized.back()), std::end(string_table_optimized.back()));
+  }
 
-  std::stable_sort(std::begin(sorted_table), std::end(sorted_table),
-    [] (const std::string& lhs, const std::string& rhs) {
-      return lhs.size() >= rhs.size();
-    });
-
-  // Optimize the string table
-  std::copy_if(
-    std::begin(sorted_table),
-    std::end(sorted_table),
-    std::back_inserter(string_table_optimized),
-    [&string_table_optimized] (const std::string& name) {
-      // Check if the given string **IS** the suffix of another string
-      auto it = std::find_if(
-          std::begin(string_table_optimized),
-          std::end(string_table_optimized),
-          [&name] (const std::string& nameOpti) {
-            return nameOpti.substr(nameOpti.size() - name.size()) == name ;
-          });
-      return (it == std::end(string_table_optimized));
+  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized),
+      [] (const std::string& lhs, const std::string& rhs) {
+          bool ret = false;
+          if (lhs.size() > rhs.size()) {
+              auto res = lhs.compare(0, rhs.size(), rhs);
+              ret = (res <= 0);
+          } else {
+              auto res = rhs.compare(0, lhs.size(), lhs);
+              ret = (res > 0);
+          }
+          return ret;
   });
+
+  // as all elements that can be merged are adjacent we can just go through the list once
+  // and memorize one we merged to calculate the offsets later
+  std::unordered_map<std::string, std::string> merged_map;
+  size_t to_set_idx = 0, cur_elm_idx = 1;
+  for (; cur_elm_idx < string_table_optimized.size(); ++cur_elm_idx) {
+      auto &cur_elm = string_table_optimized[cur_elm_idx];
+      auto &to_set_elm = string_table_optimized[to_set_idx];
+      if (to_set_elm.size() >= cur_elm.size()) {
+          auto ret = to_set_elm.compare(0, cur_elm.size(), cur_elm);
+          if (ret == 0) {
+              // when memorizing reverse back symbol names
+              std::string rev_cur_elm = cur_elm;
+              std::string rev_to_set_elm = to_set_elm;
+              std::reverse(std::begin(rev_cur_elm), std::end(rev_cur_elm));
+              std::reverse(std::begin(rev_to_set_elm), std::end(rev_to_set_elm));
+              merged_map[rev_cur_elm] = rev_to_set_elm;
+              continue;
+          }
+      }
+      ++to_set_idx;
+      std::swap(string_table_optimized[to_set_idx], cur_elm);
+  }
+  // if the first one is empty
+  if (string_table_optimized[0].size() == 0) {
+    std::swap(string_table_optimized[0], string_table_optimized[to_set_idx]);
+    --to_set_idx;
+  }
+  string_table_optimized.resize(to_set_idx + 1);
+
+  //reverse symbols back and sort them again
+  for (auto &val: string_table_optimized) {
+      std::reverse(std::begin(val), std::end(val));
+  }
+  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized));
+
+  if (of_map_p) {
+    std::unordered_map<std::string, size_t> offset_map;
+    offset_map[""] = 0;
+    size_t offset_counter = 1;
+    for (const auto &v : string_table_optimized) {
+        offset_map[v] = offset_counter;
+        offset_counter += v.size() + 1;
+    }
+    for (const auto &kv : merged_map) {
+        offset_map[kv.first] = offset_map[kv.second] + (kv.second.size() - kv.first.size());
+    }
+    *of_map_p = std::move(offset_map);
+  }
 
   return string_table_optimized;
 }
@@ -442,10 +486,12 @@ void Builder::build_static_symbols(void) {
   vector_iostream content(this->should_swap());
   content.reserve(this->binary_->static_symbols_.size() * sizeof(Elf_Sym));
   std::vector<uint8_t> string_table_raw;
+  std::unordered_map<std::string, size_t> offset_name_map;
 
   // Container which will hold symbols name (optimized)
   std::vector<std::string> string_table_optimize =
-    this->optimize<Symbol, decltype(this->binary_->static_symbols_)>(this->binary_->static_symbols_);
+    this->optimize<Symbol, decltype(this->binary_->static_symbols_)>(this->binary_->static_symbols_,
+                                                                     &offset_name_map);
 
   // We can't start with a symbol name
   string_table_raw.push_back(0);
@@ -459,19 +505,13 @@ void Builder::build_static_symbols(void) {
     VLOG(VDEBUG) << "Dealing with symbol: " << symbol->name();
     const std::string& name = symbol->name();
 
-    // Check if name is already pressent
-    auto&& it_name = std::search(
-        std::begin(string_table_raw),
-        std::end(string_table_raw),
-        name.c_str(),
-        name.c_str() + name.size() + 1);
-
-
-    if (it_name == std::end(string_table_raw)) {
-      throw LIEF::not_found("Unable to find symbol '" + name + "' in the string table");
+    auto offset_it = offset_name_map.find(name);
+    if (offset_it == std::end(offset_name_map)) {
+       throw LIEF::not_found("Unable to find symbol '" + name + "' in the string table");
     }
 
-    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
+    const Elf_Off name_offset = static_cast<Elf_Off>(offset_it->second);
+
 
     Elf_Sym sym_hdr;
     memset(&sym_hdr, 0, sizeof(sym_hdr));
@@ -1052,15 +1092,17 @@ void Builder::build_dynamic_symbols(void) {
 
   // Build symbols string table
   std::vector<uint8_t> string_table_raw = string_table_section.content();
+  std::unordered_map<std::string, size_t> offset_name_map;
+  size_t additional_offset = string_table_raw.size() - 1;
 
   std::vector<std::string> string_table_optimized =
-    this->optimize<Symbol, decltype(this->binary_->dynamic_symbols_)>(this->binary_->dynamic_symbols_);
+    this->optimize<Symbol, decltype(this->binary_->dynamic_symbols_)>(this->binary_->dynamic_symbols_,
+                                    &offset_name_map);
 
   for (const std::string& name : string_table_optimized) {
     string_table_raw.insert(std::end(string_table_raw), std::begin(name), std::end(name));
     string_table_raw.push_back(0);
   }
-
 
   //
   // Build symbols
@@ -1068,17 +1110,11 @@ void Builder::build_dynamic_symbols(void) {
   vector_iostream symbol_table_raw(this->should_swap());
   for (const Symbol* symbol : this->binary_->dynamic_symbols_) {
     const std::string& name = symbol->name();
-    // Check if name is already pressent
-    auto&& it_name = std::search(
-        std::begin(string_table_raw),
-        std::end(string_table_raw),
-        name.c_str(),
-        name.c_str() + name.size() + 1);
-
-    if (it_name == std::end(string_table_raw)) {
+    auto offset_it = offset_name_map.find(name);
+    if (offset_it == std::end(offset_name_map)) {
       throw LIEF::not_found("Unable to find the symbol in the string table");
     }
-    const Elf_Off name_offset = static_cast<Elf_Off>(std::distance(std::begin(string_table_raw), it_name));
+    const Elf_Off name_offset = static_cast<Elf_Off>(offset_name_map[name] + additional_offset);
 
     Elf_Sym sym_header;
 
@@ -1285,15 +1321,15 @@ void Builder::build_dynamic_relocations(void) {
   VLOG(VDEBUG) << "[+] Building dynamic relocations";
 
   it_dynamic_relocations dynamic_relocations = this->binary_->dynamic_relocations();
-
+  auto end_iter = std::end(dynamic_relocations);
   bool isRela = dynamic_relocations[0].is_rela();
-  if (not std::all_of(
-        std::begin(dynamic_relocations),
-        std::end(dynamic_relocations),
-        [isRela] (const Relocation& relocation) {
-          return relocation.is_rela() == isRela;
-        })) {
-      throw LIEF::type_error("Relocation are not of the same type");
+  for (; dynamic_relocations != end_iter; ++dynamic_relocations) {
+    if (dynamic_relocations->is_rela() != isRela) {
+      break;
+    }
+  }
+  if (dynamic_relocations != end_iter) {
+    throw LIEF::type_error("Relocation are not of the same type");
   }
 
   dynamic_entries_t::iterator it_dyn_relocation;

@@ -234,8 +234,8 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   VLOG(VDEBUG) << "Patch addend relocation at address: 0x" << std::hex << address;
   Segment& segment = segment_from_virtual_address(address);
   const uint64_t relative_offset = this->virtual_address_to_offset(address) - segment.file_offset();
-  std::vector<uint8_t> segment_content = segment.content();
-  const size_t segment_size = segment_content.size();
+
+  const size_t segment_size = segment.get_content_size();
 
   if (segment_size == 0) {
     LOG(WARNING) << "Segment is empty nothing to do";
@@ -247,13 +247,13 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  T* value = reinterpret_cast<T*>(segment_content.data() + relative_offset);
+  T value = segment.get_content_value<T>(relative_offset);
 
-  if (value != nullptr and *value >= from) {
-    *value += shift;
+  if (value >= from) {
+    value += shift;
   }
 
-  segment.content(segment_content);
+  segment.set_content_value(relative_offset, value);
 }
 
 

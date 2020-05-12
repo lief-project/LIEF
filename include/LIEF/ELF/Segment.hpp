@@ -81,6 +81,9 @@ class LIEF_API Segment : public Object {
     void alignment(uint64_t alignment);
     void content(const std::vector<uint8_t>& content);
     void content(std::vector<uint8_t>&& content);
+    template<typename T> T get_content_value(size_t offset) const;
+    template<typename T> void set_content_value(size_t offset, T value);
+    size_t get_content_size() const;
 
     it_sections       sections(void);
     it_const_sections sections(void) const;
