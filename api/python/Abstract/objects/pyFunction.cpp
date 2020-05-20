@@ -51,7 +51,7 @@ void create<Function>(py::module& m) {
     .def_property("address",
         static_cast<getter_t<uint64_t>>(&Function::address),
         static_cast<setter_t<uint64_t>>(&Function::address),
-        "Symbol's value")
+        "Function's address")
 
 
     .def("__str__",
