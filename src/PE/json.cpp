@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "LIEF/logging++.hpp"
+
 #include "LIEF/PE/json.hpp"
 #include "LIEF/hash.hpp"
 #include "LIEF/PE.hpp"
@@ -486,33 +488,49 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
 
 void JsonVisitor::visit(const ResourcesManager& resources_manager) {
   if (resources_manager.has_manifest()) {
-    this->node_["manifest"] = resources_manager.manifest();
+    try {
+      this->node_["manifest"] = resources_manager.manifest();
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+    }
   }
 
   if (resources_manager.has_version()) {
     JsonVisitor version_visitor;
-    version_visitor(resources_manager.version());
-    this->node_["version"] = version_visitor.get();
+    try {
+      version_visitor(resources_manager.version());
+      this->node_["version"] = version_visitor.get();
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+    }
   }
 
   if (resources_manager.has_icons()) {
     std::vector<json> icons;
-    for (const ResourceIcon& icon : resources_manager.icons()) {
-      JsonVisitor icon_visitor;
-      icon_visitor(icon);
-      icons.emplace_back(icon_visitor.get());
+    try {
+      for (const ResourceIcon& icon : resources_manager.icons()) {
+        JsonVisitor icon_visitor;
+        icon_visitor(icon);
+        icons.emplace_back(icon_visitor.get());
+      }
+      this->node_["icons"] = icons;
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
     }
-    this->node_["icons"] = icons;
   }
 
   if (resources_manager.has_dialogs()) {
     std::vector<json> dialogs;
-    for (const ResourceDialog& dialog : resources_manager.dialogs()) {
-      JsonVisitor dialog_visitor;
-      dialog_visitor(dialog);
-      dialogs.emplace_back(dialog_visitor.get());
+    try {
+      for (const ResourceDialog& dialog : resources_manager.dialogs()) {
+        JsonVisitor dialog_visitor;
+        dialog_visitor(dialog);
+        dialogs.emplace_back(dialog_visitor.get());
+      }
+      this->node_["dialogs"] = dialogs;
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
     }
-    this->node_["dialogs"] = dialogs;
   }
 }
 
