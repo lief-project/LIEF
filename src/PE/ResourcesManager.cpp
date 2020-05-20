@@ -470,6 +470,10 @@ ResourceVersion ResourcesManager::version(void) const {
   }
   stream.align(sizeof(uint32_t));
 
+  if (!stream.can_read<uint16_t>()) {
+    VLOG(VDEBUG) << "There is no entry";
+    return version;
+  }
 
   { // First entry
     VLOG(VDEBUG) << "Parsing first entry";
