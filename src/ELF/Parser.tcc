@@ -903,9 +903,15 @@ void Parser::parse_segments(void) {
 
   static const auto check_section_in_segment =
     [] (const Section* section, const Segment* segment) {
-      return section->virtual_address() > 0 and section->virtual_address() >= segment->virtual_address() and
-        (section->virtual_address() + section->size()) <=
-        (segment->virtual_address() + segment->virtual_size());
+      if (section->virtual_address() > 0) {
+        return section->virtual_address() >= segment->virtual_address() and
+          (section->virtual_address() + section->size()) <=
+          (segment->virtual_address() + segment->virtual_size());
+      } else if (section->file_offset() > 0) {
+        return section->file_offset() >= segment->file_offset() and
+          (section->file_offset() + section->size()) < (segment->file_offset() + segment->physical_size());
+      }
+      return false;
     };
 
   VLOG(VDEBUG) << "[+] Parse Segments";
