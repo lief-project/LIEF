@@ -182,6 +182,62 @@ std::vector<uint8_t> Segment::content(void) const {
   return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
 }
 
+size_t Segment::get_content_size() const {
+  DataHandler::Node& node = this->datahandler_->get(
+      this->file_offset(),
+      this->physical_size(),
+      DataHandler::Node::SEGMENT);
+  return node.size();
+}
+template<typename T> T Segment::get_content_value(size_t offset) const {
+  T ret;
+  if (this->datahandler_ == nullptr) {
+    VLOG(VDEBUG) << "Content from cache";
+    memcpy(&ret, this->content_c_.data() + offset, sizeof(T));
+  } else {
+    DataHandler::Node& node = this->datahandler_->get(
+        this->file_offset(),
+        this->physical_size(),
+        DataHandler::Node::SEGMENT);
+    const std::vector<uint8_t>& binary_content = this->datahandler_->content();
+    memcpy(&ret, binary_content.data() + node.offset() + offset, sizeof(T));
+  }
+  return ret;
+}
+
+template unsigned short Segment::get_content_value<unsigned short>(size_t offset) const;
+template unsigned int Segment::get_content_value<unsigned int>(size_t offset) const;
+template unsigned long Segment::get_content_value<unsigned long>(size_t offset) const;
+template unsigned long long Segment::get_content_value<unsigned long long>(size_t offset) const;
+
+template<typename T> void Segment::set_content_value(size_t offset, T value) {
+  if (this->datahandler_ == nullptr) {
+    VLOG(VDEBUG) << "Content from cache";
+    if (offset + sizeof(T) > this->content_c_.size()) {
+      this->content_c_.resize(offset + sizeof(T));
+      this->physical_size(offset + sizeof(T));
+    }
+    memcpy(this->content_c_.data() + offset, &value, sizeof(T));
+  } else {
+    DataHandler::Node& node = this->datahandler_->get(
+        this->file_offset(),
+        this->physical_size(),
+        DataHandler::Node::SEGMENT);
+    std::vector<uint8_t>& binary_content = this->datahandler_->content();
+
+    if (offset + sizeof(T) > binary_content.size()) {
+      this->datahandler_->reserve(node.offset(), offset + sizeof(T));
+      LOG(WARNING) << "You inserted data in segment '"
+                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+    }
+    this->physical_size(node.size());
+    memcpy(binary_content.data() + node.offset() + offset, &value, sizeof(T));
+  }
+}
+template void Segment::set_content_value<unsigned short>(size_t offset, unsigned short value);
+template void Segment::set_content_value<unsigned int>(size_t offset, unsigned int value);
+template void Segment::set_content_value<unsigned long>(size_t offset, unsigned long value);
+template void Segment::set_content_value<unsigned long long>(size_t offset, unsigned long long value);
 
 it_const_sections Segment::sections(void) const {
   return {this->sections_};

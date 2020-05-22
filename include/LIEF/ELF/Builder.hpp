@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020, NVIDIA CORPORATION. All rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +21,7 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
@@ -96,7 +98,8 @@ class LIEF_API Builder {
     void build_symbol_definition(void);
 
     template<typename T, typename HANDLER>
-    std::vector<std::string> optimize(const HANDLER& e);
+    std::vector<std::string> optimize(const HANDLER& e,
+                                      std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
     template<typename ELF_T>
     void build_symbol_version(void);

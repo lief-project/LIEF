@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -367,7 +368,8 @@ class filter_iterator : public std::iterator<
   }
 
   filter_iterator end(void) const {
-    filter_iterator it_end{this->container_, this->filters_};
+    // we don't need filter for the end iterator
+    filter_iterator it_end{this->container_};
 
     it_end.it_       =  it_end.container_.end();
     it_end.distance_ = it_end.container_.size();
@@ -432,7 +434,8 @@ class filter_iterator : public std::iterator<
     filter_iterator it = this->begin();
     size_t size = 0;
 
-    while (it++ != std::end(it)) size++;
+    auto end_iter = std::end(it);
+    for (; it != end_iter; ++it) ++size;
     this->size_c_ = size;
     return this->size_c_;
   }
