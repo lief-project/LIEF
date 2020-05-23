@@ -295,8 +295,6 @@ list(APPEND LIEF_PRIVATE_INCLUDE_DIR
   "${LIBRANG_SOURCE_DIR}/include"
   "${CMAKE_CURRENT_SOURCE_DIR}/src"
   "${CMAKE_BINARY_DIR}"
-  "${ELG_SOURCE_DIR}"
-  "${MBEDTLS_INCLUDE_DIRS}"
 )
 
 
@@ -311,6 +309,12 @@ endif()
 
 # Library definition
 # ==================
+target_include_directories(LIB_LIEF SYSTEM PRIVATE
+  "${ELG_SOURCE_DIR}"
+  "${MBEDTLS_INCLUDE_DIRS}"
+)
+
+
 target_include_directories(LIB_LIEF
   PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")

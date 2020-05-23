@@ -25,8 +25,8 @@ message(STATUS "Python lib:     ${PYTHON_LIBRARY}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
 message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
 
-set(PYBIND11_VERSION 2.4.3)
-set(PYBIND11_SHA256 SHA256=f1cc1e9c2836f9873aefdaf76a3280a55aae51068c759b27499a9cf34090d364)
+set(PYBIND11_VERSION 2.5.0)
+set(PYBIND11_SHA256 SHA256=1859f121837f6c41b0c6223d617b85a63f2f72132bae3135a2aa290582d61520)
 set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
 ExternalProject_Add(lief_pybind11
   URL               ${PYBIND11_URL}
@@ -79,6 +79,9 @@ add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
 
 target_include_directories(pyLIEF PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/"
+)
+
+target_include_directories(pyLIEF SYSTEM PRIVATE
   "${PYTHON_INCLUDE_DIR}"
   "${PYBIND11_SOURCE_DIR}/include")
 

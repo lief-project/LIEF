@@ -6,8 +6,8 @@ set(__add_lief_dependencies ON)
 # Json
 # ----
 if (LIEF_ENABLE_JSON)
-  set(LIBJSON_VERSION 3.1.1)
-  set(LIBJSON_SHA256 SHA256=8ccdc36563c714bd5e9e3944b1f210285b7401bce3f2fba6e7b87ef06704401b)
+  set(LIBJSON_VERSION 3.7.3)
+  set(LIBJSON_SHA256 SHA256=e46d26550e8cafc7d7d2564fdf09d20bd14a72c417396bf7ca815b94894d1631)
   set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
   ExternalProject_Add(lief_libjson
     URL               ${LIBJSON_URL}
@@ -45,8 +45,8 @@ set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 2.6.0)
-set(MBED_TLS_SHA256 SHA256=695e88deb49373bed2a4dd53ce693066eb079135d59d5f30ec5a7a2603fd26ff)
+set(MBED_TLS_VERSION 2.16.6)
+set(MBED_TLS_SHA256 SHA256=b9a8c5af8cd32e62b985dc8cb43397e4230a5437ce2ce3b7fedb2c6dc65115d8)
 set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -66,59 +66,69 @@ set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
 set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
 
 set(mbedtls_src_crypto
-    "${MBEDTLS_SOURCE_DIR}/library/aes.c"
-    "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
-    "${MBEDTLS_SOURCE_DIR}/library/arc4.c"
-    "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
-    "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
-    "${MBEDTLS_SOURCE_DIR}/library/base64.c"
-    "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
-    "${MBEDTLS_SOURCE_DIR}/library/blowfish.c"
-    "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
-    "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
-    "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
-    "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
-    "${MBEDTLS_SOURCE_DIR}/library/des.c"
-    "${MBEDTLS_SOURCE_DIR}/library/dhm.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ecdh.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ecdsa.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ecjpake.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ecp.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c"
-    "${MBEDTLS_SOURCE_DIR}/library/entropy.c"
-    "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
-    "${MBEDTLS_SOURCE_DIR}/library/error.c"
-    "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
-    "${MBEDTLS_SOURCE_DIR}/library/havege.c"
-    "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
-    "${MBEDTLS_SOURCE_DIR}/library/md.c"
-    "${MBEDTLS_SOURCE_DIR}/library/md2.c"
-    "${MBEDTLS_SOURCE_DIR}/library/md4.c"
-    "${MBEDTLS_SOURCE_DIR}/library/md5.c"
-    "${MBEDTLS_SOURCE_DIR}/library/md_wrap.c"
-    "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
-    "${MBEDTLS_SOURCE_DIR}/library/oid.c"
-    "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pem.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pk.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pkcs12.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pkcs5.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
-    "${MBEDTLS_SOURCE_DIR}/library/platform.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
-    "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
-    "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
-    "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
-    "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
-    "${MBEDTLS_SOURCE_DIR}/library/threading.c"
-    "${MBEDTLS_SOURCE_DIR}/library/timing.c"
-    "${MBEDTLS_SOURCE_DIR}/library/version.c"
-    "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
-    "${MBEDTLS_SOURCE_DIR}/library/xtea.c"
+  "${MBEDTLS_SOURCE_DIR}/library/aes.c"
+  "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
+  "${MBEDTLS_SOURCE_DIR}/library/arc4.c"
+  "${MBEDTLS_SOURCE_DIR}/library/aria.c"
+  "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
+  "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
+  "${MBEDTLS_SOURCE_DIR}/library/base64.c"
+  "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
+  "${MBEDTLS_SOURCE_DIR}/library/blowfish.c"
+  "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
+  "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
+  "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
+  "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
+  "${MBEDTLS_SOURCE_DIR}/library/debug.c"
+  "${MBEDTLS_SOURCE_DIR}/library/des.c"
+  "${MBEDTLS_SOURCE_DIR}/library/dhm.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ecdh.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ecdsa.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ecjpake.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ecp.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c"
+  "${MBEDTLS_SOURCE_DIR}/library/entropy.c"
+  "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
+  "${MBEDTLS_SOURCE_DIR}/library/error.c"
+  "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
+  "${MBEDTLS_SOURCE_DIR}/library/havege.c"
+  "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
+  "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
+  "${MBEDTLS_SOURCE_DIR}/library/md.c"
+  "${MBEDTLS_SOURCE_DIR}/library/md2.c"
+  "${MBEDTLS_SOURCE_DIR}/library/md4.c"
+  "${MBEDTLS_SOURCE_DIR}/library/md5.c"
+  "${MBEDTLS_SOURCE_DIR}/library/md_wrap.c"
+  "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
+  "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
+  "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
+  "${MBEDTLS_SOURCE_DIR}/library/oid.c"
+  "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pem.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pk.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pkcs12.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pkcs5.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
+  "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
+  "${MBEDTLS_SOURCE_DIR}/library/platform.c"
+  "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
+  "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
+  "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
+  "${MBEDTLS_SOURCE_DIR}/library/rsa_internal.c"
+  "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
+  "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
+  "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
+  "${MBEDTLS_SOURCE_DIR}/library/threading.c"
+  "${MBEDTLS_SOURCE_DIR}/library/timing.c"
+  "${MBEDTLS_SOURCE_DIR}/library/version.c"
+  "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
+  "${MBEDTLS_SOURCE_DIR}/library/xtea.c"
 )
 
 set(mbedtls_src_x509
@@ -150,8 +160,8 @@ set(mbedtls_src_tls
 # easyloggingpp
 # -------------
 if (LIEF_LOGGING)
-  set(ELG_VERSION 9.94.2)
-  set(ELG_SHA256 SHA256=f99adeb098e28cd6c97ebb7dfe8ddd55bf6b79578aa65b55c34b4b2527f1f235)
+  set(ELG_VERSION 9.96.7)
+  set(ELG_SHA256 SHA256=2adc3d01c2717a591fc8f61412ae3ceae85a84c872e701b26b706005579aa940)
   set(ELG_URL "${THIRD_PARTY_DIRECTORY}/easyloggingpp-${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
   ExternalProject_Add(lief_easyloggingpp
     URL               ${ELG_URL}
@@ -233,8 +243,8 @@ set(LIEF_FROZEN_ENABLED 0)
 if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
   message(STATUS "Enable Frozen (C++14 support)")
   set(LIEF_FROZEN_ENABLED 1)
-  set(FROZEN_VERSION 2f608b5)
-  set(FROZEN_SHA256 SHA256=e72a59976beb55f4d608d195745b9fbd51f8bcff20a23060b18f20a46873bddf)
+  set(FROZEN_VERSION 1.0.0)
+  set(FROZEN_SHA256 SHA256=35ed00f6e2eb718415bf7c3e62e7708318fa684b9cc736c3fe08cf4cb2f08305)
   set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
   ExternalProject_Add(lief_frozen
     URL               ${FROZEN_URL}
