@@ -176,7 +176,7 @@ std::ostream& operator<<(std::ostream& os, const LangCodeItem& item) {
      << " - "
      << std::hex << to_string(item.code_page()) << ")" << std::endl;
   os << std::setw(8) << std::setfill(' ') << "Items: " << std::endl;
-  for (const std::pair<std::u16string, std::u16string>& p : item.items()) {
+  for (const std::pair<const std::u16string, std::u16string>& p : item.items()) {
     os << "    " << "'" << u16tou8(p.first) << "': '" << u16tou8(p.second) << "'" << std::endl;
   }
   return os;

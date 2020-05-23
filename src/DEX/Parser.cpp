@@ -97,7 +97,7 @@ void Parser::resolve_inheritance(void) {
   VLOG(VDEBUG) << "Resolving inheritance relationship for "
                << std::dec << this->inheritance_.size() << " classes";
 
-  for (const std::pair<std::string, Class*>& p : this->inheritance_) {
+  for (const std::pair<const std::string, Class*>& p : this->inheritance_) {
     const std::string& parent_name = p.first;
     Class* child = p.second;
 
@@ -116,7 +116,7 @@ void Parser::resolve_external_methods(void) {
   VLOG(VDEBUG) << "Resolving external methods for "
                << std::dec << this->class_method_map_.size() << " methods";
 
-  for (const std::pair<std::string, Method*>& p : this->class_method_map_) {
+  for (const std::pair<const std::string, Method*>& p : this->class_method_map_) {
     const std::string& clazz = p.first;
     Method* method = p.second;
 

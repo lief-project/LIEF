@@ -557,7 +557,7 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
 }
 
 File::~File(void) {
-  for (const std::pair<std::string, Class*>& p : this->classes_) {
+  for (const std::pair<const std::string, Class*>& p : this->classes_) {
     delete p.second;
   }
 

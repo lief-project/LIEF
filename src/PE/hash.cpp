@@ -340,7 +340,7 @@ void Hash::visit(const LangCodeItem& resource_lci) {
 
   this->process(resource_lci.type());
   this->process(resource_lci.key());
-  for (const std::pair<std::u16string, std::u16string>& p : resource_lci.items()) {
+  for (const std::pair<const std::u16string, std::u16string>& p : resource_lci.items()) {
     this->process(p.first);
     this->process(p.second);
   }

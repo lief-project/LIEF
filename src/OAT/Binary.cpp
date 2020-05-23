@@ -176,7 +176,7 @@ Binary::~Binary(void) {
     delete file;
   }
 
-  for (const std::pair<std::string, Class*>& p : this->classes_) {
+  for (const std::pair<const std::string, Class*>& p : this->classes_) {
     delete p.second;
   }
 
