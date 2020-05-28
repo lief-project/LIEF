@@ -765,7 +765,16 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
   for (const ResourceNode& grp_icon_lvl2 : it_grp_icon->childs()) {
     for (const ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
       const ResourceData* icon_group_node = dynamic_cast<const ResourceData*>(&grp_icon_lvl3);
+      if (!icon_group_node) {
+        LOG(ERROR) << "Group icon node is null";
+        continue;
+      }
+
       const std::vector<uint8_t>& icon_group_content = icon_group_node->content();
+      if (icon_group_content.empty()) {
+        LOG(ERROR) << "Group icon is empty";
+        continue;
+      }
 
       const pe_resource_icon_dir* group_icon_header = reinterpret_cast<const pe_resource_icon_dir*>(icon_group_content.data());
 
