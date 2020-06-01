@@ -18,6 +18,7 @@
 #include "LIEF/Abstract/Parser.hpp"
 
 #include <string>
+#include <stdexcept>
 
 namespace LIEF {
 template<>
@@ -31,9 +32,15 @@ void create<Parser>(py::module& m) {
           std::make_move_iterator(std::end(raw_str))
         };
         std::unique_ptr<Binary> binary;
+        std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
-        binary = Parser::parse(std::move(raw), name);
+        try {
+          binary = Parser::parse(std::move(raw), name);
+        } catch (...) {
+          ep = std::current_exception();
+        }
         Py_END_ALLOW_THREADS
+        if (ep) std::rethrow_exception(ep);
         return binary;
       },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
@@ -43,9 +50,15 @@ void create<Parser>(py::module& m) {
   m.def("parse",
       [] (const std::string& name) {
         std::unique_ptr<Binary> binary;
+        std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
-        binary = Parser::parse(name);
+        try {
+          binary = Parser::parse(name);
+        } catch (...) {
+          ep = std::current_exception();
+        }
         Py_END_ALLOW_THREADS
+        if (ep) std::rethrow_exception(ep);
         return binary;
       },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
@@ -55,9 +68,15 @@ void create<Parser>(py::module& m) {
   m.def("parse",
       [](const std::vector<uint8_t>& raw, const std::string& name) {
         std::unique_ptr<Binary> binary;
+        std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
-        binary = Parser::parse(raw, name);
+        try {
+          binary = Parser::parse(raw, name);
+        } catch (...) {
+          ep = std::current_exception();
+        }
         Py_END_ALLOW_THREADS
+        if (ep) std::rethrow_exception(ep);
         return binary;
       },
       "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
@@ -99,9 +118,15 @@ void create<Parser>(py::module& m) {
         };
 
         std::unique_ptr<Binary> binary;
+        std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
-        binary = Parser::parse(std::move(raw), name);
+        try {
+          binary = Parser::parse(std::move(raw), name);
+        } catch (...) {
+          ep = std::current_exception();
+        }
         Py_END_ALLOW_THREADS
+        if (ep) std::rethrow_exception(ep);
         return binary;
       },
       "io"_a,
