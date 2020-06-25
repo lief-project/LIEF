@@ -346,7 +346,7 @@ bool Binary::has_resources(void) const {
 }
 
 bool Binary::has_exceptions(void) const {
-  return this->has(DATA_DIRECTORY::EXPORT_TABLE);
+  return this->has(DATA_DIRECTORY::EXCEPTION_TABLE);
   //return this->has_exceptions_;
 }
 
