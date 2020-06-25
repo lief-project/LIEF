@@ -313,6 +313,15 @@ Lang code item
 
 ----------
 
+Resource String Table
+*********************
+
+.. doxygenclass:: LIEF::PE::ResourceStringTable
+  :project: lief
+
+
+----------
+
 Rich Header
 ***********
 

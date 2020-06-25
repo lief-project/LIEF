@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -543,6 +544,20 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
       LOG(WARNING) << e.what();
     }
   }
+
+  if (resources_manager.has_string_table()) {
+    std::vector<json> string_table_json;
+    try {
+      for (const ResourceStringTable& string_table : resources_manager.string_table()) {
+        JsonVisitor string_table_visitor;
+        string_table_visitor(string_table);
+        string_table_json.emplace_back(string_table_visitor.get());
+        this->node_["string_table"] = string_table_json;
+      }
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+    }
+  }
 }
 
 void JsonVisitor::visit(const ResourceStringFileInfo& resource_sfi) {
@@ -681,6 +696,11 @@ void JsonVisitor::visit(const ResourceDialogItem& dialog_item) {
     this->node_["help_id"] = dialog_item.help_id();
   }
 
+}
+
+void JsonVisitor::visit(const ResourceStringTable& string_table) {
+  this->node_["length"] = string_table.length();
+  this->node_["name"] = u16tou8(string_table.name());
 }
 
 void JsonVisitor::visit(const Signature& signature) {

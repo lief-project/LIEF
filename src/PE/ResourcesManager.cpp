@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +35,7 @@
 #include "LIEF/PE/ResourceData.hpp"
 
 #include "LIEF/PE/resources/LangCodeItem.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -1189,6 +1191,61 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
 
 bool ResourcesManager::has_dialogs(void) const {
   return this->has_type(RESOURCE_TYPES::DIALOG);
+}
+
+// String table entry
+std::vector<ResourceStringTable> ResourcesManager::string_table(void) const {
+  it_childs nodes = this->resources_->childs();
+  auto&& it_string_table = std::find_if(
+    std::begin(nodes),
+    std::end(nodes),
+    [] (const ResourceNode& node) {
+      return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::STRING;
+    }
+  );
+
+  if (it_string_table == std::end(nodes)) {
+    throw not_found(std::string("Missing '") + to_string(RESOURCE_TYPES::STRING) + "' entry");
+  }
+
+  std::vector<ResourceStringTable> string_table;
+  for (const ResourceNode& child_l1 : it_string_table->childs()) {
+
+    for (const ResourceNode& child_l2 : child_l1.childs()) {
+      const ResourceData* string_table_node = dynamic_cast<const ResourceData*>(&child_l2);
+      if (!string_table_node) {
+        LOG(ERROR) << "String table node is null";
+        continue;
+      }
+
+      const std::vector<uint8_t>& content = string_table_node->content();
+      if (content.empty()) {
+        LOG(ERROR) << "String table content is empty";
+        continue;
+      }
+
+      const auto content_size = content.size();
+      VectorStream stream{content};
+      stream.setpos(0);
+      VLOG(VDEBUG) << "Will parse content whoose size is " << content_size;
+      while (stream.pos() < content_size) {
+        if (not stream.can_read<int16_t>()) break;
+
+        const auto len = stream.read<uint16_t>();
+        if (len > 0 && ((len * 2) < content_size)) {
+          const auto name = stream.read_u16string(len);
+          string_table.emplace_back(ResourceStringTable(len, name));
+        }
+      }
+    }
+
+  }
+
+  return string_table;
+}
+
+bool ResourcesManager::has_string_table(void) const {
+  return this->has_type(RESOURCE_TYPES::STRING);
 }
 
 // Prints

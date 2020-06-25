@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +66,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const ResourceIcon& resource_icon)           override;
   virtual void visit(const ResourceDialog& dialog)                override;
   virtual void visit(const ResourceDialogItem& dialog_item)       override;
+  virtual void visit(const ResourceStringTable& string_table)     override;
   virtual void visit(const Signature& signature)                  override;
   virtual void visit(const x509& x509)                            override;
   virtual void visit(const SignerInfo& signerinfo)                override;

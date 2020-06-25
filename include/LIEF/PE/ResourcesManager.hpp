@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,7 @@
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -115,6 +117,15 @@ class LIEF_API ResourcesManager : public Object {
 
   //! @brief Return the list of the dialogs present in the resource
   std::vector<ResourceDialog> dialogs(void) const;
+
+  // String table
+  // =====
+
+  //! @brief ``true`` if resources contain @link LIEF::PE::ResourceStringTable @endlink
+  bool has_string_table(void) const;
+
+  //! @brief Return the list of the string table in the resource
+  std::vector<ResourceStringTable> string_table(void) const;
 
   // Print
   // =====

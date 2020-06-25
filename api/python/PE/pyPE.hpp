@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +77,7 @@ SPECIALIZE_CREATE(ResourceFixedFileInfo);
 SPECIALIZE_CREATE(ResourceVarFileInfo);
 SPECIALIZE_CREATE(LangCodeItem);
 SPECIALIZE_CREATE(ResourceIcon);
+SPECIALIZE_CREATE(ResourceStringTable);
 SPECIALIZE_CREATE(ResourceDialog);
 SPECIALIZE_CREATE(ResourceDialogItem);
 SPECIALIZE_CREATE(Signature);

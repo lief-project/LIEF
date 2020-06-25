@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +77,7 @@ LIEF_PE_FORWARD(LangCodeItem)
 LIEF_PE_FORWARD(ResourceIcon)
 LIEF_PE_FORWARD(ResourceDialog)
 LIEF_PE_FORWARD(ResourceDialogItem)
+LIEF_PE_FORWARD(ResourceStringTable)
 LIEF_PE_FORWARD(Signature)
 LIEF_PE_FORWARD(x509)
 LIEF_PE_FORWARD(SignerInfo)
@@ -337,6 +339,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::ResourceVarFileInfo
   LIEF_PE_VISITABLE(ResourceVarFileInfo)
+
+  //! Method to visit a LIEF::PE::ResourceStringTable
+  LIEF_PE_VISITABLE(ResourceStringTable)
 
   //! Method to visit a LIEF::PE::LangCodeItem
   LIEF_PE_VISITABLE(LangCodeItem)

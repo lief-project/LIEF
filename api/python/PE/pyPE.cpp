@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +74,7 @@ void init_objects(py::module& m) {
   CREATE(ResourceIcon, m);
   CREATE(ResourceDialog, m);
   CREATE(ResourceDialogItem, m);
+  CREATE(ResourceStringTable, m);
   CREATE(Signature, m);
   CREATE(x509, m);
   CREATE(SignerInfo, m);
