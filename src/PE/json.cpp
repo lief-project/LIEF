@@ -507,6 +507,14 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
     }
   }
 
+  if (resources_manager.has_html()) {
+    try {
+      this->node_["html"] = resources_manager.html();
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+    }
+  }
+
   if (resources_manager.has_version()) {
     JsonVisitor version_visitor;
     try {
