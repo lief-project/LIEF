@@ -71,6 +71,20 @@ class TestResource(TestCase):
             self.assertEqual(q.returncode, 0)
 
 
+    def test_resource_string_table(self):
+        sample_path = get_sample('PE/PE64_x86-64_binary_WinApp.exe')
+        mfc = lief.parse(sample_path)
+        resources_manager = mfc.resources_manager
+
+        self.assertEqual(resources_manager.has_string_table, True)
+
+        string_table = resources_manager.string_table
+        self.assertEqual(string_table[0].name, "WinApp")
+        self.assertEqual(string_table[0].length, 6)
+
+        self.assertEqual(string_table[1].name, "WINAPP")
+        self.assertEqual(string_table[1].length, 6)
+
 
     def test_resource_version(self):
         sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')

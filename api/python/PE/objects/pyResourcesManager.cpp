@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +104,14 @@ void create<ResourcesManager>(py::module& m) {
       &ResourcesManager::has_type,
       "``True`` if the resource has the given " RST_CLASS_REF(lief.PE.RESOURCE_TYPES) "",
       "type"_a)
+
+    .def_property_readonly("has_string_table",
+      &ResourcesManager::has_string_table,
+      "``True`` if resources contain " RST_CLASS_REF(lief.PE.ResourceStringTable) "")
+
+    .def_property_readonly("string_table",
+      &ResourcesManager::string_table,
+      "Return list of " RST_CLASS_REF(lief.PE.ResourceStringTable) " present in the resource")
 
     .def("get_node_type",
       static_cast<no_const_func<ResourceNode&, RESOURCE_TYPES>>(&ResourcesManager::get_node_type),

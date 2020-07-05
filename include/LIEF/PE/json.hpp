@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +59,7 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const ResourceStringFileInfo& resource_sfi)  override;
   virtual void visit(const ResourceFixedFileInfo& resource_ffi)   override;
   virtual void visit(const ResourceVarFileInfo& resource_vfi)     override;
+  virtual void visit(const ResourceStringTable& resource_st)      override;
   virtual void visit(const LangCodeItem& resource_lci)            override;
   virtual void visit(const ResourceIcon& resource_icon)           override;
   virtual void visit(const ResourceDialog& dialog)                override;

@@ -351,6 +351,16 @@ Lang code item
 
 ----------
 
+Resource String Table
+*********************
+
+.. autoclass:: lief.PE.ResourceStringTable
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 Rich Header
 ***********
 

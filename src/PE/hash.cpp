@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -421,6 +422,11 @@ void Hash::visit(const ResourceDialogItem& dialog_item) {
     this->process(dialog_item.help_id());
     this->process(dialog_item.title());
   }
+}
+
+void Hash::visit(const ResourceStringTable& string_table) {
+  this->process(string_table.length());
+  this->process(string_table.name());
 }
 
 void Hash::visit(const Signature& signature) {
