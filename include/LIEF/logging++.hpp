@@ -5,11 +5,12 @@
 #include "easylogging++.h"
 #else
 #include <iostream>
-#define NULL_STREAM if(1){} else std::cerr
+#define NULL_STREAM if(0){} else std::cerr
+#define CERR_STREAM std::cerr
 #define VLOG(...) NULL_STREAM
 #define VLOG_IF(...) NULL_STREAM
 #define CVLOG(...) NULL_STREAM
-#define LOG(...) NULL_STREAM
+#define LOG(...) CERR_STREAM
 #define LOG_IF(...) NULL_STREAM
 #define CHECK(...) NULL_STREAM
 #define CHECK_EQ(...) NULL_STREAM

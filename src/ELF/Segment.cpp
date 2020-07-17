@@ -363,9 +363,8 @@ void Segment::content(const std::vector<uint8_t>& content) {
   if (node.size() < content.size()) {
     LOG(WARNING) << "You inserted data in segment '"
                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+    this->physical_size(content.size());
   }
-
-  this->physical_size(node.size());
 
   std::copy(
       std::begin(content),
@@ -396,9 +395,8 @@ void Segment::content(std::vector<uint8_t>&& content) {
   if (node.size() < content.size()) {
     LOG(WARNING) << "You inserted data in segment '"
                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+    this->physical_size(content.size());
   }
-
-  this->physical_size(node.size());
 
   std::move(
       std::begin(content),

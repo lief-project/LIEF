@@ -1318,7 +1318,6 @@ Section& Binary::extend(const Section& section, uint64_t size) {
     throw not_found("Unable to find the section " + section.name() + " in the current binary");
   }
 
-
   Section* section_to_extend = *it_section;
 
   uint64_t from_offset  = section_to_extend->offset() + section_to_extend->size();

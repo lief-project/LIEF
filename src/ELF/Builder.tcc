@@ -16,6 +16,7 @@
  */
 #include <numeric>
 #include <unordered_map>
+#include <unistd.h>
 
 #include "LIEF/logging++.hpp"
 
@@ -32,8 +33,6 @@ namespace ELF {
 
 template<class ELF_T>
 void Builder::build(void) {
-
-
   std::string type = ((this->binary_->type_ == ELF_CLASS::ELFCLASS32) ? "ELF32" : "ELF64");
   VLOG(VDEBUG) << "== Re-building " << type << " ==";
   try {
@@ -42,13 +41,14 @@ void Builder::build(void) {
     LOG(ERROR) << e.what();
   }
 
+  this->build<ELF_T>(this->binary_->header());
+  this->build_overlay<ELF_T>();
 
   try {
     this->build_dynamic<ELF_T>();
   } catch (const LIEF::exception& e) {
     LOG(ERROR) << e.what();
   }
-
 
   // Build Relocations
   if (this->binary_->dynamic_relocations().size() > 0) {
@@ -694,65 +694,69 @@ void Builder::build_dynamic_section(void) {
     dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
   }
 
+  if (dynamic_table_raw.size() > dyn_section.size() and dyn_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '.dynamic' section" << std::endl;
+    LOG(DEBUG) << ".dynamic resize: " << std::hex << dyn_section.size() << " > " << dynamic_table_raw.size() << std::endl;
 
-  if (dynamic_table_raw.size() > dyn_section.original_size() and dyn_section.original_size() > 0) {
-    VLOG(VDEBUG) << "Need to relocate the '.dynamic' section";
-    VLOG(VDEBUG) << std::dec << dynamic_table_raw.size() <<  " > " << dyn_section.original_size();
+    this->binary_->extend(dyn_section, dynamic_table_raw.size() - dyn_section.size());
+    //TODO Paul: Extend here segment first?
 
-    // Create a LOAD segment for the new Dynamic:
-    Segment dynamic_load;
-    dynamic_load.type(SEGMENT_TYPES::PT_LOAD);
-    dynamic_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynamic_load.content(dynamic_table_raw.raw());
-    Segment& new_dynamic_load = this->binary_->add(dynamic_load);
+    //// Create a LOAD segment for the new Dynamic:
+    //Segment dynamic_load;
+    //dynamic_load.type(SEGMENT_TYPES::PT_LOAD);
+    //dynamic_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
+    //dynamic_load.content(dynamic_table_raw.raw());
+    //Segment& new_dynamic_load = this->binary_->add(dynamic_load);
 
-    auto&& it_dynamic = std::find_if(
-        std::begin(this->binary_->segments_),
-        std::end(this->binary_->segments_),
-        [] (const Segment* s) {
-          return s->type() == SEGMENT_TYPES::PT_DYNAMIC;
-        });
-    Segment* dynamic_segment = *it_dynamic;
+    //auto&& it_dynamic = std::find_if(
+    //    std::begin(this->binary_->segments_),
+    //    std::end(this->binary_->segments_),
+    //    [] (const Segment* s) {
+    //      return s->type() == SEGMENT_TYPES::PT_DYNAMIC;
+    //    });
+    //Segment* dynamic_segment = *it_dynamic;
 
-    dynamic_segment->virtual_address(new_dynamic_load.virtual_address());
-    dynamic_segment->virtual_size(new_dynamic_load.virtual_size());
-    dynamic_segment->physical_address(new_dynamic_load.physical_address());
+    //dynamic_segment->virtual_address(new_dynamic_load.virtual_address());
+    //dynamic_segment->virtual_size(new_dynamic_load.virtual_size());
+    //dynamic_segment->physical_address(new_dynamic_load.physical_address());
 
-    dynamic_segment->file_offset(new_dynamic_load.file_offset());
-    dynamic_segment->physical_size(new_dynamic_load.physical_size());
+    //dynamic_segment->file_offset(new_dynamic_load.file_offset());
+    //dynamic_segment->physical_size(new_dynamic_load.physical_size());
 
-    dyn_section.virtual_address(new_dynamic_load.virtual_address());
-    dyn_section.size(new_dynamic_load.physical_size());
-    dyn_section.offset(new_dynamic_load.file_offset());
-    dyn_section.content(new_dynamic_load.content());
-    dyn_section.original_size_ = new_dynamic_load.physical_size();
+    //dyn_section.virtual_address(new_dynamic_load.virtual_address());
+    //dyn_section.size(new_dynamic_load.physical_size());
+    //dyn_section.offset(new_dynamic_load.file_offset());
+    //dyn_section.content(new_dynamic_load.content());
+    //dyn_section.original_size_ = new_dynamic_load.physical_size();
 
     return this->build_dynamic<ELF_T>();
 
   }
 
-  if (dynamic_strings_raw.size() > dyn_strtab_section.original_size() and dyn_strtab_section.original_size() > 0) {
+  if (dynamic_strings_raw.size() > dyn_strtab_section.size() and dyn_strtab_section.size() > 0) {
 
-    VLOG(VDEBUG) << "Need to relocate the '.dynstr' section";
-    VLOG(VDEBUG) << std::dec << dynamic_strings_raw.size() <<  " > " << dyn_strtab_section.size();
+    LOG(INFO) << "Need to relocate the '.dynstr' section" << std::endl;
+    LOG(DEBUG) << ".dynstr resize: " << std::hex << dynamic_strings_raw.size() <<  " > " << dyn_strtab_section.size() << std::endl;
 
-    // Create a segment:
-    Segment dynstr;
-    dynstr.type(SEGMENT_TYPES::PT_LOAD);
-    dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dynamic_strings_raw);
+    this->binary_->extend(dyn_strtab_section, dynamic_strings_raw.size() - dyn_strtab_section.size());
 
-    Segment& new_segment = this->binary_->add(dynstr);
-    dyn_strtab_section.virtual_address(new_segment.virtual_address());
-    dyn_strtab_section.size(new_segment.physical_size());
-    dyn_strtab_section.offset(new_segment.file_offset());
-    dyn_strtab_section.content(new_segment.content());
-    dyn_strtab_section.original_size_ = new_segment.physical_size();
+    //// Create a segment:
+    //Segment dynstr;
+    //dynstr.type(SEGMENT_TYPES::PT_LOAD);
+    //dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //dynstr.content(dynamic_strings_raw);
 
-    VLOG(VDEBUG) << std::dec << "New '.dynstr' size: " << dyn_strtab_section.size();
+    //Segment& new_segment = this->binary_->add(dynstr);
+    //dyn_strtab_section.virtual_address(new_segment.virtual_address());
+    //dyn_strtab_section.size(new_segment.physical_size());
+    //dyn_strtab_section.offset(new_segment.file_offset());
+    //dyn_strtab_section.content(new_segment.content());
+    //dyn_strtab_section.original_size_ = new_segment.physical_size();
 
-    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
+    //VLOG(VDEBUG) << std::dec << "New '.dynstr' size: " << dyn_strtab_section.size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(dyn_strtab_section.virtual_address());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_strtab_section.size());
 
     return this->build_dynamic<ELF_T>();
   }
@@ -836,25 +840,27 @@ void Builder::build_symbol_hash(void) {
 
   Section& h_section = **it_hash_section;
   if (new_hash_table.size() > h_section.size()) {
-    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section";
+    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section" << std::endl;
 
-    VLOG(VDEBUG) << std::dec << new_hash_table.size() <<  " > " << h_section.size();
+    LOG(DEBUG) << std::hex << new_hash_table.size() <<  " > " << h_section.size() << std::endl;
 
-    Segment syvhash;
-    syvhash.type(SEGMENT_TYPES::PT_LOAD);
-    syvhash.flags(ELF_SEGMENT_FLAGS::PF_R);
-    syvhash.content(new_hash_table);
+    this->binary_->extend(h_section, new_hash_table.size() - h_section.size());
 
-    Segment& new_segment = this->binary_->add(syvhash);
+    //Segment syvhash;
+    //syvhash.type(SEGMENT_TYPES::PT_LOAD);
+    //syvhash.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //syvhash.content(new_hash_table);
 
-    h_section.virtual_address(new_segment.virtual_address());
-    h_section.size(new_segment.physical_size());
-    h_section.offset(new_segment.file_offset());
-    h_section.content(new_segment.content());
+    //Segment& new_segment = this->binary_->add(syvhash);
 
-    h_section.original_size_ = new_segment.physical_size();
+    //h_section.virtual_address(new_segment.virtual_address());
+    //h_section.size(new_segment.physical_size());
+    //h_section.offset(new_segment.file_offset());
+    //h_section.content(new_segment.content());
 
-    this->binary_->get(DYNAMIC_TAGS::DT_HASH).value(new_segment.virtual_address());
+    //h_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_HASH).value(h_section.virtual_address());
     return this->build<ELF_T>();
   }
 
@@ -1005,28 +1011,28 @@ void Builder::build_symbol_gnuhash(void) {
 
   Section& h_section = **it_gnuhash;
   if (raw_gnuhash.size() > h_section.size()) {
-    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section";
-
+    LOG(INFO) << "Need to relocate the '" << h_section.name() << "' section" << std::endl;
     VLOG(VDEBUG) << std::dec << raw_gnuhash.size() <<  " > " << h_section.size();
 
-    Segment gnuhash;
-    gnuhash.type(SEGMENT_TYPES::PT_LOAD);
-    gnuhash.flags(ELF_SEGMENT_FLAGS::PF_R);
-    gnuhash.content(raw_gnuhash.raw());
+    this->binary_->extend(h_section, raw_gnuhash.size() - h_section.size());
 
-    Segment& new_segment = this->binary_->add(gnuhash);
+    //Segment gnuhash;
+    //gnuhash.type(SEGMENT_TYPES::PT_LOAD);
+    //gnuhash.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //gnuhash.content(raw_gnuhash.raw());
 
-    h_section.virtual_address(new_segment.virtual_address());
-    h_section.size(new_segment.physical_size());
-    h_section.offset(new_segment.file_offset());
-    h_section.content(new_segment.content());
+    //Segment& new_segment = this->binary_->add(gnuhash);
 
-    h_section.original_size_ = new_segment.physical_size();
+    //h_section.virtual_address(new_segment.virtual_address());
+    //h_section.size(new_segment.physical_size());
+    //h_section.offset(new_segment.file_offset());
+    //h_section.content(new_segment.content());
 
-    this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH).value(new_segment.virtual_address());
+    //h_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH).value(h_section.virtual_address());
     return this->build<ELF_T>();
   }
-
 
   return h_section.content(std::move(raw_gnuhash.raw()));
 
@@ -1088,12 +1094,12 @@ void Builder::build_dynamic_symbols(void) {
 
   VLOG(VDEBUG) << "SYMTAB's address: 0x" << std::hex << symbol_table_va;
   VLOG(VDEBUG) << "SYMTAB's section: " << symbol_table_section.name().c_str();
-  VLOG(VDEBUG) << "STRTAB's section: " << string_table_section.name().c_str();
+  VLOG(VDEBUG) << "DYNSTR's section: " << string_table_section.name().c_str();
 
   // Build symbols string table
   std::vector<uint8_t> string_table_raw = string_table_section.content();
   std::unordered_map<std::string, size_t> offset_name_map;
-  size_t additional_offset = string_table_raw.size() - 1;
+  size_t additional_offset = string_table_section.content_size() - 1;
 
   std::vector<std::string> string_table_optimized =
     this->optimize<Symbol, decltype(this->binary_->dynamic_symbols_)>(this->binary_->dynamic_symbols_,
@@ -1133,48 +1139,53 @@ void Builder::build_dynamic_symbols(void) {
   VLOG(VDEBUG) << "Set raw string table";
 
   // Relocation .dynstr section
-  if (string_table_raw.size() > string_table_section.original_size() and string_table_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocate the '" << string_table_section.name() << "' section";
-    VLOG(VDEBUG) << std::dec << string_table_raw.size() <<  " > " << string_table_section.size();
+  if (string_table_raw.size() > string_table_section.size() and string_table_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '" << string_table_section.name() << "' section" << std::endl;
+    LOG(DEBUG) << ".dynstr resize: " << std::hex << string_table_section.size() <<  " > " << string_table_raw.size();
 
-    Segment dynstr;
-    dynstr.type(SEGMENT_TYPES::PT_LOAD);
-    dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(string_table_raw);
+    this->binary_->extend(string_table_section, string_table_raw.size() - string_table_section.size());
 
-    Segment& new_segment = this->binary_->add(dynstr);
+    //Segment dynstr;
+    //dynstr.type(SEGMENT_TYPES::PT_LOAD);
+    //dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //dynstr.content(string_table_raw);
 
-    string_table_section.virtual_address(new_segment.virtual_address());
-    string_table_section.size(new_segment.physical_size());
-    string_table_section.offset(new_segment.file_offset());
-    string_table_section.content(new_segment.content());
+    //Segment& new_segment = this->binary_->add(dynstr);
 
-    string_table_section.original_size_ = new_segment.physical_size();
+    //string_table_section.virtual_address(new_segment.virtual_address());
+    //string_table_section.size(new_segment.physical_size());
+    //string_table_section.offset(new_segment.file_offset());
+    //string_table_section.content(new_segment.content());
 
-    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
+    //string_table_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(string_table_section.virtual_address());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(string_table_section.size());
     return this->build_dynamic<ELF_T>();
   }
 
   // Relocation the .dynsym section
-  if (symbol_table_raw.size() > symbol_table_section.original_size() and symbol_table_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocate the '" << symbol_table_section.name() << "' section";
+  if (symbol_table_raw.size() > symbol_table_section.size() and symbol_table_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '" << symbol_table_section.name() << "' section" << std::endl;
+    LOG(DEBUG) << ".dynsym resize: " << std::hex << symbol_table_section.size() <<  " > " << symbol_table_raw.size() << std::endl;
 
-    Segment dynsym_load;
-    dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
-    dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    dynsym_load.content(symbol_table_raw.raw());
-    Segment& new_dynsym_load = this->binary_->add(dynsym_load);
+    this->binary_->extend(symbol_table_section, symbol_table_raw.size() - symbol_table_section.size());
 
-    symbol_table_section.virtual_address(new_dynsym_load.virtual_address());
-    symbol_table_section.size(new_dynsym_load.physical_size());
-    symbol_table_section.offset(new_dynsym_load.file_offset());
-    symbol_table_section.content(new_dynsym_load.content());
+    //Segment dynsym_load;
+    //dynsym_load.type(SEGMENT_TYPES::PT_LOAD);
+    //dynsym_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
+    //dynsym_load.content(symbol_table_raw.raw());
+    //Segment& new_dynsym_load = this->binary_->add(dynsym_load);
 
-    symbol_table_section.original_size_ = new_dynsym_load.physical_size();
+    //symbol_table_section.virtual_address(new_dynsym_load.virtual_address());
+    //symbol_table_section.size(new_dynsym_load.physical_size());
+    //symbol_table_section.offset(new_dynsym_load.file_offset());
+    //symbol_table_section.content(new_dynsym_load.content());
 
-    //this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(symbol_table_raw.size());
-    this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value(new_dynsym_load.virtual_address());
+    //symbol_table_section.original_size_ = new_dynsym_load.physical_size();
+
+    ////this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(symbol_table_raw.size());
+    this->binary_->get(DYNAMIC_TAGS::DT_SYMTAB).value(symbol_table_section.virtual_address());
 
     return this->build_dynamic<ELF_T>();
   }
@@ -1297,11 +1308,12 @@ void Builder::build_section_relocations(void) {
     VLOG(VDEBUG) << "Section associated with object relocations: " << section->name();
     VLOG(VDEBUG) << "Is Rela: " << std::boolalpha << isRela;
     // Relocation the '.rela.xxxx' section
-    if (content.size() > section->original_size() and section->original_size() > 0) {
-      Section rela_section(section->name(), (isRela)?ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL);
-      rela_section.content(content);
-      this->binary_->add(rela_section, false);
-      this->binary_->remove(*section, true);
+    if (content.size() > section->size() and section->size() > 0) {
+      //Section rela_section(section->name(), (isRela)?ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL);
+      this->binary_->extend(*section, content.size() - section->size());
+      section->content(std::move(content));
+      //this->binary_->add(rela_section, false);
+      //this->binary_->remove(*section, true);
 
       return this->build<ELF_T>();
 
@@ -1444,23 +1456,25 @@ void Builder::build_dynamic_relocations(void) {
   VLOG(VDEBUG) << "Section associated with dynamic relocations: " << relocation_section.name();
   VLOG(VDEBUG) << "Is Rela: " << std::boolalpha << isRela;
   // Relocation the '.dyn.rel' section
-  if (content.size() > relocation_section.original_size() and relocation_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocated dynamic relocation section (" << content.size() << " vs " << relocation_section.original_size() << ")" << std::endl;
+  if (content.size() > relocation_section.size() and relocation_section.size() > 0) {
+    LOG(INFO) << "Need to relocated dynamic relocation section (" << content.size() << " vs " << relocation_section.size() << ")" << std::endl;
     // Need relocation of the reloc section
-    Segment relocation_load;
-    relocation_load.type(SEGMENT_TYPES::PT_LOAD);
-    relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content.raw());
-    Segment& new_relocation_load = this->binary_->add(relocation_load);
+    this->binary_->extend(relocation_section, relocation_section.size() - content.size());
 
-    relocation_section.virtual_address(new_relocation_load.virtual_address());
-    relocation_section.size(new_relocation_load.physical_size());
-    relocation_section.offset(new_relocation_load.file_offset());
-    relocation_section.content(new_relocation_load.content());
+    //Segment relocation_load;
+    //relocation_load.type(SEGMENT_TYPES::PT_LOAD);
+    //relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
+    //relocation_load.content(content.raw());
+    //Segment& new_relocation_load = this->binary_->add(relocation_load);
 
-    relocation_section.original_size_ = new_relocation_load.physical_size();
+    //relocation_section.virtual_address(new_relocation_load.virtual_address());
+    //relocation_section.size(new_relocation_load.physical_size());
+    //relocation_section.offset(new_relocation_load.file_offset());
+    //relocation_section.content(new_relocation_load.content());
 
-    dt_reloc_addr->value(new_relocation_load.virtual_address());
+    //relocation_section.original_size_ = new_relocation_load.physical_size();
+
+    dt_reloc_addr->value(relocation_section.virtual_address());
     dt_reloc_size->value(content.size());
 
     return this->build<ELF_T>();
@@ -1576,22 +1590,25 @@ void Builder::build_pltgot_relocations(void) {
   }
 
 
-  if (content.size() > relocation_section.original_size() and relocation_section.original_size() > 0) {
+  if (content.size() > relocation_section.size() and relocation_section.size() > 0) {
     // Need relocation of the reloc section
-    Segment relocation_load;
-    relocation_load.type(SEGMENT_TYPES::PT_LOAD);
-    relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
-    relocation_load.content(content.raw());
-    Segment& new_relocation_load = this->binary_->add(relocation_load);
 
-    relocation_section.virtual_address(new_relocation_load.virtual_address());
-    relocation_section.size(new_relocation_load.physical_size());
-    relocation_section.offset(new_relocation_load.file_offset());
-    relocation_section.content(new_relocation_load.content());
+    this->binary_->extend(relocation_section, content.size() - relocation_section.size());
 
-    relocation_section.original_size_ = new_relocation_load.physical_size();
+    //Segment relocation_load;
+    //relocation_load.type(SEGMENT_TYPES::PT_LOAD);
+    //relocation_load.flags(ELF_SEGMENT_FLAGS::PF_R | ELF_SEGMENT_FLAGS::PF_W);
+    //relocation_load.content(content.raw());
+    //Segment& new_relocation_load = this->binary_->add(relocation_load);
 
-    dt_reloc_addr->value(new_relocation_load.virtual_address());
+    //relocation_section.virtual_address(new_relocation_load.virtual_address());
+    //relocation_section.size(new_relocation_load.physical_size());
+    //relocation_section.offset(new_relocation_load.file_offset());
+    //relocation_section.content(new_relocation_load.content());
+
+    //relocation_section.original_size_ = new_relocation_load.physical_size();
+
+    dt_reloc_addr->value(relocation_section.virtual_address());
     dt_reloc_size->value(content.size());
 
     return this->build<ELF_T>();
@@ -1642,7 +1659,7 @@ void Builder::build_symbol_requirement(void) {
     if (it_name_offset != std::end(dyn_str_raw)) {
       name_offset = static_cast<uint64_t>(std::distance(std::begin(dyn_str_raw), it_name_offset));
     } else {
-      VLOG(VDEBUG) << "[LIEF_DEBUG] buildSymbolRequirement(): Library name is not present";
+      LOG(DEBUG) << "[LIEF_DEBUG] buildSymbolRequirement(): Library name \"" << name << "\" is not present" << std::endl;
       dyn_str_raw.insert(std::end(dyn_str_raw), std::begin(name), std::end(name));
       dyn_str_raw.push_back(0);
       name_offset = dyn_str_raw.size() - name.size() - 1;
@@ -1679,6 +1696,7 @@ void Builder::build_symbol_requirement(void) {
       if (it_svar_name_offset != std::end(dyn_str_raw)) {
         svar_name_offset = static_cast<Elf_Off>(std::distance(std::begin(dyn_str_raw), it_svar_name_offset));
       } else {
+        LOG(DEBUG) << "[LIEF_DEBUG] buildSymbolRequirement(): Auxillary name \"" << svar_name << "\" is not present" << std::endl;
         dyn_str_raw.insert(std::end(dyn_str_raw), std::begin(svar_name), std::end(svar_name));
         dyn_str_raw.push_back(0);
         svar_name_offset = dyn_str_raw.size() - svar_name.size() - 1;
@@ -1698,33 +1716,35 @@ void Builder::build_symbol_requirement(void) {
 
     ++svr_idx;
   }
-  if (dyn_str_raw.size() > dyn_str_section.original_size() and dyn_str_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section";
-    VLOG(VDEBUG) << std::dec << dyn_str_raw.size() <<  " > " << dyn_str_section.size();
 
-    Segment dynstr;
-    dynstr.type(SEGMENT_TYPES::PT_LOAD);
-    dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dyn_str_raw);
+  if (dyn_str_raw.size() > dyn_str_section.size() and dyn_str_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section" << std::endl;
+    LOG(DEBUG) << std::hex << dyn_str_raw.size() <<  " > " << dyn_str_section.size() << std::endl;
 
-    Segment& new_segment = this->binary_->add(dynstr);
+    this->binary_->extend(dyn_str_section, dyn_str_raw.size() - dyn_str_section.size());
 
-    dyn_str_section.virtual_address(new_segment.virtual_address());
-    dyn_str_section.size(new_segment.physical_size());
-    dyn_str_section.offset(new_segment.file_offset());
-    dyn_str_section.content(new_segment.content());
+    //Segment dynstr;
+    //dynstr.type(SEGMENT_TYPES::PT_LOAD);
+    //dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //dynstr.content(dyn_str_raw);
 
-    dyn_str_section.original_size_ = new_segment.physical_size();
+    //Segment& new_segment = this->binary_->add(dynstr);
 
-    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
+    //dyn_str_section.virtual_address(new_segment.virtual_address());
+    //dyn_str_section.size(new_segment.physical_size());
+    //dyn_str_section.offset(new_segment.file_offset());
+    //dyn_str_section.content(new_segment.content());
+
+    //dyn_str_section.original_size_ = new_segment.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(dyn_str_section.virtual_address());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_section.size());
 
     return this->build<ELF_T>();
   }
 
   this->binary_->section_from_offset(svr_offset).content(std::move(svr_raw.raw()));
   dyn_str_section.content(std::move(dyn_str_raw));
-
 }
 
 template<typename ELF_T>
@@ -1809,26 +1829,27 @@ void Builder::build_symbol_definition(void) {
     ++svd_idx;
   }
 
-  if (dyn_str_raw.size() > dyn_str_section.original_size() and dyn_str_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section";
-    VLOG(VDEBUG) << std::dec << dyn_str_raw.size() <<  " > " << dyn_str_section.size();
+  if (dyn_str_raw.size() > dyn_str_section.size() and dyn_str_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '" << dyn_str_section.name() << "' section" << std::endl;
+    LOG(DEBUG) << std::hex << dyn_str_raw.size() <<  " > " << dyn_str_section.size();
 
-    Segment dynstr;
-    dynstr.type(SEGMENT_TYPES::PT_LOAD);
-    dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
-    dynstr.content(dyn_str_raw);
+    this->binary_->extend(dyn_str_section, dyn_str_raw.size() - dyn_str_section.size());
+    //Segment dynstr;
+    //dynstr.type(SEGMENT_TYPES::PT_LOAD);
+    //dynstr.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //dynstr.content(dyn_str_raw);
 
-    Segment& new_segment = this->binary_->add(dynstr);
+    //Segment& new_segment = this->binary_->add(dynstr);
 
-    dyn_str_section.virtual_address(new_segment.virtual_address());
-    dyn_str_section.size(new_segment.physical_size());
-    dyn_str_section.offset(new_segment.file_offset());
-    dyn_str_section.content(new_segment.content());
+    //dyn_str_section.virtual_address(new_segment.virtual_address());
+    //dyn_str_section.size(new_segment.physical_size());
+    //dyn_str_section.offset(new_segment.file_offset());
+    //dyn_str_section.content(new_segment.content());
 
-    dyn_str_section.original_size_ = new_segment.physical_size();
+    //dyn_str_section.original_size_ = new_segment.physical_size();
 
-    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(new_segment.virtual_address());
-    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(new_segment.physical_size());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRTAB).value(dyn_str_section.virtual_address());
+    this->binary_->get(DYNAMIC_TAGS::DT_STRSZ).value(dyn_str_section.size());
 
     return this->build<ELF_T>();
   }
@@ -1849,7 +1870,7 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
 
   const std::vector<uint64_t>& array = entry_array.array();
   std::vector<uint8_t> array_content((array.size()) * sizeof(uint__), 0);
-  VLOG(VDEBUG) << "Need to relocate the " << array_section.name() << " section";
+  LOG(INFO) << "Need to relocate the " << array_section.name() << " section" << std::endl;
 
   //uint64_t first_init_va = entry_array.value();
 
@@ -2010,27 +2031,28 @@ void Builder::build_interpreter(void) {
   if (inter_str.size() > interp_segment->physical_size() and interp_segment->physical_size() > 0) {
     LOG(INFO) << "The 'interpreter' segment needs to be relocated";
 
+    this->binary_->extend(*interp_segment, inter_str.size() - interp_segment->physical_size());
     // Create a LOAD segment for the new Interpreter:
-    Segment load_interpreter_segment;
-    load_interpreter_segment.type(SEGMENT_TYPES::PT_LOAD);
-    load_interpreter_segment.flags(ELF_SEGMENT_FLAGS::PF_R);
-    load_interpreter_segment.content({std::begin(inter_str), std::end(inter_str)});
-    Segment& new_interpreter_load = this->binary_->add(load_interpreter_segment);
+    //Segment load_interpreter_segment;
+    //load_interpreter_segment.type(SEGMENT_TYPES::PT_LOAD);
+    //load_interpreter_segment.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //load_interpreter_segment.content({std::begin(inter_str), std::end(inter_str)});
+    //Segment& new_interpreter_load = this->binary_->add(load_interpreter_segment);
 
-    interp_segment->virtual_address(new_interpreter_load.virtual_address());
-    interp_segment->virtual_size(new_interpreter_load.virtual_size());
-    interp_segment->physical_address(new_interpreter_load.physical_address());
+    //interp_segment->virtual_address(new_interpreter_load.virtual_address());
+    //interp_segment->virtual_size(new_interpreter_load.virtual_size());
+    //interp_segment->physical_address(new_interpreter_load.physical_address());
 
-    interp_segment->file_offset(new_interpreter_load.file_offset());
-    interp_segment->physical_size(new_interpreter_load.physical_size());
+    //interp_segment->file_offset(new_interpreter_load.file_offset());
+    //interp_segment->physical_size(new_interpreter_load.physical_size());
 
     if (it_section_interp != std::end(this->binary_->sections_)) {
       Section* interp = *it_section_interp;
-      interp->virtual_address(new_interpreter_load.virtual_address());
-      interp->size(new_interpreter_load.physical_size());
-      interp->offset(new_interpreter_load.file_offset());
-      interp->content(new_interpreter_load.content());
-      interp->original_size_ = new_interpreter_load.physical_size();
+      interp->virtual_address(interp_segment->virtual_address());
+      interp->size(interp_segment->physical_size());
+      interp->offset(interp_segment->file_offset());
+      interp->content(interp_segment->content());
+      interp->original_size_ = interp_segment->physical_size();
     }
     return this->build<ELF_T>();
   }
@@ -2092,7 +2114,7 @@ void Builder::build_notes(void) {
     note.virtual_size(0);
     note.content(raw_notes.raw());
     this->binary_->replace(note, segment_note);
-    return this->build<ELF_T>();
+    //return this->build<ELF_T>();
   }
 
   segment_note.content(raw_notes.raw());
@@ -2136,23 +2158,25 @@ void Builder::build_symbol_version(void) {
 
   Section& sv_section = this->binary_->section_from_virtual_address(sv_address);
 
-  if (sv_raw.size() > sv_section.original_size() and sv_section.original_size() > 0) {
-    LOG(INFO) << "Need to relocate the '" << sv_section.name() << "' section";
+  if (sv_raw.size() > sv_section.size() and sv_section.size() > 0) {
+    LOG(INFO) << "Need to relocate the '" << sv_section.name() << "' section" << std::endl;
 
-    Segment sv_load;
-    sv_load.type(SEGMENT_TYPES::PT_LOAD);
-    sv_load.flags(ELF_SEGMENT_FLAGS::PF_R);
-    sv_load.content(sv_raw.raw());
-    Segment& new_sv_load = this->binary_->add(sv_load);
+    this->binary_->extend(sv_section, sv_raw.size() - sv_section.size());
 
-    sv_section.virtual_address(new_sv_load.virtual_address());
-    sv_section.size(new_sv_load.physical_size());
-    sv_section.offset(new_sv_load.file_offset());
-    sv_section.content(new_sv_load.content());
+    //Segment sv_load;
+    //sv_load.type(SEGMENT_TYPES::PT_LOAD);
+    //sv_load.flags(ELF_SEGMENT_FLAGS::PF_R);
+    //sv_load.content(sv_raw.raw());
+    //Segment& new_sv_load = this->binary_->add(sv_load);
 
-    sv_section.original_size_ = new_sv_load.physical_size();
+    //sv_section.virtual_address(new_sv_load.virtual_address());
+    //sv_section.size(new_sv_load.physical_size());
+    //sv_section.offset(new_sv_load.file_offset());
+    //sv_section.content(new_sv_load.content());
 
-    this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value(new_sv_load.virtual_address());
+    //sv_section.original_size_ = new_sv_load.physical_size();
+
+    this->binary_->get(DYNAMIC_TAGS::DT_VERSYM).value(sv_section.virtual_address());
     return this->build<ELF_T>();
   }
   sv_section.content(std::move(sv_raw.raw()));
