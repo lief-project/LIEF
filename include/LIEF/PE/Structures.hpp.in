@@ -198,6 +198,15 @@ static const DIALOG_BOX_STYLES dialog_box_styles_array[] = {
   DIALOG_BOX_STYLES::DS_SHELLFONT,
 };
 
+static const ACCELERATOR_FLAGS accelerator_array[] = {
+  ACCELERATOR_FLAGS::FVIRTKEY,
+  ACCELERATOR_FLAGS::FNOINVERT,
+  ACCELERATOR_FLAGS::FSHIFT,
+  ACCELERATOR_FLAGS::FCONTROL,
+  ACCELERATOR_FLAGS::FALT,
+  ACCELERATOR_FLAGS::END,
+};
+
 // From Virtualbox - include/iprt/formats/pecoff.h
 template <typename T>
 struct load_configuration {

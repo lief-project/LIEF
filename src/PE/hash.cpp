@@ -429,6 +429,13 @@ void Hash::visit(const ResourceStringTable& string_table) {
   this->process(string_table.name());
 }
 
+void Hash::visit(const ResourceAccelerator& accelerator) {
+  this->process(accelerator.flags());
+  this->process(accelerator.ansi());
+  this->process(accelerator.id());
+  this->process(accelerator.padding());
+}
+
 void Hash::visit(const Signature& signature) {
 
   this->process(signature.version());

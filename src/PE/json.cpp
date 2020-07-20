@@ -566,6 +566,20 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
       LOG(WARNING) << e.what();
     }
   }
+
+  if (resources_manager.has_accelerator()) {
+    std::vector<json> accelerator_json;
+    try {
+      for (const ResourceAccelerator& acc : resources_manager.accelerator()) {
+        JsonVisitor accelerator_visitor;
+        accelerator_visitor(acc);
+        accelerator_json.emplace_back(accelerator_visitor.get());
+        this->node_["accelerator"] = accelerator_json;
+      }
+    } catch (const LIEF::exception& e) {
+      LOG(WARNING) << e.what();
+    }
+  }
 }
 
 void JsonVisitor::visit(const ResourceStringFileInfo& resource_sfi) {
@@ -709,6 +723,17 @@ void JsonVisitor::visit(const ResourceDialogItem& dialog_item) {
 void JsonVisitor::visit(const ResourceStringTable& string_table) {
   this->node_["length"] = string_table.length();
   this->node_["name"] = u16tou8(string_table.name());
+}
+
+void JsonVisitor::visit(const ResourceAccelerator& acc) {
+  std::vector<json> flags;
+  for (const ACCELERATOR_FLAGS c : acc.flags_list()) {
+    flags.emplace_back(to_string(c));
+  }
+  this->node_["flags"]   = flags;
+  this->node_["ansi"]    = acc.ansi_str();
+  this->node_["id"]      = acc.id();
+  this->node_["padding"] = acc.padding();
 }
 
 void JsonVisitor::visit(const Signature& signature) {

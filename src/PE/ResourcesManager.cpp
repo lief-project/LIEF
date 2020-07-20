@@ -36,6 +36,7 @@
 
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -1285,6 +1286,53 @@ std::vector<std::string> ResourcesManager::html(void) const {
 
 bool ResourcesManager::has_html(void) const {
   return this->has_type(RESOURCE_TYPES::HTML);
+}
+
+bool ResourcesManager::has_accelerator(void) const {
+  return this->has_type(RESOURCE_TYPES::ACCELERATOR);
+}
+
+std::vector<ResourceAccelerator> ResourcesManager::accelerator(void) const {
+  it_childs nodes = this->resources_->childs();
+  auto&& it_accelerator = std::find_if(
+    std::begin(nodes),
+    std::end(nodes),
+    [] (const ResourceNode& node) {
+      return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ACCELERATOR;
+    }
+  );
+
+  if (it_accelerator == std::end(nodes)) {
+    throw not_found(std::string("Missing '") + to_string(RESOURCE_TYPES::ACCELERATOR) + "' entry");
+  }
+
+  std::vector<ResourceAccelerator> accelerator;
+  for (const ResourceNode& child_l1 : it_accelerator->childs()) {
+    for (const ResourceNode& child_l2 : child_l1.childs()) {
+      const ResourceData* accelerator_node = dynamic_cast<const ResourceData*>(&child_l2);
+      if (!accelerator_node) {
+        LOG(ERROR) << "Accelerator";
+        continue;
+      }
+
+      const std::vector<uint8_t>& content = accelerator_node->content();
+      if (content.empty()) {
+        LOG(ERROR) << "Accelerator content is empty";
+        continue;
+      }
+
+      VectorStream stream{content};
+      while (stream.can_read<pe_resource_acceltableentry>()) {
+        accelerator.emplace_back(
+          ResourceAccelerator(&stream.read<const pe_resource_acceltableentry>()));
+      }
+      if ((accelerator.back().flags() & int16_t(ACCELERATOR_FLAGS::END)) != int16_t(ACCELERATOR_FLAGS::END)) {
+        LOG(ERROR) << "Accelerator resource may be corrupted";
+      }
+    }
+  }
+
+  return accelerator;
 }
 
 // Prints

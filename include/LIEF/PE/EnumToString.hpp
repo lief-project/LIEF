@@ -65,6 +65,9 @@ LIEF_API const char* to_string(WIN_VERSION e);
 LIEF_API const char* to_string(GUARD_CF_FLAGS e);
 LIEF_API const char* to_string(GUARD_RF_FLAGS e);
 
+LIEF_API const char* to_string(ACCELERATOR_FLAGS e);
+LIEF_API const char* to_string(ACCELERATOR_VK_CODES e);
+
 } // namespace PE
 } // namespace LIEF
 #endif

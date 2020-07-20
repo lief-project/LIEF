@@ -60,6 +60,7 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const ResourceFixedFileInfo& resource_ffi)   override;
   virtual void visit(const ResourceVarFileInfo& resource_vfi)     override;
   virtual void visit(const ResourceStringTable& resource_st)      override;
+  virtual void visit(const ResourceAccelerator& resource_acc)     override;
   virtual void visit(const LangCodeItem& resource_lci)            override;
   virtual void visit(const ResourceIcon& resource_icon)           override;
   virtual void visit(const ResourceDialog& dialog)                override;

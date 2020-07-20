@@ -121,6 +121,14 @@ void create<ResourcesManager>(py::module& m) {
       &ResourcesManager::html,
       "HTML resource as the list of ``string``")
 
+    .def_property_readonly("has_accelerator",
+      &ResourcesManager::has_accelerator,
+      "``True`` if resources contain " RST_CLASS_REF(lief.PE.ResourceAccelerator) "")
+
+    .def_property_readonly("accelerator",
+      &ResourcesManager::accelerator,
+      "Return list of " RST_CLASS_REF(lief.PE.ResourceAccelerator) " present in the resource")
+
     .def("get_node_type",
       static_cast<no_const_func<ResourceNode&, RESOURCE_TYPES>>(&ResourcesManager::get_node_type),
       "Return " RST_CLASS_REF(lief.PE.ResourceNode) " with "

@@ -14,6 +14,7 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceDialog.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceDialogItem.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceStringTable.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceAccelerator.cpp"
 
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignerInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyAuthenticatedAttributes.cpp"

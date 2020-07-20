@@ -67,6 +67,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const ResourceDialog& dialog)                override;
   virtual void visit(const ResourceDialogItem& dialog_item)       override;
   virtual void visit(const ResourceStringTable& string_table)     override;
+  virtual void visit(const ResourceAccelerator& acc)              override;
   virtual void visit(const Signature& signature)                  override;
   virtual void visit(const x509& x509)                            override;
   virtual void visit(const SignerInfo& signerinfo)                override;
