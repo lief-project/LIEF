@@ -24,6 +24,26 @@
 namespace LIEF {
 namespace PE {
 
+std::string to_hex(const char c) {
+  std::stringstream ss;
+  ss << std::setfill('0') << std::setw(2) << std::hex << (0xff & (unsigned int)c);
+  return std::string("\\x") + ss.str();
+}
+
+std::string escape_non_ascii(const std::string& s) {
+  std::string result;
+  const auto len = s.size();
+  for (auto i = 0u; i < len; i++) {
+    const auto c = s[i];
+    if (c < 32 || c >= 127) {
+      result += to_hex(c);
+    } else {
+      result.push_back(c);
+    }
+  }
+  return result;
+}
+
 json to_json(const Object& v) {
   JsonVisitor visitor;
   visitor(v);
@@ -264,7 +284,7 @@ void JsonVisitor::visit(const DataDirectory& data_directory) {
   this->node_["size"] = data_directory.size();
   this->node_["type"] = to_string(data_directory.type());
   if (data_directory.has_section()) {
-    this->node_["section"] = data_directory.section().name();
+    this->node_["section"] = escape_non_ascii(data_directory.section().name());
   }
 }
 
@@ -280,7 +300,7 @@ void JsonVisitor::visit(const Section& section) {
     types.emplace_back(to_string(t));
   }
 
-  this->node_["name"]                   = section.name();
+  this->node_["name"]                   = escape_non_ascii(section.name());
   this->node_["pointerto_relocation"]   = section.pointerto_relocation();
   this->node_["pointerto_line_numbers"] = section.pointerto_line_numbers();
   this->node_["numberof_relocations"]   = section.numberof_relocations();
@@ -322,12 +342,12 @@ void JsonVisitor::visit(const Export& export_) {
   this->node_["major_version"] = export_.major_version();
   this->node_["minor_version"] = export_.minor_version();
   this->node_["ordinal_base"]  = export_.ordinal_base();
-  this->node_["name"]          = export_.name();
+  this->node_["name"]          = escape_non_ascii(export_.name());
   this->node_["entries"]       = entries;
 }
 
 void JsonVisitor::visit(const ExportEntry& export_entry) {
-  this->node_["name"]      = export_entry.name();
+  this->node_["name"]      = escape_non_ascii(export_entry.name());
   this->node_["ordinal"]   = export_entry.ordinal();
   this->node_["address"]   = export_entry.address();
   this->node_["is_extern"] = export_entry.is_extern();
@@ -355,7 +375,7 @@ void JsonVisitor::visit(const TLS& tls) {
   }
 
   if (tls.has_section()) {
-    this->node_["section"] = tls.section().name();
+    this->node_["section"] = escape_non_ascii(tls.section().name());
   }
 }
 
@@ -410,7 +430,7 @@ void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
   this->visit(static_cast<const CodeView&>(cvpdb));
   this->node_["signature"] = cvpdb.signature();
   this->node_["age"]       = cvpdb.age();
-  this->node_["filename"]  = cvpdb.filename();
+  this->node_["filename"]  = escape_non_ascii(cvpdb.filename());
 }
 
 void JsonVisitor::visit(const Import& import) {
@@ -501,7 +521,7 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
 void JsonVisitor::visit(const ResourcesManager& resources_manager) {
   if (resources_manager.has_manifest()) {
     try {
-      this->node_["manifest"] = resources_manager.manifest();
+      this->node_["manifest"] = escape_non_ascii(resources_manager.manifest()) ;
     } catch (const LIEF::exception& e) {
       LOG(WARNING) << e.what();
     }
