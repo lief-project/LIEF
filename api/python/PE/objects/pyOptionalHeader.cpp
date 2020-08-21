@@ -202,8 +202,8 @@ void create<OptionalHeader>(py::module& m) {
         static_cast<setter_t<SUBSYSTEM>>(&OptionalHeader::subsystem),
         "The " RST_CLASS_REF(lief.PE.SUBSYSTEM) " that is required to "
         "run this image. For more "
-        "information, see “Windows "
-        "Subsystem” later in this "
+        "information, see \"Windows "
+        "Subsystem\" later in this "
         "specification.")
 
     .def_property("dll_characteristics",

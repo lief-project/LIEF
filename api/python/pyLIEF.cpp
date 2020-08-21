@@ -50,7 +50,9 @@
 #include "platforms/android/pyAndroid.hpp"
 
 
+py::gil_scoped_acquire *_init_acquire = new py::gil_scoped_acquire();
 py::module LIEF_module("lief", "Python API for LIEF");
+int _init_released = [&]() {delete _init_acquire; return 1; }();
 
 PYBIND11_MODULE(lief, LIEF_module) {
 
