@@ -75,6 +75,7 @@ void init_objects(py::module& m) {
   CREATE(ResourceDialog, m);
   CREATE(ResourceDialogItem, m);
   CREATE(ResourceStringTable, m);
+  CREATE(ResourceAccelerator, m);
   CREATE(Signature, m);
   CREATE(x509, m);
   CREATE(SignerInfo, m);

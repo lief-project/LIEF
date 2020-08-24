@@ -78,6 +78,7 @@ LIEF_PE_FORWARD(ResourceIcon)
 LIEF_PE_FORWARD(ResourceDialog)
 LIEF_PE_FORWARD(ResourceDialogItem)
 LIEF_PE_FORWARD(ResourceStringTable)
+LIEF_PE_FORWARD(ResourceAccelerator)
 LIEF_PE_FORWARD(Signature)
 LIEF_PE_FORWARD(x509)
 LIEF_PE_FORWARD(SignerInfo)
@@ -342,6 +343,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::ResourceStringTable
   LIEF_PE_VISITABLE(ResourceStringTable)
+
+  //! Method to visit a LIEF::PE::ResourceAccelerator
+  LIEF_PE_VISITABLE(ResourceAccelerator)
 
   //! Method to visit a LIEF::PE::LangCodeItem
   LIEF_PE_VISITABLE(LangCodeItem)

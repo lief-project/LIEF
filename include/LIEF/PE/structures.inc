@@ -320,6 +320,12 @@ struct pe_resource_string {
   uint16_t Name[1];
 };
 
+struct pe_resource_acceltableentry {
+  int16_t fFlags;
+  int16_t wAnsi;
+  int16_t wId;
+  int16_t padding;
+};
 
 //
 // Export structures

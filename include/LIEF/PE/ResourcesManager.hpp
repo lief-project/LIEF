@@ -31,6 +31,7 @@
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -135,6 +136,15 @@ class LIEF_API ResourcesManager : public Object {
 
   //! @brief Return the list of the html resource
   std::vector<std::string> html(void) const;
+
+  // Accelerator
+  // =====
+
+  //! @brief ``true`` if resources contain @link LIEF::PE::ResourceAccelerator @endlink
+  bool has_accelerator(void) const;
+
+  //! @brief Return the list of the accelerator in the resource
+  std::vector<ResourceAccelerator> accelerator(void) const;
 
   // Print
   // =====

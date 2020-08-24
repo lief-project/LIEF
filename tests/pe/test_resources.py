@@ -85,6 +85,28 @@ class TestResource(TestCase):
         self.assertEqual(string_table[1].name, "WINAPP")
         self.assertEqual(string_table[1].length, 6)
 
+    def test_resource_accelerator(self):
+        sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+        mfc = lief.parse(sample_path)
+        resources_manager = mfc.resources_manager
+
+        self.assertEqual(resources_manager.has_accelerator, True)
+
+        accelerator = resources_manager.accelerator
+        self.assertEqual(accelerator[0].flags, lief.PE.ACCELERATOR_FLAGS.FVIRTKEY | lief.PE.ACCELERATOR_FLAGS.FCONTROL)
+        self.assertEqual(accelerator[0].ansi, int(lief.PE.ACCELERATOR_VK_CODES.VK_N))
+        self.assertEqual(accelerator[0].id, 0xe100)
+        self.assertEqual(accelerator[0].padding, 0)
+
+        self.assertEqual(accelerator[1].flags, lief.PE.ACCELERATOR_FLAGS.FVIRTKEY | lief.PE.ACCELERATOR_FLAGS.FCONTROL)
+        self.assertEqual(accelerator[1].ansi, int(lief.PE.ACCELERATOR_VK_CODES.VK_O))
+        self.assertEqual(accelerator[1].id, 0xe101)
+        self.assertEqual(accelerator[1].padding, 0)
+
+        self.assertEqual(accelerator[2].flags, lief.PE.ACCELERATOR_FLAGS.FVIRTKEY | lief.PE.ACCELERATOR_FLAGS.FCONTROL)
+        self.assertEqual(accelerator[2].ansi, int(lief.PE.ACCELERATOR_VK_CODES.VK_S))
+        self.assertEqual(accelerator[2].id, 0xe103)
+        self.assertEqual(accelerator[2].padding, 0)
 
     def test_resource_version(self):
         sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
