@@ -18,6 +18,7 @@
 #include <numeric>
 #include <sstream>
 #include <map>
+#include <cctype>
 
 #include "LIEF/DWARF/enums.hpp"
 
