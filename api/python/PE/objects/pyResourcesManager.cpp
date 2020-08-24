@@ -113,6 +113,14 @@ void create<ResourcesManager>(py::module& m) {
       &ResourcesManager::string_table,
       "Return list of " RST_CLASS_REF(lief.PE.ResourceStringTable) " present in the resource")
 
+    .def_property_readonly("has_html",
+      &ResourcesManager::has_html,
+      "``True`` if resources contain HTML resource")
+
+    .def_property_readonly("html",
+      &ResourcesManager::html,
+      "HTML resource as the list of ``string``")
+
     .def("get_node_type",
       static_cast<no_const_func<ResourceNode&, RESOURCE_TYPES>>(&ResourcesManager::get_node_type),
       "Return " RST_CLASS_REF(lief.PE.ResourceNode) " with "

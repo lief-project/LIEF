@@ -127,6 +127,15 @@ class LIEF_API ResourcesManager : public Object {
   //! @brief Return the list of the string table in the resource
   std::vector<ResourceStringTable> string_table(void) const;
 
+  // HTML
+  // ====
+
+  //! @brief ``true`` if resources contain html
+  bool has_html(void) const;
+
+  //! @brief Return the list of the html resource
+  std::vector<std::string> html(void) const;
+
   // Print
   // =====
 
