@@ -45,8 +45,8 @@ set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 2.16.6)
-set(MBED_TLS_SHA256 SHA256=b9a8c5af8cd32e62b985dc8cb43397e4230a5437ce2ce3b7fedb2c6dc65115d8)
+set(MBED_TLS_VERSION 2.23.0)
+set(MBED_TLS_SHA256 SHA256=bbf9c3cc6b7603f2f15bbba7badcf6cf188a9d5aaa63c4df2d61213f459c2f5f)
 set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -102,7 +102,6 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/md2.c"
   "${MBEDTLS_SOURCE_DIR}/library/md4.c"
   "${MBEDTLS_SOURCE_DIR}/library/md5.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md_wrap.c"
   "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
   "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
   "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
@@ -129,6 +128,19 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/version.c"
   "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
   "${MBEDTLS_SOURCE_DIR}/library/xtea.c"
+  "${MBEDTLS_SOURCE_DIR}/library/aria.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
+  "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
+  "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
+  "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
+  "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_se.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_slot_management.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_storage.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_its_file.c"
+  "${MBEDTLS_SOURCE_DIR}/library/rsa_internal.c"
 )
 
 set(mbedtls_src_x509
@@ -153,6 +165,7 @@ set(mbedtls_src_tls
     "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c"
 )
 
 #set_source_files_properties("${MBEDTLS_SOURCE_DIR}/library/bignum.c" PROPERTIES COMPILE_FLAGS -Wno-overlength-strings)
