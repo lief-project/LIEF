@@ -297,6 +297,12 @@ list(APPEND LIEF_PRIVATE_INCLUDE_DIR
   "${CMAKE_BINARY_DIR}"
 )
 
+configure_file(
+  ${PROJECT_SOURCE_DIR}/LIEF.pc.in
+  ${PROJECT_BINARY_DIR}/LIEF.pc
+  @ONLY
+)
+
 
 # Grouping external projects
 # ==========================
@@ -533,6 +539,12 @@ install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
   DESTINATION share/LIEF/cmake
   COMPONENT CMakeScripts
+)
+
+install(
+  FILES ${PROJECT_BINARY_DIR}/LIEF.pc
+  DESTINATION lib/pkgconfig
+  COMPONENT libraries
 )
 
 export(

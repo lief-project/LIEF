@@ -1,0 +1,14 @@
+prefix="@CMAKE_INSTALL_PREFIX@"
+exec_prefix="${prefix}"
+libdir="${prefix}/lib"
+includedir="${prefix}/include/LIEF"
+
+Name: LIEF
+Description: Library to Instrument Executable Formats
+URL: https://github.com/lief-project/LIEF
+Version: @LIEF_VERSION_MAJOR@.@LIEF_VERSION_MINOR@.@LIEF_VERSION_PATCH@
+Requires: @PKGCONF_REQ_PUB@
+Requires.private: @PKGCONF_REQ_PRIV@
+Cflags: -I"${includedir}"
+Libs: -L"${libdir}" -lLIEF
+Libs.private: -L"${libdir}" -lLIEF @PKGCONF_LIBS_PRIV@
