@@ -324,7 +324,8 @@ void create<Binary>(py::module& m) {
 
     .def("replace",
         static_cast<Segment& (Binary::*)(const Segment&, const Segment&, uint64_t)>(&Binary::replace),
-        "Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment",
+        "Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment."
+        ".. warning:: The ``original_segment`` is no longer valid after this function\n\n",
         "new_segment"_a, "original_segment"_a, "base"_a = 0,
         py::return_value_policy::reference)
 
