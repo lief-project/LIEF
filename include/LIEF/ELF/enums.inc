@@ -927,7 +927,7 @@ enum _LIEF_EN(NOTE_TYPES_CORE) {
 
 
 enum _LIEF_EN(NOTE_ABIS) {
-  _LIEF_EI(ELF_NOTE_UNKNOWN)     = -1u,
+  _LIEF_EI(ELF_NOTE_UNKNOWN)     = ~(unsigned int)(0),
   _LIEF_EI(ELF_NOTE_OS_LINUX)    = 0,
   _LIEF_EI(ELF_NOTE_OS_GNU)      = 1,
   _LIEF_EI(ELF_NOTE_OS_SOLARIS2) = 2,

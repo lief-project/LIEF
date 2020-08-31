@@ -36,14 +36,14 @@ class BinaryStream {
 
   int64_t read_dwarf_encoded(uint8_t encoding);
 
-  std::string read_string(size_t maxsize = -1u) const;
-  std::string peek_string(size_t maxsize = -1u) const;
-  std::string peek_string_at(size_t offset, size_t maxsize = -1u) const;
+  std::string read_string(size_t maxsize = ~static_cast<size_t>(0)) const;
+  std::string peek_string(size_t maxsize = ~static_cast<size_t>(0)) const;
+  std::string peek_string_at(size_t offset, size_t maxsize = ~static_cast<size_t>(0)) const;
 
   std::u16string read_u16string(void) const;
   std::u16string peek_u16string(void) const;
 
-  std::string read_mutf8(size_t maxsize = -1ull) const;
+  std::string read_mutf8(size_t maxsize = ~static_cast<size_t>(0)) const;
 
   std::u16string read_u16string(size_t length) const;
   std::u16string peek_u16string(size_t length) const;
