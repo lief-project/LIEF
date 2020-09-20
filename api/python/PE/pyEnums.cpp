@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1109,6 +1110,21 @@ void init_enums(py::module& m) {
     .value("VK_NONAME"              , LIEF::PE::ACCELERATOR_VK_CODES::VK_NONAME)
     .value("VK_PA1"                 , LIEF::PE::ACCELERATOR_VK_CODES::VK_PA1)
     .value("VK_OEM_CLEAR"           , LIEF::PE::ACCELERATOR_VK_CODES::VK_OEM_CLEAR);
+
+  LIEF::enum_<LIEF::PE::CERTIFICATE_REVISION>(m, "CERTIFICATE_REVISION")
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_REVISION::WIN_CERT_REVISION_1_0))
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_REVISION::WIN_CERT_REVISION_2_0));
+
+  LIEF::enum_<LIEF::PE::CERTIFICATE_TYPE>(m, "CERTIFICATE_TYPE")
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_TYPE::WIN_CERT_TYPE_X509))
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_TYPE::WIN_CERT_TYPE_PKCS_SIGNED_DATA))
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_TYPE::WIN_CERT_TYPE_RESERVED_1))
+    .value(PY_ENUM(LIEF::PE::CERTIFICATE_TYPE::WIN_CERT_TYPE_PKCS1_SIGN));
+
+  LIEF::enum_<LIEF::PE::SPC_PE_IMAGE_FLAGS>(m, "SPC_PE_IMAGEFLAGS")
+    .value(PY_ENUM(LIEF::PE::SPC_PE_IMAGE_FLAGS::INCLUDE_RESOURCES))
+    .value(PY_ENUM(LIEF::PE::SPC_PE_IMAGE_FLAGS::INCLUDE_DEBUG_INFO))
+    .value(PY_ENUM(LIEF::PE::SPC_PE_IMAGE_FLAGS::INCLUDE_IMPORT_ADDRESS_TABLE));
 }
 
 }

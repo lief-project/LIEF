@@ -21,6 +21,8 @@
 #include "LIEF/hash.hpp"
 #include "LIEF/PE.hpp"
 
+#include "mapbox/variant.hpp"
+
 namespace LIEF {
 namespace PE {
 
@@ -165,10 +167,14 @@ void JsonVisitor::visit(const Binary& binary) {
 
 
   // Signature
-  if (binary.has_signature()) {
-    JsonVisitor visitor;
-    visitor(binary.signature());
-    this->node_["signature"] = visitor.get();
+  if (binary.has_signatures()) {
+    std::vector<json> signatures;
+    for (const auto& sig : binary.signatures()) {
+      JsonVisitor visitor;
+      visitor(sig);
+      signatures.emplace_back(visitor.get());
+    }
+    this->node_["signatures"] = signatures;
   }
 
   std::vector<json> symbols;
@@ -771,6 +777,9 @@ void JsonVisitor::visit(const Signature& signature) {
     crts.emplace_back(crt_visitor.get());
   }
 
+  this->node_["length"]       = signature.length();
+  this->node_["revision"]     = to_string(signature.revision());
+  this->node_["type"]         = to_string(signature.certificate_type());
   this->node_["version"]      = signature.version();
   this->node_["content_info"] = content_info_visitor.get();
   this->node_["signer_info"]  = signer_info_visitor.get();
@@ -791,24 +800,43 @@ void JsonVisitor::visit(const SignerInfo& signerinfo) {
   JsonVisitor authenticated_attributes_visitor;
   authenticated_attributes_visitor(signerinfo.authenticated_attributes());
 
-  this->node_["version"]                  = signerinfo.version();
-  this->node_["digest_algorithm"]         = signerinfo.digest_algorithm();
-  this->node_["signature_algorithm"]      = signerinfo.signature_algorithm();
-  this->node_["authenticated_attributes"] = authenticated_attributes_visitor.get();
+  this->node_["version"]                    = signerinfo.version();
+  this->node_["digest_algorithm"]           = signerinfo.digest_algorithm();
+  this->node_["signature_algorithm"]        = signerinfo.signature_algorithm();
+  this->node_["authenticated_attributes"]   = authenticated_attributes_visitor.get();
   this->node_["issuer"] = std::get<0>(signerinfo.issuer());
 }
 
+void JsonVisitor::visit(const spc_serialized_object_t& spc_serialized_object) {
+  this->node_["classId"] = spc_serialized_object.first;
+  this->node_["serializedData"] = spc_serialized_object.second;
+}
+
+void JsonVisitor::visit(const spc_link_t& spc_link) {
+  if (spc_link.first == "url" || spc_link.first == "file") {
+    this->node_[spc_link.first] = mapbox::util::get<std::string>(spc_link.second);
+  } else if (spc_link.first == "moniker") {
+    JsonVisitor spc_serialized_object_visitor;
+    spc_serialized_object_visitor(mapbox::util::get<spc_serialized_object_t>(spc_link.second));
+    this->node_[spc_link.first] = spc_serialized_object_visitor.get();
+  }
+}
+
 void JsonVisitor::visit(const ContentInfo& contentinfo) {
-  this->node_["content_type"]     = contentinfo.content_type();
-  this->node_["type"]             = contentinfo.type();
-  this->node_["digest_algorithm"] = contentinfo.digest_algorithm();
+  this->node_["content_type"] = contentinfo.content_type();
+}
+
+void JsonVisitor::visit(const SpcIndirectDataContent& spc_indirect_data_content) {
+  this->node_["content_type"] = spc_indirect_data_content.content_type();
+  this->node_["digset_algorithm"] = spc_indirect_data_content.digest_algorithm();
+
 }
 
 void JsonVisitor::visit(const AuthenticatedAttributes& auth) {
   this->node_["content_type"] = auth.content_type();
   this->node_["program_name"] = u16tou8(auth.program_name());
-  this->node_["url"]          = auth.more_info();
   this->node_["message_digest"] = auth.message_digest();
+  this->node_["more_info"]    = auth.more_info();
 }
 
 void JsonVisitor::visit(const CodeIntegrity& code_integrity) {

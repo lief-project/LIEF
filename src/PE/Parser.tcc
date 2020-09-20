@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,7 +164,7 @@ void Parser::parse_data_directories(void) {
   // Signature
   if (this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
     try {
-      this->parse_signature();
+      this->parse_signatures();
     } catch (const exception& e) {
       LOG(WARNING) << e.what();
     }

@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +62,21 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
     return 1024 * 1024 * 1024 * gbs;
 }
 
+
+template <typename T>
+T swap_endian(T value) {
+  union {
+      T v;
+      uint8_t u8_vec[sizeof(T)];
+  } src, dst;
+  src.v = value;
+
+  for (size_t i = 0; i < sizeof(T); i++) {
+    dst.u8_vec[i] = src.u8_vec[sizeof(T) - i - 1];
+  }
+
+  return dst.v;
+}
 
 //! @brief Convert a UTF-16 string to a UTF-8 one
 LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);

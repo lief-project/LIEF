@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +37,8 @@ class LIEF_API SignerInfo : public Object {
 
   public:
   SignerInfo(void);
-  SignerInfo(const SignerInfo&);
-  SignerInfo& operator=(const SignerInfo&);
+  SignerInfo(SignerInfo&&);
+  SignerInfo& operator=(SignerInfo&&);
 
   //! @brief Should be 1
   uint32_t version(void) const;
@@ -51,6 +52,9 @@ class LIEF_API SignerInfo : public Object {
 
   //! @brief Return the AuthenticatedAttributes object
   const AuthenticatedAttributes& authenticated_attributes(void) const;
+
+  //! @brief Return true if SignerInfo has AuthenticatedAttributes object
+  bool has_authenticated_attributes(void) const;
 
   //! @brief Return the signature algorithm (OID)
   const oid_t& signature_algorithm(void) const;
@@ -74,6 +78,7 @@ class LIEF_API SignerInfo : public Object {
   oid_t                   signature_algorithm_;
   std::vector<uint8_t>    encrypted_digest_;
 
+  bool has_authenticated_attributes_ = false;
 };
 
 }

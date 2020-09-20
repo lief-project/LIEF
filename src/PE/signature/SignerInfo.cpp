@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +26,10 @@ namespace LIEF {
 namespace PE {
 
 SignerInfo::SignerInfo(void) = default;
-SignerInfo::SignerInfo(const SignerInfo&) = default;
-SignerInfo& SignerInfo::operator=(const SignerInfo&) = default;
 SignerInfo::~SignerInfo(void) = default;
 
+SignerInfo::SignerInfo(SignerInfo&& obj) = default;
+SignerInfo& SignerInfo::operator=(SignerInfo &&) = default;
 
 uint32_t SignerInfo::version(void) const {
   return this->version_;
@@ -46,9 +47,15 @@ const oid_t& SignerInfo::digest_algorithm(void) const {
 
 
 const AuthenticatedAttributes& SignerInfo::authenticated_attributes(void) const {
-  return this->authenticated_attributes_;
+  if (this->has_authenticated_attributes()) {
+    return this->authenticated_attributes_;
+  }
+  throw not_found("Does not have authenticated attributes");
 }
 
+bool SignerInfo::has_authenticated_attributes(void) const {
+  return this->has_authenticated_attributes_;
+}
 
 const oid_t& SignerInfo::signature_algorithm(void) const {
   return this->signature_algorithm_;

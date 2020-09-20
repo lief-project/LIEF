@@ -135,6 +135,8 @@ if (LIEF_ENABLE_JSON)
   list(APPEND LIEF_PUBLIC_INCLUDE_DIR  "${LIBJSON_SOURCE_DIR}/")
 endif()
 
+list(APPEND LIEF_PUBLIC_INCLUDE_DIR "${LIBVARIANT_SOURCE_DIR}/include")
+
 source_group("Header Files" FILES ${LIEF_INC_FILES})
 source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
 
@@ -340,6 +342,8 @@ endif()
 add_dependencies(LIB_LIEF lief_rang_cpp_color)
 
 add_dependencies(LIB_LIEF lief_mbed_tls)
+
+add_dependencies(LIB_LIEF lief_variant)
 
 # Flags definition
 # ----------------

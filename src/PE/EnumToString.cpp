@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1343,6 +1344,36 @@ const char* to_string(ACCELERATOR_VK_CODES e) {
   };
   auto it = enumStrings.find(e);
   return it != enumStrings.end() ? it->second : "Undefined or reserved";
+}
+
+const char* to_string(CERTIFICATE_REVISION e) {
+  CONST_MAP(CERTIFICATE_REVISION, const char*, 2) enumStrings {
+    { CERTIFICATE_REVISION::WIN_CERT_REVISION_1_0, "REVISION_1_0" },
+    { CERTIFICATE_REVISION::WIN_CERT_REVISION_2_0, "REVISION_2_0" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+const char* to_string(CERTIFICATE_TYPE e) {
+  CONST_MAP(CERTIFICATE_TYPE, const char*, 4) enumStrings {
+    { CERTIFICATE_TYPE::WIN_CERT_TYPE_X509,             "CERT_TYPE_X509"             },
+    { CERTIFICATE_TYPE::WIN_CERT_TYPE_PKCS_SIGNED_DATA, "CERT_TYPE_PKCS_SIGNED_DATA" },
+    { CERTIFICATE_TYPE::WIN_CERT_TYPE_RESERVED_1,       "CERT_TYPE_RESERVED_1"       },
+    { CERTIFICATE_TYPE::WIN_CERT_TYPE_PKCS1_SIGN,       "CERT_TYPE_PKCS1_SIGN"       },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
+
+const char* to_string(SPC_PE_IMAGE_FLAGS e) {
+  CONST_MAP(SPC_PE_IMAGE_FLAGS, const char*, 3) enumStrings {
+    { SPC_PE_IMAGE_FLAGS::INCLUDE_RESOURCES,            "INCLUDE_RESOURCES"            },
+    { SPC_PE_IMAGE_FLAGS::INCLUDE_DEBUG_INFO,           "INCLUDE_DEBUG_INFO"           },
+    { SPC_PE_IMAGE_FLAGS::INCLUDE_IMPORT_ADDRESS_TABLE, "INCLUDE_IMPORT_ADDRESS_TABLE" },
+  };
+  auto   it = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
 } // namespace PE

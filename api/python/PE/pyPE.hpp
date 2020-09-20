@@ -86,6 +86,7 @@ SPECIALIZE_CREATE(x509);
 SPECIALIZE_CREATE(SignerInfo);
 SPECIALIZE_CREATE(ContentInfo);
 SPECIALIZE_CREATE(AuthenticatedAttributes);
+SPECIALIZE_CREATE(SpcIndirectDataContent);
 SPECIALIZE_CREATE(CodeIntegrity);
 
 SPECIALIZE_CREATE(LoadConfiguration);

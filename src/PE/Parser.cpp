@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -849,15 +850,13 @@ void Parser::parse_exports(void) {
 
 }
 
-void Parser::parse_signature(void) {
+void Parser::parse_signatures(void) {
   VLOG(VDEBUG) << "[+] Parsing signature";
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
   /*********************************************************************/
   const uint32_t signature_offset  = this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA();
   const uint32_t signature_size    = this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).size();
-  VLOG(VDEBUG) << "Signature Offset: 0x" << std::hex << signature_offset;
-  VLOG(VDEBUG) << "Signature Size: 0x" << std::hex << signature_size;
 
   const uint8_t* signature_ptr = this->stream_->peek_array<uint8_t>(signature_offset, signature_size, /* check */false);
   if (signature_ptr == nullptr) {
@@ -865,9 +864,8 @@ void Parser::parse_signature(void) {
   }
   std::vector<uint8_t> raw_signature = {signature_ptr, signature_ptr + signature_size};
 
-  //TODO: Deal with header (+8)
-  this->binary_->signature_     = SignatureParser::parse(raw_signature);
-  this->binary_->has_signature_ = true;
+  this->binary_->signatures_     = SignatureParser::parse(raw_signature);
+  this->binary_->has_signatures_ = !this->binary_->signatures_.empty();
 }
 
 

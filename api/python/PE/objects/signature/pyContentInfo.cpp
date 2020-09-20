@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,18 +40,6 @@ void create<ContentInfo>(py::module& m) {
     .def_property_readonly("content_type",
         &ContentInfo::content_type,
         "OID of the content type. This value should match ``SPC_INDIRECT_DATA_OBJID``")
-
-    .def_property_readonly("type",
-        &ContentInfo::type)
-
-    .def_property_readonly("digest_algorithm",
-        &ContentInfo::digest_algorithm,
-        "Algorithm (OID) used to hash the file. This value should match SignerInfo.digest_algorithm and Signature.digest_algorithm")
-
-
-    .def_property_readonly("digest",
-        &ContentInfo::digest,
-        "The digest")
 
     .def_property_readonly("raw",
         &ContentInfo::raw,

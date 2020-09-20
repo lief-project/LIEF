@@ -73,6 +73,9 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const SignerInfo& signerinfo)                override;
   //virtual void visit(const ContentInfo& contentinfo)              override;
   virtual void visit(const AuthenticatedAttributes& auth)         override;
+  virtual void visit(const SpcIndirectDataContent& spc_indirect)  override;
+  virtual void visit(const spc_link_t& spc_link)                  override;
+  virtual void visit(const spc_serialized_object_t& )               override;
   virtual void visit(const CodeIntegrity& code_integrity)         override;
 
   virtual void visit(const LoadConfiguration& config)    override;

@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/signature/OIDDefinitions.h"
 
 #include "pyPE.hpp"
 
@@ -36,6 +38,18 @@ void create<Signature>(py::module& m) {
 
   py::class_<Signature, LIEF::Object>(m, "Signature")
 
+    .def_property_readonly("length",
+        &Signature::length,
+        "Specifies the length of the attribute certificate entry.")
+
+    .def_property_readonly("revision",
+        &Signature::revision,
+        "Contains the certificate version number. For details, see the following text.")
+
+    .def_property_readonly("certificate_type",
+        &Signature::certificate_type,
+        "Specifies the type of content in bCertificate. For details, see the following text.")
+
     .def_property_readonly("version",
         &Signature::version,
         "Should be 1")
@@ -44,11 +58,16 @@ void create<Signature>(py::module& m) {
         &Signature::digest_algorithm,
         "Return the algorithm (OID) used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) "")
 
-
     .def_property_readonly("content_info",
-        &Signature::content_info,
-        "Return the " RST_CLASS_REF(lief.PE.ContentInfo) "",
-        py::return_value_policy::reference)
+        [](const Signature& signature) -> pybind11::object {
+          const auto& content_info = signature.content_info();
+          if (content_info.content_type() == OID_SPC_INDIRECT_DATA_OBJ) {
+            return py::cast(dynamic_cast<const SpcIndirectDataContent&>(content_info));
+          }
+          // else if (content_info->content_type() == OID_T_ST_INFO)
+          return py::none();
+        },
+        "Return the " RST_CLASS_REF(lief.PE.ContentInfo))
 
 
     .def_property_readonly("certificates",

@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,20 +31,6 @@ const oid_t& ContentInfo::content_type(void) const {
   return this->content_type_;
 }
 
-const oid_t& ContentInfo::type(void) const {
-  return this->type_;
-}
-
-
-const oid_t& ContentInfo::digest_algorithm(void) const {
-  return this->digest_algorithm_;
-}
-
-
-const std::vector<uint8_t>& ContentInfo::digest(void) const {
-  return this->digest_;
-}
-
 const std::vector<uint8_t>& ContentInfo::raw(void) const {
   return this->raw_;
 }
@@ -58,8 +45,6 @@ std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
 
   os << std::hex << std::left;
   os << std::setw(wsize) << std::setfill(' ') << "Content Type: "     << oid_to_string(content_info.content_type()) << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Type: "             << oid_to_string(content_info.type())         << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Digest Algorithm: " << oid_to_string(content_info.digest_algorithm()) << std::endl;
 
   return os;
 }

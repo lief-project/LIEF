@@ -496,7 +496,12 @@ struct pe_exception_entry_arm {
   uint32_t data;
 };
 
-
+struct pe_win_certificate {
+  uint32_t length;
+  int16_t revision;
+  int16_t certificate_type;
+  uint8_t certificate_data[1];
+};
 
 
 

@@ -14,30 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_SIGNATURE_TYPES_H_
-#define LIEF_PE_SIGNATURE_TYPES_H_
+#ifndef LIEF_OIDDEFINITIONS_H_
+#define LIEF_OIDDEFINITIONS_H_
 
-#include <string>
-#include <cinttypes>
-#include <vector>
-
-#include "mapbox/variant.hpp"
-
-#include "LIEF/iterators.hpp"
-
-namespace LIEF {
-namespace PE {
-class x509;
-
-using mapbox::util::variant;
-
-using oid_t        = std::string;
-using issuer_t     = std::pair<std::string, std::vector<uint8_t>>;
-using it_const_crt = const_ref_iterator<const std::vector<x509>&>;
-using spc_serialized_object_t = std::pair<std::vector<uint8_t>, std::vector<uint8_t>>;
-using spc_link_t   =
-        std::pair<std::string, variant<std::string, spc_serialized_object_t>>;
-}
-}
+#define OID_MS_SPC_NESTED_SIGNATURE "1.3.6.1.4.1.311.2.4.1"
+#define OID_CONTENT_TYPE "1.2.840.113549.1.9.3"
+#define OID_PKCS7_SIGNED_DATA "1.2.840.113549.1.7.2"
+#define OID_SPC_INDIRECT_DATA_OBJ "1.3.6.1.4.1.311.2.1.4"
+#define OID_SPC_PE_IMAGE_DATA_OBJ "1.3.6.1.4.1.311.2.1.15"
+#define OID_MESSAGE_DIGEST "1.2.840.113549.1.9.4"
+#define OID_SPC_SP_OPUS_INFO_OBJ "1.3.6.1.4.1.311.2.1.12"
+#define OID_COUNTER_SIGNATURE "1.2.840.113549.1.9.6"
+#define OID_MS_COUNTER_SIGN "1.3.6.1.4.1.311.3.3.1"
+#define OID_T_ST_INFO "1.2.840.113549.1.9.16.1.4"
 
 #endif

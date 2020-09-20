@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +133,7 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("has_configuration", &Binary::has_configuration,
         "``True`` if the current binary has " RST_CLASS_REF(lief.PE.LoadConfiguration) "")
 
-    .def_property_readonly("has_signature", &Binary::has_signature,
+    .def_property_readonly("has_signature", &Binary::has_signatures,
         "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
 
     .def_property_readonly("is_reproducible_build", &Binary::is_reproducible_build,
@@ -152,7 +153,7 @@ void create<Binary>(py::module& m) {
         "library"_a, "function"_a)
 
     .def_property_readonly("signature",
-        static_cast<const Signature& (Binary::*)(void) const>(&Binary::signature),
+        static_cast<const std::vector<Signature>& (Binary::*)(void) const>(&Binary::signatures),
         "Return the " RST_CLASS_REF(lief.PE.Signature) " object",
         py::return_value_policy::reference)
 

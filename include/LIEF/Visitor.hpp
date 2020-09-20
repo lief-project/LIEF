@@ -83,6 +83,7 @@ LIEF_PE_FORWARD(Signature)
 LIEF_PE_FORWARD(x509)
 LIEF_PE_FORWARD(SignerInfo)
 LIEF_PE_FORWARD(ContentInfo)
+LIEF_PE_FORWARD(SpcIndirectDataContent)
 LIEF_PE_FORWARD(AuthenticatedAttributes)
 LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
@@ -368,8 +369,17 @@ class LIEF_API Visitor {
   //! Method to visit a LIEF::PE::SignerInfo
   LIEF_PE_VISITABLE(SignerInfo)
 
+  //! Method to visit a LIEF::PE::spc_link_t
+  LIEF_PE_VISITABLE(spc_link_t)
+
+  //! Method to visit a LIEF::PE::spc_serialized_object_t
+  LIEF_PE_VISITABLE(spc_serialized_object_t)
+
   //! Method to visit a LIEF::PE::ContentInfo
   LIEF_PE_VISITABLE(ContentInfo)
+
+  //! Method to visit a LIEF::PE::SpcIndirectDataContent
+  LIEF_PE_VISITABLE(SpcIndirectDataContent)
 
   //! Method to visit a LIEF::PE::AuthenticatedAttributes
   LIEF_PE_VISITABLE(AuthenticatedAttributes)

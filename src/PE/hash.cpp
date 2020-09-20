@@ -19,6 +19,10 @@
 #include "LIEF/PE.hpp"
 #include "Object.tcc"
 
+#include "mapbox/variant.hpp"
+
+using mapbox::util::get;
+
 namespace LIEF {
 namespace PE {
 
@@ -437,7 +441,9 @@ void Hash::visit(const ResourceAccelerator& accelerator) {
 }
 
 void Hash::visit(const Signature& signature) {
-
+  this->process(signature.length());
+  this->process(signature.revision());
+  this->process(signature.certificate_type());
   this->process(signature.version());
   this->process(signature.digest_algorithm());
   this->process(signature.content_info());
@@ -473,6 +479,30 @@ void Hash::visit(const AuthenticatedAttributes& auth) {
   this->process(auth.message_digest());
   this->process(u16tou8(auth.program_name()));
   this->process(auth.more_info());
+}
+
+void Hash::visit(const spc_link_t& spc_link) {
+  this->process(spc_link.first);
+  if (spc_link.first == "url" || spc_link.first == "file") {
+    this->process(get<std::string>(spc_link.second));
+  } else if (spc_link.first == "moniker") {
+    const auto spc_serialized_obj = mapbox::util::get<spc_serialized_object_t>(spc_link.second);
+    this->process(spc_serialized_obj);
+  }
+}
+
+void Hash::visit(const spc_serialized_object_t& spc_serialized_object) {
+  this->process(spc_serialized_object.first);
+  this->process(spc_serialized_object.second);
+}
+
+
+void Hash::visit(const SpcIndirectDataContent& spc_indirect) {
+  this->process(spc_indirect.digest_algorithm());
+  this->process(spc_indirect.flags());
+  this->process(spc_indirect.file());
+  this->process(spc_indirect.type());
+  this->process(spc_indirect.digest());
 }
 
 void Hash::visit(const CodeIntegrity& code_integrity) {

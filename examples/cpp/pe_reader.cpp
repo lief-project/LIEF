@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,12 +102,12 @@ int main(int argc, char **argv) {
   }
 
 
-  if (binary->has_signature()) {
+  if (binary->has_signatures()) {
     std::cout << "== Signature ==" << std::endl;
-    std::cout << binary->signature() << std::endl;
+    for (const auto& signature : binary->signatures()) {
+      std::cout << signature << std::endl;
+    }
   }
-
-
 
   return 0;
 }

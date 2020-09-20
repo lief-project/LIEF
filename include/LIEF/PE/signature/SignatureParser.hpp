@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,8 @@
 
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/SpcIndirectDataContent.hpp"
+#include "SignerInfo.hpp"
 
 
 namespace LIEF {
@@ -34,30 +37,31 @@ class LIEF_API SignatureParser {
   friend class Parser;
 
   public:
-  static Signature parse(const std::vector<uint8_t>& data);
+  static std::vector<Signature> parse(const std::vector<uint8_t>& data);
 
   private:
   SignatureParser(const std::vector<uint8_t>& data);
   ~SignatureParser(void);
   SignatureParser(void);
 
-  void parse_signature(void);
+  void parse_signatures(void);
 
-  void parse_header(void);
+  void parse_content_type(Signature& signature);
+  void parse_signed_data(Signature& signature);
   int32_t get_signed_data_version(void);
   std::string get_signed_data_digest_algorithms(void);
 
-  ContentInfo parse_content_info(void);
-  std::string get_content_info_type(void);
+  std::unique_ptr<ContentInfo> parse_content_info(void);
+  std::unique_ptr<SpcIndirectDataContent> parse_spc_indirect_data_content(void);
 
-  void parse_certificates(void);
+  void parse_certificates(Signature& signature);
 
+  SignerInfo get_signer_infos(void);
   SignerInfo get_signer_info(void);
   AuthenticatedAttributes get_authenticated_attributes(void);
 
-
   size_t current_offset(void) const;
-  Signature signature_;
+  std::vector<Signature> signatures_;
   uint8_t* p_;
   const uint8_t* end_;
   const uint8_t* signature_ptr_;

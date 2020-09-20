@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +121,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has_imports(void) const;
 
   //! @brief Check if the current binary is signed
-  bool has_signature(void) const;
+  bool has_signatures(void) const;
 
   //! @brief Check if the current binary has exports.
   //!
@@ -149,8 +150,8 @@ class LIEF_API Binary : public LIEF::Binary {
   //!  @see Debug
   bool is_reproducible_build(void) const;
 
-  //! @brief Return the Signature object if the bianry is signed
-  const Signature& signature(void) const;
+  //! @brief Return the Signature objects if the bianry is signed
+  const std::vector<Signature>& signatures(void) const;
 
   //! @brief Try to predict the RVA of the function `function` in the import library `library`
   //!
@@ -429,7 +430,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool                 has_rich_header_;
   bool                 has_tls_;
   bool                 has_imports_;
-  bool                 has_signature_;
+  bool                 has_signatures_;
   bool                 has_exports_;
   bool                 has_resources_;
   bool                 has_exceptions_;
@@ -438,7 +439,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool                 has_configuration_;
   bool                 is_reproducible_build_;
 
-  Signature            signature_;
+  std::vector<Signature> signatures_;
   TLS                  tls_;
   sections_t           sections_;
   data_directories_t   data_directories_;

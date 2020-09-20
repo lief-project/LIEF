@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +70,7 @@ std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authen
   os << std::hex << std::left;
   os << std::setw(wsize) << std::setfill(' ') << "Content type: " << content_type << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Program name: " << program_name << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "URL : "         << url          << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "URL: " << url << std::endl;
 
   return os;
 }

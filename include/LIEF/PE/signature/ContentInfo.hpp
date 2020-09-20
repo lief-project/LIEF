@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,15 +42,6 @@ class LIEF_API ContentInfo : public Object {
   //! This value should match ``SPC_INDIRECT_DATA_OBJID``
   const oid_t& content_type(void) const;
 
-  const oid_t& type(void) const;
-
-  //! @brief Algorithm (OID) used to hash the file.
-  //! This value should match SignerInfo::digest_algorithm and Signature::digest_algorithm
-  const oid_t& digest_algorithm(void) const;
-
-  //! @brief The digest
-  const std::vector<uint8_t>& digest(void) const;
-
   //! @brief Return the raw bytes associated with the ContentInfo
   const std::vector<uint8_t>& raw(void) const;
 
@@ -60,15 +52,8 @@ class LIEF_API ContentInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
 
   private:
-  oid_t content_type_; // SPC_INDIRECT_DATA_OBJID
-
-  oid_t type_;         // SPC_PE_IMAGE_DATAOBJ
-  //TODO: value
-
-  oid_t digest_algorithm_; // algorithm used to hash the file (should match Signature::digest_algorithms_)
-  std::vector<uint8_t> digest_; //hash value
+  oid_t content_type_; // e.g., SPC_INDIRECT_DATA_OBJID
   std::vector<uint8_t> raw_; // raw bytes
-
 };
 
 }

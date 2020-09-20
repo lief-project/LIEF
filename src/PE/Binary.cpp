@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +86,7 @@ Binary::Binary(void) :
   has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
-  has_signature_{false},
+  has_signatures_{false},
   has_exports_{false},
   has_resources_{false},
   has_exceptions_{false},
@@ -333,8 +334,8 @@ bool Binary::has_imports(void) const {
   return this->has_imports_;
 }
 
-bool Binary::has_signature(void) const {
-  return this->has_signature_;
+bool Binary::has_signatures(void) const {
+  return this->has_signatures_;
 }
 
 bool Binary::has_exports(void) const {
@@ -997,8 +998,8 @@ const debug_entries_t& Binary::debug(void) const {
 //
 /////////////////////
 
-const Signature& Binary::signature(void) const {
-  return this->signature_;
+const std::vector<Signature>& Binary::signatures(void) const {
+  return this->signatures_;
 }
 
 
@@ -1393,10 +1394,12 @@ std::ostream& Binary::print(std::ostream& os) const {
   }
 
 
-  if (this->has_signature()) {
+  if (this->has_signatures()) {
     os << "Signature" << std::endl;
     os << "=========" << std::endl;
-    os << this->signature() << std::endl;
+    for (const auto& signature : this->signatures()) {
+      os << signature << std::endl;
+    }
     os << std::endl;
   }
 

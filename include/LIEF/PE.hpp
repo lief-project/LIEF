@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/CodeViewPDB.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/SpcIndirectDataContent.hpp"
 
 #include "LIEF/PE/utils.hpp"
 

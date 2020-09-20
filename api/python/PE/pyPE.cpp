@@ -81,6 +81,7 @@ void init_objects(py::module& m) {
   CREATE(SignerInfo, m);
   CREATE(ContentInfo, m);
   CREATE(AuthenticatedAttributes, m);
+  CREATE(SpcIndirectDataContent, m);
   CREATE(CodeIntegrity, m);
 
   CREATE(LoadConfiguration, m);
