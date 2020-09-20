@@ -107,9 +107,17 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
   os << std::setw(wsize) << std::setfill(' ') << "Issuer DN: "           << issuer_str << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Digest Algorithm: "    << oid_to_string(signer_info.digest_algorithm()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Signature algorithm: " << oid_to_string(signer_info.signature_algorithm()) << std::endl;
+  os << std::endl;
 
+  os << "AuthenticatedAttributes" << std::endl;
+  os << "=======================" << std::endl;
   os << signer_info.authenticated_attributes() << std::endl;
+  os << std::endl;
+
+  os << "UnauthenticatedAttributes" << std::endl;
+  os << "=========================" << std::endl;
   os << signer_info.unauthenticated_attributes() << std::endl;
+  os << std::endl;
 
   return os;
 }

@@ -75,15 +75,22 @@ void UnauthenticatedAttributes::accept(Visitor &visitor) const {
 std::ostream& operator<<(std::ostream& os, const UnauthenticatedAttributes& unauthenticated_attributes) {
   if (unauthenticated_attributes.is_nested_signature()) {
     os << "Nested signature" << std::endl;
+    os << "================" << std::endl;
     os << unauthenticated_attributes.nested_signature();
+    os << std::endl;
     return os;
   } else if (unauthenticated_attributes.is_counter_signature()) {
     os << "Counter signature" << std::endl;
+    os << "=================" << std::endl;
     os << unauthenticated_attributes.counter_signature();
+    os << std::endl;
     return os;
   } else if (unauthenticated_attributes.is_timestamping_signature()) {
     // TODO: to be implemented
     os << "Timestamping signature" << std::endl;
+    os << "======================" << std::endl;
+    // os << unauthenticated_attributes.timestamping_signature();
+    os << std::endl;
     return os;
   }
   os << "Do not have nested/counter/timestamping signature" << std::endl;

@@ -20,6 +20,8 @@
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/OIDDefinitions.h"
+#include "LIEF/PE/signature/SpcIndirectDataContent.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -78,7 +80,7 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
   constexpr uint8_t wsize = 30;
   os << std::left;
 
-  os << std::setw(wsize) << std::setfill(' ') << "Length: " <<  signature.length() << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Length: " << std::dec << signature.length() << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Revision: " << to_string(signature.revision()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Certificate Type: " << to_string(signature.certificate_type()) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Content Type: " << oid_to_string(signature.content_type()) << std::endl;
@@ -87,8 +89,11 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
 
   os << "Content Info" << std::endl;
   os << "============" << std::endl;
-  os << signature.content_info() << std::endl << std::endl;
-
+  if (signature.content_type() == OID_SPC_INDIRECT_DATA_OBJ) {
+    os << "SpcIndirectDataContent" << std::endl;
+    os << "======================" << std::endl;
+    os << reinterpret_cast<const SpcIndirectDataContent&>(signature.content_info()) << std::endl << std::endl;
+  }
 
   os << "Certificates" << std::endl;
   os << "============" << std::endl;
