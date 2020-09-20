@@ -409,6 +409,89 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
   return authenticated_attributes;
 }
 
+Signature SignatureParser::get_nested_signature(void) {
+  Signature nested_signature;
+  const auto cur_top = this->p_;
+
+  const auto next_content_len
+    = get_next_content_len(this->p_, end_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  const auto header_length = static_cast<uint32_t>(this->p_ - cur_top);
+  nested_signature.length_ = next_content_len + header_length;
+  nested_signature.original_raw_signature_ = {cur_top, cur_top + nested_signature.length_};
+
+  // NOTE: assuming certificate revision and certificate type
+  nested_signature.revision_ = CERTIFICATE_REVISION::WIN_CERT_REVISION_2_0;
+  nested_signature.certificate_type_ = CERTIFICATE_TYPE::WIN_CERT_TYPE_PKCS_SIGNED_DATA;
+
+  parse_content_type(nested_signature);
+  parse_signed_data(nested_signature);
+  return nested_signature;
+}
+
+UnauthenticatedAttributes SignatureParser::get_unauthenticated_attributes(void) {
+  VLOG(VDEBUG) << "Parsing unauthenticatedAttributes (offset: "
+              << std::dec << this->current_offset()
+              << ")";
+
+  UnauthenticatedAttributes unauthenticated_attributes;
+
+  if (*this->p_ != (MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | 1)) {
+    throw corrupted("Unauthenticated attributes is not found");
+  }
+
+  auto next_content_len =
+          get_next_content_len(this->p_, this->end_, MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | 1);
+
+  uint8_t* p_end = this->p_ + next_content_len;
+  while (this->p_ < p_end) {
+    next_content_len =
+            get_next_content_len(this->p_, this->end_, MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
+
+    const auto oid_str = get_oid_numeric_str(this->p_, this->end_);
+    unauthenticated_attributes.content_type_ = oid_str;
+
+    ASN1_GET_TAG(this->p_, this->end_, next_content_len,
+                 MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED,
+                 "Unauthenticated attributes corrupted");
+
+    const auto restart_p = this->p_ + next_content_len;
+    try {
+      if (oid_str == OID_COUNTER_SIGNATURE) {
+        VLOG(VDEBUG) << "Parsing countersignature (offset: " << std::dec << this->current_offset() << ")";
+        unauthenticated_attributes.counter_signature_ = std::make_unique<SignerInfo>(get_signer_info());
+        continue;
+      } else if (oid_str == OID_MS_SPC_NESTED_SIGNATURE) {
+        VLOG(VDEBUG) << "Parsing nested signature (offset: " << std::dec << this->current_offset() << ")";
+        unauthenticated_attributes.nested_signature_ = std::make_unique<Signature>(get_nested_signature());
+        continue;
+      } else if (oid_str == OID_MS_COUNTER_SIGN) {
+        VLOG(VDEBUG) << "Parsing Timestamp signature (offset: " << std::dec << this->current_offset() << ")";
+        VLOG(VDEBUG) << "Currently not supported";
+
+#if 0
+        TODO:
+        Signature timestamp_signature;
+        get_next_content_len(this->p_, end_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+        this->parse_content_type();
+        this->parse_signed_data(timestamp_signature);
+#else
+        this->p_ += next_content_len; // for debug purpose
+#endif
+
+        continue;
+      } else {
+        VLOG(VDEBUG) << "Unsupported OID " << oid_str;
+        this->p_ = restart_p;
+        continue;
+      }
+    } catch (corrupted& err) {
+      VLOG(VDEBUG) << err.what();
+      this->p_ = restart_p;
+    }
+  }
+
+  return unauthenticated_attributes;
+}
 
 SignerInfo SignatureParser::get_signer_infos(void) {
   /*
@@ -520,6 +603,15 @@ SignerInfo SignatureParser::get_signer_info(void) {
   this->p_ += len;
 
   // unauthenticatedAttributes
+  // -------------------------
+  try {
+    signer_info.unauthenticated_attributes_ = this->get_unauthenticated_attributes();
+    signer_info.has_unauthenticated_attributes_ = true;
+  }
+  catch (const corrupted& c) {
+    LOG(ERROR) << c.what();
+  }
+
   return signer_info;
 
 }

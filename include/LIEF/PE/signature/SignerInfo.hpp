@@ -21,6 +21,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/signature/AuthenticatedAttributes.hpp"
+#include "LIEF/PE/signature/UnauthenticatedAttributes.hpp"
 
 #include "LIEF/PE/signature/types.hpp"
 
@@ -56,6 +57,12 @@ class LIEF_API SignerInfo : public Object {
   //! @brief Return true if SignerInfo has AuthenticatedAttributes object
   bool has_authenticated_attributes(void) const;
 
+  //! @brief Return the UnauthenticatedAttributes object
+  const UnauthenticatedAttributes& unauthenticated_attributes(void) const;
+
+  //! @brief Return true if SignerInfo has UnauthenticatedAttributes object
+  bool has_unauthenticated_attributes(void) const;
+
   //! @brief Return the signature algorithm (OID)
   const oid_t& signature_algorithm(void) const;
 
@@ -75,10 +82,12 @@ class LIEF_API SignerInfo : public Object {
   oid_t                    digest_algorithm_;
 
   AuthenticatedAttributes authenticated_attributes_;
+  UnauthenticatedAttributes unauthenticated_attributes_;
   oid_t                   signature_algorithm_;
   std::vector<uint8_t>    encrypted_digest_;
 
   bool has_authenticated_attributes_ = false;
+  bool has_unauthenticated_attributes_ = false;
 };
 
 }

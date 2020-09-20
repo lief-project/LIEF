@@ -73,6 +73,7 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const spc_serialized_object_t& )             override;
   virtual void visit(const SpcIndirectDataContent& spcindirect_data_content) override;
   virtual void visit(const AuthenticatedAttributes& auth)         override;
+  virtual void visit(const UnauthenticatedAttributes& unauth)       override;
   virtual void visit(const CodeIntegrity& code_integrity)         override;
 
   virtual void visit(const LoadConfiguration& config)    override;

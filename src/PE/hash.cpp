@@ -496,6 +496,18 @@ void Hash::visit(const spc_serialized_object_t& spc_serialized_object) {
   this->process(spc_serialized_object.second);
 }
 
+void Hash::visit(const UnauthenticatedAttributes& unauth) {
+  if (unauth.is_nested_signature()) {
+    this->process(unauth.nested_signature());
+  }
+  if (unauth.is_counter_signature()) {
+    this->process(unauth.counter_signature());
+  }
+  if (unauth.is_timestamping_signature()) {
+    // TODO:
+    // this->process(unauth.timestamping_signature()());
+  }
+}
 
 void Hash::visit(const SpcIndirectDataContent& spc_indirect) {
   this->process(spc_indirect.digest_algorithm());

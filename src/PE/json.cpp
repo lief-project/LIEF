@@ -800,10 +800,14 @@ void JsonVisitor::visit(const SignerInfo& signerinfo) {
   JsonVisitor authenticated_attributes_visitor;
   authenticated_attributes_visitor(signerinfo.authenticated_attributes());
 
+  JsonVisitor unauthenticated_attributes_visitor;
+  unauthenticated_attributes_visitor(signerinfo.unauthenticated_attributes());
+
   this->node_["version"]                    = signerinfo.version();
   this->node_["digest_algorithm"]           = signerinfo.digest_algorithm();
   this->node_["signature_algorithm"]        = signerinfo.signature_algorithm();
   this->node_["authenticated_attributes"]   = authenticated_attributes_visitor.get();
+  this->node_["unauthenticated_attributes"] = unauthenticated_attributes_visitor.get();
   this->node_["issuer"] = std::get<0>(signerinfo.issuer());
 }
 
@@ -837,6 +841,25 @@ void JsonVisitor::visit(const AuthenticatedAttributes& auth) {
   this->node_["program_name"] = u16tou8(auth.program_name());
   this->node_["message_digest"] = auth.message_digest();
   this->node_["more_info"]    = auth.more_info();
+}
+
+void JsonVisitor::visit(const UnauthenticatedAttributes& unauth) {
+  if (unauth.is_counter_signature()) {
+    JsonVisitor visitor;
+    visitor(unauth.counter_signature());
+    this->node_["counter_signature"] = visitor.get();
+  }
+  if (unauth.is_nested_signature()) {
+    JsonVisitor visitor;
+    visitor(unauth.nested_signature());
+    this->node_["nested_signature"] = visitor.get();
+  }
+  if (unauth.is_timestamping_signature()) {
+    // TODO:
+    // JsonVisitor visitor;
+    // visitor(*unauth.timestamping_signature());
+    // this->node_["timestamping_signature"] = visitor.get();
+  }
 }
 
 void JsonVisitor::visit(const CodeIntegrity& code_integrity) {

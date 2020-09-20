@@ -1,5 +1,6 @@
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
+ * Copyright 2020 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +64,11 @@ void create<SignerInfo>(py::module& m) {
     .def_property_readonly("authenticated_attributes",
         &SignerInfo::authenticated_attributes,
         "Return the " RST_CLASS_REF(lief.PE.AuthenticatedAttributes) " object",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("unauthenticated_attributes",
+        &SignerInfo::unauthenticated_attributes,
+        "return the " RST_CLASS_REF(lief.PE.UnauthenticatedAttributes) " object",
         py::return_value_policy::reference)
 
     .def("__str__",

@@ -18,6 +18,7 @@ set(LIEF_PYTHON_PE_SRC
 
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignerInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyAuthenticatedAttributes.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyUnauthenticatedAttributes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySpcIndirectDataContent.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyx509.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyContentInfo.cpp"

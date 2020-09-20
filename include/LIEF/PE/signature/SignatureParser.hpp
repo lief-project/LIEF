@@ -59,6 +59,8 @@ class LIEF_API SignatureParser {
   SignerInfo get_signer_infos(void);
   SignerInfo get_signer_info(void);
   AuthenticatedAttributes get_authenticated_attributes(void);
+  UnauthenticatedAttributes get_unauthenticated_attributes(void);
+  Signature get_nested_signature(void);
 
   size_t current_offset(void) const;
   std::vector<Signature> signatures_;

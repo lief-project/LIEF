@@ -30,6 +30,7 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/DataDirectory.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CodeIntegrity.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/AuthenticatedAttributes.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/signature/UnauthenticatedAttributes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/ContentInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/SpcIndirectDataContent.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/signature/Signature.cpp"
@@ -150,6 +151,7 @@ set(LIEF_PE_LOAD_CONFIGURATION_INCLUDE
 
 set(LIEF_PE_SIG_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/AuthenticatedAttributes.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/UnauthenticatedAttributes.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/ContentInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/SpcIndirectDataContent.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/signature/OIDToString.hpp"

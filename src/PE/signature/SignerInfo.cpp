@@ -57,6 +57,17 @@ bool SignerInfo::has_authenticated_attributes(void) const {
   return this->has_authenticated_attributes_;
 }
 
+const UnauthenticatedAttributes& SignerInfo::unauthenticated_attributes() const {
+  if (this->has_unauthenticated_attributes()) {
+    return this->unauthenticated_attributes_;
+  }
+  throw not_found("Does not have unauthenticated attributes");
+}
+
+bool SignerInfo::has_unauthenticated_attributes(void) const {
+  return this->has_unauthenticated_attributes_;
+}
+
 const oid_t& SignerInfo::signature_algorithm(void) const {
   return this->signature_algorithm_;
 }
@@ -98,6 +109,7 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
   os << std::setw(wsize) << std::setfill(' ') << "Signature algorithm: " << oid_to_string(signer_info.signature_algorithm()) << std::endl;
 
   os << signer_info.authenticated_attributes() << std::endl;
+  os << signer_info.unauthenticated_attributes() << std::endl;
 
   return os;
 }

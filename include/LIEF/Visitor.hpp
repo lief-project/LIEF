@@ -85,6 +85,7 @@ LIEF_PE_FORWARD(SignerInfo)
 LIEF_PE_FORWARD(ContentInfo)
 LIEF_PE_FORWARD(SpcIndirectDataContent)
 LIEF_PE_FORWARD(AuthenticatedAttributes)
+LIEF_PE_FORWARD(UnauthenticatedAttributes)
 LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
 LIEF_PE_FORWARD(LoadConfigurationV0)
@@ -383,6 +384,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::AuthenticatedAttributes
   LIEF_PE_VISITABLE(AuthenticatedAttributes)
+
+  //! Method to visit a LIEF::PE::UnauthenticatedAttributes
+  LIEF_PE_VISITABLE(UnauthenticatedAttributes)
 
   //! Method to visit a LIEF::PE::issuer_t
   LIEF_PE_VISITABLE(issuer_t)
