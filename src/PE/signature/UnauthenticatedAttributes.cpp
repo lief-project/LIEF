@@ -31,41 +31,79 @@ UnauthenticatedAttributes::~UnauthenticatedAttributes(void) = default;
 UnauthenticatedAttributes::UnauthenticatedAttributes(UnauthenticatedAttributes&& unauth) = default;
 UnauthenticatedAttributes& UnauthenticatedAttributes::operator=(UnauthenticatedAttributes&& unauth) = default;
 
-const oid_t& UnauthenticatedAttributes::content_type(void) const {
-  return this->content_type_;
+size_t UnauthenticatedAttributes::number_of_nested_signatures() const {
+  return nested_signatures_.size();
 }
 
-bool UnauthenticatedAttributes::is_nested_signature() const {
-  return content_type_ == OID_MS_SPC_NESTED_SIGNATURE;
+size_t UnauthenticatedAttributes::number_of_counter_signatures() const {
+  return counter_signatures_.size();
 }
 
-bool UnauthenticatedAttributes::is_counter_signature() const {
-  return content_type_ == OID_COUNTER_SIGNATURE;
+size_t UnauthenticatedAttributes::number_of_timestamping_signatures() const {
+  return timestamping_signatures_.size();
 }
 
-bool UnauthenticatedAttributes::is_timestamping_signature() const {
-  return content_type_ == OID_MS_COUNTER_SIGN;
+bool UnauthenticatedAttributes::has_nested_signatures() const {
+  return number_of_nested_signatures() != 0;
 }
 
-const Signature& UnauthenticatedAttributes::nested_signature() const {
-  if (not is_nested_signature()) {
+bool UnauthenticatedAttributes::has_counter_signatures() const {
+  return number_of_counter_signatures() != 0;
+}
+
+bool UnauthenticatedAttributes::has_timestamping_signatures() const {
+  return number_of_timestamping_signatures() != 0;
+}
+
+const Signature& UnauthenticatedAttributes::nested_signature(const size_t i) const {
+  if (not has_nested_signatures()) {
+    throw not_found("UnauthenticatedAttributes does not have a nested signature");
+  }
+  if (i >= nested_signatures_.size()) {
+    throw not_found("index is out of bounds");
+  }
+  return *nested_signatures_[i];
+}
+
+const SignerInfo& UnauthenticatedAttributes::counter_signature(const size_t i) const {
+  if (not has_counter_signatures()) {
+    throw not_found("UnauthenticatedAttributes does not have a counter signature");
+  }
+  if (i >= counter_signatures_.size()) {
+    throw not_found("index is out of bounds");
+  }
+  return *counter_signatures_[i];
+}
+
+const SignerInfo& UnauthenticatedAttributes::timestamping_signature(const size_t i) const {
+  if (not has_timestamping_signatures()) {
+    throw not_found("UnauthenticatedAttributes does not have a timestamping signature");
+  }
+  if (i >= timestamping_signatures_.size()) {
+    throw not_found("index is out of bounds");
+  }
+  return *timestamping_signatures_[i];
+}
+
+const std::vector<std::unique_ptr<Signature>>& UnauthenticatedAttributes::nested_signatures() const {
+  if (not has_nested_signatures()) {
     throw not_found("UnauthenticatedAttributes does not have nested signature");
   }
-  return *this->nested_signature_;
+  return this->nested_signatures_;
 }
 
-const SignerInfo& UnauthenticatedAttributes::counter_signature() const {
-  if (not is_counter_signature()) {
+const std::vector<std::unique_ptr<SignerInfo>>& UnauthenticatedAttributes::counter_signatures() const {
+  if (not has_counter_signatures()) {
     throw not_found("UnauthenticatedAttributes does not have nested signature");
   }
-  return *this->counter_signature_;
+  return this->counter_signatures_;
 }
 
-const SignerInfo& UnauthenticatedAttributes::timestamping_signature() const {
-  if (not is_timestamping_signature()) {
+const std::vector<std::unique_ptr<SignerInfo>>& UnauthenticatedAttributes::timestamping_signatures() const {
+  if (not has_timestamping_signatures()) {
     throw not_found("UnauthenticatedAttributes does not have timestamping signature");
   }
-  return *this->timestamping_signature_;
+  return this->timestamping_signatures_;
 }
 
 void UnauthenticatedAttributes::accept(Visitor &visitor) const {
@@ -73,27 +111,40 @@ void UnauthenticatedAttributes::accept(Visitor &visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const UnauthenticatedAttributes& unauthenticated_attributes) {
-  if (unauthenticated_attributes.is_nested_signature()) {
+  if ((not unauthenticated_attributes.has_nested_signatures()) &&
+    (not unauthenticated_attributes.has_counter_signatures()) &&
+    (not unauthenticated_attributes.has_timestamping_signatures())) {
+    os << "Do not have nested/counter/timestamping signature" << std::endl;
+    return os;
+  }
+
+  if (unauthenticated_attributes.has_nested_signatures()) {
     os << "Nested signature" << std::endl;
     os << "================" << std::endl;
-    os << unauthenticated_attributes.nested_signature();
-    os << std::endl;
-    return os;
-  } else if (unauthenticated_attributes.is_counter_signature()) {
+    for (const auto& nested_signature : unauthenticated_attributes.nested_signatures_) {
+      os << *nested_signature << std::endl;
+    }
+  }
+  if (unauthenticated_attributes.has_counter_signatures()) {
     os << "Counter signature" << std::endl;
     os << "=================" << std::endl;
-    os << unauthenticated_attributes.counter_signature();
-    os << std::endl;
-    return os;
-  } else if (unauthenticated_attributes.is_timestamping_signature()) {
+    for (const auto& counter_signature : unauthenticated_attributes.counter_signatures_) {
+      os << *counter_signature << std::endl;
+    }
+  }
+  if (unauthenticated_attributes.has_timestamping_signatures()) {
     // TODO: to be implemented
     os << "Timestamping signature" << std::endl;
     os << "======================" << std::endl;
-    // os << unauthenticated_attributes.timestamping_signature();
-    os << std::endl;
-    return os;
+#if 0
+    for (const auto& timestamping_signature : unauthenticated_attributes.timestamping_signatures_) {
+      os << *timestamping_signature << std::endl;
+    }
+#else
+    os << "currently not supported" << std::endl;
+#endif
   }
-  os << "Do not have nested/counter/timestamping signature" << std::endl;
+
   return os;
 }
 

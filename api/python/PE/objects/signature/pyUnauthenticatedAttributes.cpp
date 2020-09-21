@@ -34,18 +34,41 @@ template<>
 void create<UnauthenticatedAttributes>(py::module& m) {
 
   py::class_<UnauthenticatedAttributes, LIEF::Object>(m, "UnauthenticatedAttributes")
+    .def_property_readonly("has_nested_signatures",
+        &UnauthenticatedAttributes::has_nested_signatures)
 
-    .def_property_readonly("nested_signature",
+    .def_property_readonly("has_counter_signatures",
+        &UnauthenticatedAttributes::has_counter_signatures)
+
+    .def_property_readonly("has_timestamping_signatures",
+        &UnauthenticatedAttributes::has_timestamping_signatures)
+
+    .def("nested_signature",
         &UnauthenticatedAttributes::nested_signature,
-        "Return nested signature")
+        "Return a nested signatures",
+        py::return_value_policy::reference_internal)
 
-    .def_property_readonly("counter_signature",
+    .def("number_of_nested_signatures",
+        &UnauthenticatedAttributes::number_of_nested_signatures,
+        "Return the number of nested signatures")
+
+    .def("counter_signature",
         &UnauthenticatedAttributes::counter_signature,
-        "Return counter signature")
+        "Return a counter signature",
+        py::return_value_policy::reference_internal)
 
-    .def_property_readonly("timestamping_signature",
+    .def("number_of_counter_signatures",
+        &UnauthenticatedAttributes::number_of_counter_signatures,
+        "Return the number of counter signatures")
+
+    .def("timestamping_signature",
         &UnauthenticatedAttributes::timestamping_signature,
-        "return")
+        "Return timestamping signatures",
+        py::return_value_policy::reference_internal)
+
+    .def("number_of_timestamping_signatures",
+        &UnauthenticatedAttributes::number_of_timestamping_signatures,
+        "Return the number of timestamping signatures")
 
     .def("__str__",
         [] (const UnauthenticatedAttributes& unauth_attributes)

@@ -99,7 +99,6 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
         return lhs.empty() ? ss.str() : lhs + ":" + ss.str();
       });
 
-
   os << std::hex << std::left;
 
   os << std::setw(wsize) << std::setfill(' ') << "Version: "             << signer_info.version() << std::endl;
@@ -109,15 +108,19 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
   os << std::setw(wsize) << std::setfill(' ') << "Signature algorithm: " << oid_to_string(signer_info.signature_algorithm()) << std::endl;
   os << std::endl;
 
-  os << "AuthenticatedAttributes" << std::endl;
-  os << "=======================" << std::endl;
-  os << signer_info.authenticated_attributes() << std::endl;
-  os << std::endl;
+  if (signer_info.has_authenticated_attributes()) {
+    os << "AuthenticatedAttributes" << std::endl;
+    os << "=======================" << std::endl;
+    os << signer_info.authenticated_attributes() << std::endl;
+    os << std::endl;
+  }
 
-  os << "UnauthenticatedAttributes" << std::endl;
-  os << "=========================" << std::endl;
-  os << signer_info.unauthenticated_attributes() << std::endl;
-  os << std::endl;
+  if (signer_info.has_unauthenticated_attributes()) {
+    os << "UnauthenticatedAttributes" << std::endl;
+    os << "=========================" << std::endl;
+    os << signer_info.unauthenticated_attributes() << std::endl;
+    os << std::endl;
+  }
 
   return os;
 }

@@ -40,16 +40,21 @@ class LIEF_API UnauthenticatedAttributes : public Object {
   UnauthenticatedAttributes(UnauthenticatedAttributes&&);
   UnauthenticatedAttributes& operator=(UnauthenticatedAttributes&&);
 
-  //! @brief Should return the ``messageDigest`` OID
-  const oid_t& content_type(void) const;
+  size_t number_of_nested_signatures(void) const;
+  size_t number_of_counter_signatures(void) const;
+  size_t number_of_timestamping_signatures(void) const;
 
-  const Signature& nested_signature(void) const;
-  const SignerInfo& counter_signature(void) const;
-  const SignerInfo& timestamping_signature(void) const;
+  const Signature& nested_signature(const size_t i) const;
+  const SignerInfo& counter_signature(const size_t i) const;
+  const SignerInfo& timestamping_signature(const size_t i) const;
 
-  bool is_nested_signature() const;
-  bool is_counter_signature() const;
-  bool is_timestamping_signature() const;
+  const std::vector<std::unique_ptr<Signature>>& nested_signatures(void) const;
+  const std::vector<std::unique_ptr<SignerInfo>>& counter_signatures(void) const;
+  const std::vector<std::unique_ptr<SignerInfo>>& timestamping_signatures(void) const;
+
+  bool has_nested_signatures() const;
+  bool has_counter_signatures() const;
+  bool has_timestamping_signatures() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -58,11 +63,10 @@ class LIEF_API UnauthenticatedAttributes : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const UnauthenticatedAttributes& authenticated_attributes);
 
   private:
-  oid_t content_type_;
 
-  std::unique_ptr<Signature> nested_signature_;
-  std::unique_ptr<SignerInfo> counter_signature_;
-  std::unique_ptr<SignerInfo> timestamping_signature_;
+  std::vector<std::unique_ptr<Signature>> nested_signatures_;
+  std::vector<std::unique_ptr<SignerInfo>> counter_signatures_;
+  std::vector<std::unique_ptr<SignerInfo>> timestamping_signatures_;
 
 };
 

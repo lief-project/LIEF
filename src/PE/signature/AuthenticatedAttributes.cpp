@@ -19,6 +19,7 @@
 #include "LIEF/utils.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/signature/AuthenticatedAttributes.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -68,7 +69,7 @@ std::ostream& operator<<(std::ostream& os, const AuthenticatedAttributes& authen
     url = "N/A";
   }
   os << std::hex << std::left;
-  os << std::setw(wsize) << std::setfill(' ') << "Content type: " << content_type << std::endl;
+  os << std::setw(wsize) << std::setfill(' ') << "Content type: " << oid_to_string(content_type) << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "Program name: " << program_name << std::endl;
   os << std::setw(wsize) << std::setfill(' ') << "URL: " << url << std::endl;
 

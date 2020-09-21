@@ -64,7 +64,7 @@ void create<Signature>(py::module& m) {
           if (content_info.content_type() == OID_SPC_INDIRECT_DATA_OBJ) {
             return py::cast(dynamic_cast<const SpcIndirectDataContent&>(content_info));
           }
-          // else if (content_info->content_type() == OID_T_ST_INFO)
+          // else if (content_info->content_type() == OID_TST_INFO)
           return py::none();
         },
         "Return the " RST_CLASS_REF(lief.PE.ContentInfo))

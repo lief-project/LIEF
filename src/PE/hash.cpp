@@ -21,10 +21,10 @@
 
 #include "mapbox/variant.hpp"
 
-using mapbox::util::get;
-
 namespace LIEF {
 namespace PE {
+
+using mapbox::util::get;
 
 Hash::~Hash(void) = default;
 
@@ -468,9 +468,16 @@ void Hash::visit(const SignerInfo& signerinfo) {
   this->process(signerinfo.version());
   //this->process(signerinfo.issuer());
   this->process(signerinfo.digest_algorithm());
-  this->process(signerinfo.authenticated_attributes());
   this->process(signerinfo.signature_algorithm());
   this->process(signerinfo.encrypted_digest());
+
+  if (signerinfo.has_authenticated_attributes()) {
+    this->process(signerinfo.authenticated_attributes());
+  }
+
+  if (signerinfo.has_unauthenticated_attributes()) {
+    this->process(signerinfo.unauthenticated_attributes());
+  }
 }
 
 void Hash::visit(const AuthenticatedAttributes& auth) {
@@ -497,15 +504,21 @@ void Hash::visit(const spc_serialized_object_t& spc_serialized_object) {
 }
 
 void Hash::visit(const UnauthenticatedAttributes& unauth) {
-  if (unauth.is_nested_signature()) {
-    this->process(unauth.nested_signature());
+  if (unauth.has_nested_signatures()) {
+    for (const auto& nested_sig : unauth.nested_signatures()) {
+      this->process(*nested_sig);
+    }
   }
-  if (unauth.is_counter_signature()) {
-    this->process(unauth.counter_signature());
+  if (unauth.has_counter_signatures()) {
+    for (const auto& counter_sig : unauth.counter_signatures()) {
+      this->process(*counter_sig);
+    }
   }
-  if (unauth.is_timestamping_signature()) {
+  if (unauth.has_timestamping_signatures()) {
     // TODO:
-    // this->process(unauth.timestamping_signature()());
+    // for (const auto& timestamping_sig : unauth.timestamping_signatures()) {
+    //   this->process(*timestamping_sig);
+    // }
   }
 }
 

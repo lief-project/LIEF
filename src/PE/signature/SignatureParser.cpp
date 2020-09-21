@@ -39,12 +39,12 @@
 
 #include "LIEF/PE/signature/OIDDefinitions.h"
 
-using mapbox::util::get;
-
 // ref: http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/authenticode_pe.docx
 
 namespace LIEF {
 namespace PE {
+
+using mapbox::util::get;
 
 SignatureParser::~SignatureParser(void) = default;
 SignatureParser::SignatureParser(void) = default;
@@ -250,7 +250,7 @@ std::unique_ptr<ContentInfo> SignatureParser::parse_content_info(void) {
     auto content_info = parse_spc_indirect_data_content();
     content_info->content_type_ = content_type;
     return content_info;
-  } else if (content_type == OID_T_ST_INFO) {
+  } else if (content_type == OID_TST_INFO) {
     // TODO:
     VLOG(VDEBUG) << "Currently TSTInfo is not supported";
   }
@@ -448,7 +448,6 @@ UnauthenticatedAttributes SignatureParser::get_unauthenticated_attributes(void) 
             get_next_content_len(this->p_, this->end_, MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
 
     const auto oid_str = get_oid_numeric_str(this->p_, this->end_);
-    unauthenticated_attributes.content_type_ = oid_str;
 
     ASN1_GET_TAG(this->p_, this->end_, next_content_len,
                  MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED,
@@ -458,11 +457,11 @@ UnauthenticatedAttributes SignatureParser::get_unauthenticated_attributes(void) 
     try {
       if (oid_str == OID_COUNTER_SIGNATURE) {
         VLOG(VDEBUG) << "Parsing countersignature (offset: " << std::dec << this->current_offset() << ")";
-        unauthenticated_attributes.counter_signature_ = std::make_unique<SignerInfo>(get_signer_info());
+        unauthenticated_attributes.counter_signatures_.emplace_back(std::make_unique<SignerInfo>(get_signer_info()));
         continue;
       } else if (oid_str == OID_MS_SPC_NESTED_SIGNATURE) {
         VLOG(VDEBUG) << "Parsing nested signature (offset: " << std::dec << this->current_offset() << ")";
-        unauthenticated_attributes.nested_signature_ = std::make_unique<Signature>(get_nested_signature());
+        unauthenticated_attributes.nested_signatures_.emplace_back(std::make_unique<Signature>(get_nested_signature()));
         continue;
       } else if (oid_str == OID_MS_COUNTER_SIGN) {
         VLOG(VDEBUG) << "Parsing Timestamp signature (offset: " << std::dec << this->current_offset() << ")";
@@ -474,6 +473,8 @@ UnauthenticatedAttributes SignatureParser::get_unauthenticated_attributes(void) 
         get_next_content_len(this->p_, end_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
         this->parse_content_type();
         this->parse_signed_data(timestamp_signature);
+        unauthenticated_attributes.timestamping_signatures_.emplace_back(std::make_unique<>(timestamp_signature));
+        unauthenticated_attributes.has_timestamp_signature_ = true;
 #else
         this->p_ += next_content_len; // for debug purpose
 #endif

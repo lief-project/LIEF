@@ -797,18 +797,22 @@ void JsonVisitor::visit(const x509& x509) {
 }
 
 void JsonVisitor::visit(const SignerInfo& signerinfo) {
-  JsonVisitor authenticated_attributes_visitor;
-  authenticated_attributes_visitor(signerinfo.authenticated_attributes());
-
-  JsonVisitor unauthenticated_attributes_visitor;
-  unauthenticated_attributes_visitor(signerinfo.unauthenticated_attributes());
-
   this->node_["version"]                    = signerinfo.version();
   this->node_["digest_algorithm"]           = signerinfo.digest_algorithm();
   this->node_["signature_algorithm"]        = signerinfo.signature_algorithm();
-  this->node_["authenticated_attributes"]   = authenticated_attributes_visitor.get();
-  this->node_["unauthenticated_attributes"] = unauthenticated_attributes_visitor.get();
   this->node_["issuer"] = std::get<0>(signerinfo.issuer());
+
+  if (signerinfo.has_authenticated_attributes()) {
+    JsonVisitor authenticated_attributes_visitor;
+    authenticated_attributes_visitor(signerinfo.authenticated_attributes());
+    this->node_["authenticated_attributes"]   = authenticated_attributes_visitor.get();
+  }
+
+  if (signerinfo.has_unauthenticated_attributes()) {
+    JsonVisitor unauthenticated_attributes_visitor;
+    unauthenticated_attributes_visitor(signerinfo.unauthenticated_attributes());
+    this->node_["unauthenticated_attributes"] = unauthenticated_attributes_visitor.get();
+  }
 }
 
 void JsonVisitor::visit(const spc_serialized_object_t& spc_serialized_object) {
@@ -844,21 +848,32 @@ void JsonVisitor::visit(const AuthenticatedAttributes& auth) {
 }
 
 void JsonVisitor::visit(const UnauthenticatedAttributes& unauth) {
-  if (unauth.is_counter_signature()) {
-    JsonVisitor visitor;
-    visitor(unauth.counter_signature());
-    this->node_["counter_signature"] = visitor.get();
+  if (unauth.has_counter_signatures()) {
+    std::vector<json> signs;
+    for (const auto& counter_sign : unauth.counter_signatures()) {
+      JsonVisitor visitor;
+      visitor(*counter_sign);
+      signs.emplace_back(visitor.get());
+    }
+    this->node_["counter_signature"] = signs;
   }
-  if (unauth.is_nested_signature()) {
-    JsonVisitor visitor;
-    visitor(unauth.nested_signature());
-    this->node_["nested_signature"] = visitor.get();
+  if (unauth.has_nested_signatures()) {
+    std::vector<json> signs;
+    for (const auto& nested_sign : unauth.nested_signatures()) {
+      JsonVisitor visitor;
+      visitor(*nested_sign);
+      signs.emplace_back(visitor.get());
+    }
+    this->node_["nested_signature"] = signs;
   }
-  if (unauth.is_timestamping_signature()) {
-    // TODO:
-    // JsonVisitor visitor;
-    // visitor(*unauth.timestamping_signature());
-    // this->node_["timestamping_signature"] = visitor.get();
+  if (unauth.has_timestamping_signatures()) {
+    // TODO: to be implemented
+    // std::vector<json> signs;
+    // for (const auto& timestamping_sign : unauth.counter_signatures()) {
+    //   JsonVisitor visitor;
+    //   visitor(*timestamping_sign);
+    //   signs.emplace_back(visitor.get());
+    // }
   }
 }
 

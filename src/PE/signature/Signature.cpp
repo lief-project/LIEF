@@ -89,10 +89,15 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
 
   os << "Content Info" << std::endl;
   os << "============" << std::endl;
-  if (signature.content_type() == OID_SPC_INDIRECT_DATA_OBJ) {
-    os << "SpcIndirectDataContent" << std::endl;
-    os << "======================" << std::endl;
-    os << reinterpret_cast<const SpcIndirectDataContent&>(signature.content_info()) << std::endl << std::endl;
+  if (signature.content_info_) {
+    if (signature.content_info().content_type() == OID_SPC_INDIRECT_DATA_OBJ) {
+      os << "SpcIndirectDataContent" << std::endl;
+      os << "======================" << std::endl;
+      os << reinterpret_cast<const SpcIndirectDataContent&>(signature.content_info()) << std::endl << std::endl;
+    }
+    // else if {
+    //
+    // }
   }
 
   os << "Certificates" << std::endl;
