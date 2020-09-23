@@ -771,7 +771,8 @@ enum _LIEF_EN(DYNAMIC_FLAGS_1) {
   _LIEF_EI(DF_1_NORELOC)    = 0x00400000,
   _LIEF_EI(DF_1_SYMINTPOSE) = 0x00800000, /**< Object has individual interposers. */
   _LIEF_EI(DF_1_GLOBAUDIT)  = 0x01000000, /**< Global auditing required. */
-  _LIEF_EI(DF_1_SINGLETON)  = 0x02000000  /**< Singleton symbols are used. */
+  _LIEF_EI(DF_1_SINGLETON)  = 0x02000000,  /**< Singleton symbols are used. */
+  _LIEF_EI(DF_1_PIE)        = 0x08000000  /**< Singleton symbols are used. */
 };
 
 /* DT_MIPS_FLAGS values. */
