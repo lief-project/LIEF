@@ -484,6 +484,12 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
   this->shift_symbols(from, shift);
   this->shift_relocations(from, shift);
 
+  if (this->type() == ELF_CLASS::ELFCLASS32) {
+    this->fix_got_entries<ELF32>(from, shift);
+  } else {
+    this->fix_got_entries<ELF64>(from, shift);
+  }
+
   if (this->header().entrypoint() >= from) {
     this->header().entrypoint(this->header().entrypoint() + shift);
   }
@@ -594,6 +600,12 @@ Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
   this->shift_symbols(from_address, shift);
   this->shift_relocations(from_address, shift);
 
+  if (this->type() == ELF_CLASS::ELFCLASS32) {
+    this->fix_got_entries<ELF32>(from_address, shift);
+  } else {
+    this->fix_got_entries<ELF64>(from_address, shift);
+  }
+
   if (this->header().entrypoint() >= from_address) {
     this->header().entrypoint(this->header().entrypoint() + shift);
   }
@@ -684,6 +696,31 @@ Section& Binary::add_section<false>(const Section& section) {
 
   this->sections_.push_back(new_section);
   return *(this->sections_.back());
+}
+
+template<class ELF_T>
+void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
+  using ptr_t = typename ELF_T::Elf_Addr;
+
+  if (not this->has(DYNAMIC_TAGS::DT_PLTGOT)) {
+    return;
+  }
+  const uint64_t addr = this->get(DYNAMIC_TAGS::DT_PLTGOT).value();
+  std::vector<uint8_t> content = this->get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
+  if (content.size() != 3 * sizeof(ptr_t)) {
+    LOG(ERROR) << "Cant't read got entries!";
+    return;
+  }
+
+  auto got = reinterpret_cast<ptr_t*>(content.data());
+  if (got[0] > 0 and got[0] > from) { // Offset to the dynamic section
+    got[0] += shift;
+  }
+
+  if (got[1] > 0 and got[1] > from) { // Prelinked value (unlikely?)
+    got[1] += shift;
+  }
+  this->patch_address(addr, content);
 }
 
 }

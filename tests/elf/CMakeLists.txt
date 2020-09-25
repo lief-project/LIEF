@@ -170,6 +170,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_core.py")
 
+  ADD_PYTHON_TEST(ELF_PYTHON_issue_466
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_466.py")
+
 
   # Examples
   # --------

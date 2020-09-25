@@ -5,6 +5,7 @@ Changelog
 ---------------------
 
 :ELF:
+  * Fix reconstruction issue when the binary is prelinked (cf. `issue #465 <https://github.com/lief-project/LIEF/issues/466>`_)
   * Add ``DF_1_PIE`` flag
   * Fix parsing issue of the ``.eh_frame`` section when the base address is not 0.
   * :github_user:`JanuszL` enhanced the algorithm that computes the string table.

@@ -1210,14 +1210,16 @@ void Builder::build_section_relocations(void) {
   it_sections sections = this->binary_->sections();
 
   std::vector<Section*> rel_section;
-  for(Section& S: sections)
-    if(S.type() == ((isRela)?ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL))
+  for (Section& S: sections) {
+    if (S.type() == ((isRela) ? ELF_SECTION_TYPES::SHT_RELA:ELF_SECTION_TYPES::SHT_REL)) {
       rel_section.push_back(&S);
+    }
+  }
 
 
   //  FIXME: Warn if not rel section found?
 
-  for(Section* section: rel_section) {
+  for (Section* section: rel_section) {
 
     if (section->information() == 0 or section->information() >= sections.size())
       throw LIEF::not_found("Unable to find associated section for SHT_REL{A} section");

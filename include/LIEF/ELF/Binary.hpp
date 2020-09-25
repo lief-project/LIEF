@@ -562,6 +562,9 @@ class LIEF_API Binary : public LIEF::Binary {
   void shift_symbols(uint64_t from, uint64_t shift);
   void shift_relocations(uint64_t from, uint64_t shift);
 
+  template<class ELF_T>
+  void fix_got_entries(uint64_t from, uint64_t shift);
+
   LIEF::Binary::functions_t eh_frame_functions(void) const;
   LIEF::Binary::functions_t armexid_functions(void) const;
 

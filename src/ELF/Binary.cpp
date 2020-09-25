@@ -1357,6 +1357,12 @@ Section& Binary::extend(const Section& section, uint64_t size) {
   this->shift_symbols(from_address, shift);
   this->shift_relocations(from_address, shift);
 
+  if (this->type() == ELF_CLASS::ELFCLASS32) {
+    this->fix_got_entries<ELF32>(from_address, shift);
+  } else {
+    this->fix_got_entries<ELF64>(from_address, shift);
+  }
+
 
   if (this->header().entrypoint() >= from_address) {
     this->header().entrypoint(this->header().entrypoint() + shift);
