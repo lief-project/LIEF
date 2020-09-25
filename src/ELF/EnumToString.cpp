@@ -1283,7 +1283,7 @@ const char* to_string(DYNAMIC_FLAGS e) {
 }
 
 const char* to_string(DYNAMIC_FLAGS_1 e) {
-  CONST_MAP(DYNAMIC_FLAGS_1, const char*, 26) enum_strings_flags1 {
+  CONST_MAP(DYNAMIC_FLAGS_1, const char*, 27) enum_strings_flags1 {
     { DYNAMIC_FLAGS_1::DF_1_NOW,        "NOW"        },
     { DYNAMIC_FLAGS_1::DF_1_GLOBAL,     "GLOBAL"     },
     { DYNAMIC_FLAGS_1::DF_1_GROUP,      "GROUP"      },
@@ -1310,6 +1310,7 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
     { DYNAMIC_FLAGS_1::DF_1_SYMINTPOSE, "SYMINTPOSE" },
     { DYNAMIC_FLAGS_1::DF_1_GLOBAUDIT,  "GLOBAUDIT"  },
     { DYNAMIC_FLAGS_1::DF_1_SINGLETON,  "SINGLETON"  },
+    { DYNAMIC_FLAGS_1::DF_1_PIE,        "PIE"  },
   };
 
   auto   it  = enum_strings_flags1.find(e);
