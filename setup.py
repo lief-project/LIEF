@@ -106,7 +106,7 @@ class BuildLibrary(build_ext):
         build_temp                     = self.build_temp
         extdir                         = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_library_output_directory = os.path.abspath(os.path.dirname(build_temp))
-        cfg                            = 'Debug' if self.debug else 'Release'
+        cfg                            = 'RelWithDebInfo' if self.debug else 'Release'
         is64                           = sys.maxsize > 2**32
 
         cmake_args = [
