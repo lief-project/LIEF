@@ -5,6 +5,8 @@ Changelog
 ---------------------
 
 :ELF:
+  * Add ``DF_1_PIE`` flag
+  * Fix parsing issue of the ``.eh_frame`` section when the base address is not 0.
   * :github_user:`JanuszL` enhanced the algorithm that computes the string table.
     It moves from a ``N^2`` algorithm to a ``Nlog(N)`` (:commit:`1e0c4e81d4a3fd7282713f111193e42f198f8967`).
   * Fix ``.eh_frame`` parsing issue (:commit:`b57f32333a85d0f172206bc5d20aabe2d7942738`)
