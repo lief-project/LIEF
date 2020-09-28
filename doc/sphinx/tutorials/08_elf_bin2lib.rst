@@ -6,7 +6,7 @@ In this tutorial, we will see how to convert a **PIE** executable into a library
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/08_ELF_bin2lib>`_
 
 
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_ , updated by Adrien Guinet - `@adriengnt <https://twitter.com/adriengnt>`_
 
 ------
 
@@ -67,10 +67,9 @@ Let's see how it works on a basic *crackme*:
   #include <stdio.h>
   #include <string.h>
 
-  #define LOCAL    __attribute__ ((visibility ("hidden")))
   #define NOINLINE __attribute__ ((noinline))
 
-  NOINLINE LOCAL int check_found(char* input) {
+  NOINLINE int check_found(char* input) {
     if (strcmp(input, "easy") == 0) {
       return 1;
     }
@@ -84,7 +83,7 @@ Let's see how it works on a basic *crackme*:
       exit(-1);
     }
 
-    if (check(argv[1])) {
+    if (check_found(argv[1])) {
       printf("Well done!\n");
     } else {
       printf("Wrong!\n");
@@ -93,10 +92,12 @@ Let's see how it works on a basic *crackme*:
   }
 
 
-This code takes a string as input and call the **check** function on this string, then it returns ``1`` if the input is ``easy``. ``0`` otherwise.
+This code takes a string as input and call the ``check_found`` function on this
+string, then it returns ``1`` if the input is ``easy``. ``0`` otherwise.
 
-The ``__attribute__ ((visibility ("hidden")))`` attribute is used to avoid that the compiler export automatically the **check** and the ``__attribute__ ((noinline))`` one
-to disable the inline optimization. If the function check is inlined, there won't be an address associated to this function.
+The ``__attribute__ ((noinline))`` is used to make sure the ``check_found``
+function won't be inlined by the compiler.  Indeed, if the function check is
+inlined, there won't be an address associated to this function.
 
 This figure sump-up the execution flow:
 
@@ -108,13 +109,15 @@ The *crackme* can be compiled with:
 
 .. code-block:: console
 
-  $ gcc crackme101.c -O0 -fPIE -pie -Wl,-strip-all,--hash-style=sysv -o crackme101.bin
+  $ gcc crackme101.c -O0 -fPIE -pie -Wl,-strip-all,--hash-style=sysv -o crackme101.bin -fvisibility=hidden
   $ ./crackme101.bin foo
   Wrong!
   $ ./crackme101.bin easy
   Well done!
 
-By opening ``crackme101.bin`` with LIEF we can check that no functions are exported:
+Note the usage of the ``-fvisibility=hidden`` flag. It makes the compiler not
+automatically export functions, like the ``check_found`` one. By opening
+``crackme101.bin`` with LIEF, we can check that no functions are exported:
 
 .. code-block:: python
 
@@ -164,7 +167,7 @@ Since we have exported a function we can now use ``dlopen`` on ``libcrackme101.s
 ``dlsym`` on ``check_found``
 
 .. code-block:: cpp
-  :emphasize-lines: 9,10
+  :emphasize-lines: 8,14
 
   #include <dlfcn.h>
   #include <stdio.h>
@@ -175,6 +178,10 @@ Since we have exported a function we can now use ``dlopen`` on ``libcrackme101.s
   int main (int argc, char** argv) {
 
     void* handler = dlopen("./libcrackme101.so", RTLD_LAZY);
+    if (!handler) {
+      fprintf(stderr, "dlopen error: %s\n", dlerror());
+      return 1;
+    }
     check_t check_found = (check_t)dlsym(handler, "check_found");
 
     int output = check_found(argv[1]);
@@ -194,13 +201,49 @@ Running the code above should give a similar output:
   $ ./instrument.bin easy
   Output of check('easy'): 1
 
+If ``dlopen`` returns an error, please read `the following section about glibc >= 2.29 <#glibc229>`_.
+
 The transformation of the execution flow can be represented as follow:
 
 .. figure:: ../_static/tutorial/08/bin2lib_b.png
   :scale: 25%
   :align: center
 
+.. _glic229:
+Warning for glic >= 2.29 users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+If you are using glibc >= 2.29 (or a close version depending on your Linux
+distribution), you might have encountered this error while using the `dlopen`
+function:
+
+.. code::
+
+ dlopen error: cannot dynamically load position-independent executable 
+
+Loading PIE binaries as shared libraries wasn't indeed really an intended use
+case for ``dlopen``, and it used to work without really being properly
+supported.  One of the reasons is that it `does not seem that trivial to
+support <https://sourceware.org/bugzilla/show_bug.cgi?id=11754>`_ all the
+possible use cases (issues with some relocations and ELF constructors).
+
+These glibc versions now `implements a check
+<https://patchwork.ozlabs.org/project/glibc/patch/20190312130235.8E82C89CE49C@oldenburg2.str.redhat.com/>`_
+to deny calls to ``dlopen`` with PIE binaries. This is done by verifying the
+``DF_1_PIE`` flag isn't present in the list of dynamic information flags.
+
+
+In order to circumvent this test, LIEF can be used to remove this ``DF_1_PIE`` flag:
+
+.. code-block:: python
+  :emphasize-lines: 4
+
+  import lief
+  import sys
+  path = sys.argv[1]
+  bin_ = lief.parse(path)
+  bin_[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+  bin_.write(path + ".patched")
 
 
 Conclusion
