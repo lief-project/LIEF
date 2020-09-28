@@ -24,6 +24,10 @@ Changelog
   * Upgrade ``pybind11`` to 2.5.0
   * Upgrade ``mbedtls`` to 2.16.6
 
+:Documentation:
+  * :github_user:`aguinet` updated the `bin2lib tutorial <https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html>`_ with the support
+    of the new glibc versions (:commit:`7884e57aa1d103f3bd37682e47f412bfe7a3aa34`)
+
 - Bug fix in the symbols table reconstruction (ELF)
 - Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`_)
 - Add ``PT_GNU_PROPERTY`` enum
