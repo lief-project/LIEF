@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Launch Docker CI when committing
 # Inspired from https://medium.com/@zypherman/my-experiences-with-travis-ci-7f5ea26a87c0
 
