@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python
 
 # Launch Docker CI when committing
 # Inspired from https://medium.com/@zypherman/my-experiences-with-travis-ci-7f5ea26a87c0
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 AUTH_TOKEN = os.getenv("TRAVIS_TOKEN", sys.argv[1] if len(sys.argv) > 1 else None)
 
 if not AUTH_TOKEN:
-    logger.fatal("No token found!")
+    logger.error("No token found!")
     sys.exit(1)
 
 LIEF_ID   = 12579556
@@ -106,12 +106,12 @@ def trigger_build():
         if remote_var:
             r = requests.patch(f"{DOCKER}/env_var/{remote_var['id']}", data=json.dumps(env_var), headers=headers)
             if not r.ok:
-                loggger.error(f"Error while setting variable: '{remote_var['name']}'")
+                logger.error(f"Error while setting variable: '{remote_var['name']}'")
                 sys.exit(1)
         else:
             result = requests.post(DOCKER_ENV_VARS_ENDPOINT, data=json.dumps(env_var), headers=headers)
             if not result.ok:
-                loggger.error(f"Error while setting variable: '{env_var['env_var.name']}'")
+                logger.error(f"Error while setting variable: '{env_var['env_var.name']}'")
                 sys.exit(1)
 
     # (Re)Start build
