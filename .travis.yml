@@ -158,7 +158,6 @@ install:
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --name lief_$PYTHON_VERSION -e PYTHON_BINARY=$PYTHON_BINARY -e CCACHE_DIR=/ccache -v $HOME/.ccache:/ccache lief/manylinux1_x86_64 bash -c '$PYTHON_BINARY setup.py --lief-test --sdk build -j8 bdist_wheel --dist-dir wheel_stage && auditwheel repair -w dist --plat manylinux1_x86_64 wheel_stage/*.whl ' && docker cp lief_$PYTHON_VERSION:/src/dist/ . && docker cp lief_$PYTHON_VERSION:/src/build/ .; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo $PYTHON_BINARY -m pip install -U pip setuptools wheel && $PYTHON_BINARY ./setup.py --lief-test --sdk build -j8 bdist_wheel; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$PYTHON_VERSION" == "3.8" ]]; then $PYTHON_BINARY ./.github/trigger_docker.py ;fi
 
 after_success:
   - make package
@@ -170,6 +169,7 @@ after_success:
     #- if [[ -n "$TRAVIS_TAG" ]]; then $PYTHON_BINARY setup.py sdist --formats=zip       ;fi
   - cd $TRAVIS_BUILD_DIR
   - bash ./.github/deploy.sh
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then $PYTHON_BINARY ./.github/trigger_docker.py ;fi
 
 
 deploy:
