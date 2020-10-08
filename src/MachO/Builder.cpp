@@ -60,7 +60,6 @@ Builder::Builder(FatBinary* fat) :
 
 
 std::vector<uint8_t> Builder::operator()(void) {
-  this->build();
   return this->get_build();
 }
 
