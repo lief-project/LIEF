@@ -42,7 +42,7 @@ jobs:
 
         # OSX 10.12 - xcode 8.3 - Python 3.5
       - os: osx
-        osx_image: xcode8.3
+        osx_image: xcode11
         compiler: clang
         env: >
           [
@@ -54,7 +54,7 @@ jobs:
 
       # OSX 10.12 - xcode 8.3 - Python 3.6
       - os: osx
-        osx_image: xcode8.3
+        osx_image: xcode11
         compiler: clang
         env: >
           [
@@ -66,7 +66,7 @@ jobs:
 
       # OSX 10.12 - xcode 10.1 - Python 3.7
       - os: osx
-        osx_image: xcode10.1
+        osx_image: xcode11
         compiler: clang
         env: >
           [
@@ -77,7 +77,7 @@ jobs:
 
       # OSX 10.12 - xcode 10.1 - Python 3.8
       - os: osx
-        osx_image: xcode10.1
+        osx_image: xcode11
         compiler: clang
         env: >
           [
@@ -109,16 +109,21 @@ cache:
   - build/tests/catch
   - build/api/python/pybind11-prefix
 
+
+addons:
+  homebrew:
+    packages:
+    - pyenv
+    - ccache
+    update: true
+
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then docker build -t lief/manylinux1_x86_64 .; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PREFIX="/usr/local"; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs2"; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv root; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew upgrade pyenv||true; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then pyenv install --list  ;fi
 
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "2.7" ]]; then pyenv install 2.7.12; fi
