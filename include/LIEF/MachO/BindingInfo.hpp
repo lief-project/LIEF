@@ -44,7 +44,7 @@ class LIEF_API BindingInfo : public Object {
         int64_t addend = 0,
         int32_t oridnal = 0,
         bool is_weak = false,
-        bool is_non_weak_definition = false);
+        bool is_non_weak_definition = false, uint64_t offset = 0);
 
     BindingInfo& operator=(BindingInfo other);
     BindingInfo(const BindingInfo& other);
@@ -101,6 +101,9 @@ class LIEF_API BindingInfo : public Object {
       this->is_non_weak_definition_ = val;
     }
 
+    //! Original relative offset of the binding opcodes
+    uint64_t original_offset() const;
+
     virtual ~BindingInfo(void);
 
     bool operator==(const BindingInfo& rhs) const;
@@ -120,7 +123,8 @@ class LIEF_API BindingInfo : public Object {
     bool            is_weak_import_;
     bool            is_non_weak_definition_;
     DylibCommand*   library_{nullptr};
-    uint64_t        address_;
+    uint64_t        address_{0};
+    uint64_t        offset_{0};
 
 
 };

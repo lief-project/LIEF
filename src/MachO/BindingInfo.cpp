@@ -37,12 +37,14 @@ BindingInfo::BindingInfo(void) :
   is_weak_import_{false},
   is_non_weak_definition_{false},
   library_{nullptr},
-  address_{0}
+  address_{0},
+  offset_{0}
 {}
 
 
 BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
-    uint64_t address, int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition) :
+    uint64_t address, int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition,
+    uint64_t offset) :
   class_{cls},
   binding_type_{type},
   segment_{nullptr},
@@ -52,7 +54,8 @@ BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
   is_weak_import_{is_weak},
   is_non_weak_definition_{is_non_weak_definition},
   library_{nullptr},
-  address_{address}
+  address_{address},
+  offset_{offset}
 {}
 
 
@@ -72,7 +75,8 @@ BindingInfo::BindingInfo(const BindingInfo& other) :
   is_weak_import_{other.is_weak_import_},
   is_non_weak_definition_{other.is_non_weak_definition_},
   library_{nullptr},
-  address_{other.address_}
+  address_{other.address_},
+  offset_{other.offset_}
 {}
 
 void BindingInfo::swap(BindingInfo& other) {
@@ -86,6 +90,7 @@ void BindingInfo::swap(BindingInfo& other) {
   std::swap(this->is_non_weak_definition_,  other.is_non_weak_definition_);
   std::swap(this->library_,                 other.library_);
   std::swap(this->address_,                 other.address_);
+  std::swap(this->offset_,                  other.offset_);
 }
 
 
@@ -186,6 +191,11 @@ uint64_t BindingInfo::address(void) const {
 
 void BindingInfo::address(uint64_t addr) {
   this->address_ = addr;
+}
+
+
+uint64_t BindingInfo::original_offset() const {
+  return this->offset_;
 }
 
 void BindingInfo::accept(Visitor& visitor) const {

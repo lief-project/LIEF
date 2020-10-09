@@ -108,7 +108,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
         int64_t addend,
         bool is_weak,
         bool is_non_weak_definition,
-        it_segments& segments);
+        it_segments& segments,
+        uint64_t offset = 0
+    );
 
 
     template<class MACHO_T>

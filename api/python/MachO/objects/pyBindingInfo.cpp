@@ -105,6 +105,10 @@ void create<BindingInfo>(py::module& m) {
         "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the binding (if any)",
         py::return_value_policy::reference)
 
+    .def_property_readonly("original_offset",
+        &BindingInfo::original_offset,
+        "Original relative offset of the binding opcodes")
+
 
     .def("__eq__", &BindingInfo::operator==)
     .def("__ne__", &BindingInfo::operator!=)

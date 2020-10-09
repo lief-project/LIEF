@@ -475,6 +475,9 @@ def print_dyld_info(binary):
         if binfo.has_library:
             print("{:10}: {}".format("Library", binfo.library.name))
 
+        if binfo.binding_class == lief.MachO.BINDING_CLASS.LAZY:
+            print("{:10}: {}".format("Offset", binfo.offset))
+
         print("")
 
     print("")

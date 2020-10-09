@@ -380,6 +380,7 @@ void JsonVisitor::visit(const BindingInfo& binding) {
   this->node_["library_ordinal"] = binding.library_ordinal();
   this->node_["addend"]          = binding.addend();
   this->node_["is_weak_import"]  = binding.is_weak_import();
+  this->node_["original_offset"] = binding.original_offset();
 
   if (binding.has_symbol()) {
     this->node_["symbol"] = binding.symbol().name();

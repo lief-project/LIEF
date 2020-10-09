@@ -685,11 +685,11 @@ void BinaryParser::parse_dyldinfo_rebases() {
   uint64_t end_offset = offset + size;
 
   bool     done = false;
-	uint8_t  type = 0;
-	uint32_t segment_index = 0;
-	uint64_t segment_offset = 0;
-	uint32_t count = 0;
-	uint32_t skip = 0;
+  uint8_t  type = 0;
+  uint32_t segment_index = 0;
+  uint64_t segment_offset = 0;
+  uint32_t count = 0;
+  uint32_t skip = 0;
 
   it_segments segments = this->binary_->segments();
   const SegmentCommand* current_segmment = nullptr;
@@ -703,19 +703,19 @@ void BinaryParser::parse_dyldinfo_rebases() {
     switch(static_cast<REBASE_OPCODES>(opcode)) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
         {
-  				done = true;
-	  			break;
+          done = true;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM:
+      case REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM:
         {
-  				type = imm;
-	  			break;
+          type = imm;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-  				segment_index   = imm;
+          segment_index   = imm;
           segment_offset  = this->stream_->read_uleb128();
 
           if (segment_index < segments.size()) {
@@ -725,10 +725,10 @@ void BinaryParser::parse_dyldinfo_rebases() {
             done = true;
           }
 
-		  		break;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
         {
           segment_offset += this->stream_->read_uleb128();
 
@@ -737,50 +737,50 @@ void BinaryParser::parse_dyldinfo_rebases() {
                        << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
           }
 
-	  			break;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
         {
-				  segment_offset += (imm * sizeof(pint_t));
+          segment_offset += (imm * sizeof(pint_t));
 
           if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
             LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
                        << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
           }
-				  break;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
         {
           for (size_t i = 0; i < imm; ++i) {
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
-				    segment_offset += sizeof(pint_t);
+            segment_offset += sizeof(pint_t);
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
               LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
                          << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
             }
-				  }
-				  break;
+          }
+          break;
         }
-			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
         {
 
           count = this->stream_->read_uleb128();
-				  for (size_t i = 0; i < count; ++i) {
+          for (size_t i = 0; i < count; ++i) {
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
                 LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
                            << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
             }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
-					  segment_offset += sizeof(pint_t);
-				  }
-				  break;
+            segment_offset += sizeof(pint_t);
+          }
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
         {
 
           if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
@@ -791,10 +791,10 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 
-				  break;
+          break;
         }
 
-			case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
           // Count
           count = this->stream_->read_uleb128();
@@ -803,20 +803,20 @@ void BinaryParser::parse_dyldinfo_rebases() {
           skip = this->stream_->read_uleb128();
 
 
-				  for (size_t i = 0; i < count; ++i) {
+          for (size_t i = 0; i < count; ++i) {
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
                 LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
                            << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
             }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
-					  segment_offset += skip + sizeof(pint_t);
-				  }
+            segment_offset += skip + sizeof(pint_t);
+          }
 
-				  break;
+          break;
         }
 
-			default:
+      default:
         {
           LOG(ERROR) << "Unsupported opcode: " << std::showbase << std::hex << static_cast<uint32_t>(opcode);
           break;
@@ -888,18 +888,18 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
   uint64_t end_offset = offset + size;
 
-	uint8_t     type = 0;
-	uint8_t     segment_idx = 0;
-	uint64_t    segment_offset = 0;
+  uint8_t     type = 0;
+  uint8_t     segment_idx = 0;
+  uint64_t    segment_offset = 0;
   std::string symbol_name = "";
-	int         library_ordinal = 0;
+  int         library_ordinal = 0;
 
-	int64_t     addend = 0;
-	uint32_t    count = 0;
-	uint32_t    skip = 0;
+  int64_t     addend = 0;
+  uint32_t    count = 0;
+  uint32_t    skip = 0;
 
   bool        is_weak_import = false;
-	bool        done = false;
+  bool        done = false;
 
 
   it_segments segments = this->binary_->segments();
@@ -908,75 +908,75 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
     uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
     BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
 
-		switch (opcode) {
-		  case BIND_OPCODES::BIND_OPCODE_DONE:
+    switch (opcode) {
+      case BIND_OPCODES::BIND_OPCODE_DONE:
         {
-				  done = true;
-					break;
+          done = true;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
-				  library_ordinal = imm;
-					break;
+          library_ordinal = imm;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
 
           library_ordinal = this->stream_->read_uleb128();
 
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
-					// the special ordinals are negative numbers
-					if (imm == 0) {
-						library_ordinal = 0;
+          // the special ordinals are negative numbers
+          if (imm == 0) {
+            library_ordinal = 0;
           } else {
-						int8_t sign_extended = BIND_OPCODE_MASK | imm;
-						library_ordinal = sign_extended;
-					}
-					break;
+            int8_t sign_extended = BIND_OPCODE_MASK | imm;
+            library_ordinal = sign_extended;
+          }
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string();
+          symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
-						is_weak_import = true;
+            is_weak_import = true;
           } else {
-						is_weak_import = false;
+            is_weak_import = false;
           }
-					break;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
-					type = imm;
-					break;
+          type = imm;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           addend = this->stream_->read_sleb128();
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx    = imm;
+          segment_idx    = imm;
           segment_offset = this->stream_->read_uleb128();
 
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
           segment_offset += this->stream_->read_uleb128();
-					break;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
@@ -992,8 +992,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               is_weak_import,
               false,
               segments);
-					segment_offset += sizeof(pint_t);
-					break;
+          segment_offset += sizeof(pint_t);
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
@@ -1010,10 +1010,10 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               false,
               segments);
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_STANDARD,
@@ -1027,7 +1027,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
               false,
               segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
-					break;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
@@ -1039,7 +1039,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
           // Skip
           skip            = this->stream_->read_uleb128();
 
-					for (size_t i = 0; i < count; ++i) {
+          for (size_t i = 0; i < count; ++i) {
             this->do_bind<MACHO_T>(
                 BINDING_CLASS::BIND_CLASS_STANDARD,
                 type,
@@ -1052,16 +1052,16 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
                 false,
                 segments);
             segment_offset += skip + sizeof(pint_t);
-					}
-					break;
+          }
+          break;
         }
 
-			default:
+      default:
         {
           LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
           break;
         }
-			}
+      }
   }
 
 }
@@ -1093,18 +1093,18 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
   uint64_t end_offset = offset + size;
 
-	uint8_t     type = 0;
-	uint8_t     segment_idx = 0;
-	uint64_t    segment_offset = 0;
+  uint8_t     type = 0;
+  uint8_t     segment_idx = 0;
+  uint64_t    segment_offset = 0;
   std::string symbol_name = "";
 
-	int64_t     addend = 0;
-	uint32_t    count = 0;
-	uint32_t    skip = 0;
+  int64_t     addend = 0;
+  uint32_t    count = 0;
+  uint32_t    skip = 0;
 
   bool        is_weak_import = true;
   bool        is_non_weak_definition = false;
-	bool        done = false;
+  bool        done = false;
 
   it_segments segments = this->binary_->segments();
 
@@ -1114,53 +1114,53 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
     uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
     BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
 
-		switch (opcode) {
-		  case BIND_OPCODES::BIND_OPCODE_DONE:
+    switch (opcode) {
+      case BIND_OPCODES::BIND_OPCODE_DONE:
         {
-				  done = true;
-					break;
+          done = true;
+          break;
         }
 
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string();
+          symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION) != 0) {
             is_non_weak_definition = true;
           } else {
             is_non_weak_definition = false;
           }
-					break;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
-					type = imm;
-					break;
+          type = imm;
+          break;
         }
 
 
-			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           addend = this->stream_->read_sleb128();
-					break;
+          break;
         }
 
 
-			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx    = imm;
+          segment_idx    = imm;
           segment_offset = this->stream_->read_uleb128();
 
-					break;
+          break;
         }
 
 
-			case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
           segment_offset += this->stream_->read_uleb128();
-					break;
+          break;
         }
 
 
@@ -1177,8 +1177,8 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               is_weak_import,
               is_non_weak_definition,
               segments);
-					segment_offset += sizeof(pint_t);
-					break;
+          segment_offset += sizeof(pint_t);
+          break;
         }
 
 
@@ -1196,11 +1196,11 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               is_non_weak_definition,
               segments);
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
-					break;
+          break;
         }
 
 
-			case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           this->do_bind<MACHO_T>(
               BINDING_CLASS::BIND_CLASS_WEAK,
@@ -1214,7 +1214,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
               is_non_weak_definition,
               segments);
           segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
-					break;
+          break;
         }
 
 
@@ -1227,7 +1227,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
           // Skip
           skip    = this->stream_->read_uleb128();
 
-					for (size_t i = 0; i < count; ++i) {
+          for (size_t i = 0; i < count; ++i) {
             this->do_bind<MACHO_T>(
                 BINDING_CLASS::BIND_CLASS_WEAK,
                 type,
@@ -1240,18 +1240,18 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
                 is_non_weak_definition,
                 segments);
             segment_offset += skip + sizeof(pint_t);
-					}
-					break;
+          }
+          break;
         }
 
 
 
-			default:
+      default:
         {
           LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
           break;
         }
-			}
+      }
   }
 
 }
@@ -1285,12 +1285,13 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
   uint64_t end_offset     = offset + size;
 
   //uint32_t    lazy_offset     = 0;
-	uint8_t     segment_idx     = 0;
-	uint64_t    segment_offset  = 0;
+  uint8_t     segment_idx     = 0;
+  uint64_t    segment_offset  = 0;
   std::string symbol_name     = "";
-	int32_t     library_ordinal = 0;
-	int64_t     addend          = 0;
+  int32_t     library_ordinal = 0;
+  int64_t     addend          = 0;
   bool        is_weak_import  = false;
+  uint64_t    start_offset    = 0;
 
   it_segments segments = this->binary_->segments();
   this->stream_->setpos(offset);
@@ -1299,61 +1300,61 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
     BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
     current_offset += sizeof(uint8_t);
 
-		switch (opcode) {
-		  case BIND_OPCODES::BIND_OPCODE_DONE:
+    switch (opcode) {
+      case BIND_OPCODES::BIND_OPCODE_DONE:
         {
-				  //lazy_offset = current_offset - offset;
-					break;
+          //lazy_offset = current_offset - offset;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
-				  library_ordinal = imm;
-					break;
+          library_ordinal = imm;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
           library_ordinal = this->stream_->read_uleb128();
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
-					// the special ordinals are negative numbers
-					if (imm == 0) {
-						library_ordinal = 0;
+          // the special ordinals are negative numbers
+          if (imm == 0) {
+            library_ordinal = 0;
           } else {
-						int8_t sign_extended = BIND_OPCODE_MASK | imm;
-						library_ordinal = sign_extended;
-					}
-					break;
+            int8_t sign_extended = BIND_OPCODE_MASK | imm;
+            library_ordinal = sign_extended;
+          }
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
-				  symbol_name = this->stream_->read_string();
+          symbol_name = this->stream_->read_string();
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
-						is_weak_import = true;
+            is_weak_import = true;
           } else {
-						is_weak_import = false;
+            is_weak_import = false;
           }
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
           addend = this->stream_->read_sleb128();;
-					break;
+          break;
         }
 
-			case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
-					segment_idx    = imm;
+          segment_idx    = imm;
           segment_offset = this->stream_->read_uleb128();
 
-					break;
+          break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
@@ -1368,17 +1369,18 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
               addend,
               is_weak_import,
               false,
-              segments);
-					segment_offset += sizeof(pint_t);
-					break;
+              segments, start_offset);
+          start_offset = this->stream_->pos() - offset;
+          segment_offset += sizeof(pint_t);
+          break;
         }
 
-			default:
+      default:
         {
           LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
           break;
         }
-			}
+      }
   }
 }
 
@@ -1392,7 +1394,8 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
         int64_t addend,
         bool is_weak,
         bool is_non_weak_definition,
-        it_segments& segments) {
+        it_segments& segments,
+        uint64_t offset) {
 
 
   if (segment_idx >= segments.size()) {
@@ -1410,7 +1413,10 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
 
 
   // Create a BindingInfo object
-  std::unique_ptr<BindingInfo> binding_info{new BindingInfo{cls, static_cast<BIND_TYPES>(type), address, addend, ord, is_weak, is_non_weak_definition}};
+  std::unique_ptr<BindingInfo> binding_info{
+    new BindingInfo{cls, static_cast<BIND_TYPES>(type),
+                    address, addend, ord,
+                    is_weak, is_non_weak_definition, offset}};
   binding_info->segment_ = &segment;
 
 
