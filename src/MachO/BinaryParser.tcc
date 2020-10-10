@@ -1370,7 +1370,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
               is_weak_import,
               false,
               segments, start_offset);
-          start_offset = this->stream_->pos() - offset;
+          start_offset = this->stream_->pos() - offset + 1;
           segment_offset += sizeof(pint_t);
           break;
         }
