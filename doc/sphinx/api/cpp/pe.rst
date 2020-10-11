@@ -526,8 +526,5 @@ Enums
 .. doxygenenum:: LIEF::PE::GUARD_CF_FLAGS
    :project: lief
 
-.. doxygenenum:: LIEF::PE::GUARD_RF_FLAGS
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::POGO_SIGNATURES
    :project: lief

@@ -54,9 +54,9 @@ class TestLoadConfig(TestCase):
         self.assertEqual(lconf.guard_cf_function_table, 0x140011000)
         self.assertEqual(lconf.guard_cf_function_count, 15)
 
-        expected_flags  = lief.PE.GUARD_CF_FLAGS.LONGJUMP_TABLE_PRESENT
-        expected_flags |= lief.PE.GUARD_CF_FLAGS.FUNCTION_TABLE_PRESENT
-        expected_flags |= lief.PE.GUARD_CF_FLAGS.INSTRUMENTED
+        expected_flags  = lief.PE.GUARD_CF_FLAGS.GCF_LONGJUMP_TABLE_PRESENT
+        expected_flags |= lief.PE.GUARD_CF_FLAGS.GCF_FUNCTION_TABLE_PRESENT
+        expected_flags |= lief.PE.GUARD_CF_FLAGS.GCF_INSTRUMENTED
         self.assertEqual(lconf.guard_flags, lief.PE.GUARD_CF_FLAGS(expected_flags))
 
         # V2

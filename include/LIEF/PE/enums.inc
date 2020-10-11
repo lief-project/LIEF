@@ -1040,12 +1040,10 @@ enum _LIEF_EN(GUARD_CF_FLAGS) {
   _LIEF_EI(GCF_EXPORT_SUPPRESSION_INFO_PRESENT) = 0x00004000, /**< Module contains suppressed export information. This also infers that the address taken taken IAT table is also present in the load config. */
   _LIEF_EI(GCF_ENABLE_EXPORT_SUPPRESSION)       = 0x00008000, /**< Module enables suppression of exports */
   _LIEF_EI(GCF_LONGJUMP_TABLE_PRESENT)          = 0x00010000, /**< Module contains longjmp target information */
-};
 
-enum _LIEF_EN(GUARD_RF_FLAGS) {
-  _LIEF_EI(GRF_INSTRUMENTED) = 0x00020000, /**< Module contains return flow instrumentation and metadata */
-  _LIEF_EI(GRF_ENABLE)       = 0x00040000, /**< Module requests that the OS enable return flow protection */
-  _LIEF_EI(GRF_STRICT)       = 0x00080000, /**< Module requests that the OS enable return flow protection in strict mode */
+  _LIEF_EI(GRF_INSTRUMENTED)                    = 0x00020000, /**< Module contains return flow instrumentation and metadata */
+  _LIEF_EI(GRF_ENABLE)                          = 0x00040000, /**< Module requests that the OS enable return flow protection */
+  _LIEF_EI(GRF_STRICT)                          = 0x00080000, /**< Module requests that the OS enable return flow protection in strict mode */
 };
 
 //! @brief From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry

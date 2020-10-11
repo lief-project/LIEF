@@ -1104,25 +1104,17 @@ const char* to_string(WIN_VERSION e) {
 
 
 const char* to_string(GUARD_CF_FLAGS e) {
-  CONST_MAP(GUARD_CF_FLAGS, const char*, 7) enumStrings {
-    { GUARD_CF_FLAGS::GCF_NONE,                             "NONE"                            },
-    { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "INSTRUMENTED"                    },
-    { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "W_INSTRUMENTED"                  },
-    { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "FUNCTION_TABLE_PRESENT"          },
-    { GUARD_CF_FLAGS::GCF_EXPORT_SUPPRESSION_INFO_PRESENT,  "EXPORT_SUPPRESSION_INFO_PRESENT" },
-    { GUARD_CF_FLAGS::GCF_ENABLE_EXPORT_SUPPRESSION,        "ENABLE_EXPORT_SUPPRESSION"       },
-    { GUARD_CF_FLAGS::GCF_LONGJUMP_TABLE_PRESENT,           "LONGJUMP_TABLE_PRESENT"          },
-  };
-  auto   it  = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
-
-
-const char* to_string(GUARD_RF_FLAGS e) {
-  CONST_MAP(GUARD_RF_FLAGS, const char*, 3) enumStrings {
-    { GUARD_RF_FLAGS::GRF_INSTRUMENTED, "INSTRUMENTED" },
-    { GUARD_RF_FLAGS::GRF_ENABLE,       "ENABLE"       },
-    { GUARD_RF_FLAGS::GRF_STRICT,       "STRICT"       },
+  CONST_MAP(GUARD_CF_FLAGS, const char*, 10) enumStrings {
+    { GUARD_CF_FLAGS::GCF_NONE,                             "GCF_NONE"                            },
+    { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "GCF_INSTRUMENTED"                    },
+    { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "GCF_W_INSTRUMENTED"                  },
+    { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "GCF_FUNCTION_TABLE_PRESENT"          },
+    { GUARD_CF_FLAGS::GCF_EXPORT_SUPPRESSION_INFO_PRESENT,  "GCF_EXPORT_SUPPRESSION_INFO_PRESENT" },
+    { GUARD_CF_FLAGS::GCF_ENABLE_EXPORT_SUPPRESSION,        "GCF_ENABLE_EXPORT_SUPPRESSION"       },
+    { GUARD_CF_FLAGS::GCF_LONGJUMP_TABLE_PRESENT,           "GCF_LONGJUMP_TABLE_PRESENT"          },
+    { GUARD_CF_FLAGS::GRF_INSTRUMENTED,                     "GRF_INSTRUMENTED"                    },
+    { GUARD_CF_FLAGS::GRF_ENABLE,                           "GRF_ENABLE"                          },
+    { GUARD_CF_FLAGS::GRF_STRICT,                           "GRF_STRICT"                          },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

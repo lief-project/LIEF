@@ -815,16 +815,6 @@ GUARD_CF_FLAGS
 
 ----------
 
-GUARD_RF_FLAGS
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.GUARD_RF_FLAGS
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 CODE_VIEW_SIGNATURES
 ~~~~~~~~~~~~~~~~~~~~
 
