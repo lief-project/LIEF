@@ -22,6 +22,31 @@
 
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
+// According to https://en.cppreference.com/w/cpp/iterator/end,
+// cbegin and cend are supported since C++14.
+#if __cplusplus < 201402L
+#include <type_traits>
+namespace std {
+
+template <class T, std::size_t N>
+constexpr typename std::add_pointer<typename std::add_const<T>::type>::type
+cbegin(const T (&arr)[N]) noexcept {
+  return static_cast<
+      typename std::add_pointer<typename std::add_const<T>::type>::type>(arr);
+}
+
+template <class T, std::size_t N>
+constexpr typename std::add_pointer<typename std::add_const<T>::type>::type
+cend(const T (&arr)[N]) noexcept {
+  return static_cast<
+             typename std::add_pointer<typename std::add_const<T>::type>::type>(
+             arr) +
+         N;
+}
+
+}
+#endif
+
 namespace LIEF {
 namespace PE {
 
