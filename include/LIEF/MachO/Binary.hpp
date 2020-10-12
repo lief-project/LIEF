@@ -181,6 +181,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return binary's imagebase. ``0`` if not relevant
   uint64_t imagebase(void) const;
 
+  //! Size of the binary in memory when mapped
+  uint64_t virtual_size(void) const;
+
   //! Return binary's loader (e.g. ``/usr/lib/dyld``)
   const std::string& loader(void) const;
 

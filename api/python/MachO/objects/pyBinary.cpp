@@ -96,8 +96,11 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("imagebase",
         &Binary::imagebase,
         "Return binary's ``image base`` which is the base address\
-        where segments are mapped (without PIE). ``0`` if not relevant.",
-        py::return_value_policy::reference_internal)
+        where segments are mapped (without PIE). ``0`` if not relevant.")
+
+    .def_property_readonly("virtual_size",
+        &Binary::virtual_size,
+        "Binary's memory size when mapped")
 
     .def_property_readonly("fat_offset",
         &Binary::fat_offset,
