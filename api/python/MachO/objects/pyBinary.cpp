@@ -253,6 +253,17 @@ void create<Binary>(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any.",
         py::return_value_policy::reference)
 
+    .def_property_readonly("has_code_signature_dir",
+        &Binary::has_code_signature_dir,
+        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignature) " command) "
+        "with the command LC_DYLIB_CODE_SIGN_DRS",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("code_signature_dir",
+        static_cast<no_const_getter<CodeSignature&>>(&Binary::code_signature_dir),
+        "Return binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any.",
+        py::return_value_policy::reference)
+
     .def_property_readonly("has_data_in_code",
         &Binary::has_data_in_code,
         "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DataInCode) " command",

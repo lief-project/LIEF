@@ -17,6 +17,9 @@ Changelog
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
   * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)
 
+:Mach-O:
+  * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (`issues/476 <https://github.com/lief-project/LIEF/issues/476>`_)
+
 :Dependencies:
   * Upgrade ``easyloggingpp`` to 9.96.7
   * Upgrade ``frozen`` to 1.0.0
