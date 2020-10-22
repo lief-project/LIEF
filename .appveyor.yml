@@ -83,20 +83,31 @@ environment:
       PYTHON64_BINARY:  "C:\\Python38-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python38-x64\\libs\\python38.lib"
 
+    # Python 3.9 - To enable when https://github.com/appveyor/ci/issues/3541 will be resolved
+    #- PYTHON_VERSION:   "3.9"
+    #  PYTHON32_PATH:    "C:\\Python39"
+    #  PYTHON32_INCLUDE: "C:\\Python39\\include"
+    #  PYTHON32_BINARY:  "C:\\Python39\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python39\\libs\\python39.lib"
+    #  PYTHON64_PATH:    "C:\\Python39-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
+
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
 
 install:
   - ps: if ($env:PLATFORM -eq "x64") { $env:CMAKE_ARCH = "x64" }
 
-  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_PATH    = $env:PYTHON64_PATH }
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_PATH    = $env:PYTHON64_PATH    }
   - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_INCLUDE = $env:PYTHON64_INCLUDE }
-  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_BINARY  = $env:PYTHON64_BINARY }
+  - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_BINARY  = $env:PYTHON64_BINARY  }
   - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_LIBRARY = $env:PYTHON64_LIBRARY }
 
-  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_PATH    = $env:PYTHON32_PATH }
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_PATH    = $env:PYTHON32_PATH    }
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_INCLUDE = $env:PYTHON32_INCLUDE }
-  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_BINARY  = $env:PYTHON32_BINARY }
+  - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_BINARY  = $env:PYTHON32_BINARY  }
   - ps: if ($env:PLATFORM -eq "x86") { $env:PYTHON_LIBRARY = $env:PYTHON32_LIBRARY }
   - set PATH=%PYTHON_PATH%;%PATH%
 
