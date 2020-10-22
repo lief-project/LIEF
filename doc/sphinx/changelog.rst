@@ -12,10 +12,13 @@ Changelog
     It moves from a ``N^2`` algorithm to a ``Nlog(N)`` (:commit:`1e0c4e81d4a3fd7282713f111193e42f198f8967`).
   * Fix ``.eh_frame`` parsing issue (:commit:`b57f32333a85d0f172206bc5d20aabe2d7942738`)
   * :github_user:`aeflores` fixed parsing issue in ELF relocations (:commit:`6c53646bb790acf28f2999527eafad30db7d6b69`)
+  * Add ``PT_GNU_PROPERTY`` enum
+  * Bug fix in the symbols table reconstruction (ELF)
 
 :PE:
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
   * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)
+  * Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`_)
 
 :Mach-O:
   * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (`issues/476 <https://github.com/lief-project/LIEF/issues/476>`_)
@@ -24,16 +27,18 @@ Changelog
   * Upgrade ``easyloggingpp`` to 9.96.7
   * Upgrade ``frozen`` to 1.0.0
   * Upgrade ``json`` to 3.7.3
-  * Upgrade ``pybind11`` to 2.5.0
+  * Upgrade ``pybind11`` to 2.6.0
   * Upgrade ``mbedtls`` to 2.16.6
 
 :Documentation:
   * :github_user:`aguinet` updated the `bin2lib tutorial <https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html>`_ with the support
     of the new glibc versions (:commit:`7884e57aa1d103f3bd37682e47f412bfe7a3aa34`)
 
-- Bug fix in the symbols table reconstruction (ELF)
-- Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`_)
-- Add ``PT_GNU_PROPERTY`` enum
+:Misc:
+  * Add Python 3.9 support
+
+
+
 
 0.10.1 - November 29, 2019
 --------------------------
