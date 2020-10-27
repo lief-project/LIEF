@@ -102,6 +102,7 @@ class LIEF_API Section : public LIEF::Section {
     //! @see offset
     uint64_t file_offset(void) const;
     uint64_t original_size(void) const;
+    uint64_t content_size(void) const;
     uint64_t alignment(void) const;
     uint64_t information(void) const;
     uint64_t entry_size(void) const;
@@ -121,6 +122,7 @@ class LIEF_API Section : public LIEF::Section {
     void information(uint32_t info);
     void alignment(uint64_t alignment);
     void entry_size(uint64_t entry_size);
+    void content_size(uint64_t size);
 
     it_segments       segments(void);
     it_const_segments segments(void) const;
@@ -142,6 +144,7 @@ class LIEF_API Section : public LIEF::Section {
     ELF_SECTION_TYPES     type_;
     uint64_t              flags_;
     uint64_t              original_size_;
+    uint64_t              content_size_;
     uint32_t              link_;
     uint32_t              info_;
     uint64_t              address_align_;

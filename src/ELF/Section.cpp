@@ -48,6 +48,7 @@ Section::Section(const Elf64_Shdr* header) :
   type_{static_cast<ELF_SECTION_TYPES>(header->sh_type)},
   flags_{header->sh_flags},
   original_size_{header->sh_size},
+  content_size_{header->sh_size},
   link_{header->sh_link},
   info_{header->sh_info},
   address_align_{header->sh_addralign},
@@ -67,6 +68,7 @@ Section::Section(const Elf32_Shdr* header) :
   type_{static_cast<ELF_SECTION_TYPES>(header->sh_type)},
   flags_{header->sh_flags},
   original_size_{header->sh_size},
+  content_size_{header->sh_size},
   link_{header->sh_link},
   info_{header->sh_info},
   address_align_{header->sh_addralign},
@@ -86,6 +88,7 @@ Section::Section(void) :
   type_{ELF_SECTION_TYPES::SHT_PROGBITS},
   flags_{0},
   original_size_{0},
+  content_size_{0},
   link_{0},
   info_{0},
   address_align_{0x1000},
@@ -106,6 +109,7 @@ Section::Section(const std::string& name, ELF_SECTION_TYPES type) :
   type_{type},
   flags_{0},
   original_size_{0},
+  content_size_{0},
   link_{0},
   info_{0},
   address_align_{0x1000},
@@ -137,6 +141,7 @@ Section::Section(const Section& other) :
   type_{other.type_},
   flags_{other.flags_},
   original_size_{other.original_size_},
+  content_size_{other.content_size_},
   link_{other.link_},
   info_{other.info_},
   address_align_{other.address_align_},
@@ -204,6 +209,10 @@ uint64_t Section::original_size(void) const {
   return this->original_size_;
 }
 
+uint64_t Section::content_size(void) const {
+  return this->content_size_;
+}
+
 uint64_t Section::information(void) const {
   return this->info_;
 }
@@ -235,6 +244,9 @@ void Section::size(uint64_t size) {
   this->size_ = size;
 }
 
+void Section::content_size(uint64_t size){
+  this->content_size_ = size;
+}
 
 void Section::offset(uint64_t offset) {
   if (this->datahandler_ != nullptr) {
@@ -264,7 +276,7 @@ std::vector<uint8_t> Section::content(void) const {
 
   DataHandler::Node& node = this->datahandler_->get(this->offset(), this->size(), DataHandler::Node::SECTION);
   const std::vector<uint8_t>& binary_content = this->datahandler_->content();
-  return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
+  return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + this->content_size()};
 }
 
 uint32_t Section::link(void) const {
@@ -288,6 +300,8 @@ void Section::content(const std::vector<uint8_t>& content) {
                  << this->name() << "' which has SHT_NOBITS type !" << std::endl;
   }
 
+  this->content_size(content.size());
+
   if (this->datahandler_ == nullptr) {
     VLOG(VDEBUG) << "Set content in the cache";
     this->content_c_ = content;
@@ -309,10 +323,10 @@ void Section::content(const std::vector<uint8_t>& content) {
 
   if (node.size() < content.size()) {
     LOG(WARNING) << "You inserted data in section '"
-                 << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
-  }
+                 << this->name() << "' It may lead to overlay! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
 
-  this->size(content.size());
+    this->size(content.size());
+  }
 
   std::copy(
       std::begin(content),
@@ -327,6 +341,8 @@ void Section::content(std::vector<uint8_t>&& content) {
     LOG(WARNING) << "You inserted data (" << std::hex << content.size() << ") in section '"
                  << this->name() << "' which has SHT_NOBITS type !" << std::endl;
   }
+
+  this->content_size(content.size());
 
   if (this->datahandler_ == nullptr) {
     VLOG(VDEBUG) << "Set content in the cache";
@@ -350,10 +366,10 @@ void Section::content(std::vector<uint8_t>&& content) {
 
   if (node.size() < content.size()) {
     LOG(WARNING) << "You inserted data in section '"
-                 << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
+                 << this->name() << "' It may lead to overlay! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
+    this->size(content.size());
   }
 
-  this->size(content.size());
 
   std::move(
       std::begin(content),
