@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <set>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -127,6 +128,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
     MACHO_TYPES                   type_;
     bool                          is64_;
     ParserConfig                  config_;
+    std::set<uint64_t>            visited_;
 };
 
 
