@@ -1323,7 +1323,7 @@ Section& Binary::extend(const Section& section, uint64_t size) {
   Section* section_to_extend = *it_section;
 
   uint64_t from_offset  = section_to_extend->offset() + section_to_extend->size();
-  uint64_t from_address = section_to_extend->virtual_address() + size;
+  uint64_t from_address = section_to_extend->virtual_address() + section_to_extend->size();
   uint64_t shift        = size;
 
   this->datahandler_->make_hole(
