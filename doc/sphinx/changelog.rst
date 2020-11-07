@@ -5,7 +5,9 @@ Changelog
 ---------------------
 
 :ELF:
-  * Fix reconstruction issue when the binary is prelinked (cf. `issue #465 <https://github.com/lief-project/LIEF/issues/466>`_)
+  * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. `issue #477 <https://github.com/lief-project/LIEF/issues/477>`_)
+  * Fix issue when exporting symbols on empty-gnu-hash ELF binary (:commit:`1381f9a115e6e312ac0ab3deb46a78e481b81796`)
+  * Fix reconstruction issue when the binary is prelinked (cf. `issue #466 <https://github.com/lief-project/LIEF/issues/466>`_)
   * Add ``DF_1_PIE`` flag
   * Fix parsing issue of the ``.eh_frame`` section when the base address is not 0.
   * :github_user:`JanuszL` enhanced the algorithm that computes the string table.
@@ -22,6 +24,7 @@ Changelog
 
 :Mach-O:
   * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (`issues/476 <https://github.com/lief-project/LIEF/issues/476>`_)
+  * Fix issue when parsing twice a Mach-O file (`issues/479 <https://github.com/lief-project/LIEF/issues/479>`_)
 
 :Dependencies:
   * Upgrade ``easyloggingpp`` to 9.96.7
@@ -36,8 +39,6 @@ Changelog
 
 :Misc:
   * Add Python 3.9 support
-
-
 
 
 0.10.1 - November 29, 2019

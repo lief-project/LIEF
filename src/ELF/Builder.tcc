@@ -884,13 +884,11 @@ void Builder::build_symbol_gnuhash(void) {
 
   const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
   if (filters.size() > 0 and filters[0] == 0) {
-    VLOG(VDEBUG) << "Bloom filter is null: nothing to do!";
-    return;
+    VLOG(VDEBUG) << "Bloom filter is null";
   }
 
   if (shift2 == 0) {
-    VLOG(VDEBUG) << "Shift2 is null: nothing to do!";
-    return;
+    VLOG(VDEBUG) << "Shift2 is null";
   }
 
   VLOG(VDEBUG) << "Number of buckets " << std::dec << nb_buckets;
