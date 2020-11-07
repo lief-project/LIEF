@@ -220,7 +220,8 @@ enum _LIEF_EN(ARCH) {
   _LIEF_EI(EM_COOL)          = 217, /**< iCelero CoolEngine */
   _LIEF_EI(EM_NORC)          = 218, /**< Nanoradio Optimized RISC */
   _LIEF_EI(EM_CSR_KALIMBA)   = 219, /**< CSR Kalimba architecture family */
-  _LIEF_EI(EM_AMDGPU)        = 224  /**< AMD GPU architecture */
+  _LIEF_EI(EM_AMDGPU)        = 224, /**< AMD GPU architecture */
+  _LIEF_EI(EM_BPF)           = 247  /**< eBPF Filter */
 };
 
 
