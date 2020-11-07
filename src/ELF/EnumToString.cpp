@@ -60,7 +60,7 @@ const char* to_string(VERSION e) {
 
 
 const char* to_string(ARCH e) {
-  CONST_MAP(ARCH, const char*, 175) enumStrings {
+  CONST_MAP(ARCH, const char*, 176) enumStrings {
     { ARCH::EM_NONE,          "None" },
     { ARCH::EM_M32,           "M32"},
     { ARCH::EM_SPARC,         "SPARC"},
@@ -235,7 +235,8 @@ const char* to_string(ARCH e) {
     { ARCH::EM_COOL,          "COOL"},
     { ARCH::EM_NORC,          "NORC"},
     { ARCH::EM_CSR_KALIMBA,   "CSR_KALIMBA"},
-    { ARCH::EM_AMDGPU,        "AMDGPU"}
+    { ARCH::EM_AMDGPU,        "AMDGPU"},
+    { ARCH::EM_BPF,           "BPF"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
