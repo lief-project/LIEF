@@ -19,7 +19,7 @@
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 

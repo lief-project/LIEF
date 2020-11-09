@@ -17,7 +17,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
@@ -159,7 +159,7 @@ void DyldInfo::rebase_opcodes(const buffer_t& raw) {
 
 std::string DyldInfo::show_rebases_opcodes(void) const {
   if (not this->binary_) {
-    LOG(WARNING) << "Can't print rebase opcode";
+    LIEF_WARN("Can't print rebase opcode");
     return "";
   }
 
@@ -392,7 +392,7 @@ std::string DyldInfo::show_bind_opcodes(void) const {
 
 void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes, bool is_lazy) const {
   if (not this->binary_) {
-    LOG(WARNING) << "Can't print bind opcodes";
+    LIEF_WARN("Can't print bind opcodes");
     return;
   }
 
@@ -663,7 +663,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
       default:
         {
-          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -744,7 +744,7 @@ buffer_t& DyldInfo::export_trie(void) {
 
 std::string DyldInfo::show_export_trie(void) const {
   if (not this->binary_) {
-    LOG(WARNING) << "Can't print bind opcodes";
+    LIEF_WARN("Can't print bind opcodes");
     return "";
   }
 
@@ -1164,7 +1164,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
 
       default:
         {
-          LOG(FATAL) << "Unknown opcode: " << std::hex << std::showbase << static_cast<uint32_t>(inst.opcode);
+          LIEF_ERR("Unknown opcode: 0x{:x}", static_cast<uint32_t>(inst.opcode));
         }
     }
 
@@ -1488,7 +1488,11 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
   for (BindingInfo* info : bindings) {
 
     SegmentCommand* segment = this->binary_->segment_from_virtual_address(info->address());
-    CHECK_NE(segment, nullptr);
+    if (segment == nullptr) {
+      LIEF_WARN("Can't find segment associated with binding info");
+      continue;
+    }
+
 
     size_t index = this->binary_->segment_index(*segment);
 

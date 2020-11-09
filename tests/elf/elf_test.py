@@ -1,23 +1,20 @@
 #!/usr/bin/env python
-import unittest
-import lief
-import tempfile
-import sys
-import subprocess
-import stat
-import os
-import logging
-import random
 import itertools
-
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.WARNING)
-#Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
-
+import logging
+import os
+import random
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
 from subprocess import Popen
-
 from unittest import TestCase
+
+import lief
 from utils import get_sample, has_recent_glibc
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 class TestELF(TestCase):
 
@@ -289,4 +286,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -25,7 +25,7 @@ namespace ART {
 
 template<typename ART_T>
 void Parser::parse_file(void) {
-  VLOG(VDEBUG) << "Parsing ART version " << std::dec << ART_T::art_version;
+  LIEF_DEBUG("Parsing ART version {}", ART_T::art_version);
   /* const size_t ptr_size = */ this->parse_header<ART_T>();
 }
 
@@ -35,7 +35,7 @@ size_t Parser::parse_header(void) {
 
   const art_header_t& hdr = this->stream_->peek<art_header_t>(0);
   this->imagebase_ = hdr.image_begin;
-  CHECK_EQ(hdr.patch_delta, 0);
+
   if (hdr.pointer_size != sizeof(uint32_t) and hdr.pointer_size != sizeof(uint64_t)) {
     throw corrupted("Wrong pointer size!");
   }

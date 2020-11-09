@@ -11,10 +11,6 @@ import traceback
 import lief
 from lief import VDEX, DEX
 
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
-
-
 EXIT_STATUS = 0
 terminal_rows, terminal_columns = 100, 100
 try:
@@ -71,8 +67,6 @@ def print_header(vdexfile):
     header = vdexfile.header
     print(header)
 
-
-
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] VDEX files')
     parser.add_argument('-a', '--all',
@@ -86,9 +80,45 @@ def main():
     parser.add_argument("file",
             metavar="<dex-file>",
             help='Target DEX File')
+    # Logging setup
+    logger_group = parser.add_argument_group('Logger')
+    verbosity = logger_group.add_mutually_exclusive_group()
+
+    verbosity.add_argument('--debug',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.DEBUG)
+
+    verbosity.add_argument('--trace',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.TRACE)
+
+    verbosity.add_argument('--info',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.INFO)
+
+    verbosity.add_argument('--warn',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.WARNING)
+
+    verbosity.add_argument('--err',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.ERROR)
+
+    verbosity.add_argument('--critical',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.CRITICAL)
+
+    parser.set_defaults(main_verbosity=lief.logging.LOGGING_LEVEL.WARNING)
 
     args = parser.parse_args()
 
+    lief.logging.set_level(args.main_verbosity)
 
     vdexfile = None
     try:

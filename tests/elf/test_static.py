@@ -1,19 +1,18 @@
 #!/usr/bin/env python
-import unittest
 import logging
 import os
-import sys
-import subprocess
-import tempfile
 import shutil
-import lief
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
-
+import subprocess
+import sys
+import tempfile
+import unittest
 from subprocess import Popen
 from unittest import TestCase
 
+import lief
 from utils import get_compiler
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 BINADD_C = """\
 #include <stdio.h>
@@ -156,4 +155,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

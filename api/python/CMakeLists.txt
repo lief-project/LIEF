@@ -85,8 +85,6 @@ target_include_directories(pyLIEF SYSTEM PRIVATE
   "${PYTHON_INCLUDE_DIR}"
   "${PYBIND11_SOURCE_DIR}/include")
 
-add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
-
 include("${CMAKE_CURRENT_SOURCE_DIR}/Abstract/CMakeLists.txt")
 
 if(LIEF_ELF)
@@ -122,12 +120,17 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/platforms/CMakeLists.txt")
 
 target_compile_features(pyLIEF PRIVATE cxx_attribute_deprecated)
 
-set_property(TARGET pyLIEF PROPERTY CXX_STANDARD          11)
-set_property(TARGET pyLIEF PROPERTY CXX_STANDARD_REQUIRED ON)
+set_target_properties(pyLIEF PROPERTIES
+  POSITION_INDEPENDENT_CODE    ON
+  CXX_STANDARD                 11
+  CXX_STANDARD_REQUIRED        ON
+  CXX_VISIBILITY_PRESET        hidden
+  C_VISIBILITY_PRESET          hidden
+)
 
 if (MSVC)
   target_compile_options(pyLIEF PUBLIC /FIiso646.h)
-	set_property(TARGET pyLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+  set_property(TARGET pyLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHON_VERSION})

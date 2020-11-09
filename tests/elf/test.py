@@ -1,8 +1,7 @@
 import lief
-
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
 from lief.ELF import Section
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 ls   = lief.parse("/home/romain/dev/LIEF/lief-samples/ELF/ELF64_x86-64_binary_static-binary.bin")
 stub = lief.parse("hello_lief.bin")

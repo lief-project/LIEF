@@ -170,26 +170,22 @@ set(mbedtls_src_tls
 
 #set_source_files_properties("${MBEDTLS_SOURCE_DIR}/library/bignum.c" PROPERTIES COMPILE_FLAGS -Wno-overlength-strings)
 
-# easyloggingpp
-# -------------
-if (LIEF_LOGGING)
-  set(ELG_VERSION 9.96.7)
-  set(ELG_SHA256 SHA256=2adc3d01c2717a591fc8f61412ae3ceae85a84c872e701b26b706005579aa940)
-  set(ELG_URL "${THIRD_PARTY_DIRECTORY}/easyloggingpp-${ELG_VERSION}.zip" CACHE STRING "URL to the easyloggingpp lib repo")
-  ExternalProject_Add(lief_easyloggingpp
-    URL               ${ELG_URL}
-    URL_HASH          ${ELG_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
+set(SPDLOG_VERSION 1.8.1)
+set(SPDLOG_SHA256 SHA256=eed0095a1d52d08a0834feda146d4f9148fa4125620cd04d8ea57e0238fa39cd)
+set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog lib repo")
+ExternalProject_Add(lief_spdlog
+  URL               ${SPDLOG_URL}
+  URL_HASH          ${SPDLOG_SHA256}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  UPDATE_COMMAND    ""
+  INSTALL_COMMAND   "")
 
-  ExternalProject_get_property(lief_easyloggingpp SOURCE_DIR)
-  set(ELG_SOURCE_DIR "${SOURCE_DIR}/src")
-endif()
+ExternalProject_get_property(lief_spdlog SOURCE_DIR)
+set(SPDLOG_SOURCE_DIR "${SOURCE_DIR}")
 
 # Fuzzing
-# ~~~~~~~
+# ~~~~~~~
 set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O1)
 set(FUZZING_LINKER_FLAGS)
 

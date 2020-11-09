@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <functional>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 
@@ -110,7 +110,7 @@ bool Parser::should_swap(void) const {
 }
 
 void Parser::init(const std::string& name) {
-  VLOG(VDEBUG) << "Parsing binary: " << name << std::endl;
+  LIEF_DEBUG("Parsing binary: {}", name);
 
   try {
     this->binary_->original_size_ = this->binary_size_;
@@ -142,14 +142,14 @@ void Parser::init(const std::string& name) {
         throw LIEF::corrupted("e_ident[EI_CLASS] corrupted");
     }
   } catch (const std::exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
     //delete this->binary_;
   }
 }
 
 std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
   if (not is_elf(filename)) {
-    LOG(ERROR) << filename << " is not an ELF";
+    LIEF_ERR("{} is not an ELF", filename);
     return nullptr;
   }
 
@@ -163,7 +163,7 @@ std::unique_ptr<Binary> Parser::parse(
     DYNSYM_COUNT_METHODS count_mtd) {
 
   if (not is_elf(data)) {
-    LOG(ERROR) << "'" << name << "' is not an ELF";
+    LIEF_ERR("{} is not an ELF", name);
     return nullptr;
   }
 
@@ -173,9 +173,8 @@ std::unique_ptr<Binary> Parser::parse(
 
 
 void Parser::parse_symbol_version(uint64_t symbol_version_offset) {
-  VLOG(VDEBUG) << "[+] Parsing symbol version" << std::endl;
-
-  VLOG(VDEBUG) << "Symbol version offset: 0x" << std::hex << symbol_version_offset << std::endl;
+  LIEF_DEBUG("== Parsing symbol version ==");
+  LIEF_DEBUG("Symbol version offset: 0x{:x}", symbol_version_offset);
 
   const uint32_t nb_entries = static_cast<uint32_t>(this->binary_->dynamic_symbols_.size());
 
@@ -266,7 +265,6 @@ uint64_t Parser::get_dynamic_string_table(void) const {
   if (offset == 0) {
     offset = this->get_dynamic_string_table_from_sections();
   }
-  CHECK_NE(offset, 0);
   return offset;
 }
 
@@ -280,15 +278,14 @@ void Parser::link_symbol_version(void) {
 }
 
 void Parser::parse_symbol_sysv_hash(uint64_t offset) {
-
-  VLOG(VDEBUG) << "[+] Parse symbol SYSV hash";
+  LIEF_DEBUG("== Parse SYSV hash table ==");
   SysvHash sysvhash;
 
   this->stream_->setpos(offset);
   std::unique_ptr<uint32_t[]> header = this->stream_->read_conv_array<uint32_t>(2, /* check */false);
 
   if (header == nullptr) {
-    LOG(ERROR) << "Can't read SYSV Hash header";
+    LIEF_ERR("Can't read SYSV hash table header");
     return;
   }
 
@@ -322,7 +319,7 @@ void Parser::parse_symbol_sysv_hash(uint64_t offset) {
 }
 
 void Parser::parse_notes(uint64_t offset, uint64_t size) {
-  VLOG(VDEBUG) << "Parsing Note segment";
+  LIEF_DEBUG("== Parsing note segment ==");
 
   this->stream_->setpos(offset);
   uint64_t last_offset = offset + size;
@@ -332,7 +329,7 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
       break;
     }
     uint32_t namesz = this->stream_->read_conv<uint32_t>();
-    VLOG(VDEBUG) << "Name size: " << std::hex << namesz;
+    LIEF_DEBUG("Name size: 0x{:x}", namesz);
 
 
     if (not this->stream_->can_read<uint32_t>()) {
@@ -340,20 +337,20 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     }
     uint32_t descsz = std::min(this->stream_->read_conv<uint32_t>(), Parser::MAX_NOTE_DESCRIPTION);
 
-    VLOG(VDEBUG) << "Description size: " << std::hex << descsz;
+    LIEF_DEBUG("Description size: 0x{:x}", descsz);
 
     if (not this->stream_->can_read<uint32_t>()) {
       break;
     }
     NOTE_TYPES type = static_cast<NOTE_TYPES>(this->stream_->read_conv<uint32_t>());
-    VLOG(VDEBUG) << "Type: " << std::hex << static_cast<size_t>(type);
+    LIEF_DEBUG("Type: 0x{:x}", static_cast<size_t>(type));
 
     if (namesz == 0) { // System reserves
       break;
     }
 
     std::string name = this->stream_->read_string(namesz);
-    VLOG(VDEBUG) << "Name: " << name << std::endl;
+    LIEF_DEBUG("Name: {}", name);
     this->stream_->align(sizeof(uint32_t));
 
     std::vector<uint8_t> description;
@@ -402,13 +399,12 @@ void Parser::parse_overlay(void) {
     return;
   }
 
-  LOG(INFO) << "Overlay detected at " << std::hex << std::showbase << last_offset << " ("
-             << std::dec << overlay_size << " bytes)" << std::endl;
+  LIEF_INFO("Overlay detected at 0x{:x} ({} bytes)", last_offset, overlay_size);
 
   const uint8_t* overlay = this->stream_->peek_array<uint8_t>(last_offset, overlay_size, /* check */ false);
 
   if (overlay == nullptr) {
-    LOG(WARNING) << "Can't read overlay data";
+    LIEF_WARN("Can't read overlay data");
     return;
   }
   this->binary_->overlay_ = {overlay, overlay + overlay_size};

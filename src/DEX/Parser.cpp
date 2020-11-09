@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/DEX/Parser.hpp"
 #include "LIEF/DEX/utils.hpp"
@@ -46,7 +46,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
 {
   if (not is_dex(data)) {
-    LOG(FATAL) << "'" + name + "' is not a DEX";
+    LIEF_ERR("'{}' is not a DEX File", name);
     delete this->file_;
     this->file_ = nullptr;
     return;
@@ -61,7 +61,7 @@ Parser::Parser(const std::string& file) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
 {
   if (not is_dex(file)) {
-    LOG(FATAL) << "'" + file + "' is not a DEX";
+    LIEF_ERR("'{}' is not a DEX File", file);
     delete this->file_;
     this->file_ = nullptr;
     return;
@@ -73,7 +73,7 @@ Parser::Parser(const std::string& file) :
 
 
 void Parser::init(const std::string& name, dex_version_t version) {
-  LOG(DEBUG) << "Parsing file: " << name << std::endl;
+  LIEF_DEBUG("Parsing file: {}", name);
 
   if (version == DEX_35::dex_version) {
     return this->parse_file<DEX35>();
@@ -94,8 +94,7 @@ void Parser::init(const std::string& name, dex_version_t version) {
 }
 
 void Parser::resolve_inheritance(void) {
-  VLOG(VDEBUG) << "Resolving inheritance relationship for "
-               << std::dec << this->inheritance_.size() << " classes";
+  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", this->inheritance_.size());
 
   for (const std::pair<const std::string, Class*>& p : this->inheritance_) {
     const std::string& parent_name = p.first;
@@ -113,8 +112,7 @@ void Parser::resolve_inheritance(void) {
 }
 
 void Parser::resolve_external_methods(void) {
-  VLOG(VDEBUG) << "Resolving external methods for "
-               << std::dec << this->class_method_map_.size() << " methods";
+  LIEF_DEBUG("Resolving external methods for #{:d} methods", this->class_method_map_.size());
 
   for (const std::pair<const std::string, Method*>& p : this->class_method_map_) {
     const std::string& clazz = p.first;

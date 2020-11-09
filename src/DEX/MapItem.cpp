@@ -17,7 +17,7 @@
 
 #include "LIEF/DEX/MapItem.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/DEX/EnumToString.hpp"
 

@@ -17,7 +17,7 @@
 #include "LIEF/MachO/Structures.hpp"
 
 #include "LIEF/exception.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include <fstream>
 #include <iterator>
@@ -31,7 +31,7 @@ namespace MachO {
 bool is_macho(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
   if (not binary) {
-    LOG(ERROR) << "Unable to open the '" << file << "'";
+    LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
 
@@ -39,16 +39,12 @@ bool is_macho(const std::string& file) {
   binary.seekg(0, std::ios::beg);
   binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
 
-  if (magic == MACHO_TYPES::MH_MAGIC or
-      magic == MACHO_TYPES::MH_CIGAM or
-      magic == MACHO_TYPES::MH_MAGIC_64 or
-      magic == MACHO_TYPES::MH_CIGAM_64 or
-      magic == MACHO_TYPES::FAT_MAGIC or
-      magic == MACHO_TYPES::FAT_CIGAM)
-  {
-    return true;
-  }
-  return false;
+  return (magic == MACHO_TYPES::MH_MAGIC or
+          magic == MACHO_TYPES::MH_CIGAM or
+          magic == MACHO_TYPES::MH_MAGIC_64 or
+          magic == MACHO_TYPES::MH_CIGAM_64 or
+          magic == MACHO_TYPES::FAT_MAGIC or
+          magic == MACHO_TYPES::FAT_CIGAM);
 }
 
 bool is_macho(const std::vector<uint8_t>& raw) {
@@ -78,14 +74,14 @@ bool is_macho(const std::vector<uint8_t>& raw) {
 
 bool is_fat(const std::string& file) {
   if (not is_macho(file)) {
-    LOG(ERROR) << "'" << file << "' is not a MachO";
+    LIEF_ERR("'{}' is not a MachO", file);
     return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
   if (not binary) {
-    LOG(ERROR) << "Unable to open the '" << file << "'";
+    LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
 
@@ -104,14 +100,14 @@ bool is_fat(const std::string& file) {
 
 bool is_64(const std::string& file) {
  if (not is_macho(file)) {
-    LOG(ERROR) << "'" << file << "' is not a MachO";
+    LIEF_ERR("'{}' is not a MachO", file);
     return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
   if (not binary) {
-    LOG(ERROR) << "Unable to open the '" << file << "'";
+    LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
 
@@ -131,7 +127,7 @@ bool is_64(const std::string& file) {
 
 bool check_layout(const Binary& binary, std::string* error) {
   if (binary.has_dyld_info() and not binary.has_segment("__LINKEDIT")) {
-    if (error) {
+    if (error != nullptr) {
       *error = "No __LINKEDIT segment";
     }
     return false;

@@ -14,124 +14,138 @@
  * limitations under the License.
  */
 
+#include <map>
 #include "LIEF/config.h"
 #include "LIEF/logging.hpp"
-#include "LIEF/logging++.hpp"
-#include <map>
+#include "logging.hpp"
 
-#if defined(LIEF_LOGGING_SUPPORT)
-INITIALIZE_EASYLOGGINGPP
-#endif
-
-static LIEF::Logger logger;
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace LIEF {
+namespace logging {
 
-const char* logging_config = R"config(
-* GLOBAL:
-   FORMAT               = "%msg"
-   ENABLED              = true
-   TO_STANDARD_OUTPUT   = true
-   TO_FILE              = false
-   PERFORMANCE_TRACKING = true
+Logger* Logger::instance_ = nullptr;
 
-* DEBUG:
-   FORMAT  = "%func %msg"
-   Enabled = true
-)config";
+Logger::Logger(Logger&&) = default;
+Logger& Logger::operator=(Logger&&) = default;
+Logger::~Logger() = default;
 
-const char* logging_config_disabled = R"config(
-* GLOBAL:
-   FORMAT               = "%msg"
-   ENABLED              = false
-   TO_STANDARD_OUTPUT   = false
-   TO_FILE              = false
-   PERFORMANCE_TRACKING = false
+Logger::Logger(void) {
+  // TODO(romain): Handle Android logcat sink
+  if /* constexpr */ (lief_logging_support) {
+    this->sink_ = spdlog::stdout_color_mt("console");
 
-* DEBUG:
-   FORMAT  = "%func %msg"
-   Enabled = false
-)config";
+    this->sink_->set_level(spdlog::level::warn);
+    this->sink_->set_pattern("%v");
+    this->sink_->flush_on(spdlog::level::warn);
+  }
+}
 
-
+Logger& Logger::instance() {
+  if (instance_ == nullptr) {
+    instance_ = new Logger{};
+    std::atexit(destroy);
+  }
+  return *instance_;
+}
 
 
-Logger::~Logger(void) = default;
+void Logger::destroy(void) {
+  delete instance_;
+}
 
 const char* to_string(LOGGING_LEVEL e) {
   const std::map<LOGGING_LEVEL, const char*> enumStrings {
-    { LOGGING_LEVEL::LOG_GLOBAL,   "GLOBAL"  },
-    { LOGGING_LEVEL::LOG_TRACE,    "TRACE"   },
-    { LOGGING_LEVEL::LOG_DEBUG,    "DEBUG"   },
-    { LOGGING_LEVEL::LOG_FATAL,    "FATAL"   },
-    { LOGGING_LEVEL::LOG_ERROR,    "ERROR"   },
-    { LOGGING_LEVEL::LOG_WARNING,  "WARNING" },
-    { LOGGING_LEVEL::LOG_INFO,     "INFO"    },
-    { LOGGING_LEVEL::LOG_VERBOSE,  "VERBOSE" },
-    { LOGGING_LEVEL::LOG_UNKNOWN,  "UNKNOWN" },
+    { LOGGING_LEVEL::LOG_TRACE,   "TRACE"    },
+    { LOGGING_LEVEL::LOG_DEBUG,   "DEBUG"    },
+    { LOGGING_LEVEL::LOG_INFO,    "INFO"     },
+    { LOGGING_LEVEL::LOG_ERR,     "ERROR"    },
+    { LOGGING_LEVEL::LOG_WARN,    "WARNING"  },
+    { LOGGING_LEVEL::LOG_CRITICAL,"CRITICAL" },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-Logger::Logger(void)
-{
-#if defined(LIEF_LOGGING_SUPPORT)
-  (void)el::Loggers::getLogger("default");
-  this->enable();
-  this->disable();
-#endif
-}
-
 
 void Logger::disable(void) {
-#if defined(LIEF_LOGGING_SUPPORT)
-  el::Loggers::setLoggingLevel(el::Level::Unknown);
-  el::Configurations conf;
-  conf.setToDefault();
-  conf.parseFromText(logging_config_disabled);
-  el::Loggers::reconfigureAllLoggers(conf);
-#endif
+  if /* constexpr */ (lief_logging_support) {
+    Logger::instance().sink_->set_level(spdlog::level::off);
+  }
 }
 
 void Logger::enable(void) {
-#if defined(LIEF_LOGGING_SUPPORT)
-  el::Configurations conf;
-  conf.setToDefault();
-  conf.parseFromText(logging_config);
-  el::Loggers::setDefaultConfigurations(conf, true);
-
-  el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
-  el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-  el::Loggers::addFlag(el::LoggingFlag::ImmediateFlush);
-  el::Loggers::addFlag(el::LoggingFlag::CreateLoggerAutomatically);
-  el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
-  el::Loggers::setLoggingLevel(el::Level::Fatal);
-#endif
+  if /* constexpr */ (lief_logging_support) {
+    Logger::instance().sink_->set_level(spdlog::level::warn);
+  }
 }
-
-
-void Logger::set_verbose_level(uint32_t level) {
-
-#if defined(LIEF_LOGGING_SUPPORT)
-  Logger::enable();
-  el::Loggers::setVerboseLevel(level);
-#endif
-}
-
 
 void Logger::set_level(LOGGING_LEVEL level) {
-
-#if defined(LIEF_LOGGING_SUPPORT)
-  Logger::enable();
-  el::Loggers::setLoggingLevel(static_cast<el::Level>(level));
-
-  if (level == LOGGING_LEVEL::LOG_DEBUG) {
-    set_verbose_level(VDEBUG);
+  if /* constexpr */ (not lief_logging_support) {
+    return;
   }
-#endif
+  switch (level) {
+    case LOG_TRACE:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::trace);
+        Logger::instance().sink_->flush_on(spdlog::level::trace);
+        break;
+      }
+
+    case LOG_DEBUG:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::debug);
+        Logger::instance().sink_->flush_on(spdlog::level::debug);
+        break;
+      }
+
+    case LOG_INFO:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::info);
+        Logger::instance().sink_->flush_on(spdlog::level::info);
+        break;
+      }
+
+    default:
+    case LOG_WARN:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::warn);
+        Logger::instance().sink_->flush_on(spdlog::level::warn);
+        break;
+      }
+
+    case LOG_ERR:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::err);
+        Logger::instance().sink_->flush_on(spdlog::level::err);
+        break;
+      }
+
+    case LOG_CRITICAL:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::critical);
+        Logger::instance().sink_->flush_on(spdlog::level::critical);
+        break;
+      }
+  }
 }
 
+// Public interface
+
+void disable(void) {
+  Logger::disable();
+}
+
+void enable(void) {
+  Logger::enable();
+}
+
+void set_level(LOGGING_LEVEL level) {
+  Logger::set_level(level);
+}
+
+}
 }
 
 

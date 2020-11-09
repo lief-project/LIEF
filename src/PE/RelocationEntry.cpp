@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/PE/hash.hpp"
 
@@ -111,7 +111,7 @@ uint64_t RelocationEntry::address(void) const {
 }
 
 void RelocationEntry::address(uint64_t /*address*/) {
-  LOG(WARNING) << "Setting address of a PE relocation is not implemented!";
+  LIEF_WARN("Setting address of a PE relocation is not implemented!");
 }
 
 size_t RelocationEntry::size(void) const {
@@ -145,7 +145,7 @@ size_t RelocationEntry::size(void) const {
   return 0;
 }
 void RelocationEntry::size(size_t /*size*/) {
-  LOG(WARNING) << "Setting size of a PE relocation is not implemented!";
+  LIEF_WARN("Setting size of a PE relocation is not implemented!");
 
 }
 

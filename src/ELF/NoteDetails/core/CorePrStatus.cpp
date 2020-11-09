@@ -20,7 +20,7 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "CorePrStatus.tcc"
 
@@ -139,7 +139,7 @@ uint64_t CorePrStatus::pc(void) const {
 
     default:
       {
-        LOG(WARNING) << to_string(arch) << " not supported";
+        LIEF_WARN("{} not supported", to_string(arch));
         return 0;
       }
   }
@@ -170,7 +170,7 @@ uint64_t CorePrStatus::sp(void) const {
 
     default:
       {
-        LOG(WARNING) << to_string(arch) << " not supported";
+        LIEF_WARN("{} not supported", to_string(arch));
         return 0;
       }
   }
@@ -393,7 +393,7 @@ std::pair<size_t, size_t> CorePrStatus::reg_enum_range(void) const {
 
     default:
       {
-        LOG(WARNING) << to_string(arch) << " not supported";
+        LIEF_WARN("{} not supported", to_string(arch));
       }
   }
   return {enum_start, enum_end};

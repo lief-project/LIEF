@@ -20,7 +20,7 @@
 
 #include "rang.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 #include "LIEF/PE/hash.hpp"
@@ -431,11 +431,11 @@ ResourceVersion ResourcesManager::version(void) const {
   stream.setpos(0);
   // Size of the current "struct"
   const uint16_t length = stream.read<uint16_t>();
-  VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << length;
+  LIEF_DEBUG("Lenght of the struct: 0x{:x}", length);
 
   // Size of the fixed file info struct
   const uint16_t value_length = stream.read<uint16_t>();
-  VLOG(VDEBUG) << "Size of the 'FixedFileInfo' struct" << std::hex << value_length;
+  LIEF_DEBUG("Size of the 'FixedFileInfo' struct 0x{:x}", value_length);
 
   // Type of the data in the version resource
   // 1: Text data
@@ -443,14 +443,14 @@ ResourceVersion ResourcesManager::version(void) const {
   const uint16_t type = stream.read<uint16_t>();
   version.type_ = type;
   if (type != 0 and type != 1) {
-    LOG(WARNING) << "\"type\" of the resource version should be equal to 0 or 1 (" << std::dec << type << ")";
+    LIEF_WARN("\"type\" of the resource version should be equal to 0 or 1 ({:d})", type);
   }
 
 
   // Magic key: VS_VERSION_INFO
   std::u16string key = stream.read_u16string();
   if (u16tou8(key, true) != "VS_VERSION_INFO") {
-    LOG(WARNING) << "\"key\" of the resource version should be equal to 'VS_VERSION_INFO' (" << u16tou8(key) << ")";
+    LIEF_WARN("\"key\" of the resource version should be equal to 'VS_VERSION_INFO' ({})", u16tou8(key));
   }
 
   version.key_ = key;
@@ -460,27 +460,27 @@ ResourceVersion ResourcesManager::version(void) const {
     if (value_length == sizeof(pe_resource_fixed_file_info)) {
       const pe_resource_fixed_file_info* fixed_file_info_header = &stream.peek<pe_resource_fixed_file_info>();
       if (fixed_file_info_header->signature != 0xFEEF04BD) {
-        LOG(WARNING) << "Bad magic value for the Fixed file info structure";
+        LIEF_WARN("Bad magic value for the Fixed file info structure");
       } else {
         version.fixed_file_info_ = ResourceFixedFileInfo{fixed_file_info_header};
         version.has_fixed_file_info_ = true;
       }
     } else {
-      LOG(WARNING) << "The 'value' member contains an unknown structure";
+      LIEF_WARN("The 'value' member contains an unknown structure");
     }
     stream.increment_pos(value_length * sizeof(uint8_t));
   }
   stream.align(sizeof(uint32_t));
 
   if (!stream.can_read<uint16_t>()) {
-    VLOG(VDEBUG) << "There is no entry";
+    LIEF_DEBUG("There is no entry");
     return version;
   }
 
   { // First entry
-    VLOG(VDEBUG) << "Parsing first entry";
+    LIEF_DEBUG("Parsing first entry");
     const uint16_t struct_file_info_length = stream.peek<uint16_t>();
-    VLOG(VDEBUG) << "Length: " << std::hex << struct_file_info_length;
+    LIEF_DEBUG("Length: 0x{:x}", struct_file_info_length);
 
     const size_t start = stream.pos();
 
@@ -488,19 +488,19 @@ ResourceVersion ResourcesManager::version(void) const {
       stream.increment_pos(sizeof(uint16_t));
 
       const uint16_t struct_length = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << struct_length;
+      LIEF_DEBUG("Lenght of the struct: 0x{:x}", struct_length);
 
       const uint16_t type = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Type of the struct: " << std::dec << type;
+      LIEF_DEBUG("Type of the struct: {:d}", type);
 
       std::u16string key = stream.read_u16string();
-      VLOG(VDEBUG) << "First entry (key) " << u16tou8(key);
+      LIEF_DEBUG("First entry (key) {}", u16tou8(key));
       if (u16tou8(key, true) == "StringFileInfo") {
         try {
           version.string_file_info_ = this->get_string_file_info(stream, type, key, start, struct_file_info_length);
           version.has_string_file_info_ = true;
         } catch (const LIEF::exception& e) {
-          LOG(ERROR) << e.what();
+          LIEF_ERR("{}", e.what());
         }
       }
 
@@ -509,7 +509,7 @@ ResourceVersion ResourcesManager::version(void) const {
           version.var_file_info_ = this->get_var_file_info(stream, type, key, start, struct_file_info_length);
           version.has_var_file_info_ = true;
         } catch (const LIEF::exception& e) {
-          LOG(ERROR) << e.what();
+          LIEF_ERR("{}", e.what());
         }
       }
     }
@@ -518,9 +518,9 @@ ResourceVersion ResourcesManager::version(void) const {
 
   { // Second entry
 
-    VLOG(VDEBUG) << "Parsing second entry";
+    LIEF_DEBUG("Parsing second entry");
     const uint16_t struct_file_info_length = stream.peek<uint16_t>();
-    VLOG(VDEBUG) << "Length: " << std::hex << struct_file_info_length;
+    LIEF_DEBUG("Length: 0x{:x}", struct_file_info_length);
 
     const size_t start = stream.pos();
 
@@ -528,21 +528,21 @@ ResourceVersion ResourcesManager::version(void) const {
       stream.increment_pos(sizeof(uint16_t));
 
       const uint16_t struct_length = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Lenght of the struct: 0x" << std::hex << struct_length;
+      LIEF_DEBUG("Lenght of the struct: 0x{:x}", struct_length);
 
       const uint16_t type = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Type of the struct: " << std::dec << type;
+      LIEF_DEBUG("Type of the struct: {:d}", type);
 
       std::u16string key = stream.read_u16string();
       stream.align(sizeof(uint32_t));
 
-      VLOG(VDEBUG) << "Second entry (key) " << u16tou8(key);
+      LIEF_DEBUG("Second entry (key) {}", u16tou8(key));
       if (u16tou8(key, true) == "StringFileInfo") {
         try {
           version.string_file_info_ = this->get_string_file_info(stream, type, key, start, struct_file_info_length);
           version.has_string_file_info_ = true;
         } catch (const LIEF::exception& e) {
-          LOG(ERROR) << e.what();
+          LIEF_ERR("{}", e.what());
         }
       }
 
@@ -551,7 +551,7 @@ ResourceVersion ResourcesManager::version(void) const {
           version.var_file_info_ = this->get_var_file_info(stream, type, key, start, struct_file_info_length);
           version.has_var_file_info_ = true;
         } catch (const LIEF::exception& e) {
-          LOG(ERROR) << e.what();
+          LIEF_ERR("{}", e.what());
         }
       }
     }
@@ -562,7 +562,7 @@ ResourceVersion ResourcesManager::version(void) const {
 
 
 ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream& stream, uint16_t type, std::u16string key, size_t start, size_t struct_length) const {
-  VLOG(VDEBUG) << "Getting StringFileInfo object";
+  LIEF_DEBUG("Getting StringFileInfo object");
 
   // String File Info
   // ================
@@ -574,7 +574,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
   // Parse 'StringTable' childs
   // ==========================
-  VLOG(VDEBUG) << "Parsing 'StringTable' struct";
+  LIEF_DEBUG("Parsing 'StringTable' struct");
   const size_t end_string_stable = start + struct_length * sizeof(uint8_t);
 
   while (stream.pos() < end_string_stable) {
@@ -587,32 +587,32 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
     const uint16_t stringtable_value_length = stream.read<uint16_t>();
 
-    VLOG(VDEBUG) << "Value length: " << std::dec << stringtable_value_length << " (should be 0)";
+    LIEF_DEBUG("Value length: {:d} (should be 0)", stringtable_value_length);
 
     const uint16_t stringtable_type = stream.read<uint16_t>();
-    VLOG(VDEBUG) << "Type: " << std::dec << stringtable_type;
+    LIEF_DEBUG("Type: {:d}", stringtable_type);
 
     // 1: Text data
     // 0: Binary data
     if (type != 0 and type != 1) {
-      LOG(WARNING) << "\"type\" of the StringTable should be equal to 0 or 1 (" << std::dec << type << ")";
+      LIEF_WARN("\"type\" of the StringTable should be equal to 0 or 1 ({:d})", type);
     }
     lang_code_item.type_ = type;
 
 
     std::u16string key = stream.read_u16string();
     lang_code_item.key_ = key;
-    VLOG(VDEBUG) << "ID: " << u16tou8(key);
+    LIEF_DEBUG("ID: {}", u16tou8(key));
 
     std::string key_str = u16tou8(key);
 
     if (key.length() != 8) {
-      LOG(ERROR) << "Corrupted key (" << u16tou8(key) << key_str << ")";
+      LIEF_ERR("Corrupted key ({} {})", u16tou8(key), key_str);
     } else {
       uint64_t lang_id   = std::stoul(u16tou8(key.substr(0, 4)), 0, 16);
       uint64_t code_page = std::stoul(u16tou8(key.substr(4, 8)), 0, 16);
-      VLOG(VDEBUG) << "Lang ID: "   << std::dec << lang_id;
-      VLOG(VDEBUG) << "Code page: " << std::hex << code_page;
+      LIEF_DEBUG("Lang ID: {:d}", lang_id);
+      LIEF_DEBUG("Code page: 0x{:x}", code_page);
     }
 
     stream.align(sizeof(uint32_t));
@@ -623,24 +623,24 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       const size_t string_offset = stream.pos();
 
       const uint16_t string_length = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Length of the 'string' struct: 0x" << std::hex << string_length;
+      LIEF_DEBUG("Length of the 'string' struct: 0x{:x}", string_length);
 
       const uint16_t string_value_length = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Size of the 'value' member: 0x" << std::hex << string_value_length;
+      LIEF_DEBUG("Size of the 'value' member: 0x{:x}", string_value_length);
 
       const uint16_t string_type = stream.read<uint16_t>();
-      VLOG(VDEBUG) << "Type of the 'string' struct: " << std::dec << string_type;
+      LIEF_DEBUG("Type of the 'string' struct: {:d}", string_type);
 
       std::u16string key = stream.read_u16string();
-      VLOG(VDEBUG) << "Key: " << u16tou8(key);
+      LIEF_DEBUG("Key: {}", u16tou8(key));
       stream.align(sizeof(uint32_t));
 
       std::u16string value;
       if (string_value_length > 0 && stream.pos() < string_offset + string_length) {
         value = stream.read_u16string();
-        VLOG(VDEBUG) << "Value: " << u16tou8(value);
+        LIEF_DEBUG("Value: {}", u16tou8(value));
       } else {
-        VLOG(VDEBUG) << "Value: (empty)";
+        LIEF_DEBUG("Value: (empty)");
       }
 
       const size_t expected_end = string_offset + string_length;
@@ -659,7 +659,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 
 
 ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stream, uint16_t type, std::u16string key, size_t start, size_t struct_length) const {
-  VLOG(VDEBUG) << "Getting VarFileInfo object";
+  LIEF_DEBUG("Getting VarFileInfo object");
   // Var file info
   // =============
   ResourceVarFileInfo var_file_info;
@@ -669,33 +669,33 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 
   // Parse 'Var' childs
   // ==================
-  VLOG(VDEBUG) << "Parsing 'Var' childs";
+  LIEF_DEBUG("Parsing 'Var' childs");
   const size_t end_var_file_info = start + struct_length * sizeof(uint8_t);
   while (stream.pos() < end_var_file_info) {
     const uint16_t var_length = stream.read<uint16_t>();
-    VLOG(VDEBUG) << "Size of the 'Var' struct: 0x" << std::hex << var_length;
+    LIEF_DEBUG("Size of the 'Var' struct: 0x{:d}", var_length);
 
     const uint16_t var_value_length = stream.read<uint16_t>();
-    VLOG(VDEBUG) << "Size of the 'Value' member: 0x" << std::hex << var_value_length;
+    LIEF_DEBUG("Size of the 'Value' member: 0x{:x}", var_value_length);
 
     const uint16_t var_type = stream.read<uint16_t>();
-    VLOG(VDEBUG) << "Type: " << std::dec << var_type;
+    LIEF_DEBUG("Type: {:d}", var_type);
 
     std::u16string key = stream.read_u16string();
     if (u16tou8(key) != "Translation") {
-      LOG(WARNING) << "\"key\" of the var key should be equal to 'Translation' (" << u16tou8(key) << ")";
+      LIEF_WARN("\"key\" of the var key should be equal to 'Translation' ({})", u16tou8(key));
     }
     stream.align(sizeof(uint32_t));
 
     const size_t nb_items = var_value_length / sizeof(uint32_t);
     const uint32_t *value_array = stream.read_array<uint32_t>(nb_items, /* check */false);
     if (value_array == nullptr) {
-      LOG(ERROR) << "Unable to read items";
+      LIEF_ERR("Unable to read items");
       return var_file_info;
     }
 
     for (size_t i = 0; i < nb_items; ++i) {
-      VLOG(VDEBUG) << "item[" << std::dec << i << "] = " << std::hex << value_array[i];
+      LIEF_DEBUG("item[{:02d} = 0x{:x}", i, value_array[i]);
       var_file_info.translations_.push_back(value_array[i]);
     }
   }
@@ -768,20 +768,20 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
     for (const ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
       const ResourceData* icon_group_node = dynamic_cast<const ResourceData*>(&grp_icon_lvl3);
       if (!icon_group_node) {
-        LOG(ERROR) << "Group icon node is null";
+        LIEF_WARN("Group icon node is null");
         continue;
       }
 
       const std::vector<uint8_t>& icon_group_content = icon_group_node->content();
       if (icon_group_content.empty()) {
-        LOG(ERROR) << "Group icon is empty";
+        LIEF_WARN("Group icon is empty");
         continue;
       }
 
       const pe_resource_icon_dir* group_icon_header = reinterpret_cast<const pe_resource_icon_dir*>(icon_group_content.data());
 
-      VLOG(VDEBUG) << "Number of icons: " << std::dec << static_cast<uint32_t>(group_icon_header->count);
-      VLOG(VDEBUG) << "Type: "            << std::dec << static_cast<uint32_t>(group_icon_header->type);
+      LIEF_DEBUG("Number of icons: {:d}", static_cast<uint32_t>(group_icon_header->count));
+      LIEF_DEBUG("Type: {:d}", static_cast<uint32_t>(group_icon_header->type));
 
       // Some checks
       if (group_icon_header->type != 1) {
@@ -814,12 +814,12 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
             });
 
         if (it_icon_dir == std::end(sub_nodes_icons)) {
-          LOG(ERROR) << "Unable to find the icon associated with id: " << std::to_string(id);
+          LIEF_WARN("Unable to find the icon associated with id: {:d}", id);
           continue;
         }
         it_childs icons_childs = it_icon_dir->childs();
         if (icons_childs.size() < 1) {
-          LOG(ERROR) << "Resources nodes loooks corrupted";
+          LIEF_WARN("Resources nodes loooks corrupted");
           continue;
         }
         const std::vector<uint8_t>& pixels = dynamic_cast<const ResourceData*>(&icons_childs[0])->content();
@@ -957,7 +957,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
             i * sizeof(pe_resource_icon_group));
 
         if (icon_header->ID == original.id()) {
-          VLOG(VDEBUG) << "Group found: " << std::dec << i << "-nth";
+          LIEF_DEBUG("Group found: {:d}-nth", i);
           group = icon_header;
           icon_header->width       = newone.width();
           icon_header->height      = newone.height();
@@ -1013,7 +1013,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
 
     const ResourceDirectory* dialog = dynamic_cast<const ResourceDirectory*>(&nodes[i]);
     if (!dialog) {
-      LOG(WARNING) << "Dialog is empty. Skipping";
+      LIEF_WARN("Dialog is empty. Skipping");
       continue;
     }
     it_const_childs langs = dialog->childs();
@@ -1021,7 +1021,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
     for (size_t j = 0; j < langs.size(); ++j) {
       const ResourceData* data_node = dynamic_cast<const ResourceData*>(&langs[j]);
       if (!data_node) {
-        LOG(WARNING) << "Dialog is empty. Skipping";
+        LIEF_WARN("Dialog is empty. Skipping");
         continue;
       }
       const std::vector<uint8_t>& content = data_node->content();
@@ -1029,14 +1029,14 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
       stream.setpos(0);
 
       if (content.size() < std::min(sizeof(pe_dialog_template_ext), sizeof(pe_dialog_template))) {
-        LOG(WARNING) << "Dialog is corrupted!";
+        LIEF_WARN("Dialog is corrupted!");
         return {};
       }
 
       if (content[2] == 0xFF and content[3] == 0xFF) {
 
         if (content.size() < sizeof(pe_dialog_template_ext)) {
-          LOG(WARNING) << "Dialog is corrupted!";
+          LIEF_WARN("Dialog is corrupted!");
           return {};
         }
 
@@ -1052,20 +1052,20 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         switch(menu_hint) {
           case 0x0000:
             {
-              VLOG(VDEBUG) << "Dialog has not menu";
+              LIEF_DEBUG("Dialog has not menu");
               break;
             }
 
           case 0xFFFF:
             {
               const uint16_t menu_ordinal = stream.read<uint16_t>();
-              VLOG(VDEBUG) << "Menu uses ordinal number " << std::dec << menu_ordinal;
+              LIEF_DEBUG("Menu uses ordinal number {:d}", menu_ordinal);
               break;
             }
 
           default:
             {
-              VLOG(VDEBUG) << "Menu uses unicode string";
+              LIEF_DEBUG("Menu uses unicode string");
               std::u16string menu_name = stream.read_u16string();
             }
         }
@@ -1080,20 +1080,20 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         switch(window_class_hint) {
           case 0x0000:
             {
-              VLOG(VDEBUG) << "Windows class uses predefined dialog box";
+              LIEF_DEBUG("Windows class uses predefined dialog box");
               break;
             }
 
           case 0xFFFF:
             {
               const uint16_t windows_class_ordinal = stream.read<uint16_t>();
-              VLOG(VDEBUG) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
+              LIEF_DEBUG("Windows class uses ordinal number {:d}", windows_class_ordinal);
               break;
             }
 
           default:
             {
-              VLOG(VDEBUG) << "Windows class uses unicode string";
+              LIEF_DEBUG("Windows class uses unicode string");
               std::u16string window_class_name = stream.read_u16string();
             }
         }
@@ -1101,7 +1101,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
         // Title
         // =====
         stream.align(sizeof(uint16_t));
-        VLOG(VDEBUG) << "Title offset: " << std::hex << stream.pos();
+        LIEF_DEBUG("Title offset: 0x{:x}", stream.pos());
         new_dialog.title_ = stream.read_u16string();
 
         // 2nd part
@@ -1123,20 +1123,20 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           new_dialog.typeface_ = stream.read_u16string();
         }
 
-        VLOG(VDEBUG) << "Offset to the items: 0x" << std::hex << stream.pos();
-        VLOG(VDEBUG) << std::endl << std::endl << "####### Items #######" << std::endl;
+        LIEF_DEBUG("Offset to the items: 0x{:x}", stream.pos());
+        LIEF_DEBUG("\n\n####### Items #######\n");
 
         // Items
         // =====
         for (size_t i = 0; i < header->nbof_items; ++i) {
           stream.align(sizeof(uint32_t));
-          VLOG(VDEBUG) << "item[" << std::dec << i << "] offset: " << std::hex << stream.pos();
+          LIEF_DEBUG("item[{:02d}] offset: 0x{:x}", i, stream.pos());
           ResourceDialogItem dialog_item;
 
           if (new_dialog.is_extended()) {
             const pe_dialog_item_template_ext* item_header = &stream.read<pe_dialog_item_template_ext>();
             dialog_item = item_header;
-            VLOG(VDEBUG) << "Item ID: " << std::dec << item_header->id;
+            LIEF_DEBUG("Item ID: {:d}", item_header->id);
           } else {
             const pe_dialog_item_template* item_header = &stream.read<pe_dialog_item_template>();
             new_dialog.items_.emplace_back(item_header);
@@ -1151,11 +1151,11 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           if (window_class_hint == 0xFFFF) {
             stream.increment_pos(sizeof(uint16_t));
             const uint16_t windows_class_ordinal = stream.read<uint16_t>();
-            VLOG(VDEBUG) << "Windows class uses ordinal number " << std::dec <<  windows_class_ordinal;
+            LIEF_DEBUG("Windows class uses ordinal number {:d}", windows_class_ordinal);
           } else {
-            VLOG(VDEBUG) << "Windows class uses unicode string";
+            LIEF_DEBUG("Windows class uses unicode string");
             std::u16string window_class_name = stream.read_u16string();
-            VLOG(VDEBUG) << "[DEBUG] " << u16tou8(window_class_name);
+            LIEF_DEBUG("{}", u16tou8(window_class_name));
           }
 
           // Title
@@ -1165,17 +1165,17 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
           if (title_hint == 0xFFFF) {
             stream.increment_pos(sizeof(uint16_t));
             const uint16_t title_ordinal = stream.read<uint16_t>();
-            VLOG(VDEBUG) << "Title uses ordinal number " << std::dec <<  title_ordinal;
+            LIEF_DEBUG("Title uses ordinal number {:d}", title_ordinal);
           } else {
             std::u16string title_name = stream.read_u16string();
-            VLOG(VDEBUG) << "Title uses unicode string: \"" << u16tou8(title_name) << "\"";
+            LIEF_DEBUG("Title uses unicode string: '{}'", u16tou8(title_name));
             dialog_item.title_ = title_name;
           }
 
           // Extra count
           // -----------
           const uint16_t extra_count = stream.read<uint16_t>();
-          VLOG(VDEBUG) << "Extra count: " << std::hex << extra_count << std::endl;
+          LIEF_DEBUG("Extra count: 0x{:x}", extra_count);
           dialog_item.extra_count_ = extra_count;
           stream.increment_pos(extra_count * sizeof(uint8_t));
           new_dialog.items_.push_back(std::move(dialog_item));
@@ -1214,20 +1214,20 @@ std::vector<ResourceStringTable> ResourcesManager::string_table(void) const {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
       const ResourceData* string_table_node = dynamic_cast<const ResourceData*>(&child_l2);
       if (!string_table_node) {
-        LOG(ERROR) << "String table node is null";
+        LIEF_ERR("String table node is null");
         continue;
       }
 
       const std::vector<uint8_t>& content = string_table_node->content();
       if (content.empty()) {
-        LOG(ERROR) << "String table content is empty";
+        LIEF_ERR("String table content is empty");
         continue;
       }
 
       const auto content_size = content.size();
       VectorStream stream{content};
       stream.setpos(0);
-      VLOG(VDEBUG) << "Will parse content whoose size is " << content_size;
+      LIEF_DEBUG("Will parse content whoose size is {}", content_size);
       while (stream.pos() < content_size) {
         if (not stream.can_read<int16_t>()) break;
 
@@ -1267,13 +1267,13 @@ std::vector<std::string> ResourcesManager::html(void) const {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
       const ResourceData* html_node = dynamic_cast<const ResourceData*>(&child_l2);
       if (!html_node) {
-        LOG(ERROR) << "html node is null";
+        LIEF_ERR("html node is null");
         continue;
       }
 
       const std::vector<uint8_t>& content = html_node->content();
       if (content.empty()) {
-        LOG(ERROR) << "html content is empty";
+        LIEF_ERR("html content is empty");
         continue;
       }
 
@@ -1311,13 +1311,13 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator(void) const {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
       const ResourceData* accelerator_node = dynamic_cast<const ResourceData*>(&child_l2);
       if (!accelerator_node) {
-        LOG(ERROR) << "Accelerator";
+        LIEF_ERR("Accelerator");
         continue;
       }
 
       const std::vector<uint8_t>& content = accelerator_node->content();
       if (content.empty()) {
-        LOG(ERROR) << "Accelerator content is empty";
+        LIEF_ERR("Accelerator content is empty");
         continue;
       }
 
@@ -1327,7 +1327,7 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator(void) const {
           ResourceAccelerator(&stream.read<const pe_resource_acceltableentry>()));
       }
       if ((accelerator.back().flags() & int16_t(ACCELERATOR_FLAGS::END)) != int16_t(ACCELERATOR_FLAGS::END)) {
-        LOG(ERROR) << "Accelerator resource may be corrupted";
+        LIEF_ERR("Accelerator resource may be corrupted");
       }
     }
   }
@@ -1464,7 +1464,7 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
     try {
       os << rsrc.version();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
     os << std::endl;
   }
@@ -1477,7 +1477,7 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
         os << icons[i] << std::endl;
       }
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -1490,7 +1490,7 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
         os << dialogs[i] << std::endl;
       }
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 

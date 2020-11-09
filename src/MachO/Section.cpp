@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <iterator>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/MachO/hash.hpp"
 
@@ -183,7 +183,7 @@ void Section::content(const Section::content_t& data) {
   }
 
   if (this->size_ == 0 or this->offset_ == 0) { // bss section for instance
-    LOG(ERROR) << "Offset or size is null";
+    LIEF_ERR("Offset or size is null");
     return;
   }
 
@@ -193,7 +193,7 @@ void Section::content(const Section::content_t& data) {
   std::vector<uint8_t> content = this->segment_->content();
 
   if (data.size() > content.size()) {
-    LOG(ERROR) << "New data are bigger than the original one";
+    LIEF_ERR("New data are bigger than the original one");
     return;
   }
 

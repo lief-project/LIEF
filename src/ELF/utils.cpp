@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Structures.hpp"
@@ -31,7 +31,7 @@ namespace ELF {
 bool is_elf(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
   if (not binary) {
-    LOG(ERROR) << "Unable to open the file";
+    LIEF_ERR("Unable to open the file '{}'", file);
     return false;
   }
   char magic[sizeof(ElfMagic)];

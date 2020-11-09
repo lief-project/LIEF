@@ -93,7 +93,7 @@ void Builder::write(const std::string& filename) const {
 
 
 void Builder::build_empty_symbol_gnuhash(void) {
-  LOG(DEBUG) << "Build empty GNU Hash";
+  LIEF_DEBUG("Build empty GNU Hash");
   auto&& it_gnuhash = std::find_if(
       std::begin(this->binary_->sections_),
       std::end(this->binary_->sections_),

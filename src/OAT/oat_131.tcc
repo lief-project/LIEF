@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -29,21 +29,19 @@ namespace OAT {
 
 template<>
 void Parser::parse_dex_files<OAT131_t>(void) {
-  VLOG(VDEBUG) << "Parsing 'OATDexFile'";
-
   size_t nb_dex_files = this->oat_binary_->header_.nb_dex_files();
 
   uint64_t oat_dex_files_offset = this->oat_binary_->header().oat_dex_files_offset();
 
-  VLOG(VDEBUG) << "OATDexFile located at offset: " << std::showbase << std::hex << oat_dex_files_offset;
+  LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", oat_dex_files_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
 
   this->stream_->setpos(oat_dex_files_offset);
-  for (size_t i = 0; i < nb_dex_files; ++i ) {
+  for (size_t i = 0; i < nb_dex_files; ++i) {
 
-    VLOG(VDEBUG) << "Dealing with OATDexFile #" << std::dec << i;
+    LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
 
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
@@ -80,7 +78,10 @@ void Parser::parse_dex_files<OAT131_t>(void) {
 
   if (this->has_vdex()) {
     DEX::it_dex_files dexfiles = this->vdex_file_->dex_files();
-    CHECK_EQ(dexfiles.size(), this->oat_binary_->oat_dex_files_.size());
+    if (dexfiles.size() != this->oat_binary_->oat_dex_files_.size()) {
+      LIEF_WARN("Inconsistent number of vdex files");
+      return;
+    }
     for (size_t i = 0; i < dexfiles.size(); ++i) {
       DexFile* oat_dex_file = this->oat_binary_->oat_dex_files_[i];
       this->oat_binary_->dex_files_.push_back(&dexfiles[i]);

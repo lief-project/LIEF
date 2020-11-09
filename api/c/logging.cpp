@@ -16,20 +16,16 @@
 #include "LIEF/logging.hpp"
 #include "LIEF/logging.h"
 
-using namespace LIEF;
+using namespace LIEF::logging;
 
 void lief_logging_disable(void) {
-  Logger::disable();
+  disable();
 }
 
 void lief_logging_enable(void) {
-  Logger::enable();
+  enable();
 }
 
 void lief_logging_set_level(uint32_t level) {
-  Logger::set_level(static_cast<LOGGING_LEVEL>(level));
-}
-
-void lief_logging_set_verbose_level(uint32_t level) {
-  Logger::set_verbose_level(level);
+  set_level(static_cast<LOGGING_LEVEL>(level));
 }

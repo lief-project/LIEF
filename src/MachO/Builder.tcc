@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/utils.hpp"
 
 namespace LIEF {
@@ -26,10 +26,10 @@ void Builder::build_segments(void) {
   using segment_t  = typename T::segment_command;
   using uint__     = typename T::uint;
 
-  VLOG(VDEBUG) << "[+] Rebuilding segments" << std::endl;
+  LIEF_DEBUG("[+] Rebuilding segments");
   Binary* binary =  this->binaries_.back();
   for (SegmentCommand& segment : binary->segments()) {
-    VLOG(VDEBUG) << segment << std::endl;
+    LIEF_DEBUG("{}", segment);
     segment_t segment_header;
     segment_header.cmd      = static_cast<uint32_t>(segment.command());
     segment_header.cmdsize  = static_cast<uint32_t>(segment.size());
@@ -45,7 +45,7 @@ void Builder::build_segments(void) {
     segment_header.initprot = static_cast<uint32_t>(segment.init_protection());
     segment_header.nsects   = static_cast<uint32_t>(segment.numberof_sections());
     segment_header.flags    = static_cast<uint32_t>(segment.flags());
-    VLOG(VDEBUG) << "[+] Command offset: " << std::hex << segment.command_offset() << std::endl;
+    LIEF_DEBUG("  - Command offset: 0x{:x}", segment.command_offset());
 
     const auto& content = segment.content();
     if (content.size() != segment.file_size()) {
@@ -74,7 +74,7 @@ void Builder::build_segments(void) {
     it_sections sections = segment.sections();
     for (uint32_t i = 0; i < segment.numberof_sections(); ++i) {
       const Section& section = sections[i];
-      VLOG(VDEBUG) << section << std::endl;
+      LIEF_DEBUG("{}", section);
       section_t header;
       std::copy(
           section.name().c_str(),
@@ -180,7 +180,7 @@ void Builder::build_symbols(void) {
 
 template<typename T>
 void Builder::build(DylibCommand* library) {
-  VLOG(VDEBUG) << "Build Dylib '" << library->name() << "'";
+  LIEF_DEBUG("Build Dylib '{}'", library->name());
 
   const uint32_t raw_size = sizeof(dylib_command) + library->name().size() + 1;
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
@@ -188,9 +188,8 @@ void Builder::build(DylibCommand* library) {
 
   if (library->originalData_.size() != size_needed or
       library->size() != size_needed) {
-    LOG(WARNING) << "Not enough spaces to rebuild " << library->name() << ": Skip!";
-    LOG(WARNING) << std::hex << library->originalData_.size() << " vs " << size_needed;
-
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+        library->name(),  library->originalData_.size(), size_needed);
   }
 
   dylib_command raw_cmd;
@@ -229,15 +228,16 @@ void Builder::build(DylibCommand* library) {
 template <typename T>
 void Builder::build(DylinkerCommand* linker) {
 
-  VLOG(VDEBUG) << "Build dylinker '" << linker->name() << "'";
+  LIEF_DEBUG("Build dylinker '{}'", linker->name());
   const uint32_t raw_size = sizeof(dylinker_command) + linker->name().size() + 1;
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
   if (linker->originalData_.size() != size_needed or
       linker->size() != size_needed) {
-    LOG(WARNING) << "Not enough spaces to rebuild " << linker->name() << ": Skip!";
-    LOG(WARNING) << std::hex << linker->originalData_.size() << " vs " << size_needed;
+
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+        linker->name(),  linker->originalData_.size(), size_needed);
   }
 
   dylinker_command raw_cmd;
@@ -271,7 +271,7 @@ void Builder::build(DylinkerCommand* linker) {
 
 template<class T>
 void Builder::build(VersionMin* version_min) {
-  VLOG(VDEBUG) << "Build '" << to_string(version_min->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(version_min->command()));
   const uint32_t raw_size = sizeof(version_min_command);
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
@@ -303,7 +303,7 @@ void Builder::build(VersionMin* version_min) {
 
 template<class T>
 void Builder::build(SourceVersion* source_version) {
-  VLOG(VDEBUG) << "Build '" << to_string(source_version->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(source_version->command()));
   const uint32_t raw_size = sizeof(source_version_command);
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
@@ -337,7 +337,7 @@ void Builder::build(SourceVersion* source_version) {
 
 template<class T>
 void Builder::build(MainCommand* main_cmd) {
-  VLOG(VDEBUG) << "Build '" << to_string(main_cmd->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(main_cmd->command()));
   const uint32_t raw_size = sizeof(entry_point_command);
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
@@ -366,7 +366,7 @@ void Builder::build(MainCommand* main_cmd) {
 
 template<class T>
 void Builder::build(DyldInfo* dyld_info) {
-  VLOG(VDEBUG) << "Build '" << to_string(dyld_info->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(dyld_info->command()));
 
   dyld_info->update_export_trie().update_rebase_info().update_binding_info();
 
@@ -405,38 +405,48 @@ void Builder::build(DyldInfo* dyld_info) {
   // ==============
   {
     const buffer_t& rebase_opcodes = dyld_info->rebase_opcodes();
-    LOG_IF(rebase_opcodes.size() != raw_cmd.rebase_size, WARNING) << "Rebase opcodes size is different from metadata";
+    if (rebase_opcodes.size() != raw_cmd.rebase_size) {
+      LIEF_WARN("Rebase opcodes size is different from metadata");
+    }
 
     SegmentCommand* rebase_segment = this->binary_->segment_from_offset(raw_cmd.rebase_off);
+    if (rebase_segment == nullptr) {
+      LIEF_WARN("Rebease segment is null");
+    }
+    else {
+      uint64_t relative_offset = raw_cmd.rebase_off - rebase_segment->file_offset();
 
-    CHECK_NE(rebase_segment, nullptr);
-    uint64_t relative_offset = raw_cmd.rebase_off - rebase_segment->file_offset();
+      std::vector<uint8_t> content = rebase_segment->content();
 
-    std::vector<uint8_t> content = rebase_segment->content();
-
-    std::move(
-        std::begin(rebase_opcodes),
-        std::end(rebase_opcodes),
-        content.data() + relative_offset);
-    rebase_segment->content(std::move(content));
+      std::move(
+          std::begin(rebase_opcodes),
+          std::end(rebase_opcodes),
+          content.data() + relative_offset);
+      rebase_segment->content(std::move(content));
+    }
   }
 
   // Bind opcodes
   // ============
   {
     const buffer_t& bind_opcodes = dyld_info->bind_opcodes();
-    LOG_IF(bind_opcodes.size() != raw_cmd.bind_size, WARNING) << "Bind opcodes size is different from metadata";
+    if (bind_opcodes.size() != raw_cmd.bind_size) {
+      LIEF_WARN("Bind opcodes size is different from metadata");
+    }
 
     SegmentCommand* bind_segment = this->binary_->segment_from_offset(raw_cmd.bind_off);
-    CHECK_NE(bind_segment, nullptr);
-
-    uint64_t relative_offset = raw_cmd.bind_off - bind_segment->file_offset();
-    std::vector<uint8_t> content = bind_segment->content();
-    std::move(
-        std::begin(bind_opcodes),
-        std::end(bind_opcodes),
-        content.data() + relative_offset);
-    bind_segment->content(std::move(content));
+    if (bind_segment == nullptr) {
+      LIEF_WARN("Bind segment is null");
+    }
+    else {
+      uint64_t relative_offset = raw_cmd.bind_off - bind_segment->file_offset();
+      std::vector<uint8_t> content = bind_segment->content();
+      std::move(
+          std::begin(bind_opcodes),
+          std::end(bind_opcodes),
+          content.data() + relative_offset);
+      bind_segment->content(std::move(content));
+    }
   }
 
 
@@ -444,17 +454,23 @@ void Builder::build(DyldInfo* dyld_info) {
   // =================
   {
     const buffer_t& weak_bind_opcodes = dyld_info->weak_bind_opcodes();
-    LOG_IF(weak_bind_opcodes.size() != raw_cmd.weak_bind_size, WARNING) << "Weak Bind opcodes size is different from metadata";
+    if (weak_bind_opcodes.size() != raw_cmd.weak_bind_size) {
+      LIEF_WARN("Weak Bind opcodes size is different from metadata");
+    }
 
     SegmentCommand* weak_bind_segment = this->binary_->segment_from_offset(raw_cmd.weak_bind_off);
-    CHECK_NE(weak_bind_segment, nullptr);
-    uint64_t relative_offset = raw_cmd.weak_bind_off - weak_bind_segment->file_offset();
-    std::vector<uint8_t> content = weak_bind_segment->content();
-    std::move(
-        std::begin(weak_bind_opcodes),
-        std::end(weak_bind_opcodes),
-        content.data() + relative_offset);
-    weak_bind_segment->content(std::move(content));
+    if (weak_bind_segment == nullptr) {
+      LIEF_WARN("Weak bind segment is null");
+    }
+    else {
+      uint64_t relative_offset = raw_cmd.weak_bind_off - weak_bind_segment->file_offset();
+      std::vector<uint8_t> content = weak_bind_segment->content();
+      std::move(
+          std::begin(weak_bind_opcodes),
+          std::end(weak_bind_opcodes),
+          content.data() + relative_offset);
+      weak_bind_segment->content(std::move(content));
+    }
   }
 
 
@@ -462,17 +478,23 @@ void Builder::build(DyldInfo* dyld_info) {
   // =================
   {
     const buffer_t& lazy_bind_opcodes = dyld_info->lazy_bind_opcodes();
-    LOG_IF(lazy_bind_opcodes.size() != raw_cmd.lazy_bind_size, WARNING) << "Lazy Bind opcodes size is different from metadata";
+    if (lazy_bind_opcodes.size() != raw_cmd.lazy_bind_size) {
+      LIEF_WARN("Lazy Bind opcodes size is different from metadata");
+    }
 
     SegmentCommand* lazy_bind_segment = this->binary_->segment_from_offset(raw_cmd.lazy_bind_off);
-    CHECK_NE(lazy_bind_segment, nullptr);
-    uint64_t relative_offset = raw_cmd.lazy_bind_off - lazy_bind_segment->file_offset();
-    std::vector<uint8_t> content = lazy_bind_segment->content();
-    std::move(
-        std::begin(lazy_bind_opcodes),
-        std::end(lazy_bind_opcodes),
-        content.data() + relative_offset);
-    lazy_bind_segment->content(std::move(content));
+    if (lazy_bind_segment == nullptr) {
+      LIEF_WARN("Lazy bind segment is null");
+    }
+    else {
+      uint64_t relative_offset = raw_cmd.lazy_bind_off - lazy_bind_segment->file_offset();
+      std::vector<uint8_t> content = lazy_bind_segment->content();
+      std::move(
+          std::begin(lazy_bind_opcodes),
+          std::end(lazy_bind_opcodes),
+          content.data() + relative_offset);
+      lazy_bind_segment->content(std::move(content));
+    }
   }
 
 
@@ -480,17 +502,22 @@ void Builder::build(DyldInfo* dyld_info) {
   // ===========
   {
     const buffer_t& export_trie = dyld_info->export_trie();
-    LOG_IF(export_trie.size() != raw_cmd.export_size, WARNING) << "Export trie size is different from metadata";
+    if (export_trie.size() != raw_cmd.export_size) {
+      LIEF_WARN("Export trie size is different from metadata");
+    }
 
     SegmentCommand* export_segment = this->binary_->segment_from_offset(raw_cmd.export_off);
-    CHECK_NE(export_segment, nullptr);
-    uint64_t relative_offset = raw_cmd.export_off - export_segment->file_offset();
-    std::vector<uint8_t> content = export_segment->content();
-    std::move(
-        std::begin(export_trie),
-        std::end(export_trie),
-        content.data() + relative_offset);
-    export_segment->content(std::move(content));
+    if (export_segment == nullptr) {
+      LIEF_WARN("Export segment is null");
+    } else {
+      uint64_t relative_offset = raw_cmd.export_off - export_segment->file_offset();
+      std::vector<uint8_t> content = export_segment->content();
+      std::move(
+          std::begin(export_trie),
+          std::end(export_trie),
+          content.data() + relative_offset);
+      export_segment->content(std::move(content));
+    }
   }
 
 
@@ -499,7 +526,7 @@ void Builder::build(DyldInfo* dyld_info) {
 
 template<class T>
 void Builder::build(FunctionStarts* function_starts) {
-  VLOG(VDEBUG) << "Build '" << to_string(function_starts->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(function_starts->command()));
 
   std::vector<uint8_t> packed_functions;
 
@@ -524,8 +551,10 @@ void Builder::build(FunctionStarts* function_starts) {
 
   // Find the segment associated with LC_FUNCTION_STARTS
   SegmentCommand* segment = this->binary_->segment_from_offset(function_starts->data_offset());
-
-  CHECK_NE(segment, nullptr);
+  if (segment == nullptr) {
+    LIEF_WARN("Can't find segment associated with function starts");
+    return;
+  }
   std::vector<uint8_t> content = segment->content();
   uint64_t relative_offset = function_starts->data_offset() - segment->file_offset();
   std::move(
@@ -645,12 +674,18 @@ void Builder::build(SymbolCommand* symbol_command) {
 
 
   // To be removed later
-  CHECK(raw_symbol_names.size() <= symbol_command->strings_size()) << std::hex << std::showbase << raw_symbol_names.size() << " vs " << symbol_command->strings_size();
+  if (raw_symbol_names.size() > symbol_command->strings_size()) {
+    LIEF_WARN("Larger symbol names size is not supported yet");
+    return;
+  }
 
   // Update the segment handling
   // the string table
   SegmentCommand* segment = this->binary_->segment_from_offset(symbol_command->strings_offset());
-  CHECK_NE(segment, nullptr);
+  if (segment == nullptr) {
+    LIEF_WARN("Can't find segment associated with string table");
+    return;
+  }
 
   std::vector<uint8_t> content = segment->content();
   uint64_t relative_offset = symbol_command->strings_offset() - segment->file_offset();
@@ -672,7 +707,10 @@ void Builder::build(SymbolCommand* symbol_command) {
         name.c_str(),
         name.c_str() + name.size() + 1);
 
-    CHECK_NE(it_name, std::end(raw_symbol_names));
+    if (it_name == std::end(raw_symbol_names)) {
+      LIEF_WARN("Can't find name offset for symbol {}", sym->name());
+      continue;
+    }
     const size_t name_offset = std::distance(std::begin(raw_symbol_names), it_name);
 
     nlist_t nl;
@@ -689,10 +727,16 @@ void Builder::build(SymbolCommand* symbol_command) {
     );
   }
 
-  CHECK(nlist_table.size() == symbol_command->numberof_symbols() * sizeof(nlist_t));
+  if (nlist_table.size() != symbol_command->numberof_symbols() * sizeof(nlist_t)) {
+    LIEF_WARN("nlist_table.size() is not consistent");
+    return;
+  }
 
   segment = this->binary_->segment_from_offset(symbol_command->symbol_offset());
-  CHECK_NE(segment, nullptr);
+  if (segment == nullptr) {
+    LIEF_WARN("Can't find segment associated with symbol table");
+    return;
+  }
 
   content = segment->content();
   relative_offset = symbol_command->symbol_offset() - segment->file_offset();
@@ -778,7 +822,7 @@ void Builder::build(DynamicSymbolCommand* symbol_command) {
 
 template<class T>
 void Builder::build(DataInCode* datacode) {
-  VLOG(VDEBUG) << "Build '" << to_string(datacode->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(datacode->command()));
 
   linkedit_data_command raw_cmd;
 
@@ -805,7 +849,7 @@ void Builder::build(DataInCode* datacode) {
 
 template<class T>
 void Builder::build(CodeSignature* code_signature) {
-  VLOG(VDEBUG) << "Build '" << to_string(code_signature->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(code_signature->command()));
 
   linkedit_data_command raw_cmd;
 
@@ -831,7 +875,7 @@ void Builder::build(CodeSignature* code_signature) {
 
 template<class T>
 void Builder::build(SegmentSplitInfo* ssi) {
-  VLOG(VDEBUG) << "Build '" << to_string(ssi->command()) << "'";
+  LIEF_DEBUG("Build '{}'", to_string(ssi->command()));
 
   linkedit_data_command raw_cmd;
 
@@ -864,8 +908,9 @@ void Builder::build(SubFramework* sf) {
 
   if (sf->originalData_.size() != size_needed or
       sf->size() != size_needed) {
-    LOG(WARNING) << "Not enough spaces to rebuild " << sf->umbrella() << ": Skip!";
-    LOG(WARNING) << std::hex << sf->originalData_.size() << " vs " << size_needed;
+
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+        sf->umbrella(),  sf->originalData_.size(), size_needed);
   }
 
   std::fill(
@@ -906,8 +951,8 @@ void Builder::build(DyldEnvironment* de) {
 
   if (de->originalData_.size() != size_needed or
       de->size() != size_needed) {
-    LOG(WARNING) << "Not enough spaces to rebuild " << de->value() << ": Skip!";
-    LOG(WARNING) << std::hex << de->originalData_.size() << " vs " << size_needed;
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+        de->value(),  de->originalData_.size(), size_needed);
   }
 
   std::fill(
@@ -950,14 +995,15 @@ void Builder::build(ThreadCommand* tc) {
 
   if (tc->originalData_.size() != size_needed or
       tc->size() != size_needed) {
-    LOG(WARNING) << "Not enough spaces to rebuild thread command: Skip!";
-    LOG(WARNING) << std::hex << tc->originalData_.size() << " vs " << size_needed;
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
+        tc->originalData_.size(), size_needed);
   }
 
   const uint32_t state_size_needed = tc->count() * sizeof(uint32_t);
   if (state.size() < state_size_needed) {
-    LOG(WARNING) << "Not enough data in state to rebuild thread command: Skip!";
-    LOG(WARNING) << std::hex << state.size() << " vs " << state_size_needed;
+
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
+        state.size(), state_size_needed);
   }
 
   std::fill(
@@ -1000,8 +1046,8 @@ void Builder::build(BuildVersion* bv) {
 
   if (bv->originalData_.size() != size_needed or
       bv->size() != size_needed) {
-    //LOG(WARNING) << "Not enough spaces to rebuild " << bv->value() << ": Skip!";
-    //LOG(WARNING) << std::hex << bv->originalData_.size() << " vs " << size_needed;
+    LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: 0x{:x} vs 0x{:x}",
+        bv->originalData_.size(), size_needed);
   }
 
   const BuildVersion::version_t& minos    = bv->minos();

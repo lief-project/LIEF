@@ -22,7 +22,7 @@
 using namespace LIEF::PE;
 
 int main(int argc, char **argv) {
-  LIEF::Logger::set_level(LIEF::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   std::cout << "PE Reader" << std::endl;
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <PE binary>" << std::endl;

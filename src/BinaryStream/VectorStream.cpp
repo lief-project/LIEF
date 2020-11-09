@@ -21,7 +21,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"
@@ -61,10 +61,7 @@ const void* VectorStream::read_at(uint64_t offset, uint64_t size, bool throw_err
 
   if (offset > this->size() or (offset + size) > this->size()) {
     size_t out_size = (offset + size) - this->size();
-    LOG(ERROR) << "Can't read "
-               << std::dec << size << " bytes at "
-               << std::hex << std::showbase << offset
-               << " (" << std::hex << (out_size) << " bytes out of bound)";
+    LIEF_DEBUG("Can't read #{:d} bytes at 0x{:04x} (0x{:x} bytes out of bound)", size, offset, out_size);
     if (throw_error) {
       throw LIEF::read_out_of_bound(offset, size);
     }

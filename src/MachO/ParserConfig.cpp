@@ -15,7 +15,7 @@
  */
 
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/ParserConfig.hpp"
 

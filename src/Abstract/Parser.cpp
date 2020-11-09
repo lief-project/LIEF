@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/Abstract/Parser.hpp"
 
 #include "LIEF/OAT.hpp"
@@ -70,7 +70,7 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   }
 #endif
 
-  LOG(ERROR) << "Unknown format";
+  LIEF_ERR("Unknown format");
   return nullptr;
 
 }
@@ -110,7 +110,7 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
   }
 #endif
 
-  LOG(ERROR) << "Unknown format";
+  LIEF_ERR("Unknown format");
   return nullptr;
 
 }

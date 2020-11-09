@@ -184,10 +184,12 @@ pe_bad_section_name
 Logging
 -------
 
-.. autoclass:: lief.Logger
-  :members:
-  :inherited-members:
-  :undoc-members:
+.. autofunction:: lief.logging.set_level
+
+.. autofunction:: lief.logging.enable
+
+.. autofunction:: lief.logging.disable
+
 
 Logging levels
 ~~~~~~~~~~~~~~

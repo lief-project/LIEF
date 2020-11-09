@@ -17,7 +17,7 @@
 
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -27,7 +27,7 @@ Prototype::Prototype(const Prototype& other) = default;
 
 
 const Type& Prototype::return_type(void) const {
-  CHECK_NE(this->return_type_, nullptr);
+  CHECK(this->return_type_ != nullptr, "Return type is null!");
   return *this->return_type_;
 }
 

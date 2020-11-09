@@ -101,7 +101,7 @@ Header::Header(const T* header) :
         std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
   }
 
-  VLOG(VDEBUG) << to_string(this->storage_mode_);
+  LIEF_DEBUG("{}", to_string(this->storage_mode_));
 
 }
 

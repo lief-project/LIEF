@@ -188,7 +188,7 @@ void Builder::build_import_table(void) {
       uint32_t offsetIAT   = this->binary_->rva_to_offset(import_header->ImportAddressTableRVA) - original_import.pointerto_raw_data();
       if (offsetTable > import_content.size() or offsetIAT > import_content.size()) {
         //TODO: Better handle
-        LOG(ERROR) << "Can't patch" << std::endl;
+        LIEF_ERR("Can't patch");
         break;
       }
       uint__ *lookupTable = reinterpret_cast<uint__*>(import_content.data() + offsetTable);

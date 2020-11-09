@@ -20,7 +20,7 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "CoreAuxv.tcc"
 

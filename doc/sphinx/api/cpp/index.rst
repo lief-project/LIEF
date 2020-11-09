@@ -89,13 +89,19 @@ Iterators
 Logging
 -------
 
-.. doxygenclass:: LIEF::Logger
+.. doxygenfunction:: LIEF::logging::disable
+   :project: lief
+
+.. doxygenfunction:: LIEF::logging::enable
+   :project: lief
+
+.. doxygenfunction:: LIEF::logging::set_level
    :project: lief
 
 Logging levels
 ~~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::LOGGING_LEVEL
+.. doxygenenum:: LIEF::logging::LOGGING_LEVEL
    :project: lief
 
 

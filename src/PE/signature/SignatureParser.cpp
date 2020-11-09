@@ -21,7 +21,7 @@
 #include "utf8.h"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "pkcs7.h"
 
@@ -57,7 +57,7 @@ SignatureParser::SignatureParser(const std::vector<uint8_t>& data) :
     try {
       this->parse_signature();
     } catch (const std::exception& e) {
-      VLOG(VDEBUG) << e.what();
+      LIEF_DEBUG(e.what());
     }
   }
 }
@@ -92,7 +92,7 @@ void SignatureParser::parse_header(void) {
 
   buf.p = this->p_;
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &buf);
-  VLOG(VDEBUG) << "OID (signedData): " << oid_str;
+  LIEF_DEBUG("OID (signedData): {}", oid_str);
   this->p_ += buf.len;
 
   if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS7_SIGNED_DATA, &buf) != 0) {
@@ -114,7 +114,7 @@ void SignatureParser::parse_header(void) {
 
 
 int32_t SignatureParser::get_signed_data_version(void) {
-  VLOG(VDEBUG) << "Parse signed data - version";
+  LIEF_DEBUG("Parse signed data - version");
   int ret = 0;
 
   int32_t version;
@@ -122,14 +122,16 @@ int32_t SignatureParser::get_signed_data_version(void) {
     throw corrupted("Signature corrupted");
   }
 
-  VLOG(VDEBUG) << "Version: " << std::dec << version;
-  LOG_IF(version != 1, WARNING) << "Version should be equal to 1 (" << std::dec << version << ")";
+  LIEF_DEBUG("Version: {}", version);
+  if (version != 1) {
+    LIEF_WARN("Version should be equal to 1 ({:d})", version);
+  }
   return version;
 }
 
 
 std::string SignatureParser::get_signed_data_digest_algorithms(void) {
-  VLOG(VDEBUG) << "Parse signed data - digest algorithm";
+  LIEF_DEBUG("Parse signed data - digest algorithm");
   int ret = 0;
   size_t tag;
   char oid_str[256] = { 0 };
@@ -147,14 +149,14 @@ std::string SignatureParser::get_signed_data_digest_algorithms(void) {
 
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &alg_oid);
 
-  VLOG(VDEBUG) << "digestAlgorithms: " << oid_str;
+  LIEF_DEBUG("digestAlgorithms: {}", oid_str);
   return oid_str;
 
 }
 
 
 ContentInfo SignatureParser::parse_content_info(void) {
-  VLOG(VDEBUG) << "Parse signed data - content info";
+  LIEF_DEBUG("Parse signed data - content info");
 
   mbedtls_asn1_buf content_type_oid;
   mbedtls_asn1_buf alg_oid;
@@ -174,9 +176,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
   // |_ SpcAttributeTypeAndOptionalValue
   // |_ DigestInfo
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  VLOG(VDEBUG) << "Parsing SpcIndirectDataContent (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing SpcIndirectDataContent (offset: {:d})", this->current_offset());
 
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
@@ -195,9 +195,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
   // |_ SPC_PE_IMAGE_DATAOBJ
   // |_ SpcPeImageData
   // ++++++++++++++++++++++++++++++++
-  VLOG(VDEBUG) << "Parsing SpcAttributeTypeAndOptionalValue (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing SpcAttributeTypeAndOptionalValue (offset: {:d})", this->current_offset());
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
     throw corrupted("Signature corrupted");
@@ -211,7 +209,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
 
   std::memset(oid_str, 0, sizeof(oid_str));
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &content_type_oid);
-  VLOG(VDEBUG) << "SpcAttributeTypeAndOptionalValue->type " << oid_str;
+  LIEF_DEBUG("SpcAttributeTypeAndOptionalValue->type {}", oid_str);
 
   content_info.type_ = oid_str;
   this->p_ += content_type_oid.len;
@@ -220,9 +218,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
   // |_ SpcPeImageFlags
   // |_ SpcLink
   // ++++++++++++++
-  VLOG(VDEBUG) << "Parsing SpcPeImageData (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing SpcPeImageData (offset: {:d})", this->current_offset());
 
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
@@ -231,9 +227,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
 
   // SpcPeImageFlags
   // ^^^^^^^^^^^^^^^
-  VLOG(VDEBUG) << "Parsing SpcPeImageFlags (offset: "
-             << std::dec <<  this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing SpcPeImageFlags (offset: {:d})", this->current_offset());
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_BIT_STRING)) != 0) {
     throw corrupted("Signature corrupted");
   }
@@ -260,7 +254,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
 
   std::memset(oid_str, 0, sizeof(oid_str));
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &alg_oid);
-  VLOG(VDEBUG) << "DigestInfo->digestAlgorithm: " << oid_str;
+  LIEF_DEBUG("DigestInfo->digestAlgorithm: {}", oid_str);
 
   content_info.digest_algorithm_ = oid_str;
 
@@ -277,7 +271,7 @@ ContentInfo SignatureParser::parse_content_info(void) {
 
 
 std::string SignatureParser::get_content_info_type(void) {
-  VLOG(VDEBUG) << "Parse signed data - content info - content type";
+  LIEF_DEBUG("Parse signed data - content info - content type");
 
   mbedtls_asn1_buf content_type_oid;
   int ret = 0;
@@ -295,7 +289,7 @@ std::string SignatureParser::get_content_info_type(void) {
   if (MBEDTLS_OID_CMP(MBEDTLS_SPC_INDIRECT_DATA_OBJID, &content_type_oid) != 0) {
     throw corrupted(std::string(oid_str) + " is not SPC_INDIRECT_DATA_OBJID");
   }
-  VLOG(VDEBUG) << "contentType: " << oid_str << " (" << oid_to_string(oid_str) << ")";
+  LIEF_DEBUG("contentType: {} ({})", oid_str, oid_to_string(oid_str));
   this->p_ += content_type_oid.len;
 
   return {oid_str};
@@ -303,9 +297,7 @@ std::string SignatureParser::get_content_info_type(void) {
 
 
 void SignatureParser::parse_certificates(void) {
- VLOG(VDEBUG) << "Parsing Certificates (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+ LIEF_DEBUG("Parsing Certificates (offset: {:d})", this->current_offset());
 
   int ret = 0;
   size_t tag;
@@ -328,7 +320,7 @@ void SignatureParser::parse_certificates(void) {
     }
 
     mbedtls_x509_crt_info(buffer, sizeof(buffer), "", ca.get());
-    VLOG(VDEBUG) << std::endl << buffer << std::endl;
+    LIEF_DEBUG("\n{}\n", buffer);
 
     this->signature_.certificates_.emplace_back(ca.get());
     this->p_ += ca->raw.len;
@@ -344,10 +336,7 @@ void SignatureParser::parse_certificates(void) {
 }
 
 AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
-  VLOG(VDEBUG) << "Parsing authenticatedAttributes (offset: "
-             << std::dec << this->current_offset()
-             << ")";
-
+  LIEF_DEBUG("Parsing authenticatedAttributes (offset: {:d})", this->current_offset());
 
   int ret = 0;
   size_t tag;
@@ -393,9 +382,7 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
       // |_ OID (PKCS #9 Message Digest)
       // |_ SET -> OID
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      VLOG(VDEBUG) << "Parsing contentType (offset: "
-                 << std::dec << this->current_offset()
-                 << ")";
+      LIEF_DEBUG("Parsing contentType (offset: {:d})", this->current_offset());
       content_type_oid.tag = *this->p_;
       if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &content_type_oid.len, MBEDTLS_ASN1_OID)) != 0) {
         throw corrupted("Authenticated attributes corrupted");
@@ -413,10 +400,8 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
       // |_ OID (PKCS #9 Message Digest)
       // |_ SET -> OCTET STING
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      VLOG(VDEBUG) << "Parsing messageDigest (offset: "
-                 << std::dec << this->current_offset()
-                 << ")";
-      VLOG(VDEBUG) << oid_str << " (" << oid_to_string(oid_str) << ")"; // 1.2.840.113549.1.9.4
+      LIEF_DEBUG("Parsing messageDigest (offset: {:d})", this->current_offset());
+      LIEF_DEBUG("{} ({})", oid_str, oid_to_string(oid_str)); // 1.2.840.113549.1.9.4
 
       if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag, MBEDTLS_ASN1_OCTET_STRING)) != 0) {
         throw corrupted("Signature corrupted: Can't read 'ASN1_OCTET_STRING'");
@@ -436,7 +421,7 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
       }
 
       if (tag == 0) {
-          VLOG(VDEBUG) << "No program name or more info specified ";
+          LIEF_DEBUG("No program name or more info specified");
           authenticated_attributes.program_name_ = u"";
           authenticated_attributes.more_info_ = "";
           continue;
@@ -447,7 +432,7 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
       if (*this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED)) {
           this->p_ += 1;
           if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
-            VLOG(VDEBUG) << "Unexpected format for SpcSpOpusInfo [0] block ";
+            LIEF_DEBUG("Unexpected format for SpcSpOpusInfo [0] block");
             throw corrupted("Authenticated attributes corrupted");
           }
 
@@ -461,12 +446,11 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
               *this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1)) {
             this->p_ += 1;
             if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
-              VLOG(VDEBUG) << "Unexpected format for SpcString block ";
+              LIEF_DEBUG("Unexpected format for SpcString block");
               throw corrupted("Authenticated attributes corrupted");
             }
 
-            VLOG(VDEBUG) << "Offset: " << std::dec << this->current_offset();
-            VLOG(VDEBUG) << "Size: " << std::dec << tag;
+            LIEF_DEBUG("Offset: {:d} | Size: {:d}", this->current_offset(), tag);
 
             // u8 -> u16 due to endiness
             std::string u8progname{reinterpret_cast<char*>(this->p_), tag};
@@ -474,26 +458,26 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
             try {
               utf8::unchecked::utf8to16(std::begin(u8progname), std::end(u8progname), std::back_inserter(progname));
             } catch (const utf8::exception&) {
-              LOG(WARNING) << "utf8 error when parsing progname";
+              LIEF_WARN("utf8 error when parsing progname");
             }
 
             authenticated_attributes.program_name_ = progname;
-            VLOG(VDEBUG) << "ProgName " << u16tou8(progname);
+            LIEF_DEBUG("ProgName: {}", u16tou8(progname));
             this->p_ += tag;
 
           } else {
-            VLOG(VDEBUG) << "Unexpected format for SpcString block ";
+            LIEF_DEBUG("Unexpected format for SpcString block");
             throw corrupted("Authenticated attributes corrupted");
           }
 
           if (this->p_ >= seq_end) {
-              VLOG(VDEBUG) << "No more info specified ";
+              LIEF_DEBUG("No more info specified");
               authenticated_attributes.more_info_ = "";
               continue;
           }
 
       } else {
-          VLOG(VDEBUG) << "No program name specified ";
+          LIEF_DEBUG("No program name specified");
           authenticated_attributes.program_name_ = u"";
       }
 
@@ -502,7 +486,7 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
       if (*this->p_ == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_BOOLEAN)) {
           this->p_ += 1;
           if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
-            VLOG(VDEBUG) << "Unexpected format for SpcSpOpusInfo [1] block ";
+            LIEF_DEBUG("Unexpected format for SpcSpOpusInfo [1] block");
             throw corrupted("Authenticated attributes corrupted");
           }
 
@@ -510,7 +494,7 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
 
           this->p_ += 1;
           if ((ret = mbedtls_asn1_get_len(&(this->p_), this->end_, &tag)) != 0) {
-            VLOG(VDEBUG) << "Unexpected format for SpcLink block ";
+            LIEF_DEBUG("Unexpected format for SpcLink block");
             throw corrupted("Authenticated attributes corrupted");
           }
 
@@ -525,26 +509,26 @@ AuthenticatedAttributes SignatureParser::get_authenticated_attributes(void) {
 
             std::string more_info{reinterpret_cast<char*>(this->p_), tag}; // moreInfo
             authenticated_attributes.more_info_ = more_info;
-            VLOG(VDEBUG) << more_info;
+            LIEF_DEBUG("{}", more_info);
             this->p_ += tag;
 
           } else if (p_val == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1)) {
-            VLOG(VDEBUG) << "Parsing MoreInfo 'moniker' option not currently supported ";
+            LIEF_DEBUG("Parsing MoreInfo 'moniker' option not currently supported");
             authenticated_attributes.more_info_ = "";
 
           } else if (p_val == (MBEDTLS_ASN1_CONTEXT_SPECIFIC | 2)) {
-            VLOG(VDEBUG) << "Parsing MoreInfo 'file' option not currently supported ";
+            LIEF_DEBUG("Parsing MoreInfo 'file' option not currently supported");
             authenticated_attributes.more_info_ = "";
 
           } else {
-            VLOG(VDEBUG) << "Unexpected format for SpcLink block ";
+            LIEF_DEBUG("Unexpected format for SpcLink block");
             throw corrupted("Authenticated attributes corrupted");
           }
           continue;
       }
 
     } else {
-      VLOG(VDEBUG) << "Skipping OID " << oid_str;
+      LIEF_DEBUG("Skipping OID {}", oid_str);
       this->p_ += tag;
       continue;
     }
@@ -576,15 +560,16 @@ SignerInfo SignatureParser::get_signer_info(void) {
     throw corrupted("Signer info corrupted");
   }
 
-  VLOG(VDEBUG) << "Version: " << std::dec << version;
-  LOG_IF(version != 1, WARNING) << "SignerInfo's version should be equal to 1 (" << std::dec << version << ")";
+  LIEF_DEBUG("Version: {:d}", version);
+
+  if (version != 1) {
+    LIEF_WARN("SignerInfo's version should be equal to 1 ({:d})", version);
+  }
   signer_info.version_ = version;
 
   // issuerAndSerialNumber
   // ---------------------
-  VLOG(VDEBUG) << "Parsing issuerAndSerialNumber (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing issuerAndSerialNumber (offset: {:d})", this->current_offset());
 
   if ((ret = mbedtls_asn1_get_tag(&(this->p_), this->end_, &tag,
           MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED)) != 0) {
@@ -612,7 +597,7 @@ SignerInfo SignatureParser::get_signer_info(void) {
 
   std::string issuer_name {buffer};
 
-  VLOG(VDEBUG) << "Issuer: " << issuer_name;
+  LIEF_DEBUG("Issuer: {}", issuer_name);
 
   mbedtls_x509_name *name_cur;
 
@@ -636,16 +621,14 @@ SignerInfo SignatureParser::get_signer_info(void) {
 
   // digestAlgorithm
   // ---------------
-  VLOG(VDEBUG) << "Parsing digestAlgorithm (offset: "
-             << std::dec << this->current_offset()
-             << ")";
+  LIEF_DEBUG("Parsing digestAlgorithm (offset: {:d})", this->current_offset());
   if ((ret = mbedtls_asn1_get_alg_null(&(this->p_), this->end_, &alg_oid)) != 0) {
       throw corrupted("Signer info corrupted");
   }
 
   std::memset(oid_str, 0, sizeof(oid_str));
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &alg_oid);
-  VLOG(VDEBUG) << "signerInfo->digestAlgorithm " << oid_str;
+  LIEF_DEBUG("signerInfo->digestAlgorithm: {}", oid_str);
 
   signer_info.digest_algorithm_ = oid_str;
   // authenticatedAttributes (IMPLICIT OPTIONAL)
@@ -658,7 +641,7 @@ SignerInfo SignatureParser::get_signer_info(void) {
     signer_info.authenticated_attributes_ = this->get_authenticated_attributes();
   }
   catch (const corrupted& c) {
-    LOG(ERROR) << c.what();
+    LIEF_ERR("{}", c.what());
   }
 
   // digestEncryptionAlgorithm
@@ -670,7 +653,7 @@ SignerInfo SignatureParser::get_signer_info(void) {
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &alg_oid);
   signer_info.signature_algorithm_ = oid_str;
 
-  VLOG(VDEBUG) << "digestEncryptionAlgorithm: " << oid_str;
+  LIEF_DEBUG("digestEncryptionAlgorithm: {}", oid_str);
 
   // encryptedDigest
   // ---------------
@@ -701,7 +684,7 @@ void SignatureParser::parse_signature(void) {
     this->signature_.digest_algorithm_ = this->get_signed_data_digest_algorithms();
   }
   catch (const corrupted& c) {
-    LOG(ERROR) << c.what();
+    LIEF_ERR(c.what());
   }
 
   // contentInfo
@@ -712,7 +695,7 @@ void SignatureParser::parse_signature(void) {
     this->signature_.content_info_ = this->parse_content_info();
   }
   catch (const corrupted& c) {
-    LOG(ERROR) << c.what();
+    LIEF_ERR(c.what());
   }
 
   // Certificates
@@ -721,7 +704,7 @@ void SignatureParser::parse_signature(void) {
     this->parse_certificates();
   }
   catch (const corrupted& c) {
-    LOG(ERROR) << c.what();
+    LIEF_ERR(c.what());
   }
 
 
@@ -731,9 +714,9 @@ void SignatureParser::parse_signature(void) {
     this->signature_.signer_info_ = this->get_signer_info();
   }
   catch (const corrupted& c) {
-    LOG(ERROR) << c.what();
+    LIEF_ERR(c.what());
   }
-  VLOG(VDEBUG) << "Signature: " << std::endl << this->signature_;
+  //LIEF_DEBUG("Signature: {}" << std::endl << this->signature_;
 }
 
 

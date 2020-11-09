@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -63,7 +63,7 @@ void Parser::parse_dex_files(void) {
     const DEX::header& dex_hdr = this->stream_->peek<DEX::header>(current_offset);
     const uint8_t* data = this->stream_->peek_array<uint8_t>(current_offset, dex_hdr.file_size, /* check */false);
     if (data == nullptr) {
-      LOG(WARNING) << "File #" << std::dec << i << " is corrupted!";
+      LIEF_WARN("File #{:d} is corrupted!", i);
       continue;
     }
 
@@ -74,7 +74,7 @@ void Parser::parse_dex_files(void) {
       dexfile->name(name);
       this->file_->dex_files_.push_back(dexfile.release());
     } else {
-      LOG(WARNING) << "File #" << std::dec << i << " is not a dex file!";
+      LIEF_WARN("File #{:d} is not a dex file!", i);
     }
     current_offset += dex_hdr.file_size;
     current_offset = align(current_offset, sizeof(uint32_t));
@@ -88,7 +88,7 @@ void Parser::parse_verifier_deps(void) {
 
   uint64_t deps_offset = align(sizeof(vdex_header) + this->file_->header().dex_size(), sizeof(uint32_t));
 
-  VLOG(VDEBUG) << "Parsing Verifier deps at " << std::hex << std::showbase << deps_offset;
+  LIEF_DEBUG("Parsing Verifier deps at 0x{:x}", deps_offset);
 
   // 1. String table
   // ===============
@@ -108,10 +108,10 @@ void Parser::parse_quickening_info<VDEX6>(void) {
   quickening_offset += this->file_->header().verifier_deps_size();
   quickening_offset = align(quickening_offset, sizeof(uint32_t));
 
-  VLOG(VDEBUG) << "Parsing Quickening Info at " << std::hex << std::showbase << quickening_offset;
+  LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_offset);
 
   if (this->file_->header().quickening_info_size() == 0) {
-    VLOG(VDEBUG) << "No quickening info";
+    LIEF_DEBUG("No quickening info");
     return;
   }
 
@@ -208,10 +208,10 @@ void Parser::parse_quickening_info<VDEX10>(void) {
   quickening_base += this->file_->header().verifier_deps_size();
   quickening_base = align(quickening_base, sizeof(uint32_t));
 
-  VLOG(VDEBUG) << "Parsing Quickening Info at " << std::hex << std::showbase << quickening_base;
+  LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_base);
 
   if (quickening_size == 0) {
-    VLOG(VDEBUG) << "No quickening info";
+    LIEF_DEBUG("No quickening info");
     return;
   }
 
@@ -219,7 +219,10 @@ void Parser::parse_quickening_info<VDEX10>(void) {
   // Offset of the "Dex Indexes" array
   uint64_t dex_file_indices_off = quickening_base + quickening_size - nb_dex_files * sizeof(uint32_t);
 
-  CHECK_EQ(nb_dex_files, this->file_->dex_files_.size());
+  if (nb_dex_files > this->file_->dex_files_.size()) {
+    LIEF_WARN("Inconsistent number of dex files");
+    return;
+  }
 
   for (size_t i = 0; i < nb_dex_files; ++i) {
     DEX::File* dex_file = this->file_->dex_files_[i];

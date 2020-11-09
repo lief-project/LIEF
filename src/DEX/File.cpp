@@ -15,7 +15,7 @@
  */
 #include <fstream>
 #include "LIEF/DEX/File.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/hash.hpp"
 
@@ -110,19 +110,19 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_RETURN_VOID_NO_BARRIER:
           {
-
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] return-void-no-barrier -> return-void";
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] return-void-no-barrier -> return-void", dex_pc);
             deoptimize_return(inst_ptr, 0);
             break;
           }
 
         case OPCODES::OP_IGET_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-quick -> iget @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-quick -> iget@0x{:x}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET);
@@ -131,11 +131,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_WIDE_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-wide-quick -> iget-wide @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-wide-quick -> iget-wide@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-wide-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-wide-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_WIDE);
@@ -144,10 +145,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_OBJECT_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-object-quick -> iget-object @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-object-quick -> iget-object@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-object-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-object-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_OBJECT);
@@ -156,10 +158,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-quick -> iput @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-quick -> iput@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT);
@@ -168,10 +171,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_WIDE_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-wide-quick -> iput-wide @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-wide-quick -> iput-wide@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-wide-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-wide-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_WIDE);
@@ -180,10 +184,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_OBJECT_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-object-quick -> iput-object @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-object-quick -> iput-objecte@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-object-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-object-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_OBJECT);
@@ -192,11 +197,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_INVOKE_VIRTUAL_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] invoke-virtual-quick -> invoke-virtual @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] invoke-virtual-quick -> invoke-virtual@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (invoke-virtual-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL);
@@ -205,11 +211,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_INVOKE_VIRTUAL_RANGE_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] invoke-virtual-quick/range -> invoke-virtual/range @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] invoke-virtual-quick/range -> invoke-virtual/range @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (invoke-virtual-quick/range)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick/range)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL_RANGE);
@@ -218,11 +225,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_BOOLEAN_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-boolean-quick -> iput-boolean @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-boolean-quick -> iput-boolean@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-boolean-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-boolean-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BOOLEAN);
@@ -231,11 +239,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_BYTE_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-byte-quick -> iput-byte @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-byte-quick -> iput-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-byte-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-byte-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BYTE);
@@ -244,11 +253,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_CHAR_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-char-quick -> iput-char @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-char-quick -> iput-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-char-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-char-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_CHAR);
@@ -257,11 +267,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_SHORT_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iput-short-quick -> iput-short @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iput-short-quick -> iput-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iput-short-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-short)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_SHORT);
@@ -270,11 +281,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_BOOLEAN_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-boolean-quick -> iget-boolean @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-boolean-quick -> iget-boolean @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-boolean-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-boolean-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BOOLEAN);
@@ -283,11 +295,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_BYTE_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-byte-quick -> iget-byte @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-byte-quick -> iget-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-byte-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-byte-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BYTE);
@@ -296,11 +309,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_CHAR_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-char-quick -> iget-char @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-char-quick -> iget-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-char-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-char-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_CHAR);
@@ -309,11 +323,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_SHORT_QUICK:
           {
-            VLOG_IF(false, VDEBUG) << method->cls().fullname() << "." << method->name();
-            VLOG_IF(false, VDEBUG) << "[" << std::hex << dex_pc << "] iget-short-quick -> iget-short @" << std::dec << value;
+            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("[{:06x}] iget-short-quick -> iget-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LOG(WARNING) << "Unable to resolve instruction: " << method->cls().fullname() << "." << method->name() << " at " << std::hex << dex_pc << " (iget-short-quick)";
+              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-short-quick)",
+                  method->cls().fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_SHORT);

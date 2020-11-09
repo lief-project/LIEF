@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/DEX/instructions.hpp"
 
@@ -326,10 +326,6 @@ size_t inst_size_from_opcode(OPCODES op) {
 }
 
 bool is_switch_array(const uint8_t* ptr, const uint8_t* end) {
-  CHECK_NE(ptr, nullptr);
-  CHECK_NE(end, nullptr);
-  CHECK_LE(ptr, end);
-
   const size_t size = end - ptr;
   const size_t underlying_struct_size = std::min({
       sizeof(packed_switch),

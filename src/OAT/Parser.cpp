@@ -1,5 +1,5 @@
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/utils.hpp"
@@ -20,7 +20,7 @@ Parser::Parser(void)  = default;
 
 std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
   if (not is_oat(oat_file)) {
-    LOG(FATAL) << "'" + oat_file + "' is not an OAT";
+    LIEF_ERR("{} is not an OAT", oat_file);
     return nullptr;
   }
 
@@ -78,7 +78,7 @@ void Parser::set_vdex(VDEX::File* file) {
 
 
 void Parser::init(const std::string& name) {
-  VLOG(VDEBUG) << "Parsing binary: " << name << std::endl;
+  LIEF_DEBUG("Parsing {}", name);
 
   oat_version_t version = OAT::version(*this->oat_binary_);
 
@@ -87,7 +87,7 @@ void Parser::init(const std::string& name) {
   }
 
   if (not this->has_vdex() and version > OAT_088::oat_version) {
-    LOG(WARNING) << "No VDEX provided with this OAT file. Parsing will be incomplete";
+    LIEF_INFO("No VDEX provided with this OAT file. Parsing will be incomplete");
   }
 
   if (version <= OAT_064::oat_version) {
@@ -118,7 +118,10 @@ void Parser::init(const std::string& name) {
 
 
 void Parser::bind_vdex(void) {
-  CHECK_NE(this->vdex_file_, nullptr);
+  if (this->vdex_file_ == nullptr) {
+    LIEF_WARN("Inconsistent state: vdex_file is null");
+    return;
+  }
   for (DEX::File& dex_file : this->vdex_file_->dex_files()) {
     this->oat_binary_->dex_files_.push_back(&dex_file);
   }

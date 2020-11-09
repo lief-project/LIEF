@@ -4,14 +4,12 @@
 # Description
 # -----------
 # Print information about a PE file
+
 import lief
 from lief import PE
 from lief.PE import oid_to_string
 
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.FATAL)
-
-from optparse import OptionParser
+import argparse
 import sys
 import traceback
 
@@ -43,7 +41,6 @@ def print_information(binary):
     print("== Information ==\n")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
-    format_dec = "{:<30} {:<30d}"
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("Imphash:",      PE.get_imphash(binary)))
@@ -180,7 +177,7 @@ def print_symbols(binary):
             else:
                 try:
                     section_nb_str = symbol.section.name
-                except:
+                except Exception:
                     section_nb_str = "section<{:d}>".format(symbol.section_number)
 
 
@@ -212,7 +209,6 @@ def print_imports(binary, resolve=False):
 def print_tls(binary):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
 
     print("== TLS ==")
     tls = binary.tls
@@ -301,7 +297,6 @@ def print_debug(binary):
 @exceptions_handler(Exception)
 def print_signature(binary):
     format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
     format_dec = "{:<33} {:<30d}"
 
     signature = binary.signature
@@ -470,95 +465,123 @@ def print_functions(binary):
         print("    [{:d}] {}: 0x{:x} ({:d} bytes)".format(idx, f.name, f.address, f.size))
 
 def main():
-    optparser = OptionParser(
-            usage='Usage: %prog [options] <pe-file>',
-            add_help_option = True,
-            prog=sys.argv[0])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("pe_file")
 
-    optparser.add_option('-a', '--all',
+    parser.add_argument('-a', '--all',
             action='store_true', dest='show_all',
             help='Show all informations')
 
-    optparser.add_option('-d', '--data-directories',
+    parser.add_argument('-d', '--data-directories',
             action='store_true', dest='show_data_directories',
             help='Display data directories')
 
-    optparser.add_option('--debug',
+    parser.add_argument('--dbg',
             action='store_true', dest='show_debug',
             help='Display debug directory')
 
-    optparser.add_option('-g', '--signature',
+    parser.add_argument('-g', '--signature',
             action='store_true', dest='show_signature',
             help="Display the binary's signature if any")
 
-    optparser.add_option('-H', '--header',
+    parser.add_argument('-H', '--header',
             action='store_true', dest='show_headers',
             help='Display headers')
 
-    optparser.add_option('-i', '--import',
+    parser.add_argument('-i', '--import',
             action='store_true', dest='show_imports',
             help='Display imported functions and libraries')
 
-    optparser.add_option('--resolve-ordinals',
+    parser.add_argument('--resolve-ordinals',
             action='store_true', dest='resolve_ordinals',
             help="When used with --import, it attempts to resolve names of ordinal imports")
 
-    optparser.add_option('-r', '--relocs',
+    parser.add_argument('-r', '--relocs',
             action='store_true', dest='show_relocs',
             help='Display the relocations (if present)')
 
-    optparser.add_option('-R', '--rich-header',
+    parser.add_argument('-R', '--rich-header',
             action='store_true', dest='show_richheader',
             help='Display the Rich Header')
 
-    optparser.add_option('--resources', '--rsrc',
+    parser.add_argument('--resources', '--rsrc',
             action='store_true', dest='show_resources',
             help='Display the resources (if present)')
 
-    optparser.add_option('-S', '--section-headers', '--sections',
+    parser.add_argument('-S', '--section-headers', '--sections',
             action='store_true', dest='show_section_header',
             help="Display the sections' headers")
 
-    optparser.add_option('-s', '--symbols', '--syms',
+    parser.add_argument('-s', '--symbols', '--syms',
             action='store_true', dest='show_symbols',
             help='Display symbols')
 
-    optparser.add_option('-t', '--tls',
+    parser.add_argument('-t', '--tls',
             action='store_true', dest='show_tls',
             help='Display TLS informations')
 
-    optparser.add_option('-x', '--export',
+    parser.add_argument('-x', '--export',
             action='store_true', dest='show_export',
             help='Display exported functions/libraries')
 
-
-    optparser.add_option('--load-config',
+    parser.add_argument('--load-config',
             action='store_true', dest='show_loadconfig',
             help='Display load configuration')
 
-    optparser.add_option('--ctor',
+    parser.add_argument('--ctor',
             action='store_true', dest='show_ctor',
             help='Constructor functions')
 
-    optparser.add_option('-f', '--functions',
+    parser.add_argument('-f', '--functions',
             action='store_true', dest='show_functions',
             help='Display all functions found in the binary')
 
-    optparser.add_option('--exception-functions',
+    parser.add_argument('--exception-functions',
             action='store_true', dest='show_pfunctions',
             help='Display functions found in the exception directory')
 
+    # Logging setup
+    logger_group = parser.add_argument_group('Logger')
+    verbosity = logger_group.add_mutually_exclusive_group()
 
+    verbosity.add_argument('--debug',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.DEBUG)
 
-    options, args = optparser.parse_args()
+    verbosity.add_argument('--trace',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.TRACE)
 
-    if len(args) == 0:
-        optparser.print_help()
-        sys.exit(1)
+    verbosity.add_argument('--info',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.INFO)
+
+    verbosity.add_argument('--warn',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.WARNING)
+
+    verbosity.add_argument('--err',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.ERROR)
+
+    verbosity.add_argument('--critical',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.CRITICAL)
+
+    parser.set_defaults(main_verbosity=lief.logging.LOGGING_LEVEL.WARNING)
+
+    args = parser.parse_args()
+    lief.logging.set_level(args.main_verbosity)
 
     binary = None
     try:
-        binary = PE.parse(args[0])
+        binary = PE.parse(args.pe_file)
     except lief.exception as e:
         print(e)
         sys.exit(1)
@@ -566,52 +589,52 @@ def main():
 
     print_information(binary)
 
-    if options.show_data_directories or options.show_all:
+    if args.show_data_directories or args.show_all:
         print_data_directories(binary)
 
-    if options.show_headers or options.show_all:
+    if args.show_headers or args.show_all:
         print_header(binary)
 
-    if (options.show_imports or options.show_all) and binary.has_imports:
-        print_imports(binary, resolve=options.resolve_ordinals)
+    if (args.show_imports or args.show_all) and binary.has_imports:
+        print_imports(binary, resolve=args.resolve_ordinals)
 
-    if (options.show_relocs or options.show_all) and binary.has_relocations:
+    if (args.show_relocs or args.show_all) and binary.has_relocations:
         print_relocations(binary)
 
-    if options.show_section_header or options.show_all:
+    if args.show_section_header or args.show_all:
         print_sections(binary)
 
-    if options.show_symbols or options.show_all:
+    if args.show_symbols or args.show_all:
         print_symbols(binary)
 
-    if (options.show_tls or options.show_all) and binary.has_tls:
+    if (args.show_tls or args.show_all) and binary.has_tls:
         print_tls(binary)
 
-    if (options.show_export or options.show_all) and binary.has_exports:
+    if (args.show_export or args.show_all) and binary.has_exports:
         print_export(binary)
 
-    if (options.show_debug or options.show_all) and binary.has_debug:
+    if (args.show_debug or args.show_all) and binary.has_debug:
         print_debug(binary)
 
-    if (options.show_signature or options.show_all) and binary.has_signature:
+    if (args.show_signature or args.show_all) and binary.has_signature:
         print_signature(binary)
 
-    if (options.show_richheader or options.show_all) and binary.has_rich_header:
+    if (args.show_richheader or args.show_all) and binary.has_rich_header:
         print_rich_header(binary)
 
-    if (options.show_resources or options.show_all) and binary.has_resources:
+    if (args.show_resources or args.show_all) and binary.has_resources:
         print_resources(binary)
 
-    if (options.show_loadconfig or options.show_all) and binary.has_configuration:
+    if (args.show_loadconfig or args.show_all) and binary.has_configuration:
         print_load_configuration(binary)
 
-    if options.show_ctor or options.show_all:
+    if args.show_ctor or args.show_all:
         print_ctor(binary)
 
-    if options.show_functions or options.show_all:
+    if args.show_functions or args.show_all:
         print_functions(binary)
 
-    if options.show_pfunctions or options.show_all:
+    if args.show_pfunctions or args.show_all:
         print_exception_functions(binary)
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/exception.hpp"

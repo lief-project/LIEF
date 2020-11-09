@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
@@ -47,7 +47,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
 {
   if (not is_vdex(data)) {
-    LOG(FATAL) << "'" + name + "' is not a VDEX";
+    LIEF_ERR("{} is not a VDEX file!", name);
     delete this->file_;
     this->file_ = nullptr;
     return;
@@ -62,7 +62,7 @@ Parser::Parser(const std::string& file) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
 {
   if (not is_vdex(file)) {
-    LOG(FATAL) << "'" + file + "' is not a VDEX";
+    LIEF_ERR("{} is not a VDEX file!", file);
     delete this->file_;
     this->file_ = nullptr;
     return;
@@ -74,7 +74,7 @@ Parser::Parser(const std::string& file) :
 
 
 void Parser::init(const std::string& /*name*/, vdex_version_t version) {
-  VLOG(VDEBUG) << "VDEX version: " << std::dec << version;
+  LIEF_DEBUG("VDEX version: {:d}", version);
 
   if (version <= VDEX_6::vdex_version) {
     return this->parse_file<VDEX6>();

@@ -20,7 +20,7 @@
 #include <numeric>
 #include <limits>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
@@ -525,7 +525,7 @@ void Binary::remove_section(const std::string& name, bool clear) {
       });
 
   if (it_section == std::end(this->sections_)) {
-    LOG(ERROR) << "Unable to find section: '" << name << "'" << std::endl;
+    LIEF_ERR("Unable to find section: '{}'", name);
     return;
   }
 
@@ -541,7 +541,7 @@ void Binary::remove(const Section& section, bool clear) {
         return *s == section;
       });
   if (it_section == std::end(this->sections_)) {
-    LOG(ERROR) << "Unable to find section: '" << section.name() << "'" << std::endl;
+    LIEF_ERR("Unable to find section: '{}'", section.name());
     return;
   }
 
@@ -573,8 +573,8 @@ void Binary::remove(const Section& section, bool clear) {
 
 void Binary::make_space_for_new_section(void) {
   const uint32_t shift = align(sizeof(pe_section), this->optional_header().file_alignment());
-  VLOG(VDEBUG) << "Making space for a new section header";
-  VLOG(VDEBUG) << "Shifting all sections by " << std::hex << std::showbase << shift;
+  LIEF_DEBUG("Making space for a new section header");
+  LIEF_DEBUG("  -> Shifting all sections by 0x{:x}", shift);
 
   // Shift offset of the section content by the size of
   // a section header aligned on "file alignment"
@@ -621,7 +621,7 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
         return std::max<uint64_t>(s->pointerto_raw_data() + s->sizeof_raw_data(), offset);
       }), this->optional_header().file_alignment());
 
-  VLOG(VDEBUG) << "New section offset: 0x" << std::hex << new_section_offset;
+  LIEF_DEBUG("New section offset: 0x{:x}", new_section_offset);
 
 
   // Compute new section Virtual address
@@ -632,7 +632,7 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
         return std::max<uint64_t>(s->virtual_address() + s->virtual_size(), va);
       }), this->optional_header().section_alignment());
 
-  VLOG(VDEBUG) << "New section va: 0x" << std::hex << new_section_va;
+  LIEF_DEBUG("New section VA: 0x{:x}", new_section_va);
 
   new_section->add_type(type);
 
@@ -821,7 +821,7 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
       });
 
   if (it_import == std::end(this->imports_)) {
-    LOG(ERROR) << "Unable to find library '" << library << "'";
+    LIEF_ERR("Unable to find library {}", library);
     return 0;
   }
 
@@ -837,12 +837,12 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
       });
 
   if (nb_functions == 0) {
-    LOG(ERROR) << "Unable to find the function '" << function << "' in '" << library + "'.";
+    LIEF_ERR("Unable to find the function '{}' in '{}'", function, library);
     return 0;
   }
 
   if (nb_functions > 1) {
-    LOG(ERROR) << "'" << function << "' is defined " << std::to_string(nb_functions) << " in '" << library << "'.";
+    LIEF_ERR("{} is defined #{:d} times in {}", function, nb_functions, library);
     return 0;
   }
 
@@ -1093,7 +1093,7 @@ void Binary::hook_function(const std::string& function, uint64_t address) {
     }
   }
 
-  LOG(WARNING) << "Unable to find library associated with function '" << function << "'";
+  LIEF_WARN("Unable to find library associated with function '{}'", function);
 }
 
 
@@ -1131,7 +1131,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES addr_type) {
   if (size > sizeof(patch_value)) {
-    LOG(ERROR) << "Invalid size (" << std::to_string(size) << ")";
+    LIEF_ERR("Invalid size (0x{:x})", size);
     return;
   }
 
@@ -1306,7 +1306,7 @@ LIEF::Binary::functions_t Binary::exception_functions(void) const {
 
   for (size_t i = 0; i < nb_entries; ++i) {
     if (not vs.can_read<pe_exception_entry_x64>()) {
-      LOG(ERROR) << "Corrupted entry at " << std::dec << i;
+      LIEF_ERR("Corrupted entry #{:02d}", i);
       break;
     }
     const pe_exception_entry_x64& entry = vs.read<pe_exception_entry_x64>();

@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include <functional>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 
@@ -90,7 +90,7 @@ void Parser::build_fat(void) {
 
   const fat_header *header = &this->stream_->peek<fat_header>(0);
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
-  VLOG(VDEBUG) << "In this Fat binary there is " << std::dec << nb_arch << " archs" << std::endl;
+  LIEF_DEBUG("In this Fat binary there is #{:d} archs", nb_arch);
 
   if (nb_arch > 10) {
     throw parser_error("Too much architectures");
@@ -103,14 +103,14 @@ void Parser::build_fat(void) {
     const uint32_t offset = BinaryStream::swap_endian(arch[i].offset);
     const uint32_t size   = BinaryStream::swap_endian(arch[i].size);
 
-    VLOG(VDEBUG) << "Dealing with arch[" << std::dec << i << "]" << std::endl;
-    VLOG(VDEBUG) << "[" << std::dec << i << "] offset: 0x" << std::hex << offset << std::endl;
-    VLOG(VDEBUG) << "[" << std::dec << i << "] size:   0x" << std::hex << size << std::endl;
+    LIEF_DEBUG("Dealing with arch[{:d}]", i);
+    LIEF_DEBUG("    [{:d}].offset", offset);
+    LIEF_DEBUG("    [{:d}].size",   size);
 
     const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
 
     if (raw == nullptr) {
-      LOG(ERROR) << "MachO #" << std::dec << i << " corrupted!";
+      LIEF_ERR("MachO #{:d} is corrupted!", i);
       continue;
     }
 
@@ -134,7 +134,7 @@ void Parser::build(void) {
       this->binaries_.push_back(binary);
     }
   } catch (const std::exception& e) {
-    VLOG(VDEBUG) << e.what();
+    LIEF_DEBUG("{}", e.what());
   }
 }
 

@@ -27,7 +27,7 @@
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -141,7 +141,7 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
 Header::abstract_architecture_t Header::abstract_architecture(void) const {
   auto&& it = arch_elf_to_lief.find(this->machine_type());
   if (it == std::end(arch_elf_to_lief)) {
-    LOG(ERROR) << to_string(this->machine_type()) << " is not supported!";
+    LIEF_ERR("{}  is not supported!", to_string(this->machine_type()));
     return {};
   }
   return it->second;
@@ -219,7 +219,7 @@ arm_flags_list_t Header::arm_flags_list(void) const {
 
 bool Header::has(MIPS_EFLAGS f) const {
 
-  uint32_t fn = static_cast<uint32_t>(f);
+  auto fn = static_cast<uint32_t>(f);
   if (this->machine_type() != ARCH::EM_MIPS) {
     return false;
   }
@@ -553,7 +553,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   ss << static_cast<uint32_t>(identity[static_cast<size_t>(IDENTITY::EI_MAG3)]) << " ";
   const std::string& ident_magic = ss.str();
 
-  std::string processor_flags_str = "";
+  std::string processor_flags_str;
 
   if (hdr.machine_type() == ARCH::EM_ARM) {
     const arm_flags_list_t& flags = hdr.arm_flags_list();

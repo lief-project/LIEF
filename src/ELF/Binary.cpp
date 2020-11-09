@@ -30,7 +30,7 @@
 
 #include <stdexcept>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
@@ -1614,7 +1614,7 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
       });
 
   if (it_segment == std::end(this->segments_)) {
-    VLOG(VDEBUG) << "Address: 0x" << std::hex << virtual_address;
+    LIEF_DEBUG("Address: 0x{:x}", virtual_address);
     throw conversion_error("Invalid virtual address");
   }
   uint64_t baseAddress = (*it_segment)->virtual_address() - (*it_segment)->file_offset();
@@ -1881,7 +1881,7 @@ void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
       done.insert(permutation[i]);
       done.insert(i);
     } else {
-      LOG(ERROR) << "Can't apply permutation at index " << std::dec << i;
+      LIEF_ERR("Can't apply permutation at index #{:d}", i);
     }
 
   }
@@ -1973,43 +1973,41 @@ const SysvHash& Binary::sysv_hash(void) const {
 
 
 void Binary::shift_sections(uint64_t from, uint64_t shift) {
-  VLOG(VDEBUG) << "Shift Sections";
+  LIEF_DEBUG("[+] Shift Sections");
   /// TODO: ADDRESS ?????????? ///////////
   for (Section* section : this->sections_) {
-    VLOG(VDEBUG) << "[BEFORE] " << *section;
+    LIEF_DEBUG("[BEFORE] {}", *section);
     if (section->file_offset() >= from) {
       section->file_offset(section->file_offset() + shift);
       if (section->virtual_address() > 0) {
         section->virtual_address(section->virtual_address() + shift);
       }
     }
-    VLOG(VDEBUG) << "[AFTER] " << *section << std::endl;
+    LIEF_DEBUG("[AFTER] {}", *section);
   }
 
 }
 
 void Binary::shift_segments(uint64_t from, uint64_t shift) {
 
-  VLOG(VDEBUG) << "Shift Segments";
+  LIEF_DEBUG("Shift segments by 0x{:x} from 0x{:x}", shift, from);
 
   for (Segment* segment : this->segments_) {
-    VLOG(VDEBUG) << "[BEFORE] " << *segment;
+    LIEF_DEBUG("[BEFORE] {}", *segment);
     if (segment->file_offset() >= from) {
-
       segment->file_offset(segment->file_offset() + shift);
       segment->virtual_address(segment->virtual_address() + shift);
       segment->physical_address(segment->physical_address() + shift);
-
     }
-    VLOG(VDEBUG) << "[AFTER] " << *segment << std::endl;
+    LIEF_DEBUG("[AFTER] {}", *segment);
   }
 }
 
 void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
-  VLOG(VDEBUG) << "Shift Dynamic entries";
+  LIEF_DEBUG("Shift dynamic entries by 0x{:x} from 0x{:x}", shift, from);
 
   for (DynamicEntry* entry : this->dynamic_entries_) {
-    VLOG(VDEBUG) << "[BEFORE] " << *entry;
+    LIEF_DEBUG("[BEFORE] {}", *entry);
     switch (entry->tag()) {
       case DYNAMIC_TAGS::DT_PLTGOT:
       case DYNAMIC_TAGS::DT_HASH:
@@ -2056,30 +2054,29 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 
       default:
         {
-          VLOG(VDEBUG) << to_string(entry->tag()) << " not patched";
+          LIEF_WARN("{} not supported", to_string(entry->tag()));
         }
     }
-    VLOG(VDEBUG) << "[AFTER] " << *entry << std::endl;
+    LIEF_DEBUG("[AFTER] {}", *entry);
   }
 }
 
 
 void Binary::shift_symbols(uint64_t from, uint64_t shift) {
-  VLOG(VDEBUG) << "Shift Symbols";
+  LIEF_DEBUG("Shift symbols by 0x{:x} from 0x{:x}", shift, from);
   for (Symbol& symbol : this->symbols()) {
-    VLOG(VDEBUG) << "[BEFORE] " << symbol;
+    LIEF_DEBUG("[BEFORE] {}", symbol);
     if (symbol.value() >= from) {
       symbol.value(symbol.value() + shift);
     }
-    VLOG(VDEBUG) << "[AFTER] " << symbol << std::endl;
+    LIEF_DEBUG("[AFTER] {}", symbol);
   }
 }
 
 
 void Binary::shift_relocations(uint64_t from, uint64_t shift) {
   const ARCH arch = this->header().machine_type();
-
-  VLOG(VDEBUG) << "Shift relocations for architecture: " << to_string(arch);
+  LIEF_DEBUG("Shift relocations for {} by 0x{:x} from 0x{:x}", to_string(arch), shift, from);
 
   switch(arch) {
     case ARCH::EM_ARM:
@@ -2122,7 +2119,7 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 
     default:
       {
-        LOG(WARNING) << "Relocations for architecture " << to_string(arch) << " is not supported!";
+       LIEF_WARN("Relocations for architecture {} is not supported!", to_string(arch));
       }
   }
 }
@@ -2392,7 +2389,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
       });
 
   if (it_load_segment == std::end(this->segments_)) {
-    LOG(ERROR) << "Unable to find the LOAD segment associated with PT_GNU_EH_FRAME";
+    LIEF_ERR("Unable to find the LOAD segment associated with PT_GNU_EH_FRAME");
     return functions;
   }
   const Segment* load_segment = *it_load_segment;
@@ -2403,7 +2400,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
   vs.setpos(eh_frame_off);
 
   if (vs.size() < 4 * sizeof(uint8_t)) {
-    LOG(WARNING) << "Unable to read EH frame header";
+    LIEF_WARN("Unable to read EH frame header");
     return functions;
   }
 
@@ -2421,24 +2418,20 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
   }
 
   if (version != 1) {
-    LOG(WARNING) << "EH Frame header version is not 1 " << std::dec
-                 << "(" << version << ") structure may have been corrupted!";
+    LIEF_WARN("EH Frame header version is not 1 ({:d}) structure may have been corrupted!", version);
   }
 
   if (fde_count < 0) {
-    LOG(WARNING) << "fde_count is corrupted (negative value)";
+    LIEF_WARN("fde_count is corrupted (negative value)");
     fde_count = 0;
   }
 
 
-
-  VLOG(VDEBUG) << std::showbase << std::left
-             << std::setw(20) << std::setfill(' ') << "eh_frame_ptr_enc: " << std::hex << static_cast<uint32_t>(eh_frame_ptr_enc) << std::endl
-             << std::setw(20) << std::setfill(' ') << "fde_count_enc: "    << std::hex << static_cast<uint32_t>(fde_count_enc) << std::endl
-             << std::setw(20) << std::setfill(' ') << "table_enc: "        << std::hex << static_cast<uint32_t>(table_enc) << std::endl;
-
-  VLOG(VDEBUG) << std::setw(20) << std::setfill(' ') << "eh_frame_ptr: " << std::hex << eh_frame_ptr << std::endl;
-  VLOG(VDEBUG) << std::setw(20) << std::setfill(' ') << "fde_count: " << fde_count << std::endl;
+  LIEF_DEBUG("  eh_frame_ptr_enc: 0x{:x}", static_cast<uint32_t>(eh_frame_ptr_enc));
+  LIEF_DEBUG("  fde_count_enc:    0x{:x}", static_cast<uint32_t>(fde_count_enc));
+  LIEF_DEBUG("  table_enc:        0x{:x}", static_cast<uint32_t>(table_enc));
+  LIEF_DEBUG("  eh_frame_ptr:     0x{:x}", static_cast<uint32_t>(eh_frame_ptr));
+  LIEF_DEBUG("  fde_count:        0x{:x}", static_cast<uint32_t>(fde_count));
 
   DWARF::EH_ENCODING table_bias = static_cast<DWARF::EH_ENCODING>(table_enc & 0xF0);
 
@@ -2459,7 +2452,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
 
       case DWARF::EH_ENCODING::TEXTREL:
         {
-          LOG(WARNING) << "EH_ENCODING::TEXTREL is not supported";
+          LIEF_WARN("EH_ENCODING::TEXTREL is not supported");
           break;
         }
 
@@ -2471,30 +2464,30 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
 
       case DWARF::EH_ENCODING::FUNCREL:
         {
-          LOG(WARNING) << "EH_ENCODING::FUNCREL is not supported";
+          LIEF_WARN("EH_ENCODING::FUNCREL is not supported");
           break;
         }
 
       case DWARF::EH_ENCODING::ALIGNED:
         {
-          LOG(WARNING) << "EH_ENCODING::ALIGNED is not supported";
+          LIEF_WARN("EH_ENCODING::ALIGNED is not supported");
           break;
         }
 
       default:
         {
-          LOG(WARNING) << "Encoding not supported!";
+          LIEF_WARN("Encoding not supported!");
           break;
         }
     }
     initial_location += bias;
     address          += bias;
 
-    VLOG(VDEBUG) << "Initial location: " << initial_location;
-    VLOG(VDEBUG) << "Address: "          << address;
-    VLOG(VDEBUG) << "Bias: "             << std::hex << bias;
+    LIEF_DEBUG("Initial location: 0x{:x}", initial_location);
+    LIEF_DEBUG("Address: 0x{:x}", address);
+    LIEF_DEBUG("Bias: 0x{:x}", bias);
     const size_t saved_pos = vs.pos();
-    VLOG(VDEBUG) << "Go to " << std::hex << eh_frame_off + address - bias;
+    LIEF_DEBUG("Go to eh_frame_off + address - bias: 0x{:x}", eh_frame_off + address - bias);
     // Go to the FDE structure
     vs.setpos(eh_frame_off + address - bias);
     {
@@ -2505,7 +2498,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
       uint32_t cie_pointer = vs.read<uint32_t>();
 
       if (cie_pointer == 0) {
-        LOG(WARNING) << "cie_pointer is null!";
+        LIEF_DEBUG("cie_pointer is null!");
         vs.setpos(saved_pos);
         continue;
       }
@@ -2513,9 +2506,9 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
       uint32_t cie_offset  = vs.pos() - cie_pointer - sizeof(uint32_t);
 
 
-      VLOG(VDEBUG) << "fde_length@"  << std::hex << address - bias << ": " << fde_length;
-      VLOG(VDEBUG) << "cie_pointer " << std::hex << cie_pointer;
-      VLOG(VDEBUG) << "cie_offset "  << cie_offset;
+      LIEF_DEBUG("fde_length@0x{:x}: 0x{:x}", address - bias, fde_length);
+      LIEF_DEBUG("cie_pointer 0x{:x}", cie_pointer);
+      LIEF_DEBUG("cie_offset 0x{:x}", cie_offset);
 
 
       // Go to CIE structure
@@ -2532,21 +2525,19 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
         uint32_t version    = vs.read<uint8_t>();
 
         if (cie_id != 0) {
-          LOG(WARNING) << "CIE ID is not 0 "
-                       << std::dec << "(" << cie_id << ")";
+          LIEF_WARN("CIE ID is not 0 ({:d})", cie_id);
         }
 
         if (version != 1) {
-          LOG(WARNING) << "CIE Version is not 1 "
-                       << std::dec << "(" << version << ")";
+          LIEF_WARN("CIE ID is not 1 ({:d})", version);
         }
 
-        VLOG(VDEBUG) << "cie_length:" << cie_length;
-        VLOG(VDEBUG) << "ID: "      << cie_id;
-        VLOG(VDEBUG) << "Version: " << version;
+        LIEF_DEBUG("cie_length: 0x{:x}", cie_length);
+        LIEF_DEBUG("ID: {:d}", cie_id);
+        LIEF_DEBUG("Version: {:d}", version);
 
         std::string cie_augmentation_string = vs.read_string();
-        VLOG(VDEBUG) << "CIE Augmentation " << cie_augmentation_string;
+        LIEF_DEBUG("CIE Augmentation {:x}", cie_augmentation_string);
         if (cie_augmentation_string.find("eh") != std::string::npos) {
           if (is64) {
             /* uint64_t eh_data = */ vs.read<uint64_t>();
@@ -2561,18 +2552,18 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
         if (cie_augmentation_string.find('z') != std::string::npos) {
           /* int64_t  augmentation_length    = */ vs.read_uleb128();
         }
-        VLOG(VDEBUG) << cie_augmentation_string;
+        LIEF_DEBUG("cie_augmentation_string: {}", cie_augmentation_string);
 
 
         if (cie_augmentation_string.size() > 0 and cie_augmentation_string[0] == 'z') {
           if (cie_augmentation_string.find('R') != std::string::npos) {
             augmentation_data = vs.read<uint8_t>();
           } else {
-            LOG(WARNING) << "Augmentation string '" << cie_augmentation_string << "' is not supported";
+            LIEF_WARN("Augmentation string '{}' is not supported", cie_augmentation_string);
           }
         }
       }
-      VLOG(VDEBUG) << "Augmentation data "  << std::hex << static_cast<uint32_t>(augmentation_data) << std::endl;
+      LIEF_DEBUG("Augmentation data 0x{:x}", static_cast<uint32_t>(augmentation_data));
 
       // Go back to FDE Structure
       vs.setpos(saved_pos);
@@ -2583,7 +2574,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
       Function f{static_cast<uint64_t>(initial_location + this->imagebase())};
       f.size(size);
       functions.push_back(std::move(f));
-      VLOG(VDEBUG) << "PC BEGIN/SIZE: " << std::hex << function_begin << " : " << size  << std::endl;
+      LIEF_DEBUG("PC@0x{:x}:0x{:x}", function_begin, size);
     }
     vs.setpos(saved_pos);
   }

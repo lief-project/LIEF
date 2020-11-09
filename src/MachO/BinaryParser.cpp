@@ -89,7 +89,7 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
 }
 
 void BinaryParser::init(void) {
-  VLOG(VDEBUG) << "Parsing MachO" << std::endl;
+  LIEF_DEBUG("Parsing MachO");
   try {
     MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
 
@@ -112,7 +112,7 @@ void BinaryParser::init(void) {
       this->parse<MachO32>();
     }
   } catch (const std::exception& e) {
-    VLOG(VDEBUG) << e.what();
+    LIEF_DEBUG("{}", e.what());
   }
 
 }
@@ -251,7 +251,7 @@ void BinaryParser::parse_dyldinfo_export(void) {
       dyldinfo.export_trie({raw_trie, raw_trie + size});
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_DEBUG("{}", e.what());
   }
 
   this->stream_->setpos(offset);

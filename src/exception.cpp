@@ -16,7 +16,7 @@
 #include <sstream>
 
 #include "LIEF/exception.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/config.h"
 
 

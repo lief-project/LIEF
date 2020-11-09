@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -27,7 +27,6 @@ namespace OAT {
 
 template<>
 void Parser::parse_dex_files<OAT64_t>(void) {
-  VLOG(VDEBUG) << "Parsing 'OATDexFile'";
   using oat_header = typename OAT64_t::oat_header;
   using dex35_header_t  = DEX::DEX35::dex_header;
 
@@ -35,12 +34,12 @@ void Parser::parse_dex_files<OAT64_t>(void) {
 
   uint64_t dexfiles_offset = sizeof(oat_header) + this->oat_binary_->header_.key_value_size();
 
-  VLOG(VDEBUG) << "OATDexFile located at offset: " << std::showbase << std::hex << dexfiles_offset;
+  LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
 
   this->stream_->setpos(dexfiles_offset);
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
-    VLOG(VDEBUG) << "Dealing with OATDexFile #" << std::dec << i;
+    LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
     if (not this->stream_->can_read<uint32_t>()) {
       return;
@@ -75,7 +74,7 @@ void Parser::parse_dex_files<OAT64_t>(void) {
   for (size_t i = 0; i < nb_dex_files; ++i) {
     uint64_t offset = this->oat_binary_->oat_dex_files_[i]->dex_offset();
 
-    VLOG(VDEBUG) << "Dealing with DexFile #" << std::dec << i << " at offset " << std::showbase << std::hex << offset;
+    LIEF_DEBUG("Dealing with OAT DEX file #{:d} at offset 0x{:x}", i, offset);
 
     const dex35_header_t& hdr = this->stream_->peek<dex35_header_t>(offset);
 
@@ -99,7 +98,7 @@ void Parser::parse_dex_files<OAT64_t>(void) {
       this->oat_binary_->dex_files_.push_back(dexfile.release());
       oat_dex_file->dex_file_ = this->oat_binary_->dex_files_[i];
     } else {
-      LOG(WARNING) << name << " ("<< oat_dex_file->location() << ") at " << std::showbase << std::hex << this->stream_->pos() << " is not a dex file!";
+      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), this->stream_->pos());
     }
   }
 }

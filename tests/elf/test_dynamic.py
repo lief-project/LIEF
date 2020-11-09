@@ -1,20 +1,20 @@
 #!/usr/bin/env python
-import unittest
 import logging
 import os
-import sys
-import stat
 import re
-import subprocess
-import tempfile
 import shutil
-import lief
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
-
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
 from subprocess import Popen
 from unittest import TestCase
-from utils import get_sample, get_compiler
+
+import lief
+from utils import get_compiler, get_sample
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
@@ -272,4 +272,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

@@ -16,7 +16,7 @@
 
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
@@ -118,7 +118,7 @@ Method::access_flags_list_t Method::access_flags(void) const {
 }
 
 const Prototype& Method::prototype(void) const {
-  CHECK_NE(this->prototype_, nullptr);
+  CHECK(this->prototype_ != nullptr, "Prototype is null!");
   return *this->prototype_;
 }
 

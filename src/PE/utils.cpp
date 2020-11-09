@@ -23,7 +23,7 @@
 #include <sstream>
 #include <string>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "mbedtls/md5.h"
 
 #include "LIEF/exception.hpp"
@@ -41,7 +41,7 @@ namespace PE {
 bool is_pe(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
   if (not binary) {
-    LOG(ERROR) << "Unable to open the file!";
+    LIEF_ERR("Unable to open the file!");
     return false;
   }
 
@@ -53,7 +53,7 @@ bool is_pe(const std::string& file) {
 
 
   if (file_size < sizeof(pe_dos_header)) {
-    LOG(ERROR) << "File too small";
+    LIEF_ERR("File too small");
     return false;
   }
 
@@ -224,7 +224,7 @@ Import resolve_ordinals(const Import& import, bool strict) {
         [] (const ImportEntry& entry) {
           return not entry.is_ordinal();
         })) {
-    VLOG(VDEBUG) << "All imports use name. No ordinal!";
+    LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
   }
 
@@ -241,19 +241,19 @@ Import resolve_ordinals(const Import& import, bool strict) {
     if (strict) {
       throw not_found(msg);
     }
-    VLOG(VDEBUG) << msg;
+    LIEF_DEBUG("{}", msg);
     return import;
   }
   Import resolved_import = import;
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
-      VLOG(VDEBUG) << "Dealing with: " << entry;
+      LIEF_DEBUG("Dealing with: {}", entry);
       auto&& it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
       if (it_entry == std::end(it_library_lookup->second)) {
         if (strict) {
           throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
         }
-        VLOG(VDEBUG) << "Unable to resolve ordinal:" << std::hex << entry.ordinal();
+        LIEF_DEBUG("Unable to resolve ordinal: #{:d}", entry.ordinal());
         continue;
       }
       entry.data(0);

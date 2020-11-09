@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/ELF/enums.hpp"
 namespace LIEF {
 namespace ELF {
@@ -38,14 +38,14 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
       case RELOC_ARM::R_ARM_GLOB_DAT:
       case RELOC_ARM::R_ARM_IRELATIVE:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       default:
         {
-          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+          LIEF_WARN("Relocation {} not supported!", to_string(type));
         }
     }
   }
@@ -73,21 +73,21 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
       case RELOC_AARCH64::R_AARCH64_IRELATIVE:
       case RELOC_AARCH64::R_AARCH64_ABS64:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_ABS32:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_ABS16:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
@@ -95,28 +95,28 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
 
       case RELOC_AARCH64::R_AARCH64_PREL64:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_PREL32:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_PREL16:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
 
       default:
         {
-          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+          LIEF_WARN("Relocation {} not supported!", to_string(type));
         }
     }
   }
@@ -141,14 +141,14 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
       case RELOC_i386::R_386_IRELATIVE:
       case RELOC_i386::R_386_GLOB_DAT:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       default:
         {
-          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+          LIEF_WARN("Relocation {} not supported!", to_string(type));
         }
     }
   }
@@ -173,21 +173,21 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
       case RELOC_x86_64::R_X86_64_GLOB_DAT:
       case RELOC_x86_64::R_X86_64_64:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_x86_64::R_X86_64_32:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       default:
         {
-          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+          LIEF_WARN("Relocation {} not supported!", to_string(type));
         }
     }
   }
@@ -209,14 +209,14 @@ void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
     switch (type) {
       case RELOC_POWERPC32::R_PPC_RELATIVE:
         {
-          VLOG(VDEBUG) << "Patch addend of " << relocation;
+          LIEF_DEBUG("Patch addend of {}", relocation);
           this->patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       default:
         {
-          VLOG(VDEBUG) << "Relocation '" << to_string(type) << "' not patched";
+          LIEF_WARN("Relocation {} not supported!", to_string(type));
         }
     }
   }
@@ -231,19 +231,19 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   }
 
   const uint64_t address = relocation.address();
-  VLOG(VDEBUG) << "Patch addend relocation at address: 0x" << std::hex << address;
+  LIEF_DEBUG("Patch addend relocation at address: 0x{:x}", address);
   Segment& segment = segment_from_virtual_address(address);
   const uint64_t relative_offset = this->virtual_address_to_offset(address) - segment.file_offset();
 
   const size_t segment_size = segment.get_content_size();
 
   if (segment_size == 0) {
-    LOG(WARNING) << "Segment is empty nothing to do";
+    LIEF_WARN("Segment is empty nothing to do");
     return;
   }
 
   if (relative_offset >= segment_size or (relative_offset + sizeof(T)) >= segment_size) {
-    VLOG(VDEBUG) << "Offset out of bound for relocation: " << relocation;
+    LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return;
   }
 
@@ -302,7 +302,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   uint64_t last_offset     = std::max<uint64_t>(last_offset_sections, last_offset_segments);
   uint64_t new_phdr_offset = last_offset;
 
-  VLOG(VDEBUG) << "New PHDR offset 0x" << std::hex << new_phdr_offset;
+  LIEF_DEBUG("New PHDR@0x{:x}", new_phdr_offset);
   header.program_headers_offset(new_phdr_offset);
 
   uint64_t phdr_size = 0;
@@ -327,7 +327,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
 
     const uint64_t new_phdr_size = phdr_segment->physical_size() + phdr_size;
 
-    VLOG(VDEBUG) << "New PHDR size 0x" << std::hex << new_phdr_size;
+    LIEF_DEBUG("New PHDR size: 0x{:x}", new_phdr_size);
 
     phdr_segment->file_offset(new_phdr_offset);
     phdr_segment->virtual_address(text_segment->virtual_address() - text_segment->file_offset() + phdr_segment->file_offset());
@@ -464,7 +464,7 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
   // TODO: Improve (It takes too much spaces)
   uint64_t shift = psize;
 
-  VLOG(VDEBUG) << "Header shift: " << std::hex << shift;
+  LIEF_DEBUG("Header shift: 0x{:x}", shift);
 
   this->header().section_headers_offset(this->header().section_headers_offset() + shift);
 
@@ -616,7 +616,7 @@ Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
 
 template<>
 Section& Binary::add_section<true>(const Section& section) {
-  VLOG(VDEBUG) << "Adding section '" << section.name() << "' in the binary (LOADED)";
+  LIEF_DEBUG("Adding section '{}' as LOADED", section.name());
   // Create a Segment:
   Segment new_segment;
   new_segment.content(section.content());
@@ -641,7 +641,8 @@ Section& Binary::add_section<true>(const Section& section) {
 
   Segment& segment_added = this->add(new_segment);
 
-  VLOG(VDEBUG) << "Sgement associated: '" << segment_added << "'";
+  LIEF_DEBUG("Segment associated: {}@0x{:x}",
+      to_string(segment_added.type()), segment_added.virtual_address());
 
   Section* new_section = new Section{section};
   new_section->datahandler_ = this->datahandler_;
@@ -708,7 +709,7 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   const uint64_t addr = this->get(DYNAMIC_TAGS::DT_PLTGOT).value();
   std::vector<uint8_t> content = this->get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   if (content.size() != 3 * sizeof(ptr_t)) {
-    LOG(ERROR) << "Cant't read got entries!";
+    LIEF_ERR("Cant't read got entries!");
     return;
   }
 

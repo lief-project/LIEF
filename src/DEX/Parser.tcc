@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -48,7 +48,7 @@ void Parser::parse_file(void) {
 template<typename DEX_T>
 void Parser::parse_header(void) {
   using header_t = typename DEX_T::dex_header;
-  VLOG(VDEBUG) << "Parsing Header";
+  LIEF_DEBUG("Parsing Header");
 
   const header_t& hdr = this->stream_->peek<header_t>(0);
   this->file_->header_ = &hdr;
@@ -58,7 +58,7 @@ void Parser::parse_header(void) {
 
 template<typename DEX_T>
 void Parser::parse_map(void) {
-  VLOG(VDEBUG) << "Parsing MAP";
+  LIEF_DEBUG("Parsing map items");
 
   uint32_t offset = this->file_->header().map();
   this->stream_->setpos(offset);
@@ -82,21 +82,20 @@ void Parser::parse_strings(void) {
   // (Offset, Size)
   Header::location_t strings_location = this->file_->header().strings();
   if (strings_location.second == 0) {
-    LOG(WARNING) << "No strings founds in dex file: " << this->file_->location();
+    LIEF_WARN("No strings found in DEX file {}", this->file_->location());
     return;
   }
 
-  VLOG(VDEBUG) << "Parsing " << std::dec << strings_location.second << " "
-               << "strings at " << std::showbase << std::hex << strings_location.first;
+  LIEF_DEBUG("Parsing #{:d} STRINGS at 0x{:x}", strings_location.second, strings_location.first);
 
   if (this->file_->map().has(MapItem::TYPES::STRING_ID)) {
     const MapItem& string_item = this->file_->map()[MapItem::TYPES::STRING_ID];
     if (string_item.offset() != strings_location.first) {
-      LOG(WARNING) << "Different values for string offset between map and header";
+      LIEF_WARN("Different values for string offset between map and header");
     }
 
     if (string_item.size() != strings_location.second) {
-      LOG(WARNING) << "Different values for string size between map and header";
+      LIEF_WARN("Different values for string size between map and header");
     }
   }
 
@@ -113,8 +112,8 @@ void Parser::parse_strings(void) {
 template<typename DEX_T>
 void Parser::parse_types(void) {
   Header::location_t types_location = this->file_->header().types();
-  VLOG(VDEBUG) << "Parsing " << std::dec << types_location.second << " "
-               << "types at " << std::showbase << std::hex << types_location.first;
+
+  LIEF_DEBUG("Parsing #{:d} TYPES at 0x{:x}", types_location.second, types_location.first);
 
   if (types_location.first == 0) {
     return;
@@ -155,8 +154,8 @@ template<typename DEX_T>
 void Parser::parse_fields(void) {
 
   Header::location_t fields_location = this->file_->header().fields();
-  VLOG(VDEBUG) << "Parsing " << std::dec << fields_location.second << " "
-               << "fields at " << std::showbase << std::hex << fields_location.first;
+  LIEF_DEBUG("Parsing #{:d} FIELDS at 0x{:x}", fields_location.second, fields_location.first);
+  // TODO(romain): To implement
 }
 
 template<typename DEX_T>
@@ -166,26 +165,25 @@ void Parser::parse_prototypes(void) {
     return;
   }
 
-  VLOG(VDEBUG) << "Parsing " << std::dec << prototypes_locations.second << " "
-               << "protypes at " << std::showbase << std::hex << prototypes_locations.first;
+  LIEF_DEBUG("Parsing #{:d} PROTYPES at 0x{:x}", prototypes_locations.second, prototypes_locations.first);
 
   this->stream_->setpos(prototypes_locations.first);
   for (size_t i = 0; i < prototypes_locations.second; ++i) {
     if (not this->stream_->can_read<proto_id_item>()) {
-      LOG(WARNING) << "Prototype #" << std::dec << i << " corrupted";
+      LIEF_WARN("Prototype #{:d} corrupted", i);
       break;
     }
     const proto_id_item& item = this->stream_->read<proto_id_item>();
 
     if (item.shorty_idx >= this->file_->strings_.size()) {
-      LOG(WARNING) << "prototype.shorty_idx corrupted (" << std::dec << item.shorty_idx << ")";
+      LIEF_WARN("prototype.shorty_idx corrupted ({:d})", item.shorty_idx);
       break;
     }
     //std::string* shorty_str = this->file_->strings_[item.shorty_idx];
 
     // Type object that is returned
     if (item.return_type_idx >= this->file_->types_.size()) {
-      LOG(WARNING) << "prototype.return_type_idx corrupted (" << std::dec << item.return_type_idx << ")";
+      LIEF_WARN("prototype.return_type_idx corrupted ({:d})", item.return_type_idx);
       break;
     }
     std::unique_ptr<Prototype> prototype{new Prototype{}};
@@ -226,17 +224,23 @@ void Parser::parse_methods(void) {
 
   const uint64_t methods_offset = methods_location.first;
 
-  VLOG(VDEBUG) << "Parsing " << std::dec << methods_location.second << " "
-               << "methods at " << std::showbase << std::hex << methods_offset;
+  LIEF_DEBUG("Parsing #{:d} METHODS at 0x{:x}", methods_location.second, methods_location.first);
 
   for (size_t i = 0; i < methods_location.second; ++i) {
     const method_id_item& item = this->stream_->peek<method_id_item>(methods_offset + i * sizeof(method_id_item));
 
 
     // Class name in which the method is defined
-    CHECK_LT(item.class_idx, types_location.second) << "Type index for class name is corrupted";
+    if (item.class_idx > types_location.second) {
+      LIEF_WARN("Type index for class name is corrupted");
+      continue;
+    }
     uint32_t class_name_idx = this->stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
-    CHECK_LT(class_name_idx, this->file_->strings_.size()) << "String index for class name is corrupted";
+
+    if (class_name_idx > this->file_->strings_.size()) {
+      LIEF_WARN("String index for class name is corrupted");
+      continue;
+    }
     std::string clazz = *this->file_->strings_[class_name_idx];
     if (not clazz.empty() and clazz[0] == '[') {
       size_t pos = clazz.find_last_of('[');
@@ -249,17 +253,22 @@ void Parser::parse_methods(void) {
     // Prototype
     // =======================
     if (item.proto_idx >= this->file_->prototypes_.size()) {
-      LOG(WARNING) << "Prototype #" << std::dec << item.proto_idx << " out of bound (" << this->file_->prototypes_.size() << ")";
+      LIEF_WARN("Prototype #{:d} out of bound ({:d})", item.proto_idx, this->file_->prototypes_.size());
       break;
     }
     Prototype* pt = this->file_->prototypes_[item.proto_idx];
 
     // Method Name
-    CHECK_LT(item.name_idx, this->file_->strings_.size()) << "Name of method #" << std::dec << i << " is out of bound!";
-    std::string name = *this->file_->strings_[item.name_idx];
+    if (item.name_idx > this->file_->strings_.size()) {
+      LIEF_WARN("Name of method #{:d} is out of bound!", i);
+      continue;
+    }
 
-    CHECK(not clazz.empty());
-    //CHECK_EQ(clazz[0], 'L') << "Not supported class: " << clazz;
+    std::string name = *this->file_->strings_[item.name_idx];
+    if (clazz.empty()) {
+      LIEF_WARN("Empty class name");
+    }
+
     Method* method = new Method{name};
     if (name == "<init>" or name == "<clinit>") {
       method->access_flags_ |= ACCESS_FLAGS::ACC_CONSTRUCTOR;
@@ -282,8 +291,7 @@ void Parser::parse_classes(void) {
 
   const uint64_t classes_offset = classes_location.first;
 
-  VLOG(VDEBUG) << "Parsing " << std::dec << classes_location.second << " "
-               << "classes at " << std::showbase << std::hex << classes_offset;
+  LIEF_DEBUG("Parsing #{:d} CLASSES at 0x{:x}", classes_location.second, classes_offset);
 
   for (size_t i = 0; i < classes_location.second; ++i) {
     const class_def_item& item = this->stream_->peek<class_def_item>(classes_offset + i * sizeof(class_def_item));
@@ -293,23 +301,31 @@ void Parser::parse_classes(void) {
 
     std::string name;
     if (type_idx > types_location.second) {
-      LOG(WARNING) << "Type Corrupted";
+      LIEF_ERR("Type Corrupted");
     } else {
       uint32_t class_name_idx = this->stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
-
-      CHECK_LT(class_name_idx, this->file_->strings_.size()) << "String index for class name corrupted";
-      name = *this->file_->strings_[class_name_idx];
+      if (class_name_idx >= this->file_->strings_.size()) {
+        LIEF_WARN("String index for class name corrupted");
+      } else {
+        name = *this->file_->strings_[class_name_idx];
+      }
     }
 
     // Get parent class name (if any)
     std::string parent_name;
     Class* parent_ptr = nullptr;
     if (item.superclass_idx != NO_INDEX) {
-      CHECK_LT(item.superclass_idx, types_location.second) << "Type index for super class name corrupted";
+      if (item.superclass_idx > types_location.second) {
+        LIEF_WARN("Type index for super class name corrupted");
+        continue;
+      }
       uint32_t super_class_name_idx = this->stream_->peek<uint32_t>(
           types_location.first + item.superclass_idx * sizeof(uint32_t));
-      CHECK_LT(super_class_name_idx, this->file_->strings_.size()) << "String index for super class name corrupted";
-      parent_name = *this->file_->strings_[super_class_name_idx];
+      if (super_class_name_idx >= this->file_->strings_.size()) {
+        LIEF_WARN("String index for super class name corrupted");
+      } else {
+        parent_name = *this->file_->strings_[super_class_name_idx];
+      }
 
       // Check if already parsed the parent class
       auto&& it_parent = this->file_->classes_.find(parent_name);
@@ -321,8 +337,11 @@ void Parser::parse_classes(void) {
     // Get Source filename (if any)
     std::string source_filename;
     if (item.source_file_idx != NO_INDEX) {
-      CHECK_LT(item.source_file_idx, this->file_->strings_.size()) << "String index for source filename corrupted";
-      source_filename = *this->file_->strings_[item.source_file_idx];
+      if (item.source_file_idx >= this->file_->strings_.size()) {
+        LIEF_WARN("String index for source filename corrupted");
+      } else {
+        source_filename = *this->file_->strings_[item.source_file_idx];
+      }
     }
 
     Class* clazz = new Class{name, item.access_flags, parent_ptr, source_filename};
@@ -384,9 +403,11 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
   // ==============
   for (size_t method_idx = 0, i = 0; i < direct_methods_size; ++i) {
     method_idx += this->stream_->read_uleb128();
-
-    CHECK_LT(method_idx, this->file_->methods_.size()) << "Corrupted method index #"
-      << std::dec << method_idx << " for class: " << cls->fullname() << " (" << std::dec << this->file_->methods_.size() << " methods)";
+    if (method_idx > this->file_->methods_.size()) {
+      LIEF_WARN("Corrupted method index #{:d} for class: {} ({:d} methods)",
+          method_idx, cls->fullname(), this->file_->methods_.size());
+      break;
+    }
 
     this->parse_method<DEX_T>(method_idx, cls, false);
   }
@@ -396,9 +417,11 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
   for (size_t method_idx = 0, i = 0; i < virtual_methods_size; ++i) {
     method_idx += this->stream_->read_uleb128();
 
-    CHECK_LT(method_idx, this->file_->methods_.size()) << "Corrupted method index #"
-      << std::dec << method_idx << " for class: " << cls->fullname();
-
+    if (method_idx > this->file_->methods_.size()) {
+      LIEF_WARN("Corrupted method index #{:d} for class: {} ({:d} methods)",
+          method_idx, cls->fullname(), virtual_methods_size);
+      break;
+    }
     this->parse_method<DEX_T>(method_idx, cls, true);
   }
 
@@ -416,7 +439,10 @@ void Parser::parse_method(size_t index, Class* cls, bool is_virtual) {
   Method* method = this->file_->methods_[index];
   method->set_virtual(is_virtual);
 
-  CHECK_EQ(method->index(), index);
+  if (method->index() != index) {
+    LIEF_WARN("method->index() is not consistent");
+    return;
+  }
 
   method->access_flags_ = static_cast<uint32_t>(access_flags);
   method->parent_ = cls;

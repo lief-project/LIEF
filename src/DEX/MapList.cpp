@@ -17,7 +17,7 @@
 
 #include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -62,7 +62,7 @@ bool MapList::has(MapItem::TYPES type) const {
 
 const MapItem& MapList::get(MapItem::TYPES type) const {
   auto&& it = this->items_.find(type);
-  CHECK_NE(it, std::end(this->items_));
+  CHECK(it != std::end(this->items_), "Can't find type!");
   return it->second;
 }
 

@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -29,7 +29,6 @@ namespace OAT {
 
 template<>
 void Parser::parse_dex_files<OAT79_t>(void) {
-  VLOG(VDEBUG) << "Parsing 'OATDexFile'";
   using oat_header = typename OAT79_t::oat_header;
   using dex35_header_t  = DEX::DEX35::dex_header;
 
@@ -37,7 +36,7 @@ void Parser::parse_dex_files<OAT79_t>(void) {
 
   uint64_t dexfiles_offset = sizeof(oat_header) + this->oat_binary_->header_.key_value_size();
 
-  VLOG(VDEBUG) << "OATDexFile located at offset: " << std::showbase << std::hex << dexfiles_offset;
+  LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
@@ -47,7 +46,7 @@ void Parser::parse_dex_files<OAT79_t>(void) {
 
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
-    VLOG(VDEBUG) << "Dealing with OATDexFile #" << std::dec << i;
+    LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
     uint32_t location_size = this->stream_->read<uint32_t>();
@@ -80,7 +79,7 @@ void Parser::parse_dex_files<OAT79_t>(void) {
   for (size_t i = 0; i < nb_dex_files; ++i) {
     uint64_t offset = this->oat_binary_->oat_dex_files_[i]->dex_offset();
 
-    VLOG(VDEBUG) << "Dealing with DexFile #" << std::dec << i << " at offset " << std::showbase << std::hex << offset;
+    LIEF_DEBUG("Dealing with DEX file #{:d} at offset 0x{:x}", i, offset);
 
     const dex35_header_t& dex_hdr = this->stream_->peek<dex35_header_t>(offset);
 
@@ -111,7 +110,7 @@ void Parser::parse_dex_files<OAT79_t>(void) {
         oat_dex_file->classes_offsets_.push_back(off);
       }
     } else {
-      LOG(WARNING) << name << " ("<< oat_dex_file->location() << ") at " << std::showbase << std::hex << this->stream_->pos() << " is not a dex file!";
+      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), this->stream_->pos());
     }
   }
 }

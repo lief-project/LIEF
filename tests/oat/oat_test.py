@@ -1,17 +1,15 @@
 #!/usr/bin/env python
-import unittest
-import lief
-import logging
-import pprint
 import json
+import logging
 import os
-
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.FATAL)
-#Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
-
+import pprint
+import unittest
 from unittest import TestCase
+
+import lief
 from utils import get_sample
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -496,4 +494,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

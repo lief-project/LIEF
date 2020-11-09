@@ -58,13 +58,6 @@ set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
 set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
 
-if (LIEF_LOGGING)
-  set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.cc PROPERTIES GENERATED TRUE)
-  #set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.cc PROPERTIES COMPILE_FLAGS -Wno-unused-variable)
-  #set_source_files_properties(${ELG_SOURCE_DIR}/easylogging++.h  PROPERTIES COMPILE_FLAGS -Wno-unused-variable)
-  set(ELG_CC_PATH "${ELG_SOURCE_DIR}/easylogging++.cc")
-endif()
-
 set(LIEF_PRIVATE_INCLUDE_DIR)
 set(LIEF_PUBLIC_INCLUDE_DIR)
 
@@ -208,19 +201,11 @@ endif()
 # Logging Configuration
 # =====================
 
-add_definitions(-DELPP_HANDLE_SIGABRT=0)
-add_definitions(-DELPP_DISABLE_DEFAULT_CRASH_HANDLING)
-if (LIEF_LOGGING)
-  add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
-  add_definitions(-DVDEBUG=9)
-  #add_definitions(-DELPP_FEATURE_CRASH_LOG)
-  set(ENABLE_LOGGING_SUPPORT 1)
-else()
-  set(ENABLE_LOGGING_SUPPORT 0)
-  add_definitions(-DELPP_DISABLE_LOGS)
-  add_definitions(-DELPP_NO_LOG_TO_FILE)
-  add_definitions(-DELPP_DISABLE_DEFAULT_CRASH_HANDLING)
-endif()
+target_compile_definitions(LIB_LIEF
+  PRIVATE
+    SPDLOG_DISABLE_DEFAULT_LOGGER
+    SPDLOG_FUNCTION=
+)
 
 # Frozen Configuration
 # ====================
@@ -309,17 +294,14 @@ configure_file(
 source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
 source_group("mbedtls\\x509"   FILES ${mbedtls_src_x509})
 source_group("mbedtls\\tls"    FILES ${mbedtls_src_tls})
-if (LIEF_LOGGING)
-  source_group("easylogging"     FILES ${ELG_SOURCE_DIR}/easylogging++.cc)
-endif()
 
 # Library definition
 # ==================
 target_include_directories(LIB_LIEF SYSTEM PRIVATE
   "${ELG_SOURCE_DIR}"
+  "${SPDLOG_SOURCE_DIR}/include"
   "${MBEDTLS_INCLUDE_DIRS}"
 )
-
 
 target_include_directories(LIB_LIEF
   PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
@@ -329,24 +311,24 @@ if (LIEF_ENABLE_JSON)
   add_dependencies(LIB_LIEF lief_libjson)
 endif()
 
-if (LIEF_LOGGING)
-  add_dependencies(LIB_LIEF lief_easyloggingpp)
-endif()
 
 if (LIEF_FROZEN_ENABLED)
   add_dependencies(LIB_LIEF lief_frozen)
 endif()
 
-add_dependencies(LIB_LIEF lief_rang_cpp_color)
-
-add_dependencies(LIB_LIEF lief_mbed_tls)
+add_dependencies(LIB_LIEF
+  lief_spdlog lief_rang_cpp_color lief_mbed_tls)
 
 # Flags definition
 # ----------------
-set_property(TARGET LIB_LIEF PROPERTY CXX_STANDARD              11)
-set_property(TARGET LIB_LIEF PROPERTY CXX_STANDARD_REQUIRED     ON)
-set_property(TARGET LIB_LIEF PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property(TARGET LIB_LIEF PROPERTY CXX_VISIBILITY_PRESET     hidden)
+
+set_target_properties(LIB_LIEF PROPERTIES
+  POSITION_INDEPENDENT_CODE ON
+  CXX_STANDARD              11
+  CXX_STANDARD_REQUIRED     ON
+  CXX_VISIBILITY_PRESET     hidden
+  C_VISIBILITY_PRESET       hidden
+)
 
 target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 

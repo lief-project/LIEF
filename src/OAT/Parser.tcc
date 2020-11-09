@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -283,13 +283,13 @@ void Parser::parse_binary<OAT138_t>(void) {
 
 template<typename OAT_T>
 void Parser::parse_header(void) {
-  VLOG(VDEBUG) << "Parsing OAT header";
   using oat_header = typename OAT_T::oat_header;
 
+  LIEF_DEBUG("Parsing OAT header");
   const oat_header& oat_hdr = this->stream_->peek<oat_header>(0);
   this->oat_binary_->header_ = &oat_hdr;
-  VLOG(VDEBUG) << "Nb dex files: " << std::dec << this->oat_binary_->header_.nb_dex_files();
-  VLOG(VDEBUG) << "OAT version: " << std::dec << oat_hdr.oat_version;
+  LIEF_DEBUG("Nb dex files: #{:d}", this->oat_binary_->header_.nb_dex_files());
+  LIEF_DEBUG("OAT version: {:d}", oat_hdr.oat_version);
 
   this->parse_header_keys<OAT_T>();
 }
@@ -358,21 +358,21 @@ void Parser::parse_type_lookup_table(void) {
 
 template<typename OAT_T>
 void Parser::parse_oat_classes(void) {
-  VLOG(VDEBUG) << "Parsing OAT Classes";
+  LIEF_DEBUG("Parsing OAT Classes");
   for (size_t dex_idx = 0; dex_idx < this->oat_binary_->oat_dex_files_.size(); ++dex_idx) {
     DexFile* oat_dex_file = this->oat_binary_->oat_dex_files_[dex_idx];
     const DEX::File& dex_file = oat_dex_file->dex_file();
 
     const std::vector<uint32_t>& classes_offsets = oat_dex_file->classes_offsets();
     uint32_t nb_classes = dex_file.header().nb_classes();
-
-    VLOG(VDEBUG) << "Dealing with DexFile #" << std::dec << dex_idx
-                 << " (" << nb_classes << ")";
+    LIEF_DEBUG("Dealing with DexFile #{:d} (#classes: {:d})", dex_idx, nb_classes);
 
     for (size_t class_idx = 0; class_idx < nb_classes; ++class_idx) {
       const DEX::Class& cls = dex_file.get_class(class_idx);
-
-      CHECK_LE(cls.index(), classes_offsets.size());
+      if (cls.index() >= classes_offsets.size()) {
+        LIEF_WARN("cls.index() is not valid");
+        continue;
+      }
       uint32_t oat_class_offset = classes_offsets[cls.index()];
       this->stream_->setpos(oat_class_offset);
 

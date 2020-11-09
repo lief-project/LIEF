@@ -21,7 +21,7 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 

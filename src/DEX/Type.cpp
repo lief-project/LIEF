@@ -16,7 +16,7 @@
 
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -187,7 +187,7 @@ void Type::parse(const std::string& type) {
 
     default:
       {
-        LOG(WARNING) << "Unknown type: '" << t << "'";
+        LIEF_WARN("Unknown type: '{}'", t);
       }
   }
 }

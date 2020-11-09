@@ -27,7 +27,7 @@ Changelog
   * Fix issue when parsing twice a Mach-O file (`issues/479 <https://github.com/lief-project/LIEF/issues/479>`_)
 
 :Dependencies:
-  * Upgrade ``easyloggingpp`` to 9.96.7
+  * Replace ``easyloggingpp`` with `spdlog 1.8.1 <https://github.com/gabime/spdlog>`_
   * Upgrade ``frozen`` to 1.0.0
   * Upgrade ``json`` to 3.7.3
   * Upgrade ``pybind11`` to 2.6.0
@@ -39,6 +39,28 @@ Changelog
 
 :Misc:
   * Add Python 3.9 support
+
+
+:Logging:
+
+  We changed the logging interface. The following log levels have been removed:
+
+  - LOG_GLOBAL
+  - LOG_FATAL
+  - LOG_VERBOSE
+  - LOG_UNKNOWN
+
+  We also moved from an class-interface based to functions.
+
+  Example:
+
+  .. code-block:: python
+
+    lief.logging.disable()
+    lief.logging.enable()
+    lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+
+  See: :func:`lief.logging.set_level`
 
 
 0.10.1 - November 29, 2019

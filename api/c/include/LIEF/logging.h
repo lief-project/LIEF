@@ -38,10 +38,6 @@ LIEF_API void lief_logging_enable(void);
 /** @brief Update logging level */
 LIEF_API void lief_logging_set_level(uint32_t level);
 
-/** @brief Update verbosity level */
-LIEF_API void lief_logging_set_verbose_level(uint32_t level);
-
-
 #ifdef __cplusplus
 }
 #endif

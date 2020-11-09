@@ -25,16 +25,14 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  std::cout << "Parsing with Global level" << std::endl;
-  std::cout << "=========================" << std::endl;
-
-  LIEF::Logger::set_level(LIEF::LOGGING_LEVEL::LOG_GLOBAL);
-  std::unique_ptr<const LIEF::Binary> binary_global{LIEF::Parser::parse(argv[1])};
-
-  std::cout << "Parsing with Debug level" << std::endl;
+  std::cout << "Parsing with DEBUG level" << std::endl;
   std::cout << "========================" << std::endl;
 
-  LIEF::Logger::set_level(LIEF::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
+  std::unique_ptr<const LIEF::Binary> binary_global{LIEF::Parser::parse(argv[1])};
+
+  // Disable logger
+  LIEF::logging::disable();
   std::unique_ptr<const LIEF::Binary> binary_debug{LIEF::Parser::parse(argv[1])};
 
   return 0;

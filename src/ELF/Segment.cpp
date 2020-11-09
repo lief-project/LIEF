@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 
@@ -170,7 +170,8 @@ uint64_t Segment::alignment(void) const {
 
 std::vector<uint8_t> Segment::content(void) const {
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Content from cache";
+    LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
+        to_string(this->type()), this->virtual_address());
     return this->content_c_;
   }
 
@@ -192,7 +193,8 @@ size_t Segment::get_content_size() const {
 template<typename T> T Segment::get_content_value(size_t offset) const {
   T ret;
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Content from cache";
+    LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
+        to_string(this->type()), this->virtual_address());
     memcpy(&ret, this->content_c_.data() + offset, sizeof(T));
   } else {
     DataHandler::Node& node = this->datahandler_->get(
@@ -212,7 +214,8 @@ template unsigned long long Segment::get_content_value<unsigned long long>(size_
 
 template<typename T> void Segment::set_content_value(size_t offset, T value) {
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Content from cache";
+    LIEF_DEBUG("Set content of segment {}@0x{:x}:0x{:x} in cache (0x{:x} bytes)",
+        to_string(this->type()), this->virtual_address(), offset, sizeof(T));
     if (offset + sizeof(T) > this->content_c_.size()) {
       this->content_c_.resize(offset + sizeof(T));
       this->physical_size(offset + sizeof(T));
@@ -227,8 +230,9 @@ template<typename T> void Segment::set_content_value(size_t offset, T value) {
 
     if (offset + sizeof(T) > binary_content.size()) {
       this->datahandler_->reserve(node.offset(), offset + sizeof(T));
-      LOG(WARNING) << "You inserted data in segment '"
-                  << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+
+      LIEF_INFO("You up to bytes in the segment {}@0x{:x} which is 0x{:x} wide",
+        offset + sizeof(T), to_string(this->type()), this->virtual_size(), binary_content.size());
     }
     this->physical_size(node.size());
     memcpy(binary_content.data() + node.offset() + offset, &value, sizeof(T));
@@ -343,14 +347,16 @@ void Segment::type(SEGMENT_TYPES type) {
 
 void Segment::content(const std::vector<uint8_t>& content) {
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Set content in the cache";
+    LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
+        to_string(this->type()), this->virtual_address(), content.size());
     this->content_c_ = content;
 
     this->physical_size(content.size());
     return;
   }
 
-  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
+  LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
+      to_string(this->type()), this->virtual_address(), this->file_offset(), content.size());
 
   DataHandler::Node& node = this->datahandler_->get(
       this->file_offset(),
@@ -361,8 +367,8 @@ void Segment::content(const std::vector<uint8_t>& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You inserted data in segment '"
-                 << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+      LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
+        content.size(), to_string(this->type()), this->virtual_size(), node.size());
   }
 
   this->physical_size(node.size());
@@ -376,14 +382,16 @@ void Segment::content(const std::vector<uint8_t>& content) {
 
 void Segment::content(std::vector<uint8_t>&& content) {
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Set content in the cache";
+    LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
+        to_string(this->type()), this->virtual_address(), content.size());
     this->content_c_ = std::move(content);
 
     this->physical_size(content.size());
     return;
   }
 
-  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex << this->file_offset() << ", 0x" << content.size() << "]";
+  LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
+      to_string(this->type()), this->virtual_address(), this->file_offset(), content.size());
 
   DataHandler::Node& node = this->datahandler_->get(
       this->file_offset(),
@@ -394,8 +402,8 @@ void Segment::content(std::vector<uint8_t>&& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You inserted data in segment '"
-                 << to_string(this->type()) << "' It may lead to overaly!" << std::endl;
+      LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
+        content.size(), to_string(this->type()), this->virtual_size(), node.size());
   }
 
   this->physical_size(node.size());

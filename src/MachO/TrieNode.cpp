@@ -1,7 +1,7 @@
 #include "TrieNode.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/iostream.hpp"
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
@@ -84,11 +84,15 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
   }
 
   if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
-    CHECK_EQ(info.other(), 0);
+    if (info.other() != 0) {
+      LIEF_INFO("other is not null");
+    }
   }
 
   if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
-    CHECK_NE(info.other(), 0);
+    if (info.other() == 0) {
+      LIEF_INFO("other is null");
+    }
   }
 
   TrieNode* new_node = TrieNode::create(info.symbol().name());
@@ -220,7 +224,11 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
   }
 
   // Number of childs
-  CHECK(this->children_.size() < 256);
+  if (this->children_.size() >= 256) {
+    LIEF_WARN("Too many children ({:d})", this->children_.size());
+    return *this;
+  }
+
   buffer.write<uint8_t>(this->children_.size());
   for (TrieEdge* edge : this->children_) {
     buffer.write(edge->substr)

@@ -132,6 +132,12 @@ class BuildLibrary(build_ext):
             log.info("LIEF documentation enabled")
             cmake_args += ["-DLIEF_DOC=on"]
 
+        if self.debug:
+            log.info("LIEF enables DEBUG messages")
+            cmake_args += ["-DLIEF_LOGGING_DEBUG=on"]
+        else:
+            cmake_args += ["-DLIEF_LOGGING_DEBUG=off"]
+
         # Main formats
         # ============
         if self.distribution.lief_no_elf:

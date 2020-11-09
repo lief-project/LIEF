@@ -1,20 +1,19 @@
 #!/usr/bin/env python
-import unittest
-import lief
-import tempfile
 import logging
 import os
-from subprocess import Popen
-import subprocess
-import stat
 import re
+import stat
+import subprocess
 import sys
-
+import tempfile
+import unittest
+from subprocess import Popen
 from unittest import TestCase
+
+import lief
 from utils import get_sample
 
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.WARNING)
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STUB = os.path.join(CURRENT_DIRECTORY, "HelloWorld.shellcode")
@@ -405,4 +404,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -44,7 +44,7 @@ const T& Binary::command(void) const {
   }
 
   if (this->count_commands<T>() > 1) {
-    LOG(WARNING) << "Multiple " + std::string(typeid(T).name()) + " command. Return the first one!";
+    LIEF_WARN("Multiple {} command. Return the first one!", std::string(typeid(T).name()));
   }
 
   auto&& it_cmd = std::find_if(
@@ -82,12 +82,12 @@ void Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t sh
   const size_t segment_size = segment_content.size();
 
   if (segment_size == 0) {
-    LOG(WARNING) << "Segment is empty nothing to do";
+    LIEF_WARN("Segment is empty nothing to do");
     return;
   }
 
   if (relative_offset >= segment_size or (relative_offset + sizeof(T)) >= segment_size) {
-    VLOG(VDEBUG) << "Offset out of bound for relocation: " << relocation;
+    LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return;
   }
 

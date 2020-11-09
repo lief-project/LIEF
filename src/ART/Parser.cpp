@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
@@ -47,7 +47,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
 {
   if (not is_art(data)) {
-    LOG(FATAL) << "'" + name + "' is not an ART file";
+    LIEF_ERR("'{}' is not an ART file", name);
     delete this->file_;
     this->file_ = nullptr;
     return;
@@ -62,7 +62,7 @@ Parser::Parser(const std::string& file) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
 {
   if (not is_art(file)) {
-    LOG(FATAL) << "'" + file + "' is not an ART file";
+    LIEF_ERR("'{}' is not an ART file", file);
     delete this->file_;
     this->file_ = nullptr;
     return;

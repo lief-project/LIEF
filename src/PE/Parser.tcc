@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include "LoadConfigurations/LoadConfigurations.tcc"
@@ -28,31 +28,31 @@ void Parser::parse(void) {
     return;
   }
 
-  VLOG(VDEBUG) << "[+] Retreive Dos stub";
+  LIEF_DEBUG("[+] Processing DOS stub & Rich header");
 
   this->parse_dos_stub();
-
   this->parse_rich_header();
 
-  VLOG(VDEBUG) << "[+] Decomposing Sections";
+  LIEF_DEBUG("[+] Processing sections");
 
   try {
     this->parse_sections();
   } catch (const corrupted& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
-  VLOG(VDEBUG) << "[+] Decomposing Data directories";
+  LIEF_DEBUG("[+] Processing data directories");
+
   try {
     this->parse_data_directories<PE_T>();
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   try {
     this->parse_symbols();
   } catch (const corrupted& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   this->parse_overlay();
@@ -66,7 +66,7 @@ bool Parser::parse_headers(void) {
   if (this->stream_->can_read<pe_dos_header>(0)) {
     this->binary_->dos_header_ = &this->stream_->peek<pe_dos_header>(0);
   } else {
-    LOG(FATAL) << "Dos Header corrupted";
+    LIEF_ERR("DOS Header corrupted");
     return false;
   }
 
@@ -76,7 +76,7 @@ bool Parser::parse_headers(void) {
   if (this->stream_->can_read<pe_header>(pe32_header_off)) {
     this->binary_->header_ = &this->stream_->peek<pe_header>(pe32_header_off);
   } else {
-    LOG(FATAL) << "PE32 Header corrupted";
+    LIEF_ERR("PE32 Header corrupted");
     return false;
   }
 
@@ -85,7 +85,7 @@ bool Parser::parse_headers(void) {
   if (this->stream_->can_read<pe_optional_header>(optional_header_off)) {
     this->binary_->optional_header_ = &this->stream_->peek<pe_optional_header>(optional_header_off);
   } else {
-    LOG(FATAL) << "Optional header corrupted";
+    LIEF_ERR("Optional header corrupted");
     return false;
   }
 
@@ -95,9 +95,6 @@ bool Parser::parse_headers(void) {
 template<typename PE_T>
 void Parser::parse_data_directories(void) {
   using pe_optional_header = typename PE_T::pe_optional_header;
-
-  VLOG(VDEBUG) << "[+] Parsing data directories";
-
   const uint32_t directories_offset =
       this->binary_->dos_header().addressof_new_exeheader() +
       sizeof(pe_header) +
@@ -106,25 +103,23 @@ void Parser::parse_data_directories(void) {
 
   const pe_data_directory* data_directory = this->stream_->peek_array<pe_data_directory>(directories_offset, nbof_datadir, /* check */false);
   if (data_directory == nullptr) {
-    LOG(ERROR) << "Data Directories corrupted!";
+    LIEF_ERR("Data Directories corrupted!");
     return;
   }
 
   this->binary_->data_directories_.reserve(nbof_datadir);
   for (size_t i = 0; i < nbof_datadir; ++i) {
     std::unique_ptr<DataDirectory> directory{new DataDirectory{&data_directory[i], static_cast<DATA_DIRECTORY>(i)}};
-
-    VLOG(VDEBUG) << "Processing directory: " << to_string(static_cast<DATA_DIRECTORY>(i));
-    VLOG(VDEBUG) << "- RVA: 0x" << std::hex << data_directory[i].RelativeVirtualAddress;
-    VLOG(VDEBUG) << "- Size: 0x" << std::hex << data_directory[i].Size;
+    LIEF_DEBUG("Processing directory #{:d} ()", i, to_string(static_cast<DATA_DIRECTORY>(i)));
+    LIEF_DEBUG("  - RVA:  0x{:04x}", data_directory[i].RelativeVirtualAddress);
+    LIEF_DEBUG("  - Size: 0x{:04x}", data_directory[i].Size);
     if (directory->RVA() > 0) {
       // Data directory is not always associated with section
       const uint64_t offset = this->binary_->rva_to_offset(directory->RVA());
       try {
         directory->section_ = &(this->binary_->section_from_offset(offset));
       } catch (const LIEF::not_found&) {
-          LOG(WARNING) << "Unable to find the section associated with "
-                       << to_string(static_cast<DATA_DIRECTORY>(i));
+          LIEF_WARN("Unable to find the section associated with {}", to_string(static_cast<DATA_DIRECTORY>(i)));
       }
     }
     this->binary_->data_directories_.push_back(directory.release());
@@ -133,7 +128,7 @@ void Parser::parse_data_directories(void) {
   try {
     // Import Table
     if (this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA() > 0) {
-      VLOG(VDEBUG) << "[+] Decomposing Import Table";
+      LIEF_DEBUG("Processing Import Table");
       const uint32_t import_rva = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
       const uint64_t offset     = this->binary_->rva_to_offset(import_rva);
 
@@ -141,22 +136,22 @@ void Parser::parse_data_directories(void) {
         Section& section = this->binary_->section_from_offset(offset);
         section.add_type(PE_SECTION_TYPES::IMPORT);
       } catch (const not_found&) {
-        LOG(WARNING) << "Unable to find the section associated with Import Table";
+        LIEF_WARN("Unable to find the section associated with Import Table");
       }
       this->parse_import_table<PE_T>();
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   // Exports
   if (this->binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0) {
-    VLOG(VDEBUG) << "[+] Decomposing Exports";
+    LIEF_DEBUG("[+] Processing Exports");
 
     try {
       this->parse_exports();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -165,14 +160,14 @@ void Parser::parse_data_directories(void) {
     try {
       this->parse_signature();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
 
   // TLS
   if (this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA() > 0) {
-    VLOG(VDEBUG) << "[+] Decomposing TLS";
+    LIEF_DEBUG("[+] Decomposing TLS");
 
     const uint32_t tls_rva = this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
     const uint64_t offset  = this->binary_->rva_to_offset(tls_rva);
@@ -181,9 +176,9 @@ void Parser::parse_data_directories(void) {
       section.add_type(PE_SECTION_TYPES::TLS);
       this->parse_tls<PE_T>();
     } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with TLS";
+      LIEF_WARN("Unable to find the section associated with TLS");
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -197,9 +192,9 @@ void Parser::parse_data_directories(void) {
       section.add_type(PE_SECTION_TYPES::LOAD_CONFIG);
       this->parse_load_config<PE_T>();
     } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with Load Config";
+      LIEF_WARN("Unable to find the section associated with Load Config");
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -207,7 +202,7 @@ void Parser::parse_data_directories(void) {
   // Relocations
   if (this->binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA() > 0) {
 
-    VLOG(VDEBUG) << "[+] Decomposing relocations";
+    LIEF_DEBUG("[+] Decomposing relocations");
     const uint32_t relocation_rva = this->binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA();
     const uint64_t offset         = this->binary_->rva_to_offset(relocation_rva);
     try {
@@ -215,9 +210,9 @@ void Parser::parse_data_directories(void) {
       section.add_type(PE_SECTION_TYPES::RELOCATION);
       this->parse_relocations();
     } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with relocations";
+      LIEF_WARN("Unable to find the section associated with relocations");
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -225,7 +220,7 @@ void Parser::parse_data_directories(void) {
   // Debug
   if (this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA() > 0) {
 
-    VLOG(VDEBUG) << "[+] Decomposing debug";
+    LIEF_DEBUG("[+] Decomposing debug");
     const uint32_t rva    = this->binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA();
     const uint64_t offset = this->binary_->rva_to_offset(rva);
     try {
@@ -233,9 +228,9 @@ void Parser::parse_data_directories(void) {
       section.add_type(PE_SECTION_TYPES::DEBUG);
       this->parse_debug();
     } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with debug";
+      LIEF_WARN("Unable to find the section associated with debug");
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -243,7 +238,7 @@ void Parser::parse_data_directories(void) {
   // Resources
   if (this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA() > 0) {
 
-    VLOG(VDEBUG) << "[+] Decomposing resources";
+    LIEF_DEBUG("[+] Decomposing resources");
     const uint32_t resources_rva = this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA();
     const uint64_t offset        = this->binary_->rva_to_offset(resources_rva);
     try {
@@ -251,9 +246,9 @@ void Parser::parse_data_directories(void) {
       section.add_type(PE_SECTION_TYPES::RESOURCE);
       this->parse_resources();
     } catch (const not_found&) {
-      LOG(WARNING) << "Unable to find the section associated with resources";
+      LIEF_WARN("Unable to find the section associated with resources");
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
 
   }
@@ -281,7 +276,7 @@ void Parser::parse_import_table(void) {
     import.type_            = this->type_;
 
     if (import.name_RVA_ == 0) {
-      LOG(WARNING) << "Name's RVA is null";
+      LIEF_DEBUG("Name's RVA is null");
       break;
     }
 
@@ -372,7 +367,7 @@ void Parser::parse_tls(void) {
   using pe_tls = typename PE_T::pe_tls;
   using uint__ = typename PE_T::uint;
 
-  VLOG(VDEBUG) << "[+] Parsing TLS";
+  LIEF_DEBUG("[+] Parsing TLS");
 
   const uint32_t tls_rva = this->binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
   const uint64_t offset  = this->binary_->rva_to_offset(tls_rva);
@@ -391,8 +386,6 @@ void Parser::parse_tls(void) {
 
 
   if (tls_header.RawDataStartVA >= imagebase and tls_header.RawDataEndVA > tls_header.RawDataStartVA) {
-    CHECK(tls_header.RawDataStartVA >= imagebase);
-    CHECK(tls_header.RawDataEndVA >= imagebase);
     const uint64_t start_data_rva = tls_header.RawDataStartVA - imagebase;
     const uint64_t stop_data_rva  = tls_header.RawDataEndVA - imagebase;
 
@@ -402,11 +395,11 @@ void Parser::parse_tls(void) {
     const size_t size_to_read = end_template_offset - start_template_offset;
 
     if (size_to_read > Parser::MAX_DATA_SIZE) {
-      LOG(WARNING) << "TLS's template is too large!";
+      LIEF_DEBUG("TLS's template is too large!");
     } else {
       const uint8_t* template_ptr = this->stream_->peek_array<uint8_t>(start_template_offset, size_to_read, /* check */false);
       if (template_ptr == nullptr) {
-        LOG(WARNING) << "TLS's template corrupted";
+        LIEF_WARN("TLS's template corrupted");
       } else {
         tls.data_template({
             template_ptr,
@@ -435,7 +428,7 @@ void Parser::parse_tls(void) {
     Section& section = this->binary_->section_from_offset(offset);
     tls.section_     = &section;
   } catch (const not_found&) {
-    LOG(WARNING) << "No section associated with TLS";
+    LIEF_WARN("No section associated with TLS");
   }
 
   this->binary_->has_tls_ = true;
@@ -454,7 +447,7 @@ void Parser::parse_load_config(void) {
   using load_configuration_v6_t = typename PE_T::load_configuration_v6_t;
   using load_configuration_v7_t = typename PE_T::load_configuration_v7_t;
 
-  VLOG(VDEBUG) << "[+] Parsing Load Config";
+  LIEF_DEBUG("[+] Parsing Load Config");
 
   const uint32_t directory_size = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).size();
 
@@ -467,8 +460,8 @@ void Parser::parse_load_config(void) {
   const uint32_t size_from_header = this->stream_->peek<uint32_t>(offset);
 
   if (directory_size != size_from_header) {
-    LOG(WARNING) << "The size of directory '" << to_string(DATA_DIRECTORY::LOAD_CONFIG_TABLE)
-                 << "' is different from the size in the load configuration header";
+    LIEF_DEBUG("The size of directory '{}' is different from the size in the load configuration header",
+        to_string(DATA_DIRECTORY::LOAD_CONFIG_TABLE));
   }
 
   const uint32_t size = std::min<uint32_t>(directory_size, size_from_header);
@@ -480,7 +473,7 @@ void Parser::parse_load_config(void) {
     }
   }
 
-  VLOG(VDEBUG) << "Version found: " << std::dec << to_string(version_found) << "(Size: 0x" << std::hex << size << ")";
+  LIEF_DEBUG("Version found: {} (size: 0x{:x})", to_string(version_found), size);;
   std::unique_ptr<LoadConfiguration> ld_conf;
   switch (version_found) {
 

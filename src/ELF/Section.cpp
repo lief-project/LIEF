@@ -22,7 +22,7 @@
 
 #include "LIEF/ELF/Parser.hpp"
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
@@ -248,16 +248,13 @@ void Section::offset(uint64_t offset) {
 
 std::vector<uint8_t> Section::content(void) const {
   if (this->size() == 0) {
-    //VLOG(VDEBUG) << "Section '" << this->name() << "' is empty";
     return {};
   }
 
   if (this->datahandler_ == nullptr) {
-    //VLOG(VDEBUG) << "Content from cache";
     return this->content_c_;
   }
 
-  //VLOG(VDEBUG) << std::hex << "Content from Data Handler [0x" << this->offset_ << ", 0x" << this->size_ << "]";
   if (this->size() > Parser::MAX_SECTION_SIZE) {
     return {};
   }
@@ -284,19 +281,19 @@ std::set<ELF_SECTION_FLAGS> Section::flags_list(void) const {
 
 void Section::content(const std::vector<uint8_t>& content) {
   if (content.size() > 0 and this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
-    LOG(WARNING) << "You inserted data (" << std::hex << content.size() << ") in section '"
-                 << this->name() << "' which has SHT_NOBITS type !" << std::endl;
+    LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
+        content.size(), this->name());
   }
 
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Set content in the cache";
+    LIEF_DEBUG("Set 0x{:x} bytes in the cache of section '{}'", content.size(), this->name());
     this->content_c_ = content;
     this->size(content.size());
     return;
   }
 
-  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex
-               << this->file_offset() << ", 0x" << content.size() << "]";
+  LIEF_DEBUG("Set 0x{:x} bytes in the data handler@0x{:x} of section '{}'",
+      content.size(), this->file_offset(), this->name());
 
 
   DataHandler::Node& node = this->datahandler_->get(
@@ -308,8 +305,8 @@ void Section::content(const std::vector<uint8_t>& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You inserted data in section '"
-                 << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
+    LIEF_INFO("You inserted 0x{:x} bytes in the section '{}' which is 0x{:x} wide",
+        content.size(), this->name(), node.size());
   }
 
   this->size(content.size());
@@ -324,20 +321,20 @@ void Section::content(const std::vector<uint8_t>& content) {
 
 void Section::content(std::vector<uint8_t>&& content) {
   if (content.size() > 0 and this->type() == ELF_SECTION_TYPES::SHT_NOBITS) {
-    LOG(WARNING) << "You inserted data (" << std::hex << content.size() << ") in section '"
-                 << this->name() << "' which has SHT_NOBITS type !" << std::endl;
+    LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
+        content.size(), this->name());
   }
 
   if (this->datahandler_ == nullptr) {
-    VLOG(VDEBUG) << "Set content in the cache";
+    LIEF_DEBUG("Set 0x{:x} bytes in the cache of section '{}'", content.size(), this->name());
     this->content_c_ = std::move(content);
     this->size(content.size());
     return;
   }
 
 
-  VLOG(VDEBUG) << "Set content in the data handler [0x" << std::hex
-               << this->file_offset() << ", 0x" << content.size() << "]";
+  LIEF_DEBUG("Set 0x{:x} bytes in the data handler@0x{:x} of section '{}'",
+      content.size(), this->file_offset(), this->name());
 
 
   DataHandler::Node& node = this->datahandler_->get(
@@ -349,8 +346,8 @@ void Section::content(std::vector<uint8_t>&& content) {
   this->datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-    LOG(WARNING) << "You inserted data in section '"
-                 << this->name() << "' It may lead to overaly! (" << std::hex << node.size() << " < " << content.size() << ")" << std::endl;
+    LIEF_INFO("You inserted 0x{:x} bytes in the section '{}' which is 0x{:x} wide",
+        content.size(), this->name(), node.size());
   }
 
   this->size(content.size());

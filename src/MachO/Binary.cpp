@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Builder.hpp"
@@ -60,7 +60,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   // Find the segment associated with the virtual address
   SegmentCommand* segment_topatch = this->segment_from_virtual_address(address);
   if (segment_topatch == nullptr) {
-    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << address;
+    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", address);
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
@@ -75,14 +75,14 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
   if (size > sizeof(patch_value)) {
-    LOG(ERROR) << "Invalid size: " << std::hex << std::showbase << size;
+    LIEF_ERR("Invalid size: 0x{:x}", size);
     return;
   }
 
   SegmentCommand* segment_topatch = this->segment_from_virtual_address(address);
 
   if (segment_topatch == nullptr) {
-    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << address;
+    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", address);
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
@@ -100,7 +100,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
   const SegmentCommand* segment = this->segment_from_virtual_address(virtual_address);
 
   if (segment == nullptr) {
-    LOG(ERROR) << "Unable to find segment associated with address: " << std::hex << std::showbase << virtual_address;
+    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", virtual_address);
     return {};
   }
 
@@ -140,7 +140,7 @@ bool Binary::is_pie(void) const {
 
 bool Binary::has_nx(void) const {
   if (not this->header().has(HEADER_FLAGS::MH_NO_HEAP_EXECUTION)) {
-    LOG(INFO) << "Heap could be executable";
+    LIEF_INFO("Heap could be executable");
   }
   return not this->header().has(HEADER_FLAGS::MH_ALLOW_STACK_EXECUTION);
 }
@@ -698,7 +698,10 @@ void Binary::shift(size_t value) {
 
   // Segment containing load commands
   SegmentCommand* load_cmd_segment = this->segment_from_offset(loadcommands_end);
-  CHECK_NE(load_cmd_segment, nullptr);
+  if (load_cmd_segment == nullptr) {
+    LIEF_WARN("Can't find segment associated with last load command");
+    return;
+  }
   std::vector<uint8_t> content = load_cmd_segment->content();
 
   content.insert(std::begin(content) + loadcommands_end, value, 0);
@@ -778,7 +781,10 @@ LoadCommand& Binary::add(const LoadCommand& command) {
 
   // Get the segment handling the LC table
   SegmentCommand* load_cmd_segment = this->segment_from_offset(loadcommands_end);
-  CHECK_NE(load_cmd_segment, nullptr);
+  if (load_cmd_segment == nullptr) {
+    LIEF_WARN("Can't get the last load command");
+    throw not_found("Can't get the last load command");
+  }
 
   std::vector<uint8_t> content = load_cmd_segment->content();
 
@@ -852,7 +858,7 @@ bool Binary::remove(const LoadCommand& command) {
       });
 
   if (it == std::end(this->commands_)) {
-    LOG(ERROR) << "Unable to find command: " << command;
+    LIEF_ERR("Unable to find command: {}", command);
     return false;
   }
 
@@ -931,7 +937,7 @@ bool Binary::extend(const LoadCommand& command, uint64_t size) {
       });
 
   if (it == std::end(this->commands_)) {
-    LOG(ERROR) << "Unable to find command: " << command;
+    LIEF_ERR("Unable to find command: {}", command);
     return false;
   }
 
@@ -972,7 +978,7 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
       });
 
   if (it_segment == std::end(segments)) {
-    LOG(ERROR) << "Unable to find segment: '" << segment.name() << "'";
+    LIEF_ERR("Unable to find segment: '{}'", segment.name());
     return false;
   }
 
@@ -1013,7 +1019,7 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
 
 void Binary::remove_section(const std::string& name, bool clear) {
   if (not this->has_section(name)) {
-    LOG(WARNING) << "Section '" << name << "' not found!";
+    LIEF_WARN("Section '{}' not found!", name);
     return;
   }
 
@@ -1032,7 +1038,10 @@ void Binary::remove_section(const std::string& name, bool clear) {
       [&sec_to_delete] (const Section* s) {
         return *s == sec_to_delete;
       });
-  CHECK_NE(it_section, std::end(segment.sections_));
+  if (it_section == std::end(segment.sections_)) {
+    LIEF_WARN("Can't find the section");
+    return;
+  }
 
   const size_t lc_offset = segment.command_offset();
   const size_t section_struct_size = this->is64_ ? sizeof(section_64) : sizeof(section_32);
@@ -1057,7 +1066,7 @@ void Binary::remove_section(const std::string& name, bool clear) {
 Section* Binary::add_section(const Section& section) {
   SegmentCommand* __TEXT_segment = this->get_segment("__TEXT");
   if (__TEXT_segment == nullptr) {
-    LOG(ERROR) << "Unable to get '__TEXT' segment";
+    LIEF_ERR("Unable to get '__TEXT' segment");
     return nullptr;
   }
   return this->add_section(*__TEXT_segment, section);
@@ -1075,7 +1084,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
       });
 
   if (it_segment == std::end(segments)) {
-    LOG(ERROR) << "Unable to find segment: '" << segment.name() << "'";
+    LIEF_ERR("Unable to find segment: '{}'", segment.name());
     return nullptr;
   }
   SegmentCommand& target_segment = *it_segment;
@@ -1092,8 +1101,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   }
 
   if (not this->extend(target_segment, sec_size)) {
-    LOG(ERROR) << "Unable to extend segment '" << segment.name() << "' by "
-               << std::hex << std::showbase << sec_size;
+    LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), sec_size);
     return nullptr;
   }
 
@@ -1415,7 +1423,7 @@ bool Binary::can_remove_symbol(const std::string& name) const {
 bool Binary::remove_signature(void) {
 
   if (not this->has_code_signature()) {
-    LOG(WARNING) << "No signature found!";
+    LIEF_WARN("No signature found!");
     return false;
   }
 
@@ -1708,7 +1716,7 @@ LIEF::Binary::functions_t Binary::unwind_functions(void) const {
   VectorStream vs{unwind_data};
 
   if (not vs.can_read<unwind_info_section_header>()) {
-    LOG(ERROR) << "Can't read unwind section header!";
+    LIEF_ERR("Can't read unwind section header!");
     return {};
   }
 
@@ -1720,7 +1728,7 @@ LIEF::Binary::functions_t Binary::unwind_functions(void) const {
   size_t lsda_stop = 0;
   for (size_t i = 0; i < hdr.index_count; ++i) {
     if (not vs.can_read<unwind_info_section_header_index_entry>()) {
-      LOG(ERROR) << "Can't read function information at index" << std::dec << i << std::endl;
+      LIEF_ERR("Can't read function information at index #{:d}", i);
       break;
     }
     const unwind_info_section_header_index_entry& section_hdr = vs.read<unwind_info_section_header_index_entry>();
@@ -1748,10 +1756,10 @@ LIEF::Binary::functions_t Binary::unwind_functions(void) const {
           }
         }
         else if (lvl_hdr.kind == UNWIND_UNCOMPRESSED) {
-          LOG(WARNING) << "UNWIND_UNCOMPRESSED is not supported yet!";
+          LIEF_WARN("UNWIND_UNCOMPRESSED is not supported yet!");
         }
         else {
-          LOG(WARNING) << "Unknown 2nd level kind (" << std::dec << lvl_hdr.kind << ")";
+          LIEF_WARN("Unknown 2nd level kind: {:d}", lvl_hdr.kind);
         }
       }
       vs.setpos(saved_pos);
@@ -1763,7 +1771,7 @@ LIEF::Binary::functions_t Binary::unwind_functions(void) const {
   vs.setpos(lsda_start);
   for (size_t i = 0; i < nb_lsda; ++i) {
     if (not vs.can_read<unwind_info_section_header_lsda_index_entry>()) {
-      LOG(ERROR) << "Can't read LSDA at index " << std::dec << i;
+      LIEF_ERR("Can't read LSDA at index #{:d}", i);
       break;
     }
     const unwind_info_section_header_lsda_index_entry& hdr = vs.read<unwind_info_section_header_lsda_index_entry>();

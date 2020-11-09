@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import lief
-import unittest
 import logging
 import os
-import sys
 import random
-
+import sys
+import unittest
 from unittest import TestCase
+
+import lief
 from utils import get_sample
 
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 class TestLoadConfig(TestCase):
     def setUp(self):
@@ -100,4 +99,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

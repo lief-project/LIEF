@@ -19,7 +19,7 @@
 #include <iterator>
 #include <numeric>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "utf8.h"
 #include "LIEF/exception.hpp"
@@ -98,10 +98,10 @@ void Builder::write(const std::string& filename) const {
 
 void Builder::build(void) {
 
-  VLOG(VDEBUG) << "Rebuilding" << std::endl;
+  LIEF_DEBUG("Build process started");
 
   if (this->binary_->has_tls() and this->build_tls_) {
-    VLOG(VDEBUG) << "[+] Rebuilding TLS" << std::endl;
+    LIEF_DEBUG("[+] TLS");
     if (this->binary_->type() == PE_TYPE::PE32) {
       this->build_tls<PE32>();
     } else {
@@ -110,12 +110,12 @@ void Builder::build(void) {
   }
 
   if (this->binary_->has_relocations() and this->build_relocations_) {
-    VLOG(VDEBUG) << "[+] Rebuilding relocations" << std::endl;
+    LIEF_DEBUG("[+] Relocations");
     this->build_relocation();
   }
 
   if (this->binary_->has_resources() and this->binary_->resources_ != nullptr and this->build_resources_) {
-    VLOG(VDEBUG) << "[+] Rebuilding resources" << std::endl;
+    LIEF_DEBUG("[+] Resources");
     try {
       this->build_resources();
     } catch (not_found&) {
@@ -123,7 +123,7 @@ void Builder::build(void) {
   }
 
   if (this->binary_->has_imports() and this->build_imports_) {
-    VLOG(VDEBUG) << "[+] Rebuilding Import" << std::endl;
+    LIEF_DEBUG("[+] Imports");
     if (this->binary_->type() == PE_TYPE::PE32) {
       this->build_import_table<PE32>();
     } else {
@@ -131,7 +131,7 @@ void Builder::build(void) {
     }
   }
 
-  VLOG(VDEBUG) << "[+] Rebuilding headers" << std::endl;
+  LIEF_DEBUG("[+] Headers");
 
   *this << this->binary_->dos_header()
         << this->binary_->header()
@@ -147,21 +147,22 @@ void Builder::build(void) {
 
   *this << last_one;
 
-  VLOG(VDEBUG) << "[+] Rebuilding sections" << std::endl;
+  LIEF_DEBUG("[+] Sections");
 
   for (const Section& section : this->binary_->sections()) {
-    VLOG(VDEBUG) << "Building section " << section.name();
+    LIEF_DEBUG("  -> {}", section.name());
     *this << section;
   }
 
-  VLOG(VDEBUG) << "[+] Rebuilding symbols" << std::endl;
+  // LIEF_DEBUG("[+] symbols");
   //this->build_symbols();
 
 
-  VLOG(VDEBUG) << "[+] Rebuilding string table" << std::endl;
+  // LIEF_DEBUG("[+] string table");
   //this->build_string_table();
 
   if (this->binary_->overlay().size() > 0 and this->build_overlay_) {
+    LIEF_DEBUG("[+] Overlay");
     this->build_overlay();
   }
 
@@ -234,7 +235,6 @@ void Builder::build_relocation(void) {
 // Build resources
 //
 void Builder::build_resources(void) {
-  VLOG(VDEBUG) << "Building RSRC" << std::endl;
   ResourceNode& node = this->binary_->resources();
   //std::cout << ResourcesManager{this->binary_->resources_} << std::endl;
 
@@ -380,7 +380,6 @@ void Builder::construct_resources(
     }
 
   } else {
-    //VLOG(VDEBUG) << "Building Data" << std::endl;
     ResourceData *rsrc_data = dynamic_cast<ResourceData*>(&node);
 
     pe_resource_data_entry data_header;
@@ -417,7 +416,6 @@ void Builder::build_string_table(void) {
 }
 
 void Builder::build_overlay(void) {
-  VLOG(VDEBUG) << "Building overlay";
 
   const uint64_t last_section_offset = std::accumulate(
       std::begin(this->binary_->sections_),
@@ -426,8 +424,8 @@ void Builder::build_overlay(void) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
 
-  VLOG(VDEBUG) << "Overlay offset: 0x" << std::hex << last_section_offset;
-  VLOG(VDEBUG) << "Overlay size: " << std::dec << this->binary_->overlay().size();
+  LIEF_DEBUG("Overlay offset: 0x{:x}", last_section_offset);
+  LIEF_DEBUG("Overlay size: 0x{:x}", this->binary_->overlay().size());
 
   const size_t saved_offset = this->ios_.tellp();
   this->ios_.seekp(last_section_offset);
@@ -467,7 +465,7 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
   if (this->binary_->dos_stub().size() > 0 and this->build_dos_stub_) {
 
     if (sizeof(pe_dos_header) + this->binary_->dos_stub().size() > dos_header.addressof_new_exeheader()) {
-      LOG(WARNING) << "Inconsistent 'addressof_new_exeheader' (0x" << std::hex << dos_header.addressof_new_exeheader();
+      LIEF_WARN("Inconsistent 'addressof_new_exeheader': 0x{:x}", dos_header.addressof_new_exeheader());
     }
     this->ios_.write(this->binary_->dos_stub());
   }
@@ -477,7 +475,6 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
 
 
 Builder& Builder::operator<<(const Header& bHeader) {
-  VLOG(VDEBUG) << "Building standard Header" << std::endl;
   // Standard Header
   pe_header header;
   header.Machine               = static_cast<uint16_t>(bHeader.machine());
@@ -548,12 +545,10 @@ Builder& Builder::operator<<(const Section& section) {
 
   size_t pad_length = 0;
   if (section.content().size() > section.size()) {
-    LOG(WARNING) << section.name()
-                 << " content size is bigger than section's header size"
-                 << std::endl;
+    LIEF_WARN("{} content size is bigger than section's header size", section.name());
   }
   else {
-	  pad_length = section.size() - section.content().size();
+    pad_length = section.size() - section.content().size();
   }
 
   // Pad section content with zeroes

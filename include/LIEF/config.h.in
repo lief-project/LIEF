@@ -31,6 +31,7 @@
 // LIEF options
 #cmakedefine LIEF_JSON_SUPPORT    @ENABLE_JSON_SUPPORT@
 #cmakedefine LIEF_LOGGING_SUPPORT @LIEF_LOGGING_SUPPORT@
+#cmakedefine LIEF_LOGGING_DEBUG   @LIEF_LOGGING_DEBUG@
 #cmakedefine LIEF_FROZEN_ENABLED  @LIEF_FROZEN_ENABLED@
 
 #ifdef __cplusplus
@@ -46,7 +47,9 @@ static constexpr bool lief_art_support     = @LIEF_ART_SUPPORT@;
 
 static constexpr bool lief_json_support    = @LIEF_JSON_SUPPORT@;
 static constexpr bool lief_logging_support = @LIEF_LOGGING_SUPPORT@;
+static constexpr bool lief_logging_debug   = @LIEF_LOGGING_DEBUG@;
 static constexpr bool lief_frozen_enabled  = @LIEF_FROZEN_ENABLED@;
+
 
 #endif // __cplusplus
 

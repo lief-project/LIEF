@@ -1,16 +1,18 @@
-import unittest
 import logging
-import shlex
-import subprocess
-import tempfile
-import lief
 import os
-import stat
+import shlex
 import shutil
+import stat
+import subprocess
 import sys
+import tempfile
+import unittest
 from collections import namedtuple
 
+import lief
 from utils import get_compiler
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 class CommandResult(object):
     def __init__(self, output, error, retcode, process=None):
@@ -29,10 +31,6 @@ class CommandResult(object):
 
 
 
-
-lief.Logger.set_level(lief.LOGGING_LEVEL.INFO)
-
-LOGGING_LEVEL = logging.DEBUG
 
 LIBADD = """\
 #include <stdlib.h>
@@ -283,10 +281,5 @@ if __name__ == "__main__":
 
     root_logger = logging.getLogger()
     root_logger.addHandler(logging.StreamHandler())
-    root_logger.setLevel(LOGGING_LEVEL)
-    for h in root_logger.handlers:
-        h.setLevel(LOGGING_LEVEL)
 
     unittest.main(verbosity=2)
-
-

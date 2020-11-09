@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
@@ -42,7 +42,7 @@ void BinaryParser::parse(void) {
     try {
       this->parse_relocations<MACHO_T>(section);
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
   }
 
@@ -51,19 +51,19 @@ void BinaryParser::parse(void) {
     try {
       this->parse_dyldinfo_binds<MACHO_T>();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
 
     try {
       this->parse_dyldinfo_export();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
 
     try {
       this->parse_dyldinfo_rebases<MACHO_T>();
     } catch (const exception& e) {
-      LOG(WARNING) << e.what();
+      LIEF_WARN("{}", e.what());
     }
 
   }
@@ -82,7 +82,7 @@ void BinaryParser::parse_load_commands(void) {
   using segment_command_t = typename MACHO_T::segment_command;
   using section_t         = typename MACHO_T::section;
 
-  VLOG(VDEBUG) << "[+] Building Load commands";
+  LIEF_DEBUG("[+] Building Load commands");
 
   const Header& header = this->binary_->header();
   uint64_t loadcommands_offset = sizeof(header_t);
@@ -95,7 +95,7 @@ void BinaryParser::parse_load_commands(void) {
 
   if (header.nb_cmds() > BinaryParser::MAX_COMMANDS) {
     nbcmds = BinaryParser::MAX_COMMANDS;
-    LOG(WARNING) << "Only the first " << std::dec << nbcmds << " will be parsed";
+    LIEF_WARN("Only the first #{:d} will be parsed", nbcmds);
   }
 
   for (size_t i = 0; i < nbcmds; ++i) {
@@ -127,7 +127,7 @@ void BinaryParser::parse_load_commands(void) {
                 content + segment->file_size()
                 });
           } else {
-            LOG(ERROR) << "Segment content corrupted!";
+            LIEF_ERR("Segment content corrupted!");
           }
 
           // --------
@@ -184,7 +184,7 @@ void BinaryParser::parse_load_commands(void) {
       // ====
       case LOAD_COMMAND_TYPES::LC_UUID:
         {
-          VLOG(VDEBUG) << "[+] Building UUID";
+          LIEF_DEBUG("[+] Building UUID");
           const uuid_command* cmd = &this->stream_->peek<uuid_command>(loadcommands_offset);
           load_command = std::unique_ptr<UUIDCommand>{new UUIDCommand{cmd}};
           break;
@@ -213,7 +213,7 @@ void BinaryParser::parse_load_commands(void) {
       // ==============
       //case LOAD_COMMAND_TYPES::LC_PREBOUND_DYLIB:
       //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_PREBOUND_DYLIB";
+      //    LIEF_DEBUG("[+] Parsing LC_PREBOUND_DYLIB");
 
       //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
       //    const prebound_dylib_command* cmd = &this->stream_->peek<prebound_dylib_command>(loadcommands_offset);
@@ -234,15 +234,14 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_THREAD:
       case LOAD_COMMAND_TYPES::LC_UNIXTHREAD:
         {
-          VLOG(VDEBUG) << "[+] Parsing LC_THREAD";
+          LIEF_DEBUG("[+] Parsing LC_THREAD");
 
           const thread_command* cmd = &this->stream_->peek<thread_command>(loadcommands_offset);
           load_command = std::unique_ptr<ThreadCommand>{new ThreadCommand{cmd}};
 
           ThreadCommand* thread = dynamic_cast<ThreadCommand*>(load_command.get());
           thread->architecture_ = this->binary_->header().cpu_type();
-          VLOG(VDEBUG) << "FLAVOR: " << cmd->flavor << std::endl
-                       << "COUNT:  " << cmd->count;
+          LIEF_DEBUG("FLAVOR: {} | COUNT: {}", cmd->flavor, cmd->count);
           switch(this->binary_->header().cpu_type()) {
             case CPU_TYPES::CPU_TYPE_X86:
               {
@@ -285,7 +284,7 @@ void BinaryParser::parse_load_commands(void) {
               }
             default:
               {
-                LOG(ERROR) << "Unknown architecture";
+                LIEF_ERR("Unknown architecture");
               }
           }
           break;
@@ -297,7 +296,7 @@ void BinaryParser::parse_load_commands(void) {
       //case LOAD_COMMAND_TYPES::LC_ROUTINES:
       //case LOAD_COMMAND_TYPES::LC_ROUTINES_64:
       //  {
-      //    VLOG(VDEBUG) << "[+] Parsing LC_ROUTINE";
+      //    LIEF_DEBUG("[+] Parsing LC_ROUTINE");
       //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
       //    break;
       //  }
@@ -308,7 +307,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SYMTAB:
         {
           using nlist_t = typename MACHO_T::nlist;
-          VLOG(VDEBUG) << "[+] Parsing symbols";
+          LIEF_DEBUG("[+] Parsing symbols");
 
           const symtab_command* cmd = &this->stream_->peek<symtab_command>(loadcommands_offset);
 
@@ -318,7 +317,7 @@ void BinaryParser::parse_load_commands(void) {
 
           const nlist_t* nlist = this->stream_->peek_array<nlist_t>(cmd->symoff, cmd->nsyms, /* check */ false);
           if (nlist == nullptr) {
-            LOG(ERROR) << "Symbols corrupted!";
+            LIEF_ERR("Symbols corrupted!");
             break;
           }
 
@@ -340,7 +339,7 @@ void BinaryParser::parse_load_commands(void) {
       // ===============
       case LOAD_COMMAND_TYPES::LC_DYSYMTAB:
         {
-          VLOG(VDEBUG) << "[+] Parsing dynamic symbols";
+          LIEF_DEBUG("[+] Parsing dynamic symbols");
           const dysymtab_command* cmd = &this->stream_->peek<dysymtab_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DynamicSymbolCommand>{new DynamicSymbolCommand{cmd}};
@@ -353,7 +352,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_DYLD_INFO:
       case LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY:
         {
-          VLOG(VDEBUG) << "[+] Parsing dyld information";
+          LIEF_DEBUG("[+] Parsing dyld information");
           const dyld_info_command* cmd = &this->stream_->peek<dyld_info_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DyldInfo>{new DyldInfo{cmd}};
@@ -366,23 +365,22 @@ void BinaryParser::parse_load_commands(void) {
       // ===============
       case LOAD_COMMAND_TYPES::LC_SOURCE_VERSION:
         {
-          VLOG(VDEBUG) << "[+] Parsing LC_SOURCE_VERSION";
+          LIEF_DEBUG("[+] Parsing LC_SOURCE_VERSION");
 
           const source_version_command* cmd = &this->stream_->peek<source_version_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<SourceVersion>{new SourceVersion{cmd}};
-          VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
+          LIEF_DEBUG("Version: 0x{:x}", cmd->version);
           break;
         }
 
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX:
       case LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS:
         {
-          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
+          LIEF_DEBUG("[+] Parsing {}", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
 
           const version_min_command* cmd = &this->stream_->peek<version_min_command>(loadcommands_offset);
-          VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
-          VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
+          LIEF_DEBUG("Version: 0x{:x} | SDK: 0x{:x}", cmd->version, cmd->sdk);
 
           load_command = std::unique_ptr<VersionMin>{new VersionMin{cmd}};
           break;
@@ -391,11 +389,9 @@ void BinaryParser::parse_load_commands(void) {
 
       case LOAD_COMMAND_TYPES::LC_BUILD_VERSION:
         {
-          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
+          LIEF_DEBUG("[+] Parsing {}", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
 
           const auto cmd = &this->stream_->peek<build_version_command>(loadcommands_offset);
-          //VLOG(VDEBUG) << "Version: " << std::hex << cmd->version;
-          //VLOG(VDEBUG) << "SDK: "     << std::hex << cmd->sdk;
 
           load_command = std::unique_ptr<BuildVersion>{new BuildVersion{cmd}};
           BuildVersion* build_version = load_command->as<BuildVersion>();
@@ -456,7 +452,7 @@ void BinaryParser::parse_load_commands(void) {
       // =======
       case LOAD_COMMAND_TYPES::LC_MAIN:
         {
-          VLOG(VDEBUG) << "[+] Parsing LC_MAIN";
+          LIEF_DEBUG("[+] Parsing LC_MAIN");
 
           const entry_point_command* cmd = &this->stream_->peek<entry_point_command>(loadcommands_offset);
 
@@ -469,7 +465,7 @@ void BinaryParser::parse_load_commands(void) {
       // ==================
       case LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS:
         {
-          VLOG(VDEBUG) << "[+] Parsing LC_FUNCTION_STARTS";
+          LIEF_DEBUG("[+] Parsing LC_FUNCTION_STARTS");
           const linkedit_data_command* cmd = &this->stream_->peek<linkedit_data_command>(loadcommands_offset);
           load_command = std::unique_ptr<FunctionStarts>{new FunctionStarts{cmd}};
 
@@ -484,7 +480,7 @@ void BinaryParser::parse_load_commands(void) {
             }
             value += val;
 
-            VLOG(VDEBUG) << "Value: " << std::hex << value;
+            LIEF_DEBUG("Value: 0x{:x}", value);
             fstart->add_function(value);
           } while(this->stream_->pos() < (cmd->dataoff + cmd->datasize));
 
@@ -493,7 +489,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO:
         {
           //static constexpr uint8_t DYLD_CACHE_ADJ_V2_FORMAT = 0x7F;
-          VLOG(VDEBUG) << "[+] Parsing LC_SEGMENT_SPLIT_INFO";
+          LIEF_DEBUG("[+] Parsing LC_SEGMENT_SPLIT_INFO");
           const linkedit_data_command& cmd = this->stream_->peek<linkedit_data_command>(loadcommands_offset);
           load_command = std::unique_ptr<SegmentSplitInfo>{new SegmentSplitInfo{&cmd}};
           //const uint32_t start = cmd->dataoff;
@@ -552,7 +548,7 @@ void BinaryParser::parse_load_commands(void) {
       case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO:
       case LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO_64:
         {
-          VLOG(VDEBUG) << "[+] Parsing " << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd));
+          LIEF_DEBUG("[+] Parsing {}", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
           const encryption_info_command* cmd = &this->stream_->peek<encryption_info_command>(loadcommands_offset);
           load_command = std::unique_ptr<EncryptionInfo>{new EncryptionInfo{cmd}};
           break;
@@ -561,8 +557,7 @@ void BinaryParser::parse_load_commands(void) {
 
       default:
         {
-          LOG(WARNING) << "Command '" << to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd))
-                       << "' not parsed";
+          LIEF_WARN("Command '{}' not parsed!", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
 
           load_command = std::unique_ptr<LoadCommand>{new LoadCommand{&command}};
         }
@@ -588,22 +583,22 @@ void BinaryParser::parse_load_commands(void) {
 template<class MACHO_T>
 void BinaryParser::parse_relocations(Section& section) {
   if (section.numberof_relocations() == 0) {
-    VLOG(VDEBUG) << "No relocations in " << section.name();
+    LIEF_DEBUG("No relocations in {}", section.name());
     return;
   }
 
-  VLOG(VDEBUG) << "Parse '" << section.name() << "' relocations (" << std::dec << section.numberof_relocations() << ")";
+  LIEF_DEBUG("Parse '{}' relocations (#{:d})", section.name(), section.numberof_relocations());
 
   uint64_t current_reloc_offset = section.relocation_offset();
   size_t numberof_relocations = section.numberof_relocations();
   if (section.numberof_relocations() > BinaryParser::MAX_RELOCATIONS) {
     numberof_relocations = BinaryParser::MAX_RELOCATIONS;
-    LOG(WARNING) << "Huge number of relocations (" << std::dec << section.relocation_offset() << "). "
-                 << "Only the first " << std::dec << numberof_relocations << " will be parsed";
+    LIEF_WARN("Huge number of relocations (#{:d}). On the first #{:d} will be parsed",
+        section.numberof_relocations(), numberof_relocations);
 
   }
   if (current_reloc_offset + numberof_relocations * 2 * sizeof(uint32_t) > this->stream_->size()) {
-    LOG(WARNING) << "Relocations corrupted";
+    LIEF_WARN("Relocations corrupted");
     return;
   }
 
@@ -626,9 +621,9 @@ void BinaryParser::parse_relocations(Section& section) {
           Symbol& symbol = this->binary_->symbols()[reloc_info->r_symbolnum];
           reloc->symbol_ = &symbol;
 
-          VLOG(VDEBUG) << "Symbol: " << symbol.name();
+          LIEF_DEBUG("Symbol: {}", symbol.name());
         } else {
-          LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " symbol index is out-of-bound";
+          LIEF_WARN("Relocation #{:d} of {} symbol index is out-of-bound", i, section.name());
         }
       }
 
@@ -637,9 +632,9 @@ void BinaryParser::parse_relocations(Section& section) {
           Section& relsec = this->binary_->sections()[reloc_info->r_symbolnum];
           reloc->section_ = &relsec;
 
-          VLOG(VDEBUG) << "Section: " << relsec.name();
+          LIEF_DEBUG("Section: {}", relsec.name());
         } else {
-          LOG(WARNING) << "Relocation #" << std::dec << i << " of " << section.name() << " seems corrupted";
+          LIEF_WARN("Relocation #{:d} of {} seems corrupted", i, section.name());
         }
       }
     }
@@ -679,7 +674,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
       dyldinfo.rebase_opcodes({raw_rebase, raw_rebase + size});
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   uint64_t end_offset = offset + size;
@@ -721,7 +716,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
           if (segment_index < segments.size()) {
             current_segmment = &segments[segment_index];
           } else {
-            LOG(ERROR) << "REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB: Bad index";
+            LIEF_ERR("REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB: Bad index");
             done = true;
           }
 
@@ -733,8 +728,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
           segment_offset += this->stream_->read_uleb128();
 
           if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-            LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
-                       << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset (0x{:x} > 0x{:x})",
+              segment_offset, current_segmment->file_size());
           }
 
           break;
@@ -745,8 +740,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
           segment_offset += (imm * sizeof(pint_t));
 
           if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-            LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
-                       << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_IMM_SCALED: Bad offset (0x{:x} > 0x{:x})",
+              segment_offset, current_segmment->file_size());
           }
           break;
         }
@@ -758,8 +753,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
             segment_offset += sizeof(pint_t);
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-              LOG(WARNING) << "REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ("
-                         << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_IMM_TIMES: Bad offset (0x{:x} > 0x{:x})",
+                segment_offset, current_segmment->file_size());
             }
           }
           break;
@@ -771,8 +766,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
           for (size_t i = 0; i < count; ++i) {
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-                LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
-                           << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Bad offset (0x{:x} > 0x{:x})",
+                segment_offset, current_segmment->file_size());
             }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
             segment_offset += sizeof(pint_t);
@@ -784,8 +779,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
         {
 
           if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-              LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
-                         << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset (0x{:x} > 0x{:x})",
+                segment_offset, current_segmment->file_size());
           }
           this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
 
@@ -806,8 +801,8 @@ void BinaryParser::parse_dyldinfo_rebases() {
           for (size_t i = 0; i < count; ++i) {
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
-                LOG(WARNING) << "REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ("
-                           << std::hex << std::showbase << segment_offset << " > " << current_segmment->file_size() << ")";
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB: Bad offset (0x{:x} > 0x{:x})",
+                segment_offset, current_segmment->file_size());
             }
             this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
             segment_offset += skip + sizeof(pint_t);
@@ -818,7 +813,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
 
       default:
         {
-          LOG(ERROR) << "Unsupported opcode: " << std::showbase << std::hex << static_cast<uint32_t>(opcode);
+          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
     }
@@ -883,7 +878,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
       dyldinfo.bind_opcodes({raw_binding, raw_binding + size});
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   uint64_t end_offset = offset + size;
@@ -1058,7 +1053,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
       default:
         {
-          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -1088,7 +1083,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
       dyldinfo.weak_bind_opcodes({raw_binding, raw_binding + size});
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   uint64_t end_offset = offset + size;
@@ -1248,7 +1243,7 @@ void BinaryParser::parse_dyldinfo_weak_bind() {
 
       default:
         {
-          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -1278,7 +1273,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
       dyldinfo.lazy_bind_opcodes({raw_binding, raw_binding + size});
     }
   } catch (const exception& e) {
-    LOG(WARNING) << e.what();
+    LIEF_WARN("{}", e.what());
   }
 
   uint64_t current_offset = offset;
@@ -1377,7 +1372,7 @@ void BinaryParser::parse_dyldinfo_lazy_bind() {
 
       default:
         {
-          LOG(ERROR) << "Unsupported opcode: 0x" << std::hex << static_cast<uint32_t>(opcode);
+          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -1399,7 +1394,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
 
 
   if (segment_idx >= segments.size()) {
-    LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
+    LIEF_ERR("Wrong index ({:d})", segment_idx);
     return;
   }
   SegmentCommand& segment = segments[segment_idx];
@@ -1407,7 +1402,7 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   uint64_t address = segment.virtual_address() + segment_offset;
 
   if (address > (segment.virtual_address() + segment.virtual_size())) {
-    LOG(ERROR) << "Bad address: " << std::hex << std::showbase << address;
+    LIEF_ERR("Bad address: 0x{:x}", address);
     return;
   }
 
@@ -1432,12 +1427,12 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     binding_info->symbol_ = &symbol;
     symbol.binding_info_ = binding_info.get();
   } else {
-    LOG(ERROR) << "New symbol found: " << symbol_name;
+    LIEF_ERR("New symbol found: {}", symbol_name);
   }
 
 
   this->binary_->dyld_info().binding_info_.push_back(binding_info.release());
-  VLOG(VDEBUG) << to_string(cls) << segment.name() << " - " << symbol_name;
+  LIEF_DEBUG("{} {} - {}", to_string(cls), segment.name(), symbol_name);
 }
 
 template<class MACHO_T>
@@ -1447,7 +1442,7 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   it_segments segments = this->binary_->segments();
 
   if (segment_idx >= segments.size()) {
-    LOG(ERROR) << "Wrong index (" << std::dec << segment_idx << ")";
+    LIEF_ERR("Wrong index ({:d})", segment_idx);
     return;
   }
 
@@ -1455,7 +1450,7 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   uint64_t address = segment.virtual_address() + segment_offset;
 
   if (address > (segment.virtual_address() + segment.virtual_size())) {
-    LOG(ERROR) << "Bad rebase address: " << std::hex << std::showbase << address;
+    LIEF_ERR("Bad rebase address: 0x{:x}", address);
     return;
   }
 
@@ -1509,7 +1504,7 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
 
     default:
       {
-        LOG(ERROR) << "Unsuported relocation type: 0x" << std::hex << type;
+        LIEF_ERR("Unsuported relocation type: 0x{:x}", type);
       }
   }
 }

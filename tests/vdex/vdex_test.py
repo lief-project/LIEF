@@ -1,19 +1,17 @@
 #!/usr/bin/env python
-import unittest
-import lief
-import logging
-import pprint
 import json
+import logging
 import os
-
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
-#Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
-
+import pprint
+import unittest
 from unittest import TestCase
+
+import lief
 from utils import get_sample
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
 
 class TestVDEX(TestCase):
 
@@ -91,7 +89,7 @@ class TestVDEX10(TestCase):
         self.assertEqual(header.magic, [118, 100, 101, 120])
         self.assertEqual(header.version, 10)
         self.assertEqual(header.nb_dex_files, 1)
-        self.assertEqual(header.dex_size, 1421904 )
+        self.assertEqual(header.dex_size, 1421904)
         self.assertEqual(header.quickening_info_size, 584)
         self.assertEqual(header.verifier_deps_size, 18988)
 
@@ -118,4 +116,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

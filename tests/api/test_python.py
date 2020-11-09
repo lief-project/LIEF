@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-import unittest
-import lief
-import logging
 import io
+import logging
+import unittest
 from io import open as io_open
 from unittest import TestCase
+
+import lief
 from utils import get_sample
 
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.WARNING)
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 class TestPythonApi(TestCase):
 

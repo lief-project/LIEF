@@ -1,5 +1,5 @@
 if(__add_lief_options)
-	return()
+  return()
 endif()
 set(__add_lief_options ON)
 
@@ -14,6 +14,7 @@ option(LIEF_COVERAGE       "Perform code coverage"                      OFF)
 option(LIEF_USE_CCACHE     "Use ccache to speed up compilation"         ON)
 option(LIEF_EXTRA_WARNINGS "Enable extra warning from the compiler"     OFF)
 option(LIEF_LOGGING        "Enable logging"                             ON)
+option(LIEF_LOGGING_DEBUG  "Enable debug logging"                       ON)
 option(LIEF_ENABLE_JSON    "Enable JSON-related APIs"                   ON)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
@@ -52,43 +53,47 @@ set(LIEF_JSON_SUPPORT 0)
 set(LIEF_LOGGING_SUPPORT 0)
 set(LIEF_FROZEN_ENABLED 0)
 
-if (LIEF_ELF)
+if(LIEF_ELF)
   set(LIEF_ELF_SUPPORT 1)
 endif()
 
-if (LIEF_PE)
+if(LIEF_PE)
   set(LIEF_PE_SUPPORT 1)
 endif()
 
-if (LIEF_MACHO)
+if(LIEF_MACHO)
   set(LIEF_MACHO_SUPPORT 1)
 endif()
 
-if (LIEF_OAT)
+if(LIEF_OAT)
   set(LIEF_OAT_SUPPORT 1)
 endif()
 
-if (LIEF_DEX)
+if(LIEF_DEX)
   set(LIEF_DEX_SUPPORT 1)
 endif()
 
-if (LIEF_VDEX)
+if(LIEF_VDEX)
   set(LIEF_VDEX_SUPPORT 1)
 endif()
 
-if (LIEF_ART)
+if(LIEF_ART)
   set(LIEF_ART_SUPPORT 1)
 endif()
 
-if (LIEF_ENABLE_JSON)
+if(LIEF_ENABLE_JSON)
   set(LIEF_JSON_SUPPORT 1)
 endif()
 
-if (LIEF_LOGGING)
+if(LIEF_LOGGING)
   set(LIEF_LOGGING_SUPPORT 1)
+  if(LIEF_LOGGING_DEBUG)
+    set(LIEF_LOGGING_DEBUG 1)
+  else()
+    set(LIEF_LOGGING_DEBUG 0)
+  endif()
 endif()
 
-if (NOT LIEF_DISABLE_FROZEN)
+if(NOT LIEF_DISABLE_FROZEN)
   set(LIEF_FROZEN_ENABLED 1)
 endif()
-

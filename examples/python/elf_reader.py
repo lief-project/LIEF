@@ -5,18 +5,15 @@
 # -----------
 # Print information about an ELF binary
 
+import os
+import sys
+import textwrap
+import traceback
+
 import lief
 from lief import ELF
+import argparse
 
-import sys
-import os
-import traceback
-import textwrap
-
-from lief import Logger
-Logger.set_level(lief.LOGGING_LEVEL.ERROR)
-
-from optparse import OptionParser
 terminal_rows, terminal_columns = 100, 110
 try:
     terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
@@ -443,158 +440,188 @@ def print_functions(binary):
 
 
 def main():
-    optparser = OptionParser(
-            usage='Usage: %prog [options] <elf-file>',
-            add_help_option=False, # -h is a real option of readelf
-            prog=sys.argv[0])
+    parser = argparse.ArgumentParser(add_help=False, prog=sys.argv[0])
+    parser.add_argument("elf_file")
 
-    optparser.add_option('-a', '--all',
+    parser.add_argument('-a', '--all',
             action='store_true', dest='show_all',
             help='Equivalent to: -h -l -S -s -r -d -V')
 
-    optparser.add_option('-d', '--dynamic',
+    parser.add_argument('-d', '--dynamic',
             action='store_true', dest='show_dynamic_tags',
             help='Display the dynamic section')
 
-    optparser.add_option('-H', '--help',
-            action='store_true', dest='help',
+    parser.add_argument('-H', '--help',
+            action='help', dest='help',
             help='Display this information')
 
-    optparser.add_option('-h', '--file-header',
+    parser.add_argument('-h', '--file-header',
             action='store_true', dest='show_file_header',
             help='Display the ELF file header')
 
-    optparser.add_option('-i', '--imported',
+    parser.add_argument('-i', '--imported',
             action='store_true', dest='show_imported_symbols',
             help='Display imported symbols')
 
-    optparser.add_option('-l', '--program-headers', '--segments',
+    parser.add_argument('-l', '--program-headers', '--segments',
             action='store_true', dest='show_program_header',
             help='Display the program headers')
 
-    optparser.add_option('-S', '--section-headers', '--sections',
+    parser.add_argument('-S', '--section-headers', '--sections',
             action='store_true', dest='show_section_header',
             help="Display the sections' headers")
 
-    optparser.add_option('-e', '--headers',
+    parser.add_argument('-e', '--headers',
             action='store_true', dest='show_all_headers',
             help='Equivalent to: -h -l -S')
 
-    optparser.add_option('-s', '--symbols', '--syms',
+    parser.add_argument('-s', '--symbols', '--syms',
             action='store_true', dest='show_symbols',
             help='Display the symbol table')
 
-    optparser.add_option('--dynamic-symbols', '--dsyms',
+    parser.add_argument('--dynamic-symbols', '--dsyms',
             action='store_true', dest='show_dynamic_symbols',
             help='Display the dynamic symbols')
 
-    optparser.add_option('--static-symbols', '--ssyms',
+    parser.add_argument('--static-symbols', '--ssyms',
             action='store_true', dest='show_static_symbols',
             help='Display the static symbols')
 
-    optparser.add_option('-r', '--relocs',
+    parser.add_argument('-r', '--relocs',
             action='store_true', dest='show_relocs',
             help='Display the relocations (if present)')
 
-    optparser.add_option('-V', '--version-info',
+    parser.add_argument('-V', '--version-info',
             action='store_true', dest='show_version_info',
             help='Display the version sections (if present)')
 
-    optparser.add_option('-x', '--exported',
+    parser.add_argument('-x', '--exported',
             action='store_true', dest='show_exported_symbols',
             help='Display exported symbols')
 
-    optparser.add_option('--gnu-hash',
+    parser.add_argument('--gnu-hash',
             action='store_true', dest='show_gnu_hash',
             help='Display GNU Hash')
 
-    optparser.add_option('--sysv-hash',
+    parser.add_argument('--sysv-hash',
             action='store_true', dest='show_sysv_hash',
             help='Display SYSV Hash')
 
-    optparser.add_option('-n', '--notes',
+    parser.add_argument('-n', '--notes',
             action='store_true', dest='show_notes',
             help='Display Notes')
 
-    optparser.add_option('--no-trunc',
+    parser.add_argument('--no-trunc',
             action='store_true', dest='no_trunc',
             default=False,
             help='Do not trunc symbol names ...')
 
-    optparser.add_option('--ctor',
+    parser.add_argument('--ctor',
             action='store_true', dest='show_ctor',
             help='Constructor functions')
 
-    optparser.add_option('--strings',
+    parser.add_argument('--strings',
             action='store_true', dest='show_strings',
             help='Strings present in the current ELF')
 
-    optparser.add_option('--functions',
+    parser.add_argument('--functions',
             action='store_true', dest='show_functions',
             help='List all function addresses found')
 
-    options, args = optparser.parse_args()
+    # Logging setup
+    logger_group = parser.add_argument_group('Logger')
+    verbosity = logger_group.add_mutually_exclusive_group()
 
-    if options.help or len(args) == 0:
-        optparser.print_help()
-        sys.exit(0)
+    verbosity.add_argument('--debug',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.DEBUG)
 
+    verbosity.add_argument('--trace',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.TRACE)
 
-    binary = ELF.parse(args[0])
+    verbosity.add_argument('--info',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.INFO)
+
+    verbosity.add_argument('--warn',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.WARNING)
+
+    verbosity.add_argument('--err',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.ERROR)
+
+    verbosity.add_argument('--critical',
+            dest='main_verbosity',
+            action='store_const',
+            const=lief.logging.LOGGING_LEVEL.CRITICAL)
+
+    parser.set_defaults(main_verbosity=lief.logging.LOGGING_LEVEL.WARNING)
+
+    args = parser.parse_args()
+
+    lief.logging.set_level(args.main_verbosity)
+    binary = ELF.parse(args.elf_file)
     print_information(binary)
-    if options.show_all:
+    if args.show_all:
         do_file_header = do_section_header = do_program_header = True
 
-    if options.show_all_headers:
+    if args.show_all_headers:
         do_file_header = do_section_header = do_program_header = True
     else:
-        do_file_header    = options.show_file_header
-        do_section_header = options.show_section_header
-        do_program_header = options.show_program_header
+        do_file_header    = args.show_file_header
+        do_section_header = args.show_section_header
+        do_program_header = args.show_program_header
 
-    if do_file_header or options.show_all:
+    if do_file_header or args.show_all:
         print_header(binary)
 
-    if do_section_header or options.show_all:
+    if do_section_header or args.show_all:
         print_sections(binary)
 
-    if do_program_header or options.show_all:
+    if do_program_header or args.show_all:
         print_segments(binary)
 
-    if options.show_dynamic_tags or options.show_all:
+    if args.show_dynamic_tags or args.show_all:
         print_dynamic_entries(binary)
 
-    if (options.show_symbols or options.show_all or options.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
-        print_dynamic_symbols(binary, options)
+    if (args.show_symbols or args.show_all or args.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
+        print_dynamic_symbols(binary, args)
 
-    if (options.show_symbols or options.show_all or options.show_static_symbols) and len(binary.static_symbols) > 0:
-        print_static_symbols(binary, options)
+    if (args.show_symbols or args.show_all or args.show_static_symbols) and len(binary.static_symbols) > 0:
+        print_static_symbols(binary, args)
 
-    if options.show_relocs or options.show_all:
+    if args.show_relocs or args.show_all:
         print_all_relocations(binary)
 
-    if options.show_imported_symbols or options.show_all:
-        print_imported_symbols(binary, options)
+    if args.show_imported_symbols or args.show_all:
+        print_imported_symbols(binary, args)
 
-    if options.show_exported_symbols or options.show_all:
-        print_exported_symbols(binary, options)
+    if args.show_exported_symbols or args.show_all:
+        print_exported_symbols(binary, args)
 
-    if (options.show_gnu_hash or options.show_all) and binary.use_gnu_hash:
+    if (args.show_gnu_hash or args.show_all) and binary.use_gnu_hash:
         print_gnu_hash(binary)
 
-    if (options.show_sysv_hash or options.show_all) and binary.use_sysv_hash:
+    if (args.show_sysv_hash or args.show_all) and binary.use_sysv_hash:
         print_sysv_hash(binary)
 
-    if options.show_notes or options.show_all:
+    if args.show_notes or args.show_all:
         print_notes(binary)
 
-    if options.show_ctor or options.show_all:
+    if args.show_ctor or args.show_all:
         print_ctor(binary)
 
-    if options.show_strings or options.show_all:
+    if args.show_strings or args.show_all:
         print_strings(binary)
 
-    if options.show_functions:
+    if args.show_functions:
         print_functions(binary)
 
 
@@ -602,9 +629,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

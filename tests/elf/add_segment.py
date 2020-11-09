@@ -1,22 +1,21 @@
 #!/usr/bin/env python
-import unittest
 import logging
 import os
-import sys
-import stat
 import re
-import subprocess
-import tempfile
 import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
 from subprocess import Popen
+from unittest import TestCase
 
 import lief
 from lief.ELF import Segment
-from lief import Logger
-#Logger.set_level(lief.LOGGING_LEVEL.DEBUG)
-
-from unittest import TestCase
 from utils import get_sample, has_recent_glibc
+
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
@@ -216,4 +215,3 @@ if __name__ == '__main__':
     root_logger.addHandler(ch)
 
     unittest.main(verbosity=2)
-

@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iterator>
 
-#include "LIEF/logging++.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/exception.hpp"
@@ -196,7 +196,7 @@ void Builder::build_fat(void) {
 }
 
 void Builder::build_fat_header(void) {
-  VLOG(VDEBUG) << "[+] Building Fat Header" << std::endl;
+  LIEF_DEBUG("[+] Building Fat Header");
   static constexpr uint32_t ALIGNMENT = 14; // 4096 / 0x1000
   fat_header header;
   header.magic     = static_cast<uint32_t>(MACHO_TYPES::FAT_CIGAM);
@@ -224,7 +224,7 @@ void Builder::build_fat_header(void) {
 
 
 void Builder::build_header(void) {
-  VLOG(VDEBUG) << "[+] Building header" << std::endl;
+  LIEF_DEBUG("[+] Building header");
   const Header& binary_header = this->binary_->header();
   if (this->binary_->is64_) {
     mach_header_64 header;
@@ -257,13 +257,13 @@ void Builder::build_header(void) {
 
 
 void Builder::build_load_commands(void) {
-  VLOG(VDEBUG) << "[+] Building load segments" << std::endl;
+  LIEF_DEBUG("[+] Building load segments");
 
   const auto& binary = this->binaries_.back();
   // Check if the number of segments is correct
   if (binary->header().nb_cmds() != binary->commands_.size()) {
-    LOG(WARNING) << "Error: header.nb_cmds = " << std::dec << binary->header().nb_cmds()
-                 << " and number of commands is " << binary->commands_.size() << std::endl;
+    LIEF_WARN("Error: header.nb_cmds = {:d} vs number of commands #{:d}",
+      binary->header().nb_cmds(), binary->commands_.size());
     throw LIEF::builder_error("");
   }
 
@@ -278,7 +278,7 @@ void Builder::build_load_commands(void) {
   for (const LoadCommand& command : binary->commands()) {
     auto& data = command.data();
     uint64_t loadCommandsOffset = command.command_offset();
-    VLOG(VDEBUG) << "[+] Command offset: 0x" << std::hex << loadCommandsOffset << std::endl;
+    LIEF_DEBUG("[+] Command offset: 0x{:04x}", loadCommandsOffset);
     this->raw_.seekp(loadCommandsOffset);
     this->raw_.write(data);
   }
@@ -292,7 +292,7 @@ void Builder::build_uuid(void) {
           return (typeid(*command) == typeid(UUIDCommand));
         });
   if (uuid_it == std::end(this->binary_->commands_)) {
-    VLOG(VDEBUG) << "[-] No uuid" << std::endl;
+    LIEF_DEBUG("[-] No uuid");
     return;
   }
 
@@ -310,7 +310,7 @@ void Builder::build_uuid(void) {
   std::copy(std::begin(uuid), std::end(uuid), raw_cmd.uuid);
 
   if (uuid_cmd->size() < sizeof(uuid_command)) {
-    LOG(WARNING) << "Size of original data is different for " << to_string(uuid_cmd->command()) << ": Skip!";
+    LIEF_WARN("Size of original data is different for '{}' -> Skip!", to_string(uuid_cmd->command()));
     return;
   }
 
@@ -346,8 +346,9 @@ void Builder::write(const std::string& filename) const {
         std::begin(content),
         std::end(content),
         std::ostreambuf_iterator<char>(output_file));
-  } else
-    LOG(ERROR) << "Fail to write binary file\n";
+  } else {
+    LIEF_ERR("Fail to write binary file");
+  }
 
 }
 
