@@ -1,5 +1,5 @@
 version: 0.7.{build}
-image: Visual Studio 2019
+image: Visual Studio 2017
 clone_folder: c:\projects\lief
 
 configuration: Release
@@ -84,15 +84,15 @@ environment:
       PYTHON64_LIBRARY: "C:\\Python38-x64\\libs\\python38.lib"
 
     # Python 3.9
-    - PYTHON_VERSION:   "3.9"
-      PYTHON32_PATH:    "C:\\Python39"
-      PYTHON32_INCLUDE: "C:\\Python39\\include"
-      PYTHON32_BINARY:  "C:\\Python39\\python.exe"
-      PYTHON32_LIBRARY: "C:\\Python39\\libs\\python39.lib"
-      PYTHON64_PATH:    "C:\\Python39-x64"
-      PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
-      PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
-      PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
+    #- PYTHON_VERSION:   "3.9"
+    #  PYTHON32_PATH:    "C:\\Python39"
+    #  PYTHON32_INCLUDE: "C:\\Python39\\include"
+    #  PYTHON32_BINARY:  "C:\\Python39\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python39\\libs\\python39.lib"
+    #  PYTHON64_PATH:    "C:\\Python39-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
