@@ -51,6 +51,7 @@ using std::chrono::milliseconds;
 namespace LIEF {
 namespace logging {
 
+// TODO(romain): Update when moving to C++17
 class Logger {
   public:
   Logger(const Logger&) = delete;
@@ -69,7 +70,9 @@ class Logger {
 
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
-    Logger::instance().sink_->trace(fmt, args...);
+    if /* constexpr */ (lief_logging_support and lief_logging_debug) {
+      Logger::instance().sink_->trace(fmt, args...);
+    }
   }
 
   template <typename... Args>
@@ -107,7 +110,7 @@ class Logger {
   Logger& operator=(Logger&&);
 
   static void destroy(void);
-  static Logger* instance_;
+  /* inline */ static Logger* instance_;
   std::shared_ptr<spdlog::logger> sink_;
 };
 
