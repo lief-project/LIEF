@@ -1,5 +1,5 @@
 version: 0.7.{build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 clone_folder: c:\projects\lief
 
 configuration: Release
@@ -39,60 +39,60 @@ environment:
 
 
     # Python 3.5
-    - PYTHON_VERSION:   "3.5"
-      PYTHON32_PATH:    "C:\\Python35"
-      PYTHON32_INCLUDE: "C:\\Python35\\include"
-      PYTHON32_BINARY:  "C:\\Python35\\python.exe"
-      PYTHON32_LIBRARY: "C:\\Python35\\libs\\python35.lib"
-      PYTHON64_PATH:    "C:\\Python35-x64"
-      PYTHON64_INCLUDE: "C:\\Python35-x64\\include"
-      PYTHON64_BINARY:  "C:\\Python35-x64\\python.exe"
-      PYTHON64_LIBRARY: "C:\\Python35-x64\\libs\\python35.lib"
+    #- PYTHON_VERSION:   "3.5"
+    #  PYTHON32_PATH:    "C:\\Python35"
+    #  PYTHON32_INCLUDE: "C:\\Python35\\include"
+    #  PYTHON32_BINARY:  "C:\\Python35\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python35\\libs\\python35.lib"
+    #  PYTHON64_PATH:    "C:\\Python35-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python35-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python35-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python35-x64\\libs\\python35.lib"
 
 
-    ## Python 3.6
-    - PYTHON_VERSION:   "3.6"
-      PYTHON32_PATH:    "C:\\Python36"
-      PYTHON32_INCLUDE: "C:\\Python36\\include"
-      PYTHON32_BINARY:  "C:\\Python36\\python.exe"
-      PYTHON32_LIBRARY: "C:\\Python36\\libs\\python36.lib"
-      PYTHON64_PATH:    "C:\\Python36-x64"
-      PYTHON64_INCLUDE: "C:\\Python36-x64\\include"
-      PYTHON64_BINARY:  "C:\\Python36-x64\\python.exe"
-      PYTHON64_LIBRARY: "C:\\Python36-x64\\libs\\python36.lib"
+    ### Python 3.6
+    #- PYTHON_VERSION:   "3.6"
+    #  PYTHON32_PATH:    "C:\\Python36"
+    #  PYTHON32_INCLUDE: "C:\\Python36\\include"
+    #  PYTHON32_BINARY:  "C:\\Python36\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python36\\libs\\python36.lib"
+    #  PYTHON64_PATH:    "C:\\Python36-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python36-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python36-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python36-x64\\libs\\python36.lib"
 
-    # Python 3.7
-    - PYTHON_VERSION:   "3.7"
-      PYTHON32_PATH:    "C:\\Python37"
-      PYTHON32_INCLUDE: "C:\\Python37\\include"
-      PYTHON32_BINARY:  "C:\\Python37\\python.exe"
-      PYTHON32_LIBRARY: "C:\\Python37\\libs\\python37.lib"
-      PYTHON64_PATH:    "C:\\Python37-x64"
-      PYTHON64_INCLUDE: "C:\\Python37-x64\\include"
-      PYTHON64_BINARY:  "C:\\Python37-x64\\python.exe"
-      PYTHON64_LIBRARY: "C:\\Python37-x64\\libs\\python37.lib"
+    ## Python 3.7
+    #- PYTHON_VERSION:   "3.7"
+    #  PYTHON32_PATH:    "C:\\Python37"
+    #  PYTHON32_INCLUDE: "C:\\Python37\\include"
+    #  PYTHON32_BINARY:  "C:\\Python37\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python37\\libs\\python37.lib"
+    #  PYTHON64_PATH:    "C:\\Python37-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python37-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python37-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python37-x64\\libs\\python37.lib"
 
-    # Python 3.8
-    - PYTHON_VERSION:   "3.8"
-      PYTHON32_PATH:    "C:\\Python38"
-      PYTHON32_INCLUDE: "C:\\Python38\\include"
-      PYTHON32_BINARY:  "C:\\Python38\\python.exe"
-      PYTHON32_LIBRARY: "C:\\Python38\\libs\\python38.lib"
-      PYTHON64_PATH:    "C:\\Python38-x64"
-      PYTHON64_INCLUDE: "C:\\Python38-x64\\include"
-      PYTHON64_BINARY:  "C:\\Python38-x64\\python.exe"
-      PYTHON64_LIBRARY: "C:\\Python38-x64\\libs\\python38.lib"
+    ## Python 3.8
+    #- PYTHON_VERSION:   "3.8"
+    #  PYTHON32_PATH:    "C:\\Python38"
+    #  PYTHON32_INCLUDE: "C:\\Python38\\include"
+    #  PYTHON32_BINARY:  "C:\\Python38\\python.exe"
+    #  PYTHON32_LIBRARY: "C:\\Python38\\libs\\python38.lib"
+    #  PYTHON64_PATH:    "C:\\Python38-x64"
+    #  PYTHON64_INCLUDE: "C:\\Python38-x64\\include"
+    #  PYTHON64_BINARY:  "C:\\Python38-x64\\python.exe"
+    #  PYTHON64_LIBRARY: "C:\\Python38-x64\\libs\\python38.lib"
 
-    # Python 3.9 - To enable when https://github.com/appveyor/ci/issues/3541 will be resolved
-    #- PYTHON_VERSION:   "3.9"
-    #  PYTHON32_PATH:    "C:\\Python39"
-    #  PYTHON32_INCLUDE: "C:\\Python39\\include"
-    #  PYTHON32_BINARY:  "C:\\Python39\\python.exe"
-    #  PYTHON32_LIBRARY: "C:\\Python39\\libs\\python39.lib"
-    #  PYTHON64_PATH:    "C:\\Python39-x64"
-    #  PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
-    #  PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
-    #  PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
+    # Python 3.9
+    - PYTHON_VERSION:   "3.9"
+      PYTHON32_PATH:    "C:\\Python39"
+      PYTHON32_INCLUDE: "C:\\Python39\\include"
+      PYTHON32_BINARY:  "C:\\Python39\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python39\\libs\\python39.lib"
+      PYTHON64_PATH:    "C:\\Python39-x64"
+      PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
