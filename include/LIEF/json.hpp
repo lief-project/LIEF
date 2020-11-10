@@ -19,7 +19,7 @@
 #include <LIEF/config.h>
 
 #ifdef LIEF_JSON_SUPPORT
-#include <json.hpp>
+#include <LIEF/third-party/json.hpp>
 
 using json = nlohmann::json;
 #endif

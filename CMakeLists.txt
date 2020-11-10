@@ -114,12 +114,11 @@ set(LIEF_INCLUDE_FILES ${LIEF_INC_FILES} ${LIEF_VISITOR_INCLUDE_FILES})
 
 set(LIEF_JSON_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp")
 set(LIEF_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/json.hpp"
-                  "${LIBJSON_SOURCE_DIR}/json.hpp")
+                  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp")
 
 if(LIEF_ENABLE_JSON)
   list(APPEND LIBLIEF_SOURCE_FILES "${LIEF_JSON_SRC}")
   list(APPEND LIEF_INC_FILES "${LIEF_JSON_HDR}")
-  list(APPEND LIEF_PUBLIC_INCLUDE_DIR "${LIBJSON_SOURCE_DIR}/")
 endif()
 
 source_group("Header Files" FILES ${LIEF_INC_FILES})
@@ -250,14 +249,9 @@ list(APPEND LIEF_PUBLIC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/"
      "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
      "${CMAKE_CURRENT_BINARY_DIR}/include/")
 
-list(
-  APPEND
-  LIEF_PRIVATE_INCLUDE_DIR
-  "${LIEF_PUBLIC_INCLUDE_DIR}"
-  "${LIEF_PUBLIC_INCLUDE_DIR}"
-  "${LIBRANG_SOURCE_DIR}/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src"
-  "${CMAKE_BINARY_DIR}")
+list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
+     "${LIBRANG_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/src"
+     "${CMAKE_BINARY_DIR}")
 
 configure_file(${PROJECT_SOURCE_DIR}/LIEF.pc.in ${PROJECT_BINARY_DIR}/LIEF.pc
                @ONLY)
@@ -271,7 +265,7 @@ source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
 # Library definition
 # ==================
 target_include_directories(
-  LIB_LIEF SYSTEM PRIVATE "${ELG_SOURCE_DIR}" "${SPDLOG_SOURCE_DIR}/include"
+  LIB_LIEF SYSTEM PRIVATE "${SPDLOG_SOURCE_DIR}/include"
                           "${MBEDTLS_INCLUDE_DIRS}")
 
 target_include_directories(
@@ -280,7 +274,11 @@ target_include_directories(
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
-  add_dependencies(LIB_LIEF lief_libjson)
+  add_custom_target(
+    copy_json_files
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
+            ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/)
+  add_dependencies(LIB_LIEF lief_libjson copy_json_files)
 endif()
 
 if(LIEF_FROZEN_ENABLED)
