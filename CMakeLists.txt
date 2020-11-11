@@ -277,7 +277,8 @@ if(LIEF_ENABLE_JSON)
   add_custom_target(
     copy_json_files
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
-            ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/)
+            ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
+    DEPENDS lief_libjson)
   add_dependencies(LIB_LIEF lief_libjson copy_json_files)
 endif()
 
