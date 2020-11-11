@@ -39,7 +39,6 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
           break;
-          // cppcheck-suppress memleak
         }
 
       case DYNAMIC_TAGS::DT_SONAME:

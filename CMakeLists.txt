@@ -9,8 +9,6 @@ if(WIN32)
 endif()
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
-include(Findcppcheck)
-include(CppcheckTargets)
 include(ExternalProject)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
@@ -408,7 +406,6 @@ if(LIEF_COVERAGE)
   target_link_libraries(LIB_LIEF gcov)
 endif()
 
-find_package(cppcheck)
 
 if(MSVC)
   string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
