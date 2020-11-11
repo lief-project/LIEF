@@ -174,9 +174,9 @@ script:
     -v $HOME/.ccache:/ccache
     -v $TRAVIS_BUILD_DIR:/src
     liefproject/manylinux1_x86_64
-    bash -c '$PYTHON_BINARY setup.py --lief-test --sdk build -j8 bdist_wheel --dist-dir wheel_stage && auditwheel repair -w dist --plat manylinux1_x86_64 wheel_stage/*.whl '
-    && docker cp lief_$PYTHON_VERSION:/src/dist/ .
-    && docker cp lief_$PYTHON_VERSION:/src/build/ .;
+    bash -c '$PYTHON_BINARY setup.py --lief-test --sdk build -j8 bdist_wheel --dist-dir wheel_stage && auditwheel repair -w dist --plat manylinux1_x86_64 wheel_stage/*.whl'
+    && sudo chmod -R 777 dist/
+    && sudo chmod -R 777 build/;
     fi
   - >
     if [[ "$TRAVIS_OS_NAME" == "osx" ]];
