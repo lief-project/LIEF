@@ -78,12 +78,12 @@ RESOURCE_SUBLANGS LangCodeItem::sublang(void) const {
 }
 
 
-const std::map<std::u16string, std::u16string>& LangCodeItem::items(void) const {
+const LangCodeItem::items_t& LangCodeItem::items(void) const {
   return this->items_;
 }
 
-std::map<std::u16string, std::u16string>& LangCodeItem::items(void) {
-  return const_cast<std::map<std::u16string, std::u16string>&>(static_cast<const LangCodeItem*>(this)->items());
+LangCodeItem::items_t& LangCodeItem::items(void) {
+  return const_cast<LangCodeItem::items_t&>(static_cast<const LangCodeItem*>(this)->items());
 }
 
 
@@ -145,7 +145,7 @@ void LangCodeItem::sublang(RESOURCE_SUBLANGS lang) {
 }
 
 
-void LangCodeItem::items(const std::map<std::u16string, std::u16string>& items) {
+void LangCodeItem::items(const LangCodeItem::items_t& items) {
   this->items_ = items;
 }
 
@@ -176,7 +176,7 @@ std::ostream& operator<<(std::ostream& os, const LangCodeItem& item) {
      << " - "
      << std::hex << to_string(item.code_page()) << ")" << std::endl;
   os << std::setw(8) << std::setfill(' ') << "Items: " << std::endl;
-  for (const std::pair<const std::u16string, std::u16string>& p : item.items()) {
+  for (const LangCodeItem::items_t::value_type& p : item.items()) {
     os << "    " << "'" << u16tou8(p.first) << "': '" << u16tou8(p.second) << "'" << std::endl;
   }
   return os;

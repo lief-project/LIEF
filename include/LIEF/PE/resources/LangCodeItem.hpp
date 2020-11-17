@@ -18,7 +18,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 
@@ -41,6 +41,7 @@ class LIEF_API LangCodeItem : public Object {
   friend class ResourcesManager;
 
   public:
+  using items_t = std::unordered_map<std::u16string, std::u16string>;
   LangCodeItem(void);
 
   LangCodeItem(const LangCodeItem&);
@@ -69,8 +70,8 @@ class LIEF_API LangCodeItem : public Object {
   //! @brief Sublang for which @link LangCodeItem::items items @endlink are defined
   RESOURCE_SUBLANGS sublang(void) const;
 
-  const std::map<std::u16string, std::u16string>& items(void) const;
-  std::map<std::u16string, std::u16string>&       items(void);
+  const items_t& items(void) const;
+  items_t&       items(void);
 
   void type(uint16_t type);
   void key(const std::u16string& key);
@@ -80,7 +81,7 @@ class LIEF_API LangCodeItem : public Object {
   void lang(RESOURCE_LANGS lang);
   void sublang(RESOURCE_SUBLANGS lang);
 
-  void items(const std::map<std::u16string, std::u16string>& items);
+  void items(const items_t& items);
 
 
   virtual void accept(Visitor& visitor) const override;
@@ -93,8 +94,7 @@ class LIEF_API LangCodeItem : public Object {
   private:
   uint16_t       type_;
   std::u16string key_;
-  std::map<std::u16string, std::u16string> items_;
-
+  items_t        items_;
 };
 
 

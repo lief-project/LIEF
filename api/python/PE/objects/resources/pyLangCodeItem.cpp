@@ -74,8 +74,14 @@ void create<LangCodeItem>(py::module& m) {
         "" RST_CLASS_REF(lief.PE.CODE_PAGES) " for which :attr:`~lief.PE.LangCodeItem.items` are defined")
 
     .def_property("items",
-        static_cast<std::map<std::u16string, std::u16string>& (LangCodeItem::*)(void)>(&LangCodeItem::items),
-        static_cast<setter_t<const std::map<std::u16string, std::u16string>&>>(&LangCodeItem::items))
+        [] (const LangCodeItem& item) -> py::dict {
+          py::dict output;
+          for (const auto& p : item.items()) {
+            output[u16tou8(p.first).c_str()] = py::bytes(u16tou8(p.second));
+          }
+          return output;
+        },
+        static_cast<setter_t<const LangCodeItem::items_t&>>(&LangCodeItem::items))
 
 
     .def("__eq__", &LangCodeItem::operator==)

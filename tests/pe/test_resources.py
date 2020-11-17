@@ -157,28 +157,28 @@ class TestResource(TestCase):
         if sys.version_info < (3,):
             self.assertEqual(items['CompanyName'].encode("utf8"), 'TODO: <Nom de la société>')
         else:
-            self.assertEqual(items['CompanyName'], 'TODO: <Nom de la société>')
+            self.assertEqual(items['CompanyName'], b'TODO: <Nom de la soci\xc3\xa9t\xc3\xa9>')
 
         self.assertIn('FileVersion', items)
-        self.assertEqual(items['FileVersion'], '1.0.0.1')
+        self.assertEqual(items['FileVersion'], b'1.0.0.1')
 
         self.assertIn('InternalName', items)
-        self.assertEqual(items['InternalName'], 'Hello.exe')
+        self.assertEqual(items['InternalName'], b'Hello.exe')
 
         self.assertIn('LegalCopyright', items)
         if sys.version_info < (3,):
             self.assertEqual(items['LegalCopyright'].encode("utf8"), 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
         else:
-            self.assertEqual(items['LegalCopyright'], 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
+            self.assertEqual(items['LegalCopyright'].decode("utf8"), 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
 
         self.assertIn('OriginalFilename', items)
-        self.assertEqual(items['OriginalFilename'], 'Hello.exe')
+        self.assertEqual(items['OriginalFilename'], b'Hello.exe')
 
         self.assertIn('ProductName', items)
-        self.assertEqual(items['ProductName'], 'TODO: <Nom du produit>')
+        self.assertEqual(items['ProductName'], b'TODO: <Nom du produit>')
 
         self.assertIn('ProductVersion', items)
-        self.assertEqual(items['ProductVersion'], '1.0.0.1')
+        self.assertEqual(items['ProductVersion'], b'1.0.0.1')
 
         # Check ResourceVarFileInfo
         self.assertEqual(var_file_info.type, 1)

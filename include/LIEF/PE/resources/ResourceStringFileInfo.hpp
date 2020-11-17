@@ -32,7 +32,7 @@ namespace PE {
 class ResourcesManager;
 class ResourceVersion;
 
-//! @brief Modelization of the ``StringFileInfo`` structure
+//! @brief Modelization of the ``StringFileInfo`` structure
 //!
 //! It contains version information that can be displayed for a particular language and code page.
 //!
