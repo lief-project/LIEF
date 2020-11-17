@@ -35,6 +35,7 @@ LIEF_API const char* to_string(RELOC_i386 e);
 LIEF_API const char* to_string(RELOC_AARCH64 e);
 LIEF_API const char* to_string(RELOC_POWERPC32 e);
 LIEF_API const char* to_string(RELOC_POWERPC64 e);
+LIEF_API const char* to_string(RELOC_MIPS e);
 LIEF_API const char* to_string(ELF_CLASS e);
 LIEF_API const char* to_string(ELF_DATA e);
 LIEF_API const char* to_string(OS_ABI e);

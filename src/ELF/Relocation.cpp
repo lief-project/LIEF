@@ -246,6 +246,16 @@ size_t Relocation::size(void) const {
         }
         return it->second;
       }
+    
+    case ARCH::EM_MIPS:
+      {
+        auto&& it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(this->type()));
+        if (it == std::end(relocation_MIPS_sizes)) {
+          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_AARCH64>(this->type())));
+          return -1u;
+        }
+        return it->second;
+      }
 
     case ARCH::EM_PPC:
       {
@@ -355,6 +365,12 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
         break;
       }
 
+    case ARCH::EM_MIPS:
+      {
+        relocation_type = to_string(static_cast<RELOC_MIPS>(entry.type()));
+        break;
+      }
+    
     case ARCH::EM_PPC:
       {
         relocation_type = to_string(static_cast<RELOC_POWERPC32>(entry.type()));
