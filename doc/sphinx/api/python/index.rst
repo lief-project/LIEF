@@ -194,7 +194,7 @@ Logging
 Logging levels
 ~~~~~~~~~~~~~~
 
-.. autoclass:: lief.LOGGING_LEVEL
+.. autoclass:: lief.logging.LOGGING_LEVEL
   :members:
   :inherited-members:
   :undoc-members:
