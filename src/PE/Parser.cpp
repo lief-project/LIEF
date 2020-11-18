@@ -704,17 +704,12 @@ void Parser::parse_exports(void) {
 
   Export export_object = &export_directory_table;
   uint32_t name_offset = this->binary_->rva_to_offset(export_directory_table.NameRVA);
-  if (export_directory_table.NameRVA == name_offset) {
-    LIEF_WARN("Export name offset seems corrupted (0x{:x} can't be converted to an offset",
-        export_directory_table.NameRVA);
+  const std::string name = this->stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE);
+  if (Parser::is_valid_dll_name(name)) {
+    export_object.name_  = std::move(name);
+    LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
   } else {
-    const std::string name = this->stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE);
-    if (Parser::is_valid_dll_name(name)) {
-      export_object.name_  = std::move(name);
-      LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
-    } else {
-      LIEF_INFO("DLL name seems corrupted");
-    }
+    LIEF_INFO("DLL name seems corrupted");
   }
 
   // Parse Ordinal name table
