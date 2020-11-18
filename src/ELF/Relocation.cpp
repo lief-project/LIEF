@@ -251,7 +251,7 @@ size_t Relocation::size(void) const {
       {
         auto&& it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(this->type()));
         if (it == std::end(relocation_MIPS_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_AARCH64>(this->type())));
+          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_MIPS>(this->type())));
           return -1u;
         }
         return it->second;
