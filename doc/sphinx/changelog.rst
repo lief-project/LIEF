@@ -5,6 +5,7 @@ Changelog
 ---------------------
 
 :ELF:
+  * :github_user:`aeflores` added MIPS relocations support in the ELF parser
   * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. `issue #477 <https://github.com/lief-project/LIEF/issues/477>`_)
   * Fix issue when exporting symbols on empty-gnu-hash ELF binary (:commit:`1381f9a115e6e312ac0ab3deb46a78e481b81796`)
   * Fix reconstruction issue when the binary is prelinked (cf. `issue #466 <https://github.com/lief-project/LIEF/issues/466>`_)

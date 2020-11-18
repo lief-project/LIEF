@@ -466,3 +466,10 @@ Relocations AARCH64
 
 .. doxygenenum:: LIEF::ELF::RELOC_AARCH64
    :project: lief
+
+
+Relocations MIPS
+~~~~~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::RELOC_MIPS
+   :project: lief

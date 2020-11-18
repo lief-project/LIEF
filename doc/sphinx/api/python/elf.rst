@@ -549,6 +549,17 @@ Relocations AARCH64
 
 ----------
 
+Relocations MIPS
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.RELOCATION_MIPS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 
 Dynamic symbols counting
 ~~~~~~~~~~~~~~~~~~~~~~~~
