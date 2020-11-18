@@ -16,7 +16,7 @@
 #ifndef LIEF_BINARY_STREAM_H_
 #define LIEF_BINARY_STREAM_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <climits>
 #include <vector>
 #include <istream>

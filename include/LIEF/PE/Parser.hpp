@@ -35,8 +35,6 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 
-
-
 namespace LIEF {
 namespace PE {
 class LIEF_API Parser : public LIEF::Parser {
@@ -46,6 +44,9 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr size_t MAX_DATA_SIZE = 3_GB;
 
   static constexpr size_t MAX_TLS_CALLBACKS = 3000;
+
+  // According to https://stackoverflow.com/a/265782/87207
+  static constexpr size_t MAX_DLL_NAME_SIZE = 255;
 
   public:
   static bool is_valid_import_name(const std::string& name);

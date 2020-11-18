@@ -694,7 +694,7 @@ void Parser::parse_exports(void) {
   std::pair<uint32_t, uint32_t> range = {exports_rva, exports_rva + exports_size};
 
   if (not this->stream_->can_read<pe_export_directory_table>(exports_offset)) {
-    LIEF_WARN("Can't read at export table at 0x{:x}", exports_offset);
+    LIEF_WARN("Can't read export table at 0x{:x}", exports_offset);
     return;
   }
 
@@ -708,8 +708,13 @@ void Parser::parse_exports(void) {
     LIEF_WARN("Export name offset seems corrupted (0x{:x} can't be converted to an offset",
         export_directory_table.NameRVA);
   } else {
-    export_object.name_  = this->stream_->peek_string_at(name_offset);
-    LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+    const std::string name = this->stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE);
+    if (Parser::is_valid_dll_name(name)) {
+      export_object.name_  = std::move(name);
+      LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+    } else {
+      LIEF_INFO("DLL name seems corrupted");
+    }
   }
 
   // Parse Ordinal name table
@@ -718,7 +723,8 @@ void Parser::parse_exports(void) {
   const uint16_t *ordinal_table = this->stream_->peek_array<uint16_t>(ordinal_table_offset, nbof_name_ptr, /* check */false);
 
   if (nbof_name_ptr > NB_ENTRIES_LIMIT) {
-    LIEF_ERR("Too many name pointer entries: #{:d}", nbof_name_ptr);
+    LIEF_ERR("Too many name pointer entries: #{:d} (limit: {:d})",
+        nbof_name_ptr, NB_ENTRIES_LIMIT);
     return;
   }
 
@@ -935,10 +941,7 @@ bool Parser::is_valid_dll_name(const std::string& name) {
   //! @brief Minimum size for a DLL's name
   static constexpr unsigned MIN_DLL_NAME_SIZE = 4;
 
-  // According to https://stackoverflow.com/a/265782/87207
-  static constexpr unsigned MAX_DLL_NAME_SIZE = 255;
-
-  if (name.size() < MIN_DLL_NAME_SIZE or name.size() > MAX_DLL_NAME_SIZE) {
+  if (name.size() < MIN_DLL_NAME_SIZE or name.size() > Parser::MAX_DLL_NAME_SIZE) {
     return false;
   }
 
