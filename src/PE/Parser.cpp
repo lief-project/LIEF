@@ -704,8 +704,13 @@ void Parser::parse_exports(void) {
 
   Export export_object = &export_directory_table;
   uint32_t name_offset = this->binary_->rva_to_offset(export_directory_table.NameRVA);
-  export_object.name_  = this->stream_->peek_string_at(name_offset);
-  LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+  if (export_directory_table.NameRVA == name_offset) {
+    LIEF_WARN("Export name offset seems corrupted (0x{:x} can't be converted to an offset",
+        export_directory_table.NameRVA);
+  } else {
+    export_object.name_  = this->stream_->peek_string_at(name_offset);
+    LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+  }
 
   // Parse Ordinal name table
   uint32_t ordinal_table_offset = this->binary_->rva_to_offset(export_directory_table.OrdinalTableRVA);

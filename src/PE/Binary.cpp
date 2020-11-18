@@ -226,10 +226,11 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) {
       });
 
   if (it_section == std::end(sections_)) {
-    // If not found withint a section,
+    // If not found within a section,
     // we assume that rva == offset
-    return static_cast<uint32_t>(RVA);
+    return RVA;
   }
+  LIEF_TRACE("rva_to_offset(0x{:x}): {}", RVA, (*it_section)->name());
 
   // rva - virtual_address + pointer_to_raw_data
   uint32_t section_alignment = this->optional_header().section_alignment();
