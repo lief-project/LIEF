@@ -694,6 +694,7 @@ void Parser::parse_exports(void) {
   std::pair<uint32_t, uint32_t> range = {exports_rva, exports_rva + exports_size};
 
   if (not this->stream_->can_read<pe_export_directory_table>(exports_offset)) {
+    LIEF_WARN("Can't read at export table at 0x{:x}", exports_offset);
     return;
   }
 
@@ -704,6 +705,7 @@ void Parser::parse_exports(void) {
   Export export_object = &export_directory_table;
   uint32_t name_offset = this->binary_->rva_to_offset(export_directory_table.NameRVA);
   export_object.name_  = this->stream_->peek_string_at(name_offset);
+  LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
 
   // Parse Ordinal name table
   uint32_t ordinal_table_offset = this->binary_->rva_to_offset(export_directory_table.OrdinalTableRVA);
