@@ -22,14 +22,14 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/type_traits.hpp"
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 
 class Parser;
 class Builder;
+struct pe_base_relocation_block;
 
 class LIEF_API Relocation : public Object {
 
@@ -37,34 +37,34 @@ class LIEF_API Relocation : public Object {
   friend class Builder;
 
   public:
-    Relocation(void);
-    Relocation(const Relocation& other);
-    Relocation& operator=(Relocation other);
-    Relocation(const pe_base_relocation_block* header);
-    virtual ~Relocation(void);
+  Relocation(void);
+  Relocation(const Relocation& other);
+  Relocation& operator=(Relocation other);
+  Relocation(const pe_base_relocation_block* header);
+  virtual ~Relocation(void);
 
-    void swap(Relocation& other);
+  void swap(Relocation& other);
 
-    uint32_t virtual_address(void) const;
-    uint32_t block_size(void) const;
-    it_const_relocation_entries entries(void) const;
-    it_relocation_entries entries(void);
+  uint32_t virtual_address(void) const;
+  uint32_t block_size(void) const;
+  it_const_relocation_entries entries(void) const;
+  it_relocation_entries entries(void);
 
-    void virtual_address(uint32_t virtual_address);
-    void block_size(uint32_t block_size);
-    RelocationEntry& add_entry(const RelocationEntry& entry);
+  void virtual_address(uint32_t virtual_address);
+  void block_size(uint32_t block_size);
+  RelocationEntry& add_entry(const RelocationEntry& entry);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const Relocation& rhs) const;
-    bool operator!=(const Relocation& rhs) const;
+  bool operator==(const Relocation& rhs) const;
+  bool operator!=(const Relocation& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   private:
-    uint32_t             block_size_;
-    uint32_t             virtual_address_;
-    relocation_entries_t entries_;
+  uint32_t             block_size_;
+  uint32_t             virtual_address_;
+  relocation_entries_t entries_;
 };
 
 }

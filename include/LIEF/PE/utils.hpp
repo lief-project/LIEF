@@ -15,24 +15,22 @@
  */
 #ifndef LIEF_PE_UTILS_H_
 #define LIEF_PE_UTILS_H_
-
-#include <list>
+#include <vector>
 #include <string>
-#include <locale>
-#include <memory>
 
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/Import.hpp"
 
 namespace LIEF {
 namespace PE {
+class Binary;
+class Import;
 
-//! @brief check if the `file` is a PE file
+//! @brief check if the `file` is a PE file
 LIEF_API bool is_pe(const std::string& file);
 
-//! @brief check if the raw data is a PE file
+//! @brief check if the raw data is a PE file
 LIEF_API bool is_pe(const std::vector<uint8_t>& raw);
 
 //! @brief if the input `file` is a PE one, return `PE32` or `PE32+`

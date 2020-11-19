@@ -21,10 +21,13 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
+struct pe32_optional_header;
+struct pe64_optional_header;
+
 class LIEF_API OptionalHeader : public Object {
   public:
     OptionalHeader(void);

@@ -15,13 +15,10 @@
  */
 #ifndef LIEF_PE_RICH_ENTRY_H_
 #define LIEF_PE_RICH_ENTRY_H_
-#include <array>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -29,36 +26,36 @@ namespace PE {
 class LIEF_API RichEntry : public Object {
   public:
 
-    RichEntry(void);
-    RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
-    RichEntry(const RichEntry&);
-    RichEntry& operator=(const RichEntry&);
-    virtual ~RichEntry(void);
+  RichEntry(void);
+  RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
+  RichEntry(const RichEntry&);
+  RichEntry& operator=(const RichEntry&);
+  virtual ~RichEntry(void);
 
-    //! @brief Entry type
-    uint16_t id(void) const;
+  //! @brief Entry type
+  uint16_t id(void) const;
 
-    //! @brief Builder number of the tool (if any)
-    uint16_t build_id(void) const;
+  //! @brief Builder number of the tool (if any)
+  uint16_t build_id(void) const;
 
-    //! @brief *Occurrence* count.
-    uint32_t count(void) const;
+  //! @brief *Occurrence* count.
+  uint32_t count(void) const;
 
-    void id(uint16_t id);
-    void build_id(uint16_t build_id);
-    void count(uint32_t count);
+  void id(uint16_t id);
+  void build_id(uint16_t build_id);
+  void count(uint32_t count);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const RichEntry& rhs) const;
-    bool operator!=(const RichEntry& rhs) const;
+  bool operator==(const RichEntry& rhs) const;
+  bool operator!=(const RichEntry& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
 
   private:
-    uint16_t id_;
-    uint16_t build_id_;
-    uint32_t count_;
+  uint16_t id_;
+  uint16_t build_id_;
+  uint32_t count_;
 
 };
 }

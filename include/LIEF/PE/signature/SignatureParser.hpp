@@ -18,15 +18,13 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-
 namespace LIEF {
-namespace PE {
+class VectorStream;
 
+namespace PE {
 class Parser;
 
 class LIEF_API SignatureParser {
@@ -58,9 +56,9 @@ class LIEF_API SignatureParser {
 
   size_t current_offset(void) const;
   Signature signature_;
-  uint8_t* p_;
-  const uint8_t* end_;
-  const uint8_t* signature_ptr_;
+  uint8_t* p_{nullptr};
+  const uint8_t* end_{nullptr};
+  const uint8_t* signature_ptr_{nullptr};
   std::unique_ptr<VectorStream> stream_;
 
 };

@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iterator>
 #include <exception>
-#include <string.h>
+#include <string>
 #include <numeric>
 #include <iomanip>
 #include <sstream>
@@ -29,9 +29,11 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
-
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "utils/ordinals_lookup_tables/libraries_table.hpp"
 

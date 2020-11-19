@@ -19,6 +19,8 @@
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
+#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 

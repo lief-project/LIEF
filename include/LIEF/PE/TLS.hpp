@@ -18,15 +18,11 @@
 
 #include <vector>
 #include <iostream>
-#include <memory>
-#include <utility>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/enums.hpp"
 
 
 namespace LIEF {
@@ -34,6 +30,11 @@ namespace PE {
 
 class Parser;
 class Builder;
+class DataDirectory;
+class Section;
+
+struct pe32_tls;
+struct pe64_tls;
 
 class LIEF_API TLS : public Object {
   friend class Parser;
@@ -41,57 +42,57 @@ class LIEF_API TLS : public Object {
 
   public:
 
-    TLS(void);
-    TLS(const pe32_tls *header);
-    TLS(const pe64_tls *header);
-    virtual ~TLS(void);
+  TLS(void);
+  TLS(const pe32_tls *header);
+  TLS(const pe64_tls *header);
+  virtual ~TLS(void);
 
 
-    TLS(const TLS& copy);
-    TLS& operator=(TLS copy);
-    void swap(TLS& other);
+  TLS(const TLS& copy);
+  TLS& operator=(TLS copy);
+  void swap(TLS& other);
 
-    const std::vector<uint64_t>&  callbacks(void) const;
-    std::pair<uint64_t, uint64_t> addressof_raw_data(void) const;
-    uint64_t                      addressof_index(void) const;
-    uint64_t                      addressof_callbacks(void) const;
-    uint32_t                      sizeof_zero_fill(void) const;
-    uint32_t                      characteristics(void) const;
-    const std::vector<uint8_t>&   data_template(void) const;
+  const std::vector<uint64_t>&  callbacks(void) const;
+  std::pair<uint64_t, uint64_t> addressof_raw_data(void) const;
+  uint64_t                      addressof_index(void) const;
+  uint64_t                      addressof_callbacks(void) const;
+  uint32_t                      sizeof_zero_fill(void) const;
+  uint32_t                      characteristics(void) const;
+  const std::vector<uint8_t>&   data_template(void) const;
 
-    bool                          has_data_directory(void) const;
-    DataDirectory&                directory(void);
-    const DataDirectory&          directory(void) const;
+  bool                          has_data_directory(void) const;
+  DataDirectory&                directory(void);
+  const DataDirectory&          directory(void) const;
 
-    bool                          has_section(void) const;
-    Section&                      section(void);
-    const Section&                section(void) const;
+  bool                          has_section(void) const;
+  Section&                      section(void);
+  const Section&                section(void) const;
 
-    void callbacks(const std::vector<uint64_t>& callbacks);
-    void addressof_raw_data(std::pair<uint64_t, uint64_t> VAOfRawData);
-    void addressof_index(uint64_t addressOfIndex);
-    void addressof_callbacks(uint64_t addressOfCallbacks);
-    void sizeof_zero_fill(uint32_t sizeOfZeroFill);
-    void characteristics(uint32_t characteristics);
-    void data_template(const std::vector<uint8_t>& dataTemplate);
+  void callbacks(const std::vector<uint64_t>& callbacks);
+  void addressof_raw_data(std::pair<uint64_t, uint64_t> VAOfRawData);
+  void addressof_index(uint64_t addressOfIndex);
+  void addressof_callbacks(uint64_t addressOfCallbacks);
+  void sizeof_zero_fill(uint32_t sizeOfZeroFill);
+  void characteristics(uint32_t characteristics);
+  void data_template(const std::vector<uint8_t>& dataTemplate);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const TLS& rhs) const;
-    bool operator!=(const TLS& rhs) const;
+  bool operator==(const TLS& rhs) const;
+  bool operator!=(const TLS& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const TLS& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const TLS& entry);
 
   private:
-    std::vector<uint64_t>         callbacks_;
-    std::pair<uint64_t, uint64_t> VAOfRawData_;
-    uint64_t                      addressof_index_;
-    uint64_t                      addressof_callbacks_;
-    uint32_t                      sizeof_zero_fill_;
-    uint32_t                      characteristics_;
-    DataDirectory*                directory_;
-    Section*                      section_;
-    std::vector<uint8_t>          data_template_;
+  std::vector<uint64_t>         callbacks_;
+  std::pair<uint64_t, uint64_t> VAOfRawData_;
+  uint64_t                      addressof_index_;
+  uint64_t                      addressof_callbacks_;
+  uint32_t                      sizeof_zero_fill_;
+  uint32_t                      characteristics_;
+  DataDirectory*                directory_{nullptr};
+  Section*                      section_{nullptr};
+  std::vector<uint8_t>          data_template_;
 
 };
 }

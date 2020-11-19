@@ -17,15 +17,10 @@
 #define LIEF_PE_EXPORT_ENTRY_H_
 
 #include <string>
-#include <memory>
 #include <iostream>
-#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/Structures.hpp"
-
 
 namespace LIEF {
 namespace PE {

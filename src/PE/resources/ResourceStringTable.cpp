@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#include "LIEF/utils.hpp"
+
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/EnumToString.hpp"

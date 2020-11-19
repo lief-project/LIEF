@@ -15,16 +15,14 @@
  */
 #ifndef LIEF_PE_RESOURCE_NODE_H_
 #define LIEF_PE_RESOURCE_NODE_H_
-
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/type_traits.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {

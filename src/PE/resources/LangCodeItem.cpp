@@ -24,6 +24,7 @@
 #include "LIEF/PE/EnumToString.hpp"
 
 #include "LIEF/PE/resources/LangCodeItem.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
 
 namespace LIEF {
 namespace PE {

@@ -17,7 +17,7 @@
 #define LIEF_PE_ENUM_TO_STRING_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {

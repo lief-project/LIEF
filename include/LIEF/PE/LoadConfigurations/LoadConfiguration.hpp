@@ -15,19 +15,18 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_H_
 #define LIEF_PE_LOAD_CONFIGURATION_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
+
+template<class T>
+struct load_configuration;
 
 //! @brief Class modeling the default PE's ``LoadConfiguration``
 //!

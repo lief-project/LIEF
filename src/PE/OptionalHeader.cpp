@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdexcept>
-#include <iomanip>
-#include <functional>
-#include <algorithm>
 #include <numeric>
-#include <iterator>
-#include <string>
+#include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/exception.hpp"
 
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/utils.hpp"

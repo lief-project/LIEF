@@ -22,16 +22,29 @@
 
 #include "logging.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
+#include "LIEF/Abstract/Relocation.hpp"
+
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 namespace LIEF {
 namespace PE {

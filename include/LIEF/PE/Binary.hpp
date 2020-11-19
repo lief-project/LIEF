@@ -18,24 +18,15 @@
 
 #include <map>
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Import.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/Symbol.hpp"
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
@@ -452,7 +443,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> overlay_;
   std::vector<uint8_t> dos_stub_;
 
-  LoadConfiguration*   load_configuration_;
+  LoadConfiguration*   load_configuration_{nullptr};
 
   std::map<std::string, std::map<std::string, uint64_t>> hooks_;
 };

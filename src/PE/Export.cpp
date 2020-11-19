@@ -17,7 +17,9 @@
 
 #include "LIEF/PE/hash.hpp"
 
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/ExportEntry.hpp"
 
 namespace LIEF {
 namespace PE {

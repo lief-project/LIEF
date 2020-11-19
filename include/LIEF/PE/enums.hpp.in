@@ -1,6 +1,7 @@
 #ifndef LIEF_PE_ENUMS_H_
 #define LIEF_PE_ENUMS_H_
-
+#include <inttypes.h>
+#include <cstddef>
 #include "LIEF/enums.hpp"
 #include "LIEF/PE/undef.h"
 
@@ -8,6 +9,28 @@ namespace LIEF {
 namespace PE {
 
 @LIEF_PE_ENUMS@
+
+
+// Common section type
+enum class PE_SECTION_TYPES : uint8_t {
+  TEXT       = 0,
+  TLS        = 1,
+  IMPORT     = 2,
+  DATA       = 3,
+  BSS        = 4,
+  RESOURCE   = 5,
+  RELOCATION = 6,
+  EXPORT     = 7,
+  DEBUG      = 8,
+  LOAD_CONFIG = 9,
+  UNKNOWN     = 10
+};
+
+enum class PE_TYPE : uint16_t {
+    PE32      = 0x10b, ///< 32bits
+    PE32_PLUS = 0x20b  ///< 64 bits
+};
+
 
 static const RESOURCE_TYPES resource_types_array[] = {
   RESOURCE_TYPES::CURSOR,

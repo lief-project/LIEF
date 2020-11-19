@@ -21,6 +21,7 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
 namespace LIEF {

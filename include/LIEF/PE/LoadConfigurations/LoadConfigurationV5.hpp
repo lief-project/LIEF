@@ -15,19 +15,18 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_V5_H_
 #define LIEF_PE_LOAD_CONFIGURATION_V5_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <iostream>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
 
 namespace LIEF {
 namespace PE {
+
+template<class T>
+struct load_configuration_v5;
 
 //! @brief Load Configuration enhanced with Return Flow Guard
 class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {

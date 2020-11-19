@@ -45,9 +45,9 @@ struct pe_symbol {
   union {
     char ShortName[8];
     struct
-		{
-	    uint32_t Zeroes;
-			uint32_t Offset;
+    {
+      uint32_t Zeroes;
+      uint32_t Offset;
     } Name;
   } Name;
   uint32_t Value;
@@ -287,7 +287,7 @@ struct pe_pdb_20 {
 struct pe_pogo {
   uint32_t start_rva;
   uint32_t size;
-  char     name[1]; 
+  char     name[1];
 };
 
 
@@ -386,26 +386,26 @@ struct pe_resource_icon_dir {
 
 //! @brief Structure that follows pe_resource_icon_dir in a resource entry
 struct pe_resource_icon_group {
-	uint8_t width;        ///< Width, in pixels, of the image
-	uint8_t height;       ///< Height, in pixels, of the image
-	uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
-	uint8_t reserved;     ///< Reserved (must be 0)
-	uint16_t planes;      ///< Color Planes
-	uint16_t bit_count;   ///< Bits per pixel
-	uint32_t size;        ///< Size of the image in bytes
-	uint16_t ID;          ///< The associated ID
+  uint8_t width;        ///< Width, in pixels, of the image
+  uint8_t height;       ///< Height, in pixels, of the image
+  uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
+  uint8_t reserved;     ///< Reserved (must be 0)
+  uint16_t planes;      ///< Color Planes
+  uint16_t bit_count;   ///< Bits per pixel
+  uint32_t size;        ///< Size of the image in bytes
+  uint16_t ID;          ///< The associated ID
 };
 
 //! @brief Structure that follows pe_resource_icon_dir in a icon **file**
 struct pe_icon_header {
-	uint8_t width;        ///< Width, in pixels, of the image
-	uint8_t height;       ///< Height, in pixels, of the image
-	uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
-	uint8_t reserved;     ///< Reserved (must be 0)
-	uint16_t planes;      ///< Color Planes
-	uint16_t bit_count;   ///< Bits per pixel
-	uint32_t size;        ///< Size of the image in bytes
-	uint32_t offset;      ///< Offset to the pixels
+  uint8_t width;        ///< Width, in pixels, of the image
+  uint8_t height;       ///< Height, in pixels, of the image
+  uint8_t color_count;  ///< Number of colors in image (0 if >=8bpp)
+  uint8_t reserved;     ///< Reserved (must be 0)
+  uint16_t planes;      ///< Color Planes
+  uint16_t bit_count;   ///< Bits per pixel
+  uint32_t size;        ///< Size of the image in bytes
+  uint32_t offset;      ///< Offset to the pixels
 };
 
 //! @brief Extended dialog box template

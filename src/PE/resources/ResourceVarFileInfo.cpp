@@ -23,6 +23,7 @@
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
+#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 
 namespace LIEF {

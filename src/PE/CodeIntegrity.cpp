@@ -19,6 +19,7 @@
 
 #include "LIEF/PE/hash.hpp"
 
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 

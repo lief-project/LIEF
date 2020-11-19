@@ -24,7 +24,7 @@
 #include <memory>
 
 #include "LIEF/BinaryStream/Convert.hpp"
-
+namespace LIEF {
 class BinaryStream {
   public:
   BinaryStream(void);
@@ -204,7 +204,7 @@ std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size, bool check) cons
   const T *t = this->read_array<T>(size, check);
 
   if (t == nullptr) {
-	  return nullptr;
+    return nullptr;
   }
 
   std::unique_ptr<T[]> uptr(new T[size]);
@@ -233,7 +233,7 @@ std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, b
   const T *t = this->peek_array<T>(offset, size, check);
 
   if (t == nullptr) {
-	  return nullptr;
+    return nullptr;
   }
 
   std::unique_ptr<T[]> uptr(new T[size]);
@@ -246,5 +246,5 @@ std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, b
   }
   return uptr;
 }
-
+}
 #endif

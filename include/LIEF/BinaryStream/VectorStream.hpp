@@ -20,7 +20,7 @@
 #include <string>
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-
+namespace LIEF {
 class VectorStream : public BinaryStream {
   public:
   //using BinaryStream::read_integer;
@@ -36,6 +36,6 @@ class VectorStream : public BinaryStream {
   std::vector<uint8_t> binary_;
   uint64_t size_;
 };
-
+}
 
 #endif

@@ -21,10 +21,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/Section.hpp"
-
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -32,6 +29,8 @@ namespace PE {
 class Builder;
 class Parser;
 class Binary;
+class Section;
+struct pe_data_directory;
 
 class LIEF_API DataDirectory : public Object {
 
@@ -70,7 +69,7 @@ class LIEF_API DataDirectory : public Object {
   uint32_t       rva_;
   uint32_t       size_;
   DATA_DIRECTORY type_;
-  Section*       section_;
+  Section*       section_{nullptr};
 };
 }
 }

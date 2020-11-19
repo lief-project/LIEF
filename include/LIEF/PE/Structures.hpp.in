@@ -56,22 +56,6 @@ static const HEADER_CHARACTERISTICS header_characteristics_array[] = {
 };
 
 
-// Common section type
-enum class PE_SECTION_TYPES : uint8_t {
-  TEXT       = 0,
-  TLS        = 1,
-  IMPORT     = 2,
-  DATA       = 3,
-  BSS        = 4,
-  RESOURCE   = 5,
-  RELOCATION = 6,
-  EXPORT     = 7,
-  DEBUG      = 8,
-  LOAD_CONFIG = 9,
-  UNKNOWN     = 10
-};
-
-
 static const SECTION_CHARACTERISTICS section_characteristics_array[] = {
   SECTION_CHARACTERISTICS::IMAGE_SCN_TYPE_NO_PAD,
   SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE,
@@ -108,12 +92,6 @@ static const SECTION_CHARACTERISTICS section_characteristics_array[] = {
   SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE,
   SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ,
   SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE,
-};
-
-
-enum class PE_TYPE : uint16_t {
-    PE32      = 0x10b, ///< 32bits
-    PE32_PLUS = 0x20b  ///< 64 bits
 };
 
 

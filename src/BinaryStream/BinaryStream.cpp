@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iostream>
 
+namespace LIEF {
 BinaryStream::~BinaryStream(void) = default;
 BinaryStream::BinaryStream(void) = default;
 
@@ -275,5 +276,6 @@ std::string BinaryStream::read_mutf8(size_t maxsize) const {
 
 void BinaryStream::set_endian_swap(bool swap) {
   this->endian_swap_ = swap;
+}
 }
 

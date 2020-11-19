@@ -21,6 +21,7 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Header.hpp"
+#include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {

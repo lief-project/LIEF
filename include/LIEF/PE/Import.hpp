@@ -17,8 +17,6 @@
 #define LIEF_PE_IMPORT_H_
 
 #include <string>
-#include <vector>
-#include <memory>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
@@ -26,14 +24,12 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/type_traits.hpp"
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
 
 namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
+struct pe_import;
 
 class LIEF_API Import : public Object {
 
@@ -119,8 +115,8 @@ class LIEF_API Import : public Object {
 
   private:
   import_entries_t entries_;
-  DataDirectory*   directory_;
-  DataDirectory*   iat_directory_;
+  DataDirectory*   directory_{nullptr};
+  DataDirectory*   iat_directory_{nullptr};
   uint32_t         import_lookup_table_RVA_;
   uint32_t         timedatestamp_;
   uint32_t         forwarder_chain_;

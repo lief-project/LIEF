@@ -18,8 +18,6 @@
 #include <iomanip>
 #include <numeric>
 
-#include "rang.hpp"
-
 #include "logging.hpp"
 
 #include "LIEF/exception.hpp"
@@ -33,6 +31,7 @@
 
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
 
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
@@ -1340,7 +1339,6 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator(void) const {
 
 std::string ResourcesManager::print(uint32_t depth) const {
   std::ostringstream oss;
-  oss << rang::control::forceColor;
   uint32_t current_depth = 0;
   this->print_tree(*this->resources_, oss, current_depth, depth);
   return oss.str();
@@ -1360,21 +1358,16 @@ void ResourcesManager::print_tree(
     output << std::string(2 * (current_depth + 1), ' ');
     output << "[";
     if (child_node.is_directory()) {
-      output << rang::fg::cyan;
       output << "Directory";
     } else {
-      output << rang::fg::yellow;
       output << "Data";
     }
 
-    output << rang::style::reset;
     output << "] ";
 
     if (child_node.has_name()) {
 
-      output << rang::bg::blue;
       output << u16tou8(child_node.name());
-      output << rang::style::reset;
     } else {
       output << "ID: " << std::setw(2) << std::setfill('0') << std::dec << child_node.id();
       if (current_depth == 0) {

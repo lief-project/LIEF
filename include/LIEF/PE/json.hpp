@@ -19,10 +19,65 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/visitors/json.hpp"
-#include "LIEF/PE.hpp"
 
 namespace LIEF {
+
+class Binary;
+class Symbol;
+class Section;
+
 namespace PE {
+
+class Binary;
+class DosHeader;
+class RichHeader;
+class RichEntry;
+class Header;
+class OptionalHeader;
+class DataDirectory;
+class Section;
+class Relocation;
+class RelocationEntry;
+class Export;
+class ExportEntry;
+class TLS;
+class Symbol;
+class Debug;
+class CodeView;
+class CodeViewPDB;
+class Import;
+class ImportEntry;
+class ResourceNode;
+class ResourceData;
+class ResourceDirectory;
+class ResourcesManager;
+class ResourceVersion;
+class ResourceStringFileInfo;
+class ResourceFixedFileInfo;
+class ResourceVarFileInfo;
+class ResourceStringTable;
+class ResourceAccelerator;
+class LangCodeItem;
+class ResourceIcon;
+class ResourceDialog;
+class ResourceDialogItem;
+class Signature;
+class x509;
+class SignerInfo;
+class ContentInfo;
+class AuthenticatedAttributes;
+class CodeIntegrity;
+class LoadConfiguration;
+class LoadConfigurationV0;
+class LoadConfigurationV1;
+class LoadConfigurationV2;
+class LoadConfigurationV3;
+class LoadConfigurationV4;
+class LoadConfigurationV5;
+class LoadConfigurationV6;
+class LoadConfigurationV7;
+class Pogo;
+class PogoEntry;
 
 LIEF_API json to_json(const Object& v);
 LIEF_API std::string to_json_str(const Object& v);

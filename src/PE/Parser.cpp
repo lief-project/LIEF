@@ -23,28 +23,39 @@
 #include <mbedtls/oid.h>
 #include <mbedtls/x509_crt.h>
 
+#include "filesystem/filesystem.h"
+
 #include "logging.hpp"
 
 #include "LIEF/exception.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-
+#include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
-
-
 #include "LIEF/PE/CodeViewPDB.hpp"
-
 #include "LIEF/PE/Parser.hpp"
-#include "Parser.tcc"
-
 #include "LIEF/PE/utils.hpp"
-
-#include "filesystem/filesystem.h"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/PE/Pogo.hpp"
+#include "LIEF/PE/PogoEntry.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/EnumToString.hpp"
 
 #include "signature/pkcs7.h"
-
+#include "Parser.tcc"
 
 // Issue with VS2017
 #if defined(IMAGE_FILE_MACHINE_UNKNOWN)

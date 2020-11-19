@@ -21,6 +21,7 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Pogo.hpp"
+#include "LIEF/PE/PogoEntry.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -35,8 +36,8 @@ Pogo::Pogo(void) :
 
 
 Pogo::Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries) :
-  signature_{signature}, 
-  entries_{entries} 
+  signature_{signature},
+  entries_{entries}
 {}
 
 Pogo* Pogo::clone(void) const {

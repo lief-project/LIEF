@@ -20,7 +20,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/Pogo.hpp"
+#include "LIEF/PE/PogoEntry.hpp"
 
 namespace LIEF {
 namespace PE {

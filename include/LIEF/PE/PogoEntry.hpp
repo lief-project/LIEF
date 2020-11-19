@@ -15,16 +15,13 @@
  */
 #ifndef LIEF_PE_POGO_ENTRY_H_
 #define LIEF_PE_POGO_ENTRY_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
+#include <string>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -46,14 +43,13 @@ class LIEF_API PogoEntry : public Object {
   PogoEntry& operator=(const PogoEntry&);
   virtual ~PogoEntry(void);
 
-
   uint32_t start_rva() const;
   uint32_t size() const;
   const std::string& name() const;
 
   void start_rva(uint32_t start_rva);
   void size(uint32_t size);
-  void name(const std::string&  name);
+  void name(const std::string& name);
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -64,9 +60,9 @@ class LIEF_API PogoEntry : public Object {
 
 
   protected:
-    uint32_t start_rva_;
-    uint32_t size_;
-    std::string name_;
+  uint32_t start_rva_;
+  uint32_t size_;
+  std::string name_;
 };
 
 } // Namespace PE

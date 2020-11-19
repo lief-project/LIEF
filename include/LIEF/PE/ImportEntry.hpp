@@ -15,16 +15,13 @@
  */
 #ifndef LIEF_PE_IMPORT_ENTRY_H_
 #define LIEF_PE_IMPORT_ENTRY_H_
-
 #include <string>
-#include <stdexcept>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
-
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {

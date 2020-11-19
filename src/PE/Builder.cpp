@@ -25,11 +25,20 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/Builder.hpp"
-#include "Builder.tcc"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/ExportEntry.hpp"
 
-
+#include "Builder.tcc"
 
 namespace LIEF {
 namespace PE {

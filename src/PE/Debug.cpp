@@ -17,8 +17,11 @@
 
 #include "LIEF/PE/hash.hpp"
 
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Debug.hpp"
+#include "LIEF/PE/CodeView.hpp"
+#include "LIEF/PE/Pogo.hpp"
 
 namespace LIEF {
 namespace PE {

@@ -22,10 +22,8 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/PE/type_traits.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
 
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
@@ -34,6 +32,8 @@
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
 namespace LIEF {
+class VectorStream;
+
 namespace PE {
 
 //! @brief The Resource Manager provides an enhanced API to
@@ -173,7 +173,7 @@ class LIEF_API ResourcesManager : public Object {
   ResourceVarFileInfo get_var_file_info(const VectorStream& stream, uint16_t type, std::u16string key, size_t start, size_t struct_length) const;
 
 
-  ResourceNode *resources_;
+  ResourceNode *resources_{nullptr};
 };
 
 } // namespace PE

@@ -15,11 +15,13 @@
  */
 #include "LIEF/Abstract/json.hpp"
 #include "LIEF/Abstract.hpp"
+
 #include "LIEF/ELF.hpp"
 #include "LIEF/PE.hpp"
 #include "LIEF/MachO.hpp"
-#include "Object.tcc"
 #include "LIEF/config.h"
+
+#include "Object.tcc"
 
 namespace LIEF {
 

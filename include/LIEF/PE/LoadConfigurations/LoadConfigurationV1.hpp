@@ -15,20 +15,20 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_V1_H_
 #define LIEF_PE_LOAD_CONFIGURATION_V1_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <iostream>
+#include <set>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
 
 namespace LIEF {
 namespace PE {
+
+template<class T>
+struct load_configuration_v1;
 
 //! @brief LoadConfiguration enhanced with Control Flow Guard
 //!

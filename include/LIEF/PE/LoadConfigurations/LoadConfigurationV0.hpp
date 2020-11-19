@@ -15,19 +15,16 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_V0_H_
 #define LIEF_PE_LOAD_CONFIGURATION_V0_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <iostream>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 namespace LIEF {
 namespace PE {
+
+template<class T>
+struct load_configuration_v0;
 
 //! @brief LoadConfiguration enhanced with SEH
 class LIEF_API LoadConfigurationV0 : public LoadConfiguration {

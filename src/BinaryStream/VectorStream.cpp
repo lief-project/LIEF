@@ -25,7 +25,7 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"
-
+namespace LIEF {
 VectorStream::VectorStream(const std::string& filename) {
   std::ifstream binary(filename, std::ios::in | std::ios::binary);
 
@@ -70,10 +70,8 @@ const void* VectorStream::read_at(uint64_t offset, uint64_t size, bool throw_err
   return this->binary_.data() + offset;
 }
 
-
-
-
 const std::vector<uint8_t>& VectorStream::content(void) const {
   return this->binary_;
+}
 }
 

@@ -18,6 +18,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
+#include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {

@@ -19,8 +19,6 @@
 #include <vector>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 
 namespace LIEF {

@@ -17,7 +17,6 @@
 #define LIEF_PE_SYMBOLS_H_
 
 #include <string>
-#include <memory>
 #include <vector>
 #include <iostream>
 
@@ -25,16 +24,14 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Symbol.hpp"
-
 #include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
-#include "LIEF/PE/Section.hpp"
 
 namespace LIEF {
 namespace PE {
 
 class Parser;
 class Builder;
+class Section;
 
 class LIEF_API Symbol : public LIEF::Symbol {
 
@@ -62,7 +59,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   const Section&       section(void) const;
 
   //! @brief ``True`` if symbols are located in a section
-  bool                 has_section(void) const;
+  bool has_section(void) const;
 
   virtual void accept(Visitor& visitor) const override;
 

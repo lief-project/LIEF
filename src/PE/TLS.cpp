@@ -15,10 +15,12 @@
  */
 #include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/Section.hpp"
 
 namespace LIEF {
 namespace PE {

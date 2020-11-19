@@ -16,27 +16,25 @@
 #ifndef LIEF_PE_PARSER_H_
 #define LIEF_PE_PARSER_H_
 
+#include <set>
 #include <string>
 #include <vector>
 
-#include "LIEF/exception.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
-#include "LIEF/PE/Binary.hpp"
-
-#include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/PE/ResourceData.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
-
-#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
+class VectorStream;
+
 namespace PE {
+class Debug;
+class ResourceNode;
+class Binary;
+struct pe_resource_directory_table;
+
 class LIEF_API Parser : public LIEF::Parser {
 
   public:
@@ -111,7 +109,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
 
   std::unique_ptr<VectorStream> stream_;
-  Binary*                       binary_;
+  Binary*                       binary_{nullptr};
   PE_TYPE                       type_;
   std::set<uint32_t>            resource_visited_;
 };

@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdexcept>
-#include <string.h>
 #include <iomanip>
-#include <functional>
-#include <algorithm>
 #include <numeric>
 #include <iterator>
 
@@ -26,6 +22,7 @@
 
 #include "LIEF/Abstract/Section.hpp"
 
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 

@@ -15,19 +15,14 @@
  */
 #ifndef LIEF_PE_CODE_INTEGRITY_H_
 #define LIEF_PE_CODE_INTEGRITY_H_
-#include <array>
-#include <set>
-#include <functional>
-#include <algorithm>
 #include <iostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
-
 namespace LIEF {
 namespace PE {
+struct pe_code_integrity;
 class LIEF_API CodeIntegrity : public Object {
   public:
   static constexpr size_t PRINT_WIDTH = 20;

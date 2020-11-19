@@ -21,7 +21,7 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 
 namespace LIEF {
@@ -29,6 +29,7 @@ namespace PE {
 
 class Parser;
 class Builder;
+struct pe_resource_directory_table;
 
 class LIEF_API ResourceDirectory : public ResourceNode {
 
@@ -36,64 +37,64 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   friend class Builder;
 
   public:
-    ResourceDirectory(void);
-    ResourceDirectory(const pe_resource_directory_table* header);
+  ResourceDirectory(void);
+  ResourceDirectory(const pe_resource_directory_table* header);
 
-    ResourceDirectory(const ResourceDirectory& other);
-    ResourceDirectory& operator=(ResourceDirectory other);
+  ResourceDirectory(const ResourceDirectory& other);
+  ResourceDirectory& operator=(ResourceDirectory other);
 
-    void swap(ResourceDirectory& other);
+  void swap(ResourceDirectory& other);
 
-    virtual ~ResourceDirectory(void);
+  virtual ~ResourceDirectory(void);
 
-    virtual ResourceDirectory* clone(void) const override;
+  virtual ResourceDirectory* clone(void) const override;
 
-    //! @brief Resource flags. This field is reserved for future use.
-    //! It is currently set to zero.
-    uint32_t characteristics(void) const;
+  //! @brief Resource flags. This field is reserved for future use.
+  //! It is currently set to zero.
+  uint32_t characteristics(void) const;
 
-    //! @brief The time that the resource data was created by the
-    //! resource compiler.
-    uint32_t time_date_stamp(void) const;
+  //! @brief The time that the resource data was created by the
+  //! resource compiler.
+  uint32_t time_date_stamp(void) const;
 
-    //! @brief The major version number, set by the user.
-    uint16_t major_version(void) const;
+  //! @brief The major version number, set by the user.
+  uint16_t major_version(void) const;
 
-    //! @brief The minor version number, set by the user.
-    uint16_t minor_version(void) const;
+  //! @brief The minor version number, set by the user.
+  uint16_t minor_version(void) const;
 
-    //! @brief The number of directory entries immediately
-    //! following the table that use strings to identify Type,
-    //! Name, or Language entries (depending on the level
-    //! of the table).
-    uint16_t numberof_name_entries(void) const;
+  //! @brief The number of directory entries immediately
+  //! following the table that use strings to identify Type,
+  //! Name, or Language entries (depending on the level
+  //! of the table).
+  uint16_t numberof_name_entries(void) const;
 
-    //! @brief The number of directory entries immediately
-    //! following the Name entries that use numeric IDs for
-    //! Type, Name, or Language entries.
-    uint16_t numberof_id_entries(void) const;
+  //! @brief The number of directory entries immediately
+  //! following the Name entries that use numeric IDs for
+  //! Type, Name, or Language entries.
+  uint16_t numberof_id_entries(void) const;
 
-    void characteristics(uint32_t characteristics);
-    void time_date_stamp(uint32_t time_date_stamp);
-    void major_version(uint16_t major_version);
-    void minor_version(uint16_t minor_version);
-    void numberof_name_entries(uint16_t numberof_name_entries);
-    void numberof_id_entries(uint16_t numberof_id_entries);
+  void characteristics(uint32_t characteristics);
+  void time_date_stamp(uint32_t time_date_stamp);
+  void major_version(uint16_t major_version);
+  void minor_version(uint16_t minor_version);
+  void numberof_name_entries(uint16_t numberof_name_entries);
+  void numberof_id_entries(uint16_t numberof_id_entries);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const ResourceDirectory& rhs) const;
-    bool operator!=(const ResourceDirectory& rhs) const;
+  bool operator==(const ResourceDirectory& rhs) const;
+  bool operator!=(const ResourceDirectory& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 
   private:
-    uint32_t characteristics_;
-    uint32_t timeDateStamp_;
-    uint16_t majorVersion_;
-    uint16_t minorVersion_;
-    uint16_t numberOfNameEntries_;
-    uint16_t numberOfIDEntries_;
+  uint32_t characteristics_;
+  uint32_t timeDateStamp_;
+  uint16_t majorVersion_;
+  uint16_t minorVersion_;
+  uint16_t numberOfNameEntries_;
+  uint16_t numberOfIDEntries_;
 
 };
 }

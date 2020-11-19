@@ -17,8 +17,9 @@
 
 #include "logging.hpp"
 
-#include "LIEF/PE/json.hpp"
 #include "LIEF/hash.hpp"
+
+#include "LIEF/PE/json.hpp"
 #include "LIEF/PE.hpp"
 
 namespace LIEF {

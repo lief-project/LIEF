@@ -22,15 +22,16 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/CodeView.hpp"
-#include "LIEF/PE/Pogo.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 
 class Parser;
 class Builder;
+class CodeView;
+class Pogo;
+struct pe_debug;
 
 class LIEF_API Debug : public Object {
 
@@ -38,80 +39,80 @@ class LIEF_API Debug : public Object {
   friend class Builder;
 
   public:
-    Debug(void);
-    Debug(const pe_debug* debug_s);
-    Debug(const Debug& copy);
-    Debug& operator=(Debug copy);
+  Debug(void);
+  Debug(const pe_debug* debug_s);
+  Debug(const Debug& copy);
+  Debug& operator=(Debug copy);
 
-    void swap(Debug& other);
+  void swap(Debug& other);
 
-    virtual ~Debug(void);
+  virtual ~Debug(void);
 
-    //! Reserved should be 0
-    uint32_t characteristics(void) const;
+  //! Reserved should be 0
+  uint32_t characteristics(void) const;
 
-    //! The time and date that the debug data was created.
-    uint32_t timestamp(void) const;
+  //! The time and date that the debug data was created.
+  uint32_t timestamp(void) const;
 
-    //! The major version number of the debug data format.
-    uint16_t major_version(void) const;
+  //! The major version number of the debug data format.
+  uint16_t major_version(void) const;
 
-    //! The minor version number of the debug data format.
-    uint16_t minor_version(void) const;
+  //! The minor version number of the debug data format.
+  uint16_t minor_version(void) const;
 
-    //! The format DEBUG_TYPES of the debugging information
-    DEBUG_TYPES type(void) const;
+  //! The format DEBUG_TYPES of the debugging information
+  DEBUG_TYPES type(void) const;
 
-    //! Size of the debug data
-    uint32_t sizeof_data(void) const;
+  //! Size of the debug data
+  uint32_t sizeof_data(void) const;
 
-    //! Address of the debug data relative to the image base
-    uint32_t addressof_rawdata(void) const;
+  //! Address of the debug data relative to the image base
+  uint32_t addressof_rawdata(void) const;
 
-    //! File offset of the debug data
-    uint32_t pointerto_rawdata(void) const;
+  //! File offset of the debug data
+  uint32_t pointerto_rawdata(void) const;
 
-    bool has_code_view(void) const;
+  bool has_code_view(void) const;
 
-    const CodeView& code_view(void) const;
-    CodeView& code_view(void);
+  const CodeView& code_view(void) const;
+  CodeView& code_view(void);
 
-    bool has_pogo(void) const;
+  bool has_pogo(void) const;
 
-    const Pogo& pogo(void) const;
-    Pogo& pogo(void);
-
-
-    void characteristics(uint32_t characteristics);
-    void timestamp(uint32_t timestamp);
-    void major_version(uint16_t major_version);
-    void minor_version(uint16_t minor_version);
-    void type(DEBUG_TYPES new_type);
-    void sizeof_data(uint32_t sizeof_data);
-    void addressof_rawdata(uint32_t addressof_rawdata);
-    void pointerto_rawdata(uint32_t pointerto_rawdata);
+  const Pogo& pogo(void) const;
+  Pogo& pogo(void);
 
 
-    virtual void accept(Visitor& visitor) const override;
+  void characteristics(uint32_t characteristics);
+  void timestamp(uint32_t timestamp);
+  void major_version(uint16_t major_version);
+  void minor_version(uint16_t minor_version);
+  void type(DEBUG_TYPES new_type);
+  void sizeof_data(uint32_t sizeof_data);
+  void addressof_rawdata(uint32_t addressof_rawdata);
+  void pointerto_rawdata(uint32_t pointerto_rawdata);
 
-    bool operator==(const Debug& rhs) const;
-    bool operator!=(const Debug& rhs) const;
+
+  virtual void accept(Visitor& visitor) const override;
+
+  bool operator==(const Debug& rhs) const;
+  bool operator!=(const Debug& rhs) const;
 
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry);
 
   private:
-    uint32_t    characteristics_;
-    uint32_t    timestamp_;
-    uint16_t    majorversion_;
-    uint16_t    minorversion_;
-    DEBUG_TYPES type_;
-    uint32_t    sizeof_data_;
-    uint32_t    addressof_rawdata_;
-    uint32_t    pointerto_rawdata_;
+  uint32_t    characteristics_;
+  uint32_t    timestamp_;
+  uint16_t    majorversion_;
+  uint16_t    minorversion_;
+  DEBUG_TYPES type_;
+  uint32_t    sizeof_data_;
+  uint32_t    addressof_rawdata_;
+  uint32_t    pointerto_rawdata_;
 
-    CodeView* code_view_;
-    Pogo* pogo_;
+  CodeView* code_view_{nullptr};
+  Pogo* pogo_{nullptr};
 
 
 };

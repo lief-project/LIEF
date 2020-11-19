@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
+#include <cstring>
+
 #include <mbedtls/platform.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/x509_crt.h>
 
-#include "utf8.h"
 #include "LIEF/utils.hpp"
-
-#include "logging.hpp"
-
-#include "pkcs7.h"
-
-#include <cstring>
-
 #include "LIEF/exception.hpp"
 
-#include "LIEF/PE/utils.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+
+#include "utf8.h"
+#include "logging.hpp"
+#include "pkcs7.h"
 
 namespace LIEF {
 namespace PE {

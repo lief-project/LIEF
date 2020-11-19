@@ -17,6 +17,7 @@
 
 #include "LIEF/PE/hash.hpp"
 
+#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
 
 namespace LIEF {
