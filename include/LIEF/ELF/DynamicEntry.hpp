@@ -23,41 +23,43 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
+struct Elf64_Dyn;
+struct Elf32_Dyn;
 
 class LIEF_API DynamicEntry : public Object {
   public:
 
-    DynamicEntry(const Elf64_Dyn* header);
-    DynamicEntry(const Elf32_Dyn* header);
-    DynamicEntry(void);
-    DynamicEntry(DYNAMIC_TAGS tag, uint64_t value);
+  DynamicEntry(const Elf64_Dyn* header);
+  DynamicEntry(const Elf32_Dyn* header);
+  DynamicEntry(void);
+  DynamicEntry(DYNAMIC_TAGS tag, uint64_t value);
 
-    DynamicEntry& operator=(const DynamicEntry&);
-    DynamicEntry(const DynamicEntry&);
-    virtual ~DynamicEntry(void);
+  DynamicEntry& operator=(const DynamicEntry&);
+  DynamicEntry(const DynamicEntry&);
+  virtual ~DynamicEntry(void);
 
-    DYNAMIC_TAGS tag(void) const;
-    uint64_t value(void) const;
+  DYNAMIC_TAGS tag(void) const;
+  uint64_t value(void) const;
 
-    void tag(DYNAMIC_TAGS tag);
-    void value(uint64_t value);
+  void tag(DYNAMIC_TAGS tag);
+  void value(uint64_t value);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const;
+  virtual std::ostream& print(std::ostream& os) const;
 
-    bool operator==(const DynamicEntry& rhs) const;
-    bool operator!=(const DynamicEntry& rhs) const;
+  bool operator==(const DynamicEntry& rhs) const;
+  bool operator!=(const DynamicEntry& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
 
   protected:
-    DYNAMIC_TAGS tag_;
-    uint64_t     value_;
+  DYNAMIC_TAGS tag_;
+  uint64_t     value_;
 };
 }
 }

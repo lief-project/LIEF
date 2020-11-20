@@ -27,22 +27,22 @@ namespace ELF {
 class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   public:
-    using DynamicEntry::DynamicEntry;
-    DynamicSharedObject(void);
-    DynamicSharedObject(const std::string& name);
+  using DynamicEntry::DynamicEntry;
+  DynamicSharedObject(void);
+  DynamicSharedObject(const std::string& name);
 
-    DynamicSharedObject& operator=(const DynamicSharedObject&);
-    DynamicSharedObject(const DynamicSharedObject&);
+  DynamicSharedObject& operator=(const DynamicSharedObject&);
+  DynamicSharedObject(const DynamicSharedObject&);
 
-    const std::string& name(void) const;
-    void name(const std::string& name);
+  const std::string& name(void) const;
+  void name(const std::string& name);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    std::string name_;
+  std::string name_;
 };
 }
 }

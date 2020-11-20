@@ -25,7 +25,6 @@
 namespace LIEF {
 namespace ELF {
 class LIEF_API DynamicEntryArray : public DynamicEntry {
-
   public:
   using array_t = std::vector<uint64_t>;
 

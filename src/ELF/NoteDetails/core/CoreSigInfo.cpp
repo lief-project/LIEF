@@ -17,10 +17,11 @@
 #include <iomanip>
 #include <sstream>
 
-#include "LIEF/ELF/hash.hpp"
-
 #include "logging.hpp"
 
+#include "LIEF/ELF/hash.hpp"
+
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 
 namespace LIEF {

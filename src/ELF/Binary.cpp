@@ -35,9 +35,28 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
+#include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/DataHandler/Handler.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
@@ -393,7 +412,8 @@ Symbol& Binary::export_symbol(const Symbol& symbol) {
 
   if (it_symbol == std::end(this->dynamic_symbols_)) {
     // Create a new one
-    Symbol& new_sym = this->add_dynamic_symbol(symbol, SymbolVersion::global());
+    const SymbolVersion& version = SymbolVersion::global();
+    Symbol& new_sym = this->add_dynamic_symbol(symbol, &version);
     return this->export_symbol(new_sym);
   }
 
@@ -1587,10 +1607,16 @@ Symbol& Binary::add_static_symbol(const Symbol& symbol) {
 }
 
 
-Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion& version) {
-  Symbol* sym           = new Symbol{symbol};
-  SymbolVersion* symver = new SymbolVersion{version};
-  sym->symbol_version_  = symver;
+Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* version) {
+  Symbol* sym = new Symbol{symbol};
+  SymbolVersion* symver = nullptr;
+  if (version == nullptr) {
+    symver = new SymbolVersion{SymbolVersion::global()};
+  } else {
+    symver = new SymbolVersion{*version};
+  }
+
+  sym->symbol_version_ = symver;
 
   this->dynamic_symbols_.push_back(sym);
   this->symbol_version_table_.push_back(symver);

@@ -15,9 +15,8 @@
  */
 #include <algorithm>
 
-#include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 #include "pyELF.hpp"
 
@@ -293,9 +292,9 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("add_dynamic_symbol",
-        static_cast<Symbol& (Binary::*)(const Symbol&, const SymbolVersion&)>(&Binary::add_dynamic_symbol),
+        static_cast<Symbol& (Binary::*)(const Symbol&, const SymbolVersion*)>(&Binary::add_dynamic_symbol),
         "Add a **dynamic** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary",
-        "symbol"_a, "symbol_version"_a = SymbolVersion::local(),
+        "symbol"_a, "symbol_version"_a = nullptr,
         py::return_value_policy::reference)
 
     .def("virtual_address_to_offset",

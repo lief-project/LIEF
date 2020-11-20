@@ -19,7 +19,7 @@
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersion.hpp"
-
+#include "LIEF/ELF/SymbolVersionAux.hpp"
 
 namespace LIEF {
 namespace ELF {

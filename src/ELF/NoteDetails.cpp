@@ -28,6 +28,7 @@
 #include "LIEF/ELF/EnumToString.hpp"
 
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 namespace LIEF {
 namespace ELF {

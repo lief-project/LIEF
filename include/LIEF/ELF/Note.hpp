@@ -23,6 +23,8 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/ELF/enums.hpp"
+
 namespace LIEF {
 namespace ELF {
 
@@ -104,8 +106,7 @@ class LIEF_API Note : public Object {
   description_t description_;
 
   private:
-  bool          is_core_{false};
-
+  bool is_core_{false};
   std::pair<NOTE_TYPES, std::unique_ptr<NoteDetails>> details_;
 };
 

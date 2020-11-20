@@ -15,6 +15,13 @@
  */
 #include "DynamicEntry.hpp"
 
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+
 namespace LIEF {
 namespace ELF {
 

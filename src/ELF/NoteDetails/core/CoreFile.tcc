@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include <algorithm>
 
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 

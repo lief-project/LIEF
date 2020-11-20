@@ -24,7 +24,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {

@@ -25,6 +25,7 @@
 
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
 
 
 namespace LIEF {

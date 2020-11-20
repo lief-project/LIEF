@@ -19,6 +19,7 @@
 
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 #include "CorePrPsInfo.tcc"
 

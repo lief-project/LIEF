@@ -26,6 +26,9 @@
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
+#include "LIEF/ELF/DataHandler/Handler.hpp"
+#include "LIEF/ELF/Section.hpp"
+
 
 namespace LIEF {
 namespace ELF {

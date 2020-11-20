@@ -17,6 +17,7 @@
 #define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H_
 
 #include <string>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 
@@ -27,23 +28,23 @@ namespace ELF {
 class LIEF_API DynamicEntryLibrary : public DynamicEntry {
 
   public:
-    using DynamicEntry::DynamicEntry;
+  using DynamicEntry::DynamicEntry;
 
-    DynamicEntryLibrary(void);
-    DynamicEntryLibrary(const std::string& name);
+  DynamicEntryLibrary(void);
+  DynamicEntryLibrary(const std::string& name);
 
-    DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
-    DynamicEntryLibrary(const DynamicEntryLibrary&);
+  DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
+  DynamicEntryLibrary(const DynamicEntryLibrary&);
 
-    const std::string& name(void) const;
-    void name(const std::string& name);
+  const std::string& name(void) const;
+  void name(const std::string& name);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    std::string libname_;
+  std::string libname_;
 };
 }
 }

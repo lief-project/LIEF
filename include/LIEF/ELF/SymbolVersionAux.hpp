@@ -30,28 +30,29 @@ class Parser;
 class LIEF_API SymbolVersionAux : public Object {
   friend class Parser;
   public:
-    SymbolVersionAux(const std::string& name);
-    SymbolVersionAux(void);
-    virtual ~SymbolVersionAux(void);
+  SymbolVersionAux(const std::string& name);
+  SymbolVersionAux(void);
+  virtual ~SymbolVersionAux(void);
 
-    SymbolVersionAux& operator=(const SymbolVersionAux&);
-    SymbolVersionAux(const SymbolVersionAux&);
+  SymbolVersionAux& operator=(const SymbolVersionAux&);
+  SymbolVersionAux(const SymbolVersionAux&);
 
-    //! @brief Smybol's aux name (e.g. ``GLIBC_2.2.5``)
-    const std::string& name(void) const;
+  //! @brief Smybol's aux name (e.g. ``GLIBC_2.2.5``)
+  const std::string& name(void) const;
 
-    void name(const std::string& name);
+  void name(const std::string& name);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    bool operator==(const SymbolVersionAux& rhs) const;
-    bool operator!=(const SymbolVersionAux& rhs) const;
+  bool operator==(const SymbolVersionAux& rhs) const;
+  bool operator!=(const SymbolVersionAux& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux);
 
   protected:
-    std::string name_;
+  std::string name_;
 };
+
 }
 }
 #endif

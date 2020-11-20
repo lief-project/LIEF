@@ -28,14 +28,12 @@ namespace ELF {
 //! @brief Check if the given file is an ELF one.
 LIEF_API bool is_elf(const std::string& file);
 
-//! @brief check if the raw data is a ELF file
+//! @brief check if the raw data is a ELF file
 LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
 
 LIEF_API unsigned long hash32(const char* name);
 LIEF_API unsigned long hash64(const char* name);
 LIEF_API uint32_t dl_new_hash(const char* name);
-
-
 }
 }
 

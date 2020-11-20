@@ -17,10 +17,12 @@
 #include <iomanip>
 #include <sstream>
 
+#include "logging.hpp"
+
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
-
-#include "logging.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 #include "CorePrStatus.tcc"
 

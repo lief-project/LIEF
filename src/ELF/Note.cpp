@@ -31,6 +31,11 @@
 #include "LIEF/ELF/NoteDetails.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 
 namespace LIEF {
 namespace ELF {

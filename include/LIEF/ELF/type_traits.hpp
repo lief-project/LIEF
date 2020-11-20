@@ -19,7 +19,7 @@
 #include <set>
 #include "LIEF/iterators.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {

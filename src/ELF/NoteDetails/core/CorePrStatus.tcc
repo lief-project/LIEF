@@ -18,7 +18,9 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/iostream.hpp"
 
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 
 namespace LIEF {

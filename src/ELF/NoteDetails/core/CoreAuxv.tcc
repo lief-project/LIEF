@@ -18,8 +18,10 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 namespace LIEF {
 namespace ELF {

@@ -19,12 +19,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
-#include "LIEF/ELF/Parser.hpp"
-#include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/Builder.hpp"
-
 #include "pyLIEF.hpp"
-
 
 #define SPECIALIZE_CREATE(X)      \
   template<>                      \
@@ -35,6 +30,39 @@
 
 namespace LIEF {
 namespace ELF {
+
+class Parser;
+class Binary;
+class Header;
+class Section;
+class Segment;
+class Symbol;
+class Relocation;
+class SymbolVersion;
+class SymbolVersionAux;
+class SymbolVersionRequirement;
+class SymbolVersionDefinition;
+class SymbolVersionAuxRequirement;
+class DynamicEntry;
+class DynamicEntryLibrary;
+class DynamicSharedObject;
+class DynamicEntryArray;
+class DynamicEntryRpath;
+class DynamicEntryRunPath;
+class DynamicEntryFlags;
+class GnuHash;
+class SysvHash;
+class Builder;
+class Note;
+class NoteDetails;
+class AndroidNote;
+class NoteAbi;
+class CorePrPsInfo;
+class CoreFile;
+class CoreFileEntry;
+class CorePrStatus;
+class CoreAuxv;
+class CoreSigInfo;
 
 template<class T>
 void create(py::module&);

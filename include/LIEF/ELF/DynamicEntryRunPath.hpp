@@ -27,50 +27,50 @@ namespace ELF {
 class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   public:
-    static constexpr char delimiter = ':';
-    using DynamicEntry::DynamicEntry;
+  static constexpr char delimiter = ':';
+  using DynamicEntry::DynamicEntry;
 
-    DynamicEntryRunPath(void);
+  DynamicEntryRunPath(void);
 
-    //! @brief Constructor from (run)path
-    DynamicEntryRunPath(const std::string& name);
+  //! @brief Constructor from (run)path
+  DynamicEntryRunPath(const std::string& name);
 
-    //! @brief Constructor from a list of paths
-    DynamicEntryRunPath(const std::vector<std::string>& paths);
+  //! @brief Constructor from a list of paths
+  DynamicEntryRunPath(const std::vector<std::string>& paths);
 
-    DynamicEntryRunPath& operator=(const DynamicEntryRunPath&);
-    DynamicEntryRunPath(const DynamicEntryRunPath&);
+  DynamicEntryRunPath& operator=(const DynamicEntryRunPath&);
+  DynamicEntryRunPath(const DynamicEntryRunPath&);
 
-    //! @brief Runpath raw value
-    const std::string& name(void) const;
-    void name(const std::string& name);
+  //! @brief Runpath raw value
+  const std::string& name(void) const;
+  void name(const std::string& name);
 
-    //! @brief Runpath raw value
-    const std::string& runpath(void) const;
-    void runpath(const std::string& runpath);
+  //! @brief Runpath raw value
+  const std::string& runpath(void) const;
+  void runpath(const std::string& runpath);
 
-    //! @brief Paths as a list
-    std::vector<std::string> paths(void) const;
-    void paths(const std::vector<std::string>& paths);
+  //! @brief Paths as a list
+  std::vector<std::string> paths(void) const;
+  void paths(const std::vector<std::string>& paths);
 
-    //! @brief Insert a ``path`` at the given ``position``
-    DynamicEntryRunPath& insert(size_t pos, const std::string path);
+  //! @brief Insert a ``path`` at the given ``position``
+  DynamicEntryRunPath& insert(size_t pos, const std::string path);
 
-    //! @brief Append the given ``path``
-    DynamicEntryRunPath& append(const std::string& path);
+  //! @brief Append the given ``path``
+  DynamicEntryRunPath& append(const std::string& path);
 
-    //! @brief Remove the given ``path``
-    DynamicEntryRunPath& remove(const std::string& path);
+  //! @brief Remove the given ``path``
+  DynamicEntryRunPath& remove(const std::string& path);
 
-    DynamicEntryRunPath& operator+=(const std::string& path);
-    DynamicEntryRunPath& operator-=(const std::string& path);
+  DynamicEntryRunPath& operator+=(const std::string& path);
+  DynamicEntryRunPath& operator-=(const std::string& path);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    std::string runpath_;
+  std::string runpath_;
 };
 }
 }

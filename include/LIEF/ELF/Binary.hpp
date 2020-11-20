@@ -27,29 +27,25 @@
 
 #include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/DynamicEntryRunPath.hpp"
-#include "LIEF/ELF/DynamicEntryArray.hpp"
-#include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/Relocation.hpp"
-#include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
-#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
 
 namespace LIEF {
 namespace ELF {
+namespace DataHandler {
+class Handler;
+}
+
+class Section;
+class Segment;
+class DynamicEntry;
+class Symbol;
+class SymbolVersion;
+class SymbolVersionRequirement;
+class SymbolVersionDefinition;
+class Note;
+class Relocation;
 class Parser;
 class Builder;
 
@@ -91,100 +87,100 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @warning
   //! This method return a vector of references thus you can
   //! modify vector's elements (section) but not add elements.
-  it_sections                            sections(void);
-  it_const_sections                      sections(void) const;
+  it_sections       sections(void);
+  it_const_sections sections(void) const;
 
   //! @brief Return binary entrypoint
-  virtual uint64_t                       entrypoint(void) const override;
+  virtual uint64_t entrypoint(void) const override;
 
   //! @brief Return binary's segments
-  it_segments                            segments(void);
-  it_const_segments                      segments(void) const;
+  it_segments       segments(void);
+  it_const_segments segments(void) const;
 
   //! @brief Return binary's dynamic entries
-  it_dynamic_entries                     dynamic_entries(void);
-  it_const_dynamic_entries               dynamic_entries(void) const;
+  it_dynamic_entries       dynamic_entries(void);
+  it_const_dynamic_entries dynamic_entries(void) const;
 
   //! @brief Add the given dynamic entry and return the entry added
-  DynamicEntry&                          add(const DynamicEntry& entry);
+  DynamicEntry& add(const DynamicEntry& entry);
 
   //! @brief Add the given note and return the entry added
-  Note&                                  add(const Note& note);
+  Note& add(const Note& note);
 
   //! @brief Remove the given dynamic entry
-  void                                   remove(const DynamicEntry& entry);
+  void remove(const DynamicEntry& entry);
 
   //! @brief Remove **all** dynamic entries with the given tag
-  void                                   remove(DYNAMIC_TAGS tag);
+  void remove(DYNAMIC_TAGS tag);
 
   //! @brief Remove the given section
-  void                                   remove(const Section& section, bool clear = false);
+  void remove(const Section& section, bool clear = false);
 
   //! @brief Remove the given note
-  void                                   remove(const Note& note);
+  void remove(const Note& note);
 
   //! @brief Remove **all** notes with the given type
-  void                                   remove(NOTE_TYPES tag);
+  void remove(NOTE_TYPES tag);
 
   //! @brief Return binary's dynamic symbols
-  it_symbols                             dynamic_symbols(void);
-  it_const_symbols                       dynamic_symbols(void) const;
+  it_symbols       dynamic_symbols(void);
+  it_const_symbols dynamic_symbols(void) const;
 
   //! @brief Return symbols which are exported by the binary
-  it_exported_symbols                    exported_symbols(void);
-  it_const_exported_symbols              exported_symbols(void) const;
+  it_exported_symbols       exported_symbols(void);
+  it_const_exported_symbols exported_symbols(void) const;
 
   //! @brief Return symbols which are imported by the binary
-  it_imported_symbols                    imported_symbols(void);
-  it_const_imported_symbols              imported_symbols(void) const;
+  it_imported_symbols       imported_symbols(void);
+  it_const_imported_symbols imported_symbols(void) const;
 
   //! @brief Return statics symbols
-  it_symbols                             static_symbols(void);
-  it_const_symbols                       static_symbols(void) const;
+  it_symbols       static_symbols(void);
+  it_const_symbols static_symbols(void) const;
 
   //! @brief Return symbol versions
-  it_symbols_version                     symbols_version(void);
-  it_const_symbols_version               symbols_version(void) const;
+  it_symbols_version       symbols_version(void);
+  it_const_symbols_version symbols_version(void) const;
 
   //! @brief Return symbols version definition
-  it_symbols_version_definition          symbols_version_definition(void);
-  it_const_symbols_version_definition    symbols_version_definition(void) const;
+  it_symbols_version_definition       symbols_version_definition(void);
+  it_const_symbols_version_definition symbols_version_definition(void) const;
 
   //! @brief Return Symbol version requirement
-  it_symbols_version_requirement         symbols_version_requirement(void);
-  it_const_symbols_version_requirement   symbols_version_requirement(void) const;
+  it_symbols_version_requirement       symbols_version_requirement(void);
+  it_const_symbols_version_requirement symbols_version_requirement(void) const;
 
   //! @brief Return dynamic relocations
-  it_dynamic_relocations                 dynamic_relocations(void);
-  it_const_dynamic_relocations           dynamic_relocations(void) const;
+  it_dynamic_relocations       dynamic_relocations(void);
+  it_const_dynamic_relocations dynamic_relocations(void) const;
 
-  Relocation&                            add_dynamic_relocation(const Relocation& relocation);
-  Relocation&                            add_pltgot_relocation(const Relocation& relocation);
+  Relocation& add_dynamic_relocation(const Relocation& relocation);
+  Relocation& add_pltgot_relocation(const Relocation& relocation);
 
   //! @brief Return `plt.got` relocations
-  it_pltgot_relocations                  pltgot_relocations(void);
-  it_const_pltgot_relocations            pltgot_relocations(void) const;
+  it_pltgot_relocations       pltgot_relocations(void);
+  it_const_pltgot_relocations pltgot_relocations(void) const;
 
   //! @brief Return relocations used in an object file (``*.o``)
-  it_object_relocations                  object_relocations(void);
-  it_const_object_relocations            object_relocations(void) const;
+  it_object_relocations       object_relocations(void);
+  it_const_object_relocations object_relocations(void) const;
 
   //! @brief Return **all** relocations present in the binary
-  it_relocations                         relocations(void);
-  it_const_relocations                   relocations(void) const;
+  it_relocations       relocations(void);
+  it_const_relocations relocations(void) const;
 
   //! Return relocation associated with the given address.
-  //! ``nullptr`` if not found
+  //! ``nullptr`` if not found
   const Relocation* get_relocation(uint64_t address) const;
-  Relocation* get_relocation(uint64_t address);
+  Relocation*       get_relocation(uint64_t address);
 
   //! Return relocation associated with the given Symbol
   const Relocation* get_relocation(const Symbol& symbol) const;
-  Relocation* get_relocation(const Symbol& symbol);
+  Relocation*       get_relocation(const Symbol& symbol);
 
   //! Return relocation associated with the given Symbol name
   const Relocation* get_relocation(const std::string& symbol_name) const;
-  Relocation* get_relocation(const std::string& symbol_name);
+  Relocation*       get_relocation(const std::string& symbol_name);
 
   //! @brief ``true`` if GNU hash is used
   //!
@@ -235,7 +231,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! @brief Return the size of the mapped binary
   uint64_t virtual_size(void) const;
-
 
   //! @brief Check if the binary uses a loader
   //! @see interpreter
@@ -321,7 +316,7 @@ class LIEF_API Binary : public LIEF::Binary {
   Symbol& add_static_symbol(const Symbol& symbol);
 
   //! @brief Add a dynamic symbol with the associated SymbolVersion
-  Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion& version = SymbolVersion::global());
+  Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* version = nullptr);
 
   //! Create a symbol for the function at the given address and export it
   Symbol& add_exported_function(uint64_t address, const std::string& name = "");
@@ -502,7 +497,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   void overlay(overlay_t overlay);
 
-
   size_t hash(const std::string& name);
 
   virtual ~Binary(void);
@@ -584,30 +578,30 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! The binary type
   //! (i.e. `ELF32` or `ELF64`)
-  ELF_CLASS         type_;
+  ELF_CLASS type_;
 
   //! The binary's header as an object
-  Header                        header_;
+  Header header_;
 
   //! The binary's sections if any
-  sections_t                    sections_;
+  sections_t sections_;
 
   //! The binary's segments if any
-  segments_t                    segments_;
+  segments_t segments_;
 
   //! A list of the diffrents dynamic entries.
-  dynamic_entries_t             dynamic_entries_;
+  dynamic_entries_t dynamic_entries_;
 
   //! A list of dynamic symbols
-  symbols_t                     dynamic_symbols_;
+  symbols_t dynamic_symbols_;
 
   //! A list of static symbols
-  symbols_t                     static_symbols_;
+  symbols_t static_symbols_;
 
-  relocations_t                 relocations_;
+  relocations_t relocations_;
 
   //! .gnu.version
-  symbols_version_t             symbol_version_table_;
+  symbols_version_t symbol_version_table_;
 
   //! gnu.version_r
   symbols_version_requirement_t symbol_version_requirements_;
@@ -616,19 +610,19 @@ class LIEF_API Binary : public LIEF::Binary {
   symbols_version_definition_t  symbol_version_definition_;
 
   //! .gnu.hash
-  GnuHash                       gnu_hash_;
+  GnuHash gnu_hash_;
 
   //! .note
-  notes_t                       notes_;
+  notes_t notes_;
 
   //! .hash
-  SysvHash                      sysv_hash_;
+  SysvHash sysv_hash_;
 
   //! object used to manage segments/sections
-  DataHandler::Handler*         datahandler_;
+  DataHandler::Handler* datahandler_{nullptr};
 
-  std::string                   interpreter_;
-  overlay_t                     overlay_;
+  std::string interpreter_;
+  overlay_t overlay_;
 };
 
 }

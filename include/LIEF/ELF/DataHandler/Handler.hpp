@@ -15,46 +15,48 @@
  */
 #ifndef ELF_DATA_HANDLER_HANDLER_H_
 #define ELF_DATA_HANDLER_HANDLER_H_
+#include <vector>
 
-#include "LIEF/ELF/DataHandler/Node.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
-#include <vector>
+
+#include "LIEF/ELF/DataHandler/Node.hpp"
 
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
+
 class LIEF_API Handler {
   public:
-    static constexpr size_t MAX_SIZE = 1_GB;
-    Handler(const std::vector<uint8_t>& content);
-    Handler(std::vector<uint8_t>&& content);
-    ~Handler(void);
+  static constexpr size_t MAX_SIZE = 1_GB;
+  Handler(const std::vector<uint8_t>& content);
+  Handler(std::vector<uint8_t>&& content);
+  ~Handler(void);
 
-    Handler& operator=(const Handler&);
-    Handler(const Handler&);
+  Handler& operator=(const Handler&);
+  Handler(const Handler&);
 
-    const std::vector<uint8_t>& content(void) const;
-    std::vector<uint8_t>& content(void);
+  const std::vector<uint8_t>& content(void) const;
+  std::vector<uint8_t>& content(void);
 
-    Node& add(const Node& node);
+  Node& add(const Node& node);
 
-    bool has(uint64_t offset, uint64_t size, Node::Type type);
+  bool has(uint64_t offset, uint64_t size, Node::Type type);
 
-    Node& get(uint64_t offset, uint64_t size, Node::Type type);
+  Node& get(uint64_t offset, uint64_t size, Node::Type type);
 
-    Node& create(uint64_t offset, uint64_t size, Node::Type type);
+  Node& create(uint64_t offset, uint64_t size, Node::Type type);
 
-    void remove(uint64_t offset, uint64_t size, Node::Type type);
+  void remove(uint64_t offset, uint64_t size, Node::Type type);
 
-    void make_hole(uint64_t offset, uint64_t size);
+  void make_hole(uint64_t offset, uint64_t size);
 
-    void reserve(uint64_t offset, uint64_t size);
+  void reserve(uint64_t offset, uint64_t size);
 
   private:
-    Handler(void);
-    std::vector<uint8_t> data_;
-    std::vector<Node*>   nodes_;
+  Handler(void);
+  std::vector<uint8_t> data_;
+  std::vector<Node*> nodes_;
 };
 } // namespace DataHandler
 } // namespace ELF

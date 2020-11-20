@@ -22,12 +22,12 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
 namespace ELF {
 
+class Note;
 class Parser;
 class Builder;
 class Binary;

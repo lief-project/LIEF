@@ -25,14 +25,20 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/type_traits.hpp"
-#include "LIEF/ELF/Structures.hpp"
-#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
+namespace DataHandler {
+class Handler;
+}
 
 class Parser;
 class Binary;
+class Section;
+
+struct Elf64_Phdr;
+struct Elf32_Phdr;
 
 //! @brief Class which represent segments
 class LIEF_API Segment : public Object {
@@ -42,74 +48,74 @@ class LIEF_API Segment : public Object {
   friend class Binary;
 
   public:
-    Segment(void);
-    Segment(const std::vector<uint8_t>&   header, ELF_CLASS type);
-    Segment(const std::vector<uint8_t>&   header);
-    Segment(const Elf64_Phdr* header);
-    Segment(const Elf32_Phdr* header);
-    virtual ~Segment(void);
+  Segment(void);
+  Segment(const std::vector<uint8_t>& header, ELF_CLASS type);
+  Segment(const std::vector<uint8_t>& header);
+  Segment(const Elf64_Phdr* header);
+  Segment(const Elf32_Phdr* header);
+  virtual ~Segment(void);
 
-    Segment& operator=(Segment other);
-    Segment(const Segment& other);
-    void swap(Segment& other);
+  Segment& operator=(Segment other);
+  Segment(const Segment& other);
+  void swap(Segment& other);
 
-    SEGMENT_TYPES type(void) const;
-    ELF_SEGMENT_FLAGS flags(void) const;
-    uint64_t file_offset(void) const;
-    uint64_t virtual_address(void) const;
-    uint64_t physical_address(void) const;
-    uint64_t physical_size(void) const;
-    uint64_t virtual_size(void) const;
-    uint64_t alignment(void) const;
-    std::vector<uint8_t> content(void) const;
+  SEGMENT_TYPES type(void) const;
+  ELF_SEGMENT_FLAGS flags(void) const;
+  uint64_t file_offset(void) const;
+  uint64_t virtual_address(void) const;
+  uint64_t physical_address(void) const;
+  uint64_t physical_size(void) const;
+  uint64_t virtual_size(void) const;
+  uint64_t alignment(void) const;
+  std::vector<uint8_t> content(void) const;
 
-    bool has(ELF_SEGMENT_FLAGS flag) const;
-    bool has(const Section& section) const;
-    bool has(const std::string& section_name) const;
+  bool has(ELF_SEGMENT_FLAGS flag) const;
+  bool has(const Section& section) const;
+  bool has(const std::string& section_name) const;
 
-    void add(ELF_SEGMENT_FLAGS c);
-    void remove(ELF_SEGMENT_FLAGS c);
+  void add(ELF_SEGMENT_FLAGS c);
+  void remove(ELF_SEGMENT_FLAGS c);
 
-    void type(SEGMENT_TYPES type);
-    void flags(ELF_SEGMENT_FLAGS flags);
-    void clear_flags(void);
-    void file_offset(uint64_t fileOffset);
-    void virtual_address(uint64_t virtualAddress);
-    void physical_address(uint64_t physicalAddress);
-    void physical_size(uint64_t physicalSize);
-    void virtual_size(uint64_t virtualSize);
-    void alignment(uint64_t alignment);
-    void content(const std::vector<uint8_t>& content);
-    void content(std::vector<uint8_t>&& content);
-    template<typename T> T get_content_value(size_t offset) const;
-    template<typename T> void set_content_value(size_t offset, T value);
-    size_t get_content_size() const;
+  void type(SEGMENT_TYPES type);
+  void flags(ELF_SEGMENT_FLAGS flags);
+  void clear_flags(void);
+  void file_offset(uint64_t fileOffset);
+  void virtual_address(uint64_t virtualAddress);
+  void physical_address(uint64_t physicalAddress);
+  void physical_size(uint64_t physicalSize);
+  void virtual_size(uint64_t virtualSize);
+  void alignment(uint64_t alignment);
+  void content(const std::vector<uint8_t>& content);
+  void content(std::vector<uint8_t>&& content);
+  template<typename T> T get_content_value(size_t offset) const;
+  template<typename T> void set_content_value(size_t offset, T value);
+  size_t get_content_size() const;
 
-    it_sections       sections(void);
-    it_const_sections sections(void) const;
+  it_sections       sections(void);
+  it_const_sections sections(void) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    Segment& operator+=(ELF_SEGMENT_FLAGS c);
-    Segment& operator-=(ELF_SEGMENT_FLAGS c);
+  Segment& operator+=(ELF_SEGMENT_FLAGS c);
+  Segment& operator-=(ELF_SEGMENT_FLAGS c);
 
-    bool operator==(const Segment& rhs) const;
-    bool operator!=(const Segment& rhs) const;
+  bool operator==(const Segment& rhs) const;
+  bool operator!=(const Segment& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 
   private:
-    SEGMENT_TYPES         type_;
-    ELF_SEGMENT_FLAGS     flags_;
-    uint64_t              file_offset_;
-    uint64_t              virtual_address_;
-    uint64_t              physical_address_;
-    uint64_t              size_;
-    uint64_t              virtual_size_;
-    uint64_t              alignment_;
-    sections_t            sections_;
-    DataHandler::Handler* datahandler_;
-    std::vector<uint8_t>  content_c_;
+  SEGMENT_TYPES         type_;
+  ELF_SEGMENT_FLAGS     flags_;
+  uint64_t              file_offset_;
+  uint64_t              virtual_address_;
+  uint64_t              physical_address_;
+  uint64_t              size_;
+  uint64_t              virtual_size_;
+  uint64_t              alignment_;
+  sections_t            sections_;
+  DataHandler::Handler* datahandler_{nullptr};
+  std::vector<uint8_t>  content_c_;
 };
 
 

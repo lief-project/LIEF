@@ -20,6 +20,7 @@
 
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/Symbol.hpp"
 
 #include "RelocationSizes.hpp"
 #include "logging.hpp"

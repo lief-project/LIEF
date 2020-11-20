@@ -18,10 +18,39 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/ELF.hpp"
 
 namespace LIEF {
 namespace ELF {
+
+class Binary;
+class Header;
+class Section;
+class Segment;
+class DynamicEntry;
+class DynamicEntryArray;
+class DynamicEntryLibrary;
+class DynamicEntryRpath;
+class DynamicEntryRunPath;
+class DynamicSharedObject;
+class DynamicEntryFlags;
+class Symbol;
+class Relocation;
+class SymbolVersion;
+class SymbolVersionAux;
+class SymbolVersionAuxRequirement;
+class SymbolVersionRequirement;
+class SymbolVersionDefinition;
+class Note;
+class NoteDetails;
+class AndroidNote;
+class NoteAbi;
+class CorePrPsInfo;
+class CorePrStatus;
+class CoreAuxv;
+class CoreSigInfo;
+class CoreFile;
+class GnuHash;
+class SysvHash;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:

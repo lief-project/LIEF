@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyAbstract.hpp"
-#include "LIEF/Abstract/Binary.hpp"
-#include "LIEF/ELF/Binary.hpp"
-
 #include <algorithm>
 
+#include "pyAbstract.hpp"
+#include "LIEF/Abstract/Binary.hpp"
 
 #define PY_ENUM(x) LIEF::to_string(x), x
 

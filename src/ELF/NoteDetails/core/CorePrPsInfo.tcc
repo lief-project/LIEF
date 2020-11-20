@@ -19,7 +19,8 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
-
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 namespace LIEF {
 namespace ELF {

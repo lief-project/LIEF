@@ -16,11 +16,10 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H_
 #define LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H_
 
-#include <string>
+#include <set>
+#include <ostream>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 
 namespace LIEF {
@@ -31,43 +30,43 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
   using flags_list_t = std::set<uint32_t>;
 
   public:
-    using DynamicEntry::DynamicEntry;
-    DynamicEntryFlags(void);
+  using DynamicEntry::DynamicEntry;
+  DynamicEntryFlags(void);
 
-    DynamicEntryFlags& operator=(const DynamicEntryFlags&);
-    DynamicEntryFlags(const DynamicEntryFlags&);
+  DynamicEntryFlags& operator=(const DynamicEntryFlags&);
+  DynamicEntryFlags(const DynamicEntryFlags&);
 
-    //! @brief If the current entry has the given DYNAMIC_FLAGS
-    bool has(DYNAMIC_FLAGS f) const;
+  //! @brief If the current entry has the given DYNAMIC_FLAGS
+  bool has(DYNAMIC_FLAGS f) const;
 
-    //! @brief If the current entry has the given DYNAMIC_FLAGS_1
-    bool has(DYNAMIC_FLAGS_1 f) const;
+  //! @brief If the current entry has the given DYNAMIC_FLAGS_1
+  bool has(DYNAMIC_FLAGS_1 f) const;
 
-    //! @brief Return flags as a list of integers
-    flags_list_t flags(void) const;
+  //! @brief Return flags as a list of integers
+  flags_list_t flags(void) const;
 
-    //! @brief Add the given DYNAMIC_FLAGS
-    void add(DYNAMIC_FLAGS f);
+  //! @brief Add the given DYNAMIC_FLAGS
+  void add(DYNAMIC_FLAGS f);
 
-    //! @brief Add the given DYNAMIC_FLAGS_1
-    void add(DYNAMIC_FLAGS_1 f);
+  //! @brief Add the given DYNAMIC_FLAGS_1
+  void add(DYNAMIC_FLAGS_1 f);
 
-    //! @brief Remove the given DYNAMIC_FLAGS
-    void remove(DYNAMIC_FLAGS f);
+  //! @brief Remove the given DYNAMIC_FLAGS
+  void remove(DYNAMIC_FLAGS f);
 
-    //! @brief Remove the given DYNAMIC_FLAGS_1
-    void remove(DYNAMIC_FLAGS_1 f);
+  //! @brief Remove the given DYNAMIC_FLAGS_1
+  void remove(DYNAMIC_FLAGS_1 f);
 
-    DynamicEntryFlags& operator+=(DYNAMIC_FLAGS f);
-    DynamicEntryFlags& operator+=(DYNAMIC_FLAGS_1 f);
+  DynamicEntryFlags& operator+=(DYNAMIC_FLAGS f);
+  DynamicEntryFlags& operator+=(DYNAMIC_FLAGS_1 f);
 
-    DynamicEntryFlags& operator-=(DYNAMIC_FLAGS f);
-    DynamicEntryFlags& operator-=(DYNAMIC_FLAGS_1 f);
+  DynamicEntryFlags& operator-=(DYNAMIC_FLAGS f);
+  DynamicEntryFlags& operator-=(DYNAMIC_FLAGS_1 f);
 
-    //! @brief Method so that the ``visitor`` can visit us
-    virtual void accept(Visitor& visitor) const override;
+  //! @brief Method so that the ``visitor`` can visit us
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 };
 }
 }

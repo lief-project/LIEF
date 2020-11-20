@@ -22,52 +22,51 @@
 
 #include "LIEF/ELF/DynamicEntry.hpp"
 
-
 namespace LIEF {
 namespace ELF {
 class LIEF_API DynamicEntryRpath : public DynamicEntry {
 
   public:
-    static constexpr char delimiter = ':';
-    using DynamicEntry::DynamicEntry;
-    DynamicEntryRpath(void);
+  static constexpr char delimiter = ':';
+  using DynamicEntry::DynamicEntry;
+  DynamicEntryRpath(void);
 
-    DynamicEntryRpath(const std::string& name);
+  DynamicEntryRpath(const std::string& name);
 
-    //! @brief Constructor from a list of paths
-    DynamicEntryRpath(const std::vector<std::string>& paths);
+  //! @brief Constructor from a list of paths
+  DynamicEntryRpath(const std::vector<std::string>& paths);
 
-    DynamicEntryRpath& operator=(const DynamicEntryRpath&);
-    DynamicEntryRpath(const DynamicEntryRpath&);
+  DynamicEntryRpath& operator=(const DynamicEntryRpath&);
+  DynamicEntryRpath(const DynamicEntryRpath&);
 
-    const std::string& name(void) const;
-    void name(const std::string& name);
+  const std::string& name(void) const;
+  void name(const std::string& name);
 
-    const std::string& rpath(void) const;
-    void rpath(const std::string& name);
+  const std::string& rpath(void) const;
+  void rpath(const std::string& name);
 
-    //! @brief Paths as a list
-    std::vector<std::string> paths(void) const;
-    void paths(const std::vector<std::string>& paths);
+  //! @brief Paths as a list
+  std::vector<std::string> paths(void) const;
+  void paths(const std::vector<std::string>& paths);
 
-    //! @brief Insert a ``path`` at the given ``position``
-    DynamicEntryRpath& insert(size_t pos, const std::string path);
+  //! @brief Insert a ``path`` at the given ``position``
+  DynamicEntryRpath& insert(size_t pos, const std::string path);
 
-    //! @brief Append the given ``path``
-    DynamicEntryRpath& append(const std::string& path);
+  //! @brief Append the given ``path``
+  DynamicEntryRpath& append(const std::string& path);
 
-    //! @brief Remove the given ``path``
-    DynamicEntryRpath& remove(const std::string& path);
+  //! @brief Remove the given ``path``
+  DynamicEntryRpath& remove(const std::string& path);
 
-    DynamicEntryRpath& operator+=(const std::string& path);
-    DynamicEntryRpath& operator-=(const std::string& path);
+  DynamicEntryRpath& operator+=(const std::string& path);
+  DynamicEntryRpath& operator-=(const std::string& path);
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    std::string rpath_;
+  std::string rpath_;
 };
 }
 }

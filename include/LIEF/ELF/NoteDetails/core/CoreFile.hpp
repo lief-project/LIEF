@@ -22,7 +22,6 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
@@ -31,6 +30,7 @@ namespace ELF {
 class Parser;
 class Builder;
 class Binary;
+class Note;
 
 struct CoreFileEntry {
   uint64_t      start;    ///< Start address of mapped file
@@ -95,8 +95,8 @@ class LIEF_API CoreFile : public NoteDetails {
   CoreFile(Note& note);
 
   private:
-  files_t   files_;
-  uint64_t  page_size_;
+  files_t  files_;
+  uint64_t page_size_;
 };
 
 } // namepsace ELF

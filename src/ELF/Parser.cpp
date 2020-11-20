@@ -24,17 +24,23 @@
 #include "logging.hpp"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/DataHandler/Handler.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 #include "LIEF/ELF/NoteDetails/Core.hpp"
 
 #include "filesystem/filesystem.h"
 
-
 #include "Parser.tcc"
-
 
 namespace LIEF {
 namespace ELF {

@@ -25,8 +25,7 @@
 
 #include "LIEF/Abstract/Relocation.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
-#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -34,6 +33,14 @@ namespace ELF {
 class Parser;
 class Binary;
 class Builder;
+class Symbol;
+class Section;
+
+struct Elf32_Rel;
+struct Elf32_Rela;
+
+struct Elf64_Rel;
+struct Elf64_Rela;
 
 class LIEF_API Relocation : public LIEF::Relocation {
 

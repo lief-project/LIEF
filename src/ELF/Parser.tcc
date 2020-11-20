@@ -17,9 +17,28 @@
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/ELF/hash.hpp"
+#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/DataHandler/Handler.hpp"
+
 
 #include "Object.tcc"
 
