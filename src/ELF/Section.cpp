@@ -328,8 +328,8 @@ void Section::content(std::vector<uint8_t>&& content) {
 
   if (this->datahandler_ == nullptr) {
     LIEF_DEBUG("Set 0x{:x} bytes in the cache of section '{}'", content.size(), this->name());
-    this->content_c_ = std::move(content);
     this->size(content.size());
+    this->content_c_ = std::move(content);
     return;
   }
 
