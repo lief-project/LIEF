@@ -13,17 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/Structures.hpp"
-
-#include "LIEF/exception.hpp"
-#include "logging.hpp"
 
 #include <fstream>
 #include <iterator>
 #include <string>
-#include <stdexcept>
 #include <vector>
+
+#include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
+
+#include "LIEF/exception.hpp"
+#include "logging.hpp"
+
 
 namespace LIEF {
 namespace MachO {

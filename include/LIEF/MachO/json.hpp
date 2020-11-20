@@ -27,9 +27,42 @@
 namespace LIEF {
 namespace MachO {
 
+
+class Binary;
+class Header;
+class LoadCommand;
+class UUIDCommand;
+class SymbolCommand;
+class SegmentCommand;
+class Section;
+class MainCommand;
+class DynamicSymbolCommand;
+class DylinkerCommand;
+class DylibCommand;
+class ThreadCommand;
+class RPathCommand;
+class Symbol;
+class Relocation;
+class RelocationObject;
+class RelocationDyld;
+class BindingInfo;
+class ExportInfo;
+class FunctionStarts;
+class CodeSignature;
+class DataInCode;
+class DataCodeEntry;
+class VersionMin;
+class SourceVersion;
+class SegmentSplitInfo;
+class SubFramework;
+class DyldEnvironment;
+class EncryptionInfo;
+class BuildVersion;
+class BuildToolVersion;
+
+
 LIEF_API json to_json(const Object& v);
 LIEF_API std::string to_json_str(const Object& v);
-
 
 class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   public:

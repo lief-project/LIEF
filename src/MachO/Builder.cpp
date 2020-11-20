@@ -20,12 +20,15 @@
 
 #include "logging.hpp"
 
-#include "LIEF/MachO/Builder.hpp"
 #include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/UUIDCommand.hpp"
 
 #include "Builder.tcc"
 #include "Object.tcc"
-
 
 namespace LIEF {
 namespace MachO {

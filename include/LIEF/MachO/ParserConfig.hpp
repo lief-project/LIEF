@@ -22,36 +22,36 @@ namespace MachO {
 
 class LIEF_API ParserConfig {
   public:
-    ParserConfig(void);
-    ParserConfig& operator=(const ParserConfig&);
-    ParserConfig(const ParserConfig&);
-    ~ParserConfig(void);
+  ParserConfig(void);
+  ParserConfig& operator=(const ParserConfig&);
+  ParserConfig(const ParserConfig&);
+  ~ParserConfig(void);
 
-    //! @brief Return a configuration so that the all objects supported by
-    //! LIEF are parsed
-    //!
-    //! With this configuration:
-    //! * ``parse_dyldinfo_deeply`` is set to ``true``
-    static ParserConfig deep(void);
+  //! @brief Return a configuration so that the all objects supported by
+  //! LIEF are parsed
+  //!
+  //! With this configuration:
+  //! * ``parse_dyldinfo_deeply`` is set to ``true``
+  static ParserConfig deep(void);
 
-    //! Return a configuration so that the parsing is quick
-    //!
-    //! With this configuration:
-    //! * ``parse_dyldinfo_deeply`` is set to ``false``
-    static ParserConfig quick(void);
+  //! Return a configuration so that the parsing is quick
+  //!
+  //! With this configuration:
+  //! * ``parse_dyldinfo_deeply`` is set to ``false``
+  static ParserConfig quick(void);
 
-    //! @brief If ``flag`` is set to ``true``,
-    //! Exports, Bindings and Rebases opcodes are
-    //! parsed.
-    //!
-    //! @warning Enabling this flag can slow down the parsing
-    ParserConfig& parse_dyldinfo_deeply(bool flag);
+  //! @brief If ``flag`` is set to ``true``,
+  //! Exports, Bindings and Rebases opcodes are
+  //! parsed.
+  //!
+  //! @warning Enabling this flag can slow down the parsing
+  ParserConfig& parse_dyldinfo_deeply(bool flag);
 
-    //! @brief Whether or not bindings, exports, and rebases are parsed
-    bool parse_dyldinfo_deeply(void) const;
+  //! @brief Whether or not bindings, exports, and rebases are parsed
+  bool parse_dyldinfo_deeply(void) const;
 
   private:
-    bool dyldinfo_deeply_;
+  bool dyldinfo_deeply_;
 };
 
 }

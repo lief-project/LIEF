@@ -24,7 +24,11 @@
 #include "logging.hpp"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
+#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/utils.hpp"

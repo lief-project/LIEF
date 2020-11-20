@@ -34,6 +34,10 @@
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 
 #include "TrieNode.hpp"
 #include "Object.tcc"

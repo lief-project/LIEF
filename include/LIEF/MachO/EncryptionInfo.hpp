@@ -15,10 +15,7 @@
  */
 #ifndef LIEF_MACHO_ENCRYPTION_INFO_COMMAND_H_
 #define LIEF_MACHO_ENCRYPTION_INFO_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
@@ -27,7 +24,7 @@
 
 namespace LIEF {
 namespace MachO {
-
+struct encryption_info_command;
 class LIEF_API EncryptionInfo : public LoadCommand {
   public:
   EncryptionInfo(void);

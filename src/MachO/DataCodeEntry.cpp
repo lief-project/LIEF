@@ -18,6 +18,8 @@
 
 #include "LIEF/MachO/hash.hpp"
 
+#include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
 
 namespace LIEF {

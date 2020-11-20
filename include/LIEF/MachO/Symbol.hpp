@@ -24,15 +24,18 @@
 #include "LIEF/Abstract/Symbol.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
-
-#include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
-
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
 
 class BinaryParser;
+class BindingInfo;
+class ExportInfo;
+class DylibCommand;
+
+struct nlist_32;
+struct nlist_64;
 
 class LIEF_API Symbol : public LIEF::Symbol {
 

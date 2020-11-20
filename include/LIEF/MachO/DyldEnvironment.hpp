@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
 #define LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
-
+#include <string>
 #include <iostream>
 
 #include "LIEF/types.hpp"
@@ -23,9 +23,10 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-
 namespace LIEF {
 namespace MachO {
+struct dylinker_command;
+
 class LIEF_API DyldEnvironment : public LoadCommand {
   public:
   DyldEnvironment(void);

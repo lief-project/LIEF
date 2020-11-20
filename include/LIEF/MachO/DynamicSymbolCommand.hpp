@@ -15,10 +15,7 @@
  */
 #ifndef LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H_
 #define LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
@@ -27,6 +24,8 @@
 
 namespace LIEF {
 namespace MachO {
+struct dysymtab_command;
+
 class LIEF_API DynamicSymbolCommand : public LoadCommand {
   public:
   DynamicSymbolCommand(void);

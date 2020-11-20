@@ -24,10 +24,13 @@
 
 #include "LIEF/Abstract/enums.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
+struct mach_header_64;
+struct mach_header;
+
 class LIEF_API Header : public Object {
   public:
   using flags_list_t = std::set<HEADER_FLAGS>;

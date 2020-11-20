@@ -17,6 +17,7 @@
 
 #include "LIEF/MachO/hash.hpp"
 
+#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 
 namespace LIEF {

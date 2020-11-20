@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 #include "logging.hpp"
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Relocation.hpp"
 
 namespace LIEF {
 namespace MachO {

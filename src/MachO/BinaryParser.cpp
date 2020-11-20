@@ -17,16 +17,14 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
-#include <regex>
 #include <stdexcept>
-#include <functional>
 
+#include "BinaryParser.tcc"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/MachO/BinaryParser.hpp"
-#include "BinaryParser.tcc"
 
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/Header.hpp"
@@ -37,6 +35,7 @@
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 
 #include "filesystem/filesystem.h"
 

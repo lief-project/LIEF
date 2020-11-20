@@ -23,12 +23,12 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/Structures.hpp"
-
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
 class Builder;
+struct load_command;
 class LIEF_API LoadCommand : public Object {
   friend class Builder;
   public:

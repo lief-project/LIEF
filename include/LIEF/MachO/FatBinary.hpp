@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_MACHO_FAT_BINARY_H_
 #define LIEF_MACHO_FAT_BINARY_H_
-
+#include <string>
 #include <vector>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/Binary.hpp"
-
+#include "LIEF/MachO/type_traits.hpp"
 
 namespace LIEF {
 class Parser;
@@ -30,6 +29,7 @@ namespace MachO {
 
 class Parser;
 class Builder;
+class Binary;
 
 class LIEF_API FatBinary {
 

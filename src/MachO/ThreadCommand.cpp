@@ -19,6 +19,7 @@
 #include "logging.hpp"
 #include "LIEF/MachO/hash.hpp"
 
+#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 
 namespace LIEF {

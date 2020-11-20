@@ -15,8 +15,6 @@
  */
 #ifndef LIEF_MACHO_VERSION_MIN_COMMAND_H_
 #define LIEF_MACHO_VERSION_MIN_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
 #include <array>
 
@@ -27,41 +25,42 @@
 
 namespace LIEF {
 namespace MachO {
+struct version_min_command;
 
 class LIEF_API VersionMin : public LoadCommand {
 
   public:
-    //! @brief Version is an array of **3** integers
-    using version_t = std::array<uint32_t, 3>;
+  //! @brief Version is an array of **3** integers
+  using version_t = std::array<uint32_t, 3>;
 
-    VersionMin(void);
-    VersionMin(const version_min_command *version_cmd);
+  VersionMin(void);
+  VersionMin(const version_min_command *version_cmd);
 
-    VersionMin& operator=(const VersionMin& copy);
-    VersionMin(const VersionMin& copy);
+  VersionMin& operator=(const VersionMin& copy);
+  VersionMin(const VersionMin& copy);
 
-    virtual VersionMin* clone(void) const override;
+  virtual VersionMin* clone(void) const override;
 
-    virtual ~VersionMin(void);
+  virtual ~VersionMin(void);
 
-    //! @brief Return the version as an array
-    const VersionMin::version_t& version(void) const;
-    void version(const VersionMin::version_t& version);
+  //! @brief Return the version as an array
+  const VersionMin::version_t& version(void) const;
+  void version(const VersionMin::version_t& version);
 
-    //! @brief Return the sdk as an array
-    const VersionMin::version_t& sdk(void) const;
-    void sdk(const VersionMin::version_t& sdk);
+  //! @brief Return the sdk as an array
+  const VersionMin::version_t& sdk(void) const;
+  void sdk(const VersionMin::version_t& sdk);
 
-    bool operator==(const VersionMin& rhs) const;
-    bool operator!=(const VersionMin& rhs) const;
+  bool operator==(const VersionMin& rhs) const;
+  bool operator!=(const VersionMin& rhs) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    VersionMin::version_t version_;
-    VersionMin::version_t sdk_;
+  VersionMin::version_t version_;
+  VersionMin::version_t sdk_;
 };
 
 }

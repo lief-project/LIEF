@@ -27,7 +27,6 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/type_traits.hpp"
-#include "LIEF/MachO/Relocation.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -35,6 +34,9 @@ namespace MachO {
 class BinaryParser;
 class SegmentCommand;
 class Binary;
+
+struct section_32;
+struct section_64;
 
 class LIEF_API Section : public LIEF::Section {
 

@@ -15,16 +15,11 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_DYLD_COMMAND_H_
 #define LIEF_MACHO_RELOCATION_DYLD_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
-#include "LIEF/Object.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 
 namespace LIEF {
@@ -37,42 +32,41 @@ class LIEF_API RelocationDyld : public Relocation {
   friend class BinaryParser;
 
   public:
-    using Relocation::Relocation;
-    RelocationDyld(void);
+  using Relocation::Relocation;
+  RelocationDyld(void);
 
-    RelocationDyld& operator=(const RelocationDyld&);
-    RelocationDyld(const RelocationDyld&);
+  RelocationDyld& operator=(const RelocationDyld&);
+  RelocationDyld(const RelocationDyld&);
 
-    virtual ~RelocationDyld(void);
+  virtual ~RelocationDyld(void);
 
-    virtual Relocation* clone(void) const override;
+  virtual Relocation* clone(void) const override;
 
-    //! @brief Indicates whether the item containing the address to be
-    //! relocated is part of a CPU instruction that uses PC-relative addressing.
-    //!
-    //! For addresses contained in PC-relative instructions, the CPU adds the address of
-    //! the instruction to the address contained in the instruction.
-    virtual bool is_pc_relative(void) const override;
+  //! @brief Indicates whether the item containing the address to be
+  //! relocated is part of a CPU instruction that uses PC-relative addressing.
+  //!
+  //! For addresses contained in PC-relative instructions, the CPU adds the address of
+  //! the instruction to the address contained in the instruction.
+  virtual bool is_pc_relative(void) const override;
 
-    //! @brief Origin of the relocation
-    virtual RELOCATION_ORIGINS origin(void) const override;
+  //! @brief Origin of the relocation
+  virtual RELOCATION_ORIGINS origin(void) const override;
 
 
-    virtual void pc_relative(bool val) override;
+  virtual void pc_relative(bool val) override;
 
-    bool operator==(const RelocationDyld& rhs) const;
-    bool operator!=(const RelocationDyld& rhs) const;
+  bool operator==(const RelocationDyld& rhs) const;
+  bool operator!=(const RelocationDyld& rhs) const;
 
-    bool operator<(const RelocationDyld& rhs) const;
-    bool operator>=(const RelocationDyld& rhs) const;
+  bool operator<(const RelocationDyld& rhs) const;
+  bool operator>=(const RelocationDyld& rhs) const;
 
-    bool operator>(const RelocationDyld& rhs) const;
-    bool operator<=(const RelocationDyld& rhs) const;
+  bool operator>(const RelocationDyld& rhs) const;
+  bool operator<=(const RelocationDyld& rhs) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
-
+  virtual std::ostream& print(std::ostream& os) const override;
 };
 
 }

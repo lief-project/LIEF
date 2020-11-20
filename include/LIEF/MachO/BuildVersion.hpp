@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_MACHO_BUILD_VERSION_COMMAND_H_
 #define LIEF_MACHO_BUILD_VERSION_COMMAND_H_
-#include <string>
 #include <vector>
 #include <iostream>
 #include <array>
@@ -27,7 +26,8 @@
 
 namespace LIEF {
 namespace MachO {
-
+struct build_tool_version;
+struct build_version_command;
 
 class LIEF_API BuildToolVersion : public LIEF::Object {
   public:

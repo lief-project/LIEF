@@ -15,22 +15,20 @@
  */
 #ifndef LIEF_MACHO_BINDING_INFO_COMMAND_H_
 #define LIEF_MACHO_BINDING_INFO_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
+#include "LIEF/Object.hpp"
 
 #include "LIEF/MachO/enums.hpp"
-
-#include "LIEF/MachO/DylibCommand.hpp"
 
 
 namespace LIEF {
 namespace MachO {
-
+class DylibCommand;
+class SegmentCommand;
+class Symbol;
 class BinaryParser;
 
 class LIEF_API BindingInfo : public Object {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
+#include "LIEF/Object.hpp"
 
 namespace LIEF {
 

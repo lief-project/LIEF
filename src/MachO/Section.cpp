@@ -23,6 +23,7 @@
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 

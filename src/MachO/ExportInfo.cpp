@@ -21,6 +21,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 
 namespace LIEF {
 namespace MachO {

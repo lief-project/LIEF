@@ -27,8 +27,8 @@
 
 namespace LIEF {
 namespace MachO {
-
 class BinaryParser;
+struct linkedit_data_command;
 
 //! Interface of the LC_DATA_IN_CODE command
 class LIEF_API DataInCode : public LoadCommand {

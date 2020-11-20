@@ -15,7 +15,8 @@
  */
 #ifndef LIEF_MACHO_DYLIB_COMMAND_H_
 #define LIEF_MACHO_DYLIB_COMMAND_H_
-
+#include <array>
+#include <string>
 #include <iostream>
 
 #include "LIEF/types.hpp"
@@ -23,9 +24,9 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-
 namespace LIEF {
 namespace MachO {
+struct dylib_command;
 class LIEF_API DylibCommand : public LoadCommand {
 
   public:

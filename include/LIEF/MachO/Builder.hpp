@@ -25,13 +25,26 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/iostream.hpp"
 
-#include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/FatBinary.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
-
 namespace LIEF {
 namespace MachO {
-
+class Binary;
+class FatBinary;
+class DylibCommand;
+class DylinkerCommand;
+class VersionMin;
+class SourceVersion;
+class FunctionStarts;
+class MainCommand;
+class DyldInfo;
+class SymbolCommand;
+class DynamicSymbolCommand;
+class DataInCode;
+class CodeSignature;
+class SegmentSplitInfo;
+class SubFramework;
+class DyldEnvironment;
+class ThreadCommand;
+class BuildVersion;
 
 class LIEF_API Builder {
   public:

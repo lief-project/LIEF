@@ -18,10 +18,41 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/MachO.hpp"
 
 namespace LIEF {
 namespace MachO {
+
+class Binary;
+class Header;
+class LoadCommand;
+class UUIDCommand;
+class SymbolCommand;
+class SegmentCommand;
+class Section;
+class MainCommand;
+class DynamicSymbolCommand;
+class DylinkerCommand;
+class DylibCommand;
+class ThreadCommand;
+class RPathCommand;
+class Symbol;
+class Relocation;
+class RelocationObject;
+class RelocationDyld;
+class BindingInfo;
+class ExportInfo;
+class FunctionStarts;
+class CodeSignature;
+class DataInCode;
+class DataCodeEntry;
+class VersionMin;
+class SourceVersion;
+class SegmentSplitInfo;
+class SubFramework;
+class DyldEnvironment;
+class EncryptionInfo;
+class BuildVersion;
+class BuildToolVersion;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:

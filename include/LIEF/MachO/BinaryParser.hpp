@@ -23,20 +23,20 @@
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/ParserConfig.hpp"
-#include "LIEF/MachO/Structures.hpp"
-#include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/type_traits.hpp"
 
 namespace LIEF {
-namespace MachO {
+class VectorStream;
 
+namespace MachO {
+class Section;
 class Parser;
+class ParserConfig;
 
 //! @brief Class used to parse **single** binary (i.e. **not** FAT)
 //! @see MachO::Parser
@@ -49,86 +49,86 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint8_t>::max();
 
   public:
-    BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
-    BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
-    BinaryParser(void);
+  BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(void);
 
-    BinaryParser& operator=(const BinaryParser& copy) = delete;
-    BinaryParser(const BinaryParser& copy) = delete;
+  BinaryParser& operator=(const BinaryParser& copy) = delete;
+  BinaryParser(const BinaryParser& copy) = delete;
 
-    ~BinaryParser(void);
+  ~BinaryParser(void);
 
-    Binary* get_binary(void);
+  Binary* get_binary(void);
 
   private:
-    BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
 
-    void init(void);
+  void init(void);
 
-    template<class MACHO_T>
-    void parse(void);
+  template<class MACHO_T>
+  void parse(void);
 
-    template<class MACHO_T>
-    void parse_header(void);
+  template<class MACHO_T>
+  void parse_header(void);
 
-    template<class MACHO_T>
-    void parse_load_commands(void);
+  template<class MACHO_T>
+  void parse_load_commands(void);
 
-    template<class MACHO_T>
-    void parse_relocations(Section& section);
+  template<class MACHO_T>
+  void parse_relocations(Section& section);
 
-    // Dyld info parser
-    // ================
+  // Dyld info parser
+  // ================
 
-    // Rebase
-    // ------
-    template<class MACHO_T>
-    void parse_dyldinfo_rebases(void);
+  // Rebase
+  // ------
+  template<class MACHO_T>
+  void parse_dyldinfo_rebases(void);
 
-    // Bindings
-    // --------
-    template<class MACHO_T>
-    void parse_dyldinfo_binds(void);
+  // Bindings
+  // --------
+  template<class MACHO_T>
+  void parse_dyldinfo_binds(void);
 
-    template<class MACHO_T>
-    void parse_dyldinfo_generic_bind(void);
+  template<class MACHO_T>
+  void parse_dyldinfo_generic_bind(void);
 
-    template<class MACHO_T>
-    void parse_dyldinfo_weak_bind(void);
+  template<class MACHO_T>
+  void parse_dyldinfo_weak_bind(void);
 
-    template<class MACHO_T>
-    void parse_dyldinfo_lazy_bind(void);
+  template<class MACHO_T>
+  void parse_dyldinfo_lazy_bind(void);
 
-    template<class MACHO_T>
-    void do_bind(BINDING_CLASS cls,
-        uint8_t type,
-        uint8_t segment_idx,
-        uint64_t segment_offset,
-        const std::string& symbol_name,
-        int32_t ord,
-        int64_t addend,
-        bool is_weak,
-        bool is_non_weak_definition,
-        it_segments& segments,
-        uint64_t offset = 0
-    );
+  template<class MACHO_T>
+  void do_bind(BINDING_CLASS cls,
+      uint8_t type,
+      uint8_t segment_idx,
+      uint64_t segment_offset,
+      const std::string& symbol_name,
+      int32_t ord,
+      int64_t addend,
+      bool is_weak,
+      bool is_non_weak_definition,
+      it_segments& segments,
+      uint64_t offset = 0
+  );
 
 
-    template<class MACHO_T>
-    void do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_address);
+  template<class MACHO_T>
+  void do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_address);
 
-    // Exports
-    // -------
-    void parse_dyldinfo_export(void);
+  // Exports
+  // -------
+  void parse_dyldinfo_export(void);
 
-    void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
+  void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 
-    std::unique_ptr<VectorStream> stream_;
-    Binary*                       binary_ ;
-    MACHO_TYPES                   type_;
-    bool                          is64_;
-    ParserConfig                  config_;
-    std::set<uint64_t>            visited_;
+  std::unique_ptr<VectorStream> stream_;
+  Binary*                       binary_{nullptr};
+  MACHO_TYPES                   type_;
+  bool                          is64_;
+  ParserConfig                  config_;
+  std::set<uint64_t>            visited_;
 };
 
 

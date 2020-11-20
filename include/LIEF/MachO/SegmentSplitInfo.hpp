@@ -15,10 +15,8 @@
  */
 #ifndef LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
 #define LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
-#include <string>
 #include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
@@ -27,39 +25,40 @@
 
 namespace LIEF {
 namespace MachO {
-
 class BinaryParser;
+
+struct linkedit_data_command;
 
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   public:
-    SegmentSplitInfo(void);
-    SegmentSplitInfo(const linkedit_data_command *cmd);
+  SegmentSplitInfo(void);
+  SegmentSplitInfo(const linkedit_data_command *cmd);
 
-    SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
-    SegmentSplitInfo(const SegmentSplitInfo& copy);
+  SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
+  SegmentSplitInfo(const SegmentSplitInfo& copy);
 
-    virtual SegmentSplitInfo* clone(void) const override;
+  virtual SegmentSplitInfo* clone(void) const override;
 
-    uint32_t data_offset(void) const;
-    uint32_t data_size(void) const;
+  uint32_t data_offset(void) const;
+  uint32_t data_size(void) const;
 
-    void data_offset(uint32_t offset);
-    void data_size(uint32_t size);
+  void data_offset(uint32_t offset);
+  void data_size(uint32_t size);
 
-    virtual ~SegmentSplitInfo(void);
+  virtual ~SegmentSplitInfo(void);
 
-    bool operator==(const SegmentSplitInfo& rhs) const;
-    bool operator!=(const SegmentSplitInfo& rhs) const;
+  bool operator==(const SegmentSplitInfo& rhs) const;
+  bool operator!=(const SegmentSplitInfo& rhs) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    uint32_t              data_offset_;
-    uint32_t              data_size_;
-    std::vector<uint8_t>  raw_;
+  uint32_t              data_offset_;
+  uint32_t              data_size_;
+  std::vector<uint8_t>  raw_;
 
 };
 

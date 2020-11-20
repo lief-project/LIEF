@@ -18,6 +18,7 @@
 
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/Binary.hpp"
 
 namespace LIEF {
 namespace MachO {

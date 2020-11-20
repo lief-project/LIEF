@@ -16,6 +16,11 @@
 
 #include "logging.hpp"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/BinaryParser.hpp"
+#include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
@@ -24,6 +29,23 @@
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/UUIDCommand.hpp"
+#include "LIEF/MachO/DylinkerCommand.hpp"
+#include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/DyldEnvironment.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
 
 #include "Object.tcc"
 

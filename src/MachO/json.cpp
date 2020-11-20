@@ -203,7 +203,7 @@ void JsonVisitor::visit(const LoadCommand& cmd) {
   this->node_["command"]        = to_string(cmd.command());
   this->node_["command_size"]   = cmd.size();
   this->node_["command_offset"] = cmd.command_offset();
-  this->node_["data_hash"]      = Hash::hash(cmd.data());
+  this->node_["data_hash"]      = LIEF::hash(cmd.data());
 }
 
 void JsonVisitor::visit(const UUIDCommand& uuid) {
@@ -237,7 +237,7 @@ void JsonVisitor::visit(const SegmentCommand& segment) {
   this->node_["numberof_sections"] = segment.numberof_sections();
   this->node_["flags"]             = segment.flags();
   this->node_["sections"]          = sections;
-  this->node_["content_hash"]      = Hash::hash(segment.content());
+  this->node_["content_hash"]      = LIEF::hash(segment.content());
 }
 
 void JsonVisitor::visit(const Section& section) {
@@ -258,7 +258,7 @@ void JsonVisitor::visit(const Section& section) {
   this->node_["reserved1"]            = section.reserved1();
   this->node_["reserved2"]            = section.reserved2();
   this->node_["reserved3"]            = section.reserved3();
-  this->node_["content_hash"]         = Hash::hash(section.content());
+  this->node_["content_hash"]         = LIEF::hash(section.content());
 }
 
 void JsonVisitor::visit(const MainCommand& maincmd) {

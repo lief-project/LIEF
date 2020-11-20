@@ -18,13 +18,13 @@
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/MachO/Binary.hpp"
 
 #include <string>
 #include <vector>
 
 namespace LIEF {
 namespace MachO {
+class Binary;
 
 LIEF_API bool is_macho(const std::string& file);
 

@@ -15,47 +15,44 @@
  */
 #ifndef LIEF_MACHO_MAIN_COMMAND_H_
 #define LIEF_MACHO_MAIN_COMMAND_H_
-
 #include <iostream>
-#include <set>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
 namespace MachO {
-
+struct entry_point_command;
 class LIEF_API MainCommand : public LoadCommand {
   public:
-    MainCommand(void);
-    MainCommand(const entry_point_command *cmd);
+  MainCommand(void);
+  MainCommand(const entry_point_command *cmd);
 
-    MainCommand& operator=(const MainCommand& copy);
-    MainCommand(const MainCommand& copy);
+  MainCommand& operator=(const MainCommand& copy);
+  MainCommand(const MainCommand& copy);
 
-    virtual MainCommand* clone(void) const override;
+  virtual MainCommand* clone(void) const override;
 
-    virtual ~MainCommand(void);
+  virtual ~MainCommand(void);
 
-    uint64_t entrypoint(void) const;
-    uint64_t stack_size(void) const;
+  uint64_t entrypoint(void) const;
+  uint64_t stack_size(void) const;
 
-    void entrypoint(uint64_t entrypoint);
-    void stack_size(uint64_t stacksize);
+  void entrypoint(uint64_t entrypoint);
+  void stack_size(uint64_t stacksize);
 
-    bool operator==(const MainCommand& rhs) const;
-    bool operator!=(const MainCommand& rhs) const;
+  bool operator==(const MainCommand& rhs) const;
+  bool operator!=(const MainCommand& rhs) const;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
   private:
-    uint64_t entrypoint_;
-    uint64_t stackSize_;
-
+  uint64_t entrypoint_;
+  uint64_t stackSize_;
 };
 
 }

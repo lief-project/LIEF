@@ -16,9 +16,7 @@
 #ifndef LIEF_MACHO_SUB_FRAMEWORK_H_
 #define LIEF_MACHO_SUB_FRAMEWORK_H_
 #include <string>
-#include <vector>
 #include <iostream>
-#include <array>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
@@ -29,6 +27,8 @@ namespace LIEF {
 namespace MachO {
 
 class BinaryParser;
+
+struct sub_framework_command;
 
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;

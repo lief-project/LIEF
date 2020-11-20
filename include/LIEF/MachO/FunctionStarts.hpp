@@ -27,52 +27,53 @@
 
 namespace LIEF {
 namespace MachO {
+struct linkedit_data_command;
 
 class LIEF_API FunctionStarts : public LoadCommand {
   public:
-    FunctionStarts(void);
-    FunctionStarts(const linkedit_data_command *cmd);
+  FunctionStarts(void);
+  FunctionStarts(const linkedit_data_command *cmd);
 
-    FunctionStarts& operator=(const FunctionStarts& copy);
-    FunctionStarts(const FunctionStarts& copy);
+  FunctionStarts& operator=(const FunctionStarts& copy);
+  FunctionStarts(const FunctionStarts& copy);
 
-    virtual FunctionStarts* clone(void) const override;
+  virtual FunctionStarts* clone(void) const override;
 
-    //! @brief Offset in the binary where *start functions* are located
-    uint32_t data_offset(void) const;
+  //! @brief Offset in the binary where *start functions* are located
+  uint32_t data_offset(void) const;
 
-    //! @brief Size of the functions list in the binary
-    uint32_t data_size(void) const;
+  //! @brief Size of the functions list in the binary
+  uint32_t data_size(void) const;
 
-    //! @brief Addresses of every function entry point in the executable.
-    //!
-    //! This allows for functions to exist that have no entries in the symbol table.
-    //!
-    //! @warning The address is relative to the ``__TEXT`` segment
-    const std::vector<uint64_t>& functions(void) const;
+  //! @brief Addresses of every function entry point in the executable.
+  //!
+  //! This allows for functions to exist that have no entries in the symbol table.
+  //!
+  //! @warning The address is relative to the ``__TEXT`` segment
+  const std::vector<uint64_t>& functions(void) const;
 
-    std::vector<uint64_t>& functions(void);
+  std::vector<uint64_t>& functions(void);
 
-    //! @brief Add a new function
-    void add_function(uint64_t address);
+  //! @brief Add a new function
+  void add_function(uint64_t address);
 
-    void data_offset(uint32_t offset);
-    void data_size(uint32_t size);
-    void functions(const std::vector<uint64_t>& funcs);
+  void data_offset(uint32_t offset);
+  void data_size(uint32_t size);
+  void functions(const std::vector<uint64_t>& funcs);
 
-    virtual ~FunctionStarts(void);
+  virtual ~FunctionStarts(void);
 
-    bool operator==(const FunctionStarts& rhs) const;
-    bool operator!=(const FunctionStarts& rhs) const;
+  bool operator==(const FunctionStarts& rhs) const;
+  bool operator!=(const FunctionStarts& rhs) const;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual void accept(Visitor& visitor) const override;
 
-    virtual std::ostream& print(std::ostream& os) const override;
+  virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-    uint32_t              data_offset_;
-    uint32_t              data_size_;
-    std::vector<uint64_t> functions_;
+  uint32_t              data_offset_;
+  uint32_t              data_size_;
+  std::vector<uint64_t> functions_;
 
 };
 

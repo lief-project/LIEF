@@ -13,18 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "logging.hpp"
-#include "LIEF/utils.hpp"
-#include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Builder.hpp"
-#include "Object.tcc"
-#include "Binary.tcc"
-
-#include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/exception.hpp"
-
 #include <algorithm>
 #include <numeric>
 #include <sstream>
@@ -34,6 +22,48 @@
 #else
 #define getpagesize() 0x1000
 #endif
+
+#include "logging.hpp"
+
+
+#include "Object.tcc"
+#include "Binary.tcc"
+
+#include "LIEF/utils.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
+#include "LIEF/MachO/hash.hpp"
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/DylinkerCommand.hpp"
+#include "LIEF/MachO/UUIDCommand.hpp"
+#include "LIEF/MachO/VersionMin.hpp"
+#include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/DyldEnvironment.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/SourceVersion.hpp"
+
+
+#include "LIEF/exception.hpp"
+
 
 namespace LIEF {
 namespace MachO {

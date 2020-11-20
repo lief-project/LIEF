@@ -17,6 +17,7 @@
 
 #include "LIEF/MachO/Binary.h"
 #include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 #include "Binary.hpp"
 
