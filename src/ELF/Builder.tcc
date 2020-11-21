@@ -540,7 +540,18 @@ void Builder::build_static_symbols(void) {
     content.write_conv<Elf_Sym>(sym_hdr);
   }
 
-  // FIXME: Handle increase of size in symbol_str_section
+  // 1. Size of string table may become smaller if user extends string table but
+  //    doesn't add static symbols.
+  // 2. Size of string table may become larger if user add static symbols but
+  //    doesn't extend string table.
+  if (symbol_str_section.size() > string_table_raw.size()) {
+    string_table_raw.resize(symbol_str_section.size(), 0);
+  } else if (symbol_str_section.size() < string_table_raw.size()) {
+    // FIXME: Handle increase of size in symbol_str_section automatically
+    LIEF_WARN("Size of string table is increased by {:d} after optimization, "
+              "please extend string table after adding static symbols",
+              string_table_raw.size() - symbol_str_section.size());
+  }
   symbol_str_section.content(std::move(string_table_raw));
   symbol_section.content(std::move(content.raw()));
 
