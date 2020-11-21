@@ -16,6 +16,9 @@
 #ifndef LIEF_PE_H_
 #define LIEF_PE_H_
 
+#include "LIEF/config.h"
+
+#if defined(LIEF_PE_SUPPORT)
 
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Section.hpp"
@@ -71,5 +74,7 @@
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/utils.hpp"
+
+#endif
 
 #endif

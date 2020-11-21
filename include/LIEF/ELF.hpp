@@ -15,7 +15,9 @@
  */
 #ifndef LIEF_ELF_H_
 #define LIEF_ELF_H_
+#include "LIEF/config.h"
 
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/enums.hpp"
@@ -50,5 +52,6 @@
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/Core.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
+#endif
 
 #endif

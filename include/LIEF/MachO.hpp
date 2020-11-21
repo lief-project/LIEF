@@ -16,6 +16,10 @@
 #ifndef LIEF_MACHO_H_
 #define LIEF_MACHO_H_
 
+#include "LIEF/config.h"
+
+#if defined(LIEF_MACHO_SUPPORT)
+
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
@@ -60,4 +64,5 @@
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
+#endif
 #endif
