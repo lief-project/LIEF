@@ -1344,6 +1344,7 @@ Section& Binary::extend(const Section& section, uint64_t size) {
 
   uint64_t from_offset  = section_to_extend->offset() + section_to_extend->size();
   uint64_t from_address = section_to_extend->virtual_address() + section_to_extend->size();
+  bool section_loaded   = section_to_extend->virtual_address() != 0;
   uint64_t shift        = size;
 
   this->datahandler_->make_hole(
@@ -1358,7 +1359,9 @@ Section& Binary::extend(const Section& section, uint64_t size) {
   for (Segment* segment : this->segments_) {
     if ((segment->file_offset() + segment->physical_size()) >= from_offset and
         from_offset >= segment->file_offset()) {
-      segment->virtual_size(segment->virtual_size()   + shift);
+      if (section_loaded) {
+        segment->virtual_size(segment->virtual_size() + shift);
+      }
       segment->physical_size(segment->physical_size() + shift);
     }
   }
@@ -1373,19 +1376,21 @@ Section& Binary::extend(const Section& section, uint64_t size) {
 
   this->header().section_headers_offset(this->header().section_headers_offset() + shift);
 
-  this->shift_dynamic_entries(from_address, shift);
-  this->shift_symbols(from_address, shift);
-  this->shift_relocations(from_address, shift);
+  if (section_loaded) {
+    this->shift_dynamic_entries(from_address, shift);
+    this->shift_symbols(from_address, shift);
+    this->shift_relocations(from_address, shift);
 
-  if (this->type() == ELF_CLASS::ELFCLASS32) {
-    this->fix_got_entries<ELF32>(from_address, shift);
-  } else {
-    this->fix_got_entries<ELF64>(from_address, shift);
-  }
+    if (this->type() == ELF_CLASS::ELFCLASS32) {
+      this->fix_got_entries<ELF32>(from_address, shift);
+    } else {
+      this->fix_got_entries<ELF64>(from_address, shift);
+    }
 
 
-  if (this->header().entrypoint() >= from_address) {
-    this->header().entrypoint(this->header().entrypoint() + shift);
+    if (this->header().entrypoint() >= from_address) {
+      this->header().entrypoint(this->header().entrypoint() + shift);
+    }
   }
 
   return *section_to_extend;
