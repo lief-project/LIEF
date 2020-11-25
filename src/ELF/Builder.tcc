@@ -491,6 +491,28 @@ void Builder::build_static_symbols(void) {
   //clear
   //symbol_section.content(std::vector<uint8_t>(symbol_section.content().size(), 0));
 
+  std::stable_sort(std::begin(this->binary_->static_symbols_), std::end(this->binary_->static_symbols_),
+      [](const Symbol* lhs, const Symbol* rhs) {
+        return lhs->binding() == SYMBOL_BINDINGS::STB_LOCAL and
+               (rhs->binding() == SYMBOL_BINDINGS::STB_GLOBAL or rhs->binding() == SYMBOL_BINDINGS::STB_WEAK);
+  });
+
+  auto it_first_exported_symbol =
+      std::find_if(std::begin(this->binary_->static_symbols_), std::end(this->binary_->static_symbols_),
+          [](const Symbol* sym) {
+            return sym->is_exported();
+          });
+
+  uint32_t first_exported_symbol_index =
+      static_cast<uint32_t>(std::distance(std::begin(this->binary_->static_symbols_), it_first_exported_symbol));
+
+  if (first_exported_symbol_index != symbol_section.information()) {
+    LIEF_INFO("information of .symtab section changes from {:d} to {:d}",
+              symbol_section.information(),
+              first_exported_symbol_index);
+    symbol_section.information(first_exported_symbol_index);
+  }
+
   if (symbol_section.link() == 0 or
       symbol_section.link() >= this->binary_->sections_.size()) {
     throw LIEF::not_found("Unable to find a string section associated \
