@@ -892,7 +892,9 @@ void Parser::parse_sections(void) {
 
       const uint8_t* content = this->stream_->peek_array<uint8_t>(offset_to_content, size, /* check */false);
       if (content == nullptr) {
-        LIEF_ERR("  Unable to get content of section #{:d}", i);
+        if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+          LIEF_WARN("  Unable to get content of section #{:d}", i);
+        }
       } else {
         section->content({content, content + size});
       }

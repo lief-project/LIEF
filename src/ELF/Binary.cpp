@@ -2080,7 +2080,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_WARN("{} not supported", to_string(entry->tag()));
+          LIEF_DEBUG("{} skipped", to_string(entry->tag()));
         }
     }
     LIEF_DEBUG("[AFTER] {}", *entry);
@@ -2145,7 +2145,7 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 
     default:
       {
-       LIEF_WARN("Relocations for architecture {} is not supported!", to_string(arch));
+       LIEF_DEBUG("Relocations for architecture {} is not handled", to_string(arch));
       }
   }
 }

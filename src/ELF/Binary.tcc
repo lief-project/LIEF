@@ -45,7 +45,7 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_WARN("Relocation {} not supported!", to_string(type));
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
         }
     }
   }
@@ -116,7 +116,7 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
 
       default:
         {
-          LIEF_WARN("Relocation {} not supported!", to_string(type));
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
         }
     }
   }
@@ -187,7 +187,7 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_WARN("Relocation {} not supported!", to_string(type));
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
         }
     }
   }
@@ -216,7 +216,7 @@ void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_WARN("Relocation {} not supported!", to_string(type));
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
         }
     }
   }
