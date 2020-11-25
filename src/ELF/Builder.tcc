@@ -491,6 +491,30 @@ void Builder::build_static_symbols(void) {
   //clear
   //symbol_section.content(std::vector<uint8_t>(symbol_section.content().size(), 0));
 
+  auto it_begin = std::begin(this->binary_->static_symbols_);
+  auto it_end = std::end(this->binary_->static_symbols_);
+  std::stable_sort(it_begin, it_end, [](const Symbol* lhs, const Symbol* rhs) {
+    if (lhs->binding() == SYMBOL_BINDINGS::STB_LOCAL &&
+        (rhs->binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
+         rhs->binding() == SYMBOL_BINDINGS::STB_WEAK)) {
+      return true;
+    }
+    return false;
+  });
+  auto it_first_exported_symbol =
+      std::find_if(it_begin, it_end, [](const Symbol* sym) {
+        return sym->binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
+               sym->binding() == SYMBOL_BINDINGS::STB_WEAK;
+      });
+  uint32_t first_exported_symbol_index =
+      static_cast<uint32_t>(std::distance(it_begin, it_first_exported_symbol));
+  if (first_exported_symbol_index != symbol_section.information()) {
+    LIEF_WARN("information of .symtab section changes from {:d} to {:d}",
+              symbol_section.information(),
+              first_exported_symbol_index);
+    symbol_section.information(first_exported_symbol_index);
+  }
+
   if (symbol_section.link() == 0 or
       symbol_section.link() >= this->binary_->sections_.size()) {
     throw LIEF::not_found("Unable to find a string section associated \
