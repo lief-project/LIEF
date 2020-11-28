@@ -10,6 +10,7 @@ endif()
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(ExternalProject)
+include(CMakePackageConfigHelpers)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
    AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
@@ -462,6 +463,18 @@ if(LIEF_DOC)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/doc)
 endif()
 
+# Find Package Config
+# ======================
+configure_package_config_file(
+  LIEFConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
+  INSTALL_DESTINATION share/LIEF/cmake)
+
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion)
+
 # Install Prefix
 # ======================
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND UNIX)
@@ -497,6 +510,12 @@ install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
   DESTINATION share/LIEF/cmake
   COMPONENT CMakeScripts)
+
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
+  DESTINATION share/LIEF/cmake
+  COMPONENT config)
 
 install(
   FILES ${PROJECT_BINARY_DIR}/LIEF.pc

@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+
+set(LIEF_ROOT "${PACKAGE_PREFIX_DIR}")
+include("${CMAKE_CURRENT_LIST_DIR}/FindLIEF.cmake")
