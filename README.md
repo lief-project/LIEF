@@ -6,22 +6,21 @@
   <a href="https://gitter.im/lief-project">
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg">
   </a>
-  &nbsp;
+  |
   <a href="https://travis-ci.org/lief-project/LIEF">
     <img src="https://travis-ci.org/lief-project/LIEF.svg?branch=master">
   </a>
   &nbsp;
-  <!--
-  <a href="https://circleci.com/gh/lief-project/LIEF/tree/master">
-    <img src="https://circleci.com/gh/lief-project/LIEF/tree/master.svg?style=svg">
+  <a href="https://github.com/lief-project/LIEF/actions">
+    <img src="https://github.com/lief-project/LIEF/workflows/LIEF%20Windows%20Tests/badge.svg?branch=master">
   </a>
-  &nbsp;-->
+  &nbsp;
   <a href="https://ci.appveyor.com/project/Romain/lief/branch/master">
     <img src="https://ci.appveyor.com/api/projects/status/0ijlcujac5vh8cas/branch/master?svg=true">
   </a>
-  &nbsp;
+  |
   <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/badge/release-0.10.1-brightgreen.svg?style=default">
+    <img src="https://img.shields.io/github/v/release/lief-project/LIEF?style=flat-square">
   </a>
 </p>
 
