@@ -65,6 +65,11 @@ Changelog
 
   See: :func:`lief.logging.set_level`
 
+  .. note::
+
+     The log functions now output on ``stderr`` instead of ``stdout``
+
+
 
 0.10.1 - November 29, 2019
 --------------------------

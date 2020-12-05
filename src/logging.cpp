@@ -34,7 +34,7 @@ Logger::~Logger() = default;
 Logger::Logger(void) {
   // TODO(romain): Handle Android logcat sink
   if /* constexpr */ (lief_logging_support) {
-    this->sink_ = spdlog::stdout_color_mt("console");
+    this->sink_ = spdlog::stderr_color_mt("console");
 
     this->sink_->set_level(spdlog::level::warn);
     this->sink_->set_pattern("%v");
