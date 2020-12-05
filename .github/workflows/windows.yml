@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - enhancement/windows-ci
   pull_request:
 
 jobs:
@@ -29,7 +28,7 @@ jobs:
         toolset: "14.16"
     - name: Build and Test
       run: |
-        python ./setup.py --ninja --sdk bdist_wheel
+        python ./setup.py --ninja --sdk --lief-test bdist_wheel
       shell: cmd
 
 
