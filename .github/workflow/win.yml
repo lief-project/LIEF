@@ -1,0 +1,33 @@
+name: LIEF Windows Tests
+
+on:
+  push:
+    branches:
+      - master
+      - enhancement/windows-ci
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install system dependencies
+      run: |
+        choco install ninja
+        python -m pip install --upgrade pip setuptools
+        python -m pip install wheel mako
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        toolset: "14.16"
+    - name: Build and Test
+      run: |
+        python ./setup.py --ninja --sdk bdist_wheel
+      shell: cmd

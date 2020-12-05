@@ -11,6 +11,7 @@ from distutils import log
 
 from distutils.version import LooseVersion
 
+
 MIN_SETUPTOOLS_VERSION = "31.0.0"
 assert (LooseVersion(setuptools.__version__) >= LooseVersion(MIN_SETUPTOOLS_VERSION)), "LIEF requires a setuptools version '{}' or higher (pip install setuptools --upgrade)".format(MIN_SETUPTOOLS_VERSION)
 
@@ -101,6 +102,7 @@ class BuildLibrary(build_ext):
         filename = self.get_ext_filename(fullname)
 
         jobs = self.parallel if self.parallel else 1
+        cmake_args = []
 
         source_dir                     = ext.sourcedir
         build_temp                     = self.build_temp
@@ -109,7 +111,15 @@ class BuildLibrary(build_ext):
         cfg                            = 'RelWithDebInfo' if self.debug else 'Release'
         is64                           = sys.maxsize > 2**32
 
-        cmake_args = [
+        # Ninja ?
+        build_with_ninja = False
+        if self.has_ninja() and self.distribution.ninja:
+            build_with_ninja = True
+
+        if build_with_ninja:
+            cmake_args += ["-G", "Ninja"]
+
+        cmake_args += [
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}'.format(cmake_library_output_directory),
             '-DPYTHON_EXECUTABLE={}'.format(sys.executable),
             '-DLIEF_PYTHON_API=on',
@@ -172,34 +182,30 @@ class BuildLibrary(build_ext):
 
         build_args = ['--config', cfg]
 
+        env = os.environ
+
         if platform.system() == "Windows":
+            from setuptools import msvc
+
             cmake_args += [
                 '-DCMAKE_BUILD_TYPE={}'.format(cfg),
                 '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(), cmake_library_output_directory),
                 '-DLIEF_USE_CRT_RELEASE=MT',
             ]
-            cmake_args += ['-A', 'x64'] if is64 else ['-A', 'win32']
-
-            # Specific to appveyor
-            #if os.getenv("APPVEYOR", False):
-            #    build_args += ['--', '/v:m']
-            #    logger = os.getenv("MSBuildLogger", None)
-            #    if logger:
-            #        build_args += ['/logger:{}'.format(logger)]
-            #else:
-            build_args += ['--', '/m']
+            if build_with_ninja:
+                arch = 'x64' if is64 else 'x86'
+                ninja_env = msvc.msvc14_get_vc_env(arch)
+                env.update(ninja_env)
+            else:
+                cmake_args += ['-A', 'x64'] if is64 else ['-A', 'win32']
+                build_args += ['--', '/m']
         else:
             cmake_args += ['-DCMAKE_BUILD_TYPE={}'.format(cfg)]
 
-        env = os.environ.copy()
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        build_with_ninja = False
-        if self.has_ninja() and self.distribution.ninja:
-            cmake_args += ["-G", "Ninja"]
-            build_with_ninja = True
 
 
         # 1. Configure
@@ -224,7 +230,10 @@ class BuildLibrary(build_ext):
             if self.distribution.lief_test:
                 subprocess.check_call(['cmake', '--build', '.', '--target', "lief_samples"] + build_args, cwd=self.build_temp, env=env)
                 subprocess.check_call(configure_cmd, cwd=self.build_temp, env=env)
-                subprocess.check_call(['cmake', '--build', '.', '--target', "ALL_BUILD"] + build_args, cwd=self.build_temp, env=env)
+                if build_with_ninja:
+                    subprocess.check_call(['cmake', '--build', '.', '--target', "all"] + build_args, cwd=self.build_temp, env=env)
+                else:
+                    subprocess.check_call(['cmake', '--build', '.', '--target', "ALL_BUILD"] + build_args, cwd=self.build_temp, env=env)
                 subprocess.check_call(['cmake', '--build', '.', '--target', "check-lief"] + build_args, cwd=self.build_temp, env=env)
             else:
                 subprocess.check_call(['cmake', '--build', '.', '--target', targets['python_bindings']] + build_args, cwd=self.build_temp, env=env)
@@ -275,7 +284,12 @@ class BuildLibrary(build_ext):
 
         pylief_path = os.path.join(cmake_library_output_directory, "{}.{}".format(PACKAGE_NAME, libsuffix))
         if platform.system() == "Windows":
-            pylief_path = os.path.join(cmake_library_output_directory, "Release", "api", "python", "Release", "{}.{}".format(PACKAGE_NAME, libsuffix))
+            pylief_base = pathlib.Path(cmake_library_output_directory) / "Release" / "api" / "python"
+            pylief_path = pylief_base / "Release" / "{}.{}".format(PACKAGE_NAME, libsuffix)
+            if not pylief_path.is_file():
+                pylief_path = pylief_base / "{}.{}".format(PACKAGE_NAME, libsuffix)
+
+            pylief_path = pylief_path.as_posix()
 
         if not os.path.exists(self.build_lib):
             os.makedirs(self.build_lib)

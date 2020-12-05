@@ -120,7 +120,7 @@ install:
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - python.exe .\setup.py --sdk --lief-test bdist_wheel && exit 0 # Ignore warnings...
+  - python.exe .\setup.py --ninja --sdk --lief-test bdist_wheel && exit 0 # Ignore warnings...
 
 after_build:
   - bash ./.github/deploy.sh
