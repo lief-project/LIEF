@@ -97,6 +97,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   void purpose(RELOCATION_PURPOSES purpose);
   void info(uint32_t v);
   void symbol(Symbol* symbol);
+  void section(Section* section);
 
   virtual void accept(Visitor& visitor) const override;
 
