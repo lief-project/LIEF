@@ -306,6 +306,10 @@ void Relocation::symbol(Symbol* sym) {
   this->symbol_ = sym;
 }
 
+void Relocation::section(Section* section) {
+  this->section_ = section;
+}
+
 
 void Relocation::purpose(RELOCATION_PURPOSES purpose) {
   this->purpose_ = purpose;
