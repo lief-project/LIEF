@@ -14,7 +14,6 @@ environment:
  LIEF_AUTOMATIC_BUILDS_IV:
     secure: /S6Vbt3vEisoC81siFbkqOXQeVnwxLZZPMYp1r79G7h+HFjLlWUZSidxxpsAgHNE
  matrix:
-    fast_finish: false
     # Python 3.6
     - PYTHON_VERSION:   "3.6"
       PYTHON32_PATH:    "C:\\Python36"
@@ -59,6 +58,8 @@ environment:
       PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
 
+ matrix:
+    fast_finish: false
 
 install:
   - ps: if ($env:PLATFORM -eq "x64") { $env:CMAKE_ARCH = "x64" }
