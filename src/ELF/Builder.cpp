@@ -119,10 +119,12 @@ uint32_t Builder::sort_dynamic_symbols(void) {
       std::stable_partition(it_begin, it_end, [](const Symbol* sym) {
         return sym->binding() == SYMBOL_BINDINGS::STB_LOCAL;
       });
-  uint32_t first_non_local_symbol_index =
+
+  const uint32_t first_non_local_symbol_index =
       std::distance(it_begin, it_first_non_local_symbol);
-  std::string section_name = ".dynsym";
-  if (this->binary_->has_section(section_name)) {
+
+  const std::string section_name = ".dynsym";
+  if (this->binary_->has_section(".dynsym")) {
     Section& section = this->binary_->get_section(section_name);
     if (section.information() != first_non_local_symbol_index) {
       // TODO: Erase null entries of dynamic symbol table and symbol version table
@@ -140,8 +142,10 @@ uint32_t Builder::sort_dynamic_symbols(void) {
         return sym->shndx() ==
                static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
       });
-  uint32_t first_exported_symbol_index =
+
+  const uint32_t first_exported_symbol_index =
       std::distance(it_begin, it_first_exported_symbol);
+
   if (this->binary_->gnu_hash().symbol_index() != first_exported_symbol_index) {
     LIEF_WARN("symndx of .gnu.hash section changes from {:d} to {:d}",
               this->binary_->gnu_hash().symbol_index(),
