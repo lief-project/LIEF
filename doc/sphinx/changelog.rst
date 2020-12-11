@@ -5,6 +5,14 @@ Changelog
 ---------------------
 
 :ELF:
+  * :github_user:`Clcanny` improved (see :pr:`507`) the reconstruction of the dynamic symbol table
+    by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
+    a modified binary with ``readelf``
+
+    .. code-block:: text
+
+      Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
+
   * :github_user:`aeflores` added MIPS relocations support in the ELF parser
   * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. `issue #477 <https://github.com/lief-project/LIEF/issues/477>`_)
   * Fix issue when exporting symbols on empty-gnu-hash ELF binary (:commit:`1381f9a115e6e312ac0ab3deb46a78e481b81796`)

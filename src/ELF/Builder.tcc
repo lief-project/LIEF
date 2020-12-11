@@ -914,7 +914,7 @@ void Builder::build_symbol_gnuhash(void) {
   const GnuHash& gnu_hash   = this->binary_->gnu_hash();
 
   const uint32_t nb_buckets = gnu_hash.nb_buckets();
-  const uint32_t symndx     = gnu_hash.symbol_index();
+  const uint32_t symndx     = sort_dynamic_symbols();
   const uint32_t maskwords  = gnu_hash.maskwords();
   const uint32_t shift2     = gnu_hash.shift2();
 
