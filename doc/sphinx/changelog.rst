@@ -14,9 +14,9 @@ Changelog
       Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
 
   * :github_user:`aeflores` added MIPS relocations support in the ELF parser
-  * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. `issue #477 <https://github.com/lief-project/LIEF/issues/477>`_)
+  * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. issue :issue:`477`)
   * Fix issue when exporting symbols on empty-gnu-hash ELF binary (:commit:`1381f9a115e6e312ac0ab3deb46a78e481b81796`)
-  * Fix reconstruction issue when the binary is prelinked (cf. `issue #466 <https://github.com/lief-project/LIEF/issues/466>`_)
+  * Fix reconstruction issue when the binary is prelinked (cf. issue :issue:`466`)
   * Add ``DF_1_PIE`` flag
   * Fix parsing issue of the ``.eh_frame`` section when the base address is not 0.
   * :github_user:`JanuszL` enhanced the algorithm that computes the string table.
@@ -31,11 +31,11 @@ Changelog
     ``str`` object). This change is related to ``utf-16`` support.
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
   * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)
-  * Handle PE forwarded exports (`issues/307 <https://github.com/lief-project/LIEF/issues/307>`_)
+  * Handle PE forwarded exports (issue :issue:`307`)
 
 :Mach-O:
-  * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (`issues/476 <https://github.com/lief-project/LIEF/issues/476>`_)
-  * Fix issue when parsing twice a Mach-O file (`issues/479 <https://github.com/lief-project/LIEF/issues/479>`_)
+  * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (issue :issue:`476`)
+  * Fix issue when parsing twice a Mach-O file (issue :issue:`479`)
 
 :Dependencies:
   * Replace ``easyloggingpp`` with `spdlog 1.8.1 <https://github.com/gabime/spdlog>`_
