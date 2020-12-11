@@ -58,9 +58,6 @@ environment:
       PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
 
- matrix:
-    fast_finish: false
-
 install:
   - ps: if ($env:PLATFORM -eq "x64") { $env:CMAKE_ARCH = "x64" }
 
