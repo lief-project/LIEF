@@ -62,7 +62,6 @@ case $branch in
     devel*) ;;
     master*) ;;
     deploy*) ;;
-    "enhancement/setup") ;;
     *) exit 0;;
 esac
 
@@ -160,11 +159,16 @@ repo=$(git config remote.origin.url)
 ssh_repo=${repo/https:\/\/github.com\//git@github.com:}
 eval $(ssh-agent -s)
 set +x # IMPORTANT
-openssl aes-256-cbc -K $LIEF_AUTOMATIC_BUILDS_KEY -iv $LIEF_AUTOMATIC_BUILDS_IV -in "$LIEF_SRCDIR/.github/deploy-key.enc" -out .git/deploy-key -d
+openssl aes-256-cbc \
+    -K $LIEF_AUTOMATIC_BUILDS_KEY \
+    -iv $LIEF_AUTOMATIC_BUILDS_IV \
+    -in "$LIEF_SRCDIR/.github/deploy-key.enc" \
+    -out .git/deploy-key -d
 set -x
-chmod 600 .git/deploy-key
-ssh-add .git/deploy-key
 fix_home_ssh_perms
+cp .git/deploy-key ~/.ssh/id_rsa
+chmod 400 ~/.ssh/id_rsa
+ssh-add ~/.ssh/id_rsa
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 fix_home_ssh_perms
 #
