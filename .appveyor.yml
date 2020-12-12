@@ -13,6 +13,9 @@ environment:
     secure: TT7SXISIifq2/tf02n2ATgPj+Ky4Cjl3Fg44BAfyI4yRa4i87UAQIx5EFeV63+Xv2rhcU7JcMgl+An7QBrV6ofuQ9jxbuw+Gd1GqcCrAIyY=
  LIEF_AUTOMATIC_BUILDS_IV:
     secure: /S6Vbt3vEisoC81siFbkqOXQeVnwxLZZPMYp1r79G7h+HFjLlWUZSidxxpsAgHNE
+ SCCACHE_CACHE_SIZE: "250M"
+ SCCACHE_DIR: C:\Users\appveyor\AppData\Local\Mozilla\sccache
+ SCCACHE_ERROR_LOG: C:\projects\sccache.log
  matrix:
     # Python 3.6
     - PYTHON_VERSION:   "3.6"
@@ -58,7 +61,12 @@ environment:
       PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
 
+cache:
+  - '%SCCACHE_DIR%'
+
 install:
+  - cmd: choco install sccache
+  - cmd: sccache.exe --start-server
   - ps: if ($env:PLATFORM -eq "x64") { $env:CMAKE_ARCH = "x64" }
 
   - ps: if ($env:PLATFORM -eq "x64") { $env:PYTHON_PATH    = $env:PYTHON64_PATH    }
@@ -87,6 +95,9 @@ after_build:
   - ps: Get-Service -Name 'ssh-agent' | Set-Service -StartupType Manual
   - ps: Start-Service -Name 'ssh-agent'
   - bash ./.github/deploy.sh
+
+on_finish:
+  - cmd: sccache.exe --stop-server
 
 artifacts:
   - path: 'dist\*.whl'
