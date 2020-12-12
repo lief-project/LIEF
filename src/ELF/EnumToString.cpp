@@ -275,7 +275,7 @@ const char* to_string(SEGMENT_TYPES e) {
 }
 
 const char* to_string(DYNAMIC_TAGS e) {
-  CONST_MAP(DYNAMIC_TAGS, const char*, 87) enumStrings {
+  CONST_MAP(DYNAMIC_TAGS, const char*, 97) enumStrings {
     { DYNAMIC_TAGS::DT_NULL,                       "NULL"},
     { DYNAMIC_TAGS::DT_NEEDED,                     "NEEDED"},
     { DYNAMIC_TAGS::DT_PLTRELSZ,                   "PLTRELSZ"},
@@ -363,7 +363,17 @@ const char* to_string(DYNAMIC_TAGS e) {
     { DYNAMIC_TAGS::DT_MIPS_GP_VALUE,              "MIPS_GP_VALUE"},
     { DYNAMIC_TAGS::DT_MIPS_AUX_DYNAMIC,           "MIPS_AUX_DYNAMIC"},
     { DYNAMIC_TAGS::DT_MIPS_PLTGOT,                "MIPS_PLTGOT"},
-    { DYNAMIC_TAGS::DT_MIPS_RWPLT,                 "MIPS_RWPLT"}
+    { DYNAMIC_TAGS::DT_MIPS_RWPLT,                 "MIPS_RWPLT"},
+    { DYNAMIC_TAGS::DT_ANDROID_REL_OFFSET,         "ANDROID_REL_OFFSET"},
+    { DYNAMIC_TAGS::DT_ANDROID_REL_SIZE,           "ANDROID_REL_SIZE"},
+    { DYNAMIC_TAGS::DT_ANDROID_REL,                "ANDROID_REL"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELSZ,              "ANDROID_RELSZ"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELA,               "ANDROID_RELA"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELASZ,             "ANDROID_RELASZ"},
+    { DYNAMIC_TAGS::DT_RELR,                       "RELR"},
+    { DYNAMIC_TAGS::DT_RELRSZ,                     "RELRSZ"},
+    { DYNAMIC_TAGS::DT_RELRENT,                    "RELRENT"},
+    { DYNAMIC_TAGS::DT_RELRCOUNT,                  "RELRCOUNT"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
@@ -371,7 +381,7 @@ const char* to_string(DYNAMIC_TAGS e) {
 
 
 const char* to_string(ELF_SECTION_TYPES e) {
-  CONST_MAP(ELF_SECTION_TYPES, const char*, 35) enumStrings {
+  CONST_MAP(ELF_SECTION_TYPES, const char*, 39) enumStrings {
     { ELF_SECTION_TYPES::SHT_NULL,               "NULL"},
     { ELF_SECTION_TYPES::SHT_PROGBITS,           "PROGBITS"},
     { ELF_SECTION_TYPES::SHT_SYMTAB,             "SYMTAB"},
@@ -390,6 +400,10 @@ const char* to_string(ELF_SECTION_TYPES e) {
     { ELF_SECTION_TYPES::SHT_GROUP,              "GROUP"},
     { ELF_SECTION_TYPES::SHT_SYMTAB_SHNDX,       "SYMTAB_SHNDX"},
     { ELF_SECTION_TYPES::SHT_LOOS,               "LOOS"},
+    { ELF_SECTION_TYPES::SHT_ANDROID_REL,        "ANDROID_REL"},
+    { ELF_SECTION_TYPES::SHT_ANDROID_RELA,       "ANDROID_RELA"},
+    { ELF_SECTION_TYPES::SHT_LLVM_ADDRSIG,       "LLVM_ADDRSIG"},
+    { ELF_SECTION_TYPES::SHT_RELR,               "RELR"},
     { ELF_SECTION_TYPES::SHT_GNU_ATTRIBUTES,     "GNU_ATTRIBUTES"},
     { ELF_SECTION_TYPES::SHT_GNU_HASH,           "GNU_HASH"},
     { ELF_SECTION_TYPES::SHT_GNU_verdef,         "GNU_VERDEF"},
