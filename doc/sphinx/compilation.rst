@@ -80,7 +80,7 @@ The Doxygen documentation will be located at ``build/doc/doxygen/html`` and the 
 CMake Options
 -------------
 
-.. literalinclude:: ../../../cmake/LIEFOptions.cmake
+.. literalinclude:: ../../cmake/LIEFOptions.cmake
 
 Docker
 ------

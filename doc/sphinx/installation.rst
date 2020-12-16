@@ -46,6 +46,8 @@ Using ``setup.py``, one can build and install lief as follows:
 
 LIEF modules can also be parameterized using the following options:
 
+.. code-block:: console
+
    $ python ./setup.py --help
    ...
 
