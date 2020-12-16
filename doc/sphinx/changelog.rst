@@ -5,6 +5,7 @@ Changelog
 ---------------------
 
 :ELF:
+  * :github_user:`mkomet` updated enums related to Android (see: :commit:`9dd641d380a5defd0a71a9f42dde2fe9c9cb1dbd`)
   * :github_user:`Clcanny` improved (see :pr:`507`) the reconstruction of the dynamic symbol table
     by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
     a modified binary with ``readelf``
