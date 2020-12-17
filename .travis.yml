@@ -191,8 +191,13 @@ after_success:
   - sudo $PYTHON_BINARY -m pip install --upgrade setuptools
   - sudo $PYTHON_BINARY -m pip install --upgrade requests mako wheel
   - cd $TRAVIS_BUILD_DIR
-  - bash ./.github/deploy.sh
-  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$PYTHON_VERSION" == "3.7" ]]; then $PYTHON_BINARY ./.github/trigger_docker.py ;fi
+  - if [[ "$TRAVIS_EVENT_TYPE" != "pull_request" ]]; then bash ./.github/deploy.sh; fi
+  - >
+    if [[ "$TRAVIS_OS_NAME" == "linux" && "$PYTHON_VERSION" == "3.7" && "$TRAVIS_EVENT_TYPE" != "pull_request"]];
+    then
+    docker run -e CIRCLE_CI_TOKEN=$CIRCLE_CI_TOKEN liefproject/manylinux1_x86_64
+    bash -c "curl --request POST --url https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline --header 'Circle-Token: ${CIRCLE_CI_TOKEN}' --header 'content-type: application/json'"
+    ;fi
 
 
 deploy:
