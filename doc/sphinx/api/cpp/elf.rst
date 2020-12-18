@@ -186,7 +186,7 @@ Core File
 Core File Entry
 ***************
 
-.. doxygenclass:: LIEF::ELF::CoreFileEntry
+.. doxygenstruct:: LIEF::ELF::CoreFileEntry
    :project: lief
 
 ----------

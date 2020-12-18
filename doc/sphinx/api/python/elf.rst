@@ -8,8 +8,6 @@ Parser
 
 ----------
 
-.. _python-elf-binary-api-ref:
-
 Binary
 ******
 
@@ -652,12 +650,3 @@ Hexagon Processor flags
   :members:
   :inherited-members:
   :undoc-members:
-
-
-
-
-
-
-
-
-

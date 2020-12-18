@@ -32,6 +32,7 @@ class Builder;
 class Binary;
 class Note;
 
+//! Core file entry
 struct CoreFileEntry {
   uint64_t      start;    ///< Start address of mapped file
   uint64_t      end;      ///< End address of mapped file

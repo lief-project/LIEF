@@ -77,13 +77,13 @@ Iterators
 .. doxygenclass:: LIEF::ref_iterator
    :project: lief
 
-.. doxygenclass:: LIEF::const_ref_iterator
+.. doxygentypedef:: LIEF::const_ref_iterator
    :project: lief
 
 .. doxygenclass:: LIEF::filter_iterator
    :project: lief
 
-.. doxygenclass:: LIEF::const_filter_iterator
+.. doxygentypedef:: LIEF::const_filter_iterator
    :project: lief
 
 Logging

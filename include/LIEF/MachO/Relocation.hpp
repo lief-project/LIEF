@@ -33,7 +33,7 @@ namespace MachO {
 
 class BinaryParser;
 
-//! @brief Object modeling relocation
+//! Object modeling relocation
 //!
 //! @see:
 //!   * MachO::RelocationObject
@@ -57,19 +57,19 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
     virtual Relocation* clone(void) const = 0;
 
-    //! @brief For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
-    //! offset from the start of the @link MachO::Section section @endlink
-    //! to the item containing the address requiring relocation.
+    // For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
+    // offset from the start of the @link MachO::Section section @endlink
+    // to the item containing the address requiring relocation.
     //virtual uint64_t address(void) const override;
 
-    //! @brief Indicates whether the item containing the address to be
+    //! Indicates whether the item containing the address to be
     //! relocated is part of a CPU instruction that uses PC-relative addressing.
     //!
     //! For addresses contained in PC-relative instructions, the CPU adds the address of
     //! the instruction to the address contained in the instruction.
     virtual bool is_pc_relative(void) const = 0;
 
-    //! @brief Type of the relocation according to the
+    //! Type of the relocation according to the
     //! @link Relocation::architecture architecture@endlink and/or
     //! @link Relocation::origin origin@endlink
     //!
@@ -82,30 +82,30 @@ class LIEF_API Relocation : public LIEF::Relocation {
     //!   * MachO::REBASE_TYPES
     virtual uint8_t type(void) const;
 
-    //! @brief @link Relocation::architecture architecture @endlink of the relocation
+    //! @link Relocation::architecture architecture @endlink of the relocation
     CPU_TYPES architecture(void) const;
 
-    //! @brief Origin of the relocation
+    //! Origin of the relocation
     virtual RELOCATION_ORIGINS origin(void) const = 0;
 
-    //! @brief ``true`` if the relocation has a symbol associated with
+    //! ``true`` if the relocation has a symbol associated with
     bool has_symbol(void) const;
 
-    //! @brief Symbol associated with the relocation (if any)
+    //! Symbol associated with the relocation (if any)
     Symbol& symbol(void);
     const Symbol& symbol(void) const;
 
-    //! @brief ``true`` if the relocation has a section associated with
+    //! ``true`` if the relocation has a section associated with
     bool has_section(void) const;
 
-    //! @brief Section associated with the relocation (if any)
+    //! Section associated with the relocation (if any)
     Section& section(void);
     const Section& section(void) const;
 
-    //! @brief ``true`` if the relocation has a SegmentCommand associated with
+    //! ``true`` if the relocation has a SegmentCommand associated with
     bool has_segment(void) const;
 
-    //! @brief SegmentCommand associated with the relocation (if any)
+    //! SegmentCommand associated with the relocation (if any)
     SegmentCommand& segment(void);
     const SegmentCommand& segment(void) const;
 

@@ -10,7 +10,7 @@ Files and scripts used in this tutorial are available on the `tutorials reposito
 Introduction
 ~~~~~~~~~~~~
 
-ELF core files provide information about the CPU state and the memory state of a program when the coredump
+ELF core [1]_ files provide information about the CPU state and the memory state of a program when the coredump
 has been generated. The memory state embeds
 a *snapshot* of all segments mapped in the memory space of the program. The CPU state contains register values
 when the core dump has been generated.

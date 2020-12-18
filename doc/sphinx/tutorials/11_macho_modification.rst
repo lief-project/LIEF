@@ -39,7 +39,7 @@ The main limitation of these techniques is that the size and the number of comma
 If the padding size is tiny, we can't add a ``LOAD_DYLIB`` command with a *very long* library path. Moreover ``codesign`` may complain that there are not enough spaces to add the ``LC_CODE_SIGNATURE`` since we are using the space that was reserved for it.
 
 
-Next parts are about format modifications and how we managed to address this limitation
+Next parts are about format modifications and how we managed to address this limitation.
 
 When PIE makes thing easier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -385,12 +385,12 @@ Finally, we remove the signature and reconstruct the binary:
 
 The execution of ``id.modified`` should give a similar output:
 
-
 .. code-block:: console
 
   Mac-mini:tmp romain$ ./id.modified
   tmp @ [romain] $
 
+You can also check other tools such as optool [2]_ or insert_dylib [3]_
 
 .. rubric:: References
 
@@ -399,8 +399,6 @@ The execution of ``id.modified`` should give a similar output:
 .. [2] https://github.com/alexzielenski/optool
 
 .. [3] https://github.com/Tyilo/insert_dylib
-
-
 
 .. rubric:: API
 

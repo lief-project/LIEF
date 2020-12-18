@@ -27,19 +27,19 @@ namespace PE {
 class Binary;
 class Import;
 
-//! @brief check if the `file` is a PE file
+//! check if the `file` is a PE file
 LIEF_API bool is_pe(const std::string& file);
 
-//! @brief check if the raw data is a PE file
+//! check if the raw data is a PE file
 LIEF_API bool is_pe(const std::vector<uint8_t>& raw);
 
-//! @brief if the input `file` is a PE one, return `PE32` or `PE32+`
+//! if the input `file` is a PE one, return `PE32` or `PE32+`
 LIEF_API PE_TYPE get_type(const std::string& file);
 
-//! @brief Return `PE32` or `PE32+`
+//! Return `PE32` or `PE32+`
 LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
 
-//! @brief Compute the hash of imported functions
+//! Compute the hash of imported functions
 //!
 //! Properties of the hash generated:
 //!   * Order agnostic
@@ -51,7 +51,7 @@ LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
 //! @see https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
 LIEF_API std::string get_imphash(const Binary& binary);
 
-//! @brief Take a PE::Import as entry and try to resolve imports
+//! Take a PE::Import as entry and try to resolve imports
 //! by ordinal.
 //!
 //! The ``strict`` boolean parameter enables to throw an LIEF::not_found exception
@@ -59,7 +59,8 @@ LIEF_API std::string get_imphash(const Binary& binary);
 //!
 //! @param[in]  import Import to resolve
 //! @param[in]  strict If set to ``true``, throw an exception if the import can't be resolved
-//! @param[out] Import The import resolved: PE::ImportEntry::name is set
+//!
+//! @return The PE::import resolved with PE::ImportEntry::name set
 LIEF_API Import resolve_ordinals(const Import& import, bool strict=false);
 }
 }

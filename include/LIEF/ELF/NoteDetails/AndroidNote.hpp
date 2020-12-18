@@ -33,7 +33,7 @@ class Note;
 
 //! Class representing the ".note.android.ident" section
 //!
-//! @See: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
+//! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API AndroidNote : public NoteDetails {
 
   friend class Parser;

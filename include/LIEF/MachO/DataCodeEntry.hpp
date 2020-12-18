@@ -1,4 +1,3 @@
-
 /* Copyright 2017 R. Thomas
  * Copyright 2017 Quarkslab
  *

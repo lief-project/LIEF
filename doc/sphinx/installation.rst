@@ -236,7 +236,6 @@ For the compilation:
 
 .. literalinclude:: _static/ReadmeExternalProject.rst
    :language: rst
-   :lines: 1-42
 
 A *full* example is available in the ``examples/cmake/external_project`` directory.
 

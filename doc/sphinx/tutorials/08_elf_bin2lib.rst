@@ -210,8 +210,9 @@ The transformation of the execution flow can be represented as follow:
   :align: center
 
 .. _glic229:
+
 Warning for glic >= 2.29 users
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are using glibc >= 2.29 (or a close version depending on your Linux
 distribution), you might have encountered this error while using the `dlopen`
@@ -219,7 +220,7 @@ function:
 
 .. code::
 
- dlopen error: cannot dynamically load position-independent executable 
+ dlopen error: cannot dynamically load position-independent executable
 
 Loading PIE binaries as shared libraries wasn't indeed really an intended use
 case for ``dlopen``, and it used to work without really being properly

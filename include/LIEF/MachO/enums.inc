@@ -402,7 +402,7 @@ enum _LIEF_EN(X86_RELOCATION) {
   _LIEF_EI(GENERIC_RELOC_SECTDIFF)       = 2, /**< A relocation entry for an item that contains the difference of two section addresses. This is generally used for position-independent code generation. */
   _LIEF_EI(GENERIC_RELOC_PB_LA_PTR)      = 3, /**< contains the address from which to subtract; it must be followed by a X86_RELOCATION::GENERIC_RELOC_PAIR containing the address to subtract.*/
   _LIEF_EI(GENERIC_RELOC_LOCAL_SECTDIFF) = 4, /**< Similar to X86_RELOCATION::GENERIC_RELOC_SECTDIFF except that this entry refers specifically to the address in this item. If the address is that of a globally visible coalesced symbol, this relocation entry does not change if the symbol is overridden. This is used to associate stack unwinding information with the object code this relocation entry describes.*/
-  _LIEF_EI(GENERIC_RELOC_TLV)            = 5, /**< A relocation entry for a prebound lazy pointer. This is always a scattered relocation entry. The @link MachO::Relocation::value value @endlink field contains the non-prebound value of the lazy pointer.*/
+  _LIEF_EI(GENERIC_RELOC_TLV)            = 5, /**< A relocation entry for a prebound lazy pointer. This is always a scattered relocation entry. The MachO::Relocation::value field contains the non-prebound value of the lazy pointer.*/
 };
 
 
@@ -459,12 +459,12 @@ enum _LIEF_EN(ARM64_RELOCATION) {
   _LIEF_EI(ARM64_RELOC_SUBTRACTOR)          = 1,  /**< Must be followed by an ARM64_RELOCATION::ARM64_RELOC_UNSIGNED */
   _LIEF_EI(ARM64_RELOC_BRANCH26)            = 2,  /**< A B/BL instruction with 26-bit displacement. */
   _LIEF_EI(ARM64_RELOC_PAGE21)              = 3,  /**< PC-rel distance to page of target. */
-  _LIEF_EI(ARM64_RELOC_PAGEOFF12)           = 4,  /**< Offset within page, scaled by @link MachO::Relocation::size size @endlink. */
+  _LIEF_EI(ARM64_RELOC_PAGEOFF12)           = 4,  /**< Offset within page, scaled by MachO::Relocation::size. */
   _LIEF_EI(ARM64_RELOC_GOT_LOAD_PAGE21)     = 5,  /**< PC-rel distance to page of GOT slot */
-  _LIEF_EI(ARM64_RELOC_GOT_LOAD_PAGEOFF12)  = 6,  /**< Offset within page of GOT slot, scaled by @link MachO::Relocation::size size @endlink. */
+  _LIEF_EI(ARM64_RELOC_GOT_LOAD_PAGEOFF12)  = 6,  /**< Offset within page of GOT slot, scaled by MachO::Relocation::size. */
   _LIEF_EI(ARM64_RELOC_POINTER_TO_GOT)      = 7,  /**< For pointers to GOT slots. */
   _LIEF_EI(ARM64_RELOC_TLVP_LOAD_PAGE21)    = 8,  /**< PC-rel distance to page of TLVP slot. */
-  _LIEF_EI(ARM64_RELOC_TLVP_LOAD_PAGEOFF12) = 9,  /**< Offset within page of TLVP slot, scaled by @link MachO::Relocation::size size @endlink.*/
+  _LIEF_EI(ARM64_RELOC_TLVP_LOAD_PAGEOFF12) = 9,  /**< Offset within page of TLVP slot, scaled by MachO::Relocation::size.*/
   _LIEF_EI(ARM64_RELOC_ADDEND)              = 10, /**< Must be followed by ARM64_RELOCATION::ARM64_RELOC_PAGE21 or ARM64_RELOCATION::ARM64_RELOC_PAGEOFF12. */
 };
 

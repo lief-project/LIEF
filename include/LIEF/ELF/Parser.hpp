@@ -36,7 +36,7 @@ class Section;
 class Binary;
 
 
-//! @brief Class which parse an ELF file and transform into a ELF::Binary
+//! Class which parse an ELF file and transform into a ELF::Binary
 class LIEF_API Parser : public LIEF::Parser {
   friend class OAT::Parser;
   public:
@@ -55,23 +55,25 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t MAX_SEGMENT_SIZE       = MAX_SECTION_SIZE;
 
 
-  //! @brief Parse an ELF file an return a LIEF::ELF::Binary object
+  //! Parse an ELF file an return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
   //!
   //! @param[in] file Path to the ELF binary
   //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
-  //! @Return LIEF::ELF::Binary
+  //!
+  //! @return LIEF::ELF::Binary
   LIEF_API static std::unique_ptr<Binary> parse(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
-  //! @brief Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
+  //! Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
   //!
   //! @param[in] data Raw ELF
   //! @param[in] name Binary name (optional)
   //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
-  //! @Return LIEF::ELF::Binary
+  //!
+  //! @return LIEF::ELF::Binary
   LIEF_API static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "", DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
   Parser& operator=(const Parser&) = delete;
@@ -97,46 +99,46 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T>
   bool parse_header(void);
 
-  //! @brief Parse binary's Section
+  //! Parse binary's Section
   //!
   //! Parse sections by using the ``e_shoff`` field as offset
   template<typename ELF_T>
   void parse_sections(void);
 
-  //! @brief Parse binary's segments
+  //! Parse binary's segments
   //!
   //! Parse segment by using the ``e_phoff`` field as offset
   template<typename ELF_T>
   void parse_segments(void);
 
-  //! @brief Return offset of the dynamic string table
+  //! Return offset of the dynamic string table
   uint64_t get_dynamic_string_table(void) const;
 
   uint64_t get_dynamic_string_table_from_segments(void) const;
 
   uint64_t get_dynamic_string_table_from_sections(void) const;
 
-  //! @brief Return the number of dynamic symbols using the given method
+  //! Return the number of dynamic symbols using the given method
   template<typename ELF_T>
   uint32_t get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const;
 
-  //! @brief Count based on hash table (reliable)
+  //! Count based on hash table (reliable)
   template<typename ELF_T>
   uint32_t nb_dynsym_hash(void) const;
 
-  //! @brief Count based on SYSV hash table
+  //! Count based on SYSV hash table
   template<typename ELF_T>
   uint32_t nb_dynsym_sysv_hash(void) const;
 
-  //! @brief Count based on GNU hash table
+  //! Count based on GNU hash table
   template<typename ELF_T>
   uint32_t nb_dynsym_gnu_hash(void) const;
 
-  //! @brief Count based on sections (not very reliable)
+  //! Count based on sections (not very reliable)
   template<typename ELF_T>
   uint32_t nb_dynsym_section(void) const;
 
-  //! @brief Count based on PLT/GOT relocations (very reliable but not accurate)
+  //! Count based on PLT/GOT relocations (very reliable but not accurate)
   template<typename ELF_T>
   uint32_t nb_dynsym_relocations(void) const;
 
@@ -146,7 +148,7 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T>
   void parse_dynamic_symbols(uint64_t offset);
 
-  //! @brief Parse static Symbol
+  //! Parse static Symbol
   //!
   //! Parser find Symbols offset by using the file offset attribute of the
   //! ELF_SECTION_TYPES::SHT_SYMTAB Section.
@@ -157,13 +159,13 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T>
   void parse_static_symbols(uint64_t offset, uint32_t nbSymbols, const Section* string_section);
 
-  //! @brief Parse Dynamic relocations
+  //! Parse Dynamic relocations
   //!
   //! It use DT_REL/DT_RELA dynamic entries to parse it
   template<typename ELF_T, typename REL_T>
   void parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size);
 
-  //! @brief Parse `.plt.got`/`got` relocations
+  //! Parse `.plt.got`/`got` relocations
   //!
   //! For:
   //! * ELF32 it uses **DT_JMPREL** and **DT_PLTRELSZ**
@@ -172,7 +174,7 @@ class LIEF_API Parser : public LIEF::Parser {
   void parse_pltgot_relocations(uint64_t offset, uint64_t size);
 
 
-  //! @brief Parse relocations using LIEF::ELF::Section.
+  //! Parse relocations using LIEF::ELF::Section.
   //!
   //! Parser::parse_dynamic_relocations and Parser::parse_pltgot_relocations
   //! use parse relocations by using LIEF::ELF::Segment. This method parse relocations
@@ -180,7 +182,7 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T, typename REL_T>
   void parse_section_relocations(const Section& section);
 
-  //! @brief Parse SymbolVersionRequirement
+  //! Parse SymbolVersionRequirement
   //!
   //! We use the virtual address stored in the
   //! DYNAMIC_TAGS::DT_VERNEED entry to get the offset.
@@ -189,7 +191,7 @@ class LIEF_API Parser : public LIEF::Parser {
   void parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entries);
 
 
-  //! @brief Parse SymbolVersionDefinition.
+  //! Parse SymbolVersionDefinition.
   //!
   //! We use the virtual address stored in
   //! the DYNAMIC_TAGS::DT_VERDEF DT_VERDEF entry to get the offset.
@@ -198,7 +200,7 @@ class LIEF_API Parser : public LIEF::Parser {
   void parse_symbol_version_definition(uint64_t offset, uint32_t nb_entries);
 
 
-  //! @brief Parse @link SymbolVersion Symbol version @endlink.
+  //! Parse @link SymbolVersion Symbol version @endlink.
   //!
   //! We use the virtual address stored in the
   //! DYNAMIC_TAGS::DT_VERSYM entry to parse it.
@@ -206,16 +208,16 @@ class LIEF_API Parser : public LIEF::Parser {
   //! @see http://dev.gentoo.org/~solar/elf/symbol-versioning
   void parse_symbol_version(uint64_t symbol_version_offset);
 
-  //! @brief Parse Symbols's GNU hash
+  //! Parse Symbols's GNU hash
   //!
   //! @see https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
   template<typename ELF_T>
   void parse_symbol_gnu_hash(uint64_t offset);
 
-  //! @brief Parse Note (.gnu.note)
+  //! Parse Note (.gnu.note)
   void parse_notes(uint64_t offset, uint64_t size);
 
-  //! @brief Parse Symbols's SYSV hash
+  //! Parse Symbols's SYSV hash
   void parse_symbol_sysv_hash(uint64_t offset);
 
   void parse_overlay(void);

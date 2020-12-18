@@ -24,6 +24,7 @@
 #include <functional>
 #include <algorithm>
 #include <type_traits>
+#include <vector>
 
 #include "LIEF/exception.hpp"
 
@@ -42,9 +43,7 @@ template< class T >
 using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 
 
-// Iterator which return ref on container's values
-// ===============================================
-
+//! Iterator which returns reference on container's values
 template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator : public std::iterator<
                      std::bidirectional_iterator_tag,
@@ -136,14 +135,14 @@ class ref_iterator : public std::iterator<
 
     ref_iterator* no_const_this = const_cast<ref_iterator*>(this);
 
-	  typename ref_iterator::difference_type saved_dist = std::distance(std::begin(no_const_this->container_), no_const_this->it_);
+    typename ref_iterator::difference_type saved_dist = std::distance(std::begin(no_const_this->container_), no_const_this->it_);
     no_const_this->it_ = std::begin(no_const_this->container_);
-	  std::advance(no_const_this->it_, n);
+    std::advance(no_const_this->it_, n);
 
     auto&& v = const_cast<add_const_t<ref_t>>(no_const_this->operator*());
 
-	  no_const_this->it_ = std::begin(no_const_this->container_);
-	  std::advance(no_const_this->it_, saved_dist);
+    no_const_this->it_ = std::begin(no_const_this->container_);
+    std::advance(no_const_this->it_, saved_dist);
 
     return v;
   }
@@ -250,15 +249,12 @@ class ref_iterator : public std::iterator<
 };
 
 
-// Iterator which return const ref on container's values
-// =====================================================
+//! Iterator which return const ref on container's values
 template<class T, class CT = typename std::add_const<T>::type>
 using const_ref_iterator = ref_iterator<CT, typename decay_t<CT>::const_iterator>;
 
 
-// Iterator which return a ref on container's values given predicates
-// ==================================================================
-
+//! Iterator which return a ref on container's values given predicates
 template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
 class filter_iterator : public std::iterator<
                      std::forward_iterator_tag,
@@ -480,12 +476,9 @@ class filter_iterator : public std::iterator<
   typename filter_iterator::difference_type distance_;
 };
 
-// Iterator which return a const ref on container's values given predicates
-// ========================================================================
+//! Iterator which return a const ref on container's values given predicates
 template<class T, class CT = typename std::add_const<T>::type>
 using const_filter_iterator = filter_iterator<CT, typename decay_t<CT>::const_iterator>;
-
-
 
 }
 

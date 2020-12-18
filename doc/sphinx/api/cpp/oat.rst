@@ -4,22 +4,22 @@ OAT
 Utilities
 *********
 
-.. doxygenfunction:: LIEF::OAT::is_oat(const ELF::Binary&)
+.. doxygenfunction:: LIEF::OAT::is_oat(const LIEF::ELF::Binary &elf_binary)
    :project: lief
 
-.. doxygenfunction:: LIEF::OAT::is_oat(const std::string&)
+.. doxygenfunction:: LIEF::OAT::is_oat(const std::string &file)
    :project: lief
 
-.. doxygenfunction:: LIEF::OAT::is_oat(const std::vector<uint8_t>&)
+.. doxygenfunction:: LIEF::OAT::is_oat(const std::vector<uint8_t> &raw))
    :project: lief
 
-.. doxygenfunction:: LIEF::OAT::version(const std::string&)
+.. doxygenfunction:: LIEF::OAT::version(const LIEF::ELF::Binary &elf_binary)
    :project: lief
 
-.. doxygenfunction:: LIEF::OAT::version(const std::vector<uint8_t>&)
+.. doxygenfunction:: LIEF::OAT::version(const std::string &file)
    :project: lief
 
-.. doxygenfunction:: LIEF::OAT::version(const LIEF::ELF::Binary&)
+.. doxygenfunction:: LIEF::OAT::version(const std::vector<uint8_t> &raw)
    :project: lief
 
 .. doxygenfunction:: LIEF::OAT::android_version

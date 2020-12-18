@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace PE {
 
-//! @brief Modelization of the @link VS_FIXEDFILEINFO https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997(v=vs.85).aspx @endlink
+//! Modelization of [VS_FIXEDFILEINFO](https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997.aspx)
 //! Structure
 class LIEF_API ResourceFixedFileInfo : public Object {
 
@@ -39,57 +39,57 @@ class LIEF_API ResourceFixedFileInfo : public Object {
   ResourceFixedFileInfo& operator=(const ResourceFixedFileInfo&);
   virtual ~ResourceFixedFileInfo(void);
 
-  //! @brief Contains the value ``0xFEEF04BD``
+  //! Contains the value ``0xFEEF04BD``
   uint32_t signature(void) const;
 
-  //! @brief The binary version number of this structure.
+  //! The binary version number of this structure.
   //!
   //! The high-order word of this member contains the major version number,
   //! and the low-order word contains the minor version number.
   uint32_t struct_version(void) const;
 
-  //! @brief The **most** significant 32 bits of the file's binary version number.
+  //! The **most** significant 32 bits of the file's binary version number.
   //!
   //! This member is used with ResourceFixedFileInfo::file_version_LS to form a 64-bits value used for numeric comparisons.
   uint32_t file_version_MS(void) const;
 
-  //! @brief The **least** significant 32 bits of the file's binary version number.
+  //! The **least** significant 32 bits of the file's binary version number.
   //!
   //! This member is used with ResourceFixedFileInfo::file_version_MS to form a 64-bits value used for numeric comparisons.
   uint32_t file_version_LS(void) const;
 
-  //! @brief The **most** significant 32 bits of the product with which this file was distributed
+  //! The **most** significant 32 bits of the product with which this file was distributed
   //!
   //! This member is used with ResourceFixedFileInfo::product_version_LS to form a 64-bits value used for numeric comparisons.
   uint32_t product_version_MS(void) const;
 
-  //! @brief The **least** significant 32 bits of the product with which this file was distributed
+  //! The **least** significant 32 bits of the product with which this file was distributed
   //!
   //! This member is used with ResourceFixedFileInfo::product_version_MS to form a 64-bits value used for numeric comparisons.
   uint32_t product_version_LS(void) const;
 
-  //! @brief Contains a bitmask that specifies the valid bits in ResourceFixedFileInfo::file_flags.
+  //! Contains a bitmask that specifies the valid bits in ResourceFixedFileInfo::file_flags.
   //!
   //! A bit is valid only if it was defined when the file was created.
   uint32_t file_flags_mask(void) const;
 
-  //! @brief Contains a bitmask that specifies the Boolean attributes of the file
+  //! Contains a bitmask that specifies the Boolean attributes of the file
   //! (PE::FIXED_VERSION_FILE_FLAGS)
   uint32_t file_flags(void) const;
 
-  //! @brief The operating system for which this file was designed (PE::FIXED_VERSION_OS).
+  //! The operating system for which this file was designed (PE::FIXED_VERSION_OS).
   FIXED_VERSION_OS file_os(void) const;
 
-  //! @brief The general type of file (PE::FIXED_VERSION_FILE_TYPES)
+  //! The general type of file (PE::FIXED_VERSION_FILE_TYPES)
   FIXED_VERSION_FILE_TYPES file_type(void) const;
 
-  //! @brief The function of the file (PE::FIXED_VERSION_FILE_SUB_TYPES)
+  //! The function of the file (PE::FIXED_VERSION_FILE_SUB_TYPES)
   FIXED_VERSION_FILE_SUB_TYPES file_subtype(void) const;
 
-  //! @brief The **most** significant 32 bits of the file's 64-bit binary creation date and time stamp.
+  //! The **most** significant 32 bits of the file's 64-bit binary creation date and time stamp.
   uint32_t file_date_MS(void) const;
 
-  //! @brief The **least** significant 32 bits of the file's 64-bit binary creation date and time stamp.
+  //! The **least** significant 32 bits of the file's 64-bit binary creation date and time stamp.
   uint32_t file_date_LS(void) const;
 
   void signature(uint32_t signature);

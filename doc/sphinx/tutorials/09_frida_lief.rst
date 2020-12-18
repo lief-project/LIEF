@@ -165,16 +165,16 @@ When installing an application, the Android package manager will copy files from
 
 Frida is aware of these requirements as illustrated in listing below. Hence we can simply add the suffix ``.so`` to ``libgadget.conf``
 
-.. code-block:: vapi
+.. code-block:: cpp
 
   #if ANDROID
     if (!FileUtils.test (config_path, FileTest.EXISTS)) {
       var ext_index = config_path.last_index_of_char ('.');
-    	if (ext_index != -1) {
-    	  config_path = config_path[0:ext_index] + ".config.so";
-    	} else {
-    	  config_path = config_path + ".config.so";
-    	}
+      if (ext_index != -1) {
+        config_path = config_path[0:ext_index] + ".config.so";
+      } else {
+        config_path = config_path + ".config.so";
+      }
     }
   #endif
 
