@@ -34,8 +34,8 @@ using setter_t = void (ResourceStringFileInfo::*)(T);
 template<>
 void create<ResourceStringFileInfo>(py::module& m) {
   py::class_<ResourceStringFileInfo, LIEF::Object>(m, "ResourceStringFileInfo",
-      "Modelization of the ``StringFileInfo`` structure\n\n"
-      "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646989(v=vs.85).aspx")
+      "Modelization of the ``StringFileInfo`` structure\n\n"
+      "See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo")
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&ResourceStringFileInfo::type),

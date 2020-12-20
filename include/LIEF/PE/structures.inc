@@ -119,7 +119,7 @@ union Auxiliary {
 };
 
 
-/// @brief The Import Directory Table.
+/// The Import Directory Table.
 ///
 /// There is a single array of these and one entry per imported DLL.
 struct pe_import {
@@ -160,7 +160,7 @@ struct pe64_tls {
 };
 
 
-/// @brief The DOS compatible header at the front of all PEs.
+/// The DOS compatible header at the front of all PEs.
 struct pe_dos_header {
   uint16_t Magic;
   uint16_t UsedBytesInTheLastPage;
@@ -373,8 +373,8 @@ struct pe_resource_version_info {
   // uint16_t children
 };
 
-//! @brief Resource icons directory structure
-//! Based on https://msdn.microsoft.com/en-us/library/ff468901(v=vs.85).aspx
+//! Resource icons directory structure
+//! Based on https://docs.microsoft.com/en-us/windows/win32/menurc/resources-reference
 //!
 //! This is the begining of the RESOURCE_TYPES::GROUP_ICON content
 struct pe_resource_icon_dir {
@@ -384,7 +384,7 @@ struct pe_resource_icon_dir {
 };
 
 
-//! @brief Structure that follows pe_resource_icon_dir in a resource entry
+//! Structure that follows pe_resource_icon_dir in a resource entry
 struct pe_resource_icon_group {
   uint8_t width;        ///< Width, in pixels, of the image
   uint8_t height;       ///< Height, in pixels, of the image
@@ -396,7 +396,7 @@ struct pe_resource_icon_group {
   uint16_t ID;          ///< The associated ID
 };
 
-//! @brief Structure that follows pe_resource_icon_dir in a icon **file**
+//! Structure that follows pe_resource_icon_dir in a icon **file**
 struct pe_icon_header {
   uint8_t width;        ///< Width, in pixels, of the image
   uint8_t height;       ///< Height, in pixels, of the image
@@ -408,7 +408,7 @@ struct pe_icon_header {
   uint32_t offset;      ///< Offset to the pixels
 };
 
-//! @brief Extended dialog box template
+//! Extended dialog box template
 struct pe_dialog_template_ext {
   uint16_t version;
   uint16_t signature;
@@ -430,7 +430,7 @@ struct pe_dialog_template_ext {
   // char16_t  typeface[stringLen];
 };
 
-//! @brief Dialog box template
+//! Dialog box template
 struct pe_dialog_template {
   uint32_t style;
   uint32_t ext_style;
@@ -442,7 +442,7 @@ struct pe_dialog_template {
 };
 
 
-//! @brief Extended dialog box template item
+//! Extended dialog box template item
 struct pe_dialog_item_template_ext {
   uint32_t help_id;
   uint32_t ext_style;
@@ -458,7 +458,7 @@ struct pe_dialog_item_template_ext {
 };
 
 
-//! @brief Dialog box template item
+//! Dialog box template item
 struct pe_dialog_item_template {
   uint32_t style;
   uint32_t ext_style;

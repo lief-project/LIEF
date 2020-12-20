@@ -83,7 +83,7 @@ instance of :class:`lief.ELF.CoreFile`.
 
 
 
-We can eventually use the attribute :attr:`lief.ELF.CoreFile.file` or directly iterate on
+We can eventually use the attribute :attr:`lief.ELF.CoreFile.files` or directly iterate on
 the :class:`lief.ELF.CoreFile` object. Both give access to the :class:`lief.ELF.CoreFileEntry`: objects
 
 .. code-block:: python
@@ -166,8 +166,8 @@ is that **relocations** and **dependencies** are resolved inside the coredump.
 
 This API could be used in association with other tools. For instance, we could use `Triton <https://triton.quarkslab.com/>`_ API:
 
-   - `AArch64Cpu::setConcreteRegisterValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1aarch64_1_1AArch64Cpu.html#a98b6639d3e563099d41338bc01a3a852>`_
-   - `AArch64Cpu::setConcreteMemoryAreaValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1aarch64_1_1AArch64Cpu.html#a595a86dd9d606ea2b0ca3d3a3438f452>`_
+   - `AArch64Cpu::setConcreteRegisterValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
+   - `AArch64Cpu::setConcreteMemoryAreaValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
 
 to map the coredump in Triton and then use its engines: Taint analysis, symbolic execution.
 

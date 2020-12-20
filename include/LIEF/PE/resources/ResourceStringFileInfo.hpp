@@ -32,11 +32,11 @@ namespace PE {
 class ResourcesManager;
 class ResourceVersion;
 
-//! @brief Modelization of the ``StringFileInfo`` structure
+//! Modelization of the ``StringFileInfo`` structure
 //!
 //! It contains version information that can be displayed for a particular language and code page.
 //!
-//! See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646989(v=vs.85).aspx
+//! See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
 class LIEF_API ResourceStringFileInfo : public Object {
 
   friend class ResourcesManager;
@@ -47,16 +47,16 @@ class LIEF_API ResourceStringFileInfo : public Object {
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
   virtual ~ResourceStringFileInfo(void);
 
-  //! @brief The type of data in the version resource
+  //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
   uint16_t type(void) const;
 
-  //! @brief Signature of the structure:
+  //! Signature of the structure:
   //! Must be the unicode string "StringFileInfo"
   const std::u16string& key(void) const;
 
-  //! @brief List of the LangCodeItem items.
+  //! List of the LangCodeItem items.
   //!
   //! Each LangCodeItem::key indicates the appropriate
   //! language and code page for displaying the ``key: value`` of

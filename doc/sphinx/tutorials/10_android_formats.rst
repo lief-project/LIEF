@@ -62,7 +62,7 @@ Basically the ELF associated exports few symbols:
 These symbols are a kind of pointers to specific part of the OAT format. For example, ``oatdata`` will point to the begining of the underlying OAT format whereas ``oatexec`` points
 to the native code. For those who are interested in a deeper understand of OAT internal structures, See:
 
-  * `Hiding Behind ART  - Black Hat 2015 <http://www.blackhat.com/docs/asia-15/materials/asia-15-Sabanal-Hiding-Behind-ART-wp.pdf>`_
+  * `Hiding Behind ART  - Black Hat 2015 <https://www.blackhat.com/docs/asia-15/materials/asia-15-Sabanal-Hiding-Behind-ART-wp.pdf>`_
   * `Dalvik and ART <http://newandroidbook.com/files/ArtOfDalvik.pdf>`_
   * `OAT internal structures <http://romainthomas.fr/oat/>`_
 
@@ -418,7 +418,7 @@ Enjoy!
 
 .. rubric:: Notes
 
-.. [1] * http://mylifewithandroid.blogspot.fr/2009/05/about-quick-method-invocation.html
+.. [1] * http://mylifewithandroid.blogspot.com/2009/05/about-quick-method-invocation.html
        * https://github.com/JesusFreke/smali/wiki/UnresolvableOdexInstruction
 
 .. [2] Usually the ones from the Android Framework

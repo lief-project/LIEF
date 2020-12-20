@@ -35,7 +35,7 @@ class ResourcesManager;
 //!
 //! @see LIEF::PE::ResourceStringFileInfo
 //!
-//! see: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646992(v=vs.85).aspx
+//! see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
 class LIEF_API LangCodeItem : public Object {
 
   friend class ResourcesManager;
@@ -60,7 +60,7 @@ class LIEF_API LangCodeItem : public Object {
   //! @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
   const std::u16string& key(void) const;
 
-  //! [Code page](https://msdn.microsoft.com/en-us/library/windows/desktop/dd317756.aspx)
+  //! [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
   //! for which LangCodeItem::items are defined
   CODE_PAGES code_page(void) const;
 

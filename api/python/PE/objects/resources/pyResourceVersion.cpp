@@ -35,7 +35,7 @@ template<>
 void create<ResourceVersion>(py::module& m) {
   py::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
       "Modelization of the data associated with the ``RT_VERSION`` entry\n"
-      "See: `VS_VERSIONINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms647001(v=vs.85).aspx>`_")
+      "See: `VS_VERSIONINFO <https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo>`_")
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&ResourceVersion::type),

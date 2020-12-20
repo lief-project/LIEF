@@ -36,7 +36,7 @@ Such injection could be done with:
   * In an open-source target, use the linker to link with frida-gadget.
   * ...
 
-For more information about Frida gadget, here is the documentation: `frida-gadget <https://www.frida.re/docs/gadget/>`_
+For more information about Frida gadget, here is the documentation: `frida-gadget <https://frida.re/docs/gadget/>`_
 
 Frida & LIEF
 ~~~~~~~~~~~~

@@ -59,7 +59,7 @@ RESOURCE_SUBLANGS ResourcesManager::sublang_from_id(size_t id) {
 }
 
 RESOURCE_SUBLANGS ResourcesManager::sub_lang(RESOURCE_LANGS lang, size_t index) {
-  // From https://msdn.microsoft.com/en-us/library/windows/desktop/dd318693(v=vs.85).aspx
+  // From https://docs.microsoft.com/en-us/windows/win32/intl/language-identifier-constants-and-strings
   static const std::map<std::pair<RESOURCE_LANGS, size_t>, RESOURCE_SUBLANGS> sublangs_map = {
 
     { {RESOURCE_LANGS::LANG_ARABIC, 0x5}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_ALGERIA },
@@ -992,9 +992,8 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 
 // Dialogs
 // See:
-// * https://msdn.microsoft.com/en-us/library/ms645398.aspx
-// * https://msdn.microsoft.com/en-us/library/ms645389.aspx
-// * https://blogs.msdn.microsoft.com/oldnewthing/20110330-00/?p=11093
+// * https://docs.microsoft.com/en-us/windows/win32/dlgbox/dlgtemplateex
+// * https://docs.microsoft.com/en-us/windows/win32/dlgbox/dlgitemtemplateex
 // TODO:
 // * Menu as ordinal
 // * Windows class as ordinal

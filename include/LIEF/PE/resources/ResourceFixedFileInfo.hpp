@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace PE {
 
-//! Modelization of [VS_FIXEDFILEINFO](https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997.aspx)
+//! Modelization of [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
 //! Structure
 class LIEF_API ResourceFixedFileInfo : public Object {
 

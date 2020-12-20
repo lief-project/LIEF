@@ -35,7 +35,7 @@ class ResourcesManager;
 
 //! @brief Modelization of the data associated with the ``RT_VERSION`` entry
 //!
-//! See: ``VS_VERSIONINFO`` - https://msdn.microsoft.com/en-us/library/windows/desktop/ms647001(v=vs.85).aspx
+//! See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
 class LIEF_API ResourceVersion : public Object {
   friend class ResourcesManager;
 

@@ -177,7 +177,10 @@ As a check on the input size is performed before checking the flag value, we hav
 
 .. rubric:: References
 
-.. [#f1] http://vxheaven.org/lib/vrn00.html
+.. role:: strike
+   :class: strike
+
+.. [#f1] :strike:`hxxp://vxheaven.org/lib/vrn00.html`
 .. [#f2] http://phrack.org/issues/56/7.html
 
 

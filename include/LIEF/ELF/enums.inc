@@ -37,7 +37,7 @@ enum _LIEF_EN(VERSION) {
 /**
  * @brief Machine architectures
  * See current registered ELF machine architectures at:
- * http://www.uxsglobal.com/developers/gabi/latest/ch4.eheader.html
+ * http://www.sco.com/developers/gabi/latest/ch4.eheader.html
  */
 enum _LIEF_EN(ARCH) {
   _LIEF_EI(EM_NONE)          = 0,  /**< No machine */

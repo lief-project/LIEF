@@ -342,7 +342,7 @@ enum _LIEF_EN(CodeViewIdentifiers) {
 // Resources
 //
 
-//! @brief From https://msdn.microsoft.com/en-us/library/ms648009(v=vs.85).aspx
+//! From https://docs.microsoft.com/en-us/windows/win32/menurc/resource-types
 enum _LIEF_EN(RESOURCE_TYPES) {
   _LIEF_EI(CURSOR)       = 1,
   _LIEF_EI(BITMAP)       = 2,
@@ -747,7 +747,7 @@ enum _LIEF_EN(SECTION_CHARACTERISTICS) {
   _LIEF_EI(IMAGE_SCN_MEM_WRITE)              = 0x80000000
 };
 
-//! @brief From https://msdn.microsoft.com/en-us/library/ff700543.aspx
+//! From https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
 enum _LIEF_EN(EXTENDED_WINDOW_STYLES) {
   _LIEF_EI(WS_EX_DLGMODALFRAME)    = 0x00000001L,
   _LIEF_EI(WS_EX_NOPARENTNOTIFY)   = 0x00000004L,
@@ -772,7 +772,7 @@ enum _LIEF_EN(EXTENDED_WINDOW_STYLES) {
   _LIEF_EI(WS_EX_APPWINDOW)        = 0x00040000L,
 };
 
-//! @brief From: https://msdn.microsoft.com/en-us/library/ms632600.aspx
+//! From: https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
 enum _LIEF_EN(WINDOW_STYLES) {
   _LIEF_EI(WS_OVERLAPPED)      = 0x00000000L,
   _LIEF_EI(WS_POPUP)           = 0x80000000L,
@@ -798,7 +798,7 @@ enum _LIEF_EN(WINDOW_STYLES) {
 };
 
 
-//! @brief From https://msdn.microsoft.com/en-us/library/ff729172.aspx
+//! From https://docs.microsoft.com/en-us/windows/win32/dlgbox/dialog-box-styles
 enum _LIEF_EN(DIALOG_BOX_STYLES) {
   _LIEF_EI(DS_ABSALIGN)      = 0x0001L,
   _LIEF_EI(DS_SYSMODAL)      = 0x0002L,
@@ -876,148 +876,148 @@ enum _LIEF_EN(FIXED_VERSION_FILE_SUB_TYPES) {
   _LIEF_EI(VFT2_UNKNOWN)               = 0x00000000L,
 };
 
-//! @brief Code page from http://msdn.microsoft.com/en-us/library/ms776446(VS.85).aspx
+//! Code page from https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
 enum _LIEF_EN(CODE_PAGES) {
-  _LIEF_EI(CP_IBM037)                  = 37,		/**< IBM EBCDIC US-Canada */
-  _LIEF_EI(CP_IBM437)                  = 437,		/**< OEM United States */
-  _LIEF_EI(CP_IBM500)                  = 500,		/**< IBM EBCDIC International */
-  _LIEF_EI(CP_ASMO_708)                = 708,		/**< Arabic (ASMO 708) */
-  _LIEF_EI(CP_DOS_720)                 = 720,		/**< Arabic (Transparent ASMO); Arabic (DOS) */
-  _LIEF_EI(CP_IBM737)                  = 737,		/**< OEM Greek (formerly 437G); Greek (DOS) */
-  _LIEF_EI(CP_IBM775)                  = 775,		/**< OEM Baltic; Baltic (DOS) */
-  _LIEF_EI(CP_IBM850)                  = 850,		/**< OEM Multilingual Latin 1; Western European (DOS) */
-  _LIEF_EI(CP_IBM852)                  = 852,		/**< OEM Latin 2; Central European (DOS) */
-  _LIEF_EI(CP_IBM855)                  = 855,		/**< OEM Cyrillic (primarily Russian) */
-  _LIEF_EI(CP_IBM857)                  = 857,		/**< OEM Turkish; Turkish (DOS) */
-  _LIEF_EI(CP_IBM00858)                = 858,		/**< OEM Multilingual Latin 1 + Euro symbol */
-  _LIEF_EI(CP_IBM860)                  = 860,		/**< OEM Portuguese; Portuguese (DOS) */
-  _LIEF_EI(CP_IBM861)                  = 861,		/**< OEM Icelandic; Icelandic (DOS) */
-  _LIEF_EI(CP_DOS_862)                 = 862,		/**< OEM Hebrew; Hebrew (DOS) */
-  _LIEF_EI(CP_IBM863)                  = 863,		/**< OEM French Canadian; French Canadian (DOS) */
-  _LIEF_EI(CP_IBM864)                  = 864,		/**< OEM Arabic; Arabic (864) */
-  _LIEF_EI(CP_IBM865)                  = 865,		/**< OEM Nordic; Nordic (DOS) */
-  _LIEF_EI(CP_CP866)                   = 866,		/**< OEM Russian; Cyrillic (DOS) */
-  _LIEF_EI(CP_IBM869)                  = 869,		/**< OEM Modern Greek; Greek, Modern (DOS) */
-  _LIEF_EI(CP_IBM870)                  = 870,		/**< IBM EBCDIC Multilingual/ROECE (Latin 2); IBM EBCDIC Multilingual Latin 2 */
-  _LIEF_EI(CP_WINDOWS_874)             = 874,		/**< ANSI/OEM Thai (same as 28605, ISO 8859-15); Thai (Windows) */
-  _LIEF_EI(CP_CP875)                   = 875,		/**< IBM EBCDIC Greek Modern */
-  _LIEF_EI(CP_SHIFT_JIS)               = 932,		/**< ANSI/OEM Japanese; Japanese (Shift-JIS) */
-  _LIEF_EI(CP_GB2312)                  = 936,		/**< ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312) */
-  _LIEF_EI(CP_KS_C_5601_1987)          = 949,		/**< ANSI/OEM Korean (Unified Hangul Code) */
-  _LIEF_EI(CP_BIG5)                    = 950,		/**< ANSI/OEM Traditional Chinese (Taiwan; Hong Kong SAR, PRC); Chinese Traditional (Big5) */
-  _LIEF_EI(CP_IBM1026)                 = 1026,	/**< IBM EBCDIC Turkish (Latin 5) */
-  _LIEF_EI(CP_IBM01047)                = 1047,	/**< IBM EBCDIC Latin 1/Open System */
-  _LIEF_EI(CP_IBM01140)                = 1140,	/**< IBM EBCDIC US-Canada (037 + Euro symbol); IBM EBCDIC (US-Canada-Euro) */
-  _LIEF_EI(CP_IBM01141)                = 1141,	/**< IBM EBCDIC Germany (20273 + Euro symbol); IBM EBCDIC (Germany-Euro) */
-  _LIEF_EI(CP_IBM01142)                = 1142,	/**< IBM EBCDIC Denmark-Norway (20277 + Euro symbol); IBM EBCDIC (Denmark-Norway-Euro) */
-  _LIEF_EI(CP_IBM01143)                = 1143,	/**< IBM EBCDIC Finland-Sweden (20278 + Euro symbol); IBM EBCDIC (Finland-Sweden-Euro) */
-  _LIEF_EI(CP_IBM01144)                = 1144,	/**< IBM EBCDIC Italy (20280 + Euro symbol); IBM EBCDIC (Italy-Euro) */
-  _LIEF_EI(CP_IBM01145)                = 1145,	/**< IBM EBCDIC Latin America-Spain (20284 + Euro symbol); IBM EBCDIC (Spain-Euro) */
-  _LIEF_EI(CP_IBM01146)                = 1146,	/**< IBM EBCDIC United Kingdom (20285 + Euro symbol); IBM EBCDIC (UK-Euro) */
-  _LIEF_EI(CP_IBM01147)                = 1147,	/**< IBM EBCDIC France (20297 + Euro symbol); IBM EBCDIC (France-Euro) */
-  _LIEF_EI(CP_IBM01148)                = 1148,	/**< IBM EBCDIC International (500 + Euro symbol); IBM EBCDIC (International-Euro) */
-  _LIEF_EI(CP_IBM01149)                = 1149,	/**< IBM EBCDIC Icelandic (20871 + Euro symbol); IBM EBCDIC (Icelandic-Euro) */
-  _LIEF_EI(CP_UTF_16)                  = 1200,	/**< Unicode UTF-16, little endian byte order (BMP of ISO 10646); available only to managed applications */
-  _LIEF_EI(CP_UNICODEFFFE)             = 1201,	/**< Unicode UTF-16, big endian byte order; available only to managed applications */
-  _LIEF_EI(CP_WINDOWS_1250)            = 1250,	/**< ANSI Central European; Central European (Windows) */
-  _LIEF_EI(CP_WINDOWS_1251)            = 1251,	/**< ANSI Cyrillic; Cyrillic (Windows) */
-  _LIEF_EI(CP_WINDOWS_1252)            = 1252,	/**< ANSI Latin 1; Western European (Windows) */
-  _LIEF_EI(CP_WINDOWS_1253)            = 1253,	/**< ANSI Greek; Greek (Windows) */
-  _LIEF_EI(CP_WINDOWS_1254)            = 1254,	/**< ANSI Turkish; Turkish (Windows) */
-  _LIEF_EI(CP_WINDOWS_1255)            = 1255,	/**< ANSI Hebrew; Hebrew (Windows) */
-  _LIEF_EI(CP_WINDOWS_1256)            = 1256,	/**< ANSI Arabic; Arabic (Windows) */
-  _LIEF_EI(CP_WINDOWS_1257)            = 1257,	/**< ANSI Baltic; Baltic (Windows) */
-  _LIEF_EI(CP_WINDOWS_1258)            = 1258,	/**< ANSI/OEM Vietnamese; Vietnamese (Windows) */
-  _LIEF_EI(CP_JOHAB)                   = 1361,	/**< Korean (Johab) */
-  _LIEF_EI(CP_MACINTOSH)               = 10000,	/**< MAC Roman; Western European (Mac) */
-  _LIEF_EI(CP_X_MAC_JAPANESE)          = 10001,	/**< Japanese (Mac) */
-  _LIEF_EI(CP_X_MAC_CHINESETRAD)       = 10002,	/**< MAC Traditional Chinese (Big5); Chinese Traditional (Mac) */
-  _LIEF_EI(CP_X_MAC_KOREAN)            = 10003,	/**< Korean (Mac) */
-  _LIEF_EI(CP_X_MAC_ARABIC)            = 10004,	/**< Arabic (Mac) */
-  _LIEF_EI(CP_X_MAC_HEBREW)            = 10005,	/**< Hebrew (Mac) */
-  _LIEF_EI(CP_X_MAC_GREEK)             = 10006,	/**< Greek (Mac) */
-  _LIEF_EI(CP_X_MAC_CYRILLIC)          = 10007,	/**< Cyrillic (Mac) */
-  _LIEF_EI(CP_X_MAC_CHINESESIMP)       = 10008,	/**< MAC Simplified Chinese (GB 2312); Chinese Simplified (Mac) */
-  _LIEF_EI(CP_X_MAC_ROMANIAN)          = 10010,	/**< Romanian (Mac) */
-  _LIEF_EI(CP_X_MAC_UKRAINIAN)         = 10017,	/**< Ukrainian (Mac) */
-  _LIEF_EI(CP_X_MAC_THAI)              = 10021,	/**< Thai (Mac) */
-  _LIEF_EI(CP_X_MAC_CE)                = 10029,	/**< MAC Latin 2; Central European (Mac) */
-  _LIEF_EI(CP_X_MAC_ICELANDIC)         = 10079,	/**< Icelandic (Mac) */
-  _LIEF_EI(CP_X_MAC_TURKISH)           = 10081,	/**< Turkish (Mac) */
-  _LIEF_EI(CP_X_MAC_CROATIAN)          = 10082,	/**< Croatian (Mac) */
-  _LIEF_EI(CP_UTF_32)                  = 12000,	/**< Unicode UTF-32, little endian byte order; available only to managed applications */
-  _LIEF_EI(CP_UTF_32BE)                = 12001,	/**< Unicode UTF-32, big endian byte order; available only to managed applications */
-  _LIEF_EI(CP_X_CHINESE_CNS)           = 20000,	/**< CNS Taiwan; Chinese Traditional (CNS) */
-  _LIEF_EI(CP_X_CP20001)               = 20001,	/**< TCA Taiwan */
-  _LIEF_EI(CP_X_CHINESE_ETEN)          = 20002,	/**< Eten Taiwan; Chinese Traditional (Eten) */
-  _LIEF_EI(CP_X_CP20003)               = 20003,	/**< IBM5550 Taiwan */
-  _LIEF_EI(CP_X_CP20004)               = 20004,	/**< TeleText Taiwan */
-  _LIEF_EI(CP_X_CP20005)               = 20005,	/**< Wang Taiwan */
-  _LIEF_EI(CP_X_IA5)                   = 20105,	/**< IA5 (IRV International Alphabet No. 5, 7-bit); Western European (IA5) */
-  _LIEF_EI(CP_X_IA5_GERMAN)            = 20106,	/**< IA5 German (7-bit) */
-  _LIEF_EI(CP_X_IA5_SWEDISH)           = 20107,	/**< IA5 Swedish (7-bit) */
-  _LIEF_EI(CP_X_IA5_NORWEGIAN)         = 20108,	/**< IA5 Norwegian (7-bit) */
-  _LIEF_EI(CP_US_ASCII)                = 20127,	/**< US-ASCII (7-bit) */
-  _LIEF_EI(CP_X_CP20261)               = 20261,	/**< T.61 */
-  _LIEF_EI(CP_X_CP20269)               = 20269,	/**< ISO 6937 Non-Spacing Accent */
-  _LIEF_EI(CP_IBM273)                  = 20273,	/**< IBM EBCDIC Germany */
-  _LIEF_EI(CP_IBM277)                  = 20277,	/**< IBM EBCDIC Denmark-Norway */
-  _LIEF_EI(CP_IBM278)                  = 20278,	/**< IBM EBCDIC Finland-Sweden */
-  _LIEF_EI(CP_IBM280)                  = 20280,	/**< IBM EBCDIC Italy */
-  _LIEF_EI(CP_IBM284)                  = 20284,	/**< IBM EBCDIC Latin America-Spain */
-  _LIEF_EI(CP_IBM285)                  = 20285,	/**< IBM EBCDIC United Kingdom */
-  _LIEF_EI(CP_IBM290)                  = 20290,	/**< IBM EBCDIC Japanese Katakana Extended */
-  _LIEF_EI(CP_IBM297)                  = 20297,	/**< IBM EBCDIC France */
-  _LIEF_EI(CP_IBM420)                  = 20420,	/**< IBM EBCDIC Arabic */
-  _LIEF_EI(CP_IBM423)                  = 20423,	/**< IBM EBCDIC Greek */
-  _LIEF_EI(CP_IBM424)                  = 20424,	/**< IBM EBCDIC Hebrew */
-  _LIEF_EI(CP_X_EBCDIC_KOREANEXTENDED) = 20833,	/**< IBM EBCDIC Korean Extended */
-  _LIEF_EI(CP_IBM_THAI)                = 20838,	/**< IBM EBCDIC Thai */
-  _LIEF_EI(CP_KOI8_R)                  = 20866,	/**< Russian (KOI8-R); Cyrillic (KOI8-R) */
-  _LIEF_EI(CP_IBM871)                  = 20871,	/**< IBM EBCDIC Icelandic */
-  _LIEF_EI(CP_IBM880)                  = 20880,	/**< IBM EBCDIC Cyrillic Russian */
-  _LIEF_EI(CP_IBM905)                  = 20905,	/**< IBM EBCDIC Turkish */
-  _LIEF_EI(CP_IBM00924)                = 20924,	/**< IBM EBCDIC Latin 1/Open System (1047 + Euro symbol) */
-  _LIEF_EI(CP_EUC_JP_JIS)              = 20932,	/**< Japanese (JIS 0208-1990 and 0121-1990) */
-  _LIEF_EI(CP_X_CP20936)               = 20936,	/**< Simplified Chinese (GB2312); Chinese Simplified (GB2312-80) */
-  _LIEF_EI(CP_X_CP20949)               = 20949,	/**< Korean Wansung */
-  _LIEF_EI(CP_CP1025)                  = 21025,	/**< IBM EBCDIC Cyrillic Serbian-Bulgarian */
-  _LIEF_EI(CP_KOI8_U)                  = 21866,	/**< Ukrainian (KOI8-U); Cyrillic (KOI8-U) */
-  _LIEF_EI(CP_ISO_8859_1)              = 28591,	/**< ISO 8859-1 Latin 1; Western European (ISO) */
-  _LIEF_EI(CP_ISO_8859_2)              = 28592,	/**< ISO 8859-2 Central European; Central European (ISO) */
-  _LIEF_EI(CP_ISO_8859_3)              = 28593,	/**< ISO 8859-3 Latin 3 */
-  _LIEF_EI(CP_ISO_8859_4)              = 28594,	/**< ISO 8859-4 Baltic */
-  _LIEF_EI(CP_ISO_8859_5)              = 28595,	/**< ISO 8859-5 Cyrillic */
-  _LIEF_EI(CP_ISO_8859_6)              = 28596,	/**< ISO 8859-6 Arabic */
-  _LIEF_EI(CP_ISO_8859_7)              = 28597,	/**< ISO 8859-7 Greek */
-  _LIEF_EI(CP_ISO_8859_8)              = 28598,	/**< ISO 8859-8 Hebrew; Hebrew (ISO-Visual) */
-  _LIEF_EI(CP_ISO_8859_9)              = 28599,	/**< ISO 8859-9 Turkish */
-  _LIEF_EI(CP_ISO_8859_13)             = 28603,	/**< ISO 8859-13 Estonian */
-  _LIEF_EI(CP_ISO_8859_15)             = 28605,	/**< ISO 8859-15 Latin 9 */
-  _LIEF_EI(CP_X_EUROPA)                = 29001,	/**< Europa 3 */
-  _LIEF_EI(CP_ISO_8859_8_I)            = 38598,	/**< ISO 8859-8 Hebrew; Hebrew (ISO-Logical) */
-  _LIEF_EI(CP_ISO_2022_JP)             = 50220,	/**< ISO 2022 Japanese with no halfwidth Katakana; Japanese (JIS) */
-  _LIEF_EI(CP_CSISO2022JP)             = 50221,	/**< ISO 2022 Japanese with halfwidth Katakana; Japanese (JIS-Allow 1 byte Kana) */
-  _LIEF_EI(CP_ISO_2022_JP_JIS)         = 50222,	/**< ISO 2022 Japanese JIS X 0201-1989; Japanese (JIS-Allow 1 byte Kana - SO/SI) */
-  _LIEF_EI(CP_ISO_2022_KR)             = 50225,	/**< ISO 2022 Korean */
-  _LIEF_EI(CP_X_CP50227)               = 50227,	/**< ISO 2022 Simplified Chinese; Chinese Simplified (ISO 2022) */
-  _LIEF_EI(CP_EUC_JP)                  = 51932,	/**< EUC Japanese */
-  _LIEF_EI(CP_EUC_CN)                  = 51936,	/**< EUC Simplified Chinese; Chinese Simplified (EUC) */
-  _LIEF_EI(CP_EUC_KR)                  = 51949,	/**< EUC Korean */
-  _LIEF_EI(CP_HZ_GB_2312)              = 52936,	/**< HZ-GB2312 Simplified Chinese; Chinese Simplified (HZ) */
-  _LIEF_EI(CP_GB18030)                 = 54936,	/**< Windows XP and later: GB18030 Simplified Chinese (4 byte); Chinese Simplified (GB18030) */
-  _LIEF_EI(CP_X_ISCII_DE)              = 57002,	/**< ISCII Devanagari */
-  _LIEF_EI(CP_X_ISCII_BE)              = 57003,	/**< ISCII Bengali */
-  _LIEF_EI(CP_X_ISCII_TA)              = 57004,	/**< ISCII Tamil */
-  _LIEF_EI(CP_X_ISCII_TE)              = 57005,	/**< ISCII Telugu */
-  _LIEF_EI(CP_X_ISCII_AS)              = 57006,	/**< ISCII Assamese */
-  _LIEF_EI(CP_X_ISCII_OR)              = 57007,	/**< ISCII Oriya */
-  _LIEF_EI(CP_X_ISCII_KA)              = 57008,	/**< ISCII Kannada */
-  _LIEF_EI(CP_X_ISCII_MA)              = 57009,	/**< ISCII Malayalam */
-  _LIEF_EI(CP_X_ISCII_GU)              = 57010,	/**< ISCII Gujarati */
-  _LIEF_EI(CP_X_ISCII_PA)              = 57011,	/**< ISCII Punjabi */
-  _LIEF_EI(CP_UTF_7)                   = 65000,	/**< Unicode (UTF-7) */
-  _LIEF_EI(CP_UTF_8)                   = 65001,	/**< Unicode (UTF-8) */
+  _LIEF_EI(CP_IBM037)                  = 37,    /**< IBM EBCDIC US-Canada */
+  _LIEF_EI(CP_IBM437)                  = 437,   /**< OEM United States */
+  _LIEF_EI(CP_IBM500)                  = 500,   /**< IBM EBCDIC International */
+  _LIEF_EI(CP_ASMO_708)                = 708,   /**< Arabic (ASMO 708) */
+  _LIEF_EI(CP_DOS_720)                 = 720,   /**< Arabic (Transparent ASMO); Arabic (DOS) */
+  _LIEF_EI(CP_IBM737)                  = 737,   /**< OEM Greek (formerly 437G); Greek (DOS) */
+  _LIEF_EI(CP_IBM775)                  = 775,   /**< OEM Baltic; Baltic (DOS) */
+  _LIEF_EI(CP_IBM850)                  = 850,   /**< OEM Multilingual Latin 1; Western European (DOS) */
+  _LIEF_EI(CP_IBM852)                  = 852,   /**< OEM Latin 2; Central European (DOS) */
+  _LIEF_EI(CP_IBM855)                  = 855,   /**< OEM Cyrillic (primarily Russian) */
+  _LIEF_EI(CP_IBM857)                  = 857,   /**< OEM Turkish; Turkish (DOS) */
+  _LIEF_EI(CP_IBM00858)                = 858,   /**< OEM Multilingual Latin 1 + Euro symbol */
+  _LIEF_EI(CP_IBM860)                  = 860,   /**< OEM Portuguese; Portuguese (DOS) */
+  _LIEF_EI(CP_IBM861)                  = 861,   /**< OEM Icelandic; Icelandic (DOS) */
+  _LIEF_EI(CP_DOS_862)                 = 862,   /**< OEM Hebrew; Hebrew (DOS) */
+  _LIEF_EI(CP_IBM863)                  = 863,   /**< OEM French Canadian; French Canadian (DOS) */
+  _LIEF_EI(CP_IBM864)                  = 864,   /**< OEM Arabic; Arabic (864) */
+  _LIEF_EI(CP_IBM865)                  = 865,   /**< OEM Nordic; Nordic (DOS) */
+  _LIEF_EI(CP_CP866)                   = 866,   /**< OEM Russian; Cyrillic (DOS) */
+  _LIEF_EI(CP_IBM869)                  = 869,   /**< OEM Modern Greek; Greek, Modern (DOS) */
+  _LIEF_EI(CP_IBM870)                  = 870,   /**< IBM EBCDIC Multilingual/ROECE (Latin 2); IBM EBCDIC Multilingual Latin 2 */
+  _LIEF_EI(CP_WINDOWS_874)             = 874,   /**< ANSI/OEM Thai (same as 28605, ISO 8859-15); Thai (Windows) */
+  _LIEF_EI(CP_CP875)                   = 875,   /**< IBM EBCDIC Greek Modern */
+  _LIEF_EI(CP_SHIFT_JIS)               = 932,   /**< ANSI/OEM Japanese; Japanese (Shift-JIS) */
+  _LIEF_EI(CP_GB2312)                  = 936,   /**< ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312) */
+  _LIEF_EI(CP_KS_C_5601_1987)          = 949,   /**< ANSI/OEM Korean (Unified Hangul Code) */
+  _LIEF_EI(CP_BIG5)                    = 950,   /**< ANSI/OEM Traditional Chinese (Taiwan; Hong Kong SAR, PRC); Chinese Traditional (Big5) */
+  _LIEF_EI(CP_IBM1026)                 = 1026,  /**< IBM EBCDIC Turkish (Latin 5) */
+  _LIEF_EI(CP_IBM01047)                = 1047,  /**< IBM EBCDIC Latin 1/Open System */
+  _LIEF_EI(CP_IBM01140)                = 1140,  /**< IBM EBCDIC US-Canada (037 + Euro symbol); IBM EBCDIC (US-Canada-Euro) */
+  _LIEF_EI(CP_IBM01141)                = 1141,  /**< IBM EBCDIC Germany (20273 + Euro symbol); IBM EBCDIC (Germany-Euro) */
+  _LIEF_EI(CP_IBM01142)                = 1142,  /**< IBM EBCDIC Denmark-Norway (20277 + Euro symbol); IBM EBCDIC (Denmark-Norway-Euro) */
+  _LIEF_EI(CP_IBM01143)                = 1143,  /**< IBM EBCDIC Finland-Sweden (20278 + Euro symbol); IBM EBCDIC (Finland-Sweden-Euro) */
+  _LIEF_EI(CP_IBM01144)                = 1144,  /**< IBM EBCDIC Italy (20280 + Euro symbol); IBM EBCDIC (Italy-Euro) */
+  _LIEF_EI(CP_IBM01145)                = 1145,  /**< IBM EBCDIC Latin America-Spain (20284 + Euro symbol); IBM EBCDIC (Spain-Euro) */
+  _LIEF_EI(CP_IBM01146)                = 1146,  /**< IBM EBCDIC United Kingdom (20285 + Euro symbol); IBM EBCDIC (UK-Euro) */
+  _LIEF_EI(CP_IBM01147)                = 1147,  /**< IBM EBCDIC France (20297 + Euro symbol); IBM EBCDIC (France-Euro) */
+  _LIEF_EI(CP_IBM01148)                = 1148,  /**< IBM EBCDIC International (500 + Euro symbol); IBM EBCDIC (International-Euro) */
+  _LIEF_EI(CP_IBM01149)                = 1149,  /**< IBM EBCDIC Icelandic (20871 + Euro symbol); IBM EBCDIC (Icelandic-Euro) */
+  _LIEF_EI(CP_UTF_16)                  = 1200,  /**< Unicode UTF-16, little endian byte order (BMP of ISO 10646); available only to managed applications */
+  _LIEF_EI(CP_UNICODEFFFE)             = 1201,  /**< Unicode UTF-16, big endian byte order; available only to managed applications */
+  _LIEF_EI(CP_WINDOWS_1250)            = 1250,  /**< ANSI Central European; Central European (Windows) */
+  _LIEF_EI(CP_WINDOWS_1251)            = 1251,  /**< ANSI Cyrillic; Cyrillic (Windows) */
+  _LIEF_EI(CP_WINDOWS_1252)            = 1252,  /**< ANSI Latin 1; Western European (Windows) */
+  _LIEF_EI(CP_WINDOWS_1253)            = 1253,  /**< ANSI Greek; Greek (Windows) */
+  _LIEF_EI(CP_WINDOWS_1254)            = 1254,  /**< ANSI Turkish; Turkish (Windows) */
+  _LIEF_EI(CP_WINDOWS_1255)            = 1255,  /**< ANSI Hebrew; Hebrew (Windows) */
+  _LIEF_EI(CP_WINDOWS_1256)            = 1256,  /**< ANSI Arabic; Arabic (Windows) */
+  _LIEF_EI(CP_WINDOWS_1257)            = 1257,  /**< ANSI Baltic; Baltic (Windows) */
+  _LIEF_EI(CP_WINDOWS_1258)            = 1258,  /**< ANSI/OEM Vietnamese; Vietnamese (Windows) */
+  _LIEF_EI(CP_JOHAB)                   = 1361,  /**< Korean (Johab) */
+  _LIEF_EI(CP_MACINTOSH)               = 10000, /**< MAC Roman; Western European (Mac) */
+  _LIEF_EI(CP_X_MAC_JAPANESE)          = 10001, /**< Japanese (Mac) */
+  _LIEF_EI(CP_X_MAC_CHINESETRAD)       = 10002, /**< MAC Traditional Chinese (Big5); Chinese Traditional (Mac) */
+  _LIEF_EI(CP_X_MAC_KOREAN)            = 10003, /**< Korean (Mac) */
+  _LIEF_EI(CP_X_MAC_ARABIC)            = 10004, /**< Arabic (Mac) */
+  _LIEF_EI(CP_X_MAC_HEBREW)            = 10005, /**< Hebrew (Mac) */
+  _LIEF_EI(CP_X_MAC_GREEK)             = 10006, /**< Greek (Mac) */
+  _LIEF_EI(CP_X_MAC_CYRILLIC)          = 10007, /**< Cyrillic (Mac) */
+  _LIEF_EI(CP_X_MAC_CHINESESIMP)       = 10008, /**< MAC Simplified Chinese (GB 2312); Chinese Simplified (Mac) */
+  _LIEF_EI(CP_X_MAC_ROMANIAN)          = 10010, /**< Romanian (Mac) */
+  _LIEF_EI(CP_X_MAC_UKRAINIAN)         = 10017, /**< Ukrainian (Mac) */
+  _LIEF_EI(CP_X_MAC_THAI)              = 10021, /**< Thai (Mac) */
+  _LIEF_EI(CP_X_MAC_CE)                = 10029, /**< MAC Latin 2; Central European (Mac) */
+  _LIEF_EI(CP_X_MAC_ICELANDIC)         = 10079, /**< Icelandic (Mac) */
+  _LIEF_EI(CP_X_MAC_TURKISH)           = 10081, /**< Turkish (Mac) */
+  _LIEF_EI(CP_X_MAC_CROATIAN)          = 10082, /**< Croatian (Mac) */
+  _LIEF_EI(CP_UTF_32)                  = 12000, /**< Unicode UTF-32, little endian byte order; available only to managed applications */
+  _LIEF_EI(CP_UTF_32BE)                = 12001, /**< Unicode UTF-32, big endian byte order; available only to managed applications */
+  _LIEF_EI(CP_X_CHINESE_CNS)           = 20000, /**< CNS Taiwan; Chinese Traditional (CNS) */
+  _LIEF_EI(CP_X_CP20001)               = 20001, /**< TCA Taiwan */
+  _LIEF_EI(CP_X_CHINESE_ETEN)          = 20002, /**< Eten Taiwan; Chinese Traditional (Eten) */
+  _LIEF_EI(CP_X_CP20003)               = 20003, /**< IBM5550 Taiwan */
+  _LIEF_EI(CP_X_CP20004)               = 20004, /**< TeleText Taiwan */
+  _LIEF_EI(CP_X_CP20005)               = 20005, /**< Wang Taiwan */
+  _LIEF_EI(CP_X_IA5)                   = 20105, /**< IA5 (IRV International Alphabet No. 5, 7-bit); Western European (IA5) */
+  _LIEF_EI(CP_X_IA5_GERMAN)            = 20106, /**< IA5 German (7-bit) */
+  _LIEF_EI(CP_X_IA5_SWEDISH)           = 20107, /**< IA5 Swedish (7-bit) */
+  _LIEF_EI(CP_X_IA5_NORWEGIAN)         = 20108, /**< IA5 Norwegian (7-bit) */
+  _LIEF_EI(CP_US_ASCII)                = 20127, /**< US-ASCII (7-bit) */
+  _LIEF_EI(CP_X_CP20261)               = 20261, /**< T.61 */
+  _LIEF_EI(CP_X_CP20269)               = 20269, /**< ISO 6937 Non-Spacing Accent */
+  _LIEF_EI(CP_IBM273)                  = 20273, /**< IBM EBCDIC Germany */
+  _LIEF_EI(CP_IBM277)                  = 20277, /**< IBM EBCDIC Denmark-Norway */
+  _LIEF_EI(CP_IBM278)                  = 20278, /**< IBM EBCDIC Finland-Sweden */
+  _LIEF_EI(CP_IBM280)                  = 20280, /**< IBM EBCDIC Italy */
+  _LIEF_EI(CP_IBM284)                  = 20284, /**< IBM EBCDIC Latin America-Spain */
+  _LIEF_EI(CP_IBM285)                  = 20285, /**< IBM EBCDIC United Kingdom */
+  _LIEF_EI(CP_IBM290)                  = 20290, /**< IBM EBCDIC Japanese Katakana Extended */
+  _LIEF_EI(CP_IBM297)                  = 20297, /**< IBM EBCDIC France */
+  _LIEF_EI(CP_IBM420)                  = 20420, /**< IBM EBCDIC Arabic */
+  _LIEF_EI(CP_IBM423)                  = 20423, /**< IBM EBCDIC Greek */
+  _LIEF_EI(CP_IBM424)                  = 20424, /**< IBM EBCDIC Hebrew */
+  _LIEF_EI(CP_X_EBCDIC_KOREANEXTENDED) = 20833, /**< IBM EBCDIC Korean Extended */
+  _LIEF_EI(CP_IBM_THAI)                = 20838, /**< IBM EBCDIC Thai */
+  _LIEF_EI(CP_KOI8_R)                  = 20866, /**< Russian (KOI8-R); Cyrillic (KOI8-R) */
+  _LIEF_EI(CP_IBM871)                  = 20871, /**< IBM EBCDIC Icelandic */
+  _LIEF_EI(CP_IBM880)                  = 20880, /**< IBM EBCDIC Cyrillic Russian */
+  _LIEF_EI(CP_IBM905)                  = 20905, /**< IBM EBCDIC Turkish */
+  _LIEF_EI(CP_IBM00924)                = 20924, /**< IBM EBCDIC Latin 1/Open System (1047 + Euro symbol) */
+  _LIEF_EI(CP_EUC_JP_JIS)              = 20932, /**< Japanese (JIS 0208-1990 and 0121-1990) */
+  _LIEF_EI(CP_X_CP20936)               = 20936, /**< Simplified Chinese (GB2312); Chinese Simplified (GB2312-80) */
+  _LIEF_EI(CP_X_CP20949)               = 20949, /**< Korean Wansung */
+  _LIEF_EI(CP_CP1025)                  = 21025, /**< IBM EBCDIC Cyrillic Serbian-Bulgarian */
+  _LIEF_EI(CP_KOI8_U)                  = 21866, /**< Ukrainian (KOI8-U); Cyrillic (KOI8-U) */
+  _LIEF_EI(CP_ISO_8859_1)              = 28591, /**< ISO 8859-1 Latin 1; Western European (ISO) */
+  _LIEF_EI(CP_ISO_8859_2)              = 28592, /**< ISO 8859-2 Central European; Central European (ISO) */
+  _LIEF_EI(CP_ISO_8859_3)              = 28593, /**< ISO 8859-3 Latin 3 */
+  _LIEF_EI(CP_ISO_8859_4)              = 28594, /**< ISO 8859-4 Baltic */
+  _LIEF_EI(CP_ISO_8859_5)              = 28595, /**< ISO 8859-5 Cyrillic */
+  _LIEF_EI(CP_ISO_8859_6)              = 28596, /**< ISO 8859-6 Arabic */
+  _LIEF_EI(CP_ISO_8859_7)              = 28597, /**< ISO 8859-7 Greek */
+  _LIEF_EI(CP_ISO_8859_8)              = 28598, /**< ISO 8859-8 Hebrew; Hebrew (ISO-Visual) */
+  _LIEF_EI(CP_ISO_8859_9)              = 28599, /**< ISO 8859-9 Turkish */
+  _LIEF_EI(CP_ISO_8859_13)             = 28603, /**< ISO 8859-13 Estonian */
+  _LIEF_EI(CP_ISO_8859_15)             = 28605, /**< ISO 8859-15 Latin 9 */
+  _LIEF_EI(CP_X_EUROPA)                = 29001, /**< Europa 3 */
+  _LIEF_EI(CP_ISO_8859_8_I)            = 38598, /**< ISO 8859-8 Hebrew; Hebrew (ISO-Logical) */
+  _LIEF_EI(CP_ISO_2022_JP)             = 50220, /**< ISO 2022 Japanese with no halfwidth Katakana; Japanese (JIS) */
+  _LIEF_EI(CP_CSISO2022JP)             = 50221, /**< ISO 2022 Japanese with halfwidth Katakana; Japanese (JIS-Allow 1 byte Kana) */
+  _LIEF_EI(CP_ISO_2022_JP_JIS)         = 50222, /**< ISO 2022 Japanese JIS X 0201-1989; Japanese (JIS-Allow 1 byte Kana - SO/SI) */
+  _LIEF_EI(CP_ISO_2022_KR)             = 50225, /**< ISO 2022 Korean */
+  _LIEF_EI(CP_X_CP50227)               = 50227, /**< ISO 2022 Simplified Chinese; Chinese Simplified (ISO 2022) */
+  _LIEF_EI(CP_EUC_JP)                  = 51932, /**< EUC Japanese */
+  _LIEF_EI(CP_EUC_CN)                  = 51936, /**< EUC Simplified Chinese; Chinese Simplified (EUC) */
+  _LIEF_EI(CP_EUC_KR)                  = 51949, /**< EUC Korean */
+  _LIEF_EI(CP_HZ_GB_2312)              = 52936, /**< HZ-GB2312 Simplified Chinese; Chinese Simplified (HZ) */
+  _LIEF_EI(CP_GB18030)                 = 54936, /**< Windows XP and later: GB18030 Simplified Chinese (4 byte); Chinese Simplified (GB18030) */
+  _LIEF_EI(CP_X_ISCII_DE)              = 57002, /**< ISCII Devanagari */
+  _LIEF_EI(CP_X_ISCII_BE)              = 57003, /**< ISCII Bengali */
+  _LIEF_EI(CP_X_ISCII_TA)              = 57004, /**< ISCII Tamil */
+  _LIEF_EI(CP_X_ISCII_TE)              = 57005, /**< ISCII Telugu */
+  _LIEF_EI(CP_X_ISCII_AS)              = 57006, /**< ISCII Assamese */
+  _LIEF_EI(CP_X_ISCII_OR)              = 57007, /**< ISCII Oriya */
+  _LIEF_EI(CP_X_ISCII_KA)              = 57008, /**< ISCII Kannada */
+  _LIEF_EI(CP_X_ISCII_MA)              = 57009, /**< ISCII Malayalam */
+  _LIEF_EI(CP_X_ISCII_GU)              = 57010, /**< ISCII Gujarati */
+  _LIEF_EI(CP_X_ISCII_PA)              = 57011, /**< ISCII Punjabi */
+  _LIEF_EI(CP_UTF_7)                   = 65000, /**< Unicode (UTF-7) */
+  _LIEF_EI(CP_UTF_8)                   = 65001, /**< Unicode (UTF-8) */
 };
 
 enum _LIEF_EN(WIN_VERSION) {
@@ -1046,7 +1046,7 @@ enum _LIEF_EN(GUARD_CF_FLAGS) {
   _LIEF_EI(GRF_STRICT)                          = 0x00080000, /**< Module requests that the OS enable return flow protection in strict mode */
 };
 
-//! @brief From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
+//! From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
 enum _LIEF_EN(ACCELERATOR_FLAGS) {
   _LIEF_EI(FVIRTKEY)  = 0x01,
   _LIEF_EI(FNOINVERT) = 0x02,
@@ -1056,7 +1056,7 @@ enum _LIEF_EN(ACCELERATOR_FLAGS) {
   _LIEF_EI(END)       = 0x80,
 };
 
-//! @brief From https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+//! From https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 enum _LIEF_EN(ACCELERATOR_VK_CODES) {
   _LIEF_EI(VK_LBUTTON)             = 0x01,
   _LIEF_EI(VK_RBUTTON)             = 0x02,

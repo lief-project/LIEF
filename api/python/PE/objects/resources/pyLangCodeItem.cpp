@@ -36,7 +36,7 @@ template<>
 void create<LangCodeItem>(py::module& m) {
   py::class_<LangCodeItem, LIEF::Object>(m, "LangCodeItem",
       "Class which modelize the childs of the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) "\n\n"
-      "See: https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms646992(v=vs.85).aspx")
+      "See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable")
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&LangCodeItem::type),

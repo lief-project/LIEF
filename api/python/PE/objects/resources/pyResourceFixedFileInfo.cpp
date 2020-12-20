@@ -35,7 +35,7 @@ using setter_t = void (ResourceFixedFileInfo::*)(T);
 template<>
 void create<ResourceFixedFileInfo>(py::module& m) {
   py::class_<ResourceFixedFileInfo, LIEF::Object>(m, "ResourceFixedFileInfo",
-      "Modelization of the `VS_FIXEDFILEINFO <https://msdn.microsoft.com/en-us/library/windows/desktop/ms646997(v=vs.85).aspx>`_")
+      "Modelization of the `VS_FIXEDFILEINFO <https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo>`_")
 
     .def_property("signature",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::signature),

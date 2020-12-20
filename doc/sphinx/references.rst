@@ -1,22 +1,26 @@
+
 References
 ==========
 
 Blog posts related to LIEF
 --------------------------
 
-  * 2020-10-23: `[Write-up] Using a PIE binary as a Shared Library — HCSC-2020 CTF Writeup <https://medium.com/bugbountywriteup/using-a-pie-binary-as-a-shared-library-hcsc-2020-ctf-writeup-390a8a437f31>`_ by `István Tóth <https://twitter.com/an0n_r0>`_
-  * 2020-02-04: `x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 <https://iwantmore.pizza/posts/x0rro.html>`_ by `phra <https://iwantmore.pizza/>`_
-  * 2019-11-01: `Isolating the logic of an encrypted protocol with LIEF and kaitai <https://x-c3ll.github.io/posts/blackbox-lief-kaitai/>`_ by `@TheXC3LL <https://twitter.com/THEXC3LL>`_
-  * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
-  * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
-  * 2018-09-30: `[Write-up] DragonCTF-Teaser-Brutal Oldskull <http://z3r0s.com/2018/09/30/DragonCTF-Teaser/>`_ by `z3r0s <http://z3r0s.com/>`_
-  * 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
-  * 2018-07-02: `PWN problem patch method commonly used in competition  <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
-  * 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
-  * 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
-  * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
-  * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
-  * 2017-04-04: `LIEF Library to Instrument Executable Formats  <https://blog.quarkslab.com/lief-library-to-instrument-executable-formats.html>`_
+.. role:: strike
+   :class: strike
+
+* 2020-10-23: `[Write-up] Using a PIE binary as a Shared Library — HCSC-2020 CTF Writeup <https://medium.com/bugbountywriteup/using-a-pie-binary-as-a-shared-library-hcsc-2020-ctf-writeup-390a8a437f31>`_ by `István Tóth <https://twitter.com/an0n_r0>`_
+* 2020-02-04: x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra
+* 2019-11-01: `Isolating the logic of an encrypted protocol with LIEF and kaitai <https://x-c3ll.github.io/posts/blackbox-lief-kaitai/>`_ by `@TheXC3LL <https://twitter.com/THEXC3LL>`_
+* 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
+* 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
+* 2018-09-30: [Write-up] DragonCTF-Teaser-Brutal Oldskull by z3r0s
+* 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
+* 2018-07-02: `PWN problem patch method commonly used in competition  <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
+* 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
+* 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
+* 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
+* 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
+* 2017-04-04: `LIEF Library to Instrument Executable Formats  <https://blog.quarkslab.com/lief-library-to-instrument-executable-formats.html>`_
 
 
 Projects using LIEF
@@ -85,7 +89,7 @@ ELF
 +--------------+----------+-----------------------------------------------------------------------+
 | elfparser    | C++ ?    | http://elfparser.com/index.html                                       |
 +--------------+----------+-----------------------------------------------------------------------+
-| libelf       | C        | http://www.mr511.de/software/                                         |
+| libelf       | C        | :strike:`hxxp://www.mr511.de/software/`                               |
 +--------------+----------+-----------------------------------------------------------------------+
 | elfio        | C++      | http://elfio.sourceforge.net/                                         |
 +--------------+----------+-----------------------------------------------------------------------+
@@ -97,7 +101,7 @@ ELF
 +--------------+----------+-----------------------------------------------------------------------+
 | elfesteem    | Python   | https://github.com/LRGH/elfesteem                                     |
 +--------------+----------+-----------------------------------------------------------------------+
-| elfsharp     | C#       | http://elfsharp.hellsgate.pl/index.shtml                              |
+| elfsharp     | C#       | :strike:`hxxp://elfsharp.hellsgate.pl/index.shtml`                    |
 +--------------+----------+-----------------------------------------------------------------------+
 | metasm       | Ruby     | https://github.com/jjyg/metasm                                        |
 +--------------+----------+-----------------------------------------------------------------------+
@@ -122,76 +126,76 @@ ELF
 PE
 ~~
 
-+---------------+--------------+----------------------------------------------------------------------+
-|    Name       | Language     |   Link                                                               |
-+===============+==============+======================================================================+
-| pefiles       | Python       | https://github.com/erocarrera/pefile                                 |
-+---------------+--------------+----------------------------------------------------------------------+
-| radare2       | C            | https://github.com/radare/radare2/tree/master/libr/bin/format/pe     |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE.Explorer   | C++/C# ?     | http://www.pe-explorer.com/                                          |
-+---------------+--------------+----------------------------------------------------------------------+
-| CFF Explorer  | C++/C# ?     | http://www.ntcore.com/exsuite.php                                    |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE Browser 64 | C++/C# ?     | http://www.smidgeonsoft.prohosting.com/pebrowse-pro-file-viewer.html |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE View       | C++/C# ?     | http://wjradburn.com/software/                                       |
-+---------------+--------------+----------------------------------------------------------------------+
-| FileAlyzer    | C++/C# ?     | http://www.safer-networking.org/products/filealyzer/                 |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE Studio     | C++/C# ?     | http://www.winitor.com/                                              |
-+---------------+--------------+----------------------------------------------------------------------+
-| PEDumper      | C            | https://github.com/maldevel/PEdumper                                 |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE Parse      | C++/Python   | https://github.com/trailofbits/pe-parse/tree/master/parser-library   |
-+---------------+--------------+----------------------------------------------------------------------+
-| PEParse       | C#           | https://github.com/DKorablin/PEReader                                |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE Bliss      | C++          | https://github.com/BackupGGCode/portable-executable-library          |
-+---------------+--------------+----------------------------------------------------------------------+
-| PE Net        | .NET         | https://github.com/secana/PeNet                                      |
-+---------------+--------------+----------------------------------------------------------------------+
-| libpe         | C++          | https://github.com/evilsocket/libpe/tree/master/libpe                |
-+---------------+--------------+----------------------------------------------------------------------+
-| elfesteem     | Python       | https://github.com/LRGH/elfesteem                                    |
-+---------------+--------------+----------------------------------------------------------------------+
-| pelook        | C ?          | http://bytepointer.com/tools/index.htm#pelook                        |
-+---------------+--------------+----------------------------------------------------------------------+
-| PortEx        | Java         | http://katjahahn.github.io/PortEx                                    |
-+---------------+--------------+----------------------------------------------------------------------+
-| metasm        | Ruby         | https://github.com/jjyg/metasm                                       |
-+---------------+--------------+----------------------------------------------------------------------+
-| amoco         | Python       | https://github.com/bdcht/amoco                                       |
-+---------------+--------------+----------------------------------------------------------------------+
-| Goblin        | Rust         | https://github.com/m4b/goblin                                        |
-+---------------+--------------+----------------------------------------------------------------------+
++---------------+------------+--------------------------------------------------------------------------------+
+|    Name       | Language   |   Link                                                                         |
++===============+============+================================================================================+
+| pefiles       | Python     | https://github.com/erocarrera/pefile                                           |
++---------------+------------+--------------------------------------------------------------------------------+
+| radare2       | C          | https://github.com/radare/radare2/tree/master/libr/bin/format/pe               |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE.Explorer   | C++/C# ?   | http://www.pe-explorer.com/                                                    |
++---------------+------------+--------------------------------------------------------------------------------+
+| CFF Explorer  | C++/C# ?   | http://www.ntcore.com/exsuite.php                                              |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE Browser 64 | C++/C# ?   | :strike:`http://www.smidgeonsoft.prohosting.com/pebrowse-pro-file-viewer.html` |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE View       | C++/C# ?   | http://wjradburn.com/software/                                                 |
++---------------+------------+--------------------------------------------------------------------------------+
+| FileAlyzer    | C++/C# ?   | https://www.safer-networking.org/products/filealyzer/                          |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE Studio     | C++/C# ?   | https://www.winitor.com/                                                       |
++---------------+------------+--------------------------------------------------------------------------------+
+| PEDumper      | C          | https://github.com/maldevel/PEdumper                                           |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE Parse      | C++/Python | https://github.com/trailofbits/pe-parse/tree/master/parser-library             |
++---------------+------------+--------------------------------------------------------------------------------+
+| PEParse       | C#         | https://github.com/DKorablin/PEReader                                          |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE Bliss      | C++        | https://github.com/BackupGGCode/portable-executable-library                    |
++---------------+------------+--------------------------------------------------------------------------------+
+| PE Net        | .NET       | https://github.com/secana/PeNet                                                |
++---------------+------------+--------------------------------------------------------------------------------+
+| libpe         | C++        | https://github.com/evilsocket/libpe/tree/master/libpe                          |
++---------------+------------+--------------------------------------------------------------------------------+
+| elfesteem     | Python     | https://github.com/LRGH/elfesteem                                              |
++---------------+------------+--------------------------------------------------------------------------------+
+| pelook        | C ?        | http://bytepointer.com/tools/index.htm#pelook                                  |
++---------------+------------+--------------------------------------------------------------------------------+
+| PortEx        | Java       | http://katjahahn.github.io/PortEx                                              |
++---------------+------------+--------------------------------------------------------------------------------+
+| metasm        | Ruby       | https://github.com/jjyg/metasm                                                 |
++---------------+------------+--------------------------------------------------------------------------------+
+| amoco         | Python     | https://github.com/bdcht/amoco                                                 |
++---------------+------------+--------------------------------------------------------------------------------+
+| Goblin        | Rust       | https://github.com/m4b/goblin                                                  |
++---------------+------------+--------------------------------------------------------------------------------+
 
 Mach-O
 ~~~~~~
 
-+------------+------------+---------------------------------------------------------------------+
-|    Name    | Language   |   Link                                                              |
-+============+============+=====================================================================+
-| radare2    | C          | https://github.com/radare/radare2/tree/master/libr/bin/format/mach0 |
-+------------+------------+---------------------------------------------------------------------+
-| MachO-Kit  | C/ObjC     | https://github.com/DeVaukz/MachO-Kit                                |
-+------------+------------+---------------------------------------------------------------------+
-| optool     | ObjC       | https://github.com/alexzielenski/optool                             |
-+------------+------------+---------------------------------------------------------------------+
-| macho_edit | C++        | https://github.com/Tyilo/macho_edit                                 |
-+------------+------------+---------------------------------------------------------------------+
-| macholib   | Python     | https://pypi.python.org/pypi/macholib                               |
-+------------+------------+---------------------------------------------------------------------+
-| elfsharp   | C#         | http://elfsharp.hellsgate.pl/index.shtml                            |
-+------------+------------+---------------------------------------------------------------------+
-| elfesteem  | Python     | https://github.com/LRGH/elfesteem                                   |
-+------------+------------+---------------------------------------------------------------------+
-| metasm     | Ruby       | https://github.com/jjyg/metasm                                      |
-+------------+------------+---------------------------------------------------------------------+
-| Goblin     | Rust       | https://github.com/m4b/goblin                                       |
-+------------+------------+---------------------------------------------------------------------+
-| MachOView  | ObjC       | https://github.com/gdbinit/MachOView                                |
-+------------+------------+---------------------------------------------------------------------+
++------------+----------+---------------------------------------------------------------------+
+|    Name    | Language |   Link                                                              |
++============+==========+=====================================================================+
+| radare2    | C        | https://github.com/radare/radare2/tree/master/libr/bin/format/mach0 |
++------------+----------+---------------------------------------------------------------------+
+| MachO-Kit  | C/ObjC   | https://github.com/DeVaukz/MachO-Kit                                |
++------------+----------+---------------------------------------------------------------------+
+| optool     | ObjC     | https://github.com/alexzielenski/optool                             |
++------------+----------+---------------------------------------------------------------------+
+| macho_edit | C++      | https://github.com/Tyilo/macho_edit                                 |
++------------+----------+---------------------------------------------------------------------+
+| macholib   | Python   | https://pypi.org/project/macholib/                                  |
++------------+----------+---------------------------------------------------------------------+
+| elfsharp   | C#       | :strike:`http://elfsharp.hellsgate.pl/index.shtml`                  |
++------------+----------+---------------------------------------------------------------------+
+| elfesteem  | Python   | https://github.com/LRGH/elfesteem                                   |
++------------+----------+---------------------------------------------------------------------+
+| metasm     | Ruby     | https://github.com/jjyg/metasm                                      |
++------------+----------+---------------------------------------------------------------------+
+| Goblin     | Rust     | https://github.com/m4b/goblin                                       |
++------------+----------+---------------------------------------------------------------------+
+| MachOView  | ObjC     | https://github.com/gdbinit/MachOView                                |
++------------+----------+---------------------------------------------------------------------+
 
 
 Tools
@@ -202,7 +206,7 @@ Tools
 +====================+==========+========================================================+==============+======================================================+
 | Dress              | Python   | https://github.com/docileninja/dress                   | ELF          | Add static symbols                                   |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-| objconv            | C++      | http://www.agner.org/optimize/#objconv                 | ELF/PE/MachO | Format converter                                     |
+| objconv            | C++      | https://www.agner.org/optimize/#objconv                | ELF/PE/MachO | Format converter                                     |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | PEDetour           | C++      | https://github.com/chen-charles/PEDetour               | PE           | Hook exported functions                              |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
