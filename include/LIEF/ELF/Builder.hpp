@@ -93,8 +93,6 @@ class LIEF_API Builder {
   template<typename ELF_T>
   void build_symbol_gnuhash(void);
 
-  uint32_t sort_dynamic_symbols(void);
-
   void build_empty_symbol_gnuhash(void);
 
   template<typename ELF_T>
