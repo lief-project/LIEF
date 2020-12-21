@@ -21,17 +21,24 @@
 
 #include "LIEF/OAT.hpp"
 
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#endif
 
+#if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#endif
 
+#if defined(LIEF_MACHO_SUPPORT)
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#endif
 
 #include "LIEF/exception.hpp"
 
