@@ -854,7 +854,7 @@ void Builder::build_symbol_hash(void) {
       while (chain[value] != 0) {
         value = chain[value];
         if (value >= (new_hash_table.size() / sizeof(uint32_t))) {
-          LIEF_ERR("Symbo out-of-bound {}", symbol->name());
+          LIEF_ERR("Symbol out-of-bound {}", symbol->name());
           return;
         }
       }
