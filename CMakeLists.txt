@@ -286,19 +286,21 @@ target_include_directories(
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
-  add_custom_target(
-    copy_json_files
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
-            ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
+      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
     DEPENDS lief_libjson)
-  add_dependencies(LIB_LIEF lief_libjson copy_json_files)
+
+  target_sources(LIB_LIEF PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp)
 endif()
 
 if(LIEF_FROZEN_ENABLED)
   add_dependencies(LIB_LIEF lief_frozen)
 endif()
 
-add_dependencies(LIB_LIEF lief_spdlog lief_rang_cpp_color lief_mbed_tls)
+add_dependencies(LIB_LIEF lief_spdlog lief_mbed_tls)
 
 # Flags definition
 # ----------------

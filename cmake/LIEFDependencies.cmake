@@ -1,5 +1,5 @@
 if(__add_lief_dependencies)
-	return()
+  return()
 endif()
 set(__add_lief_dependencies ON)
 
@@ -25,22 +25,6 @@ else()
   message(STATUS "Disable JSON support")
   set(ENABLE_JSON_SUPPORT 0)
 endif()
-
-# Rang
-# ----
-set(LIBRANG_VERSION 2.1)
-set(LIBRANG_SHA256 SHA256=32e0af3d3d4f628a26e7330d4384a93b16677e5fed57fbdf45ea267c525deba0)
-set(LIBRANG_URL     "${THIRD_PARTY_DIRECTORY}/rang-${LIBRANG_VERSION}.zip")
-ExternalProject_Add(lief_rang_cpp_color
-  URL               ${LIBRANG_URL}
-  URL_HASH          ${LIBRANG_SHA256}
-  UPDATE_COMMAND    ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   "")
-
-ExternalProject_get_property(lief_rang_cpp_color SOURCE_DIR)
-set(LIBRANG_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # mbed TLS
