@@ -171,6 +171,25 @@ endif()
 
 target_link_libraries(pyLIEF PUBLIC ${PYLIEF_DEPS_LIBRARIES})
 
+
+if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX AND NOT APPLE)
+    add_custom_command(
+      TARGET pyLIEF
+      COMMENT "Strip LIEF Python bindings"
+      POST_BUILD
+      COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
+    )
+endif()
+
+if (CMAKE_BUILD_TYPE MATCHES Release AND APPLE)
+  add_custom_command(
+    TARGET pyLIEF
+    COMMENT "Strip LIEF Python bindings"
+    POST_BUILD
+    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:pyLIEF>
+  )
+endif()
+
 add_custom_command(TARGET pyLIEF POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/lief
 )
@@ -181,21 +200,3 @@ if (MSVC)
   )
 endif()
 
-
-if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX)
-  if (APPLE)
-    add_custom_command(
-      TARGET pyLIEF
-      COMMENT "Strip LIEF Python bindings"
-      POST_BUILD
-      COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:pyLIEF>
-    )
-  else()
-    add_custom_command(
-      TARGET pyLIEF
-      COMMENT "Strip LIEF Python bindings"
-      POST_BUILD
-      COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
-    )
-  endif()
-endif()
