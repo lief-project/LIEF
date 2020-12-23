@@ -91,7 +91,7 @@ class LIEF_API Builder {
   void build_symbol_hash(void);
 
   template<typename ELF_T>
-  void build_symbol_gnuhash(void);
+  void build_symbol_gnuhash(uint32_t new_symndx);
 
   void build_empty_symbol_gnuhash(void);
 

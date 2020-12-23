@@ -128,7 +128,13 @@ class TestDynamic(TestCase):
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_add_dynamic_symbols(self):
-        sample = LibAddSample(["-Wl,--hash-style=gnu"], ["-Wl,--hash-style=gnu"])
+        self._test_add_dynamic_symbols("sysv", False)
+        self._test_add_dynamic_symbols("both", True)
+        self._test_add_dynamic_symbols("gnu", True)
+
+    def _test_add_dynamic_symbols(self, hash_style, symbol_sorted):
+        linkage_option = "-Wl,--hash-style={}".format(hash_style)
+        sample = LibAddSample([linkage_option], [linkage_option])
         libadd = lief.parse(sample.libadd)
         binadd = lief.parse(sample.binadd)
         dynamic_symbols = list(libadd.dynamic_symbols)
@@ -154,18 +160,19 @@ class TestDynamic(TestCase):
         # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
         dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
         dynamic_symbols = list(libadd.dynamic_symbols)[:dynamic_symbols_size]
-        first_not_null_symbol_index = dynamic_section.information
-        first_exported_symbol_index = next(
-            i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
-        self.assertTrue(all(map(
-            lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
-                    dynamic_symbols[:first_not_null_symbol_index])))
-        self.assertTrue(all(map(
-            lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
-            dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
-        self.assertTrue(all(map(
-            lambda sym: sym.shndx != 0,
-            dynamic_symbols[first_exported_symbol_index:])))
+        if symbol_sorted:
+            first_not_null_symbol_index = dynamic_section.information
+            first_exported_symbol_index = next(
+                i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                        dynamic_symbols[:first_not_null_symbol_index])))
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx != 0,
+                dynamic_symbols[first_exported_symbol_index:])))
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_remove_library(self):

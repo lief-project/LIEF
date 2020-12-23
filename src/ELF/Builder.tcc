@@ -827,6 +827,12 @@ void Builder::build_symbol_hash(void) {
   hashtable_stream.setpos(0);
   uint32_t nbucket = hashtable_stream.read_conv<uint32_t>();
   uint32_t nchain  = hashtable_stream.read_conv<uint32_t>();
+  if (nchain != this->binary_->dynamic_symbols_.size()) {
+    LIEF_WARN("nchain of .hash section changes from {:d} to {:d}",
+              nchain,
+              this->binary_->dynamic_symbols_.size());
+    nchain = this->binary_->dynamic_symbols_.size();
+  }
 
 
   std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);
@@ -906,7 +912,7 @@ void Builder::build_symbol_hash(void) {
 // See also:
 // * p.9, https://www.akkadia.org/drepper/dsohowto.pdf
 template<typename ELF_T>
-void Builder::build_symbol_gnuhash(void) {
+void Builder::build_symbol_gnuhash(uint32_t new_symndx) {
   using uint__ = typename ELF_T::uint;
 
   LIEF_DEBUG("== Build GNU Hash table ==");
@@ -914,9 +920,15 @@ void Builder::build_symbol_gnuhash(void) {
   const GnuHash& gnu_hash   = this->binary_->gnu_hash();
 
   const uint32_t nb_buckets = gnu_hash.nb_buckets();
-  const uint32_t symndx     = gnu_hash.symbol_index();
+  const uint32_t symndx     = new_symndx;
   const uint32_t maskwords  = gnu_hash.maskwords();
   const uint32_t shift2     = gnu_hash.shift2();
+
+  if (symndx != gnu_hash.symbol_index()) {
+    LIEF_WARN("information of .gnu.hash section changes from {:d} to {:d}",
+              gnu_hash.symbol_index(),
+              symndx);
+  }
 
   const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
   if (filters.size() > 0 and filters[0] == 0) {
@@ -1087,6 +1099,10 @@ void Builder::build_hash_table(void) {
       {
         return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
       });
+  uint32_t new_symndx = 0;
+  if (it_gnuhash != std::end(this->binary_->sections_)) {
+    new_symndx = sort_dynamic_symbols();
+  }
 
   //TODO: To improve
   if (it_hash != std::end(this->binary_->sections_)) {
@@ -1097,7 +1113,7 @@ void Builder::build_hash_table(void) {
     if (this->empties_gnuhash_) {
       this->build_empty_symbol_gnuhash();
     } else {
-      this->build_symbol_gnuhash<ELF_T>();
+      this->build_symbol_gnuhash<ELF_T>(new_symndx);
     }
   }
 }
