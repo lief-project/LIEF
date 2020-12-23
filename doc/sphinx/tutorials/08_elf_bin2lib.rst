@@ -167,7 +167,7 @@ Since we have exported a function we can now use ``dlopen`` on ``libcrackme101.s
 ``dlsym`` on ``check_found``
 
 .. code-block:: cpp
-  :emphasize-lines: 8,14
+  :emphasize-lines: 9,14
 
   #include <dlfcn.h>
   #include <stdio.h>
@@ -237,7 +237,7 @@ to deny calls to ``dlopen`` with PIE binaries. This is done by verifying the
 In order to circumvent this test, LIEF can be used to remove this ``DF_1_PIE`` flag:
 
 .. code-block:: python
-  :emphasize-lines: 4
+  :emphasize-lines: 5
 
   import lief
   import sys

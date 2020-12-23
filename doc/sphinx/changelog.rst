@@ -205,32 +205,31 @@ API
 Misc
 ****
 
-  * Use `frozen <https://github.com/serge-sans-paille/frozen>`_ for some internal ``std::map`` (If C++14 is supported by the compiler)
+* Use `frozen <https://github.com/serge-sans-paille/frozen>`_ for some internal ``std::map`` (If C++14 is supported by the compiler)
 
 Acknowledgements
 ****************
 
-  * :github_user:`yd0b0N` for :pr:`162` and :pr:`166` (Endianness support and PPC relocations)
-  * :github_user:`0xbf00` for :pr:`128` (``LC_RPATH`` command)
-  * :github_user:`illera88` for :pr:`118`
-
+* :github_user:`yd0b0N` for :pr:`162` and :pr:`166` (Endianness support and PPC relocations)
+* :github_user:`0xbf00` for :pr:`128` (``LC_RPATH`` command)
+* :github_user:`illera88` for :pr:`118`
 
 
 0.8.3
 -----
 
-  * [Mach-O] Fix typo on comparison operator - :commit:`abbc264833894973f601f700b3abcc109904f722`
+* [Mach-O] Fix typo on comparison operator - :commit:`abbc264833894973f601f700b3abcc109904f722`
 
 0.8.2
 -----
 
-  * [ELF] Increase the upper limit of relocation number - :commit:`077bc329bdcc249cb8ed0b8bcb9630e1c9eede94`
+* [ELF] Increase the upper limit of relocation number - :commit:`077bc329bdcc249cb8ed0b8bcb9630e1c9eede94`
 
 0.8.1 - October 18, 2017
 ------------------------
 
-  * Fix an alignment issue in the ELF builder. See :commit:`8db199c04e9e6bcdbda165ab5c42d88218a0beb6`
-  * Add assertion on the setuptools version: :commit:`62e5825e27bb637c2f42f4d05690a100213beb03`
+* Fix an alignment issue in the ELF builder. See :commit:`8db199c04e9e6bcdbda165ab5c42d88218a0beb6`
+* Add assertion on the setuptools version: :commit:`62e5825e27bb637c2f42f4d05690a100213beb03`
 
 
 0.8.0 - October 16, 2017
@@ -540,9 +539,9 @@ In the C++ API ``get_XXX()`` getters have been renamed into ``XXX()`` (e.g. ``ge
 Build system
 ************
 
-  * Add `FindLIEF.cmake <https://github.com/lief-project/LIEF/blob/e8ac976c994f6612e8dcca994032403c2d6f580f/scripts/FindLIEF.cmake>`_ - :commit:`6dd8b10325e832a7520bf5ae3a588b9e022d0345`
-  * Add ASAN, TSAN, USAN, LSAN - :commit:`7f6aeb0d0d74eae886f4b312e12e8f71e1d5da6a`
-  * Add LibFuzzer - :commit:`7a0dc28ea29a30209e944ebcde27f7c0ab234651`
+* Add `FindLIEF.cmake <https://github.com/lief-project/LIEF/blob/e8ac976c994f6612e8dcca994032403c2d6f580f/scripts/FindLIEF.cmake>`_ - :commit:`6dd8b10325e832a7520bf5ae3a588b9e022d0345`
+* Add ASAN, TSAN, USAN, LSAN - :commit:`7f6aeb0d0d74eae886f4b312e12e8f71e1d5da6a`
+* Add LibFuzzer - :commit:`7a0dc28ea29a30209e944ebcde27f7c0ab234651`
 
 
 Documentation
@@ -556,11 +555,11 @@ Documentation
 Acknowledgements
 ****************
 
-  * :github_user:`alvarofe` for :pr:`47`
-  * :github_user:`aguinet` for :pr:`55`, :pr:`61`, :pr:`65`, :pr:`77`
-  * :github_user:`jevinskie` for :pr:`75`
-  * :github_user:`liumuqing` for :pr:`80`
-  * :github_user:`Manouchehri` for :pr:`106`
+* :github_user:`alvarofe` for :pr:`47`
+* :github_user:`aguinet` for :pr:`55`, :pr:`61`, :pr:`65`, :pr:`77`
+* :github_user:`jevinskie` for :pr:`75`
+* :github_user:`liumuqing` for :pr:`80`
+* :github_user:`Manouchehri` for :pr:`106`
 
 
 0.7.0 - July 3, 2017
@@ -733,10 +732,10 @@ Documentation
 Acknowledgements
 ****************
 
-  * `ek0 <https://github.com/ek0>`_: :pr:`24`
-  * `ACSC-CyberLab <https://github.com/ACSC-CyberLab>`_: :pr:`33`, :pr:`34`, :pr:`37`, :pr:`39`
-  * Hyrum Anderson who pointed bugs in the PE parser
-  * My collegues for the feedbacks and suggestions (Adrien, SebK, Pierrick)
+* `ek0 <https://github.com/ek0>`_: :pr:`24`
+* `ACSC-CyberLab <https://github.com/ACSC-CyberLab>`_: :pr:`33`, :pr:`34`, :pr:`37`, :pr:`39`
+* Hyrum Anderson who pointed bugs in the PE parser
+* My collegues for the feedbacks and suggestions (Adrien, SebK, Pierrick)
 
 0.6.1 - April 6, 2017
 ----------------------
@@ -768,7 +767,7 @@ Documentation
 Acknowledgements
 ****************
 
-  * `Philippe <https://github.com/doegox>`_ for the proofreading.
+* `Philippe <https://github.com/doegox>`_ for the proofreading.
 
 
 0.6.0 - March 30, 2017

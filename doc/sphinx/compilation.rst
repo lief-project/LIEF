@@ -3,15 +3,15 @@ Compilation
 
 To be compiled **LIEF** needs at least the following requirements:
 
- - C++11 compiler (GCC, Clang, MSVC..)
- - CMake
- - Python (for bindings)
+- C++11 compiler (GCC, Clang, MSVC..)
+- CMake
+- Python (for bindings)
 
 To build the documentation:
 
- - Doxygen (= ``1.8.10``)
- - Sphinx (with ``sphinx_rtd_theme`` module)
- - breathe (>= ``4.5.0``)
+- Doxygen (= ``1.8.10``)
+- Sphinx (with ``sphinx_rtd_theme`` module)
+- breathe (>= ``4.5.0``)
 
 
 Libraries only (SDK)

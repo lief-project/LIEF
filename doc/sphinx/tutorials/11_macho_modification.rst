@@ -30,9 +30,8 @@ enables interesting like code injection, anti-analysis, ...
 
 Different techniques exist to add new command in a Mach-O binary:
 
-  * One can replace an existing load command that is not mandatory for the execution like :class:`~lief.MachO.UUIDCommand` or :class:`~lief.MachO.CodeSignature`.
-  * One can use the padding area add to the command header.
-
+* One can replace an existing load command that is not mandatory for the execution like :class:`~lief.MachO.UUIDCommand` or :class:`~lief.MachO.CodeSignature`.
+* One can use the padding area add to the command header.
 
 The main limitation of these techniques is that the size and the number of commands that can be added are tied to the padding section size or to the size of the command replaced.
 
@@ -75,20 +74,20 @@ When Mach-O makes thing harder
 
 After the shift operation, we need to update several load commands of the Mach-O format:
 
-  * :attr:`lief.MachO.SymbolCommand.symbol_offset` / :attr:`lief.MachO.SymbolCommand.strings_offset`
-  * :attr:`lief.MachO.DataInCode.data_offset`, :attr:`lief.MachO.CodeSignature.data_offset`, :attr:`lief.MachO.SegmentSplitInfo.data_offset`
-  * :attr:`lief.MachO.MainCommand.entrypoint`
-  * :attr:`lief.MachO.FunctionStarts.data_offset` / :attr:`lief.MachO.FunctionStarts.functions`
-  * :class:`~lief.MachO.DynamicSymbolCommand`
-  * :attr:`lief.MachO.Section.offset` / :attr:`lief.MachO.Section.virtual_address`
-  * :attr:`lief.MachO.SegmentCommand.offset` / :attr:`lief.MachO.SegmentCommand.virtual_address`
-  * ...
+* :attr:`lief.MachO.SymbolCommand.symbol_offset` / :attr:`lief.MachO.SymbolCommand.strings_offset`
+* :attr:`lief.MachO.DataInCode.data_offset`, :attr:`lief.MachO.CodeSignature.data_offset`, :attr:`lief.MachO.SegmentSplitInfo.data_offset`
+* :attr:`lief.MachO.MainCommand.entrypoint`
+* :attr:`lief.MachO.FunctionStarts.data_offset` / :attr:`lief.MachO.FunctionStarts.functions`
+* :class:`~lief.MachO.DynamicSymbolCommand`
+* :attr:`lief.MachO.Section.offset` / :attr:`lief.MachO.Section.virtual_address`
+* :attr:`lief.MachO.SegmentCommand.offset` / :attr:`lief.MachO.SegmentCommand.virtual_address`
+* ...
 
 We also need to update:
 
-  * Relocations
-  * Binding information
-  * Export information
+* Relocations
+* Binding information
+* Export information
 
 Whereas ELF and PE formats use some kinds of ``struct`` for internal storage of relocations and exports, Mach-O format uses a bytecode to *rebase* the binary. Export information are stored in a  `trie <https://en.wikipedia.org/wiki/Trie>`_ data structure. The use of trie and bytecode reduces the binary size but it makes the update more difficult as we need to interpret and regenerate the bytecode.
 
@@ -174,9 +173,9 @@ Binding bytecode
 
 The Mach-O loader also uses a bytecode to bind imported functions or imported symbols. Actually, this bytecode is used in three different binding methods:
 
-  * Normal binding
-  * Weak binding -- Used when the same symbol is defined multiple times
-  * Lazy binding -- Bound only when there is an access to the symbol
+* Normal binding
+* Weak binding -- Used when the same symbol is defined multiple times
+* Lazy binding -- Bound only when there is an access to the symbol
 
 The bytecode can be pretty printed with the :attr:`~lief.MachO.DyldInfo.show_bind_opcodes`, :attr:`~lief.MachO.DyldInfo.show_weak_bind_opcodes` and :attr:`~lief.MachO.DyldInfo.show_lazy_bind_opcodes`:
 
@@ -275,9 +274,9 @@ As explained in the talk about format modification [1]_, one way to inject code 
 
 For a Mach-O binary, it can be achieved by adding one of these load commands:
 
-  * :attr:`~lief.MachO.LOAD_COMMAND_TYPES.ID_DYLIB`
-  * :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB`
-  * ...
+* :attr:`~lief.MachO.LOAD_COMMAND_TYPES.ID_DYLIB`
+* :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB`
+* ...
 
 Let's take an example with ``clang``. First, we need to create a tiny library which defines a constructor:
 

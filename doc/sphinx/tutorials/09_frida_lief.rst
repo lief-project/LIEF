@@ -31,10 +31,10 @@ mode of operation called "embedded". In this mode the user is responsible to inj
 
 Such injection could be done with:
 
-  * Environment variables: ``LD_PRELOAD``, ``DYLD_INSERT_LIBRARIES`` ...
-  * Using ``dlopen``
-  * In an open-source target, use the linker to link with frida-gadget.
-  * ...
+* Environment variables: ``LD_PRELOAD``, ``DYLD_INSERT_LIBRARIES`` ...
+* Using ``dlopen``
+* In an open-source target, use the linker to link with frida-gadget.
+* ...
 
 For more information about Frida gadget, here is the documentation: `frida-gadget <https://frida.re/docs/gadget/>`_
 
@@ -58,8 +58,8 @@ To summarize, executable formats include libraries that are linked with executab
 
 Here ``/bin/ls`` has two dependencies:
 
-  * ``libcap.so.2``
-  * ``libc.so.6``
+* ``libcap.so.2``
+* ``libc.so.6``
 
 In the loading phase of the executable, the loader iterates over these libraries and map them in the memory space of the process. Once mapped it calls its constructor [3]_.
 
@@ -80,9 +80,9 @@ Telegram
 
 To explain the process, we will inject frida gadget in the Telegram application. It's an interesting target because:
 
-  * It contains only one native library so the library should be loaded early.
-  * It shows the reliability of LIEF to modify ELF files
-  * It's a real app
+* It contains only one native library so the library should be loaded early.
+* It shows the reliability of LIEF to modify ELF files
+* It's a real app
 
 
 Regarding the environment, we will use the version ``4.8.4-12207`` of Telegram (February 18, 2018) on an Android 6.0.1 device with an AArch64 architecture (Samsung Galaxy S6)
@@ -132,9 +132,9 @@ Configuration of Frida Gadget
 
 From the documentation, Frida gadget enables to use a configuration file to parametrize the interaction:
 
-  * **Listing**: Interaction is the same as frida-server
-  * **Script**: Direct interaction with a JS script whose path is specified in the configuration
-  * **ScriptDirectory**: Same as *Script* but for multiple applications and multiple scripts
+* **Listing**: Interaction is the same as frida-server
+* **Script**: Direct interaction with a JS script whose path is specified in the configuration
+* **ScriptDirectory**: Same as *Script* but for multiple applications and multiple scripts
 
 *Listing* interaction would require ``android.permission.INTERNET`` permission. We can add such permission by modifying the manifest. Instead, we will use the *Script* interaction which does not require permission.
 
@@ -152,16 +152,16 @@ The Frida payload will be located in ``/data/local/tmp/myscript.js`` file. The g
 
 Use of configuration file must follow two requirements:
 
-  1. File must have the same name as the gadget library name (e.g. ``libgadget.so`` and ``libgadget.conf``)
-  2. The configuration file must be located in the **same** directory as the gadget library
+1. File must have the same name as the gadget library name (e.g. ``libgadget.so`` and ``libgadget.conf``)
+2. The configuration file must be located in the **same** directory as the gadget library
 
 The second requirement means that after the installation on the device, the gadget library will look for the config file in the ``/data/app/org.telegram.messenger-1/lib`` directory.
 
 When installing an application, the Android package manager will copy files from the ``lib/`` directory of the APK only if [4]_:
 
-  * It starts with the prefix ``lib``
-  * It ends with the suffix ``.so``
-  * It's ``gdbserver``
+* It starts with the prefix ``lib``
+* It ends with the suffix ``.so``
+* It's ``gdbserver``
 
 Frida is aware of these requirements as illustrated in listing below. Hence we can simply add the suffix ``.so`` to ``libgadget.conf``
 
@@ -208,9 +208,9 @@ Run
 
 Once:
 
-  1. The injection done in ``libtmessages.28.so``
-  2. The gadget library and its configuration placed in the ``/lib/ABI`` directory
-  3. The application resigned
+1. The injection done in ``libtmessages.28.so``
+2. The gadget library and its configuration placed in the ``/lib/ABI`` directory
+3. The application resigned
 
 We can install the repackaged APK ``new.apk`` and push ``myscript.js`` in ``/data/local/tmp``:
 

@@ -8,84 +8,41 @@ elseif(NOT SPHINX_FOUND)
 elseif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
   message(STATUS "You have to build the doc in another directory !")
 else()
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/Doxyfile.in
-      ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile @ONLY)
 
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/sphinx/conf.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/conf.py @ONLY)
+  add_custom_target(lief-doxygen
+      COMMAND
+        ${CMAKE_COMMAND} -E env
+          "LIEF_VERSION=${LIEF_VERSION_MAJOR}.${LIEF_VERSION_MINOR}.${LIEF_VERSION_PATCH}-${LIEF_COMMIT_HASH}"
+          "LIEF_INPUT=${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/include/LIEF ${CMAKE_BINARY_DIR}/include/LIEF ${CMAKE_SOURCE_DIR}/api/c/include"
+          "LIEF_EXCLUDE=${CMAKE_BINARY_DIR}/include/LIEF/third-party"
+          "LIEF_INCLUDE_PATH=${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include"
+          "LIEF_DOXYGEN_WARN_FILE=${CMAKE_BINARY_DIR}/doxygen-warn.log"
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doc/doxygen/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating Doxygen documentation" VERBATIM)
 
-    file(GLOB PACKER_DOC_RST RELATIVE
-      "${CMAKE_CURRENT_SOURCE_DIR}/sphinx"
-      "${CMAKE_CURRENT_SOURCE_DIR}/sphinx/*.rst")
+  add_custom_target(lief-sphinx
+      COMMAND ${CMAKE_COMMAND} -E env
+        "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
+        "LIEF_DOXYGEN_XML=${CMAKE_CURRENT_BINARY_DIR}/doxygen/xml/"
+        ${SPHINX_EXECUTABLE} -a -E -j4 -w ${CMAKE_BINARY_DIR}/sphinx-warn.log ${CMAKE_SOURCE_DIR}/doc/sphinx sphinx-doc
+        DEPENDS pyLIEF lief-doxygen
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating Sphinx Documentation" VERBATIM)
 
-    file(
-      COPY ${CMAKE_CURRENT_SOURCE_DIR}/sphinx/
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src
-      PATTERN "*.in" EXCLUDE)
-
-    file(
-      COPY ${CMAKE_CURRENT_SOURCE_DIR}/sphinx/_static
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static
-    )
-
-    ###################
-    # FIND PACKAGE
-    ####################
-
-    file(
-      COPY ${CMAKE_SOURCE_DIR}/examples/cmake/find_package/CMakeLists.txt
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/
-    )
-
-    file(
-      RENAME ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/CMakeLists.txt
-      ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/CMakeFindPackage.cmake
-    )
-
-    # Find Package Readme
-    file(
-      COPY ${CMAKE_SOURCE_DIR}/examples/cmake/find_package/README.rst
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/
-    )
-
-    file(
-      RENAME ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/README.rst
-      ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/ReadmeFindPackage.rst
-    )
-
-    ####################
-    # EXTERNAL PROJECT
-    ####################
-
-    file(
-      COPY ${CMAKE_SOURCE_DIR}/examples/cmake/external_project/CMakeLists.txt
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/
-    )
-
-    file(
-      RENAME ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/CMakeLists.txt
-      ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/CMakeExternalProject.cmake
-    )
-
-    file(
-      COPY ${CMAKE_SOURCE_DIR}/examples/cmake/external_project/README.rst
-      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/
-    )
-
-    file(
-      RENAME ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/README.rst
-      ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src/_static/ReadmeExternalProject.rst
-    )
-
-    ####################
-  add_custom_target(doc-lief ALL
-      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen/Doxyfile
-      COMMAND ${CMAKE_COMMAND} -E env "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}" ${SPHINX_EXECUTABLE} -a -E ${CMAKE_CURRENT_BINARY_DIR}/sphinx-src sphinx-doc
-      DEPENDS pyLIEF LIB_LIEF
+  add_custom_target(lief-doc ALL
+      DEPENDS lief-sphinx lief-doxygen
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       COMMENT "Generating documentation with Doxygen and Sphinx" VERBATIM)
+
+  add_custom_target(lief-quick-sphinx
+      COMMAND ${CMAKE_COMMAND} -E env
+        "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
+        "LIEF_DOXYGEN_XML=${CMAKE_CURRENT_BINARY_DIR}/doxygen/xml/"
+        "FORCE_RTD_THEME=0"
+        ${SPHINX_EXECUTABLE} -j4 -w ${CMAKE_BINARY_DIR}/sphinx-warn.log ${CMAKE_SOURCE_DIR}/doc/sphinx sphinx-doc
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating Sphinx documentation quickly" VERBATIM)
 
     install(
       DIRECTORY
@@ -100,5 +57,4 @@ else()
       DESTINATION
       share/LIEF/doc/sphinx
       COMPONENT doc)
-
 endif()

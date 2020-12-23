@@ -34,8 +34,8 @@ Consequently the installation takes more time but transformations to native code
 To optimize the Dalvik bytecode, the original DEX file (e.g. ``classes.dex``) is transformed into another file that will contain the native code. This new file usually has
 the ``.odex``, ``.oat`` extension and is wrapped by the ELF format. Using ELF format makes sense for mainly two reasons:
 
-  - It's the default format used by Linux and Android to *package* assembly code.
-  - It enables to use the same loader: ``/system/bin/linker{64}``
+- It's the default format used by Linux and Android to *package* assembly code.
+- It enables to use the same loader: ``/system/bin/linker{64}``
 
 OAT files are in fact ELF and this is why, we choose to add this new format in LIEF.
 This ELF format is actually used as a wrapper over another format which is specific to Android: the OAT format.
@@ -62,9 +62,9 @@ Basically the ELF associated exports few symbols:
 These symbols are a kind of pointers to specific part of the OAT format. For example, ``oatdata`` will point to the begining of the underlying OAT format whereas ``oatexec`` points
 to the native code. For those who are interested in a deeper understand of OAT internal structures, See:
 
-  * `Hiding Behind ART  - Black Hat 2015 <https://www.blackhat.com/docs/asia-15/materials/asia-15-Sabanal-Hiding-Behind-ART-wp.pdf>`_
-  * `Dalvik and ART <http://newandroidbook.com/files/ArtOfDalvik.pdf>`_
-  * `OAT internal structures <http://romainthomas.fr/oat/>`_
+* `Hiding Behind ART  - Black Hat 2015 <https://www.blackhat.com/docs/asia-15/materials/asia-15-Sabanal-Hiding-Behind-ART-wp.pdf>`_
+* `Dalvik and ART <http://newandroidbook.com/files/ArtOfDalvik.pdf>`_
+* `OAT internal structures <http://romainthomas.fr/oat/>`_
 
 
 These different formats can be a bit confusing and to summarize:
@@ -134,8 +134,8 @@ the application is associated with the ``/system/priv-app/SecSettings2`` directo
   $ tree system/priv-app/SecSettings2
 
   ├── oat
-  │   └── arm64
-  │       └── SecSettings2.odex
+  │   └── arm64
+  │       └── SecSettings2.odex
   └── SecSettings2.apk
 
   2 directories, 2 files
@@ -157,8 +157,8 @@ Thankfully there is a copy of the original DEX within the OAT! Actually it's not
 
 Prior Android Oreo (8.0.0) DEX files were embedded in the OAT itself and after Oreo, the transformation performed by ``dex2oat`` generates two files:
 
-  - **classes.odex**: OAT containing native code
-  - **classes.vdex**: VDEX file containing copy of original DEX files
+- **classes.odex**: OAT containing native code
+- **classes.vdex**: VDEX file containing copy of original DEX files
 
 The DEX files originally located in the OAT has been exported **in a new file** with **a new format**: the VDEX format. This new format is completely
 different from OAT, especially it's not an ELF.
@@ -212,6 +212,7 @@ To express the fact that OAT files are first ELF, the :class:`lief.OAT.Binary` c
 Thus the same ELF API is available: adding sections, modifying dynamic entries, etc and the :class:`lief.OAT.Binary` object adds the following methods:
 
 .. autoclass:: lief.OAT.Binary
+  :noindex:
   :members:
   :undoc-members:
 
@@ -369,10 +370,10 @@ ART
 As discussed previously, Android has its own implementation of the Java virtual based on the Dalvik bytecode.
 This JVM is implemented in C++ and Java primitives (``java.lang.String``, ``java.lang.Object``, etc) are mirrored with C++ objects:
 
-  * ``java.lang.Class``: ``art::mirror::Class``
-  * ``java.lang.String``: ``art::mirror::String``
-  * ``java.lang.reflect.Method``: ``art::mirror::Method``
-  * ...
+* ``java.lang.Class``: ``art::mirror::Class``
+* ``java.lang.String``: ``art::mirror::String``
+* ``java.lang.reflect.Method``: ``art::mirror::Method``
+* ...
 
 When instantiating a **new** Java class, it creates a mirrored C++ object (Memory allocation, calling constructors, ...) and the JVM handles a reference on this C++ object. To speed up the boot process and to avoid instantiation of well-known classes [2]_ at each boot, Android uses the ART format to store instances of C++ objects. To simplify, it can be seen as a heap dump of C++ objects.
 

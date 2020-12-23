@@ -221,7 +221,7 @@ class BuildLibrary(build_ext):
             targets['sdk'] = "package"
 
         if self.distribution.doc:
-            targets['doc'] = "doc-lief"
+            targets['doc'] = "lief-doc"
 
         if platform.system() == "Windows":
             build_cmd = ['cmake', '--build', '.', '--target', "lief_samples"] + build_args

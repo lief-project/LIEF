@@ -166,8 +166,8 @@ is that **relocations** and **dependencies** are resolved inside the coredump.
 
 This API could be used in association with other tools. For instance, we could use `Triton <https://triton.quarkslab.com/>`_ API:
 
-   - `AArch64Cpu::setConcreteRegisterValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
-   - `AArch64Cpu::setConcreteMemoryAreaValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
+- `AArch64Cpu::setConcreteRegisterValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
+- `AArch64Cpu::setConcreteMemoryAreaValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
 
 to map the coredump in Triton and then use its engines: Taint analysis, symbolic execution.
 

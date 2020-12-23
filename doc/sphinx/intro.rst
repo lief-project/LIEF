@@ -6,10 +6,10 @@ The purpose of this project is to provide a cross platform library which can par
 
 Main features:
 
-  * Parser: LIEF can parse ``ELF``, ``PE``, ``MachO``, ``DEX``, ``OAT``, ``ART`` and ``VDEX``. Moreover it provides an user-friendly API to access to format internals.
-  * Modify: LIEF enables to modify **some** parts of these formats
-  * Abstract: Three formats have common features like sections, symbols, entry point... LIEF factors them.
-  * API: LIEF can be used in C, C++ and Python
+* Parser: LIEF can parse ``ELF``, ``PE``, ``MachO``, ``DEX``, ``OAT``, ``ART`` and ``VDEX``. Moreover it provides an user-friendly API to access to format internals.
+* Modify: LIEF enables to modify **some** parts of these formats
+* Abstract: Three formats have common features like sections, symbols, entry point... LIEF factors them.
+* API: LIEF can be used in C, C++ and Python
 
 The global architecture looks like this:
 

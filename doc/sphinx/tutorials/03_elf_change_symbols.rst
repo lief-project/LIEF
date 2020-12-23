@@ -13,14 +13,14 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 When a binary in linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the
 dynamic table and the needed functions needed are registered in the dynamic symbols table with the following attributes:
 
-  * :attr:`~lief.ELF.Symbol.value` set to ``0``
-  * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
+* :attr:`~lief.ELF.Symbol.value` set to ``0``
+* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
 Similarly, when a library exports functions it has a ``DT_SONAME`` entry in the dynamic table and the functions
 exported are registered in the dynamic symbols table with the following attributes:
 
-  * :attr:`~lief.ELF.Symbol.value` set to address of the function in the library
-  * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
+* :attr:`~lief.ELF.Symbol.value` set to address of the function in the library
+* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
 Imported and exported functions are abstracted by LIEF thus you can iterate over these elements with :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
 

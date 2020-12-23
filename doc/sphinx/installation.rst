@@ -6,9 +6,9 @@ SDK
 
 For each platform there is an SDK that contains:
 
-  * Static library
-  * Headers
-  * Examples
+* Static library
+* Headers
+* Examples
 
 Nightly build can be downloaded here: https://lief-project.github.io/packages/sdk while releases are available here: https://github.com/lief-project/LIEF/releases.
 
@@ -222,20 +222,20 @@ External Project
 
 Using `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_:
 
-.. literalinclude:: _static/CMakeExternalProject.cmake
+.. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake
    :lines: 1-42
 
 And now, to be integrated within a project:
 
-.. literalinclude:: _static/CMakeExternalProject.cmake
+.. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake
    :lines: 47-
 
 For the compilation:
 
-.. literalinclude:: _static/ReadmeExternalProject.rst
-   :language: rst
+.. include:: ../../examples/cmake/external_project/README.rst
+   :start-line: 3
 
 A *full* example is available in the ``examples/cmake/external_project`` directory.
 
@@ -245,19 +245,19 @@ find_package()
 
 Using `CMake find_package() <https://cmake.org/cmake/help/v3.0/command/find_package.html>`_:
 
-.. literalinclude:: _static/CMakeFindPackage.cmake
+.. literalinclude:: ../../examples/cmake/find_package/CMakeLists.txt
    :language: cmake
    :lines: 5-19
 
 And now, to be integrated within a project:
 
-.. literalinclude:: _static/CMakeFindPackage.cmake
+.. literalinclude:: ../../examples/cmake/find_package/CMakeLists.txt
    :language: cmake
    :lines: 20-
 
 For the compilation:
 
-.. literalinclude:: _static/ReadmeFindPackage.rst
-   :language: rst
+.. include:: ../../examples/cmake/find_package/README.rst
+   :start-line: 3
 
 A *full* example is available in the ``examples/cmake/find_package`` directory.

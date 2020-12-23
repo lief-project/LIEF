@@ -1,4 +1,4 @@
-sphinx==1.7.1
-alabaster==0.7.10
-breathe==4.7.3
-sphinx_rtd_theme<=0.2.5b2
+sphinx
+alabaster
+breathe
+sphinx_rtd_theme

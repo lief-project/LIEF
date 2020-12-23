@@ -60,7 +60,7 @@ To test the patched library:
 
 .. code-block:: console
 
-  ./do_math.bin 1
+  $ ./do_math.bin 1
   exp(1) = 2.718282
   LD_LIBRARY_PATH=. ./do_math.bin 1
   exp(1) = 2.000000
