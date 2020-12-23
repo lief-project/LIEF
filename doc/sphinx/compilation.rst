@@ -1,17 +1,20 @@
+.. role:: strike
+   :class: strike
+
 Compilation
 ===========
 
-To be compiled **LIEF** needs at least the following requirements:
+To compile **LIEF**, you need at least the following requirements:
 
-- C++11 compiler (GCC, Clang, MSVC..)
+- C++14 compiler (GCC, Clang, MSVC..)
 - CMake
-- Python (for bindings)
+- Python >= 3.6 (for bindings)
 
 To build the documentation:
 
-- Doxygen (= ``1.8.10``)
+- Doxygen (= ``1.8.10``, the CI uses ``1.8.20``)
 - Sphinx (with ``sphinx_rtd_theme`` module)
-- breathe (>= ``4.5.0``)
+- breathe (>= ``4.25.1``)
 
 
 Libraries only (SDK)
@@ -50,32 +53,13 @@ Library and Python bindings
 
   $ git clone https://github.com/lief-project/LIEF.git
   $ cd LIEF
-  $ mkdir build
-  $ cd build
-  $ cmake -DLIEF_PYTHON_API=on -DPYTHON_VERSION=3.6 -DCMAKE_BUILD_TYPE=Release ..
-  $ cmake --build . --target LIB_LIEF --config Release
-  $ cmake --build . --target pyLIEF --config Release
+  $ python ./setup.py [--ninja] build install [--user]
 
-.. warning::
+.. note::
 
-  Depending on your Python version, CMake could not
-  find the right Python library to link against.
+  You can speed-up the compilation by installing `ccache <https://ccache.dev/>`_ or `sccache <https://github.com/mozilla/sccache>`_
 
-  We suggest to explicitly define path to the Python library,
-  Python include directory and Python executable.
-
-  .. code-block:: console
-
-    $ cmake .. \
-      -DPYTHON_VERSION=3.5 \
-      -DPYTHON_INCLUDE_DIR:PATH=/usr/include/python3.5m \
-      -DPYTHON_LIBRARY:FILEPATH=/usr/lib/libpython3.so \
-      -DPYTHON_BINARY:FILEPATH=/usr/bin/python3.5
-
-
-If you want to enable tests, add ``-DLIEF_TESTS=on`` during the CMake configuration step.
-
-The Doxygen documentation will be located at ``build/doc/doxygen/html`` and the sphinx documentation at ``build/doc/sphinx-doc``
+If you want to enable tests, you can add ``--lief-test`` after ``setup.py``.
 
 CMake Options
 -------------
@@ -85,7 +69,12 @@ CMake Options
 Docker
 ------
 
-See the `Dockerlief <https://github.com/lief-project/Dockerlief>`_ repo.
+
+See `liefproject <https://hub.docker.com/u/liefproject>`_ on Dockerhub
+
+.. container:: strike
+
+  See the `Dockerlief <https://github.com/lief-project/Dockerlief>`_ repo.
 
 
 

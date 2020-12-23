@@ -4,14 +4,13 @@ Installation and Integration
 SDK
 ---
 
-For each platform there is an SDK that contains:
+For each platform supported by LIEF there is an SDK that contains:
 
 * Static library
 * Headers
 * Examples
 
-Nightly build can be downloaded here: https://lief-project.github.io/packages/sdk while releases are available here: https://github.com/lief-project/LIEF/releases.
-
+Nightly build can be downloaded on: https://lief-project.github.io/packages/sdk while releases are available on Github release page: https://github.com/lief-project/LIEF/releases.
 
 Python
 ------
@@ -27,7 +26,11 @@ To install nightly build (master):
 
   $ pip install [--user] --index-url  https://lief-project.github.io/packages lief
 
-Python packages can be found here: https://lief-project.github.io/packages/lief
+You can also directly download the Python wheel package on: https://lief-project.github.io/packages/lief
+
+.. note::
+
+  If you already installed a nightly version of LIEF you may need the flag: ``--no-cache-dir``
 
 
 To install **release** package
@@ -36,7 +39,7 @@ To install **release** package
 
   $ pip install lief
 
-Release packages can be found here: `Releases <https://github.com/lief-project/LIEF/releases>`_
+Release packages can be found on the `PyPI <https://pypi.org/project/lief/>`_ and the Github release page: https://github.com/lief-project/LIEF/releases
 
 Using ``setup.py``, one can build and install lief as follows:
 

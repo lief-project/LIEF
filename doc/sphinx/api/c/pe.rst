@@ -1,6 +1,14 @@
 PE
 --
 
+
+.. doxygenfunction:: pe_parse
+   :project: lief
+
+
+.. doxygenfunction:: pe_binary_destroy
+   :project: lief
+
 Pe_Binary_t
 ************
 

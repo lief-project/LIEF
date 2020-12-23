@@ -55,7 +55,7 @@ struct Pe_Binary_t {
 
 typedef struct Pe_Binary_t Pe_Binary_t;
 
-/** @brief Wrapper on LIEF::PE::Parser::parse */
+/** Wrapper on LIEF::PE::Parser::parse */
 LIEF_API Pe_Binary_t* pe_parse(const char *file);
 
 LIEF_API void pe_binary_destroy(Pe_Binary_t* binary);

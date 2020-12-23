@@ -1,6 +1,29 @@
 Getting started
 ===============
 
+The entrypoints to load a binary with LIEF are:
+
+:Python:
+  * :meth:`lief.parse`
+  * :meth:`lief.ELF.parse`
+  * :meth:`lief.PE.parse`
+  * :meth:`lief.MachO.parse`
+
+|
+
+:cpp:
+  * :cpp:func:`LIEF::Parser::parse`
+  * :cpp:func:`LIEF::ELF::Parser::parse`
+  * :cpp:func:`LIEF::PE::Parser::parse`
+  * :cpp:func:`LIEF::MachO::Parser::parse`
+
+|
+
+:C:
+  * :cpp:func:`elf_parse`
+  * :cpp:func:`pe_parse`
+  * :cpp:func:`macho_parse`
+
 Python
 ------
 
