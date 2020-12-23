@@ -132,6 +132,7 @@ class TestDynamic(TestCase):
         self._test_add_dynamic_symbols("both", True)
         self._test_add_dynamic_symbols("gnu", True)
 
+    @unittest.skip("internal function")
     def _test_add_dynamic_symbols(self, hash_style, symbol_sorted):
         linkage_option = "-Wl,--hash-style={}".format(hash_style)
         sample = LibAddSample([linkage_option], [linkage_option])
