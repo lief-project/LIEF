@@ -183,13 +183,19 @@ endif()
 
 
 if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX)
-  add_custom_command(
-    TARGET pyLIEF
-    COMMENT "Strip LIEF Python bindings"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-      -DTARGET_FILE=$<TARGET_FILE:pyLIEF>
-      -DCMAKE_STRIP="${CMAKE_STRIP}"
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/strip.cmake
-  )
+  if (APPLE)
+    add_custom_command(
+      TARGET pyLIEF
+      COMMENT "Strip LIEF Python bindings"
+      POST_BUILD
+      COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:pyLIEF>
+    )
+  else()
+    add_custom_command(
+      TARGET pyLIEF
+      COMMENT "Strip LIEF Python bindings"
+      POST_BUILD
+      COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
+    )
+  endif()
 endif()
