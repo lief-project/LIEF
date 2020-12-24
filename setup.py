@@ -249,14 +249,14 @@ class BuildLibrary(build_ext):
                     subprocess.check_call(['ninja'], cwd=self.build_temp)
                     subprocess.check_call(['ninja', "check-lief"], cwd=self.build_temp)
                 else:
-                    subprocess.check_call(['ninja', targets['python_bindings']], cwd=self.build_temp)
+                    subprocess.check_call(['ninja', targets['python_bindings']], cwd=self.build_temp, env=env)
 
                 if 'sdk' in targets:
-                    subprocess.check_call(['ninja', targets['sdk']], cwd=self.build_temp)
+                    subprocess.check_call(['ninja', targets['sdk']], cwd=self.build_temp, env=env)
 
                 if 'doc' in targets:
                     try:
-                        subprocess.check_call(['ninja', targets['doc']], cwd=self.build_temp)
+                        subprocess.check_call(['ninja', targets['doc']], cwd=self.build_temp, env=env)
                     except Exception as e:
                         log.error("Documentation failed: %s" % e)
             else:
@@ -267,14 +267,14 @@ class BuildLibrary(build_ext):
                     subprocess.check_call(['make', '-j', str(jobs), "all"], cwd=self.build_temp)
                     subprocess.check_call(['make', '-j', str(jobs), "check-lief"], cwd=self.build_temp)
                 else:
-                    subprocess.check_call(['make', '-j', str(jobs), targets['python_bindings']], cwd=self.build_temp)
+                    subprocess.check_call(['make', '-j', str(jobs), targets['python_bindings']], cwd=self.build_temp, env=env)
 
                 if 'sdk' in targets:
-                    subprocess.check_call(['make', '-j', str(jobs), targets['sdk']], cwd=self.build_temp)
+                    subprocess.check_call(['make', '-j', str(jobs), targets['sdk']], cwd=self.build_temp, env=env)
 
                 if 'doc' in targets:
                     try:
-                        subprocess.check_call(['make', '-j', str(jobs), targets['doc']], cwd=self.build_temp)
+                        subprocess.check_call(['make', '-j', str(jobs), targets['doc']], cwd=self.build_temp, env=env)
                     except Exception as e:
                         log.error("Documentation failed: %s" % e)
         pylief_dst  = os.path.join(self.build_lib, self.get_ext_filename(self.get_ext_fullname(ext.name)))

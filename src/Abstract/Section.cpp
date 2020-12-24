@@ -192,7 +192,7 @@ double Section::entropy(void) const {
   for (uint64_t p : frequencies) {
     if (p > 0) {
       double freq = static_cast<double>(p) / static_cast<double>(content.size());
-      entropy += freq * std::log2(freq) ;
+      entropy += freq * std::log2l(freq) ;
     }
   }
   return (-entropy);
