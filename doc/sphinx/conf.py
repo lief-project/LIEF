@@ -182,7 +182,7 @@ else:
     html_theme = "sphinx_rtd_theme"
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-html_last_updated_fmt = '%m/%d/%Y, %H:%M:%S'
+html_last_updated_fmt = '%d/%m/%Y, %H:%M:%S'
 html_logo        = '_static/logo_blue.png'
 html_favicon     = '_static/favicon.ico'
 html_static_path = ['_static']

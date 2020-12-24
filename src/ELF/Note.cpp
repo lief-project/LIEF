@@ -48,6 +48,7 @@ Note& Note::operator=(Note other) {
 }
 
 Note::Note(const Note& other):
+  Object(other),
   binary_(other.binary_),
   name_(other.name_),
   type_(other.type_),
