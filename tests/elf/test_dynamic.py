@@ -132,7 +132,6 @@ class TestDynamic(TestCase):
         self._test_add_dynamic_symbols("both", True)
         self._test_add_dynamic_symbols("gnu", True)
 
-    @unittest.skip("internal function")
     def _test_add_dynamic_symbols(self, hash_style, symbol_sorted):
         linkage_option = "-Wl,--hash-style={}".format(hash_style)
         sample = LibAddSample([linkage_option], [linkage_option])
@@ -142,7 +141,10 @@ class TestDynamic(TestCase):
         for sym in dynamic_symbols:
             libadd.add_dynamic_symbol(sym)
         dynamic_section = libadd.get_section(".dynsym")
-        libadd.extend(dynamic_section, dynamic_section.entry_size * (len(dynamic_symbols) * 2))
+        libadd.extend(dynamic_section, dynamic_section.entry_size * len(dynamic_symbols))
+        if hash_style != "gnu":
+            hash_section = libadd.get_section(".hash")
+            libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
         libadd.write(sample.libadd)
 
         p = Popen([sample.binadd_bin, '1', '2'],
