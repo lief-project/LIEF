@@ -924,9 +924,11 @@ void Builder::build_symbol_gnuhash(uint32_t new_symndx) {
   const uint32_t maskwords  = gnu_hash.maskwords();
   const uint32_t shift2     = gnu_hash.shift2();
 
-  LIEF_WARN("symndx of .gnu.hash section changes from {:d} to {:d}",
-            gnu_hash.symbol_index(),
-            symndx);
+  if (symndx != gnu_hash.symbol_index()) {
+    LIEF_WARN("symndx of .gnu.hash section changes from {:d} to {:d}",
+              gnu_hash.symbol_index(),
+              symndx);
+  }
 
   const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
   if (filters.size() > 0 and filters[0] == 0) {
