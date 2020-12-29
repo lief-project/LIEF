@@ -1,4 +1,4 @@
-include README.md LICENSE setup.cfg CMakeLists.txt
+include README.md LICENSE setup.cfg CMakeLists.txt LIEF.pc.in LIEFConfig.cmake.in
 
 # Examples
 recursive-include examples *
