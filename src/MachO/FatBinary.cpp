@@ -91,6 +91,16 @@ const Binary& FatBinary::operator[](size_t index) const {
   return this->at(index);
 }
 
+std::unique_ptr<Binary> FatBinary::take(size_t index) {
+  if (index >= binaries_.size()) {
+    return {};
+  }
+  auto it = binaries_.begin();
+  std::advance(it, index);
+  std::unique_ptr<Binary> ret(*it);
+  binaries_.erase(it);
+  return ret;
+}
 
 void FatBinary::write(const std::string& filename) {
   Builder::write(this, filename);
