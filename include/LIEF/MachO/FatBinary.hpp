@@ -17,6 +17,7 @@
 #define LIEF_MACHO_FAT_BINARY_H_
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -61,6 +62,11 @@ class LIEF_API FatBinary {
 
   Binary&       operator[](size_t index);
   const Binary& operator[](size_t index) const;
+
+  //! Extract a @link MachO::Binary@ object. Gives ownership to the caller, and
+  //  remove it from this @link FatBinary object. Warning: this invalidates any
+  //  previously hold iterator!
+  std::unique_ptr<Binary> take(size_t index);
 
   //! Reconstruct the Fat binary object and write it in `filename`
   //! @param filename Path to write the reconstructed binary
