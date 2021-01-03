@@ -6,6 +6,8 @@ import logging
 import pathlib
 import subprocess
 import shutil
+import json
+from datetime import datetime
 from mako.template import Template
 from enum import Enum, auto
 
@@ -96,13 +98,14 @@ elif os.getenv("GITLAB_CI", None) is not None:
 elif os.getenv("CI_LOCAL", "") == "true":
     CURRENT_CI = CI.LOCAL
 else:
-    print("Can't detect CI!", file=sys.stderr)
+    logger.error("Can't detect CI!")
     sys.exit(1)
 # TODO(romain): Azure
 
-logger.info("CI: %s", pretty_ci_name(CURRENT_CI))
+CI_PRETTY_NAME = pretty_ci_name(CURRENT_CI)
+logger.info("CI: %s", CI_PRETTY_NAME)
 
-ALLOWED_BRANCHES = {"master", "deploy", "devel", "enhancement/cpack"}
+ALLOWED_BRANCHES = {"master", "deploy", "devel"}
 BRANCH_NAME = get_branch(CURRENT_CI)
 logger.info("Branch: %s", BRANCH_NAME)
 if BRANCH_NAME not in ALLOWED_BRANCHES:
@@ -120,14 +123,14 @@ DEPLOY_KEY = os.getenv("LIEF_AUTOMATIC_BUILDS_KEY", None)
 DEPLOY_IV  = os.getenv("LIEF_AUTOMATIC_BUILDS_IV", None)
 
 if DEPLOY_KEY is None or len(DEPLOY_KEY) == 0:
-    print("Deploy key is not set!", file=sys.stderr)
+    logger.error("Deploy key is not set!")
     sys.exit(1)
 
 if DEPLOY_IV is None or len(DEPLOY_IV) == 0:
-    print("Deploy IV is not set!", file=sys.stderr)
+    logger.error("Deploy IV is not set!")
     sys.exit(1)
 
-GIT_USER  = "lief-{}-ci".format(pretty_ci_name(CURRENT_CI))
+GIT_USER  = "lief-{}-ci".format(CI_PRETTY_NAME)
 GIT_EMAIL = "lief@quarkslab.com"
 
 CI_CWD = pathlib.Path(get_ci_workdir(CURRENT_CI))
@@ -141,6 +144,7 @@ LIEF_PACKAGE_DIR      = REPODIR / "deploy-packages"
 LIEF_PACKAGE_SSH_REPO = "git@github.com:lief-project/packages.git"
 SDK_PACKAGE_DIR       = LIEF_PACKAGE_DIR / "sdk"
 PYPI_PACKAGE_DIR      = LIEF_PACKAGE_DIR / "lief"
+JSON_PACKAGE          = LIEF_PACKAGE_DIR / "packages.json"
 DIST_DIR              = REPODIR / "dist"
 BUILD_DIR             = REPODIR / "build"
 
@@ -159,18 +163,18 @@ SSH_ADD     = shutil.which("ssh-add")
 SSH_KEYSCAN = shutil.which("ssh-keyscan")
 
 if DEPLOY_KEY is None:
-    print("Deploy key is not set!", file=sys.stderr)
+    logger.error("Deploy key is not set!")
     sys.exit(1)
 
 if DEPLOY_IV is None:
-    print("Deploy IV is not set!", file=sys.stderr)
+    logger.error("Deploy IV is not set!")
     sys.exit(1)
 
 
 #####################
 # Clone package repo
 #####################
-target_branch = "gh-pages"
+target_branch = "gh-pages" if BRANCH_NAME == "master" else "packages-{}".format(BRANCH_NAME)
 if not LIEF_PACKAGE_DIR.is_dir():
     cmd = "{} clone --branch={} -j8 --single-branch {} {}".format(GIT, target_branch, LIEF_PACKAGE_REPO, LIEF_PACKAGE_DIR)
     p = subprocess.Popen(cmd, shell=True, cwd=REPODIR, stderr=subprocess.STDOUT)
@@ -182,9 +186,18 @@ if not LIEF_PACKAGE_DIR.is_dir():
 SDK_PACKAGE_DIR.mkdir(exist_ok=True)
 PYPI_PACKAGE_DIR.mkdir(exist_ok=True)
 
+packages_info = {}
+new_packages_info = {}
+if JSON_PACKAGE.is_file():
+    try:
+        packages_info = json.loads(JSON_PACKAGE.read_bytes())
+    except json.decoder.JSONDecodeError as e:
+        logger.error(e)
+else:
+    JSON_PACKAGE.touch()
+
 logger.info("CI: %s - %s", GIT_USER, GIT_EMAIL)
 cmds = [
-    #"chmod 700 .git",
     "{} config user.name '{}'".format(GIT, GIT_USER),
     "{} config user.email '{}'".format(GIT, GIT_EMAIL),
     "{} reset --soft root".format(GIT),
@@ -200,16 +213,27 @@ for cmd in cmds:
 
 for file in DIST_DIR.glob("*.whl"):
     logger.debug("Copying '%s' to '%s'", file.as_posix(), PYPI_PACKAGE_DIR.as_posix())
+    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
     shutil.copy(file.as_posix(), PYPI_PACKAGE_DIR.as_posix())
 
 for file in BUILD_DIR.glob("*.zip"):
     logger.debug("Copying '%s' to '%s'", file.as_posix(), SDK_PACKAGE_DIR.as_posix())
+    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
     shutil.copy(file.as_posix(), SDK_PACKAGE_DIR.as_posix())
 
 for file in BUILD_DIR.glob("*.tar.gz"):
     logger.debug("Copying '%s' to '%s'", file.as_posix(), SDK_PACKAGE_DIR.as_posix())
+    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
     shutil.copy(file.as_posix(), SDK_PACKAGE_DIR.as_posix())
 
+for k, v in new_packages_info.items():
+    logger.info("{:<30}: {}".format(k, v))
+
+try:
+    packages_info.update(new_packages_info)
+    JSON_PACKAGE.write_text(json.dumps(packages_info))
+except Exception as e:
+    logger.error(e)
 
 INDEX_TEMPLATE = r"""
 <html>
@@ -239,6 +263,8 @@ with open((SDK_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
 
 
 
+
+
 if not SSH_DIR.is_dir():
     SSH_DIR.mkdir(mode=0o700)
 
@@ -262,7 +288,7 @@ if p.returncode:
     sys.exit(1)
 
 output_key_path.chmod(0o600)
-print(output_key_path)
+logger.info(output_key_path)
 
 process = subprocess.run(SSH_AGENT, stdout=subprocess.PIPE, universal_newlines=True, stderr=subprocess.STDOUT)
 OUTPUT_PATTERN = re.compile(r'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)', re.MULTILINE | re.DOTALL)
@@ -296,14 +322,11 @@ p.wait()
 if p.returncode:
     sys.exit(1)
 
-
+commit_msg = 'Automatic deployment by {}'.format(CI_PRETTY_NAME)
 cmds = [
-    #f"{GIT} diff --cached --exit-code --quiet",
-    #"chown -R 1000:1000 *",
     "{} add .".format(GIT),
-    "{} commit -m 'Automatic build'".format(GIT),
+    "{} commit -m '{}'".format(GIT, commit_msg),
     "{} ls-files -v".format(GIT),
-    #f"{GIT} log --pretty=fuller",
 ]
 
 for cmd in cmds:
@@ -339,5 +362,5 @@ else:
 
 
 output_key_path.unlink()
-print("ok")
+logger.info("Done!")
 
