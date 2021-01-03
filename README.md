@@ -26,7 +26,7 @@
   <a href="https://twitter.com/LIEF_project">
    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project?color=1da1f2&label=Follow&logo=twitter&logoColor=white&style=flat-square">
   </a>
-  
+
 </p>
 
 # About
@@ -84,7 +84,7 @@ pip install lief
 To install nightlty build:
 
 ```console
-pip install [--user] --index-url  https://lief-project.github.io/packages lief
+pip install [--user] --index-url https://lief.quarkslab.com/packages lief==0.11.0.dev0
 ```
 
 ### Packages
