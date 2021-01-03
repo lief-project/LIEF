@@ -12,7 +12,7 @@ from subprocess import Popen
 from unittest import TestCase
 
 import lief
-from utils import get_sample, has_recent_glibc
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -80,6 +80,7 @@ class TestELF(TestCase):
         self.assertFalse(gnu_hash.check("foofdsfdsfds"))
         self.assertFalse(gnu_hash.check("fazertrvkdfsrezklqpfjeopqdi"))
 
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_permutation(self):
         samples = [

@@ -1,0 +1,54 @@
+name: 'iOS'
+on: push
+
+jobs:
+  osx-sdk:
+    runs-on: macos-11.0
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install system dependencies
+        run: |
+          brew install cmake ninja ccache
+          python -m pip install --upgrade pip setuptools wheel
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
+        shell: bash
+      - name: Setup cache dir
+        shell: bash
+        run: |
+          mkdir -p ~/.ccache
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: ios-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              ios-${{ runner.os }}-
+      - name: Build iOS SDK
+        shell: bash
+        env:
+          CCACHE_DIR: ~/.ccache
+          CCACHE_MAXSIZE: 10.0G
+          CCACHE_CPP2: 1
+          CCACHE_COMPRESS: 1
+        run: |
+          bash scripts/osx/package_ios.sh
+      - name: Deploy
+        env:
+          LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
+          LIEF_AUTOMATIC_BUILDS_IV: ${{ secrets.LIEF_AUTOMATIC_BUILDS_IV }}
+        shell: bash
+        run: |
+          python -m pip install --upgrade requests mako
+          python .github/deploy.py
+
+
+

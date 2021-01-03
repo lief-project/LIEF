@@ -26,6 +26,7 @@
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
+#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"

@@ -66,6 +66,28 @@ endif()
 set(THIRD_PARTY_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/third-party/")
 include(LIEFDependencies)
 
+# iOS specific config
+# ===================
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED NO)
+  set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
+  set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+endif()
+
+message(STATUS "CMAKE_CXX_FLAGS_RELEASE:           ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "CMAKE_CXX_FLAGS:                   ${CMAKE_CXX_FLAGS}")
+message(STATUS "CMAKE_CXX_LINK_EXECUTABLE:         ${CMAKE_CXX_LINK_EXECUTABLE}")
+message(STATUS "CMAKE_CXX_LINK_FLAGS:              ${CMAKE_CXX_LINK_FLAGS}")
+message(STATUS "CMAKE_EXE_LINKER_FLAGS:            ${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "CMAKE_EXE_LINKER_FLAGS_RELEASE:    ${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS:         ${CMAKE_SHARED_LINKER_FLAGS}")
+message(STATUS "CMAKE_SHARED_LINKER_FLAGS_RELEASE: ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+message(STATUS "CMAKE_CXX_LINK_LIBRARY_FILE_FLAG:  ${CMAKE_CXX_LINK_LIBRARY_FILE_FLAG}")
+message(STATUS "CMAKE_LINK_LIBRARY_FILE_FLAG:      ${CMAKE_LINK_LIBRARY_FILE_FLAG}")
+message(STATUS "CMAKE_LINK_INTERFACE_LIBRARIES:    ${CMAKE_LINK_INTERFACE_LIBRARIES}")
+message(STATUS "CMAKE_CXX_IMPLICIT_LINK_LIBRARIES: ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES}")
+message(STATUS "CMAKE_SYSTEM_PROCESSOR:            ${CMAKE_SYSTEM_PROCESSOR}")
+
 # LIEF Source definition
 # ======================
 set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
@@ -315,6 +337,13 @@ set_target_properties(
              C_VISIBILITY_PRESET       hidden)
 # cmake-format: on
 
+if(UNIX AND NOT APPLE)
+  set_property(
+    TARGET LIB_LIEF
+    APPEND
+    PROPERTY LINK_FLAGS "-Wl,--gc-sections -Wl,--exclude-libs,ALL")
+endif()
+
 target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 
 # Enable support for MD2 and MD4 for parsing the Authenticode sigs of older
@@ -489,6 +518,28 @@ write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
   VERSION ${PROJECT_VERSION}
   COMPATIBILITY AnyNewerVersion)
+
+# Post-build operations
+# ======================
+if (BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
+  if (UNIX AND NOT APPLE)
+      add_custom_command(
+        TARGET LIB_LIEF
+        COMMENT "Strip LIEF shared library"
+        POST_BUILD
+        COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:LIB_LIEF>
+      )
+  endif()
+
+  if (APPLE)
+    add_custom_command(
+      TARGET LIB_LIEF
+      COMMENT "Strip LIEF shared library"
+      POST_BUILD
+      COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:LIB_LIEF>
+    )
+  endif()
+endif()
 
 # Install Prefix
 # ======================

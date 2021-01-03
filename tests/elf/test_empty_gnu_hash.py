@@ -3,6 +3,7 @@ import unittest
 import logging
 import os
 import sys
+import platform
 import stat
 import re
 import subprocess
@@ -13,7 +14,7 @@ import ctypes
 import lief
 
 from unittest import TestCase
-from utils import get_sample, has_recent_glibc
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
 
 class TestEmptyGNUHash(TestCase):
     SYMBOLS = {
@@ -29,7 +30,7 @@ class TestEmptyGNUHash(TestCase):
         self.logger.debug("temp dir: {}".format(self.tmp_dir))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_export(self):
         target_path = get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin')

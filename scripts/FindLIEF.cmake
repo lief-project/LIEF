@@ -31,22 +31,28 @@
 # Hints
 # ^^^^^
 #
-# A user may set ``LIEF_ROOT`` to a LIEF installation root to tell this
+# A user may set ``LIEF_INSTALL_PATH`` to a LIEF installation root to tell this
 # module where to look.
 #
 # To choose between STATIC and SHARED version of LIEF library, one
-# can use ``COMPONENTS STATIC`` of ``COMPONENTS SHARED``
+# can use ``COMPONENTS STATIC`` of ``COMPONENTS SHARED``
 #
 # .. code-block:: cmake
 #
-#   find_package(LIEF 0.8.0 REQUIRED COMPONENTS STATIC)
+#   find_package(LIEF 0.11.0 REQUIRED COMPONENTS STATIC)
 
 
 
 set(_LIEF_SEARCHES)
 # Search LIEF_ROOT first if it is set.
 if(LIEF_ROOT)
+  message(DEPRECATION "LIEF_ROOT is deprecated. Please use LIEF_INSTALL_PATH")
   set(_LIEF_SEARCH_ROOT PATHS ${LIEF_ROOT} NO_DEFAULT_PATH)
+  list(APPEND _LIEF_SEARCHES _LIEF_SEARCH_ROOT)
+endif()
+
+if(LIEF_INSTALL_PATH)
+  set(_LIEF_SEARCH_ROOT PATHS ${LIEF_INSTALL_PATH} NO_DEFAULT_PATH)
   list(APPEND _LIEF_SEARCHES _LIEF_SEARCH_ROOT)
 endif()
 

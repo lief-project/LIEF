@@ -14,10 +14,17 @@ import lief
 from lief.ELF import Section
 
 from unittest import TestCase
-from utils import get_sample, get_compiler
+from utils import get_sample, get_compiler, is_aarch64, is_x86_64, is_linux
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
+STUB_FILE = None
+if is_x86_64():
+    STUB_FILE = "hello_lief.bin"
+elif is_aarch64():
+    STUB_FILE = "hello_lief_aarch64.bin"
+
+STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, STUB_FILE))
+
 
 LIBADD_C = """\
 #include <stdlib.h>
@@ -95,7 +102,7 @@ class TestAddContent(TestCase):
         self.logger.debug(stdout)
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux(), "requires Linux")
     def test_simple(self):
         self.compile_libadd(self.libadd_path)
         self.compile_binadd(self.binadd_path)

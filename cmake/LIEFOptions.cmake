@@ -2,6 +2,7 @@ if(__add_lief_options)
   return()
 endif()
 set(__add_lief_options ON)
+include(CMakeDependentOption)
 
 option(LIEF_TESTS          "Enable tests"                               OFF)
 option(LIEF_DOC            "Enable documentation"                       OFF)
@@ -39,6 +40,10 @@ option(LIEF_FUZZING "Fuzz LIEF" OFF)
 
 # Profiling
 option(LIEF_PROFILING "Enable performance profiling" OFF)
+
+# Install options
+cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled examples" OFF
+                       "LIEF_EXAMPLES" OFF)
 
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)

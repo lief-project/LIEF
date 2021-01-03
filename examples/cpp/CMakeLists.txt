@@ -67,7 +67,6 @@ if (LIEF_DEX)
   set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_DEX_CPP_EXAMPLES})
 endif()
 
-
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
   add_executable("${output_name}" "${example}")
@@ -83,8 +82,11 @@ foreach(example ${LIEF_CPP_EXAMPLES})
     target_compile_options("${output_name}" PUBLIC ${LIEF_CRT})
   endif()
 
-  set_property(TARGET "${output_name}" PROPERTY CXX_STANDARD           11)
-  set_property(TARGET "${output_name}" PROPERTY CXX_STANDARD_REQUIRED  ON)
+  set_target_properties(
+    ${output_name}
+    PROPERTIES POSITION_INDEPENDENT_CODE ON
+               CXX_STANDARD              11
+               CXX_STANDARD_REQUIRED     ON)
 
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (UNIX)
@@ -97,6 +99,33 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   endif()
 
   target_link_libraries("${output_name}" PUBLIC LIB_LIEF)
+
+  if (CMAKE_BUILD_TYPE MATCHES "Release")
+    if (UNIX AND NOT APPLE)
+        add_custom_command(
+          TARGET ${output_name}
+          COMMENT "Strip ${output_name}"
+          POST_BUILD
+          COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:${output_name}>
+        )
+    endif()
+
+    if (APPLE)
+      add_custom_command(
+        TARGET ${output_name}
+        COMMENT "Strip ${output_name}"
+        POST_BUILD
+        COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:${output_name}>
+      )
+    endif()
+  endif()
+  if(LIEF_INSTALL_COMPILED_EXAMPLES)
+    install(
+      TARGETS ${output_name}
+      RUNTIME DESTINATION bin
+      BUNDLE DESTINATION bin
+      COMPONENT examples)
+  endif()
 endforeach()
 
 
@@ -106,4 +135,5 @@ install(
   COMPONENT examples
   FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
 )
+
 

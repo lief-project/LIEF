@@ -4,6 +4,9 @@ clone_folder: c:\projects\lief
 
 configuration: Release
 
+services:
+- docker
+
 platform:
 - x86
 - x64
@@ -13,7 +16,7 @@ environment:
     secure: TT7SXISIifq2/tf02n2ATgPj+Ky4Cjl3Fg44BAfyI4yRa4i87UAQIx5EFeV63+Xv2rhcU7JcMgl+An7QBrV6ofuQ9jxbuw+Gd1GqcCrAIyY=
  LIEF_AUTOMATIC_BUILDS_IV:
     secure: /S6Vbt3vEisoC81siFbkqOXQeVnwxLZZPMYp1r79G7h+HFjLlWUZSidxxpsAgHNE
- SCCACHE_CACHE_SIZE: "250M"
+ SCCACHE_CACHE_SIZE: "750M"
  SCCACHE_DIR: C:\Users\appveyor\AppData\Local\Mozilla\sccache
  SCCACHE_ERROR_LOG: C:\projects\sccache.log
  matrix:
@@ -89,12 +92,27 @@ install:
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - set MSBuildLogger="C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-  - python.exe .\setup.py --ninja --sdk --lief-test bdist_wheel && exit 0 # Ignore warnings...
+  - python.exe .\setup.py --ninja --lief-test build bdist_wheel --skip-build && exit 0 # Ignore warnings...
+  - ps: if ($env:PYTHON_VERSION -eq "3.9") { python.exe .\scripts\windows\package_sdk.py  }
 
 after_build:
   - ps: Get-Service -Name 'ssh-agent' | Set-Service -StartupType Manual
   - ps: Start-Service -Name 'ssh-agent'
-  - bash ./.github/deploy.sh
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - ps: docker pull liefproject/deploy:latest
+  - ps: |
+      docker run `
+        -v ${PWD}:/src `
+        -e APPVEYOR="true" `
+        -e APPVEYOR_PULL_REQUEST_NUMBER="$env:APPVEYOR_PULL_REQUEST_NUMBER" `
+        -e APPVEYOR_REPO_NAME="$env:APPVEYOR_REPO_NAME" `
+        -e APPVEYOR_REPO_BRANCH="$env:APPVEYOR_REPO_BRANCH" `
+        -e APPVEYOR_BUILD_FOLDER="$env:APPVEYOR_BUILD_FOLDER" `
+        -e LIEF_AUTOMATIC_BUILDS_KEY="$env:LIEF_AUTOMATIC_BUILDS_KEY" `
+        -e LIEF_AUTOMATIC_BUILDS_IV="$env:LIEF_AUTOMATIC_BUILDS_IV" `
+        --rm `
+        liefproject/deploy python3 /src/.github/deploy.py
+        $host.SetShouldExit(0)
 
 on_finish:
   - cmd: sccache.exe --stop-server

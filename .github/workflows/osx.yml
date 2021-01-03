@@ -1,0 +1,70 @@
+name: 'macOS'
+on: push
+
+jobs:
+  osx-sdk:
+    runs-on: macos-11.0
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system dependencies
+        run: |
+          brew install cmake ninja ccache
+          python -m pip install --upgrade pip setuptools wheel
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
+        shell: bash
+      - name: Setup cache dir
+        shell: bash
+        run: |
+          mkdir -p ~/.ccache
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: osx-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              osx-${{ runner.os }}-${{ matrix.python-version }}-
+              osx-${{ runner.os }}-
+      - name: Build Python ${{ matrix.python-version }} wheel
+        shell: bash
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "10.14"
+          CCACHE_DIR: ~/.ccache
+          CCACHE_MAXSIZE: 10.0G
+          CCACHE_CPP2: 1
+          CCACHE_COMPRESS: 1
+        run: |
+          python ./setup.py --ninja build bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
+      - name: Build SDK
+        shell: bash
+        if: matrix.python-version == '3.9' # Build the SDk only with Python 3.9
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "10.14"
+          CCACHE_DIR: ~/.ccache
+          CCACHE_MAXSIZE: 10.0G
+          CCACHE_CPP2: 1
+          CCACHE_COMPRESS: 1
+        run: |
+          bash scripts/osx/package_sdk.sh
+      - name: Deploy
+        env:
+          LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
+          LIEF_AUTOMATIC_BUILDS_IV: ${{ secrets.LIEF_AUTOMATIC_BUILDS_IV }}
+        shell: bash
+        run: |
+          python -m pip install --upgrade requests mako
+          python .github/deploy.py
+
+
+

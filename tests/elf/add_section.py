@@ -14,10 +14,17 @@ import lief
 from lief.ELF import Section
 
 from unittest import TestCase
-from utils import get_sample, has_recent_glibc
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
+
+STUB_FILE = None
+if is_x86_64():
+    STUB_FILE = "hello_lief.bin"
+elif is_aarch64():
+    STUB_FILE = "hello_lief_aarch64.bin"
+
+STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, STUB_FILE))
 
 class TestAddSection(TestCase):
     def setUp(self):
@@ -26,7 +33,7 @@ class TestAddSection(TestCase):
         self.logger.debug("temp dir: {}".format(self.tmp_dir))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_simple(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
@@ -55,7 +62,7 @@ class TestAddSection(TestCase):
         self.assertIsNotNone(re.search(r'LIEF is Working', stdout.decode("utf8")))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_gcc(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')

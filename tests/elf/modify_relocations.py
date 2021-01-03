@@ -14,7 +14,7 @@ import lief
 from lief.ELF import Section
 
 from unittest import TestCase
-from utils import get_sample, has_recent_glibc
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
 
 class TestRelocations(TestCase):
     def setUp(self):
@@ -23,7 +23,7 @@ class TestRelocations(TestCase):
         self.logger.debug("temp dir: {}".format(self.tmp_dir))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_simple(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
@@ -50,7 +50,7 @@ class TestRelocations(TestCase):
         self.logger.debug(stdout.decode("utf8"))
         self.assertIsNotNone(re.search(r'ls \(GNU coreutils\) ', stdout.decode("utf8")))
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     def test_all(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_all.bin')
         output      = os.path.join(self.tmp_dir, "all.relocation")
@@ -76,7 +76,7 @@ class TestRelocations(TestCase):
         self.assertIsNotNone(re.search(r'Hello World: 1', stdout.decode("utf8")))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     def test_all32(self):
         sample_path = get_sample('ELF/ELF32_x86_binary_all.bin')
         output      = os.path.join(self.tmp_dir, "all32.relocation")

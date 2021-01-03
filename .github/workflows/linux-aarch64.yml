@@ -1,0 +1,71 @@
+name: 'Linux AArch64'
+on: push
+
+jobs:
+  linux-sdk:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
+        shell: bash
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: linux-aarch64-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              linux-aarch64-${{ runner.os }}-
+      - name: Build SDK
+        if: matrix.python-version == '3.9'
+        shell: bash
+        run: |
+          docker run \
+           -e CCACHE_COMPRESS=1 \
+           -e CCACHE_MAXSIZE=10.0G \
+           -e CCACHE_CPP2=1 \
+           -e CCACHE_DIR=/ccache \
+           -v $GITHUB_WORKSPACE:/work \
+           -v $HOME/.ccache:/ccache \
+          --rm liefproject/manylinux2014-aarch64 bash /work/scripts/docker/linux-aarch64.sh
+      - name: Build Python ${{ matrix.python-version }} wheel
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          PYTHON_VERSION2=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
+          docker run \
+           -e CCACHE_COMPRESS=1 \
+           -e CCACHE_MAXSIZE=10.0G \
+           -e CCACHE_CPP2=1 \
+           -e CCACHE_DIR=/ccache \
+           -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
+           -v $GITHUB_WORKSPACE:/work \
+           -v $HOME/.ccache:/ccache \
+          --rm liefproject/manylinux2014-aarch64 bash /work/scripts/docker/manylinux2014-aarch64.sh
+      - name: Deploy
+        env:
+          LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
+          LIEF_AUTOMATIC_BUILDS_IV: ${{ secrets.LIEF_AUTOMATIC_BUILDS_IV }}
+        shell: bash
+        run: |
+          docker run \
+            -v $GITHUB_WORKSPACE:/src \
+            -e GITHUB_ACTIONS="true" \
+            -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE \
+            -e GITHUB_REF=$GITHUB_REF \
+            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
+            -e LIEF_AUTOMATIC_BUILDS_KEY=$LIEF_AUTOMATIC_BUILDS_KEY \
+            -e LIEF_AUTOMATIC_BUILDS_IV=$LIEF_AUTOMATIC_BUILDS_IV \
+            --rm \
+            liefproject/deploy python3 /src/.github/deploy.py
+
+
+

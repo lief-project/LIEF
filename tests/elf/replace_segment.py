@@ -13,7 +13,7 @@ from unittest import TestCase
 
 import lief
 from lief.ELF import Segment
-from utils import get_sample, has_recent_glibc
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -26,7 +26,7 @@ class TestAddSegment(TestCase):
         self.logger.debug("temp dir: {}".format(self.tmp_dir))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_simple(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
@@ -57,7 +57,7 @@ class TestAddSegment(TestCase):
         self.assertIsNotNone(re.search(r'LIEF is Working', stdout.decode("utf8")))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux x86-64")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_gcc(self):
         sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
@@ -88,10 +88,15 @@ class TestAddSegment(TestCase):
         self.assertIsNotNone(re.search(r'LIEF is Working', stdout.decode("utf8")))
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux(), "requires Linux")
     @unittest.skipUnless(has_recent_glibc(), "Need a recent GLIBC version")
     def test_ssh(self):
-        stub        = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
+        stub = None
+        if is_x86_64():
+            stub = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
+        elif is_aarch64():
+            stub = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief_aarch64.bin"))
+
         output      = os.path.join(self.tmp_dir, "ssh.replace_segment")
         target      = lief.parse("/usr/bin/ssh")
 

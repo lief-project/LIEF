@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.8]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,7 +24,7 @@ jobs:
         toolset: "14.16"
     - name: Build and Test
       run: |
-        python ./setup.py --ninja --sdk --lief-test bdist_wheel
+        python ./setup.py --ninja --lief-test bdist_wheel
       shell: cmd
 
 

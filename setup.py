@@ -4,6 +4,9 @@ import platform
 import subprocess
 import setuptools
 import pathlib
+import sysconfig
+import copy
+import distutils
 from pkg_resources import Distribution, get_distribution
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext, copy_file
@@ -17,6 +20,11 @@ assert (LooseVersion(setuptools.__version__) >= LooseVersion(MIN_SETUPTOOLS_VERS
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PACKAGE_NAME = "lief"
+
+get_config_var_backup  = sysconfig.get_config_var
+get_platform_backup    = sysconfig.get_platform
+get_config_vars_backup = sysconfig.get_config_vars
+distutils_get_config_vars_backup = distutils.sysconfig.get_config_vars
 
 class LiefDistribution(setuptools.Distribution):
     global_options = setuptools.Distribution.global_options + [
@@ -92,8 +100,6 @@ class BuildLibrary(build_ext):
         if platform.system() == "Windows":
             return "zip"
         return "tar.gz"
-
-
 
     def build_extension(self, ext):
         if self.distribution.lief_test:
@@ -206,7 +212,8 @@ class BuildLibrary(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-
+        log.info("Platform: %s", platform.system())
+        log.info("Wheel library: %s", self.get_ext_fullname(ext.name))
 
         # 1. Configure
         configure_cmd = ['cmake', ext.sourcedir] + cmake_args
@@ -278,8 +285,6 @@ class BuildLibrary(build_ext):
                     except Exception as e:
                         log.error("Documentation failed: %s" % e)
         pylief_dst  = os.path.join(self.build_lib, self.get_ext_filename(self.get_ext_fullname(ext.name)))
-
-
         libsuffix = pylief_dst.split(".")[-1]
 
         pylief_path = os.path.join(cmake_library_output_directory, "{}.{}".format(PACKAGE_NAME, libsuffix))
@@ -315,7 +320,63 @@ class BuildLibrary(build_ext):
                 sdk_path, sdk_output, verbose=self.verbose,
                 dry_run=self.dry_run)
 
+def get_platform():
+    out = get_platform_backup()
+    lief_arch = os.environ.get("LIEF_PY_XARCH", None)
+    if lief_arch is not None and isinstance(out, str):
+        original_out = out
+        out = out.replace("x86_64", lief_arch)
+        log.info("   Replace %s -> %s", original_out, out)
+    return out
 
+def get_config_vars(*args):
+    out = get_config_vars_backup(*args)
+    lief_arch = os.environ.get("LIEF_PY_XARCH", None)
+    if lief_arch is None:
+        return out
+    out_xfix = copy.deepcopy(out)
+    for k, v in out.items():
+        if not (isinstance(v, str) and "x86_64" in v):
+            continue
+        if k not in {"SO", "SOABI", "EXT_SUFFIX", "BUILD_GNU_TYPE"}:
+            continue
+        fix = v.replace("x86_64", lief_arch)
+        log.info("   Replace %s: %s -> %s", k, v, fix)
+        out_xfix[k] = fix
+
+    return out_xfix
+
+
+def distutils_get_config_vars(*args):
+    out = distutils_get_config_vars_backup(*args)
+    lief_arch = os.environ.get("LIEF_PY_XARCH", None)
+    if lief_arch is None:
+        return out
+
+    if isinstance(out, list):
+        fixes = []
+        for item in out:
+            if not (isinstance(item, str) and "x86_64" in item):
+                fixes.append(item)
+            else:
+                fixes.append(item.replace("x86_64", lief_arch))
+        return fixes
+
+    out_xfix = copy.deepcopy(out)
+    for k, v in out.items():
+        if not (isinstance(v, str) and "x86_64" in v):
+            continue
+        if k not in {"SO", "SOABI", "EXT_SUFFIX", "BUILD_GNU_TYPE"}:
+            continue
+        fix = v.replace("x86_64", lief_arch)
+        log.info("   Replace %s: %s -> %s", k, v, fix)
+        out_xfix[k] = fix
+
+    return out_xfix
+
+sysconfig.get_platform              = get_platform
+sysconfig.get_config_vars           = get_config_vars
+distutils.sysconfig.get_config_vars = distutils_get_config_vars
 
 # From setuptools-git-version
 command       = 'git describe --tags --long --dirty'

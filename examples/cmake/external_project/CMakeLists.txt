@@ -18,7 +18,7 @@ set(LIB_LIEF
 set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
 # LIEF's version to be used (can be 'master')
-set(LIEF_VERSION 0.10.1)
+set(LIEF_VERSION 0.11.0)
 
 # LIEF compilation config
 set(LIEF_CMAKE_ARGS
@@ -31,12 +31,12 @@ set(LIEF_CMAKE_ARGS
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
 
-if (MSVC)
+if(MSVC)
   list(APPEND ${LIEF_CMAKE_ARGS} -DLIEF_USE_CRT_RELEASE=MT)
 endif()
 
 ExternalProject_Add(LIEF
-  PREFIX           "${PACKER_LIEF_PREFIX}"
+  PREFIX           "${LIEF_PREFIX}"
   GIT_REPOSITORY   ${LIEF_GIT_URL}
   GIT_TAG          ${LIEF_VERSION}
   INSTALL_DIR      ${LIEF_INSTALL_DIR}
@@ -50,7 +50,7 @@ ExternalProject_Add(LIEF
 # ==================
 add_executable(HelloLIEF main.cpp)
 
-if (MSVC)
+if(MSVC)
   # Used for the 'and', 'or' ... keywords - See: http://www.cplusplus.com/reference/ciso646/
   target_compile_options(HelloLIEF PUBLIC /FIiso646.h)
   set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
@@ -63,8 +63,9 @@ target_include_directories(HelloLIEF
 )
 
 # Enable C++11
-set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD           11)
-set_property(TARGET HelloLIEF PROPERTY CXX_STANDARD_REQUIRED  ON)
+set_property(TARGET HelloLIEF
+             PROPERTY CXX_STANDARD  11
+             CXX_STANDARD_REQUIRED  ON)
 
 # Link the executable with LIEF
 target_link_libraries(HelloLIEF PUBLIC ${LIB_LIEF})

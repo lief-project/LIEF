@@ -34,8 +34,8 @@ foreach(example ${LIEF_C_EXAMPLES})
     $<TARGET_PROPERTY:LIB_LIEF,INCLUDE_DIRECTORIES>)
 
   if (MSVC)
-	  set_property(TARGET "${output_target}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-	  target_compile_options("${output_target}" PUBLIC ${LIEF_CRT})
+    set_property(TARGET "${output_target}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
+    target_compile_options("${output_target}" PUBLIC ${LIEF_CRT})
   endif()
 
   set(LIEF_EXAMPLES_C_FLAGS)

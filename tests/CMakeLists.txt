@@ -80,59 +80,57 @@ if(LIEF_COVERAGE)
   find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
 
   set(output_name "lief_coverage")
-	set(coverage_info "${CMAKE_BINARY_DIR}/${output_name}.info")
-	set(coverage_cleaned "${coverage_info}.cleaned")
+  set(coverage_info "${CMAKE_BINARY_DIR}/${output_name}.info")
+  set(coverage_cleaned "${coverage_info}.cleaned")
 
   add_custom_target(lief_coverage
 
-		# Cleanup lcov
-		${LCOV_PATH} --zerocounters --directory .
+    # Cleanup lcov
+    ${LCOV_PATH} --zerocounters --directory .
 
-		# Run tests
+    # Run tests
     COMMAND make check-lief
     #COMMAND ctest -R test_iterators
 
-		# Capturing lcov counters and generating report
-		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${coverage_info}
+    # Capturing lcov counters and generating report
+    COMMAND ${LCOV_PATH} --directory . --capture --output-file ${coverage_info}
     COMMAND ${LCOV_PATH} --remove ${coverage_info} 'utf8/*' 'filesystem/*' 'libjson/*' 'tests/*' '/usr/*' 'pybind11/*' '*mbedtls*' rang_cpp_color/* easyloggingpp/* -output-file ${coverage_cleaned}
-		COMMAND ${GENHTML_PATH} -o ${output_name} ${coverage_cleaned}
+    COMMAND ${GENHTML_PATH} -o ${output_name} ${coverage_cleaned}
     #COMMAND ${CMAKE_COMMAND} -E remove ${coverage_info} ${coverage_cleaned}
 
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-	)
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  )
 
 endif()
 
 
 # Fuzzing
 # =======
- if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
+  set(MELKOR_VERSION 1d62ccc) # From the fork: https://github.com/romainthomas/elf_fuzzer
+  set(MELKOR_SHA256 SHA256=2653d4ec1dca51621757e6946f4af18fcd100f905183a4692b68ad0cd65392ba)
+  set(MELKOR_URL "${THIRD_PARTY_DIRECTORY}/Melkor_ELF_Fuzzer-${MELKOR_VERSION}.zip" CACHE STRING "URL to the Melkor package")
 
-   set(MELKOR_VERSION master)
-   set(MELKOR_SHA256 SHA256=8d8115117e87ee1fad81cb09e53524f7bee9a4803632ae3b0b1cfbb66c86a6f4)
-   set(MELKOR_URL "${THIRD_PARTY_DIRECTORY}/Melkor_ELF_Fuzzer-${MELKOR_VERSION}.zip" CACHE STRING "URL to the Melkor package")
+  set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
+  set(MELKOR_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
+  ExternalProject_Add(MELKOR
+   PREFIX            ${MELKOR_PREFIX}
+   URL               ${MELKOR_URL}
+   URL_HASH          ${MELKOR_SHA256}
+   INSTALL_DIR       ${MELKOR_INSTALL_DIR}
+   UPDATE_COMMAND    ""
+   CONFIGURE_COMMAND ""
+   INSTALL_COMMAND   ""
+   BUILD_COMMAND     make clean && make
+   BUILD_IN_SOURCE   ON)
 
-   set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
-   set(MELKOR_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
-   ExternalProject_Add(MELKOR
-    PREFIX            ${MELKOR_PREFIX}
-    URL               ${MELKOR_URL}
-    URL_HASH          ${MELKOR_SHA256}
-    INSTALL_DIR       ${MELKOR_INSTALL_DIR}
-    UPDATE_COMMAND    ""
-    CONFIGURE_COMMAND ""
-    INSTALL_COMMAND   ""
-    BUILD_COMMAND     make clean && make
-    BUILD_IN_SOURCE   ON
-    PATCH_COMMAND     patch -p1 < ${THIRD_PARTY_DIRECTORY}/melkor-makefile-old-find.patch)
-
-   ExternalProject_get_property(MELKOR SOURCE_DIR)
-   set(MELKOR_BINARY "${SOURCE_DIR}/melkor")
-   message(STATUS "${MELKOR_BINARY}")
- endif()
+  ExternalProject_get_property(MELKOR SOURCE_DIR)
+  set(MELKOR_BINARY "${SOURCE_DIR}/melkor")
+  message(STATUS "${MELKOR_BINARY}")
+endif()
 
 # Tests
-# =====
+# =====
 add_executable(test_iterators "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
 
 if (MSVC)
@@ -140,8 +138,10 @@ if (MSVC)
   set_property(TARGET test_iterators PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 
-set_property(TARGET test_iterators PROPERTY CXX_STANDARD          11)
-set_property(TARGET test_iterators PROPERTY CXX_STANDARD_REQUIRED ON)
+set_target_properties(
+  test_iterators
+  PROPERTIES CXX_STANDARD           11
+             CXX_STANDARD_REQUIRED  ON)
 
 target_include_directories(test_iterators PUBLIC
   $<TARGET_PROPERTY:LIB_LIEF,INCLUDE_DIRECTORIES>
@@ -169,7 +169,7 @@ endif()
 
 macro(ADD_PYTHON_TEST name command)
 if(UNIX)
-	add_test(${name}
+  add_test(${name}
       "bash"
       "-c"
       "PYTHONPATH=\"${PROJECT_BINARY_DIR}/api/python:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\" ${command} ${ARGN}")
@@ -178,8 +178,8 @@ endif()
 if(WIN32)
    add_test(${name}
       "${PROJECT_BINARY_DIR}/tests/run_python_test.bat"
-	  "${command}"
-	  "${ARGN}")
+    "${command}"
+    "${ARGN}")
 endif()
 endmacro()
 

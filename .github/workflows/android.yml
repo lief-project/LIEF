@@ -1,0 +1,63 @@
+name: 'Android'
+on: push
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
+        shell: bash
+      - name: ccache cache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: ~/.ccache
+          key: android-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              android-${{ runner.os }}-
+      - name: Build ARM SDK
+        shell: bash
+        run: |
+          docker run \
+           -e CCACHE_COMPRESS=1 \
+           -e CCACHE_MAXSIZE=10.0G \
+           -e CCACHE_CPP2=1 \
+           -e CCACHE_DIR=/ccache \
+           -v $GITHUB_WORKSPACE:/work \
+           -v $HOME/.ccache:/ccache \
+          --rm liefproject/android-arm bash /work/scripts/docker/android-arm.sh
+      - name: Build AArch64 SDK
+        shell: bash
+        run: |
+          docker run \
+           -e CCACHE_COMPRESS=1 \
+           -e CCACHE_MAXSIZE=10.0G \
+           -e CCACHE_CPP2=1 \
+           -e CCACHE_DIR=/ccache \
+           -v $GITHUB_WORKSPACE:/work \
+           -v $HOME/.ccache:/ccache \
+          --rm liefproject/android-arm64 bash /work/scripts/docker/android-aarch64.sh
+      - name: Deploy
+        env:
+          LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
+          LIEF_AUTOMATIC_BUILDS_IV: ${{ secrets.LIEF_AUTOMATIC_BUILDS_IV }}
+        shell: bash
+        run: |
+          docker run \
+            -v $GITHUB_WORKSPACE:/src \
+            -e GITHUB_ACTIONS="true" \
+            -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE \
+            -e GITHUB_REF=$GITHUB_REF \
+            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
+            -e LIEF_AUTOMATIC_BUILDS_KEY=$LIEF_AUTOMATIC_BUILDS_KEY \
+            -e LIEF_AUTOMATIC_BUILDS_IV=$LIEF_AUTOMATIC_BUILDS_IV \
+            --rm \
+            liefproject/deploy python3 /src/.github/deploy.py
+
+
+

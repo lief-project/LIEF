@@ -10,7 +10,7 @@ import unittest
 from collections import namedtuple
 
 import lief
-from utils import get_compiler
+from utils import get_compiler, is_linux, is_x86_64, is_aarch64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -98,7 +98,7 @@ class TestBin2Lib(unittest.TestCase):
 
         return CommandResult(stdout, stderr, p.returncode)
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux(), "requires Linux")
     def test_libadd(self):
 
 
@@ -125,8 +125,15 @@ class TestBin2Lib(unittest.TestCase):
 
         compiler = get_compiler()
 
+        fmt = ""
+        if is_x86_64():
+            fmt = "{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}"
+
+        if is_aarch64():
+            fmt = "{compiler} -Wl,--export-dynamic -fPIE -pie -o {output} {input}"
+
         # Compile libadd
-        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        r = self.run_cmd(fmt.format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
@@ -138,6 +145,9 @@ class TestBin2Lib(unittest.TestCase):
         libadd_hidden.binding    = lief.ELF.SYMBOL_BINDINGS.GLOBAL
         libadd_hidden.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
         libadd_hidden            = libadd.add_dynamic_symbol(libadd_hidden, lief.ELF.SymbolVersion.global_)
+        if libadd.has(lief.ELF.DYNAMIC_TAGS.FLAGS_1):
+            libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+
         self._logger.debug(libadd_hidden)
 
         libadd.add(lief.ELF.DynamicSharedObject(os.path.basename(libadd2)))
@@ -147,7 +157,14 @@ class TestBin2Lib(unittest.TestCase):
         lib_directory = os.path.dirname(libadd2)
         libname = os.path.basename(libadd2)[3:-3] # libadd.so ---> add
 
-        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
+        fmt = ""
+        if is_x86_64():
+            fmt = "{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}"
+
+        if is_aarch64():
+            fmt = "{compiler} -Wl,--export-dynamic -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}"
+
+        r = self.run_cmd(fmt.format(
             compiler=compiler,
             libdir=lib_directory,
             libadd2=libname,
@@ -164,7 +181,7 @@ class TestBin2Lib(unittest.TestCase):
         self.assertIn("From add_hidden@libadd.so a + b = 3", r.output)
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux")
     def test_libadd_api(self):
         _, binaddc = tempfile.mkstemp(prefix="binadd_", suffix=".c")
         _, libaddc = tempfile.mkstemp(prefix="libadd_", suffix=".c")
@@ -190,7 +207,14 @@ class TestBin2Lib(unittest.TestCase):
         compiler = get_compiler()
 
         # Compile libadd
-        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        fmt = ""
+        if is_x86_64():
+            fmt = "{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}"
+
+        if is_aarch64():
+            fmt = "{compiler} -Wl,--export-dynamic -fPIE -pie -o {output} {input}"
+
+        r = self.run_cmd(fmt.format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
@@ -203,7 +227,14 @@ class TestBin2Lib(unittest.TestCase):
         lib_directory = os.path.dirname(libadd2)
         libname = os.path.basename(libadd2)[3:-3] # libadd.so ---> add
 
-        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}".format(
+        fmt = ""
+        if is_x86_64():
+            fmt = "{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}"
+
+        if is_aarch64():
+            fmt = "{compiler} -Wl,--export-dynamic -fPIE -pie -Wl,-rpath={libdir} -L{libdir} -o {output} {input} -l{libadd2}"
+
+        r = self.run_cmd(fmt.format(
             compiler=compiler,
             libdir=lib_directory,
             libadd2=libname,
@@ -220,7 +251,7 @@ class TestBin2Lib(unittest.TestCase):
         self.assertIn("From add_hidden@libadd.so a + b = 3", r.output)
 
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    @unittest.skipUnless(is_linux() and is_x86_64(), "requires Linux")
     def test_libadd_api2(self):
         _, binaddc = tempfile.mkstemp(prefix="binadd_", suffix=".c")
         _, libaddc = tempfile.mkstemp(prefix="libadd_", suffix=".c")
@@ -245,8 +276,16 @@ class TestBin2Lib(unittest.TestCase):
 
         compiler = get_compiler()
 
+        fmt = ""
+        if is_x86_64():
+            fmt = "{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}"
+
+        if is_aarch64():
+            fmt = "{compiler} -Wl,--export-dynamic -fPIE -pie -o {output} {input}"
+
+
         # Compile libadd
-        r = self.run_cmd("{compiler} -Wl,--export-dynamic -mcmodel=large -fPIE -pie -o {output} {input}".format(
+        r = self.run_cmd(fmt.format(
             compiler=compiler,
             output=libadd,
             input=libaddc))
