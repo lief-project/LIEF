@@ -41,7 +41,7 @@ void create<SymbolVersionAux>(py::module& m) {
         [] (const SymbolVersionAux& obj) {
           return safe_string_converter(obj.name());
         },
-        static_cast<getter_t<const std::string&>>(&SymbolVersionAux::name),
+        static_cast<setter_t<const std::string&>>(&SymbolVersionAux::name),
         "Symbol's name")
 
     .def("__eq__", &SymbolVersionAux::operator==)
