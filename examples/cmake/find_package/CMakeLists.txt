@@ -6,10 +6,10 @@ project(CMakeLIEF)
 # ==============================
 
 # Custom path to the LIEF install directory
-set(LIEF_INSTALL_PATH CACHE PATH ${CMAKE_INSTALL_PREFIX})
+set(LIEF_DIR CACHE PATH ${CMAKE_INSTALL_PREFIX})
 
 # Directory to 'FindLIEF.cmake'
-list(APPEND CMAKE_MODULE_PATH ${LIEF_INSTALL_PATH}/share/LIEF/cmake)
+list(APPEND CMAKE_MODULE_PATH ${LIEF_DIR}/share/LIEF/cmake)
 
 # include 'FindLIEF.cmake'
 include(FindLIEF)

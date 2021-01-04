@@ -7,6 +7,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  std::unique_ptr<LIEF::Binary> binary = LIEF::Parser::parse(argv[1]);
+  auto binary = LIEF::Parser::parse(argv[1]);
   std::cout << *binary << std::endl;
+  return 0;
 }

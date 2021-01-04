@@ -31,7 +31,7 @@
 # Hints
 # ^^^^^
 #
-# A user may set ``LIEF_INSTALL_PATH`` to a LIEF installation root to tell this
+# A user may set ``LIEF_DIR`` to a LIEF installation root to tell this
 # module where to look.
 #
 # To choose between STATIC and SHARED version of LIEF library, one
@@ -46,13 +46,13 @@
 set(_LIEF_SEARCHES)
 # Search LIEF_ROOT first if it is set.
 if(LIEF_ROOT)
-  message(DEPRECATION "LIEF_ROOT is deprecated. Please use LIEF_INSTALL_PATH")
+  message(DEPRECATION "LIEF_ROOT is deprecated. Please use LIEF_DIR")
   set(_LIEF_SEARCH_ROOT PATHS ${LIEF_ROOT} NO_DEFAULT_PATH)
   list(APPEND _LIEF_SEARCHES _LIEF_SEARCH_ROOT)
 endif()
 
-if(LIEF_INSTALL_PATH)
-  set(_LIEF_SEARCH_ROOT PATHS ${LIEF_INSTALL_PATH} NO_DEFAULT_PATH)
+if(LIEF_DIR)
+  set(_LIEF_SEARCH_ROOT PATHS ${LIEF_DIR} NO_DEFAULT_PATH)
   list(APPEND _LIEF_SEARCHES _LIEF_SEARCH_ROOT)
 endif()
 
