@@ -6,23 +6,35 @@
   <a href="https://gitter.im/lief-project">
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg?style=flat-square">
   </a>
-  &nbsp;&nbsp;
-  <a href="https://travis-ci.org/lief-project/LIEF">
-    <img src="https://travis-ci.org/lief-project/LIEF.svg?branch=master">
+  &nbsp;
+  <a href="https://travis-ci.com/lief-project/LIEF">
+    <img alt="Linux CI status" src="https://img.shields.io/travis/com/lief-project/LIEF/master?label=Linux%20x86-64&logo=travis">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions">
-    <img src="https://github.com/lief-project/LIEF/workflows/LIEF%20Windows%20Tests/badge.svg?branch=master">
+  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+AArch64%22">
+    <img alt="Linux AArch64 CI status" src="https://img.shields.io/github/workflow/status/lief-project/LIEF/Linux%20AArch64/master?label=Linux%20AArch64&logo=github">
+  </a>
+  &nbsp;
+  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AAndroid">
+    <img alt="Android CI status" src="https://img.shields.io/github/workflow/status/lief-project/LIEF/Android/master?label=Android&logo=github">
+  </a>
+  &nbsp;
+  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AmacOS">
+    <img alt="macOS CI status" src="https://img.shields.io/github/workflow/status/lief-project/LIEF/macOS/master?label=macOS&logo=github">
+  </a>
+  &nbsp;
+  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AiOS">
+    <img alt="iOS CI status" src="https://img.shields.io/github/workflow/status/lief-project/LIEF/iOS/master?label=iOS&logo=github">
   </a>
   &nbsp;
   <a href="https://ci.appveyor.com/project/Romain/lief/branch/master">
-    <img src="https://ci.appveyor.com/api/projects/status/0ijlcujac5vh8cas/branch/master?svg=true">
+    <img alt="Windows CI status" src="https://img.shields.io/appveyor/build/Romain/LIEF/master?label=Windows&logo=appveyor">
   </a>
-  &nbsp;&nbsp;
+  &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
     <img src="https://img.shields.io/github/v/release/lief-project/LIEF?style=flat-square">
   </a>
-  &nbsp
+  &nbsp;
   <a href="https://twitter.com/LIEF_project">
    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project?color=1da1f2&label=Follow&logo=twitter&logoColor=white&style=flat-square">
   </a>
