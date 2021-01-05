@@ -12,11 +12,19 @@ if (cxx_std_11 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
 endif()
 
 if (cxx_std_14 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  set(LIEF_SUPPORT_CXX14 1)
+  if (${MSVC} AND ${MSVC_TOOLSET_VERSION} GREATER_EQUAL 141)
+    set(LIEF_SUPPORT_CXX14 1)
+  elseif(NOT ${MSVC})
+    set(LIEF_SUPPORT_CXX14 1)
+  endif()
 endif()
 
 if (cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  set(LIEF_SUPPORT_CXX17 1)
+  if (${MSVC} AND ${MSVC_TOOLSET_VERSION} GREATER_EQUAL 142)
+    set(LIEF_SUPPORT_CXX17 1)
+  elseif(NOT ${MSVC})
+    set(LIEF_SUPPORT_CXX17 1)
+  endif()
 endif()
 
 configure_file(
