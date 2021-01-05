@@ -89,7 +89,7 @@ class TestAuthenticode(TestCase):
         self.assertEqual(signer.issuer, "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Assured ID Code Signing CA")
         self.assertEqual(signer.digest_algorithm, lief.PE.ALGORITHMS.SHA_256)
         self.assertEqual(signer.encryption_algorithm, lief.PE.ALGORITHMS.RSA)
-        self.assertEqual(signer.encrypted_digest.hex(":")[:23], "75:8d:b1:f4:80:eb:25:ba")
+        self.assertEqual(signer.encrypted_digest.hex()[:16], "758db1f480eb25ba")
         self.assertEqual(hash(signer.cert), hash(cert_signer))
 
         # Check authenticated attributes

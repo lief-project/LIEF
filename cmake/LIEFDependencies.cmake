@@ -228,8 +228,8 @@ endif()
 
 # Boost leaf
 # ----------
-set(LEAF_VERSION 0.3.0)
-set(LEAF_SHA256 SHA256=0a256cba80d9ec53adece74d231c28a79ddb7d96e8f79daeed72cad0c7855dfe )
+set(LEAF_VERSION 0.3.1) # Custom fix to remove use of SUBLANG_DEFAULT in common.hpp and all.hpp
+set(LEAF_SHA256 SHA256=b925413d165cb841e560e44438dc6ad6bfcbf537d526a51489d518ad381a4c11  )
 set(LEAF_URL "${THIRD_PARTY_DIRECTORY}/leaf-${LEAF_VERSION}.zip" CACHE STRING "URL to Leaf")
 ExternalProject_Add(lief_leaf # :)
   URL               ${LEAF_URL}
