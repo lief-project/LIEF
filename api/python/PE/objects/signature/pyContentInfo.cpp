@@ -40,21 +40,23 @@ void create<ContentInfo>(py::module& m) {
         &ContentInfo::content_type,
         "OID of the content type. This value should match ``SPC_INDIRECT_DATA_OBJID``")
 
-    .def_property_readonly("type",
-        &ContentInfo::type)
-
-    .def_property_readonly("digest_algorithm",
+     .def_property_readonly("digest_algorithm",
         &ContentInfo::digest_algorithm,
-        "Algorithm (OID) used to hash the file. This value should match SignerInfo.digest_algorithm and Signature.digest_algorithm")
-
+        "Algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to hash the file. "
+        "This value should match " RST_ATTR_REF_FULL(SignerInfo.digest_algorithm) " and "
+        "" RST_ATTR_REF_FULL(Signature.digest_algorithm) "")
 
     .def_property_readonly("digest",
-        &ContentInfo::digest,
-        "The digest")
+        [] (const ContentInfo& info) -> py::bytes {
+          const std::vector<uint8_t>& dg = info.digest();
+          return py::bytes(reinterpret_cast<const char*>(dg.data()), dg.size());
+        },
+        "The digest as ``bytes`` ")
 
-    .def_property_readonly("raw",
-        &ContentInfo::raw,
-        "Return the raw bytes associated with the ContentInfo")
+    .def("__hash__",
+        [] (const ContentInfo& info) {
+          return Hash::hash(info);
+        })
 
     .def("__str__",
         [] (const ContentInfo& content_info)

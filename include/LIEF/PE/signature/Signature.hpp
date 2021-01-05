@@ -24,42 +24,84 @@
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 
 class SignatureParser;
+class Binary;
 
+//! Main interface for the PKCS #7 signature scheme
 class LIEF_API Signature : public Object {
 
   friend class SignatureParser;
   friend class Parser;
+  friend class Binary;
 
   public:
+  //! Hash the input given the algorithm
+  static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo);
+
+  public:
+  //! Flags returned by verification fonctions
+  enum class VERIFICATION_FLAGS {
+    OK = 0,
+    INVALID_SIGNER                = 1 << 0,
+    UNSUPPORTED_ALGORITHM         = 1 << 1,
+    INCONSISTENT_DIGEST_ALGORITHM = 1 << 2,
+    CERT_NOT_FOUND                = 1 << 3,
+    CORRUPTED_CONTENT_INFO        = 1 << 4,
+    CORRUPTED_AUTH_DATA           = 1 << 5,
+    MISSING_PKCS9_MESSAGE_DIGEST  = 1 << 6,
+    BAD_DIGEST                    = 1 << 7,
+    BAD_SIGNATURE                 = 1 << 8,
+    NO_SIGNATURE                  = 1 << 9,
+  };
+
   Signature(void);
   Signature(const Signature&);
   Signature& operator=(const Signature&);
 
-  //! @brief Should be 1
+  //! Should be 1
   uint32_t version(void) const;
 
-  //! @brief Return the algorithm (OID) used to
-  //! sign the content of ContentInfo
-  const oid_t& digest_algorithm(void) const;
+  //! Algorithm used to *digest* the file.
+  //!
+  //! It should match SignerInfo::digest_algorithm
+  inline ALGORITHMS digest_algorithm() const {
+    return this->digest_algorithm_;
+  }
 
-  //! @brief Return the ContentInfo
+  //! Return the ContentInfo
   const ContentInfo& content_info(void) const;
 
-  //! @brief Return an iterator over x509 certificates
+  //! Return an iterator over x509 certificates
   it_const_crt certificates(void) const;
 
-  //! @brief Return the SignerInfo object
-  const SignerInfo& signer_info(void) const;
+  //! Return an iterator over the signers (SignerInfo) defined in the PKCS #7 signature
+  it_const_signers_t signers(void) const;
 
-  //! @brief Return the raw original signature
-  const std::vector<uint8_t>& original_signature(void) const;
+  //! Return the raw original PKCS7 signature
+  const std::vector<uint8_t>& raw_der(void) const;
 
   virtual void accept(Visitor& visitor) const override;
+
+  //! Check if this signature is valid according to the Authenticode/PKCS #7 verification scheme
+  //!
+  //! 1. It must contain only **one** signer info
+  //! 2. Signature::digest_algorithm must match:
+  //!    * ContentInfo::digest_algorithm
+  //!    * SignerInfo::digest_algorithm
+  //! 3. The x509 certificate specified by SignerInfo::serial_number **and** SignerInfo::issuer
+  //!    must exists within Signature::certificates
+  //! 4. Given the x509 certificate, compare SignerInfo::encrypted_digest against either:
+  //!    * hash of authenticated attributes if present there are authenticated attributes
+  //!    * hash ContentInfo
+  //! 5. If the are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST attribute exists
+  //!    and that its value matches hash of ContentInfo
+  VERIFICATION_FLAGS check() const;
 
   virtual ~Signature(void);
 
@@ -67,20 +109,26 @@ class LIEF_API Signature : public Object {
 
   private:
 
-  uint32_t          version_;
-  oid_t             digest_algorithm_;
-  ContentInfo       content_info_;
-  std::vector<x509> certificates_;
-  SignerInfo        signer_info_;
+  uint32_t                version_ = 0;
+  ALGORITHMS              digest_algorithm_ = ALGORITHMS::UNKNOWN;
+  ContentInfo             content_info_;
+  std::vector<x509>       certificates_;
+  std::vector<SignerInfo> signers_;
+
+  uint64_t                content_info_start_ = 0;
+  uint64_t                content_info_end_ = 0;
+
+  uint64_t                auth_start_ = 0;
+  uint64_t                auth_end_ = 0;
 
   std::vector<uint8_t> original_raw_signature_;
-
-
-
 };
 
+
 }
 }
+
+ENABLE_BITMASK_OPERATORS(LIEF::PE::Signature::VERIFICATION_FLAGS);
 
 
 #endif

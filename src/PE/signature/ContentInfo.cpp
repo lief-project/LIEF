@@ -17,6 +17,8 @@
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -26,27 +28,6 @@ ContentInfo::ContentInfo(const ContentInfo&) = default;
 ContentInfo& ContentInfo::operator=(const ContentInfo&) = default;
 ContentInfo::~ContentInfo(void) = default;
 
-const oid_t& ContentInfo::content_type(void) const {
-  return this->content_type_;
-}
-
-const oid_t& ContentInfo::type(void) const {
-  return this->type_;
-}
-
-
-const oid_t& ContentInfo::digest_algorithm(void) const {
-  return this->digest_algorithm_;
-}
-
-
-const std::vector<uint8_t>& ContentInfo::digest(void) const {
-  return this->digest_;
-}
-
-const std::vector<uint8_t>& ContentInfo::raw(void) const {
-  return this->raw_;
-}
 
 void ContentInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -54,12 +35,8 @@ void ContentInfo::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
-  constexpr uint8_t wsize = 30;
-
-  os << std::hex << std::left;
-  os << std::setw(wsize) << std::setfill(' ') << "Content Type: "     << oid_to_string(content_info.content_type()) << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Type: "             << oid_to_string(content_info.type())         << std::endl;
-  os << std::setw(wsize) << std::setfill(' ') << "Digest Algorithm: " << oid_to_string(content_info.digest_algorithm()) << std::endl;
+  os << "Authentihash: " << hex_dump(content_info.digest())
+     << "(" << to_string(content_info.digest_algorithm()) << ")\n";
 
   return os;
 }

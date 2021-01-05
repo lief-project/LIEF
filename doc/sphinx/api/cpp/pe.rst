@@ -153,14 +153,112 @@ Signature
 
 ----------
 
-AuthenticatedAttributes
-***********************
+Signature Attribute
+*******************
 
-.. doxygenclass:: LIEF::PE::AuthenticatedAttributes
+.. doxygenclass:: LIEF::PE::Attribute
   :project: lief
 
 
 ----------
+
+Signature ContentType
+*********************
+
+.. doxygenclass:: LIEF::PE::ContentType
+  :project: lief
+
+
+----------
+
+Signature GenericType
+*********************
+
+.. doxygenclass:: LIEF::PE::GenericType
+  :project: lief
+
+
+----------
+
+Signature MsSpcNestedSignature
+*******************************
+
+.. doxygenclass:: LIEF::PE::MsSpcNestedSignature
+  :project: lief
+
+
+----------
+
+
+Signature MsSpcStatementType
+****************************
+
+.. doxygenclass:: LIEF::PE::MsSpcStatementType
+  :project: lief
+
+
+----------
+
+
+Signature PKCS9AtSequenceNumber
+*******************************
+
+.. doxygenclass:: LIEF::PE::PKCS9AtSequenceNumber
+  :project: lief
+
+
+----------
+
+
+Signature PKCS9CounterSignature
+*******************************
+
+.. doxygenclass:: LIEF::PE::PKCS9CounterSignature
+  :project: lief
+
+
+----------
+
+
+Signature PKCS9MessageDigest
+****************************
+
+.. doxygenclass:: LIEF::PE::PKCS9MessageDigest
+  :project: lief
+
+
+----------
+
+
+Signature PKCS9SigningTime
+**************************
+
+.. doxygenclass:: LIEF::PE::PKCS9SigningTime
+  :project: lief
+
+
+----------
+
+
+Signature SpcSpOpusInfo
+***********************
+
+.. doxygenclass:: LIEF::PE::SpcSpOpusInfo
+  :project: lief
+
+
+----------
+
+
+RsaInfo
+*******
+
+.. doxygenclass:: LIEF::PE::RsaInfo
+  :project: lief
+
+
+----------
+
 
 x509
 ****
@@ -170,6 +268,7 @@ x509
 
 
 ----------
+
 
 ContentInfo
 ***********
@@ -526,5 +625,8 @@ Enums
 .. doxygenenum:: LIEF::PE::GUARD_CF_FLAGS
    :project: lief
 
-.. doxygenenum:: LIEF::PE::POGO_SIGNATURES
+.. doxygenenum:: LIEF::PE::ALGORITHMS
+   :project: lief
+
+.. doxygenenum:: LIEF::PE::SIG_ATTRIBUTE_TYPES
    :project: lief

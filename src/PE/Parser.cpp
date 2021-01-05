@@ -115,7 +115,7 @@ void Parser::parse_dos_stub(void) {
   }
   const uint64_t sizeof_dos_stub = dos_header.addressof_new_exeheader() - sizeof(pe_dos_header);
 
-  LIEF_DEBUG("DOS Stub size: 0x{:x}", sizeof_dos_stub);
+  LIEF_DEBUG("DOS stub: @0x{:x}:0x{:x}", sizeof(pe_dos_header), sizeof_dos_stub);
 
   const uint8_t* ptr_to_dos_stub = this->stream_->peek_array<uint8_t>(sizeof(pe_dos_header), sizeof_dos_stub, /* check */false);
   if (ptr_to_dos_stub == nullptr) {
@@ -224,7 +224,9 @@ void Parser::parse_sections(void) {
 
     uint32_t size_to_read = 0;
     uint32_t offset = sections[i].PointerToRawData;
-    first_section_offset = std::min(first_section_offset, offset);
+    if (offset > 0) {
+      first_section_offset = std::min(first_section_offset, offset);
+    }
 
     if (sections[i].VirtualSize > 0) {
       size_to_read = std::min(sections[i].VirtualSize, sections[i].SizeOfRawData); // According to Corkami
@@ -250,10 +252,22 @@ void Parser::parse_sections(void) {
           ptr_to_rawdata + size_to_read
         };
       }
+      const uint64_t padding_size = section->size() - size_to_read;
+      const uint8_t* ptr_to_padding = this->stream_->peek_array<uint8_t>(offset + size_to_read, padding_size, /* check */false);
+      if (ptr_to_padding != nullptr) {
+        section->padding_ = {ptr_to_padding, ptr_to_padding + padding_size};
+      }
     }
     this->binary_->sections_.push_back(section.release());
   }
+
   const uint32_t last_section_header_offset = sections_offset + numberof_sections * sizeof(pe_section);
+  const size_t padding_size = first_section_offset - last_section_header_offset;
+  const uint8_t* padding_ptr = this->stream_->peek_array<uint8_t>(last_section_header_offset, padding_size,
+                                                                  /* check */ false);
+  if (padding_ptr != nullptr) {
+    this->binary_->section_offset_padding_ = {padding_ptr, padding_ptr + padding_size};
+  }
   this->binary_->available_sections_space_ = (first_section_offset - last_section_header_offset) / sizeof(pe_section) - 1;
   LIEF_DEBUG("Number of sections that could be added: #{:d}", this->binary_->available_sections_space_);
 }
@@ -865,23 +879,41 @@ void Parser::parse_exports(void) {
 
 void Parser::parse_signature(void) {
   LIEF_DEBUG("== Parsing signature ==");
+  static constexpr size_t SIZEOF_HEADER = 8;
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
   /*********************************************************************/
   const uint32_t signature_offset  = this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA();
   const uint32_t signature_size    = this->binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).size();
+  const uint64_t end_p = signature_offset + signature_size;
   LIEF_DEBUG("Signature Offset: 0x{:04x}", signature_offset);
   LIEF_DEBUG("Signature Size: 0x{:04x}", signature_size);
 
-  const uint8_t* signature_ptr = this->stream_->peek_array<uint8_t>(signature_offset, signature_size, /* check */false);
-  if (signature_ptr == nullptr) {
-    return;
-  }
-  std::vector<uint8_t> raw_signature = {signature_ptr, signature_ptr + signature_size};
+  this->stream_->setpos(signature_offset);
+  while (this->stream_->pos() < end_p) {
+    const uint64_t current_p = this->stream_->pos();
+    auto length = this->stream_->read<uint32_t>();
+    auto revision = this->stream_->read<uint16_t>();
+    auto certificate_type = this->stream_->read<uint16_t>();
+    LIEF_DEBUG("Signature {}r0x{:x} (0x{:x} bytes)", certificate_type, revision, length);
+    const uint8_t* data_ptr = this->stream_->read_array<uint8_t>(length - SIZEOF_HEADER, /* check */false);
+    if (data_ptr == nullptr) {
+      LIEF_INFO("Can't read 0x{:x} bytes", length);
+      break;
+    }
+    std::vector<uint8_t> raw_signature = {data_ptr, data_ptr + length - SIZEOF_HEADER};
+    auto sign = SignatureParser::parse(std::move(raw_signature));
 
-  //TODO: Deal with header (+8)
-  this->binary_->signature_     = SignatureParser::parse(raw_signature);
-  this->binary_->has_signature_ = true;
+    if (sign) {
+      this->binary_->signatures_.push_back(std::move(sign.value()));
+    } else {
+      LIEF_INFO("Unable to parse the signature");
+    }
+    this->stream_->align(8);
+    if (this->stream_->pos() <= current_p) {
+      break;
+    }
+  }
 }
 
 
@@ -907,6 +939,7 @@ void Parser::parse_overlay(void) {
           ptr_to_overlay,
           ptr_to_overlay + overlay_size
         };
+      this->binary_->overlay_offset_ = last_section_offset;
     }
   } else {
     this->binary_->overlay_ = {};

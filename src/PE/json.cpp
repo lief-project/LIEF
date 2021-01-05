@@ -22,6 +22,8 @@
 #include "LIEF/PE/json.hpp"
 #include "LIEF/PE.hpp"
 
+#include "Object.tcc"
+
 namespace LIEF {
 namespace PE {
 
@@ -165,11 +167,15 @@ void JsonVisitor::visit(const Binary& binary) {
   }
 
 
-  // Signature
-  if (binary.has_signature()) {
-    JsonVisitor visitor;
-    visitor(binary.signature());
-    this->node_["signature"] = visitor.get();
+  // Signatures
+  std::vector<json> sigs;
+  if (binary.has_signatures()) {
+    for (const Signature& sig : binary.signatures()) {
+      JsonVisitor visitor;
+      visitor(sig);
+      sigs.push_back(std::move(visitor.get()));
+    }
+    this->node_["signatures"] = sigs;
   }
 
   std::vector<json> symbols;
@@ -762,20 +768,25 @@ void JsonVisitor::visit(const Signature& signature) {
   JsonVisitor content_info_visitor;
   content_info_visitor(signature.content_info());
 
-  JsonVisitor signer_info_visitor;
-  signer_info_visitor(signature.signer_info());
+  std::vector<json> jsigners;
+  for (const SignerInfo& signer : signature.signers()) {
+    JsonVisitor visitor;
+    visitor(signer);
+    jsigners.emplace_back(std::move(visitor.get()));
+  }
 
   std::vector<json> crts;
   for (const x509& crt : signature.certificates()) {
     JsonVisitor crt_visitor;
     crt_visitor(crt);
-    crts.emplace_back(crt_visitor.get());
+    crts.emplace_back(std::move(crt_visitor.get()));
   }
 
-  this->node_["version"]      = signature.version();
-  this->node_["content_info"] = content_info_visitor.get();
-  this->node_["signer_info"]  = signer_info_visitor.get();
-  this->node_["certificates"] = crts;
+  this->node_["digest_algorithm"] = to_string(signature.digest_algorithm());
+  this->node_["version"]          = signature.version();
+  this->node_["content_info"]     = content_info_visitor.get();
+  this->node_["signer_info"]      = jsigners;
+  this->node_["certificates"]     = crts;
 }
 
 void JsonVisitor::visit(const x509& x509) {
@@ -789,27 +800,93 @@ void JsonVisitor::visit(const x509& x509) {
 }
 
 void JsonVisitor::visit(const SignerInfo& signerinfo) {
-  JsonVisitor authenticated_attributes_visitor;
-  authenticated_attributes_visitor(signerinfo.authenticated_attributes());
+  std::vector<json> auth_attrs;
+  for (const Attribute& attr : signerinfo.authenticated_attributes()) {
+    JsonVisitor visitor;
+    visitor(attr);
+    auth_attrs.emplace_back(std::move(visitor.get()));
+  }
 
-  this->node_["version"]                  = signerinfo.version();
-  this->node_["digest_algorithm"]         = signerinfo.digest_algorithm();
-  this->node_["signature_algorithm"]      = signerinfo.signature_algorithm();
-  this->node_["authenticated_attributes"] = authenticated_attributes_visitor.get();
-  this->node_["issuer"] = std::get<0>(signerinfo.issuer());
+  std::vector<json> unauth_attrs;
+  for (const Attribute& attr : signerinfo.unauthenticated_attributes()) {
+    JsonVisitor visitor;
+    visitor(attr);
+    auth_attrs.emplace_back(std::move(visitor.get()));
+  }
+
+  this->node_["version"]                    = signerinfo.version();
+  this->node_["digest_algorithm"]           = to_string(signerinfo.digest_algorithm());
+  this->node_["encryption_algorithm"]       = to_string(signerinfo.encryption_algorithm());
+  this->node_["encrypted_digest"]           = signerinfo.encrypted_digest();
+  this->node_["issuer"]                     = signerinfo.issuer();
+  this->node_["serial_number"]              = signerinfo.serial_number();
+  this->node_["authenticated_attributes"]   = auth_attrs;
+  this->node_["unauthenticated_attributes"] = unauth_attrs;
 }
 
 void JsonVisitor::visit(const ContentInfo& contentinfo) {
   this->node_["content_type"]     = contentinfo.content_type();
-  this->node_["type"]             = contentinfo.type();
-  this->node_["digest_algorithm"] = contentinfo.digest_algorithm();
+  this->node_["digest_algorithm"] = to_string(contentinfo.digest_algorithm());
+  this->node_["digest"]           = contentinfo.digest();
+  this->node_["file"]             = contentinfo.file();
 }
 
-void JsonVisitor::visit(const AuthenticatedAttributes& auth) {
-  this->node_["content_type"] = auth.content_type();
-  this->node_["program_name"] = u16tou8(auth.program_name());
-  this->node_["url"]          = auth.more_info();
-  this->node_["message_digest"] = auth.message_digest();
+void JsonVisitor::visit(const Attribute& auth) {
+  this->node_["type"] = to_string(auth.type());
+}
+
+void JsonVisitor::visit(const ContentType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["oid"] = attr.oid();
+}
+
+void JsonVisitor::visit(const GenericType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["oid"] = attr.oid();
+}
+
+void JsonVisitor::visit(const MsSpcNestedSignature& attr) {
+  this->visit(*attr.as<Attribute>());
+  JsonVisitor visitor;
+  visitor(attr.sig());
+  this->node_["signature"] = std::move(visitor.get());
+}
+
+void JsonVisitor::visit(const MsSpcStatementType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["oid"] = attr.oid();
+}
+
+void JsonVisitor::visit(const PKCS9AtSequenceNumber& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["number"] = attr.number();
+}
+void JsonVisitor::visit(const PKCS9CounterSignature& attr) {
+  this->visit(*attr.as<Attribute>());
+
+  std::vector<json> signers;
+  for (const SignerInfo& signer : attr.signers()) {
+    JsonVisitor visitor;
+    visitor(signer);
+    signers.emplace_back(std::move(visitor.get()));
+  }
+  this->node_["signers"] = std::move(signers);
+}
+
+void JsonVisitor::visit(const PKCS9MessageDigest& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["digest"] = attr.digest();
+}
+
+void JsonVisitor::visit(const PKCS9SigningTime& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["time"] = attr.time();
+}
+
+void JsonVisitor::visit(const SpcSpOpusInfo& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->node_["more_info"]    = attr.more_info();
+  this->node_["program_name"] = attr.program_name();
 }
 
 void JsonVisitor::visit(const CodeIntegrity& code_integrity) {

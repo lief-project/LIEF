@@ -56,10 +56,13 @@ void init_LIEF_iterators(py::module& m) {
   init_ref_iterator<LIEF::PE::it_export_entries>(m);
   init_ref_iterator<LIEF::PE::it_pogo_entries>(m);
   init_ref_iterator<LIEF::PE::it_symbols>(m);
-  init_ref_iterator<LIEF::PE::it_const_crt>(m);
   init_ref_iterator<LIEF::PE::it_childs>(m);
   init_ref_iterator<LIEF::PE::it_rich_entries>(m);
   init_ref_iterator<LIEF::PE::it_const_dialog_items>(m);
+  init_ref_iterator<LIEF::PE::it_const_crt>(m);
+  init_ref_iterator<LIEF::PE::it_const_signatures>(m);
+  init_ref_iterator<LIEF::PE::it_const_signers_t>(m);
+  init_ref_iterator<LIEF::PE::it_const_attributes_t>(m);
 #endif
 
 

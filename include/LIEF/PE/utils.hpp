@@ -62,6 +62,8 @@ LIEF_API std::string get_imphash(const Binary& binary);
 //!
 //! @return The PE::import resolved with PE::ImportEntry::name set
 LIEF_API Import resolve_ordinals(const Import& import, bool strict=false);
+
+LIEF_API ALGORITHMS algo_from_oid(const std::string& oid);
 }
 }
 #endif

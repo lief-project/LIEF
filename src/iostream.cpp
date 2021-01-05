@@ -80,6 +80,11 @@ vector_iostream& vector_iostream::write(const std::vector<uint8_t>& s) {
   return *this;
 }
 
+vector_iostream& vector_iostream::write_sized_int(uint64_t value, size_t size) {
+  const uint64_t stack_val = value;
+  return this->write(reinterpret_cast<const uint8_t*>(&stack_val), size);
+}
+
 
 vector_iostream& vector_iostream::write(std::vector<uint8_t>&& s) {
   if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + s.size())) {
@@ -111,15 +116,15 @@ vector_iostream& vector_iostream::write(const std::string& s) {
 
 vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
   uint8_t byte;
-	do {
+  do {
     byte = value & 0x7F;
-		value &= ~0x7F;
-		if (value != 0) {
-		  byte |= 0x80;
+    value &= ~0x7F;
+    if (value != 0) {
+      byte |= 0x80;
     }
     this->write<uint8_t>(byte);
-		value = value >> 7;
-	} while (byte >= 0x80);
+    value = value >> 7;
+  } while (byte >= 0x80);
 
   return *this;
 }
@@ -127,22 +132,22 @@ vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
 vector_iostream& vector_iostream::write_sleb128(int64_t value) {
 
   bool is_neg = (value < 0);
-	uint8_t byte;
-	bool more;
-	do {
-	  byte = value & 0x7F;
-		value = value >> 7;
+  uint8_t byte;
+  bool more;
+  do {
+    byte = value & 0x7F;
+    value = value >> 7;
 
     if (is_neg) {
-		  more = ((value != -1) || ((byte & 0x40) == 0));
+      more = ((value != -1) || ((byte & 0x40) == 0));
     } else {
-		  more = ((value != 0) || ((byte & 0x40) != 0));
+      more = ((value != 0) || ((byte & 0x40) != 0));
     }
-		if (more) {
-		  byte |= 0x80;
+    if (more) {
+      byte |= 0x80;
     }
     this->write<uint8_t>(byte);
-	} while (more);
+  } while (more);
 
   return *this;
 }
@@ -263,6 +268,7 @@ vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
         /* count */ count,
         /* value */ value
     );
+    this->current_pos_ += count;
     return *this;
 }
 

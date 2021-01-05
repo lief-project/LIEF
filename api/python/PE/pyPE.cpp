@@ -78,10 +78,19 @@ void init_objects(py::module& m) {
   CREATE(ResourceAccelerator, m);
   CREATE(Signature, m);
   CREATE(x509, m);
-  CREATE(SignerInfo, m);
   CREATE(ContentInfo, m);
-  CREATE(AuthenticatedAttributes, m);
+  CREATE(SignerInfo, m);
   CREATE(CodeIntegrity, m);
+  CREATE(Attribute, m);
+  CREATE(ContentType, m);
+  CREATE(GenericType, m);
+  CREATE(MsSpcNestedSignature, m);
+  CREATE(MsSpcStatementType, m);
+  CREATE(PKCS9AtSequenceNumber, m);
+  CREATE(PKCS9CounterSignature, m);
+  CREATE(PKCS9MessageDigest, m);
+  CREATE(PKCS9SigningTime, m);
+  CREATE(SpcSpOpusInfo, m);
 
   CREATE(LoadConfiguration, m);
   CREATE(LoadConfigurationV0, m);

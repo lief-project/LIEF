@@ -24,6 +24,11 @@
 #include <memory>
 
 #include "LIEF/BinaryStream/Convert.hpp"
+#include "LIEF/errors.hpp"
+
+struct mbedtls_x509_crt;
+struct mbedtls_x509_time;
+
 namespace LIEF {
 class BinaryStream {
   public:
@@ -99,6 +104,19 @@ class BinaryStream {
   std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size, bool check = true) const;
 
   void set_endian_swap(bool swap);
+
+  // ASN1 related functions
+  virtual result<size_t> asn1_read_tag(int tag) = 0;
+  virtual result<size_t> asn1_read_len() = 0;
+  virtual result<std::string> asn1_read_alg() = 0;
+  virtual result<std::string> asn1_read_oid() = 0;
+  virtual result<int32_t> asn1_read_int() = 0;
+  virtual result<std::vector<uint8_t>> asn1_read_bitstring() = 0;
+  virtual result<std::vector<uint8_t>> asn1_read_octet_string() = 0;
+  virtual result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() = 0;
+  virtual result<std::string> x509_read_names() = 0;
+  virtual result<std::vector<uint8_t>> x509_read_serial() = 0;
+  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() = 0;
 
   protected:
   virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const = 0;

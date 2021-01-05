@@ -11,7 +11,7 @@ namespace PE {
 @LIEF_PE_ENUMS@
 
 
-// Common section type
+//! Common section type
 enum class PE_SECTION_TYPES : uint8_t {
   TEXT       = 0,
   TLS        = 1,
@@ -29,6 +29,51 @@ enum class PE_SECTION_TYPES : uint8_t {
 enum class PE_TYPE : uint16_t {
     PE32      = 0x10b, ///< 32bits
     PE32_PLUS = 0x20b  ///< 64 bits
+};
+
+//! Cryptography algorithms
+enum class ALGORITHMS {
+  UNKNOWN = 0,
+  SHA_512,
+  SHA_384,
+  SHA_256,
+  SHA_1,
+
+  MD5,
+  MD4,
+  MD2,
+
+  RSA,
+  EC,
+
+  MD5_RSA,
+  SHA1_DSA,
+  SHA1_RSA,
+  SHA_256_RSA,
+  SHA_384_RSA,
+  SHA_512_RSA,
+  SHA1_ECDSA,
+  SHA_256_ECDSA,
+  SHA_384_ECDSA,
+  SHA_512_ECDSA,
+};
+
+//! Typed enum for LIEF::PE::Attribute
+enum class SIG_ATTRIBUTE_TYPES {
+  UNKNOWN = 0,
+  CONTENT_TYPE,
+  GENERIC_TYPE,
+
+  SPC_SP_OPUS_INFO,
+
+  MS_COUNTER_SIGN,
+  MS_SPC_NESTED_SIGN,
+  MS_SPC_STATEMENT_TYPE,
+
+  PKCS9_AT_SEQUENCE_NUMBER,
+  PKCS9_COUNTER_SIGNATURE,
+  PKCS9_MESSAGE_DIGEST,
+  PKCS9_SIGNING_TIME,
 };
 
 

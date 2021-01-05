@@ -437,17 +437,14 @@ void Hash::visit(const ResourceAccelerator& accelerator) {
 }
 
 void Hash::visit(const Signature& signature) {
-
   this->process(signature.version());
   this->process(signature.digest_algorithm());
   this->process(signature.content_info());
   this->process(std::begin(signature.certificates()), std::end(signature.certificates()));
-  this->process(signature.signer_info());
-  this->process(signature.original_signature());
+  this->process(std::begin(signature.signers()), std::end(signature.signers()));
 }
 
 void Hash::visit(const x509& x509) {
-
   this->process(x509.subject());
   this->process(x509.issuer());
   this->process(x509.valid_to());
@@ -460,19 +457,65 @@ void Hash::visit(const x509& x509) {
 void Hash::visit(const SignerInfo& signerinfo) {
 
   this->process(signerinfo.version());
-  //this->process(signerinfo.issuer());
+  this->process(signerinfo.serial_number());
+  this->process(signerinfo.issuer());
+  this->process(signerinfo.encryption_algorithm());
   this->process(signerinfo.digest_algorithm());
-  this->process(signerinfo.authenticated_attributes());
-  this->process(signerinfo.signature_algorithm());
   this->process(signerinfo.encrypted_digest());
+  this->process(std::begin(signerinfo.authenticated_attributes()), std::end(signerinfo.authenticated_attributes()));
+  this->process(std::begin(signerinfo.unauthenticated_attributes()), std::end(signerinfo.unauthenticated_attributes()));
 }
 
-void Hash::visit(const AuthenticatedAttributes& auth) {
+void Hash::visit(const Attribute& attr) {
+  this->process(attr.type());
+}
 
-  this->process(auth.content_type());
-  this->process(auth.message_digest());
-  this->process(u16tou8(auth.program_name()));
-  this->process(auth.more_info());
+void Hash::visit(const ContentInfo& info) {
+  this->process(info.content_type());
+  this->process(info.digest_algorithm());
+  this->process(info.digest());
+  this->process(info.file());
+}
+
+
+void Hash::visit(const ContentType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.oid());
+}
+void Hash::visit(const GenericType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.raw_content());
+  this->process(attr.oid());
+}
+void Hash::visit(const MsSpcNestedSignature& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.sig());
+}
+void Hash::visit(const MsSpcStatementType& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.oid());
+}
+void Hash::visit(const PKCS9AtSequenceNumber& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.number());
+}
+void Hash::visit(const PKCS9CounterSignature& attr) {
+  this->visit(*attr.as<Attribute>());
+  it_const_signers_t signers = attr.signers();
+  this->process(std::begin(signers), std::end(signers));
+}
+void Hash::visit(const PKCS9MessageDigest& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.digest());
+}
+void Hash::visit(const PKCS9SigningTime& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.time());
+}
+void Hash::visit(const SpcSpOpusInfo& attr) {
+  this->visit(*attr.as<Attribute>());
+  this->process(attr.program_name());
+  this->process(attr.more_info());
 }
 
 void Hash::visit(const CodeIntegrity& code_integrity) {

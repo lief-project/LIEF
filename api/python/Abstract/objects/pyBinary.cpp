@@ -181,8 +181,8 @@ void create<Binary>(py::module& m) {
 
     .def("xref",
         &Binary::xref,
-        "Return all **virtual address** that *use* the ``address`` given in parameter"
-       "virtual_address"_a)
+        "Return all **virtual addresses** that *use* the ``address`` given in parameter",
+        "virtual_address"_a)
 
     .def("__str__",
         [] (const Binary& binary)

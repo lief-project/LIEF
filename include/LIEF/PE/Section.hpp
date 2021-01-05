@@ -58,6 +58,9 @@ class LIEF_API Section : public LIEF::Section {
   // LIEF::Section implementation
   // ============================
   virtual std::vector<uint8_t> content(void) const override;
+  inline const std::vector<uint8_t>& padding() const {
+    return this->padding_;
+  }
 
 
   uint32_t pointerto_raw_data(void) const;
@@ -100,14 +103,15 @@ class LIEF_API Section : public LIEF::Section {
   private:
   std::vector<uint8_t>& content_ref(void);
 
-  uint32_t                virtualSize_;
-  std::vector<uint8_t>    content_;
-  uint32_t                pointerToRelocations_;
-  uint32_t                pointerToLineNumbers_;
-  uint16_t                numberOfRelocations_;
-  uint16_t                numberOfLineNumbers_;
-  uint32_t                characteristics_;
-  std::set<PE_SECTION_TYPES> types_;
+  std::vector<uint8_t> content_;
+  std::vector<uint8_t> padding_;
+  uint32_t virtual_size_           = 0;
+  uint32_t pointer_to_relocations_ = 0;
+  uint32_t pointer_to_linenumbers_ = 0;
+  uint16_t number_of_relocations_  = 0;
+  uint16_t number_of_linenumbers_  = 0;
+  uint32_t characteristics_        = 0;
+  std::set<PE_SECTION_TYPES> types_ = {PE_SECTION_TYPES::UNKNOWN};
 };
 
 } // namespace PE

@@ -105,7 +105,7 @@ else:
 CI_PRETTY_NAME = pretty_ci_name(CURRENT_CI)
 logger.info("CI: %s", CI_PRETTY_NAME)
 
-ALLOWED_BRANCHES = {"master", "deploy", "devel"}
+ALLOWED_BRANCHES = {"master", "deploy", "devel", "enhancement/pe-authenticode"}
 BRANCH_NAME = get_branch(CURRENT_CI)
 logger.info("Branch: %s", BRANCH_NAME)
 if BRANCH_NAME not in ALLOWED_BRANCHES:
@@ -175,13 +175,29 @@ if DEPLOY_IV is None:
 # Clone package repo
 #####################
 target_branch = "gh-pages" if BRANCH_NAME == "master" else "packages-{}".format(BRANCH_NAME)
+new_branch = False
 if not LIEF_PACKAGE_DIR.is_dir():
     cmd = "{} clone --branch={} -j8 --single-branch {} {}".format(GIT, target_branch, LIEF_PACKAGE_REPO, LIEF_PACKAGE_DIR)
     p = subprocess.Popen(cmd, shell=True, cwd=REPODIR, stderr=subprocess.STDOUT)
     p.wait()
 
     if p.returncode:
-        sys.exit(1)
+        cmd = "{} clone --branch=master -j8 --single-branch {} {}".format(GIT, LIEF_PACKAGE_REPO, LIEF_PACKAGE_DIR)
+        pmaster = subprocess.Popen(cmd, shell=True, cwd=REPODIR, stderr=subprocess.STDOUT)
+        pmaster.wait()
+        if pmaster.returncode:
+            sys.exit(1)
+        new_branch = True
+
+        cmd = "{} checkout --orphan {}".format(GIT, target_branch)
+        pmaster = subprocess.Popen(cmd, shell=True, cwd=LIEF_PACKAGE_DIR, stderr=subprocess.STDOUT)
+        pmaster.wait()
+        if pmaster.returncode:
+            sys.exit(1)
+
+        cmd = "{} reset --hard".format(GIT)
+        pmaster = subprocess.Popen(cmd, shell=True, cwd=LIEF_PACKAGE_DIR, stderr=subprocess.STDOUT)
+        pmaster.wait()
 
 SDK_PACKAGE_DIR.mkdir(exist_ok=True)
 PYPI_PACKAGE_DIR.mkdir(exist_ok=True)
@@ -260,10 +276,6 @@ fnames = [fname for fname in sorted(f.name for f in SDK_PACKAGE_DIR.iterdir() if
 html = Template(INDEX_TEMPLATE).render(names=fnames, base_url=BASE_URL, base="packages/sdk")
 with open((SDK_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
     f.write(html)
-
-
-
-
 
 if not SSH_DIR.is_dir():
     SSH_DIR.mkdir(mode=0o700)

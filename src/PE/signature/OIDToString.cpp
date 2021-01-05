@@ -499,7 +499,7 @@ const char* oid_to_string(const oid_t& oid) {
     { "1.2.840.10040.2.3",                "REJECT" },
     { "1.2.840.10040.2.4",                "PICKUP_TOKEN" },
     { "1.2.840.10040.3",                  "ATTRIBUTE" },
-    { "1.2.840.10040.3.1",                "COUNTERSIGNATURE" },
+    { "1.2.840.10040.3.1",                "COUNTER_SIGNATURE" },
     { "1.2.840.10040.3.2",                "ATTRIBUTE_CERT" },
     { "1.2.840.10040.4",                  "ALGORITHM" },
     { "1.2.840.10040.4.1",                "DSA" },
@@ -616,7 +616,7 @@ const char* oid_to_string(const oid_t& oid) {
     { "1.2.840.113549.1.9.3",             "CONTENT_TYPE" },
     { "1.2.840.113549.1.9.4",             "MESSAGE_DIGEST" },
     { "1.2.840.113549.1.9.5",             "SIGNING_TIME" },
-    { "1.2.840.113549.1.9.6",             "COUNTERSIGNATURE" },
+    { "1.2.840.113549.1.9.6",             "COUNTER_SIGNATURE" },
     { "1.2.840.113549.1.9.7",             "CHALLENGE_PASSWORD" },
     { "1.2.840.113549.1.9.8",             "UNSTRUCTURED_ADDRESS" },
     { "1.2.840.113549.1.9.9",             "EXTENDED_CERTIFICATE_ATTRIBUTES" },
@@ -976,7 +976,7 @@ const char* oid_to_string(const oid_t& oid) {
     { "1.2.840.113635.100.6.1.1",         "APPLE_CERTIFICATE_EXTENSION_APPLE_SIGNING" },
     { "1.2.840.113635.100.6.1.2",         "APPLE_CERTIFICATE_EXTENSION_ADC_DEVELOPER_SIGNING" },
     { "1.2.840.113635.100.6.1.3",         "APPLE_CERTIFICATE_EXTENSION_ADC_APPLE_SIGNING" },
-    { "1.3.6.1.4.1.311.2.1.4",            "SPC_INDIRECT_DATA_CONTEXT" },
+    { "1.3.6.1.4.1.311.2.1.4",            "SPC_INDIRECT_DATA_CONTENT" },
     { "1.3.6.1.4.1.311.2.1.10",           "SPC_AGENCY_INFO" },
     { "1.3.6.1.4.1.311.2.1.11",           "SPC_STATEMENT_TYPE" },
     { "1.3.6.1.4.1.311.2.1.12",           "SPC_SP_OPUS_INFO" },
@@ -2241,10 +2241,11 @@ const char* oid_to_string(const oid_t& oid) {
     { "2.16.840.1.114404.1.1.2.4.1",      "TRUST_WAVE_EV_POLICY" },
     { "1.3.6.1.4.1.40869.1.1.22.3",       "TWCA_EV_POLICY" },
     { "2.16.840.1.113733.1.7.23.6",       "VERI_SIGN_EV_POLICY" },
-    { "2.16.840.1.114171.500.9",          "WELLS_FARGO_EV_POLICY" }
+    { "2.16.840.1.114171.500.9",          "WELLS_FARGO_EV_POLICY" },
+    { "1.3.6.1.4.1.311.3.3.1",            "MS_COUNTER_SIGN" }
   };
   auto   it  = oid_to_str.find(oid);
-  return it == oid_to_str.end() ? "Out of range" : it->second;
+  return it == oid_to_str.end() ? oid.c_str() : it->second;
 }
 
 }

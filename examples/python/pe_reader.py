@@ -298,45 +298,8 @@ def print_debug(binary):
 def print_signature(binary):
     format_str = "{:<33} {:<30}"
     format_dec = "{:<33} {:<30d}"
-
-    signature = binary.signature
-    print("== Signature ==")
-    print(format_dec.format("Version:",          signature.version))
-    print(format_str.format("Digest Algorithm:", oid_to_string(signature.digest_algorithm)))
-    print("")
-
-    print("-- Content Info --")
-    content_info = signature.content_info
-    print(format_str.format("Content Type:",     oid_to_string(content_info.content_type)))
-    print(format_str.format("Type:",             oid_to_string(content_info.type)))
-    print(format_str.format("Digest Algorithm:", oid_to_string(content_info.digest_algorithm)))
-    print("")
-
-    print("-- Certificates --")
-    certificates = signature.certificates
-
-    for crt in certificates:
-        sn_str = ":".join(map(lambda e : "{:02x}".format(e), crt.serial_number))
-        valid_from_str = "-".join(map(str, crt.valid_from[:3])) + " " + ":".join(map(str, crt.valid_from[3:]))
-        valid_to_str = "-".join(map(str, crt.valid_to[:3])) + " " + ":".join(map(str, crt.valid_to[3:]))
-        print(format_dec.format("Version:",             crt.version))
-        print(format_str.format("Serial Number:",       sn_str))
-        print(format_str.format("Signature Algorithm:", oid_to_string(crt.signature_algorithm)))
-        print(format_str.format("Valid from:",          valid_from_str))
-        print(format_str.format("Valid to:",            valid_to_str))
-        print(format_str.format("Issuer:",              crt.issuer))
-        print(format_str.format("Subject:",             crt.subject))
-        print("")
-
-    print("-- Signer Info --")
-    signer_info = signature.signer_info
-    print(format_dec.format("Version:",             signer_info.version))
-    print(format_str.format("Issuer:",              signer_info.issuer[0]))
-    print(format_str.format("Digest Algorithm:",    oid_to_string(signer_info.digest_algorithm)))
-    print(format_str.format("Signature algorithm:", oid_to_string(signer_info.signature_algorithm)))
-    print(format_str.format("Program name:",        signer_info.authenticated_attributes.program_name))
-    print(format_str.format("Url:",                 signer_info.authenticated_attributes.more_info))
-    print("")
+    for signature in binary.signatures:
+        print(signature)
 
 @exceptions_handler(Exception)
 def print_rich_header(binary):
@@ -616,7 +579,7 @@ def main():
     if (args.show_debug or args.show_all) and binary.has_debug:
         print_debug(binary)
 
-    if (args.show_signature or args.show_all) and binary.has_signature:
+    if (args.show_signature or args.show_all) and binary.has_signatures:
         print_signature(binary)
 
     if (args.show_richheader or args.show_all) and binary.has_rich_header:

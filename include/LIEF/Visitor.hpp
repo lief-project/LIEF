@@ -79,11 +79,23 @@ LIEF_PE_FORWARD(ResourceDialog)
 LIEF_PE_FORWARD(ResourceDialogItem)
 LIEF_PE_FORWARD(ResourceStringTable)
 LIEF_PE_FORWARD(ResourceAccelerator)
+
 LIEF_PE_FORWARD(Signature)
 LIEF_PE_FORWARD(x509)
 LIEF_PE_FORWARD(SignerInfo)
 LIEF_PE_FORWARD(ContentInfo)
-LIEF_PE_FORWARD(AuthenticatedAttributes)
+LIEF_PE_FORWARD(Attribute)
+LIEF_PE_FORWARD(ContentType)
+LIEF_PE_FORWARD(GenericType)
+//LIEF_PE_FORWARD(MsCounterSign)
+LIEF_PE_FORWARD(MsSpcNestedSignature)
+LIEF_PE_FORWARD(MsSpcStatementType)
+LIEF_PE_FORWARD(PKCS9AtSequenceNumber)
+LIEF_PE_FORWARD(PKCS9CounterSignature)
+LIEF_PE_FORWARD(PKCS9MessageDigest)
+LIEF_PE_FORWARD(PKCS9SigningTime)
+LIEF_PE_FORWARD(SpcSpOpusInfo)
+
 LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
 LIEF_PE_FORWARD(LoadConfigurationV0)
@@ -196,189 +208,216 @@ LIEF_ART_FORWARD(Header)
 
 
 class LIEF_API Visitor {
-public:
-Visitor(void);
-virtual ~Visitor(void);
+  public:
+  Visitor(void);
+  virtual ~Visitor(void);
 
-virtual void operator()(void);
+  virtual void operator()(void);
 
-template<typename Arg1, typename... Args>
-void operator()(Arg1&& arg1, Args&&... args);
+  template<typename Arg1, typename... Args>
+  void operator()(Arg1&& arg1, Args&&... args);
 
-virtual void visit(const Object&);
+  virtual void visit(const Object&);
 
-// Abstract Part
-// =============
+  // Abstract Part
+  // =============
 
-//! Method to visit a LIEF::Binary
-LIEF_ABSTRACT_VISITABLE(Binary)
+  //! Method to visit a LIEF::Binary
+  LIEF_ABSTRACT_VISITABLE(Binary)
 
-//! Method to visit a LIEF::Header
-LIEF_ABSTRACT_VISITABLE(Header)
+  //! Method to visit a LIEF::Header
+  LIEF_ABSTRACT_VISITABLE(Header)
 
-//! Method to visit a LIEF::Section
-LIEF_ABSTRACT_VISITABLE(Section)
+  //! Method to visit a LIEF::Section
+  LIEF_ABSTRACT_VISITABLE(Section)
 
-//! Method to visit a LIEF::Symbol
-LIEF_ABSTRACT_VISITABLE(Symbol)
+  //! Method to visit a LIEF::Symbol
+  LIEF_ABSTRACT_VISITABLE(Symbol)
 
-//! Method to visit a LIEF::Relocation
-LIEF_ABSTRACT_VISITABLE(Relocation)
+  //! Method to visit a LIEF::Relocation
+  LIEF_ABSTRACT_VISITABLE(Relocation)
 
-//! Method to visit a LIEF::Function
-LIEF_ABSTRACT_VISITABLE(Function)
+  //! Method to visit a LIEF::Function
+  LIEF_ABSTRACT_VISITABLE(Function)
 
-LIEF_ELF_VISITABLE(Binary)
-LIEF_ELF_VISITABLE(Header)
-LIEF_ELF_VISITABLE(Section)
-LIEF_ELF_VISITABLE(Segment)
-LIEF_ELF_VISITABLE(DynamicEntry)
-LIEF_ELF_VISITABLE(DynamicEntryArray)
-LIEF_ELF_VISITABLE(DynamicEntryLibrary)
-LIEF_ELF_VISITABLE(DynamicSharedObject)
-LIEF_ELF_VISITABLE(DynamicEntryRunPath)
-LIEF_ELF_VISITABLE(DynamicEntryRpath)
-LIEF_ELF_VISITABLE(DynamicEntryFlags)
-LIEF_ELF_VISITABLE(Symbol)
-LIEF_ELF_VISITABLE(Relocation)
-LIEF_ELF_VISITABLE(SymbolVersion)
-LIEF_ELF_VISITABLE(SymbolVersionRequirement)
-LIEF_ELF_VISITABLE(SymbolVersionDefinition)
-LIEF_ELF_VISITABLE(SymbolVersionAux)
-LIEF_ELF_VISITABLE(SymbolVersionAuxRequirement)
-LIEF_ELF_VISITABLE(Note)
-LIEF_ELF_VISITABLE(NoteDetails)
-LIEF_ELF_VISITABLE(AndroidNote)
-LIEF_ELF_VISITABLE(NoteAbi)
-LIEF_ELF_VISITABLE(CorePrPsInfo)
-LIEF_ELF_VISITABLE(CorePrStatus)
-LIEF_ELF_VISITABLE(CoreAuxv)
-LIEF_ELF_VISITABLE(CoreSigInfo)
-LIEF_ELF_VISITABLE(CoreFile)
-LIEF_ELF_VISITABLE(GnuHash)
-LIEF_ELF_VISITABLE(SysvHash)
+  LIEF_ELF_VISITABLE(Binary)
+  LIEF_ELF_VISITABLE(Header)
+  LIEF_ELF_VISITABLE(Section)
+  LIEF_ELF_VISITABLE(Segment)
+  LIEF_ELF_VISITABLE(DynamicEntry)
+  LIEF_ELF_VISITABLE(DynamicEntryArray)
+  LIEF_ELF_VISITABLE(DynamicEntryLibrary)
+  LIEF_ELF_VISITABLE(DynamicSharedObject)
+  LIEF_ELF_VISITABLE(DynamicEntryRunPath)
+  LIEF_ELF_VISITABLE(DynamicEntryRpath)
+  LIEF_ELF_VISITABLE(DynamicEntryFlags)
+  LIEF_ELF_VISITABLE(Symbol)
+  LIEF_ELF_VISITABLE(Relocation)
+  LIEF_ELF_VISITABLE(SymbolVersion)
+  LIEF_ELF_VISITABLE(SymbolVersionRequirement)
+  LIEF_ELF_VISITABLE(SymbolVersionDefinition)
+  LIEF_ELF_VISITABLE(SymbolVersionAux)
+  LIEF_ELF_VISITABLE(SymbolVersionAuxRequirement)
+  LIEF_ELF_VISITABLE(Note)
+  LIEF_ELF_VISITABLE(NoteDetails)
+  LIEF_ELF_VISITABLE(AndroidNote)
+  LIEF_ELF_VISITABLE(NoteAbi)
+  LIEF_ELF_VISITABLE(CorePrPsInfo)
+  LIEF_ELF_VISITABLE(CorePrStatus)
+  LIEF_ELF_VISITABLE(CoreAuxv)
+  LIEF_ELF_VISITABLE(CoreSigInfo)
+  LIEF_ELF_VISITABLE(CoreFile)
+  LIEF_ELF_VISITABLE(GnuHash)
+  LIEF_ELF_VISITABLE(SysvHash)
 
-// PE Part
-// =======
-//! Method to visit a LIEF::PE::Binary
-LIEF_PE_VISITABLE(Binary)
+  // PE Part
+  // =======
+  //! Method to visit a LIEF::PE::Binary
+  LIEF_PE_VISITABLE(Binary)
 
-//! Method to visit a LIEF::PE::DosHeader
-LIEF_PE_VISITABLE(DosHeader)
+  //! Method to visit a LIEF::PE::DosHeader
+  LIEF_PE_VISITABLE(DosHeader)
 
-//! Method to visit a LIEF::PE:RichHeader
-LIEF_PE_VISITABLE(RichHeader)
+  //! Method to visit a LIEF::PE:RichHeader
+  LIEF_PE_VISITABLE(RichHeader)
 
-//! Method to visit a LIEF::PE:RichEntry
-LIEF_PE_VISITABLE(RichEntry)
+  //! Method to visit a LIEF::PE:RichEntry
+  LIEF_PE_VISITABLE(RichEntry)
 
-//! Method to visit a LIEF::PE::Header
-LIEF_PE_VISITABLE(Header)
+  //! Method to visit a LIEF::PE::Header
+  LIEF_PE_VISITABLE(Header)
 
-//! Method to visit a LIEF::PE::OptionalHeader
-LIEF_PE_VISITABLE(OptionalHeader)
+  //! Method to visit a LIEF::PE::OptionalHeader
+  LIEF_PE_VISITABLE(OptionalHeader)
 
-//! Method to visit a LIEF::PE::DataDirectory
-LIEF_PE_VISITABLE(DataDirectory)
+  //! Method to visit a LIEF::PE::DataDirectory
+  LIEF_PE_VISITABLE(DataDirectory)
 
-//! Method to visit a LIEF::PE::TLS
-LIEF_PE_VISITABLE(TLS)
+  //! Method to visit a LIEF::PE::TLS
+  LIEF_PE_VISITABLE(TLS)
 
-//! Method to visit a LIEF::PE::Symbol
-LIEF_PE_VISITABLE(Symbol)
+  //! Method to visit a LIEF::PE::Symbol
+  LIEF_PE_VISITABLE(Symbol)
 
-//! Method to visit a LIEF::PE::Section
-LIEF_PE_VISITABLE(Section)
+  //! Method to visit a LIEF::PE::Section
+  LIEF_PE_VISITABLE(Section)
 
-//! Method to visit a LIEF::PE::Relocation
-LIEF_PE_VISITABLE(Relocation)
+  //! Method to visit a LIEF::PE::Relocation
+  LIEF_PE_VISITABLE(Relocation)
 
-//! Method to visit a LIEF::PE::RelocationEntry
-LIEF_PE_VISITABLE(RelocationEntry)
+  //! Method to visit a LIEF::PE::RelocationEntry
+  LIEF_PE_VISITABLE(RelocationEntry)
 
-//! Method to visit a LIEF::PE::Export
-LIEF_PE_VISITABLE(Export)
+  //! Method to visit a LIEF::PE::Export
+  LIEF_PE_VISITABLE(Export)
 
-//! Method to visit a LIEF::PE::ExportEntry
-LIEF_PE_VISITABLE(ExportEntry)
+  //! Method to visit a LIEF::PE::ExportEntry
+  LIEF_PE_VISITABLE(ExportEntry)
 
-//! Method to visit a LIEF::PE::Debug
-LIEF_PE_VISITABLE(Debug)
+  //! Method to visit a LIEF::PE::Debug
+  LIEF_PE_VISITABLE(Debug)
 
-//! Method to visit a LIEF::PE::CodeView
-LIEF_PE_VISITABLE(CodeView)
+  //! Method to visit a LIEF::PE::CodeView
+  LIEF_PE_VISITABLE(CodeView)
 
-//! Method to visit a LIEF::PE::CodeViewPDB
-LIEF_PE_VISITABLE(CodeViewPDB)
+  //! Method to visit a LIEF::PE::CodeViewPDB
+  LIEF_PE_VISITABLE(CodeViewPDB)
 
-//! Method to visit a LIEF::PE::Import
-LIEF_PE_VISITABLE(Import)
+  //! Method to visit a LIEF::PE::Import
+  LIEF_PE_VISITABLE(Import)
 
-//! Method to visit a LIEF::PE::ImportEntry
-LIEF_PE_VISITABLE(ImportEntry)
+  //! Method to visit a LIEF::PE::ImportEntry
+  LIEF_PE_VISITABLE(ImportEntry)
 
-//! Method to visit a LIEF::PE::ResourceNode
-LIEF_PE_VISITABLE(ResourceNode)
+  //! Method to visit a LIEF::PE::ResourceNode
+  LIEF_PE_VISITABLE(ResourceNode)
 
-//! Method to visit a LIEF::PE::ResourceData
-LIEF_PE_VISITABLE(ResourceData)
+  //! Method to visit a LIEF::PE::ResourceData
+  LIEF_PE_VISITABLE(ResourceData)
 
-//! Method to visit a LIEF::PE::ResourceDirectory
-LIEF_PE_VISITABLE(ResourceDirectory)
+  //! Method to visit a LIEF::PE::ResourceDirectory
+  LIEF_PE_VISITABLE(ResourceDirectory)
 
-//! Method to visit a LIEF::PE::ResourceVersion
-LIEF_PE_VISITABLE(ResourcesManager)
+  //! Method to visit a LIEF::PE::ResourceVersion
+  LIEF_PE_VISITABLE(ResourcesManager)
 
-//! Method to visit a LIEF::PE::ResourceVersion
-LIEF_PE_VISITABLE(ResourceVersion)
+  //! Method to visit a LIEF::PE::ResourceVersion
+  LIEF_PE_VISITABLE(ResourceVersion)
 
-//! Method to visit a LIEF::PE::ResourceStringFileInfo
-LIEF_PE_VISITABLE(ResourceStringFileInfo)
+  //! Method to visit a LIEF::PE::ResourceStringFileInfo
+  LIEF_PE_VISITABLE(ResourceStringFileInfo)
 
-//! Method to visit a LIEF::PE::ResourceFixedFileInfo
-LIEF_PE_VISITABLE(ResourceFixedFileInfo)
+  //! Method to visit a LIEF::PE::ResourceFixedFileInfo
+  LIEF_PE_VISITABLE(ResourceFixedFileInfo)
 
-//! Method to visit a LIEF::PE::ResourceVarFileInfo
-LIEF_PE_VISITABLE(ResourceVarFileInfo)
+  //! Method to visit a LIEF::PE::ResourceVarFileInfo
+  LIEF_PE_VISITABLE(ResourceVarFileInfo)
 
-//! Method to visit a LIEF::PE::ResourceStringTable
-LIEF_PE_VISITABLE(ResourceStringTable)
+  //! Method to visit a LIEF::PE::ResourceStringTable
+  LIEF_PE_VISITABLE(ResourceStringTable)
 
-//! Method to visit a LIEF::PE::ResourceAccelerator
-LIEF_PE_VISITABLE(ResourceAccelerator)
+  //! Method to visit a LIEF::PE::ResourceAccelerator
+  LIEF_PE_VISITABLE(ResourceAccelerator)
 
-//! Method to visit a LIEF::PE::LangCodeItem
-LIEF_PE_VISITABLE(LangCodeItem)
+  //! Method to visit a LIEF::PE::LangCodeItem
+  LIEF_PE_VISITABLE(LangCodeItem)
 
-//! Method to visit a LIEF::PE::ResourceIcon
-LIEF_PE_VISITABLE(ResourceIcon)
+  //! Method to visit a LIEF::PE::ResourceIcon
+  LIEF_PE_VISITABLE(ResourceIcon)
 
-//! Method to visit a LIEF::PE::ResourceDialog
-LIEF_PE_VISITABLE(ResourceDialog)
+  //! Method to visit a LIEF::PE::ResourceDialog
+  LIEF_PE_VISITABLE(ResourceDialog)
 
-//! Method to visit a LIEF::PE::ResourceDialogItem
-LIEF_PE_VISITABLE(ResourceDialogItem)
+  //! Method to visit a LIEF::PE::ResourceDialogItem
+  LIEF_PE_VISITABLE(ResourceDialogItem)
 
-//! Method to visit a LIEF::PE::Signature
-LIEF_PE_VISITABLE(Signature)
+  //! Method to visit a LIEF::PE::Signature
+  LIEF_PE_VISITABLE(Signature)
 
-//! Method to visit a LIEF::PE::x509
-LIEF_PE_VISITABLE(x509)
+  //! Method to visit a LIEF::PE::x509
+  LIEF_PE_VISITABLE(x509)
 
-//! Method to visit a LIEF::PE::SignerInfo
-LIEF_PE_VISITABLE(SignerInfo)
+  //! Method to visit a LIEF::PE::SignerInfo
+  LIEF_PE_VISITABLE(SignerInfo)
 
-//! Method to visit a LIEF::PE::ContentInfo
-LIEF_PE_VISITABLE(ContentInfo)
+  //! Method to visit a LIEF::PE::ContentInfo
+  LIEF_PE_VISITABLE(ContentInfo)
 
-//! Method to visit a LIEF::PE::AuthenticatedAttributes
-LIEF_PE_VISITABLE(AuthenticatedAttributes)
+  //! Method to visit a LIEF::PE::Attribute
+  LIEF_PE_VISITABLE(Attribute)
 
-//! Method to visit a LIEF::PE::issuer_t
-LIEF_PE_VISITABLE(issuer_t)
+  //! Method to visit a LIEF::PE::ContentType
+  LIEF_PE_VISITABLE(ContentType)
 
-//! Method to visit a LIEF::PE::LoadConfiguration
-LIEF_PE_VISITABLE(LoadConfiguration)
+  //! Method to visit a LIEF::PE::GenericType
+  LIEF_PE_VISITABLE(GenericType)
+
+  //! Method to visit a LIEF::PE::MsCounterSign
+  //LIEF_PE_VISITABLE(MsCounterSign)
+
+  //! Method to visit a LIEF::PE::MsSpcNestedSignature
+  LIEF_PE_VISITABLE(MsSpcNestedSignature)
+
+  //! Method to visit a LIEF::PE::MsSpcStatementType
+  LIEF_PE_VISITABLE(MsSpcStatementType)
+
+  //! Method to visit a LIEF::PE::PKCS9AtSequenceNumber
+  LIEF_PE_VISITABLE(PKCS9AtSequenceNumber)
+
+  //! Method to visit a LIEF::PE::PKCS9CounterSignature
+  LIEF_PE_VISITABLE(PKCS9CounterSignature)
+
+  //! Method to visit a LIEF::PE::PKCS9MessageDigest
+  LIEF_PE_VISITABLE(PKCS9MessageDigest)
+
+  //! Method to visit a LIEF::PE::PKCS9SigningTime
+  LIEF_PE_VISITABLE(PKCS9SigningTime)
+
+  //! Method to visit a LIEF::PE::SpcSpOpusInfo
+  LIEF_PE_VISITABLE(SpcSpOpusInfo)
+
+  //! Method to visit a LIEF::PE::LoadConfiguration
+  LIEF_PE_VISITABLE(LoadConfiguration)
 
   //! Method to visit a LIEF::PE::LoadConfigurationV0
   LIEF_PE_VISITABLE(LoadConfigurationV0)

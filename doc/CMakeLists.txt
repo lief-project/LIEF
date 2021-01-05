@@ -8,7 +8,7 @@ elseif(NOT SPHINX_FOUND)
 elseif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
   message(STATUS "You have to build the doc in another directory !")
 else()
-
+  message(STATUS "Sphinx: ${SPHINX_EXECUTABLE}")
   add_custom_target(lief-doxygen
       COMMAND
         ${CMAKE_COMMAND} -E env
@@ -23,7 +23,7 @@ else()
 
   add_custom_target(lief-sphinx
       COMMAND ${CMAKE_COMMAND} -E env
-        "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
+        "PYTHONPATH=${CMAKE_SOURCE_DIR}:${CMAKE_BINARY_DIR}/../:${CMAKE_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
         "LIEF_DOXYGEN_XML=${CMAKE_CURRENT_BINARY_DIR}/doxygen/xml/"
         ${SPHINX_EXECUTABLE} -a -E -j4 -w ${CMAKE_BINARY_DIR}/sphinx-warn.log ${CMAKE_SOURCE_DIR}/doc/sphinx sphinx-doc
         DEPENDS pyLIEF lief-doxygen
@@ -37,7 +37,7 @@ else()
 
   add_custom_target(lief-quick-sphinx
       COMMAND ${CMAKE_COMMAND} -E env
-        "PYTHONPATH=${PROJECT_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
+        "PYTHONPATH=${CMAKE_SOURCE_DIR}:${CMAKE_BINARY_DIR}/../:${CMAKE_BINARY_DIR}/api/python:$ENV{PYTHONPATH}"
         "LIEF_DOXYGEN_XML=${CMAKE_CURRENT_BINARY_DIR}/doxygen/xml/"
         "FORCE_RTD_THEME=0"
         ${SPHINX_EXECUTABLE} -j4 -w ${CMAKE_BINARY_DIR}/sphinx-warn.log ${CMAKE_SOURCE_DIR}/doc/sphinx sphinx-doc

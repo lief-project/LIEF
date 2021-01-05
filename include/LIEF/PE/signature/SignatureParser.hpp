@@ -17,6 +17,9 @@
 #define LIEF_PE_SIGNATURE_PARSER_H_
 #include <memory>
 #include <string>
+#include <array>
+
+#include "LIEF/errors.hpp"
 
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
@@ -26,41 +29,64 @@ class VectorStream;
 
 namespace PE {
 class Parser;
+class Attribute;
 
 class LIEF_API SignatureParser {
-
   friend class Parser;
+  struct SpcPeImageData {
+    uint32_t flags;
+    std::string file;
+  };
+
+  struct SpcSpOpusInfo {
+    std::string program_name;
+    std::string more_info;
+  };
+  struct range_t {
+    uint64_t start = 0;
+    uint64_t end = 0;
+  };
 
   public:
-  static Signature parse(const std::vector<uint8_t>& data);
+  using attributes_t = std::vector<std::unique_ptr<Attribute>>;
+  using signer_infos_t = std::vector<SignerInfo>;
+  using x509_certificates_t = std::vector<x509>;
+  using time_t = std::array<int32_t, 6>;
+
+  //! Parse a PKCS #7 signature given a raw blob
+  static result<Signature> parse(std::vector<uint8_t> data, bool skip_header = false);
+
+  //! Parse a PKCS #7 signature from a file path
+  static result<Signature> parse(const std::string& path);
 
   private:
-  SignatureParser(const std::vector<uint8_t>& data);
-  ~SignatureParser(void);
-  SignatureParser(void);
+  SignatureParser(std::vector<uint8_t> data);
+  ~SignatureParser();
+  SignatureParser();
 
-  void parse_signature(void);
+  result<Signature> parse_signature();
 
-  void parse_header(void);
-  int32_t get_signed_data_version(void);
-  std::string get_signed_data_digest_algorithms(void);
+  result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
+  result<x509_certificates_t> parse_certificates(VectorStream& stream);
+  result<signer_infos_t> parse_signer_infos(VectorStream& stream, range_t& auth_attr);
+  result<attributes_t> parse_attributes(VectorStream& stream);
+  result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
 
-  ContentInfo parse_content_info(void);
-  std::string get_content_info_type(void);
+  result<signer_infos_t> parse_pkcs9_counter_sign(VectorStream& stream);
+  result<std::vector<uint8_t>> parse_pkcs9_message_digest(VectorStream& stream);
+  result<int32_t> parse_pkcs9_at_sequence_number(VectorStream& stream);
+  result<time_t> parse_pkcs9_signing_time(VectorStream& stream);
 
-  void parse_certificates(void);
+  result<void> parse_ms_counter_sign(VectorStream& stream);
+  result<Signature> parse_ms_spc_nested_signature(VectorStream& stream);
+  result<oid_t> parse_ms_spc_statement_type(VectorStream& stream);
 
-  SignerInfo get_signer_info(void);
-  AuthenticatedAttributes get_authenticated_attributes(void);
-
-
+  result<SpcSpOpusInfo> parse_spc_sp_opus_info(VectorStream& stream);
+  result<std::string> parse_spc_string(VectorStream& stream);
+  result<std::string> parse_spc_link(VectorStream& stream);
+  result<SpcPeImageData> parse_spc_pe_image_data(VectorStream& stream);
   size_t current_offset(void) const;
-  Signature signature_;
-  uint8_t* p_{nullptr};
-  const uint8_t* end_{nullptr};
-  const uint8_t* signature_ptr_{nullptr};
   std::unique_ptr<VectorStream> stream_;
-
 };
 
 }

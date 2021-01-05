@@ -16,12 +16,6 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceStringTable.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/resources/pyResourceAccelerator.cpp"
 
-  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignerInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyAuthenticatedAttributes.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyx509.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pyContentInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/objects/signature/pySignature.cpp"
-
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyCodeIntegrity.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDataDirectory.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDosHeader.cpp"
@@ -62,6 +56,6 @@ target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_PE_SRC}" "${LIEF_PYTHON_PE_HDR}")
 
 
 include("${CMAKE_CURRENT_LIST_DIR}/objects/LoadConfigurations/CMakeLists.txt")
-
+include("${CMAKE_CURRENT_LIST_DIR}/objects/signature/CMakeLists.txt")
 
 

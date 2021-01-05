@@ -31,28 +31,18 @@ namespace PE {
 
 Section::~Section(void) = default;
 
-Section::Section(void) :
-  LIEF::Section{},
-  virtualSize_{0},
-  content_{},
-  pointerToRelocations_{0},
-  pointerToLineNumbers_{0},
-  numberOfRelocations_{0},
-  numberOfLineNumbers_{0},
-  characteristics_{0},
-  types_{PE_SECTION_TYPES::UNKNOWN}
-{}
+Section::Section(void) = default;
 
 
 Section& Section::operator=(const Section&) = default;
 Section::Section(const Section&) = default;
 
 Section::Section(const pe_section* header) :
-  virtualSize_{header->VirtualSize},
-  pointerToRelocations_{header->PointerToRelocations},
-  pointerToLineNumbers_{header->PointerToLineNumbers},
-  numberOfRelocations_{header->NumberOfRelocations},
-  numberOfLineNumbers_{header->NumberOfLineNumbers},
+  virtual_size_{header->VirtualSize},
+  pointer_to_relocations_{header->PointerToRelocations},
+  pointer_to_linenumbers_{header->PointerToLineNumbers},
+  number_of_relocations_{header->NumberOfRelocations},
+  number_of_linenumbers_{header->NumberOfLineNumbers},
   characteristics_{header->Characteristics},
   types_{PE_SECTION_TYPES::UNKNOWN}
 {
@@ -60,7 +50,6 @@ Section::Section(const pe_section* header) :
   this->virtual_address_ = header->VirtualAddress;
   this->size_            = header->SizeOfRawData;
   this->offset_          = header->PointerToRawData;
-
 }
 
 Section::Section(const std::vector<uint8_t>& data, const std::string& name, uint32_t characteristics) :
@@ -80,7 +69,7 @@ Section::Section(const std::string& name) :
 
 
 uint32_t Section::virtual_size(void) const {
-  return this->virtualSize_;
+  return this->virtual_size_;
 }
 
 
@@ -103,20 +92,20 @@ uint32_t Section::pointerto_raw_data(void) const {
 
 
 uint32_t Section::pointerto_relocation(void) const {
-  return this->pointerToRelocations_;
+  return this->pointer_to_relocations_;
 }
 
 
 uint32_t Section::pointerto_line_numbers(void) const {
-  return this->pointerToLineNumbers_;
+  return this->pointer_to_linenumbers_;
 }
 
 uint16_t Section::numberof_relocations(void) const {
-  return this->numberOfRelocations_;
+  return this->number_of_relocations_;
 }
 
 uint16_t Section::numberof_line_numbers(void) const {
-  return this->numberOfLineNumbers_;
+  return this->number_of_linenumbers_;
 }
 
 uint32_t Section::characteristics(void) const {
@@ -164,7 +153,7 @@ void Section::content(const std::vector<uint8_t>& data) {
 
 
 void Section::virtual_size(uint32_t virtualSize) {
-  this->virtualSize_ = virtualSize;
+  this->virtual_size_ = virtualSize;
 }
 
 
@@ -174,22 +163,22 @@ void Section::pointerto_raw_data(uint32_t pointerToRawData) {
 
 
 void Section::pointerto_relocation(uint32_t pointerToRelocation) {
-  this->pointerToRelocations_ = pointerToRelocation;
+  this->pointer_to_relocations_ = pointerToRelocation;
 }
 
 
 void Section::pointerto_line_numbers(uint32_t pointerToLineNumbers) {
-  this->pointerToLineNumbers_ = pointerToLineNumbers;
+  this->pointer_to_linenumbers_ = pointerToLineNumbers;
 }
 
 
 void Section::numberof_relocations(uint16_t numberOfRelocations) {
-  this->numberOfRelocations_ = numberOfRelocations;
+  this->number_of_relocations_ = numberOfRelocations;
 }
 
 
 void Section::numberof_line_numbers(uint16_t numberOfLineNumbers) {
-  this->numberOfLineNumbers_ = numberOfLineNumbers;
+  this->number_of_linenumbers_ = numberOfLineNumbers;
 }
 
 void Section::sizeof_raw_data(uint32_t sizeOfRawData) {

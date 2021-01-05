@@ -21,10 +21,12 @@
 #include <limits>
 
 #include "logging.hpp"
+#include "hash_stream.hpp"
 
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
@@ -98,7 +100,6 @@ Binary::Binary(void) :
   has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
-  has_signature_{false},
   has_exports_{false},
   has_resources_{false},
   has_exceptions_{false},
@@ -347,8 +348,8 @@ bool Binary::has_imports(void) const {
   return this->has_imports_;
 }
 
-bool Binary::has_signature(void) const {
-  return this->has_signature_;
+bool Binary::has_signatures(void) const {
+  return not this->signatures_.empty();
 }
 
 bool Binary::has_exports(void) const {
@@ -1011,8 +1012,228 @@ const debug_entries_t& Binary::debug(void) const {
 //
 /////////////////////
 
-const Signature& Binary::signature(void) const {
-  return this->signature_;
+it_const_signatures Binary::signatures(void) const {
+  return this->signatures_;
+}
+
+std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
+  static const std::map<ALGORITHMS, hashstream::HASH> HMAP = {
+    {ALGORITHMS::MD5,     hashstream::HASH::MD5},
+    {ALGORITHMS::SHA_1,   hashstream::HASH::SHA1},
+    {ALGORITHMS::SHA_256, hashstream::HASH::SHA256},
+    {ALGORITHMS::SHA_384, hashstream::HASH::SHA384},
+    {ALGORITHMS::SHA_512, hashstream::HASH::SHA512},
+  };
+  auto it_hash = HMAP.find(algo);
+  if (it_hash == std::end(HMAP)) {
+    LIEF_WARN("Unsupported hash algorithm: {}", to_string(algo));
+    return {};
+  }
+  const size_t sizeof_ptr = this->type_ == PE_TYPE::PE32 ? sizeof(uint32_t) : sizeof(uint64_t);
+  const hashstream::HASH hash_type = it_hash->second;
+  hashstream ios(hash_type);
+  //vector_iostream ios;
+  ios // Hash dos header
+    .write(this->dos_header_.magic())
+    .write(this->dos_header_.used_bytes_in_the_last_page())
+    .write(this->dos_header_.file_size_in_pages())
+    .write(this->dos_header_.numberof_relocation())
+    .write(this->dos_header_.header_size_in_paragraphs())
+    .write(this->dos_header_.minimum_extra_paragraphs())
+    .write(this->dos_header_.maximum_extra_paragraphs())
+    .write(this->dos_header_.initial_relative_ss())
+    .write(this->dos_header_.initial_sp())
+    .write(this->dos_header_.checksum())
+    .write(this->dos_header_.initial_ip())
+    .write(this->dos_header_.initial_relative_cs())
+    .write(this->dos_header_.addressof_relocation_table())
+    .write(this->dos_header_.overlay_number())
+    .write(this->dos_header_.reserved())
+    .write(this->dos_header_.oem_id())
+    .write(this->dos_header_.oem_info())
+    .write(this->dos_header_.reserved2())
+    .write(this->dos_header_.addressof_new_exeheader())
+    .write(this->dos_stub_);
+
+  ios // Hash PE Header
+    .write(this->header_.signature())
+    .write(static_cast<uint16_t>(this->header_.machine()))
+    .write(this->header_.numberof_sections())
+    .write(this->header_.time_date_stamp())
+    .write(this->header_.pointerto_symbol_table())
+    .write(this->header_.numberof_symbols())
+    .write(this->header_.sizeof_optional_header())
+    .write(static_cast<uint16_t>(this->header_.characteristics()));
+
+  ios // Hash OptionalHeader
+    .write(static_cast<uint16_t>(this->optional_header_.magic()))
+    .write(this->optional_header_.major_linker_version())
+    .write(this->optional_header_.minor_linker_version())
+    .write(this->optional_header_.sizeof_code())
+    .write(this->optional_header_.sizeof_initialized_data())
+    .write(this->optional_header_.sizeof_uninitialized_data())
+    .write(this->optional_header_.addressof_entrypoint())
+    .write(this->optional_header_.baseof_code());
+
+  if (this->type_ == PE_TYPE::PE32) {
+    ios.write(this->optional_header_.baseof_data());
+  }
+  ios // Continuation of optional header
+    .write_sized_int(this->optional_header_.imagebase(), sizeof_ptr)
+    .write(this->optional_header_.section_alignment())
+    .write(this->optional_header_.file_alignment())
+    .write(this->optional_header_.major_operating_system_version())
+    .write(this->optional_header_.minor_operating_system_version())
+    .write(this->optional_header_.major_image_version())
+    .write(this->optional_header_.minor_image_version())
+    .write(this->optional_header_.major_subsystem_version())
+    .write(this->optional_header_.minor_subsystem_version())
+    .write(this->optional_header_.win32_version_value())
+    .write(this->optional_header_.sizeof_image())
+    .write(this->optional_header_.sizeof_headers())
+    // this->optional_header_.checksum()) is not a part of the hash
+    .write(static_cast<uint16_t>(this->optional_header_.subsystem()))
+    .write(static_cast<uint16_t>(this->optional_header_.dll_characteristics()))
+    .write_sized_int(this->optional_header_.sizeof_stack_reserve(), sizeof_ptr)
+    .write_sized_int(this->optional_header_.sizeof_stack_commit(), sizeof_ptr)
+    .write_sized_int(this->optional_header_.sizeof_heap_reserve(), sizeof_ptr)
+    .write_sized_int(this->optional_header_.sizeof_heap_commit(), sizeof_ptr)
+    .write(this->optional_header_.loader_flags())
+    .write(this->optional_header_.numberof_rva_and_size());
+
+  for (const DataDirectory* dir : this->data_directories_) {
+    if (dir->type() == DATA_DIRECTORY::CERTIFICATE_TABLE) {
+      continue;
+    }
+    ios
+      .write(dir->RVA())
+      .write(dir->size());
+  }
+
+  // Empty data directory
+  ios
+    .write<uint32_t>(0)
+    .write<uint32_t>(0);
+
+  for (const Section* sec : this->sections_) {
+    std::array<char, 8> name = {0};
+    const std::string& sec_name = sec->name();
+    uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
+    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(name));
+    ios
+      .write(name)
+      .write(sec->virtual_size())
+      .write<uint32_t>(sec->virtual_address())
+      .write(sec->sizeof_raw_data())
+      .write(sec->pointerto_raw_data())
+      .write(sec->pointerto_relocation())
+      .write(sec->pointerto_line_numbers())
+      .write(sec->numberof_relocations())
+      .write(sec->numberof_line_numbers())
+      .write(static_cast<uint32_t>(sec->characteristics()));
+  }
+  //LIEF_DEBUG("Section padding at 0x{:x}", ios.tellp());
+  ios.write(this->section_offset_padding_);
+
+  std::vector<Section*> sections = this->sections_;
+
+  // Sort by file offset
+  std::sort(
+      std::begin(sections),
+      std::end(sections),
+      [] (const Section* lhs, const Section* rhs) {
+        return  lhs->pointerto_raw_data() < rhs->pointerto_raw_data();
+    });
+
+  uint64_t position = 0;
+  for (const Section* sec : sections) {
+    const std::vector<uint8_t>& pad     = sec->padding();
+    const std::vector<uint8_t>& content = sec->content();
+    LIEF_DEBUG("Authentihash:  Append section {:<8}: [0x{:04x}, 0x{:04x}] + [0x{:04x}] = [0x{:04x}, 0x{:04x}]",
+        sec->name(),
+        sec->offset(), sec->offset() + content.size(), pad.size(),
+        sec->offset(), sec->offset() + content.size() + pad.size());
+    if (/* overlapping */ sec->offset() < position) {
+      // Trunc the beginning of the overlap
+      if (position <= sec->offset() + content.size()) {
+        const uint64_t start_p = position - sec->offset();
+        const uint64_t size = content.size() - start_p;
+        ios
+          .write(content.data() + start_p, size)
+          .write(pad);
+      } else {
+        LIEF_WARN("Overlapping in the padding area");
+      }
+    } else {
+      ios
+        .write(content)
+        .write(pad);
+    }
+    position = sec->offset() + content.size() + pad.size();
+  }
+  if (this->overlay_.size() > 0) {
+    const DataDirectory& cert_dir = this->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
+    LIEF_DEBUG("Add overlay and omit 0x{:08x} - 0x{:08x}", cert_dir.RVA(), cert_dir.RVA() + cert_dir.size());
+    if (cert_dir.RVA() > 0 and cert_dir.size() > 0) {
+      const uint64_t start_cert_offset = cert_dir.RVA() - this->overlay_offset_;
+      const uint64_t end_cert_offset   = start_cert_offset + cert_dir.size();
+      LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", this->overlay_offset_, this->overlay_offset_ + start_cert_offset);
+      LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
+          this->overlay_offset_ + end_cert_offset, this->overlay_offset_ + this->overlay_.size() - end_cert_offset);
+      ios
+        .write(this->overlay_.data(), start_cert_offset)
+        .write(this->overlay_.data() + end_cert_offset, this->overlay_.size() - end_cert_offset);
+    }
+  }
+  //ios.write(this->overlay_);
+  // When something gets wrong with the hash:
+  // std::vector<uint8_t> out = ios.raw();
+  // std::ofstream output_file{"/tmp/hash.blob", std::ios::out | std::ios::binary | std::ios::trunc};
+  // if (output_file) {
+  //   std::copy(
+  //       std::begin(out),
+  //       std::end(out),
+  //       std::ostreambuf_iterator<char>(output_file));
+  // }
+  // std::vector<uint8_t> hash = hashstream(hash_type).write(out).raw();
+
+  std::vector<uint8_t> hash = ios.raw();
+  LIEF_DEBUG("{}", hex_dump(hash));
+  return hash;
+}
+
+Signature::VERIFICATION_FLAGS Binary::verify_signature() const {
+  if (not this->has_signatures()) {
+    return Signature::VERIFICATION_FLAGS::NO_SIGNATURE;
+  }
+
+  for (size_t i = 0; i < this->signatures_.size(); ++i) {
+    const Signature& sig = this->signatures_[i];
+    Signature::VERIFICATION_FLAGS flags = this->verify_signature(sig);
+    if (flags != Signature::VERIFICATION_FLAGS::OK) {
+      LIEF_INFO("Verification failed for signature #{:d} (0b{:b})", i, static_cast<uintptr_t>(flags));
+      return flags;
+    }
+  }
+  return Signature::VERIFICATION_FLAGS::OK;
+}
+
+Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig) const {
+  const Signature::VERIFICATION_FLAGS value = sig.check();
+  if (value != Signature::VERIFICATION_FLAGS::OK) {
+    LIEF_INFO("Bad signature (0b{:b})", static_cast<uintptr_t>(value));
+    return value;
+  }
+
+  // Check that the authentihash matches Content Info's digest
+  const std::vector<uint8_t>& authhash = this->authentihash(sig.digest_algorithm());
+  const std::vector<uint8_t>& chash = sig.content_info().digest();
+  if (authhash != chash) {
+    LIEF_INFO("Authentihash and Content info's digest does not match:\n  {}\n  {}",
+        hex_dump(authhash), hex_dump(chash));
+    return Signature::VERIFICATION_FLAGS::BAD_SIGNATURE;
+  }
+  return Signature::VERIFICATION_FLAGS::OK;
 }
 
 
@@ -1407,10 +1628,12 @@ std::ostream& Binary::print(std::ostream& os) const {
   }
 
 
-  if (this->has_signature()) {
-    os << "Signature" << std::endl;
-    os << "=========" << std::endl;
-    os << this->signature() << std::endl;
+  if (this->has_signatures()) {
+    os << "Signatures" << std::endl;
+    os << "==========" << std::endl;
+    for (const Signature& sig : this->signatures_) {
+      os << sig << std::endl;
+    }
     os << std::endl;
   }
 

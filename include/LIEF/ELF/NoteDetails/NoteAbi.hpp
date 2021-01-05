@@ -31,7 +31,7 @@ class Parser;
 class Builder;
 class Binary;
 
-//! Class representing the ".note.android.ident" section
+//! Class representing the ``.note.android.ident`` section
 //!
 //! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API NoteAbi : public NoteDetails {

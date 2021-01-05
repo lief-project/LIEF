@@ -71,6 +71,8 @@ LIEF_API std::u16string u8tou16(const std::string& string);
 
 LIEF_API std::string hex_str(uint8_t c);
 
+LIEF_API std::string hex_dump(const std::vector<uint8_t>& data, std::string sep = ":");
+
 //! Check if the given string in printable
 LIEF_API bool is_printable(const std::string& str);
 

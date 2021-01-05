@@ -444,33 +444,33 @@ void Builder::build_overlay(void) {
 
 Builder& Builder::operator<<(const DosHeader& dos_header) {
 
-  pe_dos_header dosHeader;
-  dosHeader.Magic                     = static_cast<uint16_t>(dos_header.magic());
-  dosHeader.UsedBytesInTheLastPage    = static_cast<uint16_t>(dos_header.used_bytes_in_the_last_page());
-  dosHeader.FileSizeInPages           = static_cast<uint16_t>(dos_header.file_size_in_pages());
-  dosHeader.NumberOfRelocationItems   = static_cast<uint16_t>(dos_header.numberof_relocation());
-  dosHeader.HeaderSizeInParagraphs    = static_cast<uint16_t>(dos_header.header_size_in_paragraphs());
-  dosHeader.MinimumExtraParagraphs    = static_cast<uint16_t>(dos_header.minimum_extra_paragraphs());
-  dosHeader.MaximumExtraParagraphs    = static_cast<uint16_t>(dos_header.maximum_extra_paragraphs());
-  dosHeader.InitialRelativeSS         = static_cast<uint16_t>(dos_header.initial_relative_ss());
-  dosHeader.InitialSP                 = static_cast<uint16_t>(dos_header.initial_sp());
-  dosHeader.Checksum                  = static_cast<uint16_t>(dos_header.checksum());
-  dosHeader.InitialIP                 = static_cast<uint16_t>(dos_header.initial_ip());
-  dosHeader.InitialRelativeCS         = static_cast<uint16_t>(dos_header.initial_relative_cs());
-  dosHeader.AddressOfRelocationTable  = static_cast<uint16_t>(dos_header.addressof_relocation_table());
-  dosHeader.OverlayNumber             = static_cast<uint16_t>(dos_header.overlay_number());
-  dosHeader.OEMid                     = static_cast<uint16_t>(dos_header.oem_id());
-  dosHeader.OEMinfo                   = static_cast<uint16_t>(dos_header.oem_info());
-  dosHeader.AddressOfNewExeHeader     = static_cast<uint16_t>(dos_header.addressof_new_exeheader());
+  pe_dos_header raw_dos_header;
+  raw_dos_header.Magic                     = static_cast<uint16_t>(dos_header.magic());
+  raw_dos_header.UsedBytesInTheLastPage    = static_cast<uint16_t>(dos_header.used_bytes_in_the_last_page());
+  raw_dos_header.FileSizeInPages           = static_cast<uint16_t>(dos_header.file_size_in_pages());
+  raw_dos_header.NumberOfRelocationItems   = static_cast<uint16_t>(dos_header.numberof_relocation());
+  raw_dos_header.HeaderSizeInParagraphs    = static_cast<uint16_t>(dos_header.header_size_in_paragraphs());
+  raw_dos_header.MinimumExtraParagraphs    = static_cast<uint16_t>(dos_header.minimum_extra_paragraphs());
+  raw_dos_header.MaximumExtraParagraphs    = static_cast<uint16_t>(dos_header.maximum_extra_paragraphs());
+  raw_dos_header.InitialRelativeSS         = static_cast<uint16_t>(dos_header.initial_relative_ss());
+  raw_dos_header.InitialSP                 = static_cast<uint16_t>(dos_header.initial_sp());
+  raw_dos_header.Checksum                  = static_cast<uint16_t>(dos_header.checksum());
+  raw_dos_header.InitialIP                 = static_cast<uint16_t>(dos_header.initial_ip());
+  raw_dos_header.InitialRelativeCS         = static_cast<uint16_t>(dos_header.initial_relative_cs());
+  raw_dos_header.AddressOfRelocationTable  = static_cast<uint16_t>(dos_header.addressof_relocation_table());
+  raw_dos_header.OverlayNumber             = static_cast<uint16_t>(dos_header.overlay_number());
+  raw_dos_header.OEMid                     = static_cast<uint16_t>(dos_header.oem_id());
+  raw_dos_header.OEMinfo                   = static_cast<uint16_t>(dos_header.oem_info());
+  raw_dos_header.AddressOfNewExeHeader     = static_cast<uint16_t>(dos_header.addressof_new_exeheader());
 
   const DosHeader::reserved_t& reserved   = dos_header.reserved();
   const DosHeader::reserved2_t& reserved2 = dos_header.reserved2();
 
-  std::copy(std::begin(reserved),  std::end(reserved),  std::begin(dosHeader.Reserved));
-  std::copy(std::begin(reserved2), std::end(reserved2), std::begin(dosHeader.Reserved2));
+  std::copy(std::begin(reserved),  std::end(reserved),  std::begin(raw_dos_header.Reserved));
+  std::copy(std::begin(reserved2), std::end(reserved2), std::begin(raw_dos_header.Reserved2));
 
   this->ios_.seekp(0);
-  this->ios_.write(reinterpret_cast<const uint8_t*>(&dosHeader), sizeof(pe_dos_header));
+  this->ios_.write(reinterpret_cast<const uint8_t*>(&raw_dos_header), sizeof(pe_dos_header));
   if (this->binary_->dos_stub().size() > 0 and this->build_dos_stub_) {
 
     if (sizeof(pe_dos_header) + this->binary_->dos_stub().size() > dos_header.addressof_new_exeheader()) {

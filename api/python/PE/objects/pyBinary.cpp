@@ -132,8 +132,8 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("has_configuration", &Binary::has_configuration,
         "``True`` if the current binary has " RST_CLASS_REF(lief.PE.LoadConfiguration) "")
 
-    .def_property_readonly("has_signature", &Binary::has_signature,
-        "``True`` if the binary is signed (" RST_CLASS_REF(lief.PE.Signature) ")")
+    .def_property_readonly("has_signatures", &Binary::has_signatures,
+        "``True`` if the binary has signatures (" RST_CLASS_REF(lief.PE.Signature) ")")
 
     .def_property_readonly("is_reproducible_build", &Binary::is_reproducible_build,
         "``True`` if the binary was compiled with a reproducible build directive (" RST_CLASS_REF(lief.PE.Debug) ")")
@@ -151,10 +151,68 @@ void create<Binary>(py::module& m) {
         "Try to predict the RVA of the given function name in the given import library name",
         "library"_a, "function"_a)
 
-    .def_property_readonly("signature",
-        static_cast<const Signature& (Binary::*)(void) const>(&Binary::signature),
-        "Return the " RST_CLASS_REF(lief.PE.Signature) " object",
+    .def_property_readonly("signatures",
+        static_cast<it_const_signatures (Binary::*)(void) const>(&Binary::signatures),
+        "Return an iterator over the " RST_CLASS_REF(lief.PE.Signature) " objects",
         py::return_value_policy::reference)
+
+    .def("authentihash",
+        [] (const Binary& bin, ALGORITHMS algo) {
+          const std::vector<uint8_t>& data = bin.authentihash(algo);
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Compute the authentihash according to the " RST_CLASS_REF(lief.PE.ALGORITHMS) " "
+        "given in the first parameter",
+        "algorithm"_a)
+
+    .def("verify_signature",
+        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)() const>(&Binary::verify_signature),
+        R"delim(
+        Verify the binary against the embedded signature(s) (if any)
+        Firstly, it checks that the embedded signatures are correct (c.f. :meth:`lief.PE.Signature.check`)
+        and then it checks that the authentihash matches :attr:`lief.PE.ContentInfo.digest`
+        )delim")
+
+    .def("verify_signature",
+        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)(const Signature&) const>(&Binary::verify_signature),
+        R"delim(
+        Verify the binary with the Signature object provided in the first parameter
+        It can be used to verify a detached signature:
+
+        .. code-block:: python
+
+            detached = lief.PE.Signature.parse("sig.pkcs7")
+            binary.verify_signature(detached)
+        )delim",
+        "signature"_a)
+
+    .def_property_readonly("authentihash_md5",
+        [] (const Binary& bin) {
+          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::MD5);
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Authentihash **MD5** value")
+
+    .def_property_readonly("authentihash_sha1",
+        [] (const Binary& bin) {
+          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_1);
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Authentihash **SHA1** value")
+
+    .def_property_readonly("authentihash_sha256",
+        [] (const Binary& bin) {
+          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_256);
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Authentihash **SHA-256** value")
+
+    .def_property_readonly("authentihash_sha512",
+        [] (const Binary& bin) {
+          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_512);
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Authentihash **SHA-512** value")
 
     .def_property_readonly("debug",
         static_cast<debug_entries_t& (Binary::*)(void)>(&Binary::debug),

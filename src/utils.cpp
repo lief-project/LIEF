@@ -25,6 +25,8 @@
 #include <string>
 #include <numeric>
 
+#include <spdlog/fmt/fmt.h>
+
 #include "LIEF/utils.hpp"
 #include "utf8.h"
 
@@ -83,6 +85,16 @@ std::string hex_str(uint8_t c) {
   std::stringstream ss;
   ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(c);
   return ss.str();
+}
+
+std::string hex_dump(const std::vector<uint8_t>& data, std::string sep) {
+
+  std::string hexstring = std::accumulate(std::begin(data), std::end(data), std::string{},
+     [sep] (const std::string& a, uint8_t b) {
+         return a.empty() ? fmt::format("{:02x}", b) : a + sep + fmt::format("{:02x}", b);
+     });
+
+  return hexstring;
 }
 
 

@@ -1337,5 +1337,54 @@ const char* to_string(ACCELERATOR_VK_CODES e) {
   return it != enumStrings.end() ? it->second : "Undefined or reserved";
 }
 
+const char* to_string(ALGORITHMS e) {
+  CONST_MAP(ALGORITHMS, const char*, 20) enumStrings {
+    { ALGORITHMS::UNKNOWN,  "UNKNOWN"  },
+    { ALGORITHMS::SHA_512,  "SHA_512"  },
+    { ALGORITHMS::SHA_384,  "SHA_384"  },
+    { ALGORITHMS::SHA_256,  "SHA_256"  },
+    { ALGORITHMS::SHA_1,    "SHA_1"    },
+
+    { ALGORITHMS::MD5,      "MD5"      },
+    { ALGORITHMS::MD4,      "MD4"      },
+    { ALGORITHMS::MD2,      "MD2"      },
+
+    { ALGORITHMS::RSA,      "RSA"      },
+    { ALGORITHMS::EC,       "EC"       },
+
+    { ALGORITHMS::MD5_RSA,          "MD5_RSA"       },
+    { ALGORITHMS::SHA1_DSA,         "SHA1_DSA"      },
+    { ALGORITHMS::SHA1_RSA,         "SHA1_RSA"      },
+    { ALGORITHMS::SHA_256_RSA,      "SHA_256_RSA"   },
+    { ALGORITHMS::SHA_384_RSA,      "SHA_384_RSA"   },
+    { ALGORITHMS::SHA_512_RSA,      "SHA_512_RSA"   },
+    { ALGORITHMS::SHA1_ECDSA,       "SHA1_ECDSA"    },
+    { ALGORITHMS::SHA_256_ECDSA,    "SHA_256_ECDSA" },
+    { ALGORITHMS::SHA_384_ECDSA,    "SHA_384_ECDSA" },
+    { ALGORITHMS::SHA_512_ECDSA,    "SHA_512_ECDSA" },
+  };
+  auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
+
+const char* to_string(SIG_ATTRIBUTE_TYPES e) {
+  CONST_MAP(SIG_ATTRIBUTE_TYPES, const char*, 11) enumStrings {
+    { SIG_ATTRIBUTE_TYPES::UNKNOWN,                  "UNKNOWN"                   },
+    { SIG_ATTRIBUTE_TYPES::CONTENT_TYPE,             "CONTENT_TYPE"              },
+    { SIG_ATTRIBUTE_TYPES::GENERIC_TYPE,             "GENERIC_TYPE"              },
+    { SIG_ATTRIBUTE_TYPES::SPC_SP_OPUS_INFO,         "SPC_SP_OPUS_INFO"          },
+    { SIG_ATTRIBUTE_TYPES::MS_COUNTER_SIGN,          "MS_COUNTER_SIGN"           },
+    { SIG_ATTRIBUTE_TYPES::MS_SPC_NESTED_SIGN,       "MS_SPC_NESTED_SIGN"        },
+    { SIG_ATTRIBUTE_TYPES::MS_SPC_STATEMENT_TYPE,    "MS_SPC_STATEMENT_TYPE"     },
+    { SIG_ATTRIBUTE_TYPES::PKCS9_AT_SEQUENCE_NUMBER, "PKCS9_AT_SEQUENCE_NUMBER"  },
+    { SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE,  "PKCS9_COUNTER_SIGNATURE"   },
+    { SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST,     "PKCS9_MESSAGE_DIGEST"      },
+    { SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME,       "PKCS9_SIGNING_TIME"        },
+  };
+  auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
 } // namespace PE
 } // namespace LIEF

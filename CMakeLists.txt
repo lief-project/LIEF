@@ -106,6 +106,8 @@ set(LIBLIEF_SOURCE_FILES
     "${mbedtls_src_x509}"
     "${mbedtls_src_tls}"
     "${LIBFUZZER_SRC_FILES}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/errors.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
@@ -121,6 +123,7 @@ set(LIBLIEF_SOURCE_FILES
 # Grouping basic headers together
 # ===============================
 set(LIEF_INC_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/errors.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/exception.hpp"
@@ -139,6 +142,7 @@ set(LIEF_INC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/BinaryStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/Convert.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp")
 
 set(LIEF_VISITOR_INCLUDE_FILES
@@ -284,10 +288,9 @@ list(APPEND LIEF_PUBLIC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/"
      "${CMAKE_CURRENT_BINARY_DIR}/include/")
 
 list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
-     "${LIBRANG_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/src"
-     "${CMAKE_BINARY_DIR}")
+     "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_BINARY_DIR}")
 
-configure_file(${PROJECT_SOURCE_DIR}/LIEF.pc.in ${PROJECT_BINARY_DIR}/LIEF.pc
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
                @ONLY)
 
 # Grouping external projects
@@ -322,6 +325,15 @@ if(LIEF_FROZEN_ENABLED)
   add_dependencies(LIB_LIEF lief_frozen)
 endif()
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp
+  COMMAND
+    ${CMAKE_COMMAND} -E copy_directory ${LEAF_INCLUDE_DIR}/
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
+  DEPENDS lief_leaf)
+
+target_sources(LIB_LIEF PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp)
+
 add_dependencies(LIB_LIEF lief_spdlog lief_mbed_tls)
 
 # Flags definition
@@ -351,7 +363,8 @@ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 # SpcSpAgencyInfo Critical Extension, which mbed TLS doesn't support, so set
 # MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION to have it skip this
 # extension.
-add_definitions(-DMBEDTLS_MD2_C -DMBEDTLS_MD4_C
+add_definitions(-DMBEDTLS_MD2_C -DMBEDTLS_MD4_C -DMBEDTLS_PEM_PARSE_C
+                -DMBEDTLS_X509_CRT_PARSE_C -DMBEDTLS_PEM_WRITE_C
                 -DMBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION)
 
 # ASAN - LSAN - TSAN - USAN
@@ -496,6 +509,7 @@ endif()
 
 # Tests
 # ======================
+
 if(LIEF_TESTS)
   enable_testing()
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests")
@@ -584,7 +598,7 @@ install(
   COMPONENT config)
 
 install(
-  FILES ${PROJECT_BINARY_DIR}/LIEF.pc
+  FILES ${CMAKE_BINARY_DIR}/LIEF.pc
   DESTINATION lib/pkgconfig
   COMPONENT libraries)
 

@@ -33,6 +33,9 @@
 #define RST_ATTR_REF(X) ":attr:`~"#X"`"
 #define RST_ATTR_REF_FULL(X) ":attr:`"#X"`"
 
+#define RST_METH_REF(X) ":class:`~"#X"`"
+#define RST_METH_REF_FULL(X) ":class:`"#X"`"
+
 namespace py = pybind11;
 
 using namespace pybind11::literals;

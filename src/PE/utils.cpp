@@ -265,6 +265,40 @@ Import resolve_ordinals(const Import& import, bool strict) {
 
   return resolved_import;
 }
+ALGORITHMS algo_from_oid(const std::string& oid) {
+  static const std::unordered_map<std::string, ALGORITHMS> OID_MAP = {
+    { "2.16.840.1.101.3.4.2.3", ALGORITHMS::SHA_512 },
+    { "2.16.840.1.101.3.4.2.2", ALGORITHMS::SHA_384 },
+    { "2.16.840.1.101.3.4.2.1", ALGORITHMS::SHA_256 },
+    { "1.3.14.3.2.26",          ALGORITHMS::SHA_1   },
+
+    { "1.2.840.113549.2.5",     ALGORITHMS::MD5 },
+    { "1.2.840.113549.2.4",     ALGORITHMS::MD4 },
+    { "1.2.840.113549.2.2",     ALGORITHMS::MD2 },
+
+    { "1.2.840.113549.1.1.1",   ALGORITHMS::RSA },
+    { "1.2.840.10045.2.1",      ALGORITHMS::EC  },
+
+    { "1.2.840.113549.1.1.4",   ALGORITHMS::MD5_RSA        },
+    { "1.2.840.10040.4.3",      ALGORITHMS::SHA1_DSA       },
+    { "1.2.840.113549.1.1.5",   ALGORITHMS::SHA1_RSA       },
+    { "1.2.840.113549.1.1.11",  ALGORITHMS::SHA_256_RSA    },
+    { "1.2.840.113549.1.1.12",  ALGORITHMS::SHA_384_RSA    },
+    { "1.2.840.113549.1.1.13",  ALGORITHMS::SHA_512_RSA    },
+    { "1.2.840.10045.4.1",      ALGORITHMS::SHA1_ECDSA     },
+    { "1.2.840.10045.4.3.2",    ALGORITHMS::SHA_256_ECDSA  },
+    { "1.2.840.10045.4.3.3",    ALGORITHMS::SHA_384_ECDSA  },
+    { "1.2.840.10045.4.3.4",    ALGORITHMS::SHA_512_ECDSA  },
+  };
+
+
+  const auto& it = OID_MAP.find(oid.c_str());
+  if (it == std::end(OID_MAP)) {
+    return ALGORITHMS::UNKNOWN;
+  }
+  return it->second;
+}
+
 
 }
 }

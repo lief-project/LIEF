@@ -100,13 +100,10 @@ int main(int argc, char **argv) {
     std::cout << binary->resources_manager() << std::endl;
   }
 
-
-  if (binary->has_signature()) {
+  for (const Signature& sig : binary->signatures()) {
     std::cout << "== Signature ==" << std::endl;
-    std::cout << binary->signature() << std::endl;
+    std::cout << sig << std::endl;
   }
-
-
 
   return 0;
 }

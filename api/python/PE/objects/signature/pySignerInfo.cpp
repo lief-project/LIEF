@@ -40,30 +40,67 @@ void create<SignerInfo>(py::module& m) {
         &SignerInfo::version,
         "Should be 1")
 
+    .def_property_readonly("serial_number",
+        [] (const SignerInfo& info) -> py::bytes {
+          const std::vector<uint8_t>& data = info.serial_number();
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "The X509 serial number used to sign the signed-data")
+
     .def_property_readonly("issuer",
         [] (const SignerInfo& object) {
-          const issuer_t& issuer = object.issuer();
-          return std::pair<py::object, std::vector<uint8_t>>{safe_string_converter(std::get<0>(issuer)), std::get<1>(issuer)};
+          return safe_string_converter(object.issuer());
         },
         "Issuer and serial number",
         py::return_value_policy::copy)
 
     .def_property_readonly("digest_algorithm",
         &SignerInfo::digest_algorithm,
-        "Algorithm (OID) used to hash the file. This value should match ContentInfo.digest_algorithm and Signature.digest_algorithm")
+        "Algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to hash the file. "
+        "This value should match " RST_ATTR_REF_FULL(ContentInfo.digest_algorithm) " "
+        "and " RST_ATTR_REF_FULL(Signature.digest_algorithm) "")
 
-    .def_property_readonly("signature_algorithm",
-        &SignerInfo::signature_algorithm,
-        "Return the signature algorithm (OID)")
+    .def_property_readonly("encryption_algorithm",
+        &SignerInfo::encryption_algorithm,
+        "Return algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to encrypt the digest")
 
     .def_property_readonly("encrypted_digest",
-        &SignerInfo::encrypted_digest,
+        [] (const SignerInfo& info) {
+          const std::vector<uint8_t>& data = info.encrypted_digest();
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
         "Return the signature created by the signing certificate's private key")
 
     .def_property_readonly("authenticated_attributes",
         &SignerInfo::authenticated_attributes,
-        "Return the " RST_CLASS_REF(lief.PE.AuthenticatedAttributes) " object",
+        "Return an iterator over the authenticated attributes ("
+        "" RST_CLASS_REF(lief.PE.Attribute) ")",
         py::return_value_policy::reference)
+
+    .def_property_readonly("unauthenticated_attributes",
+        &SignerInfo::unauthenticated_attributes,
+        "Return an iterator over the unauthenticated attributes ("
+        "" RST_CLASS_REF(lief.PE.Attribute) ")",
+        py::return_value_policy::reference)
+
+    .def("get_attribute",
+        &SignerInfo::get_attribute,
+        "Return the authenticated or un-authenticated attribute matching the "
+        "given " RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) " \n\n"
+        "It returns **the first** entry that matches the given type. If it can't be "
+        "found, it returns a nullptr",
+        "type"_a,
+        py::return_value_policy::reference)
+
+    .def_property_readonly("cert",
+        static_cast<x509*(SignerInfo::*)()>(&SignerInfo::cert),
+        "" RST_CLASS_REF(lief.PE.x509) " certificate used by this signer. If it can't be found, it returns None",
+        py::return_value_policy::reference)
+
+    .def("__hash__",
+        [] (const SignerInfo& obj) {
+          return Hash::hash(obj);
+        })
 
     .def("__str__",
         [] (const SignerInfo& signer_info)

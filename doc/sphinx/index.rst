@@ -25,7 +25,7 @@ Welcome to LIEF's documentation!
   tutorials/10_android_formats
   tutorials/11_macho_modification
   tutorials/12_elf_coredump
-
+  tutorials/13_pe_authenticode
 
 .. toctree::
   :caption: API

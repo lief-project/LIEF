@@ -62,7 +62,8 @@
 #include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 
-#include "LIEF/PE/signature/AuthenticatedAttributes.hpp"
+#include "LIEF/PE/signature/attributes.hpp"
+#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/signature/Signature.hpp"

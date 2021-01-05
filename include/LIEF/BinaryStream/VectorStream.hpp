@@ -31,6 +31,36 @@ class VectorStream : public BinaryStream {
 
   const std::vector<uint8_t>& content(void) const;
 
+  inline uint8_t* p() {
+    return this->binary_.data() + this->pos();
+  }
+
+  inline const uint8_t* p() const {
+    return this->binary_.data() + this->pos();
+  }
+
+
+  inline uint8_t* end() {
+    return this->binary_.data() + this->binary_.size();
+  }
+
+  inline const uint8_t* end() const {
+    return this->binary_.data() + this->binary_.size();
+  }
+
+  virtual result<size_t> asn1_read_tag(int tag) override;
+  virtual result<size_t> asn1_read_len() override;
+  result<size_t> asn1_peek_len();
+  virtual result<std::string> asn1_read_alg() override;
+  virtual result<std::string> asn1_read_oid() override;
+  virtual result<int32_t> asn1_read_int() override;
+  virtual result<std::vector<uint8_t>> asn1_read_bitstring() override;
+  virtual result<std::vector<uint8_t>> asn1_read_octet_string() override;
+  virtual result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() override;
+  virtual result<std::string> x509_read_names() override;
+  virtual result<std::vector<uint8_t>> x509_read_serial() override;
+  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
+
   protected:
   virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
   std::vector<uint8_t> binary_;

@@ -20,6 +20,7 @@ Changelog
   * Bug fix in the symbols table reconstruction (ELF)
 
 :PE:
+  * Enhance PE Authenticode. See `PE Authenticode <tutorials/13_pe_authenticode.html>`_
   * :attr:`~lief.PE.LangCodeItem.items` now returns a dictionary whose values are **bytes** (instead of
     ``str`` object). This change is related to ``utf-16`` support.
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
@@ -38,7 +39,7 @@ Changelog
   * Upgrade ``mbedtls`` to 2.16.6
 
 :Documentation:
-  * :github_user:`aguinet` updated the `bin2lib tutorial <https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html>`_ with the support
+  * :github_user:`aguinet` updated the `bin2lib tutorial <tutorials/08_elf_bin2lib.html>`_ with the support
     of the new glibc versions (:commit:`7884e57aa1d103f3bd37682e47f412bfe7a3aa34`)
   * Global update and enable to build the documentation out-of-tree
   * Changing the theme

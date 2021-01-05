@@ -4,6 +4,7 @@ set(LIEF_FUZZER_SRC
   pe_fuzzer.cpp
   macho_fuzzer.cpp
   pme_fuzzer.cpp
+  pkcs7_signature.cpp
 )
 
 foreach(fuzzer ${LIEF_FUZZER_SRC})
@@ -35,7 +36,8 @@ ExternalProject_Add(lief_fuzzer_corpus
   INSTALL_COMMAND   ""
   GIT_REPOSITORY    ${SAMPLES_GIT_URL}
   GIT_TAG           ${SAMPLES_TAG}
-  #UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
+  GIT_SHALLOW       TRUE
+  GIT_PROGRESS      TRUE
   UPDATE_COMMAND    ""
   LOG_DOWNLOAD 1
 )
@@ -118,5 +120,19 @@ add_custom_target("fuzz-macho"
   WORKING_DIRECTORY ${MACHO_WORKING_DIR}
   COMMENT "Run MachO fuzzer")
 
+
+# PKCS7-Signature parsing
+# =======================
+set(PKCS7_WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/pkcs7-output)
+set(PKCS7_NEW_CASES ${PKCS7_WORKING_DIR}/new_cases)
+
+add_custom_target(build-pkcs7-fuzz-output
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${PKCS7_WORKING_DIR} ${PKCS7_NEW_CASES})
+
+add_custom_target("fuzz-pkcs7"
+  COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS="${ASAN_OPTIONS}" ${CMAKE_CURRENT_BINARY_DIR}/pkcs7_signature ${LIB_FUZZER_ARGS} ${LIEF_CORUPUS_DIRECTORY}/pkcs7 ${PKCS7_NEW_CASES}
+  DEPENDS pkcs7_signature LIB_LIEF build-pkcs7-fuzz-output lief_fuzzer_corpus
+  WORKING_DIRECTORY ${PKCS7_WORKING_DIR}
+  COMMENT "Run PKCS7 fuzzer")
 
 

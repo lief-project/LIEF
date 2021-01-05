@@ -16,8 +16,11 @@
 #include <string>
 #include <sstream>
 
+#include "enums_wrapper.hpp"
+
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/signature/SignatureParser.hpp"
 
 #include "pyPE.hpp"
 
@@ -34,7 +37,42 @@ using setter_t = void (Signature::*)(T);
 template<>
 void create<Signature>(py::module& m) {
 
-  py::class_<Signature, LIEF::Object>(m, "Signature")
+  py::class_<Signature, LIEF::Object> signature(m, "Signature");
+  LIEF::enum_<Signature::VERIFICATION_FLAGS>(signature, "VERIFICATION_FLAGS", py::arithmetic())
+    .value("OK",                            Signature::VERIFICATION_FLAGS::OK)
+    .value("INVALID_SIGNER",                Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
+    .value("UNSUPPORTED_ALGORITHM",         Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM)
+    .value("INCONSISTENT_DIGEST_ALGORITHM", Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM)
+    .value("CERT_NOT_FOUND",                Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND)
+    .value("CORRUPTED_CONTENT_INFO",        Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO)
+    .value("CORRUPTED_AUTH_DATA",           Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA)
+    .value("MISSING_PKCS9_MESSAGE_DIGEST",  Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST)
+    .value("BAD_DIGEST",                    Signature::VERIFICATION_FLAGS::BAD_DIGEST)
+    .value("BAD_SIGNATURE",                 Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
+    .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE);
+
+  signature
+    .def_static("parse",
+        [] (const std::string& path) -> py::object {
+          auto sig = SignatureParser::parse(path);
+          if (not sig) {
+            return py::none();
+          }
+          return py::cast(sig.value());
+        },
+        "Parse the DER PKCS #7 signature from the file path given in the first parameter",
+        "path"_a)
+
+    .def_static("parse",
+        [] (const std::vector<uint8_t>& raw, bool skip_header) -> py::object {
+          auto sig = SignatureParser::parse(raw, skip_header);
+          if (not sig) {
+            return py::none();
+          }
+          return py::cast(sig.value());
+        },
+        "Parse the raw (DER) PKCS #7 signature given in the first parameter",
+        "raw"_a, "skip_header"_a = false)
 
     .def_property_readonly("version",
         &Signature::version,
@@ -42,7 +80,8 @@ void create<Signature>(py::module& m) {
 
     .def_property_readonly("digest_algorithm",
         &Signature::digest_algorithm,
-        "Return the algorithm (OID) used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) "")
+        "Return the algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") \
+        used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) "")
 
 
     .def_property_readonly("content_info",
@@ -57,24 +96,34 @@ void create<Signature>(py::module& m) {
         py::return_value_policy::reference)
 
 
-    .def_property_readonly("signer_info",
-        &Signature::signer_info,
-        "Return the " RST_CLASS_REF(lief.PE.SignerInfo) "",
+    .def_property_readonly("signers",
+        &Signature::signers,
+        "Return an iterator over the signers: " RST_CLASS_REF(lief.PE.SignerInfo) "",
         py::return_value_policy::reference)
 
+    .def("check",
+        &Signature::check,
+        "Check the integrity of the signature and return a " RST_CLASS_REF(lief.PE.Signature.VERIFICATION_FLAGS) "")
 
-    .def_property_readonly("original_signature",
-        &Signature::original_signature,
-        "Return the raw original signature")
+    .def_property_readonly("raw_der",
+        [] (const Signature& sig) {
+          const std::vector<uint8_t>& raw = sig.raw_der();
+          return py::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+        },
+        "Return the raw original signature",
+        py::return_value_policy::reference_internal)
 
+    .def("__hash__",
+        [] (const Signature& obj) {
+          return Hash::hash(obj);
+        })
 
     .def("__str__",
         [] (const Signature& signature)
         {
           std::ostringstream stream;
           stream << signature;
-          std::string str =  stream.str();
-          return str;
+          return stream.str();
         });
 }
 

@@ -162,10 +162,91 @@ Signature
 
 ----------
 
-AuthenticatedAttributes
-***********************
+Signature Attribute
+*******************
 
-.. autoclass:: lief.PE.AuthenticatedAttributes
+.. autoclass:: lief.PE.Attribute
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Signature ContentType
+*********************
+
+.. autoclass:: lief.PE.ContentType
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature GenericType
+*********************
+
+.. autoclass:: lief.PE.GenericType
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature MsSpcNestedSignature
+******************************
+
+.. autoclass:: lief.PE.MsSpcNestedSignature
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature MsSpcStatementType
+****************************
+
+.. autoclass:: lief.PE.MsSpcStatementType
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature PKCS9AtSequenceNumber
+*******************************
+
+.. autoclass:: lief.PE.PKCS9AtSequenceNumber
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature PKCS9CounterSignature
+*******************************
+
+.. autoclass:: lief.PE.PKCS9CounterSignature
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature PKCS9MessageDigest
+****************************
+
+.. autoclass:: lief.PE.PKCS9MessageDigest
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Signature PKCS9SigningTime
+**************************
+
+.. autoclass:: lief.PE.PKCS9SigningTime
   :members:
   :inherited-members:
   :undoc-members:
@@ -828,6 +909,24 @@ POGO_SIGNATURES
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: lief.PE.POGO_SIGNATURES
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+ALGORITHMS
+~~~~~~~~~~
+
+.. autoclass:: lief.PE.ALGORITHMS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+SIG_ATTRIBUTE_TYPES
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.SIG_ATTRIBUTE_TYPES
   :members:
   :inherited-members:
   :undoc-members:
