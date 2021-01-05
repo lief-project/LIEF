@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/ELF/utils.hpp"
@@ -22,6 +23,8 @@
 #include "LIEF/VDEX.hpp"
 #include "LIEF/ART.hpp"
 
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
 #include "pyLIEF.hpp"
 
 void init_utils_functions(py::module& m) {

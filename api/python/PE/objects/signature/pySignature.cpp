@@ -22,6 +22,8 @@
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
 #include "pyPE.hpp"
 
 namespace LIEF {

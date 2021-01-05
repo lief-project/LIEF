@@ -23,6 +23,11 @@
 
 #include "pyMachO.hpp"
 
+#ifdef uuid_t
+#pragma message("Windows #define uuid_t, undefine it for this file.")
+#undef uuid_t
+#endif
+
 namespace LIEF {
 namespace MachO {
 

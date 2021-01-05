@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "pyPE.hpp"
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "enums_wrapper.hpp"

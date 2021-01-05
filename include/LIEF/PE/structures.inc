@@ -496,10 +496,4 @@ struct pe_exception_entry_arm {
   uint32_t data;
 };
 
-
-
-
-
-
 #pragma pack(pop)
-
