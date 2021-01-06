@@ -120,6 +120,7 @@ void BinaryParser::parse_load_commands(void) {
     LIEF_WARN("Only the first #{:d} will be parsed", nbcmds);
   }
 
+  uint32_t low_fileoff = -1U;
   for (size_t i = 0; i < nbcmds; ++i) {
     if (not this->stream_->can_read<load_command>(loadcommands_offset)) {
       break;
@@ -158,9 +159,21 @@ void BinaryParser::parse_load_commands(void) {
           for (size_t j = 0; j < segment->numberof_sections(); ++j) {
             const section_t* section_header = &this->stream_->peek<section_t>(local_offset);
             std::unique_ptr<Section> section{new Section{section_header}};
+            if (section->size_ > 0 and
+              section->type() != MACHO_SECTION_TYPES::S_ZEROFILL and
+              section->type() != MACHO_SECTION_TYPES::S_THREAD_LOCAL_ZEROFILL and
+              section->offset_ < low_fileoff) {
+              low_fileoff = section->offset_;
+            }
             section->segment_ = segment;
             segment->sections_.push_back(section.release());
             local_offset += sizeof(section_t);
+          }
+          if (segment->numberof_sections() == 0 and
+              segment->file_offset() != 0 and
+              segment->file_size() != 0 and
+              segment->file_offset() < low_fileoff) {
+            low_fileoff = segment->file_offset();
           }
           break;
         }
@@ -599,6 +612,7 @@ void BinaryParser::parse_load_commands(void) {
     }
     loadcommands_offset += command.cmdsize;
   }
+  this->binary_->available_command_space_ = low_fileoff - loadcommands_offset;
 }
 
 
