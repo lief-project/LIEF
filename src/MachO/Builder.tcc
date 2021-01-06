@@ -782,15 +782,7 @@ void Builder::build(SymbolCommand* symbol_command) {
   symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());    // **Usually** After the header
   symtab.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
   symtab.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());   // **Usually** After nlist table
-
-
-  // TODO: Improve
-  // Update linkedit segment
-  SegmentCommand& linkedit = *this->binary_->get_segment("__LINKEDIT");
-  size_t delta = linkedit.file_offset() + linkedit.file_size();
-  delta = delta - (symbol_command->strings_offset() + symbol_command->strings_size());
-  //std::cout << std::hex << "delta:" << delta << std::endl;
-  symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size() + delta);
+  symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size());
 
   symbol_command->originalData_.clear();
   symbol_command->originalData_.reserve(sizeof(symtab_command));
