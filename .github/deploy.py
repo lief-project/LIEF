@@ -27,21 +27,21 @@ def pretty_ci_name(ci):
 def is_pr(ci):
     if ci == CI.TRAVIS:
         cond1 = os.getenv("TRAVIS_EVENT_TYPE", "pull_request") == "pull_request"
-        cond2 = not os.getenv("TRAVIS_REPO_SLUG", "").startswith("lief-project/")
+        cond2 = not (os.getenv("TRAVIS_REPO_SLUG", "").startswith("lief-project/") or os.getenv("TRAVIS_REPO_SLUG", "").startswith("romainthomas/LIEF"))
         return cond1 or cond2
     elif ci == CI.APPVEYOR:
         logger.info("%s - %s", os.getenv("APPVEYOR_PULL_REQUEST_NUMBER", -1), os.getenv("APPVEYOR_REPO_NAME", ""))
         pr_number = os.getenv("APPVEYOR_PULL_REQUEST_NUMBER", "")
         cond1 = len(pr_number) != 0 and int(pr_number) >= 0
-        cond2 = not os.getenv("APPVEYOR_REPO_NAME", "").startswith("lief-project/")
+        cond2 = not (os.getenv("APPVEYOR_REPO_NAME", "").startswith("lief-project/") or os.getenv("APPVEYOR_REPO_NAME", "").startswith("romainthomas/"))
         return cond1 or cond2
     elif ci == CI.CIRCLE_CI:
         cond1 = int(os.getenv("CIRCLE_PR_NUMBER", -1)) >= 0
-        cond2 = os.getenv("CIRCLE_PROJECT_USERNAME", "") != "lief-project"
+        cond2 = os.getenv("CIRCLE_PROJECT_USERNAME", "") != "lief-project" and os.getenv("CIRCLE_PROJECT_USERNAME", "") != "romainthomas"
         return cond1 or cond2
     elif ci == CI.GITHUB_ACTIONS:
         cond1 = os.getenv("GITHUB_HEAD_REF", "") != ""
-        cond2 = not os.getenv("GITHUB_REPOSITORY", "").startswith("lief-project/")
+        cond2 = not (os.getenv("GITHUB_REPOSITORY", "").startswith("lief-project/") or os.getenv("GITHUB_REPOSITORY", "").startswith("romainthomas/LIEF"))
         return cond1 or cond2
     elif ci == CI.LOCAL:
         return False
