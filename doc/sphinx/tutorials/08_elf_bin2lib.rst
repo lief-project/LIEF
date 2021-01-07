@@ -211,10 +211,10 @@ The transformation of the execution flow can be represented as follow:
 
 .. _glic229:
 
-Warning for glic >= 2.29 users
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Warning for glibc >= 2.29 users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are using glibc >= 2.29 (or a close version depending on your Linux
+If you are using ``glibc >= 2.29`` (or a close version depending on your Linux
 distribution), you might have encountered this error while using the `dlopen`
 function:
 

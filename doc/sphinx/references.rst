@@ -9,7 +9,7 @@ Blog posts related to LIEF
    :class: strike
 
 * 2020-10-23: `[Write-up] Using a PIE binary as a Shared Library — HCSC-2020 CTF Writeup <https://medium.com/bugbountywriteup/using-a-pie-binary-as-a-shared-library-hcsc-2020-ctf-writeup-390a8a437f31>`_ by `István Tóth <https://twitter.com/an0n_r0>`_
-* 2020-02-04: x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra
+* 2020-02-04: `x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra <https://iwantmore.pizza/posts/x0rro.html>`_
 * 2019-11-01: `Isolating the logic of an encrypted protocol with LIEF and kaitai <https://x-c3ll.github.io/posts/blackbox-lief-kaitai/>`_ by `@TheXC3LL <https://twitter.com/THEXC3LL>`_
 * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
 * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
