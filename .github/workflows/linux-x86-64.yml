@@ -23,19 +23,6 @@ jobs:
           key: linux-x86-64-${{ runner.os }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
               linux-x86-64-${{ runner.os }}-
-      - name: Build SDK
-        if: matrix.python-version == '3.9'
-        shell: bash
-        run: |
-          PYTHON_VERSION2=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
-          docker run --name lief_sdk --rm \
-            -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
-            -e CCACHE_COMPRESS=1 \
-            -e CCACHE_MAXSIZE=10.0G \
-            -e CCACHE_DIR=/ccache \
-            -v $GITHUB_WORKSPACE:/src \
-            -v $HOME/.ccache:/ccache \
-            liefproject/manylinux1_x86_64 bash /src/scripts/docker/travis-linux-sdk.sh
       - name: Build Python ${{ matrix.python-version }} wheel
         if: matrix.python-version == '3.7'
         shell: bash
@@ -68,6 +55,19 @@ jobs:
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
            liefproject/manylinux1_x86_64 bash /src/scripts/docker/travis-linux.sh
+      - name: Build SDK
+        if: matrix.python-version == '3.9'
+        shell: bash
+        run: |
+          PYTHON_VERSION2=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
+          docker run --name lief_sdk --rm \
+            -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
+            -e CCACHE_COMPRESS=1 \
+            -e CCACHE_MAXSIZE=10.0G \
+            -e CCACHE_DIR=/ccache \
+            -v $GITHUB_WORKSPACE:/src \
+            -v $HOME/.ccache:/ccache \
+            liefproject/manylinux1_x86_64 bash /src/scripts/docker/travis-linux-sdk.sh
       - name: Deploy
         env:
           LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
