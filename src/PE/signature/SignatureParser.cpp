@@ -1005,7 +1005,7 @@ result<std::string> SignatureParser::parse_spc_string(VectorStream& stream) {
     stream.set_endian_swap(false);
 
     try {
-      return utf8::utf16to8(progname);
+      return u16tou8(progname);
     } catch (const utf8::exception&) {
       LIEF_INFO("Error while converting utf-8 spc-string.program-name to utf16");
       return make_error_code(lief_errors::conversion_error);

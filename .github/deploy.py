@@ -75,7 +75,29 @@ def get_ci_workdir(ci):
         logger.critical("Unsupported CI to resolve working directory")
         sys.exit(1)
 
+def get_tag(ci):
+    if ci == CI.CIRCLE_CI:
+        return os.getenv("CIRCLE_TAG", "")
+    elif ci == CI.TRAVIS:
+        return os.getenv("TRAVIS_TAG", "")
+    elif ci == CI.APPVEYOR:
+        if os.getenv("APPVEYOR_REPO_TAG", "") in (None, ''):
+            return ""
 
+        if os.getenv("APPVEYOR_REPO_TAG", "").lower() == "false":
+            return ""
+        return os.getenv("APPVEYOR_REPO_TAG_NAME", "")
+    elif ci == CI.GITHUB_ACTIONS:
+        ref = os.getenv("GITHUB_REF", "")
+        logger.info("Github Action tag: {}".format(ref))
+        if ref.startswith("refs/tags/"):
+            return ref.replace("refs/tags/", "")
+        return ""
+    elif ci == CI.LOCAL:
+        return os.getenv("CI_TAG")
+    else:
+        logger.critical("Unsupported CI to resolve working directory")
+        sys.exit(1)
 
 LOG_LEVEL = logging.DEBUG
 
@@ -107,7 +129,10 @@ logger.info("CI: %s", CI_PRETTY_NAME)
 
 ALLOWED_BRANCHES = {"master", "deploy", "devel", "enhancement/pe-authenticode"}
 BRANCH_NAME = get_branch(CURRENT_CI)
+TAG_NAME    = get_tag(CURRENT_CI)
+IS_TAGGED   = len(TAG_NAME) > 0
 logger.info("Branch: %s", BRANCH_NAME)
+logger.info("Tag:    %s"  TAG_NAME)
 if BRANCH_NAME not in ALLOWED_BRANCHES:
     logger.info("Skip deployment for branch '%s'", BRANCH_NAME)
     sys.exit(0)
@@ -174,7 +199,14 @@ if DEPLOY_IV is None:
 #####################
 # Clone package repo
 #####################
-target_branch = "gh-pages" if BRANCH_NAME == "master" else "packages-{}".format(BRANCH_NAME)
+target_branch = "gh-pages"
+
+if BRANCH_NAME != "master":
+    target_branch = "packages-{}".format(BRANCH_NAME.replace("/", "-").replace("_", "-"))
+
+if IS_TAGGED:
+    target_branch = str(TAG_NAME)
+
 new_branch = False
 if not LIEF_PACKAGE_DIR.is_dir():
     cmd = "{} clone --branch={} -j8 --single-branch {} {}".format(GIT, target_branch, LIEF_PACKAGE_REPO, LIEF_PACKAGE_DIR)
