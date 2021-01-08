@@ -34,9 +34,24 @@ using setter_t = void (PKCS9CounterSignature::*)(T);
 
 template<>
 void create<PKCS9CounterSignature>(py::module& m) {
-  py::class_<PKCS9CounterSignature, Attribute>(m, "PKCS9CounterSignature")
+  py::class_<PKCS9CounterSignature, Attribute>(m, "PKCS9CounterSignature",
+    R"delim(
+    Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
+
+    The internal structure is described in the
+    `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
+
+    .. code-block:: text
+
+        counterSignature ATTRIBUTE ::= {
+          WITH SYNTAX SignerInfo
+          ID pkcs-9-at-counterSignature
+        }
+
+    )delim")
     .def_property_readonly("signers",
-        &PKCS9CounterSignature::signers)
+        &PKCS9CounterSignature::signers,
+        "Iterator over the " RST_CLASS_REF(lief.PE.SignerInfo) " as described in the RFC")
 
     .def("__hash__",
         [] (const PKCS9CounterSignature& obj) {

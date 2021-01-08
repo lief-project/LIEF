@@ -20,6 +20,7 @@
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/x509.hpp"
+#include "LIEF/PE/signature/RsaInfo.hpp"
 
 #include "pyPE.hpp"
 
@@ -36,7 +37,7 @@ using setter_t = void (x509::*)(T);
 template<>
 void create<x509>(py::module& m) {
 
-  py::class_<x509, LIEF::Object> cls_x509(m, "x509");
+  py::class_<x509, LIEF::Object> cls_x509(m, "x509", "Interface over a x509 certificate");
 
   LIEF::enum_<x509::VERIFICATION_FLAGS>(cls_x509, "VERIFICATION_FLAGS", py::arithmetic(),
       "Verification flags associated with " RST_METH_REF(lief.PE.x509.verify) "")
@@ -61,6 +62,15 @@ void create<x509>(py::module& m) {
     .value("BADCRL_BAD_MD",         x509::VERIFICATION_FLAGS::BADCRL_BAD_MD,         "The CRL is signed with an unacceptable hash.")
     .value("BADCRL_BAD_PK",         x509::VERIFICATION_FLAGS::BADCRL_BAD_PK,         "The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).")
     .value("BADCRL_BAD_KEY",        x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY,        "The CRL is signed with an unacceptable key (eg bad curve, RSA too short).");
+
+  LIEF::enum_<x509::KEY_TYPES>(cls_x509, "KEY_TYPES", "Public key scheme used by the x509 certificate")
+    .value("NONE",       x509::KEY_TYPES::NONE,       "Unknown scheme")
+    .value("RSA",        x509::KEY_TYPES::RSA,        "RSA scheme")
+    .value("ECKEY",      x509::KEY_TYPES::ECKEY,      "Elliptic-curve scheme")
+    .value("ECKEY_DH",   x509::KEY_TYPES::ECKEY_DH,   "Elliptic-curve Diffie-Hellman")
+    .value("ECDSA",      x509::KEY_TYPES::ECDSA,      "Elliptic-curve Digital Signature Algorithm")
+    .value("RSA_ALT",    x509::KEY_TYPES::RSA_ALT,    "RSA scheme with an alternative implementation for signing and decrypting")
+    .value("RSASSA_PSS", x509::KEY_TYPES::RSASSA_PSS, "RSA Probabilistic signature scheme");
 
   cls_x509
     .def_static("parse",
@@ -90,11 +100,9 @@ void create<x509>(py::module& m) {
         &x509::signature_algorithm,
         "Signature algorithm (OID)")
 
-
     .def_property_readonly("valid_from",
         &x509::valid_from,
         "Start time of certificate validity")
-
 
     .def_property_readonly("valid_to",
         &x509::valid_to,
@@ -104,13 +112,13 @@ void create<x509>(py::module& m) {
         [] (const x509& object) {
           return safe_string_converter(object.issuer());
         },
-        "Issuer informations")
+        "Issuer of the certificate")
 
     .def_property_readonly("subject",
         [] (const x509& object) {
           return safe_string_converter(object.subject());
         },
-        "Subject informations")
+        "Subject of the certificate")
 
     .def_property_readonly("raw",
         [] (const x509& crt) -> py::bytes {
@@ -119,16 +127,48 @@ void create<x509>(py::module& m) {
         },
         "The raw bytes associated with this x509 cert (DER encoded)")
 
+    .def_property_readonly("key_type",
+        &x509::key_type,
+        "Return the underlying public-key scheme (" RST_CLASS_REF(lief.PE.x509.KEY_TYPES) ")")
+
+    .def_property_readonly("rsa_info",
+        &x509::rsa_info,
+        "If the underlying public-key scheme is RSA, return the " RST_CLASS_REF(lief.PE.RsaInfo) " associated with this certificate. "
+        "Otherwise, return None",
+        py::return_value_policy::take_ownership)
+
     .def("verify",
         static_cast<x509::VERIFICATION_FLAGS(x509::*)(const x509&) const>(&x509::verify),
-        "Verify that this certificate has been used **to trust** the given certificate (" RST_CLASS_REF(lief.PE.x509) " object) "
-        "It returns a set of flags defined by " RST_CLASS_REF(lief.PE.x509.VERIFICATION_FLAGS) "",
+        R"delim(
+        Verify that this certificate has been used **to trust** the given :class:`~lief.PE.x509` certificate
+
+        It returns a set of flags defined by :class:`~lief.PE.x509.VERIFICATION_FLAGS`
+
+        :Example:
+
+          .. code-block:: python
+
+            ca     = lief.PE.x509.parse("ca.crt")[0]
+            signer = lief.PE.x509.parse("signer.crt")[0]
+            print(ca.verify(signer))  # lief.PE.x509.VERIFICATION_FLAGS.OK
+
+        )delim",
         "ca"_a)
 
     .def("is_trusted_by",
         &x509::is_trusted_by,
-        "Verify this certificate against a list of root CA (list of " RST_CLASS_REF(lief.PE.x509) " object) "
-        "It returns a set of flags defined by " RST_CLASS_REF(lief.PE.x509.VERIFICATION_FLAGS) "",
+        R"delim(
+        Verify this certificate against a list of root CA (list of :class:`~lief.PE.x509` objects)
+        It returns a set of flags defined by :class:`~lief.PE.x509.VERIFICATION_FLAGS`
+
+        :Example:
+
+          .. code-block:: python
+
+            signer = binary.signatures[0].signers[0]
+            microsoft_ca_bundle  lief.PE.x509.parse("bundle.pem")
+            print(signer.cert.is_trusted_by(microsoft_ca_bundle))
+        )delim",
         "ca_list"_a)
 
     .def("__hash__",

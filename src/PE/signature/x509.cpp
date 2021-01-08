@@ -182,8 +182,7 @@ x509::KEY_TYPES x509::key_type() const {
 
 std::unique_ptr<RsaInfo> x509::rsa_info(void) const {
   if (this->key_type() == KEY_TYPES::RSA) {
-    mbedtls_pk_context& ctx = this->x509_cert_->pk;
-    mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(ctx);
+    mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(this->x509_cert_->pk);
     return std::unique_ptr<RsaInfo>{new RsaInfo{rsa_ctx}};
   }
   return nullptr;

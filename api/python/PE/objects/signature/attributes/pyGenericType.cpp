@@ -34,12 +34,20 @@ using setter_t = void (GenericType::*)(T);
 
 template<>
 void create<GenericType>(py::module& m) {
-  py::class_<GenericType, Attribute>(m, "GenericType")
+  py::class_<GenericType, Attribute>(m, "GenericType",
+    R"delim(
+    Interface over an attribute whose the internal structure is not supported by LIEF
+    )delim")
     .def_property_readonly("oid",
-        &GenericType::oid)
+        &GenericType::oid,
+        "OID of the original attribute")
 
     .def_property_readonly("raw_content",
-        &GenericType::raw_content)
+        [] (const GenericType& type) -> py::bytes {
+          const std::vector<uint8_t>& raw = type.raw_content();
+          return py::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+        },
+        "Original DER blob of the attribute")
 
     .def("__hash__",
         [] (const GenericType& obj) {

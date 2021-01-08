@@ -34,9 +34,19 @@ using setter_t = void (ContentType::*)(T);
 
 template<>
 void create<ContentType>(py::module& m) {
-  py::class_<ContentType, Attribute>(m, "ContentType")
+  py::class_<ContentType, Attribute>(m, "ContentType",
+    R"delim(
+    Interface over the structure described by the OID ``1.2.840.113549.1.9.3`` (PKCS #9)
+    The internal structure is described in the:
+    `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
+
+    .. code-block:: text
+
+        ContentType ::= OBJECT IDENTIFIER
+
+    )delim")
     .def_property_readonly("oid",
-        &ContentType::oid)
+        &ContentType::oid, "OID as described in RFC #2985 (string object)")
 
     .def("__hash__",
         [] (const ContentType& obj) {

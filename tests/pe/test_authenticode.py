@@ -19,6 +19,9 @@ lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 def from_hex(x):
     return bytes.fromhex(x.replace(":", ""))
 
+def int_from_bytes(x):
+    return int.from_bytes(x, byteorder="little")
+
 class TestAuthenticode(TestCase):
 
     def setUp(self):
@@ -125,13 +128,11 @@ class TestAuthenticode(TestCase):
         pkcs7_sig = lief.PE.Signature.parse(list(sig.raw_der))
         self.assertEqual(avast.verify_signature(pkcs7_sig), lief.PE.Signature.VERIFICATION_FLAGS.OK)
 
-
     def test_json_serialization(self):
         avast = lief.PE.parse(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"))
         with open(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online-signature.json"), "rb") as f:
             json_sig = json.load(f)
         self.assertEqual(json.loads(lief.to_json(avast.signatures[0])), json_sig)
-
 
     def test_fail(self):
         # Check bad-signed PE files
@@ -152,27 +153,54 @@ class TestAuthenticode(TestCase):
         self.assertNotEqual(avast_altered.verify_signature(), lief.PE.Signature.VERIFICATION_FLAGS.OK)
         self.assertNotEqual(avast_altered.signatures[0].check(), lief.PE.Signature.VERIFICATION_FLAGS.OK)
 
-
     def test_pkcs9_signing_time(self):
         sig = lief.PE.Signature.parse(get_sample("pkcs7/cert0.p7b"))
         attr = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_SIGNING_TIME)
         self.assertEqual(attr.time, [2018, 8, 2, 15, 0, 12])
 
     def test_pkcs9_at_sequence_number(self):
-        sig = lief.PE.Signature.parse(get_sample("pkcs7/cert10.p7b"))
+        sig = lief.PE.Signature.parse(get_sample("pkcs7/cert3.p7b"))
+        nested_sig = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_NESTED_SIGN).signature
+        at_seq_nb = nested_sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_AT_SEQUENCE_NUMBER)
+        self.assertEqual(at_seq_nb.number, 1)
 
-    def test_spc_sp_opuse_info(self):
-        sig = lief.PE.Signature.parse(get_sample("pkcs7/cert10.p7b"))
+    def test_spc_sp_opus_info(self):
         sig = lief.PE.Signature.parse(get_sample("pkcs7/cert11.p7b"))
+        spc = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.SPC_SP_OPUS_INFO)
+
+        self.assertEqual(spc.program_name, "Slideshow Generator Powertoy for WinXP")
+        self.assertEqual(spc.more_info, "http://www.microsoft.com/windowsxp")
+
+        sig = lief.PE.Signature.parse(get_sample("pkcs7/cert9.p7b"))
+        spc = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.SPC_SP_OPUS_INFO)
+        self.assertEqual(spc.program_name, "Microsoft Windows")
+        self.assertEqual(spc.more_info, "http://www.microsoft.com/windows")
 
     def test_pkcs9_counter_signature(self):
         sig = lief.PE.Signature.parse(get_sample("pkcs7/cert10.p7b"))
+        counter_sign = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_COUNTER_SIGNATURE)
+
+        self.assertEqual(len(counter_sign.signers), 1)
+        signer = counter_sign.signers[0]
+
+        self.assertEqual(signer.version, 1)
+        self.assertEqual(signer.serial_number, from_hex("0e:cf:f4:38:c8:fe:bf:35:6e:04:d8:6a:98:1b:1a:50"))
+        self.assertEqual(signer.issuer, "C=US, O=Symantec Corporation, CN=Symantec Time Stamping Services CA - G2")
+        self.assertEqual(signer.digest_algorithm, lief.PE.ALGORITHMS.SHA_1)
+        self.assertEqual(signer.encryption_algorithm, lief.PE.ALGORITHMS.RSA)
+        self.assertEqual(signer.encrypted_digest.hex()[:30], "92db1faf4b20293109bcddbb6ed7a3")
+        self.assertEqual(len(signer.authenticated_attributes), 3)
+        self.assertEqual(len(signer.unauthenticated_attributes), 0)
+
+        content_type, sig_time, msg_digest = signer.authenticated_attributes
+        self.assertEqual(content_type.oid, "1.2.840.113549.1.7.1")
+        self.assertEqual(sig_time.time, [2018, 7, 25, 18, 14, 50])
+        self.assertEqual(msg_digest.digest, from_hex("05:ca:7d:34:f0:ef:c2:70:33:4c:f9:90:77:a5:bc:86:6e:46:be:45"))
 
     def test_ms_spc_nested_signature(self):
         sig = lief.PE.Signature.parse(get_sample("pkcs7/cert0.p7b"))
         attr = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_NESTED_SIGN)
         nested_sig = attr.signature
-        print(nested_sig)
 
         self.assertEqual(nested_sig.version, 1)
         self.assertEqual(nested_sig.digest_algorithm, lief.PE.ALGORITHMS.SHA_256)
@@ -221,6 +249,28 @@ class TestAuthenticode(TestCase):
         cert_ca, cert_signer = sig.certificates
         self.assertEqual(cert_ca.verify(cert_signer), lief.PE.x509.VERIFICATION_FLAGS.OK)
         self.assertEqual(cert_ca.is_trusted_by(ca_bundles), lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED)
+
+    def test_rsa_info(self):
+        avast = lief.PE.parse(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"))
+        cert_ca, cert_signer = avast.signatures[0].certificates
+        self.assertEqual(cert_ca.key_type, lief.PE.x509.KEY_TYPES.RSA)
+        rsa_info = cert_ca.rsa_info
+        self.assertEqual(rsa_info.key_size, 2048)
+        self.assertTrue(rsa_info.has_public_key)
+        self.assertFalse(rsa_info.has_private_key)
+
+        N = int_from_bytes(rsa_info.N)
+        E = int_from_bytes(rsa_info.E)
+        D = int_from_bytes(rsa_info.D)
+        P = int_from_bytes(rsa_info.P)
+        Q = int_from_bytes(rsa_info.Q)
+
+        self.assertEqual(E, 340287559217796998291003137928097431552)
+        self.assertEqual(str(N)[:70], "9739755319358115164405180509398652054747121607842183679471640563806368")
+        self.assertEqual(D, 0)
+        self.assertEqual(P, 0)
+        self.assertEqual(Q, 0)
+
 
 if __name__ == '__main__':
 

@@ -1,6 +1,7 @@
 set(LIEF_PYTHON_PE_SIG_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pySignerInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyAttribute.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyRsaInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyx509.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyContentInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pySignature.cpp"

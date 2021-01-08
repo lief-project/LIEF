@@ -34,9 +34,30 @@ using setter_t = void (MsSpcStatementType::*)(T);
 
 template<>
 void create<MsSpcStatementType>(py::module& m) {
-  py::class_<MsSpcStatementType, Attribute>(m, "MsSpcStatementType")
+  py::class_<MsSpcStatementType, Attribute>(m, "MsSpcStatementType",
+    R"delim(
+    Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
+
+    The internal structure is described in the official document:
+    `Windows Authenticode Portable Executable Signature Format <http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx>`_
+
+    .. code-block:: text
+
+        SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
+
+    )delim")
+
     .def_property_readonly("oid",
-        &MsSpcStatementType::oid)
+        &MsSpcStatementType::oid,
+        R"delim(
+        According to the documentation:
+
+        ::
+
+          The SpcStatementType MUST contain one Object Identifier with either
+          the value ``1.3.6.1.4.1.311.2.1.21 (SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID)`` or
+          ``1.3.6.1.4.1.311.2.1.22 (SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID)``.
+        )delim")
 
     .def("__hash__",
         [] (const MsSpcStatementType& obj) {

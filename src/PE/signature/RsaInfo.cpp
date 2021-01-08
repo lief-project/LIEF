@@ -20,17 +20,19 @@ RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
   const mbedtls_rsa_context* pctx = reinterpret_cast<const mbedtls_rsa_context*>(ctx);
   mbedtls_rsa_context* local_ctx = new mbedtls_rsa_context{};
   mbedtls_rsa_init(local_ctx, pctx->padding, pctx->hash_id);
-    mbedtls_rsa_copy(local_ctx, pctx);
+  mbedtls_rsa_copy(local_ctx, pctx);
+  mbedtls_rsa_complete(local_ctx);
   this->ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
 }
 
 RsaInfo::RsaInfo(const RsaInfo& other)
 {
-  if (other) {
+  if (other.ctx_ != nullptr) {
     const mbedtls_rsa_context* octx = reinterpret_cast<const mbedtls_rsa_context*>(other.ctx_);
     mbedtls_rsa_context* local_ctx = new mbedtls_rsa_context{};
     mbedtls_rsa_init(local_ctx, octx->padding, octx->hash_id);
     mbedtls_rsa_copy(local_ctx, octx);
+    mbedtls_rsa_complete(local_ctx);
     this->ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
   }
 }
@@ -99,9 +101,14 @@ RsaInfo::bignum_wrapper_t RsaInfo::Q(void) const {
   return Q;
 }
 
+size_t RsaInfo::key_size(void) const {
+  mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
+  return mbedtls_rsa_get_len(lctx) * 8;
+}
+
 
 RsaInfo::~RsaInfo(void) {
-  if (this->ctx_) {
+  if (this->ctx_ != nullptr) {
     mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
     mbedtls_rsa_free(lctx);
     delete lctx;

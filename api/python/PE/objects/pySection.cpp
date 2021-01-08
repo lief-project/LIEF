@@ -110,6 +110,13 @@ void create<Section>(py::module& m) {
         "``True`` if the a section has the given " RST_CLASS_REF(lief.PE.SECTION_CHARACTERISTICS) "",
         "characteristic"_a)
 
+    .def_property_readonly("padding",
+        [] (const Section& sec) {
+          const std::vector<uint8_t>& data = sec.padding();
+          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        },
+        "Section padding content as bytes")
+
     .def("__eq__", &Section::operator==)
     .def("__ne__", &Section::operator!=)
     .def("__hash__",

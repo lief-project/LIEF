@@ -33,17 +33,14 @@ using setter_t = void (Attribute::*)(T);
 
 template<>
 void create<Attribute>(py::module& m) {
-  py::class_<Attribute, Object>(m, "Attribute")
+  py::class_<Attribute, Object>(m, "Attribute", "Interface over PKCS #7 attribute")
     .def_property_readonly("type",
-        &Attribute::type)
-
+        &Attribute::type,
+        "Concrete type (" RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) ") of the attribute")
 
     .def("__str__", [] (const Attribute& attr)
         {
-          std::ostringstream stream;
-          //stream << config;
-          //std::string str = stream.str();
-          return stream.str();
+          return attr.print();
         });
 }
 

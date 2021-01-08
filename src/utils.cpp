@@ -28,7 +28,7 @@
 #include <spdlog/fmt/fmt.h>
 
 #include "LIEF/utils.hpp"
-#include "utf8.h"
+#include "LIEF/third-party/utfcpp/utf8.h"
 
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on) {

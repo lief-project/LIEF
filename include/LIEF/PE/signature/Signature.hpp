@@ -95,11 +95,11 @@ class LIEF_API Signature : public Object {
   //!    * ContentInfo::digest_algorithm
   //!    * SignerInfo::digest_algorithm
   //! 3. The x509 certificate specified by SignerInfo::serial_number **and** SignerInfo::issuer
-  //!    must exists within Signature::certificates
+  //!    must exist within Signature::certificates
   //! 4. Given the x509 certificate, compare SignerInfo::encrypted_digest against either:
-  //!    * hash of authenticated attributes if present there are authenticated attributes
-  //!    * hash ContentInfo
-  //! 5. If the are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST attribute exists
+  //!    * hash of authenticated attributes if present
+  //!    * hash of ContentInfo
+  //! 5. If they are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST attribute exists
   //!    and that its value matches hash of ContentInfo
   VERIFICATION_FLAGS check() const;
 

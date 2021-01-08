@@ -18,6 +18,7 @@ void swap_endian(T *v) {
 template void swap_endian<uint16_t>(uint16_t *v);
 template void swap_endian<uint32_t>(uint32_t *v);
 template void swap_endian<uint64_t>(uint64_t *v);
+template void swap_endian<char16_t>(char16_t *v);
 
 }
 }

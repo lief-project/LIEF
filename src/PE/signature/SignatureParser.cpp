@@ -44,7 +44,7 @@
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-#include "utf8.h"
+#include "LIEF/third-party/utfcpp/utf8.h"
 #include "logging.hpp"
 #include "pkcs7.h"
 
@@ -995,22 +995,21 @@ result<std::string> SignatureParser::parse_spc_string(VectorStream& stream) {
     LIEF_DEBUG("SpcString: Unicode choice");
     const size_t length = choice.value();
     LIEF_DEBUG("spc-string.program-name length: {} (pos: {})", length, stream.pos());
-    const char* str = stream.read_array<char>(length);
-    if (str == nullptr) {
+
+    if (not stream.can_read<char16_t>(length / sizeof(char16_t))) {
       LIEF_INFO("Can't read spc-string.program-name");
       return make_error_code(lief_errors::read_error);
     }
+    stream.set_endian_swap(true);
+    std::u16string progname = stream.read_u16string(length / sizeof(char16_t));
+    stream.set_endian_swap(false);
 
-    std::string u8progname = {str, str + length};
-    std::u16string progname;
     try {
-      progname = u8tou16(u8progname);
+      return utf8::utf16to8(progname);
     } catch (const utf8::exception&) {
       LIEF_INFO("Error while converting utf-8 spc-string.program-name to utf16");
       return make_error_code(lief_errors::conversion_error);
     }
-    LIEF_DEBUG("spc-string.program-name: {}", u16tou8(progname));
-    return u16tou8(progname);
   }
   else if ((choice = stream.asn1_read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1))) {
     LIEF_DEBUG("SpcString: ASCII choice");

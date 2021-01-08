@@ -19,6 +19,12 @@ Introduction
 
 .. TODO
 
+   https://github.com/ralphje/signify
+   https://signify.readthedocs.io/en/latest/authenticode.html
+
+  https://github.com/trailofbits/uthenticode
+  https://blog.trailofbits.com/2020/05/27/verifying-windows-binaries-without-windows/
+
 
 .. rubric:: API
 
@@ -37,7 +43,6 @@ Introduction
 * :class:`lief.PE.Attribute`
 * :class:`lief.PE.ContentType`
 * :class:`lief.PE.GenericType`
-* :class:`lief.PE.MsCounterSign`
 * :class:`lief.PE.MsSpcNestedSignature`
 * :class:`lief.PE.MsSpcStatementType`
 * :class:`lief.PE.PKCS9AtSequenceNumber`

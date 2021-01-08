@@ -37,6 +37,7 @@ class SignatureParser;
 
 class RsaInfo;
 
+//! Interface over a x509 certificate
 class LIEF_API x509 : public Object {
 
   friend class Parser;
@@ -48,18 +49,21 @@ class LIEF_API x509 : public Object {
 
   using certificates_t = std::vector<x509>;
 
+  //! Parse x509 certificate(s) from file path
   static certificates_t parse(const std::string& path);
+
+  //! Parse x500 certificate(s) from raw blob
   static certificates_t parse(const std::vector<uint8_t>& content);
 
   //! Public key scheme
   enum class KEY_TYPES  {
-    NONE = 0,
-    RSA,
-    ECKEY,
-    ECKEY_DH,
-    ECDSA,
-    RSA_ALT,
-    RSASSA_PSS,
+    NONE = 0,    ///< Unknown scheme
+    RSA,         ///< RSA Scheme
+    ECKEY,       ///< Elliptic-curve scheme
+    ECKEY_DH,    ///< Elliptic-curve Diffie-Hellman
+    ECDSA,       ///< Elliptic-curve Digital Signature Algorithm
+    RSA_ALT,     ///< RSA scheme with an alternative implementation for signing and decrypting
+    RSASSA_PSS,  ///< RSA Probabilistic signature scheme
   };
 
   //! Mirror of mbedtls's X509 Verify codes: MBEDTLS_X509_XX
@@ -125,7 +129,7 @@ class LIEF_API x509 : public Object {
   //! Return the underlying public-key scheme
   KEY_TYPES key_type() const;
 
-  //! **If** the underlying public-key scheme is RSA, return the Rsa information.
+  //! **If** the underlying public-key scheme is RSA, return the RSA information.
   //! Otherwise, return a nullptr
   std::unique_ptr<RsaInfo> rsa_info() const;
 

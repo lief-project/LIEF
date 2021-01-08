@@ -334,6 +334,16 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/b
 target_sources(LIB_LIEF PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp)
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h
+  COMMAND
+    ${CMAKE_COMMAND} -E copy_directory ${UTFCPP_INCLUDE_DIR}/
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp
+  DEPENDS lief_utfcpp)
+
+target_sources(LIB_LIEF PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h)
+
+
 add_dependencies(LIB_LIEF lief_spdlog lief_mbed_tls)
 
 # Flags definition

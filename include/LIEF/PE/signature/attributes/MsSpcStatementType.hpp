@@ -49,7 +49,7 @@ class LIEF_API MsSpcStatementType : public Attribute {
   virtual std::unique_ptr<Attribute> clone(void) const override;
 
   //! According to the documentation:
-  //! > The SpcStatementType MUST contain one Object Identifier  with either
+  //! > The SpcStatementType MUST contain one Object Identifier with either
   //! > the value ``1.3.6.1.4.1.311.2.1.21 (SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID)`` or
   //! > ``1.3.6.1.4.1.311.2.1.22 (SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID)``.
   inline const oid_t& oid() const {

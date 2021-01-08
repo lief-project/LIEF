@@ -34,7 +34,24 @@ using setter_t = void (SignerInfo::*)(T);
 template<>
 void create<SignerInfo>(py::module& m) {
 
-  py::class_<SignerInfo, LIEF::Object>(m, "SignerInfo")
+  py::class_<SignerInfo, LIEF::Object>(m, "SignerInfo",
+    R"delim(
+    SignerInfo as described in the `RFC 2315 #Section 9.2 <https://tools.ietf.org/html/rfc2315#section-9.2>`_
+
+    .. code-block:: text
+
+      SignerInfo ::= SEQUENCE {
+       version                   Version,
+       issuerAndSerialNumber     IssuerAndSerialNumber,
+       digestAlgorithm           DigestAlgorithmIdentifier,
+       authenticatedAttributes   [0] IMPLICIT Attributes OPTIONAL,
+       digestEncryptionAlgorithm DigestEncryptionAlgorithmIdentifier,
+       encryptedDigest           EncryptedDigest,
+       unauthenticatedAttributes [1] IMPLICIT Attributes OPTIONAL
+      }
+
+      EncryptedDigest ::= OCTET STRING
+    )delim")
 
     .def_property_readonly("version",
         &SignerInfo::version,
@@ -45,13 +62,13 @@ void create<SignerInfo>(py::module& m) {
           const std::vector<uint8_t>& data = info.serial_number();
           return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
         },
-        "The X509 serial number used to sign the signed-data")
+        "The X509 serial number used to sign the signed-data (see: :attr:`lief.PE.x509.serial_number`)")
 
     .def_property_readonly("issuer",
         [] (const SignerInfo& object) {
           return safe_string_converter(object.issuer());
         },
-        "Issuer and serial number",
+        "The X509 issuer used to sign the signed-data (see: :attr:`lief.PE.x509.issuer`)",
         py::return_value_policy::copy)
 
     .def_property_readonly("digest_algorithm",

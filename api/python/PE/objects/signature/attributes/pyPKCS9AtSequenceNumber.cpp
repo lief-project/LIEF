@@ -34,9 +34,29 @@ using setter_t = void (PKCS9AtSequenceNumber::*)(T);
 
 template<>
 void create<PKCS9AtSequenceNumber>(py::module& m) {
-  py::class_<PKCS9AtSequenceNumber, Attribute>(m, "PKCS9AtSequenceNumber")
+  py::class_<PKCS9AtSequenceNumber, Attribute>(m, "PKCS9AtSequenceNumber",
+    R"delim(
+    Interface over the structure described by the OID ``1.2.840.113549.1.9.25.4`` (PKCS #9)
+
+    The internal structure is described in the
+    `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
+
+    .. code-block:: text
+
+        sequenceNumber ATTRIBUTE ::= {
+          WITH SYNTAX SequenceNumber
+          EQUALITY MATCHING RULE integerMat
+          SINGLE VALUE TRUE
+          ID pkcs-9-at-sequenceNumber
+        }
+
+        SequenceNumber ::= INTEGER (1..MAX)
+
+    )delim")
+
     .def_property_readonly("number",
-        &PKCS9AtSequenceNumber::number)
+        &PKCS9AtSequenceNumber::number,
+        "Number as described in the RFC")
 
     .def("__hash__",
         [] (const PKCS9AtSequenceNumber& obj) {

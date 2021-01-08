@@ -105,14 +105,35 @@ void create<Signature>(py::module& m) {
 
     .def("check",
         &Signature::check,
-        "Check the integrity of the signature and return a " RST_CLASS_REF(lief.PE.Signature.VERIFICATION_FLAGS) "")
+        R"delim(
+        Check the integrity of the signature and return a :class:`lief.PE.Signature.VERIFICATION_FLAGS`
+
+        It performs the following verifications:
+
+        1. It must contain only **one** signer info (:attr:`~lief.PE.Signature.signers`)
+        2. :attr:`lief.PE.Signature.digest_algorithm` must match:
+
+           * :attr:`lief.PE.ContentInfo.digest_algorithm`
+           * :attr:`lief.PE.SignerInfo.digest_algorithm`
+
+        3. The x509 certificate specified by :attr:`lief.PE.SignerInfo.serial_number` **and** :attr:`lief.PE.SignerInfo.issuer`
+           must exist within :attr:`lief.PE.Signature.certificates`
+        4. Given the x509 certificate, compare :attr:`lief.PE.SignerInfo.encrypted_digest` against either:
+
+           * hash of authenticated attributes (:attr:`~lief.PE.SignerInfo.authenticated_attributes`) if present
+           * hash of ContentInfo
+
+        5. If they are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST (:class:`lief.PE.PKCS9MessageDigest`) attribute exists
+           and that its value matches hash of ContentInfo
+
+        )delim")
 
     .def_property_readonly("raw_der",
         [] (const Signature& sig) {
           const std::vector<uint8_t>& raw = sig.raw_der();
           return py::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
         },
-        "Return the raw original signature",
+        "Return the raw original signature as a byte object",
         py::return_value_policy::reference_internal)
 
     .def("__hash__",

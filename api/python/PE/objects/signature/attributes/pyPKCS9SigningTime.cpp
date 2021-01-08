@@ -34,9 +34,29 @@ using setter_t = void (PKCS9SigningTime::*)(T);
 
 template<>
 void create<PKCS9SigningTime>(py::module& m) {
-  py::class_<PKCS9SigningTime, Attribute>(m, "PKCS9SigningTime")
+  py::class_<PKCS9SigningTime, Attribute>(m, "PKCS9SigningTime",
+    R"delim(
+    Interface over the structure described by the OID ``1.2.840.113549.1.9.5`` (PKCS #9)
+
+    The internal structure is described in the
+    `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
+
+    .. code-block:: text
+
+        signingTime ATTRIBUTE ::= {
+                WITH SYNTAX SigningTime
+                EQUALITY MATCHING RULE signingTimeMatch
+                SINGLE VALUE TRUE
+                ID pkcs-9-at-signingTime
+        }
+
+        SigningTime ::= Time -- imported from ISO/IEC 9594-8
+
+    )delim")
+
     .def_property_readonly("time",
-        &PKCS9SigningTime::time)
+        &PKCS9SigningTime::time,
+        "Time as a list [year, month, day, hour, min, sec]")
 
     .def("__hash__",
         [] (const PKCS9SigningTime& obj) {

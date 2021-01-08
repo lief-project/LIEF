@@ -16,7 +16,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/DWARF/enums.hpp"
 #include "LIEF/utils.hpp"
-#include "utf8/checked.h"
+#include "LIEF/third-party/utfcpp/utf8/checked.h"
 
 #include <iomanip>
 #include <sstream>
@@ -172,7 +172,7 @@ std::u16string BinaryStream::peek_u16string(void) const {
 
   size_t count = 0;
   do {
-    c = this->peek<char16_t>(off);
+    c = this->peek_conv<char16_t>(off);
     off += sizeof(char16_t);
     result.push_back(c);
     ++count;
@@ -192,11 +192,11 @@ std::u16string BinaryStream::peek_u16string(size_t length) const {
   if (length == static_cast<size_t>(-1u)) {
     return this->peek_u16string();
   }
-  const char16_t* raw = this->peek_array<char16_t>(this->pos(), length, /* check */false);
+  std::unique_ptr<char16_t[]> raw = this->peek_conv_array<char16_t>(this->pos(), length, /* check */false);
   if (raw == nullptr) {
     return {};
   }
-  return {raw, length};
+  return {raw.get(), length};
 }
 
 std::u16string BinaryStream::peek_u16string_at(size_t offset, size_t length) const {

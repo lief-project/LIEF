@@ -58,10 +58,11 @@ class LIEF_API Section : public LIEF::Section {
   // LIEF::Section implementation
   // ============================
   virtual std::vector<uint8_t> content(void) const override;
+
+  //! Content of the section's padding
   inline const std::vector<uint8_t>& padding() const {
     return this->padding_;
   }
-
 
   uint32_t pointerto_raw_data(void) const;
   uint32_t pointerto_relocation(void) const;

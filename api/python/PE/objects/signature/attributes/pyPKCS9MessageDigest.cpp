@@ -34,18 +34,37 @@ using setter_t = void (PKCS9MessageDigest::*)(T);
 
 template<>
 void create<PKCS9MessageDigest>(py::module& m) {
-  py::class_<PKCS9MessageDigest, Attribute>(m, "PKCS9MessageDigest")
+  py::class_<PKCS9MessageDigest, Attribute>(m, "PKCS9MessageDigest",
+    R"delim(
+    Interface over the structure described by the OID ``1.2.840.113549.1.9.4`` (PKCS #9)
+
+    The internal structure is described in the
+    `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
+
+    .. code-block:: text
+
+        messageDigest ATTRIBUTE ::= {
+          WITH SYNTAX MessageDigest
+          EQUALITY MATCHING RULE octet
+          SINGLE VALUE TRUE
+          ID pkcs-9-at-messageDigest
+        }
+
+        MessageDigest ::= OCTET STRING
+
+    )delim")
+
     .def_property_readonly("digest",
         [] (const PKCS9MessageDigest& digest) -> py::object {
           const std::vector<uint8_t>& data = digest.digest();
           return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
-        })
+        },
+        "Message digeset as a blob of bytes as described in the RFC")
 
     .def("__hash__",
         [] (const PKCS9MessageDigest& obj) {
           return Hash::hash(obj);
         })
-
 
     .def("__str__", &PKCS9MessageDigest::print);
 }

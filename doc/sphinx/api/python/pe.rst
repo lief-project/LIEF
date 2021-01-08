@@ -253,6 +253,27 @@ Signature PKCS9SigningTime
 
 ----------
 
+Signature SpcSpOpusInfo
+***********************
+
+.. autoclass:: lief.PE.SpcSpOpusInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+RsaInfo
+*******
+
+.. autoclass:: lief.PE.RsaInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 x509
 ****
 

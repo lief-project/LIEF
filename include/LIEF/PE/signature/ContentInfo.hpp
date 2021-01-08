@@ -37,10 +37,11 @@ class SignatureParser;
  * }
  *
  * ContentType ::= OBJECT IDENTIFIER
+ * ```
  *
  * In the case of PE signature, ContentType **must** be set to SPC_INDIRECT_DATA_OBJID
  * OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by the structure: ``SpcIndirectDataContent``
- *
+ * ```raw
  * SpcIndirectDataContent ::= SEQUENCE {
  *  data          SpcAttributeTypeAndOptionalValue,
  *  messageDigest DigestInfo
@@ -50,11 +51,13 @@ class SignatureParser;
  *  type  ObjectID,
  *  value [0] EXPLICIT ANY OPTIONAL
  * }
+ * ```
  *
  * For PE signature, ``SpcAttributeTypeAndOptionalValue.type``
  * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the value is defined by
  * ``SpcPeImageData``
  *
+ * ```raw
  * DigestInfo ::= SEQUENCE {
  *  digestAlgorithm  AlgorithmIdentifier,
  *  digest           OCTETSTRING

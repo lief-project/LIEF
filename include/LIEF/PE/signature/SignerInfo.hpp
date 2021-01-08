@@ -32,6 +32,22 @@ class Parser;
 class SignatureParser;
 class x509;
 
+/** SignerInfo as described in the [RFC 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
+ *
+ * ```raw
+ * SignerInfo ::= SEQUENCE {
+ *  version Version,
+ *  issuerAndSerialNumber     IssuerAndSerialNumber,
+ *  digestAlgorithm           DigestAlgorithmIdentifier,
+ *  authenticatedAttributes   [0] IMPLICIT Attributes OPTIONAL,
+ *  digestEncryptionAlgorithm DigestEncryptionAlgorithmIdentifier,
+ *  encryptedDigest           EncryptedDigest,
+ *  unauthenticatedAttributes [1] IMPLICIT Attributes OPTIONAL
+ * }
+ *
+ * EncryptedDigest ::= OCTET STRING
+ * ```
+ */
 class LIEF_API SignerInfo : public Object {
 
   friend class Parser;

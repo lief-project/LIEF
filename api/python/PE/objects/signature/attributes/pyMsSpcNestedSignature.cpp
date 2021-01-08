@@ -34,9 +34,21 @@ using setter_t = void (MsSpcNestedSignature::*)(T);
 
 template<>
 void create<MsSpcNestedSignature>(py::module& m) {
-  py::class_<MsSpcNestedSignature, Attribute>(m, "MsSpcNestedSignature")
+  py::class_<MsSpcNestedSignature, Attribute>(m, "MsSpcNestedSignature",
+    R"delim(
+    Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
+
+    The internal structure is not documented but we can infer the following structure:
+
+    .. code-block:: text
+
+        MsSpcNestedSignature ::= SET OF SignedData
+
+    With ``SignedData``, the structure described in PKCS #7 RFC (See: :class:`lief.PE.Signature`)
+    )delim")
     .def_property_readonly("signature",
         &MsSpcNestedSignature::sig,
+        "Underlying " RST_CLASS_REF(lief.PE.Signature) " object",
         py::return_value_policy::reference)
 
     .def("__hash__",

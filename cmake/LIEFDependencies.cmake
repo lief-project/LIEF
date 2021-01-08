@@ -29,8 +29,8 @@ endif()
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 2.7.17)
-set(MBED_TLS_SHA256 SHA256=a009059b0b4b882b884e8ef7013ff068b1254d8a2d98243e000c67b1737956b6)
+set(MBED_TLS_VERSION 2.25.0)
+set(MBED_TLS_SHA256 SHA256=6bf01ef178925f7db3c9027344a50855b116f2defe4a24cbdc0220111a371597)
 set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -53,6 +53,7 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/aes.c"
   "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
   "${MBEDTLS_SOURCE_DIR}/library/arc4.c"
+  "${MBEDTLS_SOURCE_DIR}/library/aria.c"
   "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
   "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
   "${MBEDTLS_SOURCE_DIR}/library/base64.c"
@@ -60,6 +61,8 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/blowfish.c"
   "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
   "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
+  "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
   "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
   "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
   "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
@@ -76,13 +79,14 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/error.c"
   "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
   "${MBEDTLS_SOURCE_DIR}/library/havege.c"
+  "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
   "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
   "${MBEDTLS_SOURCE_DIR}/library/md.c"
   "${MBEDTLS_SOURCE_DIR}/library/md2.c"
   "${MBEDTLS_SOURCE_DIR}/library/md4.c"
   "${MBEDTLS_SOURCE_DIR}/library/md5.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md_wrap.c"
   "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
+  "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
   "${MBEDTLS_SOURCE_DIR}/library/oid.c"
   "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
   "${MBEDTLS_SOURCE_DIR}/library/pem.c"
@@ -93,6 +97,14 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
   "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
   "${MBEDTLS_SOURCE_DIR}/library/platform.c"
+  "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
+  "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_driver_wrappers.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_se.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_slot_management.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_storage.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_its_file.c"
   "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
   "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
   "${MBEDTLS_SOURCE_DIR}/library/rsa_internal.c"
@@ -119,21 +131,23 @@ set(mbedtls_src_x509
 )
 
 set(mbedtls_src_tls
-    "${MBEDTLS_SOURCE_DIR}/library/debug.c"
-    "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
+  "${MBEDTLS_SOURCE_DIR}/library/debug.c"
+  "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
 )
 
 #set_source_files_properties("${MBEDTLS_SOURCE_DIR}/library/bignum.c" PROPERTIES COMPILE_FLAGS -Wno-overlength-strings)
 
-set(SPDLOG_VERSION 1.8.1)
-set(SPDLOG_SHA256 SHA256=eed0095a1d52d08a0834feda146d4f9148fa4125620cd04d8ea57e0238fa39cd)
+set(SPDLOG_VERSION 1.8.2)
+set(SPDLOG_SHA256 SHA256=f0410b12b526065802b40db01304783550d3d20b4b6fe2f8da55f9d08ed2035d)
 set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog lib repo")
 ExternalProject_Add(lief_spdlog
   URL               ${SPDLOG_URL}
@@ -210,8 +224,8 @@ set(LIEF_FROZEN_ENABLED 0)
 if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
   message(STATUS "Enable Frozen (C++14 support)")
   set(LIEF_FROZEN_ENABLED 1)
-  set(FROZEN_VERSION 1.0.0)
-  set(FROZEN_SHA256 SHA256=35ed00f6e2eb718415bf7c3e62e7708318fa684b9cc736c3fe08cf4cb2f08305)
+  set(FROZEN_VERSION e6ddc43)
+  set(FROZEN_SHA256 SHA256=7aa0ab44eb91fc2c2431bd2e78bd3545aae750793a880064f6df0ef84c819065)
   set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
   ExternalProject_Add(lief_frozen
     URL               ${FROZEN_URL}
@@ -241,3 +255,20 @@ ExternalProject_Add(lief_leaf # :)
 
 ExternalProject_get_property(lief_leaf SOURCE_DIR)
 set(LEAF_INCLUDE_DIR "${SOURCE_DIR}/include")
+
+# utfcpp
+# ------
+set(UTFCPP_VERSION 3.1.2) # Custom fix to remove use of SUBLANG_DEFAULT in common.hpp and all.hpp
+set(UTFCPP_SHA256 SHA256=b77bff122a6d4f2a7a1ab409086bbb59bf899a2fdde12e1a85a4305fa91764c4)
+set(UTFCPP_URL "${THIRD_PARTY_DIRECTORY}/utfcpp-${UTFCPP_VERSION}.zip" CACHE STRING "URL to UTFCPP")
+ExternalProject_Add(lief_utfcpp
+  URL               ${UTFCPP_URL}
+  URL_HASH          ${UTFCPP_SHA256}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  UPDATE_COMMAND    ""
+  INSTALL_COMMAND   "")
+
+ExternalProject_get_property(lief_utfcpp SOURCE_DIR)
+set(UTFCPP_INCLUDE_DIR "${SOURCE_DIR}/source")
+
