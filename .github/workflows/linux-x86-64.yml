@@ -28,8 +28,8 @@ jobs:
         shell: bash
         run: |
           PYTHON_VERSION2=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
-          docker run --name lief_sdk --rm
-            -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION}
+          docker run --name lief_sdk --rm \
+            -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
             -e CCACHE_COMPRESS=1 \
             -e CCACHE_MAXSIZE=10.0G \
             -e CCACHE_DIR=/ccache \
@@ -47,7 +47,7 @@ jobs:
            -e CCACHE_MAXSIZE=10.0G \
            -e CCACHE_CPP2=1 \
            -e CCACHE_DIR=/ccache \
-           -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION}
+           -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
            -v $GITHUB_WORKSPACE:/work \
            -v $HOME/.ccache:/ccache \
            liefproject/manylinux1_x86_64 bash /src/scripts/docker/travis-linux.sh
@@ -73,9 +73,9 @@ jobs:
           CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
         shell: bash
         run: |
-          docker run --rm
-            -e CIRCLE_CI_TOKEN=$CIRCLE_CI_TOKEN
-            liefproject/manylinux1_x86_64
+          docker run --rm \
+            -e CIRCLE_CI_TOKEN=$CIRCLE_CI_TOKEN \
+            liefproject/manylinux1_x86_64 \
             bash -c "curl --request POST --url https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline --header 'Circle-Token: ${CIRCLE_CI_TOKEN}' --header 'content-type: application/json'";
 
 
