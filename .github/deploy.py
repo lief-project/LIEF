@@ -132,7 +132,7 @@ BRANCH_NAME = get_branch(CURRENT_CI)
 TAG_NAME    = get_tag(CURRENT_CI)
 IS_TAGGED   = len(TAG_NAME) > 0
 logger.info("Branch: %s", BRANCH_NAME)
-logger.info("Tag:    %s"  TAG_NAME)
+logger.info("Tag:    %s", TAG_NAME)
 if BRANCH_NAME not in ALLOWED_BRANCHES:
     logger.info("Skip deployment for branch '%s'", BRANCH_NAME)
     sys.exit(0)
