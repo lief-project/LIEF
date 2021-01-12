@@ -68,7 +68,7 @@ class LIEF_API SignatureParser {
 
   result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
   result<x509_certificates_t> parse_certificates(VectorStream& stream);
-  result<signer_infos_t> parse_signer_infos(VectorStream& stream, range_t& auth_attr);
+  result<signer_infos_t> parse_signer_infos(VectorStream& stream);
   result<attributes_t> parse_attributes(VectorStream& stream);
   result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
 

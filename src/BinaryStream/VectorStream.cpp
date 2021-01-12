@@ -253,7 +253,9 @@ result<std::unique_ptr<mbedtls_x509_crt>> VectorStream::asn1_read_cert() {
 
   int ret = mbedtls_x509_crt_parse_der(ca.get(), p, /* buff len */ buff_len);
   if (ret != 0) {
-    LIEF_DEBUG("asn1_read_cert(): {:x}", ret);
+    std::string strerr(1024, 0);
+    mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
+    LIEF_DEBUG("asn1_read_cert(): {}", strerr);
     return make_error_code(lief_errors::read_error);
   }
   if (ca->raw.len <= 0) {

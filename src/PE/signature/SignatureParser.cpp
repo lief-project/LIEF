@@ -279,11 +279,6 @@ result<Signature> SignatureParser::parse_signature() {
     } else {
       // Makes chain
       std::vector<x509> certs = certificates.value();
-      //mbedtls_x509_crt* next = certs.back().x509_cert_;
-      //for (size_t i = 1; i < certs.size(); ++i) {
-      //  certs[certs.size() - i - 1].x509_cert_->next = next;
-      //  next = certs[certs.size() - i - 1].x509_cert_->next;
-      //}
       signature.certificates_ = std::move(certs);
     }
   }
@@ -304,17 +299,12 @@ result<Signature> SignatureParser::parse_signature() {
   // =========================================================
   tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
   if (tag) {
-    const uint64_t current_pos = this->stream_->pos();
     LIEF_DEBUG("Parse pkcs7-signed-data.signer-infos offset: {:d}", this->stream_->pos());
     std::vector<uint8_t> raw_content =
       {this->stream_->p(), this->stream_->p() + tag.value()};
     VectorStream stream{std::move(raw_content)};
     this->stream_->increment_pos(raw_content.size());
-    range_t auth_attr;
-    auto signer_info = this->parse_signer_infos(stream, auth_attr);
-    signature.auth_start_ = current_pos + auth_attr.start;
-    signature.auth_end_   = current_pos + auth_attr.end;
-    LIEF_DEBUG("Authenticated attributes: {} -> {}", signature.auth_start_, signature.auth_end_);
+    auto signer_info = this->parse_signer_infos(stream);
     if (not signer_info) {
       LIEF_INFO("Fail to parse pkcs7-signed-data.signer-infos");
     } else {
@@ -324,15 +314,22 @@ result<Signature> SignatureParser::parse_signature() {
 
   // Tied signer info with x509 certificates
   for (SignerInfo& signer : signature.signers_) {
-    auto it_cert = std::find_if(std::begin(signature.certificates_), std::end(signature.certificates_),
-        [&signer] (const x509& cert) {
-          return cert.issuer() == signer.issuer() and cert.serial_number() == signer.serial_number();
-        });
-    if (it_cert == std::end(signature.certificates_)) {
+    const x509* crt = signature.find_crt_issuer(signer.issuer(), signer.serial_number());
+    if (crt != nullptr) {
+      signer.cert_ = std::unique_ptr<x509>(new x509{*crt});
+    } else {
       LIEF_INFO("Can't find x509 certificate associated with signer '{}'", signer.issuer());
-      continue;
     }
-    signer.cert_ = std::unique_ptr<x509>(new x509{*it_cert});
+    const auto* cs = reinterpret_cast<const PKCS9CounterSignature*>(signer.get_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE));
+    if (cs != nullptr) {
+      SignerInfo& cs_signer = const_cast<PKCS9CounterSignature*>(cs)->signer_;
+      const x509* crt = signature.find_crt_issuer(cs_signer.issuer(), cs_signer.serial_number());
+      if (crt != nullptr) {
+        cs_signer.cert_ = std::unique_ptr<x509>(new x509{*crt});
+      } else {
+        LIEF_INFO("Can't find x509 certificate associated with signer '{}'", signer.issuer());
+      }
+    }
   }
 
   return signature;
@@ -524,7 +521,7 @@ result<SignatureParser::x509_certificates_t> SignatureParser::parse_certificates
 }
 
 
-result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(VectorStream& stream, range_t& auth_attr) {
+result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(VectorStream& stream) {
   const uintptr_t end_set = stream.size();
 
   signer_infos_t infos;
@@ -621,11 +618,11 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     // Authenticated Attributes
     // =======================================================
     {
-      auth_attr.start = stream.pos();
+      const uint64_t auth_attr_start = stream.pos();
       tag = stream.asn1_read_tag(/* authenticatedAttributes [0] IMPLICIT Attributes OPTIONAL */
                                  MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED);
       if (tag) {
-        auth_attr.end   = stream.pos() + tag.value();
+        const uint64_t auth_attr_end = stream.pos() + tag.value();
         std::vector<uint8_t> raw_authenticated_attributes =
           {stream.p(), stream.p() + tag.value()};
         VectorStream auth_stream(std::move(raw_authenticated_attributes));
@@ -634,10 +631,9 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
         if (not authenticated_attributes) {
           LIEF_INFO("Fail to parse pkcs7-signed-data.signer-infos.authenticated-attributes");
         } else {
+          signer.raw_auth_data_ = {stream.start() + auth_attr_start, stream.start() + auth_attr_end};
           signer.authenticated_attributes_ = std::move(authenticated_attributes.value());
         }
-      } else {
-        auth_attr.start = 0;
       }
     }
 
@@ -672,7 +668,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
             stream.pos());
         return enc_digest.error();
       }
-      LIEF_DEBUG("pkcs7-signed-data.signer-infos.encrypted-digest: {}", hex_dump(enc_digest.value()));
+      LIEF_DEBUG("pkcs7-signed-data.signer-infos.encrypted-digest: {}", hex_dump(enc_digest.value()).substr(0, 10));
       signer.encrypted_digest_ = enc_digest.value();
     }
 
@@ -775,7 +771,14 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
         if (not res) {
           LIEF_INFO("Can't parse pkcs9-counter-sign attribute");
         } else {
-          attributes.emplace_back(new PKCS9CounterSignature(std::move(res.value())));
+          const std::vector<SignerInfo>& signers = res.value();
+          if (signers.size() == 0) {
+            LIEF_INFO("Can't parse signer info associated with the pkcs9-counter-sign");
+          } else if (signers.size() > 1) {
+            LIEF_INFO("More than one signer info associated with the pkcs9-counter-sign");
+          } else {
+            attributes.emplace_back(new PKCS9CounterSignature(std::move(signers.back())));
+          }
         }
       }
 
@@ -916,8 +919,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_pkcs9_counter_sig
   //          ID pkcs-9-at-counterSignature
   //  }
   LIEF_DEBUG("Parsing pkcs9-CounterSign ({} bytes)", stream.size());
-  range_t auth_attr;
-  auto counter_sig = this->parse_signer_infos(stream, auth_attr);
+  auto counter_sig = this->parse_signer_infos(stream);
   if (not counter_sig) {
     LIEF_INFO("Fail to parse pkcs9-counter-signature");
     return counter_sig.error();
@@ -1075,7 +1077,7 @@ result<SignatureParser::time_t> SignatureParser::parse_pkcs9_signing_time(Vector
     return tm.error();
   }
   std::unique_ptr<mbedtls_x509_time> time = std::move(tm.value());
-  LIEF_INFO("pkcs9-signing-time {}/{}/{}", time->day, time->mon, time->year);
+  LIEF_DEBUG("pkcs9-signing-time {}/{}/{}", time->day, time->mon, time->year);
   return SignatureParser::time_t{time->year, time->mon, time->day, time->hour, time->min, time->sec};
 }
 

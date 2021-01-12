@@ -145,9 +145,14 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_signatures signatures(void) const;
 
   //! Verify the binary against the embedded signature(s) (if any)
-  //! Firstly, it checks that the embedded signatures are correct (c.f. Signature::check)
+  //! First, it checks that the embedded signatures are correct (c.f. Signature::check)
   //! and then it checks that the authentihash matches ContentInfo::digest
-  Signature::VERIFICATION_FLAGS verify_signature() const;
+  //!
+  //! One can tweak the verification process with the Signature::VERIFICATION_CHECKS flags
+  //!
+  //! @see LIEF::PE::Signature::check
+  Signature::VERIFICATION_FLAGS verify_signature(
+      Signature::VERIFICATION_CHECKS checks = Signature::VERIFICATION_CHECKS::DEFAULT) const;
 
   //! Verify the binary with the Signature object provided in the first parameter
   //! It can be used to verify a detached signature:
@@ -158,7 +163,8 @@ class LIEF_API Binary : public LIEF::Binary {
   //!   binary->verify_signature(detached.value());
   //! }
   //! \endcode
-  Signature::VERIFICATION_FLAGS verify_signature(const Signature& sig) const;
+  Signature::VERIFICATION_FLAGS verify_signature(const Signature& sig,
+      Signature::VERIFICATION_CHECKS checks = Signature::VERIFICATION_CHECKS::DEFAULT) const;
 
   //! Compute the authentihash according to the algorithm provided in the first
   //! parameter

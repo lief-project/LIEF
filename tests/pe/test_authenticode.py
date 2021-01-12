@@ -14,7 +14,7 @@ from unittest import TestCase
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
 
 def from_hex(x):
     return bytes.fromhex(x.replace(":", ""))
@@ -180,8 +180,7 @@ class TestAuthenticode(TestCase):
         sig = lief.PE.Signature.parse(get_sample("pkcs7/cert10.p7b"))
         counter_sign = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_COUNTER_SIGNATURE)
 
-        self.assertEqual(len(counter_sign.signers), 1)
-        signer = counter_sign.signers[0]
+        signer = counter_sign.signer
 
         self.assertEqual(signer.version, 1)
         self.assertEqual(signer.serial_number, from_hex("0e:cf:f4:38:c8:fe:bf:35:6e:04:d8:6a:98:1b:1a:50"))

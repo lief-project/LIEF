@@ -166,15 +166,22 @@ void create<Binary>(py::module& m) {
         "algorithm"_a)
 
     .def("verify_signature",
-        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)() const>(&Binary::verify_signature),
+        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)(Signature::VERIFICATION_CHECKS) const>(&Binary::verify_signature),
         R"delim(
         Verify the binary against the embedded signature(s) (if any)
         Firstly, it checks that the embedded signatures are correct (c.f. :meth:`lief.PE.Signature.check`)
         and then it checks that the authentihash matches :attr:`lief.PE.ContentInfo.digest`
-        )delim")
+
+        One can tweak the verification process with the :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags
+
+        .. seealso::
+
+            :meth:`lief.PE.Signature.check`
+        )delim",
+        "checks"_a = Signature::VERIFICATION_CHECKS::DEFAULT)
 
     .def("verify_signature",
-        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)(const Signature&) const>(&Binary::verify_signature),
+        static_cast<Signature::VERIFICATION_FLAGS(Binary::*)(const Signature&, Signature::VERIFICATION_CHECKS) const>(&Binary::verify_signature),
         R"delim(
         Verify the binary with the Signature object provided in the first parameter
         It can be used to verify a detached signature:
@@ -184,7 +191,7 @@ void create<Binary>(py::module& m) {
             detached = lief.PE.Signature.parse("sig.pkcs7")
             binary.verify_signature(detached)
         )delim",
-        "signature"_a)
+        "signature"_a, "checks"_a = Signature::VERIFICATION_CHECKS::DEFAULT)
 
     .def_property_readonly("authentihash_md5",
         [] (const Binary& bin) {

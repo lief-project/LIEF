@@ -864,13 +864,9 @@ void JsonVisitor::visit(const PKCS9AtSequenceNumber& attr) {
 void JsonVisitor::visit(const PKCS9CounterSignature& attr) {
   this->visit(*attr.as<Attribute>());
 
-  std::vector<json> signers;
-  for (const SignerInfo& signer : attr.signers()) {
-    JsonVisitor visitor;
-    visitor(signer);
-    signers.emplace_back(std::move(visitor.get()));
-  }
-  this->node_["signers"] = std::move(signers);
+  JsonVisitor visitor;
+  visitor(attr.signer());
+  this->node_["signer"] = std::move(visitor.get());
 }
 
 void JsonVisitor::visit(const PKCS9MessageDigest& attr) {

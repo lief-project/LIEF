@@ -325,6 +325,9 @@ if(LIEF_FROZEN_ENABLED)
   add_dependencies(LIB_LIEF lief_frozen)
 endif()
 
+# =======================================
+# Leaf
+# =======================================
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp
   COMMAND
     ${CMAKE_COMMAND} -E copy_directory ${LEAF_INCLUDE_DIR}/
@@ -334,6 +337,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/b
 target_sources(LIB_LIEF PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp)
 
+# =======================================
+# utfcpp
+# =======================================
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h
   COMMAND
     ${CMAKE_COMMAND} -E copy_directory ${UTFCPP_INCLUDE_DIR}/
@@ -375,6 +381,7 @@ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 # extension.
 add_definitions(-DMBEDTLS_MD2_C -DMBEDTLS_MD4_C -DMBEDTLS_PEM_PARSE_C
                 -DMBEDTLS_X509_CRT_PARSE_C -DMBEDTLS_PEM_WRITE_C
+                -DMBEDTLS_PKCS1_V15 -DMBEDTLS_PKCS1_V21
                 -DMBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION)
 
 # ASAN - LSAN - TSAN - USAN

@@ -67,4 +67,11 @@ operator &=(Enum& lhs, Enum rhs)
     return lhs;
 }
 
+template<typename Enum>
+typename std::enable_if<EnableBitMaskOperators<Enum>::bit_mask_enabled, bool>::type
+is_true(Enum e)
+{
+  using underlying = typename std::underlying_type<Enum>::type;
+  return static_cast<underlying>(e) > 0;
+}
 #endif

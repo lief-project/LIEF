@@ -501,8 +501,7 @@ void Hash::visit(const PKCS9AtSequenceNumber& attr) {
 }
 void Hash::visit(const PKCS9CounterSignature& attr) {
   this->visit(*attr.as<Attribute>());
-  it_const_signers_t signers = attr.signers();
-  this->process(std::begin(signers), std::end(signers));
+  this->process(attr.signer());
 }
 void Hash::visit(const PKCS9MessageDigest& attr) {
   this->visit(*attr.as<Attribute>());

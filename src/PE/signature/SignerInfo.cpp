@@ -43,7 +43,8 @@ SignerInfo::SignerInfo(const SignerInfo& other) :
   serialno_{other.serialno_},
   digest_algorithm_{other.digest_algorithm_},
   digest_enc_algorithm_{other.digest_enc_algorithm_},
-  encrypted_digest_{other.encrypted_digest_}
+  encrypted_digest_{other.encrypted_digest_},
+  raw_auth_data_{other.raw_auth_data_}
 {
   for (const std::unique_ptr<Attribute>& attr : other.authenticated_attributes_) {
     this->authenticated_attributes_.push_back(attr->clone());
@@ -70,6 +71,7 @@ void SignerInfo::swap(SignerInfo& other) {
   std::swap(this->digest_algorithm_,           other.digest_algorithm_);
   std::swap(this->digest_enc_algorithm_,       other.digest_enc_algorithm_);
   std::swap(this->encrypted_digest_,           other.encrypted_digest_);
+  std::swap(this->raw_auth_data_,              other.raw_auth_data_);
   std::swap(this->authenticated_attributes_,   other.authenticated_attributes_);
   std::swap(this->unauthenticated_attributes_, other.unauthenticated_attributes_);
   std::swap(this->cert_,                       other.cert_);
@@ -110,7 +112,22 @@ it_const_attributes_t SignerInfo::unauthenticated_attributes() const {
 
 
 const Attribute* SignerInfo::get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
-  // First look for the attribute in the authenticated ones
+  const Attribute* attr = this->get_auth_attribute(type);
+  if (attr != nullptr) {
+    return attr;
+  }
+
+  attr = this->get_unauth_attribute(type);
+
+  if (attr != nullptr) {
+    return attr;
+  }
+
+  // ... not found -> return nullptr
+  return nullptr;
+}
+
+const Attribute* SignerInfo::get_auth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   auto it_auth = std::find_if(std::begin(this->authenticated_attributes_), std::end(this->authenticated_attributes_),
       [type] (const std::unique_ptr<Attribute>& attr) {
         return attr->type() == type;
@@ -118,8 +135,10 @@ const Attribute* SignerInfo::get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   if (it_auth != std::end(this->authenticated_attributes_)) {
     return it_auth->get();
   }
+  return nullptr;
+}
 
-  // Then in the UN-authenticated ones
+const Attribute* SignerInfo::get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   auto it_uauth = std::find_if(std::begin(this->unauthenticated_attributes_), std::end(this->unauthenticated_attributes_),
       [type] (const std::unique_ptr<Attribute>& attr) {
         return attr->type() == type;
@@ -127,10 +146,9 @@ const Attribute* SignerInfo::get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   if (it_uauth != std::end(this->unauthenticated_attributes_)) {
     return it_uauth->get();
   }
-
-  // ... not found -> return nullptr
   return nullptr;
 }
+
 
 void SignerInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);

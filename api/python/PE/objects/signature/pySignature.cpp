@@ -51,7 +51,24 @@ void create<Signature>(py::module& m) {
     .value("MISSING_PKCS9_MESSAGE_DIGEST",  Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST)
     .value("BAD_DIGEST",                    Signature::VERIFICATION_FLAGS::BAD_DIGEST)
     .value("BAD_SIGNATURE",                 Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
-    .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE);
+    .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE)
+    .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
+    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
+
+
+  LIEF::enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", py::arithmetic(),
+    R"delim(
+    Flags to tweak the verification process of the signature
+    See :meth:`lief.PE.Signature.check` and :meth:`lief.PE.Binary.verify_signature`
+    )delim")
+    .value("DEFAULT", Signature::VERIFICATION_CHECKS::DEFAULT,
+        "Default behavior that tries to follow the Microsoft verification process as close as possible")
+    .value("HASH_ONLY", Signature::VERIFICATION_CHECKS::HASH_ONLY,
+        "Only check that :meth:`lief.PE.Binary.authentihash` matches :attr:`lief.PE.ContentInfo.digest` regardless of the signature's validity")
+    .value("LIFETIME_SIGNING", Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING,
+        "Same semantic as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`")
+    .value("SKIP_CERT_TIME", Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME,
+        "Skip the verification of the certificates time validities so that even though a certificate expired, it returns :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`");
 
   signature
     .def_static("parse",
@@ -78,37 +95,65 @@ void create<Signature>(py::module& m) {
 
     .def_property_readonly("version",
         &Signature::version,
-        "Should be 1")
+        "Version of the signature. It should be 1")
 
     .def_property_readonly("digest_algorithm",
         &Signature::digest_algorithm,
         "Return the algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") \
         used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) "")
 
-
     .def_property_readonly("content_info",
         &Signature::content_info,
         "Return the " RST_CLASS_REF(lief.PE.ContentInfo) "",
         py::return_value_policy::reference)
-
 
     .def_property_readonly("certificates",
         &Signature::certificates,
         "Return an iterator over " RST_CLASS_REF(lief.PE.x509) " certificates",
         py::return_value_policy::reference)
 
-
     .def_property_readonly("signers",
         &Signature::signers,
         "Return an iterator over the signers: " RST_CLASS_REF(lief.PE.SignerInfo) "",
         py::return_value_policy::reference)
 
+    .def("find_crt",
+        static_cast<const x509*(Signature::*)(const std::vector<uint8_t>&) const>(&Signature::find_crt),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its serial number",
+        py::return_value_policy::reference,
+        "serialno"_a)
+
+    .def("find_crt_subject",
+        static_cast<const x509*(Signature::*)(const std::string&) const>(&Signature::find_crt_subject),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject",
+        py::return_value_policy::reference,
+        "subject"_a)
+
+    .def("find_crt_subject",
+        static_cast<const x509*(Signature::*)(const std::string&, const std::vector<uint8_t>&) const>(&Signature::find_crt_subject),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject **AND** its serial number",
+        py::return_value_policy::reference,
+        "subject"_a, "serialno"_a)
+
+    .def("find_crt_issuer",
+        static_cast<const x509*(Signature::*)(const std::string&) const>(&Signature::find_crt_issuer),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer",
+        py::return_value_policy::reference,
+        "issuer"_a)
+
+    .def("find_crt_issuer",
+        static_cast<const x509*(Signature::*)(const std::string&, const std::vector<uint8_t>&) const>(&Signature::find_crt_issuer),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer **AND** its serial number",
+        py::return_value_policy::reference,
+        "issuer"_a, "serialno"_a)
+
     .def("check",
         &Signature::check,
+        // Note: This documentation needs to be sync with LIEF::PE::Signature::check
         R"delim(
         Check the integrity of the signature and return a :class:`lief.PE.Signature.VERIFICATION_FLAGS`
 
-        It performs the following verifications:
+        By default, it performs the following verifications:
 
         1. It must contain only **one** signer info (:attr:`~lief.PE.Signature.signers`)
         2. :attr:`lief.PE.Signature.digest_algorithm` must match:
@@ -125,8 +170,15 @@ void create<Signature>(py::module& m) {
 
         5. If they are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST (:class:`lief.PE.PKCS9MessageDigest`) attribute exists
            and that its value matches hash of ContentInfo
+        6. Check the validity of the PKCS #9 counter signature if present
+        7. If the signature doesn't embed a signing-time in the counter signature, check the certificate
+           validity. (See :attr:`lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING` and :attr:`lief.pe.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME`)
 
-        )delim")
+        See: :class:`lief.PE.Signature.VERIFICATION_CHECKS` to tweak the behavior
+
+        )delim",
+        "checks"_a = Signature::VERIFICATION_CHECKS::DEFAULT
+    )
 
     .def_property_readonly("raw_der",
         [] (const Signature& sig) {

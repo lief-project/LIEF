@@ -72,6 +72,17 @@ void create<x509>(py::module& m) {
     .value("RSA_ALT",    x509::KEY_TYPES::RSA_ALT,    "RSA scheme with an alternative implementation for signing and decrypting")
     .value("RSASSA_PSS", x509::KEY_TYPES::RSASSA_PSS, "RSA Probabilistic signature scheme");
 
+  LIEF::enum_<x509::KEY_USAGE>(cls_x509, "KEY_USAGE", "Key usage as defined in `RFC #5280 - section-4.2.1.3 <https://tools.ietf.org/html/rfc5280#section-4.2.1.3>`_")
+    .value("DIGITAL_SIGNATURE", x509::KEY_USAGE::DIGITAL_SIGNATURE,  "The key is used for digital signature")
+    .value("NON_REPUDIATION",   x509::KEY_USAGE::NON_REPUDIATION,    "The key is used for digital signature AND to protects against falsely denying some action")
+    .value("KEY_ENCIPHERMENT",  x509::KEY_USAGE::KEY_ENCIPHERMENT,   "The key is used for enciphering private or secret keys")
+    .value("DATA_ENCIPHERMENT", x509::KEY_USAGE::DATA_ENCIPHERMENT,  "The key is used for directly enciphering raw user data without the use of an intermediate symmetric cipher")
+    .value("KEY_AGREEMENT",     x509::KEY_USAGE::KEY_AGREEMENT,      "The Key is used for key agreement. (e.g. with Diffie-Hellman)")
+    .value("KEY_CERT_SIGN",     x509::KEY_USAGE::KEY_CERT_SIGN,      "The key is used for verifying signatures on public key certificates")
+    .value("CRL_SIGN",          x509::KEY_USAGE::CRL_SIGN,           "The key is used for verifying signatures on certificate revocation lists")
+    .value("ENCIPHER_ONLY",     x509::KEY_USAGE::ENCIPHER_ONLY,      "In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for enciphering data while performing key agreement")
+    .value("DECIPHER_ONLY",     x509::KEY_USAGE::DECIPHER_ONLY,      "In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for deciphering data while performing key agreement");
+
   cls_x509
     .def_static("parse",
         static_cast<x509::certificates_t(*)(const std::string&)>(&x509::parse),
@@ -136,6 +147,27 @@ void create<x509>(py::module& m) {
         "If the underlying public-key scheme is RSA, return the " RST_CLASS_REF(lief.PE.RsaInfo) " associated with this certificate. "
         "Otherwise, return None",
         py::return_value_policy::take_ownership)
+
+    .def_property_readonly("key_usage",
+        &x509::key_usage,
+        "Purpose of the key contained in the certificate (see " RST_CLASS_REF(lief.PE.x509.KEY_USAGE) ")")
+
+    .def_property_readonly("ext_key_usage",
+        &x509::ext_key_usage,
+        "Indicates one or more purposes for which the certified public key may be used (list of OID)")
+
+    .def_property_readonly("certificate_policies",
+        &x509::certificate_policies,
+        "Policy information terms as list of OID (see RFC #5280)")
+
+    .def_property_readonly("is_ca",
+        &x509::is_ca)
+
+    .def_property_readonly("signature",
+        [] (const x509& cert) -> py::bytes {
+          const std::vector<uint8_t>& sig = cert.signature();
+          return py::bytes(reinterpret_cast<const char*>(sig.data()), sig.size());
+        }, "The signature of the certificate")
 
     .def("verify",
         static_cast<x509::VERIFICATION_FLAGS(x509::*)(const x509&) const>(&x509::verify),

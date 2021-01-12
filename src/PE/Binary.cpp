@@ -1202,14 +1202,14 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   return hash;
 }
 
-Signature::VERIFICATION_FLAGS Binary::verify_signature() const {
+Signature::VERIFICATION_FLAGS Binary::verify_signature(Signature::VERIFICATION_CHECKS checks) const {
   if (not this->has_signatures()) {
     return Signature::VERIFICATION_FLAGS::NO_SIGNATURE;
   }
 
   for (size_t i = 0; i < this->signatures_.size(); ++i) {
     const Signature& sig = this->signatures_[i];
-    Signature::VERIFICATION_FLAGS flags = this->verify_signature(sig);
+    Signature::VERIFICATION_FLAGS flags = this->verify_signature(sig, checks);
     if (flags != Signature::VERIFICATION_FLAGS::OK) {
       LIEF_INFO("Verification failed for signature #{:d} (0b{:b})", i, static_cast<uintptr_t>(flags));
       return flags;
@@ -1218,11 +1218,13 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature() const {
   return Signature::VERIFICATION_FLAGS::OK;
 }
 
-Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig) const {
-  const Signature::VERIFICATION_FLAGS value = sig.check();
-  if (value != Signature::VERIFICATION_FLAGS::OK) {
-    LIEF_INFO("Bad signature (0b{:b})", static_cast<uintptr_t>(value));
-    return value;
+Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Signature::VERIFICATION_CHECKS checks) const {
+  if (not is_true(checks & Signature::VERIFICATION_CHECKS::HASH_ONLY)) {
+    const Signature::VERIFICATION_FLAGS value = sig.check(checks);
+    if (value != Signature::VERIFICATION_FLAGS::OK) {
+      LIEF_INFO("Bad signature (0b{:b})", static_cast<uintptr_t>(value));
+      return value;
+    }
   }
 
   // Check that the authentihash matches Content Info's digest

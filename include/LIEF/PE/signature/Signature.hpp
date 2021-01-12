@@ -45,7 +45,7 @@ class LIEF_API Signature : public Object {
   static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo);
 
   public:
-  //! Flags returned by verification fonctions
+  //! Flags returned by verification functions
   enum class VERIFICATION_FLAGS {
     OK = 0,
     INVALID_SIGNER                = 1 << 0,
@@ -58,6 +58,18 @@ class LIEF_API Signature : public Object {
     BAD_DIGEST                    = 1 << 7,
     BAD_SIGNATURE                 = 1 << 8,
     NO_SIGNATURE                  = 1 << 9,
+    CERT_EXPIRED                  = 1 << 10,
+    CERT_FUTURE                   = 1 << 11,
+  };
+
+  //! Flags to tweak the verification process of the signature
+  //!
+  //! See Signature::check and LIEF::PE::Binary::verify_signature
+  enum class VERIFICATION_CHECKS {
+    DEFAULT          = 1 << 0, /**< Default behavior that tries to follow the Microsoft verification process as close as possible */
+    HASH_ONLY        = 1 << 1, /**< Only check that Binary::authentihash matches ContentInfo::digest regardless of the signature's validity */
+    LIFETIME_SIGNING = 1 << 2, /**< Same semantic as [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG) */
+    SKIP_CERT_TIME   = 1 << 3, /**< Skip the verification of the certificates time validities so that even though a certificate expired, it returns VERIFICATION_FLAGS::OK */
   };
 
   Signature(void);
@@ -86,9 +98,24 @@ class LIEF_API Signature : public Object {
   //! Return the raw original PKCS7 signature
   const std::vector<uint8_t>& raw_der(void) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  //! Find x509 certificate according to its serial number
+  const x509* find_crt(const std::vector<uint8_t>& serialno) const;
+
+  //! Find x509 certificate according to its subject
+  const x509* find_crt_subject(const std::string& subject) const;
+
+  //! Find x509 certificate according to its subject **AND** serial number
+  const x509* find_crt_subject(const std::string& subject, const std::vector<uint8_t>& serialno) const;
+
+  //! Find x509 certificate according to its issuer
+  const x509* find_crt_issuer(const std::string& issuer) const;
+
+  //! Find x509 certificate according to its issuer **AND** serial number
+  const x509* find_crt_issuer(const std::string& issuer, const std::vector<uint8_t>& serialno) const;
 
   //! Check if this signature is valid according to the Authenticode/PKCS #7 verification scheme
+  //!
+  //! By default, it performs the following verifications:
   //!
   //! 1. It must contain only **one** signer info
   //! 2. Signature::digest_algorithm must match:
@@ -99,16 +126,22 @@ class LIEF_API Signature : public Object {
   //! 4. Given the x509 certificate, compare SignerInfo::encrypted_digest against either:
   //!    * hash of authenticated attributes if present
   //!    * hash of ContentInfo
-  //! 5. If they are Authenticated attributes, check that a PKCS9_MESSAGE_DIGEST attribute exists
+  //! 5. If authenticated attributes are present, check that a PKCS9_MESSAGE_DIGEST attribute exists
   //!    and that its value matches hash of ContentInfo
-  VERIFICATION_FLAGS check() const;
+  //! 6. Check the validity of the PKCS #9 counter signature if present
+  //! 7. If the signature doesn't embed a signing-time in the counter signature, check the certificate
+  //!    validity. (See LIEF::PE::Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING and LIEF::PE::Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME)
+  //!
+  //! See: LIEF::PE::Signature::VERIFICATION_CHECKS to tweak the behavior
+  VERIFICATION_FLAGS check(VERIFICATION_CHECKS checks = VERIFICATION_CHECKS::DEFAULT) const;
+
+  virtual void accept(Visitor& visitor) const override;
 
   virtual ~Signature(void);
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Signature& signature);
 
   private:
-
   uint32_t                version_ = 0;
   ALGORITHMS              digest_algorithm_ = ALGORITHMS::UNKNOWN;
   ContentInfo             content_info_;
@@ -118,9 +151,6 @@ class LIEF_API Signature : public Object {
   uint64_t                content_info_start_ = 0;
   uint64_t                content_info_end_ = 0;
 
-  uint64_t                auth_start_ = 0;
-  uint64_t                auth_end_ = 0;
-
   std::vector<uint8_t> original_raw_signature_;
 };
 
@@ -129,6 +159,7 @@ class LIEF_API Signature : public Object {
 }
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::Signature::VERIFICATION_FLAGS);
+ENABLE_BITMASK_OPERATORS(LIEF::PE::Signature::VERIFICATION_CHECKS);
 
 
 #endif

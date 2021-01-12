@@ -27,6 +27,8 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
 
+#include <mbedtls/asn1write.h>
+
 #include <mbedtls/sha512.h>
 #include <mbedtls/sha256.h>
 #include <mbedtls/sha1.h>
@@ -36,10 +38,106 @@
 #include <mbedtls/md5.h>
 
 #include "mbedtls/x509_crt.h"
+#include "mbedtls/x509.h"
 
 
 namespace LIEF {
 namespace PE {
+
+inline std::string time_to_string(const x509::date_t& date) {
+  return fmt::format("{:d}/{:02d}/{:02d} - {:02d}:{:02d}:{:02d}",
+      date[0], date[1], date[2],
+      date[3], date[4], date[5]);
+}
+
+
+Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& signer,
+    const PKCS9CounterSignature& cs, Signature::VERIFICATION_CHECKS checks) {
+  LIEF_DEBUG("PKCS #9 Counter signature found");
+  Signature::VERIFICATION_FLAGS flags = Signature::VERIFICATION_FLAGS::OK;
+   const SignerInfo& cs_signer = cs.signer();
+  if (cs_signer.cert() == nullptr) {
+    LIEF_WARN("Can't find x509 certificate associated with Counter Signature's signer");
+    return flags | Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND;
+  }
+  const x509& cs_cert = *cs_signer.cert();
+  const SignerInfo::encrypted_digest_t& cs_enc_digest = cs_signer.encrypted_digest();
+
+  std::vector<uint8_t> cs_auth_data = cs_signer.raw_auth_data();
+  // According to the RFC:
+  //
+  // "[...] The Attributes value's tag is SET OF, and the DER encoding of
+  // the SET OF tag, rather than of the IMPLICIT [0] tag [...]"
+  cs_auth_data[0] = /* SET OF */ 0x31;
+  const ALGORITHMS cs_digest_algo = cs_signer.digest_algorithm();
+  const std::vector<uint8_t>& cs_hash = Signature::hash(cs_auth_data, cs_digest_algo);
+  LIEF_DEBUG("Signed data digest: {}", hex_dump(cs_hash));
+  bool check_sig = cs_cert.check_signature(cs_hash, cs_enc_digest, cs_digest_algo);
+
+  if (not check_sig) {
+    LIEF_WARN("Authenticated signature (counter signature) mismatch");
+    //return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
+  }
+
+
+  /* According to Microsoft documentation:
+   * The Authenticode timestamp SignerInfo structure contains the following authenticated attributes values:
+   * 1. ContentType (1.2.840.113549.1.9.3) is set to PKCS #7 Data (1.2.840.113549.1.7.1).
+   * 2. Signing Time (1.2.840.113549.1.9.5) is set to the UTC time of timestamp generation time.
+   * 3. Message Digest (1.2.840.113549.1.9.4) is set to the hash value of the
+   *    SignerInfo structure's encryptedDigest value. The hash algorithm that
+   *    is used to calculate the hash value is the same as that specified in the
+   *    SignerInfo structure’s digestAlgorithm value of the timestamp.
+   */
+
+  // Verify 1.
+  const auto* content_type_data = reinterpret_cast<const ContentType*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::CONTENT_TYPE));
+  if (content_type_data == nullptr) {
+    LIEF_WARN("Missing ContentType in authenticated attributes in the counter signature's signer");
+    return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
+  }
+
+  if (content_type_data->oid() != /* PKCS #7 Data */ "1.2.840.113549.1.7.1") {
+    LIEF_WARN("Bad OID for ContentType in authenticated attributes in the counter signature's signer ({})",
+               content_type_data->oid());
+    return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
+  }
+
+  // Verify 3.
+  const auto* message_dg = reinterpret_cast<const PKCS9MessageDigest*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST));
+  if (message_dg == nullptr) {
+    LIEF_WARN("Missing MessageDigest in authenticated attributes in the counter signature's signer");
+    return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
+  }
+  const std::vector<uint8_t>& dg_value = message_dg->digest();
+  const std::vector<uint8_t> dg_cs_hash = Signature::hash(signer.encrypted_digest(), cs_digest_algo);
+  if (dg_value != dg_cs_hash) {
+    LIEF_WARN("MessageDigest mismatch with Hash(signer ED)");
+    return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
+  }
+
+  /*
+   * Verify that signing's time is valid within the signer's certificate
+   * validity window.
+   */
+  const auto* signing_time = reinterpret_cast<const PKCS9SigningTime*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME));
+  if (signing_time != nullptr and not is_true(checks & Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
+    LIEF_DEBUG("PKCS #9 signing time found");
+    PKCS9SigningTime::time_t time = signing_time->time();
+    if (not x509::check_time(time, cs_cert.valid_to())) {
+      LIEF_WARN("Signing time: {} is above the certificate validity: {}",
+          time_to_string(time), time_to_string(cs_cert.valid_to()));
+      return flags | Signature::VERIFICATION_FLAGS::CERT_EXPIRED;
+    }
+
+    if (not x509::check_time(cs_cert.valid_from(), time)) {
+      LIEF_WARN("Signing time: {} is below the certificate validity: {}",
+          time_to_string(time), time_to_string(cs_cert.valid_to()));
+      return flags | Signature::VERIFICATION_FLAGS::CERT_FUTURE;
+    }
+  }
+  return flags;
+}
 
 
 Signature::Signature(void) = default;
@@ -153,7 +251,7 @@ it_const_signers_t Signature::signers(void) const {
   return this->signers_;
 }
 
-Signature::VERIFICATION_FLAGS Signature::check() const {
+Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const {
   // According to the Authenticode documentation,
   // *SignerInfos contains one SignerInfo structure*
   const size_t nb_signers = this->signers_.size();
@@ -197,6 +295,18 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
   const x509& cert = *signer.cert();
   const SignerInfo::encrypted_digest_t& enc_digest = signer.encrypted_digest();
 
+  /*
+   * Check the following condition:
+   *  "The signing certificate must contain either the extended key usage (EKU)
+   *   value for code signing, or the entire certificate chain must contain no
+   *   EKUs. The following is the EKU value for code signing"
+   */
+  //TODO(romain)
+
+  /*
+   * Verify certificate validity
+   */
+
   if (this->content_info_start_ == 0 or this->content_info_end_ == 0) {
     return flags | VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO;
   }
@@ -208,19 +318,12 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
 
   const std::vector<uint8_t> content_info_hash = Signature::hash(std::move(raw_content_info), digest_algo);
 
-  if (this->auth_start_ == 0 or this->auth_end_ == 0) {
-    flags |= VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA;
-  }
 
   // Copy authenticated attributes
   it_const_attributes_t auth_attrs = signer.authenticated_attributes();
-  if (auth_attrs.size() > 0 and
-      (flags & VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA) != VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA) {
-    std::vector<uint8_t> auth_data = {
-      std::begin(this->original_raw_signature_) + this->auth_start_,
-      std::begin(this->original_raw_signature_) + this->auth_end_
-    };
+  if (auth_attrs.size() > 0) {
 
+    std::vector<uint8_t> auth_data = signer.raw_auth_data_;
     // According to the RFC:
     //
     // "[...] The Attributes value's tag is SET OF, and the DER encoding of
@@ -232,6 +335,7 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
     bool check_sig = cert.check_signature(auth_attr_hash, enc_digest, digest_algo);
 
     if (not check_sig) {
+      LIEF_WARN("Authenticated signature mismatch");
       return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
     }
 
@@ -242,6 +346,7 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
         });
 
     if (it_pkcs9_digest == std::end(auth_attrs)) {
+      LIEF_WARN("Can't find the authenticated attribute: 'pkcs9-message-digest'");
       return flags | VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST;
     }
 
@@ -250,14 +355,53 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
     if (digest_attr.digest() != content_info_hash) {
       return flags | VERIFICATION_FLAGS::BAD_DIGEST;
     }
-
-    return flags;
+  } else {
+    /*
+     * If there is no authenticated attributes, then the encrypted digested should match ENC(content_info_hash)
+     */
+    if (not cert.check_signature(content_info_hash, enc_digest, digest_algo)) {
+      return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
+    }
   }
+
   /*
-   * If there is no authenticated attributes, then encrypted digested should match ENC(content_info_hash)
+   * CounterSignature Checks
    */
-  if (not cert.check_signature(content_info_hash, enc_digest, digest_algo)) {
-    return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
+  const auto* counter = reinterpret_cast<const PKCS9CounterSignature*>(signer.get_unauth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE));
+  bool has_ms_counter_sig = false;
+  for (const Attribute& attr : signer.unauthenticated_attributes()) {
+    if (attr.type() == SIG_ATTRIBUTE_TYPES::GENERIC_TYPE) {
+      if (reinterpret_cast<const GenericType&>(attr).oid() == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
+        has_ms_counter_sig = true;
+        break;
+      }
+    }
+  }
+  bool timeless_signature = false;
+  if (counter != nullptr) {
+    VERIFICATION_FLAGS cs_flags = verify_ts_counter_signature(signer, *counter, checks);
+    if (cs_flags == VERIFICATION_FLAGS::OK) {
+      timeless_signature = true;
+    }
+  } else if (not timeless_signature and has_ms_counter_sig) {
+    timeless_signature = true;
+  }
+  bool should_check_cert_time = not timeless_signature or is_true(checks & VERIFICATION_CHECKS::LIFETIME_SIGNING);
+  if (is_true(checks & VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
+      should_check_cert_time = false;
+  }
+  if (should_check_cert_time) {
+    /*
+     * Verify certificate validities
+     */
+    if (x509::time_is_past(cert.valid_to())) {
+      return flags | VERIFICATION_FLAGS::CERT_EXPIRED;
+    }
+
+    if (x509::time_is_future(cert.valid_from())) {
+      return flags | VERIFICATION_FLAGS::CERT_FUTURE;
+    }
+
   }
   return flags;
 }
@@ -265,6 +409,63 @@ Signature::VERIFICATION_FLAGS Signature::check() const {
 
 const std::vector<uint8_t>& Signature::raw_der(void) const {
   return this->original_raw_signature_;
+}
+
+
+const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
+  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+      [&serialno] (const x509& cert) {
+        return cert.serial_number() == serialno;
+      });
+  if (it_cert == std::end(this->certificates_)) {
+    return nullptr;
+  }
+  return &(*it_cert);
+}
+
+
+const x509* Signature::find_crt_subject(const std::string& subject) const {
+  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+      [&subject] (const x509& cert) {
+        return cert.subject() == subject;
+      });
+  if (it_cert == std::end(this->certificates_)) {
+    return nullptr;
+  }
+  return &(*it_cert);
+}
+
+const x509* Signature::find_crt_subject(const std::string& subject, const std::vector<uint8_t>& serialno) const {
+  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+      [&subject, &serialno] (const x509& cert) {
+        return cert.subject() == subject and cert.serial_number() == serialno;
+      });
+  if (it_cert == std::end(this->certificates_)) {
+    return nullptr;
+  }
+  return &(*it_cert);
+}
+
+const x509* Signature::find_crt_issuer(const std::string& issuer) const {
+  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+      [&issuer] (const x509& cert) {
+        return cert.issuer() == issuer;
+      });
+  if (it_cert == std::end(this->certificates_)) {
+    return nullptr;
+  }
+  return &(*it_cert);
+}
+
+const x509* Signature::find_crt_issuer(const std::string& issuer, const std::vector<uint8_t>& serialno) const {
+  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+      [&issuer, &serialno] (const x509& cert) {
+        return cert.issuer() == issuer and cert.serial_number() == serialno;
+      });
+  if (it_cert == std::end(this->certificates_)) {
+    return nullptr;
+  }
+  return &(*it_cert);
 }
 
 void Signature::accept(Visitor& visitor) const {
@@ -342,13 +543,7 @@ inline void print_attr(it_const_attributes_t& attrs, std::ostream& os) {
       case SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE:
         {
           const auto& ct = reinterpret_cast<const PKCS9CounterSignature&>(attr);
-          it_const_signers_t signers = ct.signers();
-
-          if (signers.size() > 1 or signers.size() == 0) {
-            suffix = std::to_string(signers.size()) + " signers";
-            break;
-          }
-          const SignerInfo& signer = signers[0];
+          const SignerInfo& signer = ct.signer();
           suffix = signer.issuer();
           break;
         }

@@ -102,10 +102,34 @@ void create<SignerInfo>(py::module& m) {
 
     .def("get_attribute",
         &SignerInfo::get_attribute,
-        "Return the authenticated or un-authenticated attribute matching the "
-        "given " RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) " \n\n"
-        "It returns **the first** entry that matches the given type. If it can't be "
-        "found, it returns a nullptr",
+        R"delim(
+        Return the authenticated or un-authenticated attribute matching the
+        given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
+        It returns **the first** entry that matches the given type. If it can't be
+        found, it returns None
+        )delim",
+        "type"_a,
+        py::return_value_policy::reference)
+
+    .def("get_auth_attribute",
+        &SignerInfo::get_auth_attribute,
+        R"delim(
+        Return the authenticated attribute matching the
+        given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
+        It returns **the first** entry that matches the given type. If it can't be
+        found, it returns None
+        )delim",
+        "type"_a,
+        py::return_value_policy::reference)
+
+    .def("get_unauth_attribute",
+        &SignerInfo::get_unauth_attribute,
+        R"delim(
+        Return the un-authenticated attribute matching the
+        given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
+        It returns **the first** entry that matches the given type. If it can't be
+        found, it returns a nullptr
+        )delim",
         "type"_a,
         py::return_value_policy::reference)
 

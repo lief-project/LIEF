@@ -27,6 +27,7 @@
 namespace LIEF {
 namespace PE {
 
+class Signature;
 class Attribute;
 class Parser;
 class SignatureParser;
@@ -52,6 +53,7 @@ class LIEF_API SignerInfo : public Object {
 
   friend class Parser;
   friend class SignatureParser;
+  friend class Signature;
 
   public:
   using encrypted_digest_t = std::vector<uint8_t>;
@@ -110,6 +112,18 @@ class LIEF_API SignerInfo : public Object {
   //! found, it returns a nullptr.
   const Attribute* get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
 
+  //! Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  //!
+  //! It returns **the first** entry that matches the given type. If it can't be
+  //! found, it returns a nullptr.
+  const Attribute* get_auth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
+
+  //! Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  //!
+  //! It returns **the first** entry that matches the given type. If it can't be
+  //! found, it returns a nullptr.
+  const Attribute* get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
+
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
   inline const x509* cert() const {
     return this->cert_.get();
@@ -120,6 +134,11 @@ class LIEF_API SignerInfo : public Object {
     return this->cert_.get();
   }
 
+  //! Raw blob that is signed by the signer certificate
+  const std::vector<uint8_t> raw_auth_data() const {
+    return this->raw_auth_data_;
+  }
+
   virtual void accept(Visitor& visitor) const override;
 
   virtual ~SignerInfo(void);
@@ -127,7 +146,7 @@ class LIEF_API SignerInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info);
 
   private:
-  uint32_t version_;
+  uint32_t version_ = 0;
   std::string issuer_;
   std::vector<uint8_t> serialno_;
 
@@ -135,11 +154,13 @@ class LIEF_API SignerInfo : public Object {
   ALGORITHMS digest_enc_algorithm_ = ALGORITHMS::UNKNOWN;
 
   encrypted_digest_t encrypted_digest_;
+
+  std::vector<uint8_t> raw_auth_data_;
+
   std::vector<std::unique_ptr<Attribute>> authenticated_attributes_;
   std::vector<std::unique_ptr<Attribute>> unauthenticated_attributes_;
 
   std::unique_ptr<x509> cert_;
-
 };
 
 }

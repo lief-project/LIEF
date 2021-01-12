@@ -34,6 +34,7 @@ namespace PE {
 
 class Parser;
 class SignatureParser;
+class Signature;
 
 class RsaInfo;
 
@@ -42,6 +43,7 @@ class LIEF_API x509 : public Object {
 
   friend class Parser;
   friend class SignatureParser;
+  friend class Signature;
 
   public:
   //! Tuple (Year, Month, Day, Hour, Minute, Second)
@@ -54,6 +56,15 @@ class LIEF_API x509 : public Object {
 
   //! Parse x500 certificate(s) from raw blob
   static certificates_t parse(const std::vector<uint8_t>& content);
+
+  //! Return True if ``before`` is *before* than ``after``. False otherwise
+  static bool check_time(const date_t& before, const date_t& after);
+
+  //! True if the given time is in the **past** according to the clock's system
+  static bool time_is_past(const date_t& to);
+
+  //! True if the given time is in the future according to the clock's system
+  static bool time_is_future(const date_t& from);
 
   //! Public key scheme
   enum class KEY_TYPES  {
@@ -93,6 +104,19 @@ class LIEF_API x509 : public Object {
     BADCRL_BAD_KEY         = 1 << 19, /**< The CRL is signed with an unacceptable key (eg bad curve, RSA too short). */
   };
 
+  //! Key usage as defined in [RFC #5280 - section-4.2.1.3](https://tools.ietf.org/html/rfc5280#section-4.2.1.3)
+  enum class KEY_USAGE {
+    DIGITAL_SIGNATURE = 0, /**< The key is used for digital signature */
+    NON_REPUDIATION,       /**< The key is used for digital signature AND to protects against falsely denying some action */
+    KEY_ENCIPHERMENT,      /**< The key is used for enciphering private or secret keys */
+    DATA_ENCIPHERMENT,     /**< The key is used for directly enciphering raw user data without the use of an intermediate symmetric cipher */
+    KEY_AGREEMENT,         /**< The Key is used for key agreement. (e.g. with Diffie-Hellman) */
+    KEY_CERT_SIGN,         /**< The key is used for verifying signatures on public key certificates */
+    CRL_SIGN,              /**< The key is used for verifying signatures on certificate revocation lists */
+    ENCIPHER_ONLY,         /**< In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for enciphering data while performing key agreement */
+    DECIPHER_ONLY,         /**< In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for deciphering data while performing key agreement */
+  };
+
   x509(mbedtls_x509_crt* ca);
   x509(const x509& other);
   x509& operator=(x509 other);
@@ -108,10 +132,10 @@ class LIEF_API x509 : public Object {
   oid_t signature_algorithm(void) const;
 
   //! Start time of certificate validity
-  x509::date_t valid_from(void) const;
+  date_t valid_from(void) const;
 
   //! End time of certificate validity
-  x509::date_t valid_to(void) const;
+  date_t valid_to(void) const;
 
   //! Issuer informations
   std::string issuer(void) const;
@@ -138,6 +162,20 @@ class LIEF_API x509 : public Object {
 
   //! Verify that this certificate **is trusted** by the given CA list
   VERIFICATION_FLAGS is_trusted_by(const std::vector<x509>& ca) const;
+
+  //! Policy information terms as OID (see RFC #5280)
+  std::vector<oid_t> certificate_policies() const;
+
+  //! Purpose of the key contained in the certificate
+  std::vector<KEY_USAGE> key_usage() const;
+
+  //! Indicates one or more purposes for which the certified public key may be used (OID types)
+  std::vector<oid_t> ext_key_usage() const;
+
+  bool is_ca() const;
+
+  //! The signature of the certificate
+  std::vector<uint8_t> signature() const;
 
   virtual void accept(Visitor& visitor) const override;
 

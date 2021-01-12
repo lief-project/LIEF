@@ -48,15 +48,15 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
 
   public:
   PKCS9CounterSignature();
-  PKCS9CounterSignature(std::vector<SignerInfo> signers);
+  PKCS9CounterSignature(SignerInfo signer);
   PKCS9CounterSignature(const PKCS9CounterSignature&);
   PKCS9CounterSignature& operator=(const PKCS9CounterSignature&);
 
   virtual std::unique_ptr<Attribute> clone(void) const override;
 
-  //! Iterator over the SignerInfo as described in the RFC
-  inline it_const_signers_t signers() const {
-    return this->signers_;
+  //! SignerInfo as described in the RFC #2985
+  inline const SignerInfo& signer() const {
+    return this->signer_;
   }
 
   //! Print information about the attribute
@@ -67,7 +67,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   virtual ~PKCS9CounterSignature();
 
   private:
-  std::vector<SignerInfo> signers_;
+  SignerInfo signer_;
 };
 
 }

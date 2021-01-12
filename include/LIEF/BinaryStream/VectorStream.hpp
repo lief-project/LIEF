@@ -40,6 +40,14 @@ class VectorStream : public BinaryStream {
   }
 
 
+  inline uint8_t* start() {
+    return this->binary_.data();
+  }
+
+  inline const uint8_t* start() const {
+    return this->binary_.data();
+  }
+
   inline uint8_t* end() {
     return this->binary_.data() + this->binary_.size();
   }

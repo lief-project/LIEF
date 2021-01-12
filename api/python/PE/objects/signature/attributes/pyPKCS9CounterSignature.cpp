@@ -49,9 +49,10 @@ void create<PKCS9CounterSignature>(py::module& m) {
         }
 
     )delim")
-    .def_property_readonly("signers",
-        &PKCS9CounterSignature::signers,
-        "Iterator over the " RST_CLASS_REF(lief.PE.SignerInfo) " as described in the RFC")
+    .def_property_readonly("signer",
+        &PKCS9CounterSignature::signer,
+        "Return the " RST_CLASS_REF(lief.PE.SignerInfo) " as described in the RFC #2985",
+        py::return_value_policy::reference)
 
     .def("__hash__",
         [] (const PKCS9CounterSignature& obj) {
