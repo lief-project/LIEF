@@ -14,6 +14,7 @@ try:
 except ImportError:
     from pprint import pprint
 
+HAS_EXCEPTION = False
 class exceptions_handler(object):
     func = None
 
@@ -28,14 +29,15 @@ class exceptions_handler(object):
         try:
             return self.func(*args, **kwargs)
         except self.exceptions as e:
+            HAS_EXCEPTION = True
             if self.on_except_callback is not None:
                 self.on_except_callback(e)
             else:
-                print("-" * 60)
+                print("-" * 60, file=sys.stderr)
                 print("Exception in {}: {}".format(self.func.__name__, e))
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
-                print("-" * 60)
+                print("-" * 60, file=sys.stderr)
 
 @exceptions_handler(Exception)
 def print_attr(indent: int, auth: lief.PE.Attribute):
@@ -300,3 +302,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    if HAS_EXCEPTION:
+        sys.exit(1)
