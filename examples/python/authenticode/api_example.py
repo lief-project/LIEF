@@ -6,9 +6,11 @@ import os
 # Parse PE file
 pe = lief.parse(sys.argv[1])
 
+sep = (":") if sys.version_info.minor > 7 else ()
+
 # Get authenticode
-print(pe.authentihash_md5.hex(":")) # 1c:a0:91:53:dc:9a:3a:5f:34:1d:7f:9b:b9:56:69:4d
-print(pe.authentihash(lief.PE.ALGORITHMS.SHA_1).hex(":")) # 1e:ad:dc:29:1e:db:41:a2:69:c2:ba:ae:4b:fb:9d:31:e7:bb:ab:59
+print(pe.authentihash_md5.hex(*sep)) # 1c:a0:91:53:dc:9a:3a:5f:34:1d:7f:9b:b9:56:69:4d
+print(pe.authentihash(lief.PE.ALGORITHMS.SHA_1).hex(*sep)) # 1e:ad:dc:29:1e:db:41:a2:69:c2:ba:ae:4b:fb:9d:31:e7:bb:ab:59
 
 # Check signature according to PKCS #7 and Microsoft documentation
 print(pe.verify_signature()) # Return VERIFICATION_FLAGS.OK
