@@ -469,7 +469,21 @@ Relocations AARCH64
 
 
 Relocations MIPS
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. doxygenenum:: LIEF::ELF::RELOC_MIPS
+   :project: lief
+
+
+Relocations PPC
+~~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::RELOC_PPC
+   :project: lief
+
+
+Relocations PPC64
+~~~~~~~~~~~~~~~~~
+
+.. doxygenenum:: LIEF::ELF::RELOC_PPC64
    :project: lief

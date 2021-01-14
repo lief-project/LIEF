@@ -558,6 +558,27 @@ Relocations MIPS
 ----------
 
 
+Relocations PPC
+~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.RELOCATION_PPC
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Relocations PPC64
+~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.ELF.RELOCATION_PPC64
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 Dynamic symbols counting
 ~~~~~~~~~~~~~~~~~~~~~~~~
