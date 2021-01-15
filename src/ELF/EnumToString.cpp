@@ -1009,7 +1009,7 @@ const char* to_string(RELOC_POWERPC64 e) {
 }
 
 const char* to_string(RELOC_MIPS e) {
-  CONST_MAP(RELOC_MIPS, const char*, 111) enumStrings {
+  CONST_MAP(RELOC_MIPS, const char*, 112) enumStrings {
     {  RELOC_MIPS::R_MICROMIPS_26_S1,           "MIRCRO_MIPS_26_S1" },
     {  RELOC_MIPS::R_MICROMIPS_CALL16,          "MIRCRO_MIPS_CALL16" },
     {  RELOC_MIPS::R_MICROMIPS_CALL_HI16,       "MIRCRO_MIPS_CALL_HI16" },
