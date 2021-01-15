@@ -258,6 +258,7 @@ void Hash::visit(const ImportEntry& import_entry) {
   this->process(import_entry.iat_value());
   this->process(import_entry.name());
   this->process(import_entry.data());
+  this->process(import_entry.manually_added());
 }
 
 void Hash::visit(const ResourceNode& resource_node) {

@@ -462,6 +462,7 @@ void JsonVisitor::visit(const ImportEntry& import_entry) {
   this->node_["iat_address"] = import_entry.iat_address();
   this->node_["data"]        = import_entry.data();
   this->node_["hint"]        = import_entry.hint();
+  this->node_["manually_added"] = import_entry.manually_added();
 }
 
 void JsonVisitor::visit(const ResourceData& resource_data) {

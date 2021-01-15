@@ -66,9 +66,11 @@ class LIEF_API ImportEntry : public Object {
   //! @brief **Original** address of the entry in the Import Address Table
   uint64_t iat_address(void) const;
 
+  bool manually_added(void) const;
 
   void name(const std::string& name);
   void data(uint64_t data);
+  void manually_added(bool manually_added);
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -84,6 +86,8 @@ class LIEF_API ImportEntry : public Object {
   uint64_t    iat_value_;
   uint64_t    rva_;
   PE_TYPE     type_;
+
+  bool manually_added_;
 };
 
 }

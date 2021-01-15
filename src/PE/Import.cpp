@@ -214,12 +214,14 @@ void Import::import_address_table_rva(uint32_t rva) {
 
 ImportEntry& Import::add_entry(const ImportEntry& entry) {
   this->entries_.push_back(entry);
+  this->entries_.back().manually_added(true);
   return this->entries_.back();
 }
 
 
 ImportEntry& Import::add_entry(const std::string& name) {
   this->entries_.emplace_back(name);
+  this->entries_.back().manually_added(true);
   return this->entries_.back();
 }
 
