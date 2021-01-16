@@ -45,6 +45,7 @@ Changelog
 
 :Misc:
   * Add Python 3.9 support
+  * ``FindLIEF.cmake`` deprecates ``LIEF_ROOT``. You should use ``LIEF_DIR`` instead.
 
 
 :Logging:
