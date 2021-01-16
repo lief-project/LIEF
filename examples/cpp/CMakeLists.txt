@@ -10,6 +10,7 @@ set(LIEF_ELF_CPP_EXAMPLES
 set(LIEF_PE_CPP_EXAMPLES
   pe_builder.cpp
   pe_reader.cpp
+  pe_authenticode_check.cpp
 )
 
 set(LIEF_MACHO_CPP_EXAMPLES
