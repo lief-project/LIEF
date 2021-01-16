@@ -478,12 +478,12 @@ Relocations MIPS
 Relocations PPC
 ~~~~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::RELOC_PPC
+.. doxygenenum:: LIEF::ELF::RELOC_POWERPC32
    :project: lief
 
 
 Relocations PPC64
 ~~~~~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::ELF::RELOC_PPC64
+.. doxygenenum:: LIEF::ELF::RELOC_POWERPC64
    :project: lief
