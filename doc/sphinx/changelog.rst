@@ -1,6 +1,8 @@
 Changelog
 =========
 
+.. _release-0110:
+
 0.11.0 - Not Released
 ---------------------
 
