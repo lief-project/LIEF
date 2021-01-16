@@ -363,13 +363,17 @@ Regarding the PKCS #7 structure itself, LIEF is able to parse and process most o
 the :class:`lief.PE.SignerInfo` structure can embed attributes (authenticated or not) whose the ASN.1 structure
 can be public or not. As of LIEF v0.11.0 we do not support yet the following OIDs:
 
-+----------------------------+-------------------------------------------------------+
-| OID                        | Description                                           |
-+============================+=======================================================+
-| 1.3.6.1.4.1.311.3.3.1      | Ms-CounterSign (undocumented)                         |
-+----------------------------+-------------------------------------------------------+
-| 1.2.840.113549.1.9.16.2.12 | S/MIME Signing certificate (id-aa-signingCertificate) |
-+----------------------------+-------------------------------------------------------+
++-------------------------------+-------------------------------------------------------+
+| OID                           | Description                                           |
++===============================+=======================================================+
+| 1.3.6.1.4.1.311.3.3.1         | Ms-CounterSign (undocumented)                         |
++-------------------------------+-------------------------------------------------------+
+| 1.2.840.113549.1.9.16.2.12    | S/MIME Signing certificate (id-aa-signingCertificate) |
++-------------------------------+-------------------------------------------------------+
+| 1.3.6.1.4.1.311.2.6.1         | SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID                   |
++-------------------------------+-------------------------------------------------------+
+| 1.3.6.1.4.1.311.10.3.28       | szOID_PLATFORM_MANIFEST_BINARY_ID                                         |
++-------------------------------+-------------------------------------------------------+
 
 These not-supported attributes are wrapped within the :class:`lief.PE.GenericType` that exposes the raw
 ASN.1 blob with the property :attr:`~lief.PE.GenericType.raw_content`.
