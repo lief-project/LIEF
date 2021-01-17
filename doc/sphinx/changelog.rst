@@ -23,6 +23,18 @@ Changelog
 
 :PE:
   * Enhance PE Authenticode. See `PE Authenticode <tutorials/13_pe_authenticode.html>`_
+  * :func:`~lief.PE.get_imphash` can now generate the same value as pefile and Virus Total (:issue:`299`)
+
+    .. code-block:: python
+
+      pe = lief.parse("example.exe")
+      vt_imphash = lief.PE.get_imphash(pe, lief.PE.IMPHASH_MODE.PEFILE)
+      lief_imphash = lief.PE.get_imphash(pe, lief.PE.IMPHASH_MODE.DEFAULT)
+
+    .. seealso::
+
+      :class:`lief.PE.IMPHASH_MODE` and :func:`lief.PE.get_imphash`
+
   * :attr:`~lief.PE.LangCodeItem.items` now returns a dictionary whose values are **bytes** (instead of
     ``str`` object). This change is related to ``utf-16`` support.
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`

@@ -35,10 +35,22 @@
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
+#include "LIEF/utils.hpp"
+
 #include "utils/ordinals_lookup_tables/libraries_table.hpp"
+#include "utils/ordinals_lookup_tables_std/libraries_table.hpp"
+
+#include "hash_stream.hpp"
 
 namespace LIEF {
 namespace PE {
+
+inline std::string to_lower(std::string str) {
+  std::string lower = str;
+  std::transform(std::begin(str), std::end(str),
+    std::begin(lower), ::tolower);
+  return lower;
+}
 
 bool is_pe(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
@@ -153,21 +165,65 @@ PE_TYPE get_type(const std::vector<uint8_t>& raw) {
 }
 
 
-std::string get_imphash(const Binary& binary) {
-  uint8_t md5_buffer[16];
+std::string get_imphash_std(const Binary& binary) {
+  static const std::set<std::string> ALLOWED_EXT = {"dll", "ocx", "sys"};
+  std::vector<uint8_t> md5_buffer(16);
+  if (not binary.has_imports()) {
+    return "";
+  }
+  std::string lstr;
+  bool first_entry = true;
+  hashstream hs(hashstream::HASH::MD5);
+  for (const Import& imp : binary.imports()) {
+    std::string libname = imp.name();
+
+    Import resolved = resolve_ordinals(imp, /* strict */ false, /* use_std */ true);
+    size_t ext_idx = resolved.name().find_last_of(".");
+    std::string name = resolved.name();
+    std::string ext;
+    if (ext_idx != std::string::npos) {
+      ext = to_lower(resolved.name().substr(ext_idx + 1));
+    }
+    if (ALLOWED_EXT.find(ext) != std::end(ALLOWED_EXT)) {
+      name = name.substr(0, ext_idx);
+    }
+
+    std::string entries_string;
+    for (const ImportEntry& e : resolved.entries()) {
+      std::string funcname;
+      if (e.is_ordinal()) {
+        funcname = "ord" + std::to_string(e.ordinal());
+      } else {
+        funcname = e.name();
+      }
+
+      if (not entries_string.empty()) {
+        entries_string += ",";
+      }
+      entries_string += name + "." + funcname;
+    }
+    if (not first_entry) {
+      lstr += ",";
+    } else {
+      first_entry = false;
+    }
+    lstr += to_lower(entries_string);
+
+    // use write(uint8_t*, size_t) instead of write(const std::string&) to avoid null char
+    hs.write(reinterpret_cast<const uint8_t*>(lstr.data()), lstr.size());
+    lstr.clear();
+  }
+
+  return hex_dump(hs.raw(), "");
+}
+
+
+std::string get_imphash_lief(const Binary& binary) {
+  std::vector<uint8_t> md5_buffer(16);
   if (not binary.has_imports()) {
     return std::to_string(0);
   }
 
-  auto to_lower = [] (const std::string& str) {
-    std::string lower = str;
-    std::transform(
-      std::begin(str),
-      std::end(str),
-      std::begin(lower),
-      ::tolower);
-    return lower;
-  };
   it_const_imports imports = binary.imports();
 
   std::string import_list;
@@ -199,24 +255,24 @@ std::string get_imphash(const Binary& binary) {
   mbedtls_md5(
       reinterpret_cast<const uint8_t*>(import_list.data()),
       import_list.size(),
-      md5_buffer);
-
-  std::string output_hex = std::accumulate(
-      std::begin(md5_buffer),
-      std::end(md5_buffer),
-      std::string{},
-      [] (const std::string& a, uint8_t b) {
-        std::stringstream ss;
-        ss << std::hex;
-        ss << std::setw(2) << std::setfill('0') << static_cast<uint32_t>(b);
-        return a + ss.str();
-      });
-
-  return output_hex;
+      md5_buffer.data());
+  return hex_dump(md5_buffer, "");
 }
 
+std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
+  switch (mode) {
+    case IMPHASH_MODE::LIEF:
+      {
+        return get_imphash_lief(binary);
+      }
+    case IMPHASH_MODE::PEFILE:
+      {
+        return get_imphash_std(binary);
+      }
+  }
+}
 
-Import resolve_ordinals(const Import& import, bool strict) {
+Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
 
   it_const_import_entries entries = import.entries();
 
@@ -230,15 +286,11 @@ Import resolve_ordinals(const Import& import, bool strict) {
     return import;
   }
 
-  std::string name = import.name();
-  std::transform(
-      std::begin(name),
-      std::end(name),
-      std::begin(name),
-      ::tolower);
+  std::string name = to_lower(import.name());
 
-  auto&& it_library_lookup = ordinals_library_tables.find(name);
-  if (it_library_lookup == std::end(ordinals_library_tables)) {
+  auto it_library_lookup = use_std ? imphashstd::ordinals_library_tables.find(name) : ordinals_library_tables.find(name);
+  if (it_library_lookup == std::end(imphashstd::ordinals_library_tables) or
+      it_library_lookup == std::end(ordinals_library_tables)) {
     std::string msg = "Ordinal lookup table for '" + name + "' not implemented";
     if (strict) {
       throw not_found(msg);
@@ -250,7 +302,7 @@ Import resolve_ordinals(const Import& import, bool strict) {
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
       LIEF_DEBUG("Dealing with: {}", entry);
-      auto&& it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
+      auto it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
       if (it_entry == std::end(it_library_lookup->second)) {
         if (strict) {
           throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));

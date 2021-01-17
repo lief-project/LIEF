@@ -536,6 +536,9 @@ Utilities
 .. doxygenfunction:: LIEF::PE::get_imphash
   :project: lief
 
+.. doxygenenum:: LIEF::PE::IMPHASH_MODE
+   :project: lief
+
 .. doxygenfunction:: LIEF::PE::resolve_ordinals
   :project: lief
 

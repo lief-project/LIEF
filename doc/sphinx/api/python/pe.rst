@@ -632,6 +632,11 @@ Utilities
 
 .. autofunction:: lief.PE.get_imphash
 
+.. autoclass:: lief.PE.IMPHASH_MODE
+  :members:
+  :inherited-members:
+  :undoc-members:
+
 .. autofunction:: lief.PE.resolve_ordinals
 
 -----------

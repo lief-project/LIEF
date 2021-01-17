@@ -190,6 +190,18 @@ class TestImphash(TestCase):
         self.assertNotEqual(lief.PE.get_imphash(binary_lhs), lief.PE.get_imphash(binary_rhs))
 
 
+    def test_pefile(self):
+        """
+        Check that we can reproduce pefile output
+        """
+        s1 = lief.parse(get_sample("PE/PE64_x86-64_binary_notepad.exe"))
+        self.assertEqual(lief.PE.get_imphash(s1, lief.PE.IMPHASH_MODE.PEFILE), "38934ee4aaaaa8dab7c73508bc6715ca")
+
+        s2 = lief.parse(get_sample("PE/PE32_x86_binary_PGO-PGI.exe"))
+        self.assertEqual(lief.PE.get_imphash(s2, lief.PE.IMPHASH_MODE.PEFILE), "4d7ac2eefa8a35d9c445d71412e8e71c")
+
+
+
 
 
 

@@ -138,13 +138,6 @@ class TestPe(TestCase):
         except Exception as e:
             self.logger.error(e)
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()
