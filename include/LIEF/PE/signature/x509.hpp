@@ -54,7 +54,7 @@ class LIEF_API x509 : public Object {
   //! Parse x509 certificate(s) from file path
   static certificates_t parse(const std::string& path);
 
-  //! Parse x500 certificate(s) from raw blob
+  //! Parse x509 certificate(s) from raw blob
   static certificates_t parse(const std::vector<uint8_t>& content);
 
   //! Return True if ``before`` is *before* than ``after``. False otherwise
