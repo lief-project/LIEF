@@ -130,17 +130,13 @@ void Parser::parse_rich_header(void) {
   LIEF_DEBUG("Parsing rich header");
   const std::vector<uint8_t>& dos_stub = this->binary_->dos_stub();
   VectorStream stream{dos_stub};
-  auto&& it_rich = std::search(
-      std::begin(dos_stub),
-      std::end(dos_stub),
-      std::begin(Rich_Magic),
-      std::end(Rich_Magic));
+  auto it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
+      std::begin(Rich_Magic), std::end(Rich_Magic));
 
   if (it_rich == std::end(dos_stub)) {
     LIEF_DEBUG("Rich header not found!");
     return;
   }
-
 
   const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
   LIEF_DEBUG("Offset to rich header: 0x{:x}", end_offset_rich_header);
@@ -152,7 +148,6 @@ void Parser::parse_rich_header(void) {
 
   this->binary_->rich_header().key(xor_key);
   LIEF_DEBUG("XOR key: 0x{:x}", xor_key);
-
 
   uint64_t curent_offset = end_offset_rich_header - sizeof(Rich_Magic);
 
@@ -176,6 +171,10 @@ void Parser::parse_rich_header(void) {
 
     value = stream.peek<uint32_t>(curent_offset) ^ xor_key;
     curent_offset -= sizeof(uint32_t);
+
+    if (value == 0 and count == 0) { // Skip padding entry
+      continue;
+    }
 
     if (value == DanS_Magic_number or count == DanS_Magic_number) {
       break;
