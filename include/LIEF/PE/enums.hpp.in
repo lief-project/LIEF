@@ -23,7 +23,8 @@ enum class PE_SECTION_TYPES : uint8_t {
   EXPORT     = 7,
   DEBUG      = 8,
   LOAD_CONFIG = 9,
-  UNKNOWN     = 10
+  UNKNOWN     = 10,
+  OLD_IMPORT = 100
 };
 
 enum class PE_TYPE : uint16_t {
