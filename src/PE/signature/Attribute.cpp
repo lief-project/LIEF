@@ -29,6 +29,7 @@ Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) :
 {}
 
 Attribute::Attribute(const Attribute& other) :
+  Object{other},
   type_{other.type_}
 {}
 

@@ -270,6 +270,7 @@ std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
         return get_imphash_std(binary);
       }
   }
+  return "";
 }
 
 Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
