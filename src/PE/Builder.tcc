@@ -172,16 +172,17 @@ void Builder::build_import_table(void) {
 
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
   uint32_t offset_imports  = this->binary_->rva_to_offset(this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
+  auto offset_imports_in_section = offset_imports - this->binary_->section_from_offset(offset_imports).offset();
+  auto original_import_offset = (*it_import_section)->pointerto_raw_data();
   Section& import_section = this->binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
 
 
   // Patch the original IAT with the address of the associated trampoline
   if (this->patch_imports_) {
-    Section& original_import = this->binary_->section_from_offset(offset_imports);
+    Section& original_import = this->binary_->section_from_offset(original_import_offset);
     std::vector<uint8_t> import_content  = original_import.content();
-    uint32_t roffset_import = offset_imports - original_import.offset();
 
-    pe_import *import_header = reinterpret_cast<pe_import*>(import_content.data() + roffset_import);
+    pe_import *import_header = reinterpret_cast<pe_import*>(import_content.data() + offset_imports_in_section);
     uint32_t jumpOffsetTmp = trampolines_offset;
     while (import_header->ImportAddressTableRVA != 0) {
       uint32_t offsetTable = this->binary_->rva_to_offset(import_header->ImportLookupTableRVA)  - original_import.pointerto_raw_data();
