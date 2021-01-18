@@ -190,6 +190,17 @@ class BuildLibrary(build_ext):
 
         env = os.environ
 
+        if os.getenv("CXXFLAGS", None) is not None:
+            cmake_args += [
+                '-DCMAKE_CXX_FLAGS={}'.format(os.getenv("CXXFLAGS")),
+            ]
+
+        if os.getenv("CFLAGS", None) is not None:
+            cmake_args += [
+                '-DCMAKE_C_FLAGS={}'.format(os.getenv("CFLAGS")),
+            ]
+
+
         if platform.system() == "Windows":
             from setuptools import msvc
 
