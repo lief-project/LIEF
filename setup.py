@@ -415,7 +415,7 @@ def get_pkg_info_version(pkg_info_file):
 
 
 def get_version() -> str:
-    version   = "0.0.0"
+    version   = "0.11.0"
     pkg_info  = os.path.join(CURRENT_DIR, "{}.egg-info".format(PACKAGE_NAME), "PKG-INFO")
     git_dir   = os.path.join(CURRENT_DIR, ".git")
     if os.path.isdir(git_dir):
