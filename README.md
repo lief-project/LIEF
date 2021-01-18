@@ -73,6 +73,7 @@ Main features:
     - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
     - [Mach-O modification](https://lief.quarkslab.com/doc/latest/tutorials/11_macho_modification.html)
     - [ELF Coredump](https://lief.quarkslab.com/doc/latest/tutorials/12_elf_coredump.html)
+    - [PE Authenticode](https://lief.quarkslab.com/doc/latest/tutorials/13_pe_authenticode.html)
 - [Contact](#contact)
 - [About](#about)
   - [Authors](#authors)
@@ -101,55 +102,8 @@ pip install [--user] --index-url https://lief.quarkslab.com/packages lief==0.11.
 
 ### Packages
 
-<table>
-<tr><td colspan="4"><a href="https://lief-project.github.io/packages/sdk"><img src="https://img.shields.io/badge/release-master-brightgreen.svg?style=default"></a></td></tr>
-<tr>
-    <th>Linux</th>
-    <th>Windows - x86</th>
-    <th>Windows - x86-64</th>
-    <th>OSX</th>
-</tr>
-
-<tr>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-Linux.tar.gz">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-win32.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-win64.zip">SDK</a></td>
-  <td><a href="https://lief-project.github.io/packages/sdk/LIEF-0.11.0-Darwin.tar.gz">SDK</a></td>
-</tr>
-
-<tr>
-  <td colspan="4"><p align="center"><a href="https://lief-project.github.io/packages/lief">Python</a></p></td>
-</tr>
-</table>
-
-<table>
-<tr><td colspan="6"><b><img src="https://img.shields.io/badge/release-0.10.1-brightgreen.svg?style=default"></b></td></tr>
-<tr>
-    <th>Linux</th>
-    <th>Windows</th>
-    <th>OSX</th>
-    <th>Documentation</th>
-</tr>
-
-<tr>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-Linux.tar.gz">SDK</a></td>
-  <td>
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-win32.zip">SDK - x86</a>
-    <br />
-    <a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-win64.zip">SDK - x86-64</a>
-  </td>
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/LIEF-0.10.1-Darwin.tar.gz">SDK</a></td>
-
-  <td><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/documentation-0.10.1.tar.gz">Sphinx + Doxygen</a></td>
-</tr>
-
-
-<tr>
-  <td colspan="3"><p align="center"><a href="https://github.com/lief-project/LIEF/releases/download/0.10.1/">Python</a></p></td>
-</tr>
-
-
-</table>
+* **Nightly**: https://github.com/lief-project/packages/tree/gh-pages
+* **v0.11.0**: https://github.com/lief-project/LIEF/releases/tag/0.11.0
 
 Here are guides to install or integrate LIEF:
 
@@ -252,7 +206,7 @@ Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://ww
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.10.1/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.11.0/LICENSE).
 
 ### Bibtex
 
@@ -267,9 +221,4 @@ LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/
 
 ```
 
----------------
-
-<p align="center" >
-<img width="40%" src="http://lief.quarkslab.com/resources/QB-big.png"/>
-</p>
 

@@ -3,8 +3,8 @@ Changelog
 
 .. _release-0110:
 
-0.11.0 - Not Released
----------------------
+0.11.0 - January 19, 2021
+-------------------------
 
 :ELF:
   * :github_user:`mkomet` updated enums related to Android (see: :commit:`9dd641d380a5defd0a71a9f42dde2fe9c9cb1dbd`)
