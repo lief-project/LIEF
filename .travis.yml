@@ -310,13 +310,13 @@ before_install:
 after_script:
   - ccache --show-stats
 
-deploy:
-  provider: releases
-  token:
-    - secure: LTJMZp9kJ9/tmv73YGktP3Bdhh3moettDNooiRlQfUEgUemRlp9K+ybbufN0ya0Md0bouOJ/7nWqFToWl1G5/kcRr4MjV/P2c+iH8W7mvWcFupLGdwm1+aqpin3hiGsdYz0a1TK37y6DANspFwHILjq1SPf5L8kGEHnYSIfyUFHaETbv7GHL+4gf1XG/55KVuyFa3vZ2BPa3sIXr4bRypdNsqssFOZ7qeoJawtcI3TbjmLqx+sOGR2aiG+9lX+/vcYVGECHOE4KdV5BbTFitDLkJ0toAQrgN4XuB6XMXEnijU0RGtpkvsUAYJUuYaNcV2ea4bwLPCKz0IJvzTw3gtyB/pioP4OUx0xY2csuNuGfppZ0Fb+BWhPx9wOg209lrPjtoWszK8vo4PywKlEUviNG+3hEYx9x382IbtbXvIxp+c2iYdRicudFIdjjSZt7fy1MwBvHhWoBRl1hVw5fpFvRIC6Q1/B6MV55Jc3LVYCs+QHPAXq2KJ1KWK/Q7mmlriG3O+dvswcE1l0/AmeqKuXLsgUMuzScYa4fMFvXL3l/B8bKw205ynMzKvbb61P3sGrJJ+AFDEoHDk8yNtSaTowoUveu75DbL1s1p02QjYeVt7AJS8AsqUm7QPcUU5iXW1gSgt50jD/46/uvK7NZCFj2LzkiVzM5JIbiUANx8pKA=
-  file_glob: true
-  file:
-    - ${TRAVIS_BUILD_DIR}/dist/*.whl
-    - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
-  on:
-    tags: true
+#deploy:
+#  provider: releases
+#  token:
+#    - secure: LTJMZp9kJ9/tmv73YGktP3Bdhh3moettDNooiRlQfUEgUemRlp9K+ybbufN0ya0Md0bouOJ/7nWqFToWl1G5/kcRr4MjV/P2c+iH8W7mvWcFupLGdwm1+aqpin3hiGsdYz0a1TK37y6DANspFwHILjq1SPf5L8kGEHnYSIfyUFHaETbv7GHL+4gf1XG/55KVuyFa3vZ2BPa3sIXr4bRypdNsqssFOZ7qeoJawtcI3TbjmLqx+sOGR2aiG+9lX+/vcYVGECHOE4KdV5BbTFitDLkJ0toAQrgN4XuB6XMXEnijU0RGtpkvsUAYJUuYaNcV2ea4bwLPCKz0IJvzTw3gtyB/pioP4OUx0xY2csuNuGfppZ0Fb+BWhPx9wOg209lrPjtoWszK8vo4PywKlEUviNG+3hEYx9x382IbtbXvIxp+c2iYdRicudFIdjjSZt7fy1MwBvHhWoBRl1hVw5fpFvRIC6Q1/B6MV55Jc3LVYCs+QHPAXq2KJ1KWK/Q7mmlriG3O+dvswcE1l0/AmeqKuXLsgUMuzScYa4fMFvXL3l/B8bKw205ynMzKvbb61P3sGrJJ+AFDEoHDk8yNtSaTowoUveu75DbL1s1p02QjYeVt7AJS8AsqUm7QPcUU5iXW1gSgt50jD/46/uvK7NZCFj2LzkiVzM5JIbiUANx8pKA=
+#  file_glob: true
+#  file:
+#    - ${TRAVIS_BUILD_DIR}/dist/*.whl
+#    - ${TRAVIS_BUILD_DIR}/build/*.tar.gz
+#  on:
+#    tags: true

@@ -124,16 +124,16 @@ artifacts:
   - path: 'build\*.zip'
     name: sdk
 
-deploy:
-  description: "LIEF version $(APPVEYOR_REPO_TAG_NAME)"
-  provider: GitHub
-  auth_token:
-    secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
-  artifact: sdk;python-wheel
-  draft: false
-  prerelease: false
-  force_update: true
-  on:
-    appveyor_repo_tag: true # deploy on tag push only
+#deploy:
+#  description: "LIEF version $(APPVEYOR_REPO_TAG_NAME)"
+#  provider: GitHub
+#  auth_token:
+#    secure: FU9CGrZ1lm0VDHUZg6zvTL4tidluDvRegVUTehCRo2xgiOv6NZePi7TdSy5CsOdG
+#  artifact: sdk;python-wheel
+#  draft: false
+#  prerelease: false
+#  force_update: true
+#  on:
+#    appveyor_repo_tag: true # deploy on tag push only
 
 
