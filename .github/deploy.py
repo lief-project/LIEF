@@ -82,7 +82,7 @@ def get_tag(ci):
         return os.getenv("TRAVIS_TAG", "")
     elif ci == CI.APPVEYOR:
         if "APPVEYOR_REPO_TAG_NAME" in os.environ:
-        return os.getenv("APPVEYOR_REPO_TAG_NAME", ""):
+            return os.getenv("APPVEYOR_REPO_TAG_NAME", "")
     elif ci == CI.GITHUB_ACTIONS:
         ref = os.getenv("GITHUB_REF", "")
         logger.info("Github Action tag: {}".format(ref))
