@@ -511,7 +511,9 @@ message(STATUS "Configuration Types: ${CMAKE_CONFIGURATION_TYPES}")
 message(STATUS "Build Types: ${CMAKE_BUILD_TYPE}")
 
 if(APPLE)
-  set_target_properties(LIB_LIEF PROPERTIES MACOSX_RPATH ".")
+  set_target_properties(LIB_LIEF PROPERTIES
+    MACOSX_RPATH ON
+  )
 endif()
 
 # API

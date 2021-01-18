@@ -151,12 +151,15 @@ set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
 add_dependencies(pyLIEF lief_pybind11)
 
 if(APPLE)
-    set_target_properties(pyLIEF PROPERTIES MACOSX_RPATH ".")
-    set_target_properties(pyLIEF PROPERTIES LINK_FLAGS "-undefined dynamic_lookup ")
+    set_target_properties(pyLIEF PROPERTIES
+      MACOSX_RPATH     ON
+      LINK_FLAGS       "-undefined dynamic_lookup "
+    )
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "")
 if (UNIX)
+  # Even on osx (c.f. EXT_SUFFIX from sysconfig)
   set_target_properties(pyLIEF PROPERTIES SUFFIX ".so")
 elseif(WIN32)
   set_target_properties(pyLIEF PROPERTIES SUFFIX ".pyd")
