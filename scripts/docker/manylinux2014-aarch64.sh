@@ -12,8 +12,11 @@
 # --lief-no-elf --lief-no-android --lief-no-macho --lief-no-json --lief-no-logging \
 #
 set -ex
-CXXFLAGS='-static-libgcc -static-libstdc++' \
-LIEF_PY_XARCH='aarch64' \
+
+export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libstdc++ -static-libgcc'
+export CFLAGS='-ffunction-sections -fdata-sections -static-libstdc++ -static-libgcc'
+export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
+LIEF_PY_XARCH='aarch64'
 $PYTHON_BINARY setup.py --ninja \
   build -t /tmp bdist_wheel --skip-build \
   --plat-name "manylinux2014-aarch64"
