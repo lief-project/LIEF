@@ -173,9 +173,8 @@ void Builder::build_import_table(void) {
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
   uint32_t offset_imports  = this->binary_->rva_to_offset(this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
   auto offset_imports_in_section = offset_imports - this->binary_->section_from_offset(offset_imports).offset();
-  auto original_import_offset = (*it_import_section)->pointerto_raw_data();
   Section& import_section = this->binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
-
+  auto original_import_offset = (*it_import_section)->pointerto_raw_data();
 
   // Patch the original IAT with the address of the associated trampoline
   if (this->patch_imports_) {
