@@ -184,9 +184,13 @@ void Builder::build_import_table(void) {
         [] (const Section* section) {
           return section != nullptr and section->is_type(PE_SECTION_TYPES::OLD_IMPORT);
         });
-    (*original_import_section)->remove_type(PE_SECTION_TYPES::OLD_IMPORT);
-    auto original_import_offset = (*original_import_section)->pointerto_raw_data();
-    Section& original_import = this->binary_->section_from_offset(original_import_offset);
+    // fallback mechanism
+    const auto is_found = original_import_section != std::end(this->binary_->sections_);
+    if (is_found) {
+      (*original_import_section)->remove_type(PE_SECTION_TYPES::OLD_IMPORT);
+    }
+    auto original_import_offset = is_found ? (*original_import_section)->pointerto_raw_data() : 0;
+    Section& original_import = this->binary_->section_from_offset(is_found ? original_import_offset: offset_imports);
     std::vector<uint8_t> import_content  = original_import.content();
 
     pe_import *import_header = reinterpret_cast<pe_import*>(import_content.data() + offset_imports_in_section);
