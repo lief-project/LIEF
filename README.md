@@ -97,7 +97,7 @@ pip install lief
 To install nightlty build:
 
 ```console
-pip install [--user] --index-url https://lief.quarkslab.com/packages lief==0.11.0.dev0
+pip install [--user] --index-url https://lief.quarkslab.com/packages lief==0.12.0.dev0
 ```
 
 ### Packages
