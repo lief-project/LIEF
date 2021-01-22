@@ -250,7 +250,7 @@ if the signature is valid or another enum (see: :attr:`lief.PE.Signature.VERIFIC
 .. code-block:: python
 
    pe = lief.parse("avast_free_antivirus_setup_online.exe")
-   print(pe.verify_signature()) # lief.Signature.VERIFICATION_FLAGS.OK
+   print(pe.verify_signature()) # lief.PE.Signature.VERIFICATION_FLAGS.OK
 
 We can also verify a PE binary with a **detached signature** by providing a :class:`signature <lief.PE.Signature>`
 object to :meth:`~lief.PE.Binary.verify_signature`:
@@ -344,14 +344,14 @@ certificate is verified against a **list of certificates**:
 
 .. code-block:: python
 
-  CA_BUNDLE = lief.x509.parse("ms_bundle.pem")
+  CA_BUNDLE = lief.PE.x509.parse("ms_bundle.pem")
   signer = signature.signers[0]
   print(signer.cert.is_trusted_by(CA_BUNDLE))
 
 .. code-block:: python
 
-  cert1 = lief.x509.parse("ca1.crt")
-  cert2 = lief.x509.parse("ca2.crt")
+  cert1 = lief.PE.x509.parse("ca1.crt")
+  cert2 = lief.PE.x509.parse("ca2.crt")
 
   print(signer.cert.is_trusted_by([cert1, cert2]))
 
