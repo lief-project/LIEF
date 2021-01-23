@@ -65,6 +65,39 @@ namespace {
 namespace LIEF {
 namespace PE {
 
+static const std::map<uint32_t, x509::VERIFICATION_FLAGS> MBEDTLS_ERR_TO_LIEF = {
+  { MBEDTLS_X509_BADCERT_EXPIRED,       x509::VERIFICATION_FLAGS::BADCERT_EXPIRED},
+  { MBEDTLS_X509_BADCERT_REVOKED,       x509::VERIFICATION_FLAGS::BADCERT_REVOKED},
+  { MBEDTLS_X509_BADCERT_CN_MISMATCH,   x509::VERIFICATION_FLAGS::BADCERT_CN_MISMATCH},
+  { MBEDTLS_X509_BADCERT_NOT_TRUSTED,   x509::VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED},
+  { MBEDTLS_X509_BADCRL_NOT_TRUSTED,    x509::VERIFICATION_FLAGS::BADCRL_NOT_TRUSTED},
+  { MBEDTLS_X509_BADCRL_EXPIRED,        x509::VERIFICATION_FLAGS::BADCRL_EXPIRED},
+  { MBEDTLS_X509_BADCERT_MISSING,       x509::VERIFICATION_FLAGS::BADCERT_MISSING},
+  { MBEDTLS_X509_BADCERT_SKIP_VERIFY,   x509::VERIFICATION_FLAGS::BADCERT_SKIP_VERIFY},
+  { MBEDTLS_X509_BADCERT_OTHER,         x509::VERIFICATION_FLAGS::BADCERT_OTHER},
+  { MBEDTLS_X509_BADCERT_FUTURE,        x509::VERIFICATION_FLAGS::BADCERT_FUTURE},
+  { MBEDTLS_X509_BADCRL_FUTURE,         x509::VERIFICATION_FLAGS::BADCRL_FUTURE},
+  { MBEDTLS_X509_BADCERT_KEY_USAGE,     x509::VERIFICATION_FLAGS::BADCERT_KEY_USAGE},
+  { MBEDTLS_X509_BADCERT_EXT_KEY_USAGE, x509::VERIFICATION_FLAGS::BADCERT_EXT_KEY_USAGE},
+  { MBEDTLS_X509_BADCERT_NS_CERT_TYPE,  x509::VERIFICATION_FLAGS::BADCERT_NS_CERT_TYPE},
+  { MBEDTLS_X509_BADCERT_BAD_MD,        x509::VERIFICATION_FLAGS::BADCERT_BAD_MD},
+  { MBEDTLS_X509_BADCERT_BAD_PK,        x509::VERIFICATION_FLAGS::BADCERT_BAD_PK},
+  { MBEDTLS_X509_BADCERT_BAD_KEY,       x509::VERIFICATION_FLAGS::BADCERT_BAD_KEY},
+  { MBEDTLS_X509_BADCRL_BAD_MD,         x509::VERIFICATION_FLAGS::BADCRL_BAD_MD},
+  { MBEDTLS_X509_BADCRL_BAD_PK,         x509::VERIFICATION_FLAGS::BADCRL_BAD_PK},
+  { MBEDTLS_X509_BADCRL_BAD_KEY,        x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY},
+};
+
+inline x509::VERIFICATION_FLAGS from_mbedtls_err(uint32_t err) {
+  x509::VERIFICATION_FLAGS flags = x509::VERIFICATION_FLAGS::OK;
+  for (const auto& p : MBEDTLS_ERR_TO_LIEF) {
+    if ((err & p.first) == p.first) {
+      flags |= p.second;
+    }
+  }
+  return flags;
+}
+
 inline x509::date_t from_mbedtls(const mbedtls_x509_time& time) {
   return {
     time.year,
@@ -431,7 +464,7 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
     std::string out(1024, 0);
     mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
     LIEF_WARN("X509 verify failed with: {} (0x{:x})\n{}", strerr, ret, out);
-    result = VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED;
+    result = from_mbedtls_err(flags);
   }
 
   // Clear the chain since ~x509() will delete each object
@@ -471,7 +504,7 @@ x509::VERIFICATION_FLAGS x509::verify(const x509& ca) const {
     std::string out(1024, 0);
     mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
     LIEF_WARN("X509 verify failed with: {} (0x{:x})\n{}", strerr, ret, out);
-    result = VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED;
+    result = from_mbedtls_err(flags);
   }
   return result;
 }
