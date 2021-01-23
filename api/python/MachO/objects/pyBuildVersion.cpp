@@ -91,8 +91,8 @@ void create<BuildVersion>(py::module& m) {
         "Minimal OS version on which this binary was built to run")
 
     .def_property("sdk",
-        static_cast<getter_t<BuildVersion::version_t>>(&BuildVersion::minos),
-        static_cast<setter_t<BuildVersion::version_t>>(&BuildVersion::minos),
+        static_cast<getter_t<BuildVersion::version_t>>(&BuildVersion::sdk),
+        static_cast<setter_t<BuildVersion::version_t>>(&BuildVersion::sdk),
         "SDK Version")
 
     .def_property_readonly("tools",
