@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.12.0 - Not Released Yet
+-------------------------
+
+:MachO:
+  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
+
 .. _release-0110:
 
 0.11.0 - January 19, 2021
