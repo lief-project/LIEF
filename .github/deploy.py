@@ -83,6 +83,7 @@ def get_tag(ci):
     elif ci == CI.APPVEYOR:
         if "APPVEYOR_REPO_TAG_NAME" in os.environ:
             return os.getenv("APPVEYOR_REPO_TAG_NAME", "")
+        return ""
     elif ci == CI.GITHUB_ACTIONS:
         ref = os.getenv("GITHUB_REF", "")
         logger.info("Github Action tag: {}".format(ref))
@@ -126,7 +127,7 @@ logger.info("CI: %s", CI_PRETTY_NAME)
 ALLOWED_BRANCHES = {"master", "deploy", "devel"}
 BRANCH_NAME = get_branch(CURRENT_CI)
 TAG_NAME    = get_tag(CURRENT_CI)
-IS_TAGGED   = len(TAG_NAME) > 0
+IS_TAGGED   = TAG_NAME is not None and len(TAG_NAME) > 0
 logger.info("Branch: %s", BRANCH_NAME)
 logger.info("Tag:    %s", TAG_NAME)
 if BRANCH_NAME not in ALLOWED_BRANCHES and not IS_TAGGED:
