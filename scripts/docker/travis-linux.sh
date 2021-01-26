@@ -8,6 +8,6 @@ export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
 $PYTHON_BINARY setup.py --ninja --lief-test build \
   bdist_wheel --skip-build --dist-dir wheel_stage
 
-auditwheel repair -w dist --plat manylinux1_x86_64 wheel_stage/*.whl
+find wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w dist --plat manylinux1_x86_64 {} \;
 
 chown -R 1000:1000 build dist wheel_stage
