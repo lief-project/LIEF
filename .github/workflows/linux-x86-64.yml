@@ -30,6 +30,7 @@ jobs:
            -e CCACHE_MAXSIZE=10.0G \
            -e CCACHE_CPP2=1 \
            -e CCACHE_DIR=/ccache \
+           -e PYTHON_VERSION=$PYTHON_VERSION \
            -e PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 \
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
@@ -44,6 +45,7 @@ jobs:
            -e CCACHE_MAXSIZE=10.0G \
            -e CCACHE_CPP2=1 \
            -e CCACHE_DIR=/ccache \
+           -e PYTHON_VERSION=$PYTHON_VERSION \
            -e PYTHON_BINARY=/opt/python/cp38-cp38/bin/python3.8 \
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
@@ -58,6 +60,7 @@ jobs:
            -e CCACHE_MAXSIZE=10.0G \
            -e CCACHE_CPP2=1 \
            -e CCACHE_DIR=/ccache \
+           -e PYTHON_VERSION=$PYTHON_VERSION \
            -e PYTHON_BINARY=/opt/python/cp39-cp39/bin/python3.9 \
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
