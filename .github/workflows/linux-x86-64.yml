@@ -23,7 +23,7 @@ jobs:
       - name: Build Python 3.7 wheel
         shell: bash
         env:
-          PYTHON_VERSION: 3.7
+          PYTHON_VERSION: 37
         run: |
           docker run --rm \
            -e CCACHE_COMPRESS=1 \
@@ -37,7 +37,7 @@ jobs:
       - name: Build Python 3.8 wheel
         shell: bash
         env:
-          PYTHON_VERSION: 3.8
+          PYTHON_VERSION: 38
         run: |
           docker run --rm \
            -e CCACHE_COMPRESS=1 \
@@ -51,7 +51,7 @@ jobs:
       - name: Build Python 3.9 wheel
         shell: bash
         env:
-          PYTHON_VERSION: 3.9
+          PYTHON_VERSION: 39
         run: |
           docker run --rm \
            -e CCACHE_COMPRESS=1 \
