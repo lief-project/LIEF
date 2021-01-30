@@ -1207,23 +1207,26 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(Signature::VERIFICATION_C
     return Signature::VERIFICATION_FLAGS::NO_SIGNATURE;
   }
 
+  Signature::VERIFICATION_FLAGS flags = Signature::VERIFICATION_FLAGS::OK;
+
   for (size_t i = 0; i < this->signatures_.size(); ++i) {
     const Signature& sig = this->signatures_[i];
-    Signature::VERIFICATION_FLAGS flags = this->verify_signature(sig, checks);
+    flags |= this->verify_signature(sig, checks);
     if (flags != Signature::VERIFICATION_FLAGS::OK) {
       LIEF_INFO("Verification failed for signature #{:d} (0b{:b})", i, static_cast<uintptr_t>(flags));
-      return flags;
+      break;
     }
   }
-  return Signature::VERIFICATION_FLAGS::OK;
+  return flags;
 }
 
 Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Signature::VERIFICATION_CHECKS checks) const {
+  Signature::VERIFICATION_FLAGS flags = Signature::VERIFICATION_FLAGS::OK;
   if (not is_true(checks & Signature::VERIFICATION_CHECKS::HASH_ONLY)) {
     const Signature::VERIFICATION_FLAGS value = sig.check(checks);
     if (value != Signature::VERIFICATION_FLAGS::OK) {
       LIEF_INFO("Bad signature (0b{:b})", static_cast<uintptr_t>(value));
-      return value;
+      flags |= value;
     }
   }
 
@@ -1233,9 +1236,12 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   if (authhash != chash) {
     LIEF_INFO("Authentihash and Content info's digest does not match:\n  {}\n  {}",
         hex_dump(authhash), hex_dump(chash));
-    return Signature::VERIFICATION_FLAGS::BAD_SIGNATURE;
+    flags |= Signature::VERIFICATION_FLAGS::BAD_DIGEST;
   }
-  return Signature::VERIFICATION_FLAGS::OK;
+  if (flags != Signature::VERIFICATION_FLAGS::OK) {
+    flags |= Signature::VERIFICATION_FLAGS::BAD_SIGNATURE;
+  }
+return flags;
 }
 
 

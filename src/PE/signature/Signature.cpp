@@ -40,6 +40,7 @@
 #include "mbedtls/x509_crt.h"
 #include "mbedtls/x509.h"
 
+#include "frozen.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -50,6 +51,25 @@ inline std::string time_to_string(const x509::date_t& date) {
       date[3], date[4], date[5]);
 }
 
+std::string Signature::flag_to_string(Signature::VERIFICATION_FLAGS flag) {
+  CONST_MAP(VERIFICATION_FLAGS, const char*, 13) enumStrings {
+    { Signature::VERIFICATION_FLAGS::OK,                            "OK"},
+    { Signature::VERIFICATION_FLAGS::INVALID_SIGNER,                "INVALID_SIGNER"},
+    { Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM,         "UNSUPPORTED_ALGORITHM"},
+    { Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM, "INCONSISTENT_DIGEST_ALGORITHM"},
+    { Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND,                "CERT_NOT_FOUND"},
+    { Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO,        "CORRUPTED_CONTENT_INFO"},
+    { Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA,           "CORRUPTED_AUTH_DATA"},
+    { Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST,  "MISSING_PKCS9_MESSAGE_DIGEST"},
+    { Signature::VERIFICATION_FLAGS::BAD_DIGEST,                    "BAD_DIGEST"},
+    { Signature::VERIFICATION_FLAGS::BAD_SIGNATURE,                 "BAD_SIGNATURE"},
+    { Signature::VERIFICATION_FLAGS::NO_SIGNATURE,                  "NO_SIGNATURE"},
+    { Signature::VERIFICATION_FLAGS::CERT_EXPIRED,                  "CERT_EXPIRED"},
+    { Signature::VERIFICATION_FLAGS::CERT_FUTURE,                   "CERT_FUTURE"},
+  };
+  auto   it  = enumStrings.find(flag);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
 
 Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& signer,
     const PKCS9CounterSignature& cs, Signature::VERIFICATION_CHECKS checks) {
