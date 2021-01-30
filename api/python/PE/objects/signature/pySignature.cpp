@@ -53,8 +53,37 @@ void create<Signature>(py::module& m) {
     .value("BAD_SIGNATURE",                 Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
     .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE)
     .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
-    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
-
+    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE)
+    .def("__str__", [] (const Signature::VERIFICATION_FLAGS& flags) {
+        static const std::array<Signature::VERIFICATION_FLAGS, 13> FLAGS = {
+          Signature::VERIFICATION_FLAGS::OK,
+          Signature::VERIFICATION_FLAGS::INVALID_SIGNER,
+          Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM,
+          Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM,
+          Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND,
+          Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO,
+          Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA,
+          Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST,
+          Signature::VERIFICATION_FLAGS::BAD_DIGEST,
+          Signature::VERIFICATION_FLAGS::BAD_SIGNATURE,
+          Signature::VERIFICATION_FLAGS::NO_SIGNATURE,
+          Signature::VERIFICATION_FLAGS::CERT_EXPIRED,
+          Signature::VERIFICATION_FLAGS::CERT_FUTURE,
+        };
+        if (flags == Signature::VERIFICATION_FLAGS::OK) {
+          return Signature::flag_to_string(flags);
+        }
+        std::string flags_str;
+        for (const Signature::VERIFICATION_FLAGS& flag : FLAGS) {
+          if ((flags & flag) == flag and flag != Signature::VERIFICATION_FLAGS::OK) {
+            if (not flags_str.empty()) {
+              flags_str += " | ";
+            }
+            flags_str += "VERIFICATION_FLAGS." + Signature::flag_to_string(flag);
+          }
+        }
+        return flags_str;
+    }, py::prepend{});
 
   LIEF::enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", py::arithmetic(),
     R"delim(

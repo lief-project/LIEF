@@ -62,6 +62,10 @@ class LIEF_API Signature : public Object {
     CERT_FUTURE                   = 1 << 11,
   };
 
+  //! Convert a verification flag into a humman representation.
+  //! e.g VERIFICATION_FLAGS.BAD_DIGEST | VERIFICATION_FLAGS.BAD_SIGNATURE | VERIFICATION_FLAGS.CERT_EXPIRED
+  static std::string flag_to_string(VERIFICATION_FLAGS flag);
+
   //! Flags to tweak the verification process of the signature
   //!
   //! See Signature::check and LIEF::PE::Binary::verify_signature
