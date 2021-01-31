@@ -111,6 +111,45 @@ void Builder::write(const std::string& filename) const {
 }
 
 
+uint32_t Builder::sort_dynamic_symbols(void) {
+  static const std::string dynsym_section_name = ".dynsym";
+  const auto it_begin = std::begin(this->binary_->dynamic_symbols_);
+  const auto it_end = std::end(this->binary_->dynamic_symbols_);
+
+  const auto it_first_non_local_symbol =
+      std::stable_partition(it_begin, it_end, [] (const Symbol* sym) {
+        return sym->binding() == SYMBOL_BINDINGS::STB_LOCAL;
+      });
+
+  const uint32_t first_non_local_symbol_index =
+      std::distance(it_begin, it_first_non_local_symbol);
+
+  if (this->binary_->has_section(dynsym_section_name)) {
+    Section& section = this->binary_->get_section(dynsym_section_name);
+    if (section.information() != first_non_local_symbol_index) {
+      // TODO: Erase null entries of dynamic symbol table and symbol version
+      // table if information of .dynsym section is smaller than null entries
+      // num.
+      LIEF_WARN("information of {} section changes from {:d} to {:d}",
+                dynsym_section_name,
+                section.information(),
+                first_non_local_symbol_index);
+      section.information(first_non_local_symbol_index);
+    }
+  }
+
+  const auto it_first_exported_symbol = std::stable_partition(
+      it_first_non_local_symbol, it_end, [] (const Symbol* sym) {
+        return sym->shndx() ==
+               static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+      });
+
+  const uint32_t first_exported_symbol_index =
+      std::distance(it_begin, it_first_exported_symbol);
+  return first_exported_symbol_index;
+}
+
+
 void Builder::build_empty_symbol_gnuhash(void) {
   LIEF_DEBUG("Build empty GNU Hash");
   auto&& it_gnuhash = std::find_if(

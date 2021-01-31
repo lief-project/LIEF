@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 """
 class LibAddSample(object):
     COUNT = 0
-    def __init__(self):
+    def __init__(self, compile_libadd_extra_flags=[], compile_binadd_extra_flags=[]):
         self.logger = logging.getLogger(__name__)
         self.tmp_dir = tempfile.mkdtemp(suffix='_lief_sample_{:d}'.format(LibAddSample.COUNT))
         self.logger.debug("temp dir: {}".format(self.tmp_dir))
@@ -72,8 +72,8 @@ class LibAddSample(object):
         with open(self.libadd_path, 'w') as f:
             f.write(LIBADD_C)
 
-        self._compile_libadd()
-        self._compile_binadd()
+        self._compile_libadd(compile_libadd_extra_flags)
+        self._compile_binadd(compile_binadd_extra_flags)
 
 
     def _compile_libadd(self, extra_flags=[]):
@@ -125,6 +125,57 @@ class LibAddSample(object):
 class TestDynamic(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    def test_add_dynamic_symbols(self):
+        self._test_add_dynamic_symbols("sysv", False)
+        self._test_add_dynamic_symbols("both", True)
+        self._test_add_dynamic_symbols("gnu", True)
+
+    def _test_add_dynamic_symbols(self, hash_style, symbol_sorted):
+        linkage_option = "-Wl,--hash-style={}".format(hash_style)
+        sample = LibAddSample([linkage_option], [linkage_option])
+        libadd = lief.parse(sample.libadd)
+        binadd = lief.parse(sample.binadd)
+        dynamic_symbols = list(libadd.dynamic_symbols)
+        for sym in dynamic_symbols:
+            libadd.add_dynamic_symbol(sym)
+        dynamic_section = libadd.get_section(".dynsym")
+        libadd.extend(dynamic_section, dynamic_section.entry_size * len(dynamic_symbols))
+        if hash_style != "gnu":
+            hash_section = libadd.get_section(".hash")
+            libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
+        libadd.write(sample.libadd)
+
+        p = Popen([sample.binadd_bin, '1', '2'],
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.STDOUT,
+                  env={"LD_LIBRARY_PATH": sample.directory})
+        stdout, _ = p.communicate()
+        if p.returncode > 0:
+            self.logger.fatal(stdout.decode("utf8"))
+            self.assertEqual(p.returncode, 0)
+        self.logger.debug(stdout.decode("utf8"))
+        self.assertIsNotNone(re.search(r'From myLIb, a \+ b = 3', stdout.decode("utf8")))
+
+        libadd = lief.parse(sample.libadd)
+        dynamic_section = libadd.get_section(".dynsym")
+        # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
+        dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
+        dynamic_symbols = list(libadd.dynamic_symbols)[:dynamic_symbols_size]
+        if symbol_sorted:
+            first_not_null_symbol_index = dynamic_section.information
+            first_exported_symbol_index = next(
+                i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                        dynamic_symbols[:first_not_null_symbol_index])))
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
+            self.assertTrue(all(map(
+                lambda sym: sym.shndx != 0,
+                dynamic_symbols[first_exported_symbol_index:])))
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_remove_library(self):

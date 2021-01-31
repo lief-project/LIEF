@@ -4,6 +4,15 @@ Changelog
 0.12.0 - Not Released Yet
 -------------------------
 
+:ELF:
+  * :github_user:`Clcanny` improved (see :pr:`507` and :pr:`509`) the reconstruction of the dynamic symbol table
+    by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
+    a modified binary with ``readelf``
+
+    .. code-block:: text
+
+      Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
+
 :PE:
   * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
     a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
