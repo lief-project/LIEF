@@ -40,7 +40,8 @@ template<>
 void create<Signature>(py::module& m) {
 
   py::class_<Signature, LIEF::Object> signature(m, "Signature");
-  LIEF::enum_<Signature::VERIFICATION_FLAGS>(signature, "VERIFICATION_FLAGS", py::arithmetic())
+  LIEF::enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums(signature, "VERIFICATION_FLAGS", py::arithmetic());
+  verif_flags_enums
     .value("OK",                            Signature::VERIFICATION_FLAGS::OK)
     .value("INVALID_SIGNER",                Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
     .value("UNSUPPORTED_ALGORITHM",         Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM)
@@ -53,28 +54,17 @@ void create<Signature>(py::module& m) {
     .value("BAD_SIGNATURE",                 Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
     .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE)
     .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
-    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE)
-    .def("__str__", [] (const Signature::VERIFICATION_FLAGS& flags) {
-        static const std::array<Signature::VERIFICATION_FLAGS, 13> FLAGS = {
-          Signature::VERIFICATION_FLAGS::OK,
-          Signature::VERIFICATION_FLAGS::INVALID_SIGNER,
-          Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM,
-          Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM,
-          Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND,
-          Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO,
-          Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA,
-          Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST,
-          Signature::VERIFICATION_FLAGS::BAD_DIGEST,
-          Signature::VERIFICATION_FLAGS::BAD_SIGNATURE,
-          Signature::VERIFICATION_FLAGS::NO_SIGNATURE,
-          Signature::VERIFICATION_FLAGS::CERT_EXPIRED,
-          Signature::VERIFICATION_FLAGS::CERT_FUTURE,
-        };
+    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
+
+  py::dict verif_flags_entries = verif_flags_enums.attr("__entries");
+  verif_flags_enums
+    .def("__str__", [verif_flags_entries] (const Signature::VERIFICATION_FLAGS& flags) {
         if (flags == Signature::VERIFICATION_FLAGS::OK) {
           return Signature::flag_to_string(flags);
         }
         std::string flags_str;
-        for (const Signature::VERIFICATION_FLAGS& flag : FLAGS) {
+        for (const auto& item : verif_flags_entries) {
+          Signature::VERIFICATION_FLAGS flag = item.second[py::int_(0)].cast<Signature::VERIFICATION_FLAGS>();
           if ((flags & flag) == flag and flag != Signature::VERIFICATION_FLAGS::OK) {
             if (not flags_str.empty()) {
               flags_str += " | ";
