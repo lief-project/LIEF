@@ -303,8 +303,9 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
       LIEF_DEBUG("Dealing with: {}", entry);
-      auto it_entry = it_library_lookup->second.find(static_cast<uint32_t>(entry.ordinal()));
-      if (it_entry == std::end(it_library_lookup->second)) {
+      const char* entry_name =
+        it_library_lookup->second(static_cast<uint32_t>(entry.ordinal()));
+      if (entry_name == nullptr) {
         if (strict) {
           throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
         }
@@ -312,7 +313,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
         continue;
       }
       entry.data(0);
-      entry.name(it_entry->second);
+      entry.name(entry_name);
     }
   }
 

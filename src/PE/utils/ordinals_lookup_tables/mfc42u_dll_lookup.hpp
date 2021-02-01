@@ -16,19 +16,21 @@
 #ifndef LIEF_PE_MFC42U_DLL_LOOKUP_H_
 #define LIEF_PE_MFC42U_DLL_LOOKUP_H_
 
-#include <map>
 
 namespace LIEF {
 namespace PE {
 
-static const std::map<uint32_t, const char*> mfc42u_dll_lookup {
-    { 0x0005, "?classCCachedDataPathProperty@CCachedDataPathProperty@@2UCRuntimeClass@@B" },
-    { 0x0006, "?classCDataPathProperty@CDataPathProperty@@2UCRuntimeClass@@B"         },
-    { 0x0002, "DllCanUnloadNow"                                                       },
-    { 0x0001, "DllGetClassObject"                                                     },
-    { 0x0003, "DllRegisterServer"                                                     },
-    { 0x0004, "DllUnregisterServer"                                                   },
-};
+const char* mfc42u_dll_lookup(uint32_t i) {
+  switch(i) {
+  case 0x0005: return "?classCCachedDataPathProperty@CCachedDataPathProperty@@2UCRuntimeClass@@B";
+  case 0x0006: return "?classCDataPathProperty@CDataPathProperty@@2UCRuntimeClass@@B";
+  case 0x0002: return "DllCanUnloadNow";
+  case 0x0001: return "DllGetClassObject";
+  case 0x0003: return "DllRegisterServer";
+  case 0x0004: return "DllUnregisterServer";
+  }
+  return nullptr;
+}
 
 
 }

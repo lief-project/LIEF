@@ -16,8 +16,7 @@
 #ifndef LIEF_PE_UTILS_LIBRARY_TABLE_H_
 #define LIEF_PE_UTILS_LIBRARY_TABLE_H_
 
-#include <map>
-#include "frozen.hpp"
+#include <unordered_map>
 
 #include "kernel32_dll_lookup.hpp"
 #include "ntdll_dll_lookup.hpp"
@@ -45,25 +44,26 @@
 namespace LIEF {
 namespace PE {
 
-static const std::map<std::string, const std::map<uint32_t, const char*>&> ordinals_library_tables =
+static const std::unordered_map<std::string, const char* (*)(uint32_t)>
+ordinals_library_tables =
 {
-  { "kernel32.dll",   kernel32_dll_lookup },
-  { "ntdll.dll",      ntdll_dll_lookup    },
-  { "advapi32.dll",   advapi32_dll_lookup },
-  { "msvcp110.dll",   msvcp110_dll_lookup },
-  { "msvcp120.dll",   msvcp120_dll_lookup },
-  { "msvcr100.dll",   msvcr100_dll_lookup },
-  { "msvcr110.dll",   msvcr110_dll_lookup },
-  { "msvcr120.dll",   msvcr120_dll_lookup },
-  { "user32.dll",     user32_dll_lookup   },
-  { "comctl32.dll",   comctl32_dll_lookup },
-  { "ws2_32.dll",     ws2_32_dll_lookup   },
-  { "shcore.dll",     shcore_dll_lookup   },
-  { "oleaut32.dll",   oleaut32_dll_lookup },
-  { "mfc42u.dll",     mfc42u_dll_lookup   },
-  { "shlwapi.dll",    shlwapi_dll_lookup  },
-  { "gdi32.dll",      gdi32_dll_lookup    },
-  { "shell32.dll",    shell32_dll_lookup  },
+  { "kernel32.dll",   &kernel32_dll_lookup },
+  { "ntdll.dll",      &ntdll_dll_lookup    },
+  { "advapi32.dll",   &advapi32_dll_lookup },
+  { "msvcp110.dll",   &msvcp110_dll_lookup },
+  { "msvcp120.dll",   &msvcp120_dll_lookup },
+  { "msvcr100.dll",   &msvcr100_dll_lookup },
+  { "msvcr110.dll",   &msvcr110_dll_lookup },
+  { "msvcr120.dll",   &msvcr120_dll_lookup },
+  { "user32.dll",     &user32_dll_lookup   },
+  { "comctl32.dll",   &comctl32_dll_lookup },
+  { "ws2_32.dll",     &ws2_32_dll_lookup   },
+  { "shcore.dll",     &shcore_dll_lookup   },
+  { "oleaut32.dll",   &oleaut32_dll_lookup },
+  { "mfc42u.dll",     &mfc42u_dll_lookup   },
+  { "shlwapi.dll",    &shlwapi_dll_lookup  },
+  { "gdi32.dll",      &gdi32_dll_lookup    },
+  { "shell32.dll",    &shell32_dll_lookup  },
 };
 
 }
