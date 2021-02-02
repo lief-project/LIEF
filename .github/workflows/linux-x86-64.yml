@@ -85,7 +85,6 @@ jobs:
             --rm \
             liefproject/deploy python3 /src/.github/deploy.py
       - name: Trigger documentation
-        if: matrix.python-version == '3.9'
         env:
           CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
         shell: bash
