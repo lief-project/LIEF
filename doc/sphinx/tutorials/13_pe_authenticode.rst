@@ -296,7 +296,7 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
 
     .. code-block:: python
 
-      pe.verify_signature(lief.PE.VERIFICATION_CHECKS.HASH_ONLY)
+      pe.verify_signature(lief.PE.Signature.VERIFICATION_CHECKS.HASH_ONLY)
 
 
 :Lifetime Signing:
@@ -306,8 +306,8 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
 
     .. code-block:: python
 
-      pe.verify_signature(lief.PE.VERIFICATION_CHECKS.LIFETIME_SIGNING)
-      signature.check(lief.PE.VERIFICATION_CHECKS.LIFETIME_SIGNING)
+      pe.verify_signature(lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING)
+      signature.check(lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING)
 
 
 :Skip Cerificate Check Time:
@@ -319,8 +319,8 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
 
       # Returns lief.PE.Signature.VERIFICATION_FLAGS.OK even though
       # the certificates expired
-      pe.verify_signature(lief.PE.VERIFICATION_CHECKS.SKIP_CERT_TIME)
-      signature.check(lief.PE.VERIFICATION_CHECKS.SKIP_CERT_TIME)
+      pe.verify_signature(lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME)
+      signature.check(lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME)
 
 .. note::
 
