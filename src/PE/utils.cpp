@@ -289,9 +289,20 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
 
   std::string name = to_lower(import.name());
 
-  auto it_library_lookup = use_std ? imphashstd::ordinals_library_tables.find(name) : ordinals_library_tables.find(name);
-  if (it_library_lookup == std::end(imphashstd::ordinals_library_tables) or
-      it_library_lookup == std::end(ordinals_library_tables)) {
+  std::function<const char*(uint32_t)> ordinal_resolver;
+  if (use_std) {
+    auto it = imphashstd::ordinals_library_tables.find(name);
+    if (it != std::end(imphashstd::ordinals_library_tables)) {
+      ordinal_resolver = it->second;
+    }
+  } else {
+    auto it = ordinals_library_tables.find(name);
+    if (it != std::end(ordinals_library_tables)) {
+      ordinal_resolver = it->second;
+    }
+  }
+
+  if (not ordinal_resolver) {
     std::string msg = "Ordinal lookup table for '" + name + "' not implemented";
     if (strict) {
       throw not_found(msg);
@@ -299,12 +310,12 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
     LIEF_DEBUG("{}", msg);
     return import;
   }
+
   Import resolved_import = import;
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
       LIEF_DEBUG("Dealing with: {}", entry);
-      const char* entry_name =
-        it_library_lookup->second(static_cast<uint32_t>(entry.ordinal()));
+      const char* entry_name = ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
       if (entry_name == nullptr) {
         if (strict) {
           throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
