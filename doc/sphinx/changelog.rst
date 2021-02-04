@@ -19,6 +19,14 @@ Changelog
     (see: :issue:`532`)
 
 :MachO:
+  * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its achitecture. See:
+    :meth:`lief.MachO.FatBinary.take`.
+
+    .. code-block:: python
+
+      fat = lief.MachO.parse("/bin/ls")
+      fit = fat.take(lief.MachO.CPU_TYPES.x86_64)
+
   * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
 
 .. _release-0110:
