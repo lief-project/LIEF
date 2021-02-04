@@ -201,6 +201,53 @@ class TestMachODyld(TestCase):
         self.assertEqual(relocations[9].section.name, "__mystuff")
         self.assertEqual(relocations[9].segment.name, "__DATA")
 
+    def test_threaded_opcodes(self):
+        target = lief.MachO.parse(get_sample('MachO/FatMachO64_x86-64_arm64_binary_ls.bin'))
+        target = target.take(lief.MachO.CPU_TYPES.ARM64)
+        self.assertTrue(target.has_dyld_info)
+
+        relocations = target.relocations
+        bindings = target.dyld_info.bindings
+
+        self.assertEqual(len(relocations), 39)
+        self.assertEqual(len(bindings), 82)
+
+        self.assertEqual(relocations[38].address, 0x10000c008)
+        self.assertEqual(relocations[38].pc_relative, False)
+        self.assertEqual(relocations[38].type, int(lief.MachO.REBASE_TYPES.POINTER))
+        self.assertEqual(relocations[38].section.name, "__data")
+        self.assertEqual(relocations[38].segment.name, "__DATA")
+
+        self.assertEqual(bindings[81].binding_class, lief.MachO.BINDING_CLASS.THREADED)
+        self.assertEqual(bindings[81].binding_type, lief.MachO.BIND_TYPES.POINTER)
+        self.assertEqual(bindings[81].address, 0x100008288)
+        self.assertEqual(bindings[81].symbol.name, "_optind")
+        self.assertEqual(bindings[81].segment.name, "__DATA_CONST")
+        self.assertEqual(bindings[81].library.name, "/usr/lib/libSystem.B.dylib")
+
+        # Test that rebuilding the binary leads to the same content
+        with tempfile.NamedTemporaryFile("wb", delete=False) as output:
+            output_path = output.name
+            target.write(output_path)
+            written_target = lief.parse(output_path)
+            relocations = written_target.relocations
+            bindings = written_target.dyld_info.bindings
+
+            self.assertEqual(len(relocations), 39)
+            self.assertEqual(len(bindings), 82)
+
+            self.assertEqual(relocations[38].address, 0x10000c008)
+            self.assertEqual(relocations[38].pc_relative, False)
+            self.assertEqual(relocations[38].type, int(lief.MachO.REBASE_TYPES.POINTER))
+            self.assertEqual(relocations[38].section.name, "__data")
+            self.assertEqual(relocations[38].segment.name, "__DATA")
+
+            self.assertEqual(bindings[81].binding_class, lief.MachO.BINDING_CLASS.THREADED)
+            self.assertEqual(bindings[81].binding_type, lief.MachO.BIND_TYPES.POINTER)
+            self.assertEqual(bindings[81].address, 0x100008288)
+            self.assertEqual(bindings[81].symbol.name, "_optind")
+            self.assertEqual(bindings[81].segment.name, "__DATA_CONST")
+            self.assertEqual(bindings[81].library.name, "/usr/lib/libSystem.B.dylib")
 
 if __name__ == '__main__':
 

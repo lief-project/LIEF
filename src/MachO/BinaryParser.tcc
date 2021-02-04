@@ -53,6 +53,18 @@
 namespace LIEF {
 namespace MachO {
 
+namespace {
+struct ThreadedBindData {
+  std::string symbol_name;
+  int64_t addend          = 0;
+  int64_t library_ordinal = 0;
+  uint8_t symbol_flags    = 0;
+  uint8_t type            = 0;
+};
+}
+
+
+
 template<class MACHO_T>
 void BinaryParser::parse(void) {
   this->parse_header<MACHO_T>();
@@ -932,11 +944,15 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
   bool        is_weak_import = false;
   bool        done = false;
 
+  size_t ordinal_table_size     = 0;
+  bool use_threaded_rebase_bind = false;
+  uint8_t symbol_flags          = 0;
+  std::vector<ThreadedBindData> ordinal_table;
 
   it_segments segments = this->binary_->segments();
   this->stream_->setpos(offset);
   while (not done and this->stream_->pos() < end_offset) {
-    uint8_t imm    = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
+    uint8_t imm = this->stream_->peek<uint8_t>() & BIND_IMMEDIATE_MASK;
     BIND_OPCODES opcode = static_cast<BIND_OPCODES>(this->stream_->read<uint8_t>() & BIND_OPCODE_MASK);
 
     switch (opcode) {
@@ -975,6 +991,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
           symbol_name = this->stream_->read_string();
+          symbol_flags = imm;
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
             is_weak_import = true;
@@ -1000,7 +1017,6 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
         {
           segment_idx    = imm;
           segment_offset = this->stream_->read_uleb128();
-
           break;
         }
 
@@ -1012,18 +1028,22 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
-          this->do_bind<MACHO_T>(
-              BINDING_CLASS::BIND_CLASS_STANDARD,
-              type,
-              segment_idx,
-              segment_offset,
-              symbol_name,
-              library_ordinal,
-              addend,
-              is_weak_import,
-              false,
-              segments);
-          segment_offset += sizeof(pint_t);
+          if (not use_threaded_rebase_bind) {
+            this->do_bind<MACHO_T>(
+                BINDING_CLASS::BIND_CLASS_STANDARD,
+                type,
+                segment_idx,
+                segment_offset,
+                symbol_name,
+                library_ordinal,
+                addend,
+                is_weak_import,
+                false,
+                segments);
+            segment_offset += sizeof(pint_t);
+          } else {
+            ordinal_table.push_back(ThreadedBindData{symbol_name, addend, library_ordinal, symbol_flags, type});
+          }
           break;
         }
 
@@ -1063,12 +1083,8 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
-
-          // Count
-          count           = this->stream_->read_uleb128();
-
-          // Skip
-          skip            = this->stream_->read_uleb128();
+          count = this->stream_->read_uleb128();
+          skip  = this->stream_->read_uleb128();
 
           for (size_t i = 0; i < count; ++i) {
             this->do_bind<MACHO_T>(
@@ -1086,13 +1102,85 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
           }
           break;
         }
+      case BIND_OPCODES::BIND_OPCODE_THREADED:
+        {
+          const auto subopcode = static_cast<BIND_SUBOPCODE_THREADED>(imm);
+          switch (subopcode) {
+            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY:
+              {
+                uint64_t delta = 0;
+                const SegmentCommand& current_segment = segments[segment_idx];
+                do {
+                  const uint64_t address = current_segment.virtual_address() + segment_offset;
+                  const std::vector<uint8_t>& content = current_segment.content();
+                  if (segment_offset >= content.size() or segment_offset + sizeof(uint64_t) >= content.size()) {
+                    LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
+                    delta = 0; // exit from de do ... while
+                    break;
+                  }
+                  auto value = *reinterpret_cast<const uint64_t*>(content.data() + segment_offset);
+                  bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
 
+                  if (is_rebase) {
+                    //LIEF_WARN("do rebase for addr: 0x{:x} vs 0x{:x}", address, current_segment)
+                    this->do_rebase<MACHO_T>(static_cast<uint8_t>(REBASE_TYPES::REBASE_TYPE_POINTER),
+                                             segment_idx, segment_offset);
+                  } else {
+                    uint16_t ordinal = value & 0xFFFF;
+                    if (ordinal >= ordinal_table_size or ordinal >= ordinal_table.size()) {
+                      LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer 0x{:04x} in "
+                                "segment '{}' (segment offset: 0x{:04x})", ordinal, ordinal_table_size, value,
+                                current_segment.name(), segment_offset);
+                      break;
+                    }
+                    if (address < current_segment.virtual_address() or
+                        address >= (current_segment.virtual_address() + current_segment.virtual_size())) {
+                      LIEF_WARN("Bad binding address");
+                      break;
+                    }
+                    const ThreadedBindData& th_bind_data = ordinal_table[ordinal];
+                    this->do_bind<MACHO_T>(
+                        BINDING_CLASS::BIND_CLASS_THREADED,
+                        th_bind_data.type,
+                        segment_idx,
+                        segment_offset,
+                        th_bind_data.symbol_name,
+                        th_bind_data.library_ordinal,
+                        th_bind_data.addend,
+                        th_bind_data.symbol_flags & BIND_SYMBOL_FLAGS_WEAK_IMPORT,
+                        false,
+                        segments);
+                  }
+                  // The delta is bits [51..61]
+                  // And bit 62 is to tell us if we are a rebase (0) or bind (1)
+                  value &= ~(1ull << 62);
+                  delta = (value & 0x3FF8000000000000) >> 51;
+                  segment_offset += delta * sizeof(pint_t);
+                } while (delta != 0);
+                break;
+              }
+            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
+              {
+                count = this->stream_->read_uleb128();
+                ordinal_table_size = count + 1; // the +1 comes from: 'ld64 wrote the wrong value here and we need to offset by 1 for now.'
+                use_threaded_rebase_bind = true;
+                ordinal_table.reserve(ordinal_table_size);
+                break;
+              }
+          }
+          break;
+        }
       default:
         {
           LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
+  }
+  if (use_threaded_rebase_bind) {
+    dyldinfo.binding_encoding_version_ = DyldInfo::BINDING_ENCODING_VERSION::V2;
+  } else {
+    dyldinfo.binding_encoding_version_ = DyldInfo::BINDING_ENCODING_VERSION::V1;
   }
 
 }
@@ -1492,7 +1580,7 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
 
   // Check if a relocation already exists:
   std::unique_ptr<RelocationDyld> new_relocation{new RelocationDyld{address, type}};
-  auto&& result = segment.relocations_.emplace(new_relocation.get());
+  auto result = segment.relocations_.emplace(new_relocation.get());
   Relocation* reloc = *result.first;
 
   // result.second is true if the insertion succeed
@@ -1512,7 +1600,7 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   reloc->section_ = section;
 
   // Tie symbol
-  auto&& it_symbol = std::find_if(
+  auto it_symbol = std::find_if(
       std::begin(this->binary_->symbols_),
       std::end(this->binary_->symbols_),
       [address] (const Symbol* sym) {
@@ -1535,6 +1623,11 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
     case REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32:
       {
         reloc->size_ = sizeof(uint32_t) * 8;
+        break;
+      }
+    case REBASE_TYPES::REBASE_TYPE_THREADED:
+      {
+        reloc->size_ = sizeof(pint_t) * 8;
         break;
       }
 

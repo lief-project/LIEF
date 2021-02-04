@@ -28,6 +28,7 @@ Changelog
       fit = fat.take(lief.MachO.CPU_TYPES.x86_64)
 
   * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
+  * Handle the `0x0D` binding opcode (see: :issue:`524`)
 
 .. _release-0110:
 

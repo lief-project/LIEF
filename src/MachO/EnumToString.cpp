@@ -370,10 +370,11 @@ const char* to_string(REBASE_TYPES e) {
 
 
 const char* to_string(BINDING_CLASS e) {
-  CONST_MAP(BINDING_CLASS, const char*, 3) enumStrings {
+  CONST_MAP(BINDING_CLASS, const char*, 4) enumStrings {
     { BINDING_CLASS::BIND_CLASS_WEAK,     "WEAK"      },
     { BINDING_CLASS::BIND_CLASS_LAZY,     "LAZY"      },
     { BINDING_CLASS::BIND_CLASS_STANDARD, "STANDARD"  },
+    { BINDING_CLASS::BIND_CLASS_THREADED, "THREADED"  },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
@@ -420,7 +421,7 @@ const char* to_string(BIND_SPECIAL_DYLIB e) {
 
 
 const char* to_string(BIND_OPCODES e) {
-  CONST_MAP(BIND_OPCODES, const char*, 13) enumStrings {
+  CONST_MAP(BIND_OPCODES, const char*, 14) enumStrings {
     { BIND_OPCODES::BIND_OPCODE_DONE,                             "DONE"                             },
     { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM,            "SET_DYLIB_ORDINAL_IMM"            },
     { BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB,           "SET_DYLIB_ORDINAL_ULEB"           },
@@ -434,11 +435,20 @@ const char* to_string(BIND_OPCODES e) {
     { BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB,            "DO_BIND_ADD_ADDR_ULEB"            },
     { BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED,      "DO_BIND_ADD_ADDR_IMM_SCALED"      },
     { BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB, "DO_BIND_ULEB_TIMES_SKIPPING_ULEB" },
+    { BIND_OPCODES::BIND_OPCODE_THREADED,                         "THREADED"                         },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
+const char* to_string(BIND_SUBOPCODE_THREADED e) {
+  CONST_MAP(BIND_SUBOPCODE_THREADED, const char*, 2) enumStrings {
+    { BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY,                            "THREADED_APPLY"                   },
+    { BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB, "SET_BIND_ORDINAL_TABLE_SIZE_ULEB" },
+  };
+  auto   it  = enumStrings.find(e);
+  return it == enumStrings.end() ? "Out of range" : it->second;
+}
 
 const char* to_string(EXPORT_SYMBOL_KINDS e) {
   CONST_MAP(EXPORT_SYMBOL_KINDS, const char*, 3) enumStrings {

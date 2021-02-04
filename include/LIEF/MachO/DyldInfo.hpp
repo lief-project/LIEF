@@ -47,6 +47,12 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @brief Tuple of ``offset`` and ``size``
   using info_t = std::pair<uint32_t, uint32_t>;
 
+  enum class BINDING_ENCODING_VERSION {
+    UNKNOWN = 0,
+    V1,
+    V2
+  };
+
   DyldInfo(void);
   DyldInfo(const dyld_info_command *dyld_info_cmd);
 
@@ -247,13 +253,16 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   void show_trie(std::ostream& output, std::string output_prefix, VectorStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
 
-  DyldInfo& update_standard_bindings(const bind_container_t& bindings);
-  DyldInfo& update_weak_bindings(const bind_container_t& bindings);
-  DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(const bind_container_t& bindings, std::vector<RelocationDyld*> rebases);
 
-  DyldInfo& update_rebase_info(void);
-  DyldInfo& update_binding_info(void);
-  DyldInfo& update_export_trie(void);
+  LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
+
+  LIEF_LOCAL DyldInfo& update_rebase_info(void);
+  LIEF_LOCAL DyldInfo& update_binding_info(void);
+  LIEF_LOCAL DyldInfo& update_export_trie(void);
 
 
   info_t   rebase_;
@@ -274,7 +283,9 @@ class LIEF_API DyldInfo : public LoadCommand {
   export_info_t  export_info_;
   binding_info_t binding_info_;
 
-  Binary* binary_{nullptr};
+  BINDING_ENCODING_VERSION binding_encoding_version_ = BINDING_ENCODING_VERSION::UNKNOWN;
+
+  Binary* binary_ = nullptr;
 };
 
 }

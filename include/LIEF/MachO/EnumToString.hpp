@@ -46,6 +46,7 @@ LIEF_API const char* to_string(BINDING_CLASS e);
 LIEF_API const char* to_string(REBASE_OPCODES e);
 LIEF_API const char* to_string(BIND_TYPES e);
 LIEF_API const char* to_string(BIND_SPECIAL_DYLIB e);
+LIEF_API const char* to_string(BIND_SUBOPCODE_THREADED e);
 LIEF_API const char* to_string(BIND_OPCODES e);
 LIEF_API const char* to_string(EXPORT_SYMBOL_KINDS e);
 LIEF_API const char* to_string(VM_PROTECTIONS e);

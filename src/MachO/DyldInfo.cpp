@@ -16,7 +16,6 @@
 #include <numeric>
 #include <iomanip>
 #include <sstream>
-
 #include "logging.hpp"
 #include "LIEF/iostream.hpp"
 
@@ -44,6 +43,14 @@
 
 namespace LIEF {
 namespace MachO {
+
+struct ThreadedBindData {
+  std::string symbol_name;
+  int64_t addend          = 0;
+  int64_t library_ordinal = 0;
+  uint8_t symbol_flags    = 0;
+  uint8_t type            = 0;
+};
 
 DyldInfo::DyldInfo(void) :
   LoadCommand{},
@@ -395,6 +402,7 @@ std::string DyldInfo::show_bind_opcodes(void) const {
 }
 
 void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes, bool is_lazy) const {
+
   if (not this->binary_) {
     LIEF_WARN("Can't print bind opcodes");
     return;
@@ -406,7 +414,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
   uint8_t     segment_idx = 0;
   uint64_t    segment_offset = 0;
   std::string symbol_name = "";
-  int         library_ordinal = 0;
+  int64_t     library_ordinal = 0;
 
   int64_t     addend = 0;
   uint32_t    count = 0;
@@ -414,6 +422,11 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
   bool        is_weak_import = false;
   bool        done = false;
+
+  size_t ordinal_table_size = 0;
+  bool use_threaded_rebase_bind = false;
+  uint8_t symbol_flags = 0;
+  std::vector<ThreadedBindData> ordinal_table;
 
   it_segments segments = this->binary_->segments();
   it_libraries libraries = this->binary_->libraries();
@@ -479,6 +492,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
           symbol_name = bind_stream.read_string();
+          symbol_flags = imm;
 
           if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
             is_weak_import = true;
@@ -540,31 +554,32 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
+          if (not use_threaded_rebase_bind) {
+            output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+            output << tab;
+            output << "bind(";
+            output << to_string(static_cast<BIND_TYPES>(type));
+            output << ", ";
+            output << segments[segment_idx].name();
+            output << ", ";
+            output << std::hex << std::showbase << segment_offset;
+            output << ", ";
+            output << symbol_name;
+            output << ", library_ordinal=";
+            output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() : std::to_string(library_ordinal));
+            output << ", addend=";
+            output << std::dec << addend;
+            output << ", is_weak_import=";
+            output << std::boolalpha << is_weak_import;
+            output << ")" << std::endl;
 
+            segment_offset += pint_v;
 
-
-          output << tab;
-          output << "bind(";
-          output << to_string(static_cast<BIND_TYPES>(type));
-          output << ", ";
-          output << segments[segment_idx].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ", ";
-          output << symbol_name;
-          output << ", library_ordinal=";
-          output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() : std::to_string(library_ordinal));
-          output << ", addend=";
-          output << std::dec << addend;
-          output << ", is_weak_import=";
-          output << std::boolalpha << is_weak_import;
-          output << ")" << std::endl;
-
-          segment_offset += pint_v;
-
-          output << tab << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")" << std::endl;
+            output << tab << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")" << std::endl;
+          } else {
+            ordinal_table.push_back(ThreadedBindData{symbol_name, addend, library_ordinal, symbol_flags, type});
+          }
           break;
         }
 
@@ -664,10 +679,79 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           }
           break;
         }
+      case BIND_OPCODES::BIND_OPCODE_THREADED:
+        {
+          const auto subopcode = static_cast<BIND_SUBOPCODE_THREADED>(imm);
+          output << std::string("[") + to_string(BIND_OPCODES::BIND_OPCODE_THREADED) + "]\n";
+          switch (subopcode) {
+            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY:
+              {
+                output << tab << std::string("[") + to_string(subopcode) + "]\n";
+                uint64_t delta = 0;
+                const SegmentCommand& current_segment = segments[segment_idx];
+                do {
+                  const uint64_t address = current_segment.virtual_address() + segment_offset;
+                  const std::vector<uint8_t>& content = current_segment.content();
+                  if (segment_offset >= content.size() or segment_offset + sizeof(uint64_t) >= content.size()) {
+                    LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
+                    delta = 0; // exit from de do ... while
+                    break;
+                  }
+                  auto value = *reinterpret_cast<const uint64_t*>(content.data() + segment_offset);
+                  bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
+
+                  if (is_rebase) {
+                    output << tab << tab << fmt::format("rebase({}, {}, 0x{:x})\n",
+                        "THREADED_REBASE", current_segment.name(), segment_offset);
+                  } else {
+                    uint16_t ordinal = value & 0xFFFF;
+                    if (ordinal >= ordinal_table_size or ordinal >= ordinal_table.size()) {
+                      LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer 0x{:04x} in "
+                                "segment '{}' (segment offset: 0x{:04x})", ordinal, ordinal_table_size, value,
+                                current_segment.name(), segment_offset);
+                      break;
+                    }
+                    if (address < current_segment.virtual_address() or
+                        address >= (current_segment.virtual_address() + current_segment.virtual_size())) {
+                      LIEF_WARN("Bad binding address");
+                      break;
+                    }
+                    const ThreadedBindData& th_bind_data = ordinal_table[ordinal];
+                    const int64_t library_ordinal = th_bind_data.library_ordinal;
+                    output << tab << tab << fmt::format("threaded_bind({}/{}, 0x{:x}, {}, {}, library_ordinal={}, "
+                                                        "addend={}, is_weak_import={})\n",
+                        "THREADED_BIND", to_string(static_cast<BIND_TYPES>(th_bind_data.type)), segment_offset,
+                        current_segment.name(), th_bind_data.symbol_name,
+                        library_ordinal > 0 ? libraries[library_ordinal - 1].name() : std::to_string(library_ordinal),
+                        th_bind_data.addend, th_bind_data.symbol_flags);
+                  }
+                  // The delta is bits [51..61]
+                  // And bit 62 is to tell us if we are a rebase (0) or bind (1)
+                  value &= ~(1ull << 62);
+                  delta = (value & 0x3FF8000000000000) >> 51;
+                  segment_offset += delta * sizeof(pint_v);
+                  output << tab << tab << fmt::format("Segment Offset += 0x{:x} (0x{:x})\n", delta * sizeof(pint_v), segment_offset);
+                } while (delta != 0);
+                break;
+              }
+            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
+              {
+                output << tab << std::string("[") + to_string(subopcode) + "]\n";
+                count = bind_stream.read_uleb128();
+                ordinal_table_size = count + 1; // the +1 comes from: 'ld64 wrote the wrong value here and we need to offset by 1 for now.'
+                use_threaded_rebase_bind = true;
+                ordinal_table.reserve(ordinal_table_size);
+                output << tab << tab << fmt::format("Ordinal table size := {:d}\n", count);
+                break;
+              }
+          }
+          break;
+        }
 
       default:
         {
           LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
+          output << fmt::format("[UNKNOWN OP 0x{:x}]\n", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -944,6 +1028,9 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   auto cmp = [] (const RelocationDyld* lhs, const RelocationDyld* rhs) {
     return *lhs < *rhs;
   };
+  if (this->binding_encoding_version_ != BINDING_ENCODING_VERSION::V1) {
+    return *this;
+  }
 
   std::set<RelocationDyld*, decltype(cmp)> rebases(cmp);
   relocations_t relocations = this->binary_->relocations_list();
@@ -1221,6 +1308,7 @@ DyldInfo& DyldInfo::update_binding_info(void) {
 
   for (BindingInfo* binfo : this->binding_info_) {
     switch (binfo->binding_class()) {
+      case BINDING_CLASS::BIND_CLASS_THREADED:
       case BINDING_CLASS::BIND_CLASS_STANDARD:
         {
           standard_binds.insert(binfo);
@@ -1538,6 +1626,42 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
 }
 
 DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& bindings) {
+  switch (this->binding_encoding_version_) {
+    case BINDING_ENCODING_VERSION::V1:
+      {
+        this->update_standard_bindings_v1(bindings);
+        break;
+      }
+
+    case BINDING_ENCODING_VERSION::V2:
+      {
+        std::vector<RelocationDyld*> rebases;
+        relocations_t relocations = this->binary_->relocations_list();
+        rebases.reserve(relocations.size());
+        for (Relocation* r : relocations) {
+          if (r->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
+            rebases.push_back(r->as<RelocationDyld>());
+          }
+        }
+        this->update_standard_bindings_v2(bindings, std::move(rebases));
+        break;
+      }
+
+    case BINDING_ENCODING_VERSION::UNKNOWN:
+    default:
+      {
+        LIEF_WARN("Unsupported version");
+        break;
+      }
+  }
+  return *this;
+}
+
+
+
+DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t& bindings) {
+  // This function upadate the standard bindings opcodes (i.e. not lazy and not weak)
+  // The following code is mainly inspired from LinkEdit.hpp: BindingInfoAtom<A>::encodeV1()
 
   std::vector<binding_instruction> instructions;
 
@@ -1774,6 +1898,303 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
   }
   raw_output.align(pint_size);
 
+
+  this->bind_opcodes_ = std::move(raw_output.raw());
+  this->set_bind_size(this->bind_opcodes_.size());
+  return *this;
+}
+
+
+DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t& bindings_set, std::vector<RelocationDyld*> rebases) {
+  // v2 encoding as defined in Linkedit.hpp - BindingInfoAtom<A>::encodeV2()
+  // This encoding uses THREADED opcodes.
+  std::vector<BindingInfo*> bindings = {std::begin(bindings_set), std::end(bindings_set)};
+
+  std::vector<binding_instruction> instructions;
+  uint64_t current_segment_start = 0;
+  uint64_t current_segment_end   = 0;
+  uint64_t current_segment_index = 0;
+  uint8_t type = 0;
+  uint64_t address = static_cast<uint64_t>(-1);
+  int32_t ordinal = 0x80000000;
+  std::string symbol_name;
+  int64_t addend = 0;
+  uint64_t num_bindings = static_cast<uint64_t>(-1);
+  const size_t pint_size = this->binary_->pointer_size();
+
+  for (BindingInfo* info : bindings) {
+    bool made_changes = false;
+    const int32_t lib_ordinal = info->library_ordinal();
+    if (ordinal != lib_ordinal) {
+      if (lib_ordinal <= 0) {
+        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM), lib_ordinal);
+      }
+      else if (lib_ordinal <= 15) {
+        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM), lib_ordinal);
+      }
+      else {
+        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB), lib_ordinal);
+      }
+      ordinal = lib_ordinal;
+      made_changes = true;
+    }
+    if (symbol_name != info->symbol().name()) {
+      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS_WEAK_IMPORT : 0;
+      symbol_name = info->symbol().name();
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, symbol_name);
+      made_changes = true;
+    }
+
+    if (info->binding_type() != static_cast<BIND_TYPES>(type)) {
+      if (info->binding_type() != BIND_TYPES::BIND_TYPE_POINTER) {
+        LIEF_ERR("Unsupported bind type with linked list opcodes");
+        return *this;
+      }
+      type = static_cast<uint8_t>(info->binding_type());
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM), type);
+      made_changes = true;
+    }
+
+    if (address != info->address()) {
+      address = info->address();
+      SegmentCommand* segment = this->binary_->segment_from_virtual_address(address);
+      if (segment == nullptr) {
+        LIEF_WARN("Can't find segment associated with address!");
+        return *this;
+      }
+
+      size_t index = this->binary_->segment_index(*segment);
+      current_segment_start = segment->virtual_address();
+      current_segment_end   = segment->virtual_address() + segment->virtual_size();
+      current_segment_index = index;
+      made_changes = true;
+    }
+
+    if (addend != info->addend()) {
+      addend = info->addend();
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB), addend);
+      made_changes = true;
+    }
+
+    if (made_changes) {
+      ++num_bindings;
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
+    }
+  }
+
+  if (num_bindings > 0x10000 and num_bindings != static_cast<uint64_t>(-1)) {
+    LIEF_ERR("Too many binds ({:d}). The limit being 65536");
+    return *this;
+  }
+
+  std::vector<uint64_t> threaded_rebase_bind_indices;
+  threaded_rebase_bind_indices.reserve(bindings.size() + rebases.size());
+
+  for (int64_t i = 0, e = rebases.size(); i != e; ++i) {
+    threaded_rebase_bind_indices.push_back(-i);
+  }
+
+  for (int64_t i = 0, e = bindings.size(); i != e; ++i) {
+    threaded_rebase_bind_indices.push_back(i + 1);
+  }
+
+  std::sort(std::begin(threaded_rebase_bind_indices), std::end(threaded_rebase_bind_indices),
+      [&bindings, &rebases] (int64_t index_a, int64_t index_b) {
+        if (index_a == index_b) {
+          return false;
+        }
+        uint64_t address_a = index_a <= 0 ? rebases[-index_a]->address() : bindings[index_a - 1]->address();
+        uint64_t address_b = index_b <= 0 ? rebases[-index_b]->address() : bindings[index_b - 1]->address();
+        return address_a < address_b;
+      });
+
+  current_segment_start = 0;
+  current_segment_end   = 0;
+  current_segment_index = 0;
+
+  uint64_t prev_page_index = 0;
+
+  for (int64_t entry_index : threaded_rebase_bind_indices) {
+    RelocationDyld* rebase = nullptr;
+    BindingInfo* bind = nullptr;
+
+    uint64_t address = 0;
+    if (entry_index <= 0) {
+      rebase = rebases[-entry_index];
+      address = rebase->address();
+    } else {
+      bind = bindings[entry_index - 1];
+      address = bind->address();
+    }
+    if (address % 8 != 0) {
+      LIEF_WARN("Address not aligned!");
+    }
+
+    bool new_segment = false;
+    if (address < current_segment_start or address >= current_segment_end) {
+      SegmentCommand* segment = this->binary_->segment_from_virtual_address(address);
+      if (segment == nullptr) {
+        LIEF_WARN("Can't find segment associated with address!");
+        return *this;
+      }
+
+      size_t index = this->binary_->segment_index(*segment);
+      current_segment_start = segment->virtual_address();
+      current_segment_end   = segment->virtual_address() + segment->virtual_size();
+      current_segment_index = index;
+      new_segment = true;
+    }
+    uint64_t page_index = (address - current_segment_start) / 4096;
+    if (new_segment or page_index != prev_page_index) {
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
+                                current_segment_index, address - current_segment_start);
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED) |
+                                static_cast<uint8_t>(BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY),
+                                0);
+    }
+    prev_page_index = page_index;
+  }
+  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
+  vector_iostream raw_output;
+  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED) |
+                            static_cast<uint8_t>(BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
+            .write_uleb128(num_bindings + 1);
+
+  bool done = false;
+  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
+    const binding_instruction& inst = *it;
+    switch(static_cast<BIND_OPCODES>(it->opcode)) {
+      case BIND_OPCODES::BIND_OPCODE_DONE:
+        {
+          done = true;
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM |
+                                                 static_cast<BIND_OPCODES>(inst.op1)));
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB))
+            .write_uleb128(inst.op1);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM |
+                            static_cast<BIND_OPCODES>(inst.op1 & BIND_IMMEDIATE_MASK)));
+
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM |
+                            static_cast<BIND_OPCODES>(inst.op1)))
+            .write(inst.name);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM |
+                            static_cast<BIND_OPCODES>(inst.op1)));
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB))
+            .write_sleb128(inst.op1);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB |
+                            static_cast<BIND_OPCODES>(inst.op1)))
+            .write_uleb128(inst.op2);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB))
+            .write_uleb128(inst.op1);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND));
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB))
+            .write_uleb128(inst.op1);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED |
+                            static_cast<BIND_OPCODES>(inst.op1)));
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
+            .write_uleb128(inst.op1)
+            .write_uleb128(inst.op2);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
+        {
+          raw_output
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
+            .write_uleb128(inst.op1);
+          break;
+        }
+
+      case BIND_OPCODES::BIND_OPCODE_THREADED_APPLY:
+        {
+          raw_output
+            .write(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED_APPLY));
+          break;
+        }
+
+      default:
+        {
+          LIEF_ERR("Unsupported opcode");
+          done = true;
+          break;
+        }
+    }
+  }
+
+  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE));
+  raw_output.align(pint_size);
 
   this->bind_opcodes_ = std::move(raw_output.raw());
   this->set_bind_size(this->bind_opcodes_.size());
