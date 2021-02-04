@@ -16,8 +16,7 @@
 #ifndef LIEF_PE_UTILS_LIBRARY_TABLE_STD_H_
 #define LIEF_PE_UTILS_LIBRARY_TABLE_STD_H_
 
-#include <map>
-#include "frozen.hpp"
+#include <unordered_map>
 
 #include "ws2_32_dll_lookup.hpp"
 #include "oleauth32_dll_lookup.hpp"
@@ -27,11 +26,12 @@ namespace LIEF {
 namespace PE {
 namespace imphashstd {
 
-static const std::map<std::string, const std::map<uint32_t, const char*>&> ordinals_library_tables =
+static const std::unordered_map<std::string, const char* (*)(uint32_t)>
+ordinals_library_tables =
 {
-  { "ws2_32.dll",     ws2_32_dll_lookup   },
-  { "wsock32.dll",    ws2_32_dll_lookup   },
-  { "oleaut32.dll",   oleaut32_dll_lookup },
+  { "ws2_32.dll",     &ws2_32_dll_lookup   },
+  { "wsock32.dll",    &ws2_32_dll_lookup   },
+  { "oleaut32.dll",   &oleaut32_dll_lookup },
 };
 }
 }
