@@ -22,6 +22,7 @@
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/type_traits.hpp"
 
 namespace LIEF {
@@ -66,8 +67,12 @@ class LIEF_API FatBinary {
   //! Extract a MachO::Binary object. Gives ownership to the caller, and
   //! remove it from this FatBinary object.
   //!
-  //!  @warning: this invalidates any previously hold iterator!
+  //! @warning: this invalidates any previously hold iterator!
   std::unique_ptr<Binary> take(size_t index);
+
+  //! Take the underlying MachO::Binary that matches the given architecture
+  //! If no binary with the architecture can be found, return a nullptr
+  std::unique_ptr<Binary> take(CPU_TYPES cpu);
 
   //! Reconstruct the Fat binary object and write it in `filename`
   //! @param filename Path to write the reconstructed binary

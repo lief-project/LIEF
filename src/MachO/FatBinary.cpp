@@ -91,14 +91,26 @@ const Binary& FatBinary::operator[](size_t index) const {
   return this->at(index);
 }
 
+std::unique_ptr<Binary> FatBinary::take(CPU_TYPES cpu) {
+  auto it = std::find_if(std::begin(this->binaries_), std::end(this->binaries_),
+      [cpu] (const Binary* bin) {
+        return bin->header().cpu_type() == cpu;
+      });
+  if (it == std::end(this->binaries_)) {
+    return nullptr;
+  }
+  std::unique_ptr<Binary> ret(*it);
+  this->binaries_.erase(it);
+  return ret;
+}
 std::unique_ptr<Binary> FatBinary::take(size_t index) {
-  if (index >= binaries_.size()) {
+  if (index >= this->binaries_.size()) {
     return {};
   }
-  auto it = binaries_.begin();
+  auto it = this->binaries_.begin();
   std::advance(it, index);
   std::unique_ptr<Binary> ret(*it);
-  binaries_.erase(it);
+  this->binaries_.erase(it);
   return ret;
 }
 

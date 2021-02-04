@@ -39,6 +39,13 @@ void create<FatBinary>(py::module& m) {
       "index"_a,
       py::return_value_policy::reference_internal)
 
+    .def("take",
+        static_cast<std::unique_ptr<Binary>(FatBinary::*)(CPU_TYPES)>(&FatBinary::take),
+        "Return the " RST_CLASS_REF(lief.MachO.Binary) " that matches the "
+        "given " RST_CLASS_REF(lief.MachO.CPU_TYPES) "",
+        "cpu"_a,
+        py::return_value_policy::take_ownership)
+
     .def("write",
         &FatBinary::write,
         "Build a Mach-O universal binary",
