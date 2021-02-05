@@ -274,6 +274,7 @@ std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
 }
 
 Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
+  using ordinal_resolver_t = const char*(*)(uint32_t);
 
   it_const_import_entries entries = import.entries();
 
@@ -289,7 +290,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
 
   std::string name = to_lower(import.name());
 
-  std::function<const char*(uint32_t)> ordinal_resolver;
+  ordinal_resolver_t ordinal_resolver = nullptr;
   if (use_std) {
     auto it = imphashstd::ordinals_library_tables.find(name);
     if (it != std::end(imphashstd::ordinals_library_tables)) {
@@ -302,7 +303,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
     }
   }
 
-  if (not ordinal_resolver) {
+  if (ordinal_resolver == nullptr) {
     std::string msg = "Ordinal lookup table for '" + name + "' not implemented";
     if (strict) {
       throw not_found(msg);
