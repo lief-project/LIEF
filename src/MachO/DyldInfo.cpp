@@ -1089,8 +1089,8 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   // Compress packed runs of pointers
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:239
   // ===========================================
-  auto&& dst = std::begin(output);
-  for (auto&& it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  auto dst = std::begin(output);
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
     if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES and it->op1 == 1) {
       *dst = *it++;
 
@@ -1113,7 +1113,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:257
   // ===========================================
   dst = std::begin(output);
-  for (auto&& it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
 
     if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES)
         and it->op1 == 1
@@ -1133,7 +1133,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:274
   // ===========================================
   dst = std::begin(output);
-  for (auto&& it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
     if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
         and (it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
@@ -1163,7 +1163,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:303
   // ===========================================
   const size_t pint_size = this->binary_->pointer_size();
-  for (auto&& it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
 
     if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB and it->op1 < (15 * pint_size) and (it->op1 % pint_size) == 0) {
       it->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED);
@@ -1175,7 +1175,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
 
   vector_iostream raw_output;
   bool done = false;
-  for (auto&& it = std::begin(output); not done and it != std::end(output); ++it) {
+  for (auto it = std::begin(output); not done and it != std::end(output); ++it) {
     const rebase_instruction& inst = *it;
 
     switch (static_cast<REBASE_OPCODES>(inst.opcode)) {
@@ -1406,8 +1406,8 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // combine bind/add pairs
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:469
   // ===========================================
-  auto&& dst = std::begin(instructions);
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  auto dst = std::begin(instructions);
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND and it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
@@ -1424,7 +1424,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:485
   // ===========================================
   dst = std::begin(instructions);
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
         it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
@@ -1451,7 +1451,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // Use immediate encodings
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
         it->op1 < (15 * pint_size) and
         (it->op1 % pint_size) == 0) {
@@ -1465,7 +1465,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
 
   bool done = false;
   vector_iostream raw_output;
-  for (auto&& it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
+  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
     const binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
@@ -1563,6 +1563,13 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
             .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
+          break;
+        }
+
+      default:
+        {
+          LIEF_WARN("Opcode {} ({:d}) is not processed for weak bindings",
+              to_string(static_cast<BIND_OPCODES>(inst.opcode)), inst.opcode);
           break;
         }
     }
@@ -1735,8 +1742,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // combine bind/add pairs
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:469
   // ===========================================
-  auto&& dst = std::begin(instructions);
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  auto dst = std::begin(instructions);
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND and it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
@@ -1753,7 +1760,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:485
   // ===========================================
   dst = std::begin(instructions);
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
         it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
@@ -1780,7 +1787,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // Use immediate encodings
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
-  for (auto&& it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
         it->op1 < (15 * pint_size) and
         (it->op1 % pint_size) == 0) {
@@ -1794,7 +1801,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
 
   bool done = false;
   vector_iostream raw_output;
-  for (auto&& it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
+  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
     const binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
@@ -1892,6 +1899,13 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
             .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
+          break;
+        }
+
+      default:
+        {
+          LIEF_WARN("Opcode {} ({:d}) is not processed for weak bindings",
+              to_string(static_cast<BIND_OPCODES>(inst.opcode)), inst.opcode);
           break;
         }
     }
