@@ -1193,6 +1193,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
       case DYNAMIC_TAGS::DT_NULL:
         {
+          dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{&entry}};
           end_of_dynamic = true;
           break;
         }

@@ -67,7 +67,7 @@ class TestSimple(TestCase):
 
     def test_dynamic(self):
         entries = self.binall.dynamic_entries
-        self.assertEqual(len(entries), 32)
+        self.assertEqual(len(entries), 28)
         self.assertEqual(entries[0].name, "libc.so.6")
         self.assertEqual(entries[3].array, [2208, 1782])
         self.assertEqual(self.binall[lief.ELF.DYNAMIC_TAGS.FLAGS_1].value, 0x8000000)
