@@ -96,6 +96,34 @@ class TestDEX35(TestCase):
         self.assertEqual(m0.access_flags, [])
 
 
+    def test_kik_fields(self):
+        fields = self.kik_dex35.fields
+
+        self.assertEqual(len(fields), 33376)
+
+        Result = self.kik_dex35.get_class("com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result")
+        if0 = Result.get_field("value")[0]
+        sf0 = Result.get_field("FULL")[0]
+
+        self.assertEqual(if0.name,                  "value")
+        self.assertEqual(if0.cls.pretty_name,       "com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result")
+        self.assertEqual(if0.type.value,            lief.DEX.Type.PRIMITIVES.INT)
+        self.assertEqual(if0.is_static,             False)
+        self.assertEqual(if0.access_flags,          [
+            lief.DEX.ACCESS_FLAGS.PRIVATE, 
+            lief.DEX.ACCESS_FLAGS.FINAL])
+
+        self.assertEqual(sf0.name,                  "FULL")
+        self.assertEqual(sf0.cls.pretty_name,       "com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result")
+        self.assertEqual(sf0.type.value.pretty_name,"com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result")
+        self.assertEqual(sf0.is_static,             True)
+        self.assertEqual(sf0.access_flags,          [
+            lief.DEX.ACCESS_FLAGS.PUBLIC,
+            lief.DEX.ACCESS_FLAGS.STATIC,
+            lief.DEX.ACCESS_FLAGS.FINAL,
+            lief.DEX.ACCESS_FLAGS.ENUM])
+
+
 
 
 
