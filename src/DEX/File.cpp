@@ -486,6 +486,14 @@ it_methods File::methods(void) {
   return this->methods_;
 }
 
+it_const_fields File::fields(void) const {
+  return this->fields_;
+}
+
+it_fields File::fields(void) {
+  return this->fields_;
+}
+
 
 it_const_strings File::strings(void) const {
   return this->strings_;

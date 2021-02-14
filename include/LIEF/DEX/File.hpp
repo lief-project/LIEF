@@ -23,6 +23,7 @@
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Field.hpp"
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/instructions.hpp"
@@ -90,6 +91,10 @@ class LIEF_API File : public Object {
   it_const_methods methods(void) const;
   it_methods methods(void);
 
+  //! **All** Fields used in this DEX
+  it_const_fields fields(void) const;
+  it_fields fields(void);
+
   //! String pool
   it_const_strings strings(void) const;
   it_strings strings(void);
@@ -137,6 +142,7 @@ class LIEF_API File : public Object {
   Header       header_;
   classes_t    classes_;
   methods_t    methods_;
+  fields_t     fields_;
   strings_t    strings_;
   types_t      types_;
   prototypes_t prototypes_;
