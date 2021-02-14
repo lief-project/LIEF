@@ -59,12 +59,19 @@ void Hash::visit(const CodeInfo& /*code_info*/) {
 
 void Hash::visit(const Class& cls) {
 
+  it_const_fields fields = cls.fields();
   it_const_methods methods = cls.methods();
   this->process(cls.fullname());
   this->process(cls.source_filename());
   this->process(cls.access_flags());
 
+  this->process(std::begin(fields), std::end(fields));
   this->process(std::begin(methods), std::end(methods));
+}
+
+void Hash::visit(const Field& field) {
+  this->process(field.name());
+  this->process(field.type());
 }
 
 void Hash::visit(const Method& method) {

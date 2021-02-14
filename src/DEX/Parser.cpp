@@ -133,6 +133,28 @@ void Parser::resolve_external_methods(void) {
   }
 }
 
+void Parser::resolve_external_fields(void) {
+  LIEF_DEBUG("Resolving external fields for #{:d} fields", this->class_field_map_.size());
+
+  for (const std::pair<const std::string, Field*>& p : this->class_field_map_) {
+    const std::string& clazz = p.first;
+    Field* field = p.second;
+
+    const auto it_inner_class = this->file_->classes_.find(clazz);
+    if (it_inner_class == std::end(this->file_->classes_)) {
+      Class* cls = new Class{clazz};
+      cls->fields_.push_back(field);
+      field->parent_ = cls;
+      this->file_->classes_.emplace(clazz, cls);
+    } else {
+      Class* cls = it_inner_class->second;
+      field->parent_ = cls;
+      cls->fields_.push_back(field);
+    }
+
+  }
+}
+
 void Parser::resolve_types(void) {
   for (auto&& p : this->class_type_map_) {
     if(this->file_->has_class(p.first)) {

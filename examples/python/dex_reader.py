@@ -80,6 +80,18 @@ def print_classes(dexfile):
         print(cls)
 
 @exceptions_handler(Exception)
+def print_fields(dexfile):
+    format_str = "{:<33} {:<30}"
+    format_hex = "{:<33} 0x{:<28x}"
+    format_dec = "{:<33} {:<30d}"
+
+    fields = dexfile.fields
+
+    print("== Fields ==")
+    for f in fields:
+        print(f)
+
+@exceptions_handler(Exception)
 def print_methods(dexfile):
     format_str = "{:<33} {:<30}"
     format_hex = "{:<33} 0x{:<28x}"
@@ -128,6 +140,10 @@ def main():
     parser.add_argument('-c', '--classes',
             action='store_true', dest='show_classes',
             help='Display classes')
+
+    parser.add_argument('-f', '--fields',
+            action='store_true', dest='show_fields',
+            help='Display Fields')
 
     parser.add_argument('-m', '--methods',
             action='store_true', dest='show_methods',
@@ -206,6 +222,9 @@ def main():
 
     if (args.show_classes or args.show_all) and len(dexfile.classes) > 0:
         print_classes(dexfile)
+
+    if (args.show_fields or args.show_all) and len(dexfile.fields) > 0:
+        print_fields(dexfile)
 
     if (args.show_methods or args.show_all) and len(dexfile.methods) > 0:
         print_methods(dexfile)

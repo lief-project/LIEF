@@ -40,6 +40,7 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const Header& header)     override;
   virtual void visit(const Class& cls)         override;
   virtual void visit(const Method& method)     override;
+  virtual void visit(const Field& field)       override;
   virtual void visit(const CodeInfo& codeinfo) override;
   virtual void visit(const Type& type)         override;
   virtual void visit(const Prototype& type)    override;

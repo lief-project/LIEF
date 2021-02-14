@@ -27,6 +27,7 @@ namespace DEX {
 class File;
 class Class;
 class Method;
+class Field;
 class Type;
 class Prototype;
 
@@ -46,6 +47,10 @@ using it_const_classes    = const_ref_iterator<const classes_list_t>;
 using methods_t           = std::vector<Method*>;
 using it_methods          = ref_iterator<methods_t>;
 using it_const_methods    = const_ref_iterator<const methods_t>;
+
+using fields_t            = std::vector<Field*>;
+using it_fields           = ref_iterator<fields_t>;
+using it_const_fields     = const_ref_iterator<const fields_t>;
 
 using strings_t           = std::vector<std::string*>;
 using it_strings          = ref_iterator<strings_t>;

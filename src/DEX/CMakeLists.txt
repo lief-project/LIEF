@@ -22,6 +22,7 @@ set(LIEF_DEX_SRC
   ${CMAKE_CURRENT_LIST_DIR}/Header.tcc
   ${CMAKE_CURRENT_LIST_DIR}/Class.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Method.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/Field.cpp
   ${CMAKE_CURRENT_LIST_DIR}/instructions.cpp
   ${CMAKE_CURRENT_LIST_DIR}/CodeInfo.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Type.cpp
@@ -37,6 +38,7 @@ set(LIEF_DEX_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/Header.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/Class.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/Method.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/Field.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/CodeInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/Parser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/DEX/type_traits.hpp"

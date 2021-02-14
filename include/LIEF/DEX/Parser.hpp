@@ -29,6 +29,7 @@ namespace LIEF {
 namespace DEX {
 class Class;
 class Method;
+class Field;
 
 //! @brief Class which parse a DEX file and transform into a DEX::File object
 class LIEF_API Parser {
@@ -78,6 +79,9 @@ class LIEF_API Parser {
     void parse_class_data(uint32_t offset, Class* cls);
 
     template<typename DEX_T>
+    void parse_field(size_t index, Class* cls, bool is_static);
+
+    template<typename DEX_T>
     void parse_method(size_t index, Class* cls, bool is_virtual);
 
     template<typename DEX_T>
@@ -86,6 +90,8 @@ class LIEF_API Parser {
     void resolve_inheritance(void);
 
     void resolve_external_methods(void);
+
+    void resolve_external_fields(void);
 
     void resolve_types(void);
 
@@ -98,6 +104,10 @@ class LIEF_API Parser {
     // Map of method/class relationship when parsing methods ('parse_methods')
     // The key is the Class name in which the method is defined
     std::unordered_multimap<std::string, Method*> class_method_map_;
+
+    // Map of field/class relationship when parsing fields ('parse_fields')
+    // The key is the Class name in which the field is defined
+    std::unordered_multimap<std::string, Field*> class_field_map_;
 
     std::unordered_multimap<std::string, Type*> class_type_map_;
 

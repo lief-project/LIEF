@@ -22,6 +22,7 @@
 #include "LIEF/DEX/type_traits.hpp"
 #include "LIEF/DEX/Structures.hpp"
 #include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Field.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -84,6 +85,14 @@ class LIEF_API Class : public Object {
   it_methods methods(const std::string& name);
   it_const_methods methods(const std::string& name) const;
 
+  //! Fields implemented in this class
+  it_const_fields fields(void) const;
+  it_fields fields(void);
+
+  //! Return Fields having the given name
+  it_fields fields(const std::string& name);
+  it_const_fields fields(const std::string& name) const;
+
   //! De-optimize information
   dex2dex_class_info_t dex2dex_info(void) const;
 
@@ -101,11 +110,13 @@ class LIEF_API Class : public Object {
 
   private:
   methods_t method_from_name(const std::string& name) const;
+  fields_t field_from_name(const std::string& name) const;
 
   std::string fullname_;
   uint32_t    access_flags_;
   Class*      parent_{nullptr};
   methods_t   methods_;
+  fields_t    fields_;
   std::string source_filename_;
 
   uint32_t original_index_;

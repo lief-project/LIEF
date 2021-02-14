@@ -41,6 +41,7 @@ void Parser::parse_file(void) {
   this->resolve_types();
   this->resolve_inheritance();
   this->resolve_external_methods();
+  this->resolve_external_fields();
 
 }
 
@@ -152,10 +153,62 @@ void Parser::parse_types(void) {
 
 template<typename DEX_T>
 void Parser::parse_fields(void) {
-
   Header::location_t fields_location = this->file_->header().fields();
+  Header::location_t types_location = this->file_->header().types();
+
+  const uint64_t fields_offset = fields_location.first;
+
   LIEF_DEBUG("Parsing #{:d} FIELDS at 0x{:x}", fields_location.second, fields_location.first);
-  // TODO(romain): To implement
+
+  for (size_t i = 0; i < fields_location.second; ++i) {
+    const field_id_item& item = this->stream_->peek<field_id_item>(fields_offset + i * sizeof(field_id_item));
+
+    // Class name in which the field is defined
+    if (item.class_idx > types_location.second) {
+      LIEF_WARN("Type index for field name is corrupted");
+      continue;
+    }
+    uint32_t class_name_idx = this->stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
+
+    if (class_name_idx > this->file_->strings_.size()) {
+      LIEF_WARN("String index for class name is corrupted");
+      continue;
+    }
+    std::string clazz = *this->file_->strings_[class_name_idx];
+    if (not clazz.empty() and clazz[0] == '[') {
+      size_t pos = clazz.find_last_of('[');
+      clazz = clazz.substr(pos + 1);
+    }
+
+    // Type
+    // =======================
+    if (item.type_idx >= this->file_->types_.size()) {
+      LIEF_WARN("Type #{:d} out of bound ({:d})", item.type_idx, this->file_->types_.size());
+      break;
+    }
+    Type* type = this->file_->types_[item.type_idx];
+
+    // Field Name
+    if (item.name_idx > this->file_->strings_.size()) {
+      LIEF_WARN("Name of field #{:d} is out of bound!", i);
+      continue;
+    }
+
+    std::string name = *this->file_->strings_[item.name_idx];
+    if (name.empty()) {
+      LIEF_WARN("Empty field name");
+    }
+
+    Field* field = new Field{name};
+    field->original_index_ = i;
+    field->type_ = type;
+    this->file_->fields_.push_back(field);
+
+
+    if (not clazz.empty() and clazz[0] != '[') {
+      this->class_field_map_.emplace(clazz, field);
+    }
+  }
 }
 
 template<typename DEX_T>
@@ -389,14 +442,26 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
   // =============
   for (size_t field_idx = 0, i = 0; i < static_fields_size; ++i) {
     field_idx += this->stream_->read_uleb128();
-    /* uint64_t access_flags = */ this->stream_->read_uleb128();
+    if (field_idx > file_->fields_.size()) {
+      LIEF_WARN("Corrupted field index #{:d} for class: {} ({:d} fields)",
+          field_idx, cls->fullname(), this->file_->fields_.size());
+      break;
+    }
+
+    this->parse_field<DEX_T>(field_idx, cls, true);
   }
 
-  // Instances
-  // =========
+  // Instance Fields
+  // ===============
   for (size_t field_idx = 0, i = 0; i < instance_fields_size; ++i) {
     field_idx += this->stream_->read_uleb128();
-    /* uint64_t access_flags = */ this->stream_->read_uleb128();
+    if (field_idx > file_->fields_.size()) {
+      LIEF_WARN("Corrupted field index #{:d} for class: {} ({:d} fields)",
+          field_idx, cls->fullname(), this->file_->fields_.size());
+      break;
+    }
+
+    this->parse_field<DEX_T>(field_idx, cls, false);
   }
 
   // Direct Methods
@@ -425,6 +490,34 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
     this->parse_method<DEX_T>(method_idx, cls, true);
   }
 
+}
+
+
+template<typename DEX_T>
+void Parser::parse_field(size_t index, Class* cls, bool is_static) {
+  // Access Flags
+  uint64_t access_flags = this->stream_->read_uleb128();
+
+  Field* field = this->file_->fields_[index];
+  field->set_static(is_static);
+
+  if (field->index() != index) {
+    LIEF_WARN("field->index() is not consistent");
+    return;
+  }
+
+  field->access_flags_ = static_cast<uint32_t>(access_flags);
+  field->parent_ = cls;
+  cls->fields_.push_back(field);
+
+  auto&& range = this->class_field_map_.equal_range(cls->fullname());
+  for (auto it = range.first; it != range.second;) {
+    if (it->second == field) {
+      it = this->class_field_map_.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
 

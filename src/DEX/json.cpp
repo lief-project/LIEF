@@ -85,6 +85,13 @@ void JsonVisitor::visit(const Class& cls) {
     flags.emplace_back(to_string(f));
   }
 
+  std::vector<json> fields;
+  for (const Field& f : cls.fields()) {
+    JsonVisitor fv;
+    fv(f);
+    fields.emplace_back(fv.get());
+  }
+
   std::vector<json> methods;
   for (const Method& m : cls.methods()) {
     JsonVisitor mv;
@@ -95,11 +102,28 @@ void JsonVisitor::visit(const Class& cls) {
   this->node_["source_filename"]  = cls.source_filename();
   this->node_["access_flags"]     = flags;
   this->node_["index"]            = cls.index();
+  this->node_["fields"]           = fields;
   this->node_["methods"]          = methods;
 
   if (cls.has_parent()) {
     this->node_["parent"] = cls.parent().fullname();
   }
+}
+
+void JsonVisitor::visit(const Field& field) {
+  std::vector<json> flags;
+  for (ACCESS_FLAGS f : field.access_flags()) {
+    flags.emplace_back(to_string(f));
+  }
+
+  JsonVisitor type_visitor;
+  type_visitor(field.type());
+
+  this->node_["name"]         = field.name();
+  this->node_["index"]        = field.index();
+  this->node_["is_static"]   = field.is_static();
+  this->node_["type"]         = type_visitor.get();
+  this->node_["access_flags"] = flags;
 }
 
 void JsonVisitor::visit(const Method& method) {

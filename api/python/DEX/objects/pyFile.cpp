@@ -68,6 +68,10 @@ void create<File>(py::module& m) {
         static_cast<no_const_getter_t<it_methods>>(&File::methods),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Method) "")
 
+    .def_property_readonly("fields",
+        static_cast<no_const_getter_t<it_fields>>(&File::fields),
+        "Iterator over Dex " RST_CLASS_REF(lief.DEX.Field) "")
+
     .def_property_readonly("strings",
         static_cast<no_const_getter_t<it_strings>>(&File::strings),
         "Iterator over Dex strings")

@@ -34,6 +34,7 @@ void init_objects(py::module& m) {
   CREATE(Header, m);
   CREATE(Class, m);
   CREATE(Method, m);
+  CREATE(Field, m);
   CREATE(Prototype, m);
   CREATE(Type, m);
   CREATE(MapList, m);

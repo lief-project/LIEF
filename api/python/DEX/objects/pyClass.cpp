@@ -73,6 +73,15 @@ void create<Class>(py::module& m) {
         "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name",
         "name"_a)
 
+    .def_property_readonly("fields",
+        static_cast<no_const_getter_t<it_fields>>(&Class::fields),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class")
+
+    .def("get_field",
+        static_cast<it_fields(Class::*)(const std::string&)>(&Class::fields),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name",
+        "name"_a)
+
     .def_property_readonly("access_flags",
         static_cast<getter_t<Class::access_flags_list_t>>(&Class::access_flags),
         "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) "")

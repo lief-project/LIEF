@@ -187,6 +187,7 @@ LIEF_OAT_FORWARD(Class)
 // DEX
 // ===============================
 LIEF_DEX_FORWARD(File)
+LIEF_DEX_FORWARD(Field)
 LIEF_DEX_FORWARD(Method)
 LIEF_DEX_FORWARD(Header)
 LIEF_DEX_FORWARD(Class)
@@ -571,6 +572,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::DEX::File
   LIEF_DEX_VISITABLE(File)
+
+//! Method to visit a LIEF::DEX::Field
+  LIEF_DEX_VISITABLE(Field)
 
   //! Method to visit a LIEF::DEX::Method
   LIEF_DEX_VISITABLE(Method)

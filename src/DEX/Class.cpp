@@ -157,6 +157,14 @@ it_methods Class::methods(void) {
   return this->methods_;
 }
 
+it_const_fields Class::fields(void) const {
+  return this->fields_;
+}
+
+it_fields Class::fields(void) {
+  return this->fields_;
+}
+
 
 it_methods Class::methods(const std::string& name) {
   return this->method_from_name(name);
@@ -176,6 +184,25 @@ methods_t Class::method_from_name(const std::string& name) const {
         return m->name() == name;
       });
   return mtd;
+}
+
+it_fields Class::fields(const std::string& name) {
+  return this->field_from_name(name);
+}
+
+it_const_fields Class::fields(const std::string& name) const {
+  return this->field_from_name(name);
+}
+
+fields_t Class::field_from_name(const std::string& name) const {
+  fields_t fld;
+  std::copy_if(
+      std::begin(this->fields_), std::end(this->fields_),
+      std::back_inserter(fld),
+      [&name] (const Field* f) {
+        return f->name() == name;
+      });
+  return fld;
 }
 
 size_t Class::index(void) const {

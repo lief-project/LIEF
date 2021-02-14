@@ -25,6 +25,7 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Field.hpp"
 #endif
 
 #endif
