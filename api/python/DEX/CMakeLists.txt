@@ -7,6 +7,7 @@ set(LIEF_PYTHON_DEX_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyParser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyFile.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyClass.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyField.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyMethod.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyCodeInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyMapList.cpp"
