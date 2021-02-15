@@ -51,6 +51,18 @@ Method
 
 ----------
 
+Field
+*****
+
+.. autoclass:: lief.DEX.Field
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
+----------
+
+
 Class
 ******
 

@@ -60,6 +60,13 @@ Class
 
 ----------
 
+Field
+*****
+
+.. doxygenclass:: LIEF::DEX::Field
+   :project: lief
+
+----------
 
 Code Info
 *********

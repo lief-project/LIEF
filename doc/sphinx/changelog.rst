@@ -30,6 +30,9 @@ Changelog
   * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
   * Handle the `0x0D` binding opcode (see: :issue:`524`)
 
+:DEX:
+  * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
+
 .. _release-0110:
 
 0.11.0 - January 19, 2021
