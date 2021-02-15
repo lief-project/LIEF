@@ -1112,6 +1112,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
   Elf_Off dynamic_string_offset = this->get_dynamic_string_table();
 
+  bool end_of_dynamic = false;
   this->stream_->setpos(offset);
   for (size_t dynIdx = 0; dynIdx < nb_entries; ++dynIdx) {
     if (not this->stream_->can_read<Elf_Dyn>()) {
@@ -1190,6 +1191,13 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           break;
         }
 
+      case DYNAMIC_TAGS::DT_NULL:
+        {
+          dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{&entry}};
+          end_of_dynamic = true;
+          break;
+        }
+
       default:
         {
           dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{&entry}};
@@ -1200,6 +1208,10 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       this->binary_->dynamic_entries_.push_back(dynamic_entry.release());
     } else {
       LIEF_WARN("dynamic_entry is nullptr !");
+    }
+
+    if (end_of_dynamic) {
+      break;
     }
 
   }
