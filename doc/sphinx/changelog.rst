@@ -33,6 +33,11 @@ Changelog
 :DEX:
   * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
 
+:Abstraction:
+  * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
+  * Add :meth:`lief.Binary.offset_to_virtual_addres`
+
+
 .. _release-0110:
 
 0.11.0 - January 19, 2021

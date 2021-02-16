@@ -1629,9 +1629,8 @@ Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* ve
 }
 
 uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
-  auto&& it_segment = std::find_if(
-      std::begin(this->segments_),
-      std::end(this->segments_),
+  const auto it_segment = std::find_if(
+      std::begin(this->segments_), std::end(this->segments_),
       [virtual_address] (const Segment* segment)
       {
         if (segment == nullptr) {
@@ -1652,6 +1651,36 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
   uint64_t offset      = virtual_address - baseAddress;
 
   return offset;
+
+}
+
+uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
+  const auto it_segment = std::find_if(
+      std::begin(this->segments_), std::end(this->segments_),
+      [offset] (const Segment* segment) {
+        if (segment == nullptr) {
+          return false;
+        }
+        return (
+          segment->type() == SEGMENT_TYPES::PT_LOAD and
+          segment->file_offset() <= offset and
+          segment->file_offset() + segment->physical_size() > offset
+          );
+      });
+
+  if (it_segment == std::end(this->segments_)) {
+    if (slide > 0) {
+      return slide + offset;
+    }
+    return this->imagebase() + offset;
+  }
+
+  const uint64_t base_address = (*it_segment)->virtual_address() - (*it_segment)->file_offset();
+  if (slide > 0) {
+    return (base_address - this->imagebase()) + slide + offset;
+  }
+
+  return base_address + offset;
 
 }
 

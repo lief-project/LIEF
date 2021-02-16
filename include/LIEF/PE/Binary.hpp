@@ -61,6 +61,15 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Convert Virtual address to offset
   uint64_t va_to_offset(uint64_t VA);
 
+  //! Convert the given offset into a virtual address.
+  //!
+  //! @param[in] offset The offset to convert.
+  //! @param[in] slide If not 0, it will replace the default base address (if any)
+  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+
+  //! Return binary's imagebase. ``0`` if not relevant
+  uint64_t imagebase(void) const override;
+
   //! Find the section associated with the `offset`
   Section&       section_from_offset(uint64_t offset);
   const Section& section_from_offset(uint64_t offset) const;

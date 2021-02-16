@@ -178,7 +178,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool disable_pie(void);
 
   //! Return binary's imagebase. ``0`` if not relevant
-  uint64_t imagebase(void) const;
+  uint64_t imagebase(void) const override;
 
   //! Size of the binary in memory when mapped
   uint64_t virtual_size(void) const;
@@ -235,6 +235,12 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Convert a virtual address to an offset in the file
   uint64_t virtual_address_to_offset(uint64_t virtualAddress) const;
+
+  //! Convert the given offset into a virtual address.
+  //!
+  //! @param[in] offset The offset to convert.
+  //! @param[in] slide If not 0, it will replace the default base address (if any)
+  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   // Return binary's @link MachO::SegmentCommand segment command
   // which hold the offset

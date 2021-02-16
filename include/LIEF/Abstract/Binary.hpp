@@ -144,8 +144,17 @@ class LIEF_API Binary : public Object {
   //! @brief Check if the binary uses ``NX`` protection
   virtual bool has_nx(void) const = 0;
 
+  //! Default image base address if the ASLR is not enabled.
+  virtual uint64_t imagebase() const = 0;
+
   //! Constructor functions that are called prior any other functions
   virtual LIEF::Binary::functions_t ctor_functions(void) const = 0;
+
+  //! Convert the given offset into a virtual address.
+  //!
+  //! @param[in] offset The offset to convert.
+  //! @param[in] slide If not 0, it will replace the default base address (if any)
+  virtual uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
 
   virtual std::ostream& print(std::ostream& os) const;
 

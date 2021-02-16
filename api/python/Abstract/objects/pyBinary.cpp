@@ -100,8 +100,7 @@ void create<Binary>(py::module& m) {
           imported_libraries_encoded.reserve(imported_libraries.size());
 
           std::transform(
-              std::begin(imported_libraries),
-              std::end(imported_libraries),
+              std::begin(imported_libraries), std::end(imported_libraries),
               std::back_inserter(imported_libraries_encoded),
               &safe_string_converter);
           return imported_libraries_encoded;
@@ -184,6 +183,14 @@ void create<Binary>(py::module& m) {
         &Binary::xref,
         "Return all **virtual addresses** that *use* the ``address`` given in parameter",
         "virtual_address"_a)
+
+    .def("offset_to_virtual_address", &Binary::offset_to_virtual_address,
+        "Convert an offset into a virtual address.",
+        "offset"_a, "slide"_a = 0)
+
+    .def_property_readonly("imagebase",
+        &Binary::imagebase,
+        "Default image base (i.e. if the ASLR is not enabled)")
 
     .def("__str__",
         [] (const Binary& binary)

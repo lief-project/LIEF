@@ -227,7 +227,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! To compute the image base, we look for the PT_PHDR segment header (phdr),
   //! and we return phdr->p_vaddr - phdr->p_offset
-  uint64_t imagebase(void) const;
+  uint64_t imagebase(void) const override;
 
   //! Return the size of the mapped binary
   uint64_t virtual_size(void) const;
@@ -400,6 +400,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Convert a virtual address to an offset in the file
   uint64_t virtual_address_to_offset(uint64_t virtual_address) const;
+
+  //! Convert the given offset into a virtual address.
+  //!
+  //! @param[in] offset The offset to convert.
+  //! @param[in] slide If not 0, it will replace the default base address (if any)
+  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   //! Check if the binary has been compiled with `-fpie -pie` flags
   //!

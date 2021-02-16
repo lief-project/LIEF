@@ -226,10 +226,37 @@ uint64_t Binary::va_to_offset(uint64_t VA) {
   return this->rva_to_offset(rva);
 }
 
+uint64_t Binary::imagebase(void) const {
+  return this->optional_header().imagebase();
+}
+
+uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
+  const auto it_section = std::find_if(
+      std::begin(this->sections_), std::end(this->sections_),
+      [offset] (const Section* section)
+      {
+        return (offset >= section->offset() and
+            offset < (section->offset() + section->sizeof_raw_data()));
+      });
+
+  if (it_section == std::end(sections_)) {
+    if (slide > 0) {
+      return slide + offset;
+    }
+    return offset;
+  }
+  const Section* section = *it_section;
+  const uint64_t base_rva = section->virtual_address() - section->offset();
+  if (slide > 0) {
+    return slide + base_rva + offset;
+  }
+
+  return base_rva + offset;
+}
+
 uint64_t Binary::rva_to_offset(uint64_t RVA) {
-  auto&& it_section = std::find_if(
-      std::begin(this->sections_),
-      std::end(this->sections_),
+  const auto it_section = std::find_if(
+      std::begin(this->sections_), std::end(this->sections_),
       [RVA] (const Section* section)
       {
         if (section == nullptr) {
