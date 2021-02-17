@@ -153,7 +153,7 @@ void BinaryParser::parse_load_commands(void) {
 
           local_offset += sizeof(segment_command_t);
 
-          SegmentCommand* segment = dynamic_cast<SegmentCommand*>(load_command.get());
+          SegmentCommand* segment = reinterpret_cast<SegmentCommand*>(load_command.get());
 
           const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size(), /* check */ false);
           if (content != nullptr) {
@@ -207,7 +207,7 @@ void BinaryParser::parse_load_commands(void) {
           const uint32_t str_name_offset = cmd->dylib.name;
           std::string name = this->stream_->peek_string_at(loadcommands_offset + str_name_offset);
 
-          dynamic_cast<DylibCommand*>(load_command.get())->name(name);
+          reinterpret_cast<DylibCommand*>(load_command.get())->name(name);
           break;
         }
 
@@ -222,7 +222,7 @@ void BinaryParser::parse_load_commands(void) {
           const uint32_t str_path_offset = cmd->path;
           std::string path = this->stream_->peek_string_at(loadcommands_offset + str_path_offset);
 
-          dynamic_cast<RPathCommand*>(load_command.get())->path(path);
+          reinterpret_cast<RPathCommand*>(load_command.get())->path(path);
           break;
         }
 
@@ -251,7 +251,7 @@ void BinaryParser::parse_load_commands(void) {
              linker_name_offset);
 
           load_command = std::unique_ptr<DylinkerCommand>{new DylinkerCommand{cmd}};
-          dynamic_cast<DylinkerCommand*>(load_command.get())->name(name);
+          reinterpret_cast<DylinkerCommand*>(load_command.get())->name(name);
           break;
         }
 
@@ -286,7 +286,7 @@ void BinaryParser::parse_load_commands(void) {
           const thread_command* cmd = &this->stream_->peek<thread_command>(loadcommands_offset);
           load_command = std::unique_ptr<ThreadCommand>{new ThreadCommand{cmd}};
 
-          ThreadCommand* thread = dynamic_cast<ThreadCommand*>(load_command.get());
+          ThreadCommand* thread = reinterpret_cast<ThreadCommand*>(load_command.get());
           thread->architecture_ = this->binary_->header().cpu_type();
           LIEF_DEBUG("FLAVOR: {} | COUNT: {}", cmd->flavor, cmd->count);
           switch(this->binary_->header().cpu_type()) {
@@ -403,7 +403,7 @@ void BinaryParser::parse_load_commands(void) {
           const dyld_info_command* cmd = &this->stream_->peek<dyld_info_command>(loadcommands_offset);
 
           load_command = std::unique_ptr<DyldInfo>{new DyldInfo{cmd}};
-          dynamic_cast<DyldInfo*>(load_command.get())->binary_ = this->binary_;
+          reinterpret_cast<DyldInfo*>(load_command.get())->binary_ = this->binary_;
           break;
         }
 
@@ -517,7 +517,7 @@ void BinaryParser::parse_load_commands(void) {
           load_command = std::unique_ptr<FunctionStarts>{new FunctionStarts{cmd}};
 
           uint64_t value = 0;
-          FunctionStarts* fstart = dynamic_cast<FunctionStarts*>(load_command.get());
+          FunctionStarts* fstart = reinterpret_cast<FunctionStarts*>(load_command.get());
           this->stream_->setpos(cmd->dataoff);
 
           do {
