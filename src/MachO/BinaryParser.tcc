@@ -154,6 +154,7 @@ void BinaryParser::parse_load_commands(void) {
           local_offset += sizeof(segment_command_t);
 
           SegmentCommand* segment = reinterpret_cast<SegmentCommand*>(load_command.get());
+          this->binary_->segments_.push_back(segment);
 
           const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size(), /* check */ false);
           if (content != nullptr) {
@@ -171,6 +172,7 @@ void BinaryParser::parse_load_commands(void) {
           for (size_t j = 0; j < segment->numberof_sections(); ++j) {
             const section_t* section_header = &this->stream_->peek<section_t>(local_offset);
             std::unique_ptr<Section> section{new Section{section_header}};
+            this->binary_->sections_.push_back(section.get());
             if (section->size_ > 0 and
               section->type() != MACHO_SECTION_TYPES::S_ZEROFILL and
               section->type() != MACHO_SECTION_TYPES::S_THREAD_LOCAL_ZEROFILL and
@@ -207,7 +209,9 @@ void BinaryParser::parse_load_commands(void) {
           const uint32_t str_name_offset = cmd->dylib.name;
           std::string name = this->stream_->peek_string_at(loadcommands_offset + str_name_offset);
 
-          reinterpret_cast<DylibCommand*>(load_command.get())->name(name);
+          auto* lib = reinterpret_cast<DylibCommand*>(load_command.get());
+          lib->name(std::move(name));
+          this->binary_->libraries_.push_back(lib);
           break;
         }
 
@@ -866,16 +870,6 @@ void BinaryParser::parse_dyldinfo_rebases() {
         }
     }
   }
-
-  // Tie symbols and relocations
-  for (Relocation& relocation : this->binary_->relocations()) {
-
-    if (not this->binary_->is_valid_addr(relocation.address())) {
-      continue;
-    }
-
-  }
-
 }
 
 

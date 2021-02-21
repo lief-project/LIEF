@@ -25,9 +25,8 @@ namespace MachO {
 template<class T>
 bool Binary::has_command(void) const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  auto&& it_cmd = std::find_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
+  const auto it_cmd = std::find_if(
+      std::begin(this->commands_), std::end(this->commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });
@@ -43,22 +42,17 @@ T& Binary::command(void) {
 template<class T>
 const T& Binary::command(void) const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  if (not this->has_command<T>()) {
-    throw not_found("Unable to find the " + std::string(typeid(T).name()));
-  }
-
-  if (this->count_commands<T>() > 1) {
-    LIEF_WARN("Multiple {} command. Return the first one!", std::string(typeid(T).name()));
-  }
-
-  auto&& it_cmd = std::find_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
+  const auto it_cmd = std::find_if(
+      std::begin(this->commands_), std::end(this->commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });
 
-  return *dynamic_cast<T*>(*it_cmd);
+  if (it_cmd == std::end(this->commands_)) {
+    throw not_found("Unable to find the " + std::string(typeid(T).name()));
+  }
+
+  return *reinterpret_cast<T*>(*it_cmd);
 
 }
 
@@ -67,8 +61,7 @@ size_t Binary::count_commands(void) const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
 
   size_t nb_cmd = std::count_if(
-      std::begin(this->commands_),
-      std::end(this->commands_),
+      std::begin(this->commands_), std::end(this->commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });

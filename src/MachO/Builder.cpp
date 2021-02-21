@@ -288,9 +288,8 @@ void Builder::build_load_commands(void) {
 }
 
 void Builder::build_uuid(void) {
-  auto&& uuid_it = std::find_if(
-        std::begin(this->binary_->commands_),
-        std::end(this->binary_->commands_),
+  const auto uuid_it = std::find_if(
+        std::begin(this->binary_->commands_), std::end(this->binary_->commands_),
         [] (const LoadCommand* command) {
           return (typeid(*command) == typeid(UUIDCommand));
         });
@@ -299,7 +298,7 @@ void Builder::build_uuid(void) {
     return;
   }
 
-  UUIDCommand* uuid_cmd = dynamic_cast<UUIDCommand*>(*uuid_it);
+  const UUIDCommand* uuid_cmd = reinterpret_cast<UUIDCommand*>(*uuid_it);
   uuid_command raw_cmd;
   std::fill(
       reinterpret_cast<uint8_t*>(&raw_cmd),

@@ -247,68 +247,27 @@ it_const_symbols Binary::symbols(void) const {
 }
 
 it_libraries Binary::libraries(void) {
-  libraries_t result;
-
-  for (LoadCommand* library: this->commands_) {
-    if (typeid(*library) == typeid(DylibCommand)) {
-      result.push_back(dynamic_cast<DylibCommand*>(library));
-    }
-  }
-  return result;
+  return this->libraries_;
 }
 
 it_const_libraries Binary::libraries(void) const {
-
-  libraries_t result;
-
-  for (LoadCommand* library: this->commands_) {
-    if (typeid(*library) == typeid(DylibCommand)) {
-      result.push_back(dynamic_cast<DylibCommand*>(library));
-    }
-  }
-  return result;
+  return this->libraries_;
 }
 
 it_segments Binary::segments(void) {
-  segments_t result{};
-  result.reserve(this->commands_.size());
-  for (LoadCommand* cmd: this->commands_) {
-    if (typeid(*cmd) == typeid(SegmentCommand)) {
-      result.push_back(dynamic_cast<SegmentCommand*>(cmd));
-    }
-  }
-  return result;
+  return this->segments_;
 }
 
 it_const_segments Binary::segments(void) const {
-  segments_t result{};
-  result.reserve(this->commands_.size());
-  for (LoadCommand* cmd: this->commands_) {
-    if (typeid(*cmd) == typeid(SegmentCommand)) {
-      result.push_back(dynamic_cast<SegmentCommand*>(cmd));
-    }
-  }
-  return result;
+  return this->segments_;
 }
 
 it_sections Binary::sections(void) {
-  sections_t result;
-  for (SegmentCommand& segment : this->segments()) {
-    for (Section& s: segment.sections()) {
-      result.push_back(&s);
-    }
-  }
-  return result;
+  return this->sections_;
 }
 
 it_const_sections Binary::sections(void) const {
-  sections_t result;
-  for (const SegmentCommand& segment : this->segments()) {
-    for (const Section& s: segment.sections()) {
-      result.push_back(const_cast<Section*>(&s));
-    }
-  }
-  return result;
+  return this->sections_;
 }
 
 
@@ -433,8 +392,7 @@ void Binary::write(const std::string& filename) {
 const Section* Binary::section_from_offset(uint64_t offset) const {
   it_const_sections sections = this->sections();
   const auto it_section = std::find_if(
-      sections.cbegin(),
-      sections.cend(),
+      sections.cbegin(), sections.cend(),
       [offset] (const Section& section) {
         return ((section.offset() <= offset) and
             offset < (section.offset() + section.size()));
@@ -804,8 +762,7 @@ LoadCommand& Binary::add(const LoadCommand& command) {
 
   // Copy the command data
   std::copy(
-      std::begin(command.data()),
-      std::end(command.data()),
+      std::begin(command.data()), std::end(command.data()),
       std::begin(content) + loadcommands_end);
 
   load_cmd_segment->content(std::move(content));
@@ -815,6 +772,16 @@ LoadCommand& Binary::add(const LoadCommand& command) {
   copy->command_offset(loadcommands_end);
 
   this->commands_.push_back(copy);
+
+  // Update cache
+  if (typeid(*copy) == typeid(DylibCommand)) {
+    this->libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
+  }
+
+  if (typeid(*copy) == typeid(SegmentCommand)) {
+    this->segments_.push_back(reinterpret_cast<SegmentCommand*>(copy));
+  }
+
   return *this->commands_.back();
 }
 
@@ -858,6 +825,14 @@ LoadCommand& Binary::add(const LoadCommand& command, size_t index) {
     }
   }
 
+  if (typeid(*copy) == typeid(DylibCommand)) {
+    this->libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
+  }
+
+  if (typeid(*copy) == typeid(SegmentCommand)) {
+    this->segments_.push_back(reinterpret_cast<SegmentCommand*>(copy));
+  }
+
   this->commands_.insert(std::begin(this->commands_) + index, copy);
   return *copy;
 }
@@ -876,6 +851,27 @@ bool Binary::remove(const LoadCommand& command) {
   }
 
   LoadCommand* cmd_rm = *it;
+
+  if (typeid(*cmd_rm) == typeid(DylibCommand)) {
+    auto it_cache = std::find(std::begin(this->libraries_), std::end(this->libraries_), cmd_rm);
+    if (it_cache == std::end(this->libraries_)) {
+      const auto* lib = reinterpret_cast<const DylibCommand*>(cmd_rm);
+      LIEF_WARN("Library {} not found in cache. The binary object is likely in an inconsistent state", lib->name());
+    } else {
+      this->libraries_.erase(it_cache);
+    }
+  }
+
+  if (typeid(*cmd_rm) == typeid(SegmentCommand)) {
+    auto it_cache = std::find(std::begin(this->segments_), std::end(this->segments_), cmd_rm);
+    if (it_cache == std::end(this->segments_)) {
+      const auto* seg = reinterpret_cast<const SegmentCommand*>(cmd_rm);
+      LIEF_WARN("Segment {} not found in cache. The binary object is likely in an inconsistent state", seg->name());
+    } else {
+      this->segments_.erase(it_cache);
+    }
+  }
+
   const size_t cmd_rm_offset = cmd_rm->command_offset();
   for (LoadCommand* cmd : this->commands_) {
     if (cmd->command_offset() >= cmd_rm_offset) {
@@ -1064,9 +1060,17 @@ void Binary::remove_section(const std::string& name, bool clear) {
 
   this->available_command_space_ += section_struct_size;
 
+  Section* section = *it_section;
+  // Remove from cache
+  auto it_cache = std::find(std::begin(this->sections_), std::end(this->sections_), section);
+  if (it_cache == std::end(this->sections_)) {
+    LIEF_WARN("Can find the section {} in the cache. The binary object is likely in an inconsistent state",
+              section->name());
+  } else {
+    this->sections_.erase(it_cache);
+  }
 
-
-  delete *it_section;
+  delete section;
   segment.sections_.erase(it_section);
 }
 
@@ -1119,7 +1123,6 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
 
   // Section raw data will be located just after commands table
   if (section.offset() == 0) {
-
     uint64_t new_offset = this->is64_ ? sizeof(mach_header_64) : sizeof(mach_header);
     new_offset += this->header().sizeof_cmds();
     new_offset += this->available_command_space_;
@@ -1137,6 +1140,9 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   new_section->segment_ = &target_segment;
   target_segment.sections_.push_back(new_section);
   target_segment.numberof_sections(target_segment.numberof_sections() + 1);
+
+  // Copy the new section in the cache
+  this->sections_.push_back(new_section);
 
   // Copy data to segment
   const size_t relative_offset = new_section->offset() - target_segment.file_offset();
@@ -1462,6 +1468,9 @@ uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) cons
   }
   const uint64_t base_address = segment->virtual_address() - segment->file_offset();
   if (slide > 0) {
+    if (this->imagebase() == 0) {
+      return slide + offset;
+    }
     return (base_address - this->imagebase()) + offset + slide;
   }
   return base_address + offset;

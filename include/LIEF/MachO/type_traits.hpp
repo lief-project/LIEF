@@ -60,16 +60,16 @@ using it_imported_symbols       = filter_iterator<symbols_t>;
 using it_const_imported_symbols = const_filter_iterator<symbols_t>;
 
 using libraries_t               = std::vector<DylibCommand*>;
-using it_libraries              = ref_iterator<libraries_t>;
-using it_const_libraries        = const_ref_iterator<libraries_t>;
+using it_libraries              = ref_iterator<libraries_t&>;
+using it_const_libraries        = const_ref_iterator<const libraries_t&>;
 
 using segments_t                = std::vector<SegmentCommand*>;
-using it_segments               = ref_iterator<segments_t>;
-using it_const_segments         = const_ref_iterator<segments_t>;
+using it_segments               = ref_iterator<segments_t&>;
+using it_const_segments         = const_ref_iterator<const segments_t&>;
 
 using sections_t                = std::vector<Section*>;
-using it_sections               = ref_iterator<sections_t>;
-using it_const_sections         = const_ref_iterator<sections_t>;
+using it_sections               = ref_iterator<sections_t&>;
+using it_const_sections         = const_ref_iterator<const sections_t&>;
 
 using relocations_t             = std::set<Relocation*, KeyCmp<Relocation>>;  ///< Container used to store relocations
 using it_relocations            = ref_iterator<relocations_t&>;               ///< Iterator's type for relocations

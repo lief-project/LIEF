@@ -496,14 +496,18 @@ class LIEF_API Binary : public LIEF::Binary  {
     return this->is64_ ? sizeof(uint64_t) : sizeof(uint32_t);
   }
 
-  bool       is64_;
-  Header     header_;
-  commands_t commands_;
-  symbols_t  symbols_;
+  bool        is64_;
+  Header      header_;
+  commands_t  commands_;
+  symbols_t   symbols_;
+  libraries_t libraries_;
+  sections_t  sections_;
+  segments_t  segments_;
 
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;
   int32_t available_command_space_ = 0;
+
 
   protected:
   uint64_t fat_offset_ = 0;
