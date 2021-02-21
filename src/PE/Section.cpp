@@ -46,7 +46,7 @@ Section::Section(const pe_section* header) :
   characteristics_{header->Characteristics},
   types_{PE_SECTION_TYPES::UNKNOWN}
 {
-  this->name_            = std::string(header->Name, sizeof(header->Name)).c_str();
+  this->name_            = std::string(header->Name, sizeof(header->Name));
   this->virtual_address_ = header->VirtualAddress;
   this->size_            = header->SizeOfRawData;
   this->offset_          = header->PointerToRawData;
