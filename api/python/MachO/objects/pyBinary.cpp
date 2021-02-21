@@ -73,7 +73,7 @@ void create<Binary>(py::module& m) {
         "name"_a)
 
     .def("get_symbol",
-        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
+        static_cast<no_const_func<Symbol*, const std::string&>>(&Binary::get_symbol),
         "Return the " RST_CLASS_REF(lief.MachO.Symbol) " from the given name",
         "name"_a,
         py::return_value_policy::reference)

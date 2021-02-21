@@ -19,6 +19,8 @@ Changelog
     (see: :issue:`532`)
 
 :MachO:
+  * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol
+    can't be found, it returns a nullptr.
   * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its achitecture. See:
     :meth:`lief.MachO.FatBinary.take`.
 

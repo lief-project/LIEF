@@ -401,30 +401,25 @@ it_const_imported_symbols Binary::imported_symbols(void) const {
 
 
 bool Binary::has_symbol(const std::string& name) const {
+  return this->get_symbol(name) != nullptr;
+}
+
+const Symbol* Binary::get_symbol(const std::string& name) const {
   const auto it_symbol = std::find_if(
       std::begin(this->symbols_), std::end(this->symbols_),
       [&name] (const Symbol* sym) {
         return sym->name() == name;
       });
-  return it_symbol != std::end(this->symbols_);
-}
 
-const Symbol& Binary::get_symbol(const std::string& name) const {
-  if (not this->has_symbol(name)) {
-    throw not_found("Unable to find the symbol '" + name + "'");
+  if (it_symbol == std::end(this->symbols_)) {
+    return nullptr;
   }
 
-  const auto it_symbol = std::find_if(
-      std::begin(this->symbols_), std::end(this->symbols_),
-      [&name] (const Symbol* sym) {
-        return sym->name() == name;
-      });
-
-  return *(*it_symbol);
+  return *it_symbol;
 }
 
-Symbol& Binary::get_symbol(const std::string& name) {
-  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
+Symbol* Binary::get_symbol(const std::string& name) {
+  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
 }
 
 // =====
@@ -1233,11 +1228,11 @@ LoadCommand& Binary::add(const SegmentCommand& segment) {
 }
 
 bool Binary::unexport(const std::string& name) {
-  if (not this->has_symbol(name)) {
+  const Symbol* s = this->get_symbol(name);
+  if (s == nullptr) {
     return false;
   }
-  const Symbol& s = this->get_symbol(name);
-  return this->unexport(s);
+  return this->unexport(*s);
 }
 
 bool Binary::unexport(const Symbol& sym) {
@@ -1382,12 +1377,12 @@ bool Binary::remove(const Symbol& sym) {
 
 bool Binary::remove_symbol(const std::string& name) {
   bool removed = false;
-  while (this->has_symbol(name)) {
-    const Symbol& s = this->get_symbol(name);
-    if (not this->remove(s)) {
+  const Symbol* s = this->get_symbol(name);
+  while (s != nullptr) {
+    if (not this->remove(*s)) {
       break;
     }
-
+    s = this->get_symbol(name);
     removed = true;
   }
   return removed;

@@ -1544,12 +1544,10 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     binding_info->library_ = &libraries[ord - 1];
   }
 
-
-  if (this->binary_->has_symbol(symbol_name)) {
-    Symbol& symbol = this->binary_->get_symbol(symbol_name);
-    //symbol.value(address);
-    binding_info->symbol_ = &symbol;
-    symbol.binding_info_ = binding_info.get();
+  Symbol* symbol = this->binary_->get_symbol(symbol_name);
+  if (symbol != nullptr) {
+    binding_info->symbol_ = symbol;
+    symbol->binding_info_ = binding_info.get();
   } else {
     LIEF_ERR("New symbol found: {}", symbol_name);
   }
