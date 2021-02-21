@@ -252,9 +252,21 @@ void Parser::parse_sections(void) {
         };
       }
       const uint64_t padding_size = section->size() - size_to_read;
-      const uint8_t* ptr_to_padding = this->stream_->peek_array<uint8_t>(offset + size_to_read, padding_size, /* check */false);
+
+      // Treat content between two sections (that is not wrapped in a section) as 'padding'
+      uint64_t hole_size = 0;
+      if (i < numberof_sections - 1) {
+        const pe_section& next_section = sections[i + 1];
+        const uint64_t sec_offset = next_section.PointerToRawData;
+        if (offset + size_to_read + padding_size < sec_offset) {
+          hole_size = sec_offset - (offset + size_to_read + padding_size);
+        }
+      }
+      const uint8_t* ptr_to_padding = this->stream_->peek_array<uint8_t>(offset + size_to_read,
+                                                                         padding_size + hole_size,
+                                                                         /* check */false);
       if (ptr_to_padding != nullptr) {
-        section->padding_ = {ptr_to_padding, ptr_to_padding + padding_size};
+        section->padding_ = {ptr_to_padding, ptr_to_padding + padding_size + hole_size};
       }
     }
     this->binary_->sections_.push_back(section.release());
