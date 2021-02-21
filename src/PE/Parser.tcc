@@ -108,7 +108,12 @@ void Parser::parse_data_directories(void) {
   }
 
   this->binary_->data_directories_.reserve(nbof_datadir);
-  for (size_t i = 0; i < nbof_datadir; ++i) {
+  // WARNING: The PE specifications require that the data directory table ends with a null entry (RVA / Size,
+  // set to 0).
+  // Nevertheless it seems that this requirement is not enforced by the PE loader.
+  // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af contains a non-null final
+  // data directory (watermarking?)
+  for (size_t i = 0; i < (nbof_datadir + 1); ++i) {
     std::unique_ptr<DataDirectory> directory{new DataDirectory{&data_directory[i], static_cast<DATA_DIRECTORY>(i)}};
     LIEF_DEBUG("Processing directory #{:d} ()", i, to_string(static_cast<DATA_DIRECTORY>(i)));
     LIEF_DEBUG("  - RVA:  0x{:04x}", data_directory[i].RelativeVirtualAddress);

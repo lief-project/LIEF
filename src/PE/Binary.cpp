@@ -1110,11 +1110,6 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       .write(dir->size());
   }
 
-  // Empty data directory
-  ios
-    .write<uint32_t>(0)
-    .write<uint32_t>(0);
-
   for (const Section* sec : this->sections_) {
     std::array<char, 8> name = {0};
     const std::string& sec_name = sec->name();
