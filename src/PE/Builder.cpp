@@ -150,12 +150,6 @@ void Builder::build(void) {
     *this << directory;
   }
 
-  DataDirectory last_one;
-  last_one.RVA(0);
-  last_one.size(0);
-
-  *this << last_one;
-
   LIEF_DEBUG("[+] Sections");
 
   for (const Section& section : this->binary_->sections()) {
