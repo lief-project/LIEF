@@ -301,8 +301,7 @@ void Builder::build_uuid(void) {
   auto* uuid_cmd = reinterpret_cast<UUIDCommand*>(*uuid_it);
   uuid_command raw_cmd;
   std::fill(
-      reinterpret_cast<uint8_t*>(&raw_cmd),
-      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
+      reinterpret_cast<uint8_t*>(&raw_cmd), reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
       0);
 
   raw_cmd.cmd     = static_cast<uint32_t>(uuid_cmd->command());
@@ -344,8 +343,7 @@ void Builder::write(const std::string& filename) const {
     this->raw_.get(content);
 
     std::copy(
-        std::begin(content),
-        std::end(content),
+        std::begin(content), std::end(content),
         std::ostreambuf_iterator<char>(output_file));
   } else {
     LIEF_ERR("Fail to write binary file");

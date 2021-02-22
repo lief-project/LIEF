@@ -417,8 +417,7 @@ void Builder::build(DyldInfo* dyld_info) {
   dyld_info->size_ = sizeof(dyld_info_command);
   dyld_info->originalData_.clear();
   std::move(
-      reinterpret_cast<uint8_t*>(&raw_cmd),
-      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(dyld_info_command),
+      reinterpret_cast<uint8_t*>(&raw_cmd), reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(dyld_info_command),
       std::back_inserter(dyld_info->originalData_));
   dyld_info->originalData_.insert(std::end(dyld_info->originalData_), padding, 0);
 
@@ -443,8 +442,7 @@ void Builder::build(DyldInfo* dyld_info) {
       std::vector<uint8_t> content = rebase_segment->content();
 
       std::move(
-          std::begin(rebase_opcodes),
-          std::end(rebase_opcodes),
+          std::begin(rebase_opcodes), std::end(rebase_opcodes),
           content.data() + relative_offset);
       rebase_segment->content(std::move(content));
     }
@@ -466,8 +464,7 @@ void Builder::build(DyldInfo* dyld_info) {
       uint64_t relative_offset = raw_cmd.bind_off - bind_segment->file_offset();
       std::vector<uint8_t> content = bind_segment->content();
       std::move(
-          std::begin(bind_opcodes),
-          std::end(bind_opcodes),
+          std::begin(bind_opcodes), std::end(bind_opcodes),
           content.data() + relative_offset);
       bind_segment->content(std::move(content));
     }
@@ -490,8 +487,7 @@ void Builder::build(DyldInfo* dyld_info) {
       uint64_t relative_offset = raw_cmd.weak_bind_off - weak_bind_segment->file_offset();
       std::vector<uint8_t> content = weak_bind_segment->content();
       std::move(
-          std::begin(weak_bind_opcodes),
-          std::end(weak_bind_opcodes),
+          std::begin(weak_bind_opcodes), std::end(weak_bind_opcodes),
           content.data() + relative_offset);
       weak_bind_segment->content(std::move(content));
     }
@@ -514,8 +510,7 @@ void Builder::build(DyldInfo* dyld_info) {
       uint64_t relative_offset = raw_cmd.lazy_bind_off - lazy_bind_segment->file_offset();
       std::vector<uint8_t> content = lazy_bind_segment->content();
       std::move(
-          std::begin(lazy_bind_opcodes),
-          std::end(lazy_bind_opcodes),
+          std::begin(lazy_bind_opcodes), std::end(lazy_bind_opcodes),
           content.data() + relative_offset);
       lazy_bind_segment->content(std::move(content));
     }
@@ -537,8 +532,7 @@ void Builder::build(DyldInfo* dyld_info) {
       uint64_t relative_offset = raw_cmd.export_off - export_segment->file_offset();
       std::vector<uint8_t> content = export_segment->content();
       std::move(
-          std::begin(export_trie),
-          std::end(export_trie),
+          std::begin(export_trie), std::end(export_trie),
           content.data() + relative_offset);
       export_segment->content(std::move(content));
     }
@@ -563,8 +557,7 @@ void Builder::build(FunctionStarts* function_starts) {
     std::vector<uint8_t> encoded = LEB128::uencode(delta);
 
     std::move(
-        std::begin(encoded),
-        std::end(encoded),
+        std::begin(encoded), std::end(encoded),
         std::back_inserter(packed_functions));
     prev_address = address;
   }
@@ -582,8 +575,7 @@ void Builder::build(FunctionStarts* function_starts) {
   std::vector<uint8_t> content = segment->content();
   uint64_t relative_offset = function_starts->data_offset() - segment->file_offset();
   std::move(
-      std::begin(packed_functions),
-      std::end(packed_functions),
+      std::begin(packed_functions), std::end(packed_functions),
       content.data() + relative_offset);
   segment->content(std::move(content));
 
