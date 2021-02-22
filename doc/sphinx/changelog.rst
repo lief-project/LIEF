@@ -1,16 +1,17 @@
 Changelog
 =========
 
-0.12.0 - Not Released Yet
--------------------------
+.. _release-0111:
+
+0.11.1 - February 22, 2021
+--------------------------
 
 :PE:
-    :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
-    a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
-    (see: :issue:`532`)
+    * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
+      a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
+      (see: :issue:`532`)
+    * Fix errors in the computation of the Authentihash
 
-:MachO:
-  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
 
 .. _release-0110:
 
