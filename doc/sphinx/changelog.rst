@@ -67,7 +67,7 @@ Changelog
   * Bug fix in the symbols table reconstruction (ELF)
 
 :PE:
-  * Enhance PE Authenticode. See `PE Authenticode <tutorials/13_pe_authenticode.html>`_
+  * Enhance PE Authenticode. See `PE Authenticode <https://lief.quarkslab.com/doc/latest/tutorials/13_pe_authenticode.html>`_
   * :func:`~lief.PE.get_imphash` can now generate the same value as pefile and Virus Total (:issue:`299`)
 
     .. code-block:: python
