@@ -801,7 +801,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
         {
           for (size_t i = 0; i < imm; ++i) {
-            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset, segments);
             segment_offset += sizeof(pint_t);
 
             if (current_segmment == nullptr or segment_offset > current_segmment->file_size()) {
@@ -821,7 +821,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Bad offset (0x{:x} > 0x{:x})",
                 segment_offset, current_segmment->file_size());
             }
-            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset, segments);
             segment_offset += sizeof(pint_t);
           }
           break;
@@ -834,7 +834,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset (0x{:x} > 0x{:x})",
                 segment_offset, current_segmment->file_size());
           }
-          this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+          this->do_rebase<MACHO_T>(type, segment_index, segment_offset, segments);
 
           segment_offset += this->stream_->read_uleb128() + sizeof(pint_t);
 
@@ -856,7 +856,7 @@ void BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB: Bad offset (0x{:x} > 0x{:x})",
                 segment_offset, current_segmment->file_size());
             }
-            this->do_rebase<MACHO_T>(type, segment_index, segment_offset);
+            this->do_rebase<MACHO_T>(type, segment_index, segment_offset, segments);
             segment_offset += skip + sizeof(pint_t);
           }
 
@@ -1118,7 +1118,7 @@ void BinaryParser::parse_dyldinfo_generic_bind() {
                   if (is_rebase) {
                     //LIEF_WARN("do rebase for addr: 0x{:x} vs 0x{:x}", address, current_segment)
                     this->do_rebase<MACHO_T>(static_cast<uint8_t>(REBASE_TYPES::REBASE_TYPE_POINTER),
-                                             segment_idx, segment_offset);
+                                             segment_idx, segment_offset, segments);
                   } else {
                     uint16_t ordinal = value & 0xFFFF;
                     if (ordinal >= ordinal_table_size or ordinal >= ordinal_table.size()) {
@@ -1552,10 +1552,9 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
 }
 
 template<class MACHO_T>
-void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset) {
+void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset,
+                             const it_segments& segments) {
   using pint_t = typename MACHO_T::uint;
-
-  it_segments segments = this->binary_->segments();
 
   if (segment_idx >= segments.size()) {
     LIEF_ERR("Wrong index ({:d})", segment_idx);
@@ -1592,9 +1591,8 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   reloc->section_ = section;
 
   // Tie symbol
-  auto it_symbol = std::find_if(
-      std::begin(this->binary_->symbols_),
-      std::end(this->binary_->symbols_),
+  const auto it_symbol = std::find_if(
+      std::begin(this->binary_->symbols_), std::end(this->binary_->symbols_),
       [address] (const Symbol* sym) {
         return sym->value() == address;
       });

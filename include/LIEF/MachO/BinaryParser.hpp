@@ -115,7 +115,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
 
   template<class MACHO_T>
-  void do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_address);
+  void do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_address, const it_segments& segments);
 
   // Exports
   // -------

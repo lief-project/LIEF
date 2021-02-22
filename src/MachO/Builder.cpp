@@ -298,7 +298,7 @@ void Builder::build_uuid(void) {
     return;
   }
 
-  const UUIDCommand* uuid_cmd = reinterpret_cast<UUIDCommand*>(*uuid_it);
+  auto* uuid_cmd = reinterpret_cast<UUIDCommand*>(*uuid_it);
   uuid_command raw_cmd;
   std::fill(
       reinterpret_cast<uint8_t*>(&raw_cmd),
@@ -317,8 +317,7 @@ void Builder::build_uuid(void) {
   }
 
   std::copy(
-      reinterpret_cast<uint8_t*>(&raw_cmd),
-      reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(uuid_command),
+      reinterpret_cast<const uint8_t*>(&raw_cmd), reinterpret_cast<const uint8_t*>(&raw_cmd) + sizeof(uuid_command),
       uuid_cmd->originalData_.data());
 }
 
