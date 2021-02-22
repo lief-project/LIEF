@@ -1056,7 +1056,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
 
     if (address != rebase->address()) {
       if (rebase->address() < current_segment_start or rebase->address() >= current_segment_end) {
-        SegmentCommand* segment = this->binary_->segment_from_virtual_address(rebase->address());
+        SegmentCommand* segment = &rebase->segment();
         if (segment == nullptr) {
           throw not_found("Unable to find segment");
         }
@@ -1369,15 +1369,11 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
 
     if (info->address() != address) {
       if (info->address() < current_segment_start or info->address() >= current_segment_end) {
-        SegmentCommand* segment = this->binary_->segment_from_virtual_address(info->address());
-        if (segment == nullptr) {
-          throw not_found("Unable to find segment");
-        }
+        SegmentCommand& segment = info->segment();
+        size_t index = this->binary_->segment_index(segment);
 
-        size_t index = this->binary_->segment_index(*segment);
-
-        current_segment_start = segment->virtual_address();
-        current_segment_end = segment->virtual_address() + segment->virtual_size();
+        current_segment_start = segment.virtual_address();
+        current_segment_end   = segment.virtual_address() + segment.virtual_size();
         current_segment_index = index;
 
         instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
@@ -1586,16 +1582,10 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
   vector_iostream raw_output;
   for (BindingInfo* info : bindings) {
 
-    SegmentCommand* segment = this->binary_->segment_from_virtual_address(info->address());
-    if (segment == nullptr) {
-      LIEF_WARN("Can't find segment associated with binding info");
-      continue;
-    }
+    SegmentCommand& segment = info->segment();
+    size_t index = this->binary_->segment_index(segment);
 
-
-    size_t index = this->binary_->segment_index(*segment);
-
-    uint64_t current_segment_start = segment->virtual_address();
+    uint64_t current_segment_start = segment.virtual_address();
     uint32_t current_segment_index = index;
 
     raw_output
@@ -1705,15 +1695,11 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
 
     if (info->address() != address) {
       if (info->address() < current_segment_start or info->address() >= current_segment_end) {
-        SegmentCommand* segment = this->binary_->segment_from_virtual_address(info->address());
-        if (segment == nullptr) {
-          throw not_found("Unable to find segment");
-        }
+        SegmentCommand& segment = info->segment();
+        size_t index = this->binary_->segment_index(segment);
 
-        size_t index = this->binary_->segment_index(*segment);
-
-        current_segment_start = segment->virtual_address();
-        current_segment_end = segment->virtual_address() + segment->virtual_size();
+        current_segment_start = segment.virtual_address();
+        current_segment_end   = segment.virtual_address() + segment.virtual_size();
         current_segment_index = index;
 
         instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
@@ -1971,15 +1957,10 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
 
     if (address != info->address()) {
       address = info->address();
-      SegmentCommand* segment = this->binary_->segment_from_virtual_address(address);
-      if (segment == nullptr) {
-        LIEF_WARN("Can't find segment associated with address!");
-        return *this;
-      }
-
-      size_t index = this->binary_->segment_index(*segment);
-      current_segment_start = segment->virtual_address();
-      current_segment_end   = segment->virtual_address() + segment->virtual_size();
+      SegmentCommand& segment = info->segment();
+      size_t index = this->binary_->segment_index(segment);
+      current_segment_start = segment.virtual_address();
+      current_segment_end   = segment.virtual_address() + segment.virtual_size();
       current_segment_index = index;
       made_changes = true;
     }
@@ -1996,7 +1977,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     }
   }
 
-  if (num_bindings > 0x10000 and num_bindings != static_cast<uint64_t>(-1)) {
+  if (num_bindings > std::numeric_limits<uint16_t>::max() and num_bindings != static_cast<uint64_t>(-1)) {
     LIEF_ERR("Too many binds ({:d}). The limit being 65536");
     return *this;
   }
@@ -2033,12 +2014,15 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     BindingInfo* bind = nullptr;
 
     uint64_t address = 0;
+    SegmentCommand* segment = nullptr;
     if (entry_index <= 0) {
       rebase = rebases[-entry_index];
       address = rebase->address();
+      segment = &rebase->segment();
     } else {
       bind = bindings[entry_index - 1];
       address = bind->address();
+      segment = &bind->segment();
     }
     if (address % 8 != 0) {
       LIEF_WARN("Address not aligned!");
@@ -2046,12 +2030,6 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
 
     bool new_segment = false;
     if (address < current_segment_start or address >= current_segment_end) {
-      SegmentCommand* segment = this->binary_->segment_from_virtual_address(address);
-      if (segment == nullptr) {
-        LIEF_WARN("Can't find segment associated with address!");
-        return *this;
-      }
-
       size_t index = this->binary_->segment_index(*segment);
       current_segment_start = segment->virtual_address();
       current_segment_end   = segment->virtual_address() + segment->virtual_size();
