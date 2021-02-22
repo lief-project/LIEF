@@ -13,11 +13,6 @@ Changelog
 
       Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
 
-:PE:
-  * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
-    a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
-    (see: :issue:`532`)
-
 :MachO:
   * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol
     can't be found, it returns a nullptr.
@@ -38,6 +33,17 @@ Changelog
 :Abstraction:
   * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
+
+.. _release-0111:
+
+0.11.1 - February 22, 2021
+--------------------------
+
+:PE:
+    * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
+      a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
+      (see: :issue:`532`)
+    * Fix errors in the computation of the Authentihash
 
 
 .. _release-0110:
