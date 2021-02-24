@@ -164,6 +164,7 @@ void Builder::build(void) {
 
 template<typename T, typename HANDLER>
 std::vector<std::string> Builder::optimize(const HANDLER& container,
+                                           std::function<std::string(const typename HANDLER::value_type)> getter,
                                            std::unordered_map<std::string, size_t> *of_map_p) {
 
   std::set<std::string> string_table;
@@ -173,12 +174,9 @@ std::vector<std::string> Builder::optimize(const HANDLER& container,
   // reverse all symbol names and sort them so we can merge then in the linear time:
   // aaa, aadd, aaaa, cca, ca -> aaaa, aaa, acc, ac ddaa
   std::transform(
-    std::begin(container),
-    std::end(container),
-    std::inserter(
-      string_table,
-      std::end(string_table)),
-    std::mem_fn(static_cast<const std::string& (T::*)(void) const>(&T::name)));
+    std::begin(container), std::end(container),
+    std::inserter(string_table, std::end(string_table)),
+    getter);
 
   for (auto &val: string_table) {
     string_table_optimized.emplace_back(std::move(val));
@@ -302,7 +300,8 @@ void Builder::build_sections(void) {
   const Elf_Off section_headers_offset = header.section_headers_offset();
 
   std::vector<std::string> shstrtab_opt =
-    this->optimize<Section, decltype(this->binary_->sections_)>(this->binary_->sections_);
+    this->optimize<Section, decltype(this->binary_->sections_)>(this->binary_->sections_,
+        [] (const Section* sec) { return sec->name(); });
 
   // Build section's name
   std::vector<uint8_t> section_names;
@@ -528,7 +527,8 @@ void Builder::build_static_symbols(void) {
   // Container which will hold symbols name (optimized)
   std::vector<std::string> string_table_optimize =
     this->optimize<Symbol, decltype(this->binary_->static_symbols_)>(this->binary_->static_symbols_,
-                                                                     &offset_name_map);
+                                                  [] (const Symbol* sym) { return sym->name(); },
+                                                  &offset_name_map);
 
   // We can't start with a symbol name
   string_table_raw.push_back(0);
@@ -1131,6 +1131,7 @@ void Builder::build_dynamic_symbols(void) {
 
   std::vector<std::string> string_table_optimized =
     this->optimize<Symbol, decltype(this->binary_->dynamic_symbols_)>(this->binary_->dynamic_symbols_,
+                                    [] (const Symbol* sym) { return sym->name(); },
                                     &offset_name_map);
 
   for (const std::string& name : string_table_optimized) {

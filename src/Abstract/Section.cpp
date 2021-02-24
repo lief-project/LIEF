@@ -48,8 +48,8 @@ Section::~Section(void) = default;
 Section& Section::operator=(const Section&) = default;
 Section::Section(const Section&) = default;
 
-const std::string& Section::name(void) const {
-  return this->name_;
+std::string Section::name(void) const {
+  return this->name_.c_str();
 }
 
 

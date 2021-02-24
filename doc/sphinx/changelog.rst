@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.11.2 - February 24, 2021
+--------------------------
+
+:PE:
+    * Fix regression in the behavior of the PE section's name. One can now access the full
+      section's name (with trailing bytes) through :attr:`lief.PE.Section.fullname` (see: :issue:`551`)
+
 .. _release-0111:
 
 0.11.1 - February 22, 2021

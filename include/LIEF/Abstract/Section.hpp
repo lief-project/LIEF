@@ -38,7 +38,7 @@ class LIEF_API Section : public Object {
   Section(const Section&);
 
   //! @brief section's name
-  virtual const std::string& name(void) const;
+  virtual std::string name(void) const;
 
   //! @brief section's content
   virtual std::vector<uint8_t> content(void) const;
