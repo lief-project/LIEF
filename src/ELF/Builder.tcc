@@ -376,12 +376,12 @@ void Builder::build_sections(void) {
   for (size_t i = 0; i < this->binary_->sections_.size(); i++) {
     const Section* section = this->binary_->sections_[i];
     LIEF_DEBUG("Writing content of section '{}'", section->name());
+    const std::string name = section->name();
 
-    auto&& it_offset_name = std::search(
-        std::begin(section_names),
-        std::end(section_names),
-        section->name().c_str(),
-        section->name().c_str() + section->name().size() + 1);
+    const auto it_offset_name = std::search(
+        std::begin(section_names), std::end(section_names),
+        name.c_str(),
+        name.c_str() + name.size() + 1);
 
     if (it_offset_name == std::end(section_names)) {
       throw LIEF::not_found("Section name not found");
