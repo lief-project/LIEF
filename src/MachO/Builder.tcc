@@ -57,9 +57,9 @@ void Builder::build_segments(void) {
     segment_t segment_header;
     segment_header.cmd      = static_cast<uint32_t>(segment.command());
     segment_header.cmdsize  = static_cast<uint32_t>(segment.size());
+    const std::string& seg_name = segment.name();
     std::copy(
-        segment.name().c_str(),
-        segment.name().c_str() + sizeof(segment_header.segname),
+        seg_name.c_str(), seg_name.c_str() + sizeof(segment_header.segname),
         segment_header.segname);
     segment_header.vmaddr   = static_cast<uint__>(segment.virtual_address());
     segment_header.vmsize   = static_cast<uint__>(segment.virtual_size());
@@ -98,16 +98,16 @@ void Builder::build_segments(void) {
     it_sections sections = segment.sections();
     for (uint32_t i = 0; i < segment.numberof_sections(); ++i) {
       const Section& section = sections[i];
+      const std::string& sec_name = section.name();
+      const std::string& segment_name = segment.name();
       LIEF_DEBUG("{}", section);
       section_t header;
       std::copy(
-          section.name().c_str(),
-          section.name().c_str() + sizeof(header.sectname),
+          sec_name.c_str(), sec_name.c_str() + sizeof(header.sectname),
           header.sectname);
 
       std::copy(
-          segment.name().c_str(),
-          segment.name().c_str() + sizeof(header.segname),
+          segment_name.c_str(), segment_name.c_str() + sizeof(header.segname),
           header.segname);
 
       header.addr      = static_cast<uint__>(section.address());
