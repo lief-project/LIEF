@@ -20,6 +20,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <functional>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
@@ -105,6 +106,7 @@ class LIEF_API Builder {
 
   template<typename T, typename HANDLER>
   std::vector<std::string> optimize(const HANDLER& e,
+                                    std::function<std::string(const typename HANDLER::value_type)> getter,
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
   template<typename ELF_T>

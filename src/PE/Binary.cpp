@@ -1139,7 +1139,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
 
   for (const Section* sec : this->sections_) {
     std::array<char, 8> name = {0};
-    const std::string& sec_name = sec->name();
+    const std::string& sec_name = sec->fullname();
     uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
     std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(name));
     ios

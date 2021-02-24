@@ -129,6 +129,12 @@ class TestPe(TestCase):
         self.assertEqual(pogo_entries[23].size,      820)
 
 
+    def test_sections(self):
+        path = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
+        pe = lief.parse(path)
+        self.assertIsNotNone(pe.get_section(".text"))
+        self.assertEqual(pe.sections[0].name, ".text")
+        self.assertEqual(pe.sections[0].fullname.encode("utf8"), b".text\x00\x00\x00")
 
     def tearDown(self):
         # Delete it

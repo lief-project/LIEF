@@ -71,6 +71,11 @@ class LIEF_API Section : public LIEF::Section {
   uint16_t numberof_line_numbers(void) const;
   uint32_t characteristics(void) const;
 
+  //! Return the **fullname** of the section including the trailing bytes
+  inline const std::string& fullname() const {
+    return this->name_;
+  }
+
   bool                              is_type(PE_SECTION_TYPES type) const;
   const std::set<PE_SECTION_TYPES>& types(void) const;
   bool                              has_characteristic(SECTION_CHARACTERISTICS c) const;
