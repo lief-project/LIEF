@@ -195,7 +195,26 @@ class TestMachO(TestCase):
         self.assertEqual(tools[0].version, [409, 12, 0])
         self.assertEqual(tools[0].tool, lief.MachO.BuildToolVersion.TOOLS.LD)
 
+    def test_segment_index(self):
+        binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+        self.assertEqual(binary.get_segment("__LINKEDIT").index, len(binary.segments) - 1)
+        original_data_index = binary.get_segment("__DATA").index
 
+        # Add a new segment (it should be placed right beore __LINKEDIT)
+        segment = lief.MachO.SegmentCommand("__LIEF", [0x60] * 0x100)
+        segment = binary.add(segment)
+        self.assertEqual(segment.index, binary.get_segment("__LINKEDIT").index - 1)
+        self.assertEqual(segment.index, original_data_index + 1)
+
+        # discard changes
+        binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+        text_segment = binary.get_segment("__TEXT")
+        original_data_index = binary.get_segment("__DATA").index
+
+        binary.remove(text_segment)
+        self.assertEqual(binary.get_segment("__DATA").index, original_data_index - 1)
+        self.assertEqual(binary.get_segment("__LINKEDIT").index, original_data_index)
+        self.assertEqual(binary.get_segment("__PAGEZERO").index, 0)
 
 if __name__ == '__main__':
 

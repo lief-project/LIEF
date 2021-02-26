@@ -447,13 +447,7 @@ const SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_addr
 }
 
 size_t Binary::segment_index(const SegmentCommand& segment) const {
-  it_const_segments segments = this->segments();
-  const auto it = std::find_if(
-      std::begin(segments), std::end(segments),
-      [&segment] (const SegmentCommand& s) {
-        return s == segment;
-      });
-  return std::distance(std::begin(segments), it);
+  return segment.index();
 }
 
 SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) {
@@ -779,7 +773,7 @@ LoadCommand& Binary::add(const LoadCommand& command) {
   }
 
   if (typeid(*copy) == typeid(SegmentCommand)) {
-    this->segments_.push_back(reinterpret_cast<SegmentCommand*>(copy));
+    this->add_cached_segment(*reinterpret_cast<SegmentCommand*>(copy));
   }
 
   return *this->commands_.back();
@@ -830,7 +824,7 @@ LoadCommand& Binary::add(const LoadCommand& command, size_t index) {
   }
 
   if (typeid(*copy) == typeid(SegmentCommand)) {
-    this->segments_.push_back(reinterpret_cast<SegmentCommand*>(copy));
+    this->add_cached_segment(*reinterpret_cast<SegmentCommand*>(copy));
   }
 
   this->commands_.insert(std::begin(this->commands_) + index, copy);
@@ -868,6 +862,10 @@ bool Binary::remove(const LoadCommand& command) {
       const auto* seg = reinterpret_cast<const SegmentCommand*>(cmd_rm);
       LIEF_WARN("Segment {} not found in cache. The binary object is likely in an inconsistent state", seg->name());
     } else {
+      // Update the indexes to keep a consistent state
+      for (auto it = it_cache; it != std::end(this->segments_); ++it) {
+        (*it)->index_--;
+      }
       this->segments_.erase(it_cache);
     }
   }
@@ -1231,6 +1229,27 @@ LoadCommand& Binary::add(const SegmentCommand& segment) {
   }
 
   return segment_added;
+}
+
+size_t Binary::add_cached_segment(SegmentCommand& segment) {
+  // The new segement should be put **befor** the __LINKEDIT
+  // segment
+  const auto it_linkedit = std::find_if(std::begin(this->segments_), std::end(this->segments_),
+      [] (SegmentCommand* cmd) { return cmd->name() == "__LINKEDIT"; });
+
+  if (it_linkedit == std::end(this->segments_)) {
+    LIEF_DEBUG("No __LINKEDIT segment found!");
+    segment.index_ = this->segments_.size();
+    this->segments_.push_back(&segment);
+  }
+  segment.index_ = (*it_linkedit)->index();
+
+  // Update indexes
+  for (auto it = it_linkedit; it != std::end(this->segments_); ++it) {
+    (*it)->index_++;
+  }
+  this->segments_.insert(it_linkedit, &segment);
+  return segment.index();
 }
 
 bool Binary::unexport(const std::string& name) {

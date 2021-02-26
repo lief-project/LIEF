@@ -102,6 +102,8 @@ void create<SegmentCommand>(py::module& m) {
         static_cast<no_const_getter<it_relocations>>(&SegmentCommand::relocations),
         "Segment's relocations"
         )
+    .def_property_readonly("index", &SegmentCommand::index,
+        "Relative index of the segment in the segment table")
 
     .def_property("content",
         static_cast<getter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),

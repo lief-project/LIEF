@@ -473,6 +473,10 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   void shift_command(size_t width, size_t from_offset);
 
+  //! Insert Segment command in the cache field (segments_)
+  //! and keep a consistent state of the indexes.
+  size_t add_cached_segment(SegmentCommand& segment);
+
   template<class T>
   LIEF_LOCAL void patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
 
