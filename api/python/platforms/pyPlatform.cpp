@@ -13,45 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PLATFORMS_H_
-#define LIEF_PLATFORMS_H_
-#include "LIEF/platforms/android.hpp"
-
-#if defined(__APPLE__)
-  #include "TargetConditionals.h"
-#endif
+#include "pyPlatform.hpp"
+#include "enums_wrapper.hpp"
 
 namespace LIEF {
 
-enum class PLATFORMS {
-  UNKNOWN = 0,
-  LINUX,
-  ANDROID,
-  WINDOWS,
-  IOS,
-  OSX,
-};
+void init_python_platforms(py::module& m) {
+  LIEF::enum_<PLATFORMS>(m, "PLATFORMS")
+    .value("UNKNOWN", PLATFORMS::UNKNOWN)
+    .value("LINUX",   PLATFORMS::LINUX)
+    .value("ANDROID", PLATFORMS::ANDROID)
+    .value("WINDOWS", PLATFORMS::WINDOWS)
+    .value("IOS",     PLATFORMS::IOS)
+    .value("OSX",     PLATFORMS::OSX);
 
-constexpr PLATFORMS current_platform() {
-#if defined(__ANDROID__)
-  return PLATFORMS::ANDROID;
-#elif defined(__linux__)
-  return PLATFORMS::LINUX;
-#elif defined(_WIN64) || defined(_WIN32)
-  return PLATFORMS::WINDOWS;
-#elif defined(__APPLE__)
-  #if defined(TARGET_OS_IPHONE)
-    return PLATFORMS::IOS;
-  #else
-    return PLATFORMS::OSX;
-  #endif
-#else
-  return PLATFORMS::UNKNOWN;
-#endif
+  m.def("current_platform", &current_platform,
+      "Return the current plaform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum");
 
 }
 
-
 }
-
-#endif

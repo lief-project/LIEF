@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import io
 import logging
 import unittest
@@ -52,6 +53,17 @@ class TestPythonApi(TestCase):
         with open(lspath, 'rb') as f:  # As io.BytesIO object
             bytes_stream = io.BytesIO(f.read())
             self.assertIsNotNone(bytes_stream)
+
+    def test_platform(self):
+        if sys.platform.lower().startswith("linux"):
+            self.assertEqual(lief.current_platform(), lief.PLATFORMS.LINUX)
+
+        if sys.platform.lower().startswith("darwin"):
+            self.assertEqual(lief.current_platform(), lief.PLATFORMS.OSX)
+
+        if sys.platform.lower().startswith("win"):
+            self.assertEqual(lief.current_platform(), lief.PLATFORMS.WINDOWS)
+
 
 
 if __name__ == '__main__':

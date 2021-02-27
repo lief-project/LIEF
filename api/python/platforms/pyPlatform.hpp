@@ -13,44 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PLATFORMS_H_
-#define LIEF_PLATFORMS_H_
-#include "LIEF/platforms/android.hpp"
+#ifndef PY_LIEF_PLATFORM_H_
+#define PY_LIEF_PLATFORM_H_
 
-#if defined(__APPLE__)
-  #include "TargetConditionals.h"
-#endif
+#include "LIEF/platforms.hpp"
+#include "pyLIEF.hpp"
 
 namespace LIEF {
 
-enum class PLATFORMS {
-  UNKNOWN = 0,
-  LINUX,
-  ANDROID,
-  WINDOWS,
-  IOS,
-  OSX,
-};
-
-constexpr PLATFORMS current_platform() {
-#if defined(__ANDROID__)
-  return PLATFORMS::ANDROID;
-#elif defined(__linux__)
-  return PLATFORMS::LINUX;
-#elif defined(_WIN64) || defined(_WIN32)
-  return PLATFORMS::WINDOWS;
-#elif defined(__APPLE__)
-  #if defined(TARGET_OS_IPHONE)
-    return PLATFORMS::IOS;
-  #else
-    return PLATFORMS::OSX;
-  #endif
-#else
-  return PLATFORMS::UNKNOWN;
-#endif
-
-}
-
+void init_python_platforms(py::module&);
 
 }
 

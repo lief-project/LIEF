@@ -48,6 +48,7 @@
 
 
 #include "platforms/android/pyAndroid.hpp"
+#include "platforms/pyPlatform.hpp"
 
 
 PYBIND11_MODULE(lief, LIEF_module) {
@@ -57,6 +58,8 @@ PYBIND11_MODULE(lief, LIEF_module) {
   LIEF_module.attr("__commit__")    = py::str(LIEF_COMMIT);
   LIEF_module.attr("__is_tagged__") = py::bool_(LIEF_TAGGED);
   LIEF_module.doc() = "Python API for LIEF";
+
+  LIEF::init_python_platforms(LIEF_module);
 
   init_LIEF_Object_class(LIEF_module);
 
