@@ -231,6 +231,10 @@ endif()
 target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_DISABLE_DEFAULT_LOGGER
                                             SPDLOG_FUNCTION=)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_NO_EXCEPTIONS SPDLOG_NO_THREAD_ID)
+endif()
+
 # Frozen Configuration
 # ====================
 if(LIEF_FROZEN_ENABLED)
