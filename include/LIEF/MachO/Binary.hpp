@@ -17,6 +17,7 @@
 #define LIEF_MACHO_BINARY_H_
 
 #include <vector>
+#include <map>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -511,6 +512,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;
   int32_t available_command_space_ = 0;
+
+  // This is used to improve performances of
+  // offset_to_virtual_address
+  std::map<uint64_t, SegmentCommand*> offset_seg_;
 
 
   protected:

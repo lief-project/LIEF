@@ -155,6 +155,7 @@ void BinaryParser::parse_load_commands(void) {
 
           SegmentCommand* segment = reinterpret_cast<SegmentCommand*>(load_command.get());
           segment->index_ = this->binary_->segments_.size();
+          this->binary_->offset_seg_[segment->file_offset()] = segment;
           this->binary_->segments_.push_back(segment);
 
           const uint8_t* content = this->stream_->peek_array<uint8_t>(segment->file_offset(), segment->file_size(), /* check */ false);

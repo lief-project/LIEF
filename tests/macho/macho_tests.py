@@ -216,6 +216,25 @@ class TestMachO(TestCase):
         self.assertEqual(binary.get_segment("__LINKEDIT").index, original_data_index)
         self.assertEqual(binary.get_segment("__PAGEZERO").index, 0)
 
+    def test_offset_to_va(self):
+
+        # |Name        |Virtual Address|Virtual Size|Offset|Size
+        # +------------+---------------+------------+------+----
+        # |__PAGEZERO  |0x0            |0x100000000 |0x0   |0x0
+        # |__TEXT      |0x100000000    |0x4000      |0x0   |0x4000
+        # |__DATA_CONST|0x100004000    |0x4000      |0x4000|0x4000
+        # |__DATA      |0x100008000    |0x8000      |0x8000|0x4000
+        # |__LINKEDIT  |0x100010000    |0x4000      |0xc000|0x130
+
+        sample = get_sample("MachO/MachO64_x86-64_binary_large-bss.bin")
+        large_bss = lief.parse(sample)
+        self.assertEqual(large_bss.segment_from_offset(0).name,      "__TEXT")
+        self.assertEqual(large_bss.segment_from_offset(0x4001).name, "__DATA_CONST")
+        self.assertEqual(large_bss.segment_from_offset(0xc000).name, "__LINKEDIT")
+        self.assertEqual(large_bss.segment_from_offset(0xc001).name, "__LINKEDIT")
+
+
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()
