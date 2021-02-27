@@ -863,8 +863,8 @@ bool Binary::remove(const LoadCommand& command) {
 
   if (typeid(*cmd_rm) == typeid(SegmentCommand)) {
     auto it_cache = std::find(std::begin(this->segments_), std::end(this->segments_), cmd_rm);
+    const auto* seg = reinterpret_cast<const SegmentCommand*>(cmd_rm);
     if (it_cache == std::end(this->segments_)) {
-      const auto* seg = reinterpret_cast<const SegmentCommand*>(cmd_rm);
       LIEF_WARN("Segment {} not found in cache. The binary object is likely in an inconsistent state", seg->name());
     } else {
       // Update the indexes to keep a consistent state
@@ -872,6 +872,10 @@ bool Binary::remove(const LoadCommand& command) {
         (*it)->index_--;
       }
       this->segments_.erase(it_cache);
+    }
+    auto it_offset = this->offset_seg_.find(seg->file_offset());
+    if (it_offset != std::end(this->offset_seg_)) {
+      this->offset_seg_.erase(it_offset);
     }
   }
 
