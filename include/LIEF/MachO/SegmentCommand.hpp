@@ -126,7 +126,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   uint32_t initProtection_{0};
   uint32_t nbSections_{0};
   uint32_t flags_{0};
-  uint8_t  index_ = -1;
+  int8_t  index_ = -1;
   content_t data_;
   sections_t    sections_;
   relocations_t relocations_;
