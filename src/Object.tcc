@@ -25,12 +25,12 @@ bool Object::is(void) const {
 
 template<class T>
 Object::output_t<T> Object::as(void) {
-  return dynamic_cast<Object::output_t<T>>(this);
+  return reinterpret_cast<Object::output_t<T>>(this);
 }
 
 template<class T>
 Object::output_const_t<T> Object::as(void) const {
-  return dynamic_cast<Object::output_const_t<T>>(this);
+  return reinterpret_cast<Object::output_const_t<T>>(this);
 }
 
 
