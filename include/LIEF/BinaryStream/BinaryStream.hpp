@@ -35,6 +35,7 @@ class BinaryStream {
   enum class STREAM_TYPE {
     UNKNOWN = 0,
     FILE,
+    MEMORY,
   };
 
   BinaryStream(void);
