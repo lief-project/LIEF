@@ -27,7 +27,7 @@
 #include "LIEF/MachO/ParserConfig.hpp"
 
 namespace LIEF {
-class VectorStream;
+class BinaryStream;
 
 namespace MachO {
 class Binary;
@@ -51,7 +51,7 @@ class LIEF_API Parser : public LIEF::Parser {
   void build(void);
   void build_fat(void);
 
-  std::unique_ptr<VectorStream> stream_;
+  std::unique_ptr<BinaryStream> stream_;
   std::vector<Binary*>          binaries_;
   ParserConfig                  config_;
 };

@@ -55,7 +55,7 @@ BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset
 }
 
 
-BinaryParser::BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset, const ParserConfig& conf) :
+BinaryParser::BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset, const ParserConfig& conf) :
   stream_{std::move(stream)},
   binary_{new Binary{}},
   config_{conf}

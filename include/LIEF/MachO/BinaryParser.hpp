@@ -31,7 +31,7 @@
 #include "LIEF/MachO/type_traits.hpp"
 
 namespace LIEF {
-class VectorStream;
+class BinaryStream;
 
 namespace MachO {
 class Section;
@@ -61,7 +61,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   Binary* get_binary(void);
 
   private:
-  BinaryParser(std::unique_ptr<VectorStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
 
   void init(void);
 
@@ -123,7 +123,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 
-  std::unique_ptr<VectorStream> stream_;
+  std::unique_ptr<BinaryStream> stream_;
   Binary*                       binary_{nullptr};
   MACHO_TYPES                   type_;
   bool                          is64_;
