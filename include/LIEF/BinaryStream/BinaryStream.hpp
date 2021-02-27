@@ -32,9 +32,16 @@ struct mbedtls_x509_time;
 namespace LIEF {
 class BinaryStream {
   public:
+  enum class STREAM_TYPE {
+    UNKNOWN = 0,
+    FILE,
+  };
+
   BinaryStream(void);
   virtual ~BinaryStream();
   virtual uint64_t size(void) const = 0;
+
+  virtual STREAM_TYPE type() const = 0;
 
   uint64_t read_uleb128(void) const;
   uint64_t read_sleb128(void) const;

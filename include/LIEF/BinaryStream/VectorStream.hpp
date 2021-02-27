@@ -27,6 +27,10 @@ class VectorStream : public BinaryStream {
   VectorStream(const std::string& filename);
   VectorStream(const std::vector<uint8_t>& data);
 
+  inline STREAM_TYPE type() const override {
+    return STREAM_TYPE::FILE;
+  }
+
   virtual uint64_t size(void) const override;
 
   const std::vector<uint8_t>& content(void) const;
