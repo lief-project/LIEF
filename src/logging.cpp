@@ -17,10 +17,13 @@
 #include <map>
 #include "LIEF/config.h"
 #include "LIEF/logging.hpp"
+#include "LIEF/platforms.hpp"
 #include "logging.hpp"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/android_sink.h"
 
 namespace LIEF {
 namespace logging {
@@ -32,9 +35,21 @@ Logger& Logger::operator=(Logger&&) = default;
 Logger::~Logger() = default;
 
 Logger::Logger(void) {
-  // TODO(romain): Handle Android logcat sink
   if /* constexpr */ (lief_logging_support) {
-    this->sink_ = spdlog::stderr_color_mt("console");
+    if /* constexpr */ (current_platform() == PLATFORMS::ANDROID) {
+      #if defined(__ANDROID__)
+      this->sink_ = spdlog::android_logger_mt("LIEF", "lief");
+      #else
+      // Should not append ...
+      #endif
+    }
+    else if (current_platform() == PLATFORMS::IOS) {
+      this->sink_ = spdlog::basic_logger_mt("LIEF", "/tmp/lief.log", /* truncate */ true);
+    }
+    else {
+      this->sink_ = spdlog::stderr_color_mt("LIEF");
+    }
+
 
     this->sink_->set_level(spdlog::level::warn);
     this->sink_->set_pattern("%v");
