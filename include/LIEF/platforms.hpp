@@ -40,7 +40,7 @@ constexpr PLATFORMS current_platform() {
 #elif defined(_WIN64) || defined(_WIN32)
   return PLATFORMS::WINDOWS;
 #elif defined(__APPLE__)
-  #if defined(TARGET_OS_IPHONE)
+  #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
     return PLATFORMS::IOS;
   #else
     return PLATFORMS::OSX;
