@@ -904,6 +904,10 @@ void Parser::parse_signature(void) {
   while (this->stream_->pos() < end_p) {
     const uint64_t current_p = this->stream_->pos();
     auto length = this->stream_->read<uint32_t>();
+    if (length <= SIZEOF_HEADER) {
+      LIEF_WARN("The signature seems corrupted!");
+      break;
+    }
     auto revision = this->stream_->read<uint16_t>();
     auto certificate_type = this->stream_->read<uint16_t>();
     LIEF_DEBUG("Signature {}r0x{:x} (0x{:x} bytes)", certificate_type, revision, length);
