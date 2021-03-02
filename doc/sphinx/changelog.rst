@@ -1,6 +1,17 @@
 Changelog
 =========
 
+.. _release-0113:
+
+0.11.3 - March 03, 2021
+--------------------------
+
+:PE:
+    * Add sanity check on the signature's length that could lead to a ``std::bad_alloc`` exception
+
+.. _release-0112:
+
+
 0.11.2 - February 24, 2021
 --------------------------
 
