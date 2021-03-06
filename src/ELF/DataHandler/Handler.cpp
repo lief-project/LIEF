@@ -19,6 +19,9 @@
 
 #include "logging.hpp"
 
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
 #include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/exception.hpp"
 
@@ -38,6 +41,30 @@ Handler::Handler(const std::vector<uint8_t>& content) :
 Handler::Handler(std::vector<uint8_t>&& content) :
   data_{std::move(content)}
 {}
+
+Handler::Handler(BinaryStream& stream) {
+
+  switch (stream.type()) {
+    case BinaryStream::STREAM_TYPE::FILE:
+      {
+        auto& vs = reinterpret_cast<VectorStream&>(stream);
+        data_ = vs.content();
+        break;
+      }
+
+    case BinaryStream::STREAM_TYPE::MEMORY:
+      {
+        throw std::runtime_error("Not impletemented yet");
+        break;
+      }
+
+    case BinaryStream::STREAM_TYPE::UNKNOWN:
+    default:
+      {
+        LIEF_ERR("Unknown stream type!");
+      }
+  }
+}
 
 const std::vector<uint8_t>& Handler::content(void) const {
   return this->data_;

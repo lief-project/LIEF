@@ -121,7 +121,7 @@ void Parser::init(const std::string& name) {
   try {
     this->binary_->original_size_ = this->binary_size_;
     this->binary_->name(name);
-    this->binary_->datahandler_ = new DataHandler::Handler{this->stream_->content()};
+    this->binary_->datahandler_ = new DataHandler::Handler{*stream_};
 
     const Elf32_Ehdr& elf_hdr = this->stream_->peek<Elf32_Ehdr>(0);
     this->stream_->set_endian_swap(this->should_swap());

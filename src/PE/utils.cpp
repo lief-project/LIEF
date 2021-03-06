@@ -113,6 +113,19 @@ bool is_pe(const std::vector<uint8_t>& raw) {
 }
 
 
+result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
+  const uint64_t cpos = stream.pos();
+  stream.setpos(0);
+  const pe_dos_header& dos_hdr = stream.read<pe_dos_header>();
+  stream.setpos(dos_hdr.AddressOfNewExeHeader + sizeof(pe_header));
+  const pe32_optional_header& opt_hdr = stream.read<pe32_optional_header>();
+  const auto type = static_cast<PE_TYPE>(opt_hdr.Magic);
+  stream.setpos(cpos);
+  if (type == PE_TYPE::PE32 or type == PE_TYPE::PE32_PLUS) {
+    return type;
+  }
+  return make_error_code(lief_errors::read_error);
+}
 
 PE_TYPE get_type(const std::string& file) {
   if (not is_pe(file)) {

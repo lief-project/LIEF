@@ -93,8 +93,13 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
 
 
 void Parser::init(const std::string& name) {
-
-  this->type_   = get_type(this->stream_->content());
+  stream_->setpos(0);
+  auto type = get_type_from_stream(*stream_);
+  if (not type) {
+    LIEF_ERR("Can't determine PE type.");
+    return;
+  }
+  this->type_   = type.value();
   this->binary_ = new Binary{};
   this->binary_->name(name);
   this->binary_->type_ = this->type_;

@@ -23,6 +23,7 @@
 #include "LIEF/ELF/DataHandler/Node.hpp"
 
 namespace LIEF {
+class BinaryStream;
 namespace ELF {
 namespace DataHandler {
 
@@ -31,6 +32,7 @@ class LIEF_API Handler {
   static constexpr size_t MAX_SIZE = 1_GB;
   Handler(const std::vector<uint8_t>& content);
   Handler(std::vector<uint8_t>&& content);
+  Handler(BinaryStream& stream);
   ~Handler(void);
 
   Handler& operator=(const Handler&);

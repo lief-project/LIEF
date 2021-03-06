@@ -25,7 +25,7 @@
 
 
 namespace LIEF {
-class VectorStream;
+class BinaryStream;
 
 namespace OAT {
 class Parser;
@@ -225,7 +225,7 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T, typename REL_T>
   uint32_t max_relocation_index(uint64_t relocations_offset, uint64_t size) const;
 
-  std::unique_ptr<VectorStream> stream_;
+  std::unique_ptr<BinaryStream> stream_;
   Binary*                       binary_{nullptr};
   ELF_CLASS                     type_;
   DYNSYM_COUNT_METHODS          count_mtd_;

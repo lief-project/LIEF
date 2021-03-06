@@ -20,9 +20,12 @@
 
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/errors.hpp"
 
 
 namespace LIEF {
+class BinaryStream;
+
 namespace PE {
 class Binary;
 class Import;
@@ -46,6 +49,9 @@ LIEF_API PE_TYPE get_type(const std::string& file);
 
 //! Return `PE32` or `PE32+`
 LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
+
+// In this case we assume that stream contains a valid PE stream
+LIEF_LOCAL result<PE_TYPE> get_type_from_stream(BinaryStream& stream);
 
 //! Compute the hash of imported functions
 //!
