@@ -51,9 +51,14 @@ Logger::Logger(void) {
     }
 
 
-    this->sink_->set_level(spdlog::level::warn);
     this->sink_->set_pattern("%v");
-    this->sink_->flush_on(spdlog::level::warn);
+    if (lief_logging_debug) {
+      this->sink_->set_level(spdlog::level::debug);
+      this->sink_->flush_on(spdlog::level::debug);
+    } else {
+      this->sink_->set_level(spdlog::level::warn);
+      this->sink_->flush_on(spdlog::level::warn);
+    }
   }
 }
 
