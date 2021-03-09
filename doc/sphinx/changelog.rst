@@ -1,10 +1,21 @@
 Changelog
 =========
 
+0.11.X - Patch Releases
+-----------------------
+
+.. _release-0114:
+
+0.11.4 - March 09, 2021
+~~~~~~~~~~~~~~~~~~~~~~~
+
+:PE:
+    * Fix missing bound check when computing the authentihash
+
 .. _release-0113:
 
 0.11.3 - March 03, 2021
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * Add sanity check on the signature's length that could lead to a ``std::bad_alloc`` exception
@@ -13,7 +24,7 @@ Changelog
 
 
 0.11.2 - February 24, 2021
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * Fix regression in the behavior of the PE section's name. One can now access the full
@@ -22,7 +33,7 @@ Changelog
 .. _release-0111:
 
 0.11.1 - February 22, 2021
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
