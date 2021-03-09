@@ -1201,13 +1201,17 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     if (cert_dir.RVA() > 0 and cert_dir.size() > 0 and cert_dir.RVA() >= this->overlay_offset_) {
       const uint64_t start_cert_offset = cert_dir.RVA() - this->overlay_offset_;
       const uint64_t end_cert_offset   = start_cert_offset + cert_dir.size();
-      LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", this->overlay_offset_, this->overlay_offset_ + start_cert_offset);
-      LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
-          this->overlay_offset_ + end_cert_offset,
-          this->overlay_offset_ + this->overlay_.size() - end_cert_offset);
-      ios
-        .write(this->overlay_.data(), start_cert_offset)
-        .write(this->overlay_.data() + end_cert_offset, this->overlay_.size() - end_cert_offset);
+      if (end_cert_offset <= this->overlay_.size()) {
+        LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", this->overlay_offset_, this->overlay_offset_ + start_cert_offset);
+        LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
+            this->overlay_offset_ + end_cert_offset,
+            this->overlay_offset_ + this->overlay_.size() - end_cert_offset);
+        ios
+          .write(this->overlay_.data(), start_cert_offset)
+          .write(this->overlay_.data() + end_cert_offset, this->overlay_.size() - end_cert_offset);
+      } else {
+        ios.write(this->overlay());
+      }
     } else {
       ios.write(this->overlay());
     }
