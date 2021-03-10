@@ -34,36 +34,46 @@ Changelog
   * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
 
+
+0.11.X - Patch Releases
+-----------------------
+
+.. _release-0114:
+
+0.11.4 - March 09, 2021
+~~~~~~~~~~~~~~~~~~~~~~~
+
+:PE:
+    * Fix missing bound check when computing the authentihash
+
 .. _release-0113:
 
 0.11.3 - March 03, 2021
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * Add sanity check on the signature's length that could lead to a ``std::bad_alloc`` exception
 
-
 .. _release-0112:
 
+
 0.11.2 - February 24, 2021
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * Fix regression in the behavior of the PE section's name. One can now access the full
       section's name (with trailing bytes) through :attr:`lief.PE.Section.fullname` (see: :issue:`551`)
 
-
 .. _release-0111:
 
 0.11.1 - February 22, 2021
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :PE:
     * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
       a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
       (see: :issue:`532`)
     * Fix errors in the computation of the Authentihash
-
 
 .. _release-0110:
 
