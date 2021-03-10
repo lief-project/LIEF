@@ -25,6 +25,8 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/iostream.hpp"
 
+struct Profiler;
+
 namespace LIEF {
 namespace MachO {
 class Binary;
@@ -48,6 +50,7 @@ class BuildVersion;
 
 class LIEF_API Builder {
   public:
+  friend struct ::Profiler;
   static void write(Binary *binary, const std::string& filename);
   static void write(FatBinary* fatbinary, const std::string& filename);
 

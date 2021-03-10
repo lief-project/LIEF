@@ -29,6 +29,7 @@
 
 #include "LIEF/OAT/Binary.hpp"
 
+struct Profiler;
 
 namespace LIEF {
 namespace VDEX {
@@ -39,6 +40,7 @@ namespace OAT {
 //! @brief Class which parse an OAT file and transform into a OAT::Binary
 class LIEF_API Parser : public LIEF::Parser {
   public:
+  friend struct ::Profiler;
     //! Parse an OAT file
     static std::unique_ptr<Binary> parse(const std::string& oat_file);
     static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);

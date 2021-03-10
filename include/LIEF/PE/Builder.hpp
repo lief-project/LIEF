@@ -32,14 +32,16 @@
 
 #include "LIEF/PE/Binary.hpp"
 
+struct Profiler;
 
 namespace LIEF {
 namespace PE {
 
 //! @brief Class which reconstruct a PE binary from a PE::Binary object
-class LIEF_API Builder
-{
+class LIEF_API Builder {
   public:
+  friend struct ::Profiler;
+
     Builder(void) = delete;
     Builder(Binary* pe_binary);
     ~Builder(void);

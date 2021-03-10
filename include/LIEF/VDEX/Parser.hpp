@@ -25,6 +25,7 @@
 
 #include "LIEF/VDEX/File.hpp"
 
+struct Profiler;
 
 namespace LIEF {
 namespace VDEX {
@@ -32,6 +33,8 @@ namespace VDEX {
 //! @brief Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
   public:
+  friend struct ::Profiler;
+
     static std::unique_ptr<File> parse(const std::string& file);
     static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 

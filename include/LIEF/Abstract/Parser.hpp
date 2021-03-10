@@ -22,10 +22,13 @@
 
 #include "LIEF/visibility.h"
 
+struct Profiler;
+
 namespace LIEF {
 class Binary;
 class LIEF_API Parser {
   public:
+  friend struct ::Profiler;
   //! @brief Construct an LIEF::Binary from the given filename
   //!
   //! @warning If the target file is a FAT Mach0, it will

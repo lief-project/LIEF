@@ -27,6 +27,8 @@
 
 #include "LIEF/ELF/enums.hpp"
 
+struct Profiler;
+
 namespace LIEF {
 namespace ELF {
 class Binary;
@@ -39,6 +41,7 @@ class Section;
 //! @brief Class which take a ELF::Binary object and reconstruct a valid binary
 class LIEF_API Builder {
   public:
+  friend struct ::Profiler;
   Builder(Binary *binary);
 
   Builder(void) = delete;

@@ -26,6 +26,8 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
 
+struct Profiler;
+
 namespace LIEF {
 class BinaryStream;
 
@@ -36,8 +38,9 @@ class Binary;
 struct pe_resource_directory_table;
 
 class LIEF_API Parser : public LIEF::Parser {
-
   public:
+  friend struct ::Profiler;
+
   //! @brief Maximum size of the data read
   static constexpr size_t MAX_DATA_SIZE = 3_GB;
 

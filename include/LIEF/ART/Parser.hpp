@@ -26,12 +26,15 @@
 #include "LIEF/ART/File.hpp"
 
 
+struct Profiler;
+
 namespace LIEF {
 namespace ART {
 
 //! @brief Class which parse an ART file and transform into a ART::File object
 class LIEF_API Parser {
   public:
+  friend struct ::Profiler;
     static std::unique_ptr<File> parse(const std::string& file);
     static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 
