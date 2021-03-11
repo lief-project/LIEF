@@ -24,7 +24,6 @@
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
 #include "LIEF/PE/resources/ResourceDialog.hpp"

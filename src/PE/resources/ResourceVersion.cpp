@@ -17,11 +17,8 @@
 #include <iomanip>
 
 #include "LIEF/exception.hpp"
-
 #include "LIEF/PE/hash.hpp"
-
 #include "LIEF/utils.hpp"
-#include "LIEF/PE/utils.hpp"
 
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 

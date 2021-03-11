@@ -18,7 +18,6 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/ART/EnumToString.hpp"
-#include "LIEF/PE/utils.hpp"
 
 namespace LIEF {
 namespace ART {

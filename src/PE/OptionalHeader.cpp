@@ -23,7 +23,6 @@
 #include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/utils.hpp"
 
 
 namespace LIEF {
