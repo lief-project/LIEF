@@ -1584,8 +1584,9 @@ bool Binary::has_section_with_va(uint64_t va) const {
         if (section == nullptr) {
           return false;
         }
-        return ((section->virtual_address() <= va) and
-            (section->virtual_address() + section->size()) > va);
+        return (section->virtual_address() != 0 and
+                (section->virtual_address() <= va) and
+                (section->virtual_address() + section->size()) > va);
       });
   return it_section != this->sections_.cend();
 }
@@ -1745,7 +1746,6 @@ Section& Binary::section_from_offset(uint64_t offset) {
 }
 
 
-
 const Section& Binary::section_from_virtual_address(uint64_t address) const {
   auto&& it_section = std::find_if(
       this->sections_.cbegin(),
@@ -1754,8 +1754,9 @@ const Section& Binary::section_from_virtual_address(uint64_t address) const {
         if (section == nullptr) {
           return false;
         }
-        return ((section->virtual_address() <= address) and
-            (section->virtual_address() + section->size()) > address);
+        return ((section->virtual_address() != 0) and
+                (section->virtual_address() <= address) and
+                (section->virtual_address() + section->size()) > address);
       });
 
   if (it_section == this->sections_.cend()) {
