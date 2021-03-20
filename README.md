@@ -103,7 +103,7 @@ pip install [--user] --index-url https://lief.quarkslab.com/packages lief==0.12.
 ### Packages
 
 * **Nightly**: https://github.com/lief-project/packages/tree/gh-pages
-* **v0.11.2**: https://github.com/lief-project/LIEF/releases/tag/0.11.2
+* **v0.11.4**: https://github.com/lief-project/LIEF/releases/tag/0.11.4
 
 Here are guides to install or integrate LIEF:
 
