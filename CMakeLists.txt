@@ -101,7 +101,6 @@ set(LIEF_PUBLIC_INCLUDE_FILES)
 set(LIEF_PRIVATE_INCLUDE_FILES)
 
 set(LIBLIEF_SOURCE_FILES
-    "${ELG_CC_PATH}"
     "${mbedtls_src_crypto}"
     "${mbedtls_src_x509}"
     "${mbedtls_src_tls}"
