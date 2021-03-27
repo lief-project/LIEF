@@ -230,6 +230,7 @@
 #undef EM_NORC
 #undef EM_CSR_KALIMBA
 #undef EM_AMDGPU
+#undef EM_RISCV
 #undef EM_BPF
 
 
