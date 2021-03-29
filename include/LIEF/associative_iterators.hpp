@@ -65,7 +65,7 @@ struct dict_iterator_pair {
     return const_cast<add_const_t<key_ref_t>>(this->key_);
   }
 
-  typename std::enable_if<not std::is_const<key_ref_t>::value, remove_const_t<key_ref_t>>::type
+  typename std::enable_if<!std::is_const<key_ref_t>::value, remove_const_t<key_ref_t>>::type
   key(void) const {
     return const_cast<remove_const_t<key_ref_t>>(static_cast<const dict_iterator_pair*>(this)->key());
   }
@@ -74,7 +74,7 @@ struct dict_iterator_pair {
     return const_cast<add_const_t<value_ref_t>>(*this->value_);
   }
 
-  typename std::enable_if<not std::is_const<value_ref_t>::value, remove_const_t<value_ref_t>>::type
+  typename std::enable_if<!std::is_const<value_ref_t>::value, remove_const_t<value_ref_t>>::type
   value(void) const {
     return const_cast<remove_const_t<value_ref_t>>(static_cast<const dict_iterator_pair*>(this)->value());
   }
@@ -185,7 +185,7 @@ class dict_iterator : public std::iterator<
   }
 
 
-  //typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  //typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   //operator[](size_t n) {
   //  return const_cast<remove_const_t<ref_t>>(static_cast<const dict_iterator*>(this)->operator[](n));
   //}
@@ -225,12 +225,12 @@ class dict_iterator : public std::iterator<
 
 
   bool operator>=(const dict_iterator& rhs) const {
-    return not (*this < rhs);
+    return !(*this < rhs);
   }
 
 
   bool operator<=(const dict_iterator& rhs) const {
-    return not (*this > rhs);
+    return !(*this > rhs);
   }
 
   dict_iterator begin(void) const {
@@ -257,7 +257,7 @@ class dict_iterator : public std::iterator<
   }
 
   bool operator!=(const dict_iterator& other) const {
-    return not (*this == other);
+    return !(*this == other);
   }
 
   size_t size(void) const {
@@ -265,7 +265,7 @@ class dict_iterator : public std::iterator<
   }
 
 
-  typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator*() {
     return const_cast<remove_const_t<ref_t>>(static_cast<const dict_iterator*>(this)->operator*());
   }
@@ -278,13 +278,13 @@ class dict_iterator : public std::iterator<
   }
 
   template<typename U = typename DT::value_type>
-  typename std::enable_if<not std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
     return const_cast<add_const_t<ref_t>>(*(this->it_));
   }
 
 
-  typename std::enable_if<not std::is_const<pointer_t>::value, pointer_t>::type
+  typename std::enable_if<!std::is_const<pointer_t>::value, pointer_t>::type
   operator->() {
     return const_cast<remove_const_t<pointer_t>>(static_cast<const ref_iterator*>(this)->operator->());
   }
