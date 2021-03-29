@@ -124,7 +124,7 @@ class ref_iterator : public std::iterator<
   }
 
 
-  typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator[](size_t n) {
     return const_cast<remove_const_t<ref_t>>(static_cast<const ref_iterator*>(this)->operator[](n));
   }
@@ -174,12 +174,12 @@ class ref_iterator : public std::iterator<
 
 
   bool operator>=(const ref_iterator& rhs) const {
-    return not (*this < rhs);
+    return !(*this < rhs);
   }
 
 
   bool operator<=(const ref_iterator& rhs) const {
-    return not (*this > rhs);
+    return !(*this > rhs);
   }
 
   ref_iterator begin(void) const {
@@ -206,7 +206,7 @@ class ref_iterator : public std::iterator<
   }
 
   bool operator!=(const ref_iterator& other) const {
-    return not (*this == other);
+    return !(*this == other);
   }
 
   size_t size(void) const {
@@ -214,7 +214,7 @@ class ref_iterator : public std::iterator<
   }
 
 
-  typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator*() {
     return const_cast<remove_const_t<ref_t>>(static_cast<const ref_iterator*>(this)->operator*());
   }
@@ -227,13 +227,13 @@ class ref_iterator : public std::iterator<
   }
 
   template<typename U = typename DT::value_type>
-  typename std::enable_if<not std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
     return const_cast<add_const_t<ref_t>>(*(this->it_));
   }
 
 
-  typename std::enable_if<not std::is_const<pointer_t>::value, pointer_t>::type
+  typename std::enable_if<!std::is_const<pointer_t>::value, pointer_t>::type
   operator->() {
     return const_cast<remove_const_t<pointer_t>>(static_cast<const ref_iterator*>(this)->operator->());
   }
@@ -283,7 +283,7 @@ class filter_iterator : public std::iterator<
     this->it_ = std::begin(this->container_);
 
     if (this->it_ != std::end(this->container_)) {
-      if (not std::all_of(std::begin(this->filters_), std::end(this->filters_), [this] (const filter_t& f) {return f(*this->it_);})) {
+      if (!std::all_of(std::begin(this->filters_), std::end(this->filters_), [this] (const filter_t& f) {return f(*this->it_);})) {
         this->next();
       }
     }
@@ -299,7 +299,7 @@ class filter_iterator : public std::iterator<
     this->it_ = std::begin(this->container_);
 
     if (this->it_ != std::end(this->container_)) {
-      if (not std::all_of(std::begin(this->filters_), std::end(this->filters_), [this] (const filter_t& f) {return f(*this->it_);})) {
+      if (!std::all_of(std::begin(this->filters_), std::end(this->filters_), [this] (const filter_t& f) {return f(*this->it_);})) {
         this->next();
       }
     }
@@ -377,7 +377,7 @@ class filter_iterator : public std::iterator<
     return this->end();
   }
 
-  typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator*() {
     return const_cast<remove_const_t<ref_t>>(static_cast<const filter_iterator*>(this)->operator*());
   }
@@ -390,13 +390,13 @@ class filter_iterator : public std::iterator<
   }
 
   template<typename U = typename DT::value_type>
-  typename std::enable_if<not std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_pointer<U>::value, add_const_t<ref_t>>::type
   operator*() const {
     return const_cast<add_const_t<ref_t>>(*(this->it_));
   }
 
 
-  typename std::enable_if<not std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
+  typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator[](size_t n) {
     return const_cast<remove_const_t<ref_t>>(static_cast<const filter_iterator*>(this)->operator[](n));
   }
@@ -410,7 +410,7 @@ class filter_iterator : public std::iterator<
   }
 
 
-  typename std::enable_if<not std::is_const<pointer_t>::value, pointer_t>::type
+  typename std::enable_if<!std::is_const<pointer_t>::value, pointer_t>::type
   operator->() {
     return const_cast<remove_const_t<pointer_t>>(static_cast<const filter_iterator*>(this)->operator->());
   }
@@ -442,7 +442,7 @@ class filter_iterator : public std::iterator<
   }
 
   bool operator!=(const filter_iterator& other) const {
-    return not (*this == other);
+    return !(*this == other);
   }
 
   protected:
@@ -457,7 +457,7 @@ class filter_iterator : public std::iterator<
       this->distance_++;
     } while(
         this->it_ != std::end(this->container_) and
-        not std::all_of(
+        !std::all_of(
           std::begin(this->filters_),
           std::end(this->filters_),
           [this] (const filter_t& f) {
