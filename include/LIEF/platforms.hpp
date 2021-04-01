@@ -26,7 +26,7 @@ namespace LIEF {
 enum class PLATFORMS {
   UNKNOWN = 0,
   LINUX,
-  ANDROID,
+  ANDROID_PLAT,
   WINDOWS,
   IOS,
   OSX,
@@ -34,7 +34,7 @@ enum class PLATFORMS {
 
 constexpr PLATFORMS current_platform() {
 #if defined(__ANDROID__)
-  return PLATFORMS::ANDROID;
+  return PLATFORMS::ANDROID_PLAT;
 #elif defined(__linux__)
   return PLATFORMS::LINUX;
 #elif defined(_WIN64) || defined(_WIN32)

@@ -22,7 +22,7 @@ void init_python_platforms(py::module& m) {
   LIEF::enum_<PLATFORMS>(m, "PLATFORMS")
     .value("UNKNOWN", PLATFORMS::UNKNOWN)
     .value("LINUX",   PLATFORMS::LINUX)
-    .value("ANDROID", PLATFORMS::ANDROID)
+    .value("ANDROID", PLATFORMS::ANDROID_PLAT)
     .value("WINDOWS", PLATFORMS::WINDOWS)
     .value("IOS",     PLATFORMS::IOS)
     .value("OSX",     PLATFORMS::OSX);

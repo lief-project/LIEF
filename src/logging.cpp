@@ -36,7 +36,7 @@ Logger::~Logger() = default;
 
 Logger::Logger(void) {
   if /* constexpr */ (lief_logging_support) {
-    if /* constexpr */ (current_platform() == PLATFORMS::ANDROID) {
+    if /* constexpr */ (current_platform() == PLATFORMS::ANDROID_PLAT) {
       #if defined(__ANDROID__)
       this->sink_ = spdlog::android_logger_mt("LIEF", "lief");
       #else
