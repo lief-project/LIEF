@@ -242,7 +242,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  if (relative_offset >= segment_size or (relative_offset + sizeof(T)) >= segment_size) {
+  if (relative_offset >= segment_size or (relative_offset + sizeof(T)) > segment_size) {
     LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return;
   }
