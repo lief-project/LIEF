@@ -259,7 +259,19 @@ def print_relocations(binary, relocations):
         elif binary.header.machine_type == ELF.ARCH.AARCH64:
             type = str(ELF.RELOCATION_AARCH64(relocation.type))
 
-        symbol_name = str(relocation.symbol.name) if relocation.has_symbol else ""
+        symbol_name = ""
+        if relocation.has_symbol:
+            symbol: lief.ELF.Symbol = relocation.symbol
+            if len(symbol.name) > 0:
+                symbol_name = symbol.name
+            elif symbol.type == lief.ELF.SYMBOL_TYPES.SECTION:
+                shndx = symbol.shndx
+                sections = binary.sections
+                if 0 < shndx and shndx < len(sections):
+                    symbol_name = sections[shndx].name + " + " + hex(relocation.addend)
+                else:
+                    symbol_name = "<section #{}>".format(shndx)
+
 
         print(f_value.format(
             relocation.address,
