@@ -390,7 +390,7 @@ void JsonVisitor::visit(const Symbol& symbol) {
 
   this->node_["value"]                = symbol.value();
   this->node_["size"]                 = symbol.size();
-  this->node_["name"]                 = symbol.name();
+  this->node_["name"]                 = escape_non_ascii(symbol.name());
 
   this->node_["section_number"]       = symbol.section_number();
   this->node_["type"]                 = symbol.type();
@@ -536,7 +536,11 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
 
   if (resources_manager.has_html()) {
     try {
-      this->node_["html"] = resources_manager.html();
+      std::vector<std::string> escaped_strs;
+      for (const auto& elem : resources_manager.html()) {
+        escaped_strs.emplace_back(escape_non_ascii(elem));
+      }
+      this->node_["html"] = escaped_strs;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
