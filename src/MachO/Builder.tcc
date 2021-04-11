@@ -55,12 +55,17 @@ void Builder::build_segments(void) {
   for (SegmentCommand& segment : binary->segments()) {
     LIEF_DEBUG("{}", segment);
     segment_t segment_header;
+    std::memset(&segment_header, 0, sizeof(segment_header));
+
     segment_header.cmd      = static_cast<uint32_t>(segment.command());
     segment_header.cmdsize  = static_cast<uint32_t>(segment.size());
+
     const std::string& seg_name = segment.name();
-    std::copy(
-        seg_name.c_str(), seg_name.c_str() + sizeof(segment_header.segname),
-        segment_header.segname);
+    const uint32_t segname_length = std::min<uint32_t>(seg_name.size() + 1,
+                                                       sizeof(segment_header.segname));
+    std::copy(seg_name.c_str(), seg_name.c_str() + segname_length,
+              std::begin(segment_header.segname));
+
     segment_header.vmaddr   = static_cast<uint__>(segment.virtual_address());
     segment_header.vmsize   = static_cast<uint__>(segment.virtual_size());
     segment_header.fileoff  = static_cast<uint__>(segment.file_offset());
@@ -75,10 +80,7 @@ void Builder::build_segments(void) {
     if (content.size() != segment.file_size()) {
       throw LIEF::builder_error("content.size() != segment.file_size()");
     }
-    //this->raw_.seekp(segment.file_offset());
-    //this->raw_.write(content);
 
-    //const size_t original_size = segment.originalData_.size();
     segment.originalData_.clear();
 
     std::move(
@@ -102,13 +104,17 @@ void Builder::build_segments(void) {
       const std::string& segment_name = segment.name();
       LIEF_DEBUG("{}", section);
       section_t header;
-      std::copy(
-          sec_name.c_str(), sec_name.c_str() + sizeof(header.sectname),
-          header.sectname);
+      std::memset(&header, 0, sizeof(header));
 
-      std::copy(
-          segment_name.c_str(), segment_name.c_str() + sizeof(header.segname),
-          header.segname);
+      const uint32_t segname_length = std::min<uint32_t>(segment_name.size() + 1,
+                                                         sizeof(header.segname));
+      std::copy(segment_name.c_str(), segment_name.c_str() + segname_length,
+                std::begin(header.segname));
+
+      const uint32_t secname_length = std::min<uint32_t>(sec_name.size() + 1,
+                                                         sizeof(header.sectname));
+      std::copy(sec_name.c_str(), sec_name.c_str() + secname_length,
+                std::begin(header.sectname));
 
       header.addr      = static_cast<uint__>(section.address());
       header.size      = static_cast<uint__>(section.size());
