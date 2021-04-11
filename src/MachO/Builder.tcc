@@ -398,6 +398,10 @@ template<class T>
 void Builder::build(DyldInfo* dyld_info) {
   LIEF_DEBUG("Build '{}'", to_string(dyld_info->command()));
 
+  // /!\ Force to update relocation cache that is used by the following functions
+  // TODO(romain): This looks like a hack
+  this->binary_->relocations();
+
   dyld_info->update_export_trie().update_rebase_info().update_binding_info();
 
   const uint32_t raw_size = sizeof(dyld_info_command);
