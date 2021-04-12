@@ -608,10 +608,15 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
     if (key.length() != 8) {
       LIEF_ERR("Corrupted key ({} {})", u16tou8(key), key_str);
     } else {
-      uint64_t lang_id   = std::stoul(u16tou8(key.substr(0, 4)), 0, 16);
-      uint64_t code_page = std::stoul(u16tou8(key.substr(4, 8)), 0, 16);
-      LIEF_DEBUG("Lang ID: {:d}", lang_id);
-      LIEF_DEBUG("Code page: 0x{:x}", code_page);
+      try {
+        uint64_t lang_id   = std::stoul(u16tou8(key.substr(0, 4)), 0, 16);
+        uint64_t code_page = std::stoul(u16tou8(key.substr(4, 8)), 0, 16);
+        LIEF_DEBUG("Lang ID: {:d}", lang_id);
+        LIEF_DEBUG("Code page: 0x{:x}", code_page);
+      } catch (const std::invalid_argument& e) {
+        LIEF_WARN("Cannot convert to integer");
+        LIEF_WARN("This PE file has Invalid Lang ID or Code page");
+      }
     }
 
     stream.align(sizeof(uint32_t));
