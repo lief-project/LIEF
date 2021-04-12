@@ -605,8 +605,8 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         JsonVisitor accelerator_visitor;
         accelerator_visitor(acc);
         accelerator_json.emplace_back(accelerator_visitor.get());
-        this->node_["accelerator"] = accelerator_json;
       }
+      this->node_["accelerator"] = accelerator_json;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
