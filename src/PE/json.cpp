@@ -591,8 +591,8 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         JsonVisitor string_table_visitor;
         string_table_visitor(string_table);
         string_table_json.emplace_back(string_table_visitor.get());
-        this->node_["string_table"] = string_table_json;
       }
+      this->node_["string_table"] = string_table_json;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
