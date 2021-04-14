@@ -20,6 +20,8 @@
 #include <vector>
 #include <vector>
 #include <memory>
+#include <functional>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/exception.hpp"
@@ -71,6 +73,11 @@ class LIEF_API Builder {
   private:
   template<typename T>
   void build(void);
+
+  template<typename T, typename HANDLER>
+  std::vector<std::string> optimize(const HANDLER& e,
+                                    std::function<std::string(const typename HANDLER::value_type)> getter,
+                                    std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
   void build_fat(void);
   void build_fat_header(void);
