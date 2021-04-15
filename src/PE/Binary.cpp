@@ -549,8 +549,8 @@ uint32_t Binary::sizeof_headers(void) const {
     size += sizeof(pe64_optional_header);
   }
 
-  size += sizeof(pe_data_directory) * (this->data_directories_.size() + 1);
-  size += sizeof(pe_section) * (this->sections_.size() + 1);
+  size += sizeof(pe_data_directory) * (this->data_directories_.size());
+  size += sizeof(pe_section) * (this->sections_.size());
   size = static_cast<uint32_t>(LIEF::align(size, this->optional_header().file_alignment()));
   return size;
 
