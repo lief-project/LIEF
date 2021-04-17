@@ -144,8 +144,7 @@ class TestExtendCommand(TestCase):
 
 
     def test_id(self):
-        original = lief.MachO.parse(get_sample("/usr/bin/id"))
-        original = original.take(lief.MachO.CPU_TYPES.ARM64)
+        original = lief.MachO.parse(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
         _, output = tempfile.mkstemp(prefix="lief_id_remove_cmd")
 
         # Extend UUID
@@ -295,7 +294,7 @@ class TestLibraryInjection(TestCase):
         if is_apple_m1():
             sample = get_sample('MachO/MachO64_Aarch64_binary_all.bin')
 
-        if is_osx() and is_x86_64():
+        if is_x86_64():
             sample = get_sample('MachO/MachO64_x86-64_binary_all.bin')
 
         original = lief.parse(sample)
