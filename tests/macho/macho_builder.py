@@ -144,7 +144,7 @@ class TestExtendCommand(TestCase):
 
 
     def test_id(self):
-        original = lief.MachO.parse(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
+        original = lief.parse(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
         _, output = tempfile.mkstemp(prefix="lief_id_remove_cmd")
 
         # Extend UUID
