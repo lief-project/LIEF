@@ -307,8 +307,7 @@ source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
 # Library definition
 # ==================
 target_include_directories(
-  LIB_LIEF SYSTEM PRIVATE "${SPDLOG_SOURCE_DIR}/include"
-                          "${MBEDTLS_INCLUDE_DIRS}")
+  LIB_LIEF SYSTEM PRIVATE "${MBEDTLS_INCLUDE_DIRS}")
 
 target_include_directories(
   LIB_LIEF
@@ -355,7 +354,8 @@ target_sources(LIB_LIEF PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h)
 
 
-add_dependencies(LIB_LIEF lief_spdlog lief_mbed_tls)
+add_dependencies(LIB_LIEF lief_mbed_tls)
+target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
 # Flags definition
 # ----------------
@@ -626,7 +626,7 @@ install(
   DESTINATION lib/pkgconfig
   COMPONENT libraries)
 
-export(TARGETS LIB_LIEF FILE LIEFExport.cmake)
+export(TARGETS LIB_LIEF lief_spdlog FILE LIEFExport.cmake)
 
 # Package
 # ======================

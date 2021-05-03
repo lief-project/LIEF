@@ -45,6 +45,10 @@ option(LIEF_PROFILING "Enable performance profiling" OFF)
 cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled examples" OFF
                        "LIEF_EXAMPLES" OFF)
 
+# Use a user-provided version of spdlog
+# It can be useful to reduce compile time
+option(LIEF_EXTERNAL_SPDLOG OFF)
+
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)
 set(LIEF_MACHO_SUPPORT 0)

@@ -144,21 +144,31 @@ set(mbedtls_src_tls
   "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
 )
 
-#set_source_files_properties("${MBEDTLS_SOURCE_DIR}/library/bignum.c" PROPERTIES COMPILE_FLAGS -Wno-overlength-strings)
+add_library(lief_spdlog INTERFACE)
 
-set(SPDLOG_VERSION 1.8.2)
-set(SPDLOG_SHA256 SHA256=f0410b12b526065802b40db01304783550d3d20b4b6fe2f8da55f9d08ed2035d)
-set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog lib repo")
-ExternalProject_Add(lief_spdlog
-  URL               ${SPDLOG_URL}
-  URL_HASH          ${SPDLOG_SHA256}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  UPDATE_COMMAND    ""
-  INSTALL_COMMAND   "")
+if(LIEF_EXTERNAL_SPDLOG)
+  find_package(spdlog REQUIRED)
+  list(APPEND CMAKE_MODULE_PATH "${SPDLOG_DIR}/cmake")
+  target_link_libraries(lief_spdlog INTERFACE spdlog::spdlog)
+  get_target_property(SPDLOG_INC_DIR spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+  target_include_directories(lief_spdlog SYSTEM INTERFACE ${SPDLOG_INC_DIR})
+else()
+  set(SPDLOG_VERSION 1.8.2)
+  set(SPDLOG_SHA256 SHA256=f0410b12b526065802b40db01304783550d3d20b4b6fe2f8da55f9d08ed2035d)
+  set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog source")
+  ExternalProject_Add(lief_spdlog_project
+    URL               ${SPDLOG_URL}
+    URL_HASH          ${SPDLOG_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    INSTALL_COMMAND   "")
 
-ExternalProject_get_property(lief_spdlog SOURCE_DIR)
-set(SPDLOG_SOURCE_DIR "${SOURCE_DIR}")
+  ExternalProject_get_property(lief_spdlog_project SOURCE_DIR)
+  set(SPDLOG_SOURCE_DIR "${SOURCE_DIR}")
+  add_dependencies(lief_spdlog lief_spdlog_project)
+  target_include_directories(lief_spdlog SYSTEM INTERFACE ${SPDLOG_SOURCE_DIR}/include)
+endif()
 
 # Fuzzing
 # ~~~~~~~
