@@ -34,6 +34,18 @@ Changelog
   * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
 
+:Compilation:
+  * Enable to use a pre-compiled version of spdlog. This feature aims
+    at improving compilation time when developing on LIEF.
+
+    One can provide path to spdlog install through:
+
+    .. code-block:: console
+
+      $ python ./setup.py --spdlog-dir=path/to/lib/cmake/spdlog [...]
+      # or
+      $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
+
 
 0.11.X - Patch Releases
 -----------------------
@@ -460,8 +472,8 @@ Features
 
       $ readelf -n foo
       Displaying notes found in: .note.gnu.build-id
-      Owner                 Data size	Description
-      GNU                  0x00000014	NT_GNU_BUILD_ID (unique build ID bitstring)
+      Owner                 Data size Description
+      GNU                  0x00000014 NT_GNU_BUILD_ID (unique build ID bitstring)
         Build ID: ffffffffffffffffffffffffffffffffffffffff
 
     See commit :commit:`3be9dd0ff58ec68cb8813e01d6798c16b42dac22` for more details
