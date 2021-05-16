@@ -184,7 +184,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug AND UNIX)
   target_compile_options(LIB_LIEF PRIVATE -g -O0)
 endif()
 
-if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS OR LIEF_FORCE_API_EXPORTS)
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_EXPORTS)
 else()
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
