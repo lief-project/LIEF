@@ -116,7 +116,7 @@ class BuildLibrary(build_ext):
         filename = self.get_ext_filename(fullname)
 
         jobs = self.parallel if self.parallel else 1
-        cmake_args = []
+        cmake_args = ["-DLIEF_FORCE_API_EXPORTS=ON"]
 
         source_dir                     = ext.sourcedir
         build_temp                     = self.build_temp
@@ -284,7 +284,7 @@ class BuildLibrary(build_ext):
                     subprocess.check_call(['ninja'], cwd=self.build_temp)
                     subprocess.check_call(['ninja', "check-lief"], cwd=self.build_temp)
                 else:
-                    subprocess.check_call(['ninja', targets['python_bindings']], cwd=self.build_temp, env=env)
+                    subprocess.check_call(['ninja', "-v", targets['python_bindings']], cwd=self.build_temp, env=env)
 
                 if 'sdk' in targets:
                     subprocess.check_call(['ninja', targets['sdk']], cwd=self.build_temp, env=env)
