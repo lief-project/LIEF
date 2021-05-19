@@ -26,6 +26,7 @@ Changelog
 
   * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
   * Handle the `0x0D` binding opcode (see: :issue:`524`)
+  * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
 :DEX:
   * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
