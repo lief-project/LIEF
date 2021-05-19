@@ -20,6 +20,7 @@
 #include <vector>
 #include <limits>
 #include <set>
+#include <map>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -123,12 +124,14 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 
-  std::unique_ptr<BinaryStream> stream_;
-  Binary*                       binary_{nullptr};
-  MACHO_TYPES                   type_;
-  bool                          is64_;
-  ParserConfig                  config_;
-  std::set<uint64_t>            visited_;
+  std::unique_ptr<BinaryStream>  stream_;
+  Binary*                        binary_{nullptr};
+  MACHO_TYPES                    type_;
+  bool                           is64_;
+  ParserConfig                   config_;
+  std::set<uint64_t>             visited_;
+  std::map<std::string, Symbol*> memoized_symbols_;
+  std::map<uint64_t, Symbol*>    memoized_symbols_by_address_;
 };
 
 
