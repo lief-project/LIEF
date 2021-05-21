@@ -486,20 +486,8 @@ if(LIEF_COVERAGE)
   target_link_libraries(LIB_LIEF gcov)
 endif()
 
+set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF CLEAN_DIRECT_OUTPUT 1)
 
-if(MSVC)
-  string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
-  if(build_type STREQUAL "debug")
-    set(CRT_OUTPUT_SUFFIX ${LIEF_USE_CRT_DEBUG})
-  else()
-    set(CRT_OUTPUT_SUFFIX ${LIEF_USE_CRT_RELEASE})
-  endif()
-  set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF${CRT_OUTPUT_SUFFIX}
-                                            CLEAN_DIRECT_OUTPUT 1)
-else()
-  set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF CLEAN_DIRECT_OUTPUT
-                                                             1)
-endif()
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
