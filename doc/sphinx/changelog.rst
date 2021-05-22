@@ -6,7 +6,6 @@ Changelog
 
 .. _release-0115:
 
-
 0.11.5 - May 22, 2021
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -20,7 +19,6 @@ Changelog
 
 :MachO:
   * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
-
 
 .. _release-0114:
 
