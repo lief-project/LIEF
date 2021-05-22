@@ -4,6 +4,24 @@ Changelog
 0.11.X - Patch Releases
 -----------------------
 
+.. _release-0115:
+
+
+0.11.5 - May 22, 2021
+~~~~~~~~~~~~~~~~~~~~~~~
+
+* Remove usage of ``not`` in public headers (:commit:`b8e825b464418de385146bb3f89ef6126f4de5d4`)
+
+:ELF:
+  * :github_user:`pdreiter` fixed the issue :issue:`418`
+
+:PE:
+  * Fix issue when computing :attr:`lief.PE.Binary.sizeof_headers` (:commit:`ab3f073ac0c60d8453070f83dd4dc04fe60aa0a5`)
+
+:MachO:
+  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
+
+
 .. _release-0114:
 
 0.11.4 - March 09, 2021
