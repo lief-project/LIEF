@@ -24,7 +24,6 @@ Changelog
       fat = lief.MachO.parse("/bin/ls")
       fit = fat.take(lief.MachO.CPU_TYPES.x86_64)
 
-  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
   * Handle the `0x0D` binding opcode (see: :issue:`524`)
   * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
@@ -50,6 +49,22 @@ Changelog
 
 0.11.X - Patch Releases
 -----------------------
+
+.. _release-0115:
+
+0.11.5 - May 22, 2021
+~~~~~~~~~~~~~~~~~~~~~~~
+
+* Remove usage of ``not`` in public headers (:commit:`b8e825b464418de385146bb3f89ef6126f4de5d4`)
+
+:ELF:
+  * :github_user:`pdreiter` fixed the issue :issue:`418`
+
+:PE:
+  * Fix issue when computing :attr:`lief.PE.Binary.sizeof_headers` (:commit:`ab3f073ac0c60d8453070f83dd4dc04fe60aa0a5`)
+
+:MachO:
+  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
 
 .. _release-0114:
 
