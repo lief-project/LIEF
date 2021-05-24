@@ -3,7 +3,7 @@ set -ex
 
 export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libstdc++ -static-libgcc'
 export CFLAGS='-ffunction-sections -fdata-sections -static-libstdc++ -static-libgcc'
-export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
+export LDFLAGS='-Wl,--gc-sections'
 
 $PYTHON_BINARY setup.py --ninja --lief-test build \
   bdist_wheel --skip-build --dist-dir wheel_stage
