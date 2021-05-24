@@ -95,7 +95,9 @@ class LibAddSample(object):
         if os.path.isfile(self.binadd_bin):
             os.remove(self.binadd_bin)
 
-        CC_FLAGS = ['-L', self.tmp_dir] + extra_flags
+        # TODO(romain): without the -fPIC -pie it fails on manylinux2014-x86-64
+        # but it should be fixed with the new ELF builder
+        CC_FLAGS = ['-fPIC', '-pie', '-L', self.tmp_dir] + extra_flags
         cmd = [self.compiler, '-o', self.binadd_bin] + CC_FLAGS + [self.binadd_path, '-ladd']
         self.logger.debug("Compile 'binadd' with: {}".format(" ".join(cmd)))
         p = Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -117,9 +119,6 @@ class LibAddSample(object):
     def remove(self):
         if os.path.isdir(self.directory):
             shutil.rmtree(self.directory)
-
-    def __del__(self):
-        self.remove()
 
 
 class TestDynamic(TestCase):

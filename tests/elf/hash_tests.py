@@ -15,7 +15,7 @@ from subprocess import Popen
 import lief
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, get_compiler
 
 LIBADD_C = """\
 #include <stdlib.h>
@@ -60,7 +60,7 @@ class TestHash(TestCase):
         self.libadd_so  = os.path.join(self.tmp_dir, "libadd.so")
         self.binadd_bin = os.path.join(self.tmp_dir, "binadd.bin")
 
-        self.compiler = shutil.which(os.environ.get('CC', 'cc'))
+        self.compiler = get_compiler()
         if self.compiler is None:
             self.logger.error("Unable to find a compiler")
             sys.exit(0)
