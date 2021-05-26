@@ -66,8 +66,8 @@ class LIEF_API Relocation : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   protected:
-  uint64_t address_;
-  uint8_t  size_;
+  uint64_t address_ = 0;
+  uint8_t  size_ = 0;
 
 };
 

@@ -31,17 +31,7 @@
 namespace LIEF {
 namespace ELF {
 
-Symbol::Symbol(void) :
-  LIEF::Symbol{},
-  type_{ELF_SYMBOL_TYPES::STT_NOTYPE},
-  binding_{SYMBOL_BINDINGS::STB_LOCAL},
-  other_{0},
-  shndx_{0},
-  section_{nullptr},
-  symbol_version_{nullptr}
-{}
-
-
+Symbol::Symbol(void) = default;
 Symbol::~Symbol(void) = default;
 
 Symbol& Symbol::operator=(Symbol other) {

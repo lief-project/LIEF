@@ -93,9 +93,9 @@ class LIEF_API Section : public Object {
 
   protected:
   std::string name_;
-  uint64_t    virtual_address_;
-  uint64_t    size_;
-  uint64_t    offset_;
+  uint64_t    virtual_address_ = 0;
+  uint64_t    size_ = 0;
+  uint64_t    offset_ = 0;
 
   private:
   template<typename T>

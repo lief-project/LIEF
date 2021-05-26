@@ -150,12 +150,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
-  ELF_SYMBOL_TYPES type_;
-  SYMBOL_BINDINGS  binding_;
-  uint8_t          other_;
-  uint16_t         shndx_;
-  Section*         section_{nullptr};
-  SymbolVersion*   symbol_version_{nullptr};
+  ELF_SYMBOL_TYPES type_    = ELF_SYMBOL_TYPES::STT_NOTYPE;
+  SYMBOL_BINDINGS  binding_ = SYMBOL_BINDINGS::STB_LOCAL;
+  uint8_t          other_   = 0;
+  uint16_t         shndx_   = 0;
+  Section*         section_ = nullptr;
+  SymbolVersion*   symbol_version_ = nullptr;
 
 };
 }
