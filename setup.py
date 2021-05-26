@@ -284,7 +284,7 @@ class BuildLibrary(build_ext):
                     subprocess.check_call(['ninja'], cwd=self.build_temp)
                     subprocess.check_call(['ninja', "check-lief"], cwd=self.build_temp)
                 else:
-                    subprocess.check_call(['ninja', "-v", targets['python_bindings']], cwd=self.build_temp, env=env)
+                    subprocess.check_call(['ninja', targets['python_bindings']], cwd=self.build_temp, env=env)
 
                 if 'sdk' in targets:
                     subprocess.check_call(['ninja', targets['sdk']], cwd=self.build_temp, env=env)
