@@ -931,6 +931,24 @@ Relocation& Binary::add_pltgot_relocation(const Relocation& relocation) {
   return *relocation_ptr;
 }
 
+Relocation* Binary::add_object_relocation(const Relocation& relocation, const Section& section) {
+  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+      [&section] (const Section* sec) { return &section == sec; });
+
+  if (it_section == std::end(sections_)) {
+    LIEF_ERR("Can't find section '{}'", section.name());
+    return nullptr;
+  }
+
+
+  Relocation* relocation_ptr = new Relocation{relocation};
+  relocation_ptr->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
+  relocation_ptr->architecture_ = this->header().machine_type();
+  relocation_ptr->section_ = *it_section;
+  this->relocations_.push_back(relocation_ptr);
+  return relocation_ptr;
+}
+
 // plt/got
 // -------
 it_pltgot_relocations Binary::pltgot_relocations(void) {

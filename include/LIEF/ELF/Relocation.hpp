@@ -61,6 +61,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   {}
 
   Relocation(void);
+  Relocation(ARCH arch);
   virtual ~Relocation(void);
 
   Relocation& operator=(Relocation other);

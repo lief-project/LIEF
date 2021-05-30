@@ -157,6 +157,15 @@ class LIEF_API Binary : public LIEF::Binary {
   Relocation& add_dynamic_relocation(const Relocation& relocation);
   Relocation& add_pltgot_relocation(const Relocation& relocation);
 
+  //! Add relocation for object file (.o)
+  //!
+  //! The first parameter is the section to add while the second parameter
+  //! is the LIEF::ELF::Section associated with the relocation.
+  //!
+  //! If there is an error, this function return a nullptr. Otherwise, it returns
+  //! the relocation added.
+  Relocation* add_object_relocation(const Relocation& relocation, const Section& section);
+
   //! Return `plt.got` relocations
   it_pltgot_relocations       pltgot_relocations(void);
   it_const_pltgot_relocations pltgot_relocations(void) const;
