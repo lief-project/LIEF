@@ -1621,7 +1621,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   static constexpr uint32_t NB_MAX_WORDS   = 90000;
   static constexpr uint32_t NB_MAX_BUCKETS = 90000;
-  static constexpr uint32_t MAX_NB_HASH    = 90000;
+  static constexpr uint32_t MAX_NB_HASH    = 1000000;
 
   LIEF_DEBUG("== Parser symbol GNU hash ==");
   GnuHash gnuhash;
@@ -1698,7 +1698,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
         gnuhash.hash_values_ = std::move(hashvalues);
       }
     } else {
-      LIEF_ERR("GNU Hash, nb_hash corrupted");
+      LIEF_ERR("The number of hash entries seems too high ({:d})", nb_hash);
     }
   }
   this->binary_->gnu_hash_ = std::move(gnuhash);

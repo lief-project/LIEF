@@ -25,14 +25,7 @@ Header& Header::operator=(const Header&) = default;
 Header::~Header(void) = default;
 
 
-Header::Header(void) :
-  architecture_{ARCHITECTURES::ARCH_NONE},
-  modes_{},
-  object_type_{OBJECT_TYPES::TYPE_NONE},
-  entrypoint_{0},
-  endianness_{ENDIANNESS::ENDIAN_NONE}
-{}
-
+Header::Header(void) = default;
 
 ARCHITECTURES Header::architecture(void) const {
   return this->architecture_;

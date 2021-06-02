@@ -185,7 +185,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug AND UNIX)
   target_compile_options(LIB_LIEF PRIVATE -g -O0)
 endif()
 
-if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS OR LIEF_FORCE_API_EXPORTS)
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_EXPORTS)
 else()
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
@@ -307,8 +307,7 @@ source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
 # Library definition
 # ==================
 target_include_directories(
-  LIB_LIEF SYSTEM PRIVATE "${SPDLOG_SOURCE_DIR}/include"
-                          "${MBEDTLS_INCLUDE_DIRS}")
+  LIB_LIEF SYSTEM PRIVATE "${MBEDTLS_INCLUDE_DIRS}")
 
 target_include_directories(
   LIB_LIEF
@@ -355,7 +354,8 @@ target_sources(LIB_LIEF PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h)
 
 
-add_dependencies(LIB_LIEF lief_spdlog lief_mbed_tls)
+add_dependencies(LIB_LIEF lief_mbed_tls)
+target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
 # Flags definition
 # ----------------
@@ -486,20 +486,8 @@ if(LIEF_COVERAGE)
   target_link_libraries(LIB_LIEF gcov)
 endif()
 
+set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF CLEAN_DIRECT_OUTPUT 1)
 
-if(MSVC)
-  string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
-  if(build_type STREQUAL "debug")
-    set(CRT_OUTPUT_SUFFIX ${LIEF_USE_CRT_DEBUG})
-  else()
-    set(CRT_OUTPUT_SUFFIX ${LIEF_USE_CRT_RELEASE})
-  endif()
-  set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF${CRT_OUTPUT_SUFFIX}
-                                            CLEAN_DIRECT_OUTPUT 1)
-else()
-  set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF CLEAN_DIRECT_OUTPUT
-                                                             1)
-endif()
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -626,7 +614,7 @@ install(
   DESTINATION lib/pkgconfig
   COMPONENT libraries)
 
-export(TARGETS LIB_LIEF FILE LIEFExport.cmake)
+export(TARGETS LIB_LIEF lief_spdlog FILE LIEFExport.cmake)
 
 # Package
 # ======================

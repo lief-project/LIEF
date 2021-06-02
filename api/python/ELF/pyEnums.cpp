@@ -1092,7 +1092,8 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_ABI_TAG))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_HWCAP))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_BUILD_ID))
-    .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION));
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION))
+    .value(PY_ENUM(NOTE_TYPES::NT_CRASHPAD));
 
 
   LIEF::enum_<NOTE_TYPES_CORE>(m, "NOTE_TYPES_CORE")

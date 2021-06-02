@@ -111,6 +111,16 @@ void create<Binary>(py::module& m) {
         &Binary::add_pltgot_relocation,
         py::return_value_policy::reference)
 
+    .def("add_object_relocation",
+        &Binary::add_object_relocation,
+        "Add relocation for object file (.o)\n\n"
+        "The first parameter is the section to add while the second parameter "
+        "is the " RST_CLASS_REF(lief.ELF.Section) " associated with the relocation.\n\n"
+        "If there is an error, this function return a nullptr. Otherwise, it returns "
+        "the relocation added.",
+        "relocation"_a, "section"_a,
+        py::return_value_policy::reference)
+
     .def_property_readonly("pltgot_relocations",
         static_cast<no_const_getter<it_pltgot_relocations>>(&Binary::pltgot_relocations),
         "Return an iterator over PLT/GOT " RST_CLASS_REF(lief.ELF.Relocation) "",

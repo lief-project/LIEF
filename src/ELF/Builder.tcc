@@ -1099,10 +1099,7 @@ void Builder::build_hash_table(void) {
       {
         return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
       });
-  uint32_t new_symndx = 0;
-  if (it_gnuhash != std::end(this->binary_->sections_)) {
-    new_symndx = sort_dynamic_symbols();
-  }
+  uint32_t new_symndx = sort_dynamic_symbols();
 
   //TODO: To improve
   if (it_hash != std::end(this->binary_->sections_)) {

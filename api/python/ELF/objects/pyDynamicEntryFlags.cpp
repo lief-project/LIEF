@@ -48,6 +48,16 @@ void create<DynamicEntryFlags>(py::module& m) {
         "Return list of " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " or " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " (integer)",
         py::return_value_policy::move)
 
+    .def("has",
+        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS) const>(&DynamicEntryFlags::has),
+        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) "",
+        "flag"_a)
+
+    .def("has",
+        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1) const>(&DynamicEntryFlags::has),
+        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) "",
+        "flag"_a)
+
     .def("add",
         static_cast<void (DynamicEntryFlags::*)(DYNAMIC_FLAGS)>(&DynamicEntryFlags::add),
         "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) "",

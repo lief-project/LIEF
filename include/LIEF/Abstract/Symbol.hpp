@@ -56,8 +56,8 @@ class LIEF_API Symbol : public Object {
 
   protected:
   std::string name_;
-  uint64_t value_;
-  uint64_t size_;
+  uint64_t value_ = 0;
+  uint64_t size_ = 0;
 };
 }
 

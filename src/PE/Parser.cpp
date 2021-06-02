@@ -667,7 +667,7 @@ void Parser::parse_debug_code_view(Debug& debug_info) {
 
     default:
       {
-        LIEF_WARN("{} is not implemented yet!");
+        LIEF_WARN("Signature {} is not implemented yet!", to_string(signature));
       }
   }
 

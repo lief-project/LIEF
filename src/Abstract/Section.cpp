@@ -28,13 +28,7 @@
 
 namespace LIEF {
 
-Section::Section(void) :
-  name_{""},
-  virtual_address_{0},
-  size_{0},
-  offset_{0}
-{}
-
+Section::Section(void) = default;
 
 Section::Section(const std::string& name) :
   name_{name},

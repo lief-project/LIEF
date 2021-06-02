@@ -918,6 +918,7 @@ enum _LIEF_EN(NOTE_TYPES) {
   _LIEF_EI(NT_GNU_HWCAP)        = 2,
   _LIEF_EI(NT_GNU_BUILD_ID)     = 3,
   _LIEF_EI(NT_GNU_GOLD_VERSION) = 4,
+  _LIEF_EI(NT_CRASHPAD)         = 0x4f464e49,
 };
 
 enum _LIEF_EN(NOTE_TYPES_CORE) {

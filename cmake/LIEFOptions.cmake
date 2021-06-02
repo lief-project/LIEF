@@ -4,19 +4,20 @@ endif()
 set(__add_lief_options ON)
 include(CMakeDependentOption)
 
-option(LIEF_TESTS          "Enable tests"                               OFF)
-option(LIEF_DOC            "Enable documentation"                       OFF)
-option(LIEF_PYTHON_API     "Enable Python API"                          ON)
-option(LIEF_INSTALL_PYTHON "Install Python bindings"                    OFF)
-option(LIEF_C_API          "C API"                                      ON)
-option(LIEF_EXAMPLES       "Build LIEF C++ examples"                    ON)
-option(LIEF_FORCE32        "Force build LIEF 32 bits version"           OFF)
-option(LIEF_COVERAGE       "Perform code coverage"                      OFF)
-option(LIEF_USE_CCACHE     "Use ccache to speed up compilation"         ON)
-option(LIEF_EXTRA_WARNINGS "Enable extra warning from the compiler"     OFF)
-option(LIEF_LOGGING        "Enable logging"                             ON)
-option(LIEF_LOGGING_DEBUG  "Enable debug logging"                       ON)
-option(LIEF_ENABLE_JSON    "Enable JSON-related APIs"                   ON)
+option(LIEF_TESTS             "Enable tests"                               OFF)
+option(LIEF_DOC               "Enable documentation"                       OFF)
+option(LIEF_PYTHON_API        "Enable Python API"                          ON)
+option(LIEF_INSTALL_PYTHON    "Install Python bindings"                    OFF)
+option(LIEF_C_API             "C API"                                      ON)
+option(LIEF_EXAMPLES          "Build LIEF C++ examples"                    ON)
+option(LIEF_FORCE32           "Force build LIEF 32 bits version"           OFF)
+option(LIEF_COVERAGE          "Perform code coverage"                      OFF)
+option(LIEF_USE_CCACHE        "Use ccache to speed up compilation"         ON)
+option(LIEF_EXTRA_WARNINGS    "Enable extra warning from the compiler"     OFF)
+option(LIEF_LOGGING           "Enable logging"                             ON)
+option(LIEF_LOGGING_DEBUG     "Enable debug logging"                       ON)
+option(LIEF_ENABLE_JSON       "Enable JSON-related APIs"                   ON)
+option(LIEF_FORCE_API_EXPORTS "Force exports of API symbols"               OFF)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 
@@ -44,6 +45,10 @@ option(LIEF_PROFILING "Enable performance profiling" OFF)
 # Install options
 cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled examples" OFF
                        "LIEF_EXAMPLES" OFF)
+
+# Use a user-provided version of spdlog
+# It can be useful to reduce compile time
+option(LIEF_EXTERNAL_SPDLOG OFF)
 
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)

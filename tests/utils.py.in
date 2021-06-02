@@ -22,12 +22,19 @@ def get_compiler():
 def is_linux():
     return sys.platform.startswith("linux")
 
+def is_osx():
+    return sys.platform.startswith("darwin")
+
 def is_x86_64():
     machine = platform.machine().lower()
     return machine in ("x86_64", "amd64")
 
+def is_apple_m1():
+    return is_aarch64() and is_osx()
+
 def is_aarch64():
-    return platform.machine() == "aarch64"
+    machine = platform.machine().lower()
+    return machine in ("aarch64", "arm64")
 
 def has_recent_glibc():
     """Check if we have at least GLIBC 2.17 (2012)"""

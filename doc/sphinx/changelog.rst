@@ -24,8 +24,8 @@ Changelog
       fat = lief.MachO.parse("/bin/ls")
       fit = fat.take(lief.MachO.CPU_TYPES.x86_64)
 
-  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
   * Handle the `0x0D` binding opcode (see: :issue:`524`)
+  * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
 :DEX:
   * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
@@ -34,9 +34,37 @@ Changelog
   * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
 
+:Compilation:
+  * Enable to use a pre-compiled version of spdlog. This feature aims
+    at improving compilation time when developing on LIEF.
+
+    One can provide path to spdlog install through:
+
+    .. code-block:: console
+
+      $ python ./setup.py --spdlog-dir=path/to/lib/cmake/spdlog [...]
+      # or
+      $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
+
 
 0.11.X - Patch Releases
 -----------------------
+
+.. _release-0115:
+
+0.11.5 - May 22, 2021
+~~~~~~~~~~~~~~~~~~~~~~~
+
+* Remove usage of ``not`` in public headers (:commit:`b8e825b464418de385146bb3f89ef6126f4de5d4`)
+
+:ELF:
+  * :github_user:`pdreiter` fixed the issue :issue:`418`
+
+:PE:
+  * Fix issue when computing :attr:`lief.PE.Binary.sizeof_headers` (:commit:`ab3f073ac0c60d8453070f83dd4dc04fe60aa0a5`)
+
+:MachO:
+  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
 
 .. _release-0114:
 
@@ -460,8 +488,8 @@ Features
 
       $ readelf -n foo
       Displaying notes found in: .note.gnu.build-id
-      Owner                 Data size	Description
-      GNU                  0x00000014	NT_GNU_BUILD_ID (unique build ID bitstring)
+      Owner                 Data size Description
+      GNU                  0x00000014 NT_GNU_BUILD_ID (unique build ID bitstring)
         Build ID: ffffffffffffffffffffffffffffffffffffffff
 
     See commit :commit:`3be9dd0ff58ec68cb8813e01d6798c16b42dac22` for more details

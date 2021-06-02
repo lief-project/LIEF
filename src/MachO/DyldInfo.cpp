@@ -1028,6 +1028,8 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   auto cmp = [] (const RelocationDyld* lhs, const RelocationDyld* rhs) {
     return *lhs < *rhs;
   };
+
+  // In recent version of dyld, relocations are melt with bindings
   if (this->binding_encoding_version_ != BINDING_ENCODING_VERSION::V1) {
     return *this;
   }

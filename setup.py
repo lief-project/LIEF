@@ -45,6 +45,10 @@ class LiefDistribution(setuptools.Distribution):
         ('lief-no-vdex', None, 'Disable VDEX module'),
         ('lief-no-oat', None, 'Disable OAT module'),
         ('lief-no-dex', None, 'Disable DEX module'),
+
+        ('lief-no-cache', None, 'Do not use compiler cache (ccache)'),
+
+        ('spdlog-dir=', None, 'Path to the directory that contains spdlogConfig.cmake'),
     ]
 
     def __init__(self, attrs=None):
@@ -66,6 +70,10 @@ class LiefDistribution(setuptools.Distribution):
 
         self.lief_no_android  = False
         self.doc = False
+
+        self.lief_no_cache  = False
+
+        self.spdlog_dir = None
         super().__init__(attrs)
 
 
@@ -108,7 +116,7 @@ class BuildLibrary(build_ext):
         filename = self.get_ext_filename(fullname)
 
         jobs = self.parallel if self.parallel else 1
-        cmake_args = []
+        cmake_args = ["-DLIEF_FORCE_API_EXPORTS=ON"]
 
         source_dir                     = ext.sourcedir
         build_temp                     = self.build_temp
@@ -153,6 +161,15 @@ class BuildLibrary(build_ext):
             cmake_args += ["-DLIEF_LOGGING_DEBUG=on"]
         else:
             cmake_args += ["-DLIEF_LOGGING_DEBUG=off"]
+
+        if self.distribution.lief_no_cache:
+            cmake_args += ["-DLIEF_USE_CCACHE=off"]
+
+        # Setup spdlog configuration flags if
+        # the user provides --spdlog-dir
+        if self.distribution.spdlog_dir is not None:
+            cmake_args.append("-DLIEF_EXTERNAL_SPDLOG=ON")
+            cmake_args.append("-Dspdlog_DIR={}".format(self.distribution.spdlog_dir))
 
         # Main formats
         # ============

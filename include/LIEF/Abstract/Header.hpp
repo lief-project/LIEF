@@ -59,11 +59,11 @@ class LIEF_API Header : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   protected:
-  ARCHITECTURES   architecture_;
+  ARCHITECTURES   architecture_ = ARCHITECTURES::ARCH_NONE;
   std::set<MODES> modes_;
-  OBJECT_TYPES    object_type_;
-  uint64_t        entrypoint_;
-  ENDIANNESS      endianness_;
+  OBJECT_TYPES    object_type_ = OBJECT_TYPES::TYPE_NONE;
+  uint64_t        entrypoint_ = 0;
+  ENDIANNESS      endianness_ = ENDIANNESS::ENDIAN_NONE;
 
 
 };

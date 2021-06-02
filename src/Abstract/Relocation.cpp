@@ -21,11 +21,7 @@
 
 namespace LIEF {
 
-Relocation::Relocation(void) :
-  address_{0},
-  size_{0}
-{}
-
+Relocation::Relocation(void) = default;
 
 Relocation::Relocation(uint64_t address, uint8_t size) :
   address_{address},

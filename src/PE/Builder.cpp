@@ -541,9 +541,8 @@ Builder& Builder::operator<<(const Section& section) {
   header.NumberOfLineNumbers  = static_cast<uint16_t>(section.numberof_line_numbers());
   header.Characteristics      = static_cast<uint32_t>(section.characteristics());
 
-  std::array<char, 8> name = {0};
   const std::string& sec_name = section.fullname();
-  uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
+  uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(header.Name));
   std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(header.Name));
 
   this->ios_.write(reinterpret_cast<uint8_t*>(&header), sizeof(pe_section));

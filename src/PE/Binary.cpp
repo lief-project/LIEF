@@ -96,7 +96,7 @@ Binary::Binary(void) :
   rich_header_{},
   header_{},
   optional_header_{},
-  available_sections_space_{0xc}, // (0x400 - 0x1f8) / sizeof(IMAGE_SECTION_HEADER)
+  available_sections_space_{0x0},
   has_rich_header_{false},
   has_tls_{false},
   has_imports_{false},
@@ -120,7 +120,9 @@ Binary::Binary(void) :
   overlay_{},
   dos_stub_{},
   load_configuration_{nullptr}
-{}
+{
+}
+
 
 Binary::~Binary(void) {
   for (Section *section : this->sections_) {
@@ -155,18 +157,25 @@ Binary::Binary(const std::string& name, PE_TYPE type) :
   this->type_ = type;
   this->name_ = name;
 
+  size_t sizeof_headers = dos_header().addressof_new_exeheader() +
+                          sizeof(pe_header) +
+                          sizeof(pe_data_directory) * DEFAULT_NUMBER_DATA_DIRECTORIES;
   if (type == PE_TYPE::PE32) {
     this->header().machine(MACHINE_TYPES::IMAGE_FILE_MACHINE_I386);
 
-    this->header().sizeof_optional_header(sizeof(pe32_optional_header) + (DEFAULT_NUMBER_DATA_DIRECTORIES + 1) * sizeof(pe_data_directory));
+    this->header().sizeof_optional_header(sizeof(pe32_optional_header) + DEFAULT_NUMBER_DATA_DIRECTORIES * sizeof(pe_data_directory));
     this->header().add_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_32BIT_MACHINE);
 
     this->optional_header().magic(PE_TYPE::PE32);
+    sizeof_headers += sizeof(pe32_optional_header);
+    this->available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(pe_section);
   } else {
     this->header().machine(MACHINE_TYPES::IMAGE_FILE_MACHINE_AMD64);
-    this->header().sizeof_optional_header(sizeof(pe64_optional_header) + (DEFAULT_NUMBER_DATA_DIRECTORIES + 1) * sizeof(pe_data_directory));
+    this->header().sizeof_optional_header(sizeof(pe64_optional_header) + DEFAULT_NUMBER_DATA_DIRECTORIES * sizeof(pe_data_directory));
     this->header().add_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_LARGE_ADDRESS_AWARE);
 
+    sizeof_headers += sizeof(pe64_optional_header);
+    this->available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(pe_section);
     this->optional_header().magic(PE_TYPE::PE32_PLUS);
   }
 
@@ -549,8 +558,8 @@ uint32_t Binary::sizeof_headers(void) const {
     size += sizeof(pe64_optional_header);
   }
 
-  size += sizeof(pe_data_directory) * (this->data_directories_.size() + 1);
-  size += sizeof(pe_section) * (this->sections_.size() + 1);
+  size += sizeof(pe_data_directory) * this->data_directories_.size();
+  size += sizeof(pe_section) * this->sections_.size();
   size = static_cast<uint32_t>(LIEF::align(size, this->optional_header().file_alignment()));
   return size;
 

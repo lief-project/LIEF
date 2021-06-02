@@ -381,7 +381,10 @@ void BinaryParser::parse_load_commands(void) {
               symbol->name(
                   this->stream_->peek_string_at(cmd->stroff + idx));
             }
-            this->binary_->symbols_.push_back(symbol.release());
+            Symbol* symbol_ptr = symbol.release();
+            this->binary_->symbols_.push_back(symbol_ptr);
+            this->memoized_symbols_[symbol_ptr->name()] = symbol_ptr;
+            this->memoized_symbols_by_address_[symbol_ptr->value()] = symbol_ptr;
           }
 
           break;
@@ -1540,7 +1543,13 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     binding_info->library_ = &libraries[ord - 1];
   }
 
-  Symbol* symbol = this->binary_->get_symbol(symbol_name);
+  Symbol* symbol = nullptr;
+  auto search = this->memoized_symbols_.find(symbol_name);
+  if (search != this->memoized_symbols_.end()) {
+    symbol = search->second;
+  } else {
+    symbol = this->binary_->get_symbol(symbol_name);
+  }
   if (symbol != nullptr) {
     binding_info->symbol_ = symbol;
     symbol->binding_info_ = binding_info.get();
@@ -1593,14 +1602,9 @@ void BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment
   reloc->section_ = section;
 
   // Tie symbol
-  const auto it_symbol = std::find_if(
-      std::begin(this->binary_->symbols_), std::end(this->binary_->symbols_),
-      [address] (const Symbol* sym) {
-        return sym->value() == address;
-      });
-
-  if (it_symbol != std::end(this->binary_->symbols_)) {
-    reloc->symbol_ = *it_symbol;
+  const auto it_symbol = this->memoized_symbols_by_address_.find(address);
+  if (it_symbol != this->memoized_symbols_by_address_.end()) {
+    reloc->symbol_ = it_symbol->second;
   }
 
   switch (static_cast<REBASE_TYPES>(type)) {

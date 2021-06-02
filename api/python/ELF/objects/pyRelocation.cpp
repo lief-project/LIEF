@@ -37,6 +37,7 @@ void create<Relocation>(py::module& m) {
   // Relocation object
   py::class_<Relocation, LIEF::Relocation>(m, "Relocation")
     .def(py::init<>())
+    .def(py::init<ARCH>(), "arch"_a)
     .def(py::init<uint64_t, uint32_t, int64_t, bool>(),
         "address"_a, "type"_a = 0, "addend"_a = 0, "is_rela"_a = false)
 

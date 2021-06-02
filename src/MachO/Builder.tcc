@@ -55,12 +55,17 @@ void Builder::build_segments(void) {
   for (SegmentCommand& segment : binary->segments()) {
     LIEF_DEBUG("{}", segment);
     segment_t segment_header;
+    std::memset(&segment_header, 0, sizeof(segment_header));
+
     segment_header.cmd      = static_cast<uint32_t>(segment.command());
     segment_header.cmdsize  = static_cast<uint32_t>(segment.size());
+
     const std::string& seg_name = segment.name();
-    std::copy(
-        seg_name.c_str(), seg_name.c_str() + sizeof(segment_header.segname),
-        segment_header.segname);
+    const uint32_t segname_length = std::min<uint32_t>(seg_name.size() + 1,
+                                                       sizeof(segment_header.segname));
+    std::copy(seg_name.c_str(), seg_name.c_str() + segname_length,
+              std::begin(segment_header.segname));
+
     segment_header.vmaddr   = static_cast<uint__>(segment.virtual_address());
     segment_header.vmsize   = static_cast<uint__>(segment.virtual_size());
     segment_header.fileoff  = static_cast<uint__>(segment.file_offset());
@@ -75,10 +80,7 @@ void Builder::build_segments(void) {
     if (content.size() != segment.file_size()) {
       throw LIEF::builder_error("content.size() != segment.file_size()");
     }
-    //this->raw_.seekp(segment.file_offset());
-    //this->raw_.write(content);
 
-    //const size_t original_size = segment.originalData_.size();
     segment.originalData_.clear();
 
     std::move(
@@ -102,13 +104,17 @@ void Builder::build_segments(void) {
       const std::string& segment_name = segment.name();
       LIEF_DEBUG("{}", section);
       section_t header;
-      std::copy(
-          sec_name.c_str(), sec_name.c_str() + sizeof(header.sectname),
-          header.sectname);
+      std::memset(&header, 0, sizeof(header));
 
-      std::copy(
-          segment_name.c_str(), segment_name.c_str() + sizeof(header.segname),
-          header.segname);
+      const uint32_t segname_length = std::min<uint32_t>(segment_name.size() + 1,
+                                                         sizeof(header.segname));
+      std::copy(segment_name.c_str(), segment_name.c_str() + segname_length,
+                std::begin(header.segname));
+
+      const uint32_t secname_length = std::min<uint32_t>(sec_name.size() + 1,
+                                                         sizeof(header.sectname));
+      std::copy(sec_name.c_str(), sec_name.c_str() + secname_length,
+                std::begin(header.sectname));
 
       header.addr      = static_cast<uint__>(section.address());
       header.size      = static_cast<uint__>(section.size());
@@ -132,74 +138,6 @@ void Builder::build_segments(void) {
   }
 
 } // build_segment
-
-
-template<typename T>
-void Builder::build_symbols(void) {
-#if 0
-  using nlist_t  = typename T::nlist;
-
-  auto itSymbolCommand = std::find_if(
-        std::begin(this->binary_->commands_),
-        std::end(this->binary_->commands_),
-        [] (const LoadCommand* command) {
-          return command->command() == LOAD_COMMAND_TYPES::LC_SYMTAB;
-        });
-  if (itSymbolCommand == std::end(this->binary_->commands_)) {
-    VLOG(VDEBUG) << "[-] No symbols" << std::endl;
-    return;
-  }
-
-  VLOG(VDEBUG) << "[+] Building symbols" << std::endl;
-  const SymbolCommand* symbol_command = static_cast<const SymbolCommand*>(*itSymbolCommand);
-  symtab_command command;
-
-  command.cmd     = static_cast<uint32_t>(symbol_command->command());
-  command.cmdsize = static_cast<uint32_t>(symbol_command->size());
-  command.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());
-  command.nsyms   = static_cast<uint32_t>(symbol_command->numberof_symbols());
-  command.stroff  = static_cast<uint32_t>(symbol_command->strings_offset());
-
-
-
-  command.strsize = static_cast<uint32_t>(symbol_command->strings_size() + delta);
-
-  uint64_t loadCommandsOffset = symbol_command->command_offset();
-
-  this->raw_.seekp(loadCommandsOffset);
-  this->raw_.write(reinterpret_cast<uint8_t*>(&command), sizeof(symtab_command));
-
-  uint32_t string_idx = 1;
-  for (size_t i = 0; i < this->binary_->symbols_.size(); ++i) {
-    nlist_t symbol;
-    const auto& binary_symbol = this->binary_->symbols_[i];
-    if (not binary_symbol->name().empty()) {
-      const std::string& name = binary_symbol->name();
-      const uint32_t name_offset = symbol_command->strings_offset() + string_idx;
-
-
-      this->raw_.seekp(name_offset);
-      this->raw_.write(reinterpret_cast<const uint8_t*>(name.data()), name.size() + 1);
-
-      symbol.n_strx  = string_idx;
-      string_idx += name.size() + 1;
-    }
-
-    symbol.n_type  = static_cast<uint8_t>(binary_symbol->type());
-    symbol.n_sect  = static_cast<uint8_t>(binary_symbol->numberof_sections());
-    if (std::is_same<T, MachO32>::value) {
-      symbol.n_desc = static_cast<uint16_t>(binary_symbol->description());
-    } else {
-      symbol.n_desc = static_cast<int16_t>(binary_symbol->description());
-    }
-    symbol.n_value = static_cast<uint32_t>(binary_symbol->value());
-    const uint32_t offset = static_cast<uint32_t>(symbol_command->symbol_offset() + i * sizeof(nlist_t));
-
-    this->raw_.seekp(offset);
-    this->raw_.write(reinterpret_cast<const uint8_t*>(&symbol), sizeof(nlist_t));
-  }
-#endif
-} // build_symbols
 
 
 template<typename T>
@@ -391,6 +329,10 @@ void Builder::build(MainCommand* main_cmd) {
 template<class T>
 void Builder::build(DyldInfo* dyld_info) {
   LIEF_DEBUG("Build '{}'", to_string(dyld_info->command()));
+
+  // /!\ Force to update relocation cache that is used by the following functions
+  // TODO(romain): This looks like a hack
+  this->binary_->relocations();
 
   dyld_info->update_export_trie().update_rebase_info().update_binding_info();
 
@@ -607,32 +549,125 @@ void Builder::build(FunctionStarts* function_starts) {
   function_starts->originalData_.insert(std::end(function_starts->originalData_), struct_padding, 0);
 }
 
+template<typename T, typename HANDLER>
+std::vector<std::string> Builder::optimize(const HANDLER& container,
+                                           std::function<std::string(const typename HANDLER::value_type)> getter,
+                                           std::unordered_map<std::string, size_t> *of_map_p) {
+  // TODO(romain): This function is also used in the ELF's builder -> move it in the 'utils' part
+
+  std::set<std::string> string_table;
+  std::vector<std::string> string_table_optimized;
+  string_table_optimized.reserve(container.size());
+
+  // reverse all symbol names and sort them so we can merge then in the linear time:
+  // aaa, aadd, aaaa, cca, ca -> aaaa, aaa, acc, ac ddaa
+  std::transform(
+    std::begin(container), std::end(container),
+    std::inserter(string_table, std::end(string_table)),
+    getter);
+
+  for (auto &val: string_table) {
+    string_table_optimized.emplace_back(std::move(val));
+    std::reverse(std::begin(string_table_optimized.back()), std::end(string_table_optimized.back()));
+  }
+
+  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized),
+      [] (const std::string& lhs, const std::string& rhs) {
+          bool ret = false;
+          if (lhs.size() > rhs.size()) {
+              auto res = lhs.compare(0, rhs.size(), rhs);
+              ret = (res <= 0);
+          } else {
+              auto res = rhs.compare(0, lhs.size(), lhs);
+              ret = (res > 0);
+          }
+          return ret;
+  });
+
+  // as all elements that can be merged are adjacent we can just go through the list once
+  // and memorize one we merged to calculate the offsets later
+  std::unordered_map<std::string, std::string> merged_map;
+  size_t to_set_idx = 0, cur_elm_idx = 1;
+  for (; cur_elm_idx < string_table_optimized.size(); ++cur_elm_idx) {
+      auto &cur_elm = string_table_optimized[cur_elm_idx];
+      auto &to_set_elm = string_table_optimized[to_set_idx];
+      if (to_set_elm.size() >= cur_elm.size()) {
+          auto ret = to_set_elm.compare(0, cur_elm.size(), cur_elm);
+          if (ret == 0) {
+              // when memorizing reverse back symbol names
+              std::string rev_cur_elm = cur_elm;
+              std::string rev_to_set_elm = to_set_elm;
+              std::reverse(std::begin(rev_cur_elm), std::end(rev_cur_elm));
+              std::reverse(std::begin(rev_to_set_elm), std::end(rev_to_set_elm));
+              merged_map[rev_cur_elm] = rev_to_set_elm;
+              continue;
+          }
+      }
+      ++to_set_idx;
+      std::swap(string_table_optimized[to_set_idx], cur_elm);
+  }
+  // if the first one is empty
+  if (string_table_optimized[0].size() == 0) {
+    std::swap(string_table_optimized[0], string_table_optimized[to_set_idx]);
+    --to_set_idx;
+  }
+  string_table_optimized.resize(to_set_idx + 1);
+
+  //reverse symbols back and sort them again
+  for (auto &val: string_table_optimized) {
+      std::reverse(std::begin(val), std::end(val));
+  }
+  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized));
+
+  if (of_map_p) {
+    std::unordered_map<std::string, size_t> offset_map;
+    offset_map[""] = 0;
+    size_t offset_counter = 1;
+    for (const auto &v : string_table_optimized) {
+        offset_map[v] = offset_counter;
+        offset_counter += v.size() + 1;
+    }
+    for (const auto &kv : merged_map) {
+        offset_map[kv.first] = offset_map[kv.second] + (kv.second.size() - kv.first.size());
+    }
+    *of_map_p = std::move(offset_map);
+  }
+
+  return string_table_optimized;
+}
+
+
 
 template<class T>
 void Builder::build(SymbolCommand* symbol_command) {
 
- // +---------------------+
- // |                     |
- // |  symtab_command     |
- // |                     |
- // +---------------------+
- // |                     |
- // |  n_list             |
- // |                     |
- // +---------------------+
- // |                     |
- // | string table        |
- // |                     |
- // +---------------------+
+  //template <typename A>
+  //void SymbolTableAtom<A>::encode()
+  //{
+  //  // Note: We lay out the symbol table so that the strings for the stabs (local) symbols are at the
+  //  // end of the string pool.  The stabs strings are not used when calculated the UUID for the image.
+  //  // If the stabs strings were not last, the string offsets for all other symbols may very which would alter the UUID.
+  //
+  //  // reserve space for local symbols
+  // +---------------------+
+  // |                     |
+  // |  symtab_command     |
+  // |                     |
+  // +---------------------+
+  // |                     |
+  // |  n_list             |
+  // |                     |
+  // +---------------------+
+  // |                     |
+  // | string table        |
+  // |                     |
+  // +---------------------+
 
   using nlist_t = typename T::nlist;
   using uint    = typename T::uint;
 
   symtab_command symtab;
 
-  auto cmp_string = [] (const std::string& a, const std::string& b) {
-    return (a.size() >= b.size() and a != b);
-  };
 
   std::vector<Symbol*> symbols;
   symbols.reserve(this->binary_->symbols().size());
@@ -640,107 +675,70 @@ void Builder::build(SymbolCommand* symbol_command) {
 
   // 1. Fill the string table
   // -------------------------------------
-  std::set<std::string, decltype(cmp_string)> string_table{cmp_string};
-  std::vector<std::string> string_table_opt;
   for (Symbol& s : this->binary_->symbols()) {
     if (s.origin() == SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB) {
-      string_table.insert(s.name());
       symbols.push_back(&s);
     }
   }
 
-  std::copy_if(
-      std::begin(string_table),
-      std::end(string_table),
-      std::back_inserter(string_table_opt),
-      [&string_table_opt] (const std::string& name) {
-
-        auto&& it = std::find_if(
-            std::begin(string_table_opt),
-            std::end(string_table_opt),
-            [&name] (const std::string& nameopt) {
-              return nameopt.substr(nameopt.size() - name.size()) == name ;
-            });
-
-        return (it == std::end(string_table_opt));
-      });
-
-  std::vector<uint8_t> raw_symbol_names;
-
+  std::unordered_map<std::string, size_t> offset_name_map;
+  std::vector<std::string> string_table_opt = optimize<Symbol, decltype(symbols)>(
+                                                symbols, [] (const Symbol* sym) { return sym->name(); },
+                                                &offset_name_map);
   // 0 index is reserved
-  raw_symbol_names.push_back(0);
-  for (const std::string& name : string_table_opt) {
-    std::move(
-        std::begin(name), std::end(name),
-        std::back_inserter(raw_symbol_names));
-    raw_symbol_names.push_back(0);
+  vector_iostream raw_symbol_names;
+  raw_symbol_names.write<uint8_t>(0);
+  for (std::string name : string_table_opt) {
+    raw_symbol_names.write(name);
   }
 
   // If the table is smaller than th original one, fill with 0
   if (raw_symbol_names.size() < symbol_command->strings_size()) {
-    raw_symbol_names.insert(
-        std::end(raw_symbol_names),
-        symbol_command->strings_size() - raw_symbol_names.size() ,
-        0
-    );
+    const size_t padding = symbol_command->strings_size() - raw_symbol_names.size();
+    raw_symbol_names.write(padding, 0);
   }
-
-  size_t padding = align(raw_symbol_names.size(), sizeof(uint)) - raw_symbol_names.size();
-  raw_symbol_names.insert(std::end(raw_symbol_names), padding, 0);
+  raw_symbol_names.align(sizeof(uint));
 
 
-  // To be removed later
   if (raw_symbol_names.size() > symbol_command->strings_size()) {
     LIEF_WARN("Larger symbol names size is not supported yet");
     return;
   }
 
-  // Update the segment handling
-  // the string table
+  // Update the segment that contains the string table
   SegmentCommand* segment = this->binary_->segment_from_offset(symbol_command->strings_offset());
   if (segment == nullptr) {
     LIEF_WARN("Can't find segment associated with string table");
     return;
   }
 
+  std::vector<uint8_t> symname_data = raw_symbol_names.raw();
   std::vector<uint8_t> content = segment->content();
   uint64_t relative_offset = symbol_command->strings_offset() - segment->file_offset();
-  std::move(
-      std::begin(raw_symbol_names),
-      std::end(raw_symbol_names),
-      content.data() + relative_offset);
+  std::move(std::begin(symname_data), std::end(symname_data), content.data() + relative_offset);
   segment->content(std::move(content));
 
   // 2. Fill the n_list table
   // -------------------------------------
-  std::vector<uint8_t> nlist_table;
+  vector_iostream nlist_table;
   nlist_table.reserve(symbols.size() * sizeof(nlist_t));
   for (Symbol* sym : symbols) {
     const std::string& name = sym->name();
-    auto&& it_name = std::search(
-        std::begin(raw_symbol_names),
-        std::end(raw_symbol_names),
-        name.c_str(),
-        name.c_str() + name.size() + 1);
+    const auto it_name = offset_name_map.find(name);
 
-    if (it_name == std::end(raw_symbol_names)) {
+    if (it_name == std::end(offset_name_map)) {
       LIEF_WARN("Can't find name offset for symbol {}", sym->name());
       continue;
     }
-    const size_t name_offset = std::distance(std::begin(raw_symbol_names), it_name);
 
     nlist_t nl;
-    nl.n_strx  = static_cast<uint32_t>(name_offset);
+    nl.n_strx  = static_cast<uint32_t>(it_name->second);
     nl.n_type  = static_cast<uint8_t>(sym->type());
     nl.n_sect  = static_cast<uint32_t>(sym->numberof_sections());
     nl.n_desc  = static_cast<uint16_t>(sym->description());
     nl.n_value = static_cast<uint>(sym->value());
 
-    nlist_table.insert(
-      std::end(nlist_table),
-      reinterpret_cast<const uint8_t*>(&nl),
-      reinterpret_cast<const uint8_t*>(&nl) + sizeof(nlist_t)
-    );
+    nlist_table.write(nl);
   }
 
   if (nlist_table.size() != symbol_command->numberof_symbols() * sizeof(nlist_t)) {
@@ -756,19 +754,14 @@ void Builder::build(SymbolCommand* symbol_command) {
 
   content = segment->content();
   relative_offset = symbol_command->symbol_offset() - segment->file_offset();
-  std::move(
-      std::begin(nlist_table),
-      std::end(nlist_table),
-      content.data() + relative_offset);
+  std::vector<uint8_t> raw_nlist_table = nlist_table.raw();
+  std::move(std::begin(raw_nlist_table), std::end(raw_nlist_table),
+            content.data() + relative_offset);
   segment->content(std::move(content));
 
   // 3. Fill the Header
-  std::fill(
-      reinterpret_cast<uint8_t*>(&symtab),
-      reinterpret_cast<uint8_t*>(&symtab) + sizeof(symtab_command),
-      0);
+  std::memset(&symtab, 0, sizeof(symtab_command));
 
-  //const uint32_t size_needed = sizeof(symtab_command) + nlist_table.size() + raw_symbol_names.size();
   symtab.cmd     = static_cast<uint32_t>(symbol_command->command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command->size());
   symtab.symoff  = static_cast<uint32_t>(symbol_command->symbol_offset());    // **Usually** After the header
@@ -781,7 +774,6 @@ void Builder::build(SymbolCommand* symbol_command) {
   SegmentCommand& linkedit = *this->binary_->get_segment("__LINKEDIT");
   size_t delta = linkedit.file_offset() + linkedit.file_size();
   delta = delta - (symbol_command->strings_offset() + symbol_command->strings_size());
-  //std::cout << std::hex << "delta:" << delta << std::endl;
   symtab.strsize = static_cast<uint32_t>(symbol_command->strings_size() + delta);
 
   symbol_command->originalData_.clear();

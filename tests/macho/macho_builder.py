@@ -11,7 +11,7 @@ from subprocess import Popen
 from unittest import TestCase
 
 import lief
-from utils import get_sample
+from utils import get_sample, is_apple_m1, is_aarch64, is_osx, is_x86_64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -19,12 +19,11 @@ CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 STUB = os.path.join(CURRENT_DIRECTORY, "HelloWorld.shellcode")
 
 def run_program(path, args=None):
-    # Make sure the program had exec permission
+    # Make sure the program has exec permission
     st = os.stat(path)
     os.chmod(path, st.st_mode | stat.S_IEXEC)
 
-
-    prog_args = path if not args else [path] + args
+    prog_args = path if args is None else [path] + args
     p = Popen(prog_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, _ = p.communicate()
     stdout = stdout.decode("utf8")
@@ -79,7 +78,7 @@ class TestAddCommand(TestCase):
         new = lief.parse(output)
         self.assertTrue(len([l for l in new.libraries if l.name == LIB_NAME]))
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'uid=', stdout))
@@ -104,7 +103,7 @@ class TestRemoveCommand(TestCase):
         self.assertFalse(lief.MachO.LOAD_COMMAND_TYPES.UUID in new)
         self.assertFalse(lief.MachO.LOAD_COMMAND_TYPES.CODE_SIGNATURE in new)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'uid=', stdout))
@@ -115,8 +114,10 @@ class TestExtendCommand(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
 
-    def test_id(self):
-        original = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
+    @unittest.skipUnless(is_apple_m1(), "requires Apple Silicon (M1)")
+    def test_id_m1(self):
+        original = lief.MachO.parse(get_sample("/usr/bin/id"))
+        original = original.take(lief.MachO.CPU_TYPES.ARM64)
         _, output = tempfile.mkstemp(prefix="lief_id_remove_cmd")
 
         # Extend UUID
@@ -126,15 +127,45 @@ class TestExtendCommand(TestCase):
         uuid_cmd = original[lief.MachO.LOAD_COMMAND_TYPES.UUID]
 
         # Extend __LINKEDIT (last one)
+        original_linkedit_size = original.get_segment("__LINKEDIT").file_size
+        original.extend_segment(original.get_segment("__LINKEDIT"), 0x30000)
+
+        original.write(output)
+
+        new = lief.parse(output)
+
+        self.assertEqual(new.get_segment("__LINKEDIT").file_size, original_linkedit_size + 0x30000)
+        self.assertEqual(new[lief.MachO.LOAD_COMMAND_TYPES.UUID].size, original_size + 0x100)
+
+        # Run the modified binary
+        stdout = run_program(output)
+        self.logger.debug(stdout)
+        self.assertIsNotNone(re.search(r'uid=', stdout))
+
+
+    def test_id(self):
+        original = lief.parse(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
+        _, output = tempfile.mkstemp(prefix="lief_id_remove_cmd")
+
+        # Extend UUID
+        uuid_cmd = original[lief.MachO.LOAD_COMMAND_TYPES.UUID]
+        original_size = uuid_cmd.size
+        original.extend(uuid_cmd, 0x100)
+        uuid_cmd = original[lief.MachO.LOAD_COMMAND_TYPES.UUID]
+
+        # Extend __LINKEDIT (last one)
+        original_linkedit_size = original.get_segment("__LINKEDIT").file_size
         original.extend_segment(original.get_segment("__LINKEDIT"), 0x30000)
 
         original.remove_signature()
         original.write(output)
 
         new = lief.parse(output)
+
+        self.assertEqual(new.get_segment("__LINKEDIT").file_size, original_linkedit_size + 0x30000)
         self.assertEqual(new[lief.MachO.LOAD_COMMAND_TYPES.UUID].size, original_size + 0x100)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx() and not is_aarch64():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'uid=', stdout))
@@ -154,7 +185,7 @@ class TestSectionSegment(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'uid=', stdout))
@@ -170,9 +201,11 @@ class TestSectionSegment(TestCase):
             section.content = [0xC3] * 0x100
             original.add_section(__text, section)
 
+        original.remove_signature()
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
+            print(output)
             stdout = run_program(output, ["--help"])
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'OpenSSH_6.9p1, LibreSSL 2.1.8', stdout))
@@ -188,7 +221,7 @@ class TestSectionSegment(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output, ["-version"])
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Default target:', stdout))
@@ -206,7 +239,7 @@ class TestSectionSegment(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World: 1', stdout))
@@ -228,7 +261,7 @@ class TestLibraryInjection(TestCase):
 
     @staticmethod
     def compile(output, extra_flags=None):
-        if not sys.platform.startswith("darwin"):
+        if not is_osx():
             return
 
         logger = logging.getLogger(__name__)
@@ -257,14 +290,21 @@ class TestLibraryInjection(TestCase):
         TestLibraryInjection.compile(self.library_path)
 
     def test_all(self):
-        original = lief.parse(get_sample('MachO/MachO64_x86-64_binary_all.bin'))
+        sample = None
+        if is_apple_m1():
+            sample = get_sample('MachO/MachO64_Aarch64_binary_all.bin')
+
+        if is_x86_64():
+            sample = get_sample('MachO/MachO64_x86-64_binary_all.bin')
+
+        original = lief.parse(sample)
         _, output = tempfile.mkstemp(prefix="lief_all_")
 
         original.add_library(self.library_path)
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'CTOR CALLED', stdout))
@@ -278,7 +318,7 @@ class TestLibraryInjection(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx() and is_x86_64():
             stdout = run_program(output, ["--help"])
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'CTOR CALLED', stdout))
@@ -313,7 +353,7 @@ class TestShellCodeInjection(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World!', stdout))
@@ -337,7 +377,7 @@ class TestShellCodeInjection(TestCase):
 
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World!', stdout))
@@ -354,7 +394,7 @@ class TestRemoveSection(TestCase):
         original.remove_section("__to_remove")
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World', stdout))
@@ -370,7 +410,7 @@ class TestRemoveSymbol(TestCase):
         original.unexport("_remove_me")
         original.write(output)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World', stdout))
@@ -388,7 +428,7 @@ class TestRemoveSymbol(TestCase):
         ok, err = lief.MachO.check_layout(new)
         self.assertTrue(ok, err)
 
-        if sys.platform.startswith("darwin"):
+        if is_osx():
             stdout = run_program(output)
             self.logger.debug(stdout)
             self.assertIsNotNone(re.search(r'Hello World', stdout))

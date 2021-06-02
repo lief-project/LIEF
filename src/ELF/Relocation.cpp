@@ -53,7 +53,11 @@ Relocation::Relocation(const Relocation& other) :
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
   section_{nullptr},
   info_{0}
-{
+{}
+
+
+Relocation::Relocation(ARCH arch) {
+  architecture_ = arch;
 }
 
 

@@ -2,14 +2,16 @@
 References
 ==========
 
-Blog posts related to LIEF
+Blog Posts & White Papers
 --------------------------
 
 .. role:: strike
    :class: strike
 
+* 2021-04-27: `An Empirical Evaluation of Automated Machine LearningTechniques for Malware Detection - IWSPA 21 <https://dl.acm.org/doi/pdf/10.1145/3445970.3451155>`_
+* 2021-01-25: `Static PE antimalware evasion - Francisco Javier Gomez Galvez <http://openaccess.uoc.edu/webapps/o2/bitstream/10609/127010/7/fgomezgalvezTFM0121memoria.pdf>`_
 * 2020-10-23: `[Write-up] Using a PIE binary as a Shared Library — HCSC-2020 CTF Writeup <https://medium.com/bugbountywriteup/using-a-pie-binary-as-a-shared-library-hcsc-2020-ctf-writeup-390a8a437f31>`_ by `István Tóth <https://twitter.com/an0n_r0>`_
-* 2020-02-04: x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra
+* 2020-02-04: `x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra <https://iwantmore.pizza/posts/x0rro.html>`_
 * 2019-11-01: `Isolating the logic of an encrypted protocol with LIEF and kaitai <https://x-c3ll.github.io/posts/blackbox-lief-kaitai/>`_ by `@TheXC3LL <https://twitter.com/THEXC3LL>`_
 * 2018-10-26: `[Write-up] HITCON 2018 - Unexecutable <https://github.com/pwning/public-writeup/tree/21b31d1aa916f07a16423a1c2944c498a29271fb/hitcon2018/unexecutable/>`_ by `Andrew Wesie <https://github.com/awesie>`_
 * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
@@ -21,7 +23,6 @@ Blog posts related to LIEF
 * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
 * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
 * 2017-04-04: `LIEF Library to Instrument Executable Formats  <https://blog.quarkslab.com/lief-library-to-instrument-executable-formats.html>`_
-
 
 Projects using LIEF
 -------------------
@@ -181,29 +182,31 @@ PE
 Mach-O
 ~~~~~~
 
-+------------+----------+---------------------------------------------------------------------+
-|    Name    | Language |   Link                                                              |
-+============+==========+=====================================================================+
-| radare2    | C        | https://github.com/radare/radare2/tree/master/libr/bin/format/mach0 |
-+------------+----------+---------------------------------------------------------------------+
-| MachO-Kit  | C/ObjC   | https://github.com/DeVaukz/MachO-Kit                                |
-+------------+----------+---------------------------------------------------------------------+
-| optool     | ObjC     | https://github.com/alexzielenski/optool                             |
-+------------+----------+---------------------------------------------------------------------+
-| macho_edit | C++      | https://github.com/Tyilo/macho_edit                                 |
-+------------+----------+---------------------------------------------------------------------+
-| macholib   | Python   | https://pypi.org/project/macholib/                                  |
-+------------+----------+---------------------------------------------------------------------+
-| elfsharp   | C#       | :strike:`http://elfsharp.hellsgate.pl/index.shtml`                  |
-+------------+----------+---------------------------------------------------------------------+
-| elfesteem  | Python   | https://github.com/LRGH/elfesteem                                   |
-+------------+----------+---------------------------------------------------------------------+
-| metasm     | Ruby     | https://github.com/jjyg/metasm                                      |
-+------------+----------+---------------------------------------------------------------------+
-| Goblin     | Rust     | https://github.com/m4b/goblin                                       |
-+------------+----------+---------------------------------------------------------------------+
-| MachOView  | ObjC     | https://github.com/gdbinit/MachOView                                |
-+------------+----------+---------------------------------------------------------------------+
++--------------+----------+---------------------------------------------------------------------+
+|    Name      | Language |   Link                                                              |
++==============+==========+=====================================================================+
+| radare2      | C        | https://github.com/radare/radare2/tree/master/libr/bin/format/mach0 |
++--------------+----------+---------------------------------------------------------------------+
+| MachO-Kit    | C/ObjC   | https://github.com/DeVaukz/MachO-Kit                                |
++--------------+----------+---------------------------------------------------------------------+
+| optool       | ObjC     | https://github.com/alexzielenski/optool                             |
++--------------+----------+---------------------------------------------------------------------+
+| macho_edit   | C++      | https://github.com/Tyilo/macho_edit                                 |
++--------------+----------+---------------------------------------------------------------------+
+| macholib     | Python   | https://pypi.org/project/macholib/                                  |
++--------------+----------+---------------------------------------------------------------------+
+| elfsharp     | C#       | :strike:`http://elfsharp.hellsgate.pl/index.shtml`                  |
++--------------+----------+---------------------------------------------------------------------+
+| elfesteem    | Python   | https://github.com/LRGH/elfesteem                                   |
++--------------+----------+---------------------------------------------------------------------+
+| metasm       | Ruby     | https://github.com/jjyg/metasm                                      |
++--------------+----------+---------------------------------------------------------------------+
+| Goblin       | Rust     | https://github.com/m4b/goblin                                       |
++--------------+----------+---------------------------------------------------------------------+
+| MachOView    | ObjC     | https://github.com/gdbinit/MachOView                                |
++--------------+----------+---------------------------------------------------------------------+
+| XMachOViewer | C++      | https://github.com/horsicq/XMachOViewer                             |
++--------------+----------+---------------------------------------------------------------------+
 
 
 Tools
