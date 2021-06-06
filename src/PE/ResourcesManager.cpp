@@ -608,8 +608,22 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
     if (key.length() != 8) {
       LIEF_ERR("Corrupted key ({} {})", u16tou8(key), key_str);
     } else {
-      uint64_t lang_id   = std::stoul(u16tou8(key.substr(0, 4)), 0, 16);
-      uint64_t code_page = std::stoul(u16tou8(key.substr(4, 8)), 0, 16);
+      const std::string& chunk_1 = u16tou8(key.substr(0, 4));
+      const std::string& chunk_2 = u16tou8(key.substr(4, 8));
+      uint64_t lang_id = 0;
+      uint64_t code_page = 0;
+      if (is_hex_number(chunk_1)) {
+        lang_id = std::stoul(chunk_1, 0, 16);
+      } else {
+        LIEF_WARN("Invalid hex-string for Lang ID: '{}'", chunk_1);
+      }
+
+      if (is_hex_number(chunk_2)) {
+        code_page = std::stoul(chunk_2, 0, 16);
+      } else {
+        LIEF_WARN("Invalid hex-string for Code page: '{}'", chunk_2);
+      }
+
       LIEF_DEBUG("Lang ID: {:d}", lang_id);
       LIEF_DEBUG("Code page: 0x{:x}", code_page);
     }
