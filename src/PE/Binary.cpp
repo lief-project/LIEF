@@ -437,6 +437,16 @@ LIEF::symbols_t Binary::get_abstract_symbols(void) {
   for (Symbol& s : this->symbols_) {
     lief_symbols.push_back(&s);
   }
+
+  for (ExportEntry& exp : this->export_.entries()) {
+    lief_symbols.push_back(&exp);
+  }
+
+  for (Import& imp : this->imports_) {
+    for (ImportEntry& entry : imp.entries()) {
+      lief_symbols.push_back(&entry);
+    }
+  }
   return lief_symbols;
 }
 

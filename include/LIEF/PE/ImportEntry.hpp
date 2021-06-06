@@ -20,6 +20,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/Abstract/Symbol.hpp"
 
 #include "LIEF/PE/enums.hpp"
 
@@ -28,7 +29,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-class LIEF_API ImportEntry : public Object {
+class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
 
@@ -39,7 +40,6 @@ class LIEF_API ImportEntry : public Object {
   ImportEntry(const ImportEntry&);
   ImportEntry& operator=(const ImportEntry&);
   virtual ~ImportEntry(void);
-
 
   //! @brief ``True`` if ordinal is used
   bool is_ordinal(void) const;
@@ -58,7 +58,7 @@ class LIEF_API ImportEntry : public Object {
   uint64_t iat_value(void) const;
 
   //! @brief Import name if not ordinal
-  const std::string& name(void) const;
+  //const std::string& name(void) const;
 
   //! @brief Raw value
   uint64_t data(void) const;
@@ -67,7 +67,7 @@ class LIEF_API ImportEntry : public Object {
   uint64_t iat_address(void) const;
 
 
-  void name(const std::string& name);
+  //void name(const std::string& name);
   void data(uint64_t data);
 
   virtual void accept(Visitor& visitor) const override;
@@ -78,12 +78,11 @@ class LIEF_API ImportEntry : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
 
   private:
-  uint64_t    data_;
-  std::string name_;
-  uint16_t    hint_;
-  uint64_t    iat_value_;
-  uint64_t    rva_;
-  PE_TYPE     type_;
+  uint64_t    data_ = 0;
+  uint16_t    hint_ = 0;
+  uint64_t    iat_value_ = 0;
+  uint64_t    rva_ = 0;
+  PE_TYPE     type_ = PE_TYPE::PE32_PLUS;
 };
 
 }

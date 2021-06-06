@@ -33,6 +33,7 @@ Changelog
 :Abstraction:
   * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
+  * Add PE imports/exports as *abstracted* symbols
 
 :Compilation:
   * Enable to use a pre-compiled version of spdlog. This feature aims

@@ -34,7 +34,7 @@ using setter_t = void (ImportEntry::*)(T);
 
 template<>
 void create<ImportEntry>(py::module& m) {
-  py::class_<ImportEntry, LIEF::Object>(m, "ImportEntry")
+  py::class_<ImportEntry, LIEF::Symbol>(m, "ImportEntry")
     .def(py::init<>())
 
     .def(py::init<const std::string&>(),

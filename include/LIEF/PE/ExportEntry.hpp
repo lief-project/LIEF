@@ -21,6 +21,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -28,7 +29,7 @@ namespace PE {
 class Builder;
 class Parser;
 
-class LIEF_API ExportEntry : public Object {
+class LIEF_API ExportEntry : public LIEF::Symbol {
 
   friend class Builder;
   friend class Parser;
@@ -49,7 +50,6 @@ class LIEF_API ExportEntry : public Object {
   ExportEntry& operator=(const ExportEntry&);
   virtual ~ExportEntry(void);
 
-  const std::string& name(void) const;
   uint16_t           ordinal(void) const;
   uint32_t           address(void) const;
   bool               is_extern(void) const;
@@ -58,10 +58,16 @@ class LIEF_API ExportEntry : public Object {
 
   uint32_t function_rva(void) const;
 
-  void name(const std::string& name);
   void ordinal(uint16_t ordinal);
   void address(uint32_t address);
   void is_extern(bool is_extern);
+
+  inline uint64_t value() const override {
+    return address();
+  }
+  inline void value(uint64_t value) override {
+    address(value);
+  }
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -71,11 +77,10 @@ class LIEF_API ExportEntry : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportEntry& exportEntry);
 
   private:
-  std::string name_;
-  uint32_t    function_rva_;
-  uint16_t    ordinal_;
-  uint32_t    address_;
-  bool        is_extern_;
+  uint32_t    function_rva_ = 0;
+  uint16_t    ordinal_ = 0;
+  uint32_t    address_ = 0;
+  bool        is_extern_ = false;
 
   forward_information_t forward_info_;
 

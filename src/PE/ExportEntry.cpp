@@ -24,20 +24,10 @@ ExportEntry::~ExportEntry(void) = default;
 ExportEntry::ExportEntry(const ExportEntry&) = default;
 ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 
-ExportEntry::ExportEntry(void) :
-  name_{""},
-  ordinal_{0},
-  address_{0},
-  is_extern_{false}
-{}
+ExportEntry::ExportEntry(void) = default;
 
 ExportEntry::forward_information_t::operator bool() const {
   return library.size() > 0 or function.size() > 0;
-}
-
-
-const std::string& ExportEntry::name(void) const {
-  return this->name_;
 }
 
 uint16_t ExportEntry::ordinal(void) const {
@@ -63,13 +53,8 @@ ExportEntry::forward_information_t ExportEntry::forward_information(void) const 
   return this->forward_info_;
 }
 
-
 uint32_t ExportEntry::function_rva(void) const {
   return this->function_rva_;
-}
-
-void ExportEntry::name(const std::string& name) {
-  this->name_ = name;
 }
 
 void ExportEntry::ordinal(uint16_t ordinal) {

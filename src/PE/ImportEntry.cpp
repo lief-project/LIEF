@@ -27,23 +27,17 @@ ImportEntry::ImportEntry(const ImportEntry&) = default;
 ImportEntry& ImportEntry::operator=(const ImportEntry&) = default;
 ImportEntry::~ImportEntry(void) = default;
 
-ImportEntry::ImportEntry(void) :
-  data_{0},
-  name_{""},
-  hint_{0},
-  iat_value_{0},
-  rva_{0},
-  type_{PE_TYPE::PE32}
-{}
+ImportEntry::ImportEntry(void) = default;
 
 ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   data_{data},
-  name_{name},
   hint_{0},
   iat_value_{0},
   rva_{0},
   type_{PE_TYPE::PE32}
-{}
+{
+  name_ = name;
+}
 
 
 ImportEntry::ImportEntry(const std::string& name) :
@@ -89,20 +83,12 @@ uint64_t ImportEntry::hint_name_rva(void) const {
   return this->data();
 }
 
-const std::string& ImportEntry::name(void) const {
-  return this->name_;
-}
-
 uint64_t ImportEntry::data(void) const {
   return this->data_;
 }
 
 uint64_t ImportEntry::iat_address(void) const {
   return this->rva_;
-}
-
-void ImportEntry::name(const std::string& name) {
-  this->name_ = name;
 }
 
 void ImportEntry::data(uint64_t data) {

@@ -33,7 +33,7 @@ using setter_t = void (ExportEntry::*)(T);
 
 template<>
 void create<ExportEntry>(py::module& m) {
-  py::class_<ExportEntry, LIEF::Object> export_entry(m, "ExportEntry");
+  py::class_<ExportEntry, LIEF::Symbol> export_entry(m, "ExportEntry");
 
   py::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
     .def_readwrite("library", &ExportEntry::forward_information_t::library)
