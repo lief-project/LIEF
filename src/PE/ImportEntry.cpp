@@ -33,7 +33,8 @@ ImportEntry::ImportEntry(void) :
   hint_{0},
   iat_value_{0},
   rva_{0},
-  type_{PE_TYPE::PE32}
+  type_{PE_TYPE::PE32},
+  manually_added_(false)
 {}
 
 ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
@@ -42,7 +43,8 @@ ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   hint_{0},
   iat_value_{0},
   rva_{0},
-  type_{PE_TYPE::PE32}
+  type_{PE_TYPE::PE32},
+  manually_added_(false)
 {}
 
 
@@ -101,6 +103,10 @@ uint64_t ImportEntry::iat_address(void) const {
   return this->rva_;
 }
 
+bool ImportEntry::manually_added(void) const {
+  return this->manually_added_;
+}
+
 void ImportEntry::name(const std::string& name) {
   this->name_ = name;
 }
@@ -109,6 +115,9 @@ void ImportEntry::data(uint64_t data) {
   this->data_ = data;
 }
 
+void ImportEntry::manually_added(bool manually_added) {
+  this->manually_added_ = manually_added;
+}
 
 void ImportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -134,6 +143,7 @@ std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   os << std::setw(20) << entry.data();
   os << std::setw(20) << entry.iat_value();
   os << std::setw(20) << entry.hint();
+  os << std::setw(20) << entry.manually_added();
   return os;
 }
 

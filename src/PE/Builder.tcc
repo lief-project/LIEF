@@ -238,7 +238,7 @@ void Builder::build_import_table(void) {
     for (const ImportEntry& entry : import.entries()) {
 
       // If patch is enabled, we have to create a trampoline for this function
-      if (this->patch_imports_) {
+      if (this->patch_imports_ && (not entry.manually_added())) {
         std::vector<uint8_t> instructions;
         uint64_t address = this->binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
         if (this->binary_->hooks_.count(import_name) > 0 and this->binary_->hooks_[import_name].count(entry.name())) {
@@ -342,6 +342,11 @@ void Builder::build_import_table(void) {
   const uint32_t rva = static_cast<uint32_t>(import_section.virtual_address() + iat_offset);
   this->binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
   this->binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
+
+  // Finaly disable ASLR
+  const auto old_dll_chars = this->binary_->optional_header().dll_characteristics();
+  const auto new_dll_chars = old_dll_chars & (~static_cast<uint32_t>(LIEF::PE::DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE));
+  this->binary_->optional_header().dll_characteristics(new_dll_chars);
 }
 
 template<typename PE_T>
