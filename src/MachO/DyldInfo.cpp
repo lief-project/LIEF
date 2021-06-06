@@ -1615,6 +1615,7 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
 
   raw_output.align(this->binary_->pointer_size());
 
+  LIEF_ERR("size: 0x{:x} vs 0x{:x}", raw_output.size(), lazy_bind_opcodes_.size());
   this->lazy_bind_opcodes_ = std::move(raw_output.raw());
   this->set_lazy_bind_size(this->lazy_bind_opcodes_.size());
   return *this;
