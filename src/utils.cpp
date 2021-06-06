@@ -103,6 +103,10 @@ bool is_printable(const std::string& str) {
           std::bind(std::isprint<char>, std::placeholders::_1, std::locale("C")));
 }
 
+bool is_hex_number(const std::string& str) {
+  return std::all_of(std::begin(str), std::end(str), isxdigit);
+}
+
 
 
 } // namespace LIEF
