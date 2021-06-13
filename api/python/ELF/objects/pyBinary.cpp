@@ -197,15 +197,19 @@ void create<Binary>(py::module& m) {
        "ELF interprer (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)")
 
     .def("section_from_offset",
-        static_cast<no_const_func<Section&, uint64_t>>(&Binary::section_from_offset),
+        static_cast<Section&(Binary::*)(uint64_t, bool)>(&Binary::section_from_offset),
         "Return binary's " RST_CLASS_REF(lief.ELF.Section) " which holds the offset",
-        "offset"_a,
+        "If ``skip_nobits`` is set (which is the case by default), this function won't "
+        "consider sections whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)",
+        "offset"_a, "skip_nobits"_a = true,
         py::return_value_policy::reference)
 
     .def("section_from_virtual_address",
-        static_cast<no_const_func<Section&, uint64_t>>(&Binary::section_from_virtual_address),
-        "Return binary's " RST_CLASS_REF(lief.ELF.Section) " which holds the given virtual address",
-        "address"_a,
+        static_cast<Section&(Binary::*)(uint64_t, bool)>(&Binary::section_from_virtual_address),
+        "Return binary's " RST_CLASS_REF(lief.ELF.Section) " which holds the given virtual address\n\n"
+        "If ``skip_nobits`` is set (which is the case by default), this function won't "
+        "consider sections whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)",
+        "address"_a, "skip_nobits"_a = true,
         py::return_value_policy::reference)
 
     .def("segment_from_virtual_address",

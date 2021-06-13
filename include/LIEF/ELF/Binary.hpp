@@ -427,13 +427,19 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return the @link ELF::Section Section @endlink
   //! from the @p offset
-  const Section& section_from_offset(uint64_t offset) const;
-  Section&       section_from_offset(uint64_t offset);
+  //!
+  //! If @p skip_nobits is set (which is the case by default), this function won't
+  //! consider section whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+  const Section& section_from_offset(uint64_t offset, bool skip_nobits = true) const;
+  Section&       section_from_offset(uint64_t offset, bool skip_nobits = true);
 
   //! Return the @link ELF::Section Section @endlink
   //! from the @p address
-  const Section& section_from_virtual_address(uint64_t address) const;
-  Section&       section_from_virtual_address(uint64_t address);
+  //!
+  //! If @p skip_nobits is set (which is the case by default), this function won't
+  //! consider section whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+  const Section& section_from_virtual_address(uint64_t address, bool skip_nobits = true) const;
+  Section&       section_from_virtual_address(uint64_t address, bool skip_nobits = true);
 
   //! Return the @link ELF::Segment Segment @endlink
   //! from the @p address
