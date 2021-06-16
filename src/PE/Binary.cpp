@@ -267,7 +267,7 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) {
   const auto it_section = std::find_if(
       std::begin(this->sections_), std::end(this->sections_),
       [RVA] (const Section* section) {
-        const uint64_t vsize_adj = std::max<uint64_t>(section->virtual_address(), section->sizeof_raw_data());
+        const uint64_t vsize_adj = std::max<uint64_t>(section->virtual_size(), section->sizeof_raw_data());
         return (RVA >= section->virtual_address() and
                 RVA < (section->virtual_address() + vsize_adj));
       });
