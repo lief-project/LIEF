@@ -263,7 +263,6 @@ template<typename PE_T>
 void Parser::parse_import_table(void) {
   using uint__ = typename PE_T::uint;
 
-
   const uint32_t import_rva    = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
   const uint64_t import_offset = this->binary_->rva_to_offset(import_rva);
 
@@ -286,9 +285,8 @@ void Parser::parse_import_table(void) {
     }
 
     // Offset to the Import (Library) name
-    const uint64_t offsetName = this->binary_->rva_to_offset(import.name_RVA_);
-    import.name_              = this->stream_->peek_string_at(offsetName);
-
+    const uint64_t offset_name = this->binary_->rva_to_offset(import.name_RVA_);
+    import.name_               = this->stream_->peek_string_at(offset_name);
 
     // We assume that a DLL name should be at least 4 length size and "printable
     if (not is_valid_dll_name(import.name())) {
@@ -331,7 +329,7 @@ void Parser::parse_import_table(void) {
       entry.type_      = this->type_;
       entry.rva_       = import.import_address_table_RVA_ + sizeof(uint__) * (idx++);
 
-      if(not entry.is_ordinal()) {
+      if (not entry.is_ordinal()) {
         const size_t hint_off = this->binary_->rva_to_offset(entry.hint_name_rva());
         const size_t name_off = hint_off + sizeof(uint16_t);
         entry.name_ = this->stream_->peek_string_at(name_off);

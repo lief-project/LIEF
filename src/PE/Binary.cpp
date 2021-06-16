@@ -266,13 +266,10 @@ uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) cons
 uint64_t Binary::rva_to_offset(uint64_t RVA) {
   const auto it_section = std::find_if(
       std::begin(this->sections_), std::end(this->sections_),
-      [RVA] (const Section* section)
-      {
-        if (section == nullptr) {
-          return false;
-        }
+      [RVA] (const Section* section) {
+        const uint64_t vsize_adj = std::max<uint64_t>(section->virtual_address(), section->sizeof_raw_data());
         return (RVA >= section->virtual_address() and
-            RVA < (section->virtual_address() + section->virtual_size()));
+                RVA < (section->virtual_address() + vsize_adj));
       });
 
   if (it_section == std::end(sections_)) {
@@ -280,7 +277,7 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) {
     // we assume that rva == offset
     return RVA;
   }
-  LIEF_TRACE("rva_to_offset(0x{:x}): {}", RVA, (*it_section)->name());
+  const Section* section = *it_section;
 
   // rva - virtual_address + pointer_to_raw_data
   uint32_t section_alignment = this->optional_header().section_alignment();
@@ -289,8 +286,8 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) {
     section_alignment = file_alignment;
   }
 
-  uint64_t section_va     = (*it_section)->virtual_address();
-  uint64_t section_offset = (*it_section)->pointerto_raw_data();
+  uint64_t section_va     = section->virtual_address();
+  uint64_t section_offset = section->pointerto_raw_data();
 
   section_va     = align(section_va, section_alignment);
   section_offset = align(section_offset, file_alignment);
