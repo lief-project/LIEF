@@ -129,7 +129,7 @@ void create<Section>(py::module& m) {
 
     .def("remove",
         &Section::remove,
-        "Remove the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " to the list of "
+        "Remove the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " from the list of "
         ":attr:`~lief.ELF.Section.flags`",
         "flag"_a)
 
