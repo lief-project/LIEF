@@ -150,7 +150,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @see Debug
   bool is_reproducible_build(void) const;
 
-  //! Return the Signature object(s) if the bianry is signed
+  //! Return the Signature object(s) if the binary is signed
   it_const_signatures signatures(void) const;
 
   //! Verify the binary against the embedded signature(s) (if any)
