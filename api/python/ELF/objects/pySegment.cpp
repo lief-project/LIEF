@@ -102,7 +102,7 @@ void create<Segment>(py::module& m) {
 
     .def("remove",
         &Segment::remove,
-        "Remove the given " RST_CLASS_REF(lief.ELF.SEGMENT_FLAGS) " to the list of "
+        "Remove the given " RST_CLASS_REF(lief.ELF.SEGMENT_FLAGS) " from the list of "
         ":attr:`~lief.ELF.Segment.flags`",
         "flag"_a)
 

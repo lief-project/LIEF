@@ -602,7 +602,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
 
   os << std::hex << std::left;
   os << std::setw(33) << std::setfill(' ') << "Magic:"                     << ident_magic << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Class"                      << to_string(hdr.identity_class()) << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Class:"                     << to_string(hdr.identity_class()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Endianness:"                << to_string(hdr.identity_data()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Version:"                   << to_string(hdr.identity_version()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "OS/ABI:"                    << to_string(hdr.identity_os_abi()) << std::endl;
@@ -613,9 +613,9 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   os << std::setw(33) << std::setfill(' ') << "Entry Point:"               << "0x" << hdr.entrypoint() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Program header offset:"     << "0x" << hdr.program_headers_offset() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Section header offset:"     << hdr.section_headers_offset() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Processor Flag"             << hdr.processor_flag() << " " << processor_flags_str << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Processor Flag:"            << hdr.processor_flag() << " " << processor_flags_str << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Header size:"               << hdr.header_size() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Size of program header :"   << hdr.program_header_size() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Size of program header:"    << hdr.program_header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Number of program header:"  << hdr.numberof_segments() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Size of section header:"    << hdr.section_header_size() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Number of section headers:" << hdr.numberof_sections() << std::endl;
