@@ -10,7 +10,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 -----
 
-When a binary in linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the
+When a binary is linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the
 dynamic table and the needed functions needed are registered in the dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to ``0``
