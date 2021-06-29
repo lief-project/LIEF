@@ -53,7 +53,7 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
   static constexpr uint32_t NB_MAX_MASKWORD        = 512;
   static constexpr uint32_t MAX_NOTE_DESCRIPTION   = 1_MB;
-  static constexpr uint32_t MAX_SECTION_SIZE       = 100_MB;
+  static constexpr uint32_t MAX_SECTION_SIZE       = 300_MB;
   static constexpr uint32_t MAX_SEGMENT_SIZE       = MAX_SECTION_SIZE;
 
 
