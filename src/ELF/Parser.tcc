@@ -878,6 +878,9 @@ void Parser::parse_sections(void) {
 
     if (section_end > this->stream_->size() + 200_MB) {
       LIEF_ERR("  Section #{:d} is too large!", i);
+      // Even if the section is too large, add it incomplete
+      // to keep section indexes consistent.
+      this->binary_->sections_.push_back(section.release());
       continue;
     }
 
