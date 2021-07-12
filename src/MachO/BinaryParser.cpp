@@ -55,12 +55,13 @@ BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset
 }
 
 
-BinaryParser::BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset, const ParserConfig& conf) :
+BinaryParser::BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset, const ParserConfig& conf, uint64_t fileset_offset) :
   stream_{std::move(stream)},
   binary_{new Binary{}},
   config_{conf}
 {
   this->binary_->fat_offset_ = fat_offset;
+  this->binary_->fileset_offset_ = fileset_offset;
   this->init();
 }
 
@@ -90,7 +91,7 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
 void BinaryParser::init(void) {
   LIEF_DEBUG("Parsing MachO");
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(this->binary_->fileset_offset_));
 
     if (type == MACHO_TYPES::MH_MAGIC_64 or
         type == MACHO_TYPES::MH_CIGAM_64 )

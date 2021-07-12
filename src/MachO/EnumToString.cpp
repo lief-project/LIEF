@@ -54,7 +54,7 @@ const char* to_string(FILE_TYPES e) {
 }
 
 const char* to_string(LOAD_COMMAND_TYPES e) {
-  CONST_MAP(LOAD_COMMAND_TYPES, const char*, 51) enumStrings {
+  CONST_MAP(LOAD_COMMAND_TYPES, const char*, 54) enumStrings {
       { LOAD_COMMAND_TYPES::LC_SEGMENT,                  "SEGMENT"},
       { LOAD_COMMAND_TYPES::LC_SYMTAB,                   "SYMTAB"},
       { LOAD_COMMAND_TYPES::LC_SYMSEG,                   "SYMSEG"},
@@ -105,7 +105,10 @@ const char* to_string(LOAD_COMMAND_TYPES e) {
       { LOAD_COMMAND_TYPES::LC_VERSION_MIN_TVOS,         "VERSION_MIN_TVOS"},
       { LOAD_COMMAND_TYPES::LC_VERSION_MIN_WATCHOS,      "VERSION_MIN_WATCHOS"},
       { LOAD_COMMAND_TYPES::LC_NOTE,                     "NOTE"},
-      { LOAD_COMMAND_TYPES::LC_BUILD_VERSION,            "BUILD_VERSION"}
+      { LOAD_COMMAND_TYPES::LC_BUILD_VERSION,            "BUILD_VERSION"},
+      { LOAD_COMMAND_TYPES::LC_DYLD_EXPORTS_TRIE,        "DYLD_EXPORTS_TRIE"},
+      { LOAD_COMMAND_TYPES::LC_DYLD_CHAINED_FIXUPS,      "DYLD_CHAINED_FIXUPS"},
+      { LOAD_COMMAND_TYPES::LC_FILESET_ENTRY,            "FILESET_ENTRY"}
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

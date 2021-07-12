@@ -30,6 +30,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Parser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SymbolCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/MainCommand.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/FilesetCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylibCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DylinkerCommand.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DyldInfo.cpp"
