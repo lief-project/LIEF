@@ -772,8 +772,9 @@ LoadCommand& Binary::add(const LoadCommand& command) {
 
   this->commands_.push_back(copy);
 
-  // Update cache
-  if (typeid(*copy) == typeid(DylibCommand)) {
+  // Update cache  
+  if (typeid(*copy) == typeid(DylibCommand) 
+      && dynamic_cast<DylibCommand*>(copy)->command() != LOAD_COMMAND_TYPES::LC_ID_DYLIB) {
     this->libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
   }
 
@@ -824,7 +825,8 @@ LoadCommand& Binary::add(const LoadCommand& command, size_t index) {
     }
   }
 
-  if (typeid(*copy) == typeid(DylibCommand)) {
+  if (typeid(*copy) == typeid(DylibCommand) 
+      && dynamic_cast<DylibCommand*>(copy)->command() != LOAD_COMMAND_TYPES::LC_ID_DYLIB) {
     this->libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
   }
 

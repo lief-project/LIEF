@@ -199,7 +199,6 @@ void BinaryParser::parse_load_commands(void) {
       // DyLib Command
       // =============
       case LOAD_COMMAND_TYPES::LC_LOAD_WEAK_DYLIB:
-      case LOAD_COMMAND_TYPES::LC_ID_DYLIB:
       case LOAD_COMMAND_TYPES::LC_LOAD_DYLIB:
       case LOAD_COMMAND_TYPES::LC_REEXPORT_DYLIB:
       case LOAD_COMMAND_TYPES::LC_LOAD_UPWARD_DYLIB:
