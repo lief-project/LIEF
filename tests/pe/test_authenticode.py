@@ -231,11 +231,12 @@ class TestAuthenticode(TestCase):
 
         self.assertEqual(signer_cert.is_trusted_by([self_signed_ca]), lief.PE.x509.VERIFICATION_FLAGS.OK)
         self.assertEqual(self_signed_ca.verify(signer_cert), lief.PE.x509.VERIFICATION_FLAGS.OK)
-        self.assertEqual(signer_cert.verify(nvidia_cert), lief.PE.x509.VERIFICATION_FLAGS.OK)
+        self.assertEqual(signer_cert.verify(nvidia_cert), lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED)
 
         ca_bundles = lief.PE.x509.parse(get_sample("pkcs7/windows-ca-bundle.pem"))
         self.assertEqual(self_signed_ca.is_trusted_by(ca_bundles), lief.PE.x509.VERIFICATION_FLAGS.OK)
-        self.assertEqual(nvidia_cert.is_trusted_by(ca_bundles), lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED)
+        self.assertEqual(int(nvidia_cert.is_trusted_by(ca_bundles)), \
+                    lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED | lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED)
 
         self.assertEqual(nested_sig.check(), lief.PE.Signature.VERIFICATION_FLAGS.OK)
 
