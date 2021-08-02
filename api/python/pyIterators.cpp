@@ -70,6 +70,7 @@ void init_LIEF_iterators(py::module& m) {
   // =====
 #if defined(LIEF_MACHO_SUPPORT)
   init_ref_iterator<LIEF::MachO::it_binaries>(m);
+  init_ref_iterator<LIEF::MachO::it_fileset_binaries>(m);
   init_ref_iterator<LIEF::MachO::it_relocations>(m);
   init_ref_iterator<LIEF::MachO::it_commands>(m);
   init_ref_iterator<LIEF::MachO::it_symbols>(m);

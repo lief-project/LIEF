@@ -34,6 +34,7 @@ set(LIEF_PYTHON_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDyldEnvironment.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyEncryptionInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBuildVersion.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyFilesetCommand.cpp"
 
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"

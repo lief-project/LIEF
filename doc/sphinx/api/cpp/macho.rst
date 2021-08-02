@@ -300,6 +300,15 @@ Build Tool Version
 
 ----------
 
+Fileset Command
+***************
+
+.. doxygenclass:: LIEF::MachO::FilesetCommand
+   :project: lief
+
+----------
+
+
 Utilities
 *********
 

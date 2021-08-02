@@ -46,6 +46,7 @@
 #include "LIEF/MachO/DyldEnvironment.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/FilesetCommand.hpp"
 
 #include "Object.tcc"
 
@@ -106,7 +107,7 @@ void BinaryParser::parse(void) {
 template<class MACHO_T>
 void BinaryParser::parse_header(void) {
   using header_t = typename MACHO_T::header;
-  this->binary_->header_ = &this->stream_->peek<header_t>(0);
+  this->binary_->header_ = &this->stream_->read<header_t>();
 }
 
 
@@ -119,7 +120,7 @@ void BinaryParser::parse_load_commands(void) {
   LIEF_DEBUG("[+] Building Load commands");
 
   const Header& header = this->binary_->header();
-  uint64_t loadcommands_offset = sizeof(header_t);
+  uint64_t loadcommands_offset = this->stream_->pos();
 
   if ((loadcommands_offset + header.sizeof_cmds()) > this->stream_->size()) {
     throw corrupted("Commands are corrupted");
@@ -607,6 +608,51 @@ void BinaryParser::parse_load_commands(void) {
           LIEF_DEBUG("[+] Parsing {}", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
           const encryption_info_command* cmd = &this->stream_->peek<encryption_info_command>(loadcommands_offset);
           load_command = std::unique_ptr<EncryptionInfo>{new EncryptionInfo{cmd}};
+          break;
+        }
+
+
+      // ==============
+      // File Set Entry
+      // ==============
+      case LOAD_COMMAND_TYPES::LC_FILESET_ENTRY:
+        {
+          LIEF_DEBUG("[+] Parsing {}", to_string(static_cast<LOAD_COMMAND_TYPES>(command.cmd)));
+
+          const fileset_entry_command* cmd = &this->stream_->peek<fileset_entry_command>(loadcommands_offset);
+          load_command = std::unique_ptr<FilesetCommand>{new FilesetCommand{cmd}};
+          const uint32_t entry_offset = cmd->entry_id;
+          std::string entry_name = this->stream_->peek_string_at(loadcommands_offset + entry_offset);
+
+          auto* fset = reinterpret_cast<FilesetCommand*>(load_command.get());
+          fset->name(entry_name);
+
+          try {
+            LIEF_DEBUG("Parsing fileset '{}' @ {:x} (size: {:x})", entry_name, cmd->fileoff, cmd->cmdsize);
+            MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(cmd->fileoff));
+
+            // Fat binary
+            if (type == MACHO_TYPES::FAT_MAGIC or
+                type == MACHO_TYPES::FAT_CIGAM) {
+                throw corrupted("Mach-O is corrupted with a FAT Mach-O inside a fileset ?");
+            } else { // fit binary
+
+              // not ideal: we need to move the stream ref for the new BinaryParser then move it back
+              const size_t current_pos = this->stream_->pos();
+              this->stream_->setpos(cmd->fileoff);
+              BinaryParser bp(std::move(this->stream_), 0, this->config_);
+
+              std::unique_ptr<Binary> binary{bp.get_binary()};
+              binary->name_ = entry_name;
+              this->stream_ = std::move(bp.stream_);
+              fset->binary_ = binary.get();
+              this->binary_->filesets_.push_back(std::move(binary));
+              this->stream_->setpos(current_pos);
+            }
+          } catch (const std::exception& e) {
+            LIEF_DEBUG("{}", e.what());
+          }
+
           break;
         }
 

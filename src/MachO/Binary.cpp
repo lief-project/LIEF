@@ -235,6 +235,27 @@ it_const_commands Binary::commands(void) const {
   return it_const_commands{std::cref(this->commands_)};
 }
 
+
+// Filesets
+// ========
+
+it_fileset_binaries Binary::filesets(void) {
+  std::vector<Binary*> binaries;
+  for (std::unique_ptr<Binary>& bin : this->filesets_) {
+    binaries.push_back(bin.get());
+  }
+  return binaries;
+}
+
+it_const_fileset_binaries Binary::filesets(void) const {
+  std::vector<Binary*> binaries;
+  for (const std::unique_ptr<Binary>& bin : this->filesets_) {
+    binaries.push_back(bin.get());
+  }
+  return binaries;
+}
+
+
 // Symbols
 // =======
 
@@ -2102,6 +2123,9 @@ const BuildVersion& Binary::build_version(void) const {
   return this->command<BuildVersion>();
 }
 
+bool Binary::has_filesets(void) const {
+  return !this->filesets_.empty();
+}
 
 LoadCommand& Binary::operator[](LOAD_COMMAND_TYPES type) {
   return this->get(type);

@@ -47,11 +47,12 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   //! @brief Maximum number of relocations
   constexpr static size_t MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
-  constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint8_t>::max();
+  constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint16_t>::max();
 
   public:
   BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
-  BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0,
+               const ParserConfig& conf = ParserConfig::deep());
   BinaryParser(void);
 
   BinaryParser& operator=(const BinaryParser& copy) = delete;
@@ -62,7 +63,8 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   Binary* get_binary(void);
 
   private:
-  BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset = 0, const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset = 0,
+               const ParserConfig& conf = ParserConfig::deep());
 
   void init(void);
 

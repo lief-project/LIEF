@@ -373,6 +373,16 @@ Build Tool Version
 
 ----------
 
+Fileset Command
+***************
+
+.. autoclass:: lief.MachO.FilesetCommand
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
 
 
 

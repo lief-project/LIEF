@@ -310,7 +310,11 @@ void Hash::visit(const BuildToolVersion& e) {
   this->process(e.version());
 }
 
-
+void Hash::visit(const FilesetCommand& e) {
+  this->process(e.name());
+  this->process(e.virtual_address());
+  this->process(e.file_offset());
+}
 
 
 

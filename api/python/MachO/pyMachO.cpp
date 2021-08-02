@@ -66,6 +66,7 @@ void init_objects(py::module& m) {
   CREATE(DyldEnvironment, m);
   CREATE(EncryptionInfo, m);
   CREATE(BuildVersion, m);
+  CREATE(FilesetCommand, m);
 }
 
 }

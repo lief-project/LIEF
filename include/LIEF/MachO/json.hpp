@@ -59,6 +59,7 @@ class DyldEnvironment;
 class EncryptionInfo;
 class BuildVersion;
 class BuildToolVersion;
+class FilesetCommand;
 
 
 LIEF_API json to_json(const Object& v);
@@ -100,6 +101,7 @@ class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   virtual void visit(const EncryptionInfo& e)                     override;
   virtual void visit(const BuildVersion& e)                       override;
   virtual void visit(const BuildToolVersion& e)                   override;
+  virtual void visit(const FilesetCommand& e)                     override;
 };
 
 }

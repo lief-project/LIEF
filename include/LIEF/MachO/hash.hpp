@@ -53,6 +53,7 @@ class DyldEnvironment;
 class EncryptionInfo;
 class BuildVersion;
 class BuildToolVersion;
+class FilesetCommand;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:
@@ -94,6 +95,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const EncryptionInfo& e)                     override;
   virtual void visit(const BuildVersion& e)                       override;
   virtual void visit(const BuildToolVersion& e)                   override;
+  virtual void visit(const FilesetCommand& e)                     override;
 
   virtual ~Hash(void);
 };

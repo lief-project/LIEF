@@ -60,6 +60,7 @@ BinaryParser::BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_
   binary_{new Binary{}},
   config_{conf}
 {
+
   this->binary_->fat_offset_ = fat_offset;
   this->init();
 }
@@ -90,7 +91,7 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
 void BinaryParser::init(void) {
   LIEF_DEBUG("Parsing MachO");
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
+    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>());
 
     if (type == MACHO_TYPES::MH_MAGIC_64 or
         type == MACHO_TYPES::MH_CIGAM_64 )
@@ -220,7 +221,7 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
 
   }
   this->stream_->setpos(children_offset);
-	const uint8_t nb_children = this->stream_->read<uint8_t>();
+  const uint8_t nb_children = this->stream_->read<uint8_t>();
   for (size_t i = 0; i < nb_children; ++i) {
     std::string suffix = this->stream_->read_string();
     std::string name   = prefix + suffix;

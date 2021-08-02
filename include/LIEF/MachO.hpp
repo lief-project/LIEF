@@ -63,6 +63,7 @@
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
+#include "LIEF/MachO/FilesetCommand.hpp"
 
 #endif
 #endif

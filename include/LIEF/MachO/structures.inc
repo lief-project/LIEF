@@ -399,6 +399,15 @@ struct entry_point_command {
   uint64_t stacksize;
 };
 
+struct fileset_entry_command {
+  uint32_t cmd;
+  uint32_t cmdsize;
+  uint64_t vmaddr;
+  uint64_t fileoff;
+  uint32_t entry_id;
+  uint32_t reserved;
+};
+
 // Structs from <mach-o/fat.h>
 struct fat_header {
   uint32_t magic;

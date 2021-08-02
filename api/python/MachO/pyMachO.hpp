@@ -79,6 +79,7 @@ SPECIALIZE_CREATE(SubFramework);
 SPECIALIZE_CREATE(DyldEnvironment);
 SPECIALIZE_CREATE(EncryptionInfo);
 SPECIALIZE_CREATE(BuildVersion);
+SPECIALIZE_CREATE(FilesetCommand);
 
 }
 }

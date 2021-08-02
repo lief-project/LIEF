@@ -77,6 +77,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_commands       commands(void);
   it_const_commands commands(void) const;
 
+  //! Return binary's @link Macho::Fileset
+  it_fileset_binaries       filesets(void);
+  it_const_fileset_binaries filesets(void) const;
+
   //! Return binary's @link MachO::Symbol symbols @endlink
   it_symbols       symbols(void);
   it_const_symbols symbols(void) const;
@@ -465,6 +469,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   LIEF::Binary::functions_t functions(void) const;
   LIEF::Binary::functions_t unwind_functions(void) const;
 
+  //! ``true`` if the binary has filesets.
+  bool has_filesets(void) const;
+
   private:
   //! Default constructor
   Binary(void);
@@ -508,6 +515,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   libraries_t libraries_;
   sections_t  sections_;
   segments_t  segments_;
+  std::vector<std::unique_ptr<Binary>> filesets_;
 
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;
@@ -520,6 +528,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   protected:
   uint64_t fat_offset_ = 0;
+  uint64_t fileset_offset_ = 0;
 };
 
 } // namespace MachO

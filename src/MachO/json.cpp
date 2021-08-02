@@ -502,6 +502,11 @@ void JsonVisitor::visit(const BuildToolVersion& e) {
   this->node_["version"] = e.version();
 }
 
+void JsonVisitor::visit(const FilesetCommand& e) {
+  this->node_["name"]            = e.name();
+  this->node_["file_offset"]     = e.file_offset();
+  this->node_["virtual_address"] = e.virtual_address();
+}
 
 
 

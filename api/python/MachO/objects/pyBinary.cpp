@@ -93,6 +93,15 @@ void create<Binary>(py::module& m) {
         "Return binary's " RST_CLASS_REF(lief.MachO.Command) "",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("filesets",
+        static_cast<no_const_getter<it_fileset_binaries>>(&Binary::filesets),
+        "Return binary's " RST_CLASS_REF(lief.MachO.Filesets) "",
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("has_filesets",
+        &Binary::has_filesets,
+        "Return ``True`` if the binary has filesets")
+
     .def_property_readonly("imagebase",
         &Binary::imagebase,
         "Return binary's ``image base`` which is the base address\

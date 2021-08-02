@@ -175,6 +175,7 @@ LIEF_MACHO_FORWARD(DyldEnvironment)
 LIEF_MACHO_FORWARD(EncryptionInfo)
 LIEF_MACHO_FORWARD(BuildVersion)
 LIEF_MACHO_FORWARD(BuildToolVersion)
+LIEF_MACHO_FORWARD(FilesetCommand)
 
 // OAT
 // ===============================
@@ -547,6 +548,9 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO:BuildToolVersion:
   LIEF_MACHO_VISITABLE(BuildToolVersion)
+
+  //! @brief Method to visit a LIEF::MachO:BuildToolVersion:
+  LIEF_MACHO_VISITABLE(FilesetCommand)
 
   // OAT part
   // ========
