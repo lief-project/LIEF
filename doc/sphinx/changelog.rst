@@ -14,6 +14,8 @@ Changelog
       Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
 
 :MachO:
+  * :github_user:`LucaMoroSyn` added the support for the ``LC_FILESET_ENTRY``. This command is usually
+    found in kernel cache files
   * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol
     can't be found, it returns a nullptr.
   * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its achitecture. See:
