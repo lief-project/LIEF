@@ -341,7 +341,7 @@ Similarly, methods and classes are available with the :attr:`lief.DEX.File.class
   com.avast.android.lib.wifiscanner.internal.b$a - WifiScannerComponentFactory.java - 1 Methods
 
 In the DEX file format, there is a special attribute for classes that register the original source filename: `source_file_idx <https://source.android.com/devices/tech/dalvik/dex-format#class-def-item>`_.
-Some *obfuscators* mangle classes but keep this attribute! Since Java source filenames are associated with class names, we can easily recover the deobfuscated name uing:
+Some *obfuscators* mangle classes but keep this attribute! Since Java source filenames are associated with class names, we can easily recover the deobfuscated name using:
 
   * :attr:`lief.DEX.Class.source_filename`
   * :attr:`lief.DEX.Class.pretty_name`
