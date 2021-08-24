@@ -38,6 +38,7 @@ namespace MachO {
 class Section;
 class Parser;
 class ParserConfig;
+class DylibCommand;
 
 //! @brief Class used to parse **single** binary (i.e. **not** FAT)
 //! @see MachO::Parser
@@ -134,6 +135,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   std::set<uint64_t>             visited_;
   std::map<std::string, Symbol*> memoized_symbols_;
   std::map<uint64_t, Symbol*>    memoized_symbols_by_address_;
+
+  std::vector<DylibCommand*> binding_libs_;
+
 };
 
 

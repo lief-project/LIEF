@@ -215,6 +215,9 @@ void BinaryParser::parse_load_commands(void) {
           auto* lib = reinterpret_cast<DylibCommand*>(load_command.get());
           lib->name(std::move(name));
           this->binary_->libraries_.push_back(lib);
+          if (static_cast<LOAD_COMMAND_TYPES>(command.cmd) != LOAD_COMMAND_TYPES::LC_ID_DYLIB) {
+            binding_libs_.push_back(lib);
+          }
           break;
         }
 
@@ -1595,9 +1598,8 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
   binding_info->segment_ = &segment;
 
 
-  it_libraries libraries = this->binary_->libraries();
-  if (0 < ord and static_cast<size_t>(ord) <= libraries.size()) {
-    binding_info->library_ = &libraries[ord - 1];
+  if (0 < ord and static_cast<size_t>(ord) <= binding_libs_.size()) {
+    binding_info->library_ = binding_libs_[ord - 1];
   }
 
   Symbol* symbol = nullptr;
