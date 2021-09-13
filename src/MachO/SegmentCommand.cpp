@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
+#include <memory>
 
 #include "LIEF/MachO/hash.hpp"
 
