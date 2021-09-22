@@ -249,10 +249,10 @@ void Parser::parse_prototypes(void) {
       size_t nb_params = this->stream_->read<uint32_t>();
 
       for (size_t i = 0; i < nb_params; ++i) {
-        if (not this->stream_->can_read<uint32_t>()) {
+        if (not this->stream_->can_read<uint16_t>()) {
           break;
         }
-        uint32_t type_idx = this->stream_->read<uint32_t>();
+        uint16_t type_idx = this->stream_->read<uint16_t>();
 
         if (type_idx > this->file_->types_.size()) {
           break;
