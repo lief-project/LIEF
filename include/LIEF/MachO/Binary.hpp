@@ -68,7 +68,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   public:
   Binary(const Binary&) = delete;
-  Binary& operator==(const Binary&) = delete;
+  Binary& operator=(const Binary&) = delete;
 
   //! Return a reference to MachO::Header
   Header&       header(void);

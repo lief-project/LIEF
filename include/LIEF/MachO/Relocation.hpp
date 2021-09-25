@@ -49,7 +49,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     Relocation(void);
     Relocation(uint64_t address, uint8_t type);
 
-    //Relocation& operator=(const Relocation& other);
+    Relocation& operator=(const Relocation& other);
     Relocation(const Relocation& other);
     void swap(Relocation& other);
 

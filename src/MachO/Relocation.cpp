@@ -60,6 +60,14 @@ Relocation::Relocation(const Relocation& other) :
 {
 }
 
+
+Relocation& Relocation::operator=(const Relocation& other) {
+  if (&other != this) {
+    type_         = other.type_;
+    architecture_ = other.architecture_;
+  }
+  return *this;
+}
 void Relocation::swap(Relocation& other) {
   LIEF::Relocation::swap(other);
 

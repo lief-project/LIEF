@@ -79,6 +79,9 @@ hashstream::hashstream(HASH type) :
       }
   }
   mbedtls_md_starts(cast(this->ctx_));
+  if (ret) {
+    LIEF_WARN("Error while setting up hash function");
+  }
 }
 
 hashstream& hashstream::put(uint8_t c) {
