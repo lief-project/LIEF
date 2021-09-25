@@ -24,7 +24,7 @@ void init_utils(py::module& m) {
 
   m.def("is_dex",
       static_cast<bool (*)(const std::string&)>(&is_dex),
-      "Check if the **file** given in parameter is an DDEX",
+      "Check if the **file** given in parameter is a DEX",
       "path"_a);
 
   m.def("is_dex",

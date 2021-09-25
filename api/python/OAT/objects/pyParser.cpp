@@ -28,19 +28,19 @@ void create<Parser>(py::module& m) {
   // Parser (Parser)
   m.def("parse",
     static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
-    "Parse the given OAT file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"
+    "Parse the given OAT file and return a " RST_CLASS_REF(lief.OAT.Binary) " object",
     "oat_file"_a,
     py::return_value_policy::take_ownership);
 
   m.def("parse",
     static_cast<std::unique_ptr<Binary> (*) (const std::string&, const std::string&)>(&Parser::parse),
-    "Parse the given OAT with its VDEX file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"
+    "Parse the given OAT with its VDEX file and return a " RST_CLASS_REF(lief.OAT.Binary) " object",
     "oat_file"_a, "vdex_file"_a,
     py::return_value_policy::take_ownership);
 
   m.def("parse",
     static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
-    "Parse the given raw data and return a " RST_CLASS_REF(lief.OAT.Binary) " object\n\n"
+    "Parse the given raw data and return a " RST_CLASS_REF(lief.OAT.Binary) " object",
     "raw"_a, py::arg("name") = "",
     py::return_value_policy::take_ownership);
 

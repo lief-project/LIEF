@@ -28,13 +28,13 @@ void create<Parser>(py::module& m) {
   // Parser (Parser)
   m.def("parse",
     static_cast<std::unique_ptr<File> (*) (const std::string&)>(&Parser::parse),
-    "Parse the given filename and return an " RST_CLASS_REF(lief.ART.File) " object"
+    "Parse the given filename and return an " RST_CLASS_REF(lief.ART.File) " object",
     "filename"_a,
     py::return_value_policy::take_ownership);
 
   m.def("parse",
     static_cast<std::unique_ptr<File> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
-    "Parse the given raw data and return an " RST_CLASS_REF(lief.ART.File) " object\n\n"
+    "Parse the given raw data and return an " RST_CLASS_REF(lief.ART.File) " object",
     "raw"_a, py::arg("name") = "",
     py::return_value_policy::take_ownership);
 
