@@ -68,6 +68,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   public:
   Binary(const Binary&) = delete;
+  Binary& operator==(const Binary&) = delete;
 
   //! Return a reference to MachO::Header
   Header&       header(void);
@@ -515,7 +516,14 @@ class LIEF_API Binary : public LIEF::Binary  {
   libraries_t libraries_;
   sections_t  sections_;
   segments_t  segments_;
-  std::vector<std::unique_ptr<Binary>> filesets_;
+
+
+  /* MSVC (19.29.30133.0) does not support std::vector<std::unique_ptr<T>> even
+   * though the class (Binary) is not copyable. Therefore we must use raw pointer.
+   *
+   * std::vector<std::unique_ptr<Binary>> filesets_;
+   */
+  std::vector<Binary*> filesets_;
 
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;

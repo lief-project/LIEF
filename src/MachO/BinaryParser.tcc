@@ -649,7 +649,7 @@ void BinaryParser::parse_load_commands(void) {
               binary->name_ = entry_name;
               this->stream_ = std::move(bp.stream_);
               fset->binary_ = binary.get();
-              this->binary_->filesets_.push_back(std::move(binary));
+              this->binary_->filesets_.push_back(binary.release());
               this->stream_->setpos(current_pos);
             }
           } catch (const std::exception& e) {

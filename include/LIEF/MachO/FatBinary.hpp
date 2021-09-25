@@ -41,6 +41,7 @@ class LIEF_API FatBinary {
 
   public:
   FatBinary(const FatBinary&) = delete;
+  FatBinary& operator==(const FatBinary&) = delete;
 
   virtual ~FatBinary(void);
 
