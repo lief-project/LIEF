@@ -107,8 +107,8 @@ endif()
 # Fuzzing
 # =======
 if(UNIX AND NOT APPLE)
-  set(MELKOR_VERSION 1d62ccc) # From the fork: https://github.com/romainthomas/elf_fuzzer
-  set(MELKOR_SHA256 SHA256=2653d4ec1dca51621757e6946f4af18fcd100f905183a4692b68ad0cd65392ba)
+  set(MELKOR_VERSION ac2495b) # From the fork: https://github.com/romainthomas/elf_fuzzer
+  set(MELKOR_SHA256 SHA256=8cccc4ca5e05e305215cc74761413746b660b76f5869a563f52cec1f23d79f2e)
   set(MELKOR_URL "${THIRD_PARTY_DIRECTORY}/Melkor_ELF_Fuzzer-${MELKOR_VERSION}.zip" CACHE STRING "URL to the Melkor package")
 
   set(MELKOR_PREFIX      "${CMAKE_CURRENT_BINARY_DIR}/Melkor")
