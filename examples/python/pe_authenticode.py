@@ -29,7 +29,7 @@ import lief
 # ....
 
 def print_crt(binary):
-    for crt in binary.signature.certificates:
+    for crt in binary.signatures[0].certificates:
         print(crt)
 
 if __name__ == '__main__':
