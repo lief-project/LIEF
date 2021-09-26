@@ -1077,8 +1077,9 @@ result<SignatureParser::time_t> SignatureParser::parse_pkcs9_signing_time(Vector
     return tm.error();
   }
   std::unique_ptr<mbedtls_x509_time> time = std::move(tm.value());
-  LIEF_DEBUG("pkcs9-signing-time {}/{}/{}", time->day, time->mon, time->year);
-  return SignatureParser::time_t{time->year, time->mon, time->day, time->hour, time->min, time->sec};
+  LIEF_DEBUG("pkcs9-signing-time {}/{}/{}", time->private_day, time->private_mon, time->private_year);
+  return SignatureParser::time_t{time->private_year, time->private_mon, time->private_day,
+                                 time->private_hour, time->private_min, time->private_sec};
 }
 
 

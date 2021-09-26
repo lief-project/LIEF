@@ -307,7 +307,10 @@ source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
 # Library definition
 # ==================
 target_include_directories(
-  LIB_LIEF SYSTEM PRIVATE "${MBEDTLS_INCLUDE_DIRS}")
+  LIB_LIEF SYSTEM PRIVATE
+    "${MBEDTLS_INCLUDE_DIRS}"
+    "${MBEDTLS_SOURCE_DIR}/library"
+)
 
 target_include_directories(
   LIB_LIEF
@@ -384,10 +387,9 @@ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 # SpcSpAgencyInfo Critical Extension, which mbed TLS doesn't support, so set
 # MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION to have it skip this
 # extension.
-add_definitions(-DMBEDTLS_MD2_C -DMBEDTLS_MD4_C -DMBEDTLS_PEM_PARSE_C
+add_definitions(-DMBEDTLS_FS_IO -DMBEDTLS_PEM_PARSE_C -DMBEDTLS_BIGNUM_C
                 -DMBEDTLS_X509_CRT_PARSE_C -DMBEDTLS_PEM_WRITE_C
-                -DMBEDTLS_PKCS1_V15 -DMBEDTLS_PKCS1_V21
-                -DMBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION)
+                -DMBEDTLS_PKCS1_V15 -DMBEDTLS_PKCS1_V21)
 
 # ASAN - LSAN - TSAN - USAN
 # ~~~

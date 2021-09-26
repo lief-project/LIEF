@@ -33,8 +33,6 @@
 #include <mbedtls/sha256.h>
 #include <mbedtls/sha1.h>
 
-#include <mbedtls/md2.h>
-#include <mbedtls/md4.h>
 #include <mbedtls/md5.h>
 
 #include "mbedtls/x509_crt.h"
@@ -172,7 +170,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_512:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512_ret(input.data(), input.size(), out.data(), /* is384 */ false);
+        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ false);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-512 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -183,7 +181,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_384:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512_ret(input.data(), input.size(), out.data(), /* is384 */ true);
+        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ true);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -194,7 +192,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_256:
       {
         std::vector<uint8_t> out(32);
-        int ret = mbedtls_sha256_ret(input.data(), input.size(), out.data(), /* is224 */ false);
+        int ret = mbedtls_sha256(input.data(), input.size(), out.data(), /* is224 */ false);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-256 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -205,7 +203,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_1:
       {
         std::vector<uint8_t> out(20);
-        int ret = mbedtls_sha1_ret(input.data(), input.size(), out.data());
+        int ret = mbedtls_sha1(input.data(), input.size(), out.data());
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-1 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -216,31 +214,9 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::MD5:
       {
         std::vector<uint8_t> out(16);
-        int ret = mbedtls_md5_ret(input.data(), input.size(), out.data());
+        int ret = mbedtls_md5(input.data(), input.size(), out.data());
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with MD5 failed! (ret: 0x{:x})", input.size(), ret);
-          return {};
-        }
-        return out;
-      }
-
-    case ALGORITHMS::MD4:
-      {
-        std::vector<uint8_t> out(16);
-        int ret = mbedtls_md4_ret(input.data(), input.size(), out.data());
-        if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with MD4 failed! (ret: 0x{:x})", input.size(), ret);
-          return {};
-        }
-        return out;
-      }
-
-    case ALGORITHMS::MD2:
-      {
-        std::vector<uint8_t> out(16);
-        int ret = mbedtls_md2_ret(input.data(), input.size(), out.data());
-        if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with MD2 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
         }
         return out;

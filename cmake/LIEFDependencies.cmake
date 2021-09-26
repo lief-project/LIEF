@@ -29,8 +29,8 @@ endif()
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 2.25.0)
-set(MBED_TLS_SHA256 SHA256=6bf01ef178925f7db3c9027344a50855b116f2defe4a24cbdc0220111a371597)
+set(MBED_TLS_VERSION 3.0.0)
+set(MBED_TLS_SHA256 SHA256=896286b2cec7a8331dc4491940b58585f5f91b9a76c281280fa21ba51d224c1b )
 set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -52,13 +52,11 @@ set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
 set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/aes.c"
   "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
-  "${MBEDTLS_SOURCE_DIR}/library/arc4.c"
   "${MBEDTLS_SOURCE_DIR}/library/aria.c"
   "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
   "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
   "${MBEDTLS_SOURCE_DIR}/library/base64.c"
   "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
-  "${MBEDTLS_SOURCE_DIR}/library/blowfish.c"
   "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
   "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
   "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
@@ -78,14 +76,13 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
   "${MBEDTLS_SOURCE_DIR}/library/error.c"
   "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
-  "${MBEDTLS_SOURCE_DIR}/library/havege.c"
   "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
   "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
   "${MBEDTLS_SOURCE_DIR}/library/md.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md2.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md4.c"
   "${MBEDTLS_SOURCE_DIR}/library/md5.c"
   "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
+  "${MBEDTLS_SOURCE_DIR}/library/mps_reader.c"
+  "${MBEDTLS_SOURCE_DIR}/library/mps_trace.c"
   "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
   "${MBEDTLS_SOURCE_DIR}/library/oid.c"
   "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
@@ -100,14 +97,21 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
   "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_crypto.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_aead.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_cipher.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_client.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_driver_wrappers.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_ecp.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_hash.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_mac.c"
+  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_rsa.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_se.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_slot_management.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_storage.c"
   "${MBEDTLS_SOURCE_DIR}/library/psa_its_file.c"
   "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
   "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
-  "${MBEDTLS_SOURCE_DIR}/library/rsa_internal.c"
+  "${MBEDTLS_SOURCE_DIR}/library/rsa_alt_helpers.c"
   "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
   "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
   "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
@@ -115,12 +119,11 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/timing.c"
   "${MBEDTLS_SOURCE_DIR}/library/version.c"
   "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
-  "${MBEDTLS_SOURCE_DIR}/library/xtea.c"
 )
 
 set(mbedtls_src_x509
-    "${MBEDTLS_SOURCE_DIR}/library/certs.c"
-    "${MBEDTLS_SOURCE_DIR}/library/pkcs11.c"
+    #"${MBEDTLS_SOURCE_DIR}/library/certs.c"
+    #"${MBEDTLS_SOURCE_DIR}/library/pkcs11.c"
     "${MBEDTLS_SOURCE_DIR}/library/x509.c"
     "${MBEDTLS_SOURCE_DIR}/library/x509_create.c"
     "${MBEDTLS_SOURCE_DIR}/library/x509_crl.c"

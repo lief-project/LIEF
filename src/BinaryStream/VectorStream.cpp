@@ -35,10 +35,10 @@ namespace LIEF {
 
 inline void free_names(mbedtls_x509_name& names) {
   mbedtls_x509_name *name_cur;
-  name_cur = names.next;
+  name_cur = names.private_next;
   while (name_cur != nullptr) {
     mbedtls_x509_name *name_prv = name_cur;
-    name_cur = name_cur->next;
+    name_cur = name_cur->private_next;
     mbedtls_free(name_prv);
   }
 }
@@ -173,9 +173,9 @@ result<std::string> VectorStream::asn1_read_oid() {
     return len.error();
   }
 
-  buf.len = len.value();
-  buf.p   = this->p();
-  buf.tag = MBEDTLS_ASN1_OID;
+  buf.private_len = len.value();
+  buf.private_p   = this->p();
+  buf.private_tag = MBEDTLS_ASN1_OID;
 
   int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &buf);
   if (ret == MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
@@ -183,7 +183,7 @@ result<std::string> VectorStream::asn1_read_oid() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(buf.len);
+  this->increment_pos(buf.private_len);
   return std::string(oid_str);
 }
 
@@ -222,14 +222,14 @@ result<std::vector<uint8_t>> VectorStream::asn1_read_bitstring() {
   }
   else if (ret == MBEDTLS_ERR_ASN1_LENGTH_MISMATCH) {
     this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-    return std::vector<uint8_t>{bs.p, bs.p + bs.len};
+    return std::vector<uint8_t>{bs.private_p, bs.private_p + bs.private_len};
   }
   else if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
   this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-  return std::vector<uint8_t>{bs.p, bs.p + bs.len};
+  return std::vector<uint8_t>{bs.private_p, bs.private_p + bs.private_len};
 }
 
 
@@ -258,10 +258,10 @@ result<std::unique_ptr<mbedtls_x509_crt>> VectorStream::asn1_read_cert() {
     LIEF_DEBUG("asn1_read_cert(): {}", strerr);
     return make_error_code(lief_errors::read_error);
   }
-  if (ca->raw.len <= 0) {
+  if (ca->private_raw.private_len <= 0) {
     return make_error_code(lief_errors::read_error);
   }
-  this->increment_pos(ca->raw.len);
+  this->increment_pos(ca->private_raw.private_len);
   return ca;
 }
 
@@ -312,7 +312,7 @@ result<std::vector<uint8_t>> VectorStream::x509_read_serial() {
   }
 
   this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-  return std::vector<uint8_t>{serial.p, serial.p + serial.len};
+  return std::vector<uint8_t>{serial.private_p, serial.private_p + serial.private_len};
 }
 
 result<std::unique_ptr<mbedtls_x509_time>> VectorStream::x509_read_time() {

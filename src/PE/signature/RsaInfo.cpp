@@ -34,7 +34,9 @@ RsaInfo::RsaInfo(void) = default;
 RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
   const mbedtls_rsa_context* pctx = reinterpret_cast<const mbedtls_rsa_context*>(ctx);
   mbedtls_rsa_context* local_ctx = new mbedtls_rsa_context{};
-  mbedtls_rsa_init(local_ctx, pctx->padding, pctx->hash_id);
+  mbedtls_rsa_init(local_ctx);
+  mbedtls_rsa_set_padding(local_ctx, pctx->private_padding,
+                          static_cast<mbedtls_md_type_t>(pctx->private_hash_id));
   mbedtls_rsa_copy(local_ctx, pctx);
   mbedtls_rsa_complete(local_ctx);
   this->ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
@@ -45,7 +47,9 @@ RsaInfo::RsaInfo(const RsaInfo& other)
   if (other.ctx_ != nullptr) {
     const mbedtls_rsa_context* octx = reinterpret_cast<const mbedtls_rsa_context*>(other.ctx_);
     mbedtls_rsa_context* local_ctx = new mbedtls_rsa_context{};
-    mbedtls_rsa_init(local_ctx, octx->padding, octx->hash_id);
+    mbedtls_rsa_init(local_ctx);
+    mbedtls_rsa_set_padding(local_ctx, octx->private_padding,
+                            static_cast<mbedtls_md_type_t>(octx->private_hash_id));
     mbedtls_rsa_copy(local_ctx, octx);
     mbedtls_rsa_complete(local_ctx);
     this->ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
@@ -83,36 +87,36 @@ bool RsaInfo::has_private_key(void) const {
 
 RsaInfo::bignum_wrapper_t RsaInfo::N(void) const {
   mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
-  bignum_wrapper_t N(mbedtls_mpi_bitlen(&lctx->N));
-  mbedtls_mpi_write_binary(&lctx->N, N.data(), N.size());
+  bignum_wrapper_t N(mbedtls_mpi_bitlen(&lctx->private_N));
+  mbedtls_mpi_write_binary(&lctx->private_N, N.data(), N.size());
   return N;
 }
 
 RsaInfo::bignum_wrapper_t RsaInfo::E(void) const {
   mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
-  bignum_wrapper_t E(mbedtls_mpi_bitlen(&lctx->E));
-  mbedtls_mpi_write_binary(&lctx->E, E.data(), E.size());
+  bignum_wrapper_t E(mbedtls_mpi_bitlen(&lctx->private_E));
+  mbedtls_mpi_write_binary(&lctx->private_E, E.data(), E.size());
   return E;
 }
 
 RsaInfo::bignum_wrapper_t RsaInfo::D(void) const {
   mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
-  bignum_wrapper_t D(mbedtls_mpi_bitlen(&lctx->D));
-  mbedtls_mpi_write_binary(&lctx->D, D.data(), D.size());
+  bignum_wrapper_t D(mbedtls_mpi_bitlen(&lctx->private_D));
+  mbedtls_mpi_write_binary(&lctx->private_D, D.data(), D.size());
   return D;
 }
 
 RsaInfo::bignum_wrapper_t RsaInfo::P(void) const {
   mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
-  bignum_wrapper_t P(mbedtls_mpi_bitlen(&lctx->P));
-  mbedtls_mpi_write_binary(&lctx->P, P.data(), P.size());
+  bignum_wrapper_t P(mbedtls_mpi_bitlen(&lctx->private_P));
+  mbedtls_mpi_write_binary(&lctx->private_P, P.data(), P.size());
   return P;
 }
 
 RsaInfo::bignum_wrapper_t RsaInfo::Q(void) const {
   mbedtls_rsa_context* lctx = reinterpret_cast<mbedtls_rsa_context*>(this->ctx_);
-  bignum_wrapper_t Q(mbedtls_mpi_bitlen(&lctx->Q));
-  mbedtls_mpi_write_binary(&lctx->Q, Q.data(), Q.size());
+  bignum_wrapper_t Q(mbedtls_mpi_bitlen(&lctx->private_Q));
+  mbedtls_mpi_write_binary(&lctx->private_Q, Q.data(), Q.size());
   return Q;
 }
 
