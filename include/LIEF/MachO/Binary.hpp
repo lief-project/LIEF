@@ -517,13 +517,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   sections_t  sections_;
   segments_t  segments_;
 
-
-  /* MSVC (19.29.30133.0) does not support std::vector<std::unique_ptr<T>> even
-   * though the class (Binary) is not copyable. Therefore we must use raw pointer.
-   *
-   * std::vector<std::unique_ptr<Binary>> filesets_;
-   */
-  std::vector<Binary*> filesets_;
+  std::vector<std::unique_ptr<Binary>> filesets_;
 
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;
