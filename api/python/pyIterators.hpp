@@ -47,9 +47,9 @@ void init_ref_iterator(py::module& m, const std::string& it_name = typeid(T).nam
         })
 
     .def("__iter__",
-        [](T& v) -> T {
-          return std::begin(v);
-        }, py::return_value_policy::reference_internal)
+        [](const T& v) {
+          return py::make_iterator(std::begin(v), std::end(v));
+        }, py::keep_alive<0, 1>())
 
     .def("__next__",
         [] (T& v) -> typename T::reference {
