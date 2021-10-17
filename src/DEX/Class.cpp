@@ -243,6 +243,7 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
     os << " - " << cls.source_filename();
   }
 
+  os << " - " << std::dec << cls.fields().size() << " Fields";
   os << " - " << std::dec << cls.methods().size() << " Methods";
 
   return os;

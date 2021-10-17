@@ -592,6 +592,9 @@ File::~File(void) {
     delete str;
   }
 
+  for (Field* field : this->fields_) {
+    delete field;
+  }
 
   for (Type* t : this->types_) {
     delete t;
