@@ -83,6 +83,10 @@ uint32_t LoadConfiguration::characteristics(void) const {
   return this->characteristics_;
 }
 
+uint32_t LoadConfiguration::size(void) const {
+  return this->characteristics_;
+}
+
 uint32_t LoadConfiguration::timedatestamp(void) const {
   return this->timedatestamp_;
 }
@@ -140,6 +144,10 @@ uint16_t LoadConfiguration::csd_version(void) const {
 }
 
 uint16_t LoadConfiguration::reserved1(void) const {
+  return this->reserved1_;
+}
+
+uint16_t LoadConfiguration::dependent_load_flags(void) const {
   return this->reserved1_;
 }
 
@@ -215,6 +223,10 @@ void LoadConfiguration::csd_version(uint16_t csd_version) {
 
 void LoadConfiguration::reserved1(uint16_t reserved1) {
   this->reserved1_ = reserved1;
+}
+
+void LoadConfiguration::dependent_load_flags(uint16_t flags) {
+  this->reserved1_ = flags;
 }
 
 void LoadConfiguration::editlist(uint32_t editlist) {

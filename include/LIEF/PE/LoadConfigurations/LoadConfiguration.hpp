@@ -53,6 +53,9 @@ class LIEF_API LoadConfiguration : public Object {
   //! @see @link version LoadConfiguration::version@endlink
   uint32_t characteristics(void) const;
 
+  //! Size of the current structure which is an alias for characteristics
+  uint32_t size(void) const;
+
   //! @brief Date and time stamp value
   uint32_t timedatestamp(void) const;
 
@@ -111,6 +114,11 @@ class LIEF_API LoadConfiguration : public Object {
   //! @brief Must be zero.
   uint16_t reserved1(void) const;
 
+  //! @brief Alias for reserved1.
+  //!
+  //! On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags
+  uint16_t dependent_load_flags(void) const;
+
   //! @brief Reserved for use by the system.
   uint32_t editlist(void) const;
 
@@ -140,6 +148,7 @@ class LIEF_API LoadConfiguration : public Object {
   void process_heap_flags(uint32_t process_heap_flagsid);
   void csd_version(uint16_t csd_version);
   void reserved1(uint16_t reserved1);
+  void dependent_load_flags(uint16_t flags);
   void editlist(uint32_t editlist);
   void security_cookie(uint32_t security_cookie);
 
@@ -156,7 +165,7 @@ class LIEF_API LoadConfiguration : public Object {
 
 
   protected:
-  uint32_t characteristics_;
+  uint32_t characteristics_; // also named size
   uint32_t timedatestamp_;
 
   uint16_t major_version_;
@@ -176,7 +185,7 @@ class LIEF_API LoadConfiguration : public Object {
   uint64_t process_affinity_mask_;
   uint32_t process_heap_flags_;
   uint16_t csd_version_;
-  uint16_t reserved1_;
+  uint16_t reserved1_;  // named DependentLoadFlags in recent headers
   uint64_t editlist_;
   uint64_t security_cookie_;
 };

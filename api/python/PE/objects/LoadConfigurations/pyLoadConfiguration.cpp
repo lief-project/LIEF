@@ -48,6 +48,10 @@ void create<LoadConfiguration>(py::module& m) {
         static_cast<setter_t<uint32_t>>(&LoadConfiguration::characteristics),
         "Characteristics of the structure.")
 
+    .def_property_readonly("size",
+        static_cast<getter_t<uint32_t>>(&LoadConfiguration::size),
+        "Size of the structure which is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.characteristics) "")
+
     .def_property("timedatestamp",
         static_cast<getter_t<uint32_t>>(&LoadConfiguration::timedatestamp),
         static_cast<setter_t<uint32_t>>(&LoadConfiguration::timedatestamp),
@@ -126,6 +130,12 @@ void create<LoadConfiguration>(py::module& m) {
         static_cast<getter_t<uint16_t>>(&LoadConfiguration::reserved1),
         static_cast<setter_t<uint16_t>>(&LoadConfiguration::reserved1),
         "Must be zero.")
+
+    .def_property("dependent_load_flags",
+        static_cast<getter_t<uint16_t>>(&LoadConfiguration::dependent_load_flags),
+        static_cast<setter_t<uint16_t>>(&LoadConfiguration::dependent_load_flags),
+        "On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags. "
+        "This is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.reserved1) "")
 
     .def_property("editlist",
         static_cast<getter_t<uint32_t>>(&LoadConfiguration::editlist),

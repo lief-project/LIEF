@@ -29,6 +29,10 @@ Changelog
   * Handle the `0x0D` binding opcode (see: :issue:`524`)
   * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
+:PE:
+  * :attr:`lief.PE.LoadConfiguration.reserved1` has been aliased to :attr:`lief.PE.LoadConfiguration.dependent_load_flags`
+  * :attr:`lief.PE.LoadConfiguration.characteristics` has been aliased to :attr:`lief.PE.LoadConfiguration.size`
+
 :DEX:
   * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
 
