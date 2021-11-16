@@ -452,32 +452,26 @@ void Parser::parse_load_config(void) {
 
   LIEF_DEBUG("[+] Parsing Load Config");
 
-  const uint32_t directory_size = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).size();
-
   const uint32_t ldc_rva = this->binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
   const uint64_t offset  = this->binary_->rva_to_offset(ldc_rva);
 
   if (not this->stream_->can_read<uint32_t>(offset)) {
     return;
   }
-  const uint32_t size_from_header = this->stream_->peek<uint32_t>(offset);
 
-  if (directory_size != size_from_header) {
-    LIEF_DEBUG("The size of directory '{}' is different from the size in the load configuration header",
-        to_string(DATA_DIRECTORY::LOAD_CONFIG_TABLE));
-  }
-
-  const uint32_t size = std::min<uint32_t>(directory_size, size_from_header);
+  const uint32_t size = this->stream_->peek<uint32_t>(offset);
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
+
   for (auto&& p : PE_T::load_configuration_sizes) {
     if (p.second > current_size and p.second <= size) {
       std::tie(version_found, current_size) = p;
     }
   }
 
-  LIEF_DEBUG("Version found: {} (size: 0x{:x})", to_string(version_found), size);;
+  LIEF_DEBUG("Version found: {} (size: 0x{:x})", to_string(version_found), size);
   std::unique_ptr<LoadConfiguration> ld_conf;
+
   switch (version_found) {
 
     case WIN_VERSION::WIN_SEH:
@@ -586,11 +580,7 @@ void Parser::parse_load_config(void) {
 
   this->binary_->has_configuration_  = static_cast<bool>(ld_conf);
   this->binary_->load_configuration_ = ld_conf.release();
-
-
-
 }
-
 
 }
 }
