@@ -747,16 +747,15 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
-  const Elf_Off sysv_hash_offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
+  const Elf_Off gnu_hash_offset = this->binary_->virtual_address_to_offset(dyn_hash.value());
 
 
-  this->stream_->setpos(sysv_hash_offset);
+  this->stream_->setpos(gnu_hash_offset);
   if (not this->stream_->can_read<uint32_t>()) {
     return 0;
   }
 
-  const uint32_t nbuckets  = std::min(this->stream_->read_conv<uint32_t>(), Parser::NB_MAX_BUCKETS);
-
+  const uint32_t nbuckets  = this->stream_->read_conv<uint32_t>();
   if (not this->stream_->can_read<uint32_t>()) {
     return 0;
   }
@@ -767,86 +766,56 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
     return 0;
   }
 
-  const uint32_t maskwords = std::min(this->stream_->read_conv<uint32_t>(), Parser::NB_MAX_MASKWORD);
+  const uint32_t maskwords = this->stream_->read_conv<uint32_t>();
 
-  if (not this->stream_->can_read<uint32_t>()) {
-    return 0;
-  }
-
-  const uint32_t shift2    = this->stream_->read_conv<uint32_t>();
+  // skip shift2, unused as we don't need the bloom filter to count syms.
+  this->stream_->increment_pos(sizeof(uint32_t));
 
   if (maskwords & (maskwords - 1)) {
     LIEF_WARN("maskwords is not a power of 2");
     return 0;
   }
 
-  std::vector<uint64_t> bloom_filters;
-
   if (maskwords > Parser::NB_MAX_MASKWORD) {
     return 0;
   }
 
-  bloom_filters.resize(maskwords);
+  // skip bloom filter mask words
+  this->stream_->increment_pos(sizeof(uint__) * (maskwords));
 
-  for (size_t i = 0; i < maskwords; ++i) {
-    if (not this->stream_->can_read<uint__>()) {
-      return 0;
-    }
-
-    bloom_filters[i] = this->stream_->read_conv<uint__>();
-  }
-
-  std::vector<uint32_t> buckets;
-  if (nbuckets > Parser::NB_MAX_BUCKETS) {
-    return 0;
-  }
-
-  buckets.reserve(nbuckets);
+  uint32_t max_bucket = 0;
   for (size_t i = 0; i < nbuckets; ++i) {
 
     if (not this->stream_->can_read<uint32_t>()) {
       return 0;
     }
 
-    buckets.push_back(this->stream_->read_conv<uint32_t>());
+    uint32_t bucket = this->stream_->read_conv<uint32_t>();
+    if (bucket > max_bucket) {
+      max_bucket = bucket;
+    }
   }
 
-  if (buckets.size() == 0) {
+  if (max_bucket == 0) {
     return 0;
   }
 
-  uint32_t nb_symbols = *std::max_element(std::begin(buckets), std::end(buckets));
+  // Skip to the contents of the bucket with the largest symbol index
+  this->stream_->increment_pos(sizeof(uint32_t) * (max_bucket - symndx));
+  
+  // Count values in the bucket
+  uint32_t hash_value = 0;
+  size_t nsyms = 0;
+  do {
+    if (not this->stream_->can_read<uint32_t>()) {
+      return 0;
+    }
+    hash_value = this->stream_->read_conv<uint32_t>();
 
-  if (nb_symbols == 0) {
-    return 0;
-  }
+    nsyms++;
+  } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
 
-  nb_symbols = symndx;
-
-  GnuHash gnuhash{symndx, shift2, bloom_filters, buckets};
-  gnuhash.c_ = sizeof(uint__) * 8;
-
-
-  // Register the size of symbols store a the buckets
-  std::vector<size_t> nbsym_buckets(nbuckets, 0);
-
-  for (size_t i = 0; i < nbuckets; ++i) {
-    uint32_t hash_value = 0;
-    size_t nsyms = 0;
-    do {
-      if (not this->stream_->can_read<uint32_t>()) {
-        return 0;
-      }
-      hash_value = this->stream_->read_conv<uint32_t>();
-
-      nsyms++;
-    } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
-
-    nbsym_buckets[i] = buckets[i] + nsyms;
-  }
-
-  nb_symbols = std::max<uint32_t>(nb_symbols, *std::max_element(std::begin(nbsym_buckets), std::end(nbsym_buckets)));
-  return nb_symbols;
+  return max_bucket + nsyms;
 }
 
 template<typename ELF_T>
