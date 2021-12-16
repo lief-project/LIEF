@@ -356,9 +356,13 @@ std::string ResourcesManager::manifest(void) const {
   if (childs_l2.size() < 1) {
     throw not_found("Manifest corrupted");
   }
-
-  const ResourceData* manifest_node = dynamic_cast<ResourceData*>(&childs_l2[0]);
-  const std::vector<uint8_t>& content = manifest_node->content();
+  const ResourceNode& manifest_node = childs_l2[0];
+  if (!manifest_node.is_data()) {
+    LIEF_WARN("Expecting a Data Node");
+    return "";
+  }
+  const auto& manifest_data = reinterpret_cast<const ResourceData&>(manifest_node);
+  const std::vector<uint8_t>& content = manifest_data.content();
   return std::string{std::begin(content), std::end(content)};
 }
 
@@ -779,7 +783,11 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
   std::vector<ResourceIcon> icons;
   for (const ResourceNode& grp_icon_lvl2 : it_grp_icon->childs()) {
     for (const ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
-      const ResourceData* icon_group_node = dynamic_cast<const ResourceData*>(&grp_icon_lvl3);
+      if (!grp_icon_lvl3.is_data()) {
+        LIEF_WARN("Expecting a data node");
+        continue;
+      }
+      const ResourceData* icon_group_node = reinterpret_cast<const ResourceData*>(&grp_icon_lvl3);
       if (!icon_group_node) {
         LIEF_WARN("Group icon node is null");
         continue;
