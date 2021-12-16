@@ -835,7 +835,12 @@ std::vector<ResourceIcon> ResourcesManager::icons(void) const {
           LIEF_WARN("Resources nodes loooks corrupted");
           continue;
         }
-        const std::vector<uint8_t>& pixels = dynamic_cast<const ResourceData*>(&icons_childs[0])->content();
+        const ResourceNode& icon_node = icons_childs[0];
+        if (!icon_node.is_data()) {
+          LIEF_WARN("Expecting a Data node but found a Directory node");
+          continue;
+        }
+        const std::vector<uint8_t>& pixels = reinterpret_cast<const ResourceData*>(&icons_childs[0])->content();
         icon.pixels_ = pixels;
 
         icons.push_back(icon);
