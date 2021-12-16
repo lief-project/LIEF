@@ -24,11 +24,11 @@
 namespace LIEF {
 namespace PE {
 
-Export::~Export(void) = default;
+Export::~Export() = default;
 Export::Export(const Export&) = default;
 Export& Export::operator=(const Export&) = default;
 
-Export::Export(void) :
+Export::Export() :
   exportFlags_{0},
   timestamp_{0},
   majorVersion_{0},
@@ -44,35 +44,35 @@ Export::Export(const pe_export_directory_table *header) :
   ordinalBase_{header->OrdinalBase}
 {}
 
-uint32_t Export::export_flags(void) const {
+uint32_t Export::export_flags() const {
   return this->exportFlags_;
 }
 
-uint32_t Export::timestamp(void) const {
+uint32_t Export::timestamp() const {
   return this->timestamp_;
 }
 
-uint16_t Export::major_version(void) const {
+uint16_t Export::major_version() const {
   return this->majorVersion_;
 }
 
-uint16_t Export::minor_version(void) const {
+uint16_t Export::minor_version() const {
   return this->minorVersion_;
 }
 
-uint32_t Export::ordinal_base(void) const {
+uint32_t Export::ordinal_base() const {
   return this->ordinalBase_;
 }
 
-const std::string& Export::name(void) const {
+const std::string& Export::name() const {
   return this->name_;
 }
 
-it_export_entries Export::entries(void) {
+it_export_entries Export::entries() {
   return this->entries_;
 }
 
-it_const_export_entries Export::entries(void) const {
+it_const_export_entries Export::entries() const {
   return this->entries_;
 }
 

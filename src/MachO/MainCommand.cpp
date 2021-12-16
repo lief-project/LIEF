@@ -25,9 +25,9 @@ namespace MachO {
 
 MainCommand& MainCommand::operator=(const MainCommand&) = default;
 MainCommand::MainCommand(const MainCommand&) = default;
-MainCommand::~MainCommand(void) = default;
+MainCommand::~MainCommand() = default;
 
-MainCommand::MainCommand(void) :
+MainCommand::MainCommand() :
   LoadCommand::LoadCommand{},
   entrypoint_{0},
   stackSize_{0}
@@ -39,16 +39,16 @@ MainCommand::MainCommand(const entry_point_command *cmd) :
   stackSize_{cmd->stacksize}
 {}
 
-MainCommand* MainCommand::clone(void) const {
+MainCommand* MainCommand::clone() const {
   return new MainCommand(*this);
 }
 
 
-uint64_t MainCommand::entrypoint(void) const {
+uint64_t MainCommand::entrypoint() const {
   return this->entrypoint_;
 }
 
-uint64_t MainCommand::stack_size(void) const {
+uint64_t MainCommand::stack_size() const {
   return this->stackSize_;
 }
 

@@ -77,27 +77,27 @@ class LIEF_API DylibCommand : public LoadCommand {
       uint32_t compat_version = 0);
 
   public:
-  DylibCommand(void);
+  DylibCommand();
   DylibCommand(const dylib_command *cmd);
 
   DylibCommand& operator=(const DylibCommand& copy);
   DylibCommand(const DylibCommand& copy);
 
-  virtual ~DylibCommand(void);
+  virtual ~DylibCommand();
 
-  virtual DylibCommand* clone(void) const override;
+  virtual DylibCommand* clone() const override;
 
   //! Library name
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! Date and Time when the shared library was built
-  uint32_t timestamp(void) const;
+  uint32_t timestamp() const;
 
   //! Current version of the shared library
-  version_t current_version(void) const;
+  version_t current_version() const;
 
   //! Compatibility version of the shared library
-  version_t compatibility_version(void) const;
+  version_t compatibility_version() const;
 
   void name(const std::string& name);
   void timestamp(uint32_t timestamp);

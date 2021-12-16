@@ -25,14 +25,14 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionRequirement::SymbolVersionRequirement(void) :
+SymbolVersionRequirement::SymbolVersionRequirement() :
   symbol_version_aux_requirement_{},
   version_{0},
   name_{""}
 {}
 
 
-SymbolVersionRequirement::~SymbolVersionRequirement(void) {
+SymbolVersionRequirement::~SymbolVersionRequirement() {
   for (SymbolVersionAuxRequirement* svar : this->symbol_version_aux_requirement_) {
     delete svar;
   }
@@ -76,27 +76,27 @@ void SymbolVersionRequirement::swap(SymbolVersionRequirement& other) {
 }
 
 
-uint16_t SymbolVersionRequirement::version(void) const {
+uint16_t SymbolVersionRequirement::version() const {
   return this->version_;
 }
 
 
-uint32_t SymbolVersionRequirement::cnt(void) const {
+uint32_t SymbolVersionRequirement::cnt() const {
   return static_cast<uint32_t>(this->symbol_version_aux_requirement_.size());
 }
 
 
-it_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols(void) {
+it_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
   return this->symbol_version_aux_requirement_;
 }
 
 
-it_const_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols(void) const {
+it_const_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
   return this->symbol_version_aux_requirement_;
 }
 
 
-const std::string& SymbolVersionRequirement::name(void) const {
+const std::string& SymbolVersionRequirement::name() const {
   return this->name_;
 }
 

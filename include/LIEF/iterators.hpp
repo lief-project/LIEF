@@ -85,7 +85,7 @@ class ref_iterator : public std::iterator<
   }
 
 
-  ref_iterator& operator++(void) {
+  ref_iterator& operator++() {
     this->it_ = std::next(this->it_);
     this->distance_++;
     return *this;
@@ -97,7 +97,7 @@ class ref_iterator : public std::iterator<
     return retval;
   }
 
-  ref_iterator& operator--(void) {
+  ref_iterator& operator--() {
     if (this->it_ != std::begin(container_)) {
       this->it_ = std::prev(this->it_);
       this->distance_--;
@@ -182,22 +182,22 @@ class ref_iterator : public std::iterator<
     return !(*this > rhs);
   }
 
-  ref_iterator begin(void) const {
+  ref_iterator begin() const {
     return this->container_;
   }
 
-  ref_iterator cbegin(void) const {
+  ref_iterator cbegin() const {
     return this->begin();
   }
 
-  ref_iterator end(void)  const {
+  ref_iterator end()  const {
     ref_iterator it = ref_iterator{this->container_};
     it.it_ = std::end(it.container_);
     it.distance_ = it.size();
     return it;
   }
 
-  ref_iterator cend(void) const {
+  ref_iterator cend() const {
     return this->end();
   }
 
@@ -209,7 +209,7 @@ class ref_iterator : public std::iterator<
     return !(*this == other);
   }
 
-  size_t size(void) const {
+  size_t size() const {
     return this->container_.size();
   }
 
@@ -355,15 +355,15 @@ class filter_iterator : public std::iterator<
     return retval;
   }
 
-  filter_iterator begin(void) const {
+  filter_iterator begin() const {
     return {this->container_, this->filters_};
   }
 
-  filter_iterator cbegin(void) const {
+  filter_iterator cbegin() const {
     return this->begin();
   }
 
-  filter_iterator end(void) const {
+  filter_iterator end() const {
     // we don't need filter for the end iterator
     filter_iterator it_end{this->container_};
 
@@ -373,7 +373,7 @@ class filter_iterator : public std::iterator<
     return it_end;
   }
 
-  filter_iterator cend(void) const {
+  filter_iterator cend() const {
     return this->end();
   }
 
@@ -419,7 +419,7 @@ class filter_iterator : public std::iterator<
     return const_cast<add_const_t<pointer_t>>(&(this->operator*()));
   }
 
-  size_t size(void) const {
+  size_t size() const {
     if (this->filters_.size() == 0) {
       return this->container_.size();
     }
@@ -446,7 +446,7 @@ class filter_iterator : public std::iterator<
   }
 
   protected:
-  void next(void) {
+  void next() {
     if (this->it_ == std::end(this->container_)) {
       this->distance_ = this->container_.size();
       return;

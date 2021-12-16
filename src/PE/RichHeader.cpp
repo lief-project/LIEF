@@ -22,24 +22,24 @@
 namespace LIEF {
 namespace PE {
 
-RichHeader::~RichHeader(void) = default;
+RichHeader::~RichHeader() = default;
 RichHeader::RichHeader(const RichHeader&) = default;
 RichHeader& RichHeader::operator=(const RichHeader&) = default;
 
-RichHeader::RichHeader(void) :
+RichHeader::RichHeader() :
   key_{0},
   entries_{}
 {}
 
-uint32_t RichHeader::key(void) const {
+uint32_t RichHeader::key() const {
   return this->key_;
 }
 
-it_rich_entries RichHeader::entries(void) {
+it_rich_entries RichHeader::entries() {
   return {this->entries_};
 }
 
-it_const_rich_entries RichHeader::entries(void) const {
+it_const_rich_entries RichHeader::entries() const {
   return {this->entries_};
 }
 

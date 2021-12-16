@@ -28,27 +28,27 @@ struct symtab_command;
 
 class LIEF_API SymbolCommand : public LoadCommand {
   public:
-  SymbolCommand(void);
+  SymbolCommand();
   SymbolCommand(const symtab_command *command);
 
   SymbolCommand& operator=(const SymbolCommand& copy);
   SymbolCommand(const SymbolCommand& copy);
 
-  virtual SymbolCommand* clone(void) const override;
+  virtual SymbolCommand* clone() const override;
 
-  virtual ~SymbolCommand(void);
+  virtual ~SymbolCommand();
 
   //! Offset from the start of the file to the n_list associated with the command
-  uint32_t symbol_offset(void) const;
+  uint32_t symbol_offset() const;
 
   //! Number of symbols registered
-  uint32_t numberof_symbols(void) const;
+  uint32_t numberof_symbols() const;
 
   //! Offset from the start of the file to the string table
-  uint32_t strings_offset(void) const;
+  uint32_t strings_offset() const;
 
   //! Size of the size string table
-  uint32_t strings_size(void) const;
+  uint32_t strings_size() const;
 
   void symbol_offset(uint32_t offset);
   void numberof_symbols(uint32_t nb);

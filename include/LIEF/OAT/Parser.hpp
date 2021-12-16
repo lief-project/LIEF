@@ -51,33 +51,33 @@ class LIEF_API Parser : public LIEF::Parser {
     Parser(const Parser& copy)            = delete;
 
   private:
-    Parser(void);
+    Parser();
     Parser(const std::string& oat_file);
     Parser(const std::vector<uint8_t>& data, const std::string& name);
-    ~Parser(void);
+    ~Parser();
 
-    bool has_vdex(void) const;
+    bool has_vdex() const;
     void set_vdex(VDEX::File* file);
 
-    void bind_vdex(void);
+    void bind_vdex();
 
     template<typename OAT_T>
     void parse_binary();
 
     template<typename OAT_T>
-    void parse_header(void);
+    void parse_header();
 
     template<typename OAT_T>
-    void parse_header_keys(void);
+    void parse_header_keys();
 
     template<typename OAT_T>
-    void parse_dex_files(void);
+    void parse_dex_files();
 
     template<typename OAT_T>
-    void parse_type_lookup_table(void);
+    void parse_type_lookup_table();
 
     template<typename OAT_T>
-    void parse_oat_classes(void);
+    void parse_oat_classes();
 
     template<typename OAT_T>
     void parse_oat_methods(uint64_t methods_offsets, Class* clazz, const DEX::Class& dex_class);

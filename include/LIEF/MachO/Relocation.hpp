@@ -46,28 +46,28 @@ class LIEF_API Relocation : public LIEF::Relocation {
     using LIEF::Relocation::address;
     using LIEF::Relocation::size;
 
-    Relocation(void);
+    Relocation();
     Relocation(uint64_t address, uint8_t type);
 
     Relocation& operator=(const Relocation& other);
     Relocation(const Relocation& other);
     void swap(Relocation& other);
 
-    virtual ~Relocation(void);
+    virtual ~Relocation();
 
-    virtual Relocation* clone(void) const = 0;
+    virtual Relocation* clone() const = 0;
 
     // For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
     // offset from the start of the @link MachO::Section section @endlink
     // to the item containing the address requiring relocation.
-    //virtual uint64_t address(void) const override;
+    //virtual uint64_t address() const override;
 
     //! Indicates whether the item containing the address to be
     //! relocated is part of a CPU instruction that uses PC-relative addressing.
     //!
     //! For addresses contained in PC-relative instructions, the CPU adds the address of
     //! the instruction to the address contained in the instruction.
-    virtual bool is_pc_relative(void) const = 0;
+    virtual bool is_pc_relative() const = 0;
 
     //! Type of the relocation according to the
     //! @link Relocation::architecture architecture@endlink and/or
@@ -80,34 +80,34 @@ class LIEF_API Relocation : public LIEF::Relocation {
     //!   * MachO::ARM_RELOCATION
     //!   * MachO::ARM64_RELOCATION
     //!   * MachO::REBASE_TYPES
-    virtual uint8_t type(void) const;
+    virtual uint8_t type() const;
 
     //! @link Relocation::architecture architecture @endlink of the relocation
-    CPU_TYPES architecture(void) const;
+    CPU_TYPES architecture() const;
 
     //! Origin of the relocation
-    virtual RELOCATION_ORIGINS origin(void) const = 0;
+    virtual RELOCATION_ORIGINS origin() const = 0;
 
     //! ``true`` if the relocation has a symbol associated with
-    bool has_symbol(void) const;
+    bool has_symbol() const;
 
     //! Symbol associated with the relocation (if any)
-    Symbol& symbol(void);
-    const Symbol& symbol(void) const;
+    Symbol& symbol();
+    const Symbol& symbol() const;
 
     //! ``true`` if the relocation has a section associated with
-    bool has_section(void) const;
+    bool has_section() const;
 
     //! Section associated with the relocation (if any)
-    Section& section(void);
-    const Section& section(void) const;
+    Section& section();
+    const Section& section() const;
 
     //! ``true`` if the relocation has a SegmentCommand associated with
-    bool has_segment(void) const;
+    bool has_segment() const;
 
     //! SegmentCommand associated with the relocation (if any)
-    SegmentCommand& segment(void);
-    const SegmentCommand& segment(void) const;
+    SegmentCommand& segment();
+    const SegmentCommand& segment() const;
 
     //virtual void address(uint64_t address) override;
     virtual void pc_relative(bool val) = 0;

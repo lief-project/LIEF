@@ -31,7 +31,7 @@ class LIEF_API CodeInfo : public Object {
   friend class Parser;
 
   public:
-  CodeInfo(void);
+  CodeInfo();
   CodeInfo(const code_item* codeitem);
 
   CodeInfo(const CodeInfo&);
@@ -42,7 +42,7 @@ class LIEF_API CodeInfo : public Object {
   bool operator==(const CodeInfo& rhs) const;
   bool operator!=(const CodeInfo& rhs) const;
 
-  virtual ~CodeInfo(void);
+  virtual ~CodeInfo();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeInfo& cinfo);
 

@@ -33,24 +33,24 @@ class LIEF_API RelocationDyld : public Relocation {
 
   public:
   using Relocation::Relocation;
-  RelocationDyld(void);
+  RelocationDyld();
 
   RelocationDyld& operator=(const RelocationDyld&);
   RelocationDyld(const RelocationDyld&);
 
-  virtual ~RelocationDyld(void);
+  virtual ~RelocationDyld();
 
-  virtual Relocation* clone(void) const override;
+  virtual Relocation* clone() const override;
 
   //! @brief Indicates whether the item containing the address to be
   //! relocated is part of a CPU instruction that uses PC-relative addressing.
   //!
   //! For addresses contained in PC-relative instructions, the CPU adds the address of
   //! the instruction to the address contained in the instruction.
-  virtual bool is_pc_relative(void) const override;
+  virtual bool is_pc_relative() const override;
 
   //! @brief Origin of the relocation
-  virtual RELOCATION_ORIGINS origin(void) const override;
+  virtual RELOCATION_ORIGINS origin() const override;
 
 
   virtual void pc_relative(bool val) override;

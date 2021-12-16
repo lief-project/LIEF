@@ -41,7 +41,7 @@ class LIEF_API GenericType : public Attribute {
   GenericType(const GenericType&);
   GenericType& operator=(const GenericType&);
 
-  virtual std::unique_ptr<Attribute> clone(void) const override;
+  virtual std::unique_ptr<Attribute> clone() const override;
 
   //! OID of the original attribute
   inline const oid_t& oid() const {

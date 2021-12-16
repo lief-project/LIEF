@@ -21,13 +21,13 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(void) :
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement() :
   hash_{0},
   flags_{0},
   other_{0}
 {}
 
-SymbolVersionAuxRequirement::~SymbolVersionAuxRequirement(void) = default;
+SymbolVersionAuxRequirement::~SymbolVersionAuxRequirement() = default;
 SymbolVersionAuxRequirement& SymbolVersionAuxRequirement::operator=(const SymbolVersionAuxRequirement&) = default;
 SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&) = default;
 
@@ -46,17 +46,17 @@ SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const Elf32_Vernaux* he
 {}
 
 
-uint32_t SymbolVersionAuxRequirement::hash(void) const {
+uint32_t SymbolVersionAuxRequirement::hash() const {
   return this->hash_;
 }
 
 
-uint16_t SymbolVersionAuxRequirement::flags(void) const {
+uint16_t SymbolVersionAuxRequirement::flags() const {
   return this->flags_;
 }
 
 
-uint16_t SymbolVersionAuxRequirement::other(void) const {
+uint16_t SymbolVersionAuxRequirement::other() const {
   return this->other_;
 }
 

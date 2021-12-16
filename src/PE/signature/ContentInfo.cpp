@@ -23,10 +23,10 @@
 namespace LIEF {
 namespace PE {
 
-ContentInfo::ContentInfo(void) = default;
+ContentInfo::ContentInfo() = default;
 ContentInfo::ContentInfo(const ContentInfo&) = default;
 ContentInfo& ContentInfo::operator=(const ContentInfo&) = default;
-ContentInfo::~ContentInfo(void) = default;
+ContentInfo::~ContentInfo() = default;
 
 
 void ContentInfo::accept(Visitor& visitor) const {

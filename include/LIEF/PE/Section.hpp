@@ -42,34 +42,34 @@ class LIEF_API Section : public LIEF::Section {
   using LIEF::Section::name;
 
   Section(const pe_section* header);
-  Section(void);
+  Section();
   Section(const std::vector<uint8_t>& data, const std::string& name = "", uint32_t characteristics = 0);
   Section(const std::string& name);
 
   Section& operator=(const Section&);
   Section(const Section&);
-  virtual ~Section(void);
+  virtual ~Section();
 
   //! @brief Return the size of the data in the section.
-  uint32_t sizeof_raw_data(void) const;
-  uint32_t virtual_size(void) const;
+  uint32_t sizeof_raw_data() const;
+  uint32_t virtual_size() const;
 
   // ============================
   // LIEF::Section implementation
   // ============================
-  virtual std::vector<uint8_t> content(void) const override;
+  virtual std::vector<uint8_t> content() const override;
 
   //! Content of the section's padding
   inline const std::vector<uint8_t>& padding() const {
     return this->padding_;
   }
 
-  uint32_t pointerto_raw_data(void) const;
-  uint32_t pointerto_relocation(void) const;
-  uint32_t pointerto_line_numbers(void) const;
-  uint16_t numberof_relocations(void) const;
-  uint16_t numberof_line_numbers(void) const;
-  uint32_t characteristics(void) const;
+  uint32_t pointerto_raw_data() const;
+  uint32_t pointerto_relocation() const;
+  uint32_t pointerto_line_numbers() const;
+  uint16_t numberof_relocations() const;
+  uint16_t numberof_line_numbers() const;
+  uint32_t characteristics() const;
 
   //! Return the **fullname** of the section including the trailing bytes
   inline const std::string& fullname() const {
@@ -77,9 +77,9 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   bool                              is_type(PE_SECTION_TYPES type) const;
-  const std::set<PE_SECTION_TYPES>& types(void) const;
+  const std::set<PE_SECTION_TYPES>& types() const;
   bool                              has_characteristic(SECTION_CHARACTERISTICS c) const;
-  std::set<SECTION_CHARACTERISTICS> characteristics_list(void) const;
+  std::set<SECTION_CHARACTERISTICS> characteristics_list() const;
   void clear(uint8_t c);
 
 
@@ -107,7 +107,7 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
-  std::vector<uint8_t>& content_ref(void);
+  std::vector<uint8_t>& content_ref();
 
   std::vector<uint8_t> content_;
   std::vector<uint8_t> padding_;

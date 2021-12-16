@@ -26,9 +26,9 @@
 namespace LIEF {
 namespace MachO {
 
-BindingInfo::~BindingInfo(void) = default;
+BindingInfo::~BindingInfo() = default;
 
-BindingInfo::BindingInfo(void) :
+BindingInfo::BindingInfo() :
   class_{BINDING_CLASS::BIND_CLASS_STANDARD},
   binding_type_{BIND_TYPES::BIND_TYPE_POINTER},
   segment_{nullptr},
@@ -95,11 +95,11 @@ void BindingInfo::swap(BindingInfo& other) {
 }
 
 
-bool BindingInfo::has_segment(void) const {
+bool BindingInfo::has_segment() const {
   return this->segment_ != nullptr;
 }
 
-const SegmentCommand& BindingInfo::segment(void) const {
+const SegmentCommand& BindingInfo::segment() const {
   if (not this->has_segment()) {
     throw not_found("No segment associated with this binding");
   }
@@ -107,15 +107,15 @@ const SegmentCommand& BindingInfo::segment(void) const {
   return *this->segment_;
 }
 
-SegmentCommand& BindingInfo::segment(void) {
+SegmentCommand& BindingInfo::segment() {
   return const_cast<SegmentCommand&>(static_cast<const BindingInfo*>(this)->segment());
 }
 
-bool BindingInfo::has_symbol(void) const {
+bool BindingInfo::has_symbol() const {
   return this->symbol_ != nullptr;
 }
 
-const Symbol& BindingInfo::symbol(void) const {
+const Symbol& BindingInfo::symbol() const {
   if (not this->has_symbol()) {
     throw not_found("No symbol associated with this binding");
   }
@@ -123,17 +123,17 @@ const Symbol& BindingInfo::symbol(void) const {
   return *this->symbol_;
 }
 
-Symbol& BindingInfo::symbol(void) {
+Symbol& BindingInfo::symbol() {
   return const_cast<Symbol&>(static_cast<const BindingInfo*>(this)->symbol());
 }
 
 
 
-bool BindingInfo::has_library(void) const {
+bool BindingInfo::has_library() const {
   return this->library_ != nullptr;
 }
 
-const DylibCommand& BindingInfo::library(void) const {
+const DylibCommand& BindingInfo::library() const {
   if (not this->has_library()) {
     throw not_found("No library associated with this binding");
   }
@@ -141,11 +141,11 @@ const DylibCommand& BindingInfo::library(void) const {
   return *this->library_;
 }
 
-DylibCommand& BindingInfo::library(void) {
+DylibCommand& BindingInfo::library() {
   return const_cast<DylibCommand&>(static_cast<const BindingInfo*>(this)->library());
 }
 
-BINDING_CLASS BindingInfo::binding_class(void) const {
+BINDING_CLASS BindingInfo::binding_class() const {
   return this->class_;
 }
 
@@ -153,7 +153,7 @@ void BindingInfo::binding_class(BINDING_CLASS bind_class) {
   this->class_ = bind_class;
 }
 
-BIND_TYPES BindingInfo::binding_type(void) const {
+BIND_TYPES BindingInfo::binding_type() const {
   return this->binding_type_;
 }
 
@@ -161,7 +161,7 @@ void BindingInfo::binding_type(BIND_TYPES type) {
   this->binding_type_ = type;
 }
 
-int32_t BindingInfo::library_ordinal(void) const {
+int32_t BindingInfo::library_ordinal() const {
   return this->library_ordinal_;
 }
 
@@ -169,7 +169,7 @@ void BindingInfo::library_ordinal(int32_t ordinal) {
   this->library_ordinal_ = ordinal;
 }
 
-int64_t BindingInfo::addend(void) const {
+int64_t BindingInfo::addend() const {
   return this->addend_;
 }
 
@@ -177,7 +177,7 @@ void BindingInfo::addend(int64_t addend) {
   this->addend_ = addend;
 }
 
-bool BindingInfo::is_weak_import(void) const {
+bool BindingInfo::is_weak_import() const {
   return this->is_weak_import_;
 }
 
@@ -186,7 +186,7 @@ void BindingInfo::set_weak_import(bool val) {
 }
 
 
-uint64_t BindingInfo::address(void) const {
+uint64_t BindingInfo::address() const {
   return this->address_;
 }
 

@@ -60,38 +60,38 @@ class LIEF_API Relocation : public LIEF::Relocation {
     Relocation{address, static_cast<uint32_t>(type), addend, isRela}
   {}
 
-  Relocation(void);
+  Relocation();
   Relocation(ARCH arch);
-  virtual ~Relocation(void);
+  virtual ~Relocation();
 
   Relocation& operator=(Relocation other);
   Relocation(const Relocation& other);
   void swap(Relocation& other);
 
-  //uint64_t address(void) const;
-  int64_t  addend(void) const;
-  uint32_t type(void) const;
-  bool     is_rela(void) const;
-  bool     is_rel(void) const;
-  uint32_t info(void) const;
-  ARCH architecture(void) const;
-  RELOCATION_PURPOSES purpose(void) const;
+  //uint64_t address() const;
+  int64_t  addend() const;
+  uint32_t type() const;
+  bool     is_rela() const;
+  bool     is_rel() const;
+  uint32_t info() const;
+  ARCH architecture() const;
+  RELOCATION_PURPOSES purpose() const;
 
   //! @brief Return the **bit** size of the value to patch
   //!
   //! Return -1 if it fails
-  virtual size_t size(void) const override;
+  virtual size_t size() const override;
 
-  bool          has_symbol(void) const;
-  Symbol&       symbol(void);
-  const Symbol& symbol(void) const;
+  bool          has_symbol() const;
+  Symbol&       symbol();
+  const Symbol& symbol() const;
 
   //! True if the relocation has a section associated
-  bool           has_section(void) const;
+  bool           has_section() const;
 
   //! Section associated with this relocation
-  Section&       section(void);
-  const Section& section(void) const;
+  Section&       section();
+  const Section& section() const;
 
   void addend(int64_t addend);
   void type(uint32_t type);

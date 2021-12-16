@@ -25,24 +25,24 @@ namespace PE {
 
 LoadConfigurationV6& LoadConfigurationV6::operator=(const LoadConfigurationV6&) = default;
 LoadConfigurationV6::LoadConfigurationV6(const LoadConfigurationV6&) = default;
-LoadConfigurationV6::~LoadConfigurationV6(void) = default;
+LoadConfigurationV6::~LoadConfigurationV6() = default;
 
-LoadConfigurationV6::LoadConfigurationV6(void) :
+LoadConfigurationV6::LoadConfigurationV6() :
   LoadConfigurationV5{},
   guardrf_verify_stackpointer_function_pointer_{0},
   hotpatch_table_offset_{0}
 {}
 
 
-WIN_VERSION LoadConfigurationV6::version(void) const {
+WIN_VERSION LoadConfigurationV6::version() const {
   return LoadConfigurationV6::VERSION;
 }
 
-uint64_t LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer(void) const {
+uint64_t LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer() const {
   return this->guardrf_verify_stackpointer_function_pointer_;
 }
 
-uint32_t LoadConfigurationV6::hotpatch_table_offset(void) const {
+uint32_t LoadConfigurationV6::hotpatch_table_offset() const {
   return this->hotpatch_table_offset_;
 }
 

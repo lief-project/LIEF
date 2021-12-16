@@ -37,9 +37,9 @@ RelocationObject::RelocationObject(const RelocationObject& other) :
   value_{other.value_}
 {}
 
-RelocationObject::~RelocationObject(void) = default;
+RelocationObject::~RelocationObject() = default;
 
-RelocationObject::RelocationObject(void) :
+RelocationObject::RelocationObject() :
   Relocation::Relocation{},
   is_pcrel_{false},
   is_scattered_{false},
@@ -69,7 +69,7 @@ RelocationObject::RelocationObject(const scattered_relocation_info *scattered_re
 }
 
 
-RelocationObject* RelocationObject::clone(void) const {
+RelocationObject* RelocationObject::clone() const {
   return new RelocationObject(*this);
 }
 
@@ -82,11 +82,11 @@ void RelocationObject::swap(RelocationObject& other) {
   std::swap(this->value_,        other.value_);
 }
 
-bool RelocationObject::is_pc_relative(void) const {
+bool RelocationObject::is_pc_relative() const {
   return this->is_pcrel_;
 }
 
-size_t RelocationObject::size(void) const {
+size_t RelocationObject::size() const {
   if (this->size_ < 2) {
     return (this->size_ + 1) * 8;
   } else {
@@ -95,12 +95,12 @@ size_t RelocationObject::size(void) const {
 }
 
 
-bool RelocationObject::is_scattered(void) const {
+bool RelocationObject::is_scattered() const {
   return this->is_scattered_;
 }
 
 
-uint64_t RelocationObject::address(void) const {
+uint64_t RelocationObject::address() const {
   if (not this->has_section()) {
     return Relocation::address();
   }
@@ -108,14 +108,14 @@ uint64_t RelocationObject::address(void) const {
   return this->address_ + this->section().offset();
 }
 
-int32_t RelocationObject::value(void) const {
+int32_t RelocationObject::value() const {
   if (not this->is_scattered()) {
     throw not_found("This relocation is not a 'scattered' one");
   }
   return this->value_;
 }
 
-RELOCATION_ORIGINS RelocationObject::origin(void) const {
+RELOCATION_ORIGINS RelocationObject::origin() const {
   return RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE;
 }
 

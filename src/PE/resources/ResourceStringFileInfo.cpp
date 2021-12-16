@@ -26,29 +26,29 @@ namespace PE {
 
 ResourceStringFileInfo::ResourceStringFileInfo(const ResourceStringFileInfo&) = default;
 ResourceStringFileInfo& ResourceStringFileInfo::operator=(const ResourceStringFileInfo&) = default;
-ResourceStringFileInfo::~ResourceStringFileInfo(void) = default;
+ResourceStringFileInfo::~ResourceStringFileInfo() = default;
 
 
-ResourceStringFileInfo::ResourceStringFileInfo(void) :
+ResourceStringFileInfo::ResourceStringFileInfo() :
   type_{0},
   key_{u8tou16("StringFileInfo")},
   childs_{}
 {}
 
 
-uint16_t ResourceStringFileInfo::type(void) const {
+uint16_t ResourceStringFileInfo::type() const {
   return this->type_;
 }
 
-const std::u16string& ResourceStringFileInfo::key(void) const {
+const std::u16string& ResourceStringFileInfo::key() const {
   return this->key_;
 }
 
-const std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items(void) const {
+const std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() const {
   return this->childs_;
 }
 
-std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items(void) {
+std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() {
   return const_cast<std::vector<LangCodeItem>&>(static_cast<const ResourceStringFileInfo*>(this)->langcode_items());
 }
 

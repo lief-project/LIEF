@@ -22,7 +22,7 @@ namespace LIEF {
 namespace PE {
 
 template<typename PE_T>
-void Parser::parse(void) {
+void Parser::parse() {
 
   if (not this->parse_headers<PE_T>()) {
     return;
@@ -59,7 +59,7 @@ void Parser::parse(void) {
 }
 
 template<typename PE_T>
-bool Parser::parse_headers(void) {
+bool Parser::parse_headers() {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   //DOS Header
@@ -93,7 +93,7 @@ bool Parser::parse_headers(void) {
 }
 
 template<typename PE_T>
-void Parser::parse_data_directories(void) {
+void Parser::parse_data_directories() {
   using pe_optional_header = typename PE_T::pe_optional_header;
   const uint32_t directories_offset =
       this->binary_->dos_header().addressof_new_exeheader() +
@@ -260,7 +260,7 @@ void Parser::parse_data_directories(void) {
 }
 
 template<typename PE_T>
-void Parser::parse_import_table(void) {
+void Parser::parse_import_table() {
   using uint__ = typename PE_T::uint;
 
   const uint32_t import_rva    = this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
@@ -366,7 +366,7 @@ void Parser::parse_import_table(void) {
 }
 
 template<typename PE_T>
-void Parser::parse_tls(void) {
+void Parser::parse_tls() {
   using pe_tls = typename PE_T::pe_tls;
   using uint__ = typename PE_T::uint;
 
@@ -439,7 +439,7 @@ void Parser::parse_tls(void) {
 
 
 template<typename PE_T>
-void Parser::parse_load_config(void) {
+void Parser::parse_load_config() {
   using load_configuration_t    = typename PE_T::load_configuration_t;
   using load_configuration_v0_t = typename PE_T::load_configuration_v0_t;
   using load_configuration_v1_t = typename PE_T::load_configuration_v1_t;

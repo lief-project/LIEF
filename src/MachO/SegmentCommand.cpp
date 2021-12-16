@@ -26,7 +26,7 @@
 namespace LIEF {
 namespace MachO {
 
-SegmentCommand::SegmentCommand(void) = default;
+SegmentCommand::SegmentCommand() = default;
 SegmentCommand& SegmentCommand::operator=(SegmentCommand other) {
   this->swap(other);
   return *this;
@@ -63,7 +63,7 @@ SegmentCommand::SegmentCommand(const SegmentCommand& other) :
 }
 
 
-SegmentCommand::~SegmentCommand(void) {
+SegmentCommand::~SegmentCommand() {
   for (Relocation* reloc : this->relocations_) {
     delete reloc;
   }
@@ -123,7 +123,7 @@ void SegmentCommand::swap(SegmentCommand& other) {
   std::swap(this->relocations_,    other.relocations_);
 }
 
-SegmentCommand* SegmentCommand::clone(void) const {
+SegmentCommand* SegmentCommand::clone() const {
   return new SegmentCommand(*this);
 }
 
@@ -142,61 +142,61 @@ SegmentCommand::SegmentCommand(const std::string& name) :
   this->name(name);
 }
 
-const std::string& SegmentCommand::name(void) const {
+const std::string& SegmentCommand::name() const {
   return this->name_;
 }
 
-uint64_t SegmentCommand::virtual_address(void) const {
+uint64_t SegmentCommand::virtual_address() const {
   return this->virtualAddress_;
 }
 
-uint64_t SegmentCommand::virtual_size(void) const {
+uint64_t SegmentCommand::virtual_size() const {
   return this->virtualSize_;
 }
 
-uint64_t SegmentCommand::file_size(void) const {
+uint64_t SegmentCommand::file_size() const {
   return this->fileSize_;
 }
 
-uint64_t SegmentCommand::file_offset(void) const {
+uint64_t SegmentCommand::file_offset() const {
   return this->fileOffset_;
 }
 
-uint32_t SegmentCommand::max_protection(void) const {
+uint32_t SegmentCommand::max_protection() const {
   return this->maxProtection_;
 }
 
-uint32_t SegmentCommand::init_protection(void) const {
+uint32_t SegmentCommand::init_protection() const {
   return this->initProtection_;
 }
 
-uint32_t SegmentCommand::numberof_sections(void) const {
+uint32_t SegmentCommand::numberof_sections() const {
   return this->nbSections_;
 }
 
-uint32_t SegmentCommand::flags(void) const {
+uint32_t SegmentCommand::flags() const {
   return this->flags_;
 }
 
-it_sections SegmentCommand::sections(void) {
+it_sections SegmentCommand::sections() {
   return this->sections_;
 }
 
 
-it_const_sections SegmentCommand::sections(void) const {
+it_const_sections SegmentCommand::sections() const {
   return this->sections_;
 }
 
 
-it_relocations SegmentCommand::relocations(void) {
+it_relocations SegmentCommand::relocations() {
   return this->relocations_;
 }
 
-it_const_relocations SegmentCommand::relocations(void) const {
+it_const_relocations SegmentCommand::relocations() const {
   return this->relocations_;
 }
 
-const SegmentCommand::content_t& SegmentCommand::content(void) const {
+const SegmentCommand::content_t& SegmentCommand::content() const {
   return this->data_;
 }
 
@@ -242,7 +242,7 @@ void SegmentCommand::content(const SegmentCommand::content_t& data) {
 }
 
 
-void SegmentCommand::remove_all_sections(void) {
+void SegmentCommand::remove_all_sections() {
   this->numberof_sections(0);
   this->sections_ = {};
 }

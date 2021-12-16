@@ -24,7 +24,7 @@ SpcSpOpusInfo::SpcSpOpusInfo() :
 SpcSpOpusInfo::SpcSpOpusInfo(const SpcSpOpusInfo&) = default;
 SpcSpOpusInfo& SpcSpOpusInfo::operator=(const SpcSpOpusInfo&) = default;
 
-std::unique_ptr<Attribute> SpcSpOpusInfo::clone(void) const {
+std::unique_ptr<Attribute> SpcSpOpusInfo::clone() const {
   return std::unique_ptr<Attribute>(new SpcSpOpusInfo{*this});
 }
 

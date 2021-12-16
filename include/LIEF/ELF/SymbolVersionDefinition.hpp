@@ -35,10 +35,10 @@ struct Elf32_Verdef;
 class LIEF_API SymbolVersionDefinition : public Object {
   friend class Parser;
   public:
-  SymbolVersionDefinition(void);
+  SymbolVersionDefinition();
   SymbolVersionDefinition(const Elf64_Verdef *header);
   SymbolVersionDefinition(const Elf32_Verdef *header);
-  virtual ~SymbolVersionDefinition(void);
+  virtual ~SymbolVersionDefinition();
 
   SymbolVersionDefinition& operator=(SymbolVersionDefinition other);
   SymbolVersionDefinition(const SymbolVersionDefinition& other);
@@ -49,22 +49,22 @@ class LIEF_API SymbolVersionDefinition : public Object {
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
-  uint16_t version(void) const;
+  uint16_t version() const;
 
   //! @brief Version information
-  uint16_t flags(void) const;
+  uint16_t flags() const;
 
   //! @brief Version index
   //!
   //! Numeric value used as an index in the LIEF::ELF::SymbolVersion table
-  uint16_t ndx(void) const;
+  uint16_t ndx() const;
 
   //! @brief Hash value of the symbol's name (using ELF hash function)
-  uint32_t hash(void) const;
+  uint32_t hash() const;
 
   //! @brief SymbolVersionAux entries
-  it_symbols_version_aux       symbols_aux(void);
-  it_const_symbols_version_aux symbols_aux(void) const;
+  it_symbols_version_aux       symbols_aux();
+  it_const_symbols_version_aux symbols_aux() const;
 
   void version(uint16_t version);
   void flags(uint16_t flags);

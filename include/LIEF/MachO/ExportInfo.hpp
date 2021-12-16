@@ -38,42 +38,42 @@ class LIEF_API ExportInfo : public Object {
   public:
   using flag_list_t = std::vector<EXPORT_SYMBOL_FLAGS>;
 
-  ExportInfo(void);
+  ExportInfo();
   ExportInfo(uint64_t address, uint64_t flags, uint64_t offset = 0);
 
   ExportInfo& operator=(ExportInfo copy);
   ExportInfo(const ExportInfo& copy);
   void swap(ExportInfo& other);
 
-  uint64_t node_offset(void) const;
+  uint64_t node_offset() const;
 
-  uint64_t flags(void) const;
+  uint64_t flags() const;
   void flags(uint64_t flags);
 
-  flag_list_t flags_list(void) const;
+  flag_list_t flags_list() const;
 
   bool has(EXPORT_SYMBOL_FLAGS flag) const;
 
-  EXPORT_SYMBOL_KINDS kind(void) const;
+  EXPORT_SYMBOL_KINDS kind() const;
 
-  uint64_t other(void) const;
+  uint64_t other() const;
 
-  uint64_t address(void) const;
+  uint64_t address() const;
   void address(uint64_t addr);
 
-  bool has_symbol(void) const;
+  bool has_symbol() const;
 
-  const Symbol& symbol(void) const;
-  Symbol& symbol(void);
+  const Symbol& symbol() const;
+  Symbol& symbol();
 
-  Symbol* alias(void);
-  const Symbol* alias(void) const;
+  Symbol* alias();
+  const Symbol* alias() const;
 
-  DylibCommand* alias_library(void);
-  const DylibCommand* alias_library(void) const;
+  DylibCommand* alias_library();
+  const DylibCommand* alias_library() const;
 
 
-  virtual ~ExportInfo(void);
+  virtual ~ExportInfo();
 
   bool operator==(const ExportInfo& rhs) const;
   bool operator!=(const ExportInfo& rhs) const;

@@ -22,42 +22,42 @@
 namespace LIEF {
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
-Header::~Header(void) = default;
+Header::~Header() = default;
 
 
-Header::Header(void) = default;
+Header::Header() = default;
 
-ARCHITECTURES Header::architecture(void) const {
+ARCHITECTURES Header::architecture() const {
   return this->architecture_;
 }
 
 
-OBJECT_TYPES Header::object_type(void) const {
+OBJECT_TYPES Header::object_type() const {
   return this->object_type_;
 }
 
 
-const std::set<MODES>& Header::modes(void) const {
+const std::set<MODES>& Header::modes() const {
   return this->modes_;
 }
 
 
-bool Header::is_32(void) const {
+bool Header::is_32() const {
   return this->modes().count(MODES::MODE_32) > 0;
 }
 
 
-bool Header::is_64(void) const {
+bool Header::is_64() const {
   return this->modes().count(MODES::MODE_64) > 0;
 }
 
 
-uint64_t Header::entrypoint(void) const {
+uint64_t Header::entrypoint() const {
   return this->entrypoint_;
 }
 
 
-ENDIANNESS Header::endianness(void) const {
+ENDIANNESS Header::endianness() const {
   return this->endianness_;
 }
 

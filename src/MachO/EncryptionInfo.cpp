@@ -23,10 +23,10 @@
 namespace LIEF {
 namespace MachO {
 
-EncryptionInfo::EncryptionInfo(void) = default;
+EncryptionInfo::EncryptionInfo() = default;
 EncryptionInfo& EncryptionInfo::operator=(const EncryptionInfo&) = default;
 EncryptionInfo::EncryptionInfo(const EncryptionInfo&) = default;
-EncryptionInfo::~EncryptionInfo(void) = default;
+EncryptionInfo::~EncryptionInfo() = default;
 
 EncryptionInfo::EncryptionInfo(const encryption_info_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -36,15 +36,15 @@ EncryptionInfo::EncryptionInfo(const encryption_info_command *cmd) :
 {}
 
 
-uint32_t EncryptionInfo::crypt_offset(void) const {
+uint32_t EncryptionInfo::crypt_offset() const {
   return this->coff_;
 }
 
-uint32_t EncryptionInfo::crypt_size(void) const {
+uint32_t EncryptionInfo::crypt_size() const {
   return this->csize_;
 }
 
-uint32_t EncryptionInfo::crypt_id(void) const  {
+uint32_t EncryptionInfo::crypt_id() const  {
   return this->cid_;
 }
 

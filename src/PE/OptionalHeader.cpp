@@ -28,11 +28,11 @@
 namespace LIEF {
 namespace PE {
 
-OptionalHeader::~OptionalHeader(void) = default;
+OptionalHeader::~OptionalHeader() = default;
 OptionalHeader& OptionalHeader::operator=(const OptionalHeader&) = default;
 OptionalHeader::OptionalHeader(const OptionalHeader&) = default;
 
-OptionalHeader::OptionalHeader(void) :
+OptionalHeader::OptionalHeader() :
   magic_{},
   majorLinkerVersion_(9), // Arbitrary value
   minorLinkerVersion_(0),
@@ -135,47 +135,47 @@ OptionalHeader::OptionalHeader(const pe64_optional_header *header):
   numberOfRvaAndSize_(header->NumberOfRvaAndSize)
 {}
 
-PE_TYPE OptionalHeader::magic(void) const {
+PE_TYPE OptionalHeader::magic() const {
   return this->magic_;
 }
 
 
-uint8_t OptionalHeader::major_linker_version(void) const {
+uint8_t OptionalHeader::major_linker_version() const {
   return this->majorLinkerVersion_;
 }
 
 
-uint8_t OptionalHeader::minor_linker_version(void) const {
+uint8_t OptionalHeader::minor_linker_version() const {
   return this->minorLinkerVersion_;
 }
 
 
-uint32_t OptionalHeader::sizeof_code(void) const {
+uint32_t OptionalHeader::sizeof_code() const {
   return this->sizeOfCode_;
 }
 
 
-uint32_t OptionalHeader::sizeof_initialized_data(void) const {
+uint32_t OptionalHeader::sizeof_initialized_data() const {
   return this->sizeOfInitializedData_;
 }
 
 
-uint32_t OptionalHeader::sizeof_uninitialized_data(void) const {
+uint32_t OptionalHeader::sizeof_uninitialized_data() const {
   return this->sizeOfUninitializedData_;
 }
 
 
-uint32_t OptionalHeader::addressof_entrypoint(void) const {
+uint32_t OptionalHeader::addressof_entrypoint() const {
   return this->addressOfEntryPoint_;
 }
 
 
-uint32_t OptionalHeader::baseof_code(void) const {
+uint32_t OptionalHeader::baseof_code() const {
   return this->baseOfCode_;
 }
 
 
-uint32_t OptionalHeader::baseof_data(void) const {
+uint32_t OptionalHeader::baseof_data() const {
   if (this->magic() == PE_TYPE::PE32) {
     return this->baseOfData_;
   } else {
@@ -184,107 +184,107 @@ uint32_t OptionalHeader::baseof_data(void) const {
 }
 
 
-uint64_t OptionalHeader::imagebase(void) const {
+uint64_t OptionalHeader::imagebase() const {
   return this->imageBase_;
 }
 
 
-uint32_t OptionalHeader::section_alignment(void) const {
+uint32_t OptionalHeader::section_alignment() const {
   return this->sectionAlignment_;
 }
 
 
-uint32_t OptionalHeader::file_alignment(void) const {
+uint32_t OptionalHeader::file_alignment() const {
   return this->fileAlignment_;
 }
 
 
-uint16_t OptionalHeader::major_operating_system_version(void) const {
+uint16_t OptionalHeader::major_operating_system_version() const {
   return this->majorOperatingSystemVersion_;
 }
 
 
-uint16_t OptionalHeader::minor_operating_system_version(void) const {
+uint16_t OptionalHeader::minor_operating_system_version() const {
   return this->minorOperatingSystemVersion_;
 }
 
 
-uint16_t OptionalHeader::major_image_version(void) const {
+uint16_t OptionalHeader::major_image_version() const {
   return this->majorImageVersion_;
 }
 
 
-uint16_t OptionalHeader::minor_image_version(void) const {
+uint16_t OptionalHeader::minor_image_version() const {
   return this->minorImageVersion_;
 }
 
 
-uint16_t OptionalHeader::major_subsystem_version(void) const {
+uint16_t OptionalHeader::major_subsystem_version() const {
   return this->majorSubsystemVersion_;
 }
 
 
-uint16_t OptionalHeader::minor_subsystem_version(void) const {
+uint16_t OptionalHeader::minor_subsystem_version() const {
   return this->minorSubsystemVersion_;
 }
 
 
-uint32_t OptionalHeader::win32_version_value(void) const {
+uint32_t OptionalHeader::win32_version_value() const {
   return this->win32VersionValue_;
 }
 
 
-uint32_t OptionalHeader::sizeof_image(void) const {
+uint32_t OptionalHeader::sizeof_image() const {
   return this->sizeOfImage_;
 }
 
 
-uint32_t OptionalHeader::sizeof_headers(void) const {
+uint32_t OptionalHeader::sizeof_headers() const {
   return this->sizeOfHeaders_;
 }
 
 
-uint32_t OptionalHeader::checksum(void) const {
+uint32_t OptionalHeader::checksum() const {
   return this->checkSum_;
 }
 
 
-SUBSYSTEM OptionalHeader::subsystem(void) const {
+SUBSYSTEM OptionalHeader::subsystem() const {
   return this->subsystem_;
 }
 
 
-uint32_t OptionalHeader::dll_characteristics(void) const {
+uint32_t OptionalHeader::dll_characteristics() const {
   return this->DLLCharacteristics_;
 }
 
 
-uint64_t OptionalHeader::sizeof_stack_reserve(void) const {
+uint64_t OptionalHeader::sizeof_stack_reserve() const {
   return this->sizeOfStackReserve_;
 }
 
 
-uint64_t OptionalHeader::sizeof_stack_commit(void) const {
+uint64_t OptionalHeader::sizeof_stack_commit() const {
   return this->sizeOfStackCommit_;
 }
 
 
-uint64_t OptionalHeader::sizeof_heap_reserve(void) const {
+uint64_t OptionalHeader::sizeof_heap_reserve() const {
   return this->sizeOfHeapReserve_;
 }
 
 
-uint64_t OptionalHeader::sizeof_heap_commit(void) const {
+uint64_t OptionalHeader::sizeof_heap_commit() const {
   return this->sizeOfHeapCommit_;
 }
 
 
-uint32_t OptionalHeader::loader_flags(void) const {
+uint32_t OptionalHeader::loader_flags() const {
   return this->loaderFlags_;
 }
 
 
-uint32_t OptionalHeader::numberof_rva_and_size(void) const {
+uint32_t OptionalHeader::numberof_rva_and_size() const {
   return this->numberOfRvaAndSize_;
 }
 
@@ -301,7 +301,7 @@ void OptionalHeader::remove(DLL_CHARACTERISTICS c) {
 }
 
 
-std::set<DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list(void) const {
+std::set<DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list() const {
   std::set<DLL_CHARACTERISTICS> dll_charac;
   std::copy_if(
       std::begin(dll_characteristics_array),

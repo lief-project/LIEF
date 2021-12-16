@@ -27,8 +27,8 @@
 namespace LIEF {
 namespace DEX {
 
-Parser::~Parser(void) = default;
-Parser::Parser(void)  = default;
+Parser::~Parser() = default;
+Parser::Parser()  = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   Parser parser{filename};
@@ -93,7 +93,7 @@ void Parser::init(const std::string& name, dex_version_t version) {
 
 }
 
-void Parser::resolve_inheritance(void) {
+void Parser::resolve_inheritance() {
   LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", this->inheritance_.size());
 
   for (const std::pair<const std::string, Class*>& p : this->inheritance_) {
@@ -111,7 +111,7 @@ void Parser::resolve_inheritance(void) {
   }
 }
 
-void Parser::resolve_external_methods(void) {
+void Parser::resolve_external_methods() {
   LIEF_DEBUG("Resolving external methods for #{:d} methods", this->class_method_map_.size());
 
   for (const std::pair<const std::string, Method*>& p : this->class_method_map_) {
@@ -133,7 +133,7 @@ void Parser::resolve_external_methods(void) {
   }
 }
 
-void Parser::resolve_external_fields(void) {
+void Parser::resolve_external_fields() {
   LIEF_DEBUG("Resolving external fields for #{:d} fields", this->class_field_map_.size());
 
   for (const std::pair<const std::string, Field*>& p : this->class_field_map_) {
@@ -155,7 +155,7 @@ void Parser::resolve_external_fields(void) {
   }
 }
 
-void Parser::resolve_types(void) {
+void Parser::resolve_types() {
   for (auto&& p : this->class_type_map_) {
     if(this->file_->has_class(p.first)) {
       p.second->underlying_array_type().cls_ = &this->file_->get_class(p.first);

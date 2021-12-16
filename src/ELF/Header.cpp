@@ -59,9 +59,9 @@ static const std::map<ELF_DATA, ENDIANNESS> endi_elf_to_lief {
 
 Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&)            = default;
-Header::~Header(void)                    = default;
+Header::~Header()                    = default;
 
-Header::Header(void) :
+Header::Header() :
   file_type_{E_TYPE::ET_NONE},
   machine_type_{ARCH::EM_NONE},
   object_file_version_{VERSION::EV_NONE},
@@ -121,16 +121,16 @@ Header::Header(const Elf64_Ehdr *header):
 }
 
 
-E_TYPE Header::file_type(void) const {
+E_TYPE Header::file_type() const {
   return this->file_type_;
 }
 
 
-ARCH Header::machine_type(void) const {
+ARCH Header::machine_type() const {
   return this->machine_type_;
 }
 
-OBJECT_TYPES Header::abstract_object_type(void) const {
+OBJECT_TYPES Header::abstract_object_type() const {
   try {
     return obj_elf_to_lief.at(this->file_type());
   } catch (const std::out_of_range&) {
@@ -139,7 +139,7 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
 }
 
 
-Header::abstract_architecture_t Header::abstract_architecture(void) const {
+Header::abstract_architecture_t Header::abstract_architecture() const {
   auto&& it = arch_elf_to_lief.find(this->machine_type());
   if (it == std::end(arch_elf_to_lief)) {
     LIEF_ERR("{}  is not supported!", to_string(this->machine_type()));
@@ -149,7 +149,7 @@ Header::abstract_architecture_t Header::abstract_architecture(void) const {
 }
 
 
-ENDIANNESS Header::abstract_endianness(void) const {
+ENDIANNESS Header::abstract_endianness() const {
   try {
     return endi_elf_to_lief.at(this->identity_data());
   } catch (const std::out_of_range&) {
@@ -158,27 +158,27 @@ ENDIANNESS Header::abstract_endianness(void) const {
 }
 
 
-VERSION Header::object_file_version(void) const {
+VERSION Header::object_file_version() const {
   return this->object_file_version_;
 }
 
 
-uint64_t Header::entrypoint(void) const {
+uint64_t Header::entrypoint() const {
   return this->entrypoint_;
 }
 
 
-uint64_t Header::program_headers_offset(void) const {
+uint64_t Header::program_headers_offset() const {
   return this->program_headers_offset_;
 }
 
 
-uint64_t Header::section_headers_offset(void) const {
+uint64_t Header::section_headers_offset() const {
   return this->section_headers_offset_;
 }
 
 
-uint32_t Header::processor_flag(void) const {
+uint32_t Header::processor_flag() const {
   return this->processor_flags_;
 }
 
@@ -205,7 +205,7 @@ bool Header::has(ARM_EFLAGS f) const {
   }
 }
 
-arm_flags_list_t Header::arm_flags_list(void) const {
+arm_flags_list_t Header::arm_flags_list() const {
   arm_flags_list_t flags;
 
   std::copy_if(
@@ -313,7 +313,7 @@ bool Header::has(MIPS_EFLAGS f) const {
   return (this->processor_flag() & fn) > 0;
 }
 
-mips_flags_list_t Header::mips_flags_list(void) const {
+mips_flags_list_t Header::mips_flags_list() const {
   mips_flags_list_t flags;
 
   std::copy_if(
@@ -335,7 +335,7 @@ bool Header::has(PPC64_EFLAGS f) const {
   return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
-ppc64_flags_list_t Header::ppc64_flags_list(void) const {
+ppc64_flags_list_t Header::ppc64_flags_list() const {
   ppc64_flags_list_t flags;
 
   std::copy_if(
@@ -357,7 +357,7 @@ bool Header::has(HEXAGON_EFLAGS f) const {
   return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
-hexagon_flags_list_t Header::hexagon_flags_list(void) const {
+hexagon_flags_list_t Header::hexagon_flags_list() const {
   hexagon_flags_list_t flags;
 
   std::copy_if(
@@ -371,59 +371,59 @@ hexagon_flags_list_t Header::hexagon_flags_list(void) const {
 }
 
 
-uint32_t Header::header_size(void) const {
+uint32_t Header::header_size() const {
   return this->header_size_;
 }
 
 
-uint32_t Header::program_header_size(void) const {
+uint32_t Header::program_header_size() const {
   return this->program_header_size_;
 }
 
 
-uint32_t Header::numberof_segments(void) const {
+uint32_t Header::numberof_segments() const {
   return this->numberof_segments_;
 }
 
-uint32_t Header::section_header_size(void) const {
+uint32_t Header::section_header_size() const {
   return this->section_header_size_;
 }
 
-uint32_t Header::numberof_sections(void) const {
+uint32_t Header::numberof_sections() const {
   return this->numberof_sections_;
 }
 
 
-uint32_t Header::section_name_table_idx(void) const {
+uint32_t Header::section_name_table_idx() const {
   return this->section_string_table_idx_;
 }
 
 
-const Header::identity_t& Header::identity(void) const {
+const Header::identity_t& Header::identity() const {
   return this->identity_;
 }
 
-Header::identity_t& Header::identity(void) {
+Header::identity_t& Header::identity() {
   return const_cast<Header::identity_t&>(static_cast<const Header*>(this)->identity());
 }
 
-ELF_CLASS Header::identity_class(void) const {
+ELF_CLASS Header::identity_class() const {
   return static_cast<ELF_CLASS>(this->identity_[static_cast<size_t>(IDENTITY::EI_CLASS)]);
 }
 
-ELF_DATA Header::identity_data(void) const {
+ELF_DATA Header::identity_data() const {
   return static_cast<ELF_DATA>(this->identity_[static_cast<size_t>(IDENTITY::EI_DATA)]);
 }
 
-VERSION Header::identity_version(void) const {
+VERSION Header::identity_version() const {
   return static_cast<VERSION>(this->identity_[static_cast<size_t>(IDENTITY::EI_VERSION)]);
 }
 
-OS_ABI Header::identity_os_abi(void) const {
+OS_ABI Header::identity_os_abi() const {
   return static_cast<OS_ABI>(this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)]);
 }
 
-uint32_t Header::identity_abi_version(void) const {
+uint32_t Header::identity_abi_version() const {
   return static_cast<uint32_t>(this->identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)]);
 }
 

@@ -20,40 +20,40 @@
 
 namespace LIEF {
 namespace PE {
-ExportEntry::~ExportEntry(void) = default;
+ExportEntry::~ExportEntry() = default;
 ExportEntry::ExportEntry(const ExportEntry&) = default;
 ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 
-ExportEntry::ExportEntry(void) = default;
+ExportEntry::ExportEntry() = default;
 
 ExportEntry::forward_information_t::operator bool() const {
   return library.size() > 0 or function.size() > 0;
 }
 
-uint16_t ExportEntry::ordinal(void) const {
+uint16_t ExportEntry::ordinal() const {
   return this->ordinal_;
 }
 
-uint32_t ExportEntry::address(void) const {
+uint32_t ExportEntry::address() const {
   return this->address_;
 }
 
-bool ExportEntry::is_extern(void) const {
+bool ExportEntry::is_extern() const {
   return this->is_extern_;
 }
 
-bool ExportEntry::is_forwarded(void) const {
+bool ExportEntry::is_forwarded() const {
   return this->forward_info_;
 }
 
-ExportEntry::forward_information_t ExportEntry::forward_information(void) const {
+ExportEntry::forward_information_t ExportEntry::forward_information() const {
   if (not this->is_forwarded()) {
     return {};
   }
   return this->forward_info_;
 }
 
-uint32_t ExportEntry::function_rva(void) const {
+uint32_t ExportEntry::function_rva() const {
   return this->function_rva_;
 }
 

@@ -25,7 +25,7 @@ PKCS9SigningTime::PKCS9SigningTime() :
 PKCS9SigningTime::PKCS9SigningTime(const PKCS9SigningTime&) = default;
 PKCS9SigningTime& PKCS9SigningTime::operator=(const PKCS9SigningTime&) = default;
 
-std::unique_ptr<Attribute> PKCS9SigningTime::clone(void) const {
+std::unique_ptr<Attribute> PKCS9SigningTime::clone() const {
   return std::unique_ptr<Attribute>(new PKCS9SigningTime{*this});
 }
 

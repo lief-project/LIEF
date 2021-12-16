@@ -22,21 +22,21 @@
 namespace LIEF {
 namespace MachO {
 
-DyldEnvironment::DyldEnvironment(void) = default;
+DyldEnvironment::DyldEnvironment() = default;
 DyldEnvironment& DyldEnvironment::operator=(const DyldEnvironment&) = default;
 DyldEnvironment::DyldEnvironment(const DyldEnvironment&) = default;
-DyldEnvironment::~DyldEnvironment(void) = default;
+DyldEnvironment::~DyldEnvironment() = default;
 
 DyldEnvironment::DyldEnvironment(const dylinker_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   value_{}
 {}
 
-DyldEnvironment* DyldEnvironment::clone(void) const {
+DyldEnvironment* DyldEnvironment::clone() const {
   return new DyldEnvironment(*this);
 }
 
-const std::string& DyldEnvironment::value(void) const {
+const std::string& DyldEnvironment::value() const {
   return this->value_;
 }
 

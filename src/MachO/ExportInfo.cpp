@@ -26,9 +26,9 @@
 namespace LIEF {
 namespace MachO {
 
-ExportInfo::~ExportInfo(void) = default;
+ExportInfo::~ExportInfo() = default;
 
-ExportInfo::ExportInfo(void) = default;
+ExportInfo::ExportInfo() = default;
 
 ExportInfo::ExportInfo(uint64_t address, uint64_t flags, uint64_t offset) :
   node_offset_{offset},
@@ -71,17 +71,17 @@ bool ExportInfo::has(EXPORT_SYMBOL_FLAGS flag) const {
   return this->flags_ & static_cast<uint64_t>(flag);
 }
 
-EXPORT_SYMBOL_KINDS ExportInfo::kind(void) const {
+EXPORT_SYMBOL_KINDS ExportInfo::kind() const {
   static constexpr size_t EXPORT_SYMBOL_FLAGS_KIND_MASK = 0x03u;
   return static_cast<EXPORT_SYMBOL_KINDS>(this->flags_ & EXPORT_SYMBOL_FLAGS_KIND_MASK);
 }
 
 
-uint64_t ExportInfo::node_offset(void) const {
+uint64_t ExportInfo::node_offset() const {
   return this->node_offset_;
 }
 
-uint64_t ExportInfo::flags(void) const {
+uint64_t ExportInfo::flags() const {
   return this->flags_;
 }
 
@@ -89,28 +89,28 @@ void ExportInfo::flags(uint64_t flags) {
   this->flags_ = flags;
 }
 
-uint64_t ExportInfo::address(void) const {
+uint64_t ExportInfo::address() const {
   return this->address_;
 }
 
-uint64_t ExportInfo::other(void) const {
+uint64_t ExportInfo::other() const {
   return this->other_;
 }
 
 
-Symbol* ExportInfo::alias(void) {
+Symbol* ExportInfo::alias() {
   return this->alias_;
 }
 
-const Symbol* ExportInfo::alias(void) const {
+const Symbol* ExportInfo::alias() const {
   return this->alias_;
 }
 
-DylibCommand* ExportInfo::alias_library(void) {
+DylibCommand* ExportInfo::alias_library() {
   return this->alias_location_;
 }
 
-const DylibCommand* ExportInfo::alias_library(void) const {
+const DylibCommand* ExportInfo::alias_library() const {
   return this->alias_location_;
 }
 
@@ -118,11 +118,11 @@ void ExportInfo::address(uint64_t addr) {
   this->address_ = addr;
 }
 
-bool ExportInfo::has_symbol(void) const {
+bool ExportInfo::has_symbol() const {
   return this->symbol_ != nullptr;
 }
 
-const Symbol& ExportInfo::symbol(void) const {
+const Symbol& ExportInfo::symbol() const {
   if (not this->has_symbol()) {
     throw not_found("No symbol associated with this export info");
   }
@@ -130,12 +130,12 @@ const Symbol& ExportInfo::symbol(void) const {
   return *this->symbol_;
 }
 
-Symbol& ExportInfo::symbol(void) {
+Symbol& ExportInfo::symbol() {
   return const_cast<Symbol&>(static_cast<const ExportInfo*>(this)->symbol());
 }
 
 
-ExportInfo::flag_list_t ExportInfo::flags_list(void) const {
+ExportInfo::flag_list_t ExportInfo::flags_list() const {
   flag_list_t flags;
 
   std::copy_if(

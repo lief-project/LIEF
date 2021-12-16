@@ -80,15 +80,15 @@ class vector_iostream {
 
   vector_iostream& flush();
 
-  size_t size(void) const;
+  size_t size() const;
 
   // seeks:
-  pos_type tellp(void);
+  pos_type tellp();
   vector_iostream& seekp(pos_type p);
   vector_iostream& seekp(vector_iostream::off_type p, std::ios_base::seekdir dir);
 
-  const std::vector<uint8_t>& raw(void) const;
-  std::vector<uint8_t>& raw(void);
+  const std::vector<uint8_t>& raw() const;
+  std::vector<uint8_t>& raw();
 
   void set_endian_swap(bool swap);
 
@@ -139,7 +139,7 @@ class prefixbuf : public std::streambuf {
   std::streambuf* sbuf;
   bool            need_prefix;
 
-  int sync(void);
+  int sync();
   int overflow(int c);
 };
 

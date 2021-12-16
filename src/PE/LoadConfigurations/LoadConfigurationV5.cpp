@@ -25,9 +25,9 @@ namespace PE {
 
 LoadConfigurationV5& LoadConfigurationV5::operator=(const LoadConfigurationV5&) = default;
 LoadConfigurationV5::LoadConfigurationV5(const LoadConfigurationV5&) = default;
-LoadConfigurationV5::~LoadConfigurationV5(void) = default;
+LoadConfigurationV5::~LoadConfigurationV5() = default;
 
-LoadConfigurationV5::LoadConfigurationV5(void) :
+LoadConfigurationV5::LoadConfigurationV5() :
   LoadConfigurationV4{},
   guard_rf_failure_routine_{0},
   guard_rf_failure_routine_function_pointer_{0},
@@ -36,27 +36,27 @@ LoadConfigurationV5::LoadConfigurationV5(void) :
   reserved2_{0}
 {}
 
-WIN_VERSION LoadConfigurationV5::version(void) const {
+WIN_VERSION LoadConfigurationV5::version() const {
   return LoadConfigurationV5::VERSION;
 }
 
-uint64_t LoadConfigurationV5::guard_rf_failure_routine(void) const {
+uint64_t LoadConfigurationV5::guard_rf_failure_routine() const {
   return this->guard_rf_failure_routine_;
 }
 
-uint64_t LoadConfigurationV5::guard_rf_failure_routine_function_pointer(void) const {
+uint64_t LoadConfigurationV5::guard_rf_failure_routine_function_pointer() const {
   return this->guard_rf_failure_routine_function_pointer_;
 }
 
-uint32_t LoadConfigurationV5::dynamic_value_reloctable_offset(void) const {
+uint32_t LoadConfigurationV5::dynamic_value_reloctable_offset() const {
   return this->dynamic_value_reloctable_offset_;
 }
 
-uint16_t LoadConfigurationV5::dynamic_value_reloctable_section(void) const {
+uint16_t LoadConfigurationV5::dynamic_value_reloctable_section() const {
   return this->dynamic_value_reloctable_section_;
 }
 
-uint16_t LoadConfigurationV5::reserved2(void) const {
+uint16_t LoadConfigurationV5::reserved2() const {
   return this->reserved2_;
 }
 

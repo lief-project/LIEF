@@ -16,8 +16,8 @@
 #include "LIEF/Object.hpp"
 
 namespace LIEF {
-Object::Object(void) = default;
+Object::Object() = default;
 Object::Object(const Object&) = default;
 Object& Object::operator=(const Object&) = default;
-Object::~Object(void) = default;
+Object::~Object() = default;
 }

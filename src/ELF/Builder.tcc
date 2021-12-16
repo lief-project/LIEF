@@ -49,7 +49,7 @@ namespace LIEF {
 namespace ELF {
 
 template<class ELF_T>
-void Builder::build(void) {
+void Builder::build() {
   std::string type = ((this->binary_->type_ == ELF_CLASS::ELFCLASS32) ? "ELF32" : "ELF64");
   LIEF_DEBUG("== Re-building {} ==", type);
   try {
@@ -286,7 +286,7 @@ void Builder::build(const Header& header) {;
 
 
 template<typename ELF_T>
-void Builder::build_sections(void) {
+void Builder::build_sections() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
@@ -416,7 +416,7 @@ void Builder::build_sections(void) {
 
 
 template<typename ELF_T>
-void Builder::build_segments(void) {
+void Builder::build_segments() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
@@ -475,7 +475,7 @@ void Builder::build_segments(void) {
 
 
 template<typename ELF_T>
-void Builder::build_static_symbols(void) {
+void Builder::build_static_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
@@ -579,7 +579,7 @@ void Builder::build_static_symbols(void) {
  *   - Dynamic relocation
  */
 template<typename ELF_T>
-void Builder::build_dynamic(void) {
+void Builder::build_dynamic() {
   LIEF_DEBUG("== Building dynamic ==");
 
   if (this->binary_->dynamic_entries_.size() > 0) {
@@ -592,7 +592,7 @@ void Builder::build_dynamic(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_dynamic_section(void) {
+void Builder::build_dynamic_section() {
   using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
@@ -807,7 +807,7 @@ void Builder::build_dynamic_section(void) {
 
 
 template<typename ELF_T>
-void Builder::build_symbol_hash(void) {
+void Builder::build_symbol_hash() {
   LIEF_DEBUG("== Build SYSV Hash ==");
   auto&& it_hash_section = std::find_if(
       std::begin(this->binary_->sections_),
@@ -1081,7 +1081,7 @@ void Builder::build_symbol_gnuhash(uint32_t new_symndx) {
 }
 
 template<typename ELF_T>
-void Builder::build_hash_table(void) {
+void Builder::build_hash_table() {
   LIEF_DEBUG("== Build hash table ==");
   auto&& it_hash = std::find_if(
       std::begin(this->binary_->sections_),
@@ -1116,7 +1116,7 @@ void Builder::build_hash_table(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_dynamic_symbols(void) {
+void Builder::build_dynamic_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
@@ -1240,7 +1240,7 @@ void Builder::build_dynamic_symbols(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_section_relocations(void) {
+void Builder::build_section_relocations() {
   using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
@@ -1366,7 +1366,7 @@ void Builder::build_section_relocations(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_dynamic_relocations(void) {
+void Builder::build_dynamic_relocations() {
   using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
@@ -1532,7 +1532,7 @@ void Builder::build_dynamic_relocations(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_pltgot_relocations(void) {
+void Builder::build_pltgot_relocations() {
   using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
@@ -1663,7 +1663,7 @@ void Builder::build_pltgot_relocations(void) {
 
 
 template<typename ELF_T>
-void Builder::build_symbol_requirement(void) {
+void Builder::build_symbol_requirement() {
   using Elf_Half    = typename ELF_T::Elf_Half;
   using Elf_Word    = typename ELF_T::Elf_Word;
   using Elf_Off     = typename ELF_T::Elf_Off;
@@ -1791,7 +1791,7 @@ void Builder::build_symbol_requirement(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_symbol_definition(void) {
+void Builder::build_symbol_definition() {
   using Elf_Half    = typename ELF_T::Elf_Half;
   using Elf_Word    = typename ELF_T::Elf_Word;
   using Elf_Addr    = typename ELF_T::Elf_Addr;
@@ -2046,7 +2046,7 @@ void Builder::relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntr
 }
 
 template<typename ELF_T>
-void Builder::build_interpreter(void) {
+void Builder::build_interpreter() {
   LIEF_DEBUG("[+] Building Interpreter");
   const std::string& inter_str = this->binary_->interpreter();
 
@@ -2104,7 +2104,7 @@ void Builder::build_interpreter(void) {
 }
 
 template<typename ELF_T>
-void Builder::build_notes(void) {
+void Builder::build_notes() {
   if (not this->binary_->has(SEGMENT_TYPES::PT_NOTE)) {
     return;
   }
@@ -2177,7 +2177,7 @@ void Builder::build_notes(void) {
 }
 
 template<class ELF_T>
-void Builder::build_symbol_version(void) {
+void Builder::build_symbol_version() {
 
   LIEF_DEBUG("[+] Building symbol version");
 
@@ -2225,7 +2225,7 @@ void Builder::build_symbol_version(void) {
 }
 
 template<class ELF_T>
-void Builder::build_overlay(void) {
+void Builder::build_overlay() {
 
   if (this->binary_->overlay_.size() == 0) {
     return;

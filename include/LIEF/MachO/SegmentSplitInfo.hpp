@@ -32,21 +32,21 @@ struct linkedit_data_command;
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   public:
-  SegmentSplitInfo(void);
+  SegmentSplitInfo();
   SegmentSplitInfo(const linkedit_data_command *cmd);
 
   SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
   SegmentSplitInfo(const SegmentSplitInfo& copy);
 
-  virtual SegmentSplitInfo* clone(void) const override;
+  virtual SegmentSplitInfo* clone() const override;
 
-  uint32_t data_offset(void) const;
-  uint32_t data_size(void) const;
+  uint32_t data_offset() const;
+  uint32_t data_size() const;
 
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
-  virtual ~SegmentSplitInfo(void);
+  virtual ~SegmentSplitInfo();
 
   bool operator==(const SegmentSplitInfo& rhs) const;
   bool operator!=(const SegmentSplitInfo& rhs) const;

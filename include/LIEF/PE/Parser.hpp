@@ -64,47 +64,47 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser(const std::string& file);
   Parser(const std::vector<uint8_t>& data, const std::string& name);
 
-  ~Parser(void);
-  Parser(void);
+  ~Parser();
+  Parser();
 
   void init(const std::string& name = "");
 
   template<typename PE_T>
-  void parse(void);
+  void parse();
 
-  void parse_exports(void);
-  void parse_sections(void);
-
-  template<typename PE_T>
-  bool parse_headers(void);
-
-  void parse_configuration(void);
+  void parse_exports();
+  void parse_sections();
 
   template<typename PE_T>
-  void parse_data_directories(void);
+  bool parse_headers();
+
+  void parse_configuration();
 
   template<typename PE_T>
-  void parse_import_table(void);
+  void parse_data_directories();
 
-  void parse_export_table(void);
-  void parse_debug(void);
+  template<typename PE_T>
+  void parse_import_table();
+
+  void parse_export_table();
+  void parse_debug();
   void parse_debug_code_view(Debug& debug_info);
   void parse_debug_pogo(Debug& debug_info);
 
   template<typename PE_T>
-  void parse_tls(void);
+  void parse_tls();
 
   template<typename PE_T>
-  void parse_load_config(void);
+  void parse_load_config();
 
-  void parse_relocations(void);
-  void parse_resources(void);
-  void parse_string_table(void);
-  void parse_symbols(void);
-  void parse_signature(void);
-  void parse_overlay(void);
-  void parse_dos_stub(void);
-  void parse_rich_header(void);
+  void parse_relocations();
+  void parse_resources();
+  void parse_string_table();
+  void parse_symbols();
+  void parse_signature();
+  void parse_overlay();
+  void parse_dos_stub();
+  void parse_rich_header();
 
   ResourceNode* parse_resource_node(
       const pe_resource_directory_table *directory_table,

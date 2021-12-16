@@ -22,7 +22,7 @@ namespace DataHandler {
 Node& Node::operator=(const Node&) = default;
 Node::Node(const Node&) = default;
 
-Node::Node(void) :
+Node::Node() :
   size_{0},
   offset_{0},
   type_{UNKNOWN}
@@ -35,17 +35,17 @@ Node::Node(uint64_t offset, uint64_t size, Type type) :
   type_{type}
 {}
 
-uint64_t Node::size(void) const {
+uint64_t Node::size() const {
   return this->size_;
 }
 
 
-uint64_t Node::offset(void) const {
+uint64_t Node::offset() const {
   return this->offset_;
 }
 
 
-Node::Type Node::type(void) const {
+Node::Type Node::type() const {
   return this->type_;
 }
 

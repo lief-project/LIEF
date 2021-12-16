@@ -60,10 +60,10 @@ static const std::map<CPU_TYPES, ENDIANNESS> endi_macho_to_lief {
 };
 
 
-Header::Header(void) = default;
+Header::Header() = default;
 Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&) = default;
-Header::~Header(void) = default;
+Header::~Header() = default;
 
 Header::Header(const mach_header_64 *header) :
   magic_{static_cast<MACHO_TYPES>(header->magic)},
@@ -88,38 +88,38 @@ Header::Header(const mach_header *header) :
 {}
 
 
-MACHO_TYPES Header::magic(void) const {
+MACHO_TYPES Header::magic() const {
   return this->magic_;
 }
-CPU_TYPES Header::cpu_type(void) const {
+CPU_TYPES Header::cpu_type() const {
   return this->cputype_;
 }
 
-uint32_t Header::cpu_subtype(void) const {
+uint32_t Header::cpu_subtype() const {
   return this->cpusubtype_;
 }
 
-FILE_TYPES Header::file_type(void) const {
+FILE_TYPES Header::file_type() const {
   return this->filetype_;
 }
 
-uint32_t Header::nb_cmds(void) const {
+uint32_t Header::nb_cmds() const {
   return this->ncmds_;
 }
 
-uint32_t Header::sizeof_cmds(void) const {
+uint32_t Header::sizeof_cmds() const {
   return this->sizeofcmds_;
 }
 
-uint32_t Header::flags(void) const {
+uint32_t Header::flags() const {
   return this->flags_;
 }
 
-uint32_t Header::reserved(void) const {
+uint32_t Header::reserved() const {
   return this->reserved_;
 }
 
-std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) const {
+std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const {
   if (arch_macho_to_lief.count(this->cpu_type()) != 0) {
     return arch_macho_to_lief.at(this->cpu_type());
   } else {
@@ -128,7 +128,7 @@ std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture(void) co
 }
 
 
-OBJECT_TYPES Header::abstract_object_type(void) const {
+OBJECT_TYPES Header::abstract_object_type() const {
   if (obj_macho_to_lief.count(this->file_type()) != 0) {
     return obj_macho_to_lief.at(this->file_type());
   } else {
@@ -136,7 +136,7 @@ OBJECT_TYPES Header::abstract_object_type(void) const {
   }
 }
 
-ENDIANNESS Header::abstract_endianness(void) const {
+ENDIANNESS Header::abstract_endianness() const {
   ENDIANNESS e = endi_macho_to_lief.at(this->cpu_type());
   auto not_endianness = [] (ENDIANNESS endian) {
     return endian == ENDIAN_LITTLE ? ENDIAN_BIG : ENDIAN_LITTLE;
@@ -150,7 +150,7 @@ ENDIANNESS Header::abstract_endianness(void) const {
 }
 
 
-Header::flags_list_t Header::flags_list(void) const {
+Header::flags_list_t Header::flags_list() const {
   Header::flags_list_t flags;
 
   std::copy_if(

@@ -32,7 +32,7 @@ struct load_configuration_v5;
 class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14901;
-  LoadConfigurationV5(void);
+  LoadConfigurationV5();
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV5(const load_configuration_v5<T>* header);
@@ -40,22 +40,22 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   LoadConfigurationV5& operator=(const LoadConfigurationV5&);
   LoadConfigurationV5(const LoadConfigurationV5&);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
   //! @brief VA of the failure routine
-  uint64_t guard_rf_failure_routine(void) const;
+  uint64_t guard_rf_failure_routine() const;
 
   //! @brief VA of the failure routine ``fptr``.
-  uint64_t guard_rf_failure_routine_function_pointer(void) const;
+  uint64_t guard_rf_failure_routine_function_pointer() const;
 
   //! @brief Offset of dynamic relocation table relative to the relocation table
-  uint32_t dynamic_value_reloctable_offset(void) const;
+  uint32_t dynamic_value_reloctable_offset() const;
 
   //! The section index of the dynamic value relocation table
-  uint16_t dynamic_value_reloctable_section(void) const;
+  uint16_t dynamic_value_reloctable_section() const;
 
   //! @brief Must be zero
-  uint16_t reserved2(void) const;
+  uint16_t reserved2() const;
 
   void guard_rf_failure_routine(uint64_t value);
   void guard_rf_failure_routine_function_pointer(uint64_t value);
@@ -63,7 +63,7 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   void dynamic_value_reloctable_section(uint16_t value);
   void reserved2(uint16_t value);
 
-  virtual ~LoadConfigurationV5(void);
+  virtual ~LoadConfigurationV5();
 
   virtual void accept(Visitor& visitor) const override;
 

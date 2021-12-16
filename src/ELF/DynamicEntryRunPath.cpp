@@ -26,7 +26,7 @@ namespace ELF {
 DynamicEntryRunPath& DynamicEntryRunPath::operator=(const DynamicEntryRunPath&) = default;
 DynamicEntryRunPath::DynamicEntryRunPath(const DynamicEntryRunPath&) = default;
 
-DynamicEntryRunPath::DynamicEntryRunPath(void) :
+DynamicEntryRunPath::DynamicEntryRunPath() :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
   runpath_{}
 {}
@@ -46,7 +46,7 @@ DynamicEntryRunPath::DynamicEntryRunPath(const std::vector<std::string>& paths) 
 
 
 
-const std::string& DynamicEntryRunPath::name(void) const {
+const std::string& DynamicEntryRunPath::name() const {
   return this->runpath_;
 }
 
@@ -55,7 +55,7 @@ void DynamicEntryRunPath::name(const std::string& name) {
   this->runpath_ = name;
 }
 
-const std::string& DynamicEntryRunPath::runpath(void) const {
+const std::string& DynamicEntryRunPath::runpath() const {
   return this->name();
 }
 
@@ -64,7 +64,7 @@ void DynamicEntryRunPath::runpath(const std::string& runpath) {
 }
 
 
-std::vector<std::string> DynamicEntryRunPath::paths(void) const {
+std::vector<std::string> DynamicEntryRunPath::paths() const {
   std::stringstream ss;
   ss.str(this->runpath());
   std::string path;

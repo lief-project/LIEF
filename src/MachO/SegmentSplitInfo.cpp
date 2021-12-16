@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-SegmentSplitInfo::SegmentSplitInfo(void) = default;
+SegmentSplitInfo::SegmentSplitInfo() = default;
 SegmentSplitInfo& SegmentSplitInfo::operator=(const SegmentSplitInfo&) = default;
 SegmentSplitInfo::SegmentSplitInfo(const SegmentSplitInfo&) = default;
-SegmentSplitInfo::~SegmentSplitInfo(void) = default;
+SegmentSplitInfo::~SegmentSplitInfo() = default;
 
 SegmentSplitInfo::SegmentSplitInfo(const linkedit_data_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -35,15 +35,15 @@ SegmentSplitInfo::SegmentSplitInfo(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
-SegmentSplitInfo* SegmentSplitInfo::clone(void) const {
+SegmentSplitInfo* SegmentSplitInfo::clone() const {
   return new SegmentSplitInfo(*this);
 }
 
-uint32_t SegmentSplitInfo::data_offset(void) const {
+uint32_t SegmentSplitInfo::data_offset() const {
   return this->data_offset_;
 }
 
-uint32_t SegmentSplitInfo::data_size(void) const {
+uint32_t SegmentSplitInfo::data_size() const {
   return this->data_size_;
 }
 

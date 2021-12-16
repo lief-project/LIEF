@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-DataInCode::DataInCode(void) = default;
+DataInCode::DataInCode() = default;
 DataInCode& DataInCode::operator=(const DataInCode&) = default;
 DataInCode::DataInCode(const DataInCode&) = default;
-DataInCode::~DataInCode(void) = default;
+DataInCode::~DataInCode() = default;
 
 DataInCode::DataInCode(const linkedit_data_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -35,15 +35,15 @@ DataInCode::DataInCode(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
-DataInCode* DataInCode::clone(void) const {
+DataInCode* DataInCode::clone() const {
   return new DataInCode(*this);
 }
 
-uint32_t DataInCode::data_offset(void) const {
+uint32_t DataInCode::data_offset() const {
   return this->data_offset_;
 }
 
-uint32_t DataInCode::data_size(void) const {
+uint32_t DataInCode::data_size() const {
   return this->data_size_;
 }
 
@@ -62,11 +62,11 @@ DataInCode& DataInCode::add(const DataCodeEntry& entry) {
 }
 
 
-DataInCode::it_const_entries DataInCode::entries(void) const {
+DataInCode::it_const_entries DataInCode::entries() const {
   return this->entries_;
 }
 
-DataInCode::it_entries DataInCode::entries(void) {
+DataInCode::it_entries DataInCode::entries() {
   return this->entries_;
 }
 

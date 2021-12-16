@@ -22,12 +22,12 @@
 namespace LIEF {
 namespace DEX {
 
-MapList::MapList(void) = default;
+MapList::MapList() = default;
 MapList::MapList(const MapList& other) = default;
 
 MapList& MapList::operator=(const MapList&) = default;
 
-MapList::it_items_t MapList::items(void) {
+MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
   items.reserve(this->items_.size());
   std::transform(
@@ -41,7 +41,7 @@ MapList::it_items_t MapList::items(void) {
 
 }
 
-MapList::it_const_items_t MapList::items(void) const {
+MapList::it_const_items_t MapList::items() const {
   std::vector<MapItem*> items;
   items.reserve(this->items_.size());
   std::transform(
@@ -100,7 +100,7 @@ std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
 }
 
 
-MapList::~MapList(void) = default;
+MapList::~MapList() = default;
 
 }
 }

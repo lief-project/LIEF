@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-VersionMin::VersionMin(void) = default;
+VersionMin::VersionMin() = default;
 VersionMin& VersionMin::operator=(const VersionMin&) = default;
 VersionMin::VersionMin(const VersionMin&) = default;
-VersionMin::~VersionMin(void) = default;
+VersionMin::~VersionMin() = default;
 
 VersionMin::VersionMin(const version_min_command *version_cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
@@ -44,12 +44,12 @@ VersionMin::VersionMin(const version_min_command *version_cmd) :
 {
 }
 
-VersionMin* VersionMin::clone(void) const {
+VersionMin* VersionMin::clone() const {
   return new VersionMin(*this);
 }
 
 
- const VersionMin::version_t& VersionMin::version(void) const {
+ const VersionMin::version_t& VersionMin::version() const {
    return this->version_;
  }
 
@@ -57,7 +57,7 @@ VersionMin* VersionMin::clone(void) const {
    this->version_ = version;
  }
 
- const VersionMin::version_t& VersionMin::sdk(void) const {
+ const VersionMin::version_t& VersionMin::sdk() const {
    return this->sdk_;
  }
 

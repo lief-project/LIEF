@@ -65,7 +65,7 @@
 
 namespace LIEF {
 namespace ELF {
-Binary::Binary(void)  = default;
+Binary::Binary()  = default;
 
 Binary::Binary(const std::string& name, ELF_CLASS type) : type_{type} {
   this->name_ = name;
@@ -76,17 +76,17 @@ Binary::Binary(const std::string& name, ELF_CLASS type) : type_{type} {
 }
 
 
-Header& Binary::header(void) {
+Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
 }
 
 
-const Header& Binary::header(void) const {
+const Header& Binary::header() const {
   return this->header_;
 }
 
 
-ELF_CLASS Binary::type(void) const {
+ELF_CLASS Binary::type() const {
   return this->type_;
 }
 
@@ -98,7 +98,7 @@ size_t Binary::hash(const std::string& name) {
   }
 }
 
-LIEF::sections_t Binary::get_abstract_sections(void) {
+LIEF::sections_t Binary::get_abstract_sections() {
   return {std::begin(this->sections_), std::end(this->sections_)};
 }
 
@@ -106,28 +106,28 @@ LIEF::sections_t Binary::get_abstract_sections(void) {
 // Sections
 // ========
 
-it_sections Binary::sections(void) {
+it_sections Binary::sections() {
   return this->sections_;
 }
 
 
-it_const_sections Binary::sections(void) const {
+it_const_sections Binary::sections() const {
   return this->sections_;
 }
 
 // Segments
 // ========
 
-it_segments Binary::segments(void) {
+it_segments Binary::segments() {
   return this->segments_;
 }
 
-it_const_segments Binary::segments(void) const {
+it_const_segments Binary::segments() const {
   return this->segments_;
 }
 
 
-LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   for (const Symbol& symbol : this->exported_symbols()) {
     if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
@@ -138,7 +138,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   for (const Symbol& symbol : this->imported_symbols()) {
     if (symbol.type() == ELF_SYMBOL_TYPES::STT_FUNC) {
@@ -149,7 +149,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
 }
 
 
-std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
+std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DynamicEntry& entry : this->dynamic_entries()) {
     if (dynamic_cast<const DynamicEntryLibrary*>(&entry)) {
@@ -163,11 +163,11 @@ std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
 // Dynamic Entries
 // ===============
 
-it_dynamic_entries Binary::dynamic_entries(void) {
+it_dynamic_entries Binary::dynamic_entries() {
   return this->dynamic_entries_;
 }
 
-it_const_dynamic_entries Binary::dynamic_entries(void) const {
+it_const_dynamic_entries Binary::dynamic_entries() const {
   return this->dynamic_entries_;
 }
 
@@ -371,31 +371,31 @@ void Binary::remove(NOTE_TYPES type) {
 // Statics
 // -------
 
-it_symbols Binary::static_symbols(void) {
+it_symbols Binary::static_symbols() {
   return this->static_symbols_;
 }
 
-it_const_symbols Binary::static_symbols(void) const {
+it_const_symbols Binary::static_symbols() const {
   return this->static_symbols_;
 }
 
 // Dynamics
 // --------
 
-it_symbols Binary::dynamic_symbols(void) {
+it_symbols Binary::dynamic_symbols() {
   return this->dynamic_symbols_;
 }
 
-it_const_symbols Binary::dynamic_symbols(void) const {
+it_const_symbols Binary::dynamic_symbols() const {
   return this->dynamic_symbols_;
 }
 
 
-it_symbols Binary::symbols(void) {
+it_symbols Binary::symbols() {
   return this->static_dyn_symbols();
 }
 
-it_const_symbols Binary::symbols(void) const {
+it_const_symbols Binary::symbols() const {
   return this->static_dyn_symbols();
 }
 
@@ -609,7 +609,7 @@ Symbol& Binary::get_static_symbol(const std::string& name) {
 }
 
 
-symbols_t Binary::static_dyn_symbols(void) const {
+symbols_t Binary::static_dyn_symbols() const {
   symbols_t symbols;
   symbols.reserve(this->dynamic_symbols().size() + this->static_symbols().size());
   for (Symbol& s : this->dynamic_symbols()) {
@@ -625,14 +625,14 @@ symbols_t Binary::static_dyn_symbols(void) const {
 // Exported
 // --------
 
-it_exported_symbols Binary::exported_symbols(void) {
+it_exported_symbols Binary::exported_symbols() {
 
   return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
 }
 
-it_const_exported_symbols Binary::exported_symbols(void) const {
+it_const_exported_symbols Binary::exported_symbols() const {
   return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_exported(); }
   };
@@ -643,13 +643,13 @@ it_const_exported_symbols Binary::exported_symbols(void) const {
 // Imported
 // --------
 
-it_imported_symbols Binary::imported_symbols(void) {
+it_imported_symbols Binary::imported_symbols() {
   return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
 }
 
-it_const_imported_symbols Binary::imported_symbols(void) const {
+it_const_imported_symbols Binary::imported_symbols() const {
   return {this->static_dyn_symbols(),
     [] (const Symbol* symbol) { return symbol->is_imported(); }
   };
@@ -659,33 +659,33 @@ it_const_imported_symbols Binary::imported_symbols(void) const {
 // Symbol version
 // --------------
 
-it_symbols_version Binary::symbols_version(void) {
+it_symbols_version Binary::symbols_version() {
   return this->symbol_version_table_;
 }
 
-it_const_symbols_version Binary::symbols_version(void) const {
+it_const_symbols_version Binary::symbols_version() const {
   return this->symbol_version_table_;
 }
 
 // Symbol version definition
 // -------------------------
 
-it_symbols_version_definition Binary::symbols_version_definition(void) {
+it_symbols_version_definition Binary::symbols_version_definition() {
   return this->symbol_version_definition_;
 }
 
-it_const_symbols_version_definition Binary::symbols_version_definition(void) const {
+it_const_symbols_version_definition Binary::symbols_version_definition() const {
   return this->symbol_version_definition_;
 }
 
 // Symbol version requirement
 // --------------------------
 
-it_symbols_version_requirement Binary::symbols_version_requirement(void) {
+it_symbols_version_requirement Binary::symbols_version_requirement() {
   return this->symbol_version_requirements_;
 }
 
-it_const_symbols_version_requirement Binary::symbols_version_requirement(void) const {
+it_const_symbols_version_requirement Binary::symbols_version_requirement() const {
   return this->symbol_version_requirements_;
 }
 
@@ -818,7 +818,7 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
 // Dynamics
 // --------
 
-it_dynamic_relocations Binary::dynamic_relocations(void) {
+it_dynamic_relocations Binary::dynamic_relocations() {
   return filter_iterator<relocations_t>{std::ref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC;
@@ -826,7 +826,7 @@ it_dynamic_relocations Binary::dynamic_relocations(void) {
   };
 }
 
-it_const_dynamic_relocations Binary::dynamic_relocations(void) const {
+it_const_dynamic_relocations Binary::dynamic_relocations() const {
   return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC;
@@ -951,7 +951,7 @@ Relocation* Binary::add_object_relocation(const Relocation& relocation, const Se
 
 // plt/got
 // -------
-it_pltgot_relocations Binary::pltgot_relocations(void) {
+it_pltgot_relocations Binary::pltgot_relocations() {
   return filter_iterator<relocations_t>{std::ref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT;
@@ -959,7 +959,7 @@ it_pltgot_relocations Binary::pltgot_relocations(void) {
   };
 }
 
-it_const_pltgot_relocations Binary::pltgot_relocations(void) const {
+it_const_pltgot_relocations Binary::pltgot_relocations() const {
   return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT;
@@ -970,7 +970,7 @@ it_const_pltgot_relocations Binary::pltgot_relocations(void) const {
 
 // objects
 // -------
-it_object_relocations Binary::object_relocations(void) {
+it_object_relocations Binary::object_relocations() {
   return filter_iterator<relocations_t>{std::ref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT;
@@ -978,7 +978,7 @@ it_object_relocations Binary::object_relocations(void) {
   };
 }
 
-it_const_object_relocations Binary::object_relocations(void) const {
+it_const_object_relocations Binary::object_relocations() const {
   return const_filter_iterator<const relocations_t>{std::cref(this->relocations_),
     [] (const Relocation* reloc) {
       return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT;
@@ -988,15 +988,15 @@ it_const_object_relocations Binary::object_relocations(void) const {
 
 // All relocations
 // ---------------
-it_relocations Binary::relocations(void) {
+it_relocations Binary::relocations() {
   return this->relocations_;
 }
 
-it_const_relocations Binary::relocations(void) const {
+it_const_relocations Binary::relocations() const {
   return this->relocations_;
 }
 
-LIEF::relocations_t Binary::get_abstract_relocations(void) {
+LIEF::relocations_t Binary::get_abstract_relocations() {
   LIEF::relocations_t relocations;
   relocations.reserve(this->relocations_.size());
   std::copy(
@@ -1008,7 +1008,7 @@ LIEF::relocations_t Binary::get_abstract_relocations(void) {
 }
 
 
-LIEF::symbols_t Binary::get_abstract_symbols(void) {
+LIEF::symbols_t Binary::get_abstract_symbols() {
   LIEF::symbols_t symbols;
   symbols.reserve(this->dynamic_symbols_.size() + this->static_symbols_.size());
   std::copy(
@@ -1045,12 +1045,12 @@ const Section& Binary::get_section(const std::string& name) const {
 
 }
 
-Section& Binary::text_section(void) {
+Section& Binary::text_section() {
   return this->get_section(".text");
 }
 
 
-Section& Binary::dynamic_section(void) {
+Section& Binary::dynamic_section() {
 
   auto&& it_dynamic_section = std::find_if(
       std::begin(this->sections_),
@@ -1067,7 +1067,7 @@ Section& Binary::dynamic_section(void) {
 
 }
 
-Section& Binary::hash_section(void) {
+Section& Binary::hash_section() {
   auto&& it_hash_section = std::find_if(
       std::begin(this->sections_),
       std::end(this->sections_),
@@ -1084,7 +1084,7 @@ Section& Binary::hash_section(void) {
 
 }
 
-Section& Binary::static_symbols_section(void) {
+Section& Binary::static_symbols_section() {
 
   auto&& it_symtab_section = std::find_if(
       std::begin(this->sections_),
@@ -1102,7 +1102,7 @@ Section& Binary::static_symbols_section(void) {
   return **it_symtab_section;
 }
 
-uint64_t Binary::imagebase(void) const {
+uint64_t Binary::imagebase() const {
   uint64_t imagebase = static_cast<uint64_t>(-1);
   for (const Segment* segment : this->segments_) {
     if (segment != nullptr and segment->type() == SEGMENT_TYPES::PT_LOAD) {
@@ -1112,7 +1112,7 @@ uint64_t Binary::imagebase(void) const {
   return imagebase;
 }
 
-uint64_t Binary::virtual_size(void) const {
+uint64_t Binary::virtual_size() const {
   uint64_t virtual_size = 0;
   for (const Segment* segment : this->segments_) {
     if (segment != nullptr and segment->type() == SEGMENT_TYPES::PT_LOAD) {
@@ -1124,7 +1124,7 @@ uint64_t Binary::virtual_size(void) const {
 }
 
 
-std::vector<uint8_t> Binary::raw(void) {
+std::vector<uint8_t> Binary::raw() {
   Builder builder{this};
   builder.build();
   return builder.get_build();
@@ -1176,7 +1176,7 @@ Section& Binary::add(const Section& section, bool loaded) {
 
 
 
-bool Binary::is_pie(void) const {
+bool Binary::is_pie() const {
   auto&& it_segment = std::find_if(
       std::begin(this->segments_),
       std::end(this->segments_),
@@ -1193,7 +1193,7 @@ bool Binary::is_pie(void) const {
 }
 
 
-bool Binary::has_nx(void) const {
+bool Binary::has_nx() const {
   auto&& it_stack = std::find_if(
       std::begin(this->segments_),
       std::end(this->segments_),
@@ -1609,7 +1609,7 @@ bool Binary::has_section_with_va(uint64_t va) const {
   return it_section != this->sections_.cend();
 }
 
-void Binary::strip(void) {
+void Binary::strip() {
   this->static_symbols_ = {};
 
   //for (Section* sec : this->sections_) {
@@ -1704,7 +1704,7 @@ uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) cons
 }
 
 
-bool Binary::has_interpreter(void) const {
+bool Binary::has_interpreter() const {
   auto&& it_segment_interp = std::find_if(
       std::begin(this->segments_),
       std::end(this->segments_),
@@ -1716,7 +1716,7 @@ bool Binary::has_interpreter(void) const {
   return it_segment_interp != std::end(this->segments_) and not this->interpreter_.empty();
 }
 
-const std::string& Binary::interpreter(void) const {
+const std::string& Binary::interpreter() const {
   if (not this->has_interpreter()) {
     throw not_found("Interpreter not found!");
   }
@@ -1964,7 +1964,7 @@ void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
   }
 }
 
-LIEF::Header Binary::get_abstract_header(void) const {
+LIEF::Header Binary::get_abstract_header() const {
   LIEF::Header header;
   const std::pair<ARCHITECTURES, std::set<MODES>>& am = this->header().abstract_architecture();
   header.architecture(am.first);
@@ -1983,7 +1983,7 @@ LIEF::Header Binary::get_abstract_header(void) const {
 }
 
 
-bool Binary::has_notes(void) const {
+bool Binary::has_notes() const {
   auto&& it_segment_note = std::find_if(
       std::begin(this->segments_),
       std::end(this->segments_),
@@ -1994,11 +1994,11 @@ bool Binary::has_notes(void) const {
   return it_segment_note != std::end(this->segments_) and this->notes().size() > 0;
 }
 
-it_const_notes Binary::notes(void) const {
+it_const_notes Binary::notes() const {
   return this->notes_;
 }
 
-it_notes Binary::notes(void) {
+it_notes Binary::notes() {
   return this->notes_;
 }
 
@@ -2007,7 +2007,7 @@ void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool Binary::use_gnu_hash(void) const {
+bool Binary::use_gnu_hash() const {
 
   auto&& it_gnu_hash = std::find_if(
       std::begin(this->dynamic_entries_),
@@ -2020,7 +2020,7 @@ bool Binary::use_gnu_hash(void) const {
 }
 
 
-const GnuHash& Binary::gnu_hash(void) const {
+const GnuHash& Binary::gnu_hash() const {
   if (this->use_gnu_hash()) {
     return this->gnu_hash_;
   } else {
@@ -2029,7 +2029,7 @@ const GnuHash& Binary::gnu_hash(void) const {
 }
 
 
-bool Binary::use_sysv_hash(void) const {
+bool Binary::use_sysv_hash() const {
   auto&& it_sysv_hash = std::find_if(
       std::begin(this->dynamic_entries_),
       std::end(this->dynamic_entries_),
@@ -2040,7 +2040,7 @@ bool Binary::use_sysv_hash(void) const {
   return it_sysv_hash != std::end(this->dynamic_entries_);
 }
 
-const SysvHash& Binary::sysv_hash(void) const {
+const SysvHash& Binary::sysv_hash() const {
   if (this->use_sysv_hash()) {
     return this->sysv_hash_;
   } else {
@@ -2202,7 +2202,7 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 }
 
 
-uint64_t Binary::last_offset_section(void) const {
+uint64_t Binary::last_offset_section() const {
   return std::accumulate(
       std::begin(this->sections_),
       std::end(this->sections_), 0llu,
@@ -2212,7 +2212,7 @@ uint64_t Binary::last_offset_section(void) const {
 }
 
 
-uint64_t Binary::last_offset_segment(void) const {
+uint64_t Binary::last_offset_segment() const {
   return std::accumulate(
       std::begin(this->segments_),
       std::end(this->segments_), 0llu,
@@ -2222,7 +2222,7 @@ uint64_t Binary::last_offset_segment(void) const {
 }
 
 
-uint64_t Binary::next_virtual_address(void) const {
+uint64_t Binary::next_virtual_address() const {
 
   uint64_t va = std::accumulate(
             std::begin(this->segments_),
@@ -2302,7 +2302,7 @@ LIEF::Binary::functions_t Binary::tor_functions(DYNAMIC_TAGS tag) const {
 }
 
 // Ctor
-LIEF::Binary::functions_t Binary::ctor_functions(void) const {
+LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
 
   LIEF::Binary::functions_t init = this->tor_functions(DYNAMIC_TAGS::DT_INIT_ARRAY);
@@ -2337,7 +2337,7 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::dtor_functions(void) const {
+LIEF::Binary::functions_t Binary::dtor_functions() const {
 
   LIEF::Binary::functions_t functions;
 
@@ -2415,7 +2415,7 @@ Relocation* Binary::get_relocation(const std::string& symbol_name) {
 }
 
 
-LIEF::Binary::functions_t Binary::armexid_functions(void) const {
+LIEF::Binary::functions_t Binary::armexid_functions() const {
   LIEF::Binary::functions_t funcs;
 
   static const auto expand_prel31 = [] (uint32_t word, uint32_t base) {
@@ -2447,7 +2447,7 @@ LIEF::Binary::functions_t Binary::armexid_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
+LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   LIEF::Binary::functions_t functions;
 
   if (not this->has(SEGMENT_TYPES::PT_GNU_EH_FRAME)) {
@@ -2660,7 +2660,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::functions(void) const {
+LIEF::Binary::functions_t Binary::functions() const {
 
   static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
     return lhs.address() < rhs.address();
@@ -2705,7 +2705,7 @@ LIEF::Binary::functions_t Binary::functions(void) const {
 }
 
 
-uint64_t Binary::eof_offset(void) const {
+uint64_t Binary::eof_offset() const {
   uint64_t last_offset_sections = 0;
 
   for (Section* section : this->sections_) {
@@ -2734,11 +2734,11 @@ uint64_t Binary::eof_offset(void) const {
 }
 
 
-bool Binary::has_overlay(void) const {
+bool Binary::has_overlay() const {
   return this->overlay_.size() > 0;
 }
 
-const Binary::overlay_t& Binary::overlay(void) const {
+const Binary::overlay_t& Binary::overlay() const {
   return this->overlay_;
 }
 
@@ -2747,7 +2747,7 @@ void Binary::overlay(Binary::overlay_t overlay) {
 }
 
 
-std::string Binary::shstrtab_name(void) const {
+std::string Binary::shstrtab_name() const {
   const Header& hdr = this->header();
   const size_t shstrtab_idx = hdr.section_name_table_idx();
   if (shstrtab_idx < this->sections_.size()) {
@@ -2994,7 +2994,7 @@ std::ostream& Binary::print(std::ostream& os) const {
 
 
 
-Binary::~Binary(void) {
+Binary::~Binary() {
   for (Relocation* relocation : this->relocations_) {
     delete relocation;
   }

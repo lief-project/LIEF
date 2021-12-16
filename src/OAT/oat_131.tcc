@@ -28,7 +28,7 @@ namespace LIEF {
 namespace OAT {
 
 template<>
-void Parser::parse_dex_files<OAT131_t>(void) {
+void Parser::parse_dex_files<OAT131_t>() {
   size_t nb_dex_files = this->oat_binary_->header_.nb_dex_files();
 
   uint64_t oat_dex_files_offset = this->oat_binary_->header().oat_dex_files_offset();

@@ -39,9 +39,9 @@ RelocationEntry& RelocationEntry::operator=(RelocationEntry other) {
   return *this;
 }
 
-RelocationEntry::~RelocationEntry(void) = default;
+RelocationEntry::~RelocationEntry() = default;
 
-RelocationEntry::RelocationEntry(void) :
+RelocationEntry::RelocationEntry() :
   LIEF::Relocation{},
   position_{0},
   type_{RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE},
@@ -72,17 +72,17 @@ void RelocationEntry::swap(RelocationEntry& other) {
 }
 
 
-uint16_t RelocationEntry::data(void) const {
+uint16_t RelocationEntry::data() const {
   return (static_cast<uint8_t>(this->type_) << 12 | static_cast<uint16_t>(this->position_));
 }
 
 
-uint16_t RelocationEntry::position(void) const {
+uint16_t RelocationEntry::position() const {
   return this->position_;
 }
 
 
-RELOCATIONS_BASE_TYPES RelocationEntry::type(void) const {
+RELOCATIONS_BASE_TYPES RelocationEntry::type() const {
   return this->type_;
 }
 
@@ -102,7 +102,7 @@ void RelocationEntry::type(RELOCATIONS_BASE_TYPES type) {
 
 
 
-uint64_t RelocationEntry::address(void) const {
+uint64_t RelocationEntry::address() const {
   if (this->relocation_ != nullptr) {
     return this->relocation_->virtual_address() + this->position();
   }
@@ -114,7 +114,7 @@ void RelocationEntry::address(uint64_t /*address*/) {
   LIEF_WARN("Setting address of a PE relocation is not implemented!");
 }
 
-size_t RelocationEntry::size(void) const {
+size_t RelocationEntry::size() const {
   switch (this->type()) {
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_LOW:
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH:

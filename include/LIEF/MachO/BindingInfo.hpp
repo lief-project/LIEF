@@ -36,7 +36,7 @@ class LIEF_API BindingInfo : public Object {
   friend class BinaryParser;
 
   public:
-    BindingInfo(void);
+    BindingInfo();
     BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
         uint64_t address,
         int64_t addend = 0,
@@ -49,49 +49,49 @@ class LIEF_API BindingInfo : public Object {
     void swap(BindingInfo& other);
 
     //! @brief Check if a @link MachO::SegmentCommand segment@endlink is associated with the BindingInfo
-    bool has_segment(void) const;
+    bool has_segment() const;
 
     //! @brief @link MachO::SegmentCommand Segment @endlink associated with the BindingInfo
-    const SegmentCommand& segment(void) const;
-    SegmentCommand&       segment(void);
+    const SegmentCommand& segment() const;
+    SegmentCommand&       segment();
 
     //! @brief Check if a @link MachO::DylibCommand library@endlink is tied with the BindingInfo
-    bool has_library(void) const;
+    bool has_library() const;
 
     //! @brief @link MachO::DylibCommand Library@endlink associated with the BindingInfo
-    const DylibCommand& library(void) const;
-    DylibCommand&       library(void);
+    const DylibCommand& library() const;
+    DylibCommand&       library();
 
     //! @brief Check if a @link MachO::Symbol symbol@endlink is associated with the BindingInfo
-    bool has_symbol(void) const;
+    bool has_symbol() const;
 
     //! @brief @link MachO::Symbol Symbol @endlink associated with the BindingInfo
-    const Symbol& symbol(void) const;
-    Symbol&       symbol(void);
+    const Symbol& symbol() const;
+    Symbol&       symbol();
 
     //! @brief Address of the binding
-    uint64_t address(void) const;
+    uint64_t address() const;
     void address(uint64_t addr);
 
     //! @brief Class of the binding (weak, lazy, ...)
-    BINDING_CLASS binding_class(void) const;
+    BINDING_CLASS binding_class() const;
     void binding_class(BINDING_CLASS bind_class);
 
     //! @brief Type of the binding. Most of the times it's BIND_TYPES::BIND_TYPE_POINTER
-    BIND_TYPES binding_type(void) const;
+    BIND_TYPES binding_type() const;
     void binding_type(BIND_TYPES type);
 
-    int32_t library_ordinal(void) const;
+    int32_t library_ordinal() const;
     void library_ordinal(int32_t ordinal);
 
     //! @brief Value added to the segment's virtual address when binding
-    int64_t addend(void) const;
+    int64_t addend() const;
     void addend(int64_t addend);
 
-    bool is_weak_import(void) const;
+    bool is_weak_import() const;
     void set_weak_import(bool val = true);
 
-    inline bool is_non_weak_definition(void) const {
+    inline bool is_non_weak_definition() const {
       return this->is_non_weak_definition_;
     }
 
@@ -102,7 +102,7 @@ class LIEF_API BindingInfo : public Object {
     //! Original relative offset of the binding opcodes
     uint64_t original_offset() const;
 
-    virtual ~BindingInfo(void);
+    virtual ~BindingInfo();
 
     bool operator==(const BindingInfo& rhs) const;
     bool operator!=(const BindingInfo& rhs) const;

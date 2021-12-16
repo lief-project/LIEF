@@ -125,7 +125,7 @@ std::string to_json_str(const Object& v) {
   return to_json(v).dump();
 }
 
-JsonVisitor::JsonVisitor(void) :
+JsonVisitor::JsonVisitor() :
   node_{}
 {}
 
@@ -136,7 +136,7 @@ JsonVisitor::JsonVisitor(const json& node) :
 JsonVisitor::JsonVisitor(const JsonVisitor&)            = default;
 JsonVisitor& JsonVisitor::operator=(const JsonVisitor&) = default;
 
-const json& JsonVisitor::get(void) const {
+const json& JsonVisitor::get() const {
   return this->node_;
 }
 

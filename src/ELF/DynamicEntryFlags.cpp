@@ -23,7 +23,7 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryFlags::DynamicEntryFlags(void) = default;
+DynamicEntryFlags::DynamicEntryFlags() = default;
 DynamicEntryFlags& DynamicEntryFlags::operator=(const DynamicEntryFlags&) = default;
 DynamicEntryFlags::DynamicEntryFlags(const DynamicEntryFlags&) = default;
 
@@ -45,7 +45,7 @@ bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
   return (static_cast<uint64_t>(f) & this->value()) > 0;
 }
 
-DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags(void) const {
+DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags() const {
   DynamicEntryFlags::flags_list_t flags;
 
 

@@ -34,9 +34,9 @@ namespace PE {
 
 ResourceDialogItem::ResourceDialogItem(const ResourceDialogItem&) = default;
 ResourceDialogItem& ResourceDialogItem::operator=(const ResourceDialogItem&) = default;
-ResourceDialogItem::~ResourceDialogItem(void) = default;
+ResourceDialogItem::~ResourceDialogItem() = default;
 
-ResourceDialogItem::ResourceDialogItem(void) :
+ResourceDialogItem::ResourceDialogItem() :
   is_extended_{false},
   help_id_{0},
   ext_style_{0},
@@ -84,15 +84,15 @@ ResourceDialogItem::ResourceDialogItem(const pe_dialog_item_template *header) :
 {}
 
 
-bool ResourceDialogItem::is_extended(void) const {
+bool ResourceDialogItem::is_extended() const {
   return this->is_extended_;
 }
 
-uint32_t ResourceDialogItem::extended_style(void) const {
+uint32_t ResourceDialogItem::extended_style() const {
   return this->ext_style_;
 }
 
-std::set<EXTENDED_WINDOW_STYLES> ResourceDialogItem::extended_style_list(void) const {
+std::set<EXTENDED_WINDOW_STYLES> ResourceDialogItem::extended_style_list() const {
   std::set<EXTENDED_WINDOW_STYLES> ext_styles;
   std::copy_if(
       std::begin(extended_window_styles_array),
@@ -108,11 +108,11 @@ bool ResourceDialogItem::has_extended_style(EXTENDED_WINDOW_STYLES style) const 
   return (this->ext_style_ & static_cast<uint32_t>(style)) != 0;
 }
 
-uint32_t ResourceDialogItem::style(void) const {
+uint32_t ResourceDialogItem::style() const {
   return this->style_;
 }
 
-std::set<WINDOW_STYLES> ResourceDialogItem::style_list(void) const {
+std::set<WINDOW_STYLES> ResourceDialogItem::style_list() const {
   std::set<WINDOW_STYLES> styles;
   std::copy_if(
       std::begin(window_styles_array),
@@ -128,31 +128,31 @@ bool ResourceDialogItem::has_style(WINDOW_STYLES style) const {
 }
 
 
-int16_t ResourceDialogItem::x(void) const {
+int16_t ResourceDialogItem::x() const {
   return this->x_;
 }
 
-int16_t ResourceDialogItem::y(void) const {
+int16_t ResourceDialogItem::y() const {
   return this->y_;
 }
 
-int16_t ResourceDialogItem::cx(void) const {
+int16_t ResourceDialogItem::cx() const {
   return this->cx_;
 }
 
-int16_t ResourceDialogItem::cy(void) const {
+int16_t ResourceDialogItem::cy() const {
   return this->cy_;
 }
 
 
-uint32_t ResourceDialogItem::id(void) const {
+uint32_t ResourceDialogItem::id() const {
   return this->id_;
 }
 
 
 // Extended API
 // ============
-uint32_t ResourceDialogItem::help_id(void) const {
+uint32_t ResourceDialogItem::help_id() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -160,7 +160,7 @@ uint32_t ResourceDialogItem::help_id(void) const {
 }
 
 
-const std::u16string& ResourceDialogItem::title(void) const {
+const std::u16string& ResourceDialogItem::title() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }

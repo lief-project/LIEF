@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-SourceVersion::SourceVersion(void) = default;
+SourceVersion::SourceVersion() = default;
 SourceVersion& SourceVersion::operator=(const SourceVersion&) = default;
 SourceVersion::SourceVersion(const SourceVersion&) = default;
-SourceVersion::~SourceVersion(void) = default;
+SourceVersion::~SourceVersion() = default;
 
 SourceVersion::SourceVersion(const source_version_command *version_cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
@@ -40,12 +40,12 @@ SourceVersion::SourceVersion(const source_version_command *version_cmd) :
   }}
 {}
 
-SourceVersion* SourceVersion::clone(void) const {
+SourceVersion* SourceVersion::clone() const {
   return new SourceVersion(*this);
 }
 
 
- const SourceVersion::version_t& SourceVersion::version(void) const {
+ const SourceVersion::version_t& SourceVersion::version() const {
    return this->version_;
  }
 

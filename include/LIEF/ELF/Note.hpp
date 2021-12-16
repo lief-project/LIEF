@@ -53,32 +53,32 @@ class LIEF_API Note : public Object {
   Note& operator=(Note copy);
   Note(const Note& copy);
 
-  virtual ~Note(void);
+  virtual ~Note();
 
   //! @brief Return the *name* of the note
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! @brief Return the type of the note. It could be one of the NOTE_TYPES values
-  NOTE_TYPES type(void) const;
+  NOTE_TYPES type() const;
 
   //! @brief Return the type of the note for core ELF (ET_CORE). It could be one of the NOTE_TYPES_CORE values
-  NOTE_TYPES_CORE type_core(void) const;
+  NOTE_TYPES_CORE type_core() const;
 
   //! @brief Return the description associated with the note
-  const description_t& description(void) const;
+  const description_t& description() const;
 
-  description_t& description(void);
+  description_t& description();
 
   //! True if the current note is associated with a core dump
-  bool is_core(void) const;
+  bool is_core() const;
 
   //! True if the current note is specific to Android.
   //!
   //! If true, ``details()`` returns a reference the LIEF::ELF::AndroidNote object
-  bool is_android(void) const;
+  bool is_android() const;
 
-  const NoteDetails& details(void) const;
-  NoteDetails& details(void);
+  const NoteDetails& details() const;
+  NoteDetails& details();
 
   void name(const std::string& name);
   void type(NOTE_TYPES type);
@@ -86,7 +86,7 @@ class LIEF_API Note : public Object {
   void description(const description_t& description);
 
   //! @brief Sizeof the **raw** note
-  uint64_t size(void) const;
+  uint64_t size() const;
 
   virtual void dump(std::ostream& os) const;
 

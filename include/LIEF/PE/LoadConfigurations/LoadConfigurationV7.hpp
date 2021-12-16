@@ -32,7 +32,7 @@ class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   public:
 
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_16237;
-  LoadConfigurationV7(void);
+  LoadConfigurationV7();
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV7(const load_configuration_v7<T>* header);
@@ -40,15 +40,15 @@ class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   LoadConfigurationV7& operator=(const LoadConfigurationV7&);
   LoadConfigurationV7(const LoadConfigurationV7&);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
-  uint32_t reserved3(void) const;
-  uint64_t addressof_unicode_string(void) const;
+  uint32_t reserved3() const;
+  uint64_t addressof_unicode_string() const;
 
   void reserved3(uint32_t value);
   void addressof_unicode_string(uint64_t value);
 
-  virtual ~LoadConfigurationV7(void);
+  virtual ~LoadConfigurationV7();
 
   virtual void accept(Visitor& visitor) const override;
 

@@ -28,9 +28,9 @@ namespace PE {
 
 ResourceIcon::ResourceIcon(const ResourceIcon&) = default;
 ResourceIcon& ResourceIcon::operator=(const ResourceIcon&) = default;
-ResourceIcon::~ResourceIcon(void) = default;
+ResourceIcon::~ResourceIcon() = default;
 
-ResourceIcon::ResourceIcon(void) :
+ResourceIcon::ResourceIcon() :
   width_{0},
   height_{0},
   color_count_{0},
@@ -97,47 +97,47 @@ ResourceIcon::ResourceIcon(const std::string& iconpath) {
   this->pixels_ = {std::begin(raw) + icon_header->offset, std::begin(raw) + icon_header->offset + icon_header->size};
 }
 
-uint32_t ResourceIcon::id(void) const {
+uint32_t ResourceIcon::id() const {
   return this->id_;
 }
 
-RESOURCE_LANGS ResourceIcon::lang(void) const {
+RESOURCE_LANGS ResourceIcon::lang() const {
   return this->lang_;
 }
 
-RESOURCE_SUBLANGS ResourceIcon::sublang(void) const {
+RESOURCE_SUBLANGS ResourceIcon::sublang() const {
   return this->sublang_;
 }
 
-uint8_t ResourceIcon::width(void) const {
+uint8_t ResourceIcon::width() const {
   return this->width_;
 }
 
-uint8_t ResourceIcon::height(void) const {
+uint8_t ResourceIcon::height() const {
   return this->height_;
 }
 
-uint8_t ResourceIcon::color_count(void) const {
+uint8_t ResourceIcon::color_count() const {
   return this->color_count_;
 }
 
-uint8_t ResourceIcon::reserved(void) const {
+uint8_t ResourceIcon::reserved() const {
   return this->reserved_;
 }
 
-uint16_t ResourceIcon::planes(void) const {
+uint16_t ResourceIcon::planes() const {
   return this->planes_;
 }
 
-uint16_t ResourceIcon::bit_count(void) const {
+uint16_t ResourceIcon::bit_count() const {
   return this->bit_count_;
 }
 
-uint32_t ResourceIcon::size(void) const {
+uint32_t ResourceIcon::size() const {
   return this->pixels_.size();
 }
 
-const std::vector<uint8_t>& ResourceIcon::pixels(void) const {
+const std::vector<uint8_t>& ResourceIcon::pixels() const {
   return this->pixels_;
 }
 

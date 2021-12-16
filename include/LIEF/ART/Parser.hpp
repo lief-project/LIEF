@@ -42,27 +42,27 @@ class LIEF_API Parser {
     Parser(const Parser& copy)            = delete;
 
   private:
-    Parser(void);
+    Parser();
     Parser(const std::string& file);
     Parser(const std::vector<uint8_t>& data, const std::string& name);
-    virtual ~Parser(void);
+    virtual ~Parser();
 
     void init(const std::string& name, art_version_t version);
 
     template<typename ART_T>
-    void parse_file(void);
+    void parse_file();
 
     template<typename ART_T>
-    size_t parse_header(void);
+    size_t parse_header();
 
     template<typename ART_T, typename PTR_T>
-    void parse_sections(void);
+    void parse_sections();
 
     template<typename ART_T, typename PTR_T>
-    void parse_roots(void);
+    void parse_roots();
 
     template<typename ART_T, typename PTR_T>
-    void parse_methods(void);
+    void parse_methods();
 
     // Section parsing
     template<typename ART_T, typename PTR_T>

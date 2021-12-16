@@ -91,7 +91,7 @@ static const std::map<MACHINE_TYPES, ENDIANNESS> arch_pe_to_endi_lief {
 };
 
 
-Binary::Binary(void) :
+Binary::Binary() :
   dos_header_{},
   rich_header_{},
   header_{},
@@ -124,7 +124,7 @@ Binary::Binary(void) :
 }
 
 
-Binary::~Binary(void) {
+Binary::~Binary() {
   for (Section *section : this->sections_) {
     delete section;
   }
@@ -146,7 +146,7 @@ Binary::~Binary(void) {
   }
 }
 
-PE_TYPE Binary::type(void) const {
+PE_TYPE Binary::type() const {
   return this->type_;
 }
 
@@ -214,12 +214,12 @@ void Binary::write(const std::string& filename) {
   builder.write(filename);
 }
 
-TLS& Binary::tls(void) {
+TLS& Binary::tls() {
   return const_cast<TLS&>(static_cast<const Binary*>(this)->tls());
 }
 
 
-const TLS& Binary::tls(void) const {
+const TLS& Binary::tls() const {
   return this->tls_;
 }
 
@@ -235,7 +235,7 @@ uint64_t Binary::va_to_offset(uint64_t VA) {
   return this->rva_to_offset(rva);
 }
 
-uint64_t Binary::imagebase(void) const {
+uint64_t Binary::imagebase() const {
   return this->optional_header().imagebase();
 }
 
@@ -369,67 +369,67 @@ bool Binary::has(DATA_DIRECTORY index) const {
   return it != std::end(this->data_directories_);
 }
 
-bool Binary::has_rich_header(void) const {
+bool Binary::has_rich_header() const {
   return this->has_rich_header_;
 }
 
-bool Binary::has_tls(void) const {
+bool Binary::has_tls() const {
   return this->has_tls_;
 }
 
-bool Binary::has_imports(void) const {
+bool Binary::has_imports() const {
   return this->has_imports_;
 }
 
-bool Binary::has_signatures(void) const {
+bool Binary::has_signatures() const {
   return not this->signatures_.empty();
 }
 
-bool Binary::has_exports(void) const {
+bool Binary::has_exports() const {
   return this->has_exports_;
 }
 
-bool Binary::has_resources(void) const {
+bool Binary::has_resources() const {
   return this->has_resources_ and this->resources_ != nullptr;
 }
 
-bool Binary::has_exceptions(void) const {
+bool Binary::has_exceptions() const {
   return this->has(DATA_DIRECTORY::EXCEPTION_TABLE);
   //return this->has_exceptions_;
 }
 
 
-bool Binary::has_relocations(void) const {
+bool Binary::has_relocations() const {
   return this->has_relocations_;
 }
 
-bool Binary::has_debug(void) const {
+bool Binary::has_debug() const {
   return this->has_debug_;
 }
 
-bool Binary::is_reproducible_build(void) const {
+bool Binary::is_reproducible_build() const {
   return this->is_reproducible_build_;
 }
 
-bool Binary::has_configuration(void) const {
+bool Binary::has_configuration() const {
   return this->has_configuration_ and this->load_configuration_ != nullptr;
 }
 
-const LoadConfiguration& Binary::load_configuration(void) const {
+const LoadConfiguration& Binary::load_configuration() const {
   if (not this->has_configuration()) {
     throw not_found("The binary doesn't have load configuration");
   }
   return *this->load_configuration_;
 }
 
-LoadConfiguration& Binary::load_configuration(void) {
+LoadConfiguration& Binary::load_configuration() {
   return const_cast<LoadConfiguration&>(static_cast<const Binary*>(this)->load_configuration());
 }
 
 //
 // Interface with LIEF::Binary
 //
-LIEF::symbols_t Binary::get_abstract_symbols(void) {
+LIEF::symbols_t Binary::get_abstract_symbols() {
   LIEF::symbols_t lief_symbols;
   for (Symbol& s : this->symbols_) {
     lief_symbols.push_back(&s);
@@ -451,16 +451,16 @@ LIEF::symbols_t Binary::get_abstract_symbols(void) {
 // Sections
 // ========
 
-it_sections Binary::sections(void) {
+it_sections Binary::sections() {
   return this->sections_;
 }
 
 
-it_const_sections Binary::sections(void) const {
+it_const_sections Binary::sections() const {
   return this->sections_;
 }
 
-LIEF::sections_t Binary::get_abstract_sections(void) {
+LIEF::sections_t Binary::get_abstract_sections() {
   return {std::begin(this->sections_), std::end(this->sections_)};
 }
 
@@ -485,7 +485,7 @@ const Section& Binary::get_section(const std::string& name) const {
 }
 
 
-const Section& Binary::import_section(void) const {
+const Section& Binary::import_section() const {
   if (not this->has_imports()) {
     throw not_found("Current binary doesn't have Import directory");
   }
@@ -494,7 +494,7 @@ const Section& Binary::import_section(void) const {
 }
 
 
-Section& Binary::import_section(void) {
+Section& Binary::import_section() {
   return const_cast<Section&>(static_cast<const Binary*>(this)->import_section());
 }
 
@@ -503,42 +503,42 @@ Section& Binary::import_section(void) {
 
 // Dos Header
 // ----------
-DosHeader& Binary::dos_header(void) {
+DosHeader& Binary::dos_header() {
   return const_cast<DosHeader&>(static_cast<const Binary*>(this)->dos_header());
 }
 
 
-const DosHeader& Binary::dos_header(void) const {
+const DosHeader& Binary::dos_header() const {
   return this->dos_header_;
 }
 
 
 // Standard header
 // ---------------
-Header& Binary::header(void) {
+Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
 }
 
 
-const Header& Binary::header(void) const {
+const Header& Binary::header() const {
   return this->header_;
 }
 
 // Optional Header
 // ---------------
-const OptionalHeader& Binary::optional_header(void) const {
+const OptionalHeader& Binary::optional_header() const {
   return this->optional_header_;
 }
 
 
-OptionalHeader& Binary::optional_header(void) {
+OptionalHeader& Binary::optional_header() {
   return const_cast<OptionalHeader&>(static_cast<const Binary*>(this)->optional_header());
 }
 
 
 
 
-uint64_t Binary::virtual_size(void) const {
+uint64_t Binary::virtual_size() const {
   uint64_t size = 0;
   size += this->dos_header().addressof_new_exeheader();
   size += sizeof(pe_header);
@@ -555,7 +555,7 @@ uint64_t Binary::virtual_size(void) const {
 }
 
 
-uint32_t Binary::sizeof_headers(void) const {
+uint32_t Binary::sizeof_headers() const {
   uint32_t size = 0;
   size += this->dos_header().addressof_new_exeheader();
   size += sizeof(pe_header);
@@ -629,7 +629,7 @@ void Binary::remove(const Section& section, bool clear) {
   this->optional_header().sizeof_image(static_cast<uint32_t>(this->virtual_size()));
 }
 
-void Binary::make_space_for_new_section(void) {
+void Binary::make_space_for_new_section() {
   const uint32_t shift = align(sizeof(pe_section), this->optional_header().file_alignment());
   LIEF_DEBUG("Making space for a new section header");
   LIEF_DEBUG("  -> Shifting all sections by 0x{:x}", shift);
@@ -784,12 +784,12 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 //
 //////////////////////////////////
 
-it_relocations Binary::relocations(void) {
+it_relocations Binary::relocations() {
   return this->relocations_;
 }
 
 
-it_const_relocations Binary::relocations(void) const {
+it_const_relocations Binary::relocations() const {
   return this->relocations_;
 }
 
@@ -806,7 +806,7 @@ Relocation& Binary::add_relocation(const Relocation& relocation) {
 //}
 
 
-void Binary::remove_all_relocations(void) {
+void Binary::remove_all_relocations() {
   for (Relocation* r : this->relocations_) {
     delete r;
   }
@@ -814,7 +814,7 @@ void Binary::remove_all_relocations(void) {
 }
 
 
-LIEF::relocations_t Binary::get_abstract_relocations(void) {
+LIEF::relocations_t Binary::get_abstract_relocations() {
   LIEF::relocations_t abstract_relocs;
   for (Relocation& relocation : this->relocations()) {
     for (RelocationEntry& entry : relocation.entries()) {
@@ -827,11 +827,11 @@ LIEF::relocations_t Binary::get_abstract_relocations(void) {
 // Imports
 // =======
 
-it_imports Binary::imports(void) {
+it_imports Binary::imports() {
   return {this->imports_};
 }
 
-it_const_imports Binary::imports(void) const {
+it_const_imports Binary::imports() const {
   return {this->imports_};
 }
 
@@ -865,7 +865,7 @@ void Binary::remove_library(const std::string&) {
   throw LIEF::not_implemented("To implement");
 }
 
-void Binary::remove_all_libraries(void) {
+void Binary::remove_all_libraries() {
   this->imports_ = {};
 }
 
@@ -987,12 +987,12 @@ const Import& Binary::get_import(const std::string& import_name) const {
 }
 
 
-Export& Binary::get_export(void) {
+Export& Binary::get_export() {
   return const_cast<Export&>(static_cast<const Binary*>(this)->get_export());
 }
 
 
-const Export& Binary::get_export(void) const {
+const Export& Binary::get_export() const {
   return this->export_;
 }
 
@@ -1013,11 +1013,11 @@ void Binary::set_resources(const ResourceData& resource) {
   this->resources_ = new ResourceData{resource};
 }
 
-ResourceNode& Binary::resources(void) {
+ResourceNode& Binary::resources() {
   return const_cast<ResourceNode&>(static_cast<const Binary*>(this)->resources());
 }
 
-const ResourceNode& Binary::resources(void) const {
+const ResourceNode& Binary::resources() const {
   if (this->resources_ != nullptr) {
     return *this->resources_;
   } else {
@@ -1031,21 +1031,21 @@ const ResourceNode& Binary::resources(void) const {
 // Methods to manage DataDirectories
 //
 /////////////////////////////////////
-it_data_directories Binary::data_directories(void) {
+it_data_directories Binary::data_directories() {
   return it_data_directories{this->data_directories_};
 }
 
-it_const_data_directories Binary::data_directories(void) const {
+it_const_data_directories Binary::data_directories() const {
   return it_const_data_directories{this->data_directories_};
 }
 
 
-debug_entries_t& Binary::debug(void) {
+debug_entries_t& Binary::debug() {
   return const_cast<debug_entries_t&>(static_cast<const Binary*>(this)->debug());
 }
 
 
-const debug_entries_t& Binary::debug(void) const {
+const debug_entries_t& Binary::debug() const {
   return this->debug_;
 }
 
@@ -1055,7 +1055,7 @@ const debug_entries_t& Binary::debug(void) const {
 //
 /////////////////////
 
-it_const_signatures Binary::signatures(void) const {
+it_const_signatures Binary::signatures() const {
   return this->signatures_;
 }
 
@@ -1291,17 +1291,17 @@ return flags;
 }
 
 
-std::vector<Symbol>& Binary::symbols(void) {
+std::vector<Symbol>& Binary::symbols() {
   return const_cast<std::vector<Symbol>&>(static_cast<const Binary*>(this)->symbols());
 }
 
 
-const std::vector<Symbol>& Binary::symbols(void) const {
+const std::vector<Symbol>& Binary::symbols() const {
   return this->symbols_;
 }
 
 
-LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   if (this->has_exports()) {
     for (const ExportEntry& entry : this->get_export().entries()) {
@@ -1314,7 +1314,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
   return result;
 }
 
-LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   if (this->has_imports()) {
     for (const Import& import : this->imports()) {
@@ -1331,7 +1331,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
 }
 
 
-std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
+std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const Import& import : this->imports()) {
     result.push_back(import.name());
@@ -1339,7 +1339,7 @@ std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
   return result;
 }
 
-LIEF::Header Binary::get_abstract_header(void) const {
+LIEF::Header Binary::get_abstract_header() const {
   LIEF::Header header;
 
   try {
@@ -1392,7 +1392,7 @@ void Binary::hook_function(const std::string& library, const std::string& functi
 
 // LIEF Interface
 // ==============
-uint64_t Binary::entrypoint(void) const {
+uint64_t Binary::entrypoint() const {
   return this->optional_header().imagebase() + this->optional_header().addressof_entrypoint();
 }
 
@@ -1467,33 +1467,33 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
 
 }
 
-bool Binary::is_pie(void) const {
+bool Binary::is_pie() const {
   return this->optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE);
 }
 
-bool Binary::has_nx(void) const {
+bool Binary::has_nx() const {
   return this->optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_NX_COMPAT);
 }
 
 // Overlay
 // =======
 
-const std::vector<uint8_t>& Binary::overlay(void) const {
+const std::vector<uint8_t>& Binary::overlay() const {
   return this->overlay_;
 }
 
-std::vector<uint8_t>& Binary::overlay(void) {
+std::vector<uint8_t>& Binary::overlay() {
   return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->overlay());
 }
 
 // Dos stub
 // ========
 
-const std::vector<uint8_t>& Binary::dos_stub(void) const {
+const std::vector<uint8_t>& Binary::dos_stub() const {
   return this->dos_stub_;
 }
 
-std::vector<uint8_t>& Binary::dos_stub(void) {
+std::vector<uint8_t>& Binary::dos_stub() {
   return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->dos_stub());
 }
 
@@ -1504,11 +1504,11 @@ void Binary::dos_stub(const std::vector<uint8_t>& content) {
 
 // Rich Header
 // -----------
-RichHeader& Binary::rich_header(void) {
+RichHeader& Binary::rich_header() {
   return const_cast<RichHeader&>(static_cast<const Binary*>(this)->rich_header());
 }
 
-const RichHeader& Binary::rich_header(void) const {
+const RichHeader& Binary::rich_header() const {
   return this->rich_header_;
 }
 
@@ -1520,14 +1520,14 @@ void Binary::rich_header(const RichHeader& rich_header) {
 // Resource manager
 // ===============
 
-ResourcesManager Binary::resources_manager(void) {
+ResourcesManager Binary::resources_manager() {
   if (this->resources_ == nullptr or not this->has_resources()) {
     throw not_found("There is no resources in the binary");
   }
   return ResourcesManager{this->resources_};
 }
 
-const ResourcesManager Binary::resources_manager(void) const {
+const ResourcesManager Binary::resources_manager() const {
   if (this->resources_ == nullptr or not this->has_resources()) {
     throw not_found("There is no resources in the binary");
   }
@@ -1535,7 +1535,7 @@ const ResourcesManager Binary::resources_manager(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::ctor_functions(void) const {
+LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
 
   if (this->has_tls()) {
@@ -1552,7 +1552,7 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::functions(void) const {
+LIEF::Binary::functions_t Binary::functions() const {
 
   static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
     return lhs.address() < rhs.address();
@@ -1581,7 +1581,7 @@ LIEF::Binary::functions_t Binary::functions(void) const {
   return {std::begin(functions_set), std::end(functions_set)};
 }
 
-LIEF::Binary::functions_t Binary::exception_functions(void) const {
+LIEF::Binary::functions_t Binary::exception_functions() const {
   LIEF::Binary::functions_t functions;
   if (not this->has_exceptions()) {
     return functions;

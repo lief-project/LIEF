@@ -48,23 +48,23 @@ class LIEF_API Binary : public Object {
   using functions_t = std::vector<Function>;
 
   public:
-  Binary(void);
-  virtual ~Binary(void);
+  Binary();
+  virtual ~Binary();
 
   Binary& operator=(const Binary&);
   Binary(const Binary&);
 
   //! @brief Executable format (ELF, PE, Mach-O) of the underlying binary
-  EXE_FORMATS format(void) const;
+  EXE_FORMATS format() const;
 
   //! @brief Return the abstract header of the binary
-  Header header(void) const;
+  Header header() const;
 
   //! @brief Return list of symbols whose elements **can** be modified
-  it_symbols symbols(void);
+  it_symbols symbols();
 
   //! @brief Return list of symbols whose elements **can't** be modified
-  it_const_symbols  symbols(void) const;
+  it_const_symbols  symbols() const;
 
   //! @brief Check if a Symbol with the given name exists
   bool has_symbol(const std::string& name) const;
@@ -75,32 +75,32 @@ class LIEF_API Binary : public Object {
   Symbol& get_symbol(const std::string& name);
 
   //! @brief Returns binary's sections
-  it_sections       sections(void);
-  it_const_sections sections(void) const;
+  it_sections       sections();
+  it_const_sections sections() const;
 
   virtual void remove_section(const std::string& name, bool clear = false) = 0;
 
   //! @brief Returns binary's relocations
-  it_relocations       relocations(void);
-  it_const_relocations relocations(void) const;
+  it_relocations       relocations();
+  it_const_relocations relocations() const;
 
   //! @brief Binary's entrypoint (if any)
-  virtual uint64_t entrypoint(void) const = 0;
+  virtual uint64_t entrypoint() const = 0;
 
   //! @brief Binary's name
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! @brief Binary's original size
-  uint64_t original_size(void) const;
+  uint64_t original_size() const;
 
   //! @brief Return functions's name exported by the binary
-  functions_t exported_functions(void) const;
+  functions_t exported_functions() const;
 
   //! @brief Return libraries which are imported by the binary
-  std::vector<std::string> imported_libraries(void) const;
+  std::vector<std::string> imported_libraries() const;
 
   //! @brief Return functions's name imported by the binary
-  functions_t imported_functions(void) const;
+  functions_t imported_functions() const;
 
   //! @brief Return the address of the given function name
   virtual uint64_t get_function_address(const std::string& func_name) const;
@@ -139,16 +139,16 @@ class LIEF_API Binary : public Object {
   void original_size(uint64_t size);
 
   //! @brief Check if the binary is position independent
-  virtual bool is_pie(void) const = 0;
+  virtual bool is_pie() const = 0;
 
   //! @brief Check if the binary uses ``NX`` protection
-  virtual bool has_nx(void) const = 0;
+  virtual bool has_nx() const = 0;
 
   //! Default image base address if the ASLR is not enabled.
   virtual uint64_t imagebase() const = 0;
 
   //! Constructor functions that are called prior any other functions
-  virtual LIEF::Binary::functions_t ctor_functions(void) const = 0;
+  virtual LIEF::Binary::functions_t ctor_functions() const = 0;
 
   //! Convert the given offset into a virtual address.
   //!
@@ -167,14 +167,14 @@ class LIEF_API Binary : public Object {
 
   uint64_t original_size_;
 
-  virtual Header                    get_abstract_header(void) const = 0;
-  virtual symbols_t                 get_abstract_symbols(void)      = 0;
-  virtual sections_t                get_abstract_sections(void)     = 0;
-  virtual relocations_t             get_abstract_relocations(void)  = 0;
+  virtual Header                    get_abstract_header() const = 0;
+  virtual symbols_t                 get_abstract_symbols()      = 0;
+  virtual sections_t                get_abstract_sections()     = 0;
+  virtual relocations_t             get_abstract_relocations()  = 0;
 
-  virtual functions_t  get_abstract_exported_functions(void) const = 0;
-  virtual functions_t  get_abstract_imported_functions(void) const = 0;
-  virtual std::vector<std::string>  get_abstract_imported_libraries(void) const = 0;
+  virtual functions_t  get_abstract_exported_functions() const = 0;
+  virtual functions_t  get_abstract_imported_functions() const = 0;
+  virtual std::vector<std::string>  get_abstract_imported_libraries() const = 0;
 
 
 };

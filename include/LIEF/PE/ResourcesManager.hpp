@@ -46,12 +46,12 @@ class LIEF_API ResourcesManager : public Object {
   static RESOURCE_SUBLANGS sublang_from_id(size_t id);
 
   public:
-  ResourcesManager(void) = delete;
+  ResourcesManager() = delete;
   ResourcesManager(ResourceNode *rsrc);
 
   ResourcesManager(const ResourcesManager&);
   ResourcesManager& operator=(const ResourcesManager&);
-  virtual ~ResourcesManager(void);
+  virtual ~ResourcesManager();
 
   // Enhancemed API to explore resource tree
   // =======================================
@@ -61,13 +61,13 @@ class LIEF_API ResourcesManager : public Object {
   const ResourceNode& get_node_type(RESOURCE_TYPES type) const;
 
   //! @brief Return list of LIEF::PE::RESOURCE_TYPES present in the resources
-  std::set<RESOURCE_TYPES> get_types_available(void) const;
+  std::set<RESOURCE_TYPES> get_types_available() const;
 
   //! @brief Return list of LIEF::PE::RESOURCE_LANGS present in the resources
-  std::set<RESOURCE_LANGS> get_langs_available(void) const;
+  std::set<RESOURCE_LANGS> get_langs_available() const;
 
   //! @brief Return list of LIEF::PE::RESOURCE_SUBLANGS present in the resources
-  std::set<RESOURCE_SUBLANGS> get_sublangs_available(void) const;
+  std::set<RESOURCE_SUBLANGS> get_sublangs_available() const;
 
   //! @brief ``true`` if the resource has the given LIEF::PE::RESOURCE_TYPES
   bool has_type(RESOURCE_TYPES type) const;
@@ -76,10 +76,10 @@ class LIEF_API ResourcesManager : public Object {
   // ========
 
   //! @brief ``true`` if resources contain Manifest element
-  bool has_manifest(void) const;
+  bool has_manifest() const;
 
   //! @brief Return the manifest as a std::string
-  std::string manifest(void) const;
+  std::string manifest() const;
 
   //! @brief Update the manifest with the given string
   void manifest(const std::string& manifest);
@@ -89,19 +89,19 @@ class LIEF_API ResourcesManager : public Object {
   // =======
 
   //! @brief ``true`` if resources contain LIEF::PE::ResourceVersion
-  bool has_version(void) const;
+  bool has_version() const;
 
   //! @brief Return ResourceVersion if any
-  ResourceVersion version(void) const;
+  ResourceVersion version() const;
 
   // Icons
   // =====
 
   //! @brief ``true`` if resources contain LIEF::PE::ResourceIcon
-  bool has_icons(void) const;
+  bool has_icons() const;
 
   //! @brief Return the list of the icons present in the resource
-  std::vector<ResourceIcon> icons(void) const;
+  std::vector<ResourceIcon> icons() const;
 
   //! @brief Add an icon to the resources
   void add_icon(const ResourceIcon& icon);
@@ -114,37 +114,37 @@ class LIEF_API ResourcesManager : public Object {
   // =======
 
   //! @brief ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs @endlink
-  bool has_dialogs(void) const;
+  bool has_dialogs() const;
 
   //! @brief Return the list of the dialogs present in the resource
-  std::vector<ResourceDialog> dialogs(void) const;
+  std::vector<ResourceDialog> dialogs() const;
 
   // String table
   // =====
 
   //! @brief ``true`` if resources contain @link LIEF::PE::ResourceStringTable @endlink
-  bool has_string_table(void) const;
+  bool has_string_table() const;
 
   //! @brief Return the list of the string table in the resource
-  std::vector<ResourceStringTable> string_table(void) const;
+  std::vector<ResourceStringTable> string_table() const;
 
   // HTML
   // ====
 
   //! @brief ``true`` if resources contain html
-  bool has_html(void) const;
+  bool has_html() const;
 
   //! @brief Return the list of the html resource
-  std::vector<std::string> html(void) const;
+  std::vector<std::string> html() const;
 
   // Accelerator
   // =====
 
   //! @brief ``true`` if resources contain @link LIEF::PE::ResourceAccelerator @endlink
-  bool has_accelerator(void) const;
+  bool has_accelerator() const;
 
   //! @brief Return the list of the accelerator in the resource
-  std::vector<ResourceAccelerator> accelerator(void) const;
+  std::vector<ResourceAccelerator> accelerator() const;
 
   // Print
   // =====

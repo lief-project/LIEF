@@ -26,9 +26,9 @@
 namespace LIEF {
 namespace MachO {
 
-Relocation::~Relocation(void) = default;
+Relocation::~Relocation() = default;
 
-Relocation::Relocation(void) :
+Relocation::Relocation() :
   LIEF::Relocation{},
   symbol_{nullptr},
   type_{0},
@@ -78,23 +78,23 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->segment_,      other.segment_);
 }
 
-uint8_t Relocation::type(void) const {
+uint8_t Relocation::type() const {
   return this->type_;
 }
 
-CPU_TYPES Relocation::architecture(void) const {
+CPU_TYPES Relocation::architecture() const {
   return this->architecture_;
 }
 
-bool Relocation::has_symbol(void) const {
+bool Relocation::has_symbol() const {
   return (this->symbol_ != nullptr);
 }
 
-Symbol& Relocation::symbol(void) {
+Symbol& Relocation::symbol() {
   return const_cast<Symbol&>(static_cast<const Relocation*>(this)->symbol());
 }
 
-const Symbol& Relocation::symbol(void) const {
+const Symbol& Relocation::symbol() const {
   if (not this->has_symbol()) {
     throw not_found("No symbol associated with this relocation");
   }
@@ -104,15 +104,15 @@ const Symbol& Relocation::symbol(void) const {
 
 // Section
 // =======
-bool Relocation::has_section(void) const {
+bool Relocation::has_section() const {
   return (this->section_ != nullptr);
 }
 
-Section& Relocation::section(void) {
+Section& Relocation::section() {
   return const_cast<Section&>(static_cast<const Relocation*>(this)->section());
 }
 
-const Section& Relocation::section(void) const {
+const Section& Relocation::section() const {
   if (not this->has_section()) {
     throw not_found("No section associated with this relocation");
   }
@@ -122,15 +122,15 @@ const Section& Relocation::section(void) const {
 
 // Segment
 // =======
-bool Relocation::has_segment(void) const {
+bool Relocation::has_segment() const {
   return (this->segment_ != nullptr);
 }
 
-SegmentCommand& Relocation::segment(void) {
+SegmentCommand& Relocation::segment() {
   return const_cast<SegmentCommand&>(static_cast<const Relocation*>(this)->segment());
 }
 
-const SegmentCommand& Relocation::segment(void) const {
+const SegmentCommand& Relocation::segment() const {
   if (not this->has_segment()) {
     throw not_found("No segment associated with this relocation");
   }

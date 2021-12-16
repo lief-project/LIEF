@@ -42,8 +42,8 @@
 namespace LIEF {
 namespace MachO {
 
-BinaryParser::BinaryParser(void) = default;
-BinaryParser::~BinaryParser(void) = default;
+BinaryParser::BinaryParser() = default;
+BinaryParser::~BinaryParser() = default;
 
 BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset, const ParserConfig& conf) :
   stream_{new VectorStream{data}},
@@ -88,7 +88,7 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
   this->init();
 }
 
-void BinaryParser::init(void) {
+void BinaryParser::init() {
   LIEF_DEBUG("Parsing MachO");
   try {
     MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>());
@@ -244,7 +244,7 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
 
 }
 
-void BinaryParser::parse_dyldinfo_export(void) {
+void BinaryParser::parse_dyldinfo_export() {
 
   DyldInfo& dyldinfo = this->binary_->dyld_info();
 
@@ -270,7 +270,7 @@ void BinaryParser::parse_dyldinfo_export(void) {
   this->parse_export_trie(offset, end_offset, "");
 }
 
-Binary* BinaryParser::get_binary(void) {
+Binary* BinaryParser::get_binary() {
   return this->binary_;
 }
 

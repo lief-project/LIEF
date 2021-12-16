@@ -23,7 +23,7 @@ namespace OAT {
 DexFile::DexFile(const DexFile&) = default;
 DexFile& DexFile::operator=(const DexFile&) = default;
 
-DexFile::DexFile(void) :
+DexFile::DexFile() :
   location_{},
   checksum_{-1u},
   dex_offset_{0},
@@ -35,23 +35,23 @@ DexFile::DexFile(void) :
 {}
 
 
-const std::string& DexFile::location(void) const {
+const std::string& DexFile::location() const {
   return this->location_;
 }
 
-uint32_t DexFile::checksum(void) const {
+uint32_t DexFile::checksum() const {
   return this->checksum_;
 }
 
-uint32_t DexFile::dex_offset(void) const {
+uint32_t DexFile::dex_offset() const {
   return this->dex_offset_;
 }
 
-bool DexFile::has_dex_file(void) const {
+bool DexFile::has_dex_file() const {
   return this->dex_file_ != nullptr;
 }
 
-const DEX::File& DexFile::dex_file(void) const {
+const DEX::File& DexFile::dex_file() const {
   if (not this->has_dex_file()) {
     throw not_found("Can't find the dex file associated with this OAT dex file");
   }
@@ -72,14 +72,14 @@ void DexFile::dex_offset(uint32_t dex_offset) {
   this->dex_offset_ = dex_offset;
 }
 
-const std::vector<uint32_t>& DexFile::classes_offsets(void) const {
+const std::vector<uint32_t>& DexFile::classes_offsets() const {
   return this->classes_offsets_;
 }
 
 
 // Android 7.X.X and Android 8.0.0
 // ===============================
-uint32_t DexFile::lookup_table_offset(void) const {
+uint32_t DexFile::lookup_table_offset() const {
   return this->lookup_table_offset_;
 }
 
@@ -88,7 +88,7 @@ void DexFile::lookup_table_offset(uint32_t offset) {
 }
 // ===============================
 
-DEX::File& DexFile::dex_file(void) {
+DEX::File& DexFile::dex_file() {
   return const_cast<DEX::File&>(static_cast<const DexFile*>(this)->dex_file());
 }
 
@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const DexFile& dex_file) {
   return os;
 }
 
-DexFile::~DexFile(void) = default;
+DexFile::~DexFile() = default;
 
 
 

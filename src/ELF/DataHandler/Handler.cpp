@@ -29,7 +29,7 @@ namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 
-Handler::Handler(void) = default;
+Handler::Handler() = default;
 Handler& Handler::operator=(const Handler&) = default;
 Handler::Handler(const Handler&) = default;
 
@@ -66,11 +66,11 @@ Handler::Handler(BinaryStream& stream) {
   }
 }
 
-const std::vector<uint8_t>& Handler::content(void) const {
+const std::vector<uint8_t>& Handler::content() const {
   return this->data_;
 }
 
-std::vector<uint8_t>& Handler::content(void) {
+std::vector<uint8_t>& Handler::content() {
   return const_cast<std::vector<uint8_t>&>(static_cast<const Handler*>(this)->content());
 }
 
@@ -152,7 +152,7 @@ void Handler::reserve(uint64_t offset, uint64_t size) {
   }
 }
 
-Handler::~Handler(void) {
+Handler::~Handler() {
   for (Node* n : this->nodes_) {
     delete n;
   }

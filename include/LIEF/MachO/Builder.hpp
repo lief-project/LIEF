@@ -61,28 +61,28 @@ class LIEF_API Builder {
   Builder(std::vector<Binary*> binaries);
   Builder(FatBinary* fat);
 
-  Builder(void) = delete;
-  ~Builder(void);
+  Builder() = delete;
+  ~Builder();
 
-  std::vector<uint8_t> operator()(void);
-  void build(void);
+  std::vector<uint8_t> operator()();
+  void build();
 
-  const std::vector<uint8_t>& get_build(void);
+  const std::vector<uint8_t>& get_build();
   void write(const std::string& filename) const;
 
   private:
   template<typename T>
-  void build(void);
+  void build();
 
   template<typename T, typename HANDLER>
   std::vector<std::string> optimize(const HANDLER& e,
                                     std::function<std::string(const typename HANDLER::value_type)> getter,
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
-  void build_fat(void);
-  void build_fat_header(void);
-  void build_header(void);
-  void build_load_commands(void);
+  void build_fat();
+  void build_fat_header();
+  void build_header();
+  void build_load_commands();
 
   template<typename T>
   void build(DylibCommand* library);
@@ -130,16 +130,16 @@ class LIEF_API Builder {
   void build(ThreadCommand* tc);
 
   template <typename T>
-  void build_segments(void);
+  void build_segments();
 
   template<class T>
   void build(BuildVersion* bv);
 
-  void build_uuid(void);
+  void build_uuid();
 
 
   template <typename T>
-  void build_symbols(void);
+  void build_symbols();
 
   std::vector<Binary*> binaries_;
   Binary*              binary_{nullptr};

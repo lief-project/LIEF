@@ -26,9 +26,9 @@ namespace LIEF {
 namespace ELF {
 GnuHash& GnuHash::operator=(const GnuHash&) = default;
 GnuHash::GnuHash(const GnuHash&)           = default;
-GnuHash::~GnuHash(void)                    = default;
+GnuHash::~GnuHash()                    = default;
 
-GnuHash::GnuHash(void) :
+GnuHash::GnuHash() :
   symbol_index_{0},
   shift2_{0},
   bloom_filters_{0},
@@ -52,31 +52,31 @@ GnuHash::GnuHash(uint32_t symbol_idx,
 {}
 
 
-uint32_t GnuHash::nb_buckets(void) const {
+uint32_t GnuHash::nb_buckets() const {
   return static_cast<uint32_t>(this->buckets_.size());
 }
 
-uint32_t GnuHash::symbol_index(void) const {
+uint32_t GnuHash::symbol_index() const {
   return this->symbol_index_;
 }
 
-uint32_t GnuHash::maskwords(void) const {
+uint32_t GnuHash::maskwords() const {
   return this->bloom_filters_.size();
 }
 
-uint32_t GnuHash::shift2(void) const {
+uint32_t GnuHash::shift2() const {
   return this->shift2_;
 }
 
-const std::vector<uint64_t>& GnuHash::bloom_filters(void) const {
+const std::vector<uint64_t>& GnuHash::bloom_filters() const {
   return this->bloom_filters_;
 }
 
-const std::vector<uint32_t>& GnuHash::buckets(void) const {
+const std::vector<uint32_t>& GnuHash::buckets() const {
   return this->buckets_;
 }
 
-const std::vector<uint32_t>& GnuHash::hash_values(void) const {
+const std::vector<uint32_t>& GnuHash::hash_values() const {
   return this->hash_values_;
 }
 

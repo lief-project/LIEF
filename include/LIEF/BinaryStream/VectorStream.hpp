@@ -31,9 +31,9 @@ class VectorStream : public BinaryStream {
     return STREAM_TYPE::FILE;
   }
 
-  virtual uint64_t size(void) const override;
+  virtual uint64_t size() const override;
 
-  const std::vector<uint8_t>& content(void) const;
+  const std::vector<uint8_t>& content() const;
 
   inline uint8_t* p() {
     return this->binary_.data() + this->pos();

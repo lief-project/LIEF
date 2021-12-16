@@ -27,7 +27,7 @@ namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
-void CorePrStatus::parse_(void) {
+void CorePrStatus::parse_() {
   using Elf_Prstatus  = typename ELF_T::Elf_Prstatus;
   using uint__        = typename ELF_T::uint;
 
@@ -79,7 +79,7 @@ void CorePrStatus::parse_(void) {
 }
 
 template <typename ELF_T>
-void CorePrStatus::build_(void) {
+void CorePrStatus::build_() {
   using Elf_Prstatus  = typename ELF_T::Elf_Prstatus;
   using uint__        = typename ELF_T::uint;
 

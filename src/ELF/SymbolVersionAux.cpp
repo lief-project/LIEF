@@ -20,11 +20,11 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionAux::~SymbolVersionAux(void) = default;
+SymbolVersionAux::~SymbolVersionAux() = default;
 SymbolVersionAux& SymbolVersionAux::operator=(const SymbolVersionAux&) = default;
 SymbolVersionAux::SymbolVersionAux(const SymbolVersionAux&) = default;
 
-SymbolVersionAux::SymbolVersionAux(void) :
+SymbolVersionAux::SymbolVersionAux() :
   name_{""}
 {}
 
@@ -32,7 +32,7 @@ SymbolVersionAux::SymbolVersionAux(const std::string& name) :
   name_{name}
 {}
 
-const std::string& SymbolVersionAux::name(void) const {
+const std::string& SymbolVersionAux::name() const {
   return this->name_;
 }
 

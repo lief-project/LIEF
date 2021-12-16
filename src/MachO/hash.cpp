@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace MachO {
 
-Hash::~Hash(void) = default;
+Hash::~Hash() = default;
 
 size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::MachO::Hash>(obj);

@@ -32,65 +32,65 @@ namespace PE {
 class LIEF_API ResourceFixedFileInfo : public Object {
 
   public:
-  ResourceFixedFileInfo(void);
+  ResourceFixedFileInfo();
   ResourceFixedFileInfo(const pe_resource_fixed_file_info* header);
 
   ResourceFixedFileInfo(const ResourceFixedFileInfo&);
   ResourceFixedFileInfo& operator=(const ResourceFixedFileInfo&);
-  virtual ~ResourceFixedFileInfo(void);
+  virtual ~ResourceFixedFileInfo();
 
   //! Contains the value ``0xFEEF04BD``
-  uint32_t signature(void) const;
+  uint32_t signature() const;
 
   //! The binary version number of this structure.
   //!
   //! The high-order word of this member contains the major version number,
   //! and the low-order word contains the minor version number.
-  uint32_t struct_version(void) const;
+  uint32_t struct_version() const;
 
   //! The **most** significant 32 bits of the file's binary version number.
   //!
   //! This member is used with ResourceFixedFileInfo::file_version_LS to form a 64-bits value used for numeric comparisons.
-  uint32_t file_version_MS(void) const;
+  uint32_t file_version_MS() const;
 
   //! The **least** significant 32 bits of the file's binary version number.
   //!
   //! This member is used with ResourceFixedFileInfo::file_version_MS to form a 64-bits value used for numeric comparisons.
-  uint32_t file_version_LS(void) const;
+  uint32_t file_version_LS() const;
 
   //! The **most** significant 32 bits of the product with which this file was distributed
   //!
   //! This member is used with ResourceFixedFileInfo::product_version_LS to form a 64-bits value used for numeric comparisons.
-  uint32_t product_version_MS(void) const;
+  uint32_t product_version_MS() const;
 
   //! The **least** significant 32 bits of the product with which this file was distributed
   //!
   //! This member is used with ResourceFixedFileInfo::product_version_MS to form a 64-bits value used for numeric comparisons.
-  uint32_t product_version_LS(void) const;
+  uint32_t product_version_LS() const;
 
   //! Contains a bitmask that specifies the valid bits in ResourceFixedFileInfo::file_flags.
   //!
   //! A bit is valid only if it was defined when the file was created.
-  uint32_t file_flags_mask(void) const;
+  uint32_t file_flags_mask() const;
 
   //! Contains a bitmask that specifies the Boolean attributes of the file
   //! (PE::FIXED_VERSION_FILE_FLAGS)
-  uint32_t file_flags(void) const;
+  uint32_t file_flags() const;
 
   //! The operating system for which this file was designed (PE::FIXED_VERSION_OS).
-  FIXED_VERSION_OS file_os(void) const;
+  FIXED_VERSION_OS file_os() const;
 
   //! The general type of file (PE::FIXED_VERSION_FILE_TYPES)
-  FIXED_VERSION_FILE_TYPES file_type(void) const;
+  FIXED_VERSION_FILE_TYPES file_type() const;
 
   //! The function of the file (PE::FIXED_VERSION_FILE_SUB_TYPES)
-  FIXED_VERSION_FILE_SUB_TYPES file_subtype(void) const;
+  FIXED_VERSION_FILE_SUB_TYPES file_subtype() const;
 
   //! The **most** significant 32 bits of the file's 64-bit binary creation date and time stamp.
-  uint32_t file_date_MS(void) const;
+  uint32_t file_date_MS() const;
 
   //! The **least** significant 32 bits of the file's 64-bit binary creation date and time stamp.
-  uint32_t file_date_LS(void) const;
+  uint32_t file_date_LS() const;
 
   void signature(uint32_t signature);
   void struct_version(uint32_t struct_version);

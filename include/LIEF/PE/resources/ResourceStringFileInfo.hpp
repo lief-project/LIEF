@@ -45,24 +45,24 @@ class LIEF_API ResourceStringFileInfo : public Object {
   public:
   ResourceStringFileInfo(const ResourceStringFileInfo&);
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
-  virtual ~ResourceStringFileInfo(void);
+  virtual ~ResourceStringFileInfo();
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type(void) const;
+  uint16_t type() const;
 
   //! Signature of the structure:
   //! Must be the unicode string "StringFileInfo"
-  const std::u16string& key(void) const;
+  const std::u16string& key() const;
 
   //! List of the LangCodeItem items.
   //!
   //! Each LangCodeItem::key indicates the appropriate
   //! language and code page for displaying the ``key: value`` of
   //! LangCodeItem::items
-  const std::vector<LangCodeItem>& langcode_items(void) const;
-  std::vector<LangCodeItem>&       langcode_items(void);
+  const std::vector<LangCodeItem>& langcode_items() const;
+  std::vector<LangCodeItem>&       langcode_items();
 
   void type(uint16_t type);
 
@@ -79,7 +79,7 @@ class LIEF_API ResourceStringFileInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
 
   private:
-  ResourceStringFileInfo(void);
+  ResourceStringFileInfo();
 
   uint16_t                  type_;
   std::u16string            key_;

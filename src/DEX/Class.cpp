@@ -24,7 +24,7 @@ namespace DEX {
 Class::Class(const Class&) = default;
 Class& Class::operator=(const Class&) = default;
 
-Class::Class(void) :
+Class::Class() :
   fullname_{},
   access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
   parent_{nullptr},
@@ -81,12 +81,12 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
   return package_normalized;
 }
 
-const std::string& Class::fullname(void) const {
+const std::string& Class::fullname() const {
   return this->fullname_;
 }
 
 
-std::string Class::package_name(void) const {
+std::string Class::package_name() const {
   size_t pos = this->fullname_.find_last_of('/');
   if (pos == std::string::npos) {
     return "";
@@ -95,7 +95,7 @@ std::string Class::package_name(void) const {
   }
 }
 
-std::string Class::name(void) const {
+std::string Class::name() const {
   size_t pos = this->fullname_.find_last_of('/');
   if (pos == std::string::npos) {
     return this->fullname_.substr(1, this->fullname_.size() - 2);
@@ -104,7 +104,7 @@ std::string Class::name(void) const {
   }
 }
 
-std::string Class::pretty_name(void) const {
+std::string Class::pretty_name() const {
   if (this->fullname_.size() <= 2) {
     return this->fullname_;
   }
@@ -120,7 +120,7 @@ bool Class::has(ACCESS_FLAGS f) const {
   return (this->access_flags_ & f) > 0;
 }
 
-Class::access_flags_list_t Class::access_flags(void) const {
+Class::access_flags_list_t Class::access_flags() const {
 
   Class::access_flags_list_t flags;
 
@@ -134,34 +134,34 @@ Class::access_flags_list_t Class::access_flags(void) const {
 }
 
 
-bool Class::has_parent(void) const {
+bool Class::has_parent() const {
   return this->parent_ != nullptr;
 }
 
-const Class& Class::parent(void) const {
+const Class& Class::parent() const {
   if (not this->has_parent()) {
     throw not_found("No parent found!");
   }
   return *this->parent_;
 }
 
-Class& Class::parent(void) {
+Class& Class::parent() {
   return const_cast<Class&>(static_cast<const Class*>(this)->parent());
 }
 
-it_const_methods Class::methods(void) const {
+it_const_methods Class::methods() const {
   return this->methods_;
 }
 
-it_methods Class::methods(void) {
+it_methods Class::methods() {
   return this->methods_;
 }
 
-it_const_fields Class::fields(void) const {
+it_const_fields Class::fields() const {
   return this->fields_;
 }
 
-it_fields Class::fields(void) {
+it_fields Class::fields() {
   return this->fields_;
 }
 
@@ -205,15 +205,15 @@ fields_t Class::field_from_name(const std::string& name) const {
   return fld;
 }
 
-size_t Class::index(void) const {
+size_t Class::index() const {
   return this->original_index_;
 }
 
-const std::string& Class::source_filename(void) const {
+const std::string& Class::source_filename() const {
   return this->source_filename_;
 }
 
-dex2dex_class_info_t Class::dex2dex_info(void) const {
+dex2dex_class_info_t Class::dex2dex_info() const {
   dex2dex_class_info_t info;
   for (Method* method : this->methods_) {
     if (method->dex2dex_info().size() > 0) {
@@ -248,7 +248,7 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
   return os;
 }
 
-Class::~Class(void) = default;
+Class::~Class() = default;
 
 }
 }

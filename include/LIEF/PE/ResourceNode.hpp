@@ -44,32 +44,32 @@ class LIEF_API ResourceNode : public Object {
 
   void swap(ResourceNode& other);
 
-  virtual ~ResourceNode(void);
+  virtual ~ResourceNode();
 
-  virtual ResourceNode* clone(void) const = 0;
+  virtual ResourceNode* clone() const = 0;
 
   //! @brief Integer that identifies the Type, Name, or
   //! Language ID entry.
-  uint32_t id(void) const;
+  uint32_t id() const;
 
   //! @brief Name of the entry
-  const std::u16string& name(void) const;
+  const std::u16string& name() const;
 
   //! @brief Iterator on node's childs
-  it_childs       childs(void);
-  it_const_childs childs(void) const;
+  it_childs       childs();
+  it_const_childs childs() const;
 
   //! @brief ``True`` if the entry uses name as ID
-  bool has_name(void) const;
+  bool has_name() const;
 
   //! @brief Current depth of the entry in the resource tree
-  uint32_t depth(void) const;
+  uint32_t depth() const;
 
   //! @brief ``True`` if the current entry is a ResourceDirectory
-  bool is_directory(void) const;
+  bool is_directory() const;
 
   //! @brief ``True`` if the current entry is a ResourceData
-  bool is_data(void) const;
+  bool is_data() const;
 
   void id(uint32_t id);
   void name(const std::string& name);
@@ -88,7 +88,7 @@ class LIEF_API ResourceNode : public Object {
   void delete_child(const ResourceNode& node);
 
   //! @brief Sort resource childs by ID
-  void sort_by_id(void);
+  void sort_by_id();
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -98,7 +98,7 @@ class LIEF_API ResourceNode : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
 
   protected:
-  ResourceNode(void);
+  ResourceNode();
 
   uint32_t       id_;
   std::u16string name_;

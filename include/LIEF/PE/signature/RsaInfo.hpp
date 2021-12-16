@@ -39,38 +39,38 @@ class LIEF_API RsaInfo {
   RsaInfo& operator=(RsaInfo other);
 
   //! True if it embeds a public key
-  bool has_public_key(void) const;
+  bool has_public_key() const;
 
   //! True if it embeds a private key
-  bool has_private_key(void) const;
+  bool has_private_key() const;
 
   //! RSA public modulus
-  bignum_wrapper_t N(void) const;
+  bignum_wrapper_t N() const;
 
   //! RSA public exponent
-  bignum_wrapper_t E(void) const;
+  bignum_wrapper_t E() const;
 
   //! RSA private exponent
-  bignum_wrapper_t D(void) const;
+  bignum_wrapper_t D() const;
 
   //! First prime factor
-  bignum_wrapper_t P(void) const;
+  bignum_wrapper_t P() const;
 
   //! Second prime factor
-  bignum_wrapper_t Q(void) const;
+  bignum_wrapper_t Q() const;
 
   //! Size of the public modulus (in bits)
-  size_t key_size(void) const;
+  size_t key_size() const;
 
   void swap(RsaInfo& other);
   operator bool() const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RsaInfo& info);
 
-  ~RsaInfo(void);
+  ~RsaInfo();
 
   private:
-  RsaInfo(void);
+  RsaInfo();
   RsaInfo(const rsa_ctx_handle ctx);
   rsa_ctx_handle ctx_;
 };

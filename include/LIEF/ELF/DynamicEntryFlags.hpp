@@ -31,7 +31,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
 
   public:
   using DynamicEntry::DynamicEntry;
-  DynamicEntryFlags(void);
+  DynamicEntryFlags();
 
   DynamicEntryFlags& operator=(const DynamicEntryFlags&);
   DynamicEntryFlags(const DynamicEntryFlags&);
@@ -43,7 +43,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
   bool has(DYNAMIC_FLAGS_1 f) const;
 
   //! @brief Return flags as a list of integers
-  flags_list_t flags(void) const;
+  flags_list_t flags() const;
 
   //! @brief Add the given DYNAMIC_FLAGS
   void add(DYNAMIC_FLAGS f);

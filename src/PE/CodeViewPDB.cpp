@@ -27,9 +27,9 @@ namespace PE {
 
 CodeViewPDB::CodeViewPDB(const CodeViewPDB&) = default;
 CodeViewPDB& CodeViewPDB::operator=(const CodeViewPDB&) = default;
-CodeViewPDB::~CodeViewPDB(void) = default;
+CodeViewPDB::~CodeViewPDB() = default;
 
-CodeViewPDB::CodeViewPDB(void) :
+CodeViewPDB::CodeViewPDB() :
   CodeView{},
   signature_{
     {
@@ -67,21 +67,21 @@ CodeViewPDB CodeViewPDB::from_pdb20(uint32_t signature, uint32_t age, const std:
 }
 
 
-CodeViewPDB* CodeViewPDB::clone(void) const {
+CodeViewPDB* CodeViewPDB::clone() const {
   return new CodeViewPDB{*this};
 }
 
 
 
-CodeViewPDB::signature_t CodeViewPDB::signature(void) const {
+CodeViewPDB::signature_t CodeViewPDB::signature() const {
   return this->signature_;
 }
 
-uint32_t CodeViewPDB::age(void) const {
+uint32_t CodeViewPDB::age() const {
   return this->age_;
 }
 
-const std::string& CodeViewPDB::filename(void) const {
+const std::string& CodeViewPDB::filename() const {
   return this->filename_;
 }
 

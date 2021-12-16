@@ -32,25 +32,25 @@ struct thread_command;
 class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
   public:
-  ThreadCommand(void);
+  ThreadCommand();
   ThreadCommand(const thread_command *cmd, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
   ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
 
   ThreadCommand& operator=(const ThreadCommand& copy);
   ThreadCommand(const ThreadCommand& copy);
 
-  virtual ThreadCommand* clone(void) const override;
+  virtual ThreadCommand* clone() const override;
 
-  virtual ~ThreadCommand(void);
+  virtual ~ThreadCommand();
 
-  uint32_t  flavor(void) const;
-  uint32_t  count(void) const;
-  CPU_TYPES architecture(void) const;
+  uint32_t  flavor() const;
+  uint32_t  count() const;
+  CPU_TYPES architecture() const;
 
-  const std::vector<uint8_t>& state(void) const;
-  std::vector<uint8_t>& state(void);
+  const std::vector<uint8_t>& state() const;
+  std::vector<uint8_t>& state();
 
-  uint64_t pc(void) const;
+  uint64_t pc() const;
 
   void state(const std::vector<uint8_t>& state);
   void flavor(uint32_t flavor);

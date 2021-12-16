@@ -30,19 +30,19 @@ struct dylinker_command;
 
 class LIEF_API DylinkerCommand : public LoadCommand {
   public:
-  DylinkerCommand(void);
+  DylinkerCommand();
   DylinkerCommand(const dylinker_command *cmd);
 
   DylinkerCommand& operator=(const DylinkerCommand& copy);
   DylinkerCommand(const DylinkerCommand& copy);
 
-  virtual DylinkerCommand* clone(void) const override;
+  virtual DylinkerCommand* clone() const override;
 
-  virtual ~DylinkerCommand(void);
+  virtual ~DylinkerCommand();
 
   virtual std::ostream& print(std::ostream& os) const override;
 
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   void name(const std::string& name);
 

@@ -32,18 +32,18 @@ class LIEF_API SourceVersion : public LoadCommand {
   //! @brief Version is an array of **5** integers
   using version_t = std::array<uint32_t, 5>;
 
-  SourceVersion(void);
+  SourceVersion();
   SourceVersion(const source_version_command *version_cmd);
 
   SourceVersion& operator=(const SourceVersion& copy);
   SourceVersion(const SourceVersion& copy);
 
-  virtual SourceVersion* clone(void) const override;
+  virtual SourceVersion* clone() const override;
 
-  virtual ~SourceVersion(void);
+  virtual ~SourceVersion();
 
   //! @brief Return the version as an array
-  const SourceVersion::version_t& version(void) const;
+  const SourceVersion::version_t& version() const;
   void version(const SourceVersion::version_t& version);
 
   bool operator==(const SourceVersion& rhs) const;

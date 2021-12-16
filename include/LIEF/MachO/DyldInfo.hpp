@@ -53,7 +53,7 @@ class LIEF_API DyldInfo : public LoadCommand {
     V2
   };
 
-  DyldInfo(void);
+  DyldInfo();
   DyldInfo(const dyld_info_command *dyld_info_cmd);
 
   DyldInfo& operator=(DyldInfo other);
@@ -61,9 +61,9 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   void swap(DyldInfo& other);
 
-  virtual DyldInfo* clone(void) const override;
+  virtual DyldInfo* clone() const override;
 
-  virtual ~DyldInfo(void);
+  virtual ~DyldInfo();
 
   //! @brief *Rebase* information
   //!
@@ -78,18 +78,18 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! bytes.
   //!
   //! @see ``/usr/include/mach-o/loader.h``
-  const info_t& rebase(void) const;
+  const info_t& rebase() const;
 
   //! @brief Return Rebase's opcodes as raw data
-  const buffer_t& rebase_opcodes(void) const;
-  buffer_t&       rebase_opcodes(void);
+  const buffer_t& rebase_opcodes() const;
+  buffer_t&       rebase_opcodes();
 
   //! @brief Set new opcodes
   void rebase_opcodes(const buffer_t& raw);
 
 
   //! Return the rebase opcodes in a humman-readable way
-  std::string show_rebases_opcodes(void) const;
+  std::string show_rebases_opcodes() const;
 
   //! @brief *Bind* information
   //!
@@ -105,17 +105,17 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! encoded in a few bytes.
   //!
   //! @see ``/usr/include/mach-o/loader.h``
-  const info_t& bind(void) const;
+  const info_t& bind() const;
 
   //! @brief Return Binding's opcodes as raw data
-  const buffer_t& bind_opcodes(void) const;
-  buffer_t&       bind_opcodes(void);
+  const buffer_t& bind_opcodes() const;
+  buffer_t&       bind_opcodes();
 
   //! @brief Set new opcodes
   void bind_opcodes(const buffer_t& raw);
 
   //! Return the bind opcodes in a humman-readable way
-  std::string show_bind_opcodes(void) const;
+  std::string show_bind_opcodes() const;
 
   //! @brief *Weak Bind* information
   //!
@@ -134,17 +134,17 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! and the call to operator new is then rebound.
   //!
   //! @see ``/usr/include/mach-o/loader.h``
-  const info_t& weak_bind(void) const;
+  const info_t& weak_bind() const;
 
   //! @brief Return **Weak** Binding's opcodes as raw data
-  const buffer_t& weak_bind_opcodes(void) const;
-  buffer_t&       weak_bind_opcodes(void);
+  const buffer_t& weak_bind_opcodes() const;
+  buffer_t&       weak_bind_opcodes();
 
   //! @brief Set new opcodes
   void weak_bind_opcodes(const buffer_t& raw);
 
   //! Return the bind opcodes in a humman-readable way
-  std::string show_weak_bind_opcodes(void) const;
+  std::string show_weak_bind_opcodes() const;
 
   //! @brief *Lazy Bind* information
   //!
@@ -160,21 +160,21 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! to bind.
   //!
   //! @see ``/usr/include/mach-o/loader.h``
-  const info_t& lazy_bind(void) const;
+  const info_t& lazy_bind() const;
 
   //! @brief Return **Lazy** Binding's opcodes as raw data
-  const buffer_t& lazy_bind_opcodes(void) const;
-  buffer_t&       lazy_bind_opcodes(void);
+  const buffer_t& lazy_bind_opcodes() const;
+  buffer_t&       lazy_bind_opcodes();
 
   //! @brief Set new opcodes
   void lazy_bind_opcodes(const buffer_t& raw);
 
   //! Return the lazy opcodes in a humman-readable way
-  std::string show_lazy_bind_opcodes(void) const;
+  std::string show_lazy_bind_opcodes() const;
 
   //! @brief Iterator over BindingInfo entries
-  it_binding_info       bindings(void);
-  it_const_binding_info bindings(void) const;
+  it_binding_info       bindings();
+  it_const_binding_info bindings() const;
 
   //! @brief *Export* information
   //!
@@ -202,21 +202,21 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! edge points to.
   //!
   //! @see ``/usr/include/mach-o/loader.h``
-  const info_t& export_info(void) const;
+  const info_t& export_info() const;
 
   //! @brief Iterator over ExportInfo entries
-  it_export_info       exports(void);
-  it_const_export_info exports(void) const;
+  it_export_info       exports();
+  it_const_export_info exports() const;
 
   //! @brief Return Export's trie as raw data
-  const buffer_t& export_trie(void) const;
-  buffer_t&       export_trie(void);
+  const buffer_t& export_trie() const;
+  buffer_t&       export_trie();
 
   //! @brief Set new trie
   void export_trie(const buffer_t& raw);
 
   //! Return the export trie in a humman-readable way
-  std::string show_export_trie(void) const;
+  std::string show_export_trie() const;
 
   void rebase(const info_t& info);
   void bind(const info_t& info);
@@ -260,9 +260,9 @@ class LIEF_API DyldInfo : public LoadCommand {
   LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings);
   LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
 
-  LIEF_LOCAL DyldInfo& update_rebase_info(void);
-  LIEF_LOCAL DyldInfo& update_binding_info(void);
-  LIEF_LOCAL DyldInfo& update_export_trie(void);
+  LIEF_LOCAL DyldInfo& update_rebase_info();
+  LIEF_LOCAL DyldInfo& update_binding_info();
+  LIEF_LOCAL DyldInfo& update_export_trie();
 
 
   info_t   rebase_;

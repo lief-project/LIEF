@@ -30,25 +30,25 @@ namespace PE {
 
 ResourceVarFileInfo::ResourceVarFileInfo(const ResourceVarFileInfo&) = default;
 ResourceVarFileInfo& ResourceVarFileInfo::operator=(const ResourceVarFileInfo&) = default;
-ResourceVarFileInfo::~ResourceVarFileInfo(void) = default;
+ResourceVarFileInfo::~ResourceVarFileInfo() = default;
 
 
-ResourceVarFileInfo::ResourceVarFileInfo(void) :
+ResourceVarFileInfo::ResourceVarFileInfo() :
   type_{0},
   key_{u8tou16("VarFileInfo")},
   translations_{}
 {}
 
 
-uint16_t ResourceVarFileInfo::type(void) const {
+uint16_t ResourceVarFileInfo::type() const {
   return this->type_;
 }
 
-const std::u16string& ResourceVarFileInfo::key(void) const {
+const std::u16string& ResourceVarFileInfo::key() const {
   return this->key_;
 }
 
-const std::vector<uint32_t>& ResourceVarFileInfo::translations(void) const {
+const std::vector<uint32_t>& ResourceVarFileInfo::translations() const {
   return this->translations_;
 }
 
@@ -64,7 +64,7 @@ void ResourceVarFileInfo::key(const std::string& key) {
   this->key(u8tou16(key));
 }
 
-std::vector<uint32_t>& ResourceVarFileInfo::translations(void) {
+std::vector<uint32_t>& ResourceVarFileInfo::translations() {
   return const_cast<std::vector<uint32_t>&>(static_cast<const ResourceVarFileInfo*>(this)->translations());
 }
 

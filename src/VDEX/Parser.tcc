@@ -21,7 +21,7 @@ namespace LIEF {
 namespace VDEX {
 
 template<typename VDEX_T>
-void Parser::parse_file(void) {
+void Parser::parse_file() {
 
   this->parse_header<VDEX_T>();
   this->parse_checksums<VDEX_T>();
@@ -33,7 +33,7 @@ void Parser::parse_file(void) {
 
 
 template<typename VDEX_T>
-void Parser::parse_header(void) {
+void Parser::parse_header() {
   using vdex_header = typename VDEX_T::vdex_header;
   const vdex_header& hdr = this->stream_->peek<vdex_header>(0);
   this->file_->header_ = &hdr;
@@ -41,12 +41,12 @@ void Parser::parse_header(void) {
 
 
 template<typename VDEX_T>
-void Parser::parse_checksums(void) {
+void Parser::parse_checksums() {
   //TODO
 }
 
 template<typename VDEX_T>
-void Parser::parse_dex_files(void) {
+void Parser::parse_dex_files() {
   using vdex_header = typename VDEX_T::vdex_header;
   size_t nb_dex_files = this->file_->header().nb_dex_files();
 
@@ -83,7 +83,7 @@ void Parser::parse_dex_files(void) {
 
 
 template<typename VDEX_T>
-void Parser::parse_verifier_deps(void) {
+void Parser::parse_verifier_deps() {
   using vdex_header = typename VDEX_T::vdex_header;
 
   uint64_t deps_offset = align(sizeof(vdex_header) + this->file_->header().dex_size(), sizeof(uint32_t));
@@ -99,7 +99,7 @@ void Parser::parse_verifier_deps(void) {
 
 // VDEX 06
 template<>
-void Parser::parse_quickening_info<VDEX6>(void) {
+void Parser::parse_quickening_info<VDEX6>() {
   using vdex_header = typename VDEX6::vdex_header;
 
   uint64_t quickening_offset = sizeof(vdex_header);
@@ -196,7 +196,7 @@ See:
 
 
 template<>
-void Parser::parse_quickening_info<VDEX10>(void) {
+void Parser::parse_quickening_info<VDEX10>() {
   using vdex_header = typename VDEX10::vdex_header;
 
   const uint64_t quickening_size = this->file_->header().quickening_info_size();
@@ -347,7 +347,7 @@ void Parser::parse_quickening_info<VDEX10>(void) {
 }
 
 template<class T>
-void Parser::parse_quickening_info(void) {
+void Parser::parse_quickening_info() {
   return this->parse_quickening_info<VDEX10>();
 }
 

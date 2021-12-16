@@ -33,9 +33,9 @@ namespace PE {
 
 ResourceDialog::ResourceDialog(const ResourceDialog&) = default;
 ResourceDialog& ResourceDialog::operator=(const ResourceDialog&) = default;
-ResourceDialog::~ResourceDialog(void) = default;
+ResourceDialog::~ResourceDialog() = default;
 
-ResourceDialog::ResourceDialog(void) :
+ResourceDialog::ResourceDialog() :
   version_{0},
   signature_{0},
   help_id_{0},
@@ -107,15 +107,15 @@ ResourceDialog::ResourceDialog(const pe_dialog_template *header) :
 {}
 
 
-bool ResourceDialog::is_extended(void) const {
+bool ResourceDialog::is_extended() const {
   return this->signature_ == 0xFFFF;
 }
 
-uint32_t ResourceDialog::extended_style(void) const {
+uint32_t ResourceDialog::extended_style() const {
   return this->ext_style_;
 }
 
-std::set<EXTENDED_WINDOW_STYLES> ResourceDialog::extended_style_list(void) const {
+std::set<EXTENDED_WINDOW_STYLES> ResourceDialog::extended_style_list() const {
   std::set<EXTENDED_WINDOW_STYLES> ext_styles;
   std::copy_if(
       std::begin(extended_window_styles_array),
@@ -131,11 +131,11 @@ bool ResourceDialog::has_extended_style(EXTENDED_WINDOW_STYLES style) const {
   return (this->ext_style_ & static_cast<uint32_t>(style)) != 0;
 }
 
-uint32_t ResourceDialog::style(void) const {
+uint32_t ResourceDialog::style() const {
   return this->style_;
 }
 
-std::set<WINDOW_STYLES> ResourceDialog::style_list(void) const {
+std::set<WINDOW_STYLES> ResourceDialog::style_list() const {
   std::set<WINDOW_STYLES> styles;
   std::copy_if(
       std::begin(window_styles_array),
@@ -151,7 +151,7 @@ bool ResourceDialog::has_style(WINDOW_STYLES style) const {
 }
 
 
-std::set<DIALOG_BOX_STYLES> ResourceDialog::dialogbox_style_list(void) const {
+std::set<DIALOG_BOX_STYLES> ResourceDialog::dialogbox_style_list() const {
   std::set<DIALOG_BOX_STYLES> styles;
   std::copy_if(
       std::begin(dialog_box_styles_array),
@@ -166,33 +166,33 @@ bool ResourceDialog::has_dialogbox_style(DIALOG_BOX_STYLES style) const {
   return (this->style_ & static_cast<uint32_t>(style)) != 0;
 }
 
-int16_t ResourceDialog::x(void) const {
+int16_t ResourceDialog::x() const {
   return this->x_;
 }
 
-int16_t ResourceDialog::y(void) const {
+int16_t ResourceDialog::y() const {
   return this->y_;
 }
 
-int16_t ResourceDialog::cx(void) const {
+int16_t ResourceDialog::cx() const {
   return this->cx_;
 }
 
-int16_t ResourceDialog::cy(void) const {
+int16_t ResourceDialog::cy() const {
   return this->cy_;
 }
 
 
-it_const_dialog_items ResourceDialog::items(void) const {
+it_const_dialog_items ResourceDialog::items() const {
   return this->items_;
 }
 
 
-RESOURCE_LANGS ResourceDialog::lang(void) const {
+RESOURCE_LANGS ResourceDialog::lang() const {
   return this->lang_;
 }
 
-RESOURCE_SUBLANGS ResourceDialog::sub_lang(void) const {
+RESOURCE_SUBLANGS ResourceDialog::sub_lang() const {
   return this->sublang_;
 }
 
@@ -207,21 +207,21 @@ void ResourceDialog::sub_lang(RESOURCE_SUBLANGS sub_lang) {
 
 // Extended API
 // ============
-uint16_t ResourceDialog::version(void) const {
+uint16_t ResourceDialog::version() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
   return this->version_;
 }
 
-uint16_t ResourceDialog::signature(void) const {
+uint16_t ResourceDialog::signature() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
   return this->signature_;
 }
 
-uint32_t ResourceDialog::help_id(void) const {
+uint32_t ResourceDialog::help_id() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -229,7 +229,7 @@ uint32_t ResourceDialog::help_id(void) const {
 }
 
 
-uint16_t ResourceDialog::weight(void) const {
+uint16_t ResourceDialog::weight() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -237,7 +237,7 @@ uint16_t ResourceDialog::weight(void) const {
 }
 
 
-uint8_t ResourceDialog::charset(void) const {
+uint8_t ResourceDialog::charset() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -245,7 +245,7 @@ uint8_t ResourceDialog::charset(void) const {
 }
 
 
-uint16_t ResourceDialog::point_size(void) const {
+uint16_t ResourceDialog::point_size() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -253,14 +253,14 @@ uint16_t ResourceDialog::point_size(void) const {
 }
 
 
-bool ResourceDialog::is_italic(void) const {
+bool ResourceDialog::is_italic() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
   return this->italic_;
 }
 
-const std::u16string& ResourceDialog::title(void) const {
+const std::u16string& ResourceDialog::title() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
@@ -269,7 +269,7 @@ const std::u16string& ResourceDialog::title(void) const {
 }
 
 
-const std::u16string& ResourceDialog::typeface(void) const {
+const std::u16string& ResourceDialog::typeface() const {
   if (not this->is_extended()) {
     throw not_found("This dialog is not an extended one");
   }

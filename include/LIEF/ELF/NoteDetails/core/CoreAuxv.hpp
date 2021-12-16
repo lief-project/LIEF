@@ -45,10 +45,10 @@ class LIEF_API CoreAuxv : public NoteDetails {
   public:
   static CoreAuxv make(Note& note);
 
-  virtual CoreAuxv* clone(void) const override;
+  virtual CoreAuxv* clone() const override;
 
   //! Auxiliary values
-  const val_context_t& values(void) const;
+  const val_context_t& values() const;
 
   //! Get an auxiliary value. If ``error`` is set,
   //! this function and the value exists, the function set the boolean value to ``false``
@@ -71,19 +71,19 @@ class LIEF_API CoreAuxv : public NoteDetails {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~CoreAuxv(void);
+  virtual ~CoreAuxv();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreAuxv& note);
 
   protected:
   template <typename ELF_T>
-  LIEF_LOCAL void parse_(void);
+  LIEF_LOCAL void parse_();
 
   template <typename ELF_T>
-  LIEF_LOCAL void build_(void);
+  LIEF_LOCAL void build_();
 
-  virtual void parse(void) override;
-  virtual void build(void) override;
+  virtual void parse() override;
+  virtual void build() override;
 
   private:
   CoreAuxv(Note& note);

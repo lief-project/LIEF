@@ -36,10 +36,10 @@ class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 
   public:
-  SymbolVersionRequirement(void);
+  SymbolVersionRequirement();
   SymbolVersionRequirement(const Elf64_Verneed *header);
   SymbolVersionRequirement(const Elf32_Verneed *header);
-  virtual ~SymbolVersionRequirement(void);
+  virtual ~SymbolVersionRequirement();
 
   SymbolVersionRequirement& operator=(SymbolVersionRequirement other);
   SymbolVersionRequirement(const SymbolVersionRequirement& other);
@@ -49,16 +49,16 @@ class LIEF_API SymbolVersionRequirement : public Object {
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
-  uint16_t version(void) const;
+  uint16_t version() const;
 
   //! @brief Number of associated auxiliary entries
-  uint32_t cnt(void) const;
+  uint32_t cnt() const;
 
   //! @brief Auxiliary entries
-  it_symbols_version_aux_requirement       auxiliary_symbols(void);
-  it_const_symbols_version_aux_requirement auxiliary_symbols(void) const;
+  it_symbols_version_aux_requirement       auxiliary_symbols();
+  it_const_symbols_version_aux_requirement auxiliary_symbols() const;
 
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   void version(uint16_t version);
   void name(const std::string& name);

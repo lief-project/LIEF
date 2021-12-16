@@ -26,9 +26,9 @@ namespace PE {
 
 ResourceAccelerator::ResourceAccelerator(const ResourceAccelerator&) = default;
 ResourceAccelerator& ResourceAccelerator::operator=(const ResourceAccelerator&) = default;
-ResourceAccelerator::~ResourceAccelerator(void) = default;
+ResourceAccelerator::~ResourceAccelerator() = default;
 
-ResourceAccelerator::ResourceAccelerator(void) :
+ResourceAccelerator::ResourceAccelerator() :
   flags_{0},
   ansi_{0},
   id_{0},
@@ -66,11 +66,11 @@ std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
   return os;
 }
 
-std::string ResourceAccelerator::ansi_str(void) const {
+std::string ResourceAccelerator::ansi_str() const {
   return to_string(static_cast<ACCELERATOR_VK_CODES>(ansi_));
 }
 
-std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list(void) const {
+std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
   std::set<ACCELERATOR_FLAGS> flags_set;
 
   const auto flags_tmp = flags_;
@@ -85,19 +85,19 @@ std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list(void) const {
   return flags_set;
 }
 
-int16_t ResourceAccelerator::flags(void) const {
+int16_t ResourceAccelerator::flags() const {
   return this->flags_;
 }
 
-int16_t ResourceAccelerator::ansi(void) const {
+int16_t ResourceAccelerator::ansi() const {
   return this->ansi_;
 }
 
-uint16_t ResourceAccelerator::id(void) const {
+uint16_t ResourceAccelerator::id() const {
   return this->id_;
 }
 
-int16_t ResourceAccelerator::padding(void) const {
+int16_t ResourceAccelerator::padding() const {
   return this->padding_;
 }
 

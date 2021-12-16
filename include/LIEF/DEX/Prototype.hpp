@@ -34,16 +34,16 @@ class LIEF_API Prototype : public Object {
   using it_const_params   = const_ref_iterator<const parameters_type_t>;
 
   public:
-  Prototype(void);
+  Prototype();
   Prototype(const Prototype& other);
 
   //! Type returned
-  const Type& return_type(void) const;
-  Type& return_type(void);
+  const Type& return_type() const;
+  Type& return_type();
 
   //! Types of the parameters
-  it_const_params parameters_type(void) const;
-  it_params parameters_type(void);
+  it_const_params parameters_type() const;
+  it_params parameters_type();
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -52,7 +52,7 @@ class LIEF_API Prototype : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Prototype& type);
 
-  virtual ~Prototype(void);
+  virtual ~Prototype();
 
   private:
   Type* return_type_{nullptr};

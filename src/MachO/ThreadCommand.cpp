@@ -25,10 +25,10 @@
 namespace LIEF {
 namespace MachO {
 
-ThreadCommand::ThreadCommand(void) = default;
+ThreadCommand::ThreadCommand() = default;
 ThreadCommand& ThreadCommand::operator=(const ThreadCommand&) = default;
 ThreadCommand::ThreadCommand(const ThreadCommand&) = default;
-ThreadCommand::~ThreadCommand(void) = default;
+ThreadCommand::~ThreadCommand() = default;
 
 ThreadCommand::ThreadCommand(const thread_command *cmd, CPU_TYPES arch) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -48,32 +48,32 @@ ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch) :
 {
 }
 
-ThreadCommand* ThreadCommand::clone(void) const {
+ThreadCommand* ThreadCommand::clone() const {
   return new ThreadCommand(*this);
 }
 
 
-uint32_t ThreadCommand::flavor(void) const {
+uint32_t ThreadCommand::flavor() const {
   return this->flavor_;
 }
 
-uint32_t ThreadCommand::count(void) const {
+uint32_t ThreadCommand::count() const {
   return this->count_;
 }
 
-CPU_TYPES ThreadCommand::architecture(void) const {
+CPU_TYPES ThreadCommand::architecture() const {
   return this->architecture_;
 }
 
-const std::vector<uint8_t>& ThreadCommand::state(void) const {
+const std::vector<uint8_t>& ThreadCommand::state() const {
   return this->state_;
 }
 
-std::vector<uint8_t>& ThreadCommand::state(void) {
+std::vector<uint8_t>& ThreadCommand::state() {
   return const_cast<std::vector<uint8_t>&>(static_cast<const ThreadCommand*>(this)->state());
 }
 
-uint64_t ThreadCommand::pc(void) const {
+uint64_t ThreadCommand::pc() const {
   uint64_t entry = 0;
   switch(this->architecture_) {
     case CPU_TYPES::CPU_TYPE_X86:

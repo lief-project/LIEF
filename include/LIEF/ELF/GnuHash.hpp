@@ -36,7 +36,7 @@ class LIEF_API GnuHash : public Object {
   friend class Binary;
 
   public:
-  GnuHash(void);
+  GnuHash();
   GnuHash(uint32_t symbol_idx,
       uint32_t shift2,
       const std::vector<uint64_t>& bloom_filters,
@@ -46,31 +46,31 @@ class LIEF_API GnuHash : public Object {
 
   GnuHash& operator=(const GnuHash& copy);
   GnuHash(const GnuHash& copy);
-  virtual ~GnuHash(void);
+  virtual ~GnuHash();
 
   //! @brief Return the number of buckets
   //! @see GnuHash::buckets
-  uint32_t nb_buckets(void) const;
+  uint32_t nb_buckets() const;
 
   //! @brief Index of the first symbol in the dynamic
   //! symbols table which accessible with the hash table
-  uint32_t symbol_index(void) const;
+  uint32_t symbol_index() const;
 
   //! @brief Shift count used in the bloom filter
-  uint32_t shift2(void) const;
+  uint32_t shift2() const;
 
   //! @brief Number of bloom filters used.
   //! It must be a power of 2
-  uint32_t maskwords(void) const;
+  uint32_t maskwords() const;
 
   //! @brief Bloom filters
-  const std::vector<uint64_t>& bloom_filters(void) const;
+  const std::vector<uint64_t>& bloom_filters() const;
 
   //! @brief Hash buckets
-  const std::vector<uint32_t>& buckets(void) const;
+  const std::vector<uint32_t>& buckets() const;
 
   //! @brief Hash values
-  const std::vector<uint32_t>& hash_values(void) const;
+  const std::vector<uint32_t>& hash_values() const;
 
   //! @brief Check if the given hash pass the bloom filter
   bool check_bloom_filter(uint32_t hash) const;

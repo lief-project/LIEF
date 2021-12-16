@@ -33,13 +33,13 @@ class LIEF_API Handler {
   Handler(const std::vector<uint8_t>& content);
   Handler(std::vector<uint8_t>&& content);
   Handler(BinaryStream& stream);
-  ~Handler(void);
+  ~Handler();
 
   Handler& operator=(const Handler&);
   Handler(const Handler&);
 
-  const std::vector<uint8_t>& content(void) const;
-  std::vector<uint8_t>& content(void);
+  const std::vector<uint8_t>& content() const;
+  std::vector<uint8_t>& content();
 
   Node& add(const Node& node);
 
@@ -56,7 +56,7 @@ class LIEF_API Handler {
   void reserve(uint64_t offset, uint64_t size);
 
   private:
-  Handler(void);
+  Handler();
   std::vector<uint8_t> data_;
   std::vector<Node*> nodes_;
 };

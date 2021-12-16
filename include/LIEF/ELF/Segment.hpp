@@ -48,26 +48,26 @@ class LIEF_API Segment : public Object {
   friend class Binary;
 
   public:
-  Segment(void);
+  Segment();
   Segment(const std::vector<uint8_t>& header, ELF_CLASS type);
   Segment(const std::vector<uint8_t>& header);
   Segment(const Elf64_Phdr* header);
   Segment(const Elf32_Phdr* header);
-  virtual ~Segment(void);
+  virtual ~Segment();
 
   Segment& operator=(Segment other);
   Segment(const Segment& other);
   void swap(Segment& other);
 
-  SEGMENT_TYPES type(void) const;
-  ELF_SEGMENT_FLAGS flags(void) const;
-  uint64_t file_offset(void) const;
-  uint64_t virtual_address(void) const;
-  uint64_t physical_address(void) const;
-  uint64_t physical_size(void) const;
-  uint64_t virtual_size(void) const;
-  uint64_t alignment(void) const;
-  std::vector<uint8_t> content(void) const;
+  SEGMENT_TYPES type() const;
+  ELF_SEGMENT_FLAGS flags() const;
+  uint64_t file_offset() const;
+  uint64_t virtual_address() const;
+  uint64_t physical_address() const;
+  uint64_t physical_size() const;
+  uint64_t virtual_size() const;
+  uint64_t alignment() const;
+  std::vector<uint8_t> content() const;
 
   bool has(ELF_SEGMENT_FLAGS flag) const;
   bool has(const Section& section) const;
@@ -78,7 +78,7 @@ class LIEF_API Segment : public Object {
 
   void type(SEGMENT_TYPES type);
   void flags(ELF_SEGMENT_FLAGS flags);
-  void clear_flags(void);
+  void clear_flags();
   void file_offset(uint64_t fileOffset);
   void virtual_address(uint64_t virtualAddress);
   void physical_address(uint64_t physicalAddress);
@@ -91,8 +91,8 @@ class LIEF_API Segment : public Object {
   template<typename T> void set_content_value(size_t offset, T value);
   size_t get_content_size() const;
 
-  it_sections       sections(void);
-  it_const_sections sections(void) const;
+  it_sections       sections();
+  it_const_sections sections() const;
 
   virtual void accept(Visitor& visitor) const override;
 

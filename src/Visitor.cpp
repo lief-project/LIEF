@@ -17,11 +17,11 @@
 #include "LIEF/Object.hpp"
 
 namespace LIEF {
-Visitor::Visitor(void) = default;
-Visitor::~Visitor(void) = default;
+Visitor::Visitor() = default;
+Visitor::~Visitor() = default;
 
 
-void Visitor::operator()(void) {
+void Visitor::operator()() {
 }
 
 void Visitor::visit(const Object& v) {

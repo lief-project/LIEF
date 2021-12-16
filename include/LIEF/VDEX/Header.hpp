@@ -32,7 +32,7 @@ class LIEF_API Header : public Object {
   public:
   using magic_t = std::array<uint8_t, 4>;
 
-  Header(void);
+  Header();
 
   template<class T>
   LIEF_LOCAL Header(const T* header);
@@ -41,22 +41,22 @@ class LIEF_API Header : public Object {
   Header& operator=(const Header&);
 
   //! Magic value used to identify VDEX
-  magic_t magic(void) const;
+  magic_t magic() const;
 
   //! VDEX version number
-  vdex_version_t version(void) const;
+  vdex_version_t version() const;
 
   //! Number of LIEF::DEX::File files registered
-  uint32_t nb_dex_files(void) const;
+  uint32_t nb_dex_files() const;
 
   //! Size of **all** LIEF::DEX::File
-  uint32_t dex_size(void) const;
+  uint32_t dex_size() const;
 
   //! Size of verifier deps section
-  uint32_t verifier_deps_size(void) const;
+  uint32_t verifier_deps_size() const;
 
   //! Size of quickening info section
-  uint32_t quickening_info_size(void) const;
+  uint32_t quickening_info_size() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -65,7 +65,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& header);
 
-  virtual ~Header(void);
+  virtual ~Header();
 
   private:
   magic_t magic_;

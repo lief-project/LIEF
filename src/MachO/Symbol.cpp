@@ -27,9 +27,9 @@
 namespace LIEF {
 namespace MachO {
 
-Symbol::~Symbol(void) = default;
+Symbol::~Symbol() = default;
 
-Symbol::Symbol(void) :
+Symbol::Symbol() :
   LIEF::Symbol{},
   type_{0},
   numberof_sections_{0},
@@ -91,19 +91,19 @@ void Symbol::swap(Symbol& other) {
   std::swap(this->origin_,            other.origin_);
 }
 
-uint8_t Symbol::type(void) const {
+uint8_t Symbol::type() const {
   return this->type_;
 }
 
-uint8_t  Symbol::numberof_sections(void) const {
+uint8_t  Symbol::numberof_sections() const {
   return this->numberof_sections_;
 }
 
-uint16_t Symbol::description(void) const {
+uint16_t Symbol::description() const {
   return this->description_;
 }
 
-SYMBOL_ORIGINS Symbol::origin(void) const {
+SYMBOL_ORIGINS Symbol::origin() const {
   return this->origin_;
 }
 
@@ -119,7 +119,7 @@ void Symbol::description(uint16_t desc) {
   this->description_ = desc;
 }
 
-bool Symbol::is_external(void) const {
+bool Symbol::is_external() const {
   static constexpr size_t N_TYPE = 0x0e;
   return static_cast<N_LIST_TYPES>(this->type_ & N_TYPE) == N_LIST_TYPES::N_UNDF;
     //(this->type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT;
@@ -127,37 +127,37 @@ bool Symbol::is_external(void) const {
 }
 
 
-bool Symbol::has_export_info(void) const {
+bool Symbol::has_export_info() const {
   return this->export_info_ != nullptr;
 }
 
-const ExportInfo& Symbol::export_info(void) const {
+const ExportInfo& Symbol::export_info() const {
   if (not this->has_export_info()) {
     throw not_found("'" + this->name() + "' hasn't export info");
   }
   return *this->export_info_;
 }
 
-ExportInfo& Symbol::export_info(void) {
+ExportInfo& Symbol::export_info() {
   return const_cast<ExportInfo&>(static_cast<const Symbol*>(this)->export_info());
 }
 
-bool Symbol::has_binding_info(void) const {
+bool Symbol::has_binding_info() const {
   return this->binding_info_ != nullptr;
 }
-const BindingInfo& Symbol::binding_info(void) const {
+const BindingInfo& Symbol::binding_info() const {
   if (not this->has_binding_info()) {
     throw not_found("'" + this->name() + "' hasn't binding info");
   }
   return *this->binding_info_;
 }
 
-BindingInfo& Symbol::binding_info(void) {
+BindingInfo& Symbol::binding_info() {
   return const_cast<BindingInfo&>(static_cast<const Symbol*>(this)->binding_info());
 }
 
 
-std::string Symbol::demangled_name(void) const {
+std::string Symbol::demangled_name() const {
 #if defined(__unix__)
   int status;
   const std::string& name = this->name().c_str();

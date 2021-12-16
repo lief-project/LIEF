@@ -58,16 +58,16 @@ class LIEF_API AndroidNote : public NoteDetails {
   using NoteDetails::NoteDetails;
   using description_t = std::vector<uint8_t>;
 
-  virtual AndroidNote* clone(void) const override;
+  virtual AndroidNote* clone() const override;
 
   //! Target SDK version
-  uint32_t sdk_version(void) const;
+  uint32_t sdk_version() const;
 
   //! NDK version used
-  std::string ndk_version(void) const;
+  std::string ndk_version() const;
 
   //! NDK build number
-  std::string ndk_build_number(void) const;
+  std::string ndk_build_number() const;
 
   void sdk_version(uint32_t version);
   void ndk_version(const std::string& ndk_version);
@@ -80,13 +80,13 @@ class LIEF_API AndroidNote : public NoteDetails {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~AndroidNote(void);
+  virtual ~AndroidNote();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
 
   protected:
-  virtual void parse(void) override;
-  virtual void build(void) override;
+  virtual void parse() override;
+  virtual void build() override;
 
   private:
   AndroidNote(Note& note);

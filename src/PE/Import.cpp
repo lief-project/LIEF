@@ -26,7 +26,7 @@
 namespace LIEF {
 namespace PE {
 
-Import::~Import(void) = default;
+Import::~Import() = default;
 
 Import::Import(const Import& other) :
   Object{other},
@@ -61,7 +61,7 @@ void Import::swap(Import& other) {
   std::swap(this->type_,                     other.type_);
 }
 
-Import::Import(void) :
+Import::Import() :
   entries_{},
   directory_{nullptr},
   iat_directory_{nullptr},
@@ -120,22 +120,22 @@ ImportEntry& Import::get_entry(const std::string& name) {
   return const_cast<ImportEntry&>(static_cast<const Import*>(this)->get_entry(name));
 }
 
-it_import_entries Import::entries(void) {
+it_import_entries Import::entries() {
   return {this->entries_};
 }
 
 
-it_const_import_entries Import::entries(void) const {
+it_const_import_entries Import::entries() const {
   return {this->entries_};
 }
 
 
-uint32_t Import::import_address_table_rva(void) const {
+uint32_t Import::import_address_table_rva() const {
   return this->import_address_table_RVA_;
 }
 
 
-uint32_t Import::import_lookup_table_rva(void) const {
+uint32_t Import::import_lookup_table_rva() const {
   return this->import_lookup_table_RVA_;
 }
 
@@ -164,11 +164,11 @@ uint32_t Import::get_function_rva_from_iat(const std::string& function) const {
 }
 
 
-const std::string& Import::name(void) const {
+const std::string& Import::name() const {
   return this->name_;
 }
 
-//std::string& Import::name(void) {
+//std::string& Import::name() {
 //  return const_cast<std::string&>(static_cast<const Import*>(this)->name());
 //}
 
@@ -177,7 +177,7 @@ void Import::name(const std::string& name) {
 }
 
 
-const DataDirectory& Import::directory(void) const {
+const DataDirectory& Import::directory() const {
   if (this->directory_ != nullptr) {
     return *this->directory_;
   } else {
@@ -185,12 +185,12 @@ const DataDirectory& Import::directory(void) const {
   }
 }
 
-DataDirectory& Import::directory(void) {
+DataDirectory& Import::directory() {
   return const_cast<DataDirectory&>(static_cast<const Import*>(this)->directory());
 }
 
 
-const DataDirectory& Import::iat_directory(void) const {
+const DataDirectory& Import::iat_directory() const {
   if (this->iat_directory_ != nullptr) {
     return *this->iat_directory_;
   } else {
@@ -198,7 +198,7 @@ const DataDirectory& Import::iat_directory(void) const {
   }
 }
 
-DataDirectory& Import::iat_directory(void) {
+DataDirectory& Import::iat_directory() {
   return const_cast<DataDirectory&>(static_cast<const Import*>(this)->iat_directory());
 }
 
@@ -223,11 +223,11 @@ ImportEntry& Import::add_entry(const std::string& name) {
   return this->entries_.back();
 }
 
-uint32_t Import::forwarder_chain(void) const {
+uint32_t Import::forwarder_chain() const {
   return this->forwarder_chain_;
 }
 
-uint32_t Import::timedatestamp(void) const {
+uint32_t Import::timedatestamp() const {
   return this->timedatestamp_;
 }
 

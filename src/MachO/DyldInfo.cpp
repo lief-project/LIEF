@@ -52,7 +52,7 @@ struct ThreadedBindData {
   uint8_t type            = 0;
 };
 
-DyldInfo::DyldInfo(void) :
+DyldInfo::DyldInfo() :
   LoadCommand{},
   rebase_{},
   rebase_opcodes_{},
@@ -92,11 +92,11 @@ DyldInfo::DyldInfo(const DyldInfo& copy) :
 {}
 
 
-DyldInfo* DyldInfo::clone(void) const {
+DyldInfo* DyldInfo::clone() const {
   return new DyldInfo(*this);
 }
 
-DyldInfo::~DyldInfo(void) {
+DyldInfo::~DyldInfo() {
   for (BindingInfo* binfo : this->binding_info_) {
     delete binfo;
   }
@@ -151,15 +151,15 @@ void DyldInfo::swap(DyldInfo& other) {
 
 // Rebase
 // ======
-const DyldInfo::info_t& DyldInfo::rebase(void) const {
+const DyldInfo::info_t& DyldInfo::rebase() const {
   return this->rebase_;
 }
 
-const buffer_t& DyldInfo::rebase_opcodes(void) const {
+const buffer_t& DyldInfo::rebase_opcodes() const {
   return this->rebase_opcodes_;
 }
 
-buffer_t& DyldInfo::rebase_opcodes(void) {
+buffer_t& DyldInfo::rebase_opcodes() {
   return const_cast<buffer_t&>(static_cast<const DyldInfo*>(this)->rebase_opcodes());
 }
 
@@ -168,7 +168,7 @@ void DyldInfo::rebase_opcodes(const buffer_t& raw) {
 }
 
 
-std::string DyldInfo::show_rebases_opcodes(void) const {
+std::string DyldInfo::show_rebases_opcodes() const {
   if (not this->binary_) {
     LIEF_WARN("Can't print rebase opcode");
     return "";
@@ -370,23 +370,23 @@ std::string DyldInfo::show_rebases_opcodes(void) const {
 // Binding
 // =======
 
-it_binding_info DyldInfo::bindings(void) {
+it_binding_info DyldInfo::bindings() {
   return this->binding_info_;
 }
 
-it_const_binding_info DyldInfo::bindings(void) const {
+it_const_binding_info DyldInfo::bindings() const {
   return this->binding_info_;
 }
 
-const DyldInfo::info_t& DyldInfo::bind(void) const {
+const DyldInfo::info_t& DyldInfo::bind() const {
   return this->bind_;
 }
 
-const buffer_t& DyldInfo::bind_opcodes(void) const {
+const buffer_t& DyldInfo::bind_opcodes() const {
   return this->bind_opcodes_;
 }
 
-buffer_t& DyldInfo::bind_opcodes(void) {
+buffer_t& DyldInfo::bind_opcodes() {
   return const_cast<buffer_t&>(static_cast<const DyldInfo*>(this)->bind_opcodes());
 }
 
@@ -395,7 +395,7 @@ void DyldInfo::bind_opcodes(const buffer_t& raw) {
 }
 
 
-std::string DyldInfo::show_bind_opcodes(void) const {
+std::string DyldInfo::show_bind_opcodes() const {
   std::ostringstream output;
   this->show_bindings(output, this->bind_opcodes(), /* is_lazy = */ false);
   return output.str();
@@ -760,15 +760,15 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
 // Weak Binding
 // ============
-const DyldInfo::info_t& DyldInfo::weak_bind(void) const {
+const DyldInfo::info_t& DyldInfo::weak_bind() const {
   return this->weak_bind_;
 }
 
-const buffer_t& DyldInfo::weak_bind_opcodes(void) const {
+const buffer_t& DyldInfo::weak_bind_opcodes() const {
   return this->weak_bind_opcodes_;
 }
 
-buffer_t& DyldInfo::weak_bind_opcodes(void) {
+buffer_t& DyldInfo::weak_bind_opcodes() {
   return const_cast<buffer_t&>(static_cast<const DyldInfo*>(this)->weak_bind_opcodes());
 }
 
@@ -777,7 +777,7 @@ void DyldInfo::weak_bind_opcodes(const buffer_t& raw) {
 }
 
 
-std::string DyldInfo::show_weak_bind_opcodes(void) const {
+std::string DyldInfo::show_weak_bind_opcodes() const {
   std::ostringstream output;
   this->show_bindings(output, this->weak_bind_opcodes(), /* is_lazy = */ false);
   return output.str();
@@ -785,15 +785,15 @@ std::string DyldInfo::show_weak_bind_opcodes(void) const {
 
 // Lazy Binding
 // ============
-const DyldInfo::info_t& DyldInfo::lazy_bind(void) const {
+const DyldInfo::info_t& DyldInfo::lazy_bind() const {
   return this->lazy_bind_;
 }
 
-const buffer_t& DyldInfo::lazy_bind_opcodes(void) const {
+const buffer_t& DyldInfo::lazy_bind_opcodes() const {
   return this->lazy_bind_opcodes_;
 }
 
-buffer_t& DyldInfo::lazy_bind_opcodes(void) {
+buffer_t& DyldInfo::lazy_bind_opcodes() {
   return const_cast<buffer_t&>(static_cast<const DyldInfo*>(this)->lazy_bind_opcodes());
 }
 
@@ -801,7 +801,7 @@ void DyldInfo::lazy_bind_opcodes(const buffer_t& raw) {
   this->lazy_bind_opcodes_ = raw;
 }
 
-std::string DyldInfo::show_lazy_bind_opcodes(void) const {
+std::string DyldInfo::show_lazy_bind_opcodes() const {
   std::ostringstream output;
   this->show_bindings(output, this->lazy_bind_opcodes(), true);
   return output.str();
@@ -809,28 +809,28 @@ std::string DyldInfo::show_lazy_bind_opcodes(void) const {
 
 // Export Info
 // ===========
-it_export_info DyldInfo::exports(void) {
+it_export_info DyldInfo::exports() {
   return this->export_info_;
 }
 
-it_const_export_info DyldInfo::exports(void) const {
+it_const_export_info DyldInfo::exports() const {
   return this->export_info_;
 }
 
-const DyldInfo::info_t& DyldInfo::export_info(void) const {
+const DyldInfo::info_t& DyldInfo::export_info() const {
   return this->export_;
 }
 
-const buffer_t& DyldInfo::export_trie(void) const {
+const buffer_t& DyldInfo::export_trie() const {
   return this->export_trie_;
 }
 
-buffer_t& DyldInfo::export_trie(void) {
+buffer_t& DyldInfo::export_trie() {
   return const_cast<buffer_t&>(static_cast<const DyldInfo*>(this)->export_trie());
 }
 
 
-std::string DyldInfo::show_export_trie(void) const {
+std::string DyldInfo::show_export_trie() const {
   if (not this->binary_) {
     LIEF_WARN("Can't print bind opcodes");
     return "";
@@ -1024,7 +1024,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 }
 
 
-DyldInfo& DyldInfo::update_rebase_info(void) {
+DyldInfo& DyldInfo::update_rebase_info() {
   auto cmp = [] (const RelocationDyld* lhs, const RelocationDyld* rhs) {
     return *lhs < *rhs;
   };
@@ -1264,7 +1264,7 @@ DyldInfo& DyldInfo::update_rebase_info(void) {
   return *this;
 }
 
-DyldInfo& DyldInfo::update_binding_info(void) {
+DyldInfo& DyldInfo::update_binding_info() {
   auto cmp = [] (const BindingInfo* lhs, const BindingInfo* rhs) {
     if (lhs->library_ordinal() != rhs->library_ordinal()) {
       return lhs->library_ordinal() < rhs->library_ordinal();
@@ -2193,7 +2193,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
 }
 
 
-DyldInfo& DyldInfo::update_export_trie(void) {
+DyldInfo& DyldInfo::update_export_trie() {
   auto cmp = [] (const ExportInfo* lhs, const ExportInfo* rhs) {
     // see : https://github.com/aosm/ld64/blob/88428de93dab43bf5fc5baca9ee38226bc013269/src/abstraction/MachOTrie.hpp#L255-L261
     return  lhs->node_offset() < rhs->node_offset();

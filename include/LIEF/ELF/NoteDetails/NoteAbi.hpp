@@ -53,17 +53,17 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   static NoteAbi make(Note& note);
 
-  virtual NoteAbi* clone(void) const override;
+  virtual NoteAbi* clone() const override;
 
   public:
   using NoteDetails::NoteDetails;
   using description_t = typename Note::description_t;
 
   //! @brief Return the target version as ``<Major, Minor, Patch>``.
-  version_t version(void) const;
+  version_t version() const;
 
   //! @brief Return the target ABI. Require a NT_GNU_ABI_TAG type
-  NOTE_ABIS abi(void) const;
+  NOTE_ABIS abi() const;
 
   bool operator==(const NoteAbi& rhs) const;
   bool operator!=(const NoteAbi& rhs) const;
@@ -72,12 +72,12 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~NoteAbi(void);
+  virtual ~NoteAbi();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteAbi& note);
 
   protected:
-  virtual void parse(void) override;
+  virtual void parse() override;
 
   private:
   NoteAbi(Note& note);

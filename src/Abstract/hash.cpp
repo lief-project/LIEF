@@ -21,7 +21,7 @@
 
 namespace LIEF {
 
-AbstractHash::~AbstractHash(void) = default;
+AbstractHash::~AbstractHash() = default;
 
 size_t AbstractHash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::AbstractHash>(obj);

@@ -47,31 +47,31 @@ class LIEF_API Symbol : public LIEF::Symbol {
       SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK,
       uint8_t other = 0, uint16_t shndx = 0,
       uint64_t value = 0, uint64_t size = 0);
-  Symbol(void);
-  virtual ~Symbol(void);
+  Symbol();
+  virtual ~Symbol();
 
   Symbol& operator=(Symbol other);
   Symbol(const Symbol& other);
   void swap(Symbol& other);
 
   //! @brief A symbol's type provides a general classification for the associated entity
-  ELF_SYMBOL_TYPES type(void) const;
+  ELF_SYMBOL_TYPES type() const;
 
   //! @brief A symbol's binding determines the linkage visibility and behavior
-  SYMBOL_BINDINGS binding(void) const;
+  SYMBOL_BINDINGS binding() const;
 
   //! @brief This member specifies the symbol's type and binding attributes.
-  uint8_t information(void) const;
+  uint8_t information() const;
 
   //! @brief This member currently holds ``0`` and has no defined meaning.
-  uint8_t other(void) const;
+  uint8_t other() const;
 
   //! @brief @link ELF::Section section@endlink index associated with the symbol
-  uint16_t section_idx(void) const;
+  uint16_t section_idx() const;
 
-  ELF_SYMBOL_VISIBILITY visibility(void) const;
+  ELF_SYMBOL_VISIBILITY visibility() const;
 
-  Section& section(void);
+  Section& section();
 
   //! This member have slightly different interpretations:
   //!   * In relocatable files, `value` holds alignment constraints for a symbol whose section index
@@ -81,27 +81,27 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
   //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
   //!     a virtual address (memory interpretation) for which the section number is irrelevant.
-  //uint64_t value(void) const;
+  //uint64_t value() const;
 
   //! @brief Symbol size
   //!
   //! Many symbols have associated sizes. For example, a data object's size is the number of
   //! bytes contained in the object. This member holds `0` if the symbol has no size or
   //! an unknown size.
-  //uint64_t size(void) const;
+  //uint64_t size() const;
 
   //! @brief @see Symbol::section_idx
-  uint16_t shndx(void) const;
+  uint16_t shndx() const;
 
   //! @brief Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
-  bool has_version(void) const;
+  bool has_version() const;
 
   //! @brief Return the @link ELF::SymbolVersion symbol version @endlink associated with this symbol
-  SymbolVersion&       symbol_version(void);
-  const SymbolVersion& symbol_version(void) const;
+  SymbolVersion&       symbol_version();
+  const SymbolVersion& symbol_version() const;
 
   //! @brief Symbol's unmangled name
-  std::string demangled_name(void) const;
+  std::string demangled_name() const;
 
   void type(ELF_SYMBOL_TYPES type);
   void binding(SYMBOL_BINDINGS binding);
@@ -115,30 +115,30 @@ class LIEF_API Symbol : public LIEF::Symbol {
   }
 
   //! @brief Check if the current symbol is exported
-  bool is_exported(void) const;
+  bool is_exported() const;
 
   //! @brief Set whether or not the symbol is exported
   void set_exported(bool flag = true);
 
   //! @brief Check if the current symbol is imported
-  bool is_imported(void) const;
+  bool is_imported() const;
 
   //! @brief Set whether or not the symbol is imported
   void set_imported(bool flag = true);
 
 
   //! True if the symbol is a static one
-  inline bool is_static(void) const {
+  inline bool is_static() const {
     return this->binding() == SYMBOL_BINDINGS::STB_GLOBAL;
   }
 
   //! True if the symbol represent a function
-  inline bool is_function(void) const {
+  inline bool is_function() const {
     return this->type() == ELF_SYMBOL_TYPES::STT_FUNC;
   }
 
   //! True if the symbol represent a variable
-  inline bool is_variable(void) const {
+  inline bool is_variable() const {
     return this->type() == ELF_SYMBOL_TYPES::STT_OBJECT;
   }
 

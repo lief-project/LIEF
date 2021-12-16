@@ -27,9 +27,9 @@ namespace PE {
 
 PogoEntry::PogoEntry(const PogoEntry&) = default;
 PogoEntry& PogoEntry::operator=(const PogoEntry&) = default;
-PogoEntry::~PogoEntry(void) = default;
+PogoEntry::~PogoEntry() = default;
 
-PogoEntry::PogoEntry(void) :
+PogoEntry::PogoEntry() :
   start_rva_{0}, size_{0}, name_{}
 {}
 

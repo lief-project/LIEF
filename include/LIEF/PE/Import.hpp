@@ -39,34 +39,34 @@ class LIEF_API Import : public Object {
   public:
   Import(const pe_import *import);
   Import(const std::string& name);
-  Import(void);
-  virtual ~Import(void);
+  Import();
+  virtual ~Import();
 
   Import(const Import& other);
   Import& operator=(Import other);
   void swap(Import& other);
 
-  uint32_t forwarder_chain(void) const;
-  uint32_t timedatestamp(void) const;
+  uint32_t forwarder_chain() const;
+  uint32_t timedatestamp() const;
 
 
   //! @brief Return a vector of @link PE::ImportEntry Import entries @endlink
-  it_import_entries       entries(void);
-  it_const_import_entries entries(void) const;
+  it_import_entries       entries();
+  it_const_import_entries entries() const;
 
   //! @brief Return the relative virtual address of the import address table (`IAT`)
   //
   //! @warning
   //! This address could be change when re-building the binary
   //!
-  uint32_t import_address_table_rva(void) const;
+  uint32_t import_address_table_rva() const;
 
   //! @brief Return the relative virtual address of the import lookup table
   //!
   //! @warning
   //! This address could be change when re-building the binary
   //!
-  uint32_t  import_lookup_table_rva(void) const;
+  uint32_t  import_lookup_table_rva() const;
 
   //! @brief Return the Function's RVA from the import address table (`IAT`)
   //!
@@ -82,20 +82,20 @@ class LIEF_API Import : public Object {
   //! @brief Return the library's name
   //!
   //! e.g. `kernel32.dll`
-  const std::string& name(void) const;
+  const std::string& name() const;
   void               name(const std::string& name);
 
   //! @brief Return the @link PE::DataDirectory Data directory@endlink associated.
   //! It should be the one at index PE::DATA_DIRECTORY::IMPORT_TABLE
   //!
-  DataDirectory&       directory(void);
-  const DataDirectory& directory(void) const;
+  DataDirectory&       directory();
+  const DataDirectory& directory() const;
 
   //! @brief Return the @link PE::DataDirectory Data directory@endlink associated.
   //! It should be the one at index PE::DATA_DIRECTORY::IAT
   //!
-  DataDirectory&       iat_directory(void);
-  const DataDirectory& iat_directory(void) const;
+  DataDirectory&       iat_directory();
+  const DataDirectory& iat_directory() const;
 
   //! @brief Add a function
   ImportEntry& add_entry(const ImportEntry& entry);

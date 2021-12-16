@@ -27,9 +27,9 @@ namespace PE {
 
 ResourceStringTable::ResourceStringTable(const ResourceStringTable&) = default;
 ResourceStringTable& ResourceStringTable::operator=(const ResourceStringTable&) = default;
-ResourceStringTable::~ResourceStringTable(void) = default;
+ResourceStringTable::~ResourceStringTable() = default;
 
-ResourceStringTable::ResourceStringTable(void) :
+ResourceStringTable::ResourceStringTable() :
   name_{},
   length_{0}
 {}
@@ -39,11 +39,11 @@ ResourceStringTable::ResourceStringTable(int16_t length, const std::u16string& n
   length_{length}
 {}
 
-int16_t ResourceStringTable::length(void) const {
+int16_t ResourceStringTable::length() const {
   return this->length_;
 }
 
-const std::u16string& ResourceStringTable::name(void) const {
+const std::u16string& ResourceStringTable::name() const {
   return this->name_;
 }
 

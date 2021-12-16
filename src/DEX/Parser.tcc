@@ -25,7 +25,7 @@ namespace LIEF {
 namespace DEX {
 
 template<typename DEX_T>
-void Parser::parse_file(void) {
+void Parser::parse_file() {
   this->file_->original_data_ = this->stream_->content();
 
   this->parse_header<DEX_T>();
@@ -47,7 +47,7 @@ void Parser::parse_file(void) {
 
 
 template<typename DEX_T>
-void Parser::parse_header(void) {
+void Parser::parse_header() {
   using header_t = typename DEX_T::dex_header;
   LIEF_DEBUG("Parsing Header");
 
@@ -58,7 +58,7 @@ void Parser::parse_header(void) {
 
 
 template<typename DEX_T>
-void Parser::parse_map(void) {
+void Parser::parse_map() {
   LIEF_DEBUG("Parsing map items");
 
   uint32_t offset = this->file_->header().map();
@@ -79,7 +79,7 @@ void Parser::parse_map(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_strings(void) {
+void Parser::parse_strings() {
   // (Offset, Size)
   Header::location_t strings_location = this->file_->header().strings();
   if (strings_location.second == 0) {
@@ -111,7 +111,7 @@ void Parser::parse_strings(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_types(void) {
+void Parser::parse_types() {
   Header::location_t types_location = this->file_->header().types();
 
   LIEF_DEBUG("Parsing #{:d} TYPES at 0x{:x}", types_location.second, types_location.first);
@@ -152,7 +152,7 @@ void Parser::parse_types(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_fields(void) {
+void Parser::parse_fields() {
   Header::location_t fields_location = this->file_->header().fields();
   Header::location_t types_location = this->file_->header().types();
 
@@ -212,7 +212,7 @@ void Parser::parse_fields(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_prototypes(void) {
+void Parser::parse_prototypes() {
   Header::location_t prototypes_locations = this->file_->header().prototypes();
   if (prototypes_locations.first == 0) {
     return;
@@ -271,7 +271,7 @@ void Parser::parse_prototypes(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_methods(void) {
+void Parser::parse_methods() {
   Header::location_t methods_location = this->file_->header().methods();
   Header::location_t types_location = this->file_->header().types();
 
@@ -338,7 +338,7 @@ void Parser::parse_methods(void) {
 }
 
 template<typename DEX_T>
-void Parser::parse_classes(void) {
+void Parser::parse_classes() {
   Header::location_t classes_location = this->file_->header().classes();
   Header::location_t types_location = this->file_->header().types();
 

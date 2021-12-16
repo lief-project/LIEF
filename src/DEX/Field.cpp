@@ -14,7 +14,7 @@ namespace DEX {
 Field::Field(const Field&) = default;
 Field& Field::operator=(const Field&) = default;
 
-Field::Field(void) = default;
+Field::Field() = default;
 
 Field::Field(const std::string& name, Class* parent) :
   name_{name},
@@ -23,30 +23,30 @@ Field::Field(const std::string& name, Class* parent) :
   original_index_{-1u}
 {}
 
-const std::string& Field::name(void) const {
+const std::string& Field::name() const {
   return this->name_;
 }
 
-bool Field::has_class(void) const {
+bool Field::has_class() const {
   return this->parent_ != nullptr;
 }
 
-const Class& Field::cls(void) const {
+const Class& Field::cls() const {
   if (not this->has_class()) {
     throw not_found("Can't find class associated with " + this->name());
   }
   return *this->parent_;
 }
 
-Class& Field::cls(void) {
+Class& Field::cls() {
   return const_cast<Class&>(static_cast<const Field*>(this)->cls());
 }
 
-size_t Field::index(void) const {
+size_t Field::index() const {
   return this->original_index_;
 }
 
-bool Field::is_static(void) const {
+bool Field::is_static() const {
     return this->is_static_;
 }
 
@@ -59,7 +59,7 @@ bool Field::has(ACCESS_FLAGS f) const {
   return (this->access_flags_ & f);
 }
 
-Field::access_flags_list_t Field::access_flags(void) const {
+Field::access_flags_list_t Field::access_flags() const {
   Field::access_flags_list_t flags;
 
   std::copy_if(
@@ -71,12 +71,12 @@ Field::access_flags_list_t Field::access_flags(void) const {
 
 }
 
-const Type& Field::type(void) const {
+const Type& Field::type() const {
   CHECK(this->type_ != nullptr, "Type is null!");
   return *this->type_;
 }
 
-Type& Field::type(void) {
+Type& Field::type() {
   return const_cast<Type&>(static_cast<const Field*>(this)->type());
 }
 
@@ -122,7 +122,7 @@ std::ostream& operator<<(std::ostream& os, const Field& field) {
   return os;
 }
 
-Field::~Field(void) = default;
+Field::~Field() = default;
 
 }
 }

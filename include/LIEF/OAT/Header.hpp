@@ -44,7 +44,7 @@ class LIEF_API Header : public Object {
   static std::string key_to_string(HEADER_KEYS key);
 
   public:
-  Header(void);
+  Header();
   Header(const Header&);
   Header& operator=(const Header&);
 
@@ -52,44 +52,44 @@ class LIEF_API Header : public Object {
   LIEF_LOCAL Header(const T* header);
 
   //! Magic value: ``oat``
-  Header::magic_t magic(void) const;
+  Header::magic_t magic() const;
 
   //! OAT version
-  oat_version_t version(void) const;
+  oat_version_t version() const;
 
-  uint32_t checksum(void) const;
+  uint32_t checksum() const;
 
-  INSTRUCTION_SETS instruction_set(void) const;
-  // TODO instruction_set_features_bitmap_(void) const;
+  INSTRUCTION_SETS instruction_set() const;
+  // TODO instruction_set_features_bitmap_() const;
 
 
-  uint32_t nb_dex_files(void) const;
+  uint32_t nb_dex_files() const;
 
   // Since OAT 131
-  uint32_t oat_dex_files_offset(void) const;
+  uint32_t oat_dex_files_offset() const;
 
-  uint32_t executable_offset(void) const;
-  uint32_t i2i_bridge_offset(void) const;
-  uint32_t i2c_code_bridge_offset(void) const;
-  uint32_t jni_dlsym_lookup_offset(void) const;
+  uint32_t executable_offset() const;
+  uint32_t i2i_bridge_offset() const;
+  uint32_t i2c_code_bridge_offset() const;
+  uint32_t jni_dlsym_lookup_offset() const;
 
-  uint32_t quick_generic_jni_trampoline_offset(void) const;
-  uint32_t quick_imt_conflict_trampoline_offset(void) const;
-  uint32_t quick_resolution_trampoline_offset(void) const;
-  uint32_t quick_to_interpreter_bridge_offset(void) const;
+  uint32_t quick_generic_jni_trampoline_offset() const;
+  uint32_t quick_imt_conflict_trampoline_offset() const;
+  uint32_t quick_resolution_trampoline_offset() const;
+  uint32_t quick_to_interpreter_bridge_offset() const;
 
-  int32_t image_patch_delta(void) const;
+  int32_t image_patch_delta() const;
 
-  uint32_t image_file_location_oat_checksum(void) const;
-  uint32_t image_file_location_oat_data_begin(void) const;
+  uint32_t image_file_location_oat_checksum() const;
+  uint32_t image_file_location_oat_data_begin() const;
 
-  uint32_t key_value_size(void) const;
+  uint32_t key_value_size() const;
 
-  it_key_values_t       key_values(void);
-  it_const_key_values_t key_values(void) const;
+  it_key_values_t       key_values();
+  it_const_key_values_t key_values() const;
 
-  keys_t keys(void) const;
-  values_t values(void) const;
+  keys_t keys() const;
+  values_t values() const;
 
   const std::string& get(HEADER_KEYS key) const;
   std::string& get(HEADER_KEYS key);

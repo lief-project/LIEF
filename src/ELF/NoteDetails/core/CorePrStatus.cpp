@@ -39,60 +39,60 @@ CorePrStatus CorePrStatus::make(Note& note) {
   return pinfo;
 }
 
-CorePrStatus* CorePrStatus::clone(void) const {
+CorePrStatus* CorePrStatus::clone() const {
   return new CorePrStatus(*this);
 }
 
-const CorePrStatus::reg_context_t& CorePrStatus::reg_context(void) const {
+const CorePrStatus::reg_context_t& CorePrStatus::reg_context() const {
   return this->ctx_;
 }
 
 
-const Elf_siginfo& CorePrStatus::siginfo(void) const {
+const Elf_siginfo& CorePrStatus::siginfo() const {
   return this->siginfo_;
 }
 
-uint16_t CorePrStatus::current_sig(void) const {
+uint16_t CorePrStatus::current_sig() const {
   return this->cursig_;
 }
 
-uint64_t CorePrStatus::sigpend(void) const {
+uint64_t CorePrStatus::sigpend() const {
   return this->sigpend_;
 }
 
-uint64_t CorePrStatus::sighold(void) const {
+uint64_t CorePrStatus::sighold() const {
   return this->sighold_;
 }
 
-int32_t CorePrStatus::pid(void) const {
+int32_t CorePrStatus::pid() const {
   return this->pid_;
 }
 
-int32_t CorePrStatus::ppid(void) const {
+int32_t CorePrStatus::ppid() const {
   return this->ppid_;
 }
 
-int32_t CorePrStatus::pgrp(void) const {
+int32_t CorePrStatus::pgrp() const {
   return this->pgrp_;
 }
 
-int32_t CorePrStatus::sid(void) const {
+int32_t CorePrStatus::sid() const {
   return this->sid_;
 }
 
-Elf64_timeval CorePrStatus::utime(void) const {
+Elf64_timeval CorePrStatus::utime() const {
   return this->utime_;
 }
 
-Elf64_timeval CorePrStatus::stime(void) const {
+Elf64_timeval CorePrStatus::stime() const {
   return this->stime_;
 }
 
-Elf64_timeval CorePrStatus::cutime(void) const {
+Elf64_timeval CorePrStatus::cutime() const {
   return this->cutime_;
 }
 
-Elf64_timeval CorePrStatus::cstime(void) const {
+Elf64_timeval CorePrStatus::cstime() const {
   return this->cstime_;
 }
 
@@ -116,7 +116,7 @@ bool CorePrStatus::has(CorePrStatus::REGISTERS reg) const {
 }
 
 
-uint64_t CorePrStatus::pc(void) const {
+uint64_t CorePrStatus::pc() const {
   const ARCH arch = this->binary()->header().machine_type();
   switch (arch) {
     case ARCH::EM_386:
@@ -147,7 +147,7 @@ uint64_t CorePrStatus::pc(void) const {
   }
 }
 
-uint64_t CorePrStatus::sp(void) const {
+uint64_t CorePrStatus::sp() const {
   const ARCH arch = this->binary()->header().machine_type();
   switch (arch) {
     case ARCH::EM_386:
@@ -341,7 +341,7 @@ std::ostream& CorePrStatus::dump(std::ostream& os, const reg_context_t& ctx) {
 }
 
 
-void CorePrStatus::parse(void) {
+void CorePrStatus::parse() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->parse_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -349,7 +349,7 @@ void CorePrStatus::parse(void) {
   }
 }
 
-void CorePrStatus::build(void) {
+void CorePrStatus::build() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->build_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -358,7 +358,7 @@ void CorePrStatus::build(void) {
 }
 
 
-std::pair<size_t, size_t> CorePrStatus::reg_enum_range(void) const {
+std::pair<size_t, size_t> CorePrStatus::reg_enum_range() const {
   const ARCH arch = this->binary()->header().machine_type();
 
   size_t enum_start = 0;
@@ -408,7 +408,7 @@ std::ostream& operator<<(std::ostream& os, const CorePrStatus& note) {
 
 
 
-CorePrStatus::~CorePrStatus(void) = default;
+CorePrStatus::~CorePrStatus() = default;
 
 } // namespace ELF
 } // namespace LIEF

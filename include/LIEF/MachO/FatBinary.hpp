@@ -43,24 +43,24 @@ class LIEF_API FatBinary {
   FatBinary(const FatBinary&) = delete;
   FatBinary& operator=(const FatBinary&) = delete;
 
-  virtual ~FatBinary(void);
+  virtual ~FatBinary();
 
   //! @brief Number of @link MachO::Binary binary @endlink registred
-  size_t size(void) const;
+  size_t size() const;
 
-  it_binaries begin(void);
-  it_const_binaries begin(void) const;
+  it_binaries begin();
+  it_const_binaries begin() const;
 
-  it_binaries end(void);
-  it_const_binaries end(void) const;
+  it_binaries end();
+  it_const_binaries end() const;
 
-  Binary* pop_back(void);
+  Binary* pop_back();
 
   Binary&       at(size_t index);
   const Binary& at(size_t index) const;
 
-  Binary&       back(void);
-  const Binary& back(void) const;
+  Binary&       back();
+  const Binary& back() const;
 
   Binary&       operator[](size_t index);
   const Binary& operator[](size_t index) const;
@@ -80,12 +80,12 @@ class LIEF_API FatBinary {
   void write(const std::string& filename);
 
   //! Reconstruct the Fat binary object and return his content as bytes
-  std::vector<uint8_t> raw(void);
+  std::vector<uint8_t> raw();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
 
   private:
-  FatBinary(void);
+  FatBinary();
   FatBinary(const std::vector<Binary*>& binaries);
   binaries_t binaries_;
 };

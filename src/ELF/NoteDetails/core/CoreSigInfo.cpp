@@ -37,19 +37,19 @@ CoreSigInfo CoreSigInfo::make(Note& note) {
   return pinfo;
 }
 
-CoreSigInfo* CoreSigInfo::clone(void) const {
+CoreSigInfo* CoreSigInfo::clone() const {
   return new CoreSigInfo(*this);
 }
 
-int32_t CoreSigInfo::signo(void) const {
+int32_t CoreSigInfo::signo() const {
   return this->siginfo_.si_signo;
 }
 
-int32_t CoreSigInfo::sigcode(void) const {
+int32_t CoreSigInfo::sigcode() const {
   return this->siginfo_.si_code;
 }
 
-int32_t CoreSigInfo::sigerrno(void) const {
+int32_t CoreSigInfo::sigerrno() const {
   return this->siginfo_.si_errno;
 }
 
@@ -97,7 +97,7 @@ void CoreSigInfo::dump(std::ostream& os) const {
 }
 
 
-void CoreSigInfo::parse(void) {
+void CoreSigInfo::parse() {
   const Note::description_t& description = this->description();
   if (description.size() < sizeof(Elf_siginfo)) {
     return;
@@ -107,7 +107,7 @@ void CoreSigInfo::parse(void) {
 }
 
 
-void CoreSigInfo::build(void) {
+void CoreSigInfo::build() {
   Note::description_t& description = this->description();
   if (description.size() < sizeof(Elf_siginfo)) {
     description.resize(sizeof(Elf_siginfo));
@@ -125,7 +125,7 @@ std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note) {
 }
 
 
-CoreSigInfo::~CoreSigInfo(void) = default;
+CoreSigInfo::~CoreSigInfo() = default;
 
 } // namespace ELF
 } // namespace LIEF

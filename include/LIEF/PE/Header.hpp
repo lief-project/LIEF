@@ -30,24 +30,24 @@ struct pe_header;
 class LIEF_API Header : public Object {
   public:
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
-  Header(void);
+  Header();
   Header(const pe_header *header);
-  virtual ~Header(void);
+  virtual ~Header();
 
   Header& operator=(const Header&);
   Header(const Header&);
 
-  const signature_t& signature(void) const;
-  MACHINE_TYPES      machine(void) const;
-  uint16_t           numberof_sections(void) const;
-  uint32_t           time_date_stamp(void) const;
-  uint32_t           pointerto_symbol_table(void) const;
-  uint32_t           numberof_symbols(void) const;
-  uint16_t           sizeof_optional_header(void) const;
-  HEADER_CHARACTERISTICS           characteristics(void) const;
+  const signature_t& signature() const;
+  MACHINE_TYPES      machine() const;
+  uint16_t           numberof_sections() const;
+  uint32_t           time_date_stamp() const;
+  uint32_t           pointerto_symbol_table() const;
+  uint32_t           numberof_symbols() const;
+  uint16_t           sizeof_optional_header() const;
+  HEADER_CHARACTERISTICS           characteristics() const;
 
   bool has_characteristic(HEADER_CHARACTERISTICS c) const;
-  std::set<HEADER_CHARACTERISTICS> characteristics_list(void) const;
+  std::set<HEADER_CHARACTERISTICS> characteristics_list() const;
 
   void machine(MACHINE_TYPES type);
   void numberof_sections(uint16_t nbOfSections);

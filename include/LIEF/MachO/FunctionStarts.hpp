@@ -31,28 +31,28 @@ struct linkedit_data_command;
 
 class LIEF_API FunctionStarts : public LoadCommand {
   public:
-  FunctionStarts(void);
+  FunctionStarts();
   FunctionStarts(const linkedit_data_command *cmd);
 
   FunctionStarts& operator=(const FunctionStarts& copy);
   FunctionStarts(const FunctionStarts& copy);
 
-  virtual FunctionStarts* clone(void) const override;
+  virtual FunctionStarts* clone() const override;
 
   //! @brief Offset in the binary where *start functions* are located
-  uint32_t data_offset(void) const;
+  uint32_t data_offset() const;
 
   //! @brief Size of the functions list in the binary
-  uint32_t data_size(void) const;
+  uint32_t data_size() const;
 
   //! @brief Addresses of every function entry point in the executable.
   //!
   //! This allows for functions to exist that have no entries in the symbol table.
   //!
   //! @warning The address is relative to the ``__TEXT`` segment
-  const std::vector<uint64_t>& functions(void) const;
+  const std::vector<uint64_t>& functions() const;
 
-  std::vector<uint64_t>& functions(void);
+  std::vector<uint64_t>& functions();
 
   //! @brief Add a new function
   void add_function(uint64_t address);
@@ -61,7 +61,7 @@ class LIEF_API FunctionStarts : public LoadCommand {
   void data_size(uint32_t size);
   void functions(const std::vector<uint64_t>& funcs);
 
-  virtual ~FunctionStarts(void);
+  virtual ~FunctionStarts();
 
   bool operator==(const FunctionStarts& rhs) const;
   bool operator!=(const FunctionStarts& rhs) const;

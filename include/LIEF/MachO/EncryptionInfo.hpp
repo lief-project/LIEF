@@ -27,17 +27,17 @@ namespace MachO {
 struct encryption_info_command;
 class LIEF_API EncryptionInfo : public LoadCommand {
   public:
-  EncryptionInfo(void);
+  EncryptionInfo();
   EncryptionInfo(const encryption_info_command *cmd);
 
   EncryptionInfo& operator=(const EncryptionInfo& copy);
   EncryptionInfo(const EncryptionInfo& copy);
 
-  virtual ~EncryptionInfo(void);
+  virtual ~EncryptionInfo();
 
-  uint32_t crypt_offset(void) const;
-  uint32_t crypt_size(void) const;
-  uint32_t crypt_id(void) const;
+  uint32_t crypt_offset() const;
+  uint32_t crypt_size() const;
+  uint32_t crypt_id() const;
 
   void crypt_offset(uint32_t offset);
   void crypt_size(uint32_t size);

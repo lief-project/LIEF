@@ -40,7 +40,7 @@ class LIEF_API Class : public Object {
   static std::string fullname_normalized(const std::string& pkg, const std::string& cls_name);
 
 
-  Class(void);
+  Class();
   Class(const Class&);
   Class& operator=(const Class&);
 
@@ -50,54 +50,54 @@ class LIEF_API Class : public Object {
       const std::string& source_filename = "");
 
   //! Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
-  const std::string& fullname(void) const;
+  const std::string& fullname() const;
 
   //! Package Name
-  std::string package_name(void) const;
+  std::string package_name() const;
 
   //! Class name
-  std::string name(void) const;
+  std::string name() const;
 
   //! Demangled class name
-  std::string pretty_name(void) const;
+  std::string pretty_name() const;
 
   //! Check if the class has the given access flag
   bool has(ACCESS_FLAGS f) const;
 
   //! Access flags used by this class
-  access_flags_list_t access_flags(void) const;
+  access_flags_list_t access_flags() const;
 
   //! Filename associated with this class (if any)
-  const std::string& source_filename(void) const;
+  const std::string& source_filename() const;
 
   //! True if the current class extends another one
-  bool has_parent(void) const;
+  bool has_parent() const;
 
   //! Parent class
-  const Class& parent(void) const;
-  Class& parent(void);
+  const Class& parent() const;
+  Class& parent();
 
   //! Methods implemented in this class
-  it_const_methods methods(void) const;
-  it_methods methods(void);
+  it_const_methods methods() const;
+  it_methods methods();
 
   //! Return Methods having the given name
   it_methods methods(const std::string& name);
   it_const_methods methods(const std::string& name) const;
 
   //! Fields implemented in this class
-  it_const_fields fields(void) const;
-  it_fields fields(void);
+  it_const_fields fields() const;
+  it_fields fields();
 
   //! Return Fields having the given name
   it_fields fields(const std::string& name);
   it_const_fields fields(const std::string& name) const;
 
   //! De-optimize information
-  dex2dex_class_info_t dex2dex_info(void) const;
+  dex2dex_class_info_t dex2dex_info() const;
 
   //! Original index in the DEX class pool
-  size_t index(void) const;
+  size_t index() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -106,7 +106,7 @@ class LIEF_API Class : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Class& cls);
 
-  virtual ~Class(void);
+  virtual ~Class();
 
   private:
   methods_t method_from_name(const std::string& name) const;

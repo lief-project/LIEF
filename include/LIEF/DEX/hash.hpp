@@ -43,7 +43,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const MapItem& item)       override;
   virtual void visit(const MapList& list)       override;
 
-  virtual ~Hash(void);
+  virtual ~Hash();
 };
 
 }

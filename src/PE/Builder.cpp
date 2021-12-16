@@ -43,7 +43,7 @@
 namespace LIEF {
 namespace PE {
 
-Builder::~Builder(void) = default;
+Builder::~Builder() = default;
 
 Builder::Builder(Binary* binary) :
   binary_{binary},
@@ -105,7 +105,7 @@ void Builder::write(const std::string& filename) const {
 }
 
 
-void Builder::build(void) {
+void Builder::build() {
 
   LIEF_DEBUG("Build process started");
 
@@ -172,14 +172,14 @@ void Builder::build(void) {
 
 }
 
-const std::vector<uint8_t>& Builder::get_build(void) {
+const std::vector<uint8_t>& Builder::get_build() {
   return this->ios_.raw();
 }
 
 //
 // Build relocations
 //
-void Builder::build_relocation(void) {
+void Builder::build_relocation() {
   std::vector<uint8_t> content;
   for (const Relocation& relocation : this->binary_->relocations()) {
 
@@ -237,7 +237,7 @@ void Builder::build_relocation(void) {
 //
 // Build resources
 //
-void Builder::build_resources(void) {
+void Builder::build_resources() {
   ResourceNode& node = this->binary_->resources();
   //std::cout << ResourcesManager{this->binary_->resources_} << std::endl;
 
@@ -409,16 +409,16 @@ void Builder::construct_resources(
 }
 
 
-void Builder::build_symbols(void) {
+void Builder::build_symbols() {
   //TODO
 }
 
 
-void Builder::build_string_table(void) {
+void Builder::build_string_table() {
   //TODO
 }
 
-void Builder::build_overlay(void) {
+void Builder::build_overlay() {
 
   const uint64_t last_section_offset = std::accumulate(
       std::begin(this->binary_->sections_),

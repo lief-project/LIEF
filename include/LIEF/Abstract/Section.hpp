@@ -29,31 +29,31 @@ class LIEF_API Section : public Object {
   public:
   static constexpr size_t npos = -1;
 
-  Section(void);
+  Section();
   Section(const std::string& name);
 
-  virtual ~Section(void);
+  virtual ~Section();
 
   Section& operator=(const Section&);
   Section(const Section&);
 
   //! @brief section's name
-  virtual std::string name(void) const;
+  virtual std::string name() const;
 
   //! @brief section's content
-  virtual std::vector<uint8_t> content(void) const;
+  virtual std::vector<uint8_t> content() const;
 
   //! @brief section's size (size in the binary)
   virtual void size(uint64_t size);
 
   //! @brief section's size (size in the binary)
-  virtual uint64_t size(void) const;
+  virtual uint64_t size() const;
 
   //! @brief offset in the binary
-  virtual uint64_t offset(void) const;
+  virtual uint64_t offset() const;
 
   //! @brief Address where the section should be mapped
-  virtual uint64_t virtual_address(void) const;
+  virtual uint64_t virtual_address() const;
 
   virtual void virtual_address(uint64_t virtual_address);
 
@@ -66,7 +66,7 @@ class LIEF_API Section : public Object {
   virtual void offset(uint64_t offset);
 
   //! @brief Section's entropy
-  double entropy(void) const;
+  double entropy() const;
 
   // Search functions
   // ================

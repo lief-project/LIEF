@@ -19,7 +19,7 @@
 
 namespace LIEF {
 namespace ELF {
-DynamicSharedObject::DynamicSharedObject(void) :
+DynamicSharedObject::DynamicSharedObject() :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
   name_{}
 {}
@@ -34,7 +34,7 @@ DynamicSharedObject::DynamicSharedObject(const std::string& name) :
 {}
 
 
-const std::string& DynamicSharedObject::name(void) const {
+const std::string& DynamicSharedObject::name() const {
   return this->name_;
 }
 

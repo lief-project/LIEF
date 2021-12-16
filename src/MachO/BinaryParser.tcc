@@ -67,7 +67,7 @@ struct ThreadedBindData {
 
 
 template<class MACHO_T>
-void BinaryParser::parse(void) {
+void BinaryParser::parse() {
   this->parse_header<MACHO_T>();
   if (this->binary_->header().nb_cmds() > 0) {
     this->parse_load_commands<MACHO_T>();
@@ -105,14 +105,14 @@ void BinaryParser::parse(void) {
 }
 
 template<class MACHO_T>
-void BinaryParser::parse_header(void) {
+void BinaryParser::parse_header() {
   using header_t = typename MACHO_T::header;
   this->binary_->header_ = &this->stream_->read<header_t>();
 }
 
 
 template<class MACHO_T>
-void BinaryParser::parse_load_commands(void) {
+void BinaryParser::parse_load_commands() {
   using header_t          = typename MACHO_T::header;
   using segment_command_t = typename MACHO_T::segment_command;
   using section_t         = typename MACHO_T::section;

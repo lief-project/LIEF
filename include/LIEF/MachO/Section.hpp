@@ -49,7 +49,7 @@ class LIEF_API Section : public LIEF::Section {
   using flag_list_t = std::set<MACHO_SECTION_FLAGS>;
 
   public:
-  Section(void);
+  Section();
   Section(const section_32 *sectionCmd);
   Section(const section_64 *sectionCmd);
 
@@ -61,41 +61,41 @@ class LIEF_API Section : public LIEF::Section {
 
   void swap(Section& other);
 
-  virtual ~Section(void);
+  virtual ~Section();
 
   // ============================
   // LIEF::Section implementation
   // ============================
-  virtual content_t content(void) const override;
+  virtual content_t content() const override;
 
   //! @brief Set section content
   virtual void content(const content_t& data) override;
 
   //! @brief Return the name of the segment holding this section
-  const std::string& segment_name(void) const;
+  const std::string& segment_name() const;
 
   //! @see virtual_address
-  uint64_t address(void) const;
+  uint64_t address() const;
 
-  uint32_t                alignment(void) const;
-  uint32_t                relocation_offset(void) const;
-  uint32_t                numberof_relocations(void) const;
-  uint32_t                flags(void) const;
-  MACHO_SECTION_TYPES     type(void) const;
-  uint32_t                reserved1(void) const;
-  uint32_t                reserved2(void) const;
-  uint32_t                reserved3(void) const;
-  flag_list_t             flags_list(void) const;
-  uint32_t                raw_flags(void) const;
+  uint32_t                alignment() const;
+  uint32_t                relocation_offset() const;
+  uint32_t                numberof_relocations() const;
+  uint32_t                flags() const;
+  MACHO_SECTION_TYPES     type() const;
+  uint32_t                reserved1() const;
+  uint32_t                reserved2() const;
+  uint32_t                reserved3() const;
+  flag_list_t             flags_list() const;
+  uint32_t                raw_flags() const;
 
-  bool                    has_segment(void) const;
-  SegmentCommand&         segment(void);
-  const SegmentCommand&   segment(void) const;
+  bool                    has_segment() const;
+  SegmentCommand&         segment();
+  const SegmentCommand&   segment() const;
 
   void clear(uint8_t v);
 
-  it_relocations relocations(void);
-  it_const_relocations relocations(void) const;
+  it_relocations relocations();
+  it_const_relocations relocations() const;
 
   void segment_name(const std::string& name);
   void address(uint64_t address);

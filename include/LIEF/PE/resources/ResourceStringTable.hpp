@@ -33,19 +33,19 @@ class LIEF_API ResourceStringTable : public Object {
 
   friend class ResourcesManager;
   public:
-  ResourceStringTable(void);
+  ResourceStringTable();
 
   ResourceStringTable(int16_t length, const std::u16string& name);
   ResourceStringTable(const ResourceStringTable&);
 
   ResourceStringTable& operator=(const ResourceStringTable&);
 
-  virtual ~ResourceStringTable(void);
+  virtual ~ResourceStringTable();
 
   virtual void accept(Visitor& visitor) const override;
 
-  int16_t length(void) const;
-  const std::u16string& name(void) const;
+  int16_t length() const;
+  const std::u16string& name() const;
 
   bool operator==(const ResourceStringTable& rhs) const;
   bool operator!=(const ResourceStringTable& rhs) const;

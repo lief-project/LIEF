@@ -39,33 +39,33 @@ CoreFile CoreFile::make(Note& note) {
   return file;
 }
 
-CoreFile* CoreFile::clone(void) const {
+CoreFile* CoreFile::clone() const {
   return new CoreFile(*this);
 }
 
 
-uint64_t CoreFile::count(void) const {
+uint64_t CoreFile::count() const {
   return this->files_.size();
 }
 
-const CoreFile::files_t& CoreFile::files(void) const {
+const CoreFile::files_t& CoreFile::files() const {
   return this->files_;
 }
 
 
-CoreFile::iterator CoreFile::begin(void) {
+CoreFile::iterator CoreFile::begin() {
   return std::begin(this->files_);
 }
 
-CoreFile::iterator CoreFile::end(void) {
+CoreFile::iterator CoreFile::end() {
   return std::end(this->files_);
 }
 
-CoreFile::const_iterator CoreFile::begin(void) const {
+CoreFile::const_iterator CoreFile::begin() const {
   return std::begin(this->files_);
 }
 
-CoreFile::const_iterator CoreFile::end(void) const {
+CoreFile::const_iterator CoreFile::end() const {
   return std::end(this->files_);
 }
 
@@ -104,7 +104,7 @@ void CoreFile::dump(std::ostream& os) const {
   os << std::endl;
 }
 
-void CoreFile::parse(void) {
+void CoreFile::parse() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->parse_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -112,7 +112,7 @@ void CoreFile::parse(void) {
   }
 }
 
-void CoreFile::build(void) {
+void CoreFile::build() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->build_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -125,7 +125,7 @@ std::ostream& operator<<(std::ostream& os, const CoreFile& note) {
   return os;
 }
 
-CoreFile::~CoreFile(void) = default;
+CoreFile::~CoreFile() = default;
 
 
 std::ostream& operator<<(std::ostream& os, const CoreFileEntry& entry) {

@@ -90,9 +90,9 @@ size_t hash(const std::vector<uint8_t>& raw) {
   return Hash::hash(raw);
 }
 
-Hash::~Hash(void) = default;
+Hash::~Hash() = default;
 
-Hash::Hash(void) :
+Hash::Hash() :
   value_{0}
 {}
 
@@ -129,7 +129,7 @@ Hash& Hash::process(const std::vector<uint8_t>& raw) {
   return *this;
 }
 
-size_t Hash::value(void) const {
+size_t Hash::value() const {
   return this->value_;
 }
 

@@ -27,16 +27,16 @@ namespace PE {
 class LIEF_API CodeView : public Object {
   public:
 
-  CodeView(void);
+  CodeView();
   CodeView(CODE_VIEW_SIGNATURES cv_signature);
 
   CodeView(const CodeView&);
   CodeView& operator=(const CodeView&);
 
-  virtual CodeView* clone(void) const = 0;
+  virtual CodeView* clone() const = 0;
 
   //! The Code View signature
-  CODE_VIEW_SIGNATURES cv_signature(void) const;
+  CODE_VIEW_SIGNATURES cv_signature() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -45,7 +45,7 @@ class LIEF_API CodeView : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
 
-  virtual ~CodeView(void);
+  virtual ~CodeView();
 
   protected:
   CODE_VIEW_SIGNATURES cv_signature_;

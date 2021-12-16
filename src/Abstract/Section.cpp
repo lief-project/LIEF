@@ -28,7 +28,7 @@
 
 namespace LIEF {
 
-Section::Section(void) = default;
+Section::Section() = default;
 
 Section::Section(const std::string& name) :
   name_{name},
@@ -38,11 +38,11 @@ Section::Section(const std::string& name) :
 {}
 
 
-Section::~Section(void) = default;
+Section::~Section() = default;
 Section& Section::operator=(const Section&) = default;
 Section::Section(const Section&) = default;
 
-std::string Section::name(void) const {
+std::string Section::name() const {
   return this->name_.c_str();
 }
 
@@ -57,12 +57,12 @@ void Section::content(const std::vector<uint8_t>&) {
 }
 
 
-std::vector<uint8_t> Section::content(void) const {
+std::vector<uint8_t> Section::content() const {
   throw not_supported("Not supported by this format");
 }
 
 
-uint64_t Section::size(void) const {
+uint64_t Section::size() const {
   return this->size_;
 }
 
@@ -71,12 +71,12 @@ void Section::size(uint64_t size) {
   this->size_ = size;
 }
 
-uint64_t Section::offset(void) const {
+uint64_t Section::offset() const {
   return this->offset_;
 }
 
 
-uint64_t Section::virtual_address(void) const {
+uint64_t Section::virtual_address() const {
   return this->virtual_address_;
 }
 
@@ -175,7 +175,7 @@ std::vector<size_t> Section::search_all(const std::string& v) const {
 }
 
 
-double Section::entropy(void) const {
+double Section::entropy() const {
   std::array<uint64_t, 256> frequencies = { {0} };
   const std::vector<uint8_t>& content = this->content();
   for (uint8_t x : content) {

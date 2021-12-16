@@ -54,29 +54,29 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
   BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0,
                const ParserConfig& conf = ParserConfig::deep());
-  BinaryParser(void);
+  BinaryParser();
 
   BinaryParser& operator=(const BinaryParser& copy) = delete;
   BinaryParser(const BinaryParser& copy) = delete;
 
-  ~BinaryParser(void);
+  ~BinaryParser();
 
-  Binary* get_binary(void);
+  Binary* get_binary();
 
   private:
   BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset = 0,
                const ParserConfig& conf = ParserConfig::deep());
 
-  void init(void);
+  void init();
 
   template<class MACHO_T>
-  void parse(void);
+  void parse();
 
   template<class MACHO_T>
-  void parse_header(void);
+  void parse_header();
 
   template<class MACHO_T>
-  void parse_load_commands(void);
+  void parse_load_commands();
 
   template<class MACHO_T>
   void parse_relocations(Section& section);
@@ -87,21 +87,21 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   // Rebase
   // ------
   template<class MACHO_T>
-  void parse_dyldinfo_rebases(void);
+  void parse_dyldinfo_rebases();
 
   // Bindings
   // --------
   template<class MACHO_T>
-  void parse_dyldinfo_binds(void);
+  void parse_dyldinfo_binds();
 
   template<class MACHO_T>
-  void parse_dyldinfo_generic_bind(void);
+  void parse_dyldinfo_generic_bind();
 
   template<class MACHO_T>
-  void parse_dyldinfo_weak_bind(void);
+  void parse_dyldinfo_weak_bind();
 
   template<class MACHO_T>
-  void parse_dyldinfo_lazy_bind(void);
+  void parse_dyldinfo_lazy_bind();
 
   template<class MACHO_T>
   void do_bind(BINDING_CLASS cls,
@@ -123,7 +123,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   // Exports
   // -------
-  void parse_dyldinfo_export(void);
+  void parse_dyldinfo_export();
 
   void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 

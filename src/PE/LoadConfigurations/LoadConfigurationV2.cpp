@@ -26,23 +26,23 @@ namespace PE {
 
 LoadConfigurationV2& LoadConfigurationV2::operator=(const LoadConfigurationV2&) = default;
 LoadConfigurationV2::LoadConfigurationV2(const LoadConfigurationV2&) = default;
-LoadConfigurationV2::~LoadConfigurationV2(void) = default;
+LoadConfigurationV2::~LoadConfigurationV2() = default;
 
-LoadConfigurationV2::LoadConfigurationV2(void) :
+LoadConfigurationV2::LoadConfigurationV2() :
   LoadConfigurationV1{},
   code_integrity_{}
 {}
 
-WIN_VERSION LoadConfigurationV2::version(void) const {
+WIN_VERSION LoadConfigurationV2::version() const {
   return LoadConfigurationV2::VERSION;
 }
 
 
-const CodeIntegrity& LoadConfigurationV2::code_integrity(void) const {
+const CodeIntegrity& LoadConfigurationV2::code_integrity() const {
   return this->code_integrity_;
 }
 
-CodeIntegrity& LoadConfigurationV2::code_integrity(void) {
+CodeIntegrity& LoadConfigurationV2::code_integrity() {
   return const_cast<CodeIntegrity&>(static_cast<const LoadConfigurationV2*>(this)->code_integrity());
 }
 

@@ -31,15 +31,15 @@ class LIEF_API Node {
       SEGMENT = 1,
       UNKNOWN = 2
     };
-    Node(void);
+    Node();
     Node(uint64_t offset, uint64_t size, Type type);
 
     Node& operator=(const Node&);
     Node(const Node&);
 
-    uint64_t size(void) const;
-    uint64_t offset(void) const;
-    Type     type(void) const;
+    uint64_t size() const;
+    uint64_t offset() const;
+    Type     type() const;
 
     void size(uint64_t size);
     void type(Type type);

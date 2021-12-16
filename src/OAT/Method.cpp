@@ -30,50 +30,50 @@ Method::Method(DEX::Method* method, Class* oat_class, const std::vector<uint8_t>
 {}
 
 
-Method::Method(void) :
+Method::Method() :
   dex_method_{nullptr},
   class_{nullptr},
   quick_code_{}
 {}
 
 
-const Class& Method::oat_class(void) const {
+const Class& Method::oat_class() const {
   if (this->class_ == nullptr) {
     throw integrity_error("No class found for method");
   }
   return *this->class_;
 }
 
-Class& Method::oat_class(void) {
+Class& Method::oat_class() {
   return const_cast<Class&>(static_cast<const Method*>(this)->oat_class());
 }
 
 
-bool Method::has_dex_method(void) const {
+bool Method::has_dex_method() const {
   return this->dex_method_ != nullptr;
 }
 
-const DEX::Method& Method::dex_method(void) const {
+const DEX::Method& Method::dex_method() const {
   if (not this->has_dex_method()) {
     throw integrity_error("No DEX Method found for the current OAT method");
   }
   return *this->dex_method_;
 }
 
-DEX::Method& Method::dex_method(void) {
+DEX::Method& Method::dex_method() {
   return const_cast<DEX::Method&>(static_cast<const Method*>(this)->dex_method());
 }
 
-bool Method::is_dex2dex_optimized(void) const {
+bool Method::is_dex2dex_optimized() const {
   return this->dex2dex_info().size() > 0;
 }
 
-bool Method::is_compiled(void) const {
+bool Method::is_compiled() const {
   return this->quick_code_.size() > 0;
 }
 
 
-std::string Method::name(void) const {
+std::string Method::name() const {
   if (this->dex_method_ == nullptr) {
     return "";
   }
@@ -81,12 +81,12 @@ std::string Method::name(void) const {
   return this->dex_method_->name();
 }
 
-const DEX::dex2dex_method_info_t& Method::dex2dex_info(void) const {
+const DEX::dex2dex_method_info_t& Method::dex2dex_info() const {
   return this->dex_method_->dex2dex_info();
 }
 
 
-const Method::quick_code_t& Method::quick_code(void) const {
+const Method::quick_code_t& Method::quick_code() const {
   return this->quick_code_;
 }
 
@@ -124,7 +124,7 @@ std::ostream& operator<<(std::ostream& os, const Method& meth) {
   return os;
 }
 
-Method::~Method(void) = default;
+Method::~Method() = default;
 
 
 

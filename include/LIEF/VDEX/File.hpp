@@ -37,28 +37,28 @@ class LIEF_API File : public Object {
   File(const File& copy)            = delete;
 
   //! VDEX Header
-  const Header& header(void) const;
-  Header& header(void);
+  const Header& header() const;
+  Header& header();
 
   //! Iterator over LIEF::DEX::Files registered
-  DEX::it_dex_files       dex_files(void);
-  DEX::it_const_dex_files dex_files(void) const;
+  DEX::it_dex_files       dex_files();
+  DEX::it_const_dex_files dex_files() const;
 
-  dex2dex_info_t dex2dex_info(void) const;
+  dex2dex_info_t dex2dex_info() const;
 
-  std::string dex2dex_json_info(void);
+  std::string dex2dex_json_info();
 
   virtual void accept(Visitor& visitor) const override;
 
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File(void);
+  virtual ~File();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& vdex_file);
 
   private:
-  File(void);
+  File();
 
   Header           header_;
   DEX::dex_files_t dex_files_;

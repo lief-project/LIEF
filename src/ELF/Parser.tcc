@@ -45,7 +45,7 @@
 namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
-void Parser::parse_binary(void) {
+void Parser::parse_binary() {
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   LIEF_DEBUG("Start parsing");
@@ -478,7 +478,7 @@ void Parser::parse_binary(void) {
 
 
 template<typename ELF_T>
-bool Parser::parse_header(void) {
+bool Parser::parse_header() {
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
   LIEF_DEBUG("[+] Parsing Header");
@@ -546,7 +546,7 @@ uint32_t Parser::get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const {
 }
 
 template<typename ELF_T>
-uint32_t Parser::nb_dynsym_relocations(void) const {
+uint32_t Parser::nb_dynsym_relocations() const {
   uint32_t nb_symbols = 0;
 
   // Dynamic Relocations
@@ -687,7 +687,7 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size
 
 
 template<typename ELF_T>
-uint32_t Parser::nb_dynsym_section(void) const {
+uint32_t Parser::nb_dynsym_section() const {
   using Elf_Sym = typename ELF_T::Elf_Sym;
   using Elf_Off = typename ELF_T::Elf_Off;
 
@@ -709,7 +709,7 @@ uint32_t Parser::nb_dynsym_section(void) const {
 }
 
 template<typename ELF_T>
-uint32_t Parser::nb_dynsym_hash(void) const {
+uint32_t Parser::nb_dynsym_hash() const {
 
   if (this->binary_->has(DYNAMIC_TAGS::DT_HASH)) {
     return this->nb_dynsym_sysv_hash<ELF_T>();
@@ -724,7 +724,7 @@ uint32_t Parser::nb_dynsym_hash(void) const {
 
 
 template<typename ELF_T>
-uint32_t Parser::nb_dynsym_sysv_hash(void) const {
+uint32_t Parser::nb_dynsym_sysv_hash() const {
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   const DynamicEntry& dyn_hash = this->binary_->get(DYNAMIC_TAGS::DT_HASH);
@@ -742,7 +742,7 @@ uint32_t Parser::nb_dynsym_sysv_hash(void) const {
 }
 
 template<typename ELF_T>
-uint32_t Parser::nb_dynsym_gnu_hash(void) const {
+uint32_t Parser::nb_dynsym_gnu_hash() const {
   using uint__ = typename ELF_T::uint;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
@@ -850,7 +850,7 @@ uint32_t Parser::nb_dynsym_gnu_hash(void) const {
 }
 
 template<typename ELF_T>
-void Parser::parse_sections(void) {
+void Parser::parse_sections() {
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
 
   using Elf_Off  = typename ELF_T::Elf_Off;
@@ -917,7 +917,7 @@ void Parser::parse_sections(void) {
 }
 
 template<typename ELF_T>
-void Parser::parse_segments(void) {
+void Parser::parse_segments() {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 

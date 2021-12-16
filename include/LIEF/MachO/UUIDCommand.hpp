@@ -32,17 +32,17 @@ using uuid_t = std::array<uint8_t, 16>;
 
 class LIEF_API UUIDCommand : public LoadCommand {
   public:
-  UUIDCommand(void);
+  UUIDCommand();
   UUIDCommand(const uuid_command *uuidCmd);
 
   UUIDCommand& operator=(const UUIDCommand& copy);
   UUIDCommand(const UUIDCommand& copy);
 
-  virtual UUIDCommand* clone(void) const override;
+  virtual UUIDCommand* clone() const override;
 
-  virtual ~UUIDCommand(void);
+  virtual ~UUIDCommand();
 
-  uuid_t uuid(void) const;
+  uuid_t uuid() const;
   void   uuid(const uuid_t& uuid);
 
   bool operator==(const UUIDCommand& rhs) const;

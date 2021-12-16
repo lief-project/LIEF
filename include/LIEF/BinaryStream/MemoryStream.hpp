@@ -49,7 +49,7 @@ class MemoryStream : public BinaryStream {
     return this->binary_;
   }
 
-  virtual uint64_t size(void) const override;
+  virtual uint64_t size() const override;
 
   virtual result<size_t> asn1_read_tag(int tag) override;
   virtual result<size_t> asn1_read_len() override;

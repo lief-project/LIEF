@@ -61,21 +61,21 @@ struct dict_iterator_pair {
     value_{value}
   {}
 
-  add_const_t<key_ref_t> key(void) const {
+  add_const_t<key_ref_t> key() const {
     return const_cast<add_const_t<key_ref_t>>(this->key_);
   }
 
   typename std::enable_if<!std::is_const<key_ref_t>::value, remove_const_t<key_ref_t>>::type
-  key(void) const {
+  key() const {
     return const_cast<remove_const_t<key_ref_t>>(static_cast<const dict_iterator_pair*>(this)->key());
   }
 
-  add_const_t<value_ref_t> value(void) const {
+  add_const_t<value_ref_t> value() const {
     return const_cast<add_const_t<value_ref_t>>(*this->value_);
   }
 
   typename std::enable_if<!std::is_const<value_ref_t>::value, remove_const_t<value_ref_t>>::type
-  value(void) const {
+  value() const {
     return const_cast<remove_const_t<value_ref_t>>(static_cast<const dict_iterator_pair*>(this)->value());
   }
 
@@ -146,7 +146,7 @@ class dict_iterator : public std::iterator<
   }
 
 
-  dict_iterator& operator++(void) {
+  dict_iterator& operator++() {
     this->it_ = std::next(this->it_);
     this->distance_++;
     return *this;
@@ -158,7 +158,7 @@ class dict_iterator : public std::iterator<
     return retval;
   }
 
-  dict_iterator& operator--(void) {
+  dict_iterator& operator--() {
     if (this->it_ != std::begin(container_)) {
       this->it_ = std::prev(this->it_);
       this->distance_--;
@@ -233,22 +233,22 @@ class dict_iterator : public std::iterator<
     return !(*this > rhs);
   }
 
-  dict_iterator begin(void) const {
+  dict_iterator begin() const {
     return this->container_;
   }
 
-  dict_iterator cbegin(void) const {
+  dict_iterator cbegin() const {
     return this->begin();
   }
 
-  dict_iterator end(void)  const {
+  dict_iterator end()  const {
     dict_iterator it = dict_iterator{this->container_};
     it.it_ = std::end(it.container_);
     it.distance_ = it.size();
     return it;
   }
 
-  dict_iterator cend(void) const {
+  dict_iterator cend() const {
     return this->end();
   }
 
@@ -260,7 +260,7 @@ class dict_iterator : public std::iterator<
     return !(*this == other);
   }
 
-  size_t size(void) const {
+  size_t size() const {
     return this->container_.size();
   }
 

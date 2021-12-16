@@ -28,8 +28,8 @@
 namespace LIEF {
 namespace ART {
 
-Parser::~Parser(void) = default;
-Parser::Parser(void)  = default;
+Parser::~Parser() = default;
+Parser::Parser()  = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   Parser parser{filename};

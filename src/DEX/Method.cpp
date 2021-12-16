@@ -30,7 +30,7 @@ namespace DEX {
 Method::Method(const Method&) = default;
 Method& Method::operator=(const Method&) = default;
 
-Method::Method(void) :
+Method::Method() :
   name_{},
   parent_{nullptr},
   access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
@@ -52,34 +52,34 @@ Method::Method(const std::string& name, Class* parent) :
   dex2dex_info_{}
 {}
 
-const std::string& Method::name(void) const {
+const std::string& Method::name() const {
   return this->name_;
 }
 
-uint64_t Method::code_offset(void) const {
+uint64_t Method::code_offset() const {
   return this->code_offset_;
 }
 
-const Method::bytecode_t& Method::bytecode(void) const {
+const Method::bytecode_t& Method::bytecode() const {
   return this->bytecode_;
 }
 
-bool Method::has_class(void) const {
+bool Method::has_class() const {
   return this->parent_ != nullptr;
 }
 
-const Class& Method::cls(void) const {
+const Class& Method::cls() const {
   if (not this->has_class()) {
     throw not_found("Can't find class associated with " + this->name());
   }
   return *this->parent_;
 }
 
-Class& Method::cls(void) {
+Class& Method::cls() {
   return const_cast<Class&>(static_cast<const Method*>(this)->cls());
 }
 
-size_t Method::index(void) const {
+size_t Method::index() const {
   return this->original_index_;
 }
 
@@ -87,11 +87,11 @@ void Method::insert_dex2dex_info(uint32_t pc, uint32_t index) {
   this->dex2dex_info_.emplace(pc, index);
 }
 
-const dex2dex_method_info_t& Method::dex2dex_info(void) const {
+const dex2dex_method_info_t& Method::dex2dex_info() const {
   return this->dex2dex_info_;
 }
 
-bool Method::is_virtual(void) const {
+bool Method::is_virtual() const {
   return this->is_virtual_;
 }
 
@@ -104,7 +104,7 @@ bool Method::has(ACCESS_FLAGS f) const {
   return (this->access_flags_ & f);
 }
 
-Method::access_flags_list_t Method::access_flags(void) const {
+Method::access_flags_list_t Method::access_flags() const {
   Method::access_flags_list_t flags;
 
   std::copy_if(
@@ -117,12 +117,12 @@ Method::access_flags_list_t Method::access_flags(void) const {
 
 }
 
-const Prototype& Method::prototype(void) const {
+const Prototype& Method::prototype() const {
   CHECK(this->prototype_ != nullptr, "Prototype is null!");
   return *this->prototype_;
 }
 
-Prototype& Method::prototype(void) {
+Prototype& Method::prototype() {
   return const_cast<Prototype&>(static_cast<const Method*>(this)->prototype());
 }
 
@@ -178,7 +178,7 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
   return os;
 }
 
-Method::~Method(void) = default;
+Method::~Method() = default;
 
 }
 }

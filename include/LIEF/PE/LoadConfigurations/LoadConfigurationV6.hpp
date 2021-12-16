@@ -33,7 +33,7 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_15002;
 
-  LoadConfigurationV6(void);
+  LoadConfigurationV6();
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV6(const load_configuration_v6<T>* header);
@@ -41,18 +41,18 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
   LoadConfigurationV6& operator=(const LoadConfigurationV6&);
   LoadConfigurationV6(const LoadConfigurationV6&);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
   //! @brief VA of the Function verifying the stack pointer
-  uint64_t guard_rf_verify_stackpointer_function_pointer(void) const;
+  uint64_t guard_rf_verify_stackpointer_function_pointer() const;
 
   //! @brief Offset to the *hotpatch* table
-  uint32_t hotpatch_table_offset(void) const;
+  uint32_t hotpatch_table_offset() const;
 
   void guard_rf_verify_stackpointer_function_pointer(uint64_t value);
   void hotpatch_table_offset(uint32_t value);
 
-  virtual ~LoadConfigurationV6(void);
+  virtual ~LoadConfigurationV6();
 
   virtual void accept(Visitor& visitor) const override;
 

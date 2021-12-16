@@ -30,8 +30,8 @@
 namespace LIEF {
 namespace PE {
 
-SignerInfo::SignerInfo(void) = default;
-SignerInfo::~SignerInfo(void) = default;
+SignerInfo::SignerInfo() = default;
+SignerInfo::~SignerInfo() = default;
 
 SignerInfo::SignerInfo(SignerInfo&&) = default;
 SignerInfo& SignerInfo::operator=(SignerInfo&&) = default;
@@ -78,19 +78,19 @@ void SignerInfo::swap(SignerInfo& other) {
 }
 
 
-uint32_t SignerInfo::version(void) const {
+uint32_t SignerInfo::version() const {
   return this->version_;
 }
 
-ALGORITHMS SignerInfo::digest_algorithm(void) const {
+ALGORITHMS SignerInfo::digest_algorithm() const {
   return this->digest_algorithm_;
 }
 
-ALGORITHMS SignerInfo::encryption_algorithm(void) const {
+ALGORITHMS SignerInfo::encryption_algorithm() const {
   return this->digest_enc_algorithm_;
 }
 
-const SignerInfo::encrypted_digest_t& SignerInfo::encrypted_digest(void) const {
+const SignerInfo::encrypted_digest_t& SignerInfo::encrypted_digest() const {
   return this->encrypted_digest_;
 }
 

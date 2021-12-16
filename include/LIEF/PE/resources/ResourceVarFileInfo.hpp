@@ -41,24 +41,24 @@ class LIEF_API ResourceVarFileInfo : public Object {
   public:
   ResourceVarFileInfo(const ResourceVarFileInfo&);
   ResourceVarFileInfo& operator=(const ResourceVarFileInfo&);
-  virtual ~ResourceVarFileInfo(void);
+  virtual ~ResourceVarFileInfo();
 
   //! @brief The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type(void) const;
+  uint16_t type() const;
 
   //! @brief Signature of the structure:
   //! Must be the unicode string "VarFileInfo"
-  const std::u16string& key(void) const;
+  const std::u16string& key() const;
 
   //! @brief List of languages that the application supports
   //!
   //! The **least** significant 16-bits  must contain a Microsoft language identifier, and the **most** significant 16-bits must contain the
   //! @link LIEF::PE::CODE_PAGES code page @endlink
   //! Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
-  const std::vector<uint32_t>& translations(void) const;
-  std::vector<uint32_t>&       translations(void);
+  const std::vector<uint32_t>& translations() const;
+  std::vector<uint32_t>&       translations();
 
   void type(uint16_t type);
 
@@ -75,7 +75,7 @@ class LIEF_API ResourceVarFileInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
 
   private:
-  ResourceVarFileInfo(void);
+  ResourceVarFileInfo();
 
   uint16_t              type_;
   std::u16string        key_;

@@ -36,35 +36,35 @@ class LIEF_API Header : public Object {
   using flags_list_t = std::set<HEADER_FLAGS>;
 
   public:
-  Header(void);
+  Header();
   Header(const mach_header_64 *header);
   Header(const mach_header    *header);
 
   Header& operator=(const Header& copy);
   Header(const Header& copy);
 
-  virtual ~Header(void);
+  virtual ~Header();
 
-  MACHO_TYPES            magic(void) const;
-  CPU_TYPES              cpu_type(void) const;
-  uint32_t               cpu_subtype(void) const;
-  FILE_TYPES             file_type(void) const;
-  flags_list_t           flags_list(void) const;
+  MACHO_TYPES            magic() const;
+  CPU_TYPES              cpu_type() const;
+  uint32_t               cpu_subtype() const;
+  FILE_TYPES             file_type() const;
+  flags_list_t           flags_list() const;
   bool                   has(HEADER_FLAGS flag) const;
-  uint32_t               nb_cmds(void) const;
-  uint32_t               sizeof_cmds(void) const;
-  uint32_t               flags(void) const;
-  uint32_t               reserved(void) const;
+  uint32_t               nb_cmds() const;
+  uint32_t               sizeof_cmds() const;
+  uint32_t               flags() const;
+  uint32_t               reserved() const;
 
   void add(HEADER_FLAGS flag);
 
   //! @brief LIEF abstract object type
-  OBJECT_TYPES abstract_object_type(void) const;
+  OBJECT_TYPES abstract_object_type() const;
 
-  std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture(void) const;
+  std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture() const;
 
   //! @brief LIEF abstract endiannes
-  ENDIANNESS abstract_endianness(void) const;
+  ENDIANNESS abstract_endianness() const;
 
   void magic(MACHO_TYPES magic);
   void cpu_type(CPU_TYPES cputype);

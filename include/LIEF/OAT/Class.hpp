@@ -32,7 +32,7 @@ class LIEF_API Class : public Object {
   friend class Parser;
 
   public:
-  Class(void);
+  Class();
 
   Class(OAT_CLASS_STATUS status,
       OAT_CLASS_TYPES type,
@@ -41,20 +41,20 @@ class LIEF_API Class : public Object {
   Class(const Class&);
   Class& operator=(const Class&);
 
-  bool has_dex_class(void) const;
-  const DEX::Class& dex_class(void) const;
-  DEX::Class& dex_class(void);
+  bool has_dex_class() const;
+  const DEX::Class& dex_class() const;
+  DEX::Class& dex_class();
 
-  OAT_CLASS_STATUS status(void) const;
-  OAT_CLASS_TYPES type(void) const;
+  OAT_CLASS_STATUS status() const;
+  OAT_CLASS_TYPES type() const;
 
-  const std::string& fullname(void) const;
-  size_t index(void) const;
+  const std::string& fullname() const;
+  size_t index() const;
 
-  it_methods methods(void);
-  it_const_methods methods(void) const;
+  it_methods methods();
+  it_const_methods methods() const;
 
-  const std::vector<uint32_t>& bitmap(void) const;
+  const std::vector<uint32_t>& bitmap() const;
 
   bool is_quickened(const DEX::Method& m) const;
   bool is_quickened(uint32_t relative_index) const;
@@ -65,7 +65,7 @@ class LIEF_API Class : public Object {
   uint32_t relative_index(const DEX::Method& m) const;
   uint32_t relative_index(uint32_t method_absolute_index) const;
 
-  DEX::dex2dex_class_info_t dex2dex_info(void) const;
+  DEX::dex2dex_class_info_t dex2dex_info() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -74,7 +74,7 @@ class LIEF_API Class : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Class& cls);
 
-  virtual ~Class(void);
+  virtual ~Class();
 
   private:
   DEX::Class* dex_class_{nullptr};

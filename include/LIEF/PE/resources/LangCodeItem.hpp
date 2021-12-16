@@ -42,36 +42,36 @@ class LIEF_API LangCodeItem : public Object {
 
   public:
   using items_t = std::unordered_map<std::u16string, std::u16string>;
-  LangCodeItem(void);
+  LangCodeItem();
 
   LangCodeItem(const LangCodeItem&);
   LangCodeItem& operator=(const LangCodeItem&);
-  virtual ~LangCodeItem(void);
+  virtual ~LangCodeItem();
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type(void) const;
+  uint16_t type() const;
 
   //! A 8-digit hexadecimal number stored as an Unicode string.
   //! * The four most significant digits represent the language identifier.
   //! * The four least significant digits represent the code page for which the data is formatted.
   //!
   //! @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
-  const std::u16string& key(void) const;
+  const std::u16string& key() const;
 
   //! [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
   //! for which LangCodeItem::items are defined
-  CODE_PAGES code_page(void) const;
+  CODE_PAGES code_page() const;
 
   //! Lang for which LangCodeItem::items are defined
-  RESOURCE_LANGS lang(void) const;
+  RESOURCE_LANGS lang() const;
 
   //! Sublang for which LangCodeItem::items are defined
-  RESOURCE_SUBLANGS sublang(void) const;
+  RESOURCE_SUBLANGS sublang() const;
 
-  const items_t& items(void) const;
-  items_t&       items(void);
+  const items_t& items() const;
+  items_t&       items();
 
   void type(uint16_t type);
   void key(const std::u16string& key);

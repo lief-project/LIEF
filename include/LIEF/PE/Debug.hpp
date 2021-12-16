@@ -39,48 +39,48 @@ class LIEF_API Debug : public Object {
   friend class Builder;
 
   public:
-  Debug(void);
+  Debug();
   Debug(const pe_debug* debug_s);
   Debug(const Debug& copy);
   Debug& operator=(Debug copy);
 
   void swap(Debug& other);
 
-  virtual ~Debug(void);
+  virtual ~Debug();
 
   //! Reserved should be 0
-  uint32_t characteristics(void) const;
+  uint32_t characteristics() const;
 
   //! The time and date that the debug data was created.
-  uint32_t timestamp(void) const;
+  uint32_t timestamp() const;
 
   //! The major version number of the debug data format.
-  uint16_t major_version(void) const;
+  uint16_t major_version() const;
 
   //! The minor version number of the debug data format.
-  uint16_t minor_version(void) const;
+  uint16_t minor_version() const;
 
   //! The format DEBUG_TYPES of the debugging information
-  DEBUG_TYPES type(void) const;
+  DEBUG_TYPES type() const;
 
   //! Size of the debug data
-  uint32_t sizeof_data(void) const;
+  uint32_t sizeof_data() const;
 
   //! Address of the debug data relative to the image base
-  uint32_t addressof_rawdata(void) const;
+  uint32_t addressof_rawdata() const;
 
   //! File offset of the debug data
-  uint32_t pointerto_rawdata(void) const;
+  uint32_t pointerto_rawdata() const;
 
-  bool has_code_view(void) const;
+  bool has_code_view() const;
 
-  const CodeView& code_view(void) const;
-  CodeView& code_view(void);
+  const CodeView& code_view() const;
+  CodeView& code_view();
 
-  bool has_pogo(void) const;
+  bool has_pogo() const;
 
-  const Pogo& pogo(void) const;
-  Pogo& pogo(void);
+  const Pogo& pogo() const;
+  Pogo& pogo();
 
 
   void characteristics(uint32_t characteristics);

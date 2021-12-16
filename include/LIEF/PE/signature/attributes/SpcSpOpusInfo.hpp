@@ -52,7 +52,7 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
   SpcSpOpusInfo(const SpcSpOpusInfo&);
   SpcSpOpusInfo& operator=(const SpcSpOpusInfo&);
 
-  virtual std::unique_ptr<Attribute> clone(void) const override;
+  virtual std::unique_ptr<Attribute> clone() const override;
 
   //! Program description provided by the publisher
   inline const std::string& program_name() const {

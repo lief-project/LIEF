@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace PE {
 
-Attribute::Attribute(void) = default;
+Attribute::Attribute() = default;
 
 Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) :
   type_{type}
@@ -39,7 +39,7 @@ Attribute& Attribute::operator=(const Attribute& other) {
   return *this;
 }
 
-Attribute::~Attribute(void) = default;
+Attribute::~Attribute() = default;
 
 void Attribute::accept(Visitor& visitor) const {
   visitor.visit(*this);

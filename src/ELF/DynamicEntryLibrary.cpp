@@ -23,7 +23,7 @@ namespace ELF {
 DynamicEntryLibrary& DynamicEntryLibrary::operator=(const DynamicEntryLibrary&) = default;
 DynamicEntryLibrary::DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
 
-DynamicEntryLibrary::DynamicEntryLibrary(void) :
+DynamicEntryLibrary::DynamicEntryLibrary() :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
   libname_{}
 {}
@@ -33,7 +33,7 @@ DynamicEntryLibrary::DynamicEntryLibrary(const std::string& name) :
   libname_{name}
 {}
 
-const std::string& DynamicEntryLibrary::name(void) const {
+const std::string& DynamicEntryLibrary::name() const {
   return this->libname_;
 }
 

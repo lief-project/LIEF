@@ -45,7 +45,7 @@ namespace MachO {
 
 
 template<typename T>
-void Builder::build_segments(void) {
+void Builder::build_segments() {
   using section_t  = typename T::section;
   using segment_t  = typename T::segment_command;
   using uint__     = typename T::uint;

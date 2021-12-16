@@ -69,7 +69,7 @@ VectorStream::VectorStream(const std::vector<uint8_t>& data) :
 {}
 
 
-uint64_t VectorStream::size(void) const {
+uint64_t VectorStream::size() const {
   return this->size_;
 }
 
@@ -334,7 +334,7 @@ result<std::unique_ptr<mbedtls_x509_time>> VectorStream::x509_read_time() {
 
 
 
-const std::vector<uint8_t>& VectorStream::content(void) const {
+const std::vector<uint8_t>& VectorStream::content() const {
   return this->binary_;
 }
 }

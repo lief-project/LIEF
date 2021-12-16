@@ -43,8 +43,8 @@
 #include "LIEF/exception.hpp"
 
 namespace LIEF {
-Parser::~Parser(void) = default;
-Parser::Parser(void) :
+Parser::~Parser() = default;
+Parser::Parser() :
   binary_size_{0},
   binary_name_{""}
 {}

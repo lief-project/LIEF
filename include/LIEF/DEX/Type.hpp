@@ -52,26 +52,26 @@ class LIEF_API Type : public Object {
   static std::string pretty_name(PRIMITIVES p);
 
   public:
-  Type(void);
+  Type();
   Type(const std::string& mangled);
   Type(const Type& other);
 
-  TYPES type(void) const;
+  TYPES type() const;
 
-  const Class& cls(void) const;
-  const array_t& array(void) const;
-  const PRIMITIVES& primitive(void) const;
+  const Class& cls() const;
+  const array_t& array() const;
+  const PRIMITIVES& primitive() const;
 
-  Class& cls(void);
-  array_t& array(void);
-  PRIMITIVES& primitive(void);
+  Class& cls();
+  array_t& array();
+  PRIMITIVES& primitive();
 
   //! Return the array dimension if the current is
   //! an array. Otherwise it returns 0
-  size_t dim(void) const;
+  size_t dim() const;
 
-  const Type& underlying_array_type(void) const;
-  Type& underlying_array_type(void);
+  const Type& underlying_array_type() const;
+  Type& underlying_array_type();
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -80,7 +80,7 @@ class LIEF_API Type : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Type& type);
 
-  virtual ~Type(void);
+  virtual ~Type();
 
   private:
   void parse(const std::string& type);

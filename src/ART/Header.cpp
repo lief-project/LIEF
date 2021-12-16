@@ -25,89 +25,89 @@ namespace ART {
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
-Header::Header(void) = default;
+Header::Header() = default;
 
-Header::magic_t Header::magic(void) const {
+Header::magic_t Header::magic() const {
   return this->magic_;
 }
 
-art_version_t Header::version(void) const {
+art_version_t Header::version() const {
   return this->version_;
 }
 
-uint32_t Header::image_begin(void) const {
+uint32_t Header::image_begin() const {
   return this->image_begin_;
 }
 
-uint32_t Header::image_size(void) const {
+uint32_t Header::image_size() const {
   return this->image_size_;
 }
 
-uint32_t Header::oat_checksum(void) const {
+uint32_t Header::oat_checksum() const {
   return this->oat_checksum_;
 }
 
-uint32_t Header::oat_file_begin(void) const {
+uint32_t Header::oat_file_begin() const {
   return this->oat_file_begin_;
 }
 
-uint32_t Header::oat_file_end(void) const {
+uint32_t Header::oat_file_end() const {
   return this->oat_file_end_;
 }
 
-uint32_t Header::oat_data_begin(void) const {
+uint32_t Header::oat_data_begin() const {
   return this->oat_data_begin_;
 }
 
-uint32_t Header::oat_data_end(void) const {
+uint32_t Header::oat_data_end() const {
   return this->oat_data_end_;
 }
 
-int32_t Header::patch_delta(void) const {
+int32_t Header::patch_delta() const {
   return this->patch_delta_;
 }
 
-uint32_t Header::image_roots(void) const {
+uint32_t Header::image_roots() const {
   return this->image_roots_;
 }
 
-uint32_t Header::pointer_size(void) const {
+uint32_t Header::pointer_size() const {
   return this->pointer_size_;
 }
 
-bool Header::compile_pic(void) const {
+bool Header::compile_pic() const {
   return this->compile_pic_;
 }
 
-uint32_t Header::nb_sections(void) const {
+uint32_t Header::nb_sections() const {
   return this->nb_sections_;
 }
 
-uint32_t Header::nb_methods(void) const {
+uint32_t Header::nb_methods() const {
   return this->nb_methods_;
 }
 
-uint32_t Header::boot_image_begin(void) const {
+uint32_t Header::boot_image_begin() const {
   return this->boot_image_begin_;
 }
 
-uint32_t Header::boot_image_size(void) const {
+uint32_t Header::boot_image_size() const {
   return this->boot_image_size_;
 }
 
-uint32_t Header::boot_oat_begin(void) const {
+uint32_t Header::boot_oat_begin() const {
   return this->boot_oat_begin_;
 }
 
-uint32_t Header::boot_oat_size(void) const {
+uint32_t Header::boot_oat_size() const {
   return this->boot_oat_size_;
 }
 
-STORAGE_MODES Header::storage_mode(void) const {
+STORAGE_MODES Header::storage_mode() const {
   return this->storage_mode_;
 }
 
-uint32_t Header::data_size(void) const {
+uint32_t Header::data_size() const {
   return this->data_size_;
 }
 
@@ -167,7 +167,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   return os;
 }
 
-Header::~Header(void) = default;
+Header::~Header() = default;
 
 } // Namespace ART
 } // Namespace LIEF

@@ -32,29 +32,29 @@ class LIEF_API DexFile : public Object {
   friend class Parser;
 
   public:
-  DexFile(void);
+  DexFile();
   DexFile(const DexFile&);
   DexFile& operator=(const DexFile&);
 
-  const std::string& location(void) const;
+  const std::string& location() const;
 
-  uint32_t checksum(void) const;
-  uint32_t dex_offset(void) const;
+  uint32_t checksum() const;
+  uint32_t dex_offset() const;
 
-  bool has_dex_file(void) const;
+  bool has_dex_file() const;
 
-  const DEX::File& dex_file(void) const;
-  DEX::File& dex_file(void);
+  const DEX::File& dex_file() const;
+  DEX::File& dex_file();
 
   void location(const std::string& location);
   void checksum(uint32_t checksum);
   void dex_offset(uint32_t dex_offset);
 
-  const std::vector<uint32_t>& classes_offsets(void) const;
+  const std::vector<uint32_t>& classes_offsets() const;
 
   // Android 7.X.X and Android 8.0.0
   // ===============================
-  uint32_t lookup_table_offset(void) const;
+  uint32_t lookup_table_offset() const;
 
   void class_offsets_offset(uint32_t offset);
   void lookup_table_offset(uint32_t offset);
@@ -65,7 +65,7 @@ class LIEF_API DexFile : public Object {
   bool operator==(const DexFile& rhs) const;
   bool operator!=(const DexFile& rhs) const;
 
-  virtual ~DexFile(void);
+  virtual ~DexFile();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DexFile& dex_file);
 

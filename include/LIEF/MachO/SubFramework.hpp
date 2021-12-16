@@ -33,18 +33,18 @@ struct sub_framework_command;
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;
   public:
-  SubFramework(void);
+  SubFramework();
   SubFramework(const sub_framework_command *cmd);
 
   SubFramework& operator=(const SubFramework& copy);
   SubFramework(const SubFramework& copy);
 
-  virtual SubFramework* clone(void) const override;
+  virtual SubFramework* clone() const override;
 
-  const std::string& umbrella(void) const;
+  const std::string& umbrella() const;
   void umbrella(const std::string& u);
 
-  virtual ~SubFramework(void);
+  virtual ~SubFramework();
 
   bool operator==(const SubFramework& rhs) const;
   bool operator!=(const SubFramework& rhs) const;

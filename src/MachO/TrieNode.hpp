@@ -33,10 +33,10 @@ class LIEF_LOCAL TrieEdge {
 
   static TrieEdge* create(const std::string& str, TrieNode* node);
 
-  TrieEdge(void) = delete;
+  TrieEdge() = delete;
   TrieEdge(const std::string& str, TrieNode* node);
 
-  ~TrieEdge(void);
+  ~TrieEdge();
 
   public:
   std::string substr;
@@ -52,10 +52,10 @@ class LIEF_LOCAL TrieNode {
 
   static TrieNode* create(const std::string& str);
 
-  TrieNode(void) = delete;
+  TrieNode() = delete;
 
   TrieNode(const std::string& str);
-  ~TrieNode(void);
+  ~TrieNode();
 
   TrieNode& add_symbol(const ExportInfo& info, std::vector<TrieNode*>& nodes);
   TrieNode& add_ordered_nodes(const ExportInfo& info, std::vector<TrieNode*>& nodes);

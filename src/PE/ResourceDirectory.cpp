@@ -24,7 +24,7 @@ namespace LIEF {
 namespace PE {
 
 
-ResourceDirectory::~ResourceDirectory(void) = default;
+ResourceDirectory::~ResourceDirectory() = default;
 
 ResourceDirectory& ResourceDirectory::operator=(ResourceDirectory other) {
   this->swap(other);
@@ -54,7 +54,7 @@ void ResourceDirectory::swap(ResourceDirectory& other) {
   std::swap(this->numberOfIDEntries_,   other.numberOfIDEntries_);
 }
 
-ResourceDirectory::ResourceDirectory(void) :
+ResourceDirectory::ResourceDirectory() :
   ResourceNode{},
   characteristics_{0},
   timeDateStamp_{0},
@@ -74,37 +74,37 @@ ResourceDirectory::ResourceDirectory(const pe_resource_directory_table* header) 
   numberOfIDEntries_(header->NumberOfIDEntries)
 {}
 
-ResourceDirectory* ResourceDirectory::clone(void) const {
+ResourceDirectory* ResourceDirectory::clone() const {
   return new ResourceDirectory{*this};
 }
 
 
-uint32_t ResourceDirectory::characteristics(void) const {
+uint32_t ResourceDirectory::characteristics() const {
   return this->characteristics_;
 }
 
 
-uint32_t ResourceDirectory::time_date_stamp(void) const {
+uint32_t ResourceDirectory::time_date_stamp() const {
   return this->timeDateStamp_;
 }
 
 
-uint16_t ResourceDirectory::major_version(void) const {
+uint16_t ResourceDirectory::major_version() const {
   return this->majorVersion_;
 }
 
 
-uint16_t ResourceDirectory::minor_version(void) const {
+uint16_t ResourceDirectory::minor_version() const {
   return this->minorVersion_;
 }
 
 
-uint16_t ResourceDirectory::numberof_name_entries(void) const {
+uint16_t ResourceDirectory::numberof_name_entries() const {
   return this->numberOfNameEntries_;
 }
 
 
-uint16_t ResourceDirectory::numberof_id_entries(void) const {
+uint16_t ResourceDirectory::numberof_id_entries() const {
   return this->numberOfIDEntries_;
 }
 

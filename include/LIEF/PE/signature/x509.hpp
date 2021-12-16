@@ -123,32 +123,32 @@ class LIEF_API x509 : public Object {
   void swap(x509& other);
 
   //! X.509 version. (1=v1, 2=v2, 3=v3)
-  uint32_t version(void) const;
+  uint32_t version() const;
 
   //! Unique id for certificate issued by a specific CA.
-  std::vector<uint8_t> serial_number(void) const;
+  std::vector<uint8_t> serial_number() const;
 
   //! Signature algorithm (OID)
-  oid_t signature_algorithm(void) const;
+  oid_t signature_algorithm() const;
 
   //! Start time of certificate validity
-  date_t valid_from(void) const;
+  date_t valid_from() const;
 
   //! End time of certificate validity
-  date_t valid_to(void) const;
+  date_t valid_to() const;
 
   //! Issuer informations
-  std::string issuer(void) const;
+  std::string issuer() const;
 
   //! Subject informations
-  std::string subject(void) const;
+  std::string subject() const;
 
   //! Try to decrypt the given signature and check if it matches the given hash according to
   //! the hash algorithm provided
   bool check_signature(const std::vector<uint8_t>& hash, const std::vector<uint8_t>& signature, ALGORITHMS digest) const;
 
   //! The raw x509 bytes (DER encoded)
-  std::vector<uint8_t> raw(void) const;
+  std::vector<uint8_t> raw() const;
 
   //! Return the underlying public-key scheme
   KEY_TYPES key_type() const;
@@ -179,12 +179,12 @@ class LIEF_API x509 : public Object {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~x509(void);
+  virtual ~x509();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const x509& x509_cert);
 
   private:
-  x509(void);
+  x509();
   mbedtls_x509_crt* x509_cert_ = nullptr;
 
 };

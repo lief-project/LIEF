@@ -25,9 +25,9 @@
 namespace LIEF {
 namespace PE {
 
-TLS::~TLS(void) = default;
+TLS::~TLS() = default;
 
-TLS::TLS(void) :
+TLS::TLS() :
   Object{},
   callbacks_{},
   VAOfRawData_{std::make_pair<uint64_t>(0, 0)},
@@ -95,40 +95,40 @@ TLS::TLS(const pe64_tls *header) :
   data_template_{}
 {}
 
-const std::vector<uint64_t>& TLS::callbacks(void) const {
+const std::vector<uint64_t>& TLS::callbacks() const {
   return this->callbacks_;
 }
 
 
-std::pair<uint64_t, uint64_t> TLS::addressof_raw_data(void) const {
+std::pair<uint64_t, uint64_t> TLS::addressof_raw_data() const {
   return this->VAOfRawData_;
 }
 
-uint64_t TLS::addressof_index(void) const {
+uint64_t TLS::addressof_index() const {
   return this->addressof_index_;
 }
 
 
-uint64_t TLS::addressof_callbacks(void) const {
+uint64_t TLS::addressof_callbacks() const {
   return this->addressof_callbacks_;
 }
 
 
-uint32_t TLS::sizeof_zero_fill(void) const {
+uint32_t TLS::sizeof_zero_fill() const {
   return this->sizeof_zero_fill_;
 }
 
 
-uint32_t TLS::characteristics(void) const {
+uint32_t TLS::characteristics() const {
   return this->characteristics_;
 }
 
 
-bool TLS::has_data_directory(void) const {
+bool TLS::has_data_directory() const {
   return this->directory_ != nullptr;
 }
 
-const DataDirectory& TLS::directory(void) const {
+const DataDirectory& TLS::directory() const {
   if (this->directory_ != nullptr) {
     return *(this->directory_);
   } else {
@@ -136,17 +136,17 @@ const DataDirectory& TLS::directory(void) const {
   }
 }
 
-DataDirectory& TLS::directory(void) {
+DataDirectory& TLS::directory() {
   return const_cast<DataDirectory&>(static_cast<const TLS*>(this)->directory());
 }
 
 
-bool TLS::has_section(void) const {
+bool TLS::has_section() const {
   return this->section_ != nullptr;
 }
 
 
-const Section& TLS::section(void) const {
+const Section& TLS::section() const {
   if (this->section_ != nullptr) {
     return *(this->section_);
   } else {
@@ -154,12 +154,12 @@ const Section& TLS::section(void) const {
   }
 }
 
-Section& TLS::section(void) {
+Section& TLS::section() {
   return const_cast<Section&>(static_cast<const TLS*>(this)->section());
 }
 
 
-const std::vector<uint8_t>& TLS::data_template(void) const {
+const std::vector<uint8_t>& TLS::data_template() const {
   return this->data_template_;
 }
 

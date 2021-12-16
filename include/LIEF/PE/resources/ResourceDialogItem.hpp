@@ -35,60 +35,60 @@ class LIEF_API ResourceDialogItem : public Object {
   friend class ResourcesManager;
 
   public:
-  ResourceDialogItem(void);
+  ResourceDialogItem();
   ResourceDialogItem(const pe_dialog_item_template_ext *header);
   ResourceDialogItem(const pe_dialog_item_template *header);
 
   ResourceDialogItem(const ResourceDialogItem&);
   ResourceDialogItem& operator=(const ResourceDialogItem&);
 
-  virtual ~ResourceDialogItem(void);
+  virtual ~ResourceDialogItem();
 
   //! @brief ``True`` if the control is an extended one
-  bool is_extended(void) const;
+  bool is_extended() const;
 
   //! @brief The extended styles for a window
-  uint32_t extended_style(void) const;
+  uint32_t extended_style() const;
 
   //! @brief List of PE::EXTENDED_WINDOW_STYLES associated with
   //! the ResourceDialogItem::extended_style value
-  std::set<EXTENDED_WINDOW_STYLES> extended_style_list(void) const;
+  std::set<EXTENDED_WINDOW_STYLES> extended_style_list() const;
 
   //! @brief Check if the DialogItem has the given PE::EXTENDED_WINDOW_STYLES
   bool has_extended_style(EXTENDED_WINDOW_STYLES style) const;
 
   //! @brief The style of the control
-  uint32_t style(void) const;
+  uint32_t style() const;
 
-  std::set<WINDOW_STYLES> style_list(void) const;
+  std::set<WINDOW_STYLES> style_list() const;
   bool has_style(WINDOW_STYLES style) const;
 
   //! @brief The x-coordinate, in dialog box units, of the upper-left corner of the control.
   //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
-  int16_t x(void) const;
+  int16_t x() const;
 
   //! @brief The y-coordinate, in dialog box units, of the upper-left corner of the control.
   //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
-  int16_t y(void) const;
+  int16_t y() const;
 
   //! @brief The width, in dialog box units, of the control.
-  int16_t cx(void) const;
+  int16_t cx() const;
 
   //! @brief The height, in dialog box units, of the control.
-  int16_t cy(void) const;
+  int16_t cy() const;
 
   //! @brief The control identifier.
-  uint32_t id(void) const;
+  uint32_t id() const;
 
 
   // Extended API
   // ============
 
   //! @brief The help context identifier for the control
-  uint32_t help_id(void) const;
+  uint32_t help_id() const;
 
   //! @brief Initial text of the control
-  const std::u16string& title(void) const;
+  const std::u16string& title() const;
 
   virtual void accept(Visitor& visitor) const override;
 

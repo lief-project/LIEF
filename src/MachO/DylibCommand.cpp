@@ -35,10 +35,10 @@ uint32_t DylibCommand::version2int(DylibCommand::version_t version) {
   return (version[2]) | (version[1] << 8) | (version[0] << 16);
 }
 
-DylibCommand::DylibCommand(void) = default;
+DylibCommand::DylibCommand() = default;
 DylibCommand& DylibCommand::operator=(const DylibCommand&) = default;
 DylibCommand::DylibCommand(const DylibCommand&) = default;
-DylibCommand::~DylibCommand(void) = default;
+DylibCommand::~DylibCommand() = default;
 
 DylibCommand::DylibCommand(const dylib_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -48,23 +48,23 @@ DylibCommand::DylibCommand(const dylib_command *cmd) :
 {}
 
 
-DylibCommand* DylibCommand::clone(void) const {
+DylibCommand* DylibCommand::clone() const {
   return new DylibCommand(*this);
 }
 
-const std::string& DylibCommand::name(void) const {
+const std::string& DylibCommand::name() const {
   return this->name_;
 }
 
-uint32_t DylibCommand::timestamp(void) const {
+uint32_t DylibCommand::timestamp() const {
   return this->timestamp_;
 }
 
-DylibCommand::version_t DylibCommand::current_version(void) const {
+DylibCommand::version_t DylibCommand::current_version() const {
   return int2version(this->current_version_);
 }
 
-DylibCommand::version_t DylibCommand::compatibility_version(void) const {
+DylibCommand::version_t DylibCommand::compatibility_version() const {
   return int2version(this->compatibility_version_);
 }
 

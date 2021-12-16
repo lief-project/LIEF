@@ -37,7 +37,7 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   friend class Builder;
 
   public:
-  ResourceDirectory(void);
+  ResourceDirectory();
   ResourceDirectory(const pe_resource_directory_table* header);
 
   ResourceDirectory(const ResourceDirectory& other);
@@ -45,34 +45,34 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   void swap(ResourceDirectory& other);
 
-  virtual ~ResourceDirectory(void);
+  virtual ~ResourceDirectory();
 
-  virtual ResourceDirectory* clone(void) const override;
+  virtual ResourceDirectory* clone() const override;
 
   //! @brief Resource flags. This field is reserved for future use.
   //! It is currently set to zero.
-  uint32_t characteristics(void) const;
+  uint32_t characteristics() const;
 
   //! @brief The time that the resource data was created by the
   //! resource compiler.
-  uint32_t time_date_stamp(void) const;
+  uint32_t time_date_stamp() const;
 
   //! @brief The major version number, set by the user.
-  uint16_t major_version(void) const;
+  uint16_t major_version() const;
 
   //! @brief The minor version number, set by the user.
-  uint16_t minor_version(void) const;
+  uint16_t minor_version() const;
 
   //! @brief The number of directory entries immediately
   //! following the table that use strings to identify Type,
   //! Name, or Language entries (depending on the level
   //! of the table).
-  uint16_t numberof_name_entries(void) const;
+  uint16_t numberof_name_entries() const;
 
   //! @brief The number of directory entries immediately
   //! following the Name entries that use numeric IDs for
   //! Type, Name, or Language entries.
-  uint16_t numberof_id_entries(void) const;
+  uint16_t numberof_id_entries() const;
 
   void characteristics(uint32_t characteristics);
   void time_date_stamp(uint32_t time_date_stamp);

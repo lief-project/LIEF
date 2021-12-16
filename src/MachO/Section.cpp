@@ -52,13 +52,13 @@ Section::Section(const Section& other) :
 {}
 
 
-Section::~Section(void) {
+Section::~Section() {
   for (Relocation* reloc : this->relocations_) {
     delete reloc;
   }
 }
 
-Section::Section(void) :
+Section::Section() :
   LIEF::Section{},
   segment_name_{""},
   original_size_{0},
@@ -157,7 +157,7 @@ Section::Section(const std::string& name, const Section::content_t& content) :
   this->content(content);
 }
 
-Section::content_t Section::content(void) const {
+Section::content_t Section::content() const {
   if (this->segment_ == nullptr) {
     return this->content_;
   }
@@ -202,7 +202,7 @@ void Section::content(const Section::content_t& data) {
   this->segment_->content(content);
 }
 
-const std::string& Section::segment_name(void) const {
+const std::string& Section::segment_name() const {
   if (this->segment_ != nullptr) {
     return this->segment_->name();
   } else {
@@ -210,58 +210,58 @@ const std::string& Section::segment_name(void) const {
   }
 }
 
-uint64_t Section::address(void) const {
+uint64_t Section::address() const {
   return this->virtual_address();
 }
 
-uint32_t Section::alignment(void) const {
+uint32_t Section::alignment() const {
   return this->align_;
 }
 
-uint32_t Section::relocation_offset(void) const {
+uint32_t Section::relocation_offset() const {
   return relocations_offset_;
 }
 
-uint32_t Section::numberof_relocations(void) const {
+uint32_t Section::numberof_relocations() const {
   return nbof_relocations_;
 }
 
-uint32_t Section::flags(void) const {
+uint32_t Section::flags() const {
   static constexpr size_t SECTION_FLAGS_MASK = 0xffffff00u;
   return (this->flags_ & SECTION_FLAGS_MASK);
 }
 
-uint32_t Section::reserved1(void) const {
+uint32_t Section::reserved1() const {
   return this->reserved1_;
 }
 
-uint32_t Section::reserved2(void) const {
+uint32_t Section::reserved2() const {
   return this->reserved2_;
 }
 
-uint32_t Section::reserved3(void) const {
+uint32_t Section::reserved3() const {
   return this->reserved3_;
 }
 
 
-uint32_t Section::raw_flags(void) const {
+uint32_t Section::raw_flags() const {
   return this->flags_;
 }
 
-it_relocations Section::relocations(void) {
+it_relocations Section::relocations() {
   return this->relocations_;
 }
 
-it_const_relocations Section::relocations(void) const {
+it_const_relocations Section::relocations() const {
   return this->relocations_;
 }
 
-MACHO_SECTION_TYPES Section::type(void) const {
+MACHO_SECTION_TYPES Section::type() const {
   static constexpr size_t SECTION_TYPE_MASK = 0xFF;
   return static_cast<MACHO_SECTION_TYPES>(this->flags_ & SECTION_TYPE_MASK);
 }
 
-Section::flag_list_t Section::flags_list(void) const {
+Section::flag_list_t Section::flags_list() const {
 
   Section::flag_list_t flags;
 
@@ -348,15 +348,15 @@ void Section::clear(uint8_t v) {
 }
 
 
-bool Section::has_segment(void) const {
+bool Section::has_segment() const {
   return this->segment_ != nullptr;
 }
 
-SegmentCommand& Section::segment(void) {
+SegmentCommand& Section::segment() {
   return const_cast<SegmentCommand&>(static_cast<const Section*>(this)->segment());
 }
 
-const SegmentCommand& Section::segment(void) const {
+const SegmentCommand& Section::segment() const {
   if (not this->has_segment()) {
     throw not_found("No segment associated with this section");
   }

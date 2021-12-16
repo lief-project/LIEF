@@ -32,35 +32,35 @@ class LIEF_API Header : public Object {
 
   public:
   using location_t = std::pair<uint32_t, uint32_t>;
-  Header(void);
+  Header();
   Header(const Header&);
   Header& operator=(const Header&);
 
   template<class T>
   LIEF_LOCAL Header(const T* header);
 
-  magic_t magic(void) const;
-  uint32_t checksum(void) const;
-  signature_t signature(void) const;
+  magic_t magic() const;
+  uint32_t checksum() const;
+  signature_t signature() const;
 
-  uint32_t file_size(void) const;
-  uint32_t header_size(void) const;
-  uint32_t endian_tag(void) const;
+  uint32_t file_size() const;
+  uint32_t header_size() const;
+  uint32_t endian_tag() const;
 
-  uint32_t map(void) const;
+  uint32_t map() const;
 
-  location_t strings(void) const;
-  location_t link(void) const;
-  location_t types(void) const;
-  location_t prototypes(void) const;
-  location_t fields(void) const;
-  location_t methods(void) const;
-  location_t classes(void) const;
-  location_t data(void) const;
+  location_t strings() const;
+  location_t link() const;
+  location_t types() const;
+  location_t prototypes() const;
+  location_t fields() const;
+  location_t methods() const;
+  location_t classes() const;
+  location_t data() const;
 
-  uint32_t nb_classes(void) const;
+  uint32_t nb_classes() const;
 
-  uint32_t nb_methods(void) const;
+  uint32_t nb_methods() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -69,7 +69,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  virtual ~Header(void);
+  virtual ~Header();
 
   private:
 

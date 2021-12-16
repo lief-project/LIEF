@@ -21,7 +21,7 @@
 
 namespace LIEF {
 namespace PE {
-ResourceData::~ResourceData(void) = default;
+ResourceData::~ResourceData() = default;
 ResourceData& ResourceData::operator=(ResourceData other) {
   this->swap(other);
   return *this;
@@ -34,7 +34,7 @@ ResourceData::ResourceData(const ResourceData& other) :
   reserved_{other.reserved_}
 {}
 
-ResourceData* ResourceData::clone(void) const {
+ResourceData* ResourceData::clone() const {
   return new ResourceData{*this};
 }
 
@@ -47,7 +47,7 @@ void ResourceData::swap(ResourceData& other) {
 }
 
 
-ResourceData::ResourceData(void) :
+ResourceData::ResourceData() :
   content_{},
   code_page_{0},
   reserved_{0}
@@ -62,21 +62,21 @@ ResourceData::ResourceData(const std::vector<uint8_t>& content, uint32_t code_pa
 
 
 
-uint32_t ResourceData::code_page(void) const {
+uint32_t ResourceData::code_page() const {
   return this->code_page_;
 }
 
 
-const std::vector<uint8_t>& ResourceData::content(void) const {
+const std::vector<uint8_t>& ResourceData::content() const {
   return this->content_;
 }
 
 
-uint32_t ResourceData::reserved(void) const {
+uint32_t ResourceData::reserved() const {
   return this->reserved_;
 }
 
-uint32_t ResourceData::offset(void) const {
+uint32_t ResourceData::offset() const {
   return this->offset_;
 }
 

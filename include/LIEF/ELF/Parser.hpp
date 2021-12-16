@@ -82,43 +82,43 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser(const Parser&)            = delete;
 
   private:
-  Parser(void);
+  Parser();
   Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
   Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
-  ~Parser(void);
+  ~Parser();
 
   void init(const std::string& name = "");
 
-  bool should_swap(void) const;
+  bool should_swap() const;
 
   // map, dynamic_symbol.version <----> symbol_version
   // symbol_version comes from symbol_version table
-  void link_symbol_version(void);
+  void link_symbol_version();
 
   template<typename ELF_T>
-  void parse_binary(void);
+  void parse_binary();
 
   template<typename ELF_T>
-  bool parse_header(void);
+  bool parse_header();
 
   //! Parse binary's Section
   //!
   //! Parse sections by using the ``e_shoff`` field as offset
   template<typename ELF_T>
-  void parse_sections(void);
+  void parse_sections();
 
   //! Parse binary's segments
   //!
   //! Parse segment by using the ``e_phoff`` field as offset
   template<typename ELF_T>
-  void parse_segments(void);
+  void parse_segments();
 
   //! Return offset of the dynamic string table
-  uint64_t get_dynamic_string_table(void) const;
+  uint64_t get_dynamic_string_table() const;
 
-  uint64_t get_dynamic_string_table_from_segments(void) const;
+  uint64_t get_dynamic_string_table_from_segments() const;
 
-  uint64_t get_dynamic_string_table_from_sections(void) const;
+  uint64_t get_dynamic_string_table_from_sections() const;
 
   //! Return the number of dynamic symbols using the given method
   template<typename ELF_T>
@@ -126,23 +126,23 @@ class LIEF_API Parser : public LIEF::Parser {
 
   //! Count based on hash table (reliable)
   template<typename ELF_T>
-  uint32_t nb_dynsym_hash(void) const;
+  uint32_t nb_dynsym_hash() const;
 
   //! Count based on SYSV hash table
   template<typename ELF_T>
-  uint32_t nb_dynsym_sysv_hash(void) const;
+  uint32_t nb_dynsym_sysv_hash() const;
 
   //! Count based on GNU hash table
   template<typename ELF_T>
-  uint32_t nb_dynsym_gnu_hash(void) const;
+  uint32_t nb_dynsym_gnu_hash() const;
 
   //! Count based on sections (not very reliable)
   template<typename ELF_T>
-  uint32_t nb_dynsym_section(void) const;
+  uint32_t nb_dynsym_section() const;
 
   //! Count based on PLT/GOT relocations (very reliable but not accurate)
   template<typename ELF_T>
-  uint32_t nb_dynsym_relocations(void) const;
+  uint32_t nb_dynsym_relocations() const;
 
   template<typename ELF_T>
   void parse_dynamic_entries(uint64_t offset, uint64_t size);
@@ -222,7 +222,7 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Parse Symbols's SYSV hash
   void parse_symbol_sysv_hash(uint64_t offset);
 
-  void parse_overlay(void);
+  void parse_overlay();
 
   template<typename ELF_T, typename REL_T>
   uint32_t max_relocation_index(uint64_t relocations_offset, uint64_t size) const;

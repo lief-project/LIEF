@@ -42,38 +42,38 @@ class LIEF_API ResourceVersion : public Object {
   public:
   ResourceVersion(const ResourceVersion&);
   ResourceVersion& operator=(const ResourceVersion&);
-  virtual ~ResourceVersion(void);
+  virtual ~ResourceVersion();
 
   //! @brief The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type(void) const;
+  uint16_t type() const;
 
   //! @brief Signature of the structure:
   //! Must be the unicode string "VS_VERSION_INFO"
-  const std::u16string& key(void) const;
+  const std::u16string& key() const;
 
   //! @brief ``true`` if the version contains a ResourceFixedFileInfo
-  bool has_fixed_file_info(void) const;
+  bool has_fixed_file_info() const;
 
   //! @brief ``true`` if the version contains a ResourceStringFileInfo
-  bool has_string_file_info(void) const;
+  bool has_string_file_info() const;
 
   //! @brief ``true`` if the version contains a ResourceVarFileInfo
-  bool has_var_file_info(void) const;
+  bool has_var_file_info() const;
 
   //! @brief Object that describes various information about the application's version
-  const ResourceFixedFileInfo& fixed_file_info(void) const;
-  ResourceFixedFileInfo&       fixed_file_info(void);
+  const ResourceFixedFileInfo& fixed_file_info() const;
+  ResourceFixedFileInfo&       fixed_file_info();
 
   //! @brief Object that describes various information about the application's version.
   //! The underlying structure is basically a dictionary (key/value)
-  const ResourceStringFileInfo& string_file_info(void) const;
-  ResourceStringFileInfo&       string_file_info(void);
+  const ResourceStringFileInfo& string_file_info() const;
+  ResourceStringFileInfo&       string_file_info();
 
   //! @brief Object that describes information about languages supported by the application
-  const ResourceVarFileInfo& var_file_info(void) const;
-  ResourceVarFileInfo&       var_file_info(void);
+  const ResourceVarFileInfo& var_file_info() const;
+  ResourceVarFileInfo&       var_file_info();
 
   void type(uint16_t type);
 
@@ -81,13 +81,13 @@ class LIEF_API ResourceVersion : public Object {
   void key(const std::string& key);
 
   void fixed_file_info(const ResourceFixedFileInfo& fixed_file_info);
-  void remove_fixed_file_info(void);
+  void remove_fixed_file_info();
 
   void string_file_info(const ResourceStringFileInfo& string_file_info);
-  void remove_string_file_info(void);
+  void remove_string_file_info();
 
   void var_file_info(const ResourceVarFileInfo& var_file_info);
-  void remove_var_file_info(void);
+  void remove_var_file_info();
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -97,7 +97,7 @@ class LIEF_API ResourceVersion : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVersion& version);
 
   private:
-  ResourceVersion(void);
+  ResourceVersion();
 
   uint16_t       type_;
   std::u16string key_;

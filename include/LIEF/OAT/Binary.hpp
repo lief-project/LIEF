@@ -44,20 +44,20 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   Binary(const Binary& copy)            = delete;
 
   //! OAT Header
-  const Header& header(void) const;
-  Header& header(void);
+  const Header& header() const;
+  Header& header();
 
   //! Iterator over LIEF::DEX::File
-  DEX::it_dex_files dex_files(void);
-  DEX::it_const_dex_files dex_files(void) const;
+  DEX::it_dex_files dex_files();
+  DEX::it_const_dex_files dex_files() const;
 
   //! Iterator over LIEF::OAT::DexFile
-  it_dex_files       oat_dex_files(void);
-  it_const_dex_files oat_dex_files(void) const;
+  it_dex_files       oat_dex_files();
+  it_const_dex_files oat_dex_files() const;
 
   //! Iterator over LIEF::OAT::Class
-  it_const_classes classes(void) const;
-  it_classes classes(void);
+  it_const_classes classes() const;
+  it_classes classes();
 
   //! Check the current OAT has the given class
   bool has_class(const std::string& class_name) const;
@@ -74,24 +74,24 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   Class& get_class(size_t index);
 
   //! Iterator over LIEF::OAT::Method
-  it_const_methods methods(void) const;
-  it_methods methods(void);
+  it_const_methods methods() const;
+  it_methods methods();
 
-  dex2dex_info_t dex2dex_info(void) const;
+  dex2dex_info_t dex2dex_info() const;
 
-  std::string dex2dex_json_info(void);
+  std::string dex2dex_json_info();
 
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~Binary(void);
+  virtual ~Binary();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 
   private:
-  Binary(void);
+  Binary();
 
   Header           header_;
   DEX::dex_files_t dex_files_;

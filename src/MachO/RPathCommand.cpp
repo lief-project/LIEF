@@ -24,20 +24,20 @@
 namespace LIEF {
 namespace MachO {
 
-RPathCommand::RPathCommand(void) = default;
+RPathCommand::RPathCommand() = default;
 RPathCommand& RPathCommand::operator=(const RPathCommand&) = default;
 RPathCommand::RPathCommand(const RPathCommand&) = default;
-RPathCommand::~RPathCommand(void) = default;
+RPathCommand::~RPathCommand() = default;
 
 RPathCommand::RPathCommand(const rpath_command *rpathCmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpathCmd->cmd), rpathCmd->cmdsize}
 {}
 
-RPathCommand* RPathCommand::clone(void) const {
+RPathCommand* RPathCommand::clone() const {
   return new RPathCommand(*this);
 }
 
-const std::string& RPathCommand::path(void) const {
+const std::string& RPathCommand::path() const {
   return this->path_;
 }
 

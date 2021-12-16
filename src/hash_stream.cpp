@@ -126,7 +126,7 @@ hashstream& hashstream::flush() {
   return *this;
 }
 
-std::vector<uint8_t>& hashstream::raw(void) {
+std::vector<uint8_t>& hashstream::raw() {
   this->flush();
   return this->output_;
 }

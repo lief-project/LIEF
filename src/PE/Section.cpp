@@ -29,9 +29,9 @@
 namespace LIEF {
 namespace PE {
 
-Section::~Section(void) = default;
+Section::~Section() = default;
 
-Section::Section(void) = default;
+Section::Section() = default;
 
 
 Section& Section::operator=(const Section&) = default;
@@ -68,52 +68,52 @@ Section::Section(const std::string& name) :
 }
 
 
-uint32_t Section::virtual_size(void) const {
+uint32_t Section::virtual_size() const {
   return this->virtual_size_;
 }
 
 
 
-uint32_t Section::sizeof_raw_data(void) const {
+uint32_t Section::sizeof_raw_data() const {
   return this->size();
 }
 
-std::vector<uint8_t> Section::content(void) const {
+std::vector<uint8_t> Section::content() const {
   return this->content_;
 }
 
-std::vector<uint8_t>& Section::content_ref(void) {
+std::vector<uint8_t>& Section::content_ref() {
   return this->content_;
 }
 
-uint32_t Section::pointerto_raw_data(void) const {
+uint32_t Section::pointerto_raw_data() const {
   return this->offset();
 }
 
 
-uint32_t Section::pointerto_relocation(void) const {
+uint32_t Section::pointerto_relocation() const {
   return this->pointer_to_relocations_;
 }
 
 
-uint32_t Section::pointerto_line_numbers(void) const {
+uint32_t Section::pointerto_line_numbers() const {
   return this->pointer_to_linenumbers_;
 }
 
-uint16_t Section::numberof_relocations(void) const {
+uint16_t Section::numberof_relocations() const {
   return this->number_of_relocations_;
 }
 
-uint16_t Section::numberof_line_numbers(void) const {
+uint16_t Section::numberof_line_numbers() const {
   return this->number_of_linenumbers_;
 }
 
-uint32_t Section::characteristics(void) const {
+uint32_t Section::characteristics() const {
   return this->characteristics_;
 }
 
 
-const std::set<PE_SECTION_TYPES>& Section::types(void) const {
+const std::set<PE_SECTION_TYPES>& Section::types() const {
   return this->types_;
 }
 
@@ -134,7 +134,7 @@ bool Section::has_characteristic(SECTION_CHARACTERISTICS c) const {
   return (this->characteristics_ & static_cast<uint32_t>(c)) > 0;
 }
 
-std::set<SECTION_CHARACTERISTICS> Section::characteristics_list(void) const {
+std::set<SECTION_CHARACTERISTICS> Section::characteristics_list() const {
   std::set<SECTION_CHARACTERISTICS> charac;
   std::copy_if(
       std::begin(section_characteristics_array),

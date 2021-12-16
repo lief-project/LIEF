@@ -157,7 +157,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const Pogo& pogo)        override;
   virtual void visit(const PogoEntry& entry)  override;
 
-  virtual ~Hash(void);
+  virtual ~Hash();
 };
 
 }

@@ -27,9 +27,9 @@ namespace PE {
 
 CodeView::CodeView(const CodeView&) = default;
 CodeView& CodeView::operator=(const CodeView&) = default;
-CodeView::~CodeView(void) = default;
+CodeView::~CodeView() = default;
 
-CodeView::CodeView(void) :
+CodeView::CodeView() :
   cv_signature_{CODE_VIEW_SIGNATURES::CVS_UNKNOWN}
 {}
 
@@ -40,7 +40,7 @@ CodeView::CodeView(CODE_VIEW_SIGNATURES cv_signature) :
 
 
 
-CODE_VIEW_SIGNATURES CodeView::cv_signature(void) const {
+CODE_VIEW_SIGNATURES CodeView::cv_signature() const {
   return this->cv_signature_;
 }
 

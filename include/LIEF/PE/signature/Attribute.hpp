@@ -34,11 +34,11 @@ class LIEF_API Attribute : public Object {
   friend class SignatureParser;
 
   public:
-  Attribute(void);
+  Attribute();
   Attribute(const Attribute&);
   Attribute& operator=(const Attribute&);
 
-  virtual std::unique_ptr<Attribute> clone(void) const = 0;
+  virtual std::unique_ptr<Attribute> clone() const = 0;
 
   //! Concrete type of the attribute
   inline virtual SIG_ATTRIBUTE_TYPES type() const {

@@ -37,7 +37,7 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN8_1;
 
-  LoadConfigurationV1(void);
+  LoadConfigurationV1();
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV1(const load_configuration_v1<T>* header);
@@ -45,30 +45,30 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   LoadConfigurationV1& operator=(const LoadConfigurationV1&);
   LoadConfigurationV1(const LoadConfigurationV1&);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
   //! @brief The VA where Control Flow Guard check-function pointer is stored.
-  uint64_t guard_cf_check_function_pointer(void) const;
+  uint64_t guard_cf_check_function_pointer() const;
 
   //! @brief The VA where Control Flow Guard dispatch-function pointer is stored.
-  uint64_t guard_cf_dispatch_function_pointer(void) const;
+  uint64_t guard_cf_dispatch_function_pointer() const;
 
   //! @brief The VA of the sorted table of RVAs of each Control Flow Guard
   //! function in the image.
-  uint64_t guard_cf_function_table(void) const;
+  uint64_t guard_cf_function_table() const;
 
   //! @brief The count of unique RVAs in the
   //! LoadConfigurationV1::guard_cf_function_table.
-  uint64_t guard_cf_function_count(void) const;
+  uint64_t guard_cf_function_count() const;
 
   //! @brief Control Flow Guard related flags.
-  GUARD_CF_FLAGS guard_flags(void) const;
+  GUARD_CF_FLAGS guard_flags() const;
 
   //! @brief Check if the given flag is present in LoadConfigurationV1::guard_flags
   bool has(GUARD_CF_FLAGS flag) const;
 
   //! @brief LoadConfigurationV1::guard_flags as a list of LIEF::PE::GUARD_CF_FLAGS
-  guard_cf_flags_list_t guard_cf_flags_list(void) const;
+  guard_cf_flags_list_t guard_cf_flags_list() const;
 
   void guard_cf_check_function_pointer(uint64_t guard_cf_check_function_pointer);
   void guard_cf_dispatch_function_pointer(uint64_t guard_cf_dispatch_function_pointer);
@@ -76,7 +76,7 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   void guard_cf_function_count(uint64_t guard_cf_function_count);
   void guard_flags(GUARD_CF_FLAGS guard_flags);
 
-  virtual ~LoadConfigurationV1(void);
+  virtual ~LoadConfigurationV1();
 
   virtual void accept(Visitor& visitor) const override;
 

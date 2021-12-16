@@ -66,8 +66,8 @@
 namespace LIEF {
 namespace PE {
 
-Parser::~Parser(void) = default;
-Parser::Parser(void) = default;
+Parser::~Parser() = default;
+Parser::Parser() = default;
 
 //
 // CTOR
@@ -112,7 +112,7 @@ void Parser::init(const std::string& name) {
 
 }
 
-void Parser::parse_dos_stub(void) {
+void Parser::parse_dos_stub() {
   const DosHeader& dos_header = this->binary_->dos_header();
 
   if (dos_header.addressof_new_exeheader() < sizeof(pe_dos_header)) {
@@ -131,7 +131,7 @@ void Parser::parse_dos_stub(void) {
 }
 
 
-void Parser::parse_rich_header(void) {
+void Parser::parse_rich_header() {
   LIEF_DEBUG("Parsing rich header");
   const std::vector<uint8_t>& dos_stub = this->binary_->dos_stub();
   VectorStream stream{dos_stub};
@@ -206,7 +206,7 @@ void Parser::parse_rich_header(void) {
 // parse PE sections
 //
 // TODO: Check offset etc
-void Parser::parse_sections(void) {
+void Parser::parse_sections() {
 
   LIEF_DEBUG("Parsing sections");
   const uint32_t sections_offset  =
@@ -292,7 +292,7 @@ void Parser::parse_sections(void) {
 //
 // parse relocations
 //
-void Parser::parse_relocations(void) {
+void Parser::parse_relocations() {
   LIEF_DEBUG("== Parsing relocations ==");
 
   const uint32_t offset = this->binary_->rva_to_offset(
@@ -346,7 +346,7 @@ void Parser::parse_relocations(void) {
 //
 // parse ressources
 //
-void Parser::parse_resources(void) {
+void Parser::parse_resources() {
   LIEF_DEBUG("== Parsing resources ==");
 
   const uint32_t resources_rva = this->binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA();
@@ -481,7 +481,7 @@ ResourceNode* Parser::parse_resource_node(
 //
 // parse string table
 //
-void Parser::parse_string_table(void) {
+void Parser::parse_string_table() {
   LIEF_DEBUG("== Parsing string table ==");
   uint32_t string_table_offset =
     this->binary_->header().pointerto_symbol_table() +
@@ -505,7 +505,7 @@ void Parser::parse_string_table(void) {
 //
 // parse Symbols
 //
-void Parser::parse_symbols(void) {
+void Parser::parse_symbols() {
   LIEF_DEBUG("== Parsing symbols ==");
   uint32_t symbol_table_offset = this->binary_->header().pointerto_symbol_table();
   uint32_t nb_symbols          = this->binary_->header().numberof_symbols();
@@ -594,7 +594,7 @@ void Parser::parse_symbols(void) {
 // parse Debug
 //
 
-void Parser::parse_debug(void) {
+void Parser::parse_debug() {
   LIEF_DEBUG("== Parsing Debug ==");
 
   this->binary_->has_debug_ = true;
@@ -724,7 +724,7 @@ void Parser::parse_debug_pogo(Debug& debug_info) {
 //
 // Parse Export
 //
-void Parser::parse_exports(void) {
+void Parser::parse_exports() {
   LIEF_DEBUG("== Parsing exports ==");
   static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
   static constexpr size_t MAX_EXPORT_NAME_SIZE = 300;
@@ -893,7 +893,7 @@ void Parser::parse_exports(void) {
 
 }
 
-void Parser::parse_signature(void) {
+void Parser::parse_signature() {
   LIEF_DEBUG("== Parsing signature ==");
   static constexpr size_t SIZEOF_HEADER = 8;
 
@@ -937,7 +937,7 @@ void Parser::parse_signature(void) {
 }
 
 
-void Parser::parse_overlay(void) {
+void Parser::parse_overlay() {
   LIEF_DEBUG("== Parsing Overlay ==");
   const uint64_t last_section_offset = std::accumulate(
       std::begin(this->binary_->sections_),

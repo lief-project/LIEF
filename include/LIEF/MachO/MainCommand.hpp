@@ -27,18 +27,18 @@ namespace MachO {
 struct entry_point_command;
 class LIEF_API MainCommand : public LoadCommand {
   public:
-  MainCommand(void);
+  MainCommand();
   MainCommand(const entry_point_command *cmd);
 
   MainCommand& operator=(const MainCommand& copy);
   MainCommand(const MainCommand& copy);
 
-  virtual MainCommand* clone(void) const override;
+  virtual MainCommand* clone() const override;
 
-  virtual ~MainCommand(void);
+  virtual ~MainCommand();
 
-  uint64_t entrypoint(void) const;
-  uint64_t stack_size(void) const;
+  uint64_t entrypoint() const;
+  uint64_t stack_size() const;
 
   void entrypoint(uint64_t entrypoint);
   void stack_size(uint64_t stacksize);

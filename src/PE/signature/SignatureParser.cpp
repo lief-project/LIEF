@@ -58,8 +58,8 @@ inline uint8_t stream_get_tag(VectorStream& stream) {
   return 0;
 }
 
-SignatureParser::~SignatureParser(void) = default;
-SignatureParser::SignatureParser(void) = default;
+SignatureParser::~SignatureParser() = default;
+SignatureParser::SignatureParser() = default;
 
 SignatureParser::SignatureParser(std::vector<uint8_t> data) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{std::move(data)})}

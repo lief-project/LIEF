@@ -33,7 +33,7 @@
 namespace LIEF {
 namespace ELF {
 
-Segment::~Segment(void) = default;
+Segment::~Segment() = default;
 Segment::Segment(const Segment& other) :
   Object{other},
   type_{other.type_},
@@ -79,7 +79,7 @@ Segment::Segment(const Elf32_Phdr* header) :
   content_c_{}
 {}
 
-Segment::Segment(void) :
+Segment::Segment() :
   type_{static_cast<SEGMENT_TYPES>(0)},
   flags_{ELF_SEGMENT_FLAGS::PF_NONE},
   file_offset_{0},
@@ -132,46 +132,46 @@ Segment::Segment(const std::vector<uint8_t>& header) {
   }
 }
 
-SEGMENT_TYPES Segment::type(void) const {
+SEGMENT_TYPES Segment::type() const {
   return this->type_;
 }
 
 
-ELF_SEGMENT_FLAGS Segment::flags(void) const {
+ELF_SEGMENT_FLAGS Segment::flags() const {
   return this->flags_;
 }
 
 
-uint64_t Segment::file_offset(void) const {
+uint64_t Segment::file_offset() const {
   return this->file_offset_;
 }
 
 
-uint64_t Segment::virtual_address(void) const {
+uint64_t Segment::virtual_address() const {
   return this->virtual_address_;
 }
 
 
-uint64_t Segment::physical_address(void) const {
+uint64_t Segment::physical_address() const {
   return this->physical_address_;
 }
 
 
-uint64_t Segment::physical_size(void) const {
+uint64_t Segment::physical_size() const {
   return this->size_;
 }
 
 
-uint64_t Segment::virtual_size(void) const {
+uint64_t Segment::virtual_size() const {
   return this->virtual_size_;
 }
 
 
-uint64_t Segment::alignment(void) const {
+uint64_t Segment::alignment() const {
   return this->alignment_;
 }
 
-std::vector<uint8_t> Segment::content(void) const {
+std::vector<uint8_t> Segment::content() const {
   if (this->datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
         to_string(this->type()), this->virtual_address());
@@ -246,12 +246,12 @@ template void Segment::set_content_value<unsigned int>(size_t offset, unsigned i
 template void Segment::set_content_value<unsigned long>(size_t offset, unsigned long value);
 template void Segment::set_content_value<unsigned long long>(size_t offset, unsigned long long value);
 
-it_const_sections Segment::sections(void) const {
+it_const_sections Segment::sections() const {
   return {this->sections_};
 }
 
 
-it_sections Segment::sections(void) {
+it_sections Segment::sections() {
   return {this->sections_};
 }
 
@@ -298,7 +298,7 @@ void Segment::remove(ELF_SEGMENT_FLAGS flag) {
 }
 
 
-void Segment::clear_flags(void) {
+void Segment::clear_flags() {
   this->flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
 }
 

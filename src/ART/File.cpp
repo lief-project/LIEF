@@ -21,16 +21,16 @@
 namespace LIEF {
 namespace ART {
 
-File::File(void) :
+File::File() :
   header_{}
 {}
 
 
-const Header& File::header(void) const {
+const Header& File::header() const {
   return this->header_;
 }
 
-Header& File::header(void) {
+Header& File::header() {
   return const_cast<Header&>(static_cast<const File*>(this)->header());
 }
 
@@ -49,7 +49,7 @@ bool File::operator!=(const File& rhs) const {
 }
 
 
-File::~File(void) = default;
+File::~File() = default;
 
 std::ostream& operator<<(std::ostream& os, const File& art_file) {
   os << art_file.header();

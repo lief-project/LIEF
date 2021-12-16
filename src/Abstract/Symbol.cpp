@@ -19,10 +19,10 @@
 #include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {
-Symbol::Symbol(void) = default;
+Symbol::Symbol() = default;
 Symbol::Symbol(const Symbol&) = default;
 Symbol& Symbol::operator=(const Symbol&) = default;
-Symbol::~Symbol(void) = default;
+Symbol::~Symbol() = default;
 
 Symbol::Symbol(const std::string& name) :
   name_{name},
@@ -48,11 +48,11 @@ void Symbol::swap(Symbol& other) {
   std::swap(this->size_,   other.size_);
 }
 
-const std::string& Symbol::name(void) const {
+const std::string& Symbol::name() const {
   return this->name_;
 }
 
-std::string& Symbol::name(void) {
+std::string& Symbol::name() {
   return this->name_;
 }
 
@@ -60,7 +60,7 @@ void Symbol::name(const std::string& name) {
   this->name_ = name;
 }
 
-uint64_t Symbol::value(void) const {
+uint64_t Symbol::value() const {
   return this->value_;
 }
 
@@ -68,7 +68,7 @@ void Symbol::value(uint64_t value) {
   this->value_ = value;
 }
 
-uint64_t Symbol::size(void) const {
+uint64_t Symbol::size() const {
   return this->size_;
 }
 

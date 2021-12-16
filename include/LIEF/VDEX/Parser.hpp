@@ -42,30 +42,30 @@ class LIEF_API Parser {
     Parser(const Parser& copy)            = delete;
 
   private:
-    Parser(void);
+    Parser();
     Parser(const std::string& file);
     Parser(const std::vector<uint8_t>& data, const std::string& name);
-    virtual ~Parser(void);
+    virtual ~Parser();
 
     void init(const std::string& name, vdex_version_t version);
 
     template<typename VDEX_T>
-    void parse_file(void);
+    void parse_file();
 
     template<typename VDEX_T>
-    void parse_header(void);
+    void parse_header();
 
     template<typename VDEX_T>
-    void parse_checksums(void);
+    void parse_checksums();
 
     template<typename VDEX_T>
-    void parse_dex_files(void);
+    void parse_dex_files();
 
     template<typename VDEX_T>
-    void parse_verifier_deps(void);
+    void parse_verifier_deps();
 
     template<typename VDEX_T>
-    void parse_quickening_info(void);
+    void parse_quickening_info();
 
     LIEF::VDEX::File* file_;
     std::unique_ptr<VectorStream> stream_;

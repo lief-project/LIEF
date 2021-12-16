@@ -59,8 +59,8 @@ constexpr uint32_t Parser::MAX_NOTE_DESCRIPTION;
 constexpr const char AndroidNote::NAME[];
 
 
-Parser::~Parser(void) = default;
-Parser::Parser(void)  = default;
+Parser::~Parser() = default;
+Parser::Parser()  = default;
 
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd, Binary* output) :
   stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
@@ -92,7 +92,7 @@ Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd, Binary* 
   this->init(filesystem::path(file).filename());
 }
 
-bool Parser::should_swap(void) const {
+bool Parser::should_swap() const {
   if (not this->stream_->can_read<Elf32_Ehdr>(0)) {
     return false;
   }
@@ -194,7 +194,7 @@ void Parser::parse_symbol_version(uint64_t symbol_version_offset) {
 }
 
 
-uint64_t Parser::get_dynamic_string_table_from_segments(void) const {
+uint64_t Parser::get_dynamic_string_table_from_segments() const {
   //find DYNAMIC segment
   auto&& it_segment_dynamic = std::find_if(
       std::begin(this->binary_->segments_),
@@ -247,7 +247,7 @@ uint64_t Parser::get_dynamic_string_table_from_segments(void) const {
   return 0;
 }
 
-uint64_t Parser::get_dynamic_string_table_from_sections(void) const {
+uint64_t Parser::get_dynamic_string_table_from_sections() const {
   // Find Dynamic string section
   auto&& it_dynamic_string_section = std::find_if(
       std::begin(this->binary_->sections_),
@@ -266,7 +266,7 @@ uint64_t Parser::get_dynamic_string_table_from_sections(void) const {
   return va_offset;
 }
 
-uint64_t Parser::get_dynamic_string_table(void) const {
+uint64_t Parser::get_dynamic_string_table() const {
   uint64_t offset = this->get_dynamic_string_table_from_segments();
   if (offset == 0) {
     offset = this->get_dynamic_string_table_from_sections();
@@ -275,7 +275,7 @@ uint64_t Parser::get_dynamic_string_table(void) const {
 }
 
 
-void Parser::link_symbol_version(void) {
+void Parser::link_symbol_version() {
   if (this->binary_->dynamic_symbols_.size() == this->binary_->symbol_version_table_.size()) {
     for (size_t i = 0; i < this->binary_->dynamic_symbols_.size(); ++i) {
       this->binary_->dynamic_symbols_[i]->symbol_version_ = this->binary_->symbol_version_table_[i];
@@ -393,7 +393,7 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
 }
 
 
-void Parser::parse_overlay(void) {
+void Parser::parse_overlay() {
   const uint64_t last_offset = this->binary_->eof_offset();
 
   if (last_offset > this->stream_->size()) {

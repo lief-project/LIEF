@@ -53,16 +53,16 @@ class LIEF_API MapItem : public Object {
   };
 
   public:
-  MapItem(void);
+  MapItem();
   MapItem(TYPES type, uint32_t offset, uint32_t size, uint16_t reserved = 0);
 
   MapItem(const MapItem&);
   MapItem& operator=(const MapItem&);
 
-  TYPES type(void) const;
-  uint16_t reserved(void) const;
-  uint32_t size(void) const;
-  uint32_t offset(void) const;
+  TYPES type() const;
+  uint16_t reserved() const;
+  uint32_t size() const;
+  uint32_t offset() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -71,7 +71,7 @@ class LIEF_API MapItem : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapItem& item);
 
-  virtual ~MapItem(void);
+  virtual ~MapItem();
 
   private:
   TYPES    type_;

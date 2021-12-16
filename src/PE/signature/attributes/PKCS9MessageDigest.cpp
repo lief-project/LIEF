@@ -31,7 +31,7 @@ PKCS9MessageDigest::PKCS9MessageDigest(std::vector<uint8_t> digest) :
   digest_{std::move(digest)}
 {}
 
-std::unique_ptr<Attribute> PKCS9MessageDigest::clone(void) const {
+std::unique_ptr<Attribute> PKCS9MessageDigest::clone() const {
   return std::unique_ptr<Attribute>(new PKCS9MessageDigest{*this});
 }
 

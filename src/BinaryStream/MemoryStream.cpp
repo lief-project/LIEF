@@ -45,7 +45,7 @@ MemoryStream::MemoryStream(uintptr_t base_address, uint64_t size) :
   size_{size}
 {}
 
-uint64_t MemoryStream::size(void) const {
+uint64_t MemoryStream::size() const {
   return this->size_;
 }
 

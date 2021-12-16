@@ -20,44 +20,44 @@ class LIEF_API Field : public Object {
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
   public:
-  Field(void);
+  Field();
   Field(const std::string& name, Class* parent = nullptr);
 
   Field(const Field&);
   Field& operator=(const Field&);
 
   //! Name of the Field
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! True if a class is associated with this field
-  bool has_class(void) const;
+  bool has_class() const;
 
   //! Class associated with this Field
-  const Class& cls(void) const;
-  Class& cls(void);
+  const Class& cls() const;
+  Class& cls();
 
   //! Index in the DEX Fields pool
-  size_t index(void) const;
+  size_t index() const;
 
   //! True if this field is a static one.
-  bool is_static(void) const;
+  bool is_static() const;
 
   //! Field's prototype
-  const Type& type(void) const;
-  Type& type(void);
+  const Type& type() const;
+  Type& type();
 
   virtual void accept(Visitor& visitor) const override;
 
   bool has(ACCESS_FLAGS f) const;
 
-  access_flags_list_t access_flags(void) const;
+  access_flags_list_t access_flags() const;
 
   bool operator==(const Field& rhs) const;
   bool operator!=(const Field& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Field& mtd);
 
-  virtual ~Field(void);
+  virtual ~Field();
 
   private:
   void set_static(bool v);

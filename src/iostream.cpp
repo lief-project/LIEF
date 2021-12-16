@@ -162,20 +162,20 @@ vector_iostream& vector_iostream::flush() {
   return *this;
 }
 
-const std::vector<uint8_t>& vector_iostream::raw(void) const {
+const std::vector<uint8_t>& vector_iostream::raw() const {
   return this->raw_;
 }
 
-std::vector<uint8_t>& vector_iostream::raw(void) {
+std::vector<uint8_t>& vector_iostream::raw() {
   return this->raw_;
 }
 
-size_t vector_iostream::size(void) const {
+size_t vector_iostream::size() const {
   return this->raw_.size();
 }
 
 // seeks:
-vector_iostream::pos_type vector_iostream::tellp(void) {
+vector_iostream::pos_type vector_iostream::tellp() {
   return this->current_pos_;
 }
 vector_iostream& vector_iostream::seekp(vector_iostream::pos_type p) {

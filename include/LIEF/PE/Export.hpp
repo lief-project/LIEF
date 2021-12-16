@@ -36,20 +36,20 @@ class LIEF_API Export : public Object {
   friend class Parser;
 
   public:
-  Export(void);
+  Export();
   Export(const pe_export_directory_table *header);
   Export(const Export&);
   Export& operator=(const Export&);
-  virtual ~Export(void);
+  virtual ~Export();
 
-  uint32_t                export_flags(void) const;
-  uint32_t                timestamp(void) const;
-  uint16_t                major_version(void) const;
-  uint16_t                minor_version(void) const;
-  uint32_t                ordinal_base(void) const;
-  const std::string&      name(void) const;
-  it_export_entries       entries(void);
-  it_const_export_entries entries(void) const;
+  uint32_t                export_flags() const;
+  uint32_t                timestamp() const;
+  uint16_t                major_version() const;
+  uint16_t                minor_version() const;
+  uint32_t                ordinal_base() const;
+  const std::string&      name() const;
+  it_export_entries       entries();
+  it_const_export_entries entries() const;
 
   void export_flags(uint32_t flags);
   void timestamp(uint32_t timestamp);

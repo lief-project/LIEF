@@ -57,7 +57,7 @@ class LIEF_API SignerInfo : public Object {
 
   public:
   using encrypted_digest_t = std::vector<uint8_t>;
-  SignerInfo(void);
+  SignerInfo();
 
   SignerInfo(const SignerInfo& signinfo);
   SignerInfo& operator=(SignerInfo signinfo);
@@ -68,7 +68,7 @@ class LIEF_API SignerInfo : public Object {
   void swap(SignerInfo& other);
 
   //! Should be 1
-  uint32_t version(void) const;
+  uint32_t version() const;
 
   //! Return the serial number associated with the x509 certificate
   //! used by this signer.
@@ -89,15 +89,15 @@ class LIEF_API SignerInfo : public Object {
   //!
   //! This value should match LIEF::PE::ContentInfo::digest_algorithm and
   //! LIEF::PE::Signature::digest_algorithm
-  ALGORITHMS digest_algorithm(void) const;
+  ALGORITHMS digest_algorithm() const;
 
   //! Return the (public-key) algorithm used to encrypt
   //! the signature
-  ALGORITHMS encryption_algorithm(void) const;
+  ALGORITHMS encryption_algorithm() const;
 
   //! Return the signature created by the signing
   //! certificate's private key
-  const encrypted_digest_t& encrypted_digest(void) const;
+  const encrypted_digest_t& encrypted_digest() const;
 
   //! Iterator over LIEF::PE::Attribute for **authenticated** attributes
   it_const_attributes_t authenticated_attributes() const;
@@ -141,7 +141,7 @@ class LIEF_API SignerInfo : public Object {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~SignerInfo(void);
+  virtual ~SignerInfo();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info);
 

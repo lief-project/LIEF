@@ -43,39 +43,39 @@ class LIEF_API Parser {
     Parser(const Parser& copy)            = delete;
 
   private:
-    Parser(void);
+    Parser();
     Parser(const std::string& file);
     Parser(const std::vector<uint8_t>& data, const std::string& name);
-    ~Parser(void);
+    ~Parser();
 
     void init(const std::string& name, dex_version_t version);
 
     template<typename DEX_T>
-    void parse_file(void);
+    void parse_file();
 
     template<typename DEX_T>
-    void parse_header(void);
+    void parse_header();
 
     template<typename DEX_T>
-    void parse_map(void);
+    void parse_map();
 
     template<typename DEX_T>
-    void parse_strings(void);
+    void parse_strings();
 
     template<typename DEX_T>
-    void parse_types(void);
+    void parse_types();
 
     template<typename DEX_T>
-    void parse_fields(void);
+    void parse_fields();
 
     template<typename DEX_T>
-    void parse_prototypes(void);
+    void parse_prototypes();
 
     template<typename DEX_T>
-    void parse_methods(void);
+    void parse_methods();
 
     template<typename DEX_T>
-    void parse_classes(void);
+    void parse_classes();
 
     template<typename DEX_T>
     void parse_class_data(uint32_t offset, Class* cls);
@@ -89,13 +89,13 @@ class LIEF_API Parser {
     template<typename DEX_T>
     void parse_code_info(uint32_t offset, Method* method);
 
-    void resolve_inheritance(void);
+    void resolve_inheritance();
 
-    void resolve_external_methods(void);
+    void resolve_external_methods();
 
-    void resolve_external_fields(void);
+    void resolve_external_fields();
 
-    void resolve_types(void);
+    void resolve_types();
 
     LIEF::DEX::File* file_;
 

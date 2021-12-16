@@ -27,7 +27,7 @@ namespace PE {
 
 LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration&) = default;
 LoadConfiguration::LoadConfiguration(const LoadConfiguration&)            = default;
-LoadConfiguration::~LoadConfiguration(void)                               = default;
+LoadConfiguration::~LoadConfiguration()                               = default;
 
 decltype(PE32::load_configuration_sizes) PE32::load_configuration_sizes = {
   {WIN_VERSION::WIN_UNKNOWN,   sizeof(PE32::load_configuration_t)},
@@ -54,7 +54,7 @@ decltype(PE64::load_configuration_sizes) PE64::load_configuration_sizes = {
   {WIN_VERSION::WIN10_0_16237, sizeof(PE64::load_configuration_v7_t)},
 };
 
-LoadConfiguration::LoadConfiguration(void) :
+LoadConfiguration::LoadConfiguration() :
   characteristics_{0},
   timedatestamp_{0},
   major_version_{0},
@@ -75,87 +75,87 @@ LoadConfiguration::LoadConfiguration(void) :
   security_cookie_{0}
 {}
 
-WIN_VERSION LoadConfiguration::version(void) const {
+WIN_VERSION LoadConfiguration::version() const {
   return LoadConfiguration::VERSION;
 }
 
-uint32_t LoadConfiguration::characteristics(void) const {
+uint32_t LoadConfiguration::characteristics() const {
   return this->characteristics_;
 }
 
-uint32_t LoadConfiguration::size(void) const {
+uint32_t LoadConfiguration::size() const {
   return this->characteristics_;
 }
 
-uint32_t LoadConfiguration::timedatestamp(void) const {
+uint32_t LoadConfiguration::timedatestamp() const {
   return this->timedatestamp_;
 }
 
-uint16_t LoadConfiguration::major_version(void) const {
+uint16_t LoadConfiguration::major_version() const {
   return this->major_version_;
 }
 
-uint16_t LoadConfiguration::minor_version(void) const {
+uint16_t LoadConfiguration::minor_version() const {
   return this->minor_version_;
 }
 
-uint32_t LoadConfiguration::global_flags_clear(void) const {
+uint32_t LoadConfiguration::global_flags_clear() const {
   return this->global_flags_clear_;
 }
 
-uint32_t LoadConfiguration::global_flags_set(void) const {
+uint32_t LoadConfiguration::global_flags_set() const {
   return this->global_flags_set_;
 }
 
-uint32_t LoadConfiguration::critical_section_default_timeout(void) const {
+uint32_t LoadConfiguration::critical_section_default_timeout() const {
   return this->critical_section_default_timeout_;
 }
 
-uint64_t LoadConfiguration::decommit_free_block_threshold(void) const {
+uint64_t LoadConfiguration::decommit_free_block_threshold() const {
   return this->decommit_free_block_threshold_;
 }
 
-uint64_t LoadConfiguration::decommit_total_free_threshold(void) const {
+uint64_t LoadConfiguration::decommit_total_free_threshold() const {
   return this->decommit_total_free_threshold_;
 }
 
-uint64_t LoadConfiguration::lock_prefix_table(void) const {
+uint64_t LoadConfiguration::lock_prefix_table() const {
   return this->lock_prefix_table_;
 }
 
-uint64_t LoadConfiguration::maximum_allocation_size(void) const {
+uint64_t LoadConfiguration::maximum_allocation_size() const {
   return this->maximum_allocation_size_;
 }
 
-uint64_t LoadConfiguration::virtual_memory_threshold(void) const {
+uint64_t LoadConfiguration::virtual_memory_threshold() const {
   return this->virtual_memory_threshold_;
 }
 
-uint64_t LoadConfiguration::process_affinity_mask(void) const {
+uint64_t LoadConfiguration::process_affinity_mask() const {
   return this->process_affinity_mask_;
 }
 
-uint32_t LoadConfiguration::process_heap_flags(void) const {
+uint32_t LoadConfiguration::process_heap_flags() const {
   return this->process_heap_flags_;
 }
 
-uint16_t LoadConfiguration::csd_version(void) const {
+uint16_t LoadConfiguration::csd_version() const {
   return this->csd_version_;
 }
 
-uint16_t LoadConfiguration::reserved1(void) const {
+uint16_t LoadConfiguration::reserved1() const {
   return this->reserved1_;
 }
 
-uint16_t LoadConfiguration::dependent_load_flags(void) const {
+uint16_t LoadConfiguration::dependent_load_flags() const {
   return this->reserved1_;
 }
 
-uint32_t LoadConfiguration::editlist(void) const {
+uint32_t LoadConfiguration::editlist() const {
   return this->editlist_;
 }
 
-uint32_t LoadConfiguration::security_cookie(void) const {
+uint32_t LoadConfiguration::security_cookie() const {
   return this->security_cookie_;
 }
 

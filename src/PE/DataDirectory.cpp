@@ -28,9 +28,9 @@
 namespace LIEF {
 namespace PE {
 
-DataDirectory::~DataDirectory(void) = default;
+DataDirectory::~DataDirectory() = default;
 
-DataDirectory::DataDirectory(void) :
+DataDirectory::DataDirectory() :
   rva_{0},
   size_{0},
   type_{},
@@ -73,22 +73,22 @@ void DataDirectory::swap(DataDirectory& other) {
 
 
 
-uint32_t DataDirectory::RVA(void) const {
+uint32_t DataDirectory::RVA() const {
   return this->rva_;
 }
 
 
-uint32_t DataDirectory::size(void) const {
+uint32_t DataDirectory::size() const {
   return this->size_;
 }
 
 
-bool DataDirectory::has_section(void) const {
+bool DataDirectory::has_section() const {
   return this->section_ != nullptr;
 }
 
 
-const Section& DataDirectory::section(void) const {
+const Section& DataDirectory::section() const {
   if (this->section_ != nullptr) {
     return *this->section_;
   } else {
@@ -97,11 +97,11 @@ const Section& DataDirectory::section(void) const {
   }
 }
 
-Section& DataDirectory::section(void) {
+Section& DataDirectory::section() {
   return const_cast<Section&>(static_cast<const DataDirectory*>(this)->section());
 }
 
-DATA_DIRECTORY DataDirectory::type(void) const {
+DATA_DIRECTORY DataDirectory::type() const {
   return this->type_;
 }
 

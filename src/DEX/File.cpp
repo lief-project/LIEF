@@ -24,7 +24,7 @@
 namespace LIEF {
 namespace DEX {
 
-File::File(void) :
+File::File() :
   name_{"classes.dex"},
   location_{""},
   header_{},
@@ -35,7 +35,7 @@ File::File(void) :
 {}
 
 
-dex_version_t File::version(void) const {
+dex_version_t File::version() const {
   magic_t m = this->header().magic();
   const char* version = reinterpret_cast<const char*>(m.data() + sizeof(DEX::magic));
   return static_cast<dex_version_t>(std::stoul(version));
@@ -363,25 +363,25 @@ void File::deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value, O
   reinterpret_cast<uint16_t*>(inst_ptr)[1] = value;
 }
 
-const std::string& File::name(void) const {
+const std::string& File::name() const {
   return this->name_;
 }
 
 
-const std::string& File::location(void) const {
+const std::string& File::location() const {
   return this->location_;
 }
 
 
-const Header& File::header(void) const {
+const Header& File::header() const {
   return this->header_;
 }
 
-Header& File::header(void) {
+Header& File::header() {
   return const_cast<Header&>(static_cast<const File*>(this)->header());
 }
 
-it_const_classes File::classes(void) const {
+it_const_classes File::classes() const {
   classes_list_t classes;
   classes.reserve(this->classes_.size());
 
@@ -394,7 +394,7 @@ it_const_classes File::classes(void) const {
   return classes;
 }
 
-it_classes File::classes(void) {
+it_classes File::classes() {
   classes_list_t classes;
   classes.reserve(this->classes_.size());
 
@@ -436,7 +436,7 @@ Class& File::get_class(size_t index) {
 }
 
 
-dex2dex_info_t File::dex2dex_info(void) const {
+dex2dex_info_t File::dex2dex_info() const {
   dex2dex_info_t info;
   for (auto&& p : this->classes_) {
     dex2dex_class_info_t class_info = p.second->dex2dex_info();
@@ -447,7 +447,7 @@ dex2dex_info_t File::dex2dex_info(void) const {
   return info;
 }
 
-std::string File::dex2dex_json_info(void) {
+std::string File::dex2dex_json_info() {
 
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
@@ -478,53 +478,53 @@ std::string File::dex2dex_json_info(void) {
 #endif
 }
 
-it_const_methods File::methods(void) const {
+it_const_methods File::methods() const {
   return this->methods_;
 }
 
-it_methods File::methods(void) {
+it_methods File::methods() {
   return this->methods_;
 }
 
-it_const_fields File::fields(void) const {
+it_const_fields File::fields() const {
   return this->fields_;
 }
 
-it_fields File::fields(void) {
+it_fields File::fields() {
   return this->fields_;
 }
 
 
-it_const_strings File::strings(void) const {
+it_const_strings File::strings() const {
   return this->strings_;
 }
 
-it_strings File::strings(void) {
+it_strings File::strings() {
   return this->strings_;
 }
 
-it_const_types File::types(void) const {
+it_const_types File::types() const {
   return this->types_;
 }
 
-it_types File::types(void) {
+it_types File::types() {
   return this->types_;
 }
 
 
-it_const_protypes File::prototypes(void) const {
+it_const_protypes File::prototypes() const {
   return this->prototypes_;
 }
 
-it_protypes File::prototypes(void) {
+it_protypes File::prototypes() {
   return this->prototypes_;
 }
 
-const MapList& File::map(void) const {
+const MapList& File::map() const {
   return this->map_;
 }
 
-MapList& File::map(void) {
+MapList& File::map() {
   return this->map_;
 }
 
@@ -579,7 +579,7 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
   return os;
 }
 
-File::~File(void) {
+File::~File() {
   for (const std::pair<const std::string, Class*>& p : this->classes_) {
     delete p.second;
   }

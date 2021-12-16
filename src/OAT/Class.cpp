@@ -32,7 +32,7 @@ namespace OAT {
 Class::Class(const Class&) = default;
 Class& Class::operator=(const Class&) = default;
 
-Class::Class(void) :
+Class::Class() :
   dex_class_{nullptr},
   status_{OAT_CLASS_STATUS::STATUS_NOTREADY},
   type_{OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED},
@@ -51,54 +51,54 @@ Class::Class(OAT_CLASS_STATUS status,
 {}
 
 
-bool Class::has_dex_class(void) const {
+bool Class::has_dex_class() const {
   return this->dex_class_ != nullptr;
 }
 
-const DEX::Class& Class::dex_class(void) const {
+const DEX::Class& Class::dex_class() const {
   if (not this->has_dex_class()) {
     throw not_found("No Dex Class associted with this OAT Class");
   }
   return *this->dex_class_;
 }
 
-DEX::Class& Class::dex_class(void) {
+DEX::Class& Class::dex_class() {
   return const_cast<DEX::Class&>(static_cast<const Class*>(this)->dex_class());
 }
 
-OAT_CLASS_STATUS Class::status(void) const {
+OAT_CLASS_STATUS Class::status() const {
   return this->status_;
 }
 
-OAT_CLASS_TYPES Class::type(void) const {
+OAT_CLASS_TYPES Class::type() const {
   return this->type_;
 }
 
-it_methods Class::methods(void) {
+it_methods Class::methods() {
   return this->methods_;
 }
 
-it_const_methods Class::methods(void) const {
+it_const_methods Class::methods() const {
   return this->methods_;
 }
 
-DEX::dex2dex_class_info_t Class::dex2dex_info(void) const {
+DEX::dex2dex_class_info_t Class::dex2dex_info() const {
   return this->dex_class().dex2dex_info();
 }
 
 
-const std::string& Class::fullname(void) const {
+const std::string& Class::fullname() const {
   return this->dex_class().fullname();
 }
 
-size_t Class::index(void) const {
+size_t Class::index() const {
   if (this->has_dex_class()) {
     return this->dex_class().index();
   }
   return -1ull;
 }
 
-const std::vector<uint32_t>& Class::bitmap(void) const {
+const std::vector<uint32_t>& Class::bitmap() const {
   return this->method_bitmap_;
 }
 
@@ -259,7 +259,7 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
   return os;
 }
 
-Class::~Class(void) = default;
+Class::~Class() = default;
 
 
 

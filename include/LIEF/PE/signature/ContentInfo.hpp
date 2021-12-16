@@ -75,7 +75,7 @@ class LIEF_API ContentInfo : public Object {
   friend class SignatureParser;
 
   public:
-  ContentInfo(void);
+  ContentInfo();
   ContentInfo(const ContentInfo&);
   ContentInfo& operator=(const ContentInfo&);
 
@@ -105,7 +105,7 @@ class LIEF_API ContentInfo : public Object {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~ContentInfo(void);
+  virtual ~ContentInfo();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
 

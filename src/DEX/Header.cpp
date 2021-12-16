@@ -35,73 +35,73 @@ namespace DEX {
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
-Header::Header(void) {
+Header::Header() {
 }
 
 
-magic_t Header::magic(void) const {
+magic_t Header::magic() const {
   return this->magic_;
 }
-uint32_t Header::checksum(void) const {
+uint32_t Header::checksum() const {
   return this->checksum_;
 }
-signature_t Header::signature(void) const {
+signature_t Header::signature() const {
   return this->signature_;
 }
 
-uint32_t Header::file_size(void) const {
+uint32_t Header::file_size() const {
   return this->file_size_;
 }
 
-uint32_t Header::header_size(void) const {
+uint32_t Header::header_size() const {
   return this->header_size_;
 }
 
-uint32_t Header::endian_tag(void) const {
+uint32_t Header::endian_tag() const {
   return this->endian_tag_;
 }
 
-uint32_t Header::nb_classes(void) const {
+uint32_t Header::nb_classes() const {
   return this->class_defs_size_;
 }
 
-uint32_t Header::nb_methods(void) const {
+uint32_t Header::nb_methods() const {
   return this->method_ids_size_;
 }
 
-uint32_t Header::map(void) const {
+uint32_t Header::map() const {
   return this->map_off_;
 }
 
-Header::location_t Header::strings(void) const {
+Header::location_t Header::strings() const {
   return {this->string_ids_off_, this->string_ids_size_};
 }
 
-Header::location_t Header::link(void) const {
+Header::location_t Header::link() const {
   return {this->link_off_, this->link_size_};
 }
 
-Header::location_t Header::types(void) const {
+Header::location_t Header::types() const {
   return {this->type_ids_off_, this->type_ids_size_};
 }
 
-Header::location_t Header::prototypes(void) const {
+Header::location_t Header::prototypes() const {
   return {this->proto_ids_off_, this->proto_ids_size_};
 }
 
-Header::location_t Header::fields(void) const {
+Header::location_t Header::fields() const {
   return {this->field_ids_off_, this->field_ids_size_};
 }
 
-Header::location_t Header::methods(void) const {
+Header::location_t Header::methods() const {
   return {this->method_ids_off_, this->method_ids_size_};
 }
 
-Header::location_t Header::classes(void) const {
+Header::location_t Header::classes() const {
   return {this->class_defs_off_, this->class_defs_size_};
 }
 
-Header::location_t Header::data(void) const {
+Header::location_t Header::data() const {
   return {this->data_off_, this->data_size_};
 }
 
@@ -166,7 +166,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   return os;
 }
 
-Header::~Header(void) = default;
+Header::~Header() = default;
 
 
 

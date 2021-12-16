@@ -60,10 +60,10 @@ class Logger {
   static Logger& instance();
 
   //! @brief Disable the logging module
-  static void disable(void);
+  static void disable();
 
   //! @brief Enable the logging module
-  static void enable(void);
+  static void enable();
 
   //! @brief Change the logging level (**hierarchical**)
   static void set_level(LOGGING_LEVEL level);
@@ -105,11 +105,11 @@ class Logger {
 
   ~Logger();
   private:
-  Logger(void);
+  Logger();
   Logger(Logger&&);
   Logger& operator=(Logger&&);
 
-  static void destroy(void);
+  static void destroy();
   /* inline */ static Logger* instance_;
   std::shared_ptr<spdlog::logger> sink_;
 };

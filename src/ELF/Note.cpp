@@ -40,7 +40,7 @@
 namespace LIEF {
 namespace ELF {
 
-Note::~Note(void) = default;
+Note::~Note() = default;
 
 Note& Note::operator=(Note other) {
   this->swap(other);
@@ -94,40 +94,40 @@ Note::Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& d
 }
 
 
-const std::string& Note::name(void) const {
+const std::string& Note::name() const {
   return this->name_;
 }
 
-NOTE_TYPES Note::type(void) const {
+NOTE_TYPES Note::type() const {
   return this->type_;
 }
 
-NOTE_TYPES_CORE Note::type_core(void) const {
+NOTE_TYPES_CORE Note::type_core() const {
   return static_cast<NOTE_TYPES_CORE>(this->type_);
 }
 
-const Note::description_t& Note::description(void) const {
+const Note::description_t& Note::description() const {
   return this->description_;
 }
 
-Note::description_t& Note::description(void) {
+Note::description_t& Note::description() {
   return this->description_;
 }
 
-bool Note::is_core(void) const {
+bool Note::is_core() const {
   return this->is_core_;
 }
 
 
-bool Note::is_android(void) const {
+bool Note::is_android() const {
   return this->name() == AndroidNote::NAME;
 }
 
-const NoteDetails& Note::details(void) const {
+const NoteDetails& Note::details() const {
   return *(this->details_.second);
 }
 
-NoteDetails& Note::details(void) {
+NoteDetails& Note::details() {
   NOTE_TYPES type = this->type();
   auto& dcache = this->details_;
 
@@ -222,7 +222,7 @@ void Note::description(const description_t& description) {
   this->description_ = description;
 }
 
-uint64_t Note::size(void) const {
+uint64_t Note::size() const {
   uint64_t size = 0;
   size += 3 * sizeof(uint32_t);
   size += this->name().size() + 1;

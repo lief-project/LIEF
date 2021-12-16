@@ -41,7 +41,7 @@ exception::exception(const char* msg) : msg_{msg} {
 #endif
 }
 
-const char* exception::what(void) const noexcept {
+const char* exception::what() const noexcept {
   return this->msg_.c_str();
 }
 

@@ -85,7 +85,7 @@ class LIEF_API SignatureParser {
   result<std::string> parse_spc_string(VectorStream& stream);
   result<std::string> parse_spc_link(VectorStream& stream);
   result<SpcPeImageData> parse_spc_pe_image_data(VectorStream& stream);
-  size_t current_offset(void) const;
+  size_t current_offset() const;
   std::unique_ptr<VectorStream> stream_;
 };
 

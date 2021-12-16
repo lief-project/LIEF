@@ -32,7 +32,7 @@ MsSpcNestedSignature::MsSpcNestedSignature(Signature sig) :
   sig_{std::move(sig)}
 {}
 
-std::unique_ptr<Attribute> MsSpcNestedSignature::clone(void) const {
+std::unique_ptr<Attribute> MsSpcNestedSignature::clone() const {
   return std::unique_ptr<Attribute>(new MsSpcNestedSignature{*this});
 }
 

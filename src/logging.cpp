@@ -34,7 +34,7 @@ Logger::Logger(Logger&&) = default;
 Logger& Logger::operator=(Logger&&) = default;
 Logger::~Logger() = default;
 
-Logger::Logger(void) {
+Logger::Logger() {
   if /* constexpr */ (lief_logging_support) {
     if /* constexpr */ (current_platform() == PLATFORMS::ANDROID_PLAT) {
       #if defined(__ANDROID__)
@@ -66,7 +66,7 @@ Logger& Logger::instance() {
 }
 
 
-void Logger::destroy(void) {
+void Logger::destroy() {
   delete instance_;
 }
 
@@ -84,13 +84,13 @@ const char* to_string(LOGGING_LEVEL e) {
 }
 
 
-void Logger::disable(void) {
+void Logger::disable() {
   if /* constexpr */ (lief_logging_support) {
     Logger::instance().sink_->set_level(spdlog::level::off);
   }
 }
 
-void Logger::enable(void) {
+void Logger::enable() {
   if /* constexpr */ (lief_logging_support) {
     Logger::instance().sink_->set_level(spdlog::level::warn);
   }
@@ -148,11 +148,11 @@ void Logger::set_level(LOGGING_LEVEL level) {
 
 // Public interface
 
-void disable(void) {
+void disable() {
   Logger::disable();
 }
 
-void enable(void) {
+void enable() {
   Logger::enable();
 }
 

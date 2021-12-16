@@ -29,19 +29,19 @@ struct dylinker_command;
 
 class LIEF_API DyldEnvironment : public LoadCommand {
   public:
-  DyldEnvironment(void);
+  DyldEnvironment();
   DyldEnvironment(const dylinker_command *cmd);
 
   DyldEnvironment& operator=(const DyldEnvironment& copy);
   DyldEnvironment(const DyldEnvironment& copy);
 
-  virtual DyldEnvironment* clone(void) const override;
+  virtual DyldEnvironment* clone() const override;
 
-  virtual ~DyldEnvironment(void);
+  virtual ~DyldEnvironment();
 
   virtual std::ostream& print(std::ostream& os) const override;
 
-  const std::string& value(void) const;
+  const std::string& value() const;
 
   void value(const std::string& values);
 

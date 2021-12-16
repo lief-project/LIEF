@@ -26,7 +26,7 @@ ContentType::ContentType() :
 ContentType::ContentType(const ContentType&) = default;
 ContentType& ContentType::operator=(const ContentType&) = default;
 
-std::unique_ptr<Attribute> ContentType::clone(void) const {
+std::unique_ptr<Attribute> ContentType::clone() const {
   return std::unique_ptr<Attribute>(new ContentType{*this});
 }
 

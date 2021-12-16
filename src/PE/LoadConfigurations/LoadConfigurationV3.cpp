@@ -25,9 +25,9 @@ namespace PE {
 
 LoadConfigurationV3& LoadConfigurationV3::operator=(const LoadConfigurationV3&) = default;
 LoadConfigurationV3::LoadConfigurationV3(const LoadConfigurationV3&) = default;
-LoadConfigurationV3::~LoadConfigurationV3(void) = default;
+LoadConfigurationV3::~LoadConfigurationV3() = default;
 
-LoadConfigurationV3::LoadConfigurationV3(void) :
+LoadConfigurationV3::LoadConfigurationV3() :
   LoadConfigurationV2{},
   guard_address_taken_iat_entry_table_{0},
   guard_address_taken_iat_entry_count_{0},
@@ -35,23 +35,23 @@ LoadConfigurationV3::LoadConfigurationV3(void) :
   guard_long_jump_target_count_{0}
 {}
 
-WIN_VERSION LoadConfigurationV3::version(void) const {
+WIN_VERSION LoadConfigurationV3::version() const {
   return LoadConfigurationV3::VERSION;
 }
 
-uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_table(void) const {
+uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_table() const {
   return this->guard_address_taken_iat_entry_table_;
 }
 
-uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_count(void) const {
+uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_count() const {
   return this->guard_address_taken_iat_entry_count_;
 }
 
-uint64_t LoadConfigurationV3::guard_long_jump_target_table(void) const {
+uint64_t LoadConfigurationV3::guard_long_jump_target_table() const {
   return this->guard_long_jump_target_table_;
 }
 
-uint64_t LoadConfigurationV3::guard_long_jump_target_count(void) const {
+uint64_t LoadConfigurationV3::guard_long_jump_target_count() const {
   return this->guard_long_jump_target_count_;
 }
 

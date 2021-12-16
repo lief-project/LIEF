@@ -31,14 +31,14 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryArray(void);
+  DynamicEntryArray();
   DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array);
 
   DynamicEntryArray& operator=(const DynamicEntryArray&);
   DynamicEntryArray(const DynamicEntryArray&);
 
-  array_t& array(void);
-  const array_t& array(void) const;
+  array_t& array();
+  const array_t& array() const;
   void array(const array_t& array);
 
   //! @brief Insert the given callback at ``pos``
@@ -51,7 +51,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   DynamicEntryArray& remove(uint64_t callback);
 
   //! @brief Number of callback registred
-  size_t size(void) const;
+  size_t size() const;
 
   DynamicEntryArray& operator+=(uint64_t value);
   DynamicEntryArray& operator-=(uint64_t value);
@@ -64,7 +64,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   virtual std::ostream& print(std::ostream& os) const override;
 
-  virtual ~DynamicEntryArray(void);
+  virtual ~DynamicEntryArray();
 
   private:
   array_t array_;

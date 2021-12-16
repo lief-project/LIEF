@@ -42,31 +42,31 @@ class LIEF_API TLS : public Object {
 
   public:
 
-  TLS(void);
+  TLS();
   TLS(const pe32_tls *header);
   TLS(const pe64_tls *header);
-  virtual ~TLS(void);
+  virtual ~TLS();
 
 
   TLS(const TLS& copy);
   TLS& operator=(TLS copy);
   void swap(TLS& other);
 
-  const std::vector<uint64_t>&  callbacks(void) const;
-  std::pair<uint64_t, uint64_t> addressof_raw_data(void) const;
-  uint64_t                      addressof_index(void) const;
-  uint64_t                      addressof_callbacks(void) const;
-  uint32_t                      sizeof_zero_fill(void) const;
-  uint32_t                      characteristics(void) const;
-  const std::vector<uint8_t>&   data_template(void) const;
+  const std::vector<uint64_t>&  callbacks() const;
+  std::pair<uint64_t, uint64_t> addressof_raw_data() const;
+  uint64_t                      addressof_index() const;
+  uint64_t                      addressof_callbacks() const;
+  uint32_t                      sizeof_zero_fill() const;
+  uint32_t                      characteristics() const;
+  const std::vector<uint8_t>&   data_template() const;
 
-  bool                          has_data_directory(void) const;
-  DataDirectory&                directory(void);
-  const DataDirectory&          directory(void) const;
+  bool                          has_data_directory() const;
+  DataDirectory&                directory();
+  const DataDirectory&          directory() const;
 
-  bool                          has_section(void) const;
-  Section&                      section(void);
-  const Section&                section(void) const;
+  bool                          has_section() const;
+  Section&                      section();
+  const Section&                section() const;
 
   void callbacks(const std::vector<uint64_t>& callbacks);
   void addressof_raw_data(std::pair<uint64_t, uint64_t> VAOfRawData);

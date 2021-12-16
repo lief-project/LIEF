@@ -19,17 +19,17 @@
 namespace LIEF {
 
 template<class T>
-bool Object::is(void) const {
+bool Object::is() const {
   return typeid(*this) == typeid(T);
 }
 
 template<class T>
-Object::output_t<T> Object::as(void) {
+Object::output_t<T> Object::as() {
   return reinterpret_cast<Object::output_t<T>>(this);
 }
 
 template<class T>
-Object::output_const_t<T> Object::as(void) const {
+Object::output_const_t<T> Object::as() const {
   return reinterpret_cast<Object::output_const_t<T>>(this);
 }
 

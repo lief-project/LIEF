@@ -24,12 +24,12 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersion::SymbolVersion(void) :
+SymbolVersion::SymbolVersion() :
   value_{0},
   symbol_aux_{nullptr}
 {}
 
-SymbolVersion::~SymbolVersion(void) = default;
+SymbolVersion::~SymbolVersion() = default;
 
 SymbolVersion& SymbolVersion::operator=(const SymbolVersion&) = default;
 
@@ -41,24 +41,24 @@ SymbolVersion::SymbolVersion(uint16_t value) :
 {}
 
 
-SymbolVersion SymbolVersion::local(void) {
+SymbolVersion SymbolVersion::local() {
   return SymbolVersion{0};
 }
 
-SymbolVersion SymbolVersion::global(void) {
+SymbolVersion SymbolVersion::global() {
   return SymbolVersion{1};
 }
 
-uint16_t SymbolVersion::value(void) const {
+uint16_t SymbolVersion::value() const {
   return this->value_;
 }
 
 
-bool SymbolVersion::has_auxiliary_version(void) const {
+bool SymbolVersion::has_auxiliary_version() const {
   return this->symbol_aux_ != nullptr;
 }
 
-const SymbolVersionAux& SymbolVersion::symbol_version_auxiliary(void) const {
+const SymbolVersionAux& SymbolVersion::symbol_version_auxiliary() const {
   if (this->symbol_aux_ != nullptr) {
     return *this->symbol_aux_;
   } else {
@@ -67,7 +67,7 @@ const SymbolVersionAux& SymbolVersion::symbol_version_auxiliary(void) const {
 
 }
 
-SymbolVersionAux& SymbolVersion::symbol_version_auxiliary(void) {
+SymbolVersionAux& SymbolVersion::symbol_version_auxiliary() {
   return const_cast<SymbolVersionAux&>(static_cast<const SymbolVersion*>(this)->symbol_version_auxiliary());
 }
 

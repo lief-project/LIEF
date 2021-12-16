@@ -24,7 +24,7 @@ GenericType::GenericType() :
 GenericType::GenericType(const GenericType&) = default;
 GenericType& GenericType::operator=(const GenericType&) = default;
 
-std::unique_ptr<Attribute> GenericType::clone(void) const {
+std::unique_ptr<Attribute> GenericType::clone() const {
   return std::unique_ptr<Attribute>(new GenericType{*this});
 }
 

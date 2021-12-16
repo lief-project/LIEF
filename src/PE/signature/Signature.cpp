@@ -158,10 +158,10 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
 }
 
 
-Signature::Signature(void) = default;
+Signature::Signature() = default;
 Signature::Signature(const Signature&) = default;
 Signature& Signature::operator=(const Signature&) = default;
-Signature::~Signature(void) = default;
+Signature::~Signature() = default;
 
 
 std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITHMS algo) {
@@ -230,20 +230,20 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
   return {};
 }
 
-uint32_t Signature::version(void) const {
+uint32_t Signature::version() const {
   return this->version_;
 }
 
 
-const ContentInfo& Signature::content_info(void) const {
+const ContentInfo& Signature::content_info() const {
   return this->content_info_;
 }
 
-it_const_crt Signature::certificates(void) const {
+it_const_crt Signature::certificates() const {
   return this->certificates_;
 }
 
-it_const_signers_t Signature::signers(void) const {
+it_const_signers_t Signature::signers() const {
   return this->signers_;
 }
 
@@ -403,7 +403,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 }
 
 
-const std::vector<uint8_t>& Signature::raw_der(void) const {
+const std::vector<uint8_t>& Signature::raw_der() const {
   return this->original_raw_signature_;
 }
 

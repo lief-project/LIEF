@@ -25,13 +25,13 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntry::DynamicEntry(void) = default;
+DynamicEntry::DynamicEntry() = default;
 
 DynamicEntry& DynamicEntry::operator=(const DynamicEntry&) = default;
 
 DynamicEntry::DynamicEntry(const DynamicEntry&) = default;
 
-DynamicEntry::~DynamicEntry(void) = default;
+DynamicEntry::~DynamicEntry() = default;
 
 DynamicEntry::DynamicEntry(const Elf64_Dyn* header) :
   tag_{static_cast<DYNAMIC_TAGS>(header->d_tag)},
@@ -51,12 +51,12 @@ DynamicEntry::DynamicEntry(DYNAMIC_TAGS tag, uint64_t value) :
 {}
 
 
-DYNAMIC_TAGS DynamicEntry::tag(void) const {
+DYNAMIC_TAGS DynamicEntry::tag() const {
   return this->tag_;
 }
 
 
-uint64_t DynamicEntry::value(void) const {
+uint64_t DynamicEntry::value() const {
   return this->value_;
 }
 

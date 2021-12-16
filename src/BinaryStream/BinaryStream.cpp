@@ -24,8 +24,8 @@
 #include <iostream>
 
 namespace LIEF {
-BinaryStream::~BinaryStream(void) = default;
-BinaryStream::BinaryStream(void) = default;
+BinaryStream::~BinaryStream() = default;
+BinaryStream::BinaryStream() = default;
 
 void BinaryStream::setpos(size_t pos) const {
   this->pos_ = pos;
@@ -40,7 +40,7 @@ BinaryStream::operator bool() const {
   return this->pos_ < this->size();
 }
 
-size_t BinaryStream::pos(void) const {
+size_t BinaryStream::pos() const {
   return this->pos_;
 }
 
@@ -86,7 +86,7 @@ int64_t BinaryStream::read_dwarf_encoded(uint8_t encoding) {
 
 }
 
-uint64_t BinaryStream::read_uleb128(void) const {
+uint64_t BinaryStream::read_uleb128() const {
   uint64_t value = 0;
   unsigned shift = 0;
   uint8_t byte_read;
@@ -99,7 +99,7 @@ uint64_t BinaryStream::read_uleb128(void) const {
   return value;
 }
 
-uint64_t BinaryStream::read_sleb128(void) const {
+uint64_t BinaryStream::read_sleb128() const {
   int64_t  value = 0;
   unsigned shift = 0;
   uint8_t byte_read;
@@ -154,13 +154,13 @@ std::string BinaryStream::peek_string_at(size_t offset, size_t maxsize) const {
   return tmp;
 }
 
-std::u16string BinaryStream::read_u16string(void) const {
+std::u16string BinaryStream::read_u16string() const {
   std::u16string str = this->peek_u16string();
   this->increment_pos((str.size() + 1) * sizeof(uint16_t)); // +1 for'\0'
   return str;
 }
 
-std::u16string BinaryStream::peek_u16string(void) const {
+std::u16string BinaryStream::peek_u16string() const {
   std::u16string result;
   result.reserve(10);
   char16_t c = '\0';

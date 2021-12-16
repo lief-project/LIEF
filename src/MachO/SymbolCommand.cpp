@@ -21,10 +21,10 @@
 namespace LIEF {
 namespace MachO {
 
-SymbolCommand::SymbolCommand(void) = default;
+SymbolCommand::SymbolCommand() = default;
 SymbolCommand& SymbolCommand::operator=(const SymbolCommand&) = default;
 SymbolCommand::SymbolCommand(const SymbolCommand&) = default;
-SymbolCommand::~SymbolCommand(void) = default;
+SymbolCommand::~SymbolCommand() = default;
 
 SymbolCommand::SymbolCommand(const symtab_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -34,23 +34,23 @@ SymbolCommand::SymbolCommand(const symtab_command *cmd) :
   stringsSize_{cmd->strsize}
 {}
 
-SymbolCommand* SymbolCommand::clone(void) const {
+SymbolCommand* SymbolCommand::clone() const {
   return new SymbolCommand(*this);
 }
 
-uint32_t SymbolCommand::symbol_offset(void) const {
+uint32_t SymbolCommand::symbol_offset() const {
   return this->symbolOffset_;
 }
 
-uint32_t SymbolCommand::numberof_symbols(void) const {
+uint32_t SymbolCommand::numberof_symbols() const {
   return this->numberOfSymbols_;
 }
 
-uint32_t SymbolCommand::strings_offset(void) const {
+uint32_t SymbolCommand::strings_offset() const {
   return this->stringsOffset_;
 }
 
-uint32_t SymbolCommand::strings_size(void) const {
+uint32_t SymbolCommand::strings_size() const {
   return this->stringsSize_;
 }
 

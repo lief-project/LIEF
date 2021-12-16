@@ -39,20 +39,20 @@ class LIEF_API Object {
   using output_const_t = add_pointer_t<add_const_t<decay_t<T>>>;
 
   public:
-  Object(void);
+  Object();
   Object(const Object& other);
   Object& operator=(const Object& other);
 
   template<class T>
-  LIEF_LOCAL bool is(void) const;
+  LIEF_LOCAL bool is() const;
 
   template<class T>
-  LIEF_LOCAL output_t<T> as(void);
+  LIEF_LOCAL output_t<T> as();
 
   template<class T>
-  LIEF_LOCAL output_const_t<T> as(void) const;
+  LIEF_LOCAL output_const_t<T> as() const;
 
-  virtual ~Object(void);
+  virtual ~Object();
   virtual void accept(Visitor& visitor) const = 0;
 };
 }

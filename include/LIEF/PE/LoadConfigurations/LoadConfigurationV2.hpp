@@ -33,7 +33,7 @@ struct load_configuration_v2;
 class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_9879;
-  LoadConfigurationV2(void);
+  LoadConfigurationV2();
 
   LoadConfigurationV2& operator=(const LoadConfigurationV2&);
   LoadConfigurationV2(const LoadConfigurationV2&);
@@ -41,13 +41,13 @@ class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   template<class T>
   LIEF_LOCAL LoadConfigurationV2(const load_configuration_v2<T>* header);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
   //! @brief CodeIntegrity associated with
-  const CodeIntegrity& code_integrity(void) const;
-  CodeIntegrity& code_integrity(void);
+  const CodeIntegrity& code_integrity() const;
+  CodeIntegrity& code_integrity();
 
-  virtual ~LoadConfigurationV2(void);
+  virtual ~LoadConfigurationV2();
 
   virtual void accept(Visitor& visitor) const override;
 

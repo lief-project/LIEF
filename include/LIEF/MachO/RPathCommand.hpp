@@ -29,17 +29,17 @@ struct rpath_command;
 
 class LIEF_API RPathCommand : public LoadCommand {
   public:
-  RPathCommand(void);
+  RPathCommand();
   RPathCommand(const rpath_command *rpathCmd);
 
   RPathCommand& operator=(const RPathCommand& copy);
   RPathCommand(const RPathCommand& copy);
 
-  virtual RPathCommand* clone(void) const override;
+  virtual RPathCommand* clone() const override;
 
-  virtual ~RPathCommand(void);
+  virtual ~RPathCommand();
 
-  const std::string& path(void) const;
+  const std::string& path() const;
   void path(const std::string& path);
 
   bool operator==(const RPathCommand& rhs) const;

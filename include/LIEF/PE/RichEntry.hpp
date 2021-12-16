@@ -26,20 +26,20 @@ namespace PE {
 class LIEF_API RichEntry : public Object {
   public:
 
-  RichEntry(void);
+  RichEntry();
   RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
   RichEntry(const RichEntry&);
   RichEntry& operator=(const RichEntry&);
-  virtual ~RichEntry(void);
+  virtual ~RichEntry();
 
   //! @brief Entry type
-  uint16_t id(void) const;
+  uint16_t id() const;
 
   //! @brief Builder number of the tool (if any)
-  uint16_t build_id(void) const;
+  uint16_t build_id() const;
 
   //! @brief *Occurrence* count.
-  uint32_t count(void) const;
+  uint32_t count() const;
 
   void id(uint16_t id);
   void build_id(uint16_t build_id);

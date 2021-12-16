@@ -35,12 +35,12 @@ namespace OAT {
 
 
 template<>
-void Parser::parse_dex_files<OAT88_t>(void) {
+void Parser::parse_dex_files<OAT88_t>() {
   return this->parse_dex_files<OAT79_t>();
 }
 
 template<>
-void Parser::parse_oat_classes<OAT88_t>(void) {
+void Parser::parse_oat_classes<OAT88_t>() {
   return this->parse_oat_classes<OAT79_t>();
 }
 
@@ -48,7 +48,7 @@ void Parser::parse_oat_classes<OAT88_t>(void) {
 // Parse Binary
 // ============
 template<>
-void Parser::parse_binary<OAT64_t>(void) {
+void Parser::parse_binary<OAT64_t>() {
 
   std::vector<uint8_t> raw_oat;
 
@@ -91,7 +91,7 @@ void Parser::parse_binary<OAT64_t>(void) {
 }
 
 template<>
-void Parser::parse_binary<OAT79_t>(void) {
+void Parser::parse_binary<OAT79_t>() {
 
   std::vector<uint8_t> raw_oat;
 
@@ -137,7 +137,7 @@ void Parser::parse_binary<OAT79_t>(void) {
 }
 
 template<>
-void Parser::parse_binary<OAT88_t>(void) {
+void Parser::parse_binary<OAT88_t>() {
   std::vector<uint8_t> raw_oat;
 
   if (this->oat_binary_->has_symbol("oatdata")) {
@@ -182,7 +182,7 @@ void Parser::parse_binary<OAT88_t>(void) {
 }
 
 template<>
-void Parser::parse_binary<OAT124_t>(void) {
+void Parser::parse_binary<OAT124_t>() {
   std::vector<uint8_t> raw_oat;
 
   if (this->oat_binary_->has_symbol("oatdata")) {
@@ -228,7 +228,7 @@ void Parser::parse_binary<OAT124_t>(void) {
 }
 
 template<>
-void Parser::parse_binary<OAT131_t>(void) {
+void Parser::parse_binary<OAT131_t>() {
   std::vector<uint8_t> raw_oat;
 
   if (this->oat_binary_->has_symbol("oatdata")) {
@@ -275,14 +275,14 @@ void Parser::parse_binary<OAT131_t>(void) {
 
 
 template<>
-void Parser::parse_binary<OAT138_t>(void) {
+void Parser::parse_binary<OAT138_t>() {
   return this->parse_binary<OAT131_t>();
 }
 
 
 
 template<typename OAT_T>
-void Parser::parse_header(void) {
+void Parser::parse_header() {
   using oat_header = typename OAT_T::oat_header;
 
   LIEF_DEBUG("Parsing OAT header");
@@ -296,7 +296,7 @@ void Parser::parse_header(void) {
 
 
 template<typename OAT_T>
-void Parser::parse_header_keys(void) {
+void Parser::parse_header_keys() {
   using oat_header = typename OAT_T::oat_header;
 
   const uint64_t keys_offset = sizeof(oat_header);
@@ -324,7 +324,7 @@ void Parser::parse_header_keys(void) {
 
 
 template<typename OAT_T>
-void Parser::parse_type_lookup_table(void) {
+void Parser::parse_type_lookup_table() {
   //using oat_header           = typename OAT_T::oat_header;
   //using dex_file             = typename OAT_T::dex_file;
   //using lookup_table_entry_t = typename OAT_T::lookup_table_entry_t;
@@ -357,7 +357,7 @@ void Parser::parse_type_lookup_table(void) {
 
 
 template<typename OAT_T>
-void Parser::parse_oat_classes(void) {
+void Parser::parse_oat_classes() {
   LIEF_DEBUG("Parsing OAT Classes");
   for (size_t dex_idx = 0; dex_idx < this->oat_binary_->oat_dex_files_.size(); ++dex_idx) {
     DexFile* oat_dex_file = this->oat_binary_->oat_dex_files_[dex_idx];

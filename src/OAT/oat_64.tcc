@@ -26,7 +26,7 @@ namespace LIEF {
 namespace OAT {
 
 template<>
-void Parser::parse_dex_files<OAT64_t>(void) {
+void Parser::parse_dex_files<OAT64_t>() {
   using oat_header = typename OAT64_t::oat_header;
   using dex35_header_t  = DEX::DEX35::dex_header;
 

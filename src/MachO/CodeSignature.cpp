@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-CodeSignature::CodeSignature(void) = default;
+CodeSignature::CodeSignature() = default;
 CodeSignature& CodeSignature::operator=(const CodeSignature&) = default;
 CodeSignature::CodeSignature(const CodeSignature&) = default;
-CodeSignature::~CodeSignature(void) = default;
+CodeSignature::~CodeSignature() = default;
 
 CodeSignature::CodeSignature(const linkedit_data_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -36,15 +36,15 @@ CodeSignature::CodeSignature(const linkedit_data_command *cmd) :
 {}
 
 
-CodeSignature* CodeSignature::clone(void) const {
+CodeSignature* CodeSignature::clone() const {
   return new CodeSignature(*this);
 }
 
-uint32_t CodeSignature::data_offset(void) const {
+uint32_t CodeSignature::data_offset() const {
   return this->data_offset_;
 }
 
-uint32_t CodeSignature::data_size(void) const {
+uint32_t CodeSignature::data_size() const {
   return this->data_size_;
 }
 

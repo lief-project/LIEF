@@ -24,7 +24,7 @@
 namespace LIEF {
 namespace DEX {
 
-MapItem::MapItem(void) = default;
+MapItem::MapItem() = default;
 MapItem::MapItem(const MapItem& other) = default;
 MapItem& MapItem::operator=(const MapItem&) = default;
 
@@ -35,19 +35,19 @@ MapItem::MapItem(MapItem::TYPES type, uint32_t offset, uint32_t size, uint16_t r
   offset_{offset}
 {}
 
-MapItem::TYPES MapItem::type(void) const {
+MapItem::TYPES MapItem::type() const {
   return this->type_;
 }
 
-uint16_t MapItem::reserved(void) const {
+uint16_t MapItem::reserved() const {
   return this->reserved_;
 }
 
-uint32_t MapItem::size(void) const {
+uint32_t MapItem::size() const {
   return this->size_;
 }
 
-uint32_t MapItem::offset(void) const {
+uint32_t MapItem::offset() const {
   return this->offset_;
 }
 
@@ -73,7 +73,7 @@ std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {
 }
 
 
-MapItem::~MapItem(void) = default;
+MapItem::~MapItem() = default;
 
 }
 }

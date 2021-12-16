@@ -39,7 +39,7 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   };
 
   public:
-  DataCodeEntry(void);
+  DataCodeEntry();
   DataCodeEntry(uint32_t off, uint16_t length, TYPES type);
   DataCodeEntry(const data_in_code_entry* entry);
 
@@ -47,19 +47,19 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   DataCodeEntry(const DataCodeEntry&);
 
   //! Offset of the data
-  uint32_t offset(void) const;
+  uint32_t offset() const;
 
   //! Length of the data
-  uint16_t length(void) const;
+  uint16_t length() const;
 
   // Type of the data
-  TYPES type(void) const;
+  TYPES type() const;
 
   void offset(uint32_t off);
   void length(uint16_t length);
   void type(TYPES type);
 
-  virtual ~DataCodeEntry(void);
+  virtual ~DataCodeEntry();
 
   bool operator==(const DataCodeEntry& rhs) const;
   bool operator!=(const DataCodeEntry& rhs) const;

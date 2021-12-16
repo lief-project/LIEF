@@ -59,22 +59,22 @@ class LIEF_API Section : public LIEF::Section {
   Section(const Elf32_Shdr* header);
   Section(const std::string& name, ELF_SECTION_TYPES type = ELF_SECTION_TYPES::SHT_PROGBITS);
 
-  Section(void);
-  ~Section(void);
+  Section();
+  ~Section();
 
   Section& operator=(Section other);
   Section(const Section& other);
   void swap(Section& other);
 
-  uint32_t          name_idx(void) const;
-  ELF_SECTION_TYPES type(void) const;
+  uint32_t          name_idx() const;
+  ELF_SECTION_TYPES type() const;
 
   // ============================
   // LIEF::Section implementation
   // ============================
 
   //! @brief Section's content
-  virtual std::vector<uint8_t> content(void) const override;
+  virtual std::vector<uint8_t> content() const override;
 
   //! @brief Set section content
   virtual void content(const std::vector<uint8_t>& data) override;
@@ -82,7 +82,7 @@ class LIEF_API Section : public LIEF::Section {
   void content(std::vector<uint8_t>&& data);
 
   //! @brief Section flags LIEF::ELF::ELF_SECTION_FLAGS
-  uint64_t flags(void) const;
+  uint64_t flags() const;
 
   //! @brief ``True`` if the section has the given flag
   //!
@@ -93,24 +93,24 @@ class LIEF_API Section : public LIEF::Section {
   bool has(const Segment& segment) const;
 
   //! @brief Return section flags as a ``std::set``
-  std::set<ELF_SECTION_FLAGS> flags_list(void) const;
+  std::set<ELF_SECTION_FLAGS> flags_list() const;
 
-  virtual uint64_t size(void) const override;
+  virtual uint64_t size() const override;
 
   virtual void size(uint64_t size) override;
 
   virtual void offset(uint64_t offset) override;
 
-  virtual uint64_t offset(void) const override;
+  virtual uint64_t offset() const override;
 
 
   //! @see offset
-  uint64_t file_offset(void) const;
-  uint64_t original_size(void) const;
-  uint64_t alignment(void) const;
-  uint64_t information(void) const;
-  uint64_t entry_size(void) const;
-  uint32_t link(void) const;
+  uint64_t file_offset() const;
+  uint64_t original_size() const;
+  uint64_t alignment() const;
+  uint64_t information() const;
+  uint64_t entry_size() const;
+  uint32_t link() const;
 
 
   //! Clear the content of the section with the given ``value``
@@ -120,15 +120,15 @@ class LIEF_API Section : public LIEF::Section {
 
   void type(ELF_SECTION_TYPES type);
   void flags(uint64_t flags);
-  void clear_flags(void);
+  void clear_flags();
   void file_offset(uint64_t offset);
   void link(uint32_t link);
   void information(uint32_t info);
   void alignment(uint64_t alignment);
   void entry_size(uint64_t entry_size);
 
-  it_segments       segments(void);
-  it_const_segments segments(void) const;
+  it_segments       segments();
+  it_const_segments segments() const;
 
   virtual void accept(Visitor& visitor) const override;
 

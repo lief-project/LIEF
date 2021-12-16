@@ -36,22 +36,22 @@ class LIEF_API SysvHash : public Object {
   friend class Binary;
 
   public:
-  SysvHash(void);
+  SysvHash();
   SysvHash& operator=(const SysvHash& copy);
   SysvHash(const SysvHash& copy);
-  virtual ~SysvHash(void);
+  virtual ~SysvHash();
 
   //! @brief Return the number of buckets used
-  uint32_t nbucket(void) const;
+  uint32_t nbucket() const;
 
   //! @brief Return the number of chain used
-  uint32_t nchain(void) const;
+  uint32_t nchain() const;
 
   //! @brief Buckets values
-  const std::vector<uint32_t>& buckets(void) const;
+  const std::vector<uint32_t>& buckets() const;
 
   //! @brief Chains values
-  const std::vector<uint32_t>& chains(void) const;
+  const std::vector<uint32_t>& chains() const;
 
   bool operator==(const SysvHash& rhs) const;
   bool operator!=(const SysvHash& rhs) const;

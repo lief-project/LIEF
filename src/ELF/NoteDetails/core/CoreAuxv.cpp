@@ -39,12 +39,12 @@ CoreAuxv CoreAuxv::make(Note& note) {
   return pinfo;
 }
 
-CoreAuxv* CoreAuxv::clone(void) const {
+CoreAuxv* CoreAuxv::clone() const {
   return new CoreAuxv(*this);
 }
 
 
-const CoreAuxv::val_context_t& CoreAuxv::values(void) const {
+const CoreAuxv::val_context_t& CoreAuxv::values() const {
   return this->ctx_;
 }
 
@@ -109,7 +109,7 @@ void CoreAuxv::dump(std::ostream& os) const {
 }
 
 
-void CoreAuxv::parse(void) {
+void CoreAuxv::parse() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->parse_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -117,7 +117,7 @@ void CoreAuxv::parse(void) {
   }
 }
 
-void CoreAuxv::build(void) {
+void CoreAuxv::build() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->build_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -132,7 +132,7 @@ std::ostream& operator<<(std::ostream& os, const CoreAuxv& note) {
 }
 
 
-CoreAuxv::~CoreAuxv(void) = default;
+CoreAuxv::~CoreAuxv() = default;
 
 } // namespace ELF
 } // namespace LIEF

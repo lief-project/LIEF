@@ -34,37 +34,37 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Builder;
 
   public:
-  ImportEntry(void);
+  ImportEntry();
   ImportEntry(uint64_t data, const std::string& name = "");
   ImportEntry(const std::string& name);
   ImportEntry(const ImportEntry&);
   ImportEntry& operator=(const ImportEntry&);
-  virtual ~ImportEntry(void);
+  virtual ~ImportEntry();
 
   //! @brief ``True`` if ordinal is used
-  bool is_ordinal(void) const;
+  bool is_ordinal() const;
 
   //! @brief ordinal value
-  uint16_t ordinal(void) const;
+  uint16_t ordinal() const;
 
   //! @see ImportEntry::data
-  uint64_t hint_name_rva(void) const;
+  uint64_t hint_name_rva() const;
 
   //! @brief Index into the Export::entries
-  uint16_t hint(void) const;
+  uint16_t hint() const;
 
   //! @brief Value of the current entry in the Import Address Table.
   //! It should match the lookup table value
-  uint64_t iat_value(void) const;
+  uint64_t iat_value() const;
 
   //! @brief Import name if not ordinal
-  //const std::string& name(void) const;
+  //const std::string& name() const;
 
   //! @brief Raw value
-  uint64_t data(void) const;
+  uint64_t data() const;
 
   //! @brief **Original** address of the entry in the Import Address Table
-  uint64_t iat_address(void) const;
+  uint64_t iat_address() const;
 
 
   //void name(const std::string& name);

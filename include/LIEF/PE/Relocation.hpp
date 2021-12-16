@@ -37,18 +37,18 @@ class LIEF_API Relocation : public Object {
   friend class Builder;
 
   public:
-  Relocation(void);
+  Relocation();
   Relocation(const Relocation& other);
   Relocation& operator=(Relocation other);
   Relocation(const pe_base_relocation_block* header);
-  virtual ~Relocation(void);
+  virtual ~Relocation();
 
   void swap(Relocation& other);
 
-  uint32_t virtual_address(void) const;
-  uint32_t block_size(void) const;
-  it_const_relocation_entries entries(void) const;
-  it_relocation_entries entries(void);
+  uint32_t virtual_address() const;
+  uint32_t block_size() const;
+  it_const_relocation_entries entries() const;
+  it_relocation_entries entries();
 
   void virtual_address(uint32_t virtual_address);
   void block_size(uint32_t block_size);

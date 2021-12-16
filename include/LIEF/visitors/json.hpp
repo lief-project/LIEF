@@ -32,12 +32,12 @@ LIEF_API std::string to_json_str(const Object& v);
 class LIEF_API JsonVisitor : public Visitor {
 
   public:
-  JsonVisitor(void);
+  JsonVisitor();
   JsonVisitor(const json& node);
   JsonVisitor(const JsonVisitor&);
   JsonVisitor& operator=(const JsonVisitor&);
 
-  const json& get(void) const;
+  const json& get() const;
 
   protected:
   json node_;

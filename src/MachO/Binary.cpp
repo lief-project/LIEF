@@ -68,9 +68,9 @@
 namespace LIEF {
 namespace MachO {
 
-Binary::Binary(void) = default;
+Binary::Binary() = default;
 
-LIEF::sections_t Binary::get_abstract_sections(void) {
+LIEF::sections_t Binary::get_abstract_sections() {
   LIEF::sections_t result;
   it_sections sections = this->sections();
   std::transform(
@@ -143,7 +143,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
 }
 
 
-uint64_t Binary::entrypoint(void) const {
+uint64_t Binary::entrypoint() const {
   if (not this->has_entrypoint()) {
     throw not_found("Entrypoint not found");
   }
@@ -160,12 +160,12 @@ uint64_t Binary::entrypoint(void) const {
   throw not_found("Entrypoint not found");
 }
 
-bool Binary::is_pie(void) const {
+bool Binary::is_pie() const {
   return this->header().has(HEADER_FLAGS::MH_PIE);
 }
 
 
-bool Binary::has_nx(void) const {
+bool Binary::has_nx() const {
   if (not this->header().has(HEADER_FLAGS::MH_NO_HEAP_EXECUTION)) {
     LIEF_INFO("Heap could be executable");
   }
@@ -173,16 +173,16 @@ bool Binary::has_nx(void) const {
 }
 
 
-bool Binary::has_entrypoint(void) const {
+bool Binary::has_entrypoint() const {
   return this->has_main_command() or this->has_thread_command();
 }
 
-LIEF::symbols_t Binary::get_abstract_symbols(void) {
+LIEF::symbols_t Binary::get_abstract_symbols() {
   return {std::begin(this->symbols_), std::end(this->symbols_)};
 }
 
 
-LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_exported_symbols syms = this->exported_symbols();
   std::transform(
@@ -194,7 +194,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions(void) const {
   return result;
 }
 
-LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
+LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_imported_symbols syms = this->imported_symbols();
   std::transform(
@@ -207,7 +207,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions(void) const {
 }
 
 
-std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
+std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DylibCommand& lib : this->libraries()) {
     result.push_back(lib.name());
@@ -216,22 +216,22 @@ std::vector<std::string> Binary::get_abstract_imported_libraries(void) const {
 }
 
 
-const Header& Binary::header(void) const {
+const Header& Binary::header() const {
   return this->header_;
 }
 
-Header& Binary::header(void) {
+Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
 }
 
 // Commands
 // ========
 
-it_commands Binary::commands(void) {
+it_commands Binary::commands() {
   return this->commands_;
 }
 
-it_const_commands Binary::commands(void) const {
+it_const_commands Binary::commands() const {
   return it_const_commands{std::cref(this->commands_)};
 }
 
@@ -239,7 +239,7 @@ it_const_commands Binary::commands(void) const {
 // Filesets
 // ========
 
-it_fileset_binaries Binary::filesets(void) {
+it_fileset_binaries Binary::filesets() {
   // MSVC fixed
   std::vector<Binary*> binaries;
   for (std::unique_ptr<Binary>& bin : this->filesets_) {
@@ -249,7 +249,7 @@ it_fileset_binaries Binary::filesets(void) {
 
 }
 
-it_const_fileset_binaries Binary::filesets(void) const {
+it_const_fileset_binaries Binary::filesets() const {
   std::vector<Binary*> binaries;
   for (const std::unique_ptr<Binary>& bin : this->filesets_) {
     binaries.push_back(bin.get());
@@ -261,35 +261,35 @@ it_const_fileset_binaries Binary::filesets(void) const {
 // Symbols
 // =======
 
-it_symbols Binary::symbols(void) {
+it_symbols Binary::symbols() {
   return this->symbols_;
 }
 
-it_const_symbols Binary::symbols(void) const {
+it_const_symbols Binary::symbols() const {
   return this->symbols_;
 }
 
-it_libraries Binary::libraries(void) {
+it_libraries Binary::libraries() {
   return this->libraries_;
 }
 
-it_const_libraries Binary::libraries(void) const {
+it_const_libraries Binary::libraries() const {
   return this->libraries_;
 }
 
-it_segments Binary::segments(void) {
+it_segments Binary::segments() {
   return this->segments_;
 }
 
-it_const_segments Binary::segments(void) const {
+it_const_segments Binary::segments() const {
   return this->segments_;
 }
 
-it_sections Binary::sections(void) {
+it_sections Binary::sections() {
   return this->sections_;
 }
 
-it_const_sections Binary::sections(void) const {
+it_const_sections Binary::sections() const {
   return this->sections_;
 }
 
@@ -330,7 +330,7 @@ it_const_relocations Binary::relocations() const {
 }
 
 
-LIEF::relocations_t Binary::get_abstract_relocations(void) {
+LIEF::relocations_t Binary::get_abstract_relocations() {
   LIEF::relocations_t relocations;
   it_relocations macho_relocations = this->relocations();
   relocations.reserve(macho_relocations.size());
@@ -350,14 +350,14 @@ bool Binary::is_exported(const Symbol& symbol) {
   return not symbol.is_external() and symbol.has_export_info();
 }
 
-it_exported_symbols Binary::exported_symbols(void) {
+it_exported_symbols Binary::exported_symbols() {
   return filter_iterator<symbols_t>{std::ref(this->symbols_),
     [] (const Symbol* symbol) { return is_exported(*symbol); }
   };
 }
 
 
-it_const_exported_symbols Binary::exported_symbols(void) const {
+it_const_exported_symbols Binary::exported_symbols() const {
   return const_filter_iterator<symbols_t>{std::cref(this->symbols_),
     [] (const Symbol* symbol) { return is_exported(*symbol); }
   };
@@ -368,14 +368,14 @@ bool Binary::is_imported(const Symbol& symbol) {
   return symbol.is_external() and not symbol.has_export_info();
 }
 
-it_imported_symbols Binary::imported_symbols(void) {
+it_imported_symbols Binary::imported_symbols() {
   return filter_iterator<symbols_t>{std::ref(this->symbols_),
     [] (const Symbol* symbol) { return is_imported(*symbol); }
   };
 }
 
 
-it_const_imported_symbols Binary::imported_symbols(void) const {
+it_const_imported_symbols Binary::imported_symbols() const {
   return const_filter_iterator<symbols_t>{std::cref(this->symbols_),
     [] (const Symbol* symbol) { return is_imported(*symbol); }
   };
@@ -1479,7 +1479,7 @@ bool Binary::can_remove_symbol(const std::string& name) const {
 }
 
 
-bool Binary::remove_signature(void) {
+bool Binary::remove_signature() {
 
   if (not this->has_code_signature()) {
     LIEF_WARN("No signature found!");
@@ -1499,7 +1499,7 @@ LoadCommand& Binary::add_library(const std::string& name) {
 }
 
 
-std::vector<uint8_t> Binary::raw(void) {
+std::vector<uint8_t> Binary::raw() {
   Builder builder{this};
   return builder();
 }
@@ -1528,7 +1528,7 @@ uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) cons
   return base_address + offset;
 }
 
-bool Binary::disable_pie(void) {
+bool Binary::disable_pie() {
   if (this->is_pie()) {
     this->header().remove(HEADER_FLAGS::MH_PIE);
     return true;
@@ -1597,7 +1597,7 @@ SegmentCommand* Binary::get_segment(const std::string& name) {
   return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->get_segment(name));
 }
 
-uint64_t Binary::virtual_size(void) const {
+uint64_t Binary::virtual_size() const {
   uint64_t virtual_size = 0;
   for (const LIEF::MachO::SegmentCommand& segment : this->segments()) {
     virtual_size = std::max(virtual_size, segment.virtual_address() + segment.virtual_size());
@@ -1607,7 +1607,7 @@ uint64_t Binary::virtual_size(void) const {
   return virtual_size;
 }
 
-uint64_t Binary::imagebase(void) const {
+uint64_t Binary::imagebase() const {
   it_const_segments segments = this->segments();
   auto it_text_segment = std::find_if(
       std::begin(segments), std::end(segments),
@@ -1623,11 +1623,11 @@ uint64_t Binary::imagebase(void) const {
 }
 
 
-const std::string& Binary::loader(void) const {
+const std::string& Binary::loader() const {
   return this->dylinker().name();
 }
 
-uint64_t Binary::fat_offset(void) const {
+uint64_t Binary::fat_offset() const {
   return this->fat_offset_;
 }
 
@@ -1638,7 +1638,7 @@ bool Binary::is_valid_addr(uint64_t address) const {
 }
 
 
-Binary::range_t Binary::va_ranges(void) const {
+Binary::range_t Binary::va_ranges() const {
 
   it_const_segments segments = this->segments();
   const auto it_min = std::min_element(
@@ -1660,7 +1660,7 @@ Binary::range_t Binary::va_ranges(void) const {
   return {it_min->virtual_address(), it_max->virtual_address() + it_max->virtual_size()};
 }
 
-Binary::range_t Binary::off_ranges(void) const {
+Binary::range_t Binary::off_ranges() const {
 
   it_const_segments segments = this->segments();
   const auto it_min = std::min_element(
@@ -1684,7 +1684,7 @@ Binary::range_t Binary::off_ranges(void) const {
 
 
 
-LIEF::Header Binary::get_abstract_header(void) const {
+LIEF::Header Binary::get_abstract_header() const {
   LIEF::Header header;
   const std::pair<ARCHITECTURES, std::set<MODES>>& am = this->header().abstract_architecture();
   header.architecture(am.first);
@@ -1702,7 +1702,7 @@ LIEF::Header Binary::get_abstract_header(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::ctor_functions(void) const {
+LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
   for (const Section& section : this->sections()) {
     if (section.type() != MACHO_SECTION_TYPES::S_MOD_INIT_FUNC_POINTERS) {
@@ -1735,7 +1735,7 @@ LIEF::Binary::functions_t Binary::ctor_functions(void) const {
 }
 
 
-LIEF::Binary::functions_t Binary::functions(void) const {
+LIEF::Binary::functions_t Binary::functions() const {
   static const auto func_cmd = [] (const Function& lhs, const Function& rhs) {
     return lhs.address() < rhs.address();
   };
@@ -1762,7 +1762,7 @@ LIEF::Binary::functions_t Binary::functions(void) const {
 
 }
 
-LIEF::Binary::functions_t Binary::unwind_functions(void) const {
+LIEF::Binary::functions_t Binary::unwind_functions() const {
   static constexpr size_t UNWIND_COMPRESSED = 3;
   static constexpr size_t UNWIND_UNCOMPRESSED = 2;
 
@@ -1848,99 +1848,99 @@ LIEF::Binary::functions_t Binary::unwind_functions(void) const {
 
 // UUID
 // ++++
-bool Binary::has_uuid(void) const {
+bool Binary::has_uuid() const {
   return this->has_command<UUIDCommand>();
 }
 
-UUIDCommand& Binary::uuid(void) {
+UUIDCommand& Binary::uuid() {
   return this->command<UUIDCommand>();
 }
 
-const UUIDCommand& Binary::uuid(void) const {
+const UUIDCommand& Binary::uuid() const {
   return this->command<UUIDCommand>();
 }
 
 // MainCommand
 // +++++++++++
-bool Binary::has_main_command(void) const {
+bool Binary::has_main_command() const {
   return this->has_command<MainCommand>();
 }
 
-MainCommand& Binary::main_command(void) {
+MainCommand& Binary::main_command() {
   return this->command<MainCommand>();
 }
 
-const MainCommand& Binary::main_command(void) const {
+const MainCommand& Binary::main_command() const {
   return this->command<MainCommand>();
 }
 
 // DylinkerCommand
 // +++++++++++++++
-bool Binary::has_dylinker(void) const {
+bool Binary::has_dylinker() const {
   return this->has_command<DylinkerCommand>();
 }
 
-DylinkerCommand& Binary::dylinker(void) {
+DylinkerCommand& Binary::dylinker() {
   return this->command<DylinkerCommand>();
 }
 
-const DylinkerCommand& Binary::dylinker(void) const {
+const DylinkerCommand& Binary::dylinker() const {
   return this->command<DylinkerCommand>();
 }
 
 // DyldInfo
 // ++++++++
-bool Binary::has_dyld_info(void) const {
+bool Binary::has_dyld_info() const {
   return this->has_command<DyldInfo>();
 }
 
-DyldInfo& Binary::dyld_info(void) {
+DyldInfo& Binary::dyld_info() {
   return this->command<DyldInfo>();
 }
 
-const DyldInfo& Binary::dyld_info(void) const {
+const DyldInfo& Binary::dyld_info() const {
   return this->command<DyldInfo>();
 }
 
 // Function Starts
 // +++++++++++++++
-bool Binary::has_function_starts(void) const {
+bool Binary::has_function_starts() const {
   return this->has_command<FunctionStarts>();
 }
 
-FunctionStarts& Binary::function_starts(void) {
+FunctionStarts& Binary::function_starts() {
   return this->command<FunctionStarts>();
 }
 
-const FunctionStarts& Binary::function_starts(void) const {
+const FunctionStarts& Binary::function_starts() const {
   return this->command<FunctionStarts>();
 }
 
 // Source Version
 // ++++++++++++++
-bool Binary::has_source_version(void) const {
+bool Binary::has_source_version() const {
   return this->has_command<SourceVersion>();
 }
 
-SourceVersion& Binary::source_version(void) {
+SourceVersion& Binary::source_version() {
   return this->command<SourceVersion>();
 }
 
-const SourceVersion& Binary::source_version(void) const {
+const SourceVersion& Binary::source_version() const {
   return this->command<SourceVersion>();
 }
 
 // Version Min
 // +++++++++++
-bool Binary::has_version_min(void) const {
+bool Binary::has_version_min() const {
   return this->has_command<VersionMin>();
 }
 
-VersionMin& Binary::version_min(void) {
+VersionMin& Binary::version_min() {
   return this->command<VersionMin>();
 }
 
-const VersionMin& Binary::version_min(void) const {
+const VersionMin& Binary::version_min() const {
   return this->command<VersionMin>();
 }
 
@@ -1948,71 +1948,71 @@ const VersionMin& Binary::version_min(void) const {
 
 // Thread command
 // ++++++++++++++
-bool Binary::has_thread_command(void) const {
+bool Binary::has_thread_command() const {
   return this->has_command<ThreadCommand>();
 }
 
-ThreadCommand& Binary::thread_command(void) {
+ThreadCommand& Binary::thread_command() {
   return this->command<ThreadCommand>();
 }
 
-const ThreadCommand& Binary::thread_command(void) const {
+const ThreadCommand& Binary::thread_command() const {
   return this->command<ThreadCommand>();
 }
 
 // RPath command
 // +++++++++++++
-bool Binary::has_rpath(void) const {
+bool Binary::has_rpath() const {
   return this->has_command<RPathCommand>();
 }
 
-RPathCommand& Binary::rpath(void) {
+RPathCommand& Binary::rpath() {
   return this->command<RPathCommand>();
 }
 
-const RPathCommand& Binary::rpath(void) const {
+const RPathCommand& Binary::rpath() const {
   return this->command<RPathCommand>();
 }
 
 // SymbolCommand command
 // +++++++++++++++++++++
-bool Binary::has_symbol_command(void) const {
+bool Binary::has_symbol_command() const {
   return this->has_command<SymbolCommand>();
 }
 
-SymbolCommand& Binary::symbol_command(void) {
+SymbolCommand& Binary::symbol_command() {
   return this->command<SymbolCommand>();
 }
 
-const SymbolCommand& Binary::symbol_command(void) const {
+const SymbolCommand& Binary::symbol_command() const {
   return this->command<SymbolCommand>();
 }
 
 // DynamicSymbolCommand command
 // ++++++++++++++++++++++++++++
-bool Binary::has_dynamic_symbol_command(void) const {
+bool Binary::has_dynamic_symbol_command() const {
   return this->has_command<DynamicSymbolCommand>();
 }
 
-DynamicSymbolCommand& Binary::dynamic_symbol_command(void) {
+DynamicSymbolCommand& Binary::dynamic_symbol_command() {
   return this->command<DynamicSymbolCommand>();
 }
 
-const DynamicSymbolCommand& Binary::dynamic_symbol_command(void) const {
+const DynamicSymbolCommand& Binary::dynamic_symbol_command() const {
   return this->command<DynamicSymbolCommand>();
 }
 
 // CodeSignature command
 // +++++++++++++++++++++
-bool Binary::has_code_signature(void) const {
+bool Binary::has_code_signature() const {
   return this->has(LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE);
 }
 
-CodeSignature& Binary::code_signature(void) {
+CodeSignature& Binary::code_signature() {
   return const_cast<CodeSignature&>(static_cast<const Binary*>(this)->code_signature());
 }
 
-const CodeSignature& Binary::code_signature(void) const {
+const CodeSignature& Binary::code_signature() const {
   if (not this->has_code_signature()) {
     throw not_found("Code signature not found!");
   }
@@ -2022,15 +2022,15 @@ const CodeSignature& Binary::code_signature(void) const {
 
 // CodeSignatureDir command
 // ++++++++++++++++++++++++
-bool Binary::has_code_signature_dir(void) const {
+bool Binary::has_code_signature_dir() const {
   return this->has(LOAD_COMMAND_TYPES::LC_DYLIB_CODE_SIGN_DRS);
 }
 
-CodeSignature& Binary::code_signature_dir(void) {
+CodeSignature& Binary::code_signature_dir() {
   return const_cast<CodeSignature&>(static_cast<const Binary*>(this)->code_signature_dir());
 }
 
-const CodeSignature& Binary::code_signature_dir(void) const {
+const CodeSignature& Binary::code_signature_dir() const {
   if (not this->has_code_signature_dir()) {
     throw not_found("Code signature dir not found!");
   }
@@ -2040,92 +2040,92 @@ const CodeSignature& Binary::code_signature_dir(void) const {
 
 // DataInCode command
 // ++++++++++++++++++
-bool Binary::has_data_in_code(void) const {
+bool Binary::has_data_in_code() const {
   return this->has_command<DataInCode>();
 }
 
-DataInCode& Binary::data_in_code(void) {
+DataInCode& Binary::data_in_code() {
   return this->command<DataInCode>();
 }
 
-const DataInCode& Binary::data_in_code(void) const {
+const DataInCode& Binary::data_in_code() const {
   return this->command<DataInCode>();
 }
 
 
 // SegmentSplitInfo command
 // ++++++++++++++++++++++++
-bool Binary::has_segment_split_info(void) const {
+bool Binary::has_segment_split_info() const {
   return this->has_command<SegmentSplitInfo>();
 }
 
-SegmentSplitInfo& Binary::segment_split_info(void) {
+SegmentSplitInfo& Binary::segment_split_info() {
   return this->command<SegmentSplitInfo>();
 }
 
-const SegmentSplitInfo& Binary::segment_split_info(void) const {
+const SegmentSplitInfo& Binary::segment_split_info() const {
   return this->command<SegmentSplitInfo>();
 }
 
 
 // SubFramework command
 // ++++++++++++++++++++
-bool Binary::has_sub_framework(void) const {
+bool Binary::has_sub_framework() const {
   return this->has_command<SubFramework>();
 }
 
-SubFramework& Binary::sub_framework(void) {
+SubFramework& Binary::sub_framework() {
   return this->command<SubFramework>();
 }
 
-const SubFramework& Binary::sub_framework(void) const {
+const SubFramework& Binary::sub_framework() const {
   return this->command<SubFramework>();
 }
 
 // DyldEnvironment command
 // +++++++++++++++++++++++
-bool Binary::has_dyld_environment(void) const {
+bool Binary::has_dyld_environment() const {
   return this->has_command<DyldEnvironment>();
 }
 
-DyldEnvironment& Binary::dyld_environment(void) {
+DyldEnvironment& Binary::dyld_environment() {
   return this->command<DyldEnvironment>();
 }
 
-const DyldEnvironment& Binary::dyld_environment(void) const {
+const DyldEnvironment& Binary::dyld_environment() const {
   return this->command<DyldEnvironment>();
 }
 
 // EncryptionInfo command
 // +++++++++++++++++++++++
-bool Binary::has_encryption_info(void) const {
+bool Binary::has_encryption_info() const {
   return this->has_command<EncryptionInfo>();
 }
 
-EncryptionInfo& Binary::encryption_info(void) {
+EncryptionInfo& Binary::encryption_info() {
   return this->command<EncryptionInfo>();
 }
 
-const EncryptionInfo& Binary::encryption_info(void) const {
+const EncryptionInfo& Binary::encryption_info() const {
   return this->command<EncryptionInfo>();
 }
 
 
 // BuildVersion command
 // ++++++++++++++++++++
-bool Binary::has_build_version(void) const {
+bool Binary::has_build_version() const {
   return this->has_command<BuildVersion>();
 }
 
-BuildVersion& Binary::build_version(void) {
+BuildVersion& Binary::build_version() {
   return this->command<BuildVersion>();
 }
 
-const BuildVersion& Binary::build_version(void) const {
+const BuildVersion& Binary::build_version() const {
   return this->command<BuildVersion>();
 }
 
-bool Binary::has_filesets(void) const {
+bool Binary::has_filesets() const {
   return !this->filesets_.empty();
 }
 
@@ -2143,7 +2143,7 @@ void Binary::accept(LIEF::Visitor& visitor) const {
 }
 
 
-Binary::~Binary(void) {
+Binary::~Binary() {
   for (LoadCommand *cmd : this->commands_) {
     delete cmd;
   }

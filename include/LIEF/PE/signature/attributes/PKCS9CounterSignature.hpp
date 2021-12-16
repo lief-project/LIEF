@@ -52,7 +52,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   PKCS9CounterSignature(const PKCS9CounterSignature&);
   PKCS9CounterSignature& operator=(const PKCS9CounterSignature&);
 
-  virtual std::unique_ptr<Attribute> clone(void) const override;
+  virtual std::unique_ptr<Attribute> clone() const override;
 
   //! SignerInfo as described in the RFC #2985
   inline const SignerInfo& signer() const {

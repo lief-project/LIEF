@@ -76,12 +76,12 @@ class LIEF_API Signature : public Object {
     SKIP_CERT_TIME   = 1 << 3, /**< Skip the verification of the certificates time validities so that even though a certificate expired, it returns VERIFICATION_FLAGS::OK */
   };
 
-  Signature(void);
+  Signature();
   Signature(const Signature&);
   Signature& operator=(const Signature&);
 
   //! Should be 1
-  uint32_t version(void) const;
+  uint32_t version() const;
 
   //! Algorithm used to *digest* the file.
   //!
@@ -91,16 +91,16 @@ class LIEF_API Signature : public Object {
   }
 
   //! Return the ContentInfo
-  const ContentInfo& content_info(void) const;
+  const ContentInfo& content_info() const;
 
   //! Return an iterator over x509 certificates
-  it_const_crt certificates(void) const;
+  it_const_crt certificates() const;
 
   //! Return an iterator over the signers (SignerInfo) defined in the PKCS #7 signature
-  it_const_signers_t signers(void) const;
+  it_const_signers_t signers() const;
 
   //! Return the raw original PKCS7 signature
-  const std::vector<uint8_t>& raw_der(void) const;
+  const std::vector<uint8_t>& raw_der() const;
 
   //! Find x509 certificate according to its serial number
   const x509* find_crt(const std::vector<uint8_t>& serialno) const;
@@ -141,7 +141,7 @@ class LIEF_API Signature : public Object {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~Signature(void);
+  virtual ~Signature();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Signature& signature);
 

@@ -22,23 +22,23 @@ namespace MachO {
 
 class LIEF_API ParserConfig {
   public:
-  ParserConfig(void);
+  ParserConfig();
   ParserConfig& operator=(const ParserConfig&);
   ParserConfig(const ParserConfig&);
-  ~ParserConfig(void);
+  ~ParserConfig();
 
   //! @brief Return a configuration so that the all objects supported by
   //! LIEF are parsed
   //!
   //! With this configuration:
   //! * ``parse_dyldinfo_deeply`` is set to ``true``
-  static ParserConfig deep(void);
+  static ParserConfig deep();
 
   //! Return a configuration so that the parsing is quick
   //!
   //! With this configuration:
   //! * ``parse_dyldinfo_deeply`` is set to ``false``
-  static ParserConfig quick(void);
+  static ParserConfig quick();
 
   //! @brief If ``flag`` is set to ``true``,
   //! Exports, Bindings and Rebases opcodes are
@@ -48,7 +48,7 @@ class LIEF_API ParserConfig {
   ParserConfig& parse_dyldinfo_deeply(bool flag);
 
   //! @brief Whether or not bindings, exports, and rebases are parsed
-  bool parse_dyldinfo_deeply(void) const;
+  bool parse_dyldinfo_deeply() const;
 
   private:
   bool dyldinfo_deeply_;

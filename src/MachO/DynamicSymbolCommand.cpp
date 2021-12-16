@@ -23,7 +23,7 @@
 namespace LIEF {
 namespace MachO {
 
-DynamicSymbolCommand::DynamicSymbolCommand(void) :
+DynamicSymbolCommand::DynamicSymbolCommand() :
   LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_DYSYMTAB, 0},
   idx_local_symbol_{0},
   nb_local_symbols_{0},
@@ -90,90 +90,90 @@ DynamicSymbolCommand& DynamicSymbolCommand::operator=(const DynamicSymbolCommand
 
 DynamicSymbolCommand::DynamicSymbolCommand(const DynamicSymbolCommand&) = default;
 
-DynamicSymbolCommand::~DynamicSymbolCommand(void) = default;
+DynamicSymbolCommand::~DynamicSymbolCommand() = default;
 
-DynamicSymbolCommand* DynamicSymbolCommand::clone(void) const {
+DynamicSymbolCommand* DynamicSymbolCommand::clone() const {
   return new DynamicSymbolCommand(*this);
 }
 
 
-uint32_t DynamicSymbolCommand::idx_local_symbol(void) const {
+uint32_t DynamicSymbolCommand::idx_local_symbol() const {
   return this->idx_local_symbol_;
 }
 
-uint32_t DynamicSymbolCommand::nb_local_symbols(void) const {
+uint32_t DynamicSymbolCommand::nb_local_symbols() const {
   return this->nb_local_symbols_;
 }
 
 
-uint32_t DynamicSymbolCommand::idx_external_define_symbol(void) const {
+uint32_t DynamicSymbolCommand::idx_external_define_symbol() const {
   return this->idx_external_define_symbol_;
 }
 
-uint32_t DynamicSymbolCommand::nb_external_define_symbols(void) const {
+uint32_t DynamicSymbolCommand::nb_external_define_symbols() const {
   return this->nb_external_define_symbols_;
 }
 
 
-uint32_t DynamicSymbolCommand::idx_undefined_symbol(void) const {
+uint32_t DynamicSymbolCommand::idx_undefined_symbol() const {
   return this->idx_undefined_symbol_;
 }
 
-uint32_t DynamicSymbolCommand::nb_undefined_symbols(void) const {
+uint32_t DynamicSymbolCommand::nb_undefined_symbols() const {
   return this->nb_undefined_symbols_;
 }
 
 
-uint32_t DynamicSymbolCommand::toc_offset(void) const {
+uint32_t DynamicSymbolCommand::toc_offset() const {
   return this->toc_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_toc(void) const {
+uint32_t DynamicSymbolCommand::nb_toc() const {
   return this->nb_toc_;
 }
 
 
-uint32_t DynamicSymbolCommand::module_table_offset(void) const {
+uint32_t DynamicSymbolCommand::module_table_offset() const {
   return this->module_table_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_module_table(void) const {
+uint32_t DynamicSymbolCommand::nb_module_table() const {
   return this->nb_module_table_;
 }
 
 
-uint32_t DynamicSymbolCommand::external_reference_symbol_offset(void) const {
+uint32_t DynamicSymbolCommand::external_reference_symbol_offset() const {
   return this->external_reference_symbol_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_external_reference_symbols(void) const {
+uint32_t DynamicSymbolCommand::nb_external_reference_symbols() const {
   return this->nb_external_reference_symbols_;
 }
 
 
-uint32_t DynamicSymbolCommand::indirect_symbol_offset(void) const {
+uint32_t DynamicSymbolCommand::indirect_symbol_offset() const {
   return this->indirect_sym_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_indirect_symbols(void) const {
+uint32_t DynamicSymbolCommand::nb_indirect_symbols() const {
   return this->nb_indirect_symbols_;
 }
 
 
-uint32_t DynamicSymbolCommand::external_relocation_offset(void) const {
+uint32_t DynamicSymbolCommand::external_relocation_offset() const {
   return this->external_relocation_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_external_relocations(void) const {
+uint32_t DynamicSymbolCommand::nb_external_relocations() const {
   return this->nb_external_relocations_;
 }
 
 
-uint32_t DynamicSymbolCommand::local_relocation_offset(void) const {
+uint32_t DynamicSymbolCommand::local_relocation_offset() const {
   return this->local_relocation_offset_;
 }
 
-uint32_t DynamicSymbolCommand::nb_local_relocations(void) const {
+uint32_t DynamicSymbolCommand::nb_local_relocations() const {
   return this->nb_local_relocations_;
 }
 

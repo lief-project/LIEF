@@ -28,13 +28,13 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   public:
   using DynamicEntry::DynamicEntry;
-  DynamicSharedObject(void);
+  DynamicSharedObject();
   DynamicSharedObject(const std::string& name);
 
   DynamicSharedObject& operator=(const DynamicSharedObject&);
   DynamicSharedObject(const DynamicSharedObject&);
 
-  const std::string& name(void) const;
+  const std::string& name() const;
   void name(const std::string& name);
 
   virtual void accept(Visitor& visitor) const override;

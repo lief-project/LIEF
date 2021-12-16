@@ -31,8 +31,8 @@
 namespace LIEF {
 namespace ELF {
 
-Symbol::Symbol(void) = default;
-Symbol::~Symbol(void) = default;
+Symbol::Symbol() = default;
+Symbol::~Symbol() = default;
 
 Symbol& Symbol::operator=(Symbol other) {
   this->swap(other);
@@ -99,27 +99,27 @@ Symbol::Symbol(std::string name, ELF_SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
 {}
 
 
-ELF_SYMBOL_TYPES Symbol::type(void) const {
+ELF_SYMBOL_TYPES Symbol::type() const {
   return this->type_;
 }
 
-SYMBOL_BINDINGS Symbol::binding(void) const {
+SYMBOL_BINDINGS Symbol::binding() const {
   return this->binding_;
 }
 
-uint8_t Symbol::information(void) const {
+uint8_t Symbol::information() const {
   return static_cast<uint8_t>((static_cast<uint8_t>(this->binding_) << 4) | (static_cast<uint8_t>(this->type_) & 0x0f));
 }
 
-uint8_t Symbol::other(void) const {
+uint8_t Symbol::other() const {
   return this->other_;
 }
 
-uint16_t Symbol::section_idx(void) const {
+uint16_t Symbol::section_idx() const {
   return this->shndx();
 }
 
-Section& Symbol::section(void) {
+Section& Symbol::section() {
   if (this->section_ == nullptr) {
     throw not_found("No section associated with this symbol");
   } else {
@@ -127,22 +127,22 @@ Section& Symbol::section(void) {
   }
 }
 
-uint16_t Symbol::shndx(void) const {
+uint16_t Symbol::shndx() const {
   return this->shndx_;
 }
 
 
-ELF_SYMBOL_VISIBILITY Symbol::visibility(void) const {
+ELF_SYMBOL_VISIBILITY Symbol::visibility() const {
   return static_cast<ELF_SYMBOL_VISIBILITY>(this->other_);
 }
 
 
-bool Symbol::has_version(void) const {
+bool Symbol::has_version() const {
   return this->symbol_version_ != nullptr;
 }
 
 
-const SymbolVersion& Symbol::symbol_version(void) const {
+const SymbolVersion& Symbol::symbol_version() const {
   if (this->symbol_version_ != nullptr) {
     return *this->symbol_version_;
   } else {
@@ -150,7 +150,7 @@ const SymbolVersion& Symbol::symbol_version(void) const {
   }
 }
 
-SymbolVersion& Symbol::symbol_version(void) {
+SymbolVersion& Symbol::symbol_version() {
   return const_cast<SymbolVersion&>(static_cast<const Symbol*>(this)->symbol_version());
 }
 
@@ -181,7 +181,7 @@ void Symbol::information(uint8_t info) {
 }
 
 
-std::string Symbol::demangled_name(void) const {
+std::string Symbol::demangled_name() const {
 #if defined(__unix__)
   int status;
   const std::string& name = this->name().c_str();
@@ -199,7 +199,7 @@ std::string Symbol::demangled_name(void) const {
 #endif
 }
 
-bool Symbol::is_exported(void) const {
+bool Symbol::is_exported() const {
   bool is_exported = this->shndx() != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
   // An export must have an address
@@ -226,7 +226,7 @@ void Symbol::set_exported(bool flag) {
   }
 }
 
-bool Symbol::is_imported(void) const {
+bool Symbol::is_imported() const {
   // An import must not be defined in a section
   bool is_imported = this->shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 

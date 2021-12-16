@@ -88,7 +88,7 @@ std::vector<uint8_t> Builder::build_jmp_hook(uint64_t from, uint64_t address) {
 */
 
 template<typename PE_T>
-void Builder::build_import_table(void) {
+void Builder::build_import_table() {
   using uint__ = typename PE_T::uint;
 
   // Compute size of the the diffrent (sub)sections
@@ -398,7 +398,7 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
 
 
 template<typename PE_T>
-void Builder::build_tls(void) {
+void Builder::build_tls() {
   using uint__ = typename PE_T::uint;
   using pe_tls = typename PE_T::pe_tls;
 

@@ -26,9 +26,9 @@ namespace PE {
 
 LoadConfigurationV1& LoadConfigurationV1::operator=(const LoadConfigurationV1&) = default;
 LoadConfigurationV1::LoadConfigurationV1(const LoadConfigurationV1&) = default;
-LoadConfigurationV1::~LoadConfigurationV1(void) = default;
+LoadConfigurationV1::~LoadConfigurationV1() = default;
 
-LoadConfigurationV1::LoadConfigurationV1(void) :
+LoadConfigurationV1::LoadConfigurationV1() :
   LoadConfigurationV0{},
   guard_cf_check_function_pointer_{0},
   guard_cf_dispatch_function_pointer_{0},
@@ -38,27 +38,27 @@ LoadConfigurationV1::LoadConfigurationV1(void) :
 {}
 
 
-WIN_VERSION LoadConfigurationV1::version(void) const {
+WIN_VERSION LoadConfigurationV1::version() const {
   return LoadConfigurationV1::VERSION;
 }
 
-uint64_t LoadConfigurationV1::guard_cf_check_function_pointer(void) const {
+uint64_t LoadConfigurationV1::guard_cf_check_function_pointer() const {
   return this->guard_cf_check_function_pointer_;
 }
 
-uint64_t LoadConfigurationV1::guard_cf_dispatch_function_pointer(void) const {
+uint64_t LoadConfigurationV1::guard_cf_dispatch_function_pointer() const {
   return this->guard_cf_dispatch_function_pointer_;
 }
 
-uint64_t LoadConfigurationV1::guard_cf_function_table(void) const {
+uint64_t LoadConfigurationV1::guard_cf_function_table() const {
   return this->guard_cf_function_table_;
 }
 
-uint64_t LoadConfigurationV1::guard_cf_function_count(void) const {
+uint64_t LoadConfigurationV1::guard_cf_function_count() const {
   return this->guard_cf_function_count_;
 }
 
-GUARD_CF_FLAGS LoadConfigurationV1::guard_flags(void) const {
+GUARD_CF_FLAGS LoadConfigurationV1::guard_flags() const {
   return this->guard_flags_;
 }
 
@@ -67,7 +67,7 @@ bool LoadConfigurationV1::has(GUARD_CF_FLAGS flag) const {
   return (this->guard_flags() & flag) != GUARD_CF_FLAGS::GCF_NONE;
 }
 
-guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list(void) const {
+guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list() const {
 
   guard_cf_flags_list_t flags;
 

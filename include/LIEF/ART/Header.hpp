@@ -32,7 +32,7 @@ class LIEF_API Header : public Object {
   public:
   using magic_t = std::array<uint8_t, 4>;
 
-  Header(void);
+  Header();
 
   template<class T>
   LIEF_LOCAL Header(const T* header);
@@ -40,39 +40,39 @@ class LIEF_API Header : public Object {
   Header(const Header&);
   Header& operator=(const Header&);
 
-  magic_t magic(void) const;
-  art_version_t version(void) const;
+  magic_t magic() const;
+  art_version_t version() const;
 
-  uint32_t image_begin(void) const;
-  uint32_t image_size(void) const;
+  uint32_t image_begin() const;
+  uint32_t image_size() const;
 
-  uint32_t oat_checksum(void) const;
+  uint32_t oat_checksum() const;
 
-  uint32_t oat_file_begin(void) const;
-  uint32_t oat_file_end(void) const;
+  uint32_t oat_file_begin() const;
+  uint32_t oat_file_end() const;
 
-  uint32_t oat_data_begin(void) const;
-  uint32_t oat_data_end(void) const;
+  uint32_t oat_data_begin() const;
+  uint32_t oat_data_end() const;
 
-  int32_t patch_delta(void) const;
+  int32_t patch_delta() const;
 
-  uint32_t image_roots(void) const;
+  uint32_t image_roots() const;
 
-  uint32_t pointer_size(void) const;
-  bool compile_pic(void) const;
+  uint32_t pointer_size() const;
+  bool compile_pic() const;
 
-  uint32_t nb_sections(void) const;
-  uint32_t nb_methods(void) const;
+  uint32_t nb_sections() const;
+  uint32_t nb_methods() const;
 
-  uint32_t boot_image_begin(void) const;
-  uint32_t boot_image_size(void) const;
+  uint32_t boot_image_begin() const;
+  uint32_t boot_image_size() const;
 
-  uint32_t boot_oat_begin(void) const;
-  uint32_t boot_oat_size(void) const;
+  uint32_t boot_oat_begin() const;
+  uint32_t boot_oat_size() const;
 
-  STORAGE_MODES storage_mode(void) const;
+  STORAGE_MODES storage_mode() const;
 
-  uint32_t data_size(void) const;
+  uint32_t data_size() const;
 
   virtual void accept(Visitor& visitor) const override;
 
@@ -81,7 +81,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  virtual ~Header(void);
+  virtual ~Header();
 
   private:
   magic_t       magic_;

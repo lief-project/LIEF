@@ -34,7 +34,7 @@ TrieEdge* TrieEdge::create(const std::string& str, TrieNode* node) {
   return new TrieEdge{str, node};
 }
 
-TrieEdge::~TrieEdge(void) = default;
+TrieEdge::~TrieEdge() = default;
 
 TrieNode::TrieNode(const std::string& str) :
   cummulative_string_{str},
@@ -51,7 +51,7 @@ TrieNode* TrieNode::create(const std::string& str) {
   return new TrieNode{str};
 }
 
-TrieNode::~TrieNode(void) {
+TrieNode::~TrieNode() {
   for (TrieEdge* edge : this->children_) {
     delete edge;
   }

@@ -35,17 +35,17 @@ class LIEF_API Pogo : public Object {
   friend class Parser;
 
   public:
-  Pogo(void);
+  Pogo();
   Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries);
 
   Pogo(const Pogo&);
   Pogo& operator=(const Pogo&);
 
-  virtual Pogo* clone(void) const;
+  virtual Pogo* clone() const;
 
   POGO_SIGNATURES       signature() const;
-  it_pogo_entries       entries(void);
-  it_const_pogo_entries entries(void) const;
+  it_pogo_entries       entries();
+  it_const_pogo_entries entries() const;
 
   void signature(POGO_SIGNATURES signature);
 
@@ -56,7 +56,7 @@ class LIEF_API Pogo : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Pogo& entry);
 
-  virtual ~Pogo(void);
+  virtual ~Pogo();
 
   protected:
   POGO_SIGNATURES signature_;

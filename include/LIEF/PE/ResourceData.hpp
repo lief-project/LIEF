@@ -33,33 +33,33 @@ class LIEF_API ResourceData : public ResourceNode {
   friend class Builder;
 
   public:
-  ResourceData(void);
+  ResourceData();
   ResourceData(const std::vector<uint8_t>& content, uint32_t code_page);
 
   ResourceData(const ResourceData& other);
   ResourceData& operator=(ResourceData other);
   void swap(ResourceData& other);
 
-  virtual ~ResourceData(void);
+  virtual ~ResourceData();
 
-  virtual ResourceData* clone(void) const override;
+  virtual ResourceData* clone() const override;
 
   //! @brief The code page that is used to decode code point
   //! values within the resource data. Typically, the code
   //! page would be the Unicode code page.
-  uint32_t code_page(void) const;
+  uint32_t code_page() const;
 
   //! @brief Resource content
-  const std::vector<uint8_t>& content(void) const;
+  const std::vector<uint8_t>& content() const;
 
   //! @brief Reserved value. Should be ``0``
-  uint32_t reserved(void) const;
+  uint32_t reserved() const;
 
   //! @brief Offset of the content within the resource
   //!
   //! @warning This value may change when rebuilding
   //! resource table
-  uint32_t offset(void) const;
+  uint32_t offset() const;
 
   void code_page(uint32_t code_page);
   void content(const std::vector<uint8_t>& content);

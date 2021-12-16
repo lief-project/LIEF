@@ -44,39 +44,39 @@ CorePrPsInfo CorePrPsInfo::make(Note& note) {
   return pinfo;
 }
 
-CorePrPsInfo* CorePrPsInfo::clone(void) const {
+CorePrPsInfo* CorePrPsInfo::clone() const {
   return new CorePrPsInfo(*this);
 }
 
-std::string CorePrPsInfo::file_name(void) const {
+std::string CorePrPsInfo::file_name() const {
   return this->file_name_;
 }
 
-uint64_t CorePrPsInfo::flags(void) const {
+uint64_t CorePrPsInfo::flags() const {
   return this->flags_;
 }
 
-uint32_t CorePrPsInfo::uid(void) const {
+uint32_t CorePrPsInfo::uid() const {
   return this->uid_;
 }
 
-uint32_t CorePrPsInfo::gid(void) const {
+uint32_t CorePrPsInfo::gid() const {
   return this->gid_;
 }
 
-int32_t CorePrPsInfo::pid(void) const {
+int32_t CorePrPsInfo::pid() const {
   return this->pid_;
 }
 
-int32_t CorePrPsInfo::ppid(void) const {
+int32_t CorePrPsInfo::ppid() const {
   return this->ppid_;
 }
 
-int32_t CorePrPsInfo::pgrp(void) const {
+int32_t CorePrPsInfo::pgrp() const {
   return this->pgrp_;
 }
 
-int32_t CorePrPsInfo::sid(void) const {
+int32_t CorePrPsInfo::sid() const {
   return this->sid_;
 }
 
@@ -145,7 +145,7 @@ void CorePrPsInfo::dump(std::ostream& os) const {
   os << std::setw(12) << std::setfill(' ') << "SID: " << std::dec << this->sid() << std::endl;
 }
 
-void CorePrPsInfo::parse(void) {
+void CorePrPsInfo::parse() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->parse_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -153,7 +153,7 @@ void CorePrPsInfo::parse(void) {
   }
 }
 
-void CorePrPsInfo::build(void) {
+void CorePrPsInfo::build() {
   if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
     this->build_<ELF64>();
   } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
@@ -166,7 +166,7 @@ std::ostream& operator<<(std::ostream& os, const CorePrPsInfo& note) {
   return os;
 }
 
-CorePrPsInfo::~CorePrPsInfo(void) = default;
+CorePrPsInfo::~CorePrPsInfo() = default;
 
 } // namespace ELF
 } // namespace LIEF

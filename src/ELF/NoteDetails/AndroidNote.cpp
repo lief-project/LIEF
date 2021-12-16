@@ -43,19 +43,19 @@ AndroidNote::AndroidNote(Note& note) :
   ndk_build_number_{}
 {}
 
-AndroidNote* AndroidNote::clone(void) const {
+AndroidNote* AndroidNote::clone() const {
   return new AndroidNote(*this);
 }
 
-uint32_t AndroidNote::sdk_version(void) const {
+uint32_t AndroidNote::sdk_version() const {
   return this->sdk_version_;
 }
 
-std::string AndroidNote::ndk_version(void) const {
+std::string AndroidNote::ndk_version() const {
   return this->ndk_version_;
 }
 
-std::string AndroidNote::ndk_build_number(void) const {
+std::string AndroidNote::ndk_build_number() const {
   return this->ndk_build_number_;
 }
 
@@ -75,7 +75,7 @@ void AndroidNote::ndk_build_number(const std::string& ndk_build_number) {
 }
 
 
-void AndroidNote::parse(void) {
+void AndroidNote::parse() {
   const description_t& description = this->description();
 
   // Parse SDK Version
@@ -97,7 +97,7 @@ void AndroidNote::parse(void) {
   this->ndk_build_number_ = std::string{reinterpret_cast<const char*>(description.data()) + ndk_build_number_offset, ndk_build_number_size};
 }
 
-void AndroidNote::build(void) {
+void AndroidNote::build() {
   description_t& description = this->description();
 
   // Build SDK Version
@@ -160,7 +160,7 @@ std::ostream& operator<<(std::ostream& os, const AndroidNote& note) {
   return os;
 }
 
-AndroidNote::~AndroidNote(void) = default;
+AndroidNote::~AndroidNote() = default;
 
 } // namespace ELF
 } // namespace LIEF

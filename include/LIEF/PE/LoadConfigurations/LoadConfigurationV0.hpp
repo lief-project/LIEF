@@ -31,7 +31,7 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_SEH;
 
-  LoadConfigurationV0(void);
+  LoadConfigurationV0();
 
   LoadConfigurationV0& operator=(const LoadConfigurationV0&);
   LoadConfigurationV0(const LoadConfigurationV0&);
@@ -39,19 +39,19 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   template<class T>
   LIEF_LOCAL LoadConfigurationV0(const load_configuration_v0<T>* header);
 
-  virtual WIN_VERSION version(void) const override;
+  virtual WIN_VERSION version() const override;
 
   //! @brief The VA of the sorted table of RVAs of each valid, unique
   //! SE handler in the image.
-  uint64_t se_handler_table(void) const;
+  uint64_t se_handler_table() const;
 
   //! @brief The count of unique handlers in the table.
-  uint64_t se_handler_count(void) const;
+  uint64_t se_handler_count() const;
 
   void se_handler_table(uint64_t se_handler_table);
   void se_handler_count(uint64_t se_handler_count);
 
-  virtual ~LoadConfigurationV0(void);
+  virtual ~LoadConfigurationV0();
 
   virtual void accept(Visitor& visitor) const override;
 

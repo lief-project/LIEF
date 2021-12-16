@@ -30,7 +30,7 @@ PKCS9CounterSignature::PKCS9CounterSignature(SignerInfo signer) :
   signer_{std::move(signer)}
 {}
 
-std::unique_ptr<Attribute> PKCS9CounterSignature::clone(void) const {
+std::unique_ptr<Attribute> PKCS9CounterSignature::clone() const {
   return std::unique_ptr<Attribute>(new PKCS9CounterSignature{*this});
 }
 

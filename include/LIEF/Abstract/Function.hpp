@@ -38,20 +38,20 @@ class LIEF_API Function : public Symbol {
   using flags_t      = std::set<FLAGS>;
 
   public:
-  Function(void);
+  Function();
   Function(const std::string& name);
   Function(uint64_t adress);
   Function(const std::string& name, uint64_t address);
   Function(const std::string& name, uint64_t address, const flags_list_t& flags);
   Function(const Function&);
   Function& operator=(const Function&);
-  virtual ~Function(void);
+  virtual ~Function();
 
-  flags_list_t flags(void) const;
+  flags_list_t flags() const;
 
   Function& add(FLAGS f);
 
-  uint64_t address(void) const;
+  uint64_t address() const;
   void address(uint64_t address);
 
   //! @brief Method so that the ``visitor`` can visit us

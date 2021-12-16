@@ -42,7 +42,7 @@ namespace PE {
 
 ResourcesManager::ResourcesManager(const ResourcesManager&) = default;
 ResourcesManager& ResourcesManager::operator=(const ResourcesManager&) = default;
-ResourcesManager::~ResourcesManager(void) = default;
+ResourcesManager::~ResourcesManager() = default;
 
 ResourcesManager::ResourcesManager(ResourceNode *rsrc) :
   resources_{rsrc}
@@ -251,7 +251,7 @@ const ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
   return *it_node;
 }
 
-std::set<RESOURCE_TYPES> ResourcesManager::get_types_available(void) const {
+std::set<RESOURCE_TYPES> ResourcesManager::get_types_available() const {
   std::set<RESOURCE_TYPES> types;
   for (const ResourceNode& node : this->resources_->childs()) {
     auto&& it = std::find_if(
@@ -268,7 +268,7 @@ std::set<RESOURCE_TYPES> ResourcesManager::get_types_available(void) const {
 
 }
 
-std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available(void) const {
+std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available() const {
   std::set<RESOURCE_LANGS> langs;
   for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
@@ -292,7 +292,7 @@ std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available(void) const {
   return langs;
 }
 
-std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available(void) const {
+std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available() const {
   std::set<RESOURCE_SUBLANGS> sublangs;
   for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
@@ -321,7 +321,7 @@ bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
 // Manifest
 // ========
 
-bool ResourcesManager::has_manifest(void) const {
+bool ResourcesManager::has_manifest() const {
   it_childs nodes = this->resources_->childs();
   auto&& it_manifest = std::find_if(
       std::begin(nodes),
@@ -333,7 +333,7 @@ bool ResourcesManager::has_manifest(void) const {
 
 }
 
-std::string ResourcesManager::manifest(void) const {
+std::string ResourcesManager::manifest() const {
   if (not this->has_manifest()) {
     throw not_found("No manifest found in the resources");
   }
@@ -390,7 +390,7 @@ void ResourcesManager::manifest(const std::string& manifest) {
 
 // Resource Version
 // ================
-bool ResourcesManager::has_version(void) const {
+bool ResourcesManager::has_version() const {
   it_childs nodes = this->resources_->childs();
   auto&& it_version = std::find_if(
       std::begin(nodes),
@@ -401,7 +401,7 @@ bool ResourcesManager::has_version(void) const {
   return it_version != std::end(nodes);
 }
 
-ResourceVersion ResourcesManager::version(void) const {
+ResourceVersion ResourcesManager::version() const {
   if (not this->has_version()) {
     throw not_found("Resource version not found");
   }
@@ -723,7 +723,7 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 // Icons
 // =====
 
-bool ResourcesManager::has_icons(void) const {
+bool ResourcesManager::has_icons() const {
 
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
@@ -754,7 +754,7 @@ bool ResourcesManager::has_icons(void) const {
 
 }
 
-std::vector<ResourceIcon> ResourcesManager::icons(void) const {
+std::vector<ResourceIcon> ResourcesManager::icons() const {
 
   it_childs nodes = this->resources_->childs();
   auto&& it_icon = std::find_if(
@@ -1026,7 +1026,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 // * Windows class as ordinal
 // * Extra count
 // ====================================================================
-std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
+std::vector<ResourceDialog> ResourcesManager::dialogs() const {
   if (not this->has_dialogs()) {
     return {};
   }
@@ -1214,12 +1214,12 @@ std::vector<ResourceDialog> ResourcesManager::dialogs(void) const {
 }
 
 
-bool ResourcesManager::has_dialogs(void) const {
+bool ResourcesManager::has_dialogs() const {
   return this->has_type(RESOURCE_TYPES::DIALOG);
 }
 
 // String table entry
-std::vector<ResourceStringTable> ResourcesManager::string_table(void) const {
+std::vector<ResourceStringTable> ResourcesManager::string_table() const {
   it_childs nodes = this->resources_->childs();
   auto&& it_string_table = std::find_if(
     std::begin(nodes),
@@ -1269,11 +1269,11 @@ std::vector<ResourceStringTable> ResourcesManager::string_table(void) const {
   return string_table;
 }
 
-bool ResourcesManager::has_string_table(void) const {
+bool ResourcesManager::has_string_table() const {
   return this->has_type(RESOURCE_TYPES::STRING);
 }
 
-std::vector<std::string> ResourcesManager::html(void) const {
+std::vector<std::string> ResourcesManager::html() const {
   it_childs nodes = this->resources_->childs();
   auto&& it_html = std::find_if(
     std::begin(nodes),
@@ -1309,15 +1309,15 @@ std::vector<std::string> ResourcesManager::html(void) const {
   return html;
 }
 
-bool ResourcesManager::has_html(void) const {
+bool ResourcesManager::has_html() const {
   return this->has_type(RESOURCE_TYPES::HTML);
 }
 
-bool ResourcesManager::has_accelerator(void) const {
+bool ResourcesManager::has_accelerator() const {
   return this->has_type(RESOURCE_TYPES::ACCELERATOR);
 }
 
-std::vector<ResourceAccelerator> ResourcesManager::accelerator(void) const {
+std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
   it_childs nodes = this->resources_->childs();
   auto&& it_accelerator = std::find_if(
     std::begin(nodes),

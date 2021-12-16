@@ -37,60 +37,60 @@ class LIEF_API Method : public Object {
 
   public:
   using bytecode_t = std::vector<uint8_t>;
-  Method(void);
+  Method();
   Method(const std::string& name, Class* parent = nullptr);
 
   Method(const Method&);
   Method& operator=(const Method&);
 
   //! Name of the Method
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! True if a class is associated with this method
-  bool has_class(void) const;
+  bool has_class() const;
 
   //! Class associated with this Method
-  const Class& cls(void) const;
-  Class& cls(void);
+  const Class& cls() const;
+  Class& cls();
 
   //! Offset to the Dalvik Bytecode
-  uint64_t code_offset(void) const;
+  uint64_t code_offset() const;
 
   //! Dalvik Bytecode
-  const bytecode_t& bytecode(void) const;
+  const bytecode_t& bytecode() const;
 
   //! Index in the DEX Methods pool
-  size_t index(void) const;
+  size_t index() const;
 
   //! True if this method is a virtual one.
   //! i.e. not **static**, **private**, **finale** or constructor
-  bool is_virtual(void) const;
+  bool is_virtual() const;
 
   //! Method's prototype
-  const Prototype& prototype(void) const;
-  Prototype& prototype(void);
+  const Prototype& prototype() const;
+  Prototype& prototype();
 
   void insert_dex2dex_info(uint32_t pc, uint32_t index);
 
   virtual void accept(Visitor& visitor) const override;
 
-  const dex2dex_method_info_t& dex2dex_info(void) const;
+  const dex2dex_method_info_t& dex2dex_info() const;
 
   bool has(ACCESS_FLAGS f) const;
 
-  access_flags_list_t access_flags(void) const;
+  access_flags_list_t access_flags() const;
 
-  //bool is_public(void) const;
-  //bool is_private(void) const;
-  //bool is_protected(void) const;
-  //bool is_static(void) const;
+  //bool is_public() const;
+  //bool is_private() const;
+  //bool is_protected() const;
+  //bool is_static() const;
 
   bool operator==(const Method& rhs) const;
   bool operator!=(const Method& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& mtd);
 
-  virtual ~Method(void);
+  virtual ~Method();
 
   private:
   void set_virtual(bool v);

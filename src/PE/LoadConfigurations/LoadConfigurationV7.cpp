@@ -25,23 +25,23 @@ namespace PE {
 
 LoadConfigurationV7& LoadConfigurationV7::operator=(const LoadConfigurationV7&) = default;
 LoadConfigurationV7::LoadConfigurationV7(const LoadConfigurationV7&) = default;
-LoadConfigurationV7::~LoadConfigurationV7(void) = default;
+LoadConfigurationV7::~LoadConfigurationV7() = default;
 
-LoadConfigurationV7::LoadConfigurationV7(void) :
+LoadConfigurationV7::LoadConfigurationV7() :
   LoadConfigurationV6{},
   reserved3_{0},
   addressof_unicode_string_{0}
 {}
 
-WIN_VERSION LoadConfigurationV7::version(void) const {
+WIN_VERSION LoadConfigurationV7::version() const {
   return LoadConfigurationV7::VERSION;
 }
 
-uint32_t LoadConfigurationV7::reserved3(void) const {
+uint32_t LoadConfigurationV7::reserved3() const {
   return this->reserved3_;
 }
 
-uint64_t LoadConfigurationV7::addressof_unicode_string(void) const {
+uint64_t LoadConfigurationV7::addressof_unicode_string() const {
   return this->addressof_unicode_string_;
 }
 

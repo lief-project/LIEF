@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace DEX {
 
-Type::Type(void) = default;
+Type::Type() = default;
 
 Type::Type(const std::string& mangled) {
   this->parse(mangled);
@@ -60,36 +60,36 @@ Type::Type(const Type& other) :
   }
 }
 
-Type::TYPES Type::type(void) const {
+Type::TYPES Type::type() const {
   return this->type_;
 }
 
-const Class& Type::cls(void) const {
+const Class& Type::cls() const {
   return *this->cls_;
 }
 
-const Type::array_t& Type::array(void) const {
+const Type::array_t& Type::array() const {
   return *this->array_;
 }
 
-const Type::PRIMITIVES& Type::primitive(void) const {
+const Type::PRIMITIVES& Type::primitive() const {
   return *this->basic_;
 }
 
 
-Class& Type::cls(void) {
+Class& Type::cls() {
   return const_cast<Class&>(static_cast<const Type*>(this)->cls());
 }
 
-Type::array_t& Type::array(void) {
+Type::array_t& Type::array() {
   return const_cast<Type::array_t&>(static_cast<const Type*>(this)->array());
 }
 
-Type::PRIMITIVES& Type::primitive(void) {
+Type::PRIMITIVES& Type::primitive() {
   return const_cast<Type::PRIMITIVES&>(static_cast<const Type*>(this)->primitive());
 }
 
-const Type& Type::underlying_array_type(void) const {
+const Type& Type::underlying_array_type() const {
   const Type* underlying_type = this;
   while (underlying_type->type() == TYPES::ARRAY) {
     underlying_type = &underlying_type->array().back();
@@ -98,7 +98,7 @@ const Type& Type::underlying_array_type(void) const {
 }
 
 
-Type& Type::underlying_array_type(void) {
+Type& Type::underlying_array_type() {
   return const_cast<Type&>((static_cast<const Type*>(this)->underlying_array_type()));
 }
 
@@ -192,7 +192,7 @@ void Type::parse(const std::string& type) {
   }
 }
 
-size_t Type::dim(void) const {
+size_t Type::dim() const {
   if (this->type() != TYPES::ARRAY) {
     return 0;
   }
@@ -306,7 +306,7 @@ std::string Type::pretty_name(PRIMITIVES p) {
   }
 }
 
-Type::~Type(void) {
+Type::~Type() {
   switch (this->type()) {
     case Type::TYPES::ARRAY:
       {

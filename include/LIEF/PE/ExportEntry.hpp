@@ -45,18 +45,18 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   };
 
   public:
-  ExportEntry(void);
+  ExportEntry();
   ExportEntry(const ExportEntry&);
   ExportEntry& operator=(const ExportEntry&);
-  virtual ~ExportEntry(void);
+  virtual ~ExportEntry();
 
-  uint16_t           ordinal(void) const;
-  uint32_t           address(void) const;
-  bool               is_extern(void) const;
-  bool               is_forwarded(void) const;
-  forward_information_t forward_information(void) const;
+  uint16_t           ordinal() const;
+  uint32_t           address() const;
+  bool               is_extern() const;
+  bool               is_forwarded() const;
+  forward_information_t forward_information() const;
 
-  uint32_t function_rva(void) const;
+  uint32_t function_rva() const;
 
   void ordinal(uint16_t ordinal);
   void address(uint32_t address);

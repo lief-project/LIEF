@@ -42,7 +42,7 @@ class LIEF_API Hash : public Visitor {
 
   public:
   using Visitor::visit;
-  Hash(void);
+  Hash();
   Hash(size_t init_value);
 
   virtual Hash& process(const Object& obj);
@@ -95,8 +95,8 @@ class LIEF_API Hash : public Visitor {
     return *this;
   }
 
-  size_t value(void) const;
-  virtual ~Hash(void);
+  size_t value() const;
+  virtual ~Hash();
 
   protected:
   size_t value_;

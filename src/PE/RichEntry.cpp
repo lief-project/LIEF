@@ -22,11 +22,11 @@
 namespace LIEF {
 namespace PE {
 
-RichEntry::~RichEntry(void) = default;
+RichEntry::~RichEntry() = default;
 RichEntry::RichEntry(const RichEntry&) = default;
 RichEntry& RichEntry::operator=(const RichEntry&) = default;
 
-RichEntry::RichEntry(void) :
+RichEntry::RichEntry() :
   id_{0},
   build_id_{0},
   count_{0}
@@ -39,15 +39,15 @@ RichEntry::RichEntry(uint16_t id, uint16_t build_id, uint32_t count) :
 {}
 
 
-uint16_t RichEntry::id(void) const {
+uint16_t RichEntry::id() const {
   return this->id_;
 }
 
-uint16_t RichEntry::build_id(void) const {
+uint16_t RichEntry::build_id() const {
   return this->build_id_;
 }
 
-uint32_t RichEntry::count(void) const {
+uint32_t RichEntry::count() const {
   return this->count_;
 }
 

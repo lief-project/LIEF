@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-UUIDCommand::UUIDCommand(void) = default;
+UUIDCommand::UUIDCommand() = default;
 UUIDCommand& UUIDCommand::operator=(const UUIDCommand&) = default;
 UUIDCommand::UUIDCommand(const UUIDCommand&) = default;
-UUIDCommand::~UUIDCommand(void) = default;
+UUIDCommand::~UUIDCommand() = default;
 
 UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(uuidCmd->cmd), uuidCmd->cmdsize}
@@ -35,11 +35,11 @@ UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) :
   std::copy(std::begin(uuidCmd->uuid), std::end(uuidCmd->uuid), std::begin(this->uuid_));
 }
 
-UUIDCommand* UUIDCommand::clone(void) const {
+UUIDCommand* UUIDCommand::clone() const {
   return new UUIDCommand(*this);
 }
 
-uuid_t UUIDCommand::uuid(void) const {
+uuid_t UUIDCommand::uuid() const {
   return this->uuid_;
 }
 

@@ -27,9 +27,9 @@ namespace MachO {
 
 DataCodeEntry& DataCodeEntry::operator=(const DataCodeEntry&) = default;
 DataCodeEntry::DataCodeEntry(const DataCodeEntry&) = default;
-DataCodeEntry::~DataCodeEntry(void) = default;
+DataCodeEntry::~DataCodeEntry() = default;
 
-DataCodeEntry::DataCodeEntry(void) :
+DataCodeEntry::DataCodeEntry() :
   offset_{0},
   length_{0},
   type_{TYPES::UNKNOWN}
@@ -48,15 +48,15 @@ DataCodeEntry::DataCodeEntry(const data_in_code_entry* entry) :
 {}
 
 
-uint32_t DataCodeEntry::offset(void) const {
+uint32_t DataCodeEntry::offset() const {
   return this->offset_;
 }
 
-uint16_t DataCodeEntry::length(void) const {
+uint16_t DataCodeEntry::length() const {
   return this->length_;
 }
 
-DataCodeEntry::TYPES DataCodeEntry::type(void) const {
+DataCodeEntry::TYPES DataCodeEntry::type() const {
   return this->type_;
 }
 

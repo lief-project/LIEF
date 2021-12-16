@@ -28,7 +28,7 @@ namespace OAT {
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
-Header::Header(void) :
+Header::Header() :
   magic_{{'o', 'a', 't', '\n'}},
   version_{0}
 {}
@@ -55,81 +55,81 @@ std::string Header::key_to_string(HEADER_KEYS key) {
 }
 
 
-Header::magic_t Header::magic(void) const {
+Header::magic_t Header::magic() const {
   return this->magic_;
 }
 
-oat_version_t Header::version(void) const {
+oat_version_t Header::version() const {
   return this->version_;
 }
 
 
-INSTRUCTION_SETS Header::instruction_set(void) const {
+INSTRUCTION_SETS Header::instruction_set() const {
   return this->instruction_set_;
 }
 
 
-uint32_t Header::checksum(void) const {
+uint32_t Header::checksum() const {
   return this->checksum_;
 }
 
-uint32_t Header::nb_dex_files(void) const {
+uint32_t Header::nb_dex_files() const {
   return this->dex_file_count_;
 }
 
 
-uint32_t Header::executable_offset(void) const {
+uint32_t Header::executable_offset() const {
   return this->executable_offset_;
 }
 
-uint32_t Header::i2i_bridge_offset(void) const {
+uint32_t Header::i2i_bridge_offset() const {
   return this->i2i_bridge_offset_;
 }
 
-uint32_t Header::i2c_code_bridge_offset(void) const {
+uint32_t Header::i2c_code_bridge_offset() const {
   return this->i2c_code_bridge_offset_;
 }
 
-uint32_t Header::jni_dlsym_lookup_offset(void) const {
+uint32_t Header::jni_dlsym_lookup_offset() const {
   return this->jni_dlsym_lookup_offset_;
 }
 
-uint32_t Header::quick_generic_jni_trampoline_offset(void) const {
+uint32_t Header::quick_generic_jni_trampoline_offset() const {
   return this->quick_generic_jni_trampoline_offset_;
 }
 
-uint32_t Header::quick_imt_conflict_trampoline_offset(void) const {
+uint32_t Header::quick_imt_conflict_trampoline_offset() const {
   return this->quick_generic_jni_trampoline_offset_;
 }
 
-uint32_t Header::quick_resolution_trampoline_offset(void) const {
+uint32_t Header::quick_resolution_trampoline_offset() const {
   return this->quick_imt_conflict_trampoline_offset_;
 }
 
-uint32_t Header::quick_to_interpreter_bridge_offset(void) const {
+uint32_t Header::quick_to_interpreter_bridge_offset() const {
   return this->quick_to_interpreter_bridge_offset_;
 }
 
-int32_t Header::image_patch_delta(void) const {
+int32_t Header::image_patch_delta() const {
   return this->image_patch_delta_;
 }
 
-uint32_t Header::image_file_location_oat_checksum(void) const {
+uint32_t Header::image_file_location_oat_checksum() const {
   return this->image_file_location_oat_checksum_;
 }
-uint32_t Header::image_file_location_oat_data_begin(void) const {
+uint32_t Header::image_file_location_oat_data_begin() const {
   return this->image_file_location_oat_data_begin_;
 }
 
-uint32_t Header::key_value_size(void) const {
+uint32_t Header::key_value_size() const {
   return this->key_value_store_size_;
 }
 
-uint32_t Header::oat_dex_files_offset(void) const {
+uint32_t Header::oat_dex_files_offset() const {
   return this->oat_dex_files_offset_;
 }
 
-Header::it_key_values_t Header::key_values(void) {
+Header::it_key_values_t Header::key_values() {
   it_key_values_t::container_type key_values_list;
   key_values_list.reserve(this->dex2oat_context_.size());
 
@@ -141,7 +141,7 @@ Header::it_key_values_t Header::key_values(void) {
   return key_values_list;
 }
 
-Header::it_const_key_values_t Header::key_values(void) const {
+Header::it_const_key_values_t Header::key_values() const {
   std::remove_const<it_const_key_values_t::container_type>::type key_values_list;
   for (auto&& p : this->dex2oat_context_) {
     HEADER_KEYS key = p.first;
@@ -152,7 +152,7 @@ Header::it_const_key_values_t Header::key_values(void) const {
 }
 
 
-Header::keys_t Header::keys(void) const {
+Header::keys_t Header::keys() const {
   Header::keys_t keys_list;
   keys_list.reserve(this->dex2oat_context_.size());
   for (auto p : this->dex2oat_context_) {
@@ -161,7 +161,7 @@ Header::keys_t Header::keys(void) const {
   return keys_list;
 }
 
-Header::values_t Header::values(void) const {
+Header::values_t Header::values() const {
   Header::values_t values_list;
   values_list.reserve(this->dex2oat_context_.size());
   for (auto p : this->dex2oat_context_) {

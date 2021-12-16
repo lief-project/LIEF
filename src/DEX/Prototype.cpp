@@ -22,24 +22,24 @@
 namespace LIEF {
 namespace DEX {
 
-Prototype::Prototype(void) = default;
+Prototype::Prototype() = default;
 Prototype::Prototype(const Prototype& other) = default;
 
 
-const Type& Prototype::return_type(void) const {
+const Type& Prototype::return_type() const {
   CHECK(this->return_type_ != nullptr, "Return type is null!");
   return *this->return_type_;
 }
 
-Type& Prototype::return_type(void) {
+Type& Prototype::return_type() {
   return const_cast<Type&>(static_cast<const Prototype*>(this)->return_type());
 }
 
-Prototype::it_const_params Prototype::parameters_type(void) const {
+Prototype::it_const_params Prototype::parameters_type() const {
   return this->params_;
 }
 
-Prototype::it_params Prototype::parameters_type(void) {
+Prototype::it_params Prototype::parameters_type() {
   return this->params_;
 }
 
@@ -74,7 +74,7 @@ std::ostream& operator<<(std::ostream& os, const Prototype& type) {
 }
 
 
-Prototype::~Prototype(void) = default;
+Prototype::~Prototype() = default;
 
 }
 }

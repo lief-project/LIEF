@@ -37,8 +37,8 @@
 
 namespace LIEF {
 namespace MachO {
-Parser::Parser(void) = default;
-Parser::~Parser(void) = default;
+Parser::Parser() = default;
+Parser::~Parser() = default;
 
 
 // From File
@@ -90,7 +90,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data, const
 
 
 
-void Parser::build_fat(void) {
+void Parser::build_fat() {
 
   const fat_header *header = &this->stream_->peek<fat_header>(0);
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
@@ -125,7 +125,7 @@ void Parser::build_fat(void) {
   }
 }
 
-void Parser::build(void) {
+void Parser::build() {
   try {
     MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
 

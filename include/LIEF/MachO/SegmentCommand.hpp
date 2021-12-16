@@ -48,7 +48,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   using content_t = std::vector<uint8_t>;
 
   public:
-  SegmentCommand(void);
+  SegmentCommand();
   SegmentCommand(const segment_command_32 *segmentCmd);
   SegmentCommand(const segment_command_64 *segmentCmd);
 
@@ -60,26 +60,26 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   void swap(SegmentCommand& other);
 
-  virtual SegmentCommand* clone(void) const override;
+  virtual SegmentCommand* clone() const override;
 
-  virtual ~SegmentCommand(void);
+  virtual ~SegmentCommand();
 
-  const std::string& name(void) const;
-  uint64_t virtual_address(void) const;
-  uint64_t virtual_size(void) const;
-  uint64_t file_size(void) const;
-  uint64_t file_offset(void) const;
-  uint32_t max_protection(void) const;
-  uint32_t init_protection(void) const;
-  uint32_t numberof_sections(void) const;
-  uint32_t flags(void) const;
-  it_sections       sections(void);
-  it_const_sections sections(void) const;
+  const std::string& name() const;
+  uint64_t virtual_address() const;
+  uint64_t virtual_size() const;
+  uint64_t file_size() const;
+  uint64_t file_offset() const;
+  uint32_t max_protection() const;
+  uint32_t init_protection() const;
+  uint32_t numberof_sections() const;
+  uint32_t flags() const;
+  it_sections       sections();
+  it_const_sections sections() const;
 
-  it_relocations       relocations(void);
-  it_const_relocations relocations(void) const;
+  it_relocations       relocations();
+  it_const_relocations relocations() const;
 
-  const content_t& content(void) const;
+  const content_t& content() const;
 
   inline int8_t index() const {
     return this->index_;
@@ -98,7 +98,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   Section& add_section(const Section& section);
 
-  void remove_all_sections(void);
+  void remove_all_sections();
 
   bool has(const Section& section) const;
   bool has_section(const std::string& section_name) const;

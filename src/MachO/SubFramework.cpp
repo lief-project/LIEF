@@ -24,21 +24,21 @@
 namespace LIEF {
 namespace MachO {
 
-SubFramework::SubFramework(void) = default;
+SubFramework::SubFramework() = default;
 SubFramework& SubFramework::operator=(const SubFramework&) = default;
 SubFramework::SubFramework(const SubFramework&) = default;
-SubFramework::~SubFramework(void) = default;
+SubFramework::~SubFramework() = default;
 
 SubFramework::SubFramework(const sub_framework_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
   umbrella_{}
 {}
 
-SubFramework* SubFramework::clone(void) const {
+SubFramework* SubFramework::clone() const {
   return new SubFramework(*this);
 }
 
-const std::string& SubFramework::umbrella(void) const {
+const std::string& SubFramework::umbrella() const {
   return this->umbrella_;
 }
 

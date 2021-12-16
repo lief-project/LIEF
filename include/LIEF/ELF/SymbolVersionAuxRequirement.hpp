@@ -34,24 +34,24 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
 
   SymbolVersionAuxRequirement(const Elf64_Vernaux *header);
   SymbolVersionAuxRequirement(const Elf32_Vernaux *header);
-  SymbolVersionAuxRequirement(void);
+  SymbolVersionAuxRequirement();
 
   SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&);
   SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&);
 
-  virtual ~SymbolVersionAuxRequirement(void);
+  virtual ~SymbolVersionAuxRequirement();
 
   //! @brief Hash value of the dependency name (use ELF hashing function)
-  uint32_t hash(void) const;
+  uint32_t hash() const;
 
   //! @brief Bitmask of flags
-  uint16_t flags(void) const;
+  uint16_t flags() const;
 
   //! @brief Contains version index unique for the file which is used in the
   //! version symbol table.  If the highest bit (bit 15) is set this
   //! is a hidden symbol which cannot be referenced from outside the
   //! object.
-  uint16_t other(void) const;
+  uint16_t other() const;
 
   void hash(uint32_t hash);
   void flags(uint16_t flags);

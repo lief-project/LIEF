@@ -288,44 +288,44 @@ void x509::swap(x509& other) {
   std::swap(this->x509_cert_, other.x509_cert_);
 }
 
-uint32_t x509::version(void) const {
+uint32_t x509::version() const {
   return this->x509_cert_->private_version;
 }
 
-std::vector<uint8_t> x509::serial_number(void) const {
+std::vector<uint8_t> x509::serial_number() const {
   return {this->x509_cert_->private_serial.private_p,
           this->x509_cert_->private_serial.private_p + this->x509_cert_->private_serial.private_len};
 }
 
-oid_t x509::signature_algorithm(void) const {
+oid_t x509::signature_algorithm() const {
   char oid_str[256];
   mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &this->x509_cert_->private_sig_oid);
   return oid_t{oid_str};
 
 }
 
-x509::date_t x509::valid_from(void) const {
+x509::date_t x509::valid_from() const {
   return from_mbedtls(this->x509_cert_->private_valid_from);
 }
 
-x509::date_t x509::valid_to(void) const {
+x509::date_t x509::valid_to() const {
   return from_mbedtls(this->x509_cert_->private_valid_to);
 }
 
 
-std::string x509::issuer(void) const {
+std::string x509::issuer() const {
   char buffer[1024];
   mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->private_issuer);
   return buffer;
 }
 
-std::string x509::subject(void) const {
+std::string x509::subject() const {
   char buffer[1024];
   mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->private_subject);
   return buffer;
 }
 
-std::vector<uint8_t> x509::raw(void) const {
+std::vector<uint8_t> x509::raw() const {
   return {this->x509_cert_->private_raw.private_p,
           this->x509_cert_->private_raw.private_p + this->x509_cert_->private_raw.private_len};
 }
@@ -353,7 +353,7 @@ x509::KEY_TYPES x509::key_type() const {
 }
 
 
-std::unique_ptr<RsaInfo> x509::rsa_info(void) const {
+std::unique_ptr<RsaInfo> x509::rsa_info() const {
   if (this->key_type() == KEY_TYPES::RSA) {
     mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(this->x509_cert_->private_pk);
     return std::unique_ptr<RsaInfo>{new RsaInfo{rsa_ctx}};
@@ -620,7 +620,7 @@ void x509::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-x509::~x509(void) {
+x509::~x509() {
   mbedtls_x509_crt_free(this->x509_cert_);
   delete this->x509_cert_;
 }

@@ -35,7 +35,7 @@ class LIEF_API RelocationObject : public Relocation {
 
   public:
   using Relocation::Relocation;
-  RelocationObject(void);
+  RelocationObject();
   RelocationObject(const relocation_info *relocinfo);
   RelocationObject(const scattered_relocation_info *scattered_relocinfo);
 
@@ -44,18 +44,18 @@ class LIEF_API RelocationObject : public Relocation {
 
   void swap(RelocationObject& other);
 
-  virtual ~RelocationObject(void);
+  virtual ~RelocationObject();
 
-  virtual RelocationObject* clone(void) const override;
+  virtual RelocationObject* clone() const override;
 
-  virtual bool is_pc_relative(void) const override;
+  virtual bool is_pc_relative() const override;
 
-  virtual size_t size(void) const override;
+  virtual size_t size() const override;
 
-  virtual uint64_t address(void) const override;
+  virtual uint64_t address() const override;
 
   //! @brief ``true`` if the relocation is a scattered one
-  bool is_scattered(void) const;
+  bool is_scattered() const;
 
   //! @brief For **scattered** relocations,
   //! The address of the relocatable expression for the item in the file that needs
@@ -65,10 +65,10 @@ class LIEF_API RelocationObject : public Relocation {
   //! the address from which to subtract (in mathematical terms, the minuend)
   //! is contained in the first relocation entry and the address to subtract (the subtrahend)
   //! is contained in the second relocation entry.
-  int32_t value(void) const;
+  int32_t value() const;
 
   //! @brief Origin of the relocation
-  virtual RELOCATION_ORIGINS origin(void) const override;
+  virtual RELOCATION_ORIGINS origin() const override;
 
   virtual void pc_relative(bool val) override;
   virtual void size(size_t size) override;

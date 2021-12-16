@@ -32,18 +32,18 @@ namespace PE {
 class LIEF_API RichHeader : public Object {
   public:
 
-    RichHeader(void);
+    RichHeader();
     RichHeader(const RichHeader&);
     RichHeader& operator=(const RichHeader&);
-    virtual ~RichHeader(void);
+    virtual ~RichHeader();
 
     //! @brief Key used to encode the header (xor operation)
-    uint32_t key(void) const;
+    uint32_t key() const;
 
     //! @brief Return an iterator on the PE::RichEntry within the header
-    it_rich_entries entries(void);
+    it_rich_entries entries();
 
-    it_const_rich_entries entries(void) const;
+    it_const_rich_entries entries() const;
 
     void key(uint32_t key);
 

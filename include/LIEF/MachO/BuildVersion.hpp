@@ -43,16 +43,16 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
   };
 
   public:
-  BuildToolVersion(void);
+  BuildToolVersion();
   BuildToolVersion(const build_tool_version& tool);
 
   //! TOOL used
-  TOOLS tool(void) const;
+  TOOLS tool() const;
 
   //! Version associated with the tool
-  version_t version(void) const;
+  version_t version() const;
 
-  virtual ~BuildToolVersion(void);
+  virtual ~BuildToolVersion();
 
   bool operator==(const BuildToolVersion& rhs) const;
   bool operator!=(const BuildToolVersion& rhs) const;
@@ -85,26 +85,26 @@ class LIEF_API BuildVersion : public LoadCommand {
   };
 
   public:
-  BuildVersion(void);
+  BuildVersion();
   BuildVersion(const build_version_command *version_cmd);
 
   BuildVersion& operator=(const BuildVersion& copy);
   BuildVersion(const BuildVersion& copy);
 
-  virtual BuildVersion* clone(void) const override;
+  virtual BuildVersion* clone() const override;
 
-  version_t minos(void) const;
+  version_t minos() const;
   void minos(version_t version);
 
-  version_t sdk(void) const;
+  version_t sdk() const;
   void sdk(version_t version);
 
-  PLATFORMS platform(void) const;
+  PLATFORMS platform() const;
   void platform(PLATFORMS plat);
 
-  tools_list_t tools(void) const;
+  tools_list_t tools() const;
 
-  virtual ~BuildVersion(void);
+  virtual ~BuildVersion();
 
   bool operator==(const BuildVersion& rhs) const;
   bool operator!=(const BuildVersion& rhs) const;

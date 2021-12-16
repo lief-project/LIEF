@@ -33,7 +33,7 @@
 namespace LIEF {
 namespace MachO {
 
-Builder::~Builder(void) = default;
+Builder::~Builder() = default;
 
 Builder::Builder(Binary *binary) :
   binaries_{},
@@ -62,11 +62,11 @@ Builder::Builder(FatBinary* fat) :
 }
 
 
-std::vector<uint8_t> Builder::operator()(void) {
+std::vector<uint8_t> Builder::operator()() {
   return this->get_build();
 }
 
-void Builder::build(void) {
+void Builder::build() {
   if (this->binary_->is64_) {
     this->build<MachO64>();
   } else {
@@ -76,7 +76,7 @@ void Builder::build(void) {
 
 
 template <typename T>
-void Builder::build(void) {
+void Builder::build() {
   if (this->binaries_.size() > 1) {
     throw not_supported("Actually, builder only support single binary");
   }
@@ -174,7 +174,7 @@ void Builder::build(void) {
 }
 
 
-void Builder::build_fat(void) {
+void Builder::build_fat() {
 
   // If there is only one binary don't build a FAT
   if (this->binaries_.size() == 1) {
@@ -198,7 +198,7 @@ void Builder::build_fat(void) {
   }
 }
 
-void Builder::build_fat_header(void) {
+void Builder::build_fat_header() {
   LIEF_DEBUG("[+] Building Fat Header");
   static constexpr uint32_t ALIGNMENT = 14; // 4096 / 0x1000
   fat_header header;
@@ -226,7 +226,7 @@ void Builder::build_fat_header(void) {
 }
 
 
-void Builder::build_header(void) {
+void Builder::build_header() {
   LIEF_DEBUG("[+] Building header");
   const Header& binary_header = this->binary_->header();
   if (this->binary_->is64_) {
@@ -259,7 +259,7 @@ void Builder::build_header(void) {
 }
 
 
-void Builder::build_load_commands(void) {
+void Builder::build_load_commands() {
   LIEF_DEBUG("[+] Building load segments");
 
   const auto& binary = this->binaries_.back();
@@ -287,7 +287,7 @@ void Builder::build_load_commands(void) {
   }
 }
 
-void Builder::build_uuid(void) {
+void Builder::build_uuid() {
   const auto uuid_it = std::find_if(
         std::begin(this->binary_->commands_), std::end(this->binary_->commands_),
         [] (const LoadCommand* command) {
@@ -320,7 +320,7 @@ void Builder::build_uuid(void) {
       uuid_cmd->originalData_.data());
 }
 
-const std::vector<uint8_t>& Builder::get_build(void) {
+const std::vector<uint8_t>& Builder::get_build() {
   return this->raw_.raw();
 }
 

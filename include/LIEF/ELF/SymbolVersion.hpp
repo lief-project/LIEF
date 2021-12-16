@@ -31,15 +31,15 @@ class LIEF_API SymbolVersion : public Object {
 
   public:
   SymbolVersion(uint16_t value);
-  SymbolVersion(void);
+  SymbolVersion();
 
   //! Generate a *local* SymbolVersion
-  static SymbolVersion local(void);
+  static SymbolVersion local();
 
   //! Generate a *global* SymbolVersion
-  static SymbolVersion global(void);
+  static SymbolVersion global();
 
-  virtual ~SymbolVersion(void);
+  virtual ~SymbolVersion();
 
   SymbolVersion& operator=(const SymbolVersion&);
   SymbolVersion(const SymbolVersion&);
@@ -50,14 +50,14 @@ class LIEF_API SymbolVersion : public Object {
   //!
   //! * ``0`` means **Local**
   //! * ``1`` means **Global**
-  uint16_t value(void) const;
+  uint16_t value() const;
 
   //! Whether or not the current SymbolVersion has an auxiliary one
-  bool has_auxiliary_version(void) const;
+  bool has_auxiliary_version() const;
 
   //! SymbolVersionAux associated with the current Version (if any)
-  SymbolVersionAux&       symbol_version_auxiliary(void);
-  const SymbolVersionAux& symbol_version_auxiliary(void) const;
+  SymbolVersionAux&       symbol_version_auxiliary();
+  const SymbolVersionAux& symbol_version_auxiliary() const;
 
   void value(uint16_t v);
 

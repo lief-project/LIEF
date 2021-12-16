@@ -22,7 +22,7 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryRpath::DynamicEntryRpath(void) :
+DynamicEntryRpath::DynamicEntryRpath() :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
   rpath_{}
 {}
@@ -45,7 +45,7 @@ DynamicEntryRpath::DynamicEntryRpath(const std::vector<std::string>& paths) :
   this->paths(paths);
 }
 
-const std::string& DynamicEntryRpath::name(void) const {
+const std::string& DynamicEntryRpath::name() const {
   return this->rpath_;
 }
 
@@ -54,7 +54,7 @@ void DynamicEntryRpath::name(const std::string& name) {
   this->rpath_ = name;
 }
 
-const std::string& DynamicEntryRpath::rpath(void) const {
+const std::string& DynamicEntryRpath::rpath() const {
   return this->name();
 }
 
@@ -64,7 +64,7 @@ void DynamicEntryRpath::rpath(const std::string& rpath) {
 }
 
 
-std::vector<std::string> DynamicEntryRpath::paths(void) const {
+std::vector<std::string> DynamicEntryRpath::paths() const {
   std::stringstream ss;
   ss.str(this->rpath());
   std::string path;

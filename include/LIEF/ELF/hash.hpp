@@ -91,7 +91,7 @@ class LIEF_API Hash : public LIEF::Hash {
   virtual void visit(const GnuHash& gnuhash)                override;
   virtual void visit(const SysvHash& sysvhash)              override;
 
-  virtual ~Hash(void);
+  virtual ~Hash();
 };
 
 }

@@ -33,22 +33,22 @@ class LIEF_API VersionMin : public LoadCommand {
   //! @brief Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
-  VersionMin(void);
+  VersionMin();
   VersionMin(const version_min_command *version_cmd);
 
   VersionMin& operator=(const VersionMin& copy);
   VersionMin(const VersionMin& copy);
 
-  virtual VersionMin* clone(void) const override;
+  virtual VersionMin* clone() const override;
 
-  virtual ~VersionMin(void);
+  virtual ~VersionMin();
 
   //! @brief Return the version as an array
-  const VersionMin::version_t& version(void) const;
+  const VersionMin::version_t& version() const;
   void version(const VersionMin::version_t& version);
 
   //! @brief Return the sdk as an array
-  const VersionMin::version_t& sdk(void) const;
+  const VersionMin::version_t& sdk() const;
   void sdk(const VersionMin::version_t& sdk);
 
   bool operator==(const VersionMin& rhs) const;

@@ -25,24 +25,24 @@ namespace PE {
 
 LoadConfigurationV0& LoadConfigurationV0::operator=(const LoadConfigurationV0&) = default;
 LoadConfigurationV0::LoadConfigurationV0(const LoadConfigurationV0&) = default;
-LoadConfigurationV0::~LoadConfigurationV0(void) = default;
+LoadConfigurationV0::~LoadConfigurationV0() = default;
 
-LoadConfigurationV0::LoadConfigurationV0(void) :
+LoadConfigurationV0::LoadConfigurationV0() :
   LoadConfiguration{},
   se_handler_table_{0},
   se_handler_count_{0}
 {}
 
 
-WIN_VERSION LoadConfigurationV0::version(void) const {
+WIN_VERSION LoadConfigurationV0::version() const {
   return LoadConfigurationV0::VERSION;
 }
 
-uint64_t LoadConfigurationV0::se_handler_table(void) const {
+uint64_t LoadConfigurationV0::se_handler_table() const {
   return this->se_handler_table_;
 }
 
-uint64_t LoadConfigurationV0::se_handler_count(void) const {
+uint64_t LoadConfigurationV0::se_handler_count() const {
   return this->se_handler_count_;
 }
 

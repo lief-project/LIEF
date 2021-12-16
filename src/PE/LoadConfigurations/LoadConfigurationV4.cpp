@@ -25,23 +25,23 @@ namespace PE {
 
 LoadConfigurationV4& LoadConfigurationV4::operator=(const LoadConfigurationV4&) = default;
 LoadConfigurationV4::LoadConfigurationV4(const LoadConfigurationV4&) = default;
-LoadConfigurationV4::~LoadConfigurationV4(void) = default;
+LoadConfigurationV4::~LoadConfigurationV4() = default;
 
-LoadConfigurationV4::LoadConfigurationV4(void) :
+LoadConfigurationV4::LoadConfigurationV4() :
   LoadConfigurationV3{},
   dynamic_value_reloc_table_{0},
   hybrid_metadata_pointer_{0}
 {}
 
-WIN_VERSION LoadConfigurationV4::version(void) const {
+WIN_VERSION LoadConfigurationV4::version() const {
   return LoadConfigurationV4::VERSION;
 }
 
-uint64_t LoadConfigurationV4::dynamic_value_reloc_table(void) const {
+uint64_t LoadConfigurationV4::dynamic_value_reloc_table() const {
   return this->dynamic_value_reloc_table_;
 }
 
-uint64_t LoadConfigurationV4::hybrid_metadata_pointer(void) const {
+uint64_t LoadConfigurationV4::hybrid_metadata_pointer() const {
   return this->hybrid_metadata_pointer_;
 }
 

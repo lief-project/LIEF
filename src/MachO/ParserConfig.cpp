@@ -22,24 +22,24 @@
 
 namespace LIEF {
 namespace MachO {
-ParserConfig::~ParserConfig(void) = default;
+ParserConfig::~ParserConfig() = default;
 
 ParserConfig& ParserConfig::operator=(const ParserConfig&) = default;
 ParserConfig::ParserConfig(const ParserConfig&) = default;
 
 
-ParserConfig::ParserConfig(void) :
+ParserConfig::ParserConfig() :
   dyldinfo_deeply_{false}
 {}
 
 
-ParserConfig ParserConfig::deep(void) {
+ParserConfig ParserConfig::deep() {
   ParserConfig conf;
   conf.parse_dyldinfo_deeply(true);
   return conf;
 }
 
-ParserConfig ParserConfig::quick(void) {
+ParserConfig ParserConfig::quick() {
   ParserConfig conf;
   conf.parse_dyldinfo_deeply(false);
   return conf;
@@ -50,7 +50,7 @@ ParserConfig& ParserConfig::parse_dyldinfo_deeply(bool flag) {
   return *this;
 }
 
-bool ParserConfig::parse_dyldinfo_deeply(void) const {
+bool ParserConfig::parse_dyldinfo_deeply() const {
   return this->dyldinfo_deeply_;
 }
 

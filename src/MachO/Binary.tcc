@@ -23,7 +23,7 @@ namespace LIEF {
 namespace MachO {
 
 template<class T>
-bool Binary::has_command(void) const {
+bool Binary::has_command() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   const auto it_cmd = std::find_if(
       std::begin(this->commands_), std::end(this->commands_),
@@ -34,13 +34,13 @@ bool Binary::has_command(void) const {
 }
 
 template<class T>
-T& Binary::command(void) {
+T& Binary::command() {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   return const_cast<T&>(static_cast<const Binary*>(this)->command<T>());
 }
 
 template<class T>
-const T& Binary::command(void) const {
+const T& Binary::command() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   const auto it_cmd = std::find_if(
       std::begin(this->commands_), std::end(this->commands_),
@@ -57,7 +57,7 @@ const T& Binary::command(void) const {
 }
 
 template<class T>
-size_t Binary::count_commands(void) const {
+size_t Binary::count_commands() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
 
   size_t nb_cmd = std::count_if(

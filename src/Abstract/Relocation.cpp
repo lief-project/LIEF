@@ -21,7 +21,7 @@
 
 namespace LIEF {
 
-Relocation::Relocation(void) = default;
+Relocation::Relocation() = default;
 
 Relocation::Relocation(uint64_t address, uint8_t size) :
   address_{address},
@@ -29,7 +29,7 @@ Relocation::Relocation(uint64_t address, uint8_t size) :
 {}
 
 
-Relocation::~Relocation(void) = default;
+Relocation::~Relocation() = default;
 Relocation& Relocation::operator=(const Relocation&) = default;
 Relocation::Relocation(const Relocation&) = default;
 
@@ -39,11 +39,11 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->size_,    other.size_);
 }
 
-uint64_t Relocation::address(void) const {
+uint64_t Relocation::address() const {
   return this->address_;
 }
 
-size_t Relocation::size(void) const {
+size_t Relocation::size() const {
   return this->size_;
 }
 

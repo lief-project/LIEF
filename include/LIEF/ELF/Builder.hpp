@@ -44,68 +44,68 @@ class LIEF_API Builder {
   friend struct ::Profiler;
   Builder(Binary *binary);
 
-  Builder(void) = delete;
-  ~Builder(void);
+  Builder() = delete;
+  ~Builder();
 
-  void build(void);
+  void build();
 
   Builder& empties_gnuhash(bool flag = true);
 
-  const std::vector<uint8_t>& get_build(void);
+  const std::vector<uint8_t>& get_build();
   void write(const std::string& filename) const;
 
   protected:
   template<typename ELF_T>
-  void build(void);
+  void build();
 
   template<typename ELF_T>
   void build(const Header& header);
 
   template<typename ELF_T>
-  void build_sections(void);
+  void build_sections();
 
   template<typename ELF_T>
-  void build_segments(void);
+  void build_segments();
 
   template<typename ELF_T>
-  void build_static_symbols(void);
+  void build_static_symbols();
 
   template<typename ELF_T>
-  void build_dynamic(void);
+  void build_dynamic();
 
   template<typename ELF_T>
-  void build_dynamic_section(void);
+  void build_dynamic_section();
 
   template<typename ELF_T>
-  void build_dynamic_symbols(void);
+  void build_dynamic_symbols();
 
   template<typename ELF_T>
-  void build_dynamic_relocations(void);
+  void build_dynamic_relocations();
 
   template<typename ELF_T>
-  void build_pltgot_relocations(void);
+  void build_pltgot_relocations();
 
   template<typename ELF_T>
-  void build_section_relocations(void);
+  void build_section_relocations();
 
   template<typename ELF_T>
-  void build_hash_table(void);
+  void build_hash_table();
 
   template<typename ELF_T>
-  void build_symbol_hash(void);
+  void build_symbol_hash();
 
   template<typename ELF_T>
   void build_symbol_gnuhash(uint32_t new_symndx);
 
-  uint32_t sort_dynamic_symbols(void);
+  uint32_t sort_dynamic_symbols();
 
-  void build_empty_symbol_gnuhash(void);
-
-  template<typename ELF_T>
-  void build_symbol_requirement(void);
+  void build_empty_symbol_gnuhash();
 
   template<typename ELF_T>
-  void build_symbol_definition(void);
+  void build_symbol_requirement();
+
+  template<typename ELF_T>
+  void build_symbol_definition();
 
   template<typename T, typename HANDLER>
   std::vector<std::string> optimize(const HANDLER& e,
@@ -113,13 +113,13 @@ class LIEF_API Builder {
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
   template<typename ELF_T>
-  void build_symbol_version(void);
+  void build_symbol_version();
 
   template<typename ELF_T>
-  void build_interpreter(void);
+  void build_interpreter();
 
   template<typename ELF_T>
-  void build_notes(void);
+  void build_notes();
 
   void build(NOTE_TYPES type);
 
@@ -131,9 +131,9 @@ class LIEF_API Builder {
   void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
 
   template<typename ELF_T>
-  void build_overlay(void);
+  void build_overlay();
 
-  bool should_swap(void) const;
+  bool should_swap() const;
 
   Section& array_section(uint64_t addr);
 

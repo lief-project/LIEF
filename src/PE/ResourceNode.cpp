@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace PE {
 
-ResourceNode::ResourceNode(void) :
+ResourceNode::ResourceNode() :
   id_{0},
   name_{},
   childs_{},
@@ -60,47 +60,47 @@ void ResourceNode::swap(ResourceNode& other) {
   std::swap(this->depth_,  other.depth_);
 }
 
-ResourceNode::~ResourceNode(void) {
+ResourceNode::~ResourceNode() {
   for (ResourceNode* node : this->childs_) {
     delete node;
   }
 }
 
 
-uint32_t ResourceNode::id(void) const {
+uint32_t ResourceNode::id() const {
   return this->id_;
 }
 
 
-it_childs ResourceNode::childs(void) {
+it_childs ResourceNode::childs() {
   return {this->childs_};
 }
 
 
-it_const_childs ResourceNode::childs(void) const {
+it_const_childs ResourceNode::childs() const {
   return {this->childs_};
 }
 
 
-const std::u16string& ResourceNode::name(void) const {
+const std::u16string& ResourceNode::name() const {
   return this->name_;
 }
 
 
-bool ResourceNode::is_directory(void) const {
+bool ResourceNode::is_directory() const {
   return typeid(*this) == typeid(ResourceDirectory);
 }
 
-bool ResourceNode::is_data(void) const {
+bool ResourceNode::is_data() const {
   return not this->is_directory();
 }
 
 
-bool ResourceNode::has_name(void) const {
+bool ResourceNode::has_name() const {
   return static_cast<bool>(this->id() & 0x80000000);
 }
 
-uint32_t ResourceNode::depth(void) const {
+uint32_t ResourceNode::depth() const {
   return this->depth_;
 }
 
@@ -196,7 +196,7 @@ void ResourceNode::name(const std::u16string& name) {
 }
 
 
-void ResourceNode::sort_by_id(void) {
+void ResourceNode::sort_by_id() {
   std::sort(
       std::begin(this->childs_),
       std::end(this->childs_),

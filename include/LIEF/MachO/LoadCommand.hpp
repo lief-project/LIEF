@@ -35,7 +35,7 @@ class LIEF_API LoadCommand : public Object {
   using raw_t = std::vector<uint8_t>;
 
   public:
-  LoadCommand(void);
+  LoadCommand();
   LoadCommand(const load_command* command);
   LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
 
@@ -43,22 +43,22 @@ class LIEF_API LoadCommand : public Object {
   LoadCommand(const LoadCommand& copy);
 
   void swap(LoadCommand& other);
-  virtual LoadCommand* clone(void) const;
+  virtual LoadCommand* clone() const;
 
-  virtual ~LoadCommand(void);
+  virtual ~LoadCommand();
 
 
   //! Command type
-  LOAD_COMMAND_TYPES command(void) const;
+  LOAD_COMMAND_TYPES command() const;
 
   //! Size of the command (should be greather than ``sizeof(load_command)``)
-  uint32_t size(void) const;
+  uint32_t size() const;
 
   //! Raw command
-  const raw_t& data(void) const;
+  const raw_t& data() const;
 
   //! Offset of the command within the *Load Command Table*
-  uint64_t command_offset(void) const;
+  uint64_t command_offset() const;
 
   void data(const raw_t& data);
   void command(LOAD_COMMAND_TYPES command);

@@ -23,7 +23,7 @@
 namespace LIEF {
 namespace MachO {
 
-FatBinary::FatBinary(void) :
+FatBinary::FatBinary() :
   binaries_{}
 {}
 
@@ -33,30 +33,30 @@ FatBinary::FatBinary(const std::vector<Binary*>& binaries) :
 {}
 
 
-size_t FatBinary::size(void) const {
+size_t FatBinary::size() const {
   return this->binaries_.size();
 }
 
 
-it_binaries FatBinary::begin(void) {
+it_binaries FatBinary::begin() {
   return this->binaries_;
 }
 
-it_const_binaries FatBinary::begin(void) const {
+it_const_binaries FatBinary::begin() const {
   return this->binaries_;
 }
 
 
-it_binaries FatBinary::end(void) {
+it_binaries FatBinary::end() {
   return it_binaries{this->binaries_}.end();
 }
 
-it_const_binaries FatBinary::end(void) const {
+it_const_binaries FatBinary::end() const {
   return it_const_binaries{this->binaries_}.end();
 }
 
 
-Binary* FatBinary::pop_back(void) {
+Binary* FatBinary::pop_back() {
   if (this->binaries_.size() > 0) {
     Binary* last = this->binaries_.back();
     this->binaries_.pop_back();
@@ -76,10 +76,10 @@ const Binary& FatBinary::at(size_t index) const {
 }
 
 
-Binary& FatBinary::back(void) {
+Binary& FatBinary::back() {
   return const_cast<Binary&>(static_cast<const FatBinary*>(this)->back());
 }
-const Binary& FatBinary::back(void) const {
+const Binary& FatBinary::back() const {
   return *this->binaries_.back();
 }
 
@@ -118,7 +118,7 @@ void FatBinary::write(const std::string& filename) {
   Builder::write(this, filename);
 }
 
-std::vector<uint8_t> FatBinary::raw(void) {
+std::vector<uint8_t> FatBinary::raw() {
   Builder builder{this};
   return builder();
 }
@@ -132,7 +132,7 @@ std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   return os;
 }
 
-FatBinary::~FatBinary(void) {
+FatBinary::~FatBinary() {
   for (Binary* b : this->binaries_) {
     delete b;
   }

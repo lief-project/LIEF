@@ -26,7 +26,7 @@ namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
-void CorePrPsInfo::parse_(void) {
+void CorePrPsInfo::parse_() {
   using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
 
   const Note::description_t& description = this->description();
@@ -49,7 +49,7 @@ void CorePrPsInfo::parse_(void) {
 }
 
 template <typename ELF_T>
-void CorePrPsInfo::build_(void) {
+void CorePrPsInfo::build_() {
   using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
   Note::description_t& description = this->description();
   constexpr size_t desc_size = sizeof(Elf_Prpsinfo);

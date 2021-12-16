@@ -33,21 +33,21 @@ class LIEF_API ResourceAccelerator : public Object {
   friend class ResourcesManager;
 
   public:
-  ResourceAccelerator(void);
+  ResourceAccelerator();
   explicit ResourceAccelerator(const pe_resource_acceltableentry*);
 
   ResourceAccelerator(const ResourceAccelerator&);
   ResourceAccelerator& operator=(const ResourceAccelerator&);
 
-  virtual ~ResourceAccelerator(void);
+  virtual ~ResourceAccelerator();
 
   std::set<ACCELERATOR_FLAGS> flags_list() const;
   std::string ansi_str() const;
 
-  int16_t flags(void) const;
-  int16_t ansi(void) const;
-  uint16_t id(void) const;
-  int16_t padding(void) const;
+  int16_t flags() const;
+  int16_t ansi() const;
+  uint16_t id() const;
+  int16_t padding() const;
 
   virtual void accept(Visitor& visitor) const override;
 

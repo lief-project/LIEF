@@ -46,7 +46,7 @@ class LIEF_API MsSpcStatementType : public Attribute {
   MsSpcStatementType(const MsSpcStatementType&);
   MsSpcStatementType& operator=(const MsSpcStatementType&);
 
-  virtual std::unique_ptr<Attribute> clone(void) const override;
+  virtual std::unique_ptr<Attribute> clone() const override;
 
   //! According to the documentation:
   //! > The SpcStatementType MUST contain one Object Identifier with either

@@ -30,7 +30,7 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   static constexpr char delimiter = ':';
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryRunPath(void);
+  DynamicEntryRunPath();
 
   //! @brief Constructor from (run)path
   DynamicEntryRunPath(const std::string& name);
@@ -42,15 +42,15 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   DynamicEntryRunPath(const DynamicEntryRunPath&);
 
   //! @brief Runpath raw value
-  const std::string& name(void) const;
+  const std::string& name() const;
   void name(const std::string& name);
 
   //! @brief Runpath raw value
-  const std::string& runpath(void) const;
+  const std::string& runpath() const;
   void runpath(const std::string& runpath);
 
   //! @brief Paths as a list
-  std::vector<std::string> paths(void) const;
+  std::vector<std::string> paths() const;
   void paths(const std::vector<std::string>& paths);
 
   //! @brief Insert a ``path`` at the given ``position``

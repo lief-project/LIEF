@@ -25,27 +25,27 @@ namespace LIEF {
 namespace ELF {
 SysvHash& SysvHash::operator=(const SysvHash&) = default;
 SysvHash::SysvHash(const SysvHash&)           = default;
-SysvHash::~SysvHash(void)                    = default;
+SysvHash::~SysvHash()                    = default;
 
-SysvHash::SysvHash(void) :
+SysvHash::SysvHash() :
   buckets_{},
   chains_{}
 {}
 
 
-uint32_t SysvHash::nbucket(void) const {
+uint32_t SysvHash::nbucket() const {
   return static_cast<uint32_t>(this->buckets_.size());
 }
 
-uint32_t SysvHash::nchain(void) const {
+uint32_t SysvHash::nchain() const {
   return static_cast<uint32_t>(this->chains_.size());
 }
 
-const std::vector<uint32_t>& SysvHash::buckets(void) const {
+const std::vector<uint32_t>& SysvHash::buckets() const {
   return this->buckets_;
 }
 
-const std::vector<uint32_t>& SysvHash::chains(void) const {
+const std::vector<uint32_t>& SysvHash::chains() const {
   return this->chains_;
 }
 

@@ -26,11 +26,11 @@
 namespace LIEF {
 namespace PE {
 
-CodeIntegrity::~CodeIntegrity(void) = default;
+CodeIntegrity::~CodeIntegrity() = default;
 CodeIntegrity& CodeIntegrity::operator=(const CodeIntegrity&) = default;
 CodeIntegrity::CodeIntegrity(const CodeIntegrity&) = default;
 
-CodeIntegrity::CodeIntegrity(void) :
+CodeIntegrity::CodeIntegrity() :
   flags_{0},
   catalog_{0},
   catalog_offset_{0},
@@ -46,18 +46,18 @@ CodeIntegrity::CodeIntegrity(const pe_code_integrity *header) :
 {}
 
 
-uint16_t CodeIntegrity::flags(void) const {
+uint16_t CodeIntegrity::flags() const {
   return this->flags_;
 }
-uint16_t CodeIntegrity::catalog(void) const {
+uint16_t CodeIntegrity::catalog() const {
   return this->catalog_;
 }
 
-uint32_t CodeIntegrity::catalog_offset(void) const {
+uint32_t CodeIntegrity::catalog_offset() const {
   return this->catalog_offset_;
 }
 
-uint32_t CodeIntegrity::reserved(void) const {
+uint32_t CodeIntegrity::reserved() const {
   return this->reserved_;
 }
 

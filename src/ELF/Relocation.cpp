@@ -28,9 +28,9 @@
 namespace LIEF {
 namespace ELF {
 
-Relocation::~Relocation(void) = default;
+Relocation::~Relocation() = default;
 
-Relocation::Relocation(void) :
+Relocation::Relocation() :
   LIEF::Relocation{},
   type_{0},
   addend_{0},
@@ -143,17 +143,17 @@ void Relocation::swap(Relocation& other) {
   std::swap(this->info_,         other.info_);
 }
 
-int64_t Relocation::addend(void) const {
+int64_t Relocation::addend() const {
   return this->addend_;
 }
 
 
-uint32_t Relocation::type(void) const {
+uint32_t Relocation::type() const {
   return this->type_;
 }
 
 
-const Symbol& Relocation::symbol(void) const {
+const Symbol& Relocation::symbol() const {
   if (this->symbol_ != nullptr) {
     return *this->symbol_;
   } else {
@@ -161,11 +161,11 @@ const Symbol& Relocation::symbol(void) const {
   }
 }
 
-Symbol& Relocation::symbol(void) {
+Symbol& Relocation::symbol() {
   return const_cast<Symbol&>(static_cast<const Relocation*>(this)->symbol());
 }
 
-const Section& Relocation::section(void) const {
+const Section& Relocation::section() const {
   if (this->has_section()) {
     return *this->section_;
   } else {
@@ -173,43 +173,43 @@ const Section& Relocation::section(void) const {
   }
 }
 
-Section& Relocation::section(void) {
+Section& Relocation::section() {
   return const_cast<Section&>(static_cast<const Relocation*>(this)->section());
 }
 
-bool Relocation::is_rela(void) const {
+bool Relocation::is_rela() const {
   return this->isRela_;
 }
 
 
-bool Relocation::is_rel(void) const {
+bool Relocation::is_rel() const {
   return not this->isRela_;
 }
 
 
-ARCH Relocation::architecture(void) const {
+ARCH Relocation::architecture() const {
   return this->architecture_;
 }
 
 
-RELOCATION_PURPOSES Relocation::purpose(void) const {
+RELOCATION_PURPOSES Relocation::purpose() const {
   return this->purpose_;
 }
 
 
-bool Relocation::has_symbol(void) const {
+bool Relocation::has_symbol() const {
   return this->symbol_ != nullptr;
 }
 
-bool Relocation::has_section(void) const {
+bool Relocation::has_section() const {
   return this->section_ != nullptr;
 }
 
-uint32_t Relocation::info(void) const {
+uint32_t Relocation::info() const {
   return this->info_;
 }
 
-size_t Relocation::size(void) const {
+size_t Relocation::size() const {
 
  switch (this->architecture()) {
     case ARCH::EM_X86_64:

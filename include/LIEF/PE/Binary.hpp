@@ -46,10 +46,10 @@ class LIEF_API Binary : public LIEF::Binary {
   public:
   Binary(const std::string& name, PE_TYPE type);
 
-  virtual ~Binary(void);
+  virtual ~Binary();
 
   //! Return `PE32` or `PE32+`
-  PE_TYPE type(void) const;
+  PE_TYPE type() const;
 
   //! Convert Relative Virtual Address to offset
   //!
@@ -68,7 +68,7 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   //! Return binary's imagebase. ``0`` if not relevant
-  uint64_t imagebase(void) const override;
+  uint64_t imagebase() const override;
 
   //! Find the section associated with the `offset`
   Section&       section_from_offset(uint64_t offset);
@@ -79,79 +79,79 @@ class LIEF_API Binary : public LIEF::Binary {
   const Section& section_from_rva(uint64_t virtual_address) const;
 
   //! Return binary's sections
-  it_sections       sections(void);
-  it_const_sections sections(void) const;
+  it_sections       sections();
+  it_const_sections sections() const;
 
   // =======
   // Headers
   // =======
 
   //! Return a reference to the PE::DosHeader object
-  DosHeader&       dos_header(void);
-  const DosHeader& dos_header(void) const;
+  DosHeader&       dos_header();
+  const DosHeader& dos_header() const;
 
   //! Return a reference to the PE::Header object
-  Header&       header(void);
-  const Header& header(void) const;
+  Header&       header();
+  const Header& header() const;
 
   //! Return a reference to the OptionalHeader object
-  OptionalHeader&       optional_header(void);
-  const OptionalHeader& optional_header(void) const;
+  OptionalHeader&       optional_header();
+  const OptionalHeader& optional_header() const;
 
   //! Compute the binary's virtual size.
   //! It should match with OptionalHeader::sizeof_image
-  uint64_t virtual_size(void) const;
+  uint64_t virtual_size() const;
 
   //! Compute the size of all headers
-  uint32_t sizeof_headers(void) const;
+  uint32_t sizeof_headers() const;
 
   //! Return a reference to the TLS object
-  TLS&       tls(void);
-  const TLS& tls(void) const;
+  TLS&       tls();
+  const TLS& tls() const;
 
   //! Set a TLS object in the current Binary
   void tls(const TLS& tls);
 
   //! Check if the current binary has a TLS object
-  bool has_tls(void) const;
+  bool has_tls() const;
 
   //! Check if the current binary has imports
   //!
   //! @see Import
-  bool has_imports(void) const;
+  bool has_imports() const;
 
   //! Check if the current binary conatains signatures
-  bool has_signatures(void) const;
+  bool has_signatures() const;
 
   //! Check if the current binary has exports.
   //!
   //! @see Export
-  bool has_exports(void) const;
+  bool has_exports() const;
 
   //! Check if the current binary has resources
-  bool has_resources(void) const;
+  bool has_resources() const;
 
   //! Check if the current binary has exceptions
-  bool has_exceptions(void) const;
+  bool has_exceptions() const;
 
   //! Check if the current binary has relocations
   //!
   //! @see Relocation
-  bool has_relocations(void) const;
+  bool has_relocations() const;
 
   //! Check if the current binary has debugs
-  bool has_debug(void) const;
+  bool has_debug() const;
 
   //! Check if the current binary has a load configuration
-  bool has_configuration(void) const;
+  bool has_configuration() const;
 
   //! Check if the current binary has been built has reproducible, replacing timestamps by a compile hash.
   //!
   //! @see Debug
-  bool is_reproducible_build(void) const;
+  bool is_reproducible_build() const;
 
   //! Return the Signature object(s) if the binary is signed
-  it_const_signatures signatures(void) const;
+  it_const_signatures signatures() const;
 
   //! Verify the binary against the embedded signature(s) (if any)
   //! First, it checks that the embedded signatures are correct (c.f. Signature::check)
@@ -194,16 +194,16 @@ class LIEF_API Binary : public LIEF::Binary {
   uint32_t predict_function_rva(const std::string& library, const std::string& function);
 
   //! Return the Export object
-  Export&       get_export(void);
-  const Export& get_export(void) const;
+  Export&       get_export();
+  const Export& get_export() const;
 
   //! Return binary Symbols
-  std::vector<Symbol>&       symbols(void);
-  const std::vector<Symbol>& symbols(void) const;
+  std::vector<Symbol>&       symbols();
+  const std::vector<Symbol>& symbols() const;
 
   //! Return resources as a tree
-  ResourceNode&                  resources(void);
-  const ResourceNode&            resources(void) const;
+  ResourceNode&                  resources();
+  const ResourceNode&            resources() const;
 
   //! Set a new resource tree
   void set_resources(const ResourceDirectory& resource);
@@ -212,8 +212,8 @@ class LIEF_API Binary : public LIEF::Binary {
   void set_resources(const ResourceData& resource);
 
   //! Return the ResourcesManager (class to manage resources more easily than the tree one)
-  ResourcesManager               resources_manager(void);
-  const ResourcesManager         resources_manager(void) const;
+  ResourcesManager               resources_manager();
+  const ResourcesManager         resources_manager() const;
 
   // ==========================
   // Methods to manage sections
@@ -226,8 +226,8 @@ class LIEF_API Binary : public LIEF::Binary {
   const Section& get_section(const std::string& name) const;
 
   //! Return the section associated with import table
-  const Section& import_section(void) const;
-  Section&       import_section(void);
+  const Section& import_section() const;
+  Section&       import_section();
 
   //! Delete the section with the given name
   //!
@@ -247,22 +247,22 @@ class LIEF_API Binary : public LIEF::Binary {
   // Methods to manage relocations
   // =============================
 
-  it_relocations       relocations(void);
-  it_const_relocations relocations(void) const;
+  it_relocations       relocations();
+  it_const_relocations relocations() const;
 
   //! Add a @link PE::Relocation relocation @endlink
   Relocation& add_relocation(const Relocation& relocation);
 
   //! Remove all relocations
-  void remove_all_relocations(void);
+  void remove_all_relocations();
 
   // ===============================
   // Methods to manage DataDirectory
   // ===============================
 
   //! Return data directories in the binary
-  it_data_directories       data_directories(void);
-  it_const_data_directories data_directories(void) const;
+  it_data_directories       data_directories();
+  it_const_data_directories data_directories() const;
 
   //! Return the DataDirectory with the given type (or index)
   DataDirectory&       data_directory(DATA_DIRECTORY index);
@@ -271,28 +271,28 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has(DATA_DIRECTORY index) const;
 
   //! Return the debug_entries_t object
-  debug_entries_t&       debug(void);
-  const debug_entries_t& debug(void) const;
+  debug_entries_t&       debug();
+  const debug_entries_t& debug() const;
 
   //! Retrun the LoadConfiguration object
-  const LoadConfiguration& load_configuration(void) const;
-  LoadConfiguration& load_configuration(void);
+  const LoadConfiguration& load_configuration() const;
+  LoadConfiguration& load_configuration();
 
   // =======
   // Overlay
   // =======
 
   //! Return the overlay content
-  const std::vector<uint8_t>& overlay(void) const;
-  std::vector<uint8_t>&       overlay(void);
+  const std::vector<uint8_t>& overlay() const;
+  std::vector<uint8_t>&       overlay();
 
   // ========
   // DOS Stub
   // ========
 
   //! Return the DOS stub content
-  const std::vector<uint8_t>& dos_stub(void) const;
-  std::vector<uint8_t>&       dos_stub(void);
+  const std::vector<uint8_t>& dos_stub() const;
+  std::vector<uint8_t>&       dos_stub();
 
   //! Update the DOS stub content
   void dos_stub(const std::vector<uint8_t>& content);
@@ -301,22 +301,22 @@ class LIEF_API Binary : public LIEF::Binary {
   // -----------
 
   //! Return a reference to the RichHeader object
-  RichHeader&       rich_header(void);
-  const RichHeader& rich_header(void) const;
+  RichHeader&       rich_header();
+  const RichHeader& rich_header() const;
 
   //! Set a RichHeader object in the current Binary
   void rich_header(const RichHeader& rich_header);
 
   //! Check if the current binary has a RichHeader object
-  bool has_rich_header(void) const;
+  bool has_rich_header() const;
 
   // =========================
   // Methods to manage Imports
   // =========================
 
   //! return binary's @link PE::Import imports @endlink
-  it_imports       imports(void);
-  it_const_imports imports(void) const;
+  it_imports       imports();
+  it_const_imports imports() const;
 
   //! Returns the PE::Import from the given name
   //!
@@ -342,7 +342,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove_library(const std::string& name);
 
   //! Remove all libraries in the binary
-  void remove_all_libraries(void);
+  void remove_all_libraries();
 
   //! Hook an imported function
   //!
@@ -401,21 +401,21 @@ class LIEF_API Binary : public LIEF::Binary {
       LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
 
   //! Return the binary's entrypoint
-  virtual uint64_t entrypoint(void) const override;
+  virtual uint64_t entrypoint() const override;
 
   //! Check if the binary is position independent
-  virtual bool is_pie(void) const override;
+  virtual bool is_pie() const override;
 
   //! Check if the binary uses ``NX`` protection
-  virtual bool has_nx(void) const override;
+  virtual bool has_nx() const override;
 
-  virtual LIEF::Binary::functions_t ctor_functions(void) const override;
+  virtual LIEF::Binary::functions_t ctor_functions() const override;
 
   //! **All** functions found in the binary
-  LIEF::Binary::functions_t functions(void) const;
+  LIEF::Binary::functions_t functions() const;
 
   //! Functions found in the Exception table directory
-  LIEF::Binary::functions_t exception_functions(void) const;
+  LIEF::Binary::functions_t exception_functions() const;
 
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
@@ -423,28 +423,28 @@ class LIEF_API Binary : public LIEF::Binary {
   virtual std::ostream& print(std::ostream& os) const override;
 
   private:
-  Binary(void);
+  Binary();
 
   //! Make space between the last section header and the beginning of the
   //! content of first section
-  void make_space_for_new_section(void);
+  void make_space_for_new_section();
 
   //! Return binary's symbols as LIEF::Symbol
-  virtual LIEF::symbols_t  get_abstract_symbols(void) override;
+  virtual LIEF::symbols_t  get_abstract_symbols() override;
 
-  virtual LIEF::Header     get_abstract_header(void) const override;
+  virtual LIEF::Header     get_abstract_header() const override;
 
   //! Return binary's section as LIEF::Section
-  virtual LIEF::sections_t get_abstract_sections(void) override;
+  virtual LIEF::sections_t get_abstract_sections() override;
 
-  virtual LIEF::relocations_t get_abstract_relocations(void) override;
+  virtual LIEF::relocations_t get_abstract_relocations() override;
 
-  virtual LIEF::Binary::functions_t get_abstract_exported_functions(void) const override;
-  virtual LIEF::Binary::functions_t get_abstract_imported_functions(void) const override;
-  virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
+  virtual LIEF::Binary::functions_t get_abstract_exported_functions() const override;
+  virtual LIEF::Binary::functions_t get_abstract_imported_functions() const override;
+  virtual std::vector<std::string> get_abstract_imported_libraries() const override;
 
-  void update_lookup_address_table_offset(void);
-  void update_iat(void);
+  void update_lookup_address_table_offset();
+  void update_iat();
 
   PE_TYPE        type_;
   DosHeader      dos_header_;

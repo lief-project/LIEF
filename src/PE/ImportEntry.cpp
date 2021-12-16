@@ -25,9 +25,9 @@ namespace LIEF {
 namespace PE {
 ImportEntry::ImportEntry(const ImportEntry&) = default;
 ImportEntry& ImportEntry::operator=(const ImportEntry&) = default;
-ImportEntry::~ImportEntry(void) = default;
+ImportEntry::~ImportEntry() = default;
 
-ImportEntry::ImportEntry(void) = default;
+ImportEntry::ImportEntry() = default;
 
 ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   data_{data},
@@ -44,7 +44,7 @@ ImportEntry::ImportEntry(const std::string& name) :
   ImportEntry{0, name}
 {}
 
-bool ImportEntry::is_ordinal(void) const {
+bool ImportEntry::is_ordinal() const {
   // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
   const uint64_t ORDINAL_MASK = this->type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
   bool ordinal_bit_is_set = static_cast<bool>(this->data_ & ORDINAL_MASK);
@@ -62,7 +62,7 @@ bool ImportEntry::is_ordinal(void) const {
   return true;
 }
 
-uint16_t ImportEntry::ordinal(void) const {
+uint16_t ImportEntry::ordinal() const {
   if (not this->is_ordinal()) {
     throw LIEF::not_found("This import is not ordinal");
   }
@@ -70,24 +70,24 @@ uint16_t ImportEntry::ordinal(void) const {
   return this->data_ & 0xFFFF;
 }
 
-uint16_t ImportEntry::hint(void) const {
+uint16_t ImportEntry::hint() const {
   return this->hint_;
 }
 
-uint64_t ImportEntry::iat_value(void) const {
+uint64_t ImportEntry::iat_value() const {
   return this->iat_value_;
 }
 
 
-uint64_t ImportEntry::hint_name_rva(void) const {
+uint64_t ImportEntry::hint_name_rva() const {
   return this->data();
 }
 
-uint64_t ImportEntry::data(void) const {
+uint64_t ImportEntry::data() const {
   return this->data_;
 }
 
-uint64_t ImportEntry::iat_address(void) const {
+uint64_t ImportEntry::iat_address() const {
   return this->rva_;
 }
 

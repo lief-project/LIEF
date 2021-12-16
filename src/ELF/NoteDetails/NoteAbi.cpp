@@ -36,7 +36,7 @@ NoteAbi NoteAbi::make(Note& note) {
   return abi;
 }
 
-NoteAbi* NoteAbi::clone(void) const {
+NoteAbi* NoteAbi::clone() const {
   return new NoteAbi(*this);
 }
 
@@ -46,15 +46,15 @@ NoteAbi::NoteAbi(Note& note) :
   abi_{NOTE_ABIS::ELF_NOTE_UNKNOWN}
 {}
 
-NoteAbi::version_t NoteAbi::version(void) const {
+NoteAbi::version_t NoteAbi::version() const {
   return this->version_;
 }
 
-NOTE_ABIS NoteAbi::abi(void) const {
+NOTE_ABIS NoteAbi::abi() const {
   return this->abi_;
 }
 
-void NoteAbi::parse(void) {
+void NoteAbi::parse() {
   const description_t& description = this->description();
 
   // Parse ABI
@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const NoteAbi& note) {
   return os;
 }
 
-NoteAbi::~NoteAbi(void) = default;
+NoteAbi::~NoteAbi() = default;
 
 } // namespace ELF
 } // namespace LIEF

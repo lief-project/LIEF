@@ -30,16 +30,16 @@
 #endif
 
 namespace LIEF {
-Binary::Binary(void) :
+Binary::Binary() :
   name_{""},
   original_size_{0}
 {}
 
-Binary::~Binary(void) = default;
+Binary::~Binary() = default;
 Binary& Binary::operator=(const Binary&) = default;
 Binary::Binary(const Binary&) = default;
 
-EXE_FORMATS Binary::format(void) const {
+EXE_FORMATS Binary::format() const {
 
 #if defined(LIEF_ELF_SUPPORT)
   if (typeid(*this) == typeid(LIEF::ELF::Binary)) {
@@ -63,15 +63,15 @@ EXE_FORMATS Binary::format(void) const {
   return EXE_FORMATS::FORMAT_UNKNOWN;
 }
 
-Header Binary::header(void) const {
+Header Binary::header() const {
   return this->get_abstract_header();
 }
 
-it_symbols Binary::symbols(void) {
+it_symbols Binary::symbols() {
   return this->get_abstract_symbols();
 }
 
-it_const_symbols Binary::symbols(void) const {
+it_const_symbols Binary::symbols() const {
   return const_cast<Binary*>(this)->get_abstract_symbols();
 }
 
@@ -109,35 +109,35 @@ Symbol& Binary::get_symbol(const std::string& name) {
   return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
 }
 
-it_sections Binary::sections(void) {
+it_sections Binary::sections() {
   return this->get_abstract_sections();
 }
 
 
-it_const_sections Binary::sections(void) const {
+it_const_sections Binary::sections() const {
   return const_cast<Binary*>(this)->get_abstract_sections();
 }
 
 
-it_relocations Binary::relocations(void) {
+it_relocations Binary::relocations() {
   return this->get_abstract_relocations();
 }
 
-it_const_relocations Binary::relocations(void) const {
+it_const_relocations Binary::relocations() const {
   return const_cast<Binary*>(this)->get_abstract_relocations();
 }
 
 
-Binary::functions_t Binary::exported_functions(void) const {
+Binary::functions_t Binary::exported_functions() const {
   return this->get_abstract_exported_functions();
 }
 
-Binary::functions_t Binary::imported_functions(void) const {
+Binary::functions_t Binary::imported_functions() const {
   return this->get_abstract_imported_functions();
 }
 
 
-std::vector<std::string> Binary::imported_libraries(void) const {
+std::vector<std::string> Binary::imported_libraries() const {
   return this->get_abstract_imported_libraries();
 }
 
@@ -162,12 +162,12 @@ void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-const std::string& Binary::name(void) const {
+const std::string& Binary::name() const {
   return this->name_;
 }
 
 
-uint64_t Binary::original_size(void) const {
+uint64_t Binary::original_size() const {
   return this->original_size_;
 }
 

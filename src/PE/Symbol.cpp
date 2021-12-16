@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace PE {
 
-Symbol::Symbol(void) :
+Symbol::Symbol() :
   LIEF::Symbol{},
   section_number_{0},
   type_{0},
@@ -36,7 +36,7 @@ Symbol::Symbol(void) :
   section_{nullptr}
 {}
 
-Symbol::~Symbol(void) = default;
+Symbol::~Symbol() = default;
 
 Symbol::Symbol(const Symbol& other) :
   LIEF::Symbol{other},
@@ -75,39 +75,39 @@ Symbol::Symbol(const pe_symbol* header) :
 }
 
 
-int16_t Symbol::section_number(void) const {
+int16_t Symbol::section_number() const {
   return this->section_number_;
 }
 
-uint16_t Symbol::type(void) const {
+uint16_t Symbol::type() const {
   return this->type_;
 }
 
-SYMBOL_BASE_TYPES Symbol::base_type(void) const {
+SYMBOL_BASE_TYPES Symbol::base_type() const {
   return static_cast<SYMBOL_BASE_TYPES>(this->type_ & 0x0F);
 }
 
-SYMBOL_COMPLEX_TYPES Symbol::complex_type(void) const {
+SYMBOL_COMPLEX_TYPES Symbol::complex_type() const {
   return static_cast<SYMBOL_COMPLEX_TYPES>((this->type_ >> 4) & 0x0F);
 }
 
 
-SYMBOL_STORAGE_CLASS Symbol::storage_class(void) const {
+SYMBOL_STORAGE_CLASS Symbol::storage_class() const {
   return this->storage_class_;
 }
 
 
-uint8_t Symbol::numberof_aux_symbols(void) const {
+uint8_t Symbol::numberof_aux_symbols() const {
   return this->numberof_aux_symbols_;
 }
 
 
-std::wstring Symbol::wname(void) const {
+std::wstring Symbol::wname() const {
   return {std::begin(this->name_), std::end(this->name_)};
 }
 
 
-const Section& Symbol::section(void) const {
+const Section& Symbol::section() const {
   if (this->has_section()) {
     return *(this->section_);
   } else {
@@ -115,11 +115,11 @@ const Section& Symbol::section(void) const {
   }
 }
 
-Section& Symbol::section(void) {
+Section& Symbol::section() {
   return const_cast<Section&>(static_cast<const Symbol*>(this)->section());
 }
 
-bool Symbol::has_section(void) const {
+bool Symbol::has_section() const {
   return this->section_ != nullptr;
 }
 

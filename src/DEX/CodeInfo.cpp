@@ -30,7 +30,7 @@ CodeInfo::CodeInfo(const code_item* codeitem) :
   output_sizes_{codeitem->outs_size}
 {}
 
-CodeInfo::CodeInfo(void) :
+CodeInfo::CodeInfo() :
   nb_registers_{0},
   args_input_sizes_{0},
   output_sizes_{0}
@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {
   return os;
 }
 
-CodeInfo::~CodeInfo(void) = default;
+CodeInfo::~CodeInfo() = default;
 
 }
 }

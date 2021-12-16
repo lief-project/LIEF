@@ -24,29 +24,29 @@
 namespace LIEF {
 class LIEF_API Symbol : public Object {
   public:
-  Symbol(void);
+  Symbol();
   Symbol(const std::string& name);
   Symbol(const std::string& name, uint64_t value);
   Symbol(const std::string& name, uint64_t value, uint64_t size);
   Symbol(const Symbol&);
   Symbol& operator=(const Symbol&);
-  virtual ~Symbol(void);
+  virtual ~Symbol();
 
   void swap(Symbol& other);
 
   //! @brief Return symbol name
-  virtual const std::string& name(void) const;
+  virtual const std::string& name() const;
 
-  virtual std::string& name(void);
+  virtual std::string& name();
 
   //! @brief Set symbol name
   virtual void name(const std::string& name);
 
   // Symbol's value
-  virtual uint64_t value(void) const;
+  virtual uint64_t value() const;
   virtual void     value(uint64_t value);
 
-  virtual uint64_t size(void) const;
+  virtual uint64_t size() const;
   virtual void     size(uint64_t value);
 
   //! @brief Method so that the ``visitor`` can visit us

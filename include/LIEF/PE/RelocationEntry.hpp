@@ -40,34 +40,34 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   friend class PE::Relocation;
 
   public:
-  RelocationEntry(void);
+  RelocationEntry();
   RelocationEntry(const RelocationEntry& other);
   RelocationEntry& operator=(RelocationEntry other);
   RelocationEntry(uint16_t data);
   RelocationEntry(uint16_t position, RELOCATIONS_BASE_TYPES type);
-  virtual ~RelocationEntry(void);
+  virtual ~RelocationEntry();
 
   void swap(RelocationEntry& other);
 
-  virtual uint64_t address(void) const override;
+  virtual uint64_t address() const override;
 
   virtual void address(uint64_t address) override;
 
-  virtual size_t size(void) const override;
+  virtual size_t size() const override;
 
   virtual void size(size_t size) override;
 
   //! @brief Raw data of the relocation:
   //! - The **high** 4 bits store the relocation type
   //! - The **low** 12 bits store the relocation offset
-  uint16_t data(void) const;
+  uint16_t data() const;
 
   //! @brief Offset relative to Relocation::virtual_address
   //! where the relocation must occur.
-  uint16_t position(void) const;
+  uint16_t position() const;
 
   //! @brief Type of the relocation
-  RELOCATIONS_BASE_TYPES type(void) const;
+  RELOCATIONS_BASE_TYPES type() const;
 
   void data(uint16_t data);
   void position(uint16_t position);

@@ -27,7 +27,7 @@ namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
-void CoreAuxv::parse_(void) {
+void CoreAuxv::parse_() {
   using Elf_Auxv  = typename ELF_T::Elf_Auxv;
   using uint__    = typename ELF_T::uint;
 
@@ -48,7 +48,7 @@ void CoreAuxv::parse_(void) {
 }
 
 template <typename ELF_T>
-void CoreAuxv::build_(void) {
+void CoreAuxv::build_() {
   using Elf_Auxv  = typename ELF_T::Elf_Auxv;
   using uint__    = typename ELF_T::uint;
 

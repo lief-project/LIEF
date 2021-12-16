@@ -23,9 +23,9 @@
 namespace LIEF {
 namespace MachO {
 
-LoadCommand::LoadCommand(void) = default;
+LoadCommand::LoadCommand() = default;
 
-LoadCommand::~LoadCommand(void) = default;
+LoadCommand::~LoadCommand() = default;
 
 LoadCommand& LoadCommand::operator=(LoadCommand other) {
   this->swap(other);
@@ -62,24 +62,24 @@ void LoadCommand::swap(LoadCommand& other) {
   std::swap(this->commandOffset_, other.commandOffset_);
 }
 
-LoadCommand* LoadCommand::clone(void) const {
+LoadCommand* LoadCommand::clone() const {
   return new LoadCommand{*this};
 }
 
-LOAD_COMMAND_TYPES LoadCommand::command(void) const {
+LOAD_COMMAND_TYPES LoadCommand::command() const {
   return this->command_;
 }
 
-uint32_t LoadCommand::size(void) const {
+uint32_t LoadCommand::size() const {
   return this->size_;
 }
 
-const LoadCommand::raw_t& LoadCommand::data(void) const {
+const LoadCommand::raw_t& LoadCommand::data() const {
   return this->originalData_;
 }
 
 
-uint64_t LoadCommand::command_offset(void) const {
+uint64_t LoadCommand::command_offset() const {
   return this->commandOffset_;
 }
 

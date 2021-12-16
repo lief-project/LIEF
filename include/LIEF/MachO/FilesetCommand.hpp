@@ -36,7 +36,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
   friend class BinaryParser;
   using content_t = std::vector<uint8_t>;
 
-  FilesetCommand(void);
+  FilesetCommand();
   FilesetCommand(const fileset_entry_command *command);
   FilesetCommand(const std::string& name);
 
@@ -45,18 +45,18 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   void swap(FilesetCommand& other);
 
-  virtual FilesetCommand* clone(void) const override;
+  virtual FilesetCommand* clone() const override;
 
-  virtual ~FilesetCommand(void);
+  virtual ~FilesetCommand();
 
   //! Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   //! Memory address where the MachO file should be mapped
-  uint64_t virtual_address(void) const;
+  uint64_t virtual_address() const;
 
   //! Original offset in the kernel cache
-  uint64_t file_offset(void) const;
+  uint64_t file_offset() const;
 
   //! Return a pointer on the LIEF::MachO::Binary associated
   //! with this entry

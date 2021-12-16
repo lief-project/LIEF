@@ -23,13 +23,13 @@ namespace LIEF {
 namespace ART {
 
 template<typename ART_T>
-void Parser::parse_file(void) {
+void Parser::parse_file() {
   LIEF_DEBUG("Parsing ART version {}", ART_T::art_version);
   /* const size_t ptr_size = */ this->parse_header<ART_T>();
 }
 
 template<typename ART_T>
-size_t Parser::parse_header(void) {
+size_t Parser::parse_header() {
   using art_header_t = typename ART_T::art_header_t;
 
   const art_header_t& hdr = this->stream_->peek<art_header_t>(0);
@@ -44,7 +44,7 @@ size_t Parser::parse_header(void) {
 
 #if 0
 template<typename ART_T, typename PTR_T>
-void Parser::parse_sections(void) {
+void Parser::parse_sections() {
   using IMAGE_SECTIONS = typename ART_T::IMAGE_SECTIONS;
   using art_header_t   = typename ART_T::art_header_t;
   using jarray_t       = typename ART_T::template jarray_t<>;
@@ -137,7 +137,7 @@ void Parser::parse_sections(void) {
 
 
 template<typename ART_T, typename PTR_T>
-void Parser::parse_roots(void) {
+void Parser::parse_roots() {
   using jarray_t = typename ART_T::template jarray_t<>;
   VLOG(VDEBUG) << "Parsing Image Roots" << std::endl;
   using IMAGE_ROOTS = typename ART_T::IMAGE_ROOTS;
@@ -272,7 +272,7 @@ void Parser::parse_dex_cache(size_t object_offset) {
 }
 
 template<typename ART_T, typename PTR_T>
-void Parser::parse_methods(void) {
+void Parser::parse_methods() {
   using art_header_t = typename ART_T::art_header_t;
   using IMAGE_METHODS = typename ART_T::IMAGE_METHODS;
 

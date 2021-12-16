@@ -23,20 +23,20 @@
 namespace LIEF {
 namespace MachO {
 
-DylinkerCommand::DylinkerCommand(void) = default;
+DylinkerCommand::DylinkerCommand() = default;
 DylinkerCommand& DylinkerCommand::operator=(const DylinkerCommand&) = default;
 DylinkerCommand::DylinkerCommand(const DylinkerCommand&) = default;
-DylinkerCommand::~DylinkerCommand(void) = default;
+DylinkerCommand::~DylinkerCommand() = default;
 
 DylinkerCommand::DylinkerCommand(const dylinker_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize}
 {}
 
-DylinkerCommand* DylinkerCommand::clone(void) const {
+DylinkerCommand* DylinkerCommand::clone() const {
   return new DylinkerCommand(*this);
 }
 
-const std::string& DylinkerCommand::name(void) const {
+const std::string& DylinkerCommand::name() const {
   return this->name_;
 }
 

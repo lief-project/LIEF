@@ -23,7 +23,7 @@
 namespace LIEF {
 namespace MachO {
 
-FilesetCommand::FilesetCommand(void) = default;
+FilesetCommand::FilesetCommand() = default;
 
 FilesetCommand::FilesetCommand(const fileset_entry_command *command) :
   LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, command->cmdsize},
@@ -49,7 +49,7 @@ FilesetCommand::FilesetCommand(const FilesetCommand& other) :
   file_offset_{other.file_offset_}
 {}
 
-FilesetCommand::~FilesetCommand(void) = default;
+FilesetCommand::~FilesetCommand() = default;
 
 void FilesetCommand::swap(FilesetCommand& other) {
   LoadCommand::swap(other);
@@ -58,19 +58,19 @@ void FilesetCommand::swap(FilesetCommand& other) {
   std::swap(this->file_offset_,     other.file_offset_);
 }
 
-FilesetCommand* FilesetCommand::clone(void) const {
+FilesetCommand* FilesetCommand::clone() const {
   return new FilesetCommand(*this);
 }
 
-const std::string& FilesetCommand::name(void) const {
+const std::string& FilesetCommand::name() const {
   return this->name_;
 }
 
-uint64_t FilesetCommand::virtual_address(void) const {
+uint64_t FilesetCommand::virtual_address() const {
   return this->virtual_address_;
 }
 
-uint64_t FilesetCommand::file_offset(void) const {
+uint64_t FilesetCommand::file_offset() const {
   return this->file_offset_;
 }
 

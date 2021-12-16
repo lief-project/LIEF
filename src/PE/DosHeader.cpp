@@ -23,11 +23,11 @@
 namespace LIEF {
 namespace PE {
 
-DosHeader::~DosHeader(void) = default;
+DosHeader::~DosHeader() = default;
 DosHeader::DosHeader(const DosHeader&) = default;
 DosHeader& DosHeader::operator=(const DosHeader&) = default;
 
-DosHeader::DosHeader(void) :
+DosHeader::DosHeader() :
   magic_{0x5a4d},
   usedBytesInTheLastPage_{144},
   fileSizeInPages_{3},
@@ -79,97 +79,97 @@ DosHeader::DosHeader(const pe_dos_header *header) :
 }
 
 
-uint16_t DosHeader::magic(void) const {
+uint16_t DosHeader::magic() const {
   return this->magic_;
 }
 
 
-uint16_t DosHeader::used_bytes_in_the_last_page(void) const {
+uint16_t DosHeader::used_bytes_in_the_last_page() const {
   return this->usedBytesInTheLastPage_;
 }
 
 
-uint16_t DosHeader::file_size_in_pages(void) const {
+uint16_t DosHeader::file_size_in_pages() const {
   return this->fileSizeInPages_;
 }
 
 
-uint16_t DosHeader::numberof_relocation(void) const {
+uint16_t DosHeader::numberof_relocation() const {
   return this->numberOfRelocation_;
 }
 
 
-uint16_t DosHeader::header_size_in_paragraphs(void) const {
+uint16_t DosHeader::header_size_in_paragraphs() const {
   return this->headerSizeInParagraphs_;
 }
 
 
-uint16_t DosHeader::minimum_extra_paragraphs(void) const {
+uint16_t DosHeader::minimum_extra_paragraphs() const {
   return this->minimumExtraParagraphs_;
 }
 
 
-uint16_t DosHeader::maximum_extra_paragraphs(void) const {
+uint16_t DosHeader::maximum_extra_paragraphs() const {
   return this->maximumExtraParagraphs_;
 }
 
 
-uint16_t DosHeader::initial_relative_ss(void) const {
+uint16_t DosHeader::initial_relative_ss() const {
   return this->initialRelativeSS_;
 }
 
 
-uint16_t DosHeader::initial_sp(void) const {
+uint16_t DosHeader::initial_sp() const {
   return this->initialSP_;
 }
 
 
-uint16_t DosHeader::checksum(void) const {
+uint16_t DosHeader::checksum() const {
   return this->checksum_;
 }
 
 
-uint16_t DosHeader::initial_ip(void) const {
+uint16_t DosHeader::initial_ip() const {
   return this->initialIP_;
 }
 
 
-uint16_t DosHeader::initial_relative_cs(void) const {
+uint16_t DosHeader::initial_relative_cs() const {
   return this->initialRelativeCS_;
 }
 
 
-uint16_t DosHeader::addressof_relocation_table(void) const {
+uint16_t DosHeader::addressof_relocation_table() const {
   return this->addressOfRelocationTable_;
 }
 
 
-uint16_t DosHeader::overlay_number(void) const {
+uint16_t DosHeader::overlay_number() const {
   return this->overlayNumber_;
 }
 
 
-std::array<uint16_t, 4> DosHeader::reserved(void) const {
+std::array<uint16_t, 4> DosHeader::reserved() const {
   return this->reserved_;
 }
 
 
-uint16_t DosHeader::oem_id(void) const {
+uint16_t DosHeader::oem_id() const {
   return this->oEMid_;
 }
 
 
-uint16_t DosHeader::oem_info(void) const {
+uint16_t DosHeader::oem_info() const {
   return this->oEMinfo_;
 }
 
 
-std::array<uint16_t, 10> DosHeader::reserved2(void) const {
+std::array<uint16_t, 10> DosHeader::reserved2() const {
   return this->reserved2_;
 }
 
 
-uint32_t DosHeader::addressof_new_exeheader(void) const {
+uint32_t DosHeader::addressof_new_exeheader() const {
   return this->addressOfNewExeHeader_;
 }
 

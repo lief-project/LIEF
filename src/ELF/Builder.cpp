@@ -50,7 +50,7 @@ namespace LIEF {
 namespace ELF {
 
 
-Builder::~Builder(void) = default;
+Builder::~Builder() = default;
 
 Builder::Builder(Binary *binary) :
   empties_gnuhash_{false},
@@ -61,7 +61,7 @@ Builder::Builder(Binary *binary) :
 }
 
 
-bool Builder::should_swap(void) const {
+bool Builder::should_swap() const {
   switch (this->binary_->header().abstract_endianness()) {
 #ifdef __BYTE_ORDER__
 #if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
@@ -78,7 +78,7 @@ bool Builder::should_swap(void) const {
 }
 
 
-void Builder::build(void) {
+void Builder::build() {
   if(this->binary_->type() == ELF_CLASS::ELFCLASS32) {
     this->build<ELF32>();
   } else {
@@ -86,7 +86,7 @@ void Builder::build(void) {
   }
 }
 
-const std::vector<uint8_t>& Builder::get_build(void) {
+const std::vector<uint8_t>& Builder::get_build() {
   return this->ios_.raw();
 }
 
@@ -111,7 +111,7 @@ void Builder::write(const std::string& filename) const {
 }
 
 
-uint32_t Builder::sort_dynamic_symbols(void) {
+uint32_t Builder::sort_dynamic_symbols() {
   static const std::string dynsym_section_name = ".dynsym";
   const auto it_begin = std::begin(this->binary_->dynamic_symbols_);
   const auto it_end = std::end(this->binary_->dynamic_symbols_);
@@ -150,7 +150,7 @@ uint32_t Builder::sort_dynamic_symbols(void) {
 }
 
 
-void Builder::build_empty_symbol_gnuhash(void) {
+void Builder::build_empty_symbol_gnuhash() {
   LIEF_DEBUG("Build empty GNU Hash");
   auto&& it_gnuhash = std::find_if(
       std::begin(this->binary_->sections_),

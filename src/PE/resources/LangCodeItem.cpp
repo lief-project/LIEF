@@ -30,25 +30,25 @@ namespace PE {
 
 LangCodeItem::LangCodeItem(const LangCodeItem&) = default;
 LangCodeItem& LangCodeItem::operator=(const LangCodeItem&) = default;
-LangCodeItem::~LangCodeItem(void) = default;
+LangCodeItem::~LangCodeItem() = default;
 
 
-LangCodeItem::LangCodeItem(void) :
+LangCodeItem::LangCodeItem() :
   type_{0},
   key_{u8tou16("040c04B0")}, // English standard
   items_{}
 {}
 
-uint16_t LangCodeItem::type(void) const {
+uint16_t LangCodeItem::type() const {
   return this->type_;
 }
 
-const std::u16string& LangCodeItem::key(void) const {
+const std::u16string& LangCodeItem::key() const {
   return this->key_;
 }
 
 
-CODE_PAGES LangCodeItem::code_page(void) const {
+CODE_PAGES LangCodeItem::code_page() const {
   if (this->key().length() != 8) {
     throw corrupted(std::string("'") + u16tou8(this->key()) + "': Wrong size");
   }
@@ -56,7 +56,7 @@ CODE_PAGES LangCodeItem::code_page(void) const {
   return static_cast<CODE_PAGES>(std::stoul(u16tou8(this->key().substr(4, 8)), 0, 16));
 }
 
-RESOURCE_LANGS LangCodeItem::lang(void) const {
+RESOURCE_LANGS LangCodeItem::lang() const {
   if (this->key().length() != 8) {
     throw corrupted(std::string("'") + u16tou8(this->key()) + "': Wrong size");
   }
@@ -67,7 +67,7 @@ RESOURCE_LANGS LangCodeItem::lang(void) const {
 
 }
 
-RESOURCE_SUBLANGS LangCodeItem::sublang(void) const {
+RESOURCE_SUBLANGS LangCodeItem::sublang() const {
   if (this->key().length() != 8) {
     throw corrupted(std::string("'") + u16tou8(this->key()) + "': Wrong size");
   }
@@ -78,11 +78,11 @@ RESOURCE_SUBLANGS LangCodeItem::sublang(void) const {
 }
 
 
-const LangCodeItem::items_t& LangCodeItem::items(void) const {
+const LangCodeItem::items_t& LangCodeItem::items() const {
   return this->items_;
 }
 
-LangCodeItem::items_t& LangCodeItem::items(void) {
+LangCodeItem::items_t& LangCodeItem::items() {
   return const_cast<LangCodeItem::items_t&>(static_cast<const LangCodeItem*>(this)->items());
 }
 

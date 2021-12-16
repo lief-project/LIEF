@@ -65,41 +65,41 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary(const Binary& copy) = delete;
 
   //! Return binary's class (ELF32 or ELF64)
-  ELF_CLASS type(void) const;
+  ELF_CLASS type() const;
 
   //! Return @link ELF::Header Elf header @endlink
-  Header&       header(void);
-  const Header& header(void) const;
+  Header&       header();
+  const Header& header() const;
 
   //! Return the last offset used in binary
   //! according to section headers
-  uint64_t last_offset_section(void) const;
+  uint64_t last_offset_section() const;
 
   //! Return the last offset used in binary
   //! according to segment headers
-  uint64_t last_offset_segment(void) const;
+  uint64_t last_offset_segment() const;
 
   //! Return the next virtual address available
-  uint64_t next_virtual_address(void) const;
+  uint64_t next_virtual_address() const;
 
   //! Return binary's sections
   //!
   //! @warning
   //! This method return a vector of references thus you can
   //! modify vector's elements (section) but not add elements.
-  it_sections       sections(void);
-  it_const_sections sections(void) const;
+  it_sections       sections();
+  it_const_sections sections() const;
 
   //! Return binary entrypoint
-  virtual uint64_t entrypoint(void) const override;
+  virtual uint64_t entrypoint() const override;
 
   //! Return binary's segments
-  it_segments       segments(void);
-  it_const_segments segments(void) const;
+  it_segments       segments();
+  it_const_segments segments() const;
 
   //! Return binary's dynamic entries
-  it_dynamic_entries       dynamic_entries(void);
-  it_const_dynamic_entries dynamic_entries(void) const;
+  it_dynamic_entries       dynamic_entries();
+  it_const_dynamic_entries dynamic_entries() const;
 
   //! Add the given dynamic entry and return the entry added
   DynamicEntry& add(const DynamicEntry& entry);
@@ -123,36 +123,36 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(NOTE_TYPES tag);
 
   //! Return binary's dynamic symbols
-  it_symbols       dynamic_symbols(void);
-  it_const_symbols dynamic_symbols(void) const;
+  it_symbols       dynamic_symbols();
+  it_const_symbols dynamic_symbols() const;
 
   //! Return symbols which are exported by the binary
-  it_exported_symbols       exported_symbols(void);
-  it_const_exported_symbols exported_symbols(void) const;
+  it_exported_symbols       exported_symbols();
+  it_const_exported_symbols exported_symbols() const;
 
   //! Return symbols which are imported by the binary
-  it_imported_symbols       imported_symbols(void);
-  it_const_imported_symbols imported_symbols(void) const;
+  it_imported_symbols       imported_symbols();
+  it_const_imported_symbols imported_symbols() const;
 
   //! Return statics symbols
-  it_symbols       static_symbols(void);
-  it_const_symbols static_symbols(void) const;
+  it_symbols       static_symbols();
+  it_const_symbols static_symbols() const;
 
   //! Return symbol versions
-  it_symbols_version       symbols_version(void);
-  it_const_symbols_version symbols_version(void) const;
+  it_symbols_version       symbols_version();
+  it_const_symbols_version symbols_version() const;
 
   //! Return symbols version definition
-  it_symbols_version_definition       symbols_version_definition(void);
-  it_const_symbols_version_definition symbols_version_definition(void) const;
+  it_symbols_version_definition       symbols_version_definition();
+  it_const_symbols_version_definition symbols_version_definition() const;
 
   //! Return Symbol version requirement
-  it_symbols_version_requirement       symbols_version_requirement(void);
-  it_const_symbols_version_requirement symbols_version_requirement(void) const;
+  it_symbols_version_requirement       symbols_version_requirement();
+  it_const_symbols_version_requirement symbols_version_requirement() const;
 
   //! Return dynamic relocations
-  it_dynamic_relocations       dynamic_relocations(void);
-  it_const_dynamic_relocations dynamic_relocations(void) const;
+  it_dynamic_relocations       dynamic_relocations();
+  it_const_dynamic_relocations dynamic_relocations() const;
 
   Relocation& add_dynamic_relocation(const Relocation& relocation);
   Relocation& add_pltgot_relocation(const Relocation& relocation);
@@ -167,16 +167,16 @@ class LIEF_API Binary : public LIEF::Binary {
   Relocation* add_object_relocation(const Relocation& relocation, const Section& section);
 
   //! Return `plt.got` relocations
-  it_pltgot_relocations       pltgot_relocations(void);
-  it_const_pltgot_relocations pltgot_relocations(void) const;
+  it_pltgot_relocations       pltgot_relocations();
+  it_const_pltgot_relocations pltgot_relocations() const;
 
   //! Return relocations used in an object file (``*.o``)
-  it_object_relocations       object_relocations(void);
-  it_const_object_relocations object_relocations(void) const;
+  it_object_relocations       object_relocations();
+  it_const_object_relocations object_relocations() const;
 
   //! Return **all** relocations present in the binary
-  it_relocations       relocations(void);
-  it_const_relocations relocations(void) const;
+  it_relocations       relocations();
+  it_const_relocations relocations() const;
 
   //! Return relocation associated with the given address.
   //! ``nullptr`` if not found
@@ -194,18 +194,18 @@ class LIEF_API Binary : public LIEF::Binary {
   //! ``true`` if GNU hash is used
   //!
   //! @see gnu_hash and use_sysv_hash
-  bool use_gnu_hash(void) const;
+  bool use_gnu_hash() const;
 
   //! Return the GnuHash object in **readonly**
-  const GnuHash& gnu_hash(void) const;
+  const GnuHash& gnu_hash() const;
 
   //! ``true`` if SYSV hash is used
   //!
   //! @see sysv_hash and use_gnu_hash
-  bool use_sysv_hash(void) const;
+  bool use_sysv_hash() const;
 
   //! Return the SysvHash object in **readonly**
-  const SysvHash& sysv_hash(void) const;
+  const SysvHash& sysv_hash() const;
 
   //! Check if a section with the given name exists in the binary
   bool has_section(const std::string& name) const;
@@ -221,39 +221,39 @@ class LIEF_API Binary : public LIEF::Binary {
   const Section& get_section(const std::string& name) const;
 
   //! Return `.text` section
-  Section& text_section(void);
+  Section& text_section();
 
   //! Return `.dynamic` section
-  Section& dynamic_section(void);
+  Section& dynamic_section();
 
   //! Return hash section
-  Section& hash_section(void);
+  Section& hash_section();
 
   //! Return section which holds static symbols
-  Section& static_symbols_section(void);
+  Section& static_symbols_section();
 
   //! Return program image base. For instance 0x40000
   //!
   //! To compute the image base, we look for the PT_PHDR segment header (phdr),
   //! and we return phdr->p_vaddr - phdr->p_offset
-  uint64_t imagebase(void) const override;
+  uint64_t imagebase() const override;
 
   //! Return the size of the mapped binary
-  uint64_t virtual_size(void) const;
+  uint64_t virtual_size() const;
 
   //! Check if the binary uses a loader
   //! @see interpreter
-  bool has_interpreter(void) const;
+  bool has_interpreter() const;
 
   //! Return ELF interprer if any. (e.g. `/lib64/ld-linux-x86-64.so.2`)
-  const std::string& interpreter(void) const;
+  const std::string& interpreter() const;
 
   //! Change the interpreter
   void interpreter(const std::string& interpreter);
 
   //! Return both static and dynamic symbols
-  it_symbols       symbols(void);
-  it_const_symbols symbols(void) const;
+  it_symbols       symbols();
+  it_const_symbols symbols() const;
 
   //! Export the given symbol and create it if it doesn't exist
   Symbol& export_symbol(const Symbol& symbol);
@@ -392,7 +392,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
 
   //! Strip the binary by removing static symbols
-  void strip(void);
+  void strip();
 
   //! Remove a binary's section.
   //!
@@ -405,7 +405,7 @@ class LIEF_API Binary : public LIEF::Binary {
   virtual void write(const std::string& filename) override;
 
   //! Reconstruct the binary object and return his content as bytes
-  std::vector<uint8_t> raw(void);
+  std::vector<uint8_t> raw();
 
   //! Convert a virtual address to an offset in the file
   uint64_t virtual_address_to_offset(uint64_t virtual_address) const;
@@ -420,10 +420,10 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! To do so we check if there is a `PT_INTERP` segment and if
   //! the binary type is `ET_DYN` (Shared object)
-  virtual bool is_pie(void) const override;
+  virtual bool is_pie() const override;
 
   //! Check if the binary uses ``NX`` protection
-  virtual bool has_nx(void) const override;
+  virtual bool has_nx() const override;
 
   //! Return the @link ELF::Section Section @endlink
   //! from the @p offset
@@ -496,33 +496,33 @@ class LIEF_API Binary : public LIEF::Binary {
   //! to ``true``
   void permute_dynamic_symbols(const std::vector<size_t>& permutation);
 
-  virtual LIEF::Binary::functions_t ctor_functions(void) const override;
-  LIEF::Binary::functions_t dtor_functions(void) const;
+  virtual LIEF::Binary::functions_t ctor_functions() const override;
+  LIEF::Binary::functions_t dtor_functions() const;
 
-  LIEF::Binary::functions_t functions(void) const;
+  LIEF::Binary::functions_t functions() const;
 
   //! ``true`` if the binary embed notes
-  bool has_notes(void) const;
+  bool has_notes() const;
 
   //! Return the Note object if any
   //! @see has_note
-  it_const_notes notes(void) const;
+  it_const_notes notes() const;
 
-  it_notes notes(void);
+  it_notes notes();
 
-  uint64_t eof_offset(void) const;
+  uint64_t eof_offset() const;
 
   //! True if data are present at the end of the binary
-  bool has_overlay(void) const;
+  bool has_overlay() const;
 
   //! Overlay data (if any)
-  const overlay_t& overlay(void) const;
+  const overlay_t& overlay() const;
 
   void overlay(overlay_t overlay);
 
   size_t hash(const std::string& name);
 
-  virtual ~Binary(void);
+  virtual ~Binary();
 
   virtual std::ostream& print(std::ostream& os) const override;
 
@@ -554,18 +554,18 @@ class LIEF_API Binary : public LIEF::Binary {
   const Section& operator[](ELF_SECTION_TYPES type) const;
 
   protected:
-  Binary(void);
+  Binary();
 
   //! Return an abstraction of binary's section: LIEF::Section
-  virtual LIEF::sections_t         get_abstract_sections(void) override;
+  virtual LIEF::sections_t         get_abstract_sections() override;
 
-  virtual LIEF::Header             get_abstract_header(void) const override;
+  virtual LIEF::Header             get_abstract_header() const override;
 
-  virtual LIEF::Binary::functions_t get_abstract_exported_functions(void) const override;
-  virtual LIEF::Binary::functions_t get_abstract_imported_functions(void) const override;
-  virtual std::vector<std::string> get_abstract_imported_libraries(void) const override;
-  virtual LIEF::symbols_t          get_abstract_symbols(void) override;
-  virtual LIEF::relocations_t      get_abstract_relocations(void) override;
+  virtual LIEF::Binary::functions_t get_abstract_exported_functions() const override;
+  virtual LIEF::Binary::functions_t get_abstract_imported_functions() const override;
+  virtual std::vector<std::string> get_abstract_imported_libraries() const override;
+  virtual LIEF::symbols_t          get_abstract_symbols() override;
+  virtual LIEF::relocations_t      get_abstract_relocations() override;
 
   template<ELF::ARCH ARCH>
   void patch_relocations(uint64_t from, uint64_t shift);
@@ -582,8 +582,8 @@ class LIEF_API Binary : public LIEF::Binary {
   template<class ELF_T>
   void fix_got_entries(uint64_t from, uint64_t shift);
 
-  LIEF::Binary::functions_t eh_frame_functions(void) const;
-  LIEF::Binary::functions_t armexid_functions(void) const;
+  LIEF::Binary::functions_t eh_frame_functions() const;
+  LIEF::Binary::functions_t armexid_functions() const;
 
   template<E_TYPE OBJECT_TYPE, bool note = false>
   Segment& add_segment(const Segment& segment, uint64_t base);
@@ -593,9 +593,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   template<bool LOADED>
   Section& add_section(const Section& section);
-  symbols_t static_dyn_symbols(void) const;
+  symbols_t static_dyn_symbols() const;
 
-  std::string shstrtab_name(void) const;
+  std::string shstrtab_name() const;
 
   LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 

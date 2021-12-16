@@ -29,8 +29,8 @@
 namespace LIEF {
 namespace OAT {
 
-Parser::~Parser(void) = default;
-Parser::Parser(void)  = default;
+Parser::~Parser() = default;
+Parser::Parser()  = default;
 
 
 std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
@@ -83,7 +83,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-bool Parser::has_vdex(void) const {
+bool Parser::has_vdex() const {
   return this->vdex_file_ != nullptr;
 }
 
@@ -132,7 +132,7 @@ void Parser::init(const std::string& name) {
 }
 
 
-void Parser::bind_vdex(void) {
+void Parser::bind_vdex() {
   if (this->vdex_file_ == nullptr) {
     LIEF_WARN("Inconsistent state: vdex_file is null");
     return;

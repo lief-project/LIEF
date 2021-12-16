@@ -25,7 +25,7 @@ MsSpcStatementType::MsSpcStatementType() :
 MsSpcStatementType::MsSpcStatementType(const MsSpcStatementType&) = default;
 MsSpcStatementType& MsSpcStatementType::operator=(const MsSpcStatementType&) = default;
 
-std::unique_ptr<Attribute> MsSpcStatementType::clone(void) const {
+std::unique_ptr<Attribute> MsSpcStatementType::clone() const {
   return std::unique_ptr<Attribute>(new MsSpcStatementType{*this});
 }
 

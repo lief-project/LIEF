@@ -28,9 +28,9 @@ namespace PE {
 
 Pogo::Pogo(const Pogo&) = default;
 Pogo& Pogo::operator=(const Pogo&) = default;
-Pogo::~Pogo(void) = default;
+Pogo::~Pogo() = default;
 
-Pogo::Pogo(void) :
+Pogo::Pogo() :
   signature_{POGO_SIGNATURES::POGO_UNKNOWN}
 {}
 
@@ -40,7 +40,7 @@ Pogo::Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries) :
   entries_{entries}
 {}
 
-Pogo* Pogo::clone(void) const {
+Pogo* Pogo::clone() const {
   return new Pogo{*this};
 }
 
@@ -49,11 +49,11 @@ POGO_SIGNATURES Pogo::signature() const {
   return signature_;
 }
 
-it_pogo_entries Pogo::entries(void) {
+it_pogo_entries Pogo::entries() {
   return this->entries_;
 }
 
-it_const_pogo_entries Pogo::entries(void) const {
+it_const_pogo_entries Pogo::entries() const {
   return this->entries_;
 }
 

@@ -28,7 +28,7 @@ namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
-void CoreFile::parse_(void) {
+void CoreFile::parse_() {
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 
@@ -54,7 +54,7 @@ void CoreFile::parse_(void) {
 }
 
 template <typename ELF_T>
-void CoreFile::build_(void) {
+void CoreFile::build_() {
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 

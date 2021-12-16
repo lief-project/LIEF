@@ -25,22 +25,22 @@ class LIEF_API Relocation : public Object {
 
   public:
   //! @brief Default CTOR
-  Relocation(void);
+  Relocation();
 
   //! @brief CTOR from relocation's address and size
   Relocation(uint64_t address, uint8_t size);
 
-  virtual ~Relocation(void);
+  virtual ~Relocation();
 
   Relocation& operator=(const Relocation&);
   Relocation(const Relocation&);
   void swap(Relocation& other);
 
   //! @brief Relocation's Address
-  virtual uint64_t address(void) const;
+  virtual uint64_t address() const;
 
   //! @brief Relocation size in **bits**
-  virtual size_t size(void) const;
+  virtual size_t size() const;
 
   virtual void address(uint64_t address);
   virtual void size(size_t size);

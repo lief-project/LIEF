@@ -29,7 +29,7 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   public:
   static constexpr char delimiter = ':';
   using DynamicEntry::DynamicEntry;
-  DynamicEntryRpath(void);
+  DynamicEntryRpath();
 
   DynamicEntryRpath(const std::string& name);
 
@@ -39,14 +39,14 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   DynamicEntryRpath& operator=(const DynamicEntryRpath&);
   DynamicEntryRpath(const DynamicEntryRpath&);
 
-  const std::string& name(void) const;
+  const std::string& name() const;
   void name(const std::string& name);
 
-  const std::string& rpath(void) const;
+  const std::string& rpath() const;
   void rpath(const std::string& name);
 
   //! @brief Paths as a list
-  std::vector<std::string> paths(void) const;
+  std::vector<std::string> paths() const;
   void paths(const std::vector<std::string>& paths);
 
   //! @brief Insert a ``path`` at the given ``position``

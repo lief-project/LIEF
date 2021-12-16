@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryArray::DynamicEntryArray(void) = default;
+DynamicEntryArray::DynamicEntryArray() = default;
 DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = default;
 DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
 
@@ -32,12 +32,12 @@ DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array) :
 {}
 
 
-DynamicEntryArray::array_t& DynamicEntryArray::array(void) {
+DynamicEntryArray::array_t& DynamicEntryArray::array() {
   return const_cast<DynamicEntryArray::array_t&>(static_cast<const DynamicEntryArray*>(this)->array());
 }
 
 
-const DynamicEntryArray::array_t& DynamicEntryArray::array(void) const {
+const DynamicEntryArray::array_t& DynamicEntryArray::array() const {
   return this->array_;
 }
 
@@ -73,7 +73,7 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t value) {
 }
 
 
-size_t DynamicEntryArray::size(void) const {
+size_t DynamicEntryArray::size() const {
   return this->array_.size();
 }
 
@@ -122,7 +122,7 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
 }
 
 
-DynamicEntryArray::~DynamicEntryArray(void) = default;
+DynamicEntryArray::~DynamicEntryArray() = default;
 
 }
 }

@@ -35,20 +35,20 @@ class LIEF_API File : public Object {
   File& operator=(const File& copy) = delete;
   File(const File& copy)            = delete;
 
-  const Header& header(void) const;
-  Header& header(void);
+  const Header& header() const;
+  Header& header();
 
   virtual void accept(Visitor& visitor) const override;
 
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File(void);
+  virtual ~File();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& art_file);
 
   private:
-  File(void);
+  File();
 
   Header header_;
 };

@@ -23,23 +23,23 @@
 namespace LIEF {
 namespace MachO {
 
-RelocationDyld::~RelocationDyld(void) = default;
+RelocationDyld::~RelocationDyld() = default;
 
-RelocationDyld::RelocationDyld(void) = default;
+RelocationDyld::RelocationDyld() = default;
 RelocationDyld& RelocationDyld::operator=(const RelocationDyld&) = default;
 RelocationDyld::RelocationDyld(const RelocationDyld&) = default;
 
-bool RelocationDyld::is_pc_relative(void) const {
+bool RelocationDyld::is_pc_relative() const {
   return static_cast<REBASE_TYPES>(this->type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
 }
 
 
-Relocation* RelocationDyld::clone(void) const {
+Relocation* RelocationDyld::clone() const {
   return new RelocationDyld(*this);
 }
 
 
-RELOCATION_ORIGINS RelocationDyld::origin(void) const {
+RELOCATION_ORIGINS RelocationDyld::origin() const {
   return RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
 }
 

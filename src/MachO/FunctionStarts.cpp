@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
-FunctionStarts::FunctionStarts(void) = default;
+FunctionStarts::FunctionStarts() = default;
 FunctionStarts& FunctionStarts::operator=(const FunctionStarts&) = default;
 FunctionStarts::FunctionStarts(const FunctionStarts&) = default;
-FunctionStarts::~FunctionStarts(void) = default;
+FunctionStarts::~FunctionStarts() = default;
 
 FunctionStarts::FunctionStarts(const linkedit_data_command *cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
@@ -35,15 +35,15 @@ FunctionStarts::FunctionStarts(const linkedit_data_command *cmd) :
   data_size_{cmd->datasize}
 {}
 
-FunctionStarts* FunctionStarts::clone(void) const {
+FunctionStarts* FunctionStarts::clone() const {
   return new FunctionStarts(*this);
 }
 
-uint32_t FunctionStarts::data_offset(void) const {
+uint32_t FunctionStarts::data_offset() const {
   return this->data_offset_;
 }
 
-uint32_t FunctionStarts::data_size(void) const {
+uint32_t FunctionStarts::data_size() const {
   return this->data_size_;
 }
 
@@ -59,11 +59,11 @@ void FunctionStarts::functions(const std::vector<uint64_t>& funcs) {
   this->functions_ = funcs;
 }
 
-const std::vector<uint64_t>& FunctionStarts::functions(void) const {
+const std::vector<uint64_t>& FunctionStarts::functions() const {
   return this->functions_;
 }
 
-std::vector<uint64_t>& FunctionStarts::functions(void) {
+std::vector<uint64_t>& FunctionStarts::functions() {
   return const_cast<std::vector<uint64_t>&>(static_cast<const FunctionStarts*>(this)->functions());
 }
 

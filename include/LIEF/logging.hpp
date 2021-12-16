@@ -40,10 +40,10 @@ enum LOGGING_LEVEL {
 LIEF_API const char* to_string(LOGGING_LEVEL e);
 
 //! @brief Disable the logging module
-LIEF_API void disable(void);
+LIEF_API void disable();
 
 //! @brief Enable the logging module
-LIEF_API void enable(void);
+LIEF_API void enable();
 
 //! @brief Change the logging level (**hierarchical**)
 LIEF_API void set_level(LOGGING_LEVEL level);

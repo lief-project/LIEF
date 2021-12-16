@@ -19,10 +19,10 @@
 #include "LIEF/Abstract/Function.hpp"
 
 namespace LIEF {
-Function::Function(void) = default;
+Function::Function() = default;
 Function::Function(const Function&) = default;
 Function& Function::operator=(const Function&) = default;
-Function::~Function(void) = default;
+Function::~Function() = default;
 
 Function::Function(uint64_t address) :
   Symbol{"", address},
@@ -45,7 +45,7 @@ Function::Function(const std::string& name, uint64_t address, const Function::fl
 {}
 
 
-uint64_t Function::address(void) const {
+uint64_t Function::address() const {
   return this->value_;
 }
 
@@ -53,7 +53,7 @@ void Function::address(uint64_t address) {
   this->value_ = address;
 }
 
-Function::flags_list_t Function::flags(void) const {
+Function::flags_list_t Function::flags() const {
   return {std::begin(this->flags_), std::end(this->flags_)};
 }
 

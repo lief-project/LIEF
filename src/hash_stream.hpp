@@ -65,7 +65,7 @@ class hashstream {
   hashstream& get(std::vector<uint8_t>& c);
   hashstream& flush();
 
-  std::vector<uint8_t>& raw(void);
+  std::vector<uint8_t>& raw();
   ~hashstream();
 
   private:

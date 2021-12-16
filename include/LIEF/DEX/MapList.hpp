@@ -38,14 +38,14 @@ class LIEF_API MapList : public Object {
 
 
   public:
-  MapList(void);
+  MapList();
 
   MapList(const MapList&);
   MapList& operator=(const MapList&);
 
   //! Iterator over LIEF::DEX::MapItem
-  it_items_t items(void);
-  it_const_items_t items(void) const;
+  it_items_t items();
+  it_const_items_t items() const;
 
   //! Check if the given type exists
   bool has(MapItem::TYPES type) const;
@@ -69,7 +69,7 @@ class LIEF_API MapList : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapList& mtd);
 
-  virtual ~MapList(void);
+  virtual ~MapList();
 
   private:
   items_t items_;

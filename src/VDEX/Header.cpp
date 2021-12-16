@@ -32,7 +32,7 @@ namespace VDEX {
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
-Header::Header(void) :
+Header::Header() :
   magic_{},
   version_{0},
   nb_dex_files_{0},
@@ -47,27 +47,27 @@ Header::Header(void) :
   );
 }
 
-Header::magic_t Header::magic(void) const {
+Header::magic_t Header::magic() const {
   return this->magic_;
 }
 
-vdex_version_t Header::version(void) const {
+vdex_version_t Header::version() const {
   return this->version_;
 }
 
-uint32_t Header::nb_dex_files(void) const {
+uint32_t Header::nb_dex_files() const {
   return this->nb_dex_files_;
 }
 
-uint32_t Header::dex_size(void) const {
+uint32_t Header::dex_size() const {
   return this->dex_size_;
 }
 
-uint32_t Header::verifier_deps_size(void) const {
+uint32_t Header::verifier_deps_size() const {
   return this->verifier_deps_size_;
 }
 
-uint32_t Header::quickening_info_size(void) const {
+uint32_t Header::quickening_info_size() const {
   return this->quickening_info_size_;
 }
 
@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
   return os;
 }
 
-Header::~Header(void) = default;
+Header::~Header() = default;
 
 } // Namespace VDEX
 } // Namespace LIEF

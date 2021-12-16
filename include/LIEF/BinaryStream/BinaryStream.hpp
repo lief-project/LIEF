@@ -38,14 +38,14 @@ class BinaryStream {
     MEMORY,
   };
 
-  BinaryStream(void);
+  BinaryStream();
   virtual ~BinaryStream();
-  virtual uint64_t size(void) const = 0;
+  virtual uint64_t size() const = 0;
 
   virtual STREAM_TYPE type() const = 0;
 
-  uint64_t read_uleb128(void) const;
-  uint64_t read_sleb128(void) const;
+  uint64_t read_uleb128() const;
+  uint64_t read_sleb128() const;
 
   int64_t read_dwarf_encoded(uint8_t encoding);
 
@@ -53,8 +53,8 @@ class BinaryStream {
   std::string peek_string(size_t maxsize = ~static_cast<size_t>(0)) const;
   std::string peek_string_at(size_t offset, size_t maxsize = ~static_cast<size_t>(0)) const;
 
-  std::u16string read_u16string(void) const;
-  std::u16string peek_u16string(void) const;
+  std::u16string read_u16string() const;
+  std::u16string peek_u16string() const;
 
   std::string read_mutf8(size_t maxsize = ~static_cast<size_t>(0)) const;
 
@@ -64,7 +64,7 @@ class BinaryStream {
 
   void setpos(size_t pos) const;
   void increment_pos(size_t value) const;
-  size_t pos(void) const;
+  size_t pos() const;
 
   operator bool() const;
 
@@ -72,7 +72,7 @@ class BinaryStream {
   const T* read_array(size_t size, bool check = true) const;
 
   template<class T>
-  const T& peek(void) const;
+  const T& peek() const;
 
   template<class T>
   const T& peek(size_t offset) const;
@@ -84,13 +84,13 @@ class BinaryStream {
   const T* peek_array(size_t offset, size_t size, bool check = true) const;
 
   template<class T>
-  const T& read(void) const;
+  const T& read() const;
 
   template<typename T>
   static T swap_endian(T u);
 
   template<typename T>
-  bool can_read(void) const;
+  bool can_read() const;
 
   template<typename T>
   bool can_read(size_t offset) const;
@@ -154,14 +154,14 @@ T BinaryStream::swap_endian(T u) {
 
 
 template<class T>
-const T& BinaryStream::read(void) const {
+const T& BinaryStream::read() const {
   const T& tmp = this->peek<T>();
   this->increment_pos(sizeof(T));
   return tmp;
 }
 
 template<class T>
-const T& BinaryStream::peek(void) const {
+const T& BinaryStream::peek() const {
   const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
   return *reinterpret_cast<const T*>(raw);
 }
@@ -194,7 +194,7 @@ const T* BinaryStream::peek_array(size_t offset, size_t size, bool check) const 
 
 
 template<typename T>
-bool BinaryStream::can_read(void) const {
+bool BinaryStream::can_read() const {
   const void* raw = this->read_at(this->pos_, sizeof(T), /* throw error*/ false);
   return raw != nullptr;
 }
@@ -216,7 +216,7 @@ const T* BinaryStream::read_array(size_t size, bool check) const {
 
 
 template<typename T>
-T BinaryStream::read_conv(void) const {
+T BinaryStream::read_conv() const {
   T t = this->read<T>();
   if (this->endian_swap_) {
     LIEF::Convert::swap_endian<T>(& t);

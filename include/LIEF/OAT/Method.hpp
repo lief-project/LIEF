@@ -37,37 +37,37 @@ class LIEF_API Method : public Object {
   using quick_code_t = std::vector<uint8_t>;
 
   public:
-  Method(void);
+  Method();
   Method(DEX::Method* method, Class* oat_class, const std::vector<uint8_t>& code = {});
   Method(const Method&);
   Method& operator=(const Method&);
 
 
   //! Method's name
-  std::string name(void) const;
+  std::string name() const;
 
   //! OAT Class associated with this Method
-  const Class& oat_class(void) const;
-  Class& oat_class(void);
+  const Class& oat_class() const;
+  Class& oat_class();
 
   //! Check if a LIEF::DEX::Method is associated with
   //! this Method
-  bool has_dex_method(void) const;
+  bool has_dex_method() const;
 
   //! LIEF::DEX::Method associated (if any)
-  const DEX::Method& dex_method(void) const;
-  DEX::Method& dex_method(void);
+  const DEX::Method& dex_method() const;
+  DEX::Method& dex_method();
 
   //! True if the optimization is DEX
-  bool is_dex2dex_optimized(void) const;
+  bool is_dex2dex_optimized() const;
 
   // True if the optimization is native
-  bool is_compiled(void) const;
+  bool is_compiled() const;
 
-  const DEX::dex2dex_method_info_t& dex2dex_info(void) const;
+  const DEX::dex2dex_method_info_t& dex2dex_info() const;
 
   //! Quick code associated with the method
-  const quick_code_t& quick_code(void) const;
+  const quick_code_t& quick_code() const;
   void quick_code(const quick_code_t& code);
 
   virtual void accept(Visitor& visitor) const override;
@@ -77,7 +77,7 @@ class LIEF_API Method : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& meth);
 
-  virtual ~Method(void);
+  virtual ~Method();
 
   private:
   DEX::Method* dex_method_{nullptr};

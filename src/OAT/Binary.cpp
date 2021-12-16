@@ -25,7 +25,7 @@
 namespace LIEF {
 namespace OAT {
 
-Binary::Binary(void) :
+Binary::Binary() :
   ELF::Binary{},
   header_{},
   dex_files_{},
@@ -34,31 +34,31 @@ Binary::Binary(void) :
 {}
 
 
-const Header& Binary::header(void) const {
+const Header& Binary::header() const {
   return this->header_;
 }
 
-Header& Binary::header(void) {
+Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
 }
 
-DEX::it_dex_files Binary::dex_files(void) {
+DEX::it_dex_files Binary::dex_files() {
   return this->dex_files_;
 }
 
-DEX::it_const_dex_files Binary::dex_files(void) const {
+DEX::it_const_dex_files Binary::dex_files() const {
   return this->dex_files_;
 }
 
-it_dex_files Binary::oat_dex_files(void) {
+it_dex_files Binary::oat_dex_files() {
   return this->oat_dex_files_;
 }
-it_const_dex_files Binary::oat_dex_files(void) const {
+it_const_dex_files Binary::oat_dex_files() const {
   return this->oat_dex_files_;
 }
 
 
-it_const_classes Binary::classes(void) const {
+it_const_classes Binary::classes() const {
   classes_list_t classes;
   classes.reserve(this->classes_.size());
 
@@ -71,7 +71,7 @@ it_const_classes Binary::classes(void) const {
   return classes;
 }
 
-it_classes Binary::classes(void) {
+it_classes Binary::classes() {
   classes_list_t classes;
   classes.reserve(this->classes_.size());
 
@@ -123,15 +123,15 @@ Class& Binary::get_class(size_t index) {
   return const_cast<Class&>(static_cast<const Binary*>(this)->get_class(index));
 }
 
-it_const_methods Binary::methods(void) const {
+it_const_methods Binary::methods() const {
   return this->methods_;
 }
 
-it_methods Binary::methods(void) {
+it_methods Binary::methods() {
   return this->methods_;
 }
 
-dex2dex_info_t Binary::dex2dex_info(void) const {
+dex2dex_info_t Binary::dex2dex_info() const {
   dex2dex_info_t info;
   for (DEX::File* dex_file : this->dex_files_) {
     info.emplace(dex_file, dex_file->dex2dex_info());
@@ -139,7 +139,7 @@ dex2dex_info_t Binary::dex2dex_info(void) const {
   return info;
 }
 
-std::string Binary::dex2dex_json_info(void) {
+std::string Binary::dex2dex_json_info() {
 
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
@@ -170,7 +170,7 @@ bool Binary::operator!=(const Binary& rhs) const {
   return not (*this == rhs);
 }
 
-Binary::~Binary(void) {
+Binary::~Binary() {
 
   for (DexFile* file : this->oat_dex_files_) {
     delete file;

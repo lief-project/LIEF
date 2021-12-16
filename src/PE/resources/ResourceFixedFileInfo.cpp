@@ -26,10 +26,10 @@ namespace PE {
 
 ResourceFixedFileInfo::ResourceFixedFileInfo(const ResourceFixedFileInfo&) = default;
 ResourceFixedFileInfo& ResourceFixedFileInfo::operator=(const ResourceFixedFileInfo&) = default;
-ResourceFixedFileInfo::~ResourceFixedFileInfo(void) = default;
+ResourceFixedFileInfo::~ResourceFixedFileInfo() = default;
 
 
-ResourceFixedFileInfo::ResourceFixedFileInfo(void) :
+ResourceFixedFileInfo::ResourceFixedFileInfo() :
   signature_{0xFEEF04BD},
   struct_version_{0},
   file_version_MS_{0},
@@ -63,55 +63,55 @@ ResourceFixedFileInfo::ResourceFixedFileInfo(const pe_resource_fixed_file_info* 
 {}
 
 
-uint32_t ResourceFixedFileInfo::signature(void) const {
+uint32_t ResourceFixedFileInfo::signature() const {
   return this->signature_;
 }
 
-uint32_t ResourceFixedFileInfo::struct_version(void) const {
+uint32_t ResourceFixedFileInfo::struct_version() const {
   return this->struct_version_;
 }
 
-uint32_t ResourceFixedFileInfo::file_version_MS(void) const {
+uint32_t ResourceFixedFileInfo::file_version_MS() const {
   return this->file_version_MS_;
 }
 
-uint32_t ResourceFixedFileInfo::file_version_LS(void) const {
+uint32_t ResourceFixedFileInfo::file_version_LS() const {
   return this->file_version_LS_;
 }
 
-uint32_t ResourceFixedFileInfo::product_version_MS(void) const {
+uint32_t ResourceFixedFileInfo::product_version_MS() const {
   return this->product_version_MS_;
 }
 
-uint32_t ResourceFixedFileInfo::product_version_LS(void) const {
+uint32_t ResourceFixedFileInfo::product_version_LS() const {
   return this->product_version_LS_;
 }
 
-uint32_t ResourceFixedFileInfo::file_flags_mask(void) const {
+uint32_t ResourceFixedFileInfo::file_flags_mask() const {
   return this->file_flags_mask_;
 }
 
-uint32_t ResourceFixedFileInfo::file_flags(void) const {
+uint32_t ResourceFixedFileInfo::file_flags() const {
   return this->file_flags_;
 }
 
-FIXED_VERSION_OS ResourceFixedFileInfo::file_os(void) const {
+FIXED_VERSION_OS ResourceFixedFileInfo::file_os() const {
   return this->file_os_;
 }
 
-FIXED_VERSION_FILE_TYPES ResourceFixedFileInfo::file_type(void) const {
+FIXED_VERSION_FILE_TYPES ResourceFixedFileInfo::file_type() const {
   return this->file_type_;
 }
 
-FIXED_VERSION_FILE_SUB_TYPES ResourceFixedFileInfo::file_subtype(void) const {
+FIXED_VERSION_FILE_SUB_TYPES ResourceFixedFileInfo::file_subtype() const {
   return this->file_subtype_;
 }
 
-uint32_t ResourceFixedFileInfo::file_date_MS(void) const {
+uint32_t ResourceFixedFileInfo::file_date_MS() const {
   return this->file_date_MS_;
 }
 
-uint32_t ResourceFixedFileInfo::file_date_LS(void) const {
+uint32_t ResourceFixedFileInfo::file_date_LS() const {
   return this->file_date_LS_;
 }
 

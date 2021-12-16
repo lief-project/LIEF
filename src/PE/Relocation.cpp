@@ -45,14 +45,14 @@ Relocation& Relocation::operator=(Relocation other) {
 }
 
 
-Relocation::~Relocation(void) {
+Relocation::~Relocation() {
   for (RelocationEntry* entry : this->entries_) {
     delete entry;
   }
 }
 
 
-Relocation::Relocation(void) :
+Relocation::Relocation() :
   block_size_{0},
   virtual_address_{0},
   entries_{}
@@ -73,21 +73,21 @@ void Relocation::swap(Relocation& other) {
 }
 
 
-uint32_t Relocation::virtual_address(void) const {
+uint32_t Relocation::virtual_address() const {
   return this->virtual_address_;
 }
 
 
-uint32_t Relocation::block_size(void) const {
+uint32_t Relocation::block_size() const {
   return this->block_size_;
 }
 
-it_const_relocation_entries Relocation::entries(void) const {
+it_const_relocation_entries Relocation::entries() const {
   return this->entries_;
 }
 
 
-it_relocation_entries Relocation::entries(void) {
+it_relocation_entries Relocation::entries() {
   return this->entries_;
 }
 

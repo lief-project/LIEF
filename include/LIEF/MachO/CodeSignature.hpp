@@ -32,23 +32,23 @@ struct linkedit_data_command;
 class LIEF_API CodeSignature : public LoadCommand {
   friend class BinaryParser;
   public:
-  CodeSignature(void);
+  CodeSignature();
   CodeSignature(const linkedit_data_command *cmd);
 
   CodeSignature& operator=(const CodeSignature& copy);
   CodeSignature(const CodeSignature& copy);
 
-  virtual CodeSignature* clone(void) const override;
+  virtual CodeSignature* clone() const override;
 
-  uint32_t data_offset(void) const;
+  uint32_t data_offset() const;
 
-  uint32_t data_size(void) const;
+  uint32_t data_size() const;
 
 
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
-  virtual ~CodeSignature(void);
+  virtual ~CodeSignature();
 
   bool operator==(const CodeSignature& rhs) const;
   bool operator!=(const CodeSignature& rhs) const;

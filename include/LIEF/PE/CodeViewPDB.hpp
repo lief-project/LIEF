@@ -30,20 +30,20 @@ class LIEF_API CodeViewPDB : public CodeView {
   public:
   using signature_t = std::array<uint8_t, 16>;
 
-  CodeViewPDB(void);
+  CodeViewPDB();
   CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig, uint32_t age, const std::string& filename);
 
   CodeViewPDB(const CodeViewPDB&);
   CodeViewPDB& operator=(const CodeViewPDB&);
 
-  virtual CodeViewPDB* clone(void) const override;
+  virtual CodeViewPDB* clone() const override;
 
   static CodeViewPDB from_pdb70(signature_t sig, uint32_t age, const std::string& filename);
   static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age, const std::string& filename);
 
-  signature_t signature(void) const;
-  uint32_t age(void) const;
-  const std::string& filename(void) const;
+  signature_t signature() const;
+  uint32_t age() const;
+  const std::string& filename() const;
 
   void signature(uint32_t signature);
   void signature(signature_t signature);
@@ -57,7 +57,7 @@ class LIEF_API CodeViewPDB : public CodeView {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
 
-  virtual ~CodeViewPDB(void);
+  virtual ~CodeViewPDB();
 
   private:
   signature_t signature_;

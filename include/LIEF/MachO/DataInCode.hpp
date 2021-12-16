@@ -39,26 +39,26 @@ class LIEF_API DataInCode : public LoadCommand {
   using it_entries       = ref_iterator<entries_t&>;
 
   public:
-  DataInCode(void);
+  DataInCode();
   DataInCode(const linkedit_data_command *cmd);
 
   DataInCode& operator=(const DataInCode&);
   DataInCode(const DataInCode&);
 
-  virtual DataInCode* clone(void) const override;
+  virtual DataInCode* clone() const override;
 
-  uint32_t data_offset(void) const;
-  uint32_t data_size(void) const;
+  uint32_t data_offset() const;
+  uint32_t data_size() const;
 
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
   DataInCode& add(const DataCodeEntry& entry);
 
-  it_const_entries entries(void) const;
-  it_entries entries(void);
+  it_const_entries entries() const;
+  it_entries entries();
 
-  virtual ~DataInCode(void);
+  virtual ~DataInCode();
 
   bool operator==(const DataInCode& rhs) const;
   bool operator!=(const DataInCode& rhs) const;

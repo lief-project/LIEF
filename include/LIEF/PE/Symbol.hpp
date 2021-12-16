@@ -41,25 +41,25 @@ class LIEF_API Symbol : public LIEF::Symbol {
   public:
   Symbol(const pe_symbol* header);
 
-  Symbol(void);
-  virtual ~Symbol(void);
+  Symbol();
+  virtual ~Symbol();
 
   Symbol& operator=(Symbol other);
   Symbol(const Symbol& copy);
   void swap(Symbol& other);
 
-  int16_t              section_number(void) const;
-  uint16_t             type(void) const;
-  SYMBOL_BASE_TYPES    base_type(void) const;
-  SYMBOL_COMPLEX_TYPES complex_type(void) const;
-  SYMBOL_STORAGE_CLASS storage_class(void) const;
-  uint8_t              numberof_aux_symbols(void) const;
-  std::wstring         wname(void) const;
-  Section&             section(void);
-  const Section&       section(void) const;
+  int16_t              section_number() const;
+  uint16_t             type() const;
+  SYMBOL_BASE_TYPES    base_type() const;
+  SYMBOL_COMPLEX_TYPES complex_type() const;
+  SYMBOL_STORAGE_CLASS storage_class() const;
+  uint8_t              numberof_aux_symbols() const;
+  std::wstring         wname() const;
+  Section&             section();
+  const Section&       section() const;
 
   //! @brief ``True`` if symbols are located in a section
-  bool has_section(void) const;
+  bool has_section() const;
 
   virtual void accept(Visitor& visitor) const override;
 

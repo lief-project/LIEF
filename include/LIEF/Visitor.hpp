@@ -211,10 +211,10 @@ LIEF_ART_FORWARD(Header)
 
 class LIEF_API Visitor {
   public:
-  Visitor(void);
-  virtual ~Visitor(void);
+  Visitor();
+  virtual ~Visitor();
 
-  virtual void operator()(void);
+  virtual void operator()();
 
   template<typename Arg1, typename... Args>
   void operator()(Arg1&& arg1, Args&&... args);

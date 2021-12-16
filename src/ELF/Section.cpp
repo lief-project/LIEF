@@ -40,7 +40,7 @@ Section operator"" _section(const char* name) {
   return Section{name};
 }
 
-Section::~Section(void) = default;
+Section::~Section() = default;
 
 
 Section::Section(const Elf64_Shdr* header) :
@@ -81,7 +81,7 @@ Section::Section(const Elf32_Shdr* header) :
   this->size_            = header->sh_size;
 }
 
-Section::Section(void) :
+Section::Section() :
   LIEF::Section{},
   name_idx_{0},
   type_{ELF_SECTION_TYPES::SHT_PROGBITS},
@@ -169,15 +169,15 @@ void Section::swap(Section& other) {
   std::swap(this->content_c_,      other.content_c_);
 }
 
-uint32_t Section::name_idx(void) const {
+uint32_t Section::name_idx() const {
   return this->name_idx_;
 }
 
-ELF_SECTION_TYPES Section::type(void) const {
+ELF_SECTION_TYPES Section::type() const {
   return this->type_;
 }
 
-uint64_t Section::flags(void) const {
+uint64_t Section::flags() const {
   return this->flags_;
 }
 
@@ -197,31 +197,31 @@ bool Section::has(const Segment& segment) const {
   return it_segment != std::end(this->segments_);
 }
 
-uint64_t Section::file_offset(void) const {
+uint64_t Section::file_offset() const {
   return this->offset();
 }
 
-uint64_t Section::original_size(void) const {
+uint64_t Section::original_size() const {
   return this->original_size_;
 }
 
-uint64_t Section::information(void) const {
+uint64_t Section::information() const {
   return this->info_;
 }
 
-uint64_t Section::entry_size(void) const {
+uint64_t Section::entry_size() const {
   return this->entry_size_;
 }
 
-uint64_t Section::alignment(void) const {
+uint64_t Section::alignment() const {
   return this->address_align_;
 }
 
-uint64_t Section::size(void) const {
+uint64_t Section::size() const {
   return this->size_;
 }
 
-uint64_t Section::offset(void) const {
+uint64_t Section::offset() const {
   return this->offset_;
 }
 
@@ -247,7 +247,7 @@ void Section::offset(uint64_t offset) {
   this->offset_ = offset;
 }
 
-std::vector<uint8_t> Section::content(void) const {
+std::vector<uint8_t> Section::content() const {
   if (this->size() == 0) {
     return {};
   }
@@ -265,11 +265,11 @@ std::vector<uint8_t> Section::content(void) const {
   return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
 }
 
-uint32_t Section::link(void) const {
+uint32_t Section::link() const {
   return this->link_;
 }
 
-std::set<ELF_SECTION_FLAGS> Section::flags_list(void) const {
+std::set<ELF_SECTION_FLAGS> Section::flags_list() const {
   std::set<ELF_SECTION_FLAGS> flags;
   std::copy_if(
       std::begin(section_flags_array),
@@ -375,7 +375,7 @@ void Section::remove(ELF_SECTION_FLAGS flag) {
   this->flags(this->flags() & (~ static_cast<uint64_t>(flag)));
 }
 
-void Section::clear_flags(void) {
+void Section::clear_flags() {
   this->flags(0);
 }
 
@@ -400,11 +400,11 @@ void Section::entry_size(uint64_t entry_size) {
 }
 
 
-it_segments Section::segments(void) {
+it_segments Section::segments() {
   return this->segments_;
 }
 
-it_const_segments Section::segments(void) const {
+it_const_segments Section::segments() const {
   return this->segments_;
 }
 

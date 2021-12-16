@@ -35,15 +35,15 @@ class LIEF_API DynamicEntry : public Object {
 
   DynamicEntry(const Elf64_Dyn* header);
   DynamicEntry(const Elf32_Dyn* header);
-  DynamicEntry(void);
+  DynamicEntry();
   DynamicEntry(DYNAMIC_TAGS tag, uint64_t value);
 
   DynamicEntry& operator=(const DynamicEntry&);
   DynamicEntry(const DynamicEntry&);
-  virtual ~DynamicEntry(void);
+  virtual ~DynamicEntry();
 
-  DYNAMIC_TAGS tag(void) const;
-  uint64_t value(void) const;
+  DYNAMIC_TAGS tag() const;
+  uint64_t value() const;
 
   void tag(DYNAMIC_TAGS tag);
   void value(uint64_t value);

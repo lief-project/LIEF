@@ -39,21 +39,21 @@ class LIEF_API DataDirectory : public Object {
   friend class Binary;
 
   public:
-  DataDirectory(void);
+  DataDirectory();
   DataDirectory(DATA_DIRECTORY type);
   DataDirectory(const pe_data_directory *header, DATA_DIRECTORY type);
 
   DataDirectory(const DataDirectory& other);
   DataDirectory& operator=(DataDirectory other);
   void swap(DataDirectory& other);
-  virtual ~DataDirectory(void);
+  virtual ~DataDirectory();
 
-  uint32_t       RVA(void) const;
-  uint32_t       size(void) const;
-  Section&       section(void);
-  const Section& section(void) const;
-  DATA_DIRECTORY type(void) const;
-  bool           has_section(void) const;
+  uint32_t       RVA() const;
+  uint32_t       size() const;
+  Section&       section();
+  const Section& section() const;
+  DATA_DIRECTORY type() const;
+  bool           has_section() const;
 
   void size(uint32_t size);
   void RVA(uint32_t rva);

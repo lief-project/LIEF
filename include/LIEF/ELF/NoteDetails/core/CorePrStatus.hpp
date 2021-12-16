@@ -81,52 +81,52 @@ class LIEF_API CorePrStatus : public NoteDetails {
   public:
   static CorePrStatus make(Note& note);
 
-  virtual CorePrStatus* clone(void) const override;
+  virtual CorePrStatus* clone() const override;
 
   //! Info associated with the signal
-  const Elf_siginfo& siginfo(void) const;
+  const Elf_siginfo& siginfo() const;
 
   //! Current Signal
-  uint16_t current_sig(void) const;
+  uint16_t current_sig() const;
 
   //! Set of pending signals
-  uint64_t sigpend(void) const;
+  uint64_t sigpend() const;
 
   //! Set of held signals
-  uint64_t sighold(void) const;
+  uint64_t sighold() const;
 
   //! Process ID
-  int32_t pid(void) const;
+  int32_t pid() const;
 
   //! Process parent ID
-  int32_t ppid(void) const;
+  int32_t ppid() const;
 
   //! Process group ID
-  int32_t pgrp(void) const;
+  int32_t pgrp() const;
 
   //! Process session ID
-  int32_t sid(void) const;
+  int32_t sid() const;
 
   //! User time
-  Elf64_timeval utime(void) const;
+  Elf64_timeval utime() const;
 
   //! System time
-  Elf64_timeval stime(void) const;
+  Elf64_timeval stime() const;
 
   //! Cumulative user time
-  Elf64_timeval cutime(void) const;
+  Elf64_timeval cutime() const;
 
   //! Cumulative system time
-  Elf64_timeval cstime(void) const;
+  Elf64_timeval cstime() const;
 
   //! GP registers state
-  const reg_context_t& reg_context(void) const;
+  const reg_context_t& reg_context() const;
 
   //! Return the program counter
-  uint64_t pc(void) const;
+  uint64_t pc() const;
 
   //! Return the stack pointer
-  uint64_t sp(void) const;
+  uint64_t sp() const;
 
   //! Get register value. If ``error`` is set,
   //! this function and the register exists, the function set the boolean value to ``false``
@@ -168,24 +168,24 @@ class LIEF_API CorePrStatus : public NoteDetails {
 
   virtual void accept(Visitor& visitor) const override;
 
-  virtual ~CorePrStatus(void);
+  virtual ~CorePrStatus();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrStatus& note);
 
   protected:
   template <typename ELF_T>
-  LIEF_LOCAL void parse_(void);
+  LIEF_LOCAL void parse_();
 
   template <typename ELF_T>
-  LIEF_LOCAL void build_(void);
+  LIEF_LOCAL void build_();
 
-  virtual void parse(void) override;
-  virtual void build(void) override;
+  virtual void parse() override;
+  virtual void build() override;
 
   private:
   CorePrStatus(Note& note);
 
-  std::pair<size_t, size_t> reg_enum_range(void) const;
+  std::pair<size_t, size_t> reg_enum_range() const;
 
   Elf_siginfo siginfo_;
   uint16_t    cursig_;

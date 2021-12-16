@@ -42,24 +42,24 @@ class LIEF_API File : public Object {
 
 
   //! Version of the current DEX file
-  dex_version_t version(void) const;
+  dex_version_t version() const;
 
   //! Name of this file
-  const std::string& name(void) const;
+  const std::string& name() const;
 
   void name(const std::string& name);
 
   //! Location of this file
-  const std::string& location(void) const;
+  const std::string& location() const;
   void location(const std::string& location);
 
   //! DEX header
-  const Header& header(void) const;
-  Header& header(void);
+  const Header& header() const;
+  Header& header();
 
   //! **All** classes used in the DEX file
-  it_const_classes classes(void) const;
-  it_classes classes(void);
+  it_const_classes classes() const;
+  it_classes classes();
 
   //! Check if the given class name exists
   bool has_class(const std::string& class_name) const;
@@ -76,10 +76,10 @@ class LIEF_API File : public Object {
 
 
   //! De-optimize information
-  dex2dex_info_t dex2dex_info(void) const;
+  dex2dex_info_t dex2dex_info() const;
 
   //! De-optimize information as JSON
-  std::string dex2dex_json_info(void);
+  std::string dex2dex_json_info();
 
   //bool has_method(const std::string& method_name) const;
 
@@ -88,28 +88,28 @@ class LIEF_API File : public Object {
   //Method& get_method(const std::string& method_name);
 
   //! **All** Methods used in this DEX
-  it_const_methods methods(void) const;
-  it_methods methods(void);
+  it_const_methods methods() const;
+  it_methods methods();
 
   //! **All** Fields used in this DEX
-  it_const_fields fields(void) const;
-  it_fields fields(void);
+  it_const_fields fields() const;
+  it_fields fields();
 
   //! String pool
-  it_const_strings strings(void) const;
-  it_strings strings(void);
+  it_const_strings strings() const;
+  it_strings strings();
 
   //! Type pool
-  it_const_types types(void) const;
-  it_types types(void);
+  it_const_types types() const;
+  it_types types();
 
   //! Prototype pool
-  it_const_protypes prototypes(void) const;
-  it_protypes prototypes(void);
+  it_const_protypes prototypes() const;
+  it_protypes prototypes();
 
   //! DEX Map
-  const MapList& map(void) const;
-  MapList& map(void);
+  const MapList& map() const;
+  MapList& map();
 
 
   //! Extract the current dex file and deoptimize it
@@ -122,12 +122,12 @@ class LIEF_API File : public Object {
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File(void);
+  virtual ~File();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& file);
 
   private:
-  File(void);
+  File();
 
   void add_class(Class* cls);
 

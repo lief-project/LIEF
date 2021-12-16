@@ -25,7 +25,7 @@ PKCS9AtSequenceNumber::PKCS9AtSequenceNumber() :
 PKCS9AtSequenceNumber::PKCS9AtSequenceNumber(const PKCS9AtSequenceNumber&) = default;
 PKCS9AtSequenceNumber& PKCS9AtSequenceNumber::operator=(const PKCS9AtSequenceNumber&) = default;
 
-std::unique_ptr<Attribute> PKCS9AtSequenceNumber::clone(void) const {
+std::unique_ptr<Attribute> PKCS9AtSequenceNumber::clone() const {
   return std::unique_ptr<Attribute>(new PKCS9AtSequenceNumber{*this});
 }
 

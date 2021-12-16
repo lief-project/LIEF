@@ -26,11 +26,11 @@
 namespace LIEF {
 namespace PE {
 
-Header::~Header(void) = default;
+Header::~Header() = default;
 Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&) = default;
 
-Header::Header(void) :
+Header::Header() :
   machine_{MACHINE_TYPES::IMAGE_FILE_MACHINE_UNKNOWN},
   numberOfSections_{0},
   timeDateStamp_{0},
@@ -62,42 +62,42 @@ Header::Header(const pe_header *header) :
       std::begin(this->signature_));
 }
 
-const Header::signature_t& Header::signature(void) const {
+const Header::signature_t& Header::signature() const {
   return this->signature_;
 }
 
 
-MACHINE_TYPES Header::machine(void) const {
+MACHINE_TYPES Header::machine() const {
   return this->machine_;
 }
 
 
-uint16_t Header::numberof_sections(void) const {
+uint16_t Header::numberof_sections() const {
   return this->numberOfSections_;
 }
 
 
-uint32_t Header::time_date_stamp(void) const {
+uint32_t Header::time_date_stamp() const {
   return this->timeDateStamp_;
 }
 
 
-uint32_t Header::pointerto_symbol_table(void) const {
+uint32_t Header::pointerto_symbol_table() const {
   return this->pointerToSymbolTable_;
 }
 
 
-uint32_t Header::numberof_symbols(void) const {
+uint32_t Header::numberof_symbols() const {
   return this->numberOfSymbols_;
 }
 
 
-uint16_t Header::sizeof_optional_header(void) const {
+uint16_t Header::sizeof_optional_header() const {
   return this->sizeOfOptionalHeader_;
 }
 
 
-HEADER_CHARACTERISTICS Header::characteristics(void) const {
+HEADER_CHARACTERISTICS Header::characteristics() const {
   return this->characteristics_;
 }
 
@@ -107,7 +107,7 @@ bool Header::has_characteristic(HEADER_CHARACTERISTICS c) const {
 }
 
 
-std::set<HEADER_CHARACTERISTICS> Header::characteristics_list(void) const {
+std::set<HEADER_CHARACTERISTICS> Header::characteristics_list() const {
 
   std::set<HEADER_CHARACTERISTICS> charac;
   std::copy_if(

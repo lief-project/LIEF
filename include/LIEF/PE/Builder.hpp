@@ -42,12 +42,12 @@ class LIEF_API Builder {
   public:
   friend struct ::Profiler;
 
-    Builder(void) = delete;
+    Builder() = delete;
     Builder(Binary* pe_binary);
-    ~Builder(void);
+    ~Builder();
 
     //! @brief Perform the build process
-    void build(void);
+    void build();
 
     //! @brief Construct a ``jmp [address] @ from``.
     //!
@@ -87,7 +87,7 @@ class LIEF_API Builder {
     Builder& build_dos_stub(bool flag);
 
     //! @brief Return the build result
-    const std::vector<uint8_t>& get_build(void);
+    const std::vector<uint8_t>& get_build();
 
     //! @brief Write the build result into the ``output`` file
     void write(const std::string& filename) const;
@@ -108,17 +108,17 @@ class LIEF_API Builder {
     //! @brief Rebuild Import Table
     // TODO: Bug with x86
     template<typename PE_T>
-    void build_import_table(void);
+    void build_import_table();
 
     template<typename PE_T>
-    void build_tls(void);
+    void build_tls();
 
-    void build_symbols(void);
-    void build_string_table(void);
-    void build_relocation(void);
-    void build_resources(void);
-    void build_overlay(void);
-    void build_dos_stub(void);
+    void build_symbols();
+    void build_string_table();
+    void build_relocation();
+    void build_resources();
+    void build_overlay();
+    void build_dos_stub();
 
     void compute_resources_size(
         ResourceNode& node,

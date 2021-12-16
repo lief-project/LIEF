@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionDefinition::SymbolVersionDefinition(void) :
+SymbolVersionDefinition::SymbolVersionDefinition() :
   version_{1},
   flags_{0},
   ndx_{0},
@@ -71,7 +71,7 @@ SymbolVersionDefinition& SymbolVersionDefinition::operator=(SymbolVersionDefinit
   return *this;
 }
 
-SymbolVersionDefinition::~SymbolVersionDefinition(void) {
+SymbolVersionDefinition::~SymbolVersionDefinition() {
   for (SymbolVersionAux* sva : this->symbol_version_aux_) {
     delete sva;
   }
@@ -86,27 +86,27 @@ void SymbolVersionDefinition::swap(SymbolVersionDefinition& other) {
 }
 
 
-uint16_t SymbolVersionDefinition::version(void) const {
+uint16_t SymbolVersionDefinition::version() const {
   return this->version_;
 }
 
-uint16_t SymbolVersionDefinition::flags(void) const {
+uint16_t SymbolVersionDefinition::flags() const {
   return this->flags_;
 }
 
-uint16_t SymbolVersionDefinition::ndx(void) const {
+uint16_t SymbolVersionDefinition::ndx() const {
   return this->ndx_;
 }
 
-uint32_t SymbolVersionDefinition::hash(void) const {
+uint32_t SymbolVersionDefinition::hash() const {
   return this->hash_;
 }
 
-it_symbols_version_aux SymbolVersionDefinition::symbols_aux(void) {
+it_symbols_version_aux SymbolVersionDefinition::symbols_aux() {
   return this->symbol_version_aux_;
 }
 
-it_const_symbols_version_aux SymbolVersionDefinition::symbols_aux(void) const {
+it_const_symbols_version_aux SymbolVersionDefinition::symbols_aux() const {
   return this->symbol_version_aux_;
 
 }

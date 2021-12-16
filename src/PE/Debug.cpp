@@ -67,7 +67,7 @@ void Debug::swap(Debug& other) {
   std::swap(this->pogo_,              other.pogo_);
 }
 
-Debug::~Debug(void) {
+Debug::~Debug() {
   if (this->code_view_ != nullptr) {
     delete this->code_view_;
   }
@@ -77,7 +77,7 @@ Debug::~Debug(void) {
   }
 }
 
-Debug::Debug(void) :
+Debug::Debug() :
   characteristics_{0},
   timestamp_{0},
   majorversion_{0},
@@ -105,44 +105,44 @@ Debug::Debug(const pe_debug* debug_s) :
 
 
 
-uint32_t Debug::characteristics(void) const {
+uint32_t Debug::characteristics() const {
   return this->characteristics_;
 }
 
-uint32_t Debug::timestamp(void) const {
+uint32_t Debug::timestamp() const {
   return this->timestamp_;
 }
 
-uint16_t Debug::major_version(void) const {
+uint16_t Debug::major_version() const {
   return this->majorversion_;
 }
 
-uint16_t Debug::minor_version(void) const {
+uint16_t Debug::minor_version() const {
   return this->minorversion_;
 }
 
-DEBUG_TYPES Debug::type(void) const {
+DEBUG_TYPES Debug::type() const {
   return this->type_;
 }
 
-uint32_t Debug::sizeof_data(void) const {
+uint32_t Debug::sizeof_data() const {
   return this->sizeof_data_;
 }
 
-uint32_t Debug::addressof_rawdata(void) const {
+uint32_t Debug::addressof_rawdata() const {
   return this->addressof_rawdata_;
 }
 
-uint32_t Debug::pointerto_rawdata(void) const {
+uint32_t Debug::pointerto_rawdata() const {
   return this->pointerto_rawdata_;
 }
 
 
-bool Debug::has_code_view(void) const {
+bool Debug::has_code_view() const {
   return this->code_view_ != nullptr;
 }
 
-const CodeView& Debug::code_view(void) const {
+const CodeView& Debug::code_view() const {
   if (not this->has_code_view()) {
     throw not_found("Can't find code view");
   }
@@ -151,16 +151,16 @@ const CodeView& Debug::code_view(void) const {
 
 }
 
-CodeView& Debug::code_view(void) {
+CodeView& Debug::code_view() {
   return const_cast<CodeView&>(static_cast<const Debug*>(this)->code_view());
 }
 
 
-bool Debug::has_pogo(void) const {
+bool Debug::has_pogo() const {
   return this->pogo_ != nullptr;
 }
 
-const Pogo& Debug::pogo(void) const {
+const Pogo& Debug::pogo() const {
   if (not this->has_pogo()) {
     throw not_found("Can't find pogo");
   }
@@ -169,7 +169,7 @@ const Pogo& Debug::pogo(void) const {
 
 }
 
-Pogo& Debug::pogo(void) {
+Pogo& Debug::pogo() {
   return const_cast<Pogo&>(static_cast<const Debug*>(this)->pogo());
 }
 

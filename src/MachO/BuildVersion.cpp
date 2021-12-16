@@ -26,7 +26,7 @@ namespace LIEF {
 namespace MachO {
 
 
-BuildToolVersion::BuildToolVersion(void) = default;
+BuildToolVersion::BuildToolVersion() = default;
 BuildToolVersion::BuildToolVersion(const build_tool_version& tool) :
   tool_{static_cast<BuildToolVersion::TOOLS>(tool.tool)},
   version_{{
@@ -36,15 +36,15 @@ BuildToolVersion::BuildToolVersion(const build_tool_version& tool) :
   }}
 {}
 
-BuildToolVersion::TOOLS BuildToolVersion::tool(void) const {
+BuildToolVersion::TOOLS BuildToolVersion::tool() const {
   return this->tool_;
 }
 
-BuildToolVersion::version_t BuildToolVersion::version(void) const {
+BuildToolVersion::version_t BuildToolVersion::version() const {
   return this->version_;
 }
 
-BuildToolVersion::~BuildToolVersion(void) = default;
+BuildToolVersion::~BuildToolVersion() = default;
 
 bool BuildToolVersion::operator==(const BuildToolVersion& rhs) const {
   size_t hash_lhs = Hash::hash(*this);
@@ -75,10 +75,10 @@ std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool) {
 // Build Version
 // =============
 
-BuildVersion::BuildVersion(void) = default;
+BuildVersion::BuildVersion() = default;
 BuildVersion& BuildVersion::operator=(const BuildVersion&) = default;
 BuildVersion::BuildVersion(const BuildVersion&) = default;
-BuildVersion::~BuildVersion(void) = default;
+BuildVersion::~BuildVersion() = default;
 
 BuildVersion::BuildVersion(const build_version_command *version_cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
@@ -96,12 +96,12 @@ BuildVersion::BuildVersion(const build_version_command *version_cmd) :
 {
 }
 
-BuildVersion* BuildVersion::clone(void) const {
+BuildVersion* BuildVersion::clone() const {
   return new BuildVersion(*this);
 }
 
 
-BuildVersion::version_t BuildVersion::minos(void) const {
+BuildVersion::version_t BuildVersion::minos() const {
   return this->minos_;
 }
 
@@ -109,7 +109,7 @@ void BuildVersion::minos(BuildVersion::version_t version) {
   this->minos_ = version;
 }
 
-BuildVersion::version_t BuildVersion::sdk(void) const {
+BuildVersion::version_t BuildVersion::sdk() const {
   return this->sdk_;
 }
 
@@ -117,7 +117,7 @@ void BuildVersion::sdk(BuildVersion::version_t version) {
   this->sdk_ = version;
 }
 
-BuildVersion::PLATFORMS BuildVersion::platform(void) const {
+BuildVersion::PLATFORMS BuildVersion::platform() const {
   return this->platform_;
 }
 
@@ -126,7 +126,7 @@ void BuildVersion::platform(BuildVersion::PLATFORMS plat) {
 }
 
 
-BuildVersion::tools_list_t BuildVersion::tools(void) const {
+BuildVersion::tools_list_t BuildVersion::tools() const {
   return this->tools_;
 }
 

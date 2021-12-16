@@ -30,13 +30,13 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryLibrary(void);
+  DynamicEntryLibrary();
   DynamicEntryLibrary(const std::string& name);
 
   DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
   DynamicEntryLibrary(const DynamicEntryLibrary&);
 
-  const std::string& name(void) const;
+  const std::string& name() const;
   void name(const std::string& name);
 
   virtual void accept(Visitor& visitor) const override;
