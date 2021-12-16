@@ -7,8 +7,8 @@
     <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg?style=flat-square">
   </a>
   &nbsp;
-  <a href="https://travis-ci.com/lief-project/LIEF">
-    <img alt="Linux CI status" src="https://img.shields.io/travis/com/lief-project/LIEF/master?label=Linux%20x86-64&logo=travis">
+  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+x86-64%22">
+    <img alt="Linux x86-64 CI status" src="https://img.shields.io/github/workflow/status/lief-project/LIEF/Linux%20x86-64/master?label=Linux%20x86-64&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+AArch64%22">
