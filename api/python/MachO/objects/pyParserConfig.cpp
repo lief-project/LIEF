@@ -25,17 +25,17 @@ namespace MachO {
 template<>
 void create<ParserConfig>(py::module& m) {
 
-  py::class_<ParserConfig>(m, "ParserConfig", "Configuration of MachO's parser")
+  py::class_<ParserConfig>(m, "ParserConfig", "Configuration of the MachO parser")
     .def(py::init<>())
-    .def_property("parse_dyldinfo_deeply",
-        static_cast<bool (ParserConfig::*)(void) const>(&ParserConfig::parse_dyldinfo_deeply),
-        static_cast<ParserConfig& (ParserConfig::*)(bool)>(&ParserConfig::parse_dyldinfo_deeply),
-        "If set to ``True``, parse deeply the " RST_CLASS_REF(lief.MachO.DyldInfo) " "
-        "structure. It includes Exports, Bindings and Rebases")
+    .def_readwrite("parse_dyld_exports",  &ParserConfig::parse_dyld_exports)
+    .def_readwrite("parse_dyld_bindings", &ParserConfig::parse_dyld_bindings)
+    .def_readwrite("parse_dyld_rebases",  &ParserConfig::parse_dyld_rebases)
+
+    .def("full_dyldinfo",  &ParserConfig::full_dyldinfo)
 
     .def_property_readonly_static("deep",
       [] (py::object /* self */) { return ParserConfig::deep(); },
-      "foobar")
+      "")
 
     .def_property_readonly_static("quick",
       [] (py::object /* self */) { return ParserConfig::quick(); },

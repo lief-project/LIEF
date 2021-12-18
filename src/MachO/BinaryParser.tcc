@@ -81,24 +81,30 @@ void BinaryParser::parse() {
     }
   }
 
-  if (this->binary_->has_dyld_info() and this->config_.parse_dyldinfo_deeply()) {
+  if (this->binary_->has_dyld_info()) {
 
-    try {
-      this->parse_dyldinfo_binds<MACHO_T>();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
+    if (config_.parse_dyld_bindings) {
+      try {
+        this->parse_dyldinfo_binds<MACHO_T>();
+      } catch (const exception& e) {
+        LIEF_WARN("{}", e.what());
+      }
     }
 
-    try {
-      this->parse_dyldinfo_export();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
+    if (config_.parse_dyld_exports) {
+      try {
+        this->parse_dyldinfo_export();
+      } catch (const exception& e) {
+        LIEF_WARN("{}", e.what());
+      }
     }
 
-    try {
-      this->parse_dyldinfo_rebases<MACHO_T>();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
+    if (config_.parse_dyld_rebases) {
+      try {
+        this->parse_dyldinfo_rebases<MACHO_T>();
+      } catch (const exception& e) {
+        LIEF_WARN("{}", e.what());
+      }
     }
 
   }

@@ -14,6 +14,17 @@ Changelog
       Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
 
 :MachO:
+  * The API to configure the MachO parser has been redesigned to provide a better granularity
+
+    .. code-block:: python
+
+      config = lief.MachO.ParserConfig()
+      config.parse_dyld_bindings = False
+      config.parse_dyld_exports  = True
+      config.parse_dyld_rebases  = False
+
+      lief.MachO.parse("/tmp/big.macho", config)
+
   * :github_user:`LucaMoroSyn` added the support for the ``LC_FILESET_ENTRY``. This command is usually
     found in kernel cache files
   * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol

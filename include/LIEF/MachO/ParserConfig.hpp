@@ -20,13 +20,7 @@
 namespace LIEF {
 namespace MachO {
 
-class LIEF_API ParserConfig {
-  public:
-  ParserConfig();
-  ParserConfig& operator=(const ParserConfig&);
-  ParserConfig(const ParserConfig&);
-  ~ParserConfig();
-
+struct LIEF_API ParserConfig {
   //! @brief Return a configuration so that the all objects supported by
   //! LIEF are parsed
   //!
@@ -45,13 +39,11 @@ class LIEF_API ParserConfig {
   //! parsed.
   //!
   //! @warning Enabling this flag can slow down the parsing
-  ParserConfig& parse_dyldinfo_deeply(bool flag);
+  ParserConfig& full_dyldinfo(bool flag);
 
-  //! @brief Whether or not bindings, exports, and rebases are parsed
-  bool parse_dyldinfo_deeply() const;
-
-  private:
-  bool dyldinfo_deeply_;
+  bool parse_dyld_exports  = true;
+  bool parse_dyld_bindings = true;
+  bool parse_dyld_rebases  = true;
 };
 
 }

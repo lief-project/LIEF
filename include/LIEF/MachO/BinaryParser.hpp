@@ -37,7 +37,7 @@ class BinaryStream;
 namespace MachO {
 class Section;
 class Parser;
-class ParserConfig;
+struct ParserConfig;
 class DylibCommand;
 
 //! @brief Class used to parse **single** binary (i.e. **not** FAT)
