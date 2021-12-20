@@ -29,8 +29,8 @@ endif()
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 3.0.0)
-set(MBED_TLS_SHA256 SHA256=896286b2cec7a8331dc4491940b58585f5f91b9a76c281280fa21ba51d224c1b )
+set(MBED_TLS_VERSION 3.1.0)
+set(MBED_TLS_SHA256 SHA256=8ec791eaed8332c50cade2bcc17b75ae5931ac00824a761b5aa4e7586645b72b)
 set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
 set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -63,6 +63,7 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
   "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
   "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
+  "${MBEDTLS_SOURCE_DIR}/library/constant_time.c"
   "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
   "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
   "${MBEDTLS_SOURCE_DIR}/library/des.c"
@@ -115,6 +116,7 @@ set(mbedtls_src_crypto
   "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
   "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
   "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_debug_helpers_generated.c"
   "${MBEDTLS_SOURCE_DIR}/library/threading.c"
   "${MBEDTLS_SOURCE_DIR}/library/timing.c"
   "${MBEDTLS_SOURCE_DIR}/library/version.c"
@@ -145,6 +147,9 @@ set(mbedtls_src_tls
   "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
   "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
   "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_server.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_client.c"
+  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_generic.c"
 )
 
 add_library(lief_spdlog INTERFACE)

@@ -65,7 +65,7 @@ Changelog
       $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
 
 :Dependencies:
-  * Upgrade to MbedTLS 3.0.0
+  * Upgrade to MbedTLS 3.1.0
 
 
 0.11.X - Patch Releases

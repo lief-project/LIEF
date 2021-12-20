@@ -49,12 +49,12 @@ namespace {
           ret = -1;
       else
       {
-          now->private_year = lt->tm_year + 1900;
-          now->private_mon  = lt->tm_mon  + 1;
-          now->private_day  = lt->tm_mday;
-          now->private_hour = lt->tm_hour;
-          now->private_min  = lt->tm_min;
-          now->private_sec  = lt->tm_sec;
+          now->year = lt->tm_year + 1900;
+          now->mon  = lt->tm_mon  + 1;
+          now->day  = lt->tm_mday;
+          now->hour = lt->tm_hour;
+          now->min  = lt->tm_min;
+          now->sec  = lt->tm_sec;
       }
 
       return( ret );
@@ -100,12 +100,12 @@ inline x509::VERIFICATION_FLAGS from_mbedtls_err(uint32_t err) {
 
 inline x509::date_t from_mbedtls(const mbedtls_x509_time& time) {
   return {
-    time.private_year,
-    time.private_mon,
-    time.private_day,
-    time.private_hour,
-    time.private_min,
-    time.private_sec
+    time.year,
+    time.mon,
+    time.day,
+    time.hour,
+    time.min,
+    time.sec
   };
 }
 
@@ -147,8 +147,8 @@ x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
   mbedtls_x509_crt* prev = nullptr;
   mbedtls_x509_crt* current = ca.release();
   while (current != nullptr and current != prev) {
-    mbedtls_x509_crt* next = current->private_next;
-    current->private_next = nullptr;
+    mbedtls_x509_crt* next = current->next;
+    current->next = nullptr;
     crts.emplace_back(current);
     prev = current;
     current = next;
@@ -267,8 +267,8 @@ x509::x509(const x509& other) :
 {
   mbedtls_x509_crt* crt = new mbedtls_x509_crt{};
   mbedtls_x509_crt_init(crt);
-  int ret = mbedtls_x509_crt_parse_der(crt, other.x509_cert_->private_raw.private_p,
-                                       other.x509_cert_->private_raw.private_len);
+  int ret = mbedtls_x509_crt_parse_der(crt, other.x509_cert_->raw.p,
+                                       other.x509_cert_->raw.len);
   if (ret) {
     LIEF_WARN("Failed to copy x509 certificate");
     delete crt;
@@ -289,45 +289,45 @@ void x509::swap(x509& other) {
 }
 
 uint32_t x509::version() const {
-  return this->x509_cert_->private_version;
+  return this->x509_cert_->version;
 }
 
 std::vector<uint8_t> x509::serial_number() const {
-  return {this->x509_cert_->private_serial.private_p,
-          this->x509_cert_->private_serial.private_p + this->x509_cert_->private_serial.private_len};
+  return {this->x509_cert_->serial.p,
+          this->x509_cert_->serial.p + this->x509_cert_->serial.len};
 }
 
 oid_t x509::signature_algorithm() const {
   char oid_str[256];
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &this->x509_cert_->private_sig_oid);
+  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &this->x509_cert_->sig_oid);
   return oid_t{oid_str};
 
 }
 
 x509::date_t x509::valid_from() const {
-  return from_mbedtls(this->x509_cert_->private_valid_from);
+  return from_mbedtls(this->x509_cert_->valid_from);
 }
 
 x509::date_t x509::valid_to() const {
-  return from_mbedtls(this->x509_cert_->private_valid_to);
+  return from_mbedtls(this->x509_cert_->valid_to);
 }
 
 
 std::string x509::issuer() const {
   char buffer[1024];
-  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->private_issuer);
+  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->issuer);
   return buffer;
 }
 
 std::string x509::subject() const {
   char buffer[1024];
-  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->private_subject);
+  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &this->x509_cert_->subject);
   return buffer;
 }
 
 std::vector<uint8_t> x509::raw() const {
-  return {this->x509_cert_->private_raw.private_p,
-          this->x509_cert_->private_raw.private_p + this->x509_cert_->private_raw.private_len};
+  return {this->x509_cert_->raw.p,
+          this->x509_cert_->raw.p + this->x509_cert_->raw.len};
 }
 
 
@@ -342,7 +342,7 @@ x509::KEY_TYPES x509::key_type() const {
     {MBEDTLS_PK_RSASSA_PSS, KEY_TYPES::RSASSA_PSS },
   };
 
-  mbedtls_pk_context* ctx = &(this->x509_cert_->private_pk);
+  mbedtls_pk_context* ctx = &(this->x509_cert_->pk);
   mbedtls_pk_type_t type  = mbedtls_pk_get_type(ctx);
 
   auto&& it_key = mtype2asi.find(type);
@@ -355,7 +355,7 @@ x509::KEY_TYPES x509::key_type() const {
 
 std::unique_ptr<RsaInfo> x509::rsa_info() const {
   if (this->key_type() == KEY_TYPES::RSA) {
-    mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(this->x509_cert_->private_pk);
+    mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(this->x509_cert_->pk);
     return std::unique_ptr<RsaInfo>{new RsaInfo{rsa_ctx}};
   }
   return nullptr;
@@ -378,7 +378,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
     LIEF_ERR("Can't find algorithm {}", to_string(algo));
     return false;
   }
-  mbedtls_pk_context& ctx = this->x509_cert_->private_pk;
+  mbedtls_pk_context& ctx = this->x509_cert_->pk;
   int ret = mbedtls_pk_verify(&ctx,
     /* MD_HASH_ALGO       */ it_md->second,
     /* Input Hash         */ hash.data(), hash.size(),
@@ -448,7 +448,7 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
   }
   std::vector<x509> ca_list = ca; // Explicit copy since we will modify mbedtls_x509_crt->next
   for (size_t i = 0; i < ca_list.size() - 1; ++i) {
-    ca_list[i].x509_cert_->private_next = ca_list[i + 1].x509_cert_;
+    ca_list[i].x509_cert_->next = ca_list[i + 1].x509_cert_;
   }
 
   VERIFICATION_FLAGS result = VERIFICATION_FLAGS::OK;
@@ -486,7 +486,7 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
 
   // Clear the chain since ~x509() will delete each object
   for (size_t i = 0; i < ca_list.size(); ++i) {
-    ca_list[i].x509_cert_->private_next = nullptr;
+    ca_list[i].x509_cert_->next = nullptr;
   }
   return result;
 }
@@ -530,11 +530,11 @@ std::vector<oid_t> x509::ext_key_usage() const {
   if ((this->x509_cert_->private_ext_types & MBEDTLS_X509_EXT_EXTENDED_KEY_USAGE) == 0) {
     return {};
   }
-  mbedtls_asn1_sequence* current = &this->x509_cert_->private_ext_key_usage;
+  mbedtls_asn1_sequence* current = &this->x509_cert_->ext_key_usage;
   std::vector<oid_t> oids;
   while (current != nullptr) {
     char oid_str[256] = {0};
-    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->private_buf);
+    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
     if (ret != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
       LIEF_DEBUG("OID: {}", oid_str);
       oids.push_back(oid_str);
@@ -543,10 +543,10 @@ std::vector<oid_t> x509::ext_key_usage() const {
       mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
       LIEF_WARN("{}", strerr);
     }
-    if (current->private_next == current) {
+    if (current->next == current) {
       break;
     }
-    current = current->private_next;
+    current = current->next;
   }
   return oids;
 }
@@ -556,12 +556,12 @@ std::vector<oid_t> x509::certificate_policies() const {
     return {};
   }
 
-  mbedtls_x509_sequence& policies = this->x509_cert_->private_certificate_policies;
+  mbedtls_x509_sequence& policies = this->x509_cert_->certificate_policies;
   mbedtls_asn1_sequence* current = &policies;
   std::vector<oid_t> oids;
   while (current != nullptr) {
     char oid_str[256] = {0};
-    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->private_buf);
+    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
     if (ret != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
       oids.push_back(oid_str);
     } else {
@@ -569,10 +569,10 @@ std::vector<oid_t> x509::certificate_policies() const {
       mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
       LIEF_WARN("{}", strerr);
     }
-    if (current->private_next == current) {
+    if (current->next == current) {
       break;
     }
-    current = current->private_next;
+    current = current->next;
   }
   return oids;
 }
@@ -613,7 +613,7 @@ std::vector<x509::KEY_USAGE> x509::key_usage() const {
 
 std::vector<uint8_t> x509::signature() const {
   mbedtls_x509_buf sig =  this->x509_cert_->private_sig;
-  return {sig.private_p, sig.private_p + sig.private_len};
+  return {sig.p, sig.p + sig.len};
 }
 
 void x509::accept(Visitor& visitor) const {
