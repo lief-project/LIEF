@@ -50,7 +50,7 @@ const char* to_string(ARCHITECTURES e) {
     { ARCHITECTURES::ARCH_PPC,   "PPC"   },
     { ARCHITECTURES::ARCH_SPARC, "SPARC" },
     { ARCHITECTURES::ARCH_SYSZ,  "SYSZ"  },
-    { ARCHITECTURES::ARCH_XCORE, "XCODE" },
+    { ARCHITECTURES::ARCH_XCORE, "XCORE" },
     { ARCHITECTURES::ARCH_INTEL, "INTEL" },
   };
   auto   it  = enumStrings.find(e);
