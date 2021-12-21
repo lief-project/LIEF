@@ -2194,6 +2194,12 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
       }
       */
 
+    case ARCH::EM_RISCV:
+      {
+        this->patch_relocations<ARCH::EM_RISCV>(from, shift);
+        break;
+      }
+
     default:
       {
        LIEF_DEBUG("Relocations for architecture {} is not handled", to_string(arch));

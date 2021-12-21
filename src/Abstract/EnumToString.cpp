@@ -41,7 +41,7 @@ const char* to_string(OBJECT_TYPES e) {
 }
 
 const char* to_string(ARCHITECTURES e) {
-  CONST_MAP(ARCHITECTURES, const char*, 10) enumStrings {
+  CONST_MAP(ARCHITECTURES, const char*, 11) enumStrings {
     { ARCHITECTURES::ARCH_NONE,  "NONE"  },
     { ARCHITECTURES::ARCH_ARM,   "ARM"   },
     { ARCHITECTURES::ARCH_ARM64, "ARM64" },
@@ -52,6 +52,7 @@ const char* to_string(ARCHITECTURES e) {
     { ARCHITECTURES::ARCH_SYSZ,  "SYSZ"  },
     { ARCHITECTURES::ARCH_XCORE, "XCODE" },
     { ARCHITECTURES::ARCH_INTEL, "INTEL" },
+    { ARCHITECTURES::ARCH_RISCV, "RISCV" },
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
