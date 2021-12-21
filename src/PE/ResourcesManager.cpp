@@ -1351,8 +1351,11 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
         accelerator.emplace_back(
           ResourceAccelerator(&stream.read<const pe_resource_acceltableentry>()));
       }
-      if ((accelerator.back().flags() & int16_t(ACCELERATOR_FLAGS::END)) != int16_t(ACCELERATOR_FLAGS::END)) {
-        LIEF_ERR("Accelerator resource may be corrupted");
+      if (!accelerator.empty()) {
+        ResourceAccelerator& acc = accelerator.back();
+        if ((acc.flags() & int16_t(ACCELERATOR_FLAGS::END)) != int16_t(ACCELERATOR_FLAGS::END)) {
+          LIEF_ERR("Accelerator resource may be corrupted");
+        }
       }
     }
   }
