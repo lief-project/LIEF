@@ -2192,6 +2192,12 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
         this->patch_relocations<ARCH::EM_PPC64>(from, shift);
         break;
       }
+
+      case ARCH::EM_RISCV:
+        {
+          this->patch_relocations<ARCH::EM_RISCV>(from, shift);
+          break;
+        }
       */
 
     default:
