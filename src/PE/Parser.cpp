@@ -801,7 +801,7 @@ void Parser::parse_exports() {
     return;
   }
 
-
+  export_entries_t export_entries;
   // Export address table (EXTERN)
   // =============================
   std::set<size_t> corrupted_entries; // Ordinal value of corrupted entries
@@ -817,7 +817,7 @@ void Parser::parse_exports() {
       entry.ordinal_      = i + export_directory_table.OrdinalBase;
       entry.function_rva_ = value;
 
-      export_object.entries_.push_back(std::move(entry));
+      export_entries.push_back(std::move(entry));
     } else {
       ExportEntry entry;
       entry.name_         = "";
@@ -831,14 +831,14 @@ void Parser::parse_exports() {
         corrupted_entries.insert(entry.ordinal_);
       }
 
-      export_object.entries_.push_back(std::move(entry));
+      export_entries.push_back(std::move(entry));
 
     }
   }
 
 
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
-    if (ordinal_table[i] >= export_object.entries_.size()) {
+    if (ordinal_table[i] >= export_entries.size()) {
       LIEF_ERR("Export ordinal is outside the address table");
       break;
     }
@@ -846,7 +846,7 @@ void Parser::parse_exports() {
     uint32_t name_offset = this->binary_->rva_to_offset(name_table[i]);
     std::string name = this->stream_->peek_string_at(name_offset);
 
-    ExportEntry& entry = export_object.entries_[ordinal_table[i]];
+    ExportEntry& entry = export_entries[ordinal_table[i]];
 
     // Check if the entry is 'extern' and if the export name is already set
     if (entry.is_extern_ and not entry.name_.empty()) {
@@ -876,17 +876,13 @@ void Parser::parse_exports() {
     }
   }
 
-  auto&& it_export = std::begin(export_object.entries_);
-  while (it_export != std::end(export_object.entries_)) {
-    const ExportEntry& entry = *it_export;
+  for (size_t i = 0; i < export_entries.size(); ++i) {
+    ExportEntry& entry = export_entries[i];
     if (corrupted_entries.count(entry.ordinal()) == 0) {
-      ++it_export;
+      export_object.entries_.push_back(std::move(entry));
       continue;
     }
-
-    it_export = export_object.entries_.erase(it_export);
   }
-
 
   this->binary_->export_ = std::move(export_object);
   this->binary_->has_exports_ = true;
