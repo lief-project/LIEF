@@ -185,7 +185,7 @@ std::vector<uint8_t> Segment::content() const {
 
   const std::vector<uint8_t>& binary_content = this->datahandler_->content();
   const size_t size = binary_content.size();
-  if (node.offset() >= size || (node.offset() + node.size()) >= node.size()) {
+  if (node.offset() >= size || (node.offset() + node.size()) >= size) {
     LIEF_ERR("Corrupted data");
     return {};
   }
