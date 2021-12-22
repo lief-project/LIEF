@@ -57,69 +57,6 @@ const void* MemoryStream::read_at(uint64_t offset, uint64_t, bool) const {
   return reinterpret_cast<const void*>(va);
 }
 
-
-result<size_t> MemoryStream::asn1_read_tag(int tag) {
-  // TODO(romain)
-  return 0;
-}
-
-result<size_t> MemoryStream::asn1_peek_len() {
-  // TODO(romain)
-  return 0;
-}
-
-result<size_t> MemoryStream::asn1_read_len() {
-  // TODO(romain)
-  return 0;
-}
-
-result<std::string> MemoryStream::asn1_read_alg() {
-  // TODO(romain)
-  return std::string();
-}
-
-result<std::string> MemoryStream::asn1_read_oid() {
-  // TODO(romain)
-  return std::string();
-}
-
-
-result<int32_t> MemoryStream::asn1_read_int() {
-  // TODO(romain)
-  return 0;
-}
-
-result<std::vector<uint8_t>> MemoryStream::asn1_read_bitstring() {
-  // TODO(romain)
-  return {};
-}
-
-
-result<std::vector<uint8_t>> MemoryStream::asn1_read_octet_string() {
-  // TODO(romain)
-  return {};
-}
-
-result<std::unique_ptr<mbedtls_x509_crt>> MemoryStream::asn1_read_cert() {
-  // TODO(romain)
-  return std::unique_ptr<mbedtls_x509_crt>{nullptr};
-}
-
-result<std::string> MemoryStream::x509_read_names() {
-  // TODO(romain)
-  return std::string();
-}
-
-result<std::vector<uint8_t>> MemoryStream::x509_read_serial() {
-  // TODO(romain)
-  return {};
-}
-
-result<std::unique_ptr<mbedtls_x509_time>> MemoryStream::x509_read_time() {
-  // TODO(romain)
-  return std::unique_ptr<mbedtls_x509_time>{nullptr};
-}
-
 MemoryStream::~MemoryStream() = default;
 
 }

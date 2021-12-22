@@ -64,7 +64,8 @@ bool Parser::parse_headers() {
 
   //DOS Header
   if (this->stream_->can_read<pe_dos_header>(0)) {
-    this->binary_->dos_header_ = &this->stream_->peek<pe_dos_header>(0);
+    const auto pe_hdr = this->stream_->peek<pe_dos_header>(0);
+    this->binary_->dos_header_ = &pe_hdr;
   } else {
     LIEF_ERR("DOS Header corrupted");
     return false;
@@ -74,7 +75,8 @@ bool Parser::parse_headers() {
   //PE32 Header
   const size_t pe32_header_off = this->binary_->dos_header().addressof_new_exeheader();
   if (this->stream_->can_read<pe_header>(pe32_header_off)) {
-    this->binary_->header_ = &this->stream_->peek<pe_header>(pe32_header_off);
+    const auto pe_hdr = this->stream_->peek<pe_header>(pe32_header_off);
+    this->binary_->header_ = &pe_hdr;
   } else {
     LIEF_ERR("PE32 Header corrupted");
     return false;
@@ -83,7 +85,8 @@ bool Parser::parse_headers() {
   // Optional Header
   const size_t optional_header_off = this->binary_->dos_header().addressof_new_exeheader() + sizeof(pe_header);
   if (this->stream_->can_read<pe_optional_header>(optional_header_off)) {
-    this->binary_->optional_header_ = &this->stream_->peek<pe_optional_header>(optional_header_off);
+    const auto pe_opt_header = this->stream_->peek<pe_optional_header>(optional_header_off);
+    this->binary_->optional_header_ = &pe_opt_header;
   } else {
     LIEF_ERR("Optional header corrupted");
     return false;

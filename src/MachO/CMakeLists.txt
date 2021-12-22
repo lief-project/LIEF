@@ -58,6 +58,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/EncryptionInfo.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TrieNode.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/BuildVersion.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
 )
 
 set(LIEF_MACHO_INCLUDE_FILES

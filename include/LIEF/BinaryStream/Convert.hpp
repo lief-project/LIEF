@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_CONVERT_H_
 #define LIEF_CONVERT_H_
-
 namespace LIEF {
 namespace Convert {
 
-template<typename X>
-void swap_endian(X* x);
+template<typename T>
+void swap_endian(T*);
+
 }
 }
 

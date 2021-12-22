@@ -50,20 +50,6 @@ class MemoryStream : public BinaryStream {
   }
 
   virtual uint64_t size() const override;
-
-  virtual result<size_t> asn1_read_tag(int tag) override;
-  virtual result<size_t> asn1_read_len() override;
-  result<size_t> asn1_peek_len();
-  virtual result<std::string> asn1_read_alg() override;
-  virtual result<std::string> asn1_read_oid() override;
-  virtual result<int32_t> asn1_read_int() override;
-  virtual result<std::vector<uint8_t>> asn1_read_bitstring() override;
-  virtual result<std::vector<uint8_t>> asn1_read_octet_string() override;
-  virtual result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() override;
-  virtual result<std::string> x509_read_names() override;
-  virtual result<std::vector<uint8_t>> x509_read_serial() override;
-  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
-
   virtual ~MemoryStream();
 
 

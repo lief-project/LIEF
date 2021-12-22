@@ -461,11 +461,11 @@ ResourceVersion ResourcesManager::version() const {
 
   if (value_length > 0) {
     if (value_length == sizeof(pe_resource_fixed_file_info)) {
-      const pe_resource_fixed_file_info* fixed_file_info_header = &stream.peek<pe_resource_fixed_file_info>();
-      if (fixed_file_info_header->signature != 0xFEEF04BD) {
+      const auto fixed_file_info_header = stream.peek<pe_resource_fixed_file_info>();
+      if (fixed_file_info_header.signature != 0xFEEF04BD) {
         LIEF_WARN("Bad magic value for the Fixed file info structure");
       } else {
-        version.fixed_file_info_ = ResourceFixedFileInfo{fixed_file_info_header};
+        version.fixed_file_info_ = ResourceFixedFileInfo{&fixed_file_info_header};
         version.has_fixed_file_info_ = true;
       }
     } else {
@@ -1065,9 +1065,9 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
           return {};
         }
 
-        const pe_dialog_template_ext* header = &stream.read<pe_dialog_template_ext>();
+        const auto header = stream.read<pe_dialog_template_ext>();
 
-        ResourceDialog new_dialog{header};
+        ResourceDialog new_dialog{&header};
         new_dialog.lang(ResourcesManager::lang_from_id(data_node->id()));
         new_dialog.sub_lang(ResourcesManager::sublang_from_id(data_node->id()));
 
@@ -1153,18 +1153,18 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
         // Items
         // =====
-        for (size_t i = 0; i < header->nbof_items; ++i) {
+        for (size_t i = 0; i < header.nbof_items; ++i) {
           stream.align(sizeof(uint32_t));
           LIEF_DEBUG("item[{:02d}] offset: 0x{:x}", i, stream.pos());
           ResourceDialogItem dialog_item;
 
           if (new_dialog.is_extended()) {
-            const pe_dialog_item_template_ext* item_header = &stream.read<pe_dialog_item_template_ext>();
-            dialog_item = item_header;
-            LIEF_DEBUG("Item ID: {:d}", item_header->id);
+            const auto item_header = stream.read<pe_dialog_item_template_ext>();
+            dialog_item = ResourceDialogItem{&item_header};
+            LIEF_DEBUG("Item ID: {:d}", item_header.id);
           } else {
-            const pe_dialog_item_template* item_header = &stream.read<pe_dialog_item_template>();
-            new_dialog.items_.emplace_back(item_header);
+            const pe_dialog_item_template item_header = stream.read<pe_dialog_item_template>();
+            new_dialog.items_.emplace_back(&item_header);
             continue;
           }
 
@@ -1348,8 +1348,9 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
 
       VectorStream stream{content};
       while (stream.can_read<pe_resource_acceltableentry>()) {
+        const auto entry = stream.read<const pe_resource_acceltableentry>();
         accelerator.emplace_back(
-          ResourceAccelerator(&stream.read<const pe_resource_acceltableentry>()));
+          ResourceAccelerator(&entry));
       }
       if (!accelerator.empty()) {
         ResourceAccelerator& acc = accelerator.back();

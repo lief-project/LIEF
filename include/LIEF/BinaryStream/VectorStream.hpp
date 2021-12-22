@@ -62,7 +62,6 @@ class VectorStream : public BinaryStream {
 
   virtual result<size_t> asn1_read_tag(int tag) override;
   virtual result<size_t> asn1_read_len() override;
-  result<size_t> asn1_peek_len();
   virtual result<std::string> asn1_read_alg() override;
   virtual result<std::string> asn1_read_oid() override;
   virtual result<int32_t> asn1_read_int() override;

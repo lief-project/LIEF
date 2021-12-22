@@ -22,6 +22,7 @@ set(LIEF_VDEX_SRC
   ${CMAKE_CURRENT_LIST_DIR}/Header.tcc
   ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
   ${CMAKE_CURRENT_LIST_DIR}/hash.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/Convert.cpp
 )
 
 set(LIEF_VDEX_INC_FILES

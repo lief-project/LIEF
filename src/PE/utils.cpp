@@ -163,11 +163,11 @@ PE_TYPE get_type(const std::vector<uint8_t>& raw) {
 
   VectorStream raw_stream = VectorStream(raw);
 
-  const pe_dos_header* dos_header = &raw_stream.read<pe_dos_header>();
-  raw_stream.setpos(dos_header->AddressOfNewExeHeader + sizeof(pe_header));
-  const pe32_optional_header* optional_header = &raw_stream.read<pe32_optional_header>();
+  const pe_dos_header dos_header = raw_stream.read<pe_dos_header>();
+  raw_stream.setpos(dos_header.AddressOfNewExeHeader + sizeof(pe_header));
+  const pe32_optional_header optional_header = raw_stream.read<pe32_optional_header>();
 
-  PE_TYPE type = static_cast<PE_TYPE>(optional_header->Magic);
+  PE_TYPE type = static_cast<PE_TYPE>(optional_header.Magic);
 
   if (type == PE_TYPE::PE32 or type == PE_TYPE::PE32_PLUS) {
     return type;

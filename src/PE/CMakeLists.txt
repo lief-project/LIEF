@@ -31,6 +31,7 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/CodeIntegrity.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
+  "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialog.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialogItem.cpp"

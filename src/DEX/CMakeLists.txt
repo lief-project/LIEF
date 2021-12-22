@@ -31,6 +31,7 @@ set(LIEF_DEX_SRC
   ${CMAKE_CURRENT_LIST_DIR}/MapItem.cpp
   ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
   ${CMAKE_CURRENT_LIST_DIR}/hash.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/Convert.cpp
 )
 
 set(LIEF_DEX_INC_FILES

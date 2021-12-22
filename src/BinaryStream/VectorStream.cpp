@@ -111,12 +111,6 @@ result<size_t> VectorStream::asn1_read_tag(int tag) {
   return out;
 }
 
-result<size_t> VectorStream::asn1_peek_len() {
-  const uint64_t pos = this->pos();
-  auto len = this->asn1_read_len();
-  this->setpos(pos);
-  return len;
-}
 
 result<size_t> VectorStream::asn1_read_len() {
   size_t len = 0;

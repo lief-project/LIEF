@@ -92,15 +92,15 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data, const
 
 void Parser::build_fat() {
 
-  const fat_header *header = &this->stream_->peek<fat_header>(0);
-  uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
+  const auto header = this->stream_->peek<fat_header>(0);
+  uint32_t nb_arch = Swap4Bytes(header.nfat_arch);
   LIEF_DEBUG("In this Fat binary there is #{:d} archs", nb_arch);
 
   if (nb_arch > 10) {
     throw parser_error("Too much architectures");
   }
 
-  const fat_arch* arch = &this->stream_->peek<fat_arch>(sizeof(fat_header));
+  const fat_arch* arch = this->stream_->peek_array<fat_arch>(sizeof(fat_header), nb_arch, /* check */ false);
 
   for (size_t i = 0; i < nb_arch; ++i) {
 

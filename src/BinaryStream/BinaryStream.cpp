@@ -17,15 +17,50 @@
 #include "LIEF/DWARF/enums.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/third-party/utfcpp/utf8/checked.h"
+#include <mbedtls/platform.h>
+#include <mbedtls/asn1.h>
+#include <mbedtls/error.h>
+#include <mbedtls/oid.h>
+#include <mbedtls/x509_crt.h>
+
+#include "intmem.h"
 
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
 #include <iostream>
 
+#define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)
+
 namespace LIEF {
 BinaryStream::~BinaryStream() = default;
 BinaryStream::BinaryStream() = default;
+
+
+template<typename T>
+T BinaryStream::swap_endian(T u) {
+  return intmem::bswap(u);
+}
+
+template<>
+char16_t BinaryStream::swap_endian<char16_t>(char16_t u) {
+  return intmem::bswap(static_cast<uint16_t>(u));
+}
+
+template<>
+char BinaryStream::swap_endian<char>(char u) {
+  return intmem::bswap(static_cast<uint8_t>(u));
+}
+
+TMPL_DECL(uint8_t);
+TMPL_DECL(uint16_t);
+TMPL_DECL(uint32_t);
+TMPL_DECL(uint64_t);
+
+TMPL_DECL(int8_t);
+TMPL_DECL(int16_t);
+TMPL_DECL(int32_t);
+TMPL_DECL(int64_t);
 
 void BinaryStream::setpos(size_t pos) const {
   this->pos_ = pos;
@@ -172,7 +207,7 @@ std::u16string BinaryStream::peek_u16string() const {
 
   size_t count = 0;
   do {
-    c = this->peek_conv<char16_t>(off);
+    c = this->peek<char16_t>(off);
     off += sizeof(char16_t);
     result.push_back(c);
     ++count;
@@ -277,5 +312,52 @@ std::string BinaryStream::read_mutf8(size_t maxsize) const {
 void BinaryStream::set_endian_swap(bool swap) {
   this->endian_swap_ = swap;
 }
+
+result<size_t> BinaryStream::asn1_read_tag(int) {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<size_t> BinaryStream::asn1_read_len() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::string> BinaryStream::asn1_read_alg() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::string> BinaryStream::asn1_read_oid() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<int32_t> BinaryStream::asn1_read_int() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::vector<uint8_t>> BinaryStream::asn1_read_bitstring() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::vector<uint8_t>> BinaryStream::asn1_read_octet_string() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::unique_ptr<mbedtls_x509_crt>> BinaryStream::asn1_read_cert() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::string> BinaryStream::x509_read_names() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::vector<uint8_t>> BinaryStream::x509_read_serial() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+result<std::unique_ptr<mbedtls_x509_time>> BinaryStream::x509_read_time() {
+  return make_error_code(lief_errors::not_implemented);
+}
+
+
+
 }
 

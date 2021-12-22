@@ -72,10 +72,13 @@ class BinaryStream {
   const T* read_array(size_t size, bool check = true) const;
 
   template<class T>
-  const T& peek() const;
+  typename std::enable_if<std::is_integral<T>::value, T>::type peek() const;
 
   template<class T>
-  const T& peek(size_t offset) const;
+  typename std::enable_if<!std::is_integral<T>::value, T>::type peek() const;
+
+  template<class T>
+  T peek(size_t offset) const;
 
   template<class T>
   const T* peek_array(size_t size, bool check = true) const;
@@ -84,10 +87,7 @@ class BinaryStream {
   const T* peek_array(size_t offset, size_t size, bool check = true) const;
 
   template<class T>
-  const T& read() const;
-
-  template<typename T>
-  static T swap_endian(T u);
+  T read() const;
 
   template<typename T>
   bool can_read() const;
@@ -97,8 +97,17 @@ class BinaryStream {
 
   size_t align(size_t align_on) const;
 
-  /* Read an integer value and adjust endianness as needed */
-  template<typename T>
+  /* Functions that are endianness aware */
+  template<class T>
+  typename std::enable_if<std::is_integral<T>::value, T>::type peek_conv() const;
+
+  template<class T>
+  typename std::enable_if<!std::is_integral<T>::value, T>::type peek_conv() const;
+
+  template<class T>
+  T peek_conv(size_t offset) const;
+
+  template<class T>
   T read_conv() const;
 
   /* Read an array of values and adjust endianness as needed */
@@ -106,25 +115,25 @@ class BinaryStream {
   std::unique_ptr<T[]> read_conv_array(size_t size, bool check = true) const;
 
   template<typename T>
-  T peek_conv(size_t offset) const;
+  std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size, bool check = true) const;
 
   template<typename T>
-  std::unique_ptr<T[]> peek_conv_array(size_t offset, size_t size, bool check = true) const;
+  static T swap_endian(T u);
 
   void set_endian_swap(bool swap);
 
-  // ASN1 related functions
-  virtual result<size_t> asn1_read_tag(int tag) = 0;
-  virtual result<size_t> asn1_read_len() = 0;
-  virtual result<std::string> asn1_read_alg() = 0;
-  virtual result<std::string> asn1_read_oid() = 0;
-  virtual result<int32_t> asn1_read_int() = 0;
-  virtual result<std::vector<uint8_t>> asn1_read_bitstring() = 0;
-  virtual result<std::vector<uint8_t>> asn1_read_octet_string() = 0;
-  virtual result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() = 0;
-  virtual result<std::string> x509_read_names() = 0;
-  virtual result<std::vector<uint8_t>> x509_read_serial() = 0;
-  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() = 0;
+  /* ASN.1 & X509 parsing functions */
+  virtual result<size_t>                             asn1_read_tag(int tag);
+  virtual result<size_t>                             asn1_read_len();
+  virtual result<std::string>                        asn1_read_alg();
+  virtual result<std::string>                        asn1_read_oid();
+  virtual result<int32_t>                            asn1_read_int();
+  virtual result<std::vector<uint8_t>>               asn1_read_bitstring();
+  virtual result<std::vector<uint8_t>>               asn1_read_octet_string();
+  virtual result<std::unique_ptr<mbedtls_x509_crt>>  asn1_read_cert();
+  virtual result<std::string>                        x509_read_names();
+  virtual result<std::vector<uint8_t>>               x509_read_serial();
+  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time();
 
   protected:
   virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const = 0;
@@ -133,45 +142,33 @@ class BinaryStream {
 };
 
 
-template<typename T>
-T BinaryStream::swap_endian(T u) {
-  // From http://stackoverflow.com/a/4956493
-  static_assert(CHAR_BIT == 8, "CHAR_BIT != 8");
-  static_assert(std::is_integral<T>::value, "Integer required");
-  union {
-    T u;
-    unsigned char u8[sizeof(T)];
-  } source, dest;
-
-  source.u = u;
-
-  for (size_t k = 0; k < sizeof(T); k++) {
-    dest.u8[k] = source.u8[sizeof(T) - k - 1];
-  }
-
-  return dest.u;
-}
-
-
 template<class T>
-const T& BinaryStream::read() const {
-  const T& tmp = this->peek<T>();
+T BinaryStream::read() const {
+  T tmp = this->peek<T>();
   this->increment_pos(sizeof(T));
   return tmp;
 }
 
 template<class T>
-const T& BinaryStream::peek() const {
+typename std::enable_if<std::is_integral<T>::value, T>::type BinaryStream::peek() const {
+  const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
+  T ret;
+  memcpy(&ret, raw, sizeof(T));
+  return ret;
+}
+
+template<class T>
+typename std::enable_if<!std::is_integral<T>::value, T>::type BinaryStream::peek() const {
   const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
   return *reinterpret_cast<const T*>(raw);
 }
 
 
 template<class T>
-const T& BinaryStream::peek(size_t offset) const {
+T BinaryStream::peek(size_t offset) const {
   size_t saved_offset = this->pos();
   this->setpos(offset);
-  const T& r = this->peek<T>();
+  T r = this->peek<T>();
   this->setpos(saved_offset);
   return r;
 }
@@ -215,13 +212,42 @@ const T* BinaryStream::read_array(size_t size, bool check) const {
 }
 
 
-template<typename T>
+template<class T>
 T BinaryStream::read_conv() const {
-  T t = this->read<T>();
-  if (this->endian_swap_) {
-    LIEF::Convert::swap_endian<T>(& t);
+  T tmp = this->peek_conv<T>();
+  this->increment_pos(sizeof(T));
+  return tmp;
+}
+
+template<class T>
+typename std::enable_if<std::is_integral<T>::value, T>::type BinaryStream::peek_conv() const {
+  const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
+  T ret;
+  memcpy(&ret, raw, sizeof(T));
+  if (endian_swap_) {
+    return swap_endian<T>(ret);
   }
-  return t;
+  return ret;
+}
+
+template<class T>
+typename std::enable_if<!std::is_integral<T>::value, T>::type BinaryStream::peek_conv() const {
+  const void* raw = this->read_at(this->pos(), sizeof(T), /* throw error*/ true);
+  T ret = *reinterpret_cast<const T*>(raw);
+  if (endian_swap_) {
+    LIEF::Convert::swap_endian<T>(&ret);
+  }
+  return ret;
+}
+
+
+template<class T>
+T BinaryStream::peek_conv(size_t offset) const {
+  size_t saved_offset = this->pos();
+  this->setpos(offset);
+  T r = this->peek_conv<T>();
+  this->setpos(saved_offset);
+  return r;
 }
 
 
@@ -244,15 +270,6 @@ std::unique_ptr<T[]> BinaryStream::read_conv_array(size_t size, bool check) cons
   return uptr;
 }
 
-template<class T>
-T BinaryStream::peek_conv(size_t offset) const {
-  T t = this->peek<T>(offset);
-
-  if (this->endian_swap_) {
-    LIEF::Convert::swap_endian(&t);
-  }
-  return t;
-}
 
 template<typename T>
 std::unique_ptr<T[]> BinaryStream::peek_conv_array(size_t offset, size_t size, bool check) const {

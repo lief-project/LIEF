@@ -74,7 +74,7 @@ if (PYTHON_TESTS_ENABLED)
 
   ADD_PYTHON_TEST(PE_PYTHON_authenticode
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_authenticode.py")
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_authenticode.py TestAuthenticode.test_spc_sp_opus_info")
 
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_authenticode_reader
     ${PYTHON_EXECUTABLE}
