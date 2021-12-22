@@ -182,7 +182,14 @@ std::vector<uint8_t> Segment::content() const {
       this->file_offset(),
       this->physical_size(),
       DataHandler::Node::SEGMENT);
+
   const std::vector<uint8_t>& binary_content = this->datahandler_->content();
+  const size_t size = binary_content.size();
+  if (node.offset() >= size || (node.offset() + node.size()) >= node.size()) {
+    LIEF_ERR("Corrupted data");
+    return {};
+  }
+
   return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
 }
 
