@@ -368,20 +368,16 @@ std::string ResourcesManager::manifest() const {
 
 void ResourcesManager::manifest(const std::string& manifest) {
   if (not this->has_manifest()) {
-    //TODO
-    //ResourceDirectory* dir1 = new ResourceDirectory{};
-    //ResourceDirectory* dir2 = new ResourceDirectory{};
-    //ResourceData* data = new ResourceData{};
-    throw not_implemented("Not manifest already present");
+    //TODO(Romain): Enable to craft a manifest
+    throw not_implemented("No manifest");
   }
 
   it_childs nodes = this->resources_->childs();
-  auto&& it_manifest = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  const auto it_manifest = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
+
 
   ResourceData* manifest_node = dynamic_cast<ResourceData*>(&((*it_manifest).childs()[0].childs()[0]));
   manifest_node->content({std::begin(manifest), std::end(manifest)});
@@ -426,8 +422,12 @@ ResourceVersion ResourcesManager::version() const {
     throw not_found("Resource version corrupted");
   }
 
-  const ResourceData* version_node = dynamic_cast<ResourceData*>(&childs_l2[0]);
-  const std::vector<uint8_t>& content = version_node->content();
+  if (!childs_l2[0].is_data()) {
+    throw not_found("Resource version corrupted");
+  }
+
+  const auto& version_node = reinterpret_cast<const ResourceData&>(childs_l2[0]);
+  const std::vector<uint8_t>& content = version_node.content();
   VectorStream stream{content};
   ResourceVersion version;
 
@@ -904,8 +904,11 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
     throw not_found("Icon version corrupted");
   }
 
-  ResourceData* icon_group_node = dynamic_cast<ResourceData*>(&childs_l2[0]);
-  std::vector<uint8_t> icon_group_content = icon_group_node->content();
+  if (!childs_l2[0].is_data()) {
+    throw not_found("Icon version corrupted");
+  }
+  auto& icon_group_node = reinterpret_cast<ResourceData&>(childs_l2[0]);
+  std::vector<uint8_t> icon_group_content = icon_group_node.content();
 
   pe_resource_icon_dir* group_icon_header = reinterpret_cast<pe_resource_icon_dir*>(icon_group_content.data());
 
@@ -929,7 +932,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
 
   group_icon_header->count++;
 
-  icon_group_node->content(icon_group_content);
+  icon_group_node.content(icon_group_content);
 
   // Add to the ICON list
   ResourceDirectory new_icon_dir_node;
@@ -971,9 +974,13 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   pe_resource_icon_group* group = nullptr;
   for (ResourceNode& grp_icon_lvl2 : it_grp_icon->childs()) {
     for (ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
-      ResourceData* icon_group_node = dynamic_cast<ResourceData*>(&grp_icon_lvl3);
+      if (!grp_icon_lvl3.is_data()) {
+        LIEF_WARN("Resource group icon corrupted");
+        continue;
+      }
+      auto& icon_group_node = reinterpret_cast<ResourceData&>(grp_icon_lvl3);
 
-      std::vector<uint8_t> icon_group_content = icon_group_node->content();
+      std::vector<uint8_t> icon_group_content = icon_group_node.content();
 
       pe_resource_icon_dir* group_icon_header = reinterpret_cast<pe_resource_icon_dir*>(icon_group_content.data());
       for (size_t i = 0; i < group_icon_header->count; ++i) {
@@ -999,7 +1006,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
       if (group == nullptr) {
         throw not_found("Unable to find the group associated with the original icon");
       }
-      icon_group_node->content(icon_group_content);
+      icon_group_node.content(icon_group_content);
     }
   }
 
@@ -1031,25 +1038,30 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
     return {};
   }
   std::vector<ResourceDialog> dialogs;
-  const ResourceDirectory* dialog_dir = dynamic_cast<const ResourceDirectory*>(&this->get_node_type(RESOURCE_TYPES::DIALOG));
+  const ResourceNode& dialog_node = this->get_node_type(RESOURCE_TYPES::DIALOG);
+  if (!dialog_node.is_directory()) {
+    LIEF_WARN("Dialog node corrupted");
+    return {};
+  }
+  const auto& dialog_dir = reinterpret_cast<const ResourceDirectory&>(dialog_node);
 
-  it_const_childs nodes = dialog_dir->childs();
+  it_const_childs nodes = dialog_dir.childs();
   for (size_t i = 0; i < nodes.size(); ++i) {
-
-    const ResourceDirectory* dialog = dynamic_cast<const ResourceDirectory*>(&nodes[i]);
-    if (!dialog) {
-      LIEF_WARN("Dialog is empty. Skipping");
+    if (!nodes[i].is_directory()) {
+      LIEF_WARN("Dialog node corrupted");
       continue;
     }
-    it_const_childs langs = dialog->childs();
+
+    const auto& dialog = reinterpret_cast<const ResourceDirectory&>(nodes[i]);
+    it_const_childs langs = dialog.childs();
 
     for (size_t j = 0; j < langs.size(); ++j) {
-      const ResourceData* data_node = dynamic_cast<const ResourceData*>(&langs[j]);
-      if (!data_node) {
-        LIEF_WARN("Dialog is empty. Skipping");
+      if (!langs[j].is_data()) {
+        LIEF_WARN("Dialog node corrupted");
         continue;
       }
-      const std::vector<uint8_t>& content = data_node->content();
+      const auto& data_node = reinterpret_cast<const ResourceData&>(langs[j]);
+      const std::vector<uint8_t>& content = data_node.content();
       VectorStream stream{content};
       stream.setpos(0);
 
@@ -1068,8 +1080,8 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
         const auto header = stream.read<pe_dialog_template_ext>();
 
         ResourceDialog new_dialog{&header};
-        new_dialog.lang(ResourcesManager::lang_from_id(data_node->id()));
-        new_dialog.sub_lang(ResourcesManager::sublang_from_id(data_node->id()));
+        new_dialog.lang(ResourcesManager::lang_from_id(data_node.id()));
+        new_dialog.sub_lang(ResourcesManager::sublang_from_id(data_node.id()));
 
         // Menu
         // ====
@@ -1237,13 +1249,13 @@ std::vector<ResourceStringTable> ResourcesManager::string_table() const {
   for (const ResourceNode& child_l1 : it_string_table->childs()) {
 
     for (const ResourceNode& child_l2 : child_l1.childs()) {
-      const ResourceData* string_table_node = dynamic_cast<const ResourceData*>(&child_l2);
-      if (!string_table_node) {
-        LIEF_ERR("String table node is null");
+      if (!child_l2.is_data()) {
+        LIEF_WARN("String node corrupted");
         continue;
       }
+      const auto& string_table_node = reinterpret_cast<const ResourceData&>(child_l2);
 
-      const std::vector<uint8_t>& content = string_table_node->content();
+      const std::vector<uint8_t>& content = string_table_node.content();
       if (content.empty()) {
         LIEF_ERR("String table content is empty");
         continue;
@@ -1290,13 +1302,13 @@ std::vector<std::string> ResourcesManager::html() const {
   std::vector<std::string> html;
   for (const ResourceNode& child_l1 : it_html->childs()) {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
-      const ResourceData* html_node = dynamic_cast<const ResourceData*>(&child_l2);
-      if (!html_node) {
-        LIEF_ERR("html node is null");
+      if (!child_l2.is_data()) {
+        LIEF_ERR("html node corrupted");
         continue;
       }
+      const auto& html_node = reinterpret_cast<const ResourceData&>(child_l2);
 
-      const std::vector<uint8_t>& content = html_node->content();
+      const std::vector<uint8_t>& content = html_node.content();
       if (content.empty()) {
         LIEF_ERR("html content is empty");
         continue;
@@ -1334,13 +1346,13 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
   std::vector<ResourceAccelerator> accelerator;
   for (const ResourceNode& child_l1 : it_accelerator->childs()) {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
-      const ResourceData* accelerator_node = dynamic_cast<const ResourceData*>(&child_l2);
-      if (!accelerator_node) {
-        LIEF_ERR("Accelerator");
+      if (!child_l2.is_data()) {
+        LIEF_ERR("Accelerator node corrupted");
         continue;
       }
+      const auto& accelerator_node = reinterpret_cast<const ResourceData&>(child_l2);
 
-      const std::vector<uint8_t>& content = accelerator_node->content();
+      const std::vector<uint8_t>& content = accelerator_node.content();
       if (content.empty()) {
         LIEF_ERR("Accelerator content is empty");
         continue;
