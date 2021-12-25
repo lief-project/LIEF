@@ -31,7 +31,7 @@ const char* to_string(PE_TYPE e) {
 }
 
 const char* to_string(DATA_DIRECTORY e) {
-  CONST_MAP(DATA_DIRECTORY, const char*, 15) enumStrings {
+  CONST_MAP(DATA_DIRECTORY, const char*, 16) enumStrings {
     { DATA_DIRECTORY::EXPORT_TABLE,            "EXPORT_TABLE" },
     { DATA_DIRECTORY::IMPORT_TABLE,            "IMPORT_TABLE" },
     { DATA_DIRECTORY::RESOURCE_TABLE,          "RESOURCE_TABLE" },
@@ -46,7 +46,8 @@ const char* to_string(DATA_DIRECTORY e) {
     { DATA_DIRECTORY::BOUND_IMPORT,            "BOUND_IMPORT" },
     { DATA_DIRECTORY::IAT,                     "IAT" },
     { DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR, "DELAY_IMPORT_DESCRIPTOR" },
-    { DATA_DIRECTORY::CLR_RUNTIME_HEADER,      "CLR_RUNTIME_HEADER" }
+    { DATA_DIRECTORY::CLR_RUNTIME_HEADER,      "CLR_RUNTIME_HEADER" },
+    { DATA_DIRECTORY::RESERVED,                "RESERVED" }
   };
   auto   it  = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
