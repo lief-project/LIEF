@@ -195,6 +195,7 @@ Binary::Binary(const std::string& name, PE_TYPE type) :
   this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::IAT});
   this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR});
   this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::CLR_RUNTIME_HEADER});
+  this->data_directories_.emplace_back(new DataDirectory{DATA_DIRECTORY::RESERVED});
 
   this->optional_header().sizeof_headers(this->sizeof_headers());
   this->optional_header().sizeof_image(this->virtual_size());
