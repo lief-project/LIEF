@@ -7,7 +7,7 @@ import pathlib
 import sysconfig
 import copy
 import distutils
-from pkg_resources import Distribution, get_distribution
+from pkg_resources import get_distribution
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext, copy_file
 from distutils import log
@@ -113,14 +113,9 @@ class BuildLibrary(build_ext):
         if self.distribution.lief_test:
             log.info("LIEF tests enabled!")
         fullname = self.get_ext_fullname(ext.name)
-        filename = self.get_ext_filename(fullname)
-
         jobs = self.parallel if self.parallel else 1
         cmake_args = ["-DLIEF_FORCE_API_EXPORTS=ON"]
-
-        source_dir                     = ext.sourcedir
         build_temp                     = self.build_temp
-        extdir                         = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_library_output_directory = os.path.abspath(os.path.dirname(build_temp))
         cfg                            = 'RelWithDebInfo' if self.debug else 'Release'
         is64                           = sys.maxsize > 2**32
