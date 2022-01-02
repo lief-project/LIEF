@@ -116,7 +116,7 @@ void Parser::parse_data_directories() {
   // Nevertheless it seems that this requirement is not enforced by the PE loader.
   // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af contains a non-null final
   // data directory (watermarking?)
-  for (size_t i = 0; i < (nbof_datadir + 1); ++i) {
+  for (size_t i = 0; i < nbof_datadir; ++i) {
     std::unique_ptr<DataDirectory> directory{new DataDirectory{&data_directory[i], static_cast<DATA_DIRECTORY>(i)}};
     LIEF_DEBUG("Processing directory #{:d} ()", i, to_string(static_cast<DATA_DIRECTORY>(i)));
     LIEF_DEBUG("  - RVA:  0x{:04x}", data_directory[i].RelativeVirtualAddress);
@@ -127,7 +127,7 @@ void Parser::parse_data_directories() {
       try {
         directory->section_ = &(this->binary_->section_from_offset(offset));
       } catch (const LIEF::not_found&) {
-          LIEF_WARN("Unable to find the section associated with {}", to_string(static_cast<DATA_DIRECTORY>(i)));
+        LIEF_WARN("Unable to find the section associated with {}", to_string(static_cast<DATA_DIRECTORY>(i)));
       }
     }
     this->binary_->data_directories_.push_back(directory.release());

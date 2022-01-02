@@ -225,8 +225,9 @@ enum _LIEF_EN(DATA_DIRECTORY) {
   _LIEF_EI(IAT)                     = 12,
   _LIEF_EI(DELAY_IMPORT_DESCRIPTOR) = 13,
   _LIEF_EI(CLR_RUNTIME_HEADER)      = 14,
+  _LIEF_EI(RESERVED)                = 15,
 
-  _LIEF_EI(NUM_DATA_DIRECTORIES)    = 15
+  _LIEF_EI(NUM_DATA_DIRECTORIES)    = 16
 };
 
 
