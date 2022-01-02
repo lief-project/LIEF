@@ -774,7 +774,6 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
   if (it_relocation != std::end(this->relocations_)) {
     delete *it_relocation;
     this->relocations_.erase(it_relocation);
-  } else {
   }
 
 
