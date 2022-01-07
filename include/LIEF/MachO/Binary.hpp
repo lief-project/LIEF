@@ -78,7 +78,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_commands       commands();
   it_const_commands commands() const;
 
-  //! Return binary's @link Macho::Fileset
+  //! Return binary's @link MachO::Fileset
   it_fileset_binaries       filesets();
   it_const_fileset_binaries filesets() const;
 
