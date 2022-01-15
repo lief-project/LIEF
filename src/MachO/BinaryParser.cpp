@@ -148,11 +148,10 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
     if (symbol != nullptr) {
       export_info->symbol_ = symbol;
       symbol->export_info_ = export_info.get();
-      symbol->value_       = export_info->address();
     } else { // Register it into the symbol table
       std::unique_ptr<Symbol> symbol{new Symbol{}};
       symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT;
-      symbol->value_             = export_info->address();
+      symbol->value_             = 0;
       symbol->type_              = 0;
       symbol->numberof_sections_ = 0;
       symbol->description_       = 0;
