@@ -83,17 +83,17 @@ void BinaryParser::parse() {
 
   if (this->binary_->has_dyld_info()) {
 
-    if (config_.parse_dyld_bindings) {
+    if (config_.parse_dyld_exports) {
       try {
-        this->parse_dyldinfo_binds<MACHO_T>();
+        this->parse_dyldinfo_export();
       } catch (const exception& e) {
         LIEF_WARN("{}", e.what());
       }
     }
 
-    if (config_.parse_dyld_exports) {
+    if (config_.parse_dyld_bindings) {
       try {
-        this->parse_dyldinfo_export();
+        this->parse_dyldinfo_binds<MACHO_T>();
       } catch (const exception& e) {
         LIEF_WARN("{}", e.what());
       }
@@ -1615,7 +1615,17 @@ void BinaryParser::do_bind(BINDING_CLASS cls,
     binding_info->symbol_ = symbol;
     symbol->binding_info_ = binding_info.get();
   } else {
-    LIEF_ERR("New symbol found: {}", symbol_name);
+    LIEF_INFO("New symbol discovered: {}", symbol_name);
+    std::unique_ptr<Symbol> symbol{new Symbol{}};
+    symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_BIND;
+    symbol->type_              = 0;
+    symbol->numberof_sections_ = 0;
+    symbol->description_       = 0;
+    symbol->name(symbol_name);
+
+    binding_info->symbol_ = symbol.get();
+    symbol->binding_info_ = binding_info.get();
+    this->binary_->symbols_.push_back(symbol.release());
   }
 
 

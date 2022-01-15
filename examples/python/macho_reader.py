@@ -221,7 +221,13 @@ def print_symbols(binary):
             libname = symbol.binding_info.library.name
 
 
-        symbol_value = symbol.value if symbol.value > 0 or not symbol.has_binding_info else symbol.binding_info.address
+        symbol_value = 0
+        if symbol.has_export_info:
+            symbol_value = symbol.export_info.address
+        elif symbol.has_binding_info:
+            symbol_value = symbol.binding_info.address
+        else:
+            symbol_value = symbol.value
 
         try:
             symbol_name = symbol.demangled_name
