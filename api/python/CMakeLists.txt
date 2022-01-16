@@ -47,6 +47,7 @@ set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLogger.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyHash.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyObject.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyErr.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/encoding.cpp"
 )
 
@@ -63,6 +64,7 @@ set(LIEF_PYTHON_SRC
 
 
 set(LIEF_PYTHON_BASIC_HDR
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyErr.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/enums_wrapper.hpp"

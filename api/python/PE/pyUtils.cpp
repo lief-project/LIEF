@@ -17,12 +17,10 @@
 
 #include "LIEF/PE/utils.hpp"
 
-
 namespace LIEF {
 namespace PE {
 
 void init_utils(py::module& m) {
-
   py::enum_<IMPHASH_MODE>(m, "IMPHASH_MODE",
       "Enum to define the behavior of :func:`~lief.PE.get_imphash`")
     .value("DEFAULT", IMPHASH_MODE::DEFAULT, "Default implementation")
@@ -41,14 +39,20 @@ void init_utils(py::module& m) {
       "raw"_a);
 
   m.def("get_type",
-      static_cast<PE_TYPE (*)(const std::string&)>(&get_type),
-      "If the input file is a ``PE`` one, return the " RST_CLASS_REF(lief.PE.PE_TYPE) "",
+      [] (const std::string& file) {
+        return error_or(static_cast<result<PE_TYPE> (*)(const std::string&)>(&get_type), file);
+      },
+      "If the input file is a ``PE`` one, return the " RST_CLASS_REF(lief.PE.PE_TYPE) " \n"
+      "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) "",
       "file"_a);
 
 
   m.def("get_type",
-      static_cast<PE_TYPE (*)(const std::vector<uint8_t>&)>(&get_type),
-      "If the input *raw* data represent a ``PE`` file, return the " RST_CLASS_REF(lief.PE.PE_TYPE) "",
+      [] (const std::vector<uint8_t>& raw) {
+        return error_or(static_cast<result<PE_TYPE> (*)(const std::vector<uint8_t>&)>(&get_type), raw);
+      },
+      "If the input *raw* data represent a ``PE`` file, return the " RST_CLASS_REF(lief.PE.PE_TYPE) " \n"
+      "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) "",
       "raw"_a);
 
   m.def("get_imphash",

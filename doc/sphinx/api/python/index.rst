@@ -29,158 +29,6 @@ Python
   platforms/android.rst
 
 
-Exceptions
-----------
-
-exception
-~~~~~~~~~
-
-.. autoclass:: lief.exception
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-bad_file
-~~~~~~~~
-
-.. autoclass:: lief.bad_file
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-bad_format
-~~~~~~~~~~
-
-.. autoclass:: lief.bad_format
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-not_implemented
-~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.not_implemented
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-not_supported
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.not_supported
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-integrity_error
-~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.integrity_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-read_out_of_bound
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.read_out_of_bound
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-not_found
-~~~~~~~~~
-
-.. autoclass:: lief.not_found
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-corrupted
-~~~~~~~~~
-
-.. autoclass:: lief.corrupted
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-conversion_error
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.conversion_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-type_error
-~~~~~~~~~~
-
-.. autoclass:: lief.type_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-builder_error
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.builder_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-parser_error
-~~~~~~~~~~~~
-
-.. autoclass:: lief.parser_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-pe_error
-~~~~~~~~
-
-.. autoclass:: lief.pe_error
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-pe_bad_section_name
-~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.pe_bad_section_name
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-
 Logging
 -------
 
@@ -198,3 +46,24 @@ Logging levels
   :members:
   :inherited-members:
   :undoc-members:
+
+Error Handling
+--------------
+
+
+.. autoclass:: lief.lief_errors
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+See also the section :ref:`err_handling`
+
+Exceptions
+----------
+
+In the future versions of LIEF, the exceptions will be removed to be replaced with the ``ResultOrError``
+idiom.
+
+See:
+  * https://llvm.org/docs/ProgrammersManual.html#error-handling
+  * https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#recoverable-errors-with-result

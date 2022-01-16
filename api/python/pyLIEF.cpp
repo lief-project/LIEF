@@ -65,6 +65,8 @@ PYBIND11_MODULE(lief, LIEF_module) {
 
   init_LIEF_iterators(LIEF_module);
 
+  init_LIEF_errors(LIEF_module);
+
   init_LIEF_Logger(LIEF_module);
 
   // Init custom LIEF exceptions

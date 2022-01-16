@@ -22,8 +22,26 @@ C++
 
   platforms/android.rst
 
+Error Handling
+--------------
+
+.. doxygentypedef:: LIEF::result
+   :project: lief
+
+.. doxygenfunction:: LIEF::as_lief_err
+   :project: lief
+
+.. doxygenenum:: lief_errors
+   :project: lief
+
+See also the section :ref:`err_handling`
+
 Exceptions
 ----------
+
+.. warning::
+
+   Exceptions will be progressively removed as explained in :ref:`err_handling`
 
 .. doxygenclass:: LIEF::exception
    :project: lief

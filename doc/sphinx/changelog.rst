@@ -29,7 +29,7 @@ Changelog
     found in kernel cache files
   * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol
     can't be found, it returns a nullptr.
-  * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its achitecture. See:
+  * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its architecture. See:
     :meth:`lief.MachO.FatBinary.take`.
 
     .. code-block:: python
@@ -43,12 +43,14 @@ Changelog
 :PE:
   * :attr:`lief.PE.LoadConfiguration.reserved1` has been aliased to :attr:`lief.PE.LoadConfiguration.dependent_load_flags`
   * :attr:`lief.PE.LoadConfiguration.characteristics` has been aliased to :attr:`lief.PE.LoadConfiguration.size`
+  * Thanks to :github_user:`gdesmar`, we updated the PE checks to support PE files that have a corrupted
+    :attr:`lief.PE.OptionalHeader.magic` (cf. :issue:`644`)
 
 :DEX:
   * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
 
 :Abstraction:
-  * Abtract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
+  * Abstract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
   * Add :meth:`lief.Binary.offset_to_virtual_addres`
   * Add PE imports/exports as *abstracted* symbols
 
@@ -66,6 +68,10 @@ Changelog
 
 :Dependencies:
   * Upgrade to MbedTLS 3.1.0
+
+:Documentation:
+  * New section about the errors handling (:ref:`err_handling`) and the upcoming
+    deprecation of the exceptions.
 
 
 0.11.X - Patch Releases

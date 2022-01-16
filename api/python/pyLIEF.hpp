@@ -26,6 +26,7 @@
 #include "encoding.hpp"
 
 #include "pyIterators.hpp"
+#include "pyErr.hpp"
 
 #define RST_CLASS_REF(X) ":class:`~"#X"`"
 #define RST_CLASS_REF_FULL(X) ":class:`"#X"`"

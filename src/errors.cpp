@@ -32,6 +32,7 @@ const std::error_category& lief_error_category() {
         case lief_errors::read_out_of_bound: return "read_out_of_bound";
         case lief_errors::asn1_bad_tag:      return "asn1_bad_tag";
         case lief_errors::file_error:        return "file_error";
+        case lief_errors::file_format_error: return "file_format_error";
         default: return "error";
       }
     }

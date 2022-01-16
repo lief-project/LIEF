@@ -8,6 +8,7 @@ Welcome to LIEF's documentation!
   installation
   getting_started
   compilation
+  error_handling
 
 .. toctree::
   :caption: Tutorials

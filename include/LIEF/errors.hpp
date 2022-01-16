@@ -31,6 +31,8 @@ enum class lief_errors {
   read_out_of_bound,
   asn1_bad_tag,
   file_error,
+
+  file_format_error,
 };
 
 const std::error_category& error_category();
@@ -51,13 +53,12 @@ inline std::error_code make_error_code(lief_errors e) {
 
 
 namespace LIEF {
-
-
-//! Wrapper that contains an Object or an error
+//! Wrapper that contains an Object (``T``) or an error
 //!
 //! The LEAF implementation exposes the method ``value()`` to access the underlying object (if no error)
 //!
 //! Typical usage is:
+//!
 //! \code{.cpp}
 //! result<int> intval = my_function();
 //! if (intval) {
@@ -85,6 +86,12 @@ error_t return_error(lief_errors);
 template<class T>
 std::error_code get_error(result<T>& err) {
   return make_error_code(lief_errors(boost::leaf::error_id(err.error()).value()));
+}
+
+//! Return the lief_errors when the provided ``result<T>`` is an error
+template<class T>
+lief_errors as_lief_err(result<T>& err) {
+  return lief_errors(boost::leaf::error_id(err.error()).value());
 }
 
 }

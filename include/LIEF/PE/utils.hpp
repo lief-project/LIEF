@@ -45,10 +45,10 @@ LIEF_API bool is_pe(const std::string& file);
 LIEF_API bool is_pe(const std::vector<uint8_t>& raw);
 
 //! if the input `file` is a PE one, return `PE32` or `PE32+`
-LIEF_API PE_TYPE get_type(const std::string& file);
+LIEF_API result<PE_TYPE> get_type(const std::string& file);
 
 //! Return `PE32` or `PE32+`
-LIEF_API PE_TYPE get_type(const std::vector<uint8_t>& raw);
+LIEF_API result<PE_TYPE> get_type(const std::vector<uint8_t>& raw);
 
 // In this case we assume that stream contains a valid PE stream
 LIEF_LOCAL result<PE_TYPE> get_type_from_stream(BinaryStream& stream);
