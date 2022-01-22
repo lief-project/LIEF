@@ -5,6 +5,9 @@ Changelog
 -------------------------
 
 :ELF:
+  * New ELF Builder which is more efficient in terms of speed and
+    in terms of number of segments added when modifying binaries.
+
   * :github_user:`Clcanny` improved (see :pr:`507` and :pr:`509`) the reconstruction of the dynamic symbol table
     by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
     a modified binary with ``readelf``
