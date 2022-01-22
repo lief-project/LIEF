@@ -35,7 +35,7 @@
 #define LIEF_ERR(...)   LIEF::logging::Logger::err(__VA_ARGS__)
 
 #define LIEF_SW_START(X) spdlog::stopwatch X;
-#define LIEF_SW_END(...) LIEF_DEBUG(__VA_ARGS__);
+#define LIEF_SW_END(...) LIEF_INFO(__VA_ARGS__);
 
 #define CHECK(X, ...)        \
   do {                       \

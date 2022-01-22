@@ -53,6 +53,10 @@ class LIEF_API SysvHash : public Object {
   //! @brief Chains values
   const std::vector<uint32_t>& chains() const;
 
+  inline void nchain(uint32_t nb) {
+    chains_.resize(nb);
+  }
+
   bool operator==(const SysvHash& rhs) const;
   bool operator!=(const SysvHash& rhs) const;
 

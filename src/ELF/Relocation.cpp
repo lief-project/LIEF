@@ -42,7 +42,6 @@ Relocation::Relocation() :
   info_{0}
 {}
 
-
 Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
   type_{other.type_},

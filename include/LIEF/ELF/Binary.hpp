@@ -48,11 +48,17 @@ class Note;
 class Relocation;
 class Parser;
 class Builder;
+class Layout;
+class ObjectFileLayout;
+class ExeLayout;
 
 //! Class which represent an ELF binary
 class LIEF_API Binary : public LIEF::Binary {
   friend class Parser;
   friend class Builder;
+  friend class ExeLayout;
+  friend class Layout;
+  friend class ObjectFileLayout;
 
   public:
   using string_list_t = std::vector<std::string>;
@@ -121,6 +127,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Remove **all** notes with the given type
   void remove(NOTE_TYPES tag);
+
+  //! Remove the given segment
+  void remove(const Segment& seg);
 
   //! Return binary's dynamic symbols
   it_symbols       dynamic_symbols();
@@ -554,12 +563,16 @@ class LIEF_API Binary : public LIEF::Binary {
   const Section& operator[](ELF_SECTION_TYPES type) const;
 
   protected:
+  struct phdr_relocation_info_t {
+    uint64_t new_offset = 0;
+    size_t nb_segments = 0;
+  };
   Binary();
 
   //! Return an abstraction of binary's section: LIEF::Section
-  virtual LIEF::sections_t         get_abstract_sections() override;
+  virtual LIEF::sections_t get_abstract_sections() override;
 
-  virtual LIEF::Header             get_abstract_header() const override;
+  virtual LIEF::Header get_abstract_header() const override;
 
   virtual LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   virtual LIEF::Binary::functions_t get_abstract_imported_functions() const override;
@@ -588,6 +601,11 @@ class LIEF_API Binary : public LIEF::Binary {
   template<E_TYPE OBJECT_TYPE, bool note = false>
   Segment& add_segment(const Segment& segment, uint64_t base);
 
+  uint64_t relocate_phdr_table();
+  uint64_t relocate_phdr_table_pie();
+  uint64_t relocate_phdr_table_v1();
+  uint64_t relocate_phdr_table_v2();
+
   template<SEGMENT_TYPES PT>
   Segment& extend_segment(const Segment& segment, uint64_t size);
 
@@ -599,50 +617,22 @@ class LIEF_API Binary : public LIEF::Binary {
 
   LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 
-  //! The binary type
-  //! (i.e. `ELF32` or `ELF64`)
   ELF_CLASS type_;
-
-  //! The binary's header as an object
   Header header_;
-
-  //! The binary's sections if any
   sections_t sections_;
-
-  //! The binary's segments if any
   segments_t segments_;
-
-  //! A list of the diffrents dynamic entries.
   dynamic_entries_t dynamic_entries_;
-
-  //! A list of dynamic symbols
   symbols_t dynamic_symbols_;
-
-  //! A list of static symbols
   symbols_t static_symbols_;
-
   relocations_t relocations_;
-
-  //! .gnu.version
   symbols_version_t symbol_version_table_;
-
-  //! gnu.version_r
   symbols_version_requirement_t symbol_version_requirements_;
-
-  //! .gnu.version_d
   symbols_version_definition_t  symbol_version_definition_;
-
-  //! .gnu.hash
   GnuHash gnu_hash_;
-
-  //! .note
   notes_t notes_;
-
-  //! .hash
   SysvHash sysv_hash_;
-
-  //! object used to manage segments/sections
   DataHandler::Handler* datahandler_{nullptr};
+  phdr_relocation_info_t phdr_reloc_info_;
 
   std::string interpreter_;
   overlay_t overlay_;

@@ -337,7 +337,6 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
     uint32_t namesz = this->stream_->read_conv<uint32_t>();
     LIEF_DEBUG("Name size: 0x{:x}", namesz);
 
-
     if (not this->stream_->can_read<uint32_t>()) {
       break;
     }
@@ -378,14 +377,13 @@ void Parser::parse_notes(uint64_t offset, uint64_t size) {
       note = std::unique_ptr<Note>{new Note{name, type, std::move(description), this->binary_}};
     }
 
-    auto&& it_note = std::find_if(
-        std::begin(this->binary_->notes_),
-        std::end(this->binary_->notes_),
+    const auto it_note = std::find_if(
+        std::begin(this->binary_->notes_), std::end(this->binary_->notes_),
         [&note] (const Note* n) {
           return *n == *note;
         });
 
-    if (it_note == std::end(this->binary_->notes_)) {
+    if (it_note == std::end(this->binary_->notes_)) { // Not already present
       this->binary_->notes_.push_back(note.release());
     }
   }

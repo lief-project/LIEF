@@ -48,6 +48,7 @@ set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/hash.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Note.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/NoteDetails.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Layout.cpp"
 )
 
 set(LIEF_ELF_INC_FILES

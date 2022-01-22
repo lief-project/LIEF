@@ -258,131 +258,56 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
 
 
 // ========
-// ET_EXEC
-// ========
+// ET_EXEC: non-pie executable
+//
+// For non-pie executable, we move the phdr table at the end of the
+// binary and we extend the closest PT_LOAD segment to the end of the
+// binary so that it loads the new location of the phdr
+//
+// The ELF format requires the following relationship between
+// segment's VA and segment's offset:
+//
+// segment_va % pagesize() == segment_offset % pagesize()
+//
+// It implies that we usually find "cave" between segments
+// that could can be large enough to insert our new phdr table.
+// To do so, we would just need to extend the PT_LOAD segment associated
+// with the caving.
 template<>
 Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t base) {
-
   Header& header = this->header();
+  const uint64_t new_phdr_offset = relocate_phdr_table();
 
-  // ------------------------------------------
-  // Part 1: Move PHDR at the end of the binary
-  // ------------------------------------------
+  if (new_phdr_offset == 0) {
+    LIEF_ERR("We can't relocate the PHDR table for this binary.");
+    return const_cast<Segment&>(segment);
+  }
+  if (phdr_reloc_info_.nb_segments <= 0) {
+    LIEF_ERR("Segment table is full. We can't add segment");
+    return const_cast<Segment&>(segment);
+  }
 
+  const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
+                                       sizeof(ELF32::Elf_Phdr) : sizeof(ELF64::Elf_Phdr);
+
+  // Add the segment itself
+  // ====================================================================
+  //this->datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
-
-  auto&& it_text_segment = std::find_if(
-      std::begin(this->segments_),
-      std::end(this->segments_),
-      [] (const Segment* s) {
-        return s->type() == SEGMENT_TYPES::PT_LOAD and
-               s->has(ELF_SEGMENT_FLAGS::PF_X) and s->has(ELF_SEGMENT_FLAGS::PF_R);
-      });
-
-  if (it_text_segment == std::end(this->segments_)) {
-    throw not_found("Unable to find a LOAD segment with 'r-x' permissions");
-  }
-
-  Segment* text_segment = *it_text_segment;
-
-  uint64_t last_offset_sections = std::accumulate(
-      std::begin(this->sections_),
-      std::end(this->sections_), 0,
-      [] (uint64_t offset, const Section* section) {
-        return std::max<uint64_t>(section->file_offset() + section->size(), offset);
-      });
-
-  uint64_t last_offset_segments = std::accumulate(
-      std::begin(this->segments_),
-      std::end(this->segments_), 0,
-      [] (uint64_t offset, const Segment* segment) {
-        return std::max<uint64_t>(segment->file_offset() + segment->physical_size(), offset);
-      });
-
-  uint64_t last_offset     = std::max<uint64_t>(last_offset_sections, last_offset_segments);
-  uint64_t new_phdr_offset = last_offset;
-
-  LIEF_DEBUG("New PHDR@0x{:x}", new_phdr_offset);
-  header.program_headers_offset(new_phdr_offset);
-
-  uint64_t phdr_size = 0;
-  if (this->type() == ELF_CLASS::ELFCLASS32) {
-    phdr_size = sizeof(ELF32::Elf_Phdr);
-  }
-
-  if (this->type() == ELF_CLASS::ELFCLASS64) {
-    phdr_size = sizeof(ELF64::Elf_Phdr);
-  }
-
-  auto&& it_segment_phdr = std::find_if(
-      std::begin(this->segments_),
-      std::end(this->segments_),
-      [] (const Segment* s)
-      {
-        return s != nullptr and s->type() == SEGMENT_TYPES::PT_PHDR;
-      });
-
-  if (it_segment_phdr != std::end(this->segments_)) {
-    Segment *phdr_segment = *it_segment_phdr;
-
-    const uint64_t new_phdr_size = phdr_segment->physical_size() + phdr_size;
-
-    LIEF_DEBUG("New PHDR size: 0x{:x}", new_phdr_size);
-
-    phdr_segment->file_offset(new_phdr_offset);
-    phdr_segment->virtual_address(text_segment->virtual_address() - text_segment->file_offset() + phdr_segment->file_offset());
-
-    phdr_segment->physical_address(phdr_segment->virtual_address());
-
-    phdr_segment->physical_size(new_phdr_size);
-    phdr_segment->virtual_size(phdr_segment->virtual_size() + phdr_size);
-
-    uint64_t gap  = phdr_segment->file_offset() + phdr_segment->physical_size();
-             gap -= text_segment->file_offset() + text_segment->physical_size();
-
-    text_segment->physical_size(text_segment->physical_size() + gap);
-    text_segment->virtual_size(text_segment->virtual_size() + gap);
-
-    // Clear PHDR segment
-    phdr_segment->content(std::vector<uint8_t>(phdr_segment->physical_size(), 0));
-  }
-
-  if (header.section_headers_offset() <= new_phdr_offset + phdr_size * header.numberof_segments()) {
-    header.section_headers_offset(header.section_headers_offset() + new_phdr_offset + phdr_size * header.numberof_segments());
-  }
-
-  // Extend the segment so that it wraps the PHDR segment
-  this->datahandler_->make_hole(new_phdr_offset, phdr_size * header.numberof_segments());
-
-  // --------------------------------------
-  // Part 2: Add the segment
-  // --------------------------------------
   std::vector<uint8_t> content = segment.content();
   Segment* new_segment = new Segment{segment};
-  new_segment->datahandler_ = this->datahandler_;
 
-  DataHandler::Node new_node{
-          new_segment->file_offset(),
-          new_segment->physical_size(),
-          DataHandler::Node::SEGMENT};
-  this->datahandler_->add(new_node);
-
-
-  last_offset_sections = std::accumulate(
-      std::begin(this->sections_),
-      std::end(this->sections_), 0,
+  uint64_t last_offset_sections = std::accumulate(std::begin(sections_), std::end(sections_), 0,
       [] (uint64_t offset, const Section* section) {
         return std::max<uint64_t>(section->file_offset() + section->size(), offset);
       });
 
-  last_offset_segments = std::accumulate(
-      std::begin(this->segments_),
-      std::end(this->segments_), 0,
+  uint64_t last_offset_segments = std::accumulate(std::begin(segments_), std::end(segments_), 0,
       [] (uint64_t offset, const Segment* segment) {
         return std::max<uint64_t>(segment->file_offset() + segment->physical_size(), offset);
       });
 
-  last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
+  uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
   const uint64_t psize = static_cast<uint64_t>(getpagesize());
   const uint64_t last_offset_aligned = align(last_offset, psize);
@@ -403,100 +328,40 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   if (new_segment->alignment() == 0) {
     new_segment->alignment(psize);
   }
+  new_segment->datahandler_ = this->datahandler_;
 
-  this->datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
+                             DataHandler::Node::SEGMENT};
+  datahandler_->add(new_node);
+  datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
   new_segment->content(content);
 
-
-  if (it_segment_phdr == std::end(this->segments_)) { // Static binary
-    if (header.program_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
-      header.program_headers_offset(header.program_headers_offset() + new_segment->file_offset() + new_segment->physical_size());
-    }
-  }
   if (header.section_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
     header.section_headers_offset(header.section_headers_offset() + new_segment->file_offset() + new_segment->physical_size());
   }
 
+  const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
+      [&new_segment] (const Segment* s) { return s->type() == new_segment->type(); });
 
-
-  auto&& it_new_segment_place = std::find_if(
-      this->segments_.rbegin(),
-      this->segments_.rend(),
-      [&new_segment] (const Segment* s) {
-        return s->type() == new_segment->type();
-      });
-  if (it_new_segment_place == this->segments_.rend()) {
-    this->segments_.push_back(new_segment);
+  if (it_new_segment_place == segments_.rend()) {
+    segments_.push_back(new_segment);
   } else {
-    const size_t idx = std::distance(std::begin(this->segments_), it_new_segment_place.base());
-    this->segments_.insert(std::begin(this->segments_) + idx, new_segment);
+    const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
+    segments_.insert(std::begin(this->segments_) + idx, new_segment);
   }
-
+  phdr_reloc_info_.nb_segments--;
   return *new_segment;
 }
-
 
 // =======================
 // ET_DYN (PIE/Libraries)
 // =======================
 template<>
 Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t base) {
-
   const uint64_t psize = static_cast<uint64_t>(getpagesize());
 
-  // --------------------------------------
-  // Part 1: Make spaces for a new PHDR
-  // --------------------------------------
-  const uint64_t phdr_offset = this->header().program_headers_offset();
-  uint64_t phdr_size         = 0;
+  const uint64_t new_phdr_offset = relocate_phdr_table();
 
-  if (this->type() == ELF_CLASS::ELFCLASS32) {
-    phdr_size = sizeof(ELF32::Elf_Phdr);
-  }
-
-  if (this->type() == ELF_CLASS::ELFCLASS64) {
-    phdr_size = sizeof(ELF64::Elf_Phdr);
-  }
-
-  this->datahandler_->make_hole(phdr_offset + phdr_size * this->segments_.size(), psize);
-
-  uint64_t from  = phdr_offset + phdr_size * this->segments_.size();
-  // TODO: Improve (It takes too much spaces)
-  uint64_t shift = psize;
-
-  LIEF_DEBUG("Header shift: 0x{:x}", shift);
-
-  this->header().section_headers_offset(this->header().section_headers_offset() + shift);
-
-  this->shift_sections(from, shift);
-  this->shift_segments(from, shift);
-
-  // Patch segment size for the segment which contains the new segment
-  for (Segment* segment : this->segments_) {
-    if ((segment->file_offset() + segment->physical_size()) >= from and
-        from >= segment->file_offset()) {
-      segment->virtual_size(segment->virtual_size()   + shift);
-      segment->physical_size(segment->physical_size() + shift);
-    }
-  }
-
-  this->shift_dynamic_entries(from, shift);
-  this->shift_symbols(from, shift);
-  this->shift_relocations(from, shift);
-
-  if (this->type() == ELF_CLASS::ELFCLASS32) {
-    this->fix_got_entries<ELF32>(from, shift);
-  } else {
-    this->fix_got_entries<ELF64>(from, shift);
-  }
-
-  if (this->header().entrypoint() >= from) {
-    this->header().entrypoint(this->header().entrypoint() + shift);
-  }
-
-  // --------------------------------------
-  // Part 2: Add the segment
-  // --------------------------------------
   std::vector<uint8_t> content = segment.content();
   Segment* new_segment = new Segment{segment};
   new_segment->datahandler_ = this->datahandler_;
@@ -510,14 +375,14 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
   const uint64_t last_offset_sections = this->last_offset_section();
   const uint64_t last_offset_segments = this->last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
-  const uint64_t last_offset_aligned = align(last_offset, psize);
+  const uint64_t last_offset_aligned  = align(last_offset, psize);
 
   new_segment->file_offset(last_offset_aligned);
   new_segment->virtual_address(new_segment->file_offset() + base);
   new_segment->physical_address(new_segment->virtual_address());
 
-  uint64_t segmentsize = align(content.size(), psize);
-  content.resize(segmentsize);
+  uint64_t segmentsize = align(content.size(), 0x10);
+  //uint64_t segmentsize = content.size();
 
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
@@ -537,12 +402,12 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   header.numberof_segments(header.numberof_segments() + 1);
 
-  auto&& it_new_segment_place = std::find_if(
-      this->segments_.rbegin(),
-      this->segments_.rend(),
+  const auto& it_new_segment_place = std::find_if(
+      this->segments_.rbegin(), this->segments_.rend(),
       [&new_segment] (const Segment* s) {
         return s->type() == new_segment->type();
       });
+
   if (it_new_segment_place == this->segments_.rend()) {
     this->segments_.push_back(new_segment);
   } else {
@@ -664,17 +529,15 @@ Section& Binary::add_section<true>(const Section& section) {
   return *(this->sections_.back());
 }
 
-
+// Add a non-loaded section
 template<>
 Section& Binary::add_section<false>(const Section& section) {
 
   Section* new_section = new Section{section};
   new_section->datahandler_ = this->datahandler_;
 
-  DataHandler::Node new_node{
-          new_section->file_offset(),
-          new_section->size(),
-          DataHandler::Node::SECTION};
+  DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
+                             DataHandler::Node::SECTION};
   this->datahandler_->add(new_node);
 
   const uint64_t last_offset_sections = this->last_offset_section();

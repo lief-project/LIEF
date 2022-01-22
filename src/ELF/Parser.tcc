@@ -80,7 +80,9 @@ void Parser::parse_binary() {
       this->parse_segments<ELF_T>();
       LIEF_SW_END("segments parsed in {}", duration_cast<std::chrono::microseconds>(sw.elapsed()));
     } else {
-      LIEF_WARN("Binary doesn't have a program header");
+      if (binary_->header().file_type() != E_TYPE::ET_REL) {
+        LIEF_WARN("Binary doesn't have a program header");
+      }
     }
   } catch (const corrupted& e) {
     LIEF_WARN(e.what());
@@ -416,21 +418,18 @@ void Parser::parse_binary() {
 
   // Parse Note segment
   // ==================
-  auto&& it_segment_note = std::find_if(
-      std::begin(this->binary_->segments_),
-      std::end(this->binary_->segments_),
-      [] (const Segment* segment) {
-        return segment != nullptr and segment->type() == SEGMENT_TYPES::PT_NOTE;
-      });
-
-  if (it_segment_note != std::end(this->binary_->segments_)) {
+  for (const Segment& segment : binary_->segments()) {
+    if (segment.type() != SEGMENT_TYPES::PT_NOTE) {
+      continue;
+    }
     try {
-      const uint64_t note_offset = this->binary_->virtual_address_to_offset((*it_segment_note)->virtual_address());
-      this->parse_notes(note_offset, (*it_segment_note)->physical_size());
+      const uint64_t note_offset = this->binary_->virtual_address_to_offset(segment.virtual_address());
+      this->parse_notes(note_offset, segment.physical_size());
     } catch (const conversion_error&) {
     } catch (const exception& e) {
       LIEF_WARN("{}", e.what());
     }
+
   }
 
   // Parse Note Sections

@@ -174,10 +174,9 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_466.py")
 
-  # To be re-enabled when the new builder is merged
-  # ADD_PYTHON_TEST(ELF_PYTHON_empty_gnu_hash
-  #   ${PYTHON_EXECUTABLE}
-  #   "${CMAKE_CURRENT_SOURCE_DIR}/test_empty_gnu_hash.py")
+   ADD_PYTHON_TEST(ELF_PYTHON_empty_gnu_hash
+    ${PYTHON_EXECUTABLE}
+     "${CMAKE_CURRENT_SOURCE_DIR}/test_empty_gnu_hash.py")
 
 
   # Examples

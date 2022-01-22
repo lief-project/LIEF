@@ -77,6 +77,7 @@ class vector_iostream {
   vector_iostream& write_sleb128(int64_t value);
 
   vector_iostream& get(std::vector<uint8_t>& c);
+  vector_iostream& move(std::vector<uint8_t>& c);
 
   vector_iostream& flush();
 

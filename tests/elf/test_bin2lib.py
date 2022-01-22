@@ -145,7 +145,7 @@ class TestBin2Lib(unittest.TestCase):
         libadd_hidden.binding    = lief.ELF.SYMBOL_BINDINGS.GLOBAL
         libadd_hidden.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
         libadd_hidden            = libadd.add_dynamic_symbol(libadd_hidden, lief.ELF.SymbolVersion.global_)
-        if libadd.has(lief.ELF.DYNAMIC_TAGS.FLAGS_1):
+        if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
             libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
 
         self._logger.debug(libadd_hidden)
@@ -222,6 +222,10 @@ class TestBin2Lib(unittest.TestCase):
 
         libadd = lief.parse(libadd)
         libadd.export_symbol("add_hidden")
+
+        if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
+            libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+
         libadd.write(libadd2)
 
         lib_directory = os.path.dirname(libadd2)
@@ -294,6 +298,9 @@ class TestBin2Lib(unittest.TestCase):
         libadd = lief.parse(libadd)
         add_hidden_static = libadd.get_static_symbol("add_hidden")
         libadd.add_exported_function(add_hidden_static.value, add_hidden_static.name)
+
+        if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
+            libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
         libadd.write(libadd2)
 
         lib_directory = os.path.dirname(libadd2)

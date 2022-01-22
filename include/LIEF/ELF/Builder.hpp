@@ -18,12 +18,15 @@
 #define LIEF_ELF_BUIDLER_H_
 
 #include <vector>
+#include <memory>
 #include <string>
+#include <set>
 #include <unordered_map>
 #include <functional>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 #include "LIEF/ELF/enums.hpp"
 
@@ -32,31 +35,80 @@ struct Profiler;
 namespace LIEF {
 namespace ELF {
 class Binary;
+class Layout;
 class Header;
 class Note;
 class DynamicEntryArray;
 class DynamicEntry;
 class Section;
+class ExeLayout;
+class ObjectFileLayout;
+class Layout;
+class Relocation;
 
-//! @brief Class which take a ELF::Binary object and reconstruct a valid binary
+//! @brief Class which takes a ELF::Binary object and reconstructs a valid binary
 class LIEF_API Builder {
+  friend class ObjectFileLayout;
+  friend class Layout;
+  friend class ExeLayout;
   public:
   friend struct ::Profiler;
-  Builder(Binary *binary);
+
+  struct config_t {
+    bool force_relocations = false;
+  };
+
+  Builder(Binary& binary);
 
   Builder() = delete;
   ~Builder();
 
+  //! Perform the build of the provided ELF binary
   void build();
 
-  Builder& empties_gnuhash(bool flag = true);
+  //! Tweak the ELF builder with the provided config parameter
+  inline Builder& set_config(config_t conf) {
+    config_ = std::move(conf);
+    return *this;
+  }
 
+  //! Force relocating all the ELF characteristics supported by LIEF.
+  Builder& force_relocations(bool flag = true);
+
+  //! Return the built ELF binary as a byte vector
   const std::vector<uint8_t>& get_build();
+
+  //! Write the built ELF binary in the ``filename`` given in parameter
   void write(const std::string& filename) const;
 
   protected:
+  struct build_opt_t {
+    bool gnu_hash        = true;
+    bool dt_hash         = true;
+    bool rela            = true;
+    bool jmprel          = true;
+    bool dyn_str         = true;
+    bool symtab          = true;
+    bool static_symtab   = true;
+    bool sym_versym      = true;
+    bool sym_verdef      = true;
+    bool sym_verneed     = true;
+    bool dynamic_section = true;
+    bool init_array      = true;
+    bool preinit_array   = true;
+    bool fini_array      = true;
+    bool notes           = true;
+    bool interpreter     = true;
+  };
+
   template<typename ELF_T>
   void build();
+
+  template<typename ELF_T>
+  void build_relocatable();
+
+  template<typename ELF_T>
+  void build_exe_lib();
 
   template<typename ELF_T>
   void build(const Header& header);
@@ -80,6 +132,9 @@ class LIEF_API Builder {
   void build_dynamic_symbols();
 
   template<typename ELF_T>
+  void build_obj_symbols();
+
+  template<typename ELF_T>
   void build_dynamic_relocations();
 
   template<typename ELF_T>
@@ -88,16 +143,13 @@ class LIEF_API Builder {
   template<typename ELF_T>
   void build_section_relocations();
 
+  uint32_t sort_dynamic_symbols();
+
   template<typename ELF_T>
   void build_hash_table();
 
   template<typename ELF_T>
   void build_symbol_hash();
-
-  template<typename ELF_T>
-  void build_symbol_gnuhash(uint32_t new_symndx);
-
-  uint32_t sort_dynamic_symbols();
 
   void build_empty_symbol_gnuhash();
 
@@ -108,10 +160,10 @@ class LIEF_API Builder {
   void build_symbol_definition();
 
   template<typename T, typename HANDLER>
-  std::vector<std::string> optimize(const HANDLER& e,
+  static std::vector<std::string> optimize(const HANDLER& e,
                                     std::function<std::string(const typename HANDLER::value_type)> getter,
+                                    size_t& offset_counter,
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
-
   template<typename ELF_T>
   void build_symbol_version();
 
@@ -121,11 +173,7 @@ class LIEF_API Builder {
   template<typename ELF_T>
   void build_notes();
 
-  void build(NOTE_TYPES type);
-
-  size_t note_offset(const Note& note);
-
-  bool empties_gnuhash_;
+  void build(const Note& note, std::set<Section*>* sections);
 
   template<typename ELF_T>
   void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
@@ -135,10 +183,16 @@ class LIEF_API Builder {
 
   bool should_swap() const;
 
-  Section& array_section(uint64_t addr);
+  template<class ELF_T>
+  void process_object_relocations();
 
+  static Section& array_section(Binary& bin, uint64_t addr);
+  build_opt_t build_opt_;
+  config_t config_;
   mutable vector_iostream ios_;
   Binary* binary_{nullptr};
+  std::unique_ptr<Layout> layout_;
+
 };
 
 } // namespace ELF

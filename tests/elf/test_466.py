@@ -33,7 +33,7 @@ class TestGOTPatch(TestCase):
         libfreebl3 = lief.parse(libfreebl3_path)
         ls         = lief.parse("/usr/bin/ls")
 
-        if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in ls and ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_TAGS.FLAGS_1):
+        if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in ls and ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
             ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
 
         ls.add_library("libfreebl3.so")

@@ -158,6 +158,11 @@ vector_iostream& vector_iostream::get(std::vector<uint8_t>& c) {
   return *this;
 }
 
+vector_iostream& vector_iostream::move(std::vector<uint8_t>& c) {
+  c = std::move(this->raw_);
+  return *this;
+}
+
 vector_iostream& vector_iostream::flush() {
   return *this;
 }

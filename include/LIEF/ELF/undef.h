@@ -1611,7 +1611,7 @@
 #undef AT_L2_CACHESHAPE
 #undef AT_L3_CACHESHAPE
 
-
+#undef NT_GNU_PROPERTY_TYPE_0
 
 
 #endif

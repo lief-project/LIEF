@@ -336,8 +336,7 @@ void Binary::remove(const Section& section, bool clear) {
 void Binary::remove(const Note& note) {
 
   auto&& it_note = std::find_if(
-      std::begin(this->notes_),
-      std::end(this->notes_),
+      std::begin(this->notes_), std::end(this->notes_),
       [&note] (const Note* n)
       {
         return note == *n;
@@ -833,7 +832,6 @@ it_const_dynamic_relocations Binary::dynamic_relocations() const {
   };
 }
 
-
 Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   Relocation* relocation_ptr = new Relocation{relocation};
   relocation_ptr->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
@@ -1124,7 +1122,7 @@ uint64_t Binary::virtual_size() const {
 
 
 std::vector<uint8_t> Binary::raw() {
-  Builder builder{this};
+  Builder builder{*this};
   builder.build();
   return builder.get_build();
 }
@@ -1321,8 +1319,29 @@ Segment& Binary::replace(const Segment& new_segment, const Segment& original_seg
 
   this->segments_.push_back(new_segment_ptr);
   return *this->segments_.back();
+}
 
 
+void Binary::remove(const Segment& segment) {
+  const auto& it_segment = std::find_if(std::begin(this->segments_), std::end(this->segments_),
+      [&segment] (const Segment* s) {
+        return *s == segment;
+      });
+
+  if (it_segment == std::end(this->segments_)) {
+    throw not_found("Unable to find the segment in the current binary");
+  }
+
+  Segment* local_segment = *it_segment;
+  this->datahandler_->remove(local_segment->file_offset(), local_segment->physical_size(),
+                             DataHandler::Node::SEGMENT);
+  if (phdr_reloc_info_.new_offset > 0) {
+    ++phdr_reloc_info_.nb_segments;
+  }
+  header().numberof_segments(header().numberof_segments() - 1);
+
+  delete local_segment;
+  this->segments_.erase(it_segment);
 }
 
 
@@ -1611,12 +1630,6 @@ bool Binary::has_section_with_va(uint64_t va) const {
 void Binary::strip() {
   this->static_symbols_ = {};
 
-  //for (Section* sec : this->sections_) {
-  //  if (sec->segments().size() == 0 and sec->name() != ".shstrtab" and sec->type() != ELF_SECTION_TYPES::SHT_NULL) {
-  //    this->remove(*sec, /* clear */ true);
-  //    return strip();
-  //  }
-  //}
   if (this->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
     Section& symtab = this->get(ELF_SECTION_TYPES::SHT_SYMTAB);
     this->remove(symtab, /* clear */ true);
@@ -1728,7 +1741,7 @@ void Binary::interpreter(const std::string& interpreter) {
 
 
 void Binary::write(const std::string& filename) {
-  Builder builder{this};
+  Builder builder{*this};
   builder.build();
   builder.write(filename);
 }
@@ -2050,18 +2063,16 @@ const SysvHash& Binary::sysv_hash() const {
 
 void Binary::shift_sections(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("[+] Shift Sections");
-  /// TODO: ADDRESS ?????????? ///////////
   for (Section* section : this->sections_) {
-    LIEF_DEBUG("[BEFORE] {}", *section);
     if (section->file_offset() >= from) {
+      LIEF_DEBUG("[BEFORE] {}", *section);
       section->file_offset(section->file_offset() + shift);
       if (section->virtual_address() > 0) {
         section->virtual_address(section->virtual_address() + shift);
       }
+      LIEF_DEBUG("[AFTER ] {}", *section);
     }
-    LIEF_DEBUG("[AFTER] {}", *section);
   }
-
 }
 
 void Binary::shift_segments(uint64_t from, uint64_t shift) {
@@ -2069,13 +2080,13 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shift segments by 0x{:x} from 0x{:x}", shift, from);
 
   for (Segment* segment : this->segments_) {
-    LIEF_DEBUG("[BEFORE] {}", *segment);
     if (segment->file_offset() >= from) {
+      LIEF_DEBUG("[BEFORE] {}", *segment);
       segment->file_offset(segment->file_offset() + shift);
       segment->virtual_address(segment->virtual_address() + shift);
       segment->physical_address(segment->physical_address() + shift);
+      LIEF_DEBUG("[AFTER ] {}", *segment);
     }
-    LIEF_DEBUG("[AFTER] {}", *segment);
   }
 }
 
@@ -2130,10 +2141,10 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_DEBUG("{} skipped", to_string(entry->tag()));
+          //LIEF_DEBUG("{} not supported", to_string(entry->tag()));
         }
     }
-    LIEF_DEBUG("[AFTER] {}", *entry);
+    LIEF_DEBUG("[AFTER ] {}", *entry);
   }
 }
 
@@ -2141,11 +2152,11 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 void Binary::shift_symbols(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shift symbols by 0x{:x} from 0x{:x}", shift, from);
   for (Symbol& symbol : this->symbols()) {
-    LIEF_DEBUG("[BEFORE] {}", symbol);
     if (symbol.value() >= from) {
+      LIEF_DEBUG("[BEFORE] {}", symbol);
       symbol.value(symbol.value() + shift);
+      LIEF_DEBUG("[AFTER ] {}", symbol);
     }
-    LIEF_DEBUG("[AFTER] {}", symbol);
   }
 }
 
@@ -2761,6 +2772,340 @@ std::string Binary::shstrtab_name() const {
   return ".shstrtab";
 }
 
+uint64_t Binary::relocate_phdr_table() {
+  uint64_t offset = 0;
+  if (header_.file_type() == E_TYPE::ET_DYN) {
+    offset = relocate_phdr_table_pie();
+    if (offset == 0) {
+      LIEF_ERR("Can't relocated phdr table for this PIE binary");
+    } else {
+      return offset;
+    }
+  }
+
+  LIEF_DEBUG("Try v1 relocator");
+  if ((offset = relocate_phdr_table_v1()) == 0) {
+    LIEF_DEBUG("Try v2 relocator");
+    if ((offset = relocate_phdr_table_v2()) == 0) {
+      LIEF_ERR("Can't relocate the phdr table for this binary. Please consider to open an issue");
+      return 0;
+    }
+  }
+  return offset;
+}
+
+
+uint64_t Binary::relocate_phdr_table_pie() {
+
+  if (phdr_reloc_info_.new_offset > 0) {
+    // Already relocated
+    return phdr_reloc_info_.new_offset;
+  }
+
+
+  // --------------------------------------
+  // Part 1: Make spaces for a new PHDR
+  // --------------------------------------
+  const uint64_t phdr_offset = this->header().program_headers_offset();
+  uint64_t phdr_size         = 0;
+
+  if (this->type() == ELF_CLASS::ELFCLASS32) {
+    phdr_size = sizeof(ELF32::Elf_Phdr);
+  }
+
+  if (this->type() == ELF_CLASS::ELFCLASS64) {
+    phdr_size = sizeof(ELF64::Elf_Phdr);
+  }
+
+
+  const uint64_t from = phdr_offset + phdr_size * this->segments_.size();
+
+  /*
+   * We could use a smaller shift value but 0x1000 eases the
+   * support of corner cases like ADRP on AArch64.
+   *
+   * Note: 0x1000 enables to add up to 73 segments which should be enough
+   *       in most of the cases
+   *
+   * e.g:
+   * const ARCH arch = header_.machine_type();
+   * uint64_t shift = align(phdr_size, 0x10);
+   * if (arch == ARCH::EM_AARCH64 or arch == ARCH::EM_ARM) {
+   *   shift = 0x1000;
+   *   phdr_reloc_info_.new_offset = phdr_offset;
+   *   phdr_reloc_info_.nb_segments = shift / phdr_size - header_.numberof_segments();
+   * }
+   */
+  static constexpr size_t shift = 0x1000;
+
+  phdr_reloc_info_.new_offset  = from;
+  phdr_reloc_info_.nb_segments = shift / phdr_size - header_.numberof_segments();
+
+  this->datahandler_->make_hole(from, shift);
+
+  LIEF_DEBUG("Header shift: 0x{:x}", shift);
+
+  this->header().section_headers_offset(this->header().section_headers_offset() + shift);
+
+  this->shift_sections(from, shift);
+  this->shift_segments(from, shift);
+
+  // Patch segment size for the segment which contains the new segment
+  for (Segment* segment : this->segments_) {
+    if ((segment->file_offset() + segment->physical_size()) >= from and
+        from >= segment->file_offset()) {
+      segment->virtual_size(segment->virtual_size()   + shift);
+      segment->physical_size(segment->physical_size() + shift);
+    }
+  }
+
+  this->shift_dynamic_entries(from, shift);
+  this->shift_symbols(from, shift);
+  this->shift_relocations(from, shift);
+
+  if (this->type() == ELF_CLASS::ELFCLASS32) {
+    this->fix_got_entries<ELF32>(from, shift);
+  } else {
+    this->fix_got_entries<ELF64>(from, shift);
+  }
+
+  if (this->header().entrypoint() >= from) {
+    this->header().entrypoint(this->header().entrypoint() + shift);
+  }
+  return phdr_offset;
+}
+
+/*
+ * This function relocates the phdr table in the case
+ * where:
+ *  1. The binary is NOT pie
+ *  2. There is no gap between two adjacent segments (cf. relocate_phdr_table_v1)
+ *
+ * It performs the following modifications:
+ *  1. Expand the bss section such as virtual size == file size
+ *  2. Relocate the phdr table right after the (expanded) bss section
+ *  3. Add a LOAD segment to wrap the new phdr location
+ *
+ */
+uint64_t Binary::relocate_phdr_table_v2() {
+  static constexpr size_t USER_SEGMENTS = 10; // We reserve space for 10 user's segments
+
+  if (phdr_reloc_info_.new_offset > 0) {
+    return phdr_reloc_info_.new_offset;
+  }
+
+  Header& header = this->header();
+
+  const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
+                                       sizeof(ELF32::Elf_Phdr) : sizeof(ELF64::Elf_Phdr);
+
+
+  std::vector<Segment*> load_seg;
+  Segment* bss_segment = nullptr;
+  size_t bss_cnt = 0;
+  for (Segment* segment : segments_) {
+    if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
+      load_seg.push_back(segment);
+      if (segment->physical_size() < segment->virtual_size()) {
+        bss_segment = segment;
+        ++bss_cnt;
+      }
+    }
+  }
+
+  if (bss_cnt != 1 or bss_segment == nullptr) {
+    LIEF_ERR("Zero or more than 1 bss-like segment!");
+    return 0;
+  }
+
+  // "expand" the .bss area. It is required since the bss area that is mapped
+  // needs to be set to 0
+  const uint64_t original_psize = bss_segment->physical_size();
+  const uint64_t new_phdr_offset = bss_segment->file_offset() + bss_segment->virtual_size();
+  phdr_reloc_info_.new_offset = new_phdr_offset;
+
+  header.program_headers_offset(new_phdr_offset);
+
+  size_t delta_pa = (bss_segment->virtual_size() - bss_segment->physical_size());
+  const size_t nb_segments = header.numberof_segments() + /* custom PT_LOAD */ 1 + USER_SEGMENTS;
+
+  phdr_reloc_info_.nb_segments = USER_SEGMENTS;
+  datahandler_->make_hole(bss_segment->file_offset() + bss_segment->physical_size(), delta_pa);
+  bss_segment->physical_size(bss_segment->virtual_size());
+
+  Segment* new_segment_ptr = new Segment{};
+  new_segment_ptr->type(SEGMENT_TYPES::PT_LOAD);
+  new_segment_ptr->virtual_size(nb_segments * phdr_size);
+  new_segment_ptr->physical_size(nb_segments * phdr_size);
+  new_segment_ptr->virtual_address(imagebase() + phdr_reloc_info_.new_offset);
+  new_segment_ptr->physical_address(imagebase() + phdr_reloc_info_.new_offset);
+  new_segment_ptr->flags(ELF_SEGMENT_FLAGS::PF_R);
+  new_segment_ptr->alignment(0x1000);
+  new_segment_ptr->file_offset(phdr_reloc_info_.new_offset);
+  new_segment_ptr->datahandler_ = this->datahandler_;
+
+  DataHandler::Node new_node{
+          phdr_reloc_info_.new_offset,
+          nb_segments * phdr_size,
+          DataHandler::Node::SEGMENT};
+
+  this->datahandler_->add(new_node);
+
+  const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
+      [&new_segment_ptr] (const Segment* s) { return s->type() == new_segment_ptr->type(); });
+
+  if (it_new_segment_place == segments_.rend()) {
+    segments_.push_back(new_segment_ptr);
+  } else {
+    const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
+    segments_.insert(std::begin(this->segments_) + idx, new_segment_ptr);
+  }
+
+  this->header().numberof_segments(this->header().numberof_segments() + 1);
+
+  const auto it_segment_phdr = std::find_if(std::begin(segments_), std::end(segments_),
+              [] (const Segment* s) {
+                return s->type() == SEGMENT_TYPES::PT_PHDR;
+              });
+
+  if (it_segment_phdr != std::end(segments_)) {
+    Segment *const phdr_segment = *it_segment_phdr;
+    phdr_segment->file_offset(new_segment_ptr->file_offset());
+    phdr_segment->virtual_address(new_segment_ptr->virtual_address());
+    phdr_segment->physical_address(new_segment_ptr->physical_address());
+    phdr_segment->content(std::vector<uint8_t>(phdr_segment->physical_size(), 0));
+  }
+
+
+  // Shift components that come after the bss offset
+  uint64_t from = bss_segment->file_offset() + original_psize;
+  uint64_t shift = delta_pa + nb_segments * phdr_size;
+  this->header().section_headers_offset(this->header().section_headers_offset() + shift);
+
+  // Shift sections
+  for (Section* section : this->sections_) {
+    if (section->file_offset() >= from and section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+      LIEF_DEBUG("[BEFORE] {}", *section);
+      section->file_offset(section->file_offset() + shift);
+      if (section->virtual_address() > 0) {
+        section->virtual_address(section->virtual_address() + shift);
+      }
+      LIEF_DEBUG("[AFTER ] {}", *section);
+    }
+  }
+
+  return phdr_reloc_info_.new_offset;
+}
+
+
+uint64_t Binary::relocate_phdr_table_v1() {
+  // The minimum number of segments that need to be available
+  // to consider this relocation valid
+  static constexpr auto MIN_POTENTIAL_SIZE = 2;
+
+  // check if we already relocated the segment table in the larger segment's cave
+  if (phdr_reloc_info_.new_offset > 0) {
+    return phdr_reloc_info_.new_offset;
+  }
+
+  Header& header = this->header();
+
+  const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
+                                       sizeof(ELF32::Elf_Phdr) : sizeof(ELF64::Elf_Phdr);
+
+  const auto it_segment_phdr = std::find_if(std::begin(segments_), std::end(segments_),
+              [] (const Segment* s) {
+                return s->type() == SEGMENT_TYPES::PT_PHDR;
+              });
+
+  std::vector<Segment*> load_seg;
+  for (Segment* segment : segments_) {
+    if (segment->type() == SEGMENT_TYPES::PT_LOAD) {
+      load_seg.push_back(segment);
+    }
+  }
+
+  // Take the 2 adjacent segments that have the larger "cave"
+  Segment* seg_to_extend = nullptr;
+  Segment* next_to_extend = nullptr;
+  size_t potential_size = 0;
+  const size_t nb_loads = load_seg.size();
+  for (size_t i = 0; i < nb_loads; ++i) {
+    Segment* current = load_seg[i];
+    // Skip bss-like segments
+    if (current->virtual_size() != current->physical_size()) {
+      LIEF_DEBUG("Skipping .bss like segment: {}@0x{:x}:0x{:x}",
+          to_string(current->type()),
+          current->virtual_address(), current->virtual_size());
+      continue;
+    }
+    if (i < nb_loads - 1) {
+      Segment* adjacent = load_seg[i + 1];
+      const size_t gap = adjacent->file_offset() - (current->file_offset() + current->physical_size());
+      const size_t nb_seg_gap = gap / phdr_size;
+      LIEF_DEBUG("Gap between {:d} <-> {:d}: {:x} ({:d} segments)", i, i + 1, gap, nb_seg_gap);
+      if (nb_seg_gap > potential_size) {
+        seg_to_extend = current;
+        next_to_extend = adjacent;
+        potential_size = nb_seg_gap;
+      }
+      continue;
+    }
+    else {
+      // i == nb_loads - 1 => Last segment
+      return 0;
+    }
+  }
+
+  if (seg_to_extend == nullptr or next_to_extend == nullptr) {
+    LIEF_DEBUG("Can't find a suitable segment (v1)");
+    return 0;
+  }
+
+  if (potential_size < MIN_POTENTIAL_SIZE) {
+    LIEF_DEBUG("The number of available segments is too small ({} vs {})",
+               potential_size, MIN_POTENTIAL_SIZE);
+    return 0;
+  }
+
+  LIEF_DEBUG("Segment selected for the extension: {}@0x{:x}:0x{:x}",
+      to_string(seg_to_extend->type()), seg_to_extend->virtual_address(), seg_to_extend->virtual_size());
+  LIEF_DEBUG("Adjacent segment selected for the extension: {}@0x{:x}:0x{:x}",
+      to_string(next_to_extend->type()), next_to_extend->virtual_address(), next_to_extend->virtual_size());
+
+  // New values
+  const uint64_t new_phdr_offset = seg_to_extend->file_offset() + seg_to_extend->physical_size();
+  phdr_reloc_info_.new_offset = new_phdr_offset;
+
+  header.program_headers_offset(new_phdr_offset);
+
+  // Extend the segment that wraps the next PHDR table so that it is contiguous
+  // with the next segment.
+  size_t delta = next_to_extend->file_offset() - (seg_to_extend->file_offset() + seg_to_extend->physical_size());
+  const size_t nb_segments = delta / phdr_size - header.numberof_segments();
+  if (nb_segments < header.numberof_segments()) {
+    LIEF_DEBUG("The layout of this binary does not enable to relocate the segment table (v1)");
+    return 0;
+  }
+  phdr_reloc_info_.nb_segments = nb_segments;
+  seg_to_extend->physical_size(seg_to_extend->physical_size() + delta);
+  seg_to_extend->virtual_size(seg_to_extend->virtual_size() + delta);
+
+
+  if (it_segment_phdr != std::end(segments_)) {
+    Segment *const phdr_segment = *it_segment_phdr;
+    // Update the PHDR segment with our values
+    const uint64_t base = seg_to_extend->virtual_address() - seg_to_extend->file_offset();
+    phdr_segment->file_offset(new_phdr_offset);
+    phdr_segment->virtual_address(base + phdr_segment->file_offset());
+    phdr_segment->physical_address(phdr_segment->virtual_address());
+    LIEF_DEBUG("{}@0x{:x}:0x{:x}", to_string(phdr_segment->type()),
+                                   phdr_segment->virtual_address(), phdr_segment->virtual_size());
+    // Clear PHDR segment
+    phdr_segment->content(std::vector<uint8_t>(phdr_segment->physical_size(), 0));
+  }
+  return phdr_reloc_info_.new_offset;
+}
 
 // Operator+=
 // ==========

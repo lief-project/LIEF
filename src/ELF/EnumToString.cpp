@@ -1196,12 +1196,13 @@ const char* to_string(DYNSYM_COUNT_METHODS e) {
 
 
 const char* to_string(NOTE_TYPES e) {
-  CONST_MAP(NOTE_TYPES, const char*, 6) enumStrings {
+  CONST_MAP(NOTE_TYPES, const char*, 7) enumStrings {
     { NOTE_TYPES::NT_UNKNOWN,          "UNKNOWN"},
     { NOTE_TYPES::NT_GNU_ABI_TAG,      "ABI_TAG"},
     { NOTE_TYPES::NT_GNU_HWCAP,        "HWCAP"},
     { NOTE_TYPES::NT_GNU_BUILD_ID,     "BUILD_ID"},
     { NOTE_TYPES::NT_GNU_GOLD_VERSION, "GOLD_VERSION"},
+    { NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0, "PROPERTY_TYPE_0"},
     { NOTE_TYPES::NT_CRASHPAD,         "CRASHPAD"},
   };
 

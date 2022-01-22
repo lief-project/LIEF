@@ -1093,6 +1093,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_HWCAP))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_BUILD_ID))
     .value(PY_ENUM(NOTE_TYPES::NT_GNU_GOLD_VERSION))
+    .value(PY_ENUM(NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0))
     .value(PY_ENUM(NOTE_TYPES::NT_CRASHPAD));
 
 

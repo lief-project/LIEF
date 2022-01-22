@@ -25,7 +25,7 @@ namespace LIEF {
 namespace ELF {
 
 template<class T>
-using getter_t = T (SysvHash::*)(void) const;
+using getter_t = T (SysvHash::*)() const;
 
 template<class T>
 using setter_t = void (SysvHash::*)(T);
@@ -40,8 +40,9 @@ void create<SysvHash>(py::module& m) {
       &SysvHash::nbucket,
       "Return the number of buckets")
 
-    .def_property_readonly("nchain",
-      &SysvHash::nchain,
+    .def_property("nchain",
+      static_cast<getter_t<uint32_t>>(&SysvHash::nchain),
+      static_cast<setter_t<uint32_t>>(&SysvHash::nchain),
       "Return the number of *chains* (symbol table index)")
 
     .def_property_readonly("buckets",

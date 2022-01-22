@@ -24,8 +24,17 @@ namespace ELF {
 
 template<>
 void create<Builder>(py::module& m) {
-  py::class_<Builder>(m, "Builder")
-    .def(py::init<Binary*>(),
+  py::class_<Builder> builder(m, "Builder",
+                              "Class that handles the transformation of a LIEF ELF object into a raw ELF file");
+
+  py::class_<Builder::config_t>(builder, "config_t",
+                                "Interface to tweak the " RST_CLASS_REF(lief.ELF.Builder) "")
+    .def(py::init<>())
+    .def_readwrite("force_relocations", &Builder::config_t::force_relocations,
+                   "Force to relocate all the ELF structures that can be relocated (mostly for testing)");
+
+  builder
+    .def(py::init<Binary&>(),
         "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) "",
         "elf_binary"_a)
 
@@ -33,10 +42,10 @@ void create<Builder>(py::module& m) {
         static_cast<void (Builder::*)(void)>(&Builder::build),
         "Perform the build process")
 
-    .def("empties_gnuhash",
-        &Builder::empties_gnuhash,
-        "Disable the " RST_CLASS_REF(lief.ELF.GnuHash) "",
-        py::return_value_policy::reference)
+    .def("set_config", &Builder::set_config)
+    .def("force_relocations", &Builder::force_relocations,
+        "flag"_a = true,
+        py::return_value_policy::reference_internal)
 
     .def("write",
         &Builder::write,

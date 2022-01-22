@@ -40,6 +40,8 @@ class Segment;
 class Parser;
 class Binary;
 class Builder;
+class ExeLayout;
+class ObjectFileLayout;
 
 struct Elf64_Shdr;
 struct Elf32_Shdr;
@@ -48,10 +50,11 @@ LIEF_API Section operator"" _section(const char* name);
 
 //! @brief Class wich represent sections
 class LIEF_API Section : public LIEF::Section {
-
   friend class Parser;
   friend class Binary;
   friend class Builder;
+  friend class ExeLayout;
+  friend class ObjectFileLayout;
 
   public:
   Section(uint8_t *data, ELF_CLASS type);

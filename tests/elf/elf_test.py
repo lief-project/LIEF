@@ -103,7 +103,6 @@ class TestELF(TestCase):
             binary.permute_dynamic_symbols(permutation)
 
             builder = lief.ELF.Builder(binary)
-            builder.empties_gnuhash(True)
             builder.build()
             output = os.path.join(tmp_dir, "{}.permutated".format(binary.name))
             self.logger.debug("Output: {}".format(output))

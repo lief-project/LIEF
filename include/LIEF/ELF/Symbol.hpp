@@ -156,7 +156,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
   uint16_t         shndx_   = 0;
   Section*         section_ = nullptr;
   SymbolVersion*   symbol_version_ = nullptr;
-
 };
 }
 }

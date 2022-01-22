@@ -46,17 +46,42 @@
 
 #include "Builder.tcc"
 
+#include "ExeLayout.hpp"
+#include "ObjectFileLayout.hpp"
+
 namespace LIEF {
 namespace ELF {
 
 
 Builder::~Builder() = default;
 
-Builder::Builder(Binary *binary) :
-  empties_gnuhash_{false},
-  binary_{binary}
+Builder::Builder(Binary& binary) :
+  binary_{&binary},
+  layout_{nullptr}
 {
-  this->ios_.reserve(binary->original_size());
+  const E_TYPE type = binary.header().file_type();
+  switch (type) {
+    case E_TYPE::ET_CORE:
+    case E_TYPE::ET_DYN:
+    case E_TYPE::ET_EXEC:
+      {
+        layout_ = std::make_unique<ExeLayout>(binary);
+        break;
+      }
+
+    case E_TYPE::ET_REL:
+      {
+        layout_ = std::make_unique<ObjectFileLayout>(binary);
+        break;
+      }
+
+    default:
+      {
+        LIEF_ERR("ELF {} are not supported", to_string(type));
+        std::abort();
+      }
+  }
+  this->ios_.reserve(binary.original_size());
   this->ios_.set_endian_swap(this->should_swap());
 }
 
@@ -91,23 +116,21 @@ const std::vector<uint8_t>& Builder::get_build() {
 }
 
 
-Builder& Builder::empties_gnuhash(bool flag) {
-  this->empties_gnuhash_ = flag;
+Builder& Builder::force_relocations(bool flag) {
+  config_.force_relocations = flag;
   return *this;
 }
 
 
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
-  if (output_file) {
-    std::vector<uint8_t> content;
-    this->ios_.get(content);
-
-    std::copy(
-        std::begin(content),
-        std::end(content),
-        std::ostreambuf_iterator<char>(output_file));
+  if (not output_file) {
+    LIEF_ERR("Can't open {}!", filename);
+    return;
   }
+  std::vector<uint8_t> content;
+  this->ios_.move(content);
+  output_file.write(reinterpret_cast<const char*>(content.data()), content.size());
 }
 
 
@@ -130,7 +153,7 @@ uint32_t Builder::sort_dynamic_symbols() {
       // TODO: Erase null entries of dynamic symbol table and symbol version
       // table if information of .dynsym section is smaller than null entries
       // num.
-      LIEF_WARN("information of {} section changes from {:d} to {:d}",
+      LIEF_DEBUG("information of {} section changes from {:d} to {:d}",
                 dynsym_section_name,
                 section.information(),
                 first_non_local_symbol_index);
@@ -153,8 +176,7 @@ uint32_t Builder::sort_dynamic_symbols() {
 void Builder::build_empty_symbol_gnuhash() {
   LIEF_DEBUG("Build empty GNU Hash");
   auto&& it_gnuhash = std::find_if(
-      std::begin(this->binary_->sections_),
-      std::end(this->binary_->sections_),
+      std::begin(this->binary_->sections_), std::end(this->binary_->sections_),
       [] (const Section* section)
       {
         return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
@@ -192,52 +214,24 @@ void Builder::build_empty_symbol_gnuhash() {
 
 
 
-
-
-size_t Builder::note_offset(const Note& note) {
-  auto&& it_note = std::find_if(
-      std::begin(this->binary_->notes_),
-      std::end(this->binary_->notes_),
-      [&note] (const Note* n) {
-        return *n == note;
-      });
-  if (it_note == std::end(this->binary_->notes_)) {
-    // TODO
-  }
-
-  size_t offset = std::accumulate(
-      std::begin(this->binary_->notes_),
-      it_note, 0,
-      [] (size_t offset, const Note* n) {
-        return offset + n->size();
-      });
-  return offset;
-}
-
-
-void Builder::build(NOTE_TYPES type) {
-  using note_to_section_map_t = std::multimap<NOTE_TYPES, const char*>;
+void Builder::build(const Note& note, std::set<Section*>* sections) {
   using value_t = typename note_to_section_map_t::value_type;
 
-  static const note_to_section_map_t note_to_section_map = {
-    { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.ABI-tag"          },
-    { NOTE_TYPES::NT_GNU_ABI_TAG,      ".note.android.ident"    },
-
-    { NOTE_TYPES::NT_GNU_HWCAP,        ".note.gnu.hwcap"        },
-    { NOTE_TYPES::NT_GNU_BUILD_ID,     ".note.gnu.build-id"     },
-    { NOTE_TYPES::NT_GNU_GOLD_VERSION, ".note.gnu.gold-version" },
-
-    { NOTE_TYPES::NT_UNKNOWN,          ".note"                  },
-  };
+  if (sections == nullptr) {
+    LIEF_ERR("Section list should not be null");
+    return;
+  }
 
   Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
 
-  auto&& range_secname = note_to_section_map.equal_range(type);
+  auto range_secname = note_to_section_map.equal_range(note.type());
 
-  auto&& it_section_name = std::find_if(
+  const bool known_section = (range_secname.first != range_secname.second);
+
+  const auto it_section_name = std::find_if(
       range_secname.first, range_secname.second,
       [this] (value_t p) {
-        return this->binary_->has_section(p.second);
+        return binary_->has_section(p.second);
       });
 
   bool has_section = (it_section_name != range_secname.second);
@@ -245,53 +239,56 @@ void Builder::build(NOTE_TYPES type) {
   std::string section_name;
   if (has_section) {
     section_name = it_section_name->second;
-  } else {
+  } else if (known_section) {
     section_name = range_secname.first->second;
+  } else {
+    section_name = fmt::format(".note.{:x}", static_cast<uint32_t>(note.type()));
   }
+
+  const std::unordered_map<const Note*, size_t>& offset_map = reinterpret_cast<ExeLayout*>(layout_.get())->note_off_map();
+  const auto& it_offset = offset_map.find(&note);
 
   // Link section and notes
-  if (this->binary_->has(type) and
-      has_section)
-  {
+  if (binary_->has(note.type()) and has_section) {
+    if (it_offset == std::end(offset_map)) {
+      LIEF_ERR("Can't find {}", to_string(note.type()));
+      return;
+    }
+    const size_t note_offset = it_offset->second;
     Section& section = this->binary_->get_section(section_name);
-    const Note& note = this->binary_->get(type);
-    section.offset(segment_note.file_offset() + this->note_offset(note));
-    section.size(note.size());
-  }
-
-  // Remove the section
-  if (not this->binary_->has(type) and
-      has_section)
-  {
-    this->binary_->remove_section(section_name, true);
-  }
-
-  // Add a new section
-  if (this->binary_->has(type) and
-      not has_section)
-  {
-
-    const Note& note = this->binary_->get(type);
-
-    Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
-    section += ELF_SECTION_FLAGS::SHF_ALLOC;
-
-    Section& section_added = this->binary_->add(section, false);
-    section_added.offset(segment_note.file_offset() + this->note_offset(note));
-    section_added.size(note.size());
-    section_added.alignment(4);
+    if (sections->insert(&section).second) {
+      section.offset(segment_note.file_offset() + note_offset);
+      section.size(note.size());
+      section.virtual_address(segment_note.virtual_address() + note_offset);
+      // Special process for GNU_PROPERTY:
+      // This kind of note has a dedicated segment while others don't
+      // Therefore, when relocating this note, we need
+      // to update the segment as well.
+      if (note.type() == NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0 and
+          binary_->has(SEGMENT_TYPES::PT_GNU_PROPERTY)) {
+        Segment& seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY);
+        seg.file_offset(section.offset());
+        seg.physical_size(section.size());
+        seg.virtual_address(section.virtual_address());
+        seg.physical_address(section.virtual_address());
+        seg.virtual_size(section.size());
+      }
+    } else /* We already handled this kind of note */ {
+      section.virtual_address(0);
+      section.size(section.size() + note.size());
+    }
   }
 }
 
 
-Section& Builder::array_section(uint64_t addr) {
+Section& Builder::array_section(Binary& bin, uint64_t addr) {
   static const std::set<ELF_SECTION_TYPES> ARRAY_TYPES = {
     ELF_SECTION_TYPES::SHT_INIT_ARRAY,
     ELF_SECTION_TYPES::SHT_FINI_ARRAY,
     ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,
   };
 
-  for (Section* section : this->binary_->sections_) {
+  for (Section* section : bin.sections_) {
     if (section->virtual_address() >= addr and
         addr < (section->virtual_address() + section->size())
         and ARRAY_TYPES.count(section->type()) > 0) {
