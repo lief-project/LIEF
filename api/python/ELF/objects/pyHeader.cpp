@@ -75,6 +75,11 @@ void create<Header>(py::module& m) {
             return;
           }
 
+          if (py::isinstance<py::bytes>(obj)) {
+            header.identity(obj.cast<Header::identity_t>());
+            return;
+          }
+
           if (py::isinstance<py::list>(obj)) {
             header.identity(obj.cast<Header::identity_t>());
             return;
