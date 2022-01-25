@@ -6,7 +6,7 @@ Changelog
 
 :ELF:
   * New ELF Builder which is more efficient in terms of speed and
-    in terms of number of segments added when modifying binaries.
+    in terms of number of segments added when modifying binaries (see: https://lief-project.github.io/blog/2022-01-23-new-elf-builder/)
 
   * :github_user:`Clcanny` improved (see :pr:`507` and :pr:`509`) the reconstruction of the dynamic symbol table
     by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
@@ -75,6 +75,7 @@ Changelog
 :Documentation:
   * New section about the errors handling (:ref:`err_handling`) and the upcoming
     deprecation of the exceptions.
+  * New section about how to compile LIEF for debugging/developing. See: :ref:`lief_debug`
 
 
 0.11.X - Patch Releases

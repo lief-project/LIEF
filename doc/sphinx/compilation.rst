@@ -61,6 +61,40 @@ Library and Python bindings
 
 If you want to enable tests, you can add ``--lief-test`` after ``setup.py``.
 
+.. _lief_debug:
+
+Debugging
+---------
+
+By default, LIEF is compiled with ``CMAKE_BUILD_TYPE`` set to ``Release``. One can change this behavior
+by setting either ``RelWithDebInfo`` or ``Debug`` during the cmake's configuration step:
+
+.. code-block:: console
+
+   $ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo [...] ..
+
+On the other hand, Python bindings can also be compiled with debug information by using
+the ``--debug`` flag:
+
+.. code-block:: console
+
+   $ python ./setup.py build --debug
+
+
+.. note::
+
+  When developing on LIEF, you can use:
+
+  .. code-block:: console
+
+   $ python ./setup [--ninja] build --debug develop --user
+
+  Compared to the ``install`` command, ``develop`` creates a ``.egg-link``
+  that links to the native LIEF library currently presents in you build directory.
+
+  The ``--user`` flag is used to avoid creating the ``.egg-link`` system-wide (i.e. ``/usr/lib/python3.9/site-packages``).
+  Instead, it links the ``.egg-link`` in the user's local dir (e.g. ``~/.local/lib/python3.9/site-packages``)
+
 CMake Options
 -------------
 
