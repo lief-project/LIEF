@@ -335,14 +335,16 @@ endif()
 # =======================================
 # Leaf
 # =======================================
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
   COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${LEAF_INCLUDE_DIR}/
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
+    ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+  COMMAND
+    ${CMAKE_COMMAND} -E copy_directory ${LEAF_SRC_DIR}/
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
   DEPENDS lief_leaf)
 
 target_sources(LIB_LIEF PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/boost/leaf/all.hpp)
+  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp)
 
 # =======================================
 # utfcpp

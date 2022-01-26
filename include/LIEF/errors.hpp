@@ -16,7 +16,7 @@
 #ifndef LIEF_ERROR_H_
 #define LIEF_ERROR_H_
 #include <system_error>
-#include <LIEF/third-party/boost/leaf/all.hpp>
+#include <LIEF/third-party/leaf.hpp>
 
 //! LIEF error codes definition
 enum class lief_errors {
