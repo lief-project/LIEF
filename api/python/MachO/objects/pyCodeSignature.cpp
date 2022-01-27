@@ -41,7 +41,7 @@ void create<CodeSignature>(py::module& m) {
     .def_property("data_offset",
         static_cast<getter_t<uint32_t>>(&CodeSignature::data_offset),
         static_cast<setter_t<uint32_t>>(&CodeSignature::data_offset),
-        "Offset in the binary where signature starts")
+        "Offset in the binary where the signature starts")
 
     .def_property("data_size",
         static_cast<getter_t<uint32_t>>(&CodeSignature::data_size),

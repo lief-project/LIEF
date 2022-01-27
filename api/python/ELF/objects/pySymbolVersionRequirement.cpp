@@ -39,20 +39,21 @@ void create<SymbolVersionRequirement>(py::module& m) {
 
   // Symbol Version Requirement object
   py::class_<SymbolVersionRequirement, LIEF::Object>(m, "SymbolVersionRequirement",
-      "Class which modelize an entry in ``DT_VERNEED`` or ``.gnu.version_r`` table")
+      "Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table")
 
     .def_property("version",
         static_cast<getter_t<uint16_t>>(&SymbolVersionRequirement::version),
         static_cast<setter_t<uint16_t>>(&SymbolVersionRequirement::version),
-        "Version revision. Should holds 1")
+        "Version revision. Should be 1")
 
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&SymbolVersionRequirement::name),
-        static_cast<setter_t<const std::string&>>(&SymbolVersionRequirement::name))
+        static_cast<setter_t<const std::string&>>(&SymbolVersionRequirement::name),
+        "Library's name associated with this requirement (e.g. ``libc.so.6``)")
 
     .def("get_auxiliary_symbols",
         static_cast<no_const_getter<it_symbols_version_aux_requirement>>(&SymbolVersionRequirement::auxiliary_symbols),
-        "Auxiliary entries",
+        "Auxiliary entries (iterator over " RST_CLASS_REF(lief.ELF.SymbolVersionAuxRequirement) ")",
         py::return_value_policy::reference_internal)
 
     .def("__eq__", &SymbolVersionRequirement::operator==)

@@ -25,8 +25,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v6;
+}
 
 //! @brief Load Configuration enhanced with Hotpatch and improved RFG
 class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
@@ -36,12 +38,12 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
   LoadConfigurationV6();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV6(const load_configuration_v6<T>* header);
+  LIEF_LOCAL LoadConfigurationV6(const details::load_configuration_v6<T>& header);
 
   LoadConfigurationV6& operator=(const LoadConfigurationV6&);
   LoadConfigurationV6(const LoadConfigurationV6&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief VA of the Function verifying the stack pointer
   uint64_t guard_rf_verify_stackpointer_function_pointer() const;
@@ -54,12 +56,12 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
 
   virtual ~LoadConfigurationV6();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV6& rhs) const;
   bool operator!=(const LoadConfigurationV6& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint64_t guardrf_verify_stackpointer_function_pointer_;

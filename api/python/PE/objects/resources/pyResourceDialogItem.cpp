@@ -33,7 +33,10 @@ using setter_t = void (ResourceDialogItem::*)(T);
 
 template<>
 void create<ResourceDialogItem>(py::module& m) {
-  py::class_<ResourceDialogItem, LIEF::Object>(m, "ResourceDialogItem")
+  py::class_<ResourceDialogItem, LIEF::Object>(m, "ResourceDialogItem",
+      R"delim(
+      This class represents an item in the :class:`lief.PE.ResourceDialog`
+      )delim")
 
     .def_property_readonly("is_extended",
         &ResourceDialogItem::is_extended,

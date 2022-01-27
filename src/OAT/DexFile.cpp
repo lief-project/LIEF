@@ -24,11 +24,8 @@ DexFile::DexFile(const DexFile&) = default;
 DexFile& DexFile::operator=(const DexFile&) = default;
 
 DexFile::DexFile() :
-  location_{},
   checksum_{-1u},
   dex_offset_{0},
-  dex_file_{nullptr},
-  classes_offsets_{},
   lookup_table_offset_{0},
   method_bss_mapping_offset_{0},
   dex_sections_layout_offset_{0}
@@ -36,55 +33,55 @@ DexFile::DexFile() :
 
 
 const std::string& DexFile::location() const {
-  return this->location_;
+  return location_;
 }
 
 uint32_t DexFile::checksum() const {
-  return this->checksum_;
+  return checksum_;
 }
 
 uint32_t DexFile::dex_offset() const {
-  return this->dex_offset_;
+  return dex_offset_;
 }
 
 bool DexFile::has_dex_file() const {
-  return this->dex_file_ != nullptr;
+  return dex_file_ != nullptr;
 }
 
 const DEX::File& DexFile::dex_file() const {
-  if (not this->has_dex_file()) {
+  if (!has_dex_file()) {
     throw not_found("Can't find the dex file associated with this OAT dex file");
   }
-  return *this->dex_file_;
+  return *dex_file_;
 }
 
 
 
 void DexFile::location(const std::string& location) {
-  this->location_ = location;
+  location_ = location;
 }
 
 void DexFile::checksum(uint32_t checksum) {
-  this->checksum_ = checksum;
+  checksum_ = checksum;
 }
 
 void DexFile::dex_offset(uint32_t dex_offset) {
-  this->dex_offset_ = dex_offset;
+  dex_offset_ = dex_offset;
 }
 
 const std::vector<uint32_t>& DexFile::classes_offsets() const {
-  return this->classes_offsets_;
+  return classes_offsets_;
 }
 
 
 // Android 7.X.X and Android 8.0.0
 // ===============================
 uint32_t DexFile::lookup_table_offset() const {
-  return this->lookup_table_offset_;
+  return lookup_table_offset_;
 }
 
 void DexFile::lookup_table_offset(uint32_t offset) {
-  this->lookup_table_offset_ = offset;
+  lookup_table_offset_ = offset;
 }
 // ===============================
 
@@ -103,7 +100,7 @@ bool DexFile::operator==(const DexFile& rhs) const {
 }
 
 bool DexFile::operator!=(const DexFile& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const DexFile& dex_file) {

@@ -45,12 +45,12 @@ void swap_endian_ehdr(Elf_Ehdr *hdr) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Ehdr>(LIEF::ELF::Elf32_Ehdr *hdr) {
+void swap_endian<LIEF::ELF::details::Elf32_Ehdr>(LIEF::ELF::details::Elf32_Ehdr *hdr) {
   swap_endian_ehdr(hdr);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Ehdr>(LIEF::ELF::Elf64_Ehdr *hdr) {
+void swap_endian<LIEF::ELF::details::Elf64_Ehdr>(LIEF::ELF::details::Elf64_Ehdr *hdr) {
   swap_endian_ehdr(hdr);
 }
 
@@ -71,12 +71,12 @@ void swap_endian_shdr(Elf_Shdr *shdr) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Shdr>(LIEF::ELF::Elf32_Shdr *shdr) {
+void swap_endian<LIEF::ELF::details::Elf32_Shdr>(LIEF::ELF::details::Elf32_Shdr *shdr) {
   swap_endian_shdr(shdr);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Shdr>(LIEF::ELF::Elf64_Shdr *shdr) {
+void swap_endian<LIEF::ELF::details::Elf64_Shdr>(LIEF::ELF::details::Elf64_Shdr *shdr) {
   swap_endian_shdr(shdr);
 }
 
@@ -95,12 +95,12 @@ void swap_endian_phdr(Elf_Phdr *phdr) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Phdr>(LIEF::ELF::Elf32_Phdr *phdr) {
+void swap_endian<LIEF::ELF::details::Elf32_Phdr>(LIEF::ELF::details::Elf32_Phdr *phdr) {
   swap_endian_phdr(phdr);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Phdr>(LIEF::ELF::Elf64_Phdr *phdr) {
+void swap_endian<LIEF::ELF::details::Elf64_Phdr>(LIEF::ELF::details::Elf64_Phdr *phdr) {
   swap_endian_phdr(phdr);
 }
 
@@ -117,12 +117,12 @@ void swap_endian_sym(Elf_Sym *sym) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Sym>(LIEF::ELF::Elf32_Sym *sym) {
+void swap_endian<LIEF::ELF::details::Elf32_Sym>(LIEF::ELF::details::Elf32_Sym *sym) {
   swap_endian_sym(sym);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Sym>(LIEF::ELF::Elf64_Sym *sym) {
+void swap_endian<LIEF::ELF::details::Elf64_Sym>(LIEF::ELF::details::Elf64_Sym *sym) {
   swap_endian_sym(sym);
 }
 
@@ -141,22 +141,22 @@ void swap_endian_rela(RELA_T *rel) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Rel>(LIEF::ELF::Elf32_Rel *rel) {
+void swap_endian<LIEF::ELF::details::Elf32_Rel>(LIEF::ELF::details::Elf32_Rel *rel) {
   swap_endian_rel(rel);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Rel>(LIEF::ELF::Elf64_Rel *rel) {
+void swap_endian<LIEF::ELF::details::Elf64_Rel>(LIEF::ELF::details::Elf64_Rel *rel) {
   swap_endian_rel(rel);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Rela>(LIEF::ELF::Elf32_Rela *rel) {
+void swap_endian<LIEF::ELF::details::Elf32_Rela>(LIEF::ELF::details::Elf32_Rela *rel) {
   swap_endian_rela(rel);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Rela>(LIEF::ELF::Elf64_Rela *rel) {
+void swap_endian<LIEF::ELF::details::Elf64_Rela>(LIEF::ELF::details::Elf64_Rela *rel) {
   swap_endian_rela(rel);
 }
 
@@ -169,12 +169,12 @@ void swap_endian_dyn(Elf_Dyn *dyn) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Dyn>(LIEF::ELF::Elf32_Dyn *dyn) {
+void swap_endian<LIEF::ELF::details::Elf32_Dyn>(LIEF::ELF::details::Elf32_Dyn *dyn) {
   swap_endian_dyn(dyn);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Dyn>(LIEF::ELF::Elf64_Dyn *dyn) {
+void swap_endian<LIEF::ELF::details::Elf64_Dyn>(LIEF::ELF::details::Elf64_Dyn *dyn) {
   swap_endian_dyn(dyn);
 }
 
@@ -190,12 +190,12 @@ void swap_endian_verneed(Elf_Verneed *ver) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Verneed>(LIEF::ELF::Elf32_Verneed *ver) {
+void swap_endian<LIEF::ELF::details::Elf32_Verneed>(LIEF::ELF::details::Elf32_Verneed *ver) {
   swap_endian_verneed(ver);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Verneed>(LIEF::ELF::Elf64_Verneed *ver) {
+void swap_endian<LIEF::ELF::details::Elf64_Verneed>(LIEF::ELF::details::Elf64_Verneed *ver) {
   swap_endian_verneed(ver);
 }
 
@@ -211,12 +211,12 @@ void swap_endian_vernaux(Elf_Vernaux *ver) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Vernaux>(LIEF::ELF::Elf32_Vernaux *ver) {
+void swap_endian<LIEF::ELF::details::Elf32_Vernaux>(LIEF::ELF::details::Elf32_Vernaux *ver) {
   swap_endian_vernaux(ver);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Vernaux>(LIEF::ELF::Elf64_Vernaux *ver) {
+void swap_endian<LIEF::ELF::details::Elf64_Vernaux>(LIEF::ELF::details::Elf64_Vernaux *ver) {
   swap_endian_vernaux(ver);
 }
 
@@ -233,12 +233,12 @@ void swap_endian_verdef(Elf_Verdef *ver) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Verdef>(LIEF::ELF::Elf32_Verdef *ver) {
+void swap_endian<LIEF::ELF::details::Elf32_Verdef>(LIEF::ELF::details::Elf32_Verdef *ver) {
   swap_endian_verdef(ver);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Verdef>(LIEF::ELF::Elf64_Verdef *ver) {
+void swap_endian<LIEF::ELF::details::Elf64_Verdef>(LIEF::ELF::details::Elf64_Verdef *ver) {
   swap_endian_verdef(ver);
 }
 
@@ -250,12 +250,12 @@ void swap_endian_verdaux(Elf_Verdaux *ver) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Verdaux>(LIEF::ELF::Elf32_Verdaux *ver) {
+void swap_endian<LIEF::ELF::details::Elf32_Verdaux>(LIEF::ELF::details::Elf32_Verdaux *ver) {
   swap_endian_verdaux(ver);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Verdaux>(LIEF::ELF::Elf64_Verdaux *ver) {
+void swap_endian<LIEF::ELF::details::Elf64_Verdaux>(LIEF::ELF::details::Elf64_Verdaux *ver) {
   swap_endian_verdaux(ver);
 }
 
@@ -266,12 +266,12 @@ void swap_endian_auxv(Elf_Auxv *auxv) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_Auxv>(LIEF::ELF::Elf32_Auxv *auxv) {
+void swap_endian<LIEF::ELF::details::Elf32_Auxv>(LIEF::ELF::details::Elf32_Auxv *auxv) {
   swap_endian_auxv(auxv);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_Auxv>(LIEF::ELF::Elf64_Auxv *auxv) {
+void swap_endian<LIEF::ELF::details::Elf64_Auxv>(LIEF::ELF::details::Elf64_Auxv *auxv) {
   swap_endian_auxv(auxv);
 }
 
@@ -283,12 +283,12 @@ void swap_endian_fileentry(Elf_FileEntry *entry) {
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf32_FileEntry>(LIEF::ELF::Elf32_FileEntry *entry) {
+void swap_endian<LIEF::ELF::details::Elf32_FileEntry>(LIEF::ELF::details::Elf32_FileEntry *entry) {
   swap_endian_fileentry(entry);
 }
 
 template<>
-void swap_endian<LIEF::ELF::Elf64_FileEntry>(LIEF::ELF::Elf64_FileEntry *entry) {
+void swap_endian<LIEF::ELF::details::Elf64_FileEntry>(LIEF::ELF::details::Elf64_FileEntry *entry) {
   swap_endian_fileentry(entry);
 }
 

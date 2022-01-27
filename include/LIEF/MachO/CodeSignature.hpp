@@ -27,23 +27,26 @@ namespace LIEF {
 namespace MachO {
 
 class BinaryParser;
+namespace details {
 struct linkedit_data_command;
+}
 
 class LIEF_API CodeSignature : public LoadCommand {
   friend class BinaryParser;
   public:
   CodeSignature();
-  CodeSignature(const linkedit_data_command *cmd);
+  CodeSignature(const details::linkedit_data_command& cmd);
 
   CodeSignature& operator=(const CodeSignature& copy);
   CodeSignature(const CodeSignature& copy);
 
-  virtual CodeSignature* clone() const override;
+  CodeSignature* clone() const override;
 
+  //! Offset in the binary where the signature starts
   uint32_t data_offset() const;
 
+  //! Size of the raw signature
   uint32_t data_size() const;
-
 
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
@@ -53,9 +56,9 @@ class LIEF_API CodeSignature : public LoadCommand {
   bool operator==(const CodeSignature& rhs) const;
   bool operator!=(const CodeSignature& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   uint32_t              data_offset_;

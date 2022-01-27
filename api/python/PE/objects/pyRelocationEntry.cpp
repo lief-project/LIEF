@@ -33,17 +33,23 @@ using setter_t = void (RelocationEntry::*)(T);
 
 template<>
 void create<RelocationEntry>(py::module& m) {
-  py::class_<RelocationEntry, LIEF::Relocation>(m, "RelocationEntry")
+  py::class_<RelocationEntry, LIEF::Relocation>(m, "RelocationEntry",
+      R"delim(
+      Class which represents an entry of the PE relocation table.
+
+      It extends the :class:`lief.Relocation` object to provide an uniform API across the file formats
+      )delim")
     .def(py::init<>())
 
     .def_property("data",
         static_cast<getter_t<uint16_t>>(&RelocationEntry::data),
         static_cast<setter_t<uint16_t>>(&RelocationEntry::data),
-        "Raw data of the relocation:\n\n"
+        R"delim(
+        Raw data of the relocation:
 
-        "\t\t * The **high** 4 bits store the relocation :attr:`~lief.PE.RelocationEntry.type`\n\n"
-        "\t\t * The **low** 12 bits store the relocation offset (:attr:`~lief.PE.RelocationEntry.position`)\n\n"
-        )
+          * The **high** 4 bits store the relocation :attr:`~lief.PE.RelocationEntry.type`
+          * The **low** 12 bits store the relocation offset (:attr:`~lief.PE.RelocationEntry.position`)
+        )delim")
 
     .def_property("position",
         static_cast<getter_t<uint16_t>>(&RelocationEntry::position),
@@ -53,7 +59,7 @@ void create<RelocationEntry>(py::module& m) {
     .def_property("type",
         static_cast<getter_t<RELOCATIONS_BASE_TYPES>>(&RelocationEntry::type),
         static_cast<setter_t<RELOCATIONS_BASE_TYPES>>(&RelocationEntry::type),
-        "Type of the relocation")
+        "Type of the relocation (see: " RST_CLASS_REF(lief.PE.RELOCATIONS_BASE_TYPES) ")")
 
 
     .def("__eq__", &RelocationEntry::operator==)

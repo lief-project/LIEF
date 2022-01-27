@@ -174,7 +174,7 @@ enum _LIEF_EN(MACHO_SECTION_FLAGS) {
   _LIEF_EI(S_ATTR_PURE_INSTRUCTIONS)   = 0x80000000u, ///< Section contains only true machine instructions
   _LIEF_EI(S_ATTR_NO_TOC)              = 0x40000000u, ///< Section contains coalesced symbols that are not to be in a ranlib table of contents.
   _LIEF_EI(S_ATTR_STRIP_STATIC_SYMS)   = 0x20000000u, ///< Ok to strip static symbols in this section in files with the MY_DYLDLINK flag.
-  _LIEF_EI(S_ATTR_NO_DEAD_STRIP)       = 0x10000000u, ///<  No dead stripping.
+  _LIEF_EI(S_ATTR_NO_DEAD_STRIP)       = 0x10000000u, ///< No dead stripping.
   _LIEF_EI(S_ATTR_LIVE_SUPPORT)        = 0x08000000u, ///< Blocks are live if they reference live blocks.
   _LIEF_EI(S_ATTR_SELF_MODIFYING_CODE) = 0x04000000u, ///< Used with i386 code stubs written on by dyld
   _LIEF_EI(S_ATTR_DEBUG)               = 0x02000000u, ///< A debug section.

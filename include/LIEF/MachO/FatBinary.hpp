@@ -33,6 +33,8 @@ class Parser;
 class Builder;
 class Binary;
 
+//! Class which represent a Mach-O (fat) binary
+//! This object is also used for representing Mach-O binaries that are **NOT FAT**
 class LIEF_API FatBinary {
 
   friend class LIEF::Parser;
@@ -45,7 +47,7 @@ class LIEF_API FatBinary {
 
   virtual ~FatBinary();
 
-  //! @brief Number of @link MachO::Binary binary @endlink registred
+  //! Number of MachO::Binary wrapped by this object
   size_t size() const;
 
   it_binaries begin();
@@ -86,7 +88,7 @@ class LIEF_API FatBinary {
 
   private:
   FatBinary();
-  FatBinary(const std::vector<Binary*>& binaries);
+  FatBinary(std::vector<Binary*>  binaries);
   binaries_t binaries_;
 };
 

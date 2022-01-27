@@ -70,14 +70,14 @@ class Logger {
 
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support and lief_logging_debug) {
+    if /* constexpr */ (lief_logging_support && lief_logging_debug) {
       Logger::instance().sink_->trace(fmt, args...);
     }
   }
 
   template <typename... Args>
   static void debug(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support and lief_logging_debug) {
+    if /* constexpr */ (lief_logging_support && lief_logging_debug) {
       Logger::instance().sink_->debug(fmt, args...);
     }
   }

@@ -84,9 +84,9 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual ~Binary();
+  ~Binary() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 

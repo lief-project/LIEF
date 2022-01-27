@@ -25,8 +25,7 @@ namespace LIEF {
 namespace ELF {
 
 SymbolVersion::SymbolVersion() :
-  value_{0},
-  symbol_aux_{nullptr}
+  value_{0}
 {}
 
 SymbolVersion::~SymbolVersion() = default;
@@ -36,8 +35,7 @@ SymbolVersion& SymbolVersion::operator=(const SymbolVersion&) = default;
 SymbolVersion::SymbolVersion(const SymbolVersion&) = default;
 
 SymbolVersion::SymbolVersion(uint16_t value) :
-  value_{value},
-  symbol_aux_{nullptr}
+  value_{value}
 {}
 
 
@@ -50,17 +48,17 @@ SymbolVersion SymbolVersion::global() {
 }
 
 uint16_t SymbolVersion::value() const {
-  return this->value_;
+  return value_;
 }
 
 
 bool SymbolVersion::has_auxiliary_version() const {
-  return this->symbol_aux_ != nullptr;
+  return symbol_aux_ != nullptr;
 }
 
 const SymbolVersionAux& SymbolVersion::symbol_version_auxiliary() const {
-  if (this->symbol_aux_ != nullptr) {
-    return *this->symbol_aux_;
+  if (symbol_aux_ != nullptr) {
+    return *symbol_aux_;
   } else {
     throw not_found("No auxiliary symbol associated with this version");
   }
@@ -72,7 +70,7 @@ SymbolVersionAux& SymbolVersion::symbol_version_auxiliary() {
 }
 
 void SymbolVersion::value(uint16_t value) {
-  this->value_ = value;
+  value_ = value;
 }
 
 void SymbolVersion::accept(Visitor& visitor) const {
@@ -86,7 +84,7 @@ bool SymbolVersion::operator==(const SymbolVersion& rhs) const {
 }
 
 bool SymbolVersion::operator!=(const SymbolVersion& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {

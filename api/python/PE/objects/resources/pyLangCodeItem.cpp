@@ -35,26 +35,38 @@ using setter_t = void (LangCodeItem::*)(T);
 template<>
 void create<LangCodeItem>(py::module& m) {
   py::class_<LangCodeItem, LIEF::Object>(m, "LangCodeItem",
-      "Class which modelize the childs of the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) "\n\n"
-      "See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable")
+      R"delim(
+      Class which represents the childs of the :class:`~lief.PE.ResourceStringFileInfo`
+
+      See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
+      )delim")
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&LangCodeItem::type),
         static_cast<setter_t<uint16_t>>(&LangCodeItem::type),
-        "The type of data in the version resource\n\n"
-        "\t* ``1`` if it contains text data\n\n"
-        "\t* ``0`` if it contains binary data\n\n")
+        R"delim(
+        The type of data in the version resource
+
+          * ``1`` if it contains text data
+          * ``0`` if it contains binary data
+        )delim")
 
     .def_property("key",
         static_cast<getter_t<const std::u16string&>>(&LangCodeItem::key),
         static_cast<setter_t<const std::string&>>(&LangCodeItem::key),
-        "A 8-digit hexadecimal number stored as an Unicode string\n\n"
-        "\t* The four most significant digits represent the language identifier.\n\n"
-        "\t* The four least significant digits represent the code page for which the data is formatted.\n\n"
-        "See:\n"
-        "\t* :attr:`~lief.PE.LangCodeItem.code_page`\n\n"
-        "\t* :attr:`~lief.PE.LangCodeItem.lang`\n\n"
-        "\t* :attr:`~lief.PE.LangCodeItem.sublang`\n\n")
+        R"delim(
+        A 8-digit hexadecimal number stored as an Unicode string
+
+        * The four most significant digits represent the language identifier.
+        * The four least significant digits represent the code page for which the data is formatted.
+
+        See:
+
+          * :attr:`~lief.PE.LangCodeItem.code_page`
+          * :attr:`~lief.PE.LangCodeItem.lang`
+          * :attr:`~lief.PE.LangCodeItem.sublang`
+
+        )delim")
 
     .def_property("lang",
         static_cast<getter_t<RESOURCE_LANGS>>(&LangCodeItem::lang),
@@ -71,7 +83,11 @@ void create<LangCodeItem>(py::module& m) {
     .def_property("code_page",
         static_cast<getter_t<CODE_PAGES>>(&LangCodeItem::code_page),
         static_cast<setter_t<CODE_PAGES>>(&LangCodeItem::code_page),
-        "" RST_CLASS_REF(lief.PE.CODE_PAGES) " for which :attr:`~lief.PE.LangCodeItem.items` are defined")
+        R"delim(
+        :class:`~lief.PE.CODE_PAGES` for which :attr:`~lief.PE.LangCodeItem.items` are defined.
+
+        See: https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+        )delim")
 
     .def_property("items",
         [] (const LangCodeItem& item) -> py::dict {

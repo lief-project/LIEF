@@ -28,87 +28,87 @@ Header& Header::operator=(const Header&) = default;
 Header::Header() = default;
 
 Header::magic_t Header::magic() const {
-  return this->magic_;
+  return magic_;
 }
 
 art_version_t Header::version() const {
-  return this->version_;
+  return version_;
 }
 
 uint32_t Header::image_begin() const {
-  return this->image_begin_;
+  return image_begin_;
 }
 
 uint32_t Header::image_size() const {
-  return this->image_size_;
+  return image_size_;
 }
 
 uint32_t Header::oat_checksum() const {
-  return this->oat_checksum_;
+  return oat_checksum_;
 }
 
 uint32_t Header::oat_file_begin() const {
-  return this->oat_file_begin_;
+  return oat_file_begin_;
 }
 
 uint32_t Header::oat_file_end() const {
-  return this->oat_file_end_;
+  return oat_file_end_;
 }
 
 uint32_t Header::oat_data_begin() const {
-  return this->oat_data_begin_;
+  return oat_data_begin_;
 }
 
 uint32_t Header::oat_data_end() const {
-  return this->oat_data_end_;
+  return oat_data_end_;
 }
 
 int32_t Header::patch_delta() const {
-  return this->patch_delta_;
+  return patch_delta_;
 }
 
 uint32_t Header::image_roots() const {
-  return this->image_roots_;
+  return image_roots_;
 }
 
 uint32_t Header::pointer_size() const {
-  return this->pointer_size_;
+  return pointer_size_;
 }
 
 bool Header::compile_pic() const {
-  return this->compile_pic_;
+  return compile_pic_;
 }
 
 uint32_t Header::nb_sections() const {
-  return this->nb_sections_;
+  return nb_sections_;
 }
 
 uint32_t Header::nb_methods() const {
-  return this->nb_methods_;
+  return nb_methods_;
 }
 
 uint32_t Header::boot_image_begin() const {
-  return this->boot_image_begin_;
+  return boot_image_begin_;
 }
 
 uint32_t Header::boot_image_size() const {
-  return this->boot_image_size_;
+  return boot_image_size_;
 }
 
 uint32_t Header::boot_oat_begin() const {
-  return this->boot_oat_begin_;
+  return boot_oat_begin_;
 }
 
 uint32_t Header::boot_oat_size() const {
-  return this->boot_oat_size_;
+  return boot_oat_size_;
 }
 
 STORAGE_MODES Header::storage_mode() const {
-  return this->storage_mode_;
+  return storage_mode_;
 }
 
 uint32_t Header::data_size() const {
-  return this->data_size_;
+  return data_size_;
 }
 
 
@@ -124,7 +124,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {

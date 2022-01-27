@@ -59,9 +59,9 @@ std::string to_json_str(const Object& v) {
 
 void JsonVisitor::visit(const Binary& binary) {
 
-  this->node_["name"]         = binary.name();
-  this->node_["entrypoint"]   = binary.entrypoint();
-  this->node_["virtual_size"] = binary.virtual_size();
+  node_["name"]         = binary.name();
+  node_["entrypoint"]   = binary.entrypoint();
+  node_["virtual_size"] = binary.virtual_size();
 
   // DOS Header
   JsonVisitor dos_header_visitor;
@@ -71,7 +71,7 @@ void JsonVisitor::visit(const Binary& binary) {
   if (binary.has_rich_header()) {
     JsonVisitor visitor;
     visitor(binary.rich_header());
-    this->node_["rich_header"] = visitor.get();
+    node_["rich_header"] = visitor.get();
   }
 
   // PE header
@@ -82,9 +82,9 @@ void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor optional_header_visitor;
   optional_header_visitor(binary.optional_header());
 
-  this->node_["dos_header"]      = dos_header_visitor.get();
-  this->node_["header"]          = header_visitor.get();
-  this->node_["optional_header"] = optional_header_visitor.get();
+  node_["dos_header"]      = dos_header_visitor.get();
+  node_["header"]          = header_visitor.get();
+  node_["optional_header"] = optional_header_visitor.get();
 
   // Data directories
   std::vector<json> data_directories;
@@ -93,7 +93,7 @@ void JsonVisitor::visit(const Binary& binary) {
     visitor(data_directory);
     data_directories.emplace_back(visitor.get());
   }
-  this->node_["data_directories"] = data_directories;
+  node_["data_directories"] = data_directories;
 
 
   // Section
@@ -103,7 +103,7 @@ void JsonVisitor::visit(const Binary& binary) {
     visitor(section);
     sections.emplace_back(visitor.get());
   }
-  this->node_["sections"] = sections;
+  node_["sections"] = sections;
 
   // Relocations
   if (binary.has_relocations()) {
@@ -113,14 +113,14 @@ void JsonVisitor::visit(const Binary& binary) {
       visitor(relocation);
       relocations.emplace_back(visitor.get());
     }
-    this->node_["relocations"] = relocations;
+    node_["relocations"] = relocations;
   }
 
   // TLS
   if (binary.has_tls()) {
     JsonVisitor visitor;
     visitor(binary.tls());
-    this->node_["tls"] = visitor.get();
+    node_["tls"] = visitor.get();
   }
 
 
@@ -128,7 +128,7 @@ void JsonVisitor::visit(const Binary& binary) {
   if (binary.has_exports()) {
     JsonVisitor visitor;
     visitor(binary.get_export());
-    this->node_["export"] = visitor.get();
+    node_["export"] = visitor.get();
   }
 
 
@@ -140,7 +140,7 @@ void JsonVisitor::visit(const Binary& binary) {
       visitor(debug);
       debug_entries.emplace_back(visitor.get());
     }
-    this->node_["debug"] = debug_entries;
+    node_["debug"] = debug_entries;
   }
 
   // Imports
@@ -151,7 +151,7 @@ void JsonVisitor::visit(const Binary& binary) {
       visitor(import);
       imports.emplace_back(visitor.get());
     }
-    this->node_["imports"] = imports;
+    node_["imports"] = imports;
   }
 
   // Resources
@@ -162,8 +162,8 @@ void JsonVisitor::visit(const Binary& binary) {
     JsonVisitor manager_visitor;
     binary.resources_manager().accept(manager_visitor);
 
-    this->node_["resources_tree"]    = visitor.get();
-    this->node_["resources_manager"] = manager_visitor.get();
+    node_["resources_tree"]    = visitor.get();
+    node_["resources_manager"] = manager_visitor.get();
   }
 
 
@@ -173,9 +173,9 @@ void JsonVisitor::visit(const Binary& binary) {
     for (const Signature& sig : binary.signatures()) {
       JsonVisitor visitor;
       visitor(sig);
-      sigs.push_back(std::move(visitor.get()));
+      sigs.push_back(visitor.get());
     }
-    this->node_["signatures"] = sigs;
+    node_["signatures"] = sigs;
   }
 
   std::vector<json> symbols;
@@ -185,7 +185,7 @@ void JsonVisitor::visit(const Binary& binary) {
     symbols.emplace_back(visitor.get());
   }
   if (!symbols.empty()) {
-    this->node_["symbols"] = symbols;
+    node_["symbols"] = symbols;
   }
 
   // Load Configuration
@@ -193,7 +193,7 @@ void JsonVisitor::visit(const Binary& binary) {
     JsonVisitor visitor;
     const LoadConfiguration& config = binary.load_configuration();
     config.accept(visitor);
-    this->node_["load_configuration"] = visitor.get();
+    node_["load_configuration"] = visitor.get();
   }
 
 }
@@ -201,25 +201,25 @@ void JsonVisitor::visit(const Binary& binary) {
 
 void JsonVisitor::visit(const DosHeader& dos_header) {
 
-  this->node_["magic"]                       = dos_header.magic();
-  this->node_["used_bytes_in_the_last_page"] = dos_header.used_bytes_in_the_last_page();
-  this->node_["file_size_in_pages"]          = dos_header.file_size_in_pages();
-  this->node_["numberof_relocation"]         = dos_header.numberof_relocation();
-  this->node_["header_size_in_paragraphs"]   = dos_header.header_size_in_paragraphs();
-  this->node_["minimum_extra_paragraphs"]    = dos_header.minimum_extra_paragraphs();
-  this->node_["maximum_extra_paragraphs"]    = dos_header.maximum_extra_paragraphs();
-  this->node_["initial_relative_ss"]         = dos_header.initial_relative_ss();
-  this->node_["initial_sp"]                  = dos_header.initial_sp();
-  this->node_["checksum"]                    = dos_header.checksum();
-  this->node_["initial_ip"]                  = dos_header.initial_ip();
-  this->node_["initial_relative_cs"]         = dos_header.initial_relative_cs();
-  this->node_["addressof_relocation_table"]  = dos_header.addressof_relocation_table();
-  this->node_["overlay_number"]              = dos_header.overlay_number();
-  this->node_["reserved"]                    = dos_header.reserved();
-  this->node_["oem_id"]                      = dos_header.oem_id();
-  this->node_["oem_info"]                    = dos_header.oem_info();
-  this->node_["reserved2"]                   = dos_header.reserved2();
-  this->node_["addressof_new_exeheader"]     = dos_header.addressof_new_exeheader();
+  node_["magic"]                       = dos_header.magic();
+  node_["used_bytes_in_the_last_page"] = dos_header.used_bytes_in_the_last_page();
+  node_["file_size_in_pages"]          = dos_header.file_size_in_pages();
+  node_["numberof_relocation"]         = dos_header.numberof_relocation();
+  node_["header_size_in_paragraphs"]   = dos_header.header_size_in_paragraphs();
+  node_["minimum_extra_paragraphs"]    = dos_header.minimum_extra_paragraphs();
+  node_["maximum_extra_paragraphs"]    = dos_header.maximum_extra_paragraphs();
+  node_["initial_relative_ss"]         = dos_header.initial_relative_ss();
+  node_["initial_sp"]                  = dos_header.initial_sp();
+  node_["checksum"]                    = dos_header.checksum();
+  node_["initial_ip"]                  = dos_header.initial_ip();
+  node_["initial_relative_cs"]         = dos_header.initial_relative_cs();
+  node_["addressof_relocation_table"]  = dos_header.addressof_relocation_table();
+  node_["overlay_number"]              = dos_header.overlay_number();
+  node_["reserved"]                    = dos_header.reserved();
+  node_["oem_id"]                      = dos_header.oem_id();
+  node_["oem_info"]                    = dos_header.oem_info();
+  node_["reserved2"]                   = dos_header.reserved2();
+  node_["addressof_new_exeheader"]     = dos_header.addressof_new_exeheader();
 }
 
 void JsonVisitor::visit(const RichHeader& rich_header) {
@@ -230,68 +230,68 @@ void JsonVisitor::visit(const RichHeader& rich_header) {
     entries.emplace_back(visitor.get());
   }
 
-  this->node_["key"]     = rich_header.key();
-  this->node_["entries"] = entries;
+  node_["key"]     = rich_header.key();
+  node_["entries"] = entries;
 }
 
 void JsonVisitor::visit(const RichEntry& rich_entry) {
-  this->node_["id"]       = rich_entry.id();
-  this->node_["build_id"] = rich_entry.build_id();
-  this->node_["count"]    = rich_entry.count();
+  node_["id"]       = rich_entry.id();
+  node_["build_id"] = rich_entry.build_id();
+  node_["count"]    = rich_entry.count();
 }
 
 void JsonVisitor::visit(const Header& header) {
-  this->node_["signature"]              = header.signature();
-  this->node_["machine"]                = to_string(header.machine());
-  this->node_["numberof_sections"]      = header.numberof_sections();
-  this->node_["time_date_stamp"]        = header.time_date_stamp();
-  this->node_["pointerto_symbol_table"] = header.pointerto_symbol_table();
-  this->node_["numberof_symbols"]       = header.numberof_symbols();
-  this->node_["sizeof_optional_header"] = header.sizeof_optional_header();
-  this->node_["characteristics"]        = static_cast<size_t>(header.characteristics());
+  node_["signature"]              = header.signature();
+  node_["machine"]                = to_string(header.machine());
+  node_["numberof_sections"]      = header.numberof_sections();
+  node_["time_date_stamp"]        = header.time_date_stamp();
+  node_["pointerto_symbol_table"] = header.pointerto_symbol_table();
+  node_["numberof_symbols"]       = header.numberof_symbols();
+  node_["sizeof_optional_header"] = header.sizeof_optional_header();
+  node_["characteristics"]        = static_cast<size_t>(header.characteristics());
 }
 
 void JsonVisitor::visit(const OptionalHeader& optional_header) {
-  this->node_["magic"]                          = to_string(optional_header.magic());
-  this->node_["major_linker_version"]           = optional_header.major_linker_version();
-  this->node_["minor_linker_version"]           = optional_header.minor_linker_version();
-  this->node_["sizeof_code"]                    = optional_header.sizeof_code();
-  this->node_["sizeof_initialized_data"]        = optional_header.sizeof_initialized_data();
-  this->node_["sizeof_uninitialized_data"]      = optional_header.sizeof_uninitialized_data();
-  this->node_["addressof_entrypoint"]           = optional_header.addressof_entrypoint();
-  this->node_["baseof_code"]                    = optional_header.baseof_code();
+  node_["magic"]                          = to_string(optional_header.magic());
+  node_["major_linker_version"]           = optional_header.major_linker_version();
+  node_["minor_linker_version"]           = optional_header.minor_linker_version();
+  node_["sizeof_code"]                    = optional_header.sizeof_code();
+  node_["sizeof_initialized_data"]        = optional_header.sizeof_initialized_data();
+  node_["sizeof_uninitialized_data"]      = optional_header.sizeof_uninitialized_data();
+  node_["addressof_entrypoint"]           = optional_header.addressof_entrypoint();
+  node_["baseof_code"]                    = optional_header.baseof_code();
   if (optional_header.magic() == PE_TYPE::PE32) {
-    this->node_["baseof_data"]     = optional_header.baseof_data();
+    node_["baseof_data"]     = optional_header.baseof_data();
   }
-  this->node_["imagebase"]                      = optional_header.imagebase();
-  this->node_["section_alignment"]              = optional_header.section_alignment();
-  this->node_["file_alignment"]                 = optional_header.file_alignment();
-  this->node_["major_operating_system_version"] = optional_header.major_operating_system_version();
-  this->node_["minor_operating_system_version"] = optional_header.minor_operating_system_version();
-  this->node_["major_image_version"]            = optional_header.major_image_version();
-  this->node_["minor_image_version"]            = optional_header.minor_image_version();
-  this->node_["major_subsystem_version"]        = optional_header.major_subsystem_version();
-  this->node_["minor_subsystem_version"]        = optional_header.minor_subsystem_version();
-  this->node_["win32_version_value"]            = optional_header.win32_version_value();
-  this->node_["sizeof_image"]                   = optional_header.sizeof_image();
-  this->node_["sizeof_headers"]                 = optional_header.sizeof_headers();
-  this->node_["checksum"]                       = optional_header.checksum();
-  this->node_["subsystem"]                      = to_string(optional_header.subsystem());
-  this->node_["dll_characteristics"]            = optional_header.dll_characteristics();
-  this->node_["sizeof_stack_reserve"]           = optional_header.sizeof_stack_reserve();
-  this->node_["sizeof_stack_commit"]            = optional_header.sizeof_stack_commit();
-  this->node_["sizeof_heap_reserve"]            = optional_header.sizeof_heap_reserve();
-  this->node_["sizeof_heap_commit"]             = optional_header.sizeof_heap_commit();
-  this->node_["loader_flags"]                   = optional_header.loader_flags();
-  this->node_["numberof_rva_and_size"]          = optional_header.numberof_rva_and_size();
+  node_["imagebase"]                      = optional_header.imagebase();
+  node_["section_alignment"]              = optional_header.section_alignment();
+  node_["file_alignment"]                 = optional_header.file_alignment();
+  node_["major_operating_system_version"] = optional_header.major_operating_system_version();
+  node_["minor_operating_system_version"] = optional_header.minor_operating_system_version();
+  node_["major_image_version"]            = optional_header.major_image_version();
+  node_["minor_image_version"]            = optional_header.minor_image_version();
+  node_["major_subsystem_version"]        = optional_header.major_subsystem_version();
+  node_["minor_subsystem_version"]        = optional_header.minor_subsystem_version();
+  node_["win32_version_value"]            = optional_header.win32_version_value();
+  node_["sizeof_image"]                   = optional_header.sizeof_image();
+  node_["sizeof_headers"]                 = optional_header.sizeof_headers();
+  node_["checksum"]                       = optional_header.checksum();
+  node_["subsystem"]                      = to_string(optional_header.subsystem());
+  node_["dll_characteristics"]            = optional_header.dll_characteristics();
+  node_["sizeof_stack_reserve"]           = optional_header.sizeof_stack_reserve();
+  node_["sizeof_stack_commit"]            = optional_header.sizeof_stack_commit();
+  node_["sizeof_heap_reserve"]            = optional_header.sizeof_heap_reserve();
+  node_["sizeof_heap_commit"]             = optional_header.sizeof_heap_commit();
+  node_["loader_flags"]                   = optional_header.loader_flags();
+  node_["numberof_rva_and_size"]          = optional_header.numberof_rva_and_size();
 }
 
 void JsonVisitor::visit(const DataDirectory& data_directory) {
-  this->node_["RVA"]  = data_directory.RVA();
-  this->node_["size"] = data_directory.size();
-  this->node_["type"] = to_string(data_directory.type());
+  node_["RVA"]  = data_directory.RVA();
+  node_["size"] = data_directory.size();
+  node_["type"] = to_string(data_directory.type());
   if (data_directory.has_section()) {
-    this->node_["section"] = escape_non_ascii(data_directory.section().name());
+    node_["section"] = escape_non_ascii(data_directory.section().name());
   }
 }
 
@@ -307,14 +307,14 @@ void JsonVisitor::visit(const Section& section) {
     types.emplace_back(to_string(t));
   }
 
-  this->node_["name"]                   = escape_non_ascii(section.name());
-  this->node_["pointerto_relocation"]   = section.pointerto_relocation();
-  this->node_["pointerto_line_numbers"] = section.pointerto_line_numbers();
-  this->node_["numberof_relocations"]   = section.numberof_relocations();
-  this->node_["numberof_line_numbers"]  = section.numberof_line_numbers();
-  this->node_["entropy"]                = section.entropy();
-  this->node_["characteristics"]        = characteristics;
-  this->node_["types"]                  = types;
+  node_["name"]                   = escape_non_ascii(section.name());
+  node_["pointerto_relocation"]   = section.pointerto_relocation();
+  node_["pointerto_line_numbers"] = section.pointerto_line_numbers();
+  node_["numberof_relocations"]   = section.numberof_relocations();
+  node_["numberof_line_numbers"]  = section.numberof_line_numbers();
+  node_["entropy"]                = section.entropy();
+  node_["characteristics"]        = characteristics;
+  node_["types"]                  = types;
 }
 
 void JsonVisitor::visit(const Relocation& relocation) {
@@ -325,15 +325,15 @@ void JsonVisitor::visit(const Relocation& relocation) {
     entries.emplace_back(visitor.get());
   }
 
-  this->node_["virtual_address"] = relocation.virtual_address();
-  this->node_["block_size"]      = relocation.block_size();
-  this->node_["entries"]         = entries;
+  node_["virtual_address"] = relocation.virtual_address();
+  node_["block_size"]      = relocation.block_size();
+  node_["entries"]         = entries;
 }
 
 void JsonVisitor::visit(const RelocationEntry& relocation_entry) {
-  this->node_["data"]     = relocation_entry.data();
-  this->node_["position"] = relocation_entry.position();
-  this->node_["type"]     = to_string(relocation_entry.type());
+  node_["data"]     = relocation_entry.data();
+  node_["position"] = relocation_entry.position();
+  node_["type"]     = to_string(relocation_entry.type());
 }
 
 void JsonVisitor::visit(const Export& export_) {
@@ -344,24 +344,24 @@ void JsonVisitor::visit(const Export& export_) {
     visitor(entry);
     entries.emplace_back(visitor.get());
   }
-  this->node_["export_flags"]  = export_.export_flags();
-  this->node_["timestamp"]     = export_.timestamp();
-  this->node_["major_version"] = export_.major_version();
-  this->node_["minor_version"] = export_.minor_version();
-  this->node_["ordinal_base"]  = export_.ordinal_base();
-  this->node_["name"]          = escape_non_ascii(export_.name());
-  this->node_["entries"]       = entries;
+  node_["export_flags"]  = export_.export_flags();
+  node_["timestamp"]     = export_.timestamp();
+  node_["major_version"] = export_.major_version();
+  node_["minor_version"] = export_.minor_version();
+  node_["ordinal_base"]  = export_.ordinal_base();
+  node_["name"]          = escape_non_ascii(export_.name());
+  node_["entries"]       = entries;
 }
 
 void JsonVisitor::visit(const ExportEntry& export_entry) {
-  this->node_["name"]      = escape_non_ascii(export_entry.name());
-  this->node_["ordinal"]   = export_entry.ordinal();
-  this->node_["address"]   = export_entry.address();
-  this->node_["is_extern"] = export_entry.is_extern();
+  node_["name"]      = escape_non_ascii(export_entry.name());
+  node_["ordinal"]   = export_entry.ordinal();
+  node_["address"]   = export_entry.address();
+  node_["is_extern"] = export_entry.is_extern();
 
   if (export_entry.is_forwarded()) {
     const ExportEntry::forward_information_t& fwd_info = export_entry.forward_information();
-    this->node_["forward_information"] = {
+    node_["forward_information"] = {
       {"library",  fwd_info.library},
       {"function", fwd_info.function},
     };
@@ -370,74 +370,74 @@ void JsonVisitor::visit(const ExportEntry& export_entry) {
 
 void JsonVisitor::visit(const TLS& tls) {
 
-  this->node_["callbacks"]           = tls.callbacks();
-  this->node_["addressof_raw_data"]  = std::vector<uint64_t>{tls.addressof_raw_data().first, tls.addressof_raw_data().second};
-  this->node_["addressof_index"]     = tls.addressof_index();
-  this->node_["addressof_callbacks"] = tls.addressof_callbacks();
-  this->node_["sizeof_zero_fill"]    = tls.sizeof_zero_fill();
-  this->node_["characteristics"]     = tls.characteristics();
+  node_["callbacks"]           = tls.callbacks();
+  node_["addressof_raw_data"]  = std::vector<uint64_t>{tls.addressof_raw_data().first, tls.addressof_raw_data().second};
+  node_["addressof_index"]     = tls.addressof_index();
+  node_["addressof_callbacks"] = tls.addressof_callbacks();
+  node_["sizeof_zero_fill"]    = tls.sizeof_zero_fill();
+  node_["characteristics"]     = tls.characteristics();
 
   if (tls.has_data_directory()) {
-    this->node_["data_directory"] = to_string(tls.directory().type());
+    node_["data_directory"] = to_string(tls.directory().type());
   }
 
   if (tls.has_section()) {
-    this->node_["section"] = escape_non_ascii(tls.section().name());
+    node_["section"] = escape_non_ascii(tls.section().name());
   }
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {
 
-  this->node_["value"]                = symbol.value();
-  this->node_["size"]                 = symbol.size();
-  this->node_["name"]                 = escape_non_ascii(symbol.name());
+  node_["value"]                = symbol.value();
+  node_["size"]                 = symbol.size();
+  node_["name"]                 = escape_non_ascii(symbol.name());
 
-  this->node_["section_number"]       = symbol.section_number();
-  this->node_["type"]                 = symbol.type();
-  this->node_["base_type"]            = to_string(symbol.base_type());
-  this->node_["complex_type"]         = to_string(symbol.complex_type());
-  this->node_["storage_class"]        = to_string(symbol.storage_class());
-  this->node_["numberof_aux_symbols"] = symbol.numberof_aux_symbols();
+  node_["section_number"]       = symbol.section_number();
+  node_["type"]                 = symbol.type();
+  node_["base_type"]            = to_string(symbol.base_type());
+  node_["complex_type"]         = to_string(symbol.complex_type());
+  node_["storage_class"]        = to_string(symbol.storage_class());
+  node_["numberof_aux_symbols"] = symbol.numberof_aux_symbols();
 
   if (symbol.has_section()) {
-    this->node_["section"] = symbol.section().name();
+    node_["section"] = symbol.section().name();
   }
 }
 
 void JsonVisitor::visit(const Debug& debug) {
-  this->node_["characteristics"]   = debug.characteristics();
-  this->node_["timestamp"]         = debug.timestamp();
-  this->node_["major_version"]     = debug.major_version();
-  this->node_["minor_version"]     = debug.minor_version();
-  this->node_["type"]              = to_string(debug.type());
-  this->node_["sizeof_data"]       = debug.sizeof_data();
-  this->node_["addressof_rawdata"] = debug.addressof_rawdata();
-  this->node_["pointerto_rawdata"] = debug.pointerto_rawdata();
+  node_["characteristics"]   = debug.characteristics();
+  node_["timestamp"]         = debug.timestamp();
+  node_["major_version"]     = debug.major_version();
+  node_["minor_version"]     = debug.minor_version();
+  node_["type"]              = to_string(debug.type());
+  node_["sizeof_data"]       = debug.sizeof_data();
+  node_["addressof_rawdata"] = debug.addressof_rawdata();
+  node_["pointerto_rawdata"] = debug.pointerto_rawdata();
 
   if (debug.has_code_view()) {
     JsonVisitor codeview_visitor;
     const CodeView& codeview = debug.code_view();
     codeview.accept(codeview_visitor);
-    this->node_["code_view"] = codeview_visitor.get();
+    node_["code_view"] = codeview_visitor.get();
   }
 
   if (debug.has_pogo()) {
     JsonVisitor pogo_visitor;
     const Pogo& pogo = debug.pogo();
     pogo.accept(pogo_visitor);
-    this->node_["pogo"] = pogo_visitor.get();
+    node_["pogo"] = pogo_visitor.get();
   }
 }
 
 void JsonVisitor::visit(const CodeView& cv) {
-  this->node_["cv_signature"] = to_string(cv.cv_signature());
+  node_["cv_signature"] = to_string(cv.cv_signature());
 }
 
 void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
-  this->visit(static_cast<const CodeView&>(cvpdb));
-  this->node_["signature"] = cvpdb.signature();
-  this->node_["age"]       = cvpdb.age();
-  this->node_["filename"]  = escape_non_ascii(cvpdb.filename());
+  visit(static_cast<const CodeView&>(cvpdb));
+  node_["signature"] = cvpdb.signature();
+  node_["age"]       = cvpdb.age();
+  node_["filename"]  = escape_non_ascii(cvpdb.filename());
 }
 
 void JsonVisitor::visit(const Import& import) {
@@ -449,40 +449,40 @@ void JsonVisitor::visit(const Import& import) {
     entries.emplace_back(visitor.get());
   }
 
-  this->node_["forwarder_chain"]          = import.forwarder_chain();
-  this->node_["timedatestamp"]            = import.timedatestamp();
-  this->node_["import_address_table_rva"] = import.import_address_table_rva();
-  this->node_["import_lookup_table_rva"]  = import.import_lookup_table_rva();
-  this->node_["name"]                     = import.name();
-  this->node_["entries"]                  = entries;
+  node_["forwarder_chain"]          = import.forwarder_chain();
+  node_["timedatestamp"]            = import.timedatestamp();
+  node_["import_address_table_rva"] = import.import_address_table_rva();
+  node_["import_lookup_table_rva"]  = import.import_lookup_table_rva();
+  node_["name"]                     = import.name();
+  node_["entries"]                  = entries;
 
 }
 
 void JsonVisitor::visit(const ImportEntry& import_entry) {
   if (import_entry.is_ordinal()) {
-    this->node_["ordinal"] = import_entry.ordinal();
+    node_["ordinal"] = import_entry.ordinal();
   } else {
-    this->node_["name"] = import_entry.name();
+    node_["name"] = import_entry.name();
   }
 
-  this->node_["iat_address"] = import_entry.iat_address();
-  this->node_["data"]        = import_entry.data();
-  this->node_["hint"]        = import_entry.hint();
+  node_["iat_address"] = import_entry.iat_address();
+  node_["data"]        = import_entry.data();
+  node_["hint"]        = import_entry.hint();
 }
 
 void JsonVisitor::visit(const ResourceData& resource_data) {
-  this->node_["code_page"] = resource_data.code_page();
-  this->node_["reserved"]  = resource_data.reserved();
-  this->node_["offset"]    = resource_data.offset();
-  this->node_["hash"]      = Hash::hash(resource_data.content());
+  node_["code_page"] = resource_data.code_page();
+  node_["reserved"]  = resource_data.reserved();
+  node_["offset"]    = resource_data.offset();
+  node_["hash"]      = Hash::hash(resource_data.content());
 
 }
 
 void JsonVisitor::visit(const ResourceNode& resource_node) {
-  this->node_["id"] = resource_node.id();
+  node_["id"] = resource_node.id();
 
   if (resource_node.has_name()) {
-    this->node_["name"] = u16tou8(resource_node.name());
+    node_["name"] = u16tou8(resource_node.name());
   }
 
   if (resource_node.childs().size() > 0) {
@@ -493,24 +493,24 @@ void JsonVisitor::visit(const ResourceNode& resource_node) {
       childs.emplace_back(visitor.get());
     }
 
-    this->node_["childs"] = childs;
+    node_["childs"] = childs;
   }
 
 }
 
 void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
-  this->node_["id"] = resource_directory.id();
+  node_["id"] = resource_directory.id();
 
   if (resource_directory.has_name()) {
-    this->node_["name"] = u16tou8(resource_directory.name());
+    node_["name"] = u16tou8(resource_directory.name());
   }
 
-  this->node_["characteristics"]       = resource_directory.characteristics();
-  this->node_["time_date_stamp"]       = resource_directory.time_date_stamp();
-  this->node_["major_version"]         = resource_directory.major_version();
-  this->node_["minor_version"]         = resource_directory.minor_version();
-  this->node_["numberof_name_entries"] = resource_directory.numberof_name_entries();
-  this->node_["numberof_id_entries"]   = resource_directory.numberof_id_entries();
+  node_["characteristics"]       = resource_directory.characteristics();
+  node_["time_date_stamp"]       = resource_directory.time_date_stamp();
+  node_["major_version"]         = resource_directory.major_version();
+  node_["minor_version"]         = resource_directory.minor_version();
+  node_["numberof_name_entries"] = resource_directory.numberof_name_entries();
+  node_["numberof_id_entries"]   = resource_directory.numberof_id_entries();
 
   if (resource_directory.childs().size() > 0) {
     std::vector<json> childs;
@@ -520,7 +520,7 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
       childs.emplace_back(visitor.get());
     }
 
-    this->node_["childs"] = childs;
+    node_["childs"] = childs;
   }
 }
 
@@ -528,7 +528,7 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
 void JsonVisitor::visit(const ResourcesManager& resources_manager) {
   if (resources_manager.has_manifest()) {
     try {
-      this->node_["manifest"] = escape_non_ascii(resources_manager.manifest()) ;
+      node_["manifest"] = escape_non_ascii(resources_manager.manifest()) ;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -540,7 +540,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
       for (const std::string& elem : resources_manager.html()) {
         escaped_strs.emplace_back(escape_non_ascii(elem));
       }
-      this->node_["html"] = escaped_strs;
+      node_["html"] = escaped_strs;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -550,7 +550,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
     JsonVisitor version_visitor;
     try {
       version_visitor(resources_manager.version());
-      this->node_["version"] = version_visitor.get();
+      node_["version"] = version_visitor.get();
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -564,7 +564,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         icon_visitor(icon);
         icons.emplace_back(icon_visitor.get());
       }
-      this->node_["icons"] = icons;
+      node_["icons"] = icons;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -578,7 +578,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         dialog_visitor(dialog);
         dialogs.emplace_back(dialog_visitor.get());
       }
-      this->node_["dialogs"] = dialogs;
+      node_["dialogs"] = dialogs;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -592,7 +592,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         string_table_visitor(string_table);
         string_table_json.emplace_back(string_table_visitor.get());
       }
-      this->node_["string_table"] = string_table_json;
+      node_["string_table"] = string_table_json;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -606,7 +606,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
         accelerator_visitor(acc);
         accelerator_json.emplace_back(accelerator_visitor.get());
       }
-      this->node_["accelerator"] = accelerator_json;
+      node_["accelerator"] = accelerator_json;
     } catch (const LIEF::exception& e) {
       LIEF_WARN("{}", e.what());
     }
@@ -622,31 +622,31 @@ void JsonVisitor::visit(const ResourceStringFileInfo& resource_sfi) {
     langcode_items.emplace_back(langcode_visitor.get());
   }
 
-  this->node_["type"]  = resource_sfi.type();
-  this->node_["key"]   = u16tou8(resource_sfi.key());
-  this->node_["langcode_items"] = langcode_items;
+  node_["type"]  = resource_sfi.type();
+  node_["key"]   = u16tou8(resource_sfi.key());
+  node_["langcode_items"] = langcode_items;
 }
 
 void JsonVisitor::visit(const ResourceFixedFileInfo& resource_ffi) {
-  this->node_["signature"]          = resource_ffi.signature();
-  this->node_["struct_version"]     = resource_ffi.struct_version();
-  this->node_["file_version_MS"]    = resource_ffi.file_version_MS();
-  this->node_["file_version_LS"]    = resource_ffi.file_version_LS();
-  this->node_["product_version_MS"] = resource_ffi.product_version_MS();
-  this->node_["product_version_LS"] = resource_ffi.product_version_LS();
-  this->node_["file_flags_mask"]    = resource_ffi.file_flags_mask();
-  this->node_["file_flags"]         = resource_ffi.file_flags();
-  this->node_["file_os"]            = to_string(resource_ffi.file_os());
-  this->node_["file_type"]          = to_string(resource_ffi.file_type());
-  this->node_["file_subtype"]       = to_string(resource_ffi.file_subtype());
-  this->node_["file_date_MS"]       = resource_ffi.file_date_MS();
-  this->node_["file_date_LS"]       = resource_ffi.file_date_LS();
+  node_["signature"]          = resource_ffi.signature();
+  node_["struct_version"]     = resource_ffi.struct_version();
+  node_["file_version_MS"]    = resource_ffi.file_version_MS();
+  node_["file_version_LS"]    = resource_ffi.file_version_LS();
+  node_["product_version_MS"] = resource_ffi.product_version_MS();
+  node_["product_version_LS"] = resource_ffi.product_version_LS();
+  node_["file_flags_mask"]    = resource_ffi.file_flags_mask();
+  node_["file_flags"]         = resource_ffi.file_flags();
+  node_["file_os"]            = to_string(resource_ffi.file_os());
+  node_["file_type"]          = to_string(resource_ffi.file_type());
+  node_["file_subtype"]       = to_string(resource_ffi.file_subtype());
+  node_["file_date_MS"]       = resource_ffi.file_date_MS();
+  node_["file_date_LS"]       = resource_ffi.file_date_LS();
 }
 
 void JsonVisitor::visit(const ResourceVarFileInfo& resource_vfi) {
-  this->node_["type"]         = resource_vfi.type();
-  this->node_["key"]          = u16tou8(resource_vfi.key());
-  this->node_["translations"] = resource_vfi.translations();
+  node_["type"]         = resource_vfi.type();
+  node_["key"]          = u16tou8(resource_vfi.key());
+  node_["translations"] = resource_vfi.translations();
 }
 
 void JsonVisitor::visit(const LangCodeItem& resource_lci) {
@@ -659,58 +659,58 @@ void JsonVisitor::visit(const LangCodeItem& resource_lci) {
         return std::pair<std::string, std::string>{u16tou8(p.first), u16tou8(p.second)};
       });
 
-  this->node_["type"]  = resource_lci.type();
-  this->node_["key"]   = u16tou8(resource_lci.key());
-  this->node_["items"] = items;
+  node_["type"]  = resource_lci.type();
+  node_["key"]   = u16tou8(resource_lci.key());
+  node_["items"] = items;
 
 }
 
 
 void JsonVisitor::visit(const ResourceVersion& resource_version) {
-  this->node_["type"] = resource_version.type();
-  this->node_["key"]  = u16tou8(resource_version.key());
+  node_["type"] = resource_version.type();
+  node_["key"]  = u16tou8(resource_version.key());
 
   if (resource_version.has_fixed_file_info()) {
     JsonVisitor visitor;
     visitor(resource_version.fixed_file_info());
-    this->node_["fixed_file_info"] = visitor.get();
+    node_["fixed_file_info"] = visitor.get();
   }
 
 
   if (resource_version.has_string_file_info()) {
     JsonVisitor visitor;
     visitor(resource_version.string_file_info());
-    this->node_["string_file_info"] = visitor.get();
+    node_["string_file_info"] = visitor.get();
   }
 
 
   if (resource_version.has_var_file_info()) {
     JsonVisitor visitor;
     visitor(resource_version.var_file_info());
-    this->node_["var_file_info"] = visitor.get();
+    node_["var_file_info"] = visitor.get();
   }
 }
 
 void JsonVisitor::visit(const ResourceIcon& resource_icon) {
-  this->node_["id"]          = resource_icon.id();
-  this->node_["lang"]        = to_string(resource_icon.lang());
-  this->node_["sublang"]     = to_string(resource_icon.sublang());
-  this->node_["width"]       = resource_icon.width();
-  this->node_["height"]      = resource_icon.height();
-  this->node_["color_count"] = resource_icon.color_count();
-  this->node_["reserved"]    = resource_icon.reserved();
-  this->node_["planes"]      = resource_icon.planes();
-  this->node_["bit_count"]   = resource_icon.bit_count();
-  this->node_["pixels"]      = Hash::hash(resource_icon.pixels());
+  node_["id"]          = resource_icon.id();
+  node_["lang"]        = to_string(resource_icon.lang());
+  node_["sublang"]     = to_string(resource_icon.sublang());
+  node_["width"]       = resource_icon.width();
+  node_["height"]      = resource_icon.height();
+  node_["color_count"] = resource_icon.color_count();
+  node_["reserved"]    = resource_icon.reserved();
+  node_["planes"]      = resource_icon.planes();
+  node_["bit_count"]   = resource_icon.bit_count();
+  node_["pixels"]      = Hash::hash(resource_icon.pixels());
 }
 
 void JsonVisitor::visit(const ResourceDialog& dialog) {
-  this->node_["x"]              = dialog.x();
-  this->node_["y"]              = dialog.y();
-  this->node_["cx"]             = dialog.cx();
-  this->node_["cy"]             = dialog.cy();
-  this->node_["style"]          = dialog.style();
-  this->node_["extended_style"] = dialog.extended_style();
+  node_["x"]              = dialog.x();
+  node_["y"]              = dialog.y();
+  node_["cx"]             = dialog.cx();
+  node_["cy"]             = dialog.cy();
+  node_["style"]          = dialog.style();
+  node_["extended_style"] = dialog.extended_style();
 
   std::vector<json> dialog_items;
   for (const ResourceDialogItem& item : dialog.items()) {
@@ -719,41 +719,41 @@ void JsonVisitor::visit(const ResourceDialog& dialog) {
     dialog_items.emplace_back(dialogitem_visitor.get());
   }
 
-  this->node_["items"] = dialog_items;
+  node_["items"] = dialog_items;
 
   if (dialog.is_extended()) {
-    this->node_["version"]    = dialog.version();
-    this->node_["signature"]  = dialog.signature();
-    this->node_["help_id"]    = dialog.help_id();
-    this->node_["weight"]     = dialog.weight();
-    this->node_["point_size"] = dialog.point_size();
-    this->node_["is_italic"]  = dialog.is_italic();
-    this->node_["charset"]    = dialog.charset();
-    this->node_["title"]      = u16tou8(dialog.title());
-    this->node_["typeface"]   = u16tou8(dialog.typeface());
+    node_["version"]    = dialog.version();
+    node_["signature"]  = dialog.signature();
+    node_["help_id"]    = dialog.help_id();
+    node_["weight"]     = dialog.weight();
+    node_["point_size"] = dialog.point_size();
+    node_["is_italic"]  = dialog.is_italic();
+    node_["charset"]    = dialog.charset();
+    node_["title"]      = u16tou8(dialog.title());
+    node_["typeface"]   = u16tou8(dialog.typeface());
   }
 }
 
 
 void JsonVisitor::visit(const ResourceDialogItem& dialog_item) {
-  this->node_["id"]             = dialog_item.id();
-  this->node_["x"]              = dialog_item.x();
-  this->node_["y"]              = dialog_item.y();
-  this->node_["cx"]             = dialog_item.cx();
-  this->node_["cy"]             = dialog_item.cy();
-  this->node_["style"]          = dialog_item.style();
-  this->node_["extended_style"] = dialog_item.extended_style();
+  node_["id"]             = dialog_item.id();
+  node_["x"]              = dialog_item.x();
+  node_["y"]              = dialog_item.y();
+  node_["cx"]             = dialog_item.cx();
+  node_["cy"]             = dialog_item.cy();
+  node_["style"]          = dialog_item.style();
+  node_["extended_style"] = dialog_item.extended_style();
 
   if (dialog_item.is_extended()) {
-    this->node_["title"]   = u16tou8(dialog_item.title());
-    this->node_["help_id"] = dialog_item.help_id();
+    node_["title"]   = u16tou8(dialog_item.title());
+    node_["help_id"] = dialog_item.help_id();
   }
 
 }
 
 void JsonVisitor::visit(const ResourceStringTable& string_table) {
-  this->node_["length"] = string_table.length();
-  this->node_["name"] = u16tou8(string_table.name());
+  node_["length"] = string_table.length();
+  node_["name"] = u16tou8(string_table.name());
 }
 
 void JsonVisitor::visit(const ResourceAccelerator& acc) {
@@ -761,10 +761,10 @@ void JsonVisitor::visit(const ResourceAccelerator& acc) {
   for (const ACCELERATOR_FLAGS c : acc.flags_list()) {
     flags.emplace_back(to_string(c));
   }
-  this->node_["flags"]   = flags;
-  this->node_["ansi"]    = acc.ansi_str();
-  this->node_["id"]      = acc.id();
-  this->node_["padding"] = acc.padding();
+  node_["flags"]   = flags;
+  node_["ansi"]    = acc.ansi_str();
+  node_["id"]      = acc.id();
+  node_["padding"] = acc.padding();
 }
 
 void JsonVisitor::visit(const Signature& signature) {
@@ -776,31 +776,31 @@ void JsonVisitor::visit(const Signature& signature) {
   for (const SignerInfo& signer : signature.signers()) {
     JsonVisitor visitor;
     visitor(signer);
-    jsigners.emplace_back(std::move(visitor.get()));
+    jsigners.emplace_back(visitor.get());
   }
 
   std::vector<json> crts;
   for (const x509& crt : signature.certificates()) {
     JsonVisitor crt_visitor;
     crt_visitor(crt);
-    crts.emplace_back(std::move(crt_visitor.get()));
+    crts.emplace_back(crt_visitor.get());
   }
 
-  this->node_["digest_algorithm"] = to_string(signature.digest_algorithm());
-  this->node_["version"]          = signature.version();
-  this->node_["content_info"]     = content_info_visitor.get();
-  this->node_["signer_info"]      = jsigners;
-  this->node_["certificates"]     = crts;
+  node_["digest_algorithm"] = to_string(signature.digest_algorithm());
+  node_["version"]          = signature.version();
+  node_["content_info"]     = content_info_visitor.get();
+  node_["signer_info"]      = jsigners;
+  node_["certificates"]     = crts;
 }
 
 void JsonVisitor::visit(const x509& x509) {
-  this->node_["serial_number"]       = x509.serial_number();
-  this->node_["version"]             = x509.version();
-  this->node_["issuer"]              = x509.issuer();
-  this->node_["subject"]             = x509.subject();
-  this->node_["signature_algorithm"] = x509.signature_algorithm();
-  this->node_["valid_from"]          = x509.valid_from();
-  this->node_["valid_to"]            = x509.valid_to();
+  node_["serial_number"]       = x509.serial_number();
+  node_["version"]             = x509.version();
+  node_["issuer"]              = x509.issuer();
+  node_["subject"]             = x509.subject();
+  node_["signature_algorithm"] = x509.signature_algorithm();
+  node_["valid_from"]          = x509.valid_from();
+  node_["valid_to"]            = x509.valid_to();
 }
 
 void JsonVisitor::visit(const SignerInfo& signerinfo) {
@@ -808,178 +808,178 @@ void JsonVisitor::visit(const SignerInfo& signerinfo) {
   for (const Attribute& attr : signerinfo.authenticated_attributes()) {
     JsonVisitor visitor;
     visitor(attr);
-    auth_attrs.emplace_back(std::move(visitor.get()));
+    auth_attrs.emplace_back(visitor.get());
   }
 
   std::vector<json> unauth_attrs;
   for (const Attribute& attr : signerinfo.unauthenticated_attributes()) {
     JsonVisitor visitor;
     visitor(attr);
-    auth_attrs.emplace_back(std::move(visitor.get()));
+    auth_attrs.emplace_back(visitor.get());
   }
 
-  this->node_["version"]                    = signerinfo.version();
-  this->node_["digest_algorithm"]           = to_string(signerinfo.digest_algorithm());
-  this->node_["encryption_algorithm"]       = to_string(signerinfo.encryption_algorithm());
-  this->node_["encrypted_digest"]           = signerinfo.encrypted_digest();
-  this->node_["issuer"]                     = signerinfo.issuer();
-  this->node_["serial_number"]              = signerinfo.serial_number();
-  this->node_["authenticated_attributes"]   = auth_attrs;
-  this->node_["unauthenticated_attributes"] = unauth_attrs;
+  node_["version"]                    = signerinfo.version();
+  node_["digest_algorithm"]           = to_string(signerinfo.digest_algorithm());
+  node_["encryption_algorithm"]       = to_string(signerinfo.encryption_algorithm());
+  node_["encrypted_digest"]           = signerinfo.encrypted_digest();
+  node_["issuer"]                     = signerinfo.issuer();
+  node_["serial_number"]              = signerinfo.serial_number();
+  node_["authenticated_attributes"]   = auth_attrs;
+  node_["unauthenticated_attributes"] = unauth_attrs;
 }
 
 void JsonVisitor::visit(const ContentInfo& contentinfo) {
-  this->node_["content_type"]     = contentinfo.content_type();
-  this->node_["digest_algorithm"] = to_string(contentinfo.digest_algorithm());
-  this->node_["digest"]           = contentinfo.digest();
-  this->node_["file"]             = contentinfo.file();
+  node_["content_type"]     = contentinfo.content_type();
+  node_["digest_algorithm"] = to_string(contentinfo.digest_algorithm());
+  node_["digest"]           = contentinfo.digest();
+  node_["file"]             = contentinfo.file();
 }
 
 void JsonVisitor::visit(const Attribute& auth) {
-  this->node_["type"] = to_string(auth.type());
+  node_["type"] = to_string(auth.type());
 }
 
 void JsonVisitor::visit(const ContentType& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["oid"] = attr.oid();
+  visit(*attr.as<Attribute>());
+  node_["oid"] = attr.oid();
 }
 
 void JsonVisitor::visit(const GenericType& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["oid"] = attr.oid();
+  visit(*attr.as<Attribute>());
+  node_["oid"] = attr.oid();
 }
 
 void JsonVisitor::visit(const MsSpcNestedSignature& attr) {
-  this->visit(*attr.as<Attribute>());
+  visit(*attr.as<Attribute>());
   JsonVisitor visitor;
   visitor(attr.sig());
-  this->node_["signature"] = std::move(visitor.get());
+  node_["signature"] = visitor.get();
 }
 
 void JsonVisitor::visit(const MsSpcStatementType& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["oid"] = attr.oid();
+  visit(*attr.as<Attribute>());
+  node_["oid"] = attr.oid();
 }
 
 void JsonVisitor::visit(const PKCS9AtSequenceNumber& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["number"] = attr.number();
+  visit(*attr.as<Attribute>());
+  node_["number"] = attr.number();
 }
 void JsonVisitor::visit(const PKCS9CounterSignature& attr) {
-  this->visit(*attr.as<Attribute>());
+  visit(*attr.as<Attribute>());
 
   JsonVisitor visitor;
   visitor(attr.signer());
-  this->node_["signer"] = std::move(visitor.get());
+  node_["signer"] = visitor.get();
 }
 
 void JsonVisitor::visit(const PKCS9MessageDigest& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["digest"] = attr.digest();
+  visit(*attr.as<Attribute>());
+  node_["digest"] = attr.digest();
 }
 
 void JsonVisitor::visit(const PKCS9SigningTime& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["time"] = attr.time();
+  visit(*attr.as<Attribute>());
+  node_["time"] = attr.time();
 }
 
 void JsonVisitor::visit(const SpcSpOpusInfo& attr) {
-  this->visit(*attr.as<Attribute>());
-  this->node_["more_info"]    = attr.more_info();
-  this->node_["program_name"] = attr.program_name();
+  visit(*attr.as<Attribute>());
+  node_["more_info"]    = attr.more_info();
+  node_["program_name"] = attr.program_name();
 }
 
 void JsonVisitor::visit(const CodeIntegrity& code_integrity) {
-  this->node_["flags"]          = code_integrity.flags();
-  this->node_["catalog"]        = code_integrity.catalog();
-  this->node_["catalog_offset"] = code_integrity.catalog_offset();
-  this->node_["reserved"]       = code_integrity.reserved();
+  node_["flags"]          = code_integrity.flags();
+  node_["catalog"]        = code_integrity.catalog();
+  node_["catalog_offset"] = code_integrity.catalog_offset();
+  node_["reserved"]       = code_integrity.reserved();
 }
 
 void JsonVisitor::visit(const LoadConfiguration& config) {
-  this->node_["version"]                          = to_string(config.version());
-  this->node_["characteristics"]                  = config.characteristics();
-  this->node_["timedatestamp"]                    = config.timedatestamp();
-  this->node_["major_version"]                    = config.major_version();
-  this->node_["minor_version"]                    = config.minor_version();
-  this->node_["global_flags_clear"]               = config.global_flags_clear();
-  this->node_["global_flags_set"]                 = config.global_flags_set();
-  this->node_["critical_section_default_timeout"] = config.critical_section_default_timeout();
-  this->node_["decommit_free_block_threshold"]    = config.decommit_free_block_threshold();
-  this->node_["decommit_total_free_threshold"]    = config.decommit_total_free_threshold();
-  this->node_["lock_prefix_table"]                = config.lock_prefix_table();
-  this->node_["maximum_allocation_size"]          = config.maximum_allocation_size();
-  this->node_["virtual_memory_threshold"]         = config.virtual_memory_threshold();
-  this->node_["process_affinity_mask"]            = config.process_affinity_mask();
-  this->node_["process_heap_flags"]               = config.process_heap_flags();
-  this->node_["csd_version"]                      = config.csd_version();
-  this->node_["reserved1"]                        = config.reserved1();
-  this->node_["editlist"]                         = config.editlist();
-  this->node_["security_cookie"]                  = config.security_cookie();
+  node_["version"]                          = to_string(config.version());
+  node_["characteristics"]                  = config.characteristics();
+  node_["timedatestamp"]                    = config.timedatestamp();
+  node_["major_version"]                    = config.major_version();
+  node_["minor_version"]                    = config.minor_version();
+  node_["global_flags_clear"]               = config.global_flags_clear();
+  node_["global_flags_set"]                 = config.global_flags_set();
+  node_["critical_section_default_timeout"] = config.critical_section_default_timeout();
+  node_["decommit_free_block_threshold"]    = config.decommit_free_block_threshold();
+  node_["decommit_total_free_threshold"]    = config.decommit_total_free_threshold();
+  node_["lock_prefix_table"]                = config.lock_prefix_table();
+  node_["maximum_allocation_size"]          = config.maximum_allocation_size();
+  node_["virtual_memory_threshold"]         = config.virtual_memory_threshold();
+  node_["process_affinity_mask"]            = config.process_affinity_mask();
+  node_["process_heap_flags"]               = config.process_heap_flags();
+  node_["csd_version"]                      = config.csd_version();
+  node_["reserved1"]                        = config.reserved1();
+  node_["editlist"]                         = config.editlist();
+  node_["security_cookie"]                  = config.security_cookie();
 
 }
 
 void JsonVisitor::visit(const LoadConfigurationV0& config) {
-  this->node_["se_handler_table"] = config.se_handler_table();
-  this->node_["se_handler_count"] = config.se_handler_count();
-  this->visit(static_cast<const LoadConfiguration&>(config));
+  node_["se_handler_table"] = config.se_handler_table();
+  node_["se_handler_count"] = config.se_handler_count();
+  visit(static_cast<const LoadConfiguration&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV1& config) {
-  this->node_["guard_cf_check_function_pointer"]    = config.guard_cf_check_function_pointer();
-  this->node_["guard_cf_dispatch_function_pointer"] = config.guard_cf_dispatch_function_pointer();
-  this->node_["guard_cf_function_table"]            = config.guard_cf_function_table();
-  this->node_["guard_cf_function_count"]            = config.guard_cf_function_count();
-  this->node_["guard_flags"]                        = static_cast<size_t>(config.guard_flags());
-  this->visit(static_cast<const LoadConfigurationV0&>(config));
+  node_["guard_cf_check_function_pointer"]    = config.guard_cf_check_function_pointer();
+  node_["guard_cf_dispatch_function_pointer"] = config.guard_cf_dispatch_function_pointer();
+  node_["guard_cf_function_table"]            = config.guard_cf_function_table();
+  node_["guard_cf_function_count"]            = config.guard_cf_function_count();
+  node_["guard_flags"]                        = static_cast<size_t>(config.guard_flags());
+  visit(static_cast<const LoadConfigurationV0&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV2& config) {
   JsonVisitor code_integrity_visitor;
   code_integrity_visitor(config.code_integrity());
 
-  this->node_["code_integrity"] = code_integrity_visitor.get();
-  this->visit(static_cast<const LoadConfigurationV1&>(config));
+  node_["code_integrity"] = code_integrity_visitor.get();
+  visit(static_cast<const LoadConfigurationV1&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV3& config) {
-  this->node_["guard_address_taken_iat_entry_table"] = config.guard_address_taken_iat_entry_table();
-  this->node_["guard_address_taken_iat_entry_count"] = config.guard_address_taken_iat_entry_count();
-  this->node_["guard_long_jump_target_table"]        = config.guard_long_jump_target_table();
-  this->node_["guard_long_jump_target_count"]        = config.guard_long_jump_target_count();
-  this->visit(static_cast<const LoadConfigurationV2&>(config));
+  node_["guard_address_taken_iat_entry_table"] = config.guard_address_taken_iat_entry_table();
+  node_["guard_address_taken_iat_entry_count"] = config.guard_address_taken_iat_entry_count();
+  node_["guard_long_jump_target_table"]        = config.guard_long_jump_target_table();
+  node_["guard_long_jump_target_count"]        = config.guard_long_jump_target_count();
+  visit(static_cast<const LoadConfigurationV2&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV4& config) {
-  this->node_["dynamic_value_reloc_table"] = config.dynamic_value_reloc_table();
-  this->node_["hybrid_metadata_pointer"]   = config.hybrid_metadata_pointer();
-  this->visit(static_cast<const LoadConfigurationV3&>(config));
+  node_["dynamic_value_reloc_table"] = config.dynamic_value_reloc_table();
+  node_["hybrid_metadata_pointer"]   = config.hybrid_metadata_pointer();
+  visit(static_cast<const LoadConfigurationV3&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV5& config) {
-  this->node_["guard_rf_failure_routine"]                   = config.guard_rf_failure_routine();
-  this->node_["guard_rf_failure_routine_function_pointer"]  = config.guard_rf_failure_routine_function_pointer();
-  this->node_["dynamic_value_reloctable_offset"]            = config.dynamic_value_reloctable_offset();
-  this->node_["dynamic_value_reloctable_section"]           = config.dynamic_value_reloctable_section();
-  this->node_["reserved2"]                                  = config.guard_rf_failure_routine();
-  this->visit(static_cast<const LoadConfigurationV4&>(config));
+  node_["guard_rf_failure_routine"]                   = config.guard_rf_failure_routine();
+  node_["guard_rf_failure_routine_function_pointer"]  = config.guard_rf_failure_routine_function_pointer();
+  node_["dynamic_value_reloctable_offset"]            = config.dynamic_value_reloctable_offset();
+  node_["dynamic_value_reloctable_section"]           = config.dynamic_value_reloctable_section();
+  node_["reserved2"]                                  = config.guard_rf_failure_routine();
+  visit(static_cast<const LoadConfigurationV4&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV6& config) {
-  this->node_["guard_rf_verify_stackpointer_function_pointer"]  = config.guard_rf_verify_stackpointer_function_pointer();
-  this->node_["hotpatch_table_offset"]                          = config.hotpatch_table_offset();
-  this->visit(static_cast<const LoadConfigurationV5&>(config));
+  node_["guard_rf_verify_stackpointer_function_pointer"]  = config.guard_rf_verify_stackpointer_function_pointer();
+  node_["hotpatch_table_offset"]                          = config.hotpatch_table_offset();
+  visit(static_cast<const LoadConfigurationV5&>(config));
 }
 
 void JsonVisitor::visit(const LoadConfigurationV7& config) {
-  this->node_["reserved3"]                = config.reserved3();
-  this->node_["addressof_unicode_string"] = config.addressof_unicode_string();
-  this->visit(static_cast<const LoadConfigurationV6&>(config));
+  node_["reserved3"]                = config.reserved3();
+  node_["addressof_unicode_string"] = config.addressof_unicode_string();
+  visit(static_cast<const LoadConfigurationV6&>(config));
 }
 
 
 void JsonVisitor::visit(const Pogo& pogo) {
-  this->node_["signature"] = to_string(pogo.signature());
+  node_["signature"] = to_string(pogo.signature());
 
   std::vector<json> entries;
   for (const PogoEntry& entry : pogo.entries()) {
@@ -987,32 +987,32 @@ void JsonVisitor::visit(const Pogo& pogo) {
     v(entry);
     entries.emplace_back(v.get());
   }
-  this->node_["entries"] = entries;
+  node_["entries"] = entries;
 }
 
 void JsonVisitor::visit(const PogoEntry& entry) {
-  this->node_["name"]      = entry.name();
-  this->node_["start_rva"] = entry.start_rva();
-  this->node_["size"]      = entry.size();
+  node_["name"]      = entry.name();
+  node_["start_rva"] = entry.start_rva();
+  node_["size"]      = entry.size();
 }
 
 
 // LIEF Abstract
 void JsonVisitor::visit(const LIEF::Binary& binary) {
   // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::PE::Binary*>(&binary));
+  visit(*dynamic_cast<const LIEF::PE::Binary*>(&binary));
 }
 
 
 void JsonVisitor::visit(const LIEF::Symbol& symbol) {
   // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::PE::Symbol*>(&symbol));
+  visit(*dynamic_cast<const LIEF::PE::Symbol*>(&symbol));
 }
 
 
 void JsonVisitor::visit(const LIEF::Section& section) {
   // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  this->visit(*dynamic_cast<const LIEF::PE::Section*>(&section));
+  visit(*dynamic_cast<const LIEF::PE::Section*>(&section));
 }
 
 } // namespace PE

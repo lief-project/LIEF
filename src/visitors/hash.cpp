@@ -104,33 +104,33 @@ Hash::Hash(size_t init_value) :
 Hash& Hash::process(const Object& obj) {
   Hash hasher;
   obj.accept(hasher);
-  this->value_ = combine(this->value_, hasher.value());
+  value_ = combine(value_, hasher.value());
   return *this;
 }
 
 Hash& Hash::process(size_t integer) {
-  this->value_ = combine(this->value_, std::hash<size_t>{}(integer));
+  value_ = combine(value_, std::hash<size_t>{}(integer));
   return *this;
 }
 
 Hash& Hash::process(const std::string& str) {
-  this->value_ = combine(this->value_, std::hash<std::string>{}(str));
+  value_ = combine(value_, std::hash<std::string>{}(str));
   return *this;
 }
 
 
 Hash& Hash::process(const std::u16string& str) {
-  this->value_ = combine(this->value_, std::hash<std::u16string>{}(str));
+  value_ = combine(value_, std::hash<std::u16string>{}(str));
   return *this;
 }
 
 Hash& Hash::process(const std::vector<uint8_t>& raw) {
-  this->value_ = combine(this->value_, Hash::hash(raw));
+  value_ = combine(value_, Hash::hash(raw));
   return *this;
 }
 
 size_t Hash::value() const {
-  return this->value_;
+  return value_;
 }
 
 
@@ -151,7 +151,7 @@ size_t Hash::hash(const std::vector<uint8_t>& raw) {
 
 
 size_t Hash::hash(const void* raw, size_t size) {
-  const uint8_t* start = reinterpret_cast<const uint8_t*>(raw);
+  const auto* start = reinterpret_cast<const uint8_t*>(raw);
   return Hash::hash(std::vector<uint8_t>{start, start + size});
 }
 

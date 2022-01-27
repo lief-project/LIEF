@@ -26,8 +26,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v2;
+}
 
 //! @brief LoadConfiguration enhanced with code integrity
 class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
@@ -39,9 +41,9 @@ class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   LoadConfigurationV2(const LoadConfigurationV2&);
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV2(const load_configuration_v2<T>* header);
+  LIEF_LOCAL LoadConfigurationV2(const details::load_configuration_v2<T>& header);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief CodeIntegrity associated with
   const CodeIntegrity& code_integrity() const;
@@ -49,12 +51,12 @@ class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
 
   virtual ~LoadConfigurationV2();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV2& rhs) const;
   bool operator!=(const LoadConfigurationV2& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   CodeIntegrity code_integrity_;

@@ -28,9 +28,9 @@ class LIEF_API exception : public std::exception {
   public:
 
     exception(const exception& other);
-    explicit exception(const std::string& msg);
+    explicit exception(std::string  msg);
     explicit exception(const char* msg);
-    virtual const char* what() const noexcept override;
+    const char* what() const noexcept override;
     virtual ~exception() noexcept;
 
   protected:

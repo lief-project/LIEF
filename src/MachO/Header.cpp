@@ -65,63 +65,63 @@ Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&) = default;
 Header::~Header() = default;
 
-Header::Header(const mach_header_64 *header) :
-  magic_{static_cast<MACHO_TYPES>(header->magic)},
-  cputype_(static_cast<CPU_TYPES>(header->cputype)),
-  cpusubtype_{header->cpusubtype},
-  filetype_{static_cast<FILE_TYPES>(header->filetype)},
-  ncmds_{header->ncmds},
-  sizeofcmds_{header->sizeofcmds},
-  flags_{header->flags},
-  reserved_{header->reserved}
+Header::Header(const details::mach_header_64& header) :
+  magic_{static_cast<MACHO_TYPES>(header.magic)},
+  cputype_(static_cast<CPU_TYPES>(header.cputype)),
+  cpusubtype_{header.cpusubtype},
+  filetype_{static_cast<FILE_TYPES>(header.filetype)},
+  ncmds_{header.ncmds},
+  sizeofcmds_{header.sizeofcmds},
+  flags_{header.flags},
+  reserved_{header.reserved}
 {}
 
-Header::Header(const mach_header *header) :
-  magic_{static_cast<MACHO_TYPES>(header->magic)},
-  cputype_(static_cast<CPU_TYPES>(header->cputype)),
-  cpusubtype_{header->cpusubtype},
-  filetype_{static_cast<FILE_TYPES>(header->filetype)},
-  ncmds_{header->ncmds},
-  sizeofcmds_{header->sizeofcmds},
-  flags_{header->flags},
+Header::Header(const details::mach_header& header) :
+  magic_{static_cast<MACHO_TYPES>(header.magic)},
+  cputype_(static_cast<CPU_TYPES>(header.cputype)),
+  cpusubtype_{header.cpusubtype},
+  filetype_{static_cast<FILE_TYPES>(header.filetype)},
+  ncmds_{header.ncmds},
+  sizeofcmds_{header.sizeofcmds},
+  flags_{header.flags},
   reserved_{0}
 {}
 
 
 MACHO_TYPES Header::magic() const {
-  return this->magic_;
+  return magic_;
 }
 CPU_TYPES Header::cpu_type() const {
-  return this->cputype_;
+  return cputype_;
 }
 
 uint32_t Header::cpu_subtype() const {
-  return this->cpusubtype_;
+  return cpusubtype_;
 }
 
 FILE_TYPES Header::file_type() const {
-  return this->filetype_;
+  return filetype_;
 }
 
 uint32_t Header::nb_cmds() const {
-  return this->ncmds_;
+  return ncmds_;
 }
 
 uint32_t Header::sizeof_cmds() const {
-  return this->sizeofcmds_;
+  return sizeofcmds_;
 }
 
 uint32_t Header::flags() const {
-  return this->flags_;
+  return flags_;
 }
 
 uint32_t Header::reserved() const {
-  return this->reserved_;
+  return reserved_;
 }
 
 std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const {
-  if (arch_macho_to_lief.count(this->cpu_type()) != 0) {
-    return arch_macho_to_lief.at(this->cpu_type());
+  if (arch_macho_to_lief.count(cpu_type()) != 0) {
+    return arch_macho_to_lief.at(cpu_type());
   } else {
     return {ARCHITECTURES::ARCH_NONE, {}};
   }
@@ -129,21 +129,20 @@ std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const 
 
 
 OBJECT_TYPES Header::abstract_object_type() const {
-  if (obj_macho_to_lief.count(this->file_type()) != 0) {
-    return obj_macho_to_lief.at(this->file_type());
-  } else {
-    return OBJECT_TYPES::TYPE_NONE;
+  if (obj_macho_to_lief.count(file_type()) != 0) {
+    return obj_macho_to_lief.at(file_type());
   }
+  return OBJECT_TYPES::TYPE_NONE;
 }
 
 ENDIANNESS Header::abstract_endianness() const {
-  ENDIANNESS e = endi_macho_to_lief.at(this->cpu_type());
+  ENDIANNESS e = endi_macho_to_lief.at(cpu_type());
   auto not_endianness = [] (ENDIANNESS endian) {
     return endian == ENDIAN_LITTLE ? ENDIAN_BIG : ENDIAN_LITTLE;
   };
-  if (this->magic() == MACHO_TYPES::MH_CIGAM or
-      this->magic() == MACHO_TYPES::MH_CIGAM_64 or
-      this->magic() == MACHO_TYPES::FAT_CIGAM) {
+  if (magic() == MACHO_TYPES::MH_CIGAM ||
+      magic() == MACHO_TYPES::MH_CIGAM_64 ||
+      magic() == MACHO_TYPES::FAT_CIGAM) {
     return not_endianness(e);
   }
   return e;
@@ -157,55 +156,55 @@ Header::flags_list_t Header::flags_list() const {
       std::begin(header_flags_array),
       std::end(header_flags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(&Header::has, this, std::placeholders::_1));
+      [this] (HEADER_FLAGS f) { return has(f); });
 
   return flags;
 }
 
 
 bool Header::has(HEADER_FLAGS flag) const {
-  return (this->flags() & static_cast<uint32_t>(flag)) > 0;
+  return (flags() & static_cast<uint32_t>(flag)) > 0;
 }
 
 
 void Header::add(HEADER_FLAGS flag) {
-  this->flags(this->flags() | static_cast<uint32_t>(flag));
+  flags(flags() | static_cast<uint32_t>(flag));
 }
 
 void Header::remove(HEADER_FLAGS flag) {
-  this->flags(this->flags() & ~static_cast<uint32_t>(flag));
+  flags(flags() & ~static_cast<uint32_t>(flag));
 }
 
 
 void Header::magic(MACHO_TYPES magic) {
-  this->magic_ = magic;
+  magic_ = magic;
 }
 void Header::cpu_type(CPU_TYPES cputype) {
-  this->cputype_ = cputype;
+  cputype_ = cputype;
 }
 
 void Header::cpu_subtype(uint32_t cpusubtype) {
-  this->cpusubtype_ = cpusubtype;
+  cpusubtype_ = cpusubtype;
 }
 
 void Header::file_type(FILE_TYPES filetype) {
-  this->filetype_ = filetype;
+  filetype_ = filetype;
 }
 
 void Header::nb_cmds(uint32_t ncmds) {
-  this->ncmds_ = ncmds;
+  ncmds_ = ncmds;
 }
 
 void Header::sizeof_cmds(uint32_t sizeofcmds) {
-  this->sizeofcmds_ = sizeofcmds;
+  sizeofcmds_ = sizeofcmds;
 }
 
 void Header::flags(uint32_t flags) {
-  this->flags_ = flags;
+  flags_ = flags;
 }
 
 void Header::reserved(uint32_t reserved) {
-  this->reserved_ = reserved;
+  reserved_ = reserved;
 }
 
 
@@ -220,17 +219,17 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 Header& Header::operator+=(HEADER_FLAGS c) {
-  this->add(c);
+  add(c);
   return *this;
 }
 
 Header& Header::operator-=(HEADER_FLAGS c) {
-  this->remove(c);
+  remove(c);
   return *this;
 }
 

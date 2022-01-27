@@ -36,7 +36,7 @@ template<>
 void create<GenericType>(py::module& m) {
   py::class_<GenericType, Attribute>(m, "GenericType",
     R"delim(
-    Interface over an attribute whose the internal structure is not supported by LIEF
+    Interface over an attribute for which the internal structure is not supported by LIEF
     )delim")
     .def_property_readonly("oid",
         &GenericType::oid,

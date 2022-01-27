@@ -40,7 +40,7 @@ void ContentType::accept(Visitor& visitor) const {
 }
 
 std::string ContentType::print() const {
-  return this->oid() + " (" + oid_to_string(this->oid()) + ")";
+  return oid() + " (" + oid_to_string(oid()) + ")";
 }
 
 

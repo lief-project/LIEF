@@ -38,44 +38,44 @@ CodeIntegrity::CodeIntegrity() :
 {}
 
 
-CodeIntegrity::CodeIntegrity(const pe_code_integrity *header) :
-  flags_{header->Flags},
-  catalog_{header->Catalog},
-  catalog_offset_{header->CatalogOffset},
-  reserved_{header->Reserved}
+CodeIntegrity::CodeIntegrity(const details::pe_code_integrity& header) :
+  flags_{header.Flags},
+  catalog_{header.Catalog},
+  catalog_offset_{header.CatalogOffset},
+  reserved_{header.Reserved}
 {}
 
 
 uint16_t CodeIntegrity::flags() const {
-  return this->flags_;
+  return flags_;
 }
 uint16_t CodeIntegrity::catalog() const {
-  return this->catalog_;
+  return catalog_;
 }
 
 uint32_t CodeIntegrity::catalog_offset() const {
-  return this->catalog_offset_;
+  return catalog_offset_;
 }
 
 uint32_t CodeIntegrity::reserved() const {
-  return this->reserved_;
+  return reserved_;
 }
 
 
 void CodeIntegrity::flags(uint16_t flags) {
-  this->flags_ = flags;
+  flags_ = flags;
 }
 
 void CodeIntegrity::catalog(uint16_t catalog) {
-  this->catalog_ = catalog;
+  catalog_ = catalog;
 }
 
 void CodeIntegrity::catalog_offset(uint32_t catalog_offset) {
-  this->catalog_offset_ = catalog_offset;
+  catalog_offset_ = catalog_offset;
 }
 
 void CodeIntegrity::reserved(uint32_t reserved) {
-  this->reserved_ = reserved;
+  reserved_ = reserved;
 }
 
 void CodeIntegrity::accept(LIEF::Visitor& visitor) const {
@@ -89,7 +89,7 @@ bool CodeIntegrity::operator==(const CodeIntegrity& rhs) const {
 }
 
 bool CodeIntegrity::operator!=(const CodeIntegrity& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry) {

@@ -35,7 +35,7 @@ template<>
 void create<ResourceIcon>(py::module& m) {
   py::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
     .def(py::init<const std::string&>(),
-        "Constructor that takes a icon path as input",
+        "Constructor that takes an icon path as input",
         "icon_path"_a)
 
     .def_property("id",

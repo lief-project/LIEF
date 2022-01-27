@@ -53,44 +53,44 @@ class LIEF_API Hash : public Visitor {
 
   template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
   Hash& process(T v) {
-    return this->process(static_cast<size_t>(v));
+    return process(static_cast<size_t>(v));
   }
 
   template<class It>
   Hash& process(typename It::iterator v) {
-    return this->process(std::begin(v), std::end(v));
+    return process(std::begin(v), std::end(v));
   }
 
 
   template<class T, size_t N>
   Hash& process(const std::array<T, N>& array) {
-    this->process(std::begin(array), std::end(array));
+    process(std::begin(array), std::end(array));
     return *this;
   }
 
   template<class T>
   Hash& process(const std::vector<T>& vector) {
-    this->process(std::begin(vector), std::end(vector));
+    process(std::begin(vector), std::end(vector));
     return *this;
   }
 
   template<class T>
   Hash& process(const std::set<T>& set) {
-    this->process(std::begin(set), std::end(set));
+    process(std::begin(set), std::end(set));
     return *this;
   }
 
   template<class U, class V>
   Hash& process(const std::pair<U, V>& p) {
-    this->process(p.first);
-    this->process(p.second);
+    process(p.first);
+    process(p.second);
     return *this;
   }
 
   template<class InputIt>
   Hash& process(InputIt begin, InputIt end) {
     for (auto&& it = begin; it != end; ++it) {
-      this->process(*it);
+      process(*it);
     }
     return *this;
   }

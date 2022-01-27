@@ -24,26 +24,33 @@
 
 namespace LIEF {
 namespace MachO {
-struct dysymtab_command;
 
+namespace details {
+struct dysymtab_command;
+}
+
+//! Class that represents the LC_DYSYMTAB command.
+//! This command completes the LC_SYMTAB (SymbolCommand) to provide
+//! a better granularity over the symbols layout.
 class LIEF_API DynamicSymbolCommand : public LoadCommand {
   public:
   DynamicSymbolCommand();
-  DynamicSymbolCommand(const dysymtab_command *cmd);
+
+  DynamicSymbolCommand(const details::dysymtab_command& cmd);
 
   DynamicSymbolCommand& operator=(const DynamicSymbolCommand& copy);
   DynamicSymbolCommand(const DynamicSymbolCommand& copy);
 
-  virtual DynamicSymbolCommand* clone() const override;
+  DynamicSymbolCommand* clone() const override;
 
   virtual ~DynamicSymbolCommand();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const DynamicSymbolCommand& rhs) const;
   bool operator!=(const DynamicSymbolCommand& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   //! Index of the first symbol in the group of local symbols.
   uint32_t idx_local_symbol() const;

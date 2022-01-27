@@ -12,7 +12,7 @@ Parsers
    :project: lief
 
 
-.. doxygenclass:: LIEF::MachO::ParserConfig
+.. doxygenstruct:: LIEF::MachO::ParserConfig
    :project: lief
 
 ----------

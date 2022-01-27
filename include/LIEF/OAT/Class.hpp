@@ -36,7 +36,7 @@ class LIEF_API Class : public Object {
 
   Class(OAT_CLASS_STATUS status,
       OAT_CLASS_TYPES type,
-      DEX::Class* dex_class, const std::vector<uint32_t>& bitmap = {});
+      DEX::Class* dex_class, std::vector<uint32_t> bitmap = {});
 
   Class(const Class&);
   Class& operator=(const Class&);
@@ -67,7 +67,7 @@ class LIEF_API Class : public Object {
 
   DEX::dex2dex_class_info_t dex2dex_info() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Class& rhs) const;
   bool operator!=(const Class& rhs) const;

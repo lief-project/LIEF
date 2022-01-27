@@ -38,22 +38,22 @@ Logger::Logger() {
   if /* constexpr */ (lief_logging_support) {
     if /* constexpr */ (current_platform() == PLATFORMS::ANDROID_PLAT) {
       #if defined(__ANDROID__)
-      this->sink_ = spdlog::android_logger_mt("LIEF", "lief");
+      sink_ = spdlog::android_logger_mt("LIEF", "lief");
       #else
       // Should not append ...
       #endif
     }
     else if (current_platform() == PLATFORMS::IOS) {
-      this->sink_ = spdlog::basic_logger_mt("LIEF", "/tmp/lief.log", /* truncate */ true);
+      sink_ = spdlog::basic_logger_mt("LIEF", "/tmp/lief.log", /* truncate */ true);
     }
     else {
-      this->sink_ = spdlog::stderr_color_mt("LIEF");
+      sink_ = spdlog::stderr_color_mt("LIEF");
     }
 
 
-    this->sink_->set_level(spdlog::level::warn);
-    this->sink_->set_pattern("%v");
-    this->sink_->flush_on(spdlog::level::warn);
+    sink_->set_level(spdlog::level::warn);
+    sink_->set_pattern("%v");
+    sink_->flush_on(spdlog::level::warn);
   }
 }
 
@@ -97,7 +97,7 @@ void Logger::enable() {
 }
 
 void Logger::set_level(LOGGING_LEVEL level) {
-  if /* constexpr */ (not lief_logging_support) {
+  if /* constexpr */ (!lief_logging_support) {
     return;
   }
   switch (level) {

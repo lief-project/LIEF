@@ -36,10 +36,6 @@ endmacro()
 
 if (MSVC)
   add_definitions(-DNOMINMAX)
-
-  if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(LIB_LIEF PUBLIC /FIiso646.h)
-  endif()
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")

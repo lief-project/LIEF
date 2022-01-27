@@ -29,6 +29,10 @@ namespace PE {
 class Parser;
 class Builder;
 
+//! Class that represents an entry (i.e. an import) in the import table (Import).
+//!
+//! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
+//! LIEF::Symbol::value API
 class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
@@ -41,36 +45,32 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   ImportEntry& operator=(const ImportEntry&);
   virtual ~ImportEntry();
 
-  //! @brief ``True`` if ordinal is used
+  //!``True`` if it is an import by ordinal
   bool is_ordinal() const;
 
-  //! @brief ordinal value
+  //! The ordinal value
   uint16_t ordinal() const;
 
   //! @see ImportEntry::data
   uint64_t hint_name_rva() const;
 
-  //! @brief Index into the Export::entries
+  //! Index into the Export::entries that is used to speed-up
+  //! the symbol resolution.
   uint16_t hint() const;
 
-  //! @brief Value of the current entry in the Import Address Table.
+  //! Value of the current entry in the Import Address Table.
   //! It should match the lookup table value
   uint64_t iat_value() const;
 
-  //! @brief Import name if not ordinal
-  //const std::string& name() const;
-
-  //! @brief Raw value
+  //! Raw value
   uint64_t data() const;
 
-  //! @brief **Original** address of the entry in the Import Address Table
+  //! **Original** address of the entry in the Import Address Table
   uint64_t iat_address() const;
 
-
-  //void name(const std::string& name);
   void data(uint64_t data);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ImportEntry& rhs) const;
   bool operator!=(const ImportEntry& rhs) const;

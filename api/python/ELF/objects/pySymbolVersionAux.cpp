@@ -33,16 +33,15 @@ using setter_t = void (SymbolVersionAux::*)(T);
 template<>
 void create<SymbolVersionAux>(py::module& m) {
 
-  // Symbol Version Auxiliary object
   py::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
-      "Class which modelize an Auxiliary Symbol version")
+      "Class which represents an Auxiliary Symbol version")
 
     .def_property("name",
         [] (const SymbolVersionAux& obj) {
           return safe_string_converter(obj.name());
         },
         static_cast<setter_t<const std::string&>>(&SymbolVersionAux::name),
-        "Symbol's name")
+        "Symbol's name (e.g. ``GLIBC_2.2.5``)")
 
     .def("__eq__", &SymbolVersionAux::operator==)
     .def("__ne__", &SymbolVersionAux::operator!=)

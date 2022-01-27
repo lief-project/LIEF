@@ -24,6 +24,9 @@
 
 namespace LIEF {
 namespace ELF {
+
+//! Class that represents a ``DT_RUNPATH`` wich is used by the loader
+//! to resolve libraries (DynamicEntryLibrary).
 class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   public:
@@ -32,42 +35,42 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   DynamicEntryRunPath();
 
-  //! @brief Constructor from (run)path
-  DynamicEntryRunPath(const std::string& name);
+  //! Constructor from (run)path
+  DynamicEntryRunPath(std::string runpath);
 
-  //! @brief Constructor from a list of paths
+  //! Constructor from a list of paths
   DynamicEntryRunPath(const std::vector<std::string>& paths);
 
   DynamicEntryRunPath& operator=(const DynamicEntryRunPath&);
   DynamicEntryRunPath(const DynamicEntryRunPath&);
 
-  //! @brief Runpath raw value
+  //! Runpath raw value
   const std::string& name() const;
   void name(const std::string& name);
 
-  //! @brief Runpath raw value
+  //! Runpath raw value
   const std::string& runpath() const;
   void runpath(const std::string& runpath);
 
-  //! @brief Paths as a list
+  //! Paths as a list
   std::vector<std::string> paths() const;
   void paths(const std::vector<std::string>& paths);
 
-  //! @brief Insert a ``path`` at the given ``position``
-  DynamicEntryRunPath& insert(size_t pos, const std::string path);
+  //! Insert a ``path`` at the given ``position``
+  DynamicEntryRunPath& insert(size_t pos, const std::string& path);
 
-  //! @brief Append the given ``path``
+  //! Append the given ``path``
   DynamicEntryRunPath& append(const std::string& path);
 
-  //! @brief Remove the given ``path``
+  //! Remove the given ``path``
   DynamicEntryRunPath& remove(const std::string& path);
 
   DynamicEntryRunPath& operator+=(const std::string& path);
   DynamicEntryRunPath& operator-=(const std::string& path);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   std::string runpath_;

@@ -53,7 +53,7 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   static NoteAbi make(Note& note);
 
-  virtual NoteAbi* clone() const override;
+  NoteAbi* clone() const override;
 
   public:
   using NoteDetails::NoteDetails;
@@ -68,16 +68,16 @@ class LIEF_API NoteAbi : public NoteDetails {
   bool operator==(const NoteAbi& rhs) const;
   bool operator!=(const NoteAbi& rhs) const;
 
-  virtual void dump(std::ostream& os) const override;
+  void dump(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~NoteAbi();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteAbi& note);
 
   protected:
-  virtual void parse() override;
+  void parse() override;
 
   private:
   NoteAbi(Note& note);

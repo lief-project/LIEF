@@ -27,7 +27,10 @@ namespace PE {
 template<>
 void create<Builder>(py::module& m) {
 
-  py::class_<Builder>(m, "Builder")
+  py::class_<Builder>(m, "Builder",
+      R"delim(
+      Class that is used to rebuild a raw PE binary from a PE::Binary object
+      )delim")
     .def(py::init<Binary*>(),
         "Constructor that takes a " RST_CLASS_REF(lief.PE.Binary) "",
         "pe_binary"_a)
@@ -38,7 +41,7 @@ void create<Builder>(py::module& m) {
 
     .def("build_imports",
         &Builder::build_imports,
-        "Rebuild the import table in another section",
+        "Rebuild the import table into another section",
         py::arg("enable") = true,
         py::return_value_policy::reference)
 

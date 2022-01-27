@@ -27,9 +27,8 @@ DyldEnvironment& DyldEnvironment::operator=(const DyldEnvironment&) = default;
 DyldEnvironment::DyldEnvironment(const DyldEnvironment&) = default;
 DyldEnvironment::~DyldEnvironment() = default;
 
-DyldEnvironment::DyldEnvironment(const dylinker_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  value_{}
+DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
 {}
 
 DyldEnvironment* DyldEnvironment::clone() const {
@@ -37,11 +36,11 @@ DyldEnvironment* DyldEnvironment::clone() const {
 }
 
 const std::string& DyldEnvironment::value() const {
-  return this->value_;
+  return value_;
 }
 
 void DyldEnvironment::value(const std::string& value) {
-  this->value_ = value;
+  value_ = value;
 }
 
 
@@ -57,14 +56,14 @@ bool DyldEnvironment::operator==(const DyldEnvironment& rhs) const {
 }
 
 bool DyldEnvironment::operator!=(const DyldEnvironment& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& DyldEnvironment::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
-     << std::setw(35) << this->value();
+     << std::setw(35) << value();
   return os;
 }
 

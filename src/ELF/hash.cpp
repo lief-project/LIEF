@@ -103,37 +103,37 @@ void Hash::visit(const DynamicEntry& entry) {
 
 
 void Hash::visit(const DynamicEntryArray& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.array());
 }
 
 
 void Hash::visit(const DynamicEntryLibrary& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.name());
 }
 
 
 void Hash::visit(const DynamicEntryRpath& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.rpath());
 }
 
 
 void Hash::visit(const DynamicEntryRunPath& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.runpath());
 }
 
 
 void Hash::visit(const DynamicSharedObject& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.name());
 }
 
 
 void Hash::visit(const DynamicEntryFlags& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
   process(entry.flags());
 }
 
@@ -155,8 +155,8 @@ void Hash::visit(const Symbol& symbol) {
 }
 
 void Hash::visit(const Relocation& relocation) {
-  this->process(relocation.address());
-  this->process(relocation.size());
+  process(relocation.address());
+  process(relocation.size());
 
   process(relocation.addend());
   process(relocation.type());
@@ -194,7 +194,7 @@ void Hash::visit(const SymbolVersionAux& sv) {
 }
 
 void Hash::visit(const SymbolVersionAuxRequirement& svar) {
-  this->visit(static_cast<const SymbolVersionAux&>(svar));
+  visit(static_cast<const SymbolVersionAux&>(svar));
   process(svar.hash());
   process(svar.flags());
   process(svar.other());
@@ -211,11 +211,11 @@ void Hash::visit(const NoteDetails& details) {
 }
 
 void Hash::visit(const AndroidNote& note) {
-  this->visit(static_cast<const NoteDetails&>(note));
+  visit(static_cast<const NoteDetails&>(note));
 }
 
 void Hash::visit(const NoteAbi& note) {
-  this->visit(static_cast<const NoteDetails&>(note));
+  visit(static_cast<const NoteDetails&>(note));
 }
 
 void Hash::visit(const CorePrPsInfo& pinfo) {
@@ -255,22 +255,22 @@ void Hash::visit(const CorePrStatus& pstatus) {
   process(pstatus.cstime().tv_usec);
 
   for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
-    this->process(val.first);  // Register
-    this->process(val.second); // Value
+    process(val.first);  // Register
+    process(val.second); // Value
   }
 }
 
 void Hash::visit(const CoreAuxv& auxv) {
   for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
-    this->process(val.first);  // Type
-    this->process(val.second); // Value
+    process(val.first);  // Type
+    process(val.second); // Value
   }
 }
 
 void Hash::visit(const CoreSigInfo& siginfo) {
-  this->process(siginfo.signo());
-  this->process(siginfo.sigcode());
-  this->process(siginfo.sigerrno());
+  process(siginfo.signo());
+  process(siginfo.sigcode());
+  process(siginfo.sigerrno());
 }
 
 void Hash::visit(const CoreFile& file) {

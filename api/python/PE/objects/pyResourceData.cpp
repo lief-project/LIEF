@@ -33,7 +33,10 @@ using setter_t = void (ResourceData::*)(T);
 
 template<>
 void create<ResourceData>(py::module& m) {
-  py::class_<ResourceData, ResourceNode>(m, "ResourceData")
+  py::class_<ResourceData, ResourceNode>(m, "ResourceData",
+      R"delim(
+      Class which represents a Data Node in the PE resources tree
+      )delim")
     .def(py::init<>(),
         "Default constructor")
 
@@ -43,9 +46,10 @@ void create<ResourceData>(py::module& m) {
     .def_property("code_page",
         static_cast<getter_t<uint32_t>>(&ResourceData::code_page),
         static_cast<setter_t<uint32_t>>(&ResourceData::code_page),
-        "The code page that is used to decode code point "
-        "values within the resource data. Typically, the code "
-        "page would be the Unicode code page")
+        R"delim(
+        Return the code page that is used to decode code point
+        values within the resource data. Typically, the code page is the Unicode code page.
+        )delim")
 
     .def_property("content",
         static_cast<getter_t<const std::vector<uint8_t>&>>(&ResourceData::content),
@@ -59,7 +63,13 @@ void create<ResourceData>(py::module& m) {
 
     .def_property_readonly("offset",
         &ResourceData::offset,
-        "Offset of the content within the resource")
+        R"delim(
+        Offset of the content within the resource
+
+        .. warning::
+
+            This value can change when re-building the resource table
+        )delim")
 
     .def("__eq__", &ResourceData::operator==)
     .def("__ne__", &ResourceData::operator!=)

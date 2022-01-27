@@ -28,37 +28,37 @@ EncryptionInfo& EncryptionInfo::operator=(const EncryptionInfo&) = default;
 EncryptionInfo::EncryptionInfo(const EncryptionInfo&) = default;
 EncryptionInfo::~EncryptionInfo() = default;
 
-EncryptionInfo::EncryptionInfo(const encryption_info_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  coff_{cmd->cryptoff},
-  csize_{cmd->cryptsize},
-  cid_{cmd->cryptid}
+EncryptionInfo::EncryptionInfo(const details::encryption_info_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  coff_{cmd.cryptoff},
+  csize_{cmd.cryptsize},
+  cid_{cmd.cryptid}
 {}
 
 
 uint32_t EncryptionInfo::crypt_offset() const {
-  return this->coff_;
+  return coff_;
 }
 
 uint32_t EncryptionInfo::crypt_size() const {
-  return this->csize_;
+  return csize_;
 }
 
 uint32_t EncryptionInfo::crypt_id() const  {
-  return this->cid_;
+  return cid_;
 }
 
 
 void EncryptionInfo::crypt_offset(uint32_t offset) {
-  this->coff_ = offset;
+  coff_ = offset;
 }
 
 void EncryptionInfo::crypt_size(uint32_t size) {
-  this->csize_ = size;
+  csize_ = size;
 }
 
 void EncryptionInfo::crypt_id(uint32_t id) {
-  this->cid_ = id;
+  cid_ = id;
 }
 
 void EncryptionInfo::accept(Visitor& visitor) const {
@@ -73,7 +73,7 @@ bool EncryptionInfo::operator==(const EncryptionInfo& rhs) const {
 }
 
 bool EncryptionInfo::operator!=(const EncryptionInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

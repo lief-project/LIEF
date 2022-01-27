@@ -27,42 +27,43 @@ namespace LIEF {
 namespace ELF {
 
 class Parser;
+
+namespace details {
 struct Elf64_Verdef;
 struct Elf32_Verdef;
+}
 
-//! @brief Class which modelization of an entry defined in ``DT_VERDEF``
-//! (or ``.gnu.version_d``)
+//! Class which represents an entry defined in ``DT_VERDEF`` or ``.gnu.version_d``
 class LIEF_API SymbolVersionDefinition : public Object {
   friend class Parser;
   public:
   SymbolVersionDefinition();
-  SymbolVersionDefinition(const Elf64_Verdef *header);
-  SymbolVersionDefinition(const Elf32_Verdef *header);
+  SymbolVersionDefinition(const details::Elf64_Verdef& header);
+  SymbolVersionDefinition(const details::Elf32_Verdef& header);
   virtual ~SymbolVersionDefinition();
 
   SymbolVersionDefinition& operator=(SymbolVersionDefinition other);
   SymbolVersionDefinition(const SymbolVersionDefinition& other);
   void swap(SymbolVersionDefinition& other);
 
-
-  //! @brief Version revision
+  //! Version revision
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
   uint16_t version() const;
 
-  //! @brief Version information
+  //! Version information
   uint16_t flags() const;
 
-  //! @brief Version index
+  //! Version index
   //!
   //! Numeric value used as an index in the LIEF::ELF::SymbolVersion table
   uint16_t ndx() const;
 
-  //! @brief Hash value of the symbol's name (using ELF hash function)
+  //! Hash value of the symbol's name (using ELF hash function)
   uint32_t hash() const;
 
-  //! @brief SymbolVersionAux entries
+  //! SymbolVersionAux entries
   it_symbols_version_aux       symbols_aux();
   it_const_symbols_version_aux symbols_aux() const;
 
@@ -70,7 +71,7 @@ class LIEF_API SymbolVersionDefinition : public Object {
   void flags(uint16_t flags);
   void hash(uint32_t hash);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersionDefinition& rhs) const;
   bool operator!=(const SymbolVersionDefinition& rhs) const;

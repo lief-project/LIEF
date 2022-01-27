@@ -30,7 +30,7 @@ RelocationDyld& RelocationDyld::operator=(const RelocationDyld&) = default;
 RelocationDyld::RelocationDyld(const RelocationDyld&) = default;
 
 bool RelocationDyld::is_pc_relative() const {
-  return static_cast<REBASE_TYPES>(this->type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
+  return static_cast<REBASE_TYPES>(type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
 }
 
 
@@ -44,19 +44,17 @@ RELOCATION_ORIGINS RelocationDyld::origin() const {
 }
 
 void RelocationDyld::pc_relative(bool val) {
-  if (this->is_pc_relative() == val) {
+  if (is_pc_relative() == val) {
     return;
   }
 
-  if (val == true) {
-    this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32);
-  }
-
-  if (val == false) {
-    if (this->size() == 32) {
-      this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32);
+  if (val) {
+    type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32);
+  } else {
+    if (size() == 32) {
+      type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32);
     } else {
-      this->type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_POINTER);
+      type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_POINTER);
     }
   }
 }
@@ -73,30 +71,30 @@ bool RelocationDyld::operator==(const RelocationDyld& rhs) const {
 }
 
 bool RelocationDyld::operator!=(const RelocationDyld& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 bool RelocationDyld::operator<(const RelocationDyld& rhs) const {
   // From ld/OutputFile.h
-  if (this->type() != rhs.type()) {
-    return this->type() < rhs.type();
+  if (type() != rhs.type()) {
+    return type() < rhs.type();
   }
-  return this->address() < rhs.address();
+  return address() < rhs.address();
 }
 
 bool RelocationDyld::operator>=(const RelocationDyld& rhs) const {
-  return not (*this < rhs);
+  return !(*this < rhs);
 }
 
 bool RelocationDyld::operator>(const RelocationDyld& rhs) const {
-  if (this->type() != rhs.type()) {
-    return this->type() > rhs.type();
+  if (type() != rhs.type()) {
+    return type() > rhs.type();
   }
-  return this->address() > rhs.address();
+  return address() > rhs.address();
 }
 
 bool RelocationDyld::operator<=(const RelocationDyld& rhs) const {
-  return not (*this > rhs);
+  return !(*this > rhs);
 }
 
 

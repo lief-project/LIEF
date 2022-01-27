@@ -24,17 +24,21 @@
 
 namespace LIEF {
 namespace MachO {
-struct symtab_command;
 
+namespace details {
+struct symtab_command;
+}
+
+//! Class that represents the LC_SYMTAB command
 class LIEF_API SymbolCommand : public LoadCommand {
   public:
   SymbolCommand();
-  SymbolCommand(const symtab_command *command);
+  SymbolCommand(const details::symtab_command& command);
 
   SymbolCommand& operator=(const SymbolCommand& copy);
   SymbolCommand(const SymbolCommand& copy);
 
-  virtual SymbolCommand* clone() const override;
+  SymbolCommand* clone() const override;
 
   virtual ~SymbolCommand();
 
@@ -55,9 +59,9 @@ class LIEF_API SymbolCommand : public LoadCommand {
   void strings_offset(uint32_t offset);
   void strings_size(uint32_t size);
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolCommand& rhs) const;
   bool operator!=(const SymbolCommand& rhs) const;

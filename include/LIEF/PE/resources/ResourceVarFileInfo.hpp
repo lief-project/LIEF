@@ -30,7 +30,7 @@ namespace PE {
 class ResourcesManager;
 class ResourceVersion;
 
-//! @brief This object describes information about languages supported by the application
+//! This object describes information about languages supported by the application
 //!
 //! @see LIEF::PE::ResourceVersion
 class LIEF_API ResourceVarFileInfo : public Object {
@@ -43,19 +43,19 @@ class LIEF_API ResourceVarFileInfo : public Object {
   ResourceVarFileInfo& operator=(const ResourceVarFileInfo&);
   virtual ~ResourceVarFileInfo();
 
-  //! @brief The type of data in the version resource
+  //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
   uint16_t type() const;
 
-  //! @brief Signature of the structure:
+  //! Signature of the structure:
   //! Must be the unicode string "VarFileInfo"
   const std::u16string& key() const;
 
-  //! @brief List of languages that the application supports
+  //! List of languages that the application supports
   //!
-  //! The **least** significant 16-bits  must contain a Microsoft language identifier, and the **most** significant 16-bits must contain the
-  //! @link LIEF::PE::CODE_PAGES code page @endlink
+  //! The **least** significant 16-bits  must contain a Microsoft language identifier,
+  //! and the **most** significant 16-bits must contain the PE::CODE_PAGES
   //! Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
   const std::vector<uint32_t>& translations() const;
   std::vector<uint32_t>&       translations();
@@ -67,7 +67,7 @@ class LIEF_API ResourceVarFileInfo : public Object {
 
   void translations(const std::vector<uint32_t>& translations);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceVarFileInfo& rhs) const;
   bool operator!=(const ResourceVarFileInfo& rhs) const;

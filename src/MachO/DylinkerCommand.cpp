@@ -28,8 +28,8 @@ DylinkerCommand& DylinkerCommand::operator=(const DylinkerCommand&) = default;
 DylinkerCommand::DylinkerCommand(const DylinkerCommand&) = default;
 DylinkerCommand::~DylinkerCommand() = default;
 
-DylinkerCommand::DylinkerCommand(const dylinker_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize}
+DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
 {}
 
 DylinkerCommand* DylinkerCommand::clone() const {
@@ -37,11 +37,11 @@ DylinkerCommand* DylinkerCommand::clone() const {
 }
 
 const std::string& DylinkerCommand::name() const {
-  return this->name_;
+  return name_;
 }
 
 void DylinkerCommand::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
@@ -57,14 +57,14 @@ bool DylinkerCommand::operator==(const DylinkerCommand& rhs) const {
 }
 
 bool DylinkerCommand::operator!=(const DylinkerCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& DylinkerCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
-     << std::setw(35) << this->name();
+     << std::setw(35) << name();
   return os;
 }
 

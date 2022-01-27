@@ -34,39 +34,36 @@ ResourceVersion::ResourceVersion() :
   type_{0},
   key_{u8tou16("VS_VERSION_INFO")},
   has_fixed_file_info_{false},
-  fixed_file_info_{},
   has_string_file_info_{false},
-  string_file_info_{},
-  has_var_file_info_{false},
-  var_file_info_{}
+  has_var_file_info_{false}
 {}
 
 
 uint16_t ResourceVersion::type() const {
-  return this->type_;
+  return type_;
 }
 
 const std::u16string& ResourceVersion::key() const {
-  return this->key_;
+  return key_;
 }
 
 bool ResourceVersion::has_fixed_file_info() const {
-  return this->has_fixed_file_info_;
+  return has_fixed_file_info_;
 }
 
 bool ResourceVersion::has_string_file_info() const {
-  return this->has_string_file_info_;
+  return has_string_file_info_;
 }
 
 bool ResourceVersion::has_var_file_info() const {
-  return this->has_var_file_info_;
+  return has_var_file_info_;
 }
 
 const ResourceFixedFileInfo& ResourceVersion::fixed_file_info() const {
-  if (not this->has_fixed_file_info()) {
+  if (!has_fixed_file_info()) {
     throw not_found("Fixed file info is not present in the current resource");
   }
-  return this->fixed_file_info_;
+  return fixed_file_info_;
 }
 
 ResourceFixedFileInfo& ResourceVersion::fixed_file_info() {
@@ -74,10 +71,10 @@ ResourceFixedFileInfo& ResourceVersion::fixed_file_info() {
 }
 
 const ResourceStringFileInfo& ResourceVersion::string_file_info() const {
-  if (not this->has_string_file_info()) {
+  if (!has_string_file_info()) {
     throw not_found("String file info is not present in the current resource");
   }
-  return this->string_file_info_;
+  return string_file_info_;
 }
 
 ResourceStringFileInfo& ResourceVersion::string_file_info() {
@@ -85,10 +82,10 @@ ResourceStringFileInfo& ResourceVersion::string_file_info() {
 }
 
 const ResourceVarFileInfo& ResourceVersion::var_file_info() const {
-  if (not this->has_var_file_info()) {
+  if (!has_var_file_info()) {
     throw not_found("Var file info is not present in the current resource");
   }
-  return this->var_file_info_;
+  return var_file_info_;
 }
 
 ResourceVarFileInfo& ResourceVersion::var_file_info() {
@@ -97,11 +94,11 @@ ResourceVarFileInfo& ResourceVersion::var_file_info() {
 
 
 void ResourceVersion::type(uint16_t type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 void ResourceVersion::key(const std::u16string& key) {
-  this->key_ = key;
+  key_ = key;
 }
 
 void ResourceVersion::key(const std::string& key) {
@@ -109,30 +106,30 @@ void ResourceVersion::key(const std::string& key) {
 }
 
 void ResourceVersion::fixed_file_info(const ResourceFixedFileInfo& fixed_file_info) {
-  this->fixed_file_info_ = fixed_file_info;
-  this->has_fixed_file_info_ = true;
+  fixed_file_info_ = fixed_file_info;
+  has_fixed_file_info_ = true;
 }
 
 void ResourceVersion::remove_fixed_file_info() {
-  this->has_fixed_file_info_ = false;
+  has_fixed_file_info_ = false;
 }
 
 void ResourceVersion::string_file_info(const ResourceStringFileInfo& string_file_info) {
-  this->string_file_info_ = string_file_info;
-  this->has_string_file_info_ = true;
+  string_file_info_ = string_file_info;
+  has_string_file_info_ = true;
 }
 
 void ResourceVersion::remove_string_file_info() {
-  this->has_string_file_info_ = false;
+  has_string_file_info_ = false;
 }
 
 void ResourceVersion::var_file_info(const ResourceVarFileInfo& var_file_info) {
-  this->var_file_info_ = var_file_info;
-  this->has_var_file_info_ = true;
+  var_file_info_ = var_file_info;
+  has_var_file_info_ = true;
 }
 
 void ResourceVersion::remove_var_file_info() {
-  this->has_var_file_info_ = false;
+  has_var_file_info_ = false;
 }
 
 
@@ -148,7 +145,7 @@ bool ResourceVersion::operator==(const ResourceVersion& rhs) const {
 }
 
 bool ResourceVersion::operator!=(const ResourceVersion& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceVersion& version) {

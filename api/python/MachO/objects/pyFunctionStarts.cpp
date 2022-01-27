@@ -36,7 +36,12 @@ using setter_t = void (FunctionStarts::*)(T);
 template<>
 void create<FunctionStarts>(py::module& m) {
 
-  py::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts")
+  py::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts",
+      R"delim(
+      Class which represents the LC_FUNCTION_STARTS command
+
+      This command is an array of ULEB128 encoded values
+      )delim")
 
     .def_property("data_offset",
         static_cast<getter_t<uint32_t>>(&FunctionStarts::data_offset),
@@ -51,12 +56,15 @@ void create<FunctionStarts>(py::module& m) {
     .def_property("functions",
         static_cast<getter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
         static_cast<setter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
-        "Addresses of every function entry point in the executable\n\n"
+        R"delim(
+        Addresses of every function entry point in the executable
 
-        "This allows for functions to exist that have no entries in the symbol table.\n\n"
+        This allows functions to exist for which there are no entries in the symbol table.
 
-        ".. warning::\n\n"
-        "\tThe address is relative to the ``__TEXT`` segment\n\n",
+        .. warning::
+
+          The address is relative to the ``__TEXT`` segment
+        )delim",
         py::return_value_policy::reference_internal)
 
     .def("add_function",

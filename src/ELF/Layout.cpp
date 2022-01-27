@@ -29,15 +29,15 @@ bool Layout::is_strtab_shared_shstrtab() const {
 
   bool is_shared = true;
   const size_t nb_sections = binary_->sections().size();
-  is_shared = is_shared and strtab_idx > 0 and shstrtab_idx > 0;
-  is_shared = is_shared and strtab_idx < nb_sections and shstrtab_idx < nb_sections;
-  is_shared = is_shared and strtab_idx == shstrtab_idx;
+  is_shared = is_shared && strtab_idx > 0 && shstrtab_idx > 0;
+  is_shared = is_shared && strtab_idx < nb_sections && shstrtab_idx < nb_sections;
+  is_shared = is_shared && strtab_idx == shstrtab_idx;
   return is_shared;
 }
 
 size_t Layout::section_strtab_size() {
   // could be moved in the class base.
-  if (not raw_strtab_.empty()) {
+  if (!raw_strtab_.empty()) {
     return raw_strtab_.size();
   }
 
@@ -51,11 +51,10 @@ size_t Layout::section_strtab_size() {
 
   size_t offset_counter = raw_strtab.tellp();
 
-  if (binary_->static_symbols_.size() == 0) {
+  if (binary_->static_symbols_.empty()) {
     return 0;
   }
 
-  offset_counter = raw_strtab.tellp();
   std::vector<std::string> symstr_opt =
     Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,
                      [] (const Symbol* sym) { return sym->name(); },
@@ -69,7 +68,7 @@ size_t Layout::section_strtab_size() {
 }
 
 size_t Layout::section_shstr_size() {
-  if (not raw_shstrtab_.empty()) {
+  if (!raw_shstrtab_.empty()) {
     // Already in the cache
     return raw_shstrtab_.size();
   }
@@ -94,7 +93,7 @@ size_t Layout::section_shstr_size() {
 
   // Check if the .shstrtab and the .strtab are shared (optimization used by clang)
   // in this case, include the static symbol names
-  if (binary_->static_symbols_.size() > 0 and is_strtab_shared_shstrtab()) {
+  if (!binary_->static_symbols_.empty() && is_strtab_shared_shstrtab()) {
     offset_counter = raw_shstrtab.tellp();
     std::vector<std::string> symstr_opt =
       Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,

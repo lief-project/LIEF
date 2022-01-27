@@ -57,7 +57,7 @@ inline std::string to_lower(std::string str) {
 
 bool is_pe(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Unable to open the file!");
     return false;
   }
@@ -69,78 +69,78 @@ bool is_pe(const std::string& file) {
   binary.seekg(0, std::ios::beg);
 
 
-  if (file_size < sizeof(pe_dos_header)) {
+  if (file_size < sizeof(details::pe_dos_header)) {
     LIEF_ERR("File too small");
     return false;
   }
 
   char magic[2];
-  pe_dos_header dos_header;
+  details::pe_dos_header dos_header;
   binary.read(magic, sizeof(magic));
-  if (magic[0] != 'M' or magic[1] != 'Z') {
+  if (magic[0] != 'M' || magic[1] != 'Z') {
     return false;
   }
 
   binary.seekg(0, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(pe_dos_header));
+  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(details::pe_dos_header));
   if (dos_header.AddressOfNewExeHeader >= file_size) {
     return false;
   }
-  char signature[sizeof(PE_Magic)];
+  char signature[sizeof(details::PE_Magic)];
   binary.seekg(dos_header.AddressOfNewExeHeader, std::ios::beg);
-  binary.read(signature, sizeof(PE_Magic));
-  return std::equal(std::begin(signature), std::end(signature), std::begin(PE_Magic));
+  binary.read(signature, sizeof(details::PE_Magic));
+  return std::equal(std::begin(signature), std::end(signature), std::begin(details::PE_Magic));
 }
 
 
 bool is_pe(const std::vector<uint8_t>& raw) {
 
-  if (raw.size() < sizeof(pe_dos_header)) {
+  if (raw.size() < sizeof(details::pe_dos_header)) {
     return false;
   }
 
-  const pe_dos_header* dos_header = reinterpret_cast<const pe_dos_header*>(raw.data());
-  if (raw[0] != 'M' or raw[1] != 'Z') {
+  const auto* dos_header = reinterpret_cast<const details::pe_dos_header*>(raw.data());
+  if (raw[0] != 'M' || raw[1] != 'Z') {
     return false;
   }
 
-  if ((dos_header->AddressOfNewExeHeader + sizeof(pe_header)) >= raw.size()) {
+  if ((dos_header->AddressOfNewExeHeader + sizeof(details::pe_header)) >= raw.size()) {
     return false;
   }
 
   VectorStream raw_stream(raw);
   raw_stream.setpos(dos_header->AddressOfNewExeHeader);
-  auto signature = raw_stream.read_array<char>(sizeof(PE_Magic), /* check bounds */ true);
+  const auto *signature = raw_stream.read_array<char>(sizeof(details::PE_Magic), /* check bounds */ true);
 
-  return std::equal(signature, signature + sizeof(PE_Magic), std::begin(PE_Magic));
+  return std::equal(signature, signature + sizeof(details::PE_Magic), std::begin(details::PE_Magic));
 }
 
 
 result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   const uint64_t cpos = stream.pos();
   stream.setpos(0);
-  if (!stream.can_read<pe_dos_header>()) {
+  if (!stream.can_read<details::pe_dos_header>()) {
     LIEF_ERR("Can't read the dos header");
     return make_error_code(lief_errors::read_error);
   }
-  const auto dos_hdr = stream.read<pe_dos_header>();
+  const auto dos_hdr = stream.read<details::pe_dos_header>();
   stream.setpos(dos_hdr.AddressOfNewExeHeader);
-  if (!stream.can_read<pe_header>()) {
+  if (!stream.can_read<details::pe_header>()) {
     LIEF_ERR("Can't read the PE header");
     return make_error_code(lief_errors::read_error);
   }
-  const auto header = stream.read<pe_header>();
+  const auto header = stream.read<details::pe_header>();
   const size_t sizeof_opt_header = header.SizeOfOptionalHeader;
   if (sizeof_opt_header != SIZEOF_OPT_HEADER_32 &&
       sizeof_opt_header != SIZEOF_OPT_HEADER_64) {
     LIEF_WARN("The value of the SizeOfOptionalHeader in the PE header seems corrupted 0x{:x}", sizeof_opt_header);
   }
 
-  if (!stream.can_read<pe32_optional_header>()) {
+  if (!stream.can_read<details::pe32_optional_header>()) {
     LIEF_ERR("Can't read the PE optional header");
     return make_error_code(lief_errors::read_error);
   }
-  const auto opt_hdr = stream.read<pe32_optional_header>();
+  const auto opt_hdr = stream.read<details::pe32_optional_header>();
   const auto type = static_cast<PE_TYPE>(opt_hdr.Magic);
   stream.setpos(cpos); // Restore the original position
 
@@ -182,19 +182,19 @@ result<PE_TYPE> get_type(const std::string& file) {
 
   binary.seekg(0, std::ios::beg);
 
-  pe_dos_header dos_header;
-  pe32_optional_header optional_header;
-  pe_header hdr;
+  details::pe_dos_header dos_header;
+  details::pe32_optional_header optional_header;
+  details::pe_header hdr;
 
-  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(pe_dos_header));
+  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(details::pe_dos_header));
 
   binary.seekg(dos_header.AddressOfNewExeHeader, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&hdr), sizeof(pe_header));
+  binary.read(reinterpret_cast<char*>(&hdr), sizeof(details::pe_header));
   const size_t sizeof_opt_header = hdr.SizeOfOptionalHeader;
 
-  binary.seekg(dos_header.AddressOfNewExeHeader + sizeof(pe_header), std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&optional_header), sizeof(pe32_optional_header));
-  PE_TYPE type = static_cast<PE_TYPE>(optional_header.Magic);
+  binary.seekg(dos_header.AddressOfNewExeHeader + sizeof(details::pe_header), std::ios::beg);
+  binary.read(reinterpret_cast<char*>(&optional_header), sizeof(details::pe32_optional_header));
+  auto type = static_cast<PE_TYPE>(optional_header.Magic);
 
   // See the ``get_type_from_stream`` comments for the logic of these if cases
   if (type == PE_TYPE::PE32 || type == PE_TYPE::PE32_PLUS) {
@@ -220,15 +220,15 @@ result<PE_TYPE> get_type(const std::vector<uint8_t>& raw) {
 
   VectorStream raw_stream = VectorStream(raw);
 
-  const auto dos_header = raw_stream.read<pe_dos_header>();
+  const auto dos_header = raw_stream.read<details::pe_dos_header>();
   raw_stream.setpos(dos_header.AddressOfNewExeHeader);
-  const auto hdr = raw_stream.read<pe_header>();
+  const auto hdr = raw_stream.read<details::pe_header>();
   const size_t sizeof_opt_header = hdr.SizeOfOptionalHeader;
 
-  raw_stream.setpos(dos_header.AddressOfNewExeHeader + sizeof(pe_header));
-  const pe32_optional_header optional_header = raw_stream.read<pe32_optional_header>();
+  raw_stream.setpos(dos_header.AddressOfNewExeHeader + sizeof(details::pe_header));
+  const auto optional_header = raw_stream.read<details::pe32_optional_header>();
 
-  PE_TYPE type = static_cast<PE_TYPE>(optional_header.Magic);
+  auto type = static_cast<PE_TYPE>(optional_header.Magic);
 
   // See the ``get_type_from_stream`` comments for the logic of these if cases
   if (type == PE_TYPE::PE32 || type == PE_TYPE::PE32_PLUS) {
@@ -251,7 +251,7 @@ result<PE_TYPE> get_type(const std::vector<uint8_t>& raw) {
 std::string get_imphash_std(const Binary& binary) {
   static const std::set<std::string> ALLOWED_EXT = {"dll", "ocx", "sys"};
   std::vector<uint8_t> md5_buffer(16);
-  if (not binary.has_imports()) {
+  if (!binary.has_imports()) {
     return "";
   }
   std::string lstr;
@@ -261,7 +261,7 @@ std::string get_imphash_std(const Binary& binary) {
     std::string libname = imp.name();
 
     Import resolved = resolve_ordinals(imp, /* strict */ false, /* use_std */ true);
-    size_t ext_idx = resolved.name().find_last_of(".");
+    size_t ext_idx = resolved.name().find_last_of('.');
     std::string name = resolved.name();
     std::string ext;
     if (ext_idx != std::string::npos) {
@@ -280,13 +280,13 @@ std::string get_imphash_std(const Binary& binary) {
         funcname = e.name();
       }
 
-      if (not entries_string.empty()) {
-        entries_string += ",";
+      if (!entries_string.empty()) {
+        entries_string += ',';
       }
-      entries_string += name + "." + funcname;
+      entries_string += name + '.' + funcname;
     }
-    if (not first_entry) {
-      lstr += ",";
+    if (!first_entry) {
+      lstr += ',';
     } else {
       first_entry = false;
     }
@@ -303,7 +303,7 @@ std::string get_imphash_std(const Binary& binary) {
 
 std::string get_imphash_lief(const Binary& binary) {
   std::vector<uint8_t> md5_buffer(16);
-  if (not binary.has_imports()) {
+  if (!binary.has_imports()) {
     return std::to_string(0);
   }
 
@@ -312,7 +312,7 @@ std::string get_imphash_lief(const Binary& binary) {
   std::string import_list;
   for (const Import& imp : imports) {
     Import resolved = resolve_ordinals(imp);
-    size_t ext_idx = resolved.name().find_last_of(".");
+    size_t ext_idx = resolved.name().find_last_of('.');
     std::string name_without_ext = resolved.name();
 
     if (ext_idx != std::string::npos) {
@@ -330,10 +330,8 @@ std::string get_imphash_lief(const Binary& binary) {
     import_list += to_lower(entries_string);
   }
 
-  std::sort(
-      std::begin(import_list),
-      std::end(import_list),
-      std::less<char>());
+  std::sort(std::begin(import_list), std::end(import_list),
+            std::less<>());
 
   mbedtls_md5(
       reinterpret_cast<const uint8_t*>(import_list.data()),
@@ -365,7 +363,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
         std::begin(entries),
         std::end(entries),
         [] (const ImportEntry& entry) {
-          return not entry.is_ordinal();
+          return !entry.is_ordinal();
         })) {
     LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
@@ -387,7 +385,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
   }
 
   if (ordinal_resolver == nullptr) {
-    std::string msg = "Ordinal lookup table for '" + name + "' not implemented";
+    std::string msg = "Ordinal lookup table for '" + name + "' !implemented";
     if (strict) {
       throw not_found(msg);
     }
@@ -441,7 +439,7 @@ ALGORITHMS algo_from_oid(const std::string& oid) {
   };
 
 
-  const auto& it = OID_MAP.find(oid.c_str());
+  const auto it = OID_MAP.find(oid.c_str());
   if (it == std::end(OID_MAP)) {
     return ALGORITHMS::UNKNOWN;
   }

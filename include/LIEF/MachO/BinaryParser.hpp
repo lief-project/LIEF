@@ -40,15 +40,20 @@ class Parser;
 struct ParserConfig;
 class DylibCommand;
 
-//! @brief Class used to parse **single** binary (i.e. **not** FAT)
+//! Class used to parse a **single** binary (i.e. non-FAT)
+//!
+//! @warning This class should not be directly used.
+//!
 //! @see MachO::Parser
 class LIEF_API BinaryParser : public LIEF::Parser {
 
   friend class MachO::Parser;
 
-  //! @brief Maximum number of relocations
+  //! Maximum number of relocations
   constexpr static size_t MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
-  constexpr static size_t MAX_COMMANDS    = std::numeric_limits<uint16_t>::max();
+
+  //! Maximum number of MachO LoadCommand
+  constexpr static size_t MAX_COMMANDS = std::numeric_limits<uint16_t>::max();
 
   public:
   BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
@@ -61,6 +66,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   ~BinaryParser();
 
+  //! Return the parsed Binary
   Binary* get_binary();
 
   private:

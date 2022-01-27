@@ -25,18 +25,15 @@ Function& Function::operator=(const Function&) = default;
 Function::~Function() = default;
 
 Function::Function(uint64_t address) :
-  Symbol{"", address},
-  flags_{}
+  Symbol{"", address}
 {}
 
 Function::Function(const std::string& name) :
-  Symbol{name},
-  flags_{}
+  Symbol{name}
 {}
 
 Function::Function(const std::string& name, uint64_t address) :
-  Symbol{name, address},
-  flags_{}
+  Symbol{name, address}
 {}
 
 Function::Function(const std::string& name, uint64_t address, const Function::flags_list_t& flags) :
@@ -46,19 +43,19 @@ Function::Function(const std::string& name, uint64_t address, const Function::fl
 
 
 uint64_t Function::address() const {
-  return this->value_;
+  return value_;
 }
 
 void Function::address(uint64_t address) {
-  this->value_ = address;
+  value_ = address;
 }
 
 Function::flags_list_t Function::flags() const {
-  return {std::begin(this->flags_), std::end(this->flags_)};
+  return {std::begin(flags_), std::end(flags_)};
 }
 
 Function& Function::add(Function::FLAGS f) {
-  this->flags_.insert(f);
+  flags_.insert(f);
   return *this;
 }
 
@@ -73,11 +70,11 @@ std::ostream& operator<<(std::ostream& os, const Function& entry) {
       std::begin(name),
       std::end(name),
       std::begin(name), []
-      (unsigned char c) { return (c < 127 and c > 32) ? c : ' ';});
+      (unsigned char c) { return (c < 127 && c > 32) ? c : ' ';});
   if (name.size() > 20) {
     name = name.substr(0, 17) + "...";
   }
-  if (not name.empty()) {
+  if (!name.empty()) {
     os << name;
   }
 

@@ -35,54 +35,73 @@ using setter_t = void (ResourceFixedFileInfo::*)(T);
 template<>
 void create<ResourceFixedFileInfo>(py::module& m) {
   py::class_<ResourceFixedFileInfo, LIEF::Object>(m, "ResourceFixedFileInfo",
-      "Modelization of the `VS_FIXEDFILEINFO <https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo>`_")
+      R"delim(
+      Representation of the `VS_FIXEDFILEINFO <https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo>`_
+      structure
+      )delim")
 
     .def_property("signature",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::signature),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::signature),
-        "Contains the value ``0xFEEF04BD``")
+        "Must be set to ``0xFEEF04BD``")
 
     .def_property("struct_version",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::struct_version),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::struct_version),
-        "The binary version number of this structure.\n\n"
-        "\t* The high-order word of this member contains the major version number.\n\n"
-        "\t* The low-order word contains the minor version number\n\n")
+        R"delim(
+        The binary version number of this structure.
+
+        * The high-order word of this member contains the major version number.
+        * The low-order word contains the minor version number
+        )delim")
 
     .def_property("file_version_MS",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::file_version_MS),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::file_version_MS),
-        "The **most** significant 32 bits of the file's binary version number\n\n"
-        "This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.file_version_LS` "
-        "to form a 64-bits value used for numeric comparisons.")
+        R"delim(
+        The **most** significant 32 bits of the file's binary version number
+
+        This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.file_version_LS`
+        to form a 64-bits value used for numeric comparisons.
+        )delim")
 
     .def_property("file_version_LS",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::file_version_LS),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::file_version_LS),
-        "The **least** significant 32 bits of the file's binary version number\n\n"
-        "This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.file_version_MS` "
-        "to form a 64-bits value used for numeric comparisons.")
+        R"delim(
+        The **least** significant 32 bits of the file's binary version number
+
+        This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.file_version_MS`
+        to form a 64-bits value used for numeric comparisons.
+        )delim")
 
     .def_property("product_version_MS",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::product_version_MS),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::product_version_MS),
-        "The **most** significant 32 bits of the product with which this file was distributed\n\n"
-        "This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.product_version_LS` "
-        "to form a 64-bits value used for numeric comparisons.")
+        R"delim(
+        The **most** significant 32 bits of the product with which this file was distributed
+
+        This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.product_version_LS`
+        to form a 64-bits value used for numeric comparisons.
+        )delim")
 
     .def_property("product_version_LS",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::product_version_LS),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::product_version_LS),
-        "The **least** significant 32 bits of the product with which this file was distributed\n\n"
-        "This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.product_version_MS` "
-        "to form a 64-bits value used for numeric comparisons.")
+        R"delim(
+        The **least** significant 32 bits of the product with which this file was distributed
+
+        This member is used with :attr:`~lief.PE.ResourceFixedFileInfo.product_version_MS`
+        to form a 64-bits value used for numeric comparisons.
+        )delim")
 
     .def_property("file_flags_mask",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::file_flags_mask),
         static_cast<setter_t<uint32_t>>(&ResourceFixedFileInfo::file_flags_mask),
-        "Contains a bitmask that specifies the valid bits in "
-        ":attr:`~lief.PE.ResourceFixedFileInfo.file_flags`.\n\n"
-        "A bit is valid only if it was defined when the file was created.")
+        R"delim(
+        Contains a bitmask that specifies the valid bits in :attr:`~lief.PE.ResourceFixedFileInfo.file_flags`.
+        A bit is valid only if it was defined when the file was created.
+        )delim")
 
     .def_property("file_flags",
         static_cast<getter_t<uint32_t>>(&ResourceFixedFileInfo::file_flags),

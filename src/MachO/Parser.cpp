@@ -17,6 +17,7 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
+#include <memory>
 #include <regex>
 #include <stdexcept>
 #include <functional>
@@ -44,12 +45,11 @@ Parser::~Parser() = default;
 // From File
 Parser::Parser(const std::string& file, const ParserConfig& conf) :
   LIEF::Parser{file},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{file})},
-  binaries_{},
+  stream_{std::make_unique<VectorStream>(file)},
   config_{conf}
 {
-  this->build();
-  for (Binary* binary : this->binaries_) {
+  build();
+  for (Binary* binary : binaries_) {
     binary->name(filesystem::path(file).filename());
   }
 
@@ -57,7 +57,7 @@ Parser::Parser(const std::string& file, const ParserConfig& conf) :
 
 
 std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const ParserConfig& conf) {
-  if (not is_macho(filename)) {
+  if (!is_macho(filename)) {
     throw bad_file("'" + filename + "' is not a MachO binary");
   }
 
@@ -67,20 +67,19 @@ std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const Pars
 
 // From Vector
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name, const ParserConfig& conf) :
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})},
-  binaries_{},
+  stream_{std::make_unique<VectorStream>(data)},
   config_{conf}
 {
-  this->build();
+  build();
 
-  for (Binary* binary : this->binaries_) {
+  for (Binary* binary : binaries_) {
     binary->name(name);
   }
 }
 
 
 std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data, const std::string& name, const ParserConfig& conf) {
-  if (not is_macho(data)) {
+  if (!is_macho(data)) {
     throw bad_file("'" + name + "' is not a MachO binary");
   }
 
@@ -92,7 +91,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data, const
 
 void Parser::build_fat() {
 
-  const auto header = this->stream_->peek<fat_header>(0);
+  const auto header = stream_->peek<details::fat_header>(0);
   uint32_t nb_arch = Swap4Bytes(header.nfat_arch);
   LIEF_DEBUG("In this Fat binary there is #{:d} archs", nb_arch);
 
@@ -100,10 +99,10 @@ void Parser::build_fat() {
     throw parser_error("Too much architectures");
   }
 
-  const fat_arch* arch = this->stream_->peek_array<fat_arch>(sizeof(fat_header), nb_arch, /* check */ false);
+  const auto* arch = stream_->peek_array<details::fat_arch>(sizeof(details::fat_header),
+                                                            nb_arch, /* check */ false);
 
   for (size_t i = 0; i < nb_arch; ++i) {
-
     const uint32_t offset = BinaryStream::swap_endian(arch[i].offset);
     const uint32_t size   = BinaryStream::swap_endian(arch[i].size);
 
@@ -111,7 +110,7 @@ void Parser::build_fat() {
     LIEF_DEBUG("    [{:d}].offset", offset);
     LIEF_DEBUG("    [{:d}].size",   size);
 
-    const uint8_t* raw = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+    const auto* raw = stream_->peek_array<uint8_t>(offset, size, /* check */ false);
 
     if (raw == nullptr) {
       LIEF_ERR("MachO #{:d} is corrupted!", i);
@@ -120,22 +119,22 @@ void Parser::build_fat() {
 
     std::vector<uint8_t> data = {raw, raw + size};
 
-    Binary *binary = BinaryParser{std::move(data), offset, this->config_}.get_binary();
-    this->binaries_.push_back(binary);
+    Binary *binary = BinaryParser{std::move(data), offset, config_}.get_binary();
+    binaries_.push_back(binary);
   }
 }
 
 void Parser::build() {
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>(0));
+    auto type = static_cast<MACHO_TYPES>(stream_->peek<uint32_t>(0));
 
     // Fat binary
-    if (type == MACHO_TYPES::FAT_MAGIC or
+    if (type == MACHO_TYPES::FAT_MAGIC ||
         type == MACHO_TYPES::FAT_CIGAM) {
-      this->build_fat();
+      build_fat();
     } else { // fit binary
-      Binary *binary = BinaryParser(std::move(this->stream_), 0, this->config_).get_binary();
-      this->binaries_.push_back(binary);
+      Binary *binary = BinaryParser(std::move(stream_), 0, config_).get_binary();
+      binaries_.push_back(binary);
     }
   } catch (const std::exception& e) {
     LIEF_DEBUG("{}", e.what());

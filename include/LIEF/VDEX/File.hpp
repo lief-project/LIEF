@@ -29,6 +29,7 @@ namespace LIEF {
 namespace VDEX {
 class Parser;
 
+//! Main class for the VDEX module which represents a VDEX file
 class LIEF_API File : public Object {
   friend class Parser;
 
@@ -48,7 +49,7 @@ class LIEF_API File : public Object {
 
   std::string dex2dex_json_info();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;

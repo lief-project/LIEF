@@ -65,7 +65,7 @@ std::string Signature::flag_to_string(Signature::VERIFICATION_FLAGS flag) {
     { Signature::VERIFICATION_FLAGS::CERT_EXPIRED,                  "CERT_EXPIRED"},
     { Signature::VERIFICATION_FLAGS::CERT_FUTURE,                   "CERT_FUTURE"},
   };
-  auto   it  = enumStrings.find(flag);
+  const auto it = enumStrings.find(flag);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -92,7 +92,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
   LIEF_DEBUG("Signed data digest: {}", hex_dump(cs_hash));
   bool check_sig = cs_cert.check_signature(cs_hash, cs_enc_digest, cs_digest_algo);
 
-  if (not check_sig) {
+  if (!check_sig) {
     LIEF_WARN("Authenticated signature (counter signature) mismatch");
     //return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
   }
@@ -139,16 +139,16 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
    * validity window.
    */
   const auto* signing_time = reinterpret_cast<const PKCS9SigningTime*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME));
-  if (signing_time != nullptr and not is_true(checks & Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
+  if (signing_time != nullptr && !is_true(checks & Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
     LIEF_DEBUG("PKCS #9 signing time found");
     PKCS9SigningTime::time_t time = signing_time->time();
-    if (not x509::check_time(time, cs_cert.valid_to())) {
+    if (!x509::check_time(time, cs_cert.valid_to())) {
       LIEF_WARN("Signing time: {} is above the certificate validity: {}",
           time_to_string(time), time_to_string(cs_cert.valid_to()));
       return flags | Signature::VERIFICATION_FLAGS::CERT_EXPIRED;
     }
 
-    if (not x509::check_time(cs_cert.valid_from(), time)) {
+    if (!x509::check_time(cs_cert.valid_from(), time)) {
       LIEF_WARN("Signing time: {} is below the certificate validity: {}",
           time_to_string(time), time_to_string(cs_cert.valid_to()));
       return flags | Signature::VERIFICATION_FLAGS::CERT_FUTURE;
@@ -170,7 +170,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_512:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ false);
+        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ 0);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-512 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -181,7 +181,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_384:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ true);
+        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ 1);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -192,7 +192,7 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_256:
       {
         std::vector<uint8_t> out(32);
-        int ret = mbedtls_sha256(input.data(), input.size(), out.data(), /* is224 */ false);
+        int ret = mbedtls_sha256(input.data(), input.size(), out.data(), /* is224 */ 0);
         if (ret != 0) {
           LIEF_ERR("Hashing {} bytes with SHA-256 failed! (ret: 0x{:x})", input.size(), ret);
           return {};
@@ -231,26 +231,26 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
 }
 
 uint32_t Signature::version() const {
-  return this->version_;
+  return version_;
 }
 
 
 const ContentInfo& Signature::content_info() const {
-  return this->content_info_;
+  return content_info_;
 }
 
 it_const_crt Signature::certificates() const {
-  return this->certificates_;
+  return certificates_;
 }
 
 it_const_signers_t Signature::signers() const {
-  return this->signers_;
+  return signers_;
 }
 
 Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const {
   // According to the Authenticode documentation,
   // *SignerInfos contains one SignerInfo structure*
-  const size_t nb_signers = this->signers_.size();
+  const size_t nb_signers = signers_.size();
   VERIFICATION_FLAGS flags = VERIFICATION_FLAGS::OK;
   if (nb_signers == 0) {
     LIEF_WARN("No signer associated with the signature");
@@ -261,31 +261,31 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     LIEF_WARN("More than ONE signer ({:d} signers)", nb_signers);
     return flags | VERIFICATION_FLAGS::INVALID_SIGNER;
   }
-  const SignerInfo& signer = this->signers_.back();
+  const SignerInfo& signer = signers_.back();
 
   // Check that Signature.digest_algorithm matches:
   // - SignerInfo.digest_algorithm
   // - ContentInfo.digest_algorithm
 
-  if (this->digest_algorithm_ == ALGORITHMS::UNKNOWN) {
+  if (digest_algorithm_ == ALGORITHMS::UNKNOWN) {
     LIEF_WARN("Unsupported digest algorithm");
     return flags | VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM;
   }
 
-  if (this->digest_algorithm_ != this->content_info_.digest_algorithm()) {
+  if (digest_algorithm_ != content_info_.digest_algorithm()) {
     LIEF_WARN("Digest algorithm is different from ContentInfo");
     return flags | VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM;
   }
 
-  if (this->digest_algorithm_ != signer.digest_algorithm()) {
+  if (digest_algorithm_ != signer.digest_algorithm()) {
     LIEF_WARN("Digest algorithm is different from Signer");
     return flags | VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM;
   }
 
-  const ALGORITHMS digest_algo = this->content_info().digest_algorithm();
+  const ALGORITHMS digest_algo = content_info().digest_algorithm();
 
   if (signer.cert() == nullptr) {
-    LIEF_WARN("Can't find certificate whose the issuer is {}", signer.issuer());
+    LIEF_WARN("Can't find certificate for which the issuer is {}", signer.issuer());
     return flags | VERIFICATION_FLAGS::CERT_NOT_FOUND;
   }
   const x509& cert = *signer.cert();
@@ -303,13 +303,13 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
    * Verify certificate validity
    */
 
-  if (this->content_info_start_ == 0 or this->content_info_end_ == 0) {
+  if (content_info_start_ == 0 || content_info_end_ == 0) {
     return flags | VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO;
   }
 
   std::vector<uint8_t> raw_content_info = {
-    std::begin(this->original_raw_signature_) + this->content_info_start_,
-    std::begin(this->original_raw_signature_) + this->content_info_end_
+    std::begin(original_raw_signature_) + content_info_start_,
+    std::begin(original_raw_signature_) + content_info_end_
   };
 
   const std::vector<uint8_t> content_info_hash = Signature::hash(std::move(raw_content_info), digest_algo);
@@ -330,7 +330,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     LIEF_DEBUG("Authenticated attribute digest: {}", hex_dump(auth_attr_hash));
     bool check_sig = cert.check_signature(auth_attr_hash, enc_digest, digest_algo);
 
-    if (not check_sig) {
+    if (!check_sig) {
       LIEF_WARN("Authenticated signature mismatch");
       return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
     }
@@ -355,7 +355,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     /*
      * If there is no authenticated attributes, then the encrypted digested should match ENC(content_info_hash)
      */
-    if (not cert.check_signature(content_info_hash, enc_digest, digest_algo)) {
+    if (!cert.check_signature(content_info_hash, enc_digest, digest_algo)) {
       return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
     }
   }
@@ -379,10 +379,10 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     if (cs_flags == VERIFICATION_FLAGS::OK) {
       timeless_signature = true;
     }
-  } else if (not timeless_signature and has_ms_counter_sig) {
+  } else if (has_ms_counter_sig) {
     timeless_signature = true;
   }
-  bool should_check_cert_time = not timeless_signature or is_true(checks & VERIFICATION_CHECKS::LIFETIME_SIGNING);
+  bool should_check_cert_time = !timeless_signature || is_true(checks & VERIFICATION_CHECKS::LIFETIME_SIGNING);
   if (is_true(checks & VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
       should_check_cert_time = false;
   }
@@ -404,16 +404,16 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
 
 const std::vector<uint8_t>& Signature::raw_der() const {
-  return this->original_raw_signature_;
+  return original_raw_signature_;
 }
 
 
 const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
       [&serialno] (const x509& cert) {
         return cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(this->certificates_)) {
+  if (it_cert == std::end(certificates_)) {
     return nullptr;
   }
   return &(*it_cert);
@@ -421,44 +421,44 @@ const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
 
 
 const x509* Signature::find_crt_subject(const std::string& subject) const {
-  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
       [&subject] (const x509& cert) {
         return cert.subject() == subject;
       });
-  if (it_cert == std::end(this->certificates_)) {
+  if (it_cert == std::end(certificates_)) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_subject(const std::string& subject, const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
       [&subject, &serialno] (const x509& cert) {
-        return cert.subject() == subject and cert.serial_number() == serialno;
+        return cert.subject() == subject && cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(this->certificates_)) {
+  if (it_cert == std::end(certificates_)) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_issuer(const std::string& issuer) const {
-  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
       [&issuer] (const x509& cert) {
         return cert.issuer() == issuer;
       });
-  if (it_cert == std::end(this->certificates_)) {
+  if (it_cert == std::end(certificates_)) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_issuer(const std::string& issuer, const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(this->certificates_), std::end(this->certificates_),
+  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
       [&issuer, &serialno] (const x509& cert) {
-        return cert.issuer() == issuer and cert.serial_number() == serialno;
+        return cert.issuer() == issuer && cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(this->certificates_)) {
+  if (it_cert == std::end(certificates_)) {
     return nullptr;
   }
   return &(*it_cert);
@@ -489,11 +489,11 @@ inline void print_attr(it_const_attributes_t& attrs, std::ostream& os) {
       case SIG_ATTRIBUTE_TYPES::SPC_SP_OPUS_INFO:
         {
           const auto& ct = reinterpret_cast<const SpcSpOpusInfo&>(attr);
-          if (not ct.program_name().empty()) {
+          if (!ct.program_name().empty()) {
             suffix = ct.program_name();
           }
-          if (not ct.more_info().empty()) {
-            if (not suffix.empty()) {
+          if (!ct.more_info().empty()) {
+            if (!suffix.empty()) {
               suffix += " - ";
             }
             suffix += ct.more_info();
@@ -567,7 +567,7 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
   os << fmt::format("Version:             {:d}\n", signature.version());
   os << fmt::format("Digest Algorithm:    {}\n", to_string(signature.digest_algorithm()));
   os << fmt::format("Content Info Digest: {}\n", hex_dump(cinfo.digest()));
-  if (not cinfo.file().empty()) {
+  if (!cinfo.file().empty()) {
     os << fmt::format("Content Info File:   {}\n", cinfo.file());
   }
   it_const_crt certs = signature.certificates();

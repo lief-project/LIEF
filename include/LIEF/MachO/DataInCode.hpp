@@ -28,9 +28,16 @@
 namespace LIEF {
 namespace MachO {
 class BinaryParser;
+
+namespace details {
 struct linkedit_data_command;
+}
 
 //! Interface of the LC_DATA_IN_CODE command
+//! This command is used to list slices of code sections that contain data. The *slices*
+//! information are stored as an array of DataCodeEntry
+//!
+//! @see DataCodeEntry
 class LIEF_API DataInCode : public LoadCommand {
   friend class BinaryParser;
   public:
@@ -40,21 +47,26 @@ class LIEF_API DataInCode : public LoadCommand {
 
   public:
   DataInCode();
-  DataInCode(const linkedit_data_command *cmd);
+  DataInCode(const details::linkedit_data_command& cmd);
 
   DataInCode& operator=(const DataInCode&);
   DataInCode(const DataInCode&);
 
-  virtual DataInCode* clone() const override;
+  DataInCode* clone() const override;
 
+  //! Start of the array of the DataCodeEntry entries
   uint32_t data_offset() const;
+
+  //! Whole size of the array (``size = sizeof(DataCodeEntry) * nb_elements``)
   uint32_t data_size() const;
 
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
+  //! Add a new entry
   DataInCode& add(const DataCodeEntry& entry);
 
+  //! Iterator over the DataCodeEntry
   it_const_entries entries() const;
   it_entries entries();
 
@@ -63,9 +75,9 @@ class LIEF_API DataInCode : public LoadCommand {
   bool operator==(const DataInCode& rhs) const;
   bool operator!=(const DataInCode& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   uint32_t  data_offset_;

@@ -32,11 +32,10 @@
 
 namespace LIEF {
 uint64_t align(uint64_t value, uint64_t align_on) {
-  if ((align_on > 0) and (value % align_on) > 0) {
+  if ((align_on > 0) && (value % align_on) > 0) {
     return  value + (align_on - (value % align_on));
-  } else {
-    return value;
   }
+  return value;
 }
 }
 
@@ -87,7 +86,7 @@ std::string hex_str(uint8_t c) {
   return ss.str();
 }
 
-std::string hex_dump(const std::vector<uint8_t>& data, std::string sep) {
+std::string hex_dump(const std::vector<uint8_t>& data, const std::string& sep) {
 
   std::string hexstring = std::accumulate(std::begin(data), std::end(data), std::string{},
      [sep] (const std::string& a, uint8_t b) {
@@ -100,7 +99,7 @@ std::string hex_dump(const std::vector<uint8_t>& data, std::string sep) {
 
 bool is_printable(const std::string& str) {
   return std::all_of(std::begin(str), std::end(str),
-          std::bind(std::isprint<char>, std::placeholders::_1, std::locale("C")));
+                     [] (char c) { return std::isprint<char>(c, std::locale("C")); });
 }
 
 bool is_hex_number(const std::string& str) {

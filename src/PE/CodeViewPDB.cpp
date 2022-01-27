@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <numeric>
+#include <utility>
 
 #include "LIEF/PE/hash.hpp"
 
@@ -30,7 +31,6 @@ CodeViewPDB& CodeViewPDB::operator=(const CodeViewPDB&) = default;
 CodeViewPDB::~CodeViewPDB() = default;
 
 CodeViewPDB::CodeViewPDB() :
-  CodeView{},
   signature_{
     {
       0, 0, 0, 0,
@@ -39,16 +39,16 @@ CodeViewPDB::CodeViewPDB() :
       0, 0, 0, 0,
     }
   },
-  age_{0},
-  filename_{}
+  age_{0}
 {}
 
 
-CodeViewPDB::CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig, uint32_t age, const std::string& filename) :
+CodeViewPDB::CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig,
+                         uint32_t age, std::string filename) :
   CodeView(cv_signature),
   signature_(sig),
   age_(age),
-  filename_(filename)
+  filename_(std::move(filename))
 {}
 
 
@@ -74,15 +74,15 @@ CodeViewPDB* CodeViewPDB::clone() const {
 
 
 CodeViewPDB::signature_t CodeViewPDB::signature() const {
-  return this->signature_;
+  return signature_;
 }
 
 uint32_t CodeViewPDB::age() const {
-  return this->age_;
+  return age_;
 }
 
 const std::string& CodeViewPDB::filename() const {
-  return this->filename_;
+  return filename_;
 }
 
 
@@ -98,15 +98,15 @@ void CodeViewPDB::signature(uint32_t signature) {
 }
 
 void CodeViewPDB::signature(CodeViewPDB::signature_t signature) {
-  this->signature_ = signature;
+  signature_ = signature;
 }
 
 void CodeViewPDB::age(uint32_t age) {
-  this->age_ = age;
+  age_ = age;
 }
 
 void CodeViewPDB::filename(const std::string& filename) {
-  this->filename_ = filename;
+  filename_ = filename;
 }
 
 
@@ -122,7 +122,7 @@ bool CodeViewPDB::operator==(const CodeViewPDB& rhs) const {
 }
 
 bool CodeViewPDB::operator!=(const CodeViewPDB& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

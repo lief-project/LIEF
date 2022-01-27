@@ -36,68 +36,68 @@ Export::Export() :
   ordinalBase_{0}
 {}
 
-Export::Export(const pe_export_directory_table *header) :
-  exportFlags_{header->ExportFlags},
-  timestamp_{header->Timestamp},
-  majorVersion_{header->MajorVersion},
-  minorVersion_{header->MinorVersion},
-  ordinalBase_{header->OrdinalBase}
+Export::Export(const details::pe_export_directory_table& header) :
+  exportFlags_{header.ExportFlags},
+  timestamp_{header.Timestamp},
+  majorVersion_{header.MajorVersion},
+  minorVersion_{header.MinorVersion},
+  ordinalBase_{header.OrdinalBase}
 {}
 
 uint32_t Export::export_flags() const {
-  return this->exportFlags_;
+  return exportFlags_;
 }
 
 uint32_t Export::timestamp() const {
-  return this->timestamp_;
+  return timestamp_;
 }
 
 uint16_t Export::major_version() const {
-  return this->majorVersion_;
+  return majorVersion_;
 }
 
 uint16_t Export::minor_version() const {
-  return this->minorVersion_;
+  return minorVersion_;
 }
 
 uint32_t Export::ordinal_base() const {
-  return this->ordinalBase_;
+  return ordinalBase_;
 }
 
 const std::string& Export::name() const {
-  return this->name_;
+  return name_;
 }
 
 it_export_entries Export::entries() {
-  return this->entries_;
+  return entries_;
 }
 
 it_const_export_entries Export::entries() const {
-  return this->entries_;
+  return entries_;
 }
 
 void Export::export_flags(uint32_t flags) {
-  this->exportFlags_ = flags;
+  exportFlags_ = flags;
 }
 
 void Export::timestamp(uint32_t timestamp) {
-  this->timestamp_ = timestamp;
+  timestamp_ = timestamp;
 }
 
 void Export::major_version(uint16_t major_version) {
-  this->majorVersion_ = major_version;
+  majorVersion_ = major_version;
 }
 
 void Export::minor_version(uint16_t minor_version) {
-  this->minorVersion_ = minor_version;
+  minorVersion_ = minor_version;
 }
 
 void Export::ordinal_base(uint32_t ordinal_base) {
-  this->ordinalBase_ = ordinal_base;
+  ordinalBase_ = ordinal_base;
 }
 
 void Export::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void Export::accept(LIEF::Visitor& visitor) const {
@@ -111,7 +111,7 @@ bool Export::operator==(const Export& rhs) const {
 }
 
 bool Export::operator!=(const Export& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Export& exp) {

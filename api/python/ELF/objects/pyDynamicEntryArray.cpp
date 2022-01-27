@@ -38,7 +38,17 @@ template<>
 void create<DynamicEntryArray>(py::module& m) {
 
   // Dynamic Entry Array object
-  py::class_<DynamicEntryArray, DynamicEntry>(m, "DynamicEntryArray")
+  py::class_<DynamicEntryArray, DynamicEntry>(m, "DynamicEntryArray",
+      R"delim(
+      Class that represent an Array in the dynamic table.
+      This entry is associated with constructors:
+      - ``DT_PREINIT_ARRAY``
+      - ``DT_INIT_ARRAY``
+      - ``DT_FINI_ARRAY``
+
+      The underlying values are 64-bits integers to cover both:
+      ELF32 and ELF64 binaries.
+      )delim")
     .def(py::init<>())
 
     .def(py::init<DYNAMIC_TAGS, uint64_t>(),
@@ -46,27 +56,27 @@ void create<DynamicEntryArray>(py::module& m) {
         "tag"_a, "value"_a)
 
     .def_property("array",
-        static_cast<std::vector<uint64_t>& (DynamicEntryArray::*) (void)>(&DynamicEntryArray::array),
+        static_cast<std::vector<uint64_t>& (DynamicEntryArray::*)()>(&DynamicEntryArray::array),
         static_cast<setter_t<const std::vector<uint64_t>&>>(&DynamicEntryArray::array),
-        "Return the array",
+        "Return the array as a list of intergers",
         py::return_value_policy::reference)
 
     .def("insert",
         &DynamicEntryArray::insert,
-        "Insert a ``callback`` at the given ``position``",
-        "position"_a, "callback"_a,
+        "Insert the given ``function`` at ``pos``",
+        "pos"_a, "function"_a,
         py::return_value_policy::reference)
 
     .def("append",
         &DynamicEntryArray::append,
-        "Append the given ``callback`` ",
-        "callback"_a,
+        "Append the given ``function`` ",
+        "function"_a,
         py::return_value_policy::reference)
 
     .def("remove",
         &DynamicEntryArray::remove,
-        "Remove the given ``callback`` ",
-        "callback"_a,
+        "Remove the given ``function`` ",
+        "function"_a,
         py::return_value_policy::reference)
 
 

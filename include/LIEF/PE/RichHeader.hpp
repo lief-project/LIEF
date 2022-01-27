@@ -29,38 +29,40 @@
 namespace LIEF {
 namespace PE {
 
+//! Class which represents the not-so-documented rich header
 class LIEF_API RichHeader : public Object {
   public:
 
-    RichHeader();
-    RichHeader(const RichHeader&);
-    RichHeader& operator=(const RichHeader&);
-    virtual ~RichHeader();
+  RichHeader();
+  RichHeader(const RichHeader&);
+  RichHeader& operator=(const RichHeader&);
+  virtual ~RichHeader();
 
-    //! @brief Key used to encode the header (xor operation)
-    uint32_t key() const;
+  //! Key used to encode the header (xor operation)
+  uint32_t key() const;
 
-    //! @brief Return an iterator on the PE::RichEntry within the header
-    it_rich_entries entries();
+  //! Return an iterator over the PE::RichEntry within the header
+  it_rich_entries entries();
+  it_const_rich_entries entries() const;
 
-    it_const_rich_entries entries() const;
+  void key(uint32_t key);
 
-    void key(uint32_t key);
+  //! Add a new PE::RichEntry
+  void add_entry(const RichEntry& entry);
 
-    //! @brief Add a new PE::RichEntry
-    void add_entry(const RichEntry& entry);
-    void add_entry(uint16_t id, uint16_t build_id, uint32_t count);
+  //! Add a new entry given the id, build_id and count
+  void add_entry(uint16_t id, uint16_t build_id, uint32_t count);
 
-    virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-    bool operator==(const RichHeader& rhs) const;
-    bool operator!=(const RichHeader& rhs) const;
+  bool operator==(const RichHeader& rhs) const;
+  bool operator!=(const RichHeader& rhs) const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header);
 
   private:
-    uint32_t       key_;
-    rich_entries_t entries_;
+  uint32_t       key_;
+  rich_entries_t entries_;
 
 };
 }

@@ -30,40 +30,40 @@ namespace ELF {
 
 bool is_elf(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Unable to open the file '{}'", file);
     return false;
   }
-  char magic[sizeof(ElfMagic)];
+  char magic[sizeof(details::ElfMagic)];
 
   binary.seekg(0, std::ios::beg);
   binary.read(magic, sizeof(magic));
-  return std::equal(std::begin(magic), std::end(magic), std::begin(ElfMagic));
+  return std::equal(std::begin(magic), std::end(magic), std::begin(details::ElfMagic));
 }
 
 bool is_elf(const std::vector<uint8_t>& raw) {
 
-  char magic[sizeof(ElfMagic)];
+  char magic[sizeof(details::ElfMagic)];
 
-  if (raw.size() < sizeof(ElfMagic)) {
+  if (raw.size() < sizeof(details::ElfMagic)) {
     return false;
   }
 
 
   std::copy(
     reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(ElfMagic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::ElfMagic),
     magic);
 
-  return std::equal(std::begin(magic), std::end(magic), std::begin(ElfMagic));
+  return std::equal(std::begin(magic), std::end(magic), std::begin(details::ElfMagic));
 }
 
 //! SYSV hash function
 unsigned long hash32(const char* name) {
   unsigned long h = 0, g;
-  while (*name) {
+  while (*name != 0) {
     h = (h << 4) + *name++;
-    if ((g = h & 0xf0000000)) {
+    if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
     }
     h &= ~g;
@@ -75,9 +75,9 @@ unsigned long hash32(const char* name) {
 //! https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
 unsigned long hash64(const char* name) {
   unsigned long h = 0, g;
-  while (*name) {
+  while (*name != 0) {
     h = (h << 4) + *name++;
-    if ((g = h & 0xf0000000)) {
+    if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
     }
     h &= 0x0fffffff;

@@ -34,11 +34,11 @@ ResourceAccelerator::ResourceAccelerator() :
   id_{0},
   padding_{0} {}
 
-ResourceAccelerator::ResourceAccelerator(const pe_resource_acceltableentry* entry) :
-  flags_{entry->fFlags},
-  ansi_{entry->wAnsi},
-  id_{static_cast<uint16_t>(entry->wId)},
-  padding_{entry->padding} {}
+ResourceAccelerator::ResourceAccelerator(const details::pe_resource_acceltableentry& entry) :
+  flags_{entry.fFlags},
+  ansi_{entry.wAnsi},
+  id_{static_cast<uint16_t>(entry.wId)},
+  padding_{entry.padding} {}
 
 void ResourceAccelerator::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -51,7 +51,7 @@ bool ResourceAccelerator::operator==(const ResourceAccelerator& rhs) const {
 }
 
 bool ResourceAccelerator::operator!=(const ResourceAccelerator& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
@@ -75,8 +75,8 @@ std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
 
   const auto flags_tmp = flags_;
   std::copy_if(
-    std::cbegin(accelerator_array),
-    std::cend(accelerator_array),
+    std::cbegin(details::accelerator_array),
+    std::cend(details::accelerator_array),
     std::inserter(flags_set, std::begin(flags_set)),
     [flags_tmp](ACCELERATOR_FLAGS c) {
       return (static_cast<uint16_t>(flags_tmp) & static_cast<uint16_t>(c)) > 0;
@@ -86,19 +86,19 @@ std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
 }
 
 int16_t ResourceAccelerator::flags() const {
-  return this->flags_;
+  return flags_;
 }
 
 int16_t ResourceAccelerator::ansi() const {
-  return this->ansi_;
+  return ansi_;
 }
 
 uint16_t ResourceAccelerator::id() const {
-  return this->id_;
+  return id_;
 }
 
 int16_t ResourceAccelerator::padding() const {
-  return this->padding_;
+  return padding_;
 }
 
 }

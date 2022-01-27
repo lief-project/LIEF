@@ -23,6 +23,7 @@
 
 namespace LIEF {
 namespace MachO {
+
 LIEF_API const char* to_string(LOAD_COMMAND_TYPES e);
 LIEF_API const char* to_string(MACHO_TYPES e);
 LIEF_API const char* to_string(FILE_TYPES e);

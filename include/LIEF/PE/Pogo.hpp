@@ -36,7 +36,7 @@ class LIEF_API Pogo : public Object {
 
   public:
   Pogo();
-  Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries);
+  Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry> entries);
 
   Pogo(const Pogo&);
   Pogo& operator=(const Pogo&);
@@ -49,7 +49,7 @@ class LIEF_API Pogo : public Object {
 
   void signature(POGO_SIGNATURES signature);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Pogo& rhs) const;
   bool operator!=(const Pogo& rhs) const;

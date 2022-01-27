@@ -29,6 +29,7 @@ namespace PE {
 class Builder;
 class Parser;
 
+//! Class which represents a PE Export entry (cf. PE::Export)
 class LIEF_API ExportEntry : public LIEF::Symbol {
 
   friend class Builder;
@@ -65,11 +66,12 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   inline uint64_t value() const override {
     return address();
   }
+
   inline void value(uint64_t value) override {
     address(value);
   }
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ExportEntry& rhs) const;
   bool operator!=(const ExportEntry& rhs) const;
@@ -77,10 +79,10 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportEntry& exportEntry);
 
   private:
-  uint32_t    function_rva_ = 0;
-  uint16_t    ordinal_ = 0;
-  uint32_t    address_ = 0;
-  bool        is_extern_ = false;
+  uint32_t function_rva_ = 0;
+  uint16_t ordinal_ = 0;
+  uint32_t address_ = 0;
+  bool     is_extern_ = false;
 
   forward_information_t forward_info_;
 

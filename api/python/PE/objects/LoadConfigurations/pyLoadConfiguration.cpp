@@ -34,9 +34,10 @@ using setter_t = void (LoadConfiguration::*)(T);
 template<>
 void create<LoadConfiguration>(py::module& m) {
   py::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
-    "Class modeling the default PE's ``LoadConfiguration``\n\n"
-    "It's the base class for any future version of the structure"
-    )
+    R"delim(
+    Class that represents the default PE's ``LoadConfiguration``
+    It's the base class for any future versions of the structure
+    )delim")
     .def(py::init<>())
 
     .def_property_readonly("version",
@@ -117,9 +118,10 @@ void create<LoadConfiguration>(py::module& m) {
     .def_property("process_heap_flags",
         static_cast<getter_t<uint32_t>>(&LoadConfiguration::process_heap_flags),
         static_cast<setter_t<uint32_t>>(&LoadConfiguration::process_heap_flags),
-        "Process heap flags that correspond to the first argument of the "
-        "``HeapCreate`` function. These flags apply to the process heap that is "
-        "created during process startup.")
+        R"delim(
+        Process heap flags that correspond to the first argument of the ``HeapCreate``
+        function. These flags apply to the process heap that is created during process startup.
+        )delim")
 
     .def_property("csd_version",
         static_cast<getter_t<uint16_t>>(&LoadConfiguration::csd_version),

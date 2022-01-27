@@ -50,12 +50,12 @@ VectorStream::VectorStream(const std::string& filename) {
     binary.unsetf(std::ios::skipws);
     binary.seekg(0, std::ios::end);
     assert(binary.tellg() > 0);
-    this->size_ = static_cast<uint64_t>(binary.tellg());
+    size_ = static_cast<uint64_t>(binary.tellg());
     binary.seekg(0, std::ios::beg);
 
     // reserve capacity
-    this->binary_.resize(this->size() + 30, 0);
-    binary.read(reinterpret_cast<char*>(binary_.data()), this->size_);
+    binary_.resize(size() + 30, 0);
+    binary.read(reinterpret_cast<char*>(binary_.data()), size_);
     binary.close();
   } else {
     throw LIEF::bad_file("Unable to open " + filename);
@@ -70,28 +70,29 @@ VectorStream::VectorStream(const std::vector<uint8_t>& data) :
 
 
 uint64_t VectorStream::size() const {
-  return this->size_;
+  return size_;
 }
 
 
 const void* VectorStream::read_at(uint64_t offset, uint64_t size, bool throw_error) const {
 
-  if (offset > this->size() or (offset + size) > this->size()) {
-    size_t out_size = (offset + size) - this->size();
+  const uint64_t stream_size = this->size();
+  if (offset > stream_size || (offset + size) > stream_size) {
+    size_t out_size = (offset + size) - stream_size;
     LIEF_DEBUG("Can't read #{:d} bytes at 0x{:04x} (0x{:x} bytes out of bound)", size, offset, out_size);
     if (throw_error) {
       throw LIEF::read_out_of_bound(offset, size);
     }
     return nullptr;
   }
-  return this->binary_.data() + offset;
+  return binary_.data() + offset;
 }
 
 
 result<size_t> VectorStream::asn1_read_tag(int tag) {
   size_t out = 0;
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -107,7 +108,7 @@ result<size_t> VectorStream::asn1_read_tag(int tag) {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return out;
 }
 
@@ -115,7 +116,7 @@ result<size_t> VectorStream::asn1_read_tag(int tag) {
 result<size_t> VectorStream::asn1_read_len() {
   size_t len = 0;
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -128,7 +129,7 @@ result<size_t> VectorStream::asn1_read_len() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return len;
 }
 
@@ -136,7 +137,7 @@ result<std::string> VectorStream::asn1_read_alg() {
   mbedtls_asn1_buf alg_oid;
   char oid_str[256] = {0};
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -154,7 +155,7 @@ result<std::string> VectorStream::asn1_read_alg() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return std::string(oid_str);
 }
 
@@ -162,13 +163,13 @@ result<std::string> VectorStream::asn1_read_oid() {
   mbedtls_asn1_buf buf;
   char oid_str[256] = {0};
 
-  auto len = this->asn1_read_tag(MBEDTLS_ASN1_OID);
-  if (not len) {
+  auto len = asn1_read_tag(MBEDTLS_ASN1_OID);
+  if (!len) {
     return len.error();
   }
 
   buf.len = len.value();
-  buf.p   = this->p();
+  buf.p   = p();
   buf.tag = MBEDTLS_ASN1_OID;
 
   int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &buf);
@@ -177,7 +178,7 @@ result<std::string> VectorStream::asn1_read_oid() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(buf.len);
+  increment_pos(buf.len);
   return std::string(oid_str);
 }
 
@@ -185,7 +186,7 @@ result<std::string> VectorStream::asn1_read_oid() {
 result<int32_t> VectorStream::asn1_read_int() {
   int32_t value = 0;
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -198,14 +199,14 @@ result<int32_t> VectorStream::asn1_read_int() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return value;
 }
 
 result<std::vector<uint8_t>> VectorStream::asn1_read_bitstring() {
   mbedtls_asn1_bitstring bs = {0, 0, nullptr};
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -215,25 +216,25 @@ result<std::vector<uint8_t>> VectorStream::asn1_read_bitstring() {
     return make_error_code(lief_errors::read_out_of_bound);
   }
   else if (ret == MBEDTLS_ERR_ASN1_LENGTH_MISMATCH) {
-    this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+    increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
     return std::vector<uint8_t>{bs.p, bs.p + bs.len};
   }
   else if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return std::vector<uint8_t>{bs.p, bs.p + bs.len};
 }
 
 
 result<std::vector<uint8_t>> VectorStream::asn1_read_octet_string() {
-  auto tag = this->asn1_read_tag(MBEDTLS_ASN1_OCTET_STRING);
-  if (not tag) {
+  auto tag = asn1_read_tag(MBEDTLS_ASN1_OCTET_STRING);
+  if (!tag) {
     return tag.error();
   }
-  std::vector<uint8_t> raw = {this->p(), this->p() + tag.value()};
-  this->increment_pos(tag.value());
+  std::vector<uint8_t> raw = {p(), p() + tag.value()};
+  increment_pos(tag.value());
   return raw;
 }
 
@@ -255,7 +256,7 @@ result<std::unique_ptr<mbedtls_x509_crt>> VectorStream::asn1_read_cert() {
   if (ca->raw.len <= 0) {
     return make_error_code(lief_errors::read_error);
   }
-  this->increment_pos(ca->raw.len);
+  increment_pos(ca->raw.len);
   return ca;
 }
 
@@ -263,15 +264,15 @@ result<std::string> VectorStream::x509_read_names() {
   mbedtls_x509_name name;
   std::memset(&name, 0, sizeof(name));
 
-  auto tag = this->asn1_read_tag(/* Name */
+  auto tag = asn1_read_tag(/* Name */
                                  MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} for x509_read_names (pos: {:d})",
-        this->peek<uint8_t>(), this->pos());
+        peek<uint8_t>(), pos());
     return tag.error();
   }
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = p + tag.value();
   int ret = mbedtls_x509_get_name(&p, end, &name);
@@ -288,14 +289,14 @@ result<std::string> VectorStream::x509_read_names() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return std::string(buffer);
 }
 
 result<std::vector<uint8_t>> VectorStream::x509_read_serial() {
   mbedtls_x509_buf serial;
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -305,14 +306,14 @@ result<std::vector<uint8_t>> VectorStream::x509_read_serial() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
   return std::vector<uint8_t>{serial.p, serial.p + serial.len};
 }
 
 result<std::unique_ptr<mbedtls_x509_time>> VectorStream::x509_read_time() {
   std::unique_ptr<mbedtls_x509_time> tm{new mbedtls_x509_time{}};
 
-  const uint8_t* cur_p = this->p();
+  const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
   const uint8_t* end   = this->end();
 
@@ -322,14 +323,14 @@ result<std::unique_ptr<mbedtls_x509_time>> VectorStream::x509_read_time() {
     return make_error_code(lief_errors::read_error);
   }
 
-  this->increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-  return std::move(tm);
+  increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
+  return tm;
 }
 
 
 
 const std::vector<uint8_t>& VectorStream::content() const {
-  return this->binary_;
+  return binary_;
 }
 }
 

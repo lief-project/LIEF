@@ -21,13 +21,13 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+//! Class which represents an abstracted Relocation
 class LIEF_API Relocation : public Object {
 
   public:
-  //! @brief Default CTOR
   Relocation();
 
-  //! @brief CTOR from relocation's address and size
+  //! Constructor from a relocation's address and size
   Relocation(uint64_t address, uint8_t size);
 
   virtual ~Relocation();
@@ -36,31 +36,31 @@ class LIEF_API Relocation : public Object {
   Relocation(const Relocation&);
   void swap(Relocation& other);
 
-  //! @brief Relocation's Address
+  //! Relocation's address
   virtual uint64_t address() const;
 
-  //! @brief Relocation size in **bits**
+  //! Relocation size in **bits**
   virtual size_t size() const;
 
   virtual void address(uint64_t address);
   virtual void size(size_t size);
 
-  //! @brief Method so that the ``visitor`` can visit us
-  virtual void accept(Visitor& visitor) const override;
+  //! Method so that the ``visitor`` can visit us
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Relocation& rhs) const;
   bool operator!=(const Relocation& rhs) const;
 
-  //! @brief Comparaison based on the Relocation's **address**
+  //! Comparaison based on the Relocation's **address**
   virtual bool operator<(const Relocation& rhs) const;
 
-  //! @brief Comparaison based on the Relocation's **address**
+  //! Comparaison based on the Relocation's **address**
   virtual bool operator<=(const Relocation& rhs) const;
 
-  //! @brief Comparaison based on the Relocation's **address**
+  //! Comparaison based on the Relocation's **address**
   virtual bool operator>(const Relocation& rhs) const;
 
-  //! @brief Comparaison based on the Relocation's **address**
+  //! Comparaison based on the Relocation's **address**
   virtual bool operator>=(const Relocation& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
@@ -68,7 +68,6 @@ class LIEF_API Relocation : public Object {
   protected:
   uint64_t address_ = 0;
   uint8_t  size_ = 0;
-
 };
 
 

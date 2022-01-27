@@ -8,7 +8,7 @@ To compile **LIEF**, you need at least the following requirements:
 
 - C++14 compiler (GCC, Clang, MSVC..)
 - CMake
-- Python >= 3.6 (for bindings)
+- Python >= 3.6 (for the bindings)
 
 To build the documentation:
 
@@ -16,6 +16,10 @@ To build the documentation:
 - Sphinx (with ``sphinx_rtd_theme`` module)
 - breathe (>= ``4.25.1``)
 
+
+.. note::
+
+  A compilation from scratch with all the options enabled can take ~30 minutes on a regular laptop.
 
 Libraries only (SDK)
 --------------------
@@ -94,6 +98,21 @@ the ``--debug`` flag:
 
   The ``--user`` flag is used to avoid creating the ``.egg-link`` system-wide (i.e. ``/usr/lib/python3.9/site-packages``).
   Instead, it links the ``.egg-link`` in the user's local dir (e.g. ``~/.local/lib/python3.9/site-packages``)
+
+Continuous Integration
+----------------------
+
+LIEF uses different CI (Github Action, AppVeyor, ...) to test and release nightly builds. The configuration
+of these CI can also be a good source of information for the compilation process.
+In particular, `scripts/docker/travis-linux-sdk.sh <https://github.com/lief-project/LIEF/blob/master/scripts/docker/travis-linux-sdk.sh>`_
+contains the build process to generate the **Linux x86-64 SDK**.
+
+The ``build_script`` section of `.appveyor.yml <https://github.com/lief-project/LIEF/blob/master/.appveyor.yml>`_
+contains the logic for generating **Windows Python wheels and the SDK**.
+
+For **OSX & iOS**, the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/ios.yml>`_
+and `.github/workflows/osx.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/osx.yml>`_
+to compile (and cross-compile) LIEF for these platforms.
 
 CMake Options
 -------------

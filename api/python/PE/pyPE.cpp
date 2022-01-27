@@ -22,8 +22,9 @@ namespace LIEF {
 namespace PE {
 
 void init_python_module(py::module& m) {
-  py::module LIEF_PE_module = m.def_submodule("PE", "Python API for PE");
+  py::module LIEF_PE_module = m.def_submodule("PE", "Python API for the LIEF's PE format");
 
+  init_iterators(LIEF_PE_module);
   init_enums(LIEF_PE_module);
   init_objects(LIEF_PE_module);
   init_utils(LIEF_PE_module);

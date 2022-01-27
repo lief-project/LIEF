@@ -33,6 +33,7 @@ class Builder;
 class Binary;
 class NoteDetails;
 
+//! Class which represents an ELF note
 class LIEF_API Note : public Object {
 
   friend class Parser;
@@ -46,7 +47,7 @@ class LIEF_API Note : public Object {
 
   public:
   Note();
-  Note(const std::string& name, uint32_t type, const description_t& description, Binary* binary=nullptr);
+  Note(std::string  name, uint32_t type, description_t description, Binary* binary=nullptr);
   Note(const std::string& name, NOTE_TYPES type, const description_t& description, Binary* binary=nullptr);
   Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& description, Binary* binary=nullptr);
 
@@ -55,16 +56,17 @@ class LIEF_API Note : public Object {
 
   virtual ~Note();
 
-  //! @brief Return the *name* of the note
+  //! Return the *name* of the note
   const std::string& name() const;
 
-  //! @brief Return the type of the note. It could be one of the NOTE_TYPES values
+  //! Return the type of the note. It could be one of the NOTE_TYPES values
   NOTE_TYPES type() const;
 
-  //! @brief Return the type of the note for core ELF (ET_CORE). It could be one of the NOTE_TYPES_CORE values
+  //! Return the type of the note for core ELF (ET_CORE).
+  //! It could be one of the NOTE_TYPES_CORE values
   NOTE_TYPES_CORE type_core() const;
 
-  //! @brief Return the description associated with the note
+  //! Return the description associated with the note
   const description_t& description() const;
 
   description_t& description();
@@ -74,7 +76,7 @@ class LIEF_API Note : public Object {
 
   //! True if the current note is specific to Android.
   //!
-  //! If true, ``details()`` returns a reference the LIEF::ELF::AndroidNote object
+  //! If true, ``details()`` returns a reference to the LIEF::ELF::AndroidNote object
   bool is_android() const;
 
   const NoteDetails& details() const;
@@ -85,7 +87,7 @@ class LIEF_API Note : public Object {
   void type_core(NOTE_TYPES_CORE type);
   void description(const description_t& description);
 
-  //! @brief Sizeof the **raw** note
+  //! Size of the **raw** note
   uint64_t size() const;
 
   virtual void dump(std::ostream& os) const;
@@ -95,7 +97,7 @@ class LIEF_API Note : public Object {
 
   void swap(Note& other);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Note& note);
 

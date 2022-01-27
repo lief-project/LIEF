@@ -32,77 +32,76 @@
 namespace LIEF {
 namespace DEX {
 
+Header::Header() = default;
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
-Header::Header() {
-}
 
 
 magic_t Header::magic() const {
-  return this->magic_;
+  return magic_;
 }
 uint32_t Header::checksum() const {
-  return this->checksum_;
+  return checksum_;
 }
 signature_t Header::signature() const {
-  return this->signature_;
+  return signature_;
 }
 
 uint32_t Header::file_size() const {
-  return this->file_size_;
+  return file_size_;
 }
 
 uint32_t Header::header_size() const {
-  return this->header_size_;
+  return header_size_;
 }
 
 uint32_t Header::endian_tag() const {
-  return this->endian_tag_;
+  return endian_tag_;
 }
 
 uint32_t Header::nb_classes() const {
-  return this->class_defs_size_;
+  return class_defs_size_;
 }
 
 uint32_t Header::nb_methods() const {
-  return this->method_ids_size_;
+  return method_ids_size_;
 }
 
 uint32_t Header::map() const {
-  return this->map_off_;
+  return map_off_;
 }
 
 Header::location_t Header::strings() const {
-  return {this->string_ids_off_, this->string_ids_size_};
+  return {string_ids_off_, string_ids_size_};
 }
 
 Header::location_t Header::link() const {
-  return {this->link_off_, this->link_size_};
+  return {link_off_, link_size_};
 }
 
 Header::location_t Header::types() const {
-  return {this->type_ids_off_, this->type_ids_size_};
+  return {type_ids_off_, type_ids_size_};
 }
 
 Header::location_t Header::prototypes() const {
-  return {this->proto_ids_off_, this->proto_ids_size_};
+  return {proto_ids_off_, proto_ids_size_};
 }
 
 Header::location_t Header::fields() const {
-  return {this->field_ids_off_, this->field_ids_size_};
+  return {field_ids_off_, field_ids_size_};
 }
 
 Header::location_t Header::methods() const {
-  return {this->method_ids_off_, this->method_ids_size_};
+  return {method_ids_off_, method_ids_size_};
 }
 
 Header::location_t Header::classes() const {
-  return {this->class_defs_off_, this->class_defs_size_};
+  return {class_defs_off_, class_defs_size_};
 }
 
 Header::location_t Header::data() const {
-  return {this->data_off_, this->data_size_};
+  return {data_off_, data_size_};
 }
 
 
@@ -117,7 +116,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
@@ -125,7 +124,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
   std::string magic_str;
   for (uint8_t c : hdr.magic()) {
-    if (::isprint(c)) {
+    if (::isprint(c) != 0) {
       magic_str.push_back(static_cast<char>(c));
     } else {
       std::stringstream ss;

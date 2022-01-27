@@ -59,8 +59,8 @@ class LIEF_API SignerInfo : public Object {
   using encrypted_digest_t = std::vector<uint8_t>;
   SignerInfo();
 
-  SignerInfo(const SignerInfo& signinfo);
-  SignerInfo& operator=(SignerInfo signinfo);
+  SignerInfo(const SignerInfo& other);
+  SignerInfo& operator=(SignerInfo other);
 
   SignerInfo(SignerInfo&&);
   SignerInfo& operator=(SignerInfo&&);
@@ -77,12 +77,12 @@ class LIEF_API SignerInfo : public Object {
   //! LIEF::PE::x509::serial_number
   //! SignerInfo::issuer
   inline const std::vector<uint8_t>& serial_number() const {
-    return this->serialno_;
+    return serialno_;
   }
 
   //! Return the x509::issuer used by this signer
   inline const std::string& issuer() const {
-    return this->issuer_;
+    return issuer_;
   };
 
   //! Algorithm (OID) used to hash the file.
@@ -126,20 +126,20 @@ class LIEF_API SignerInfo : public Object {
 
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
   inline const x509* cert() const {
-    return this->cert_.get();
+    return cert_.get();
   }
 
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
   inline x509* cert() {
-    return this->cert_.get();
+    return cert_.get();
   }
 
   //! Raw blob that is signed by the signer certificate
   const std::vector<uint8_t> raw_auth_data() const {
-    return this->raw_auth_data_;
+    return raw_auth_data_;
   }
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~SignerInfo();
 

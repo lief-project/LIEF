@@ -43,7 +43,7 @@ const char* to_string(MapItem::TYPES  e) {
     { MapItem::TYPES::ENCODED_ARRAY,            "ENCODED_ARRAY" },
     { MapItem::TYPES::ANNOTATIONS_DIRECTORY,    "ANNOTATIONS_DIRECTORY" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -69,7 +69,7 @@ const char* to_string(ACCESS_FLAGS  e) {
     { ACCESS_FLAGS::ACC_CONSTRUCTOR,           "CONSTRUCTOR" },
     { ACCESS_FLAGS::ACC_DECLARED_SYNCHRONIZED, "DECLARED_SYNCHRONIZED" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -80,7 +80,7 @@ const char* to_string(Type::TYPES  e) {
     { Type::TYPES::CLASS,     "CLASS"     },
     { Type::TYPES::PRIMITIVE, "PRIMITIVE" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -97,7 +97,7 @@ const char* to_string(Type::PRIMITIVES  e) {
     { Type::PRIMITIVES::FLOAT,   "FLOAT"   },
     { Type::PRIMITIVES::BYTE,    "BYTE"    },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 

@@ -25,15 +25,17 @@
 
 namespace LIEF {
 namespace ELF {
+namespace details {
 struct Elf64_Vernaux;
 struct Elf32_Vernaux;
+}
 
 class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   public:
   using SymbolVersionAux::name;
 
-  SymbolVersionAuxRequirement(const Elf64_Vernaux *header);
-  SymbolVersionAuxRequirement(const Elf32_Vernaux *header);
+  SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header);
+  SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header);
   SymbolVersionAuxRequirement();
 
   SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&);
@@ -41,14 +43,14 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
 
   virtual ~SymbolVersionAuxRequirement();
 
-  //! @brief Hash value of the dependency name (use ELF hashing function)
+  //! Hash value of the dependency name (use ELF hashing function)
   uint32_t hash() const;
 
-  //! @brief Bitmask of flags
+  //! Bitmask of flags
   uint16_t flags() const;
 
-  //! @brief Contains version index unique for the file which is used in the
-  //! version symbol table.  If the highest bit (bit 15) is set this
+  //! It returns the unique version index for the file which is used in the
+  //! version symbol table. If the highest bit (bit 15) is set this
   //! is a hidden symbol which cannot be referenced from outside the
   //! object.
   uint16_t other() const;
@@ -57,7 +59,7 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   void flags(uint16_t flags);
   void other(uint16_t other);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersionAuxRequirement& rhs) const;
   bool operator!=(const SymbolVersionAuxRequirement& rhs) const;

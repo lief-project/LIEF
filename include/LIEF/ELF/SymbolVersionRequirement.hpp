@@ -28,42 +28,46 @@
 namespace LIEF {
 namespace ELF {
 class Parser;
+
+namespace details {
 struct Elf64_Verneed;
 struct Elf32_Verneed;
+}
 
-//! @brief Class which modelize an entry in ``DT_VERNEED`` or ``.gnu.version_r`` table
+//! Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table
 class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 
   public:
   SymbolVersionRequirement();
-  SymbolVersionRequirement(const Elf64_Verneed *header);
-  SymbolVersionRequirement(const Elf32_Verneed *header);
+  SymbolVersionRequirement(const details::Elf64_Verneed& header);
+  SymbolVersionRequirement(const details::Elf32_Verneed& header);
   virtual ~SymbolVersionRequirement();
 
   SymbolVersionRequirement& operator=(SymbolVersionRequirement other);
   SymbolVersionRequirement(const SymbolVersionRequirement& other);
   void swap(SymbolVersionRequirement& other);
 
-  //! @brief Version revision
+  //! Version revision
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
   uint16_t version() const;
 
-  //! @brief Number of associated auxiliary entries
+  //! Number of associated auxiliary entries
   uint32_t cnt() const;
 
-  //! @brief Auxiliary entries
+  //! Auxiliary entries as an iterator over SymbolVersionAuxRequirement
   it_symbols_version_aux_requirement       auxiliary_symbols();
   it_const_symbols_version_aux_requirement auxiliary_symbols() const;
 
+  //! Return the library name associated with this requirement (e.g. ``libc.so.6``)
   const std::string& name() const;
 
   void version(uint16_t version);
   void name(const std::string& name);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersionRequirement& rhs) const;
   bool operator!=(const SymbolVersionRequirement& rhs) const;
@@ -72,7 +76,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
 
   private:
   symbols_version_aux_requirement_t symbol_version_aux_requirement_;
-  uint16_t    version_;
+  uint16_t    version_ = 0;
   std::string name_;
 };
 

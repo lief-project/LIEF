@@ -30,10 +30,10 @@ Header::Header(const T* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
 
-  this->version_ = static_cast<vdex_version_t>(std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
+  version_ = static_cast<vdex_version_t>(std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
 
 }
 

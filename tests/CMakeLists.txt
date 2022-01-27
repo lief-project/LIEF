@@ -134,7 +134,6 @@ endif()
 add_executable(test_iterators "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
 
 if (MSVC)
-  target_compile_options(test_iterators PUBLIC /FIiso646.h)
   set_property(TARGET test_iterators PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 

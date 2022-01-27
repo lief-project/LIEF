@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <utility>
+
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
@@ -24,20 +26,18 @@ SymbolVersionAux::~SymbolVersionAux() = default;
 SymbolVersionAux& SymbolVersionAux::operator=(const SymbolVersionAux&) = default;
 SymbolVersionAux::SymbolVersionAux(const SymbolVersionAux&) = default;
 
-SymbolVersionAux::SymbolVersionAux() :
-  name_{""}
-{}
+SymbolVersionAux::SymbolVersionAux() = default;
 
-SymbolVersionAux::SymbolVersionAux(const std::string& name) :
-  name_{name}
+SymbolVersionAux::SymbolVersionAux(std::string  name) :
+  name_{std::move(name)}
 {}
 
 const std::string& SymbolVersionAux::name() const {
-  return this->name_;
+  return name_;
 }
 
 void SymbolVersionAux::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void SymbolVersionAux::accept(Visitor& visitor) const {
@@ -51,7 +51,7 @@ bool SymbolVersionAux::operator==(const SymbolVersionAux& rhs) const {
 }
 
 bool SymbolVersionAux::operator!=(const SymbolVersionAux& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

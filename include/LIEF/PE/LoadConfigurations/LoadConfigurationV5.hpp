@@ -25,8 +25,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v5;
+}
 
 //! @brief Load Configuration enhanced with Return Flow Guard
 class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
@@ -35,12 +37,12 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   LoadConfigurationV5();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV5(const load_configuration_v5<T>* header);
+  LIEF_LOCAL LoadConfigurationV5(const details::load_configuration_v5<T>& header);
 
   LoadConfigurationV5& operator=(const LoadConfigurationV5&);
   LoadConfigurationV5(const LoadConfigurationV5&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief VA of the failure routine
   uint64_t guard_rf_failure_routine() const;
@@ -65,12 +67,12 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
 
   virtual ~LoadConfigurationV5();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV5& rhs) const;
   bool operator!=(const LoadConfigurationV5& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint64_t guard_rf_failure_routine_;

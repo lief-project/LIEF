@@ -39,7 +39,7 @@ void PKCS9AtSequenceNumber::accept(Visitor& visitor) const {
 }
 
 std::string PKCS9AtSequenceNumber::print() const {
-  return std::to_string(this->number());
+  return std::to_string(number());
 }
 
 

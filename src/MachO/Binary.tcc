@@ -26,11 +26,11 @@ template<class T>
 bool Binary::has_command() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   const auto it_cmd = std::find_if(
-      std::begin(this->commands_), std::end(this->commands_),
+      std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });
-  return it_cmd != std::end(this->commands_);
+  return it_cmd != std::end(commands_);
 }
 
 template<class T>
@@ -43,12 +43,12 @@ template<class T>
 const T& Binary::command() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   const auto it_cmd = std::find_if(
-      std::begin(this->commands_), std::end(this->commands_),
+      std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });
 
-  if (it_cmd == std::end(this->commands_)) {
+  if (it_cmd == std::end(commands_)) {
     throw not_found("Unable to find the " + std::string(typeid(T).name()));
   }
 
@@ -61,7 +61,7 @@ size_t Binary::count_commands() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
 
   size_t nb_cmd = std::count_if(
-      std::begin(this->commands_), std::end(this->commands_),
+      std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
         return typeid(T) == typeid(*command);
       });
@@ -72,9 +72,9 @@ size_t Binary::count_commands() const {
 template<class T>
 void Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift) {
 
-  SegmentCommand* segment = this->segment_from_virtual_address(relocation.address());
+  SegmentCommand* segment = segment_from_virtual_address(relocation.address());
 
-  const uint64_t relative_offset = this->virtual_address_to_offset(relocation.address()) - segment->file_offset();
+  const uint64_t relative_offset = virtual_address_to_offset(relocation.address()) - segment->file_offset();
   std::vector<uint8_t> segment_content = segment->content();
   const size_t segment_size = segment_content.size();
 
@@ -83,13 +83,13 @@ void Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t sh
     return;
   }
 
-  if (relative_offset >= segment_size or (relative_offset + sizeof(T)) >= segment_size) {
+  if (relative_offset >= segment_size || (relative_offset + sizeof(T)) >= segment_size) {
     LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return;
   }
 
   T* ptr_value = reinterpret_cast<T*>(segment_content.data() + relative_offset);
-  if (*ptr_value >= from and this->is_valid_addr(*ptr_value)) {
+  if (*ptr_value >= from && is_valid_addr(*ptr_value)) {
     *ptr_value += shift;
   }
   segment->content(std::move(segment_content));

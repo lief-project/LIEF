@@ -22,25 +22,28 @@
 
 namespace LIEF {
 namespace PE {
+namespace details {
 struct pe_code_integrity;
+}
+
 class LIEF_API CodeIntegrity : public Object {
   public:
   static constexpr size_t PRINT_WIDTH = 20;
   CodeIntegrity();
-  CodeIntegrity(const pe_code_integrity *header);
+  CodeIntegrity(const details::pe_code_integrity& header);
   virtual ~CodeIntegrity();
 
   CodeIntegrity& operator=(const CodeIntegrity&);
   CodeIntegrity(const CodeIntegrity&);
 
-  //! @brief Flags to indicate if CI information is available, etc.
+  //! Flags to indicate if CI information is available, etc.
   uint16_t flags() const;
 
-  //! @brief 0xFFFF means not available
+  //! 0xFFFF means not available
   uint16_t catalog() const;
   uint32_t catalog_offset() const;
 
-  //! @brief Additional bitmask to be defined later
+  //! Additional bitmask to be defined later
   uint32_t reserved() const;
 
   void flags(uint16_t flags);
@@ -48,7 +51,7 @@ class LIEF_API CodeIntegrity : public Object {
   void catalog_offset(uint32_t catalog_offset);
   void reserved(uint32_t reserved);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const CodeIntegrity& rhs) const;
   bool operator!=(const CodeIntegrity& rhs) const;

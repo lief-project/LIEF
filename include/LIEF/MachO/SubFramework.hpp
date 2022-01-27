@@ -28,19 +28,34 @@ namespace MachO {
 
 class BinaryParser;
 
+namespace details {
 struct sub_framework_command;
+}
 
+//! Class that represents the SubFramework command.
+//! Accodring to the Mach-O ``loader.h`` documentation:
+//!
+//!
+//! > A dynamically linked shared library may be a subframework of an umbrella
+//! > framework.  If so it will be linked with "-umbrella umbrella_name" where
+//! > Where "umbrella_name" is the name of the umbrella framework. A subframework
+//! > can only be linked against by its umbrella framework or other subframeworks
+//! > that are part of the same umbrella framework.  Otherwise the static link
+//! > editor produces an error and states to link against the umbrella framework.
+//! > The name of the umbrella framework for subframeworks is recorded in the
+//! > following structure.
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;
   public:
   SubFramework();
-  SubFramework(const sub_framework_command *cmd);
+  SubFramework(const details::sub_framework_command& cmd);
 
   SubFramework& operator=(const SubFramework& copy);
   SubFramework(const SubFramework& copy);
 
-  virtual SubFramework* clone() const override;
+  SubFramework* clone() const override;
 
+  //! Name of the umbrella framework
   const std::string& umbrella() const;
   void umbrella(const std::string& u);
 
@@ -49,13 +64,12 @@ class LIEF_API SubFramework : public LoadCommand {
   bool operator==(const SubFramework& rhs) const;
   bool operator!=(const SubFramework& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   std::string umbrella_;
-
 };
 
 }

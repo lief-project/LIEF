@@ -39,36 +39,33 @@ ResourceIcon::ResourceIcon() :
   bit_count_{0},
   id_{static_cast<uint32_t>(-1)},
   lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT},
-  pixels_{}
+  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
 {}
 
 
-ResourceIcon::ResourceIcon(const pe_resource_icon_group *header) :
-  width_{header->width},
-  height_{header->height},
-  color_count_{header->color_count},
-  reserved_{header->reserved},
-  planes_{header->planes},
-  bit_count_{header->bit_count},
-  id_{header->ID},
+ResourceIcon::ResourceIcon(const details::pe_resource_icon_group& header) :
+  width_{header.width},
+  height_{header.height},
+  color_count_{header.color_count},
+  reserved_{header.reserved},
+  planes_{header.planes},
+  bit_count_{header.bit_count},
+  id_{header.ID},
   lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT},
-  pixels_{}
+  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
 {}
 
 
-ResourceIcon::ResourceIcon(const pe_icon_header *header) :
-  width_{header->width},
-  height_{header->height},
-  color_count_{header->color_count},
-  reserved_{header->reserved},
-  planes_{header->planes},
-  bit_count_{header->bit_count},
+ResourceIcon::ResourceIcon(const details::pe_icon_header& header) :
+  width_{header.width},
+  height_{header.height},
+  color_count_{header.color_count},
+  reserved_{header.reserved},
+  planes_{header.planes},
+  bit_count_{header.bit_count},
   id_{static_cast<uint32_t>(-1)},
   lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT},
-  pixels_{}
+  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
 {}
 
 
@@ -91,130 +88,130 @@ ResourceIcon::ResourceIcon(const std::string& iconpath) {
     throw LIEF::bad_file("Unable to open " + iconpath); // XXX: Not exception within a ctor
   }
 
-  const pe_icon_header* icon_header = reinterpret_cast<const pe_icon_header*>(raw.data() + sizeof(pe_resource_icon_dir));
-  new (this) ResourceIcon{icon_header};
+  const auto* icon_header = reinterpret_cast<const details::pe_icon_header*>(raw.data() + sizeof(details::pe_resource_icon_dir));
+  new (this) ResourceIcon{*icon_header};
 
-  this->pixels_ = {std::begin(raw) + icon_header->offset, std::begin(raw) + icon_header->offset + icon_header->size};
+  pixels_ = {std::begin(raw) + icon_header->offset, std::begin(raw) + icon_header->offset + icon_header->size};
 }
 
 uint32_t ResourceIcon::id() const {
-  return this->id_;
+  return id_;
 }
 
 RESOURCE_LANGS ResourceIcon::lang() const {
-  return this->lang_;
+  return lang_;
 }
 
 RESOURCE_SUBLANGS ResourceIcon::sublang() const {
-  return this->sublang_;
+  return sublang_;
 }
 
 uint8_t ResourceIcon::width() const {
-  return this->width_;
+  return width_;
 }
 
 uint8_t ResourceIcon::height() const {
-  return this->height_;
+  return height_;
 }
 
 uint8_t ResourceIcon::color_count() const {
-  return this->color_count_;
+  return color_count_;
 }
 
 uint8_t ResourceIcon::reserved() const {
-  return this->reserved_;
+  return reserved_;
 }
 
 uint16_t ResourceIcon::planes() const {
-  return this->planes_;
+  return planes_;
 }
 
 uint16_t ResourceIcon::bit_count() const {
-  return this->bit_count_;
+  return bit_count_;
 }
 
 uint32_t ResourceIcon::size() const {
-  return this->pixels_.size();
+  return pixels_.size();
 }
 
 const std::vector<uint8_t>& ResourceIcon::pixels() const {
-  return this->pixels_;
+  return pixels_;
 }
 
 void ResourceIcon::id(uint32_t id) {
-  this->id_ = id;
+  id_ = id;
 }
 
 void ResourceIcon::lang(RESOURCE_LANGS lang) {
-  this->lang_ = lang;
+  lang_ = lang;
 }
 
 void ResourceIcon::sublang(RESOURCE_SUBLANGS sublang) {
-  this->sublang_ = sublang;
+  sublang_ = sublang;
 }
 
 void ResourceIcon::width(uint8_t width) {
-  this->width_ = width;
+  width_ = width;
 }
 
 void ResourceIcon::height(uint8_t height) {
-  this->height_ = height;
+  height_ = height;
 }
 
 void ResourceIcon::color_count(uint8_t color_count) {
-  this->color_count_ = color_count;
+  color_count_ = color_count;
 }
 
 void ResourceIcon::reserved(uint8_t reserved) {
-  this->reserved_ = reserved;
+  reserved_ = reserved;
 }
 
 void ResourceIcon::planes(uint16_t planes) {
-  this->planes_ = planes;
+  planes_ = planes;
 }
 
 void ResourceIcon::bit_count(uint16_t bit_count) {
-  this->bit_count_ = bit_count;
+  bit_count_ = bit_count;
 }
 
 void ResourceIcon::pixels(const std::vector<uint8_t>& pixels) {
-  this->pixels_ = pixels;
+  pixels_ = pixels;
 }
 
 
 void ResourceIcon::save(const std::string& filename) const {
-  std::vector<uint8_t> icon(sizeof(pe_resource_icon_dir) + sizeof(pe_icon_header) + this->pixels_.size(), 0);
-  pe_resource_icon_dir dir_header;
+  std::vector<uint8_t> icon(sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header) + pixels_.size(), 0);
+  details::pe_resource_icon_dir dir_header;
   dir_header.reserved = 0;
   dir_header.type     = 1;
   dir_header.count    = 1;
 
-  pe_icon_header icon_header;
-  icon_header.width       = static_cast<uint8_t>(this->width());
-  icon_header.height      = static_cast<uint8_t>(this->height());
-  icon_header.color_count = static_cast<uint8_t>(this->color_count());
-  icon_header.reserved    = static_cast<uint8_t>(this->reserved());
-  icon_header.planes      = static_cast<uint16_t>(this->planes());
-  icon_header.bit_count   = static_cast<uint16_t>(this->bit_count());
-  icon_header.size        = static_cast<uint32_t>(this->size());
-  icon_header.offset      = sizeof(pe_resource_icon_dir) + sizeof(pe_icon_header);
+  details::pe_icon_header icon_header;
+  icon_header.width       = static_cast<uint8_t>(width());
+  icon_header.height      = static_cast<uint8_t>(height());
+  icon_header.color_count = static_cast<uint8_t>(color_count());
+  icon_header.reserved    = static_cast<uint8_t>(reserved());
+  icon_header.planes      = static_cast<uint16_t>(planes());
+  icon_header.bit_count   = static_cast<uint16_t>(bit_count());
+  icon_header.size        = static_cast<uint32_t>(size());
+  icon_header.offset      = sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header);
 
   const std::vector<uint8_t>& pixels = this->pixels();
 
   std::copy(
       reinterpret_cast<const uint8_t*>(&dir_header),
-      reinterpret_cast<const uint8_t*>(&dir_header) + sizeof(pe_resource_icon_dir),
+      reinterpret_cast<const uint8_t*>(&dir_header) + sizeof(details::pe_resource_icon_dir),
       icon.data());
 
   std::copy(
       reinterpret_cast<const uint8_t*>(&icon_header),
-      reinterpret_cast<const uint8_t*>(&icon_header) + sizeof(pe_icon_header),
-      icon.data() + sizeof(pe_resource_icon_dir));
+      reinterpret_cast<const uint8_t*>(&icon_header) + sizeof(details::pe_icon_header),
+      icon.data() + sizeof(details::pe_resource_icon_dir));
 
   std::copy(
       std::begin(pixels),
       std::end(pixels),
-      icon.data() + sizeof(pe_resource_icon_dir) + sizeof(pe_icon_header));
+      icon.data() + sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header));
 
 
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
@@ -237,7 +234,7 @@ bool ResourceIcon::operator==(const ResourceIcon& rhs) const {
 }
 
 bool ResourceIcon::operator!=(const ResourceIcon& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

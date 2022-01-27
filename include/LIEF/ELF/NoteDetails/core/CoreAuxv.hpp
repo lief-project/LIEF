@@ -45,7 +45,7 @@ class LIEF_API CoreAuxv : public NoteDetails {
   public:
   static CoreAuxv make(Note& note);
 
-  virtual CoreAuxv* clone() const override;
+  CoreAuxv* clone() const override;
 
   //! Auxiliary values
   const val_context_t& values() const;
@@ -67,9 +67,9 @@ class LIEF_API CoreAuxv : public NoteDetails {
 
   uint64_t& operator[](AUX_TYPE atype);
 
-  virtual void dump(std::ostream& os) const override;
+  void dump(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~CoreAuxv();
 
@@ -82,8 +82,8 @@ class LIEF_API CoreAuxv : public NoteDetails {
   template <typename ELF_T>
   LIEF_LOCAL void build_();
 
-  virtual void parse() override;
-  virtual void build() override;
+  void parse() override;
+  void build() override;
 
   private:
   CoreAuxv(Note& note);

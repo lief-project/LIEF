@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
   try {
     file = std::unique_ptr<const File>{LIEF::VDEX::Parser::parse(argv[1])};
-    for (auto&& f : file->dex_files()) {
+    for (auto& f : file->dex_files()) {
       std::cout << f.location() << std::endl;
     }
   } catch (const LIEF::exception& e) {

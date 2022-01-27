@@ -25,10 +25,10 @@ namespace MachO {
 
 FilesetCommand::FilesetCommand() = default;
 
-FilesetCommand::FilesetCommand(const fileset_entry_command *command) :
-  LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, command->cmdsize},
-  virtual_address_{command->vmaddr},
-  file_offset_{command->fileoff}
+FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd) :
+  LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, cmd.cmdsize},
+  virtual_address_{cmd.vmaddr},
+  file_offset_{cmd.fileoff}
 {}
 
 FilesetCommand::FilesetCommand(const std::string& name) :
@@ -38,7 +38,7 @@ FilesetCommand::FilesetCommand(const std::string& name) :
 }
 
 FilesetCommand& FilesetCommand::operator=(FilesetCommand other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
@@ -54,8 +54,8 @@ FilesetCommand::~FilesetCommand() = default;
 void FilesetCommand::swap(FilesetCommand& other) {
   LoadCommand::swap(other);
 
-  std::swap(this->virtual_address_, other.virtual_address_);
-  std::swap(this->file_offset_,     other.file_offset_);
+  std::swap(virtual_address_, other.virtual_address_);
+  std::swap(file_offset_,     other.file_offset_);
 }
 
 FilesetCommand* FilesetCommand::clone() const {
@@ -63,27 +63,27 @@ FilesetCommand* FilesetCommand::clone() const {
 }
 
 const std::string& FilesetCommand::name() const {
-  return this->name_;
+  return name_;
 }
 
 uint64_t FilesetCommand::virtual_address() const {
-  return this->virtual_address_;
+  return virtual_address_;
 }
 
 uint64_t FilesetCommand::file_offset() const {
-  return this->file_offset_;
+  return file_offset_;
 }
 
 void FilesetCommand::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void FilesetCommand::virtual_address(uint64_t virtual_address) {
-  this->virtual_address_ = virtual_address;
+  virtual_address_ = virtual_address;
 }
 
 void FilesetCommand::file_offset(uint64_t file_offset) {
-  this->file_offset_ = file_offset;
+  file_offset_ = file_offset;
 }
 
 std::ostream& FilesetCommand::print(std::ostream& os) const {
@@ -91,9 +91,9 @@ std::ostream& FilesetCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
-     << std::setw(15) << this->name()
-     << std::setw(15) << this->virtual_address()
-     << std::setw(15) << this->file_offset()
+     << std::setw(15) << name()
+     << std::setw(15) << virtual_address()
+     << std::setw(15) << file_offset()
      << std::endl;
   return os;
 }
@@ -105,7 +105,7 @@ bool FilesetCommand::operator==(const FilesetCommand& rhs) const {
 }
 
 bool FilesetCommand::operator!=(const FilesetCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 }

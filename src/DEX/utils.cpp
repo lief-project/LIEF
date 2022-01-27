@@ -55,7 +55,7 @@ bool is_dex(const std::vector<uint8_t>& raw) {
 }
 
 dex_version_t version(const std::string& file) {
-  if (not is_dex(file)) {
+  if (!is_dex(file)) {
     return 0;
   }
 

@@ -74,9 +74,6 @@ foreach(example ${LIEF_CPP_EXAMPLES})
 
   # Don't use default include dir
   set_property(TARGET "${output_name}" PROPERTY INCLUDE_DIRECTORIES "")
-  if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options("${output_name}" PUBLIC /FIiso646.h)
-  endif()
 
   if (MSVC)
     set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)

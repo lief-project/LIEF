@@ -25,30 +25,21 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionRequirement::SymbolVersionRequirement() :
-  symbol_version_aux_requirement_{},
-  version_{0},
-  name_{""}
-{}
-
+SymbolVersionRequirement::SymbolVersionRequirement() = default;
 
 SymbolVersionRequirement::~SymbolVersionRequirement() {
-  for (SymbolVersionAuxRequirement* svar : this->symbol_version_aux_requirement_) {
+  for (SymbolVersionAuxRequirement* svar : symbol_version_aux_requirement_) {
     delete svar;
   }
 }
 
 
-SymbolVersionRequirement::SymbolVersionRequirement(const Elf64_Verneed *header) :
-  symbol_version_aux_requirement_{},
-  version_{header->vn_version},
-  name_{""}
+SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed& header) :
+  version_{header.vn_version}
 {}
 
-SymbolVersionRequirement::SymbolVersionRequirement(const Elf32_Verneed *header)  :
-  symbol_version_aux_requirement_{},
-  version_{header->vn_version},
-  name_{""}
+SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf32_Verneed& header)  :
+  version_{header.vn_version}
 {}
 
 
@@ -59,55 +50,55 @@ SymbolVersionRequirement::SymbolVersionRequirement(const SymbolVersionRequiremen
 {
   symbol_version_aux_requirement_.reserve(other.symbol_version_aux_requirement_.size());
   for (const SymbolVersionAuxRequirement* aux : other.symbol_version_aux_requirement_) {
-    this->symbol_version_aux_requirement_.push_back(new SymbolVersionAuxRequirement{*aux});
+    symbol_version_aux_requirement_.push_back(new SymbolVersionAuxRequirement{*aux});
   }
 }
 
 
 SymbolVersionRequirement& SymbolVersionRequirement::operator=(SymbolVersionRequirement other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 void SymbolVersionRequirement::swap(SymbolVersionRequirement& other) {
-  std::swap(this->symbol_version_aux_requirement_, other.symbol_version_aux_requirement_);
-  std::swap(this->version_,                        other.version_);
-  std::swap(this->name_,                           other.name_);
+  std::swap(symbol_version_aux_requirement_, other.symbol_version_aux_requirement_);
+  std::swap(version_,                        other.version_);
+  std::swap(name_,                           other.name_);
 }
 
 
 uint16_t SymbolVersionRequirement::version() const {
-  return this->version_;
+  return version_;
 }
 
 
 uint32_t SymbolVersionRequirement::cnt() const {
-  return static_cast<uint32_t>(this->symbol_version_aux_requirement_.size());
+  return static_cast<uint32_t>(symbol_version_aux_requirement_.size());
 }
 
 
 it_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
-  return this->symbol_version_aux_requirement_;
+  return symbol_version_aux_requirement_;
 }
 
 
 it_const_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
-  return this->symbol_version_aux_requirement_;
+  return symbol_version_aux_requirement_;
 }
 
 
 const std::string& SymbolVersionRequirement::name() const {
-  return this->name_;
+  return name_;
 }
 
 
 void SymbolVersionRequirement::version(uint16_t version) {
-  this->version_ = version;
+  version_ = version;
 }
 
 
 void SymbolVersionRequirement::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
@@ -122,7 +113,7 @@ bool SymbolVersionRequirement::operator==(const SymbolVersionRequirement& rhs) c
 }
 
 bool SymbolVersionRequirement::operator!=(const SymbolVersionRequirement& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

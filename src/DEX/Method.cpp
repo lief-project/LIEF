@@ -22,6 +22,7 @@
 #include "LIEF/DEX/EnumToString.hpp"
 
 #include <numeric>
+#include <utility>
 
 
 namespace LIEF {
@@ -30,49 +31,35 @@ namespace DEX {
 Method::Method(const Method&) = default;
 Method& Method::operator=(const Method&) = default;
 
-Method::Method() :
-  name_{},
-  parent_{nullptr},
-  access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
-  original_index_{-1u},
-  code_offset_{0},
-  bytecode_{},
-  code_info_{},
-  dex2dex_info_{}
-{}
+Method::Method() = default;
 
-Method::Method(const std::string& name, Class* parent) :
-  name_{name},
-  parent_{parent},
-  access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
-  original_index_{-1u},
-  code_offset_{0},
-  bytecode_{},
-  code_info_{},
-  dex2dex_info_{}
+
+Method::Method(std::string name, Class* parent) :
+  name_{std::move(name)},
+  parent_{parent}
 {}
 
 const std::string& Method::name() const {
-  return this->name_;
+  return name_;
 }
 
 uint64_t Method::code_offset() const {
-  return this->code_offset_;
+  return code_offset_;
 }
 
 const Method::bytecode_t& Method::bytecode() const {
-  return this->bytecode_;
+  return bytecode_;
 }
 
 bool Method::has_class() const {
-  return this->parent_ != nullptr;
+  return parent_ != nullptr;
 }
 
 const Class& Method::cls() const {
-  if (not this->has_class()) {
-    throw not_found("Can't find class associated with " + this->name());
+  if (!has_class()) {
+    throw not_found("Can't find class associated with " + name());
   }
-  return *this->parent_;
+  return *parent_;
 }
 
 Class& Method::cls() {
@@ -80,28 +67,28 @@ Class& Method::cls() {
 }
 
 size_t Method::index() const {
-  return this->original_index_;
+  return original_index_;
 }
 
 void Method::insert_dex2dex_info(uint32_t pc, uint32_t index) {
-  this->dex2dex_info_.emplace(pc, index);
+  dex2dex_info_.emplace(pc, index);
 }
 
 const dex2dex_method_info_t& Method::dex2dex_info() const {
-  return this->dex2dex_info_;
+  return dex2dex_info_;
 }
 
 bool Method::is_virtual() const {
-  return this->is_virtual_;
+  return is_virtual_;
 }
 
 void Method::set_virtual(bool v) {
-  this->is_virtual_ = v;
+  is_virtual_ = v;
 }
 
 
 bool Method::has(ACCESS_FLAGS f) const {
-  return (this->access_flags_ & f);
+  return (access_flags_ & f) != 0u;
 }
 
 Method::access_flags_list_t Method::access_flags() const {
@@ -111,15 +98,15 @@ Method::access_flags_list_t Method::access_flags() const {
       std::begin(access_flags_list),
       std::end(access_flags_list),
       std::back_inserter(flags),
-      std::bind(static_cast<bool (Method::*)(ACCESS_FLAGS) const>(&Method::has), this, std::placeholders::_1));
+      [this] (ACCESS_FLAGS f) { return has(f); });
 
   return flags;
 
 }
 
 const Prototype& Method::prototype() const {
-  CHECK(this->prototype_ != nullptr, "Prototype is null!");
-  return *this->prototype_;
+  CHECK(prototype_ != nullptr, "Prototype is null!");
+  return *prototype_;
 }
 
 Prototype& Method::prototype() {
@@ -137,13 +124,13 @@ bool Method::operator==(const Method& rhs) const {
 }
 
 bool Method::operator!=(const Method& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Method& method) {
   Prototype::it_const_params ps = method.prototype().parameters_type();
   std::string pretty_cls_name = method.cls().fullname();
-  if (not pretty_cls_name.empty()) {
+  if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
     std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/', '.');
   }
@@ -159,7 +146,7 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
         return l.empty() ? str : l + " " + str;
       });
 
-  if (not flags_str.empty()) {
+  if (!flags_str.empty()) {
     os << flags_str << " ";
   }
   os << method.prototype().return_type()

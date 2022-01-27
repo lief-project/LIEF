@@ -137,6 +137,7 @@ class TestAddContent(TestCase):
 
     def tearDown(self):
         # Delete it
+        return
         if os.path.isdir(self.tmp_dir):
             shutil.rmtree(self.tmp_dir)
 

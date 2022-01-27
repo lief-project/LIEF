@@ -81,10 +81,10 @@ class LIEF_API CorePrStatus : public NoteDetails {
   public:
   static CorePrStatus make(Note& note);
 
-  virtual CorePrStatus* clone() const override;
+  CorePrStatus* clone() const override;
 
   //! Info associated with the signal
-  const Elf_siginfo& siginfo() const;
+  const details::Elf_siginfo& siginfo() const;
 
   //! Current Signal
   uint16_t current_sig() const;
@@ -108,16 +108,16 @@ class LIEF_API CorePrStatus : public NoteDetails {
   int32_t sid() const;
 
   //! User time
-  Elf64_timeval utime() const;
+  details::Elf64_timeval utime() const;
 
   //! System time
-  Elf64_timeval stime() const;
+  details::Elf64_timeval stime() const;
 
   //! Cumulative user time
-  Elf64_timeval cutime() const;
+  details::Elf64_timeval cutime() const;
 
   //! Cumulative system time
-  Elf64_timeval cstime() const;
+  details::Elf64_timeval cstime() const;
 
   //! GP registers state
   const reg_context_t& reg_context() const;
@@ -136,7 +136,7 @@ class LIEF_API CorePrStatus : public NoteDetails {
   //! Check if the given register is present in the info
   bool has(REGISTERS reg) const;
 
-  void siginfo(const Elf_siginfo& siginfo);
+  void siginfo(const details::Elf_siginfo& siginfo);
   void current_sig(uint16_t current_sig);
 
   void sigpend(uint64_t sigpend);
@@ -147,10 +147,10 @@ class LIEF_API CorePrStatus : public NoteDetails {
   void pgrp(int32_t pgrp);
   void sid(int32_t sid);
 
-  void utime(Elf64_timeval utime);
-  void stime(Elf64_timeval stime);
-  void cutime(Elf64_timeval cutime);
-  void cstime(Elf64_timeval cstime);
+  void utime(details::Elf64_timeval utime);
+  void stime(details::Elf64_timeval stime);
+  void cutime(details::Elf64_timeval cutime);
+  void cstime(details::Elf64_timeval cstime);
 
   void reg_context(const reg_context_t& ctx);
 
@@ -161,12 +161,12 @@ class LIEF_API CorePrStatus : public NoteDetails {
 
   uint64_t& operator[](REGISTERS reg);
 
-  virtual void dump(std::ostream& os) const override;
-  static std::ostream& dump(std::ostream& os, const Elf64_timeval& time);
-  static std::ostream& dump(std::ostream& os, const Elf_siginfo& siginfo);
+  void dump(std::ostream& os) const override;
+  static std::ostream& dump(std::ostream& os, const details::Elf64_timeval& time);
+  static std::ostream& dump(std::ostream& os, const details::Elf_siginfo& siginfo);
   static std::ostream& dump(std::ostream& os, const reg_context_t& ctx);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~CorePrStatus();
 
@@ -179,15 +179,15 @@ class LIEF_API CorePrStatus : public NoteDetails {
   template <typename ELF_T>
   LIEF_LOCAL void build_();
 
-  virtual void parse() override;
-  virtual void build() override;
+  void parse() override;
+  void build() override;
 
   private:
   CorePrStatus(Note& note);
 
   std::pair<size_t, size_t> reg_enum_range() const;
 
-  Elf_siginfo siginfo_;
+  details::Elf_siginfo siginfo_;
   uint16_t    cursig_;
 
   uint64_t    sigpend_;
@@ -198,10 +198,10 @@ class LIEF_API CorePrStatus : public NoteDetails {
   int32_t    pgrp_;
   int32_t    sid_;
 
-  Elf64_timeval utime_;
-  Elf64_timeval stime_;
-  Elf64_timeval cutime_;
-  Elf64_timeval cstime_;
+  details::Elf64_timeval utime_;
+  details::Elf64_timeval stime_;
+  details::Elf64_timeval cutime_;
+  details::Elf64_timeval cstime_;
 
   reg_context_t ctx_;
 };

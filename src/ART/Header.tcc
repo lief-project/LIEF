@@ -49,14 +49,14 @@ Header::Header(const ART_17::header* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
   if (std::all_of(
         header->version,
         header->version + sizeof(header->version) - 1,
         ::isdigit))
   {
-    this->version_ = static_cast<uint32_t>(
+    version_ = static_cast<uint32_t>(
         std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
   }
 
@@ -90,18 +90,18 @@ Header::Header(const T* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
   if (std::all_of(
         header->version,
         header->version + sizeof(header->version) - 1,
         ::isdigit))
   {
-    this->version_ = static_cast<uint32_t>(
+    version_ = static_cast<uint32_t>(
         std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
   }
 
-  LIEF_DEBUG("{}", to_string(this->storage_mode_));
+  LIEF_DEBUG("{}", to_string(storage_mode_));
 
 }
 

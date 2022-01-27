@@ -37,7 +37,14 @@ using no_const_func = T (Binary::*)(P);
 
 template<>
 void create<Binary>(py::module& m) {
-  py::class_<Binary, Object> pybinary(m, "Binary");
+  py::class_<Binary, Object> pybinary(m, "Binary",
+      R"delim(
+      File format abstract representation.
+
+      This object represents the abstraction of an executable file format.
+      It enables to access common features (like the :attr:`~lief.Binary.entrypoint`) regardless
+      of the concrete format (e.g. :attr:`lief.ELF.Binary.entrypoint`)
+      )delim");
 
   py::enum_<Binary::VA_TYPES>(pybinary, "VA_TYPES")
     .value(PY_ENUM(Binary::VA_TYPES::AUTO))
@@ -55,7 +62,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("has_nx",
         &Binary::has_nx,
-        "Check if the binary uses ``NX`` protection")
+        "Check if the binary has ``NX`` protection (non executable stack)")
 
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&Binary::name),
@@ -64,7 +71,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("header",
         &Binary::header,
-        "Binary's header")
+        "Binary's abstract header (" RST_CLASS_REF(lief.Header) ")")
 
     .def_property_readonly("entrypoint",
         &Binary::entrypoint,
@@ -77,7 +84,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("sections",
         static_cast<it_t<it_sections>>(&Binary::sections),
-        "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Section) "",
+        "Return an iterator over the binary's abstract sections (" RST_CLASS_REF(lief.Section) ")",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("relocations",
@@ -87,11 +94,11 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("exported_functions",
         &Binary::exported_functions,
-        "Return binary's exported " RST_CLASS_REF(lief.Function) "")
+        "Return the binary's exported " RST_CLASS_REF(lief.Function) "")
 
     .def_property_readonly("imported_functions",
         &Binary::imported_functions,
-        "Return binary's imported " RST_CLASS_REF(lief.Function) " (name)")
+        "Return the binary's imported " RST_CLASS_REF(lief.Function) " (name)")
 
     .def_property_readonly("libraries",
         [] (const Binary& binary) {
@@ -109,7 +116,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("symbols",
         static_cast<it_t<it_symbols>>(&Binary::symbols),
-        "Return a list in **read only** of binary's abstract " RST_CLASS_REF(lief.Symbol) "",
+        "Return an iterator over the binary's abstract " RST_CLASS_REF(lief.Symbol) "",
         py::return_value_policy::reference_internal)
 
     .def("has_symbol",
@@ -119,7 +126,7 @@ void create<Binary>(py::module& m) {
 
     .def("get_symbol",
         static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
-        "Return the " RST_CLASS_REF(lief.Symbol) " with the given ``name``",
+        "Return the " RST_CLASS_REF(lief.Symbol) " from the given ``name``",
         "symbol_name"_a,
         py::return_value_policy::reference_internal)
 
@@ -130,27 +137,36 @@ void create<Binary>(py::module& m) {
 
     .def("patch_address",
         static_cast<void (Binary::*) (uint64_t, const std::vector<uint8_t>&, Binary::VA_TYPES)>(&Binary::patch_address),
-        "Patch the address with the given value",
-        "Virtual address is specified in the first argument and the content in the second (as a list of bytes).\n"
-        "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
+        R"delim(
+        Patch the address with the given list of bytes.
+        The virtual address is specified in the first argument and the content in the second (as a list of bytes).
+
+        If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
+        a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
+        )delim",
         "address"_a, "patch_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("patch_address",
         static_cast<void (Binary::*) (uint64_t, uint64_t, size_t, Binary::VA_TYPES)>(&Binary::patch_address),
-        "Patch the address with the given value",
-        "Virtual address is specified in the first argument, integer in the second and sizeof the integer in third one.\n"
-        "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
+        R"delim(
+        Patch the address with the given integer value.
+        The virtual address is specified in the first argument, the integer in the second and the integer's size of in third one.
+
+        If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
+        a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
+        )delim",
         "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
 
 
    .def("get_content_from_virtual_address",
         &Binary::get_content_from_virtual_address,
-        "Return the content located at virtual address.\n\n"
-        "Virtual address is specified in the first argument and size to read (in bytes) in the second.\n"
-        "If the underlying binary is a PE, one can specify if the virtual address is a " RST_ATTR_REF(lief.Binary.VA_TYPES.RVA) ""
-        " or a " RST_ATTR_REF(lief.Binary.VA_TYPES.VA) ". By default it is set to " RST_ATTR_REF(lief.Binary.VA_TYPES.AUTO) "",
+        R"delim(
+        Return the content located at the provided virtual address.
+        The virtual address is specified in the first argument and size to read (in bytes) in the second.
+
+        If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
+        a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
+        )delim",
         "virtual_address"_a, "size"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def_property_readonly("abstract",
@@ -158,11 +174,16 @@ void create<Binary>(py::module& m) {
           self.attr("__class__") = m.attr("Binary");
           return self;
         },
-        "Return the " RST_CLASS_REF(lief.Binary) " object\n\n"
-        ".. warning::\n\n"
-        "\tGetting this property modifies the ``__class__`` attribute so that "
-        "the current binary looks like a " RST_CLASS_REF(lief.Binary) ".\n\n"
-        "\tUse the " RST_ATTR_REF(lief.Binary.concrete) " to get back to the original binary.",
+        R"delim(
+        Return the abstract representation of the current binary (:class:`lief.Binary`)
+
+        .. warning::
+
+          Getting this property modifies the ``__class__`` attribute such as
+          the current binary looks like a :class:`lief.Binary`.
+
+          To get back to the original binary, one needs to access :attr:`lief.Binary.concrete`
+        )delim",
         py::return_value_policy::reference)
 
 
@@ -171,13 +192,17 @@ void create<Binary>(py::module& m) {
           self.attr("__class__") = py::cast(self.cast<Binary*>()).attr("__class__");
           return self;
         },
-        "Return either " RST_CLASS_REF_FULL(lief.ELF.Binary) ", " RST_CLASS_REF_FULL(lief.PE.Binary) ", " RST_CLASS_REF_FULL(lief.MachO.Binary) " object\n\n"
-        "",
+        R"delim(
+        The *concrete* representation of the binary. Basically, this property cast a :class:`lief.Binary`
+        into a :class:`lief.PE.Binary`, :class:`lief.ELF.Binary` or :class:`lief.MachO.Binary`.
+
+        See also: :attr:`lief.Binary.abstract`
+        )delim",
         py::return_value_policy::reference)
 
     .def_property_readonly("ctor_functions",
         &Binary::ctor_functions,
-        "Constructor functions that are called prior any other functions")
+        "Constructor functions that are called prior to any other functions")
 
     .def("xref",
         &Binary::xref,

@@ -31,8 +31,8 @@ namespace py = pybind11;
 void init_LIEF_iterators(py::module&);
 
 template<class T>
-void init_ref_iterator(py::module& m, const std::string& it_name = typeid(T).name()) {
-  py::class_<T>(m, it_name.c_str())
+void init_ref_iterator(py::module& m, const char* it_name) {
+  py::class_<T>(m, it_name)
     .def("__getitem__",
         [](T& v, size_t i) -> typename T::reference {
             if (i >= v.size())

@@ -25,7 +25,8 @@ namespace ELF {
 class Parser;
 class SymbolVersionAux;
 
-//! @brief Class which modelization of an entry defined in ``DT_VERSYM``
+//! Class which represents an entry defined in the ``DT_VERSYM``
+//! dynamic entry
 class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
@@ -61,7 +62,7 @@ class LIEF_API SymbolVersion : public Object {
 
   void value(uint16_t v);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersion& rhs) const;
   bool operator!=(const SymbolVersion& rhs) const;

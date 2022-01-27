@@ -59,11 +59,11 @@ void create<Header>(py::module& m) {
 
     .def_property_readonly("is_32",
         &Header::is_32,
-        "``True`` if the binary target a ``32-bits`` architecture")
+        "``True`` if the binary targets a ``32-bits`` architecture")
 
     .def_property_readonly("is_64",
         &Header::is_64,
-        "``True`` if the binary target a ``64-bits`` architecture")
+        "``True`` if the binary targets a ``64-bits`` architecture")
 
 
     .def("__str__",

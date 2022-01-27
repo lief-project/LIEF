@@ -25,7 +25,9 @@ namespace ELF {
 template<>
 void create<Builder>(py::module& m) {
   py::class_<Builder> builder(m, "Builder",
-                              "Class that handles the transformation of a LIEF ELF object into a raw ELF file");
+      R"delim(
+      Class which takes an :class:`lief.ELF.Binary` object and reconstructs a valid binary
+      )delim");
 
   py::class_<Builder::config_t>(builder, "config_t",
                                 "Interface to tweak the " RST_CLASS_REF(lief.ELF.Builder) "")
@@ -40,10 +42,15 @@ void create<Builder>(py::module& m) {
 
     .def("build",
         static_cast<void (Builder::*)(void)>(&Builder::build),
-        "Perform the build process")
+        "Perform the build of the provided ELF binary")
 
-    .def("set_config", &Builder::set_config)
-    .def("force_relocations", &Builder::force_relocations,
+    .def("set_config",
+        &Builder::set_config,
+        "Tweak the ELF builder with the provided config parameter")
+
+    .def("force_relocations",
+        &Builder::force_relocations,
+        "Force relocating all the ELF characteristics supported by LIEF"
         "flag"_a = true,
         py::return_value_policy::reference_internal)
 

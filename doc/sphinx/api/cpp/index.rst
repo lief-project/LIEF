@@ -3,6 +3,8 @@
 C++
 ===
 
+The original Doxygen documentation is also available `here <../../doxygen/>`_
+
 .. toctree::
   :maxdepth: 2
 

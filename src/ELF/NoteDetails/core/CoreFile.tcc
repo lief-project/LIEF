@@ -32,24 +32,24 @@ void CoreFile::parse_() {
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 
-  const VectorStream& stream(this->description());
-  if (not stream.can_read<Elf_Addr>(0)) {
+  const VectorStream& stream(description());
+  if (!stream.can_read<Elf_Addr>(0)) {
     return;
   }
   const Elf_Addr count = stream.read_conv<Elf_Addr>();
-  if (count == 0 or not stream.can_read<Elf_Addr>()) {
+  if (count == 0 || !stream.can_read<Elf_Addr>()) {
     return;
   }
-  this->page_size_ = static_cast<uint64_t>(stream.read_conv<Elf_Addr>());
+  page_size_ = static_cast<uint64_t>(stream.read_conv<Elf_Addr>());
   for (uint32_t idx = 0; idx < count; idx++) {
-    if (not stream.can_read<Elf_FileEntry>()) {
+    if (!stream.can_read<Elf_FileEntry>()) {
       break;
     }
     const Elf_FileEntry entry = stream.read_conv<Elf_FileEntry>();
-    this->files_.push_back({entry.start, entry.end, entry.file_ofs, {}});
+    files_.push_back({entry.start, entry.end, entry.file_ofs, {}});
   }
   for (uint32_t idx = 0; idx < count; idx++) {
-    this->files_[idx].path = stream.read_string();
+    files_[idx].path = stream.read_string();
   }
 }
 
@@ -58,18 +58,18 @@ void CoreFile::build_() {
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 
-  Note::description_t& description = this->description();
+  Note::description_t& desc = description();
 
-  Elf_Addr count = static_cast<Elf_Addr>(this->count());
-  Elf_Addr page_size = static_cast<Elf_Addr>(this->page_size_);
+  auto cnt = static_cast<Elf_Addr>(count());
+  Elf_Addr page_size = static_cast<Elf_Addr>(page_size_);
 
   vector_iostream raw_output;
-  size_t desc_part_size = sizeof(Elf_Addr) * 2 + count * sizeof(Elf_FileEntry);
+  size_t desc_part_size = sizeof(Elf_Addr) * 2 + cnt * sizeof(Elf_FileEntry);
   raw_output.reserve(desc_part_size);
 
-  raw_output.write_conv<Elf_Addr>(count);
+  raw_output.write_conv<Elf_Addr>(cnt);
   raw_output.write_conv<Elf_Addr>(page_size);
-  for (const CoreFileEntry& entry: this->files_) {
+  for (const CoreFileEntry& entry: files_) {
     const Elf_FileEntry raw_entry = {
       static_cast<Elf_Addr>(entry.start),
       static_cast<Elf_Addr>(entry.end),
@@ -77,10 +77,10 @@ void CoreFile::build_() {
     };
     raw_output.write_conv<Elf_FileEntry>(raw_entry);
   }
-  for (const CoreFileEntry& entry: this->files_) {
+  for (const CoreFileEntry& entry: files_) {
     raw_output.write(entry.path);
   }
-  description = std::move(raw_output.raw());
+  desc = std::move(raw_output.raw());
 }
 
 } // namespace ELF

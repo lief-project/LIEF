@@ -49,12 +49,12 @@ class MemoryStream : public BinaryStream {
     return this->binary_;
   }
 
-  virtual uint64_t size() const override;
+  uint64_t size() const override;
   virtual ~MemoryStream();
 
 
   protected:
-  virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
+  const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
   uintptr_t baseaddr_ = 0;
   uint64_t size_ = 0;
   Binary* binary_ = nullptr;

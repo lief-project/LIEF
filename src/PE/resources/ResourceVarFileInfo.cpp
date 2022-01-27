@@ -35,29 +35,28 @@ ResourceVarFileInfo::~ResourceVarFileInfo() = default;
 
 ResourceVarFileInfo::ResourceVarFileInfo() :
   type_{0},
-  key_{u8tou16("VarFileInfo")},
-  translations_{}
+  key_{u8tou16("VarFileInfo")}
 {}
 
 
 uint16_t ResourceVarFileInfo::type() const {
-  return this->type_;
+  return type_;
 }
 
 const std::u16string& ResourceVarFileInfo::key() const {
-  return this->key_;
+  return key_;
 }
 
 const std::vector<uint32_t>& ResourceVarFileInfo::translations() const {
-  return this->translations_;
+  return translations_;
 }
 
 void ResourceVarFileInfo::type(uint16_t type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 void ResourceVarFileInfo::key(const std::u16string& key) {
-  this->key_ = key;
+  key_ = key;
 }
 
 void ResourceVarFileInfo::key(const std::string& key) {
@@ -69,7 +68,7 @@ std::vector<uint32_t>& ResourceVarFileInfo::translations() {
 }
 
 void ResourceVarFileInfo::translations(const std::vector<uint32_t>& translations) {
-  this->translations_ = translations;
+  translations_ = translations;
 }
 
 void ResourceVarFileInfo::accept(Visitor& visitor) const {
@@ -84,21 +83,20 @@ bool ResourceVarFileInfo::operator==(const ResourceVarFileInfo& rhs) const {
 }
 
 bool ResourceVarFileInfo::operator!=(const ResourceVarFileInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
 
   std::string translation_str = std::accumulate(
-     std::begin(entry.translations()),
-     std::end(entry.translations()), std::string{},
+     std::begin(entry.translations()), std::end(entry.translations()), std::string{},
      [] (const std::string& a, uint32_t t) {
        std::stringstream ss;
        uint16_t lsb = t & 0xFFFF;
        uint16_t msb = t >> 16;
-       CODE_PAGES cp = static_cast<CODE_PAGES>(msb);
+       auto cp = static_cast<CODE_PAGES>(msb);
 
-       RESOURCE_LANGS lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
+       auto lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
        RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(lang, (lsb >> 10));
 
        ss << to_string(cp) << "/" << to_string(lang) << "/" << to_string(sublang);

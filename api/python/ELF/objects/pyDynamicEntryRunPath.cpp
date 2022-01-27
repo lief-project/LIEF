@@ -36,12 +36,14 @@ using setter_t = void (DynamicEntryRunPath::*)(T);
 template<>
 void create<DynamicEntryRunPath>(py::module& m) {
 
-  //
-  // Dynamic Entry RUNPATH object
-  //
-  py::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath")
+  py::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath",
+      R"delim(
+      Class that represents a ``DT_RUNPATH`` wich is used by the loader
+      to resolve libraries (:class:`~lief.ELF.DynamicEntryLibrary`).
+      )delim")
+
     .def(py::init<const std::string &>(),
-        "Constructor from (run)path",
+        "Constructor from a (run)path",
         "path"_a = "")
 
     .def(py::init<const std::vector<std::string> &>(),

@@ -30,7 +30,7 @@ namespace DataHandler {
 class LIEF_API Handler {
   public:
   static constexpr size_t MAX_SIZE = 1_GB;
-  Handler(const std::vector<uint8_t>& content);
+  Handler(std::vector<uint8_t> content);
   Handler(std::vector<uint8_t>&& content);
   Handler(BinaryStream& stream);
   ~Handler();

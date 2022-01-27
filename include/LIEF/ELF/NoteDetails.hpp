@@ -55,7 +55,7 @@ class LIEF_API NoteDetails : public Object {
   bool operator==(const NoteDetails& rhs) const;
   bool operator!=(const NoteDetails& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteDetails& note);
 

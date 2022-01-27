@@ -38,7 +38,7 @@ class LIEF_API CodeView : public Object {
   //! The Code View signature
   CODE_VIEW_SIGNATURES cv_signature() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const CodeView& rhs) const;
   bool operator!=(const CodeView& rhs) const;

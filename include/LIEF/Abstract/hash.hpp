@@ -31,12 +31,12 @@ class LIEF_API AbstractHash : public LIEF::Hash {
   using LIEF::Hash::visit;
 
   public:
-  virtual void visit(const Binary& binary)         override;
-  virtual void visit(const Header& header)         override;
-  virtual void visit(const Section& section)       override;
-  virtual void visit(const Symbol& symbol)         override;
-  virtual void visit(const Relocation& relocation) override;
-  virtual void visit(const Function& function)     override;
+  void visit(const Binary& binary)         override;
+  void visit(const Header& header)         override;
+  void visit(const Section& section)       override;
+  void visit(const Symbol& symbol)         override;
+  void visit(const Relocation& relocation) override;
+  void visit(const Function& function)     override;
 
   virtual ~AbstractHash();
 };

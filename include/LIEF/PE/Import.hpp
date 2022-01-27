@@ -29,16 +29,20 @@ namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
-struct pe_import;
 
+namespace details {
+struct pe_import;
+}
+
+//! Class that represents a PE import.
 class LIEF_API Import : public Object {
 
   friend class Parser;
   friend class Builder;
 
   public:
-  Import(const pe_import *import);
-  Import(const std::string& name);
+  Import(const details::pe_import& import);
+  Import(std::string name);
   Import();
   virtual ~Import();
 
@@ -46,67 +50,66 @@ class LIEF_API Import : public Object {
   Import& operator=(Import other);
   void swap(Import& other);
 
+  //! The index of the first forwarder reference
   uint32_t forwarder_chain() const;
+
+  //! The stamp that is set to zero until the image is bound.
+  //! After the image is bound, this field is set to the time/data stamp of the DLL
   uint32_t timedatestamp() const;
 
-
-  //! @brief Return a vector of @link PE::ImportEntry Import entries @endlink
+  //! Iterator over the PE::ImportEntry
   it_import_entries       entries();
   it_const_import_entries entries() const;
 
-  //! @brief Return the relative virtual address of the import address table (`IAT`)
-  //
-  //! @warning
-  //! This address could be change when re-building the binary
+  //! The RVA of the import address table (``IAT``). The content of this table is
+  //! **identical** to the content of the Import Lookup Table (``ILT``) until the image is bound.
   //!
+  //! @warning
+  //! This address could change when re-building the binary
   uint32_t import_address_table_rva() const;
 
-  //! @brief Return the relative virtual address of the import lookup table
+  //! Return the relative virtual address of the import lookup table
   //!
   //! @warning
-  //! This address could be change when re-building the binary
-  //!
+  //! This address could change when re-building the binary
   uint32_t  import_lookup_table_rva() const;
 
-  //! @brief Return the Function's RVA from the import address table (`IAT`)
+  //! Return the Function's RVA from the import address table (`IAT`)
   //!
   //! @warning
-  //! This address could be change when re-building the binary
-  //!
+  //! This address could change when re-building the binary
   uint32_t get_function_rva_from_iat(const std::string& function) const;
 
-  //! @brief Return the imported function with the given name
+  //! Return the imported function with the given name
   ImportEntry&       get_entry(const std::string& name);
   const ImportEntry& get_entry(const std::string& name) const;
 
-  //! @brief Return the library's name
-  //!
-  //! e.g. `kernel32.dll`
+  //! Return the library's name (e.g. `kernel32.dll`)
   const std::string& name() const;
-  void               name(const std::string& name);
 
-  //! @brief Return the @link PE::DataDirectory Data directory@endlink associated.
+  //! Change the current import name
+  void name(const std::string& name);
+
+  //! Return the PE::DataDirectory associated with this import.
   //! It should be the one at index PE::DATA_DIRECTORY::IMPORT_TABLE
-  //!
   DataDirectory&       directory();
   const DataDirectory& directory() const;
 
-  //! @brief Return the @link PE::DataDirectory Data directory@endlink associated.
+  //! Return the PE::DataDirectory associated associated with the IAT.
   //! It should be the one at index PE::DATA_DIRECTORY::IAT
-  //!
   DataDirectory&       iat_directory();
   const DataDirectory& iat_directory() const;
 
-  //! @brief Add a function
+  //! Add a new import entry (i.e. an imported function)
   ImportEntry& add_entry(const ImportEntry& entry);
 
-  //! @brief Add a function from name
+  //! Add a new import entry with the given name (i.e. an imported function)
   ImportEntry& add_entry(const std::string& name);
 
   void import_lookup_table_rva(uint32_t rva);
   void import_address_table_rva(uint32_t rva);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Import& rhs) const;
   bool operator!=(const Import& rhs) const;

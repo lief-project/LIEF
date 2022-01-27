@@ -32,9 +32,9 @@ void Parser::parse_dex_files<OAT79_t>() {
   using oat_header = typename OAT79_t::oat_header;
   using dex35_header_t  = DEX::DEX35::dex_header;
 
-  size_t nb_dex_files = this->oat_binary_->header_.nb_dex_files();
+  size_t nb_dex_files = oat_binary_->header_.nb_dex_files();
 
-  uint64_t dexfiles_offset = sizeof(oat_header) + this->oat_binary_->header_.key_value_size();
+  uint64_t dexfiles_offset = sizeof(oat_header) + oat_binary_->header_.key_value_size();
 
   LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
 
@@ -42,16 +42,16 @@ void Parser::parse_dex_files<OAT79_t>() {
   classes_offsets_offset.reserve(nb_dex_files);
 
 
-  this->stream_->setpos(dexfiles_offset);
+  stream_->setpos(dexfiles_offset);
 
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
-    uint32_t location_size = this->stream_->read<uint32_t>();
+    uint32_t location_size = stream_->read<uint32_t>();
 
-    const char* loc_cstr = this->stream_->read_array<char>(location_size, /* check */false);
+    const char* loc_cstr = stream_->read_array<char>(location_size, /* check */false);
 
     std::string location;
 
@@ -61,30 +61,30 @@ void Parser::parse_dex_files<OAT79_t>() {
 
     dex_file->location(location);
 
-    uint32_t checksum = this->stream_->read<uint32_t>();
+    uint32_t checksum = stream_->read<uint32_t>();
     dex_file->checksum(checksum);
 
-    uint32_t dex_struct_offset = this->stream_->read<uint32_t>();
+    uint32_t dex_struct_offset = stream_->read<uint32_t>();
     dex_file->dex_offset(dex_struct_offset);
 
-    uint32_t class_offsets = this->stream_->read<uint32_t>();
+    uint32_t class_offsets = stream_->read<uint32_t>();
     classes_offsets_offset.push_back(class_offsets);
 
-    uint32_t type_lookup_offset = this->stream_->read<uint32_t>();
+    uint32_t type_lookup_offset = stream_->read<uint32_t>();
     dex_file->lookup_table_offset(type_lookup_offset);
 
-    this->oat_binary_->oat_dex_files_.push_back(dex_file.release());
+    oat_binary_->oat_dex_files_.push_back(dex_file.release());
   }
 
   for (size_t i = 0; i < nb_dex_files; ++i) {
-    uint64_t offset = this->oat_binary_->oat_dex_files_[i]->dex_offset();
+    uint64_t offset = oat_binary_->oat_dex_files_[i]->dex_offset();
 
     LIEF_DEBUG("Dealing with DEX file #{:d} at offset 0x{:x}", i, offset);
 
-    const dex35_header_t& dex_hdr = this->stream_->peek<dex35_header_t>(offset);
+    const dex35_header_t& dex_hdr = stream_->peek<dex35_header_t>(offset);
 
     std::vector<uint8_t> data_v;
-    const uint8_t* data = this->stream_->peek_array<uint8_t>(offset, dex_hdr.file_size, /* check */false);
+    const uint8_t* data = stream_->peek_array<uint8_t>(offset, dex_hdr.file_size, /* check */false);
     if (data != nullptr) {
       data_v = {data, data + dex_hdr.file_size};
     }
@@ -95,22 +95,22 @@ void Parser::parse_dex_files<OAT79_t>() {
     }
     name += ".dex";
 
-    DexFile* oat_dex_file = this->oat_binary_->oat_dex_files_[i];
+    DexFile* oat_dex_file = oat_binary_->oat_dex_files_[i];
     if (DEX::is_dex(data_v)) {
       std::unique_ptr<DEX::File> dexfile{DEX::Parser::parse(std::move(data_v), name)};
       dexfile->location(oat_dex_file->location());
       const uint32_t nb_classes = dexfile->header().nb_classes();
-      this->oat_binary_->dex_files_.push_back(dexfile.release());
-      oat_dex_file->dex_file_ = this->oat_binary_->dex_files_[i];
+      oat_binary_->dex_files_.push_back(dexfile.release());
+      oat_dex_file->dex_file_ = oat_binary_->dex_files_[i];
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
 
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        uint32_t off = this->stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
+        uint32_t off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
         oat_dex_file->classes_offsets_.push_back(off);
       }
     } else {
-      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), this->stream_->pos());
+      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), stream_->pos());
     }
   }
 }

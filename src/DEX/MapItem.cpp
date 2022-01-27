@@ -36,19 +36,19 @@ MapItem::MapItem(MapItem::TYPES type, uint32_t offset, uint32_t size, uint16_t r
 {}
 
 MapItem::TYPES MapItem::type() const {
-  return this->type_;
+  return type_;
 }
 
 uint16_t MapItem::reserved() const {
-  return this->reserved_;
+  return reserved_;
 }
 
 uint32_t MapItem::size() const {
-  return this->size_;
+  return size_;
 }
 
 uint32_t MapItem::offset() const {
-  return this->offset_;
+  return offset_;
 }
 
 void MapItem::accept(Visitor& visitor) const {
@@ -62,7 +62,7 @@ bool MapItem::operator==(const MapItem& rhs) const {
 }
 
 bool MapItem::operator!=(const MapItem& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {

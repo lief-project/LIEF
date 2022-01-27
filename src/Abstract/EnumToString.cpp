@@ -25,7 +25,7 @@ const char* to_string(EXE_FORMATS e) {
     { EXE_FORMATS::FORMAT_PE,      "PE"      },
     { EXE_FORMATS::FORMAT_MACHO,   "MACHO"   },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -36,7 +36,7 @@ const char* to_string(OBJECT_TYPES e) {
     { OBJECT_TYPES::TYPE_LIBRARY,    "LIBRARY"    },
     { OBJECT_TYPES::TYPE_OBJECT,     "OBJECT"     },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -54,7 +54,7 @@ const char* to_string(ARCHITECTURES e) {
     { ARCHITECTURES::ARCH_INTEL, "INTEL" },
     { ARCHITECTURES::ARCH_RISCV, "RISCV" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -77,7 +77,7 @@ const char* to_string(MODES e) {
     { MODES::MODE_MIPS32,        "MIPS32" },
     { MODES::MODE_MIPS64,        "MIPS64" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -87,7 +87,7 @@ const char* to_string(ENDIANNESS e) {
     { ENDIANNESS::ENDIAN_BIG,    "BIG"    },
     { ENDIANNESS::ENDIAN_LITTLE, "LITTLE" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -97,7 +97,7 @@ const char* to_string(Binary::VA_TYPES e) {
     { LIEF::Binary::VA_TYPES::RVA,  "RVA"  },
     { LIEF::Binary::VA_TYPES::VA,   "VA"   },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -110,7 +110,7 @@ const char* to_string(Function::FLAGS e) {
     { LIEF::Function::FLAGS::IMPORTED,     "IMPORTED"     },
     { LIEF::Function::FLAGS::EXPORTED,     "EXPORTED"     },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 

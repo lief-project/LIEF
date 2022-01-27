@@ -48,7 +48,7 @@ bool CodeInfo::operator==(const CodeInfo& rhs) const {
 }
 
 bool CodeInfo::operator!=(const CodeInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {

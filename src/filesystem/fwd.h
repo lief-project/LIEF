@@ -1,5 +1,5 @@
 /*
-    fwd.h -- Forward declarations for path.h and resolver.h
+    fwd.h -- Forward declarations for path.h && resolver.h
 
     Copyright (c) 2015 Wenzel Jakob <wenzel@inf.ethz.ch>
 

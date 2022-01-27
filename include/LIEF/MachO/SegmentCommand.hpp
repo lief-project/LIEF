@@ -34,11 +34,12 @@ class BinaryParser;
 class Binary;
 class Section;
 
+namespace details {
 struct segment_command_32;
 struct segment_command_64;
+}
 
-//! @class SegmentCommand
-//! @brief Class which represent a MachO Segment
+//! Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT / LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
 class LIEF_API SegmentCommand : public LoadCommand {
 
   friend class BinaryParser;
@@ -49,8 +50,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   public:
   SegmentCommand();
-  SegmentCommand(const segment_command_32 *segmentCmd);
-  SegmentCommand(const segment_command_64 *segmentCmd);
+  SegmentCommand(const details::segment_command_32& cmd);
+  SegmentCommand(const details::segment_command_64& cmd);
 
   SegmentCommand& operator=(SegmentCommand other);
   SegmentCommand(const SegmentCommand& copy);
@@ -60,75 +61,100 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   void swap(SegmentCommand& other);
 
-  virtual SegmentCommand* clone() const override;
+  SegmentCommand* clone() const override;
 
   virtual ~SegmentCommand();
 
+  //! Name of the segment (e.g. ``__TEXT``)
   const std::string& name() const;
+
+  //! Absolute virtual base address of the segment
   uint64_t virtual_address() const;
+
+  //! Virtual size of the segment
   uint64_t virtual_size() const;
+
+  //! Size of this segment in the binary file
   uint64_t file_size() const;
+
+  //! Offset of the data of this segment in the file
   uint64_t file_offset() const;
+
+  //! The maximum of protections for this segment (cf. VM_PROTECTIONS)
   uint32_t max_protection() const;
+
+  //! The initial protections of this segment (cf. VM_PROTECTIONS)
   uint32_t init_protection() const;
+
+  //! The number of sections associated with this segment
   uint32_t numberof_sections() const;
+
+  //! Flags associated with this segment (cf. MACHO_SEGMENTS_FLAGS)
   uint32_t flags() const;
-  it_sections       sections();
+
+  //! Return an iterator over the MachO::Section linked to this segment
+  it_sections sections();
   it_const_sections sections() const;
 
-  it_relocations       relocations();
+  //! Return an iterator over the MachO::Relocation linked to this segment
+  //!
+  //! For Mach-O executable or library this iterator should be empty as
+  //! the relocations are managed by the Dyld::rebase_opcodes.
+  //! On the other hand, for object files (``.o``) this iterator should not be empty
+  it_relocations relocations();
   it_const_relocations relocations() const;
 
+  //! The raw content of this segment
   const content_t& content() const;
 
+  //! The original index of this segment
   inline int8_t index() const {
     return this->index_;
   }
 
   void name(const std::string& name);
-  void virtual_address(uint64_t virtualAddress);
-  void virtual_size(uint64_t virtualSize);
-  void file_offset(uint64_t fileOffset);
-  void file_size(uint64_t fileSize);
-  void max_protection(uint32_t maxProtection);
-  void init_protection(uint32_t initProtection);
-  void numberof_sections(uint32_t nbSections);
+  void virtual_address(uint64_t virtual_address);
+  void virtual_size(uint64_t virtual_size);
+  void file_offset(uint64_t file_offset);
+  void file_size(uint64_t file_size);
+  void max_protection(uint32_t max_protection);
+  void init_protection(uint32_t init_protection);
+  void numberof_sections(uint32_t nb_section);
   void flags(uint32_t flags);
   void content(const content_t& data);
 
+  //! Add a new section in this segment
   Section& add_section(const Section& section);
 
+  //! Remove all the sections linked to this segment
   void remove_all_sections();
 
+  //! Check if the current segment embeds the given section
   bool has(const Section& section) const;
+
+  //! Check if the current segment embeds the given section name
   bool has_section(const std::string& section_name) const;
 
   bool operator==(const SegmentCommand& rhs) const;
   bool operator!=(const SegmentCommand& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   private:
   std::string name_;
-
-  //! @brief Indicates the starting virtual memory address of this segmen
-  uint64_t virtualAddress_{0};
-
-  //! @brief Indicates the number of bytes of virtual memory occupied by this segment. See also the description of filesize, below.
-  uint64_t virtualSize_{0};
-
-  //! @brief Indicates the offset in this file of the data to be mapped at virtualAddress_.
-  uint64_t fileOffset_{0};
-  uint64_t fileSize_{0};
-  uint32_t maxProtection_{0};
-  uint32_t initProtection_{0};
-  uint32_t nbSections_{0};
-  uint32_t flags_{0};
+  uint64_t virtual_address_ = 0;
+  uint64_t virtual_size_ = 0;
+  uint64_t file_offset_ = 0;
+  uint64_t file_size_ = 0;
+  uint32_t max_protection_ = 0;
+  uint32_t init_protection_ = 0;
+  uint32_t nb_sections_ = 0;
+  uint32_t flags_ = 0;
   int8_t  index_ = -1;
   content_t data_;
-  sections_t    sections_;
+  sections_t sections_;
   relocations_t relocations_;
 
 

@@ -28,7 +28,7 @@ void init_c_commands(Macho_Binary_t* c_binary, Binary* binary) {
 
     c_binary->commands[i] = static_cast<Macho_Command_t*>(malloc(sizeof(Macho_Command_t)));
     const std::vector<uint8_t>& cmd_content = cmd.data();
-    uint8_t* content = static_cast<uint8_t*>(malloc(cmd_content.size() * sizeof(uint8_t)));
+    auto* content = static_cast<uint8_t*>(malloc(cmd_content.size() * sizeof(uint8_t)));
     std::copy(
         std::begin(cmd_content),
         std::end(cmd_content),

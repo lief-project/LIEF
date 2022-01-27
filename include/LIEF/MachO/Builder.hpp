@@ -50,9 +50,12 @@ class DyldEnvironment;
 class ThreadCommand;
 class BuildVersion;
 
+//! Class that is used to rebuilt a Mach-O file
 class LIEF_API Builder {
   public:
   friend struct ::Profiler;
+
+
   static void write(Binary *binary, const std::string& filename);
   static void write(FatBinary* fatbinary, const std::string& filename);
 
@@ -135,14 +138,13 @@ class LIEF_API Builder {
   template<class T>
   void build(BuildVersion* bv);
 
-  void build_uuid();
-
-
   template <typename T>
   void build_symbols();
 
+  void build_uuid();
+
   std::vector<Binary*> binaries_;
-  Binary*              binary_{nullptr};
+  Binary* binary_ = nullptr;
   mutable vector_iostream raw_;
 };
 

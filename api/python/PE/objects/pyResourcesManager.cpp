@@ -42,7 +42,7 @@ void create<ResourcesManager>(py::module& m) {
 
     .def_property_readonly("has_manifest",
         &ResourcesManager::has_manifest,
-        "``True`` if resources contain Manifest element")
+        "``True`` if the resources contain a Manifest element")
 
     .def_property("manifest",
         [] (const ResourcesManager& obj) {
@@ -54,17 +54,16 @@ void create<ResourcesManager>(py::module& m) {
 
     .def_property_readonly("has_version",
         &ResourcesManager::has_version,
-        "``true`` if resources contain " RST_CLASS_REF(lief.PE.ResourceVersion) "")
+        "``true`` if the resources contain a " RST_CLASS_REF(lief.PE.ResourceVersion) "")
 
     .def_property_readonly("version",
         static_cast<getter_t<ResourceVersion>>(&ResourcesManager::version),
         "Return the " RST_CLASS_REF(lief.PE.ResourceVersion) "")
-        //static_cast<setter_t<const ResourceVersion&>>(&ResourcesManager::version))
 
 
     .def_property_readonly("has_icons",
         &ResourcesManager::has_icons,
-        "``true`` if resources contain " RST_CLASS_REF(lief.PE.ResourceIcon) "")
+        "``true`` if the resources contain " RST_CLASS_REF(lief.PE.ResourceIcon) "")
 
     .def_property_readonly("icons",
       &ResourcesManager::icons,
@@ -77,7 +76,7 @@ void create<ResourcesManager>(py::module& m) {
 
     .def_property_readonly("has_dialogs",
         &ResourcesManager::has_dialogs,
-        "``true`` if resources contain " RST_CLASS_REF(lief.PE.ResourceDialog) "")
+        "``true`` if the resources contain " RST_CLASS_REF(lief.PE.ResourceDialog) "")
 
     .def_property_readonly("dialogs",
       &ResourcesManager::dialogs,

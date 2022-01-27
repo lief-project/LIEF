@@ -46,126 +46,120 @@ ResourceDialogItem::ResourceDialogItem() :
   y_{0},
   cx_{0},
   cy_{0},
-  window_class_{},
-  title_{},
   extra_count_{0}
 {}
 
 
-ResourceDialogItem::ResourceDialogItem(const pe_dialog_item_template_ext *header) :
+ResourceDialogItem::ResourceDialogItem(const details::pe_dialog_item_template_ext& header) :
   is_extended_{true},
-  help_id_{header->help_id},
-  ext_style_{header->ext_style},
-  style_{header->style},
-  id_{header->id},
-  x_{header->x},
-  y_{header->y},
-  cx_{header->cx},
-  cy_{header->cy},
-  window_class_{},
-  title_{},
+  help_id_{header.help_id},
+  ext_style_{header.ext_style},
+  style_{header.style},
+  id_{header.id},
+  x_{header.x},
+  y_{header.y},
+  cx_{header.cx},
+  cy_{header.cy},
   extra_count_{0}
 {}
 
 
-ResourceDialogItem::ResourceDialogItem(const pe_dialog_item_template *header) :
+ResourceDialogItem::ResourceDialogItem(const details::pe_dialog_item_template& header) :
   is_extended_{false},
   help_id_{0},
-  ext_style_{header->ext_style},
-  style_{header->style},
-  id_{header->id},
-  x_{header->x},
-  y_{header->y},
-  cx_{header->cx},
-  cy_{header->cy},
-  window_class_{},
-  title_{},
+  ext_style_{header.ext_style},
+  style_{header.style},
+  id_{header.id},
+  x_{header.x},
+  y_{header.y},
+  cx_{header.cx},
+  cy_{header.cy},
   extra_count_{0}
 {}
 
 
 bool ResourceDialogItem::is_extended() const {
-  return this->is_extended_;
+  return is_extended_;
 }
 
 uint32_t ResourceDialogItem::extended_style() const {
-  return this->ext_style_;
+  return ext_style_;
 }
 
 std::set<EXTENDED_WINDOW_STYLES> ResourceDialogItem::extended_style_list() const {
   std::set<EXTENDED_WINDOW_STYLES> ext_styles;
   std::copy_if(
-      std::begin(extended_window_styles_array),
-      std::end(extended_window_styles_array),
+      std::begin(details::extended_window_styles_array),
+      std::end(details::extended_window_styles_array),
       std::inserter(ext_styles, std::begin(ext_styles)),
-      std::bind(&ResourceDialogItem::has_extended_style, this, std::placeholders::_1));
+      [this] (EXTENDED_WINDOW_STYLES f) { return has_extended_style(f); });
 
   return ext_styles;
 
 }
 
 bool ResourceDialogItem::has_extended_style(EXTENDED_WINDOW_STYLES style) const {
-  return (this->ext_style_ & static_cast<uint32_t>(style)) != 0;
+  return (ext_style_ & static_cast<uint32_t>(style)) != 0;
 }
 
 uint32_t ResourceDialogItem::style() const {
-  return this->style_;
+  return style_;
 }
 
 std::set<WINDOW_STYLES> ResourceDialogItem::style_list() const {
   std::set<WINDOW_STYLES> styles;
   std::copy_if(
-      std::begin(window_styles_array),
-      std::end(window_styles_array),
+      std::begin(details::window_styles_array),
+      std::end(details::window_styles_array),
       std::inserter(styles, std::begin(styles)),
-      std::bind(&ResourceDialogItem::has_style, this, std::placeholders::_1));
+      [this] (WINDOW_STYLES f) { return has_style(f); });
 
   return styles;
 }
 
 bool ResourceDialogItem::has_style(WINDOW_STYLES style) const {
-  return (this->style_ & static_cast<uint32_t>(style)) != 0;
+  return (style_ & static_cast<uint32_t>(style)) != 0;
 }
 
 
 int16_t ResourceDialogItem::x() const {
-  return this->x_;
+  return x_;
 }
 
 int16_t ResourceDialogItem::y() const {
-  return this->y_;
+  return y_;
 }
 
 int16_t ResourceDialogItem::cx() const {
-  return this->cx_;
+  return cx_;
 }
 
 int16_t ResourceDialogItem::cy() const {
-  return this->cy_;
+  return cy_;
 }
 
 
 uint32_t ResourceDialogItem::id() const {
-  return this->id_;
+  return id_;
 }
 
 
 // Extended API
 // ============
 uint32_t ResourceDialogItem::help_id() const {
-  if (not this->is_extended()) {
+  if (!is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
-  return this->help_id_;
+  return help_id_;
 }
 
 
 const std::u16string& ResourceDialogItem::title() const {
-  if (not this->is_extended()) {
+  if (!is_extended()) {
     throw not_found("This dialog is not an extended one");
   }
 
-  return this->title_;
+  return title_;
 }
 
 
@@ -180,7 +174,7 @@ bool ResourceDialogItem::operator==(const ResourceDialogItem& rhs) const {
 }
 
 bool ResourceDialogItem::operator!=(const ResourceDialogItem& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -207,11 +201,11 @@ std::ostream& operator<<(std::ostream& os, const ResourceDialogItem& dialog_item
   }
   os << ", " << std::dec << dialog_item.id();
 
-  if (not styles_str.empty()) {
+  if (!styles_str.empty()) {
     os << ", " << styles_str;
   }
 
-  if (not ext_styles_str.empty()) {
+  if (!ext_styles_str.empty()) {
     os << ", " << ext_styles_str;
   }
 

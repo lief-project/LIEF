@@ -17,8 +17,8 @@
 #include "LIEF/exception.hpp"
 
 void init_LIEF_exceptions(py::module& m) {
-  auto&& exception = py::register_exception<LIEF::exception>(m, "exception");
-  auto&& bad_file  = py::register_exception<LIEF::bad_file>(m, "bad_file", exception.ptr());
+  auto& exception = py::register_exception<LIEF::exception>(m, "exception");
+  auto& bad_file  = py::register_exception<LIEF::bad_file>(m, "bad_file", exception.ptr());
   py::register_exception<LIEF::bad_format>(m, "bad_format", bad_file.ptr());
   py::register_exception<LIEF::not_implemented>(m, "not_implemented", exception.ptr());
   py::register_exception<LIEF::not_supported>(m, "not_supported", exception.ptr());
@@ -30,6 +30,6 @@ void init_LIEF_exceptions(py::module& m) {
   py::register_exception<LIEF::type_error>(m, "type_error", exception.ptr());
   py::register_exception<LIEF::builder_error>(m, "builder_error", exception.ptr());
   py::register_exception<LIEF::parser_error>(m, "parser_error", exception.ptr());
-  auto&& pe_error = py::register_exception<LIEF::pe_error>(m, "pe_error", exception.ptr());
+  auto& pe_error = py::register_exception<LIEF::pe_error>(m, "pe_error", exception.ptr());
   py::register_exception<LIEF::pe_bad_section_name>(m, "pe_bad_section_name", pe_error.ptr());
 }

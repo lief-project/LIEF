@@ -28,37 +28,37 @@ Header::~Header() = default;
 Header::Header() = default;
 
 ARCHITECTURES Header::architecture() const {
-  return this->architecture_;
+  return architecture_;
 }
 
 
 OBJECT_TYPES Header::object_type() const {
-  return this->object_type_;
+  return object_type_;
 }
 
 
 const std::set<MODES>& Header::modes() const {
-  return this->modes_;
+  return modes_;
 }
 
 
 bool Header::is_32() const {
-  return this->modes().count(MODES::MODE_32) > 0;
+  return modes().count(MODES::MODE_32) > 0;
 }
 
 
 bool Header::is_64() const {
-  return this->modes().count(MODES::MODE_64) > 0;
+  return modes().count(MODES::MODE_64) > 0;
 }
 
 
 uint64_t Header::entrypoint() const {
-  return this->entrypoint_;
+  return entrypoint_;
 }
 
 
 ENDIANNESS Header::endianness() const {
-  return this->endianness_;
+  return endianness_;
 }
 
 
@@ -68,27 +68,27 @@ void Header::accept(Visitor& visitor) const {
 
 
 void Header::architecture(ARCHITECTURES arch) {
-  this->architecture_ = arch;
+  architecture_ = arch;
 }
 
 
 void Header::object_type(OBJECT_TYPES type) {
-  this->object_type_ = type;
+  object_type_ = type;
 }
 
 
 void Header::modes(const std::set<MODES>& m) {
-  this->modes_ = m;
+  modes_ = m;
 }
 
 
 void Header::entrypoint(uint64_t entrypoint) {
-  this->entrypoint_ = entrypoint;
+  entrypoint_ = entrypoint;
 }
 
 
 void Header::endianness(ENDIANNESS endianness) {
-  this->endianness_ = endianness;
+  endianness_ = endianness;
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {

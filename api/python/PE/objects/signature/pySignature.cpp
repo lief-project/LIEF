@@ -65,8 +65,8 @@ void create<Signature>(py::module& m) {
         std::string flags_str;
         for (const auto& item : verif_flags_entries) {
           Signature::VERIFICATION_FLAGS flag = item.second[py::int_(0)].cast<Signature::VERIFICATION_FLAGS>();
-          if ((flags & flag) == flag and flag != Signature::VERIFICATION_FLAGS::OK) {
-            if (not flags_str.empty()) {
+          if ((flags & flag) == flag && flag != Signature::VERIFICATION_FLAGS::OK) {
+            if (!flags_str.empty()) {
               flags_str += " | ";
             }
             flags_str += "VERIFICATION_FLAGS." + Signature::flag_to_string(flag);
@@ -93,7 +93,7 @@ void create<Signature>(py::module& m) {
     .def_static("parse",
         [] (const std::string& path) -> py::object {
           auto sig = SignatureParser::parse(path);
-          if (not sig) {
+          if (!sig) {
             return py::none();
           }
           return py::cast(sig.value());
@@ -104,7 +104,7 @@ void create<Signature>(py::module& m) {
     .def_static("parse",
         [] (const std::vector<uint8_t>& raw, bool skip_header) -> py::object {
           auto sig = SignatureParser::parse(raw, skip_header);
-          if (not sig) {
+          if (!sig) {
             return py::none();
           }
           return py::cast(sig.value());

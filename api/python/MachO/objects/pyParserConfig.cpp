@@ -25,21 +25,42 @@ namespace MachO {
 template<>
 void create<ParserConfig>(py::module& m) {
 
-  py::class_<ParserConfig>(m, "ParserConfig", "Configuration of the MachO parser")
-    .def(py::init<>())
-    .def_readwrite("parse_dyld_exports",  &ParserConfig::parse_dyld_exports)
-    .def_readwrite("parse_dyld_bindings", &ParserConfig::parse_dyld_bindings)
-    .def_readwrite("parse_dyld_rebases",  &ParserConfig::parse_dyld_rebases)
+  py::class_<ParserConfig>(m, "ParserConfig",
+      R"delim(
+      This class is used to tweak the MachO Parser (:class:`~lief.MachO.Parser`)
+      )delim")
 
-    .def("full_dyldinfo",  &ParserConfig::full_dyldinfo)
+    .def(py::init<>())
+    .def_readwrite("parse_dyld_exports", &ParserConfig::parse_dyld_exports,
+                   "Parse the Dyld export trie")
+
+    .def_readwrite("parse_dyld_bindings", &ParserConfig::parse_dyld_bindings,
+                   "Parse the Dyld binding opcodes")
+
+    .def_readwrite("parse_dyld_rebases", &ParserConfig::parse_dyld_rebases,
+                   "Parse the Dyld rebase opcodes")
+
+    .def("full_dyldinfo",  &ParserConfig::full_dyldinfo,
+         R"delim(
+         If ``flag`` is set to ``true``, Exports, Bindings and Rebases opcodes are parsed.
+
+         .. warning::
+
+            Enabling this flag can slow down the parsing
+         )delim",
+         "flag"_a)
 
     .def_property_readonly_static("deep",
       [] (py::object /* self */) { return ParserConfig::deep(); },
-      "")
+      R"delim(
+      Return a parser configuration such as all the objects supported by LIEF are parsed
+      )delim")
 
     .def_property_readonly_static("quick",
       [] (py::object /* self */) { return ParserConfig::quick(); },
-      "");
+      R"delim(
+      Return a configuration to parse the most important MachO structures
+      )delim");
 }
 
 }

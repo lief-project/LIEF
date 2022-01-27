@@ -18,55 +18,53 @@
 #include <iomanip>
 #include <numeric>
 #include <sstream>
+#include <utility>
 
 namespace LIEF {
 namespace ELF {
 
 DynamicEntryRpath::DynamicEntryRpath() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
-  rpath_{}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0}
 {}
 
 DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath&) = default;
 DynamicEntryRpath::DynamicEntryRpath(const DynamicEntryRpath&) = default;
 
 
-DynamicEntryRpath::DynamicEntryRpath(const std::string& rpath) :
+DynamicEntryRpath::DynamicEntryRpath(std::string rpath) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
-  rpath_{rpath}
-{
-}
+  rpath_{std::move(rpath)}
+{}
 
 
 DynamicEntryRpath::DynamicEntryRpath(const std::vector<std::string>& paths) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
-  rpath_{""}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0}
 {
   this->paths(paths);
 }
 
 const std::string& DynamicEntryRpath::name() const {
-  return this->rpath_;
+  return rpath_;
 }
 
 
 void DynamicEntryRpath::name(const std::string& name) {
-  this->rpath_ = name;
+  rpath_ = name;
 }
 
 const std::string& DynamicEntryRpath::rpath() const {
-  return this->name();
+  return name();
 }
 
 
 void DynamicEntryRpath::rpath(const std::string& rpath) {
-  this->name(rpath);
+  name(rpath);
 }
 
 
 std::vector<std::string> DynamicEntryRpath::paths() const {
   std::stringstream ss;
-  ss.str(this->rpath());
+  ss.str(rpath());
   std::string path;
   std::vector<std::string> paths;
   while (std::getline(ss, path, DynamicEntryRpath::delimiter)) {
@@ -76,11 +74,8 @@ std::vector<std::string> DynamicEntryRpath::paths() const {
 }
 
 void DynamicEntryRpath::paths(const std::vector<std::string>& paths) {
-  this->rpath_ = std::accumulate(
-      std::begin(paths),
-      std::end(paths),
-      std::string(""),
-      [] (std::string path, const std::string& new_entry) {
+  rpath_ = std::accumulate(std::begin(paths), std::end(paths), std::string(),
+      [] (const std::string& path, const std::string& new_entry) {
         return path.empty() ? new_entry :  path + DynamicEntryRpath::delimiter + new_entry;
       });
 }
@@ -94,21 +89,20 @@ DynamicEntryRpath& DynamicEntryRpath::append(const std::string& path) {
 
 DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
-  paths.erase(std::remove_if(
-        std::begin(paths),
-        std::end(paths),
-        [&path] (const std::string& p) {
-          return p == path;
-        }), std::end(paths));
+  paths.erase(std::remove_if(std::begin(paths), std::end(paths),
+                             [&path] (const std::string& p) {
+                               return p == path;
+                             }),
+              std::end(paths));
   this->paths(paths);
   return *this;
 }
 
-DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string path) {
+DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path) {
   std::vector<std::string> paths = this->paths();
 
   if (pos == paths.size()) {
-    return this->append(path);
+    return append(path);
   }
 
   if (pos > paths.size()) {
@@ -120,11 +114,11 @@ DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string path)
 }
 
 DynamicEntryRpath& DynamicEntryRpath::operator+=(const std::string& path) {
-  return this->append(path);
+  return append(path);
 }
 
 DynamicEntryRpath& DynamicEntryRpath::operator-=(const std::string& path) {
-  return this->remove(path);
+  return remove(path);
 }
 
 void DynamicEntryRpath::accept(Visitor& visitor) const {
@@ -136,7 +130,7 @@ std::ostream& DynamicEntryRpath::print(std::ostream& os) const {
   DynamicEntry::print(os);
   os << std::hex
      << std::left
-     << std::setw(10) << this->rpath();
+     << std::setw(10) << rpath();
   return os;
 
 }

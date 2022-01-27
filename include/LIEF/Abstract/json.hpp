@@ -30,17 +30,19 @@ LIEF_API json to_json_from_abstract(const Object& v);
 LIEF_API std::string to_json_str_from_abstract(const Object& v);
 
 
+//! Class that implements the Visitor pattern to serialize LIEF abstracted
+//! object in JSON
 class LIEF_API AbstractJsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;
 
   public:
-  virtual void visit(const Binary& binary)         override;
-  virtual void visit(const Header& header)         override;
-  virtual void visit(const Section& section)       override;
-  virtual void visit(const Symbol& symbol)         override;
-  virtual void visit(const Relocation& relocation) override;
-  virtual void visit(const Function& f)            override;
+  void visit(const Binary& binary)         override;
+  void visit(const Header& header)         override;
+  void visit(const Section& section)       override;
+  void visit(const Symbol& symbol)         override;
+  void visit(const Relocation& relocation) override;
+  void visit(const Function& f)            override;
 };
 
 }

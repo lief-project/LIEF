@@ -29,6 +29,12 @@ class Parser;
 class Builder;
 class Binary;
 
+//! Class which represents the SYSV hash for the symbols
+//! resolution.
+//!
+//! References:
+//! - http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
+//! - https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
 class LIEF_API SysvHash : public Object {
 
   friend class Parser;
@@ -60,7 +66,7 @@ class LIEF_API SysvHash : public Object {
   bool operator==(const SysvHash& rhs) const;
   bool operator!=(const SysvHash& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
 

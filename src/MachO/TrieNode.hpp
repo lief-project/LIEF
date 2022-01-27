@@ -28,13 +28,11 @@ namespace MachO {
 class TrieNode;
 
 class LIEF_LOCAL TrieEdge {
-
   public:
-
   static TrieEdge* create(const std::string& str, TrieNode* node);
 
   TrieEdge() = delete;
-  TrieEdge(const std::string& str, TrieNode* node);
+  TrieEdge(std::string str, TrieNode* node);
 
   ~TrieEdge();
 
@@ -54,7 +52,7 @@ class LIEF_LOCAL TrieNode {
 
   TrieNode() = delete;
 
-  TrieNode(const std::string& str);
+  TrieNode(std::string str);
   ~TrieNode();
 
   TrieNode& add_symbol(const ExportInfo& info, std::vector<TrieNode*>& nodes);

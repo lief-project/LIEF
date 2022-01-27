@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#include <utility>
+
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/hash.hpp"
@@ -30,21 +32,20 @@ ResourceStringTable& ResourceStringTable::operator=(const ResourceStringTable&) 
 ResourceStringTable::~ResourceStringTable() = default;
 
 ResourceStringTable::ResourceStringTable() :
-  name_{},
   length_{0}
 {}
 
-ResourceStringTable::ResourceStringTable(int16_t length, const std::u16string& name) :
-  name_{name},
+ResourceStringTable::ResourceStringTable(int16_t length, std::u16string name) :
+  name_{std::move(name)},
   length_{length}
 {}
 
 int16_t ResourceStringTable::length() const {
-  return this->length_;
+  return length_;
 }
 
 const std::u16string& ResourceStringTable::name() const {
-  return this->name_;
+  return name_;
 }
 
 void ResourceStringTable::accept(Visitor& visitor) const {
@@ -56,7 +57,7 @@ bool ResourceStringTable::operator==(const ResourceStringTable& rhs) const {
 }
 
 bool ResourceStringTable::operator!=(const ResourceStringTable& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

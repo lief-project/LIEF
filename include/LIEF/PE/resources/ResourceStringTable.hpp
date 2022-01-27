@@ -35,16 +35,19 @@ class LIEF_API ResourceStringTable : public Object {
   public:
   ResourceStringTable();
 
-  ResourceStringTable(int16_t length, const std::u16string& name);
+  ResourceStringTable(int16_t length, std::u16string name);
   ResourceStringTable(const ResourceStringTable&);
 
   ResourceStringTable& operator=(const ResourceStringTable&);
 
   virtual ~ResourceStringTable();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
+  //! The size of the string, not including length field itself.
   int16_t length() const;
+
+  //! The variable-length Unicode string data, word-aligned.
   const std::u16string& name() const;
 
   bool operator==(const ResourceStringTable& rhs) const;

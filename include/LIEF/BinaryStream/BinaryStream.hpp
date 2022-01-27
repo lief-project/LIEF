@@ -30,6 +30,9 @@ struct mbedtls_x509_crt;
 struct mbedtls_x509_time;
 
 namespace LIEF {
+
+
+//! Class that is used to a read stream of data from different sources
 class BinaryStream {
   public:
   enum class STREAM_TYPE {
@@ -47,7 +50,7 @@ class BinaryStream {
   uint64_t read_uleb128() const;
   uint64_t read_sleb128() const;
 
-  int64_t read_dwarf_encoded(uint8_t encoding);
+  int64_t read_dwarf_encoded(uint8_t encoding) const;
 
   std::string read_string(size_t maxsize = ~static_cast<size_t>(0)) const;
   std::string peek_string(size_t maxsize = ~static_cast<size_t>(0)) const;

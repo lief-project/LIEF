@@ -29,16 +29,9 @@ namespace PE {
 
 ResourceNode::ResourceNode() :
   id_{0},
-  name_{},
-  childs_{},
   depth_{0}
 {}
 
-
-//ResourceNode& ResourceNode::operator=(ResourceNode other) {
-//  this->swap(other);
-//  return *this;
-//}
 
 ResourceNode::ResourceNode(const ResourceNode& other) :
   Object{other},
@@ -46,44 +39,43 @@ ResourceNode::ResourceNode(const ResourceNode& other) :
   name_{other.name_},
   depth_{other.depth_}
 {
-  this->childs_.reserve(other.childs_.size());
+  childs_.reserve(other.childs_.size());
   for (const ResourceNode* node : other.childs_) {
-    this->childs_.push_back(node->clone());
+    childs_.push_back(node->clone());
   }
 }
 
-
 void ResourceNode::swap(ResourceNode& other) {
-  std::swap(this->id_,     other.id_);
-  std::swap(this->name_,   other.name_);
-  std::swap(this->childs_, other.childs_);
-  std::swap(this->depth_,  other.depth_);
+  std::swap(id_,     other.id_);
+  std::swap(name_,   other.name_);
+  std::swap(childs_, other.childs_);
+  std::swap(depth_,  other.depth_);
 }
 
 ResourceNode::~ResourceNode() {
-  for (ResourceNode* node : this->childs_) {
+  for (ResourceNode* node : childs_) {
     delete node;
   }
 }
 
 
 uint32_t ResourceNode::id() const {
-  return this->id_;
+  return id_;
 }
 
 
 it_childs ResourceNode::childs() {
-  return {this->childs_};
+  return {childs_};
 }
 
 
 it_const_childs ResourceNode::childs() const {
-  return {this->childs_};
+  return {childs_};
 }
 
 
 const std::u16string& ResourceNode::name() const {
-  return this->name_;
+  return name_;
 }
 
 
@@ -92,27 +84,27 @@ bool ResourceNode::is_directory() const {
 }
 
 bool ResourceNode::is_data() const {
-  return not this->is_directory();
+  return !is_directory();
 }
 
 
 bool ResourceNode::has_name() const {
-  return static_cast<bool>(this->id() & 0x80000000);
+  return static_cast<bool>(id() & 0x80000000);
 }
 
 uint32_t ResourceNode::depth() const {
-  return this->depth_;
+  return depth_;
 }
 
 
 ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
 
-  ResourceDirectory* new_node = new ResourceDirectory{child};
-  new_node->depth_ = this->depth_ + 1;
+  auto* new_node = new ResourceDirectory{child};
+  new_node->depth_ = depth_ + 1;
 
-  this->childs_.push_back(new_node);
+  childs_.push_back(new_node);
 
-  if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
+  if (auto* dir = dynamic_cast<ResourceDirectory*>(this)) {
     if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
@@ -120,57 +112,53 @@ ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
     }
   }
 
-  return *this->childs_.back();
+  return *childs_.back();
 }
 
 ResourceNode& ResourceNode::add_child(const ResourceData& child) {
-  ResourceData* new_node = new ResourceData{child};
-  new_node->depth_ = this->depth_ + 1;
+  auto* new_node = new ResourceData{child};
+  new_node->depth_ = depth_ + 1;
 
-  this->childs_.push_back(new_node);
+  childs_.push_back(new_node);
 
-  if (ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this)) {
+  if (auto* dir = dynamic_cast<ResourceDirectory*>(this)) {
     if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
     }
   }
-  return *this->childs_.back();
+  return *childs_.back();
 }
 
 void ResourceNode::delete_child(uint32_t id) {
 
-  auto&& it_node = std::find_if(
-      std::begin(this->childs_),
-      std::end(this->childs_),
+  const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
       [id] (const ResourceNode* node) {
         return node->id() == id;
       });
 
-  if (it_node == std::end(this->childs_)) {
+  if (it_node == std::end(childs_)) {
     throw not_found("Unable to find the node with id " + std::to_string(id) + "!");
   }
-  this->delete_child(**it_node);
+  delete_child(**it_node);
 
 }
 
 void ResourceNode::delete_child(const ResourceNode& node) {
-  auto&& it_node = std::find_if(
-      std::begin(this->childs_),
-      std::end(this->childs_),
+  const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
       [&node] (const ResourceNode* intree_node) {
         return *intree_node == node;
       });
 
-  if (it_node == std::end(this->childs_)) {
+  if (it_node == std::end(childs_)) {
     std::stringstream ss;
     ss << "Unable to find the node: " << node;
     throw not_found(ss.str());
   }
 
-  if (this->is_directory()) {
-    ResourceDirectory* dir = dynamic_cast<ResourceDirectory*>(this);
+  if (is_directory()) {
+    auto* dir = dynamic_cast<ResourceDirectory*>(this);
     if ((*it_node)->has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() - 1);
     } else {
@@ -179,12 +167,12 @@ void ResourceNode::delete_child(const ResourceNode& node) {
   }
 
   delete *it_node;
-  this->childs_.erase(it_node);
+  childs_.erase(it_node);
 
 }
 
 void ResourceNode::id(uint32_t id) {
-  this->id_ = id;
+  id_ = id;
 }
 
 void ResourceNode::name(const std::string& name) {
@@ -192,14 +180,14 @@ void ResourceNode::name(const std::string& name) {
 }
 
 void ResourceNode::name(const std::u16string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
 void ResourceNode::sort_by_id() {
   std::sort(
-      std::begin(this->childs_),
-      std::end(this->childs_),
+      std::begin(childs_),
+      std::end(childs_),
       [] (const ResourceNode* lhs, const ResourceNode* rhs) {
         return lhs->id() < rhs->id();
       });
@@ -216,7 +204,7 @@ bool ResourceNode::operator==(const ResourceNode& rhs) const {
 }
 
 bool ResourceNode::operator!=(const ResourceNode& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceNode& node) {

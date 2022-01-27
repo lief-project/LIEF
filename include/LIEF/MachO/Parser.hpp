@@ -35,6 +35,14 @@ namespace MachO {
 class Binary;
 class FatBinary;
 
+//! The main interface to parse a Mach-O binary.
+//!
+//! This class is used to parse both Fat & non-Fat binary.
+//! Non-fat binaries are considerated as a **fat** with
+//! only one architecture. This is why MachO::Parser::parse outputs
+//! a FatBinary object.
+//!
+//! @see MachO::Parser
 class LIEF_API Parser : public LIEF::Parser {
   public:
   friend struct ::Profiler;
@@ -43,20 +51,42 @@ class LIEF_API Parser : public LIEF::Parser {
 
   ~Parser();
 
-  static std::unique_ptr<FatBinary> parse(const std::string& filename, const ParserConfig& conf = ParserConfig::deep());
-  static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data, const std::string& name = "", const ParserConfig& conf = ParserConfig::deep());
+  //! Parse a Mach-O file from the path provided by the ``filename``
+  //! parameter
+  //!
+  //! The @p conf parameter can be used to tweak the configuration
+  //! of the parser
+  //!
+  //! @param[in] filename   Path to the Mach-O file
+  //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
+  static std::unique_ptr<FatBinary> parse(const std::string& filename,
+                                          const ParserConfig& conf = ParserConfig::deep());
+
+  //! Parse a Mach-O file from the raw content provided by the ``data``
+  //! parameter
+  //!
+  //! The @p conf parameter can be used to tweak the configuration
+  //! of the parser
+  //!
+  //! @param[in] data       Mach-O file as a vector of bytes
+  //! @param[in] name       A name for the Mach-O file
+  //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
+  static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data,
+                                          const std::string& name = "",
+                                          const ParserConfig& conf = ParserConfig::deep());
 
   private:
   Parser(const std::string& file, const ParserConfig& conf);
-  Parser(const std::vector<uint8_t>& data, const std::string& name, const ParserConfig& conf);
+  Parser(const std::vector<uint8_t>& data, const std::string& name,
+         const ParserConfig& conf);
   Parser();
 
   void build();
   void build_fat();
 
   std::unique_ptr<BinaryStream> stream_;
-  std::vector<Binary*>          binaries_;
-  ParserConfig                  config_;
+  std::vector<Binary*> binaries_;
+  ParserConfig config_;
 };
 }
 }

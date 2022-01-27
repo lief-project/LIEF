@@ -30,6 +30,7 @@ namespace DEX {
 class Parser;
 class Class;
 
+//! Class which represents a DEX::Method
 class LIEF_API Method : public Object {
   friend class Parser;
   public:
@@ -38,7 +39,7 @@ class LIEF_API Method : public Object {
   public:
   using bytecode_t = std::vector<uint8_t>;
   Method();
-  Method(const std::string& name, Class* parent = nullptr);
+  Method(std::string  name, Class* parent = nullptr);
 
   Method(const Method&);
   Method& operator=(const Method&);
@@ -56,7 +57,7 @@ class LIEF_API Method : public Object {
   //! Offset to the Dalvik Bytecode
   uint64_t code_offset() const;
 
-  //! Dalvik Bytecode
+  //! Dalvik Bytecode as bytes
   const bytecode_t& bytecode() const;
 
   //! Index in the DEX Methods pool
@@ -72,18 +73,15 @@ class LIEF_API Method : public Object {
 
   void insert_dex2dex_info(uint32_t pc, uint32_t index);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   const dex2dex_method_info_t& dex2dex_info() const;
 
+  //! Check if the current method has the given ACCESS_FLAGS
   bool has(ACCESS_FLAGS f) const;
 
+  //! ACCESS_FLAGS as an std::set
   access_flags_list_t access_flags() const;
-
-  //bool is_public() const;
-  //bool is_private() const;
-  //bool is_protected() const;
-  //bool is_static() const;
 
   bool operator==(const Method& rhs) const;
   bool operator!=(const Method& rhs) const;
@@ -97,13 +95,13 @@ class LIEF_API Method : public Object {
 
   private:
   std::string name_;
-  Class* parent_{nullptr};
-  Prototype* prototype_{nullptr};
-  uint32_t access_flags_;
-  uint32_t original_index_;
-  bool is_virtual_;
+  Class* parent_ = nullptr;
+  Prototype* prototype_ = nullptr;
+  uint32_t access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
+  uint32_t original_index_ = -1u;
+  bool is_virtual_ = false;
 
-  uint64_t code_offset_;
+  uint64_t code_offset_ = 0;
   std::vector<uint8_t> bytecode_;
 
   CodeInfo code_info_;

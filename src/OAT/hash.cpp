@@ -92,8 +92,8 @@ void Hash::visit(const Method& meth) {
   if (meth.has_dex_method()) {
     process(DEX::Hash::hash(meth.dex_method()));
   }
-  process(meth.is_dex2dex_optimized());
-  process(meth.is_compiled());
+  process(static_cast<size_t>(meth.is_dex2dex_optimized()));
+  process(static_cast<size_t>(meth.is_compiled()));
   process(meth.quick_code());
 }
 

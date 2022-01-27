@@ -29,17 +29,17 @@ VersionMin& VersionMin::operator=(const VersionMin&) = default;
 VersionMin::VersionMin(const VersionMin&) = default;
 VersionMin::~VersionMin() = default;
 
-VersionMin::VersionMin(const version_min_command *version_cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
+VersionMin::VersionMin(const details::version_min_command& version_cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd.cmd), version_cmd.cmdsize},
   version_{{
-    static_cast<uint32_t>((version_cmd->version >> 16) & 0xFFFF),
-    static_cast<uint32_t>((version_cmd->version >>  8) & 0xFF),
-    static_cast<uint32_t>((version_cmd->version >>  0) & 0xFF)
+    static_cast<uint32_t>((version_cmd.version >> 16) & 0xFFFF),
+    static_cast<uint32_t>((version_cmd.version >>  8) & 0xFF),
+    static_cast<uint32_t>((version_cmd.version >>  0) & 0xFF)
   }},
   sdk_{{
-    static_cast<uint32_t>((version_cmd->sdk >> 16) & 0xFFFF),
-    static_cast<uint32_t>((version_cmd->sdk >>  8) & 0xFF),
-    static_cast<uint32_t>((version_cmd->sdk >>  0) & 0xFF)
+    static_cast<uint32_t>((version_cmd.sdk >> 16) & 0xFFFF),
+    static_cast<uint32_t>((version_cmd.sdk >>  8) & 0xFF),
+    static_cast<uint32_t>((version_cmd.sdk >>  0) & 0xFF)
   }}
 {
 }
@@ -50,19 +50,19 @@ VersionMin* VersionMin::clone() const {
 
 
  const VersionMin::version_t& VersionMin::version() const {
-   return this->version_;
+   return version_;
  }
 
  void VersionMin::version(const VersionMin::version_t& version) {
-   this->version_ = version;
+   version_ = version;
  }
 
  const VersionMin::version_t& VersionMin::sdk() const {
-   return this->sdk_;
+   return sdk_;
  }
 
  void VersionMin::sdk(const VersionMin::version_t& version) {
-   this->sdk_ = version;
+   sdk_ = version;
  }
 
 void VersionMin::accept(Visitor& visitor) const {
@@ -77,7 +77,7 @@ bool VersionMin::operator==(const VersionMin& rhs) const {
 }
 
 bool VersionMin::operator!=(const VersionMin& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

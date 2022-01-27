@@ -38,7 +38,10 @@ using no_const_getter = T (SegmentCommand::*)(void);
 template<>
 void create<SegmentCommand>(py::module& m) {
 
-  py::class_<SegmentCommand, LoadCommand>(m, "SegmentCommand")
+  py::class_<SegmentCommand, LoadCommand>(m, "SegmentCommand",
+      R"delim(
+      Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT / LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
+      )delim")
     .def(py::init<>())
     .def(py::init<const std::string&>())
     .def(py::init<const std::string&, const SegmentCommand::content_t&>())
@@ -48,75 +51,63 @@ void create<SegmentCommand>(py::module& m) {
           return safe_string_converter(obj.name());
         },
         static_cast<setter_t<const std::string&>>(&SegmentCommand::name),
-        "Segment's name"
-        )
+        "Segment's name")
 
     .def_property("virtual_address",
         static_cast<getter_t<uint64_t>>(&SegmentCommand::virtual_address),
         static_cast<setter_t<uint64_t>>(&SegmentCommand::virtual_address),
-        "Segment's virtual address"
-        )
+        "Segment's virtual address")
 
     .def_property("virtual_size",
         static_cast<getter_t<uint64_t>>(&SegmentCommand::virtual_size),
         static_cast<setter_t<uint64_t>>(&SegmentCommand::virtual_size),
-        "Segment's virtual size"
-        )
+        "Segment's virtual size")
 
     .def_property("file_size",
         static_cast<getter_t<uint64_t>>(&SegmentCommand::file_size),
         static_cast<setter_t<uint64_t>>(&SegmentCommand::file_size),
-        "Segment's file size"
-        )
+        "Segment's file size")
 
     .def_property("file_offset",
         static_cast<getter_t<uint64_t>>(&SegmentCommand::file_offset),
         static_cast<setter_t<uint64_t>>(&SegmentCommand::file_offset),
-        "Segment's file offset"
-        )
+        "Segment's file offset")
 
     .def_property("max_protection",
         static_cast<getter_t<uint32_t>>(&SegmentCommand::max_protection),
         static_cast<setter_t<uint32_t>>(&SegmentCommand::max_protection),
-        "Segment's max protection"
-        )
+        "Segment's max protection")
 
     .def_property("init_protection",
         static_cast<getter_t<uint32_t>>(&SegmentCommand::init_protection),
         static_cast<setter_t<uint32_t>>(&SegmentCommand::init_protection),
-        "Segment's initial protection"
-        )
+        "Segment's initial protection")
 
     .def_property("numberof_sections",
         static_cast<getter_t<uint32_t>>(&SegmentCommand::numberof_sections),
         static_cast<setter_t<uint32_t>>(&SegmentCommand::numberof_sections),
-        "Number of sections in this segment"
-        )
+        "Number of sections in this segment")
 
     .def_property_readonly("sections",
         static_cast<no_const_getter<it_sections>>(&SegmentCommand::sections),
-        "Segment's sections"
-        )
+        "Segment's sections")
 
     .def_property_readonly("relocations",
         static_cast<no_const_getter<it_relocations>>(&SegmentCommand::relocations),
-        "Segment's relocations"
-        )
+        "Segment's relocations")
+
     .def_property_readonly("index", &SegmentCommand::index,
         "Relative index of the segment in the segment table")
 
     .def_property("content",
         static_cast<getter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
         static_cast<setter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
-        "Segment's content"
-        )
-
+        "Segment's content")
 
     .def_property("flags",
         static_cast<getter_t<uint32_t>>(&SegmentCommand::flags),
         static_cast<setter_t<uint32_t>>(&SegmentCommand::flags),
-        "Segment's flags"
-        )
+        "Segment's flags")
 
     .def("has",
         static_cast<bool(SegmentCommand::*)(const Section&) const>(&SegmentCommand::has),

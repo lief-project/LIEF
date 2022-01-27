@@ -23,14 +23,34 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+
+//! Class that represents a function in the binary
 class LIEF_API Function : public Symbol {
   public:
+  //! Flags used to characterize the semantic
+  //! of the function
   enum class FLAGS {
-    NONE        = 0,
+    NONE = 0,
+    //! The function acts as constructor.
+    //!
+    //! Usually this flag is associated with functions
+    //! that are located in the ``.init_array``, ``__mod_init_func`` or ``.tls`` sections
     CONSTRUCTOR,
+
+    //! The function acts a destructor.
+    //!
+    //! Usually this flag is associated with functions
+    //! that are located in the ``.fini_array`` or ``__mod_term_func`` sections
     DESTRUCTOR,
+
+    //! The function is associated with Debug information
     DEBUG,
+
+    //! The function is exported by the binary and the address() method
+    //! returns its virtual address in the binary
     EXPORTED,
+
+    //! The function is **imported** by the binary and the address() should return 0
     IMPORTED,
   };
 
@@ -40,22 +60,26 @@ class LIEF_API Function : public Symbol {
   public:
   Function();
   Function(const std::string& name);
-  Function(uint64_t adress);
+  Function(uint64_t address);
   Function(const std::string& name, uint64_t address);
   Function(const std::string& name, uint64_t address, const flags_list_t& flags);
   Function(const Function&);
   Function& operator=(const Function&);
   virtual ~Function();
 
+  //! List of FLAGS
   flags_list_t flags() const;
 
+  //! Add a flag to the current function
   Function& add(FLAGS f);
 
+  //! Address of the current function. For functions that are set with the FLAGS::IMPORTED flag,
+  //! this value is likely 0.
   uint64_t address() const;
   void address(uint64_t address);
 
-  //! @brief Method so that the ``visitor`` can visit us
-  virtual void accept(Visitor& visitor) const override;
+  //! Method so that the ``visitor`` can visit us
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Function& entry);
 

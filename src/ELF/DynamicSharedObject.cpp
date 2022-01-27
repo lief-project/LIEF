@@ -16,31 +16,31 @@
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 
 #include <iomanip>
+#include <utility>
 
 namespace LIEF {
 namespace ELF {
 DynamicSharedObject::DynamicSharedObject() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
-  name_{}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0}
 {}
 
 DynamicSharedObject& DynamicSharedObject::operator=(const DynamicSharedObject&) = default;
 
 DynamicSharedObject::DynamicSharedObject(const DynamicSharedObject&) = default;
 
-DynamicSharedObject::DynamicSharedObject(const std::string& name) :
+DynamicSharedObject::DynamicSharedObject(std::string name) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
-  name_{name}
+  name_{std::move(name)}
 {}
 
 
 const std::string& DynamicSharedObject::name() const {
-  return this->name_;
+  return name_;
 }
 
 
 void DynamicSharedObject::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void DynamicSharedObject::accept(Visitor& visitor) const {
@@ -52,7 +52,7 @@ std::ostream& DynamicSharedObject::print(std::ostream& os) const {
   DynamicEntry::print(os);
   os << std::hex
      << std::left
-     << std::setw(10) << this->name();
+     << std::setw(10) << name();
   return os;
 
 }

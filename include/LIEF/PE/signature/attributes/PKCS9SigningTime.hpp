@@ -60,15 +60,15 @@ class LIEF_API PKCS9SigningTime : public Attribute {
 
   //! Time as an array [year, month, day, hour, min, sec]
   const time_t& time() const {
-    return this->time_;
+    return time_;
   }
 
   //! Print information about the attribute
-  virtual std::string print() const override;
+  std::string print() const override;
 
-  virtual std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
   virtual ~PKCS9SigningTime();
 
   private:

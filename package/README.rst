@@ -1,7 +1,8 @@
 About
 =====
 
-The purpose of this project is to provide a cross platform library which can parse, modify and abstract ELF, PE and MachO formats.
+The purpose of this project is to provide a cross platform library which can parse, modify and
+abstract ELF, PE and MachO formats.
 
 Main features:
 
@@ -26,7 +27,7 @@ To install the latest **version** (release):
 
    $ pip install lief
 
-To install nightlty build:
+To install nightly build:
 
 .. code-block:: console
 
@@ -121,7 +122,7 @@ Documentation
 Contact
 =======
 
-* **Mail**: lief at quarkslab com
+* **Mail**: contact at lief.re
 * **Gitter**: `lief-project <https://gitter.im/lief-project>`_
 
 

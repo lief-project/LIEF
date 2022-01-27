@@ -35,11 +35,12 @@ using setter_t = void (DynamicEntryRpath::*)(T);
 
 template<>
 void create<DynamicEntryRpath>(py::module& m) {
+  py::class_<DynamicEntryRpath, DynamicEntry>(m, "DynamicEntryRpath",
+      R"delim(
+      Class which represents a ``DT_RPATH`` entry. This attribute is
+      deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See :class:`~lief.ELF.DynamicRunPath`)
+      )delim")
 
-  //
-  // Dynamic Entry RPATH object
-  //
-  py::class_<DynamicEntryRpath, DynamicEntry>(m, "DynamicEntryRpath")
     .def(py::init<const std::string &>(),
         "Constructor from (r)path",
         "path"_a = "")
@@ -53,14 +54,14 @@ void create<DynamicEntryRpath>(py::module& m) {
           return safe_string_converter(obj.name());
         },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::name),
-        "Return path value")
+        "The actual rpath as a string")
 
     .def_property("rpath",
         [] (const DynamicEntryRpath& obj) {
           return safe_string_converter(obj.rpath());
         },
         static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::rpath),
-        "Return path value")
+        "The actual rpath as a string")
 
 
     .def_property("paths",

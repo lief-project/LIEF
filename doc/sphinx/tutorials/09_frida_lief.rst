@@ -133,7 +133,7 @@ Configuration of Frida Gadget
 From the documentation, Frida gadget enables to use a configuration file to parametrize the interaction:
 
 * **Listing**: Interaction is the same as frida-server
-* **Script**: Direct interaction with a JS script whose path is specified in the configuration
+* **Script**: Direct interaction with a JS script for which the path is specified in the configuration
 * **ScriptDirectory**: Same as *Script* but for multiple applications and multiple scripts
 
 *Listing* interaction would require ``android.permission.INTERNET`` permission. We can add such permission by modifying the manifest. Instead, we will use the *Script* interaction which does not require permission.

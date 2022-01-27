@@ -28,9 +28,7 @@ LoadConfigurationV2& LoadConfigurationV2::operator=(const LoadConfigurationV2&) 
 LoadConfigurationV2::LoadConfigurationV2(const LoadConfigurationV2&) = default;
 LoadConfigurationV2::~LoadConfigurationV2() = default;
 
-LoadConfigurationV2::LoadConfigurationV2() :
-  LoadConfigurationV1{},
-  code_integrity_{}
+LoadConfigurationV2::LoadConfigurationV2()
 {}
 
 WIN_VERSION LoadConfigurationV2::version() const {
@@ -39,7 +37,7 @@ WIN_VERSION LoadConfigurationV2::version() const {
 
 
 const CodeIntegrity& LoadConfigurationV2::code_integrity() const {
-  return this->code_integrity_;
+  return code_integrity_;
 }
 
 CodeIntegrity& LoadConfigurationV2::code_integrity() {
@@ -57,15 +55,14 @@ bool LoadConfigurationV2::operator==(const LoadConfigurationV2& rhs) const {
 }
 
 bool LoadConfigurationV2::operator!=(const LoadConfigurationV2& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& LoadConfigurationV2::print(std::ostream& os) const {
   LoadConfigurationV1::print(os);
 
   os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Code Integrity:" << std::endl;
-  oprefixstream out("    ", os);
-  out << this->code_integrity();
+  os << code_integrity();
   return os;
 }
 

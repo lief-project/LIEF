@@ -28,7 +28,9 @@ namespace MachO {
 class Binary;
 class BinaryParser;
 
+namespace details {
 struct fileset_entry_command;
+}
 
 //! Class associated with the LC_FILESET_ENTRY commands
 class LIEF_API FilesetCommand : public LoadCommand {
@@ -37,7 +39,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
   using content_t = std::vector<uint8_t>;
 
   FilesetCommand();
-  FilesetCommand(const fileset_entry_command *command);
+  FilesetCommand(const details::fileset_entry_command& command);
   FilesetCommand(const std::string& name);
 
   FilesetCommand& operator=(FilesetCommand copy);
@@ -45,7 +47,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   void swap(FilesetCommand& other);
 
-  virtual FilesetCommand* clone() const override;
+  FilesetCommand* clone() const override;
 
   virtual ~FilesetCommand();
 
@@ -68,12 +70,11 @@ class LIEF_API FilesetCommand : public LoadCommand {
     return binary_;
   }
 
-
   void name(const std::string& name);
   void virtual_address(uint64_t virtual_address);
   void file_offset(uint64_t file_offset);
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   bool operator==(const FilesetCommand& rhs) const;
   bool operator!=(const FilesetCommand& rhs) const;

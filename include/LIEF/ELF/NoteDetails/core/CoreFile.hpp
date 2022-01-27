@@ -55,7 +55,7 @@ class LIEF_API CoreFile : public NoteDetails {
   public:
   static CoreFile make(Note& note);
 
-  virtual CoreFile* clone() const override;
+  CoreFile* clone() const override;
 
   //! Number of coredump file entries
   uint64_t count() const;
@@ -74,9 +74,9 @@ class LIEF_API CoreFile : public NoteDetails {
   bool operator==(const CoreFile& rhs) const;
   bool operator!=(const CoreFile& rhs) const;
 
-  virtual void dump(std::ostream& os) const override;
+  void dump(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~CoreFile();
 
@@ -89,8 +89,8 @@ class LIEF_API CoreFile : public NoteDetails {
   template <typename ELF_T>
   LIEF_LOCAL void build_();
 
-  virtual void parse() override;
-  virtual void build() override;
+  void parse() override;
+  void build() override;
 
   private:
   CoreFile(Note& note);

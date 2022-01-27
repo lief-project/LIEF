@@ -51,13 +51,13 @@ class hashstream {
   template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
   hashstream& write(Integer integer) {
     auto int_p = reinterpret_cast<const uint8_t*>(&integer);
-    return this->write(int_p, sizeof(Integer));
+    return write(int_p, sizeof(Integer));
   }
 
   template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
   hashstream& write(const std::array<T, size>& t) {
     for (T val : t) {
-      this->write<T>(val);
+      write<T>(val);
     }
     return *this;
   }

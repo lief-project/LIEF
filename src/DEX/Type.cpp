@@ -24,7 +24,7 @@ namespace DEX {
 Type::Type() = default;
 
 Type::Type(const std::string& mangled) {
-  this->parse(mangled);
+  parse(mangled);
 }
 
 
@@ -32,26 +32,26 @@ Type::Type(const Type& other) :
   Object{other},
   type_{other.type_}
 {
-  switch (this->type()) {
+  switch (type()) {
     case TYPES::ARRAY:
       {
-        this->array_ = new array_t{};
+        array_ = new array_t{};
         std::copy(
             std::begin(other.array()),
             std::end(other.array()),
-            std::back_inserter(*this->array_));
+            std::back_inserter(*array_));
         break;
       }
 
     case TYPES::CLASS:
       {
-        this->cls_ = other.cls_;
+        cls_ = other.cls_;
         break;
       }
 
     case TYPES::PRIMITIVE:
       {
-        this->basic_ = new PRIMITIVES{other.primitive()};
+        basic_ = new PRIMITIVES{other.primitive()};
         break;
       }
 
@@ -61,19 +61,19 @@ Type::Type(const Type& other) :
 }
 
 Type::TYPES Type::type() const {
-  return this->type_;
+  return type_;
 }
 
 const Class& Type::cls() const {
-  return *this->cls_;
+  return *cls_;
 }
 
 const Type::array_t& Type::array() const {
-  return *this->array_;
+  return *array_;
 }
 
 const Type::PRIMITIVES& Type::primitive() const {
-  return *this->basic_;
+  return *basic_;
 }
 
 
@@ -108,80 +108,80 @@ void Type::parse(const std::string& type) {
   switch(t) {
     case 'V':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::VOID_T};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::VOID_T};
         break;
       }
 
     case 'Z':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BOOLEAN};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BOOLEAN};
         break;
       }
 
     case 'B':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BYTE};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BYTE};
         break;
       }
 
     case 'S':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::SHORT};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::SHORT};
         break;
       }
 
     case 'C':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::CHAR};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::CHAR};
         break;
       }
 
     case 'I':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::INT};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::INT};
         break;
       }
 
     case 'J':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::LONG};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::LONG};
         break;
       }
 
     case 'F':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::FLOAT};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::FLOAT};
         break;
       }
 
     case 'D':
       {
-        this->type_ = Type::TYPES::PRIMITIVE;
-        this->basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::DOUBLE};
+        type_ = Type::TYPES::PRIMITIVE;
+        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::DOUBLE};
         break;
       }
 
     case 'L': //CLASS
       {
-        this->type_ = Type::TYPES::CLASS;
+        type_ = Type::TYPES::CLASS;
         break;
       }
 
     case '[': //ARRAY
       {
-        if (this->array_ == nullptr) {
-          this->array_ = new array_t{};
+        if (array_ == nullptr) {
+          array_ = new array_t{};
         }
-        this->type_ = Type::TYPES::ARRAY;
-        this->array_->emplace_back(type.substr(1));
+        type_ = Type::TYPES::ARRAY;
+        array_->emplace_back(type.substr(1));
         break;
       }
 
@@ -193,7 +193,7 @@ void Type::parse(const std::string& type) {
 }
 
 size_t Type::dim() const {
-  if (this->type() != TYPES::ARRAY) {
+  if (type() != TYPES::ARRAY) {
     return 0;
   }
 
@@ -217,7 +217,7 @@ bool Type::operator==(const Type& rhs) const {
 }
 
 bool Type::operator!=(const Type& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Type& type) {
@@ -307,16 +307,16 @@ std::string Type::pretty_name(PRIMITIVES p) {
 }
 
 Type::~Type() {
-  switch (this->type()) {
+  switch (type()) {
     case Type::TYPES::ARRAY:
       {
-        delete this->array_;
+        delete array_;
         break;
       }
 
     case Type::TYPES::PRIMITIVE:
       {
-        delete this->basic_;
+        delete basic_;
         break;
       }
 

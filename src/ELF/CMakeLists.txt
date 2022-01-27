@@ -83,8 +83,6 @@ set(LIEF_ELF_INC_FILES
 
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/Structures.hpp"
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp"
-
-  "${CMAKE_CURRENT_LIST_DIR}/RelocationSizes.hpp"
   )
 
 set(LIEF_ELF_DATA_HANDLER_INCLUDE_FILES

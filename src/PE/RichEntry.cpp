@@ -40,27 +40,27 @@ RichEntry::RichEntry(uint16_t id, uint16_t build_id, uint32_t count) :
 
 
 uint16_t RichEntry::id() const {
-  return this->id_;
+  return id_;
 }
 
 uint16_t RichEntry::build_id() const {
-  return this->build_id_;
+  return build_id_;
 }
 
 uint32_t RichEntry::count() const {
-  return this->count_;
+  return count_;
 }
 
 void RichEntry::id(uint16_t id) {
-  this->id_ = id;
+  id_ = id;
 }
 
 void RichEntry::build_id(uint16_t build_id) {
-  this->build_id_ = build_id;
+  build_id_ = build_id;
 }
 
 void RichEntry::count(uint32_t count) {
-  this->count_ = count;
+  count_ = count;
 }
 
 void RichEntry::accept(LIEF::Visitor& visitor) const {
@@ -74,7 +74,7 @@ bool RichEntry::operator==(const RichEntry& rhs) const {
 }
 
 bool RichEntry::operator!=(const RichEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

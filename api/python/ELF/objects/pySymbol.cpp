@@ -37,52 +37,57 @@ using setter_t = void (Symbol::*)(T);
 template<>
 void create<Symbol>(py::module& m) {
 
-  py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
+  py::class_<Symbol, LIEF::Symbol>(m, "Symbol",
+    R"delim(
+    "Class which represents an ELF symbol"
+    )delim")
     .def(py::init<>())
     .def_property_readonly("demangled_name",
         &Symbol::demangled_name,
-        "Symbol's unmangled name")
+        "Symbol's name demangled")
 
     .def_property("type",
         static_cast<getter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
         static_cast<setter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
-        "A symbol's type provides a general classification for the associated entity. See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) "")
+        "The symbol's type provides a general classification for the associated entity. "
+        "See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) "")
 
     .def_property("binding",
         static_cast<getter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
         static_cast<setter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
-        "A symbol's binding determines the linkage visibility and behavior. See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) "")
+        "A symbol's binding determines the linkage visibility and behavior. "
+        "See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) "")
 
     .def_property("information",
         static_cast<getter_t<uint8_t>>(&Symbol::information),
         static_cast<setter_t<uint8_t>>(&Symbol::information),
-        "This member specifies the symbol's type and binding attributes")
+        "This property specifies the symbol's type and binding attributes")
 
     .def_property("other",
         static_cast<getter_t<uint8_t>>(&Symbol::other),
         static_cast<setter_t<uint8_t>>(&Symbol::other),
-        "This member **should** holds ``0`` and **should** not have defined meaning.\n\n"
-
-        "See: " RST_ATTR_REF(lief.ELF.Symbol.visibility) "")
+        "Alias for: " RST_ATTR_REF(lief.ELF.Symbol.visibility) "")
 
     .def_property("visibility",
         static_cast<getter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
         static_cast<setter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
-        "Symbol " RST_CLASS_REF(lief.ELF.SYMBOL_VISIBILITY) ". \n\n"
+        "Symbol " RST_CLASS_REF(lief.ELF.SYMBOL_VISIBILITY) "."
 
         "It's basically an alias on " RST_ATTR_REF(lief.ELF.Symbol.other) "")
 
-    .def_property("value",
+    .def_property("value", // Even though it is already defined in the base class (Abstract/Symbol)
+                           // We keep the definition to provide a dedicated documentation
         static_cast<getter_t<uint64_t>>(&Symbol::value),
         static_cast<setter_t<uint64_t>>(&Symbol::value),
-        "This member have slightly different interpretations\n\n"
-        "\t- In relocatable files, `value` holds alignment constraints for a symbol whose section index is "
-        "`SHN_COMMON`.\n\n"
-        "\t- In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an"
-        "offset from the beginning of the section associated with this symbol.\n\n"
-        "\t- In executable and shared object files, `value` holds a virtual address. To make these files's"
-        "symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to"
-        "a virtual address (memory interpretation) for which the section number is irrelevant.")
+        R"delim(
+        This member has different menaing depending on the symbol's type and the type of the ELF file (library, object, ...)
+
+        - In relocatable files, this property contains the alignment constraints
+          of the symbol for which the section index is `SHN_COMMON`.
+        - In relocatable files, can also contain a section's offset for a defined symbol.
+          That is, `value` is an offset from the beginning of the section associated with this symbol.
+        - In executable and libraries, this property contains a virtual address.
+        )delim")
 
     .def_property("size",
         static_cast<getter_t<uint64_t>>(&Symbol::size),
@@ -107,7 +112,7 @@ void create<Symbol>(py::module& m) {
 
     .def_property_readonly("is_static",
         &Symbol::is_static,
-        "True if the symbol is a static one")
+        "True if the symbol is a static one (i.e. from the ``.symtab`` section")
 
     .def_property_readonly("is_function",
         &Symbol::is_function,
@@ -117,16 +122,13 @@ void create<Symbol>(py::module& m) {
         &Symbol::is_variable,
         "True if the symbol is a variable")
 
-
     .def_property("exported",
-        &Symbol::is_exported,
-        &Symbol::set_exported,
-        "Whether or not the symbol is **exported**")
+        &Symbol::is_exported, &Symbol::set_exported,
+        "Whether the symbol is **exported**")
 
     .def_property("imported",
-        &Symbol::is_imported,
-        &Symbol::set_imported,
-        "Whether or not the symbol is **imported**")
+        &Symbol::is_imported, &Symbol::set_imported,
+        "Whether the symbol is **imported**")
 
     .def("__eq__", &Symbol::operator==)
     .def("__ne__", &Symbol::operator!=)
@@ -137,8 +139,7 @@ void create<Symbol>(py::module& m) {
 
 
     .def("__str__",
-      [] (const Symbol& symbol)
-      {
+      [] (const Symbol& symbol) {
         std::ostringstream stream;
         stream << symbol;
         std::string str =  stream.str();

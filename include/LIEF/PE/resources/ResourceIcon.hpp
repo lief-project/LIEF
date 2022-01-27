@@ -34,8 +34,8 @@ class LIEF_API ResourceIcon : public Object {
 
   public:
   ResourceIcon();
-  ResourceIcon(const pe_resource_icon_group *header);
-  ResourceIcon(const pe_icon_header *header);
+  ResourceIcon(const details::pe_resource_icon_group& header);
+  ResourceIcon(const details::pe_icon_header& header);
 
   ResourceIcon(const std::string& iconpath);
 
@@ -44,37 +44,37 @@ class LIEF_API ResourceIcon : public Object {
 
   virtual ~ResourceIcon();
 
-  //! @brief Id associated with the icon
+  //! Id associated with the icon
   uint32_t id() const;
 
-  //! @brief Language associated with the icon
+  //! Language associated with the icon
   RESOURCE_LANGS lang() const;
 
-  //! @brief Sub language associated with the icon
+  //! Sub language associated with the icon
   RESOURCE_SUBLANGS sublang() const;
 
-  //! @brief Width in pixels of the image
+  //! Width in pixels of the image
   uint8_t width() const;
 
-  //! @brief Height in pixels of the image
+  //! Height in pixels of the image
   uint8_t height() const;
 
-  //! @brief Number of colors in image (0 if >=8bpp)
+  //! Number of colors in image (0 if >=8bpp)
   uint8_t color_count() const;
 
-  //! @brief Reserved (must be 0)
+  //! Reserved (must be 0)
   uint8_t reserved() const;
 
-  //! @brief Color Planes
+  //! Color Planes
   uint16_t planes() const;
 
-  //! @brief Bits per pixel
+  //! Bits per pixel
   uint16_t bit_count() const;
 
-  //! @brief Size in bytes of the image
+  //! Size in bytes of the image
   uint32_t size() const;
 
-  //! @brief Pixels of the image (as bytes)
+  //! Pixels of the image (as bytes)
   const std::vector<uint8_t>& pixels() const;
 
   void id(uint32_t id);
@@ -88,12 +88,12 @@ class LIEF_API ResourceIcon : public Object {
   void bit_count(uint16_t bit_count);
   void pixels(const std::vector<uint8_t>& pixels);
 
-  //! @brief Save the icon to the given filename
+  //! Save the icon to the given filename
   //!
   //! @param[in] filename Path to file in which the icon will be saved
   void save(const std::string& filename) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceIcon& rhs) const;
   bool operator!=(const ResourceIcon& rhs) const;

@@ -29,25 +29,25 @@ namespace OAT {
 
 template<>
 void Parser::parse_dex_files<OAT131_t>() {
-  size_t nb_dex_files = this->oat_binary_->header_.nb_dex_files();
+  size_t nb_dex_files = oat_binary_->header_.nb_dex_files();
 
-  uint64_t oat_dex_files_offset = this->oat_binary_->header().oat_dex_files_offset();
+  uint64_t oat_dex_files_offset = oat_binary_->header().oat_dex_files_offset();
 
   LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", oat_dex_files_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
 
-  this->stream_->setpos(oat_dex_files_offset);
+  stream_->setpos(oat_dex_files_offset);
   for (size_t i = 0; i < nb_dex_files; ++i) {
 
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
 
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
-    uint32_t location_size = this->stream_->read<uint32_t>();
+    uint32_t location_size = stream_->read<uint32_t>();
 
-    const char* loc_cstr = this->stream_->read_array<char>(location_size, /* check */false);
+    const char* loc_cstr = stream_->read_array<char>(location_size, /* check */false);
     std::string location;
 
     if (loc_cstr != nullptr) {
@@ -56,35 +56,35 @@ void Parser::parse_dex_files<OAT131_t>() {
 
     dex_file->location(location);
 
-    uint32_t checksum = this->stream_->read<uint32_t>();
+    uint32_t checksum = stream_->read<uint32_t>();
     dex_file->checksum(checksum);
 
-    uint32_t dex_struct_offset = this->stream_->read<uint32_t>();
+    uint32_t dex_struct_offset = stream_->read<uint32_t>();
     dex_file->dex_offset(dex_struct_offset);
 
-    uint32_t class_offsets = this->stream_->read<uint32_t>();
+    uint32_t class_offsets = stream_->read<uint32_t>();
     classes_offsets_offset.push_back(class_offsets);
 
-    uint32_t type_lookup_offset = this->stream_->read<uint32_t>();
+    uint32_t type_lookup_offset = stream_->read<uint32_t>();
 
     dex_file->lookup_table_offset(type_lookup_offset);
 
-    /* uint32_t dex_sections_layout_offset = */ this->stream_->read<uint32_t>();
+    /* uint32_t dex_sections_layout_offset = */ stream_->read<uint32_t>();
 
-    /* uint32_t method_bss_mapping_offset =  */ this->stream_->read<uint32_t>();
+    /* uint32_t method_bss_mapping_offset =  */ stream_->read<uint32_t>();
 
-    this->oat_binary_->oat_dex_files_.push_back(dex_file.release());
+    oat_binary_->oat_dex_files_.push_back(dex_file.release());
   }
 
-  if (this->has_vdex()) {
-    DEX::it_dex_files dexfiles = this->vdex_file_->dex_files();
-    if (dexfiles.size() != this->oat_binary_->oat_dex_files_.size()) {
+  if (has_vdex()) {
+    DEX::it_dex_files dexfiles = vdex_file_->dex_files();
+    if (dexfiles.size() != oat_binary_->oat_dex_files_.size()) {
       LIEF_WARN("Inconsistent number of vdex files");
       return;
     }
     for (size_t i = 0; i < dexfiles.size(); ++i) {
-      DexFile* oat_dex_file = this->oat_binary_->oat_dex_files_[i];
-      this->oat_binary_->dex_files_.push_back(&dexfiles[i]);
+      DexFile* oat_dex_file = oat_binary_->oat_dex_files_[i];
+      oat_binary_->dex_files_.push_back(&dexfiles[i]);
       oat_dex_file->dex_file_ = &dexfiles[i];
 
       const uint32_t nb_classes = dexfiles[i].header().nb_classes();
@@ -92,7 +92,7 @@ void Parser::parse_dex_files<OAT131_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        uint32_t off = this->stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
+        uint32_t off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
         oat_dex_file->classes_offsets_.push_back(off);
       }
     }

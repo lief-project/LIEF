@@ -30,7 +30,7 @@ void init_c_sections(Pe_Binary_t* c_binary, Binary* binary) {
     std::vector<uint8_t> section_content = b_section.content();
     uint8_t* content = nullptr;
 
-    if (section_content.size() > 0) {
+    if (!section_content.empty()) {
       content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
       std::move(
           std::begin(section_content),

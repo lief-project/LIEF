@@ -35,9 +35,12 @@ class BinaryParser;
 class SegmentCommand;
 class Binary;
 
+namespace details {
 struct section_32;
 struct section_64;
+}
 
+//! Class that represents a Mach-O section
 class LIEF_API Section : public LIEF::Section {
 
   friend class BinaryParser;
@@ -50,8 +53,8 @@ class LIEF_API Section : public LIEF::Section {
 
   public:
   Section();
-  Section(const section_32 *sectionCmd);
-  Section(const section_64 *sectionCmd);
+  Section(const details::section_32& section_cmd);
+  Section(const details::section_64& section_cmd);
 
   Section(const std::string& name);
   Section(const std::string& name, const content_t& content);
@@ -61,39 +64,78 @@ class LIEF_API Section : public LIEF::Section {
 
   void swap(Section& other);
 
-  virtual ~Section();
+  ~Section() override;
 
-  // ============================
-  // LIEF::Section implementation
-  // ============================
-  virtual content_t content() const override;
+  content_t content() const override;
 
-  //! @brief Set section content
-  virtual void content(const content_t& data) override;
+  //! Update the content of the section
+  void content(const content_t& data) override;
 
-  //! @brief Return the name of the segment holding this section
+  //! Return the name of the segment linked to this section
   const std::string& segment_name() const;
 
-  //! @see virtual_address
+  //! Virtual base address of the section
   uint64_t address() const;
 
-  uint32_t                alignment() const;
-  uint32_t                relocation_offset() const;
-  uint32_t                numberof_relocations() const;
-  uint32_t                flags() const;
-  MACHO_SECTION_TYPES     type() const;
-  uint32_t                reserved1() const;
-  uint32_t                reserved2() const;
-  uint32_t                reserved3() const;
-  flag_list_t             flags_list() const;
-  uint32_t                raw_flags() const;
+  //! Section alignment as a power of 2
+  uint32_t alignment() const;
 
-  bool                    has_segment() const;
-  SegmentCommand&         segment();
-  const SegmentCommand&   segment() const;
+  //! Offset of the relocation table. This value should be 0
+  //! for executable and libraries as the relocations are managed by the DyldInfo::rebase
+  //!
+  //! Other the other hand, for object files (``.o``) this value should not be 0
+  //!
+  //! @see numberof_relocations
+  //! @see relocations
+  uint32_t relocation_offset() const;
 
+  //! Number of relocations associated with this section
+  uint32_t numberof_relocations() const;
+
+  //! Section's flags masked with SECTION_FLAGS_MASK (see: MACHO_SECTION_FLAGS)
+  //!
+  //! @see flags
+  uint32_t flags() const;
+
+  //! Type of the section. This value can help to determine
+  //! the purpose of the section (e.g. MACHO_SECTION_TYPES::MACHO_SECTION_TYPES)
+  MACHO_SECTION_TYPES type() const;
+
+  //! According to the official ``loader.h`` file, this value is reserved
+  //! for *offset* or *index*
+  uint32_t reserved1() const;
+
+  //! According to the official ``loader.h`` file, this value is reserved
+  //! for *count* or *sizeof*
+  uint32_t reserved2() const;
+
+  //! This value is only present for 64 bits Mach-O files. In that case,
+  //! the value is *reserved*.
+  uint32_t reserved3() const;
+
+  //! Return the Section::flags as an std::set of MACHO_SECTION_FLAGS
+  //!
+  //! @see flags
+  flag_list_t flags_list() const;
+
+  //! Section flags without applying the SECTION_FLAGS_MASK mask
+  uint32_t raw_flags() const;
+
+  //! Check if this section is correctly linked with a MachO::SegmentCommand
+  bool has_segment() const;
+
+  //! The segment associated with this section
+  SegmentCommand& segment();
+  const SegmentCommand& segment() const;
+
+  //! Clear the content of this section by filling its values
+  //! with the byte provided in parameter
   void clear(uint8_t v);
 
+  //! Return an iterator over the MachO::Relocation associated with this section
+  //!
+  //! This iterator is likely to be empty of executable and libraries while it should not
+  //! for object files (``.o``)
   it_relocations relocations();
   it_const_relocations relocations() const;
 
@@ -109,15 +151,19 @@ class LIEF_API Section : public LIEF::Section {
   void reserved2(uint32_t reserved2);
   void reserved3(uint32_t reserved3);
 
+  //! Check if the section has the given MACHO_SECTION_FLAGS flag
   bool has(MACHO_SECTION_FLAGS flag) const;
 
+  //! Append a MACHO_SECTION_FLAGS to the current section
   void add(MACHO_SECTION_FLAGS flag);
+
+  //! Remove a MACHO_SECTION_FLAGS to the current section
   void remove(MACHO_SECTION_FLAGS flag);
 
   Section& operator+=(MACHO_SECTION_FLAGS flag);
   Section& operator-=(MACHO_SECTION_FLAGS flag);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Section& rhs) const;
   bool operator!=(const Section& rhs) const;
@@ -130,16 +176,11 @@ class LIEF_API Section : public LIEF::Section {
   uint32_t align_{0};
   uint32_t relocations_offset_{0};
   uint32_t nbof_relocations_{0};
-  //! @brief `flags_` attribute holds both section's type and section's *flags*
-  //!
-  //! * Type:  `flags_[7:0]`
-  //! * Flags: `flags_[31:8]`
   uint32_t flags_{0};
   uint32_t reserved1_{0};
   uint32_t reserved2_{0};
   uint32_t reserved3_{0};
   content_t content_;
-  //! @brief Pointer to the segment holding this section.
   SegmentCommand *segment_{nullptr};
   relocations_t relocations_;
 };

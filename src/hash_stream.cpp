@@ -79,7 +79,7 @@ hashstream::hashstream(HASH type) :
       }
   }
   mbedtls_md_starts(cast(this->ctx_));
-  if (ret) {
+  if (ret != 0) {
     LIEF_WARN("Error while setting up hash function");
   }
 }

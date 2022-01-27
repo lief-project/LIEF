@@ -34,11 +34,7 @@ namespace LIEF {
 namespace ELF {
 
 NoteDetails::~NoteDetails() = default;
-
-
-NoteDetails::NoteDetails():
-  note_{nullptr}
-{}
+NoteDetails::NoteDetails() = default;
 
 NoteDetails::NoteDetails(Note& note):
   note_{&note}
@@ -49,17 +45,17 @@ NoteDetails* NoteDetails::clone() const {
 }
 
 const Note::description_t& NoteDetails::description() const {
-  if (this->note_ == nullptr) {
-    return this->empty_;
+  if (note_ == nullptr) {
+    return empty_;
   }
-  return this->note_->description();
+  return note_->description();
 }
 
 Note::description_t& NoteDetails::description() {
-  if (this->note_ == nullptr) {
-    return this->empty_;
+  if (note_ == nullptr) {
+    return empty_;
   }
-  return this->note_->description();
+  return note_->description();
 }
 
 
@@ -69,10 +65,10 @@ Binary* NoteDetails::binary() {
 
 
 const Binary* NoteDetails::binary() const {
-  if (this->note_ == nullptr) {
+  if (note_ == nullptr) {
     return nullptr;
   }
-  return this->note_->binary_;
+  return note_->binary_;
 }
 
 void NoteDetails::accept(Visitor& visitor) const {
@@ -87,7 +83,7 @@ bool NoteDetails::operator==(const NoteDetails& rhs) const {
 }
 
 bool NoteDetails::operator!=(const NoteDetails& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

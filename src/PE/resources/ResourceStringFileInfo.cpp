@@ -31,21 +31,20 @@ ResourceStringFileInfo::~ResourceStringFileInfo() = default;
 
 ResourceStringFileInfo::ResourceStringFileInfo() :
   type_{0},
-  key_{u8tou16("StringFileInfo")},
-  childs_{}
+  key_{u8tou16("StringFileInfo")}
 {}
 
 
 uint16_t ResourceStringFileInfo::type() const {
-  return this->type_;
+  return type_;
 }
 
 const std::u16string& ResourceStringFileInfo::key() const {
-  return this->key_;
+  return key_;
 }
 
 const std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() const {
-  return this->childs_;
+  return childs_;
 }
 
 std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() {
@@ -54,19 +53,19 @@ std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() {
 
 
 void ResourceStringFileInfo::type(uint16_t type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 void ResourceStringFileInfo::key(const std::u16string& key) {
-  this->key_ = key;
+  key_ = key;
 }
 
 void ResourceStringFileInfo::key(const std::string& key) {
-  this->key_ = u8tou16(key);
+  key_ = u8tou16(key);
 }
 
 void ResourceStringFileInfo::langcode_items(const std::vector<LangCodeItem>& items) {
-  this->childs_ = items;
+  childs_ = items;
 }
 
 
@@ -82,7 +81,7 @@ bool ResourceStringFileInfo::operator==(const ResourceStringFileInfo& rhs) const
 }
 
 bool ResourceStringFileInfo::operator!=(const ResourceStringFileInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info) {

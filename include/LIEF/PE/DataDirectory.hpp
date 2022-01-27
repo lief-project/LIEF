@@ -30,8 +30,12 @@ class Builder;
 class Parser;
 class Binary;
 class Section;
-struct pe_data_directory;
 
+namespace details {
+struct pe_data_directory;
+}
+
+//! Class that represents a PE data directory entry
 class LIEF_API DataDirectory : public Object {
 
   friend class Builder;
@@ -41,24 +45,35 @@ class LIEF_API DataDirectory : public Object {
   public:
   DataDirectory();
   DataDirectory(DATA_DIRECTORY type);
-  DataDirectory(const pe_data_directory *header, DATA_DIRECTORY type);
+  DataDirectory(const details::pe_data_directory& header, DATA_DIRECTORY type);
 
   DataDirectory(const DataDirectory& other);
   DataDirectory& operator=(DataDirectory other);
   void swap(DataDirectory& other);
   virtual ~DataDirectory();
 
-  uint32_t       RVA() const;
-  uint32_t       size() const;
-  Section&       section();
+  //! The relative virtual address of the content of this data
+  //! directory
+  uint32_t RVA() const;
+
+  //! The size of the content
+  uint32_t size() const;
+
+  //! Check if the content of this data directory is associated
+  //! with a PE Cection
+  bool has_section() const;
+
+  //! Section associated with the DataDirectory
+  Section& section();
   const Section& section() const;
+
+  //! Type of the data directory
   DATA_DIRECTORY type() const;
-  bool           has_section() const;
 
   void size(uint32_t size);
   void RVA(uint32_t rva);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const DataDirectory& rhs) const;
   bool operator!=(const DataDirectory& rhs) const;

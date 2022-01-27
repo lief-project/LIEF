@@ -35,13 +35,15 @@ using setter_t = void (DynamicEntryLibrary::*)(T);
 
 template<>
 void create<DynamicEntryLibrary>(py::module& m) {
+  py::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary",
+      R"delim(
+      Class which represents a ``DT_NEEDED`` entry in the dynamic table.
 
-  //
-  // Dynamic Entry Library object
-  //
-  py::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary")
+      This kind of entry is usually used to create library dependency.
+      )delim")
+
     .def(py::init<const std::string &>(),
-        "Constructor from library name",
+        "Constructor from a library name",
         "library_name"_a)
 
     .def_property("name",
@@ -49,7 +51,7 @@ void create<DynamicEntryLibrary>(py::module& m) {
           return safe_string_converter(obj.name());
         },
         static_cast<setter_t<const std::string&>>(&DynamicEntryLibrary::name),
-        "Return library's name")
+        "Library associated with this entry (e.g. ``libc.so.6``)")
 
     .def("__eq__", &DynamicEntryLibrary::operator==)
     .def("__ne__", &DynamicEntryLibrary::operator!=)

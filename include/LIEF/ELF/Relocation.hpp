@@ -36,12 +36,15 @@ class Builder;
 class Symbol;
 class Section;
 
+namespace details {
 struct Elf32_Rel;
 struct Elf32_Rela;
 
 struct Elf64_Rel;
 struct Elf64_Rela;
+}
 
+//! Class that represents an ELF relocation.
 class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class Parser;
@@ -49,10 +52,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
   friend class Builder;
 
   public:
-  Relocation(const Elf32_Rel*  header);
-  Relocation(const Elf32_Rela* header);
-  Relocation(const Elf64_Rel*  header);
-  Relocation(const Elf64_Rela* header);
+  Relocation(const details::Elf32_Rel&  header);
+  Relocation(const details::Elf32_Rela& header);
+  Relocation(const details::Elf64_Rel&  header);
+  Relocation(const details::Elf64_Rela& header);
   Relocation(uint64_t address, uint32_t type = 0, int64_t addend = 0, bool isRela = false);
 
   template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
@@ -62,32 +65,58 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   Relocation();
   Relocation(ARCH arch);
-  virtual ~Relocation();
+  ~Relocation() override;
 
   Relocation& operator=(Relocation other);
   Relocation(const Relocation& other);
   void swap(Relocation& other);
 
-  //uint64_t address() const;
+  //! Additional value that can be involved in the relocation processing
   int64_t  addend() const;
+
+  //! Type of the relocation
+  //! This type depends on the underlying architecture which can be accessed with architecture().
+  //!
+  //! Depending on the architecture, it can return:
+  //!
+  //! * RELOC_x86_64
+  //! * RELOC_i386
+  //! * RELOC_POWERPC32
+  //! * RELOC_POWERPC64
+  //! * RELOC_AARCH64
+  //! * RELOC_ARM
+  //! * RELOC_MIPS
+  //! * RELOC_HEXAGON
+  //! * RELOC_SYSTEMZ
+  //! * RELOC_SPARC
   uint32_t type() const;
-  bool     is_rela() const;
-  bool     is_rel() const;
+
+  //! Check if the relocation uses the explicit addend() field (this is usually the case for 64 bits binaries)
+  bool is_rela() const;
+
+  //! Check if the relocation uses the implicit added (i.e. not present in the ELF structure)
+  bool is_rel() const;
+
+  //! Relocation info which contains for instance the symbol index
   uint32_t info() const;
+
   ARCH architecture() const;
   RELOCATION_PURPOSES purpose() const;
 
-  //! @brief Return the **bit** size of the value to patch
+  //! Return the size (in **bits**) of the value associated with this relocation
   //!
   //! Return -1 if it fails
-  virtual size_t size() const override;
+  size_t size() const override;
 
-  bool          has_symbol() const;
+  //! True if the current relocation is associated with a symbol
+  bool has_symbol() const;
+
+  //! Symbol associated with the relocation
   Symbol&       symbol();
   const Symbol& symbol() const;
 
-  //! True if the relocation has a section associated
-  bool           has_section() const;
+  //! True if the relocation has an associated section
+  bool has_section() const;
 
   //! Section associated with this relocation
   Section&       section();
@@ -100,7 +129,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   void symbol(Symbol* symbol);
   void section(Section* section);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Relocation& rhs) const;
   bool operator!=(const Relocation& rhs) const;
@@ -108,14 +137,14 @@ class LIEF_API Relocation : public LIEF::Relocation {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
-  uint32_t            type_;
-  int64_t             addend_;
-  bool                isRela_;
-  Symbol*             symbol_{nullptr};
-  ARCH                architecture_;
-  RELOCATION_PURPOSES purpose_;
+  uint32_t            type_ = 0;
+  int64_t             addend_ = 0;
+  bool                isRela_ = false;
+  Symbol*             symbol_ = nullptr;
+  ARCH                architecture_ = ARCH::EM_NONE;
+  RELOCATION_PURPOSES purpose_ = RELOCATION_PURPOSES::RELOC_PURPOSE_NONE;
   Section*            section_{nullptr};
-  uint32_t            info_;
+  uint32_t            info_ = 0;
 };
 
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "logging.hpp"
 
 #include "LIEF/DEX/Parser.hpp"
@@ -43,32 +45,32 @@ std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std:
 
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
+  stream_{std::make_unique<VectorStream>(data)}
 {
-  if (not is_dex(data)) {
+  if (!is_dex(data)) {
     LIEF_ERR("'{}' is not a DEX File", name);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   dex_version_t version = DEX::version(data);
-  this->init(name, version);
+  init(name, version);
 }
 
 Parser::Parser(const std::string& file) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
+  stream_{std::make_unique<VectorStream>(file)}
 {
-  if (not is_dex(file)) {
+  if (!is_dex(file)) {
     LIEF_ERR("'{}' is not a DEX File", file);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   dex_version_t version = DEX::version(file);
-  this->init(filesystem::path(file).filename(), version);
+  init(filesystem::path(file).filename(), version);
 }
 
 
@@ -76,34 +78,34 @@ void Parser::init(const std::string& name, dex_version_t version) {
   LIEF_DEBUG("Parsing file: {}", name);
 
   if (version == DEX_35::dex_version) {
-    return this->parse_file<DEX35>();
+    return parse_file<DEX35>();
   }
 
   if (version == DEX_37::dex_version) {
-    return this->parse_file<DEX37>();
+    return parse_file<DEX37>();
   }
 
   if (version == DEX_38::dex_version) {
-    return this->parse_file<DEX38>();
+    return parse_file<DEX38>();
   }
 
   if (version == DEX_39::dex_version) {
-    return this->parse_file<DEX39>();
+    return parse_file<DEX39>();
   }
 
 }
 
 void Parser::resolve_inheritance() {
-  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", this->inheritance_.size());
+  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", inheritance_.size());
 
-  for (const std::pair<const std::string, Class*>& p : this->inheritance_) {
+  for (const std::pair<const std::string, Class*>& p : inheritance_) {
     const std::string& parent_name = p.first;
     Class* child = p.second;
 
-    auto&& it_inner_class = this->file_->classes_.find(parent_name);
-    if (it_inner_class == std::end(this->file_->classes_)) {
-      Class* external_class = new Class{parent_name};
-      this->file_->classes_.emplace(parent_name, external_class);
+    const auto it_inner_class = file_->classes_.find(parent_name);
+    if (it_inner_class == std::end(file_->classes_)) {
+      auto* external_class = new Class{parent_name};
+      file_->classes_.emplace(parent_name, external_class);
       child->parent_ = external_class;
     } else {
       child->parent_ = it_inner_class->second;
@@ -112,18 +114,18 @@ void Parser::resolve_inheritance() {
 }
 
 void Parser::resolve_external_methods() {
-  LIEF_DEBUG("Resolving external methods for #{:d} methods", this->class_method_map_.size());
+  LIEF_DEBUG("Resolving external methods for #{:d} methods", class_method_map_.size());
 
-  for (const std::pair<const std::string, Method*>& p : this->class_method_map_) {
+  for (const std::pair<const std::string, Method*>& p : class_method_map_) {
     const std::string& clazz = p.first;
     Method* method = p.second;
 
-    auto&& it_inner_class = this->file_->classes_.find(clazz);
-    if (it_inner_class == std::end(this->file_->classes_)) {
-      Class* cls = new Class{clazz};
+    const auto it_inner_class = file_->classes_.find(clazz);
+    if (it_inner_class == std::end(file_->classes_)) {
+      auto* cls = new Class{clazz};
       cls->methods_.push_back(method);
       method->parent_ = cls;
-      this->file_->classes_.emplace(clazz, cls);
+      file_->classes_.emplace(clazz, cls);
     } else {
       Class* cls = it_inner_class->second;
       method->parent_ = cls;
@@ -134,18 +136,18 @@ void Parser::resolve_external_methods() {
 }
 
 void Parser::resolve_external_fields() {
-  LIEF_DEBUG("Resolving external fields for #{:d} fields", this->class_field_map_.size());
+  LIEF_DEBUG("Resolving external fields for #{:d} fields", class_field_map_.size());
 
-  for (const std::pair<const std::string, Field*>& p : this->class_field_map_) {
+  for (const std::pair<const std::string, Field*>& p : class_field_map_) {
     const std::string& clazz = p.first;
     Field* field = p.second;
 
-    const auto it_inner_class = this->file_->classes_.find(clazz);
-    if (it_inner_class == std::end(this->file_->classes_)) {
-      Class* cls = new Class{clazz};
+    const auto it_inner_class = file_->classes_.find(clazz);
+    if (it_inner_class == std::end(file_->classes_)) {
+      auto* cls = new Class{clazz};
       cls->fields_.push_back(field);
       field->parent_ = cls;
-      this->file_->classes_.emplace(clazz, cls);
+      file_->classes_.emplace(clazz, cls);
     } else {
       Class* cls = it_inner_class->second;
       field->parent_ = cls;
@@ -156,12 +158,12 @@ void Parser::resolve_external_fields() {
 }
 
 void Parser::resolve_types() {
-  for (auto&& p : this->class_type_map_) {
-    if(this->file_->has_class(p.first)) {
-      p.second->underlying_array_type().cls_ = &this->file_->get_class(p.first);
+  for (const auto& p : class_type_map_) {
+    if(file_->has_class(p.first)) {
+      p.second->underlying_array_type().cls_ = &file_->get_class(p.first);
     } else {
-      Class* cls = new Class{p.first};
-      this->file_->classes_.emplace(p.first, cls);
+      auto* cls = new Class{p.first};
+      file_->classes_.emplace(p.first, cls);
       p.second->underlying_array_type().cls_ = cls;
     }
   }

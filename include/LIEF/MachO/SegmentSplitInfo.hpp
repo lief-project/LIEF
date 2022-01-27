@@ -27,18 +27,21 @@ namespace LIEF {
 namespace MachO {
 class BinaryParser;
 
+namespace details {
 struct linkedit_data_command;
+}
 
+//! Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   public:
   SegmentSplitInfo();
-  SegmentSplitInfo(const linkedit_data_command *cmd);
+  SegmentSplitInfo(const details::linkedit_data_command& cmd);
 
   SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
   SegmentSplitInfo(const SegmentSplitInfo& copy);
 
-  virtual SegmentSplitInfo* clone() const override;
+  SegmentSplitInfo* clone() const override;
 
   uint32_t data_offset() const;
   uint32_t data_size() const;
@@ -51,9 +54,9 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
   bool operator==(const SegmentSplitInfo& rhs) const;
   bool operator!=(const SegmentSplitInfo& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   uint32_t              data_offset_;

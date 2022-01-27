@@ -34,7 +34,16 @@ using setter_t = void (Symbol::*)(T);
 template<>
 void create<Symbol>(py::module& m) {
 
-  py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
+  py::class_<Symbol, LIEF::Symbol>(m, "Symbol",
+      R"delim(
+      Class that represents a Symbol in a Mach-O file.
+
+      A Mach-O symbol can come from:
+
+      1. The symbols command (LC_SYMTAB / SymbolCommand)
+      2. The Dyld Export trie
+      3. The Dyld Symbol bindings
+      )delim")
     .def(py::init<>())
 
     .def_property_readonly("demangled_name",
@@ -47,20 +56,20 @@ void create<Symbol>(py::module& m) {
 
     .def_property("numberof_sections",
         static_cast<getter_t<uint8_t>>(&Symbol::numberof_sections),
-        static_cast<setter_t<uint8_t>>(&Symbol::numberof_sections))
+        static_cast<setter_t<uint8_t>>(&Symbol::numberof_sections),
+        R"delim(
+        It returns the number of sections in which this symbol can be found.
+        If the symbol can't be found in any section, it returns 0 (NO_SECT)
+        )delim")
 
     .def_property("description",
         static_cast<getter_t<uint16_t>>(&Symbol::description),
-        static_cast<setter_t<uint16_t>>(&Symbol::description))
-
-    .def_property("value",
-        static_cast<getter_t<uint64_t>>(&Symbol::value),
-        static_cast<setter_t<uint64_t>>(&Symbol::value))
-
+        static_cast<setter_t<uint16_t>>(&Symbol::description),
+        "Return information about the symbol (:class:`~lief.MachO.SYMBOL_DESCRIPTIONS`)")
 
     .def_property_readonly("has_export_info",
         &Symbol::has_export_info,
-        "``True`` if the symbol has a " RST_CLASS_REF(lief.MachO.ExportInfo) " associated with")
+        "``True`` if the symbol has an " RST_CLASS_REF(lief.MachO.ExportInfo) " associated with")
 
     .def_property_readonly("origin",
         &Symbol::origin,
@@ -89,8 +98,7 @@ void create<Symbol>(py::module& m) {
 
 
     .def("__str__",
-        [] (const Symbol& symbol)
-        {
+        [] (const Symbol& symbol) {
           std::ostringstream stream;
           stream << symbol;
           std::string str =  stream.str();

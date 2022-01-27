@@ -55,12 +55,12 @@ Header::Header(const T* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_));
+      std::begin(magic_));
 
   std::copy(
       std::begin(header->signature),
       std::end(header->signature),
-      std::begin(this->signature_));
+      std::begin(signature_));
 }
 
 

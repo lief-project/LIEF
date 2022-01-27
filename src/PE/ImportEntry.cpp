@@ -31,9 +31,6 @@ ImportEntry::ImportEntry() = default;
 
 ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   data_{data},
-  hint_{0},
-  iat_value_{0},
-  rva_{0},
   type_{PE_TYPE::PE32}
 {
   name_ = name;
@@ -46,53 +43,49 @@ ImportEntry::ImportEntry(const std::string& name) :
 
 bool ImportEntry::is_ordinal() const {
   // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
-  const uint64_t ORDINAL_MASK = this->type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
-  bool ordinal_bit_is_set = static_cast<bool>(this->data_ & ORDINAL_MASK);
+  const uint64_t ORDINAL_MASK = type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
+  bool ordinal_bit_is_set = static_cast<bool>(data_ & ORDINAL_MASK);
 
   // Check that bit 31 / 63 is set
-  if (not ordinal_bit_is_set) {
+  if (!ordinal_bit_is_set) {
     return false;
   }
   // Check that bits 30-15 / 62-15 are set to 0.
-  uint64_t val = (this->data_ & ~ORDINAL_MASK) >> 15;
-
-  if (val != 0) {
-    return false;
-  }
-  return true;
+  uint64_t val = (data_ & ~ORDINAL_MASK) >> 15;
+  return val == 0;
 }
 
 uint16_t ImportEntry::ordinal() const {
-  if (not this->is_ordinal()) {
+  if (!is_ordinal()) {
     throw LIEF::not_found("This import is not ordinal");
   }
 
-  return this->data_ & 0xFFFF;
+  return data_ & 0xFFFF;
 }
 
 uint16_t ImportEntry::hint() const {
-  return this->hint_;
+  return hint_;
 }
 
 uint64_t ImportEntry::iat_value() const {
-  return this->iat_value_;
+  return iat_value_;
 }
 
 
 uint64_t ImportEntry::hint_name_rva() const {
-  return this->data();
+  return data();
 }
 
 uint64_t ImportEntry::data() const {
-  return this->data_;
+  return data_;
 }
 
 uint64_t ImportEntry::iat_address() const {
-  return this->rva_;
+  return rva_;
 }
 
 void ImportEntry::data(uint64_t data) {
-  this->data_ = data;
+  data_ = data;
 }
 
 
@@ -107,14 +100,14 @@ bool ImportEntry::operator==(const ImportEntry& rhs) const {
 }
 
 bool ImportEntry::operator!=(const ImportEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   os << std::hex;
   os << std::left;
-  if (not entry.is_ordinal()) {
+  if (!entry.is_ordinal()) {
     os << std::setw(33) << entry.name();
   }
   os << std::setw(20) << entry.data();

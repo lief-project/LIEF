@@ -26,12 +26,12 @@ SymbolCommand& SymbolCommand::operator=(const SymbolCommand&) = default;
 SymbolCommand::SymbolCommand(const SymbolCommand&) = default;
 SymbolCommand::~SymbolCommand() = default;
 
-SymbolCommand::SymbolCommand(const symtab_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  symbolOffset_{cmd->symoff},
-  numberOfSymbols_{cmd->nsyms},
-  stringsOffset_{cmd->stroff},
-  stringsSize_{cmd->strsize}
+SymbolCommand::SymbolCommand(const details::symtab_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  symbolOffset_{cmd.symoff},
+  numberOfSymbols_{cmd.nsyms},
+  stringsOffset_{cmd.stroff},
+  stringsSize_{cmd.strsize}
 {}
 
 SymbolCommand* SymbolCommand::clone() const {
@@ -39,35 +39,35 @@ SymbolCommand* SymbolCommand::clone() const {
 }
 
 uint32_t SymbolCommand::symbol_offset() const {
-  return this->symbolOffset_;
+  return symbolOffset_;
 }
 
 uint32_t SymbolCommand::numberof_symbols() const {
-  return this->numberOfSymbols_;
+  return numberOfSymbols_;
 }
 
 uint32_t SymbolCommand::strings_offset() const {
-  return this->stringsOffset_;
+  return stringsOffset_;
 }
 
 uint32_t SymbolCommand::strings_size() const {
-  return this->stringsSize_;
+  return stringsSize_;
 }
 
 void SymbolCommand::symbol_offset(uint32_t offset) {
-  this->symbolOffset_ = offset;
+  symbolOffset_ = offset;
 }
 
 void SymbolCommand::numberof_symbols(uint32_t nb) {
-  this->numberOfSymbols_ = nb;
+  numberOfSymbols_ = nb;
 }
 
 void SymbolCommand::strings_offset(uint32_t offset) {
-  this->stringsOffset_ = offset;
+  stringsOffset_ = offset;
 }
 
 void SymbolCommand::strings_size(uint32_t size) {
-  this->stringsSize_ = size;
+  stringsSize_ = size;
 }
 
 void SymbolCommand::accept(Visitor& visitor) const {
@@ -82,7 +82,7 @@ bool SymbolCommand::operator==(const SymbolCommand& rhs) const {
 }
 
 bool SymbolCommand::operator!=(const SymbolCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& SymbolCommand::print(std::ostream& os) const {

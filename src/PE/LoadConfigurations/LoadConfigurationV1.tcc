@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
 namespace LIEF {
 namespace PE {
 
-
 template<class T>
-LoadConfigurationV1::LoadConfigurationV1(const load_configuration_v1<T>* header) :
-  LoadConfigurationV0{reinterpret_cast<const load_configuration_v0<T>*>(header)},
-  guard_cf_check_function_pointer_{header->GuardCFCheckFunctionPointer},
-  guard_cf_dispatch_function_pointer_{header->GuardCFDispatchFunctionPointer},
-  guard_cf_function_table_{header->GuardCFFunctionTable},
-  guard_cf_function_count_{header->GuardCFFunctionCount},
-  guard_flags_{static_cast<GUARD_CF_FLAGS>(header->GuardFlags)}
+LoadConfigurationV1::LoadConfigurationV1(const details::load_configuration_v1<T>& header) :
+  LoadConfigurationV0{reinterpret_cast<const details::load_configuration_v0<T>&>(header)},
+  guard_cf_check_function_pointer_{header.GuardCFCheckFunctionPointer},
+  guard_cf_dispatch_function_pointer_{header.GuardCFDispatchFunctionPointer},
+  guard_cf_function_table_{header.GuardCFFunctionTable},
+  guard_cf_function_count_{header.GuardCFFunctionCount},
+  guard_flags_{static_cast<GUARD_CF_FLAGS>(header.GuardFlags)}
 {
 }
 

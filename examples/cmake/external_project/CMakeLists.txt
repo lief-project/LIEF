@@ -51,8 +51,6 @@ ExternalProject_Add(LIEF
 add_executable(HelloLIEF main.cpp)
 
 if(MSVC)
-  # Used for the 'and', 'or' ... keywords - See: http://www.cplusplus.com/reference/ciso646/
-  target_compile_options(HelloLIEF PUBLIC /FIiso646.h)
   set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 

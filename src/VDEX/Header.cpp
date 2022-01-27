@@ -43,32 +43,32 @@ Header::Header() :
   std::copy(
       std::begin(VDEX::magic),
       std::end(VDEX::magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
 }
 
 Header::magic_t Header::magic() const {
-  return this->magic_;
+  return magic_;
 }
 
 vdex_version_t Header::version() const {
-  return this->version_;
+  return version_;
 }
 
 uint32_t Header::nb_dex_files() const {
-  return this->nb_dex_files_;
+  return nb_dex_files_;
 }
 
 uint32_t Header::dex_size() const {
-  return this->dex_size_;
+  return dex_size_;
 }
 
 uint32_t Header::verifier_deps_size() const {
-  return this->verifier_deps_size_;
+  return verifier_deps_size_;
 }
 
 uint32_t Header::quickening_info_size() const {
-  return this->quickening_info_size_;
+  return quickening_info_size_;
 }
 
 void Header::accept(Visitor& visitor) const {
@@ -82,7 +82,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& header) {
@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
 
   std::string magic_str;
   for (uint8_t c : header.magic()) {
-    if (::isprint(c)) {
+    if (::isprint(c) != 0) {
       magic_str.push_back(static_cast<char>(c));
     } else {
       std::stringstream ss;

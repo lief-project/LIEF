@@ -13,6 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "LIEF/PE/Builder.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+
+#include "logging.hpp"
+
 namespace LIEF {
 namespace PE {
 
@@ -31,7 +39,7 @@ std::vector<uint8_t> Builder::build_jmp(uint64_t from, uint64_t address) {
   instruction.push_back(0x58); // eax/rax holds the current PC
 
   // add rax/eax (signed)
-  if (std::is_same<PE_T, PE64>::value) {
+  if (std::is_same<PE_T, details::PE64>::value) {
     instruction.push_back(0x48); //x64
   }
   instruction.push_back(0x05);
@@ -96,7 +104,7 @@ void Builder::build_import_table() {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // Size of pe_import + 1 for the null entry
-  uint32_t import_table_size  = static_cast<uint32_t>((this->binary_->imports().size() + 1) * sizeof(pe_import)); // +1 for the null entry
+  uint32_t import_table_size  = static_cast<uint32_t>((binary_->imports().size() + 1) * sizeof(details::pe_import)); // +1 for the null entry
 
   // Size of import entries
   uint32_t entries_size = 0;
@@ -114,7 +122,7 @@ void Builder::build_import_table() {
   uint32_t trampoline_size = build_jmp<PE_T>(0, 0).size();
 
   // Compute size of each imports's sections
-  for (const Import& import : this->binary_->imports()) {
+  for (const Import& import : binary_->imports()) {
     for (const ImportEntry& entry : import.entries()) {
 
       functions_name_size += 2 + entry.name().size() + 1; // [Hint] [Name\0]
@@ -149,7 +157,7 @@ void Builder::build_import_table() {
 
   // Create empty content of the required size and align it
   std::vector<uint8_t> content(trampolines_offset + trampolines_size, 0);
-  size_t content_size_aligned = align(content.size(), this->binary_->optional_header().file_alignment());
+  size_t content_size_aligned = align(content.size(), binary_->optional_header().file_alignment());
   content.insert(std::end(content), content_size_aligned - content.size(), 0);
 
   // Create a new section to handle imports
@@ -158,35 +166,33 @@ void Builder::build_import_table() {
 
   new_import_section.add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
 
-  auto&& it_import_section = std::find_if(
-      std::begin(this->binary_->sections_),
-      std::end(this->binary_->sections_),
+  const auto it_import_section = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
       [] (const Section* section) {
-        return section != nullptr and section->is_type(PE_SECTION_TYPES::IMPORT);
+        return section != nullptr && section->is_type(PE_SECTION_TYPES::IMPORT);
       });
 
   // Remove 'import' type from the original section
-  if (it_import_section != std::end(this->binary_->sections_)) {
+  if (it_import_section != std::end(binary_->sections_)) {
     (*it_import_section)->remove_type(PE_SECTION_TYPES::IMPORT);
   }
 
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
-  uint32_t offset_imports  = this->binary_->rva_to_offset(this->binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
-  Section& import_section = this->binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
+  uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
+  Section& import_section = binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
 
 
   // Patch the original IAT with the address of the associated trampoline
-  if (this->patch_imports_) {
-    Section& original_import = this->binary_->section_from_offset(offset_imports);
+  if (patch_imports_) {
+    Section& original_import = binary_->section_from_offset(offset_imports);
     std::vector<uint8_t> import_content  = original_import.content();
     uint32_t roffset_import = offset_imports - original_import.offset();
 
-    pe_import *import_header = reinterpret_cast<pe_import*>(import_content.data() + roffset_import);
+    auto* import_header = reinterpret_cast<details::pe_import*>(import_content.data() + roffset_import);
     uint32_t jumpOffsetTmp = trampolines_offset;
     while (import_header->ImportAddressTableRVA != 0) {
-      uint32_t offsetTable = this->binary_->rva_to_offset(import_header->ImportLookupTableRVA)  - original_import.pointerto_raw_data();
-      uint32_t offsetIAT   = this->binary_->rva_to_offset(import_header->ImportAddressTableRVA) - original_import.pointerto_raw_data();
-      if (offsetTable > import_content.size() or offsetIAT > import_content.size()) {
+      uint32_t offsetTable = binary_->rva_to_offset(import_header->ImportLookupTableRVA)  - original_import.pointerto_raw_data();
+      uint32_t offsetIAT   = binary_->rva_to_offset(import_header->ImportAddressTableRVA) - original_import.pointerto_raw_data();
+      if (offsetTable > import_content.size() || offsetIAT > import_content.size()) {
         //TODO: Better handle
         LIEF_ERR("Can't patch");
         break;
@@ -195,7 +201,7 @@ void Builder::build_import_table() {
       uint__ *IAT         = reinterpret_cast<uint__*>(import_content.data() + offsetIAT);
 
       while (*lookupTable != 0) {
-        *IAT = static_cast<uint__>(this->binary_->optional_header().imagebase() + import_section.virtual_address() + jumpOffsetTmp);
+        *IAT = static_cast<uint__>(binary_->optional_header().imagebase() + import_section.virtual_address() + jumpOffsetTmp);
         *lookupTable = *IAT;
         jumpOffsetTmp += trampoline_size;
 
@@ -208,9 +214,9 @@ void Builder::build_import_table() {
   }
 
   // Process libraries
-  for (const Import& import : this->binary_->imports()) {
+  for (const Import& import : binary_->imports()) {
     // Header
-    pe_import header;
+    details::pe_import header;
     header.ImportLookupTableRVA  = static_cast<uint__>(import_section.virtual_address() + lookuptable_offset);
     header.TimeDateStamp         = static_cast<uint32_t>(import.timedatestamp());
     header.ForwarderChain        = static_cast<uint32_t>(import.forwarder_chain());
@@ -220,10 +226,10 @@ void Builder::build_import_table() {
     // Copy the header in the "header section"
     std::copy(
         reinterpret_cast<uint8_t*>(&header),
-        reinterpret_cast<uint8_t*>(&header) + sizeof(pe_import),
+        reinterpret_cast<uint8_t*>(&header) + sizeof(details::pe_import),
         content.data() + import_table_offset);
 
-    import_table_offset += sizeof(pe_import);
+    import_table_offset += sizeof(details::pe_import);
 
     // Copy the name in the "string section"
     const std::string& import_name = import.name();
@@ -238,14 +244,14 @@ void Builder::build_import_table() {
     for (const ImportEntry& entry : import.entries()) {
 
       // If patch is enabled, we have to create a trampoline for this function
-      if (this->patch_imports_) {
+      if (patch_imports_) {
         std::vector<uint8_t> instructions;
-        uint64_t address = this->binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
-        if (this->binary_->hooks_.count(import_name) > 0 and this->binary_->hooks_[import_name].count(entry.name())) {
-          address = this->binary_->hooks_[import_name][entry.name()];
-          instructions = Builder::build_jmp_hook<PE_T>(this->binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
+        uint64_t address = binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
+        if (binary_->hooks_.count(import_name) > 0 && binary_->hooks_[import_name].count(entry.name())) {
+          address = binary_->hooks_[import_name][entry.name()];
+          instructions = Builder::build_jmp_hook<PE_T>(binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
         } else {
-          instructions = Builder::build_jmp<PE_T>(this->binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
+          instructions = Builder::build_jmp<PE_T>(binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
         }
         std::copy(
             std::begin(instructions),
@@ -258,7 +264,7 @@ void Builder::build_import_table() {
       // Default: ordinal case
       uint__ lookup_table_value = entry.data();
 
-      if (not entry.is_ordinal()) {
+      if (!entry.is_ordinal()) {
 
         lookup_table_value = import_section.virtual_address() + functions_name_offset;
 
@@ -289,7 +295,7 @@ void Builder::build_import_table() {
       uint__ iat_value = 0;
 
       // Check if manually set
-      if (entry.data() != entry.iat_value() and entry.iat_value() > 0) {
+      if (entry.data() != entry.iat_value() && entry.iat_value() > 0) {
         iat_value = entry.iat_value();
       } else { // default value same that in the lookup table
         iat_value = lookup_table_value;
@@ -328,20 +334,17 @@ void Builder::build_import_table() {
   }
 
   // Insert null entry at the end
-  std::fill(
-    content.data() + import_table_offset,
-    content.data() + import_table_offset + sizeof(pe_import),
-    0);
+  std::memset(content.data() + import_table_offset, 0, sizeof(details::pe_import));
 
-  import_table_offset += sizeof(pe_import);
+  import_table_offset += sizeof(details::pe_import);
 
   // Fill the section
   import_section.content(content);
 
   // Update IAT data directory
   const uint32_t rva = static_cast<uint32_t>(import_section.virtual_address() + iat_offset);
-  this->binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
-  this->binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
+  binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
+  binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
 }
 
 template<typename PE_T>
@@ -350,8 +353,8 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   // Build optional header
-  this->binary_->optional_header().sizeof_image(static_cast<uint32_t>(this->binary_->virtual_size()));
-  this->binary_->optional_header().sizeof_headers(static_cast<uint32_t>(this->binary_->sizeof_headers()));
+  binary_->optional_header().sizeof_image(static_cast<uint32_t>(binary_->virtual_size()));
+  binary_->optional_header().sizeof_headers(static_cast<uint32_t>(binary_->sizeof_headers()));
 
   pe_optional_header optional_header_raw;
   optional_header_raw.Magic                   = static_cast<uint16_t>(optional_header.magic());
@@ -363,9 +366,8 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
   optional_header_raw.AddressOfEntryPoint     = static_cast<uint32_t>(optional_header.addressof_entrypoint());
   optional_header_raw.BaseOfCode              = static_cast<uint32_t>(optional_header.baseof_code());
 
-  if (std::is_same<PE_T, PE32>::value) {
-    // Trick to avoid compilation error
-    reinterpret_cast<pe32_optional_header*>(&optional_header_raw)->BaseOfData = static_cast<uint32_t>(optional_header.baseof_data());
+  if (std::is_same<PE_T, details::PE32>::value) {
+    reinterpret_cast<details::pe32_optional_header*>(&optional_header_raw)->BaseOfData = static_cast<uint32_t>(optional_header.baseof_data());
   }
   optional_header_raw.ImageBase                    = static_cast<uint__>(optional_header.imagebase());
   optional_header_raw.SectionAlignment             = static_cast<uint32_t>(optional_header.section_alignment());
@@ -390,9 +392,9 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
   optional_header_raw.NumberOfRvaAndSize           = static_cast<uint32_t>(optional_header.numberof_rva_and_size());
 
 
-  const uint32_t address_next_header = this->binary_->dos_header().addressof_new_exeheader() + sizeof(pe_header);
-  this->ios_.seekp(address_next_header);
-  this->ios_.write(reinterpret_cast<const uint8_t*>(&optional_header_raw), sizeof(pe_optional_header));
+  const uint32_t address_next_header = binary_->dos_header().addressof_new_exeheader() + sizeof(details::pe_header);
+  ios_.seekp(address_next_header);
+  ios_.write(reinterpret_cast<const uint8_t*>(&optional_header_raw), sizeof(pe_optional_header));
 
 }
 
@@ -402,46 +404,43 @@ void Builder::build_tls() {
   using uint__ = typename PE_T::uint;
   using pe_tls = typename PE_T::pe_tls;
 
-  auto&& it_tls = std::find_if(
-    std::begin(this->binary_->sections_),
-    std::end(this->binary_->sections_),
-    [] (const Section* section)
-    {
+  const auto it_tls = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
+    [] (const Section* section) {
       const std::set<PE_SECTION_TYPES>& types = section->types();
-      return types.size() == 1 and types.find(PE_SECTION_TYPES::TLS) != std::end(types);
+      return types.size() == 1 && types.find(PE_SECTION_TYPES::TLS) != std::end(types);
     });
 
   Section *tls_section = nullptr;
 
   pe_tls tls_raw;
-  const TLS& tls_obj = this->binary_->tls();
+  const TLS& tls_obj = binary_->tls();
 
   // No .tls section register in the binary. We have to create it
-  if (it_tls == std::end(this->binary_->sections_)) {
+  if (it_tls == std::end(binary_->sections_)) {
     Section new_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::TLS_TABLE))}; // .l9 -> lief.tls
     new_section.characteristics(0xC0300040);
     uint64_t tls_section_size = sizeof(pe_tls);
 
-    const uint64_t offset_callbacks = this->binary_->va_to_offset(tls_obj.addressof_callbacks());
-    const uint64_t offset_rawdata   = this->binary_->va_to_offset(tls_obj.addressof_raw_data().first);
+    const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
+    const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
 
     try {
-      const Section& _ [[gnu::unused]] = this->binary_->section_from_offset(offset_callbacks);
+      const Section& _ [[gnu::unused]] = binary_->section_from_offset(offset_callbacks);
     } catch (const not_found&) { // Callbacks will be in our section (not present yet)
       tls_section_size += tls_obj.callbacks().size() * sizeof(uint__);
     }
 
 
     try {
-      const Section& _ [[gnu::unused]] = this->binary_->section_from_offset(offset_rawdata);
+      const Section& _ [[gnu::unused]] = binary_->section_from_offset(offset_rawdata);
     } catch (const not_found&) { // data_template will be in our section (not present yet)
       tls_section_size += tls_obj.data_template().size();
     }
 
-    tls_section_size = align(tls_section_size, this->binary_->optional_header().file_alignment());
+    tls_section_size = align(tls_section_size, binary_->optional_header().file_alignment());
     new_section.content(std::vector<uint8_t>(tls_section_size, 0));
 
-    tls_section = &(this->binary_->add_section(new_section, PE_SECTION_TYPES::TLS));
+    tls_section = &(binary_->add_section(new_section, PE_SECTION_TYPES::TLS));
   } else {
     tls_section = *it_tls;
   }
@@ -460,10 +459,10 @@ void Builder::build_tls() {
       reinterpret_cast<uint8_t*>(&tls_raw) + sizeof(pe_tls),
       data.data());
 
-  const uint64_t offset_callbacks = this->binary_->va_to_offset(tls_obj.addressof_callbacks());
-  const uint64_t offset_rawdata   = this->binary_->va_to_offset(tls_obj.addressof_raw_data().first);
+  const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
+  const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
   try {
-    Section& section_callbacks = this->binary_->section_from_offset(offset_callbacks);
+    Section& section_callbacks = binary_->section_from_offset(offset_callbacks);
 
     const uint64_t size_needed = (tls_obj.callbacks().size()) * sizeof(uint__);
 
@@ -510,7 +509,7 @@ void Builder::build_tls() {
 
 
   try {
-    Section& section_rawdata = this->binary_->section_from_offset(offset_rawdata);
+    Section& section_rawdata = binary_->section_from_offset(offset_rawdata);
 
     const std::vector<uint8_t>& data_template = tls_obj.data_template();
     const uint64_t size_needed = data_template.size();

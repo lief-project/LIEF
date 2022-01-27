@@ -28,7 +28,6 @@ LoadConfigurationV5::LoadConfigurationV5(const LoadConfigurationV5&) = default;
 LoadConfigurationV5::~LoadConfigurationV5() = default;
 
 LoadConfigurationV5::LoadConfigurationV5() :
-  LoadConfigurationV4{},
   guard_rf_failure_routine_{0},
   guard_rf_failure_routine_function_pointer_{0},
   dynamic_value_reloctable_offset_{0},
@@ -41,44 +40,44 @@ WIN_VERSION LoadConfigurationV5::version() const {
 }
 
 uint64_t LoadConfigurationV5::guard_rf_failure_routine() const {
-  return this->guard_rf_failure_routine_;
+  return guard_rf_failure_routine_;
 }
 
 uint64_t LoadConfigurationV5::guard_rf_failure_routine_function_pointer() const {
-  return this->guard_rf_failure_routine_function_pointer_;
+  return guard_rf_failure_routine_function_pointer_;
 }
 
 uint32_t LoadConfigurationV5::dynamic_value_reloctable_offset() const {
-  return this->dynamic_value_reloctable_offset_;
+  return dynamic_value_reloctable_offset_;
 }
 
 uint16_t LoadConfigurationV5::dynamic_value_reloctable_section() const {
-  return this->dynamic_value_reloctable_section_;
+  return dynamic_value_reloctable_section_;
 }
 
 uint16_t LoadConfigurationV5::reserved2() const {
-  return this->reserved2_;
+  return reserved2_;
 }
 
 
 void LoadConfigurationV5::guard_rf_failure_routine(uint64_t value) {
-  this->guard_rf_failure_routine_ = value;
+  guard_rf_failure_routine_ = value;
 }
 
 void LoadConfigurationV5::guard_rf_failure_routine_function_pointer(uint64_t value) {
-  this->guard_rf_failure_routine_function_pointer_ = value;
+  guard_rf_failure_routine_function_pointer_ = value;
 }
 
 void LoadConfigurationV5::dynamic_value_reloctable_offset(uint32_t value) {
-  this->dynamic_value_reloctable_offset_ = value;
+  dynamic_value_reloctable_offset_ = value;
 }
 
 void LoadConfigurationV5::dynamic_value_reloctable_section(uint16_t value) {
-  this->dynamic_value_reloctable_section_ = value;
+  dynamic_value_reloctable_section_ = value;
 }
 
 void LoadConfigurationV5::reserved2(uint16_t value) {
-  this->reserved2_ = value;
+  reserved2_ = value;
 }
 
 
@@ -94,16 +93,16 @@ bool LoadConfigurationV5::operator==(const LoadConfigurationV5& rhs) const {
 }
 
 bool LoadConfigurationV5::operator!=(const LoadConfigurationV5& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& LoadConfigurationV5::print(std::ostream& os) const {
   LoadConfigurationV4::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF failure routine:"                  << std::hex << this->guard_rf_failure_routine()                  << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF failure routine function pointer:" << std::hex << this->guard_rf_failure_routine_function_pointer() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value reloctable offset:"      << std::hex << this->dynamic_value_reloctable_offset()           << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value reloctable section:"     << std::dec << this->dynamic_value_reloctable_section()          << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF failure routine:"                  << std::hex << guard_rf_failure_routine()                  << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF failure routine function pointer:" << std::hex << guard_rf_failure_routine_function_pointer() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value reloctable offset:"      << std::hex << dynamic_value_reloctable_offset()           << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value reloctable section:"     << std::dec << dynamic_value_reloctable_section()          << std::endl;
   return os;
 }
 

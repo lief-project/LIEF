@@ -36,8 +36,7 @@ namespace ELF {
 class Section;
 class Binary;
 
-
-//! Class which parse an ELF file and transform into a ELF::Binary
+//! Class which parses and transforms an ELF file into a ELF::Binary object
 class LIEF_API Parser : public LIEF::Parser {
   friend class OAT::Parser;
   public:
@@ -57,34 +56,44 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t MAX_SEGMENT_SIZE       = MAX_SECTION_SIZE;
 
 
-  //! Parse an ELF file an return a LIEF::ELF::Binary object
+  //! Parse an ELF file and return a LIEF::ELF::Binary object
   //!
-  //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
+  //! For weird binaries (e.g. sectionless) you can choose which method to use for counting dynamic symbols
   //!
-  //! @param[in] file Path to the ELF binary
-  //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+  //! @param[in] file      Path to the ELF binary
+  //! @param[in] count_mtd Method used to count dynamic symbols.
+  //!                      Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
   //!
   //! @return LIEF::ELF::Binary
-  static std::unique_ptr<Binary> parse(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+  static std::unique_ptr<Binary> parse(const std::string& file,
+                                       DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
   //! Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
   //!
-  //! @param[in] data Raw ELF
-  //! @param[in] name Binary name (optional)
-  //! @param[in] count_mtd Method used to count dynamic symbols. Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+  //! @param[in] data      Raw ELF
+  //! @param[in] name      Binary name (optional)
+  //! @param[in] count_mtd Method used to count dynamic symbols.
+  //                       Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
   //!
   //! @return LIEF::ELF::Binary
-  static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "", DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+  static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "",
+                                       DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
 
   Parser& operator=(const Parser&) = delete;
   Parser(const Parser&)            = delete;
 
   private:
   Parser();
-  Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
-  Parser(const std::vector<uint8_t>& data, const std::string& name, DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO, Binary* output = nullptr);
+  Parser(const std::string& file,
+         DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+         Binary* output = nullptr);
+
+  Parser(const std::vector<uint8_t>& data,
+         const std::string& name,
+         DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+         Binary* output = nullptr);
   ~Parser();
 
   void init(const std::string& name = "");
@@ -101,19 +110,12 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T>
   bool parse_header();
 
-  //! Parse binary's Section
-  //!
-  //! Parse sections by using the ``e_shoff`` field as offset
   template<typename ELF_T>
   void parse_sections();
 
-  //! Parse binary's segments
-  //!
-  //! Parse segment by using the ``e_phoff`` field as offset
   template<typename ELF_T>
   void parse_segments();
 
-  //! Return offset of the dynamic string table
   uint64_t get_dynamic_string_table() const;
 
   uint64_t get_dynamic_string_table_from_segments() const;
@@ -163,7 +165,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
   //! Parse Dynamic relocations
   //!
-  //! It use DT_REL/DT_RELA dynamic entries to parse it
+  //! It uses DT_REL/DT_RELA dynamic entries to parse it
   template<typename ELF_T, typename REL_T>
   void parse_dynamic_relocations(uint64_t relocations_offset, uint64_t size);
 
@@ -177,10 +179,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
 
   //! Parse relocations using LIEF::ELF::Section.
-  //!
-  //! Parser::parse_dynamic_relocations and Parser::parse_pltgot_relocations
-  //! use parse relocations by using LIEF::ELF::Segment. This method parse relocations
-  //! that are not reachable through segments (For example Object file).
+  //! Section relocations are usually found in object files
   template<typename ELF_T, typename REL_T>
   void parse_section_relocations(const Section& section);
 
@@ -232,9 +231,6 @@ class LIEF_API Parser : public LIEF::Parser {
   ELF_CLASS                     type_;
   DYNSYM_COUNT_METHODS          count_mtd_;
 };
-
-
-
 
 } // namespace ELF
 } // namespace LIEF

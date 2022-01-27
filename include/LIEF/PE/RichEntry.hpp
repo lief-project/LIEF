@@ -23,6 +23,7 @@
 namespace LIEF {
 namespace PE {
 
+//! Class which represents an entry associated to the RichHeader
 class LIEF_API RichEntry : public Object {
   public:
 
@@ -32,20 +33,20 @@ class LIEF_API RichEntry : public Object {
   RichEntry& operator=(const RichEntry&);
   virtual ~RichEntry();
 
-  //! @brief Entry type
+  //! Entry type
   uint16_t id() const;
 
-  //! @brief Builder number of the tool (if any)
+  //! Build number of the tool (if any)
   uint16_t build_id() const;
 
-  //! @brief *Occurrence* count.
+  //! *Occurrence* count.
   uint32_t count() const;
 
   void id(uint16_t id);
   void build_id(uint16_t build_id);
   void count(uint32_t count);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const RichEntry& rhs) const;
   bool operator!=(const RichEntry& rhs) const;

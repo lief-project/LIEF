@@ -25,29 +25,37 @@
 
 namespace LIEF {
 namespace MachO {
-struct rpath_command;
 
+namespace details {
+struct rpath_command;
+}
+
+//! Class that represents the LC_RPATH command.
+//!
+//! This command is used to add path for searching libraries
+//! associated with the ``@rpath`` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
   public:
   RPathCommand();
-  RPathCommand(const rpath_command *rpathCmd);
+  RPathCommand(const details::rpath_command& rpathCmd);
 
   RPathCommand& operator=(const RPathCommand& copy);
   RPathCommand(const RPathCommand& copy);
 
-  virtual RPathCommand* clone() const override;
+  RPathCommand* clone() const override;
 
   virtual ~RPathCommand();
 
+  //! The rpath value as a string
   const std::string& path() const;
   void path(const std::string& path);
 
   bool operator==(const RPathCommand& rhs) const;
   bool operator!=(const RPathCommand& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   std::string path_;

@@ -24,6 +24,15 @@
 
 namespace LIEF {
 namespace ELF {
+
+//! Class that represent an Array in the dynamic table.
+//! This entry is associated with constructors:
+//! - ``DT_PREINIT_ARRAY``
+//! - ``DT_INIT_ARRAY``
+//! - ``DT_FINI_ARRAY``
+//!
+//! The underlying values are 64-bits integers to cover both:
+//! ELF32 and ELF64 binaries.
 class LIEF_API DynamicEntryArray : public DynamicEntry {
   public:
   using array_t = std::vector<uint64_t>;
@@ -32,25 +41,27 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   using DynamicEntry::DynamicEntry;
 
   DynamicEntryArray();
-  DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array);
+  DynamicEntryArray(DYNAMIC_TAGS tag, array_t array);
 
   DynamicEntryArray& operator=(const DynamicEntryArray&);
   DynamicEntryArray(const DynamicEntryArray&);
 
+  //! Return the array values (list of pointer)
   array_t& array();
+
   const array_t& array() const;
   void array(const array_t& array);
 
-  //! @brief Insert the given callback at ``pos``
-  DynamicEntryArray& insert(size_t pos, uint64_t callback);
+  //! Insert the given function at ``pos``
+  DynamicEntryArray& insert(size_t pos, uint64_t function);
 
-  //! @brief Append the given callback
-  DynamicEntryArray& append(uint64_t callback);
+  //! Append the given function
+  DynamicEntryArray& append(uint64_t function);
 
-  //! @brief Remove the given callback
-  DynamicEntryArray& remove(uint64_t callback);
+  //! Remove the given function
+  DynamicEntryArray& remove(uint64_t function);
 
-  //! @brief Number of callback registred
+  //! Number of function registred in this array
   size_t size() const;
 
   DynamicEntryArray& operator+=(uint64_t value);
@@ -59,10 +70,9 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   const uint64_t& operator[](size_t idx) const;
   uint64_t&       operator[](size_t idx);
 
-  //! @brief Method so that the ``visitor`` can visit us
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   virtual ~DynamicEntryArray();
 

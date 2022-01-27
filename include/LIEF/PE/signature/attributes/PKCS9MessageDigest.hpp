@@ -53,17 +53,17 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   PKCS9MessageDigest(const PKCS9MessageDigest&);
   PKCS9MessageDigest& operator=(const PKCS9MessageDigest&);
 
-  virtual std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override;
 
   //! Message digeset as a blob of bytes as described in the RFC
   inline const std::vector<uint8_t>& digest() const {
-    return this->digest_;
+    return digest_;
   }
 
   //! Print information about the attribute
-  virtual std::string print() const override;
+  std::string print() const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~PKCS9MessageDigest();
 

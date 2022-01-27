@@ -26,14 +26,17 @@
 
 namespace LIEF {
 namespace MachO {
-struct dylib_command;
-class LIEF_API DylibCommand : public LoadCommand {
 
+namespace details {
+struct dylib_command;
+}
+
+//! Class which represents a library dependency
+class LIEF_API DylibCommand : public LoadCommand {
   public:
   using version_t = std::array<uint16_t, 3>;
 
   public:
-
   //! Helper to convert an integer into a version array
   static version_t int2version(uint32_t version);
 
@@ -78,14 +81,14 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   public:
   DylibCommand();
-  DylibCommand(const dylib_command *cmd);
+  DylibCommand(const details::dylib_command& cmd);
 
   DylibCommand& operator=(const DylibCommand& copy);
   DylibCommand(const DylibCommand& copy);
 
   virtual ~DylibCommand();
 
-  virtual DylibCommand* clone() const override;
+  DylibCommand* clone() const override;
 
   //! Library name
   const std::string& name() const;
@@ -104,25 +107,23 @@ class LIEF_API DylibCommand : public LoadCommand {
   void current_version(version_t currentVersion);
   void compatibility_version(version_t compatibilityVersion);
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   bool operator==(const DylibCommand& rhs) const;
   bool operator!=(const DylibCommand& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
-
+  void accept(Visitor& visitor) const override;
 
   private:
   static DylibCommand create(LOAD_COMMAND_TYPES type,
-      const std::string& name,
-      uint32_t timestamp,
-      uint32_t current_version,
-      uint32_t compat_version);
-
+                             const std::string& name,
+                             uint32_t timestamp,
+                             uint32_t current_version,
+                             uint32_t compat_version);
   std::string name_;
-  uint32_t    timestamp_;
-  uint32_t    current_version_;
-  uint32_t    compatibility_version_;
+  uint32_t timestamp_;
+  uint32_t current_version_;
+  uint32_t compatibility_version_;
 };
 
 

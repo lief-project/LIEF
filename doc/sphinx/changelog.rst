@@ -168,7 +168,7 @@ Changelog
 
       :class:`lief.PE.IMPHASH_MODE` and :func:`lief.PE.get_imphash`
   * Remove the padding entry (0) from the rich header
-  * :attr:`~lief.PE.LangCodeItem.items` now returns a dictionary whose values are **bytes** (instead of
+  * :attr:`~lief.PE.LangCodeItem.items` now returns a dictionary for which the values are **bytes** (instead of
     ``str`` object). This change is related to ``utf-16`` support.
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
   * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)

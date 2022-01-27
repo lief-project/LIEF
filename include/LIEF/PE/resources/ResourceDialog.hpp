@@ -33,67 +33,66 @@ namespace LIEF {
 namespace PE {
 class ResourcesManager;
 
-//! @brief Representation of a dialog box
+//! Representation of a dialog box
 //!
 //! Windows allows two kinds of dialog box:
 //! * Simple one
 //! * Extended one
 //!
-//! ResourceDialog::is_extended checks
-//! the type of the Dialog
+//! ResourceDialog::is_extended determine the type of the Dialog
 class LIEF_API ResourceDialog : public Object {
 
   friend class ResourcesManager;
 
   public:
   ResourceDialog();
-  ResourceDialog(const pe_dialog_template_ext *header);
-  ResourceDialog(const pe_dialog_template *header);
+  ResourceDialog(const details::pe_dialog_template_ext& header);
+  ResourceDialog(const details::pe_dialog_template& header);
 
   ResourceDialog(const ResourceDialog&);
   ResourceDialog& operator=(const ResourceDialog&);
 
   virtual ~ResourceDialog();
 
-  //! @brief ``true`` if the dialog is an extended one
+  //! ``true`` if the dialog is an extended one
   bool is_extended() const;
 
-  //! @brief The extended windows styles
+  //! The extended windows styles
   uint32_t extended_style() const;
 
-  //! @brief Return list of LIEF::PE::EXTENDED_WINDOW_STYLES associated with the
+  //! Return list of LIEF::PE::EXTENDED_WINDOW_STYLES associated with the
   //! ResourceDialog::extended_style value
   std::set<EXTENDED_WINDOW_STYLES> extended_style_list() const;
 
   bool has_extended_style(EXTENDED_WINDOW_STYLES style) const;
 
-  //! @brief The style of the dialog box. This member can be a combination of LIEF::PE::WINDOW_STYLES values and
+  //! The style of the dialog box. This member can be a combination of LIEF::PE::WINDOW_STYLES values and
   //! LIEF::PE::DIALOG_BOX_STYLES values.
   uint32_t style() const;
 
-  //! @brief Return list of LIEF::PE::WINDOW_STYLES associated with the
+  //! Return list of LIEF::PE::WINDOW_STYLES associated with the
   //! ResourceDialog::style value
   std::set<WINDOW_STYLES> style_list() const;
   bool has_style(WINDOW_STYLES style) const;
 
-  //! @brief Return list of LIEF::PE::DIALOG_BOX_STYLES associated with the
+  //! Return list of LIEF::PE::DIALOG_BOX_STYLES associated with the
   //! ResourceDialog::style value
   std::set<DIALOG_BOX_STYLES> dialogbox_style_list() const;
   bool has_dialogbox_style(DIALOG_BOX_STYLES style) const;
 
-  //! @brief The x-coordinate, in dialog box units, of the upper-left corner of the dialog box.
+  //! The x-coordinate, in dialog box units, of the upper-left corner of the dialog box.
   int16_t x() const;
 
-  //! @brief The y-coordinate, in dialog box units, of the upper-left corner of the dialog box.
+  //! The y-coordinate, in dialog box units, of the upper-left corner of the dialog box.
   int16_t y() const;
 
-  //! @brief The width, in dialog box units, of the dialog box.
+  //! The width, in dialog box units, of the dialog box.
   int16_t cx() const;
 
-  //! @brief The height, in dialog box units, of the dialog box.
+  //! The height, in dialog box units, of the dialog box.
   int16_t cy() const;
 
-  //! @brief Iterator on the controls (ResourceDialogItem) that define the Dialog (Button, Label...)
+  //! Iterator on the controls (ResourceDialogItem) that defines the Dialog (Button, Label...)
   it_const_dialog_items items() const;
 
   //! RESOURCE_LANGS associated with the Dialog
@@ -109,38 +108,39 @@ class LIEF_API ResourceDialog : public Object {
   // Extended API
   // ============
 
-  //! @brief The version number of the extended dialog box template. This member must be set to 1.
+  //! The version number of the extended dialog box template. This member must be set to 1.
   uint16_t version() const;
 
-  //! @brief Indicates whether a template is an extended dialog box template:
+  //! Indicates whether a template is an extended dialog box template:
+  //!
   //! * ``0xFFFF``: Extended dialog box template
   //! * Other value: Standard dialog box template
   //!
   //! @see ResourceDialog::is_extended
   uint16_t signature() const;
 
-  //! @brief The help context identifier for the dialog box window
+  //! The help context identifier for the dialog box window
   uint32_t help_id() const;
 
-  //! @brief The weight of the font
+  //! The weight of the font
   uint16_t weight() const;
 
-  //! @brief The point size of the font to use for the text in the dialog box and its controls.
+  //! The point size of the font to use for the text in the dialog box and its controls.
   uint16_t point_size() const;
 
-  //! @brief Indicates whether the font is italic. If this value is ``true``, the font is italic
+  //! Indicates whether the font is italic. If this value is ``true``, the font is italic
   bool is_italic() const;
 
-  //! @brief The character set to be used
+  //! The character to be used
   uint8_t charset() const;
 
-  //! @brief The title of the dialog box
+  //! The title of the dialog box
   const std::u16string& title() const;
 
-  //! @brief The name of the typeface for the font
+  //! The name of the typeface for the font
   const std::u16string& typeface() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceDialog& rhs) const;
   bool operator!=(const ResourceDialog& rhs) const;

@@ -25,42 +25,46 @@
 
 namespace LIEF {
 namespace MachO {
-struct version_min_command;
 
+namespace details {
+struct version_min_command;
+}
+
+//! Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ... commands.
 class LIEF_API VersionMin : public LoadCommand {
 
   public:
-  //! @brief Version is an array of **3** integers
+  //! Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   VersionMin();
-  VersionMin(const version_min_command *version_cmd);
+  VersionMin(const details::version_min_command& version_cmd);
 
   VersionMin& operator=(const VersionMin& copy);
   VersionMin(const VersionMin& copy);
 
-  virtual VersionMin* clone() const override;
+  VersionMin* clone() const override;
 
   virtual ~VersionMin();
 
-  //! @brief Return the version as an array
-  const VersionMin::version_t& version() const;
-  void version(const VersionMin::version_t& version);
+  //! Return the version as an array
+  const version_t& version() const;
+  void version(const version_t& version);
 
-  //! @brief Return the sdk as an array
-  const VersionMin::version_t& sdk() const;
-  void sdk(const VersionMin::version_t& sdk);
+  //! Return the sdk version as an array
+  const version_t& sdk() const;
+  void sdk(const version_t& sdk);
 
   bool operator==(const VersionMin& rhs) const;
   bool operator!=(const VersionMin& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
-  VersionMin::version_t version_;
-  VersionMin::version_t sdk_;
+  version_t version_;
+  version_t sdk_;
 };
 
 }

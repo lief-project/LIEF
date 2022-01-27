@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
+
 namespace LIEF {
 namespace PE {
 
-
 template<class T>
-LoadConfigurationV2::LoadConfigurationV2(const load_configuration_v2<T>* header) :
-  LoadConfigurationV1{reinterpret_cast<const load_configuration_v1<T>*>(header)},
-  code_integrity_{&header->CodeIntegrity}
+LoadConfigurationV2::LoadConfigurationV2(const details::load_configuration_v2<T>& header) :
+  LoadConfigurationV1{reinterpret_cast<const details::load_configuration_v1<T>&>(header)},
+  code_integrity_{header.CodeIntegrity}
 {}
 
 

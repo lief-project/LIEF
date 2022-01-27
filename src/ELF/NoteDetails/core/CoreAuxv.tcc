@@ -31,18 +31,18 @@ void CoreAuxv::parse_() {
   using Elf_Auxv  = typename ELF_T::Elf_Auxv;
   using uint__    = typename ELF_T::uint;
 
-  const Note::description_t& description = this->description();
-  if (description.size() < sizeof(Elf_Auxv)) {
+  const Note::description_t& desc = description();
+  if (desc.size() < sizeof(Elf_Auxv)) {
     return;
   }
 
-  const VectorStream& stream(description);
+  const VectorStream& stream(desc);
   while (stream.can_read<Elf_Auxv>()) {
     const Elf_Auxv auxv = stream.read<Elf_Auxv>();
     AUX_TYPE type = static_cast<AUX_TYPE>(auxv.a_type);
     if (type == AUX_TYPE::AT_NULL)
       break;
-    this->ctx_[type] = static_cast<uint__>(auxv.a_un.a_val);
+    ctx_[type] = static_cast<uint__>(auxv.a_un.a_val);
   }
 
 }
@@ -52,12 +52,12 @@ void CoreAuxv::build_() {
   using Elf_Auxv  = typename ELF_T::Elf_Auxv;
   using uint__    = typename ELF_T::uint;
 
-  Note::description_t& description = this->description();
+  Note::description_t& desc = description();
 
   vector_iostream raw_output;
-  raw_output.reserve(this->ctx_.size() * sizeof(Elf_Auxv));
+  raw_output.reserve(ctx_.size() * sizeof(Elf_Auxv));
 
-  for (auto&& val : this->ctx_) {
+  for (const auto& val : ctx_) {
     AUX_TYPE type = val.first;
     // skip for now, will be added at the end
     if (type == AUX_TYPE::AT_NULL)
@@ -71,7 +71,7 @@ void CoreAuxv::build_() {
 
   std::vector<uint8_t> raw = raw_output.raw();
   std::copy(std::begin(raw), std::end(raw),
-      std::begin(description));
+            std::begin(desc));
 }
 
 } // namespace ELF

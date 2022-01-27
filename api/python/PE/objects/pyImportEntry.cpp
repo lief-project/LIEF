@@ -34,15 +34,21 @@ using setter_t = void (ImportEntry::*)(T);
 
 template<>
 void create<ImportEntry>(py::module& m) {
-  py::class_<ImportEntry, LIEF::Symbol>(m, "ImportEntry")
+  py::class_<ImportEntry, LIEF::Symbol>(m, "ImportEntry",
+      R"delim(
+      Class that represents an entry (i.e. an import) in the import table (:class:`~lief.PE.Import`).
+
+      It extends the :class:`lief.Symbol` generic class that provides the :attr:`lief.Symbol.name`
+      and :attr:`lief.Symbol.value`
+      )delim")
     .def(py::init<>())
 
     .def(py::init<const std::string&>(),
-        "Constructor by :attr:`~lief.PE.ImportEntry.name`",
+        "Constructor from a :attr:`~lief.PE.ImportEntry.name`",
         "import_name"_a)
 
     .def(py::init<uint64_t, const std::string&>(),
-        "Constructor by :attr:`~lief.PE.ImportEntry.data` and optionally :attr:`~lief.PE.ImportEntry.name`",
+        "Constructor from a :attr:`~lief.PE.ImportEntry.data` and an optionally :attr:`~lief.PE.ImportEntry.name`",
         "data"_a, "name"_a = "")
 
     .def_property("name",
@@ -59,7 +65,7 @@ void create<ImportEntry>(py::module& m) {
 
     .def_property_readonly("is_ordinal",
         &ImportEntry::is_ordinal,
-        "``True`` if ordinal is used")
+        "``True`` if it is an import by ordinal")
 
     .def_property_readonly("ordinal",
         &ImportEntry::ordinal,
@@ -67,16 +73,15 @@ void create<ImportEntry>(py::module& m) {
 
     .def_property_readonly("hint",
         &ImportEntry::hint,
-        "Index into the :attr:`~lief.PE.Export.entries`")
+        "Index into the :attr:`lief.PE.Export.entries` that is used to speed-up the symbol resolution")
 
     .def_property_readonly("iat_value",
         &ImportEntry::iat_value,
-        "Value of the current entry in the Import Address Table")
+        "Value of the current entry in the Import Address Table. It should match the lookup table value.")
 
     .def_property_readonly("iat_address",
         &ImportEntry::iat_address,
         "**Original** address of the entry in the Import Address Table")
-
 
 
     .def("__eq__", &ImportEntry::operator==)

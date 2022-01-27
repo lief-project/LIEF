@@ -33,8 +33,11 @@ using setter_t = void (GnuHash::*)(T);
 
 template<>
 void create<GnuHash>(py::module& m) {
-
-  py::class_<GnuHash, LIEF::Object>(m, "GnuHash")
+  py::class_<GnuHash, LIEF::Object>(m, "GnuHash",
+      R"delim(
+      Class which provides a view over the GNU Hash implementation.
+      Most of the fields are read-only since the values are re-computed by the :class:`lief.ELF.Builder`.
+      )delim")
     .def(py::init<>())
 
     .def_property_readonly("nb_buckets",
@@ -48,11 +51,6 @@ void create<GnuHash>(py::module& m) {
     .def_property_readonly("shift2",
       &GnuHash::shift2,
       "Shift count used in the bloom filter")
-
-    .def_property_readonly("bloom_filters",
-      &GnuHash::bloom_filters,
-      "Bloom filters",
-      py::return_value_policy::reference_internal)
 
     .def_property_readonly("bloom_filters",
       &GnuHash::bloom_filters,

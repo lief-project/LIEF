@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#include <utility>
+
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
 
@@ -25,23 +27,18 @@ Class::Class(const Class&) = default;
 Class& Class::operator=(const Class&) = default;
 
 Class::Class() :
-  fullname_{},
   access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
-  parent_{nullptr},
-  methods_{},
-  source_filename_{},
   original_index_{-1u}
 {}
 
-Class::Class(const std::string& fullname,
+Class::Class(std::string  fullname,
       uint32_t access_flags,
       Class* parent,
-      const std::string& source_filename) :
-  fullname_{fullname},
+      std::string source_filename) :
+  fullname_{std::move(fullname)},
   access_flags_{access_flags},
   parent_{parent},
-  methods_{},
-  source_filename_{source_filename},
+  source_filename_{std::move(source_filename)},
   original_index_{-1u}
 {}
 
@@ -82,34 +79,34 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
 }
 
 const std::string& Class::fullname() const {
-  return this->fullname_;
+  return fullname_;
 }
 
 
 std::string Class::package_name() const {
-  size_t pos = this->fullname_.find_last_of('/');
+  size_t pos = fullname_.find_last_of('/');
   if (pos == std::string::npos) {
     return "";
   } else {
-    return this->fullname_.substr(1, pos - 1);
+    return fullname_.substr(1, pos - 1);
   }
 }
 
 std::string Class::name() const {
-  size_t pos = this->fullname_.find_last_of('/');
+  size_t pos = fullname_.find_last_of('/');
   if (pos == std::string::npos) {
-    return this->fullname_.substr(1, this->fullname_.size() - 2);
+    return fullname_.substr(1, fullname_.size() - 2);
   } else {
-    return this->fullname_.substr(pos + 1, this->fullname_.size() - pos - 2);
+    return fullname_.substr(pos + 1, fullname_.size() - pos - 2);
   }
 }
 
 std::string Class::pretty_name() const {
-  if (this->fullname_.size() <= 2) {
-    return this->fullname_;
+  if (fullname_.size() <= 2) {
+    return fullname_;
   }
 
-  std::string pretty_name = this->fullname_.substr(1, this->fullname_.size() - 2);
+  std::string pretty_name = fullname_.substr(1, fullname_.size() - 2);
   std::replace(std::begin(pretty_name), std::end(pretty_name), '/', '.');
   return pretty_name;
 
@@ -117,7 +114,7 @@ std::string Class::pretty_name() const {
 
 
 bool Class::has(ACCESS_FLAGS f) const {
-  return (this->access_flags_ & f) > 0;
+  return (access_flags_ & f) > 0;
 }
 
 Class::access_flags_list_t Class::access_flags() const {
@@ -128,21 +125,21 @@ Class::access_flags_list_t Class::access_flags() const {
       std::begin(access_flags_list),
       std::end(access_flags_list),
       std::back_inserter(flags),
-      std::bind(static_cast<bool (Class::*)(ACCESS_FLAGS) const>(&Class::has), this, std::placeholders::_1));
+      [this] (ACCESS_FLAGS f) { return has(f); });
 
   return flags;
 }
 
 
 bool Class::has_parent() const {
-  return this->parent_ != nullptr;
+  return parent_ != nullptr;
 }
 
 const Class& Class::parent() const {
-  if (not this->has_parent()) {
+  if (!has_parent()) {
     throw not_found("No parent found!");
   }
-  return *this->parent_;
+  return *parent_;
 }
 
 Class& Class::parent() {
@@ -150,35 +147,35 @@ Class& Class::parent() {
 }
 
 it_const_methods Class::methods() const {
-  return this->methods_;
+  return methods_;
 }
 
 it_methods Class::methods() {
-  return this->methods_;
+  return methods_;
 }
 
 it_const_fields Class::fields() const {
-  return this->fields_;
+  return fields_;
 }
 
 it_fields Class::fields() {
-  return this->fields_;
+  return fields_;
 }
 
 
 it_methods Class::methods(const std::string& name) {
-  return this->method_from_name(name);
+  return method_from_name(name);
 }
 
 it_const_methods Class::methods(const std::string& name) const {
-  return this->method_from_name(name);
+  return method_from_name(name);
 }
 
 methods_t Class::method_from_name(const std::string& name) const {
   methods_t mtd;
   std::copy_if(
-      std::begin(this->methods_),
-      std::end(this->methods_),
+      std::begin(methods_),
+      std::end(methods_),
       std::back_inserter(mtd),
       [name] (const Method* m) {
         return m->name() == name;
@@ -187,17 +184,17 @@ methods_t Class::method_from_name(const std::string& name) const {
 }
 
 it_fields Class::fields(const std::string& name) {
-  return this->field_from_name(name);
+  return field_from_name(name);
 }
 
 it_const_fields Class::fields(const std::string& name) const {
-  return this->field_from_name(name);
+  return field_from_name(name);
 }
 
 fields_t Class::field_from_name(const std::string& name) const {
   fields_t fld;
   std::copy_if(
-      std::begin(this->fields_), std::end(this->fields_),
+      std::begin(fields_), std::end(fields_),
       std::back_inserter(fld),
       [&name] (const Field* f) {
         return f->name() == name;
@@ -206,17 +203,17 @@ fields_t Class::field_from_name(const std::string& name) const {
 }
 
 size_t Class::index() const {
-  return this->original_index_;
+  return original_index_;
 }
 
 const std::string& Class::source_filename() const {
-  return this->source_filename_;
+  return source_filename_;
 }
 
 dex2dex_class_info_t Class::dex2dex_info() const {
   dex2dex_class_info_t info;
-  for (Method* method : this->methods_) {
-    if (method->dex2dex_info().size() > 0) {
+  for (Method* method : methods_) {
+    if (!method->dex2dex_info().empty()) {
       info.emplace(method, method->dex2dex_info());
     }
   }
@@ -234,12 +231,12 @@ bool Class::operator==(const Class& rhs) const {
 }
 
 bool Class::operator!=(const Class& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Class& cls) {
   os << cls.pretty_name();
-  if (not cls.source_filename().empty()) {
+  if (!cls.source_filename().empty()) {
     os << " - " << cls.source_filename();
   }
 

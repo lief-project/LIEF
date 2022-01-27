@@ -37,7 +37,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
       case DYNAMIC_TAGS::DT_NEEDED:
         {
 
-          Elf_DynamicEntry_Library_t* e = static_cast<Elf_DynamicEntry_Library_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_Library_t*>(
               malloc(sizeof(Elf_DynamicEntry_Library_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -50,7 +50,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
       case DYNAMIC_TAGS::DT_SONAME:
         {
-          Elf_DynamicEntry_SharedObject_t* e = static_cast<Elf_DynamicEntry_SharedObject_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_SharedObject_t*>(
               malloc(sizeof(Elf_DynamicEntry_SharedObject_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -63,7 +63,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
       case DYNAMIC_TAGS::DT_RPATH:
         {
-          Elf_DynamicEntry_Rpath_t* e = static_cast<Elf_DynamicEntry_Rpath_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_Rpath_t*>(
               malloc(sizeof(Elf_DynamicEntry_Rpath_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -77,7 +77,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
       case DYNAMIC_TAGS::DT_RUNPATH:
         {
-          Elf_DynamicEntry_RunPath_t* e = static_cast<Elf_DynamicEntry_RunPath_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_RunPath_t*>(
               malloc(sizeof(Elf_DynamicEntry_RunPath_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -93,7 +93,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
       case DYNAMIC_TAGS::DT_FINI_ARRAY:
       case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
         {
-          Elf_DynamicEntry_Array_t* e = static_cast<Elf_DynamicEntry_Array_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_Array_t*>(
               malloc(sizeof(Elf_DynamicEntry_Array_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -111,7 +111,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
       case DYNAMIC_TAGS::DT_FLAGS:
         {
-          Elf_DynamicEntry_Flags_t* e = static_cast<Elf_DynamicEntry_Flags_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_Flags_t*>(
               malloc(sizeof(Elf_DynamicEntry_Flags_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -120,7 +120,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
           e->flags   = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS*>(malloc((flags.size() + 1) * sizeof(enum LIEF_ELF_DYNAMIC_FLAGS)));
           e->flags_1 = nullptr;
 
-          auto&& it = std::begin(flags);
+          auto it = std::begin(flags);
 
           for (size_t i = 0; it != std::end(flags); ++i, ++it) {
             e->flags[i] = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS>(*it);
@@ -134,7 +134,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
       case DYNAMIC_TAGS::DT_FLAGS_1:
         {
-          Elf_DynamicEntry_Flags_t* e = static_cast<Elf_DynamicEntry_Flags_t*>(
+          auto* e = static_cast<Elf_DynamicEntry_Flags_t*>(
               malloc(sizeof(Elf_DynamicEntry_Flags_t)));
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
@@ -143,7 +143,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
           e->flags_1 = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS_1*>(malloc((flags.size() + 1) * sizeof(enum LIEF_ELF_DYNAMIC_FLAGS_1)));
           e->flags   = nullptr;
 
-          auto&& it = std::begin(flags);
+          auto it = std::begin(flags);
 
           for (size_t i = 0; it != std::end(flags); ++i, ++it) {
             e->flags_1[i] = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS_1>(*it);

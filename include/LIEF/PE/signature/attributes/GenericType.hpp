@@ -29,7 +29,7 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over an attribute whose the internal structure is not supported by LIEF
+//! Interface over an attribute for which the internal structure is not supported by LIEF
 class LIEF_API GenericType : public Attribute {
 
   friend class Parser;
@@ -41,22 +41,22 @@ class LIEF_API GenericType : public Attribute {
   GenericType(const GenericType&);
   GenericType& operator=(const GenericType&);
 
-  virtual std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override;
 
   //! OID of the original attribute
   inline const oid_t& oid() const {
-    return this->oid_;
+    return oid_;
   }
 
   //! Original DER blob of the attribute
   inline const std::vector<uint8_t>& raw_content() const {
-    return this->raw_;
+    return raw_;
   }
 
   //! Print information about the attribute
-  virtual std::string print() const override;
+  std::string print() const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~GenericType();
 

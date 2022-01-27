@@ -41,31 +41,31 @@ std::string to_json_str(const Object& v) {
 void JsonVisitor::visit(const File& file) {
   JsonVisitor header_visitor;
   header_visitor(file.header());
-  this->node_["header"]                      = header_visitor.get();
+  node_["header"]                      = header_visitor.get();
 }
 
 void JsonVisitor::visit(const Header& header) {
-  this->node_["magic"]            = header.magic();
-  this->node_["version"]          = header.version();
-  this->node_["image_begin"]      = header.image_begin();
-  this->node_["image_size"]       = header.image_size();
-  this->node_["oat_checksum"]     = header.oat_checksum();
-  this->node_["oat_file_begin"]   = header.oat_file_begin();
-  this->node_["oat_file_end"]     = header.oat_file_end();
-  this->node_["oat_data_begin"]   = header.oat_data_begin();
-  this->node_["oat_data_end"]     = header.oat_data_end();
-  this->node_["patch_delta"]      = header.patch_delta();
-  this->node_["image_roots"]      = header.image_roots();
-  this->node_["pointer_size"]     = header.pointer_size();
-  this->node_["compile_pic"]      = header.compile_pic();
-  this->node_["nb_sections"]      = header.nb_sections();
-  this->node_["nb_methods"]       = header.nb_methods();
-  this->node_["boot_image_begin"] = header.boot_image_begin();
-  this->node_["boot_image_size"]  = header.boot_image_size();
-  this->node_["boot_oat_begin"]   = header.boot_oat_begin();
-  this->node_["boot_oat_size"]    = header.boot_oat_size();
-  this->node_["storage_mode"]     = to_string(header.storage_mode());
-  this->node_["data_size"]        = header.data_size();
+  node_["magic"]            = header.magic();
+  node_["version"]          = header.version();
+  node_["image_begin"]      = header.image_begin();
+  node_["image_size"]       = header.image_size();
+  node_["oat_checksum"]     = header.oat_checksum();
+  node_["oat_file_begin"]   = header.oat_file_begin();
+  node_["oat_file_end"]     = header.oat_file_end();
+  node_["oat_data_begin"]   = header.oat_data_begin();
+  node_["oat_data_end"]     = header.oat_data_end();
+  node_["patch_delta"]      = header.patch_delta();
+  node_["image_roots"]      = header.image_roots();
+  node_["pointer_size"]     = header.pointer_size();
+  node_["compile_pic"]      = header.compile_pic();
+  node_["nb_sections"]      = header.nb_sections();
+  node_["nb_methods"]       = header.nb_methods();
+  node_["boot_image_begin"] = header.boot_image_begin();
+  node_["boot_image_size"]  = header.boot_image_size();
+  node_["boot_oat_begin"]   = header.boot_oat_begin();
+  node_["boot_oat_size"]    = header.boot_oat_size();
+  node_["storage_mode"]     = to_string(header.storage_mode());
+  node_["data_size"]        = header.data_size();
 }
 
 } // namespace ART

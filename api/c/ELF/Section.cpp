@@ -28,7 +28,7 @@ void init_c_sections(Elf_Binary_t* c_binary, Binary* binary) {
     Section& b_section = sections[i];
     c_binary->sections[i] = static_cast<Elf_Section_t*>(malloc(sizeof(Elf_Section_t)));
     const std::vector<uint8_t>& section_content = b_section.content();
-    uint8_t* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
+    auto* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
     std::copy(
         std::begin(section_content),
         std::end(section_content),

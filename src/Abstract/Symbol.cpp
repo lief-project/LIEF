@@ -24,56 +24,53 @@ Symbol::Symbol(const Symbol&) = default;
 Symbol& Symbol::operator=(const Symbol&) = default;
 Symbol::~Symbol() = default;
 
-Symbol::Symbol(const std::string& name) :
-  name_{name},
-  value_{0},
-  size_{0}
+Symbol::Symbol(std::string name) :
+  name_{std::move(name)}
 {}
 
-Symbol::Symbol(const std::string& name, uint64_t value) :
-  name_{name},
-  value_{value},
-  size_{0}
+Symbol::Symbol(std::string name, uint64_t value) :
+  name_{std::move(name)},
+  value_{value}
 {}
 
-Symbol::Symbol(const std::string& name, uint64_t value, uint64_t size) :
-  name_{name},
+Symbol::Symbol(std::string name, uint64_t value, uint64_t size) :
+  name_{std::move(name)},
   value_{value},
   size_{size}
 {}
 
 void Symbol::swap(Symbol& other) {
-  std::swap(this->name_,   other.name_);
-  std::swap(this->value_,  other.value_);
-  std::swap(this->size_,   other.size_);
+  std::swap(name_,   other.name_);
+  std::swap(value_,  other.value_);
+  std::swap(size_,   other.size_);
 }
 
 const std::string& Symbol::name() const {
-  return this->name_;
+  return name_;
 }
 
 std::string& Symbol::name() {
-  return this->name_;
+  return name_;
 }
 
 void Symbol::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 uint64_t Symbol::value() const {
-  return this->value_;
+  return value_;
 }
 
 void Symbol::value(uint64_t value) {
-  this->value_ = value;
+  value_ = value;
 }
 
 uint64_t Symbol::size() const {
-  return this->size_;
+  return size_;
 }
 
 void Symbol::size(uint64_t value) {
-  this->size_ = value;
+  size_ = value;
 }
 
 
@@ -88,7 +85,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
       std::begin(name),
       std::end(name),
       std::begin(name), []
-      (unsigned char c) { return (c < 127 and c > 32) ? c : ' ';});
+      (unsigned char c) { return (c < 127 && c > 32) ? c : ' ';});
   if (name.size() > 20) {
     name = name.substr(0, 17) + "...";
   }

@@ -39,71 +39,69 @@ Header::Header() :
   sizeOfOptionalHeader_{0},
   characteristics_{HEADER_CHARACTERISTICS::IMAGE_FILE_EXECUTABLE_IMAGE}
 {
-  std::copy(
-      std::begin(PE_Magic),
-      std::end(PE_Magic),
-      std::begin(this->signature_));
+  std::copy(std::begin(details::PE_Magic), std::end(details::PE_Magic),
+            std::begin(signature_));
 }
 
 
-Header::Header(const pe_header *header) :
-  machine_(static_cast<MACHINE_TYPES>(header->Machine)),
-  numberOfSections_(header->NumberOfSections),
-  timeDateStamp_(header->TimeDateStamp),
-  pointerToSymbolTable_(header->PointerToSymbolTable),
-  numberOfSymbols_(header->NumberOfSymbols),
-  sizeOfOptionalHeader_(header->SizeOfOptionalHeader),
-  characteristics_(static_cast<HEADER_CHARACTERISTICS>(header->Characteristics))
+Header::Header(const details::pe_header& header) :
+  machine_(static_cast<MACHINE_TYPES>(header.Machine)),
+  numberOfSections_(header.NumberOfSections),
+  timeDateStamp_(header.TimeDateStamp),
+  pointerToSymbolTable_(header.PointerToSymbolTable),
+  numberOfSymbols_(header.NumberOfSymbols),
+  sizeOfOptionalHeader_(header.SizeOfOptionalHeader),
+  characteristics_(static_cast<HEADER_CHARACTERISTICS>(header.Characteristics))
 
 {
   std::copy(
-      reinterpret_cast<const uint8_t*>(header->signature),
-      reinterpret_cast<const uint8_t*>(header->signature) + sizeof(PE_Magic),
-      std::begin(this->signature_));
+      reinterpret_cast<const uint8_t*>(header.signature),
+      reinterpret_cast<const uint8_t*>(header.signature) + sizeof(details::PE_Magic),
+      std::begin(signature_));
 }
 
 const Header::signature_t& Header::signature() const {
-  return this->signature_;
+  return signature_;
 }
 
 
 MACHINE_TYPES Header::machine() const {
-  return this->machine_;
+  return machine_;
 }
 
 
 uint16_t Header::numberof_sections() const {
-  return this->numberOfSections_;
+  return numberOfSections_;
 }
 
 
 uint32_t Header::time_date_stamp() const {
-  return this->timeDateStamp_;
+  return timeDateStamp_;
 }
 
 
 uint32_t Header::pointerto_symbol_table() const {
-  return this->pointerToSymbolTable_;
+  return pointerToSymbolTable_;
 }
 
 
 uint32_t Header::numberof_symbols() const {
-  return this->numberOfSymbols_;
+  return numberOfSymbols_;
 }
 
 
 uint16_t Header::sizeof_optional_header() const {
-  return this->sizeOfOptionalHeader_;
+  return sizeOfOptionalHeader_;
 }
 
 
 HEADER_CHARACTERISTICS Header::characteristics() const {
-  return this->characteristics_;
+  return characteristics_;
 }
 
 
 bool Header::has_characteristic(HEADER_CHARACTERISTICS c) const {
-  return (this->characteristics_ & c) != HEADER_CHARACTERISTICS::IMAGE_FILE_INVALID;
+  return (characteristics_ & c) != HEADER_CHARACTERISTICS::IMAGE_FILE_INVALID;
 }
 
 
@@ -111,64 +109,62 @@ std::set<HEADER_CHARACTERISTICS> Header::characteristics_list() const {
 
   std::set<HEADER_CHARACTERISTICS> charac;
   std::copy_if(
-      std::begin(header_characteristics_array),
-      std::end(header_characteristics_array),
+      std::begin(details::header_characteristics_array),
+      std::end(details::header_characteristics_array),
       std::inserter(charac, std::begin(charac)),
-      std::bind(&Header::has_characteristic, this, std::placeholders::_1));
+      [this] (HEADER_CHARACTERISTICS f) { return has_characteristic(f); });
 
   return charac;
 }
 
 void Header::machine(MACHINE_TYPES type) {
-  this->machine_ = type;
+  machine_ = type;
 }
 
 
 void Header::numberof_sections(uint16_t nbOfSections) {
-  this->numberOfSections_ = nbOfSections;
+  numberOfSections_ = nbOfSections;
 }
 
 
 void Header::time_date_stamp(uint32_t timestamp) {
-  this->timeDateStamp_ = timestamp;
+  timeDateStamp_ = timestamp;
 }
 
 
 void Header::pointerto_symbol_table(uint32_t pointerToSymbol) {
-  this->pointerToSymbolTable_ = pointerToSymbol;
+  pointerToSymbolTable_ = pointerToSymbol;
 }
 
 
 void Header::numberof_symbols(uint32_t nbOfSymbols) {
-  this->numberOfSymbols_ = nbOfSymbols;
+  numberOfSymbols_ = nbOfSymbols;
 }
 
 
 void Header::sizeof_optional_header(uint16_t sizeOfOptionalHdr) {
-  this->sizeOfOptionalHeader_ = sizeOfOptionalHdr;
+  sizeOfOptionalHeader_ = sizeOfOptionalHdr;
 }
 
 
 void Header::characteristics(HEADER_CHARACTERISTICS characteristics) {
-  this->characteristics_ = characteristics;
+  characteristics_ = characteristics;
 }
 
 
 void Header::add_characteristic(HEADER_CHARACTERISTICS c) {
-  this->characteristics_ |= c;
+  characteristics_ |= c;
 }
 
 
 void Header::remove_characteristic(HEADER_CHARACTERISTICS c) {
-  this->characteristics_ &= ~c;
+  characteristics_ &= ~c;
 }
 
 
 void Header::signature(const Header::signature_t& sig) {
-  std::copy(
-      std::begin(sig),
-      std::end(sig),
-      std::begin(this->signature_));
+  std::copy(std::begin(sig), std::end(sig),
+            std::begin(signature_));
 }
 
 void Header::accept(LIEF::Visitor& visitor) const {
@@ -182,7 +178,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& entry) {

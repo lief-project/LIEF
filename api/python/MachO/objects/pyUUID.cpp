@@ -41,7 +41,8 @@ using setter_t = void (UUIDCommand::*)(T);
 template<>
 void create<UUIDCommand>(py::module& m) {
 
-  py::class_<UUIDCommand, LoadCommand>(m, "UUIDCommand")
+  py::class_<UUIDCommand, LoadCommand>(m, "UUIDCommand",
+      "Class that represents the UUID command")
 
     .def_property("uuid",
         static_cast<getter_t<LIEF::MachO::uuid_t>>(&UUIDCommand::uuid),

@@ -26,12 +26,18 @@
 
 namespace LIEF {
 namespace MachO {
+
+namespace details {
 struct build_tool_version;
 struct build_version_command;
+}
 
+//! Class that represents a tool's version that was
+//! involved in the build of the binary
 class LIEF_API BuildToolVersion : public LIEF::Object {
   public:
-  //! @brief Version is an array of **3** integers
+
+  //! A version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   public:
@@ -44,9 +50,9 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
 
   public:
   BuildToolVersion();
-  BuildToolVersion(const build_tool_version& tool);
+  BuildToolVersion(const details::build_tool_version& tool);
 
-  //! TOOL used
+  //! The tools used
   TOOLS tool() const;
 
   //! Version associated with the tool
@@ -57,7 +63,7 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
   bool operator==(const BuildToolVersion& rhs) const;
   bool operator!=(const BuildToolVersion& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool);
 
@@ -70,7 +76,7 @@ class LIEF_API BuildVersion : public LoadCommand {
   friend class BinaryParser;
 
   public:
-  //! @brief Version is an array of **3** integers
+  //! Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   using tools_list_t = std::vector<BuildToolVersion>;
@@ -86,12 +92,12 @@ class LIEF_API BuildVersion : public LoadCommand {
 
   public:
   BuildVersion();
-  BuildVersion(const build_version_command *version_cmd);
+  BuildVersion(const details::build_version_command& version_cmd);
 
   BuildVersion& operator=(const BuildVersion& copy);
   BuildVersion(const BuildVersion& copy);
 
-  virtual BuildVersion* clone() const override;
+  BuildVersion* clone() const override;
 
   version_t minos() const;
   void minos(version_t version);
@@ -109,9 +115,9 @@ class LIEF_API BuildVersion : public LoadCommand {
   bool operator==(const BuildVersion& rhs) const;
   bool operator!=(const BuildVersion& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   PLATFORMS platform_{PLATFORMS::UNKNOWN};

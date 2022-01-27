@@ -29,9 +29,8 @@ SubFramework& SubFramework::operator=(const SubFramework&) = default;
 SubFramework::SubFramework(const SubFramework&) = default;
 SubFramework::~SubFramework() = default;
 
-SubFramework::SubFramework(const sub_framework_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  umbrella_{}
+SubFramework::SubFramework(const details::sub_framework_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
 {}
 
 SubFramework* SubFramework::clone() const {
@@ -39,11 +38,11 @@ SubFramework* SubFramework::clone() const {
 }
 
 const std::string& SubFramework::umbrella() const {
-  return this->umbrella_;
+  return umbrella_;
 }
 
 void SubFramework::umbrella(const std::string& u) {
-  this->umbrella_ = u;
+  umbrella_ = u;
 }
 
 void SubFramework::accept(Visitor& visitor) const {
@@ -58,7 +57,7 @@ bool SubFramework::operator==(const SubFramework& rhs) const {
 }
 
 bool SubFramework::operator!=(const SubFramework& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -66,7 +65,7 @@ std::ostream& SubFramework::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
   os << std::endl;
-  os << "Umbrella:" << this->umbrella();
+  os << "Umbrella:" << umbrella();
   return os;
 }
 

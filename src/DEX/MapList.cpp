@@ -29,10 +29,10 @@ MapList& MapList::operator=(const MapList&) = default;
 
 MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
-  items.reserve(this->items_.size());
+  items.reserve(items_.size());
   std::transform(
-      std::begin(this->items_),
-      std::end(this->items_),
+      std::begin(items_),
+      std::end(items_),
       std::back_inserter(items),
       [] (MapList::items_t::value_type& p) -> MapItem* {
         return &(p.second);
@@ -43,10 +43,10 @@ MapList::it_items_t MapList::items() {
 
 MapList::it_const_items_t MapList::items() const {
   std::vector<MapItem*> items;
-  items.reserve(this->items_.size());
+  items.reserve(items_.size());
   std::transform(
-      std::begin(this->items_),
-      std::end(this->items_),
+      std::begin(items_),
+      std::end(items_),
       std::back_inserter(items),
       [] (const MapList::items_t::value_type& p) -> MapItem* {
         return const_cast<MapItem*>(&(p.second));
@@ -57,12 +57,12 @@ MapList::it_const_items_t MapList::items() const {
 
 
 bool MapList::has(MapItem::TYPES type) const {
-  return this->items_.count(type) > 0;
+  return items_.count(type) > 0;
 }
 
 const MapItem& MapList::get(MapItem::TYPES type) const {
-  auto&& it = this->items_.find(type);
-  CHECK(it != std::end(this->items_), "Can't find type!");
+  const auto it = items_.find(type);
+  CHECK(it != std::end(items_), "Can't find type!");
   return it->second;
 }
 
@@ -71,11 +71,11 @@ MapItem& MapList::get(MapItem::TYPES type) {
 }
 
 const MapItem& MapList::operator[](MapItem::TYPES type) const {
-  return this->get(type);
+  return get(type);
 }
 
 MapItem& MapList::operator[](MapItem::TYPES type) {
-  return this->get(type);
+  return get(type);
 }
 
 void MapList::accept(Visitor& visitor) const {
@@ -89,7 +89,7 @@ bool MapList::operator==(const MapList& rhs) const {
 }
 
 bool MapList::operator!=(const MapList& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const MapList& mlist) {

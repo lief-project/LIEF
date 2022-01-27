@@ -56,86 +56,86 @@ std::string Header::key_to_string(HEADER_KEYS key) {
 
 
 Header::magic_t Header::magic() const {
-  return this->magic_;
+  return magic_;
 }
 
 oat_version_t Header::version() const {
-  return this->version_;
+  return version_;
 }
 
 
 INSTRUCTION_SETS Header::instruction_set() const {
-  return this->instruction_set_;
+  return instruction_set_;
 }
 
 
 uint32_t Header::checksum() const {
-  return this->checksum_;
+  return checksum_;
 }
 
 uint32_t Header::nb_dex_files() const {
-  return this->dex_file_count_;
+  return dex_file_count_;
 }
 
 
 uint32_t Header::executable_offset() const {
-  return this->executable_offset_;
+  return executable_offset_;
 }
 
 uint32_t Header::i2i_bridge_offset() const {
-  return this->i2i_bridge_offset_;
+  return i2i_bridge_offset_;
 }
 
 uint32_t Header::i2c_code_bridge_offset() const {
-  return this->i2c_code_bridge_offset_;
+  return i2c_code_bridge_offset_;
 }
 
 uint32_t Header::jni_dlsym_lookup_offset() const {
-  return this->jni_dlsym_lookup_offset_;
+  return jni_dlsym_lookup_offset_;
 }
 
 uint32_t Header::quick_generic_jni_trampoline_offset() const {
-  return this->quick_generic_jni_trampoline_offset_;
+  return quick_generic_jni_trampoline_offset_;
 }
 
 uint32_t Header::quick_imt_conflict_trampoline_offset() const {
-  return this->quick_generic_jni_trampoline_offset_;
+  return quick_generic_jni_trampoline_offset_;
 }
 
 uint32_t Header::quick_resolution_trampoline_offset() const {
-  return this->quick_imt_conflict_trampoline_offset_;
+  return quick_imt_conflict_trampoline_offset_;
 }
 
 uint32_t Header::quick_to_interpreter_bridge_offset() const {
-  return this->quick_to_interpreter_bridge_offset_;
+  return quick_to_interpreter_bridge_offset_;
 }
 
 int32_t Header::image_patch_delta() const {
-  return this->image_patch_delta_;
+  return image_patch_delta_;
 }
 
 uint32_t Header::image_file_location_oat_checksum() const {
-  return this->image_file_location_oat_checksum_;
+  return image_file_location_oat_checksum_;
 }
 uint32_t Header::image_file_location_oat_data_begin() const {
-  return this->image_file_location_oat_data_begin_;
+  return image_file_location_oat_data_begin_;
 }
 
 uint32_t Header::key_value_size() const {
-  return this->key_value_store_size_;
+  return key_value_store_size_;
 }
 
 uint32_t Header::oat_dex_files_offset() const {
-  return this->oat_dex_files_offset_;
+  return oat_dex_files_offset_;
 }
 
 Header::it_key_values_t Header::key_values() {
   it_key_values_t::container_type key_values_list;
-  key_values_list.reserve(this->dex2oat_context_.size());
+  key_values_list.reserve(dex2oat_context_.size());
 
-  for (auto&& p : this->dex2oat_context_) {
+  for (const auto& p : dex2oat_context_) {
     HEADER_KEYS key = p.first;
-    std::string& value = this->dex2oat_context_.at(key);
+    std::string& value = dex2oat_context_.at(key);
     key_values_list.emplace_back(key, std::ref(value));
   }
   return key_values_list;
@@ -143,9 +143,9 @@ Header::it_key_values_t Header::key_values() {
 
 Header::it_const_key_values_t Header::key_values() const {
   std::remove_const<it_const_key_values_t::container_type>::type key_values_list;
-  for (auto&& p : this->dex2oat_context_) {
+  for (const auto& p : dex2oat_context_) {
     HEADER_KEYS key = p.first;
-    std::string value = this->dex2oat_context_.at(key);
+    std::string value = dex2oat_context_.at(key);
     key_values_list.emplace_back(key, value);
   }
   return key_values_list;
@@ -154,8 +154,8 @@ Header::it_const_key_values_t Header::key_values() const {
 
 Header::keys_t Header::keys() const {
   Header::keys_t keys_list;
-  keys_list.reserve(this->dex2oat_context_.size());
-  for (auto p : this->dex2oat_context_) {
+  keys_list.reserve(dex2oat_context_.size());
+  for (const auto& p : dex2oat_context_) {
     keys_list.push_back(p.first);
   }
   return keys_list;
@@ -163,16 +163,16 @@ Header::keys_t Header::keys() const {
 
 Header::values_t Header::values() const {
   Header::values_t values_list;
-  values_list.reserve(this->dex2oat_context_.size());
-  for (auto p : this->dex2oat_context_) {
+  values_list.reserve(dex2oat_context_.size());
+  for (const auto& p : dex2oat_context_) {
     values_list.push_back(p.second);
   }
   return values_list;
 }
 
 const std::string& Header::get(HEADER_KEYS key) const {
-  auto&& it = this->dex2oat_context_.find(key);
-  if (it == std::end(this->dex2oat_context_)) {
+  const auto it = dex2oat_context_.find(key);
+  if (it == std::end(dex2oat_context_)) {
     throw not_found("Unable to find the key " + Header::key_to_string(key));
   }
   return it->second;
@@ -184,8 +184,8 @@ std::string& Header::get(HEADER_KEYS key) {
 
 
 Header& Header::set(HEADER_KEYS key, const std::string& value) {
-  auto&& it = this->dex2oat_context_.find(key);
-  if (it == std::end(this->dex2oat_context_)) {
+  const auto it = dex2oat_context_.find(key);
+  if (it == std::end(dex2oat_context_)) {
     throw not_found(std::string{"Can't find key: '"} + to_string(key) + "'");
   }
 
@@ -194,11 +194,11 @@ Header& Header::set(HEADER_KEYS key, const std::string& value) {
 }
 
 const std::string& Header::operator[](HEADER_KEYS key) const {
-  return this->get(key);
+  return get(key);
 }
 
 std::string& Header::operator[](HEADER_KEYS key) {
-  return this->get(key);
+  return get(key);
 }
 
 void Header::accept(Visitor& visitor) const {
@@ -212,7 +212,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -255,7 +255,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
   os << std::endl;
 
-  for (auto&& p : hdr.key_values()) {
+  for (const auto& p : hdr.key_values()) {
     os << std::setw(WIDTH) << std::setfill(' ') << Header::key_to_string(p.first) + ":" << p.second << std::endl;
   }
 

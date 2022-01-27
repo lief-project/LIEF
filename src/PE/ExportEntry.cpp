@@ -27,46 +27,46 @@ ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 ExportEntry::ExportEntry() = default;
 
 ExportEntry::forward_information_t::operator bool() const {
-  return library.size() > 0 or function.size() > 0;
+  return !library.empty() || !function.empty();
 }
 
 uint16_t ExportEntry::ordinal() const {
-  return this->ordinal_;
+  return ordinal_;
 }
 
 uint32_t ExportEntry::address() const {
-  return this->address_;
+  return address_;
 }
 
 bool ExportEntry::is_extern() const {
-  return this->is_extern_;
+  return is_extern_;
 }
 
 bool ExportEntry::is_forwarded() const {
-  return this->forward_info_;
+  return forward_info_;
 }
 
 ExportEntry::forward_information_t ExportEntry::forward_information() const {
-  if (not this->is_forwarded()) {
+  if (!is_forwarded()) {
     return {};
   }
-  return this->forward_info_;
+  return forward_info_;
 }
 
 uint32_t ExportEntry::function_rva() const {
-  return this->function_rva_;
+  return function_rva_;
 }
 
 void ExportEntry::ordinal(uint16_t ordinal) {
-  this->ordinal_ = ordinal;
+  ordinal_ = ordinal;
 }
 
 void ExportEntry::address(uint32_t address) {
-  this->address_ = address;
+  address_ = address;
 }
 
 void ExportEntry::is_extern(bool is_extern) {
-  this->is_extern_ = is_extern;
+  is_extern_ = is_extern;
 }
 
 void ExportEntry::accept(LIEF::Visitor& visitor) const {
@@ -80,7 +80,7 @@ bool ExportEntry::operator==(const ExportEntry& rhs) const {
 }
 
 bool ExportEntry::operator!=(const ExportEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -99,7 +99,7 @@ std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {
   os << std::setw(33) << name;
   os << std::setw(5)  << export_entry.ordinal();
 
-  if (not export_entry.is_extern()) {
+  if (!export_entry.is_extern()) {
     os << std::setw(10) << export_entry.address();
   } else {
     os << std::setw(10) << "[Extern]";

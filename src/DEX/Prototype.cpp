@@ -27,8 +27,8 @@ Prototype::Prototype(const Prototype& other) = default;
 
 
 const Type& Prototype::return_type() const {
-  CHECK(this->return_type_ != nullptr, "Return type is null!");
-  return *this->return_type_;
+  CHECK(return_type_ != nullptr, "Return type is null!");
+  return *return_type_;
 }
 
 Type& Prototype::return_type() {
@@ -36,11 +36,11 @@ Type& Prototype::return_type() {
 }
 
 Prototype::it_const_params Prototype::parameters_type() const {
-  return this->params_;
+  return params_;
 }
 
 Prototype::it_params Prototype::parameters_type() {
-  return this->params_;
+  return params_;
 }
 
 void Prototype::accept(Visitor& visitor) const {
@@ -54,7 +54,7 @@ bool Prototype::operator==(const Prototype& rhs) const {
 }
 
 bool Prototype::operator!=(const Prototype& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Prototype& type) {

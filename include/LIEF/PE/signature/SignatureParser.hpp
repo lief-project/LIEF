@@ -60,7 +60,7 @@ class LIEF_API SignatureParser {
   static result<Signature> parse(const std::string& path);
 
   private:
-  SignatureParser(std::vector<uint8_t> data);
+  SignatureParser(const std::vector<uint8_t>& data);
   ~SignatureParser();
   SignatureParser();
 

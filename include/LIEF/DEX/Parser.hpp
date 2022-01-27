@@ -32,88 +32,90 @@ class Class;
 class Method;
 class Field;
 
-//! @brief Class which parse a DEX file and transform into a DEX::File object
+//! Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
   public:
   friend struct ::Profiler;
-    static std::unique_ptr<File> parse(const std::string& file);
-    static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  //! Parse the DEX file from the file path given in parameter
+  static std::unique_ptr<File> parse(const std::string& file);
+  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data,
+                                     const std::string& name = "");
 
-    Parser& operator=(const Parser& copy) = delete;
-    Parser(const Parser& copy)            = delete;
+  Parser& operator=(const Parser& copy) = delete;
+  Parser(const Parser& copy)            = delete;
 
   private:
-    Parser();
-    Parser(const std::string& file);
-    Parser(const std::vector<uint8_t>& data, const std::string& name);
-    ~Parser();
+  Parser();
+  Parser(const std::string& file);
+  Parser(const std::vector<uint8_t>& data, const std::string& name);
+  ~Parser();
 
-    void init(const std::string& name, dex_version_t version);
+  void init(const std::string& name, dex_version_t version);
 
-    template<typename DEX_T>
-    void parse_file();
+  template<typename DEX_T>
+  void parse_file();
 
-    template<typename DEX_T>
-    void parse_header();
+  template<typename DEX_T>
+  void parse_header();
 
-    template<typename DEX_T>
-    void parse_map();
+  template<typename DEX_T>
+  void parse_map();
 
-    template<typename DEX_T>
-    void parse_strings();
+  template<typename DEX_T>
+  void parse_strings();
 
-    template<typename DEX_T>
-    void parse_types();
+  template<typename DEX_T>
+  void parse_types();
 
-    template<typename DEX_T>
-    void parse_fields();
+  template<typename DEX_T>
+  void parse_fields();
 
-    template<typename DEX_T>
-    void parse_prototypes();
+  template<typename DEX_T>
+  void parse_prototypes();
 
-    template<typename DEX_T>
-    void parse_methods();
+  template<typename DEX_T>
+  void parse_methods();
 
-    template<typename DEX_T>
-    void parse_classes();
+  template<typename DEX_T>
+  void parse_classes();
 
-    template<typename DEX_T>
-    void parse_class_data(uint32_t offset, Class* cls);
+  template<typename DEX_T>
+  void parse_class_data(uint32_t offset, Class* cls);
 
-    template<typename DEX_T>
-    void parse_field(size_t index, Class* cls, bool is_static);
+  template<typename DEX_T>
+  void parse_field(size_t index, Class* cls, bool is_static);
 
-    template<typename DEX_T>
-    void parse_method(size_t index, Class* cls, bool is_virtual);
+  template<typename DEX_T>
+  void parse_method(size_t index, Class* cls, bool is_virtual);
 
-    template<typename DEX_T>
-    void parse_code_info(uint32_t offset, Method* method);
+  template<typename DEX_T>
+  void parse_code_info(uint32_t offset, Method* method);
 
-    void resolve_inheritance();
+  void resolve_inheritance();
 
-    void resolve_external_methods();
+  void resolve_external_methods();
 
-    void resolve_external_fields();
+  void resolve_external_fields();
 
-    void resolve_types();
+  void resolve_types();
 
-    LIEF::DEX::File* file_;
+  LIEF::DEX::File* file_ = nullptr;
 
-    // Map of inheritance relationship when parsing classes ('parse_classes')
-    // The key is the parent class name of the value
-    std::unordered_multimap<std::string, Class*> inheritance_;
+  // Map of inheritance relationship when parsing classes ('parse_classes')
+  // The key is the parent class name of the value
+  std::unordered_multimap<std::string, Class*> inheritance_;
 
-    // Map of method/class relationship when parsing methods ('parse_methods')
-    // The key is the Class name in which the method is defined
-    std::unordered_multimap<std::string, Method*> class_method_map_;
+  // Map of method/class relationship when parsing methods ('parse_methods')
+  // The key is the Class name in which the method is defined
+  std::unordered_multimap<std::string, Method*> class_method_map_;
 
-    // Map of field/class relationship when parsing fields ('parse_fields')
-    // The key is the Class name in which the field is defined
-    std::unordered_multimap<std::string, Field*> class_field_map_;
+  // Map of field/class relationship when parsing fields ('parse_fields')
+  // The key is the Class name in which the field is defined
+  std::unordered_multimap<std::string, Field*> class_field_map_;
 
-    std::unordered_multimap<std::string, Type*> class_type_map_;
+  std::unordered_multimap<std::string, Type*> class_type_map_;
 
-    std::unique_ptr<VectorStream> stream_;
+  std::unique_ptr<VectorStream> stream_;
 };
 
 

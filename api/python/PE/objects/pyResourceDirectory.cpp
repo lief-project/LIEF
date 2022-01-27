@@ -40,7 +40,7 @@ void create<ResourceDirectory>(py::module& m) {
     .def_property("characteristics",
         static_cast<getter_t<uint32_t>>(&ResourceDirectory::characteristics),
         static_cast<setter_t<uint32_t>>(&ResourceDirectory::characteristics),
-        "Resource flags. This field is reserved for future use. "
+        "Resource characteristics. This field is reserved for future use. "
         "It is currently set to zero.")
 
     .def_property("time_date_stamp",

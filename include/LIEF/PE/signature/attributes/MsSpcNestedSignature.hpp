@@ -49,17 +49,17 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   MsSpcNestedSignature(const MsSpcNestedSignature&);
   MsSpcNestedSignature& operator=(const MsSpcNestedSignature&);
 
-  virtual std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override;
 
   //! Underlying Signature object
   inline const Signature& sig() const {
-    return this->sig_;
+    return sig_;
   }
 
   //! Print information about the attribute
-  virtual std::string print() const override;
+  std::string print() const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~MsSpcNestedSignature();
 

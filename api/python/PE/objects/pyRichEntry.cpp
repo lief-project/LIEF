@@ -33,7 +33,10 @@ using setter_t = void (RichEntry::*)(T);
 
 template<>
 void create<RichEntry>(py::module& m) {
-  py::class_<RichEntry, LIEF::Object>(m, "RichEntry")
+  py::class_<RichEntry, LIEF::Object>(m, "RichEntry",
+      R"delim(
+      Class which represents an entry associated to the RichHeader
+      )delim")
     .def(py::init<>())
     .def(py::init<uint16_t, uint16_t, uint32_t>(),
         "Contructor from "

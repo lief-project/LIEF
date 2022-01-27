@@ -22,8 +22,8 @@
 #include <frozen/map.h>
 #define CONST_MAP(KEY, VAL, NUM) constexpr frozen::map<KEY, VAL, NUM>
 #else
-#include <map>
-#define CONST_MAP(KEY, VAL, NUM) static const std::map<KEY, VAL>
+#include <unordered_map>
+#define CONST_MAP(KEY, VAL, NUM) static const std::unordered_map<KEY, VAL>
 #endif
 
 #endif

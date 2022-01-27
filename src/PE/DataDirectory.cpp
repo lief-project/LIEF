@@ -33,67 +33,63 @@ DataDirectory::~DataDirectory() = default;
 DataDirectory::DataDirectory() :
   rva_{0},
   size_{0},
-  type_{},
-  section_{nullptr}
+  type_{}
 {}
 
 DataDirectory::DataDirectory(DATA_DIRECTORY type) :
   rva_{0},
   size_{0},
-  type_{type},
-  section_{nullptr}
+  type_{type}
 {}
 
-DataDirectory::DataDirectory(const pe_data_directory *header, DATA_DIRECTORY type) :
-  rva_{header->RelativeVirtualAddress},
-  size_{header->Size},
-  type_{type},
-  section_{nullptr}
+DataDirectory::DataDirectory(const details::pe_data_directory& header, DATA_DIRECTORY type) :
+  rva_{header.RelativeVirtualAddress},
+  size_{header.Size},
+  type_{type}
 {}
 
 DataDirectory::DataDirectory(const DataDirectory& other) :
   Object{other},
   rva_{other.rva_},
   size_{other.size_},
-  type_{other.type_},
-  section_{nullptr}
+  type_{other.type_}
 {}
 
 DataDirectory& DataDirectory::operator=(DataDirectory other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 void DataDirectory::swap(DataDirectory& other) {
-  std::swap(this->rva_,     other.rva_);
-  std::swap(this->size_,    other.size_);
-  std::swap(this->type_,    other.type_);
-  std::swap(this->section_, other.section_);
+  std::swap(rva_,     other.rva_);
+  std::swap(size_,    other.size_);
+  std::swap(type_,    other.type_);
+  std::swap(section_, other.section_);
 }
 
 
 
 uint32_t DataDirectory::RVA() const {
-  return this->rva_;
+  return rva_;
 }
 
 
 uint32_t DataDirectory::size() const {
-  return this->size_;
+  return size_;
 }
 
 
 bool DataDirectory::has_section() const {
-  return this->section_ != nullptr;
+  return section_ != nullptr;
 }
 
 
 const Section& DataDirectory::section() const {
-  if (this->section_ != nullptr) {
-    return *this->section_;
+  if (section_ != nullptr) {
+    return *section_;
   } else {
     throw not_found("No section associated with the data directory '" +
-        std::string{to_string(this->type())} + "'");
+        std::string{to_string(type())} + "'");
   }
 }
 
@@ -102,16 +98,16 @@ Section& DataDirectory::section() {
 }
 
 DATA_DIRECTORY DataDirectory::type() const {
-  return this->type_;
+  return type_;
 }
 
 void DataDirectory::RVA(uint32_t rva) {
-  this->rva_ = rva;
+  rva_ = rva;
 }
 
 
 void DataDirectory::size(uint32_t size) {
-  this->size_ = size;
+  size_ = size;
 }
 
 void DataDirectory::accept(LIEF::Visitor& visitor) const {
@@ -127,7 +123,7 @@ bool DataDirectory::operator==(const DataDirectory& rhs) const {
 }
 
 bool DataDirectory::operator!=(const DataDirectory& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {

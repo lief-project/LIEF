@@ -38,7 +38,7 @@ class LIEF_API PogoEntry : public Object {
 
   PogoEntry();
   PogoEntry(const PogoEntry&);
-  PogoEntry(uint32_t start_rva, uint32_t size, const std::string& name);
+  PogoEntry(uint32_t start_rva, uint32_t size, std::string  name);
 
   PogoEntry& operator=(const PogoEntry&);
   virtual ~PogoEntry();
@@ -51,7 +51,7 @@ class LIEF_API PogoEntry : public Object {
   void size(uint32_t size);
   void name(const std::string& name);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const PogoEntry& rhs) const;
   bool operator!=(const PogoEntry& rhs) const;

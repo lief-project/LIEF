@@ -36,7 +36,12 @@ using setter_t = setter_abs_t<uint16_t>;
 
 template<>
 void create<DosHeader>(py::module& m) {
-  py::class_<DosHeader, LIEF::Object>(m, "DosHeader")
+  py::class_<DosHeader, LIEF::Object>(m, "DosHeader",
+      R"delim(
+      Class which represents the DosHeader, the **first** structure presents at the beginning of a PE file.
+
+      Most of the attributes of this structures are not relevant, except :attr:`~lief.PE.DosHeader.addressof_new_exeheader`
+      )delim")
     .def(py::init<>())
     .def_property("magic",
         static_cast<getter_t>(&DosHeader::magic),

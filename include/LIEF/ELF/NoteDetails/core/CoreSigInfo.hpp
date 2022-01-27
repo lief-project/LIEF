@@ -44,7 +44,7 @@ class LIEF_API CoreSigInfo : public NoteDetails {
   public:
   static CoreSigInfo make(Note& note);
 
-  virtual CoreSigInfo* clone() const override;
+  CoreSigInfo* clone() const override;
 
   //! Signal number.
   int32_t signo() const;
@@ -62,22 +62,22 @@ class LIEF_API CoreSigInfo : public NoteDetails {
   bool operator==(const CoreSigInfo& rhs) const;
   bool operator!=(const CoreSigInfo& rhs) const;
 
-  virtual void dump(std::ostream& os) const override;
+  void dump(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~CoreSigInfo();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note);
 
   protected:
-  virtual void parse() override;
-  virtual void build() override;
+  void parse() override;
+  void build() override;
 
   private:
   CoreSigInfo(Note& note);
 
-  Elf_siginfo siginfo_;
+  details::Elf_siginfo siginfo_;
 };
 
 

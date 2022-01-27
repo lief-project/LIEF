@@ -37,12 +37,16 @@ template<>
 void create<DynamicEntry>(py::module& m) {
 
   // DynamicEntry object
-  py::class_<DynamicEntry, LIEF::Object>(m, "DynamicEntry")
+  py::class_<DynamicEntry, LIEF::Object>(m, "DynamicEntry",
+      R"delim(
+      Class which represents an entry in the dynamic table
+      These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC`` segment
+      )delim")
     .def(py::init<>(),
         "Default constructor")
 
     .def(py::init<DYNAMIC_TAGS, uint64_t>(),
-        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
+        "Constructor from a " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
         "tag"_a, "value"_a)
 
     .def_property("tag",
@@ -53,7 +57,12 @@ void create<DynamicEntry>(py::module& m) {
     .def_property("value",
         static_cast<getter_t<uint64_t>>(&DynamicEntry::value),
         static_cast<setter_t<uint64_t>>(&DynamicEntry::value),
-        "Return the entry's value.")
+        R"delim(
+        Return the entry's value
+
+        The meaning of the value strongly depends on the tag.
+        It can be an offset, an index, a flag, ...
+        )delim")
 
     .def("__eq__", &DynamicEntry::operator==)
     .def("__ne__", &DynamicEntry::operator!=)

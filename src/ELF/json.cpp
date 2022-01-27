@@ -137,65 +137,65 @@ void JsonVisitor::visit(const Binary& binary) {
     notes.emplace_back(visitor.get());
   }
 
-  this->node_["name"]         = binary.name();
-  this->node_["entrypoint"]   = binary.entrypoint();
-  this->node_["imagebase"]    = binary.imagebase();
-  this->node_["virtual_size"] = binary.virtual_size();
-  this->node_["is_pie"]       = binary.is_pie();
+  node_["name"]         = binary.name();
+  node_["entrypoint"]   = binary.entrypoint();
+  node_["imagebase"]    = binary.imagebase();
+  node_["virtual_size"] = binary.virtual_size();
+  node_["is_pie"]       = binary.is_pie();
 
   if (binary.has_interpreter()) {
-    this->node_["interpreter"] = binary.interpreter();
+    node_["interpreter"] = binary.interpreter();
   }
 
-  this->node_["header"]                      = header_visitor.get();
-  this->node_["sections"]                    = sections;
-  this->node_["segments"]                    = segments;
-  this->node_["dynamic_entries"]             = dynamic_entries;
-  this->node_["dynamic_symbols"]             = dynamic_symbols;
-  this->node_["static_symbols"]              = static_symbols;
-  this->node_["dynamic_relocations"]         = dynamic_relocations;
-  this->node_["pltgot_relocations"]          = pltgot_relocations;
-  this->node_["symbols_version"]             = symbols_version;
-  this->node_["symbols_version_requirement"] = symbols_version_requirement;
-  this->node_["symbols_version_definition"]  = symbols_version_definition;
-  this->node_["notes"]                       = notes;
+  node_["header"]                      = header_visitor.get();
+  node_["sections"]                    = sections;
+  node_["segments"]                    = segments;
+  node_["dynamic_entries"]             = dynamic_entries;
+  node_["dynamic_symbols"]             = dynamic_symbols;
+  node_["static_symbols"]              = static_symbols;
+  node_["dynamic_relocations"]         = dynamic_relocations;
+  node_["pltgot_relocations"]          = pltgot_relocations;
+  node_["symbols_version"]             = symbols_version;
+  node_["symbols_version_requirement"] = symbols_version_requirement;
+  node_["symbols_version_definition"]  = symbols_version_definition;
+  node_["notes"]                       = notes;
 
   if (binary.use_gnu_hash()) {
     JsonVisitor gnu_hash_visitor;
     gnu_hash_visitor(binary.gnu_hash());
 
-    this->node_["gnu_hash"] = gnu_hash_visitor.get();
+    node_["gnu_hash"] = gnu_hash_visitor.get();
   }
 
   if (binary.use_sysv_hash()) {
     JsonVisitor sysv_hash_visitor;
     sysv_hash_visitor(binary.sysv_hash());
 
-    this->node_["sysv_hash"] = sysv_hash_visitor.get();
+    node_["sysv_hash"] = sysv_hash_visitor.get();
   }
 
 }
 
 
 void JsonVisitor::visit(const Header& header) {
-  this->node_["file_type"]                       = to_string(header.file_type());
-  this->node_["machine_type"]                    = to_string(header.machine_type());
-  this->node_["object_file_version"]             = to_string(header.object_file_version());
-  this->node_["entrypoint"]                      = header.entrypoint();
-  this->node_["program_headers_offset"]          = header.program_headers_offset();
-  this->node_["section_headers_offset"]          = header.section_headers_offset();
-  this->node_["processor_flag"]                  = header.processor_flag();
-  this->node_["header_size"]                     = header.header_size();
-  this->node_["program_header_size"]             = header.program_header_size();
-  this->node_["processornumberof_segments_flag"] = header.numberof_segments();
-  this->node_["section_header_size"]             = header.section_header_size();
-  this->node_["numberof_sections"]               = header.numberof_sections();
-  this->node_["section_name_table_idx"]          = header.section_name_table_idx();
-  this->node_["identity_class"]                  = to_string(header.identity_class());
-  this->node_["identity_data"]                   = to_string(header.identity_data());
-  this->node_["identity_version"]                = to_string(header.identity_version());
-  this->node_["identity_os_abi"]                 = to_string(header.identity_os_abi());
-  this->node_["identity_abi_version"]            = header.identity_abi_version();
+  node_["file_type"]                       = to_string(header.file_type());
+  node_["machine_type"]                    = to_string(header.machine_type());
+  node_["object_file_version"]             = to_string(header.object_file_version());
+  node_["entrypoint"]                      = header.entrypoint();
+  node_["program_headers_offset"]          = header.program_headers_offset();
+  node_["section_headers_offset"]          = header.section_headers_offset();
+  node_["processor_flag"]                  = header.processor_flag();
+  node_["header_size"]                     = header.header_size();
+  node_["program_header_size"]             = header.program_header_size();
+  node_["processornumberof_segments_flag"] = header.numberof_segments();
+  node_["section_header_size"]             = header.section_header_size();
+  node_["numberof_sections"]               = header.numberof_sections();
+  node_["section_name_table_idx"]          = header.section_name_table_idx();
+  node_["identity_class"]                  = to_string(header.identity_class());
+  node_["identity_data"]                   = to_string(header.identity_data());
+  node_["identity_version"]                = to_string(header.identity_version());
+  node_["identity_os_abi"]                 = to_string(header.identity_os_abi());
+  node_["identity_abi_version"]            = header.identity_abi_version();
 }
 
 
@@ -205,16 +205,16 @@ void JsonVisitor::visit(const Section& section) {
     flags.emplace_back(to_string(f));
   }
 
-  this->node_["name"]            = section.name();
-  this->node_["virtual_address"] = section.virtual_address();
-  this->node_["size"]            = section.size();
-  this->node_["offset"]          = section.offset();
-  this->node_["alignment"]       = section.alignment();
-  this->node_["information"]     = section.information();
-  this->node_["entry_size"]      = section.entry_size();
-  this->node_["link"]            = section.link();
-  this->node_["type"]            = to_string(section.type());
-  this->node_["flags"]           = flags;
+  node_["name"]            = section.name();
+  node_["virtual_address"] = section.virtual_address();
+  node_["size"]            = section.size();
+  node_["offset"]          = section.offset();
+  node_["alignment"]       = section.alignment();
+  node_["information"]     = section.information();
+  node_["entry_size"]      = section.entry_size();
+  node_["link"]            = section.link();
+  node_["type"]            = to_string(section.type());
+  node_["flags"]           = flags;
 }
 
 void JsonVisitor::visit(const Segment& segment) {
@@ -224,56 +224,56 @@ void JsonVisitor::visit(const Segment& segment) {
     sections.emplace_back(section.name());
   }
 
-  this->node_["type"]             = to_string(segment.type());
-  this->node_["flags"]            = static_cast<size_t>(segment.flags());
-  this->node_["file_offset"]      = segment.file_offset();
-  this->node_["virtual_address"]  = segment.virtual_address();
-  this->node_["physical_address"] = segment.physical_address();
-  this->node_["physical_size"]    = segment.physical_size();
-  this->node_["virtual_size"]     = segment.virtual_size();
-  this->node_["alignment"]        = segment.alignment();
-  this->node_["sections"]         = sections;
+  node_["type"]             = to_string(segment.type());
+  node_["flags"]            = static_cast<size_t>(segment.flags());
+  node_["file_offset"]      = segment.file_offset();
+  node_["virtual_address"]  = segment.virtual_address();
+  node_["physical_address"] = segment.physical_address();
+  node_["physical_size"]    = segment.physical_size();
+  node_["virtual_size"]     = segment.virtual_size();
+  node_["alignment"]        = segment.alignment();
+  node_["sections"]         = sections;
 
 }
 
 void JsonVisitor::visit(const DynamicEntry& entry) {
-  this->node_["tag"]   = to_string(entry.tag());
-  this->node_["value"] = entry.value();
+  node_["tag"]   = to_string(entry.tag());
+  node_["value"] = entry.value();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryArray& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
-  this->node_["array"] = entry.array();
+  visit(static_cast<const DynamicEntry&>(entry));
+  node_["array"] = entry.array();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryLibrary& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
-  this->node_["library"] = entry.name();
+  visit(static_cast<const DynamicEntry&>(entry));
+  node_["library"] = entry.name();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryRpath& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
-  this->node_["rpath"] = entry.rpath();
+  visit(static_cast<const DynamicEntry&>(entry));
+  node_["rpath"] = entry.rpath();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryRunPath& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
-  this->node_["runpath"] = entry.runpath();
+  visit(static_cast<const DynamicEntry&>(entry));
+  node_["runpath"] = entry.runpath();
 }
 
 
 void JsonVisitor::visit(const DynamicSharedObject& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
-  this->node_["library"] = entry.name();
+  visit(static_cast<const DynamicEntry&>(entry));
+  node_["library"] = entry.name();
 }
 
 
 void JsonVisitor::visit(const DynamicEntryFlags& entry) {
-  this->visit(static_cast<const DynamicEntry&>(entry));
+  visit(static_cast<const DynamicEntry&>(entry));
 
   const DynamicEntryFlags::flags_list_t& flags = entry.flags();
   std::vector<std::string> flags_str;
@@ -297,28 +297,28 @@ void JsonVisitor::visit(const DynamicEntryFlags& entry) {
         });
   }
 
-  this->node_["flags"] = flags_str;
+  node_["flags"] = flags_str;
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {
-  this->node_["type"]        = to_string(symbol.type());
-  this->node_["binding"]     = to_string(symbol.binding());
-  this->node_["information"] = symbol.information();
-  this->node_["other"]       = symbol.other();
-  this->node_["value"]       = symbol.value();
-  this->node_["size"]        = symbol.size();
-  this->node_["name"]        = symbol.name();
+  node_["type"]        = to_string(symbol.type());
+  node_["binding"]     = to_string(symbol.binding());
+  node_["information"] = symbol.information();
+  node_["other"]       = symbol.other();
+  node_["value"]       = symbol.value();
+  node_["size"]        = symbol.size();
+  node_["name"]        = symbol.name();
 
   try {
-    this->node_["demangled_name"] = symbol.demangled_name();
+    node_["demangled_name"] = symbol.demangled_name();
   } catch (const not_supported&) {
   }
 }
 
 void JsonVisitor::visit(const Relocation& relocation) {
   std::string relocation_type = "NOT_TO_STRING";
-  std::string symbol_name     = "";
-  std::string section_name    = "";
+  std::string symbol_name;
+  std::string section_name;
 
   if (relocation.has_symbol()) {
     const Symbol& s = relocation.symbol();
@@ -338,17 +338,17 @@ void JsonVisitor::visit(const Relocation& relocation) {
     relocation_type = to_string(static_cast<RELOC_x86_64>(relocation.type()));
   }
 
-  this->node_["symbol_name"] = symbol_name;
-  this->node_["address"]     = relocation.address();
-  this->node_["type"]        = relocation_type;
-  this->node_["section"]     = section_name;
+  node_["symbol_name"] = symbol_name;
+  node_["address"]     = relocation.address();
+  node_["type"]        = relocation_type;
+  node_["section"]     = section_name;
 
 }
 
 void JsonVisitor::visit(const SymbolVersion& sv) {
-  this->node_["value"] = sv.value();
+  node_["value"] = sv.value();
   if (sv.has_auxiliary_version()) {
-   this->node_["symbol_version_auxiliary"] = sv.symbol_version_auxiliary().name();
+   node_["symbol_version_auxiliary"] = sv.symbol_version_auxiliary().name();
   }
 
 }
@@ -363,9 +363,9 @@ void JsonVisitor::visit(const SymbolVersionRequirement& svr) {
     svar_json.emplace_back(visitor.get());
   }
 
-  this->node_["version"]                              = svr.version();
-  this->node_["name"]                                 = svr.name();
-  this->node_["symbol_version_auxiliary_requirement"] = svar_json;
+  node_["version"]                              = svr.version();
+  node_["name"]                                 = svr.name();
+  node_["symbol_version_auxiliary_requirement"] = svar_json;
 
 }
 
@@ -379,74 +379,74 @@ void JsonVisitor::visit(const SymbolVersionDefinition& svd) {
     sva_json.emplace_back(visitor.get());
   }
 
-  this->node_["version"]                  = svd.version();
-  this->node_["flags"]                    = svd.flags();
-  this->node_["hash"]                     = svd.hash();
-  this->node_["symbol_version_auxiliary"] = sva_json;
+  node_["version"]                  = svd.version();
+  node_["flags"]                    = svd.flags();
+  node_["hash"]                     = svd.hash();
+  node_["symbol_version_auxiliary"] = sva_json;
 }
 
 void JsonVisitor::visit(const SymbolVersionAux& sv) {
-  this->node_["name"] = sv.name();
+  node_["name"] = sv.name();
 }
 
 void JsonVisitor::visit(const SymbolVersionAuxRequirement& svar) {
-  this->node_["hash"]  = svar.hash();
-  this->node_["flags"] = svar.flags();
-  this->node_["other"] = svar.other();
+  node_["hash"]  = svar.hash();
+  node_["flags"] = svar.flags();
+  node_["other"] = svar.other();
 }
 
 void JsonVisitor::visit(const Note& note) {
-  this->node_["name"]  = note.name();
+  node_["name"]  = note.name();
   const std::string type_str = note.is_core() ? to_string(note.type_core()) : to_string(note.type());
-  this->node_["type"]  = type_str;
+  node_["type"]  = type_str;
   JsonVisitor visitor;
   const NoteDetails& d = note.details();
   d.accept(visitor);
-  this->node_["details"] = visitor.get();
+  node_["details"] = visitor.get();
 }
 
 void JsonVisitor::visit(const NoteDetails&) {
-  this->node_ = json::object();
+  node_ = json::object();
 }
 
 void JsonVisitor::visit(const NoteAbi& note_abi) {
-  this->node_["abi"]     = to_string(note_abi.abi());
-  this->node_["version"] = note_abi.version();
+  node_["abi"]     = to_string(note_abi.abi());
+  node_["version"] = note_abi.version();
 }
 
 void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
-  this->node_["file_name"] = pinfo.file_name();
-  this->node_["flags"]     = pinfo.flags();
-  this->node_["uid"]       = pinfo.uid();
-  this->node_["gid"]       = pinfo.gid();
-  this->node_["pid"]       = pinfo.pid();
-  this->node_["ppid"]      = pinfo.ppid();
-  this->node_["pgrp"]      = pinfo.pgrp();
-  this->node_["sid"]       = pinfo.sid();
+  node_["file_name"] = pinfo.file_name();
+  node_["flags"]     = pinfo.flags();
+  node_["uid"]       = pinfo.uid();
+  node_["gid"]       = pinfo.gid();
+  node_["pid"]       = pinfo.pid();
+  node_["ppid"]      = pinfo.ppid();
+  node_["pgrp"]      = pinfo.pgrp();
+  node_["sid"]       = pinfo.sid();
 }
 
 
 void JsonVisitor::visit(const CorePrStatus& pstatus) {
-  this->node_["current_sig"] = pstatus.current_sig();
-  this->node_["sigpend"]     = pstatus.sigpend();
-  this->node_["sighold"]     = pstatus.sighold();
-  this->node_["pid"]         = pstatus.pid();
-  this->node_["ppid"]        = pstatus.ppid();
-  this->node_["pgrp"]        = pstatus.pgrp();
-  this->node_["sid"]         = pstatus.sid();
-  this->node_["sigpend"]     = pstatus.sigpend();
+  node_["current_sig"] = pstatus.current_sig();
+  node_["sigpend"]     = pstatus.sigpend();
+  node_["sighold"]     = pstatus.sighold();
+  node_["pid"]         = pstatus.pid();
+  node_["ppid"]        = pstatus.ppid();
+  node_["pgrp"]        = pstatus.pgrp();
+  node_["sid"]         = pstatus.sid();
+  node_["sigpend"]     = pstatus.sigpend();
 
-  this->node_["utime"] = {
+  node_["utime"] = {
     {"tv_sec",  pstatus.utime().tv_sec},
     {"tv_usec", pstatus.utime().tv_usec}
   };
 
-  this->node_["stime"] = {
+  node_["stime"] = {
     {"tv_sec",  pstatus.stime().tv_sec},
     {"tv_usec", pstatus.stime().tv_usec}
   };
 
-  this->node_["stime"] = {
+  node_["stime"] = {
     {"tv_sec",  pstatus.stime().tv_sec},
     {"tv_usec", pstatus.stime().tv_usec}
   };
@@ -455,20 +455,20 @@ void JsonVisitor::visit(const CorePrStatus& pstatus) {
   for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
     regs[to_string(val.first)] = val.second;
   };
-  this->node_["regs"] = regs;
+  node_["regs"] = regs;
 }
 
 void JsonVisitor::visit(const CoreAuxv& auxv) {
   std::vector<json> values;
   for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
-    this->node_[to_string(val.first)] = val.second;
+    node_[to_string(val.first)] = val.second;
   }
 }
 
 void JsonVisitor::visit(const CoreSigInfo& siginfo) {
-  this->node_["signo"] = siginfo.signo();
-  this->node_["sigcode"] = siginfo.sigcode();
-  this->node_["sigerrno"] = siginfo.sigerrno();
+  node_["signo"] = siginfo.signo();
+  node_["sigcode"] = siginfo.sigcode();
+  node_["sigerrno"] = siginfo.sigerrno();
 }
 
 void JsonVisitor::visit(const CoreFile& file) {
@@ -482,26 +482,26 @@ void JsonVisitor::visit(const CoreFile& file) {
     };
     files.emplace_back(file);
   }
-  this->node_["files"] = files;
-  this->node_["count"] = file.count();
+  node_["files"] = files;
+  node_["count"] = file.count();
 }
 
 void JsonVisitor::visit(const GnuHash& gnuhash) {
-  this->node_["nb_buckets"]    = gnuhash.nb_buckets();
-  this->node_["symbol_index"]  = gnuhash.symbol_index();
-  this->node_["shift2"]        = gnuhash.shift2();
-  this->node_["maskwords"]     = gnuhash.maskwords();
-  this->node_["bloom_filters"] = gnuhash.bloom_filters();
-  this->node_["buckets"]       = gnuhash.buckets();
-  this->node_["hash_values"]   = gnuhash.hash_values();
+  node_["nb_buckets"]    = gnuhash.nb_buckets();
+  node_["symbol_index"]  = gnuhash.symbol_index();
+  node_["shift2"]        = gnuhash.shift2();
+  node_["maskwords"]     = gnuhash.maskwords();
+  node_["bloom_filters"] = gnuhash.bloom_filters();
+  node_["buckets"]       = gnuhash.buckets();
+  node_["hash_values"]   = gnuhash.hash_values();
 }
 
 
 void JsonVisitor::visit(const SysvHash& sysvhash) {
-  this->node_["nbucket"] = sysvhash.nbucket();
-  this->node_["nchain"]  = sysvhash.nchain();
-  this->node_["buckets"] = sysvhash.buckets();
-  this->node_["chains"]  = sysvhash.chains();
+  node_["nbucket"] = sysvhash.nbucket();
+  node_["nchain"]  = sysvhash.nchain();
+  node_["buckets"] = sysvhash.buckets();
+  node_["chains"]  = sysvhash.chains();
 }
 
 

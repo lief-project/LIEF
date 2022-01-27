@@ -34,9 +34,11 @@ using setter_t = void (LoadConfigurationV6::*)(T);
 template<>
 void create<LoadConfigurationV6>(py::module& m) {
   py::class_<LoadConfigurationV6, LoadConfigurationV5>(m, "LoadConfigurationV6",
-    "" RST_CLASS_REF(lief.PE.LoadConfigurationV5) " enhanced with Hotpatch and improved RFG. \n\n"
-    "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
-    ":attr:`~lief.PE.WIN_VERSION.WIN10_0_15002`")
+    R"delim(
+    :class:`~lief.PE.LoadConfigurationV5` enhanced with Hotpatch and improved RFG.
+
+    It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_15002`
+    )delim")
 
     .def(py::init<>())
 

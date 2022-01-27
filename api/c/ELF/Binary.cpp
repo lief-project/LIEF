@@ -40,7 +40,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->type        = static_cast<enum LIEF_ELF_ELF_CLASS>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
-    std::string interp = binary->interpreter();
+    const std::string& interp = binary->interpreter();
     c_binary->interpreter = static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
     std::memcpy(
         reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
@@ -65,7 +65,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
 
 Elf_Binary_t* elf_parse(const char *file) {
   Binary* binary = Parser::parse(file).release();
-  Elf_Binary_t* c_binary = static_cast<Elf_Binary_t*>(malloc(sizeof(Elf_Binary_t)));
+  auto* c_binary = static_cast<Elf_Binary_t*>(malloc(sizeof(Elf_Binary_t)));
   memset(c_binary, 0, sizeof(Elf_Binary_t));
   init_c_binary(c_binary, binary);
   return c_binary;
@@ -92,7 +92,7 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
   hdr.entrypoint(binary->header.entrypoint);
 
   //TODO: identity
-  return true;
+  return 1;
 }
 
 

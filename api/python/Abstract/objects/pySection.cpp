@@ -26,7 +26,10 @@ using setter_t = void (Section::*)(T);
 
 template<>
 void create<Section>(py::module& m) {
-  py::class_<Section, Object>(m, "Section")
+  py::class_<Section, Object>(m, "Section",
+      R"delim(
+      Class which represents an abstracted section
+      )delim")
     .def(py::init(),
         "Default constructor")
 
@@ -49,7 +52,7 @@ void create<Section>(py::module& m) {
     .def_property("offset",
         static_cast<getter_t<uint64_t>>(&Section::offset),
         static_cast<setter_t<uint64_t>>(&Section::offset),
-        "Section's offset")
+        "Section's file offset")
 
     .def_property("virtual_address",
         static_cast<getter_t<uint64_t>>(&Section::virtual_address),

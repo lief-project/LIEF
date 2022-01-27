@@ -25,12 +25,14 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration;
+}
 
-//! @brief Class modeling the default PE's ``LoadConfiguration``
+//! Class that represents the default PE's ``LoadConfiguration``
 //!
-//! It's the base class for any future version of the structure
+//! It's the base class for any future versions of the structure
 class LIEF_API LoadConfiguration : public Object {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_UNKNOWN;
@@ -39,15 +41,15 @@ class LIEF_API LoadConfiguration : public Object {
   LoadConfiguration();
 
   template<class T>
-  LoadConfiguration(const load_configuration<T>* header);
+  LIEF_LOCAL LoadConfiguration(const details::load_configuration<T>& header);
 
   LoadConfiguration& operator=(const LoadConfiguration&);
   LoadConfiguration(const LoadConfiguration&);
 
-  //! @brief (SDK) Version of the structure
+  //! (SDK) Version of the structure
   virtual WIN_VERSION version() const;
 
-  //! @brief Characteristics of the structure
+  //! Characteristics of the structure
   //! It usually holds its size
   //!
   //! @see @link version LoadConfiguration::version@endlink
@@ -56,36 +58,36 @@ class LIEF_API LoadConfiguration : public Object {
   //! Size of the current structure which is an alias for characteristics
   uint32_t size() const;
 
-  //! @brief Date and time stamp value
+  //! Date and time stamp value
   uint32_t timedatestamp() const;
 
-  //! @brief Major Version
+  //! Major Version
   uint16_t major_version() const;
 
-  //! @brief Minor version
+  //! Minor version
   uint16_t minor_version() const;
 
-  //! @brief The global loader flags to clear for
+  //! The global loader flags to clear for
   //! this process as the loader start the process.
   uint32_t global_flags_clear() const;
 
-  //! @brief The global loader flags to set for
+  //! The global loader flags to set for
   //! this process as the loader starts the process.
   uint32_t global_flags_set() const;
 
-  //! @brief The default timeout value to use for
+  //! The default timeout value to use for
   //! this process’s critical sections that are abandoned.
   uint32_t critical_section_default_timeout() const;
 
-  //! @brief Memory that must be freed before
+  //! Memory that must be freed before
   //! it is returned to the system, in bytes.
   uint64_t decommit_free_block_threshold() const;
 
-  //! @brief Total amount of free memory, in
+  //! Total amount of free memory, in
   //! bytes.
   uint64_t decommit_total_free_threshold() const;
 
-  //! @brief The VA of a list of
+  //! The VA of a list of
   //! addresses where the LOCK prefix
   //! is used so that they can be replaced with NOP on single
   //! processor machines.
@@ -93,36 +95,36 @@ class LIEF_API LoadConfiguration : public Object {
   //! @warning For ``x86`` only
   uint64_t lock_prefix_table() const;
 
-  //! @brief Maximum allocation size, in bytes.
+  //! Maximum allocation size, in bytes.
   uint64_t maximum_allocation_size() const;
 
-  //! @brief Maximum virtual memory size, in bytes.
+  //! Maximum virtual memory size, in bytes.
   uint64_t virtual_memory_threshold() const;
 
-  //! @brief Setting this field to a non-zero value is equivalent to calling
+  //! Setting this field to a non-zero value is equivalent to calling
   //! ``SetProcessAffinityMask`` with this value during process startup (.exe only)
   uint64_t process_affinity_mask() const;
 
-  //! @brief Process heap flags that correspond to the first argument of the
+  //! Process heap flags that correspond to the first argument of the
   //! ``HeapCreate`` function. These flags apply to the process heap that is
   //! created during process startup.
   uint32_t process_heap_flags() const;
 
-  //! @brief The service pack version identifier.
+  //! The service pack version identifier.
   uint16_t csd_version() const;
 
-  //! @brief Must be zero.
+  //! Must be zero.
   uint16_t reserved1() const;
 
-  //! @brief Alias for reserved1.
+  //! Alias for reserved1.
   //!
   //! On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags
   uint16_t dependent_load_flags() const;
 
-  //! @brief Reserved for use by the system.
+  //! Reserved for use by the system.
   uint32_t editlist() const;
 
-  //! @brief A pointer to a cookie that is used by Visual C++ or GS
+  //! A pointer to a cookie that is used by Visual C++ or GS
   //! implementation.
   uint32_t security_cookie() const;
 
@@ -154,7 +156,7 @@ class LIEF_API LoadConfiguration : public Object {
 
   virtual ~LoadConfiguration();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfiguration& rhs) const;
   bool operator!=(const LoadConfiguration& rhs) const;

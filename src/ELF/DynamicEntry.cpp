@@ -33,15 +33,15 @@ DynamicEntry::DynamicEntry(const DynamicEntry&) = default;
 
 DynamicEntry::~DynamicEntry() = default;
 
-DynamicEntry::DynamicEntry(const Elf64_Dyn* header) :
-  tag_{static_cast<DYNAMIC_TAGS>(header->d_tag)},
-  value_{header->d_un.d_val}
+DynamicEntry::DynamicEntry(const details::Elf64_Dyn& header) :
+  tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
+  value_{header.d_un.d_val}
 {}
 
 
-DynamicEntry::DynamicEntry(const Elf32_Dyn* header) :
-  tag_{static_cast<DYNAMIC_TAGS>(header->d_tag)},
-  value_{header->d_un.d_val}
+DynamicEntry::DynamicEntry(const details::Elf32_Dyn& header) :
+  tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
+  value_{header.d_un.d_val}
 {}
 
 
@@ -52,21 +52,21 @@ DynamicEntry::DynamicEntry(DYNAMIC_TAGS tag, uint64_t value) :
 
 
 DYNAMIC_TAGS DynamicEntry::tag() const {
-  return this->tag_;
+  return tag_;
 }
 
 
 uint64_t DynamicEntry::value() const {
-  return this->value_;
+  return value_;
 }
 
 void DynamicEntry::tag(DYNAMIC_TAGS tag) {
-  this->tag_ = tag;
+  tag_ = tag;
 }
 
 
 void DynamicEntry::value(uint64_t value) {
-  this->value_ = value;
+  value_ = value;
 }
 
 void DynamicEntry::accept(Visitor& visitor) const {
@@ -81,7 +81,7 @@ bool DynamicEntry::operator==(const DynamicEntry& rhs) const {
 }
 
 bool DynamicEntry::operator!=(const DynamicEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -89,8 +89,8 @@ bool DynamicEntry::operator!=(const DynamicEntry& rhs) const {
 std::ostream& DynamicEntry::print(std::ostream& os) const {
   os << std::hex;
   os << std::left
-     << std::setw(20) << to_string(this->tag())
-     << std::setw(10) << this->value();
+     << std::setw(20) << to_string(tag())
+     << std::setw(10) << value();
   return os;
 }
 

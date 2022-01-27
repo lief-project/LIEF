@@ -31,24 +31,21 @@ SymbolVersionDefinition::SymbolVersionDefinition() :
   version_{1},
   flags_{0},
   ndx_{0},
-  hash_{0},
-  symbol_version_aux_{}
+  hash_{0}
 {}
 
-SymbolVersionDefinition::SymbolVersionDefinition(const Elf64_Verdef *header) :
-  version_{header->vd_version},
-  flags_{header->vd_flags},
-  ndx_{header->vd_ndx},
-  hash_{header->vd_hash},
-  symbol_version_aux_{}
+SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf64_Verdef& header) :
+  version_{header.vd_version},
+  flags_{header.vd_flags},
+  ndx_{header.vd_ndx},
+  hash_{header.vd_hash}
 {}
 
-SymbolVersionDefinition::SymbolVersionDefinition(const Elf32_Verdef *header) :
-  version_{header->vd_version},
-  flags_{header->vd_flags},
-  ndx_{header->vd_ndx},
-  hash_{header->vd_hash},
-  symbol_version_aux_{}
+SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf32_Verdef& header) :
+  version_{header.vd_version},
+  flags_{header.vd_flags},
+  ndx_{header.vd_ndx},
+  hash_{header.vd_hash}
 {}
 
 
@@ -57,70 +54,69 @@ SymbolVersionDefinition::SymbolVersionDefinition(const SymbolVersionDefinition& 
   version_{other.version_},
   flags_{other.flags_},
   ndx_{other.ndx_},
-  hash_{other.hash_},
-  symbol_version_aux_{}
+  hash_{other.hash_}
 {
-  this->symbol_version_aux_.reserve(other.symbol_version_aux_.size());
+  symbol_version_aux_.reserve(other.symbol_version_aux_.size());
   for (const SymbolVersionAux* aux : other.symbol_version_aux_) {
-    this->symbol_version_aux_.push_back(new SymbolVersionAux{*aux});
+    symbol_version_aux_.push_back(new SymbolVersionAux{*aux});
   }
 }
 
 SymbolVersionDefinition& SymbolVersionDefinition::operator=(SymbolVersionDefinition other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 SymbolVersionDefinition::~SymbolVersionDefinition() {
-  for (SymbolVersionAux* sva : this->symbol_version_aux_) {
+  for (SymbolVersionAux* sva : symbol_version_aux_) {
     delete sva;
   }
 }
 
 void SymbolVersionDefinition::swap(SymbolVersionDefinition& other) {
-  std::swap(this->version_,            other.version_);
-  std::swap(this->flags_,              other.flags_);
-  std::swap(this->ndx_,                other.ndx_);
-  std::swap(this->hash_,               other.hash_);
-  std::swap(this->symbol_version_aux_, other.symbol_version_aux_);
+  std::swap(version_,            other.version_);
+  std::swap(flags_,              other.flags_);
+  std::swap(ndx_,                other.ndx_);
+  std::swap(hash_,               other.hash_);
+  std::swap(symbol_version_aux_, other.symbol_version_aux_);
 }
 
 
 uint16_t SymbolVersionDefinition::version() const {
-  return this->version_;
+  return version_;
 }
 
 uint16_t SymbolVersionDefinition::flags() const {
-  return this->flags_;
+  return flags_;
 }
 
 uint16_t SymbolVersionDefinition::ndx() const {
-  return this->ndx_;
+  return ndx_;
 }
 
 uint32_t SymbolVersionDefinition::hash() const {
-  return this->hash_;
+  return hash_;
 }
 
 it_symbols_version_aux SymbolVersionDefinition::symbols_aux() {
-  return this->symbol_version_aux_;
+  return symbol_version_aux_;
 }
 
 it_const_symbols_version_aux SymbolVersionDefinition::symbols_aux() const {
-  return this->symbol_version_aux_;
+  return symbol_version_aux_;
 
 }
 
 void SymbolVersionDefinition::version(uint16_t version) {
-  this->version_ = version;
+  version_ = version;
 }
 
 void SymbolVersionDefinition::flags(uint16_t flags) {
-  this->flags_ = flags;
+  flags_ = flags;
 }
 
 void SymbolVersionDefinition::hash(uint32_t hash) {
-  this->hash_ = hash;
+  hash_ = hash;
 }
 
 void SymbolVersionDefinition::accept(Visitor& visitor) const {
@@ -135,7 +131,7 @@ bool SymbolVersionDefinition::operator==(const SymbolVersionDefinition& rhs) con
 }
 
 bool SymbolVersionDefinition::operator!=(const SymbolVersionDefinition& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {

@@ -21,13 +21,10 @@
 namespace LIEF {
 namespace ART {
 
-File::File() :
-  header_{}
-{}
-
+File::File() = default;
 
 const Header& File::header() const {
-  return this->header_;
+  return header_;
 }
 
 Header& File::header() {
@@ -45,7 +42,7 @@ bool File::operator==(const File& rhs) const {
 }
 
 bool File::operator!=(const File& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

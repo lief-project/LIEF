@@ -34,7 +34,7 @@ class LIEF_API ResourceAccelerator : public Object {
 
   public:
   ResourceAccelerator();
-  explicit ResourceAccelerator(const pe_resource_acceltableentry*);
+  explicit ResourceAccelerator(const details::pe_resource_acceltableentry&);
 
   ResourceAccelerator(const ResourceAccelerator&);
   ResourceAccelerator& operator=(const ResourceAccelerator&);
@@ -44,12 +44,19 @@ class LIEF_API ResourceAccelerator : public Object {
   std::set<ACCELERATOR_FLAGS> flags_list() const;
   std::string ansi_str() const;
 
+  //! Describe the keyboard accelerator characteristics
   int16_t flags() const;
+
+  //! An ANSI character value or a virtual-key code that identifies the accelerator key
   int16_t ansi() const;
+
+  //! An identifier for the keyboard accelerator
   uint16_t id() const;
+
+  //! The number of bytes inserted to ensure that the structure is aligned on a DWORD boundary.
   int16_t padding() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceAccelerator& rhs) const;
   bool operator!=(const ResourceAccelerator& rhs) const;

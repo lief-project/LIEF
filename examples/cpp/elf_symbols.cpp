@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  if (not is_elf(argv[1])) {
+  if (!is_elf(argv[1])) {
     std::cerr << argv[1] << " is not a ELF file. Abort !" << std::endl;
     return EXIT_FAILURE;
   }

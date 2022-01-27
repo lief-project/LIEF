@@ -54,7 +54,7 @@ bool is_art(const std::vector<uint8_t>& raw) {
 }
 
 art_version_t version(const std::string& file) {
-  if (not is_art(file)) {
+  if (!is_art(file)) {
     return 0;
   }
 

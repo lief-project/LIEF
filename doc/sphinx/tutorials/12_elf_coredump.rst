@@ -79,7 +79,7 @@ instance of :class:`lief.ELF.CoreFile`.
       note = ...
       // Check Type
       // ...
-      auto&& note_file = reinterpret_cast<const CoreFile&>(note.details());
+      const auto& note_file = reinterpret_cast<const CoreFile&>(note.details());
 
 
 
@@ -119,7 +119,7 @@ the :class:`lief.ELF.CoreFile` object. Both give access to the :class:`lief.ELF.
 From this output, we can see that the :class:`~lief.ELF.Segment` of the main executable
 (``/data/local/tmp/hello-exe``), are mapped from address ``0x5580b86000`` to address ``0x5580b99000``.
 
-One can also access to the registers state by using the note whose the :attr:`~lief.ELF.Note.type_core`
+One can also access to the registers state by using the note for which the :attr:`~lief.ELF.Note.type_core`
 is :class:`lief.ELF.CorePrStatus`.
 
 .. code-block:: python

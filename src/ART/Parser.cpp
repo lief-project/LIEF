@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "logging.hpp"
 
 #include "LIEF/ART/Parser.hpp"
@@ -44,59 +46,59 @@ std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std:
 
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
+  stream_{std::make_unique<VectorStream>(data)}
 {
-  if (not is_art(data)) {
+  if (!is_art(data)) {
     LIEF_ERR("'{}' is not an ART file", name);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   art_version_t version = ART::version(data);
-  this->init(name, version);
+  init(name, version);
 }
 
 Parser::Parser(const std::string& file) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
+  stream_{std::make_unique<VectorStream>(file)}
 {
-  if (not is_art(file)) {
+  if (!is_art(file)) {
     LIEF_ERR("'{}' is not an ART file", file);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   art_version_t version = ART::version(file);
-  this->init(filesystem::path(file).filename(), version);
+  init(filesystem::path(file).filename(), version);
 }
 
 
 void Parser::init(const std::string& /*name*/, art_version_t version) {
 
   if (version <= ART_17::art_version) {
-    return this->parse_file<ART17>();
+    return parse_file<ART17>();
   }
 
   if (version <= ART_29::art_version) {
-    return this->parse_file<ART29>();
+    return parse_file<ART29>();
   }
 
   if (version <= ART_30::art_version) {
-    return this->parse_file<ART30>();
+    return parse_file<ART30>();
   }
 
   if (version <= ART_44::art_version) {
-    return this->parse_file<ART44>();
+    return parse_file<ART44>();
   }
 
   if (version <= ART_46::art_version) {
-    return this->parse_file<ART46>();
+    return parse_file<ART46>();
   }
 
   if (version <= ART_56::art_version) {
-    return this->parse_file<ART56>();
+    return parse_file<ART56>();
   }
 }
 

@@ -24,19 +24,32 @@
 
 namespace LIEF {
 namespace MachO {
+
+namespace details {
 struct encryption_info_command;
+}
+
+//! Class that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64 commands
+//!
+//! The encryption info is usually present in Mach-O executables that
+//! target iOS to encrypt some sections of the binary
 class LIEF_API EncryptionInfo : public LoadCommand {
   public:
   EncryptionInfo();
-  EncryptionInfo(const encryption_info_command *cmd);
+  EncryptionInfo(const details::encryption_info_command& cmd);
 
   EncryptionInfo& operator=(const EncryptionInfo& copy);
   EncryptionInfo(const EncryptionInfo& copy);
 
   virtual ~EncryptionInfo();
 
+  //! The beginning of the encrypted area
   uint32_t crypt_offset() const;
+
+  //! The size of the encrypted area
   uint32_t crypt_size() const;
+
+  //! The encryption system. 0 means no encrypted
   uint32_t crypt_id() const;
 
   void crypt_offset(uint32_t offset);
@@ -46,9 +59,9 @@ class LIEF_API EncryptionInfo : public LoadCommand {
   bool operator==(const EncryptionInfo& rhs) const;
   bool operator!=(const EncryptionInfo& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   uint32_t coff_;

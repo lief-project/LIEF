@@ -27,9 +27,15 @@ class x509;
 class SignerInfo;
 class Attribute;
 
-using oid_t                 = std::string;
-using it_const_crt          = const_ref_iterator<const std::vector<x509>&>;
-using it_const_signers_t    = const_ref_iterator<const std::vector<SignerInfo>&>;
+using oid_t = std::string;
+
+//! Iterator over x509 certificates
+using it_const_crt = const_ref_iterator<const std::vector<x509>&>;
+
+//! Iterator over SignerInfo
+using it_const_signers_t = const_ref_iterator<const std::vector<SignerInfo>&>;
+
+//! Iterator over Attribute
 using it_const_attributes_t = const_ref_iterator<std::vector<Attribute*>>;
 }
 }

@@ -22,64 +22,7 @@
 void init_LIEF_iterators(py::module& m) {
   // Abstract
   // ========
-  init_ref_iterator<LIEF::it_sections>(m);
-  init_ref_iterator<LIEF::it_symbols>(m);
-  init_ref_iterator<LIEF::it_relocations>(m);
-
-  // ELF
-  // ===
-#if defined(LIEF_ELF_SUPPORT)
-  init_ref_iterator<LIEF::ELF::it_sections>(m);
-  init_ref_iterator<LIEF::ELF::it_segments>(m);
-  init_ref_iterator<LIEF::ELF::it_dynamic_entries>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols>(m);
-  init_ref_iterator<LIEF::filter_iterator<LIEF::ELF::relocations_t>>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols_version>(m);
-  init_ref_iterator<LIEF::ELF::it_relocations>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols_version_requirement>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols_version_definition>(m);
-  init_ref_iterator<LIEF::filter_iterator<LIEF::ELF::symbols_t>>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols_version_aux>(m);
-  init_ref_iterator<LIEF::ELF::it_symbols_version_aux_requirement>(m);
-  init_ref_iterator<LIEF::ELF::it_notes>(m);
-#endif
-
-  // PE
-  // ==
-#if defined(LIEF_PE_SUPPORT)
-  init_ref_iterator<LIEF::PE::it_sections>(m);
-  init_ref_iterator<LIEF::PE::it_data_directories>(m);
-  init_ref_iterator<LIEF::PE::it_relocations>(m);
-  init_ref_iterator<LIEF::PE::it_relocation_entries>(m);
-  init_ref_iterator<LIEF::PE::it_imports>(m);
-  init_ref_iterator<LIEF::PE::it_import_entries>(m);
-  init_ref_iterator<LIEF::PE::it_export_entries>(m);
-  init_ref_iterator<LIEF::PE::it_pogo_entries>(m);
-  init_ref_iterator<LIEF::PE::it_symbols>(m);
-  init_ref_iterator<LIEF::PE::it_childs>(m);
-  init_ref_iterator<LIEF::PE::it_rich_entries>(m);
-  init_ref_iterator<LIEF::PE::it_const_dialog_items>(m);
-  init_ref_iterator<LIEF::PE::it_const_crt>(m);
-  init_ref_iterator<LIEF::PE::it_const_signatures>(m);
-  init_ref_iterator<LIEF::PE::it_const_signers_t>(m);
-  init_ref_iterator<LIEF::PE::it_const_attributes_t>(m);
-#endif
-
-
-  // MachO
-  // =====
-#if defined(LIEF_MACHO_SUPPORT)
-  init_ref_iterator<LIEF::MachO::it_binaries>(m);
-  init_ref_iterator<LIEF::MachO::it_fileset_binaries>(m);
-  init_ref_iterator<LIEF::MachO::it_relocations>(m);
-  init_ref_iterator<LIEF::MachO::it_commands>(m);
-  init_ref_iterator<LIEF::MachO::it_symbols>(m);
-  init_ref_iterator<LIEF::filter_iterator<LIEF::MachO::symbols_t>>(m);
-  init_ref_iterator<LIEF::MachO::it_libraries>(m);
-  init_ref_iterator<LIEF::MachO::it_segments>(m);
-  init_ref_iterator<LIEF::MachO::it_sections>(m);
-  init_ref_iterator<LIEF::MachO::it_binding_info>(m);
-  init_ref_iterator<LIEF::MachO::it_export_info>(m);
-#endif
-
+  init_ref_iterator<LIEF::it_sections>(m, "it_sections");
+  init_ref_iterator<LIEF::it_symbols>(m, "it_symbols");
+  init_ref_iterator<LIEF::it_relocations>(m, "it_relocations");
 }

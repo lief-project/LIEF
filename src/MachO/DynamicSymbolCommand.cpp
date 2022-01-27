@@ -53,35 +53,35 @@ DynamicSymbolCommand::DynamicSymbolCommand() :
   nb_local_relocations_{0}
 {}
 
-DynamicSymbolCommand::DynamicSymbolCommand(const dysymtab_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
+DynamicSymbolCommand::DynamicSymbolCommand(const details::dysymtab_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
 
-  idx_local_symbol_{cmd->ilocalsym},
-  nb_local_symbols_{cmd->nlocalsym},
+  idx_local_symbol_{cmd.ilocalsym},
+  nb_local_symbols_{cmd.nlocalsym},
 
-  idx_external_define_symbol_{cmd->iextdefsym},
-  nb_external_define_symbols_{cmd->nextdefsym},
+  idx_external_define_symbol_{cmd.iextdefsym},
+  nb_external_define_symbols_{cmd.nextdefsym},
 
-  idx_undefined_symbol_{cmd->iundefsym},
-  nb_undefined_symbols_{cmd->nundefsym},
+  idx_undefined_symbol_{cmd.iundefsym},
+  nb_undefined_symbols_{cmd.nundefsym},
 
-  toc_offset_{cmd->tocoff},
-  nb_toc_{cmd->ntoc},
+  toc_offset_{cmd.tocoff},
+  nb_toc_{cmd.ntoc},
 
-  module_table_offset_{cmd->modtaboff},
-  nb_module_table_{cmd->nmodtab},
+  module_table_offset_{cmd.modtaboff},
+  nb_module_table_{cmd.nmodtab},
 
-  external_reference_symbol_offset_{cmd->extrefsymoff},
-  nb_external_reference_symbols_{cmd->nextrefsyms},
+  external_reference_symbol_offset_{cmd.extrefsymoff},
+  nb_external_reference_symbols_{cmd.nextrefsyms},
 
-  indirect_sym_offset_{cmd->indirectsymoff},
-  nb_indirect_symbols_{cmd->nindirectsyms},
+  indirect_sym_offset_{cmd.indirectsymoff},
+  nb_indirect_symbols_{cmd.nindirectsyms},
 
-  external_relocation_offset_{cmd->extreloff},
-  nb_external_relocations_{cmd->nextrel},
+  external_relocation_offset_{cmd.extreloff},
+  nb_external_relocations_{cmd.nextrel},
 
-  local_relocation_offset_{cmd->locreloff},
-  nb_local_relocations_{cmd->nlocrel}
+  local_relocation_offset_{cmd.locreloff},
+  nb_local_relocations_{cmd.nlocrel}
 {}
 
 
@@ -98,154 +98,154 @@ DynamicSymbolCommand* DynamicSymbolCommand::clone() const {
 
 
 uint32_t DynamicSymbolCommand::idx_local_symbol() const {
-  return this->idx_local_symbol_;
+  return idx_local_symbol_;
 }
 
 uint32_t DynamicSymbolCommand::nb_local_symbols() const {
-  return this->nb_local_symbols_;
+  return nb_local_symbols_;
 }
 
 
 uint32_t DynamicSymbolCommand::idx_external_define_symbol() const {
-  return this->idx_external_define_symbol_;
+  return idx_external_define_symbol_;
 }
 
 uint32_t DynamicSymbolCommand::nb_external_define_symbols() const {
-  return this->nb_external_define_symbols_;
+  return nb_external_define_symbols_;
 }
 
 
 uint32_t DynamicSymbolCommand::idx_undefined_symbol() const {
-  return this->idx_undefined_symbol_;
+  return idx_undefined_symbol_;
 }
 
 uint32_t DynamicSymbolCommand::nb_undefined_symbols() const {
-  return this->nb_undefined_symbols_;
+  return nb_undefined_symbols_;
 }
 
 
 uint32_t DynamicSymbolCommand::toc_offset() const {
-  return this->toc_offset_;
+  return toc_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_toc() const {
-  return this->nb_toc_;
+  return nb_toc_;
 }
 
 
 uint32_t DynamicSymbolCommand::module_table_offset() const {
-  return this->module_table_offset_;
+  return module_table_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_module_table() const {
-  return this->nb_module_table_;
+  return nb_module_table_;
 }
 
 
 uint32_t DynamicSymbolCommand::external_reference_symbol_offset() const {
-  return this->external_reference_symbol_offset_;
+  return external_reference_symbol_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_external_reference_symbols() const {
-  return this->nb_external_reference_symbols_;
+  return nb_external_reference_symbols_;
 }
 
 
 uint32_t DynamicSymbolCommand::indirect_symbol_offset() const {
-  return this->indirect_sym_offset_;
+  return indirect_sym_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_indirect_symbols() const {
-  return this->nb_indirect_symbols_;
+  return nb_indirect_symbols_;
 }
 
 
 uint32_t DynamicSymbolCommand::external_relocation_offset() const {
-  return this->external_relocation_offset_;
+  return external_relocation_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_external_relocations() const {
-  return this->nb_external_relocations_;
+  return nb_external_relocations_;
 }
 
 
 uint32_t DynamicSymbolCommand::local_relocation_offset() const {
-  return this->local_relocation_offset_;
+  return local_relocation_offset_;
 }
 
 uint32_t DynamicSymbolCommand::nb_local_relocations() const {
-  return this->nb_local_relocations_;
+  return nb_local_relocations_;
 }
 
 
 void DynamicSymbolCommand::idx_local_symbol(uint32_t value) {
-  this->idx_local_symbol_ = value;
+  idx_local_symbol_ = value;
 }
 void DynamicSymbolCommand::nb_local_symbols(uint32_t value) {
-  this->nb_local_symbols_ = value;
+  nb_local_symbols_ = value;
 }
 
 void DynamicSymbolCommand::idx_external_define_symbol(uint32_t value) {
-  this->idx_external_define_symbol_ = value;
+  idx_external_define_symbol_ = value;
 }
 void DynamicSymbolCommand::nb_external_define_symbols(uint32_t value) {
-  this->nb_external_define_symbols_ = value;
+  nb_external_define_symbols_ = value;
 }
 
 void DynamicSymbolCommand::idx_undefined_symbol(uint32_t value) {
-  this->idx_undefined_symbol_ = value;
+  idx_undefined_symbol_ = value;
 }
 
 void DynamicSymbolCommand::nb_undefined_symbols(uint32_t value) {
-  this->nb_undefined_symbols_ = value;
+  nb_undefined_symbols_ = value;
 }
 
 void DynamicSymbolCommand::toc_offset(uint32_t value) {
-  this->toc_offset_ = value;
+  toc_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_toc(uint32_t value) {
-  this->nb_toc_ = value;
+  nb_toc_ = value;
 }
 
 void DynamicSymbolCommand::module_table_offset(uint32_t value) {
-  this->module_table_offset_ = value;
+  module_table_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_module_table(uint32_t value) {
-  this->nb_module_table_ = value;
+  nb_module_table_ = value;
 }
 
 void DynamicSymbolCommand::external_reference_symbol_offset(uint32_t value) {
-  this->external_reference_symbol_offset_ = value;
+  external_reference_symbol_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_external_reference_symbols(uint32_t value) {
-  this->nb_external_reference_symbols_ = value;
+  nb_external_reference_symbols_ = value;
 }
 
 void DynamicSymbolCommand::indirect_symbol_offset(uint32_t value) {
-  this->indirect_sym_offset_ = value;
+  indirect_sym_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_indirect_symbols(uint32_t value) {
-  this->nb_indirect_symbols_ = value;
+  nb_indirect_symbols_ = value;
 }
 
 void DynamicSymbolCommand::external_relocation_offset(uint32_t value) {
-  this->external_relocation_offset_ = value;
+  external_relocation_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_external_relocations(uint32_t value) {
-  this->nb_external_relocations_ = value;
+  nb_external_relocations_ = value;
 }
 
 void DynamicSymbolCommand::local_relocation_offset(uint32_t value) {
-  this->local_relocation_offset_ = value;
+  local_relocation_offset_ = value;
 }
 
 void DynamicSymbolCommand::nb_local_relocations(uint32_t value) {
-  this->nb_local_relocations_ = value;
+  nb_local_relocations_ = value;
 }
 
 
@@ -261,7 +261,7 @@ bool DynamicSymbolCommand::operator==(const DynamicSymbolCommand& rhs) const {
 }
 
 bool DynamicSymbolCommand::operator!=(const DynamicSymbolCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -270,41 +270,41 @@ std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
   static constexpr size_t WIDTH = 36;
   os << std::hex;
   os << std::left
-     << std::setw(WIDTH) << "First local symbol index:"          << this->idx_local_symbol()
+     << std::setw(WIDTH) << "First local symbol index:"          << idx_local_symbol()
      << std::endl
-     << std::setw(WIDTH) << "Number of local symbols:"           << this->nb_local_symbols()
+     << std::setw(WIDTH) << "Number of local symbols:"           << nb_local_symbols()
      << std::endl
-     << std::setw(WIDTH) << "External symbol index:"             << this->idx_external_define_symbol()
+     << std::setw(WIDTH) << "External symbol index:"             << idx_external_define_symbol()
      << std::endl
-     << std::setw(WIDTH) << "Number of external symbols:"        << this->nb_external_define_symbols()
+     << std::setw(WIDTH) << "Number of external symbols:"        << nb_external_define_symbols()
      << std::endl
-     << std::setw(WIDTH) << "Undefined symbol index:"            << this->idx_undefined_symbol()
+     << std::setw(WIDTH) << "Undefined symbol index:"            << idx_undefined_symbol()
      << std::endl
-     << std::setw(WIDTH) << "Number of undefined symbols:"       << this->nb_undefined_symbols()
+     << std::setw(WIDTH) << "Number of undefined symbols:"       << nb_undefined_symbols()
      << std::endl
-     << std::setw(WIDTH) << "Table of content offset:"           << this->toc_offset()
+     << std::setw(WIDTH) << "Table of content offset:"           << toc_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of entries in TOC:"          << this->nb_toc()
+     << std::setw(WIDTH) << "Number of entries in TOC:"          << nb_toc()
      << std::endl
-     << std::setw(WIDTH) << "Module table offset:"               << this->module_table_offset()
+     << std::setw(WIDTH) << "Module table offset:"               << module_table_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of entries in module table:" << this->nb_module_table()
+     << std::setw(WIDTH) << "Number of entries in module table:" << nb_module_table()
      << std::endl
-     << std::setw(WIDTH) << "External reference table offset:"   << this->external_reference_symbol_offset()
+     << std::setw(WIDTH) << "External reference table offset:"   << external_reference_symbol_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of external reference:"      << this->nb_external_reference_symbols()
+     << std::setw(WIDTH) << "Number of external reference:"      << nb_external_reference_symbols()
      << std::endl
-     << std::setw(WIDTH) << "Indirect symbols offset:"           << this->indirect_symbol_offset()
+     << std::setw(WIDTH) << "Indirect symbols offset:"           << indirect_symbol_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of indirect symbols:"        << this->nb_indirect_symbols()
+     << std::setw(WIDTH) << "Number of indirect symbols:"        << nb_indirect_symbols()
      << std::endl
-     << std::setw(WIDTH) << "External relocation offset:"        << this->external_relocation_offset()
+     << std::setw(WIDTH) << "External relocation offset:"        << external_relocation_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of external relocations:"    << this->nb_external_relocations()
+     << std::setw(WIDTH) << "Number of external relocations:"    << nb_external_relocations()
      << std::endl
-     << std::setw(WIDTH) << "Local relocation offset:"           << this->local_relocation_offset()
+     << std::setw(WIDTH) << "Local relocation offset:"           << local_relocation_offset()
      << std::endl
-     << std::setw(WIDTH) << "Number of local relocations:"       << this->nb_local_relocations()
+     << std::setw(WIDTH) << "Number of local relocations:"       << nb_local_relocations()
      << std::endl;
 
   return os;

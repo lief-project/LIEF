@@ -26,9 +26,16 @@ namespace LIEF {
 namespace MachO {
 
 class BinaryParser;
+
+namespace details {
 struct relocation_info;
 struct scattered_relocation_info;
+}
 
+//! Class that represents a relocation presents in the MachO object
+//! file (``.o``). Usually, this kind of relocation is found in the MachO::Section
+//!
+//! @see RelocationDyld
 class LIEF_API RelocationObject : public Relocation {
 
   friend class BinaryParser;
@@ -36,8 +43,8 @@ class LIEF_API RelocationObject : public Relocation {
   public:
   using Relocation::Relocation;
   RelocationObject();
-  RelocationObject(const relocation_info *relocinfo);
-  RelocationObject(const scattered_relocation_info *scattered_relocinfo);
+  RelocationObject(const details::relocation_info& relocinfo);
+  RelocationObject(const details::scattered_relocation_info& scattered_relocinfo);
 
   RelocationObject& operator=(RelocationObject other);
   RelocationObject(const RelocationObject& other);
@@ -46,18 +53,22 @@ class LIEF_API RelocationObject : public Relocation {
 
   virtual ~RelocationObject();
 
-  virtual RelocationObject* clone() const override;
+  RelocationObject* clone() const override;
 
-  virtual bool is_pc_relative() const override;
+  //! Whether the relocation is PC relative
+  bool is_pc_relative() const override;
 
-  virtual size_t size() const override;
+  //! Size of the relocation
+  size_t size() const override;
 
-  virtual uint64_t address() const override;
+  //! Address where the relocation is applied
+  //! This address is relative to the start of the section where the relocation takes place
+  uint64_t address() const override;
 
-  //! @brief ``true`` if the relocation is a scattered one
+  //! ``true`` if the relocation is a scattered one
   bool is_scattered() const;
 
-  //! @brief For **scattered** relocations,
+  //! For **scattered** relocations:
   //! The address of the relocatable expression for the item in the file that needs
   //! to be updated if the address is changed.
   //!
@@ -67,24 +78,24 @@ class LIEF_API RelocationObject : public Relocation {
   //! is contained in the second relocation entry.
   int32_t value() const;
 
-  //! @brief Origin of the relocation
-  virtual RELOCATION_ORIGINS origin() const override;
+  //! Origin of the relocation. For this object it should be RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE)
+  RELOCATION_ORIGINS origin() const override;
 
-  virtual void pc_relative(bool val) override;
-  virtual void size(size_t size) override;
+  void pc_relative(bool val) override;
+  void size(size_t size) override;
 
   void value(int32_t value);
 
   bool operator==(const RelocationObject& rhs) const;
   bool operator!=(const RelocationObject& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
-  bool    is_pcrel_;
-  bool    is_scattered_;
+  bool is_pcrel_;
+  bool is_scattered_;
   int32_t value_;
 };
 

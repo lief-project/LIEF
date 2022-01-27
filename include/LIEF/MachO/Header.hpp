@@ -28,42 +28,70 @@
 
 namespace LIEF {
 namespace MachO {
+
+namespace details {
 struct mach_header_64;
 struct mach_header;
+}
 
+//! Class that represents the Mach-O header
 class LIEF_API Header : public Object {
   public:
   using flags_list_t = std::set<HEADER_FLAGS>;
 
   public:
   Header();
-  Header(const mach_header_64 *header);
-  Header(const mach_header    *header);
+  Header(const details::mach_header_64& header);
+  Header(const details::mach_header&    header);
 
   Header& operator=(const Header& copy);
   Header(const Header& copy);
 
   virtual ~Header();
 
-  MACHO_TYPES            magic() const;
-  CPU_TYPES              cpu_type() const;
-  uint32_t               cpu_subtype() const;
-  FILE_TYPES             file_type() const;
-  flags_list_t           flags_list() const;
-  bool                   has(HEADER_FLAGS flag) const;
-  uint32_t               nb_cmds() const;
-  uint32_t               sizeof_cmds() const;
-  uint32_t               flags() const;
-  uint32_t               reserved() const;
+  //! The Mach-O magic bytes. These bytes determine whether it is
+  //! a 32 bits Mach-O, a 64 bits Mach-O files etc.
+  MACHO_TYPES magic() const;
+
+  //! The CPU architecture targeted by this binary
+  CPU_TYPES cpu_type() const;
+
+  //! Return the CPU subtype supported by the Mach-O binary.
+  //! For ARM architectures, this value could represent the minimum version
+  //! for which the Mach-O binary has been compiled for.
+  uint32_t cpu_subtype() const;
+
+  //! Return the type of the Mach-O file (executable, object, shared library, ...)
+  FILE_TYPES file_type() const;
+
+  //! Return the HEADER_FLAGS as a std::set
+  flags_list_t flags_list() const;
+
+  //! Check if the given HEADER_FLAGS is present in the header's flags
+  bool has(HEADER_FLAGS flag) const;
+
+  //! Number of LoadCommand present in the Mach-O binary
+  uint32_t nb_cmds() const;
+
+  //! The size of **all** the LoadCommand
+  uint32_t sizeof_cmds() const;
+
+  //! Header flags (cf. HEADER_FLAGS)
+  //!
+  //! @see flags_list
+  uint32_t flags() const;
+
+  //! According to the official documentation, a reserved value
+  uint32_t reserved() const;
 
   void add(HEADER_FLAGS flag);
 
-  //! @brief LIEF abstract object type
+  //! LIEF abstract object type
   OBJECT_TYPES abstract_object_type() const;
 
   std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture() const;
 
-  //! @brief LIEF abstract endiannes
+  //! LIEF abstract endiannes
   ENDIANNESS abstract_endianness() const;
 
   void magic(MACHO_TYPES magic);
@@ -82,7 +110,7 @@ class LIEF_API Header : public Object {
   bool operator==(const Header& rhs) const;
   bool operator!=(const Header& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 

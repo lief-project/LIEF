@@ -46,13 +46,13 @@ MemoryStream::MemoryStream(uintptr_t base_address, uint64_t size) :
 {}
 
 uint64_t MemoryStream::size() const {
-  return this->size_;
+  return size_;
 }
 
 const void* MemoryStream::read_at(uint64_t offset, uint64_t, bool) const {
-  const uintptr_t va = this->baseaddr_ + offset;
-  if (this->binary_ != nullptr) {
-    return reinterpret_cast<const void*>(this->binary_->offset_to_virtual_address(offset, this->baseaddr_));
+  const uintptr_t va = baseaddr_ + offset;
+  if (binary_ != nullptr) {
+    return reinterpret_cast<const void*>(binary_->offset_to_virtual_address(offset, baseaddr_));
   }
   return reinterpret_cast<const void*>(va);
 }

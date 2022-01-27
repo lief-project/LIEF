@@ -11,6 +11,8 @@ namespace LIEF {
 //! @brief Namespace related to the LIEF's ELF module
 namespace ELF {
 
+namespace details {
+
 @LIEF_ELF_STRUCTURES@
 
 static const ELF_SECTION_FLAGS section_flags_array[] = {
@@ -206,6 +208,7 @@ class ELF64 {
   typedef Elf64_timeval   Elf_timeval;
  };
 
+} /* end namespace details */
 } /* end namespace ELF */
 } /* end namespace LIEF */
 #endif

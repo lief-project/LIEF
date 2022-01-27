@@ -28,7 +28,7 @@ void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
 
     c_binary->sections[i] = static_cast<Macho_Section_t*>(malloc(sizeof(Macho_Section_t)));
     const std::vector<uint8_t>& section_content = section.content();
-    uint8_t* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
+    auto* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
     std::copy(
         std::begin(section_content),
         std::end(section_content),

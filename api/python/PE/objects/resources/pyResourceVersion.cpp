@@ -34,15 +34,21 @@ using setter_t = void (ResourceVersion::*)(T);
 template<>
 void create<ResourceVersion>(py::module& m) {
   py::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
-      "Modelization of the data associated with the ``RT_VERSION`` entry\n"
-      "See: `VS_VERSIONINFO <https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo>`_")
+      R"delim(
+      Class that represents the data associated with the ``RT_VERSION`` entry
+
+      See: `VS_VERSIONINFO <https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo>`_
+      )delim")
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&ResourceVersion::type),
         static_cast<setter_t<uint16_t>>(&ResourceVersion::type),
-        "The type of data in the version resource\n\n"
-        "* ``1`` if it contains text data\n"
-        "* ``0`` if it contains binary data\n")
+        R"delim(
+        The type of data in the version resource
+          * ``1`` if it contains text data
+          * ``0`` if it contains binary data
+        )delim")
+
 
     .def_property("key",
         static_cast<getter_t<const std::u16string&>>(&ResourceVersion::key),

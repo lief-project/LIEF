@@ -44,14 +44,14 @@ Header::Header(const T* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
   if (std::all_of(
         std::begin(header->oat_version),
         std::end(header->oat_version) - 1,
         ::isdigit))
   {
-    this->version_ = static_cast<uint32_t>(
+    version_ = static_cast<uint32_t>(
         std::stoi(
           std::string{reinterpret_cast<const char*>(header->oat_version), sizeof(header->oat_version)}));
   }
@@ -86,14 +86,14 @@ Header::Header(const OAT_131::oat_header* header) :
   std::copy(
       std::begin(header->magic),
       std::end(header->magic),
-      std::begin(this->magic_)
+      std::begin(magic_)
   );
   if (std::all_of(
         std::begin(header->oat_version),
         std::end(header->oat_version) - 1,
         ::isdigit))
   {
-    this->version_ = static_cast<uint32_t>(std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version), sizeof(header->oat_version)}));
+    version_ = static_cast<uint32_t>(std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version), sizeof(header->oat_version)}));
   }
 
 }

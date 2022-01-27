@@ -48,27 +48,27 @@ class vector_iostream {
   template<typename T>
   vector_iostream& write_conv_array(const std::vector<T>& v);
 
-  vector_iostream& align(size_t size, uint8_t val = 0);
+  vector_iostream& align(size_t alignment, uint8_t fill = 0);
 
   template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
   vector_iostream& write(Integer integer) {
-    if (this->raw_.size() < (static_cast<size_t>(this->tellp()) + sizeof(Integer))) {
-      this->raw_.resize(static_cast<size_t>(this->tellp()) + sizeof(Integer));
+    if (raw_.size() < (static_cast<size_t>(tellp()) + sizeof(Integer))) {
+      raw_.resize(static_cast<size_t>(tellp()) + sizeof(Integer));
     }
 
     auto int_p = reinterpret_cast<const uint8_t*>(&integer);
     std::copy(
         int_p, int_p + sizeof(Integer),
-        std::begin(this->raw_) + static_cast<size_t>(this->tellp()));
+        std::begin(raw_) + static_cast<size_t>(tellp()));
 
-    this->current_pos_ += sizeof(Integer);
+    current_pos_ += sizeof(Integer);
     return *this;
   }
 
   template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
   vector_iostream& write(const std::array<T, size>& t) {
     for (T val : t) {
-      this->write<T>(val);
+      write<T>(val);
     }
     return *this;
   }
@@ -104,13 +104,13 @@ template<typename T>
 vector_iostream& vector_iostream::write_conv(const T& t) {
   const uint8_t *ptr = nullptr;
   T tmp = t;
-  if (this->endian_swap_) {
+  if (endian_swap_) {
     LIEF::Convert::swap_endian<T>(&tmp);
     ptr = reinterpret_cast<const uint8_t*>(&tmp);
   } else {
     ptr = reinterpret_cast<const uint8_t*>(&t);
   }
-  this->write(ptr, sizeof(T));
+  write(ptr, sizeof(T));
   return *this;
 }
 
@@ -119,35 +119,17 @@ vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
   for (const T& i: v) {
     const uint8_t* ptr = nullptr;
     T tmp = i;
-    if (this->endian_swap_) {
+    if (endian_swap_) {
       LIEF::Convert::swap_endian<T>(&tmp);
       ptr = reinterpret_cast<const uint8_t*>(&tmp);
     } else {
       ptr = reinterpret_cast<const uint8_t*>(&i);
     }
-    this->write(ptr, sizeof(T));
+    write(ptr, sizeof(T));
   }
   return *this;
 }
 
-// From https://stackoverflow.com/questions/27336335/c-cout-with-prefix
-class prefixbuf : public std::streambuf {
-  public:
-  prefixbuf(std::string const& prefix, std::streambuf* sbuf);
-
-  private:
-  std::string     prefix;
-  std::streambuf* sbuf;
-  bool            need_prefix;
-
-  int sync();
-  int overflow(int c);
-};
-
-class oprefixstream : private virtual prefixbuf, public std::ostream {
-  public:
-  oprefixstream(std::string const& prefix, std::ostream& out);
-};
 
 }
 #endif

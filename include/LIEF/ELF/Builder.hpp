@@ -46,7 +46,7 @@ class ObjectFileLayout;
 class Layout;
 class Relocation;
 
-//! @brief Class which takes a ELF::Binary object and reconstructs a valid binary
+//! Class which takes an ELF::Binary object and reconstructs a valid binary
 class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
@@ -54,8 +54,9 @@ class LIEF_API Builder {
   public:
   friend struct ::Profiler;
 
+  //! Configuration options to tweak the building process
   struct config_t {
-    bool force_relocations = false;
+    bool force_relocations = false; /// Force to relocate all the ELF structures that can be relocated (mostly for testing)
   };
 
   Builder(Binary& binary);

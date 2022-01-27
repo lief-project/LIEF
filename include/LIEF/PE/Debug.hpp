@@ -31,7 +31,10 @@ class Parser;
 class Builder;
 class CodeView;
 class Pogo;
+
+namespace details {
 struct pe_debug;
+}
 
 class LIEF_API Debug : public Object {
 
@@ -40,7 +43,7 @@ class LIEF_API Debug : public Object {
 
   public:
   Debug();
-  Debug(const pe_debug* debug_s);
+  Debug(const details::pe_debug& debug_s);
   Debug(const Debug& copy);
   Debug& operator=(Debug copy);
 
@@ -82,7 +85,6 @@ class LIEF_API Debug : public Object {
   const Pogo& pogo() const;
   Pogo& pogo();
 
-
   void characteristics(uint32_t characteristics);
   void timestamp(uint32_t timestamp);
   void major_version(uint16_t major_version);
@@ -92,8 +94,7 @@ class LIEF_API Debug : public Object {
   void addressof_rawdata(uint32_t addressof_rawdata);
   void pointerto_rawdata(uint32_t pointerto_rawdata);
 
-
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Debug& rhs) const;
   bool operator!=(const Debug& rhs) const;
@@ -113,8 +114,6 @@ class LIEF_API Debug : public Object {
 
   CodeView* code_view_{nullptr};
   Pogo* pogo_{nullptr};
-
-
 };
 }
 }

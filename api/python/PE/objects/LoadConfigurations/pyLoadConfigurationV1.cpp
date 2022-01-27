@@ -34,10 +34,10 @@ using setter_t = void (LoadConfigurationV1::*)(T);
 template<>
 void create<LoadConfigurationV1>(py::module& m) {
   py::class_<LoadConfigurationV1, LoadConfigurationV0>(m, "LoadConfigurationV1",
-    "" RST_CLASS_REF(lief.PE.LoadConfigurationV0) " enhanced with *Control Flow Guard*. \n\n"
-    "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
-    ":attr:`~lief.PE.WIN_VERSION.WIN_8_1`"
-      )
+      R"delim(
+      :class:`~lief.PE.LoadConfigurationV0` enhanced with *Control Flow Guard*.
+      It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN_8_1`
+      )delim")
     .def(py::init<>())
 
     .def_property("guard_cf_check_function_pointer",

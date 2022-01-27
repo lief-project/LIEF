@@ -31,7 +31,7 @@ class VectorStream : public BinaryStream {
     return STREAM_TYPE::FILE;
   }
 
-  virtual uint64_t size() const override;
+  uint64_t size() const override;
 
   const std::vector<uint8_t>& content() const;
 
@@ -60,20 +60,20 @@ class VectorStream : public BinaryStream {
     return this->binary_.data() + this->binary_.size();
   }
 
-  virtual result<size_t> asn1_read_tag(int tag) override;
-  virtual result<size_t> asn1_read_len() override;
-  virtual result<std::string> asn1_read_alg() override;
-  virtual result<std::string> asn1_read_oid() override;
-  virtual result<int32_t> asn1_read_int() override;
-  virtual result<std::vector<uint8_t>> asn1_read_bitstring() override;
-  virtual result<std::vector<uint8_t>> asn1_read_octet_string() override;
-  virtual result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() override;
-  virtual result<std::string> x509_read_names() override;
-  virtual result<std::vector<uint8_t>> x509_read_serial() override;
-  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
+  result<size_t> asn1_read_tag(int tag) override;
+  result<size_t> asn1_read_len() override;
+  result<std::string> asn1_read_alg() override;
+  result<std::string> asn1_read_oid() override;
+  result<int32_t> asn1_read_int() override;
+  result<std::vector<uint8_t>> asn1_read_bitstring() override;
+  result<std::vector<uint8_t>> asn1_read_octet_string() override;
+  result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() override;
+  result<std::string> x509_read_names() override;
+  result<std::vector<uint8_t>> x509_read_serial() override;
+  result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
 
   protected:
-  virtual const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
+  const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
   std::vector<uint8_t> binary_;
   uint64_t size_;
 };

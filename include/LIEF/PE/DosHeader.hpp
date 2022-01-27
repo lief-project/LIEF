@@ -23,38 +23,48 @@
 
 namespace LIEF {
 namespace PE {
-struct pe_dos_header;
 
+namespace details {
+struct pe_dos_header;
+}
+
+//! Class which represents the DosHeader, the **first**
+//! structure presents at the beginning of a PE file.
+//!
+//! Most of the attributes of this structures are not relevant.
 class LIEF_API DosHeader : public Object {
   public:
   using reserved_t  = std::array<uint16_t, 4>;
   using reserved2_t = std::array<uint16_t, 10>;
 
-  DosHeader(const pe_dos_header* header);
+  DosHeader(const details::pe_dos_header& header);
   DosHeader();
   DosHeader(const DosHeader&);
   DosHeader& operator=(const DosHeader&);
   virtual ~DosHeader();
 
-  uint16_t    magic() const;
-  uint16_t    used_bytes_in_the_last_page() const;
-  uint16_t    file_size_in_pages() const;
-  uint16_t    numberof_relocation() const;
-  uint16_t    header_size_in_paragraphs() const;
-  uint16_t    minimum_extra_paragraphs() const;
-  uint16_t    maximum_extra_paragraphs() const;
-  uint16_t    initial_relative_ss() const;
-  uint16_t    initial_sp() const;
-  uint16_t    checksum() const;
-  uint16_t    initial_ip() const;
-  uint16_t    initial_relative_cs() const;
-  uint16_t    addressof_relocation_table() const;
-  uint16_t    overlay_number() const;
+  //! Magic bytes identifying a DOS/PE binary
+  uint16_t magic() const;
+  uint16_t used_bytes_in_the_last_page() const;
+  uint16_t file_size_in_pages() const;
+  uint16_t numberof_relocation() const;
+  uint16_t header_size_in_paragraphs() const;
+  uint16_t minimum_extra_paragraphs() const;
+  uint16_t maximum_extra_paragraphs() const;
+  uint16_t initial_relative_ss() const;
+  uint16_t initial_sp() const;
+  uint16_t checksum() const;
+  uint16_t initial_ip() const;
+  uint16_t initial_relative_cs() const;
+  uint16_t addressof_relocation_table() const;
+  uint16_t overlay_number() const;
   reserved_t  reserved() const;
-  uint16_t    oem_id() const;
-  uint16_t    oem_info() const;
+  uint16_t oem_id() const;
+  uint16_t oem_info() const;
   reserved2_t reserved2() const;
-  uint32_t    addressof_new_exeheader() const;
+
+  //! It returns the offset to the PE::Header structure.
+  uint32_t addressof_new_exeheader() const;
 
   void magic(uint16_t magic);
   void used_bytes_in_the_last_page(uint16_t usedBytesInTheLastPage);
@@ -76,7 +86,7 @@ class LIEF_API DosHeader : public Object {
   void reserved2(const reserved2_t& reserved2);
   void addressof_new_exeheader(uint32_t addressOfNewExeHeader);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const DosHeader& rhs) const;
   bool operator!=(const DosHeader& rhs) const;

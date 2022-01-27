@@ -36,19 +36,21 @@ using setter_t = void (MainCommand::*)(T);
 template<>
 void create<MainCommand>(py::module& m) {
 
-  py::class_<MainCommand, LoadCommand>(m, "MainCommand")
+  py::class_<MainCommand, LoadCommand>(m, "MainCommand",
+      R"delim(
+      Class that represent the LC_MAIN command. This kind
+      of command can be used to determine the entrypoint of an executable
+      )delim")
 
     .def_property("entrypoint",
         static_cast<getter_t<uint64_t>>(&MainCommand::entrypoint),
         static_cast<setter_t<uint64_t>>(&MainCommand::entrypoint),
-        "Program entry point",
-        py::return_value_policy::reference_internal)
+        "Offset of the *main* function relative to the ``__TEXT`` segment")
 
     .def_property("stack_size",
         static_cast<getter_t<uint64_t>>(&MainCommand::stack_size),
         static_cast<setter_t<uint64_t>>(&MainCommand::stack_size),
-        "Program stack_size",
-        py::return_value_policy::reference_internal)
+        "The initial stack size (if not 0)")
 
 
     .def("__eq__", &MainCommand::operator==)

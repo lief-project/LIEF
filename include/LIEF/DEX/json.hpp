@@ -30,22 +30,23 @@ namespace DEX {
 LIEF_API json to_json(const Object& v);
 LIEF_API std::string to_json_str(const Object& v);
 
-
+//! Class that implements the Visitor pattern to output
+//! a JSON representation of an ELF object
 class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;
 
   public:
-  virtual void visit(const File& file)         override;
-  virtual void visit(const Header& header)     override;
-  virtual void visit(const Class& cls)         override;
-  virtual void visit(const Method& method)     override;
-  virtual void visit(const Field& field)       override;
-  virtual void visit(const CodeInfo& codeinfo) override;
-  virtual void visit(const Type& type)         override;
-  virtual void visit(const Prototype& type)    override;
-  virtual void visit(const MapItem& item)      override;
-  virtual void visit(const MapList& list)      override;
+  void visit(const File& file)         override;
+  void visit(const Header& header)     override;
+  void visit(const Class& cls)         override;
+  void visit(const Method& method)     override;
+  void visit(const Field& field)       override;
+  void visit(const CodeInfo& codeinfo) override;
+  void visit(const Type& type)         override;
+  void visit(const Prototype& type)    override;
+  void visit(const MapItem& item)      override;
+  void visit(const MapList& list)      override;
 };
 
 }

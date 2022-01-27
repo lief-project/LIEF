@@ -10,7 +10,8 @@ For each platform supported by LIEF there is an SDK that contains:
 * Headers
 * Examples
 
-Nightly build can be downloaded on: https://lief-project.github.io/packages/sdk while releases are available on Github release page: https://github.com/lief-project/LIEF/releases.
+Nightly build can be downloaded on: https://lief-project.github.io/packages/sdk while releases are available
+on Github release page: https://github.com/lief-project/LIEF/releases.
 
 Python
 ------
@@ -39,7 +40,7 @@ To install **release** package
 
   $ pip install lief
 
-Release packages can be found on the `PyPI <https://pypi.org/project/lief/>`_ and the Github release page: https://github.com/lief-project/LIEF/releases
+Release packages can be found on `PyPI <https://pypi.org/project/lief/>`_ and the Github release page: https://github.com/lief-project/LIEF/releases
 
 Using ``setup.py``, one can build and install lief as follows:
 
@@ -71,7 +72,6 @@ LIEF modules can also be parameterized using the following options:
 From 0.8.0 to 0.9.0
 *******************
 
-
 To install **release** package
 
 
@@ -80,7 +80,6 @@ To install **release** package
   $ pip install pylief-VERSION.zip
 
 Release packages can be found here: `Releases <https://github.com/lief-project/LIEF/releases>`_
-
 
 Before 0.8.0
 ************

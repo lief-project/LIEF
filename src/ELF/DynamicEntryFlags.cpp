@@ -30,36 +30,36 @@ DynamicEntryFlags::DynamicEntryFlags(const DynamicEntryFlags&) = default;
 
 
 bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
     return false;
   }
 
-  return (static_cast<uint64_t>(f) & this->value()) > 0;
+  return (static_cast<uint64_t>(f) & value()) > 0;
 }
 
 
 bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
     return false;
   }
-  return (static_cast<uint64_t>(f) & this->value()) > 0;
+  return (static_cast<uint64_t>(f) & value()) > 0;
 }
 
 DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags() const {
   DynamicEntryFlags::flags_list_t flags;
 
 
-  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    for (DYNAMIC_FLAGS f : dynamic_flags_array) {
-      if (this->has(f)) {
+  if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
+    for (DYNAMIC_FLAGS f : details::dynamic_flags_array) {
+      if (has(f)) {
         flags.insert(static_cast<uint32_t>(f));
       }
     }
   }
 
-  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    for (DYNAMIC_FLAGS_1 f : dynamic_flags_1_array) {
-      if (this->has(f)) {
+  if (tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
+    for (DYNAMIC_FLAGS_1 f : details::dynamic_flags_1_array) {
+      if (has(f)) {
         flags.insert(static_cast<uint32_t>(f));
       }
     }
@@ -69,55 +69,55 @@ DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags() const {
 }
 
 void DynamicEntryFlags::add(DYNAMIC_FLAGS f) {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
     return;
   }
 
-  this->value(this->value() | static_cast<uint64_t>(f));
+  value(value() | static_cast<uint64_t>(f));
 }
 
 void DynamicEntryFlags::add(DYNAMIC_FLAGS_1 f) {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
     return;
   }
 
-  this->value(this->value() | static_cast<uint64_t>(f));
+  value(value() | static_cast<uint64_t>(f));
 }
 
 void DynamicEntryFlags::remove(DYNAMIC_FLAGS f) {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
     return;
   }
 
-  this->value(this->value() & (~ static_cast<uint64_t>(f)));
+  value(value() & (~ static_cast<uint64_t>(f)));
 }
 
 void DynamicEntryFlags::remove(DYNAMIC_FLAGS_1 f) {
-  if (this->tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
+  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
     return;
   }
 
-  this->value(this->value() & (~ static_cast<uint64_t>(f)));
+  value(value() & (~ static_cast<uint64_t>(f)));
 }
 
 
 DynamicEntryFlags& DynamicEntryFlags::operator+=(DYNAMIC_FLAGS f) {
-  this->add(f);
+  add(f);
   return *this;
 }
 
 DynamicEntryFlags& DynamicEntryFlags::operator+=(DYNAMIC_FLAGS_1 f) {
-  this->add(f);
+  add(f);
   return *this;
 }
 
 DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS f) {
-  this->remove(f);
+  remove(f);
   return *this;
 }
 
 DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS_1 f) {
-  this->remove(f);
+  remove(f);
   return *this;
 }
 
@@ -129,24 +129,20 @@ std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   DynamicEntry::print(os);
 
   const flags_list_t& flags = this->flags();
-  std::string flags_str = "";
+  std::string flags_str;
 
-  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    flags_str = std::accumulate(
-       std::begin(flags),
-       std::end(flags), std::string{},
+  if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
+    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
        [] (const std::string& a, const uint32_t flag) {
-          DYNAMIC_FLAGS f = static_cast<DYNAMIC_FLAGS>(flag);
+          auto f = static_cast<DYNAMIC_FLAGS>(flag);
           return a.empty() ? to_string(f) : a + " - " + to_string(f);
        });
   }
 
-  if (this->tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    flags_str = std::accumulate(
-       std::begin(flags),
-       std::end(flags), std::string{},
+  if (tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
+    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
        [] (const std::string& a, const uint32_t flag) {
-          DYNAMIC_FLAGS_1 f = static_cast<DYNAMIC_FLAGS_1>(flag);
+          auto f = static_cast<DYNAMIC_FLAGS_1>(flag);
           return a.empty() ? to_string(f) : a + " - " + to_string(f);
        });
   }

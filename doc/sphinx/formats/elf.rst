@@ -4,7 +4,7 @@ ELF Format
 Duality sections/segments
 --------------------------
 
-In the ``ELF`` format we have two kinds of containers:
+In the ``ELF`` format there are two kinds of containers for handling data:
 
   * Sections
   * Segments
@@ -127,5 +127,5 @@ As content can be used and updated by both sections and segments we can't store 
 
 |
 
-The manager is implemented in the ``ELF::DataHandler::Handler`` classe.
+The manager is implemented in the ``ELF::DataHandler::Handler`` class.
 

@@ -25,6 +25,7 @@ namespace LIEF {
 namespace DEX {
 class Parser;
 
+//! Class which represents a DEX method prototype
 class LIEF_API Prototype : public Object {
   friend class Parser;
 
@@ -45,7 +46,7 @@ class LIEF_API Prototype : public Object {
   it_const_params parameters_type() const;
   it_params parameters_type();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Prototype& rhs) const;
   bool operator!=(const Prototype& rhs) const;

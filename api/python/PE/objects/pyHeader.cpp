@@ -33,18 +33,21 @@ using setter_t = void (Header::*)(T);
 
 template<>
 void create<Header>(py::module& m) {
-  py::class_<Header, LIEF::Object>(m, "Header")
+  py::class_<Header, LIEF::Object>(m, "Header",
+      R"delim(
+      Class that represents the PE header (which follows the :class:`lief.PE.DosHeader`)
+      )delim")
     .def(py::init<>())
 
     .def_property("signature",
         static_cast<getter_t<const Header::signature_t&>>(&Header::signature),
         static_cast<setter_t<const Header::signature_t&>>(&Header::signature),
-        "PE signature. Should be ``[80, 69, 0, 0]`` (``PE\\0\\0``)")
+        "Signature (or magic byte) of the header. It must be: ``PE\\0\\0``")
 
     .def_property("machine",
         static_cast<getter_t<MACHINE_TYPES>>(&Header::machine),
         static_cast<setter_t<MACHINE_TYPES>>(&Header::machine),
-        "Target " RST_CLASS_REF(lief.PE.MACHINE_TYPES) "")
+        "The target machine architecture: " RST_CLASS_REF(lief.PE.MACHINE_TYPES) "")
 
     .def_property("numberof_sections",
         static_cast<getter_t<uint16_t>>(&Header::numberof_sections),
@@ -59,23 +62,35 @@ void create<Header>(py::module& m) {
     .def_property("pointerto_symbol_table",
         static_cast<getter_t<uint32_t>>(&Header::pointerto_symbol_table),
         static_cast<setter_t<uint32_t>>(&Header::pointerto_symbol_table),
-        "The file offset of the COFF symbol table, or zero if no COFF symbol table is present.\n\n"
-        "This value should be zero for an image because COFF debugging information is deprecated.")
+        R"delim(
+        The file offset of the COFF symbol table, or zero if no COFF symbol table is present.
+
+        This value should be zero for an image because COFF debugging information is deprecated.
+        )delim")
 
     .def_property("numberof_symbols",
         static_cast<getter_t<uint32_t>>(&Header::numberof_symbols),
         static_cast<setter_t<uint32_t>>(&Header::numberof_symbols),
-        "The number of entries in the symbol table. This "
-        "data can be used to locate the string table, "
-        "which immediately follows the symbol table. "
-        "This value should be zero for an image because "
-        "COFF debugging information is deprecated.")
+        R"delim(
+        The number of entries in the symbol table. This data can be used to locate the string table
+        which immediately follows the symbol table.
+
+        This value should be zero for an image because COFF debugging information is deprecated.
+        )delim")
 
     .def_property("sizeof_optional_header",
         static_cast<getter_t<uint16_t>>(&Header::sizeof_optional_header),
         static_cast<setter_t<uint16_t>>(&Header::sizeof_optional_header),
-        "The size of the optional header, which is\n"
-        "required for executable files")
+        R"delim(
+        Size of the :class:`~lief.PE.OptionalHeader` **AND** the data directories which follows this header.
+
+        This value is equivalent to: ``sizeof(pe_optional_header) + NB_DATA_DIR * sizeof(data_directory)``
+
+        This size **should** be either:
+
+          * 0xE0 (224) for a PE32  (32 bits)
+          * 0xF0 (240) for a PE32+ (64 bits)
+        )delim")
 
     .def_property("characteristics",
         static_cast<getter_t<HEADER_CHARACTERISTICS>>(&Header::characteristics),

@@ -34,7 +34,10 @@ using setter_t = void (SymbolCommand::*)(T);
 template<>
 void create<SymbolCommand>(py::module& m) {
 
-  py::class_<SymbolCommand, LoadCommand>(m, "SymbolCommand")
+  py::class_<SymbolCommand, LoadCommand>(m, "SymbolCommand",
+      R"delim(
+      Class that represents the LC_SYMTAB command
+      )delim")
     .def(py::init<>())
 
     .def_property("symbol_offset",

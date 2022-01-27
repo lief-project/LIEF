@@ -29,10 +29,10 @@ DataInCode& DataInCode::operator=(const DataInCode&) = default;
 DataInCode::DataInCode(const DataInCode&) = default;
 DataInCode::~DataInCode() = default;
 
-DataInCode::DataInCode(const linkedit_data_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  data_offset_{cmd->dataoff},
-  data_size_{cmd->datasize}
+DataInCode::DataInCode(const details::linkedit_data_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  data_offset_{cmd.dataoff},
+  data_size_{cmd.datasize}
 {}
 
 DataInCode* DataInCode::clone() const {
@@ -40,34 +40,34 @@ DataInCode* DataInCode::clone() const {
 }
 
 uint32_t DataInCode::data_offset() const {
-  return this->data_offset_;
+  return data_offset_;
 }
 
 uint32_t DataInCode::data_size() const {
-  return this->data_size_;
+  return data_size_;
 }
 
 void DataInCode::data_offset(uint32_t offset) {
-  this->data_offset_ = offset;
+  data_offset_ = offset;
 }
 
 void DataInCode::data_size(uint32_t size) {
-  this->data_size_ = size;
+  data_size_ = size;
 }
 
 
 DataInCode& DataInCode::add(const DataCodeEntry& entry) {
-  this->entries_.push_back(entry);
+  entries_.push_back(entry);
   return *this;
 }
 
 
 DataInCode::it_const_entries DataInCode::entries() const {
-  return this->entries_;
+  return entries_;
 }
 
 DataInCode::it_entries DataInCode::entries() {
-  return this->entries_;
+  return entries_;
 }
 
 
@@ -83,7 +83,7 @@ bool DataInCode::operator==(const DataInCode& rhs) const {
 }
 
 bool DataInCode::operator!=(const DataInCode& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -92,8 +92,8 @@ std::ostream& DataInCode::print(std::ostream& os) const {
   os << std::left;
   os << std::endl;
   os << "Data location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << this->data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << this->data_size()   << std::endl;
+  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
+  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
   return os;
 }
 

@@ -17,6 +17,7 @@
 #include <iterator>
 #include <iostream>
 #include <algorithm>
+#include <memory>
 #include <stdexcept>
 
 #include "BinaryParser.tcc"
@@ -50,8 +51,8 @@ BinaryParser::BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset
   binary_{new Binary{}},
   config_{conf}
 {
-  this->binary_->fat_offset_ = fat_offset;
-  this->init();
+  binary_->fat_offset_ = fat_offset;
+  init();
 }
 
 
@@ -61,8 +62,8 @@ BinaryParser::BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_
   config_{conf}
 {
 
-  this->binary_->fat_offset_ = fat_offset;
-  this->init();
+  binary_->fat_offset_ = fat_offset;
+  init();
 }
 
 BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
@@ -70,47 +71,36 @@ BinaryParser::BinaryParser(const std::string& file, const ParserConfig& conf) :
   config_{conf}
 {
 
-  if (not is_macho(file)) {
+  if (!is_macho(file)) {
     throw bad_file("'" + file + "' is not a MachO binary");
   }
 
 
-  if (not is_fat(file)) {
+  if (!is_fat(file)) {
     throw bad_file("'" + file + "' is a FAT MachO, this parser takes fit binary");
   }
 
-  this->stream_ = std::unique_ptr<VectorStream>(new VectorStream{file});
+  stream_ = std::make_unique<VectorStream>(file);
 
-  this->binary_ = new Binary{};
-  this->binary_->name_ = filesystem::path(file).filename();
-  this->binary_->fat_offset_ = 0;
+  binary_ = new Binary{};
+  binary_->name_ = filesystem::path(file).filename();
+  binary_->fat_offset_ = 0;
 
-  this->init();
+  init();
 }
 
 void BinaryParser::init() {
   LIEF_DEBUG("Parsing MachO");
   try {
-    MACHO_TYPES type = static_cast<MACHO_TYPES>(this->stream_->peek<uint32_t>());
+    auto type = static_cast<MACHO_TYPES>(stream_->peek<uint32_t>());
+    is64_ = type == MACHO_TYPES::MH_MAGIC_64 ||
+            type == MACHO_TYPES::MH_CIGAM_64;
 
-    if (type == MACHO_TYPES::MH_MAGIC_64 or
-        type == MACHO_TYPES::MH_CIGAM_64 )
-    {
-      this->is64_ = true;
-    }
-    else
-    {
-      this->is64_ = false;
-    }
+    binary_->is64_ = is64_;
+    type_          = type;
 
-    this->binary_->is64_ = this->is64_;
-    this->type_          = type;
-
-    if (this->is64_) {
-      this->parse<MachO64>();
-    } else {
-      this->parse<MachO32>();
-    }
+    is64_ ? parse<details::MachO64>() :
+            parse<details::MachO32>();
   } catch (const std::exception& e) {
     LIEF_DEBUG("{}", e.what());
   }
@@ -119,31 +109,31 @@ void BinaryParser::init() {
 
 
 void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix) {
-  if (this->stream_->pos() >= end) {
+  if (stream_->pos() >= end) {
     return;
   }
 
-  if (start > this->stream_->pos()) {
+  if (start > stream_->pos()) {
     return;
   }
 
-  const uint8_t terminal_size = this->stream_->read<uint8_t>();
-  uint64_t children_offset = this->stream_->pos() + terminal_size;
+  const auto terminal_size = stream_->read<uint8_t>();
+  uint64_t children_offset = stream_->pos() + terminal_size;
 
   if (terminal_size != 0) {
-    uint64_t offset = this->stream_->pos() - start;
+    uint64_t offset = stream_->pos() - start;
 
-    uint64_t flags   = this->stream_->read_uleb128();
-    //uint64_t address = this->stream_->read_uleb128();
+    uint64_t flags   = stream_->read_uleb128();
+    //uint64_t address = stream_->read_uleb128();
 
     const std::string& symbol_name = prefix;
     std::unique_ptr<ExportInfo> export_info{new ExportInfo{0, flags, offset}};
     Symbol* symbol = nullptr;
-    auto search = this->memoized_symbols_.find(symbol_name);
-    if (search != this->memoized_symbols_.end()) {
+    auto search = memoized_symbols_.find(symbol_name);
+    if (search != memoized_symbols_.end()) {
       symbol = search->second;
     } else {
-      symbol = this->binary_->get_symbol(symbol_name);
+      symbol = binary_->get_symbol(symbol_name);
     }
     if (symbol != nullptr) {
       export_info->symbol_ = symbol;
@@ -160,26 +150,26 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
       // Weak bind of the pointer
       symbol->export_info_       = export_info.get();
       export_info->symbol_       = symbol.get();
-      this->binary_->symbols_.push_back(symbol.release());
+      binary_->symbols_.push_back(symbol.release());
     }
 
     // REEXPORT
     // ========
     if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
-      const uint64_t ordinal = this->stream_->read_uleb128();
+      const uint64_t ordinal = stream_->read_uleb128();
       export_info->other_ = ordinal;
 
-      std::string imported_name = this->stream_->peek_string();
+      std::string imported_name = stream_->peek_string();
       if (imported_name.empty()) {
         imported_name = export_info->symbol().name();
       }
 
       Symbol* symbol = nullptr;
-      auto search = this->memoized_symbols_.find(imported_name);
-      if (search != this->memoized_symbols_.end()) {
+      auto search = memoized_symbols_.find(imported_name);
+      if (search != memoized_symbols_.end()) {
         symbol = search->second;
       } else {
-        symbol = this->binary_->get_symbol(imported_name);
+        symbol = binary_->get_symbol(imported_name);
       }
       if (symbol != nullptr) {
         export_info->alias_  = symbol;
@@ -197,69 +187,69 @@ void BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::st
         // Weak bind of the pointer
         symbol->export_info_      = export_info.get();
         export_info->alias_       = symbol.get();
-        this->binary_->symbols_.push_back(symbol.release());
+        binary_->symbols_.push_back(symbol.release());
       }
 
 
-      if (ordinal < this->binary_->libraries().size()) {
-        DylibCommand& lib = this->binary_->libraries()[ordinal];
+      if (ordinal < binary_->libraries().size()) {
+        DylibCommand& lib = binary_->libraries()[ordinal];
         export_info->alias_location_ = &lib;
       } else {
         // TODO: Corrupted library name
       }
     } else {
-      uint64_t address = this->stream_->read_uleb128();
+      uint64_t address = stream_->read_uleb128();
       export_info->address(address);
     }
 
     // STUB_AND_RESOLVER
     // =================
     if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
-      export_info->other_ = this->stream_->read_uleb128();
+      export_info->other_ = stream_->read_uleb128();
     }
 
-    this->binary_->dyld_info().export_info_.push_back(export_info.release());
+    binary_->dyld_info().export_info_.push_back(export_info.release());
 
   }
-  this->stream_->setpos(children_offset);
-  const uint8_t nb_children = this->stream_->read<uint8_t>();
+  stream_->setpos(children_offset);
+  const auto nb_children = stream_->read<uint8_t>();
   for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix = this->stream_->read_string();
+    std::string suffix = stream_->read_string();
     std::string name   = prefix + suffix;
 
-    uint32_t child_node_offet = static_cast<uint32_t>(this->stream_->read_uleb128());
+    auto child_node_offet = static_cast<uint32_t>(stream_->read_uleb128());
 
     if (child_node_offet == 0) {
       break;
     }
 
-    if (this->visited_.count(start + child_node_offet) > 0) {
+    if (visited_.count(start + child_node_offet) > 0) {
       break;
     }
-    this->visited_.insert(start + child_node_offet);
-    size_t current_pos = this->stream_->pos();
-    this->stream_->setpos(start + child_node_offet);
-    this->parse_export_trie(start, end, name);
-    this->stream_->setpos(current_pos);
+    visited_.insert(start + child_node_offet);
+    size_t current_pos = stream_->pos();
+    stream_->setpos(start + child_node_offet);
+    parse_export_trie(start, end, name);
+    stream_->setpos(current_pos);
   }
 
 }
 
 void BinaryParser::parse_dyldinfo_export() {
 
-  DyldInfo& dyldinfo = this->binary_->dyld_info();
+  DyldInfo& dyldinfo = binary_->dyld_info();
 
   uint32_t offset = std::get<0>(dyldinfo.export_info());
   uint32_t size   = std::get<1>(dyldinfo.export_info());
 
-  if (offset == 0 or size == 0) {
+  if (offset == 0 || size == 0) {
     return;
   }
 
   uint64_t end_offset = offset + size;
 
   try {
-    const uint8_t* raw_trie = this->stream_->peek_array<uint8_t>(offset, size, /* check */ false);
+    const auto* raw_trie = stream_->peek_array<uint8_t>(offset, size, /* check */ false);
     if (raw_trie != nullptr) {
       dyldinfo.export_trie({raw_trie, raw_trie + size});
     }
@@ -267,12 +257,12 @@ void BinaryParser::parse_dyldinfo_export() {
     LIEF_DEBUG("{}", e.what());
   }
 
-  this->stream_->setpos(offset);
-  this->parse_export_trie(offset, end_offset, "");
+  stream_->setpos(offset);
+  parse_export_trie(offset, end_offset, "");
 }
 
 Binary* BinaryParser::get_binary() {
-  return this->binary_;
+  return binary_;
 }
 
 } // namespace MachO

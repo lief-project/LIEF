@@ -15,6 +15,7 @@
  */
 #include <numeric>
 #include <iomanip>
+#include <utility>
 
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Builder.hpp"
@@ -23,43 +24,40 @@
 namespace LIEF {
 namespace MachO {
 
-FatBinary::FatBinary() :
-  binaries_{}
-{}
+FatBinary::FatBinary() = default;
 
-
-FatBinary::FatBinary(const std::vector<Binary*>& binaries) :
-  binaries_{binaries}
+FatBinary::FatBinary(std::vector<Binary*> binaries) :
+  binaries_{std::move(binaries)}
 {}
 
 
 size_t FatBinary::size() const {
-  return this->binaries_.size();
+  return binaries_.size();
 }
 
 
 it_binaries FatBinary::begin() {
-  return this->binaries_;
+  return binaries_;
 }
 
 it_const_binaries FatBinary::begin() const {
-  return this->binaries_;
+  return binaries_;
 }
 
 
 it_binaries FatBinary::end() {
-  return it_binaries{this->binaries_}.end();
+  return it_binaries{binaries_}.end();
 }
 
 it_const_binaries FatBinary::end() const {
-  return it_const_binaries{this->binaries_}.end();
+  return it_const_binaries{binaries_}.end();
 }
 
 
 Binary* FatBinary::pop_back() {
-  if (this->binaries_.size() > 0) {
-    Binary* last = this->binaries_.back();
-    this->binaries_.pop_back();
+  if (!binaries_.empty()) {
+    Binary* last = binaries_.back();
+    binaries_.pop_back();
     return last;
   }
   return nullptr;
@@ -69,10 +67,10 @@ Binary& FatBinary::at(size_t index) {
   return const_cast<Binary&>(static_cast<const FatBinary*>(this)->at(index));
 }
 const Binary& FatBinary::at(size_t index) const {
-  if (index >= this->size()) {
+  if (index >= size()) {
     throw std::out_of_range("Bad index");
   }
-  return *this->binaries_[index];
+  return *binaries_[index];
 }
 
 
@@ -80,7 +78,7 @@ Binary& FatBinary::back() {
   return const_cast<Binary&>(static_cast<const FatBinary*>(this)->back());
 }
 const Binary& FatBinary::back() const {
-  return *this->binaries_.back();
+  return *binaries_.back();
 }
 
 Binary& FatBinary::operator[](size_t index) {
@@ -88,29 +86,29 @@ Binary& FatBinary::operator[](size_t index) {
 }
 
 const Binary& FatBinary::operator[](size_t index) const {
-  return this->at(index);
+  return at(index);
 }
 
 std::unique_ptr<Binary> FatBinary::take(CPU_TYPES cpu) {
-  auto it = std::find_if(std::begin(this->binaries_), std::end(this->binaries_),
+  auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
       [cpu] (const Binary* bin) {
         return bin->header().cpu_type() == cpu;
       });
-  if (it == std::end(this->binaries_)) {
+  if (it == std::end(binaries_)) {
     return nullptr;
   }
   std::unique_ptr<Binary> ret(*it);
-  this->binaries_.erase(it);
+  binaries_.erase(it);
   return ret;
 }
 std::unique_ptr<Binary> FatBinary::take(size_t index) {
-  if (index >= this->binaries_.size()) {
+  if (index >= binaries_.size()) {
     return {};
   }
-  auto it = this->binaries_.begin();
+  auto it = binaries_.begin();
   std::advance(it, index);
   std::unique_ptr<Binary> ret(*it);
-  this->binaries_.erase(it);
+  binaries_.erase(it);
   return ret;
 }
 
@@ -133,7 +131,7 @@ std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
 }
 
 FatBinary::~FatBinary() {
-  for (Binary* b : this->binaries_) {
+  for (Binary* b : binaries_) {
     delete b;
   }
 }

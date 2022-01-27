@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <numeric>
+#include <utility>
 
 #include "LIEF/PE/hash.hpp"
 
@@ -35,9 +36,9 @@ Pogo::Pogo() :
 {}
 
 
-Pogo::Pogo(POGO_SIGNATURES signature, const std::vector<PogoEntry>& entries) :
+Pogo::Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry>  entries) :
   signature_{signature},
-  entries_{entries}
+  entries_{std::move(entries)}
 {}
 
 Pogo* Pogo::clone() const {
@@ -50,11 +51,11 @@ POGO_SIGNATURES Pogo::signature() const {
 }
 
 it_pogo_entries Pogo::entries() {
-  return this->entries_;
+  return entries_;
 }
 
 it_const_pogo_entries Pogo::entries() const {
-  return this->entries_;
+  return entries_;
 }
 
 void Pogo::signature(POGO_SIGNATURES signature) {
@@ -72,7 +73,7 @@ bool Pogo::operator==(const Pogo& rhs) const {
 }
 
 bool Pogo::operator!=(const Pogo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

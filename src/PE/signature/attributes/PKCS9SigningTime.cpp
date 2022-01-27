@@ -31,7 +31,7 @@ std::unique_ptr<Attribute> PKCS9SigningTime::clone() const {
 
 PKCS9SigningTime::PKCS9SigningTime(time_t time) :
   Attribute(SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME),
-  time_{std::move(time)}
+  time_{time}
 {}
 
 void PKCS9SigningTime::accept(Visitor& visitor) const {

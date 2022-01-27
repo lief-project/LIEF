@@ -42,13 +42,13 @@ class LIEF_API Attribute : public Object {
 
   //! Concrete type of the attribute
   inline virtual SIG_ATTRIBUTE_TYPES type() const {
-    return this->type_;
+    return type_;
   }
 
   //! Print information about the underlying attribute
   virtual std::string print() const = 0;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~Attribute();
 

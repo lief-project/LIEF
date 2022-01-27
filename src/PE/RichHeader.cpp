@@ -27,32 +27,31 @@ RichHeader::RichHeader(const RichHeader&) = default;
 RichHeader& RichHeader::operator=(const RichHeader&) = default;
 
 RichHeader::RichHeader() :
-  key_{0},
-  entries_{}
+  key_{0}
 {}
 
 uint32_t RichHeader::key() const {
-  return this->key_;
+  return key_;
 }
 
 it_rich_entries RichHeader::entries() {
-  return {this->entries_};
+  return {entries_};
 }
 
 it_const_rich_entries RichHeader::entries() const {
-  return {this->entries_};
+  return {entries_};
 }
 
 void RichHeader::key(uint32_t key) {
-  this->key_ = key;
+  key_ = key;
 }
 
 void RichHeader::add_entry(const RichEntry& entry) {
-  this->entries_.push_back(entry);
+  entries_.push_back(entry);
 }
 
 void RichHeader::add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
-  this->entries_.emplace_back(id, build_id, count);
+  entries_.emplace_back(id, build_id, count);
 }
 
 void RichHeader::accept(LIEF::Visitor& visitor) const {
@@ -66,7 +65,7 @@ bool RichHeader::operator==(const RichHeader& rhs) const {
 }
 
 bool RichHeader::operator!=(const RichHeader& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

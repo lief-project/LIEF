@@ -29,9 +29,11 @@ void create<Parser>(py::module& m) {
   // Parser (Parser)
   m.def("parse",
     static_cast<std::unique_ptr<FatBinary> (*) (const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
-    "Parse the given binary and return a " RST_CLASS_REF(lief.MachO.FatBinary) " object\n\n"
+    R"delim(
+    Parse the given binary and return a :class:`~lief.MachO.FatBinary` object
 
-    "One can configure the parsing with the ``config`` parameter. See " RST_CLASS_REF(lief.MachO.ParserConfig) "",
+    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`,
+    )delim",
     "filename"_a,
     "config"_a = ParserConfig::deep(),
     py::return_value_policy::take_ownership);
@@ -39,9 +41,11 @@ void create<Parser>(py::module& m) {
 
   m.def("parse",
     static_cast<std::unique_ptr<FatBinary> (*) (const std::vector<uint8_t>&, const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
-    "Parse the given binary (from raw) and return a " RST_CLASS_REF(lief.MachO.FatBinary) " objects\n\n"
+    R"delim(
+    Parse the given binary (from raw bytes) and return a :class:`~lief.MachO.FatBinary` object
 
-    "One can configure the parsing with the ``config`` parameter. See " RST_CLASS_REF(lief.MachO.ParserConfig) "",
+    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
+    )delim",
     "raw"_a,
     "name"_a = "",
     "config"_a = ParserConfig::quick(),
@@ -50,10 +54,10 @@ void create<Parser>(py::module& m) {
 
     m.def("parse",
       [] (py::object byteio, std::string name, const ParserConfig& config) {
-        auto&& io = py::module::import("io");
-        auto&& RawIOBase = io.attr("RawIOBase");
-        auto&& BufferedIOBase = io.attr("BufferedIOBase");
-        auto&& TextIOBase = io.attr("TextIOBase");
+        const auto& io = py::module::import("io");
+        const auto& RawIOBase = io.attr("RawIOBase");
+        const auto& BufferedIOBase = io.attr("BufferedIOBase");
+        const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
 
@@ -81,6 +85,11 @@ void create<Parser>(py::module& m) {
 
         return LIEF::MachO::Parser::parse(std::move(raw), name, config);
       },
+      R"delim(
+      Parse the given binary from a Python IO interface and return a :class:`~lief.MachO.FatBinary` object
+
+      One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
+      )delim",
       "io"_a,
       "name"_a = "",
       "config"_a = ParserConfig::quick(),

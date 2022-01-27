@@ -25,8 +25,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v7;
+}
 
 class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   public:
@@ -35,12 +37,12 @@ class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   LoadConfigurationV7();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV7(const load_configuration_v7<T>* header);
+  LIEF_LOCAL LoadConfigurationV7(const details::load_configuration_v7<T>& header);
 
   LoadConfigurationV7& operator=(const LoadConfigurationV7&);
   LoadConfigurationV7(const LoadConfigurationV7&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   uint32_t reserved3() const;
   uint64_t addressof_unicode_string() const;
@@ -50,12 +52,12 @@ class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
 
   virtual ~LoadConfigurationV7();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV7& rhs) const;
   bool operator!=(const LoadConfigurationV7& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint32_t reserved3_;

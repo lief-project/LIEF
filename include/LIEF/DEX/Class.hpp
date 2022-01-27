@@ -28,6 +28,7 @@ namespace LIEF {
 namespace DEX {
 class Parser;
 
+//! Class which represents a DEX Class (i.e. a Java/Kotlin class)
 class LIEF_API Class : public Object {
   friend class Parser;
 
@@ -44,10 +45,10 @@ class LIEF_API Class : public Object {
   Class(const Class&);
   Class& operator=(const Class&);
 
-  Class(const std::string& fullname,
-      uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
-      Class* parent = nullptr,
-      const std::string& source_filename = "");
+  Class(std::string fullname,
+        uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
+        Class* parent = nullptr,
+        std::string source_filename = "");
 
   //! Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
   const std::string& fullname() const;
@@ -99,7 +100,7 @@ class LIEF_API Class : public Object {
   //! Original index in the DEX class pool
   size_t index() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Class& rhs) const;
   bool operator!=(const Class& rhs) const;
@@ -120,9 +121,6 @@ class LIEF_API Class : public Object {
   std::string source_filename_;
 
   uint32_t original_index_;
-
-
-
 };
 
 } // Namespace DEX

@@ -16,6 +16,7 @@
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 
 #include <iomanip>
+#include <utility>
 
 namespace LIEF {
 namespace ELF {
@@ -24,22 +25,21 @@ DynamicEntryLibrary& DynamicEntryLibrary::operator=(const DynamicEntryLibrary&) 
 DynamicEntryLibrary::DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
 
 DynamicEntryLibrary::DynamicEntryLibrary() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
-  libname_{}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0}
 {}
 
-DynamicEntryLibrary::DynamicEntryLibrary(const std::string& name) :
+DynamicEntryLibrary::DynamicEntryLibrary(std::string name) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
-  libname_{name}
+  libname_{std::move(name)}
 {}
 
 const std::string& DynamicEntryLibrary::name() const {
-  return this->libname_;
+  return libname_;
 }
 
 
 void DynamicEntryLibrary::name(const std::string& name) {
-  this->libname_ = name;
+  libname_ = name;
 }
 
 
@@ -52,7 +52,7 @@ std::ostream& DynamicEntryLibrary::print(std::ostream& os) const {
   DynamicEntry::print(os);
   os << std::hex
      << std::left
-     << std::setw(10) << this->name();
+     << std::setw(10) << name();
   return os;
 
 }

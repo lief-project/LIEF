@@ -43,17 +43,25 @@ void create<Parser>(py::module& m) {
         if (ep) std::rethrow_exception(ep);
         return binary;
       },
-      "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      R"delim(
+      Parse a binary supported by LIEF from the given bytes and return either:
+
+      - :class:`lief.ELF.Binary`
+      - :class:`lief.PE.Binary`
+      - :class:`lief.MachO.Binary`
+
+      depending on the given binary format.
+      )delim",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 
   m.def("parse",
-      [] (const std::string& name) {
+      [] (const std::string& filepath) {
         std::unique_ptr<Binary> binary;
         std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
         try {
-          binary = Parser::parse(name);
+          binary = Parser::parse(filepath);
         } catch (...) {
           ep = std::current_exception();
         }
@@ -61,7 +69,15 @@ void create<Parser>(py::module& m) {
         if (ep) std::rethrow_exception(ep);
         return binary;
       },
-      "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      R"delim(
+      Parse a binary from the given file path and return either:
+
+      - :class:`lief.ELF.Binary`
+      - :class:`lief.PE.Binary`
+      - :class:`lief.MachO.Binary`
+
+      depending on the given binary format.
+      )delim",
       "filepath"_a,
       py::return_value_policy::take_ownership);
 
@@ -79,7 +95,15 @@ void create<Parser>(py::module& m) {
         if (ep) std::rethrow_exception(ep);
         return binary;
       },
-      "Parse the given binary and return a " RST_CLASS_REF(lief.Binary) " object",
+      R"delim(
+      Parse a binary supported by LIEF from the given list of bytes and return either:
+
+      - :class:`lief.ELF.Binary`
+      - :class:`lief.PE.Binary`
+      - :class:`lief.MachO.Binary`
+
+      depending on the given binary format.
+      )delim",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 
@@ -87,10 +111,10 @@ void create<Parser>(py::module& m) {
 
   m.def("parse",
       [] (py::object byteio, const std::string& name) {
-        auto&& io = py::module::import("io");
-        auto&& RawIOBase = io.attr("RawIOBase");
-        auto&& BufferedIOBase = io.attr("BufferedIOBase");
-        auto&& TextIOBase = io.attr("TextIOBase");
+        const auto& io = py::module::import("io");
+        const auto& RawIOBase = io.attr("RawIOBase");
+        const auto& BufferedIOBase = io.attr("BufferedIOBase");
+        const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
 
@@ -129,8 +153,16 @@ void create<Parser>(py::module& m) {
         if (ep) std::rethrow_exception(ep);
         return binary;
       },
-      "io"_a,
-      "name"_a = "",
+      R"delim(
+      Parse a binary supported by LIEF from the given Python IO interface and return either:
+
+      - :class:`lief.ELF.Binary`
+      - :class:`lief.PE.Binary`
+      - :class:`lief.MachO.Binary`
+
+      depending on the given binary format.
+      )delim",
+      "io"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 }
 }

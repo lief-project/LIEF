@@ -34,9 +34,11 @@ using setter_t = void (LoadConfigurationV2::*)(T);
 template<>
 void create<LoadConfigurationV2>(py::module& m) {
   py::class_<LoadConfigurationV2, LoadConfigurationV1>(m, "LoadConfigurationV2",
-    "" RST_CLASS_REF(lief.PE.LoadConfigurationV1) " enhanced with *code integrity*. \n\n"
-    "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
-    ":attr:`~lief.PE.WIN_VERSION.WIN10_0_9879`")
+      R"delim(
+      :class:`~lief.PE.LoadConfigurationV1` enhanced with *code integrity*.
+      It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_9879`
+      )delim")
+
     .def(py::init<>())
 
     .def_property_readonly("code_integrity",

@@ -15,6 +15,7 @@
  */
 #include <algorithm>
 #include <iomanip>
+#include <utility>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
@@ -31,8 +32,6 @@ Import::~Import() = default;
 Import::Import(const Import& other) :
   Object{other},
   entries_{other.entries_},
-  directory_{nullptr},
-  iat_directory_{nullptr},
   import_lookup_table_RVA_{other.import_lookup_table_RVA_},
   timedatestamp_{other.timedatestamp_},
   forwarder_chain_{other.forwarder_chain_},
@@ -44,73 +43,60 @@ Import::Import(const Import& other) :
 
 
 Import& Import::operator=(Import other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 void Import::swap(Import& other) {
-  std::swap(this->entries_,                  other.entries_);
-  std::swap(this->directory_,                other.directory_);
-  std::swap(this->iat_directory_,            other.iat_directory_);
-  std::swap(this->import_lookup_table_RVA_,  other.import_lookup_table_RVA_);
-  std::swap(this->timedatestamp_,            other.timedatestamp_);
-  std::swap(this->forwarder_chain_,          other.forwarder_chain_);
-  std::swap(this->name_RVA_,                 other.name_RVA_);
-  std::swap(this->import_address_table_RVA_, other.import_address_table_RVA_);
-  std::swap(this->name_,                     other.name_);
-  std::swap(this->type_,                     other.type_);
+  std::swap(entries_,                  other.entries_);
+  std::swap(directory_,                other.directory_);
+  std::swap(iat_directory_,            other.iat_directory_);
+  std::swap(import_lookup_table_RVA_,  other.import_lookup_table_RVA_);
+  std::swap(timedatestamp_,            other.timedatestamp_);
+  std::swap(forwarder_chain_,          other.forwarder_chain_);
+  std::swap(name_RVA_,                 other.name_RVA_);
+  std::swap(import_address_table_RVA_, other.import_address_table_RVA_);
+  std::swap(name_,                     other.name_);
+  std::swap(type_,                     other.type_);
 }
 
 Import::Import() :
-  entries_{},
-  directory_{nullptr},
-  iat_directory_{nullptr},
   import_lookup_table_RVA_{0},
   timedatestamp_{0},
   forwarder_chain_{0},
   name_RVA_{0},
   import_address_table_RVA_{0},
-  name_{""},
   type_{PE_TYPE::PE32} // Arbitrary value
 
 {}
 
-Import::Import(const pe_import *import) :
-  entries_{},
-  directory_{nullptr},
-  iat_directory_{nullptr},
-  import_lookup_table_RVA_(import->ImportLookupTableRVA),
-  timedatestamp_(import->TimeDateStamp),
-  forwarder_chain_(import->ForwarderChain),
-  name_RVA_(import->NameRVA),
-  import_address_table_RVA_(import->ImportAddressTableRVA),
-  name_{""},
+Import::Import(const details::pe_import& import) :
+  import_lookup_table_RVA_(import.ImportLookupTableRVA),
+  timedatestamp_(import.TimeDateStamp),
+  forwarder_chain_(import.ForwarderChain),
+  name_RVA_(import.NameRVA),
+  import_address_table_RVA_(import.ImportAddressTableRVA),
   type_{PE_TYPE::PE32} // Arbitrary value
 {}
 
 
-Import::Import(const std::string& name) :
-  entries_{},
-  directory_{nullptr},
-  iat_directory_{nullptr},
+Import::Import(std::string name) :
   import_lookup_table_RVA_{0},
   timedatestamp_{0},
   forwarder_chain_{0},
   name_RVA_{0},
   import_address_table_RVA_{0},
-  name_{name},
+  name_{std::move(name)},
   type_{PE_TYPE::PE32} // Arbitrary value
 {}
 
 
 const ImportEntry& Import::get_entry(const std::string& name) const {
-  auto&& it_entry = std::find_if(
-      std::begin(this->entries_),
-      std::end(this->entries_),
+  const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
       [&name] (const ImportEntry& entry) {
         return entry.name() == name;
       });
-  if (it_entry == std::end(this->entries_)) {
+  if (it_entry == std::end(entries_)) {
     throw LIEF::not_found("Unable to find the entry '" + name + "'.");
   }
   return *it_entry;
@@ -121,42 +107,39 @@ ImportEntry& Import::get_entry(const std::string& name) {
 }
 
 it_import_entries Import::entries() {
-  return {this->entries_};
+  return {entries_};
 }
 
 
 it_const_import_entries Import::entries() const {
-  return {this->entries_};
+  return {entries_};
 }
 
 
 uint32_t Import::import_address_table_rva() const {
-  return this->import_address_table_RVA_;
+  return import_address_table_RVA_;
 }
 
 
 uint32_t Import::import_lookup_table_rva() const {
-  return this->import_lookup_table_RVA_;
+  return import_lookup_table_RVA_;
 }
 
 
 uint32_t Import::get_function_rva_from_iat(const std::string& function) const {
-  auto&& it_function = std::find_if(
-      std::begin(this->entries_),
-      std::end(this->entries_),
-      [&function] (const ImportEntry& entry)
-      {
+  const auto it_function = std::find_if(std::begin(entries_), std::end(entries_),
+      [&function] (const ImportEntry& entry) {
         return entry.name() == function;
       });
 
-  if (it_function == std::end(this->entries_)) {
+  if (it_function == std::end(entries_)) {
     throw LIEF::not_found("No such function ('" + function + "')");
   }
 
   // Index of the function in the imported functions
-  uint32_t idx = std::distance(std::begin(this->entries_), it_function);
+  uint32_t idx = std::distance(std::begin(entries_), it_function);
 
-  if (this->type_ == PE_TYPE::PE32) {
+  if (type_ == PE_TYPE::PE32) {
     return idx * sizeof(uint32_t);
   } else {
     return idx * sizeof(uint64_t);
@@ -165,7 +148,7 @@ uint32_t Import::get_function_rva_from_iat(const std::string& function) const {
 
 
 const std::string& Import::name() const {
-  return this->name_;
+  return name_;
 }
 
 //std::string& Import::name() {
@@ -173,13 +156,13 @@ const std::string& Import::name() const {
 //}
 
 void Import::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
 const DataDirectory& Import::directory() const {
-  if (this->directory_ != nullptr) {
-    return *this->directory_;
+  if (directory_ != nullptr) {
+    return *directory_;
   } else {
     throw not_found("Unable to find the Data Directory");
   }
@@ -191,8 +174,8 @@ DataDirectory& Import::directory() {
 
 
 const DataDirectory& Import::iat_directory() const {
-  if (this->iat_directory_ != nullptr) {
-    return *this->iat_directory_;
+  if (iat_directory_ != nullptr) {
+    return *iat_directory_;
   } else {
     throw not_found("Unable to find the IAT Data Directory");
   }
@@ -204,31 +187,31 @@ DataDirectory& Import::iat_directory() {
 
 
 void Import::import_lookup_table_rva(uint32_t rva) {
-  this->import_lookup_table_RVA_ = rva;
+  import_lookup_table_RVA_ = rva;
 }
 
 
 void Import::import_address_table_rva(uint32_t rva) {
-  this->import_address_table_RVA_ = rva;
+  import_address_table_RVA_ = rva;
 }
 
 ImportEntry& Import::add_entry(const ImportEntry& entry) {
-  this->entries_.push_back(entry);
-  return this->entries_.back();
+  entries_.push_back(entry);
+  return entries_.back();
 }
 
 
 ImportEntry& Import::add_entry(const std::string& name) {
-  this->entries_.emplace_back(name);
-  return this->entries_.back();
+  entries_.emplace_back(name);
+  return entries_.back();
 }
 
 uint32_t Import::forwarder_chain() const {
-  return this->forwarder_chain_;
+  return forwarder_chain_;
 }
 
 uint32_t Import::timedatestamp() const {
-  return this->timedatestamp_;
+  return timedatestamp_;
 }
 
 void Import::accept(LIEF::Visitor& visitor) const {
@@ -242,7 +225,7 @@ bool Import::operator==(const Import& rhs) const {
 }
 
 bool Import::operator!=(const Import& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Import& entry) {

@@ -29,14 +29,14 @@ SourceVersion& SourceVersion::operator=(const SourceVersion&) = default;
 SourceVersion::SourceVersion(const SourceVersion&) = default;
 SourceVersion::~SourceVersion() = default;
 
-SourceVersion::SourceVersion(const source_version_command *version_cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd->cmd), version_cmd->cmdsize},
+SourceVersion::SourceVersion(const details::source_version_command& ver) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(ver.cmd), ver.cmdsize},
   version_{{
-    static_cast<uint32_t>((version_cmd->version >> 40) & 0xffffff),
-    static_cast<uint32_t>((version_cmd->version >> 30) & 0x3ff),
-    static_cast<uint32_t>((version_cmd->version >> 20) & 0x3ff),
-    static_cast<uint32_t>((version_cmd->version >> 10) & 0x3ff),
-    static_cast<uint32_t>((version_cmd->version >>  0) & 0x3ff)
+    static_cast<uint32_t>((ver.version >> 40) & 0xffffff),
+    static_cast<uint32_t>((ver.version >> 30) & 0x3ff),
+    static_cast<uint32_t>((ver.version >> 20) & 0x3ff),
+    static_cast<uint32_t>((ver.version >> 10) & 0x3ff),
+    static_cast<uint32_t>((ver.version >>  0) & 0x3ff)
   }}
 {}
 
@@ -46,11 +46,11 @@ SourceVersion* SourceVersion::clone() const {
 
 
  const SourceVersion::version_t& SourceVersion::version() const {
-   return this->version_;
+   return version_;
  }
 
  void SourceVersion::version(const SourceVersion::version_t& version) {
-   this->version_ = version;
+   version_ = version;
  }
 
 void SourceVersion::accept(Visitor& visitor) const {
@@ -65,7 +65,7 @@ bool SourceVersion::operator==(const SourceVersion& rhs) const {
 }
 
 bool SourceVersion::operator!=(const SourceVersion& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

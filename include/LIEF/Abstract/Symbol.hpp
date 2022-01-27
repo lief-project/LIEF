@@ -22,35 +22,37 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+
+//! This class represents a symbol in an executable format.
 class LIEF_API Symbol : public Object {
   public:
   Symbol();
-  Symbol(const std::string& name);
-  Symbol(const std::string& name, uint64_t value);
-  Symbol(const std::string& name, uint64_t value, uint64_t size);
+  Symbol(std::string name);
+  Symbol(std::string name, uint64_t value);
+  Symbol(std::string name, uint64_t value, uint64_t size);
   Symbol(const Symbol&);
   Symbol& operator=(const Symbol&);
   virtual ~Symbol();
 
   void swap(Symbol& other);
 
-  //! @brief Return symbol name
+  //! Return the symbol's name
   virtual const std::string& name() const;
-
   virtual std::string& name();
 
-  //! @brief Set symbol name
+  //! Set symbol name
   virtual void name(const std::string& name);
 
-  // Symbol's value
+  // Symbol's value which is usually the **address** of the symbol
   virtual uint64_t value() const;
   virtual void     value(uint64_t value);
 
+  //! This size of the symbol (when applicable)
   virtual uint64_t size() const;
   virtual void     size(uint64_t value);
 
-  //! @brief Method so that the ``visitor`` can visit us
-  virtual void accept(Visitor& visitor) const override;
+  //! Method so that the ``visitor`` can visit us
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 

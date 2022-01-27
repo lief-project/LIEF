@@ -38,7 +38,7 @@ class LIEF_API Method : public Object {
 
   public:
   Method();
-  Method(DEX::Method* method, Class* oat_class, const std::vector<uint8_t>& code = {});
+  Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  code = {});
   Method(const Method&);
   Method& operator=(const Method&);
 
@@ -70,7 +70,7 @@ class LIEF_API Method : public Object {
   const quick_code_t& quick_code() const;
   void quick_code(const quick_code_t& code);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Method& rhs) const;
   bool operator!=(const Method& rhs) const;

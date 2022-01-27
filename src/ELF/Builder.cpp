@@ -81,13 +81,13 @@ Builder::Builder(Binary& binary) :
         std::abort();
       }
   }
-  this->ios_.reserve(binary.original_size());
-  this->ios_.set_endian_swap(this->should_swap());
+  ios_.reserve(binary.original_size());
+  ios_.set_endian_swap(should_swap());
 }
 
 
 bool Builder::should_swap() const {
-  switch (this->binary_->header().abstract_endianness()) {
+  switch (binary_->header().abstract_endianness()) {
 #ifdef __BYTE_ORDER__
 #if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
     case ENDIANNESS::ENDIAN_BIG:
@@ -104,15 +104,15 @@ bool Builder::should_swap() const {
 
 
 void Builder::build() {
-  if(this->binary_->type() == ELF_CLASS::ELFCLASS32) {
-    this->build<ELF32>();
+  if(binary_->type() == ELF_CLASS::ELFCLASS32) {
+    build<details::ELF32>();
   } else {
-    this->build<ELF64>();
+    build<details::ELF64>();
   }
 }
 
 const std::vector<uint8_t>& Builder::get_build() {
-  return this->ios_.raw();
+  return ios_.raw();
 }
 
 
@@ -124,20 +124,20 @@ Builder& Builder::force_relocations(bool flag) {
 
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
-  if (not output_file) {
+  if (!output_file) {
     LIEF_ERR("Can't open {}!", filename);
     return;
   }
   std::vector<uint8_t> content;
-  this->ios_.move(content);
+  ios_.move(content);
   output_file.write(reinterpret_cast<const char*>(content.data()), content.size());
 }
 
 
 uint32_t Builder::sort_dynamic_symbols() {
   static const std::string dynsym_section_name = ".dynsym";
-  const auto it_begin = std::begin(this->binary_->dynamic_symbols_);
-  const auto it_end = std::end(this->binary_->dynamic_symbols_);
+  const auto it_begin = std::begin(binary_->dynamic_symbols_);
+  const auto it_end = std::end(binary_->dynamic_symbols_);
 
   const auto it_first_non_local_symbol =
       std::stable_partition(it_begin, it_end, [] (const Symbol* sym) {
@@ -147,8 +147,8 @@ uint32_t Builder::sort_dynamic_symbols() {
   const uint32_t first_non_local_symbol_index =
       std::distance(it_begin, it_first_non_local_symbol);
 
-  if (this->binary_->has_section(dynsym_section_name)) {
-    Section& section = this->binary_->get_section(dynsym_section_name);
+  if (binary_->has_section(dynsym_section_name)) {
+    Section& section = binary_->get_section(dynsym_section_name);
     if (section.information() != first_non_local_symbol_index) {
       // TODO: Erase null entries of dynamic symbol table and symbol version
       // table if information of .dynsym section is smaller than null entries
@@ -175,20 +175,18 @@ uint32_t Builder::sort_dynamic_symbols() {
 
 void Builder::build_empty_symbol_gnuhash() {
   LIEF_DEBUG("Build empty GNU Hash");
-  auto&& it_gnuhash = std::find_if(
-      std::begin(this->binary_->sections_), std::end(this->binary_->sections_),
-      [] (const Section* section)
-      {
-        return section != nullptr and section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
-      });
+  const auto it_gnuhash = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
+                                       [] (const Section* section) {
+                                         return section->type() == ELF_SECTION_TYPES::SHT_GNU_HASH;
+                                       });
 
-  if (it_gnuhash == std::end(this->binary_->sections_)) {
+  if (it_gnuhash == std::end(binary_->sections_)) {
     throw corrupted("Unable to find the .gnu.hash section");
   }
 
   Section* gnu_hash_section = *it_gnuhash;
 
-  vector_iostream content(this->should_swap());
+  vector_iostream content(should_swap());
   const uint32_t nb_buckets = 1;
   const uint32_t shift2     = 0;
   const uint32_t maskwords  = 1;
@@ -222,7 +220,7 @@ void Builder::build(const Note& note, std::set<Section*>* sections) {
     return;
   }
 
-  Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
+  Segment& segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
 
   auto range_secname = note_to_section_map.equal_range(note.type());
 
@@ -249,13 +247,13 @@ void Builder::build(const Note& note, std::set<Section*>* sections) {
   const auto& it_offset = offset_map.find(&note);
 
   // Link section and notes
-  if (binary_->has(note.type()) and has_section) {
+  if (binary_->has(note.type()) && has_section) {
     if (it_offset == std::end(offset_map)) {
       LIEF_ERR("Can't find {}", to_string(note.type()));
       return;
     }
     const size_t note_offset = it_offset->second;
-    Section& section = this->binary_->get_section(section_name);
+    Section& section = binary_->get_section(section_name);
     if (sections->insert(&section).second) {
       section.offset(segment_note.file_offset() + note_offset);
       section.size(note.size());
@@ -264,7 +262,7 @@ void Builder::build(const Note& note, std::set<Section*>* sections) {
       // This kind of note has a dedicated segment while others don't
       // Therefore, when relocating this note, we need
       // to update the segment as well.
-      if (note.type() == NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0 and
+      if (note.type() == NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0 &&
           binary_->has(SEGMENT_TYPES::PT_GNU_PROPERTY)) {
         Segment& seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY);
         seg.file_offset(section.offset());
@@ -289,9 +287,9 @@ Section& Builder::array_section(Binary& bin, uint64_t addr) {
   };
 
   for (Section* section : bin.sections_) {
-    if (section->virtual_address() >= addr and
+    if (section->virtual_address() >= addr &&
         addr < (section->virtual_address() + section->size())
-        and ARRAY_TYPES.count(section->type()) > 0) {
+        && ARRAY_TYPES.count(section->type()) > 0) {
       return *section;
     }
   }

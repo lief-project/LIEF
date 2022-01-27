@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <memory>
+
 #include "logging.hpp"
 
 #include "LIEF/VDEX/Parser.hpp"
@@ -44,32 +46,32 @@ std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std:
 
 Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{data})}
+  stream_{std::make_unique<VectorStream>(data)}
 {
-  if (not is_vdex(data)) {
+  if (!is_vdex(data)) {
     LIEF_ERR("{} is not a VDEX file!", name);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   vdex_version_t version = VDEX::version(data);
-  this->init(name, version);
+  init(name, version);
 }
 
 Parser::Parser(const std::string& file) :
   file_{new File{}},
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{file})}
+  stream_{std::make_unique<VectorStream>(file)}
 {
-  if (not is_vdex(file)) {
+  if (!is_vdex(file)) {
     LIEF_ERR("{} is not a VDEX file!", file);
-    delete this->file_;
-    this->file_ = nullptr;
+    delete file_;
+    file_ = nullptr;
     return;
   }
 
   vdex_version_t version = VDEX::version(file);
-  this->init(filesystem::path(file).filename(), version);
+  init(filesystem::path(file).filename(), version);
 }
 
 
@@ -77,15 +79,15 @@ void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   LIEF_DEBUG("VDEX version: {:d}", version);
 
   if (version <= VDEX_6::vdex_version) {
-    return this->parse_file<VDEX6>();
+    return parse_file<VDEX6>();
   }
 
   if (version <= VDEX_10::vdex_version) {
-    return this->parse_file<VDEX10>();
+    return parse_file<VDEX10>();
   }
 
   if (version <= VDEX_11::vdex_version) {
-    return this->parse_file<VDEX11>();
+    return parse_file<VDEX11>();
   }
 }
 

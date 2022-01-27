@@ -34,14 +34,17 @@ using setter_t = void (Header::*)(T);
 template<>
 void create<Header>(py::module& m) {
 
-  py::class_<Header, LIEF::Object>(m, "Header")
+  py::class_<Header, LIEF::Object>(m, "Header",
+      "Class that represents the Mach-O header")
     .def(py::init<>())
 
     .def_property("magic",
         static_cast<getter_t<MACHO_TYPES>>(&Header::magic),
         static_cast<setter_t<MACHO_TYPES>>(&Header::magic),
-        ""
-        )
+        R"delim(
+        The Mach-O magic bytes. These bytes determine whether it is
+        a 32 bits Mach-O, a 64 bits Mach-O files etc.
+        )delim")
 
     .def_property("cpu_type",
         static_cast<getter_t<CPU_TYPES>>(&Header::cpu_type),
@@ -51,7 +54,11 @@ void create<Header>(py::module& m) {
     .def_property("cpu_subtype",
         static_cast<getter_t<uint32_t>>(&Header::cpu_subtype),
         static_cast<setter_t<uint32_t>>(&Header::cpu_subtype),
-        "CPU subtype")
+        R"delim(
+        Return the CPU subtype supported by the Mach-O binary.
+        For ARM architectures, this value could represent the minimum version
+        for which the Mach-O binary has been compiled for.
+        )delim")
 
     .def_property("file_type",
         static_cast<getter_t<FILE_TYPES>>(&Header::file_type),
@@ -76,7 +83,7 @@ void create<Header>(py::module& m) {
     .def_property("reserved",
         static_cast<getter_t<uint32_t>>(&Header::reserved),
         static_cast<setter_t<uint32_t>>(&Header::reserved),
-        "")
+        "According to the official documentation, a reserved value")
 
     .def_property_readonly("flags_list",
         &Header::flags_list,

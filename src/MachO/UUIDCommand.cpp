@@ -29,10 +29,10 @@ UUIDCommand& UUIDCommand::operator=(const UUIDCommand&) = default;
 UUIDCommand::UUIDCommand(const UUIDCommand&) = default;
 UUIDCommand::~UUIDCommand() = default;
 
-UUIDCommand::UUIDCommand(const uuid_command *uuidCmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(uuidCmd->cmd), uuidCmd->cmdsize}
+UUIDCommand::UUIDCommand(const details::uuid_command& uuid) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(uuid.cmd), uuid.cmdsize}
 {
-  std::copy(std::begin(uuidCmd->uuid), std::end(uuidCmd->uuid), std::begin(this->uuid_));
+  std::copy(std::begin(uuid.uuid), std::end(uuid.uuid), std::begin(uuid_));
 }
 
 UUIDCommand* UUIDCommand::clone() const {
@@ -40,11 +40,11 @@ UUIDCommand* UUIDCommand::clone() const {
 }
 
 uuid_t UUIDCommand::uuid() const {
-  return this->uuid_;
+  return uuid_;
 }
 
 void UUIDCommand::uuid(const uuid_t& uuid) {
-  this->uuid_ = uuid;
+  uuid_ = uuid;
 }
 
 
@@ -60,13 +60,13 @@ bool UUIDCommand::operator==(const UUIDCommand& rhs) const {
 }
 
 bool UUIDCommand::operator!=(const UUIDCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 std::ostream& UUIDCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  for (uint32_t x : this->uuid()) {
+  for (uint32_t x : uuid()) {
     os << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(x) << " ";
   }
   os << std::setfill(' ');

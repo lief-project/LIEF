@@ -47,29 +47,29 @@ NoteAbi::NoteAbi(Note& note) :
 {}
 
 NoteAbi::version_t NoteAbi::version() const {
-  return this->version_;
+  return version_;
 }
 
 NOTE_ABIS NoteAbi::abi() const {
-  return this->abi_;
+  return abi_;
 }
 
 void NoteAbi::parse() {
-  const description_t& description = this->description();
+  const description_t& desc = description();
 
   // Parse ABI
-  if (description.size() < (abi_offset + abi_size)) {
+  if (desc.size() < (abi_offset + abi_size)) {
     return;
   }
-  this->abi_ = static_cast<NOTE_ABIS>(*reinterpret_cast<const uint32_t*>(description.data()));
+  abi_ = static_cast<NOTE_ABIS>(*reinterpret_cast<const uint32_t*>(desc.data()));
 
   // Parse Version
-  if (description.size() < (version_offset + version_size)) {
+  if (desc.size() < (version_offset + version_size)) {
     return;
   }
 
-  const uint32_t* version = reinterpret_cast<const uint32_t*>(description.data() + version_offset);
-  this->version_ = {{version[0], version[1], version[2]}};
+  const auto* version = reinterpret_cast<const uint32_t*>(desc.data() + version_offset);
+  version_ = {{version[0], version[1], version[2]}};
 }
 
 
@@ -85,12 +85,12 @@ bool NoteAbi::operator==(const NoteAbi& rhs) const {
 }
 
 bool NoteAbi::operator!=(const NoteAbi& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 void NoteAbi::dump(std::ostream& os) const {
     version_t version = this->version();
-    std::string version_str = "";
+    std::string version_str;
     // Major
     version_str += std::to_string(std::get<0>(version));
     version_str += ".";
@@ -102,7 +102,7 @@ void NoteAbi::dump(std::ostream& os) const {
     // Patch
     version_str += std::to_string(std::get<2>(version));
 
-    os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(this->abi()) << std::endl;
+    os << std::setw(33) << std::setfill(' ') << "ABI:"     << to_string(abi()) << std::endl;
     os << std::setw(33) << std::setfill(' ') << "Version:" << version_str           << std::endl;
 }
 

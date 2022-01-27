@@ -1,5 +1,5 @@
 if(__add_lief_git)
-	return()
+  return()
 endif()
 set(__add_lief_git ON)
 

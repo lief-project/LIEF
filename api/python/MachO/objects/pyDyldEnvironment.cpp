@@ -36,7 +36,11 @@ using setter_t = void (DyldEnvironment::*)(T);
 template<>
 void create<DyldEnvironment>(py::module& m) {
 
-  py::class_<DyldEnvironment, LoadCommand>(m, "DyldEnvironment")
+  py::class_<DyldEnvironment, LoadCommand>(m, "DyldEnvironment",
+      R"delim(
+      Class that represents a LC_DYLD_ENVIRONMENT which is
+      used by the Mach-O linker/loader to initialize an environment variable
+      )delim")
 
     .def_property("value",
         static_cast<getter_t<const std::string&>>(&DyldEnvironment::value),

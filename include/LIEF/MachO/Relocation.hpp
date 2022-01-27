@@ -33,7 +33,7 @@ namespace MachO {
 
 class BinaryParser;
 
-//! Object modeling relocation
+//! Class that represents a Mach-O relocation
 //!
 //! @see:
 //!   * MachO::RelocationObject
@@ -43,94 +43,84 @@ class LIEF_API Relocation : public LIEF::Relocation {
   friend class BinaryParser;
 
   public:
-    using LIEF::Relocation::address;
-    using LIEF::Relocation::size;
+  using LIEF::Relocation::address;
+  using LIEF::Relocation::size;
 
-    Relocation();
-    Relocation(uint64_t address, uint8_t type);
+  Relocation();
+  Relocation(uint64_t address, uint8_t type);
 
-    Relocation& operator=(const Relocation& other);
-    Relocation(const Relocation& other);
-    void swap(Relocation& other);
+  Relocation& operator=(const Relocation& other);
+  Relocation(const Relocation& other);
+  void swap(Relocation& other);
 
-    virtual ~Relocation();
+  ~Relocation() override;
 
-    virtual Relocation* clone() const = 0;
+  virtual Relocation* clone() const = 0;
 
-    // For @link MachO::FILE_TYPES::MH_OBJECT object @endlink this is an
-    // offset from the start of the @link MachO::Section section @endlink
-    // to the item containing the address requiring relocation.
-    //virtual uint64_t address() const override;
+  //! Indicates whether the item containing the address to be
+  //! relocated is part of a CPU instruction that uses PC-relative addressing.
+  //!
+  //! For addresses contained in PC-relative instructions, the CPU adds the address of
+  //! the instruction to the address contained in the instruction.
+  virtual bool is_pc_relative() const = 0;
 
-    //! Indicates whether the item containing the address to be
-    //! relocated is part of a CPU instruction that uses PC-relative addressing.
-    //!
-    //! For addresses contained in PC-relative instructions, the CPU adds the address of
-    //! the instruction to the address contained in the instruction.
-    virtual bool is_pc_relative() const = 0;
+  //! Type of the relocation according to the
+  //! Relocation::architecture and/or the Relocation::origin
+  //!
+  //! See:
+  //!   * MachO::X86_RELOCATION
+  //!   * MachO::X86_64_RELOCATION
+  //!   * MachO::PPC_RELOCATION
+  //!   * MachO::ARM_RELOCATION
+  //!   * MachO::ARM64_RELOCATION
+  //!   * MachO::REBASE_TYPES
+  virtual uint8_t type() const;
 
-    //! Type of the relocation according to the
-    //! @link Relocation::architecture architecture@endlink and/or
-    //! @link Relocation::origin origin@endlink
-    //!
-    //! See:
-    //!   * MachO::X86_RELOCATION
-    //!   * MachO::X86_64_RELOCATION
-    //!   * MachO::PPC_RELOCATION
-    //!   * MachO::ARM_RELOCATION
-    //!   * MachO::ARM64_RELOCATION
-    //!   * MachO::REBASE_TYPES
-    virtual uint8_t type() const;
+  //! Achitecture targeted by this relocation
+  CPU_TYPES architecture() const;
 
-    //! @link Relocation::architecture architecture @endlink of the relocation
-    CPU_TYPES architecture() const;
+  //! Origin of the relocation
+  virtual RELOCATION_ORIGINS origin() const = 0;
 
-    //! Origin of the relocation
-    virtual RELOCATION_ORIGINS origin() const = 0;
+  //! ``true`` if the relocation has a symbol associated with
+  bool has_symbol() const;
 
-    //! ``true`` if the relocation has a symbol associated with
-    bool has_symbol() const;
+  //! Symbol associated with the relocation (if any)
+  Symbol& symbol();
+  const Symbol& symbol() const;
 
-    //! Symbol associated with the relocation (if any)
-    Symbol& symbol();
-    const Symbol& symbol() const;
+  //! ``true`` if the relocation has a section associated with
+  bool has_section() const;
 
-    //! ``true`` if the relocation has a section associated with
-    bool has_section() const;
+  //! Section associated with the relocation (if any)
+  Section& section();
+  const Section& section() const;
 
-    //! Section associated with the relocation (if any)
-    Section& section();
-    const Section& section() const;
+  //! ``true`` if the relocation has a SegmentCommand associated with
+  bool has_segment() const;
 
-    //! ``true`` if the relocation has a SegmentCommand associated with
-    bool has_segment() const;
+  //! SegmentCommand associated with the relocation (if any)
+  SegmentCommand& segment();
+  const SegmentCommand& segment() const;
 
-    //! SegmentCommand associated with the relocation (if any)
-    SegmentCommand& segment();
-    const SegmentCommand& segment() const;
+  virtual void pc_relative(bool val) = 0;
+  virtual void type(uint8_t type);
 
-    //virtual void address(uint64_t address) override;
-    virtual void pc_relative(bool val) = 0;
-    virtual void type(uint8_t type);
+  bool operator==(const Relocation& rhs) const;
+  bool operator!=(const Relocation& rhs) const;
 
-    bool operator==(const Relocation& rhs) const;
-    bool operator!=(const Relocation& rhs) const;
+  void accept(Visitor& visitor) const override;
 
-    virtual void accept(Visitor& visitor) const override;
+  virtual std::ostream& print(std::ostream& os) const;
 
-    virtual std::ostream& print(std::ostream& os) const;
-
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
-
-
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   protected:
-    Symbol*            symbol_{nullptr};
-    uint8_t            type_;
-    CPU_TYPES          architecture_;
-    Section*           section_{nullptr};
-    SegmentCommand*    segment_{nullptr};
-
+  Symbol*         symbol_ = nullptr;
+  uint8_t         type_;
+  CPU_TYPES       architecture_;
+  Section*        section_ = nullptr;
+  SegmentCommand* segment_ = nullptr;
 };
 
 }

@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     std::cout << binary->get_export() << std::endl;
   }
 
-  if (binary->symbols().size() > 0) {
+  if (!binary->symbols().empty()) {
     std::cout << "== Symbols ==" << std::endl;
     for (const Symbol& symbol : binary->symbols()) {
       std::cout << symbol << std::endl;

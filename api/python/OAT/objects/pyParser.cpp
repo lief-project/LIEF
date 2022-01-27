@@ -47,10 +47,10 @@ void create<Parser>(py::module& m) {
 
   m.def("parse",
       [] (py::object byteio, const std::string& name) {
-        auto&& io = py::module::import("io");
-        auto&& RawIOBase = io.attr("RawIOBase");
-        auto&& BufferedIOBase = io.attr("BufferedIOBase");
-        auto&& TextIOBase = io.attr("TextIOBase");
+        const auto& io = py::module::import("io");
+        const auto& RawIOBase = io.attr("RawIOBase");
+        const auto& BufferedIOBase = io.attr("BufferedIOBase");
+        const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
 

@@ -30,7 +30,10 @@ using setter_t = void (Symbol::*)(T);
 template<>
 void create<Symbol>(py::module& m) {
 
-  py::class_<Symbol, Object>(m, "Symbol")
+  py::class_<Symbol, Object>(m, "Symbol",
+      R"delim(
+      This class represents a symbol in an executable format.
+      )delim")
     .def(py::init())
 
     .def_property("name",

@@ -28,7 +28,12 @@
 namespace LIEF {
 namespace MachO {
 class Builder;
+
+namespace details {
 struct load_command;
+}
+
+//! Based class for the Mach-O load commands
 class LIEF_API LoadCommand : public Object {
   friend class Builder;
   public:
@@ -36,7 +41,7 @@ class LIEF_API LoadCommand : public Object {
 
   public:
   LoadCommand();
-  LoadCommand(const load_command* command);
+  LoadCommand(const details::load_command& command);
   LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
 
   LoadCommand& operator=(LoadCommand copy);
@@ -46,7 +51,6 @@ class LIEF_API LoadCommand : public Object {
   virtual LoadCommand* clone() const;
 
   virtual ~LoadCommand();
-
 
   //! Command type
   LOAD_COMMAND_TYPES command() const;
@@ -70,15 +74,15 @@ class LIEF_API LoadCommand : public Object {
   bool operator==(const LoadCommand& rhs) const;
   bool operator!=(const LoadCommand& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd);
 
   protected:
-  raw_t               originalData_;
-  LOAD_COMMAND_TYPES  command_;
-  uint32_t            size_{0};
-  uint64_t            commandOffset_{0};
+  raw_t original_data_;
+  LOAD_COMMAND_TYPES command_;
+  uint32_t size_ = 0;
+  uint64_t command_offset_ = 0;
 };
 
 }

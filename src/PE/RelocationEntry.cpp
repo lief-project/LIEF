@@ -30,84 +30,77 @@ namespace PE {
 RelocationEntry::RelocationEntry(const RelocationEntry& other) :
   LIEF::Relocation{other},
   position_{other.position_},
-  type_{other.type_},
-  relocation_{nullptr}
+  type_{other.type_}
 {}
 
 RelocationEntry& RelocationEntry::operator=(RelocationEntry other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 RelocationEntry::~RelocationEntry() = default;
 
 RelocationEntry::RelocationEntry() :
-  LIEF::Relocation{},
   position_{0},
-  type_{RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE},
-  relocation_{nullptr}
+  type_{RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE}
 {}
 
 RelocationEntry::RelocationEntry(uint16_t data) :
-  LIEF::Relocation{},
   position_{static_cast<uint16_t>(data & 0x0FFF)},
-  type_{static_cast<RELOCATIONS_BASE_TYPES>(data >> 12)},
-  relocation_{nullptr}
+  type_{static_cast<RELOCATIONS_BASE_TYPES>(data >> 12)}
 {}
 
 
 RelocationEntry::RelocationEntry(uint16_t position, RELOCATIONS_BASE_TYPES type) :
-  LIEF::Relocation{},
   position_{position},
-  type_{type},
-  relocation_{nullptr}
+  type_{type}
 {}
 
 
 void RelocationEntry::swap(RelocationEntry& other) {
   LIEF::Relocation::swap(other);
-  std::swap(this->position_,   other.position_);
-  std::swap(this->type_,       other.type_);
-  std::swap(this->relocation_, other.relocation_);
+  std::swap(position_,   other.position_);
+  std::swap(type_,       other.type_);
+  std::swap(relocation_, other.relocation_);
 }
 
 
 uint16_t RelocationEntry::data() const {
-  return (static_cast<uint8_t>(this->type_) << 12 | static_cast<uint16_t>(this->position_));
+  return (static_cast<uint8_t>(type_) << 12 | static_cast<uint16_t>(position_));
 }
 
 
 uint16_t RelocationEntry::position() const {
-  return this->position_;
+  return position_;
 }
 
 
 RELOCATIONS_BASE_TYPES RelocationEntry::type() const {
-  return this->type_;
+  return type_;
 }
 
 void RelocationEntry::data(uint16_t data) {
-  this->position_ = static_cast<uint16_t>(data & 0x0FFF);
-  this->type_     = static_cast<RELOCATIONS_BASE_TYPES>(data >> 12);
+  position_ = static_cast<uint16_t>(data & 0x0FFF);
+  type_     = static_cast<RELOCATIONS_BASE_TYPES>(data >> 12);
 }
 
 void RelocationEntry::position(uint16_t position) {
-  this->position_ = position;
+  position_ = position;
 }
 
 
 void RelocationEntry::type(RELOCATIONS_BASE_TYPES type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 
 
 uint64_t RelocationEntry::address() const {
-  if (this->relocation_ != nullptr) {
-    return this->relocation_->virtual_address() + this->position();
+  if (relocation_ != nullptr) {
+    return relocation_->virtual_address() + position();
   }
 
-  return this->position();
+  return position();
 }
 
 void RelocationEntry::address(uint64_t /*address*/) {
@@ -115,31 +108,27 @@ void RelocationEntry::address(uint64_t /*address*/) {
 }
 
 size_t RelocationEntry::size() const {
-  switch (this->type()) {
+  switch (type()) {
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_LOW:
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH:
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHADJ:
       {
         return 16;
-        break;
       }
 
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHLOW: // Addr += delta
       {
         return 32;
-        break;
       }
 
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_DIR64: // Addr += delta
       {
         return 64;
-        break;
       }
     case RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE:
     default:
       {
         return 0;
-        break;
       }
   }
   return 0;
@@ -160,7 +149,7 @@ bool RelocationEntry::operator==(const RelocationEntry& rhs) const {
 }
 
 bool RelocationEntry::operator!=(const RelocationEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry) {

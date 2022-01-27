@@ -13,7 +13,7 @@
 namespace LIEF {
 namespace ELF {
 
-//! Compute the size and the offsets of the elements
+//! Class used to compute the size and the offsets of the elements
 //! needed to rebuild the ELF file.
 class LIEF_LOCAL ObjectFileLayout : public Layout {
   public:
@@ -40,7 +40,6 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
   }
 
   void relocate() {
-
     uint64_t last_offset_sections = 0;
 
     for (Section* section : binary_->sections_) {
@@ -55,7 +54,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
 
     Header& hdr = binary_->header();
     for (Section& sec : binary_->sections()) {
-      if (not should_relocate(sec)) {
+      if (!should_relocate(sec)) {
         continue;
       }
 
@@ -74,7 +73,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       last_offset_sections += needed_size;
     }
 
-    if (strtab_section_ != nullptr and not is_strtab_shared_shstrtab()) {
+    if (strtab_section_ != nullptr && !is_strtab_shared_shstrtab()) {
       strtab_section_->content(raw_strtab());
     }
   }

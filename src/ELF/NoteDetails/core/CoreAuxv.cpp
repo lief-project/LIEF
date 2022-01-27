@@ -45,12 +45,12 @@ CoreAuxv* CoreAuxv::clone() const {
 
 
 const CoreAuxv::val_context_t& CoreAuxv::values() const {
-  return this->ctx_;
+  return ctx_;
 }
 
 
 uint64_t CoreAuxv::get(LIEF::ELF::AUX_TYPE atype, bool* error) const {
-  if (not this->has(atype)) {
+  if (!has(atype)) {
     if (error != nullptr) {
       *error = true;
     }
@@ -60,22 +60,22 @@ uint64_t CoreAuxv::get(LIEF::ELF::AUX_TYPE atype, bool* error) const {
   if (error != nullptr) {
     *error = false;
   }
-  return this->ctx_.at(atype);
+  return ctx_.at(atype);
 }
 
-bool CoreAuxv::has(LIEF::ELF::AUX_TYPE atype) const {
-  return this->ctx_.find(atype) != std::end(this->ctx_);
+bool CoreAuxv::has(LIEF::ELF::AUX_TYPE reg) const {
+  return ctx_.find(reg) != std::end(ctx_);
 }
 
 
 void CoreAuxv::values(const val_context_t& ctx) {
-  this->ctx_ = ctx;
-  this->build();
+  ctx_ = ctx;
+  build();
 }
 
 bool CoreAuxv::set(LIEF::ELF::AUX_TYPE atype, uint64_t value) {
-  this->ctx_[atype] = value;
-  this->build();
+  ctx_[atype] = value;
+  build();
   return true;
 }
 
@@ -90,11 +90,11 @@ bool CoreAuxv::operator==(const CoreAuxv& rhs) const {
 }
 
 bool CoreAuxv::operator!=(const CoreAuxv& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 uint64_t& CoreAuxv::operator[](LIEF::ELF::AUX_TYPE atype) {
-  return this->ctx_[atype];
+  return ctx_[atype];
 }
 
 void CoreAuxv::dump(std::ostream& os) const {
@@ -102,7 +102,7 @@ void CoreAuxv::dump(std::ostream& os) const {
   os << std::left;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Auxiliary values: "<< std::dec << std::endl;
-  for (auto&& val : this->ctx_) {
+  for (const auto& val : ctx_) {
     os << std::setw(14) << std::setfill(' ') << to_string(val.first) << ": " << std::hex << std::showbase << val.second << std::endl;
   }
   os << std::endl;
@@ -110,18 +110,18 @@ void CoreAuxv::dump(std::ostream& os) const {
 
 
 void CoreAuxv::parse() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->parse_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->parse_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    parse_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    parse_<details::ELF32>();
   }
 }
 
 void CoreAuxv::build() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->build_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->build_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    build_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    build_<details::ELF32>();
   }
 }
 

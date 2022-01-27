@@ -25,33 +25,39 @@
 
 namespace LIEF {
 namespace MachO {
+
+namespace details {
 struct source_version_command;
+}
+
+//! Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
+//! This command is used to provide the *version* of the sources used to build the binary
 class LIEF_API SourceVersion : public LoadCommand {
 
   public:
-  //! @brief Version is an array of **5** integers
+  //! Version is an array of **5** integers
   using version_t = std::array<uint32_t, 5>;
 
   SourceVersion();
-  SourceVersion(const source_version_command *version_cmd);
+  SourceVersion(const details::source_version_command& version_cmd);
 
   SourceVersion& operator=(const SourceVersion& copy);
   SourceVersion(const SourceVersion& copy);
 
-  virtual SourceVersion* clone() const override;
+  SourceVersion* clone() const override;
 
   virtual ~SourceVersion();
 
-  //! @brief Return the version as an array
+  //! Return the version as an array
   const SourceVersion::version_t& version() const;
   void version(const SourceVersion::version_t& version);
 
   bool operator==(const SourceVersion& rhs) const;
   bool operator!=(const SourceVersion& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   SourceVersion::version_t version_;

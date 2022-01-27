@@ -24,29 +24,25 @@
 namespace LIEF {
 namespace ELF {
 SysvHash& SysvHash::operator=(const SysvHash&) = default;
-SysvHash::SysvHash(const SysvHash&)           = default;
-SysvHash::~SysvHash()                    = default;
-
-SysvHash::SysvHash() :
-  buckets_{},
-  chains_{}
-{}
+SysvHash::SysvHash(const SysvHash&)            = default;
+SysvHash::~SysvHash()                          = default;
+SysvHash::SysvHash()                           = default;
 
 
 uint32_t SysvHash::nbucket() const {
-  return static_cast<uint32_t>(this->buckets_.size());
+  return static_cast<uint32_t>(buckets_.size());
 }
 
 uint32_t SysvHash::nchain() const {
-  return static_cast<uint32_t>(this->chains_.size());
+  return static_cast<uint32_t>(chains_.size());
 }
 
 const std::vector<uint32_t>& SysvHash::buckets() const {
-  return this->buckets_;
+  return buckets_;
 }
 
 const std::vector<uint32_t>& SysvHash::chains() const {
-  return this->chains_;
+  return chains_;
 }
 
 bool SysvHash::operator==(const SysvHash& rhs) const {
@@ -56,7 +52,7 @@ bool SysvHash::operator==(const SysvHash& rhs) const {
 }
 
 bool SysvHash::operator!=(const SysvHash& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

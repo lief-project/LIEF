@@ -14,6 +14,7 @@ namespace DEX {
 class Parser;
 class Class;
 
+//! Class which represent a DEX Field
 class LIEF_API Field : public Object {
   friend class Parser;
   public:
@@ -21,7 +22,7 @@ class LIEF_API Field : public Object {
 
   public:
   Field();
-  Field(const std::string& name, Class* parent = nullptr);
+  Field(std::string name, Class* parent = nullptr);
 
   Field(const Field&);
   Field& operator=(const Field&);
@@ -30,6 +31,7 @@ class LIEF_API Field : public Object {
   const std::string& name() const;
 
   //! True if a class is associated with this field
+  //! (which should be the case)
   bool has_class() const;
 
   //! Class associated with this Field
@@ -46,10 +48,12 @@ class LIEF_API Field : public Object {
   const Type& type() const;
   Type& type();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
+  //! Check if the field has the given ACCESS_FLAGS
   bool has(ACCESS_FLAGS f) const;
 
+  //! ACCESS_FLAGS as a list
   access_flags_list_t access_flags() const;
 
   bool operator==(const Field& rhs) const;
@@ -64,12 +68,11 @@ class LIEF_API Field : public Object {
 
   private:
   std::string name_;
-  Class* parent_{nullptr};
-  Type* type_{nullptr};
+  Class* parent_ = nullptr;
+  Type* type_ = nullptr;
   uint32_t access_flags_ = 0;
   uint32_t original_index_ = -1u;
   bool is_static_ = false;
-
 };
 
 } // Namespace DEX

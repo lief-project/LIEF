@@ -30,7 +30,7 @@ const char* to_string(MACHO_TYPES e) {
       { MACHO_TYPES::FAT_MAGIC,   "FAT_MAGIC"},
       { MACHO_TYPES::FAT_CIGAM,   "FAT_CIGAM"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -49,7 +49,7 @@ const char* to_string(FILE_TYPES e) {
       { FILE_TYPES::MH_DSYM,          "DSYM"},
       { FILE_TYPES::MH_KEXT_BUNDLE,   "KEXT_BUNDLE"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -110,7 +110,7 @@ const char* to_string(LOAD_COMMAND_TYPES e) {
       { LOAD_COMMAND_TYPES::LC_DYLD_CHAINED_FIXUPS,      "DYLD_CHAINED_FIXUPS"},
       { LOAD_COMMAND_TYPES::LC_FILESET_ENTRY,            "FILESET_ENTRY"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -128,7 +128,7 @@ const char* to_string(CPU_TYPES e) {
       { CPU_TYPES::CPU_TYPE_POWERPC,   "POWERPC"},
       { CPU_TYPES::CPU_TYPE_POWERPC64, "POWERPC64"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -161,7 +161,7 @@ const char* to_string(HEADER_FLAGS e) {
       { HEADER_FLAGS::MH_NO_HEAP_EXECUTION       ,"NO_HEAP_EXECUTION"},
       { HEADER_FLAGS::MH_APP_EXTENSION_SAFE      ,"APP_EXTENSION_SAFE"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -190,7 +190,7 @@ const char* to_string(MACHO_SECTION_TYPES e) {
       { MACHO_SECTION_TYPES::S_THREAD_LOCAL_VARIABLE_POINTERS,      "THREAD_LOCAL_VARIABLE_POINTERS"},
       { MACHO_SECTION_TYPES::S_THREAD_LOCAL_INIT_FUNCTION_POINTERS, "THREAD_LOCAL_INIT_FUNCTION_POINTERS"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -207,7 +207,7 @@ const char* to_string(MACHO_SECTION_FLAGS e) {
     { MACHO_SECTION_FLAGS::S_ATTR_EXT_RELOC,           "EXT_RELOC"},
     { MACHO_SECTION_FLAGS::S_ATTR_LOC_RELOC,           "LOC_RELOC"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -219,7 +219,7 @@ const char* to_string(MACHO_SYMBOL_TYPES e) {
     { MACHO_SYMBOL_TYPES::N_TYPE, "TYPE"},
     { MACHO_SYMBOL_TYPES::N_EXT,  "EXT"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -231,7 +231,7 @@ const char* to_string(N_LIST_TYPES e) {
     { N_LIST_TYPES::N_PBUD, "PBUD"},
     { N_LIST_TYPES::N_INDR, "INDR"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -255,7 +255,7 @@ const char* to_string(SYMBOL_DESCRIPTIONS e) {
     { SYMBOL_DESCRIPTIONS::DYNAMIC_LOOKUP_ORDINAL,                    "DYNAMIC_LOOKUP_ORDINAL"},
     { SYMBOL_DESCRIPTIONS::EXECUTABLE_ORDINAL,                        "EXECUTABLE_ORDINAL"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -268,7 +268,7 @@ const char* to_string(X86_RELOCATION e) {
     { X86_RELOCATION::GENERIC_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
     { X86_RELOCATION::GENERIC_RELOC_TLV,            "TLV"            },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -286,7 +286,7 @@ const char* to_string(X86_64_RELOCATION e) {
     { X86_64_RELOCATION::X86_64_RELOC_SIGNED_4,   "SIGNED_4"   },
     { X86_64_RELOCATION::X86_64_RELOC_TLV,        "TLV"        },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -310,7 +310,7 @@ const char* to_string(PPC_RELOCATION e) {
     { PPC_RELOCATION::PPC_RELOC_LO14_SECTDIFF,  "LO14_SECTDIFF"  },
     { PPC_RELOCATION::PPC_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -328,7 +328,7 @@ const char* to_string(ARM_RELOCATION e) {
     { ARM_RELOCATION::ARM_RELOC_HALF,           "HALF"           },
     { ARM_RELOCATION::ARM_RELOC_HALF_SECTDIFF,  "HALF_SECTDIFF"  },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -347,7 +347,7 @@ const char* to_string(ARM64_RELOCATION e) {
     { ARM64_RELOCATION::ARM64_RELOC_TLVP_LOAD_PAGEOFF12, "TLVP_LOAD_PAGEOFF12" },
     { ARM64_RELOCATION::ARM64_RELOC_ADDEND,              "ADDEND"              },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -357,7 +357,7 @@ const char* to_string(RELOCATION_ORIGINS e) {
     { RELOCATION_ORIGINS::ORIGIN_DYLDINFO,    "DYLDINFO"    },
     { RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE, "RELOC_TABLE" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -367,7 +367,7 @@ const char* to_string(REBASE_TYPES e) {
     { REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32,  "TEXT_ABSOLUTE32" },
     { REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32,     "TEXT_PCREL32"    },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -379,7 +379,7 @@ const char* to_string(BINDING_CLASS e) {
     { BINDING_CLASS::BIND_CLASS_STANDARD, "STANDARD"  },
     { BINDING_CLASS::BIND_CLASS_THREADED, "THREADED"  },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -396,7 +396,7 @@ const char* to_string(REBASE_OPCODES e) {
     { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB,            "DO_REBASE_ADD_ADDR_ULEB"            },
     { REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB, "DO_REBASE_ULEB_TIMES_SKIPPING_ULEB" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -407,7 +407,7 @@ const char* to_string(BIND_TYPES e) {
     { BIND_TYPES::BIND_TYPE_TEXT_ABSOLUTE32, "TEXT_ABSOLUTE32" },
     { BIND_TYPES::BIND_TYPE_TEXT_PCREL32,    "TEXT_PCREL32"    },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -418,7 +418,7 @@ const char* to_string(BIND_SPECIAL_DYLIB e) {
     { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE, "MAIN_EXECUTABLE" },
     { BIND_SPECIAL_DYLIB::BIND_SPECIAL_DYLIB_FLAT_LOOKUP,     "FLAT_LOOKUP"     },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -440,7 +440,7 @@ const char* to_string(BIND_OPCODES e) {
     { BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB, "DO_BIND_ULEB_TIMES_SKIPPING_ULEB" },
     { BIND_OPCODES::BIND_OPCODE_THREADED,                         "THREADED"                         },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -449,7 +449,7 @@ const char* to_string(BIND_SUBOPCODE_THREADED e) {
     { BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY,                            "THREADED_APPLY"                   },
     { BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB, "SET_BIND_ORDINAL_TABLE_SIZE_ULEB" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -459,7 +459,7 @@ const char* to_string(EXPORT_SYMBOL_KINDS e) {
     { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL, "THREAD_LOCAL" },
     { EXPORT_SYMBOL_KINDS::EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE,     "ABSOLUTE"     },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -469,7 +469,7 @@ const char* to_string(EXPORT_SYMBOL_FLAGS e) {
     { EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT,          "REEXPORT"          },
     { EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER, "STUB_AND_RESOLVER" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -480,7 +480,7 @@ const char* to_string(VM_PROTECTIONS e) {
     { VM_PROTECTIONS::VM_PROT_WRITE,   "WRITE"   },
     { VM_PROTECTIONS::VM_PROT_EXECUTE, "EXECUTE" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -491,7 +491,7 @@ const char* to_string(SYMBOL_ORIGINS e) {
     { SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT, "DYLD_EXPORT" },
     { SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB,   "LC_SYMTAB"   },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
@@ -505,7 +505,7 @@ const char* to_string(DataCodeEntry::TYPES e) {
     { DataCodeEntry::TYPES::JUMP_TABLE_32,     "JUMP_TABLE_32"     },
     { DataCodeEntry::TYPES::ABS_JUMP_TABLE_32, "ABS_JUMP_TABLE_32" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -517,7 +517,7 @@ const char* to_string(BuildVersion::PLATFORMS e) {
     { BuildVersion::PLATFORMS::TVOS,      "TVOS"      },
     { BuildVersion::PLATFORMS::WATCHOS,   "WATCHOS"   },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -529,7 +529,7 @@ const char* to_string(BuildToolVersion::TOOLS e) {
     { BuildToolVersion::TOOLS::CLANG,   "CLANG"     },
     { BuildToolVersion::TOOLS::LD,      "LD"        },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 

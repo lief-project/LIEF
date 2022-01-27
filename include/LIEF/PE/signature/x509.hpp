@@ -145,7 +145,8 @@ class LIEF_API x509 : public Object {
 
   //! Try to decrypt the given signature and check if it matches the given hash according to
   //! the hash algorithm provided
-  bool check_signature(const std::vector<uint8_t>& hash, const std::vector<uint8_t>& signature, ALGORITHMS digest) const;
+  bool check_signature(const std::vector<uint8_t>& hash,
+                       const std::vector<uint8_t>& signature, ALGORITHMS digest) const;
 
   //! The raw x509 bytes (DER encoded)
   std::vector<uint8_t> raw() const;
@@ -158,7 +159,7 @@ class LIEF_API x509 : public Object {
   std::unique_ptr<RsaInfo> rsa_info() const;
 
   //! Verify that this certificate has been used **to trust** the given certificate
-  VERIFICATION_FLAGS verify(const x509& child) const;
+  VERIFICATION_FLAGS verify(const x509& ca) const;
 
   //! Verify that this certificate **is trusted** by the given CA list
   VERIFICATION_FLAGS is_trusted_by(const std::vector<x509>& ca) const;
@@ -177,7 +178,7 @@ class LIEF_API x509 : public Object {
   //! The signature of the certificate
   std::vector<uint8_t> signature() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~x509();
 

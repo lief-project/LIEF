@@ -52,25 +52,10 @@ struct ThreadedBindData {
   uint8_t type            = 0;
 };
 
-DyldInfo::DyldInfo() :
-  LoadCommand{},
-  rebase_{},
-  rebase_opcodes_{},
-  bind_{},
-  bind_opcodes_{},
-  weak_bind_{},
-  weak_bind_opcodes_{},
-  lazy_bind_{},
-  lazy_bind_opcodes_{},
-  export_{},
-  export_trie_{},
-  export_info_{},
-  binding_info_{},
-  binary_{nullptr}
-{}
+DyldInfo::DyldInfo() = default;
 
 DyldInfo& DyldInfo::operator=(DyldInfo other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
@@ -85,10 +70,7 @@ DyldInfo::DyldInfo(const DyldInfo& copy) :
   lazy_bind_{copy.lazy_bind_},
   lazy_bind_opcodes_{copy.lazy_bind_opcodes_},
   export_{copy.export_},
-  export_trie_{copy.export_trie_},
-  export_info_{},
-  binding_info_{},
-  binary_{nullptr}
+  export_trie_{copy.export_trie_}
 {}
 
 
@@ -97,66 +79,58 @@ DyldInfo* DyldInfo::clone() const {
 }
 
 DyldInfo::~DyldInfo() {
-  for (BindingInfo* binfo : this->binding_info_) {
+  for (BindingInfo* binfo : binding_info_) {
     delete binfo;
   }
 
-  for (ExportInfo* einfo : this->export_info_) {
+  for (ExportInfo* einfo : export_info_) {
     delete einfo;
   }
 }
 
-DyldInfo::DyldInfo(const dyld_info_command *dyld_info_cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd->cmd), dyld_info_cmd->cmdsize},
-  rebase_{dyld_info_cmd->rebase_off, dyld_info_cmd->rebase_size},
-  rebase_opcodes_{},
-  bind_{dyld_info_cmd->bind_off, dyld_info_cmd->bind_size},
-  bind_opcodes_{},
-  weak_bind_{dyld_info_cmd->weak_bind_off, dyld_info_cmd->weak_bind_size},
-  weak_bind_opcodes_{},
-  lazy_bind_{dyld_info_cmd->lazy_bind_off, dyld_info_cmd->lazy_bind_size},
-  lazy_bind_opcodes_{},
-  export_{dyld_info_cmd->export_off, dyld_info_cmd->export_size},
-  export_trie_{},
-  export_info_{},
-  binding_info_{},
-  binary_{nullptr}
+DyldInfo::DyldInfo(const details::dyld_info_command& dyld_info_cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd.cmd), dyld_info_cmd.cmdsize},
+  rebase_{dyld_info_cmd.rebase_off, dyld_info_cmd.rebase_size},
+  bind_{dyld_info_cmd.bind_off, dyld_info_cmd.bind_size},
+  weak_bind_{dyld_info_cmd.weak_bind_off, dyld_info_cmd.weak_bind_size},
+  lazy_bind_{dyld_info_cmd.lazy_bind_off, dyld_info_cmd.lazy_bind_size},
+  export_{dyld_info_cmd.export_off, dyld_info_cmd.export_size}
 {}
 
 
 void DyldInfo::swap(DyldInfo& other) {
   LoadCommand::swap(other);
 
-  std::swap(this->rebase_,             other.rebase_);
-  std::swap(this->rebase_opcodes_,     other.rebase_opcodes_);
+  std::swap(rebase_,             other.rebase_);
+  std::swap(rebase_opcodes_,     other.rebase_opcodes_);
 
-  std::swap(this->bind_,               other.bind_);
-  std::swap(this->bind_opcodes_,       other.bind_opcodes_);
+  std::swap(bind_,               other.bind_);
+  std::swap(bind_opcodes_,       other.bind_opcodes_);
 
-  std::swap(this->weak_bind_,          other.weak_bind_);
-  std::swap(this->weak_bind_opcodes_,  other.weak_bind_opcodes_);
+  std::swap(weak_bind_,          other.weak_bind_);
+  std::swap(weak_bind_opcodes_,  other.weak_bind_opcodes_);
 
-  std::swap(this->lazy_bind_,          other.lazy_bind_);
-  std::swap(this->lazy_bind_opcodes_,  other.lazy_bind_opcodes_);
+  std::swap(lazy_bind_,          other.lazy_bind_);
+  std::swap(lazy_bind_opcodes_,  other.lazy_bind_opcodes_);
 
-  std::swap(this->export_,             other.export_);
-  std::swap(this->export_trie_,        other.export_trie_);
+  std::swap(export_,             other.export_);
+  std::swap(export_trie_,        other.export_trie_);
 
-  std::swap(this->export_info_,        other.export_info_);
-  std::swap(this->binding_info_,       other.binding_info_);
+  std::swap(export_info_,        other.export_info_);
+  std::swap(binding_info_,       other.binding_info_);
 
-  std::swap(this->binary_,             other.binary_);
+  std::swap(binary_,             other.binary_);
 }
 
 
 // Rebase
 // ======
 const DyldInfo::info_t& DyldInfo::rebase() const {
-  return this->rebase_;
+  return rebase_;
 }
 
 const buffer_t& DyldInfo::rebase_opcodes() const {
-  return this->rebase_opcodes_;
+  return rebase_opcodes_;
 }
 
 buffer_t& DyldInfo::rebase_opcodes() {
@@ -164,17 +138,17 @@ buffer_t& DyldInfo::rebase_opcodes() {
 }
 
 void DyldInfo::rebase_opcodes(const buffer_t& raw) {
-  this->rebase_opcodes_ = raw;
+  rebase_opcodes_ = raw;
 }
 
 
 std::string DyldInfo::show_rebases_opcodes() const {
-  if (not this->binary_) {
+  if (binary_ == nullptr) {
     LIEF_WARN("Can't print rebase opcode");
     return "";
   }
 
-  size_t pint_v = static_cast<LIEF::Binary*>(this->binary_)->header().is_64() ? sizeof(uint64_t) : sizeof(uint32_t);
+  size_t pint_v = static_cast<LIEF::Binary*>(binary_)->header().is_64() ? sizeof(uint64_t) : sizeof(uint32_t);
   std::ostringstream output;
   const buffer_t& rebase_opcodes = this->rebase_opcodes();
 
@@ -187,11 +161,11 @@ std::string DyldInfo::show_rebases_opcodes() const {
   VectorStream rebase_stream{rebase_opcodes};
   const std::string tab = "    ";
 
-  it_segments segments = this->binary_->segments();
+  it_segments segments = binary_->segments();
 
-  while (not done and rebase_stream.pos() < rebase_opcodes.size()) {
+  while (!done && rebase_stream.pos() < rebase_opcodes.size()) {
     uint8_t imm    = rebase_stream.peek<uint8_t>() & REBASE_IMMEDIATE_MASK;
-    REBASE_OPCODES opcode = static_cast<REBASE_OPCODES>(rebase_stream.read<uint8_t>() & REBASE_OPCODE_MASK);
+    auto opcode = static_cast<REBASE_OPCODES>(rebase_stream.read<uint8_t>() & REBASE_OPCODE_MASK);
 
     switch(opcode) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
@@ -371,19 +345,19 @@ std::string DyldInfo::show_rebases_opcodes() const {
 // =======
 
 it_binding_info DyldInfo::bindings() {
-  return this->binding_info_;
+  return binding_info_;
 }
 
 it_const_binding_info DyldInfo::bindings() const {
-  return this->binding_info_;
+  return binding_info_;
 }
 
 const DyldInfo::info_t& DyldInfo::bind() const {
-  return this->bind_;
+  return bind_;
 }
 
 const buffer_t& DyldInfo::bind_opcodes() const {
-  return this->bind_opcodes_;
+  return bind_opcodes_;
 }
 
 buffer_t& DyldInfo::bind_opcodes() {
@@ -391,29 +365,29 @@ buffer_t& DyldInfo::bind_opcodes() {
 }
 
 void DyldInfo::bind_opcodes(const buffer_t& raw) {
-  this->bind_opcodes_ = raw;
+  bind_opcodes_ = raw;
 }
 
 
 std::string DyldInfo::show_bind_opcodes() const {
   std::ostringstream output;
-  this->show_bindings(output, this->bind_opcodes(), /* is_lazy = */ false);
+  show_bindings(output, bind_opcodes(), /* is_lazy = */ false);
   return output.str();
 }
 
 void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes, bool is_lazy) const {
 
-  if (not this->binary_) {
+  if (binary_ == nullptr) {
     LIEF_WARN("Can't print bind opcodes");
     return;
   }
 
-  size_t pint_v = static_cast<LIEF::Binary*>(this->binary_)->header().is_64() ? sizeof(uint64_t) : sizeof(uint32_t);
+  size_t pint_v = static_cast<LIEF::Binary*>(binary_)->header().is_64() ? sizeof(uint64_t) : sizeof(uint32_t);
 
   uint8_t     type = is_lazy ? static_cast<uint8_t>(BIND_TYPES::BIND_TYPE_POINTER) : 0;
   uint8_t     segment_idx = 0;
   uint64_t    segment_offset = 0;
-  std::string symbol_name = "";
+  std::string symbol_name;
   int64_t     library_ordinal = 0;
 
   int64_t     addend = 0;
@@ -428,22 +402,22 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
   uint8_t symbol_flags = 0;
   std::vector<ThreadedBindData> ordinal_table;
 
-  it_segments segments = this->binary_->segments();
-  it_libraries libraries = this->binary_->libraries();
+  it_segments segments = binary_->segments();
+  it_libraries libraries = binary_->libraries();
 
   const std::string tab = "    ";
 
   VectorStream bind_stream{bind_opcodes};
 
-  while (not done and bind_stream.pos() < bind_opcodes.size()) {
+  while (!done && bind_stream.pos() < bind_opcodes.size()) {
     uint8_t imm  = bind_stream.peek<uint8_t>() & BIND_IMMEDIATE_MASK;
-    BIND_OPCODES opcode = static_cast<BIND_OPCODES>(bind_stream.read<uint8_t>() & BIND_OPCODE_MASK);
+    auto opcode = static_cast<BIND_OPCODES>(bind_stream.read<uint8_t>() & BIND_OPCODE_MASK);
 
     switch (opcode) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
         {
           output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
-          if (not is_lazy) {
+          if (!is_lazy) {
             done = true;
           }
           break;
@@ -494,11 +468,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
           symbol_name = bind_stream.read_string();
           symbol_flags = imm;
 
-          if ((imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0) {
-            is_weak_import = true;
-          } else {
-            is_weak_import = false;
-          }
+          is_weak_import = (imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0;
 
           output << tab << "Symbol name := " << symbol_name << std::endl;
           output << tab << "Is Weak ? " << std::boolalpha << is_weak_import << std::endl;
@@ -554,7 +524,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
-          if (not use_threaded_rebase_bind) {
+          if (!use_threaded_rebase_bind) {
             output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
 
             output << tab;
@@ -692,7 +662,7 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
                 do {
                   const uint64_t address = current_segment.virtual_address() + segment_offset;
                   const std::vector<uint8_t>& content = current_segment.content();
-                  if (segment_offset >= content.size() or segment_offset + sizeof(uint64_t) >= content.size()) {
+                  if (segment_offset >= content.size() || segment_offset + sizeof(uint64_t) >= content.size()) {
                     LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
                     delta = 0; // exit from de do ... while
                     break;
@@ -705,13 +675,13 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
                         "THREADED_REBASE", current_segment.name(), segment_offset);
                   } else {
                     uint16_t ordinal = value & 0xFFFF;
-                    if (ordinal >= ordinal_table_size or ordinal >= ordinal_table.size()) {
+                    if (ordinal >= ordinal_table_size || ordinal >= ordinal_table.size()) {
                       LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer 0x{:04x} in "
                                 "segment '{}' (segment offset: 0x{:04x})", ordinal, ordinal_table_size, value,
                                 current_segment.name(), segment_offset);
                       break;
                     }
-                    if (address < current_segment.virtual_address() or
+                    if (address < current_segment.virtual_address() ||
                         address >= (current_segment.virtual_address() + current_segment.virtual_size())) {
                       LIEF_WARN("Bad binding address");
                       break;
@@ -761,11 +731,11 @@ void DyldInfo::show_bindings(std::ostream& output, const buffer_t& bind_opcodes,
 // Weak Binding
 // ============
 const DyldInfo::info_t& DyldInfo::weak_bind() const {
-  return this->weak_bind_;
+  return weak_bind_;
 }
 
 const buffer_t& DyldInfo::weak_bind_opcodes() const {
-  return this->weak_bind_opcodes_;
+  return weak_bind_opcodes_;
 }
 
 buffer_t& DyldInfo::weak_bind_opcodes() {
@@ -773,24 +743,24 @@ buffer_t& DyldInfo::weak_bind_opcodes() {
 }
 
 void DyldInfo::weak_bind_opcodes(const buffer_t& raw) {
-  this->weak_bind_opcodes_ = raw;
+  weak_bind_opcodes_ = raw;
 }
 
 
 std::string DyldInfo::show_weak_bind_opcodes() const {
   std::ostringstream output;
-  this->show_bindings(output, this->weak_bind_opcodes(), /* is_lazy = */ false);
+  show_bindings(output, weak_bind_opcodes(), /* is_lazy = */ false);
   return output.str();
 }
 
 // Lazy Binding
 // ============
 const DyldInfo::info_t& DyldInfo::lazy_bind() const {
-  return this->lazy_bind_;
+  return lazy_bind_;
 }
 
 const buffer_t& DyldInfo::lazy_bind_opcodes() const {
-  return this->lazy_bind_opcodes_;
+  return lazy_bind_opcodes_;
 }
 
 buffer_t& DyldInfo::lazy_bind_opcodes() {
@@ -798,31 +768,31 @@ buffer_t& DyldInfo::lazy_bind_opcodes() {
 }
 
 void DyldInfo::lazy_bind_opcodes(const buffer_t& raw) {
-  this->lazy_bind_opcodes_ = raw;
+  lazy_bind_opcodes_ = raw;
 }
 
 std::string DyldInfo::show_lazy_bind_opcodes() const {
   std::ostringstream output;
-  this->show_bindings(output, this->lazy_bind_opcodes(), true);
+  show_bindings(output, lazy_bind_opcodes(), true);
   return output.str();
 }
 
 // Export Info
 // ===========
 it_export_info DyldInfo::exports() {
-  return this->export_info_;
+  return export_info_;
 }
 
 it_const_export_info DyldInfo::exports() const {
-  return this->export_info_;
+  return export_info_;
 }
 
 const DyldInfo::info_t& DyldInfo::export_info() const {
-  return this->export_;
+  return export_;
 }
 
 const buffer_t& DyldInfo::export_trie() const {
-  return this->export_trie_;
+  return export_trie_;
 }
 
 buffer_t& DyldInfo::export_trie() {
@@ -831,16 +801,16 @@ buffer_t& DyldInfo::export_trie() {
 
 
 std::string DyldInfo::show_export_trie() const {
-  if (not this->binary_) {
+  if (binary_ == nullptr) {
     LIEF_WARN("Can't print bind opcodes");
     return "";
   }
 
   std::ostringstream output;
-  const buffer_t& buffer = this->export_trie();
+  const buffer_t& buffer = export_trie();
 
   VectorStream stream{buffer};
-  this->show_trie(output, "", stream, 0, buffer.size(), "");
+  show_trie(output, "", stream, 0, buffer.size(), "");
 
   return output.str();
 }
@@ -855,13 +825,13 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
     return;
   }
 
-  const uint8_t terminal_size = stream.read<uint8_t>();
+  const auto terminal_size = stream.read<uint8_t>();
 
   uint64_t children_offset = stream.pos() + terminal_size;
 
   if (terminal_size != 0) {
 
-    EXPORT_SYMBOL_FLAGS flags = static_cast<EXPORT_SYMBOL_FLAGS>(stream.read_uleb128());
+    auto flags = static_cast<EXPORT_SYMBOL_FLAGS>(stream.read_uleb128());
     uint64_t address = 0;
     const std::string& symbol_name = prefix;
     uint64_t ordinal = 0;
@@ -870,7 +840,7 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
 
     // REEXPORT
     // ========
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT) != 0u) {
       ordinal       = stream.read_uleb128();
       imported_name = stream.peek_string();
       if (imported_name.empty()) {
@@ -884,7 +854,7 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
 
     // STUB_AND_RESOLVER
     // =================
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
+    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) != 0u) {
       other = stream.read_uleb128();
     }
 
@@ -893,17 +863,17 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
     output << "{";
     output << "addr: " << std::showbase << std::hex << address << ", ";
     output << "flags: " << std::showbase << std::hex << static_cast<uint64_t>(flags);
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT) != 0u) {
       output << ", ";
       output << "re-exported from #" << std::dec << ordinal << " - " << imported_name;
     }
 
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) and other > 0) {
+    if ((static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) != 0u) && other > 0) {
       output << ", ";
       output << "other:" << std::showbase << std::hex << other;
     }
 
-    if (not this->binary_->has_symbol(symbol_name)) {
+    if (!binary_->has_symbol(symbol_name)) {
       output << " [NOT REGISTRED]";
     }
 
@@ -912,14 +882,14 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
 
   }
   stream.setpos(children_offset);
-  const uint8_t nb_children = stream.read<uint8_t>();
+  const auto nb_children = stream.read<uint8_t>();
 
   output_prefix += "    ";
   for (size_t i = 0; i < nb_children; ++i) {
     std::string suffix = stream.read_string();
     std::string name   = prefix + suffix;
 
-    uint32_t child_node_offet  = static_cast<uint32_t>(stream.read_uleb128());
+    auto child_node_offet  = static_cast<uint32_t>(stream.read_uleb128());
 
     if (child_node_offet == 0) {
       break;
@@ -929,75 +899,75 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Vector
 
     size_t current_pos = stream.pos();
     stream.setpos(start + child_node_offet);
-    this->show_trie(output, output_prefix, stream, start, end, name);
+    show_trie(output, output_prefix, stream, start, end, name);
     stream.setpos(current_pos);
   }
 }
 
 void DyldInfo::export_trie(const buffer_t& raw) {
-  this->export_trie_ = raw;
+  export_trie_ = raw;
 }
 
 
 void DyldInfo::rebase(const DyldInfo::info_t& info) {
-  this->rebase_ = info;
+  rebase_ = info;
 }
 
 void DyldInfo::bind(const DyldInfo::info_t& info) {
-  this->bind_ = info;
+  bind_ = info;
 }
 
 void DyldInfo::weak_bind(const DyldInfo::info_t& info) {
-  this->weak_bind_ = info;
+  weak_bind_ = info;
 }
 
 void DyldInfo::lazy_bind(const DyldInfo::info_t& info) {
-  this->lazy_bind_ = info;
+  lazy_bind_ = info;
 }
 
 void DyldInfo::export_info(const DyldInfo::info_t& info) {
-  this->export_ = info;
+  export_ = info;
 }
 
 
 
 void DyldInfo::set_rebase_offset(uint32_t offset) {
-  this->rebase_ = {offset, std::get<1>(this->rebase())};
+  rebase_ = {offset, std::get<1>(rebase())};
 }
 void DyldInfo::set_rebase_size(uint32_t size) {
-  this->rebase_ = {std::get<0>(this->rebase()), size};
+  rebase_ = {std::get<0>(rebase()), size};
 }
 
 
 void DyldInfo::set_bind_offset(uint32_t offset) {
-  this->bind_ = {offset, std::get<1>(this->bind())};
+  bind_ = {offset, std::get<1>(bind())};
 }
 void DyldInfo::set_bind_size(uint32_t size) {
-  this->bind_ = {std::get<0>(this->bind()), size};
+  bind_ = {std::get<0>(bind()), size};
 }
 
 
 void DyldInfo::set_weak_bind_offset(uint32_t offset) {
-  this->weak_bind_ = {offset, std::get<1>(this->weak_bind())};
+  weak_bind_ = {offset, std::get<1>(weak_bind())};
 }
 void DyldInfo::set_weak_bind_size(uint32_t size) {
-  this->weak_bind_ = {std::get<0>(this->weak_bind()), size};
+  weak_bind_ = {std::get<0>(weak_bind()), size};
 }
 
 
 void DyldInfo::set_lazy_bind_offset(uint32_t offset) {
-  this->lazy_bind_ = {offset, std::get<1>(this->lazy_bind())};
+  lazy_bind_ = {offset, std::get<1>(lazy_bind())};
 }
 void DyldInfo::set_lazy_bind_size(uint32_t size) {
-  this->lazy_bind_ = {std::get<0>(this->lazy_bind()), size};
+  lazy_bind_ = {std::get<0>(lazy_bind()), size};
 }
 
 
 void DyldInfo::set_export_offset(uint32_t offset) {
-  this->export_ = {offset, std::get<1>(this->export_info())};
+  export_ = {offset, std::get<1>(export_info())};
 }
 void DyldInfo::set_export_size(uint32_t size) {
-  this->export_ = {std::get<0>(this->export_info()), size};
+  export_ = {std::get<0>(export_info()), size};
 }
 
 void DyldInfo::accept(Visitor& visitor) const {
@@ -1012,7 +982,7 @@ bool DyldInfo::operator==(const DyldInfo& rhs) const {
 }
 
 bool DyldInfo::operator!=(const DyldInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 bool operator==(uint8_t lhs, REBASE_OPCODES rhs) {
@@ -1030,12 +1000,12 @@ DyldInfo& DyldInfo::update_rebase_info() {
   };
 
   // In recent version of dyld, relocations are melt with bindings
-  if (this->binding_encoding_version_ != BINDING_ENCODING_VERSION::V1) {
+  if (binding_encoding_version_ != BINDING_ENCODING_VERSION::V1) {
     return *this;
   }
 
   std::set<RelocationDyld*, decltype(cmp)> rebases(cmp);
-  relocations_t relocations = this->binary_->relocations_list();
+  relocations_t relocations = binary_->relocations_list();
   for (Relocation* r : relocations) {
     if (r->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
       rebases.insert(r->as<RelocationDyld>());
@@ -1047,8 +1017,8 @@ DyldInfo& DyldInfo::update_rebase_info() {
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-  uint64_t address = static_cast<uint64_t>(-1);
-  std::vector<rebase_instruction> output;
+  auto address = static_cast<uint64_t>(-1);
+  std::vector<details::rebase_instruction> output;
 
   for (RelocationDyld* rebase : rebases) {
     if (type != rebase->type()) {
@@ -1057,7 +1027,7 @@ DyldInfo& DyldInfo::update_rebase_info() {
     }
 
     if (address != rebase->address()) {
-      if (rebase->address() < current_segment_start or rebase->address() >= current_segment_end) {
+      if (rebase->address() < current_segment_start || rebase->address() >= current_segment_end) {
         SegmentCommand& segment = rebase->segment();
         size_t index = segment.index();
 
@@ -1073,7 +1043,7 @@ DyldInfo& DyldInfo::update_rebase_info() {
     }
 
     output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES), 1);
-    address += this->binary_->pointer_size();
+    address += binary_->pointer_size();
 
     if (address >= current_segment_end) {
       address = 0;
@@ -1089,7 +1059,7 @@ DyldInfo& DyldInfo::update_rebase_info() {
   // ===========================================
   auto dst = std::begin(output);
   for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
-    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES and it->op1 == 1) {
+    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES && it->op1 == 1) {
       *dst = *it++;
 
       while (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES) {
@@ -1114,8 +1084,8 @@ DyldInfo& DyldInfo::update_rebase_info() {
   for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
 
     if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES)
-        and it->op1 == 1
-        and it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB) {
+        && it->op1 == 1
+        && it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB) {
       dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
@@ -1134,16 +1104,16 @@ DyldInfo& DyldInfo::update_rebase_info() {
   for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
     if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-        and (it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-        and (it[2].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-        and (it[1].op1 == delta)
-        and (it[2].op1 == delta) ) {
+        && (it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+        && (it[2].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+        && (it[1].op1 == delta)
+        && (it[2].op1 == delta) ) {
 
       dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB and it->op1 == delta) {
+      while (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1160,21 +1130,21 @@ DyldInfo& DyldInfo::update_rebase_info() {
   // Use immediate encodings
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:303
   // ===========================================
-  const size_t pint_size = this->binary_->pointer_size();
+  const size_t pint_size = binary_->pointer_size();
   for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
 
-    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB and it->op1 < (15 * pint_size) and (it->op1 % pint_size) == 0) {
+    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB && it->op1 < (15 * pint_size) && (it->op1 % pint_size) == 0) {
       it->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if ( (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES) and (it->op1 < 15) ) {
+    } else if ( (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES) && (it->op1 < 15) ) {
       it->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES);
     }
   }
 
   vector_iostream raw_output;
   bool done = false;
-  for (auto it = std::begin(output); not done and it != std::end(output); ++it) {
-    const rebase_instruction& inst = *it;
+  for (auto it = std::begin(output); !done && it != std::end(output); ++it) {
+    const details::rebase_instruction& inst = *it;
 
     switch (static_cast<REBASE_OPCODES>(inst.opcode)) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
@@ -1259,8 +1229,8 @@ DyldInfo& DyldInfo::update_rebase_info() {
 
   }
   raw_output.align(pint_size);
-  this->rebase_opcodes_ = std::move(raw_output.raw());
-  this->set_rebase_size(this->rebase_opcodes_.size());
+  rebase_opcodes_ = std::move(raw_output.raw());
+  set_rebase_size(rebase_opcodes_.size());
   return *this;
 }
 
@@ -1304,7 +1274,7 @@ DyldInfo& DyldInfo::update_binding_info() {
   DyldInfo::bind_container_t weak_binds(cmp_weak_binding);
   DyldInfo::bind_container_t lazy_binds(cmp_lazy_binding);
 
-  for (BindingInfo* binfo : this->binding_info_) {
+  for (BindingInfo* binfo : binding_info_) {
     switch (binfo->binding_class()) {
       case BINDING_CLASS::BIND_CLASS_THREADED:
       case BINDING_CLASS::BIND_CLASS_STANDARD:
@@ -1326,7 +1296,7 @@ DyldInfo& DyldInfo::update_binding_info() {
         }
     }
   }
-  return this->update_standard_bindings(standard_binds)
+  return update_standard_bindings(standard_binds)
     .update_weak_bindings(weak_binds)
     .update_lazy_bindings(lazy_binds);
 }
@@ -1340,17 +1310,17 @@ bool operator!=(uint8_t lhs, BIND_OPCODES rhs) {
 }
 
 DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindings) {
-  std::vector<binding_instruction> instructions;
+  std::vector<details::binding_instruction> instructions;
 
   uint64_t current_segment_start = 0;
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
 
   uint8_t type = 0;
-  uint64_t address = static_cast<uint64_t>(-1);
-  std::string symbol_name = "";
+  auto address = static_cast<uint64_t>(-1);
+  std::string symbol_name;
   int64_t addend = 0;
-  const size_t pint_size = this->binary_->pointer_size();
+  const size_t pint_size = binary_->pointer_size();
 
 
   for (BindingInfo* info : bindings) {
@@ -1366,7 +1336,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
     }
 
     if (info->address() != address) {
-      if (info->address() < current_segment_start or info->address() >= current_segment_end) {
+      if (info->address() < current_segment_start || info->address() >= current_segment_end) {
         SegmentCommand& segment = info->segment();
         size_t index = segment.index();
 
@@ -1389,7 +1359,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
     }
 
     instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
-    address += this->binary_->pointer_size();
+    address += binary_->pointer_size();
   }
 
   instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
@@ -1402,7 +1372,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // ===========================================
   auto dst = std::begin(instructions);
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND and it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND && it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
@@ -1420,14 +1390,14 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   dst = std::begin(instructions);
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
-        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
         it[1].op1 == delta) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and it->op1 == delta) {
+      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1446,12 +1416,12 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
-        it->op1 < (15 * pint_size) and
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+        it->op1 < (15 * pint_size) &&
         (it->op1 % pint_size) == 0) {
       it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB and it->op1 <= 15) {
+    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
       it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM);
     }
   }
@@ -1459,8 +1429,8 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
 
   bool done = false;
   vector_iostream raw_output;
-  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
-    const binding_instruction& inst = *it;
+  for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
+    const details::binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
         {
@@ -1570,8 +1540,8 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   }
   raw_output.align(pint_size);
 
-  this->weak_bind_opcodes_ = std::move(raw_output.raw());
-  this->set_weak_bind_size(this->weak_bind_opcodes_.size());
+  weak_bind_opcodes_ = std::move(raw_output.raw());
+  set_weak_bind_size(weak_bind_opcodes_.size());
   return *this;
 }
 
@@ -1613,33 +1583,33 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
       .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE));
   }
 
-  raw_output.align(this->binary_->pointer_size());
+  raw_output.align(binary_->pointer_size());
 
   LIEF_ERR("size: 0x{:x} vs 0x{:x}", raw_output.size(), lazy_bind_opcodes_.size());
-  this->lazy_bind_opcodes_ = std::move(raw_output.raw());
-  this->set_lazy_bind_size(this->lazy_bind_opcodes_.size());
+  lazy_bind_opcodes_ = std::move(raw_output.raw());
+  set_lazy_bind_size(lazy_bind_opcodes_.size());
   return *this;
 }
 
 DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& bindings) {
-  switch (this->binding_encoding_version_) {
+  switch (binding_encoding_version_) {
     case BINDING_ENCODING_VERSION::V1:
       {
-        this->update_standard_bindings_v1(bindings);
+        update_standard_bindings_v1(bindings);
         break;
       }
 
     case BINDING_ENCODING_VERSION::V2:
       {
         std::vector<RelocationDyld*> rebases;
-        relocations_t relocations = this->binary_->relocations_list();
+        relocations_t relocations = binary_->relocations_list();
         rebases.reserve(relocations.size());
         for (Relocation* r : relocations) {
           if (r->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
             rebases.push_back(r->as<RelocationDyld>());
           }
         }
-        this->update_standard_bindings_v2(bindings, std::move(rebases));
+        update_standard_bindings_v2(bindings, std::move(rebases));
         break;
       }
 
@@ -1659,17 +1629,17 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // This function updates the standard bindings opcodes (i.e. not lazy and not weak)
   // The following code is mainly inspired from LinkEdit.hpp: BindingInfoAtom<A>::encodeV1()
 
-  std::vector<binding_instruction> instructions;
+  std::vector<details::binding_instruction> instructions;
 
   uint64_t current_segment_start = 0;
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-  uint64_t address = static_cast<uint64_t>(-1);
+  auto address = static_cast<uint64_t>(-1);
   int32_t ordinal = 0x80000000;
-  std::string symbol_name = "";
+  std::string symbol_name;
   int64_t addend = 0;
-  const size_t pint_size = this->binary_->pointer_size();
+  const size_t pint_size = binary_->pointer_size();
 
   for (BindingInfo* info : bindings) {
     if (info->library_ordinal() != ordinal) {
@@ -1693,7 +1663,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
     }
 
     if (info->address() != address) {
-      if (info->address() < current_segment_start or info->address() >= current_segment_end) {
+      if (info->address() < current_segment_start || info->address() >= current_segment_end) {
         SegmentCommand& segment = info->segment();
         size_t index = segment.index();
 
@@ -1716,7 +1686,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
     }
 
     instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
-    address += this->binary_->pointer_size();
+    address += binary_->pointer_size();
   }
 
   instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
@@ -1729,7 +1699,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // ===========================================
   auto dst = std::begin(instructions);
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND and it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND && it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
@@ -1747,14 +1717,14 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   dst = std::begin(instructions);
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
     uint64_t delta = it->op1;
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
-        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
         it[1].op1 == delta) {
       dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and it->op1 == delta) {
+      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1773,12 +1743,12 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
   for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB and
-        it->op1 < (15 * pint_size) and
+    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+        it->op1 < (15 * pint_size) &&
         (it->op1 % pint_size) == 0) {
       it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB and it->op1 <= 15) {
+    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
       it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM);
     }
   }
@@ -1786,8 +1756,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
 
   bool done = false;
   vector_iostream raw_output;
-  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
-    const binding_instruction& inst = *it;
+  for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
+    const details::binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
         {
@@ -1898,8 +1868,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   raw_output.align(pint_size);
 
 
-  this->bind_opcodes_ = std::move(raw_output.raw());
-  this->set_bind_size(this->bind_opcodes_.size());
+  bind_opcodes_ = std::move(raw_output.raw());
+  set_bind_size(bind_opcodes_.size());
   return *this;
 }
 
@@ -1909,17 +1879,17 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
   // This encoding uses THREADED opcodes.
   std::vector<BindingInfo*> bindings = {std::begin(bindings_set), std::end(bindings_set)};
 
-  std::vector<binding_instruction> instructions;
+  std::vector<details::binding_instruction> instructions;
   uint64_t current_segment_start = 0;
   uint64_t current_segment_end   = 0;
   uint64_t current_segment_index = 0;
   uint8_t type = 0;
-  uint64_t address = static_cast<uint64_t>(-1);
+  auto address = static_cast<uint64_t>(-1);
   int32_t ordinal = 0x80000000;
   std::string symbol_name;
   int64_t addend = 0;
-  uint64_t num_bindings = static_cast<uint64_t>(-1);
-  const size_t pint_size = this->binary_->pointer_size();
+  auto num_bindings = static_cast<uint64_t>(-1);
+  const size_t pint_size = binary_->pointer_size();
 
   for (BindingInfo* info : bindings) {
     bool made_changes = false;
@@ -1976,7 +1946,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     }
   }
 
-  if (num_bindings > std::numeric_limits<uint16_t>::max() and num_bindings != static_cast<uint64_t>(-1)) {
+  if (num_bindings > std::numeric_limits<uint16_t>::max() && num_bindings != static_cast<uint64_t>(-1)) {
     LIEF_ERR("Too many binds ({:d}). The limit being 65536");
     return *this;
   }
@@ -2028,7 +1998,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     }
 
     bool new_segment = false;
-    if (address < current_segment_start or address >= current_segment_end) {
+    if (address < current_segment_start || address >= current_segment_end) {
       size_t index = segment->index();
       current_segment_start = segment->virtual_address();
       current_segment_end   = segment->virtual_address() + segment->virtual_size();
@@ -2036,7 +2006,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
       new_segment = true;
     }
     uint64_t page_index = (address - current_segment_start) / 4096;
-    if (new_segment or page_index != prev_page_index) {
+    if (new_segment || page_index != prev_page_index) {
       instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
                                 current_segment_index, address - current_segment_start);
       instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED) |
@@ -2052,8 +2022,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
             .write_uleb128(num_bindings + 1);
 
   bool done = false;
-  for (auto it = std::begin(instructions); not done and it != std::end(instructions); ++it) {
-    const binding_instruction& inst = *it;
+  for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
+    const details::binding_instruction& inst = *it;
     switch(static_cast<BIND_OPCODES>(it->opcode)) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
         {
@@ -2187,8 +2157,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
   raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE));
   raw_output.align(pint_size);
 
-  this->bind_opcodes_ = std::move(raw_output.raw());
-  this->set_bind_size(this->bind_opcodes_.size());
+  bind_opcodes_ = std::move(raw_output.raw());
+  set_bind_size(bind_opcodes_.size());
   return *this;
 }
 
@@ -2199,7 +2169,7 @@ DyldInfo& DyldInfo::update_export_trie() {
     return  lhs->node_offset() < rhs->node_offset();
   };
   using symbol_trie_container_t = std::set<ExportInfo*, decltype(cmp)>;
-  symbol_trie_container_t entries{std::begin(this->export_info_), std::end(this->export_info_), cmp};
+  symbol_trie_container_t entries{std::begin(export_info_), std::end(export_info_), cmp};
 
   TrieNode* start = TrieNode::create("");
   std::vector<TrieNode*> nodes;
@@ -2244,15 +2214,15 @@ DyldInfo& DyldInfo::update_export_trie() {
   // Mach-O utilities perform checks on offsets:
   // See: cctools-921/libstuff/checkout.c dyld_order:431
   //
-  if (raw_output.size() < this->export_trie_.size()) {
-    const size_t padding = this->export_trie_.size() - raw_output.size();
+  if (raw_output.size() < export_trie_.size()) {
+    const size_t padding = export_trie_.size() - raw_output.size();
     raw_output.write(padding, 0);
   }
 
-  raw_output.align(this->binary_->pointer_size());
+  raw_output.align(binary_->pointer_size());
 
-  this->export_trie_ = std::move(raw_output.raw());
-  this->set_export_size(this->export_trie_.size());
+  export_trie_ = std::move(raw_output.raw());
+  set_export_size(export_trie_.size());
   return *this;
 }
 
@@ -2261,11 +2231,11 @@ std::ostream& DyldInfo::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex << std::left;
   os << std::setw(11) << "Type "       << std::setw(10) << "Offset" << "Size" << std::endl;
-  os << std::setw(11) << "Rebase: "    << std::setw(10) << std::get<0>(this->rebase())      << std::get<1>(this->rebase())      << std::endl;
-  os << std::setw(11) << "Bind: "      << std::setw(10) << std::get<0>(this->bind())        << std::get<1>(this->bind())        << std::endl;
-  os << std::setw(11) << "Weak bind: " << std::setw(10) << std::get<0>(this->weak_bind())   << std::get<1>(this->weak_bind())   << std::endl;
-  os << std::setw(11) << "Lazy bind: " << std::setw(10) << std::get<0>(this->lazy_bind())   << std::get<1>(this->lazy_bind())   << std::endl;
-  os << std::setw(11) << "Export: "    << std::setw(10) << std::get<0>(this->export_info()) << std::get<1>(this->export_info()) << std::endl;
+  os << std::setw(11) << "Rebase: "    << std::setw(10) << std::get<0>(rebase())      << std::get<1>(rebase())      << std::endl;
+  os << std::setw(11) << "Bind: "      << std::setw(10) << std::get<0>(bind())        << std::get<1>(bind())        << std::endl;
+  os << std::setw(11) << "Weak bind: " << std::setw(10) << std::get<0>(weak_bind())   << std::get<1>(weak_bind())   << std::endl;
+  os << std::setw(11) << "Lazy bind: " << std::setw(10) << std::get<0>(lazy_bind())   << std::get<1>(lazy_bind())   << std::endl;
+  os << std::setw(11) << "Export: "    << std::setw(10) << std::get<0>(export_info()) << std::get<1>(export_info()) << std::endl;
 
   it_const_binding_info bindings = this->bindings();
   for (size_t i = 0; i < bindings.size(); ++i) {

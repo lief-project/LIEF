@@ -40,14 +40,14 @@ void SpcSpOpusInfo::accept(Visitor& visitor) const {
 
 std::string SpcSpOpusInfo::print() const {
   std::string out;
-  if (not this->program_name().empty()) {
-    out = this->program_name();
+  if (!program_name().empty()) {
+    out = program_name();
   }
-  if (not this->more_info().empty()) {
-    if (not out.empty()) {
+  if (!more_info().empty()) {
+    if (!out.empty()) {
       out += " - ";
     }
-    out += this->more_info();
+    out += more_info();
   }
   return out;
 }

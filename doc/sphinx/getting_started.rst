@@ -1,4 +1,4 @@
-Getting started
+Getting Started
 ===============
 
 The entrypoints to load a binary with LIEF are:

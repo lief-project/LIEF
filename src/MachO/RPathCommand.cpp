@@ -29,8 +29,8 @@ RPathCommand& RPathCommand::operator=(const RPathCommand&) = default;
 RPathCommand::RPathCommand(const RPathCommand&) = default;
 RPathCommand::~RPathCommand() = default;
 
-RPathCommand::RPathCommand(const rpath_command *rpathCmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpathCmd->cmd), rpathCmd->cmdsize}
+RPathCommand::RPathCommand(const details::rpath_command& rpath) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpath.cmd), rpath.cmdsize}
 {}
 
 RPathCommand* RPathCommand::clone() const {
@@ -38,11 +38,11 @@ RPathCommand* RPathCommand::clone() const {
 }
 
 const std::string& RPathCommand::path() const {
-  return this->path_;
+  return path_;
 }
 
 void RPathCommand::path(const std::string& path) {
-  this->path_ = path;
+  path_ = path;
 }
 
 
@@ -58,14 +58,14 @@ bool RPathCommand::operator==(const RPathCommand& rhs) const {
 }
 
 bool RPathCommand::operator!=(const RPathCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 std::ostream& RPathCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left
-     << std::setw(10) << "Path: " << this->path();
+     << std::setw(10) << "Path: " << path();
   return os;
 }
 

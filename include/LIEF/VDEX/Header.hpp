@@ -58,7 +58,7 @@ class LIEF_API Header : public Object {
   //! Size of quickening info section
   uint32_t quickening_info_size() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Header& rhs) const;
   bool operator!=(const Header& rhs) const;

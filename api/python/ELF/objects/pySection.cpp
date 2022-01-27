@@ -39,43 +39,35 @@ template<>
 void create<Section>(py::module& m) {
 
   // Section object
-  py::class_<Section, LIEF::Section>(m, "Section")
+  py::class_<Section, LIEF::Section>(m, "Section",
+      R"delim(
+      Class which represents an ELF section.
+      )delim")
+
     .def(py::init<>(),
         "Default constructor")
 
     .def(py::init<const std::string&, ELF_SECTION_TYPES>(),
-        "Constructor from name and type",
+        "Constructor from a name and a section type",
         "name"_a, "type"_a = ELF_SECTION_TYPES::SHT_PROGBITS)
 
     .def(py::init([] (Section& section, std::vector<uint8_t>& content, ELF_CLASS type) {
           return new Section(content.data(), type);
         }))
 
-    .def_property_readonly("name_idx",
-        static_cast<getter_t<uint32_t>>(&Section::name_idx),
-        "Index of the section's name in the string table\n\n"
-        ".. warning:: The value will probably change when re-building binary.")
-
     .def_property("type",
         static_cast<getter_t<ELF_SECTION_TYPES>>(&Section::type),
         static_cast<setter_t<ELF_SECTION_TYPES>>(&Section::type),
-        "Return a " RST_CLASS_REF(lief.ELF.SECTION_TYPES) "")
+        "Return the " RST_CLASS_REF(lief.ELF.SECTION_TYPES) "")
 
     .def_property("flags",
         static_cast<getter_t<uint64_t>>(&Section::flags),
         static_cast<setter_t<uint64_t>>(&Section::flags),
-        "Return section's flags as an integer")
+        "Return the section's flags as an integer")
 
     .def_property_readonly("flags_list",
         &Section::flags_list,
         "Return section's flags as a list of " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) "")
-
-    .def_property("virtual_address",
-        static_cast<getter_t<uint64_t>>(&Section::virtual_address),
-        static_cast<setter_t<uint64_t>>(&Section::virtual_address),
-        "Return address where the section will be mapped in memory\n\n"
-        ".. warning:: This value is not reliable use segment's virtual address "
-        "(:attr:`~lief.ELF.Segment.virtual_address`) instead.")
 
     .def_property("file_offset",
         static_cast<getter_t<uint64_t>>(&Section::file_offset),
@@ -84,7 +76,12 @@ void create<Section>(py::module& m) {
 
     .def_property_readonly("original_size",
         static_cast<getter_t<uint64_t>>(&Section::original_size),
-        "original data size. Without modification we have `original_size == size`")
+        R"delim(
+        Original size of the section's data.
+
+        This value is used by the :class:`~lief.ELF.Builder` to determine if it needs
+        to be relocated to avoid an override of the data
+        )delim")
 
     .def_property("alignment",
         static_cast<getter_t<uint64_t>>(&Section::alignment),
@@ -99,11 +96,17 @@ void create<Section>(py::module& m) {
     .def_property("entry_size",
         static_cast<getter_t<uint64_t>>(&Section::entry_size),
         static_cast<setter_t<uint64_t>>(&Section::entry_size),
-        "If section's content is an array, `entry_size` holds the element size\n\n"
-        ":Example:\n"
-        "\tThe `.dynamic` section contains an array of " RST_CLASS_REF(lief.ELF.DynamicEntry) ". As the size "
-        "of a dynamic entry is 0x10 (for ELF64), entry_size will contains this value\n\n"
-        ".. warning:: This value is not necessarily reliable.")
+        R"delim(
+        This property returns the size of an element in the case of a section that
+        contains an array.
+
+        :Example:
+
+            The `.dynamic` section contains an array of :class:`~lief.ELF.DynamicEntry`. As the
+            size of the raw C structure of this entry is 0x10 (``sizeof(Elf64_Dyn)``)
+            in a ELF64, the :attr:`~lief.ELF.Section.entry_size`,
+            is set to this value.
+        )delim")
 
     .def_property("link",
         static_cast<getter_t<uint32_t>>(&Section::link),
@@ -132,7 +135,6 @@ void create<Section>(py::module& m) {
         "Remove the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " from the list of "
         ":attr:`~lief.ELF.Section.flags`",
         "flag"_a)
-
 
     .def("has",
         static_cast<bool (Section::*)(ELF_SECTION_FLAGS) const>(&Section::has),
@@ -170,8 +172,7 @@ void create<Section>(py::module& m) {
         {
           std::ostringstream stream;
           stream << section;
-          std::string str =  stream.str();
-          return str;
+          return stream.str();
         });
 }
 

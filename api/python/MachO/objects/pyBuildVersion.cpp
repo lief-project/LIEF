@@ -42,7 +42,10 @@ template<>
 void create<BuildVersion>(py::module& m) {
 
   py::class_<BuildVersion, LoadCommand> cls(m, "BuildVersion");
-  py::class_<BuildToolVersion, LIEF::Object> tool_version_cls(m, "BuildToolVersion");
+  py::class_<BuildToolVersion, LIEF::Object> tool_version_cls(m, "BuildToolVersion",
+      R"delim(
+      Class that represents a tool's version that was involved in the build of the binary
+      )delim");
 
 
   // Build Tool Version

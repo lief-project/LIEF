@@ -34,14 +34,11 @@ ExportInfo::ExportInfo(uint64_t address, uint64_t flags, uint64_t offset) :
   node_offset_{offset},
   flags_{flags},
   address_{address},
-  other_{0},
-  symbol_{nullptr},
-  alias_{nullptr},
-  alias_location_{nullptr}
+  other_{0}
 {}
 
 ExportInfo& ExportInfo::operator=(ExportInfo other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
@@ -50,84 +47,81 @@ ExportInfo::ExportInfo(const ExportInfo& other) :
   node_offset_{other.node_offset_},
   flags_{other.flags_},
   address_{other.address_},
-  other_{other.other_},
-  symbol_{nullptr},
-  alias_{nullptr},
-  alias_location_{nullptr}
+  other_{other.other_}
 {}
 
 void ExportInfo::swap(ExportInfo& other) {
-  std::swap(this->node_offset_,    other.node_offset_);
-  std::swap(this->flags_,          other.flags_);
-  std::swap(this->address_,        other.address_);
-  std::swap(this->other_,          other.other_);
-  std::swap(this->symbol_,         other.symbol_);
-  std::swap(this->alias_,          other.alias_);
-  std::swap(this->alias_location_, other.alias_location_);
+  std::swap(node_offset_,    other.node_offset_);
+  std::swap(flags_,          other.flags_);
+  std::swap(address_,        other.address_);
+  std::swap(other_,          other.other_);
+  std::swap(symbol_,         other.symbol_);
+  std::swap(alias_,          other.alias_);
+  std::swap(alias_location_, other.alias_location_);
 }
 
 
 bool ExportInfo::has(EXPORT_SYMBOL_FLAGS flag) const {
-  return this->flags_ & static_cast<uint64_t>(flag);
+  return (flags_ & static_cast<uint64_t>(flag)) != 0u;
 }
 
 EXPORT_SYMBOL_KINDS ExportInfo::kind() const {
   static constexpr size_t EXPORT_SYMBOL_FLAGS_KIND_MASK = 0x03u;
-  return static_cast<EXPORT_SYMBOL_KINDS>(this->flags_ & EXPORT_SYMBOL_FLAGS_KIND_MASK);
+  return static_cast<EXPORT_SYMBOL_KINDS>(flags_ & EXPORT_SYMBOL_FLAGS_KIND_MASK);
 }
 
 
 uint64_t ExportInfo::node_offset() const {
-  return this->node_offset_;
+  return node_offset_;
 }
 
 uint64_t ExportInfo::flags() const {
-  return this->flags_;
+  return flags_;
 }
 
 void ExportInfo::flags(uint64_t flags) {
-  this->flags_ = flags;
+  flags_ = flags;
 }
 
 uint64_t ExportInfo::address() const {
-  return this->address_;
+  return address_;
 }
 
 uint64_t ExportInfo::other() const {
-  return this->other_;
+  return other_;
 }
 
 
 Symbol* ExportInfo::alias() {
-  return this->alias_;
+  return alias_;
 }
 
 const Symbol* ExportInfo::alias() const {
-  return this->alias_;
+  return alias_;
 }
 
 DylibCommand* ExportInfo::alias_library() {
-  return this->alias_location_;
+  return alias_location_;
 }
 
 const DylibCommand* ExportInfo::alias_library() const {
-  return this->alias_location_;
+  return alias_location_;
 }
 
 void ExportInfo::address(uint64_t addr) {
-  this->address_ = addr;
+  address_ = addr;
 }
 
 bool ExportInfo::has_symbol() const {
-  return this->symbol_ != nullptr;
+  return symbol_ != nullptr;
 }
 
 const Symbol& ExportInfo::symbol() const {
-  if (not this->has_symbol()) {
+  if (!has_symbol()) {
     throw not_found("No symbol associated with this export info");
   }
 
-  return *this->symbol_;
+  return *symbol_;
 }
 
 Symbol& ExportInfo::symbol() {
@@ -142,7 +136,7 @@ ExportInfo::flag_list_t ExportInfo::flags_list() const {
       std::begin(export_symbol_flags),
       std::end(export_symbol_flags),
       std::back_inserter(flags),
-      std::bind(static_cast<bool (ExportInfo::*)(EXPORT_SYMBOL_FLAGS) const>(&ExportInfo::has), this, std::placeholders::_1));
+      [this] (EXPORT_SYMBOL_FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -159,7 +153,7 @@ bool ExportInfo::operator==(const ExportInfo& rhs) const {
 }
 
 bool ExportInfo::operator!=(const ExportInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -186,9 +180,9 @@ std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info) {
     os << std::setw(13) << "Symbol: "    << export_info.symbol().name() << std::endl;
   }
 
-  if (export_info.alias()) {
+  if (export_info.alias() != nullptr) {
     os << std::setw(13) << "Alias Symbol: " << export_info.alias()->name();
-    if (export_info.alias_library()) {
+    if (export_info.alias_library() != nullptr) {
       os << " from " << export_info.alias_library()->name();
     }
     os << std::endl;

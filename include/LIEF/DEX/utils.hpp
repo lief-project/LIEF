@@ -27,16 +27,16 @@
 namespace LIEF {
 namespace DEX {
 
-//! @brief Check if the given file is an DEX one.
+//! Check if the given file is a DEX.
 LIEF_API bool is_dex(const std::string& file);
 
-//! @brief Check if the given raw data is an DEX one.
+//! Check if the given raw data is a DEX.
 LIEF_API bool is_dex(const std::vector<uint8_t>& raw);
 
-//! @brief Return the DEX version of the given file
+//! Return the DEX version of the given file
 LIEF_API dex_version_t version(const std::string& file);
 
-//! @brief Return the DEX version of the raw data
+//! Return the DEX version of the raw data
 LIEF_API dex_version_t version(const std::vector<uint8_t>& raw);
 
 }

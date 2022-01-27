@@ -30,10 +30,7 @@
 #endif
 
 namespace LIEF {
-Binary::Binary() :
-  name_{""},
-  original_size_{0}
-{}
+Binary::Binary() = default;
 
 Binary::~Binary() = default;
 Binary& Binary::operator=(const Binary&) = default;
@@ -64,11 +61,11 @@ EXE_FORMATS Binary::format() const {
 }
 
 Header Binary::header() const {
-  return this->get_abstract_header();
+  return get_abstract_header();
 }
 
 it_symbols Binary::symbols() {
-  return this->get_abstract_symbols();
+  return get_abstract_symbols();
 }
 
 it_const_symbols Binary::symbols() const {
@@ -78,29 +75,25 @@ it_const_symbols Binary::symbols() const {
 
 bool Binary::has_symbol(const std::string& name) const {
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
-  auto&& it_symbol = std::find_if(
-      std::begin(symbols),
-      std::end(symbols),
-      [&name] (const Symbol* s) {
-        return s->name() == name;
-      });
+  const auto it_symbol = std::find_if(std::begin(symbols), std::end(symbols),
+                                  [&name] (const Symbol* s) {
+                                    return s->name() == name;
+                                  });
 
   return it_symbol != std::end(symbols);
 }
 
 const Symbol& Binary::get_symbol(const std::string& name) const {
-  if (not this->has_symbol(name)) {
+  if (!has_symbol(name)) {
     throw not_found("Symbol '" + name + "' not found!");
   }
 
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
 
-  auto&& it_symbol = std::find_if(
-      std::begin(symbols),
-      std::end(symbols),
-      [&name] (const Symbol* s) {
-        return s->name() == name;
-      });
+  const auto it_symbol = std::find_if(std::begin(symbols), std::end(symbols),
+                                      [&name] (const Symbol* s) {
+                                        return s->name() == name;
+                                      });
 
   return **it_symbol;
 }
@@ -110,7 +103,7 @@ Symbol& Binary::get_symbol(const std::string& name) {
 }
 
 it_sections Binary::sections() {
-  return this->get_abstract_sections();
+  return get_abstract_sections();
 }
 
 
@@ -120,7 +113,7 @@ it_const_sections Binary::sections() const {
 
 
 it_relocations Binary::relocations() {
-  return this->get_abstract_relocations();
+  return get_abstract_relocations();
 }
 
 it_const_relocations Binary::relocations() const {
@@ -129,16 +122,16 @@ it_const_relocations Binary::relocations() const {
 
 
 Binary::functions_t Binary::exported_functions() const {
-  return this->get_abstract_exported_functions();
+  return get_abstract_exported_functions();
 }
 
 Binary::functions_t Binary::imported_functions() const {
-  return this->get_abstract_imported_functions();
+  return get_abstract_imported_functions();
 }
 
 
 std::vector<std::string> Binary::imported_libraries() const {
-  return this->get_abstract_imported_libraries();
+  return get_abstract_imported_libraries();
 }
 
 uint64_t Binary::get_function_address(const std::string&) const {
@@ -163,22 +156,22 @@ void Binary::accept(Visitor& visitor) const {
 }
 
 const std::string& Binary::name() const {
-  return this->name_;
+  return name_;
 }
 
 
 uint64_t Binary::original_size() const {
-  return this->original_size_;
+  return original_size_;
 }
 
 
 void Binary::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
 void Binary::original_size(uint64_t size) {
-  this->original_size_ = size;
+  original_size_ = size;
 }
 
 

@@ -41,7 +41,7 @@ void PKCS9MessageDigest::accept(Visitor& visitor) const {
 }
 
 std::string PKCS9MessageDigest::print() const {
-  return hex_dump(this->digest());
+  return hex_dump(digest());
 }
 
 

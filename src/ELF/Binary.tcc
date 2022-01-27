@@ -23,10 +23,10 @@ namespace ELF {
 // ===============
 template<>
 void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
-  for (Relocation& relocation : this->relocations()) {
+  for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
-      //this->shift_code(relocation.address(), shift, relocation.size() / 8);
+      //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -39,7 +39,7 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
       case RELOC_ARM::R_ARM_IRELATIVE:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
@@ -57,10 +57,10 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
 // ===================
 template<>
 void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) {
-  for (Relocation& relocation : this->relocations()) {
+  for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
-      //this->shift_code(relocation.address(), shift, relocation.size() / 8);
+      //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -74,21 +74,21 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
       case RELOC_AARCH64::R_AARCH64_ABS64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint64_t>(relocation, from, shift);
+          patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_ABS32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_ABS16:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint16_t>(relocation, from, shift);
+          patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
 
@@ -96,21 +96,21 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
       case RELOC_AARCH64::R_AARCH64_PREL64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint64_t>(relocation, from, shift);
+          patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_PREL32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_AARCH64::R_AARCH64_PREL16:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint16_t>(relocation, from, shift);
+          patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
 
@@ -127,9 +127,9 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
 // ==================
 template<>
 void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
-  for (Relocation& relocation : this->relocations()) {
+  for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      //this->shift_code(relocation.address(), shift, relocation.size() / 8);
+      //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -142,7 +142,7 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
       case RELOC_i386::R_386_GLOB_DAT:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
@@ -159,9 +159,9 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
 // ==================
 template<>
 void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
-  for (Relocation& relocation : this->relocations()) {
+  for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      //this->shift_code(relocation.address(), shift, relocation.size() / 8);
+      //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -174,14 +174,14 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
       case RELOC_x86_64::R_X86_64_64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint64_t>(relocation, from, shift);
+          patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case RELOC_x86_64::R_X86_64_32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
@@ -199,7 +199,7 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
 // ==================
 template<>
 void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
-  for (Relocation& relocation : this->relocations()) {
+  for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
       relocation.address(relocation.address() + shift);
     }
@@ -210,7 +210,7 @@ void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
       case RELOC_POWERPC32::R_PPC_RELATIVE:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
-          this->patch_addend<uint32_t>(relocation, from, shift);
+          patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
@@ -233,7 +233,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   const uint64_t address = relocation.address();
   LIEF_DEBUG("Patch addend relocation at address: 0x{:x}", address);
   Segment& segment = segment_from_virtual_address(address);
-  const uint64_t relative_offset = this->virtual_address_to_offset(address) - segment.file_offset();
+  const uint64_t relative_offset = virtual_address_to_offset(address) - segment.file_offset();
 
   const size_t segment_size = segment.get_content_size();
 
@@ -242,7 +242,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  if (relative_offset >= segment_size or (relative_offset + sizeof(T)) > segment_size) {
+  if (relative_offset >= segment_size || (relative_offset + sizeof(T)) > segment_size) {
     LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return;
   }
@@ -282,17 +282,17 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
     LIEF_ERR("We can't relocate the PHDR table for this binary.");
     return const_cast<Segment&>(segment);
   }
-  if (phdr_reloc_info_.nb_segments <= 0) {
-    LIEF_ERR("Segment table is full. We can't add segment");
+  if (phdr_reloc_info_.nb_segments == 0) {
+    LIEF_ERR("The segment table is full. We can't add segment");
     return const_cast<Segment&>(segment);
   }
 
-  const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
-                                       sizeof(ELF32::Elf_Phdr) : sizeof(ELF64::Elf_Phdr);
+  //const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
+  //                                     sizeof(details::ELF32::Elf_Phdr) : sizeof(details::ELF64::Elf_Phdr);
 
   // Add the segment itself
   // ====================================================================
-  //this->datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
+  //datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
   std::vector<uint8_t> content = segment.content();
   Segment* new_segment = new Segment{segment};
@@ -328,7 +328,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   if (new_segment->alignment() == 0) {
     new_segment->alignment(psize);
   }
-  new_segment->datahandler_ = this->datahandler_;
+  new_segment->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
@@ -347,7 +347,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
     segments_.push_back(new_segment);
   } else {
     const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
-    segments_.insert(std::begin(this->segments_) + idx, new_segment);
+    segments_.insert(std::begin(segments_) + idx, new_segment);
   }
   phdr_reloc_info_.nb_segments--;
   return *new_segment;
@@ -364,16 +364,16 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   std::vector<uint8_t> content = segment.content();
   Segment* new_segment = new Segment{segment};
-  new_segment->datahandler_ = this->datahandler_;
+  new_segment->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{
           new_segment->file_offset(),
           new_segment->physical_size(),
           DataHandler::Node::SEGMENT};
-  this->datahandler_->add(new_node);
+  datahandler_->add(new_node);
 
-  const uint64_t last_offset_sections = this->last_offset_section();
-  const uint64_t last_offset_segments = this->last_offset_segment();
+  const uint64_t last_offset_sections = last_offset_section();
+  const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
   const uint64_t last_offset_aligned  = align(last_offset, psize);
 
@@ -396,23 +396,23 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
   const uint64_t new_section_hdr_offset = new_segment->file_offset() + new_segment->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  this->datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
 
   new_segment->content(content);
 
   header.numberof_segments(header.numberof_segments() + 1);
 
   const auto& it_new_segment_place = std::find_if(
-      this->segments_.rbegin(), this->segments_.rend(),
+      segments_.rbegin(), segments_.rend(),
       [&new_segment] (const Segment* s) {
         return s->type() == new_segment->type();
       });
 
-  if (it_new_segment_place == this->segments_.rend()) {
-    this->segments_.push_back(new_segment);
+  if (it_new_segment_place == segments_.rend()) {
+    segments_.push_back(new_segment);
   } else {
-    const size_t idx = std::distance(std::begin(this->segments_), it_new_segment_place.base());
-    this->segments_.insert(std::begin(this->segments_) + idx, new_segment);
+    const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
+    segments_.insert(std::begin(segments_) + idx, new_segment);
   }
 
   return *new_segment;
@@ -425,14 +425,10 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 template<>
 Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, uint64_t size) {
 
-  auto&& it_segment = std::find_if(
-      std::begin(this->segments_),
-      std::end(this->segments_),
-      [&segment] (const Segment* s) {
-        return *s == segment;
-      });
+  const auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
+                                       [&segment] (const Segment* s) { return *s == segment; });
 
-  if (it_segment == std::end(this->segments_)) {
+  if (it_segment == std::end(segments_)) {
     throw not_found("Unable to find the segment in the current binary");
   }
 
@@ -443,12 +439,12 @@ Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
   uint64_t from_address = segment_to_extend->virtual_address() + segment_to_extend->virtual_size();
   uint64_t shift        = size;
 
-  this->datahandler_->make_hole(
+  datahandler_->make_hole(
       segment_to_extend->file_offset() + segment_to_extend->physical_size(),
       size);
 
-  this->shift_sections(from_offset, shift);
-  this->shift_segments(from_offset, shift);
+  shift_sections(from_offset, shift);
+  shift_segments(from_offset, shift);
 
   // Shift
   segment_to_extend->physical_size(segment_to_extend->physical_size() + size);
@@ -459,20 +455,20 @@ Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
   segment_to_extend->content(segment_content);
 
   // Patches
-  this->header().section_headers_offset(this->header().section_headers_offset() + shift);
+  header().section_headers_offset(header().section_headers_offset() + shift);
 
-  this->shift_dynamic_entries(from_address, shift);
-  this->shift_symbols(from_address, shift);
-  this->shift_relocations(from_address, shift);
+  shift_dynamic_entries(from_address, shift);
+  shift_symbols(from_address, shift);
+  shift_relocations(from_address, shift);
 
-  if (this->type() == ELF_CLASS::ELFCLASS32) {
-    this->fix_got_entries<ELF32>(from_address, shift);
+  if (type() == ELF_CLASS::ELFCLASS32) {
+    fix_got_entries<details::ELF32>(from_address, shift);
   } else {
-    this->fix_got_entries<ELF64>(from_address, shift);
+    fix_got_entries<details::ELF64>(from_address, shift);
   }
 
-  if (this->header().entrypoint() >= from_address) {
-    this->header().entrypoint(this->header().entrypoint() + shift);
+  if (header().entrypoint() >= from_address) {
+    header().entrypoint(header().entrypoint() + shift);
   }
 
   return *segment_to_extend;
@@ -504,29 +500,29 @@ Section& Binary::add_section<true>(const Section& section) {
     new_segment.add(ELF_SEGMENT_FLAGS::PF_X);
   }
 
-  Segment& segment_added = this->add(new_segment);
+  Segment& segment_added = add(new_segment);
 
   LIEF_DEBUG("Segment associated: {}@0x{:x}",
       to_string(segment_added.type()), segment_added.virtual_address());
 
   Section* new_section = new Section{section};
-  new_section->datahandler_ = this->datahandler_;
+  new_section->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{
           new_section->file_offset(),
           new_section->size(),
           DataHandler::Node::SECTION};
-  this->datahandler_->add(new_node);
+  datahandler_->add(new_node);
 
   new_section->virtual_address(segment_added.virtual_address());
   new_section->size(segment_added.physical_size());
   new_section->offset(segment_added.file_offset());
   new_section->original_size_ = segment_added.physical_size();
 
-  this->header().numberof_sections(this->header().numberof_sections() + 1);
+  header().numberof_sections(header().numberof_sections() + 1);
 
-  this->sections_.push_back(new_section);
-  return *(this->sections_.back());
+  sections_.push_back(new_section);
+  return *(sections_.back());
 }
 
 // Add a non-loaded section
@@ -534,17 +530,17 @@ template<>
 Section& Binary::add_section<false>(const Section& section) {
 
   Section* new_section = new Section{section};
-  new_section->datahandler_ = this->datahandler_;
+  new_section->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
                              DataHandler::Node::SECTION};
-  this->datahandler_->add(new_node);
+  datahandler_->add(new_node);
 
-  const uint64_t last_offset_sections = this->last_offset_section();
-  const uint64_t last_offset_segments = this->last_offset_segment();
+  const uint64_t last_offset_sections = last_offset_section();
+  const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  this->datahandler_->make_hole(last_offset, section.size());
+  datahandler_->make_hole(last_offset, section.size());
 
   new_section->offset(last_offset);
   new_section->size(section.size());
@@ -552,39 +548,39 @@ Section& Binary::add_section<false>(const Section& section) {
   // Copy original content in the data handler
   new_section->content(section.content());
 
-  this->header().numberof_sections(this->header().numberof_sections() + 1);
+  header().numberof_sections(header().numberof_sections() + 1);
 
   Header& header = this->header();
   const uint64_t new_section_hdr_offset = new_section->offset() + new_section->size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  this->sections_.push_back(new_section);
-  return *(this->sections_.back());
+  sections_.push_back(new_section);
+  return *(sections_.back());
 }
 
 template<class ELF_T>
 void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   using ptr_t = typename ELF_T::Elf_Addr;
 
-  if (not this->has(DYNAMIC_TAGS::DT_PLTGOT)) {
+  if (!has(DYNAMIC_TAGS::DT_PLTGOT)) {
     return;
   }
-  const uint64_t addr = this->get(DYNAMIC_TAGS::DT_PLTGOT).value();
-  std::vector<uint8_t> content = this->get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
+  const uint64_t addr = get(DYNAMIC_TAGS::DT_PLTGOT).value();
+  std::vector<uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   if (content.size() != 3 * sizeof(ptr_t)) {
     LIEF_ERR("Cant't read got entries!");
     return;
   }
 
   auto got = reinterpret_cast<ptr_t*>(content.data());
-  if (got[0] > 0 and got[0] > from) { // Offset to the dynamic section
+  if (got[0] > 0 && got[0] > from) { // Offset to the dynamic section
     got[0] += shift;
   }
 
-  if (got[1] > 0 and got[1] > from) { // Prelinked value (unlikely?)
+  if (got[1] > 0 && got[1] > from) { // Prelinked value (unlikely?)
     got[1] += shift;
   }
-  this->patch_address(addr, content);
+  patch_address(addr, content);
 }
 
 }

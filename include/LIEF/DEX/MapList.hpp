@@ -28,6 +28,11 @@ namespace DEX {
 class Parser;
 class Class;
 
+//! Class which represents the ``map_list`` structure that
+//! follows the main DEX header.
+//!
+//! This MapList aims at referencing the location of other DEX structures as
+//! described in https://source.android.com/devices/tech/dalvik/dex-format#map-item
 class LIEF_API MapList : public Object {
   friend class Parser;
 
@@ -35,7 +40,6 @@ class LIEF_API MapList : public Object {
   using items_t           = std::map<MapItem::TYPES, MapItem>;
   using it_items_t        = ref_iterator<std::vector<MapItem*>>;
   using it_const_items_t  = const_ref_iterator<std::vector<MapItem*>>;
-
 
   public:
   MapList();
@@ -62,7 +66,7 @@ class LIEF_API MapList : public Object {
   //! Return the LIEF::DEX::MapItem associated with the given type
   MapItem& operator[](MapItem::TYPES type);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const MapList& rhs) const;
   bool operator!=(const MapList& rhs) const;

@@ -34,12 +34,16 @@ using setter_t = void (Note::*)(T);
 template<>
 void create<Note>(py::module& m) {
 
-  py::class_<Note, LIEF::Object>(m, "Note")
+  py::class_<Note, LIEF::Object>(m, "Note",
+      R"delim(
+      Class which represents an ELF note.
+      )delim")
+
     .def(py::init<>(),
-        "Default ctor")
+        "Default constructor")
 
     .def(py::init<const std::string&, NOTE_TYPES, const std::vector<uint8_t>&>(),
-        "Ctor from ``name``, ``type`` and ``description``",
+        "Constructor from a ``name``, ``type`` and ``description``",
         "name"_a, "type"_a, "description"_a)
 
     .def_property_readonly("details",
@@ -56,13 +60,13 @@ void create<Note>(py::module& m) {
     .def_property("type",
         static_cast<getter_t<NOTE_TYPES>>(&Note::type),
         static_cast<setter_t<NOTE_TYPES>>(&Note::type),
-        "Return the type of the note. Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
+        "Return the type of the note. It can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
         )
 
     .def_property("type_core",
         static_cast<getter_t<NOTE_TYPES_CORE>>(&Note::type_core),
         static_cast<setter_t<NOTE_TYPES_CORE>>(&Note::type_core),
-        "Return the type of the note for core ELF (ET_CORE). Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"
+        "Return the type of the note for ELF Core (ET_CORE). It Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"
         )
 
     .def_property("description",
@@ -77,7 +81,15 @@ void create<Note>(py::module& m) {
 
     .def_property_readonly("is_android",
         &Note::is_android,
-        "True if the note is an Android one")
+        R"delim(
+        True if the current note is specific to Android.
+
+        If true, :attr:`lief.Note.details` returns a reference to the :class:`~lief.ELF.AndroidNote` object
+        )delim")
+
+    .def_property_readonly("size",
+        &Note::size,
+        "Size of the **raw** note")
 
     .def("__eq__", &Note::operator==)
     .def("__ne__", &Note::operator!=)

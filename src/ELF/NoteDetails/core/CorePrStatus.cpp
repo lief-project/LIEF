@@ -44,61 +44,61 @@ CorePrStatus* CorePrStatus::clone() const {
 }
 
 const CorePrStatus::reg_context_t& CorePrStatus::reg_context() const {
-  return this->ctx_;
+  return ctx_;
 }
 
 
-const Elf_siginfo& CorePrStatus::siginfo() const {
-  return this->siginfo_;
+const details::Elf_siginfo& CorePrStatus::siginfo() const {
+  return siginfo_;
 }
 
 uint16_t CorePrStatus::current_sig() const {
-  return this->cursig_;
+  return cursig_;
 }
 
 uint64_t CorePrStatus::sigpend() const {
-  return this->sigpend_;
+  return sigpend_;
 }
 
 uint64_t CorePrStatus::sighold() const {
-  return this->sighold_;
+  return sighold_;
 }
 
 int32_t CorePrStatus::pid() const {
-  return this->pid_;
+  return pid_;
 }
 
 int32_t CorePrStatus::ppid() const {
-  return this->ppid_;
+  return ppid_;
 }
 
 int32_t CorePrStatus::pgrp() const {
-  return this->pgrp_;
+  return pgrp_;
 }
 
 int32_t CorePrStatus::sid() const {
-  return this->sid_;
+  return sid_;
 }
 
-Elf64_timeval CorePrStatus::utime() const {
-  return this->utime_;
+details::Elf64_timeval CorePrStatus::utime() const {
+  return utime_;
 }
 
-Elf64_timeval CorePrStatus::stime() const {
-  return this->stime_;
+details::Elf64_timeval CorePrStatus::stime() const {
+  return stime_;
 }
 
-Elf64_timeval CorePrStatus::cutime() const {
-  return this->cutime_;
+details::Elf64_timeval CorePrStatus::cutime() const {
+  return cutime_;
 }
 
-Elf64_timeval CorePrStatus::cstime() const {
-  return this->cstime_;
+details::Elf64_timeval CorePrStatus::cstime() const {
+  return cstime_;
 }
 
 
 uint64_t CorePrStatus::get(CorePrStatus::REGISTERS reg, bool* error) const {
-  if (not this->has(reg)) {
+  if (!has(reg)) {
     if (error != nullptr) {
       *error = true;
     }
@@ -108,35 +108,35 @@ uint64_t CorePrStatus::get(CorePrStatus::REGISTERS reg, bool* error) const {
   if (error != nullptr) {
     *error = false;
   }
-  return this->ctx_.at(reg);
+  return ctx_.at(reg);
 }
 
 bool CorePrStatus::has(CorePrStatus::REGISTERS reg) const {
-  return this->ctx_.find(reg) != std::end(this->ctx_);
+  return ctx_.find(reg) != std::end(ctx_);
 }
 
 
 uint64_t CorePrStatus::pc() const {
-  const ARCH arch = this->binary()->header().machine_type();
+  const ARCH arch = binary()->header().machine_type();
   switch (arch) {
     case ARCH::EM_386:
       {
-        return this->get(REGISTERS::X86_EIP);
+        return get(REGISTERS::X86_EIP);
       }
 
     case ARCH::EM_X86_64:
       {
-        return this->get(REGISTERS::X86_64_RIP);
+        return get(REGISTERS::X86_64_RIP);
       }
 
     case ARCH::EM_ARM:
       {
-        return this->get(REGISTERS::ARM_R15);
+        return get(REGISTERS::ARM_R15);
       }
 
     case ARCH::EM_AARCH64:
       {
-        return this->get(REGISTERS::AARCH64_PC);
+        return get(REGISTERS::AARCH64_PC);
       }
 
     default:
@@ -148,26 +148,26 @@ uint64_t CorePrStatus::pc() const {
 }
 
 uint64_t CorePrStatus::sp() const {
-  const ARCH arch = this->binary()->header().machine_type();
+  const ARCH arch = binary()->header().machine_type();
   switch (arch) {
     case ARCH::EM_386:
       {
-        return this->get(REGISTERS::X86_ESP);
+        return get(REGISTERS::X86_ESP);
       }
 
     case ARCH::EM_X86_64:
       {
-        return this->get(REGISTERS::X86_64_RSP);
+        return get(REGISTERS::X86_64_RSP);
       }
 
     case ARCH::EM_ARM:
       {
-        return this->get(REGISTERS::ARM_R13);
+        return get(REGISTERS::ARM_R13);
       }
 
     case ARCH::EM_AARCH64:
       {
-        return this->get(REGISTERS::AARCH64_X31);
+        return get(REGISTERS::AARCH64_X31);
       }
 
     default:
@@ -180,74 +180,74 @@ uint64_t CorePrStatus::sp() const {
 }
 
 
-void CorePrStatus::siginfo(const Elf_siginfo& siginfo) {
-  this->siginfo_ = siginfo;
-  this->build();
+void CorePrStatus::siginfo(const details::Elf_siginfo& siginfo) {
+  siginfo_ = siginfo;
+  build();
 }
 
 void CorePrStatus::current_sig(uint16_t current_sig) {
-  this->cursig_ = current_sig;
-  this->build();
+  cursig_ = current_sig;
+  build();
 }
 
 void CorePrStatus::sigpend(uint64_t sigpend) {
-  this->sigpend_ = sigpend;
-  this->build();
+  sigpend_ = sigpend;
+  build();
 }
 
 void CorePrStatus::sighold(uint64_t sighold) {
-  this->sighold_ = sighold;
-  this->build();
+  sighold_ = sighold;
+  build();
 }
 
 void CorePrStatus::pid(int32_t pid) {
-  this->pid_ = pid;
-  this->build();
+  pid_ = pid;
+  build();
 }
 
 void CorePrStatus::ppid(int32_t ppid) {
-  this->ppid_ = ppid;
-  this->build();
+  ppid_ = ppid;
+  build();
 }
 
 void CorePrStatus::pgrp(int32_t pgrp) {
-  this->pgrp_ = pgrp;
-  this->build();
+  pgrp_ = pgrp;
+  build();
 }
 
 void CorePrStatus::sid(int32_t sid) {
-  this->sid_ = sid;
-  this->build();
+  sid_ = sid;
+  build();
 }
 
-void CorePrStatus::utime(Elf64_timeval utime) {
-  this->utime_ = utime;
-  this->build();
+void CorePrStatus::utime(details::Elf64_timeval utime) {
+  utime_ = utime;
+  build();
 }
 
-void CorePrStatus::stime(Elf64_timeval stime) {
-  this->stime_ = stime;
-  this->build();
+void CorePrStatus::stime(details::Elf64_timeval stime) {
+  stime_ = stime;
+  build();
 }
 
-void CorePrStatus::cutime(Elf64_timeval cutime) {
-  this->cutime_ = cutime;
-  this->build();
+void CorePrStatus::cutime(details::Elf64_timeval cutime) {
+  cutime_ = cutime;
+  build();
 }
 
-void CorePrStatus::cstime(Elf64_timeval cstime) {
-  this->cstime_ = cstime;
-  this->build();
+void CorePrStatus::cstime(details::Elf64_timeval cstime) {
+  cstime_ = cstime;
+  build();
 }
 
 void CorePrStatus::reg_context(const reg_context_t& ctx) {
-  this->ctx_ = ctx;
-  this->build();
+  ctx_ = ctx;
+  build();
 }
 
 bool CorePrStatus::set(REGISTERS reg, uint64_t value) {
-  this->ctx_[reg] = value;
-  this->build();
+  ctx_[reg] = value;
+  build();
   return true;
 }
 
@@ -262,11 +262,11 @@ bool CorePrStatus::operator==(const CorePrStatus& rhs) const {
 }
 
 bool CorePrStatus::operator!=(const CorePrStatus& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 uint64_t& CorePrStatus::operator[](REGISTERS reg) {
-  return this->ctx_[reg];
+  return ctx_[reg];
 }
 
 void CorePrStatus::dump(std::ostream& os) const {
@@ -274,59 +274,59 @@ void CorePrStatus::dump(std::ostream& os) const {
   os << std::left;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Siginfo: "<< std::dec;
-    dump(os, this->siginfo());
+    dump(os, siginfo());
   os << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Current Signal: "<< std::dec
-     << this->current_sig() << std::endl;
+     << current_sig() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Pending signal: "<< std::dec
-     << this->sigpend() << std::endl;
+     << sigpend() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Signal held: "<< std::dec
-     << this->sighold() << std::endl;
+     << sighold() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "PID: "<< std::dec
-     << this->pid() << std::endl;
+     << pid() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "PPID: "<< std::dec
-     << this->ppid() << std::endl;
+     << ppid() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "PGRP: "<< std::dec
-     << this->pgrp() << std::endl;
+     << pgrp() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "SID: "<< std::dec
-     << this->sid() << std::endl;
+     << sid() << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "utime: "<< std::dec;
-    dump(os, this->utime());
+    dump(os, utime());
   os << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "stime: "<< std::dec;
-    dump(os, this->stime());
+    dump(os, stime());
   os << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "cutime: "<< std::dec;
-    dump(os, this->cutime());
+    dump(os, cutime());
   os << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "cstime: "<< std::dec;
-    dump(os, this->cstime());
+    dump(os, cstime());
   os << std::endl;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Registers: "<< std::dec << std::endl;
-    dump(os, this->reg_context());
+    dump(os, reg_context());
   os << std::endl;
 
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const Elf64_timeval& time) {
+std::ostream& CorePrStatus::dump(std::ostream& os, const details::Elf64_timeval& time) {
   os << std::dec;
   os << time.tv_sec << ":" << time.tv_usec;
   return os;
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const Elf_siginfo& siginfo) {
+std::ostream& CorePrStatus::dump(std::ostream& os, const details::Elf_siginfo& siginfo) {
   os << std::dec;
   os << siginfo.si_signo << " - " << siginfo.si_code << " - " << siginfo.si_errno;
   return os;
@@ -334,7 +334,7 @@ std::ostream& CorePrStatus::dump(std::ostream& os, const Elf_siginfo& siginfo) {
 
 std::ostream& CorePrStatus::dump(std::ostream& os, const reg_context_t& ctx) {
 
-  for (auto&& reg_val : ctx) {
+  for (const auto& reg_val : ctx) {
     os << std::setw(14) << std::setfill(' ') << to_string(reg_val.first) << ": " << std::hex << std::showbase << reg_val.second << std::endl;
   }
   return os;
@@ -342,24 +342,24 @@ std::ostream& CorePrStatus::dump(std::ostream& os, const reg_context_t& ctx) {
 
 
 void CorePrStatus::parse() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->parse_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->parse_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    parse_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    parse_<details::ELF32>();
   }
 }
 
 void CorePrStatus::build() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->build_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->build_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    build_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    build_<details::ELF32>();
   }
 }
 
 
 std::pair<size_t, size_t> CorePrStatus::reg_enum_range() const {
-  const ARCH arch = this->binary()->header().machine_type();
+  const ARCH arch = binary()->header().machine_type();
 
   size_t enum_start = 0;
   size_t enum_end   = 0;

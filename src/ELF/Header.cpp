@@ -79,71 +79,71 @@ Header::Header() :
 {}
 
 
-Header::Header(const Elf32_Ehdr *header):
-  file_type_(static_cast<E_TYPE>(header->e_type)),
-  machine_type_(static_cast<ARCH>(header->e_machine)),
-  object_file_version_(static_cast<VERSION>(header->e_version)),
-  entrypoint_(header->e_entry),
-  program_headers_offset_(header->e_phoff),
-  section_headers_offset_(header->e_shoff),
-  processor_flags_(header->e_flags),
-  header_size_(header->e_ehsize),
-  program_header_size_(header->e_phentsize),
-  numberof_segments_(header->e_phnum),
-  section_header_size_(header->e_shentsize),
-  numberof_sections_(header->e_shnum),
-  section_string_table_idx_(header->e_shstrndx)
+Header::Header(const details::Elf32_Ehdr& header):
+  file_type_(static_cast<E_TYPE>(header.e_type)),
+  machine_type_(static_cast<ARCH>(header.e_machine)),
+  object_file_version_(static_cast<VERSION>(header.e_version)),
+  entrypoint_(header.e_entry),
+  program_headers_offset_(header.e_phoff),
+  section_headers_offset_(header.e_shoff),
+  processor_flags_(header.e_flags),
+  header_size_(header.e_ehsize),
+  program_header_size_(header.e_phentsize),
+  numberof_segments_(header.e_phnum),
+  section_header_size_(header.e_shentsize),
+  numberof_sections_(header.e_shnum),
+  section_string_table_idx_(header.e_shstrndx)
 {
  std::copy(
-     reinterpret_cast<const uint8_t*>(header->e_ident),
-     reinterpret_cast<const uint8_t*>(header->e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
-     std::begin(this->identity_));
+     reinterpret_cast<const uint8_t*>(header.e_ident),
+     reinterpret_cast<const uint8_t*>(header.e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
+     std::begin(identity_));
 }
 
-Header::Header(const Elf64_Ehdr *header):
-  file_type_(static_cast<E_TYPE>(header->e_type)),
-  machine_type_(static_cast<ARCH>(header->e_machine)),
-  object_file_version_(static_cast<VERSION>(header->e_version)),
-  entrypoint_(header->e_entry),
-  program_headers_offset_(header->e_phoff),
-  section_headers_offset_(header->e_shoff),
-  processor_flags_(header->e_flags),
-  header_size_(header->e_ehsize),
-  program_header_size_(header->e_phentsize),
-  numberof_segments_(header->e_phnum),
-  section_header_size_(header->e_shentsize),
-  numberof_sections_(header->e_shnum),
-  section_string_table_idx_(header->e_shstrndx)
+Header::Header(const details::Elf64_Ehdr& header):
+  file_type_(static_cast<E_TYPE>(header.e_type)),
+  machine_type_(static_cast<ARCH>(header.e_machine)),
+  object_file_version_(static_cast<VERSION>(header.e_version)),
+  entrypoint_(header.e_entry),
+  program_headers_offset_(header.e_phoff),
+  section_headers_offset_(header.e_shoff),
+  processor_flags_(header.e_flags),
+  header_size_(header.e_ehsize),
+  program_header_size_(header.e_phentsize),
+  numberof_segments_(header.e_phnum),
+  section_header_size_(header.e_shentsize),
+  numberof_sections_(header.e_shnum),
+  section_string_table_idx_(header.e_shstrndx)
 {
  std::copy(
-     reinterpret_cast<const uint8_t*>(header->e_ident),
-     reinterpret_cast<const uint8_t*>(header->e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
-     std::begin(this->identity_));
+     reinterpret_cast<const uint8_t*>(header.e_ident),
+     reinterpret_cast<const uint8_t*>(header.e_ident) + static_cast<size_t>(IDENTITY::EI_NIDENT),
+     std::begin(identity_));
 }
 
 
 E_TYPE Header::file_type() const {
-  return this->file_type_;
+  return file_type_;
 }
 
 
 ARCH Header::machine_type() const {
-  return this->machine_type_;
+  return machine_type_;
 }
 
 OBJECT_TYPES Header::abstract_object_type() const {
   try {
-    return obj_elf_to_lief.at(this->file_type());
+    return obj_elf_to_lief.at(file_type());
   } catch (const std::out_of_range&) {
-    throw not_implemented(to_string(this->file_type()));
+    throw not_implemented(to_string(file_type()));
   }
 }
 
 
 Header::abstract_architecture_t Header::abstract_architecture() const {
-  auto&& it = arch_elf_to_lief.find(this->machine_type());
+  const auto it = arch_elf_to_lief.find(machine_type());
   if (it == std::end(arch_elf_to_lief)) {
-    LIEF_ERR("{}  is not supported!", to_string(this->machine_type()));
+    LIEF_ERR("{}  is not supported!", to_string(machine_type()));
     return {};
   }
   return it->second;
@@ -152,7 +152,7 @@ Header::abstract_architecture_t Header::abstract_architecture() const {
 
 ENDIANNESS Header::abstract_endianness() const {
   try {
-    return endi_elf_to_lief.at(this->identity_data());
+    return endi_elf_to_lief.at(identity_data());
   } catch (const std::out_of_range&) {
     throw corrupted("Invalid encoding");
   }
@@ -160,32 +160,32 @@ ENDIANNESS Header::abstract_endianness() const {
 
 
 VERSION Header::object_file_version() const {
-  return this->object_file_version_;
+  return object_file_version_;
 }
 
 
 uint64_t Header::entrypoint() const {
-  return this->entrypoint_;
+  return entrypoint_;
 }
 
 
 uint64_t Header::program_headers_offset() const {
-  return this->program_headers_offset_;
+  return program_headers_offset_;
 }
 
 
 uint64_t Header::section_headers_offset() const {
-  return this->section_headers_offset_;
+  return section_headers_offset_;
 }
 
 
 uint32_t Header::processor_flag() const {
-  return this->processor_flags_;
+  return processor_flags_;
 }
 
 
 bool Header::has(ARM_EFLAGS f) const {
-  if (this->machine_type() != ARCH::EM_ARM) {
+  if (machine_type() != ARCH::EM_ARM) {
     return false;
   }
 
@@ -196,12 +196,11 @@ bool Header::has(ARM_EFLAGS f) const {
     case ARM_EFLAGS::EF_ARM_EABI_VER4:
     case ARM_EFLAGS::EF_ARM_EABI_VER5:
       {
-        return (this->processor_flag() & static_cast<uint32_t>(ARM_EFLAGS::EF_ARM_EABIMASK)) == static_cast<uint32_t>(f);
-        break;
+        return (processor_flag() & static_cast<uint32_t>(ARM_EFLAGS::EF_ARM_EABIMASK)) == static_cast<uint32_t>(f);
       }
     default:
       {
-        return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
+        return (processor_flag() & static_cast<uint32_t>(f)) > 0;
       }
   }
 }
@@ -210,10 +209,10 @@ arm_flags_list_t Header::arm_flags_list() const {
   arm_flags_list_t flags;
 
   std::copy_if(
-      std::begin(arm_eflags_array),
-      std::end(arm_eflags_array),
+      std::begin(details::arm_eflags_array),
+      std::end(details::arm_eflags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(static_cast<bool (Header::*)(ARM_EFLAGS) const>(&Header::has), this, std::placeholders::_1));
+      [this] (ARM_EFLAGS f) { return has(f); });
 
   return flags;
 
@@ -222,15 +221,15 @@ arm_flags_list_t Header::arm_flags_list() const {
 bool Header::has(MIPS_EFLAGS f) const {
 
   auto fn = static_cast<uint32_t>(f);
-  if (this->machine_type() != ARCH::EM_MIPS) {
+  if (machine_type() != ARCH::EM_MIPS) {
     return false;
   }
 
-  if (this->machine_type() != ARCH::EM_MIPS_RS3_LE) {
+  if (machine_type() != ARCH::EM_MIPS_RS3_LE) {
     return false;
   }
 
-  if (this->machine_type() != ARCH::EM_MIPS_X) {
+  if (machine_type() != ARCH::EM_MIPS_X) {
     return false;
   }
 
@@ -243,8 +242,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_FP64:
     case MIPS_EFLAGS::EF_MIPS_NAN2008:
       {
-        return (this->processor_flag() & fn) > 0;
-        break;
+        return (processor_flag() & fn) > 0;
       }
 
     case MIPS_EFLAGS::EF_MIPS_ABI_O32:
@@ -252,8 +250,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ABI_EABI32:
     case MIPS_EFLAGS::EF_MIPS_ABI_EABI64:
       {
-        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ABI)) & fn) > 0;
-        break;
+        return ((processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ABI)) & fn) > 0;
       }
 
     case MIPS_EFLAGS::EF_MIPS_MACH_3900:
@@ -275,8 +272,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_MACH_LS2F:
     case MIPS_EFLAGS::EF_MIPS_MACH_LS3A:
       {
-        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_MACH)) & fn) > 0;
-        break;
+        return ((processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_MACH)) & fn) > 0;
       }
 
 
@@ -284,8 +280,7 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ARCH_ASE_M16:
     case MIPS_EFLAGS::EF_MIPS_ARCH_ASE_MDMX:
       {
-        return ((this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH_ASE)) & fn) > 0;
-        break;
+        return ((processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH_ASE)) & fn) > 0;
       }
 
     case MIPS_EFLAGS::EF_MIPS_ARCH_1:
@@ -300,28 +295,27 @@ bool Header::has(MIPS_EFLAGS f) const {
     case MIPS_EFLAGS::EF_MIPS_ARCH_32R6:
     case MIPS_EFLAGS::EF_MIPS_ARCH_64R6:
       {
-        return (this->processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH)) == fn;
-        break;
+        return (processor_flag() & static_cast<uint32_t>(MIPS_EFLAGS::EF_MIPS_ARCH)) == fn;
       }
 
     default:
       {
-        return (this->processor_flag() & fn) > 0;
+        return (processor_flag() & fn) > 0;
       }
   }
 
 
-  return (this->processor_flag() & fn) > 0;
+  return (processor_flag() & fn) > 0;
 }
 
 mips_flags_list_t Header::mips_flags_list() const {
   mips_flags_list_t flags;
 
   std::copy_if(
-      std::begin(mips_eflags_array),
-      std::end(mips_eflags_array),
+      std::begin(details::mips_eflags_array),
+      std::end(details::mips_eflags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(static_cast<bool (Header::*)(MIPS_EFLAGS) const>(&Header::has), this, std::placeholders::_1));
+      [this] (MIPS_EFLAGS f) { return has(f); });
 
   return flags;
 
@@ -329,21 +323,21 @@ mips_flags_list_t Header::mips_flags_list() const {
 
 
 bool Header::has(PPC64_EFLAGS f) const {
-  if (this->machine_type() != ARCH::EM_PPC64) {
+  if (machine_type() != ARCH::EM_PPC64) {
     return false;
   }
 
-  return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
+  return (processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
 ppc64_flags_list_t Header::ppc64_flags_list() const {
   ppc64_flags_list_t flags;
 
   std::copy_if(
-      std::begin(ppc64_eflags_array),
-      std::end(ppc64_eflags_array),
+      std::begin(details::ppc64_eflags_array),
+      std::end(details::ppc64_eflags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(static_cast<bool (Header::*)(PPC64_EFLAGS) const>(&Header::has), this, std::placeholders::_1));
+      [this] (PPC64_EFLAGS f) { return has(f); });
 
   return flags;
 
@@ -351,21 +345,21 @@ ppc64_flags_list_t Header::ppc64_flags_list() const {
 
 
 bool Header::has(HEXAGON_EFLAGS f) const {
-  if (this->machine_type() != ARCH::EM_HEXAGON) {
+  if (machine_type() != ARCH::EM_HEXAGON) {
     return false;
   }
 
-  return (this->processor_flag() & static_cast<uint32_t>(f)) > 0;
+  return (processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
 hexagon_flags_list_t Header::hexagon_flags_list() const {
   hexagon_flags_list_t flags;
 
   std::copy_if(
-      std::begin(hexagon_eflags_array),
-      std::end(hexagon_eflags_array),
+      std::begin(details::hexagon_eflags_array),
+      std::end(details::hexagon_eflags_array),
       std::inserter(flags, std::begin(flags)),
-      std::bind(static_cast<bool (Header::*)(HEXAGON_EFLAGS) const>(&Header::has), this, std::placeholders::_1));
+      [this] (HEXAGON_EFLAGS f) { return has(f); });
 
   return flags;
 
@@ -373,35 +367,35 @@ hexagon_flags_list_t Header::hexagon_flags_list() const {
 
 
 uint32_t Header::header_size() const {
-  return this->header_size_;
+  return header_size_;
 }
 
 
 uint32_t Header::program_header_size() const {
-  return this->program_header_size_;
+  return program_header_size_;
 }
 
 
 uint32_t Header::numberof_segments() const {
-  return this->numberof_segments_;
+  return numberof_segments_;
 }
 
 uint32_t Header::section_header_size() const {
-  return this->section_header_size_;
+  return section_header_size_;
 }
 
 uint32_t Header::numberof_sections() const {
-  return this->numberof_sections_;
+  return numberof_sections_;
 }
 
 
 uint32_t Header::section_name_table_idx() const {
-  return this->section_string_table_idx_;
+  return section_string_table_idx_;
 }
 
 
 const Header::identity_t& Header::identity() const {
-  return this->identity_;
+  return identity_;
 }
 
 Header::identity_t& Header::identity() {
@@ -409,87 +403,87 @@ Header::identity_t& Header::identity() {
 }
 
 ELF_CLASS Header::identity_class() const {
-  return static_cast<ELF_CLASS>(this->identity_[static_cast<size_t>(IDENTITY::EI_CLASS)]);
+  return static_cast<ELF_CLASS>(identity_[static_cast<size_t>(IDENTITY::EI_CLASS)]);
 }
 
 ELF_DATA Header::identity_data() const {
-  return static_cast<ELF_DATA>(this->identity_[static_cast<size_t>(IDENTITY::EI_DATA)]);
+  return static_cast<ELF_DATA>(identity_[static_cast<size_t>(IDENTITY::EI_DATA)]);
 }
 
 VERSION Header::identity_version() const {
-  return static_cast<VERSION>(this->identity_[static_cast<size_t>(IDENTITY::EI_VERSION)]);
+  return static_cast<VERSION>(identity_[static_cast<size_t>(IDENTITY::EI_VERSION)]);
 }
 
 OS_ABI Header::identity_os_abi() const {
-  return static_cast<OS_ABI>(this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)]);
+  return static_cast<OS_ABI>(identity_[static_cast<size_t>(IDENTITY::EI_OSABI)]);
 }
 
 uint32_t Header::identity_abi_version() const {
-  return static_cast<uint32_t>(this->identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)]);
+  return static_cast<uint32_t>(identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)]);
 }
 
 void Header::file_type(E_TYPE type) {
-  this->file_type_ = type;
+  file_type_ = type;
 }
 
 
 void Header::machine_type(ARCH machineType) {
-  this->machine_type_ = machineType;
+  machine_type_ = machineType;
 }
 
 
 void Header::object_file_version(VERSION version) {
-  this->object_file_version_ = version;
+  object_file_version_ = version;
 }
 
 
 void Header::entrypoint(uint64_t entryPoint) {
-  this->entrypoint_ = entryPoint;
+  entrypoint_ = entryPoint;
 }
 
 
 void Header::program_headers_offset(uint64_t programHeaderOffset) {
-  this->program_headers_offset_ = programHeaderOffset;
+  program_headers_offset_ = programHeaderOffset;
 }
 
 
 void Header::section_headers_offset(uint64_t sectionHeaderOffset) {
-  this->section_headers_offset_ = sectionHeaderOffset;
+  section_headers_offset_ = sectionHeaderOffset;
 }
 
 
 void Header::processor_flag(uint32_t processorFlag) {
-  this->processor_flags_ = processorFlag;
+  processor_flags_ = processorFlag;
 }
 
 
 void Header::header_size(uint32_t headerSize) {
-  this->header_size_ = headerSize;
+  header_size_ = headerSize;
 }
 
 
 void Header::program_header_size(uint32_t programHeaderSize) {
-  this->program_header_size_ = programHeaderSize;
+  program_header_size_ = programHeaderSize;
 }
 
 
 void Header::numberof_segments(uint32_t n) {
-  this->numberof_segments_ = n;
+  numberof_segments_ = n;
 }
 
 
 void Header::section_header_size(uint32_t sizeOfSectionHeaderEntries) {
-  this->section_header_size_ = sizeOfSectionHeaderEntries;
+  section_header_size_ = sizeOfSectionHeaderEntries;
 }
 
 
 void Header::numberof_sections(uint32_t n) {
-  this->numberof_sections_ = n;
+  numberof_sections_ = n;
 }
 
 
 void Header::section_name_table_idx(uint32_t sectionNameStringTableIdx) {
-  this->section_string_table_idx_ = sectionNameStringTableIdx;
+  section_string_table_idx_ = sectionNameStringTableIdx;
 }
 
 
@@ -497,34 +491,34 @@ void Header::identity(const std::string& identity) {
   std::copy(
       std::begin(identity),
       std::end(identity),
-      std::begin(this->identity_));
+      std::begin(identity_));
 }
 
 void Header::identity(const Header::identity_t& identity) {
   std::copy(
       std::begin(identity),
       std::end(identity),
-      std::begin(this->identity_));
+      std::begin(identity_));
 }
 
 void Header::identity_class(ELF_CLASS i_class) {
-  this->identity_[static_cast<size_t>(IDENTITY::EI_CLASS)] = static_cast<uint8_t>(i_class);
+  identity_[static_cast<size_t>(IDENTITY::EI_CLASS)] = static_cast<uint8_t>(i_class);
 }
 
 void Header::identity_data(ELF_DATA data) {
-  this->identity_[static_cast<size_t>(IDENTITY::EI_DATA)] = static_cast<uint8_t>(data);
+  identity_[static_cast<size_t>(IDENTITY::EI_DATA)] = static_cast<uint8_t>(data);
 }
 
 void Header::identity_version(VERSION version) {
-  this->identity_[static_cast<size_t>(IDENTITY::EI_VERSION)] = static_cast<uint8_t>(version);
+  identity_[static_cast<size_t>(IDENTITY::EI_VERSION)] = static_cast<uint8_t>(version);
 }
 
 void Header::identity_os_abi(OS_ABI osabi) {
-  this->identity_[static_cast<size_t>(IDENTITY::EI_OSABI)] = static_cast<uint8_t>(osabi);
+  identity_[static_cast<size_t>(IDENTITY::EI_OSABI)] = static_cast<uint8_t>(osabi);
 }
 
 void Header::identity_abi_version(uint32_t version) {
-  this->identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)] = static_cast<uint8_t>(version);
+  identity_[static_cast<size_t>(IDENTITY::EI_ABIVERSION)] = static_cast<uint8_t>(version);
 }
 
 
@@ -539,7 +533,7 @@ bool Header::operator==(const Header& rhs) const {
 }
 
 bool Header::operator!=(const Header& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -589,8 +583,8 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   }
 
 
-  if (hdr.machine_type() == ARCH::EM_MIPS or
-      hdr.machine_type() == ARCH::EM_MIPS_RS3_LE or
+  if (hdr.machine_type() == ARCH::EM_MIPS ||
+      hdr.machine_type() == ARCH::EM_MIPS_RS3_LE ||
       hdr.machine_type() == ARCH::EM_MIPS_X) {
     const mips_flags_list_t& flags = hdr.mips_flags_list();
     processor_flags_str = std::accumulate(

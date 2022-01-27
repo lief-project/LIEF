@@ -36,7 +36,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     //   * Symbol definition
     //   * Symbol version requirement
     //   * Symbol version definition
-    if (not raw_dynstr_.empty()) {
+    if (!raw_dynstr_.empty()) {
       return raw_dynstr_.size();
     }
     LIEF_SW_START(sw);
@@ -154,7 +154,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
   template<class ELF_T>
   size_t dynamic_arraysize(DYNAMIC_TAGS tag) {
     using uint__ = typename ELF_T::uint;
-    if (not binary_->has(tag)) {
+    if (!binary_->has(tag)) {
       return 0;
     }
     return binary_->get(tag).as<const DynamicEntryArray&>()->size() * sizeof(uint__);
@@ -254,7 +254,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     const uint32_t shift2     = gnu_hash.shift2();
 
     const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
-    if (filters.size() > 0 and filters[0] == 0) {
+    if (filters.size() > 0 && filters[0] == 0) {
       LIEF_DEBUG("Bloom filter is null");
     }
 
@@ -371,7 +371,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     using Elf_Rela   = typename ELF_T::Elf_Rela;
     using Elf_Rel    = typename ELF_T::Elf_Rel;
     const it_pltgot_relocations& pltgot_relocs = binary_->pltgot_relocations();
-    bool is_rela = binary_->has(DYNAMIC_TAGS::DT_PLTREL) and
+    bool is_rela = binary_->has(DYNAMIC_TAGS::DT_PLTREL) &&
        binary_->get(DYNAMIC_TAGS::DT_PLTREL).value() == static_cast<uint64_t>(DYNAMIC_TAGS::DT_RELA);
 
     if (is_rela) {
@@ -507,7 +507,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *
      */
     Segment* interp = nullptr;
-    if (interp_size_ > 0 and not binary_->has(SEGMENT_TYPES::PT_INTERP)) {
+    if (interp_size_ > 0 && !binary_->has(SEGMENT_TYPES::PT_INTERP)) {
       Segment interp_segment;
       interp_segment.alignment(0x8);
       interp_segment.type(SEGMENT_TYPES::PT_INTERP);
@@ -968,7 +968,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       symtab.content(std::vector<uint8_t>(symtab_size_));
 
       const size_t sizeof_sym = binary_->type() == ELF_CLASS::ELFCLASS32 ?
-                                sizeof(Elf32_Sym) : sizeof(Elf64_Sym);
+                                sizeof(details::Elf32_Sym) : sizeof(details::Elf64_Sym);
       symtab.entry_size(sizeof_sym);
       symtab.alignment(8);
       symtab.link(strtab_idx);
@@ -980,7 +980,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // Process note sections
     if (binary_->has(SEGMENT_TYPES::PT_NOTE)) {
       using value_t = typename note_to_section_map_t::value_type;
-      const Segment& segment_note = this->binary_->get(SEGMENT_TYPES::PT_NOTE);
+      const Segment& segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
 
       for (const Note& note : binary_->notes()) {
         auto range_secname = note_to_section_map.equal_range(note.type());
@@ -1009,14 +1009,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
         // If the binary does not have the note "type"
         // but still have the section, then remove the section
-        if (not binary_->has(note.type()) and has_section) {
+        if (!binary_->has(note.type()) && has_section) {
           binary_->remove_section(section_name, true);
         }
 
         // If the binary has the note type but does not have
         // the section (likly because the user added the note manually)
         // then, create the section
-        if (this->binary_->has(type) and not has_section) {
+        if (binary_->has(type) && !has_section) {
           if (it_offset == std::end(notes_off_map_)) {
             LIEF_ERR("Can't find {}", to_string(type));
             return;

@@ -44,7 +44,7 @@ void MsSpcNestedSignature::accept(Visitor& visitor) const {
 std::string MsSpcNestedSignature::print() const {
   std::ostringstream oss;
   oss << "Nested signature:\n";
-  oss << this->sig();
+  oss << sig();
   return oss.str();
 }
 

@@ -24,6 +24,7 @@ namespace DEX {
 class Parser;
 class Class;
 
+//! Class which represents an element of the MapList object
 class LIEF_API MapItem : public Object {
   friend class Parser;
 
@@ -59,12 +60,20 @@ class LIEF_API MapItem : public Object {
   MapItem(const MapItem&);
   MapItem& operator=(const MapItem&);
 
+  //! The type of the item
   TYPES type() const;
+
+  //! Reserved value (likely for alignment prupose)
   uint16_t reserved() const;
+
+  //! The number of elements (the real meaning depends on the type)
   uint32_t size() const;
+
+  //! Offset from the start of the DEX file to the items associated with
+  //! the underlying TYPES
   uint32_t offset() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const MapItem& rhs) const;
   bool operator!=(const MapItem& rhs) const;

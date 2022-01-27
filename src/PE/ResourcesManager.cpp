@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <numeric>
+#include <utility>
 
 #include "logging.hpp"
 
@@ -44,8 +45,8 @@ ResourcesManager::ResourcesManager(const ResourcesManager&) = default;
 ResourcesManager& ResourcesManager::operator=(const ResourcesManager&) = default;
 ResourcesManager::~ResourcesManager() = default;
 
-ResourcesManager::ResourcesManager(ResourceNode *rsrc) :
-  resources_{rsrc}
+ResourcesManager::ResourcesManager(ResourceNode& rsrc) :
+  resources_{&rsrc}
 {}
 
 RESOURCE_LANGS ResourcesManager::lang_from_id(size_t id) {
@@ -220,7 +221,7 @@ RESOURCE_SUBLANGS ResourcesManager::sub_lang(RESOURCE_LANGS lang, size_t index) 
     { {RESOURCE_LANGS::LANG_VALENCIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_VALENCIAN_VALENCIA },
   };
 
-  auto&& it = sublangs_map.find({lang, index});
+  const auto it = sublangs_map.find({lang, index});
   if (it == std::end(sublangs_map)) {
     return RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
   }
@@ -236,14 +237,12 @@ ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) {
 }
 
 const ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
-  if (not this->has_type(type)) {
+  if (!has_type(type)) {
     throw not_found(std::string("Can't find the node with type '") + to_string(type) + "'");
   }
 
-  it_childs nodes = this->resources_->childs();
-  auto&& it_node = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_node = std::find_if(std::begin(nodes), std::end(nodes),
       [type] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == type;
       });
@@ -253,10 +252,8 @@ const ResourceNode& ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
 
 std::set<RESOURCE_TYPES> ResourcesManager::get_types_available() const {
   std::set<RESOURCE_TYPES> types;
-  for (const ResourceNode& node : this->resources_->childs()) {
-    auto&& it = std::find_if(
-        std::begin(resource_types_array),
-        std::end(resource_types_array),
+  for (const ResourceNode& node : resources_->childs()) {
+    const auto *const it = std::find_if(std::begin(resource_types_array), std::end(resource_types_array),
         [&node] (RESOURCE_TYPES t) {
           return t == static_cast<RESOURCE_TYPES>(node.id());
         });
@@ -270,15 +267,12 @@ std::set<RESOURCE_TYPES> ResourcesManager::get_types_available() const {
 
 std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available() const {
   std::set<RESOURCE_LANGS> langs;
-  for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
+  for (const ResourceNode& node_lvl_1 : resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
       for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
 
-        RESOURCE_LANGS lang = static_cast<RESOURCE_LANGS>(node_lvl_3.id() & 0x3ff);
-
-        auto&& it = std::find_if(
-            std::begin(resource_langs_array),
-            std::end(resource_langs_array),
+        auto lang = static_cast<RESOURCE_LANGS>(node_lvl_3.id() & 0x3ff);
+        const auto *const it = std::find_if(std::begin(resource_langs_array), std::end(resource_langs_array),
             [lang] (RESOURCE_LANGS t) {
               return t == lang;
             });
@@ -294,7 +288,7 @@ std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available() const {
 
 std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available() const {
   std::set<RESOURCE_SUBLANGS> sublangs;
-  for (const ResourceNode& node_lvl_1 : this->resources_->childs()) {
+  for (const ResourceNode& node_lvl_1 : resources_->childs()) {
     for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
       for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
         RESOURCE_SUBLANGS sub_lang = ResourcesManager::sublang_from_id(node_lvl_3.id());
@@ -306,10 +300,8 @@ std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available() const {
 }
 
 bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_node = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_node = std::find_if(std::begin(nodes), std::end(nodes),
       [type] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == type;
       });
@@ -322,10 +314,8 @@ bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
 // ========
 
 bool ResourcesManager::has_manifest() const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_manifest = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_manifest = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
@@ -334,14 +324,12 @@ bool ResourcesManager::has_manifest() const {
 }
 
 std::string ResourcesManager::manifest() const {
-  if (not this->has_manifest()) {
+  if (!has_manifest()) {
     throw not_found("No manifest found in the resources");
   }
 
-  it_childs nodes = this->resources_->childs();
-  auto&& it_manifest = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_manifest = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
@@ -367,12 +355,12 @@ std::string ResourcesManager::manifest() const {
 }
 
 void ResourcesManager::manifest(const std::string& manifest) {
-  if (not this->has_manifest()) {
+  if (!has_manifest()) {
     //TODO(Romain): Enable to craft a manifest
     throw not_implemented("No manifest");
   }
 
-  it_childs nodes = this->resources_->childs();
+  it_childs nodes = resources_->childs();
   const auto it_manifest = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
@@ -387,10 +375,8 @@ void ResourcesManager::manifest(const std::string& manifest) {
 // Resource Version
 // ================
 bool ResourcesManager::has_version() const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_version = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_version = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::VERSION;
       });
@@ -398,14 +384,12 @@ bool ResourcesManager::has_version() const {
 }
 
 ResourceVersion ResourcesManager::version() const {
-  if (not this->has_version()) {
+  if (!has_version()) {
     throw not_found("Resource version not found");
   }
 
-  it_childs nodes = this->resources_->childs();
-  auto&& it_version = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_version = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::VERSION;
       });
@@ -433,19 +417,19 @@ ResourceVersion ResourcesManager::version() const {
 
   stream.setpos(0);
   // Size of the current "struct"
-  const uint16_t length = stream.read<uint16_t>();
+  const auto length = stream.read<uint16_t>();
   LIEF_DEBUG("Lenght of the struct: 0x{:x}", length);
 
   // Size of the fixed file info struct
-  const uint16_t value_length = stream.read<uint16_t>();
+  const auto value_length = stream.read<uint16_t>();
   LIEF_DEBUG("Size of the 'FixedFileInfo' struct 0x{:x}", value_length);
 
   // Type of the data in the version resource
   // 1: Text data
   // 0: Binary data
-  const uint16_t type = stream.read<uint16_t>();
+  const auto type = stream.read<uint16_t>();
   version.type_ = type;
-  if (type != 0 and type != 1) {
+  if (type != 0 && type != 1) {
     LIEF_WARN("\"type\" of the resource version should be equal to 0 or 1 ({:d})", type);
   }
 
@@ -460,12 +444,12 @@ ResourceVersion ResourcesManager::version() const {
   stream.align(sizeof(uint32_t));
 
   if (value_length > 0) {
-    if (value_length == sizeof(pe_resource_fixed_file_info)) {
-      const auto fixed_file_info_header = stream.peek<pe_resource_fixed_file_info>();
+    if (value_length == sizeof(details::pe_resource_fixed_file_info)) {
+      const auto fixed_file_info_header = stream.peek<details::pe_resource_fixed_file_info>();
       if (fixed_file_info_header.signature != 0xFEEF04BD) {
         LIEF_WARN("Bad magic value for the Fixed file info structure");
       } else {
-        version.fixed_file_info_ = ResourceFixedFileInfo{&fixed_file_info_header};
+        version.fixed_file_info_ = ResourceFixedFileInfo{fixed_file_info_header};
         version.has_fixed_file_info_ = true;
       }
     } else {
@@ -490,17 +474,17 @@ ResourceVersion ResourcesManager::version() const {
     if (struct_file_info_length > 0) {
       stream.increment_pos(sizeof(uint16_t));
 
-      const uint16_t struct_length = stream.read<uint16_t>();
+      const auto struct_length = stream.read<uint16_t>();
       LIEF_DEBUG("Lenght of the struct: 0x{:x}", struct_length);
 
-      const uint16_t type = stream.read<uint16_t>();
+      const auto type = stream.read<uint16_t>();
       LIEF_DEBUG("Type of the struct: {:d}", type);
 
       std::u16string key = stream.read_u16string();
       LIEF_DEBUG("First entry (key) {}", u16tou8(key));
       if (u16tou8(key, true) == "StringFileInfo") {
         try {
-          version.string_file_info_ = this->get_string_file_info(stream, type, key, start, struct_file_info_length);
+          version.string_file_info_ = get_string_file_info(stream, type, key, start, struct_file_info_length);
           version.has_string_file_info_ = true;
         } catch (const LIEF::exception& e) {
           LIEF_ERR("{}", e.what());
@@ -509,7 +493,7 @@ ResourceVersion ResourcesManager::version() const {
 
       if (u16tou8(key, true) == "VarFileInfo") {
         try {
-          version.var_file_info_ = this->get_var_file_info(stream, type, key, start, struct_file_info_length);
+          version.var_file_info_ = get_var_file_info(stream, type, key, start, struct_file_info_length);
           version.has_var_file_info_ = true;
         } catch (const LIEF::exception& e) {
           LIEF_ERR("{}", e.what());
@@ -530,10 +514,10 @@ ResourceVersion ResourcesManager::version() const {
     if (struct_file_info_length > 0) {
       stream.increment_pos(sizeof(uint16_t));
 
-      const uint16_t struct_length = stream.read<uint16_t>();
+      const auto struct_length = stream.read<uint16_t>();
       LIEF_DEBUG("Lenght of the struct: 0x{:x}", struct_length);
 
-      const uint16_t type = stream.read<uint16_t>();
+      const auto type = stream.read<uint16_t>();
       LIEF_DEBUG("Type of the struct: {:d}", type);
 
       std::u16string key = stream.read_u16string();
@@ -542,7 +526,7 @@ ResourceVersion ResourcesManager::version() const {
       LIEF_DEBUG("Second entry (key) {}", u16tou8(key));
       if (u16tou8(key, true) == "StringFileInfo") {
         try {
-          version.string_file_info_ = this->get_string_file_info(stream, type, key, start, struct_file_info_length);
+          version.string_file_info_ = get_string_file_info(stream, type, key, start, struct_file_info_length);
           version.has_string_file_info_ = true;
         } catch (const LIEF::exception& e) {
           LIEF_ERR("{}", e.what());
@@ -551,7 +535,7 @@ ResourceVersion ResourcesManager::version() const {
 
       if (u16tou8(key, true) == "VarFileInfo") {
         try {
-          version.var_file_info_ = this->get_var_file_info(stream, type, key, start, struct_file_info_length);
+          version.var_file_info_ = get_var_file_info(stream, type, key, start, struct_file_info_length);
           version.has_var_file_info_ = true;
         } catch (const LIEF::exception& e) {
           LIEF_ERR("{}", e.what());
@@ -564,7 +548,8 @@ ResourceVersion ResourcesManager::version() const {
 }
 
 
-ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream& stream, uint16_t type, std::u16string key, size_t start, size_t struct_length) const {
+ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream& stream, uint16_t type,
+                              std::u16string key, size_t start, size_t struct_length) const {
   LIEF_DEBUG("Getting StringFileInfo object");
 
   // String File Info
@@ -572,7 +557,7 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
   ResourceStringFileInfo string_file_info;
 
   string_file_info.type_ = type;
-  string_file_info.key_  = key;
+  string_file_info.key_  = std::move(key);
 
 
   // Parse 'StringTable' childs
@@ -588,16 +573,16 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
     const uint64_t end_offset = stream.pos() + stringtable_length * sizeof(uint8_t);
     stream.increment_pos(sizeof(uint16_t));
 
-    const uint16_t stringtable_value_length = stream.read<uint16_t>();
+    const auto stringtable_value_length = stream.read<uint16_t>();
 
     LIEF_DEBUG("Value length: {:d} (should be 0)", stringtable_value_length);
 
-    const uint16_t stringtable_type = stream.read<uint16_t>();
+    const auto stringtable_type = stream.read<uint16_t>();
     LIEF_DEBUG("Type: {:d}", stringtable_type);
 
     // 1: Text data
     // 0: Binary data
-    if (type != 0 and type != 1) {
+    if (type != 0 && type != 1) {
       LIEF_WARN("\"type\" of the StringTable should be equal to 0 or 1 ({:d})", type);
     }
     lang_code_item.type_ = type;
@@ -617,13 +602,13 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
       uint64_t lang_id = 0;
       uint64_t code_page = 0;
       if (is_hex_number(chunk_1)) {
-        lang_id = std::stoul(chunk_1, 0, 16);
+        lang_id = std::stoul(chunk_1, nullptr, 16);
       } else {
         LIEF_WARN("Invalid hex-string for Lang ID: '{}'", chunk_1);
       }
 
       if (is_hex_number(chunk_2)) {
-        code_page = std::stoul(chunk_2, 0, 16);
+        code_page = std::stoul(chunk_2, nullptr, 16);
       } else {
         LIEF_WARN("Invalid hex-string for Code page: '{}'", chunk_2);
       }
@@ -639,13 +624,13 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
     while (stream.pos() < end_offset) {
       const size_t string_offset = stream.pos();
 
-      const uint16_t string_length = stream.read<uint16_t>();
+      const auto string_length = stream.read<uint16_t>();
       LIEF_DEBUG("Length of the 'string' struct: 0x{:x}", string_length);
 
-      const uint16_t string_value_length = stream.read<uint16_t>();
+      const auto string_value_length = stream.read<uint16_t>();
       LIEF_DEBUG("Size of the 'value' member: 0x{:x}", string_value_length);
 
-      const uint16_t string_type = stream.read<uint16_t>();
+      const auto string_type = stream.read<uint16_t>();
       LIEF_DEBUG("Type of the 'string' struct: {:d}", string_type);
 
       std::u16string key = stream.read_u16string();
@@ -675,27 +660,28 @@ ResourceStringFileInfo ResourcesManager::get_string_file_info(const VectorStream
 }
 
 
-ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stream, uint16_t type, std::u16string key, size_t start, size_t struct_length) const {
+ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stream, uint16_t type,
+                                        std::u16string key, size_t start, size_t struct_length) const {
   LIEF_DEBUG("Getting VarFileInfo object");
   // Var file info
   // =============
   ResourceVarFileInfo var_file_info;
 
   var_file_info.type_ = type;
-  var_file_info.key_  = key;
+  var_file_info.key_  = std::move(key);
 
   // Parse 'Var' childs
   // ==================
   LIEF_DEBUG("Parsing 'Var' childs");
   const size_t end_var_file_info = start + struct_length * sizeof(uint8_t);
   while (stream.pos() < end_var_file_info) {
-    const uint16_t var_length = stream.read<uint16_t>();
+    const auto var_length = stream.read<uint16_t>();
     LIEF_DEBUG("Size of the 'Var' struct: 0x{:d}", var_length);
 
-    const uint16_t var_value_length = stream.read<uint16_t>();
+    const auto var_value_length = stream.read<uint16_t>();
     LIEF_DEBUG("Size of the 'Value' member: 0x{:x}", var_value_length);
 
-    const uint16_t var_type = stream.read<uint16_t>();
+    const auto var_type = stream.read<uint16_t>();
     LIEF_DEBUG("Type: {:d}", var_type);
 
     std::u16string key = stream.read_u16string();
@@ -705,7 +691,7 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
     stream.align(sizeof(uint32_t));
 
     const size_t nb_items = var_value_length / sizeof(uint32_t);
-    const uint32_t *value_array = stream.read_array<uint32_t>(nb_items, /* check */false);
+    const auto *value_array = stream.read_array<uint32_t>(nb_items, /* check */false);
     if (value_array == nullptr) {
       LIEF_ERR("Unable to read items");
       return var_file_info;
@@ -725,18 +711,14 @@ ResourceVarFileInfo ResourcesManager::get_var_file_info(const VectorStream& stre
 
 bool ResourcesManager::has_icons() const {
 
-  it_childs nodes = this->resources_->childs();
-  auto&& it_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
-  auto&& it_grp_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  const auto it_grp_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
@@ -756,18 +738,14 @@ bool ResourcesManager::has_icons() const {
 
 std::vector<ResourceIcon> ResourcesManager::icons() const {
 
-  it_childs nodes = this->resources_->childs();
-  auto&& it_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
-  auto&& it_grp_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  const auto it_grp_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
@@ -787,8 +765,8 @@ std::vector<ResourceIcon> ResourcesManager::icons() const {
         LIEF_WARN("Expecting a data node");
         continue;
       }
-      const ResourceData* icon_group_node = reinterpret_cast<const ResourceData*>(&grp_icon_lvl3);
-      if (!icon_group_node) {
+      const auto* icon_group_node = reinterpret_cast<const ResourceData*>(&grp_icon_lvl3);
+      if (icon_group_node == nullptr) {
         LIEF_WARN("Group icon node is null");
         continue;
       }
@@ -799,7 +777,7 @@ std::vector<ResourceIcon> ResourcesManager::icons() const {
         continue;
       }
 
-      const pe_resource_icon_dir* group_icon_header = reinterpret_cast<const pe_resource_icon_dir*>(icon_group_content.data());
+      const auto* group_icon_header = reinterpret_cast<const details::pe_resource_icon_dir*>(icon_group_content.data());
 
       LIEF_DEBUG("Number of icons: {:d}", static_cast<uint32_t>(group_icon_header->count));
       LIEF_DEBUG("Type: {:d}", static_cast<uint32_t>(group_icon_header->type));
@@ -809,27 +787,25 @@ std::vector<ResourceIcon> ResourcesManager::icons() const {
         throw corrupted("Group icon type should be equal to 1 (" + std::to_string(group_icon_header->type) + ")");
       }
 
-      if ((group_icon_header->count * sizeof(pe_resource_icon_group) + sizeof(pe_resource_icon_dir)) > icon_group_content.size()) {
+      if ((group_icon_header->count * sizeof(details::pe_resource_icon_group) + sizeof(details::pe_resource_icon_dir)) > icon_group_content.size()) {
         throw corrupted("The Number of icons seems corrupted (" + std::to_string(group_icon_header->count) + ")");
       }
 
       for (size_t i = 0; i < group_icon_header->count; ++i) {
-        const pe_resource_icon_group* icon_header = reinterpret_cast<const pe_resource_icon_group*>(
+        const auto* icon_header = reinterpret_cast<const details::pe_resource_icon_group*>(
             icon_group_content.data() +
-            sizeof(pe_resource_icon_dir) +
-            i * sizeof(pe_resource_icon_group));
+            sizeof(details::pe_resource_icon_dir) +
+            i * sizeof(details::pe_resource_icon_group));
 
         const uint32_t id = icon_header->ID;
 
-        ResourceIcon icon{icon_header};
+        ResourceIcon icon{*icon_header};
         icon.lang_    = ResourcesManager::lang_from_id(grp_icon_lvl3.id());
         icon.sublang_ = ResourcesManager::sublang_from_id(grp_icon_lvl3.id());
 
         it_childs sub_nodes_icons = it_icon->childs();
 
-        auto&& it_icon_dir = std::find_if(
-            std::begin(sub_nodes_icons),
-            std::end(sub_nodes_icons),
+        const auto it_icon_dir = std::find_if(std::begin(sub_nodes_icons), std::end(sub_nodes_icons),
             [&id] (const ResourceNode& node) {
               return node.id() == id;
             });
@@ -861,18 +837,14 @@ std::vector<ResourceIcon> ResourcesManager::icons() const {
 
 
 void ResourcesManager::add_icon(const ResourceIcon& icon) {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
-  auto&& it_grp_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  const auto it_grp_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
       });
@@ -884,7 +856,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   if (it_grp_icon == std::end(nodes)) {
     throw not_found(std::string("Missing '") + to_string(RESOURCE_TYPES::GROUP_ICON) + "' entry");
   }
-  uint16_t new_id = static_cast<uint16_t>(icon.id());
+  auto new_id = static_cast<uint16_t>(icon.id());
 
   if (static_cast<int32_t>(icon.id()) < 0) {
     new_id = it_icon->childs().size() + 1;
@@ -910,9 +882,9 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   auto& icon_group_node = reinterpret_cast<ResourceData&>(childs_l2[0]);
   std::vector<uint8_t> icon_group_content = icon_group_node.content();
 
-  pe_resource_icon_dir* group_icon_header = reinterpret_cast<pe_resource_icon_dir*>(icon_group_content.data());
+  auto* group_icon_header = reinterpret_cast<details::pe_resource_icon_dir*>(icon_group_content.data());
 
-  pe_resource_icon_group new_icon_header;
+  details::pe_resource_icon_group new_icon_header;
 
   new_icon_header.width       = icon.width();
   new_icon_header.height      = icon.height();
@@ -925,10 +897,10 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
 
   icon_group_content.insert(
       std::begin(icon_group_content) +
-      sizeof(pe_resource_icon_dir) +
-      group_icon_header->count * sizeof(pe_resource_icon_group),
+      sizeof(details::pe_resource_icon_dir) +
+      group_icon_header->count * sizeof(details::pe_resource_icon_group),
       reinterpret_cast<uint8_t*>(&new_icon_header),
-      reinterpret_cast<uint8_t*>(&new_icon_header) + sizeof(pe_resource_icon_group));
+      reinterpret_cast<uint8_t*>(&new_icon_header) + sizeof(details::pe_resource_icon_group));
 
   group_icon_header->count++;
 
@@ -948,17 +920,14 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
 
 
 void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceIcon& newone) {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_icon = std::find_if(
-      std::begin(nodes),
-      std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
       });
 
 
-  auto&& it_grp_icon = std::find_if(
-      std::begin(nodes),
+  const auto it_grp_icon = std::find_if(std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
@@ -971,7 +940,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 
   // 1. Update group in which the icon is registred
   // ----------------------------------------------
-  pe_resource_icon_group* group = nullptr;
+  details::pe_resource_icon_group* group = nullptr;
   for (ResourceNode& grp_icon_lvl2 : it_grp_icon->childs()) {
     for (ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
       if (!grp_icon_lvl3.is_data()) {
@@ -982,12 +951,12 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 
       std::vector<uint8_t> icon_group_content = icon_group_node.content();
 
-      pe_resource_icon_dir* group_icon_header = reinterpret_cast<pe_resource_icon_dir*>(icon_group_content.data());
+      auto* group_icon_header = reinterpret_cast<details::pe_resource_icon_dir*>(icon_group_content.data());
       for (size_t i = 0; i < group_icon_header->count; ++i) {
-        pe_resource_icon_group* icon_header = reinterpret_cast<pe_resource_icon_group*>(
+        auto* icon_header = reinterpret_cast<details::pe_resource_icon_group*>(
             icon_group_content.data() +
-            sizeof(pe_resource_icon_dir) +
-            i * sizeof(pe_resource_icon_group));
+            sizeof(details::pe_resource_icon_dir) +
+            i * sizeof(details::pe_resource_icon_group));
 
         if (icon_header->ID == original.id()) {
           LIEF_DEBUG("Group found: {:d}-nth", i);
@@ -1034,11 +1003,11 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 // * Extra count
 // ====================================================================
 std::vector<ResourceDialog> ResourcesManager::dialogs() const {
-  if (not this->has_dialogs()) {
+  if (!has_dialogs()) {
     return {};
   }
   std::vector<ResourceDialog> dialogs;
-  const ResourceNode& dialog_node = this->get_node_type(RESOURCE_TYPES::DIALOG);
+  const ResourceNode& dialog_node = get_node_type(RESOURCE_TYPES::DIALOG);
   if (!dialog_node.is_directory()) {
     LIEF_WARN("Dialog node corrupted");
     return {};
@@ -1065,27 +1034,27 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
       VectorStream stream{content};
       stream.setpos(0);
 
-      if (content.size() < std::min(sizeof(pe_dialog_template_ext), sizeof(pe_dialog_template))) {
+      if (content.size() < std::min(sizeof(details::pe_dialog_template_ext), sizeof(details::pe_dialog_template))) {
         LIEF_WARN("Dialog is corrupted!");
         return {};
       }
 
-      if (content[2] == 0xFF and content[3] == 0xFF) {
+      if (content[2] == 0xFF && content[3] == 0xFF) {
 
-        if (content.size() < sizeof(pe_dialog_template_ext)) {
+        if (content.size() < sizeof(details::pe_dialog_template_ext)) {
           LIEF_WARN("Dialog is corrupted!");
           return {};
         }
 
-        const auto header = stream.read<pe_dialog_template_ext>();
+        const auto header = stream.read<details::pe_dialog_template_ext>();
 
-        ResourceDialog new_dialog{&header};
+        ResourceDialog new_dialog{header};
         new_dialog.lang(ResourcesManager::lang_from_id(data_node.id()));
         new_dialog.sub_lang(ResourcesManager::sublang_from_id(data_node.id()));
 
         // Menu
         // ====
-        const uint16_t menu_hint = stream.read<uint16_t>();
+        const auto menu_hint = stream.read<uint16_t>();
         switch(menu_hint) {
           case 0x0000:
             {
@@ -1095,7 +1064,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
           case 0xFFFF:
             {
-              const uint16_t menu_ordinal = stream.read<uint16_t>();
+              const auto menu_ordinal = stream.read<uint16_t>();
               LIEF_DEBUG("Menu uses ordinal number {:d}", menu_ordinal);
               break;
             }
@@ -1112,7 +1081,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
         // ============
         stream.align(sizeof(uint16_t));
 
-        const uint16_t window_class_hint = stream.read<uint16_t>();
+        const auto window_class_hint = stream.read<uint16_t>();
 
         switch(window_class_hint) {
           case 0x0000:
@@ -1123,7 +1092,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
           case 0xFFFF:
             {
-              const uint16_t windows_class_ordinal = stream.read<uint16_t>();
+              const auto windows_class_ordinal = stream.read<uint16_t>();
               LIEF_DEBUG("Windows class uses ordinal number {:d}", windows_class_ordinal);
               break;
             }
@@ -1144,18 +1113,18 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
         // 2nd part
         // ========
         const std::set<DIALOG_BOX_STYLES>& dialogbox_styles = new_dialog.dialogbox_style_list();
-        if (dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SHELLFONT) > 0 or dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SETFONT) > 0) {
-          const uint16_t point_size = stream.read<uint16_t>();
+        if (dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SHELLFONT) > 0 || dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SETFONT) > 0) {
+          const auto point_size = stream.read<uint16_t>();
           new_dialog.point_size_ = point_size;
 
-          const uint16_t weight = stream.read<uint16_t>();
+          const auto weight = stream.read<uint16_t>();
           new_dialog.weight_ = weight;
 
-          const uint8_t is_italic = stream.read<uint8_t>();
+          const auto is_italic = stream.read<uint8_t>();
           new_dialog.italic_ = static_cast<bool>(is_italic);
 
-          const uint8_t charset = stream.read<uint8_t>();
-          new_dialog.charset_ = static_cast<bool>(charset);
+          const auto charset = stream.read<uint8_t>();
+          new_dialog.charset_ = static_cast<uint8_t>(static_cast<bool>(charset));
 
           new_dialog.typeface_ = stream.read_u16string();
         }
@@ -1171,12 +1140,12 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
           ResourceDialogItem dialog_item;
 
           if (new_dialog.is_extended()) {
-            const auto item_header = stream.read<pe_dialog_item_template_ext>();
-            dialog_item = ResourceDialogItem{&item_header};
+            const auto item_header = stream.read<details::pe_dialog_item_template_ext>();
+            dialog_item = ResourceDialogItem{item_header};
             LIEF_DEBUG("Item ID: {:d}", item_header.id);
           } else {
-            const pe_dialog_item_template item_header = stream.read<pe_dialog_item_template>();
-            new_dialog.items_.emplace_back(&item_header);
+            const auto item_header = stream.read<details::pe_dialog_item_template>();
+            new_dialog.items_.emplace_back(item_header);
             continue;
           }
 
@@ -1187,7 +1156,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
           if (window_class_hint == 0xFFFF) {
             stream.increment_pos(sizeof(uint16_t));
-            const uint16_t windows_class_ordinal = stream.read<uint16_t>();
+            const auto windows_class_ordinal = stream.read<uint16_t>();
             LIEF_DEBUG("Windows class uses ordinal number {:d}", windows_class_ordinal);
           } else {
             LIEF_DEBUG("Windows class uses unicode string");
@@ -1201,7 +1170,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
           if (title_hint == 0xFFFF) {
             stream.increment_pos(sizeof(uint16_t));
-            const uint16_t title_ordinal = stream.read<uint16_t>();
+            const auto title_ordinal = stream.read<uint16_t>();
             LIEF_DEBUG("Title uses ordinal number {:d}", title_ordinal);
           } else {
             std::u16string title_name = stream.read_u16string();
@@ -1211,7 +1180,7 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
           // Extra count
           // -----------
-          const uint16_t extra_count = stream.read<uint16_t>();
+          const auto extra_count = stream.read<uint16_t>();
           LIEF_DEBUG("Extra count: 0x{:x}", extra_count);
           dialog_item.extra_count_ = extra_count;
           stream.increment_pos(extra_count * sizeof(uint8_t));
@@ -1227,15 +1196,13 @@ std::vector<ResourceDialog> ResourcesManager::dialogs() const {
 
 
 bool ResourcesManager::has_dialogs() const {
-  return this->has_type(RESOURCE_TYPES::DIALOG);
+  return has_type(RESOURCE_TYPES::DIALOG);
 }
 
 // String table entry
 std::vector<ResourceStringTable> ResourcesManager::string_table() const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_string_table = std::find_if(
-    std::begin(nodes),
-    std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_string_table = std::find_if(std::begin(nodes), std::end(nodes),
     [] (const ResourceNode& node) {
       return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::STRING;
     }
@@ -1266,7 +1233,7 @@ std::vector<ResourceStringTable> ResourcesManager::string_table() const {
       stream.setpos(0);
       LIEF_DEBUG("Will parse content whoose size is {}", content_size);
       while (stream.pos() < content_size) {
-        if (not stream.can_read<int16_t>()) break;
+        if (!stream.can_read<int16_t>()) break;
 
         const auto len = stream.read<uint16_t>();
         if (len > 0 && ((len * 2) < content_size)) {
@@ -1282,14 +1249,12 @@ std::vector<ResourceStringTable> ResourcesManager::string_table() const {
 }
 
 bool ResourcesManager::has_string_table() const {
-  return this->has_type(RESOURCE_TYPES::STRING);
+  return has_type(RESOURCE_TYPES::STRING);
 }
 
 std::vector<std::string> ResourcesManager::html() const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_html = std::find_if(
-    std::begin(nodes),
-    std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_html = std::find_if(std::begin(nodes), std::end(nodes),
     [] (const ResourceNode& node) {
       return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::HTML;
     }
@@ -1322,18 +1287,16 @@ std::vector<std::string> ResourcesManager::html() const {
 }
 
 bool ResourcesManager::has_html() const {
-  return this->has_type(RESOURCE_TYPES::HTML);
+  return has_type(RESOURCE_TYPES::HTML);
 }
 
 bool ResourcesManager::has_accelerator() const {
-  return this->has_type(RESOURCE_TYPES::ACCELERATOR);
+  return has_type(RESOURCE_TYPES::ACCELERATOR);
 }
 
 std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
-  it_childs nodes = this->resources_->childs();
-  auto&& it_accelerator = std::find_if(
-    std::begin(nodes),
-    std::end(nodes),
+  it_childs nodes = resources_->childs();
+  const auto it_accelerator = std::find_if(std::begin(nodes), std::end(nodes),
     [] (const ResourceNode& node) {
       return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ACCELERATOR;
     }
@@ -1359,10 +1322,9 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
       }
 
       VectorStream stream{content};
-      while (stream.can_read<pe_resource_acceltableentry>()) {
-        const auto entry = stream.read<const pe_resource_acceltableentry>();
-        accelerator.emplace_back(
-          ResourceAccelerator(&entry));
+      while (stream.can_read<details::pe_resource_acceltableentry>()) {
+        const auto entry = stream.read<details::pe_resource_acceltableentry>();
+        accelerator.emplace_back(ResourceAccelerator(entry));
       }
       if (!accelerator.empty()) {
         ResourceAccelerator& acc = accelerator.back();
@@ -1382,7 +1344,7 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
 std::string ResourcesManager::print(uint32_t depth) const {
   std::ostringstream oss;
   uint32_t current_depth = 0;
-  this->print_tree(*this->resources_, oss, current_depth, depth);
+  print_tree(*resources_, oss, current_depth, depth);
   return oss.str();
 }
 
@@ -1440,7 +1402,7 @@ bool ResourcesManager::operator==(const ResourcesManager& rhs) const {
 }
 
 bool ResourcesManager::operator!=(const ResourcesManager& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -1452,33 +1414,33 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
   std::set<RESOURCE_LANGS> langs = rsrc.get_langs_available();
   std::set<RESOURCE_SUBLANGS> sublangs = rsrc.get_sublangs_available();
 
-  if (types.size() > 0) {
+  if (!types.empty()) {
     std::string types_str = std::accumulate(
         std::begin(types),
         std::end(types), std::string{},
-        [] (std::string a, RESOURCE_TYPES t) {
+        [] (const std::string& a, RESOURCE_TYPES t) {
          return a.empty() ? to_string(t) : a + " - " + to_string(t);
         });
     os << "Types: " << types_str << std::endl << std::endl;
   }
 
 
-  if (langs.size() > 0) {
+  if (!langs.empty()) {
     std::string langs_str = std::accumulate(
         std::begin(langs),
         std::end(langs), std::string{},
-        [] (std::string a, RESOURCE_LANGS l) {
+        [] (const std::string& a, RESOURCE_LANGS l) {
          return a.empty() ? to_string(l) : a + " - " + to_string(l);
         });
     os << "Langs: " << langs_str << std::endl << std::endl;
   }
 
 
-  if (sublangs.size() > 0) {
+  if (!sublangs.empty()) {
     std::string sublangs_str = std::accumulate(
         std::begin(sublangs),
         std::end(sublangs), std::string{},
-        [] (std::string a, RESOURCE_SUBLANGS sl) {
+        [] (const std::string& a, RESOURCE_SUBLANGS sl) {
          return a.empty() ? to_string(sl) : a + " - " + to_string(sl);
         });
     os << "Sub-langs: " << sublangs_str << std::endl << std::endl;

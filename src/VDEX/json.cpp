@@ -47,17 +47,17 @@ void JsonVisitor::visit(const File& file) {
     dexfiles.emplace_back(DEX::to_json(dexfile));
   }
 
-  this->node_["header"]    = vheader.get();
-  this->node_["dex_files"] = dexfiles;
+  node_["header"]    = vheader.get();
+  node_["dex_files"] = dexfiles;
 }
 
 void JsonVisitor::visit(const Header& header) {
-  this->node_["magic"]                = header.magic();
-  this->node_["version"]              = header.version();
-  this->node_["nb_dex_files"]         = header.nb_dex_files();
-  this->node_["dex_size"]             = header.dex_size();
-  this->node_["verifier_deps_size"]   = header.verifier_deps_size();
-  this->node_["quickening_info_size"] = header.quickening_info_size();
+  node_["magic"]                = header.magic();
+  node_["version"]              = header.version();
+  node_["nb_dex_files"]         = header.nb_dex_files();
+  node_["dex_size"]             = header.dex_size();
+  node_["verifier_deps_size"]   = header.verifier_deps_size();
+  node_["quickening_info_size"] = header.quickening_info_size();
 }
 
 } // namespace VDEX

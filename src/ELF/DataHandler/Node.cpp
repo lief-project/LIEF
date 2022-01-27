@@ -36,65 +36,65 @@ Node::Node(uint64_t offset, uint64_t size, Type type) :
 {}
 
 uint64_t Node::size() const {
-  return this->size_;
+  return size_;
 }
 
 
 uint64_t Node::offset() const {
-  return this->offset_;
+  return offset_;
 }
 
 
 Node::Type Node::type() const {
-  return this->type_;
+  return type_;
 }
 
 void Node::size(uint64_t size) {
-  this->size_ = size;
+  size_ = size;
 }
 
 
 void Node::type(Node::Type type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 
 void Node::offset(uint64_t offset) {
-  this->offset_ = offset;
+  offset_ = offset;
 }
 
 
 bool Node::operator==(const Node& rhs) const {
-  return this->type() == rhs.type() and
-         this->size() == rhs.size() and
-         this->offset() == rhs.offset();
+  return type() == rhs.type() &&
+         size() == rhs.size() &&
+         offset() == rhs.offset();
 }
 
 bool Node::operator!=(const Node& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 bool Node::operator<(const Node& rhs) const {
-  return ((this->type() == rhs.type() and
-         this->offset() <= rhs.offset() and
-         (this->offset() + this->size()) < (rhs.offset() + rhs.size())) or
-         (this->type() == rhs.type() and
-         this->offset() < rhs.offset() and
-         (this->offset() + this->size()) <= (rhs.offset() + rhs.size())));
+  return ((type() == rhs.type() &&
+         offset() <= rhs.offset() &&
+         (offset() + size()) < (rhs.offset() + rhs.size())) ||
+         (type() == rhs.type() &&
+         offset() < rhs.offset() &&
+         (offset() + size()) <= (rhs.offset() + rhs.size())));
 
 }
 
 bool Node::operator<=(const Node& rhs) const {
-  return (this->type() == rhs.type() and not (*this > rhs));
+  return (type() == rhs.type() && !(*this > rhs));
 }
 
 bool Node::operator>(const Node& rhs) const {
-  return this->type() == rhs.type() and
-        (this->offset() > rhs.offset() or (this->offset() + this->size()) > (rhs.offset() + rhs.size()));
+  return type() == rhs.type() &&
+        (offset() > rhs.offset() || (offset() + size()) > (rhs.offset() + rhs.size()));
 }
 
 bool Node::operator>=(const Node& rhs) const {
-  return (this->type() == rhs.type() and not (*this < rhs));
+  return (type() == rhs.type() && !(*this < rhs));
 }
 
 }

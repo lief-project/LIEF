@@ -39,7 +39,7 @@ void GenericType::accept(Visitor& visitor) const {
 }
 
 std::string GenericType::print() const {
-  return this->oid() + " (" + std::to_string(this->raw_content().size()) + " bytes)";
+  return oid() + " (" + std::to_string(raw_content().size()) + " bytes)";
 }
 
 

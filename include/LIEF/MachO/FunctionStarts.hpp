@@ -27,34 +27,41 @@
 
 namespace LIEF {
 namespace MachO {
-struct linkedit_data_command;
 
+namespace details {
+struct linkedit_data_command;
+}
+
+
+//! Class which represents the LC_FUNCTION_STARTS command
+//!
+//! This command is an array of ULEB128 encoded values
 class LIEF_API FunctionStarts : public LoadCommand {
   public:
   FunctionStarts();
-  FunctionStarts(const linkedit_data_command *cmd);
+  FunctionStarts(const details::linkedit_data_command& cmd);
 
   FunctionStarts& operator=(const FunctionStarts& copy);
   FunctionStarts(const FunctionStarts& copy);
 
-  virtual FunctionStarts* clone() const override;
+  FunctionStarts* clone() const override;
 
-  //! @brief Offset in the binary where *start functions* are located
+  //! Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
   uint32_t data_offset() const;
 
-  //! @brief Size of the functions list in the binary
+  //! Size of the functions list in the binary
   uint32_t data_size() const;
 
-  //! @brief Addresses of every function entry point in the executable.
+  //! Addresses of every function entry point in the executable.
   //!
-  //! This allows for functions to exist that have no entries in the symbol table.
+  //! This allows functions to exist for which there are no entries in the symbol table.
   //!
   //! @warning The address is relative to the ``__TEXT`` segment
   const std::vector<uint64_t>& functions() const;
 
   std::vector<uint64_t>& functions();
 
-  //! @brief Add a new function
+  //! Add a new function
   void add_function(uint64_t address);
 
   void data_offset(uint32_t offset);
@@ -66,15 +73,14 @@ class LIEF_API FunctionStarts : public LoadCommand {
   bool operator==(const FunctionStarts& rhs) const;
   bool operator!=(const FunctionStarts& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
-  uint32_t              data_offset_;
-  uint32_t              data_size_;
+  uint32_t data_offset_;
+  uint32_t data_size_;
   std::vector<uint64_t> functions_;
-
 };
 
 }

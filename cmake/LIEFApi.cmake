@@ -1,5 +1,5 @@
 if(__add_lief_api)
-	return()
+  return()
 endif()
 set(__add_lief_api ON)
 
@@ -14,7 +14,7 @@ if (LIEF_PYTHON_API)
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api/python")
 endif()
 
-# C API
+# C API
 # -----
 if(LIEF_C_API)
 

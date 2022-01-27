@@ -21,9 +21,9 @@
 
 
 template<>
-void init_ref_iterator<LIEF::OAT::Header::it_key_values_t>(py::module& m, const std::string& it_name) {
+void init_ref_iterator<LIEF::OAT::Header::it_key_values_t>(py::module& m, const char* it_name) {
 
-  py::class_<LIEF::OAT::Header::it_key_values_t>(m, it_name.c_str())
+  py::class_<LIEF::OAT::Header::it_key_values_t>(m, it_name)
     .def("__getitem__",
         [] (LIEF::OAT::Header::it_key_values_t& v, size_t i) -> LIEF::OAT::Header::it_key_values_t::value_type {
             if (i >= v.size())
@@ -58,9 +58,9 @@ namespace OAT {
 
 void init_iterators(py::module& m) {
   init_ref_iterator<Header::it_key_values_t>(m, "Header.it_key_values_t");
-  init_ref_iterator<it_methods>(m, "lief.OAT.it_methods");
-  init_ref_iterator<it_classes>(m, "lief.OAT.it_classes");
-  init_ref_iterator<it_dex_files>(m, "lief.OAT.it_dex_files");
+  init_ref_iterator<it_methods>(m, "it_methods");
+  init_ref_iterator<it_classes>(m, "it_classes");
+  init_ref_iterator<it_dex_files>(m, "it_dex_files");
 
 }
 

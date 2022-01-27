@@ -393,17 +393,15 @@ add_definitions(-DMBEDTLS_FS_IO -DMBEDTLS_PEM_PARSE_C -DMBEDTLS_BIGNUM_C
                 -DMBEDTLS_X509_CRT_PARSE_C -DMBEDTLS_PEM_WRITE_C
                 -DMBEDTLS_PKCS1_V15 -DMBEDTLS_PKCS1_V21)
 
-# ASAN - LSAN - TSAN - USAN
-# ~~~
+# LIEF Sanitizer options
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
 if(LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=address)
 
-  set_property(
-    TARGET LIB_LIEF
-    APPEND
-    PROPERTY LINK_FLAGS -fsanitize=address)
+  set_property(TARGET LIB_LIEF
+               APPEND PROPERTY LINK_FLAGS -fsanitize=address)
   target_link_libraries(LIB_LIEF INTERFACE asan)
 endif()
 
@@ -411,10 +409,8 @@ if(LIEF_LSAN)
   message(STATUS "Leak sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=leak)
 
-  set_property(
-    TARGET LIB_LIEF
-    APPEND
-    PROPERTY LINK_FLAGS -fsanitize=leak)
+  set_property(TARGET LIB_LIEF
+               APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
 
   target_link_libraries(LIB_LIEF INTERFACE lsan)
 endif()
@@ -423,45 +419,43 @@ if(LIEF_TSAN)
   message(STATUS "Thread sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=thread)
 
-  set_property(
-    TARGET LIB_LIEF
-    APPEND
-    PROPERTY LINK_FLAGS -fsanitize=thread)
+  set_property(TARGET LIB_LIEF
+               APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
 
   target_link_libraries(LIB_LIEF INTERFACE tsan)
 endif()
 
 if(LIEF_USAN)
   message(STATUS "Undefined sanitizer enabled")
-  list(APPEND SANITIZER_FLAGS -fsanitize=undefined)
+  list(APPEND SANITIZER_FLAGS -fsanitize=undefined,null,alignment)
 
-  set_property(
-    TARGET LIB_LIEF
-    APPEND
-    PROPERTY LINK_FLAGS -fsanitize=undefined)
+  set_property(TARGET LIB_LIEF
+               APPEND PROPERTY LINK_FLAGS -fsanitize=undefined,null,alignment)
+  target_link_options(LIB_LIEF PUBLIC -fsanitize=undefined,null,alignment)
 
-  target_link_libraries(LIB_LIEF INTERFACE ubsan)
+  target_link_libraries(LIB_LIEF PUBLIC ubsan -fsanitize=undefined,null,alignment)
 endif()
 
-if(LIEF_ASAN
-   OR LIEF_LSAN
-   OR LIEF_TSAN
-   OR LIEF_USAN)
-  target_compile_options(LIB_LIEF PRIVATE ${SANITIZER_FLAGS})
+set(LIEF_SANITIZER OFF)
+if(LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
+  set(LIEF_SANITIZER ON)
 endif()
 
-# Fuzzing
-# ~~~
+if (LIEF_SANITIZER)
+  message("LIEF Sanitizer enabled: ${SANITIZER_FLAGS}")
+  target_compile_options(LIB_LIEF PUBLIC ${SANITIZER_FLAGS})
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests/sanitizer")
+endif()
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Fuzzing options
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if(LIEF_FUZZING)
-  set_property(
-    TARGET LIB_LIEF
-    APPEND
-    PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
+  set_property(TARGET LIB_LIEF
+               APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
 
   target_compile_options(LIB_LIEF PRIVATE ${FUZZING_FLAGS})
-
   target_link_libraries(LIB_LIEF asan pthread)
-
   add_dependencies(LIB_LIEF lief_libfuzzer)
 endif()
 

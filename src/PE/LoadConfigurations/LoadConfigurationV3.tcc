@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
+
 namespace LIEF {
 namespace PE {
 
-
 template<class T>
-LoadConfigurationV3::LoadConfigurationV3(const load_configuration_v3<T>* header) :
-  LoadConfigurationV2{reinterpret_cast<const load_configuration_v2<T>*>(header)},
-  guard_address_taken_iat_entry_table_{header->GuardAddressTakenIatEntryTable},
-  guard_address_taken_iat_entry_count_{header->GuardAddressTakenIatEntryCount},
-  guard_long_jump_target_table_{header->GuardLongJumpTargetTable},
-  guard_long_jump_target_count_{header->GuardLongJumpTargetCount}
+LoadConfigurationV3::LoadConfigurationV3(const details::load_configuration_v3<T>& header) :
+  LoadConfigurationV2{reinterpret_cast<const details::load_configuration_v2<T>&>(header)},
+  guard_address_taken_iat_entry_table_{header.GuardAddressTakenIatEntryTable},
+  guard_address_taken_iat_entry_count_{header.GuardAddressTakenIatEntryCount},
+  guard_long_jump_target_table_{header.GuardLongJumpTargetTable},
+  guard_long_jump_target_count_{header.GuardLongJumpTargetCount}
 {
 }
 

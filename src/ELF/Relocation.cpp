@@ -22,7 +22,7 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 
-#include "RelocationSizes.hpp"
+#include "LIEF/ELF/RelocationSizes.hpp"
 #include "logging.hpp"
 
 namespace LIEF {
@@ -30,27 +30,15 @@ namespace ELF {
 
 Relocation::~Relocation() = default;
 
-Relocation::Relocation() :
-  LIEF::Relocation{},
-  type_{0},
-  addend_{0},
-  isRela_{false},
-  symbol_{nullptr},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
-  info_{0}
-{}
+Relocation::Relocation() = default;
 
 Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
   type_{other.type_},
   addend_{other.addend_},
   isRela_{other.isRela_},
-  symbol_{nullptr},
   architecture_{other.architecture_},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
   info_{0}
 {}
 
@@ -61,59 +49,51 @@ Relocation::Relocation(ARCH arch) {
 
 
 Relocation& Relocation::operator=(Relocation other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
-Relocation::Relocation(const Elf32_Rel* header) :
-  LIEF::Relocation{header->r_offset, 0},
-  type_{static_cast<uint32_t>(header->r_info & 0xff)},
+Relocation::Relocation(const details::Elf32_Rel& header) :
+  LIEF::Relocation{header.r_offset, 0},
+  type_{static_cast<uint32_t>(header.r_info & 0xff)},
   addend_{0},
   isRela_{false},
-  symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
-  info_{static_cast<uint32_t>(header->r_info >> 8)}
+  info_{static_cast<uint32_t>(header.r_info >> 8)}
 {}
 
 
-Relocation::Relocation(const Elf32_Rela* header) :
-  LIEF::Relocation{header->r_offset, 0},
-  type_{static_cast<uint32_t>(header->r_info & 0xff)},
-  addend_{header->r_addend},
+Relocation::Relocation(const details::Elf32_Rela& header) :
+  LIEF::Relocation{header.r_offset, 0},
+  type_{static_cast<uint32_t>(header.r_info & 0xff)},
+  addend_{header.r_addend},
   isRela_{true},
-  symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
-  info_{static_cast<uint32_t>(header->r_info >> 8)}
+  info_{static_cast<uint32_t>(header.r_info >> 8)}
 {}
 
 
-Relocation::Relocation(const Elf64_Rel* header) :
-  LIEF::Relocation{header->r_offset, 0},
-  type_{static_cast<uint32_t>(header->r_info & 0xffffffff)},
+Relocation::Relocation(const details::Elf64_Rel& header) :
+  LIEF::Relocation{header.r_offset, 0},
+  type_{static_cast<uint32_t>(header.r_info & 0xffffffff)},
   addend_{0},
   isRela_{false},
-  symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
-  info_{static_cast<uint32_t>(header->r_info >> 32)}
+  info_{static_cast<uint32_t>(header.r_info >> 32)}
 {}
 
 
-Relocation::Relocation(const Elf64_Rela* header)  :
-  LIEF::Relocation{header->r_offset, 0},
-  type_{static_cast<uint32_t>(header->r_info & 0xffffffff)},
-  addend_{header->r_addend},
+Relocation::Relocation(const details::Elf64_Rela& header)  :
+  LIEF::Relocation{header.r_offset, 0},
+  type_{static_cast<uint32_t>(header.r_info & 0xffffffff)},
+  addend_{header.r_addend},
   isRela_{true},
-  symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
-  info_{static_cast<uint32_t>(header->r_info >> 32)}
+  info_{static_cast<uint32_t>(header.r_info >> 32)}
 {}
 
 
@@ -122,39 +102,37 @@ Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isR
   type_{type},
   addend_{addend},
   isRela_{isRela},
-  symbol_{nullptr},
   architecture_{ARCH::EM_NONE},
   purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  section_{nullptr},
   info_{0}
 {}
 
 
 void Relocation::swap(Relocation& other) {
-  std::swap(this->address_,      other.address_);
-  std::swap(this->type_,         other.type_);
-  std::swap(this->addend_,       other.addend_);
-  std::swap(this->isRela_,       other.isRela_);
-  std::swap(this->symbol_,       other.symbol_);
-  std::swap(this->architecture_, other.architecture_);
-  std::swap(this->purpose_,      other.purpose_);
-  std::swap(this->section_,      other.section_);
-  std::swap(this->info_,         other.info_);
+  std::swap(address_,      other.address_);
+  std::swap(type_,         other.type_);
+  std::swap(addend_,       other.addend_);
+  std::swap(isRela_,       other.isRela_);
+  std::swap(symbol_,       other.symbol_);
+  std::swap(architecture_, other.architecture_);
+  std::swap(purpose_,      other.purpose_);
+  std::swap(section_,      other.section_);
+  std::swap(info_,         other.info_);
 }
 
 int64_t Relocation::addend() const {
-  return this->addend_;
+  return addend_;
 }
 
 
 uint32_t Relocation::type() const {
-  return this->type_;
+  return type_;
 }
 
 
 const Symbol& Relocation::symbol() const {
-  if (this->symbol_ != nullptr) {
-    return *this->symbol_;
+  if (symbol_ != nullptr) {
+    return *symbol_;
   } else {
     throw not_found("No symbol associated with this relocation");
   }
@@ -165,8 +143,8 @@ Symbol& Relocation::symbol() {
 }
 
 const Section& Relocation::section() const {
-  if (this->has_section()) {
-    return *this->section_;
+  if (has_section()) {
+    return *section_;
   } else {
     throw not_found("No section associated with this relocation");
   }
@@ -177,45 +155,45 @@ Section& Relocation::section() {
 }
 
 bool Relocation::is_rela() const {
-  return this->isRela_;
+  return isRela_;
 }
 
 
 bool Relocation::is_rel() const {
-  return not this->isRela_;
+  return !isRela_;
 }
 
 
 ARCH Relocation::architecture() const {
-  return this->architecture_;
+  return architecture_;
 }
 
 
 RELOCATION_PURPOSES Relocation::purpose() const {
-  return this->purpose_;
+  return purpose_;
 }
 
 
 bool Relocation::has_symbol() const {
-  return this->symbol_ != nullptr;
+  return symbol_ != nullptr;
 }
 
 bool Relocation::has_section() const {
-  return this->section_ != nullptr;
+  return section_ != nullptr;
 }
 
 uint32_t Relocation::info() const {
-  return this->info_;
+  return info_;
 }
 
 size_t Relocation::size() const {
 
- switch (this->architecture()) {
+ switch (architecture()) {
     case ARCH::EM_X86_64:
       {
-        auto&& it = relocation_x86_64_sizes.find(static_cast<RELOC_x86_64>(this->type()));
+        const auto it = relocation_x86_64_sizes.find(static_cast<RELOC_x86_64>(type()));
         if (it == std::end(relocation_x86_64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_x86_64>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_x86_64>(type())));
           return -1u;
         }
         return it->second;
@@ -223,9 +201,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_386:
       {
-        auto&& it = relocation_i386_sizes.find(static_cast<RELOC_i386>(this->type()));
+        const auto it = relocation_i386_sizes.find(static_cast<RELOC_i386>(type()));
         if (it == std::end(relocation_i386_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_i386>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_i386>(type())));
           return -1u;
         }
         return it->second;
@@ -233,9 +211,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_ARM:
       {
-        auto&& it = relocation_ARM_sizes.find(static_cast<RELOC_ARM>(this->type()));
+        const auto it = relocation_ARM_sizes.find(static_cast<RELOC_ARM>(type()));
         if (it == std::end(relocation_ARM_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_ARM>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_ARM>(type())));
           return -1u;
         }
         return it->second;
@@ -243,9 +221,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_AARCH64:
       {
-        auto&& it = relocation_AARCH64_sizes.find(static_cast<RELOC_AARCH64>(this->type()));
+        const auto it = relocation_AARCH64_sizes.find(static_cast<RELOC_AARCH64>(type()));
         if (it == std::end(relocation_AARCH64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_AARCH64>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_AARCH64>(type())));
           return -1u;
         }
         return it->second;
@@ -253,9 +231,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_MIPS:
       {
-        auto&& it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(this->type()));
+        const auto it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(type()));
         if (it == std::end(relocation_MIPS_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_MIPS>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_MIPS>(type())));
           return -1u;
         }
         return it->second;
@@ -264,9 +242,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_PPC:
       {
-        auto&& it = relocation_PPC_sizes.find(static_cast<RELOC_POWERPC32>(this->type()));
+        const auto it = relocation_PPC_sizes.find(static_cast<RELOC_POWERPC32>(type()));
         if (it == std::end(relocation_PPC_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_POWERPC32>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC32>(type())));
           return -1u;
         }
         return it->second;
@@ -274,9 +252,9 @@ size_t Relocation::size() const {
 
     case ARCH::EM_PPC64:
       {
-        auto&& it = relocation_PPC64_sizes.find(static_cast<RELOC_POWERPC64>(this->type()));
+        const auto it = relocation_PPC64_sizes.find(static_cast<RELOC_POWERPC64>(type()));
         if (it == std::end(relocation_PPC64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(this->architecture()), to_string(static_cast<RELOC_POWERPC64>(this->type())));
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC64>(type())));
           return -1u;
         }
         return it->second;
@@ -284,7 +262,7 @@ size_t Relocation::size() const {
 
     default:
       {
-        LIEF_ERR("Architecture {} not implemented", to_string(this->architecture()));
+        LIEF_ERR("Architecture {} not implemented", to_string(architecture()));
         return -1u;
       }
   }
@@ -293,29 +271,29 @@ size_t Relocation::size() const {
 
 
 void Relocation::addend(int64_t addend) {
-  this->addend_ = addend;
+  addend_ = addend;
 }
 
 
 void Relocation::type(uint32_t type) {
-  this->type_ = type;
+  type_ = type;
 }
 
 void Relocation::info(uint32_t v) {
-  this->info_ = v;
+  info_ = v;
 }
 
 void Relocation::symbol(Symbol* sym) {
-  this->symbol_ = sym;
+  symbol_ = sym;
 }
 
 void Relocation::section(Section* section) {
-  this->section_ = section;
+  section_ = section;
 }
 
 
 void Relocation::purpose(RELOCATION_PURPOSES purpose) {
-  this->purpose_ = purpose;
+  purpose_ = purpose;
 }
 
 void Relocation::accept(Visitor& visitor) const {
@@ -330,12 +308,12 @@ bool Relocation::operator==(const Relocation& rhs) const {
 }
 
 bool Relocation::operator!=(const Relocation& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
-  std::string symbol_name = "";
+  std::string symbol_name;
   os << std::hex;
   os << std::left;
 
@@ -348,7 +326,7 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
     }
   }
 
-  std::string relocation_type = "";
+  std::string relocation_type;
   switch (entry.architecture()) {
     case ARCH::EM_X86_64:
       {

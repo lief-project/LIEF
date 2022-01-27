@@ -21,14 +21,12 @@
 namespace LIEF {
 namespace VDEX {
 
-File::File() :
-  header_{},
-  dex_files_{}
+File::File()
 {}
 
 
 const Header& File::header() const {
-  return this->header_;
+  return header_;
 }
 
 Header& File::header() {
@@ -37,16 +35,16 @@ Header& File::header() {
 
 
 DEX::it_dex_files File::dex_files() {
-  return this->dex_files_;
+  return dex_files_;
 }
 
 DEX::it_const_dex_files File::dex_files() const {
-  return this->dex_files_;
+  return dex_files_;
 }
 
 dex2dex_info_t File::dex2dex_info() const {
   dex2dex_info_t info;
-  for (DEX::File* dex_file : this->dex_files_) {
+  for (DEX::File* dex_file : dex_files_) {
     info.emplace(dex_file, dex_file->dex2dex_info());
   }
   return info;
@@ -57,7 +55,7 @@ std::string File::dex2dex_json_info() {
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
-  for (DEX::File* dex_file : this->dex_files_) {
+  for (DEX::File* dex_file : dex_files_) {
     json dex2dex = json::parse(dex_file->dex2dex_json_info());
     mapping[dex_file->name()] = dex2dex;
   }
@@ -79,12 +77,12 @@ bool File::operator==(const File& rhs) const {
 }
 
 bool File::operator!=(const File& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 File::~File() {
-  for (DEX::File* file : this->dex_files_) {
+  for (DEX::File* file : dex_files_) {
     delete file;
   }
 }

@@ -39,9 +39,13 @@ void create<ResourceVarFileInfo>(py::module& m) {
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&ResourceVarFileInfo::type),
         static_cast<setter_t<uint16_t>>(&ResourceVarFileInfo::type),
-        "The type of data in the version resource\n\n"
-        "* ``1`` if it contains text data\n"
-        "* ``0`` if it contains binary data\n")
+        R"delim(
+        The type of data in the version resource
+
+          * ``1`` if it contains text data
+          * ``0`` if it contains binary data
+        )delim")
+
 
     .def_property("key",
         static_cast<getter_t<const std::u16string&>>(&ResourceVarFileInfo::key),
@@ -51,11 +55,13 @@ void create<ResourceVarFileInfo>(py::module& m) {
     .def_property("translations",
         static_cast<std::vector<uint32_t>& (ResourceVarFileInfo::*)(void)>(&ResourceVarFileInfo::translations),
         static_cast<setter_t<const std::vector<uint32_t>&>>(&ResourceVarFileInfo::translations),
-        "List of languages that the application supports\n\n"
-        "The **least** significant 16-bits  must contain a Microsoft language identifier, "
-        "and the **most** significant 16-bits must contain the " RST_CLASS_REF(lief.PE.CODE_PAGES) "\n"
-        "Either **most** or **least** 16-bits can be zero, indicating that the file is "
-        "language or code page independent.")
+        R"delim(
+        List of languages that the application supports
+
+        The **least** significant 16-bits  must contain a Microsoft language identifier,
+        and the **most** significant 16-bits must contain the :class:`~lief.PE.CODE_PAGES`
+        Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
+        )delim")
 
     .def("__eq__", &ResourceVarFileInfo::operator==)
     .def("__ne__", &ResourceVarFileInfo::operator!=)

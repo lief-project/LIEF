@@ -33,7 +33,15 @@ using setter_t = void (SysvHash::*)(T);
 template<>
 void create<SysvHash>(py::module& m) {
 
-  py::class_<SysvHash, LIEF::Object>(m, "SysvHash")
+  py::class_<SysvHash, LIEF::Object>(m, "SysvHash",
+    R"delim(
+    Class which represents the SYSV hash for the symbols resolution
+
+    References:
+
+      * http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
+      * https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
+    )delim")
     .def(py::init<>())
 
     .def_property_readonly("nbucket",

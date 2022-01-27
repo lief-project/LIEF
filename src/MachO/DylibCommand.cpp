@@ -40,11 +40,11 @@ DylibCommand& DylibCommand::operator=(const DylibCommand&) = default;
 DylibCommand::DylibCommand(const DylibCommand&) = default;
 DylibCommand::~DylibCommand() = default;
 
-DylibCommand::DylibCommand(const dylib_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  timestamp_{cmd->dylib.timestamp},
-  current_version_{cmd->dylib.current_version},
-  compatibility_version_{cmd->dylib.compatibility_version}
+DylibCommand::DylibCommand(const details::dylib_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  timestamp_{cmd.dylib.timestamp},
+  current_version_{cmd.dylib.current_version},
+  compatibility_version_{cmd.dylib.compatibility_version}
 {}
 
 
@@ -53,35 +53,35 @@ DylibCommand* DylibCommand::clone() const {
 }
 
 const std::string& DylibCommand::name() const {
-  return this->name_;
+  return name_;
 }
 
 uint32_t DylibCommand::timestamp() const {
-  return this->timestamp_;
+  return timestamp_;
 }
 
 DylibCommand::version_t DylibCommand::current_version() const {
-  return int2version(this->current_version_);
+  return int2version(current_version_);
 }
 
 DylibCommand::version_t DylibCommand::compatibility_version() const {
-  return int2version(this->compatibility_version_);
+  return int2version(compatibility_version_);
 }
 
 void DylibCommand::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void DylibCommand::timestamp(uint32_t timestamp) {
-  this->timestamp_ = timestamp;
+  timestamp_ = timestamp;
 }
 
 void DylibCommand::current_version(DylibCommand::version_t currentVersion) {
-  this->current_version_ = version2int(currentVersion);
+  current_version_ = version2int(currentVersion);
 }
 
 void DylibCommand::compatibility_version(DylibCommand::version_t compatibilityVersion) {
-  this->compatibility_version_ = version2int(compatibilityVersion);
+  compatibility_version_ = version2int(compatibilityVersion);
 }
 
 
@@ -96,7 +96,7 @@ bool DylibCommand::operator==(const DylibCommand& rhs) const {
 }
 
 bool DylibCommand::operator!=(const DylibCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -106,8 +106,8 @@ std::ostream& DylibCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
-     << std::setw(35) << this->name()
-     << this->timestamp()
+     << std::setw(35) << name()
+     << timestamp()
      << " - "
 
      << std::dec
@@ -135,14 +135,14 @@ DylibCommand DylibCommand::create(LOAD_COMMAND_TYPES type,
     uint32_t current_version,
     uint32_t compat_version) {
 
-  dylib_command raw_cmd;
+  details::dylib_command raw_cmd;
   raw_cmd.cmd                         = static_cast<uint32_t>(type);
-  raw_cmd.cmdsize                     = align(sizeof(dylib_command) + name.size() + 1, sizeof(uint64_t));
+  raw_cmd.cmdsize                     = align(sizeof(details::dylib_command) + name.size() + 1, sizeof(uint64_t));
   raw_cmd.dylib.timestamp             = timestamp;
   raw_cmd.dylib.current_version       = current_version;
   raw_cmd.dylib.compatibility_version = compat_version;
 
-  DylibCommand dylib{&raw_cmd};
+  DylibCommand dylib{raw_cmd};
   dylib.name(name);
   dylib.data(LoadCommand::raw_t(raw_cmd.cmdsize, 0));
 

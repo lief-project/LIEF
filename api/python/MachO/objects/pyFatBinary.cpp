@@ -27,7 +27,11 @@ template<>
 void create<FatBinary>(py::module& m) {
 
 
-  py::class_<FatBinary>(m, "FatBinary")
+  py::class_<FatBinary>(m, "FatBinary",
+      R"delim(
+      Class which represent a Mach-O (fat) binary
+      This object is also used for representing Mach-O binaries that are **NOT FAT**
+      )delim")
 
     .def_property_readonly("size",
       &FatBinary::size,

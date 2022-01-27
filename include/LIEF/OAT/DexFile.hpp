@@ -60,7 +60,7 @@ class LIEF_API DexFile : public Object {
   void lookup_table_offset(uint32_t offset);
   // ===============================
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const DexFile& rhs) const;
   bool operator!=(const DexFile& rhs) const;

@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <numeric>
 #include <sstream>
+#include <utility>
 
 namespace LIEF {
 namespace ELF {
@@ -27,19 +28,17 @@ DynamicEntryRunPath& DynamicEntryRunPath::operator=(const DynamicEntryRunPath&) 
 DynamicEntryRunPath::DynamicEntryRunPath(const DynamicEntryRunPath&) = default;
 
 DynamicEntryRunPath::DynamicEntryRunPath() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
-  runpath_{}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0}
 {}
 
-DynamicEntryRunPath::DynamicEntryRunPath(const std::string& runpath) :
+DynamicEntryRunPath::DynamicEntryRunPath(std::string runpath) :
   DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
-  runpath_{runpath}
+  runpath_{std::move(runpath)}
 {}
 
 
 DynamicEntryRunPath::DynamicEntryRunPath(const std::vector<std::string>& paths) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0},
-  runpath_{""}
+  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RUNPATH, 0}
 {
   this->paths(paths);
 }
@@ -47,26 +46,26 @@ DynamicEntryRunPath::DynamicEntryRunPath(const std::vector<std::string>& paths) 
 
 
 const std::string& DynamicEntryRunPath::name() const {
-  return this->runpath_;
+  return runpath_;
 }
 
 
 void DynamicEntryRunPath::name(const std::string& name) {
-  this->runpath_ = name;
+  runpath_ = name;
 }
 
 const std::string& DynamicEntryRunPath::runpath() const {
-  return this->name();
+  return name();
 }
 
 void DynamicEntryRunPath::runpath(const std::string& runpath) {
-  this->name(runpath);
+  name(runpath);
 }
 
 
 std::vector<std::string> DynamicEntryRunPath::paths() const {
   std::stringstream ss;
-  ss.str(this->runpath());
+  ss.str(runpath());
   std::string path;
   std::vector<std::string> paths;
   while (std::getline(ss, path, DynamicEntryRunPath::delimiter)) {
@@ -76,11 +75,10 @@ std::vector<std::string> DynamicEntryRunPath::paths() const {
 }
 
 void DynamicEntryRunPath::paths(const std::vector<std::string>& paths) {
-  this->runpath_ = std::accumulate(
-      std::begin(paths),
-      std::end(paths),
+  runpath_ = std::accumulate(
+      std::begin(paths), std::end(paths),
       std::string(""),
-      [] (std::string path, const std::string& new_entry) {
+      [] (const std::string& path, const std::string& new_entry) {
         return path.empty() ? new_entry :  path + DynamicEntryRunPath::delimiter + new_entry;
       });
 }
@@ -94,21 +92,18 @@ DynamicEntryRunPath& DynamicEntryRunPath::append(const std::string& path) {
 
 DynamicEntryRunPath& DynamicEntryRunPath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
-  paths.erase(std::remove_if(
-        std::begin(paths),
-        std::end(paths),
-        [&path] (const std::string& p) {
-          return p == path;
-        }), std::end(paths));
+  paths.erase(std::remove_if(std::begin(paths), std::end(paths),
+                             [&path] (const std::string& p) { return p == path; }),
+              std::end(paths));
   this->paths(paths);
   return *this;
 }
 
-DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos, const std::string path) {
+DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos, const std::string& path) {
   std::vector<std::string> paths = this->paths();
 
   if (pos == paths.size()) {
-    return this->append(path);
+    return append(path);
   }
 
   if (pos > paths.size()) {
@@ -120,11 +115,11 @@ DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos, const std::string p
 }
 
 DynamicEntryRunPath& DynamicEntryRunPath::operator+=(const std::string& path) {
-  return this->append(path);
+  return append(path);
 }
 
 DynamicEntryRunPath& DynamicEntryRunPath::operator-=(const std::string& path) {
-  return this->remove(path);
+  return remove(path);
 }
 
 void DynamicEntryRunPath::accept(Visitor& visitor) const {
@@ -135,7 +130,7 @@ std::ostream& DynamicEntryRunPath::print(std::ostream& os) const {
   DynamicEntry::print(os);
   os << std::hex
      << std::left
-     << std::setw(10) << this->name();
+     << std::setw(10) << name();
   return os;
 }
 }

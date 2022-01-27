@@ -25,28 +25,22 @@ namespace LIEF {
 namespace DEX {
 
 File::File() :
-  name_{"classes.dex"},
-  location_{""},
-  header_{},
-  classes_{},
-  methods_{},
-  strings_{},
-  original_data_{}
+  name_{"classes.dex"}
 {}
 
 
 dex_version_t File::version() const {
-  magic_t m = this->header().magic();
+  magic_t m = header().magic();
   const char* version = reinterpret_cast<const char*>(m.data() + sizeof(DEX::magic));
   return static_cast<dex_version_t>(std::stoul(version));
 }
 
-std::string File::save(const std::string path, bool deoptimize) const {
+std::string File::save(const std::string& path, bool deoptimize) const {
   if (path.empty()) {
-    if (not this->name().empty()) {
-      return this->save(this->name());
+    if (!name().empty()) {
+      return save(name());
     } else {
-      return this->save("classes.dex");
+      return save("classes.dex");
     }
   }
 
@@ -55,7 +49,7 @@ std::string File::save(const std::string path, bool deoptimize) const {
       const std::vector<uint8_t> raw = this->raw(deoptimize);
       ifs.write(reinterpret_cast<const char*>(raw.data()), raw.size());
     } else {
-      ifs.write(reinterpret_cast<const char*>(this->original_data_.data()), this->original_data_.size());
+      ifs.write(reinterpret_cast<const char*>(original_data_.data()), original_data_.size());
     }
     return path;
   }
@@ -65,19 +59,19 @@ std::string File::save(const std::string path, bool deoptimize) const {
 
 
 std::vector<uint8_t> File::raw(bool deoptimize) const {
-  if (not deoptimize) {
-    return this->original_data_;
+  if (!deoptimize) {
+    return original_data_;
   }
   dex2dex_info_t dex2dex_info = this->dex2dex_info();
 
-  if (dex2dex_info.size() == 0) {
-    return this->original_data_;
+  if (dex2dex_info.empty()) {
+    return original_data_;
   }
 
-  std::vector<uint8_t> raw = this->original_data_;
+  std::vector<uint8_t> raw = original_data_;
 
-  for (Method* method : this->methods_) {
-    if (method->bytecode().size() == 0) {
+  for (Method* method : methods_) {
+    if (method->bytecode().empty()) {
       continue;
     }
     const uint32_t code_item_offset = method->code_offset();
@@ -88,7 +82,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
     while (inst_ptr < inst_end) {
       uint16_t dex_pc = (inst_ptr - inst_start) / sizeof(uint16_t);
-      OPCODES opcode = static_cast<OPCODES>(*inst_ptr);
+      auto opcode = static_cast<OPCODES>(*inst_ptr);
       uint32_t value = -1u;
 
       if (meth_info.find(dex_pc) != std::end(meth_info)) {
@@ -364,17 +358,17 @@ void File::deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value, O
 }
 
 const std::string& File::name() const {
-  return this->name_;
+  return name_;
 }
 
 
 const std::string& File::location() const {
-  return this->location_;
+  return location_;
 }
 
 
 const Header& File::header() const {
-  return this->header_;
+  return header_;
 }
 
 Header& File::header() {
@@ -383,12 +377,12 @@ Header& File::header() {
 
 it_const_classes File::classes() const {
   classes_list_t classes;
-  classes.reserve(this->classes_.size());
+  classes.reserve(classes_.size());
 
   std::transform(
-      std::begin(this->classes_), std::end(this->classes_),
+      std::begin(classes_), std::end(classes_),
       std::back_inserter(classes),
-      [] (std::pair<std::string, Class*> it) {
+      [] (const std::pair<std::string, Class*>& it) {
         return it.second;
       });
   return classes;
@@ -396,26 +390,26 @@ it_const_classes File::classes() const {
 
 it_classes File::classes() {
   classes_list_t classes;
-  classes.reserve(this->classes_.size());
+  classes.reserve(classes_.size());
 
   std::transform(
-      std::begin(this->classes_), std::end(this->classes_),
+      std::begin(classes_), std::end(classes_),
       std::back_inserter(classes),
-      [] (std::pair<std::string, Class*> it) {
+      [] (const std::pair<std::string, Class*>& it) {
         return it.second;
       });
   return classes;
 }
 
 bool File::has_class(const std::string& class_name) const {
-  return this->classes_.find(Class::fullname_normalized(class_name)) != std::end(this->classes_);
+  return classes_.find(Class::fullname_normalized(class_name)) != std::end(classes_);
 }
 
 const Class& File::get_class(const std::string& class_name) const {
-  if (not this->has_class(class_name)) {
+  if (!has_class(class_name)) {
     throw not_found(class_name);
   }
-  return *(this->classes_.find(Class::fullname_normalized(class_name))->second);
+  return *(classes_.find(Class::fullname_normalized(class_name))->second);
 }
 
 Class& File::get_class(const std::string& class_name) {
@@ -424,10 +418,10 @@ Class& File::get_class(const std::string& class_name) {
 
 
 const Class& File::get_class(size_t index) const {
-  if (index >= this->classes_.size()) {
+  if (index >= classes_.size()) {
     throw not_found("Can't find class at index " + std::to_string(index));
   }
-  return *this->class_list_[index];
+  return *class_list_[index];
 
 }
 
@@ -438,9 +432,9 @@ Class& File::get_class(size_t index) {
 
 dex2dex_info_t File::dex2dex_info() const {
   dex2dex_info_t info;
-  for (auto&& p : this->classes_) {
+  for (const auto& p : classes_) {
     dex2dex_class_info_t class_info = p.second->dex2dex_info();
-    if (class_info.size() > 0) {
+    if (!class_info.empty()) {
       info.emplace(p.second, std::move(class_info));
     }
   }
@@ -453,21 +447,21 @@ std::string File::dex2dex_json_info() {
   json mapping = json::object();
 
   // Iter over the class quickened
-  for (auto&& class_map : this->dex2dex_info()) {
+  for (const auto& class_map : dex2dex_info()) {
     const Class* clazz = class_map.first;
     const std::string& class_name = clazz->fullname();
     mapping[class_name] = json::object();
 
     const dex2dex_class_info_t& class_info = class_map.second;
     // Iter over the method within the class
-    for (auto&& method_map : class_info) {
+    for (const auto& method_map : class_info) {
 
       // Index of the method within the Dex File
       uint32_t index = method_map.first->index();
 
       mapping[class_name][std::to_string(index)] = json::object();
 
-      for (auto&& pc_index : method_map.second) {
+      for (const auto& pc_index : method_map.second) {
         mapping[class_name][std::to_string(index)][std::to_string(pc_index.first)] = pc_index.second;
       }
     }
@@ -479,67 +473,67 @@ std::string File::dex2dex_json_info() {
 }
 
 it_const_methods File::methods() const {
-  return this->methods_;
+  return methods_;
 }
 
 it_methods File::methods() {
-  return this->methods_;
+  return methods_;
 }
 
 it_const_fields File::fields() const {
-  return this->fields_;
+  return fields_;
 }
 
 it_fields File::fields() {
-  return this->fields_;
+  return fields_;
 }
 
 
 it_const_strings File::strings() const {
-  return this->strings_;
+  return strings_;
 }
 
 it_strings File::strings() {
-  return this->strings_;
+  return strings_;
 }
 
 it_const_types File::types() const {
-  return this->types_;
+  return types_;
 }
 
 it_types File::types() {
-  return this->types_;
+  return types_;
 }
 
 
 it_const_protypes File::prototypes() const {
-  return this->prototypes_;
+  return prototypes_;
 }
 
 it_protypes File::prototypes() {
-  return this->prototypes_;
+  return prototypes_;
 }
 
 const MapList& File::map() const {
-  return this->map_;
+  return map_;
 }
 
 MapList& File::map() {
-  return this->map_;
+  return map_;
 }
 
 
 void File::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 void File::location(const std::string& location) {
-  this->location_ = location;
+  location_ = location;
 }
 
 void File::add_class(Class* cls) {
-  this->classes_.emplace(cls->fullname(), cls);
-  this->class_list_.push_back(cls);
+  classes_.emplace(cls->fullname(), cls);
+  class_list_.push_back(cls);
 }
 
 void File::accept(Visitor& visitor) const {
@@ -553,12 +547,12 @@ bool File::operator==(const File& rhs) const {
 }
 
 bool File::operator!=(const File& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const File& file) {
   os << "DEX File " << file.name() << " Version: " << std::dec << file.version();
-  if (not file.location().empty()) {
+  if (!file.location().empty()) {
     os << " - " << file.location();
   }
   os << std::endl;
@@ -580,24 +574,24 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
 }
 
 File::~File() {
-  for (const std::pair<const std::string, Class*>& p : this->classes_) {
+  for (const std::pair<const std::string, Class*>& p : classes_) {
     delete p.second;
   }
 
-  for (Method* mtd : this->methods_) {
+  for (Method* mtd : methods_) {
     delete mtd;
   }
 
-  for (std::string* str : this->strings_) {
+  for (std::string* str : strings_) {
     delete str;
   }
 
 
-  for (Type* t : this->types_) {
+  for (Type* t : types_) {
     delete t;
   }
 
-  for (Prototype* pt : this->prototypes_) {
+  for (Prototype* pt : prototypes_) {
     delete pt;
   }
 }

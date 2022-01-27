@@ -24,42 +24,30 @@ namespace LIEF {
 namespace MachO {
 
 LoadCommand::LoadCommand() = default;
-
 LoadCommand::~LoadCommand() = default;
+LoadCommand::LoadCommand(const LoadCommand& other) = default;
 
 LoadCommand& LoadCommand::operator=(LoadCommand other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
-LoadCommand::LoadCommand(const LoadCommand& other) :
-  Object{other},
-  originalData_{other.originalData_},
-  command_{other.command_},
-  size_{other.size_},
-  commandOffset_{other.commandOffset_}
-{}
-
-
 LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size) :
-  originalData_{},
   command_{type},
-  size_{size},
-  commandOffset_{0}
+  size_{size}
 {}
 
-LoadCommand::LoadCommand(const load_command* command) :
-  command_{static_cast<LOAD_COMMAND_TYPES>(command->cmd)},
-  size_{command->cmdsize},
-  commandOffset_{0}
+LoadCommand::LoadCommand(const details::load_command& command) :
+  command_{static_cast<LOAD_COMMAND_TYPES>(command.cmd)},
+  size_{command.cmdsize}
 {}
 
 
 void LoadCommand::swap(LoadCommand& other) {
-  std::swap(this->originalData_,  other.originalData_);
-  std::swap(this->command_,       other.command_);
-  std::swap(this->size_,          other.size_);
-  std::swap(this->commandOffset_, other.commandOffset_);
+  std::swap(original_data_,  other.original_data_);
+  std::swap(command_,        other.command_);
+  std::swap(size_,           other.size_);
+  std::swap(command_offset_, other.command_offset_);
 }
 
 LoadCommand* LoadCommand::clone() const {
@@ -67,37 +55,37 @@ LoadCommand* LoadCommand::clone() const {
 }
 
 LOAD_COMMAND_TYPES LoadCommand::command() const {
-  return this->command_;
+  return command_;
 }
 
 uint32_t LoadCommand::size() const {
-  return this->size_;
+  return size_;
 }
 
 const LoadCommand::raw_t& LoadCommand::data() const {
-  return this->originalData_;
+  return original_data_;
 }
 
 
 uint64_t LoadCommand::command_offset() const {
-  return this->commandOffset_;
+  return command_offset_;
 }
 
 void LoadCommand::data(const LoadCommand::raw_t& data) {
-  this->originalData_ = std::move(data);
+  original_data_ = data;
 }
 
 void LoadCommand::command(LOAD_COMMAND_TYPES command) {
-  this->command_ = command;
+  command_ = command;
 }
 
 void LoadCommand::size(uint32_t size) {
-  this->size_ = size;
+  size_ = size;
 }
 
 
 void LoadCommand::command_offset(uint64_t offset) {
-  this->commandOffset_ = offset;
+  command_offset_ = offset;
 }
 
 
@@ -112,14 +100,14 @@ bool LoadCommand::operator==(const LoadCommand& rhs) const {
 }
 
 bool LoadCommand::operator!=(const LoadCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& LoadCommand::print(std::ostream& os) const {
   os << std::hex;
-  os << "Command : " << to_string(this->command()) << std::endl;
-  os << "Offset  : " << this->command_offset() << std::endl;
-  os << "Size    : " << this->size() << std::endl;
+  os << "Command : " << to_string(command()) << std::endl;
+  os << "Offset  : " << command_offset() << std::endl;
+  os << "Size    : " << size() << std::endl;
   return os;
 }
 

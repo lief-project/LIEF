@@ -46,125 +46,125 @@ ResourceFixedFileInfo::ResourceFixedFileInfo() :
 {}
 
 
-ResourceFixedFileInfo::ResourceFixedFileInfo(const pe_resource_fixed_file_info* header) :
-  signature_{header->signature},
-  struct_version_{header->struct_version},
-  file_version_MS_{header->file_version_MS},
-  file_version_LS_{header->file_version_LS},
-  product_version_MS_{header->product_version_MS},
-  product_version_LS_{header->product_version_LS},
-  file_flags_mask_{header->file_flags_mask},
-  file_flags_{header->file_flags},
-  file_os_{static_cast<FIXED_VERSION_OS>(header->file_OS)},
-  file_type_{static_cast<FIXED_VERSION_FILE_TYPES>(header->file_type)},
-  file_subtype_{static_cast<FIXED_VERSION_FILE_SUB_TYPES>(header->file_subtype)},
-  file_date_MS_{header->file_date_MS},
-  file_date_LS_{header->file_date_LS}
+ResourceFixedFileInfo::ResourceFixedFileInfo(const details::pe_resource_fixed_file_info& header) :
+  signature_{header.signature},
+  struct_version_{header.struct_version},
+  file_version_MS_{header.file_version_MS},
+  file_version_LS_{header.file_version_LS},
+  product_version_MS_{header.product_version_MS},
+  product_version_LS_{header.product_version_LS},
+  file_flags_mask_{header.file_flags_mask},
+  file_flags_{header.file_flags},
+  file_os_{static_cast<FIXED_VERSION_OS>(header.file_OS)},
+  file_type_{static_cast<FIXED_VERSION_FILE_TYPES>(header.file_type)},
+  file_subtype_{static_cast<FIXED_VERSION_FILE_SUB_TYPES>(header.file_subtype)},
+  file_date_MS_{header.file_date_MS},
+  file_date_LS_{header.file_date_LS}
 {}
 
 
 uint32_t ResourceFixedFileInfo::signature() const {
-  return this->signature_;
+  return signature_;
 }
 
 uint32_t ResourceFixedFileInfo::struct_version() const {
-  return this->struct_version_;
+  return struct_version_;
 }
 
 uint32_t ResourceFixedFileInfo::file_version_MS() const {
-  return this->file_version_MS_;
+  return file_version_MS_;
 }
 
 uint32_t ResourceFixedFileInfo::file_version_LS() const {
-  return this->file_version_LS_;
+  return file_version_LS_;
 }
 
 uint32_t ResourceFixedFileInfo::product_version_MS() const {
-  return this->product_version_MS_;
+  return product_version_MS_;
 }
 
 uint32_t ResourceFixedFileInfo::product_version_LS() const {
-  return this->product_version_LS_;
+  return product_version_LS_;
 }
 
 uint32_t ResourceFixedFileInfo::file_flags_mask() const {
-  return this->file_flags_mask_;
+  return file_flags_mask_;
 }
 
 uint32_t ResourceFixedFileInfo::file_flags() const {
-  return this->file_flags_;
+  return file_flags_;
 }
 
 FIXED_VERSION_OS ResourceFixedFileInfo::file_os() const {
-  return this->file_os_;
+  return file_os_;
 }
 
 FIXED_VERSION_FILE_TYPES ResourceFixedFileInfo::file_type() const {
-  return this->file_type_;
+  return file_type_;
 }
 
 FIXED_VERSION_FILE_SUB_TYPES ResourceFixedFileInfo::file_subtype() const {
-  return this->file_subtype_;
+  return file_subtype_;
 }
 
 uint32_t ResourceFixedFileInfo::file_date_MS() const {
-  return this->file_date_MS_;
+  return file_date_MS_;
 }
 
 uint32_t ResourceFixedFileInfo::file_date_LS() const {
-  return this->file_date_LS_;
+  return file_date_LS_;
 }
 
 void ResourceFixedFileInfo::signature(uint32_t signature) {
-  this->signature_ = signature;
+  signature_ = signature;
 }
 
 void ResourceFixedFileInfo::struct_version(uint32_t struct_version) {
-  this->struct_version_ = struct_version;
+  struct_version_ = struct_version;
 }
 
 void ResourceFixedFileInfo::file_version_MS(uint32_t file_version_MS) {
-  this->file_version_MS_ = file_version_MS;
+  file_version_MS_ = file_version_MS;
 }
 
 void ResourceFixedFileInfo::file_version_LS(uint32_t file_version_LS) {
-  this->file_version_LS_ = file_version_LS;
+  file_version_LS_ = file_version_LS;
 }
 
 void ResourceFixedFileInfo::product_version_MS(uint32_t product_version_MS) {
-  this->product_version_MS_ = product_version_MS;
+  product_version_MS_ = product_version_MS;
 }
 
 void ResourceFixedFileInfo::product_version_LS(uint32_t product_version_LS) {
-  this->product_version_LS_ = product_version_LS;
+  product_version_LS_ = product_version_LS;
 }
 
 void ResourceFixedFileInfo::file_flags_mask(uint32_t file_flags_mask) {
-  this->file_flags_mask_ = file_flags_mask;
+  file_flags_mask_ = file_flags_mask;
 }
 
 void ResourceFixedFileInfo::file_flags(uint32_t file_flags) {
-  this->file_flags_ = file_flags;
+  file_flags_ = file_flags;
 }
 
 void ResourceFixedFileInfo::file_os(FIXED_VERSION_OS file_os) {
-  this->file_os_ = file_os;
+  file_os_ = file_os;
 }
 
 void ResourceFixedFileInfo::file_type(FIXED_VERSION_FILE_TYPES file_type) {
-  this->file_type_ = file_type;
+  file_type_ = file_type;
 }
 
 void ResourceFixedFileInfo::file_subtype(FIXED_VERSION_FILE_SUB_TYPES file_subtype) {
-  this->file_subtype_ = file_subtype;
+  file_subtype_ = file_subtype;
 }
 
 void ResourceFixedFileInfo::file_date_MS(uint32_t file_date_MS) {
-  this->file_date_MS_ = file_date_MS;
+  file_date_MS_ = file_date_MS;
 }
 
 void ResourceFixedFileInfo::file_date_LS(uint32_t file_date_LS) {
-  this->file_date_LS_ = file_date_LS;
+  file_date_LS_ = file_date_LS;
 }
 
 void ResourceFixedFileInfo::accept(Visitor& visitor) const {
@@ -179,13 +179,13 @@ bool ResourceFixedFileInfo::operator==(const ResourceFixedFileInfo& rhs) const {
 }
 
 bool ResourceFixedFileInfo::operator!=(const ResourceFixedFileInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_info) {
 
   // File Version (readable)
-  std::string file_version_str = "";
+  std::string file_version_str;
   file_version_str += std::to_string((fixed_info.file_version_MS() >> 16) & 0xFFFF);
   file_version_str += " - ";
   file_version_str += std::to_string(fixed_info.file_version_MS() & 0xFFFF);
@@ -195,7 +195,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_in
   file_version_str += std::to_string(fixed_info.file_version_LS() & 0xFFFF);
 
   // Product Version (readable)
-  std::string product_version_str = "";
+  std::string product_version_str;
   product_version_str += std::to_string((fixed_info.product_version_MS() >> 16) & 0xFFFF);
   product_version_str += " - ";
   product_version_str += std::to_string(fixed_info.product_version_MS() & 0xFFFF);
@@ -211,7 +211,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_in
   os << std::setw(17) << std::setfill(' ') << "Product version:" << product_version_str               << std::endl;
   os << std::setw(17) << std::setfill(' ') << "File OS:"         << to_string(fixed_info.file_os())   << std::endl;
   os << std::setw(17) << std::setfill(' ') << "File type:"       << to_string(fixed_info.file_type()) << std::endl;
-  if (fixed_info.file_type() == FIXED_VERSION_FILE_TYPES::VFT_DRV or
+  if (fixed_info.file_type() == FIXED_VERSION_FILE_TYPES::VFT_DRV ||
       fixed_info.file_type() == FIXED_VERSION_FILE_TYPES::VFT_FONT) {
     os << std::setw(17) << std::setfill(' ') << "File sub-type:" << to_string(fixed_info.file_subtype()) << std::endl;
   }

@@ -29,8 +29,13 @@ namespace PE {
 
 class Parser;
 class Builder;
-struct pe_base_relocation_block;
 
+namespace details {
+struct pe_base_relocation_block;
+}
+
+//! Class which represents the *Base Relocation Block*
+//! Usually, we find this structure in the ``.reloc`` section
 class LIEF_API Relocation : public Object {
 
   friend class Parser;
@@ -40,21 +45,28 @@ class LIEF_API Relocation : public Object {
   Relocation();
   Relocation(const Relocation& other);
   Relocation& operator=(Relocation other);
-  Relocation(const pe_base_relocation_block* header);
+  Relocation(const details::pe_base_relocation_block& header);
   virtual ~Relocation();
 
   void swap(Relocation& other);
 
+  //! The RVA for which the offset of the relocation entries (RelocationEntry) is added
   uint32_t virtual_address() const;
+
+  //! The total number of bytes in the base relocation block.
+  //! ``block_size = sizeof(BaseRelocationBlock) + nb_of_relocs * sizeof(uint16_t = RelocationEntry)``
   uint32_t block_size() const;
+
+  //! Iterator over the RelocationEntry
   it_const_relocation_entries entries() const;
   it_relocation_entries entries();
 
   void virtual_address(uint32_t virtual_address);
   void block_size(uint32_t block_size);
+
   RelocationEntry& add_entry(const RelocationEntry& entry);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Relocation& rhs) const;
   bool operator!=(const Relocation& rhs) const;

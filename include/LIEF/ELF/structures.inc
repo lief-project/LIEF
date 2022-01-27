@@ -99,7 +99,7 @@ struct Elf32_Sym {
   Elf32_Addr    st_value; /**< Value or address associated with the symbol */
   Elf32_Word    st_size;  /**< Size of the symbol */
   unsigned char st_info;  /**< Symbol's type and binding attributes */
-  unsigned char st_other; /**< Must be zero; reserved */
+  unsigned char st_other; /**< Symbol visibility */
   Elf32_Half    st_shndx; /**< Which section (header table index) it's defined in */
 };
 
@@ -107,7 +107,7 @@ struct Elf32_Sym {
 struct Elf64_Sym {
   Elf64_Word      st_name;  /**< Symbol name (index into string table) */
   unsigned char   st_info;  /**< Symbol's type and binding attributes */
-  unsigned char   st_other; /**< Must be zero; reserved */
+  unsigned char   st_other; /**< Symbol visibility */
   Elf64_Half      st_shndx; /**< Which section (header tbl index) it's defined in */
   Elf64_Addr      st_value; /**< Value or address associated with the symbol */
   Elf64_Xword     st_size;  /**< Size of the symbol */

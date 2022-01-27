@@ -29,7 +29,7 @@ const char* to_string(SYMBOL_BINDINGS e) {
     { SYMBOL_BINDINGS::STB_WEAK,       "WEAK" },
     { SYMBOL_BINDINGS::STB_GNU_UNIQUE, "GNU_UNIQUE" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -44,7 +44,7 @@ const char* to_string(E_TYPE e) {
     { E_TYPE::ET_LOPROC, "LOPROC" },
     { E_TYPE::ET_HIPROC, "HIPROC" }
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -54,7 +54,7 @@ const char* to_string(VERSION e) {
     { VERSION::EV_NONE,    "NONE" },
     { VERSION::EV_CURRENT, "CURRENT" }
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -239,7 +239,7 @@ const char* to_string(ARCH e) {
     { ARCH::EM_RISCV,         "RISCV"},
     { ARCH::EM_BPF,           "BPF"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -271,7 +271,7 @@ const char* to_string(SEGMENT_TYPES e) {
     //{ SEGMENT_TYPES::PT_MIPS_OPTIONS,  "MIPS_OPTIONS" },
     //{ SEGMENT_TYPES::PT_MIPS_ABIFLAGS, "MIPS_ABIFLAGS" }
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -376,7 +376,7 @@ const char* to_string(DYNAMIC_TAGS e) {
     { DYNAMIC_TAGS::DT_RELRENT,                    "RELRENT"},
     { DYNAMIC_TAGS::DT_RELRCOUNT,                  "RELRCOUNT"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -426,7 +426,7 @@ const char* to_string(ELF_SECTION_TYPES e) {
     { ELF_SECTION_TYPES::SHT_LOUSER,             "LOUSER"},
     { ELF_SECTION_TYPES::SHT_HIUSER,             "HIUSER"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -458,7 +458,7 @@ const char* to_string(ELF_SECTION_FLAGS e) {
     { ELF_SECTION_FLAGS::SHF_MIPS_ADDR,        "MIPS_ADDR"},
     { ELF_SECTION_FLAGS::SHF_MIPS_STRING,      "MIPS_STRING"}
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -474,7 +474,7 @@ const char* to_string(ELF_SYMBOL_TYPES e) {
     { ELF_SYMBOL_TYPES::STT_TLS,       "TLS"},
     { ELF_SYMBOL_TYPES::STT_GNU_IFUNC, "GNU_IFUNC"},
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -525,7 +525,7 @@ const char* to_string(RELOC_x86_64 e) {
     { RELOC_x86_64::R_X86_64_GOTPCRELX,       "GOTPCRELX"},
     { RELOC_x86_64::R_X86_64_REX_GOTPCRELX,   "REX_GOTPCRELX"},
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -670,7 +670,7 @@ const char* to_string(RELOC_ARM e) {
     { RELOC_ARM::R_ARM_RPC24,              "RPC24"},
     { RELOC_ARM::R_ARM_RBASE,              "RBASE"},
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -801,7 +801,7 @@ const char* to_string(RELOC_AARCH64 e) {
     { RELOC_AARCH64::R_AARCH64_IRELATIVE,                    "IRELATIVE"},
 
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -850,7 +850,7 @@ const char* to_string(RELOC_i386 e) {
     { RELOC_i386::R_386_IRELATIVE,     "IRELATIVE"},
     { RELOC_i386::R_386_NUM,           "NUM"},
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -914,7 +914,7 @@ const char* to_string(RELOC_POWERPC32 e) {
   { RELOC_POWERPC32::R_PPC_REL16_HI,          "REL16_HI" },
   { RELOC_POWERPC32::R_PPC_REL16_HA,          "REL16_HA" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1005,7 +1005,7 @@ const char* to_string(RELOC_POWERPC64 e) {
   { RELOC_POWERPC64::R_PPC64_REL16_HI,            "REL16_HI" },
   { RELOC_POWERPC64::R_PPC64_REL16_HA,            "REL16_HA" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1124,7 +1124,7 @@ const char* to_string(RELOC_MIPS e) {
     {  RELOC_MIPS::R_MIPS_UNUSED2,              "MIPS_UNUSED2" },
     {  RELOC_MIPS::R_MIPS_UNUSED3,              "MIPS_UNUSED3" },
   };
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1135,7 +1135,7 @@ const char* to_string(ELF_CLASS e) {
     { ELF_CLASS::ELFCLASS64,   "CLASS64"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1146,7 +1146,7 @@ const char* to_string(ELF_DATA e) {
     { ELF_DATA::ELFDATA2MSB, "MSB"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1177,7 +1177,7 @@ const char* to_string(OS_ABI e) {
     { OS_ABI::ELFOSABI_STANDALONE,   "STANDALONE"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1190,7 +1190,7 @@ const char* to_string(DYNSYM_COUNT_METHODS e) {
     { DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS, "RELOCATIONS"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1206,7 +1206,7 @@ const char* to_string(NOTE_TYPES e) {
     { NOTE_TYPES::NT_CRASHPAD,         "CRASHPAD"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1234,7 +1234,7 @@ const char* to_string(NOTE_TYPES_CORE e) {
     { NOTE_TYPES_CORE::NT_386_XSTATE,       "I386_XSTATE"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
@@ -1250,7 +1250,7 @@ const char* to_string(NOTE_ABIS e) {
     { NOTE_ABIS::ELF_NOTE_OS_SYLLABLE, "SYLLABLE"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1262,7 +1262,7 @@ const char* to_string(RELOCATION_PURPOSES e) {
     { RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT,  "OBJECT"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1272,7 +1272,7 @@ const char* to_string(PPC64_EFLAGS e) {
     { PPC64_EFLAGS::EF_PPC64_ABI, "ABI"},
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1289,7 +1289,7 @@ const char* to_string(ARM_EFLAGS e) {
     { ARM_EFLAGS::EF_ARM_EABI_VER5,    "EABI_VER5" },
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1344,7 +1344,7 @@ const char* to_string(MIPS_EFLAGS e) {
     { MIPS_EFLAGS::EF_MIPS_ARCH_64R6,     "ARCH_64R6"     },
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1364,7 +1364,7 @@ const char* to_string(HEXAGON_EFLAGS e) {
     { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V5,    "ISA_V5"   },
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1383,7 +1383,7 @@ const char* to_string(IDENTITY e) {
     { IDENTITY::EI_NIDENT,     "NIDENT"     },
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1401,7 +1401,7 @@ const char* to_string(SYMBOL_SECTION_INDEX e) {
     { SYMBOL_SECTION_INDEX::SHN_HIRESERVE, "HIRESERVE" },
   };
 
-  auto   it  = enumStrings.find(e);
+  const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1415,7 +1415,7 @@ const char* to_string(DYNAMIC_FLAGS e) {
     { DYNAMIC_FLAGS::DF_STATIC_TLS, "STATIC_TLS"     },
   };
 
-  auto   it  = enum_strings.find(e);
+  const auto it = enum_strings.find(e);
   return it == enum_strings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1450,7 +1450,7 @@ const char* to_string(DYNAMIC_FLAGS_1 e) {
     { DYNAMIC_FLAGS_1::DF_1_PIE,        "PIE"  },
   };
 
-  auto   it  = enum_strings_flags1.find(e);
+  const auto it = enum_strings_flags1.find(e);
   return it == enum_strings_flags1.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1462,7 +1462,7 @@ const char* to_string(ELF_SEGMENT_FLAGS e) {
     { ELF_SEGMENT_FLAGS::PF_R,    "R" },
   };
 
-  auto   it  = enum_strings.find(e);
+  const auto it = enum_strings.find(e);
   return it == enum_strings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1503,7 +1503,7 @@ const char* to_string(AUX_TYPE e) {
     { AUX_TYPE::AT_L1D_CACHESHAPE, "L1D_CACHESHAPE" },
   };
 
-  auto   it  = enum_strings.find(e);
+  const auto it = enum_strings.find(e);
   return it == enum_strings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1516,7 +1516,7 @@ const char* to_string(ELF_SYMBOL_VISIBILITY e) {
     { ELF_SYMBOL_VISIBILITY::STV_PROTECTED, "PROTECTED" },
   };
 
-  auto   it  = enum_strings.find(e);
+  const auto it = enum_strings.find(e);
   return it == enum_strings.end() ? "UNDEFINED" : it->second;
 }
 
@@ -1623,7 +1623,7 @@ const char* to_string(CorePrStatus::REGISTERS e) {
 
   };
 
-  auto   it  = enum_strings.find(e);
+  const auto it = enum_strings.find(e);
   return it == enum_strings.end() ? "UNKNOWN" : it->second;
 }
 

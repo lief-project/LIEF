@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
+#include <utility>
+
 #include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
 
 namespace LIEF {
 namespace OAT {
 
+Method::Method() = default;
 Method::Method(const Method&) = default;
 Method& Method::operator=(const Method&) = default;
 
-Method::Method(DEX::Method* method, Class* oat_class, const std::vector<uint8_t>& quick_code) :
+Method::Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  quick_code) :
   dex_method_{method},
   class_{oat_class},
-  quick_code_{quick_code}
+  quick_code_{std::move(quick_code)}
 {}
 
-
-Method::Method() :
-  dex_method_{nullptr},
-  class_{nullptr},
-  quick_code_{}
-{}
 
 
 const Class& Method::oat_class() const {
-  if (this->class_ == nullptr) {
+  if (class_ == nullptr) {
     throw integrity_error("No class found for method");
   }
-  return *this->class_;
+  return *class_;
 }
 
 Class& Method::oat_class() {
@@ -50,14 +47,14 @@ Class& Method::oat_class() {
 
 
 bool Method::has_dex_method() const {
-  return this->dex_method_ != nullptr;
+  return dex_method_ != nullptr;
 }
 
 const DEX::Method& Method::dex_method() const {
-  if (not this->has_dex_method()) {
+  if (!has_dex_method()) {
     throw integrity_error("No DEX Method found for the current OAT method");
   }
-  return *this->dex_method_;
+  return *dex_method_;
 }
 
 DEX::Method& Method::dex_method() {
@@ -65,33 +62,33 @@ DEX::Method& Method::dex_method() {
 }
 
 bool Method::is_dex2dex_optimized() const {
-  return this->dex2dex_info().size() > 0;
+  return !dex2dex_info().empty();
 }
 
 bool Method::is_compiled() const {
-  return this->quick_code_.size() > 0;
+  return !quick_code_.empty();
 }
 
 
 std::string Method::name() const {
-  if (this->dex_method_ == nullptr) {
+  if (dex_method_ == nullptr) {
     return "";
   }
 
-  return this->dex_method_->name();
+  return dex_method_->name();
 }
 
 const DEX::dex2dex_method_info_t& Method::dex2dex_info() const {
-  return this->dex_method_->dex2dex_info();
+  return dex_method_->dex2dex_info();
 }
 
 
 const Method::quick_code_t& Method::quick_code() const {
-  return this->quick_code_;
+  return quick_code_;
 }
 
 void Method::quick_code(const Method::quick_code_t& code) {
-  this->quick_code_ = code;
+  quick_code_ = code;
 }
 
 void Method::accept(Visitor& visitor) const {
@@ -105,7 +102,7 @@ bool Method::operator==(const Method& rhs) const {
 }
 
 bool Method::operator!=(const Method& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Method& meth) {

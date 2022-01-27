@@ -33,7 +33,7 @@ namespace PE {
 
 class ResourcesManager;
 
-//! @brief Modelization of the data associated with the ``RT_VERSION`` entry
+//! Representation of the data associated with the ``RT_VERSION`` entry
 //!
 //! See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
 class LIEF_API ResourceVersion : public Object {
@@ -44,34 +44,34 @@ class LIEF_API ResourceVersion : public Object {
   ResourceVersion& operator=(const ResourceVersion&);
   virtual ~ResourceVersion();
 
-  //! @brief The type of data in the version resource
+  //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
   uint16_t type() const;
 
-  //! @brief Signature of the structure:
+  //! Signature of the structure:
   //! Must be the unicode string "VS_VERSION_INFO"
   const std::u16string& key() const;
 
-  //! @brief ``true`` if the version contains a ResourceFixedFileInfo
+  //! ``true`` if the version contains a ResourceFixedFileInfo
   bool has_fixed_file_info() const;
 
-  //! @brief ``true`` if the version contains a ResourceStringFileInfo
+  //! ``true`` if the version contains a ResourceStringFileInfo
   bool has_string_file_info() const;
 
-  //! @brief ``true`` if the version contains a ResourceVarFileInfo
+  //! ``true`` if the version contains a ResourceVarFileInfo
   bool has_var_file_info() const;
 
-  //! @brief Object that describes various information about the application's version
+  //! Object that describes various information about the application's version
   const ResourceFixedFileInfo& fixed_file_info() const;
   ResourceFixedFileInfo&       fixed_file_info();
 
-  //! @brief Object that describes various information about the application's version.
+  //! Object that describes various information about the application's version.
   //! The underlying structure is basically a dictionary (key/value)
   const ResourceStringFileInfo& string_file_info() const;
   ResourceStringFileInfo&       string_file_info();
 
-  //! @brief Object that describes information about languages supported by the application
+  //! Object that describes information about languages supported by the application
   const ResourceVarFileInfo& var_file_info() const;
   ResourceVarFileInfo&       var_file_info();
 
@@ -89,7 +89,7 @@ class LIEF_API ResourceVersion : public Object {
   void var_file_info(const ResourceVarFileInfo& var_file_info);
   void remove_var_file_info();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceVersion& rhs) const;
   bool operator!=(const ResourceVersion& rhs) const;

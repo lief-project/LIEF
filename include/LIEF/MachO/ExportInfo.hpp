@@ -31,6 +31,10 @@ class BinaryParser;
 class Symbol;
 class DylibCommand;
 
+//! Class that provides an interface over the Dyld export info
+//!
+//! This class does not represent a structure that exists in the Mach-O format
+//! specification but provides a *view* on an entry of the Dyld export trie.
 class LIEF_API ExportInfo : public Object {
 
   friend class BinaryParser;
@@ -45,40 +49,52 @@ class LIEF_API ExportInfo : public Object {
   ExportInfo(const ExportInfo& copy);
   void swap(ExportInfo& other);
 
+  //! Original offset in the export Trie
   uint64_t node_offset() const;
 
+  //! Some information (EXPORT_SYMBOL_FLAGS) about the export
+  //! (like weak export, reexport, ...)
   uint64_t flags() const;
   void flags(uint64_t flags);
 
+  //! The export flags() as a list
   flag_list_t flags_list() const;
 
+  //! Check if the current entry contains the provided EXPORT_SYMBOL_FLAGS
   bool has(EXPORT_SYMBOL_FLAGS flag) const;
 
+  //! The export's kind (regular, thread local, absolute, ...)
   EXPORT_SYMBOL_KINDS kind() const;
 
   uint64_t other() const;
 
+  //! The address of the export
   uint64_t address() const;
   void address(uint64_t addr);
 
+  //! Check if a symbol is associated with this export
   bool has_symbol() const;
 
+  //! MachO::Symbol associated with this export
   const Symbol& symbol() const;
   Symbol& symbol();
 
+  //! If the export is a EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT,
+  //! this returns the (optional) MachO::Symbol
   Symbol* alias();
   const Symbol* alias() const;
 
+  //! If the export is a EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT,
+  //! this returns the (optional) library (MachO::DylibCommand)
   DylibCommand* alias_library();
   const DylibCommand* alias_library() const;
-
 
   virtual ~ExportInfo();
 
   bool operator==(const ExportInfo& rhs) const;
   bool operator!=(const ExportInfo& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
 

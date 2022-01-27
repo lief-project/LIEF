@@ -56,7 +56,7 @@ class SegmentCommand;
 class LoadCommand;
 class Header;
 
-//! Class which represent a MachO binary
+//! Class which represents a MachO binary
 class LIEF_API Binary : public LIEF::Binary  {
 
   friend class BinaryParser;
@@ -70,15 +70,17 @@ class LIEF_API Binary : public LIEF::Binary  {
   Binary(const Binary&) = delete;
   Binary& operator=(const Binary&) = delete;
 
-  //! Return a reference to MachO::Header
-  Header&       header();
+  //! Return a reference to the MachO::Header
+  Header& header();
   const Header& header() const;
 
-  //! Return binary's @link MachO::LoadCommand load commands @endlink
-  it_commands       commands();
+  //! Return an iterator over the MachO LoadCommand present
+  //! in the binary
+  it_commands commands();
   it_const_commands commands() const;
 
-  //! Return binary's @link MachO::Fileset
+  //! Return an iterator over the MachO::Binary associated
+  //! with the LOAD_COMMAND_TYPES::LC_FILESET_ENTRY commands
   it_fileset_binaries       filesets();
   it_const_fileset_binaries filesets() const;
 
@@ -86,7 +88,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_symbols       symbols();
   it_const_symbols symbols() const;
 
-  //! If a symbol with the given name exists
+  //! Check if a symbol with the given name exists
   bool has_symbol(const std::string& name) const;
 
   //! Return Symbol from the given name. If the symbol does not
@@ -94,103 +96,109 @@ class LIEF_API Binary : public LIEF::Binary  {
   const Symbol* get_symbol(const std::string& name) const;
   Symbol* get_symbol(const std::string& name);
 
-  //! Check if the given symbol is an exported one
+  //! Check if the given symbol is exported
   static bool is_exported(const Symbol& symbol);
 
-  //! Return binary's exported symbols
+  //! Return binary's exported symbols (iterator over LIEF::MachO::Symbol)
   it_exported_symbols       exported_symbols();
   it_const_exported_symbols exported_symbols() const;
 
   //! Check if the given symbol is an imported one
   static bool is_imported(const Symbol& symbol);
 
-  //! Return binary's imported symbols
-  it_imported_symbols       imported_symbols();
+  //! Return binary's imported symbols (iterator over LIEF::MachO::Symbol)
+  it_imported_symbols imported_symbols();
   it_const_imported_symbols imported_symbols() const;
 
   //! Return binary imported libraries (MachO::DylibCommand)
-  it_libraries       libraries();
+  it_libraries libraries();
   it_const_libraries libraries() const;
 
-  //! Return binary's @link MachO::SegmentCommand segments @endlink
+  //! Return an iterator over the SegmentCommand
   it_segments       segments();
   it_const_segments segments() const;
 
-  //! Return binary's @link MachO::Section sections @endlink
+  //! Return an iterator over the MachO::Section
   it_sections       sections();
   it_const_sections sections() const;
 
-  //! Return binary's @link MachO::Relocation relocations @endlink
+  //! Return an iterator over the MachO::Relocation
   it_relocations       relocations();
   it_const_relocations relocations() const;
 
-  //! Reconstruct the binary object and write it in `filename`
+  //! Reconstruct the binary object and write the result in the given `filename`
+  //!
   //! @param filename Path to write the reconstructed binary
-  virtual void write(const std::string& filename) override;
+  void write(const std::string& filename) override;
 
-  //! Reconstruct the binary object and return his content as bytes
+  //! Reconstruct the binary object and return its content as bytes
   std::vector<uint8_t> raw();
 
   //! Check if the current binary has the given MachO::LOAD_COMMAND_TYPES
   bool has(LOAD_COMMAND_TYPES type) const;
 
+  //! Return the LoadCommand associated with the given LOAD_COMMAND_TYPES
   const LoadCommand& get(LOAD_COMMAND_TYPES type) const;
   LoadCommand& get(LOAD_COMMAND_TYPES type);
 
-  //! Insert the new Load Command
+  //! Insert a new LoadCommand
   LoadCommand& add(const LoadCommand& command);
 
-  //! Insert the new Load command at ``index``
+  //! Insert a new LoadCommand at the specified ``index``
   LoadCommand& add(const LoadCommand& command, size_t index);
 
   //! Insert the given DylibCommand
   LoadCommand& add(const DylibCommand& library);
 
-  //! Add a new LC_SEGMENT command
+  //! Add a new LC_SEGMENT command from the given SegmentCommand
   LoadCommand& add(const SegmentCommand& segment);
 
-  //! Insert a new shared library through a ``LC_LOAD_DYLIB`` command
+  //! Insert a new shared library through a ``LC_LOAD_DYLIB`` command
   LoadCommand& add_library(const std::string& name);
 
-  //! Add section in the __TEXT segment
+  //! Add a new MachO::Section in the __TEXT segment
   Section* add_section(const Section& section);
 
   //! Add a section in the given MachO::SegmentCommand.
   //!
   //! @warning This method may corrupt the file if the segment is not the first one
-  //! or the last one
+  //!          nor the last one
   Section* add_section(const SegmentCommand& segment, const Section& section);
 
-  virtual void remove_section(const std::string& name, bool clear = false) override;
+  //! Remove the section with the name provided in the first parameter.
+  //!
+  //! @param name     Name of the MachO::Section to remove
+  //! @param clear    If ``true`` clear the content of the section before removing
+  void remove_section(const std::string& name, bool clear = false) override;
 
-  //! Remove the given command
+  //! Remove the given LoadCommand
   bool remove(const LoadCommand& command);
 
-  //! Remove **all** Load Command with the given type (MachO::LOAD_COMMAND_TYPES)
+  //! Remove **all** LoadCommand with the given type (MachO::LOAD_COMMAND_TYPES)
   bool remove(LOAD_COMMAND_TYPES type);
 
-  //! Remove the Load Command at ``index``
+  //! Remove the Load Command at the provided ``index``
   bool remove_command(size_t index);
 
   //! Remove the LC_SIGNATURE command
   bool remove_signature();
 
-  //! Extend the **size** of the Load command
+  //! Extend the **size** of the given LoadCommand
   bool extend(const LoadCommand& command, uint64_t size);
 
-  //! Extend the **content** of the Segment
+  //! Extend the **content** of the given SegmentCommand
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
-  //! Remove ``PIE`` flag
+  //! Remove the ``PIE`` flag
   bool disable_pie();
 
-  //! Return binary's imagebase. ``0`` if not relevant
+  //! Return the binary's imagebase. ``0`` if not relevant
   uint64_t imagebase() const override;
 
-  //! Size of the binary in memory when mapped
+  //! Size of the binary in memory when mapped by the loader (``dyld``)
   uint64_t virtual_size() const;
 
-  //! Return binary's loader (e.g. ``/usr/lib/dyld``)
+  //! Return the binary's loader (e.g. ``/usr/lib/dyld``)
   const std::string& loader() const;
 
   //! Check if a section with the given name exists
@@ -207,9 +215,11 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return the segment from the given name
   const SegmentCommand* get_segment(const std::string& name) const;
+
+  //! Return the segment from the given name
   SegmentCommand* get_segment(const std::string& name);
 
-  //! Remove symbol with the given name
+  //! Remove the symbol with the given name
   bool remove_symbol(const std::string& name);
 
   //! Remove the given symbol
@@ -218,26 +228,23 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Check if the given symbol can be safely removed.
   bool can_remove(const Symbol& sym) const;
 
+  //! Check if the MachO::Symbol with the given name can be safely removed.
   bool can_remove_symbol(const std::string& name) const;
 
-  //! Remove the given symbol from the export table
+  //! Remove the given MachO::Symbol with the given name from the export table
   bool unexport(const std::string& name);
 
   //! Remove the given symbol from the export table
   bool unexport(const Symbol& sym);
 
-  // ======
-  // Helper
-  // ======
-
-  //! Return binary's @link MachO::Section section @endlink
-  //! which holds the offset
-  Section*       section_from_offset(uint64_t offset);
+  //! Return the MachO::Section that encompasses the provided offset.
+  //! If a section can't be found, it returns a null pointer (``nullptr``)
+  Section* section_from_offset(uint64_t offset);
   const Section* section_from_offset(uint64_t offset) const;
 
-  //! Return binary's @link MachO::Section section @endlink
-  //! which holds the given virtual address
-  Section*       section_from_virtual_address(uint64_t virtual_address);
+  //! Return the MachO::Section that encompasses the provided virtual address.
+  //! If a section can't be found, it returns a null pointer (``nullptr``)
+  Section* section_from_virtual_address(uint64_t virtual_address);
   const Section* section_from_virtual_address(uint64_t virtual_address) const;
 
   //! Convert a virtual address to an offset in the file
@@ -245,24 +252,24 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Convert the given offset into a virtual address.
   //!
-  //! @param[in] offset The offset to convert.
-  //! @param[in] slide If not 0, it will replace the default base address (if any)
+  //! @param[in] offset    The offset to convert.
+  //! @param[in] slide     If not 0, it will replace the default base address (if any)
   uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
-  // Return binary's @link MachO::SegmentCommand segment command
-  // which hold the offset
-  SegmentCommand*       segment_from_offset(uint64_t offset);
+  //! Return the binary's SegmentCommand that encompasses the provided offset
+  //!
+  //! If a SegmentCommand can't be found it returns a null pointer (``nullptr``).
+  SegmentCommand* segment_from_offset(uint64_t offset);
   const SegmentCommand* segment_from_offset(uint64_t offset) const;
 
-  //! Return the index of the given segment;
+  //! Return the index of the given SegmentCommand
   size_t segment_index(const SegmentCommand& segment) const;
 
   //! Return binary's *fat offset*. ``0`` if not relevant.
   uint64_t fat_offset() const;
 
-  // Return binary's @link MachO::SegmentCommand segment command
-  // which hold the virtual address
-  SegmentCommand*       segment_from_virtual_address(uint64_t virtual_address);
+  //! Return the binary's SegmentCommand which encompasses the given virtual address
+  SegmentCommand* segment_from_virtual_address(uint64_t virtual_address);
   const SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) const;
 
   //! Return the range of virtual addresses
@@ -271,46 +278,49 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the range of offsets
   range_t off_ranges() const;
 
-  //! Check if the given address is comprise between the lowest
-  //! virtual address and the biggest one
+  //! Check if the given address is encompassed in the
+  //! binary's virtual addresses range
   bool is_valid_addr(uint64_t address) const;
 
   //! Method so that the ``visitor`` can visit us
-  virtual void accept(LIEF::Visitor& visitor) const override;
+  void accept(LIEF::Visitor& visitor) const override;
 
-  virtual ~Binary();
+  ~Binary() override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
-
-  // LIEF Interface
-  // ==============
+  std::ostream& print(std::ostream& os) const override;
 
   //! Patch the content at virtual address @p address with @p patch_value
   //!
-  //! @param[in] address Address to patch
-  //! @param[in] patch_value Patch to apply
-  //! @param[in] addr_type Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  //! @param[in] address       Address to patch
+  //! @param[in] patch_value   Patch to apply
+  //! @param[in] addr_type     Specify if the address should be used as
+  //!                          an absolute virtual address or an RVA
+  void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
+                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Patch the address with the given value
   //!
-  //! @param[in] address Address to patch
-  //! @param[in] patch_value Patch to apply
-  //! @param[in] size Size of the value in **bytes** (1, 2, ... 8)
-  //! @param[in] addr_type Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t), LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  //! @param[in] address       Address to patch
+  //! @param[in] patch_value   Patch to apply
+  //! @param[in] size          Size of the value in **bytes** (1, 2, ... 8)
+  //! @param[in] addr_type     Specify if the address should be used as
+  //!                          an absolute virtual address or an RVA
+  void patch_address(uint64_t address, uint64_t patch_value,
+                     size_t size = sizeof(uint64_t),
+                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Return the content located at virtual address
-  virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
+  std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
+                            LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
 
-  virtual uint64_t entrypoint() const override;
+  //! The binary entrypoint
+  uint64_t entrypoint() const override;
 
   //! Check if the binary is position independent
-  virtual bool is_pie() const override;
+  bool is_pie() const override;
 
   //! Check if the binary uses ``NX`` protection
-  virtual bool has_nx() const override;
+  bool has_nx() const override;
 
   //! ``true`` if the binary has an entrypoint.
   //!
@@ -321,49 +331,49 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool has_uuid() const;
 
   //! Return the MachO::UUIDCommand
-  UUIDCommand&       uuid();
+  UUIDCommand& uuid();
   const UUIDCommand& uuid() const;
 
   //! ``true`` if the binary has a MachO::MainCommand command.
   bool has_main_command() const;
 
   //! Return the MachO::MainCommand
-  MainCommand&       main_command();
+  MainCommand& main_command();
   const MainCommand& main_command() const;
 
   //! ``true`` if the binary has a MachO::DylinkerCommand.
   bool has_dylinker() const;
 
   //! Return the MachO::DylinkerCommand
-  DylinkerCommand&       dylinker();
+  DylinkerCommand& dylinker();
   const DylinkerCommand& dylinker() const;
 
   //! ``true`` if the binary has a MachO::DyldInfo command.
   bool has_dyld_info() const;
 
   //! Return the MachO::Dyld command
-  DyldInfo&       dyld_info();
+  DyldInfo& dyld_info();
   const DyldInfo& dyld_info() const;
 
   //! ``true`` if the binary has a MachO::FunctionStarts command.
   bool has_function_starts() const;
 
   //! Return the MachO::FunctionStarts command
-  FunctionStarts&       function_starts();
+  FunctionStarts& function_starts();
   const FunctionStarts& function_starts() const;
 
   //! ``true`` if the binary has a MachO::SourceVersion command.
   bool has_source_version() const;
 
   //! Return the MachO::SourceVersion command
-  SourceVersion&       source_version();
+  SourceVersion& source_version();
   const SourceVersion& source_version() const;
 
   //! ``true`` if the binary has a MachO::VersionMin command.
   bool has_version_min() const;
 
   //! Return the MachO::VersionMin command
-  VersionMin&       version_min();
+  VersionMin& version_min();
   const VersionMin& version_min() const;
 
 
@@ -371,84 +381,84 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool has_thread_command() const;
 
   //! Return the MachO::ThreadCommand command
-  ThreadCommand&       thread_command();
+  ThreadCommand& thread_command();
   const ThreadCommand& thread_command() const;
 
   //! ``true`` if the binary has a MachO::RPathCommand command.
   bool has_rpath() const;
 
   //! Return the MachO::RPathCommand command
-  RPathCommand&       rpath();
+  RPathCommand& rpath();
   const RPathCommand& rpath() const;
 
   //! ``true`` if the binary has a MachO::SymbolCommand command.
   bool has_symbol_command() const;
 
   //! Return the MachO::SymbolCommand
-  SymbolCommand&       symbol_command();
+  SymbolCommand& symbol_command();
   const SymbolCommand& symbol_command() const;
 
   //! ``true`` if the binary has a MachO::DynamicSymbolCommand command.
   bool has_dynamic_symbol_command() const;
 
   //! Return the MachO::SymbolCommand
-  DynamicSymbolCommand&       dynamic_symbol_command();
+  DynamicSymbolCommand&dynamic_symbol_command();
   const DynamicSymbolCommand& dynamic_symbol_command() const;
 
   //! ``true`` if the binary is signed with `LC_CODE_SIGNATURE` command
   bool has_code_signature() const;
 
   //! Return the MachO::CodeSignature
-  CodeSignature&       code_signature();
+  CodeSignature& code_signature();
   const CodeSignature& code_signature() const;
 
   //! ``true`` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
   bool has_code_signature_dir() const;
 
   //! Return the MachO::CodeSignature
-  CodeSignature&       code_signature_dir();
+  CodeSignature& code_signature_dir();
   const CodeSignature& code_signature_dir() const;
 
   //! ``true`` if the binaryhas a MachO::DataInCode command.
   bool has_data_in_code() const;
 
   //! Return the MachO::Signature
-  DataInCode&       data_in_code();
+  DataInCode& data_in_code();
   const DataInCode& data_in_code() const;
 
   //! ``true`` if the binary has segment split info.
   bool has_segment_split_info() const;
 
   //! Return the MachO::SegmentSplitInfo
-  SegmentSplitInfo&       segment_split_info();
+  SegmentSplitInfo& segment_split_info();
   const SegmentSplitInfo& segment_split_info() const;
 
   //! ``true`` if the binary has a sub framework command.
   bool has_sub_framework() const;
 
-  //! @brief ``true`` if the binary has Encryption Info.
+  //! ``true`` if the binary has Encryption Info.
   bool has_encryption_info() const;
 
-  //! @brief Return the MachO::DyldEnvironment
-  EncryptionInfo&       encryption_info();
+  //! Return the MachO::DyldEnvironment
+  EncryptionInfo& encryption_info();
   const EncryptionInfo& encryption_info() const;
 
   //! Return the MachO::SubFramework
-  SubFramework&       sub_framework();
+  SubFramework& sub_framework();
   const SubFramework& sub_framework() const;
 
   //! ``true`` if the binary has Dyld envrionment variables.
   bool has_dyld_environment() const;
 
   //! Return the MachO::DyldEnvironment
-  DyldEnvironment&       dyld_environment();
+  DyldEnvironment& dyld_environment();
   const DyldEnvironment& dyld_environment() const;
 
   //! ``true`` if the binary has Build Version command.
   bool has_build_version() const;
 
   //! Return the MachO::BuildVersion
-  BuildVersion&       build_version();
+  BuildVersion& build_version();
   const BuildVersion& build_version() const;
 
   template<class T>
@@ -466,14 +476,20 @@ class LIEF_API Binary : public LIEF::Binary  {
   LoadCommand&       operator[](LOAD_COMMAND_TYPES type);
   const LoadCommand& operator[](LOAD_COMMAND_TYPES type) const;
 
-  virtual LIEF::Binary::functions_t ctor_functions() const override;
+  //! Return the list of the MachO's constructors
+  LIEF::Binary::functions_t ctor_functions() const override;
+
+  //! Return all the functions found in this MachO
   LIEF::Binary::functions_t functions() const;
+
+  //! Return the functions found in the ``__unwind_info`` section
   LIEF::Binary::functions_t unwind_functions() const;
 
-  //! ``true`` if the binary has filesets.
+  //! ``true`` if the binary has a LOAD_COMMAND_TYPES::LC_FILESET_ENTRY command
   bool has_filesets() const;
 
   private:
+
   //! Default constructor
   Binary();
 
@@ -482,20 +498,20 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   void shift_command(size_t width, size_t from_offset);
 
-  //! Insert Segment command in the cache field (segments_)
+  //! Insert a Segment command in the cache field (segments_)
   //! and keep a consistent state of the indexes.
   size_t add_cached_segment(SegmentCommand& segment);
 
   template<class T>
   LIEF_LOCAL void patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
 
-  virtual LIEF::Header              get_abstract_header() const override;
-  virtual LIEF::sections_t          get_abstract_sections() override;
-  virtual LIEF::symbols_t           get_abstract_symbols() override;
-  virtual LIEF::relocations_t       get_abstract_relocations() override;
-  virtual LIEF::Binary::functions_t get_abstract_exported_functions() const override;
-  virtual LIEF::Binary::functions_t get_abstract_imported_functions() const override;
-  virtual std::vector<std::string>  get_abstract_imported_libraries() const override;
+  LIEF::Header              get_abstract_header() const override;
+  LIEF::sections_t          get_abstract_sections() override;
+  LIEF::symbols_t           get_abstract_symbols() override;
+  LIEF::relocations_t       get_abstract_relocations() override;
+  LIEF::Binary::functions_t get_abstract_exported_functions() const override;
+  LIEF::Binary::functions_t get_abstract_imported_functions() const override;
+  std::vector<std::string>  get_abstract_imported_libraries() const override;
 
   inline relocations_t& relocations_list() {
     return this->relocations_;

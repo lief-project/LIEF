@@ -43,6 +43,7 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyTLS.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyPE.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyIterators.cpp"
 )
 
 set(LIEF_PYTHON_PE_HDR

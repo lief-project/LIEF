@@ -70,6 +70,7 @@ void create(py::module&);
 void init_python_module(py::module& m);
 void init_objects(py::module&);
 void init_enums(py::module&);
+void init_iterators(py::module&);
 
 void init_ELF32_sizes(py::module&);
 void init_ELF64_sizes(py::module&);

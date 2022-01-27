@@ -24,6 +24,9 @@
 
 namespace LIEF {
 namespace ELF {
+
+//! Class which represents a ``DT_RPATH`` entry. This attribute is
+//! deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See DynamicRunPath)
 class LIEF_API DynamicEntryRpath : public DynamicEntry {
 
   public:
@@ -31,39 +34,41 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   using DynamicEntry::DynamicEntry;
   DynamicEntryRpath();
 
-  DynamicEntryRpath(const std::string& name);
+  DynamicEntryRpath(std::string rpath);
 
-  //! @brief Constructor from a list of paths
+  //! Constructor from a list of paths
   DynamicEntryRpath(const std::vector<std::string>& paths);
 
   DynamicEntryRpath& operator=(const DynamicEntryRpath&);
   DynamicEntryRpath(const DynamicEntryRpath&);
 
+  //! The actual rpath as a string
   const std::string& name() const;
   void name(const std::string& name);
 
+  //! The actual rpath as a string
   const std::string& rpath() const;
   void rpath(const std::string& name);
 
-  //! @brief Paths as a list
+  //! Paths as a list
   std::vector<std::string> paths() const;
   void paths(const std::vector<std::string>& paths);
 
-  //! @brief Insert a ``path`` at the given ``position``
-  DynamicEntryRpath& insert(size_t pos, const std::string path);
+  //! Insert a ``path`` at the given ``position``
+  DynamicEntryRpath& insert(size_t pos, const std::string& path);
 
-  //! @brief Append the given ``path``
+  //! Append the given ``path``
   DynamicEntryRpath& append(const std::string& path);
 
-  //! @brief Remove the given ``path``
+  //! Remove the given ``path``
   DynamicEntryRpath& remove(const std::string& path);
 
   DynamicEntryRpath& operator+=(const std::string& path);
   DynamicEntryRpath& operator-=(const std::string& path);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   std::string rpath_;

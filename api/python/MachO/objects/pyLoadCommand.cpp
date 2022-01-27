@@ -34,7 +34,8 @@ using setter_t = void (LoadCommand::*)(T);
 template<>
 void create<LoadCommand>(py::module& m) {
 
-  py::class_<LoadCommand, LIEF::Object>(m, "LoadCommand")
+  py::class_<LoadCommand, LIEF::Object>(m, "LoadCommand",
+      "Based class for the Mach-O load commands")
     .def(py::init<>())
 
     .def_property("command",

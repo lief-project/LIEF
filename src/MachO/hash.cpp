@@ -28,292 +28,292 @@ size_t Hash::hash(const Object& obj) {
 }
 
 void Hash::visit(const Binary& binary) {
-  this->process(binary.header());
-  this->process(std::begin(binary.commands()), std::end(binary.commands()));
-  this->process(std::begin(binary.symbols()), std::end(binary.symbols()));
+  process(binary.header());
+  process(std::begin(binary.commands()), std::end(binary.commands()));
+  process(std::begin(binary.symbols()), std::end(binary.symbols()));
 }
 
 
 void Hash::visit(const Header& header) {
-  this->process(header.magic());
-  this->process(header.cpu_type());
-  this->process(header.cpu_subtype());
-  this->process(header.file_type());
-  this->process(header.nb_cmds());
-  this->process(header.sizeof_cmds());
-  this->process(header.flags());
-  this->process(header.reserved());
+  process(header.magic());
+  process(header.cpu_type());
+  process(header.cpu_subtype());
+  process(header.file_type());
+  process(header.nb_cmds());
+  process(header.sizeof_cmds());
+  process(header.flags());
+  process(header.reserved());
 }
 
 void Hash::visit(const LoadCommand& cmd) {
-  this->process(cmd.command());
-  this->process(cmd.size());
-  this->process(cmd.data());
-  this->process(cmd.command_offset());
+  process(cmd.command());
+  process(cmd.size());
+  process(cmd.data());
+  process(cmd.command_offset());
 }
 
 void Hash::visit(const UUIDCommand& uuid) {
-  this->visit(*uuid.as<LoadCommand>());
-  this->process(uuid.uuid());
+  visit(*uuid.as<LoadCommand>());
+  process(uuid.uuid());
 }
 
 void Hash::visit(const SymbolCommand& symbol) {
 
-  this->visit(*symbol.as<LoadCommand>());
-  this->process(symbol.symbol_offset());
-  this->process(symbol.numberof_symbols());
-  this->process(symbol.strings_offset());
-  this->process(symbol.strings_size());
+  visit(*symbol.as<LoadCommand>());
+  process(symbol.symbol_offset());
+  process(symbol.numberof_symbols());
+  process(symbol.strings_offset());
+  process(symbol.strings_size());
 }
 
 void Hash::visit(const SegmentCommand& segment) {
 
-  this->visit(*segment.as<LoadCommand>());
-  this->process(segment.name());
-  this->process(segment.virtual_address());
-  this->process(segment.virtual_size());
-  this->process(segment.file_size());
-  this->process(segment.file_offset());
-  this->process(segment.max_protection());
-  this->process(segment.init_protection());
-  this->process(segment.numberof_sections());
-  this->process(segment.flags());
-  this->process(segment.content());
-  this->process(std::begin(segment.sections()), std::end(segment.sections()));
+  visit(*segment.as<LoadCommand>());
+  process(segment.name());
+  process(segment.virtual_address());
+  process(segment.virtual_size());
+  process(segment.file_size());
+  process(segment.file_offset());
+  process(segment.max_protection());
+  process(segment.init_protection());
+  process(segment.numberof_sections());
+  process(segment.flags());
+  process(segment.content());
+  process(std::begin(segment.sections()), std::end(segment.sections()));
 }
 
 void Hash::visit(const Section& section) {
-  this->process(section.content());
-  this->process(section.segment_name());
-  this->process(section.address());
-  this->process(section.alignment());
-  this->process(section.relocation_offset());
-  this->process(section.numberof_relocations());
-  this->process(section.flags());
-  this->process(section.type());
-  this->process(section.reserved1());
-  this->process(section.reserved2());
-  this->process(section.reserved3());
-  this->process(section.raw_flags());
-  this->process(std::begin(section.relocations()), std::end(section.relocations()));
+  process(section.content());
+  process(section.segment_name());
+  process(section.address());
+  process(section.alignment());
+  process(section.relocation_offset());
+  process(section.numberof_relocations());
+  process(section.flags());
+  process(section.type());
+  process(section.reserved1());
+  process(section.reserved2());
+  process(section.reserved3());
+  process(section.raw_flags());
+  process(std::begin(section.relocations()), std::end(section.relocations()));
 }
 
 void Hash::visit(const MainCommand& maincmd) {
 
-  this->visit(*maincmd.as<LoadCommand>());
+  visit(*maincmd.as<LoadCommand>());
 
-  this->process(maincmd.entrypoint());
-  this->process(maincmd.stack_size());
+  process(maincmd.entrypoint());
+  process(maincmd.stack_size());
 }
 
 void Hash::visit(const DynamicSymbolCommand& dynamic_symbol) {
-  this->visit(*dynamic_symbol.as<LoadCommand>());
-  this->process(dynamic_symbol.idx_local_symbol());
-  this->process(dynamic_symbol.nb_local_symbols());
+  visit(*dynamic_symbol.as<LoadCommand>());
+  process(dynamic_symbol.idx_local_symbol());
+  process(dynamic_symbol.nb_local_symbols());
 
-  this->process(dynamic_symbol.idx_external_define_symbol());
-  this->process(dynamic_symbol.nb_external_define_symbols());
+  process(dynamic_symbol.idx_external_define_symbol());
+  process(dynamic_symbol.nb_external_define_symbols());
 
-  this->process(dynamic_symbol.idx_undefined_symbol());
-  this->process(dynamic_symbol.nb_undefined_symbols());
+  process(dynamic_symbol.idx_undefined_symbol());
+  process(dynamic_symbol.nb_undefined_symbols());
 
-  this->process(dynamic_symbol.toc_offset());
-  this->process(dynamic_symbol.nb_toc());
+  process(dynamic_symbol.toc_offset());
+  process(dynamic_symbol.nb_toc());
 
-  this->process(dynamic_symbol.module_table_offset());
-  this->process(dynamic_symbol.nb_module_table());
+  process(dynamic_symbol.module_table_offset());
+  process(dynamic_symbol.nb_module_table());
 
-  this->process(dynamic_symbol.external_reference_symbol_offset());
-  this->process(dynamic_symbol.nb_external_reference_symbols());
+  process(dynamic_symbol.external_reference_symbol_offset());
+  process(dynamic_symbol.nb_external_reference_symbols());
 
-  this->process(dynamic_symbol.indirect_symbol_offset());
-  this->process(dynamic_symbol.nb_indirect_symbols());
+  process(dynamic_symbol.indirect_symbol_offset());
+  process(dynamic_symbol.nb_indirect_symbols());
 
-  this->process(dynamic_symbol.external_relocation_offset());
-  this->process(dynamic_symbol.nb_external_relocations());
+  process(dynamic_symbol.external_relocation_offset());
+  process(dynamic_symbol.nb_external_relocations());
 
-  this->process(dynamic_symbol.local_relocation_offset());
-  this->process(dynamic_symbol.nb_local_relocations());
+  process(dynamic_symbol.local_relocation_offset());
+  process(dynamic_symbol.nb_local_relocations());
 }
 
 void Hash::visit(const DylinkerCommand& dylinker) {
-  this->visit(*dylinker.as<LoadCommand>());
-  this->process(dylinker.name());
+  visit(*dylinker.as<LoadCommand>());
+  process(dylinker.name());
 }
 
 void Hash::visit(const DylibCommand& dylib) {
-  this->visit(*dylib.as<LoadCommand>());
+  visit(*dylib.as<LoadCommand>());
 
-  this->process(dylib.name());
-  this->process(dylib.timestamp());
-  this->process(dylib.current_version());
-  this->process(dylib.compatibility_version());
+  process(dylib.name());
+  process(dylib.timestamp());
+  process(dylib.current_version());
+  process(dylib.compatibility_version());
 }
 
 void Hash::visit(const ThreadCommand& threadcmd) {
-  this->visit(*threadcmd.as<LoadCommand>());
-  this->process(threadcmd.flavor());
-  this->process(threadcmd.count());
-  this->process(threadcmd.state());
+  visit(*threadcmd.as<LoadCommand>());
+  process(threadcmd.flavor());
+  process(threadcmd.count());
+  process(threadcmd.state());
 }
 
 void Hash::visit(const RPathCommand& rpath) {
-  this->visit(*rpath.as<LoadCommand>());
-  this->process(rpath.path());
+  visit(*rpath.as<LoadCommand>());
+  process(rpath.path());
 }
 
 void Hash::visit(const Symbol& symbol) {
-  this->process(symbol.name());
-  this->process(symbol.value());
-  this->process(symbol.size());
+  process(symbol.name());
+  process(symbol.value());
+  process(symbol.size());
 
-  this->process(symbol.type());
-  this->process(symbol.numberof_sections());
-  this->process(symbol.description());
+  process(symbol.type());
+  process(symbol.numberof_sections());
+  process(symbol.description());
 
   //if (symbol.has_binding_info()) {
-  //  this->process(symbol.binding_info());
+  //  process(symbol.binding_info());
   //}
 
   //if (symbol.has_export_info()) {
-  //  this->process(symbol.export_info());
+  //  process(symbol.export_info());
   //}
 }
 
 void Hash::visit(const Relocation& relocation) {
 
-  this->process(relocation.size());
-  this->process(relocation.address());
-  this->process(relocation.is_pc_relative());
-  this->process(relocation.type());
-  this->process(relocation.origin());
+  process(relocation.size());
+  process(relocation.address());
+  process(static_cast<size_t>(relocation.is_pc_relative()));
+  process(relocation.type());
+  process(relocation.origin());
 
   if (relocation.has_symbol()) {
-    this->process(relocation.symbol().name());
+    process(relocation.symbol().name());
   }
 }
 
 void Hash::visit(const RelocationObject& robject) {
 
-  this->visit(*robject.as<Relocation>());
-  this->process(robject.is_scattered());
+  visit(*robject.as<Relocation>());
+  process(static_cast<size_t>(robject.is_scattered()));
   if (robject.is_scattered()) {
-    this->process(robject.value());
+    process(robject.value());
   }
 }
 
 void Hash::visit(const RelocationDyld& rdyld) {
-  this->visit(*rdyld.as<Relocation>());
+  visit(*rdyld.as<Relocation>());
 }
 
 void Hash::visit(const BindingInfo& binding) {
 
-  this->process(binding.binding_class());
-  this->process(binding.binding_type());
-  this->process(binding.library_ordinal());
-  this->process(binding.addend());
-  this->process(binding.is_weak_import());
-  this->process(binding.address());
+  process(binding.binding_class());
+  process(binding.binding_type());
+  process(binding.library_ordinal());
+  process(binding.addend());
+  process(static_cast<size_t>(binding.is_weak_import()));
+  process(binding.address());
 
   if (binding.has_symbol()) {
-    this->process(binding.symbol().name());
+    process(binding.symbol().name());
   }
 
   if (binding.has_library()) {
-    this->process(binding.library());
+    process(binding.library());
   }
 }
 
 void Hash::visit(const ExportInfo& einfo) {
-  this->process(einfo.node_offset());
-  this->process(einfo.flags());
-  this->process(einfo.address());
+  process(einfo.node_offset());
+  process(einfo.flags());
+  process(einfo.address());
 
   if (einfo.has_symbol()) {
-    this->process(einfo.symbol().name());
+    process(einfo.symbol().name());
   }
 }
 
 void Hash::visit(const FunctionStarts& fs) {
-  this->visit(*fs.as<LoadCommand>());
-  this->process(fs.data_offset());
-  this->process(fs.data_size());
-  this->process(fs.functions());
+  visit(*fs.as<LoadCommand>());
+  process(fs.data_offset());
+  process(fs.data_size());
+  process(fs.functions());
 
 }
 
 void Hash::visit(const CodeSignature& cs) {
-  this->visit(*cs.as<LoadCommand>());
-  this->process(cs.data_offset());
-  this->process(cs.data_size());
+  visit(*cs.as<LoadCommand>());
+  process(cs.data_offset());
+  process(cs.data_size());
 }
 
 void Hash::visit(const DataInCode& dic) {
-  this->visit(*dic.as<LoadCommand>());
-  this->process(dic.data_offset());
-  this->process(dic.data_size());
-  this->process(std::begin(dic.entries()), std::end(dic.entries()));
+  visit(*dic.as<LoadCommand>());
+  process(dic.data_offset());
+  process(dic.data_size());
+  process(std::begin(dic.entries()), std::end(dic.entries()));
 }
 
 void Hash::visit(const DataCodeEntry& dce) {
-  this->process(dce.offset());
-  this->process(dce.length());
-  this->process(dce.type());
+  process(dce.offset());
+  process(dce.length());
+  process(dce.type());
 }
 
 void Hash::visit(const VersionMin& vmin) {
-  this->visit(*vmin.as<LoadCommand>());
-  this->process(vmin.version());
-  this->process(vmin.sdk());
+  visit(*vmin.as<LoadCommand>());
+  process(vmin.version());
+  process(vmin.sdk());
 }
 
 void Hash::visit(const SourceVersion& sv) {
-  this->visit(*sv.as<LoadCommand>());
-  this->process(sv.version());
+  visit(*sv.as<LoadCommand>());
+  process(sv.version());
 }
 
 void Hash::visit(const SegmentSplitInfo& ssi) {
-  this->visit(*ssi.as<LoadCommand>());
-  this->process(ssi.data_offset());
-  this->process(ssi.data_size());
+  visit(*ssi.as<LoadCommand>());
+  process(ssi.data_offset());
+  process(ssi.data_size());
 }
 
 void Hash::visit(const SubFramework& sf) {
-  this->visit(*sf.as<LoadCommand>());
-  this->process(sf.umbrella());
+  visit(*sf.as<LoadCommand>());
+  process(sf.umbrella());
 }
 
 void Hash::visit(const DyldEnvironment& de) {
-  this->visit(*de.as<LoadCommand>());
-  this->process(de.value());
+  visit(*de.as<LoadCommand>());
+  process(de.value());
 }
 
 void Hash::visit(const EncryptionInfo& e) {
-  this->visit(*e.as<LoadCommand>());
-  this->process(e.crypt_offset());
-  this->process(e.crypt_size());
-  this->process(e.crypt_id());
+  visit(*e.as<LoadCommand>());
+  process(e.crypt_offset());
+  process(e.crypt_size());
+  process(e.crypt_id());
 }
 
 void Hash::visit(const BuildVersion& e) {
   BuildVersion::tools_list_t tools = e.tools();
 
-  this->visit(*e.as<LoadCommand>());
-  this->process(e.platform());
-  this->process(e.minos());
-  this->process(e.sdk());
-  this->process(std::begin(tools), std::end(tools));
+  visit(*e.as<LoadCommand>());
+  process(e.platform());
+  process(e.minos());
+  process(e.sdk());
+  process(std::begin(tools), std::end(tools));
 }
 
 void Hash::visit(const BuildToolVersion& e) {
-  this->process(e.tool());
-  this->process(e.version());
+  process(e.tool());
+  process(e.version());
 }
 
 void Hash::visit(const FilesetCommand& e) {
-  this->process(e.name());
-  this->process(e.virtual_address());
-  this->process(e.file_offset());
+  process(e.name());
+  process(e.virtual_address());
+  process(e.file_offset());
 }
 
 

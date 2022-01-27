@@ -634,20 +634,20 @@ class LIEF_API Visitor {
 
 template<typename Arg1, typename... Args>
 void Visitor::operator()(Arg1&& arg1, Args&&... args) {
-  this->dispatch(std::forward<Arg1>(arg1));
-  this->operator()(std::forward<Args>(args)... );
+  dispatch(std::forward<Arg1>(arg1));
+  operator()(std::forward<Args>(args)... );
 }
 
 template<class T>
 void Visitor::dispatch(const T& obj) {
   size_t hash = reinterpret_cast<size_t>(&obj);
-  if (this->visited_.find(hash) != std::end(this->visited_)) {
+  if (visited_.find(hash) != std::end(visited_)) {
     // Already visited
     return;
   }
 
-  this->visited_.insert(hash);
-  this->visit(obj);
+  visited_.insert(hash);
+  visit(obj);
 }
 
 }

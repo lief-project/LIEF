@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
 
 ## Contact
 
-* **Mail**: lief at quarkslab com
+* **Mail**: contact at lief re
 * **Gitter**: [lief-project](https://gitter.im/lief-project)
 
 ## About

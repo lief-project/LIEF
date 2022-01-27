@@ -41,7 +41,7 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   public:
   static CorePrPsInfo make(Note& note);
 
-  virtual CorePrPsInfo* clone() const override;
+  CorePrPsInfo* clone() const override;
 
   //! Process file name
   std::string file_name() const;
@@ -79,9 +79,9 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   bool operator==(const CorePrPsInfo& rhs) const;
   bool operator!=(const CorePrPsInfo& rhs) const;
 
-  virtual void dump(std::ostream& os) const override;
+  void dump(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~CorePrPsInfo();
 
@@ -94,8 +94,8 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   template <typename ELF_T>
   LIEF_LOCAL void build_();
 
-  virtual void parse() override;
-  virtual void build() override;
+  void parse() override;
+  void build() override;
 
   private:
   CorePrPsInfo(Note& note);

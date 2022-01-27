@@ -32,27 +32,27 @@ void Hash::visit(const File& file) {
 }
 
 void Hash::visit(const Header& header) {
-  this->process(header.magic());
-  this->process(header.version());
-  this->process(header.image_begin());
-  this->process(header.image_size());
-  this->process(header.oat_checksum());
-  this->process(header.oat_file_begin());
-  this->process(header.oat_file_end());
-  this->process(header.oat_data_begin());
-  this->process(header.oat_data_end());
-  this->process(header.patch_delta());
-  this->process(header.image_roots());
-  this->process(header.pointer_size());
-  this->process(header.compile_pic());
-  this->process(header.nb_sections());
-  this->process(header.nb_methods());
-  this->process(header.boot_image_begin());
-  this->process(header.boot_image_size());
-  this->process(header.boot_oat_begin());
-  this->process(header.boot_oat_size());
-  this->process(header.storage_mode());
-  this->process(header.data_size());
+  process(header.magic());
+  process(header.version());
+  process(header.image_begin());
+  process(header.image_size());
+  process(header.oat_checksum());
+  process(header.oat_file_begin());
+  process(header.oat_file_end());
+  process(header.oat_data_begin());
+  process(header.oat_data_end());
+  process(header.patch_delta());
+  process(header.image_roots());
+  process(header.pointer_size());
+  process(static_cast<size_t>(header.compile_pic()));
+  process(header.nb_sections());
+  process(header.nb_methods());
+  process(header.boot_image_begin());
+  process(header.boot_image_size());
+  process(header.boot_oat_begin());
+  process(header.boot_oat_size());
+  process(header.storage_mode());
+  process(header.data_size());
 }
 
 

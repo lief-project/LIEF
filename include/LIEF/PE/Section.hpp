@@ -30,8 +30,12 @@ namespace PE {
 class Parser;
 class Builder;
 class Binary;
-struct pe_section;
 
+namespace details {
+struct pe_section;
+}
+
+//! Class which represents a PE section
 class LIEF_API Section : public LIEF::Section {
 
   friend class Parser;
@@ -41,50 +45,81 @@ class LIEF_API Section : public LIEF::Section {
   public:
   using LIEF::Section::name;
 
-  Section(const pe_section* header);
+  Section(const details::pe_section& header);
   Section();
-  Section(const std::vector<uint8_t>& data, const std::string& name = "", uint32_t characteristics = 0);
+  Section(const std::vector<uint8_t>& data,
+          const std::string& name = "", uint32_t characteristics = 0);
   Section(const std::string& name);
 
   Section& operator=(const Section&);
   Section(const Section&);
-  virtual ~Section();
+  ~Section() override;
 
-  //! @brief Return the size of the data in the section.
+  //! Return the size of the data in the section.
   uint32_t sizeof_raw_data() const;
+
+  //! Return the size of the data when mapped in memory
+  //!
+  //! If this value is greater than sizeof_raw_data, the section is zero-padded.
   uint32_t virtual_size() const;
 
-  // ============================
-  // LIEF::Section implementation
-  // ============================
-  virtual std::vector<uint8_t> content() const override;
+  //! The actual content of the section
+  std::vector<uint8_t> content() const override;
 
-  //! Content of the section's padding
+  //! Content of the section's padding area
   inline const std::vector<uint8_t>& padding() const {
-    return this->padding_;
+    return padding_;
   }
 
+  //! The offset of the section data in the PE file
   uint32_t pointerto_raw_data() const;
+
+  //! The file pointer to the beginning of the COFF relocation entries for the section. This is set to zero for
+  //! executable images or if there are no relocations.
+  //!
+  //! For modern PE binaries, this value is usually set to 0 as the relocations are managed by
+  //! PE::Relocation.
   uint32_t pointerto_relocation() const;
+
+  //! The file pointer to the beginning of line-number entries for the section.
+  //! This is set to zero if there are no COFF line numbers. This value should be zero for an image because COFF
+  //! debugging information is deprecated and modern debug information relies on the PDB files.
   uint32_t pointerto_line_numbers() const;
+
+  //! No longer used in recent PE binaries produced by Visual Studio
   uint16_t numberof_relocations() const;
+
+  //! No longer used in recent PE binaries produced by Visual Studio
   uint16_t numberof_line_numbers() const;
+
+  //! Characteristics of the section: it gives information about
+  //! the permissions of the section when mapped. It can also provides
+  //! information about the *purpose* of the section (contain code, BSS-like, ...)
   uint32_t characteristics() const;
 
   //! Return the **fullname** of the section including the trailing bytes
   inline const std::string& fullname() const {
-    return this->name_;
+    return name_;
   }
 
-  bool                              is_type(PE_SECTION_TYPES type) const;
+  //! Deprecated do not use. It will likely change in a future release of LIEF
+  bool is_type(PE_SECTION_TYPES type) const;
+
+  //! Deprecated do not use. It will likely change in a future release of LIEF
   const std::set<PE_SECTION_TYPES>& types() const;
-  bool                              has_characteristic(SECTION_CHARACTERISTICS c) const;
+
+  //! Check if the section has the given SECTION_CHARACTERISTICS
+  bool has_characteristic(SECTION_CHARACTERISTICS c) const;
+
+  //! List of the section characteristics as a std::set
   std::set<SECTION_CHARACTERISTICS> characteristics_list() const;
+
+  //! Fill the content of the section with the given ``char``
   void clear(uint8_t c);
 
+  void name(const std::string& name) override;
+  void content(const std::vector<uint8_t>& data) override;
 
-  virtual void name(const std::string& name) override;
-  virtual void content(const std::vector<uint8_t>& data) override;
   void virtual_size(uint32_t virtualSize);
   void pointerto_raw_data(uint32_t pointerToRawData);
   void pointerto_relocation(uint32_t pointerToRelocation);
@@ -99,7 +134,7 @@ class LIEF_API Section : public LIEF::Section {
   void add_characteristic(SECTION_CHARACTERISTICS characteristic);
   void remove_characteristic(SECTION_CHARACTERISTICS characteristic);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Section& rhs) const;
   bool operator!=(const Section& rhs) const;

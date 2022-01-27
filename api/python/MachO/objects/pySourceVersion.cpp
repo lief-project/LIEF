@@ -36,7 +36,11 @@ using setter_t = void (SourceVersion::*)(T);
 template<>
 void create<SourceVersion>(py::module& m) {
 
-  py::class_<SourceVersion, LoadCommand>(m, "SourceVersion")
+  py::class_<SourceVersion, LoadCommand>(m, "SourceVersion",
+      R"delim(
+      Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
+      This command is used to provide the *version* of the sources used to build the binary
+      )delim")
 
     .def_property("version",
         static_cast<getter_t<const SourceVersion::version_t&>>(&SourceVersion::version),

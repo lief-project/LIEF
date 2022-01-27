@@ -27,26 +27,25 @@ namespace PE {
 Relocation::Relocation(const Relocation& other) :
   Object{other},
   block_size_{other.block_size_},
-  virtual_address_{other.virtual_address_},
-  entries_{}
+  virtual_address_{other.virtual_address_}
 {
-  this->entries_.reserve(other.entries_.size());
+  entries_.reserve(other.entries_.size());
   for (RelocationEntry* r : other.entries_) {
-    RelocationEntry* copy = new RelocationEntry{*r};
+    auto* copy = new RelocationEntry{*r};
     copy->relocation_ = this;
-    this->entries_.push_back(copy);
+    entries_.push_back(copy);
   }
 
 }
 
 Relocation& Relocation::operator=(Relocation other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 
 Relocation::~Relocation() {
-  for (RelocationEntry* entry : this->entries_) {
+  for (RelocationEntry* entry : entries_) {
     delete entry;
   }
 }
@@ -54,60 +53,58 @@ Relocation::~Relocation() {
 
 Relocation::Relocation() :
   block_size_{0},
-  virtual_address_{0},
-  entries_{}
+  virtual_address_{0}
 {}
 
 
-Relocation::Relocation(const pe_base_relocation_block* header) :
-  block_size_{header->BlockSize},
-  virtual_address_{header->PageRVA},
-  entries_{}
+Relocation::Relocation(const details::pe_base_relocation_block& header) :
+  block_size_{header.BlockSize},
+  virtual_address_{header.PageRVA}
 {}
 
 
 void Relocation::swap(Relocation& other) {
-  std::swap(this->block_size_,      other.block_size_);
-  std::swap(this->virtual_address_, other.virtual_address_);
-  std::swap(this->entries_,         other.entries_);
+  std::swap(block_size_,      other.block_size_);
+  std::swap(virtual_address_, other.virtual_address_);
+  std::swap(entries_,         other.entries_);
 }
 
 
 uint32_t Relocation::virtual_address() const {
-  return this->virtual_address_;
+  return virtual_address_;
 }
 
 
 uint32_t Relocation::block_size() const {
-  return this->block_size_;
+  return block_size_;
 }
 
 it_const_relocation_entries Relocation::entries() const {
-  return this->entries_;
+  return entries_;
 }
 
 
 it_relocation_entries Relocation::entries() {
-  return this->entries_;
+  return entries_;
 }
 
 
 
 RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
-  RelocationEntry* newone = new RelocationEntry{entry};
+  auto* newone = new RelocationEntry{entry};
   newone->relocation_ = this;
-  this->entries_.push_back(newone);
+  entries_.push_back(newone);
   return *newone;
 }
 
 
 void Relocation::virtual_address(uint32_t virtual_address) {
-  this->virtual_address_ = virtual_address;
+  virtual_address_ = virtual_address;
 }
 
 
 void Relocation::block_size(uint32_t block_size) {
-  this->block_size_ = block_size;
+  block_size_ = block_size;
 }
 
 
@@ -122,7 +119,7 @@ bool Relocation::operator==(const Relocation& rhs) const {
 }
 
 bool Relocation::operator!=(const Relocation& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

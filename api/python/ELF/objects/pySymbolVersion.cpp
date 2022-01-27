@@ -53,10 +53,17 @@ void create<SymbolVersion>(py::module& m) {
     .def_property("value",
         static_cast<getter_t<uint16_t>>(&SymbolVersion::value),
         static_cast<setter_t<uint16_t>>(&SymbolVersion::value),
-        "- `0` : The symbol is local\n"
-        "- `1` : The symbol is global\n\n"
-        "All other values are used for versions in the own object or in any of\n"
-        "the dependencies.  This is the version the symbol is tight to.")
+        R"delim(
+        Value associated with the symbol.
+
+        If the given SymbolVersion hasn't Auxiliary version:
+
+        - `0` : The symbol is local
+        - `1` : The symbol is global
+
+        All other values are used for versions in the own object or in any of
+        the dependencies. This is the version the symbol is tight to.
+        )delim")
 
     .def_property_readonly("has_auxiliary_version",
         &SymbolVersion::has_auxiliary_version,

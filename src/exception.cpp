@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <sstream>
+#include <utility>
 
 #include "LIEF/exception.hpp"
 #include "logging.hpp"
@@ -24,7 +25,7 @@ namespace LIEF {
 exception::exception(const exception&) = default;
 exception::~exception() noexcept = default;
 
-exception::exception(const std::string& msg) : msg_{msg} {
+exception::exception(std::string msg) : msg_{std::move(msg)} {
 
 #if defined(LIEF_LOGGING_SUPPORT)
 //std::ostringstream oss;

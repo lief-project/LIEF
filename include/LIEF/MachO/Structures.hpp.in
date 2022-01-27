@@ -33,64 +33,64 @@ namespace LIEF {
 //! Namespace related to the LIEF's MachO module
 namespace MachO {
 
+namespace details {
+
   @LIEF_MACHO_STRUCTURES@
 
+struct rebase_instruction {
+  rebase_instruction(uint8_t opcode, uint64_t op1, uint64_t op2 = 0) :
+    opcode{opcode},
+    op1{op1},
+    op2{op2}
+  {}
+
+  uint8_t opcode;
+  uint64_t op1;
+  uint64_t op2;
+};
+
+struct binding_instruction {
+  binding_instruction(uint8_t opcode, uint64_t op1, uint64_t op2 = 0, std::string name = "") :
+    opcode{opcode},
+    op1{op1},
+    op2{op2},
+    name{name}
+  {}
+  binding_instruction(const binding_instruction&) = default;
+  binding_instruction& operator=(const binding_instruction&) = default;
 
 
-  struct rebase_instruction {
-    rebase_instruction(uint8_t opcode, uint64_t op1, uint64_t op2 = 0) :
-      opcode{opcode},
-      op1{op1},
-      op2{op2}
-    {}
-
-    uint8_t opcode;
-    uint64_t op1;
-    uint64_t op2;
-  };
-
-  struct binding_instruction {
-    binding_instruction(uint8_t opcode, uint64_t op1, uint64_t op2 = 0, std::string name = "") :
-      opcode{opcode},
-      op1{op1},
-      op2{op2},
-      name{name}
-    {}
-    binding_instruction(const binding_instruction&) = default;
-    binding_instruction& operator=(const binding_instruction&) = default;
+  uint8_t opcode;
+  uint64_t op1;
+  uint64_t op2;
+  std::string name;
+};
 
 
-    uint8_t opcode;
-    uint64_t op1;
-    uint64_t op2;
-    std::string name;
-  };
+class MachO32 {
+  public:
+  using header                  = mach_header;
+  using segment_command         = segment_command_32;
+  using section                 = section_32;
+  using routines_command        = routines_command_32;
+  using dylib_module            = dylib_module_32;
+  using nlist                   = nlist_32;
 
+  using uint                    = uint32_t;
+};
 
-  class MachO32 {
-    public:
-    using header                  = mach_header;
-    using segment_command         = segment_command_32;
-    using section                 = section_32;
-    using routines_command        = routines_command_32;
-    using dylib_module            = dylib_module_32;
-    using nlist                   = nlist_32;
+class MachO64 {
+  public:
+  using header                  = mach_header_64;
+  using segment_command         = segment_command_64;
+  using section                 = section_64;
+  using routines_command        = routines_command_64;
+  using dylib_module            = dylib_module_64;
+  using nlist                   = nlist_64;
 
-    using uint                    = uint32_t;
-  };
-
-  class MachO64 {
-    public:
-    using header                  = mach_header_64;
-    using segment_command         = segment_command_64;
-    using section                 = section_64;
-    using routines_command        = routines_command_64;
-    using dylib_module            = dylib_module_64;
-    using nlist                   = nlist_64;
-
-    using uint                    = uint64_t;
-  };
-
+  using uint                    = uint64_t;
+};
+}
 } // end namespace MachO
 }
 #endif

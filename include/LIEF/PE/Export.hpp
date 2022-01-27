@@ -29,26 +29,45 @@ namespace PE {
 
 class Builder;
 class Parser;
-struct pe_export_directory_table;
 
+namespace details {
+struct pe_export_directory_table;
+}
+
+//! Class which represents a PE Export
 class LIEF_API Export : public Object {
   friend class Builder;
   friend class Parser;
 
   public:
   Export();
-  Export(const pe_export_directory_table *header);
+  Export(const details::pe_export_directory_table& header);
   Export(const Export&);
   Export& operator=(const Export&);
   virtual ~Export();
 
-  uint32_t                export_flags() const;
-  uint32_t                timestamp() const;
-  uint16_t                major_version() const;
-  uint16_t                minor_version() const;
-  uint32_t                ordinal_base() const;
-  const std::string&      name() const;
-  it_export_entries       entries();
+  //! According to the PE specifications this value is reserved
+  //! and should be set to 0
+  uint32_t export_flags() const;
+
+  //! The time and date that the export data was created
+  uint32_t timestamp() const;
+
+  //! The major version number (can be user-defined)
+  uint16_t major_version() const;
+
+  //! The minor version number (can be user-defined)
+  uint16_t minor_version() const;
+
+  //! The starting number for the exports. Usually this value is set
+  //! to 1
+  uint32_t ordinal_base() const;
+
+  //! The name of the library exported (e.g. ``KERNEL32.dll``)
+  const std::string& name() const;
+
+  //! Iterator over the ExportEntry
+  it_export_entries entries();
   it_const_export_entries entries() const;
 
   void export_flags(uint32_t flags);
@@ -58,7 +77,7 @@ class LIEF_API Export : public Object {
   void ordinal_base(uint32_t ordinal_base);
   void name(const std::string& name);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Export& rhs) const;
   bool operator!=(const Export& rhs) const;

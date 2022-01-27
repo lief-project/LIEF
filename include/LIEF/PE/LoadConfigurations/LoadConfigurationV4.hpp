@@ -25,8 +25,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v4;
+}
 
 //! @brief Load Configuration enhanced with
 //! * Kind of dynamic relocations
@@ -38,12 +40,12 @@ class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
   LoadConfigurationV4();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV4(const load_configuration_v4<T>* header);
+  LIEF_LOCAL LoadConfigurationV4(const details::load_configuration_v4<T>& header);
 
   LoadConfigurationV4& operator=(const LoadConfigurationV4&);
   LoadConfigurationV4(const LoadConfigurationV4&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief VA of pointing to a ``IMAGE_DYNAMIC_RELOCATION_TABLE``
   uint64_t dynamic_value_reloc_table() const;
@@ -55,12 +57,12 @@ class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
 
   virtual ~LoadConfigurationV4();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV4& rhs) const;
   bool operator!=(const LoadConfigurationV4& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint64_t dynamic_value_reloc_table_;

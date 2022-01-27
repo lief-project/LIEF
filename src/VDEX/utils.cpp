@@ -54,7 +54,7 @@ bool is_vdex(const std::vector<uint8_t>& raw) {
 }
 
 vdex_version_t version(const std::string& file) {
-  if (not is_vdex(file)) {
+  if (!is_vdex(file)) {
     return 0;
   }
 

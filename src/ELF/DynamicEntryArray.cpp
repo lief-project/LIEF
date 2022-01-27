@@ -17,6 +17,7 @@
 #include <numeric>
 #include <sstream>
 #include <iomanip>
+#include <utility>
 
 namespace LIEF {
 namespace ELF {
@@ -26,9 +27,9 @@ DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = defa
 DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
 
 
-DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, const array_t& array) :
+DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, array_t array) :
   DynamicEntry::DynamicEntry{tag, 0},
-  array_{array}
+  array_{std::move(array)}
 {}
 
 
@@ -38,58 +39,55 @@ DynamicEntryArray::array_t& DynamicEntryArray::array() {
 
 
 const DynamicEntryArray::array_t& DynamicEntryArray::array() const {
-  return this->array_;
+  return array_;
 }
 
 void DynamicEntryArray::array(const DynamicEntryArray::array_t& array) {
-  this->array_ = array;
+  array_ = array;
 }
 
-DynamicEntryArray& DynamicEntryArray::append(uint64_t value) {
-  this->array_.push_back(value);
+DynamicEntryArray& DynamicEntryArray::append(uint64_t function) {
+  array_.push_back(function);
   return *this;
 }
 
-DynamicEntryArray& DynamicEntryArray::remove(uint64_t callback) {
-  this->array_.erase(std::remove_if(
-        std::begin(this->array_),
-        std::end(this->array_),
-        [callback] (uint64_t v) {
-          return v == callback;
-        }), std::end(this->array_));
+DynamicEntryArray& DynamicEntryArray::remove(uint64_t function) {
+  array_.erase(std::remove_if(std::begin(array_), std::end(array_),
+                              [function] (uint64_t v) { return v == function; }),
+               std::end(array_));
   return *this;
 }
 
-DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t value) {
-  if (pos == this->array_.size()) {
-    return this->append(value);
+DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
+  if (pos == array_.size()) {
+    return append(function);
   }
 
-  if (pos > this->array_.size()) {
+  if (pos > array_.size()) {
     throw corrupted(std::to_string(pos) + " is out of ranges");
   }
-  this->array_.insert(std::begin(this->array_) + pos, value);
+  array_.insert(std::begin(array_) + pos, function);
   return *this;
 }
 
 
 size_t DynamicEntryArray::size() const {
-  return this->array_.size();
+  return array_.size();
 }
 
 DynamicEntryArray& DynamicEntryArray::operator+=(uint64_t value) {
-  return this->append(value);
+  return append(value);
 }
 
 DynamicEntryArray& DynamicEntryArray::operator-=(uint64_t value) {
-  return this->remove(value);
+  return remove(value);
 }
 
 const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
-  if (idx >= this->array_.size()) {
+  if (idx >= array_.size()) {
     throw corrupted(std::to_string(idx) + " is out of ranges");
   }
-  return this->array_[idx];
+  return array_[idx];
 }
 
 uint64_t& DynamicEntryArray::operator[](size_t idx) {
@@ -106,10 +104,7 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
   os << std::hex
      << std::left
      << "["
-     << std::accumulate(
-         std::begin(array),
-         std::end(array),
-         std::string(""),
+     << std::accumulate(std::begin(array), std::end(array), std::string(),
          [] (std::string& s, uint64_t x) {
           std::stringstream ss;
           ss << "0x" << std::hex << x;

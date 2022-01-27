@@ -28,7 +28,6 @@ LoadConfigurationV0::LoadConfigurationV0(const LoadConfigurationV0&) = default;
 LoadConfigurationV0::~LoadConfigurationV0() = default;
 
 LoadConfigurationV0::LoadConfigurationV0() :
-  LoadConfiguration{},
   se_handler_table_{0},
   se_handler_count_{0}
 {}
@@ -39,19 +38,19 @@ WIN_VERSION LoadConfigurationV0::version() const {
 }
 
 uint64_t LoadConfigurationV0::se_handler_table() const {
-  return this->se_handler_table_;
+  return se_handler_table_;
 }
 
 uint64_t LoadConfigurationV0::se_handler_count() const {
-  return this->se_handler_count_;
+  return se_handler_count_;
 }
 
 void LoadConfigurationV0::se_handler_table(uint64_t se_handler_table) {
-  this->se_handler_table_ = se_handler_table;
+  se_handler_table_ = se_handler_table;
 }
 
 void LoadConfigurationV0::se_handler_count(uint64_t se_handler_count) {
-  this->se_handler_count_ = se_handler_count;
+  se_handler_count_ = se_handler_count;
 }
 
 void LoadConfigurationV0::accept(Visitor& visitor) const {
@@ -65,14 +64,14 @@ bool LoadConfigurationV0::operator==(const LoadConfigurationV0& rhs) const {
 }
 
 bool LoadConfigurationV0::operator!=(const LoadConfigurationV0& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& LoadConfigurationV0::print(std::ostream& os) const {
   LoadConfiguration::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler table:" << std::hex << this->se_handler_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler count:" << std::dec << this->se_handler_count() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler table:" << std::hex << se_handler_table() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler count:" << std::dec << se_handler_count() << std::endl;
   return os;
 }
 

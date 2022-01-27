@@ -34,15 +34,22 @@ using setter_t = void (ResourceStringFileInfo::*)(T);
 template<>
 void create<ResourceStringFileInfo>(py::module& m) {
   py::class_<ResourceStringFileInfo, LIEF::Object>(m, "ResourceStringFileInfo",
-      "Modelization of the ``StringFileInfo`` structure\n\n"
-      "See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo")
+      R"delim(
+      Representation of the ``StringFileInfo`` structure
+
+      See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
+      )delim")
+
 
     .def_property("type",
         static_cast<getter_t<uint16_t>>(&ResourceStringFileInfo::type),
         static_cast<setter_t<uint16_t>>(&ResourceStringFileInfo::type),
-        "The type of data in the version resource\n\n"
-        "* ``1`` if it contains text data\n"
-        "* ``0`` if it contains binary data\n")
+        R"delim(
+        The type of data in the version resource:
+
+          * ``1`` if it contains text data
+          * ``0`` if it contains binary data
+        )delim")
 
     .def_property("key",
         static_cast<getter_t<const std::u16string&>>(&ResourceStringFileInfo::key),
@@ -52,10 +59,12 @@ void create<ResourceStringFileInfo>(py::module& m) {
     .def_property("langcode_items",
         static_cast<std::vector<LangCodeItem>& (ResourceStringFileInfo::*)(void)>(&ResourceStringFileInfo::langcode_items),
         static_cast<setter_t<const std::vector<LangCodeItem>&>>(&ResourceStringFileInfo::langcode_items),
-        "List of the LangCodeItem items\n\n"
-        "Each :attr:`~lief.PE.LangCodeItem.key` indicates the appropriate "
-        "language and code page for displaying the ``key: value`` of "
-        ":attr:`~lief.PE.LangCodeItem.items`")
+        R"delim(
+        List of the LangCodeItem items
+
+        Each :attr:`~lief.PE.LangCodeItem.key` indicates the appropriate language and code page
+        for displaying the ``key: value`` of :attr:`~lief.PE.LangCodeItem.items`
+        )delim")
 
     .def("__eq__", &ResourceStringFileInfo::operator==)
     .def("__ne__", &ResourceStringFileInfo::operator!=)

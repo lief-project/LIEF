@@ -35,7 +35,10 @@ template<>
 void create<Relocation>(py::module& m) {
 
   // Relocation object
-  py::class_<Relocation, LIEF::Relocation>(m, "Relocation")
+  py::class_<Relocation, LIEF::Relocation>(m, "Relocation",
+      R"delim(
+      Class that represents an ELF relocation.
+      )delim")
     .def(py::init<>())
     .def(py::init<ARCH>(), "arch"_a)
     .def(py::init<uint64_t, uint32_t, int64_t, bool>(),
@@ -49,25 +52,33 @@ void create<Relocation>(py::module& m) {
     .def_property("info",
         static_cast<getter_t<uint32_t>>(&Relocation::info),
         static_cast<setter_t<uint32_t>>(&Relocation::info),
-        "Extra information like symbol index")
+        "Extra information like the symbol index")
 
     .def_property("purpose",
         static_cast<getter_t<RELOCATION_PURPOSES>>(&Relocation::purpose),
         static_cast<setter_t<RELOCATION_PURPOSES>>(&Relocation::purpose),
-        "Purpose (" RST_CLASS_REF(lief.ELF.RELOCATION_PURPOSES) ") of the relocation")
+        R"delim(
+        Purpose of the relocation (:class:`~lief.ELF.RELOCATION_PURPOSES`).
+
+        This value provides the information about how the relocation is used (PLT/GOT resolution, ``.o`` file, ...)
+        )delim")
 
     .def_property("type",
         static_cast<getter_t<uint32_t>>(&Relocation::type),
         static_cast<setter_t<uint32_t>>(&Relocation::type),
-        "Relocation type.\n\n"
-        "See:\n\n"
-        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_X86_64) "\n\n"
-        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_ARM) "\n\n"
-        "\t\t * " RST_CLASS_REF(lief.ELF.RELOCATION_i386) "\n\n")
+        R"delim(
+        Relocation type. This value depends on the underlying architecture.
+
+        See:
+          * :class:`~lief.ELF.RELOCATION_X86_64`
+          * :class:`~lief.ELF.RELOCATION_i386`
+          * :class:`~lief.ELF.RELOCATION_AARCH64`
+          * :class:`~lief.ELF.RELOCATION_ARM`
+        )delim")
 
     .def_property_readonly("has_symbol",
         &Relocation::has_symbol,
-        "``True`` if a " RST_CLASS_REF(lief.ELF.Symbol) " is associated with the relocations")
+        "``True`` if a " RST_CLASS_REF(lief.ELF.Symbol) " is associated with the relocation")
 
     .def_property("symbol",
         static_cast<Symbol& (Relocation::*)(void)>(&Relocation::symbol),
@@ -77,20 +88,24 @@ void create<Relocation>(py::module& m) {
 
     .def_property_readonly("has_section",
         &Relocation::has_section,
-        "``True`` if a this relocation has a " RST_CLASS_REF(lief.ELF.Section) " associated")
+        R"delim(
+        ``True`` if this relocation has a :class:`lief.ELF.Section` associated with.
+
+        This is usually the case for object files (``.o``)
+        )delim")
 
     .def_property_readonly("section",
         static_cast<Section& (Relocation::*)(void)>(&Relocation::section),
-        "" RST_CLASS_REF(lief.ELF.Section) " to which the relocation applies",
+        "" RST_CLASS_REF(lief.ELF.Section) " in which the relocation is applied",
         py::return_value_policy::reference)
 
     .def_property_readonly("is_rela",
       static_cast<getter_t<bool>>(&Relocation::is_rela),
-      "``True`` if the relocation uses the :attr:`~lief.ELF.Relocation.addend` proprety")
+      "``True`` if the relocation **uses** the :attr:`~lief.ELF.Relocation.addend` proprety")
 
     .def_property_readonly("is_rel",
       static_cast<getter_t<bool>>(&Relocation::is_rel),
-      "``True`` if the relocation doesn't use the :attr:`~lief.ELF.Relocation.addend` proprety")
+      "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` proprety")
 
     .def("__eq__", &Relocation::operator==)
     .def("__ne__", &Relocation::operator!=)

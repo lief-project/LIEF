@@ -27,16 +27,13 @@ MainCommand& MainCommand::operator=(const MainCommand&) = default;
 MainCommand::MainCommand(const MainCommand&) = default;
 MainCommand::~MainCommand() = default;
 
-MainCommand::MainCommand() :
-  LoadCommand::LoadCommand{},
-  entrypoint_{0},
-  stackSize_{0}
-{}
+MainCommand::MainCommand() = default;
 
-MainCommand::MainCommand(const entry_point_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  entrypoint_{cmd->entryoff},
-  stackSize_{cmd->stacksize}
+
+MainCommand::MainCommand(const details::entry_point_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  entrypoint_{cmd.entryoff},
+  stack_size_{cmd.stacksize}
 {}
 
 MainCommand* MainCommand::clone() const {
@@ -45,19 +42,19 @@ MainCommand* MainCommand::clone() const {
 
 
 uint64_t MainCommand::entrypoint() const {
-  return this->entrypoint_;
+  return entrypoint_;
 }
 
 uint64_t MainCommand::stack_size() const {
-  return this->stackSize_;
+  return stack_size_;
 }
 
 void MainCommand::entrypoint(uint64_t entrypoint) {
-  this->entrypoint_ = entrypoint;
+  entrypoint_ = entrypoint;
 }
 
 void MainCommand::stack_size(uint64_t stacksize) {
-  this->stackSize_ = stacksize;
+  stack_size_ = stacksize;
 }
 
 void MainCommand::accept(Visitor& visitor) const {
@@ -71,16 +68,16 @@ bool MainCommand::operator==(const MainCommand& rhs) const {
 }
 
 bool MainCommand::operator!=(const MainCommand& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& MainCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
   os << std::left
-     << "Entrypoint: " << "0x" << this->entrypoint()
+     << "Entrypoint: " << "0x" << entrypoint()
      << std::endl
-     << "Stack size: " << "0x" << this->stack_size();
+     << "Stack size: " << "0x" << stack_size();
   return os;
 }
 

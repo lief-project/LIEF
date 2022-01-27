@@ -21,7 +21,7 @@ namespace PE {
 
 void init_c_imports(Pe_Binary_t* c_binary, Binary* binary) {
 
-  if (not binary->has_imports()) {
+  if (!binary->has_imports()) {
     c_binary->imports = nullptr;
   }
 

@@ -36,7 +36,10 @@ using no_const_getter = T (RichHeader::*)(void);
 
 template<>
 void create<RichHeader>(py::module& m) {
-  py::class_<RichHeader>(m, "RichHeader")
+  py::class_<RichHeader>(m, "RichHeader",
+      R"delim(
+      Class which represents the not-so-documented rich header
+      )delim")
     .def(py::init<>())
     .def_property("key",
         static_cast<getter_t<uint32_t>>(&RichHeader::key),
@@ -45,7 +48,7 @@ void create<RichHeader>(py::module& m) {
 
     .def_property_readonly("entries",
         static_cast<no_const_getter<it_rich_entries>>(&RichHeader::entries),
-        "Return binary's " RST_CLASS_REF(lief.PE.RichEntry) " within the header",
+        "Return an iterator over the " RST_CLASS_REF(lief.PE.RichEntry) " within the header",
         py::return_value_policy::reference)
 
     .def("add_entry",

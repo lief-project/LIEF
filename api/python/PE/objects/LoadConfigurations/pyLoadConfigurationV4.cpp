@@ -34,11 +34,14 @@ using setter_t = void (LoadConfigurationV4::*)(T);
 template<>
 void create<LoadConfigurationV4>(py::module& m) {
   py::class_<LoadConfigurationV4, LoadConfigurationV3>(m, "LoadConfigurationV4",
-    "" RST_CLASS_REF(lief.PE.LoadConfigurationV3) " enhanced with:\n\n"
-    "\t\t * Kind of dynamic relocations\n\n"
-    "\t\t * *Hybrid Metadata Pointer* \n\n"
-    "It is associated with the " RST_CLASS_REF(lief.PE.WIN_VERSION) ": "
-    ":attr:`~lief.PE.WIN_VERSION.WIN10_0_14383`")
+      R"delim(
+      :class:`~lief.PE.LoadConfigurationV3` enhanced with:
+
+        * Kind of dynamic relocations
+        * *Hybrid Metadata Pointer*
+
+      It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_14383`
+      )delim")
     .def(py::init<>())
 
     .def_property("dynamic_value_reloc_table",

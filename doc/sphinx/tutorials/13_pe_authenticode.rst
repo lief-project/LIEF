@@ -277,7 +277,7 @@ A. Check the integrity of the signature (:meth:`lief.PE.Signature.check()`):
    3. If the :class:`~lief.PE.SignerInfo` has authenticated attributes, check their integrity. Otherwise, check
       the integrity of the :class:`~lief.PE.ContentInfo` against the Signer's certificate.
    4. If they are authenticated attributes, check that there is a
-      :class:`lief.PE.PKCS9MessageDigest` attribute whose the :attr:`~lief.PE.PKCS9MessageDigest.digest`
+      :class:`lief.PE.PKCS9MessageDigest` attribute for which the :attr:`~lief.PE.PKCS9MessageDigest.digest`
       matches the hash of the :class:`~lief.PE.ContentInfo`
    5. If there is a counter signature in the **un-authenticated attributes**, verify its integrity and check
       that it wraps a valid *timestamping*.
@@ -360,7 +360,7 @@ Limitations
 ~~~~~~~~~~~
 
 Regarding the PKCS #7 structure itself, LIEF is able to parse and process most of its elements. Nevertheless,
-the :class:`lief.PE.SignerInfo` structure can embed attributes (authenticated or not) whose the ASN.1 structure
+the :class:`lief.PE.SignerInfo` structure can embed attributes (authenticated or not) for which the ASN.1 structure
 can be public or not. As of LIEF v0.11.0 we do not support yet the following OIDs:
 
 +----------------------------+-------------------------------------------------------+

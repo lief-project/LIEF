@@ -131,9 +131,6 @@ set_target_properties(pyLIEF PROPERTIES
 )
 
 if (MSVC)
-  if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(pyLIEF PUBLIC /FIiso646.h)
-  endif()
   set_property(TARGET pyLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 

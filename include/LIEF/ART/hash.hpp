@@ -32,10 +32,10 @@ class LIEF_API Hash : public LIEF::Hash {
   using LIEF::Hash::visit;
 
   public:
-  virtual void visit(const File& file)      override;
-  virtual void visit(const Header& header)  override;
+  void visit(const File& file)      override;
+  void visit(const Header& header)  override;
 
-  virtual ~Hash();
+  ~Hash() override;
 };
 
 }

@@ -25,7 +25,7 @@ namespace LIEF {
 namespace OAT {
 
 bool is_oat(const std::string& file) {
-  if (not LIEF::ELF::is_elf(file)) {
+  if (!LIEF::ELF::is_elf(file)) {
     return false;
   }
 
@@ -61,9 +61,7 @@ bool is_oat(const std::vector<uint8_t>& raw) {
 bool is_oat(const ELF::Binary& elf_binary) {
   LIEF::ELF::it_const_symbols dynamic_symbols = elf_binary.dynamic_symbols();
 
-  auto&& it_oatdata_symbol = std::find_if(
-      std::begin(dynamic_symbols),
-      std::end(dynamic_symbols),
+  const auto it_oatdata_symbol = std::find_if(std::begin(dynamic_symbols), std::end(dynamic_symbols),
       [] (const LIEF::ELF::Symbol& sym) {
         return sym.name() == "oatdata";
       });
@@ -73,14 +71,12 @@ bool is_oat(const ELF::Binary& elf_binary) {
   }
 
   const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(it_oatdata_symbol->value(), sizeof(oat_magic));
-  return std::equal(
-      header.data(),
-      header.data() + sizeof(oat_magic),
-      std::begin(oat_magic));
+  return std::equal(header.data(), header.data() + sizeof(oat_magic),
+                    std::begin(oat_magic));
 }
 
 oat_version_t version(const std::string& file) {
-  if (not is_oat(file)) {
+  if (!is_oat(file)) {
     return 0;
   }
 
@@ -92,14 +88,14 @@ oat_version_t version(const std::string& file) {
   }
 
   if (elf_binary == nullptr) {
-    return false;
+    return 0u;
   }
 
   return version(*elf_binary);
 }
 
 oat_version_t version(const std::vector<uint8_t>& raw) {
-  if (not is_oat(raw)) {
+  if (!is_oat(raw)) {
     return 0;
   }
 
@@ -111,7 +107,7 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
   }
 
   if (elf_binary == nullptr) {
-    return false;
+    return 0u;
   }
 
   return version(*elf_binary);

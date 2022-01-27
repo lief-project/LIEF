@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
+
 namespace LIEF {
 namespace PE {
 
-
 template<class T>
-LoadConfigurationV6::LoadConfigurationV6(const load_configuration_v6<T>* header) :
-  LoadConfigurationV5{reinterpret_cast<const load_configuration_v5<T>*>(header)},
-  guardrf_verify_stackpointer_function_pointer_{header->GuardRFVerifyStackPointerFunctionPointer},
-  hotpatch_table_offset_{header->HotPatchTableOffset}
+LoadConfigurationV6::LoadConfigurationV6(const details::load_configuration_v6<T>& header) :
+  LoadConfigurationV5{reinterpret_cast<const details::load_configuration_v5<T>&>(header)},
+  guardrf_verify_stackpointer_function_pointer_{header.GuardRFVerifyStackPointerFunctionPointer},
+  hotpatch_table_offset_{header.HotPatchTableOffset}
 {}
 
 

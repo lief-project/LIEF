@@ -40,7 +40,7 @@ void PKCS9CounterSignature::accept(Visitor& visitor) const {
 
 std::string PKCS9CounterSignature::print() const {
   std::ostringstream oss;
-  oss << this->signer() << "\n";
+  oss << signer() << "\n";
   return oss.str();
 }
 

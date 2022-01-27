@@ -25,8 +25,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v3;
+}
 
 //! @brief LoadConfiguration with Control Flow Guard improved
 class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
@@ -37,12 +39,12 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
   LoadConfigurationV3();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV3(const load_configuration_v3<T>* header);
+  LIEF_LOCAL LoadConfigurationV3(const details::load_configuration_v3<T>& header);
 
   LoadConfigurationV3& operator=(const LoadConfigurationV3&);
   LoadConfigurationV3(const LoadConfigurationV3&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief VA of a table associated with CFG's *IAT* checks
   uint64_t guard_address_taken_iat_entry_table() const;
@@ -63,12 +65,12 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
 
   virtual ~LoadConfigurationV3();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV3& rhs) const;
   bool operator!=(const LoadConfigurationV3& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint64_t guard_address_taken_iat_entry_table_;

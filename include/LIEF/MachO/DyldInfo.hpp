@@ -34,9 +34,11 @@ class BinaryParser;
 class BindingInfo;
 class ExportInfo;
 
+namespace details {
 struct dyld_info_command;
+}
 
-//! LC_DYLD_INFO and LC_DYLD_INFO_ONLY command model
+//! Class that represents the LC_DYLD_INFO and LC_DYLD_INFO_ONLY commands
 class LIEF_API DyldInfo : public LoadCommand {
 
   friend class BinaryParser;
@@ -44,7 +46,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   friend class Builder;
 
   public:
-  //! @brief Tuple of ``offset`` and ``size``
+  //! Tuple of ``offset`` and ``size``
   using info_t = std::pair<uint32_t, uint32_t>;
 
   enum class BINDING_ENCODING_VERSION {
@@ -54,22 +56,22 @@ class LIEF_API DyldInfo : public LoadCommand {
   };
 
   DyldInfo();
-  DyldInfo(const dyld_info_command *dyld_info_cmd);
+  DyldInfo(const details::dyld_info_command& dyld_info_cmd);
 
   DyldInfo& operator=(DyldInfo other);
   DyldInfo(const DyldInfo& copy);
 
   void swap(DyldInfo& other);
 
-  virtual DyldInfo* clone() const override;
+  DyldInfo* clone() const override;
 
   virtual ~DyldInfo();
 
-  //! @brief *Rebase* information
+  //! *Rebase* information
   //!
   //! Dyld rebases an image whenever dyld loads it at an address different
   //! from its preferred address.  The rebase information is a stream
-  //! of byte sized opcodes whose symbolic names start with REBASE_OPCODE_.
+  //! of byte sized opcodes for which symbolic names start with REBASE_OPCODE_.
   //! Conceptually the rebase information is a table of tuples:
   //!    <seg-index, seg-offset, type>
   //! The opcodes are a compressed way to encode the table by only
@@ -80,23 +82,23 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @see ``/usr/include/mach-o/loader.h``
   const info_t& rebase() const;
 
-  //! @brief Return Rebase's opcodes as raw data
+  //! Return Rebase's opcodes as raw data
   const buffer_t& rebase_opcodes() const;
   buffer_t&       rebase_opcodes();
 
-  //! @brief Set new opcodes
+  //! Set new opcodes
   void rebase_opcodes(const buffer_t& raw);
 
 
   //! Return the rebase opcodes in a humman-readable way
   std::string show_rebases_opcodes() const;
 
-  //! @brief *Bind* information
+  //! *Bind* information
   //!
   //! Dyld binds an image during the loading process, if the image
   //! requires any pointers to be initialized to symbols in other images.
   //! The rebase information is a stream of byte sized
-  //! opcodes whose symbolic names start with BIND_OPCODE_.
+  //! opcodes for which symbolic names start with BIND_OPCODE_.
   //! Conceptually the bind information is a table of tuples:
   //!    <seg-index, seg-offset, type, symbol-library-ordinal, symbol-name, addend>
   //! The opcodes are a compressed way to encode the table by only
@@ -107,23 +109,23 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @see ``/usr/include/mach-o/loader.h``
   const info_t& bind() const;
 
-  //! @brief Return Binding's opcodes as raw data
+  //! Return Binding's opcodes as raw data
   const buffer_t& bind_opcodes() const;
   buffer_t&       bind_opcodes();
 
-  //! @brief Set new opcodes
+  //! Set new opcodes
   void bind_opcodes(const buffer_t& raw);
 
   //! Return the bind opcodes in a humman-readable way
   std::string show_bind_opcodes() const;
 
-  //! @brief *Weak Bind* information
+  //! *Weak Bind* information
   //!
   //! Some C++ programs require dyld to unique symbols so that all
   //! images in the process use the same copy of some code/data.
   //! This step is done after binding. The content of the weak_bind
   //! info is an opcode stream like the bind_info.  But it is sorted
-  //! alphabetically by symbol name.  This enable dyld to walk
+  //! alphabetically by symbol name.  This enables dyld to walk
   //! all images with weak binding information in order and look
   //! for collisions.  If there are no collisions, dyld does
   //! no updating.  That means that some fixups are also encoded
@@ -136,17 +138,17 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @see ``/usr/include/mach-o/loader.h``
   const info_t& weak_bind() const;
 
-  //! @brief Return **Weak** Binding's opcodes as raw data
+  //! Return **Weak** Binding's opcodes as raw data
   const buffer_t& weak_bind_opcodes() const;
   buffer_t&       weak_bind_opcodes();
 
-  //! @brief Set new opcodes
+  //! Set new opcodes
   void weak_bind_opcodes(const buffer_t& raw);
 
   //! Return the bind opcodes in a humman-readable way
   std::string show_weak_bind_opcodes() const;
 
-  //! @brief *Lazy Bind* information
+  //! *Lazy Bind* information
   //!
   //! Some uses of external symbols do not need to be bound immediately.
   //! Instead they can be lazily bound on first use.  The lazy_bind
@@ -162,21 +164,21 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @see ``/usr/include/mach-o/loader.h``
   const info_t& lazy_bind() const;
 
-  //! @brief Return **Lazy** Binding's opcodes as raw data
+  //! Return **Lazy** Binding's opcodes as raw data
   const buffer_t& lazy_bind_opcodes() const;
   buffer_t&       lazy_bind_opcodes();
 
-  //! @brief Set new opcodes
+  //! Set new opcodes
   void lazy_bind_opcodes(const buffer_t& raw);
 
   //! Return the lazy opcodes in a humman-readable way
   std::string show_lazy_bind_opcodes() const;
 
-  //! @brief Iterator over BindingInfo entries
+  //! Iterator over BindingInfo entries
   it_binding_info       bindings();
   it_const_binding_info bindings() const;
 
-  //! @brief *Export* information
+  //! *Export* information
   //!
   //! The symbols exported by a dylib are encoded in a trie.  This
   //! is a compact representation that factors out common prefixes.
@@ -204,15 +206,15 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! @see ``/usr/include/mach-o/loader.h``
   const info_t& export_info() const;
 
-  //! @brief Iterator over ExportInfo entries
+  //! Iterator over ExportInfo entries
   it_export_info       exports();
   it_const_export_info exports() const;
 
-  //! @brief Return Export's trie as raw data
+  //! Return Export's trie as raw data
   const buffer_t& export_trie() const;
   buffer_t&       export_trie();
 
-  //! @brief Set new trie
+  //! Set new trie
   void export_trie(const buffer_t& raw);
 
   //! Return the export trie in a humman-readable way
@@ -242,9 +244,9 @@ class LIEF_API DyldInfo : public LoadCommand {
   bool operator==(const DyldInfo& rhs) const;
   bool operator!=(const DyldInfo& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   private:
   using bind_container_t = std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
@@ -263,7 +265,6 @@ class LIEF_API DyldInfo : public LoadCommand {
   LIEF_LOCAL DyldInfo& update_rebase_info();
   LIEF_LOCAL DyldInfo& update_binding_info();
   LIEF_LOCAL DyldInfo& update_export_trie();
-
 
   info_t   rebase_;
   buffer_t rebase_opcodes_;

@@ -33,11 +33,13 @@ class LIEF_API JsonVisitor : public Visitor {
 
   public:
   JsonVisitor();
-  JsonVisitor(const json& node);
+  JsonVisitor(json node);
   JsonVisitor(const JsonVisitor&);
   JsonVisitor& operator=(const JsonVisitor&);
 
-  const json& get() const;
+  inline json get() const {
+    return node_;
+  }
 
   protected:
   json node_;

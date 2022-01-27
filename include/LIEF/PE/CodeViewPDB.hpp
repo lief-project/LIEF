@@ -31,15 +31,18 @@ class LIEF_API CodeViewPDB : public CodeView {
   using signature_t = std::array<uint8_t, 16>;
 
   CodeViewPDB();
-  CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig, uint32_t age, const std::string& filename);
+  CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig,
+              uint32_t age, std::string filename);
 
   CodeViewPDB(const CodeViewPDB&);
   CodeViewPDB& operator=(const CodeViewPDB&);
 
-  virtual CodeViewPDB* clone() const override;
+  CodeViewPDB* clone() const override;
 
-  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age, const std::string& filename);
-  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age, const std::string& filename);
+  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age,
+                                const std::string& filename);
+  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age,
+                                const std::string& filename);
 
   signature_t signature() const;
   uint32_t age() const;
@@ -50,7 +53,7 @@ class LIEF_API CodeViewPDB : public CodeView {
   void age(uint32_t age);
   void filename(const std::string& filename);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const CodeViewPDB& rhs) const;
   bool operator!=(const CodeViewPDB& rhs) const;

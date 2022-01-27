@@ -31,15 +31,10 @@ BindingInfo::~BindingInfo() = default;
 BindingInfo::BindingInfo() :
   class_{BINDING_CLASS::BIND_CLASS_STANDARD},
   binding_type_{BIND_TYPES::BIND_TYPE_POINTER},
-  segment_{nullptr},
-  symbol_{nullptr},
   library_ordinal_{0},
   addend_{0},
   is_weak_import_{false},
-  is_non_weak_definition_{false},
-  library_{nullptr},
-  address_{0},
-  offset_{0}
+  is_non_weak_definition_{false}
 {}
 
 
@@ -48,20 +43,17 @@ BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
     uint64_t offset) :
   class_{cls},
   binding_type_{type},
-  segment_{nullptr},
-  symbol_{nullptr},
   library_ordinal_{oridnal},
   addend_{addend},
   is_weak_import_{is_weak},
   is_non_weak_definition_{is_non_weak_definition},
-  library_{nullptr},
   address_{address},
   offset_{offset}
 {}
 
 
 BindingInfo& BindingInfo::operator=(BindingInfo other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
@@ -69,42 +61,39 @@ BindingInfo::BindingInfo(const BindingInfo& other) :
   Object{other},
   class_{other.class_},
   binding_type_{other.binding_type_},
-  segment_{nullptr},
-  symbol_{nullptr},
   library_ordinal_{other.library_ordinal_},
   addend_{other.addend_},
   is_weak_import_{other.is_weak_import_},
   is_non_weak_definition_{other.is_non_weak_definition_},
-  library_{nullptr},
   address_{other.address_},
   offset_{other.offset_}
 {}
 
 void BindingInfo::swap(BindingInfo& other) {
-  std::swap(this->class_,                   other.class_);
-  std::swap(this->binding_type_,            other.binding_type_);
-  std::swap(this->segment_,                 other.segment_);
-  std::swap(this->symbol_,                  other.symbol_);
-  std::swap(this->library_ordinal_,         other.library_ordinal_);
-  std::swap(this->addend_,                  other.addend_);
-  std::swap(this->is_weak_import_,          other.is_weak_import_);
-  std::swap(this->is_non_weak_definition_,  other.is_non_weak_definition_);
-  std::swap(this->library_,                 other.library_);
-  std::swap(this->address_,                 other.address_);
-  std::swap(this->offset_,                  other.offset_);
+  std::swap(class_,                   other.class_);
+  std::swap(binding_type_,            other.binding_type_);
+  std::swap(segment_,                 other.segment_);
+  std::swap(symbol_,                  other.symbol_);
+  std::swap(library_ordinal_,         other.library_ordinal_);
+  std::swap(addend_,                  other.addend_);
+  std::swap(is_weak_import_,          other.is_weak_import_);
+  std::swap(is_non_weak_definition_,  other.is_non_weak_definition_);
+  std::swap(library_,                 other.library_);
+  std::swap(address_,                 other.address_);
+  std::swap(offset_,                  other.offset_);
 }
 
 
 bool BindingInfo::has_segment() const {
-  return this->segment_ != nullptr;
+  return segment_ != nullptr;
 }
 
 const SegmentCommand& BindingInfo::segment() const {
-  if (not this->has_segment()) {
+  if (!has_segment()) {
     throw not_found("No segment associated with this binding");
   }
 
-  return *this->segment_;
+  return *segment_;
 }
 
 SegmentCommand& BindingInfo::segment() {
@@ -112,15 +101,15 @@ SegmentCommand& BindingInfo::segment() {
 }
 
 bool BindingInfo::has_symbol() const {
-  return this->symbol_ != nullptr;
+  return symbol_ != nullptr;
 }
 
 const Symbol& BindingInfo::symbol() const {
-  if (not this->has_symbol()) {
+  if (!has_symbol()) {
     throw not_found("No symbol associated with this binding");
   }
 
-  return *this->symbol_;
+  return *symbol_;
 }
 
 Symbol& BindingInfo::symbol() {
@@ -130,15 +119,15 @@ Symbol& BindingInfo::symbol() {
 
 
 bool BindingInfo::has_library() const {
-  return this->library_ != nullptr;
+  return library_ != nullptr;
 }
 
 const DylibCommand& BindingInfo::library() const {
-  if (not this->has_library()) {
+  if (!has_library()) {
     throw not_found("No library associated with this binding");
   }
 
-  return *this->library_;
+  return *library_;
 }
 
 DylibCommand& BindingInfo::library() {
@@ -146,57 +135,57 @@ DylibCommand& BindingInfo::library() {
 }
 
 BINDING_CLASS BindingInfo::binding_class() const {
-  return this->class_;
+  return class_;
 }
 
 void BindingInfo::binding_class(BINDING_CLASS bind_class) {
-  this->class_ = bind_class;
+  class_ = bind_class;
 }
 
 BIND_TYPES BindingInfo::binding_type() const {
-  return this->binding_type_;
+  return binding_type_;
 }
 
 void BindingInfo::binding_type(BIND_TYPES type) {
-  this->binding_type_ = type;
+  binding_type_ = type;
 }
 
 int32_t BindingInfo::library_ordinal() const {
-  return this->library_ordinal_;
+  return library_ordinal_;
 }
 
 void BindingInfo::library_ordinal(int32_t ordinal) {
-  this->library_ordinal_ = ordinal;
+  library_ordinal_ = ordinal;
 }
 
 int64_t BindingInfo::addend() const {
-  return this->addend_;
+  return addend_;
 }
 
 void BindingInfo::addend(int64_t addend) {
-  this->addend_ = addend;
+  addend_ = addend;
 }
 
 bool BindingInfo::is_weak_import() const {
-  return this->is_weak_import_;
+  return is_weak_import_;
 }
 
 void BindingInfo::set_weak_import(bool val) {
-  this->is_weak_import_ = val;
+  is_weak_import_ = val;
 }
 
 
 uint64_t BindingInfo::address() const {
-  return this->address_;
+  return address_;
 }
 
 void BindingInfo::address(uint64_t addr) {
-  this->address_ = addr;
+  address_ = addr;
 }
 
 
 uint64_t BindingInfo::original_offset() const {
-  return this->offset_;
+  return offset_;
 }
 
 void BindingInfo::accept(Visitor& visitor) const {
@@ -211,7 +200,7 @@ bool BindingInfo::operator==(const BindingInfo& rhs) const {
 }
 
 bool BindingInfo::operator!=(const BindingInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -228,7 +217,7 @@ std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info) {
     os << std::setw(13) << "Symbol: "    << binding_info.symbol().name() << std::endl;
   }
 
-  if (binding_info.has_symbol()) {
+  if (binding_info.has_segment()) {
     os << std::setw(13) << "Segment: "    << binding_info.segment().name() << std::endl;
   }
 

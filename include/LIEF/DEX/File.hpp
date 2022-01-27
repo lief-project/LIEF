@@ -33,13 +33,13 @@ namespace LIEF {
 namespace DEX {
 class Parser;
 
+//! Class that represents a DEX file
 class LIEF_API File : public Object {
   friend class Parser;
 
   public:
   File& operator=(const File& copy) = delete;
   File(const File& copy)            = delete;
-
 
   //! Version of the current DEX file
   dex_version_t version() const;
@@ -74,24 +74,17 @@ class LIEF_API File : public Object {
 
   Class& get_class(size_t index);
 
-
   //! De-optimize information
   dex2dex_info_t dex2dex_info() const;
 
   //! De-optimize information as JSON
   std::string dex2dex_json_info();
 
-  //bool has_method(const std::string& method_name) const;
-
-  //const Method& get_method(const std::string& method_name) const;
-
-  //Method& get_method(const std::string& method_name);
-
-  //! **All** Methods used in this DEX
+  //! Return an iterator over **all** the DEX::Method used in this DEX file
   it_const_methods methods() const;
   it_methods methods();
 
-  //! **All** Fields used in this DEX
+  //! Return an iterator over **all** the DEX::Field used in this DEX file
   it_const_fields fields() const;
   it_fields fields();
 
@@ -111,13 +104,12 @@ class LIEF_API File : public Object {
   const MapList& map() const;
   MapList& map();
 
-
   //! Extract the current dex file and deoptimize it
-  std::string save(const std::string path = "", bool deoptimize = true) const;
+  std::string save(const std::string& path = "", bool deoptimize = true) const;
 
   std::vector<uint8_t> raw(bool deoptimize = true) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;

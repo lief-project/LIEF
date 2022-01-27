@@ -32,47 +32,47 @@ SymbolVersionAuxRequirement& SymbolVersionAuxRequirement::operator=(const Symbol
 SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&) = default;
 
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const Elf64_Vernaux* header) :
-  hash_{header->vna_hash},
-  flags_{header->vna_flags},
-  other_{header->vna_other}
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header) :
+  hash_{header.vna_hash},
+  flags_{header.vna_flags},
+  other_{header.vna_other}
 {}
 
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const Elf32_Vernaux* header) :
-  hash_{header->vna_hash},
-  flags_{header->vna_flags},
-  other_{header->vna_other}
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header) :
+  hash_{header.vna_hash},
+  flags_{header.vna_flags},
+  other_{header.vna_other}
 {}
 
 
 uint32_t SymbolVersionAuxRequirement::hash() const {
-  return this->hash_;
+  return hash_;
 }
 
 
 uint16_t SymbolVersionAuxRequirement::flags() const {
-  return this->flags_;
+  return flags_;
 }
 
 
 uint16_t SymbolVersionAuxRequirement::other() const {
-  return this->other_;
+  return other_;
 }
 
 
 void SymbolVersionAuxRequirement::hash(uint32_t hash) {
-  this->hash_ = hash;
+  hash_ = hash;
 }
 
 
 void SymbolVersionAuxRequirement::flags(uint16_t flags) {
-  this->flags_ = flags;
+  flags_ = flags;
 }
 
 
 void SymbolVersionAuxRequirement::other(uint16_t other) {
-  this->other_ = other;
+  other_ = other;
 }
 
 void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
@@ -86,7 +86,7 @@ bool SymbolVersionAuxRequirement::operator==(const SymbolVersionAuxRequirement& 
 }
 
 bool SymbolVersionAuxRequirement::operator!=(const SymbolVersionAuxRequirement& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

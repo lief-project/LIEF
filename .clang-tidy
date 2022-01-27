@@ -1,0 +1,36 @@
+Checks: >
+  -*,
+  bugprone-*,
+  google-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -google-readability-namespace-comments,
+  -google-runtime-int,
+  -google-runtime-references,
+  -misc-non-private-member-variables-in-classes,
+  -modernize-redundant-void-arg,
+  -modernize-use-trailing-return-type,
+  -readability-braces-around-statements,
+  -readability-function-cognitive-complexity,
+  -readability-magic-numbers,
+  -readability-named-parameter,
+  -readability-uppercase-literal-suffix,
+  -readability-else-after-return,
+  -google-readability-todo,
+  -readability-inconsistent-declaration-parameter-name,
+  -performance-noexcept-move-constructor,
+  -readability-redundant-string-cstr
+
+# Turn all the warnings from the checks above into errors.
+#WarningsAsErrors: "*"
+UseColor: false
+
+CheckOptions:
+  - { key: readability-identifier-naming.PrivateMemberSuffix,   value: _          }
+  - { key: readability-identifier-naming.ProtectedMemberSuffix, value: _          }
+  - { key: readability-identifier-naming.MacroDefinitionCase,   value: UPPER_CASE }

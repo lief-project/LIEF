@@ -32,7 +32,7 @@ namespace PE {
 class ResourcesManager;
 class ResourceVersion;
 
-//! Modelization of the ``StringFileInfo`` structure
+//! Representation of the ``StringFileInfo`` structure
 //!
 //! It contains version information that can be displayed for a particular language and code page.
 //!
@@ -70,8 +70,7 @@ class LIEF_API ResourceStringFileInfo : public Object {
   void key(const std::string& key);
   void langcode_items(const std::vector<LangCodeItem>& items);
 
-
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceStringFileInfo& rhs) const;
   bool operator!=(const ResourceStringFileInfo& rhs) const;

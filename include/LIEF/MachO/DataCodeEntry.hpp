@@ -24,9 +24,12 @@
 
 namespace LIEF {
 namespace MachO {
-struct data_in_code_entry;
 
-//! Interface of an entry in DataInCode
+namespace details {
+struct data_in_code_entry;
+}
+
+//! Interface over an entry in the DataInCode command
 class LIEF_API DataCodeEntry : public LIEF::Object {
   public:
   enum class TYPES {
@@ -41,7 +44,7 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   public:
   DataCodeEntry();
   DataCodeEntry(uint32_t off, uint16_t length, TYPES type);
-  DataCodeEntry(const data_in_code_entry* entry);
+  DataCodeEntry(const details::data_in_code_entry& entry);
 
   DataCodeEntry& operator=(const DataCodeEntry&);
   DataCodeEntry(const DataCodeEntry&);
@@ -64,7 +67,7 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   bool operator==(const DataCodeEntry& rhs) const;
   bool operator!=(const DataCodeEntry& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry);
 

@@ -22,19 +22,15 @@ namespace LIEF {
 namespace PE {
 
 Attribute::Attribute() = default;
+Attribute::Attribute(const Attribute& other) = default;
 
 Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) :
   type_{type}
 {}
 
-Attribute::Attribute(const Attribute& other) :
-  Object{other},
-  type_{other.type_}
-{}
-
 Attribute& Attribute::operator=(const Attribute& other) {
   if (this != &other) {
-    this->type_ = other.type_;
+    type_ = other.type_;
   }
   return *this;
 }

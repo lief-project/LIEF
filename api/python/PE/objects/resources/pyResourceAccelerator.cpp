@@ -35,7 +35,7 @@ void create<ResourceAccelerator>(py::module& m) {
 
     .def_property_readonly("flags",
       static_cast<getter_t<int16_t>>(&ResourceAccelerator::flags),
-      "Describes keyboard accelerator characteristics. ")
+      "Describe the keyboard accelerator characteristics.")
 
     .def_property_readonly("ansi",
       static_cast<getter_t<int16_t>>(&ResourceAccelerator::ansi),

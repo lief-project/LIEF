@@ -52,6 +52,8 @@ class CoreFile;
 class GnuHash;
 class SysvHash;
 
+//! Class which implements a visitor to compute
+//! a **deterministic** hash for LIEF ELF objects
 class LIEF_API Hash : public LIEF::Hash {
   public:
   static size_t hash(const Object& obj);
@@ -61,37 +63,37 @@ class LIEF_API Hash : public LIEF::Hash {
   using LIEF::Hash::visit;
 
   public:
-  virtual void visit(const Binary& binary)                  override;
-  virtual void visit(const Header& header)                  override;
-  virtual void visit(const Section& section)                override;
-  virtual void visit(const Segment& segment)                override;
-  virtual void visit(const DynamicEntry& entry)             override;
-  virtual void visit(const DynamicEntryArray& entry)        override;
-  virtual void visit(const DynamicEntryLibrary& entry)      override;
-  virtual void visit(const DynamicEntryRpath& entry)        override;
-  virtual void visit(const DynamicEntryRunPath& entry)      override;
-  virtual void visit(const DynamicSharedObject& entry)      override;
-  virtual void visit(const DynamicEntryFlags& entry)        override;
-  virtual void visit(const Symbol& symbol)                  override;
-  virtual void visit(const Relocation& relocation)          override;
-  virtual void visit(const SymbolVersion& sv)               override;
-  virtual void visit(const SymbolVersionAux& sv)            override;
-  virtual void visit(const SymbolVersionAuxRequirement& sv) override;
-  virtual void visit(const SymbolVersionRequirement& svr)   override;
-  virtual void visit(const SymbolVersionDefinition& svd)    override;
-  virtual void visit(const Note& note)                      override;
-  virtual void visit(const NoteDetails& details)            override;
-  virtual void visit(const AndroidNote& note)               override;
-  virtual void visit(const NoteAbi& note)                   override;
-  virtual void visit(const CorePrPsInfo& pinfo)             override;
-  virtual void visit(const CorePrStatus& pstatus)           override;
-  virtual void visit(const CoreAuxv& auxv)                  override;
-  virtual void visit(const CoreSigInfo& siginfo)            override;
-  virtual void visit(const CoreFile& file)                  override;
-  virtual void visit(const GnuHash& gnuhash)                override;
-  virtual void visit(const SysvHash& sysvhash)              override;
+  void visit(const Binary& binary)                  override;
+  void visit(const Header& header)                  override;
+  void visit(const Section& section)                override;
+  void visit(const Segment& segment)                override;
+  void visit(const DynamicEntry& entry)             override;
+  void visit(const DynamicEntryArray& entry)        override;
+  void visit(const DynamicEntryLibrary& entry)      override;
+  void visit(const DynamicEntryRpath& entry)        override;
+  void visit(const DynamicEntryRunPath& entry)      override;
+  void visit(const DynamicSharedObject& entry)      override;
+  void visit(const DynamicEntryFlags& entry)        override;
+  void visit(const Symbol& symbol)                  override;
+  void visit(const Relocation& relocation)          override;
+  void visit(const SymbolVersion& sv)               override;
+  void visit(const SymbolVersionAux& sv)            override;
+  void visit(const SymbolVersionAuxRequirement& sv) override;
+  void visit(const SymbolVersionRequirement& svr)   override;
+  void visit(const SymbolVersionDefinition& svd)    override;
+  void visit(const Note& note)                      override;
+  void visit(const NoteDetails& details)            override;
+  void visit(const AndroidNote& note)               override;
+  void visit(const NoteAbi& note)                   override;
+  void visit(const CorePrPsInfo& pinfo)             override;
+  void visit(const CorePrStatus& pstatus)           override;
+  void visit(const CoreAuxv& auxv)                  override;
+  void visit(const CoreSigInfo& siginfo)            override;
+  void visit(const CoreFile& file)                  override;
+  void visit(const GnuHash& gnuhash)                override;
+  void visit(const SysvHash& sysvhash)              override;
 
-  virtual ~Hash();
+  ~Hash() override;
 };
 
 }

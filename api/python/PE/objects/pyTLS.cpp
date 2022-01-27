@@ -36,60 +36,78 @@ using no_const_getter = T (TLS::*)(void);
 
 template<>
 void create<TLS>(py::module& m) {
-  py::class_<TLS, LIEF::Object>(m, "TLS")
+  py::class_<TLS, LIEF::Object>(m, "TLS",
+      R"delim(
+      Class which represents the PE Thread Local Storage.
+      This PE structure is also used to implement binary/library constructors.
+      )delim")
     .def(py::init<>(),
         "Default constructor")
 
     .def_property("callbacks",
         static_cast<getter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
         static_cast<setter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
-        "List of the callbacks called before any other functions")
+        R"delim(
+        List of the callback associated with the current TLS.
+
+        These functions are called before any other functions of the PE binary.
+        )delim")
 
     .def_property("addressof_index",
         static_cast<getter_t<uint64_t>>(&TLS::addressof_index),
         static_cast<setter_t<uint64_t>>(&TLS::addressof_index),
-        "The location to receive the TLS index, which the "
-        "loader assigns. This location is in an ordinary data "
-        "section, so it can be given a symbolic name that is "
-        "accessible to the program.")
+        R"delim(
+        The location to receive the TLS index, which the loader assigns.
+        This location is in an ordinary data section, so it can be given a symbolic name that is accessible
+        to the program.
+        )delim")
 
     .def_property("addressof_callbacks",
         static_cast<getter_t<uint64_t>>(&TLS::addressof_callbacks),
         static_cast<setter_t<uint64_t>>(&TLS::addressof_callbacks),
-        "The pointer to an array of TLS callback functions. "
-        "The array is null-terminated, so if no callback "
-        "function is supported, this field points to 4 bytes set "
-        "to zero")
+        R"delim(
+        The pointer to an array of TLS callback functions.
+
+        The array is null-terminated, so if no callback function
+        is supported, this field points to 4 bytes set to zero.
+
+        See: :attr:`~lief.PE.TLS.callbacks`
+        )delim")
 
     .def_property("sizeof_zero_fill",
         static_cast<getter_t<uint32_t>>(&TLS::sizeof_zero_fill),
         static_cast<setter_t<uint32_t>>(&TLS::sizeof_zero_fill),
-        "The size in bytes of the template, beyond the "
-        "initialized data delimited by the :attr:`lief.PE.TLS.addressof_raw_data` "
-        "fields. The total template "
-        "size should be the same as the total size of TLS "
-        "data in the image file. The zero fill is the amount of "
-        "data that comes after the initialized nonzero data.")
+        R"delim(
+        The size in bytes of the template, beyond the initialized data delimited by
+        the :attr:`~lief.PE.TLS.addressof_raw_data` fields.
+        The total template size should be the same as the total size of TLS data in the image file.
+        The zero fill is the amount of data that comes after the initialized nonzero data.
+        )delim")
+
 
     .def_property("characteristics",
         static_cast<getter_t<uint32_t>>(&TLS::characteristics),
         static_cast<setter_t<uint32_t>>(&TLS::characteristics),
-        "The four bits [23:20] describe alignment info. "
-        "Possible values are those defined as "
-        "IMAGE_SCN_ALIGN_*, which are also used to "
-        "describe alignment of section in object files. The "
-        "other 28 bits are reserved for future use.")
+        R"delim(
+        The four bits [23:20] describe alignment info.
+        Possible values are those defined as IMAGE_SCN_ALIGN_*, which are also used to
+        describe alignment of section in object files. The other 28 bits are reserved for future use.
+        )delim")
 
     .def_property("addressof_raw_data",
         static_cast<getter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
         static_cast<setter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
-        "Tuple ``(start address, end address)`` of the TLS template. The "
-        "template is a block of data that is used to initialize "
-        "TLS data. The system copies all of this data each "
-        "time a thread is created, so it must not be "
-        "corrupted. Note that these addresses are not RVA; it is "
-        "addresses for which there should be a base "
-        "relocation in the .reloc section. ")
+        R"delim(
+        Tuple ``(start address, end address)`` of the TLS template.
+        The template is a block of data that is used to initialize TLS data.
+        The system copies all of this data each time a thread is created, so it must not be
+        corrupted.
+
+        .. note::
+
+          These addresses are not RVA. It is addresses for which there should be a base
+          relocation in the ``.reloc`` section.
+        )delim")
 
     .def_property("data_template",
         static_cast<getter_t<const std::vector<uint8_t>&>>(&TLS::data_template),

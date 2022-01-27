@@ -26,22 +26,28 @@
 
 namespace LIEF {
 namespace MachO {
-struct dylinker_command;
 
+namespace details {
+struct dylinker_command;
+}
+
+//! Class that represents the Mach-O linker, also named loader
+//! Most of the time, DylinkerCommand::name() returns ``/usr/lib/dyld``
 class LIEF_API DylinkerCommand : public LoadCommand {
   public:
   DylinkerCommand();
-  DylinkerCommand(const dylinker_command *cmd);
+  DylinkerCommand(const details::dylinker_command& cmd);
 
   DylinkerCommand& operator=(const DylinkerCommand& copy);
   DylinkerCommand(const DylinkerCommand& copy);
 
-  virtual DylinkerCommand* clone() const override;
+  DylinkerCommand* clone() const override;
 
   virtual ~DylinkerCommand();
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
+  //! Path to the linker (or loader)
   const std::string& name() const;
 
   void name(const std::string& name);
@@ -49,8 +55,7 @@ class LIEF_API DylinkerCommand : public LoadCommand {
   bool operator==(const DylinkerCommand& rhs) const;
   bool operator!=(const DylinkerCommand& rhs) const;
 
-  virtual void accept(Visitor& visitor) const override;
-
+  void accept(Visitor& visitor) const override;
 
   private:
   std::string name_;

@@ -102,7 +102,7 @@ Offset and size of the bytecode are given in :attr:`lief.MachO.DyldInfo.rebase` 
   One can notice that :class:`~lief.MachO.Section` object has a :attr:`~lief.MachO.Section.relocation_offset` attribute. Actually, it seems to be only
   used for Mach-O object files (:attr:`lief.MachO.FILE_TYPES.OBJECT`) or with an executable that uses an old version of the Mach-O loader.
 
-  This offset points to a list of relocation structures (not bytecode) whose number is defined by :attr:`~lief.MachO.Section.numberof_relocations`.
+  This offset points to a list of relocation structures (not bytecode) for which the number is defined by :attr:`~lief.MachO.Section.numberof_relocations`.
 
 
 To know which addresses need to be relocated, we have to interpret the bytecode.

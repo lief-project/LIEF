@@ -36,7 +36,8 @@ using setter_t = void (VersionMin::*)(T);
 template<>
 void create<VersionMin>(py::module& m) {
 
-  py::class_<VersionMin, LoadCommand>(m, "VersionMin")
+  py::class_<VersionMin, LoadCommand>(m, "VersionMin",
+      "Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ... commands")
 
     .def_property("version",
         static_cast<getter_t<const VersionMin::version_t&>>(&VersionMin::version),

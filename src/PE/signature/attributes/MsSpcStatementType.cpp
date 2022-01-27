@@ -39,7 +39,7 @@ void MsSpcStatementType::accept(Visitor& visitor) const {
 }
 
 std::string MsSpcStatementType::print() const {
-  return this->oid() + " (" + oid_to_string(this->oid()) + ")";
+  return oid() + " (" + oid_to_string(oid()) + ")";
 }
 
 

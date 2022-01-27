@@ -29,53 +29,53 @@ template <typename ELF_T>
 void CorePrPsInfo::parse_() {
   using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
 
-  const Note::description_t& description = this->description();
+  const Note::description_t& desc = description();
 
-  if (description.size() < sizeof(Elf_Prpsinfo)) {
+  if (desc.size() < sizeof(Elf_Prpsinfo)) {
     return;
   }
 
-  const Elf_Prpsinfo* info = reinterpret_cast<const Elf_Prpsinfo*>(description.data());
+  const Elf_Prpsinfo* info = reinterpret_cast<const Elf_Prpsinfo*>(desc.data());
 
   // parse info structure
-  this->file_name_ = info->pr_fname;
-  this->flags_     = info->pr_flag;
-  this->uid_       = info->pr_uid;
-  this->gid_       = info->pr_gid;
-  this->pid_       = info->pr_pid;
-  this->ppid_      = info->pr_ppid;
-  this->pgrp_      = info->pr_pgrp;
-  this->sid_       = info->pr_sid;
+  file_name_ = info->pr_fname;
+  flags_     = info->pr_flag;
+  uid_       = info->pr_uid;
+  gid_       = info->pr_gid;
+  pid_       = info->pr_pid;
+  ppid_      = info->pr_ppid;
+  pgrp_      = info->pr_pgrp;
+  sid_       = info->pr_sid;
 }
 
 template <typename ELF_T>
 void CorePrPsInfo::build_() {
   using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
-  Note::description_t& description = this->description();
+  Note::description_t& desc = description();
   constexpr size_t desc_size = sizeof(Elf_Prpsinfo);
-  if (description.size() < desc_size) {
-    description.resize(desc_size);
+  if (desc.size() < desc_size) {
+    desc.resize(desc_size);
   }
 
-  Elf_Prpsinfo* info = reinterpret_cast<Elf_Prpsinfo*>(description.data());
+  auto* info = reinterpret_cast<Elf_Prpsinfo*>(desc.data());
   // update info structure
   const size_t fname_size = sizeof(info->pr_fname) - 1;
 
-  std::string fname = this->file_name_;
+  std::string fname = file_name_;
   fname.resize(fname_size, 0);
 
   std::move(
-      std::begin(this->file_name_),
-      std::end(this->file_name_),
+      std::begin(file_name_),
+      std::end(file_name_),
       info->pr_fname);
 
-  info->pr_flag = this->flags_;
-  info->pr_uid  = this->uid_;
-  info->pr_gid  = this->gid_;
-  info->pr_pid  = this->pid_;
-  info->pr_ppid = this->ppid_;
-  info->pr_pgrp = this->pgrp_;
-  info->pr_sid  = this->sid_;
+  info->pr_flag = flags_;
+  info->pr_uid  = uid_;
+  info->pr_gid  = gid_;
+  info->pr_pid  = pid_;
+  info->pr_ppid = ppid_;
+  info->pr_pgrp = pgrp_;
+  info->pr_sid  = sid_;
 }
 
 } // namespace ELF

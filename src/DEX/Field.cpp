@@ -6,6 +6,7 @@
 #include "LIEF/DEX/EnumToString.hpp"
 
 #include <numeric>
+#include <utility>
 
 
 namespace LIEF {
@@ -16,26 +17,25 @@ Field& Field::operator=(const Field&) = default;
 
 Field::Field() = default;
 
-Field::Field(const std::string& name, Class* parent) :
-  name_{name},
+Field::Field(std::string name, Class* parent) :
+  name_{std::move(name)},
   parent_{parent},
-  access_flags_{ACCESS_FLAGS::ACC_UNKNOWN},
-  original_index_{-1u}
+  access_flags_{ACCESS_FLAGS::ACC_UNKNOWN}
 {}
 
 const std::string& Field::name() const {
-  return this->name_;
+  return name_;
 }
 
 bool Field::has_class() const {
-  return this->parent_ != nullptr;
+  return parent_ != nullptr;
 }
 
 const Class& Field::cls() const {
-  if (not this->has_class()) {
-    throw not_found("Can't find class associated with " + this->name());
+  if (!has_class()) {
+    throw not_found("Can't find class associated with " + name());
   }
-  return *this->parent_;
+  return *parent_;
 }
 
 Class& Field::cls() {
@@ -43,20 +43,20 @@ Class& Field::cls() {
 }
 
 size_t Field::index() const {
-  return this->original_index_;
+  return original_index_;
 }
 
 bool Field::is_static() const {
-    return this->is_static_;
+    return is_static_;
 }
 
 void Field::set_static(bool v) {
-    this->is_static_ = v;
+    is_static_ = v;
 }
 
 
 bool Field::has(ACCESS_FLAGS f) const {
-  return (this->access_flags_ & f);
+  return (access_flags_ & f) != 0u;
 }
 
 Field::access_flags_list_t Field::access_flags() const {
@@ -65,15 +65,15 @@ Field::access_flags_list_t Field::access_flags() const {
   std::copy_if(
       std::begin(access_flags_list), std::end(access_flags_list),
       std::back_inserter(flags),
-      std::bind(static_cast<bool (Field::*)(ACCESS_FLAGS) const>(&Field::has), this, std::placeholders::_1));
+      [this] (ACCESS_FLAGS f) { return has(f); });
 
   return flags;
 
 }
 
 const Type& Field::type() const {
-  CHECK(this->type_ != nullptr, "Type is null!");
-  return *this->type_;
+  CHECK(type_ != nullptr, "Type is null!");
+  return *type_;
 }
 
 Type& Field::type() {
@@ -91,12 +91,12 @@ bool Field::operator==(const Field& rhs) const {
 }
 
 bool Field::operator!=(const Field& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Field& field) {
   std::string pretty_cls_name = field.cls().fullname();
-  if (not pretty_cls_name.empty()) {
+  if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
     std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/', '.');
   }
@@ -112,7 +112,7 @@ std::ostream& operator<<(std::ostream& os, const Field& field) {
         return l.empty() ? str : l + " " + str;
       });
 
-  if (not flags_str.empty()) {
+  if (!flags_str.empty()) {
     os << flags_str << " ";
   }
   os << field.type()

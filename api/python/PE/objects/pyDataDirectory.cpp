@@ -33,7 +33,10 @@ using setter_t = void (DataDirectory::*)(T);
 
 template<>
 void create<DataDirectory>(py::module& m) {
-  py::class_<DataDirectory, LIEF::Object>(m, "DataDirectory")
+  py::class_<DataDirectory, LIEF::Object>(m, "DataDirectory",
+      R"delim(
+      Class that represents a PE data directory entry
+      )delim")
     .def(py::init<>())
     .def_property("rva",
         static_cast<getter_t<uint32_t>>(&DataDirectory::RVA),

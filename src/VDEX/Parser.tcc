@@ -23,11 +23,11 @@ namespace VDEX {
 template<typename VDEX_T>
 void Parser::parse_file() {
 
-  this->parse_header<VDEX_T>();
-  this->parse_checksums<VDEX_T>();
-  this->parse_dex_files<VDEX_T>();
-  this->parse_verifier_deps<VDEX_T>();
-  this->parse_quickening_info<VDEX_T>();
+  parse_header<VDEX_T>();
+  parse_checksums<VDEX_T>();
+  parse_dex_files<VDEX_T>();
+  parse_verifier_deps<VDEX_T>();
+  parse_quickening_info<VDEX_T>();
 
 }
 
@@ -35,8 +35,8 @@ void Parser::parse_file() {
 template<typename VDEX_T>
 void Parser::parse_header() {
   using vdex_header = typename VDEX_T::vdex_header;
-  const vdex_header& hdr = this->stream_->peek<vdex_header>(0);
-  this->file_->header_ = &hdr;
+  const vdex_header& hdr = stream_->peek<vdex_header>(0);
+  file_->header_ = &hdr;
 }
 
 
@@ -48,7 +48,7 @@ void Parser::parse_checksums() {
 template<typename VDEX_T>
 void Parser::parse_dex_files() {
   using vdex_header = typename VDEX_T::vdex_header;
-  size_t nb_dex_files = this->file_->header().nb_dex_files();
+  size_t nb_dex_files = file_->header().nb_dex_files();
 
   uint64_t current_offset = sizeof(vdex_header) + nb_dex_files * sizeof(checksum_t);
   current_offset = align(current_offset, sizeof(uint32_t));
@@ -60,8 +60,8 @@ void Parser::parse_dex_files() {
     }
     name += ".dex";
 
-    const DEX::header& dex_hdr = this->stream_->peek<DEX::header>(current_offset);
-    const uint8_t* data = this->stream_->peek_array<uint8_t>(current_offset, dex_hdr.file_size, /* check */false);
+    const DEX::header& dex_hdr = stream_->peek<DEX::header>(current_offset);
+    const uint8_t* data = stream_->peek_array<uint8_t>(current_offset, dex_hdr.file_size, /* check */false);
     if (data == nullptr) {
       LIEF_WARN("File #{:d} is corrupted!", i);
       continue;
@@ -72,7 +72,7 @@ void Parser::parse_dex_files() {
     if (DEX::is_dex(data_v)) {
       std::unique_ptr<DEX::File> dexfile{DEX::Parser::parse(std::move(data_v), name)};
       dexfile->name(name);
-      this->file_->dex_files_.push_back(dexfile.release());
+      file_->dex_files_.push_back(dexfile.release());
     } else {
       LIEF_WARN("File #{:d} is not a dex file!", i);
     }
@@ -86,13 +86,13 @@ template<typename VDEX_T>
 void Parser::parse_verifier_deps() {
   using vdex_header = typename VDEX_T::vdex_header;
 
-  uint64_t deps_offset = align(sizeof(vdex_header) + this->file_->header().dex_size(), sizeof(uint32_t));
+  uint64_t deps_offset = align(sizeof(vdex_header) + file_->header().dex_size(), sizeof(uint32_t));
 
   LIEF_DEBUG("Parsing Verifier deps at 0x{:x}", deps_offset);
 
   // 1. String table
   // ===============
-  //val = this->stream_->read_uleb128(deps_offset);
+  //val = stream_->read_uleb128(deps_offset);
   //deps_offset += val.second;
 }
 
@@ -103,21 +103,21 @@ void Parser::parse_quickening_info<VDEX6>() {
   using vdex_header = typename VDEX6::vdex_header;
 
   uint64_t quickening_offset = sizeof(vdex_header);
-  quickening_offset += this->file_->header().dex_size();
-  quickening_offset += this->file_->header().nb_dex_files() * sizeof(checksum_t);
-  quickening_offset += this->file_->header().verifier_deps_size();
+  quickening_offset += file_->header().dex_size();
+  quickening_offset += file_->header().nb_dex_files() * sizeof(checksum_t);
+  quickening_offset += file_->header().verifier_deps_size();
   quickening_offset = align(quickening_offset, sizeof(uint32_t));
 
   LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_offset);
 
-  if (this->file_->header().quickening_info_size() == 0) {
+  if (file_->header().quickening_info_size() == 0) {
     LIEF_DEBUG("No quickening info");
     return;
   }
 
-  this->stream_->setpos(quickening_offset);
+  stream_->setpos(quickening_offset);
 
-  for (DEX::File& dex_file : this->file_->dex_files()) {
+  for (DEX::File& dex_file : file_->dex_files()) {
     for (size_t i = 0; i < dex_file.header().nb_classes(); ++i) {
       DEX::Class& cls = dex_file.get_class(i);
       for (DEX::Method& method : cls.methods()) {
@@ -126,22 +126,22 @@ void Parser::parse_quickening_info<VDEX6>() {
           continue;
         }
 
-        uint32_t quickening_size = this->stream_->read<uint32_t>();
-        const size_t start_offset = this->stream_->pos();
+        uint32_t quickening_size = stream_->read<uint32_t>();
+        const size_t start_offset = stream_->pos();
         if (quickening_size == 0) {
           continue;
         }
 
-        while (this->stream_->pos() < (start_offset + quickening_size)) {
-          if (not this->stream_->can_read<uint8_t>()) {
+        while (stream_->pos() < (start_offset + quickening_size)) {
+          if (!stream_->can_read<uint8_t>()) {
             break;
           }
-          uint32_t pc    = static_cast<int32_t>(this->stream_->read_uleb128());
+          uint32_t pc    = static_cast<int32_t>(stream_->read_uleb128());
 
-          if (not this->stream_->can_read<uint8_t>()) {
+          if (!stream_->can_read<uint8_t>()) {
             break;
           }
-          uint16_t index = static_cast<uint16_t>(this->stream_->read_uleb128());
+          uint16_t index = static_cast<uint16_t>(stream_->read_uleb128());
           method.insert_dex2dex_info(pc, index);
         }
       }
@@ -199,13 +199,13 @@ template<>
 void Parser::parse_quickening_info<VDEX10>() {
   using vdex_header = typename VDEX10::vdex_header;
 
-  const uint64_t quickening_size = this->file_->header().quickening_info_size();
-  const size_t nb_dex_files = this->file_->header().nb_dex_files();
+  const uint64_t quickening_size = file_->header().quickening_info_size();
+  const size_t nb_dex_files = file_->header().nb_dex_files();
 
   uint64_t quickening_base = sizeof(vdex_header);
-  quickening_base += this->file_->header().dex_size();
-  quickening_base += this->file_->header().nb_dex_files() * sizeof(checksum_t);
-  quickening_base += this->file_->header().verifier_deps_size();
+  quickening_base += file_->header().dex_size();
+  quickening_base += file_->header().nb_dex_files() * sizeof(checksum_t);
+  quickening_base += file_->header().verifier_deps_size();
   quickening_base = align(quickening_base, sizeof(uint32_t));
 
   LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_base);
@@ -219,21 +219,21 @@ void Parser::parse_quickening_info<VDEX10>() {
   // Offset of the "Dex Indexes" array
   uint64_t dex_file_indices_off = quickening_base + quickening_size - nb_dex_files * sizeof(uint32_t);
 
-  if (nb_dex_files > this->file_->dex_files_.size()) {
+  if (nb_dex_files > file_->dex_files_.size()) {
     LIEF_WARN("Inconsistent number of dex files");
     return;
   }
 
   for (size_t i = 0; i < nb_dex_files; ++i) {
-    DEX::File* dex_file = this->file_->dex_files_[i];
+    DEX::File* dex_file = file_->dex_files_[i];
 
     // Code item offset of the first method
-    uint64_t current_code_item = quickening_base + this->stream_->peek<uint32_t>(dex_file_indices_off + i * sizeof(uint32_t));
+    uint64_t current_code_item = quickening_base + stream_->peek<uint32_t>(dex_file_indices_off + i * sizeof(uint32_t));
 
     // End
     uint64_t code_item_end = dex_file_indices_off;
     if (i < (nb_dex_files - 1)) {
-      code_item_end = quickening_base + this->stream_->peek<uint32_t>(dex_file_indices_off + (i + 1) * sizeof(uint32_t));
+      code_item_end = quickening_base + stream_->peek<uint32_t>(dex_file_indices_off + (i + 1) * sizeof(uint32_t));
     }
 
     size_t nb_code_item = (code_item_end - current_code_item) / (2 * sizeof(uint32_t)); // The array is compounded of
@@ -253,20 +253,20 @@ void Parser::parse_quickening_info<VDEX10>() {
     for (size_t j = 0; j < nb_code_item; ++j) {
 
       // code_item_offset on the diagram
-      uint32_t method_code_item_offset = this->stream_->peek<uint32_t>(current_code_item);
+      uint32_t method_code_item_offset = stream_->peek<uint32_t>(current_code_item);
 
       // Offset of the quickening data
-      uint64_t method_quickening_info_offset = quickening_base + this->stream_->peek<uint32_t>(current_code_item + sizeof(uint32_t));
+      uint64_t method_quickening_info_offset = quickening_base + stream_->peek<uint32_t>(current_code_item + sizeof(uint32_t));
 
       // Quickening size
-      uint64_t method_quickening_info_size = this->stream_->peek<uint32_t>(method_quickening_info_offset);
+      uint64_t method_quickening_info_size = stream_->peek<uint32_t>(method_quickening_info_offset);
 
       uint64_t quickening_offset_local = method_quickening_info_offset + sizeof(uint32_t); // + Quickening size entry
 
       const size_t nb_indices = method_quickening_info_size / sizeof(uint16_t); // index values are stored as uint16_t
 
       for (size_t quick_idx = 0; quick_idx < nb_indices; ++quick_idx) {
-        uint16_t index = this->stream_->peek<uint16_t>(quickening_offset_local + quick_idx * sizeof(uint16_t));
+        uint16_t index = stream_->peek<uint16_t>(quickening_offset_local + quick_idx * sizeof(uint16_t));
         quick_info[method_code_item_offset].push_back(index);
       }
       current_code_item += 2 * sizeof(uint32_t); // sizeof(code_item_offset) + sizeof(quickening_base)
@@ -275,7 +275,7 @@ void Parser::parse_quickening_info<VDEX10>() {
     // Resolve methods offset
     const std::vector<uint8_t>& raw = dex_file->raw(/* deoptimize */false);
     for (DEX::Method& method : dex_file->methods()) {
-      auto&& it_quick = quick_info.find(method.code_offset() - sizeof(DEX::code_item));
+      const auto it_quick = quick_info.find(method.code_offset() - sizeof(DEX::code_item));
       if (it_quick == std::end(quick_info)) {
         continue;
       }
@@ -289,7 +289,7 @@ void Parser::parse_quickening_info<VDEX10>() {
 
       const uint8_t* inst_ptr = inst_start;
 
-      while (nb_indexes > 0 and inst_ptr < inst_end) {
+      while (nb_indexes > 0 && inst_ptr < inst_end) {
         uint16_t dex_pc = (inst_ptr - inst_start) / sizeof(uint16_t);
         DEX::OPCODES opcode = static_cast<DEX::OPCODES>(*inst_ptr);
         uint16_t index_value = quickinfo[quickinfo.size() - nb_indexes];
@@ -348,7 +348,7 @@ void Parser::parse_quickening_info<VDEX10>() {
 
 template<class T>
 void Parser::parse_quickening_info() {
-  return this->parse_quickening_info<VDEX10>();
+  return parse_quickening_info<VDEX10>();
 }
 
 

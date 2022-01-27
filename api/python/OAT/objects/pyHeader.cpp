@@ -75,7 +75,7 @@ void create<Header>(py::module& m) {
         static_cast<getter_t<uint32_t>>(&Header::oat_dex_files_offset),
         "Offset to the raw " RST_CLASS_REF_FULL(lief.OAT.DexFile) "\n\n"
         ".. warning::\n\n"
-        "\tThis attribute is only relevant for OAT whose version is above 131")
+        "\tThis attribute is only relevant for OAT for which the version is above 131")
 
     .def_property_readonly("executable_offset",
         static_cast<getter_t<uint32_t>>(&Header::executable_offset))

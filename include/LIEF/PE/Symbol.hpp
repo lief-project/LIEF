@@ -24,7 +24,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Symbol.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -33,19 +33,24 @@ class Parser;
 class Builder;
 class Section;
 
+namespace details {
+struct pe_symbol;
+}
+
+//! Class that represents a PE symbol.
 class LIEF_API Symbol : public LIEF::Symbol {
 
   friend class Parser;
   friend class Builder;
 
   public:
-  Symbol(const pe_symbol* header);
+  Symbol(const details::pe_symbol& header);
 
   Symbol();
-  virtual ~Symbol();
+  ~Symbol() override;
 
   Symbol& operator=(Symbol other);
-  Symbol(const Symbol& copy);
+  Symbol(const Symbol& other);
   void swap(Symbol& other);
 
   int16_t              section_number() const;
@@ -61,7 +66,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! @brief ``True`` if symbols are located in a section
   bool has_section() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const Symbol& rhs) const;
   bool operator!=(const Symbol& rhs) const;

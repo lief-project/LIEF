@@ -27,19 +27,19 @@
 namespace LIEF {
 namespace PE {
 
-//! Modelization of [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
+//! Representation of [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
 //! Structure
 class LIEF_API ResourceFixedFileInfo : public Object {
 
   public:
   ResourceFixedFileInfo();
-  ResourceFixedFileInfo(const pe_resource_fixed_file_info* header);
+  ResourceFixedFileInfo(const details::pe_resource_fixed_file_info& header);
 
   ResourceFixedFileInfo(const ResourceFixedFileInfo&);
   ResourceFixedFileInfo& operator=(const ResourceFixedFileInfo&);
   virtual ~ResourceFixedFileInfo();
 
-  //! Contains the value ``0xFEEF04BD``
+  //! Must be set to ``0xFEEF04BD``
   uint32_t signature() const;
 
   //! The binary version number of this structure.
@@ -50,7 +50,8 @@ class LIEF_API ResourceFixedFileInfo : public Object {
 
   //! The **most** significant 32 bits of the file's binary version number.
   //!
-  //! This member is used with ResourceFixedFileInfo::file_version_LS to form a 64-bits value used for numeric comparisons.
+  //! This member is used with ResourceFixedFileInfo::file_version_LS to form a 64-bits
+  //! value used for numeric comparisons.
   uint32_t file_version_MS() const;
 
   //! The **least** significant 32 bits of the file's binary version number.
@@ -106,7 +107,7 @@ class LIEF_API ResourceFixedFileInfo : public Object {
   void file_date_MS(uint32_t file_date_MS);
   void file_date_LS(uint32_t file_date_LS);
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceFixedFileInfo& rhs) const;
   bool operator!=(const ResourceFixedFileInfo& rhs) const;

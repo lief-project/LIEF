@@ -26,24 +26,24 @@ template<>
 void create<Parser>(py::module& m) {
 
     m.def("parse",
-    static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
-    "Parse the given binary and return a " RST_CLASS_REF(lief.PE.Binary) " object",
-    py::arg("filename"),
-    py::return_value_policy::take_ownership);
+      static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
+      "Parse the PE binary from the given **file path** and return a " RST_CLASS_REF(lief.PE.Binary) " object",
+      "filename"_a,
+      py::return_value_policy::take_ownership);
 
     m.def("parse",
-    static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
-    "Parse the given binary and return a " RST_CLASS_REF(lief.PE.Binary) " object",
-    py::arg("raw"), py::arg("name") = "",
-    py::return_value_policy::take_ownership);
+      static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+      "Parse the PE binary from the given **list of bytes** and return a :class:`lief.PE.Binary` object",
+      "raw"_a, "name"_a = "",
+      py::return_value_policy::take_ownership);
 
 
     m.def("parse",
       [] (py::object byteio, const std::string& name) {
-        auto&& io = py::module::import("io");
-        auto&& RawIOBase = io.attr("RawIOBase");
-        auto&& BufferedIOBase = io.attr("BufferedIOBase");
-        auto&& TextIOBase = io.attr("TextIOBase");
+        const auto& io = py::module::import("io");
+        const auto& RawIOBase = io.attr("RawIOBase");
+        const auto& BufferedIOBase = io.attr("BufferedIOBase");
+        const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
 
@@ -71,8 +71,8 @@ void create<Parser>(py::module& m) {
 
         return LIEF::PE::Parser::parse(std::move(raw), name);
       },
-      "io"_a,
-      "name"_a = "",
+      "Parse the PE binary from the given Python IO interface and return a :class:`lief.PE.Binary` object",
+      "io"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 }
 

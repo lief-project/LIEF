@@ -24,20 +24,30 @@
 
 namespace LIEF {
 namespace MachO {
+
+namespace details {
 struct entry_point_command;
+}
+
+//! Class that represent the LC_MAIN command. This kind
+//! of command can be used to determine the entrypoint of an executable
 class LIEF_API MainCommand : public LoadCommand {
   public:
   MainCommand();
-  MainCommand(const entry_point_command *cmd);
+  MainCommand(const details::entry_point_command& cmd);
 
   MainCommand& operator=(const MainCommand& copy);
   MainCommand(const MainCommand& copy);
 
-  virtual MainCommand* clone() const override;
+  MainCommand* clone() const override;
 
   virtual ~MainCommand();
 
+  //! Offset of the *main* function relative to the ``__TEXT``
+  //! segment
   uint64_t entrypoint() const;
+
+  //! The initial stack size (if not 0)
   uint64_t stack_size() const;
 
   void entrypoint(uint64_t entrypoint);
@@ -46,13 +56,13 @@ class LIEF_API MainCommand : public LoadCommand {
   bool operator==(const MainCommand& rhs) const;
   bool operator!=(const MainCommand& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   private:
-  uint64_t entrypoint_;
-  uint64_t stackSize_;
+  uint64_t entrypoint_ = 0;
+  uint64_t stack_size_ = 0;
 };
 
 }

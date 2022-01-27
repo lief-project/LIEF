@@ -31,11 +31,10 @@ namespace PE {
 
 class ResourcesManager;
 
-//! It's basically a map of key/value
+//! Class which represents the childs of the ResourceStringFileInfo
 //!
-//! @see LIEF::PE::ResourceStringFileInfo
-//!
-//! see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
+//! @see: LIEF::PE::ResourceStringFileInfo
+//! @see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
 class LIEF_API LangCodeItem : public Object {
 
   friend class ResourcesManager;
@@ -83,8 +82,7 @@ class LIEF_API LangCodeItem : public Object {
 
   void items(const items_t& items);
 
-
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LangCodeItem& rhs) const;
   bool operator!=(const LangCodeItem& rhs) const;

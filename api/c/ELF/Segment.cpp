@@ -27,7 +27,7 @@ void init_c_segments(Elf_Binary_t* c_binary, Binary* binary) {
     Segment& segment = segments[i];
 
     const std::vector<uint8_t>& segment_content = segment.content();
-    uint8_t* content = static_cast<uint8_t*>(malloc(segment_content.size() * sizeof(uint8_t)));
+    auto* content = static_cast<uint8_t*>(malloc(segment_content.size() * sizeof(uint8_t)));
     std::copy(
         std::begin(segment_content),
         std::end(segment_content),

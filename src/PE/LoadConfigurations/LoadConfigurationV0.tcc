@@ -18,10 +18,10 @@ namespace LIEF {
 namespace PE {
 
 template<class T>
-LoadConfigurationV0::LoadConfigurationV0(const load_configuration_v0<T>* header) :
-  LoadConfiguration{reinterpret_cast<const load_configuration<T>*>(header)},
-  se_handler_table_{header->SEHandlerTable},
-  se_handler_count_{header->SEHandlerCount}
+LoadConfigurationV0::LoadConfigurationV0(const details::load_configuration_v0<T>& header) :
+  LoadConfiguration{reinterpret_cast<const details::load_configuration<T>&>(header)},
+  se_handler_table_{header.SEHandlerTable},
+  se_handler_count_{header.SEHandlerCount}
 {
 }
 

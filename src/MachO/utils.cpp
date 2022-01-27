@@ -40,7 +40,7 @@ namespace MachO {
 
 bool is_macho(const std::string& file) {
   std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
@@ -49,11 +49,11 @@ bool is_macho(const std::string& file) {
   binary.seekg(0, std::ios::beg);
   binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
 
-  return (magic == MACHO_TYPES::MH_MAGIC or
-          magic == MACHO_TYPES::MH_CIGAM or
-          magic == MACHO_TYPES::MH_MAGIC_64 or
-          magic == MACHO_TYPES::MH_CIGAM_64 or
-          magic == MACHO_TYPES::FAT_MAGIC or
+  return (magic == MACHO_TYPES::MH_MAGIC ||
+          magic == MACHO_TYPES::MH_CIGAM ||
+          magic == MACHO_TYPES::MH_MAGIC_64 ||
+          magic == MACHO_TYPES::MH_CIGAM_64 ||
+          magic == MACHO_TYPES::FAT_MAGIC ||
           magic == MACHO_TYPES::FAT_CIGAM);
 }
 
@@ -70,27 +70,23 @@ bool is_macho(const std::vector<uint8_t>& raw) {
     reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(uint32_t),
     reinterpret_cast<uint8_t*>(&magic));
 
-  if (magic == MACHO_TYPES::MH_MAGIC or
-      magic == MACHO_TYPES::MH_CIGAM or
-      magic == MACHO_TYPES::MH_MAGIC_64 or
-      magic == MACHO_TYPES::MH_CIGAM_64 or
-      magic == MACHO_TYPES::FAT_MAGIC or
-      magic == MACHO_TYPES::FAT_CIGAM)
-  {
-    return true;
-  }
-  return false;
+   return magic == MACHO_TYPES::MH_MAGIC    ||
+          magic == MACHO_TYPES::MH_CIGAM    ||
+          magic == MACHO_TYPES::MH_MAGIC_64 ||
+          magic == MACHO_TYPES::MH_CIGAM_64 ||
+          magic == MACHO_TYPES::FAT_MAGIC   ||
+          magic == MACHO_TYPES::FAT_CIGAM;
 }
 
 bool is_fat(const std::string& file) {
-  if (not is_macho(file)) {
+  if (!is_macho(file)) {
     LIEF_ERR("'{}' is not a MachO", file);
     return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
@@ -99,24 +95,19 @@ bool is_fat(const std::string& file) {
   binary.seekg(0, std::ios::beg);
   binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
 
-  if (magic == MACHO_TYPES::FAT_MAGIC or
-      magic == MACHO_TYPES::FAT_CIGAM)
-  {
-    return true;
-  }
-
-  return false;
+  return magic == MACHO_TYPES::FAT_MAGIC ||
+         magic == MACHO_TYPES::FAT_CIGAM;
 }
 
 bool is_64(const std::string& file) {
- if (not is_macho(file)) {
+ if (!is_macho(file)) {
     LIEF_ERR("'{}' is not a MachO", file);
     return false;
   }
 
   std::ifstream binary(file, std::ios::in | std::ios::binary);
 
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Unable to open the '{}'", file);
     return false;
   }
@@ -125,18 +116,15 @@ bool is_64(const std::string& file) {
   binary.seekg(0, std::ios::beg);
   binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
 
-  if (magic == MACHO_TYPES::MH_MAGIC_64 or
-      magic == MACHO_TYPES::MH_CIGAM_64 )
-  {
-    return true;
-  }
-  return false;
+  return magic == MACHO_TYPES::MH_MAGIC_64 ||
+         magic == MACHO_TYPES::MH_CIGAM_64;
+
 
 }
 
 
 bool check_layout(const Binary& binary, std::string* error) {
-  if (binary.has_dyld_info() and not binary.has_segment("__LINKEDIT")) {
+  if (binary.has_dyld_info() && !binary.has_segment("__LINKEDIT")) {
     if (error != nullptr) {
       *error = "No __LINKEDIT segment";
     }
@@ -151,7 +139,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   // Requirement #1: Dyld Info starts at the beginning of __LINKEDIT
   if (dyld_info.rebase().first != 0) {
     if (dyld_info.rebase().first != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dyld 'rebase' doesn't start at the begining of LINKEDIT";
       }
       return false;
@@ -160,7 +148,7 @@ bool check_layout(const Binary& binary, std::string* error) {
 
   else if (dyld_info.bind().first != 0) {
     if (dyld_info.bind().first != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dyld 'bind' doesn't start at the begining of LINKEDIT";
       }
       return false;
@@ -170,10 +158,10 @@ bool check_layout(const Binary& binary, std::string* error) {
   else if (dyld_info.export_info().first != 0) {
 
     if (    dyld_info.export_info().first != offset
-        and dyld_info.weak_bind().first   != 0
-        and dyld_info.lazy_bind().first   != 0) {
+        && dyld_info.weak_bind().first   != 0
+        && dyld_info.lazy_bind().first   != 0) {
 
-      if (error) {
+      if (error != nullptr) {
         *error = "Dyld 'export' doesn't start at the begining of LINKEDIT";
       }
       return false;
@@ -201,9 +189,9 @@ bool check_layout(const Binary& binary, std::string* error) {
     offset = dyld_info.rebase().first + dyld_info.rebase().second;
   }
 
-  if (not binary.has_dynamic_symbol_command()) {
-    if (error) {
-      *error = "Dynamic symbol command not found";
+  if (!binary.has_dynamic_symbol_command()) {
+    if (error != nullptr) {
+      *error = "Dynamic symbol command !found";
     }
     return false;
   }
@@ -214,19 +202,19 @@ bool check_layout(const Binary& binary, std::string* error) {
 
   if (dyst.nb_local_relocations() != 0) {
     if (dyst.local_relocation_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (local relocation offset) out of place";
       }
       return false;
     }
-    offset += dyst.nb_local_relocations() * sizeof(relocation_info);
+    offset += dyst.nb_local_relocations() * sizeof(details::relocation_info);
   }
 
   // Check consistency of Segment Split Info command
   if (binary.has_segment_split_info()) {
     const SegmentSplitInfo& spi = binary.segment_split_info();
-    if (spi.data_offset() != 0 and spi.data_offset() != offset) {
-      if (error) {
+    if (spi.data_offset() != 0 && spi.data_offset() != offset) {
+      if (error != nullptr) {
         *error = "Segment Split Info  out of place";
       }
       return false;
@@ -237,8 +225,8 @@ bool check_layout(const Binary& binary, std::string* error) {
   // Check consistency of Function starts
   if (binary.has_function_starts()) {
     const FunctionStarts& fs = binary.function_starts();
-    if (fs.data_offset() != 0 and fs.data_offset() != offset) {
-      if (error) {
+    if (fs.data_offset() != 0 && fs.data_offset() != offset) {
+      if (error != nullptr) {
         *error = "Function starts out of place";
       }
       return false;
@@ -251,7 +239,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (binary.has_data_in_code()) {
     const DataInCode& dic = binary.data_in_code();
     if (dic.data_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Data in Code out of place";
       }
       return false;
@@ -263,7 +251,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (binary.has_code_signature()) {
     const CodeSignature& cs = binary.code_signature();
     if (cs.data_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Code signature out of place";
       }
       return false;
@@ -275,9 +263,9 @@ bool check_layout(const Binary& binary, std::string* error) {
   //    TODO: Linker optimization hit
   // }
 
-  if (not binary.has_symbol_command()) {
-    if (error) {
-      *error = "Symbol command not found";
+  if (!binary.has_symbol_command()) {
+    if (error != nullptr) {
+      *error = "Symbol command !found";
     }
     return false;
   }
@@ -286,12 +274,12 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (st.numberof_symbols() != 0) {
     // Check offset
     if (st.symbol_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Symbol table out of place";
       }
       return false;
     }
-    offset += st.numberof_symbols() * (is64 ? sizeof(nlist_64) : sizeof(nlist_32));
+    offset += st.numberof_symbols() * (is64 ? sizeof(details::nlist_64) : sizeof(details::nlist_32));
   }
 
   size_t isym = 0;
@@ -299,7 +287,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (dyst.nb_local_symbols() != 0) {
     // Check index match
     if (isym != dyst.idx_local_symbol()) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_local_symbol) out of place";
       }
       return false;
@@ -311,7 +299,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (dyst.nb_external_define_symbols() != 0) {
     // Check index match
     if (isym != dyst.idx_external_define_symbol()) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_external_define_symbol) out of place";
       }
       return false;
@@ -322,7 +310,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   if (dyst.nb_undefined_symbols() != 0) {
     // Check index match
     if (isym != dyst.idx_undefined_symbol()) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_undefined_symbol) out of place";
       }
       return false;
@@ -337,19 +325,19 @@ bool check_layout(const Binary& binary, std::string* error) {
 
   if (dyst.nb_external_relocations() != 0) {
     if (dyst.external_relocation_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (external_relocation_offset) out of place";
       }
       return false;
     }
 
-    offset += dyst.nb_external_relocations() * sizeof(relocation_info);
+    offset += dyst.nb_external_relocations() * sizeof(details::relocation_info);
   }
 
 
   if (dyst.nb_indirect_symbols() != 0) {
     if (dyst.indirect_symbol_offset() != offset) {
-      if (error) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (indirect_symbol_offset) out of place";
       }
       return false;
@@ -360,36 +348,36 @@ bool check_layout(const Binary& binary, std::string* error) {
 
   uint64_t rounded_offset = offset;
   uint64_t input_indirectsym_pad = 0;
-  if (is64 and (dyst.nb_indirect_symbols() % 2) != 0) {
+  if (is64 && (dyst.nb_indirect_symbols() % 2) != 0) {
     const uint32_t align = offset % 8;
-    if (align) {
+    if (align != 0u) {
       rounded_offset = offset - align;
     }
   }
 
   if (dyst.toc_offset() != 0) {
-    if (dyst.toc_offset() != offset and dyst.toc_offset() != rounded_offset) {
-      if (error) {
+    if (dyst.toc_offset() != offset && dyst.toc_offset() != rounded_offset) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (toc_offset) out of place";
       }
       return false;
     }
     if (dyst.toc_offset() == offset) {
-      offset        += dyst.nb_toc() * sizeof(dylib_table_of_contents);
+      offset        += dyst.nb_toc() * sizeof(details::dylib_table_of_contents);
       rounded_offset = offset;
     }
     else if (dyst.toc_offset() == rounded_offset) {
       input_indirectsym_pad = rounded_offset - offset;
 
-      rounded_offset += dyst.nb_toc() * sizeof(dylib_table_of_contents);
+      rounded_offset += dyst.nb_toc() * sizeof(details::dylib_table_of_contents);
       offset          = rounded_offset;
     }
   }
 
 
   if (dyst.nb_module_table() != 0) {
-    if (dyst.module_table_offset() != offset and dyst.module_table_offset() != rounded_offset) {
-      if (error) {
+    if (dyst.module_table_offset() != offset && dyst.module_table_offset() != rounded_offset) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (module_table_offset) out of place";
       }
       return false;
@@ -397,44 +385,44 @@ bool check_layout(const Binary& binary, std::string* error) {
 
     if (is64) {
       if (dyst.module_table_offset() == offset) {
-        offset        += dyst.nb_module_table() * sizeof(dylib_module_64);
+        offset        += dyst.nb_module_table() * sizeof(details::dylib_module_64);
         rounded_offset = offset;
       }
       else if (dyst.module_table_offset() == rounded_offset) {
         input_indirectsym_pad = rounded_offset - offset;
-        rounded_offset += dyst.nb_module_table() * sizeof(dylib_module_64);
+        rounded_offset += dyst.nb_module_table() * sizeof(details::dylib_module_64);
         offset         = rounded_offset;
       }
     } else {
-      offset        += dyst.nb_module_table() * sizeof(dylib_module_32);
+      offset        += dyst.nb_module_table() * sizeof(details::dylib_module_32);
       rounded_offset = offset;
     }
   }
 
 
   if (dyst.nb_external_reference_symbols() != 0) {
-    if (dyst.external_reference_symbol_offset() != offset and dyst.external_reference_symbol_offset() != rounded_offset) {
-      if (error) {
+    if (dyst.external_reference_symbol_offset() != offset && dyst.external_reference_symbol_offset() != rounded_offset) {
+      if (error != nullptr) {
         *error = "Dynamic Symbol command (external_reference_symbol_offset) out of place";
       }
       return false;
     }
 
     if (dyst.external_reference_symbol_offset() == offset) {
-      offset        += dyst.nb_external_reference_symbols() * sizeof(dylib_reference);
+      offset        += dyst.nb_external_reference_symbols() * sizeof(details::dylib_reference);
       rounded_offset = offset;
     }
     else if (dyst.external_reference_symbol_offset() == rounded_offset) {
       input_indirectsym_pad = rounded_offset - offset;
-      rounded_offset += dyst.nb_external_reference_symbols() * sizeof(dylib_reference);
+      rounded_offset += dyst.nb_external_reference_symbols() * sizeof(details::dylib_reference);
       offset         = rounded_offset;
     }
   }
 
 
   if (st.strings_size() != 0) {
-    if (st.strings_offset() != offset and st.strings_offset() != rounded_offset) {
-      if (error) {
+    if (st.strings_offset() != offset && st.strings_offset() != rounded_offset) {
+      if (error != nullptr) {
         *error = "Symbol command (strings_offset) out of place";
       }
       return false;
@@ -457,8 +445,8 @@ bool check_layout(const Binary& binary, std::string* error) {
   // }
 
   const uint64_t object_size = linkedit.file_offset() + linkedit.file_size();
-  if (offset != object_size and rounded_offset != object_size) {
-    if (error) {
+  if (offset != object_size && rounded_offset != object_size) {
+    if (error != nullptr) {
       *error = "link edit info doesn't fill the __LINKEDIT segment";
     }
     return false;

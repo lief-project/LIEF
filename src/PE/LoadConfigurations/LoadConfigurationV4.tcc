@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
+#include "LIEF/PE/Structures.hpp"
 namespace LIEF {
 namespace PE {
 
-
 template<class T>
-LoadConfigurationV4::LoadConfigurationV4(const load_configuration_v4<T>* header) :
-  LoadConfigurationV3{reinterpret_cast<const load_configuration_v3<T>*>(header)},
-  dynamic_value_reloc_table_{header->DynamicValueRelocTable},
-  hybrid_metadata_pointer_{header->HybridMetadataPointer}
+LoadConfigurationV4::LoadConfigurationV4(const details::load_configuration_v4<T>& header) :
+  LoadConfigurationV3{reinterpret_cast<const details::load_configuration_v3<T>&>(header)},
+  dynamic_value_reloc_table_{header.DynamicValueRelocTable},
+  hybrid_metadata_pointer_{header.HybridMetadataPointer}
 {
 }
 

@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     std::cout << entry << std::endl;
   }
 
-  auto&& static_symbols = binary->static_symbols();
+  auto static_symbols = binary->static_symbols();
   if (static_symbols.size() > 0) {
     std::cout << "== Static symbols ==" << std::endl;
     for (const Symbol& symbol : static_symbols) {

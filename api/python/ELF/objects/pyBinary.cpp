@@ -40,9 +40,9 @@ template<>
 void create<Binary>(py::module& m) {
 
   // Binary object
-  py::class_<Binary, LIEF::Binary>(m, "Binary", "ELF binary representation")
-    .def(py::init<const std::string&, ELF_CLASS>())
-
+  py::class_<Binary, LIEF::Binary>(m, "Binary", R"delim(
+  Class which represents an ELF binary
+  )delim")
     .def_property_readonly("type",
         &Binary::type,
         "Return the binary's " RST_CLASS_REF(lief.ELF.ELF_CLASS) "")
@@ -54,12 +54,12 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("sections",
         static_cast<no_const_getter<it_sections>>(&Binary::sections),
-        "Return an iterator to binary's " RST_CLASS_REF(lief.ELF.Section) "",
+        "Return an iterator over binary's " RST_CLASS_REF(lief.ELF.Section) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("segments",
         static_cast<no_const_getter<it_segments>>(&Binary::segments),
-        "Return an interator to binary's " RST_CLASS_REF(lief.ELF.Segment) "",
+        "Return an iterator to binary's " RST_CLASS_REF(lief.ELF.Segment) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("dynamic_entries",
@@ -104,20 +104,37 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def("add_dynamic_relocation",
-        &Binary::add_dynamic_relocation,
+        &Binary::add_dynamic_relocation, R"delim(
+        Add a new *dynamic* relocation.
+
+        We consider a dynamic relocation as a relocation which is not plt-related.
+
+        See: :meth:`lief.ELF.Binary.add_pltgot_relocation`
+        )delim",
+        "relocation"_a,
         py::return_value_policy::reference)
 
     .def("add_pltgot_relocation",
-        &Binary::add_pltgot_relocation,
+        &Binary::add_pltgot_relocation, R"delim(
+        Add a .plt.got relocation. This kind of relocation is usually
+        associated with a PLT stub that aims at resolving the underlying symbol.
+
+        See: :meth:`lief.ELF.Binary.add_dynamic_relocation`
+        )delim",
+        "relocation"_a,
         py::return_value_policy::reference)
 
     .def("add_object_relocation",
         &Binary::add_object_relocation,
-        "Add relocation for object file (.o)\n\n"
-        "The first parameter is the section to add while the second parameter "
-        "is the " RST_CLASS_REF(lief.ELF.Section) " associated with the relocation.\n\n"
-        "If there is an error, this function return a nullptr. Otherwise, it returns "
-        "the relocation added.",
+        R"delim(
+        Add relocation for object file (.o)
+
+        The first parameter is the section to add while the second parameter
+        is the :class:`~lief.ELF.Section` associated with the relocation.
+
+        If there is an error, this function returns a nullptr. Otherwise, it returns
+        the relocation added.",
+        )delim",
         "relocation"_a, "section"_a,
         py::return_value_policy::reference)
 
@@ -133,7 +150,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("relocations",
         static_cast<no_const_getter<it_relocations>>(&Binary::relocations),
-        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) " s",
+        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) "",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("symbols_version",
@@ -158,7 +175,7 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("gnu_hash",
         &Binary::gnu_hash,
         "Return the " RST_CLASS_REF(lief.ELF.GnuHash) " object\n\n"
-        "Hash are used by the loader to speed up symbols resolving (GNU Version)",
+        "Hash are used by the loader to speed up symbols resolution (GNU Version)",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("use_sysv_hash",
@@ -168,7 +185,7 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("sysv_hash",
         &Binary::sysv_hash,
         "Return the " RST_CLASS_REF(lief.ELF.SysvHash) " object\n\n"
-        "Hash are used by the loader to speed up symbols resolving (SYSV version)",
+        "Hash are used by the loader to speed up symbols resolution (SYSV version)",
         py::return_value_policy::reference_internal)
 
    .def_property_readonly("imagebase",
@@ -177,80 +194,110 @@ void create<Binary>(py::module& m) {
 
    .def_property_readonly("virtual_size",
         &Binary::virtual_size,
-       "Return the binary's size when mapped in memory")
+       "Return the size of the mapped binary")
 
    .def_property_readonly("is_pie",
         &Binary::is_pie,
-       "``True`` if the binary is a ``pie`` one")
+        R"delim(
+        Check if the binary has been compiled with `-fpie -pie` flags
+
+        To do so we check if there is a `PT_INTERP` segment and if
+        the binary type is `ET_DYN` (Shared object)
+        )delim")
 
    .def_property_readonly("has_interpreter",
         &Binary::has_interpreter,
-       "``True`` if the binary uses a loader")
+       "Check if the binary uses a loader (also named linker or interpreter)")
 
    .def_property_readonly("functions",
         &Binary::functions,
-       "")
+       "List of the functions found the in the binary")
 
    .def_property("interpreter",
         static_cast<getter_t<const std::string&>>(&Binary::interpreter),
         static_cast<setter_t<const std::string&>>(&Binary::interpreter),
-       "ELF interprer (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)")
+       "ELF interpreter (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)")
 
     .def("section_from_offset",
         static_cast<Section&(Binary::*)(uint64_t, bool)>(&Binary::section_from_offset),
-        "Return binary's " RST_CLASS_REF(lief.ELF.Section) " which holds the offset",
-        "If ``skip_nobits`` is set (which is the case by default), this function won't "
-        "consider sections whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)",
+        R"delim(
+        Return the :class:`~lief.ELF.Section` which encompasses the given offset.
+
+        If ``skip_nobits`` is set (which is the case by default), this function won't
+        consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+        )delim",
         "offset"_a, "skip_nobits"_a = true,
         py::return_value_policy::reference)
 
     .def("section_from_virtual_address",
         static_cast<Section&(Binary::*)(uint64_t, bool)>(&Binary::section_from_virtual_address),
-        "Return binary's " RST_CLASS_REF(lief.ELF.Section) " which holds the given virtual address\n\n"
-        "If ``skip_nobits`` is set (which is the case by default), this function won't "
-        "consider sections whose type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)",
+        R"delim(
+        Return the :class:`~lief.ELF.Section` which encompasses the given virtual address.
+
+        If ``skip_nobits`` is set (which is the case by default), this function won't
+        consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+        )delim",
         "address"_a, "skip_nobits"_a = true,
         py::return_value_policy::reference)
 
     .def("segment_from_virtual_address",
         static_cast<no_const_func<Segment&, uint64_t>>(&Binary::segment_from_virtual_address),
-        "Return binary's " RST_CLASS_REF(lief.ELF.Segment) " which holds the address",
+        R"delim(
+        Return the :class:`~lief.ELF.Segment` which encompasses the given virtual address.
+        )delim",
         "address"_a,
         py::return_value_policy::reference)
 
     .def("segment_from_offset",
         static_cast<no_const_func<Segment&, uint64_t>>(&Binary::segment_from_offset),
-        "Return binary's " RST_CLASS_REF(lief.ELF.Segment) " which holds the offset",
+        R"delim(
+        Return the :class:`~lief.ELF.Segment` which encompasses the given offset.
+        )delim",
         "offset"_a,
         py::return_value_policy::reference)
 
     .def("get",
         static_cast<no_const_func<DynamicEntry&, DYNAMIC_TAGS>>(&Binary::get),
-        "Return first binary's " RST_CLASS_REF(lief.ELF.DynamicEntry) " given its " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) "",
+        R"delim(
+        Return the first binary's :class:`~lief.ELF.DynamicEntry` from the given
+        :class:`~lief.ELF.DYNAMIC_TAGS`
+        )delim",
         "tag"_a,
         py::return_value_policy::reference)
 
     .def("get",
         static_cast<no_const_func<Segment&, SEGMENT_TYPES>>(&Binary::get),
-        "Return **first** binary's " RST_CLASS_REF(lief.ELF.Segment) " given its " RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) "",
+        R"delim(
+        Return the first binary's :class:`~lief.ELF.Segment` from the given
+        :class:`~lief.ELF.SEGMENT_TYPES`
+        )delim",
         "type"_a,
         py::return_value_policy::reference)
 
     .def("get",
         static_cast<no_const_func<Note&, NOTE_TYPES>>(&Binary::get),
-        "Return **first** binary's " RST_CLASS_REF(lief.ELF.Note) " given its " RST_CLASS_REF(lief.ELF.NOTE_TYPES) "",
+        R"delim(
+        Return the first binary's :class:`~lief.ELF.Note` from the given
+        :class:`~lief.ELF.NOTE_TYPES`
+        )delim",
         "type"_a,
         py::return_value_policy::reference)
 
     .def("get",
         static_cast<no_const_func<Section&, ELF_SECTION_TYPES>>(&Binary::get),
-        "Return **first** binary's " RST_CLASS_REF(lief.ELF.Section) " given its " RST_CLASS_REF(lief.ELF.ELF_SECTION_TYPES) "",
+        R"delim(
+        Return the first binary's :class:`~lief.ELF.Section` from the given
+        :class:`~lief.ELF.ELF_SECTION_TYPES`
+        )delim",
         "type"_a,
         py::return_value_policy::reference)
 
     .def("has",
         static_cast<bool (Binary::*)(DYNAMIC_TAGS) const>(&Binary::has),
-        "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists",
+        R"delim(
+        Check if it exists a :class:`~lief.ELF.DynamicEntry` with the given
+        :class:`~lief.ELF.DYNAMIC_TAGS`
+        )delim",
         "tag"_a)
 
     .def("has",
@@ -280,18 +327,18 @@ void create<Binary>(py::module& m) {
 
     .def("has_section",
         &Binary::has_section,
-        "Check if a section with the given name exists in the binary",
+        "Check if a " RST_CLASS_REF(lief.ELF.Section) " with the given name exists in the binary",
         "section_name"_a)
 
     .def("has_section_with_offset",
         &Binary::has_section_with_offset,
-        "Check if a section that handle the given offset exists",
+        "Check if a " RST_CLASS_REF(lief.ELF.Section) " that encompasses the given offset exists",
         "offset"_a)
 
     .def("has_section_with_va",
         &Binary::has_section_with_va,
-        "Check if a section that handle the given virtual address exists",
-        "va"_a)
+        "Check if a " RST_CLASS_REF(lief.ELF.Section) " that encompasses the given virtual address exists",
+        "virtual_address"_a)
 
     .def("get_section",
         static_cast<no_const_func<Section&, const std::string&>>(&Binary::get_section),
@@ -307,25 +354,33 @@ void create<Binary>(py::module& m) {
 
     .def("add_dynamic_symbol",
         static_cast<Symbol& (Binary::*)(const Symbol&, const SymbolVersion*)>(&Binary::add_dynamic_symbol),
-        "Add a **dynamic** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary",
+        R"delim(
+        Add a **dynamic** :class:`~lief.ELF.Symbol` to the binary
+
+        The function also takes an optional :class:`lief.ELF.SymbolVersion`
+        )delim",
         "symbol"_a, "symbol_version"_a = nullptr,
         py::return_value_policy::reference)
 
     .def("virtual_address_to_offset",
         &Binary::virtual_address_to_offset,
-        "Convert the virtual address to an offset in the binary",
+        "Convert the virtual address to a file offset",
         "virtual_address"_a)
 
     .def("add",
         static_cast<Section& (Binary::*)(const Section&, bool)>(&Binary::add),
-        "Add the given " RST_CLASS_REF(lief.ELF.Section) " to the binary. \n\n"
-        "If the section should not be loaded in memory, ``loaded`` parameter have to be set to ``False`` (default: ``True``)",
+        R"delim(
+        Add the given :class:`~lief.ELF.Section` to the binary.
+
+        If the section does not aim at being loaded in memory,
+        the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
+        )delim",
         "section"_a, "loaded"_a = true,
         py::return_value_policy::reference)
 
     .def("add",
         static_cast<Segment& (Binary::*)(const Segment&, uint64_t)>(&Binary::add),
-        "Add a segment in the binary",
+        "Add a new " RST_CLASS_REF(lief.ELF.Segment) " in the binary"
         "segment"_a, "base"_a = 0,
         py::return_value_policy::reference)
 
@@ -337,8 +392,13 @@ void create<Binary>(py::module& m) {
 
     .def("replace",
         static_cast<Segment& (Binary::*)(const Segment&, const Segment&, uint64_t)>(&Binary::replace),
-        "Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment."
-        ".. warning:: The ``original_segment`` is no longer valid after this function\n\n",
+        R"delim(
+        Replace the :class:`~lief.ELF.Segment` given in 2nd parameter with the
+        :class:`~lief.ELF.Segment` given in the first parameter and return the updated segment.
+
+        .. warning::
+            The ``original_segment`` is no longer valid after this function
+        )delim",
         "new_segment"_a, "original_segment"_a, "base"_a = 0,
         py::return_value_policy::reference)
 
@@ -361,12 +421,12 @@ void create<Binary>(py::module& m) {
 
     .def("remove",
         static_cast<void (Binary::*)(DYNAMIC_TAGS)>(&Binary::remove),
-        "Remove **all** " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) "",
+        "Remove **all** the " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) "",
         "tag"_a)
 
     .def("remove",
         static_cast<void (Binary::*)(const Section&, bool)>(&Binary::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Section) ". ``clear`` specify whether or not "
+        "Remove the given " RST_CLASS_REF(lief.ELF.Section) ". The ``clear`` parameter specifies whether or not "
         "we must fill its content with ``0`` before removing",
         "section"_a, "clear"_a = false)
 
@@ -377,7 +437,7 @@ void create<Binary>(py::module& m) {
 
     .def("remove",
         static_cast<void (Binary::*)(NOTE_TYPES)>(&Binary::remove),
-        "Remove **all** " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) "",
+        "Remove **all** the " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) "",
         "type"_a)
 
     .def_property_readonly("has_notes",
@@ -386,7 +446,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("notes",
         static_cast<no_const_getter<it_notes>>(&Binary::notes),
-        "Return an iterator to " RST_CLASS_REF(lief.ELF.Note) " entries as a list",
+        "Return an iterator over the " RST_CLASS_REF(lief.ELF.Note) " entries",
         py::return_value_policy::reference_internal)
 
     .def("strip",
@@ -406,11 +466,11 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("last_offset_section",
         &Binary::last_offset_section,
-        "Return the last offset used in binary according to **section headers**")
+        "Return the last offset used in binary according to **sections table**")
 
     .def_property_readonly("last_offset_segment",
         &Binary::last_offset_segment,
-        "Return the last offset used in binary according to **segment headers**")
+        "Return the last offset used in binary according to **segments table**")
 
     .def_property_readonly("next_virtual_address",
         &Binary::next_virtual_address,
@@ -471,33 +531,30 @@ void create<Binary>(py::module& m) {
           return bin.strings();
         },
         "Return list of strings used in the current ELF file.\n"
-        "Basically we look for strings in the ``.roadata`` section",
+        "Basically this function looks for strings in the ``.roadata`` section",
         py::return_value_policy::move)
 
     .def("remove_static_symbol",
         static_cast<void(Binary::*)(Symbol* s)>(&Binary::remove_static_symbol),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " in the ``.symtab`` section")
+        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section")
 
     .def("add_exported_function",
         &Binary::add_exported_function,
-        "Create a symbol for the function at the given ``address`` and export it",
+        "Create a symbol for the function at the given ``address`` and create an export",
         "address"_a, "name"_a = "",
         py::return_value_policy::reference)
 
-
     .def("export_symbol",
         static_cast<Symbol& (Binary::*)(const Symbol&)>(&Binary::export_symbol),
-        "Export the given symbol and create it if it doesn't exist",
+        "Export the given symbol and create an entry if it doesn't exist",
         "symbol"_a,
         py::return_value_policy::reference)
 
-
     .def("export_symbol",
         static_cast<Symbol& (Binary::*)(const std::string&, uint64_t)>(&Binary::export_symbol),
-        "Export the symbol with the given name and create it if it doesn't exist",
+        "Export the symbol with the given name and create an entry if it doesn't exist",
         "symbol_name"_a, "value"_a = 0,
         py::return_value_policy::reference)
-
 
     .def("get_relocation",
         static_cast<no_const_func<Relocation*, const std::string&>>(&Binary::get_relocation),
@@ -517,15 +574,14 @@ void create<Binary>(py::module& m) {
         "address"_a,
         py::return_value_policy::reference)
 
-
     .def_property_readonly("dtor_functions",
         &Binary::dtor_functions,
-        "Destuctor functions that are called the main execution")
+        "List of the binary destructors (typically, the functions located in the ``.fini_array``)")
 
     .def_property_readonly("eof_offset",
         &Binary::eof_offset,
-        "Last offset that is used by the ELF format. Data after this offset are "
-        "considered as overlay data")
+        "Return the last offset used by the ELF binary according to both: the sections table "
+        "and the segments table.")
 
     .def_property_readonly("has_overlay",
         &Binary::has_overlay,
@@ -535,8 +591,6 @@ void create<Binary>(py::module& m) {
         static_cast<getter_t<const Binary::overlay_t&>>(&Binary::overlay),
         static_cast<setter_t<Binary::overlay_t>>(&Binary::overlay),
         "Overlay data that are not a part of the ELF format")
-
-
 
     .def(py::self += Segment())
     .def(py::self += Section())
@@ -594,12 +648,10 @@ void create<Binary>(py::module& m) {
         "Check if the " RST_CLASS_REF(lief.ELF.Section) " associated with the given " RST_CLASS_REF(lief.ELF.SECTION_TYPES) " exists")
 
     .def("__str__",
-        [] (const Binary& binary)
-        {
+        [] (const Binary& binary) {
           std::ostringstream stream;
           stream << binary;
-          std::string str = stream.str();
-          return str;
+          return stream.str();
         });
 }
 }

@@ -41,7 +41,7 @@ CodeView::CodeView(CODE_VIEW_SIGNATURES cv_signature) :
 
 
 CODE_VIEW_SIGNATURES CodeView::cv_signature() const {
-  return this->cv_signature_;
+  return cv_signature_;
 }
 
 
@@ -56,7 +56,7 @@ bool CodeView::operator==(const CodeView& rhs) const {
 }
 
 bool CodeView::operator!=(const CodeView& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 

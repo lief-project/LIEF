@@ -16,6 +16,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <memory>
 
 #include <mbedtls/platform.h>
 #include <mbedtls/oid.h>
@@ -61,13 +62,13 @@ inline uint8_t stream_get_tag(VectorStream& stream) {
 SignatureParser::~SignatureParser() = default;
 SignatureParser::SignatureParser() = default;
 
-SignatureParser::SignatureParser(std::vector<uint8_t> data) :
-  stream_{std::unique_ptr<VectorStream>(new VectorStream{std::move(data)})}
+SignatureParser::SignatureParser(const std::vector<uint8_t>& data) :
+  stream_{std::make_unique<VectorStream>(std::move(data))}
 {}
 
 result<Signature> SignatureParser::parse(const std::string& path) {
   std::ifstream binary(path, std::ios::in | std::ios::binary);
-  if (not binary) {
+  if (!binary) {
     LIEF_ERR("Can't open {}", path);
     return make_error_code(lief_errors::file_error);
   }
@@ -91,51 +92,51 @@ result<Signature> SignatureParser::parse(std::vector<uint8_t> data, bool skip_he
 
   SignatureParser parser{std::move(sig_data)};
   auto sig = parser.parse_signature();
-  if (not sig) {
+  if (!sig) {
     LIEF_ERR("Error while parsing the signature");
     return sig.error();
   }
-  return std::move(sig.value());
+  return sig.value();
 }
 
 size_t SignatureParser::current_offset() const {
-  return this->stream_->pos();
+  return stream_->pos();
 }
 
 
 result<Signature> SignatureParser::parse_signature() {
   Signature signature;
-  signature.original_raw_signature_ = this->stream_->content();
-  auto tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  signature.original_raw_signature_ = stream_->content();
+  auto tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
-        stream_get_tag(*this->stream_), this->stream_->pos());
+        stream_get_tag(*stream_), stream_->pos());
     return tag.error();
   }
 
-  auto oid = this->stream_->asn1_read_oid();
-  if (not oid) {
-    LIEF_INFO("Can't read OID value (pos: {})", this->stream_->pos());
+  auto oid = stream_->asn1_read_oid();
+  if (!oid) {
+    LIEF_INFO("Can't read OID value (pos: {})", stream_->pos());
     return oid.error();
   }
   std::string& oid_str = oid.value();
 
   if (oid_str != /* pkcs7-signedData */ "1.2.840.113549.1.7.2") {
     LIEF_INFO("Expecting OID pkcs7-signed-data at {:d} but got {}",
-        this->stream_->pos(), oid_to_string(oid_str));
+        stream_->pos(), oid_to_string(oid_str));
     return make_error_code(lief_errors::read_error);
   }
 
-  tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | 0);
-  if (not tag) {
+  tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | 0);
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
-        stream_get_tag(*this->stream_), this->stream_->pos());
+        stream_get_tag(*stream_), stream_->pos());
     return tag.error();
   }
-  tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
-        stream_get_tag(*this->stream_), this->stream_->pos());
+        stream_get_tag(*stream_), stream_->pos());
     return tag.error();
   }
 
@@ -177,9 +178,9 @@ result<Signature> SignatureParser::parse_signature() {
   //
   // Version ::= INTEGER
   // ==============================================================================
-  auto version = this->stream_->asn1_read_int();
-  if (not version) {
-    LIEF_INFO("Can't parse version (pos: {:d})", this->stream_->pos());
+  auto version = stream_->asn1_read_int();
+  if (!version) {
+    LIEF_INFO("Can't parse version (pos: {:d})", stream_->pos());
     return tag.error();
   }
   const int32_t version_val = version.value();
@@ -195,26 +196,26 @@ result<Signature> SignatureParser::parse_signature() {
   //
   // DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
   // ==============================================================================
-  tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
-  if (not tag) {
+  tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
-        stream_get_tag(*this->stream_), this->stream_->pos());
+        stream_get_tag(*stream_), stream_->pos());
     return tag.error();
   }
-  const uintptr_t end_set = this->stream_->pos() + tag.value();
+  const uintptr_t end_set = stream_->pos() + tag.value();
   std::vector<oid_t> algorithms;
-  while (this->stream_->pos() < end_set) {
-    const size_t current_p = this->stream_->pos();
-    auto alg = this->stream_->asn1_read_alg();
-    if (not alg) {
-      LIEF_INFO("Can't parse signed data digest algorithm (pos: {:d})", this->stream_->pos());
+  while (stream_->pos() < end_set) {
+    const size_t current_p = stream_->pos();
+    auto alg = stream_->asn1_read_alg();
+    if (!alg) {
+      LIEF_INFO("Can't parse signed data digest algorithm (pos: {:d})", stream_->pos());
       break;
     }
-    if (this->stream_->pos() == current_p) break;
+    if (stream_->pos() == current_p) break;
     LIEF_DEBUG("pkcs7-signed-data.digest-algorithms: {}", oid_to_string(alg.value()));
     algorithms.push_back(std::move(alg.value()));
   }
-  if (algorithms.size() == 0) {
+  if (algorithms.empty()) {
     LIEF_INFO("pkcs7-signed-data.digest-algorithms no algorithms found");
     return make_error_code(lief_errors::read_error);
   }
@@ -234,47 +235,48 @@ result<Signature> SignatureParser::parse_signature() {
 
   // Content Info
   // =========================================================
-  tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} can't parse content info (pos: {:d})",
-        stream_get_tag(*this->stream_), this->stream_->pos());
+        stream_get_tag(*stream_), stream_->pos());
     return tag.error();
   }
 
   /* Content Info */ {
     std::vector<uint8_t> raw_content_info =
-      {this->stream_->p(), this->stream_->p() + tag.value()};
+      {stream_->p(), stream_->p() + tag.value()};
+    const size_t raw_content_size = raw_content_info.size();
     VectorStream content_info_stream{std::move(raw_content_info)};
 
     range_t range = {0, 0};
-    auto content_info = this->parse_content_info(content_info_stream, range);
-    if (not content_info) {
+    auto content_info = parse_content_info(content_info_stream, range);
+    if (!content_info) {
       LIEF_INFO("Fail to parse pkcs7-signed-data.content-info");
     } else {
       signature.content_info_ = std::move(content_info.value());
-      signature.content_info_start_ = this->stream_->pos() + range.start;
-      signature.content_info_end_   = this->stream_->pos() + range.end;
+      signature.content_info_start_ = stream_->pos() + range.start;
+      signature.content_info_end_   = stream_->pos() + range.end;
       LIEF_DEBUG("ContentInfo range: {:d} -> {:d}",
           signature.content_info_start_, signature.content_info_end_);
     }
-    this->stream_->increment_pos(raw_content_info.size());
+    stream_->increment_pos(raw_content_size);
   }
 
   // X509 Certificates (optional)
   // =========================================================
 
-  tag = this->stream_->asn1_read_tag(/* certificates */
+  tag = stream_->asn1_read_tag(/* certificates */
                                      MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC);
   if (tag) {
-    LIEF_DEBUG("Parse pkcs7-signed-data.certificates offset: {:d}", this->stream_->pos());
+    LIEF_DEBUG("Parse pkcs7-signed-data.certificates offset: {:d}", stream_->pos());
     std::vector<uint8_t> raw_content =
-      {this->stream_->p(), this->stream_->p() + tag.value()};
+      {stream_->p(), stream_->p() + tag.value()};
 
     VectorStream certificate_stream{std::move(raw_content)};
-    this->stream_->increment_pos(raw_content.size());
+    stream_->increment_pos(raw_content.size());
 
-    auto certificates = this->parse_certificates(certificate_stream);
-    if (not certificates) {
+    auto certificates = parse_certificates(certificate_stream);
+    if (!certificates) {
       LIEF_INFO("Fail to parse pkcs7-signed-data.certificates");
     } else {
       // Makes chain
@@ -285,27 +287,27 @@ result<Signature> SignatureParser::parse_signature() {
 
   // CRLS (optional)
   // =========================================================
-  tag = this->stream_->asn1_read_tag(/* certificates */
+  tag = stream_->asn1_read_tag(/* certificates */
                                      MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1);
   if (tag) {
-    LIEF_DEBUG("Parse pkcs7-signed-data.crls offset: {:d}", this->stream_->pos());
+    LIEF_DEBUG("Parse pkcs7-signed-data.crls offset: {:d}", stream_->pos());
     std::vector<uint8_t> raw_content =
-      {this->stream_->p(), this->stream_->p() + tag.value()};
+      {stream_->p(), stream_->p() + tag.value()};
     // TODO(romain): Process crls certificates
-    this->stream_->increment_pos(raw_content.size());
+    stream_->increment_pos(raw_content.size());
   }
 
   // SignerInfos
   // =========================================================
-  tag = this->stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
+  tag = stream_->asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
   if (tag) {
-    LIEF_DEBUG("Parse pkcs7-signed-data.signer-infos offset: {:d}", this->stream_->pos());
-    std::vector<uint8_t> raw_content =
-      {this->stream_->p(), this->stream_->p() + tag.value()};
+    LIEF_DEBUG("Parse pkcs7-signed-data.signer-infos offset: {:d}", stream_->pos());
+    std::vector<uint8_t> raw_content = {stream_->p(), stream_->p() + tag.value()};
+    const size_t raw_content_size = raw_content.size();
     VectorStream stream{std::move(raw_content)};
-    this->stream_->increment_pos(raw_content.size());
-    auto signer_info = this->parse_signer_infos(stream);
-    if (not signer_info) {
+    stream_->increment_pos(raw_content_size);
+    auto signer_info = parse_signer_infos(stream);
+    if (!signer_info) {
       LIEF_INFO("Fail to parse pkcs7-signed-data.signer-infos");
     } else {
       signature.signers_ = std::move(signer_info.value());
@@ -316,7 +318,7 @@ result<Signature> SignatureParser::parse_signature() {
   for (SignerInfo& signer : signature.signers_) {
     const x509* crt = signature.find_crt_issuer(signer.issuer(), signer.serial_number());
     if (crt != nullptr) {
-      signer.cert_ = std::unique_ptr<x509>(new x509{*crt});
+      signer.cert_ = std::make_unique<x509>(*crt);
     } else {
       LIEF_INFO("Can't find x509 certificate associated with signer '{}'", signer.issuer());
     }
@@ -325,7 +327,7 @@ result<Signature> SignatureParser::parse_signature() {
       SignerInfo& cs_signer = const_cast<PKCS9CounterSignature*>(cs)->signer_;
       const x509* crt = signature.find_crt_issuer(cs_signer.issuer(), cs_signer.serial_number());
       if (crt != nullptr) {
-        cs_signer.cert_ = std::unique_ptr<x509>(new x509{*crt});
+        cs_signer.cert_ = std::make_unique<x509>(*crt);
       } else {
         LIEF_INFO("Can't find x509 certificate associated with signer '{}'", signer.issuer());
       }
@@ -350,7 +352,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   // First, process contentType which must match SPC_INDIRECT_DATA_CONTEXT
   {
     auto content_type = stream.asn1_read_oid();
-    if (not content_type) {
+    if (!content_type) {
       LIEF_INFO("Can't parse content-info.content-type (pos: {:d})", stream.pos());
       return content_type.error();
     }
@@ -390,7 +392,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   // ==============================================================================
   auto tag = stream.asn1_read_tag(/* [0] EXPLICIT ANY DEFINED BY contentType OPTIONAL */
                                   MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
         stream_get_tag(stream), stream.pos());
     return tag.error();
@@ -399,7 +401,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
 
   tag = stream.asn1_read_tag(/* SpcIndirectDataContent */
                              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
         stream_get_tag(stream), stream.pos());
     return tag.error();
@@ -408,7 +410,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   range.start = stream.pos();
   tag = stream.asn1_read_tag(/* SpcAttributeTypeAndOptionalValue */
                              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
         stream_get_tag(stream), stream.pos());
     return tag.error();
@@ -416,7 +418,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
 
   // SpcAttributeTypeAndOptionalValue.type
   auto spc_attr_type = stream.asn1_read_oid();
-  if (not spc_attr_type) {
+  if (!spc_attr_type) {
     LIEF_INFO("Can't parse spc-attribute-type-and-optional-value.type (pos: {:d})", stream.pos());
     return spc_attr_type.error();
   }
@@ -432,7 +434,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   tag = stream.asn1_read_tag(/* SpcPeImageData ::= SEQUENCE */
                              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
 
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} (pos: {:d})",
         stream_get_tag(stream), stream.pos());
     return tag.error();
@@ -445,8 +447,8 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
     VectorStream spc_data_stream{std::move(raw)};
     stream.increment_pos(spc_data_stream.size());
 
-    auto spc_data = this->parse_spc_pe_image_data(spc_data_stream);
-    if (not spc_data) {
+    auto spc_data = parse_spc_pe_image_data(spc_data_stream);
+    if (!spc_data) {
       LIEF_INFO("Can't parse SpcPeImageData");
     } else {
       const SpcPeImageData& spc_data_value = spc_data.value();
@@ -461,14 +463,14 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   tag = stream.asn1_read_tag(/* DigestInfo */
                              MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
 
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag 0x{:x} for DigestInfo ::= SEQUENCE (pos: {:d})",
         stream_get_tag(stream), stream.pos());
     return tag.error();
   }
 
   auto alg_identifier = stream.asn1_read_alg();
-  if (not alg_identifier) {
+  if (!alg_identifier) {
     LIEF_INFO("Can't parse SignedData.contentInfo.messageDigest.digestAlgorithm (pos: {:d})",
         stream.pos());
     return alg_identifier.error();
@@ -486,7 +488,7 @@ result<ContentInfo> SignatureParser::parse_content_info(VectorStream& stream, ra
   //  The value must match the digestAlgorithm value specified
   //  in SignerInfo and the parent PKCS #7 digestAlgorithms fields.
   auto digest = stream.asn1_read_octet_string();
-  if (not digest) {
+  if (!digest) {
     LIEF_INFO("Can't parse SignedData.contentInfo.messageDigest.digest (pos: {:d})",
         stream.pos());
     return digest.error();
@@ -501,7 +503,7 @@ result<SignatureParser::x509_certificates_t> SignatureParser::parse_certificates
   const uint64_t cert_end_p = stream.size();
   while (stream.pos() < cert_end_p) {
     auto cert = stream.asn1_read_cert();
-    if (not cert) {
+    if (!cert) {
       LIEF_INFO("Can't parse X509 cert pkcs7-signed-data.certificates (pos: {:d})",
           stream.pos());
       return cert.error();
@@ -532,7 +534,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
 
     auto tag = stream.asn1_read_tag(/* SignerInfo */
                                     MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-    if (not tag) {
+    if (!tag) {
       LIEF_INFO("Wrong tag: 0x{:x} for pkcs7-signed-data.signer-infos SEQUENCE (pos: {:d})",
           stream_get_tag(stream), stream.pos());
       break;
@@ -542,7 +544,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     // version Version
     // =======================================================
     auto version = stream.asn1_read_int();
-    if (not version) {
+    if (!version) {
       LIEF_INFO("Can't parse pkcs7-signed-data.signer-info.version (pos: {:d})", stream.pos());
       break;
     }
@@ -565,7 +567,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     // =======================================================
     tag = stream.asn1_read_tag(/* Name */
                                MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-    if (not tag) {
+    if (!tag) {
       LIEF_INFO("Wrong tag: 0x{:x} for \
           pkcs7-signed-data.signer-infos.issuer-and-serial-number.issuer (pos: {:d})",
           stream_get_tag(stream), stream.pos());
@@ -573,7 +575,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     }
 
     auto issuer = stream.x509_read_names();
-    if (not issuer) {
+    if (!issuer) {
       LIEF_INFO("Can't parse pkcs7-signed-data.signer-infos.issuer-and-serial-number.issuer (pos: {:d})",
           stream.pos());
       break;
@@ -584,7 +586,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     signer.issuer_ = std::move(issuer.value());
 
     auto sn = stream.x509_read_serial();
-    if (not sn) {
+    if (!sn) {
       LIEF_INFO("Can't parse pkcs7-signed-data.signer-infos.issuer-and-serial-number.serial-number (pos: {:d})",
           stream.pos());
       break;
@@ -600,7 +602,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     {
       auto digest_alg = stream.asn1_read_alg();
 
-      if (not digest_alg) {
+      if (!digest_alg) {
         LIEF_INFO("Can't parse pkcs7-signed-data.signer-infos.digest-algorithm (pos: {:d})", stream.pos());
         break;
       }
@@ -627,8 +629,8 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
           {stream.p(), stream.p() + tag.value()};
         VectorStream auth_stream(std::move(raw_authenticated_attributes));
         stream.increment_pos(auth_stream.size());
-        auto authenticated_attributes = this->parse_attributes(auth_stream);
-        if (not authenticated_attributes) {
+        auto authenticated_attributes = parse_attributes(auth_stream);
+        if (!authenticated_attributes) {
           LIEF_INFO("Fail to parse pkcs7-signed-data.signer-infos.authenticated-attributes");
         } else {
           signer.raw_auth_data_ = {stream.start() + auth_attr_start, stream.start() + auth_attr_end};
@@ -642,7 +644,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     // =======================================================
     {
       auto digest_enc_alg = stream.asn1_read_alg();
-      if (not digest_enc_alg) {
+      if (!digest_enc_alg) {
         LIEF_INFO("Can't parse pkcs7-signed-data.signer-infos.digest-encryption-algorithm (pos: {:d})",
             stream.pos());
         return digest_enc_alg.error();
@@ -663,7 +665,7 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
     // =======================================================
     {
       auto enc_digest = stream.asn1_read_octet_string();
-      if (not enc_digest) {
+      if (!enc_digest) {
         LIEF_INFO("Can't parse pkcs7-signed-data.signer-infos.encrypted-digest (pos: {:d})",
             stream.pos());
         return enc_digest.error();
@@ -683,8 +685,8 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_signer_infos(Vect
           {stream.p(), stream.p() + tag.value()};
         VectorStream unauth_stream(std::move(raw_unauthenticated_attributes));
         stream.increment_pos(unauth_stream.size());
-        auto unauthenticated_attributes = this->parse_attributes(unauth_stream);
-        if (not unauthenticated_attributes) {
+        auto unauthenticated_attributes = parse_attributes(unauth_stream);
+        if (!unauthenticated_attributes) {
           LIEF_INFO("Fail to parse pkcs7-signed-data.signer-infos.unauthenticated-attributes");
         } else {
           signer.unauthenticated_attributes_ = std::move(unauthenticated_attributes.value());
@@ -714,19 +716,19 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
   while (stream.pos() < end_pos) {
     auto tag = stream.asn1_read_tag(/* Attribute ::= SEQUENCE */
                                     MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
-    if (not tag) {
+    if (!tag) {
       LIEF_INFO("Can't parse attribute (pos: {:d})", stream.pos());
       break;
     }
 
     auto oid = stream.asn1_read_oid();
-    if (not oid) {
+    if (!oid) {
       LIEF_INFO("Can't parse attribute.type (pos: {:d})", stream.pos());
       break;
     }
     tag = stream.asn1_read_tag(/* AttributeSetValue */
                                MBEDTLS_ASN1_SET | MBEDTLS_ASN1_CONSTRUCTED);
-    if (not tag) {
+    if (!tag) {
       LIEF_DEBUG("attribute.values: Unable to get set for {}", oid.value());
       break;
     }
@@ -741,8 +743,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       const std::string& oid_str = oid.value();
 
       if (oid_str == /* contentType */ "1.2.840.113549.1.9.3") {
-        auto res = this->parse_content_type(value_stream);
-        if (not res or res.value() == nullptr) {
+        auto res = parse_content_type(value_stream);
+        if (!res || res.value() == nullptr) {
           LIEF_INFO("Can't parse content-type attribute");
         } else {
           attributes.push_back(std::move(res.value()));
@@ -750,8 +752,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* SpcSpOpusInfo */ "1.3.6.1.4.1.311.2.1.12") {
-        auto res = this->parse_spc_sp_opus_info(value_stream);
-        if (not res) {
+        auto res = parse_spc_sp_opus_info(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse spc-sp-opus-info attribute");
         } else {
           SpcSpOpusInfo info = std::move(res.value());
@@ -760,19 +762,19 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
       // TODO(romain): Parse the internal DER of Ms-CounterSign
       // else if (oid_str == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
-      //   auto res = this->parse_ms_counter_sign(value_stream);
+      //   auto res = parse_ms_counter_sign(value_stream);
       //   if (not res) {
       //     LIEF_INFO("Can't parse ms-counter-sign attribute");
       //   }
       // }
 
       else if (oid_str == /* pkcs9-CounterSignature */ "1.2.840.113549.1.9.6") {
-        auto res = this->parse_pkcs9_counter_sign(value_stream);
-        if (not res) {
+        auto res = parse_pkcs9_counter_sign(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse pkcs9-counter-sign attribute");
         } else {
           const std::vector<SignerInfo>& signers = res.value();
-          if (signers.size() == 0) {
+          if (signers.empty()) {
             LIEF_INFO("Can't parse signer info associated with the pkcs9-counter-sign");
           } else if (signers.size() > 1) {
             LIEF_INFO("More than one signer info associated with the pkcs9-counter-sign");
@@ -783,8 +785,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* Ms-SpcNestedSignature */ "1.3.6.1.4.1.311.2.4.1") {
-        auto res = this->parse_ms_spc_nested_signature(value_stream);
-        if (not res) {
+        auto res = parse_ms_spc_nested_signature(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse ms-spc-nested-signature attribute");
         } else {
           attributes.emplace_back(new MsSpcNestedSignature(std::move(res.value())));
@@ -792,8 +794,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* pkcs9-MessageDigest */ "1.2.840.113549.1.9.4") {
-        auto res = this->parse_pkcs9_message_digest(value_stream);
-        if (not res) {
+        auto res = parse_pkcs9_message_digest(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse pkcs9-message-digest attribute");
         } else {
           attributes.emplace_back(new PKCS9MessageDigest(std::move(res.value())));
@@ -801,8 +803,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* Ms-SpcStatementType */ "1.3.6.1.4.1.311.2.1.11") {
-        auto res = this->parse_ms_spc_statement_type(value_stream);
-        if (not res) {
+        auto res = parse_ms_spc_statement_type(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse ms-spc-statement-type attribute");
         } else {
           attributes.emplace_back(new MsSpcStatementType(std::move(res.value())));
@@ -810,8 +812,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* pkcs9-at-SequenceNumber */ "1.2.840.113549.1.9.25.4") {
-        auto res = this->parse_pkcs9_at_sequence_number(value_stream);
-        if (not res) {
+        auto res = parse_pkcs9_at_sequence_number(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse ms-spc-statement-type attribute");
         } else {
           attributes.emplace_back(new PKCS9AtSequenceNumber(res.value()));
@@ -819,8 +821,8 @@ result<SignatureParser::attributes_t> SignatureParser::parse_attributes(VectorSt
       }
 
       else if (oid_str == /* pkcs9-signing-time */ "1.2.840.113549.1.9.5") {
-        auto res = this->parse_pkcs9_signing_time(value_stream);
-        if (not res) {
+        auto res = parse_pkcs9_signing_time(value_stream);
+        if (!res) {
           LIEF_INFO("Can't parse ms-spc-statement-type attribute");
         } else {
           attributes.emplace_back(new PKCS9SigningTime(std::move(res.value())));
@@ -851,7 +853,7 @@ result<std::unique_ptr<Attribute>> SignatureParser::parse_content_type(VectorStr
    */
 
   auto oid = stream.asn1_read_oid();
-  if (not oid) {
+  if (!oid) {
     LIEF_INFO("Can't parse content-type.oid (pos: {:d})", stream.pos());
     return oid.error();
   }
@@ -870,9 +872,9 @@ result<SignatureParser::SpcSpOpusInfo> SignatureParser::parse_spc_sp_opus_info(V
   SpcSpOpusInfo info;
   auto tag = stream.asn1_read_tag(/* SpcSpOpusInfo ::= SEQUENCE */
                                   MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag for  spc-sp-opus-info SEQUENCE : 0x{:x} (pos: {:d})",
-        stream_get_tag(stream), this->stream_->pos());
+        stream_get_tag(stream), stream_->pos());
     return tag.error();
   }
 
@@ -881,8 +883,8 @@ result<SignatureParser::SpcSpOpusInfo> SignatureParser::parse_spc_sp_opus_info(V
   if (tag) {
     std::vector<uint8_t> raw = {stream.p(), stream.p() + tag.value()};
     VectorStream spc_string_stream(std::move(raw));
-    auto program_name = this->parse_spc_string(spc_string_stream);
-    if (not program_name) {
+    auto program_name = parse_spc_string(spc_string_stream);
+    if (!program_name) {
       LIEF_INFO("Fail to parse spc-sp-opus-info.program-name");
     } else {
       info.program_name = program_name.value();
@@ -894,8 +896,8 @@ result<SignatureParser::SpcSpOpusInfo> SignatureParser::parse_spc_sp_opus_info(V
   if (tag) {
     std::vector<uint8_t> raw = {stream.p(), stream.p() + tag.value()};
     VectorStream spc_link_stream(std::move(raw));
-    auto more_info = this->parse_spc_link(spc_link_stream);
-    if (not more_info) {
+    auto more_info = parse_spc_link(spc_link_stream);
+    if (!more_info) {
       LIEF_INFO("Fail to parse spc-sp-opus-info.more-info");
     } else {
       info.more_info = more_info.value();
@@ -919,8 +921,8 @@ result<SignatureParser::signer_infos_t> SignatureParser::parse_pkcs9_counter_sig
   //          ID pkcs-9-at-counterSignature
   //  }
   LIEF_DEBUG("Parsing pkcs9-CounterSign ({} bytes)", stream.size());
-  auto counter_sig = this->parse_signer_infos(stream);
-  if (not counter_sig) {
+  auto counter_sig = parse_signer_infos(stream);
+  if (!counter_sig) {
     LIEF_INFO("Fail to parse pkcs9-counter-signature");
     return counter_sig.error();
   }
@@ -932,7 +934,7 @@ result<Signature> SignatureParser::parse_ms_spc_nested_signature(VectorStream& s
   // SET of pkcs7-signed data
   LIEF_DEBUG("Parsing Ms-SpcNestedSignature ({} bytes)", stream.size());
   auto sign = SignatureParser::parse(stream.content(), /* skip header */ false);
-  if (not sign) {
+  if (!sign) {
     LIEF_INFO("Ms-SpcNestedSignature finished with errors");
     return sign.error();
   }
@@ -942,7 +944,7 @@ result<Signature> SignatureParser::parse_ms_spc_nested_signature(VectorStream& s
 
 result<std::vector<uint8_t>> SignatureParser::parse_pkcs9_message_digest(VectorStream& stream) {
   auto digest = stream.asn1_read_octet_string();
-  if (not digest) {
+  if (!digest) {
     LIEF_INFO("Can't process OCTET STREAM for attribute.pkcs9-message-digest (pos: {})",
         stream.pos());
     return digest.error();
@@ -957,14 +959,14 @@ result<oid_t> SignatureParser::parse_ms_spc_statement_type(VectorStream& stream)
   // SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
   LIEF_DEBUG("Parsing Ms-SpcStatementType ({} bytes)", stream.size());
   auto tag = stream.asn1_read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-  if (not tag) {
+  if (!tag) {
     LIEF_INFO("Wrong tag for ms-spc-statement-type: 0x{:x} (pos: {:d})",
-        stream_get_tag(stream), this->stream_->pos());
+        stream_get_tag(stream), stream_->pos());
     return tag.error();
   }
 
   auto oid = stream.asn1_read_oid();
-  if (not oid) {
+  if (!oid) {
     LIEF_INFO("Can't parse ms-spc-statement-type.oid (pos: {:d})", stream.pos());
     return oid.error();
   }
@@ -977,7 +979,7 @@ result<oid_t> SignatureParser::parse_ms_spc_statement_type(VectorStream& stream)
 result<int32_t> SignatureParser::parse_pkcs9_at_sequence_number(VectorStream& stream) {
   LIEF_DEBUG("Parsing pkcs9-at-SequenceNumber ({} bytes)", stream.size());
   auto value = stream.asn1_read_int();
-  if (not value) {
+  if (!value) {
     LIEF_INFO("pkcs9-at-sequence-number: Can't parse integer");
     return value.error();
   }
@@ -998,7 +1000,7 @@ result<std::string> SignatureParser::parse_spc_string(VectorStream& stream) {
     const size_t length = choice.value();
     LIEF_DEBUG("spc-string.program-name length: {} (pos: {})", length, stream.pos());
 
-    if (not stream.can_read<char16_t>(length / sizeof(char16_t))) {
+    if (!stream.can_read<char16_t>(length / sizeof(char16_t))) {
       LIEF_INFO("Can't read spc-string.program-name");
       return make_error_code(lief_errors::read_error);
     }
@@ -1072,7 +1074,7 @@ result<SignatureParser::time_t> SignatureParser::parse_pkcs9_signing_time(Vector
   // See: https://tools.ietf.org/html/rfc2985#page-20
   // UTCTIME           :171116220536Z
   auto tm = stream.x509_read_time();
-  if (not tm) {
+  if (!tm) {
     LIEF_INFO("Can't read pkcs9-signing-time (pos: {})", stream.pos());
     return tm.error();
   }
@@ -1123,7 +1125,7 @@ result<SignatureParser::SpcPeImageData> SignatureParser::parse_spc_pe_image_data
   //  return tag.error();
   //}
   ////LIEF_INFO("spc-pe-image-data.flags length: {:d}", flags.value().size());
-  //auto file = this->parse_spc_link(stream);
+  //auto file = parse_spc_link(stream);
   //if (not file) {
   //  LIEF_INFO("Can't parse spc-pe-image-data.file (pos: {})", stream.pos());
   //  return file.error();

@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <utility>
 
 #include "LIEF/Abstract/hash.hpp"
 #include "LIEF/exception.hpp"
@@ -30,11 +31,8 @@ namespace LIEF {
 
 Section::Section() = default;
 
-Section::Section(const std::string& name) :
-  name_{name},
-  virtual_address_{0},
-  size_{0},
-  offset_{0}
+Section::Section(std::string name) :
+  name_{std::move(name)}
 {}
 
 
@@ -43,12 +41,12 @@ Section& Section::operator=(const Section&) = default;
 Section::Section(const Section&) = default;
 
 std::string Section::name() const {
-  return this->name_.c_str();
+  return name_.c_str();
 }
 
 
 void Section::name(const std::string& name) {
-  this->name_ = name;
+  name_ = name;
 }
 
 
@@ -63,29 +61,29 @@ std::vector<uint8_t> Section::content() const {
 
 
 uint64_t Section::size() const {
-  return this->size_;
+  return size_;
 }
 
 
 void Section::size(uint64_t size) {
-  this->size_ = size;
+  size_ = size;
 }
 
 uint64_t Section::offset() const {
-  return this->offset_;
+  return offset_;
 }
 
 
 uint64_t Section::virtual_address() const {
-  return this->virtual_address_;
+  return virtual_address_;
 }
 
 void Section::virtual_address(uint64_t virtual_address) {
-  this->virtual_address_ = virtual_address;;
+  virtual_address_ = virtual_address;;
 }
 
 void Section::offset(uint64_t offset) {
-  this->offset_ = offset;
+  offset_ = offset;
 }
 
 
@@ -121,16 +119,15 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
       reinterpret_cast<const uint8_t*>(&integer) + minimal_size,
       pattern.data());
 
-  return this->search(pattern, pos);
+  return search(pattern, pos);
 }
 
 size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   std::vector<uint8_t> content = this->content();
 
-  auto&& it_found = std::search(
+  const auto it_found = std::search(
       std::begin(content) + pos, std::end(content),
-      std::begin(pattern), std::end(pattern)
-      );
+      std::begin(pattern), std::end(pattern));
 
   if (it_found == std::end(content)) {
     return Section::npos;
@@ -141,18 +138,18 @@ size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
 
 size_t Section::search(const std::string& pattern, size_t pos) const {
   std::vector<uint8_t> pattern_formated = {std::begin(pattern), std::end(pattern)};
-  return this->search(pattern_formated, pos);
+  return search(pattern_formated, pos);
 }
 
 size_t Section::search(uint64_t integer, size_t pos) const {
-  return this->search(integer, pos, 0);
+  return search(integer, pos, 0);
 }
 
 // Search all functions
 // ====================
 std::vector<size_t> Section::search_all(uint64_t v, size_t size) const {
   std::vector<size_t> result;
-  size_t pos = this->search(v, 0, size);
+  size_t pos = search(v, 0, size);
 
   if (pos == Section::npos) {
     return result;
@@ -160,18 +157,18 @@ std::vector<size_t> Section::search_all(uint64_t v, size_t size) const {
 
   do {
     result.push_back(pos);
-    pos = this->search(v, pos + 1, size);
+    pos = search(v, pos + 1, size);
   } while(pos != Section::npos);
 
   return result;
 }
 
 std::vector<size_t> Section::search_all(uint64_t v) const {
-  return this->search_all(v, 0);
+  return search_all(v, 0);
 }
 
 std::vector<size_t> Section::search_all(const std::string& v) const {
-  return this->search_all_<std::string>(v);
+  return search_all_<std::string>(v);
 }
 
 
@@ -205,7 +202,7 @@ bool Section::operator==(const Section& rhs) const {
 }
 
 bool Section::operator!=(const Section& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& entry) {

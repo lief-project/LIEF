@@ -87,7 +87,7 @@ class LIEF_API Signature : public Object {
   //!
   //! It should match SignerInfo::digest_algorithm
   inline ALGORITHMS digest_algorithm() const {
-    return this->digest_algorithm_;
+    return digest_algorithm_;
   }
 
   //! Return the ContentInfo
@@ -139,7 +139,7 @@ class LIEF_API Signature : public Object {
   //! See: LIEF::PE::Signature::VERIFICATION_CHECKS to tweak the behavior
   VERIFICATION_FLAGS check(VERIFICATION_CHECKS checks = VERIFICATION_CHECKS::DEFAULT) const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   virtual ~Signature();
 

@@ -43,12 +43,12 @@ class Builder;
 class ExeLayout;
 class ObjectFileLayout;
 
+namespace details {
 struct Elf64_Shdr;
 struct Elf32_Shdr;
+}
 
-LIEF_API Section operator"" _section(const char* name);
-
-//! @brief Class wich represent sections
+//! Class wich represents an ELF Section
 class LIEF_API Section : public LIEF::Section {
   friend class Parser;
   friend class Binary;
@@ -57,68 +57,85 @@ class LIEF_API Section : public LIEF::Section {
   friend class ObjectFileLayout;
 
   public:
-  Section(uint8_t *data, ELF_CLASS type);
-  Section(const Elf64_Shdr* header);
-  Section(const Elf32_Shdr* header);
+  Section(const uint8_t *data, ELF_CLASS type);
+  Section(const details::Elf64_Shdr& header);
+  Section(const details::Elf32_Shdr& header);
   Section(const std::string& name, ELF_SECTION_TYPES type = ELF_SECTION_TYPES::SHT_PROGBITS);
 
   Section();
-  ~Section();
+  ~Section() override;
 
   Section& operator=(Section other);
   Section(const Section& other);
   void swap(Section& other);
 
-  uint32_t          name_idx() const;
   ELF_SECTION_TYPES type() const;
 
-  // ============================
-  // LIEF::Section implementation
-  // ============================
+  //! Section's content
+  std::vector<uint8_t> content() const override;
 
-  //! @brief Section's content
-  virtual std::vector<uint8_t> content() const override;
-
-  //! @brief Set section content
-  virtual void content(const std::vector<uint8_t>& data) override;
+  //! Set section content
+  void content(const std::vector<uint8_t>& data) override;
 
   void content(std::vector<uint8_t>&& data);
 
-  //! @brief Section flags LIEF::ELF::ELF_SECTION_FLAGS
+  //! Section flags LIEF::ELF::ELF_SECTION_FLAGS
   uint64_t flags() const;
 
-  //! @brief ``True`` if the section has the given flag
+  //! ``True`` if the section has the given flag
   //!
   //! @param[in] flag flag to test
   bool has(ELF_SECTION_FLAGS flag) const;
 
-  //! @brief ``True`` if the section is in the given segment
+  //! ``True`` if the section is wrapped by the given Segment
   bool has(const Segment& segment) const;
 
-  //! @brief Return section flags as a ``std::set``
+  //! Return section flags as a ``std::set``
   std::set<ELF_SECTION_FLAGS> flags_list() const;
 
-  virtual uint64_t size() const override;
+  uint64_t size() const override;
 
-  virtual void size(uint64_t size) override;
+  void size(uint64_t size) override;
 
-  virtual void offset(uint64_t offset) override;
+  void offset(uint64_t offset) override;
 
-  virtual uint64_t offset() const override;
+  uint64_t offset() const override;
 
 
   //! @see offset
   uint64_t file_offset() const;
-  uint64_t original_size() const;
-  uint64_t alignment() const;
-  uint64_t information() const;
-  uint64_t entry_size() const;
-  uint32_t link() const;
 
+  //! Original size of the section's data.
+  //!
+  //! This value is used by the ELF::Builder to determines if it needs
+  //! to be relocated to avoid an override of the data
+  uint64_t original_size() const;
+
+  //! Section file alignment
+  uint64_t alignment() const;
+
+  //! Section information.
+  //! This meaning of this value depends on the section's type
+  uint64_t information() const;
+
+  //! This function returns the size of an element in the case of a section that contains
+  //! an array.
+  //
+  //! For instance, the `.dynamic` section contains an array of DynamicEntry. As the
+  //! size of the raw C structure of this entry is 0x10 (``sizeof(Elf64_Dyn)``)
+  //! in a ELF64, the `entry_size` is set to this value.
+  uint64_t entry_size() const;
+
+  //! Index to another section
+  uint32_t link() const;
 
   //! Clear the content of the section with the given ``value``
   Section& clear(uint8_t value = 0);
+
+  //! Add the given ELF_SECTION_FLAGS
   void add(ELF_SECTION_FLAGS flag);
+
+  //! Remove the given ELF_SECTION_FLAGS
   void remove(ELF_SECTION_FLAGS flag);
 
   void type(ELF_SECTION_TYPES type);
@@ -133,7 +150,7 @@ class LIEF_API Section : public LIEF::Section {
   it_segments       segments();
   it_const_segments segments() const;
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   Section& operator+=(ELF_SECTION_FLAGS c);
   Section& operator-=(ELF_SECTION_FLAGS c);
@@ -144,8 +161,6 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
-  // virtualAddress_, offset_ and size_ are inherited from LIEF::Section
-  uint32_t              name_idx_;
   ELF_SECTION_TYPES     type_;
   uint64_t              flags_;
   uint64_t              original_size_;

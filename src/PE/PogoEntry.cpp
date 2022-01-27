@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <numeric>
+#include <utility>
 
 #include "LIEF/PE/hash.hpp"
 
@@ -30,11 +31,11 @@ PogoEntry& PogoEntry::operator=(const PogoEntry&) = default;
 PogoEntry::~PogoEntry() = default;
 
 PogoEntry::PogoEntry() :
-  start_rva_{0}, size_{0}, name_{}
+  start_rva_{0}, size_{0}
 {}
 
-PogoEntry::PogoEntry(uint32_t start_rva, uint32_t size, const std::string& name) :
-  start_rva_{start_rva}, size_{size}, name_{name}
+PogoEntry::PogoEntry(uint32_t start_rva, uint32_t size, std::string name) :
+  start_rva_{start_rva}, size_{size}, name_{std::move(name)}
 {}
 
 
@@ -49,31 +50,31 @@ bool PogoEntry::operator==(const PogoEntry& rhs) const {
 }
 
 bool PogoEntry::operator!=(const PogoEntry& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 uint32_t PogoEntry::start_rva() const {
-  return this->start_rva_;
+  return start_rva_;
 }
 
 uint32_t PogoEntry::size() const {
-  return this->size_;
+  return size_;
 }
 
 const std::string& PogoEntry::name() const {
-  return this->name_;
+  return name_;
 }
 
 void PogoEntry::start_rva(uint32_t start_rva){
-  this->start_rva_ = start_rva;
+  start_rva_ = start_rva;
 }
 
 void PogoEntry::size(uint32_t size){
-  this->size_ = size;
+  size_ = size;
 }
 
 void PogoEntry::name(const std::string& name){
-  this->name_ = name;
+  name_ = name;
 }
 
 

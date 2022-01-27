@@ -23,17 +23,16 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
 Symbol::Symbol() :
-  LIEF::Symbol{},
   section_number_{0},
   type_{0},
   storage_class_{SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_INVALID},
-  numberof_aux_symbols_{0},
-  section_{nullptr}
+  numberof_aux_symbols_{0}
 {}
 
 Symbol::~Symbol() = default;
@@ -43,73 +42,70 @@ Symbol::Symbol(const Symbol& other) :
   section_number_{other.section_number_},
   type_{other.type_},
   storage_class_{other.storage_class_},
-  numberof_aux_symbols_{other.numberof_aux_symbols_},
-  section_{nullptr}
+  numberof_aux_symbols_{other.numberof_aux_symbols_}
 {}
 
 
 Symbol& Symbol::operator=(Symbol other) {
-  this->swap(other);
+  swap(other);
   return *this;
 }
 
 void Symbol::swap(Symbol& other) {
   LIEF::Symbol::swap(other);
 
-  std::swap(this->section_number_,        other.section_number_);
-  std::swap(this->type_,                  other.type_);
-  std::swap(this->storage_class_,         other.storage_class_);
-  std::swap(this->numberof_aux_symbols_,  other.numberof_aux_symbols_);
-  std::swap(this->section_,               other.section_);
+  std::swap(section_number_,        other.section_number_);
+  std::swap(type_,                  other.type_);
+  std::swap(storage_class_,         other.storage_class_);
+  std::swap(numberof_aux_symbols_,  other.numberof_aux_symbols_);
+  std::swap(section_,               other.section_);
 }
 
-Symbol::Symbol(const pe_symbol* header) :
-  LIEF::Symbol{},
-  section_number_(header->SectionNumber),
-  type_(header->Type),
-  storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header->StorageClass)),
-  numberof_aux_symbols_(header->NumberOfAuxSymbols),
-  section_{nullptr}
+Symbol::Symbol(const details::pe_symbol& header) :
+  section_number_(header.SectionNumber),
+  type_(header.Type),
+  storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header.StorageClass)),
+  numberof_aux_symbols_(header.NumberOfAuxSymbols)
 {
-  this->value_ = header->Value;
+  value_ = header.Value;
 }
 
 
 int16_t Symbol::section_number() const {
-  return this->section_number_;
+  return section_number_;
 }
 
 uint16_t Symbol::type() const {
-  return this->type_;
+  return type_;
 }
 
 SYMBOL_BASE_TYPES Symbol::base_type() const {
-  return static_cast<SYMBOL_BASE_TYPES>(this->type_ & 0x0F);
+  return static_cast<SYMBOL_BASE_TYPES>(type_ & 0x0F);
 }
 
 SYMBOL_COMPLEX_TYPES Symbol::complex_type() const {
-  return static_cast<SYMBOL_COMPLEX_TYPES>((this->type_ >> 4) & 0x0F);
+  return static_cast<SYMBOL_COMPLEX_TYPES>((type_ >> 4) & 0x0F);
 }
 
 
 SYMBOL_STORAGE_CLASS Symbol::storage_class() const {
-  return this->storage_class_;
+  return storage_class_;
 }
 
 
 uint8_t Symbol::numberof_aux_symbols() const {
-  return this->numberof_aux_symbols_;
+  return numberof_aux_symbols_;
 }
 
 
 std::wstring Symbol::wname() const {
-  return {std::begin(this->name_), std::end(this->name_)};
+  return {std::begin(name_), std::end(name_)};
 }
 
 
 const Section& Symbol::section() const {
-  if (this->has_section()) {
-    return *(this->section_);
+  if (has_section()) {
+    return *(section_);
   } else {
     throw not_found("No section associated with this symbol");
   }
@@ -120,7 +116,7 @@ Section& Symbol::section() {
 }
 
 bool Symbol::has_section() const {
-  return this->section_ != nullptr;
+  return section_ != nullptr;
 }
 
 void Symbol::accept(LIEF::Visitor& visitor) const {
@@ -134,12 +130,12 @@ bool Symbol::operator==(const Symbol& rhs) const {
 }
 
 bool Symbol::operator!=(const Symbol& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
-  std::string section_number_str = "";
+  std::string section_number_str;
   if (entry.section_number() <= 0) {
     section_number_str = to_string(
         static_cast<SYMBOL_SECTION_NUMBER>(entry.section_number()));
@@ -158,7 +154,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
       std::end(name),
       std::begin(name),
       [] (char c) {
-        return (c <= '~' and c >= '!') ? c : ' ';
+        return (c <= '~' && c >= '!') ? c : ' ';
       });
 
   if (name.size() > 20) {

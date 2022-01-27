@@ -167,7 +167,7 @@ Play with Manifest
 
 Now we will see how we can use practically the :class:`~lief.PE.ResourcesManager` to grant *Administrator* privilege to an executable thanks to the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` element.
 
-The application manifest is implement as an XML document whose the documentation is available here: `MSDN <https://docs.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference>`_
+The application manifest is implement as an XML document for which the documentation is available here: `MSDN <https://docs.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference>`_
 
 Among these tags, the ``requestedExecutionLevel`` tag *"describes the minimum security permissions required for the application to run on the client computer."* [#f1]_
 

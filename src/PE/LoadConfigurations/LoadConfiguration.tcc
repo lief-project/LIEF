@@ -15,30 +15,31 @@
  */
 #include <iomanip>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 
 namespace LIEF {
 namespace PE {
 
 template<class T>
-LoadConfiguration::LoadConfiguration(const load_configuration<T>* header) :
-  characteristics_{header->Characteristics},
-  timedatestamp_{header->TimeDateStamp},
-  major_version_{header->MajorVersion},
-  minor_version_{header->MinorVersion},
-  global_flags_clear_{header->GlobalFlagsClear},
-  global_flags_set_{header->GlobalFlagsSet},
-  critical_section_default_timeout_{header->CriticalSectionDefaultTimeout},
-  decommit_free_block_threshold_{header->DeCommitFreeBlockThreshold},
-  decommit_total_free_threshold_{header->DeCommitTotalFreeThreshold},
-  lock_prefix_table_{header->LockPrefixTable},
-  maximum_allocation_size_{header->MaximumAllocationSize},
-  virtual_memory_threshold_{header->VirtualMemoryThreshold},
-  process_affinity_mask_{header->ProcessAffinityMask},
-  process_heap_flags_{header->ProcessHeapFlags},
-  csd_version_{header->CSDVersion},
-  reserved1_{header->Reserved1},
-  editlist_{header->EditList},
-  security_cookie_{header->SecurityCookie}
+LoadConfiguration::LoadConfiguration(const details::load_configuration<T>& header) :
+  characteristics_{header.Characteristics},
+  timedatestamp_{header.TimeDateStamp},
+  major_version_{header.MajorVersion},
+  minor_version_{header.MinorVersion},
+  global_flags_clear_{header.GlobalFlagsClear},
+  global_flags_set_{header.GlobalFlagsSet},
+  critical_section_default_timeout_{header.CriticalSectionDefaultTimeout},
+  decommit_free_block_threshold_{header.DeCommitFreeBlockThreshold},
+  decommit_total_free_threshold_{header.DeCommitTotalFreeThreshold},
+  lock_prefix_table_{header.LockPrefixTable},
+  maximum_allocation_size_{header.MaximumAllocationSize},
+  virtual_memory_threshold_{header.VirtualMemoryThreshold},
+  process_affinity_mask_{header.ProcessAffinityMask},
+  process_heap_flags_{header.ProcessHeapFlags},
+  csd_version_{header.CSDVersion},
+  reserved1_{header.Reserved1},
+  editlist_{header.EditList},
+  security_cookie_{header.SecurityCookie}
 {}
 
 

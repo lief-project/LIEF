@@ -27,8 +27,10 @@
 namespace LIEF {
 namespace PE {
 
+namespace details {
 template<class T>
 struct load_configuration_v1;
+}
 
 //! @brief LoadConfiguration enhanced with Control Flow Guard
 //!
@@ -40,12 +42,12 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   LoadConfigurationV1();
 
   template<class T>
-  LIEF_LOCAL LoadConfigurationV1(const load_configuration_v1<T>* header);
+  LIEF_LOCAL LoadConfigurationV1(const details::load_configuration_v1<T>& header);
 
   LoadConfigurationV1& operator=(const LoadConfigurationV1&);
   LoadConfigurationV1(const LoadConfigurationV1&);
 
-  virtual WIN_VERSION version() const override;
+  WIN_VERSION version() const override;
 
   //! @brief The VA where Control Flow Guard check-function pointer is stored.
   uint64_t guard_cf_check_function_pointer() const;
@@ -78,12 +80,12 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
 
   virtual ~LoadConfigurationV1();
 
-  virtual void accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV1& rhs) const;
   bool operator!=(const LoadConfigurationV1& rhs) const;
 
-  virtual std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override;
 
   protected:
   uint64_t guard_cf_check_function_pointer_;

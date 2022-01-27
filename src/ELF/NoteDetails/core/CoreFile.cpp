@@ -29,8 +29,7 @@ namespace LIEF {
 namespace ELF {
 
 CoreFile::CoreFile(Note& note):
-  NoteDetails::NoteDetails{note},
-  files_{}
+  NoteDetails::NoteDetails{note}
 {}
 
 CoreFile CoreFile::make(Note& note) {
@@ -45,33 +44,33 @@ CoreFile* CoreFile::clone() const {
 
 
 uint64_t CoreFile::count() const {
-  return this->files_.size();
+  return files_.size();
 }
 
 const CoreFile::files_t& CoreFile::files() const {
-  return this->files_;
+  return files_;
 }
 
 
 CoreFile::iterator CoreFile::begin() {
-  return std::begin(this->files_);
+  return std::begin(files_);
 }
 
 CoreFile::iterator CoreFile::end() {
-  return std::end(this->files_);
+  return std::end(files_);
 }
 
 CoreFile::const_iterator CoreFile::begin() const {
-  return std::begin(this->files_);
+  return std::begin(files_);
 }
 
 CoreFile::const_iterator CoreFile::end() const {
-  return std::end(this->files_);
+  return std::end(files_);
 }
 
 void CoreFile::files(const CoreFile::files_t& files) {
-  this->files_ = files;
-  this->build();
+  files_ = files;
+  build();
 }
 
 
@@ -86,7 +85,7 @@ bool CoreFile::operator==(const CoreFile& rhs) const {
 }
 
 bool CoreFile::operator!=(const CoreFile& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 void CoreFile::dump(std::ostream& os) const {
@@ -94,7 +93,7 @@ void CoreFile::dump(std::ostream& os) const {
   os << std::left;
 
   os << std::setw(WIDTH) << std::setfill(' ') << "Files: "<< std::dec << std::endl;
-  for (const CoreFileEntry& file : this->files()) {
+  for (const CoreFileEntry& file : files()) {
     os << " - ";
     os << file.path << " ";
     os << "[" << std::hex << std::showbase << file.start << ", " << file.end << "] ";
@@ -105,18 +104,18 @@ void CoreFile::dump(std::ostream& os) const {
 }
 
 void CoreFile::parse() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->parse_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->parse_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    parse_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    parse_<details::ELF32>();
   }
 }
 
 void CoreFile::build() {
-  if (this->binary()->type() == ELF_CLASS::ELFCLASS64) {
-    this->build_<ELF64>();
-  } else if (this->binary()->type() == ELF_CLASS::ELFCLASS32) {
-    this->build_<ELF32>();
+  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
+    build_<details::ELF64>();
+  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
+    build_<details::ELF32>();
   }
 }
 

@@ -46,6 +46,7 @@ class TestEmptyGNUHash(TestCase):
 
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
+        print(output)
 
         lib = ctypes.cdll.LoadLibrary(output)
         # Raise 'AttributeError' if not exported
@@ -53,9 +54,10 @@ class TestEmptyGNUHash(TestCase):
         self.assertIsNotNone(lib.myinstance)
 
     def tearDown(self):
+        pass
         # Delete it
-        if os.path.isdir(self.tmp_dir):
-            shutil.rmtree(self.tmp_dir)
+        #if os.path.isdir(self.tmp_dir):
+        #    shutil.rmtree(self.tmp_dir)
 
 if __name__ == '__main__':
     root_logger = logging.getLogger()

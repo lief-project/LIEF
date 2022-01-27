@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_RELOCATIONSIZE_H_
-#define LIEF_ELF_RELOCATIONSIZE_H_
+#ifndef LIEF_ELF_RELOCATION_SIZES_H_
+#define LIEF_ELF_RELOCATION_SIZES_H_
 
+#include <map>
+#include <cstdint>
 #include <map>
 
 #include "LIEF/ELF/enums.hpp"
+#define CONST_MAP(KEY, VAL, NUM) static const std::map<KEY, VAL>
 
 namespace LIEF {
 namespace ELF {
 
-// TODO: Use Frozen https://github.com/serge-sans-paille/frozen
-static const std::map<RELOC_x86_64, uint32_t> relocation_x86_64_sizes {
+CONST_MAP(RELOC_x86_64, uint32_t, 43) relocation_x86_64_sizes {
   {RELOC_x86_64::R_X86_64_NONE,             0 },
   {RELOC_x86_64::R_X86_64_64,              64 },
   {RELOC_x86_64::R_X86_64_PC32,            32 },
@@ -70,7 +72,7 @@ static const std::map<RELOC_x86_64, uint32_t> relocation_x86_64_sizes {
   {RELOC_x86_64::R_X86_64_REX_GOTPCRELX,   32 },
 };
 
-static const std::map<RELOC_i386, uint32_t> relocation_i386_sizes {
+CONST_MAP(RELOC_i386, uint32_t, 40) relocation_i386_sizes {
   {RELOC_i386::R_386_NONE,            0 },
   {RELOC_i386::R_386_32,             32 },
   {RELOC_i386::R_386_PC32,           32 },
@@ -114,7 +116,7 @@ static const std::map<RELOC_i386, uint32_t> relocation_i386_sizes {
 };
 
 // From https://github.com/gittup/binutils/blob/gittup/bfd/elf32-arm.c#L75
-static const std::map<RELOC_ARM, uint32_t> relocation_ARM_sizes {
+CONST_MAP(RELOC_ARM, uint32_t, 138) relocation_ARM_sizes {
   {RELOC_ARM::R_ARM_NONE,                    0 },
   {RELOC_ARM::R_ARM_PC24,                   24 },
   {RELOC_ARM::R_ARM_ABS32,                  32 },
@@ -255,7 +257,7 @@ static const std::map<RELOC_ARM, uint32_t> relocation_ARM_sizes {
   {RELOC_ARM::R_ARM_RBASE,                   0 },
 };
 
-static const std::map<RELOC_AARCH64, uint32_t> relocation_AARCH64_sizes {
+CONST_MAP(RELOC_AARCH64, uint32_t, 123) relocation_AARCH64_sizes {
   { RELOC_AARCH64::R_AARCH64_NONE,                          0 },
   { RELOC_AARCH64::R_AARCH64_ABS64,                        64 },
   { RELOC_AARCH64::R_AARCH64_ABS32,                        32 },
@@ -381,7 +383,7 @@ static const std::map<RELOC_AARCH64, uint32_t> relocation_AARCH64_sizes {
   { RELOC_AARCH64::R_AARCH64_IRELATIVE,                    64 },
 };
 
-static const std::map<RELOC_POWERPC32, uint32_t> relocation_PPC_sizes {
+CONST_MAP(RELOC_POWERPC32, uint32_t, 57) relocation_PPC_sizes {
   { RELOC_POWERPC32::R_PPC_NONE,              0 },
   { RELOC_POWERPC32::R_PPC_ADDR32,            32 },
   { RELOC_POWERPC32::R_PPC_ADDR24,            32 },
@@ -441,7 +443,7 @@ static const std::map<RELOC_POWERPC32, uint32_t> relocation_PPC_sizes {
   { RELOC_POWERPC32::R_PPC_REL16_HA,          16 },
 };
 
-static const std::map<RELOC_POWERPC64, uint32_t> relocation_PPC64_sizes {
+CONST_MAP(RELOC_POWERPC64, uint32_t, 84) relocation_PPC64_sizes {
   { RELOC_POWERPC64::R_PPC64_NONE,                 0 },
   { RELOC_POWERPC64::R_PPC64_ADDR32,              32 },
   { RELOC_POWERPC64::R_PPC64_ADDR24,              32 },
@@ -450,7 +452,7 @@ static const std::map<RELOC_POWERPC64, uint32_t> relocation_PPC64_sizes {
   { RELOC_POWERPC64::R_PPC64_ADDR16_HI,           16 },
   { RELOC_POWERPC64::R_PPC64_ADDR16_HA,           16 },
   { RELOC_POWERPC64::R_PPC64_ADDR14,              32 },
-  { RELOC_POWERPC64::R_PPC64_ADDR14_BRTAKEN,      32 }, 
+  { RELOC_POWERPC64::R_PPC64_ADDR14_BRTAKEN,      32 },
   { RELOC_POWERPC64::R_PPC64_ADDR14_BRNTAKEN,     32 },
   { RELOC_POWERPC64::R_PPC64_REL24,               32 },
   { RELOC_POWERPC64::R_PPC64_REL14,               32 },
@@ -520,12 +522,127 @@ static const std::map<RELOC_POWERPC64, uint32_t> relocation_PPC64_sizes {
   { RELOC_POWERPC64::R_PPC64_DTPREL16_HIGHERA,    16 },
   { RELOC_POWERPC64::R_PPC64_DTPREL16_HIGHEST,    16 },
   { RELOC_POWERPC64::R_PPC64_DTPREL16_HIGHESTA,   16 },
-  { RELOC_POWERPC64::R_PPC64_TLSGD,                0 },
-  { RELOC_POWERPC64::R_PPC64_TLSLD,                0 },
+  { RELOC_POWERPC64::R_PPC64_TLSGD,               64 },
+  { RELOC_POWERPC64::R_PPC64_TLSLD,               64 },
   { RELOC_POWERPC64::R_PPC64_REL16,               16 },
   { RELOC_POWERPC64::R_PPC64_REL16_LO,            16 },
   { RELOC_POWERPC64::R_PPC64_REL16_HI,            16 },
   { RELOC_POWERPC64::R_PPC64_REL16_HA,            16 },
+};
+
+CONST_MAP(RELOC_MIPS, uint32_t, 112) relocation_MIPS_sizes {
+  { RELOC_MIPS::R_MICROMIPS_26_S1,           26 },
+  { RELOC_MIPS::R_MICROMIPS_CALL16,          16 },
+  { RELOC_MIPS::R_MICROMIPS_CALL_HI16,       16 },
+  { RELOC_MIPS::R_MICROMIPS_CALL_LO16,       16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT16,           16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT_DISP,        16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT_HI16,        16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT_LO16,        16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT_OFST,        16 },
+  { RELOC_MIPS::R_MICROMIPS_GOT_PAGE,        16 },
+  { RELOC_MIPS::R_MICROMIPS_GPREL16,         16 },
+  { RELOC_MIPS::R_MICROMIPS_GPREL7_S2,        7 },
+  { RELOC_MIPS::R_MICROMIPS_HI0_LO16,        16 },
+  { RELOC_MIPS::R_MICROMIPS_HI16,            16 },
+  { RELOC_MIPS::R_MICROMIPS_HIGHER,          16 },
+  { RELOC_MIPS::R_MICROMIPS_HIGHEST,         16 },
+  { RELOC_MIPS::R_MICROMIPS_JALR,            32 },
+  { RELOC_MIPS::R_MICROMIPS_LITERAL,         16 },
+  { RELOC_MIPS::R_MICROMIPS_LO16,            16 },
+  { RELOC_MIPS::R_MICROMIPS_PC10_S1,         10 },
+  { RELOC_MIPS::R_MICROMIPS_PC16_S1,         16 },
+  { RELOC_MIPS::R_MICROMIPS_PC18_S3,         18 },
+  { RELOC_MIPS::R_MICROMIPS_PC19_S2,         19 },
+  { RELOC_MIPS::R_MICROMIPS_PC21_S2,         21 },
+  { RELOC_MIPS::R_MICROMIPS_PC23_S2,         23 },
+  { RELOC_MIPS::R_MICROMIPS_PC26_S2,         26 },
+  { RELOC_MIPS::R_MICROMIPS_PC7_S1,           7 },
+  { RELOC_MIPS::R_MICROMIPS_SCN_DISP,        32 },
+  { RELOC_MIPS::R_MICROMIPS_SUB,             64 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_DTPREL_HI16, 16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_DTPREL_LO16, 16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_GD,          16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_GOTTPREL,    16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_LDM,         16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_TPREL_HI16,  16 },
+  { RELOC_MIPS::R_MICROMIPS_TLS_TPREL_LO16,  16 },
+  { RELOC_MIPS::R_MIPS_16,                   16 },
+  { RELOC_MIPS::R_MIPS16_26,                 26 },
+  { RELOC_MIPS::R_MIPS16_CALL16,             16 },
+  { RELOC_MIPS::R_MIPS16_GOT16,              16 },
+  { RELOC_MIPS::R_MIPS16_GPREL,              16 },
+  { RELOC_MIPS::R_MIPS16_HI16,               16 },
+  { RELOC_MIPS::R_MIPS16_LO16,               16 },
+  { RELOC_MIPS::R_MIPS16_TLS_DTPREL_HI16,    16 },
+  { RELOC_MIPS::R_MIPS16_TLS_DTPREL_LO16,    16 },
+  { RELOC_MIPS::R_MIPS16_TLS_GD,             16 },
+  { RELOC_MIPS::R_MIPS16_TLS_GOTTPREL,       16 },
+  { RELOC_MIPS::R_MIPS16_TLS_LDM,            16 },
+  { RELOC_MIPS::R_MIPS16_TLS_TPREL_HI16,     16 },
+  { RELOC_MIPS::R_MIPS16_TLS_TPREL_LO16,     16 },
+  { RELOC_MIPS::R_MIPS_ADD_IMMEDIATE,         0 },
+  { RELOC_MIPS::R_MIPS_26,                   26 },
+  { RELOC_MIPS::R_MIPS_32,                   32 },
+  { RELOC_MIPS::R_MIPS_64,                   64 },
+  { RELOC_MIPS::R_MIPS_CALL16,               16 },
+  { RELOC_MIPS::R_MIPS_CALL_HI16,            16 },
+  { RELOC_MIPS::R_MIPS_CALL_LO16,            16 },
+  { RELOC_MIPS::R_MIPS_COPY,                  0 },
+  { RELOC_MIPS::R_MIPS_DELETE,               32 },
+  { RELOC_MIPS::R_MIPS_EH,                   32 },
+  { RELOC_MIPS::R_MIPS_GLOB_DAT,             32 },
+  { RELOC_MIPS::R_MIPS_GOT16,                16 },
+  { RELOC_MIPS::R_MIPS_GOT_DISP,             16 },
+  { RELOC_MIPS::R_MIPS_GOT_HI16,             16 },
+  { RELOC_MIPS::R_MIPS_GOT_LO16,             16 },
+  { RELOC_MIPS::R_MIPS_GOT_OFST,             16 },
+  { RELOC_MIPS::R_MIPS_GOT_PAGE,             16 },
+  { RELOC_MIPS::R_MIPS_GPREL16,              16 },
+  { RELOC_MIPS::R_MIPS_GPREL32,              32 },
+  { RELOC_MIPS::R_MIPS_HI16,                 16 },
+  { RELOC_MIPS::R_MIPS_HIGHER,               16 },
+  { RELOC_MIPS::R_MIPS_HIGHEST,              16 },
+  { RELOC_MIPS::R_MIPS_INSERT_A,             32 },
+  { RELOC_MIPS::R_MIPS_INSERT_B,             32 },
+  { RELOC_MIPS::R_MIPS_JALR,                 32 },
+  { RELOC_MIPS::R_MIPS_JUMP_SLOT,            64 },
+  { RELOC_MIPS::R_MIPS_LITERAL,              16 },
+  { RELOC_MIPS::R_MIPS_LO16,                 16 },
+  { RELOC_MIPS::R_MIPS_NONE,                  0 },
+  { RELOC_MIPS::R_MIPS_NUM,                   0 },
+  { RELOC_MIPS::R_MIPS_PC16,                 16 },
+  { RELOC_MIPS::R_MIPS_PC18_S3,              18 },
+  { RELOC_MIPS::R_MIPS_PC19_S2,              19 },
+  { RELOC_MIPS::R_MIPS_PC21_S2,              21 },
+  { RELOC_MIPS::R_MIPS_PC26_S2,              26 },
+  { RELOC_MIPS::R_MIPS_PC32,                 32 },
+  { RELOC_MIPS::R_MIPS_PCHI16,               16 },
+  { RELOC_MIPS::R_MIPS_PCLO16,               16 },
+  { RELOC_MIPS::R_MIPS_PJUMP,                 0 },
+  { RELOC_MIPS::R_MIPS_REL16,                16 },
+  { RELOC_MIPS::R_MIPS_REL32,                32 },
+  { RELOC_MIPS::R_MIPS_RELGOT,               32 },
+  { RELOC_MIPS::R_MIPS_SCN_DISP,             32 },
+  { RELOC_MIPS::R_MIPS_SHIFT5,                5 },
+  { RELOC_MIPS::R_MIPS_SHIFT6,                6 },
+  { RELOC_MIPS::R_MIPS_SUB,                  64 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPMOD32,         32 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPMOD64,         64 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPREL32,         32 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPREL64,         64 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPREL_HI16,      16 },
+  { RELOC_MIPS::R_MIPS_TLS_DTPREL_LO16,      16 },
+  { RELOC_MIPS::R_MIPS_TLS_GD,               16 },
+  { RELOC_MIPS::R_MIPS_TLS_GOTTPREL,         16 },
+  { RELOC_MIPS::R_MIPS_TLS_LDM,              16 },
+  { RELOC_MIPS::R_MIPS_TLS_TPREL64,          32 },
+  { RELOC_MIPS::R_MIPS_TLS_TPREL64,          64 },
+  { RELOC_MIPS::R_MIPS_TLS_TPREL_HI16,       16 },
+  { RELOC_MIPS::R_MIPS_TLS_TPREL_LO16,       16 },
+  { RELOC_MIPS::R_MIPS_UNUSED1,               0 },
+  { RELOC_MIPS::R_MIPS_UNUSED2,               0 },
+  { RELOC_MIPS::R_MIPS_UNUSED3,               0 },
 };
 
 }

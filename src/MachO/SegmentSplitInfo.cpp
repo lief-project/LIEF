@@ -29,10 +29,10 @@ SegmentSplitInfo& SegmentSplitInfo::operator=(const SegmentSplitInfo&) = default
 SegmentSplitInfo::SegmentSplitInfo(const SegmentSplitInfo&) = default;
 SegmentSplitInfo::~SegmentSplitInfo() = default;
 
-SegmentSplitInfo::SegmentSplitInfo(const linkedit_data_command *cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd->cmd), cmd->cmdsize},
-  data_offset_{cmd->dataoff},
-  data_size_{cmd->datasize}
+SegmentSplitInfo::SegmentSplitInfo(const details::linkedit_data_command& cmd) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  data_offset_{cmd.dataoff},
+  data_size_{cmd.datasize}
 {}
 
 SegmentSplitInfo* SegmentSplitInfo::clone() const {
@@ -40,19 +40,19 @@ SegmentSplitInfo* SegmentSplitInfo::clone() const {
 }
 
 uint32_t SegmentSplitInfo::data_offset() const {
-  return this->data_offset_;
+  return data_offset_;
 }
 
 uint32_t SegmentSplitInfo::data_size() const {
-  return this->data_size_;
+  return data_size_;
 }
 
 void SegmentSplitInfo::data_offset(uint32_t offset) {
-  this->data_offset_ = offset;
+  data_offset_ = offset;
 }
 
 void SegmentSplitInfo::data_size(uint32_t size) {
-  this->data_size_ = size;
+  data_size_ = size;
 }
 void SegmentSplitInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -66,7 +66,7 @@ bool SegmentSplitInfo::operator==(const SegmentSplitInfo& rhs) const {
 }
 
 bool SegmentSplitInfo::operator!=(const SegmentSplitInfo& rhs) const {
-  return not (*this == rhs);
+  return !(*this == rhs);
 }
 
 
@@ -75,8 +75,8 @@ std::ostream& SegmentSplitInfo::print(std::ostream& os) const {
   os << std::left;
   os << std::endl;
   os << "Segment Split Info location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << this->data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << this->data_size()   << std::endl;
+  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
+  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
   return os;
 }
 
