@@ -66,6 +66,11 @@
 namespace LIEF {
 namespace PE {
 
+constexpr size_t Parser::MAX_PADDING_SIZE;
+constexpr size_t Parser::MAX_TLS_CALLBACKS;
+constexpr size_t Parser::MAX_DLL_NAME_SIZE;
+constexpr size_t Parser::MAX_DATA_SIZE;
+
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
@@ -264,7 +269,12 @@ void Parser::parse_sections() {
                                                                          padding_size + hole_size,
                                                                          /* check */false);
       if (ptr_to_padding != nullptr) {
-        section->padding_ = {ptr_to_padding, ptr_to_padding + padding_size + hole_size};
+        if ((padding_size + hole_size) < Parser::MAX_PADDING_SIZE) {
+          section->padding_ = {ptr_to_padding, ptr_to_padding + padding_size + hole_size};
+        } else {
+          LIEF_WARN("Section {} has a padding size larger that 0x{:x} (0x{:x}) and will be ignored",
+                    section->name(), Parser::MAX_PADDING_SIZE, padding_size + hole_size);
+        }
       }
     }
     binary_->sections_.push_back(section.release());

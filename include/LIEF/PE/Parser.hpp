@@ -54,6 +54,9 @@ class LIEF_API Parser : public LIEF::Parser {
   // According to https://stackoverflow.com/a/265782/87207
   static constexpr size_t MAX_DLL_NAME_SIZE = 255;
 
+  //! Max size of the padding section
+  static constexpr size_t MAX_PADDING_SIZE = 1_GB;
+
   public:
   //! Check if the given name is a valid import.
   //!
