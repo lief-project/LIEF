@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <cctype>
+#include <unordered_set>
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
@@ -1299,31 +1300,42 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
   }
 }
 
-struct RelocationKey {
-    uint64_t address;
-    uint32_t type;
-    int64_t addend;
-    size_t symbol;
+struct RelocationSetEq {
+  bool operator()(const Relocation* lhs, const Relocation* rhs) const {
+    bool check = lhs->address() == rhs->address() &&
+                 lhs->type() == rhs->type() &&
+                 lhs->addend() == rhs->addend() &&
+                 lhs->info() == rhs->info() &&
+                 lhs->has_symbol() == rhs->has_symbol();
 
-    bool operator==(const RelocationKey &o) const {
-        return address == o.address && type == o.type && addend == o.addend && symbol == o.symbol;
+    if (!check) {
+      return false;
     }
 
-    bool operator<(const RelocationKey &o) const {
-        return address < o.address || (address == o.address && type < o.type) ||
-            ((address == o.address && type == o.type) || addend < o .addend) ||
-            ((address == o.address && type == o.type && addend == o.addend) && symbol < o.symbol);
+    if (lhs->has_symbol()) { // The fact that rhs->has_symbol is checked previously
+      return lhs->symbol().name() == rhs->symbol().name();
     }
+    return check;
+  }
+};
 
-    bool operator>(const RelocationKey &o) const {
-        return address > o.address || (address == o.address && type > o.type) ||
-            ((address == o.address && type == o.type) || addend > o.addend) ||
-            ((address == o.address && type == o.type && addend == o.addend) && symbol > o.symbol);
+struct RelocationSetHash {
+  size_t operator()(const Relocation* reloc) const {
+    Hash hasher;
+    hasher.process(reloc->address())
+          .process(reloc->type())
+          .process(reloc->info())
+          .process(reloc->addend());
+
+    if (reloc->has_symbol()) {
+      hasher.process(reloc->symbol().name());
     }
+    return hasher.value();
+  }
 };
 
 template<typename ELF_T, typename REL_T>
-void Parser::parse_section_relocations(Section const& section) {
+void Parser::parse_section_relocations(const Section& section) {
   using Elf_Rel = typename ELF_T::Elf_Rel;
   using Elf_Rela = typename ELF_T::Elf_Rela;
 
@@ -1335,8 +1347,8 @@ void Parser::parse_section_relocations(Section const& section) {
   // identified by the sh_link
   // BUT: in practice sh_info and sh_link are inverted
   Section* applies_to = nullptr;
-  if (section.information() > 0 && section.information() < binary_->sections_.size()) {
-    const size_t sh_info = section.information();
+  const size_t sh_info = section.information();
+  if (sh_info > 0 && sh_info < binary_->sections_.size()) {
     applies_to = binary_->sections_[sh_info];
   }
 
@@ -1353,16 +1365,15 @@ void Parser::parse_section_relocations(Section const& section) {
   uint32_t nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
-  std::map<RelocationKey, Relocation*> map;
-
+  std::unordered_set<Relocation*, RelocationSetHash, RelocationSetEq> reloc_hash;
   stream_->setpos(offset_relocations);
   for (uint32_t i = 0; i < nb_entries; ++i) {
     if (!stream_->can_read<REL_T>()) {
       break;
     }
-    const REL_T rel_hdr = stream_->read_conv<REL_T>();
+    const auto rel_hdr = stream_->read_conv<REL_T>();
 
-    std::unique_ptr<Relocation> reloc{new Relocation{rel_hdr}};
+    auto reloc = std::make_unique<Relocation>(rel_hdr);
     reloc->architecture_ = binary_->header_.machine_type();
     reloc->section_      = applies_to;
     if (binary_->header().file_type() == ELF::E_TYPE::ET_REL &&
@@ -1370,23 +1381,14 @@ void Parser::parse_section_relocations(Section const& section) {
       reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
     }
 
-    const uint32_t idx  = static_cast<uint32_t>(rel_hdr.r_info >> shift);
+    const auto idx  = static_cast<uint32_t>(rel_hdr.r_info >> shift);
     if (idx > 0 && idx < binary_->dynamic_symbols_.size()) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx];
     } else if (idx < binary_->static_symbols_.size()) {
       reloc->symbol_ = binary_->static_symbols_[idx];
     }
-
-    RelocationKey k = {
-        reloc->address(),
-        reloc->type(),
-        reloc->addend(),
-        reloc->has_symbol() ? LIEF::Hash::hash(reloc->symbol()) : 0
-    };
-
-    if (map[k] == nullptr) {
-        auto released = map[k] = reloc.release();
-        binary_->relocations_.push_back(released);
+    if (reloc_hash.insert(reloc.get()).second) {
+      binary_->relocations_.push_back(reloc.release());
     }
   }
 }
