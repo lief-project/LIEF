@@ -451,12 +451,14 @@ endif()
 # Fuzzing options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if(LIEF_FUZZING)
+  set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O2 -fsanitize=address,fuzzer-no-link)
+  set(FUZZING_LINKER_FLAGS -fsanitize=address,fuzzer-no-link)
   set_property(TARGET LIB_LIEF
                APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
 
   target_compile_options(LIB_LIEF PRIVATE ${FUZZING_FLAGS})
-  target_link_libraries(LIB_LIEF asan pthread)
-  add_dependencies(LIB_LIEF lief_libfuzzer)
+  target_link_libraries(LIB_LIEF PUBLIC asan pthread)
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
 endif()
 
 # Compile Flags

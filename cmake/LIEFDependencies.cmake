@@ -178,63 +178,6 @@ else()
   target_include_directories(lief_spdlog SYSTEM INTERFACE ${SPDLOG_SOURCE_DIR}/include)
 endif()
 
-# Fuzzing
-# ~~~~~~~
-set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O2)
-set(FUZZING_LINKER_FLAGS)
-
-list(APPEND FUZZING_FLAGS -fsanitize=address,fuzzer)
-list(APPEND FUZZING_LINKER_FLAGS -fsanitize=address,fuzzer)
-
-set(LIBFUZZER_SRC_FILES)
-if (LIEF_FUZZING)
-  message(STATUS "Fuzzing Enabled")
-
-  set(LIBFUZZER_VERSION 6f13445)
-  set(LIBFUZZER_SHA256  SHA256=cf9a4f5025beb9005181b9136a88e142f1360a3f8ccd490ec1b8f773cefc51e1)
-  set(LIBFUZZER_URL     "${THIRD_PARTY_DIRECTORY}/LibFuzzer-${LIBFUZZER_VERSION}.zip")
-  ExternalProject_Add(lief_libfuzzer
-  URL               ${LIBFUZZER_URL}
-  URL_HASH          ${LIBFUZZER_SHA256}
-  CONFIGURE_COMMAND ""
-  UPDATE_COMMAND    ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   "")
-
-  ExternalProject_get_property(lief_libfuzzer SOURCE_DIR)
-  set(LIBFUZZER_SOURCE_DIR "${SOURCE_DIR}")
-
-  set(LIBFUZZER_SRC_FILES
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerMain.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerCrossOver.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerDataFlowTrace.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerDriver.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsDlsym.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsWeak.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtFunctionsWindows.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerExtraCounters.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerFork.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerIO.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerIOPosix.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerIOWindows.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerLoop.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerMerge.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerMutate.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerSHA1.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerTracePC.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtil.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilDarwin.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilFuchsia.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilLinux.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilPosix.cpp"
-    "${LIBFUZZER_SOURCE_DIR}/FuzzerUtilWindows.cpp"
-    )
-  list(APPEND LIBLIEF_SOURCE_FILES ${LIBFUZZER_SRC_FILES})
-  set_source_files_properties(${LIBFUZZER_SRC_FILES} PROPERTIES GENERATED TRUE)
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fuzzing")
-endif()
-
-
 # Frozen
 # ------
 set(LIEF_FROZEN_ENABLED 0)
