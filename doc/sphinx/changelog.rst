@@ -69,6 +69,8 @@ Changelog
       # or
       $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
 
+  * Replace the keywords ``and``, ``or``, ``not`` with ``&&``, ``||`` and ``!``.
+
 :Dependencies:
   * Upgrade to MbedTLS 3.1.0
 
