@@ -126,7 +126,7 @@ after_build:
         $host.SetShouldExit(0)
 
 on_finish:
-  - cmd: sccache.exe --stop-server && exit 0 # ignore error
+  - cmd: sccache.exe --stop-server || true # ignore error
 
 artifacts:
   - path: 'dist\*.whl'
