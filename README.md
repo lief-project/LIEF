@@ -38,12 +38,20 @@
   <a href="https://twitter.com/LIEF_project">
    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project?color=1da1f2&label=Follow&logo=twitter&logoColor=white&style=flat-square">
   </a>
-
 </p>
+
+<br />
+<p align="center">
+  <a href="https://lief-project.github.io/blog/"><b>Blog</b></a> •
+  <a href="https://lief-project.github.io/doc/latest/index.html"><b>Documentation</b></a> •
+  <a href="#about-A"><b>About</b></a>
+</p>
+<br />
 
 # About
 
-The purpose of this project is to provide a cross platform library which can parse, modify and abstract ELF, PE and MachO formats.
+The purpose of this project is to provide a cross platform library which can parse,
+modify and abstract ELF, PE and MachO formats.
 
 Main features:
 
