@@ -42,7 +42,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          e->name  = dynamic_cast<DynamicEntryLibrary*>(&entry)->name().c_str();
+          e->name  = reinterpret_cast<DynamicEntryLibrary*>(&entry)->name().c_str();
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
           break;
@@ -55,7 +55,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          e->name  = dynamic_cast<DynamicSharedObject*>(&entry)->name().c_str();
+          e->name  = reinterpret_cast<DynamicSharedObject*>(&entry)->name().c_str();
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
           break;
@@ -68,7 +68,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          e->rpath = dynamic_cast<DynamicEntryRpath*>(&entry)->name().c_str();
+          e->rpath = reinterpret_cast<DynamicEntryRpath*>(&entry)->name().c_str();
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
 
@@ -82,7 +82,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value   = entry.value();
-          e->runpath = dynamic_cast<DynamicEntryRunPath*>(&entry)->name().c_str();
+          e->runpath = reinterpret_cast<DynamicEntryRunPath*>(&entry)->name().c_str();
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
 
@@ -98,7 +98,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          const std::vector<uint64_t>& array = dynamic_cast<DynamicEntryArray*>(&entry)->array();
+          const std::vector<uint64_t>& array = reinterpret_cast<DynamicEntryArray*>(&entry)->array();
           e->array = static_cast<uint64_t*>(malloc((array.size() + 1) * sizeof(uint64_t)));
           for (size_t i = 0; i < array.size(); ++i) {
             e->array[i] = array[i];
@@ -116,7 +116,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          const DynamicEntryFlags::flags_list_t& flags = dynamic_cast<DynamicEntryFlags*>(&entry)->flags();
+          const DynamicEntryFlags::flags_list_t& flags = reinterpret_cast<DynamicEntryFlags*>(&entry)->flags();
           e->flags   = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS*>(malloc((flags.size() + 1) * sizeof(enum LIEF_ELF_DYNAMIC_FLAGS)));
           e->flags_1 = nullptr;
 
@@ -139,7 +139,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
           e->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
           e->value = entry.value();
-          const DynamicEntryFlags::flags_list_t& flags = dynamic_cast<DynamicEntryFlags*>(&entry)->flags();
+          const DynamicEntryFlags::flags_list_t& flags = reinterpret_cast<DynamicEntryFlags*>(&entry)->flags();
           e->flags_1 = static_cast<enum LIEF_ELF_DYNAMIC_FLAGS_1*>(malloc((flags.size() + 1) * sizeof(enum LIEF_ELF_DYNAMIC_FLAGS_1)));
           e->flags   = nullptr;
 

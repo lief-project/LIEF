@@ -101,8 +101,9 @@ ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
   new_node->depth_ = depth_ + 1;
 
   childs_.push_back(new_node);
+  if (is_directory()) {
+    auto* dir = reinterpret_cast<ResourceDirectory*>(this);
 
-  if (auto* dir = dynamic_cast<ResourceDirectory*>(this)) {
     if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
@@ -119,13 +120,17 @@ ResourceNode& ResourceNode::add_child(const ResourceData& child) {
 
   childs_.push_back(new_node);
 
-  if (auto* dir = dynamic_cast<ResourceDirectory*>(this)) {
+  if (is_directory()) {
+    auto* dir = reinterpret_cast<ResourceDirectory*>(this);
+
     if (child.has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() + 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
     }
+
   }
+
   return *childs_.back();
 }
 
@@ -155,18 +160,19 @@ void ResourceNode::delete_child(const ResourceNode& node) {
     throw not_found(ss.str());
   }
 
+  ResourceNode* inode = *it_node;
+
   if (is_directory()) {
-    auto* dir = dynamic_cast<ResourceDirectory*>(this);
-    if ((*it_node)->has_name()) {
+    auto* dir = reinterpret_cast<ResourceDirectory*>(this);
+    if (inode->has_name()) {
       dir->numberof_name_entries(dir->numberof_name_entries() - 1);
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() - 1);
     }
   }
 
-  delete *it_node;
+  delete inode;
   childs_.erase(it_node);
-
 }
 
 void ResourceNode::id(uint32_t id) {

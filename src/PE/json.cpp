@@ -1034,20 +1034,15 @@ void JsonVisitor::visit(const PogoEntry& entry) {
 
 // LIEF Abstract
 void JsonVisitor::visit(const LIEF::Binary& binary) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  visit(*dynamic_cast<const LIEF::PE::Binary*>(&binary));
+  visit(reinterpret_cast<const LIEF::PE::Binary&>(binary));
 }
-
 
 void JsonVisitor::visit(const LIEF::Symbol& symbol) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  visit(*dynamic_cast<const LIEF::PE::Symbol*>(&symbol));
+  visit(reinterpret_cast<const LIEF::PE::Symbol&>(symbol));
 }
 
-
 void JsonVisitor::visit(const LIEF::Section& section) {
-  // It should be a ELF::Binary so we don't catch "std::bad_cast"
-  visit(*dynamic_cast<const LIEF::PE::Section*>(&section));
+  visit(reinterpret_cast<const LIEF::PE::Section&>(section));
 }
 
 } // namespace PE

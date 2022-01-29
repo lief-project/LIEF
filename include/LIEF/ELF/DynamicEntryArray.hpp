@@ -76,6 +76,8 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   virtual ~DynamicEntryArray();
 
+  static bool classof(const DynamicEntry* entry);
+
   private:
   array_t array_;
 

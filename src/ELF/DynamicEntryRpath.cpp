@@ -125,6 +125,12 @@ void DynamicEntryRpath::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+bool DynamicEntryRpath::classof(const DynamicEntry* entry) {
+  const DYNAMIC_TAGS tag = entry->tag();
+  return tag == DYNAMIC_TAGS::DT_RPATH;
+}
+
+
 std::ostream& DynamicEntryRpath::print(std::ostream& os) const {
 
   DynamicEntry::print(os);

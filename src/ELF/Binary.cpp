@@ -144,8 +144,8 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
 std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DynamicEntry& entry : dynamic_entries()) {
-    if (dynamic_cast<const DynamicEntryLibrary*>(&entry) != nullptr) {
-      result.push_back(dynamic_cast<const DynamicEntryLibrary*>(&entry)->name());
+    if (DynamicEntryLibrary::classof(&entry)) {
+      result.push_back(reinterpret_cast<const DynamicEntryLibrary*>(&entry)->name());
     }
   }
   return result;
@@ -166,56 +166,31 @@ it_const_dynamic_entries Binary::dynamic_entries() const {
 
 DynamicEntry& Binary::add(const DynamicEntry& entry) {
 
-  DynamicEntry* new_one = nullptr;
-  switch (entry.tag()) {
-    case DYNAMIC_TAGS::DT_NEEDED:
-      {
-        new_one = new DynamicEntryLibrary{*dynamic_cast<const DynamicEntryLibrary*>(&entry)};
-        break;
-      }
+  std::unique_ptr<DynamicEntry> new_one;
 
-
-    case DYNAMIC_TAGS::DT_SONAME:
-      {
-        new_one = new DynamicSharedObject{*dynamic_cast<const DynamicSharedObject*>(&entry)};
-        break;
-      }
-
-
-    case DYNAMIC_TAGS::DT_RPATH:
-      {
-        new_one = new DynamicEntryRpath{*dynamic_cast<const DynamicEntryRpath*>(&entry)};
-        break;
-      }
-
-
-    case DYNAMIC_TAGS::DT_RUNPATH:
-      {
-        new_one = new DynamicEntryRunPath{*dynamic_cast<const DynamicEntryRunPath*>(&entry)};
-        break;
-      }
-
-
-    case DYNAMIC_TAGS::DT_FLAGS_1:
-    case DYNAMIC_TAGS::DT_FLAGS:
-      {
-        new_one = new DynamicEntryFlags{*dynamic_cast<const DynamicEntryFlags*>(&entry)};
-        break;
-      }
-
-
-    case DYNAMIC_TAGS::DT_FINI_ARRAY:
-    case DYNAMIC_TAGS::DT_INIT_ARRAY:
-    case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
-      {
-        new_one = new DynamicEntryArray{*dynamic_cast<const DynamicEntryArray*>(&entry)};
-        break;
-      }
-
-    default:
-      {
-        new_one = new DynamicEntry{entry};
-      }
+  if (DynamicEntryLibrary::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryLibrary>(reinterpret_cast<const DynamicEntryLibrary&>(entry));
+  }
+  else if (DynamicEntryLibrary::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryLibrary>(reinterpret_cast<const DynamicEntryLibrary&>(entry));
+  }
+  else if (DynamicSharedObject::classof(&entry)) {
+    new_one = std::make_unique<DynamicSharedObject>(reinterpret_cast<const DynamicSharedObject&>(entry));
+  }
+  else if (DynamicEntryRpath::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryRpath>(reinterpret_cast<const DynamicEntryRpath&>(entry));
+  }
+  else if (DynamicEntryRunPath::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryRunPath>(reinterpret_cast<const DynamicEntryRunPath&>(entry));
+  }
+  else if (DynamicEntryFlags::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryFlags>(reinterpret_cast<const DynamicEntryFlags&>(entry));
+  }
+  else if (DynamicEntryArray::classof(&entry)) {
+    new_one = std::make_unique<DynamicEntryArray>(reinterpret_cast<const DynamicEntryArray&>(entry));
+  }
+  else {
+    new_one = std::make_unique<DynamicEntry>(entry);
   }
 
   const auto it_new_place = std::find_if(std::begin(dynamic_entries_), std::end(dynamic_entries_),
@@ -223,8 +198,9 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
         return e->tag() == new_one->tag() || e->tag() == DYNAMIC_TAGS::DT_NULL;
       });
 
-  dynamic_entries_.insert(it_new_place, new_one);
-  return *new_one;
+  auto* ptr = new_one.get();
+  dynamic_entries_.insert(it_new_place, new_one.release());
+  return *ptr;
 
 }
 
@@ -2049,7 +2025,7 @@ uint64_t Binary::next_virtual_address() const {
 
 
 DynamicEntryLibrary& Binary::add_library(const std::string& library_name) {
-  return *dynamic_cast<DynamicEntryLibrary*>(&add(DynamicEntryLibrary{library_name}));
+  return reinterpret_cast<DynamicEntryLibrary&>(add(DynamicEntryLibrary{library_name}));
 }
 
 

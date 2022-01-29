@@ -269,25 +269,26 @@ void Builder::build_resources() {
 //
 // Pre-computation
 //
-void Builder::compute_resources_size(ResourceNode& node, uint32_t *headerSize, uint32_t *dataSize, uint32_t *nameSize) {
+void Builder::compute_resources_size(ResourceNode& node, uint32_t* header_size,
+                                     uint32_t* data_size, uint32_t* name_size) {
   if (!node.name().empty()) {
-    *nameSize += sizeof(uint16_t) + (node.name().size() + 1) * sizeof(char16_t);
+    *name_size += sizeof(uint16_t) + (node.name().size() + 1) * sizeof(char16_t);
   }
 
   if (node.is_directory()) {
-    *headerSize += sizeof(details::pe_resource_directory_table);
-    *headerSize += sizeof(details::pe_resource_directory_entries);
+    *header_size += sizeof(details::pe_resource_directory_table);
+    *header_size += sizeof(details::pe_resource_directory_entries);
   } else {
-    auto *dataNode = dynamic_cast<ResourceData*>(&node);
-    *headerSize += sizeof(details::pe_resource_data_entry);
-    *headerSize += sizeof(details::pe_resource_directory_entries);
+    auto& data_dode = reinterpret_cast<ResourceData&>(node);
+    *header_size += sizeof(details::pe_resource_data_entry);
+    *header_size += sizeof(details::pe_resource_directory_entries);
 
     // !!! Data content have to be aligned !!!
-    *dataSize += align(dataNode->content().size(), sizeof(uint32_t));
+    *data_size += align(data_dode.content().size(), sizeof(uint32_t));
   }
 
   for (ResourceNode& child : node.childs()) {
-    compute_resources_size(child, headerSize, dataSize, nameSize);
+    compute_resources_size(child, header_size, data_size, name_size);
   }
 }
 
@@ -295,41 +296,35 @@ void Builder::compute_resources_size(ResourceNode& node, uint32_t *headerSize, u
 //
 // Build level by level
 //
-void Builder::construct_resources(
-    ResourceNode& node,
-    std::vector<uint8_t> *content,
-    uint32_t *offsetToHeader,
-    uint32_t *offsetToData,
-    uint32_t *offsetToName,
-    uint32_t baseRVA,
-    uint32_t depth) {
+void Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
+                                  uint32_t* offset_header, uint32_t* offset_data,
+                                  uint32_t* offset_name, uint32_t base_rva, uint32_t depth) {
 
   // Build Directory
   // ===============
   if (node.is_directory()) {
-    auto *rsrc_directory = dynamic_cast<ResourceDirectory*>(&node);
+    auto& rsrc_directory = reinterpret_cast<ResourceDirectory&>(node);
 
     details::pe_resource_directory_table rsrc_header;
-    rsrc_header.Characteristics     = static_cast<uint32_t>(rsrc_directory->characteristics());
-    rsrc_header.TimeDateStamp       = static_cast<uint32_t>(rsrc_directory->time_date_stamp());
-    rsrc_header.MajorVersion        = static_cast<uint16_t>(rsrc_directory->major_version());
-    rsrc_header.MinorVersion        = static_cast<uint16_t>(rsrc_directory->minor_version());
-    rsrc_header.NumberOfNameEntries = static_cast<uint16_t>(rsrc_directory->numberof_name_entries());
-    rsrc_header.NumberOfIDEntries   = static_cast<uint16_t>(rsrc_directory->numberof_id_entries());
+    rsrc_header.Characteristics     = static_cast<uint32_t>(rsrc_directory.characteristics());
+    rsrc_header.TimeDateStamp       = static_cast<uint32_t>(rsrc_directory.time_date_stamp());
+    rsrc_header.MajorVersion        = static_cast<uint16_t>(rsrc_directory.major_version());
+    rsrc_header.MinorVersion        = static_cast<uint16_t>(rsrc_directory.minor_version());
+    rsrc_header.NumberOfNameEntries = static_cast<uint16_t>(rsrc_directory.numberof_name_entries());
+    rsrc_header.NumberOfIDEntries   = static_cast<uint16_t>(rsrc_directory.numberof_id_entries());
 
 
-    std::copy(
-        reinterpret_cast<uint8_t*>(&rsrc_header),
-        reinterpret_cast<uint8_t*>(&rsrc_header) + sizeof(details::pe_resource_directory_table),
-        content->data() + *offsetToHeader);
+    std::copy(reinterpret_cast<uint8_t*>(&rsrc_header),
+              reinterpret_cast<uint8_t*>(&rsrc_header) + sizeof(details::pe_resource_directory_table),
+              content->data() + *offset_header);
 
-    *offsetToHeader += sizeof(details::pe_resource_directory_table);
+    *offset_header += sizeof(details::pe_resource_directory_table);
 
     //Build next level
-    uint32_t currentOffset = *offsetToHeader;
+    uint32_t current_offset = *offset_header;
 
     // Offset to the next RESOURCE_NODE_TYPES::DIRECTORY
-    *offsetToHeader += node.childs().size() * sizeof(details::pe_resource_directory_entries);
+    *offset_header += node.childs().size() * sizeof(details::pe_resource_directory_entries);
 
 
     // Build childs
@@ -338,73 +333,68 @@ void Builder::construct_resources(
       if ((static_cast<uint32_t>(child.id()) & 0x80000000) != 0u) { // There is a name
 
         const std::u16string& name = child.name();
-        child.id(0x80000000 | *offsetToName);
+        child.id(0x80000000 | *offset_name);
 
-        auto* length_ptr = reinterpret_cast<uint16_t*>(content->data() + *offsetToName);
+        auto* length_ptr = reinterpret_cast<uint16_t*>(content->data() + *offset_name);
         *length_ptr = name.size();
-        auto* name_ptr = reinterpret_cast<char16_t*>(content->data() + *offsetToName + sizeof(uint16_t));
+        auto* name_ptr = reinterpret_cast<char16_t*>(content->data() + *offset_name + sizeof(uint16_t));
 
-        std::copy(
-            reinterpret_cast<const char16_t*>(name.data()),
-            reinterpret_cast<const char16_t*>(name.data()) + name.size(),
-            name_ptr);
+        std::copy(reinterpret_cast<const char16_t*>(name.data()),
+                  reinterpret_cast<const char16_t*>(name.data()) + name.size(),
+                  name_ptr);
 
-        *offsetToName += (name.size() + 1) * sizeof(char16_t) + sizeof(uint16_t);
+        *offset_name += (name.size() + 1) * sizeof(char16_t) + sizeof(uint16_t);
       }
 
       // DIRECTORY
       if (child.is_directory()) {
         details::pe_resource_directory_entries entry_header;
         entry_header.NameID.IntegerID = static_cast<uint32_t>(child.id());
-        entry_header.RVA              = static_cast<uint32_t>((0x80000000 | *offsetToHeader));
+        entry_header.RVA              = static_cast<uint32_t>((0x80000000 | *offset_header));
 
-        std::copy(
-            reinterpret_cast<uint8_t*>(&entry_header),
-            reinterpret_cast<uint8_t*>(&entry_header) + sizeof(details::pe_resource_directory_entries),
-            content->data() + currentOffset);
+        std::copy(reinterpret_cast<uint8_t*>(&entry_header),
+                  reinterpret_cast<uint8_t*>(&entry_header) + sizeof(details::pe_resource_directory_entries),
+                  content->data() + current_offset);
 
-        currentOffset += sizeof(details::pe_resource_directory_entries);
-        construct_resources(child, content, offsetToHeader, offsetToData, offsetToName, baseRVA, depth + 1);
+        current_offset += sizeof(details::pe_resource_directory_entries);
+        construct_resources(child, content, offset_header, offset_data, offset_name, base_rva, depth + 1);
       } else { //DATA
         details::pe_resource_directory_entries entry_header;
 
         entry_header.NameID.IntegerID = static_cast<uint32_t>(child.id());
-        entry_header.RVA              = static_cast<uint32_t>(*offsetToHeader);
+        entry_header.RVA              = static_cast<uint32_t>(*offset_header);
 
-        std::copy(
-            reinterpret_cast<uint8_t*>(&entry_header),
-            reinterpret_cast<uint8_t*>(&entry_header) + sizeof(details::pe_resource_directory_entries),
-            content->data() + currentOffset);
+        std::copy(reinterpret_cast<uint8_t*>(&entry_header),
+                  reinterpret_cast<uint8_t*>(&entry_header) + sizeof(details::pe_resource_directory_entries),
+                  content->data() + current_offset);
 
-        currentOffset += sizeof(details::pe_resource_directory_entries);
+        current_offset += sizeof(details::pe_resource_directory_entries);
 
-        construct_resources(child, content, offsetToHeader, offsetToData, offsetToName, baseRVA, depth + 1);
+        construct_resources(child, content, offset_header, offset_data, offset_name, base_rva, depth + 1);
       }
     }
 
   } else {
-    auto *rsrc_data = dynamic_cast<ResourceData*>(&node);
+    auto& rsrc_data = reinterpret_cast<ResourceData&>(node);
 
     details::pe_resource_data_entry data_header;
-    data_header.DataRVA  = static_cast<uint32_t>(baseRVA + *offsetToData);
-    data_header.Size     = static_cast<uint32_t>(rsrc_data->content().size());
-    data_header.Codepage = static_cast<uint32_t>(rsrc_data->code_page());
-    data_header.Reserved = static_cast<uint32_t>(rsrc_data->reserved());
+    data_header.DataRVA  = static_cast<uint32_t>(base_rva + *offset_data);
+    data_header.Size     = static_cast<uint32_t>(rsrc_data.content().size());
+    data_header.Codepage = static_cast<uint32_t>(rsrc_data.code_page());
+    data_header.Reserved = static_cast<uint32_t>(rsrc_data.reserved());
 
 
-    std::copy(
-        reinterpret_cast<uint8_t*>(&data_header),
-        reinterpret_cast<uint8_t*>(&data_header) + sizeof(details::pe_resource_data_entry),
-        content->data() + *offsetToHeader);
+    std::copy(reinterpret_cast<uint8_t*>(&data_header),
+              reinterpret_cast<uint8_t*>(&data_header) + sizeof(details::pe_resource_data_entry),
+              content->data() + *offset_header);
 
-    *offsetToHeader += sizeof(details::pe_resource_directory_table);
-    const std::vector<uint8_t>& resource_content = rsrc_data->content();
-    std::copy(
-        std::begin(resource_content),
-        std::end(resource_content),
-        content->data() + *offsetToData);
+    *offset_header += sizeof(details::pe_resource_directory_table);
+    const std::vector<uint8_t>& resource_content = rsrc_data.content();
 
-    *offsetToData += align(resource_content.size(), sizeof(uint32_t));
+    std::copy(std::begin(resource_content), std::end(resource_content),
+              content->data() + *offset_data);
+
+    *offset_data += align(resource_content.size(), sizeof(uint32_t));
   }
 }
 

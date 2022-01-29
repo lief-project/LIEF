@@ -47,6 +47,8 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const DynamicEntry* entry);
+
   private:
   std::string name_;
 };

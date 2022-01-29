@@ -125,6 +125,12 @@ void DynamicEntryFlags::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+bool DynamicEntryFlags::classof(const DynamicEntry* entry) {
+  const DYNAMIC_TAGS tag = entry->tag();
+  return tag == DYNAMIC_TAGS::DT_FLAGS_1 ||
+         tag == DYNAMIC_TAGS::DT_FLAGS;
+}
+
 std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   DynamicEntry::print(os);
 

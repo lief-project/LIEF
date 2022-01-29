@@ -366,9 +366,10 @@ void ResourcesManager::manifest(const std::string& manifest) {
         return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::MANIFEST;
       });
 
+  ResourceNode& mnode = *it_manifest;
 
-  ResourceData* manifest_node = dynamic_cast<ResourceData*>(&((*it_manifest).childs()[0].childs()[0]));
-  manifest_node->content({std::begin(manifest), std::end(manifest)});
+  auto& data_manifest_node = reinterpret_cast<ResourceData&>(mnode.childs()[0].childs()[0]);
+  data_manifest_node.content({std::begin(manifest), std::end(manifest)});
 }
 
 

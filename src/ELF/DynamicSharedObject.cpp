@@ -47,6 +47,11 @@ void DynamicSharedObject::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+bool DynamicSharedObject::classof(const DynamicEntry* entry) {
+  const DYNAMIC_TAGS tag = entry->tag();
+  return tag == DYNAMIC_TAGS::DT_SONAME;
+}
+
 
 std::ostream& DynamicSharedObject::print(std::ostream& os) const {
   DynamicEntry::print(os);

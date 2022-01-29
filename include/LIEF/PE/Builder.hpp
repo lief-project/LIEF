@@ -119,12 +119,12 @@ class LIEF_API Builder {
   void build_overlay();
   void build_dos_stub();
 
-  void compute_resources_size(ResourceNode& node, uint32_t *headerSize,
-                              uint32_t *dataSize, uint32_t *nameSize);
+  void compute_resources_size(ResourceNode& node, uint32_t *header_size,
+                              uint32_t *data_size, uint32_t *name_size);
 
-  void construct_resources(ResourceNode& node, std::vector<uint8_t> *content,
-                           uint32_t *offsetToHeader, uint32_t *offsetToData, uint32_t *offsetToName,
-                           uint32_t baseRVA, uint32_t depth);
+  void construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
+                           uint32_t* offset_header, uint32_t* offset_data, uint32_t* offset_name,
+                           uint32_t base_rva, uint32_t depth);
 
 
   mutable vector_iostream ios_;

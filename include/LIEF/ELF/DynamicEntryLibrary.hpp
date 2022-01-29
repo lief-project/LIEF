@@ -44,6 +44,8 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   const std::string& name() const;
   void name(const std::string& name);
 
+  static bool classof(const DynamicEntry* entry);
+
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;

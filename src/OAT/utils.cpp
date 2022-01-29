@@ -116,7 +116,7 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
 
 oat_version_t version(const LIEF::ELF::Binary& elf_binary) {
 
-  const LIEF::ELF::Symbol& oatdata_symbol = dynamic_cast<const LIEF::ELF::Symbol&>(elf_binary.get_symbol("oatdata"));
+  const auto& oatdata_symbol = reinterpret_cast<const LIEF::ELF::Symbol&>(elf_binary.get_symbol("oatdata"));
 
   const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(oatdata_symbol.value() + sizeof(oat_magic), sizeof(oat_version));
 

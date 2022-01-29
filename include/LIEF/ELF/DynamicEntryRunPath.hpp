@@ -70,6 +70,8 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const DynamicEntry* entry);
+
   std::ostream& print(std::ostream& os) const override;
 
   private:

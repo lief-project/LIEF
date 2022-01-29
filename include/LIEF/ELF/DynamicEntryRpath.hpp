@@ -66,6 +66,8 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   DynamicEntryRpath& operator+=(const std::string& path);
   DynamicEntryRpath& operator-=(const std::string& path);
 
+  static bool classof(const DynamicEntry* entry);
+
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;

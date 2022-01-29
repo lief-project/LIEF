@@ -67,6 +67,8 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
   //! Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const DynamicEntry* entry);
+
   std::ostream& print(std::ostream& os) const override;
 };
 }

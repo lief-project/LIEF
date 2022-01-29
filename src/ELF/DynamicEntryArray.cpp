@@ -98,6 +98,13 @@ void DynamicEntryArray::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+bool DynamicEntryArray::classof(const DynamicEntry* entry) {
+  const DYNAMIC_TAGS tag = entry->tag();
+  return tag == DYNAMIC_TAGS::DT_INIT_ARRAY ||
+         tag == DYNAMIC_TAGS::DT_FINI_ARRAY ||
+         tag == DYNAMIC_TAGS::DT_PREINIT_ARRAY;
+}
+
 std::ostream& DynamicEntryArray::print(std::ostream& os) const {
   const DynamicEntryArray::array_t& array = this->array();
   DynamicEntry::print(os);
