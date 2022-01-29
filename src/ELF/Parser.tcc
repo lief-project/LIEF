@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <cctype>
+#include <memory>
 #include <unordered_set>
 #include "logging.hpp"
 
@@ -39,7 +40,7 @@
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/DataHandler/Handler.hpp"
-
+#include "LIEF/ELF/Structures.hpp"
 
 #include "Object.tcc"
 
@@ -313,7 +314,7 @@ void Parser::parse_binary() {
   if (it_symbol_version_definition != std::end(binary_->dynamic_entries_) &&
       it_symbol_version_definition_size != std::end(binary_->dynamic_entries_)) {
     const uint64_t virtual_address = (*it_symbol_version_definition)->value();
-    const uint32_t size            = static_cast<uint32_t>((*it_symbol_version_definition_size)->value());
+    const auto size            = static_cast<uint32_t>((*it_symbol_version_definition_size)->value());
     try {
       const uint64_t offset = binary_->virtual_address_to_offset(virtual_address);
       parse_symbol_version_definition<ELF_T>(offset, size);
@@ -334,7 +335,7 @@ void Parser::parse_binary() {
 
   if (it_symtab_section != std::end(binary_->sections_)) {
     const Section* section = *it_symtab_section;
-    uint32_t nb_entries = static_cast<uint32_t>((section->size() / sizeof(typename ELF_T::Elf_Sym)));
+    auto nb_entries = static_cast<uint32_t>((section->size() / sizeof(typename ELF_T::Elf_Sym)));
 
     if (section->link() == 0 || section->link() >= binary_->sections_.size()) {
       LIEF_WARN("section->link() is not valid !");
@@ -630,7 +631,7 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size
 
   const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
 
-  const uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  const auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
   uint32_t idx = 0;
   stream_->setpos(relocations_offset);
@@ -712,18 +713,18 @@ uint32_t Parser::nb_dynsym_gnu_hash() const {
     return 0;
   }
 
-  const uint32_t nbuckets  = stream_->read_conv<uint32_t>();
+  const auto nbuckets  = stream_->read_conv<uint32_t>();
   if (!stream_->can_read<uint32_t>()) {
     return 0;
   }
 
-  const uint32_t symndx    = stream_->read_conv<uint32_t>();
+  const auto symndx    = stream_->read_conv<uint32_t>();
 
   if (!stream_->can_read<uint32_t>()) {
     return 0;
   }
 
-  const uint32_t maskwords = stream_->read_conv<uint32_t>();
+  const auto maskwords = stream_->read_conv<uint32_t>();
 
   // skip shift2, unused as we don't need the bloom filter to count syms.
   stream_->increment_pos(sizeof(uint32_t));
@@ -747,7 +748,7 @@ uint32_t Parser::nb_dynsym_gnu_hash() const {
       return 0;
     }
 
-    uint32_t bucket = stream_->read_conv<uint32_t>();
+    auto bucket = stream_->read_conv<uint32_t>();
     if (bucket > max_bucket) {
       max_bucket = bucket;
     }
@@ -927,7 +928,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
 
   const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
 
-  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
@@ -941,7 +942,7 @@ void Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64_t siz
     reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_DYNAMIC);
     reloc->architecture_ = binary_->header().machine_type();
 
-    const uint32_t idx =  static_cast<uint32_t>(raw_reloc.r_info >> shift);
+    const auto idx =  static_cast<uint32_t>(raw_reloc.r_info >> shift);
 
     if (idx < binary_->dynamic_symbols_.size()) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx];
@@ -1058,7 +1059,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
     switch (static_cast<DYNAMIC_TAGS>(entry.d_tag)) {
       case DYNAMIC_TAGS::DT_NEEDED :
         {
-          dynamic_entry = std::unique_ptr<DynamicEntryLibrary>{new DynamicEntryLibrary{entry}};
+          dynamic_entry = std::make_unique<DynamicEntryLibrary>(DynamicEntryLibrary{entry});
           std::string library_name = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
           dynamic_entry->as<DynamicEntryLibrary>()->name(library_name);
           break;
@@ -1067,7 +1068,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       case DYNAMIC_TAGS::DT_SONAME :
         {
 
-          dynamic_entry = std::unique_ptr<DynamicSharedObject>{new DynamicSharedObject{entry}};
+          dynamic_entry = std::make_unique<DynamicSharedObject>(DynamicSharedObject{entry});
           std::string sharename = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
           dynamic_entry->as<DynamicSharedObject>()->name(sharename);
           break;
@@ -1075,7 +1076,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
 
       case DYNAMIC_TAGS::DT_RPATH:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntryRpath>{new DynamicEntryRpath{entry}};
+          dynamic_entry = std::make_unique<DynamicEntryRpath>(DynamicEntryRpath{entry});
           std::string name = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
           dynamic_entry->as<DynamicEntryRpath>()->name(name);
           break;
@@ -1084,7 +1085,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       case DYNAMIC_TAGS::DT_RUNPATH:
         {
 
-          dynamic_entry = std::unique_ptr<DynamicEntryRunPath>{new DynamicEntryRunPath{entry}};
+          dynamic_entry = std::make_unique<DynamicEntryRunPath>(DynamicEntryRunPath{entry});
           std::string name = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
           dynamic_entry->as<DynamicEntryRunPath>()->name(name);
           break;
@@ -1093,7 +1094,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       case DYNAMIC_TAGS::DT_FLAGS_1:
       case DYNAMIC_TAGS::DT_FLAGS:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntryFlags>{new DynamicEntryFlags{entry}};
+          dynamic_entry = std::make_unique<DynamicEntryFlags>(DynamicEntryFlags{entry});
           break;
         }
 
@@ -1112,7 +1113,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       case DYNAMIC_TAGS::DT_VERDEF:
       case DYNAMIC_TAGS::DT_VERDEFNUM:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{entry}};
+          dynamic_entry = std::make_unique<DynamicEntry>(DynamicEntry{entry});
           break;
         }
 
@@ -1120,20 +1121,20 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       case DYNAMIC_TAGS::DT_INIT_ARRAY:
       case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntryArray>{new DynamicEntryArray{entry}};
+          dynamic_entry = std::make_unique<DynamicEntryArray>(DynamicEntryArray{entry});
           break;
         }
 
       case DYNAMIC_TAGS::DT_NULL:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{entry}};
+          dynamic_entry = std::make_unique<DynamicEntry>(DynamicEntry{entry});
           end_of_dynamic = true;
           break;
         }
 
       default:
         {
-          dynamic_entry = std::unique_ptr<DynamicEntry>{new DynamicEntry{entry}};
+          dynamic_entry = std::make_unique<DynamicEntry>(DynamicEntry{entry});
         }
     }
 
@@ -1244,7 +1245,7 @@ void Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       DynamicEntry* dt_preinitarray_entry = *it_dt_preinitarray;
 
       std::vector<uint64_t>& array = dt_preinitarray_entry->as<DynamicEntryArray>()->array();
-      const uint32_t nb_functions = static_cast<uint32_t>((*it_dt_preinitarray_size)->value() / sizeof(uint__));
+      const auto nb_functions = static_cast<uint32_t>((*it_dt_preinitarray_size)->value() / sizeof(uint__));
 
       const Elf_Off offset = binary_->virtual_address_to_offset(dt_preinitarray_entry->value());
 
@@ -1277,7 +1278,7 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
   const Elf_Off offset_relocations = offset;
   const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
 
-  uint32_t nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
@@ -1291,7 +1292,7 @@ void Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
     reloc->architecture_ = binary_->header_.machine_type();
     reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_PLTGOT);
 
-    const uint32_t idx  = static_cast<uint32_t>(rel_hdr.r_info >> shift);
+    const auto idx  = static_cast<uint32_t>(rel_hdr.r_info >> shift);
     if (idx > 0 && idx < binary_->dynamic_symbols_.size()) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx];
     }
@@ -1362,7 +1363,7 @@ void Parser::parse_section_relocations(const Section& section) {
   const uint64_t offset_relocations = section.file_offset();
   const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
 
-  uint32_t nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
+  auto nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
   std::unordered_set<Relocation*, RelocationSetHash, RelocationSetEq> reloc_hash;
@@ -1603,7 +1604,7 @@ void Parser::parse_symbol_gnu_hash(uint64_t offset) {
 
   gnuhash.buckets_ = std::move(buckets);
 
-  const uint32_t dynsymcount = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
+  const auto dynsymcount = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
   if (dynsymcount < symndx) {
     LIEF_ERR("GNU Hash, symndx corrupted");
   } else {

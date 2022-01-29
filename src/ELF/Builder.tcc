@@ -909,7 +909,7 @@ void Builder::build_static_symbols() {
       std::find_if(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
                    [](const Symbol* sym) { return sym->is_exported(); });
 
-  const uint32_t first_exported_symbol_index =
+  const auto first_exported_symbol_index =
       static_cast<uint32_t>(std::distance(std::begin(binary_->static_symbols_), it_first_exported_symbol));
 
   if (first_exported_symbol_index != symbol_section.information()) {
@@ -1034,7 +1034,7 @@ void Builder::build_dynamic_section() {
             const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
             std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
 
-            Elf_Addr* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
             for (size_t i = 0; i < array.size(); ++i) {
               raw_array[i] = static_cast<Elf_Addr>(array[i]);
             }
@@ -1058,7 +1058,7 @@ void Builder::build_dynamic_section() {
             const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
             std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
 
-            Elf_Addr* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
             for (size_t i = 0; i < array.size(); ++i) {
               raw_array[i] = static_cast<Elf_Addr>(array[i]);
             }
@@ -1082,7 +1082,7 @@ void Builder::build_dynamic_section() {
             const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
             std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
 
-            Elf_Addr* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
             for (size_t i = 0; i < array.size(); ++i) {
               raw_array[i] = static_cast<Elf_Addr>(array[i]);
             }
@@ -1235,7 +1235,7 @@ void Builder::build_obj_symbols() {
       continue;
     }
 
-    const Elf_Off name_offset = static_cast<Elf_Off>(offset_it->second);
+    const auto name_offset = static_cast<Elf_Off>(offset_it->second);
 
     Elf_Sym sym_header;
     memset(&sym_header, 0, sizeof(Elf_Sym));
@@ -1282,7 +1282,7 @@ void Builder::build_dynamic_symbols() {
       continue;
     }
 
-    const Elf_Off name_offset = static_cast<Elf_Off>(offset_it->second);
+    const auto name_offset = static_cast<Elf_Off>(offset_it->second);
 
     Elf_Sym sym_header;
 

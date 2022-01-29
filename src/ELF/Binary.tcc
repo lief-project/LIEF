@@ -15,6 +15,17 @@
  */
 #include "logging.hpp"
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/DataHandler/Node.hpp"
+#include "LIEF/ELF/DataHandler/Handler.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Structures.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include <numeric>
+#include <unistd.h>
 namespace LIEF {
 namespace ELF {
 
@@ -30,7 +41,7 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
-    const RELOC_ARM type = static_cast<RELOC_ARM>(relocation.type());
+    const auto type = static_cast<RELOC_ARM>(relocation.type());
 
     switch (type) {
       case RELOC_ARM::R_ARM_JUMP_SLOT:
@@ -64,7 +75,7 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
       relocation.address(relocation.address() + shift);
     }
 
-    const RELOC_AARCH64 type = static_cast<RELOC_AARCH64>(relocation.type());
+    const auto type = static_cast<RELOC_AARCH64>(relocation.type());
 
     switch (type) {
       case RELOC_AARCH64::R_AARCH64_JUMP_SLOT:
@@ -133,7 +144,7 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
-    const RELOC_i386 type = static_cast<RELOC_i386>(relocation.type());
+    const auto type = static_cast<RELOC_i386>(relocation.type());
 
     switch (type) {
       case RELOC_i386::R_386_RELATIVE:
@@ -165,7 +176,7 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
-    const RELOC_x86_64 type = static_cast<RELOC_x86_64>(relocation.type());
+    const auto type = static_cast<RELOC_x86_64>(relocation.type());
     switch (type) {
       case RELOC_x86_64::R_X86_64_RELATIVE:
       case RELOC_x86_64::R_X86_64_IRELATIVE:
@@ -204,7 +215,7 @@ void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
-    const RELOC_POWERPC32 type = static_cast<RELOC_POWERPC32>(relocation.type());
+    const auto type = static_cast<RELOC_POWERPC32>(relocation.type());
 
     switch (type) {
       case RELOC_POWERPC32::R_PPC_RELATIVE:
@@ -295,7 +306,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   //datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
   std::vector<uint8_t> content = segment.content();
-  Segment* new_segment = new Segment{segment};
+  auto* new_segment = new Segment{segment};
 
   uint64_t last_offset_sections = std::accumulate(std::begin(sections_), std::end(sections_), 0,
       [] (uint64_t offset, const Section* section) {
@@ -309,7 +320,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
 
   uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const uint64_t psize = static_cast<uint64_t>(getpagesize());
+  const auto psize = static_cast<uint64_t>(getpagesize());
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
@@ -358,12 +369,12 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
 // =======================
 template<>
 Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t base) {
-  const uint64_t psize = static_cast<uint64_t>(getpagesize());
+  const auto psize = static_cast<uint64_t>(getpagesize());
 
   const uint64_t new_phdr_offset = relocate_phdr_table();
 
   std::vector<uint8_t> content = segment.content();
-  Segment* new_segment = new Segment{segment};
+  auto* new_segment = new Segment{segment};
   new_segment->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{
@@ -505,7 +516,7 @@ Section& Binary::add_section<true>(const Section& section) {
   LIEF_DEBUG("Segment associated: {}@0x{:x}",
       to_string(segment_added.type()), segment_added.virtual_address());
 
-  Section* new_section = new Section{section};
+  auto* new_section = new Section{section};
   new_section->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{
@@ -529,7 +540,7 @@ Section& Binary::add_section<true>(const Section& section) {
 template<>
 Section& Binary::add_section<false>(const Section& section) {
 
-  Section* new_section = new Section{section};
+  auto* new_section = new Section{section};
   new_section->datahandler_ = datahandler_;
 
   DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
