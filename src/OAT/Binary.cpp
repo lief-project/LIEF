@@ -18,7 +18,7 @@
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/hash.hpp"
 #include "logging.hpp"
-#include "LIEF/json.hpp"
+#include "visitors/json.hpp"
 
 #include "LIEF/VDEX.hpp"
 

@@ -14,28 +14,11 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/ELF/json.hpp"
-
+#include "ELF/json_internal.hpp"
 #include "LIEF/ELF.hpp"
+
 namespace LIEF {
 namespace ELF {
-
-
-json to_json(const Object& v) {
-  JsonVisitor visitor;
-  visitor(v);
-  return visitor.get();
-}
-
-
-std::string to_json_str(const Object& v) {
-  return ELF::to_json(v).dump();
-}
-
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
@@ -509,4 +492,3 @@ void JsonVisitor::visit(const SysvHash& sysvhash) {
 } // namespace ELF
 } // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT

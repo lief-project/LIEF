@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-#include "LIEF/hash.hpp"
 
-#ifdef LIEF_JSON_SUPPORT
+#include "MachO/json_internal.hpp"
+#include "LIEF/MachO.hpp"
 #include "Object.tcc"
 
-#include "LIEF/MachO/json.hpp"
-
-#include "LIEF/MachO.hpp"
 namespace LIEF {
 namespace MachO {
-
-
-json to_json(const Object& v) {
-  JsonVisitor visitor;
-  visitor(v);
-  return visitor.get();
-}
-
-
-std::string to_json_str(const Object& v) {
-  return MachO::to_json(v).dump();
-}
 
 
 void JsonVisitor::visit(const Binary& binary) {
@@ -513,4 +497,3 @@ void JsonVisitor::visit(const FilesetCommand& e) {
 } // namespace MachO
 } // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT

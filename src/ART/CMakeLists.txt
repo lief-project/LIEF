@@ -40,12 +40,14 @@ set(LIEF_ART_INC_FILES
   "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ART/enums.hpp"
 )
 
-set(LIEF_ART_JSON_SRC "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
-set(LIEF_ART_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/json.hpp")
+# JSON Public API: Always present
+list(APPEND LIEF_ART_SRC       "${CMAKE_CURRENT_LIST_DIR}/json_api.cpp")
+list(APPEND LIEF_ART_INC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/json.hpp")
 
+# JSON Impl
 if (LIEF_ENABLE_JSON)
-  list(APPEND LIEF_ART_SRC       ${LIEF_ART_JSON_SRC})
-  list(APPEND LIEF_ART_INC_FILES ${LIEF_ART_JSON_HDR})
+  list(APPEND LIEF_ART_SRC       "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
+  list(APPEND LIEF_ART_INC_FILES "${CMAKE_CURRENT_LIST_DIR}/json_internal.hpp")
 endif()
 
 source_group("Source Files\\ART" FILES ${LIEF_ART_SRC})

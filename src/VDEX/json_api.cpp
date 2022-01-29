@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2021 R. Thomas
  * Copyright 2017 - 2021 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_JSON_H_
-#define LIEF_PE_JSON_H_
+#include "logging.hpp"
 
-#include "LIEF/visibility.h"
-#include <string>
+#include "LIEF/config.h"
+
+#include "LIEF/VDEX/json.hpp"
+
+#ifdef LIEF_JSON_SUPPORT
+#include "VDEX/json_internal.hpp"
+#endif
 
 namespace LIEF {
-class Object;
-namespace PE {
+namespace VDEX {
 
-LIEF_API std::string to_json(const Object& v);
-
-}
-}
-
+std::string to_json(const Object& v) {
+#ifdef LIEF_JSON_SUPPORT
+  JsonVisitor visitor;
+  visitor(v);
+  return visitor.get().dump();
+#else
+  LIEF_WARN("JSON support is not enabled");
+  return "";
 #endif
+}
+
+} // namespace VDEX
+} // namespace LIEF
+

@@ -14,29 +14,12 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
 
-#ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/ART/json.hpp"
-
+#include "ART/json_internal.hpp"
 #include "LIEF/ART.hpp"
-#include "LIEF/ART/EnumToString.hpp"
+
 namespace LIEF {
 namespace ART {
-
-
-json to_json(const Object& v) {
-  JsonVisitor visitor;
-  visitor(v);
-  return visitor.get();
-}
-
-
-std::string to_json_str(const Object& v) {
-  return ART::to_json(v).dump();
-}
-
 
 void JsonVisitor::visit(const File& file) {
   JsonVisitor header_visitor;
@@ -71,4 +54,3 @@ void JsonVisitor::visit(const Header& header) {
 } // namespace ART
 } // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT

@@ -13,28 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_TO_JSON_H_
-#define LIEF_TO_JSON_H_
+#ifndef LIEF_ABSTRACT_JSON_INTERNAL_H_
+#define LIEF_ABSTRACT_JSON_INTERNAL_H_
 
 #include "LIEF/config.h"
 
-#ifdef LIEF_JSON_SUPPORT
-
-
-#ifdef LIEF_ELF_SUPPORT
-#include "LIEF/ELF/json.hpp"
-#endif
-
-#ifdef LIEF_PE_SUPPORT
-#include "LIEF/PE/json.hpp"
-#endif
-
-#include "LIEF/Abstract/json.hpp"
-
+#include "LIEF/visibility.h"
 #include "LIEF/Abstract.hpp"
-#include "LIEF/ELF.hpp"
-#include "LIEF/PE.hpp"
+#include "visitors/json.hpp"
 
-#endif // LIEF_JSON_SUPPORT
+namespace LIEF {
 
+//! Class that implements the Visitor pattern to serialize LIEF abstracted
+//! object in JSON
+class AbstractJsonVisitor : public LIEF::JsonVisitor {
+  public:
+  using LIEF::JsonVisitor::JsonVisitor;
+
+  public:
+  void visit(const Binary& binary)         override;
+  void visit(const Header& header)         override;
+  void visit(const Section& section)       override;
+  void visit(const Symbol& symbol)         override;
+  void visit(const Relocation& relocation) override;
+  void visit(const Function& f)            override;
+};
+
+}
 #endif

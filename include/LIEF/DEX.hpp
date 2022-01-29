@@ -26,6 +26,7 @@
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/EnumToString.hpp"
 #endif
 
 #endif

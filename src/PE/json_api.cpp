@@ -14,19 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_JSON_H_
-#define LIEF_PE_JSON_H_
+#include "logging.hpp"
 
-#include "LIEF/visibility.h"
-#include <string>
+#include "LIEF/config.h"
+
+#include "LIEF/PE/json.hpp"
+
+#ifdef LIEF_JSON_SUPPORT
+#include "PE/json_internal.hpp"
+#endif
 
 namespace LIEF {
-class Object;
 namespace PE {
 
-LIEF_API std::string to_json(const Object& v);
-
-}
-}
-
+std::string to_json(const Object& v) {
+#ifdef LIEF_JSON_SUPPORT
+  JsonVisitor visitor;
+  visitor(v);
+  return visitor.get().dump();
+#else
+  LIEF_WARN("JSON support is not enabled");
+  return "";
 #endif
+}
+
+
+} // namespace PE
+} // namespace LIEF
+

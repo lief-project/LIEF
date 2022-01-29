@@ -13,45 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_DEX_VISITOR_JSONS_H_
-#define LIEF_DEX_VISITOR_JSONS_H_
-
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
+#ifndef LIEF_DEX_PUBLIC_JSON_H_
+#define LIEF_DEX_PUBLIC_JSON_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/visitors/json.hpp"
-#include "LIEF/DEX.hpp"
+#include <string>
 
 namespace LIEF {
+class Object;
+
 namespace DEX {
 
-LIEF_API json to_json(const Object& v);
-LIEF_API std::string to_json_str(const Object& v);
-
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of an ELF object
-class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
-  public:
-  using LIEF::JsonVisitor::JsonVisitor;
-
-  public:
-  void visit(const File& file)         override;
-  void visit(const Header& header)     override;
-  void visit(const Class& cls)         override;
-  void visit(const Method& method)     override;
-  void visit(const Field& field)       override;
-  void visit(const CodeInfo& codeinfo) override;
-  void visit(const Type& type)         override;
-  void visit(const Prototype& type)    override;
-  void visit(const MapItem& item)      override;
-  void visit(const MapList& list)      override;
-};
+LIEF_API std::string to_json(const Object& v);
 
 }
 }
 
-#endif // LIEF_JSON_SUPPORT
 
 #endif

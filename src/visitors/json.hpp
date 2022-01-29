@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2021 R. Thomas
  * Copyright 2017 - 2021 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_JSON_H_
-#define LIEF_PE_JSON_H_
+#ifndef LIEF_VISITOR_JSONS_H_
+#define LIEF_VISITOR_JSONS_H_
+
+#include "LIEF/config.h"
 
 #include "LIEF/visibility.h"
-#include <string>
+#include "LIEF/Visitor.hpp"
+
+#ifndef LIEF_NLOHMANN_JSON_EXTERNAL
+#include "internal/nlohmann/json.hpp"
+#else
+#include <nlohmann/json.hpp>
+#endif
+
+using json = nlohmann::json;
 
 namespace LIEF {
-class Object;
-namespace PE {
 
-LIEF_API std::string to_json(const Object& v);
+class JsonVisitor : public Visitor {
+  public:
+  JsonVisitor();
+  JsonVisitor(json node);
+  JsonVisitor(const JsonVisitor&);
+  JsonVisitor& operator=(const JsonVisitor&);
+
+  inline json get() const {
+    return node_;
+  }
+
+  protected:
+  json node_;
+};
 
 }
-}
-
 #endif

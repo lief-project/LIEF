@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Abstract/json.hpp"
 #include "LIEF/Abstract.hpp"
+#include "Abstract/json_internal.hpp"
 
 #include "LIEF/ELF.hpp"
 #include "LIEF/PE.hpp"
@@ -24,18 +24,6 @@
 #include "Object.tcc"
 
 namespace LIEF {
-
-json to_json_from_abstract(const Object& v) {
-  AbstractJsonVisitor visitor;
-  v.accept(visitor);
-  return visitor.get();
-}
-
-
-std::string to_json_str_from_abstract(const Object& v) {
-  return to_json(v).dump();
-}
-
 
 void AbstractJsonVisitor::visit(const Binary& binary) {
   AbstractJsonVisitor header_visitor;

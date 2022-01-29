@@ -19,7 +19,7 @@
 #include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/hash.hpp"
 
-#include "LIEF/json.hpp"
+#include "visitors/json.hpp"
 
 namespace LIEF {
 namespace DEX {

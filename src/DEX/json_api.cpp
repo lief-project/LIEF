@@ -13,42 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VISITOR_JSONS_H_
-#define LIEF_VISITOR_JSONS_H_
-
 #include "LIEF/config.h"
+#include "logging.hpp"
+#include "LIEF/DEX/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/visibility.h"
-#include "LIEF/Visitor.hpp"
-#include "LIEF/json.hpp"
+#include "DEX/json_internal.hpp"
+#endif
+#include "LIEF/DEX.hpp"
 
 namespace LIEF {
+namespace DEX {
 
-LIEF_API json to_json(const Object& v);
-LIEF_API std::string to_json_str(const Object& v);
-
-class LIEF_API JsonVisitor : public Visitor {
-
-  public:
-  JsonVisitor();
-  JsonVisitor(json node);
-  JsonVisitor(const JsonVisitor&);
-  JsonVisitor& operator=(const JsonVisitor&);
-
-  inline json get() const {
-    return node_;
-  }
-
-  protected:
-  json node_;
-
-
-};
-
+std::string to_json(const Object& v) {
+#ifdef LIEF_JSON_SUPPORT
+  JsonVisitor visitor;
+  v.accept(visitor);
+  return visitor.get().dump();
+#else
+  LIEF_WARN("JSON support is not enabled");
+  return "";
+#endif
 }
 
-#endif // LIEF_JSON_SUPPORT
-
-#endif
+}
+} // namespace LIEF

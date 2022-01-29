@@ -106,15 +106,14 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/TrieNode.hpp"
 )
 
-# JSON Part
-# =========
-set(LIEF_MACHO_JSON_SRC "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
-set(LIEF_MACHO_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/json.hpp")
+# JSON Public API: Always present
+list(APPEND LIEF_MACHO_SRC       "${CMAKE_CURRENT_LIST_DIR}/json_api.cpp")
+list(APPEND LIEF_MACHO_INC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/json.hpp")
 
-
+# JSON Impl
 if (LIEF_ENABLE_JSON)
-  list(APPEND LIEF_MACHO_SRC           ${LIEF_MACHO_JSON_SRC})
-  list(APPEND LIEF_MACHO_INCLUDE_FILES ${LIEF_MACHO_JSON_HDR})
+  list(APPEND LIEF_MACHO_SRC       "${CMAKE_CURRENT_LIST_DIR}/json.cpp")
+  list(APPEND LIEF_MACHO_INC_FILES "${CMAKE_CURRENT_LIST_DIR}/json_internal.hpp")
 endif()
 
 source_group("Header Files\\MachO" FILES ${LIEF_MACHO_INCLUDE_FILES})

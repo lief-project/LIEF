@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_JSON_H_
-#define LIEF_JSON_H_
+#ifndef LIEF_JSON_MAIN_H_
+#define LIEF_JSON_MAIN_H_
+#include <string>
+#include <LIEF/visibility.h>
+namespace LIEF {
+class Object;
 
-#include <LIEF/config.h>
+LIEF_API std::string to_json(const Object& v);
 
-#ifdef LIEF_JSON_SUPPORT
-#include <LIEF/third-party/json.hpp>
-
-using json = nlohmann::json;
-#endif
-
+}
 #endif

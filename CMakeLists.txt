@@ -152,12 +152,14 @@ set(LIEF_VISITOR_INCLUDE_FILES
 set(LIEF_INCLUDE_FILES ${LIEF_INC_FILES} ${LIEF_VISITOR_INCLUDE_FILES})
 
 set(LIEF_JSON_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/json.cpp")
-set(LIEF_JSON_HDR "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/json.hpp"
-                  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp")
+set(LIEF_JSON_HDR "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp")
+
+list(APPEND LIEF_INC_FILES       "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/json.hpp")
+list(APPEND LIBLIEF_SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/json_api.cpp")
 
 if(LIEF_ENABLE_JSON)
   list(APPEND LIBLIEF_SOURCE_FILES "${LIEF_JSON_SRC}")
-  list(APPEND LIEF_INC_FILES "${LIEF_JSON_HDR}")
+  list(APPEND LIEF_INC_FILES       "${LIEF_JSON_HDR}")
 endif()
 
 source_group("Header Files" FILES ${LIEF_INC_FILES})
@@ -318,14 +320,24 @@ target_include_directories(
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
-      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/
-    DEPENDS lief_libjson)
+  if(LIEF_OPT_NLOHMANN_JSON_EXTERNAL)
+    find_package(nlohmann_json REQUIRED)
+    target_link_libraries(LIB_LIEF PRIVATE nlohmann_json::nlohmann_json)
+  else()
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/json.hpp
+      COMMAND
+        ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann
+      COMMAND
+        ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
+                                           ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/
+      DEPENDS lief_libjson)
 
-  target_sources(LIB_LIEF PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/json.hpp)
+    target_sources(LIB_LIEF PRIVATE
+                   ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/json.hpp)
+
+    target_include_directories(LIB_LIEF PRIVATE
+                               ${CMAKE_CURRENT_BINARY_DIR}/)
+  endif()
 endif()
 
 if(LIEF_FROZEN_ENABLED)

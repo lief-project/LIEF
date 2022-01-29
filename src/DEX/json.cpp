@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-#include "LIEF/DEX/EnumToString.hpp"
-
-#ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/DEX/json.hpp"
-
+#include "DEX/json_internal.hpp"
 #include "LIEF/DEX.hpp"
+
 namespace LIEF {
 namespace DEX {
 
-
-json to_json(const Object& v) {
+json to_json_obj(const Object& v) {
   JsonVisitor visitor;
   visitor(v);
   return visitor.get();
-}
-
-
-std::string to_json_str(const Object& v) {
-  return DEX::to_json(v).dump();
 }
 
 
@@ -218,4 +207,3 @@ void JsonVisitor::visit(const MapList& list) {
 } // namespace DEX
 } // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT

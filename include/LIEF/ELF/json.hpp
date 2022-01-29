@@ -13,93 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_VISITOR_JSONS_H_
-#define LIEF_ELF_VISITOR_JSONS_H_
-
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
+#ifndef LIEF_ELF_PUBLIC_JSON_H_
+#define LIEF_ELF_PUBLIC_JSON_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/visitors/json.hpp"
-#include "LIEF/ELF.hpp"
+#include <string>
 
 namespace LIEF {
+class Object;
+
 namespace ELF {
 
-class AndroidNote;
-class Binary;
-class CoreAuxv;
-class CoreFile;
-class CorePrPsInfo;
-class CorePrStatus;
-class CoreSigInfo;
-class DynamicEntry;
-class DynamicEntryArray;
-class DynamicEntryFlags;
-class DynamicEntryLibrary;
-class DynamicEntryRpath;
-class DynamicEntryRunPath;
-class DynamicSharedObject;
-class GnuHash;
-class Header;
-class Note;
-class NoteAbi;
-class NoteDetails;
-class Relocation;
-class Section;
-class Segment;
-class Symbol;
-class SymbolVersion;
-class SymbolVersionAux;
-class SymbolVersionAuxRequirement;
-class SymbolVersionDefinition;
-class SymbolVersionRequirement;
-class SysvHash;
-
-LIEF_API json to_json(const Object& v);
-LIEF_API std::string to_json_str(const Object& v);
-
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of an ELF object
-class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
-  public:
-  using LIEF::JsonVisitor::JsonVisitor;
-
-  public:
-  void visit(const Binary& binary)                  override;
-  void visit(const Header& header)                  override;
-  void visit(const Section& section)                override;
-  void visit(const Segment& segment)                override;
-  void visit(const DynamicEntry& entry)             override;
-  void visit(const DynamicEntryArray& entry)        override;
-  void visit(const DynamicEntryLibrary& entry)      override;
-  void visit(const DynamicEntryRpath& entry)        override;
-  void visit(const DynamicEntryRunPath& entry)      override;
-  void visit(const DynamicSharedObject& entry)      override;
-  void visit(const DynamicEntryFlags& entry)        override;
-  void visit(const Symbol& symbol)                  override;
-  void visit(const Relocation& relocation)          override;
-  void visit(const SymbolVersion& sv)               override;
-  void visit(const SymbolVersionAux& sv)            override;
-  void visit(const SymbolVersionAuxRequirement& sv) override;
-  void visit(const SymbolVersionRequirement& svr)   override;
-  void visit(const SymbolVersionDefinition& svd)    override;
-  void visit(const Note& note)                      override;
-  void visit(const NoteAbi& note)                   override;
-  void visit(const NoteDetails& details)            override;
-  void visit(const CorePrPsInfo& pinfo)             override;
-  void visit(const CorePrStatus& pstatus)           override;
-  void visit(const CoreAuxv& auxv)                  override;
-  void visit(const CoreSigInfo& siginfo)            override;
-  void visit(const CoreFile& file)                  override;
-  void visit(const GnuHash& gnuhash)                override;
-  void visit(const SysvHash& sysvhash)              override;
-};
+LIEF_API std::string to_json(const Object& v);
 
 }
 }
-
-#endif // LIEF_JSON_SUPPORT
-
 #endif

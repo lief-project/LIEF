@@ -16,7 +16,7 @@
 
 #include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/hash.hpp"
-#include "LIEF/json.hpp"
+#include "visitors/json.hpp"
 
 namespace LIEF {
 namespace VDEX {

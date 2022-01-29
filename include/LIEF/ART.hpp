@@ -22,6 +22,7 @@
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
 #include "LIEF/ART/File.hpp"
+#include "LIEF/ART/EnumToString.hpp"
 #endif
 
 #endif

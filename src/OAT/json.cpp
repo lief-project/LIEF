@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-#include "LIEF/OAT/EnumToString.hpp"
 
-#ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/OAT/json.hpp"
-
+#include "OAT/json_internal.hpp"
 #include "LIEF/OAT.hpp"
+
 namespace LIEF {
 namespace OAT {
-
-
-json to_json(const Object& v) {
-  JsonVisitor visitor;
-  visitor(v);
-  return visitor.get();
-}
-
-std::string to_json_str(const Object& v) {
-  return OAT::to_json(v).dump();
-}
-
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
@@ -123,5 +107,3 @@ void JsonVisitor::visit(const Method& method) {
 
 } // namespace OAT
 } // namespace LIEF
-
-#endif // LIEF_JSON_SUPPORT

@@ -13,36 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ART_VISITOR_JSONS_H_
-#define LIEF_ART_VISITOR_JSONS_H_
-
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
+#ifndef LIEF_ART_PUBLIC_JSON_H_
+#define LIEF_ART_PUBLIC_JSON_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/visitors/json.hpp"
-#include "LIEF/ART.hpp"
+#include <string>
 
 namespace LIEF {
+class Object;
 namespace ART {
 
-LIEF_API json to_json(const Object& v);
-LIEF_API std::string to_json_str(const Object& v);
-
-
-class LIEF_API JsonVisitor : public LIEF::JsonVisitor {
-  public:
-  using LIEF::JsonVisitor::JsonVisitor;
-
-  public:
-  void visit(const File& header)   override;
-  void visit(const Header& header) override;
-};
+LIEF_API std::string to_json(const Object& v);
 
 }
 }
-
-#endif // LIEF_JSON_SUPPORT
 
 #endif

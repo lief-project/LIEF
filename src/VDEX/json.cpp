@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
-
-#ifdef LIEF_JSON_SUPPORT
-
-#include "LIEF/VDEX/json.hpp"
-#include "LIEF/DEX/json.hpp"
+#include "VDEX/json_internal.hpp"
+#include "DEX/json_internal.hpp"
 
 #include "LIEF/VDEX.hpp"
+
 namespace LIEF {
 namespace VDEX {
-
-
-json to_json(const Object& v) {
-  JsonVisitor visitor;
-  visitor(v);
-  return visitor.get();
-}
-
-
-std::string to_json_str(const Object& v) {
-  return VDEX::to_json(v).dump();
-}
-
 
 void JsonVisitor::visit(const File& file) {
   JsonVisitor vheader;
@@ -44,7 +28,7 @@ void JsonVisitor::visit(const File& file) {
 
   std::vector<json> dexfiles;
   for (const DEX::File& dexfile : file.dex_files()) {
-    dexfiles.emplace_back(DEX::to_json(dexfile));
+    dexfiles.emplace_back(DEX::to_json_obj(dexfile));
   }
 
   node_["header"]    = vheader.get();
@@ -62,5 +46,3 @@ void JsonVisitor::visit(const Header& header) {
 
 } // namespace VDEX
 } // namespace LIEF
-
-#endif // LIEF_JSON_SUPPORT

@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2021 R. Thomas
  * Copyright 2017 - 2021 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_JSON_H_
-#define LIEF_PE_JSON_H_
+#ifndef LIEF_ART_JSON_INTERNAL_H_
+#define LIEF_ART_JSON_INTERNAL_H_
 
 #include "LIEF/visibility.h"
-#include <string>
+#include "visitors/json.hpp"
 
 namespace LIEF {
-class Object;
-namespace PE {
+namespace ART {
 
-LIEF_API std::string to_json(const Object& v);
+class JsonVisitor : public LIEF::JsonVisitor {
+  public:
+  using LIEF::JsonVisitor::JsonVisitor;
+
+  public:
+  void visit(const File& header)   override;
+  void visit(const Header& header) override;
+};
 
 }
 }
-
 #endif

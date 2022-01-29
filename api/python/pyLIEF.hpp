@@ -50,9 +50,6 @@ void init_hash_functions(py::module&);
 
 void init_utils_functions(py::module&);
 
-#if defined(LIEF_JSON_SUPPORT)
 void init_json_functions(py::module&);
-#endif
-
 
 #endif

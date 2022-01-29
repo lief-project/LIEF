@@ -26,6 +26,7 @@
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/EnumToString.hpp"
 #endif
 
 #endif

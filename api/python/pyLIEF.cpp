@@ -119,8 +119,5 @@ PYBIND11_MODULE(lief, LIEF_module) {
   init_utils_functions(LIEF_module);
 
 
-#if defined(LIEF_JSON_SUPPORT)
   init_json_functions(LIEF_module);
-#endif
-
 }
