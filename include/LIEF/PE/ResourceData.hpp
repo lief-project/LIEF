@@ -73,9 +73,9 @@ class LIEF_API ResourceData : public ResourceNode {
 
   private:
   std::vector<uint8_t> content_;
-  uint32_t             code_page_;
-  uint32_t             reserved_;
-  uint32_t             offset_;
+  uint32_t code_page_ = 0;
+  uint32_t reserved_ = 0;
+  uint32_t offset_ = 0;
 
 };
 

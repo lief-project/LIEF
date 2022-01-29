@@ -59,6 +59,8 @@ void BuildToolVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+
+
 std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool) {
   BuildToolVersion::version_t version = tool.version();
 
@@ -142,6 +144,12 @@ bool BuildVersion::operator==(const BuildVersion& rhs) const {
 
 bool BuildVersion::operator!=(const BuildVersion& rhs) const {
   return !(*this == rhs);
+}
+
+bool BuildVersion::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_BUILD_VERSION;
 }
 
 

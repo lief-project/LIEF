@@ -59,6 +59,8 @@ class LIEF_API SourceVersion : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   SourceVersion::version_t version_;
 };

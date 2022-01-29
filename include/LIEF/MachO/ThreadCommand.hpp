@@ -91,6 +91,8 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uint32_t flavor_;
   uint32_t count_;

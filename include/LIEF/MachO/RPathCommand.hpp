@@ -57,6 +57,8 @@ class LIEF_API RPathCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string path_;
 };

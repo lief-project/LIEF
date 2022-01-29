@@ -54,14 +54,9 @@ void ResourceDirectory::swap(ResourceDirectory& other) {
   std::swap(numberOfIDEntries_,   other.numberOfIDEntries_);
 }
 
-ResourceDirectory::ResourceDirectory() :
-  characteristics_{0},
-  timeDateStamp_{0},
-  majorVersion_{0},
-  minorVersion_{0},
-  numberOfNameEntries_{0},
-  numberOfIDEntries_{0}
-{}
+ResourceDirectory::ResourceDirectory() {
+  type_ = ResourceNode::TYPE::DIRECTORY;
+}
 
 ResourceDirectory::ResourceDirectory(const details::pe_resource_directory_table& header) :
   characteristics_(header.Characteristics),
@@ -70,7 +65,9 @@ ResourceDirectory::ResourceDirectory(const details::pe_resource_directory_table&
   minorVersion_(header.MajorVersion),
   numberOfNameEntries_(header.NumberOfNameEntries),
   numberOfIDEntries_(header.NumberOfIDEntries)
-{}
+{
+  type_ = ResourceNode::TYPE::DIRECTORY;
+}
 
 ResourceDirectory* ResourceDirectory::clone() const {
   return new ResourceDirectory{*this};

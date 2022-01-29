@@ -40,6 +40,15 @@ class LIEF_API ResourceNode : public Object {
   friend class Builder;
 
   public:
+
+  //! Enum that identifies the type of a node in
+  //! the resource tree
+  enum class TYPE {
+    UNKNOWN = 0,
+    DATA,
+    DIRECTORY,
+  };
+
   ResourceNode(const ResourceNode& other);
   void swap(ResourceNode& other);
 
@@ -110,11 +119,11 @@ class LIEF_API ResourceNode : public Object {
 
   protected:
   ResourceNode();
-
-  uint32_t       id_;
+  TYPE           type_ = TYPE::UNKNOWN;
+  uint32_t       id_ = 0;
   std::u16string name_;
   childs_t       childs_;
-  uint32_t       depth_;
+  uint32_t       depth_ = 0;
 };
 }
 }

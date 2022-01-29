@@ -77,6 +77,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uint32_t data_offset_;
   uint32_t data_size_;

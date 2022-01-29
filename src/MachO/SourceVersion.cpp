@@ -68,6 +68,11 @@ bool SourceVersion::operator!=(const SourceVersion& rhs) const {
   return !(*this == rhs);
 }
 
+bool SourceVersion::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_SOURCE_VERSION;
+}
 
 std::ostream& SourceVersion::print(std::ostream& os) const {
   LoadCommand::print(os);

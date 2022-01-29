@@ -248,6 +248,8 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   using bind_container_t = std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
 

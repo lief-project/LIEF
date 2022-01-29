@@ -108,5 +108,11 @@ bool FilesetCommand::operator!=(const FilesetCommand& rhs) const {
   return !(*this == rhs);
 }
 
+bool FilesetCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_FILESET_ENTRY;
+}
+
 }
 }

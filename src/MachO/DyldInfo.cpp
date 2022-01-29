@@ -2226,6 +2226,13 @@ DyldInfo& DyldInfo::update_export_trie() {
   return *this;
 }
 
+bool DyldInfo::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_DYLD_INFO ||
+         type == LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY;
+}
+
 
 std::ostream& DyldInfo::print(std::ostream& os) const {
   LoadCommand::print(os);

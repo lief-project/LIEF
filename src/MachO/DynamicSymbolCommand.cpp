@@ -264,6 +264,11 @@ bool DynamicSymbolCommand::operator!=(const DynamicSymbolCommand& rhs) const {
   return !(*this == rhs);
 }
 
+bool DynamicSymbolCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_DYSYMTAB;
+}
 
 std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
   LoadCommand::print(os);

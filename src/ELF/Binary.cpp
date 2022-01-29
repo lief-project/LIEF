@@ -65,7 +65,10 @@
 
 namespace LIEF {
 namespace ELF {
-Binary::Binary()  = default;
+
+Binary::Binary() {
+  format_ = LIEF::EXE_FORMATS::FORMAT_ELF;
+}
 
 Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());

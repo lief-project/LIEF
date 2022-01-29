@@ -56,6 +56,8 @@ class LIEF_API UUIDCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uuid_t uuid_;
 };

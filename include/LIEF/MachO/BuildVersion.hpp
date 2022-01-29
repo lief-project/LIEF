@@ -119,6 +119,8 @@ class LIEF_API BuildVersion : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   PLATFORMS platform_{PLATFORMS::UNKNOWN};
   version_t minos_;

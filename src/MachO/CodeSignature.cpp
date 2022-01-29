@@ -70,6 +70,13 @@ bool CodeSignature::operator!=(const CodeSignature& rhs) const {
   return !(*this == rhs);
 }
 
+bool CodeSignature::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_DYLIB_CODE_SIGN_DRS ||
+         type == LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE;
+}
+
 
 std::ostream& CodeSignature::print(std::ostream& os) const {
   LoadCommand::print(os);

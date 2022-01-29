@@ -77,6 +77,14 @@ bool EncryptionInfo::operator!=(const EncryptionInfo& rhs) const {
 }
 
 
+bool EncryptionInfo::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO ||
+         type == LOAD_COMMAND_TYPES::LC_ENCRYPTION_INFO_64;
+}
+
+
 std::ostream& EncryptionInfo::print(std::ostream& os) const {
   LoadCommand::print(os);
   return os;

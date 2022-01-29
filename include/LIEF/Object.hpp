@@ -44,9 +44,6 @@ class LIEF_API Object {
   Object& operator=(const Object& other);
 
   template<class T>
-  LIEF_LOCAL bool is() const;
-
-  template<class T>
   LIEF_LOCAL output_t<T> as();
 
   template<class T>

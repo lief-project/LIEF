@@ -129,6 +129,16 @@ std::ostream& operator<<(std::ostream& os, const DylibCommand& command) {
 // Static functions
 // ================
 
+bool DylibCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_LOAD_WEAK_DYLIB ||
+         type == LOAD_COMMAND_TYPES::LC_ID_DYLIB ||
+         type == LOAD_COMMAND_TYPES::LC_LOAD_DYLIB ||
+         type == LOAD_COMMAND_TYPES::LC_REEXPORT_DYLIB ||
+         type == LOAD_COMMAND_TYPES::LC_LAZY_LOAD_DYLIB;
+}
+
 DylibCommand DylibCommand::create(LOAD_COMMAND_TYPES type,
     const std::string& name,
     uint32_t timestamp,

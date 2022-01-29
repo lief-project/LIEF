@@ -85,6 +85,12 @@ bool SymbolCommand::operator!=(const SymbolCommand& rhs) const {
   return !(*this == rhs);
 }
 
+bool SymbolCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_SYMTAB;
+}
+
 std::ostream& SymbolCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   return os;

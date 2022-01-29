@@ -80,82 +80,82 @@ void Builder::build() {
   build_uuid();
 
   for (LoadCommand* cmd : binary_->commands_) {
-    if (cmd->is<DylibCommand>()) {
+    if (DylibCommand::classof(cmd)) {
       build<T>(cmd->as<DylibCommand>());
       continue;
     }
 
-    if (cmd->is<DylinkerCommand>()) {
+    if (DylinkerCommand::classof(cmd)) {
       build<T>(cmd->as<DylinkerCommand>());
       continue;
     }
 
-    if (cmd->is<VersionMin>()) {
+    if (VersionMin::classof(cmd)) {
       build<T>(cmd->as<VersionMin>());
       continue;
     }
 
-    if (cmd->is<SourceVersion>()) {
+    if (SourceVersion::classof(cmd)) {
       build<T>(cmd->as<SourceVersion>());
       continue;
     }
 
-    if (cmd->is<MainCommand>()) {
+    if (MainCommand::classof(cmd)) {
       build<T>(cmd->as<MainCommand>());
       continue;
     }
 
-    if (cmd->is<DyldInfo>()) {
+    if (MainCommand::classof(cmd)) {
       build<T>(cmd->as<DyldInfo>());
       continue;
     }
 
-    if (cmd->is<FunctionStarts>()) {
+    if (FunctionStarts::classof(cmd)) {
       build<T>(cmd->as<FunctionStarts>());
       continue;
     }
 
-    if (cmd->is<SymbolCommand>()) {
+    if (SymbolCommand::classof(cmd)) {
       build<T>(cmd->as<SymbolCommand>());
       continue;
     }
 
-    if (cmd->is<DynamicSymbolCommand>()) {
+    if (DynamicSymbolCommand::classof(cmd)) {
       build<T>(cmd->as<DynamicSymbolCommand>());
       continue;
     }
 
-    if (cmd->is<DataInCode>()) {
+    if (DataInCode::classof(cmd)) {
       build<T>(cmd->as<DataInCode>());
       continue;
     }
 
-    if (cmd->is<CodeSignature>()) {
+    if (CodeSignature::classof(cmd)) {
       build<T>(cmd->as<CodeSignature>());
       continue;
     }
 
-    if (cmd->is<SegmentSplitInfo>()) {
+    if (SegmentSplitInfo::classof(cmd)) {
       build<T>(cmd->as<SegmentSplitInfo>());
       continue;
     }
 
-    if (cmd->is<SubFramework>()) {
+    if (SubFramework::classof(cmd)) {
       build<T>(cmd->as<SubFramework>());
       continue;
     }
 
-    if (cmd->is<DyldEnvironment>()) {
+    if (DyldEnvironment::classof(cmd)) {
       build<T>(cmd->as<DyldEnvironment>());
       continue;
     }
 
-    if (cmd->is<ThreadCommand>()) {
+    if (ThreadCommand::classof(cmd)) {
       build<T>(cmd->as<ThreadCommand>());
       continue;
     }
 
-    if (cmd->is<BuildVersion>()) {
+    if (BuildVersion::classof(cmd)) {
       build<T>(cmd->as<BuildVersion>());
       continue;
     }
@@ -286,7 +286,7 @@ void Builder::build_uuid() {
   const auto uuid_it = std::find_if(
         std::begin(binary_->commands_), std::end(binary_->commands_),
         [] (const LoadCommand* command) {
-          return (typeid(*command) == typeid(UUIDCommand));
+          return UUIDCommand::classof(command);
         });
   if (uuid_it == std::end(binary_->commands_)) {
     LIEF_DEBUG("[-] No uuid");

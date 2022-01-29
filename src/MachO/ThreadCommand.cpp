@@ -137,6 +137,13 @@ bool ThreadCommand::operator!=(const ThreadCommand& rhs) const {
   return !(*this == rhs);
 }
 
+bool ThreadCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_THREAD ||
+         type == LOAD_COMMAND_TYPES::LC_UNIXTHREAD;
+}
+
 
 std::ostream& ThreadCommand::print(std::ostream& os) const {
   LoadCommand::print(os);

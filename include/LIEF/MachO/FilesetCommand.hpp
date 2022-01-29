@@ -79,6 +79,8 @@ class LIEF_API FilesetCommand : public LoadCommand {
   bool operator==(const FilesetCommand& rhs) const;
   bool operator!=(const FilesetCommand& rhs) const;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string name_;
   uint64_t virtual_address_{0};

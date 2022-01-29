@@ -48,17 +48,17 @@ void ResourceData::swap(ResourceData& other) {
 }
 
 
-ResourceData::ResourceData() :
-  code_page_{0},
-  reserved_{0}
-{}
+ResourceData::ResourceData() {
+  type_ = ResourceNode::TYPE::DATA;
+}
 
 
 ResourceData::ResourceData(std::vector<uint8_t> content, uint32_t code_page) :
   content_{std::move(content)},
-  code_page_{code_page},
-  reserved_{0}
-{}
+  code_page_{code_page}
+{
+  type_ = ResourceNode::TYPE::DATA;
+}
 
 
 

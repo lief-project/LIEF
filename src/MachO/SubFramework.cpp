@@ -61,6 +61,12 @@ bool SubFramework::operator!=(const SubFramework& rhs) const {
 }
 
 
+bool SubFramework::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_SUB_FRAMEWORK;
+}
+
 std::ostream& SubFramework::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;

@@ -71,6 +71,14 @@ bool MainCommand::operator!=(const MainCommand& rhs) const {
   return !(*this == rhs);
 }
 
+
+bool MainCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_MAIN;
+}
+
+
 std::ostream& MainCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;

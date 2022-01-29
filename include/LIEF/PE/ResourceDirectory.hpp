@@ -92,12 +92,12 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 
   private:
-  uint32_t characteristics_;
-  uint32_t timeDateStamp_;
-  uint16_t majorVersion_;
-  uint16_t minorVersion_;
-  uint16_t numberOfNameEntries_;
-  uint16_t numberOfIDEntries_;
+  uint32_t characteristics_ = 0;
+  uint32_t timeDateStamp_ = 0;
+  uint16_t majorVersion_ = 0;
+  uint16_t minorVersion_ = 0;
+  uint16_t numberOfNameEntries_ = 0;
+  uint16_t numberOfIDEntries_ = 0;
 
 };
 }

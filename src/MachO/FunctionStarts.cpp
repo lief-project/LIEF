@@ -86,6 +86,12 @@ bool FunctionStarts::operator!=(const FunctionStarts& rhs) const {
   return !(*this == rhs);
 }
 
+bool FunctionStarts::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS;
+}
+
 
 std::ostream& FunctionStarts::print(std::ostream& os) const {
   LoadCommand::print(os);

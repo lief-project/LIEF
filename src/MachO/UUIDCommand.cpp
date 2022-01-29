@@ -63,6 +63,12 @@ bool UUIDCommand::operator!=(const UUIDCommand& rhs) const {
   return !(*this == rhs);
 }
 
+bool UUIDCommand::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_UUID;
+}
+
 
 std::ostream& UUIDCommand::print(std::ostream& os) const {
   LoadCommand::print(os);

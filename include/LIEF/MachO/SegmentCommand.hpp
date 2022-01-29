@@ -142,6 +142,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string name_;
   uint64_t virtual_address_ = 0;

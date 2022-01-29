@@ -59,6 +59,12 @@ bool DyldEnvironment::operator!=(const DyldEnvironment& rhs) const {
   return !(*this == rhs);
 }
 
+bool DyldEnvironment::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_DYLD_ENVIRONMENT;
+}
+
 std::ostream& DyldEnvironment::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;

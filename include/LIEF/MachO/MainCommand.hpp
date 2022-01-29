@@ -60,6 +60,8 @@ class LIEF_API MainCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uint64_t entrypoint_ = 0;
   uint64_t stack_size_ = 0;

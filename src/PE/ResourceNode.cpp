@@ -27,14 +27,11 @@
 namespace LIEF {
 namespace PE {
 
-ResourceNode::ResourceNode() :
-  id_{0},
-  depth_{0}
-{}
-
+ResourceNode::ResourceNode() = default;
 
 ResourceNode::ResourceNode(const ResourceNode& other) :
   Object{other},
+  type_{other.type_},
   id_{other.id_},
   name_{other.name_},
   depth_{other.depth_}
@@ -46,6 +43,7 @@ ResourceNode::ResourceNode(const ResourceNode& other) :
 }
 
 void ResourceNode::swap(ResourceNode& other) {
+  std::swap(type_,   other.type_);
   std::swap(id_,     other.id_);
   std::swap(name_,   other.name_);
   std::swap(childs_, other.childs_);
@@ -80,11 +78,11 @@ const std::u16string& ResourceNode::name() const {
 
 
 bool ResourceNode::is_directory() const {
-  return typeid(*this) == typeid(ResourceDirectory);
+  return type_ == TYPE::DIRECTORY;
 }
 
 bool ResourceNode::is_data() const {
-  return !is_directory();
+  return type_ == TYPE::DATA;
 }
 
 

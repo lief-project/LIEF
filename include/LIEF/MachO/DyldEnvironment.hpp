@@ -56,6 +56,8 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string value_;
 };

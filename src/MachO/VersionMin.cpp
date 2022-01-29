@@ -81,6 +81,13 @@ bool VersionMin::operator!=(const VersionMin& rhs) const {
 }
 
 
+bool VersionMin::classof(const LoadCommand* cmd) {
+  // This must be sync with BinaryParser.tcc
+  const LOAD_COMMAND_TYPES type = cmd->command();
+  return type == LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX ||
+         type == LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS;
+}
+
 std::ostream& VersionMin::print(std::ostream& os) const {
   LoadCommand::print(os);
   const VersionMin::version_t& version = this->version();

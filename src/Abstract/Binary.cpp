@@ -37,27 +37,7 @@ Binary& Binary::operator=(const Binary&) = default;
 Binary::Binary(const Binary&) = default;
 
 EXE_FORMATS Binary::format() const {
-
-#if defined(LIEF_ELF_SUPPORT)
-  if (typeid(*this) == typeid(LIEF::ELF::Binary)) {
-    return EXE_FORMATS::FORMAT_ELF;
-  }
-#endif
-
-
-#if defined(LIEF_PE_SUPPORT)
-  if (typeid(*this) == typeid(LIEF::PE::Binary)) {
-    return EXE_FORMATS::FORMAT_PE;
-  }
-#endif
-
-#if defined(LIEF_MACHO_SUPPORT)
-  if (typeid(*this) == typeid(LIEF::MachO::Binary)) {
-    return EXE_FORMATS::FORMAT_MACHO;
-  }
-#endif
-
-  return EXE_FORMATS::FORMAT_UNKNOWN;
+  return format_;
 }
 
 Header Binary::header() const {

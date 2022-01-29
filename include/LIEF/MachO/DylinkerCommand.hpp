@@ -57,6 +57,8 @@ class LIEF_API DylinkerCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string name_;
 };

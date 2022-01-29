@@ -105,6 +105,7 @@ Binary::Binary() :
   is_reproducible_build_{false},
   resources_{nullptr}
 {
+  format_ = LIEF::EXE_FORMATS::FORMAT_PE;
 }
 
 
@@ -133,6 +134,7 @@ PE_TYPE Binary::type() const {
 Binary::Binary(const std::string& name, PE_TYPE type) :
   Binary::Binary{}
 {
+  format_ = LIEF::EXE_FORMATS::FORMAT_PE;
   type_ = type;
   name_ = name;
   Header& hdr = header();

@@ -165,6 +165,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void local_relocation_offset(uint32_t value);
   void nb_local_relocations(uint32_t value);
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uint32_t idx_local_symbol_;
   uint32_t nb_local_symbols_;

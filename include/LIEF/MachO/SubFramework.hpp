@@ -68,6 +68,8 @@ class LIEF_API SubFramework : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   std::string umbrella_;
 };

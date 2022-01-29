@@ -66,6 +66,8 @@ class LIEF_API SymbolCommand : public LoadCommand {
   bool operator==(const SymbolCommand& rhs) const;
   bool operator!=(const SymbolCommand& rhs) const;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   uint32_t symbolOffset_;
   uint32_t numberOfSymbols_;

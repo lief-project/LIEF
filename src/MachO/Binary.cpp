@@ -68,7 +68,9 @@
 namespace LIEF {
 namespace MachO {
 
-Binary::Binary() = default;
+Binary::Binary() {
+  format_ = LIEF::EXE_FORMATS::FORMAT_MACHO;
+}
 
 LIEF::sections_t Binary::get_abstract_sections() {
   LIEF::sections_t result;
@@ -795,11 +797,11 @@ LoadCommand& Binary::add(const LoadCommand& command) {
   commands_.push_back(copy);
 
   // Update cache
-  if (typeid(*copy) == typeid(DylibCommand)) {
+  if (DylibCommand::classof(copy)) {
     libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
   }
 
-  if (typeid(*copy) == typeid(SegmentCommand)) {
+  if (SegmentCommand::classof(copy)) {
     add_cached_segment(*reinterpret_cast<SegmentCommand*>(copy));
   }
 
@@ -846,11 +848,11 @@ LoadCommand& Binary::add(const LoadCommand& command, size_t index) {
     }
   }
 
-  if (typeid(*copy) == typeid(DylibCommand)) {
+  if (DylibCommand::classof(copy)) {
     libraries_.push_back(reinterpret_cast<DylibCommand*>(copy));
   }
 
-  if (typeid(*copy) == typeid(SegmentCommand)) {
+  if (SegmentCommand::classof(copy)) {
     add_cached_segment(*reinterpret_cast<SegmentCommand*>(copy));
   }
 
@@ -873,7 +875,7 @@ bool Binary::remove(const LoadCommand& command) {
 
   LoadCommand* cmd_rm = *it;
 
-  if (typeid(*cmd_rm) == typeid(DylibCommand)) {
+  if (DylibCommand::classof(cmd_rm)) {
     auto it_cache = std::find(std::begin(libraries_), std::end(libraries_), cmd_rm);
     if (it_cache == std::end(libraries_)) {
       const auto* lib = reinterpret_cast<const DylibCommand*>(cmd_rm);
@@ -883,7 +885,7 @@ bool Binary::remove(const LoadCommand& command) {
     }
   }
 
-  if (typeid(*cmd_rm) == typeid(SegmentCommand)) {
+  if (SegmentCommand::classof(cmd_rm)) {
     auto it_cache = std::find(std::begin(segments_), std::end(segments_), cmd_rm);
     const auto* seg = reinterpret_cast<const SegmentCommand*>(cmd_rm);
     if (it_cache == std::end(segments_)) {
@@ -1224,7 +1226,7 @@ LoadCommand& Binary::add(const SegmentCommand& segment) {
   const auto it_linkedit = std::find_if(
       std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* cmd) {
-        if (!cmd->is<SegmentCommand>()) {
+        if (!SegmentCommand::classof(cmd)) {
           return false;
         }
 

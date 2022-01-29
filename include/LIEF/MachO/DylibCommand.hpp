@@ -114,6 +114,8 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const LoadCommand* cmd);
+
   private:
   static DylibCommand create(LOAD_COMMAND_TYPES type,
                              const std::string& name,

@@ -27,58 +27,7 @@ namespace LIEF {
 
 json to_json_from_abstract(const Object& v) {
   AbstractJsonVisitor visitor;
-
-#if defined(LIEF_ELF_SUPPORT)
-  if (v.is<LIEF::ELF::Binary>()) {
-    visitor.visit(*v.as<LIEF::Binary>());
-  }
-  else if (v.is<LIEF::ELF::Section>()) {
-    visitor.visit(*v.as<LIEF::Section>());
-  }
-  else if (v.is<LIEF::ELF::Relocation>()) {
-    visitor.visit(*v.as<LIEF::Relocation>());
-  }
-  else if (v.is<LIEF::ELF::Symbol>()) {
-    visitor.visit(*v.as<LIEF::Symbol>());
-  } else {
-    //TODO: show error
-  }
-#endif
-
-#if defined(LIEF_PE_SUPPORT)
-  if (v.is<LIEF::PE::Binary>()) {
-    visitor.visit(*v.as<LIEF::Binary>());
-  }
-  else if (v.is<LIEF::PE::Section>()) {
-    visitor.visit(*v.as<LIEF::Section>());
-  }
-  else if (v.is<LIEF::PE::Relocation>()) {
-    visitor.visit(*v.as<LIEF::Relocation>());
-  }
-  else if (v.is<LIEF::PE::Symbol>()) {
-    visitor.visit(*v.as<LIEF::Symbol>());
-  } else {
-    //TODO: show error
-  }
-#endif
-
-#if defined(LIEF_MACHO_SUPPORT)
-  if (v.is<LIEF::MachO::Binary>()) {
-    visitor.visit(*v.as<LIEF::Binary>());
-  }
-  else if (v.is<LIEF::MachO::Section>()) {
-    visitor.visit(*v.as<LIEF::Section>());
-  }
-  else if (v.is<LIEF::MachO::Relocation>()) {
-    visitor.visit(*v.as<LIEF::Relocation>());
-  }
-  else if (v.is<LIEF::MachO::Symbol>()) {
-    visitor.visit(*v.as<LIEF::Symbol>());
-  } else {
-    //TODO: show error
-  }
-#endif
-
+  v.accept(visitor);
   return visitor.get();
 }
 

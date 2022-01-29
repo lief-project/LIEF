@@ -170,6 +170,7 @@ class LIEF_API Binary : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 
   protected:
+  EXE_FORMATS format_ = EXE_FORMATS::FORMAT_UNKNOWN;
   std::string name_;
 
   uint64_t original_size_ = 0;

@@ -28,7 +28,7 @@ bool Binary::has_command() const {
   const auto it_cmd = std::find_if(
       std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
-        return typeid(T) == typeid(*command);
+        return T::classof(command);
       });
   return it_cmd != std::end(commands_);
 }
@@ -45,11 +45,11 @@ const T& Binary::command() const {
   const auto it_cmd = std::find_if(
       std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
-        return typeid(T) == typeid(*command);
+        return T::classof(command);
       });
 
   if (it_cmd == std::end(commands_)) {
-    throw not_found("Unable to find the " + std::string(typeid(T).name()));
+    throw not_found("Unable to find the command");
   }
 
   return *reinterpret_cast<T*>(*it_cmd);
@@ -63,7 +63,7 @@ size_t Binary::count_commands() const {
   size_t nb_cmd = std::count_if(
       std::begin(commands_), std::end(commands_),
       [] (const LoadCommand* command) {
-        return typeid(T) == typeid(*command);
+        return T::classof(command);
       });
   return nb_cmd;
 
