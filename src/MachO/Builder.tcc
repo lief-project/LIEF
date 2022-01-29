@@ -667,7 +667,7 @@ void Builder::build(SymbolCommand* symbol_command) {
   // 0 index is reserved
   vector_iostream raw_symbol_names;
   raw_symbol_names.write<uint8_t>(0);
-  for (std::string name : string_table_opt) {
+  for (const std::string& name : string_table_opt) {
     raw_symbol_names.write(name);
   }
 

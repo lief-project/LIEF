@@ -435,7 +435,7 @@ void Parser::parse_binary() {
   // If we don't have any relocations, we parse all relocation sections
   // otherwise, only the non-allocated sections to avoid parsing dynamic
   // relocations (or plt relocations) twice.
-  bool skip_allocated_sections = binary_->relocations_.size() > 0;
+  bool skip_allocated_sections = !binary_->relocations_.empty();
   for (const Section& section : binary_->sections()) {
     if(skip_allocated_sections && section.has(ELF_SECTION_FLAGS::SHF_ALLOC)){
       continue;

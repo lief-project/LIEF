@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <memory>
+
 #include "logging.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -111,7 +113,7 @@ void Parser::parse_data_directories() {
   const uint32_t directories_offset =
       binary_->dos_header().addressof_new_exeheader() +
       sizeof(details::pe_header) + sizeof(pe_optional_header);
-  const uint32_t nbof_datadir = static_cast<uint32_t>(DATA_DIRECTORY::NUM_DATA_DIRECTORIES);
+  const auto nbof_datadir = static_cast<uint32_t>(DATA_DIRECTORY::NUM_DATA_DIRECTORIES);
 
   const auto* data_directory = stream_->peek_array<details::pe_data_directory>(directories_offset, nbof_datadir, /* check */false);
   if (data_directory == nullptr) {
@@ -471,7 +473,7 @@ void Parser::parse_load_config() {
     return;
   }
 
-  const uint32_t size = stream_->peek<uint32_t>(offset);
+  const auto size = stream_->peek<uint32_t>(offset);
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
 
@@ -493,7 +495,7 @@ void Parser::parse_load_config() {
         }
 
         const auto header = stream_->peek<load_configuration_v0_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV0>{new LoadConfigurationV0{header}};
+        ld_conf = std::make_unique<LoadConfigurationV0>(LoadConfigurationV0{header});
         break;
       }
 
@@ -504,7 +506,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v1_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV1>{new LoadConfigurationV1{header}};
+        ld_conf = std::make_unique<LoadConfigurationV1>(LoadConfigurationV1{header});
         break;
       }
 
@@ -515,7 +517,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v2_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV2>{new LoadConfigurationV2{header}};
+        ld_conf = std::make_unique<LoadConfigurationV2>(LoadConfigurationV2{header});
         break;
       }
 
@@ -526,7 +528,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v3_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV3>{new LoadConfigurationV3{header}};
+        ld_conf = std::make_unique<LoadConfigurationV3>(LoadConfigurationV3{header});
         break;
       }
 
@@ -537,7 +539,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v4_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV4>{new LoadConfigurationV4{header}};
+        ld_conf = std::make_unique<LoadConfigurationV4>(LoadConfigurationV4{header});
         break;
       }
 
@@ -548,7 +550,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v5_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV5>{new LoadConfigurationV5{header}};
+        ld_conf = std::make_unique<LoadConfigurationV5>(LoadConfigurationV5{header});
         break;
       }
 
@@ -559,7 +561,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v6_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV6>{new LoadConfigurationV6{header}};
+        ld_conf = std::make_unique<LoadConfigurationV6>(LoadConfigurationV6{header});
         break;
       }
 
@@ -570,7 +572,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_v7_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfigurationV7>{new LoadConfigurationV7{header}};
+        ld_conf = std::make_unique<LoadConfigurationV7>(LoadConfigurationV7{header});
         break;
       }
 
@@ -581,7 +583,7 @@ void Parser::parse_load_config() {
           break;
         }
         const auto header = stream_->peek<load_configuration_t>(offset);
-        ld_conf = std::unique_ptr<LoadConfiguration>{new LoadConfiguration{header}};
+        ld_conf = std::make_unique<LoadConfiguration>(LoadConfiguration{header});
       }
   }
 

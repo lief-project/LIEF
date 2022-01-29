@@ -81,7 +81,7 @@ void Builder::build() {
 
 template<typename ELF_T>
 void Builder::build_exe_lib() {
-  auto layout = reinterpret_cast<ExeLayout*>(layout_.get());
+  auto* layout = reinterpret_cast<ExeLayout*>(layout_.get());
   // Sort dynamic symbols
   uint32_t new_symndx = sort_dynamic_symbols();
   layout->set_dyn_sym_idx(new_symndx);
@@ -481,7 +481,7 @@ void Builder::build_exe_lib() {
   }
 
   // Build sections
-  if (binary_->sections_.size() > 0) {
+  if (!binary_->sections_.empty()) {
     build_sections<ELF_T>();
   }
 
@@ -500,7 +500,7 @@ void Builder::build_exe_lib() {
 template<class ELF_T>
 void Builder::process_object_relocations() {
 
-  const auto layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
+  auto* layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
 
   const auto it_relocations = binary_->object_relocations();
 
@@ -631,7 +631,7 @@ void Builder::build_relocatable() {
   build_section_relocations<ELF_T>();
 
   // Since object file only have sections, we don't have to process segments
-  if (binary_->sections_.size() > 0) {
+  if (!binary_->sections_.empty()) {
     build_sections<ELF_T>();
   }
 
@@ -656,8 +656,8 @@ std::vector<std::string> Builder::optimize(const HANDLER& container,
     std::inserter(string_table, std::end(string_table)),
     getter);
 
-  for (auto &val: string_table) {
-    string_table_optimized.emplace_back(std::move(val));
+  for (const auto& val: string_table) {
+    string_table_optimized.emplace_back(val);
     std::reverse(std::begin(string_table_optimized.back()), std::end(string_table_optimized.back()));
   }
 
@@ -698,7 +698,7 @@ std::vector<std::string> Builder::optimize(const HANDLER& container,
       std::swap(string_table_optimized[to_set_idx], cur_elm);
   }
   // if the first one is empty
-  if (string_table_optimized[0].size() == 0) {
+  if (string_table_optimized[0].empty()) {
     std::swap(string_table_optimized[0], string_table_optimized[to_set_idx]);
     --to_set_idx;
   }
@@ -893,7 +893,7 @@ void Builder::build_static_symbols() {
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
 
-  auto layout = reinterpret_cast<ExeLayout*>(layout_.get());
+  auto* layout = reinterpret_cast<ExeLayout*>(layout_.get());
 
   LIEF_DEBUG("== Build static symbols ==");
   Section& symbol_section = binary_->static_symbols_section();
@@ -1311,7 +1311,7 @@ void Builder::build_section_relocations() {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
   LIEF_DEBUG("[+] Building relocations");
 
-  auto layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
+  auto* layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
 
   it_object_relocations object_relocations = binary_->object_relocations();
   const bool is_rela = object_relocations[0].is_rela();

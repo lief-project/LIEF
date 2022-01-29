@@ -197,8 +197,8 @@ void Builder::build_import_table() {
         LIEF_ERR("Can't patch");
         break;
       }
-      uint__ *lookupTable = reinterpret_cast<uint__*>(import_content.data() + offsetTable);
-      uint__ *IAT         = reinterpret_cast<uint__*>(import_content.data() + offsetIAT);
+      auto *lookupTable = reinterpret_cast<uint__*>(import_content.data() + offsetTable);
+      auto *IAT         = reinterpret_cast<uint__*>(import_content.data() + offsetIAT);
 
       while (*lookupTable != 0) {
         *IAT = static_cast<uint__>(binary_->optional_header().imagebase() + import_section.virtual_address() + jumpOffsetTmp);
@@ -342,7 +342,7 @@ void Builder::build_import_table() {
   import_section.content(content);
 
   // Update IAT data directory
-  const uint32_t rva = static_cast<uint32_t>(import_section.virtual_address() + iat_offset);
+  const auto rva = static_cast<uint32_t>(import_section.virtual_address() + iat_offset);
   binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
   binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
 }
