@@ -4,7 +4,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-if(WIN32)
+
+set(IS_WIN_CROSS_COMPILE 0)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_CROSSCOMPILING)
+  set(IS_WIN_CROSS_COMPILE 1)
+endif()
+
+
+if(WIN32 OR ${IS_WIN_CROSS_COMPILE})
   include(ChooseMSVCCRT)
 endif()
 include(CheckCXXCompilerFlag)
@@ -173,7 +180,7 @@ if(WINDOWS AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF ws2_32)
 endif()
 
-if(MSVC)
+if(MSVC OR ${IS_WIN_CROSS_COMPILE})
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
