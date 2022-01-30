@@ -25,7 +25,13 @@
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include <numeric>
+
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
+#else
+#define getpagesize() 0x1000
+#endif
+
 namespace LIEF {
 namespace ELF {
 
