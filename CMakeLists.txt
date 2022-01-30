@@ -613,33 +613,48 @@ endif()
 # Installation
 # ======================
 
+if(UNIX)
+  include(GNUInstallDirs)
+else()
+  if (WIN32)
+      set(CMAKE_INSTALL_LIBDIR "lib")
+      set(CMAKE_INSTALL_DATADIR "share")
+      set(CMAKE_INSTALL_INCLUDEDIR "include")
+      set(CMAKE_INSTALL_BINDIR "bin")
+      set(CMAKE_INSTALL_DATAROOTDIR "share")
+      message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
+    else()
+      message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
+    endif()
+endif()
+
 install(
   TARGETS LIB_LIEF
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib COMPONENT libraries)
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
 
 install(
   DIRECTORY ${LIEF_PUBLIC_INCLUDE_DIR}
-  DESTINATION include
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   COMPONENT headers
   FILES_MATCHING
   REGEX "(.*).(hpp|h|def)$")
 
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
-  DESTINATION share/LIEF/cmake
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
   COMPONENT CMakeScripts)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
-  DESTINATION share/LIEF/cmake
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
   COMPONENT config)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
-  DESTINATION lib/pkgconfig
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   COMPONENT libraries)
 
 export(TARGETS LIB_LIEF lief_spdlog FILE LIEFExport.cmake)
