@@ -1,5 +1,6 @@
 #ifndef LIEF_LEAF_H_
 #define LIEF_LEAF_H_
+#include "LIEF/config.h"
 
 // LEAF raises warnings which pollute the LIEF's warning
 // This sequence disables the warning for the include
@@ -12,13 +13,10 @@
 #  pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-// First step to enable users to provide their own (system) dependency
-#define LIEF_EXTERNAL_THIRD_PARTY 0
-
-#if !LIEF_EXTERNAL_THIRD_PARTY
+#ifndef LIEF_EXTERNAL_LEAF
 #include <LIEF/third-party/internal/leaf.hpp>
 #else
-// TODO
+#include <boost/leaf.hpp>
 #endif
 
 

@@ -354,16 +354,25 @@ endif()
 # =======================================
 # Leaf
 # =======================================
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
-  COMMAND
-    ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${LEAF_SRC_DIR}/
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-  DEPENDS lief_leaf)
+if(LIEF_EXTERNAL_LEAF)
+  message(STATUS "Using external LEAF version")
+  if(LIEF_EXTERNAL_LEAF_DIR)
+    message(STATUS "External LEAF include dir: ${LIEF_EXTERNAL_LEAF_DIR}")
+    target_include_directories(LIB_LIEF SYSTEM PUBLIC
+                               ${LIEF_EXTERNAL_LEAF_DIR})
+  endif()
+else()
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
+    COMMAND
+      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${LEAF_SRC_DIR}/
+      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+    DEPENDS lief_leaf)
 
-target_sources(LIB_LIEF PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp)
+  target_sources(LIB_LIEF PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp)
+endif()
 
 # =======================================
 # utfcpp
