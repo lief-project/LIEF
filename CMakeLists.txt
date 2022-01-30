@@ -97,9 +97,6 @@ message(STATUS "CMAKE_SYSTEM_PROCESSOR:            ${CMAKE_SYSTEM_PROCESSOR}")
 
 # LIEF Source definition
 # ======================
-set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
-set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
-set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
 
 set(LIEF_PRIVATE_INCLUDE_DIR)
 set(LIEF_PUBLIC_INCLUDE_DIR)
@@ -107,10 +104,8 @@ set(LIEF_PUBLIC_INCLUDE_DIR)
 set(LIEF_PUBLIC_INCLUDE_FILES)
 set(LIEF_PRIVATE_INCLUDE_FILES)
 
+
 set(LIBLIEF_SOURCE_FILES
-    "${mbedtls_src_crypto}"
-    "${mbedtls_src_x509}"
-    "${mbedtls_src_tls}"
     "${LIBFUZZER_SRC_FILES}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/errors.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.cpp"
@@ -175,6 +170,33 @@ source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
 source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
 
 add_library(LIB_LIEF ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES})
+
+if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
+  set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
+  target_sources(LIB_LIEF PRIVATE
+                 "${mbedtls_src_crypto}"
+                 "${mbedtls_src_x509}"
+                 "${mbedtls_src_tls}")
+
+  source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
+  source_group("mbedtls\\x509" FILES ${mbedtls_src_x509})
+  source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
+
+  target_include_directories(
+    LIB_LIEF SYSTEM PRIVATE
+      "${MBEDTLS_INCLUDE_DIRS}"
+      "${MBEDTLS_SOURCE_DIR}/library"
+  )
+
+  add_dependencies(LIB_LIEF lief_mbed_tls)
+else()
+  find_package(MbedTLS REQUIRED)
+  target_link_libraries(LIB_LIEF PRIVATE
+                        MbedTLS::mbedcrypto
+                        MbedTLS::mbedx509)
+endif()
 
 if(WINDOWS AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF ws2_32)
@@ -307,20 +329,6 @@ list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
                @ONLY)
 
-# Grouping external projects
-# ==========================
-source_group("mbedtls\\crypto" FILES ${mbedtls_src_crypto})
-source_group("mbedtls\\x509" FILES ${mbedtls_src_x509})
-source_group("mbedtls\\tls" FILES ${mbedtls_src_tls})
-
-# Library definition
-# ==================
-target_include_directories(
-  LIB_LIEF SYSTEM PRIVATE
-    "${MBEDTLS_INCLUDE_DIRS}"
-    "${MBEDTLS_SOURCE_DIR}/library"
-)
-
 target_include_directories(
   LIB_LIEF
   PUBLIC "${LIEF_PUBLIC_INCLUDE_DIR}"
@@ -395,7 +403,6 @@ else()
 endif()
 
 
-add_dependencies(LIB_LIEF lief_mbed_tls)
 target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
 # Flags definition

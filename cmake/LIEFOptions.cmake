@@ -62,8 +62,11 @@ option(LIEF_EXTERNAL_SPDLOG OFF)
 option(LIEF_OPT_EXTERNAL_LEAF OFF)
 set(LIEF_EXTERNAL_LEAF_DIR )
 
-# This option enable to provide an external version of utf8cpp
+# This option enables to provide an external version of utf8cpp
 option(LIEF_OPT_UTFCPP_EXTERNAL OFF)
+
+# This option enables to provide an external version of MbedTLS
+option(LIEF_OPT_MBEDTLS_EXTERNAL OFF)
 
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)
@@ -82,6 +85,7 @@ set(LIEF_FROZEN_ENABLED 0)
 
 set(LIEF_EXTERNAL_LEAF 0)
 set(LIEF_EXTERNAL_UTF8CPP 0)
+set(LIEF_EXTERNAL_MBEDTLS 0)
 
 if(LIEF_ELF)
   set(LIEF_ELF_SUPPORT 1)
@@ -137,4 +141,8 @@ endif()
 
 if(LIEF_OPT_UTFCPP_EXTERNAL)
   set(LIEF_EXTERNAL_UTF8CPP 1)
+endif()
+
+if(LIEF_OPT_MBEDTLS_EXTERNAL)
+  set(LIEF_EXTERNAL_MBEDTLS 1)
 endif()

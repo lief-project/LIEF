@@ -29,128 +29,130 @@ endif()
 
 # mbed TLS
 # --------
-set(MBED_TLS_VERSION 3.1.0)
-set(MBED_TLS_SHA256 SHA256=8ec791eaed8332c50cade2bcc17b75ae5931ac00824a761b5aa4e7586645b72b)
-set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
-set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
+if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
+  set(MBED_TLS_VERSION 3.1.0)
+  set(MBED_TLS_SHA256 SHA256=8ec791eaed8332c50cade2bcc17b75ae5931ac00824a761b5aa4e7586645b72b)
+  set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
+  set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
 
-ExternalProject_Add(lief_mbed_tls
-  PREFIX            ${MBED_TLS_PREFIX}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  URL               ${MBED_TLS_URL}
-  URL_HASH          ${MBED_TLS_SHA256}
-  UPDATE_COMMAND    "" # repetitive update are a pain
-  BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
+  ExternalProject_Add(lief_mbed_tls
+    PREFIX            ${MBED_TLS_PREFIX}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   ""
+    URL               ${MBED_TLS_URL}
+    URL_HASH          ${MBED_TLS_SHA256}
+    UPDATE_COMMAND    "" # repetitive update are a pain
+    BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
 
-ExternalProject_get_property(lief_mbed_tls SOURCE_DIR)
-set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
-set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
+  ExternalProject_get_property(lief_mbed_tls SOURCE_DIR)
+  set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
+  set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
 
-set(mbedtls_src_crypto
-  "${MBEDTLS_SOURCE_DIR}/library/aes.c"
-  "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
-  "${MBEDTLS_SOURCE_DIR}/library/aria.c"
-  "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
-  "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
-  "${MBEDTLS_SOURCE_DIR}/library/base64.c"
-  "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
-  "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
-  "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
-  "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
-  "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
-  "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
-  "${MBEDTLS_SOURCE_DIR}/library/constant_time.c"
-  "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
-  "${MBEDTLS_SOURCE_DIR}/library/des.c"
-  "${MBEDTLS_SOURCE_DIR}/library/dhm.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ecdh.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ecdsa.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ecjpake.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ecp.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c"
-  "${MBEDTLS_SOURCE_DIR}/library/entropy.c"
-  "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
-  "${MBEDTLS_SOURCE_DIR}/library/error.c"
-  "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
-  "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
-  "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md.c"
-  "${MBEDTLS_SOURCE_DIR}/library/md5.c"
-  "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
-  "${MBEDTLS_SOURCE_DIR}/library/mps_reader.c"
-  "${MBEDTLS_SOURCE_DIR}/library/mps_trace.c"
-  "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
-  "${MBEDTLS_SOURCE_DIR}/library/oid.c"
-  "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pem.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pk.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pkcs12.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pkcs5.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
-  "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
-  "${MBEDTLS_SOURCE_DIR}/library/platform.c"
-  "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
-  "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_aead.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_cipher.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_client.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_driver_wrappers.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_ecp.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_hash.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_mac.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_rsa.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_se.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_slot_management.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_storage.c"
-  "${MBEDTLS_SOURCE_DIR}/library/psa_its_file.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
-  "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
-  "${MBEDTLS_SOURCE_DIR}/library/rsa_alt_helpers.c"
-  "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
-  "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
-  "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_debug_helpers_generated.c"
-  "${MBEDTLS_SOURCE_DIR}/library/threading.c"
-  "${MBEDTLS_SOURCE_DIR}/library/timing.c"
-  "${MBEDTLS_SOURCE_DIR}/library/version.c"
-  "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
-)
+  set(mbedtls_src_crypto
+    "${MBEDTLS_SOURCE_DIR}/library/aes.c"
+    "${MBEDTLS_SOURCE_DIR}/library/aesni.c"
+    "${MBEDTLS_SOURCE_DIR}/library/aria.c"
+    "${MBEDTLS_SOURCE_DIR}/library/asn1parse.c"
+    "${MBEDTLS_SOURCE_DIR}/library/asn1write.c"
+    "${MBEDTLS_SOURCE_DIR}/library/base64.c"
+    "${MBEDTLS_SOURCE_DIR}/library/bignum.c"
+    "${MBEDTLS_SOURCE_DIR}/library/camellia.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ccm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/chacha20.c"
+    "${MBEDTLS_SOURCE_DIR}/library/chachapoly.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cipher.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cipher_wrap.c"
+    "${MBEDTLS_SOURCE_DIR}/library/constant_time.c"
+    "${MBEDTLS_SOURCE_DIR}/library/cmac.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ctr_drbg.c"
+    "${MBEDTLS_SOURCE_DIR}/library/des.c"
+    "${MBEDTLS_SOURCE_DIR}/library/dhm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecdh.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecdsa.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecjpake.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecp.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ecp_curves.c"
+    "${MBEDTLS_SOURCE_DIR}/library/entropy.c"
+    "${MBEDTLS_SOURCE_DIR}/library/entropy_poll.c"
+    "${MBEDTLS_SOURCE_DIR}/library/error.c"
+    "${MBEDTLS_SOURCE_DIR}/library/gcm.c"
+    "${MBEDTLS_SOURCE_DIR}/library/hkdf.c"
+    "${MBEDTLS_SOURCE_DIR}/library/hmac_drbg.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md.c"
+    "${MBEDTLS_SOURCE_DIR}/library/md5.c"
+    "${MBEDTLS_SOURCE_DIR}/library/memory_buffer_alloc.c"
+    "${MBEDTLS_SOURCE_DIR}/library/mps_reader.c"
+    "${MBEDTLS_SOURCE_DIR}/library/mps_trace.c"
+    "${MBEDTLS_SOURCE_DIR}/library/nist_kw.c"
+    "${MBEDTLS_SOURCE_DIR}/library/oid.c"
+    "${MBEDTLS_SOURCE_DIR}/library/padlock.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pem.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pk.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pk_wrap.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkcs12.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkcs5.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkparse.c"
+    "${MBEDTLS_SOURCE_DIR}/library/pkwrite.c"
+    "${MBEDTLS_SOURCE_DIR}/library/platform.c"
+    "${MBEDTLS_SOURCE_DIR}/library/platform_util.c"
+    "${MBEDTLS_SOURCE_DIR}/library/poly1305.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_aead.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_cipher.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_client.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_driver_wrappers.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_ecp.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_hash.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_mac.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_rsa.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_se.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_slot_management.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_crypto_storage.c"
+    "${MBEDTLS_SOURCE_DIR}/library/psa_its_file.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ripemd160.c"
+    "${MBEDTLS_SOURCE_DIR}/library/rsa.c"
+    "${MBEDTLS_SOURCE_DIR}/library/rsa_alt_helpers.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha1.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha256.c"
+    "${MBEDTLS_SOURCE_DIR}/library/sha512.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_debug_helpers_generated.c"
+    "${MBEDTLS_SOURCE_DIR}/library/threading.c"
+    "${MBEDTLS_SOURCE_DIR}/library/timing.c"
+    "${MBEDTLS_SOURCE_DIR}/library/version.c"
+    "${MBEDTLS_SOURCE_DIR}/library/version_features.c"
+  )
 
-set(mbedtls_src_x509
-    #"${MBEDTLS_SOURCE_DIR}/library/certs.c"
-    #"${MBEDTLS_SOURCE_DIR}/library/pkcs11.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509_create.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509_crl.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509_crt.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509_csr.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509write_crt.c"
-    "${MBEDTLS_SOURCE_DIR}/library/x509write_csr.c"
-)
+  set(mbedtls_src_x509
+      #"${MBEDTLS_SOURCE_DIR}/library/certs.c"
+      #"${MBEDTLS_SOURCE_DIR}/library/pkcs11.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509_create.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509_crl.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509_crt.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509_csr.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509write_crt.c"
+      "${MBEDTLS_SOURCE_DIR}/library/x509write_csr.c"
+  )
 
-set(mbedtls_src_tls
-  "${MBEDTLS_SOURCE_DIR}/library/debug.c"
-  "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_server.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_client.c"
-  "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_generic.c"
-)
+  set(mbedtls_src_tls
+    "${MBEDTLS_SOURCE_DIR}/library/debug.c"
+    "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_server.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_client.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_generic.c"
+  )
+endif()
 
 add_library(lief_spdlog INTERFACE)
 
