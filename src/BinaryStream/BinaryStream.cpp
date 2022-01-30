@@ -16,7 +16,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/DWARF/enums.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/third-party/utfcpp.hpp"
+#include "third-party/utfcpp.hpp"
 #include <mbedtls/platform.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/error.h>
