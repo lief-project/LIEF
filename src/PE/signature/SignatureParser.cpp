@@ -45,7 +45,7 @@
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-#include "LIEF/third-party/utfcpp/utf8.h"
+#include "LIEF/third-party/utfcpp.hpp"
 #include "logging.hpp"
 #include "pkcs7.h"
 

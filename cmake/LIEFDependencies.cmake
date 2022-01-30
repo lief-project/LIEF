@@ -221,17 +221,19 @@ endif()
 
 # utfcpp
 # ------
-set(UTFCPP_VERSION 3.1.2) # Custom fix to remove use of SUBLANG_DEFAULT in common.hpp and all.hpp
-set(UTFCPP_SHA256 SHA256=b77bff122a6d4f2a7a1ab409086bbb59bf899a2fdde12e1a85a4305fa91764c4)
-set(UTFCPP_URL "${THIRD_PARTY_DIRECTORY}/utfcpp-${UTFCPP_VERSION}.zip" CACHE STRING "URL to UTFCPP")
-ExternalProject_Add(lief_utfcpp
-  URL               ${UTFCPP_URL}
-  URL_HASH          ${UTFCPP_SHA256}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  UPDATE_COMMAND    ""
-  INSTALL_COMMAND   "")
+if(NOT LIEF_OPT_UTFCPP_EXTERNAL)
+  set(UTFCPP_VERSION 3.1.2) # Custom fix to remove use of SUBLANG_DEFAULT in common.hpp and all.hpp
+  set(UTFCPP_SHA256 SHA256=b77bff122a6d4f2a7a1ab409086bbb59bf899a2fdde12e1a85a4305fa91764c4)
+  set(UTFCPP_URL "${THIRD_PARTY_DIRECTORY}/utfcpp-${UTFCPP_VERSION}.zip" CACHE STRING "URL to UTFCPP")
+  ExternalProject_Add(lief_utfcpp
+    URL               ${UTFCPP_URL}
+    URL_HASH          ${UTFCPP_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    INSTALL_COMMAND   "")
 
-ExternalProject_get_property(lief_utfcpp SOURCE_DIR)
-set(UTFCPP_INCLUDE_DIR "${SOURCE_DIR}/source")
+  ExternalProject_get_property(lief_utfcpp SOURCE_DIR)
+  set(UTFCPP_INCLUDE_DIR "${SOURCE_DIR}/source")
+endif()
 

@@ -377,14 +377,22 @@ endif()
 # =======================================
 # utfcpp
 # =======================================
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory ${UTFCPP_INCLUDE_DIR}/
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp
-  DEPENDS lief_utfcpp)
 
-target_sources(LIB_LIEF PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/utfcpp/utf8.h)
+if(LIEF_OPT_UTFCPP_EXTERNAL)
+  find_package(utf8cpp REQUIRED)
+  target_link_libraries(LIB_LIEF PRIVATE utf8cpp)
+else()
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/utfcpp/utf8.h
+    COMMAND
+      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${UTFCPP_INCLUDE_DIR}/
+      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/utfcpp
+    DEPENDS lief_utfcpp)
+
+  target_sources(LIB_LIEF PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/utfcpp/utf8.h)
+endif()
 
 
 add_dependencies(LIB_LIEF lief_mbed_tls)
