@@ -6,7 +6,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 set(IS_WIN_CROSS_COMPILE 0)
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_CROSSCOMPILING)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_CROSSCOMPILING)
   set(IS_WIN_CROSS_COMPILE 1)
 endif()
 
@@ -57,7 +57,7 @@ if(LIEF_USE_CCACHE)
     message(STATUS "Found ccache: ${CCACHE_FOUND}")
   else()
     find_program(SCCACHE_FOUND sccache)
-    if (SCCACHE_FOUND)
+    if(SCCACHE_FOUND)
       set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_FOUND})
       set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_FOUND})
       message(STATUS "Found sccache: ${SCCACHE_FOUND}")
@@ -104,9 +104,7 @@ set(LIEF_PUBLIC_INCLUDE_DIR)
 set(LIEF_PUBLIC_INCLUDE_FILES)
 set(LIEF_PRIVATE_INCLUDE_FILES)
 
-
 set(LIBLIEF_SOURCE_FILES
-    "${LIBFUZZER_SRC_FILES}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/errors.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
@@ -484,7 +482,7 @@ if(LIEF_ASAN OR LIEF_LSAN OR LIEF_TSAN OR LIEF_USAN)
   set(LIEF_SANITIZER ON)
 endif()
 
-if (LIEF_SANITIZER)
+if(LIEF_SANITIZER)
   message("LIEF Sanitizer enabled: ${SANITIZER_FLAGS}")
   target_compile_options(LIB_LIEF PUBLIC ${SANITIZER_FLAGS})
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/tests/sanitizer")
@@ -540,16 +538,14 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
       CACHE STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-                                               "MinSizeRel" "RelWithDebInfo")
+                                                       "MinSizeRel" "RelWithDebInfo")
 endif()
 
 message(STATUS "Configuration Types: ${CMAKE_CONFIGURATION_TYPES}")
-message(STATUS "Build Types: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build Types:         ${CMAKE_BUILD_TYPE}")
 
 if(APPLE)
-  set_target_properties(LIB_LIEF PROPERTIES
-    MACOSX_RPATH ON
-  )
+  set_target_properties(LIB_LIEF PROPERTIES MACOSX_RPATH ON)
 endif()
 
 # API
@@ -590,8 +586,8 @@ write_basic_package_version_file(
 
 # Post-build operations
 # ======================
-if (BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
-  if (UNIX AND NOT APPLE)
+if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
+  if(UNIX AND NOT APPLE)
       add_custom_command(
         TARGET LIB_LIEF
         COMMENT "Strip LIEF shared library"
@@ -600,7 +596,7 @@ if (BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
       )
   endif()
 
-  if (APPLE)
+  if(APPLE)
     add_custom_command(
       TARGET LIB_LIEF
       COMMENT "Strip LIEF shared library"
@@ -631,11 +627,11 @@ endif()
 if(UNIX)
   include(GNUInstallDirs)
 else()
-  if (WIN32)
-      set(CMAKE_INSTALL_LIBDIR "lib")
-      set(CMAKE_INSTALL_DATADIR "share")
-      set(CMAKE_INSTALL_INCLUDEDIR "include")
-      set(CMAKE_INSTALL_BINDIR "bin")
+  if(WIN32)
+      set(CMAKE_INSTALL_LIBDIR      "lib")
+      set(CMAKE_INSTALL_DATADIR     "share")
+      set(CMAKE_INSTALL_INCLUDEDIR  "include")
+      set(CMAKE_INSTALL_BINDIR      "bin")
       set(CMAKE_INSTALL_DATAROOTDIR "share")
       message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
     else()
@@ -657,9 +653,9 @@ install(
   REGEX "(.*).(hpp|h|def)$")
 
 install(
-  FILES ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
+  FILES       ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
-  COMPONENT CMakeScripts)
+  COMPONENT   CMakeScripts)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
@@ -668,9 +664,9 @@ install(
   COMPONENT config)
 
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
+  FILES       ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  COMPONENT libraries)
+  COMPONENT   libraries)
 
 export(TARGETS LIB_LIEF lief_spdlog FILE LIEFExport.cmake)
 
