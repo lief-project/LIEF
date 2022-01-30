@@ -69,6 +69,7 @@ Changelog
       # or
       $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
 
+  * Enable to feed LIEF's dependencies externally (c.f. :ref:`lief_third_party`)
   * Replace the keywords ``and``, ``or``, ``not`` with ``&&``, ``||`` and ``!``.
 
 :Dependencies:
