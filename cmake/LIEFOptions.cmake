@@ -68,6 +68,14 @@ option(LIEF_OPT_UTFCPP_EXTERNAL OFF)
 # This option enables to provide an external version of MbedTLS
 option(LIEF_OPT_MBEDTLS_EXTERNAL OFF)
 
+# This option enables to provide an external version of Frozen
+set(_LIEF_USE_FROZEN ON)
+if(LIEF_DISABLE_FROZEN)
+  set(_LIEF_USE_FROZEN OFF)
+endif()
+cmake_dependent_option(LIEF_OPT_FROZEN_EXTERNAL "Install LIEF Compiled examples" OFF
+                       "_LIEF_USE_FROZEN" OFF)
+
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)
 set(LIEF_MACHO_SUPPORT 0)
@@ -82,6 +90,7 @@ set(LIEF_NLOHMANN_JSON_EXTERNAL 0)
 set(LIEF_LOGGING_SUPPORT 0)
 set(LIEF_LOGGING_DEBUG_SUPPORT 0)
 set(LIEF_FROZEN_ENABLED 0)
+set(LIEF_EXTERNAL_FROZEN 0)
 
 set(LIEF_EXTERNAL_LEAF 0)
 set(LIEF_EXTERNAL_UTF8CPP 0)
@@ -133,6 +142,9 @@ endif()
 
 if(NOT LIEF_DISABLE_FROZEN)
   set(LIEF_FROZEN_ENABLED 1)
+  if(LIEF_OPT_FROZEN_EXTERNAL)
+    set(LIEF_EXTERNAL_FROZEN 1)
+  endif()
 endif()
 
 if(LIEF_OPT_EXTERNAL_LEAF)
@@ -146,3 +158,5 @@ endif()
 if(LIEF_OPT_MBEDTLS_EXTERNAL)
   set(LIEF_EXTERNAL_MBEDTLS 1)
 endif()
+
+

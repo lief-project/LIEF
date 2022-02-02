@@ -266,7 +266,6 @@ endif()
 # Frozen Configuration
 # ====================
 if(LIEF_FROZEN_ENABLED)
-  list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${FROZEN_INCLUDE_DIR}")
 endif()
 
 # OAT part
@@ -327,9 +326,8 @@ list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
                @ONLY)
 
-target_include_directories(
-  LIB_LIEF
-  PUBLIC "${LIEF_PUBLIC_INCLUDE_DIR}"
+target_include_directories(LIB_LIEF
+  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
@@ -354,7 +352,13 @@ if(LIEF_ENABLE_JSON)
 endif()
 
 if(LIEF_FROZEN_ENABLED)
-  add_dependencies(LIB_LIEF lief_frozen)
+  if(LIEF_OPT_FROZEN_EXTERNAL)
+    find_package(frozen REQUIRED)
+    target_link_libraries(LIB_LIEF PRIVATE frozen::frozen)
+  else()
+    add_dependencies(LIB_LIEF lief_frozen)
+    list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${FROZEN_INCLUDE_DIR}")
+  endif()
 endif()
 
 # =======================================

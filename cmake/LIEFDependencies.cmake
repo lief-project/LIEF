@@ -5,20 +5,22 @@ set(__add_lief_dependencies ON)
 
 # Json
 # ----
-if (LIEF_ENABLE_JSON)
-  set(LIBJSON_VERSION 3.9.1)
-  set(LIBJSON_SHA256 SHA256=5db3b7b3356a0742e06b27b6ee744f8ee487ed9c0f8cf3f9778a2076e7a933ba)
-  set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
-  ExternalProject_Add(lief_libjson
-    URL               ${LIBJSON_URL}
-    URL_HASH          ${LIBJSON_SHA256}
-    UPDATE_COMMAND    ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   "")
+if(LIEF_ENABLE_JSON)
+  if(NOT LIEF_OPT_NLOHMANN_JSON_EXTERNAL)
+    set(LIBJSON_VERSION 3.9.1)
+    set(LIBJSON_SHA256 SHA256=5db3b7b3356a0742e06b27b6ee744f8ee487ed9c0f8cf3f9778a2076e7a933ba)
+    set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
+    ExternalProject_Add(lief_libjson
+      URL               ${LIBJSON_URL}
+      URL_HASH          ${LIBJSON_SHA256}
+      UPDATE_COMMAND    ""
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND     ""
+      INSTALL_COMMAND   "")
 
-  ExternalProject_get_property(lief_libjson SOURCE_DIR)
-  set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
+    ExternalProject_get_property(lief_libjson SOURCE_DIR)
+    set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
+  endif()
   message(STATUS "Enable JSON support")
   set(ENABLE_JSON_SUPPORT 1)
 else()
@@ -187,19 +189,22 @@ set(LIEF_FROZEN_ENABLED 0)
 if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
   message(STATUS "Enable Frozen (C++14 support)")
   set(LIEF_FROZEN_ENABLED 1)
-  set(FROZEN_VERSION e6ddc43)
-  set(FROZEN_SHA256 SHA256=7aa0ab44eb91fc2c2431bd2e78bd3545aae750793a880064f6df0ef84c819065)
-  set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
-  ExternalProject_Add(lief_frozen
-    URL               ${FROZEN_URL}
-    URL_HASH          ${FROZEN_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
 
-  ExternalProject_get_property(lief_frozen SOURCE_DIR)
-  set(FROZEN_INCLUDE_DIR "${SOURCE_DIR}/include")
+  if (NOT LIEF_OPT_FROZEN_EXTERNAL)
+    set(FROZEN_VERSION e6ddc43)
+    set(FROZEN_SHA256 SHA256=7aa0ab44eb91fc2c2431bd2e78bd3545aae750793a880064f6df0ef84c819065)
+    set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
+    ExternalProject_Add(lief_frozen
+      URL               ${FROZEN_URL}
+      URL_HASH          ${FROZEN_SHA256}
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND     ""
+      UPDATE_COMMAND    ""
+      INSTALL_COMMAND   "")
+
+    ExternalProject_get_property(lief_frozen SOURCE_DIR)
+    set(FROZEN_INCLUDE_DIR "${SOURCE_DIR}/include")
+  endif()
 endif()
 
 

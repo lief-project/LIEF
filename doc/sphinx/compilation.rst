@@ -153,6 +153,7 @@ cmake's options:
   * ``LIEF_OPT_UTFCPP_EXTERNAL``
   * ``LIEF_OPT_MBEDTLS_EXTERNAL``
   * ``LIEF_EXTERNAL_SPDLOG``
+  * ``LIEF_OPT_FROZEN_EXTERNAL``
 
 By setting these flags, LIEF resolves the dependencies with CMake ``find_package(...)`` which
 is aware of ``<DEPS>_DIR`` to find the package. Boost's Leaf does not provide
