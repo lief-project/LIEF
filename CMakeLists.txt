@@ -357,7 +357,8 @@ if(LIEF_FROZEN_ENABLED)
     target_link_libraries(LIB_LIEF PRIVATE frozen::frozen)
   else()
     add_dependencies(LIB_LIEF lief_frozen)
-    list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${FROZEN_INCLUDE_DIR}")
+    target_include_directories(LIB_LIEF
+      PRIVATE "${FROZEN_INCLUDE_DIR}")
   endif()
 endif()
 
