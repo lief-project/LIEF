@@ -68,7 +68,7 @@ void Hash::visit(const DexFile& dex_file) {
   process(dex_file.checksum());
   process(dex_file.dex_offset());
   if (dex_file.has_dex_file()) {
-    process(DEX::Hash::hash(dex_file.dex_file()));
+    process(DEX::Hash::hash(*dex_file.dex_file()));
   }
   process(dex_file.lookup_table_offset());
   process(dex_file.classes_offsets());
@@ -77,20 +77,21 @@ void Hash::visit(const DexFile& dex_file) {
 
 void Hash::visit(const Class& cls) {
   if (cls.has_dex_class()) {
-    process(DEX::Hash::hash(cls.dex_class()));
+    process(DEX::Hash::hash(*cls.dex_class()));
   }
 
   process(cls.status());
   process(cls.type());
   process(cls.fullname());
   process(cls.bitmap());
-  process(std::begin(cls.methods()), std::end(cls.methods()));
+  Class::it_const_methods it = cls.methods();
+  process(std::begin(it), std::end(it));
 }
 
 
 void Hash::visit(const Method& meth) {
   if (meth.has_dex_method()) {
-    process(DEX::Hash::hash(meth.dex_method()));
+    process(DEX::Hash::hash(*meth.dex_method()));
   }
   process(static_cast<size_t>(meth.is_dex2dex_optimized()));
   process(static_cast<size_t>(meth.is_compiled()));

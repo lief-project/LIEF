@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "pyDEX.hpp"
-#include "LIEF/DEX/Structures.hpp"
 #include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
 

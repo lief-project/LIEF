@@ -21,6 +21,8 @@
 #include "LIEF/OAT/hash.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 
+#include "LIEF/DEX/Class.hpp"
+
 #include "logging.hpp"
 
 #if defined(_MSC_VER)
@@ -34,14 +36,10 @@ namespace OAT {
 Class::Class(const Class&) = default;
 Class& Class::operator=(const Class&) = default;
 
-Class::Class() :
-  status_{OAT_CLASS_STATUS::STATUS_NOTREADY},
-  type_{OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED}
-{}
+Class::Class() = default;
 
-Class::Class(OAT_CLASS_STATUS status,
-      OAT_CLASS_TYPES type,
-      DEX::Class* dex_class, std::vector<uint32_t> bitmap) :
+Class::Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type,
+             DEX::Class* dex_class, std::vector<uint32_t> bitmap) :
   dex_class_{dex_class},
   status_{status},
   type_{type},
@@ -53,15 +51,12 @@ bool Class::has_dex_class() const {
   return dex_class_ != nullptr;
 }
 
-const DEX::Class& Class::dex_class() const {
-  if (!has_dex_class()) {
-    throw not_found("No Dex Class associted with this OAT Class");
-  }
-  return *dex_class_;
+const DEX::Class* Class::dex_class() const {
+  return dex_class_;
 }
 
-DEX::Class& Class::dex_class() {
-  return const_cast<DEX::Class&>(static_cast<const Class*>(this)->dex_class());
+DEX::Class* Class::dex_class() {
+  return const_cast<DEX::Class*>(static_cast<const Class*>(this)->dex_class());
 }
 
 OAT_CLASS_STATUS Class::status() const {
@@ -72,26 +67,29 @@ OAT_CLASS_TYPES Class::type() const {
   return type_;
 }
 
-it_methods Class::methods() {
+Class::it_methods Class::methods() {
   return methods_;
 }
 
-it_const_methods Class::methods() const {
+Class::it_const_methods Class::methods() const {
   return methods_;
 }
 
 DEX::dex2dex_class_info_t Class::dex2dex_info() const {
-  return dex_class().dex2dex_info();
+  if (const DEX::Class* cls = dex_class()) {
+    return cls->dex2dex_info();
+  }
+  return {};
 }
 
 
 const std::string& Class::fullname() const {
-  return dex_class().fullname();
+  return dex_class()->fullname();
 }
 
 size_t Class::index() const {
   if (has_dex_class()) {
-    return dex_class().index();
+    return dex_class()->index();
   }
   return -1ull;
 }
@@ -101,7 +99,10 @@ const std::vector<uint32_t>& Class::bitmap() const {
 }
 
 bool Class::is_quickened(const DEX::Method& m) const {
-  const DEX::Class& cls = dex_class();
+  if (!has_dex_class()) {
+    return false;
+  }
+  const DEX::Class& cls = *dex_class();
 
   if (m.bytecode().empty()) {
     return false;
@@ -146,7 +147,10 @@ bool Class::is_quickened(uint32_t relative_index) const {
 }
 
 uint32_t Class::method_offsets_index(const DEX::Method& m) const {
-  const DEX::Class& cls = dex_class();
+  if (!has_dex_class()) {
+    return -1u;
+  }
+  const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
   const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
@@ -192,7 +196,10 @@ uint32_t Class::method_offsets_index(uint32_t relative_index) const {
 }
 
 uint32_t Class::relative_index(const DEX::Method& m) const {
-  const DEX::Class& cls = dex_class();
+  if (!has_dex_class()) {
+    return -1u;
+  }
+  const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
   const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
@@ -209,7 +216,10 @@ uint32_t Class::relative_index(const DEX::Method& m) const {
 }
 
 uint32_t Class::relative_index(uint32_t method_absolute_index) const {
-  const DEX::Class& cls = dex_class();
+  if (!has_dex_class()) {
+    return -1u;
+  }
+  const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
   const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
@@ -232,6 +242,9 @@ void Class::accept(Visitor& visitor) const {
 }
 
 bool Class::operator==(const Class& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

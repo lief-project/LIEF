@@ -25,6 +25,8 @@
 
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/enums.hpp"
+
+#include "LIEF/iterators.hpp"
 #include "LIEF/enums.hpp"
 
 namespace LIEF {
@@ -45,7 +47,14 @@ class LIEF_API Signature : public Object {
   static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo);
 
   public:
-  //! Flags returned by verification functions
+
+  //! Iterator which outputs const x509& certificates
+  using it_const_crt = const_ref_iterator<const std::vector<x509>&>;
+
+  //! Iterator which outputs const SignerInfo&
+  using it_const_signers_t = const_ref_iterator<const std::vector<SignerInfo>&>;
+
+  //! Flags returned by the verification functions
   enum class VERIFICATION_FLAGS {
     OK = 0,
     INVALID_SIGNER                = 1 << 0,
@@ -79,6 +88,9 @@ class LIEF_API Signature : public Object {
   Signature();
   Signature(const Signature&);
   Signature& operator=(const Signature&);
+
+  Signature(Signature&&);
+  Signature& operator=(Signature&&);
 
   //! Should be 1
   uint32_t version() const;

@@ -18,12 +18,14 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/DataHandler/Node.hpp"
-#include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+
+#include "ELF/Structures.hpp"
+#include "ELF/DataHandler/Node.hpp"
+#include "ELF/DataHandler/Handler.hpp"
+
 #include <numeric>
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
@@ -249,10 +251,13 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
 
   const uint64_t address = relocation.address();
   LIEF_DEBUG("Patch addend relocation at address: 0x{:x}", address);
-  Segment& segment = segment_from_virtual_address(address);
-  const uint64_t relative_offset = virtual_address_to_offset(address) - segment.file_offset();
+  Segment* segment = segment_from_virtual_address(address);
+  if (segment == nullptr) {
+    LIEF_ERR("Can't find segment with the virtual address 0x{:x}", address);
+  }
+  const uint64_t relative_offset = virtual_address_to_offset(address) - segment->file_offset();
 
-  const size_t segment_size = segment.get_content_size();
+  const size_t segment_size = segment->get_content_size();
 
   if (segment_size == 0) {
     LIEF_WARN("Segment is empty nothing to do");
@@ -264,13 +269,13 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  T value = segment.get_content_value<T>(relative_offset);
+  T value = segment->get_content_value<T>(relative_offset);
 
   if (value >= from) {
     value += shift;
   }
 
-  segment.set_content_value(relative_offset, value);
+  segment->set_content_value(relative_offset, value);
 }
 
 
@@ -312,15 +317,15 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   //datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
   std::vector<uint8_t> content = segment.content();
-  auto* new_segment = new Segment{segment};
+  auto new_segment = std::make_unique<Segment>(segment);
 
   uint64_t last_offset_sections = std::accumulate(std::begin(sections_), std::end(sections_), 0,
-      [] (uint64_t offset, const Section* section) {
+      [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->file_offset() + section->size(), offset);
       });
 
   uint64_t last_offset_segments = std::accumulate(std::begin(segments_), std::end(segments_), 0,
-      [] (uint64_t offset, const Segment* segment) {
+      [] (uint64_t offset, const std::unique_ptr<Segment>& segment) {
         return std::max<uint64_t>(segment->file_offset() + segment->physical_size(), offset);
       });
 
@@ -345,12 +350,16 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   if (new_segment->alignment() == 0) {
     new_segment->alignment(psize);
   }
-  new_segment->datahandler_ = datahandler_;
+  new_segment->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
-  datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  if (!alloc) {
+    LIEF_ERR("Allocation failed");
+    throw corrupted("Allocation failed");
+  }
   new_segment->content(content);
 
   if (header.section_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
@@ -358,16 +367,17 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   }
 
   const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
-      [&new_segment] (const Segment* s) { return s->type() == new_segment->type(); });
+      [&new_segment] (const std::unique_ptr<Segment>& s) { return s->type() == new_segment->type(); });
 
+  Segment* seg_ptr = new_segment.get();
   if (it_new_segment_place == segments_.rend()) {
-    segments_.push_back(new_segment);
+    segments_.push_back(std::move(new_segment));
   } else {
     const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
-    segments_.insert(std::begin(segments_) + idx, new_segment);
+    segments_.insert(std::begin(segments_) + idx, std::move(new_segment));
   }
   phdr_reloc_info_.nb_segments--;
-  return *new_segment;
+  return *seg_ptr;
 }
 
 // =======================
@@ -377,16 +387,14 @@ template<>
 Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t base) {
   const auto psize = static_cast<uint64_t>(getpagesize());
 
-  const uint64_t new_phdr_offset = relocate_phdr_table();
+  /*const uint64_t new_phdr_offset = */ relocate_phdr_table();
 
   std::vector<uint8_t> content = segment.content();
-  auto* new_segment = new Segment{segment};
-  new_segment->datahandler_ = datahandler_;
+  auto new_segment = std::make_unique<Segment>(segment);
+  new_segment->datahandler_ = datahandler_.get();
 
-  DataHandler::Node new_node{
-          new_segment->file_offset(),
-          new_segment->physical_size(),
-          DataHandler::Node::SEGMENT};
+  DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
+                             DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
 
   const uint64_t last_offset_sections = last_offset_section();
@@ -413,7 +421,12 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
   const uint64_t new_section_hdr_offset = new_segment->file_offset() + new_segment->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+
+  if (!alloc) {
+    LIEF_ERR("Allocation failed");
+    throw corrupted("Allocation failed");
+  }
 
   new_segment->content(content);
 
@@ -421,18 +434,18 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   const auto& it_new_segment_place = std::find_if(
       segments_.rbegin(), segments_.rend(),
-      [&new_segment] (const Segment* s) {
+      [&new_segment] (const std::unique_ptr<Segment>& s) {
         return s->type() == new_segment->type();
       });
-
+  Segment* seg_ptr = new_segment.get();
   if (it_new_segment_place == segments_.rend()) {
-    segments_.push_back(new_segment);
+    segments_.push_back(std::move(new_segment));
   } else {
     const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
-    segments_.insert(std::begin(segments_) + idx, new_segment);
+    segments_.insert(std::begin(segments_) + idx, std::move(new_segment));
   }
 
-  return *new_segment;
+  return *seg_ptr;
 }
 
 
@@ -443,22 +456,29 @@ template<>
 Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, uint64_t size) {
 
   const auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
-                                       [&segment] (const Segment* s) { return *s == segment; });
+                                       [&segment] (const std::unique_ptr<Segment>& s) {
+                                          return *s == segment;
+                                       });
 
   if (it_segment == std::end(segments_)) {
     throw not_found("Unable to find the segment in the current binary");
   }
 
-  Segment* segment_to_extend = *it_segment;
+  std::unique_ptr<Segment>& segment_to_extend = *it_segment;
 
 
   uint64_t from_offset  = segment_to_extend->file_offset() + segment_to_extend->physical_size();
   uint64_t from_address = segment_to_extend->virtual_address() + segment_to_extend->virtual_size();
   uint64_t shift        = size;
 
-  datahandler_->make_hole(
+  auto alloc = datahandler_->make_hole(
       segment_to_extend->file_offset() + segment_to_extend->physical_size(),
       size);
+
+  if (!alloc) {
+    LIEF_ERR("Allocation failed");
+    throw corrupted("Allocation failed");
+  }
 
   shift_sections(from_offset, shift);
   shift_segments(from_offset, shift);
@@ -520,15 +540,13 @@ Section& Binary::add_section<true>(const Section& section) {
   Segment& segment_added = add(new_segment);
 
   LIEF_DEBUG("Segment associated: {}@0x{:x}",
-      to_string(segment_added.type()), segment_added.virtual_address());
+             to_string(segment_added.type()), segment_added.virtual_address());
 
-  auto* new_section = new Section{section};
-  new_section->datahandler_ = datahandler_;
+  auto new_section = std::make_unique<Section>(section);
+  new_section->datahandler_ = datahandler_.get();
 
-  DataHandler::Node new_node{
-          new_section->file_offset(),
-          new_section->size(),
-          DataHandler::Node::SECTION};
+  DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
+                             DataHandler::Node::SECTION};
   datahandler_->add(new_node);
 
   new_section->virtual_address(segment_added.virtual_address());
@@ -538,7 +556,7 @@ Section& Binary::add_section<true>(const Section& section) {
 
   header().numberof_sections(header().numberof_sections() + 1);
 
-  sections_.push_back(new_section);
+  sections_.push_back(std::move(new_section));
   return *(sections_.back());
 }
 
@@ -546,8 +564,8 @@ Section& Binary::add_section<true>(const Section& section) {
 template<>
 Section& Binary::add_section<false>(const Section& section) {
 
-  auto* new_section = new Section{section};
-  new_section->datahandler_ = datahandler_;
+  auto new_section = std::make_unique<Section>(section);
+  new_section->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
                              DataHandler::Node::SECTION};
@@ -557,7 +575,11 @@ Section& Binary::add_section<false>(const Section& section) {
   const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  datahandler_->make_hole(last_offset, section.size());
+  auto alloc = datahandler_->make_hole(last_offset, section.size());
+  if (!alloc) {
+    LIEF_ERR("Allocation failed");
+    throw corrupted("Allocation failed");
+  }
 
   new_section->offset(last_offset);
   new_section->size(section.size());
@@ -571,7 +593,7 @@ Section& Binary::add_section<false>(const Section& section) {
   const uint64_t new_section_hdr_offset = new_section->offset() + new_section->size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  sections_.push_back(new_section);
+  sections_.push_back(std::move(new_section));
   return *(sections_.back());
 }
 
@@ -579,10 +601,11 @@ template<class ELF_T>
 void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   using ptr_t = typename ELF_T::Elf_Addr;
 
-  if (!has(DYNAMIC_TAGS::DT_PLTGOT)) {
+  DynamicEntry* dt_pltgot = get(DYNAMIC_TAGS::DT_PLTGOT);
+  if (dt_pltgot == nullptr) {
     return;
   }
-  const uint64_t addr = get(DYNAMIC_TAGS::DT_PLTGOT).value();
+  const uint64_t addr = dt_pltgot->value();
   std::vector<uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   if (content.size() != 3 * sizeof(ptr_t)) {
     LIEF_ERR("Cant't read got entries!");

@@ -20,6 +20,7 @@
 #include <memory>
 
 #include "LIEF/types.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
@@ -77,15 +78,14 @@ class LIEF_API Parser : public LIEF::Parser {
 
   private:
   Parser(const std::string& file, const ParserConfig& conf);
-  Parser(const std::vector<uint8_t>& data, const std::string& name,
-         const ParserConfig& conf);
+  Parser(std::vector<uint8_t> data, const std::string& name, const ParserConfig& conf);
   Parser();
 
-  void build();
-  void build_fat();
+  ok_error_t build();
+  ok_error_t build_fat();
 
   std::unique_ptr<BinaryStream> stream_;
-  std::vector<Binary*> binaries_;
+  std::vector<std::unique_ptr<Binary>> binaries_;
   ParserConfig config_;
 };
 }

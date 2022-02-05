@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/exception.hpp"
+#include "logging.hpp"
+
 #include <numeric>
 #include <sstream>
 #include <iomanip>
@@ -64,8 +67,10 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
   }
 
   if (pos > array_.size()) {
-    throw corrupted(std::to_string(pos) + " is out of ranges");
+    LIEF_ERR("pos: {:d} is out of range", pos);
+    return *this;
   }
+
   array_.insert(std::begin(array_) + pos, function);
   return *this;
 }

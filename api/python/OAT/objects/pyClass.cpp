@@ -16,6 +16,7 @@
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/hash.hpp"
 
+#include "pyIterators.hpp"
 #include "pyOAT.hpp"
 
 namespace LIEF {
@@ -33,7 +34,11 @@ using no_const_getter = T (Class::*)(void);
 template<>
 void create<Class>(py::module& m) {
 
-  py::class_<Class, LIEF::Object>(m, "Class", "OAT Class representation")
+  py::class_<Class, LIEF::Object> cls(m, "Class", "OAT Class representation");
+
+  init_ref_iterator<Class::it_methods>(cls, "it_methods");
+
+  cls
     .def(py::init<>())
 
     .def("has_dex_class",
@@ -59,7 +64,7 @@ void create<Class>(py::module& m) {
         "Index the **DEX** classes pool (" RST_ATTR_REF_FULL(lief.DEX.File.classes) ")")
 
     .def_property_readonly("methods",
-        static_cast<no_const_getter<it_methods>>(&Class::methods),
+        static_cast<no_const_getter<Class::it_methods>>(&Class::methods),
         "Iterator over " RST_CLASS_REF_FULL(lief.OAT.Method) "")
 
     .def_property_readonly("bitmap",

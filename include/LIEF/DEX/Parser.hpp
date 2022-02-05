@@ -38,8 +38,7 @@ class LIEF_API Parser {
   friend struct ::Profiler;
   //! Parse the DEX file from the file path given in parameter
   static std::unique_ptr<File> parse(const std::string& file);
-  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data,
-                                     const std::string& name = "");
+  static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
@@ -47,7 +46,7 @@ class LIEF_API Parser {
   private:
   Parser();
   Parser(const std::string& file);
-  Parser(const std::vector<uint8_t>& data, const std::string& name);
+  Parser(std::vector<uint8_t> data);
   ~Parser();
 
   void init(const std::string& name, dex_version_t version);
@@ -80,16 +79,16 @@ class LIEF_API Parser {
   void parse_classes();
 
   template<typename DEX_T>
-  void parse_class_data(uint32_t offset, Class* cls);
+  void parse_class_data(uint32_t offset, Class& cls);
 
   template<typename DEX_T>
-  void parse_field(size_t index, Class* cls, bool is_static);
+  void parse_field(size_t index, Class& cls, bool is_static);
 
   template<typename DEX_T>
-  void parse_method(size_t index, Class* cls, bool is_virtual);
+  void parse_method(size_t index, Class& cls, bool is_virtual);
 
   template<typename DEX_T>
-  void parse_code_info(uint32_t offset, Method* method);
+  void parse_code_info(uint32_t offset, Method& method);
 
   void resolve_inheritance();
 
@@ -99,7 +98,7 @@ class LIEF_API Parser {
 
   void resolve_types();
 
-  LIEF::DEX::File* file_ = nullptr;
+  std::unique_ptr<File> file_;
 
   // Map of inheritance relationship when parsing classes ('parse_classes')
   // The key is the parent class name of the value

@@ -4,13 +4,12 @@
 
 // LEAF raises warnings which pollute the LIEF's warning
 // This sequence disables the warning for the include
-#if defined(__GNUG__) || defined(__clang__)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wextra-semi"
-#  pragma GCC diagnostic ignored "-Wunused-variable"
-#  pragma GCC diagnostic ignored "-Wdangling-else"
-#  pragma GCC diagnostic ignored "-Wpedantic"
-#  pragma GCC diagnostic ignored "-Wunused-parameter"
+#if defined(_MSC_VER)
+#    pragma warning(push,1)
+#elif defined(__clang__)
+#    pragma clang system_header
+#elif (__GNUC__*100+__GNUC_MINOR__>301)
+#    pragma GCC system_header
 #endif
 
 #ifndef LIEF_EXTERNAL_LEAF
@@ -20,8 +19,9 @@
 #endif
 
 
-#if defined(__GNUG__) || defined(__clang__)
-#  pragma GCC diagnostic pop
+#if defined(_MSC_VER)
+#pragma warning(pop)
 #endif
+
 
 #endif

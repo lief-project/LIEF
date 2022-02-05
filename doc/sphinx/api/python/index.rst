@@ -47,11 +47,17 @@ Logging levels
   :inherited-members:
   :undoc-members:
 
+.. _python-api-error-handling:
+
 Error Handling
 --------------
 
-
 .. autoclass:: lief.lief_errors
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+.. autoclass:: lief.ok_t
   :members:
   :inherited-members:
   :undoc-members:

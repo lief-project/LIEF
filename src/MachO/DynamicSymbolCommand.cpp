@@ -17,8 +17,8 @@
 
 #include "LIEF/MachO/hash.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -255,6 +255,9 @@ void DynamicSymbolCommand::accept(Visitor& visitor) const {
 
 
 bool DynamicSymbolCommand::operator==(const DynamicSymbolCommand& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

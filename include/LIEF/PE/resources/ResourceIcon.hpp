@@ -22,11 +22,16 @@
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+
+namespace details {
+struct pe_resource_icon_group;
+struct pe_icon_header;
+}
 
 class LIEF_API ResourceIcon : public Object {
 
@@ -36,8 +41,6 @@ class LIEF_API ResourceIcon : public Object {
   ResourceIcon();
   ResourceIcon(const details::pe_resource_icon_group& header);
   ResourceIcon(const details::pe_icon_header& header);
-
-  ResourceIcon(const std::string& iconpath);
 
   ResourceIcon(const ResourceIcon&);
   ResourceIcon& operator=(const ResourceIcon&);
@@ -101,15 +104,15 @@ class LIEF_API ResourceIcon : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceIcon& entry);
 
   private:
-  uint8_t              width_;
-  uint8_t              height_;
-  uint8_t              color_count_;
-  uint8_t              reserved_;
-  uint16_t             planes_;
-  uint16_t             bit_count_;
-  uint32_t             id_;
-  RESOURCE_LANGS       lang_;
-  RESOURCE_SUBLANGS    sublang_;
+  uint8_t              width_ = 0;
+  uint8_t              height_ = 0;
+  uint8_t              color_count_ = 0;
+  uint8_t              reserved_ = 0;
+  uint16_t             planes_ = 0;
+  uint16_t             bit_count_ = 0;
+  uint32_t             id_ = -1u;
+  RESOURCE_LANGS       lang_ = RESOURCE_LANGS::LANG_NEUTRAL;
+  RESOURCE_SUBLANGS    sublang_ = RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
   std::vector<uint8_t> pixels_;
 
 

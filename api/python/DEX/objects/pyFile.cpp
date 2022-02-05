@@ -16,6 +16,7 @@
 #include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/hash.hpp"
 
+#include "pyIterators.hpp"
 #include "pyDEX.hpp"
 
 namespace LIEF {
@@ -34,8 +35,16 @@ using setter_t = void (File::*)(T);
 template<>
 void create<File>(py::module& m) {
 
-  py::class_<File, LIEF::Object>(m, "File", "DEX File representation")
+  py::class_<File, LIEF::Object> file(m, "File", "DEX File representation");
 
+  init_ref_iterator<File::it_classes>(file, "it_classes");
+  init_ref_iterator<File::it_methods>(file, "it_methods");
+  init_ref_iterator<File::it_strings>(file, "it_strings");
+  init_ref_iterator<File::it_types>(file, "it_types");
+  init_ref_iterator<File::it_prototypes>(file, "it_prototypes");
+  init_ref_iterator<File::it_fields>(file, "it_fields");
+
+  file
     .def_property_readonly("version",
         &File::version,
         "Dex version")
@@ -46,7 +55,7 @@ void create<File>(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("classes",
-        static_cast<no_const_getter_t<it_classes>>(&File::classes),
+        static_cast<no_const_getter_t<File::it_classes>>(&File::classes),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Class) "")
 
     .def("has_class",
@@ -55,33 +64,33 @@ void create<File>(py::module& m) {
         "classname"_a)
 
     .def("get_class",
-        static_cast<Class&(File::*)(const std::string&)>(&File::get_class),
+        static_cast<Class*(File::*)(const std::string&)>(&File::get_class),
         "classname"_a,
         py::return_value_policy::reference)
 
     .def("get_class",
-        static_cast<Class&(File::*)(size_t)>(&File::get_class),
+        static_cast<Class*(File::*)(size_t)>(&File::get_class),
         "classname"_a,
         py::return_value_policy::reference)
 
     .def_property_readonly("methods",
-        static_cast<no_const_getter_t<it_methods>>(&File::methods),
+        static_cast<no_const_getter_t<File::it_methods>>(&File::methods),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Method) "")
 
     .def_property_readonly("fields",
-        static_cast<no_const_getter_t<it_fields>>(&File::fields),
+        static_cast<no_const_getter_t<File::it_fields>>(&File::fields),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Field) "")
 
     .def_property_readonly("strings",
-        static_cast<no_const_getter_t<it_strings>>(&File::strings),
+        static_cast<no_const_getter_t<File::it_strings>>(&File::strings),
         "Iterator over Dex strings")
 
     .def_property_readonly("types",
-        static_cast<no_const_getter_t<it_types>>(&File::types),
+        static_cast<no_const_getter_t<File::it_types>>(&File::types),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Type) "")
 
     .def_property_readonly("prototypes",
-        static_cast<no_const_getter_t<it_protypes>>(&File::prototypes),
+        static_cast<no_const_getter_t<File::it_prototypes>>(&File::prototypes),
         "Iterator over Dex " RST_CLASS_REF(lief.DEX.Prototype) "")
 
     .def_property_readonly("map",

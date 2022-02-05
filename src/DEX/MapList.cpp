@@ -30,13 +30,11 @@ MapList& MapList::operator=(const MapList&) = default;
 MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(
-      std::begin(items_),
-      std::end(items_),
-      std::back_inserter(items),
-      [] (MapList::items_t::value_type& p) -> MapItem* {
-        return &(p.second);
-      });
+  std::transform(std::begin(items_), std::end(items_),
+                 std::back_inserter(items),
+                 [] (MapList::items_t::value_type& p) -> MapItem* {
+                   return &(p.second);
+                 });
   return items;
 
 }
@@ -44,13 +42,11 @@ MapList::it_items_t MapList::items() {
 MapList::it_const_items_t MapList::items() const {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(
-      std::begin(items_),
-      std::end(items_),
-      std::back_inserter(items),
-      [] (const MapList::items_t::value_type& p) -> MapItem* {
-        return const_cast<MapItem*>(&(p.second));
-      });
+  std::transform(std::begin(items_), std::end(items_),
+                 std::back_inserter(items),
+                 [] (const MapList::items_t::value_type& p) -> MapItem* {
+                   return const_cast<MapItem*>(&(p.second));
+                 });
   return items;
 
 }
@@ -83,6 +79,9 @@ void MapList::accept(Visitor& visitor) const {
 }
 
 bool MapList::operator==(const MapList& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

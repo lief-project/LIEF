@@ -17,6 +17,7 @@
 
 #include "pyELF.hpp"
 
+#include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
 namespace LIEF {

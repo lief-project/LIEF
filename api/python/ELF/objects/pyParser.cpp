@@ -16,6 +16,7 @@
 #include "pyELF.hpp"
 
 #include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 #include <string>
 

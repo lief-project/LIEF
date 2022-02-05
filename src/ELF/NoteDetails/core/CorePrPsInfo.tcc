@@ -35,7 +35,7 @@ void CorePrPsInfo::parse_() {
     return;
   }
 
-  const Elf_Prpsinfo* info = reinterpret_cast<const Elf_Prpsinfo*>(desc.data());
+  const auto* info = reinterpret_cast<const Elf_Prpsinfo*>(desc.data());
 
   // parse info structure
   file_name_ = info->pr_fname;

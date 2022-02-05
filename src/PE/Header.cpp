@@ -21,7 +21,7 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Header.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -172,6 +172,9 @@ void Header::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

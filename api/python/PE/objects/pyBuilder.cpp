@@ -20,6 +20,13 @@
 #include <string>
 #include <sstream>
 
+//template<typename Fn, typename... Args,
+//        std::enable_if_t<std::is_member_pointer<std::decay_t<Fn>>{}, int> = 0 >
+//constexpr decltype(auto) my_invoke(Fn&& f, Args&&... args)
+//    noexcept(noexcept(std::mem_fn(f)(std::forward<Args>(args)...)))
+//{
+//    return std::mem_fn(f)(std::forward<Args>(args)...);
+//}
 
 namespace LIEF {
 namespace PE {
@@ -31,12 +38,15 @@ void create<Builder>(py::module& m) {
       R"delim(
       Class that is used to rebuild a raw PE binary from a PE::Binary object
       )delim")
-    .def(py::init<Binary*>(),
+
+    .def(py::init<Binary&>(),
         "Constructor that takes a " RST_CLASS_REF(lief.PE.Binary) "",
         "pe_binary"_a)
 
     .def("build",
-        &Builder::build,
+        [] (Builder& self) -> py::object {
+          return error_or(static_cast<ok_error_t(Builder::*)()>(&Builder::build), self);
+        },
         "Perform the build process")
 
     .def("build_imports",

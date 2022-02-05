@@ -95,20 +95,12 @@ const SignerInfo::encrypted_digest_t& SignerInfo::encrypted_digest() const {
   return encrypted_digest_;
 }
 
-it_const_attributes_t SignerInfo::authenticated_attributes() const {
-  std::vector<Attribute*> attrs(authenticated_attributes_.size(), nullptr);
-  for (size_t i = 0; i < authenticated_attributes_.size(); ++i) {
-    attrs[i] = authenticated_attributes_[i].get();
-  }
-  return attrs;
+SignerInfo::it_const_attributes_t SignerInfo::authenticated_attributes() const {
+  return authenticated_attributes_;
 }
 
-it_const_attributes_t SignerInfo::unauthenticated_attributes() const {
-  std::vector<Attribute*> attrs(unauthenticated_attributes_.size(), nullptr);
-  for (size_t i = 0; i < unauthenticated_attributes_.size(); ++i) {
-    attrs[i] = unauthenticated_attributes_[i].get();
-  }
-  return attrs;
+SignerInfo::it_const_attributes_t SignerInfo::unauthenticated_attributes() const {
+  return unauthenticated_attributes_;
 }
 
 

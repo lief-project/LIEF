@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "pyELF.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
 namespace LIEF {
 namespace ELF {

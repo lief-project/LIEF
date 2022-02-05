@@ -1,7 +1,6 @@
 set(LIEF_PYTHON_DEX_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyDEX.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyIterators.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyHeader.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyParser.cpp"

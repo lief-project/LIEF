@@ -48,7 +48,7 @@ void create<Method>(py::module& m) {
         "True if a class is associated with this method")
 
     .def_property_readonly("cls",
-        static_cast<no_const_getter_t<Class&>>(&Method::cls),
+        static_cast<no_const_getter_t<Class*>>(&Method::cls),
         "" RST_CLASS_REF(lief.DEX.Class) " associated with this method")
 
     .def_property_readonly("code_offset",
@@ -64,7 +64,7 @@ void create<Method>(py::module& m) {
         "True if the method is a virtual (not **private**, **static**, **final**, **constructor**)")
 
     .def_property_readonly("prototype",
-        static_cast<no_const_getter_t<Prototype&>>(&Method::prototype),
+        static_cast<no_const_getter_t<Prototype*>>(&Method::prototype),
         "" RST_CLASS_REF(lief.DEX.Prototype) " of this method")
 
     .def_property_readonly("access_flags",

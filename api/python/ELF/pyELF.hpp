@@ -18,7 +18,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
-
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "pyLIEF.hpp"
 
 #define SPECIALIZE_CREATE(X)      \
@@ -70,7 +70,6 @@ void create(py::module&);
 void init_python_module(py::module& m);
 void init_objects(py::module&);
 void init_enums(py::module&);
-void init_iterators(py::module&);
 
 void init_ELF32_sizes(py::module&);
 void init_ELF64_sizes(py::module&);

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include <string>
+#include "LIEF/OAT/Header.hpp"
+#include "OAT/Structures.hpp"
 namespace LIEF {
 namespace OAT {
 
@@ -41,15 +43,11 @@ Header::Header(const T* header) :
   dex2oat_context_{}
 {
 
-  std::copy(
-      std::begin(header->magic),
-      std::end(header->magic),
-      std::begin(magic_)
+  std::copy(std::begin(header->magic), std::end(header->magic),
+            std::begin(magic_)
   );
-  if (std::all_of(
-        std::begin(header->oat_version),
-        std::end(header->oat_version) - 1,
-        ::isdigit))
+  if (std::all_of(std::begin(header->oat_version), std::end(header->oat_version) - 1,
+                  ::isdigit))
   {
     version_ = static_cast<uint32_t>(
         std::stoi(
@@ -60,7 +58,7 @@ Header::Header(const T* header) :
 
 
 template<>
-Header::Header(const OAT_131::oat_header* header) :
+Header::Header(const details::OAT_131::oat_header* header) :
   magic_{},
   version_{0},
   checksum_{header->adler32_checksum},

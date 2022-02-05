@@ -23,14 +23,7 @@ namespace OAT {
 DexFile::DexFile(const DexFile&) = default;
 DexFile& DexFile::operator=(const DexFile&) = default;
 
-DexFile::DexFile() :
-  checksum_{-1u},
-  dex_offset_{0},
-  lookup_table_offset_{0},
-  method_bss_mapping_offset_{0},
-  dex_sections_layout_offset_{0}
-{}
-
+DexFile::DexFile() = default;
 
 const std::string& DexFile::location() const {
   return location_;
@@ -48,14 +41,9 @@ bool DexFile::has_dex_file() const {
   return dex_file_ != nullptr;
 }
 
-const DEX::File& DexFile::dex_file() const {
-  if (!has_dex_file()) {
-    throw not_found("Can't find the dex file associated with this OAT dex file");
-  }
-  return *dex_file_;
+const DEX::File* DexFile::dex_file() const {
+  return dex_file_;
 }
-
-
 
 void DexFile::location(const std::string& location) {
   location_ = location;
@@ -85,8 +73,8 @@ void DexFile::lookup_table_offset(uint32_t offset) {
 }
 // ===============================
 
-DEX::File& DexFile::dex_file() {
-  return const_cast<DEX::File&>(static_cast<const DexFile*>(this)->dex_file());
+DEX::File* DexFile::dex_file() {
+  return const_cast<DEX::File*>(static_cast<const DexFile*>(this)->dex_file());
 }
 
 void DexFile::accept(Visitor& visitor) const {
@@ -94,6 +82,9 @@ void DexFile::accept(Visitor& visitor) const {
 }
 
 bool DexFile::operator==(const DexFile& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

@@ -53,6 +53,9 @@ void ResourceStringTable::accept(Visitor& visitor) const {
 }
 
 bool ResourceStringTable::operator==(const ResourceStringTable& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   return Hash::hash(*this) == Hash::hash(rhs);
 }
 

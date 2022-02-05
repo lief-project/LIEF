@@ -110,7 +110,7 @@ class TestDEX35(TestCase):
         self.assertEqual(if0.type.value,            lief.DEX.Type.PRIMITIVES.INT)
         self.assertEqual(if0.is_static,             False)
         self.assertEqual(if0.access_flags,          [
-            lief.DEX.ACCESS_FLAGS.PRIVATE, 
+            lief.DEX.ACCESS_FLAGS.PRIVATE,
             lief.DEX.ACCESS_FLAGS.FINAL])
 
         self.assertEqual(sf0.name,                  "FULL")
@@ -122,6 +122,11 @@ class TestDEX35(TestCase):
             lief.DEX.ACCESS_FLAGS.STATIC,
             lief.DEX.ACCESS_FLAGS.FINAL,
             lief.DEX.ACCESS_FLAGS.ENUM])
+
+    def test_kik_iterators(self):
+        ValueAnimator = self.kik_dex35.get_class("android.animation.ValueAnimator")
+        self.assertEqual(len(list(ValueAnimator.get_method("test"))), 0)
+        self.assertEqual(len(list(ValueAnimator.get_method("setValues"))), 1)
 
 
 
@@ -135,7 +140,6 @@ class TestDEX38(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
         #self.dex38 = lief.DEX.parse(get_sample("DEX/DEX38-Framework.dex"))
-        #self.dex38 = lief.DEX.parse("/home/romain/dev/LIEF/_work/dex/ArrayClass.dex")
 
     def test_header(self):
         #print(self.dex38.header)

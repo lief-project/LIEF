@@ -18,12 +18,12 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-#include "LIEF/DEX/Type.hpp"
 #include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace DEX {
 class Parser;
+class Type;
 
 //! Class which represents a DEX method prototype
 class LIEF_API Prototype : public Object {
@@ -38,9 +38,9 @@ class LIEF_API Prototype : public Object {
   Prototype();
   Prototype(const Prototype& other);
 
-  //! Type returned
-  const Type& return_type() const;
-  Type& return_type();
+  //! Type returned or a nullptr if not resolved
+  const Type* return_type() const;
+  Type* return_type();
 
   //! Types of the parameters
   it_const_params parameters_type() const;
@@ -56,7 +56,7 @@ class LIEF_API Prototype : public Object {
   virtual ~Prototype();
 
   private:
-  Type* return_type_{nullptr};
+  Type* return_type_ = nullptr;
   parameters_type_t params_;
 
 };

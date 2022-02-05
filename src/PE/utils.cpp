@@ -29,13 +29,14 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "PE/Structures.hpp"
 
 #include "LIEF/utils.hpp"
+
 
 #include "utils/ordinals_lookup_tables/libraries_table.hpp"
 #include "utils/ordinals_lookup_tables_std/libraries_table.hpp"
@@ -110,7 +111,10 @@ bool is_pe(const std::vector<uint8_t>& raw) {
 
   VectorStream raw_stream(raw);
   raw_stream.setpos(dos_header->AddressOfNewExeHeader);
-  const auto *signature = raw_stream.read_array<char>(sizeof(details::PE_Magic), /* check bounds */ true);
+  const auto *signature = raw_stream.read_array<char>(sizeof(details::PE_Magic));
+  if (signature == nullptr) {
+    return false;
+  }
 
   return std::equal(signature, signature + sizeof(details::PE_Magic), std::begin(details::PE_Magic));
 }
@@ -119,29 +123,35 @@ bool is_pe(const std::vector<uint8_t>& raw) {
 result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   const uint64_t cpos = stream.pos();
   stream.setpos(0);
-  if (!stream.can_read<details::pe_dos_header>()) {
-    LIEF_ERR("Can't read the dos header");
-    return make_error_code(lief_errors::read_error);
+  auto dos_hdr = stream.read<details::pe_dos_header>();
+  if (!dos_hdr) {
+    LIEF_ERR("Can't read the DOS Header structure");
+    return dos_hdr.error();
   }
-  const auto dos_hdr = stream.read<details::pe_dos_header>();
-  stream.setpos(dos_hdr.AddressOfNewExeHeader);
+  stream.setpos(dos_hdr->AddressOfNewExeHeader);
   if (!stream.can_read<details::pe_header>()) {
     LIEF_ERR("Can't read the PE header");
     return make_error_code(lief_errors::read_error);
   }
-  const auto header = stream.read<details::pe_header>();
-  const size_t sizeof_opt_header = header.SizeOfOptionalHeader;
+
+  auto header = stream.read<details::pe_header>();
+  if (!header) {
+    LIEF_ERR("Can't read the PE header");
+    return header.error();
+  }
+
+  const size_t sizeof_opt_header = header->SizeOfOptionalHeader;
   if (sizeof_opt_header != SIZEOF_OPT_HEADER_32 &&
       sizeof_opt_header != SIZEOF_OPT_HEADER_64) {
     LIEF_WARN("The value of the SizeOfOptionalHeader in the PE header seems corrupted 0x{:x}", sizeof_opt_header);
   }
 
-  if (!stream.can_read<details::pe32_optional_header>()) {
+  auto opt_hdr = stream.read<details::pe32_optional_header>();
+  if (!opt_hdr) {
     LIEF_ERR("Can't read the PE optional header");
-    return make_error_code(lief_errors::read_error);
+    return opt_hdr.error();
   }
-  const auto opt_hdr = stream.read<details::pe32_optional_header>();
-  const auto type = static_cast<PE_TYPE>(opt_hdr.Magic);
+  const auto type = static_cast<PE_TYPE>(opt_hdr->Magic);
   stream.setpos(cpos); // Restore the original position
 
   /*
@@ -220,15 +230,30 @@ result<PE_TYPE> get_type(const std::vector<uint8_t>& raw) {
 
   VectorStream raw_stream = VectorStream(raw);
 
-  const auto dos_header = raw_stream.read<details::pe_dos_header>();
-  raw_stream.setpos(dos_header.AddressOfNewExeHeader);
-  const auto hdr = raw_stream.read<details::pe_header>();
-  const size_t sizeof_opt_header = hdr.SizeOfOptionalHeader;
+  auto dos_header = raw_stream.read<details::pe_dos_header>();
+  if (!dos_header) {
+    LIEF_ERR("Can't read the DOS Header");
+    return dos_header.error();
+  }
 
-  raw_stream.setpos(dos_header.AddressOfNewExeHeader + sizeof(details::pe_header));
-  const auto optional_header = raw_stream.read<details::pe32_optional_header>();
+  raw_stream.setpos(dos_header->AddressOfNewExeHeader);
+  auto hdr = raw_stream.read<details::pe_header>();
 
-  auto type = static_cast<PE_TYPE>(optional_header.Magic);
+  if (!hdr) {
+    LIEF_ERR("Can't read the PE Header structure");
+    return hdr.error();
+  }
+
+  const size_t sizeof_opt_header = hdr->SizeOfOptionalHeader;
+  raw_stream.setpos(dos_header->AddressOfNewExeHeader + sizeof(details::pe_header));
+
+  auto optional_header = raw_stream.read<details::pe32_optional_header>();
+  if (!optional_header) {
+    LIEF_ERR("Can't read the optional header");
+    return optional_header.error();
+  }
+
+  auto type = static_cast<PE_TYPE>(optional_header->Magic);
 
   // See the ``get_type_from_stream`` comments for the logic of these if cases
   if (type == PE_TYPE::PE32 || type == PE_TYPE::PE32_PLUS) {
@@ -307,7 +332,7 @@ std::string get_imphash_lief(const Binary& binary) {
     return std::to_string(0);
   }
 
-  it_const_imports imports = binary.imports();
+  Binary::it_const_imports imports = binary.imports();
 
   std::string import_list;
   for (const Import& imp : imports) {
@@ -357,14 +382,10 @@ std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
 Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
   using ordinal_resolver_t = const char*(*)(uint32_t);
 
-  it_const_import_entries entries = import.entries();
+  Import::it_const_entries entries = import.entries();
 
-  if (std::all_of(
-        std::begin(entries),
-        std::end(entries),
-        [] (const ImportEntry& entry) {
-          return !entry.is_ordinal();
-        })) {
+  if (std::all_of(std::begin(entries), std::end(entries),
+                  [] (const ImportEntry& entry) { return !entry.is_ordinal(); })) {
     LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
   }

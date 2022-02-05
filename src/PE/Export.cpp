@@ -17,9 +17,9 @@
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -68,11 +68,11 @@ const std::string& Export::name() const {
   return name_;
 }
 
-it_export_entries Export::entries() {
+Export::it_entries Export::entries() {
   return entries_;
 }
 
-it_const_export_entries Export::entries() const {
+Export::it_const_entries Export::entries() const {
   return entries_;
 }
 
@@ -105,6 +105,9 @@ void Export::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Export::operator==(const Export& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

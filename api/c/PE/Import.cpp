@@ -25,7 +25,7 @@ void init_c_imports(Pe_Binary_t* c_binary, Binary* binary) {
     c_binary->imports = nullptr;
   }
 
-  it_imports imports = binary->imports();
+  Binary::it_imports imports = binary->imports();
 
   c_binary->imports = static_cast<Pe_Import_t**>(
       malloc((imports.size() + 1) * sizeof(Pe_Import_t**)));

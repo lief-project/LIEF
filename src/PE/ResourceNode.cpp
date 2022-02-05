@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iomanip>
 
+#include "logging.hpp"
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/utils.hpp"
@@ -28,6 +29,10 @@ namespace LIEF {
 namespace PE {
 
 ResourceNode::ResourceNode() = default;
+ResourceNode::~ResourceNode() = default;
+
+ResourceNode::ResourceNode(ResourceNode&& other) = default;
+ResourceNode& ResourceNode::operator=(ResourceNode&& other) = default;
 
 ResourceNode::ResourceNode(const ResourceNode& other) :
   Object{other},
@@ -37,9 +42,25 @@ ResourceNode::ResourceNode(const ResourceNode& other) :
   depth_{other.depth_}
 {
   childs_.reserve(other.childs_.size());
-  for (const ResourceNode* node : other.childs_) {
-    childs_.push_back(node->clone());
+  for (const std::unique_ptr<ResourceNode>& node : other.childs_) {
+    childs_.emplace_back(node->clone());
   }
+}
+
+ResourceNode& ResourceNode::operator=(const ResourceNode& other) {
+  if (this == &other) {
+    return *this;
+  }
+  type_   = other.type_;
+  id_     = other.id_;
+  name_   = other.name_;
+  depth_  = other.depth_;
+
+  childs_.reserve(other.childs_.size());
+  for (const std::unique_ptr<ResourceNode>& node : other.childs_) {
+    childs_.emplace_back(node->clone());
+  }
+  return *this;
 }
 
 void ResourceNode::swap(ResourceNode& other) {
@@ -50,25 +71,18 @@ void ResourceNode::swap(ResourceNode& other) {
   std::swap(depth_,  other.depth_);
 }
 
-ResourceNode::~ResourceNode() {
-  for (ResourceNode* node : childs_) {
-    delete node;
-  }
-}
-
-
 uint32_t ResourceNode::id() const {
   return id_;
 }
 
 
-it_childs ResourceNode::childs() {
-  return {childs_};
+ResourceNode::it_childs ResourceNode::childs() {
+  return childs_;
 }
 
 
-it_const_childs ResourceNode::childs() const {
-  return {childs_};
+ResourceNode::it_const_childs ResourceNode::childs() const {
+  return childs_;
 }
 
 
@@ -97,10 +111,9 @@ uint32_t ResourceNode::depth() const {
 
 ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
 
-  auto* new_node = new ResourceDirectory{child};
+  auto new_node = std::make_unique<ResourceDirectory>(child);
   new_node->depth_ = depth_ + 1;
 
-  childs_.push_back(new_node);
   if (is_directory()) {
     auto* dir = reinterpret_cast<ResourceDirectory*>(this);
 
@@ -111,14 +124,14 @@ ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
     }
   }
 
+  childs_.push_back(std::move(new_node));
   return *childs_.back();
 }
 
 ResourceNode& ResourceNode::add_child(const ResourceData& child) {
-  auto* new_node = new ResourceData{child};
+  auto new_node = std::make_unique<ResourceData>(child);
   new_node->depth_ = depth_ + 1;
 
-  childs_.push_back(new_node);
 
   if (is_directory()) {
     auto* dir = reinterpret_cast<ResourceDirectory*>(this);
@@ -130,37 +143,37 @@ ResourceNode& ResourceNode::add_child(const ResourceData& child) {
     }
 
   }
-
+  childs_.push_back(std::move(new_node));
   return *childs_.back();
 }
 
 void ResourceNode::delete_child(uint32_t id) {
 
   const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
-      [id] (const ResourceNode* node) {
+      [id] (const std::unique_ptr<ResourceNode>& node) {
         return node->id() == id;
       });
 
   if (it_node == std::end(childs_)) {
-    throw not_found("Unable to find the node with id " + std::to_string(id) + "!");
+    LIEF_ERR("Unable to find the node with the id {:d}", id);
+    return;
   }
-  delete_child(**it_node);
 
+  delete_child(**it_node);
 }
 
 void ResourceNode::delete_child(const ResourceNode& node) {
   const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
-      [&node] (const ResourceNode* intree_node) {
+      [&node] (const std::unique_ptr<ResourceNode>& intree_node) {
         return *intree_node == node;
       });
 
   if (it_node == std::end(childs_)) {
-    std::stringstream ss;
-    ss << "Unable to find the node: " << node;
-    throw not_found(ss.str());
+    LIEF_ERR("Unable to find the node {}", node);
+    return;
   }
 
-  ResourceNode* inode = *it_node;
+  std::unique_ptr<ResourceNode>& inode = *it_node;
 
   if (is_directory()) {
     auto* dir = reinterpret_cast<ResourceDirectory*>(this);
@@ -171,7 +184,6 @@ void ResourceNode::delete_child(const ResourceNode& node) {
     }
   }
 
-  delete inode;
   childs_.erase(it_node);
 }
 
@@ -189,10 +201,8 @@ void ResourceNode::name(const std::u16string& name) {
 
 
 void ResourceNode::sort_by_id() {
-  std::sort(
-      std::begin(childs_),
-      std::end(childs_),
-      [] (const ResourceNode* lhs, const ResourceNode* rhs) {
+  std::sort(std::begin(childs_), std::end(childs_),
+      [] (const std::unique_ptr<ResourceNode>& lhs, const std::unique_ptr<ResourceNode>& rhs) {
         return lhs->id() < rhs->id();
       });
 }
@@ -202,6 +212,9 @@ void ResourceNode::accept(Visitor& visitor) const {
 }
 
 bool ResourceNode::operator==(const ResourceNode& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

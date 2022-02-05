@@ -23,13 +23,13 @@
 #include <LIEF/ELF.hpp>
 
 int main(int argc, char **argv) {
-  std::cout << "ELF builder" << std::endl;
+  std::cout << "ELF builder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
     return -1;
   }
 
-  std::unique_ptr<LIEF::ELF::Binary> binary{LIEF::ELF::Parser::parse(argv[1])};
+  std::unique_ptr<LIEF::ELF::Binary> binary = LIEF::ELF::Parser::parse(argv[1]);
   LIEF::ELF::Segment seg;
   seg.type(LIEF::ELF::SEGMENT_TYPES::PT_LOAD);
   //seg.content(std::vector<uint8_t>(0x100));

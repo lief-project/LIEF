@@ -31,6 +31,7 @@
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/errors.hpp"
 
 struct Profiler;
 
@@ -43,11 +44,11 @@ class LIEF_API Builder {
   friend struct ::Profiler;
 
   Builder() = delete;
-  Builder(Binary* pe_binary);
+  Builder(Binary& binary);
   ~Builder();
 
   //! Perform the build process
-  void build();
+  ok_error_t build();
 
   //! @brief Construct a ``jmp [address] @ from``.
   //!
@@ -94,15 +95,15 @@ class LIEF_API Builder {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Builder& b);
 
-  Builder& operator<<(const DosHeader& dos_header);
-  Builder& operator<<(const Header& bHeader);
-  Builder& operator<<(const OptionalHeader& optional_header);
-  Builder& operator<<(const DataDirectory& data_directory);
-  Builder& operator<<(const Section& section);
+  ok_error_t build(const DosHeader& dos_header);
+  ok_error_t build(const Header& bHeader);
+  ok_error_t build(const OptionalHeader& optional_header);
+  ok_error_t build(const DataDirectory& data_directory);
+  ok_error_t build(const Section& section);
 
   protected:
   template<typename PE_T>
-  void build_optional_header(const OptionalHeader& optional_header);
+  ok_error_t build_optional_header(const OptionalHeader& optional_header);
 
   //! @brief Rebuild Import Table
   // TODO: Bug with x86
@@ -110,19 +111,17 @@ class LIEF_API Builder {
   void build_import_table();
 
   template<typename PE_T>
-  void build_tls();
+  ok_error_t build_tls();
 
-  void build_symbols();
-  void build_string_table();
-  void build_relocation();
-  void build_resources();
-  void build_overlay();
-  void build_dos_stub();
+  ok_error_t build_relocation();
+  ok_error_t build_resources();
+  ok_error_t build_overlay();
+  ok_error_t build_dos_stub();
 
-  void compute_resources_size(ResourceNode& node, uint32_t *header_size,
+  ok_error_t compute_resources_size(ResourceNode& node, uint32_t *header_size,
                               uint32_t *data_size, uint32_t *name_size);
 
-  void construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
+  ok_error_t construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
                            uint32_t* offset_header, uint32_t* offset_data, uint32_t* offset_name,
                            uint32_t base_rva, uint32_t depth);
 
@@ -130,13 +129,13 @@ class LIEF_API Builder {
   mutable vector_iostream ios_;
   Binary* binary_ = nullptr;
 
-  bool build_imports_;
-  bool patch_imports_;
-  bool build_relocations_;
-  bool build_tls_;
-  bool build_resources_;
-  bool build_overlay_;
-  bool build_dos_stub_;
+  bool build_imports_ = false;
+  bool patch_imports_ = false;
+  bool build_relocations_ = false;
+  bool build_tls_ = false;
+  bool build_resources_ = false;
+  bool build_overlay_ = true;
+  bool build_dos_stub_ = true;
 
 };
 

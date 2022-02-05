@@ -22,7 +22,6 @@ void init_python_module(py::module& m) {
   py::module LIEF_ART_module = m.def_submodule("ART", "Python API for ART format");
 
   init_enums(LIEF_ART_module);
-  init_iterators(LIEF_ART_module);
   init_objects(LIEF_ART_module);
   init_utils(LIEF_ART_module);
 }

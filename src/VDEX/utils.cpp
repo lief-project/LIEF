@@ -17,22 +17,20 @@
 #include <map>
 
 #include "LIEF/VDEX/utils.hpp"
-#include "LIEF/VDEX/Structures.hpp"
+#include "VDEX/Structures.hpp"
 
 namespace LIEF {
 namespace VDEX {
 bool is_vdex(const std::string& file) {
   if (std::ifstream ifs{file, std::ios::in | std::ios::binary}) {
 
-    char magic[sizeof(VDEX::magic)];
+    char magic[sizeof(details::magic)];
 
     ifs.seekg(0, std::ios::beg);
     ifs.read(magic, sizeof(magic));
 
-    return std::equal(
-        std::begin(magic),
-        std::end(magic),
-        std::begin(VDEX::magic));
+    return std::equal(std::begin(magic), std::end(magic),
+                      std::begin(details::magic));
 
   }
 
@@ -40,17 +38,17 @@ bool is_vdex(const std::string& file) {
 }
 
 bool is_vdex(const std::vector<uint8_t>& raw) {
-  if (raw.size() < sizeof(VDEX::magic)) {
+  if (raw.size() < sizeof(details::magic)) {
     return false;
   }
 
-  char magic[sizeof(VDEX::magic)];
+  char magic[sizeof(details::magic)];
   std::copy(
     reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(VDEX::magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic),
     magic);
 
-  return std::equal(std::begin(magic), std::end(magic), std::begin(VDEX::magic));
+  return std::equal(std::begin(magic), std::end(magic), std::begin(details::magic));
 }
 
 vdex_version_t version(const std::string& file) {
@@ -62,7 +60,7 @@ vdex_version_t version(const std::string& file) {
 
     char version[4];
 
-    ifs.seekg(sizeof(VDEX::magic), std::ios::beg);
+    ifs.seekg(sizeof(details::magic), std::ios::beg);
     ifs.read(version, sizeof(version) + 1);
 
     if (std::all_of(std::begin(version), std::end(version) - 1, ::isdigit)) {
@@ -82,8 +80,8 @@ vdex_version_t version(const std::vector<uint8_t>& raw) {
 
   char version[4];
   std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(VDEX::magic),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(VDEX::magic) + sizeof(version) + 1,
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic) + sizeof(version) + 1,
     version);
 
 

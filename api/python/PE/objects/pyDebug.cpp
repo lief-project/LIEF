@@ -81,10 +81,15 @@ void create<Debug>(py::module& m) {
         "Whether or not a code view is present")
 
     .def_property_readonly("code_view",
-        static_cast<CodeView& (Debug::*)(void)>(&Debug::code_view),
-        "Return an object which subclass " RST_CLASS_REF(lief.PE.CodeView) " representing the code view \n\n"
-        "The subclassed object can be one of: \n\n"
-        "    * " RST_CLASS_REF(lief.PE.CodeViewPDB) "\n",
+        static_cast<CodeView* (Debug::*)(void)>(&Debug::code_view),
+        R"delim(
+        Return an object which subclass :class:`~lief.PE.CodeView` representing the code view"
+        The subclassed object can be one of:
+
+            * :class:`~lief.PE.CodeViewPDB`
+
+        If a code view is not present, it is set to None
+        )delim",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_pogo",
@@ -92,8 +97,11 @@ void create<Debug>(py::module& m) {
         "Whether or not a pogo is present")
 
     .def_property_readonly("pogo",
-        static_cast<Pogo& (Debug::*)(void)>(&Debug::pogo),
-        "Return an object which subclass " RST_CLASS_REF(lief.PE.Pogo) " representing the pogo entry \n",
+        static_cast<Pogo* (Debug::*)(void)>(&Debug::pogo),
+        R"delim(
+        Return an object which subclasses :class:`~lief.PE.Pogo` representing the pogo entry.
+        It returns None if not present.
+        )delim",
         py::return_value_policy::reference)
 
     .def("__eq__", &Debug::operator==)

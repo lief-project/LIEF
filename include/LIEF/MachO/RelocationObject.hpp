@@ -94,9 +94,9 @@ class LIEF_API RelocationObject : public Relocation {
   std::ostream& print(std::ostream& os) const override;
 
   private:
-  bool is_pcrel_;
-  bool is_scattered_;
-  int32_t value_;
+  bool is_pcrel_ = false;
+  bool is_scattered_ = false;
+  int32_t value_ = 0;
 };
 
 }

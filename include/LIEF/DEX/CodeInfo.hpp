@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_DEX_CODE_INFO_H_
 #define LIEF_DEX_CODE_INFO_H_
-
-#include "LIEF/DEX/type_traits.hpp"
-#include "LIEF/DEX/Structures.hpp"
-
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
+
 namespace LIEF {
 namespace DEX {
+namespace details {
+struct code_item;
+}
 class Parser;
 class Method;
 
@@ -32,7 +32,7 @@ class LIEF_API CodeInfo : public Object {
 
   public:
   CodeInfo();
-  CodeInfo(const code_item* codeitem);
+  CodeInfo(const details::code_item& codeitem);
 
   CodeInfo(const CodeInfo&);
   CodeInfo& operator=(const CodeInfo&);
@@ -47,9 +47,9 @@ class LIEF_API CodeInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeInfo& cinfo);
 
   private:
-  uint16_t nb_registers_;
-  uint16_t args_input_sizes_;
-  uint16_t output_sizes_;
+  uint16_t nb_registers_ = 0;
+  uint16_t args_input_sizes_ = 0;
+  uint16_t output_sizes_ = 0;
 
 };
 

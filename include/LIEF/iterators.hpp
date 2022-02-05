@@ -44,18 +44,20 @@ using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 
 
 //! Iterator which returns reference on container's values
-template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
+template<class T, typename U = typename decay_t<T>::value_type,
+         class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator : public std::iterator<
                      std::bidirectional_iterator_tag,
-                     typename decay_t<T>::value_type,
+                     decay_t<U>,
                      ptrdiff_t,
-                     typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
-                     typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
+                     typename std::remove_pointer<U>::type*,
+                     typename std::remove_pointer<U>::type&> {
   public:
-  using container_type = T;
-  using DT        = decay_t<T>;
-  using ref_t     = typename ref_iterator::reference;
-  using pointer_t = typename ref_iterator::pointer;
+  using container_type = T;          // e.g. std::vector<Section*>&
+  using DT_VAL         = U;          // e.g. Section*
+  using DT             = decay_t<T>; // e.g. std::vector<Section>
+  using ref_t          = typename ref_iterator::reference;
+  using pointer_t      = typename ref_iterator::pointer;
 
   ref_iterator(T container) :
     container_{std::forward<T>(container)},
@@ -79,7 +81,8 @@ class ref_iterator : public std::iterator<
   }
 
   void swap(ref_iterator& other) {
-    std::swap(const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(container_), const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_));
+    std::swap(const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(container_),
+              const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_));
     std::swap(it_, other.it_);
     std::swap(distance_, other.distance_);
   }
@@ -219,15 +222,15 @@ class ref_iterator : public std::iterator<
     return const_cast<remove_const_t<ref_t>>(static_cast<const ref_iterator*>(this)->operator*());
   }
 
-  template<typename U = typename DT::value_type>
-  typename std::enable_if<std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  template<typename V = DT_VAL>
+  typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     assert(*it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(**it_);
   }
 
-  template<typename U = typename DT::value_type>
-  typename std::enable_if<!std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  template<typename V = DT_VAL>
+  typename std::enable_if<!std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     return const_cast<add_const_t<ref_t>>(*(it_));
   }
@@ -250,21 +253,23 @@ class ref_iterator : public std::iterator<
 
 
 //! Iterator which return const ref on container's values
-template<class T, class CT = typename std::add_const<T>::type>
-using const_ref_iterator = ref_iterator<CT, typename decay_t<CT>::const_iterator>;
+template<class T, typename U = typename decay_t<T>::value_type, class CT = typename std::add_const<T>::type>
+using const_ref_iterator = ref_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
 
 //! Iterator which return a ref on container's values given predicates
-template<class T, class ITERATOR_T = typename decay_t<T>::iterator>
+template<class T, typename U = typename decay_t<T>::value_type,
+         class ITERATOR_T = typename decay_t<T>::iterator>
 class filter_iterator : public std::iterator<
-                     std::forward_iterator_tag,
-                     typename decay_t<T>::value_type,
-                     ptrdiff_t,
-                     typename std::remove_pointer<typename decay_t<T>::value_type>::type*,
-                     typename std::remove_pointer<typename decay_t<T>::value_type>::type&> {
+                        std::forward_iterator_tag,
+                        decay_t<U>,
+                        ptrdiff_t,
+                        typename std::remove_pointer<U>::type*,
+                        typename std::remove_pointer<U>::type&> {
 
   public:
   using container_type = T;
+  using DT_VAL         = U;
   using DT        = decay_t<T>;
   using ref_t     = typename filter_iterator::reference;
   using pointer_t = typename filter_iterator::pointer;
@@ -382,15 +387,15 @@ class filter_iterator : public std::iterator<
     return const_cast<remove_const_t<ref_t>>(static_cast<const filter_iterator*>(this)->operator*());
   }
 
-  template<typename U = typename DT::value_type>
-  typename std::enable_if<std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  template<typename V = DT_VAL>
+  typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     assert(*it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(**it_);
   }
 
-  template<typename U = typename DT::value_type>
-  typename std::enable_if<!std::is_pointer<U>::value, add_const_t<ref_t>>::type
+  template<typename V = DT_VAL>
+  typename std::enable_if<!std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     return const_cast<add_const_t<ref_t>>(*(it_));
   }
@@ -470,8 +475,9 @@ class filter_iterator : public std::iterator<
 };
 
 //! Iterator which return a const ref on container's values given predicates
-template<class T, class CT = typename std::add_const<T>::type>
-using const_filter_iterator = filter_iterator<CT, typename decay_t<CT>::const_iterator>;
+template<class T, typename U = typename decay_t<T>::value_type,
+         class CT = typename std::add_const<T>::type>
+using const_filter_iterator = filter_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
 }
 

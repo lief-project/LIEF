@@ -27,35 +27,25 @@ namespace LIEF {
 namespace MachO {
 
 Relocation::~Relocation() = default;
-
-Relocation::Relocation() :
-  type_{0},
-  architecture_{CPU_TYPES::CPU_TYPE_ANY}
-{}
-
-
-Relocation::Relocation(uint64_t address, uint8_t type) :
-  Relocation{}
-{
-  address_ = address;
-  type_    = type;
-}
-
-
-//Relocation& Relocation::operator=(const Relocation& other) {
-//  return *other.clone();
-//}
+Relocation::Relocation() = default;
 
 Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
   type_{other.type_},
   architecture_{other.architecture_}
-{
+{}
+
+Relocation::Relocation(uint64_t address, uint8_t type) {
+  address_ = address;
+  type_    = type;
 }
 
 
 Relocation& Relocation::operator=(const Relocation& other) {
   if (&other != this) {
+    /* Do not copy pointer as they could be not bind to the same Binary */
+    address_      = other.address_;
+    size_         = other.size_;
     type_         = other.type_;
     architecture_ = other.architecture_;
   }
@@ -80,54 +70,43 @@ CPU_TYPES Relocation::architecture() const {
 }
 
 bool Relocation::has_symbol() const {
-  return (symbol_ != nullptr);
+  return symbol_ != nullptr;
 }
 
-Symbol& Relocation::symbol() {
-  return const_cast<Symbol&>(static_cast<const Relocation*>(this)->symbol());
+Symbol* Relocation::symbol() {
+  return const_cast<Symbol*>(static_cast<const Relocation*>(this)->symbol());
 }
 
-const Symbol& Relocation::symbol() const {
-  if (!has_symbol()) {
-    throw not_found("No symbol associated with this relocation");
-  }
-  return *symbol_;
+const Symbol* Relocation::symbol() const {
+  return symbol_;
 }
 
 
 // Section
 // =======
 bool Relocation::has_section() const {
-  return (section_ != nullptr);
+  return section_ != nullptr;
 }
 
-Section& Relocation::section() {
-  return const_cast<Section&>(static_cast<const Relocation*>(this)->section());
+Section* Relocation::section() {
+  return const_cast<Section*>(static_cast<const Relocation*>(this)->section());
 }
 
-const Section& Relocation::section() const {
-  if (!has_section()) {
-    throw not_found("No section associated with this relocation");
-  }
-  return *section_;
+const Section* Relocation::section() const {
+  return section_;
 }
 
 
-// Segment
-// =======
 bool Relocation::has_segment() const {
-  return (segment_ != nullptr);
+  return segment_ != nullptr;
 }
 
-SegmentCommand& Relocation::segment() {
-  return const_cast<SegmentCommand&>(static_cast<const Relocation*>(this)->segment());
+SegmentCommand* Relocation::segment() {
+  return const_cast<SegmentCommand*>(static_cast<const Relocation*>(this)->segment());
 }
 
-const SegmentCommand& Relocation::segment() const {
-  if (!has_segment()) {
-    throw not_found("No segment associated with this relocation");
-  }
-  return *segment_;
+const SegmentCommand* Relocation::segment() const {
+  return segment_;
 }
 
 void Relocation::type(uint8_t type) {
@@ -140,6 +119,9 @@ void Relocation::accept(Visitor& visitor) const {
 
 
 bool Relocation::operator==(const Relocation& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -156,17 +138,17 @@ std::ostream& Relocation::print(std::ostream& os) const {
 
   std::string symbol_name;
   if (has_symbol()) {
-    symbol_name = symbol().name();
+    symbol_name = symbol()->name();
   }
 
   std::string section_name;
   if (has_section()) {
-    section_name = section().name();
+    section_name = section()->name();
   }
 
   std::string segment_name;
   if (has_segment()) {
-    segment_name = segment().name();
+    segment_name = segment()->name();
   }
 
   std::string segment_section_name;

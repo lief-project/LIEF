@@ -37,6 +37,7 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
+#include "PE/Structures.hpp"
 
 #include "Builder.tcc"
 
@@ -45,17 +46,9 @@ namespace PE {
 
 Builder::~Builder() = default;
 
-Builder::Builder(Binary* binary) :
-  binary_{binary},
-  build_imports_{false},
-  patch_imports_{false},
-  build_relocations_{false},
-  build_tls_{false},
-  build_resources_{false},
-  build_overlay_{true},
-  build_dos_stub_{true}
+Builder::Builder(Binary& binary) :
+  binary_{&binary}
 {}
-
 
 Builder& Builder::build_imports(bool flag) {
   build_imports_ = flag;
@@ -94,19 +87,20 @@ Builder& Builder::build_dos_stub(bool flag) {
 
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
-  if (output_file) {
-    std::vector<uint8_t> content;
-    ios_.get(content);
-    std::copy(
-        std::begin(content),
-        std::end(content),
-        std::ostreambuf_iterator<char>(output_file));
+  if (!output_file) {
+    LIEF_ERR("Can't write in {}", filename);
+    return;
   }
+
+  std::vector<uint8_t> content;
+  ios_.get(content);
+  std::copy(std::begin(content), std::end(content),
+            std::ostreambuf_iterator<char>(output_file));
+
 }
 
 
-void Builder::build() {
-
+ok_error_t Builder::build() {
   LIEF_DEBUG("Build process started");
 
   if (binary_->has_tls() && build_tls_) {
@@ -142,34 +136,27 @@ void Builder::build() {
 
   LIEF_DEBUG("[+] Headers");
 
-  *this << binary_->dos_header()
-        << binary_->header()
-        << binary_->optional_header();
+  build(binary_->dos_header());
+  build(binary_->header());
+  build(binary_->optional_header());
 
   for (const DataDirectory& directory : binary_->data_directories()) {
-    *this << directory;
+    build(directory);
   }
 
   LIEF_DEBUG("[+] Sections");
 
   for (const Section& section : binary_->sections()) {
     LIEF_DEBUG("  -> {}", section.name());
-    *this << section;
+    build(section);
   }
-
-  // LIEF_DEBUG("[+] symbols");
-  //build_symbols();
-
-
-  // LIEF_DEBUG("[+] string table");
-  //build_string_table();
 
   if (!binary_->overlay().empty() && build_overlay_) {
     LIEF_DEBUG("[+] Overlay");
     build_overlay();
   }
 
-
+  return ok();
 }
 
 const std::vector<uint8_t>& Builder::get_build() {
@@ -179,7 +166,7 @@ const std::vector<uint8_t>& Builder::get_build() {
 //
 // Build relocations
 //
-void Builder::build_relocation() {
+ok_error_t Builder::build_relocation() {
   std::vector<uint8_t> content;
   for (const Relocation& relocation : binary_->relocations()) {
 
@@ -189,17 +176,15 @@ void Builder::build_relocation() {
     uint32_t block_size = static_cast<uint32_t>((relocation.entries().size()) * sizeof(uint16_t) + sizeof(details::pe_base_relocation_block));
     relocation_header.BlockSize = align(block_size, sizeof(uint32_t));
 
-    content.insert(
-        std::end(content),
-        reinterpret_cast<uint8_t*>(&relocation_header),
-        reinterpret_cast<uint8_t*>(&relocation_header) + sizeof(details::pe_base_relocation_block));
+    content.insert(std::end(content),
+                   reinterpret_cast<uint8_t*>(&relocation_header),
+                   reinterpret_cast<uint8_t*>(&relocation_header) + sizeof(details::pe_base_relocation_block));
 
     for (const RelocationEntry& entry: relocation.entries()) {
       uint16_t data = entry.data();
-      content.insert(
-          std::end(content),
-          reinterpret_cast<uint8_t*>(&data),
-          reinterpret_cast<uint8_t*>(&data) + sizeof(uint16_t));
+      content.insert(std::end(content),
+                     reinterpret_cast<uint8_t*>(&data),
+                     reinterpret_cast<uint8_t*>(&data) + sizeof(uint16_t));
     }
 
     content.insert(
@@ -231,29 +216,32 @@ void Builder::build_relocation() {
   new_relocation_section.content(content);
 
   binary_->add_section(new_relocation_section, PE_SECTION_TYPES::RELOCATION);
+  return ok();
 }
 
 
 //
 // Build resources
 //
-void Builder::build_resources() {
-  ResourceNode& node = binary_->resources();
-  //std::cout << ResourcesManager{binary_->resources_} << std::endl;
-
+ok_error_t Builder::build_resources() {
+  ResourceNode* node = binary_->resources();
+  if (node == nullptr) {
+    LIEF_ERR("Resource node is empty. Can't build the resources");
+    return make_error_code(lief_errors::build_error);
+  }
 
   uint32_t headerSize = 0;
   uint32_t dataSize   = 0;
   uint32_t nameSize   = 0;
 
-  compute_resources_size(node, &headerSize, &dataSize, &nameSize);
+  compute_resources_size(*node, &headerSize, &dataSize, &nameSize);
   std::vector<uint8_t> content(headerSize + dataSize + nameSize, 0);
   const uint64_t content_size_aligned = align(content.size(), binary_->optional_header().file_alignment());
   content.insert(std::end(content), content_size_aligned - content.size(), 0);
 
-  uint32_t offsetToHeader = 0;
-  uint32_t offsetToName   = headerSize;
-  uint32_t offsetToData   = headerSize + nameSize;
+  uint32_t offset_header = 0;
+  uint32_t offset_name   = headerSize;
+  uint32_t offset_data   = headerSize + nameSize;
 
   Section new_section_rsrc{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::RESOURCE_TABLE))};
   new_section_rsrc.characteristics(0x40000040);
@@ -261,16 +249,18 @@ void Builder::build_resources() {
 
   Section& rsrc_section = binary_->add_section(new_section_rsrc, PE_SECTION_TYPES::RESOURCE);
 
-  construct_resources(node, &content, &offsetToHeader, &offsetToData, &offsetToName, rsrc_section.virtual_address(), 0);
+  construct_resources(*node, &content, &offset_header, &offset_data, &offset_name,
+                      rsrc_section.virtual_address(), 0);
 
   rsrc_section.content(content);
+  return ok();
 }
 
 //
 // Pre-computation
 //
-void Builder::compute_resources_size(ResourceNode& node, uint32_t* header_size,
-                                     uint32_t* data_size, uint32_t* name_size) {
+ok_error_t Builder::compute_resources_size(ResourceNode& node, uint32_t* header_size,
+                                             uint32_t* data_size, uint32_t* name_size) {
   if (!node.name().empty()) {
     *name_size += sizeof(uint16_t) + (node.name().size() + 1) * sizeof(char16_t);
   }
@@ -290,15 +280,16 @@ void Builder::compute_resources_size(ResourceNode& node, uint32_t* header_size,
   for (ResourceNode& child : node.childs()) {
     compute_resources_size(child, header_size, data_size, name_size);
   }
+  return ok();
 }
 
 
 //
 // Build level by level
 //
-void Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
-                                  uint32_t* offset_header, uint32_t* offset_data,
-                                  uint32_t* offset_name, uint32_t base_rva, uint32_t depth) {
+ok_error_t Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
+                                          uint32_t* offset_header, uint32_t* offset_data,
+                                          uint32_t* offset_name, uint32_t base_rva, uint32_t depth) {
 
   // Build Directory
   // ===============
@@ -396,24 +387,15 @@ void Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>* cont
 
     *offset_data += align(resource_content.size(), sizeof(uint32_t));
   }
+  return ok();
 }
 
 
-void Builder::build_symbols() {
-  //TODO
-}
-
-
-void Builder::build_string_table() {
-  //TODO
-}
-
-void Builder::build_overlay() {
+ok_error_t Builder::build_overlay() {
 
   const uint64_t last_section_offset = std::accumulate(
-      std::begin(binary_->sections_),
-      std::end(binary_->sections_), 0,
-      [] (uint64_t offset, const Section* section) {
+      std::begin(binary_->sections_), std::end(binary_->sections_), 0,
+      [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
 
@@ -424,11 +406,13 @@ void Builder::build_overlay() {
   ios_.seekp(last_section_offset);
   ios_.write(binary_->overlay());
   ios_.seekp(saved_offset);
+  return ok();
 }
 
-Builder& Builder::operator<<(const DosHeader& dos_header) {
-
+ok_error_t Builder::build(const DosHeader& dos_header) {
   details::pe_dos_header raw_dos_header;
+  std::memset(&raw_dos_header, 0, sizeof(details::pe_dos_header));
+
   raw_dos_header.Magic                     = static_cast<uint16_t>(dos_header.magic());
   raw_dos_header.UsedBytesInTheLastPage    = static_cast<uint16_t>(dos_header.used_bytes_in_the_last_page());
   raw_dos_header.FileSizeInPages           = static_cast<uint16_t>(dos_header.file_size_in_pages());
@@ -450,8 +434,11 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
   const DosHeader::reserved_t& reserved   = dos_header.reserved();
   const DosHeader::reserved2_t& reserved2 = dos_header.reserved2();
 
-  std::copy(std::begin(reserved),  std::end(reserved),  std::begin(raw_dos_header.Reserved));
-  std::copy(std::begin(reserved2), std::end(reserved2), std::begin(raw_dos_header.Reserved2));
+  std::copy(std::begin(reserved),  std::end(reserved),
+            std::begin(raw_dos_header.Reserved));
+
+  std::copy(std::begin(reserved2), std::end(reserved2),
+            std::begin(raw_dos_header.Reserved2));
 
   ios_.seekp(0);
   ios_.write(reinterpret_cast<const uint8_t*>(&raw_dos_header), sizeof(details::pe_dos_header));
@@ -463,13 +450,15 @@ Builder& Builder::operator<<(const DosHeader& dos_header) {
     ios_.write(binary_->dos_stub());
   }
 
-  return *this;
+  return ok();
 }
 
 
-Builder& Builder::operator<<(const Header& bHeader) {
+ok_error_t Builder::build(const Header& bHeader) {
   // Standard Header
   details::pe_header header;
+  std::memset(&header, 0, sizeof(details::pe_header));
+
   header.Machine               = static_cast<uint16_t>(bHeader.machine());
   header.NumberOfSections      = static_cast<uint16_t>(binary_->sections_.size());
   //TODO: use current
@@ -487,33 +476,34 @@ Builder& Builder::operator<<(const Header& bHeader) {
 
   ios_.seekp(address_next_header);
   ios_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(details::pe_header));
-  return *this;
+  return ok();
 }
 
 
-Builder& Builder::operator<<(const OptionalHeader& optional_header) {
+ok_error_t Builder::build(const OptionalHeader& optional_header) {
   if (binary_->type() == PE_TYPE::PE32) {
     build_optional_header<details::PE32>(optional_header);
   } else {
     build_optional_header<details::PE64>(optional_header);
   }
-  return *this;
+  return ok();
+;
 }
 
 
-Builder& Builder::operator<<(const DataDirectory& data_directory) {
-
+ok_error_t Builder::build(const DataDirectory& data_directory) {
   details::pe_data_directory header;
+  std::memset(&header, 0, sizeof(details::pe_data_directory));
 
   header.RelativeVirtualAddress = data_directory.RVA();
   header.Size                   = data_directory.size();
 
   ios_.write(reinterpret_cast<uint8_t*>(&header), sizeof(details::pe_data_directory));
-  return *this;
+  return ok();
 }
 
 
-Builder& Builder::operator<<(const Section& section) {
+ok_error_t Builder::build(const Section& section) {
 
   details::pe_section header;
   std::memset(&header, 0, sizeof(details::pe_section));
@@ -543,14 +533,14 @@ Builder& Builder::operator<<(const Section& section) {
   }
 
   // Pad section content with zeroes
-  std::vector<uint8_t> zero_pad (pad_length, 0);
+  std::vector<uint8_t> zero_pad(pad_length, 0);
 
   const size_t saved_offset = ios_.tellp();
   ios_.seekp(section.offset());
   ios_.write(section.content());
   ios_.write(zero_pad);
   ios_.seekp(saved_offset);
-  return *this;
+  return ok();
 }
 
 std::ostream& operator<<(std::ostream& os, const Builder& b) {

@@ -21,8 +21,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -40,6 +39,11 @@ class LIEF_API Export : public Object {
   friend class Parser;
 
   public:
+
+  using entries_t        = std::vector<ExportEntry>;
+  using it_entries       = ref_iterator<entries_t&>;
+  using it_const_entries = const_ref_iterator<const entries_t&>;
+
   Export();
   Export(const details::pe_export_directory_table& header);
   Export(const Export&);
@@ -67,8 +71,8 @@ class LIEF_API Export : public Object {
   const std::string& name() const;
 
   //! Iterator over the ExportEntry
-  it_export_entries entries();
-  it_const_export_entries entries() const;
+  it_entries entries();
+  it_const_entries entries() const;
 
   void export_flags(uint32_t flags);
   void timestamp(uint32_t timestamp);
@@ -85,13 +89,13 @@ class LIEF_API Export : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Export& exp);
 
   private:
-  uint32_t         exportFlags_;
-  uint32_t         timestamp_;
-  uint16_t         majorVersion_;
-  uint16_t         minorVersion_;
-  uint32_t         ordinalBase_;
-  std::string      name_;
-  export_entries_t entries_;
+  uint32_t    exportFlags_;
+  uint32_t    timestamp_;
+  uint16_t    majorVersion_;
+  uint16_t    minorVersion_;
+  uint32_t    ordinalBase_;
+  std::string name_;
+  entries_t   entries_;
 
 };
 

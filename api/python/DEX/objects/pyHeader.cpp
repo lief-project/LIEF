@@ -33,7 +33,7 @@ void create<Header>(py::module& m) {
   py::class_<Header, LIEF::Object>(m, "Header", "DEX Header")
 
     .def_property_readonly("magic",
-        static_cast<getter_t<magic_t>>(&Header::magic),
+        static_cast<getter_t<Header::magic_t>>(&Header::magic),
         "Magic value")
 
     .def_property_readonly("checksum",
@@ -41,7 +41,7 @@ void create<Header>(py::module& m) {
         "Checksum value of the rest of the file (without " RST_ATTR_REF(lief.DEX.Header.magic) ")")
 
     .def_property_readonly("signature",
-        static_cast<getter_t<signature_t>>(&Header::signature),
+        static_cast<getter_t<Header::signature_t>>(&Header::signature),
         "SHA-1 signature of the rest of the file (without " RST_ATTR_REF(lief.DEX.Header.magic) " and " RST_ATTR_REF(lief.DEX.Header.checksum) ")")
 
     .def_property_readonly("file_size",

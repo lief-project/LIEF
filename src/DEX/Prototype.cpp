@@ -16,6 +16,7 @@
 #include <numeric>
 
 #include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
 
@@ -26,13 +27,12 @@ Prototype::Prototype() = default;
 Prototype::Prototype(const Prototype& other) = default;
 
 
-const Type& Prototype::return_type() const {
-  CHECK(return_type_ != nullptr, "Return type is null!");
-  return *return_type_;
+const Type* Prototype::return_type() const {
+  return return_type_;
 }
 
-Type& Prototype::return_type() {
-  return const_cast<Type&>(static_cast<const Prototype*>(this)->return_type());
+Type* Prototype::return_type() {
+  return const_cast<Type*>(static_cast<const Prototype*>(this)->return_type());
 }
 
 Prototype::it_const_params Prototype::parameters_type() const {
@@ -48,6 +48,9 @@ void Prototype::accept(Visitor& visitor) const {
 }
 
 bool Prototype::operator==(const Prototype& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -60,7 +63,9 @@ bool Prototype::operator!=(const Prototype& rhs) const {
 std::ostream& operator<<(std::ostream& os, const Prototype& type) {
 
   Prototype::it_const_params ps = type.parameters_type();
-  os << type.return_type();
+  if (const auto* t = type.return_type()) {
+    os << *t;
+  }
   os << " (";
   for (size_t i = 0; i < ps.size(); ++i) {
     if (i > 0) {

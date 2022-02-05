@@ -59,8 +59,8 @@ void Hash::visit(const CodeInfo& /*code_info*/) {
 
 void Hash::visit(const Class& cls) {
 
-  it_const_fields fields = cls.fields();
-  it_const_methods methods = cls.methods();
+  Class::it_const_fields fields = cls.fields();
+  Class::it_const_methods methods = cls.methods();
   process(cls.fullname());
   process(cls.source_filename());
   process(cls.access_flags());
@@ -71,13 +71,17 @@ void Hash::visit(const Class& cls) {
 
 void Hash::visit(const Field& field) {
   process(field.name());
-  process(field.type());
+  if (const Type* t = field.type()) {
+    process(*t);
+  }
 }
 
 void Hash::visit(const Method& method) {
   process(method.name());
   process(method.bytecode());
-  process(method.prototype());
+  if (const auto* p = method.prototype()) {
+    process(*p);
+  }
 }
 
 
@@ -111,10 +115,11 @@ void Hash::visit(const Type& type) {
 }
 
 void Hash::visit(const Prototype& type) {
-  process(type.return_type());
-  process(
-      std::begin(type.parameters_type()),
-      std::end(type.parameters_type()));
+  if (const auto* rty = type.return_type()) {
+    process(*rty);
+  }
+  process(std::begin(type.parameters_type()),
+          std::end(type.parameters_type()));
 }
 
 void Hash::visit(const MapItem& item) {

@@ -21,9 +21,6 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
-
-#include "LIEF/PE/Structures.hpp"
-
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 
 namespace LIEF {
@@ -43,6 +40,7 @@ class LIEF_API ResourceStringFileInfo : public Object {
   friend class ResourceVersion;
 
   public:
+  ResourceStringFileInfo();
   ResourceStringFileInfo(const ResourceStringFileInfo&);
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
   virtual ~ResourceStringFileInfo();
@@ -78,10 +76,8 @@ class LIEF_API ResourceStringFileInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
 
   private:
-  ResourceStringFileInfo();
-
-  uint16_t                  type_;
-  std::u16string            key_;
+  uint16_t       type_ = 0;
+  std::u16string key_;
   std::vector<LangCodeItem> childs_;
 
 

@@ -17,9 +17,12 @@
 #include <sstream>
 #include <vector>
 
+
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Section.hpp"
 
+#include "pyIterators.hpp"
 #include "pyELF.hpp"
 
 namespace LIEF {
@@ -37,14 +40,22 @@ using no_const_getter = T (Segment::*)(void);
 
 template<>
 void create<Segment>(py::module& m) {
-  py::class_<Segment, LIEF::Object>(m, "Segment",
+  py::class_<Segment, LIEF::Object> seg(m, "Segment",
       R"delim(
       Class which represents the ELF segments
-      )delim")
+      )delim");
 
+  init_ref_iterator<Segment::it_sections>(seg, "it_sections");
+
+  seg
     .def(py::init<>())
-    .def(py::init<const std::vector<uint8_t>&>())
-    .def(py::init<const std::vector<uint8_t>&, ELF_CLASS>())
+    .def_static("from_raw",
+        [] (py::bytes raw) -> py::object {
+          const std::string& bytes_as_str = raw;
+          std::vector<uint8_t> cpp_raw = {std::begin(bytes_as_str), std::end(bytes_as_str)};
+          auto* f_ptr = static_cast<result<Segment>(*)(const std::vector<uint8_t>&)>(&Segment::from_raw);
+          return error_or(f_ptr, std::move(cpp_raw));
+        })
 
     .def_property("type",
         static_cast<getter_t<SEGMENT_TYPES>>(&Segment::type),
@@ -141,7 +152,7 @@ void create<Segment>(py::module& m) {
         "section_name"_a)
 
     .def_property_readonly("sections",
-      static_cast<no_const_getter<it_sections>>(&Segment::sections),
+      static_cast<no_const_getter<Segment::it_sections>>(&Segment::sections),
       "Iterator over the " RST_CLASS_REF(lief.ELF.Section) " wrapped by this segment",
       py::return_value_policy::reference_internal)
 

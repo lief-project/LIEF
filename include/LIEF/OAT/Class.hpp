@@ -16,34 +16,42 @@
 #ifndef LIEF_OAT_CLASS_H_
 #define LIEF_OAT_CLASS_H_
 
-#include "LIEF/OAT/type_traits.hpp"
-#include "LIEF/OAT/Structures.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/OAT/enums.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/DEX.hpp"
 
 namespace LIEF {
+namespace DEX {
+class Class;
+}
 namespace OAT {
 class Parser;
+class Method;
 
 class LIEF_API Class : public Object {
   friend class Parser;
 
   public:
+  using methods_t = std::vector<Method*>;
+  using it_methods = ref_iterator<methods_t&>;
+  using it_const_methods = const_ref_iterator<const methods_t&>;
+
+  public:
   Class();
 
-  Class(OAT_CLASS_STATUS status,
-      OAT_CLASS_TYPES type,
-      DEX::Class* dex_class, std::vector<uint32_t> bitmap = {});
+  Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type,
+        DEX::Class* dex_class, std::vector<uint32_t> bitmap = {});
 
   Class(const Class&);
   Class& operator=(const Class&);
 
   bool has_dex_class() const;
-  const DEX::Class& dex_class() const;
-  DEX::Class& dex_class();
+  const DEX::Class* dex_class() const;
+  DEX::Class* dex_class();
 
   OAT_CLASS_STATUS status() const;
   OAT_CLASS_TYPES type() const;
@@ -77,10 +85,11 @@ class LIEF_API Class : public Object {
   virtual ~Class();
 
   private:
-  DEX::Class* dex_class_{nullptr};
 
-  OAT_CLASS_STATUS status_;
-  OAT_CLASS_TYPES  type_;
+  DEX::Class* dex_class_ = nullptr;
+
+  OAT_CLASS_STATUS status_ = OAT_CLASS_STATUS::STATUS_NOTREADY;
+  OAT_CLASS_TYPES  type_   = OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED;
 
   std::vector<uint32_t> method_bitmap_;
   methods_t methods_;

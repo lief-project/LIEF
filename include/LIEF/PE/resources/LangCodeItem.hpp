@@ -24,7 +24,7 @@
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -90,7 +90,7 @@ class LIEF_API LangCodeItem : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const LangCodeItem& item);
 
   private:
-  uint16_t       type_;
+  uint16_t       type_ = 0;
   std::u16string key_;
   items_t        items_;
 };

@@ -102,15 +102,15 @@ class LIEF_API TLS : public Object {
 
   //! Return the DataDirectory associated with this object.
   //! If it exists, its type should be DATA_DIRECTORY::TLS_TABLE
-  DataDirectory&       directory();
-  const DataDirectory& directory() const;
+  DataDirectory*       directory();
+  const DataDirectory* directory() const;
 
   //! Check if there is a section associated with this entry
   bool has_section() const;
 
   //! The section associated with the entry
-  Section& section();
-  const Section& section() const;
+  Section* section();
+  const Section* section() const;
 
   void callbacks(const std::vector<uint64_t>& callbacks);
   void addressof_raw_data(std::pair<uint64_t, uint64_t> VAOfRawData);
@@ -130,12 +130,12 @@ class LIEF_API TLS : public Object {
   private:
   std::vector<uint64_t>         callbacks_;
   std::pair<uint64_t, uint64_t> VAOfRawData_;
-  uint64_t                      addressof_index_;
-  uint64_t                      addressof_callbacks_;
-  uint32_t                      sizeof_zero_fill_;
-  uint32_t                      characteristics_;
-  DataDirectory*                directory_{nullptr};
-  Section*                      section_{nullptr};
+  uint64_t                      addressof_index_ = 0;
+  uint64_t                      addressof_callbacks_ = 0;
+  uint32_t                      sizeof_zero_fill_ = 0;
+  uint32_t                      characteristics_ = 0;
+  DataDirectory*                directory_ = nullptr;
+  Section*                      section_ = nullptr;
   std::vector<uint8_t>          data_template_;
 
 };

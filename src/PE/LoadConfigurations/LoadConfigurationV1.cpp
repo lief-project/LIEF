@@ -66,15 +66,13 @@ bool LoadConfigurationV1::has(GUARD_CF_FLAGS flag) const {
   return (guard_flags() & flag) != GUARD_CF_FLAGS::GCF_NONE;
 }
 
-guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list() const {
+LoadConfigurationV1::guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list() const {
 
   guard_cf_flags_list_t flags;
 
-  std::copy_if(
-      std::begin(guard_cf_flags_array),
-      std::end(guard_cf_flags_array),
-      std::inserter(flags, std::begin(flags)),
-      [this] (GUARD_CF_FLAGS f) { return has(f); });
+  std::copy_if(std::begin(guard_cf_flags_array), std::end(guard_cf_flags_array),
+               std::inserter(flags, std::begin(flags)),
+               [this] (GUARD_CF_FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -104,6 +102,9 @@ void LoadConfigurationV1::accept(Visitor& visitor) const {
 }
 
 bool LoadConfigurationV1::operator==(const LoadConfigurationV1& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -119,8 +120,7 @@ std::ostream& LoadConfigurationV1::print(std::ostream& os) const {
 
   const guard_cf_flags_list_t& flags = guard_cf_flags_list();
   std::string flags_str = std::accumulate(
-     std::begin(flags),
-     std::end(flags), std::string{},
+     std::begin(flags), std::end(flags), std::string{},
      [] (const std::string& a, GUARD_CF_FLAGS b) {
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });

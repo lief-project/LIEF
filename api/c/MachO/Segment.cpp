@@ -18,7 +18,7 @@
 namespace LIEF {
 namespace MachO {
 void init_c_segments(Macho_Binary_t* c_binary, Binary* binary) {
-  it_segments segments = binary->segments();
+  Binary::it_segments segments = binary->segments();
 
   c_binary->segments = static_cast<Macho_Segment_t**>(
       malloc((segments.size() + 1) * sizeof(Macho_Segment_t**)));

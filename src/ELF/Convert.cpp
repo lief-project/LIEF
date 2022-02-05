@@ -15,7 +15,7 @@
  */
 #include "LIEF/BinaryStream/Convert.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/ELF/Structures.hpp"
+#include "ELF/Structures.hpp"
 
 /* In place conversions for BinaryStream/VectorStream data */
 

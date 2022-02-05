@@ -21,19 +21,27 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/DEX.hpp"
+#include "LIEF/VDEX/File.hpp"
 
 #include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/OAT/Parser.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Binary.hpp"
+
+#include "OAT/Structures.hpp"
 
 namespace LIEF {
 namespace OAT {
 
 template<>
-void Parser::parse_dex_files<OAT124_t>() {
-  using oat_header = typename OAT124_t::oat_header;
+void Parser::parse_dex_files<details::OAT124_t>() {
+  using oat_header = typename details::OAT124_t::oat_header;
 
-  size_t nb_dex_files = oat_binary_->header().nb_dex_files();
+  auto& oat = oat_binary();
 
-  uint64_t dexfiles_offset = sizeof(oat_header) + oat_binary_->header_.key_value_size();
+  size_t nb_dex_files = oat.header().nb_dex_files();
+
+  uint64_t dexfiles_offset = sizeof(oat_header) + oat.header_.key_value_size();
 
   LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
 
@@ -47,41 +55,55 @@ void Parser::parse_dex_files<OAT124_t>() {
 
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
-    uint32_t location_size = stream_->read<uint32_t>();
+    auto location_size = stream_->read<uint32_t>();
+    if (!location_size) {
+      break;
+    }
 
-    const char* loc_cstr = stream_->read_array<char>(location_size, /* check */false);
+    const char* loc_cstr = stream_->read_array<char>(*location_size);
     std::string location;
 
     if (loc_cstr != nullptr) {
-      location = {loc_cstr, location_size};
+      location = {loc_cstr, *location_size};
     }
 
     dex_file->location(location);
 
-    uint32_t checksum = stream_->read<uint32_t>();
-    dex_file->checksum(checksum);
+    if (auto res = stream_->read<uint32_t>()) {
+      dex_file->checksum(*res);
+    } else {
+      break;
+    }
 
-    uint32_t dex_struct_offset = stream_->read<uint32_t>();
-    dex_file->dex_offset(dex_struct_offset);
+    if (auto res = stream_->read<uint32_t>()) {
+      dex_file->dex_offset(*res);
+    } else {
+      break;
+    }
 
-    uint32_t class_offsets = stream_->read<uint32_t>();
-    classes_offsets_offset.push_back(class_offsets);
+    if (auto res = stream_->read<uint32_t>()) {
+      classes_offsets_offset.push_back(*res);
+    } else {
+      break;
+    }
 
-    uint32_t type_lookup_offset = stream_->read<uint32_t>();
-    dex_file->lookup_table_offset(type_lookup_offset);
+    if (auto res = stream_->read<uint32_t>()) {
+      dex_file->lookup_table_offset(*res);
+    } else {
+      break;
+    }
 
-    oat_binary_->oat_dex_files_.push_back(dex_file.release());
+    oat.oat_dex_files_.push_back(std::move(dex_file));
   }
 
-  if (has_vdex()) {
-    DEX::it_dex_files dexfiles = vdex_file_->dex_files();
-    if (dexfiles.size() != oat_binary_->oat_dex_files_.size()) {
+  if (oat_binary().has_vdex()) {
+    VDEX::File::it_dex_files dexfiles = oat_binary().vdex_->dex_files();
+    if (dexfiles.size() != oat.oat_dex_files_.size()) {
       LIEF_WARN("Inconsistent number of vdex files");
       return;
     }
     for (size_t i = 0; i < dexfiles.size(); ++i) {
-      DexFile* oat_dex_file = oat_binary_->oat_dex_files_[i];
-      oat_binary_->dex_files_.push_back(&dexfiles[i]);
+      std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[i];
       oat_dex_file->dex_file_ = &dexfiles[i];
 
 
@@ -90,8 +112,11 @@ void Parser::parse_dex_files<OAT124_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        uint32_t off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
-        oat_dex_file->classes_offsets_.push_back(off);
+        if (auto res = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+          oat_dex_file->classes_offsets_.push_back(*res);
+        } else {
+          break;
+        }
       }
     }
   }

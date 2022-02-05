@@ -60,8 +60,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   SYMBOL_STORAGE_CLASS storage_class() const;
   uint8_t              numberof_aux_symbols() const;
   std::wstring         wname() const;
-  Section&             section();
-  const Section&       section() const;
+  Section*             section();
+  const Section*       section() const;
 
   //! @brief ``True`` if symbols are located in a section
   bool has_section() const;
@@ -74,11 +74,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
-  int16_t              section_number_;
-  uint16_t             type_;
-  SYMBOL_STORAGE_CLASS storage_class_;
-  uint8_t              numberof_aux_symbols_;
-  Section*             section_{nullptr};
+  int16_t  section_number_ = 0;
+  uint16_t type_ = 0;
+  uint8_t  numberof_aux_symbols_ = 0;
+  Section* section_ = nullptr;
+  SYMBOL_STORAGE_CLASS storage_class_ = SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_INVALID;
 
 };
 

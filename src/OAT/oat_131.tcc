@@ -23,15 +23,21 @@
 #include "LIEF/DEX.hpp"
 
 #include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/OAT/Parser.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/VDEX/File.hpp"
+#include "OAT/Structures.hpp"
 
 namespace LIEF {
 namespace OAT {
 
 template<>
-void Parser::parse_dex_files<OAT131_t>() {
-  size_t nb_dex_files = oat_binary_->header_.nb_dex_files();
+void Parser::parse_dex_files<details::OAT131_t>() {
+  auto& oat = oat_binary();
+  size_t nb_dex_files = oat.header_.nb_dex_files();
 
-  uint64_t oat_dex_files_offset = oat_binary_->header().oat_dex_files_offset();
+  uint64_t oat_dex_files_offset = oat.header().oat_dex_files_offset();
 
   LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", oat_dex_files_offset);
 
@@ -43,48 +49,61 @@ void Parser::parse_dex_files<OAT131_t>() {
 
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
 
-    std::unique_ptr<DexFile> dex_file{new DexFile{}};
+    auto dex_file = std::make_unique<DexFile>();
 
-    uint32_t location_size = stream_->read<uint32_t>();
+    auto location_size = stream_->read<uint32_t>();
+    if (!location_size) {
+      break;
+    }
 
-    const char* loc_cstr = stream_->read_array<char>(location_size, /* check */false);
+    const char* loc_cstr = stream_->read_array<char>(*location_size);
     std::string location;
 
     if (loc_cstr != nullptr) {
-      location = {loc_cstr, location_size};
+      location = {loc_cstr, *location_size};
     }
 
     dex_file->location(location);
 
-    uint32_t checksum = stream_->read<uint32_t>();
-    dex_file->checksum(checksum);
+    if (auto checksum = stream_->read<uint32_t>()) {
+      dex_file->checksum(*checksum);
+    } else {
+      break;
+    }
 
-    uint32_t dex_struct_offset = stream_->read<uint32_t>();
-    dex_file->dex_offset(dex_struct_offset);
+    if (auto dex_struct_offset = stream_->read<uint32_t>()) {
+      dex_file->dex_offset(*dex_struct_offset);
+    } else {
+      break;
+    }
 
-    uint32_t class_offsets = stream_->read<uint32_t>();
-    classes_offsets_offset.push_back(class_offsets);
+    if (auto class_offsets = stream_->read<uint32_t>()) {
+      classes_offsets_offset.push_back(*class_offsets);
+    } else {
+      break;
+    }
 
-    uint32_t type_lookup_offset = stream_->read<uint32_t>();
-
-    dex_file->lookup_table_offset(type_lookup_offset);
+    if (auto type_lookup_offset = stream_->read<uint32_t>()) {
+      dex_file->lookup_table_offset(*type_lookup_offset);
+    } else {
+      break;
+    }
 
     /* uint32_t dex_sections_layout_offset = */ stream_->read<uint32_t>();
 
     /* uint32_t method_bss_mapping_offset =  */ stream_->read<uint32_t>();
 
-    oat_binary_->oat_dex_files_.push_back(dex_file.release());
+    oat.oat_dex_files_.push_back(std::move(dex_file));
   }
 
-  if (has_vdex()) {
-    DEX::it_dex_files dexfiles = vdex_file_->dex_files();
-    if (dexfiles.size() != oat_binary_->oat_dex_files_.size()) {
+  if (oat_binary().has_vdex()) {
+    VDEX::File::it_dex_files dexfiles = oat_binary().vdex_->dex_files();
+    if (dexfiles.size() != oat.oat_dex_files_.size()) {
       LIEF_WARN("Inconsistent number of vdex files");
       return;
     }
     for (size_t i = 0; i < dexfiles.size(); ++i) {
-      DexFile* oat_dex_file = oat_binary_->oat_dex_files_[i];
-      oat_binary_->dex_files_.push_back(&dexfiles[i]);
+      std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[i];
       oat_dex_file->dex_file_ = &dexfiles[i];
 
       const uint32_t nb_classes = dexfiles[i].header().nb_classes();
@@ -92,8 +111,11 @@ void Parser::parse_dex_files<OAT131_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        uint32_t off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t));
-        oat_dex_file->classes_offsets_.push_back(off);
+        if (auto off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+          oat_dex_file->classes_offsets_.push_back(*off);
+        } else {
+          break;
+        }
       }
     }
   }

@@ -21,6 +21,8 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Note.hpp"
 
+#include "ELF/Structures.hpp"
+
 #include "CorePrPsInfo.tcc"
 
 namespace LIEF {
@@ -124,6 +126,9 @@ void CorePrPsInfo::accept(Visitor& visitor) const {
 }
 
 bool CorePrPsInfo::operator==(const CorePrPsInfo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

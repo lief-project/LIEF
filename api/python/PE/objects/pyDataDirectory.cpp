@@ -49,8 +49,8 @@ void create<DataDirectory>(py::module& m) {
         "Size in bytes of the content associated with the current data directory")
 
     .def_property_readonly("section",
-        static_cast<Section& (DataDirectory::*) (void)>(&DataDirectory::section),
-        "" RST_CLASS_REF(lief.PE.Section) " associated with the current data directory",
+        static_cast<Section* (DataDirectory::*) (void)>(&DataDirectory::section),
+        "" RST_CLASS_REF(lief.PE.Section) " associated with the current data directory or None if not linked",
         py::return_value_policy::reference)
 
     .def_property_readonly("type",

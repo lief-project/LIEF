@@ -53,12 +53,13 @@ class LIEF_API SymbolVersion : public Object {
   //! * ``1`` means **Global**
   uint16_t value() const;
 
-  //! Whether or not the current SymbolVersion has an auxiliary one
+  //! Whether the current SymbolVersion has an auxiliary one
   bool has_auxiliary_version() const;
 
-  //! SymbolVersionAux associated with the current Version (if any)
-  SymbolVersionAux&       symbol_version_auxiliary();
-  const SymbolVersionAux& symbol_version_auxiliary() const;
+  //! SymbolVersionAux associated with the current Version if any,
+  //! or a nullptr
+  SymbolVersionAux*       symbol_version_auxiliary();
+  const SymbolVersionAux* symbol_version_auxiliary() const;
 
   void value(uint16_t v);
 
@@ -70,8 +71,8 @@ class LIEF_API SymbolVersion : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
 
   private:
-  uint16_t          value_;
-  SymbolVersionAux* symbol_aux_{nullptr};
+  uint16_t          value_ = 0;
+  SymbolVersionAux* symbol_aux_ = nullptr;
 };
 }
 }

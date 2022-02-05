@@ -20,6 +20,9 @@
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 
 #include "pyMachO.hpp"
 
@@ -83,8 +86,8 @@ void create<BindingInfo>(py::module& m) {
         "``True`` if the binding info has a " RST_CLASS_REF(lief.MachO.DylibCommand) " associated with")
 
     .def_property_readonly("library",
-        static_cast<DylibCommand& (BindingInfo::*)(void)>(&BindingInfo::library),
-        "" RST_CLASS_REF(lief.MachO.DylibCommand) " associated with the binding (if any)",
+        static_cast<DylibCommand* (BindingInfo::*)(void)>(&BindingInfo::library),
+        "" RST_CLASS_REF(lief.MachO.DylibCommand) " associated with the binding if any, or None",
         py::return_value_policy::reference)
 
 
@@ -93,8 +96,8 @@ void create<BindingInfo>(py::module& m) {
         "``True`` if the binding info has a " RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with")
 
     .def_property_readonly("segment",
-        static_cast<SegmentCommand& (BindingInfo::*)(void)>(&BindingInfo::segment),
-        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the binding (if any)",
+        static_cast<SegmentCommand* (BindingInfo::*)(void)>(&BindingInfo::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the binding if any, or None",
         py::return_value_policy::reference)
 
 
@@ -103,8 +106,8 @@ void create<BindingInfo>(py::module& m) {
         "``True`` if the binding info has a " RST_CLASS_REF(lief.MachO.Symbol) " associated with")
 
     .def_property_readonly("symbol",
-        static_cast<Symbol& (BindingInfo::*)(void)>(&BindingInfo::symbol),
-        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the binding (if any)",
+        static_cast<Symbol* (BindingInfo::*)(void)>(&BindingInfo::symbol),
+        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the binding if any, or None",
         py::return_value_policy::reference)
 
     .def_property_readonly("original_offset",

@@ -17,12 +17,14 @@
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/Structures.hpp"
+#include "PE/Structures.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 
 namespace LIEF {
 namespace PE {
+
+Relocation::~Relocation() = default;
 
 Relocation::Relocation(const Relocation& other) :
   Object{other},
@@ -30,10 +32,10 @@ Relocation::Relocation(const Relocation& other) :
   virtual_address_{other.virtual_address_}
 {
   entries_.reserve(other.entries_.size());
-  for (RelocationEntry* r : other.entries_) {
-    auto* copy = new RelocationEntry{*r};
+  for (const std::unique_ptr<RelocationEntry>& r : other.entries_) {
+    auto copy = std::make_unique<RelocationEntry>(*r);
     copy->relocation_ = this;
-    entries_.push_back(copy);
+    entries_.push_back(std::move(copy));
   }
 
 }
@@ -44,17 +46,10 @@ Relocation& Relocation::operator=(Relocation other) {
 }
 
 
-Relocation::~Relocation() {
-  for (RelocationEntry* entry : entries_) {
-    delete entry;
-  }
-}
 
 
-Relocation::Relocation() :
-  block_size_{0},
-  virtual_address_{0}
-{}
+Relocation::Relocation() = default;
+
 
 
 Relocation::Relocation(const details::pe_base_relocation_block& header) :
@@ -79,22 +74,22 @@ uint32_t Relocation::block_size() const {
   return block_size_;
 }
 
-it_const_relocation_entries Relocation::entries() const {
+Relocation::it_const_entries Relocation::entries() const {
   return entries_;
 }
 
 
-it_relocation_entries Relocation::entries() {
+Relocation::it_entries Relocation::entries() {
   return entries_;
 }
 
 
 
 RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
-  auto* newone = new RelocationEntry{entry};
+  auto newone = std::make_unique<RelocationEntry>(entry);
   newone->relocation_ = this;
-  entries_.push_back(newone);
-  return *newone;
+  entries_.push_back(std::move(newone));
+  return *entries_.back();
 }
 
 
@@ -113,6 +108,9 @@ void Relocation::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Relocation::operator==(const Relocation& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

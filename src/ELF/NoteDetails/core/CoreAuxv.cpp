@@ -24,6 +24,8 @@
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Binary.hpp"
 
+#include "ELF/Structures.hpp"
+
 #include "CoreAuxv.tcc"
 
 namespace LIEF {
@@ -84,6 +86,9 @@ void CoreAuxv::accept(Visitor& visitor) const {
 }
 
 bool CoreAuxv::operator==(const CoreAuxv& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

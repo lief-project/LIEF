@@ -17,19 +17,17 @@
 #define LIEF_PE_RESOURCE_VERSION_H_
 #include <iostream>
 #include <sstream>
+#include <memory>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
-
-#include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
-
 namespace LIEF {
 namespace PE {
+class ResourceFixedFileInfo;
+class ResourceStringFileInfo;
+class ResourceVarFileInfo;
 
 class ResourcesManager;
 
@@ -62,18 +60,22 @@ class LIEF_API ResourceVersion : public Object {
   //! ``true`` if the version contains a ResourceVarFileInfo
   bool has_var_file_info() const;
 
-  //! Object that describes various information about the application's version
-  const ResourceFixedFileInfo& fixed_file_info() const;
-  ResourceFixedFileInfo&       fixed_file_info();
+  //! Object that describes various information about the application's version.
+  //! This is an optional information and if it is not present, it returns a nullptr
+  const ResourceFixedFileInfo* fixed_file_info() const;
+  ResourceFixedFileInfo*       fixed_file_info();
 
   //! Object that describes various information about the application's version.
   //! The underlying structure is basically a dictionary (key/value)
-  const ResourceStringFileInfo& string_file_info() const;
-  ResourceStringFileInfo&       string_file_info();
+  //!
+  //! This structure is not always present and if not, it returns a nullptr
+  const ResourceStringFileInfo* string_file_info() const;
+  ResourceStringFileInfo*       string_file_info();
 
   //! Object that describes information about languages supported by the application
-  const ResourceVarFileInfo& var_file_info() const;
-  ResourceVarFileInfo&       var_file_info();
+  //! This structure is not always present and if not, it returns a nullptr
+  const ResourceVarFileInfo* var_file_info() const;
+  ResourceVarFileInfo*       var_file_info();
 
   void type(uint16_t type);
 
@@ -103,17 +105,9 @@ class LIEF_API ResourceVersion : public Object {
   std::u16string key_;
 
   // Optional structures
-  bool                   has_fixed_file_info_;
-  ResourceFixedFileInfo  fixed_file_info_;
-
-  bool                   has_string_file_info_;
-  ResourceStringFileInfo string_file_info_;
-
-  bool                   has_var_file_info_;
-  ResourceVarFileInfo    var_file_info_;
-
-
-
+  std::unique_ptr<ResourceFixedFileInfo>  fixed_file_info_;
+  std::unique_ptr<ResourceStringFileInfo> string_file_info_;
+  std::unique_ptr<ResourceVarFileInfo>    var_file_info_;
 };
 
 

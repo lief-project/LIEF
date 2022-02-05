@@ -28,15 +28,7 @@ namespace MachO {
 
 BindingInfo::~BindingInfo() = default;
 
-BindingInfo::BindingInfo() :
-  class_{BINDING_CLASS::BIND_CLASS_STANDARD},
-  binding_type_{BIND_TYPES::BIND_TYPE_POINTER},
-  library_ordinal_{0},
-  addend_{0},
-  is_weak_import_{false},
-  is_non_weak_definition_{false}
-{}
-
+BindingInfo::BindingInfo() = default;
 
 BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
     uint64_t address, int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition,
@@ -88,50 +80,36 @@ bool BindingInfo::has_segment() const {
   return segment_ != nullptr;
 }
 
-const SegmentCommand& BindingInfo::segment() const {
-  if (!has_segment()) {
-    throw not_found("No segment associated with this binding");
-  }
-
-  return *segment_;
+const SegmentCommand* BindingInfo::segment() const {
+  return segment_;
 }
 
-SegmentCommand& BindingInfo::segment() {
-  return const_cast<SegmentCommand&>(static_cast<const BindingInfo*>(this)->segment());
+SegmentCommand* BindingInfo::segment() {
+  return const_cast<SegmentCommand*>(static_cast<const BindingInfo*>(this)->segment());
 }
 
 bool BindingInfo::has_symbol() const {
   return symbol_ != nullptr;
 }
 
-const Symbol& BindingInfo::symbol() const {
-  if (!has_symbol()) {
-    throw not_found("No symbol associated with this binding");
-  }
-
-  return *symbol_;
+const Symbol* BindingInfo::symbol() const {
+  return symbol_;
 }
 
-Symbol& BindingInfo::symbol() {
-  return const_cast<Symbol&>(static_cast<const BindingInfo*>(this)->symbol());
+Symbol* BindingInfo::symbol() {
+  return const_cast<Symbol*>(static_cast<const BindingInfo*>(this)->symbol());
 }
-
-
 
 bool BindingInfo::has_library() const {
   return library_ != nullptr;
 }
 
-const DylibCommand& BindingInfo::library() const {
-  if (!has_library()) {
-    throw not_found("No library associated with this binding");
-  }
-
-  return *library_;
+const DylibCommand* BindingInfo::library() const {
+  return library_;
 }
 
-DylibCommand& BindingInfo::library() {
-  return const_cast<DylibCommand&>(static_cast<const BindingInfo*>(this)->library());
+DylibCommand* BindingInfo::library() {
+  return const_cast<DylibCommand*>(static_cast<const BindingInfo*>(this)->library());
 }
 
 BINDING_CLASS BindingInfo::binding_class() const {
@@ -192,8 +170,11 @@ void BindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
 bool BindingInfo::operator==(const BindingInfo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
+  if (&rhs == this) { return true; }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -214,15 +195,15 @@ std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info) {
   os << std::setw(13) << "Address: 0x" <<  std::hex << binding_info.address() << std::endl;
 
   if (binding_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << binding_info.symbol().name() << std::endl;
+    os << std::setw(13) << "Symbol: "    << binding_info.symbol()->name() << std::endl;
   }
 
   if (binding_info.has_segment()) {
-    os << std::setw(13) << "Segment: "    << binding_info.segment().name() << std::endl;
+    os << std::setw(13) << "Segment: "    << binding_info.segment()->name() << std::endl;
   }
 
   if (binding_info.has_library()) {
-    os << std::setw(13) << "Library: "    << binding_info.library().name() << std::endl;
+    os << std::setw(13) << "Library: "    << binding_info.library()->name() << std::endl;
   }
 
   return os;

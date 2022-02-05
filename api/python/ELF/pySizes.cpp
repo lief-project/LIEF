@@ -1,5 +1,5 @@
 #include "pyELF.hpp"
-#include "LIEF/ELF/Structures.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {

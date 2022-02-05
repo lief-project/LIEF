@@ -19,6 +19,7 @@
 #include <vector>
 #include <iostream>
 #include <set>
+#include <memory>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -26,7 +27,7 @@
 #include "LIEF/Abstract/Section.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -48,16 +49,30 @@ class LIEF_API Section : public LIEF::Section {
   friend class SegmentCommand;
 
   public:
+  struct KeyCmp {
+    bool operator() (const std::unique_ptr<Relocation>& lhs,
+                     const std::unique_ptr<Relocation>& rhs) const;
+  };
+
   using content_t   = std::vector<uint8_t>;
   using flag_list_t = std::set<MACHO_SECTION_FLAGS>;
+
+  //! Internal container for storing Mach-O Relocation
+  using relocations_t = std::set<std::unique_ptr<Relocation>, KeyCmp>;
+
+  //! Iterator which outputs Relocation&
+  using it_relocations = ref_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs const Relocation&
+  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
 
   public:
   Section();
   Section(const details::section_32& section_cmd);
   Section(const details::section_64& section_cmd);
 
-  Section(const std::string& name);
-  Section(const std::string& name, const content_t& content);
+  Section(std::string name);
+  Section(std::string name, content_t content);
 
   Section& operator=(Section copy);
   Section(const Section& copy);
@@ -124,9 +139,10 @@ class LIEF_API Section : public LIEF::Section {
   //! Check if this section is correctly linked with a MachO::SegmentCommand
   bool has_segment() const;
 
-  //! The segment associated with this section
-  SegmentCommand& segment();
-  const SegmentCommand& segment() const;
+  //! The segment associated with this section or a nullptr
+  //! if not present
+  SegmentCommand* segment();
+  const SegmentCommand* segment() const;
 
   //! Clear the content of this section by filling its values
   //! with the byte provided in parameter
@@ -172,16 +188,16 @@ class LIEF_API Section : public LIEF::Section {
 
   private:
   std::string segment_name_;
-  uint64_t original_size_{0};
-  uint32_t align_{0};
-  uint32_t relocations_offset_{0};
-  uint32_t nbof_relocations_{0};
-  uint32_t flags_{0};
-  uint32_t reserved1_{0};
-  uint32_t reserved2_{0};
-  uint32_t reserved3_{0};
+  uint64_t original_size_ = 0;
+  uint32_t align_ = 0;
+  uint32_t relocations_offset_ = 0;
+  uint32_t nbof_relocations_ = 0;
+  uint32_t flags_ = 0;
+  uint32_t reserved1_ = 0;
+  uint32_t reserved2_ = 0;
+  uint32_t reserved3_ = 0;
   content_t content_;
-  SegmentCommand *segment_{nullptr};
+  SegmentCommand *segment_ = nullptr;
   relocations_t relocations_;
 };
 

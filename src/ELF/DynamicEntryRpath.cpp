@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "logging.hpp"
 
 #include <iomanip>
 #include <numeric>
@@ -106,7 +107,8 @@ DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path
   }
 
   if (pos > paths.size()) {
-    throw corrupted(std::to_string(pos) + " is out of ranges");
+    LIEF_ERR("pos: {:d} is out of range", pos);
+    return *this;
   }
   paths.insert(std::begin(paths) + pos, path);
   this->paths(paths);

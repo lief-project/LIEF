@@ -56,23 +56,37 @@ void create<ResourceVersion>(py::module& m) {
         "Signature of the structure. Must be ``VS_VERSION_INFO``")
 
     .def_property("fixed_file_info",
-        static_cast<getter_t<const ResourceFixedFileInfo&>>(&ResourceVersion::fixed_file_info),
+        static_cast<getter_t<const ResourceFixedFileInfo*>>(&ResourceVersion::fixed_file_info),
         static_cast<setter_t<const ResourceFixedFileInfo&>>(&ResourceVersion::fixed_file_info),
-        "" RST_CLASS_REF(lief.PE.ResourceFixedFileInfo) " associated with the version (if any).\n\n"
-        "This object describes various information about the application's version")
+        R"delim(
+        :class:`~lief.PE.ResourceFixedFileInfo` associated with the version (if any).
+        This object describes various information about the application's version.
+
+        If not present, this property is set to None
+        )delim")
 
     .def_property("string_file_info",
-        static_cast<getter_t<const ResourceStringFileInfo&>>(&ResourceVersion::string_file_info),
+        static_cast<getter_t<const ResourceStringFileInfo*>>(&ResourceVersion::string_file_info),
         static_cast<setter_t<const ResourceStringFileInfo&>>(&ResourceVersion::string_file_info),
-        "" RST_CLASS_REF(lief.PE.ResourceStringFileInfo) " associated with the version (if any)\n\n"
-        "This object describes various information about the application's version.\n"
-        "The underlying structure is basically a dictionary (key/value)")
+        R"delim(
+        :class:`~lief.PE.ResourceStringFileInfo` associated with the version (if any)
+        This object describes various information about the application's version.
+        The underlying structure is basically a dictionary (key/value)
+
+        If the current :class:`~lief.PE.ResourceVersion` does not use :class:`~lief.PE.ResourceStringFileInfo`,
+        it returns None.
+        )delim")
 
     .def_property("var_file_info",
-        static_cast<getter_t<const ResourceVarFileInfo&>>(&ResourceVersion::var_file_info),
+        static_cast<getter_t<const ResourceVarFileInfo*>>(&ResourceVersion::var_file_info),
         static_cast<setter_t<const ResourceVarFileInfo&>>(&ResourceVersion::var_file_info),
-        "" RST_CLASS_REF(lief.PE.ResourceVarFileInfo) " associated with the version (if any)\n\n"
-        "This object describes information about languages supported by the application")
+        R"delim(
+        :class:`~lief.PE.ResourceVarFileInfo` associated with the version (if any)
+        This object describes information about languages supported by the application.
+
+        If the current :class:`~lief.PE.ResourceVersion` does not use :class:`~lief.PE.ResourceVarFileInfo`,
+        it returns None.
+        )delim")
 
     .def_property_readonly("has_fixed_file_info",
         &ResourceVersion::has_fixed_file_info,

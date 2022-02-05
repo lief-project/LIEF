@@ -34,7 +34,6 @@ LangCodeItem::~LangCodeItem() = default;
 
 
 LangCodeItem::LangCodeItem() :
-  type_{0},
   key_{u8tou16("040c04B0")}
 {}
 
@@ -155,6 +154,9 @@ void LangCodeItem::accept(Visitor& visitor) const {
 
 
 bool LangCodeItem::operator==(const LangCodeItem& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

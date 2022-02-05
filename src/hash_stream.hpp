@@ -50,7 +50,7 @@ class hashstream {
 
   template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
   hashstream& write(Integer integer) {
-    auto int_p = reinterpret_cast<const uint8_t*>(&integer);
+    const auto* int_p = reinterpret_cast<const uint8_t*>(&integer);
     return write(int_p, sizeof(Integer));
   }
 

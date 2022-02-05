@@ -18,13 +18,13 @@
 namespace LIEF {
 namespace MachO {
 void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
-  it_sections sections = binary->sections();
+  Binary::it_sections sections = binary->sections();
 
   c_binary->sections = static_cast<Macho_Section_t**>(
       malloc((sections.size() + 1) * sizeof(Macho_Section_t**)));
 
   for (size_t i = 0; i < sections.size(); ++i) {
-    Section& section = sections[i];
+    const Section& section = sections[i];
 
     c_binary->sections[i] = static_cast<Macho_Section_t*>(malloc(sizeof(Macho_Section_t)));
     const std::vector<uint8_t>& section_content = section.content();

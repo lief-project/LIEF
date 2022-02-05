@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 #include "pyELF.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
 
 #include <string>
 #include <sstream>
@@ -39,11 +41,14 @@ template<>
 void create<Section>(py::module& m) {
 
   // Section object
-  py::class_<Section, LIEF::Section>(m, "Section",
+  py::class_<Section, LIEF::Section> sec(m, "Section",
       R"delim(
       Class which represents an ELF section.
-      )delim")
+      )delim");
 
+  init_ref_iterator<Section::it_segments>(sec, "it_segments");
+
+  sec
     .def(py::init<>(),
         "Default constructor")
 
@@ -114,7 +119,7 @@ void create<Section>(py::module& m) {
         "Index to another section")
 
     .def_property_readonly("segments",
-      static_cast<no_const_getter<it_segments>>(&Section::segments),
+      static_cast<no_const_getter<Section::it_segments>>(&Section::segments),
       "Return segment(s) associated with the given section",
       py::return_value_policy::reference_internal)
 

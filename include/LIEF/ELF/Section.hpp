@@ -25,9 +25,8 @@
 
 #include "LIEF/Abstract/Section.hpp"
 
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/enums.hpp"
-
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -57,6 +56,10 @@ class LIEF_API Section : public LIEF::Section {
   friend class ObjectFileLayout;
 
   public:
+  using segments_t        = std::vector<Segment*>;
+  using it_segments       = ref_iterator<segments_t&>;
+  using it_const_segments = const_ref_iterator<const segments_t&>;
+
   Section(const uint8_t *data, ELF_CLASS type);
   Section(const details::Elf64_Shdr& header);
   Section(const details::Elf32_Shdr& header);

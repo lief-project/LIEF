@@ -39,11 +39,11 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.notes()), std::end(binary.notes()));
 
   if (binary.use_gnu_hash()) {
-    process(binary.gnu_hash());
+    process(*binary.gnu_hash());
   }
 
   if (binary.use_sysv_hash()) {
-    process(binary.sysv_hash());
+    process(*binary.sysv_hash());
   }
 
   if (binary.has_interpreter()) {
@@ -149,8 +149,9 @@ void Hash::visit(const Symbol& symbol) {
   process(symbol.section_idx());
   process(symbol.visibility());
   process(symbol.value());
-  if (symbol.has_version()) {
-    process(symbol.symbol_version());
+  const SymbolVersion* symver = symbol.symbol_version();
+  if (symver != nullptr) {
+    process(*symver);
   }
 }
 
@@ -163,8 +164,9 @@ void Hash::visit(const Relocation& relocation) {
   process(relocation.architecture());
   process(relocation.purpose());
 
-  if (relocation.has_symbol()) {
-    process(relocation.symbol().name());
+  const Symbol* sym = relocation.symbol();
+  if (sym != nullptr) {
+    process(*sym);
   }
 
 }
@@ -172,7 +174,7 @@ void Hash::visit(const Relocation& relocation) {
 void Hash::visit(const SymbolVersion& sv) {
   process(sv.value());
   if (sv.has_auxiliary_version()) {
-    process(sv.symbol_version_auxiliary());
+    process(*sv.symbol_version_auxiliary());
   }
 }
 
@@ -242,17 +244,17 @@ void Hash::visit(const CorePrStatus& pstatus) {
   process(pstatus.pgrp());
   process(pstatus.sid());
 
-  process(pstatus.utime().tv_sec);
-  process(pstatus.utime().tv_usec);
+  process(pstatus.utime().sec);
+  process(pstatus.utime().usec);
 
-  process(pstatus.stime().tv_sec);
-  process(pstatus.stime().tv_usec);
+  process(pstatus.stime().sec);
+  process(pstatus.stime().usec);
 
-  process(pstatus.cutime().tv_sec);
-  process(pstatus.cutime().tv_usec);
+  process(pstatus.cutime().sec);
+  process(pstatus.cutime().usec);
 
-  process(pstatus.cstime().tv_sec);
-  process(pstatus.cstime().tv_usec);
+  process(pstatus.cstime().sec);
+  process(pstatus.cstime().usec);
 
   for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
     process(val.first);  // Register

@@ -16,6 +16,7 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
 
+#include "pyIterators.hpp"
 #include "pyDEX.hpp"
 
 namespace LIEF {
@@ -34,8 +35,15 @@ using setter_t = void (Class::*)(T);
 template<>
 void create<Class>(py::module& m) {
 
-  py::class_<Class, LIEF::Object>(m, "Class", "DEX Class representation")
+  py::class_<Class, LIEF::Object> cls(m, "Class", "DEX Class representation");
 
+  init_ref_iterator<Class::it_methods>(cls, "it_methods");
+  init_ref_iterator<Class::it_fields>(cls, "it_fields");
+
+  init_ref_iterator<Class::it_named_methods>(cls, "it_named_methods");
+  init_ref_iterator<Class::it_named_fields>(cls, "it_named_fields");
+
+  cls
     .def_property_readonly("fullname",
         &Class::fullname,
         "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)")
@@ -61,24 +69,24 @@ void create<Class>(py::module& m) {
         "True if the current class extends another one")
 
     .def_property_readonly("parent",
-        static_cast<no_const_getter_t<Class&>>(&Class::parent),
+        static_cast<no_const_getter_t<Class*>>(&Class::parent),
         "" RST_CLASS_REF(lief.DEX.Class) " parent class")
 
     .def_property_readonly("methods",
-        static_cast<no_const_getter_t<it_methods>>(&Class::methods),
+        static_cast<no_const_getter_t<Class::it_methods>>(&Class::methods),
         "Iterator over " RST_CLASS_REF(lief.DEX.Method) " implemented in this class")
 
     .def("get_method",
-        static_cast<it_methods(Class::*)(const std::string&)>(&Class::methods),
+        static_cast<Class::it_named_methods(Class::*)(const std::string&)>(&Class::methods),
         "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name",
         "name"_a)
 
     .def_property_readonly("fields",
-        static_cast<no_const_getter_t<it_fields>>(&Class::fields),
+        static_cast<no_const_getter_t<Class::it_fields>>(&Class::fields),
         "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class")
 
     .def("get_field",
-        static_cast<it_fields(Class::*)(const std::string&)>(&Class::fields),
+        static_cast<Class::it_named_fields(Class::*)(const std::string&)>(&Class::fields),
         "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name",
         "name"_a)
 

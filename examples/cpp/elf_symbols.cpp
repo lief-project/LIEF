@@ -22,24 +22,24 @@ using namespace LIEF::ELF;
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <ELF binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <ELF binary>" << '\n';
     return EXIT_FAILURE;
   }
 
   if (!is_elf(argv[1])) {
-    std::cerr << argv[1] << " is not a ELF file. Abort !" << std::endl;
+    std::cerr << argv[1] << " is not a ELF file. Abort !" << '\n';
     return EXIT_FAILURE;
   }
 
   std::unique_ptr<const Binary> binary{Parser::parse(argv[1])};
 
-  std::cout << "== Exported Symbols ==" << std::endl;
+  std::cout << "== Exported Symbols ==" << '\n';
   for (const Symbol& symbol : binary->exported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
-  std::cout << "== Imported Symbols ==" << std::endl;
+  std::cout << "== Imported Symbols ==" << '\n';
   for (const Symbol& symbol : binary->imported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
 

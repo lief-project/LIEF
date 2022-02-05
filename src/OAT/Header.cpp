@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include "logging.hpp"
 #include "LIEF/OAT/Header.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/hash.hpp"
@@ -29,8 +29,7 @@ Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
 Header::Header() :
-  magic_{{'o', 'a', 't', '\n'}},
-  version_{0}
+  magic_{{'o', 'a', 't', '\n'}}
 {}
 
 
@@ -170,34 +169,35 @@ Header::values_t Header::values() const {
   return values_list;
 }
 
-const std::string& Header::get(HEADER_KEYS key) const {
+const std::string* Header::get(HEADER_KEYS key) const {
   const auto it = dex2oat_context_.find(key);
   if (it == std::end(dex2oat_context_)) {
-    throw not_found("Unable to find the key " + Header::key_to_string(key));
+    return nullptr;
   }
-  return it->second;
+  return &it->second;
 }
 
-std::string& Header::get(HEADER_KEYS key) {
-  return const_cast<std::string&>(static_cast<const Header*>(this)->get(key));
+std::string* Header::get(HEADER_KEYS key) {
+  return const_cast<std::string*>(static_cast<const Header*>(this)->get(key));
 }
 
 
 Header& Header::set(HEADER_KEYS key, const std::string& value) {
   const auto it = dex2oat_context_.find(key);
   if (it == std::end(dex2oat_context_)) {
-    throw not_found(std::string{"Can't find key: '"} + to_string(key) + "'");
+    LIEF_WARN("Can't find the key {}", to_string(key));
+    return *this;
   }
 
   it->second = value;
   return *this;
 }
 
-const std::string& Header::operator[](HEADER_KEYS key) const {
+const std::string* Header::operator[](HEADER_KEYS key) const {
   return get(key);
 }
 
-std::string& Header::operator[](HEADER_KEYS key) {
+std::string* Header::operator[](HEADER_KEYS key) {
   return get(key);
 }
 
@@ -206,6 +206,9 @@ void Header::accept(Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

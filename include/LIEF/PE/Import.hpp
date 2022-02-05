@@ -22,8 +22,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -41,6 +40,10 @@ class LIEF_API Import : public Object {
   friend class Builder;
 
   public:
+  using entries_t        = std::vector<ImportEntry>;
+  using it_entries       = ref_iterator<entries_t&>;
+  using it_const_entries = const_ref_iterator<const entries_t&>;
+
   Import(const details::pe_import& import);
   Import(std::string name);
   Import();
@@ -58,8 +61,8 @@ class LIEF_API Import : public Object {
   uint32_t timedatestamp() const;
 
   //! Iterator over the PE::ImportEntry
-  it_import_entries       entries();
-  it_const_import_entries entries() const;
+  it_const_entries entries() const;
+  it_entries       entries();
 
   //! The RVA of the import address table (``IAT``). The content of this table is
   //! **identical** to the content of the Import Lookup Table (``ILT``) until the image is bound.
@@ -81,8 +84,8 @@ class LIEF_API Import : public Object {
   uint32_t get_function_rva_from_iat(const std::string& function) const;
 
   //! Return the imported function with the given name
-  ImportEntry&       get_entry(const std::string& name);
-  const ImportEntry& get_entry(const std::string& name) const;
+  ImportEntry*       get_entry(const std::string& name);
+  const ImportEntry* get_entry(const std::string& name) const;
 
   //! Return the library's name (e.g. `kernel32.dll`)
   const std::string& name() const;
@@ -92,13 +95,17 @@ class LIEF_API Import : public Object {
 
   //! Return the PE::DataDirectory associated with this import.
   //! It should be the one at index PE::DATA_DIRECTORY::IMPORT_TABLE
-  DataDirectory&       directory();
-  const DataDirectory& directory() const;
+  //!
+  //! If the data directory can't be found, return a nullptr
+  DataDirectory*       directory();
+  const DataDirectory* directory() const;
 
   //! Return the PE::DataDirectory associated associated with the IAT.
   //! It should be the one at index PE::DATA_DIRECTORY::IAT
-  DataDirectory&       iat_directory();
-  const DataDirectory& iat_directory() const;
+  //!
+  //! If the data directory can't be found, return a nullptr
+  DataDirectory*       iat_directory();
+  const DataDirectory* iat_directory() const;
 
   //! Add a new import entry (i.e. an imported function)
   ImportEntry& add_entry(const ImportEntry& entry);
@@ -117,16 +124,16 @@ class LIEF_API Import : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Import& entry);
 
   private:
-  import_entries_t entries_;
-  DataDirectory*   directory_{nullptr};
-  DataDirectory*   iat_directory_{nullptr};
-  uint32_t         import_lookup_table_RVA_;
-  uint32_t         timedatestamp_;
-  uint32_t         forwarder_chain_;
-  uint32_t         name_RVA_;
-  uint32_t         import_address_table_RVA_;
+  entries_t        entries_;
+  DataDirectory*   directory_ = nullptr;
+  DataDirectory*   iat_directory_ = nullptr;
+  uint32_t         import_lookup_table_RVA_ = 0;
+  uint32_t         timedatestamp_ = 0;
+  uint32_t         forwarder_chain_ = 0;
+  uint32_t         name_RVA_ = 0;
+  uint32_t         import_address_table_RVA_ = 0;
   std::string      name_;
-  PE_TYPE          type_;
+  PE_TYPE          type_ = PE_TYPE::PE32;
 };
 
 }

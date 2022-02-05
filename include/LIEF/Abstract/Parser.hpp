@@ -47,7 +47,7 @@ class LIEF_API Parser {
 
   protected:
   Parser(const std::string& file);
-  uint64_t    binary_size_;
+  uint64_t    binary_size_  = 0;
   std::string binary_name_;
 
   ~Parser();

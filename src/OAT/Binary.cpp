@@ -15,17 +15,21 @@
  */
 #include <fstream>
 
+#include "LIEF/VDEX.hpp"
+#include "LIEF/VDEX/File.hpp"
+#include "LIEF/DEX/File.hpp"
+
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/hash.hpp"
 #include "logging.hpp"
 #include "visitors/json.hpp"
 
-#include "LIEF/VDEX.hpp"
 
 namespace LIEF {
 namespace OAT {
 
 Binary::Binary() = default;
+Binary::~Binary() = default;
 
 const Header& Binary::header() const {
   return header_;
@@ -35,67 +39,57 @@ Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
 }
 
-DEX::it_dex_files Binary::dex_files() {
+Binary::it_dex_files Binary::dex_files() {
+  if (vdex_ != nullptr) {
+    return vdex_->dex_files_;
+  }
   return dex_files_;
 }
 
-DEX::it_const_dex_files Binary::dex_files() const {
+Binary::it_const_dex_files Binary::dex_files() const {
+  if (vdex_ != nullptr) {
+    return vdex_->dex_files_;
+  }
   return dex_files_;
 }
 
-it_dex_files Binary::oat_dex_files() {
-  return oat_dex_files_;
-}
-it_const_dex_files Binary::oat_dex_files() const {
+Binary::it_oat_dex_files Binary::oat_dex_files() {
   return oat_dex_files_;
 }
 
-
-it_const_classes Binary::classes() const {
-  classes_list_t classes;
-  classes.reserve(classes_.size());
-
-  std::transform(
-      std::begin(classes_), std::end(classes_),
-      std::back_inserter(classes),
-      [] (const std::pair<std::string, Class*>& it) {
-        return it.second;
-      });
-  return classes;
+Binary::it_const_oat_dex_files Binary::oat_dex_files() const {
+  return oat_dex_files_;
 }
 
-it_classes Binary::classes() {
-  classes_list_t classes;
-  classes.reserve(classes_.size());
 
-  std::transform(
-      std::begin(classes_), std::end(classes_),
-      std::back_inserter(classes),
-      [] (const std::pair<std::string, Class*>& it) {
-        return it.second;
-      });
-  return classes;
+Binary::it_const_classes Binary::classes() const {
+  return classes_list_;
+}
+
+Binary::it_classes Binary::classes() {
+  return classes_list_;
 }
 
 bool Binary::has_class(const std::string& class_name) const {
   return classes_.find(DEX::Class::fullname_normalized(class_name)) != std::end(classes_);
 }
 
-const Class& Binary::get_class(const std::string& class_name) const {
-  if (!has_class(class_name)) {
-    throw not_found(class_name);
+const Class* Binary::get_class(const std::string& class_name) const {
+  auto it = classes_.find(DEX::Class::fullname_normalized(class_name));
+  if (it == std::end(classes_)) {
+    return nullptr;
   }
-  return *(classes_.find(DEX::Class::fullname_normalized(class_name))->second);
+  return it->second;
 }
 
-Class& Binary::get_class(const std::string& class_name) {
-  return const_cast<Class&>(static_cast<const Binary*>(this)->get_class(class_name));
+Class* Binary::get_class(const std::string& class_name) {
+  return const_cast<Class*>(static_cast<const Binary*>(this)->get_class(class_name));
 }
 
 
-const Class& Binary::get_class(size_t index) const {
+const Class* Binary::get_class(size_t index) const {
   if (index >= classes_.size()) {
-    throw not_found("Can't find class at index " + std::to_string(index));
+    return nullptr;
   }
 
   const auto it = std::find_if(std::begin(classes_), std::end(classes_),
@@ -103,29 +97,29 @@ const Class& Binary::get_class(size_t index) const {
         return p.second->index() == index;
       });
 
-  if (it != std::end(classes_)) {
-    return *it->second;
+  if (it == std::end(classes_)) {
+    return nullptr;
   }
-
-  throw not_found("Can't find class at index " + std::to_string(index));
+  return it->second;
 }
 
-Class& Binary::get_class(size_t index) {
-  return const_cast<Class&>(static_cast<const Binary*>(this)->get_class(index));
+Class* Binary::get_class(size_t index) {
+  return const_cast<Class*>(static_cast<const Binary*>(this)->get_class(index));
 }
 
-it_const_methods Binary::methods() const {
+Binary::it_const_methods Binary::methods() const {
   return methods_;
 }
 
-it_methods Binary::methods() {
+Binary::it_methods Binary::methods() {
   return methods_;
 }
 
-dex2dex_info_t Binary::dex2dex_info() const {
+Binary::dex2dex_info_t Binary::dex2dex_info() const {
   dex2dex_info_t info;
-  for (DEX::File* dex_file : dex_files_) {
-    info.emplace(dex_file, dex_file->dex2dex_info());
+
+  for (const DEX::File& dex_file : dex_files()) {
+    info.emplace(&dex_file, dex_file.dex2dex_info());
   }
   return info;
 }
@@ -135,9 +129,9 @@ std::string Binary::dex2dex_json_info() {
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
-  for (DEX::File* dex_file : dex_files_) {
-    json dex2dex = json::parse(dex_file->dex2dex_json_info());
-    mapping[dex_file->name()] = dex2dex;
+  for (const DEX::File& dex_file : dex_files()) {
+    json dex2dex = json::parse(dex_file.dex2dex_json_info());
+    mapping[dex_file.name()] = dex2dex;
   }
 
   return mapping.dump();
@@ -147,11 +141,19 @@ std::string Binary::dex2dex_json_info() {
 
 }
 
+void Binary::add_class(std::unique_ptr<Class> cls) {
+  classes_.emplace(cls->fullname(), cls.get());
+  classes_list_.push_back(std::move(cls));
+}
+
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 bool Binary::operator==(const Binary& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -159,31 +161,6 @@ bool Binary::operator==(const Binary& rhs) const {
 
 bool Binary::operator!=(const Binary& rhs) const {
   return !(*this == rhs);
-}
-
-Binary::~Binary() {
-
-  for (DexFile* file : oat_dex_files_) {
-    delete file;
-  }
-
-  for (const std::pair<const std::string, Class*>& p : classes_) {
-    delete p.second;
-  }
-
-  for (Method* mtd : methods_) {
-    delete mtd;
-  }
-
-  if (vdex_ == nullptr) {
-    // DEX are owned by us
-    for (DEX::File* file : dex_files_) {
-      delete file;
-    }
-  } else {
-    // DEX file are owned by VDEX
-    delete vdex_;
-  }
 }
 
 std::ostream& operator<<(std::ostream& os, const Binary& binary) {

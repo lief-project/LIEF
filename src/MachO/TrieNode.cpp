@@ -24,44 +24,40 @@
 namespace LIEF {
 namespace MachO {
 
-TrieEdge::TrieEdge(std::string str, TrieNode* node) :
+TrieEdge::TrieEdge(std::string str, TrieNode& node) :
   substr{std::move(str)},
-  child{node}
+  child{&node}
 {}
 
 
-TrieEdge* TrieEdge::create(const std::string& str, TrieNode* node) {
-  return new TrieEdge{str, node};
+std::unique_ptr<TrieEdge> TrieEdge::create(const std::string& str, TrieNode& node) {
+  return std::make_unique<TrieEdge>(str, node);
 }
 
 TrieEdge::~TrieEdge() = default;
 
+TrieNode::~TrieNode() = default;
 TrieNode::TrieNode(std::string str) :
-  cummulative_string_{std::move(str)},
-  address_{0},
-  flags_{0},
-  other_{0},
-  trie_offset_{0},
-  has_export_info_{false}
+  cummulative_string_{std::move(str)}
 {}
 
 
-TrieNode* TrieNode::create(const std::string& str) {
-  return new TrieNode{str};
+std::unique_ptr<TrieNode> TrieNode::create(const std::string& str) {
+  return std::make_unique<TrieNode>(str);
 }
 
-TrieNode::~TrieNode() {
-  for (TrieEdge* edge : children_) {
-    delete edge;
-  }
-}
 
 
 // Mainly inspired from LLVM: lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
-TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& nodes) {
-  std::string partial_str = info.symbol().name().substr(cummulative_string_.size());
+TrieNode& TrieNode::add_symbol(const ExportInfo& info, TrieNode::node_list_t& nodes) {
+  if (!info.has_symbol()) {
+    LIEF_ERR("Missing symbol in the Trie node");
+    return *this;
+  }
+  const Symbol& sym = *info.symbol();
+  std::string partial_str = sym.name().substr(cummulative_string_.size());
 
-  for (TrieEdge* edge : children_) {
+  for (std::unique_ptr<TrieEdge>& edge : children_) {
 
     std::string edge_string = edge->substr;
 
@@ -76,10 +72,9 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
         std::string b_node_str = edge->child->cummulative_string_;
         b_node_str = b_node_str.substr(0, b_node_str.size() + n - edge_string.size()); // drop front
 
-        TrieNode* b_new_node = TrieNode::create(b_node_str);
-        nodes.push_back(b_new_node);
+        std::unique_ptr<TrieNode> b_new_node = TrieNode::create(b_node_str);
 
-        TrieNode* c_node = edge->child;
+        TrieNode& c_node = *edge->child;
 
         std::string ab_edge_str = edge_string.substr(0, n);
         std::string bc_edge_str = edge_string.substr(n);
@@ -87,11 +82,13 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
         TrieEdge& ab_edge = *edge;
 
         ab_edge.substr = ab_edge_str;
-        ab_edge.child = b_new_node;
+        ab_edge.child = b_new_node.get();
 
-        TrieEdge* bc_edge = TrieEdge::create(bc_edge_str, c_node);
-        b_new_node->children_.push_back(bc_edge);
+        std::unique_ptr<TrieEdge> bc_edge = TrieEdge::create(bc_edge_str, c_node);
+        b_new_node->children_.push_back(std::move(bc_edge));
         b_new_node->add_symbol(info, nodes);
+
+        nodes.push_back(std::move(b_new_node));
         return *this;
       }
     }
@@ -109,10 +106,9 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
     }
   }
 
-  TrieNode* new_node = TrieNode::create(info.symbol().name());
-  TrieEdge* new_edge = TrieEdge::create(partial_str, new_node);
+  std::unique_ptr<TrieNode> new_node = TrieNode::create(sym.name());
+  std::unique_ptr<TrieEdge> new_edge = TrieEdge::create(partial_str, *new_node);
 
-  children_.push_back(new_edge);
 
   new_node->address_ = info.address();
   new_node->flags_   = info.flags();
@@ -120,12 +116,15 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, std::vector<TrieNode*>& n
 
   if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
     new_node->imported_name_ = "";
-    if ((info.alias() != nullptr) && info.alias()->name() != info.symbol().name())
-    new_node->imported_name_ = info.alias()->name();
+    if ((info.alias() != nullptr) && info.alias()->name() != sym.name()) {
+      new_node->imported_name_ = info.alias()->name();
+    }
   }
 
   new_node->has_export_info_ = true;
-  nodes.push_back(new_node);
+
+  children_.push_back(std::move(new_edge));
+  nodes.push_back(std::move(new_node));
   return *this;
 }
 
@@ -138,8 +137,13 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info, std::vector<TrieNo
     ordered_ = true;
   }
 
-  std::string partial_str = info.symbol().name().substr(cummulative_string_.size());
-  for (TrieEdge* edge : children_) {
+  if (!info.has_symbol()) {
+    LIEF_ERR("Missing symbol can process add_ordered_nodes");
+    return *this;
+  }
+
+  std::string partial_str = info.symbol()->name().substr(cummulative_string_.size());
+  for (std::unique_ptr<TrieEdge>& edge : children_) {
     std::string edge_string = edge->substr;
 
     if (partial_str.find(edge_string) == 0) {
@@ -171,7 +175,7 @@ bool TrieNode::update_offset(uint32_t& offset) {
 
   ++node_size;
 
-  for (TrieEdge* edge : children_) {
+  for (std::unique_ptr<TrieEdge>& edge : children_) {
     node_size += edge->substr.size() + 1;
     node_size += vector_iostream::uleb128_size(edge->child->trie_offset_);
   }
@@ -244,7 +248,7 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
   }
 
   buffer.write<uint8_t>(children_.size());
-  for (TrieEdge* edge : children_) {
+  for (std::unique_ptr<TrieEdge>& edge : children_) {
     buffer.write(edge->substr)
           .write_uleb128(edge->child->trie_offset_);
   }

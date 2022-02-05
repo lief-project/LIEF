@@ -27,8 +27,7 @@ set(LIEF_API_C_PE_INCLUDE_FILES_CPP
 )
 
 set(LIEF_API_C_PE_INCLUDE_FILES_C
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/structures.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/PE/enums.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/enums.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/Binary.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/DataDirectory.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/PE/DosHeader.h"

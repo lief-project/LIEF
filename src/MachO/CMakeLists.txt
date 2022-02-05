@@ -1,18 +1,3 @@
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/enums.inc"      LIEF_MACHO_ENUMS)
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/structures.inc" LIEF_MACHO_STRUCTURES)
-
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/enums.hpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp"
-  @ONLY
-)
-
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Structures.hpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/Structures.hpp"
-  @ONLY
-)
-
 set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Binary.cpp"
@@ -82,8 +67,7 @@ set(LIEF_MACHO_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/DyldInfo.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/UUIDCommand.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/FunctionStarts.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/enums.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/SourceVersion.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/VersionMin.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/MachO/Relocation.hpp"

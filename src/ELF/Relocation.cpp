@@ -23,13 +23,14 @@
 #include "LIEF/ELF/Symbol.hpp"
 
 #include "LIEF/ELF/RelocationSizes.hpp"
+#include "ELF/Structures.hpp"
+
 #include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 Relocation::~Relocation() = default;
-
 Relocation::Relocation() = default;
 
 Relocation::Relocation(const Relocation& other) :
@@ -37,9 +38,7 @@ Relocation::Relocation(const Relocation& other) :
   type_{other.type_},
   addend_{other.addend_},
   isRela_{other.isRela_},
-  architecture_{other.architecture_},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  info_{0}
+  architecture_{other.architecture_}
 {}
 
 
@@ -56,10 +55,6 @@ Relocation& Relocation::operator=(Relocation other) {
 Relocation::Relocation(const details::Elf32_Rel& header) :
   LIEF::Relocation{header.r_offset, 0},
   type_{static_cast<uint32_t>(header.r_info & 0xff)},
-  addend_{0},
-  isRela_{false},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
   info_{static_cast<uint32_t>(header.r_info >> 8)}
 {}
 
@@ -69,8 +64,6 @@ Relocation::Relocation(const details::Elf32_Rela& header) :
   type_{static_cast<uint32_t>(header.r_info & 0xff)},
   addend_{header.r_addend},
   isRela_{true},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
   info_{static_cast<uint32_t>(header.r_info >> 8)}
 {}
 
@@ -78,10 +71,6 @@ Relocation::Relocation(const details::Elf32_Rela& header) :
 Relocation::Relocation(const details::Elf64_Rel& header) :
   LIEF::Relocation{header.r_offset, 0},
   type_{static_cast<uint32_t>(header.r_info & 0xffffffff)},
-  addend_{0},
-  isRela_{false},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
   info_{static_cast<uint32_t>(header.r_info >> 32)}
 {}
 
@@ -91,8 +80,6 @@ Relocation::Relocation(const details::Elf64_Rela& header)  :
   type_{static_cast<uint32_t>(header.r_info & 0xffffffff)},
   addend_{header.r_addend},
   isRela_{true},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
   info_{static_cast<uint32_t>(header.r_info >> 32)}
 {}
 
@@ -101,10 +88,7 @@ Relocation::Relocation(uint64_t address, uint32_t type, int64_t addend, bool isR
   LIEF::Relocation{address, 0},
   type_{type},
   addend_{addend},
-  isRela_{isRela},
-  architecture_{ARCH::EM_NONE},
-  purpose_{RELOCATION_PURPOSES::RELOC_PURPOSE_NONE},
-  info_{0}
+  isRela_{isRela}
 {}
 
 
@@ -130,28 +114,20 @@ uint32_t Relocation::type() const {
 }
 
 
-const Symbol& Relocation::symbol() const {
-  if (symbol_ != nullptr) {
-    return *symbol_;
-  } else {
-    throw not_found("No symbol associated with this relocation");
-  }
+const Symbol* Relocation::symbol() const {
+  return symbol_;
 }
 
-Symbol& Relocation::symbol() {
-  return const_cast<Symbol&>(static_cast<const Relocation*>(this)->symbol());
+Symbol* Relocation::symbol() {
+  return const_cast<Symbol*>(static_cast<const Relocation*>(this)->symbol());
 }
 
-const Section& Relocation::section() const {
-  if (has_section()) {
-    return *section_;
-  } else {
-    throw not_found("No section associated with this relocation");
-  }
+const Section* Relocation::section() const {
+  return section_;
 }
 
-Section& Relocation::section() {
-  return const_cast<Section&>(static_cast<const Relocation*>(this)->section());
+Section* Relocation::section() {
+  return const_cast<Section*>(static_cast<const Relocation*>(this)->section());
 }
 
 bool Relocation::is_rela() const {
@@ -302,6 +278,10 @@ void Relocation::accept(Visitor& visitor) const {
 
 
 bool Relocation::operator==(const Relocation& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
+
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -317,12 +297,11 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
   os << std::hex;
   os << std::left;
 
-  if (entry.has_symbol()) {
-    const Symbol& symbol = entry.symbol();
-    try {
-      symbol_name = symbol.demangled_name();
-    } catch (const not_supported&) {
-      symbol_name = symbol.name();
+  const Symbol* symbol = entry.symbol();
+  if (symbol != nullptr) {
+    symbol_name = symbol->demangled_name();
+    if (symbol_name.empty()) {
+      symbol_name = symbol->name();
     }
   }
 

@@ -36,12 +36,17 @@ void CoreAuxv::parse_() {
     return;
   }
 
-  const VectorStream& stream(desc);
+  VectorStream stream(desc);
   while (stream.can_read<Elf_Auxv>()) {
-    const Elf_Auxv auxv = stream.read<Elf_Auxv>();
-    AUX_TYPE type = static_cast<AUX_TYPE>(auxv.a_type);
-    if (type == AUX_TYPE::AT_NULL)
+    auto res_auxv = stream.read<Elf_Auxv>();
+    if (!res_auxv) {
       break;
+    }
+    auto auxv = *res_auxv;
+    auto type = static_cast<AUX_TYPE>(auxv.a_type);
+    if (type == AUX_TYPE::AT_NULL) {
+      break;
+    }
     ctx_[type] = static_cast<uint__>(auxv.a_un.a_val);
   }
 
@@ -60,8 +65,9 @@ void CoreAuxv::build_() {
   for (const auto& val : ctx_) {
     AUX_TYPE type = val.first;
     // skip for now, will be added at the end
-    if (type == AUX_TYPE::AT_NULL)
+    if (type == AUX_TYPE::AT_NULL) {
       continue;
+    }
     const Elf_Auxv aux = { static_cast<uint__>(val.first), {static_cast<uint__>(val.second)} };
     raw_output.write_conv(aux);
   }

@@ -32,15 +32,19 @@
 using namespace LIEF;
 
 int main(int argc, char **argv) {
-  std::cout << "MachO Rebuilder" << std::endl;
+  std::cout << "MachO Rebuilder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << std::endl;
-    return -1;
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << "\n";
+    return 1;
   }
 
-  std::unique_ptr<LIEF::MachO::FatBinary> binaries{MachO::Parser::parse(argv[1])};
-  MachO::Binary& binary = binaries->back();
-  binary.write(argv[2]);
+  std::unique_ptr<LIEF::MachO::FatBinary> fat = MachO::Parser::parse(argv[1]);
+  MachO::Binary* binary = fat->back();
+  if (binary == nullptr) {
+    std::cerr << "Can't access binary" << "\n";
+    return 1;
+  }
+  binary->write(argv[2]);
 
   return 0;
 }

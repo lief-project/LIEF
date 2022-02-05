@@ -21,8 +21,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/PE/RichEntry.hpp"
 
@@ -33,6 +32,10 @@ namespace PE {
 class LIEF_API RichHeader : public Object {
   public:
 
+  using entries_t        = std::vector<RichEntry>;
+  using it_entries       = ref_iterator<entries_t&>;
+  using it_const_entries = const_ref_iterator<const entries_t&>;
+
   RichHeader();
   RichHeader(const RichHeader&);
   RichHeader& operator=(const RichHeader&);
@@ -42,8 +45,8 @@ class LIEF_API RichHeader : public Object {
   uint32_t key() const;
 
   //! Return an iterator over the PE::RichEntry within the header
-  it_rich_entries entries();
-  it_const_rich_entries entries() const;
+  it_entries entries();
+  it_const_entries entries() const;
 
   void key(uint32_t key);
 
@@ -61,8 +64,8 @@ class LIEF_API RichHeader : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header);
 
   private:
-  uint32_t       key_;
-  rich_entries_t entries_;
+  uint32_t  key_ = 0;
+  entries_t entries_;
 
 };
 }

@@ -18,15 +18,22 @@
 
 #include "LIEF/MachO/hash.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
 
+bool SegmentCommand::KeyCmp::operator() (const std::unique_ptr<Relocation>& lhs,
+                                         const std::unique_ptr<Relocation>& rhs) const {
+  return *lhs < *rhs;
+}
+
 SegmentCommand::SegmentCommand() = default;
+SegmentCommand::~SegmentCommand() = default;
+
 SegmentCommand& SegmentCommand::operator=(SegmentCommand other) {
   swap(other);
   return *this;
@@ -46,11 +53,11 @@ SegmentCommand::SegmentCommand(const SegmentCommand& other) :
   data_{other.data_}
 {
 
-  for (Section* section : other.sections_) {
-    auto* new_section = new Section{*section};
+  for (const std::unique_ptr<Section>& section : other.sections_) {
+    auto new_section = std::make_unique<Section>(*section);
     new_section->segment_ = this;
     new_section->segment_name_ = name();
-    sections_.push_back(new_section);
+    sections_.push_back(std::move(new_section));
   }
 
   // TODO:
@@ -61,15 +68,6 @@ SegmentCommand::SegmentCommand(const SegmentCommand& other) :
 }
 
 
-SegmentCommand::~SegmentCommand() {
-  for (Relocation* reloc : relocations_) {
-    delete reloc;
-  }
-
-  for (Section* section : sections_) {
-    delete section;
-  }
-}
 
 SegmentCommand::SegmentCommand(const details::segment_command_32& seg) :
   LoadCommand{LOAD_COMMAND_TYPES::LC_SEGMENT, seg.cmdsize},
@@ -122,19 +120,15 @@ SegmentCommand* SegmentCommand::clone() const {
 }
 
 
-SegmentCommand::SegmentCommand(const std::string& name, const content_t& content) :
-  SegmentCommand{}
-{
-  this->name(name);
-  this->content(std::move(content));
-}
+SegmentCommand::SegmentCommand(std::string name, content_t content) :
+  name_{std::move(name)},
+  data_{std::move(content)}
+{}
 
 
-SegmentCommand::SegmentCommand(const std::string& name) :
-  SegmentCommand{}
-{
-  this->name(name);
-}
+SegmentCommand::SegmentCommand(std::string name) :
+  name_{std::move(name)}
+{}
 
 const std::string& SegmentCommand::name() const {
   return name_;
@@ -172,20 +166,20 @@ uint32_t SegmentCommand::flags() const {
   return flags_;
 }
 
-it_sections SegmentCommand::sections() {
+SegmentCommand::it_sections SegmentCommand::sections() {
   return sections_;
 }
 
-it_const_sections SegmentCommand::sections() const {
+SegmentCommand::it_const_sections SegmentCommand::sections() const {
   return sections_;
 }
 
 
-it_relocations SegmentCommand::relocations() {
+SegmentCommand::it_relocations SegmentCommand::relocations() {
   return relocations_;
 }
 
-it_const_relocations SegmentCommand::relocations() const {
+SegmentCommand::it_const_relocations SegmentCommand::relocations() const {
   return relocations_;
 }
 
@@ -230,18 +224,18 @@ void SegmentCommand::flags(uint32_t flags) {
 }
 
 
-void SegmentCommand::content(const SegmentCommand::content_t& data) {
-  data_ = data;
+void SegmentCommand::content(SegmentCommand::content_t data) {
+  data_ = std::move(data);
 }
 
 
 void SegmentCommand::remove_all_sections() {
   numberof_sections(0);
-  sections_ = {};
+  sections_.clear();
 }
 
 Section& SegmentCommand::add_section(const Section& section) {
-  std::unique_ptr<Section> new_section{new Section{section}};
+  auto new_section = std::make_unique<Section>(section);
 
   new_section->segment_ = this;
   new_section->segment_name_ = name();
@@ -266,13 +260,13 @@ Section& SegmentCommand::add_section(const Section& section) {
             std::begin(data_) + relative_offset);
 
   file_size(data_.size());
-  sections_.push_back(new_section.release());
+  sections_.push_back(std::move(new_section));
   return *sections_.back();
 }
 
 bool SegmentCommand::has(const Section& section) const {
   auto it = std::find_if(std::begin(sections_), std::end(sections_),
-      [&section] (const Section* sec) {
+      [&section] (const std::unique_ptr<Section>& sec) {
         return *sec == section;
       });
   return it != std::end(sections_);
@@ -280,7 +274,7 @@ bool SegmentCommand::has(const Section& section) const {
 
 bool SegmentCommand::has_section(const std::string& section_name) const {
   auto it = std::find_if(std::begin(sections_), std::end(sections_),
-      [&section_name] (const Section* sec) {
+      [&section_name] (const std::unique_ptr<Section>& sec) {
         return sec->name() == section_name;
       });
   return it != std::end(sections_);
@@ -292,6 +286,9 @@ void SegmentCommand::accept(Visitor& visitor) const {
 }
 
 bool SegmentCommand::operator==(const SegmentCommand& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

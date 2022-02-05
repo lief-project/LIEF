@@ -11,8 +11,6 @@ set(LIEF_PYTHON_OAT_OBJECTS_SRC
 set(LIEF_PYTHON_OAT_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyOAT.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyIterators.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyOpaqueTypes.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyUtils.cpp"
 )
 

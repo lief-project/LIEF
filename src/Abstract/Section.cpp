@@ -20,6 +20,7 @@
 #include <iomanip>
 #include <utility>
 
+#include "logging.hpp"
 #include "LIEF/Abstract/hash.hpp"
 #include "LIEF/exception.hpp"
 
@@ -51,12 +52,13 @@ void Section::name(const std::string& name) {
 
 
 void Section::content(const std::vector<uint8_t>&) {
-  throw not_supported("Not supported by this format");
+  LIEF_ERR("Not supported by this format");
 }
 
 
 std::vector<uint8_t> Section::content() const {
-  throw not_supported("Not supported by this format");
+  LIEF_ERR("Not supported by this format");
+  return {};
 }
 
 
@@ -114,10 +116,9 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
 
   std::vector<uint8_t> pattern(minimal_size, 0);
 
-  std::copy(
-      reinterpret_cast<const uint8_t*>(&integer),
-      reinterpret_cast<const uint8_t*>(&integer) + minimal_size,
-      pattern.data());
+  std::copy(reinterpret_cast<const uint8_t*>(&integer),
+            reinterpret_cast<const uint8_t*>(&integer) + minimal_size,
+            pattern.data());
 
   return search(pattern, pos);
 }
@@ -196,6 +197,9 @@ void Section::accept(Visitor& visitor) const {
 
 
 bool Section::operator==(const Section& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = AbstractHash::hash(*this);
   size_t hash_rhs = AbstractHash::hash(rhs);
   return hash_lhs == hash_rhs;

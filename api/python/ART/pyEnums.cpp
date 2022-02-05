@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "pyART.hpp"
-#include "LIEF/ART/Structures.hpp"
 #include "LIEF/ART/enums.hpp"
 #include "LIEF/ART/EnumToString.hpp"
 

@@ -19,10 +19,10 @@
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 
 namespace LIEF {
@@ -30,15 +30,10 @@ namespace PE {
 
 DataDirectory::~DataDirectory() = default;
 
-DataDirectory::DataDirectory() :
-  rva_{0},
-  size_{0},
-  type_{}
-{}
+DataDirectory::DataDirectory() = default;
+
 
 DataDirectory::DataDirectory(DATA_DIRECTORY type) :
-  rva_{0},
-  size_{0},
   type_{type}
 {}
 
@@ -48,12 +43,7 @@ DataDirectory::DataDirectory(const details::pe_data_directory& header, DATA_DIRE
   type_{type}
 {}
 
-DataDirectory::DataDirectory(const DataDirectory& other) :
-  Object{other},
-  rva_{other.rva_},
-  size_{other.size_},
-  type_{other.type_}
-{}
+DataDirectory::DataDirectory(const DataDirectory& other) = default;
 
 DataDirectory& DataDirectory::operator=(DataDirectory other) {
   swap(other);
@@ -66,8 +56,6 @@ void DataDirectory::swap(DataDirectory& other) {
   std::swap(type_,    other.type_);
   std::swap(section_, other.section_);
 }
-
-
 
 uint32_t DataDirectory::RVA() const {
   return rva_;
@@ -84,17 +72,12 @@ bool DataDirectory::has_section() const {
 }
 
 
-const Section& DataDirectory::section() const {
-  if (section_ != nullptr) {
-    return *section_;
-  } else {
-    throw not_found("No section associated with the data directory '" +
-        std::string{to_string(type())} + "'");
-  }
+const Section* DataDirectory::section() const {
+  return section_;
 }
 
-Section& DataDirectory::section() {
-  return const_cast<Section&>(static_cast<const DataDirectory*>(this)->section());
+Section* DataDirectory::section() {
+  return const_cast<Section*>(static_cast<const DataDirectory*>(this)->section());
 }
 
 DATA_DIRECTORY DataDirectory::type() const {
@@ -117,6 +100,9 @@ void DataDirectory::accept(LIEF::Visitor& visitor) const {
 
 
 bool DataDirectory::operator==(const DataDirectory& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -132,7 +118,7 @@ std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
   os << std::setw(10) << std::left << std::setfill(' ') << "RVA: 0x"  << entry.RVA()  << std::endl;
   os << std::setw(10) << std::left << std::setfill(' ') << "Size: 0x" << entry.size() << std::endl;
   if (entry.has_section()) {
-    os << std::setw(10) << std::left << std::setfill(' ') << "Section: " << entry.section().name() << std::endl;
+    os << std::setw(10) << std::left << std::setfill(' ') << "Section: " << entry.section()->name() << std::endl;
   }
 
   return os;

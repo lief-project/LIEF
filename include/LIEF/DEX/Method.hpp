@@ -16,19 +16,19 @@
 #ifndef LIEF_DEX_METHOD_H_
 #define LIEF_DEX_METHOD_H_
 
-#include "LIEF/DEX/type_traits.hpp"
-#include "LIEF/DEX/Structures.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
+#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/CodeInfo.hpp"
-#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
 namespace DEX {
 class Parser;
 class Class;
+class Prototype;
 
 //! Class which represents a DEX::Method
 class LIEF_API Method : public Object {
@@ -39,7 +39,7 @@ class LIEF_API Method : public Object {
   public:
   using bytecode_t = std::vector<uint8_t>;
   Method();
-  Method(std::string  name, Class* parent = nullptr);
+  Method(std::string name, Class* parent = nullptr);
 
   Method(const Method&);
   Method& operator=(const Method&);
@@ -50,9 +50,10 @@ class LIEF_API Method : public Object {
   //! True if a class is associated with this method
   bool has_class() const;
 
-  //! Class associated with this Method
-  const Class& cls() const;
-  Class& cls();
+  //! DEX::Class associated with this Method or a nullptr
+  //! if not resolved
+  const Class* cls() const;
+  Class* cls();
 
   //! Offset to the Dalvik Bytecode
   uint64_t code_offset() const;
@@ -67,9 +68,9 @@ class LIEF_API Method : public Object {
   //! i.e. not **static**, **private**, **finale** or constructor
   bool is_virtual() const;
 
-  //! Method's prototype
-  const Prototype& prototype() const;
-  Prototype& prototype();
+  //! Method's prototype or a nullptr if it is not resolved
+  const Prototype* prototype() const;
+  Prototype* prototype();
 
   void insert_dex2dex_info(uint32_t pc, uint32_t index);
 

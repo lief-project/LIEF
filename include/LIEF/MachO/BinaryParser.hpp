@@ -24,6 +24,7 @@
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/errors.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 
@@ -39,6 +40,7 @@ class Section;
 class Parser;
 struct ParserConfig;
 class DylibCommand;
+class Symbol;
 
 //! Class used to parse a **single** binary (i.e. non-FAT)
 //!
@@ -56,36 +58,38 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   constexpr static size_t MAX_COMMANDS = std::numeric_limits<uint16_t>::max();
 
   public:
-  BinaryParser(const std::string& file, const ParserConfig& conf = ParserConfig::deep());
-  BinaryParser(const std::vector<uint8_t>& data, uint64_t fat_offset = 0,
-               const ParserConfig& conf = ParserConfig::deep());
-  BinaryParser();
+  static std::unique_ptr<Binary> parse(const std::string& file);
+  static std::unique_ptr<Binary> parse(const std::string& file, const ParserConfig& conf);
+  static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data,
+                                       const ParserConfig& conf = ParserConfig::deep());
+
+  static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, uint64_t fat_offset,
+                                       const ParserConfig& conf = ParserConfig::deep());
+
+  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream, uint64_t fat_offset,
+                                       const ParserConfig& conf);
 
   BinaryParser& operator=(const BinaryParser& copy) = delete;
   BinaryParser(const BinaryParser& copy) = delete;
 
   ~BinaryParser();
 
-  //! Return the parsed Binary
-  Binary* get_binary();
-
   private:
-  BinaryParser(std::unique_ptr<BinaryStream>&& stream, uint64_t fat_offset = 0,
-               const ParserConfig& conf = ParserConfig::deep());
+  BinaryParser();
 
-  void init();
-
-  template<class MACHO_T>
-  void parse();
+  ok_error_t init_and_parse();
 
   template<class MACHO_T>
-  void parse_header();
+  ok_error_t parse();
 
   template<class MACHO_T>
-  void parse_load_commands();
+  ok_error_t parse_header();
 
   template<class MACHO_T>
-  void parse_relocations(Section& section);
+  ok_error_t parse_load_commands();
+
+  template<class MACHO_T>
+  ok_error_t parse_relocations(Section& section);
 
   // Dyld info parser
   // ================
@@ -93,57 +97,51 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   // Rebase
   // ------
   template<class MACHO_T>
-  void parse_dyldinfo_rebases();
+  ok_error_t parse_dyldinfo_rebases();
 
   // Bindings
   // --------
   template<class MACHO_T>
-  void parse_dyldinfo_binds();
+  ok_error_t parse_dyldinfo_binds();
 
   template<class MACHO_T>
-  void parse_dyldinfo_generic_bind();
+  ok_error_t parse_dyldinfo_generic_bind();
 
   template<class MACHO_T>
-  void parse_dyldinfo_weak_bind();
+  ok_error_t parse_dyldinfo_weak_bind();
 
   template<class MACHO_T>
-  void parse_dyldinfo_lazy_bind();
+  ok_error_t parse_dyldinfo_lazy_bind();
+
+  using it_opaque_segments = void*; // To avoid including Binary.hpp. It must contains it_opaque_segments
 
   template<class MACHO_T>
-  void do_bind(BINDING_CLASS cls,
-      uint8_t type,
-      uint8_t segment_idx,
-      uint64_t segment_offset,
-      const std::string& symbol_name,
-      int32_t ord,
-      int64_t addend,
-      bool is_weak,
-      bool is_non_weak_definition,
-      it_segments& segments,
-      uint64_t offset = 0
-  );
+  ok_error_t do_bind(BINDING_CLASS cls, uint8_t type, uint8_t segment_idx,
+                     uint64_t segment_offset, const std::string& symbol_name,
+                     int32_t ord, int64_t addend, bool is_weak,
+                     bool is_non_weak_definition, it_opaque_segments segments_ptr, uint64_t offset = 0);
 
 
   template<class MACHO_T>
-  void do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_address, const it_segments& segments);
+  ok_error_t do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset,
+                       const it_opaque_segments segments);
 
   // Exports
   // -------
-  void parse_dyldinfo_export();
+  ok_error_t parse_dyldinfo_export();
 
-  void parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
+  ok_error_t parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
 
   std::unique_ptr<BinaryStream>  stream_;
-  Binary*                        binary_{nullptr};
-  MACHO_TYPES                    type_;
-  bool                           is64_;
+  std::unique_ptr<Binary>        binary_;
+  MACHO_TYPES                    type_ = MACHO_TYPES::MH_MAGIC_64;
+  bool                           is64_ = true;
   ParserConfig                   config_;
   std::set<uint64_t>             visited_;
   std::map<std::string, Symbol*> memoized_symbols_;
   std::map<uint64_t, Symbol*>    memoized_symbols_by_address_;
 
   std::vector<DylibCommand*> binding_libs_;
-
 };
 
 

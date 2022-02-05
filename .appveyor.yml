@@ -102,8 +102,19 @@ install:
 
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - python.exe .\setup.py --ninja --lief-test build bdist_wheel --skip-build && exit 0 # Ignore warnings...
   - ps: if ($env:PYTHON_VERSION -eq "3.9") { python.exe .\scripts\windows\package_sdk.py  }
+  - ps: |
+      if ($env:PYTHON_VERSION -eq "3.6") {
+        python.exe .\setup.py --ninja --lief-test build bdist_wheel --skip-build 2>&1;
+        if ($LASTEXITCODE -eq 0) {
+            $host.SetShouldExit(0)
+        }
+      } else {
+        python.exe .\setup.py --ninja build bdist_wheel --skip-build 2>&1;
+        if ($LASTEXITCODE -eq 0) {
+            $host.SetShouldExit(0)
+        }
+      }
 
 after_build:
   - ps: Get-Service -Name 'ssh-agent' | Set-Service -StartupType Manual

@@ -16,7 +16,6 @@
 
 #include "LIEF/Abstract/hash.hpp"
 #include "LIEF/Abstract.hpp"
-
 #include "Object.tcc"
 
 namespace LIEF {

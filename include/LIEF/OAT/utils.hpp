@@ -19,15 +19,16 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/ELF/Binary.hpp"
-#include "LIEF/OAT/type_traits.hpp"
-
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/platforms/android.hpp"
 
 namespace LIEF {
+namespace ELF {
+class Binary;
+}
 namespace OAT {
 
 //! @brief Check if the given LIEF::ELF::Binary is an OAT one.

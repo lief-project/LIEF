@@ -17,6 +17,7 @@
 #include <memory>
 
 #include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 #include "pyMachO.hpp"
 

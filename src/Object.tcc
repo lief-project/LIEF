@@ -20,12 +20,12 @@ namespace LIEF {
 
 template<class T>
 Object::output_t<T> Object::as() {
-  return reinterpret_cast<Object::output_t<T>>(this);
+  return static_cast<Object::output_t<T>>(this);
 }
 
 template<class T>
 Object::output_const_t<T> Object::as() const {
-  return reinterpret_cast<Object::output_const_t<T>>(this);
+  return static_cast<Object::output_const_t<T>>(this);
 }
 
 

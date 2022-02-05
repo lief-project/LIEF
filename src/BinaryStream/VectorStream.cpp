@@ -33,6 +33,9 @@
 #include "LIEF/exception.hpp"
 namespace LIEF {
 
+VectorStream::VectorStream(VectorStream&& other) = default;
+VectorStream& VectorStream::operator=(VectorStream&& other) = default;
+
 inline void free_names(mbedtls_x509_name& names) {
   mbedtls_x509_name *name_cur;
   name_cur = names.next;
@@ -43,47 +46,37 @@ inline void free_names(mbedtls_x509_name& names) {
   }
 }
 
-VectorStream::VectorStream(const std::string& filename) {
-  std::ifstream binary(filename, std::ios::in | std::ios::binary);
-
-  if (binary) {
-    binary.unsetf(std::ios::skipws);
-    binary.seekg(0, std::ios::end);
-    assert(binary.tellg() > 0);
-    size_ = static_cast<uint64_t>(binary.tellg());
-    binary.seekg(0, std::ios::beg);
-
-    // reserve capacity
-    binary_.resize(size() + 30, 0);
-    binary.read(reinterpret_cast<char*>(binary_.data()), size_);
-    binary.close();
-  } else {
-    throw LIEF::bad_file("Unable to open " + filename);
+result<VectorStream> VectorStream::from_file(const std::string& file) {
+  std::ifstream ifs(file, std::ios::in | std::ios::binary);
+  if (!ifs) {
+    LIEF_ERR("Can't opent '{}'", file);
+    return make_error_code(lief_errors::read_error);
   }
+
+  ifs.unsetf(std::ios::skipws);
+  ifs.seekg(0, std::ios::end);
+  const size_t size = static_cast<uint64_t>(ifs.tellg());
+  ifs.seekg(0, std::ios::beg);
+  std::vector<uint8_t> data;
+  data.resize(size, 0);
+  ifs.read(reinterpret_cast<char*>(data.data()), data.size());
+  return VectorStream{std::move(data)};
 }
 
 
-VectorStream::VectorStream(const std::vector<uint8_t>& data) :
-  binary_{data},
-  size_{data.size()}
-{}
-
-
-uint64_t VectorStream::size() const {
-  return size_;
+VectorStream::VectorStream(std::vector<uint8_t> data) :
+  binary_{std::move(data)},
+  size_{binary_.size()}
+{
+  stype_ = STREAM_TYPE::VECTOR;
 }
 
-
-const void* VectorStream::read_at(uint64_t offset, uint64_t size, bool throw_error) const {
-
+result<const void*> VectorStream::read_at(uint64_t offset, uint64_t size) const {
   const uint64_t stream_size = this->size();
   if (offset > stream_size || (offset + size) > stream_size) {
     size_t out_size = (offset + size) - stream_size;
     LIEF_DEBUG("Can't read #{:d} bytes at 0x{:04x} (0x{:x} bytes out of bound)", size, offset, out_size);
-    if (throw_error) {
-      throw LIEF::read_out_of_bound(offset, size);
-    }
-    return nullptr;
+    return make_error_code(lief_errors::read_error);
   }
   return binary_.data() + offset;
 }
@@ -101,10 +94,12 @@ result<size_t> VectorStream::asn1_read_tag(int tag) {
   if (ret == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
-  else if (ret == MBEDTLS_ERR_ASN1_UNEXPECTED_TAG) {
+
+  if (ret == MBEDTLS_ERR_ASN1_UNEXPECTED_TAG) {
     return make_error_code(lief_errors::asn1_bad_tag);
   }
-  else if (ret != 0) {
+
+  if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
@@ -125,7 +120,8 @@ result<size_t> VectorStream::asn1_read_len() {
   if (ret == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
-  else if (ret != 0) {
+
+  if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
@@ -135,7 +131,7 @@ result<size_t> VectorStream::asn1_read_len() {
 
 result<std::string> VectorStream::asn1_read_alg() {
   mbedtls_asn1_buf alg_oid;
-  char oid_str[256] = {0};
+  std::array<char, 256> oid_str = {0};
 
   const uint8_t* cur_p = p();
   uint8_t* p           = this->p();
@@ -146,22 +142,23 @@ result<std::string> VectorStream::asn1_read_alg() {
   if (ret == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
-  else if (ret != 0) {
+
+  if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
-  ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &alg_oid);
+  ret = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &alg_oid);
   if (ret <= 0) {
     return make_error_code(lief_errors::read_error);
   }
 
   increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-  return std::string(oid_str);
+  return std::string(oid_str.data());
 }
 
 result<std::string> VectorStream::asn1_read_oid() {
   mbedtls_asn1_buf buf;
-  char oid_str[256] = {0};
+  std::array<char, 256> oid_str = {0};
 
   auto len = asn1_read_tag(MBEDTLS_ASN1_OID);
   if (!len) {
@@ -172,14 +169,14 @@ result<std::string> VectorStream::asn1_read_oid() {
   buf.p   = p();
   buf.tag = MBEDTLS_ASN1_OID;
 
-  int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &buf);
+  int ret = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &buf);
   if (ret == MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
     LIEF_DEBUG("asn1_read_oid: mbedtls_oid_get_numeric_string return MBEDTLS_ERR_OID_BUF_TOO_SMALL");
     return make_error_code(lief_errors::read_error);
   }
 
   increment_pos(buf.len);
-  return std::string(oid_str);
+  return std::string(oid_str.data());
 }
 
 
@@ -195,7 +192,8 @@ result<int32_t> VectorStream::asn1_read_int() {
   if (ret == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
-  else if (ret != 0) {
+
+  if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
@@ -215,11 +213,13 @@ result<std::vector<uint8_t>> VectorStream::asn1_read_bitstring() {
   if (ret == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
-  else if (ret == MBEDTLS_ERR_ASN1_LENGTH_MISMATCH) {
+
+  if (ret == MBEDTLS_ERR_ASN1_LENGTH_MISMATCH) {
     increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
     return std::vector<uint8_t>{bs.p, bs.p + bs.len};
   }
-  else if (ret != 0) {
+
+  if (ret != 0) {
     return make_error_code(lief_errors::read_error);
   }
 
@@ -265,10 +265,9 @@ result<std::string> VectorStream::x509_read_names() {
   std::memset(&name, 0, sizeof(name));
 
   auto tag = asn1_read_tag(/* Name */
-                                 MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+                           MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
   if (!tag) {
-    LIEF_INFO("Wrong tag: 0x{:x} for x509_read_names (pos: {:d})",
-        peek<uint8_t>(), pos());
+    LIEF_INFO("Wrong tag: 0x{:x} for x509_read_names (pos: {:d})", *peek<uint8_t>(), pos());
     return tag.error();
   }
 
@@ -281,8 +280,8 @@ result<std::string> VectorStream::x509_read_names() {
     LIEF_DEBUG("mbedtls_x509_get_name failed with {:d}", ret);
     return make_error_code(lief_errors::read_error);
   }
-  char buffer[1024];
-  ret = mbedtls_x509_dn_gets(buffer, sizeof(buffer), &name);
+  std::array<char, 1024> buffer = {0};
+  ret = mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &name);
   free_names(name);
 
   if (ret < 0) {
@@ -290,7 +289,7 @@ result<std::string> VectorStream::x509_read_names() {
   }
 
   increment_pos(reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(cur_p));
-  return std::string(buffer);
+  return std::string(buffer.data());
 }
 
 result<std::vector<uint8_t>> VectorStream::x509_read_serial() {
@@ -327,10 +326,13 @@ result<std::unique_ptr<mbedtls_x509_time>> VectorStream::x509_read_time() {
   return tm;
 }
 
-
-
 const std::vector<uint8_t>& VectorStream::content() const {
   return binary_;
+}
+
+
+bool VectorStream::classof(const BinaryStream& stream) {
+  return stream.type() == STREAM_TYPE::VECTOR;
 }
 }
 

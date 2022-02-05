@@ -62,8 +62,8 @@ void create<Symbol>(py::module& m) {
         &Symbol::numberof_aux_symbols)
 
     .def_property_readonly("section",
-        static_cast<no_const_getter<Section&>>(&Symbol::section),
-        py::return_value_policy::reference_internal)
+        static_cast<no_const_getter<Section*>>(&Symbol::section),
+        py::return_value_policy::reference)
 
     .def_property_readonly("has_section",
         &Symbol::has_section,

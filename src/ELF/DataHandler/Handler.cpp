@@ -23,16 +23,18 @@
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/ELF/DataHandler/Handler.hpp"
+#include "ELF/DataHandler/Handler.hpp"
 #include "LIEF/exception.hpp"
 
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 
+Handler::~Handler() = default;
 Handler::Handler() = default;
-Handler& Handler::operator=(const Handler&) = default;
-Handler::Handler(const Handler&) = default;
+
+Handler& Handler::operator=(Handler&&) = default;
+Handler::Handler(Handler&&) = default;
 
 Handler::Handler(std::vector<uint8_t> content) :
   data_{std::move(content)}
@@ -43,28 +45,21 @@ Handler::Handler(std::vector<uint8_t>&& content) :
   data_{std::move(content)}
 {}
 
-Handler::Handler(BinaryStream& stream) {
 
-  switch (stream.type()) {
-    case BinaryStream::STREAM_TYPE::FILE:
-      {
-        auto& vs = reinterpret_cast<VectorStream&>(stream);
-        data_ = vs.content();
-        break;
-      }
-
-    case BinaryStream::STREAM_TYPE::MEMORY:
-      {
-        throw std::runtime_error("Not impletemented yet");
-        break;
-      }
-
-    case BinaryStream::STREAM_TYPE::UNKNOWN:
-    default:
-      {
-        LIEF_ERR("Unknown stream type!");
-      }
+result<Handler> Handler::from_stream(BinaryStream& stream) {
+  if (VectorStream::classof(stream)) {
+    Handler hdl;
+    auto& vs = static_cast<VectorStream&>(stream);
+    hdl.data_ = vs.content();
+    return hdl;
   }
+
+  if (MemoryStream::classof(stream)) {
+    return make_error_code(lief_errors::not_implemented);
+  }
+
+  LIEF_ERR("Unknown stream for Handler");
+  return make_error_code(lief_errors::not_supported);
 }
 
 const std::vector<uint8_t>& Handler::content() const {
@@ -78,21 +73,24 @@ std::vector<uint8_t>& Handler::content() {
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
   const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const Node* node) { return tmp == *node; });
+                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                      return tmp == *node;
+                                    });
   return it_node != std::end(nodes_);
 }
 
-Node& Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
+result<Node&> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
   const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const Node* node) { return tmp == *node; });
+                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                      return tmp == *node;
+                                    });
 
-  if (it_node != std::end(nodes_)) {
-    return **it_node;
-  } else {
-    throw not_found("Unable to find node");
+  if (it_node == std::end(nodes_)) {
+    return make_error_code(lief_errors::not_found);
   }
+  return **it_node;
 }
 
 
@@ -101,48 +99,53 @@ void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
   const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const Node* node) { return tmp == *node; });
+                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                      return tmp == *node;
+                                    });
 
-  if (it_node != std::end(nodes_)) {
-    delete *it_node;
-    nodes_.erase(it_node);
-  } else {
-    throw not_found("Unable to find node");
+  if (it_node == std::end(nodes_)) {
+    LIEF_ERR("Unable to find the node");
   }
+
+   nodes_.erase(it_node);
 }
 
 
 Node& Handler::create(uint64_t offset, uint64_t size, Node::Type type) {
-  nodes_.emplace_back(new Node{offset, size, type});
+  nodes_.push_back(std::make_unique<Node>(offset, size, type));
   return *nodes_.back();
 }
 
 
 Node& Handler::add(const Node& node) {
-  nodes_.push_back(new Node{node});
+  nodes_.push_back(std::make_unique<Node>(node));
   return *nodes_.back();
 }
 
-void Handler::make_hole(uint64_t offset, uint64_t size) {
-  reserve(offset, size);
+ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
+  auto res = reserve(offset, size);
+  if (!res) {
+    return res.error();
+  }
   data_.insert(std::begin(data_) + offset, size, 0);
+  return ok();
 }
 
 
-void Handler::reserve(uint64_t offset, uint64_t size) {
-  if ((offset + size) > Handler::MAX_SIZE) {
-    throw std::bad_alloc();
+ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
+  const bool must_resize = data_.size() < (offset + size);
+  if (!must_resize) {
+    return ok();
   }
-  if (data_.size() < (offset + size)) {
-    data_.resize((offset + size), 0);
+
+  try {
+    data_.resize(offset + size, 0);
+  } catch (const std::bad_alloc&) {
+    return make_error_code(lief_errors::data_too_large);
   }
+  return ok();
 }
 
-Handler::~Handler() {
-  for (Node* n : nodes_) {
-    delete n;
-  }
-}
 
 } // namespace DataHandler
 } // namespace ELF

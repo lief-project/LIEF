@@ -26,7 +26,7 @@
 #include "LIEF/types.hpp"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -85,23 +85,26 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! ``true`` if the relocation has a symbol associated with
   bool has_symbol() const;
 
-  //! Symbol associated with the relocation (if any)
-  Symbol& symbol();
-  const Symbol& symbol() const;
+  //! Symbol associated with the relocation, if any,
+  //! otherwise a nullptr.
+  Symbol* symbol();
+  const Symbol* symbol() const;
 
   //! ``true`` if the relocation has a section associated with
   bool has_section() const;
 
-  //! Section associated with the relocation (if any)
-  Section& section();
-  const Section& section() const;
+  //! Section associated with the relocation, if any,
+  //! otherwise a nullptr.
+  Section* section();
+  const Section* section() const;
 
   //! ``true`` if the relocation has a SegmentCommand associated with
   bool has_segment() const;
 
-  //! SegmentCommand associated with the relocation (if any)
-  SegmentCommand& segment();
-  const SegmentCommand& segment() const;
+  //! SegmentCommand associated with the relocation, if any,
+  //! otherwise a nullptr.
+  SegmentCommand* segment();
+  const SegmentCommand* segment() const;
 
   virtual void pc_relative(bool val) = 0;
   virtual void type(uint8_t type);
@@ -117,8 +120,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   protected:
   Symbol*         symbol_ = nullptr;
-  uint8_t         type_;
-  CPU_TYPES       architecture_;
+  uint8_t         type_ = 0;
+  CPU_TYPES       architecture_ = CPU_TYPES::CPU_TYPE_ANY;
   Section*        section_ = nullptr;
   SegmentCommand* segment_ = nullptr;
 };

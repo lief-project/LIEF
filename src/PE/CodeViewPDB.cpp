@@ -116,6 +116,9 @@ void CodeViewPDB::accept(LIEF::Visitor& visitor) const {
 }
 
 bool CodeViewPDB::operator==(const CodeViewPDB& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

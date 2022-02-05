@@ -5,7 +5,27 @@
 #include <LIEF/ELF/Binary.hpp>
 #include <LIEF/ELF/Builder.hpp>
 #include <LIEF/ELF/Symbol.hpp>
+#include <LIEF/ELF/DynamicEntryArray.hpp>
+#include <LIEF/ELF/DynamicEntryLibrary.hpp>
+#include <LIEF/ELF/DynamicEntryRpath.hpp>
+#include <LIEF/ELF/DynamicEntryRunPath.hpp>
+#include <LIEF/ELF/DynamicSharedObject.hpp>
+#include <LIEF/ELF/SymbolVersionDefinition.hpp>
+#include <LIEF/ELF/SymbolVersionAux.hpp>
+#include <LIEF/ELF/SymbolVersionRequirement.hpp>
+#include <LIEF/ELF/SymbolVersionAuxRequirement.hpp>
+#include <LIEF/ELF/EnumToString.hpp>
+#include <LIEF/ELF/Segment.hpp>
+#include <LIEF/ELF/Section.hpp>
+#include <LIEF/ELF/Relocation.hpp>
+#include <LIEF/ELF/Note.hpp>
+#include <LIEF/ELF/GnuHash.hpp>
+#include <LIEF/ELF/SysvHash.hpp>
+#include <LIEF/ELF/utils.hpp>
 #include <LIEF/iostream.hpp>
+#include <LIEF/errors.hpp>
+#include <ELF/Structures.hpp>
+
 #include "logging.hpp"
 #include "Layout.hpp"
 namespace LIEF {
@@ -18,6 +38,11 @@ class Note;
 class LIEF_LOCAL ExeLayout : public Layout {
   public:
   using Layout::Layout;
+  ExeLayout(const ExeLayout&) = delete;
+  ExeLayout& operator=(const ExeLayout&) = delete;
+
+  ExeLayout(ExeLayout&&) = default;
+  ExeLayout& operator=(ExeLayout&&) = default;
 
   template<class ELF_T>
   size_t dynamic_size() {
@@ -43,7 +68,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // Start with dynamic entries: NEEDED / SONAME etc
     vector_iostream raw_dynstr;
     raw_dynstr.write<uint8_t>(0);
-    for (DynamicEntry* entry : binary_->dynamic_entries_) {
+    for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
       switch (entry->tag()) {
       case DYNAMIC_TAGS::DT_NEEDED:
         {
@@ -85,7 +110,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     size_t offset_counter = raw_dynstr.tellp();
     std::vector<std::string> string_table_optimized =
       Builder::optimize<Symbol, decltype(binary_->dynamic_symbols_)>(binary_->dynamic_symbols_,
-                                    [] (const Symbol* sym) { return sym->name(); },
+                                    [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
                                     offset_counter,
                                     &offset_name_map_);
     for (const std::string& name : string_table_optimized) {
@@ -154,15 +179,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
   template<class ELF_T>
   size_t dynamic_arraysize(DYNAMIC_TAGS tag) {
     using uint__ = typename ELF_T::uint;
-    if (!binary_->has(tag)) {
+    DynamicEntry* entry = binary_->get(tag);
+    if (entry == nullptr || !DynamicEntryArray::classof(entry)) {
       return 0;
     }
-    return binary_->get(tag).as<const DynamicEntryArray&>()->size() * sizeof(uint__);
+    return entry->as<const DynamicEntryArray&>()->size() * sizeof(uint__);
   }
 
   template<class ELF_T>
   size_t note_size() {
-    if (raw_notes_.size() > 0) {
+    if (!raw_notes_.empty()) {
       return raw_notes_.size();
     }
 
@@ -170,11 +196,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
     for (const Note& note : binary_->notes()) {
       size_t pos = raw_notes.tellp();
       // First we have to write the length of the Note's name
-      const uint32_t namesz = static_cast<uint32_t>(note.name().size() + 1);
+      const auto namesz = static_cast<uint32_t>(note.name().size() + 1);
       raw_notes.write_conv<uint32_t>(namesz);
 
       // Then the length of the Note's description
-      const uint32_t descsz = static_cast<uint32_t>(note.description().size());
+      const auto descsz = static_cast<uint32_t>(note.description().size());
       raw_notes.write_conv<uint32_t>(descsz);
 
       // Then the note's type
@@ -190,14 +216,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       // description content (manipulated in 4 byte/uint32_t chunks)
       const std::vector<uint8_t>& description = note.description();
-      const uint32_t *desc_ptr = reinterpret_cast<const uint32_t*>(description.data());
+      const auto* desc_ptr = reinterpret_cast<const uint32_t*>(description.data());
       size_t i = 0;
       for (; i < description.size() / sizeof(uint32_t); i++) {
         raw_notes.write_conv<uint32_t>(desc_ptr[i]);
       }
       if (description.size() % sizeof(uint32_t) != 0) {
         uint32_t padded = 0;
-        uint8_t *ptr = reinterpret_cast<uint8_t*>(&padded);
+        auto *ptr = reinterpret_cast<uint8_t*>(&padded);
         memcpy(ptr, desc_ptr + i, description.size() % sizeof(uint32_t));
         raw_notes.write_conv<uint32_t>(padded);
       }
@@ -209,14 +235,17 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   template<class ELF_T>
   size_t symbol_sysv_hash_size() {
-    const SysvHash& sysv_hash = binary_->sysv_hash();
-    nchain_ = sysv_hash.nchain();
+    const SysvHash* sysv_hash = binary_->sysv_hash();
+    if (sysv_hash == nullptr) {
+      return 0;
+    }
+    nchain_ = sysv_hash->nchain();
     if (nchain_ < binary_->dynamic_symbols_.size()) {
       LIEF_DEBUG("nchain of .hash section changes from {:d} to {:d}",
-                nchain_, binary_->dynamic_symbols_.size());
+                 nchain_, binary_->dynamic_symbols_.size());
       nchain_ = binary_->dynamic_symbols_.size();
     }
-    return (sysv_hash.nbucket() + nchain_ + /* header */ 2) * sizeof(uint32_t);
+    return (sysv_hash->nbucket() + nchain_ + /* header */ 2) * sizeof(uint32_t);
   }
 
   template<class ELF_T>
@@ -236,7 +265,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // See also:
     // * p.9, https://www.akkadia.org/drepper/dsohowto.pdf
     using uint__ = typename ELF_T::uint;
-    if (raw_gnu_hash_.size() > 0) {
+    if (!raw_gnu_hash_.empty()) {
       return raw_gnu_hash_.size();
     }
     uint32_t first_exported_symbol_index = 0;
@@ -246,15 +275,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
       LIEF_WARN("First exported symbol index not set");
     }
 
-    const GnuHash& gnu_hash = binary_->gnu_hash();
+    const GnuHash* gnu_hash = binary_->gnu_hash();
+    if (gnu_hash == nullptr) {
+      return 0;
+    }
 
-    const uint32_t nb_buckets = gnu_hash.nb_buckets();
+    const uint32_t nb_buckets = gnu_hash->nb_buckets();
     const uint32_t symndx     = first_exported_symbol_index;
-    const uint32_t maskwords  = gnu_hash.maskwords();
-    const uint32_t shift2     = gnu_hash.shift2();
+    const uint32_t maskwords  = gnu_hash->maskwords();
+    const uint32_t shift2     = gnu_hash->shift2();
 
-    const std::vector<uint64_t>& filters = gnu_hash.bloom_filters();
-    if (filters.size() > 0 && filters[0] == 0) {
+    const std::vector<uint64_t>& filters = gnu_hash->bloom_filters();
+    if (!filters.empty() && filters[0] == 0) {
       LIEF_DEBUG("Bloom filter is null");
     }
 
@@ -270,12 +302,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // MANDATORY !
     std::stable_sort(
         std::begin(binary_->dynamic_symbols_) + symndx, std::end(binary_->dynamic_symbols_),
-        [&nb_buckets] (const Symbol* lhs, const Symbol* rhs) {
-          return
-            (dl_new_hash(lhs->name().c_str()) % nb_buckets) <
-            (dl_new_hash(rhs->name().c_str()) % nb_buckets);
+        [&nb_buckets] (const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
+          return (dl_new_hash(lhs->name().c_str()) % nb_buckets) <
+                 (dl_new_hash(rhs->name().c_str()) % nb_buckets);
       });
-    it_symbols dynamic_symbols = binary_->dynamic_symbols();
+    Binary::it_dynamic_symbols dynamic_symbols = binary_->dynamic_symbols();
 
     vector_iostream raw_gnuhash;
     raw_gnuhash.reserve(
@@ -299,9 +330,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
       const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
-      const size_t pos = (hash / C) & (gnu_hash.maskwords() - 1);
+      const size_t pos = (hash / C) & (gnu_hash->maskwords() - 1);
       uint__ V = (static_cast<uint__>(1) << (hash % C)) |
-                 (static_cast<uint__>(1) << ((hash >> gnu_hash.shift2()) % C));
+                 (static_cast<uint__>(1) << ((hash >> gnu_hash->shift2()) % C));
       bloom_filters[pos] |= V;
     }
     for (size_t idx = 0; idx < bloom_filters.size(); ++idx) {
@@ -323,8 +354,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
       int bucket = hash % nb_buckets;
 
       if (bucket < previous_bucket) {
-        throw corrupted("Previous bucket is greater than the current one ("
-            + std::to_string(bucket) + " < " +  std::to_string(previous_bucket) + ")");
+        LIEF_ERR("Previous bucket is greater than the current one ({} < {})",
+                 bucket, previous_bucket);
+        return 0;
       }
 
       if (bucket != previous_bucket) {
@@ -354,7 +386,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
   size_t dynamic_relocations_size() {
     using Elf_Rela   = typename ELF_T::Elf_Rela;
     using Elf_Rel    = typename ELF_T::Elf_Rel;
-    const it_dynamic_relocations& dyn_relocs = binary_->dynamic_relocations();
+    const Binary::it_dynamic_relocations& dyn_relocs = binary_->dynamic_relocations();
     size_t computed_size = 0;
     bool is_rela = binary_->has(DYNAMIC_TAGS::DT_RELA);
     if (is_rela) {
@@ -370,9 +402,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
   size_t pltgot_relocations_size() {
     using Elf_Rela   = typename ELF_T::Elf_Rela;
     using Elf_Rel    = typename ELF_T::Elf_Rel;
-    const it_pltgot_relocations& pltgot_relocs = binary_->pltgot_relocations();
-    bool is_rela = binary_->has(DYNAMIC_TAGS::DT_PLTREL) &&
-       binary_->get(DYNAMIC_TAGS::DT_PLTREL).value() == static_cast<uint64_t>(DYNAMIC_TAGS::DT_RELA);
+    const Binary::it_pltgot_relocations& pltgot_relocs = binary_->pltgot_relocations();
+
+    const DynamicEntry* dt_rela = binary_->get(DYNAMIC_TAGS::DT_PLTREL);
+
+    const bool is_rela = dt_rela != nullptr &&
+                         dt_rela->value() == static_cast<uint64_t>(DYNAMIC_TAGS::DT_RELA);
 
     if (is_rela) {
       return pltgot_relocs.size() * sizeof(Elf_Rela);
@@ -502,7 +537,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return raw_notes_;
   }
 
-  void relocate() {
+  result<bool> relocate() {
     /* PT_INTERP segment (optional)
      *
      */
@@ -573,8 +608,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
      * Perm: READ | WRITE
      * Align: 0x1000
      */
-    const uint64_t read_write_segment =
-      init_size_ + preinit_size_ + fini_size_ + dynamic_size_ ;
+    const uint64_t read_write_segment = init_size_ + preinit_size_ + fini_size_ + dynamic_size_ ;
 
     Segment* new_rwsegment = nullptr;
     Segment rwsegment;
@@ -595,7 +629,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       // Remove the current .shstrtab section
       Header& hdr = binary_->header();
-      Section* string_names_section = binary_->sections_[hdr.section_name_table_idx()];
+      if (hdr.section_name_table_idx() >= binary_->sections_.size()) {
+        LIEF_ERR("Sections' names table index is out of range");
+        return make_error_code(lief_errors::file_format_error);
+      }
+      std::unique_ptr<Section>& string_names_section = binary_->sections_[hdr.section_name_table_idx()];
       binary_->remove(*string_names_section, /* clear */ true);
       std::string sec_name = binary_->shstrtab_name();
       Section sec_str_section(sec_name, ELF_SECTION_TYPES::SHT_STRTAB);
@@ -606,25 +644,30 @@ class LIEF_LOCAL ExeLayout : public Layout {
       hdr.section_name_table_idx(binary_->sections_.size() - 1);
     }
 
-    for (Relocation* reloc : binary_->relocations_) {
-      relocations_addresses_[reloc->address()] = reloc;
+    for (std::unique_ptr<Relocation>& reloc : binary_->relocations_) {
+      relocations_addresses_[reloc->address()] = reloc.get();
     }
 
     uint64_t va_r_base  = new_rsegment  != nullptr ? new_rsegment->virtual_address() : 0;
     uint64_t va_rw_base = new_rwsegment != nullptr ? new_rwsegment->virtual_address() : 0;
 
     if (interp_size_ > 0) {
-      Segment& pt_interp = binary_->get(SEGMENT_TYPES::PT_INTERP);
+      Segment* pt_interp = binary_->get(SEGMENT_TYPES::PT_INTERP);
+      if (pt_interp == nullptr) {
+        LIEF_ERR("Can't find the PT_INTERP segment.");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
       Section* section = nullptr;
-      it_sections sections = pt_interp.sections();
+      Segment::it_sections sections = pt_interp->sections();
       if (sections.size() > 0) {
         section = &sections[0];
       }
-      pt_interp.virtual_address(va_r_base);
-      pt_interp.virtual_size(interp_size_);
-      pt_interp.physical_address(va_r_base);
-      pt_interp.file_offset(binary_->virtual_address_to_offset(va_r_base));
-      pt_interp.physical_size(interp_size_);
+      pt_interp->virtual_address(va_r_base);
+      pt_interp->virtual_size(interp_size_);
+      pt_interp->physical_address(va_r_base);
+      pt_interp->file_offset(binary_->virtual_address_to_offset(va_r_base));
+      pt_interp->physical_size(interp_size_);
       if (section != nullptr) {
         section->virtual_address(va_r_base);
         section->size(interp_size_);
@@ -633,104 +676,167 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
 
       va_r_base += interp_size_;
+
     }
 
     if (relocate_notes_) {
-      Segment& note_segment = binary_->get(SEGMENT_TYPES::PT_NOTE);
-      note_segment.virtual_address(va_r_base);
-      note_segment.virtual_size(raw_notes_.size());
-      note_segment.physical_address(va_r_base);
-      note_segment.file_offset(binary_->virtual_address_to_offset(va_r_base));
-      note_segment.physical_size(raw_notes_.size());
+      Segment* note_segment = binary_->get(SEGMENT_TYPES::PT_NOTE);
+      if (note_segment == nullptr) {
+        LIEF_ERR("Can't find the PT_NOTE segment");
+        return make_error_code(lief_errors::file_format_error);
+      }
+      note_segment->virtual_address(va_r_base);
+      note_segment->virtual_size(raw_notes_.size());
+      note_segment->physical_address(va_r_base);
+      note_segment->file_offset(binary_->virtual_address_to_offset(va_r_base));
+      note_segment->physical_size(raw_notes_.size());
       va_r_base += raw_notes_.size();
     }
 
     if (dynamic_size_ > 0) {
       // Update .dynamic / PT_DYNAMIC
       // Update relocations associated with .init_array etc
-      Segment& dynamic_segment = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
-      Section& dynamic_section = binary_->dynamic_section();
+      Segment* dynamic_segment = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
+      Section* dynamic_section = binary_->dynamic_section();
+      if (dynamic_segment == nullptr || dynamic_section == nullptr) {
+        LIEF_ERR("Can't find the dynamic section/segment");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      dynamic_segment.virtual_address(va_rw_base);
-      dynamic_segment.virtual_size(dynamic_size_);
-      dynamic_segment.physical_address(va_rw_base);
-      dynamic_segment.file_offset(binary_->virtual_address_to_offset(va_rw_base));
-      dynamic_segment.physical_size(dynamic_size_);
+      dynamic_segment->virtual_address(va_rw_base);
+      dynamic_segment->virtual_size(dynamic_size_);
+      dynamic_segment->physical_address(va_rw_base);
+      dynamic_segment->file_offset(binary_->virtual_address_to_offset(va_rw_base));
+      dynamic_segment->physical_size(dynamic_size_);
 
-      dynamic_section.virtual_address(va_rw_base);
-      dynamic_section.size(dynamic_size_);
-      dynamic_section.offset(binary_->virtual_address_to_offset(va_rw_base));
-      dynamic_section.original_size_ = dynamic_size_;
+      dynamic_section->virtual_address(va_rw_base);
+      dynamic_section->size(dynamic_size_);
+      dynamic_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      dynamic_section->original_size_ = dynamic_size_;
       va_rw_base += dynamic_size_;
     }
 
     if (dynsym_size_ > 0) {
       // Update .dynsym / DT_SYMTAB
-      DynamicEntry& dt_symtab = binary_->get(DYNAMIC_TAGS::DT_SYMTAB);
-      Section& dyn_sym_section  = binary_->section_from_virtual_address(dt_symtab.value());
+      DynamicEntry* dt_symtab = binary_->get(DYNAMIC_TAGS::DT_SYMTAB);
 
-      dyn_sym_section.virtual_address(va_r_base);
-      dyn_sym_section.size(dynsym_size_);
-      dyn_sym_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      dyn_sym_section.original_size_ = dynsym_size_;
-      dt_symtab.value(va_r_base);
+      if (dt_symtab == nullptr) {
+        LIEF_ERR("Can't find DT_SYMTAB");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* dyn_sym_section  = binary_->section_from_virtual_address(dt_symtab->value());
+
+      if (dyn_sym_section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_SYMTAB");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      dyn_sym_section->virtual_address(va_r_base);
+      dyn_sym_section->size(dynsym_size_);
+      dyn_sym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_sym_section->original_size_ = dynsym_size_;
+      dt_symtab->value(va_r_base);
 
       va_r_base += dynsym_size_;
     }
 
     if (relocate_dynstr_) {
       // Update .dynstr section, DT_SYMTAB, DT_STRSZ
-      DynamicEntry& dt_strtab  = binary_->get(DYNAMIC_TAGS::DT_STRTAB);
-      DynamicEntry& dt_strsize = binary_->get(DYNAMIC_TAGS::DT_STRSZ);
-      Section& dyn_str_section = binary_->section_from_virtual_address(dt_strtab.value());
+      DynamicEntry* dt_strtab  = binary_->get(DYNAMIC_TAGS::DT_STRTAB);
+      DynamicEntry* dt_strsize = binary_->get(DYNAMIC_TAGS::DT_STRSZ);
 
-      dyn_str_section.virtual_address(va_r_base);
-      dyn_str_section.size(raw_dynstr_.size());
-      dyn_str_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      dyn_str_section.original_size_ = raw_dynstr_.size();
+      if (dt_strtab == nullptr || dt_strsize == nullptr) {
+        LIEF_ERR("Can't find DT_STRTAB/DT_STRSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      dt_strtab.value(va_r_base);
-      dt_strsize.value(raw_dynstr_.size());
+      Section* dyn_str_section = binary_->section_from_virtual_address(dt_strtab->value());
+
+      if (dyn_str_section == nullptr) {
+        LIEF_ERR("Can't find the .dynstr section");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      dyn_str_section->virtual_address(va_r_base);
+      dyn_str_section->size(raw_dynstr_.size());
+      dyn_str_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_str_section->original_size_ = raw_dynstr_.size();
+
+      dt_strtab->value(va_r_base);
+      dt_strsize->value(raw_dynstr_.size());
 
       va_r_base += raw_dynstr_.size();
     }
 
 
     if (sver_size_ > 0) {
-      DynamicEntry& dt_versym = binary_->get(DYNAMIC_TAGS::DT_VERSYM);
-      Section& versym_section = binary_->section_from_virtual_address(dt_versym.value());
+      DynamicEntry* dt_versym = binary_->get(DYNAMIC_TAGS::DT_VERSYM);
+      if (dt_versym == nullptr) {
+        LIEF_ERR("Can't find DT_VERSYM");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      versym_section.virtual_address(va_r_base);
-      versym_section.size(sver_size_);
-      versym_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      versym_section.original_size_ = sver_size_;
-      dt_versym.value(va_r_base);
+      Section* versym_section = binary_->section_from_virtual_address(dt_versym->value());
+
+      if (versym_section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_VERSYM");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      versym_section->virtual_address(va_r_base);
+      versym_section->size(sver_size_);
+      versym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      versym_section->original_size_ = sver_size_;
+      dt_versym->value(va_r_base);
 
       va_r_base += sver_size_;
     }
 
     if (sverd_size_ > 0) {
-      DynamicEntry& dt_verdef = binary_->get(DYNAMIC_TAGS::DT_VERDEF);
-      Section& verdef_section = binary_->section_from_virtual_address(dt_verdef.value());
+      DynamicEntry* dt_verdef = binary_->get(DYNAMIC_TAGS::DT_VERDEF);
 
-      verdef_section.virtual_address(va_r_base);
-      verdef_section.size(sverd_size_);
-      verdef_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      verdef_section.original_size_ = sverd_size_;
-      dt_verdef.value(va_r_base);
+      if (dt_verdef == nullptr) {
+        LIEF_ERR("Can't find DT_VERDEF");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* verdef_section = binary_->section_from_virtual_address(dt_verdef->value());
+
+      if (verdef_section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_VERDEF");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      verdef_section->virtual_address(va_r_base);
+      verdef_section->size(sverd_size_);
+      verdef_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verdef_section->original_size_ = sverd_size_;
+      dt_verdef->value(va_r_base);
 
       va_r_base += sverd_size_;
     }
 
     if (sverr_size_ > 0) {
-      DynamicEntry& dt_verreq = binary_->get(DYNAMIC_TAGS::DT_VERNEED);
-      Section& verreq_section = binary_->section_from_virtual_address(dt_verreq.value());
+      DynamicEntry* dt_verreq = binary_->get(DYNAMIC_TAGS::DT_VERNEED);
 
-      verreq_section.virtual_address(va_r_base);
-      verreq_section.size(sverr_size_);
-      verreq_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      verreq_section.original_size_ = sverr_size_;
-      dt_verreq.value(va_r_base);
+      if (dt_verreq == nullptr) {
+        LIEF_ERR("Can't find DT_VERNEED");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* verreq_section = binary_->section_from_virtual_address(dt_verreq->value());
+
+      if (verreq_section == nullptr) {
+        LIEF_ERR("Can't the section associated with DT_VERNEED");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      verreq_section->virtual_address(va_r_base);
+      verreq_section->size(sverr_size_);
+      verreq_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verreq_section->original_size_ = sverr_size_;
+      dt_verreq->value(va_r_base);
 
       va_r_base += sverr_size_;
     }
@@ -740,21 +846,34 @@ class LIEF_LOCAL ExeLayout : public Layout {
       // - DT_REL / DT_RELA
       // - DT_RELSZ / DT_RELASZ
       // - .dyn.rel
-      bool is_rela = binary_->has(DYNAMIC_TAGS::DT_RELA);
-      DynamicEntry& dt_reloc = is_rela ?
-        binary_->get(DYNAMIC_TAGS::DT_RELA) : binary_->get(DYNAMIC_TAGS::DT_REL);
 
-      DynamicEntry& dt_relocsz = is_rela ?
-        binary_->get(DYNAMIC_TAGS::DT_RELASZ) : binary_->get(DYNAMIC_TAGS::DT_RELSZ);
-      Section& dyn_relocation_section = binary_->section_from_virtual_address(dt_reloc.value());
-      LIEF_DEBUG("Update {}", dyn_relocation_section.name());
-      dyn_relocation_section.virtual_address(va_r_base);
-      dyn_relocation_section.size(dynamic_reloc_size_);
-      dyn_relocation_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      dyn_relocation_section.original_size_ = dynamic_reloc_size_;
+      DynamicEntry* dt_rela = binary_->get(DYNAMIC_TAGS::DT_RELA);
 
-      dt_reloc.value(va_r_base);
-      dt_relocsz.value(dynamic_reloc_size_);
+      const bool is_rela = dt_rela != nullptr;
+      DynamicEntry* dt_reloc   = is_rela ? dt_rela : binary_->get(DYNAMIC_TAGS::DT_REL);
+      DynamicEntry* dt_relocsz = is_rela ? binary_->get(DYNAMIC_TAGS::DT_RELASZ) :
+                                           binary_->get(DYNAMIC_TAGS::DT_RELSZ);
+
+      if (dt_reloc == nullptr || dt_relocsz == nullptr) {
+        LIEF_ERR("Can't find DT_REL(A) / DT_REL(A)SZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* dyn_relocation_section = binary_->section_from_virtual_address(dt_reloc->value());
+
+      if (dyn_relocation_section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_REL(A)");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      LIEF_DEBUG("Update {}", dyn_relocation_section->name());
+      dyn_relocation_section->virtual_address(va_r_base);
+      dyn_relocation_section->size(dynamic_reloc_size_);
+      dyn_relocation_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_relocation_section->original_size_ = dynamic_reloc_size_;
+
+      dt_reloc->value(va_r_base);
+      dt_relocsz->value(dynamic_reloc_size_);
 
       va_r_base += dynamic_reloc_size_;
     }
@@ -763,17 +882,28 @@ class LIEF_LOCAL ExeLayout : public Layout {
       // Update:
       // - DT_JMPREL / DT_PLTRELSZ
       // - .plt.rel
-      DynamicEntry& dt_reloc = binary_->get(DYNAMIC_TAGS::DT_JMPREL);
-      DynamicEntry& dt_relocsz = binary_->get(DYNAMIC_TAGS::DT_PLTRELSZ);
-      Section& relocation_section = binary_->section_from_virtual_address(dt_reloc.value());
+      DynamicEntry* dt_reloc = binary_->get(DYNAMIC_TAGS::DT_JMPREL);
+      DynamicEntry* dt_relocsz = binary_->get(DYNAMIC_TAGS::DT_PLTRELSZ);
 
-      relocation_section.virtual_address(va_r_base);
-      relocation_section.size(pltgot_reloc_size_);
-      relocation_section.offset(binary_->virtual_address_to_offset(va_r_base));
-      relocation_section.original_size_ = pltgot_reloc_size_;
+      if (dt_reloc == nullptr || dt_relocsz == nullptr) {
+        LIEF_ERR("Can't find DT_JMPREL, DT_PLTRELSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      dt_reloc.value(va_r_base);
-      dt_relocsz.value(pltgot_reloc_size_);
+      Section* relocation_section = binary_->section_from_virtual_address(dt_reloc->value());
+
+      if (relocation_section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_JMPREL");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      relocation_section->virtual_address(va_r_base);
+      relocation_section->size(pltgot_reloc_size_);
+      relocation_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      relocation_section->original_size_ = pltgot_reloc_size_;
+
+      dt_reloc->value(va_r_base);
+      dt_relocsz->value(pltgot_reloc_size_);
 
       va_r_base += pltgot_reloc_size_;
     }
@@ -781,29 +911,51 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     if (relocate_gnu_hash_) {
       // Update .gnu.hash section / DT_GNU_HASH
-      DynamicEntry& dt_gnu_hash = binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
-      Section& section = binary_->section_from_virtual_address(dt_gnu_hash.value());
+      DynamicEntry* dt_gnu_hash = binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
 
-      section.virtual_address(va_r_base);
-      section.size(raw_gnu_hash_.size());
-      section.offset(binary_->virtual_address_to_offset(va_r_base));
-      section.original_size_ = raw_gnu_hash_.size();
+      if (dt_gnu_hash == nullptr) {
+        LIEF_ERR("Can't find DT_GNU_HASH");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      dt_gnu_hash.value(va_r_base);
+      Section* section = binary_->section_from_virtual_address(dt_gnu_hash->value());
+
+      if (section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_GNU_HASH");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      section->virtual_address(va_r_base);
+      section->size(raw_gnu_hash_.size());
+      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->original_size_ = raw_gnu_hash_.size();
+
+      dt_gnu_hash->value(va_r_base);
       va_r_base += raw_gnu_hash_.size();
     }
 
     if (sysv_size_ > 0) {
       // Update .hash section / DT_HASH
-      DynamicEntry& dt_hash = binary_->get(DYNAMIC_TAGS::DT_HASH);
-      Section& section = binary_->section_from_virtual_address(dt_hash.value());
+      DynamicEntry* dt_hash = binary_->get(DYNAMIC_TAGS::DT_HASH);
 
-      section.virtual_address(va_r_base);
-      section.size(sysv_size_);
-      section.offset(binary_->virtual_address_to_offset(va_r_base));
-      section.original_size_ = sysv_size_;
+      if (dt_hash == nullptr) {
+        LIEF_ERR("Can't find DT_HASH");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
-      dt_hash.value(va_r_base);
+      Section* section = binary_->section_from_virtual_address(dt_hash->value());
+
+      if (section == nullptr) {
+        LIEF_ERR("Can't find the section associated with DT_HASH");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      section->virtual_address(va_r_base);
+      section->size(sysv_size_);
+      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->original_size_ = sysv_size_;
+
+      dt_hash->value(va_r_base);
       va_r_base += sysv_size_;
     }
 
@@ -811,21 +963,38 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // RW-Segment
     // ====================================
     if (init_size_ > 0) {  // .init_array
-      auto& dt_init_array           = *binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAY).as<DynamicEntryArray>();
-      DynamicEntry& dt_init_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
-      Section& init_array_section   = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY);
+      DynamicEntry* raw_dt_init = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAY);
+      if (raw_dt_init == nullptr || !DynamicEntryArray::classof(raw_dt_init)) {
+        LIEF_ERR("DT_INIT_ARRAY not found");
+        return make_error_code(lief_errors::file_format_error);
+      }
+      DynamicEntryArray* dt_init_array = raw_dt_init->as<DynamicEntryArray>();
+      DynamicEntry* dt_init_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
+
+      if (dt_init_arraysz == nullptr) {
+        LIEF_ERR("Can't find DT_INIT_ARRAYSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* init_array_section   = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY);
+
+      if (init_array_section == nullptr) {
+        LIEF_ERR("Can't find .init_array section");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
       // Update relocation range
       if (binary_->header().file_type() == E_TYPE::ET_DYN) {
         LIEF_WARN("Relocating .init_array might not work on Linux.");
-        const std::vector<uint64_t>& array = dt_init_array.array();
+        const std::vector<uint64_t>& array = dt_init_array->array();
         const size_t sizeof_p = binary_->type() == ELF_CLASS::ELFCLASS32 ?
-          sizeof(uint32_t) : sizeof(uint64_t);
+                                sizeof(uint32_t) : sizeof(uint64_t);
 
         // Since the values of the .init_array have moved elsewhere,
         // we need to change the relocation associated with the former .init_array
+        const uint64_t array_base_address = dt_init_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
-          auto it_reloc = relocations_addresses_.find(dt_init_array.value() + i * sizeof_p);
+          auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
             LIEF_ERR("Missing relocation for .init_array[{:d}]: 0x{:x}", i, array[i]);
             continue;
@@ -835,30 +1004,47 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
-      init_array_section.virtual_address(va_rw_base);
-      init_array_section.size(init_size_);
-      init_array_section.offset(binary_->virtual_address_to_offset(va_rw_base));
-      init_array_section.original_size_ = init_size_;
+      init_array_section->virtual_address(va_rw_base);
+      init_array_section->size(init_size_);
+      init_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      init_array_section->original_size_ = init_size_;
 
-      dt_init_array.value(va_rw_base);
-      dt_init_arraysz.value(init_size_);
+      dt_init_array->value(va_rw_base);
+      dt_init_arraysz->value(init_size_);
 
       va_rw_base += init_size_;
     }
 
     if (preinit_size_ > 0) { // .preinit_array
-      auto& dt_preinit_array = *binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAY).as<DynamicEntryArray>();
-      DynamicEntry& dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
-      Section& preinit_array_section   = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
+      DynamicEntry* raw_dt_preinit = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
+      if (raw_dt_preinit == nullptr || !DynamicEntryArray::classof(raw_dt_preinit)) {
+        LIEF_ERR("DT_PREINIT_ARRAY not found");
+        return make_error_code(lief_errors::file_format_error);
+      }
+      DynamicEntryArray* dt_preinit_array = raw_dt_preinit->as<DynamicEntryArray>();
+      DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
+
+      if (dt_preinit_array == nullptr) {
+        LIEF_ERR("Can't find DT_PREINIT_ARRAYSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* preinit_array_section = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
+
+      if (preinit_array_section == nullptr) {
+        LIEF_ERR("Can't find the section .preinit_array (SHT_PREINIT_ARRAY)");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
       if (binary_->header().file_type() == E_TYPE::ET_DYN) {
-        const std::vector<uint64_t>& array = dt_preinit_array.array();
+        const std::vector<uint64_t>& array = dt_preinit_array->array();
         const size_t sizeof_p = binary_->type() == ELF_CLASS::ELFCLASS32 ?
-          sizeof(uint32_t) : sizeof(uint64_t);
+                                sizeof(uint32_t) : sizeof(uint64_t);
         LIEF_WARN("Relocating .preinit_array might not work on Linux.");
 
+        const uint64_t array_base_address = dt_preinit_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
-          auto it_reloc = relocations_addresses_.find(dt_preinit_array.value() + i * sizeof_p);
+          auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
             LIEF_ERR("Missing relocation for .preinit_array[{:d}]: 0x{:x}", i, array[i]);
             continue;
@@ -868,34 +1054,49 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
-      preinit_array_section.virtual_address(va_rw_base);
-      preinit_array_section.size(preinit_size_);
-      preinit_array_section.offset(binary_->virtual_address_to_offset(va_rw_base));
-      preinit_array_section.original_size_ = preinit_size_;
+      preinit_array_section->virtual_address(va_rw_base);
+      preinit_array_section->size(preinit_size_);
+      preinit_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      preinit_array_section->original_size_ = preinit_size_;
 
-      dt_preinit_array.value(va_rw_base);
-      dt_preinit_arraysz.value(preinit_size_);
+      dt_preinit_array->value(va_rw_base);
+      dt_preinit_arraysz->value(preinit_size_);
 
       va_rw_base += preinit_size_;
     }
 
 
     if (fini_size_ > 0) { // .fini_array
-      auto& dt_fini_array           = *binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAY).as<DynamicEntryArray>();
-      DynamicEntry& dt_fini_arraysz = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
-      Section& fini_array_section   = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY);
+      DynamicEntry* raw_dt_fini = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAY);
+      if (raw_dt_fini == nullptr || !DynamicEntryArray::classof(raw_dt_fini)) {
+        LIEF_ERR("DT_FINI_ARRAY not found");
+        return make_error_code(lief_errors::file_format_error);
+      }
+      DynamicEntryArray* dt_fini_array = raw_dt_fini->as<DynamicEntryArray>();
+      DynamicEntry* dt_fini_arraysz = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
 
-      // Update relocation range
+      if (dt_fini_arraysz == nullptr) {
+        LIEF_ERR("Can't find DT_FINI_ARRAYSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      Section* fini_array_section = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY);
+
+      if (fini_array_section == nullptr) {
+        LIEF_ERR("Can't find the section .fini_array (SHT_FINI_ARRAY)");
+        return make_error_code(lief_errors::file_format_error);
+      }
 
       if (binary_->header().file_type() == E_TYPE::ET_DYN) {
-        const std::vector<uint64_t>& array = dt_fini_array.array();
+        const std::vector<uint64_t>& array = dt_fini_array->array();
         const size_t sizeof_p = binary_->type() == ELF_CLASS::ELFCLASS32 ?
-          sizeof(uint32_t) : sizeof(uint64_t);
+                                sizeof(uint32_t) : sizeof(uint64_t);
 
         LIEF_WARN("Relocating .fini_array might not work on Linux.");
 
+        const uint64_t array_base_address = dt_fini_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
-          auto it_reloc = relocations_addresses_.find(dt_fini_array.value() + i * sizeof_p);
+          auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
             LIEF_ERR("Missing relocation for .fini_array[{:d}]: 0x{:x}", i, array[i]);
             continue;
@@ -905,13 +1106,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
-      fini_array_section.virtual_address(va_rw_base);
-      fini_array_section.size(fini_size_);
-      fini_array_section.offset(binary_->virtual_address_to_offset(va_rw_base));
-      fini_array_section.original_size_ = fini_size_;
+      fini_array_section->virtual_address(va_rw_base);
+      fini_array_section->size(fini_size_);
+      fini_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      fini_array_section->original_size_ = fini_size_;
 
-      dt_fini_array.value(va_rw_base);
-      dt_fini_arraysz.value(fini_size_);
+      dt_fini_array->value(va_rw_base);
+      dt_fini_arraysz->value(fini_size_);
       va_rw_base += fini_size_;
     }
 
@@ -922,7 +1123,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       LIEF_DEBUG("Relocate .strtab");
       if (is_strtab_shared_shstrtab()) {
         LIEF_ERR("Inconsistency"); // The strtab should be located in the .shstrtab section
-        std::abort();
+        return make_error_code(lief_errors::file_format_error);
       }
       if (strtab_section_ != nullptr) {
         LIEF_DEBUG("Removing the old section: {} 0x{:x} (size: 0x{:x})",
@@ -938,10 +1139,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
       Section& new_strtab = binary_->add(strtab, /* loaded */ false);
       LIEF_DEBUG("New .strtab section: #{:d} {} 0x{:x} (size: {:x})",
                  strtab_idx, new_strtab.name(), new_strtab.file_offset(), new_strtab.size());
-      if (binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
-        Section& sec = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
-        LIEF_DEBUG("Link section {} with the new .strtab (idx: #{:d})", sec.name(), strtab_idx);
-        sec.link(strtab_idx);
+
+      Section* sec_symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+      if (sec_symtab != nullptr) {
+        LIEF_DEBUG("Link section {} with the new .strtab (idx: #{:d})", sec_symtab->name(), strtab_idx);
+        sec_symtab->link(strtab_idx);
       }
       set_strtab_section(new_strtab);
     }
@@ -954,14 +1156,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // currently we only handle the static symbol table: .symtab
     if (symtab_size_ > 0) {
       LIEF_DEBUG("Relocate .symtab");
-      if (binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
-        Section& sec = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+
+      Section* sec_symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+      if (sec_symtab != nullptr) {
         if (strtab_idx == 0) {
-          strtab_idx = sec.link();
+          strtab_idx = sec_symtab->link();
         }
         LIEF_DEBUG("Removing the old section: {} 0x{:x} (size: 0x{:x})",
-                   sec.name(), sec.file_offset(), sec.size());
-        binary_->remove(sec, /* clear */ true);
+                   sec_symtab->name(), sec_symtab->file_offset(), sec_symtab->size());
+        binary_->remove(*sec_symtab, /* clear */ true);
       }
 
       Section symtab{".symtab", ELF_SECTION_TYPES::SHT_SYMTAB};
@@ -978,10 +1181,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     // Process note sections
-    if (binary_->has(SEGMENT_TYPES::PT_NOTE)) {
+    const Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
+    if (segment_note != nullptr) {
       using value_t = typename note_to_section_map_t::value_type;
-      const Segment& segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
-
       for (const Note& note : binary_->notes()) {
         auto range_secname = note_to_section_map.equal_range(note.type());
         const bool known_section = (range_secname.first != range_secname.second);
@@ -1019,23 +1221,24 @@ class LIEF_LOCAL ExeLayout : public Layout {
         if (binary_->has(type) && !has_section) {
           if (it_offset == std::end(notes_off_map_)) {
             LIEF_ERR("Can't find {}", to_string(type));
-            return;
+            return make_error_code(lief_errors::file_format_error);
           }
           const size_t note_offset = it_offset->second;
 
-          const Note& note = binary_->get(type);
+          const Note& note = *binary_->get(type);
 
           Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
           section += ELF_SECTION_FLAGS::SHF_ALLOC;
 
           Section& section_added = binary_->add(section, /*loaded */ false);
-          section_added.offset(segment_note.file_offset() + note_offset);
+          section_added.offset(segment_note->file_offset() + note_offset);
           section_added.size(note.size());
-          section.virtual_address(segment_note.virtual_address() + note_offset);
+          section.virtual_address(segment_note->virtual_address() + note_offset);
           section_added.alignment(4);
         }
       }
     }
+    return true;
   }
 
   inline const std::unordered_map<std::string, size_t>& dynstr_map() const {
@@ -1050,10 +1253,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return nchain_;
   }
 
-  virtual ~ExeLayout() = default;
-
-  private:
+  ~ExeLayout() override = default;
   ExeLayout() = delete;
+  private:
 
   std::unordered_map<std::string, size_t> offset_name_map_;
   std::unordered_map<const Note*, size_t> notes_off_map_;

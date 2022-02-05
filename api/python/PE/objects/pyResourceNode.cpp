@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
@@ -34,12 +35,15 @@ using setter_t = void (ResourceNode::*)(T);
 
 template<>
 void create<ResourceNode>(py::module& m) {
-  py::class_<ResourceNode, LIEF::Object>(m, "ResourceNode",
+  py::class_<ResourceNode, LIEF::Object> res_node(m, "ResourceNode",
       R"delim(
       Class which represents a Node in the resource tree.
       It is extended by :class:`lief.PE.ResourceData` and :class:`lief.PE.ResourceNode`
-      )delim")
+      )delim");
 
+  init_ref_iterator<ResourceNode::it_childs>(res_node, "it_childs");
+
+  res_node
     .def_property("id",
         static_cast<getter_t<uint32_t>>(&ResourceNode::id),
         static_cast<setter_t<uint32_t>>(&ResourceNode::id),
@@ -66,7 +70,7 @@ void create<ResourceNode>(py::module& m) {
         "Resource's name")
 
     .def_property_readonly("childs",
-        static_cast<it_childs (ResourceNode::*)(void)>(&ResourceNode::childs),
+        static_cast<ResourceNode::it_childs (ResourceNode::*)(void)>(&ResourceNode::childs),
         "Node's childs")
 
     .def("add_directory_node",

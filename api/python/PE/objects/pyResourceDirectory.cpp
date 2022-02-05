@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"

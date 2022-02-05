@@ -41,13 +41,13 @@ void create<Method>(py::module& m) {
         "Method's name")
 
     .def_property_readonly("oat_class",
-        static_cast<no_const_getter<Class&>>(&Method::oat_class),
-        "" RST_CLASS_REF(lief.OAT.Class) " associated with the method",
+        static_cast<no_const_getter<Class*>>(&Method::oat_class),
+        "" RST_CLASS_REF(lief.OAT.Class) " associated with the method (or None)",
         py::return_value_policy::reference)
 
     .def_property_readonly("dex_method",
-        static_cast<no_const_getter<LIEF::DEX::Method&>>(&Method::dex_method),
-        "Mirrored " RST_CLASS_REF(lief.DEX.Method) " associated with the OAT method",
+        static_cast<no_const_getter<LIEF::DEX::Method*>>(&Method::dex_method),
+        "Mirrored " RST_CLASS_REF(lief.DEX.Method) " associated with the OAT method (or None)",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_dex_method",

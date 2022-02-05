@@ -19,6 +19,7 @@
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 
+#include "pyIterators.hpp"
 #include "pyELF.hpp"
 
 namespace LIEF {
@@ -38,9 +39,12 @@ template<>
 void create<SymbolVersionRequirement>(py::module& m) {
 
   // Symbol Version Requirement object
-  py::class_<SymbolVersionRequirement, LIEF::Object>(m, "SymbolVersionRequirement",
-      "Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table")
+  py::class_<SymbolVersionRequirement, LIEF::Object> sym_ver_req(m, "SymbolVersionRequirement",
+      "Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table");
 
+  init_ref_iterator<SymbolVersionRequirement::it_aux_requirement>(sym_ver_req, "it_aux_requirement");
+
+  sym_ver_req
     .def_property("version",
         static_cast<getter_t<uint16_t>>(&SymbolVersionRequirement::version),
         static_cast<setter_t<uint16_t>>(&SymbolVersionRequirement::version),
@@ -52,7 +56,7 @@ void create<SymbolVersionRequirement>(py::module& m) {
         "Library's name associated with this requirement (e.g. ``libc.so.6``)")
 
     .def("get_auxiliary_symbols",
-        static_cast<no_const_getter<it_symbols_version_aux_requirement>>(&SymbolVersionRequirement::auxiliary_symbols),
+        static_cast<no_const_getter<SymbolVersionRequirement::it_aux_requirement>>(&SymbolVersionRequirement::auxiliary_symbols),
         "Auxiliary entries (iterator over " RST_CLASS_REF(lief.ELF.SymbolVersionAuxRequirement) ")",
         py::return_value_policy::reference_internal)
 

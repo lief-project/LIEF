@@ -1,18 +1,3 @@
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/enums.inc      LIEF_ART_ENUMS)
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/structures.inc LIEF_ART_STRUCTURES)
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/enums.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ART/enums.hpp
-  @ONLY
-)
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/Structures.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ART/Structures.hpp
-  @ONLY
-)
-
 set(LIEF_ART_SRC
   ${CMAKE_CURRENT_LIST_DIR}/Parser.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Parser.tcc
@@ -23,21 +8,20 @@ set(LIEF_ART_SRC
   ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Structures.cpp
   ${CMAKE_CURRENT_LIST_DIR}/hash.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/Convert.cpp
 )
 
 set(LIEF_ART_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/File.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/Header.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/Parser.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/type_traits.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/types.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/utils.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/EnumToString.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/java_structures.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/hash.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ART/enums.hpp"
+  "${CMAKE_CURRENT_LIST_DIR}/Structures.hpp"
 
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ART/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ART/enums.hpp"
 )
 
 # JSON Public API: Always present

@@ -17,6 +17,7 @@
 #define LIEF_MACHO_TRIE_NODE_H_
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/MachO/ExportInfo.hpp"
@@ -29,33 +30,33 @@ class TrieNode;
 
 class LIEF_LOCAL TrieEdge {
   public:
-  static TrieEdge* create(const std::string& str, TrieNode* node);
+  static std::unique_ptr<TrieEdge> create(const std::string& str, TrieNode& node);
 
   TrieEdge() = delete;
-  TrieEdge(std::string str, TrieNode* node);
+  TrieEdge(std::string str, TrieNode& node);
 
   ~TrieEdge();
 
   public:
   std::string substr;
-  TrieNode* child{nullptr};
-
+  TrieNode* child = nullptr;
 };
 
 
 class LIEF_LOCAL TrieNode {
 
   public:
-  using trie_edge_list_t = std::vector<TrieEdge*>;
+  using trie_edge_list_t = std::vector<std::unique_ptr<TrieEdge>>;
+  using node_list_t = std::vector<std::unique_ptr<TrieNode>>;
 
-  static TrieNode* create(const std::string& str);
+  static std::unique_ptr<TrieNode> create(const std::string& str);
 
   TrieNode() = delete;
 
   TrieNode(std::string str);
   ~TrieNode();
 
-  TrieNode& add_symbol(const ExportInfo& info, std::vector<TrieNode*>& nodes);
+  TrieNode& add_symbol(const ExportInfo& info, node_list_t& nodes);
   TrieNode& add_ordered_nodes(const ExportInfo& info, std::vector<TrieNode*>& nodes);
   bool update_offset(uint32_t& offset);
 
@@ -65,13 +66,13 @@ class LIEF_LOCAL TrieNode {
   private:
   std::string cummulative_string_;
   trie_edge_list_t children_;
-  uint64_t address_;
-  uint64_t flags_;
-  uint64_t other_;
+  uint64_t address_ = 0;
+  uint64_t flags_ = 0;
+  uint64_t other_ = 0;
   std::string imported_name_;
-  uint32_t trie_offset_;
-  bool has_export_info_;
-  bool ordered_{false};
+  uint32_t trie_offset_ = 0;
+  bool has_export_info_ = false;
+  bool ordered_ = false;
 
 };
 

@@ -19,19 +19,26 @@
 #include <vector>
 #include <string>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 namespace LIEF {
 class VectorStream : public BinaryStream {
   public:
-  //using BinaryStream::read_integer;
-  VectorStream(const std::string& filename);
-  VectorStream(const std::vector<uint8_t>& data);
+  static result<VectorStream> from_file(const std::string& file);
+  VectorStream(std::vector<uint8_t> data);
 
-  inline STREAM_TYPE type() const override {
-    return STREAM_TYPE::FILE;
+  VectorStream() = delete;
+
+  // VectorStream should not be copyable for performances reasons
+  VectorStream(const VectorStream&) = delete;
+  VectorStream& operator=(const VectorStream&) = delete;
+
+  VectorStream(VectorStream&& other);
+  VectorStream& operator=(VectorStream&& other);
+
+  inline uint64_t size() const override {
+    return size_;
   }
-
-  uint64_t size() const override;
 
   const std::vector<uint8_t>& content() const;
 
@@ -42,7 +49,6 @@ class VectorStream : public BinaryStream {
   inline const uint8_t* p() const {
     return this->binary_.data() + this->pos();
   }
-
 
   inline uint8_t* start() {
     return this->binary_.data();
@@ -72,10 +78,12 @@ class VectorStream : public BinaryStream {
   result<std::vector<uint8_t>> x509_read_serial() override;
   result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
 
+  static bool classof(const BinaryStream& stream);
+
   protected:
-  const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
   std::vector<uint8_t> binary_;
-  uint64_t size_;
+  uint64_t size_ = 0;
 };
 }
 

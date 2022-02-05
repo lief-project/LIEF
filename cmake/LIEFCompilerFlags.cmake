@@ -57,14 +57,17 @@ if (NOT MSVC)
   ADD_FLAG_IF_SUPPORTED("-fomit-frame-pointer"      OMIT_FRAME_POINTER)
   ADD_FLAG_IF_SUPPORTED("-fno-strict-aliasing"      NO_STRICT_ALIASING)
   ADD_FLAG_IF_SUPPORTED("-fexceptions"              EXCEPTION)
-  ADD_FLAG_IF_SUPPORTED("-fvisibility=hidden"       VISIBILITY)
   ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined" NO_EXPANSION_TO_DEFINED)
+
+  # Promote this warning into an error as Leaf error management
+  # where the result is 'result<void>' might miss the "return {}"
+  ADD_FLAG_IF_SUPPORTED("-Werror=return-type" ERR_RET_TYPE)
+
 
   ADD_FLAG_IF_SUPPORTED("-fdiagnostics-color=always" DIAGNOSTICS_COLOR)
   ADD_FLAG_IF_SUPPORTED("-fcolor-diagnostics"        COLOR_DIAGNOSTICS)
-
-
 endif()
+
 #ADD_FLAG_IF_SUPPORTED("-Wduplicated-cond"         HAS_DUPLICATED_COND)
 #ADD_FLAG_IF_SUPPORTED("-Wduplicated-branches"     HAS_DUPLICATED_BRANCHES)
 #ADD_FLAG_IF_SUPPORTED("-Wlogical-op"              HAS_LOGICAL_OP)

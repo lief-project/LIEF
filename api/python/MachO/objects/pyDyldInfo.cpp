@@ -21,6 +21,7 @@
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 
+#include "pyIterators.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
@@ -39,11 +40,15 @@ using no_const_getter = T (DyldInfo::*)(void);
 template<>
 void create<DyldInfo>(py::module& m) {
 
-  py::class_<DyldInfo, LoadCommand>(m, "DyldInfo",
+  py::class_<DyldInfo, LoadCommand> dyld(m, "DyldInfo",
       R"delim(
       Class that represents the LC_DYLD_INFO and LC_DYLD_INFO_ONLY commands
-      )delim")
+      )delim");
 
+  init_ref_iterator<DyldInfo::it_binding_info>(dyld, "it_binding_info");
+  init_ref_iterator<DyldInfo::it_export_info>(dyld, "it_export_info");
+
+  dyld
     .def_property("rebase",
         static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::rebase),
         static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::rebase),
@@ -172,7 +177,7 @@ void create<DyldInfo>(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("bindings",
-        static_cast<no_const_getter<it_binding_info>>(&DyldInfo::bindings),
+        static_cast<no_const_getter<DyldInfo::it_binding_info>>(&DyldInfo::bindings),
         "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.BindingInfo) "",
         py::return_value_policy::reference_internal)
 
@@ -218,7 +223,7 @@ void create<DyldInfo>(py::module& m) {
         "Return Export's trie as ``list`` of bytes")
 
     .def_property_readonly("exports",
-        static_cast<no_const_getter<it_export_info>>(&DyldInfo::exports),
+        static_cast<no_const_getter<DyldInfo::it_export_info>>(&DyldInfo::exports),
         "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.ExportInfo) "",
         py::return_value_policy::reference_internal)
 

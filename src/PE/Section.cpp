@@ -17,14 +17,15 @@
 #include <numeric>
 #include <iterator>
 
+#include "logging.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -43,8 +44,7 @@ Section::Section(const details::pe_section& header) :
   pointer_to_linenumbers_{header.PointerToLineNumbers},
   number_of_relocations_{header.NumberOfRelocations},
   number_of_linenumbers_{header.NumberOfLineNumbers},
-  characteristics_{header.Characteristics},
-  types_{PE_SECTION_TYPES::UNKNOWN}
+  characteristics_{header.Characteristics}
 {
   name_            = std::string(header.Name, sizeof(header.Name));
   virtual_address_ = header.VirtualAddress;
@@ -71,8 +71,6 @@ Section::Section(const std::string& name) :
 uint32_t Section::virtual_size() const {
   return virtual_size_;
 }
-
-
 
 uint32_t Section::sizeof_raw_data() const {
   return size();
@@ -125,9 +123,11 @@ bool Section::is_type(PE_SECTION_TYPES type) const {
 
 void Section::name(const std::string& name) {
   if (name.size() > details::STRUCT_SIZES::NameSize) {
-    throw LIEF::pe_bad_section_name("Name is too big");
+    LIEF_ERR("The max size of a section's name is {} vs {d}",
+             details::STRUCT_SIZES::NameSize, name.size());
+    return;
   }
-  name_  = name;
+  name_ = name;
 }
 
 bool Section::has_characteristic(SECTION_CHARACTERISTICS c) const {
@@ -137,8 +137,7 @@ bool Section::has_characteristic(SECTION_CHARACTERISTICS c) const {
 std::set<SECTION_CHARACTERISTICS> Section::characteristics_list() const {
   std::set<SECTION_CHARACTERISTICS> charac;
   std::copy_if(
-      std::begin(details::section_characteristics_array),
-      std::end(details::section_characteristics_array),
+      std::begin(details::section_characteristics_array), std::end(details::section_characteristics_array),
       std::inserter(charac, std::begin(charac)),
       [this] (SECTION_CHARACTERISTICS f) { return has_characteristic(f); });
 
@@ -221,13 +220,13 @@ void Section::accept(LIEF::Visitor& visitor) const {
 
 
 void Section::clear(uint8_t c) {
-  std::fill(
-      std::begin(content_),
-      std::end(content_),
-      c);
+  std::fill(std::begin(content_), std::end(content_), c);
 }
 
 bool Section::operator==(const Section& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -242,8 +241,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& chara = section.characteristics_list();
 
   std::string chara_str = std::accumulate(
-     std::begin(chara),
-     std::end(chara), std::string{},
+     std::begin(chara), std::end(chara), std::string{},
      [] (const std::string& a, SECTION_CHARACTERISTICS b) {
          return a.empty() ?
          to_string(b) :

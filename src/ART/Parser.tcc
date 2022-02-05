@@ -16,7 +16,8 @@
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
-
+#include "LIEF/ART/Parser.hpp"
+#include "LIEF/ART/File.hpp"
 #include "LIEF/ART/EnumToString.hpp"
 
 namespace LIEF {
@@ -32,7 +33,11 @@ template<typename ART_T>
 size_t Parser::parse_header() {
   using art_header_t = typename ART_T::art_header_t;
 
-  const art_header_t& hdr = stream_->peek<art_header_t>(0);
+  const auto res_hdr = stream_->peek<art_header_t>(0);
+  if (!res_hdr) {
+    return 0;
+  }
+  const auto hdr = std::move(*res_hdr);
   imagebase_ = hdr.image_begin;
 
   if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t)) {

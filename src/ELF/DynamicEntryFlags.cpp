@@ -19,6 +19,7 @@
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -26,8 +27,6 @@ namespace ELF {
 DynamicEntryFlags::DynamicEntryFlags() = default;
 DynamicEntryFlags& DynamicEntryFlags::operator=(const DynamicEntryFlags&) = default;
 DynamicEntryFlags::DynamicEntryFlags(const DynamicEntryFlags&) = default;
-
-
 
 bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
   if (tag() != DYNAMIC_TAGS::DT_FLAGS) {

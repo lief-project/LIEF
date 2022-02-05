@@ -25,31 +25,25 @@
 
 namespace LIEF {
 namespace ELF {
+
+GnuHash::GnuHash(GnuHash&&)                 = default;
+GnuHash& GnuHash::operator=(GnuHash&&)      = default;
+
 GnuHash& GnuHash::operator=(const GnuHash&) = default;
-GnuHash::GnuHash(const GnuHash&)           = default;
-GnuHash::~GnuHash()                    = default;
-
-GnuHash::GnuHash() :
-  symbol_index_{0},
-  shift2_{0},
-  bloom_filters_{0},
-  buckets_{0},
-  hash_values_{0},
-  c_{0}
-{}
+GnuHash::GnuHash(const GnuHash&)            = default;
+GnuHash::~GnuHash()                         = default;
+GnuHash::GnuHash()                          = default;
 
 
-GnuHash::GnuHash(uint32_t symbol_idx,
-      uint32_t shift2,
-      std::vector<uint64_t> bloom_filters,
-      std::vector<uint32_t> buckets,
-      std::vector<uint32_t> hash_values) :
+
+GnuHash::GnuHash(uint32_t symbol_idx, uint32_t shift2,
+                 std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
+                 std::vector<uint32_t> hash_values) :
   symbol_index_{symbol_idx},
   shift2_{shift2},
   bloom_filters_{std::move(bloom_filters)},
   buckets_{std::move(buckets)},
-  hash_values_{std::move(hash_values)},
-  c_{0}
+  hash_values_{std::move(hash_values)}
 {}
 
 
@@ -117,6 +111,9 @@ bool GnuHash::check(uint32_t hash) const {
 }
 
 bool GnuHash::operator==(const GnuHash& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

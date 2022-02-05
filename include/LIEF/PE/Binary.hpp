@@ -34,6 +34,8 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+
+//! Namespace related to the LIEF's PE module
 namespace PE {
 class Parser;
 class Builder;
@@ -45,6 +47,78 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class Builder;
 
   public:
+  //! Internal container for storing PE's Section
+  using sections_t = std::vector<std::unique_ptr<Section>>;
+
+  //! Iterator that outputs Section& object
+  using it_sections = ref_iterator<sections_t&, Section*>;
+
+  //! Iterator that outputs const Section& object
+  using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
+
+  //! Internal container for storing PE's DataDirectory
+  using data_directories_t = std::vector<std::unique_ptr<DataDirectory>>;
+
+  //! Iterator that outputs DataDirectory&
+  using it_data_directories = ref_iterator<data_directories_t&, DataDirectory*>;
+
+  //! Iterator that outputs const DataDirectory&
+  using it_const_data_directories = const_ref_iterator<const data_directories_t&, const DataDirectory*>;
+
+  //! Internal container for storing PE's Relocation
+  using relocations_t = std::vector<std::unique_ptr<Relocation>>;
+
+  //! Iterator that outputs Relocation&
+  using it_relocations = ref_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator that outputs const Relocation&
+  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+
+  //! Internal container for storing PE's Import
+  using imports_t = std::vector<Import>;
+
+  //! Iterator that output Import&
+  using it_imports = ref_iterator<imports_t&>;
+
+  //! Iterator that outputs const Import&
+  using it_const_imports = const_ref_iterator<const imports_t&>;
+
+  //! Internal container for storing Debug information
+  using debug_entries_t = std::vector<Debug>;
+
+  //! Iterator that outputs Debug&
+  using it_debug_entries = ref_iterator<debug_entries_t&>;
+
+  //! Iterator that outputs const Debug&
+  using it_const_debug_entries = const_ref_iterator<const debug_entries_t&>;
+
+  //! Internal container for storing COFF Symbols
+  using symbols_t = std::vector<Symbol>;
+
+  //! Iterator that outputs Symbol&
+  using it_symbols = ref_iterator<symbols_t&>;
+
+  //! Iterator that outputs const Symbol&
+  using it_const_symbols = const_ref_iterator<const symbols_t&>;
+
+  //! Internal container for storing strings
+  using strings_table_t = std::vector<std::string>;
+
+  //! Iterator that outputs std::string&
+  using it_strings_table = ref_iterator<strings_table_t&>;
+
+  //! Iterator that outputs const std::string&
+  using it_const_strings_table = const_ref_iterator<const strings_table_t&>;
+
+  //! Internal container for storing PE's authenticode Signature
+  using signatures_t = std::vector<Signature>;
+
+  //! Iterator that outputs Signature&
+  using it_signatures = ref_iterator<signatures_t&>;
+
+  //! Iterator that outputs const Signature&
+  using it_const_signatures = const_ref_iterator<const signatures_t&>;
+
   Binary(const std::string& name, PE_TYPE type);
 
   ~Binary() override;
@@ -74,12 +148,16 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t imagebase() const override;
 
   //! Find the section associated that encompasses the given offset.
-  Section& section_from_offset(uint64_t offset);
-  const Section& section_from_offset(uint64_t offset) const;
+  //!
+  //! If no section can be found, return a nullptr
+  Section* section_from_offset(uint64_t offset);
+  const Section* section_from_offset(uint64_t offset) const;
 
   //! Find the section associated that encompasses the given RVA.
-  Section& section_from_rva(uint64_t virtual_address);
-  const Section& section_from_rva(uint64_t virtual_address) const;
+  //!
+  //! If no section can be found, return a nullptr
+  Section* section_from_rva(uint64_t virtual_address);
+  const Section* section_from_rva(uint64_t virtual_address) const;
 
   //! Return an iterator over the PE's Section
   it_sections sections();
@@ -203,8 +281,8 @@ class LIEF_API Binary : public LIEF::Binary {
   const std::vector<Symbol>& symbols() const;
 
   //! Return resources as a tree
-  ResourceNode& resources();
-  const ResourceNode& resources() const;
+  ResourceNode* resources();
+  const ResourceNode* resources() const;
 
   //! Set a new resource tree
   void set_resources(const ResourceDirectory& resource);
@@ -216,15 +294,17 @@ class LIEF_API Binary : public LIEF::Binary {
   ResourcesManager resources_manager();
   const ResourcesManager resources_manager() const;
 
-  //! Return binary's section from its name
+  //! Return binary's section from its name.
+  //! If the secion can't be found, return a nullptr
   //!
   //! @param[in] name Name of the Section
-  Section& get_section(const std::string& name);
-  const Section& get_section(const std::string& name) const;
+  Section* get_section(const std::string& name);
+  const Section* get_section(const std::string& name) const;
 
-  //! Return the section associated with import table
-  const Section& import_section() const;
-  Section&       import_section();
+  //! Return the section associated with import table or a
+  //! nullptr if the binary does not have an import table
+  const Section* import_section() const;
+  Section*       import_section();
 
   //! Delete the section with the given name
   //!
@@ -267,9 +347,10 @@ class LIEF_API Binary : public LIEF::Binary {
   debug_entries_t& debug();
   const debug_entries_t& debug() const;
 
-  //! Retrun the LoadConfiguration object
-  const LoadConfiguration& load_configuration() const;
-  LoadConfiguration& load_configuration();
+  //! Retrun the LoadConfiguration object or a nullptr
+  //! if the binary does not use the LoadConfiguration
+  const LoadConfiguration* load_configuration() const;
+  LoadConfiguration* load_configuration();
 
   //! Return the overlay content
   const std::vector<uint8_t>& overlay() const;
@@ -299,22 +380,24 @@ class LIEF_API Binary : public LIEF::Binary {
   it_imports       imports();
   it_const_imports imports() const;
 
-  //! Returns the PE::Import from the given name
+  //! Returns the PE::Import from the given name. If it can't be
+  //! found, return a nullptr
   //!
   //! @param[in] import_name Name of the import
-  Import& get_import(const std::string& import_name);
-  const Import& get_import(const std::string& import_name) const;
+  Import* get_import(const std::string& import_name);
+  const Import* get_import(const std::string& import_name) const;
 
   //! ``True`` if the binary import the given library name
   //!
   //! @param[in] import_name Name of the import
   bool has_import(const std::string& import_name) const;
 
-  //! Add the function @p function of the library @p library
+  //! Add the function @p function of the library @p library.
+  //! If the function fails, it returns a nullptr
   //!
   //! @param[in] library  Library name of the function
   //! @param[in] function Function's name from the library to import
-  ImportEntry& add_import_function(const std::string& library, const std::string& function);
+  ImportEntry* add_import_function(const std::string& library, const std::string& function);
 
   //! Add an imported library (i.e. `DLL`) to the binary
   Import& add_library(const std::string& name);
@@ -399,14 +482,14 @@ class LIEF_API Binary : public LIEF::Binary {
   void make_space_for_new_section();
 
   //! Return binary's symbols as LIEF::Symbol
-  LIEF::symbols_t get_abstract_symbols() override;
+  LIEF::Binary::symbols_t get_abstract_symbols() override;
 
   LIEF::Header get_abstract_header() const override;
 
   //! Return binary's section as LIEF::Section
-  LIEF::sections_t get_abstract_sections() override;
+  LIEF::Binary::sections_t get_abstract_sections() override;
 
-  LIEF::relocations_t get_abstract_relocations() override;
+  LIEF::Binary::relocations_t get_abstract_relocations() override;
 
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
@@ -415,24 +498,24 @@ class LIEF_API Binary : public LIEF::Binary {
   void update_lookup_address_table_offset();
   void update_iat();
 
-  PE_TYPE        type_;
+  PE_TYPE        type_ = PE_TYPE::PE32_PLUS;
   DosHeader      dos_header_;
   RichHeader     rich_header_;
   Header         header_;
   OptionalHeader optional_header_;
 
-  int32_t available_sections_space_;
+  int32_t available_sections_space_ = 0;
 
-  bool has_rich_header_;
-  bool has_tls_;
-  bool has_imports_;
-  bool has_exports_;
-  bool has_resources_;
-  bool has_exceptions_;
-  bool has_relocations_;
-  bool has_debug_;
-  bool has_configuration_;
-  bool is_reproducible_build_;
+  bool has_rich_header_ = false;
+  bool has_tls_ = false;
+  bool has_imports_ = false;
+  bool has_exports_ = false;
+  bool has_resources_ = false;
+  bool has_exceptions_ = false;
+  bool has_relocations_ = false;
+  bool has_debug_ = false;
+  bool has_configuration_ = false;
+  bool is_reproducible_build_ = false;
 
   signatures_t         signatures_;
   TLS                  tls_;
@@ -441,7 +524,7 @@ class LIEF_API Binary : public LIEF::Binary {
   symbols_t            symbols_;
   strings_table_t      strings_table_;
   relocations_t        relocations_;
-  ResourceNode*        resources_;
+  std::unique_ptr<ResourceNode> resources_;
   imports_t            imports_;
   Export               export_;
   debug_entries_t      debug_;
@@ -450,8 +533,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> dos_stub_;
   std::vector<uint8_t> section_offset_padding_;
 
-  LoadConfiguration*   load_configuration_{nullptr};
-
+  std::unique_ptr<LoadConfiguration> load_configuration_;
   std::map<std::string, std::map<std::string, uint64_t>> hooks_; // Deprecated
 };
 

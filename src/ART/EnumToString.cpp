@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ART/Structures.hpp"
+#include "LIEF/ART/enums.hpp"
 #include "LIEF/ART/EnumToString.hpp"
 #include <map>
 

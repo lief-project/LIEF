@@ -23,7 +23,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/enums.hpp"
-#include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 class Parser;
@@ -42,6 +42,16 @@ class LIEF_API FatBinary {
   friend class Builder;
 
   public:
+
+  //! Internal containter used to store Binary objects within a Fat Mach-O
+  using binaries_t = std::vector<std::unique_ptr<Binary>>;
+
+  //! Iterator that outputs Binary&
+  using it_binaries = ref_iterator<binaries_t&, Binary*>;
+
+  //! Iterator that outputs const Binary&
+  using it_const_binaries = const_ref_iterator<const binaries_t&, Binary*>;
+
   FatBinary(const FatBinary&) = delete;
   FatBinary& operator=(const FatBinary&) = delete;
 
@@ -50,22 +60,32 @@ class LIEF_API FatBinary {
   //! Number of MachO::Binary wrapped by this object
   size_t size() const;
 
+  //! Checks whether this object contains MachO::Binary
+  bool empty() const;
+
   it_binaries begin();
   it_const_binaries begin() const;
 
   it_binaries end();
   it_const_binaries end() const;
 
-  Binary* pop_back();
+  //! Get a pointer to the last MachO::Binary object presents in this Fat Binary.
+  //! It returns a nullptr if no binary are present.
+  std::unique_ptr<Binary> pop_back();
 
-  Binary&       at(size_t index);
-  const Binary& at(size_t index) const;
+  //! Get a pointer to the MachO::Binary specified by the ``index``.
+  //! It returns a nullptr if the binary does not exist at the given index.
+  Binary*       at(size_t index);
+  const Binary* at(size_t index) const;
 
-  Binary&       back();
-  const Binary& back() const;
+  Binary*       back();
+  const Binary* back() const;
 
-  Binary&       operator[](size_t index);
-  const Binary& operator[](size_t index) const;
+  Binary*       front();
+  const Binary* front() const;
+
+  Binary*       operator[](size_t index);
+  const Binary* operator[](size_t index) const;
 
   //! Extract a MachO::Binary object. Gives ownership to the caller, and
   //! remove it from this FatBinary object.
@@ -88,7 +108,7 @@ class LIEF_API FatBinary {
 
   private:
   FatBinary();
-  FatBinary(std::vector<Binary*>  binaries);
+  FatBinary(binaries_t binaries);
   binaries_t binaries_;
 };
 

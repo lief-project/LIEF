@@ -17,7 +17,9 @@
 #include <sstream>
 
 #include "pyAbstract.hpp"
+#include "pyIterators.hpp"
 #include "LIEF/Abstract/Binary.hpp"
+
 
 #define PY_ENUM(x) LIEF::to_string(x), x
 
@@ -51,7 +53,11 @@ void create<Binary>(py::module& m) {
     .value(PY_ENUM(Binary::VA_TYPES::VA))
     .value(PY_ENUM(Binary::VA_TYPES::RVA));
 
-    pybinary
+  init_ref_iterator<Binary::it_sections>(pybinary, "it_sections");
+  init_ref_iterator<Binary::it_symbols>(pybinary, "it_symbols");
+  init_ref_iterator<Binary::it_relocations>(pybinary, "it_relocations");
+
+  pybinary
     .def_property_readonly("format",
         &Binary::format,
         "File format " RST_CLASS_REF(lief.EXE_FORMATS) " of the underlying binary.")
@@ -83,12 +89,12 @@ void create<Binary>(py::module& m) {
         "name"_a, "clear"_a = false)
 
     .def_property_readonly("sections",
-        static_cast<it_t<it_sections>>(&Binary::sections),
+        static_cast<it_t<Binary::it_sections>>(&Binary::sections),
         "Return an iterator over the binary's abstract sections (" RST_CLASS_REF(lief.Section) ")",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("relocations",
-        static_cast<it_t<it_relocations>>(&Binary::relocations),
+        static_cast<it_t<Binary::it_relocations>>(&Binary::relocations),
         "Return an iterator over abstract " RST_CLASS_REF(lief.Relocation) "",
         py::return_value_policy::reference_internal)
 
@@ -115,7 +121,7 @@ void create<Binary>(py::module& m) {
         "Return binary's imported libraries (name)")
 
     .def_property_readonly("symbols",
-        static_cast<it_t<it_symbols>>(&Binary::symbols),
+        static_cast<it_t<Binary::it_symbols>>(&Binary::symbols),
         "Return an iterator over the binary's abstract " RST_CLASS_REF(lief.Symbol) "",
         py::return_value_policy::reference_internal)
 
@@ -125,8 +131,12 @@ void create<Binary>(py::module& m) {
         "symbol_name"_a)
 
     .def("get_symbol",
-        static_cast<no_const_func<Symbol&, const std::string&>>(&Binary::get_symbol),
-        "Return the " RST_CLASS_REF(lief.Symbol) " from the given ``name``",
+        static_cast<no_const_func<Symbol*, const std::string&>>(&Binary::get_symbol),
+        R"delim(
+        Return the :class:`~lief.Symbol` from the given ``name``.
+
+        If the symbol can't be found, it returns None.
+        )delim",
         "symbol_name"_a,
         py::return_value_policy::reference_internal)
 

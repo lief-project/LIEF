@@ -78,11 +78,11 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
 
   private:
-  uint64_t    data_ = 0;
-  uint16_t    hint_ = 0;
-  uint64_t    iat_value_ = 0;
-  uint64_t    rva_ = 0;
-  PE_TYPE     type_ = PE_TYPE::PE32_PLUS;
+  uint64_t data_ = 0;
+  uint16_t hint_ = 0;
+  uint64_t iat_value_ = 0;
+  uint64_t rva_ = 0;
+  PE_TYPE  type_ = PE_TYPE::PE32_PLUS;
 };
 
 }

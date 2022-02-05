@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 #include "pyMachO.hpp"
-
+#include "pyIterators.hpp"
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Section.hpp"
 
 #include <string>
 #include <sstream>
@@ -38,10 +39,15 @@ using no_const_getter = T (SegmentCommand::*)(void);
 template<>
 void create<SegmentCommand>(py::module& m) {
 
-  py::class_<SegmentCommand, LoadCommand>(m, "SegmentCommand",
+  py::class_<SegmentCommand, LoadCommand> seg_cmd(m, "SegmentCommand",
       R"delim(
       Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT / LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
-      )delim")
+      )delim");
+
+    init_ref_iterator<SegmentCommand::it_sections>(seg_cmd, "it_sections");
+    init_ref_iterator<SegmentCommand::it_relocations>(seg_cmd, "it_relocations");
+
+  seg_cmd
     .def(py::init<>())
     .def(py::init<const std::string&>())
     .def(py::init<const std::string&, const SegmentCommand::content_t&>())
@@ -89,11 +95,11 @@ void create<SegmentCommand>(py::module& m) {
         "Number of sections in this segment")
 
     .def_property_readonly("sections",
-        static_cast<no_const_getter<it_sections>>(&SegmentCommand::sections),
+        static_cast<no_const_getter<SegmentCommand::it_sections>>(&SegmentCommand::sections),
         "Segment's sections")
 
     .def_property_readonly("relocations",
-        static_cast<no_const_getter<it_relocations>>(&SegmentCommand::relocations),
+        static_cast<no_const_getter<SegmentCommand::it_relocations>>(&SegmentCommand::relocations),
         "Segment's relocations")
 
     .def_property_readonly("index", &SegmentCommand::index,
@@ -101,7 +107,7 @@ void create<SegmentCommand>(py::module& m) {
 
     .def_property("content",
         static_cast<getter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
-        static_cast<setter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
+        static_cast<setter_t<SegmentCommand::content_t>>(&SegmentCommand::content),
         "Segment's content")
 
     .def_property("flags",

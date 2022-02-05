@@ -21,7 +21,6 @@ set(LIEF_ABSTRACT_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Parser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/enums.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/hash.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Relocation.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract/Function.hpp"
 )

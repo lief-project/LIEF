@@ -18,7 +18,9 @@
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 
+#include "pyIterators.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
@@ -76,8 +78,8 @@ void create<Symbol>(py::module& m) {
         "Return the " RST_CLASS_REF(lief.MachO.SYMBOL_ORIGINS) " of this symbol")
 
     .def_property_readonly("export_info",
-        static_cast<ExportInfo& (Symbol::*)(void)>(&Symbol::export_info),
-        "" RST_CLASS_REF(lief.MachO.ExportInfo) " associated with the symbol (if any)",
+        static_cast<ExportInfo* (Symbol::*)(void)>(&Symbol::export_info),
+        "" RST_CLASS_REF(lief.MachO.ExportInfo) " associated with the symbol if any, or None",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_binding_info",
@@ -85,8 +87,8 @@ void create<Symbol>(py::module& m) {
         "``True`` if the symbol has an " RST_CLASS_REF(lief.MachO.BindingInfo) " associated with")
 
     .def_property_readonly("binding_info",
-        static_cast<BindingInfo& (Symbol::*)(void)>(&Symbol::binding_info),
-        "" RST_CLASS_REF(lief.MachO.BindingInfo) " associated with the symbol (if any)",
+        static_cast<BindingInfo* (Symbol::*)(void)>(&Symbol::binding_info),
+        "" RST_CLASS_REF(lief.MachO.BindingInfo) " associated with the symbol if any, or None",
         py::return_value_policy::reference)
 
     .def("__eq__", &Symbol::operator==)

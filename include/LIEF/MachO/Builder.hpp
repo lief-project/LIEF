@@ -23,6 +23,7 @@
 #include <functional>
 #include <unordered_map>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/exception.hpp"
 #include "LIEF/iostream.hpp"
@@ -55,19 +56,17 @@ class LIEF_API Builder {
   public:
   friend struct ::Profiler;
 
-
-  static void write(Binary *binary, const std::string& filename);
-  static void write(FatBinary* fatbinary, const std::string& filename);
+  static void write(Binary& binary, const std::string& filename);
+  static void write(FatBinary& fatbinary, const std::string& filename);
 
   public:
-  Builder(Binary *binary);
+  Builder(Binary& binary);
   Builder(std::vector<Binary*> binaries);
-  Builder(FatBinary* fat);
+  Builder(FatBinary& fat);
 
   Builder() = delete;
   ~Builder();
 
-  std::vector<uint8_t> operator()();
   void build();
 
   const std::vector<uint8_t>& get_build();
@@ -75,73 +74,73 @@ class LIEF_API Builder {
 
   private:
   template<typename T>
-  void build();
+  ok_error_t build();
 
   template<typename T, typename HANDLER>
   std::vector<std::string> optimize(const HANDLER& e,
                                     std::function<std::string(const typename HANDLER::value_type)> getter,
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
 
-  void build_fat();
-  void build_fat_header();
-  void build_header();
-  void build_load_commands();
+  ok_error_t build_fat();
+  ok_error_t build_fat_header();
+  ok_error_t build_header();
+  ok_error_t build_load_commands();
 
   template<typename T>
-  void build(DylibCommand* library);
+  ok_error_t build(DylibCommand* library);
 
   template<typename T>
-  void build(DylinkerCommand* linker);
+  ok_error_t build(DylinkerCommand* linker);
 
   template<class T>
-  void build(VersionMin* version_min);
+  ok_error_t build(VersionMin* version_min);
 
   template<class T>
-  void build(SourceVersion* source_version);
+  ok_error_t build(SourceVersion* source_version);
 
   template<class T>
-  void build(FunctionStarts* function_starts);
+  ok_error_t build(FunctionStarts* function_starts);
 
   template<class T>
-  void build(MainCommand* main_cmd);
+  ok_error_t build(MainCommand* main_cmd);
 
   template<class T>
-  void build(DyldInfo* dyld_info);
+  ok_error_t build(DyldInfo* dyld_info);
 
   template<class T>
-  void build(SymbolCommand* symbol_command);
+  ok_error_t build(SymbolCommand* symbol_command);
 
   template<class T>
-  void build(DynamicSymbolCommand* symbol_command);
+  ok_error_t build(DynamicSymbolCommand* symbol_command);
 
   template<class T>
-  void build(DataInCode* datacode);
+  ok_error_t build(DataInCode* datacode);
 
   template<class T>
-  void build(CodeSignature* code_signature);
+  ok_error_t build(CodeSignature* code_signature);
 
   template<class T>
-  void build(SegmentSplitInfo* ssi);
+  ok_error_t build(SegmentSplitInfo* ssi);
 
   template<class T>
-  void build(SubFramework* sf);
+  ok_error_t build(SubFramework* sf);
 
   template<class T>
-  void build(DyldEnvironment* de);
+  ok_error_t build(DyldEnvironment* de);
 
   template<class T>
-  void build(ThreadCommand* tc);
+  ok_error_t build(ThreadCommand* tc);
 
   template <typename T>
-  void build_segments();
+  ok_error_t build_segments();
 
   template<class T>
-  void build(BuildVersion* bv);
+  ok_error_t build(BuildVersion* bv);
 
   template <typename T>
-  void build_symbols();
+  ok_error_t build_symbols();
 
-  void build_uuid();
+  ok_error_t build_uuid();
 
   std::vector<Binary*> binaries_;
   Binary* binary_ = nullptr;

@@ -25,15 +25,21 @@
 
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
-
-#include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/Section.hpp"
+
+#include "ELF/DataHandler/Handler.hpp"
+#include "ELF/Structures.hpp"
 
 
 namespace LIEF {
 namespace ELF {
 
+Segment::Segment() = default;
 Segment::~Segment() = default;
+
+Segment& Segment::operator=(Segment&&) = default;
+Segment::Segment(Segment&&) = default;
+
 Segment::Segment(const Segment& other) :
   Object{other},
   type_{other.type_},
@@ -46,8 +52,6 @@ Segment::Segment(const Segment& other) :
   alignment_{other.alignment_},
   content_c_{other.content()}
 {}
-
-
 
 Segment::Segment(const details::Elf64_Phdr& header) :
   type_{static_cast<SEGMENT_TYPES>(header.p_type)},
@@ -71,17 +75,6 @@ Segment::Segment(const details::Elf32_Phdr& header) :
   alignment_{header.p_align}
 {}
 
-Segment::Segment() :
-  type_{static_cast<SEGMENT_TYPES>(0)},
-  flags_{ELF_SEGMENT_FLAGS::PF_NONE},
-  file_offset_{0},
-  virtual_address_{0},
-  physical_address_{0},
-  size_{0},
-  virtual_size_{0},
-  alignment_{0}
-{}
-
 void Segment::swap(Segment& other) {
   std::swap(type_,             other.type_);
   std::swap(flags_,            other.flags_);
@@ -103,22 +96,34 @@ Segment& Segment::operator=(Segment other) {
 }
 
 
-Segment::Segment(const std::vector<uint8_t>& header, ELF_CLASS type) {
-  if (type == ELF_CLASS::ELFCLASS32) {
-    *this = {*reinterpret_cast<const details::Elf32_Phdr*>(header.data())};
-  } else if (type == ELF_CLASS::ELFCLASS64) {
-    *this = {*reinterpret_cast<const details::Elf64_Phdr*>(header.data())};
+result<Segment> Segment::from_raw(const uint8_t* ptr, size_t size) {
+  if (size != sizeof(details::Elf32_Phdr) &&
+      size != sizeof(details::Elf64_Phdr))
+  {
+    LIEF_ERR("The size of the provided data does not match a valid header size");
+    return make_error_code(lief_errors::corrupted);
   }
+  return Segment::from_raw(std::vector<uint8_t>{ptr, ptr + size});
 }
 
-Segment::Segment(const std::vector<uint8_t>& header) {
-  if (header.size() == sizeof(details::Elf32_Phdr)) {
-    *this = {*reinterpret_cast<const details::Elf32_Phdr*>(header.data())};
-  } else if (header.size() == sizeof(details::Elf64_Phdr)) {
-    *this = {*reinterpret_cast<const details::Elf64_Phdr*>(header.data())};
-  } else {
-    throw LIEF::corrupted("Unable to determine the header type: 32bits or 64bits (Wrong size)");
+result<Segment> Segment::from_raw(const std::vector<uint8_t>& raw) {
+  const size_t size = raw.size();
+  if (size != sizeof(details::Elf32_Phdr) &&
+      size != sizeof(details::Elf64_Phdr))
+  {
+    LIEF_ERR("The size of the provided data does not match a valid header size");
+    return make_error_code(lief_errors::corrupted);
   }
+
+  if (size == sizeof(details::Elf32_Phdr)) {
+    return Segment(*reinterpret_cast<const details::Elf32_Phdr*>(raw.data()));
+  }
+
+  if (size == sizeof(details::Elf64_Phdr)) {
+    return Segment(*reinterpret_cast<const details::Elf64_Phdr*>(raw.data()));
+  }
+
+  return make_error_code(lief_errors::not_implemented);
 }
 
 SEGMENT_TYPES Segment::type() const {
@@ -163,14 +168,16 @@ uint64_t Segment::alignment() const {
 std::vector<uint8_t> Segment::content() const {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
-        to_string(type()), virtual_address());
+               to_string(type()), virtual_address());
     return content_c_;
   }
 
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      physical_size(),
-      DataHandler::Node::SEGMENT);
+  auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+  if (!res) {
+    LIEF_ERR("Can't find the node. The segment's content can't be accessed");
+    return {};
+  }
+  DataHandler::Node& node = res.value();
 
   const std::vector<uint8_t>& binary_content = datahandler_->content();
   const size_t size = binary_content.size();
@@ -179,29 +186,36 @@ std::vector<uint8_t> Segment::content() const {
     return {};
   }
 
-  return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
+  const uint8_t* ptr = binary_content.data() + node.offset();
+  return {ptr, ptr + node.size()};
 }
 
 size_t Segment::get_content_size() const {
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      physical_size(),
-      DataHandler::Node::SEGMENT);
-  return node.size();
+  if (datahandler_ == nullptr) {
+    return content_c_.size();
+  }
+  auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+  if (!res) {
+    LIEF_ERR("Can't find the node");
+    return 0;
+  }
+  return res->size();
 }
 template<typename T> T Segment::get_content_value(size_t offset) const {
   T ret;
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
-        to_string(type()), virtual_address());
+               to_string(type()), virtual_address());
     memcpy(&ret, content_c_.data() + offset, sizeof(T));
   } else {
-    DataHandler::Node& node = datahandler_->get(
-        file_offset(),
-        physical_size(),
-        DataHandler::Node::SEGMENT);
+    auto node = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+    if (!node) {
+      LIEF_ERR("Can't find the node associated with this segment");
+      memset(&ret, 0, sizeof(T));
+      return ret;
+    }
     const std::vector<uint8_t>& binary_content = datahandler_->content();
-    memcpy(&ret, binary_content.data() + node.offset() + offset, sizeof(T));
+    memcpy(&ret, binary_content.data() + node->offset() + offset, sizeof(T));
   }
   return ret;
 }
@@ -221,10 +235,12 @@ template<typename T> void Segment::set_content_value(size_t offset, T value) {
     }
     memcpy(content_c_.data() + offset, &value, sizeof(T));
   } else {
-    DataHandler::Node& node = datahandler_->get(
-        file_offset(),
-        physical_size(),
-        DataHandler::Node::SEGMENT);
+    auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+    if (!res) {
+      LIEF_ERR("Can't find the node associated with this segment. The content can't be updated");
+      return;
+    }
+    DataHandler::Node& node = res.value();
     std::vector<uint8_t>& binary_content = datahandler_->content();
 
     if (offset + sizeof(T) > binary_content.size()) {
@@ -242,13 +258,13 @@ template void Segment::set_content_value<unsigned int>(size_t offset, unsigned i
 template void Segment::set_content_value<unsigned long>(size_t offset, unsigned long value);
 template void Segment::set_content_value<unsigned long long>(size_t offset, unsigned long long value);
 
-it_const_sections Segment::sections() const {
-  return {sections_};
+Segment::it_const_sections Segment::sections() const {
+  return sections_;
 }
 
 
-it_sections Segment::sections() {
-  return {sections_};
+Segment::it_sections Segment::sections() {
+  return sections_;
 }
 
 bool Segment::has(ELF_SEGMENT_FLAGS flag) const {
@@ -258,7 +274,7 @@ bool Segment::has(ELF_SEGMENT_FLAGS flag) const {
 
 bool Segment::has(const Section& section) const {
   auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
-      [&section] (Section* s) {
+      [&section] (const Section* s) {
         return *s == section;
       });
   return it_section != std::end(sections_);
@@ -267,7 +283,7 @@ bool Segment::has(const Section& section) const {
 
 bool Segment::has(const std::string& name) const {
   auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
-      [&name] (Section* s) {
+      [&name] (const Section* s) {
         return s->name() == name;
       });
   return it_section != std::end(sections_);
@@ -296,10 +312,12 @@ void Segment::clear_flags() {
 
 void Segment::file_offset(uint64_t file_offset) {
   if (datahandler_ != nullptr) {
-    DataHandler::Node& node = datahandler_->get(
-        this->file_offset(), physical_size(),
-        DataHandler::Node::SEGMENT);
-    node.offset(file_offset);
+    auto res = datahandler_->get(this->file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+    if (!res) {
+      LIEF_ERR("Can't find the node. The file offset can't be updated");
+      return;
+    }
+    res->offset(file_offset);
   }
   file_offset_ = file_offset;
 }
@@ -317,10 +335,12 @@ void Segment::physical_address(uint64_t physical_address) {
 
 void Segment::physical_size(uint64_t physical_size) {
   if (datahandler_ != nullptr) {
-    DataHandler::Node& node = datahandler_->get(
-        file_offset(), this->physical_size(),
-        DataHandler::Node::SEGMENT);
-    node.size(physical_size);
+    auto node = datahandler_->get(file_offset(), this->physical_size(), DataHandler::Node::SEGMENT);
+    if (!node) {
+      LIEF_ERR("Can't find the node. The physical size can't be updated");
+      return;
+    }
+    node->size(physical_size);
   }
   size_ = physical_size;
 }
@@ -342,7 +362,7 @@ void Segment::type(SEGMENT_TYPES type) {
 void Segment::content(const std::vector<uint8_t>& content) {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
-        to_string(type()), virtual_address(), content.size());
+               to_string(type()), virtual_address(), content.size());
     content_c_ = content;
 
     physical_size(content.size());
@@ -350,61 +370,61 @@ void Segment::content(const std::vector<uint8_t>& content) {
   }
 
   LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
-      to_string(type()), virtual_address(), file_offset(), content.size());
+             to_string(type()), virtual_address(), file_offset(), content.size());
 
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      physical_size(),
-      DataHandler::Node::SEGMENT);
+  auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+  if (!res) {
+    LIEF_ERR("Can't find the node for updating content");
+    return;
+  }
+  DataHandler::Node& node = res.value();
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
       LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
-        content.size(), to_string(type()), virtual_size(), node.size());
+                content.size(), to_string(type()), virtual_size(), node.size());
   }
 
   physical_size(node.size());
 
-  std::copy(
-      std::begin(content),
-      std::end(content),
-      std::begin(binary_content) + node.offset());
+  std::copy(std::begin(content), std::end(content),
+            std::begin(binary_content) + node.offset());
 }
 
 
 void Segment::content(std::vector<uint8_t>&& content) {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
-        to_string(type()), virtual_address(), content.size());
+               to_string(type()), virtual_address(), content.size());
     physical_size(content.size());
     content_c_ = std::move(content);
     return;
   }
 
   LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
-      to_string(type()), virtual_address(), file_offset(), content.size());
+             to_string(type()), virtual_address(), file_offset(), content.size());
 
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      physical_size(),
-      DataHandler::Node::SEGMENT);
+  auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
+  if (!res) {
+    LIEF_ERR("Can't find the node for updating content");
+    return;
+  }
+  DataHandler::Node& node = res.value();
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
       LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
-        content.size(), to_string(type()), virtual_size(), node.size());
+                content.size(), to_string(type()), virtual_size(), node.size());
   }
 
   physical_size(node.size());
 
-  std::move(
-      std::begin(content),
-      std::end(content),
-      std::begin(binary_content) + node.offset());
+  std::move(std::begin(content), std::end(content),
+            std::begin(binary_content) + node.offset());
 }
 
 void Segment::accept(Visitor& visitor) const {
@@ -423,6 +443,9 @@ Segment& Segment::operator-=(ELF_SEGMENT_FLAGS flag) {
 }
 
 bool Segment::operator==(const Segment& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

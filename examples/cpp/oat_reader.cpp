@@ -25,17 +25,17 @@ using namespace LIEF::OAT;
 int main(int argc, char **argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <OAT file>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <OAT file>" << '\n';
     return EXIT_FAILURE;
   }
 
   std::unique_ptr<const Binary> binary;
 
   try {
-    binary = std::unique_ptr<const Binary>{LIEF::OAT::Parser::parse(argv[1])};
-    std::cout << *binary << std::endl;
+    std::unique_ptr<const Binary> binary = LIEF::OAT::Parser::parse(argv[1]);
+    std::cout << *binary << '\n';
   } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << std::endl;
+    std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
 

@@ -17,8 +17,8 @@
 #include "LIEF/utils.hpp"
 #include "LIEF/MachO/hash.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -90,6 +90,9 @@ void DylibCommand::accept(Visitor& visitor) const {
 }
 
 bool DylibCommand::operator==(const DylibCommand& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

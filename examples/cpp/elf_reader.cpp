@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <ELF binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <ELF binary>" << '\n';
     return EXIT_FAILURE;
   }
 
@@ -35,106 +35,107 @@ int main(int argc, char **argv) {
   try {
     binary = std::unique_ptr<const Binary>{Parser::parse(argv[1])};
   } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << std::endl;
+    std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
+
   binary->functions();
-  return EXIT_SUCCESS;
 
-  std::cout << "Binary: " << binary->name() << std::endl;
-  std::cout << "== Header ==" << std::endl;
-  std::cout << binary->header() << std::endl;
+  std::cout << "Binary: " << binary->name() << '\n';
+  std::cout << "Interpreter: " << binary->interpreter() << '\n';
+  std::cout << "== Header ==" << '\n';
+  std::cout << binary->header() << '\n';
 
-  std::cout << "== Sections ==" << std::endl;
+  std::cout << "== Sections ==" << '\n';
   for (const Section& section : binary->sections()) {
-    std::cout << section << std::endl;
+    std::cout << section << '\n';
   }
-  std::cout << std::endl;
+  std::cout << '\n';
 
-  std::cout << "== Segments ==" << std::endl;
+  std::cout << "== Segments ==" << '\n';
   for (const Segment& segment : binary->segments()) {
-    std::cout << segment << std::endl;
+    std::cout << segment << '\n';
   }
-  std::cout << std::endl;
+  std::cout << '\n';
 
-  std::cout << "== Dynamic entries ==" << std::endl;
+  std::cout << "== Dynamic entries ==" << '\n';
   for (const DynamicEntry& entry : binary->dynamic_entries()) {
-    std::cout << entry << std::endl;
+    std::cout << entry << '\n';
   }
 
   auto static_symbols = binary->static_symbols();
   if (static_symbols.size() > 0) {
-    std::cout << "== Static symbols ==" << std::endl;
+    std::cout << "== Static symbols ==" << '\n';
     for (const Symbol& symbol : static_symbols) {
-      std::cout << symbol << std::endl;
+      std::cout << symbol << '\n';
     }
   }
 
-  std::cout << "== Dynamics symbols ==" << std::endl;
+  std::cout << "== Dynamics symbols ==" << '\n';
   for (const Symbol& symbol : binary->dynamic_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
-  std::cout << "== Exported symbols ==" << std::endl;
+  std::cout << "== Exported symbols ==" << '\n';
   for (const Symbol& symbol : binary->exported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
 
-  std::cout << "== Imported symbols ==" << std::endl;
+  std::cout << "== Imported symbols ==" << '\n';
   for (const Symbol& symbol : binary->imported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
 
-  std::cout << "== Dynamic Relocations ==" << std::endl;
+  std::cout << "== Dynamic Relocations ==" << '\n';
   for (const Relocation& relocation : binary->dynamic_relocations()) {
-    std::cout << relocation << std::endl;
+    std::cout << relocation << '\n';
   }
 
-  std::cout << "== PLT/GOT Relocations ==" << std::endl;
+  std::cout << "== PLT/GOT Relocations ==" << '\n';
   for (const Relocation& relocation : binary->pltgot_relocations()) {
-    std::cout << relocation << std::endl;
+    std::cout << relocation << '\n';
   }
 
 
   if (binary->use_gnu_hash()) {
-    std::cout << "== GNU Hash ==" << std::endl;
-    std::cout << binary->gnu_hash() << std::endl;
+    std::cout << "== GNU Hash ==" << '\n';
+    std::cout << binary->gnu_hash() << '\n';
   }
 
 
   if (binary->use_sysv_hash()) {
-    std::cout << "== SYSV Hash ==" << std::endl;
-    std::cout << binary->sysv_hash() << std::endl;
+    std::cout << "== SYSV Hash ==" << '\n';
+    std::cout << binary->sysv_hash() << '\n';
   }
 
   if (binary->notes().size() > 0) {
-    std::cout << "== Notes ==" << std::endl;
+    std::cout << "== Notes ==" << '\n';
 
     for (const Note& note : binary->notes()) {
-      std::cout << note << std::endl;
+      std::cout << note << '\n';
     }
   }
 
 
 
-  //std::cout << "== Symbol Version ==" << std::endl;
+  //std::cout << "== Symbol Version ==" << '\n';
   //std::vector<SymbolVersion>* symbolsVersion = binary->get_symbol_version();
   //for (const auto &symVersion : *symbolsVersion) {
-  //  std::cout << symVersion << std::endl;
+  //  std::cout << symVersion << '\n';
   //}
 
 
-  //std::cout << "== Symbols Version Requirement ==" << std::endl;
+  //std::cout << "== Symbols Version Requirement ==" << '\n';
   //std::vector<SymbolVersionRequirement> *symR = binary->get_symbol_version_requirement();
   //for (SymbolVersionRequirement &symbolR : *symR) {
-  //  std::cout << symbolR << std::endl << std::endl;
+  //  std::cout << symbolR << '\n' << std::endl;
   //  auto symAux = symbolR.get_auxiliary_symbols();
   //  for (auto &symbolAux : symAux) {
-  //    std::cout << *symbolAux << std::endl;
+  //    std::cout << *symbolAux << '\n';
   //  }
-  //  std::cout << std::endl;
+  //  std::cout << '\n';
   //}
 
   return 0;

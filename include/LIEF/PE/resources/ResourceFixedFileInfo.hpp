@@ -22,10 +22,14 @@
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
+
+namespace details {
+struct pe_resource_fixed_file_info;
+}
 
 //! Representation of [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
 //! Structure

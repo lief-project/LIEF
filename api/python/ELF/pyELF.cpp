@@ -21,7 +21,6 @@ namespace ELF {
 void init_python_module(py::module& m) {
   py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for the ELF format");
 
-  init_iterators(LIEF_ELF_module);
   init_enums(LIEF_ELF_module);
   init_objects(LIEF_ELF_module);
 

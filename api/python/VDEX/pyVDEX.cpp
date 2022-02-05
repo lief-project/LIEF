@@ -21,8 +21,6 @@ namespace VDEX {
 void init_python_module(py::module& m) {
   py::module LIEF_VDEX_module = m.def_submodule("VDEX", "Python API for VDEX format");
 
-  init_enums(LIEF_VDEX_module);
-  init_iterators(LIEF_VDEX_module);
   init_objects(LIEF_VDEX_module);
   init_utils(LIEF_VDEX_module);
 }

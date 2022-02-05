@@ -21,6 +21,7 @@
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
 
+#include "pyIterators.hpp"
 #include "pyMachO.hpp"
 
 

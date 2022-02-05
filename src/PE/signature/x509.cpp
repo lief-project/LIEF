@@ -135,11 +135,10 @@ x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
       mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
       LIEF_WARN("Failed to parse certificate blob: '{}' ({})", strerr, ret);
       return {};
-    } else {
-      // If ret > 0, it contains the number of certificates that the parser did not
-      // manage to parse
-      LIEF_WARN("{} certificates are not parsed", ret);
     }
+    // If ret > 0, it contains the number of certificates that the parser did not
+    // manage to parse
+    LIEF_WARN("{} certificates are not parsed", ret);
   }
   std::vector<x509> crts;
 
@@ -297,9 +296,9 @@ std::vector<uint8_t> x509::serial_number() const {
 }
 
 oid_t x509::signature_algorithm() const {
-  char oid_str[256];
-  mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &x509_cert_->sig_oid);
-  return oid_t{oid_str};
+  std::array<char, 256> oid_str;
+  mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &x509_cert_->sig_oid);
+  return oid_t{oid_str.data()};
 
 }
 
@@ -313,15 +312,15 @@ x509::date_t x509::valid_to() const {
 
 
 std::string x509::issuer() const {
-  char buffer[1024];
-  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &x509_cert_->issuer);
-  return buffer;
+  std::array<char, 1024> buffer;
+  mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->issuer);
+  return buffer.data();
 }
 
 std::string x509::subject() const {
-  char buffer[1024];
-  mbedtls_x509_dn_gets(buffer, sizeof(buffer), &x509_cert_->subject);
-  return buffer;
+  std::array<char, 1024> buffer;
+  mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->subject);
+  return buffer.data();
 }
 
 std::vector<uint8_t> x509::raw() const {

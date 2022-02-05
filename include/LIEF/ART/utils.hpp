@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/ART/type_traits.hpp"
+#include "LIEF/ART/types.hpp"
 
 #include "LIEF/platforms/android.hpp"
 

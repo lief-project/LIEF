@@ -18,7 +18,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -274,6 +274,9 @@ void DosHeader::accept(LIEF::Visitor& visitor) const {
 }
 
 bool DosHeader::operator==(const DosHeader& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

@@ -24,11 +24,16 @@
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+
+namespace details {
+struct pe_dialog_item_template_ext;
+struct pe_dialog_item_template;
+}
 
 //! This class represents an item in the ResourceDialog
 class LIEF_API ResourceDialogItem : public Object {

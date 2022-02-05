@@ -42,7 +42,6 @@ set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLogger.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyHash.cpp"
@@ -76,6 +75,7 @@ add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
 
 target_include_directories(pyLIEF PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../src"
 )
 
 target_include_directories(pyLIEF SYSTEM PRIVATE

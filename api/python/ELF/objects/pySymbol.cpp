@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 #include "pyELF.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
@@ -44,7 +46,7 @@ void create<Symbol>(py::module& m) {
     .def(py::init<>())
     .def_property_readonly("demangled_name",
         &Symbol::demangled_name,
-        "Symbol's name demangled")
+        "Symbol's name demangled or an empty string if the demangling is not possible/failed")
 
     .def_property("type",
         static_cast<getter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
@@ -71,9 +73,10 @@ void create<Symbol>(py::module& m) {
     .def_property("visibility",
         static_cast<getter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
         static_cast<setter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
-        "Symbol " RST_CLASS_REF(lief.ELF.SYMBOL_VISIBILITY) "."
-
-        "It's basically an alias on " RST_ATTR_REF(lief.ELF.Symbol.other) "")
+        R"delim(
+        Symbol :class:`~lief.ELF.SYMBOL_VISIBILITY`.
+        It's basically an alias on :attr:`~lief.ELF.Symbol.other`
+        )delim")
 
     .def_property("value", // Even though it is already defined in the base class (Abstract/Symbol)
                            // We keep the definition to provide a dedicated documentation
@@ -106,8 +109,12 @@ void create<Symbol>(py::module& m) {
         "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersion) "")
 
     .def_property_readonly("symbol_version",
-        static_cast<SymbolVersion& (Symbol::*)(void)>(&Symbol::symbol_version),
-        "Return the " RST_CLASS_REF(lief.ELF.SymbolVersion) " associated with this symbol",
+        static_cast<SymbolVersion* (Symbol::*)(void)>(&Symbol::symbol_version),
+        R"delim(
+        Return the :class:`~lief.ELF.SymbolVersion` associated with this symbol
+
+        It returns None if no version is tied to this symbol.
+        )delim",
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("is_static",
@@ -142,8 +149,7 @@ void create<Symbol>(py::module& m) {
       [] (const Symbol& symbol) {
         std::ostringstream stream;
         stream << symbol;
-        std::string str =  stream.str();
-        return str;
+        return stream.str();
       });
 }
 

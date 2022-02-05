@@ -24,7 +24,6 @@ namespace MachO {
 void init_python_module(py::module& m) {
   py::module LIEF_MachO_module = m.def_submodule("MachO", "Python API for the MachO format");
 
-  init_iterators(LIEF_MachO_module);
   init_enums(LIEF_MachO_module);
   init_objects(LIEF_MachO_module);
   init_utils(LIEF_MachO_module);

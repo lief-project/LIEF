@@ -144,7 +144,7 @@ void JsonVisitor::visit(const Binary& binary) {
   // Resources
   if (binary.has_resources()) {
     JsonVisitor visitor;
-    binary.resources().accept(visitor);
+    binary.resources()->accept(visitor);
 
     JsonVisitor manager_visitor;
     binary.resources_manager().accept(manager_visitor);
@@ -178,8 +178,8 @@ void JsonVisitor::visit(const Binary& binary) {
   // Load Configuration
   if (binary.has_configuration()) {
     JsonVisitor visitor;
-    const LoadConfiguration& config = binary.load_configuration();
-    config.accept(visitor);
+    const LoadConfiguration* config = binary.load_configuration();
+    config->accept(visitor);
     node_["load_configuration"] = visitor.get();
   }
 
@@ -281,7 +281,7 @@ void JsonVisitor::visit(const DataDirectory& data_directory) {
   node_["size"] = data_directory.size();
   node_["type"] = to_string(data_directory.type());
   if (data_directory.has_section()) {
-    node_["section"] = escape_non_ascii(data_directory.section().name());
+    node_["section"] = escape_non_ascii(data_directory.section()->name());
   }
 }
 
@@ -371,11 +371,11 @@ void JsonVisitor::visit(const TLS& tls) {
   node_["characteristics"]     = tls.characteristics();
 
   if (tls.has_data_directory()) {
-    node_["data_directory"] = to_string(tls.directory().type());
+    node_["data_directory"] = to_string(tls.directory()->type());
   }
 
   if (tls.has_section()) {
-    node_["section"] = escape_non_ascii(tls.section().name());
+    node_["section"] = escape_non_ascii(tls.section()->name());
   }
 }
 
@@ -393,7 +393,7 @@ void JsonVisitor::visit(const Symbol& symbol) {
   node_["numberof_aux_symbols"] = symbol.numberof_aux_symbols();
 
   if (symbol.has_section()) {
-    node_["section"] = symbol.section().name();
+    node_["section"] = symbol.section()->name();
   }
 }
 
@@ -410,15 +410,15 @@ void JsonVisitor::visit(const Debug& debug) {
 
   if (debug.has_code_view()) {
     JsonVisitor codeview_visitor;
-    const CodeView& codeview = debug.code_view();
-    codeview.accept(codeview_visitor);
+    const CodeView* codeview = debug.code_view();
+    codeview->accept(codeview_visitor);
     node_["code_view"] = codeview_visitor.get();
   }
 
   if (debug.has_pogo()) {
     JsonVisitor pogo_visitor;
-    const Pogo& pogo = debug.pogo();
-    pogo.accept(pogo_visitor);
+    const Pogo* pogo = debug.pogo();
+    pogo->accept(pogo_visitor);
     node_["pogo"] = pogo_visitor.get();
   }
 }
@@ -656,8 +656,7 @@ void JsonVisitor::visit(const LangCodeItem& resource_lci) {
 
   std::map<std::string, std::string> items;
   std::transform(
-      std::begin(resource_lci.items()),
-      std::end(resource_lci.items()),
+      std::begin(resource_lci.items()), std::end(resource_lci.items()),
       std::insert_iterator<decltype(items)>(items, std::end(items)),
       [] (const std::pair<std::u16string, std::u16string>& p) {
         return std::pair<std::string, std::string>{u16tou8(p.first), u16tou8(p.second)};
@@ -677,21 +676,21 @@ void JsonVisitor::visit(const ResourceVersion& resource_version) {
 
   if (resource_version.has_fixed_file_info()) {
     JsonVisitor visitor;
-    visitor(resource_version.fixed_file_info());
+    visitor(*resource_version.fixed_file_info());
     node_["fixed_file_info"] = visitor.get();
   }
 
 
   if (resource_version.has_string_file_info()) {
     JsonVisitor visitor;
-    visitor(resource_version.string_file_info());
+    visitor(*resource_version.string_file_info());
     node_["string_file_info"] = visitor.get();
   }
 
 
   if (resource_version.has_var_file_info()) {
     JsonVisitor visitor;
-    visitor(resource_version.var_file_info());
+    visitor(*resource_version.var_file_info());
     node_["var_file_info"] = visitor.get();
   }
 }

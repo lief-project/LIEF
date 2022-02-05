@@ -18,8 +18,10 @@
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
+#include "LIEF/PE/signature/Attribute.hpp"
 
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -34,7 +36,7 @@ using setter_t = void (SignerInfo::*)(T);
 template<>
 void create<SignerInfo>(py::module& m) {
 
-  py::class_<SignerInfo, LIEF::Object>(m, "SignerInfo",
+  py::class_<SignerInfo, LIEF::Object> signer(m, "SignerInfo",
     R"delim(
     SignerInfo as described in the `RFC 2315 #Section 9.2 <https://tools.ietf.org/html/rfc2315#section-9.2>`_
 
@@ -51,8 +53,12 @@ void create<SignerInfo>(py::module& m) {
       }
 
       EncryptedDigest ::= OCTET STRING
-    )delim")
+    )delim");
 
+
+  init_ref_iterator<SignerInfo::it_const_attributes_t>(signer, "it_const_attributes_t");
+
+  signer
     .def_property_readonly("version",
         &SignerInfo::version,
         "Should be 1")

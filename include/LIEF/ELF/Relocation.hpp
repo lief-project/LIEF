@@ -112,15 +112,17 @@ class LIEF_API Relocation : public LIEF::Relocation {
   bool has_symbol() const;
 
   //! Symbol associated with the relocation
-  Symbol&       symbol();
-  const Symbol& symbol() const;
+  //! If no symbol is tied to this relocation, it returns a nullptr
+  Symbol*       symbol();
+  const Symbol* symbol() const;
 
   //! True if the relocation has an associated section
   bool has_section() const;
 
-  //! Section associated with this relocation
-  Section&       section();
-  const Section& section() const;
+  //! Section associated with this relocation.
+  //! If no section is tied to this relocation, it returns a nullptr
+  Section*       section();
+  const Section* section() const;
 
   void addend(int64_t addend);
   void type(uint32_t type);

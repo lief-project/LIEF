@@ -17,11 +17,12 @@
 #define LIEF_PE_RELOCATION_H_
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
@@ -42,6 +43,10 @@ class LIEF_API Relocation : public Object {
   friend class Builder;
 
   public:
+  using entries_t        = std::vector<std::unique_ptr<RelocationEntry>>;
+  using it_entries       = ref_iterator<entries_t&, RelocationEntry*>;
+  using it_const_entries = const_ref_iterator<const entries_t&, RelocationEntry*>;
+
   Relocation();
   Relocation(const Relocation& other);
   Relocation& operator=(Relocation other);
@@ -58,8 +63,8 @@ class LIEF_API Relocation : public Object {
   uint32_t block_size() const;
 
   //! Iterator over the RelocationEntry
-  it_const_relocation_entries entries() const;
-  it_relocation_entries entries();
+  it_const_entries entries() const;
+  it_entries entries();
 
   void virtual_address(uint32_t virtual_address);
   void block_size(uint32_t block_size);
@@ -74,9 +79,9 @@ class LIEF_API Relocation : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
 
   private:
-  uint32_t             block_size_;
-  uint32_t             virtual_address_;
-  relocation_entries_t entries_;
+  uint32_t  block_size_ = 0;
+  uint32_t  virtual_address_ = 0;
+  entries_t entries_;
 };
 
 }

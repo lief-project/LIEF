@@ -17,8 +17,6 @@
 #define LIEF_VDEX_HEADER_H_
 
 #include "LIEF/VDEX/type_traits.hpp"
-#include "LIEF/VDEX/Structures.hpp"
-
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 

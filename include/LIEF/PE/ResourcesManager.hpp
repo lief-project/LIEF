@@ -23,8 +23,6 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/type_traits.hpp"
-
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
@@ -71,7 +69,8 @@ class LIEF_API ResourcesManager : public Object {
     //! ``true`` if resources contain the Manifest element
   bool has_manifest() const;
 
-  //! Return the manifest as a std::string
+  //! Return the manifest as a std::string or an empty string if not found
+  //! or corrupted
   std::string manifest() const;
 
   //! Update the manifest with the given string
@@ -138,23 +137,18 @@ class LIEF_API ResourcesManager : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
 
   private:
-  void print_tree(
-      const ResourceNode& node,
-      std::ostringstream& stream,
-      uint32_t current_depth,
-      uint32_t max_depth) const;
+  void print_tree(const ResourceNode& node, std::ostringstream& stream,
+                  uint32_t current_depth, uint32_t max_depth) const;
 
   //! @brief Build the ResourceStringFileInfo from the RT_VERSION node
-  ResourceStringFileInfo get_string_file_info(const VectorStream& stream,
-                                              uint16_t type, std::u16string key, size_t start,
-                                              size_t struct_length) const;
+  std::unique_ptr<ResourceStringFileInfo> get_string_file_info(const VectorStream& stream,
+      uint16_t type, std::u16string key, size_t start, size_t struct_length) const;
 
   //! @brief Build the ResourceVarFileInfo from the RT_VERSION node
-  ResourceVarFileInfo get_var_file_info(const VectorStream& stream, uint16_t type,
-                                        std::u16string key, size_t start,
-                                        size_t struct_length) const;
+  std::unique_ptr<ResourceVarFileInfo> get_var_file_info(const VectorStream& stream,
+      uint16_t type, std::u16string key, size_t start, size_t struct_length) const;
 
-  ResourceNode* resources_{nullptr};
+  ResourceNode* resources_ = nullptr;
 };
 
 } // namespace PE

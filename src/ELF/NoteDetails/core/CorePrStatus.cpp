@@ -23,6 +23,7 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "ELF/Structures.hpp"
 
 #include "CorePrStatus.tcc"
 
@@ -48,7 +49,7 @@ const CorePrStatus::reg_context_t& CorePrStatus::reg_context() const {
 }
 
 
-const details::Elf_siginfo& CorePrStatus::siginfo() const {
+const CorePrStatus::siginfo_t& CorePrStatus::siginfo() const {
   return siginfo_;
 }
 
@@ -80,19 +81,19 @@ int32_t CorePrStatus::sid() const {
   return sid_;
 }
 
-details::Elf64_timeval CorePrStatus::utime() const {
+CorePrStatus::timeval_t CorePrStatus::utime() const {
   return utime_;
 }
 
-details::Elf64_timeval CorePrStatus::stime() const {
+CorePrStatus::timeval_t CorePrStatus::stime() const {
   return stime_;
 }
 
-details::Elf64_timeval CorePrStatus::cutime() const {
+CorePrStatus::timeval_t CorePrStatus::cutime() const {
   return cutime_;
 }
 
-details::Elf64_timeval CorePrStatus::cstime() const {
+CorePrStatus::timeval_t CorePrStatus::cstime() const {
   return cstime_;
 }
 
@@ -119,26 +120,10 @@ bool CorePrStatus::has(CorePrStatus::REGISTERS reg) const {
 uint64_t CorePrStatus::pc() const {
   const ARCH arch = binary()->header().machine_type();
   switch (arch) {
-    case ARCH::EM_386:
-      {
-        return get(REGISTERS::X86_EIP);
-      }
-
-    case ARCH::EM_X86_64:
-      {
-        return get(REGISTERS::X86_64_RIP);
-      }
-
-    case ARCH::EM_ARM:
-      {
-        return get(REGISTERS::ARM_R15);
-      }
-
-    case ARCH::EM_AARCH64:
-      {
-        return get(REGISTERS::AARCH64_PC);
-      }
-
+    case ARCH::EM_386:     return get(REGISTERS::X86_EIP);
+    case ARCH::EM_X86_64:  return get(REGISTERS::X86_64_RIP);
+    case ARCH::EM_ARM:     return get(REGISTERS::ARM_R15);
+    case ARCH::EM_AARCH64: return get(REGISTERS::AARCH64_PC);
     default:
       {
         LIEF_WARN("{} not supported", to_string(arch));
@@ -150,26 +135,10 @@ uint64_t CorePrStatus::pc() const {
 uint64_t CorePrStatus::sp() const {
   const ARCH arch = binary()->header().machine_type();
   switch (arch) {
-    case ARCH::EM_386:
-      {
-        return get(REGISTERS::X86_ESP);
-      }
-
-    case ARCH::EM_X86_64:
-      {
-        return get(REGISTERS::X86_64_RSP);
-      }
-
-    case ARCH::EM_ARM:
-      {
-        return get(REGISTERS::ARM_R13);
-      }
-
-    case ARCH::EM_AARCH64:
-      {
-        return get(REGISTERS::AARCH64_X31);
-      }
-
+    case ARCH::EM_386:     return get(REGISTERS::X86_ESP);
+    case ARCH::EM_X86_64:  return get(REGISTERS::X86_64_RSP);
+    case ARCH::EM_ARM:     return get(REGISTERS::ARM_R13);
+    case ARCH::EM_AARCH64: return get(REGISTERS::AARCH64_X31);
     default:
       {
         LIEF_WARN("{} not supported", to_string(arch));
@@ -180,7 +149,7 @@ uint64_t CorePrStatus::sp() const {
 }
 
 
-void CorePrStatus::siginfo(const details::Elf_siginfo& siginfo) {
+void CorePrStatus::siginfo(const CorePrStatus::siginfo_t& siginfo) {
   siginfo_ = siginfo;
   build();
 }
@@ -220,22 +189,22 @@ void CorePrStatus::sid(int32_t sid) {
   build();
 }
 
-void CorePrStatus::utime(details::Elf64_timeval utime) {
+void CorePrStatus::utime(CorePrStatus::timeval_t utime) {
   utime_ = utime;
   build();
 }
 
-void CorePrStatus::stime(details::Elf64_timeval stime) {
+void CorePrStatus::stime(CorePrStatus::timeval_t stime) {
   stime_ = stime;
   build();
 }
 
-void CorePrStatus::cutime(details::Elf64_timeval cutime) {
+void CorePrStatus::cutime(CorePrStatus::timeval_t cutime) {
   cutime_ = cutime;
   build();
 }
 
-void CorePrStatus::cstime(details::Elf64_timeval cstime) {
+void CorePrStatus::cstime(CorePrStatus::timeval_t cstime) {
   cstime_ = cstime;
   build();
 }
@@ -256,6 +225,10 @@ void CorePrStatus::accept(Visitor& visitor) const {
 }
 
 bool CorePrStatus::operator==(const CorePrStatus& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
+
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -320,13 +293,13 @@ void CorePrStatus::dump(std::ostream& os) const {
 
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const details::Elf64_timeval& time) {
+std::ostream& CorePrStatus::dump(std::ostream& os, const CorePrStatus::timeval_t& time) {
   os << std::dec;
-  os << time.tv_sec << ":" << time.tv_usec;
+  os << time.sec << ":" << time.usec;
   return os;
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const details::Elf_siginfo& siginfo) {
+std::ostream& CorePrStatus::dump(std::ostream& os, const CorePrStatus::siginfo_t& siginfo) {
   os << std::dec;
   os << siginfo.si_signo << " - " << siginfo.si_code << " - " << siginfo.si_errno;
   return os;

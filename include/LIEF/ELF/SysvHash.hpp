@@ -45,7 +45,10 @@ class LIEF_API SysvHash : public Object {
   SysvHash();
   SysvHash& operator=(const SysvHash& copy);
   SysvHash(const SysvHash& copy);
-  virtual ~SysvHash();
+
+  SysvHash& operator=(SysvHash&&);
+  SysvHash(SysvHash&&);
+  ~SysvHash() override;
 
   //! @brief Return the number of buckets used
   uint32_t nbucket() const;

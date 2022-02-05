@@ -17,6 +17,7 @@
 #define PY_LIEF_ABSTRACT_H_
 
 #include "pyLIEF.hpp"
+#include "LIEF/Abstract.hpp"
 
 #define SPECIALIZE_CREATE(X)      \
   template<>                      \

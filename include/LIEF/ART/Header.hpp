@@ -16,8 +16,8 @@
 #ifndef LIEF_ART_HEADER_H_
 #define LIEF_ART_HEADER_H_
 
-#include "LIEF/ART/type_traits.hpp"
-#include "LIEF/ART/Structures.hpp"
+#include "LIEF/ART/types.hpp"
+#include "LIEF/ART/enums.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"

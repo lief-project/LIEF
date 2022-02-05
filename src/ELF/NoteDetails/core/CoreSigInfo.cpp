@@ -23,6 +23,7 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -73,6 +74,9 @@ void CoreSigInfo::accept(Visitor& visitor) const {
 }
 
 bool CoreSigInfo::operator==(const CoreSigInfo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -102,8 +106,10 @@ void CoreSigInfo::parse() {
   if (desc.size() < sizeof(details::Elf_siginfo)) {
     return;
   }
-  const auto& siginfo = reinterpret_cast<const details::Elf_siginfo*>(desc.data());
-  siginfo_ = *siginfo;
+  const auto* siginfo = reinterpret_cast<const details::Elf_siginfo*>(desc.data());
+  siginfo_.si_signo = siginfo->si_signo;
+  siginfo_.si_code  = siginfo->si_code;
+  siginfo_.si_errno = siginfo->si_errno;
 }
 
 

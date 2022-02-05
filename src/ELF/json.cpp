@@ -145,14 +145,14 @@ void JsonVisitor::visit(const Binary& binary) {
 
   if (binary.use_gnu_hash()) {
     JsonVisitor gnu_hash_visitor;
-    gnu_hash_visitor(binary.gnu_hash());
+    gnu_hash_visitor(*binary.gnu_hash());
 
     node_["gnu_hash"] = gnu_hash_visitor.get();
   }
 
   if (binary.use_sysv_hash()) {
     JsonVisitor sysv_hash_visitor;
-    sysv_hash_visitor(binary.sysv_hash());
+    sysv_hash_visitor(*binary.sysv_hash());
 
     node_["sysv_hash"] = sysv_hash_visitor.get();
   }
@@ -292,10 +292,11 @@ void JsonVisitor::visit(const Symbol& symbol) {
   node_["size"]        = symbol.size();
   node_["name"]        = symbol.name();
 
-  try {
-    node_["demangled_name"] = symbol.demangled_name();
-  } catch (const not_supported&) {
+  std::string sname = symbol.demangled_name();
+  if (sname.empty()) {
+    sname = symbol.name();
   }
+  node_["demangled_name"] = sname;
 }
 
 void JsonVisitor::visit(const Relocation& relocation) {
@@ -303,17 +304,16 @@ void JsonVisitor::visit(const Relocation& relocation) {
   std::string symbol_name;
   std::string section_name;
 
-  if (relocation.has_symbol()) {
-    const Symbol& s = relocation.symbol();
-    try {
-      symbol_name = s.demangled_name();
-    } catch(const not_supported&) {
-      symbol_name = s.name();
+  const Symbol* s = relocation.symbol();
+  if (s != nullptr) {
+    symbol_name = s->demangled_name();
+    if (symbol_name.empty()) {
+      symbol_name = s->name();
     }
   }
-
-  if (relocation.has_section()) {
-    section_name = relocation.section().name();
+  const Section* reloc_sec = relocation.section();
+  if (reloc_sec != nullptr) {
+    section_name = reloc_sec->name();
   }
 
 
@@ -331,7 +331,7 @@ void JsonVisitor::visit(const Relocation& relocation) {
 void JsonVisitor::visit(const SymbolVersion& sv) {
   node_["value"] = sv.value();
   if (sv.has_auxiliary_version()) {
-   node_["symbol_version_auxiliary"] = sv.symbol_version_auxiliary().name();
+   node_["symbol_version_auxiliary"] = sv.symbol_version_auxiliary()->name();
   }
 
 }
@@ -420,18 +420,18 @@ void JsonVisitor::visit(const CorePrStatus& pstatus) {
   node_["sigpend"]     = pstatus.sigpend();
 
   node_["utime"] = {
-    {"tv_sec",  pstatus.utime().tv_sec},
-    {"tv_usec", pstatus.utime().tv_usec}
+    {"tv_sec",  pstatus.utime().sec},
+    {"tv_usec", pstatus.utime().usec}
   };
 
   node_["stime"] = {
-    {"tv_sec",  pstatus.stime().tv_sec},
-    {"tv_usec", pstatus.stime().tv_usec}
+    {"tv_sec",  pstatus.stime().sec},
+    {"tv_usec", pstatus.stime().sec}
   };
 
   node_["stime"] = {
-    {"tv_sec",  pstatus.stime().tv_sec},
-    {"tv_usec", pstatus.stime().tv_usec}
+    {"tv_sec",  pstatus.stime().sec},
+    {"tv_usec", pstatus.stime().usec}
   };
 
   json regs;

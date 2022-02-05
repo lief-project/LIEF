@@ -21,12 +21,15 @@
 
 #include "LIEF/Object.hpp"
 
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/type_traits.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+
+namespace details {
+struct pe_resource_acceltableentry;
+}
 
 class LIEF_API ResourceAccelerator : public Object {
 

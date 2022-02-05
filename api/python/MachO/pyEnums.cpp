@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "pyMachO.hpp"
-#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "enums_wrapper.hpp"
 

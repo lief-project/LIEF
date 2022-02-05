@@ -40,16 +40,18 @@ class LIEF_API GnuHash : public Object {
 
   public:
   GnuHash();
-  GnuHash(uint32_t symbol_idx,
-          uint32_t shift2,
-          std::vector<uint64_t> bloom_filters,
-          std::vector<uint32_t> buckets,
+  GnuHash(uint32_t symbol_idx, uint32_t shift2,
+          std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
           std::vector<uint32_t> hash_values = {});
 
 
   GnuHash& operator=(const GnuHash& copy);
   GnuHash(const GnuHash& copy);
-  virtual ~GnuHash();
+
+  GnuHash(GnuHash&&);
+  GnuHash& operator=(GnuHash&&);
+
+  ~GnuHash() override;
 
   //! Return the number of buckets
   //! @see GnuHash::buckets
@@ -101,14 +103,14 @@ class LIEF_API GnuHash : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash);
 
   private:
-  uint32_t symbol_index_;
-  uint32_t shift2_;
+  uint32_t symbol_index_ = 0;
+  uint32_t shift2_       = 0;
 
   std::vector<uint64_t> bloom_filters_;
   std::vector<uint32_t> buckets_;
   std::vector<uint32_t> hash_values_;
 
-  size_t c_;
+  size_t c_ = 0;
 };
 
 

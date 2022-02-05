@@ -24,7 +24,6 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
@@ -76,8 +75,13 @@ class LIEF_API CoreSigInfo : public NoteDetails {
 
   private:
   CoreSigInfo(Note& note);
+  struct siginfo_t {
+    int32_t si_signo;
+    int32_t si_code;
+    int32_t si_errno;
+  };
 
-  details::Elf_siginfo siginfo_;
+  siginfo_t siginfo_;
 };
 
 

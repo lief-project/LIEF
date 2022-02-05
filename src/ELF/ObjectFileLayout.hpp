@@ -5,8 +5,8 @@
 #include <LIEF/ELF/Binary.hpp>
 #include <LIEF/ELF/Section.hpp>
 #include <LIEF/ELF/Symbol.hpp>
-#include <LIEF/ELF/DataHandler/Handler.hpp>
 #include <LIEF/iostream.hpp>
+#include <ELF/DataHandler/Handler.hpp>
 
 #include "logging.hpp"
 #include "Layout.hpp"
@@ -23,6 +23,11 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
 
   public:
   using Layout::Layout;
+  ObjectFileLayout(const ObjectFileLayout&) = delete;
+  ObjectFileLayout& operator=(const ObjectFileLayout&) = delete;
+
+  ObjectFileLayout(ObjectFileLayout&&) = default;
+  ObjectFileLayout& operator=(ObjectFileLayout&&) = default;
 
   //! The given section should be relocated if the "needed" size
   //! is greater than 0
@@ -39,10 +44,10 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
     return *this;
   }
 
-  void relocate() {
+  result<void> relocate() {
     uint64_t last_offset_sections = 0;
 
-    for (Section* section : binary_->sections_) {
+    for (std::unique_ptr<Section>& section : binary_->sections_) {
       if (section->type() == LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS) {
         continue;
       }
@@ -76,6 +81,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
     if (strtab_section_ != nullptr && !is_strtab_shared_shstrtab()) {
       strtab_section_->content(raw_strtab());
     }
+    return {};
   }
 
   template<class ELF_T>
@@ -96,8 +102,9 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
     return rel_sections_size_;
   }
 
-  virtual ~ObjectFileLayout() = default;
+  ~ObjectFileLayout() override = default;
 
+  ObjectFileLayout() = delete;
   private:
   std::unordered_map<const Section*, size_t> sec_reloc_info_;
 
@@ -105,7 +112,6 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
   sections_reloc_map_t sections_reloc_map_;
   rel_sections_size_t rel_sections_size_;
 
-  ObjectFileLayout() = delete;
 };
 }
 }

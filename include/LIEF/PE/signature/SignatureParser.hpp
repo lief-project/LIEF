@@ -58,33 +58,34 @@ class LIEF_API SignatureParser {
 
   //! Parse a PKCS #7 signature from a file path
   static result<Signature> parse(const std::string& path);
-
+  SignatureParser(const SignatureParser&) = delete;
+  SignatureParser& operator=(const SignatureParser&) = delete;
   private:
-  SignatureParser(const std::vector<uint8_t>& data);
+  SignatureParser(std::vector<uint8_t> data);
   ~SignatureParser();
   SignatureParser();
 
   result<Signature> parse_signature();
 
-  result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
-  result<x509_certificates_t> parse_certificates(VectorStream& stream);
+  static result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
+  static result<x509_certificates_t> parse_certificates(VectorStream& stream);
   result<signer_infos_t> parse_signer_infos(VectorStream& stream);
   result<attributes_t> parse_attributes(VectorStream& stream);
-  result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
+  static result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
 
   result<signer_infos_t> parse_pkcs9_counter_sign(VectorStream& stream);
-  result<std::vector<uint8_t>> parse_pkcs9_message_digest(VectorStream& stream);
-  result<int32_t> parse_pkcs9_at_sequence_number(VectorStream& stream);
-  result<time_t> parse_pkcs9_signing_time(VectorStream& stream);
+  static result<std::vector<uint8_t>> parse_pkcs9_message_digest(VectorStream& stream);
+  static result<int32_t> parse_pkcs9_at_sequence_number(VectorStream& stream);
+  static result<time_t> parse_pkcs9_signing_time(VectorStream& stream);
 
-  result<void> parse_ms_counter_sign(VectorStream& stream);
-  result<Signature> parse_ms_spc_nested_signature(VectorStream& stream);
+  static result<void> parse_ms_counter_sign(VectorStream& stream);
+  static result<Signature> parse_ms_spc_nested_signature(VectorStream& stream);
   result<oid_t> parse_ms_spc_statement_type(VectorStream& stream);
 
   result<SpcSpOpusInfo> parse_spc_sp_opus_info(VectorStream& stream);
-  result<std::string> parse_spc_string(VectorStream& stream);
-  result<std::string> parse_spc_link(VectorStream& stream);
-  result<SpcPeImageData> parse_spc_pe_image_data(VectorStream& stream);
+  static result<std::string> parse_spc_string(VectorStream& stream);
+  static result<std::string> parse_spc_link(VectorStream& stream);
+  static result<SpcPeImageData> parse_spc_pe_image_data(VectorStream& stream);
   size_t current_offset() const;
   std::unique_ptr<VectorStream> stream_;
 };

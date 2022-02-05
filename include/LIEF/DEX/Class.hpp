@@ -18,15 +18,16 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/DEX/type_traits.hpp"
-#include "LIEF/DEX/Structures.hpp"
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
 namespace DEX {
 class Parser;
+class Field;
+class Method;
 
 //! Class which represents a DEX Class (i.e. a Java/Kotlin class)
 class LIEF_API Class : public Object {
@@ -35,20 +36,31 @@ class LIEF_API Class : public Object {
   public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
+  using methods_t = std::vector<Method*>;
+  using it_methods = ref_iterator<methods_t&>;
+  using it_const_methods = const_ref_iterator<const methods_t&>;
+
+  using fields_t = std::vector<Field*>;
+  using it_fields = ref_iterator<fields_t&>;
+  using it_const_fields = const_ref_iterator<const fields_t&>;
+
+  using it_named_methods = filter_iterator<methods_t&>;
+  using it_const_named_methods = const_filter_iterator<const methods_t&>;
+
+  using it_named_fields = filter_iterator<fields_t&>;
+  using it_const_named_fields = const_filter_iterator<const fields_t&>;
+
   public:
   static std::string package_normalized(const std::string& pkg_name);
   static std::string fullname_normalized(const std::string& pkg_cls);
   static std::string fullname_normalized(const std::string& pkg, const std::string& cls_name);
 
-
   Class();
-  Class(const Class&);
-  Class& operator=(const Class&);
+  Class(const Class&) = delete;
+  Class& operator=(const Class&) = delete;
 
-  Class(std::string fullname,
-        uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
-        Class* parent = nullptr,
-        std::string source_filename = "");
+  Class(std::string fullname, uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
+        Class* parent = nullptr, std::string source_filename = "");
 
   //! Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
   const std::string& fullname() const;
@@ -75,24 +87,24 @@ class LIEF_API Class : public Object {
   bool has_parent() const;
 
   //! Parent class
-  const Class& parent() const;
-  Class& parent();
+  const Class* parent() const;
+  Class* parent();
 
   //! Methods implemented in this class
   it_const_methods methods() const;
   it_methods methods();
 
   //! Return Methods having the given name
-  it_methods methods(const std::string& name);
-  it_const_methods methods(const std::string& name) const;
+  it_named_methods methods(const std::string& name);
+  it_const_named_methods methods(const std::string& name) const;
 
   //! Fields implemented in this class
   it_const_fields fields() const;
   it_fields fields();
 
   //! Return Fields having the given name
-  it_fields fields(const std::string& name);
-  it_const_fields fields(const std::string& name) const;
+  it_named_fields fields(const std::string& name);
+  it_const_named_fields fields(const std::string& name) const;
 
   //! De-optimize information
   dex2dex_class_info_t dex2dex_info() const;
@@ -107,20 +119,17 @@ class LIEF_API Class : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Class& cls);
 
-  virtual ~Class();
+  ~Class() override;
 
   private:
-  methods_t method_from_name(const std::string& name) const;
-  fields_t field_from_name(const std::string& name) const;
-
   std::string fullname_;
-  uint32_t    access_flags_;
-  Class*      parent_{nullptr};
+  uint32_t    access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
+  Class*      parent_ = nullptr;
   methods_t   methods_;
   fields_t    fields_;
   std::string source_filename_;
 
-  uint32_t original_index_;
+  uint32_t original_index_ = -1u;
 };
 
 } // Namespace DEX

@@ -15,32 +15,27 @@
  */
 #include <numeric>
 #include <iomanip>
+#include "logging.hpp"
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/Section.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
 RelocationObject::RelocationObject(const RelocationObject& other) = default;
 RelocationObject::~RelocationObject() = default;
+RelocationObject::RelocationObject() = default;
 
 RelocationObject& RelocationObject::operator=(RelocationObject other) {
   swap(other);
   return *this;
 }
 
-RelocationObject::RelocationObject() :
-  is_pcrel_{false},
-  is_scattered_{false},
-  value_{0}
-{}
-
 RelocationObject::RelocationObject(const details::relocation_info& relocinfo) :
-  is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)},
-  is_scattered_{false},
-  value_{0}
+  is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)}
 {
   address_ = static_cast<uint32_t>(relocinfo.r_address);
   size_    = static_cast<uint8_t>(relocinfo.r_length);
@@ -78,9 +73,8 @@ bool RelocationObject::is_pc_relative() const {
 size_t RelocationObject::size() const {
   if (size_ < 2) {
     return (size_ + 1) * 8;
-  } else {
-    return sizeof(uint32_t) * 8;
   }
+  return sizeof(uint32_t) * 8;
 }
 
 
@@ -90,16 +84,18 @@ bool RelocationObject::is_scattered() const {
 
 
 uint64_t RelocationObject::address() const {
-  if (!has_section()) {
+  const Section* sec = section();
+  if (sec == nullptr) {
     return Relocation::address();
   }
 
-  return address_ + section().offset();
+  return address_ + section()->offset();
 }
 
 int32_t RelocationObject::value() const {
   if (!is_scattered()) {
-    throw not_found("This relocation is not a 'scattered' one");
+    LIEF_ERR("This relocation is not a 'scattered' one");
+    return -1;
   }
   return value_;
 }
@@ -115,34 +111,17 @@ void RelocationObject::pc_relative(bool val) {
 
 void RelocationObject::size(size_t size) {
   switch(size) {
-    case 8:
-      {
-        size_ = 0;
-        break;
-      }
-
-    case 16:
-      {
-        size_ = 1;
-        break;
-      }
-
-    case 32:
-      {
-        size_ = 2;
-        break;
-      }
-
-    default:
-      {
-        throw integrity_error("Size must not be bigger than 32 bits");
-      }
+    case 8:  size_ = 0; break;
+    case 16: size_ = 1; break;
+    case 32: size_ = 2; break;
+    default: LIEF_ERR("Size must not be bigger than 32 bits");
   }
 }
 
 void RelocationObject::value(int32_t value) {
   if (!is_scattered()) {
-    throw not_found("This relocation is not a 'scattered' one");
+    LIEF_ERR("This relocation is not a 'scattered' one");
+    return;
   }
   value_ = value;
 }
@@ -154,6 +133,9 @@ void RelocationObject::accept(Visitor& visitor) const {
 
 
 bool RelocationObject::operator==(const RelocationObject& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

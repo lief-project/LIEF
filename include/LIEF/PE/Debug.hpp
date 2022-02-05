@@ -18,6 +18,7 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -77,13 +78,13 @@ class LIEF_API Debug : public Object {
 
   bool has_code_view() const;
 
-  const CodeView& code_view() const;
-  CodeView& code_view();
+  const CodeView* code_view() const;
+  CodeView* code_view();
 
   bool has_pogo() const;
 
-  const Pogo& pogo() const;
-  Pogo& pogo();
+  const Pogo* pogo() const;
+  Pogo* pogo();
 
   void characteristics(uint32_t characteristics);
   void timestamp(uint32_t timestamp);
@@ -103,17 +104,17 @@ class LIEF_API Debug : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry);
 
   private:
-  uint32_t    characteristics_;
-  uint32_t    timestamp_;
-  uint16_t    majorversion_;
-  uint16_t    minorversion_;
-  DEBUG_TYPES type_;
-  uint32_t    sizeof_data_;
-  uint32_t    addressof_rawdata_;
-  uint32_t    pointerto_rawdata_;
+  uint32_t    characteristics_ = 0;
+  uint32_t    timestamp_ = 0;
+  uint16_t    majorversion_ = 0;
+  uint16_t    minorversion_ = 0;
+  DEBUG_TYPES type_ = DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN;
+  uint32_t    sizeof_data_ = 0;
+  uint32_t    addressof_rawdata_ = 0;
+  uint32_t    pointerto_rawdata_ = 0;
 
-  CodeView* code_view_{nullptr};
-  Pogo* pogo_{nullptr};
+  std::unique_ptr<CodeView> code_view_;
+  std::unique_ptr<Pogo> pogo_;
 };
 }
 }

@@ -15,17 +15,13 @@
  */
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement() :
-  hash_{0},
-  flags_{0},
-  other_{0}
-{}
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement() = default;
 
 SymbolVersionAuxRequirement::~SymbolVersionAuxRequirement() = default;
 SymbolVersionAuxRequirement& SymbolVersionAuxRequirement::operator=(const SymbolVersionAuxRequirement&) = default;
@@ -80,6 +76,9 @@ void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
 }
 
 bool SymbolVersionAuxRequirement::operator==(const SymbolVersionAuxRequirement& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

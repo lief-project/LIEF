@@ -18,9 +18,9 @@
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -242,6 +242,9 @@ void LoadConfiguration::accept(Visitor& visitor) const {
 }
 
 bool LoadConfiguration::operator==(const LoadConfiguration& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

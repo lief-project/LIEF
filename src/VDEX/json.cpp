@@ -18,6 +18,7 @@
 #include "DEX/json_internal.hpp"
 
 #include "LIEF/VDEX.hpp"
+#include "LIEF/DEX/File.hpp"
 
 namespace LIEF {
 namespace VDEX {

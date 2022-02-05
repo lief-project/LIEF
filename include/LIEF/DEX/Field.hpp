@@ -1,8 +1,7 @@
 #ifndef LIEF_DEX_FIELD_H_
 #define LIEF_DEX_FIELD_H_
 
-#include "LIEF/DEX/type_traits.hpp"
-#include "LIEF/DEX/Structures.hpp"
+#include "LIEF/DEX/enums.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -35,8 +34,8 @@ class LIEF_API Field : public Object {
   bool has_class() const;
 
   //! Class associated with this Field
-  const Class& cls() const;
-  Class& cls();
+  const Class* cls() const;
+  Class* cls();
 
   //! Index in the DEX Fields pool
   size_t index() const;
@@ -45,8 +44,8 @@ class LIEF_API Field : public Object {
   bool is_static() const;
 
   //! Field's prototype
-  const Type& type() const;
-  Type& type();
+  const Type* type() const;
+  Type* type();
 
   void accept(Visitor& visitor) const override;
 

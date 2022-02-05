@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/DEX/type_traits.hpp"
+#include "LIEF/DEX/types.hpp"
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

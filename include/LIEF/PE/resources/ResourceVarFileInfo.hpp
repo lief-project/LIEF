@@ -21,9 +21,6 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
-
-#include "LIEF/PE/Structures.hpp"
-
 namespace LIEF {
 namespace PE {
 
@@ -39,6 +36,7 @@ class LIEF_API ResourceVarFileInfo : public Object {
   friend class ResourceVersion;
 
   public:
+  ResourceVarFileInfo();
   ResourceVarFileInfo(const ResourceVarFileInfo&);
   ResourceVarFileInfo& operator=(const ResourceVarFileInfo&);
   virtual ~ResourceVarFileInfo();
@@ -75,10 +73,8 @@ class LIEF_API ResourceVarFileInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
 
   private:
-  ResourceVarFileInfo();
-
-  uint16_t              type_;
-  std::u16string        key_;
+  uint16_t       type_ = 0;
+  std::u16string key_;
   std::vector<uint32_t> translations_;
 
 };

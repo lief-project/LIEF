@@ -25,6 +25,7 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 #include "LIEF/PE/resources/ResourceDialog.hpp"
 
@@ -168,7 +169,7 @@ int16_t ResourceDialog::cy() const {
 }
 
 
-it_const_dialog_items ResourceDialog::items() const {
+ResourceDialog::it_const_items ResourceDialog::items() const {
   return items_;
 }
 
@@ -267,6 +268,9 @@ void ResourceDialog::accept(Visitor& visitor) const {
 }
 
 bool ResourceDialog::operator==(const ResourceDialog& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

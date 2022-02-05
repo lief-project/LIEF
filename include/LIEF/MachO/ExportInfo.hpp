@@ -75,9 +75,9 @@ class LIEF_API ExportInfo : public Object {
   //! Check if a symbol is associated with this export
   bool has_symbol() const;
 
-  //! MachO::Symbol associated with this export
-  const Symbol& symbol() const;
-  Symbol& symbol();
+  //! MachO::Symbol associated with this export or a nullptr if no symbol
+  const Symbol* symbol() const;
+  Symbol* symbol();
 
   //! If the export is a EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT,
   //! this returns the (optional) MachO::Symbol
@@ -99,16 +99,14 @@ class LIEF_API ExportInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
 
   private:
-  uint64_t node_offset_;
-  uint64_t flags_;
-  uint64_t address_;
-  uint64_t other_;
-  Symbol* symbol_{nullptr};
+  uint64_t node_offset_ = 0;
+  uint64_t flags_ = 0;
+  uint64_t address_ = 0;
+  uint64_t other_ = 0;
+  Symbol* symbol_ = nullptr;
 
-  Symbol* alias_{nullptr};
-  DylibCommand* alias_location_{nullptr};
-
-
+  Symbol* alias_ = nullptr;
+  DylibCommand* alias_location_ = nullptr;
 };
 
 }

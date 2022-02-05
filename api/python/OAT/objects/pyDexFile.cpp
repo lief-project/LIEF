@@ -56,7 +56,7 @@ void create<DexFile>(py::module& m) {
         "Check if the " RST_CLASS_REF_FULL(lief.DEX.File) " is present")
 
     .def_property_readonly("dex_file",
-        static_cast<no_const_getter<LIEF::DEX::File&>>(&DexFile::dex_file),
+        static_cast<no_const_getter<LIEF::DEX::File*>>(&DexFile::dex_file),
         "Associated " RST_CLASS_REF_FULL(lief.DEX.File) "")
 
     .def("__eq__", &DexFile::operator==)

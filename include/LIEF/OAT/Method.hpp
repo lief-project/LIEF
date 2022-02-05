@@ -16,15 +16,14 @@
 #ifndef LIEF_OAT_METHOD_H_
 #define LIEF_OAT_METHOD_H_
 
-#include "LIEF/OAT/type_traits.hpp"
-#include "LIEF/OAT/Structures.hpp"
-
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-
-#include "LIEF/DEX.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
+namespace DEX {
+class Method;
+}
 namespace OAT {
 class Parser;
 class Class;
@@ -47,16 +46,16 @@ class LIEF_API Method : public Object {
   std::string name() const;
 
   //! OAT Class associated with this Method
-  const Class& oat_class() const;
-  Class& oat_class();
+  const Class* oat_class() const;
+  Class* oat_class();
 
   //! Check if a LIEF::DEX::Method is associated with
   //! this Method
   bool has_dex_method() const;
 
   //! LIEF::DEX::Method associated (if any)
-  const DEX::Method& dex_method() const;
-  DEX::Method& dex_method();
+  const DEX::Method* dex_method() const;
+  DEX::Method* dex_method();
 
   //! True if the optimization is DEX
   bool is_dex2dex_optimized() const;
@@ -80,8 +79,8 @@ class LIEF_API Method : public Object {
   virtual ~Method();
 
   private:
-  DEX::Method* dex_method_{nullptr};
-  Class* class_{nullptr};
+  DEX::Method* dex_method_ = nullptr;
+  Class* class_ = nullptr;
 
   quick_code_t quick_code_;
 };

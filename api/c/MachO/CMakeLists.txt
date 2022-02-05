@@ -26,8 +26,7 @@ set(LIEF_API_C_MACHO_INCLUDE_FILES_CPP
 
 
 set(LIEF_API_C_MACHO_INCLUDE_FILES_C
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/structures.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/MachO/enums.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/enums.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/Binary.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/EnumToString.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/MachO/Header.h"

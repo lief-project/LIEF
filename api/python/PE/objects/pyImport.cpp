@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Import.hpp"
@@ -39,10 +40,14 @@ using no_const_func = T (Import::*)(P);
 
 template<>
 void create<Import>(py::module& m) {
-  py::class_<Import, LIEF::Object>(m, "Import",
+  py::class_<Import, LIEF::Object> imp(m, "Import",
       R"delim(
       Class that represents a PE import
-      )delim")
+      )delim");
+
+  init_ref_iterator<Import::it_entries>(imp, "it_entries");
+
+  imp
     .def(py::init<>(),
         "Default constructor with a library name")
 
@@ -63,7 +68,7 @@ void create<Import>(py::module& m) {
         )delim")
 
     .def_property_readonly("entries",
-        static_cast<no_const_getter<it_import_entries>>(&Import::entries),
+        static_cast<no_const_getter<Import::it_entries>>(&Import::entries),
         "Iterator over the " RST_CLASS_REF(lief.PE.ImportEntry) " (functions)",
         py::return_value_policy::reference)
 
@@ -76,20 +81,22 @@ void create<Import>(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("directory",
-        static_cast<no_const_getter<DataDirectory&>>(&Import::directory),
+        static_cast<no_const_getter<DataDirectory*>>(&Import::directory),
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with this import.
 
-        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IMPORT_TABLE`
+        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IMPORT_TABLE`.
+        It can return None if the Import directory can't be resolved.
         )delim",
         py::return_value_policy::reference)
 
     .def_property_readonly("iat_directory",
-        static_cast<no_const_getter<DataDirectory&>>(&Import::iat_directory),
+        static_cast<no_const_getter<DataDirectory*>>(&Import::iat_directory),
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with the ``IAT`` table.
 
-        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IAT`
+        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IAT`. It can
+        return None if the IAT directory can't be resolved.
         )delim",
         py::return_value_policy::reference)
 
@@ -133,8 +140,8 @@ void create<Import>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("get_entry",
-      static_cast<no_const_func<ImportEntry&, const std::string&>>(&Import::get_entry),
-      "Return " RST_CLASS_REF(lief.PE.ImportEntry) " with the given name",
+      static_cast<no_const_func<ImportEntry*, const std::string&>>(&Import::get_entry),
+      "Return the " RST_CLASS_REF(lief.PE.ImportEntry) " with the given name or None if not found",
       "function_name"_a,
       py::return_value_policy::reference)
 

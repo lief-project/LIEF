@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     std::cerr << "Usage: " << argv[0] << " <PE binary>" << "\n";
     return 1;
   }
-  std::unique_ptr<const Binary> binary{Parser::parse(argv[1])};
+  std::unique_ptr<const Binary> binary = Parser::parse(argv[1]);
   if (binary->verify_signature() != Signature::VERIFICATION_FLAGS::OK) {
     std::cerr << "Signature failed!\n";
     return 1;

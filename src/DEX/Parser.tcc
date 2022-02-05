@@ -17,9 +17,14 @@
 
 #include "LIEF/utils.hpp"
 
-#include "LIEF/DEX/Structures.hpp"
 #include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/Field.hpp"
 #include "LIEF/DEX/MapList.hpp"
+#include "DEX/Structures.hpp"
 
 #include "Header.tcc"
 
@@ -53,10 +58,13 @@ void Parser::parse_header() {
   using header_t = typename DEX_T::dex_header;
   LIEF_DEBUG("Parsing Header");
 
-  const header_t& hdr = stream_->peek<header_t>(0);
-  file_->header_ = &hdr;
+  const auto res_hdr = stream_->peek<header_t>(0);
+  if (!res_hdr) {
+    return;
+  }
+  const auto hdr = std::move(*res_hdr);
+  file_->header_ = hdr;
 }
-
 
 
 template<typename DEX_T>
@@ -65,17 +73,18 @@ void Parser::parse_map() {
 
   uint32_t offset = file_->header().map();
   stream_->setpos(offset);
-  if (!stream_->can_read<uint32_t>()) {
-    return;
-  }
 
   const auto nb_elements = stream_->read<uint32_t>();
-  for (size_t i = 0; i < nb_elements; ++i) {
-    if (!stream_->can_read<map_items>()) {
+  if (!nb_elements) {
+    return;
+  }
+  for (size_t i = 0; i < *nb_elements; ++i) {
+    auto res_item = stream_->read<details::map_items>();
+    if (!res_item) {
       break;
     }
-    const auto item = stream_->read<map_items>();
-    const MapItem::TYPES type = static_cast<MapItem::TYPES>(item.type);
+    auto item = *res_item;
+    const auto type = static_cast<MapItem::TYPES>(item.type);
     file_->map_.items_[type] = {type, item.offset, item.size, item.unused};
   }
 }
@@ -107,10 +116,21 @@ void Parser::parse_strings() {
   file_->strings_.reserve(strings_location.second);
   for (size_t i = 0; i < strings_location.second; ++i) {
     auto string_offset = stream_->peek<uint32_t>(strings_location.first + i * sizeof(uint32_t));
-    stream_->setpos(string_offset);
-    size_t str_size = stream_->read_uleb128(); // Code point count
-    std::string string_value = stream_->read_mutf8(str_size);
-    file_->strings_.push_back(new std::string{std::move(string_value)});
+    if (!string_offset) {
+      break;
+    }
+    stream_->setpos(*string_offset);
+    size_t str_size = 0;
+    if (auto res = stream_->read_uleb128()) {
+      str_size = *res;
+    } else {
+      break;
+    }
+    auto string_value = stream_->read_mutf8(str_size);
+    if (!string_value) {
+      break;
+    }
+    file_->strings_.push_back(std::make_unique<std::string>(*string_value));
   }
 }
 
@@ -126,20 +146,19 @@ void Parser::parse_types() {
 
   stream_->setpos(types_location.first);
   for (size_t i = 0; i < types_location.second; ++i) {
-    if (!stream_->can_read<uint32_t>()) {
+    auto descriptor_idx = stream_->read<uint32_t>();
+    if (!descriptor_idx) {
       break;
     }
-    uint32_t descriptor_idx = stream_->read<uint32_t>();
 
-    if (descriptor_idx > file_->strings_.size()) {
+    if (*descriptor_idx > file_->strings_.size()) {
       break;
     }
-    std::string* descriptor_str = file_->strings_[descriptor_idx];
-    std::unique_ptr<Type> type{new Type{*descriptor_str}};
+    std::unique_ptr<std::string>& descriptor_str = file_->strings_[*descriptor_idx];
+    auto type = std::make_unique<Type>(*descriptor_str);
 
     if (type->type() == Type::TYPES::CLASS) {
       class_type_map_.emplace(*descriptor_str, type.get());
-
     }
 
     else if (type->type() == Type::TYPES::ARRAY) {
@@ -151,7 +170,7 @@ void Parser::parse_types() {
       }
     }
 
-    file_->types_.push_back(type.release());
+    file_->types_.push_back(std::move(type));
   }
 }
 
@@ -165,20 +184,28 @@ void Parser::parse_fields() {
   LIEF_DEBUG("Parsing #{:d} FIELDS at 0x{:x}", fields_location.second, fields_location.first);
 
   for (size_t i = 0; i < fields_location.second; ++i) {
-    const auto item = stream_->peek<field_id_item>(fields_offset + i * sizeof(field_id_item));
+    const auto res_item = stream_->peek<details::field_id_item>(fields_offset + i * sizeof(details::field_id_item));
+    if (!res_item) {
+      break;
+    }
+    const auto item = *res_item;
 
     // Class name in which the field is defined
     if (item.class_idx > types_location.second) {
       LIEF_WARN("Type index for field name is corrupted");
       continue;
     }
-    const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
 
-    if (class_name_idx > file_->strings_.size()) {
+    const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
+    if (!class_name_idx) {
+      continue;
+    }
+
+    if (*class_name_idx > file_->strings_.size()) {
       LIEF_WARN("String index for class name is corrupted");
       continue;
     }
-    std::string clazz = *file_->strings_[class_name_idx];
+    std::string clazz = *file_->strings_[*class_name_idx];
     if (!clazz.empty() && clazz[0] == '[') {
       size_t pos = clazz.find_last_of('[');
       clazz = clazz.substr(pos + 1);
@@ -190,7 +217,7 @@ void Parser::parse_fields() {
       LIEF_WARN("Type #{:d} out of bound ({:d})", item.type_idx, file_->types_.size());
       break;
     }
-    Type* type = file_->types_[item.type_idx];
+    std::unique_ptr<Type>& type = file_->types_[item.type_idx];
 
     // Field Name
     if (item.name_idx > file_->strings_.size()) {
@@ -203,15 +230,14 @@ void Parser::parse_fields() {
       LIEF_WARN("Empty field name");
     }
 
-    Field* field = new Field{name};
+    auto field = std::make_unique<Field>(name);
     field->original_index_ = i;
-    field->type_ = type;
-    file_->fields_.push_back(field);
-
+    field->type_ = type.get();
 
     if (!clazz.empty() && clazz[0] != '[') {
-      class_field_map_.emplace(clazz, field);
+      class_field_map_.emplace(clazz, field.get());
     }
+    file_->fields_.push_back(std::move(field));
   }
 }
 
@@ -227,11 +253,12 @@ void Parser::parse_prototypes() {
 
   stream_->setpos(prototypes_locations.first);
   for (size_t i = 0; i < prototypes_locations.second; ++i) {
-    if (!stream_->can_read<proto_id_item>()) {
+    const auto res_item = stream_->read<details::proto_id_item>();
+    if (!res_item) {
       LIEF_WARN("Prototype #{:d} corrupted", i);
       break;
     }
-    const auto item = stream_->read<proto_id_item>();
+    const auto item = *res_item;
 
     if (item.shorty_idx >= file_->strings_.size()) {
       LIEF_WARN("prototype.shorty_idx corrupted ({:d})", item.shorty_idx);
@@ -244,32 +271,31 @@ void Parser::parse_prototypes() {
       LIEF_WARN("prototype.return_type_idx corrupted ({:d})", item.return_type_idx);
       break;
     }
-    std::unique_ptr<Prototype> prototype{new Prototype{}};
-    prototype->return_type_ = file_->types_[item.return_type_idx];
-
+    auto prototype = std::make_unique<Prototype>();
+    prototype->return_type_ = file_->types_[item.return_type_idx].get();
 
     if (item.parameters_off > 0 && stream_->can_read<uint32_t>(item.parameters_off)) {
       const size_t saved_pos = stream_->pos();
       stream_->setpos(item.parameters_off);
-      const size_t nb_params = stream_->read<uint32_t>();
+      const size_t nb_params = *stream_->read<uint32_t>();
 
       for (size_t i = 0; i < nb_params; ++i) {
-        if (!stream_->can_read<uint16_t>()) {
-          break;
-        }
         const auto type_idx = stream_->read<uint16_t>();
-
-        if (type_idx > file_->types_.size()) {
+        if (!type_idx) {
           break;
         }
 
-        Type* param_type = file_->types_[type_idx];
+        if (*type_idx > file_->types_.size()) {
+          break;
+        }
+
+        Type* param_type = file_->types_[*type_idx].get();
         prototype->params_.push_back(param_type);
       }
       stream_->setpos(saved_pos);
     }
 
-    file_->prototypes_.push_back(prototype.release());
+    file_->prototypes_.push_back(std::move(prototype));
   }
 
 
@@ -285,8 +311,11 @@ void Parser::parse_methods() {
   LIEF_DEBUG("Parsing #{:d} METHODS at 0x{:x}", methods_location.second, methods_location.first);
 
   for (size_t i = 0; i < methods_location.second; ++i) {
-    const auto item = stream_->peek<method_id_item>(methods_offset + i * sizeof(method_id_item));
-
+    const auto res_item = stream_->peek<details::method_id_item>(methods_offset + i * sizeof(details::method_id_item));
+    if (!res_item) {
+      break;
+    }
+    const auto item = *res_item;
 
     // Class name in which the method is defined
     if (item.class_idx > types_location.second) {
@@ -294,12 +323,16 @@ void Parser::parse_methods() {
       continue;
     }
     const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
+    if (!class_name_idx) {
+      break;
+    }
 
-    if (class_name_idx > file_->strings_.size()) {
+    if (*class_name_idx > file_->strings_.size()) {
       LIEF_WARN("String index for class name is corrupted");
       continue;
     }
-    std::string clazz = *file_->strings_[class_name_idx];
+
+    std::string clazz = *file_->strings_[*class_name_idx];
     if (!clazz.empty() && clazz[0] == '[') {
       size_t pos = clazz.find_last_of('[');
       clazz = clazz.substr(pos + 1);
@@ -314,7 +347,7 @@ void Parser::parse_methods() {
       LIEF_WARN("Prototype #{:d} out of bound ({:d})", item.proto_idx, file_->prototypes_.size());
       break;
     }
-    Prototype* pt = file_->prototypes_[item.proto_idx];
+    std::unique_ptr<Prototype>& pt = file_->prototypes_[item.proto_idx];
 
     // Method Name
     if (item.name_idx > file_->strings_.size()) {
@@ -327,18 +360,17 @@ void Parser::parse_methods() {
       LIEF_WARN("Empty class name");
     }
 
-    Method* method = new Method{name};
+    auto method = std::make_unique<Method>(name);
     if (name == "<init>" || name == "<clinit>") {
       method->access_flags_ |= ACCESS_FLAGS::ACC_CONSTRUCTOR;
     }
     method->original_index_ = i;
-    method->prototype_ = pt;
-    file_->methods_.push_back(method);
-
+    method->prototype_ = pt.get();
 
     if (!clazz.empty() && clazz[0] != '[') {
-      class_method_map_.emplace(clazz, method);
+      class_method_map_.emplace(clazz, method.get());
     }
+    file_->methods_.push_back(std::move(method));
   }
 }
 
@@ -352,7 +384,11 @@ void Parser::parse_classes() {
   LIEF_DEBUG("Parsing #{:d} CLASSES at 0x{:x}", classes_location.second, classes_offset);
 
   for (size_t i = 0; i < classes_location.second; ++i) {
-    const auto item = stream_->peek<class_def_item>(classes_offset + i * sizeof(class_def_item));
+    const auto res_item = stream_->peek<details::class_def_item>(classes_offset + i * sizeof(details::class_def_item));
+    if (!res_item) {
+      break;
+    }
+    const auto item = *res_item;
 
     // Get full class name
     uint32_t type_idx = item.class_idx;
@@ -361,28 +397,33 @@ void Parser::parse_classes() {
     if (type_idx > types_location.second) {
       LIEF_ERR("Type Corrupted");
     } else {
-      uint32_t class_name_idx = stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
-      if (class_name_idx >= file_->strings_.size()) {
+      auto class_name_idx = stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
+      if (!class_name_idx) {
+        break;
+      }
+      if (*class_name_idx >= file_->strings_.size()) {
         LIEF_WARN("String index for class name corrupted");
       } else {
-        name = *file_->strings_[class_name_idx];
+        name = *file_->strings_[*class_name_idx];
       }
     }
 
     // Get parent class name (if any)
     std::string parent_name;
     Class* parent_ptr = nullptr;
-    if (item.superclass_idx != NO_INDEX) {
+    if (item.superclass_idx != details::NO_INDEX) {
       if (item.superclass_idx > types_location.second) {
         LIEF_WARN("Type index for super class name corrupted");
         continue;
       }
-      uint32_t super_class_name_idx = stream_->peek<uint32_t>(
-          types_location.first + item.superclass_idx * sizeof(uint32_t));
-      if (super_class_name_idx >= file_->strings_.size()) {
+      auto super_class_name_idx = stream_->peek<uint32_t>(types_location.first + item.superclass_idx * sizeof(uint32_t));
+      if (!super_class_name_idx) {
+        break;
+      }
+      if (*super_class_name_idx >= file_->strings_.size()) {
         LIEF_WARN("String index for super class name corrupted");
       } else {
-        parent_name = *file_->strings_[super_class_name_idx];
+        parent_name = *file_->strings_[*super_class_name_idx];
       }
 
       // Check if already parsed the parent class
@@ -394,7 +435,7 @@ void Parser::parse_classes() {
 
     // Get Source filename (if any)
     std::string source_filename;
-    if (item.source_file_idx != NO_INDEX) {
+    if (item.source_file_idx != details::NO_INDEX) {
       if (item.source_file_idx >= file_->strings_.size()) {
         LIEF_WARN("String index for source filename corrupted");
       } else {
@@ -402,14 +443,16 @@ void Parser::parse_classes() {
       }
     }
 
-    Class* clazz = new Class{name, item.access_flags, parent_ptr, source_filename};
+    auto clazz = std::make_unique<Class>(name, item.access_flags, parent_ptr, source_filename);
     clazz->original_index_ = i;
     if (parent_ptr == nullptr) {
       // Register in inheritance map to be resolved later
-      inheritance_.emplace(parent_name, clazz);
+      inheritance_.emplace(parent_name, clazz.get());
     }
 
-    file_->add_class(clazz);
+    Class& cls = *clazz;
+    file_->add_class(std::move(clazz));
+
 
     // Parse class annotations
     if (item.annotations_off > 0) {
@@ -417,7 +460,7 @@ void Parser::parse_classes() {
 
     // Parse Class content
     if (item.class_data_off > 0) {
-      parse_class_data<DEX_T>(item.class_data_off, clazz);
+      parse_class_data<DEX_T>(item.class_data_off, cls);
     }
 
   }
@@ -426,30 +469,48 @@ void Parser::parse_classes() {
 
 
 template<typename DEX_T>
-void Parser::parse_class_data(uint32_t offset, Class* cls) {
+void Parser::parse_class_data(uint32_t offset, Class& cls) {
   stream_->setpos(offset);
 
   // The number of static fields defined in this item
-  uint64_t static_fields_size = stream_->read_uleb128();
+  auto static_fields_size = stream_->read_uleb128();
+  if (!static_fields_size) {
+    return;
+  }
 
   // The number of instance fields defined in this item
-  uint64_t instance_fields_size = stream_->read_uleb128();
+  auto instance_fields_size = stream_->read_uleb128();
+
+  if (!instance_fields_size) {
+    return;
+  }
 
   // The number of direct methods defined in this item
-  uint64_t direct_methods_size = stream_->read_uleb128();
+  auto direct_methods_size = stream_->read_uleb128();
+  if (!direct_methods_size) {
+    return;
+  }
 
   // The number of virtual methods defined in this item
-  uint64_t virtual_methods_size = stream_->read_uleb128();
+  auto virtual_methods_size = stream_->read_uleb128();
+  if (!virtual_methods_size) {
+    return;
+  }
 
-  cls->methods_.reserve(direct_methods_size + virtual_methods_size);
+  cls.methods_.reserve(*direct_methods_size + *virtual_methods_size);
 
   // Static Fields
   // =============
-  for (size_t field_idx = 0, i = 0; i < static_fields_size; ++i) {
-    field_idx += stream_->read_uleb128();
+  for (size_t field_idx = 0, i = 0; i < *static_fields_size; ++i) {
+    if (auto res = stream_->read_uleb128()) {
+      field_idx += *res;
+    } else {
+      break;
+    }
+
     if (field_idx > file_->fields_.size()) {
       LIEF_WARN("Corrupted field index #{:d} for class: {} ({:d} fields)",
-                field_idx, cls->fullname(), file_->fields_.size());
+                field_idx, cls.fullname(), file_->fields_.size());
       break;
     }
 
@@ -458,11 +519,15 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
 
   // Instance Fields
   // ===============
-  for (size_t field_idx = 0, i = 0; i < instance_fields_size; ++i) {
-    field_idx += stream_->read_uleb128();
+  for (size_t field_idx = 0, i = 0; i < *instance_fields_size; ++i) {
+    if (auto res = stream_->read_uleb128()) {
+      field_idx += *res;
+    } else {
+      break;
+    }
     if (field_idx > file_->fields_.size()) {
       LIEF_WARN("Corrupted field index #{:d} for class: {} ({:d} fields)",
-                field_idx, cls->fullname(), file_->fields_.size());
+                field_idx, cls.fullname(), file_->fields_.size());
       break;
     }
 
@@ -471,11 +536,15 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
 
   // Direct Methods
   // ==============
-  for (size_t method_idx = 0, i = 0; i < direct_methods_size; ++i) {
-    method_idx += stream_->read_uleb128();
+  for (size_t method_idx = 0, i = 0; i < *direct_methods_size; ++i) {
+    if (auto res = stream_->read_uleb128()) {
+      method_idx += *res;
+    } else {
+      break;
+    }
     if (method_idx > file_->methods_.size()) {
       LIEF_WARN("Corrupted method index #{:d} for class: {} ({:d} methods)",
-                method_idx, cls->fullname(), file_->methods_.size());
+                method_idx, cls.fullname(), file_->methods_.size());
       break;
     }
 
@@ -484,12 +553,16 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
 
   // Virtual Methods
   // ===============
-  for (size_t method_idx = 0, i = 0; i < virtual_methods_size; ++i) {
-    method_idx += stream_->read_uleb128();
+  for (size_t method_idx = 0, i = 0; i < *virtual_methods_size; ++i) {
+    if (auto res = stream_->read_uleb128()) {
+      method_idx += *res;
+    } else {
+      break;
+    }
 
     if (method_idx > file_->methods_.size()) {
       LIEF_WARN("Corrupted method index #{:d} for class: {} ({:d} methods)",
-                method_idx, cls->fullname(), virtual_methods_size);
+                method_idx, cls.fullname(), *virtual_methods_size);
       break;
     }
     parse_method<DEX_T>(method_idx, cls, true);
@@ -499,11 +572,14 @@ void Parser::parse_class_data(uint32_t offset, Class* cls) {
 
 
 template<typename DEX_T>
-void Parser::parse_field(size_t index, Class* cls, bool is_static) {
+void Parser::parse_field(size_t index, Class& cls, bool is_static) {
   // Access Flags
-  uint64_t access_flags = stream_->read_uleb128();
+  auto access_flags = stream_->read_uleb128();
+  if (!access_flags) {
+    return;
+  }
 
-  Field* field = file_->fields_[index];
+  std::unique_ptr<Field>& field = file_->fields_[index];
   field->set_static(is_static);
 
   if (field->index() != index) {
@@ -511,13 +587,13 @@ void Parser::parse_field(size_t index, Class* cls, bool is_static) {
     return;
   }
 
-  field->access_flags_ = static_cast<uint32_t>(access_flags);
-  field->parent_ = cls;
-  cls->fields_.push_back(field);
+  field->access_flags_ = static_cast<uint32_t>(*access_flags);
+  field->parent_ = &cls;
+  cls.fields_.push_back(field.get());
 
-  const auto range = class_field_map_.equal_range(cls->fullname());
+  const auto range = class_field_map_.equal_range(cls.fullname());
   for (auto it = range.first; it != range.second;) {
-    if (it->second == field) {
+    if (it->second == field.get()) {
       it = class_field_map_.erase(it);
     } else {
       ++it;
@@ -527,14 +603,20 @@ void Parser::parse_field(size_t index, Class* cls, bool is_static) {
 
 
 template<typename DEX_T>
-void Parser::parse_method(size_t index, Class* cls, bool is_virtual) {
+void Parser::parse_method(size_t index, Class& cls, bool is_virtual) {
   // Access Flags
-  uint64_t access_flags = stream_->read_uleb128();
+  auto access_flags = stream_->read_uleb128();
+  if (!access_flags) {
+    return;
+  }
 
   // Dalvik bytecode offset
-  uint64_t code_offset = stream_->read_uleb128();
+  auto code_offset = stream_->read_uleb128();
+  if (!code_offset) {
+    return;
+  }
 
-  Method* method = file_->methods_[index];
+  std::unique_ptr<Method>& method = file_->methods_[index];
   method->set_virtual(is_virtual);
 
   if (method->index() != index) {
@@ -542,35 +624,37 @@ void Parser::parse_method(size_t index, Class* cls, bool is_virtual) {
     return;
   }
 
-  method->access_flags_ = static_cast<uint32_t>(access_flags);
-  method->parent_ = cls;
-  cls->methods_.push_back(method);
+  method->access_flags_ = static_cast<uint32_t>(*access_flags);
+  method->parent_ = &cls;
+  cls.methods_.push_back(method.get());
 
-  const auto range = class_method_map_.equal_range(cls->fullname());
+  const auto range = class_method_map_.equal_range(cls.fullname());
   for (auto it = range.first; it != range.second;) {
-    if (it->second == method) {
+    if (it->second == method.get()) {
       it = class_method_map_.erase(it);
     } else {
       ++it;
     }
   }
 
-  if (code_offset > 0) {
-    parse_code_info<DEX_T>(code_offset, method);
+  if (*code_offset > 0) {
+    parse_code_info<DEX_T>(*code_offset, *method);
   }
 }
 
 template<typename DEX_T>
-void Parser::parse_code_info(uint32_t offset, Method* method) {
-  const auto codeitem = stream_->peek<code_item>(offset);
-  method->code_info_ = &codeitem;
+void Parser::parse_code_info(uint32_t offset, Method& method) {
+  const auto codeitem = stream_->peek<details::code_item>(offset);
+  if (!codeitem) {
+    return;
+  }
+  method.code_info_ = codeitem.value();
 
-  const auto* bytecode = stream_->peek_array<uint8_t>(/* offset */ offset + sizeof(code_item),
-                                                      /* size   */ codeitem.insns_size * sizeof(uint16_t),
-                                                      /* check */  false);
-  method->code_offset_ = offset + sizeof(code_item);
+  const auto* bytecode = stream_->peek_array<uint8_t>(/* offset */ offset + sizeof(details::code_item),
+                                                      /* size   */ codeitem->insns_size * sizeof(uint16_t));
+  method.code_offset_ = offset + sizeof(details::code_item);
   if (bytecode != nullptr) {
-    method->bytecode_ = {bytecode, bytecode + codeitem.insns_size * sizeof(uint16_t)};
+    method.bytecode_ = {bytecode, bytecode + codeitem->insns_size * sizeof(uint16_t)};
   }
 }
 

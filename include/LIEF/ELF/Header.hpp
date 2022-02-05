@@ -24,11 +24,11 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/enums.hpp"
 
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
+class Parser;
 
 namespace details {
 struct Elf32_Ehdr;
@@ -38,10 +38,18 @@ struct Elf64_Ehdr;
 //! Class which represents the ELF's header. This is the ELF structure
 //! that starts an ELF file.
 class LIEF_API Header : public Object {
-
+  friend class Parser;
   public:
   using identity_t = std::array<uint8_t, 16>;
   using abstract_architecture_t = std::pair<ARCHITECTURES, std::set<MODES>>;
+
+  template<class T>
+  using flags_list_t = std::set<T>;
+
+  using arm_flags_list_t     = flags_list_t<ARM_EFLAGS>;
+  using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
+  using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
+  using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
 
   public:
   Header();

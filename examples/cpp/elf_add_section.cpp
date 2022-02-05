@@ -27,13 +27,13 @@
 using namespace LIEF::ELF;
 
 int main(int argc, char **argv) {
-  std::cout << "ELF Section rename" << std::endl;
+  std::cout << "ELF Section rename" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << "<binary> <binary output name>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << "<binary> <binary output name>" << '\n';
     return -1;
   }
 
-  std::unique_ptr<Binary> binary{Parser::parse(argv[1])};
+  std::unique_ptr<Binary> binary = Parser::parse(argv[1]);
   for (size_t i = 0; i < 2; ++i) {
     Section new_section{".test"};
     std::vector<uint8_t> data(100, 0);

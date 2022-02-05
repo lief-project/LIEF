@@ -33,8 +33,7 @@ ExportInfo::ExportInfo() = default;
 ExportInfo::ExportInfo(uint64_t address, uint64_t flags, uint64_t offset) :
   node_offset_{offset},
   flags_{flags},
-  address_{address},
-  other_{0}
+  address_{address}
 {}
 
 ExportInfo& ExportInfo::operator=(ExportInfo other) {
@@ -91,7 +90,6 @@ uint64_t ExportInfo::other() const {
   return other_;
 }
 
-
 Symbol* ExportInfo::alias() {
   return alias_;
 }
@@ -116,27 +114,21 @@ bool ExportInfo::has_symbol() const {
   return symbol_ != nullptr;
 }
 
-const Symbol& ExportInfo::symbol() const {
-  if (!has_symbol()) {
-    throw not_found("No symbol associated with this export info");
-  }
-
-  return *symbol_;
+const Symbol* ExportInfo::symbol() const {
+  return symbol_;
 }
 
-Symbol& ExportInfo::symbol() {
-  return const_cast<Symbol&>(static_cast<const ExportInfo*>(this)->symbol());
+Symbol* ExportInfo::symbol() {
+  return const_cast<Symbol*>(static_cast<const ExportInfo*>(this)->symbol());
 }
 
 
 ExportInfo::flag_list_t ExportInfo::flags_list() const {
   flag_list_t flags;
 
-  std::copy_if(
-      std::begin(export_symbol_flags),
-      std::end(export_symbol_flags),
-      std::back_inserter(flags),
-      [this] (EXPORT_SYMBOL_FLAGS f) { return has(f); });
+  std::copy_if(std::begin(export_symbol_flags), std::end(export_symbol_flags),
+               std::back_inserter(flags),
+               [this] (EXPORT_SYMBOL_FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -147,6 +139,9 @@ void ExportInfo::accept(Visitor& visitor) const {
 
 
 bool ExportInfo::operator==(const ExportInfo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -177,7 +172,7 @@ std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info) {
   os << std::setw(13) << "Kind: "        << to_string(export_info.kind()) << std::endl;
   os << std::setw(13) << "Flags: "       << flags_str << std::endl;
   if (export_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << export_info.symbol().name() << std::endl;
+    os << std::setw(13) << "Symbol: "    << export_info.symbol()->name() << std::endl;
   }
 
   if (export_info.alias() != nullptr) {

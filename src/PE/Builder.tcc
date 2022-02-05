@@ -167,7 +167,7 @@ void Builder::build_import_table() {
   new_import_section.add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
 
   const auto it_import_section = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
-      [] (const Section* section) {
+      [] (const std::unique_ptr<Section>& section) {
         return section != nullptr && section->is_type(PE_SECTION_TYPES::IMPORT);
       });
 
@@ -183,15 +183,19 @@ void Builder::build_import_table() {
 
   // Patch the original IAT with the address of the associated trampoline
   if (patch_imports_) {
-    Section& original_import = binary_->section_from_offset(offset_imports);
-    std::vector<uint8_t> import_content  = original_import.content();
-    uint32_t roffset_import = offset_imports - original_import.offset();
+    Section* original_import = binary_->section_from_offset(offset_imports);
+    if (original_import == nullptr) {
+      LIEF_ERR("Can't find the section associated with the import table");
+      return;
+    }
+    std::vector<uint8_t> import_content  = original_import->content();
+    uint32_t roffset_import = offset_imports - original_import->offset();
 
     auto* import_header = reinterpret_cast<details::pe_import*>(import_content.data() + roffset_import);
     uint32_t jumpOffsetTmp = trampolines_offset;
     while (import_header->ImportAddressTableRVA != 0) {
-      uint32_t offsetTable = binary_->rva_to_offset(import_header->ImportLookupTableRVA)  - original_import.pointerto_raw_data();
-      uint32_t offsetIAT   = binary_->rva_to_offset(import_header->ImportAddressTableRVA) - original_import.pointerto_raw_data();
+      uint32_t offsetTable = binary_->rva_to_offset(import_header->ImportLookupTableRVA)  - original_import->pointerto_raw_data();
+      uint32_t offsetIAT   = binary_->rva_to_offset(import_header->ImportAddressTableRVA) - original_import->pointerto_raw_data();
       if (offsetTable > import_content.size() || offsetIAT > import_content.size()) {
         //TODO: Better handle
         LIEF_ERR("Can't patch");
@@ -210,7 +214,7 @@ void Builder::build_import_table() {
       }
       import_header++;
     }
-    original_import.content(import_content);
+    original_import->content(import_content);
   }
 
   // Process libraries
@@ -282,10 +286,8 @@ void Builder::build_import_table() {
 
         // Then: name
         const std::string& name = entry.name();
-        std::copy(
-            std::begin(name),
-            std::end(name),
-            content.data() + functions_name_offset);
+        std::copy(std::begin(name), std::end(name),
+                  content.data() + functions_name_offset);
 
         functions_name_offset += name.size() + 1; // +1 for \0
 
@@ -318,15 +320,11 @@ void Builder::build_import_table() {
     }
 
     // Insert null entry at the end
-    std::fill(
-      content.data() + lookuptable_offset,
-      content.data() + lookuptable_offset + sizeof(uint__),
-      0);
+    std::fill(content.data() + lookuptable_offset,
+              content.data() + lookuptable_offset + sizeof(uint__), 0);
 
-    std::fill(
-      content.data() + iat_offset,
-      content.data() + iat_offset + sizeof(uint__),
-      0);
+    std::fill(content.data() + iat_offset,
+              content.data() + iat_offset + sizeof(uint__), 0);
 
     lookuptable_offset  += sizeof(uint__);
     iat_offset += sizeof(uint__);
@@ -348,7 +346,7 @@ void Builder::build_import_table() {
 }
 
 template<typename PE_T>
-void Builder::build_optional_header(const OptionalHeader& optional_header) {
+ok_error_t Builder::build_optional_header(const OptionalHeader& optional_header) {
   using uint__             = typename PE_T::uint;
   using pe_optional_header = typename PE_T::pe_optional_header;
 
@@ -395,17 +393,17 @@ void Builder::build_optional_header(const OptionalHeader& optional_header) {
   const uint32_t address_next_header = binary_->dos_header().addressof_new_exeheader() + sizeof(details::pe_header);
   ios_.seekp(address_next_header);
   ios_.write(reinterpret_cast<const uint8_t*>(&optional_header_raw), sizeof(pe_optional_header));
-
+  return ok();
 }
 
 
 template<typename PE_T>
-void Builder::build_tls() {
+ok_error_t Builder::build_tls() {
   using uint__ = typename PE_T::uint;
   using pe_tls = typename PE_T::pe_tls;
 
   const auto it_tls = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
-    [] (const Section* section) {
+    [] (const std::unique_ptr<Section>& section) {
       const std::set<PE_SECTION_TYPES>& types = section->types();
       return types.size() == 1 && types.find(PE_SECTION_TYPES::TLS) != std::end(types);
     });
@@ -424,16 +422,13 @@ void Builder::build_tls() {
     const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
     const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
 
-    try {
-      const Section& _ [[gnu::unused]] = binary_->section_from_offset(offset_callbacks);
-    } catch (const not_found&) { // Callbacks will be in our section (not present yet)
+    Section* callbacks_sec = binary_->section_from_offset(offset_callbacks);
+    if (callbacks_sec == nullptr) {
       tls_section_size += tls_obj.callbacks().size() * sizeof(uint__);
     }
 
-
-    try {
-      const Section& _ [[gnu::unused]] = binary_->section_from_offset(offset_rawdata);
-    } catch (const not_found&) { // data_template will be in our section (not present yet)
+    Section* data_sec = binary_->section_from_offset(offset_rawdata);
+    if (data_sec == nullptr) {
       tls_section_size += tls_obj.data_template().size();
     }
 
@@ -442,7 +437,7 @@ void Builder::build_tls() {
 
     tls_section = &(binary_->add_section(new_section, PE_SECTION_TYPES::TLS));
   } else {
-    tls_section = *it_tls;
+    tls_section = it_tls->get();
   }
 
   tls_raw.RawDataStartVA    = static_cast<uint__>(tls_obj.addressof_raw_data().first);
@@ -455,103 +450,96 @@ void Builder::build_tls() {
   std::vector<uint8_t> data(sizeof(pe_tls), 0);
 
   std::copy(
-      reinterpret_cast<uint8_t*>(&tls_raw),
-      reinterpret_cast<uint8_t*>(&tls_raw) + sizeof(pe_tls),
+      reinterpret_cast<uint8_t*>(&tls_raw), reinterpret_cast<uint8_t*>(&tls_raw) + sizeof(pe_tls),
       data.data());
 
   const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
   const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
-  try {
-    Section& section_callbacks = binary_->section_from_offset(offset_callbacks);
+  Section* section_callbacks = binary_->section_from_offset(offset_callbacks);
+  if (section_callbacks == nullptr) {
+    LIEF_ERR("Can't find the section which holds callbacks.");
+    return make_error_code(lief_errors::not_found);
+  }
 
-    const uint64_t size_needed = (tls_obj.callbacks().size()) * sizeof(uint__);
+  const uint64_t size_needed = (tls_obj.callbacks().size()) * sizeof(uint__);
 
-    if (section_callbacks == *tls_section) {
-      // Case where the section where callbacks are located is the same
-      // than the current .tls section
+  if (section_callbacks == tls_section) {
+    // Case where the section where callbacks are located is the same
+    // than the current .tls section
 
-      uint64_t relative_offset = offset_callbacks - tls_section->offset();
+    uint64_t relative_offset = offset_callbacks - tls_section->offset();
 
-      for (uint__ callback : tls_obj.callbacks()) {
-        data.insert(
-            std::begin(data) + relative_offset,
-            reinterpret_cast<uint8_t*>(&callback),
-            reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__));
-        relative_offset += sizeof(uint__);
-      }
-
-      //data.insert(std::begin(data) + relative_offset + sizeof(uint__), sizeof(uint__), 0);
-
-    } else {
-      // Case where the section where callbacks are located is **not** in the same
-      // current .tls section
-
-      uint64_t relative_offset = offset_callbacks - section_callbacks.offset();
-      std::vector<uint8_t> callback_data = section_callbacks.content();
-
-      if (callback_data.size() < (relative_offset + size_needed)) {
-        throw builder_error("Don't have enough space to write callbacks");
-      }
-
-      for (uint__ callback : tls_obj.callbacks()) {
-        std::copy(
-          reinterpret_cast<uint8_t*>(&callback),
-          reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__),
-          callback_data.data() + relative_offset);
-        relative_offset += sizeof(uint__);
-      }
-      section_callbacks.content(callback_data);
-
+    for (uint__ callback : tls_obj.callbacks()) {
+      data.insert(std::begin(data) + relative_offset,
+                  reinterpret_cast<uint8_t*>(&callback),
+                  reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__));
+      relative_offset += sizeof(uint__);
     }
-  } catch (const not_found&) {
-    throw builder_error("Can't find the section which holds callbacks.");
+
+    //data.insert(std::begin(data) + relative_offset + sizeof(uint__), sizeof(uint__), 0);
+
+  } else {
+    // Case where the section where callbacks are located is **not** in the same
+    // current .tls section
+
+    uint64_t relative_offset = offset_callbacks - section_callbacks->offset();
+    std::vector<uint8_t> callback_data = section_callbacks->content();
+
+    if ((relative_offset + size_needed) > callback_data.size()) {
+      LIEF_ERR("Don't have enough space to write callbacks");
+      return make_error_code(lief_errors::build_error);
+    }
+
+    for (uint__ callback : tls_obj.callbacks()) {
+      std::copy(
+        reinterpret_cast<uint8_t*>(&callback),
+        reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__),
+        callback_data.data() + relative_offset);
+      relative_offset += sizeof(uint__);
+    }
+    section_callbacks->content(callback_data);
   }
 
 
-  try {
-    Section& section_rawdata = binary_->section_from_offset(offset_rawdata);
 
+  Section* section_rawdata = binary_->section_from_offset(offset_rawdata);
+  if (section_rawdata == nullptr) {
+    LIEF_ERR("Can't find the section which holds 'data_template'.");
+    return make_error_code(lief_errors::not_found);
+  }
+  {
     const std::vector<uint8_t>& data_template = tls_obj.data_template();
     const uint64_t size_needed = data_template.size();
 
-    if (section_rawdata == *tls_section) {
+    if (section_rawdata == tls_section) {
       // Case where the section where data templates are located in the same
       // than the current .tls section
-
       const uint64_t relative_offset = offset_rawdata - tls_section->offset();
 
-      data.insert(
-          std::begin(data) + relative_offset,
-          std::begin(data_template),
-          std::end(data_template));
-
+      data.insert(std::begin(data) + relative_offset, std::begin(data_template),
+                  std::end(data_template));
     } else {
-      const uint64_t relative_offset = offset_rawdata - section_rawdata.offset();
-      std::vector<uint8_t> section_data = section_rawdata.content();
+      const uint64_t relative_offset = offset_rawdata - section_rawdata->offset();
+      std::vector<uint8_t> section_data = section_rawdata->content();
       const std::vector<uint8_t>& data_template = tls_obj.data_template();
-      if (section_data.size() < (relative_offset + size_needed)) {
-        throw builder_error("Don't have enough space to write data template.");
+      if ((relative_offset + size_needed) > section_data.size()) {
+        return make_error_code(lief_errors::build_error);
       }
 
-      std::copy(
-          std::begin(data_template),
-          std::end(data_template),
-          section_data.data() + relative_offset);
-      section_rawdata.content(section_data);
-
+      std::copy(std::begin(data_template), std::end(data_template),
+                section_data.data() + relative_offset);
+      section_rawdata->content(section_data);
     }
-  } catch (const not_found&) {
-    throw builder_error("Can't find the section which holds 'data_template'.");
   }
 
-
   if (data.size() > tls_section->size()) {
-    throw builder_error("Builder constructed a bigger section that the original one.");
+    LIEF_ERR("The builder constructed a larger section that the original one.");
+    return make_error_code(lief_errors::build_error);
   }
 
   data.insert(std::end(data), tls_section->size() - data.size(), 0);
   tls_section->content(data);
-
+  return ok();
 }
 
 }

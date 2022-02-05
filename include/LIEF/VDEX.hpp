@@ -19,6 +19,10 @@
 #include "LIEF/config.h"
 
 #if defined(LIEF_VDEX_SUPPORT)
+#if !defined(LIEF_DEX_SUPPORT)
+#error "The VDEX module can't be used without the DEX support"
+#endif
+#include "LIEF/DEX.hpp"
 #include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
 #include "LIEF/VDEX/File.hpp"

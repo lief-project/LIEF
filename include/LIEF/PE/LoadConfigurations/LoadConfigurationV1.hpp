@@ -21,7 +21,6 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/enums.hpp"
-#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
 
 namespace LIEF {
@@ -38,6 +37,11 @@ struct load_configuration_v1;
 class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN8_1;
+
+  template<class T>
+  using flags_list_t = std::set<T>;
+
+  using guard_cf_flags_list_t = flags_list_t<GUARD_CF_FLAGS>;
 
   LoadConfigurationV1();
 

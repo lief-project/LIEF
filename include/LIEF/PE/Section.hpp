@@ -21,6 +21,7 @@
 #include <set>
 
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/PE/enums.hpp"
 

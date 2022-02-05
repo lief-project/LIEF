@@ -56,22 +56,24 @@ class LIEF_API BindingInfo : public Object {
   bool has_segment() const;
 
   //! The MachO::SegmentCommand associated with the BindingInfo
-  const SegmentCommand& segment() const;
-  SegmentCommand&       segment();
+  const SegmentCommand* segment() const;
+  SegmentCommand*       segment();
 
   //! Check if a MachO::DylibCommand is tied with the BindingInfo
   bool has_library() const;
 
-  //! MachO::DylibCommand associated with the BindingInfo
-  const DylibCommand& library() const;
-  DylibCommand&       library();
+  //! MachO::DylibCommand associated with the BindingInfo or a nullptr
+  //! if not present
+  const DylibCommand* library() const;
+  DylibCommand*       library();
 
   //! Check if a MachO::Symbol is associated with the BindingInfo
   bool has_symbol() const;
 
-  //! MachO::Symbol associated with the BindingInfo
-  const Symbol& symbol() const;
-  Symbol&       symbol();
+  //! MachO::Symbol associated with the BindingInfo or
+  //! a nullptr if not present
+  const Symbol* symbol() const;
+  Symbol*       symbol();
 
   //! Address of the binding
   uint64_t address() const;
@@ -116,19 +118,17 @@ class LIEF_API BindingInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
 
   private:
-  BINDING_CLASS   class_; // STANDARD, WEAK, LAZY
-  BIND_TYPES      binding_type_;
-  SegmentCommand* segment_{nullptr};
-  Symbol*         symbol_{nullptr};
-  int32_t         library_ordinal_;
-  int64_t         addend_;
-  bool            is_weak_import_;
-  bool            is_non_weak_definition_;
-  DylibCommand*   library_{nullptr};
-  uint64_t        address_{0};
-  uint64_t        offset_{0};
-
-
+  BINDING_CLASS   class_ = BINDING_CLASS::BIND_CLASS_STANDARD;
+  BIND_TYPES      binding_type_ = BIND_TYPES::BIND_TYPE_POINTER;
+  SegmentCommand* segment_ = nullptr;
+  Symbol*         symbol_ = nullptr;
+  int32_t         library_ordinal_ = 0;
+  int64_t         addend_ = 0;
+  bool            is_weak_import_ = false;
+  bool            is_non_weak_definition_ = false;
+  DylibCommand*   library_ = nullptr;
+  uint64_t        address_ = 0;
+  uint64_t        offset_ = 0;
 };
 
 }

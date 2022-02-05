@@ -16,13 +16,17 @@
 
 #include "logging.hpp"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
 #include "LIEF/OAT/Parser.hpp"
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/utils.hpp"
-#include "LIEF/OAT/Structures.hpp"
 
-#include "LIEF/VDEX.hpp"
+#include "LIEF/VDEX/utils.hpp"
+#include "LIEF/VDEX/Parser.hpp"
 
-#include "filesystem/filesystem.h"
+#include "OAT/Structures.hpp"
 
 #include "Parser.tcc"
 
@@ -41,7 +45,9 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
 
   Parser parser{oat_file};
   parser.init(oat_file);
-  return std::unique_ptr<Binary>{parser.oat_binary_};
+
+  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  return oat_binary;
 }
 
 
@@ -53,33 +59,39 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::st
   if (!VDEX::is_vdex(vdex_file)) {
     return nullptr;
   }
+
   Parser parser{oat_file};
-  parser.set_vdex(VDEX::Parser::parse(vdex_file).release());
+  if (std::unique_ptr<VDEX::File> vdex = VDEX::Parser::parse(vdex_file)) {
+    parser.vdex_file_ = std::move(vdex);
+  } else {
+    LIEF_WARN("Can't parse the VDEX file '{}'", vdex_file);
+  }
   parser.init(oat_file);
-  return std::unique_ptr<Binary>{parser.oat_binary_};
+  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  return oat_binary;
 
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
-  Parser parser{data, name};
+std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+  Parser parser{std::move(data)};
   parser.init(name);
-  return std::unique_ptr<Binary>{parser.oat_binary_};
+  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  return oat_binary;
 }
 
 
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
-  oat_binary_{new Binary{}},
-  stream_{nullptr}
-{
-  LIEF::ELF::Parser{data, name, LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO, oat_binary_};
+Parser::Parser(std::vector<uint8_t> data) {
+  stream_    = std::make_unique<VectorStream>(std::move(data));
+  binary_    = std::unique_ptr<Binary>(new Binary{});
+  count_mtd_ = ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO;
 }
 
-Parser::Parser(const std::string& file) :
-  LIEF::Parser{file},
-  oat_binary_{new Binary{}},
-  stream_{nullptr}
-{
-  LIEF::ELF::Parser{file, LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO, oat_binary_};
+Parser::Parser(const std::string& file) {
+  if (auto s = VectorStream::from_file(file)) {
+    stream_ = std::make_unique<VectorStream>(std::move(*s));
+  }
+  binary_    = std::unique_ptr<Binary>(new Binary{});
+  count_mtd_ = ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO;
 }
 
 
@@ -87,61 +99,47 @@ bool Parser::has_vdex() const {
   return vdex_file_ != nullptr;
 }
 
-void Parser::set_vdex(VDEX::File* file) {
-  vdex_file_ = file;
+void Parser::set_vdex(std::unique_ptr<VDEX::File> file) {
+  vdex_file_ = std::move(file);
 }
 
 
 void Parser::init(const std::string& name) {
   LIEF_DEBUG("Parsing {}", name);
+  ELF::Parser::init(name);
+  oat_version_t version = OAT::version(oat_binary());
+  Binary& oat_bin = oat_binary();
+  oat_bin.vdex_ = std::move(vdex_file_);
 
-  oat_version_t version = OAT::version(*oat_binary_);
-
-  if (has_vdex()) {
-    oat_binary_->vdex_ = vdex_file_;
-  }
-
-  if (!has_vdex() && version > OAT_088::oat_version) {
+  if (!oat_bin.has_vdex() && version > details::OAT_088::oat_version) {
     LIEF_INFO("No VDEX provided with this OAT file. Parsing will be incomplete");
   }
 
-  if (version <= OAT_064::oat_version) {
-    return parse_binary<OAT64_t>();
+  if (version <= details::OAT_064::oat_version) {
+    return parse_binary<details::OAT64_t>();
   }
 
-  if (version <= OAT_079::oat_version) {
-    return parse_binary<OAT79_t>();
+  if (version <= details::OAT_079::oat_version) {
+    return parse_binary<details::OAT79_t>();
   }
 
-  if (version <= OAT_088::oat_version) {
-    return parse_binary<OAT88_t>();
+  if (version <= details::OAT_088::oat_version) {
+    return parse_binary<details::OAT88_t>();
   }
 
-  if (version <= OAT_124::oat_version) {
-    return parse_binary<OAT124_t>();
+  if (version <= details::OAT_124::oat_version) {
+    return parse_binary<details::OAT124_t>();
   }
 
-  if (version <= OAT_131::oat_version) {
-    return parse_binary<OAT131_t>();
+  if (version <= details::OAT_131::oat_version) {
+    return parse_binary<details::OAT131_t>();
   }
 
-  if (version <= OAT_138::oat_version) {
-    return parse_binary<OAT138_t>();
+  if (version <= details::OAT_138::oat_version) {
+    return parse_binary<details::OAT138_t>();
   }
 
 }
-
-
-void Parser::bind_vdex() {
-  if (vdex_file_ == nullptr) {
-    LIEF_WARN("Inconsistent state: vdex_file is null");
-    return;
-  }
-  for (DEX::File& dex_file : vdex_file_->dex_files()) {
-    oat_binary_->dex_files_.push_back(&dex_file);
-  }
-}
-
 
 } // namespace OAT
 } // namespace LIEF

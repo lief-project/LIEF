@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
@@ -30,6 +29,7 @@
 #include "LIEF/MachO/DataInCode.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
+#include "MachO/Structures.hpp"
 
 #include "LIEF/exception.hpp"
 #include "logging.hpp"
@@ -124,21 +124,28 @@ bool is_64(const std::string& file) {
 
 
 bool check_layout(const Binary& binary, std::string* error) {
-  if (binary.has_dyld_info() && !binary.has_segment("__LINKEDIT")) {
+  const SegmentCommand* linkedit = binary.get_segment("__LINKEDIT");
+  const DyldInfo* dyld_info      = binary.dyld_info();
+
+  if (dyld_info == nullptr && linkedit == nullptr) {
+    LIEF_WARN("No __LINKEDIT segment neither Dyld info");
+    return false;
+  }
+
+  if (dyld_info != nullptr && linkedit == nullptr) {
     if (error != nullptr) {
       *error = "No __LINKEDIT segment";
     }
     return false;
   }
-  const SegmentCommand& linkedit = *binary.get_segment("__LINKEDIT");
-  const DyldInfo& dyld_info      = binary.dyld_info();
+
 
   const bool is64 = static_cast<const LIEF::Binary&>(binary).header().is_64();
-  uint64_t offset = linkedit.file_offset();
+  uint64_t offset = linkedit->file_offset();
 
   // Requirement #1: Dyld Info starts at the beginning of __LINKEDIT
-  if (dyld_info.rebase().first != 0) {
-    if (dyld_info.rebase().first != offset) {
+  if (dyld_info->rebase().first != 0) {
+    if (dyld_info->rebase().first != offset) {
       if (error != nullptr) {
         *error = "Dyld 'rebase' doesn't start at the begining of LINKEDIT";
       }
@@ -146,8 +153,8 @@ bool check_layout(const Binary& binary, std::string* error) {
     }
   }
 
-  else if (dyld_info.bind().first != 0) {
-    if (dyld_info.bind().first != offset) {
+  else if (dyld_info->bind().first != 0) {
+    if (dyld_info->bind().first != offset) {
       if (error != nullptr) {
         *error = "Dyld 'bind' doesn't start at the begining of LINKEDIT";
       }
@@ -155,12 +162,12 @@ bool check_layout(const Binary& binary, std::string* error) {
     }
   }
 
-  else if (dyld_info.export_info().first != 0) {
+  else if (dyld_info->export_info().first != 0) {
 
-    if (    dyld_info.export_info().first != offset
-        && dyld_info.weak_bind().first   != 0
-        && dyld_info.lazy_bind().first   != 0) {
-
+    if (dyld_info->export_info().first != offset &&
+        dyld_info->weak_bind().first   != 0      &&
+        dyld_info->lazy_bind().first   != 0      )
+    {
       if (error != nullptr) {
         *error = "Dyld 'export' doesn't start at the begining of LINKEDIT";
       }
@@ -168,154 +175,154 @@ bool check_layout(const Binary& binary, std::string* error) {
     }
   }
 
-  // Update Offset to end of dyld_info contents
-  if (dyld_info.export_info().second != 0) {
-    offset = dyld_info.export_info().first + dyld_info.export_info().second;
+  // Update Offset to end of dyld_info->contents
+  if (dyld_info->export_info().second != 0) {
+    offset = dyld_info->export_info().first + dyld_info->export_info().second;
   }
 
-  else if (dyld_info.lazy_bind().second != 0) {
-    offset = dyld_info.lazy_bind().first + dyld_info.lazy_bind().second;
+  else if (dyld_info->lazy_bind().second != 0) {
+    offset = dyld_info->lazy_bind().first + dyld_info->lazy_bind().second;
   }
 
-  else if (dyld_info.weak_bind().second != 0) {
-    offset = dyld_info.weak_bind().first + dyld_info.weak_bind().second;
+  else if (dyld_info->weak_bind().second != 0) {
+    offset = dyld_info->weak_bind().first + dyld_info->weak_bind().second;
   }
 
-  else if (dyld_info.bind().second != 0) {
-    offset = dyld_info.bind().first + dyld_info.bind().second;
+  else if (dyld_info->bind().second != 0) {
+    offset = dyld_info->bind().first + dyld_info->bind().second;
   }
 
-  else if (dyld_info.rebase().second != 0) {
-    offset = dyld_info.rebase().first + dyld_info.rebase().second;
+  else if (dyld_info->rebase().second != 0) {
+    offset = dyld_info->rebase().first + dyld_info->rebase().second;
   }
 
-  if (!binary.has_dynamic_symbol_command()) {
+  const DynamicSymbolCommand* dyst = binary.dynamic_symbol_command();
+  if (dyst == nullptr) {
     if (error != nullptr) {
-      *error = "Dynamic symbol command !found";
+      *error = "Dynamic symbol command not found";
     }
     return false;
   }
 
   // Check Dynamic symbol command consistency
-  const DynamicSymbolCommand& dyst = binary.dynamic_symbol_command();
 
 
-  if (dyst.nb_local_relocations() != 0) {
-    if (dyst.local_relocation_offset() != offset) {
+  if (dyst->nb_local_relocations() != 0) {
+    if (dyst->local_relocation_offset() != offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (local relocation offset) out of place";
       }
       return false;
     }
-    offset += dyst.nb_local_relocations() * sizeof(details::relocation_info);
+    offset += dyst->nb_local_relocations() * sizeof(details::relocation_info);
   }
 
   // Check consistency of Segment Split Info command
-  if (binary.has_segment_split_info()) {
-    const SegmentSplitInfo& spi = binary.segment_split_info();
-    if (spi.data_offset() != 0 && spi.data_offset() != offset) {
+  const SegmentSplitInfo* spi = binary.segment_split_info();
+  if (spi != nullptr) {
+    if (spi->data_offset() != 0 && spi->data_offset() != offset) {
       if (error != nullptr) {
-        *error = "Segment Split Info  out of place";
+        *error = "Segment Split Info out of place";
       }
       return false;
     }
-    offset += spi.data_size();
+    offset += spi->data_size();
   }
 
   // Check consistency of Function starts
-  if (binary.has_function_starts()) {
-    const FunctionStarts& fs = binary.function_starts();
-    if (fs.data_offset() != 0 && fs.data_offset() != offset) {
+  const FunctionStarts* fs = binary.function_starts();
+  if (fs != nullptr) {
+    if (fs->data_offset() != 0 && fs->data_offset() != offset) {
       if (error != nullptr) {
         *error = "Function starts out of place";
       }
       return false;
     }
-    offset += fs.data_size();
+    offset += fs->data_size();
   }
 
 
   // Check consistency of Data in Code
-  if (binary.has_data_in_code()) {
-    const DataInCode& dic = binary.data_in_code();
-    if (dic.data_offset() != offset) {
+  const DataInCode* dic = binary.data_in_code();
+  if (dic != nullptr) {
+    if (dic->data_offset() != offset) {
       if (error != nullptr) {
         *error = "Data in Code out of place";
       }
       return false;
     }
-    offset += dic.data_size();
+    offset += dic->data_size();
   }
 
   // Check consistency of Code Signature
-  if (binary.has_code_signature()) {
-    const CodeSignature& cs = binary.code_signature();
-    if (cs.data_offset() != offset) {
+  const CodeSignature* cs = binary.code_signature();
+  if (cs != nullptr) {
+    if (cs->data_offset() != offset) {
       if (error != nullptr) {
         *error = "Code signature out of place";
       }
       return false;
     }
-    offset += cs.data_size();
+    offset += cs->data_size();
   }
 
   // {
   //    TODO: Linker optimization hit
   // }
 
-  if (!binary.has_symbol_command()) {
+  const SymbolCommand* st = binary.symbol_command();
+  if (st == nullptr) {
     if (error != nullptr) {
       *error = "Symbol command !found";
     }
     return false;
   }
 
-  const SymbolCommand& st = binary.symbol_command();
-  if (st.numberof_symbols() != 0) {
+  if (st->numberof_symbols() != 0) {
     // Check offset
-    if (st.symbol_offset() != offset) {
+    if (st->symbol_offset() != offset) {
       if (error != nullptr) {
         *error = "Symbol table out of place";
       }
       return false;
     }
-    offset += st.numberof_symbols() * (is64 ? sizeof(details::nlist_64) : sizeof(details::nlist_32));
+    offset += st->numberof_symbols() * (is64 ? sizeof(details::nlist_64) : sizeof(details::nlist_32));
   }
 
   size_t isym = 0;
 
-  if (dyst.nb_local_symbols() != 0) {
+  if (dyst->nb_local_symbols() != 0) {
     // Check index match
-    if (isym != dyst.idx_local_symbol()) {
+    if (isym != dyst->idx_local_symbol()) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_local_symbol) out of place";
       }
       return false;
     }
-    isym += dyst.nb_local_symbols();
+    isym += dyst->nb_local_symbols();
   }
 
 
-  if (dyst.nb_external_define_symbols() != 0) {
+  if (dyst->nb_external_define_symbols() != 0) {
     // Check index match
-    if (isym != dyst.idx_external_define_symbol()) {
+    if (isym != dyst->idx_external_define_symbol()) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_external_define_symbol) out of place";
       }
       return false;
     }
-    isym += dyst.nb_external_define_symbols();
+    isym += dyst->nb_external_define_symbols();
   }
 
-  if (dyst.nb_undefined_symbols() != 0) {
+  if (dyst->nb_undefined_symbols() != 0) {
     // Check index match
-    if (isym != dyst.idx_undefined_symbol()) {
+    if (isym != dyst->idx_undefined_symbol()) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (idx_undefined_symbol) out of place";
       }
       return false;
     }
-    isym += dyst.nb_undefined_symbols();
+    isym += dyst->nb_undefined_symbols();
   }
 
   // {
@@ -323,60 +330,60 @@ bool check_layout(const Binary& binary, std::string* error) {
   // }
 
 
-  if (dyst.nb_external_relocations() != 0) {
-    if (dyst.external_relocation_offset() != offset) {
+  if (dyst->nb_external_relocations() != 0) {
+    if (dyst->external_relocation_offset() != offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (external_relocation_offset) out of place";
       }
       return false;
     }
 
-    offset += dyst.nb_external_relocations() * sizeof(details::relocation_info);
+    offset += dyst->nb_external_relocations() * sizeof(details::relocation_info);
   }
 
 
-  if (dyst.nb_indirect_symbols() != 0) {
-    if (dyst.indirect_symbol_offset() != offset) {
+  if (dyst->nb_indirect_symbols() != 0) {
+    if (dyst->indirect_symbol_offset() != offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (indirect_symbol_offset) out of place";
       }
       return false;
     }
 
-    offset += dyst.nb_indirect_symbols() * sizeof(uint32_t);
+    offset += dyst->nb_indirect_symbols() * sizeof(uint32_t);
   }
 
   uint64_t rounded_offset = offset;
   uint64_t input_indirectsym_pad = 0;
-  if (is64 && (dyst.nb_indirect_symbols() % 2) != 0) {
+  if (is64 && (dyst->nb_indirect_symbols() % 2) != 0) {
     const uint32_t align = offset % 8;
     if (align != 0u) {
       rounded_offset = offset - align;
     }
   }
 
-  if (dyst.toc_offset() != 0) {
-    if (dyst.toc_offset() != offset && dyst.toc_offset() != rounded_offset) {
+  if (dyst->toc_offset() != 0) {
+    if (dyst->toc_offset() != offset && dyst->toc_offset() != rounded_offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (toc_offset) out of place";
       }
       return false;
     }
-    if (dyst.toc_offset() == offset) {
-      offset        += dyst.nb_toc() * sizeof(details::dylib_table_of_contents);
+    if (dyst->toc_offset() == offset) {
+      offset        += dyst->nb_toc() * sizeof(details::dylib_table_of_contents);
       rounded_offset = offset;
     }
-    else if (dyst.toc_offset() == rounded_offset) {
+    else if (dyst->toc_offset() == rounded_offset) {
       input_indirectsym_pad = rounded_offset - offset;
 
-      rounded_offset += dyst.nb_toc() * sizeof(details::dylib_table_of_contents);
+      rounded_offset += dyst->nb_toc() * sizeof(details::dylib_table_of_contents);
       offset          = rounded_offset;
     }
   }
 
 
-  if (dyst.nb_module_table() != 0) {
-    if (dyst.module_table_offset() != offset && dyst.module_table_offset() != rounded_offset) {
+  if (dyst->nb_module_table() != 0) {
+    if (dyst->module_table_offset() != offset && dyst->module_table_offset() != rounded_offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (module_table_offset) out of place";
       }
@@ -384,44 +391,44 @@ bool check_layout(const Binary& binary, std::string* error) {
     }
 
     if (is64) {
-      if (dyst.module_table_offset() == offset) {
-        offset        += dyst.nb_module_table() * sizeof(details::dylib_module_64);
+      if (dyst->module_table_offset() == offset) {
+        offset        += dyst->nb_module_table() * sizeof(details::dylib_module_64);
         rounded_offset = offset;
       }
-      else if (dyst.module_table_offset() == rounded_offset) {
+      else if (dyst->module_table_offset() == rounded_offset) {
         input_indirectsym_pad = rounded_offset - offset;
-        rounded_offset += dyst.nb_module_table() * sizeof(details::dylib_module_64);
+        rounded_offset += dyst->nb_module_table() * sizeof(details::dylib_module_64);
         offset         = rounded_offset;
       }
     } else {
-      offset        += dyst.nb_module_table() * sizeof(details::dylib_module_32);
+      offset        += dyst->nb_module_table() * sizeof(details::dylib_module_32);
       rounded_offset = offset;
     }
   }
 
 
-  if (dyst.nb_external_reference_symbols() != 0) {
-    if (dyst.external_reference_symbol_offset() != offset && dyst.external_reference_symbol_offset() != rounded_offset) {
+  if (dyst->nb_external_reference_symbols() != 0) {
+    if (dyst->external_reference_symbol_offset() != offset && dyst->external_reference_symbol_offset() != rounded_offset) {
       if (error != nullptr) {
         *error = "Dynamic Symbol command (external_reference_symbol_offset) out of place";
       }
       return false;
     }
 
-    if (dyst.external_reference_symbol_offset() == offset) {
-      offset        += dyst.nb_external_reference_symbols() * sizeof(details::dylib_reference);
+    if (dyst->external_reference_symbol_offset() == offset) {
+      offset        += dyst->nb_external_reference_symbols() * sizeof(details::dylib_reference);
       rounded_offset = offset;
     }
-    else if (dyst.external_reference_symbol_offset() == rounded_offset) {
+    else if (dyst->external_reference_symbol_offset() == rounded_offset) {
       input_indirectsym_pad = rounded_offset - offset;
-      rounded_offset += dyst.nb_external_reference_symbols() * sizeof(details::dylib_reference);
+      rounded_offset += dyst->nb_external_reference_symbols() * sizeof(details::dylib_reference);
       offset         = rounded_offset;
     }
   }
 
 
-  if (st.strings_size() != 0) {
-    if (st.strings_offset() != offset && st.strings_offset() != rounded_offset) {
+  if (st->strings_size() != 0) {
+    if (st->strings_offset() != offset && st->strings_offset() != rounded_offset) {
       if (error != nullptr) {
         *error = "Symbol command (strings_offset) out of place";
       }
@@ -429,13 +436,13 @@ bool check_layout(const Binary& binary, std::string* error) {
     }
 
 
-    if (st.strings_offset() == offset) {
-      offset        += st.strings_size();
+    if (st->strings_offset() == offset) {
+      offset        += st->strings_size();
       rounded_offset = offset;
     }
-    else if (st.strings_offset() == rounded_offset) {
+    else if (st->strings_offset() == rounded_offset) {
       input_indirectsym_pad = rounded_offset - offset;
-      rounded_offset += st.strings_size();
+      rounded_offset += st->strings_size();
       offset         = rounded_offset;
     }
   }
@@ -444,7 +451,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   //    TODO: Code Signature
   // }
 
-  const uint64_t object_size = linkedit.file_offset() + linkedit.file_size();
+  const uint64_t object_size = linkedit->file_offset() + linkedit->file_size();
   if (offset != object_size && rounded_offset != object_size) {
     if (error != nullptr) {
       *error = "link edit info doesn't fill the __LINKEDIT segment";

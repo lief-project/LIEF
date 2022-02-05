@@ -18,13 +18,13 @@
 namespace LIEF {
 namespace MachO {
 void init_c_symbols(Macho_Binary_t* c_binary, Binary* binary) {
-  it_symbols symbols = binary->symbols();
+  Binary::it_symbols symbols = binary->symbols();
 
   c_binary->symbols = static_cast<Macho_Symbol_t**>(
       malloc((symbols.size() + 1) * sizeof(Macho_Symbol_t**)));
 
   for (size_t i = 0; i < symbols.size(); ++i) {
-    Symbol& symbol = symbols[i];
+    const Symbol& symbol = symbols[i];
 
     c_binary->symbols[i] = static_cast<Macho_Symbol_t*>(malloc(sizeof(Macho_Symbol_t)));
 

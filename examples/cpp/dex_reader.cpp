@@ -25,16 +25,16 @@ using namespace LIEF::DEX;
 int main(int argc, char **argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <DEX file>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <DEX file>" << '\n';
     return EXIT_FAILURE;
   }
 
   std::unique_ptr<const File> file;
 
   try {
-    file = std::unique_ptr<const File>{LIEF::DEX::Parser::parse(argv[1])};
+    std::unique_ptr<const File> file = LIEF::DEX::Parser::parse(argv[1]);
   } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << std::endl;
+    std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
 

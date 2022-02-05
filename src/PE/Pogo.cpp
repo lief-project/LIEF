@@ -27,16 +27,12 @@
 namespace LIEF {
 namespace PE {
 
+Pogo::Pogo() = default;
 Pogo::Pogo(const Pogo&) = default;
 Pogo& Pogo::operator=(const Pogo&) = default;
 Pogo::~Pogo() = default;
 
-Pogo::Pogo() :
-  signature_{POGO_SIGNATURES::POGO_UNKNOWN}
-{}
-
-
-Pogo::Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry>  entries) :
+Pogo::Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry> entries) :
   signature_{signature},
   entries_{std::move(entries)}
 {}
@@ -50,11 +46,11 @@ POGO_SIGNATURES Pogo::signature() const {
   return signature_;
 }
 
-it_pogo_entries Pogo::entries() {
+Pogo::it_entries Pogo::entries() {
   return entries_;
 }
 
-it_const_pogo_entries Pogo::entries() const {
+Pogo::it_const_entries Pogo::entries() const {
   return entries_;
 }
 
@@ -67,6 +63,9 @@ void Pogo::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Pogo::operator==(const Pogo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

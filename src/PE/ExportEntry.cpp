@@ -74,6 +74,9 @@ void ExportEntry::accept(LIEF::Visitor& visitor) const {
 }
 
 bool ExportEntry::operator==(const ExportEntry& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

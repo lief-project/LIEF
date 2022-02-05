@@ -123,13 +123,13 @@ void create<TLS>(py::module& m) {
         "``True`` if there is a " RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object")
 
     .def_property_readonly("directory",
-        static_cast<no_const_getter<DataDirectory&>>(&TLS::directory),
-        "" RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object",
+        static_cast<no_const_getter<DataDirectory*>>(&TLS::directory),
+        "" RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object (or None if not linked)",
         py::return_value_policy::reference)
 
     .def_property_readonly("section",
-        static_cast<no_const_getter<Section&>>(&TLS::section),
-        "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object",
+        static_cast<no_const_getter<Section*>>(&TLS::section),
+        "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object (or None if not linked)",
         py::return_value_policy::reference)
 
 

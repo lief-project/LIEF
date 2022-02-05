@@ -33,6 +33,15 @@ enum class lief_errors {
   file_error,
 
   file_format_error,
+  parsing_error,
+  build_error,
+
+  data_too_large,
+  /*
+   * When adding a new error, do not forget
+   * to update the Python bindings as well (pyErr.cpp)
+   *
+   */
 };
 
 const std::error_category& error_category();
@@ -93,6 +102,28 @@ template<class T>
 lief_errors as_lief_err(result<T>& err) {
   return lief_errors(boost::leaf::error_id(err.error()).value());
 }
+
+//! Opaque structure used by ok_error_t
+struct ok_t {};
+
+//! Return success for function with return type ok_error_t.
+inline ok_t ok() {
+  return ok_t{};
+}
+
+//! Opaque structure that is used by LIEF to avoid
+//! writing ``result<void> f(...)``. Instead, it makes the output
+//! explicit such as:
+//!
+//! \code{.cpp}
+//! ok_error_t process() {
+//!   if (fail) {
+//!     return make_error_code(...);
+//!   }
+//!   return ok();
+//! }
+//! \endcode
+using ok_error_t = result<ok_t>;
 
 }
 

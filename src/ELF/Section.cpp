@@ -28,9 +28,11 @@
 
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/ELF/DataHandler/Handler.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
+
+#include "ELF/DataHandler/Handler.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -192,10 +194,12 @@ uint64_t Section::offset() const {
 
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr) {
-    DataHandler::Node& node = datahandler_->get(
-        file_offset(), this->size(),
-        DataHandler::Node::SECTION);
-    node.size(size);
+    auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION);
+    if (!node) {
+      LIEF_ERR("Node not found. Can't resize the section");
+      return;
+    }
+    node.value().size(size);
   }
   size_ = size;
 }
@@ -203,10 +207,12 @@ void Section::size(uint64_t size) {
 
 void Section::offset(uint64_t offset) {
   if (datahandler_ != nullptr) {
-    DataHandler::Node& node = datahandler_->get(
-        file_offset(), size(),
-        DataHandler::Node::SECTION);
-    node.offset(offset);
+    auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
+    if (!node) {
+      LIEF_ERR("Node not found. Can't change the offset of the section");
+      return;
+    }
+    node.value().offset(offset);
   }
   offset_ = offset;
 }
@@ -224,9 +230,15 @@ std::vector<uint8_t> Section::content() const {
     return {};
   }
 
-  DataHandler::Node& node = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
+  auto res = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
+  if (!res) {
+    LIEF_ERR("Node node found. Can't access the content of the section");
+    return {};
+  }
   const std::vector<uint8_t>& binary_content = datahandler_->content();
-  return {binary_content.data() + node.offset(), binary_content.data() + node.offset() + node.size()};
+  DataHandler::Node& node = res.value();
+  const uint8_t* ptr = binary_content.data() + node.offset();
+  return {ptr, ptr + node.size()};
 }
 
 uint32_t Section::link() const {
@@ -259,10 +271,13 @@ void Section::content(const std::vector<uint8_t>& data) {
              data.size(), file_offset(), name());
 
 
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      size(),
-      DataHandler::Node::SECTION);
+  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
+  if (!res) {
+    LIEF_ERR("Can't find the node. The section's content can't be updated");
+    return;
+  }
+
+  DataHandler::Node& node = res.value();
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), data.size());
@@ -296,10 +311,12 @@ void Section::content(std::vector<uint8_t>&& data) {
   LIEF_DEBUG("Set 0x{:x} bytes in the data handler@0x{:x} of section '{}'",
              data.size(), file_offset(), name());
 
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      size(),
-      DataHandler::Node::SECTION);
+  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
+  if (!res) {
+    LIEF_ERR("Can't find the node. The section's content can't be updated");
+    return;
+  }
+  DataHandler::Node& node = res.value();
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), data.size());
@@ -356,11 +373,11 @@ void Section::entry_size(uint64_t entry_size) {
 }
 
 
-it_segments Section::segments() {
+Section::it_segments Section::segments() {
   return segments_;
 }
 
-it_const_segments Section::segments() const {
+Section::it_const_segments Section::segments() const {
   return segments_;
 }
 
@@ -368,16 +385,17 @@ it_const_segments Section::segments() const {
 Section& Section::clear(uint8_t value) {
 
   if (datahandler_ == nullptr) {
-    std::fill(std::begin(content_c_), std::end(content_c_),
-              value);
+    std::fill(std::begin(content_c_), std::end(content_c_), value);
     return *this;
   }
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
-  DataHandler::Node& node = datahandler_->get(
-      file_offset(),
-      size(),
-      DataHandler::Node::SECTION);
+  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
+  if (!res) {
+    LIEF_ERR("Can't find the node. The section's content can't be cleared");
+    return *this;
+  }
+  DataHandler::Node& node = res.value();
 
   std::fill_n(std::begin(binary_content) + node.offset(), size(), value);
   return *this;
@@ -401,6 +419,9 @@ Section& Section::operator-=(ELF_SECTION_FLAGS c) {
 
 
 bool Section::operator==(const Section& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -411,8 +432,7 @@ bool Section::operator!=(const Section& rhs) const {
 }
 
 
-std::ostream& operator<<(std::ostream& os, const Section& section)
-{
+std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
   std::string flags_str = std::accumulate(
      std::begin(flags), std::end(flags), std::string{},
@@ -420,7 +440,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section)
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });
 
-  it_const_segments segments = section.segments();
+  Section::it_const_segments segments = section.segments();
   std::string segments_str = std::accumulate(
      std::begin(segments), std::end(segments), std::string{},
      [] (const std::string& a, const Segment& segment) {

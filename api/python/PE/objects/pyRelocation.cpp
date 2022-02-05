@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Relocation.hpp"
@@ -35,11 +36,15 @@ using it_t = T (Relocation::*)(void);
 
 template<>
 void create<Relocation>(py::module& m) {
-  py::class_<Relocation, LIEF::Object>(m, "Relocation",
+  py::class_<Relocation, LIEF::Object> reloc(m, "Relocation",
       R"delim(
       Class which represents the *Base Relocation Block*
       Usually, we find this structure in the ``.reloc`` section
-      )delim")
+      )delim");
+
+  init_ref_iterator<Relocation::it_entries>(reloc, "it_entries");
+
+  reloc
     .def(py::init<>())
 
     .def_property("virtual_address",
@@ -56,7 +61,7 @@ void create<Relocation>(py::module& m) {
         )delim")
 
     .def_property_readonly("entries",
-        static_cast<it_t<it_relocation_entries>>(&Relocation::entries),
+        static_cast<it_t<Relocation::it_entries>>(&Relocation::entries),
         "Iterator over the " RST_CLASS_REF(lief.PE.RelocationEntry) "")
 
     .def("add_entry",

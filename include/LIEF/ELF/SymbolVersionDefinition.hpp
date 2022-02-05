@@ -16,11 +16,12 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_DEFINITION_H_
 #define LIEF_ELF_SYMBOL_VERSION_DEFINITION_H_
 #include <iostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
@@ -37,6 +38,10 @@ struct Elf32_Verdef;
 class LIEF_API SymbolVersionDefinition : public Object {
   friend class Parser;
   public:
+  using version_aux_t        = std::vector<std::unique_ptr<SymbolVersionAux>>;
+  using it_version_aux       = ref_iterator<version_aux_t&, SymbolVersionAux*>;
+  using it_const_version_aux = const_ref_iterator<const version_aux_t&, const SymbolVersionAux*>;
+
   SymbolVersionDefinition();
   SymbolVersionDefinition(const details::Elf64_Verdef& header);
   SymbolVersionDefinition(const details::Elf32_Verdef& header);
@@ -64,8 +69,8 @@ class LIEF_API SymbolVersionDefinition : public Object {
   uint32_t hash() const;
 
   //! SymbolVersionAux entries
-  it_symbols_version_aux       symbols_aux();
-  it_const_symbols_version_aux symbols_aux() const;
+  it_version_aux       symbols_aux();
+  it_const_version_aux symbols_aux() const;
 
   void version(uint16_t version);
   void flags(uint16_t flags);
@@ -79,11 +84,11 @@ class LIEF_API SymbolVersionDefinition : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym);
 
   private:
-  uint16_t version_;
-  uint16_t flags_;
-  uint16_t ndx_;
-  uint32_t hash_;
-  symbols_version_aux_t symbol_version_aux_;
+  uint16_t version_ = 1;
+  uint16_t flags_ = 0;
+  uint16_t ndx_  = 0;
+  uint32_t hash_ = 0;
+  version_aux_t symbol_version_aux_;
 };
 }
 }

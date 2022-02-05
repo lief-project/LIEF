@@ -24,6 +24,8 @@ The original Doxygen documentation is also available `here <../../doxygen/>`_
 
   platforms/android.rst
 
+.. _cpp-api-error-handling:
+
 Error Handling
 --------------
 
@@ -34,6 +36,15 @@ Error Handling
    :project: lief
 
 .. doxygenenum:: lief_errors
+   :project: lief
+
+.. doxygentypedef:: LIEF::ok_error_t
+   :project: lief
+
+.. doxygenfunction:: LIEF::ok
+   :project: lief
+
+.. doxygenstruct:: LIEF::ok_t
    :project: lief
 
 See also the section :ref:`err_handling`

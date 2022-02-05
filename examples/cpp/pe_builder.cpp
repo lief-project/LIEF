@@ -16,10 +16,9 @@
 //
 // Description
 // ===========
-// The tool is used to test the rebuilding of a binary.
-// It take a binary as first argument, decompose it, rebuild the binary and then
-// save it (second argument)
-//
+// This program shows how to use the LIEF's PE Builder API.
+// It takes a PE binary as input and write the reconstructed binary in the file
+// given in the second argument.
 
 #include <iostream>
 #include <memory>
@@ -31,14 +30,14 @@
 
 using namespace LIEF::PE;
 int main(int argc, char **argv) {
-  std::cout << "PE Rebuilder" << std::endl;
+  std::cout << "PE Rebuilder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
     return -1;
   }
 
   std::unique_ptr<Binary> binary{Parser::parse(argv[1])};
-  Builder builder{binary.get()};
+  Builder builder{*binary};
 
   builder
     .build_imports(false)
@@ -48,7 +47,7 @@ int main(int argc, char **argv) {
 
   builder.build();
   builder.write(argv[2]);
-  std::cout << binary->name() << std::endl;
+  std::cout << binary->name() << '\n';
 
   return 0;
 }

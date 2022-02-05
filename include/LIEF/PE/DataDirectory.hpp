@@ -64,8 +64,8 @@ class LIEF_API DataDirectory : public Object {
   bool has_section() const;
 
   //! Section associated with the DataDirectory
-  Section& section();
-  const Section& section() const;
+  Section* section();
+  const Section* section() const;
 
   //! Type of the data directory
   DATA_DIRECTORY type() const;
@@ -81,10 +81,10 @@ class LIEF_API DataDirectory : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
 
   private:
-  uint32_t       rva_;
-  uint32_t       size_;
-  DATA_DIRECTORY type_;
-  Section*       section_{nullptr};
+  uint32_t       rva_ = 0;
+  uint32_t       size_ = 0;
+  DATA_DIRECTORY type_ = DATA_DIRECTORY::NUM_DATA_DIRECTORIES;
+  Section*       section_ = nullptr;
 };
 }
 }

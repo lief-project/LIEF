@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "PE/Structures.hpp"
 namespace LIEF {
 namespace PE {
 

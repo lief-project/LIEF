@@ -58,6 +58,9 @@ void LoadConfigurationV0::accept(Visitor& visitor) const {
 }
 
 bool LoadConfigurationV0::operator==(const LoadConfigurationV0& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

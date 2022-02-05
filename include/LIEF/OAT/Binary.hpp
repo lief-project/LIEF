@@ -20,24 +20,46 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/Binary.hpp"
-
-#include "LIEF/DEX.hpp"
-
-#include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/OAT/Header.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/Method.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
+namespace DEX {
+class File;
+}
+
 namespace VDEX {
 class File;
 }
+
 namespace OAT {
 class Parser;
+class Class;
+class Method;
+class DexFile;
 
-class LIEF_API Binary : public LIEF::ELF::Binary {
+class LIEF_API Binary : public ELF::Binary {
   friend class Parser;
+
+  public:
+  using dex_files_t        = std::vector<std::unique_ptr<DEX::File>>;
+  using it_dex_files       = ref_iterator<dex_files_t&, DEX::File*>;
+  using it_const_dex_files = const_ref_iterator<const dex_files_t&, const DEX::File*>;
+
+  using classes_t         = std::unordered_map<std::string, Class*>;
+  using classes_list_t    = std::vector<std::unique_ptr<Class>>;
+  using it_classes        = ref_iterator<classes_list_t&, Class*>;
+  using it_const_classes  = const_ref_iterator<const classes_list_t&, const Class*>;
+
+  using oat_dex_files_t        = std::vector<std::unique_ptr<DexFile>>;
+  using it_oat_dex_files       = ref_iterator<oat_dex_files_t&, DexFile*>;
+  using it_const_oat_dex_files = const_ref_iterator<const oat_dex_files_t&, const DexFile*>;
+
+  using methods_t         = std::vector<std::unique_ptr<Method>>;
+  using it_methods        = ref_iterator<methods_t&, Method*>;
+  using it_const_methods  = const_ref_iterator<const methods_t&, const Method*>;
+
+  using dex2dex_info_t = std::unordered_map<const DEX::File*, DEX::dex2dex_info_t>;
 
   public:
   Binary& operator=(const Binary& copy) = delete;
@@ -48,30 +70,32 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   Header& header();
 
   //! Iterator over LIEF::DEX::File
-  DEX::it_dex_files dex_files();
-  DEX::it_const_dex_files dex_files() const;
+  it_dex_files dex_files();
+  it_const_dex_files dex_files() const;
 
   //! Iterator over LIEF::OAT::DexFile
-  it_dex_files       oat_dex_files();
-  it_const_dex_files oat_dex_files() const;
+  it_oat_dex_files       oat_dex_files();
+  it_const_oat_dex_files oat_dex_files() const;
 
   //! Iterator over LIEF::OAT::Class
   it_const_classes classes() const;
   it_classes classes();
 
-  //! Check the current OAT has the given class
+  //! Check if the current OAT has the given class
   bool has_class(const std::string& class_name) const;
 
 
-  //! Return the LIEF::OAT::Class with the given name
-  const Class& get_class(const std::string& class_name) const;
+  //! Return the LIEF::OAT::Class with the given name or
+  //! a nullptr if the class can't be found
+  const Class* get_class(const std::string& class_name) const;
 
-  Class& get_class(const std::string& class_name);
+  Class* get_class(const std::string& class_name);
 
-  //! Return the LIEF::OAT::Class at the given index
-  const Class& get_class(size_t index) const;
+  //! Return the LIEF::OAT::Class at the given index or a nullptr
+  //! if it does not exist
+  const Class* get_class(size_t index) const;
 
-  Class& get_class(size_t index);
+  Class* get_class(size_t index);
 
   //! Iterator over LIEF::OAT::Method
   it_const_methods methods() const;
@@ -80,6 +104,10 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
   dex2dex_info_t dex2dex_info() const;
 
   std::string dex2dex_json_info();
+
+  inline bool has_vdex() const {
+    return vdex_ != nullptr;
+  }
 
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
@@ -92,18 +120,18 @@ class LIEF_API Binary : public LIEF::ELF::Binary {
 
   private:
   Binary();
+  void add_class(std::unique_ptr<Class> cls);
 
-  Header           header_;
-  DEX::dex_files_t dex_files_;
+  Header header_;
+  methods_t methods_;
+  dex_files_t dex_files_;
+  oat_dex_files_t oat_dex_files_;
 
-  dex_files_t oat_dex_files_;
-  classes_t   classes_;
-  methods_t   methods_;
+  classes_t classes_;
+  classes_list_t classes_list_;
 
   // For OAT > 79
-  VDEX::File* vdex_{nullptr};
-
-
+  std::unique_ptr<VDEX::File> vdex_;
 };
 
 }

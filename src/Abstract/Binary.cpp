@@ -16,18 +16,11 @@
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/config.h"
+#include "logging.hpp"
 
-#if defined(LIEF_ELF_SUPPORT)
-#include "LIEF/ELF/Binary.hpp"
-#endif
-
-#if defined(LIEF_PE_SUPPORT)
-#include "LIEF/PE/Binary.hpp"
-#endif
-
-#if defined(LIEF_MACHO_SUPPORT)
-#include "LIEF/MachO/Binary.hpp"
-#endif
+#include "LIEF/Abstract/Relocation.hpp"
+#include "LIEF/Abstract/Section.hpp"
+#include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {
 Binary::Binary() = default;
@@ -44,59 +37,52 @@ Header Binary::header() const {
   return get_abstract_header();
 }
 
-it_symbols Binary::symbols() {
+Binary::it_symbols Binary::symbols() {
   return get_abstract_symbols();
 }
 
-it_const_symbols Binary::symbols() const {
+Binary::it_const_symbols Binary::symbols() const {
   return const_cast<Binary*>(this)->get_abstract_symbols();
 }
 
 
 bool Binary::has_symbol(const std::string& name) const {
-  symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
-  const auto it_symbol = std::find_if(std::begin(symbols), std::end(symbols),
-                                  [&name] (const Symbol* s) {
-                                    return s->name() == name;
-                                  });
-
-  return it_symbol != std::end(symbols);
+  return get_symbol(name) != nullptr;
 }
 
-const Symbol& Binary::get_symbol(const std::string& name) const {
-  if (!has_symbol(name)) {
-    throw not_found("Symbol '" + name + "' not found!");
-  }
-
+const Symbol* Binary::get_symbol(const std::string& name) const {
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
-
   const auto it_symbol = std::find_if(std::begin(symbols), std::end(symbols),
                                       [&name] (const Symbol* s) {
                                         return s->name() == name;
                                       });
 
-  return **it_symbol;
+  if (it_symbol == std::end(symbols)) {
+    return nullptr;
+  }
+
+  return *it_symbol;
 }
 
-Symbol& Binary::get_symbol(const std::string& name) {
-  return const_cast<Symbol&>(static_cast<const Binary*>(this)->get_symbol(name));
+Symbol* Binary::get_symbol(const std::string& name) {
+  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
 }
 
-it_sections Binary::sections() {
+Binary::it_sections Binary::sections() {
   return get_abstract_sections();
 }
 
 
-it_const_sections Binary::sections() const {
+Binary::it_const_sections Binary::sections() const {
   return const_cast<Binary*>(this)->get_abstract_sections();
 }
 
 
-it_relocations Binary::relocations() {
+Binary::it_relocations Binary::relocations() {
   return get_abstract_relocations();
 }
 
-it_const_relocations Binary::relocations() const {
+Binary::it_const_relocations Binary::relocations() const {
   return const_cast<Binary*>(this)->get_abstract_relocations();
 }
 
@@ -115,7 +101,8 @@ std::vector<std::string> Binary::imported_libraries() const {
 }
 
 uint64_t Binary::get_function_address(const std::string&) const {
-  throw not_implemented("Not implemented for this format");
+  LIEF_ERR("Not implemented for this format");
+  return 0;
 }
 
 std::vector<uint64_t> Binary::xref(uint64_t address) const {

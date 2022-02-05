@@ -74,11 +74,65 @@ Changelog
 
 :Dependencies:
   * Upgrade to MbedTLS 3.1.0
+  * The different dependencies can be *linked* externally (cf. above and :ref:`lief_third_party`)
 
 :Documentation:
   * New section about the errors handling (:ref:`err_handling`) and the upcoming
     deprecation of the exceptions.
   * New section about how to compile LIEF for debugging/developing. See: :ref:`lief_debug`
+
+:General Design:
+
+  .. warning::
+
+    We started to refactor the API and the internal design to remove C++ exceptions.
+    These changes are described a the dedicated blog (To be published)
+
+    To highlighting the content of the blog for the end users,
+    functions that returned a **reference and which threw an exception** in the case
+    of a failure are now returning a **pointer that is set to nullptr** in the case of a failure.
+
+    If we consider this original code:
+
+    .. code-block:: cpp
+
+      LIEF::MachO::Binary& bin = ...;
+
+      try {
+        LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+        std::cout << cmd << "\n";
+      } catch (const LIEF::not_found&) {
+        // ... dedicated processing
+      }
+
+      // Other option with has_uuid()
+      if (bin.has_uuid()) {
+        LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+        std::cout << cmd << "\n";
+      }
+
+    It can now be written as:
+
+    .. code-block:: cpp
+
+      LIEF::MachO::Binary& bin = ...;
+
+      if (LIEF::MachO::UUIDCommand* cmd = bin.uuid();) {
+        std::cout << *cmd << "\n";
+      } else {
+        // ... dedicated processing as it is a nullptr
+      }
+
+      // Other option with has_uuid()
+      if (bin.has_uuid()) { // It ensures that it is not a nullptr
+        LIEF::MachO::UUIDCommand& cmd = *bin.uuid();
+        std::cout << cmd << "\n";
+      }
+
+  .. seealso::
+
+    - :ref:`C++ API for errors handling <cpp-api-error-handling>`
+    - :ref:`Python API for errors handling <python-api-error-handling>`
 
 
 0.11.X - Patch Releases
@@ -87,7 +141,7 @@ Changelog
 .. _release-0115:
 
 0.11.5 - May 22, 2021
-~~~~~~~~~~~~~~~~~~~~~~~
+*********************
 
 * Remove usage of ``not`` in public headers (:commit:`b8e825b464418de385146bb3f89ef6126f4de5d4`)
 
@@ -103,7 +157,7 @@ Changelog
 .. _release-0114:
 
 0.11.4 - March 09, 2021
-~~~~~~~~~~~~~~~~~~~~~~~
+***********************
 
 :PE:
     * Fix missing bound check when computing the authentihash
@@ -111,7 +165,7 @@ Changelog
 .. _release-0113:
 
 0.11.3 - March 03, 2021
-~~~~~~~~~~~~~~~~~~~~~~~
+***********************
 
 :PE:
     * Add sanity check on the signature's length that could lead to a ``std::bad_alloc`` exception
@@ -120,7 +174,7 @@ Changelog
 
 
 0.11.2 - February 24, 2021
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**************************
 
 :PE:
     * Fix regression in the behavior of the PE section's name. One can now access the full
@@ -129,7 +183,7 @@ Changelog
 .. _release-0111:
 
 0.11.1 - February 22, 2021
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**************************
 
 :PE:
     * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return

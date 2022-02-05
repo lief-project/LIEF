@@ -17,14 +17,14 @@
 #include <map>
 
 #include "LIEF/ART/utils.hpp"
-#include "LIEF/ART/Structures.hpp"
+#include "ART/Structures.hpp"
 
 namespace LIEF {
 namespace ART {
 bool is_art(const std::string& file) {
   if (std::ifstream ifs{file, std::ios::in | std::ios::binary}) {
 
-    char magic[sizeof(ART::art_magic)];
+    char magic[sizeof(details::art_magic)];
 
     ifs.seekg(0, std::ios::beg);
     ifs.read(magic, sizeof(magic));
@@ -32,7 +32,7 @@ bool is_art(const std::string& file) {
     return std::equal(
         std::begin(magic),
         std::end(magic),
-        std::begin(ART::art_magic));
+        std::begin(details::art_magic));
 
   }
 
@@ -40,17 +40,17 @@ bool is_art(const std::string& file) {
 }
 
 bool is_art(const std::vector<uint8_t>& raw) {
-  if (raw.size() < sizeof(ART::art_magic)) {
+  if (raw.size() < sizeof(details::art_magic)) {
     return false;
   }
 
-  char magic[sizeof(ART::art_magic)];
+  char magic[sizeof(details::art_magic)];
   std::copy(
     reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(ART::art_magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::art_magic),
     magic);
 
-  return std::equal(std::begin(magic), std::end(magic), std::begin(ART::art_magic));
+  return std::equal(std::begin(magic), std::end(magic), std::begin(details::art_magic));
 }
 
 art_version_t version(const std::string& file) {
@@ -62,7 +62,7 @@ art_version_t version(const std::string& file) {
 
     char version[4];
 
-    ifs.seekg(sizeof(ART::art_magic), std::ios::beg);
+    ifs.seekg(sizeof(details::art_magic), std::ios::beg);
     ifs.read(version, sizeof(version));
 
     if (std::all_of(version, version + sizeof(version) - 1, ::isdigit)) {
@@ -82,8 +82,8 @@ art_version_t version(const std::vector<uint8_t>& raw) {
 
   char version[4];
   std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(ART::art_magic),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(ART::art_magic) + sizeof(version) + 1,
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::art_magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::art_magic) + sizeof(version) + 1,
     version);
 
 

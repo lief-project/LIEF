@@ -29,16 +29,18 @@ class MemoryStream : public BinaryStream {
   MemoryStream(uintptr_t base_address);
   MemoryStream(uintptr_t base_address, uint64_t size);
 
+  MemoryStream(const MemoryStream&) = delete;
+  MemoryStream& operator=(const MemoryStream&) = delete;
+
+  MemoryStream(MemoryStream&&);
+  MemoryStream& operator=(MemoryStream&&);
+
   inline uintptr_t base_address() const {
     return this->baseaddr_;
   }
 
   inline uint64_t end() const {
     return this->baseaddr_ + this->size_;
-  }
-
-  inline STREAM_TYPE type() const override {
-    return STREAM_TYPE::MEMORY;
   }
 
   inline void binary(Binary& bin) {
@@ -50,11 +52,12 @@ class MemoryStream : public BinaryStream {
   }
 
   uint64_t size() const override;
-  virtual ~MemoryStream();
+  ~MemoryStream() override;
 
+  static bool classof(const BinaryStream& stream);
 
   protected:
-  const void* read_at(uint64_t offset, uint64_t size, bool throw_error = true) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
   uintptr_t baseaddr_ = 0;
   uint64_t size_ = 0;
   Binary* binary_ = nullptr;

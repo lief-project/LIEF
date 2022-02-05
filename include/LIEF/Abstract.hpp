@@ -23,5 +23,6 @@
 #include <LIEF/Abstract/Relocation.hpp>
 #include <LIEF/Abstract/Function.hpp>
 #include <LIEF/Abstract/Symbol.hpp>
+#include <LIEF/Abstract/Section.hpp>
 
 #endif

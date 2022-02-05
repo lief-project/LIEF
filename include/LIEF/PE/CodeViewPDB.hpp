@@ -22,7 +22,7 @@
 #include "LIEF/visibility.h"
 
 #include "LIEF/PE/CodeView.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -39,10 +39,8 @@ class LIEF_API CodeViewPDB : public CodeView {
 
   CodeViewPDB* clone() const override;
 
-  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age,
-                                const std::string& filename);
-  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age,
-                                const std::string& filename);
+  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age, const std::string& filename);
+  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age, const std::string& filename);
 
   signature_t signature() const;
   uint32_t age() const;

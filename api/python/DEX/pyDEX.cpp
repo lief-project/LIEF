@@ -22,7 +22,6 @@ void init_python_module(py::module& m) {
   py::module LIEF_DEX_module = m.def_submodule("DEX", "Python API for DEX format");
 
   init_enums(LIEF_DEX_module);
-  init_iterators(LIEF_DEX_module);
   init_objects(LIEF_DEX_module);
   init_utils(LIEF_DEX_module);
 }

@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
@@ -67,9 +68,9 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
 
   private:
-  uint32_t hash_;
-  uint16_t flags_;
-  uint16_t other_;
+  uint32_t hash_ = 0;
+  uint16_t flags_ = 0;
+  uint16_t other_ = 0;
 };
 }
 }

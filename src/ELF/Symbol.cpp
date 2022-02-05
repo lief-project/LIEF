@@ -28,6 +28,7 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
 
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -110,12 +111,8 @@ uint16_t Symbol::section_idx() const {
   return shndx();
 }
 
-Section& Symbol::section() {
-  if (section_ == nullptr) {
-    throw not_found("No section associated with this symbol");
-  } else {
-    return *section_;
-  }
+Section* Symbol::section() {
+  return section_;
 }
 
 uint16_t Symbol::shndx() const {
@@ -133,16 +130,12 @@ bool Symbol::has_version() const {
 }
 
 
-const SymbolVersion& Symbol::symbol_version() const {
-  if (symbol_version_ != nullptr) {
-    return *symbol_version_;
-  } else {
-    throw not_found("There is no symbol version associated with this symbol");
-  }
+const SymbolVersion* Symbol::symbol_version() const {
+  return symbol_version_;
 }
 
-SymbolVersion& Symbol::symbol_version() {
-  return const_cast<SymbolVersion&>(static_cast<const Symbol*>(this)->symbol_version());
+SymbolVersion* Symbol::symbol_version() {
+  return const_cast<SymbolVersion*>(static_cast<const Symbol*>(this)->symbol_version());
 }
 
 void Symbol::type(ELF_SYMBOL_TYPES type) {
@@ -176,17 +169,17 @@ std::string Symbol::demangled_name() const {
 #if defined(__unix__)
   int status;
   const std::string& name = this->name().c_str();
-  char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+  char* demangled_name = abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
   if (status == 0) {
     std::string realname = demangled_name;
     free(demangled_name);
     return realname;
-  } else {
-    return name;
   }
+
+  return name;
 #else
-  throw not_supported("Can't demangle name");
+  return "";
 #endif
 }
 
@@ -253,6 +246,9 @@ void Symbol::accept(Visitor& visitor) const {
 }
 
 bool Symbol::operator==(const Symbol& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -266,12 +262,11 @@ bool Symbol::operator!=(const Symbol& rhs) const {
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
 
-  std::string name;
-  try {
-    name = entry.demangled_name();
-  } catch (const not_supported&) {
+  std::string name = entry.demangled_name();
+  if (name.empty()) {
     name = entry.name();
   }
+
   os << std::hex;
   os << std::left
      << std::setw(30) << name

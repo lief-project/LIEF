@@ -21,6 +21,7 @@
 
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -75,6 +76,9 @@ void DynamicEntry::accept(Visitor& visitor) const {
 
 
 bool DynamicEntry::operator==(const DynamicEntry& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

@@ -20,9 +20,7 @@
 
 #include "LIEF/DEX/Parser.hpp"
 #include "LIEF/DEX/utils.hpp"
-#include "LIEF/DEX/Structures.hpp"
-
-#include "filesystem/filesystem.h"
+#include "DEX/Structures.hpp"
 
 #include "Parser.tcc"
 
@@ -33,66 +31,64 @@ Parser::~Parser() = default;
 Parser::Parser()  = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
+  if (!is_dex(filename)) {
+    LIEF_ERR("'{}' is not a DEX File", filename);
+    return nullptr;
+  }
   Parser parser{filename};
-  return std::unique_ptr<File>{parser.file_};
+  dex_version_t version = DEX::version(filename);
+  parser.init(filename, version);
+  return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
-  Parser parser{data, name};
-  return std::unique_ptr<File>{parser.file_};
-}
-
-
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(data)}
-{
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
   if (!is_dex(data)) {
     LIEF_ERR("'{}' is not a DEX File", name);
-    delete file_;
-    file_ = nullptr;
-    return;
+    return nullptr;
   }
-
   dex_version_t version = DEX::version(data);
-  init(name, version);
+
+  Parser parser{std::move(data)};
+  parser.init(name, version);
+  return std::move(parser.file_);
 }
 
-Parser::Parser(const std::string& file) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(file)}
-{
-  if (!is_dex(file)) {
-    LIEF_ERR("'{}' is not a DEX File", file);
-    delete file_;
-    file_ = nullptr;
-    return;
-  }
 
-  dex_version_t version = DEX::version(file);
-  init(filesystem::path(file).filename(), version);
+Parser::Parser(std::vector<uint8_t> data) :
+  file_{new File{}},
+  stream_{std::make_unique<VectorStream>(std::move(data))}
+{}
+
+Parser::Parser(const std::string& file) :
+  file_{new File{}}
+{
+  auto stream = VectorStream::from_file(file);
+  if (!stream) {
+    LIEF_ERR("Can't create the stream");
+  } else {
+    stream_ = std::make_unique<VectorStream>(std::move(*stream));
+  }
 }
 
 
 void Parser::init(const std::string& name, dex_version_t version) {
   LIEF_DEBUG("Parsing file: {}", name);
 
-  if (version == DEX_35::dex_version) {
-    return parse_file<DEX35>();
+  if (version == details::DEX_35::dex_version) {
+    return parse_file<details::DEX35>();
   }
 
-  if (version == DEX_37::dex_version) {
-    return parse_file<DEX37>();
+  if (version == details::DEX_37::dex_version) {
+    return parse_file<details::DEX37>();
   }
 
-  if (version == DEX_38::dex_version) {
-    return parse_file<DEX38>();
+  if (version == details::DEX_38::dex_version) {
+    return parse_file<details::DEX38>();
   }
 
-  if (version == DEX_39::dex_version) {
-    return parse_file<DEX39>();
+  if (version == details::DEX_39::dex_version) {
+    return parse_file<details::DEX39>();
   }
-
 }
 
 void Parser::resolve_inheritance() {
@@ -104,9 +100,9 @@ void Parser::resolve_inheritance() {
 
     const auto it_inner_class = file_->classes_.find(parent_name);
     if (it_inner_class == std::end(file_->classes_)) {
-      auto* external_class = new Class{parent_name};
-      file_->classes_.emplace(parent_name, external_class);
-      child->parent_ = external_class;
+      auto external_class = std::make_unique<Class>(parent_name);
+      child->parent_ = external_class.get();
+      file_->add_class(std::move(external_class));
     } else {
       child->parent_ = it_inner_class->second;
     }
@@ -122,10 +118,10 @@ void Parser::resolve_external_methods() {
 
     const auto it_inner_class = file_->classes_.find(clazz);
     if (it_inner_class == std::end(file_->classes_)) {
-      auto* cls = new Class{clazz};
+      auto cls = std::make_unique<Class>(clazz);
       cls->methods_.push_back(method);
-      method->parent_ = cls;
-      file_->classes_.emplace(clazz, cls);
+      method->parent_ = cls.get();
+      file_->add_class(std::move(cls));
     } else {
       Class* cls = it_inner_class->second;
       method->parent_ = cls;
@@ -144,10 +140,10 @@ void Parser::resolve_external_fields() {
 
     const auto it_inner_class = file_->classes_.find(clazz);
     if (it_inner_class == std::end(file_->classes_)) {
-      auto* cls = new Class{clazz};
+      auto cls = std::make_unique<Class>(clazz);
       cls->fields_.push_back(field);
-      field->parent_ = cls;
-      file_->classes_.emplace(clazz, cls);
+      field->parent_ = cls.get();
+      file_->add_class(std::move(cls));
     } else {
       Class* cls = it_inner_class->second;
       field->parent_ = cls;
@@ -159,12 +155,12 @@ void Parser::resolve_external_fields() {
 
 void Parser::resolve_types() {
   for (const auto& p : class_type_map_) {
-    if(file_->has_class(p.first)) {
-      p.second->underlying_array_type().cls_ = &file_->get_class(p.first);
-    } else {
-      auto* cls = new Class{p.first};
-      file_->classes_.emplace(p.first, cls);
+    if(Class* cls = file_->get_class(p.first)) {
       p.second->underlying_array_type().cls_ = cls;
+    } else {
+      auto new_cls = std::make_unique<Class>(p.first);
+      p.second->underlying_array_type().cls_ = new_cls.get();
+      file_->add_class(std::move(new_cls));
     }
   }
 }

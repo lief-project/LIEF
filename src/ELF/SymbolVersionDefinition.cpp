@@ -20,19 +20,15 @@
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionDefinition::SymbolVersionDefinition() :
-  version_{1},
-  flags_{0},
-  ndx_{0},
-  hash_{0}
-{}
+SymbolVersionDefinition::SymbolVersionDefinition() = default;
+SymbolVersionDefinition::~SymbolVersionDefinition() = default;
 
 SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf64_Verdef& header) :
   version_{header.vd_version},
@@ -57,8 +53,8 @@ SymbolVersionDefinition::SymbolVersionDefinition(const SymbolVersionDefinition& 
   hash_{other.hash_}
 {
   symbol_version_aux_.reserve(other.symbol_version_aux_.size());
-  for (const SymbolVersionAux* aux : other.symbol_version_aux_) {
-    symbol_version_aux_.push_back(new SymbolVersionAux{*aux});
+  for (const std::unique_ptr<SymbolVersionAux>& aux : other.symbol_version_aux_) {
+    symbol_version_aux_.emplace_back(new SymbolVersionAux{*aux});
   }
 }
 
@@ -67,11 +63,7 @@ SymbolVersionDefinition& SymbolVersionDefinition::operator=(SymbolVersionDefinit
   return *this;
 }
 
-SymbolVersionDefinition::~SymbolVersionDefinition() {
-  for (SymbolVersionAux* sva : symbol_version_aux_) {
-    delete sva;
-  }
-}
+
 
 void SymbolVersionDefinition::swap(SymbolVersionDefinition& other) {
   std::swap(version_,            other.version_);
@@ -98,11 +90,11 @@ uint32_t SymbolVersionDefinition::hash() const {
   return hash_;
 }
 
-it_symbols_version_aux SymbolVersionDefinition::symbols_aux() {
+SymbolVersionDefinition::it_version_aux SymbolVersionDefinition::symbols_aux() {
   return symbol_version_aux_;
 }
 
-it_const_symbols_version_aux SymbolVersionDefinition::symbols_aux() const {
+SymbolVersionDefinition::it_const_version_aux SymbolVersionDefinition::symbols_aux() const {
   return symbol_version_aux_;
 
 }
@@ -125,6 +117,9 @@ void SymbolVersionDefinition::accept(Visitor& visitor) const {
 
 
 bool SymbolVersionDefinition::operator==(const SymbolVersionDefinition& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

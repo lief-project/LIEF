@@ -20,8 +20,11 @@
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 
 #include "pyMachO.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -90,8 +93,8 @@ void create<ExportInfo>(py::module& m) {
         "flag"_a)
 
     .def_property_readonly("symbol",
-        static_cast<Symbol& (ExportInfo::*)(void)>(&ExportInfo::symbol),
-        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the export (if any)",
+        static_cast<Symbol* (ExportInfo::*)(void)>(&ExportInfo::symbol),
+        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the export if any, or None ",
         py::return_value_policy::reference)
 
 

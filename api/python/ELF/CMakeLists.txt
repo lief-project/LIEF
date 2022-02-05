@@ -24,7 +24,6 @@ set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyBuilder.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pySizes.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/pyIterators.cpp"
 )
 
 set(LIEF_PYTHON_ELF_NOTE

@@ -43,6 +43,14 @@
 namespace LIEF {
 namespace PE {
 
+Signature::Signature() = default;
+Signature::Signature(const Signature&) = default;
+Signature& Signature::operator=(const Signature&) = default;
+Signature::~Signature() = default;
+Signature::Signature(Signature&&) = default;
+Signature& Signature::operator=(Signature&&) = default;
+
+
 inline std::string time_to_string(const x509::date_t& date) {
   return fmt::format("{:d}/{:02d}/{:02d} - {:02d}:{:02d}:{:02d}",
       date[0], date[1], date[2],
@@ -144,24 +152,18 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
     PKCS9SigningTime::time_t time = signing_time->time();
     if (!x509::check_time(time, cs_cert.valid_to())) {
       LIEF_WARN("Signing time: {} is above the certificate validity: {}",
-          time_to_string(time), time_to_string(cs_cert.valid_to()));
+                time_to_string(time), time_to_string(cs_cert.valid_to()));
       return flags | Signature::VERIFICATION_FLAGS::CERT_EXPIRED;
     }
 
     if (!x509::check_time(cs_cert.valid_from(), time)) {
       LIEF_WARN("Signing time: {} is below the certificate validity: {}",
-          time_to_string(time), time_to_string(cs_cert.valid_to()));
+                time_to_string(time), time_to_string(cs_cert.valid_to()));
       return flags | Signature::VERIFICATION_FLAGS::CERT_FUTURE;
     }
   }
   return flags;
 }
-
-
-Signature::Signature() = default;
-Signature::Signature(const Signature&) = default;
-Signature& Signature::operator=(const Signature&) = default;
-Signature::~Signature() = default;
 
 
 std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITHMS algo) {
@@ -239,11 +241,11 @@ const ContentInfo& Signature::content_info() const {
   return content_info_;
 }
 
-it_const_crt Signature::certificates() const {
+Signature::it_const_crt Signature::certificates() const {
   return certificates_;
 }
 
-it_const_signers_t Signature::signers() const {
+Signature::it_const_signers_t Signature::signers() const {
   return signers_;
 }
 
@@ -316,7 +318,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
 
   // Copy authenticated attributes
-  it_const_attributes_t auth_attrs = signer.authenticated_attributes();
+  SignerInfo::it_const_attributes_t auth_attrs = signer.authenticated_attributes();
   if (auth_attrs.size() > 0) {
 
     std::vector<uint8_t> auth_data = signer.raw_auth_data_;
@@ -468,7 +470,7 @@ void Signature::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-inline void print_attr(it_const_attributes_t& attrs, std::ostream& os) {
+inline void print_attr(SignerInfo::it_const_attributes_t& attrs, std::ostream& os) {
   for (const Attribute& attr : attrs) {
     std::string suffix;
     switch (attr.type()) {
@@ -570,26 +572,26 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
   if (!cinfo.file().empty()) {
     os << fmt::format("Content Info File:   {}\n", cinfo.file());
   }
-  it_const_crt certs = signature.certificates();
+  Signature::it_const_crt certs = signature.certificates();
   os << fmt::format("#{:d} certificate(s):\n", certs.size());
   for (const x509& crt : certs) {
     os << fmt::format("  - {}\n", crt.issuer()); // TODO(romain): RSA-2048, ...
   }
 
-  it_const_signers_t signers = signature.signers();
+  Signature::it_const_signers_t signers = signature.signers();
   os << fmt::format("#{:d} signer(s):\n", signers.size());
   for (const SignerInfo& signer : signers) {
     os << fmt::format("Issuer:       {}\n", signer.issuer());
     os << fmt::format("Digest:       {}\n", to_string(signer.digest_algorithm()));
     os << fmt::format("Encryption:   {}\n", to_string(signer.encryption_algorithm()));
     os << fmt::format("Encrypted DG: {} ...\n", hex_dump(signer.encrypted_digest()).substr(0, 41));
-    it_const_attributes_t auth_attr = signer.authenticated_attributes();
+    SignerInfo::it_const_attributes_t auth_attr = signer.authenticated_attributes();
     if (auth_attr.size() > 0) {
       os << fmt::format("#{:d} authenticated attributes:\n", auth_attr.size());
       print_attr(auth_attr, os);
     }
 
-    it_const_attributes_t unauth_attr = signer.unauthenticated_attributes();
+    SignerInfo::it_const_attributes_t unauth_attr = signer.unauthenticated_attributes();
     if (unauth_attr.size() > 0) {
       os << fmt::format("#{:d} un-authenticated attributes:\n", unauth_attr.size());
       print_attr(unauth_attr, os);

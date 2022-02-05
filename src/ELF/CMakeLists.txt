@@ -1,19 +1,3 @@
-
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/enums.inc"      LIEF_ELF_ENUMS)
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/structures.inc" LIEF_ELF_STRUCTURES)
-
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/enums.hpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp"
-  @ONLY
-)
-
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Structures.hpp.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/Structures.hpp"
-  @ONLY
-)
-
 set(LIEF_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DynamicEntryArray.cpp"
@@ -75,19 +59,16 @@ set(LIEF_ELF_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/SymbolVersionAuxRequirement.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/SymbolVersionDefinition.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/SymbolVersionRequirement.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/utils.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/hash.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/Note.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/NoteDetails.hpp"
-
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/enums.hpp"
   )
 
 set(LIEF_ELF_DATA_HANDLER_INCLUDE_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Handler.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF/DataHandler/Node.hpp")
+  "${CMAKE_CURRENT_LIST_DIR}/DataHandler/Handler.hpp"
+  "${CMAKE_CURRENT_LIST_DIR}/DataHandler/Node.hpp")
 
 # Note Details Part
 # =================

@@ -19,9 +19,10 @@
 #include <vector>
 
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 #include "LIEF/Object.hpp"
-#include "LIEF/DEX/MapItem.hpp"
 
+#include "LIEF/DEX/MapItem.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -73,7 +74,7 @@ class LIEF_API MapList : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapList& mtd);
 
-  virtual ~MapList();
+  ~MapList() override;
 
   private:
   items_t items_;

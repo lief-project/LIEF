@@ -20,9 +20,22 @@
 
 namespace py = pybind11;
 
-template <class Func, typename... Ts>
+
+template <class Func, typename... Ts,
+          std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
 py::object error_or(Func f, Ts&&... args) {
   auto&& ret = f(std::forward<Ts>(args)...);
+  if (!ret) {
+    return py::cast(LIEF::as_lief_err(ret));
+  }
+  return py::cast(ret.value());
+}
+
+
+template <class Func, typename... Ts,
+          std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
+py::object error_or(Func f, Ts&&... args) {
+  auto&& ret = std::mem_fn(f)(std::forward<Ts>(args)...);
   if (!ret) {
     return py::cast(LIEF::as_lief_err(ret));
   }

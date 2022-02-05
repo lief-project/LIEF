@@ -23,28 +23,15 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/Structures.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-Symbol::Symbol() :
-  section_number_{0},
-  type_{0},
-  storage_class_{SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_INVALID},
-  numberof_aux_symbols_{0}
-{}
-
+Symbol::Symbol() = default;
 Symbol::~Symbol() = default;
 
-Symbol::Symbol(const Symbol& other) :
-  LIEF::Symbol{other},
-  section_number_{other.section_number_},
-  type_{other.type_},
-  storage_class_{other.storage_class_},
-  numberof_aux_symbols_{other.numberof_aux_symbols_}
-{}
-
+Symbol::Symbol(const Symbol&) = default;
 
 Symbol& Symbol::operator=(Symbol other) {
   swap(other);
@@ -64,8 +51,8 @@ void Symbol::swap(Symbol& other) {
 Symbol::Symbol(const details::pe_symbol& header) :
   section_number_(header.SectionNumber),
   type_(header.Type),
-  storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header.StorageClass)),
-  numberof_aux_symbols_(header.NumberOfAuxSymbols)
+  numberof_aux_symbols_(header.NumberOfAuxSymbols),
+  storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header.StorageClass))
 {
   value_ = header.Value;
 }
@@ -102,17 +89,12 @@ std::wstring Symbol::wname() const {
   return {std::begin(name_), std::end(name_)};
 }
 
-
-const Section& Symbol::section() const {
-  if (has_section()) {
-    return *(section_);
-  } else {
-    throw not_found("No section associated with this symbol");
-  }
+const Section* Symbol::section() const {
+  return section_;
 }
 
-Section& Symbol::section() {
-  return const_cast<Section&>(static_cast<const Symbol*>(this)->section());
+Section* Symbol::section() {
+  return const_cast<Section*>(static_cast<const Symbol*>(this)->section());
 }
 
 bool Symbol::has_section() const {
@@ -124,6 +106,9 @@ void Symbol::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Symbol::operator==(const Symbol& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -141,7 +126,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
         static_cast<SYMBOL_SECTION_NUMBER>(entry.section_number()));
   } else {
     if (entry.has_section()) {
-      section_number_str = entry.section().name();
+      section_number_str = entry.section()->name();
     } else {
       section_number_str = std::to_string(static_cast<uint32_t>(entry.section_number())); // section
     }
@@ -149,9 +134,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
 
   std::string name = entry.name();
   // UTF8 -> ASCII
-  std::transform(
-      std::begin(name),
-      std::end(name),
+  std::transform(std::begin(name), std::end(name),
       std::begin(name),
       [] (char c) {
         return (c <= '~' && c >= '!') ? c : ' ';

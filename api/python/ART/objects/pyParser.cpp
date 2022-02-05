@@ -33,9 +33,9 @@ void create<Parser>(py::module& m) {
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<File> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<File> (*) (std::vector<uint8_t>, const std::string&)>(&Parser::parse),
     "Parse the given raw data and return an " RST_CLASS_REF(lief.ART.File) " object",
-    "raw"_a, py::arg("name") = "",
+    "raw"_a, "name"_a = "",
     py::return_value_policy::take_ownership);
 
 
@@ -72,8 +72,7 @@ void create<Parser>(py::module& m) {
 
         return LIEF::ART::Parser::parse(std::move(raw), name);
       },
-      "io"_a,
-      "name"_a = "",
+      "io"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
 }
 

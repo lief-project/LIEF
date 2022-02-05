@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichHeader.hpp"
@@ -36,10 +37,14 @@ using no_const_getter = T (RichHeader::*)(void);
 
 template<>
 void create<RichHeader>(py::module& m) {
-  py::class_<RichHeader>(m, "RichHeader",
+  py::class_<RichHeader> rich(m, "RichHeader",
       R"delim(
       Class which represents the not-so-documented rich header
-      )delim")
+      )delim");
+
+  init_ref_iterator<RichHeader::it_entries>(rich, "it_entries");
+
+  rich
     .def(py::init<>())
     .def_property("key",
         static_cast<getter_t<uint32_t>>(&RichHeader::key),
@@ -47,7 +52,7 @@ void create<RichHeader>(py::module& m) {
         "Key used to encode the header (xor operation)")
 
     .def_property_readonly("entries",
-        static_cast<no_const_getter<it_rich_entries>>(&RichHeader::entries),
+        static_cast<no_const_getter<RichHeader::it_entries>>(&RichHeader::entries),
         "Return an iterator over the " RST_CLASS_REF(lief.PE.RichEntry) " within the header",
         py::return_value_policy::reference)
 

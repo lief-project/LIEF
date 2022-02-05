@@ -33,7 +33,7 @@ void create<Field>(py::module& m) {
         "True if a class is associated with this field")
 
     .def_property_readonly("cls",
-        static_cast<no_const_getter_t<Class&>>(&Field::cls),
+        static_cast<no_const_getter_t<Class*>>(&Field::cls),
         "" RST_CLASS_REF(lief.DEX.Class) " associated with this field")
 
     .def_property_readonly("is_static",
@@ -41,7 +41,7 @@ void create<Field>(py::module& m) {
         "True if the field is static")
 
     .def_property_readonly("type",
-        static_cast<no_const_getter_t<Type&>>(&Field::type),
+        static_cast<no_const_getter_t<Type*>>(&Field::type),
         "" RST_CLASS_REF(lief.DEX.Type) " of this field", py::return_value_policy::reference)
 
     .def_property_readonly("access_flags",

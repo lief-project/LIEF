@@ -17,14 +17,17 @@
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/CodeView.hpp"
 #include "LIEF/PE/Pogo.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
+
+Debug::Debug() = default;
+Debug::~Debug() = default;
 
 Debug::Debug(const Debug& copy) :
   Object{copy},
@@ -38,11 +41,11 @@ Debug::Debug(const Debug& copy) :
   pointerto_rawdata_{copy.pointerto_rawdata_}
 {
   if (copy.has_code_view()) {
-    code_view_ = copy.code_view().clone();
+    code_view_ = std::unique_ptr<CodeView>(copy.code_view()->clone());
   }
 
   if (copy.has_pogo()) {
-    pogo_ = copy.pogo().clone();
+    pogo_ = std::unique_ptr<Pogo>(copy.pogo()->clone());
   }
 }
 
@@ -65,21 +68,6 @@ void Debug::swap(Debug& other) {
   std::swap(pogo_,              other.pogo_);
 }
 
-Debug::~Debug() {
-  delete code_view_;
-  delete pogo_;
-}
-
-Debug::Debug() :
-  characteristics_{0},
-  timestamp_{0},
-  majorversion_{0},
-  minorversion_{0},
-  type_{DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN},
-  sizeof_data_{0},
-  addressof_rawdata_{0},
-  pointerto_rawdata_{0}
-{}
 
 Debug::Debug(const details::pe_debug& debug_s) :
   characteristics_{debug_s.Characteristics},
@@ -131,35 +119,25 @@ bool Debug::has_code_view() const {
   return code_view_ != nullptr;
 }
 
-const CodeView& Debug::code_view() const {
-  if (!has_code_view()) {
-    throw not_found("Can't find code view");
-  }
-
-  return *code_view_;
+const CodeView* Debug::code_view() const {
+  return code_view_.get();
 
 }
 
-CodeView& Debug::code_view() {
-  return const_cast<CodeView&>(static_cast<const Debug*>(this)->code_view());
+CodeView* Debug::code_view() {
+  return const_cast<CodeView*>(static_cast<const Debug*>(this)->code_view());
 }
-
 
 bool Debug::has_pogo() const {
   return pogo_ != nullptr;
 }
 
-const Pogo& Debug::pogo() const {
-  if (!has_pogo()) {
-    throw not_found("Can't find pogo");
-  }
-
-  return *pogo_;
-
+const Pogo* Debug::pogo() const {
+  return pogo_.get();
 }
 
-Pogo& Debug::pogo() {
-  return const_cast<Pogo&>(static_cast<const Debug*>(this)->pogo());
+Pogo* Debug::pogo() {
+  return const_cast<Pogo*>(static_cast<const Debug*>(this)->pogo());
 }
 
 
@@ -201,6 +179,9 @@ void Debug::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Debug::operator==(const Debug& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -228,13 +209,13 @@ std::ostream& operator<<(std::ostream& os, const Debug& entry) {
 
   if (entry.has_code_view()) {
     os << std::endl;
-    os << entry.code_view();
+    os << *entry.code_view();
     os << std::endl;
   }
 
   if (entry.has_pogo()) {
     os << std::endl;
-    os << entry.pogo();
+    os << *entry.pogo();
     os << std::endl;
   }
 

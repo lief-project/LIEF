@@ -13,7 +13,7 @@ else()
       COMMAND
         ${CMAKE_COMMAND} -E env
           "LIEF_VERSION=${LIEF_VERSION_MAJOR}.${LIEF_VERSION_MINOR}.${LIEF_VERSION_PATCH}-${LIEF_COMMIT_HASH}"
-          "LIEF_INPUT=${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/include/LIEF ${CMAKE_BINARY_DIR}/include/LIEF ${CMAKE_SOURCE_DIR}/api/c/include ${CMAKE_SOURCE_DIR}/doc/doxygen/"
+          "LIEF_INPUT=${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include/LIEF ${CMAKE_SOURCE_DIR}/api/c/include ${CMAKE_SOURCE_DIR}/doc/doxygen/"
           "LIEF_EXCLUDE=${CMAKE_BINARY_DIR}/include/LIEF/third-party"
           "LIEF_INCLUDE_PATH=${CMAKE_BINARY_DIR}/include ${CMAKE_SOURCE_DIR}/include"
           "LIEF_DOXYGEN_WARN_FILE=${CMAKE_BINARY_DIR}/doxygen-warn.log"

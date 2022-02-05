@@ -15,12 +15,15 @@
  */
 
 #include <algorithm>
+#include <limits>
 
+#include "logging.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/iostream.hpp"
 
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
 
@@ -32,24 +35,38 @@ void CoreFile::parse_() {
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 
-  const VectorStream& stream(description());
-  if (!stream.can_read<Elf_Addr>(0)) {
+  VectorStream stream{description()};
+
+  auto res_count = stream.read_conv<Elf_Addr>();
+  if (!res_count) {
     return;
   }
-  const Elf_Addr count = stream.read_conv<Elf_Addr>();
-  if (count == 0 || !stream.can_read<Elf_Addr>()) {
+
+  const auto count = *res_count;
+  const auto res_page_size = stream.read_conv<Elf_Addr>();
+
+  if (!res_page_size) {
+    LIEF_ERR("Can't read CoreFile.page_size");
     return;
   }
-  page_size_ = static_cast<uint64_t>(stream.read_conv<Elf_Addr>());
+
+  page_size_ = *res_page_size;
+
   for (uint32_t idx = 0; idx < count; idx++) {
-    if (!stream.can_read<Elf_FileEntry>()) {
+    auto res_entry = stream.read_conv<Elf_FileEntry>();
+    if (!res_entry) {
       break;
     }
-    const Elf_FileEntry entry = stream.read_conv<Elf_FileEntry>();
+    const auto entry = *res_entry;
     files_.push_back({entry.start, entry.end, entry.file_ofs, {}});
   }
+
   for (uint32_t idx = 0; idx < count; idx++) {
-    files_[idx].path = stream.read_string();
+    auto res_path = stream.read_string();
+    if (!res_path) {
+      break;
+    }
+    files_[idx].path = std::move(*res_path);
   }
 }
 
@@ -61,7 +78,7 @@ void CoreFile::build_() {
   Note::description_t& desc = description();
 
   auto cnt = static_cast<Elf_Addr>(count());
-  Elf_Addr page_size = static_cast<Elf_Addr>(page_size_);
+  auto page_size = static_cast<Elf_Addr>(page_size_);
 
   vector_iostream raw_output;
   size_t desc_part_size = sizeof(Elf_Addr) * 2 + cnt * sizeof(Elf_FileEntry);

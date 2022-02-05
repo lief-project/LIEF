@@ -17,8 +17,8 @@
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -133,6 +133,9 @@ void ResourceDirectory::accept(Visitor& visitor) const {
 }
 
 bool ResourceDirectory::operator==(const ResourceDirectory& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

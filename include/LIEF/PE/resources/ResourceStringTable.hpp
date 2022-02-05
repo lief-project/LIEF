@@ -19,11 +19,7 @@
 #include <string>
 
 #include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
-
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/type_traits.hpp"
 
 namespace LIEF {
 namespace PE {

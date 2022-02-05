@@ -16,6 +16,8 @@
 #include "LIEF/VDEX/Header.hpp"
 #include "LIEF/VDEX/hash.hpp"
 
+#include "VDEX/Structures.hpp"
+
 #include <numeric>
 #include <sstream>
 #include <iomanip>
@@ -40,10 +42,8 @@ Header::Header() :
   verifier_deps_size_{0},
   quickening_info_size_{0}
 {
-  std::copy(
-      std::begin(VDEX::magic),
-      std::end(VDEX::magic),
-      std::begin(magic_)
+  std::copy(std::begin(details::magic), std::end(details::magic),
+            std::begin(magic_)
   );
 }
 
@@ -76,6 +76,9 @@ void Header::accept(Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

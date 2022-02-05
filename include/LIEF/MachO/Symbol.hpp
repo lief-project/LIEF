@@ -74,21 +74,21 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! This value is set when the symbol comes from the Dyld Export trie
   bool has_export_info() const;
 
-  //! Return the ExportInfo associated with this symbol
+  //! Return the ExportInfo associated with this symbol (or nullptr if not present)
   //! @see has_export_info
-  const ExportInfo& export_info() const;
-  ExportInfo& export_info();
+  const ExportInfo* export_info() const;
+  ExportInfo* export_info();
 
   //! True if the symbol is associated with a BindingInfo
   //! This value is set when the symbol comes from the Dyld symbol bindings
   bool has_binding_info() const;
 
-  //! Return the BindingInfo associated with this symbol
+  //! Return the BindingInfo associated with this symbol (or nullptr if not present)
   //! @see has_binding_info
-  const BindingInfo& binding_info() const;
-  BindingInfo& binding_info();
+  const BindingInfo* binding_info() const;
+  BindingInfo* binding_info();
 
-  //! Try to demangle the symbol
+  //! Try to demangle the symbol or return an empty string if it is not possible
   std::string demangled_name() const;
 
   //! True if the symbol is defined as an external symbol.

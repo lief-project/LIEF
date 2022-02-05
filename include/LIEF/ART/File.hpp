@@ -22,8 +22,6 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/DEX.hpp"
-
 namespace LIEF {
 namespace ART {
 class Parser;
@@ -43,7 +41,7 @@ class LIEF_API File : public Object {
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File();
+  ~File() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& art_file);
 

@@ -19,7 +19,7 @@ namespace LIEF {
 namespace ELF {
 
 void init_c_dynamic_symbols(Elf_Binary_t* c_binary, Binary* binary) {
-  it_symbols dyn_symb = binary->dynamic_symbols();
+  Binary::it_dynamic_symbols dyn_symb = binary->dynamic_symbols();
 
   c_binary->dynamic_symbols = static_cast<Elf_Symbol_t**>(
       malloc((dyn_symb.size() + 1) * sizeof(Elf_Symbol_t**)));
@@ -46,7 +46,7 @@ void init_c_dynamic_symbols(Elf_Binary_t* c_binary, Binary* binary) {
 
 
 void init_c_static_symbols(Elf_Binary_t* c_binary, Binary* binary) {
-  it_symbols static_symb = binary->static_symbols();
+  Binary::it_static_symbols static_symb = binary->static_symbols();
 
   c_binary->static_symbols = static_cast<Elf_Symbol_t**>(
       malloc((static_symb.size() + 1) * sizeof(Elf_Symbol_t**)));

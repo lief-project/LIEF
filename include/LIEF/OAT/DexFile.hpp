@@ -17,7 +17,6 @@
 #define LIEF_OAT_DEXFILE_H_
 
 #include "LIEF/OAT/type_traits.hpp"
-#include "LIEF/OAT/Structures.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -43,8 +42,8 @@ class LIEF_API DexFile : public Object {
 
   bool has_dex_file() const;
 
-  const DEX::File& dex_file() const;
-  DEX::File& dex_file();
+  const DEX::File* dex_file() const;
+  DEX::File* dex_file();
 
   void location(const std::string& location);
   void checksum(uint32_t checksum);
@@ -71,20 +70,20 @@ class LIEF_API DexFile : public Object {
 
   private:
   std::string location_;
-  uint32_t checksum_;
-  uint32_t dex_offset_;
+  uint32_t checksum_ = 0;
+  uint32_t dex_offset_ = 0;
 
-  DEX::File* dex_file_{nullptr};
+  DEX::File* dex_file_ = nullptr;
 
   // OAT 64 (Android 6.X.X)
   std::vector<uint32_t> classes_offsets_;
 
   // OAT 79 / 88 (Android 7.X.X)
-  uint32_t lookup_table_offset_;
+  uint32_t lookup_table_offset_ = 0;
 
   // OAT 131 (Android 8.1.0)
-  uint32_t method_bss_mapping_offset_;
-  uint32_t dex_sections_layout_offset_;
+  uint32_t method_bss_mapping_offset_ = 0;
+  uint32_t dex_sections_layout_offset_ = 0;
 
 
 };

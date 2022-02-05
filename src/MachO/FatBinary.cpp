@@ -24,9 +24,10 @@
 namespace LIEF {
 namespace MachO {
 
+FatBinary::~FatBinary() = default;
 FatBinary::FatBinary() = default;
 
-FatBinary::FatBinary(std::vector<Binary*> binaries) :
+FatBinary::FatBinary(binaries_t binaries) :
   binaries_{std::move(binaries)}
 {}
 
@@ -36,89 +37,113 @@ size_t FatBinary::size() const {
 }
 
 
-it_binaries FatBinary::begin() {
+FatBinary::it_binaries FatBinary::begin() {
   return binaries_;
 }
 
-it_const_binaries FatBinary::begin() const {
+FatBinary::it_const_binaries FatBinary::begin() const {
   return binaries_;
 }
 
 
-it_binaries FatBinary::end() {
+FatBinary::it_binaries FatBinary::end() {
   return it_binaries{binaries_}.end();
 }
 
-it_const_binaries FatBinary::end() const {
+FatBinary::it_const_binaries FatBinary::end() const {
   return it_const_binaries{binaries_}.end();
 }
 
 
-Binary* FatBinary::pop_back() {
-  if (!binaries_.empty()) {
-    Binary* last = binaries_.back();
-    binaries_.pop_back();
-    return last;
+std::unique_ptr<Binary> FatBinary::pop_back() {
+  if (binaries_.empty()) {
+    return nullptr;
   }
-  return nullptr;
+  std::unique_ptr<Binary> last = std::move(binaries_.back());
+  binaries_.pop_back();
+  return last;
 }
 
-Binary& FatBinary::at(size_t index) {
-  return const_cast<Binary&>(static_cast<const FatBinary*>(this)->at(index));
+Binary* FatBinary::at(size_t index) {
+  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->at(index));
 }
-const Binary& FatBinary::at(size_t index) const {
+
+const Binary* FatBinary::at(size_t index) const {
   if (index >= size()) {
-    throw std::out_of_range("Bad index");
+    return nullptr;
   }
-  return *binaries_[index];
+  return binaries_[index].get();
 }
 
 
-Binary& FatBinary::back() {
-  return const_cast<Binary&>(static_cast<const FatBinary*>(this)->back());
-}
-const Binary& FatBinary::back() const {
-  return *binaries_.back();
+Binary* FatBinary::back() {
+  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->back());
 }
 
-Binary& FatBinary::operator[](size_t index) {
-  return const_cast<Binary&>(static_cast<const FatBinary*>(this)->operator[](index));
+const Binary* FatBinary::back() const {
+  if (binaries_.empty()) {
+    return nullptr;
+  }
+  return binaries_.back().get();
 }
 
-const Binary& FatBinary::operator[](size_t index) const {
+Binary* FatBinary::front() {
+  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->front());
+}
+
+const Binary* FatBinary::front() const {
+  if (binaries_.empty()) {
+    return nullptr;
+  }
+  return binaries_.front().get();
+}
+
+
+Binary* FatBinary::operator[](size_t index) {
+  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->operator[](index));
+}
+
+const Binary* FatBinary::operator[](size_t index) const {
   return at(index);
+}
+
+bool FatBinary::empty() const {
+  return binaries_.empty();
 }
 
 std::unique_ptr<Binary> FatBinary::take(CPU_TYPES cpu) {
   auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
-      [cpu] (const Binary* bin) {
+      [cpu] (const std::unique_ptr<Binary>& bin) {
         return bin->header().cpu_type() == cpu;
       });
+
   if (it == std::end(binaries_)) {
     return nullptr;
   }
-  std::unique_ptr<Binary> ret(*it);
+
+  std::unique_ptr<Binary> ret = std::move(*it);
   binaries_.erase(it);
   return ret;
 }
+
 std::unique_ptr<Binary> FatBinary::take(size_t index) {
   if (index >= binaries_.size()) {
-    return {};
+    return nullptr;
   }
   auto it = binaries_.begin();
   std::advance(it, index);
-  std::unique_ptr<Binary> ret(*it);
+  std::unique_ptr<Binary> ret = std::move(*it);
   binaries_.erase(it);
   return ret;
 }
 
 void FatBinary::write(const std::string& filename) {
-  Builder::write(this, filename);
+  Builder::write(*this, filename);
 }
 
 std::vector<uint8_t> FatBinary::raw() {
-  Builder builder{this};
-  return builder();
+  Builder builder{*this};
+  return builder.get_build();
 }
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
@@ -130,11 +155,6 @@ std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   return os;
 }
 
-FatBinary::~FatBinary() {
-  for (Binary* b : binaries_) {
-    delete b;
-  }
-}
 
 
 }

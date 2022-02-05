@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "frozen.hpp"

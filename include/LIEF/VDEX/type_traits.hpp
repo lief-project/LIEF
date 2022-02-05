@@ -15,15 +15,12 @@
  */
 #ifndef LIEF_VDEX_TYPE_TRAITS_H_
 #define LIEF_VDEX_TYPE_TRAITS_H_
-
-#include <vector>
-#include "LIEF/iterators.hpp"
-#include "LIEF/OAT.hpp"
+#include "LIEF/OAT/Binary.hpp"
 
 namespace LIEF {
 namespace VDEX {
 using vdex_version_t = uint32_t;
-using dex2dex_info_t = LIEF::OAT::dex2dex_info_t;
+using dex2dex_info_t = LIEF::OAT::Binary::dex2dex_info_t;
 }
 }
 

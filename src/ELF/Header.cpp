@@ -26,6 +26,7 @@
 
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "ELF/Structures.hpp"
 
 #include "logging.hpp"
 
@@ -132,18 +133,19 @@ ARCH Header::machine_type() const {
 }
 
 OBJECT_TYPES Header::abstract_object_type() const {
-  try {
-    return obj_elf_to_lief.at(file_type());
-  } catch (const std::out_of_range&) {
-    throw not_implemented(to_string(file_type()));
+  const auto it = obj_elf_to_lief.find(file_type());
+  if (it == std::end(obj_elf_to_lief)) {
+    LIEF_ERR("File type {} is not abstracted by LIEF", to_string(file_type()));
+    return OBJECT_TYPES::TYPE_NONE;
   }
+  return it->second;;
 }
 
 
 Header::abstract_architecture_t Header::abstract_architecture() const {
   const auto it = arch_elf_to_lief.find(machine_type());
   if (it == std::end(arch_elf_to_lief)) {
-    LIEF_ERR("{}  is not supported!", to_string(machine_type()));
+    LIEF_ERR("{} is not supported!", to_string(machine_type()));
     return {};
   }
   return it->second;
@@ -151,11 +153,12 @@ Header::abstract_architecture_t Header::abstract_architecture() const {
 
 
 ENDIANNESS Header::abstract_endianness() const {
-  try {
-    return endi_elf_to_lief.at(identity_data());
-  } catch (const std::out_of_range&) {
-    throw corrupted("Invalid encoding");
+  const auto it = endi_elf_to_lief.find(identity_data());
+  if (it == std::end(endi_elf_to_lief)) {
+    LIEF_ERR("This endianness can't be abstracted");
+    return ENDIANNESS::ENDIAN_NONE;
   }
+  return it->second;
 }
 
 
@@ -205,14 +208,12 @@ bool Header::has(ARM_EFLAGS f) const {
   }
 }
 
-arm_flags_list_t Header::arm_flags_list() const {
+Header::arm_flags_list_t Header::arm_flags_list() const {
   arm_flags_list_t flags;
 
-  std::copy_if(
-      std::begin(details::arm_eflags_array),
-      std::end(details::arm_eflags_array),
-      std::inserter(flags, std::begin(flags)),
-      [this] (ARM_EFLAGS f) { return has(f); });
+  std::copy_if(std::begin(details::arm_eflags_array), std::end(details::arm_eflags_array),
+               std::inserter(flags, std::begin(flags)),
+               [this] (ARM_EFLAGS f) { return has(f); });
 
   return flags;
 
@@ -308,7 +309,7 @@ bool Header::has(MIPS_EFLAGS f) const {
   return (processor_flag() & fn) > 0;
 }
 
-mips_flags_list_t Header::mips_flags_list() const {
+Header::mips_flags_list_t Header::mips_flags_list() const {
   mips_flags_list_t flags;
 
   std::copy_if(
@@ -330,7 +331,7 @@ bool Header::has(PPC64_EFLAGS f) const {
   return (processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
-ppc64_flags_list_t Header::ppc64_flags_list() const {
+Header::ppc64_flags_list_t Header::ppc64_flags_list() const {
   ppc64_flags_list_t flags;
 
   std::copy_if(
@@ -352,7 +353,7 @@ bool Header::has(HEXAGON_EFLAGS f) const {
   return (processor_flag() & static_cast<uint32_t>(f)) > 0;
 }
 
-hexagon_flags_list_t Header::hexagon_flags_list() const {
+Header::hexagon_flags_list_t Header::hexagon_flags_list() const {
   hexagon_flags_list_t flags;
 
   std::copy_if(
@@ -527,6 +528,10 @@ void Header::accept(LIEF::Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
+
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -552,7 +557,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   std::string processor_flags_str;
 
   if (hdr.machine_type() == ARCH::EM_ARM) {
-    const arm_flags_list_t& flags = hdr.arm_flags_list();
+    const Header::arm_flags_list_t& flags = hdr.arm_flags_list();
     processor_flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},
@@ -563,7 +568,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
 
 
   if (hdr.machine_type() == ARCH::EM_PPC64) {
-    const ppc64_flags_list_t& flags = hdr.ppc64_flags_list();
+    const Header::ppc64_flags_list_t& flags = hdr.ppc64_flags_list();
     processor_flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},
@@ -573,7 +578,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   }
 
   if (hdr.machine_type() == ARCH::EM_HEXAGON) {
-    const hexagon_flags_list_t& flags = hdr.hexagon_flags_list();
+    const Header::hexagon_flags_list_t& flags = hdr.hexagon_flags_list();
     processor_flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},
@@ -585,8 +590,9 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
 
   if (hdr.machine_type() == ARCH::EM_MIPS ||
       hdr.machine_type() == ARCH::EM_MIPS_RS3_LE ||
-      hdr.machine_type() == ARCH::EM_MIPS_X) {
-    const mips_flags_list_t& flags = hdr.mips_flags_list();
+      hdr.machine_type() == ARCH::EM_MIPS_X)
+  {
+    const Header::mips_flags_list_t& flags = hdr.mips_flags_list();
     processor_flags_str = std::accumulate(
      std::begin(flags),
      std::end(flags), std::string{},

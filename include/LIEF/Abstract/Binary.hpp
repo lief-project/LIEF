@@ -22,16 +22,16 @@
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/Abstract/type_traits.hpp"
 #include "LIEF/Abstract/Header.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
-#include "LIEF/Abstract/Section.hpp"
-#include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/Abstract/Function.hpp"
 
 //! LIEF namespace
 namespace LIEF {
+class Section;
+class Relocation;
+class Symbol;
 
 //! Abstract binary that exposes an uniform API for the
 //! different executable file formats
@@ -47,6 +47,33 @@ class LIEF_API Binary : public Object {
   };
 
   using functions_t = std::vector<Function>;
+
+  //! Internal container
+  using sections_t = std::vector<Section*>;
+
+  //! Iterator that outputs LIEF::Section&
+  using it_sections = ref_iterator<sections_t>;
+
+  //! Iterator that outputs const LIEF::Section&
+  using it_const_sections = const_ref_iterator<sections_t>;
+
+  //! Internal container
+  using symbols_t = std::vector<Symbol*>;
+
+  //! Iterator that outputs LIEF::Symbol&
+  using it_symbols = ref_iterator<symbols_t>;
+
+  //! Iterator that outputs const LIEF::Symbol&
+  using it_const_symbols = const_ref_iterator<symbols_t>;
+
+  //! Internal container
+  using relocations_t = std::vector<Relocation*>;
+
+  //! Iterator that outputs LIEF::Relocation&
+  using it_relocations = ref_iterator<relocations_t>;
+
+  //! Iterator that outputs const LIEF::Relocation&
+  using it_const_relocations = const_ref_iterator<relocations_t>;
 
   public:
   Binary();
@@ -71,9 +98,10 @@ class LIEF_API Binary : public Object {
   bool has_symbol(const std::string& name) const;
 
   //! Return the Symbol with the given name
-  const Symbol& get_symbol(const std::string& name) const;
+  //! If the symbol does not exist, return a nullptr
+  const Symbol* get_symbol(const std::string& name) const;
 
-  Symbol& get_symbol(const std::string& name);
+  Symbol* get_symbol(const std::string& name);
 
   //! Return an iterator over the binary's sections (LIEF::Section)
   it_sections sections();
@@ -184,8 +212,6 @@ class LIEF_API Binary : public Object {
   virtual functions_t  get_abstract_exported_functions() const = 0;
   virtual functions_t  get_abstract_imported_functions() const = 0;
   virtual std::vector<std::string>  get_abstract_imported_libraries() const = 0;
-
-
 };
 }
 

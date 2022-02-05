@@ -17,7 +17,7 @@
 #define LIEF_MACHO_ENUM_TO_STRING_H
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/Structures.hpp"
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 

@@ -18,9 +18,21 @@
 #include "MachO/json_internal.hpp"
 #include "LIEF/MachO.hpp"
 #include "Object.tcc"
+#include "MachO/Binary.tcc"
 
 namespace LIEF {
 namespace MachO {
+
+
+template<class T>
+inline void process_command(json& node, const Binary& bin, const char* key) {
+  auto* cmd = bin.command<T>();
+  if (cmd != nullptr) {
+    JsonVisitor v;
+    v(*cmd);
+    node[key] = v.get();
+  }
+}
 
 
 void JsonVisitor::visit(const Binary& binary) {
@@ -74,95 +86,21 @@ void JsonVisitor::visit(const Binary& binary) {
   node_["relocations"] = relocations;
   node_["libraries"]   = libraries;
 
-  if (binary.has_uuid()) {
-    JsonVisitor v;
-    v(binary.uuid());
-    node_["uuid"] = v.get();
-  }
-
-  if (binary.has_main_command()) {
-    JsonVisitor v;
-    v(binary.main_command());
-    node_["main_command"] = v.get();
-  }
-
-  if (binary.has_dylinker()) {
-    JsonVisitor v;
-    v(binary.dylinker());
-    node_["dylinker"] = v.get();
-  }
-
-  if (binary.has_dyld_info()) {
-    JsonVisitor v;
-    v(binary.dyld_info());
-    node_["dyld_info"] = v.get();
-  }
-
-  if (binary.has_function_starts()) {
-    JsonVisitor v;
-    v(binary.function_starts());
-    node_["function_starts"] = v.get();
-  }
-
-  if (binary.has_source_version()) {
-    JsonVisitor v;
-    v(binary.source_version());
-    node_["source_version"] = v.get();
-  }
-
-  if (binary.has_version_min()) {
-    JsonVisitor v;
-    v(binary.version_min());
-    node_["version_min"] = v.get();
-  }
-
-  if (binary.has_thread_command()) {
-    JsonVisitor v;
-    v(binary.thread_command());
-    node_["thread_command"] = v.get();
-  }
-
-  if (binary.has_rpath()) {
-    JsonVisitor v;
-    v(binary.rpath());
-    node_["rpath"] = v.get();
-  }
-
-  if (binary.has_symbol_command()) {
-    JsonVisitor v;
-    v(binary.symbol_command());
-    node_["symbol_command"] = v.get();
-  }
-
-  if (binary.has_dynamic_symbol_command()) {
-    JsonVisitor v;
-    v(binary.dynamic_symbol_command());
-    node_["dynamic_symbol_command"] = v.get();
-  }
-
-  if (binary.has_code_signature()) {
-    JsonVisitor v;
-    v(binary.code_signature());
-    node_["code_signature"] = v.get();
-  }
-
-  if (binary.has_data_in_code()) {
-    JsonVisitor v;
-    v(binary.data_in_code());
-    node_["data_in_code"] = v.get();
-  }
-
-  if (binary.has_encryption_info()) {
-    JsonVisitor v;
-    v(binary.encryption_info());
-    node_["encryption_info"] = v.get();
-  }
-
-  if (binary.has_build_version()) {
-    JsonVisitor v;
-    v(binary.build_version());
-    node_["build_version"] = v.get();
-  }
+  process_command<UUIDCommand>(node_, binary, "uuid");
+  process_command<MainCommand>(node_, binary, "main_command");
+  process_command<DylinkerCommand>(node_, binary, "dylinker");
+  process_command<DyldInfo>(node_, binary, "dyld_info");
+  process_command<FunctionStarts>(node_, binary, "function_starts");
+  process_command<SourceVersion>(node_, binary, "source_version");
+  process_command<VersionMin>(node_, binary, "version_min");
+  process_command<ThreadCommand>(node_, binary, "thread_command");
+  process_command<RPathCommand>(node_, binary, "rpath");
+  process_command<SymbolCommand>(node_, binary, "symbol_command");
+  process_command<DynamicSymbolCommand>(node_, binary, "dynamic_symbol_command");
+  process_command<CodeSignature>(node_, binary, "code_signature");
+  process_command<DataInCode>(node_, binary, "data_in_code");
+  process_command<EncryptionInfo>(node_, binary, "encryption_info");
+  process_command<BuildVersion>(node_, binary, "build_verison");
 }
 
 
@@ -317,13 +255,13 @@ void JsonVisitor::visit(const Symbol& symbol) {
 
   if (symbol.has_export_info()) {
     JsonVisitor v;
-    v(symbol.export_info());
+    v(*symbol.export_info());
     node_["export_info"] = v.get();
   }
 
   if (symbol.has_binding_info()) {
     JsonVisitor v;
-    v(symbol.binding_info());
+    v(*symbol.binding_info());
     node_["binding_info"] = v.get();
   }
 }
@@ -334,15 +272,15 @@ void JsonVisitor::visit(const Relocation& relocation) {
   node_["architecture"]   = to_string(relocation.architecture());
   node_["origin"]         = to_string(relocation.origin());
   if (relocation.has_symbol()) {
-    node_["symbol"] = relocation.symbol().name();
+    node_["symbol"] = relocation.symbol()->name();
   }
 
   if (relocation.has_section()) {
-    node_["section"] = relocation.section().name();
+    node_["section"] = relocation.section()->name();
   }
 
   if (relocation.has_segment()) {
-    node_["segment"] = relocation.segment().name();
+    node_["segment"] = relocation.segment()->name();
   }
 }
 
@@ -367,15 +305,15 @@ void JsonVisitor::visit(const BindingInfo& binding) {
   node_["original_offset"] = binding.original_offset();
 
   if (binding.has_symbol()) {
-    node_["symbol"] = binding.symbol().name();
+    node_["symbol"] = binding.symbol()->name();
   }
 
   if (binding.has_segment()) {
-    node_["segment"] = binding.segment().name();
+    node_["segment"] = binding.segment()->name();
   }
 
   if (binding.has_library()) {
-    node_["library"] = binding.library().name();
+    node_["library"] = binding.library()->name();
   }
 
 }
@@ -386,7 +324,7 @@ void JsonVisitor::visit(const ExportInfo& einfo) {
   node_["address"] = einfo.address();
 
   if (einfo.has_symbol()) {
-    node_["symbol"] = einfo.symbol().name();
+    node_["symbol"] = einfo.symbol()->name();
   }
 }
 

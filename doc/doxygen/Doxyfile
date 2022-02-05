@@ -2174,6 +2174,9 @@ PREDEFINED             =       \
       "LIEF_MACHO_SUPPORT=1"   \
       "LIEF_ART_SUPPORT=1"   \
       "LIEF_OAT_SUPPORT=1"     \
+      "LIEF_VDEX_SUPPORT=1"     \
+      "LIEF_DEX_SUPPORT=1"     \
+      "LIEF_ART_SUPPORT=1"     \
       "LIEF_LOGGING_SUPPORT=1" \
       __cplusplus
 

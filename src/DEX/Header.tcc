@@ -14,53 +14,50 @@
  * limitations under the License.
  */
 #include <string>
+#include "LIEF/DEX/Header.hpp"
 namespace LIEF {
 namespace DEX {
 
 template<class T>
-Header::Header(const T* header) :
+Header::Header(const T& header) :
   magic_{},
-  checksum_{header->checksum},
+  checksum_{header.checksum},
   signature_{},
-  file_size_{header->file_size},
-  header_size_{header->header_size},
-  endian_tag_{header->endian_tag},
+  file_size_{header.file_size},
+  header_size_{header.header_size},
+  endian_tag_{header.endian_tag},
 
-  link_size_{header->link_size},
-  link_off_{header->link_off},
+  link_size_{header.link_size},
+  link_off_{header.link_off},
 
-  map_off_{header->map_off},
+  map_off_{header.map_off},
 
-  string_ids_size_{header->string_ids_size},
-  string_ids_off_{header->string_ids_off},
+  string_ids_size_{header.string_ids_size},
+  string_ids_off_{header.string_ids_off},
 
-  type_ids_size_{header->type_ids_size},
-  type_ids_off_{header->type_ids_off},
+  type_ids_size_{header.type_ids_size},
+  type_ids_off_{header.type_ids_off},
 
-  proto_ids_size_{header->proto_ids_size},
-  proto_ids_off_{header->proto_ids_off},
+  proto_ids_size_{header.proto_ids_size},
+  proto_ids_off_{header.proto_ids_off},
 
-  field_ids_size_{header->field_ids_size},
-  field_ids_off_{header->field_ids_off},
+  field_ids_size_{header.field_ids_size},
+  field_ids_off_{header.field_ids_off},
 
-  method_ids_size_{header->method_ids_size},
-  method_ids_off_{header->method_ids_off},
+  method_ids_size_{header.method_ids_size},
+  method_ids_off_{header.method_ids_off},
 
-  class_defs_size_{header->class_defs_size},
-  class_defs_off_{header->class_defs_off},
+  class_defs_size_{header.class_defs_size},
+  class_defs_off_{header.class_defs_off},
 
-  data_size_{header->data_size},
-  data_off_{header->data_off}
+  data_size_{header.data_size},
+  data_off_{header.data_off}
 {
-  std::copy(
-      std::begin(header->magic),
-      std::end(header->magic),
-      std::begin(magic_));
+  std::copy(std::begin(header.magic), std::end(header.magic),
+            std::begin(magic_));
 
-  std::copy(
-      std::begin(header->signature),
-      std::end(header->signature),
-      std::begin(signature_));
+  std::copy(std::begin(header.signature), std::end(header.signature),
+            std::begin(signature_));
 }
 
 

@@ -76,7 +76,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! Symbol visibility
   ELF_SYMBOL_VISIBILITY visibility() const;
 
-  Section& section();
+  Section* section();
 
   //! This member have slightly different interpretations:
   //!   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
@@ -101,11 +101,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
   bool has_version() const;
 
-  //! Return the @link ELF::SymbolVersion symbol version @endlink associated with this symbol
-  SymbolVersion&       symbol_version();
-  const SymbolVersion& symbol_version() const;
+  //! Return the SymbolVersion associated with this symbol.
+  //! If there is no symbol version, return a nullptr
+  SymbolVersion*       symbol_version();
+  const SymbolVersion* symbol_version() const;
 
-  //! Symbol's unmangled name
+  //! Symbol's unmangled name. If not available, it returns an empty string
   std::string demangled_name() const;
 
   void type(ELF_SYMBOL_TYPES type);

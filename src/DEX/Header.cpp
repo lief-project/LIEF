@@ -38,13 +38,15 @@ Header& Header::operator=(const Header&) = default;
 
 
 
-magic_t Header::magic() const {
+Header::magic_t Header::magic() const {
   return magic_;
 }
+
 uint32_t Header::checksum() const {
   return checksum_;
 }
-signature_t Header::signature() const {
+
+Header::signature_t Header::signature() const {
   return signature_;
 }
 
@@ -110,6 +112,9 @@ void Header::accept(Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -133,7 +138,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
     }
   }
 
-  const signature_t& sig = hdr.signature();
+  const Header::signature_t& sig = hdr.signature();
   std::string sig_str = std::accumulate(
       std::begin(sig),
       std::end(sig),

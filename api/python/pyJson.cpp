@@ -16,6 +16,7 @@
 #include "LIEF/config.h"
 #include "LIEF/json.hpp"
 #include "LIEF/Abstract/json.hpp"
+#include "LIEF/Object.hpp"
 
 #include "pyLIEF.hpp"
 

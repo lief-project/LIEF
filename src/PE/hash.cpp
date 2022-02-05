@@ -226,7 +226,7 @@ void Hash::visit(const Debug& debug) {
   process(debug.pointerto_rawdata());
 
   if (debug.has_code_view()) {
-    debug.code_view().accept(*this);
+    debug.code_view()->accept(*this);
   }
 
 }
@@ -354,15 +354,15 @@ void Hash::visit(const ResourceVersion& resource_version) {
   process(resource_version.key());
 
   if (resource_version.has_fixed_file_info()) {
-    process(resource_version.fixed_file_info());
+    process(*resource_version.fixed_file_info());
   }
 
   if (resource_version.has_string_file_info()) {
-    process(resource_version.string_file_info());
+    process(*resource_version.string_file_info());
   }
 
   if (resource_version.has_var_file_info()) {
-    process(resource_version.var_file_info());
+    process(*resource_version.var_file_info());
   }
 
 }
@@ -603,7 +603,7 @@ void Hash::visit(const LoadConfigurationV7& config) {
 
 
 void Hash::visit(const Pogo& pogo) {
-  it_const_pogo_entries entries = pogo.entries();
+  Pogo::it_const_entries entries = pogo.entries();
   process(pogo.signature());
   process(std::begin(entries), std::end(entries));
 }

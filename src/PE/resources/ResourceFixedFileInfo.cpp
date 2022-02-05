@@ -18,6 +18,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 #include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
 
@@ -173,6 +174,9 @@ void ResourceFixedFileInfo::accept(Visitor& visitor) const {
 
 
 bool ResourceFixedFileInfo::operator==(const ResourceFixedFileInfo& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

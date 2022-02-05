@@ -25,31 +25,31 @@
 
 #include "LIEF/Abstract/Binary.hpp"
 
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/GnuHash.hpp"
-#include "LIEF/ELF/SysvHash.hpp"
 
 namespace LIEF {
+//! Namespace related to the LIEF's ELF module
 namespace ELF {
 namespace DataHandler {
 class Handler;
 }
 
+class Builder;
+class DynamicEntry;
+class ExeLayout;
+class GnuHash;
+class Layout;
+class Note;
+class ObjectFileLayout;
+class Parser;
+class Relocation;
 class Section;
 class Segment;
-class DynamicEntry;
 class Symbol;
 class SymbolVersion;
-class SymbolVersionRequirement;
 class SymbolVersionDefinition;
-class Note;
-class Relocation;
-class Parser;
-class Builder;
-class Layout;
-class ObjectFileLayout;
-class ExeLayout;
+class SymbolVersionRequirement;
+class SysvHash;
 
 //! Class which represents an ELF binary
 class LIEF_API Binary : public LIEF::Binary {
@@ -60,8 +60,131 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class ObjectFileLayout;
 
   public:
-  using string_list_t = std::vector<std::string>;
-  using overlay_t     = std::vector<uint8_t>;
+  using string_list_t  = std::vector<std::string>;
+  using overlay_t      = std::vector<uint8_t>;
+
+  //! Internal container for storing notes
+  using notes_t = std::vector<std::unique_ptr<Note>>;
+
+  //! Iterator which outputs Note& object
+  using it_notes = ref_iterator<notes_t&, Note*>;
+
+  //! Iterator which outputs const Note& object
+  using it_const_notes = const_ref_iterator<const notes_t&, const Note*>;
+
+  //! Internal container for storing SymbolVersionRequirement
+  using symbols_version_requirement_t = std::vector<std::unique_ptr<SymbolVersionRequirement>>;
+
+  //! Iterator which outputs SymbolVersionRequirement& object
+  using it_symbols_version_requirement = ref_iterator<symbols_version_requirement_t&, SymbolVersionRequirement*>;
+
+  //! Iterator which outputs const SymbolVersionRequirement& object
+  using it_const_symbols_version_requirement = const_ref_iterator<const symbols_version_requirement_t&, const SymbolVersionRequirement*>;
+
+  //! Internal container for storing SymbolVersionDefinition
+  using symbols_version_definition_t = std::vector<std::unique_ptr<SymbolVersionDefinition>>;
+
+  //! Iterator which outputs SymbolVersionDefinition& object
+  using it_symbols_version_definition       = ref_iterator<symbols_version_definition_t&, SymbolVersionDefinition*>;
+
+  //! Iterator which outputs const SymbolVersionDefinition& object
+  using it_const_symbols_version_definition = const_ref_iterator<const symbols_version_definition_t&, const SymbolVersionDefinition*>;
+
+  //! Internal container for storing ELF's Segment
+  using segments_t = std::vector<std::unique_ptr<Segment>>;
+
+  //! Iterator which outputs Segment& object
+  using it_segments = ref_iterator<segments_t&, Segment*>;
+
+  //! Iterator which outputs const Segment& object
+  using it_const_segments = const_ref_iterator<const segments_t&, const Segment*>;
+
+  //! Internal container for storing ELF's DynamicEntry
+  using dynamic_entries_t = std::vector<std::unique_ptr<DynamicEntry>>;
+
+  //! Iterator which outputs DynamicEntry& object
+  using it_dynamic_entries = ref_iterator<dynamic_entries_t&, DynamicEntry*>;
+
+  //! Iterator which outputs const DynamicEntry& object
+  using it_const_dynamic_entries = const_ref_iterator<const dynamic_entries_t&, const DynamicEntry*>;
+
+  //! Internal container for storing ELF's SymbolVersion
+  using symbols_version_t = std::vector<std::unique_ptr<SymbolVersion>>;
+
+  //! Iterator which outputs SymbolVersion& object
+  using it_symbols_version = ref_iterator<symbols_version_t&, SymbolVersion*>;
+
+  //! Iterator which outputs const SymbolVersion& object
+  using it_const_symbols_version = const_ref_iterator<const symbols_version_t&, const SymbolVersion*>;
+
+  //! Internal container for storing ELF's Relocation
+  using relocations_t = std::vector<std::unique_ptr<Relocation>>;
+
+  //! Iterator which outputs plt/got Relocation& object
+  using it_pltgot_relocations = filter_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs plt/got const Relocation& object
+  using it_const_pltgot_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+
+  //! Iterator which outputs dynamic Relocation& object (not related to the PLT/GOT mechanism)
+  using it_dynamic_relocations = filter_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs dynamic const Relocation& object (not related to the PLT/GOT mechanism)
+  using it_const_dynamic_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+
+  //! Iterator which outputs Relocation& object found in object files (.o)
+  using it_object_relocations = filter_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs const Relocation& object found in object files (.o)
+  using it_const_object_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+
+  //! Iterator which outputs Relocation& object
+  using it_relocations = ref_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs const Relocation& object
+  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+
+  //! Internal container for storing ELF's Symbol
+  using symbols_t = std::vector<std::unique_ptr<Symbol>>;
+
+  //! Iterator which outputs the Dynamic Symbol& object
+  using it_dynamic_symbols = ref_iterator<symbols_t&, Symbol*>;
+
+  //! Iterator which outputs the Dynamic const Symbol& object
+  using it_const_dynamic_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+
+  //! Iterator which outputs the static/debug Symbol& object
+  using it_static_symbols = ref_iterator<symbols_t&, Symbol*>;
+
+  //! Iterator which outputs the static/debug const Symbol& object
+  using it_const_static_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+
+  //! Iterator which outputs static and dynamic Symbol& object
+  using it_symbols = ref_iterator<std::vector<Symbol*>>;
+
+  //! Iterator which outputs static and dynamic const Symbol& object
+  using it_const_symbols = const_ref_iterator<std::vector<Symbol*>>;
+
+  //! Iterator which outputs exported Symbol& object
+  using it_exported_symbols = filter_iterator<std::vector<Symbol*>>;
+
+  //! Iterator which outputs exported const Symbol& object
+  using it_const_exported_symbols = const_filter_iterator<std::vector<Symbol*>>;
+
+  //! Iterator which outputs imported Symbol& object
+  using it_imported_symbols = filter_iterator<std::vector<Symbol*>>;
+
+  //! Iterator which outputs imported const Symbol& object
+  using it_const_imported_symbols = const_filter_iterator<std::vector<Symbol*>>;
+
+  //! Internal container for storing ELF's Section
+  using sections_t = std::vector<std::unique_ptr<Section>>;
+
+  //! Iterator which outputs Section& object
+  using it_sections = ref_iterator<sections_t&, Section*>;
+
+  //! Iterator which outputs const Section& object
+  using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
 
   public:
   Binary& operator=(const Binary& ) = delete;
@@ -130,8 +253,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return an iterator over the binary's dynamic symbols
   //! The dynamic symbols are those located in the ``.dynsym`` section
-  it_symbols       dynamic_symbols();
-  it_const_symbols dynamic_symbols() const;
+  it_dynamic_symbols       dynamic_symbols();
+  it_const_dynamic_symbols dynamic_symbols() const;
 
   //! Return symbols which are exported by the binary
   it_exported_symbols       exported_symbols();
@@ -142,8 +265,8 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_imported_symbols imported_symbols() const;
 
   //! Return statics symbols.
-  it_symbols       static_symbols();
-  it_const_symbols static_symbols() const;
+  it_static_symbols       static_symbols();
+  it_const_static_symbols static_symbols() const;
 
   //! Return the symbol versions
   it_symbols_version       symbols_version();
@@ -216,7 +339,8 @@ class LIEF_API Binary : public LIEF::Binary {
   bool use_gnu_hash() const;
 
   //! Return the GnuHash object in **readonly**
-  const GnuHash& gnu_hash() const;
+  //! If the ELF binary does not use the GNU hash table, return a nullptr
+  const GnuHash* gnu_hash() const;
 
   //! ``true`` if SYSV hash is used
   //!
@@ -224,7 +348,8 @@ class LIEF_API Binary : public LIEF::Binary {
   bool use_sysv_hash() const;
 
   //! Return the SysvHash object as a **read-only** object
-  const SysvHash& sysv_hash() const;
+  //! If the ELF binary does not use the legacy sysv hash table, return a nullptr
+  const SysvHash* sysv_hash() const;
 
   //! Check if a section with the given name exists in the binary
   bool has_section(const std::string& name) const;
@@ -235,21 +360,26 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Check if a section that handles the given virtual address exists
   bool has_section_with_va(uint64_t va) const;
 
-  //! Return Section with the given `name`
-  Section&       get_section(const std::string& name);
-  const Section& get_section(const std::string& name) const;
+  //! Return Section with the given `name`. If the section can't be
+  //! found, it returns a nullptr
+  Section*       get_section(const std::string& name);
+  const Section* get_section(const std::string& name) const;
 
-  //! Return the `.text` section
-  Section& text_section();
+  //! Return the `.text` section. If the section
+  //! can't be found, it returns a nullptr
+  Section* text_section();
 
-  //! Return the `.dynamic` section
-  Section& dynamic_section();
+  //! Return the `.dynamic` section. If the section
+  //! can't be found, it returns a nullptr
+  Section* dynamic_section();
 
-  //! Return the hash section
-  Section& hash_section();
+  //! Return the hash section. If the section
+  //! can't be found, it returns a nullptr
+  Section* hash_section();
 
-  //! Return section which holds static symbols
-  Section& static_symbols_section();
+  //! Return section which holds static symbols. If the section
+  //! can't be found, it returns a nullptr
+  Section* static_symbols_section();
 
   //! Return program image base. For instance ``0x40000``
   //!
@@ -265,6 +395,9 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has_interpreter() const;
 
   //! Return the ELF interpreter if any. (e.g. `/lib64/ld-linux-x86-64.so.2`)
+  //! If the binary does not have an interpreter, it returns an empty string
+  //!
+  //! @see has_interpreter
   const std::string& interpreter() const;
 
   //! Change the interpreter
@@ -283,23 +416,25 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Check if the symbol with the given ``name`` exists in the dynamic symbols table
   bool has_dynamic_symbol(const std::string& name) const;
 
-  //! Get the dynamic symbol from the given name
-  const Symbol& get_dynamic_symbol(const std::string& name) const;
+  //! Get the dynamic symbol from the given name.
+  //! Return a nullptr if it can't be found
+  const Symbol* get_dynamic_symbol(const std::string& name) const;
 
-  Symbol& get_dynamic_symbol(const std::string& name);
+  Symbol* get_dynamic_symbol(const std::string& name);
 
   //! Check if the symbol with the given ``name`` exists in the static symbol table
   bool has_static_symbol(const std::string& name) const;
 
   //! Get the static symbol from the given name
-  const Symbol& get_static_symbol(const std::string& name) const;
+  //! Return a nullptr if it can't be found
+  const Symbol* get_static_symbol(const std::string& name) const;
 
-  Symbol& get_static_symbol(const std::string& name);
+  Symbol* get_static_symbol(const std::string& name);
 
   //! Return list of the strings used by the ELF binary.
   //!
   //! Basically, this function looks for string in the ``.roadata`` section
-  string_list_t strings(const size_t min_size = 5) const;
+  string_list_t strings(size_t min_size = 5) const;
 
   //! Remove symbols with the given name in both:
   //!   * dynamic symbols
@@ -358,10 +493,12 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove_library(const std::string& library_name);
 
   //! Get the library object (DynamicEntryLibrary) from the given name
-  DynamicEntryLibrary& get_library(const std::string& library_name);
+  //! If the library can't be found, it returns a nullptr.
+  DynamicEntryLibrary* get_library(const std::string& library_name);
 
   //! Get the library object (DynamicEntryLibrary) from the given name
-  const DynamicEntryLibrary& get_library(const std::string& library_name) const;
+  //! If the library can't be found, it returns a nullptr.
+  const DynamicEntryLibrary* get_library(const std::string& library_name) const;
 
   //! Check if the given library name exists in the current binary
   bool has_library(const std::string& name) const;
@@ -448,43 +585,51 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Check if the binary uses the ``NX`` protection (Non executable stack)
   bool has_nx() const override;
 
-  //! Return the ELF::Section from the given @p offset
+  //! Return the ELF::Section from the given @p offset. Return a nullptr
+  //! if a section can't be found
   //!
   //! If @p skip_nobits is set (which is the case by default), this function won't
   //! consider section for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-  const Section& section_from_offset(uint64_t offset, bool skip_nobits = true) const;
-  Section&       section_from_offset(uint64_t offset, bool skip_nobits = true);
+  const Section* section_from_offset(uint64_t offset, bool skip_nobits = true) const;
+  Section*       section_from_offset(uint64_t offset, bool skip_nobits = true);
 
-  //! Return the ELF::Section from the given @p address
+  //! Return the ELF::Section from the given @p address. Return a nullptr
+  //! if a section can't be found.
   //!
   //! If @p skip_nobits is set (which is the case by default), this function won't
   //! consider section for which type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-  const Section& section_from_virtual_address(uint64_t address, bool skip_nobits = true) const;
-  Section&       section_from_virtual_address(uint64_t address, bool skip_nobits = true);
+  const Section* section_from_virtual_address(uint64_t address, bool skip_nobits = true) const;
+  Section*       section_from_virtual_address(uint64_t address, bool skip_nobits = true);
 
-  //! Return the ELF::Segment from the given @p address
-  const Segment& segment_from_virtual_address(uint64_t address) const;
-  Segment&       segment_from_virtual_address(uint64_t address);
+  //! Return the ELF::Segment from the given @p address. Return a nullptr
+  //! if a segment can't be found.
+  const Segment* segment_from_virtual_address(uint64_t address) const;
+  Segment*       segment_from_virtual_address(uint64_t address);
 
-  //! Return the ELF::Segment from the @p offset
-  const Segment& segment_from_offset(uint64_t offset) const;
-  Segment&       segment_from_offset(uint64_t offset);
+  //! Return the ELF::Segment from the @p offset. Return a nullptr
+  //! if a segment can't be found.
+  const Segment* segment_from_offset(uint64_t offset) const;
+  Segment*       segment_from_offset(uint64_t offset);
 
   //! Return the **first** ELF::DynamicEntry associated with the given tag
-  const DynamicEntry& get(DYNAMIC_TAGS tag) const;
-  DynamicEntry&       get(DYNAMIC_TAGS tag);
+  //! If the tag can't be found, it returns a nullptr
+  const DynamicEntry* get(DYNAMIC_TAGS tag) const;
+  DynamicEntry*       get(DYNAMIC_TAGS tag);
 
-  //! Return the **first** ELF::Segment associated with the given type
-  const Segment& get(SEGMENT_TYPES type) const;
-  Segment&       get(SEGMENT_TYPES type);
+  //! Return the **first** ELF::Segment associated with the given type.
+  //! If a segment can't be found, it returns a nullptr.
+  const Segment* get(SEGMENT_TYPES type) const;
+  Segment*       get(SEGMENT_TYPES type);
 
   //! Return the **first** ELF::Note associated with the given type
-  const Note& get(NOTE_TYPES type) const;
-  Note&       get(NOTE_TYPES type);
+  //! If a note can't be found, it returns a nullptr.
+  const Note* get(NOTE_TYPES type) const;
+  Note*       get(NOTE_TYPES type);
 
   //! Return the **first** ELF::Section associated with the given type
-  const Section& get(ELF_SECTION_TYPES type) const;
-  Section&       get(ELF_SECTION_TYPES type);
+  //! If a section can't be found, it returns a nullptr.
+  const Section* get(ELF_SECTION_TYPES type) const;
+  Section*       get(ELF_SECTION_TYPES type);
 
   //! Check if an ELF::DynamicEntry associated with the given tag exists.
   bool has(DYNAMIC_TAGS tag) const;
@@ -561,17 +706,17 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary& operator-=(const Note& note);
   Binary& operator-=(NOTE_TYPES type);
 
-  Segment&       operator[](SEGMENT_TYPES type);
-  const Segment& operator[](SEGMENT_TYPES type) const;
+  Segment*       operator[](SEGMENT_TYPES type);
+  const Segment* operator[](SEGMENT_TYPES type) const;
 
-  DynamicEntry&       operator[](DYNAMIC_TAGS tag);
-  const DynamicEntry& operator[](DYNAMIC_TAGS tag) const;
+  DynamicEntry*       operator[](DYNAMIC_TAGS tag);
+  const DynamicEntry* operator[](DYNAMIC_TAGS tag) const;
 
-  Note&       operator[](NOTE_TYPES type);
-  const Note& operator[](NOTE_TYPES type) const;
+  Note*       operator[](NOTE_TYPES type);
+  const Note* operator[](NOTE_TYPES type) const;
 
-  Section&       operator[](ELF_SECTION_TYPES type);
-  const Section& operator[](ELF_SECTION_TYPES type) const;
+  Section*       operator[](ELF_SECTION_TYPES type);
+  const Section* operator[](ELF_SECTION_TYPES type) const;
 
   protected:
   struct phdr_relocation_info_t {
@@ -581,15 +726,15 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary();
 
   //! Return an abstraction of binary's section: LIEF::Section
-  LIEF::sections_t get_abstract_sections() override;
+  LIEF::Binary::sections_t get_abstract_sections() override;
 
   LIEF::Header get_abstract_header() const override;
 
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
   std::vector<std::string> get_abstract_imported_libraries() const override;
-  LIEF::symbols_t          get_abstract_symbols() override;
-  LIEF::relocations_t      get_abstract_relocations() override;
+  LIEF::Binary::symbols_t     get_abstract_symbols() override;
+  LIEF::Binary::relocations_t get_abstract_relocations() override;
 
   template<ELF::ARCH ARCH>
   void patch_relocations(uint64_t from, uint64_t shift);
@@ -622,13 +767,13 @@ class LIEF_API Binary : public LIEF::Binary {
 
   template<bool LOADED>
   Section& add_section(const Section& section);
-  symbols_t static_dyn_symbols() const;
+  std::vector<Symbol*> static_dyn_symbols() const;
 
   std::string shstrtab_name() const;
 
   LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 
-  ELF_CLASS type_;
+  ELF_CLASS type_ = ELF_CLASS::ELFCLASSNONE;
   Header header_;
   sections_t sections_;
   segments_t segments_;
@@ -639,10 +784,10 @@ class LIEF_API Binary : public LIEF::Binary {
   symbols_version_t symbol_version_table_;
   symbols_version_requirement_t symbol_version_requirements_;
   symbols_version_definition_t  symbol_version_definition_;
-  GnuHash gnu_hash_;
   notes_t notes_;
-  SysvHash sysv_hash_;
-  DataHandler::Handler* datahandler_{nullptr};
+  std::unique_ptr<GnuHash> gnu_hash_;
+  std::unique_ptr<SysvHash> sysv_hash_;
+  std::unique_ptr<DataHandler::Handler> datahandler_;
   phdr_relocation_info_t phdr_reloc_info_;
 
   std::string interpreter_;

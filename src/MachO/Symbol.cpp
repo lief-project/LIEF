@@ -23,6 +23,7 @@
 
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -115,29 +116,24 @@ bool Symbol::has_export_info() const {
   return export_info_ != nullptr;
 }
 
-const ExportInfo& Symbol::export_info() const {
-  if (!has_export_info()) {
-    throw not_found("'" + name() + "' hasn't export info");
-  }
-  return *export_info_;
+const ExportInfo* Symbol::export_info() const {
+  return export_info_;
 }
 
-ExportInfo& Symbol::export_info() {
-  return const_cast<ExportInfo&>(static_cast<const Symbol*>(this)->export_info());
+ExportInfo* Symbol::export_info() {
+  return const_cast<ExportInfo*>(static_cast<const Symbol*>(this)->export_info());
 }
 
 bool Symbol::has_binding_info() const {
   return binding_info_ != nullptr;
 }
-const BindingInfo& Symbol::binding_info() const {
-  if (!has_binding_info()) {
-    throw not_found("'" + name() + "' hasn't binding info");
-  }
-  return *binding_info_;
+
+const BindingInfo* Symbol::binding_info() const {
+  return binding_info_;
 }
 
-BindingInfo& Symbol::binding_info() {
-  return const_cast<BindingInfo&>(static_cast<const Symbol*>(this)->binding_info());
+BindingInfo* Symbol::binding_info() {
+  return const_cast<BindingInfo*>(static_cast<const Symbol*>(this)->binding_info());
 }
 
 
@@ -151,11 +147,10 @@ std::string Symbol::demangled_name() const {
     std::string realname = demangled_name;
     free(demangled_name);
     return realname;
-  } else {
-    return name;
   }
+  return name;
 #else
-  throw not_supported("Can't demangle name");
+  return "";
 #endif
 }
 
@@ -165,6 +160,9 @@ void Symbol::accept(Visitor& visitor) const {
 
 
 bool Symbol::operator==(const Symbol& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

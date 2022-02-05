@@ -22,6 +22,7 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "ELF/Structures.hpp"
 
 #include "CoreFile.tcc"
 
@@ -79,6 +80,9 @@ void CoreFile::accept(Visitor& visitor) const {
 }
 
 bool CoreFile::operator==(const CoreFile& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

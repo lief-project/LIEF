@@ -34,10 +34,6 @@ using setter_t = void (ResourceIcon::*)(T);
 template<>
 void create<ResourceIcon>(py::module& m) {
   py::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
-    .def(py::init<const std::string&>(),
-        "Constructor that takes an icon path as input",
-        "icon_path"_a)
-
     .def_property("id",
         static_cast<getter_t<uint32_t>>(&ResourceIcon::id),
         static_cast<setter_t<uint32_t>>(&ResourceIcon::id),

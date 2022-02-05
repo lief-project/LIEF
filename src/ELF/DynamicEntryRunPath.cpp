@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "logging.hpp"
 
 #include <iomanip>
 #include <numeric>
@@ -66,7 +67,9 @@ void DynamicEntryRunPath::runpath(const std::string& runpath) {
 std::vector<std::string> DynamicEntryRunPath::paths() const {
   std::stringstream ss;
   ss.str(runpath());
+
   std::string path;
+
   std::vector<std::string> paths;
   while (std::getline(ss, path, DynamicEntryRunPath::delimiter)) {
     paths.push_back(path);
@@ -79,7 +82,7 @@ void DynamicEntryRunPath::paths(const std::vector<std::string>& paths) {
       std::begin(paths), std::end(paths),
       std::string(""),
       [] (const std::string& path, const std::string& new_entry) {
-        return path.empty() ? new_entry :  path + DynamicEntryRunPath::delimiter + new_entry;
+        return path.empty() ? new_entry : path + DynamicEntryRunPath::delimiter + new_entry;
       });
 }
 
@@ -107,7 +110,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos, const std::string& 
   }
 
   if (pos > paths.size()) {
-    throw corrupted(std::to_string(pos) + " is out of ranges");
+    LIEF_ERR("pos: {:d} is out of range", pos);
   }
   paths.insert(std::begin(paths) + pos, path);
   this->paths(paths);

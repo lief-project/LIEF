@@ -18,8 +18,8 @@
 
 #include "LIEF/MachO/hash.hpp"
 
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -51,6 +51,9 @@ void SubFramework::accept(Visitor& visitor) const {
 
 
 bool SubFramework::operator==(const SubFramework& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

@@ -21,6 +21,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"

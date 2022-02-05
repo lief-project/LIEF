@@ -16,19 +16,20 @@
 #include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/hash.hpp"
 
+#include "pyIterators.hpp"
 #include "pyVDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
 
 template<class T>
-using no_const_getter = T (File::*)(void);
+using no_const_getter = T (File::*)();
 
 template<class T, class P>
 using no_const_func = T (File::*)(P);
 
 template<class T>
-using getter_t = T (File::*)(void) const;
+using getter_t = T (File::*)() const;
 
 template<class T>
 using setter_t = void (File::*)(T);
@@ -37,15 +38,28 @@ template<>
 void create<File>(py::module& m) {
 
   // File object
-  py::class_<File, LIEF::Object>(m, "File", "VDEX File representation")
+  py::class_<File, LIEF::Object> file(m, "File", "VDEX File representation");
 
+  /*
+   * it_dex_files is also registered by OAT/pyBinary.cpp and pybind11
+   * seems not able to see their (limited) scope such as it raises
+   *  generic_type: type "it_dex_files" is already registered!
+   *
+   * NOTE(romain): I tried to add py::local_module in pyIterator.hpp without
+   * success
+   */
+  try {
+    init_ref_iterator<File::it_dex_files>(file, "it_dex_files");
+  } catch (const std::runtime_error&) {}
+
+  file
     .def_property_readonly("header",
         static_cast<no_const_getter<Header&>>(&File::header),
         "Return the VDEX " RST_CLASS_REF(lief.VDEX.Header) "",
         py::return_value_policy::reference)
 
     .def_property_readonly("dex_files",
-        static_cast<no_const_getter<LIEF::DEX::it_dex_files>>(&File::dex_files),
+        static_cast<no_const_getter<File::it_dex_files>>(&File::dex_files),
         "Return an iterator over " RST_CLASS_REF(lief.DEX.File) "",
         py::return_value_policy::reference)
 

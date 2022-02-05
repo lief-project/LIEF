@@ -21,17 +21,20 @@
 #include <set>
 
 #include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/PE/Structures.hpp"
-#include "LIEF/PE/type_traits.hpp"
-
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/resources/ResourceDialogItem.hpp"
 
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+
+namespace details {
+struct pe_dialog_template_ext;
+struct pe_dialog_template;
+}
 
 //! Representation of a dialog box
 //!
@@ -45,6 +48,10 @@ class LIEF_API ResourceDialog : public Object {
   friend class ResourcesManager;
 
   public:
+  using items_t        = std::vector<ResourceDialogItem>;
+  using it_items       = ref_iterator<items_t&>;
+  using it_const_items = const_ref_iterator<const items_t&>;
+
   ResourceDialog();
   ResourceDialog(const details::pe_dialog_template_ext& header);
   ResourceDialog(const details::pe_dialog_template& header);
@@ -93,7 +100,7 @@ class LIEF_API ResourceDialog : public Object {
   int16_t cy() const;
 
   //! Iterator on the controls (ResourceDialogItem) that defines the Dialog (Button, Label...)
-  it_const_dialog_items items() const;
+  it_const_items items() const;
 
   //! RESOURCE_LANGS associated with the Dialog
   RESOURCE_LANGS lang() const;
@@ -169,7 +176,7 @@ class LIEF_API ResourceDialog : public Object {
   uint8_t        charset_;
   std::u16string typeface_;
 
-  std::vector<ResourceDialogItem> items_;
+  items_t items_;
 
   RESOURCE_LANGS lang_;
   RESOURCE_SUBLANGS sublang_;

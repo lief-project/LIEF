@@ -19,13 +19,11 @@ bool Layout::is_strtab_shared_shstrtab() const {
   const size_t shstrtab_idx = binary_->header().section_name_table_idx();
   size_t strtab_idx = 0;
 
-  if (binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
-    const Section& symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
-    strtab_idx = symtab.link();
-  } else {
+  const Section* symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+  if (symtab == nullptr) {
     return false;
   }
-
+  strtab_idx = symtab->link();
 
   bool is_shared = true;
   const size_t nb_sections = binary_->sections().size();
@@ -57,7 +55,7 @@ size_t Layout::section_strtab_size() {
 
   std::vector<std::string> symstr_opt =
     Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,
-                     [] (const Symbol* sym) { return sym->name(); },
+                     [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
                      offset_counter,
                      &strtab_name_map_);
   for (const std::string& name : symstr_opt) {
@@ -83,7 +81,7 @@ size_t Layout::section_shstr_size() {
   size_t offset_counter = raw_shstrtab.tellp();
   std::vector<std::string> shstrtab_opt =
     Builder::optimize<Section, decltype(binary_->sections_)>(binary_->sections_,
-                      [] (const Section* sec) { return sec->name(); },
+                      [] (const std::unique_ptr<Section>& sec) { return sec->name(); },
                       offset_counter,
                       &shstr_name_map_);
 
@@ -97,7 +95,7 @@ size_t Layout::section_shstr_size() {
     offset_counter = raw_shstrtab.tellp();
     std::vector<std::string> symstr_opt =
       Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,
-                       [] (const Symbol* sym) { return sym->name(); },
+                       [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
                        offset_counter,
                        &shstr_name_map_);
     for (const std::string& name : symstr_opt) {

@@ -17,6 +17,7 @@
 
 #include "LIEF/MachO/FatBinary.hpp"
 
+#include "pyIterators.hpp"
 #include "pyMachO.hpp"
 
 
@@ -27,19 +28,22 @@ template<>
 void create<FatBinary>(py::module& m) {
 
 
-  py::class_<FatBinary>(m, "FatBinary",
+  py::class_<FatBinary> fat(m, "FatBinary",
       R"delim(
       Class which represent a Mach-O (fat) binary
       This object is also used for representing Mach-O binaries that are **NOT FAT**
-      )delim")
+      )delim");
 
+    init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
+
+  fat
     .def_property_readonly("size",
       &FatBinary::size,
       "Number of " RST_CLASS_REF(lief.MachO.Binary) " registred")
 
     .def("at",
-      static_cast<Binary& (FatBinary::*)(size_t)>(&FatBinary::at),
-      "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index",
+      static_cast<Binary* (FatBinary::*)(size_t)>(&FatBinary::at),
+      "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index or None if it is not present",
       "index"_a,
       py::return_value_policy::reference_internal)
 
@@ -63,12 +67,12 @@ void create<FatBinary>(py::module& m) {
         &FatBinary::size)
 
     .def("__getitem__",
-        static_cast<Binary& (FatBinary::*)(size_t)>(&FatBinary::operator[]),
+        static_cast<Binary* (FatBinary::*)(size_t)>(&FatBinary::operator[]),
         "",
         py::return_value_policy::reference_internal)
 
     .def("__iter__",
-        static_cast<it_binaries (FatBinary::*)(void)>(&FatBinary::begin),
+        static_cast<FatBinary::it_binaries (FatBinary::*)(void)>(&FatBinary::begin),
         py::return_value_policy::reference_internal)
 
     .def("__str__",

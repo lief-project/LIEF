@@ -18,7 +18,7 @@
 namespace LIEF {
 namespace MachO {
 void init_c_commands(Macho_Binary_t* c_binary, Binary* binary) {
-  it_commands commands = binary->commands();
+  Binary::it_commands commands = binary->commands();
 
   c_binary->commands = static_cast<Macho_Command_t**>(
       malloc((commands.size() + 1) * sizeof(Macho_Command_t**)));

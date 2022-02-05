@@ -316,7 +316,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in"
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/config.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/config.h" @ONLY)
 
-list(APPEND LIEF_PUBLIC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+list(APPEND LIEF_PUBLIC_INCLUDE_DIR
+     "${CMAKE_CURRENT_SOURCE_DIR}/include/"
      "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
      "${CMAKE_CURRENT_BINARY_DIR}/include/")
 
@@ -655,7 +656,7 @@ install(
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   COMPONENT headers
   FILES_MATCHING
-  REGEX "(.*).(hpp|h|def)$")
+  REGEX "(.*).(hpp|h|def|inc)$")
 
 install(
   FILES       ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake

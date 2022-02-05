@@ -28,8 +28,7 @@ LoadConfigurationV2& LoadConfigurationV2::operator=(const LoadConfigurationV2&) 
 LoadConfigurationV2::LoadConfigurationV2(const LoadConfigurationV2&) = default;
 LoadConfigurationV2::~LoadConfigurationV2() = default;
 
-LoadConfigurationV2::LoadConfigurationV2()
-{}
+LoadConfigurationV2::LoadConfigurationV2() = default;
 
 WIN_VERSION LoadConfigurationV2::version() const {
   return LoadConfigurationV2::VERSION;
@@ -49,6 +48,9 @@ void LoadConfigurationV2::accept(Visitor& visitor) const {
 }
 
 bool LoadConfigurationV2::operator==(const LoadConfigurationV2& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

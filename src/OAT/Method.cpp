@@ -32,17 +32,12 @@ Method::Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  quic
   quick_code_{std::move(quick_code)}
 {}
 
-
-
-const Class& Method::oat_class() const {
-  if (class_ == nullptr) {
-    throw integrity_error("No class found for method");
-  }
-  return *class_;
+const Class* Method::oat_class() const {
+  return class_;
 }
 
-Class& Method::oat_class() {
-  return const_cast<Class&>(static_cast<const Method*>(this)->oat_class());
+Class* Method::oat_class() {
+  return const_cast<Class*>(static_cast<const Method*>(this)->oat_class());
 }
 
 
@@ -50,15 +45,12 @@ bool Method::has_dex_method() const {
   return dex_method_ != nullptr;
 }
 
-const DEX::Method& Method::dex_method() const {
-  if (!has_dex_method()) {
-    throw integrity_error("No DEX Method found for the current OAT method");
-  }
-  return *dex_method_;
+const DEX::Method* Method::dex_method() const {
+  return dex_method_;
 }
 
-DEX::Method& Method::dex_method() {
-  return const_cast<DEX::Method&>(static_cast<const Method*>(this)->dex_method());
+DEX::Method* Method::dex_method() {
+  return const_cast<DEX::Method*>(static_cast<const Method*>(this)->dex_method());
 }
 
 bool Method::is_dex2dex_optimized() const {
@@ -96,6 +88,9 @@ void Method::accept(Visitor& visitor) const {
 }
 
 bool Method::operator==(const Method& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -106,7 +101,7 @@ bool Method::operator!=(const Method& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Method& meth) {
-  std::string pretty_name = meth.oat_class().fullname();
+  std::string pretty_name = meth.oat_class()->fullname();
   pretty_name = pretty_name.substr(1, pretty_name.size() - 2);
 
   os << pretty_name << "." << meth.name();

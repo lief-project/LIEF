@@ -17,6 +17,8 @@
 
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/Section.hpp"
 
 #include <string>
 #include <sstream>
@@ -81,9 +83,12 @@ void create<Relocation>(py::module& m) {
         "``True`` if a " RST_CLASS_REF(lief.ELF.Symbol) " is associated with the relocation")
 
     .def_property("symbol",
-        static_cast<Symbol& (Relocation::*)(void)>(&Relocation::symbol),
+        static_cast<Symbol* (Relocation::*)(void)>(&Relocation::symbol),
         static_cast<void (Relocation::*)(Symbol*)>(&Relocation::symbol),
-        "" RST_CLASS_REF(lief.ELF.Symbol) " associated with the relocation",
+        R"delim(
+        :class:`~lief.ELF.Symbol` associated with the relocation or None
+        if no symbol are associated with this relocation.
+        )delim",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_section",
@@ -95,8 +100,10 @@ void create<Relocation>(py::module& m) {
         )delim")
 
     .def_property_readonly("section",
-        static_cast<Section& (Relocation::*)(void)>(&Relocation::section),
-        "" RST_CLASS_REF(lief.ELF.Section) " in which the relocation is applied",
+        static_cast<Section* (Relocation::*)(void)>(&Relocation::section),
+        R"delim(
+        :class:`~lief.ELF.Section` in which the relocation is applied or None if not relevant
+        )delim",
         py::return_value_policy::reference)
 
     .def_property_readonly("is_rela",

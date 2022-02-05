@@ -39,7 +39,7 @@
 //
 // $ readelf -S ./lsRename
 //
-//  En-têtes de section :
+//  En-têtes de section:
 //  [Nr] Nom               Type             Adresse           Décalage
 //       Taille            TaillEntrée      Fanion Lien  Info  Alignement
 //  [ 0] toto              NULL             0000000000000000  00000000
@@ -53,9 +53,9 @@
 //
 //
 int main(int argc, char **argv) {
-  std::cout << "ELF Section rename" << std::endl;
+  std::cout << "ELF Section rename" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>" << '\n';
     return -1;
   }
 

@@ -68,6 +68,9 @@ void RichEntry::accept(LIEF::Visitor& visitor) const {
 }
 
 bool RichEntry::operator==(const RichEntry& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

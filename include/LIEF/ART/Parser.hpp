@@ -15,102 +15,95 @@
  */
 #ifndef LIEF_ART_PARSER_H_
 #define LIEF_ART_PARSER_H_
-
-
 #include <memory>
+#include <vector>
 
+#include "LIEF/ART/types.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
-#include "LIEF/ART/File.hpp"
-
 
 struct Profiler;
 
 namespace LIEF {
+class BinaryStream;
 namespace ART {
+class File;
 
-//! @brief Class which parse an ART file and transform into a ART::File object
+
+//! @brief Class which parses an ART file and transform into a ART::File object
 class LIEF_API Parser {
   public:
   friend struct ::Profiler;
-    static std::unique_ptr<File> parse(const std::string& file);
-    static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  static std::unique_ptr<File> parse(const std::string& file);
+  static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
 
-    Parser& operator=(const Parser& copy) = delete;
-    Parser(const Parser& copy)            = delete;
+  Parser& operator=(const Parser& copy) = delete;
+  Parser(const Parser& copy)            = delete;
 
   private:
-    Parser();
-    Parser(const std::string& file);
-    Parser(const std::vector<uint8_t>& data, const std::string& name);
-    virtual ~Parser();
+  Parser();
+  Parser(const std::string& file);
+  Parser(std::vector<uint8_t> data);
+  virtual ~Parser();
 
-    void init(const std::string& name, art_version_t version);
+  void init(const std::string& name, art_version_t version);
 
-    template<typename ART_T>
-    void parse_file();
+  template<typename ART_T>
+  void parse_file();
 
-    template<typename ART_T>
-    size_t parse_header();
+  template<typename ART_T>
+  size_t parse_header();
 
-    template<typename ART_T, typename PTR_T>
-    void parse_sections();
+  template<typename ART_T, typename PTR_T>
+  void parse_sections();
 
-    template<typename ART_T, typename PTR_T>
-    void parse_roots();
+  template<typename ART_T, typename PTR_T>
+  void parse_roots();
 
-    template<typename ART_T, typename PTR_T>
-    void parse_methods();
+  template<typename ART_T, typename PTR_T>
+  void parse_methods();
 
-    // Section parsing
-    template<typename ART_T, typename PTR_T>
-    void parse_objects(size_t offset, size_t size);
+  // Section parsing
+  template<typename ART_T, typename PTR_T>
+  void parse_objects(size_t offset, size_t size);
 
-    template<typename ART_T, typename PTR_T>
-    void parse_art_fields(size_t offset, size_t size);
+  template<typename ART_T, typename PTR_T>
+  void parse_art_fields(size_t offset, size_t size);
 
-    template<typename ART_T, typename PTR_T>
-    void parse_art_methods(size_t offset, size_t size);
+  template<typename ART_T, typename PTR_T>
+  void parse_art_methods(size_t offset, size_t size);
 
-    template<typename ART_T, typename PTR_T>
-    void parse_interned_strings(size_t offset, size_t size);
+  template<typename ART_T, typename PTR_T>
+  void parse_interned_strings(size_t offset, size_t size);
 
-    // Parse an **Array** of java.lang.DexCache objects
-    template<typename ART_T, typename PTR_T>
-    void parse_dex_caches(size_t offset, size_t size);
+  // Parse an **Array** of java.lang.DexCache objects
+  template<typename ART_T, typename PTR_T>
+  void parse_dex_caches(size_t offset, size_t size);
 
-    // Parse a **Single** java.lang.DexCache object
-    template<typename ART_T, typename PTR_T>
-    void parse_dex_cache(size_t object_offset);
+  // Parse a **Single** java.lang.DexCache object
+  template<typename ART_T, typename PTR_T>
+  void parse_dex_cache(size_t object_offset);
 
-    // Parse an **Array** of java.lang.Class objects
-    template<typename ART_T, typename PTR_T>
-    void parse_class_roots(size_t offset, size_t size);
+  // Parse an **Array** of java.lang.Class objects
+  template<typename ART_T, typename PTR_T>
+  void parse_class_roots(size_t offset, size_t size);
 
-    // Parse java.lang.Class objects
-    template<typename ART_T, typename PTR_T>
-    void parse_class(size_t offset);
+  // Parse java.lang.Class objects
+  template<typename ART_T, typename PTR_T>
+  void parse_class(size_t offset);
 
-    // Parse java.lang.String objects
-    template<typename ART_T, typename PTR_T>
-    void parse_jstring(size_t offset);
-
-
-    //// Parse a **Single** java.lang.DexCache object
-    //template<typename ART_T, typename PTR_T>
-    //void parse_class_roots(size_t object_offset);
+  // Parse java.lang.String objects
+  template<typename ART_T, typename PTR_T>
+  void parse_jstring(size_t offset);
 
 
-    LIEF::ART::File* file_;
-    std::unique_ptr<VectorStream> stream_;
-    uint32_t imagebase_;
+  //// Parse a **Single** java.lang.DexCache object
+  //template<typename ART_T, typename PTR_T>
+  //void parse_class_roots(size_t object_offset);
+
+  std::unique_ptr<File> file_;
+  std::unique_ptr<BinaryStream> stream_;
+  uint32_t imagebase_ = 0;
 };
-
-
-
-
 } // namespace ART
 } // namespace LIEF
 #endif

@@ -21,23 +21,56 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/resources/ResourceVersion.hpp"
+#include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 
 namespace LIEF {
 namespace PE {
 
-ResourceVersion::ResourceVersion(const ResourceVersion&) = default;
-ResourceVersion& ResourceVersion::operator=(const ResourceVersion&) = default;
 ResourceVersion::~ResourceVersion() = default;
+ResourceVersion::ResourceVersion(const ResourceVersion& copy) :
+  LIEF::Object{copy},
+  type_{copy.type_},
+  key_{copy.key_}
+{
+  if (copy.fixed_file_info_ != nullptr) {
+    fixed_file_info_ = std::make_unique<ResourceFixedFileInfo>(*copy.fixed_file_info_);
+  }
 
+  if (copy.string_file_info_ != nullptr) {
+    string_file_info_ = std::make_unique<ResourceStringFileInfo>(*copy.string_file_info_);
+  }
+
+  if (copy.var_file_info_ != nullptr) {
+    var_file_info_ = std::make_unique<ResourceVarFileInfo>(*copy.var_file_info_);
+  }
+}
+
+ResourceVersion& ResourceVersion::operator=(const ResourceVersion& other) {
+  if (this != &other) {
+    type_ = other.type_;
+    key_  = other.key_;
+
+    if (other.fixed_file_info_ != nullptr) {
+      fixed_file_info_ = std::make_unique<ResourceFixedFileInfo>(*other.fixed_file_info_);
+    }
+
+    if (other.string_file_info_ != nullptr) {
+      string_file_info_ = std::make_unique<ResourceStringFileInfo>(*other.string_file_info_);
+    }
+
+    if (other.var_file_info_ != nullptr) {
+      var_file_info_ = std::make_unique<ResourceVarFileInfo>(*other.var_file_info_);
+    }
+  }
+  return *this;
+}
 
 ResourceVersion::ResourceVersion() :
   type_{0},
-  key_{u8tou16("VS_VERSION_INFO")},
-  has_fixed_file_info_{false},
-  has_string_file_info_{false},
-  has_var_file_info_{false}
+  key_{u8tou16("VS_VERSION_INFO")}
 {}
-
 
 uint16_t ResourceVersion::type() const {
   return type_;
@@ -48,50 +81,40 @@ const std::u16string& ResourceVersion::key() const {
 }
 
 bool ResourceVersion::has_fixed_file_info() const {
-  return has_fixed_file_info_;
+  return fixed_file_info_ != nullptr;
 }
 
 bool ResourceVersion::has_string_file_info() const {
-  return has_string_file_info_;
+  return string_file_info_ != nullptr;
 }
 
 bool ResourceVersion::has_var_file_info() const {
-  return has_var_file_info_;
+  return var_file_info_ != nullptr;
 }
 
-const ResourceFixedFileInfo& ResourceVersion::fixed_file_info() const {
-  if (!has_fixed_file_info()) {
-    throw not_found("Fixed file info is not present in the current resource");
-  }
-  return fixed_file_info_;
+const ResourceFixedFileInfo* ResourceVersion::fixed_file_info() const {
+  return fixed_file_info_.get();
 }
 
-ResourceFixedFileInfo& ResourceVersion::fixed_file_info() {
-  return const_cast<ResourceFixedFileInfo&>(static_cast<const ResourceVersion*>(this)->fixed_file_info());
+ResourceFixedFileInfo* ResourceVersion::fixed_file_info() {
+  return const_cast<ResourceFixedFileInfo*>(static_cast<const ResourceVersion*>(this)->fixed_file_info());
 }
 
-const ResourceStringFileInfo& ResourceVersion::string_file_info() const {
-  if (!has_string_file_info()) {
-    throw not_found("String file info is not present in the current resource");
-  }
-  return string_file_info_;
+const ResourceStringFileInfo* ResourceVersion::string_file_info() const {
+  return string_file_info_.get();
 }
 
-ResourceStringFileInfo& ResourceVersion::string_file_info() {
-  return const_cast<ResourceStringFileInfo&>(static_cast<const ResourceVersion*>(this)->string_file_info());
+ResourceStringFileInfo* ResourceVersion::string_file_info() {
+  return const_cast<ResourceStringFileInfo*>(static_cast<const ResourceVersion*>(this)->string_file_info());
 }
 
-const ResourceVarFileInfo& ResourceVersion::var_file_info() const {
-  if (!has_var_file_info()) {
-    throw not_found("Var file info is not present in the current resource");
-  }
-  return var_file_info_;
+const ResourceVarFileInfo* ResourceVersion::var_file_info() const {
+  return var_file_info_.get();
 }
 
-ResourceVarFileInfo& ResourceVersion::var_file_info() {
-  return const_cast<ResourceVarFileInfo&>(static_cast<const ResourceVersion*>(this)->var_file_info());
+ResourceVarFileInfo* ResourceVersion::var_file_info() {
+  return const_cast<ResourceVarFileInfo*>(static_cast<const ResourceVersion*>(this)->var_file_info());
 }
-
 
 void ResourceVersion::type(uint16_t type) {
   type_ = type;
@@ -106,32 +129,28 @@ void ResourceVersion::key(const std::string& key) {
 }
 
 void ResourceVersion::fixed_file_info(const ResourceFixedFileInfo& fixed_file_info) {
-  fixed_file_info_ = fixed_file_info;
-  has_fixed_file_info_ = true;
+  fixed_file_info_ = std::make_unique<ResourceFixedFileInfo>(fixed_file_info);
 }
 
 void ResourceVersion::remove_fixed_file_info() {
-  has_fixed_file_info_ = false;
+  fixed_file_info_.reset(nullptr);
 }
 
 void ResourceVersion::string_file_info(const ResourceStringFileInfo& string_file_info) {
-  string_file_info_ = string_file_info;
-  has_string_file_info_ = true;
+  string_file_info_ = std::make_unique<ResourceStringFileInfo>(string_file_info);
 }
 
 void ResourceVersion::remove_string_file_info() {
-  has_string_file_info_ = false;
+  string_file_info_.reset(nullptr);
 }
 
 void ResourceVersion::var_file_info(const ResourceVarFileInfo& var_file_info) {
-  var_file_info_ = var_file_info;
-  has_var_file_info_ = true;
+  var_file_info_ = std::make_unique<ResourceVarFileInfo>(var_file_info);
 }
 
 void ResourceVersion::remove_var_file_info() {
-  has_var_file_info_ = false;
+  var_file_info_.reset(nullptr);
 }
-
 
 void ResourceVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -139,6 +158,9 @@ void ResourceVersion::accept(Visitor& visitor) const {
 
 
 bool ResourceVersion::operator==(const ResourceVersion& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

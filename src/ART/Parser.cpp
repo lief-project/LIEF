@@ -18,11 +18,12 @@
 
 #include "logging.hpp"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
-#include "LIEF/ART/Structures.hpp"
+#include "LIEF/ART/File.hpp"
 
-#include "filesystem/filesystem.h"
+#include "ART/Structures.hpp"
 
 #include "Header.tcc"
 #include "Parser.tcc"
@@ -34,71 +35,72 @@ Parser::~Parser() = default;
 Parser::Parser()  = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
+  if (!is_art(filename)) {
+    LIEF_ERR("'{}' is not an ART file", filename);
+    return nullptr;
+  }
+
+  const art_version_t version = ART::version(filename);
   Parser parser{filename};
-  return std::unique_ptr<File>{parser.file_};
+  parser.init(filename, version);
+  return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
-  Parser parser{data, name};
-  return std::unique_ptr<File>{parser.file_};
-}
-
-
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(data)}
-{
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
   if (!is_art(data)) {
     LIEF_ERR("'{}' is not an ART file", name);
-    delete file_;
-    file_ = nullptr;
-    return;
+    return nullptr;
   }
 
   art_version_t version = ART::version(data);
-  init(name, version);
+  Parser parser{std::move(data)};
+  parser.init(name, version);
+  return std::move(parser.file_);
+}
+
+
+Parser::Parser(std::vector<uint8_t> data) :
+  file_{new File{}},
+  stream_{std::make_unique<VectorStream>(std::move(data))}
+{
 }
 
 Parser::Parser(const std::string& file) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(file)}
+  file_{new File{}}
 {
-  if (!is_art(file)) {
-    LIEF_ERR("'{}' is not an ART file", file);
-    delete file_;
-    file_ = nullptr;
+  auto stream = VectorStream::from_file(file);
+  if (!stream) {
+    LIEF_ERR("Can't create the stream");
     return;
   }
-
-  art_version_t version = ART::version(file);
-  init(filesystem::path(file).filename(), version);
+  stream_ = std::make_unique<VectorStream>(std::move(*stream));
 }
 
 
 void Parser::init(const std::string& /*name*/, art_version_t version) {
 
-  if (version <= ART_17::art_version) {
-    return parse_file<ART17>();
+  if (version <= details::ART_17::art_version) {
+    return parse_file<details::ART17>();
   }
 
-  if (version <= ART_29::art_version) {
-    return parse_file<ART29>();
+  if (version <= details::ART_29::art_version) {
+    return parse_file<details::ART29>();
   }
 
-  if (version <= ART_30::art_version) {
-    return parse_file<ART30>();
+  if (version <= details::ART_30::art_version) {
+    return parse_file<details::ART30>();
   }
 
-  if (version <= ART_44::art_version) {
-    return parse_file<ART44>();
+  if (version <= details::ART_44::art_version) {
+    return parse_file<details::ART44>();
   }
 
-  if (version <= ART_46::art_version) {
-    return parse_file<ART46>();
+  if (version <= details::ART_46::art_version) {
+    return parse_file<details::ART46>();
   }
 
-  if (version <= ART_56::art_version) {
-    return parse_file<ART56>();
+  if (version <= details::ART_56::art_version) {
+    return parse_file<details::ART56>();
   }
 }
 

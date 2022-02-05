@@ -28,6 +28,7 @@
 namespace LIEF {
 namespace MachO {
 class Builder;
+class BinaryParser;
 
 namespace details {
 struct load_command;
@@ -36,6 +37,7 @@ struct load_command;
 //! Based class for the Mach-O load commands
 class LIEF_API LoadCommand : public Object {
   friend class Builder;
+  friend class BinaryParser;
   public:
   using raw_t = std::vector<uint8_t>;
 

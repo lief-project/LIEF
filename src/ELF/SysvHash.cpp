@@ -27,6 +27,8 @@ SysvHash& SysvHash::operator=(const SysvHash&) = default;
 SysvHash::SysvHash(const SysvHash&)            = default;
 SysvHash::~SysvHash()                          = default;
 SysvHash::SysvHash()                           = default;
+SysvHash& SysvHash::operator=(SysvHash&&)      = default;
+SysvHash::SysvHash(SysvHash&&)                 = default;
 
 
 uint32_t SysvHash::nbucket() const {
@@ -46,6 +48,9 @@ const std::vector<uint32_t>& SysvHash::chains() const {
 }
 
 bool SysvHash::operator==(const SysvHash& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

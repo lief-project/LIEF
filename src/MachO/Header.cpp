@@ -27,6 +27,7 @@
 
 #include "LIEF/MachO/Header.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -120,19 +121,20 @@ uint32_t Header::reserved() const {
 }
 
 std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const {
-  if (arch_macho_to_lief.count(cpu_type()) != 0) {
-    return arch_macho_to_lief.at(cpu_type());
-  } else {
+  auto it = arch_macho_to_lief.find(cpu_type());
+  if (it == std::end(arch_macho_to_lief)) {
     return {ARCHITECTURES::ARCH_NONE, {}};
   }
+  return it->second;
 }
 
 
 OBJECT_TYPES Header::abstract_object_type() const {
-  if (obj_macho_to_lief.count(file_type()) != 0) {
-    return obj_macho_to_lief.at(file_type());
+  auto it = obj_macho_to_lief.find(file_type());
+  if (it == std::end(obj_macho_to_lief)) {
+    return OBJECT_TYPES::TYPE_NONE;
   }
-  return OBJECT_TYPES::TYPE_NONE;
+  return it->second;
 }
 
 ENDIANNESS Header::abstract_endianness() const {
@@ -142,7 +144,8 @@ ENDIANNESS Header::abstract_endianness() const {
   };
   if (magic() == MACHO_TYPES::MH_CIGAM ||
       magic() == MACHO_TYPES::MH_CIGAM_64 ||
-      magic() == MACHO_TYPES::FAT_CIGAM) {
+      magic() == MACHO_TYPES::FAT_CIGAM)
+  {
     return not_endianness(e);
   }
   return e;
@@ -152,11 +155,9 @@ ENDIANNESS Header::abstract_endianness() const {
 Header::flags_list_t Header::flags_list() const {
   Header::flags_list_t flags;
 
-  std::copy_if(
-      std::begin(header_flags_array),
-      std::end(header_flags_array),
-      std::inserter(flags, std::begin(flags)),
-      [this] (HEADER_FLAGS f) { return has(f); });
+  std::copy_if(std::begin(header_flags_array), std::end(header_flags_array),
+               std::inserter(flags, std::begin(flags)),
+               [this] (HEADER_FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -213,6 +214,9 @@ void Header::accept(Visitor& visitor) const {
 }
 
 bool Header::operator==(const Header& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -239,8 +243,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   const auto& flags = hdr.flags_list();
 
  std::string flags_str = std::accumulate(
-     std::begin(flags),
-     std::end(flags), std::string{},
+     std::begin(flags), std::end(flags), std::string{},
      [] (const std::string& a, HEADER_FLAGS b) {
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });

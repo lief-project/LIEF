@@ -44,9 +44,7 @@
 
 namespace LIEF {
 Parser::~Parser() = default;
-Parser::Parser() :
-  binary_size_{0}
-{}
+Parser::Parser() = default;
 
 std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
@@ -72,13 +70,11 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(filename)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* fat = MachO::Parser::parse(filename).release();
-    MachO::Binary* binary_return = nullptr;
+    std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(filename);
     if (fat != nullptr) {
-      binary_return = fat->pop_back();
-      delete fat;
+      return fat->pop_back();
     }
-    return std::unique_ptr<Binary>{binary_return};
+    return nullptr;
   }
 #endif
 
@@ -111,14 +107,11 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(raw)) {
     // For fat binary we take the last one...
-    MachO::FatBinary* fat = MachO::Parser::parse(raw, name).release();
-    MachO::Binary* binary_return = nullptr;
-
+    std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(raw, name);
     if (fat != nullptr) {
-      binary_return = fat->pop_back();
-      delete fat;
+      return fat->pop_back();
     }
-    return std::unique_ptr<Binary>{binary_return};
+    return nullptr;
   }
 #endif
 
@@ -128,19 +121,18 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
 }
 
 Parser::Parser(const std::string& filename) :
-  binary_size_{0},
   binary_name_{filename}
 {
   std::ifstream file(filename, std::ios::in | std::ios::binary);
 
-  if (file) {
-    file.unsetf(std::ios::skipws);
-    file.seekg(0, std::ios::end);
-    binary_size_ = static_cast<uint64_t>(file.tellg());
-    file.seekg(0, std::ios::beg);
-  } else {
-    throw LIEF::bad_file("Unable to open " + filename);
+  if (!file) {
+    LIEF_ERR("Can't open '{}'", filename);
+    return;
   }
+  file.unsetf(std::ios::skipws);
+  file.seekg(0, std::ios::end);
+  binary_size_ = static_cast<uint64_t>(file.tellg());
+  file.seekg(0, std::ios::beg);
 }
 
 }

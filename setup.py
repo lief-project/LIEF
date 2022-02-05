@@ -114,7 +114,7 @@ class BuildLibrary(build_ext):
             log.info("LIEF tests enabled!")
         fullname = self.get_ext_fullname(ext.name)
         jobs = self.parallel if self.parallel else 1
-        cmake_args = ["-DLIEF_FORCE_API_EXPORTS=ON"]
+        cmake_args = ["-DLIEF_FORCE_API_EXPORTS=ON", "-DLIEF_PYTHON_API=on"]
         build_temp                     = self.build_temp
         cmake_library_output_directory = os.path.abspath(os.path.dirname(build_temp))
         cfg                            = 'RelWithDebInfo' if self.debug else 'Release'

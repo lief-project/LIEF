@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "pyOAT.hpp"
-#include "LIEF/OAT/Structures.hpp"
 #include "LIEF/OAT/enums.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 

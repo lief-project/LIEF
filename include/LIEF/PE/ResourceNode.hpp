@@ -17,11 +17,12 @@
 #define LIEF_PE_RESOURCE_NODE_H_
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/PE/type_traits.hpp"
 #include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
@@ -40,6 +41,9 @@ class LIEF_API ResourceNode : public Object {
   friend class Builder;
 
   public:
+  using childs_t        = std::vector<std::unique_ptr<ResourceNode>>;
+  using it_childs       = ref_iterator<childs_t&, ResourceNode*>;
+  using it_const_childs = const_ref_iterator<const childs_t&, ResourceNode*>;
 
   //! Enum that identifies the type of a node in
   //! the resource tree
@@ -50,6 +54,11 @@ class LIEF_API ResourceNode : public Object {
   };
 
   ResourceNode(const ResourceNode& other);
+  ResourceNode& operator=(const ResourceNode& other);
+
+  ResourceNode(ResourceNode&& other);
+  ResourceNode& operator=(ResourceNode&& other);
+
   void swap(ResourceNode& other);
 
   virtual ~ResourceNode();

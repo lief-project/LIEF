@@ -189,7 +189,7 @@ void Hash::visit(const Relocation& relocation) {
   process(relocation.origin());
 
   if (relocation.has_symbol()) {
-    process(relocation.symbol().name());
+    process(relocation.symbol()->name());
   }
 }
 
@@ -216,11 +216,11 @@ void Hash::visit(const BindingInfo& binding) {
   process(binding.address());
 
   if (binding.has_symbol()) {
-    process(binding.symbol().name());
+    process(binding.symbol()->name());
   }
 
   if (binding.has_library()) {
-    process(binding.library());
+    process(*binding.library());
   }
 }
 
@@ -230,7 +230,7 @@ void Hash::visit(const ExportInfo& einfo) {
   process(einfo.address());
 
   if (einfo.has_symbol()) {
-    process(einfo.symbol().name());
+    process(einfo.symbol()->name());
   }
 }
 

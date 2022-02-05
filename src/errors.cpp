@@ -33,6 +33,9 @@ const std::error_category& lief_error_category() {
         case lief_errors::asn1_bad_tag:      return "asn1_bad_tag";
         case lief_errors::file_error:        return "file_error";
         case lief_errors::file_format_error: return "file_format_error";
+        case lief_errors::parsing_error:     return "parsing_error";
+        case lief_errors::build_error:       return "build_error";
+        case lief_errors::data_too_large:    return "data_too_large";
         default: return "error";
       }
     }

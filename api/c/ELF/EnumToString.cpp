@@ -16,9 +16,8 @@
 #include "LIEF/ELF/EnumToString.h"
 #include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
-#include "LIEF/ELF/structures.h"
-
+#include "LIEF/ELF/enums.h"
+#include "LIEF/ELF/enums.hpp"
 
 extern "C"
 {

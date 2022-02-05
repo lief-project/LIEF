@@ -94,8 +94,8 @@ void JsonVisitor::visit(const Class& cls) {
   node_["fields"]           = fields;
   node_["methods"]          = methods;
 
-  if (cls.has_parent()) {
-    node_["parent"] = cls.parent().fullname();
+  if (const auto* parent = cls.parent()) {
+    node_["parent"] = parent->fullname();
   }
 }
 
@@ -106,11 +106,11 @@ void JsonVisitor::visit(const Field& field) {
   }
 
   JsonVisitor type_visitor;
-  type_visitor(field.type());
+  type_visitor(*field.type());
 
   node_["name"]         = field.name();
   node_["index"]        = field.index();
-  node_["is_static"]   = field.is_static();
+  node_["is_static"]    = field.is_static();
   node_["type"]         = type_visitor.get();
   node_["access_flags"] = flags;
 }
@@ -122,7 +122,9 @@ void JsonVisitor::visit(const Method& method) {
   }
 
   JsonVisitor proto_visitor;
-  proto_visitor(method.prototype());
+  if (const Prototype* p = method.prototype()) {
+    proto_visitor(*p);
+  }
 
   node_["name"]         = method.name();
   node_["code_offset"]  = method.code_offset();
@@ -171,7 +173,9 @@ void JsonVisitor::visit(const Type& type) {
 
 void JsonVisitor::visit(const Prototype& type) {
   JsonVisitor rtype_visitor;
-  rtype_visitor(type.return_type());
+  if (const Type* rty = type.return_type()) {
+    rtype_visitor(*rty);
+  }
 
   std::vector<json> params;
   for (const Type& t : type.parameters_type()) {

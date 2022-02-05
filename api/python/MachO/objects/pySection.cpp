@@ -18,8 +18,11 @@
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 
 #include "pyMachO.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -37,8 +40,12 @@ using no_const_getter = T (Section::*)(void);
 template<>
 void create<Section>(py::module& m) {
 
-  py::class_<Section, LIEF::Section>(m, "Section",
-      "Class that represents a Mach-O section")
+  py::class_<Section, LIEF::Section> sec(m, "Section",
+      "Class that represents a Mach-O section");
+
+  init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
+
+  sec
     .def(py::init<>())
 
     .def(py::init<const std::string&>(),
@@ -78,7 +85,7 @@ void create<Section>(py::module& m) {
         )delim")
 
     .def_property_readonly("relocations",
-        static_cast<no_const_getter<it_relocations>>(&Section::relocations),
+        static_cast<no_const_getter<Section::it_relocations>>(&Section::relocations),
         "Iterator over the " RST_CLASS_REF(lief.MachO.Relocation) " (if any)",
         py::return_value_policy::reference_internal)
 
@@ -107,8 +114,8 @@ void create<Section>(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def_property_readonly("segment",
-        static_cast<SegmentCommand& (Section::*)(void)>(&Section::segment),
-        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the section",
+        static_cast<SegmentCommand* (Section::*)(void)>(&Section::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the section or None if not present",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_segment",

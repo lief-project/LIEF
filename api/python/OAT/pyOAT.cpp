@@ -21,13 +21,10 @@ namespace OAT {
 void init_python_module(py::module& m) {
   py::module LIEF_OAT_module = m.def_submodule("OAT", "Python API for OAT format");
 
-  init_opaque_types(LIEF_OAT_module);
   init_enums(LIEF_OAT_module);
-  init_iterators(LIEF_OAT_module);
   init_utils(LIEF_OAT_module);
 
   init_objects(LIEF_OAT_module);
-
 }
 
 

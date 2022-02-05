@@ -20,9 +20,7 @@
 
 #include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
-#include "LIEF/VDEX/Structures.hpp"
-
-#include "filesystem/filesystem.h"
+#include "VDEX/Structures.hpp"
 
 #include "Header.tcc"
 #include "Parser.tcc"
@@ -60,8 +58,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
 }
 
 Parser::Parser(const std::string& file) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(file)}
+  file_{new File{}}
 {
   if (!is_vdex(file)) {
     LIEF_ERR("{} is not a VDEX file!", file);
@@ -70,24 +67,28 @@ Parser::Parser(const std::string& file) :
     return;
   }
 
+  if (auto s = VectorStream::from_file(file)) {
+    stream_ = std::make_unique<VectorStream>(std::move(*s));
+  }
+
   vdex_version_t version = VDEX::version(file);
-  init(filesystem::path(file).filename(), version);
+  init(file, version);
 }
 
 
 void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   LIEF_DEBUG("VDEX version: {:d}", version);
 
-  if (version <= VDEX_6::vdex_version) {
-    return parse_file<VDEX6>();
+  if (version <= details::VDEX_6::vdex_version) {
+    return parse_file<details::VDEX6>();
   }
 
-  if (version <= VDEX_10::vdex_version) {
-    return parse_file<VDEX10>();
+  if (version <= details::VDEX_10::vdex_version) {
+    return parse_file<details::VDEX10>();
   }
 
-  if (version <= VDEX_11::vdex_version) {
-    return parse_file<VDEX11>();
+  if (version <= details::VDEX_11::vdex_version) {
+    return parse_file<details::VDEX11>();
   }
 }
 

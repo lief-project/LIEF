@@ -17,8 +17,7 @@
 #ifndef LIEF_DEX_HEADER_H_
 #define LIEF_DEX_HEADER_H_
 
-#include "LIEF/DEX/type_traits.hpp"
-#include "LIEF/DEX/Structures.hpp"
+#include "LIEF/DEX/types.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -37,12 +36,16 @@ class LIEF_API Header : public Object {
 
   public:
   using location_t = std::pair<uint32_t, uint32_t>;
+
+  using magic_t     = std::array<uint8_t, 8>;
+  using signature_t = std::array<uint8_t, 20>;
+
   Header();
   Header(const Header&);
   Header& operator=(const Header&);
 
   template<class T>
-  LIEF_LOCAL Header(const T* header);
+  LIEF_LOCAL Header(const T& header);
 
   //! The DEX magic bytes (``DEX\n`` followed by the DEX version)
   magic_t magic() const;

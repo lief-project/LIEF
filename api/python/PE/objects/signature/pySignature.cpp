@@ -25,6 +25,7 @@
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -81,13 +82,27 @@ void create<Signature>(py::module& m) {
     See :meth:`lief.PE.Signature.check` and :meth:`lief.PE.Binary.verify_signature`
     )delim")
     .value("DEFAULT", Signature::VERIFICATION_CHECKS::DEFAULT,
-        "Default behavior that tries to follow the Microsoft verification process as close as possible")
+           "Default behavior that tries to follow the Microsoft verification process as close as possible")
+
     .value("HASH_ONLY", Signature::VERIFICATION_CHECKS::HASH_ONLY,
-        "Only check that :meth:`lief.PE.Binary.authentihash` matches :attr:`lief.PE.ContentInfo.digest` regardless of the signature's validity")
+           R"delim(
+           Only check that :meth:`lief.PE.Binary.authentihash` matches :attr:`lief.PE.ContentInfo.digest`
+           regardless of the signature's validity
+           )delim")
+
     .value("LIFETIME_SIGNING", Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING,
-        "Same semantic as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`")
+           R"delim(
+           Same semantic as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`_
+           )delim")
+
     .value("SKIP_CERT_TIME", Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME,
-        "Skip the verification of the certificates time validities so that even though a certificate expired, it returns :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`");
+           R"delim(
+           Skip the verification of the certificates time validities so that even though
+           a certificate expired, it returns :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`
+           )delim");
+
+  init_ref_iterator<Signature::it_const_crt>(signature, "it_const_crt");
+  init_ref_iterator<Signature::it_const_signers_t>(signature, "it_const_signers_t");
 
   signature
     .def_static("parse",

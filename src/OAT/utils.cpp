@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 #include <string>
+#include "OAT/Structures.hpp"
 #include "LIEF/OAT/utils.hpp"
-#include "LIEF/OAT/Structures.hpp"
-
-#include "LIEF/ELF.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 
 namespace LIEF {
@@ -59,7 +61,7 @@ bool is_oat(const std::vector<uint8_t>& raw) {
 }
 
 bool is_oat(const ELF::Binary& elf_binary) {
-  LIEF::ELF::it_const_symbols dynamic_symbols = elf_binary.dynamic_symbols();
+  ELF::Binary::it_const_dynamic_symbols dynamic_symbols = elf_binary.dynamic_symbols();
 
   const auto it_oatdata_symbol = std::find_if(std::begin(dynamic_symbols), std::end(dynamic_symbols),
       [] (const LIEF::ELF::Symbol& sym) {
@@ -70,9 +72,9 @@ bool is_oat(const ELF::Binary& elf_binary) {
     return false;
   }
 
-  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(it_oatdata_symbol->value(), sizeof(oat_magic));
-  return std::equal(header.data(), header.data() + sizeof(oat_magic),
-                    std::begin(oat_magic));
+  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(it_oatdata_symbol->value(), sizeof(details::oat_magic));
+  return std::equal(header.data(), header.data() + sizeof(details::oat_magic),
+                    std::begin(details::oat_magic));
 }
 
 oat_version_t version(const std::string& file) {
@@ -116,9 +118,12 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
 
 oat_version_t version(const LIEF::ELF::Binary& elf_binary) {
 
-  const auto& oatdata_symbol = reinterpret_cast<const LIEF::ELF::Symbol&>(elf_binary.get_symbol("oatdata"));
+  const Symbol* oatdata_symbol = elf_binary.get_symbol("oatdata");
+  if (oatdata_symbol == nullptr) {
+    return 0;
+  }
 
-  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(oatdata_symbol.value() + sizeof(oat_magic), sizeof(oat_version));
+  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(oatdata_symbol->value() + sizeof(details::oat_magic), sizeof(details::oat_version));
 
   uint32_t version = std::stoul(std::string(reinterpret_cast<const char*>(header.data()), 3));
 

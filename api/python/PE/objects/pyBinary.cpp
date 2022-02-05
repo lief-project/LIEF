@@ -19,6 +19,7 @@
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -39,15 +40,24 @@ using setter_t = void (Binary::*)(T);
 template<>
 void create<Binary>(py::module& m) {
 
-  py::class_<Binary, LIEF::Binary>(m, "Binary",
+  py::class_<Binary, LIEF::Binary> bin(m, "Binary",
       R"delim(
       Class which represents a PE binary
       This is the main interface to manage and modify a PE executable
-      )delim")
+      )delim");
+
+  init_ref_iterator<Binary::it_sections>(bin, "it_section");
+  init_ref_iterator<Binary::it_data_directories>(bin, "it_data_directories");
+  init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
+  init_ref_iterator<Binary::it_imports>(bin, "it_imports");
+  init_ref_iterator<Binary::it_symbols>(bin, "it_symbols");
+  init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
+
+  bin
     .def(py::init<const std::string&, PE_TYPE>())
 
     .def_property_readonly("sections",
-        static_cast<no_const_getter<it_sections>>(&Binary::sections),
+        static_cast<no_const_getter<Binary::it_sections>>(&Binary::sections),
         "Return binary's an iterator over the PE's " RST_CLASS_REF(lief.PE.Section) "",
         py::return_value_policy::reference)
 
@@ -97,14 +107,20 @@ void create<Binary>(py::module& m) {
         )delim")
 
     .def("section_from_offset",
-        static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_offset),
-        "Return the " RST_CLASS_REF(lief.PE.Section) " which encompasses the provided offset",
+        static_cast<Section* (Binary::*)(uint64_t)>(&Binary::section_from_offset),
+        R"delim(
+        Return the :class:`~lief.PE.Section` which encompasses the provided offset.
+        It returns None if a section can't be found.
+        )delim",
         "offset"_a,
         py::return_value_policy::reference)
 
     .def("section_from_rva",
-        static_cast<Section& (Binary::*)(uint64_t)>(&Binary::section_from_rva),
-        "Return the " RST_CLASS_REF(lief.PE.Section) " which encompasses the provided **relative** virtual address",
+        static_cast<Section* (Binary::*)(uint64_t)>(&Binary::section_from_rva),
+        R"delim(
+        Return the :class:`~lief.PE.Section` which encompasses the provided **relative** virtual address.
+        If a section can't be found, it returns None.
+        )delim",
         "rva"_a,
         py::return_value_policy::reference)
 
@@ -167,7 +183,7 @@ void create<Binary>(py::module& m) {
         "library"_a, "function"_a)
 
     .def_property_readonly("signatures",
-        static_cast<it_const_signatures (Binary::*)(void) const>(&Binary::signatures),
+        static_cast<Binary::it_const_signatures (Binary::*)(void) const>(&Binary::signatures),
         "Return an iterator over the " RST_CLASS_REF(lief.PE.Signature) " objects",
         py::return_value_policy::reference)
 
@@ -238,13 +254,13 @@ void create<Binary>(py::module& m) {
         "Authentihash **SHA-512** value")
 
     .def_property_readonly("debug",
-        static_cast<debug_entries_t& (Binary::*)(void)>(&Binary::debug),
+        static_cast<Binary::debug_entries_t& (Binary::*)(void)>(&Binary::debug),
         "Return the " RST_CLASS_REF(lief.PE.Debug) "",
         py::return_value_policy::reference)
 
     .def_property_readonly("load_configuration",
-        static_cast<LoadConfiguration& (Binary::*)(void)>(&Binary::load_configuration),
-        "Return the " RST_CLASS_REF(lief.PE.LoadConfiguration) " object",
+        static_cast<LoadConfiguration* (Binary::*)(void)>(&Binary::load_configuration),
+        "Return the " RST_CLASS_REF(lief.PE.LoadConfiguration) " object or None if not present",
         py::return_value_policy::reference)
 
     .def("get_export",
@@ -258,8 +274,8 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("get_section",
-        static_cast<no_const_func<Section&, const std::string&>>(&Binary::get_section),
-        "Return the " RST_CLASS_REF(lief.PE.Section) " object from the given name",
+        static_cast<no_const_func<Section*, const std::string&>>(&Binary::get_section),
+        "Return the " RST_CLASS_REF(lief.PE.Section) " object from the given name or None if not not found",
         "section_name"_a,
         py::return_value_policy::reference)
 
@@ -270,7 +286,7 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("relocations",
-        static_cast<no_const_getter<it_relocations>>(&Binary::relocations),
+        static_cast<no_const_getter<Binary::it_relocations>>(&Binary::relocations),
         "Return an iterator over the " RST_CLASS_REF(lief.PE.Relocation) "",
         py::return_value_policy::reference)
 
@@ -287,7 +303,7 @@ void create<Binary>(py::module& m) {
         "section"_a, "clear"_a = false)
 
     .def_property_readonly("data_directories",
-        static_cast<no_const_getter<it_data_directories>>(&Binary::data_directories),
+        static_cast<no_const_getter<Binary::it_data_directories>>(&Binary::data_directories),
         "Return an iterator over the " RST_CLASS_REF(lief.PE.DataDirectory) "",
         py::return_value_policy::reference)
 
@@ -298,7 +314,7 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("imports",
-        static_cast<no_const_getter<it_imports>>(&Binary::imports),
+        static_cast<no_const_getter<Binary::it_imports>>(&Binary::imports),
         "Return an iterator over the " RST_CLASS_REF(lief.PE.Import) " libraries",
         py::return_value_policy::reference)
 
@@ -308,8 +324,8 @@ void create<Binary>(py::module& m) {
         "import_name"_a)
 
     .def("get_import",
-        static_cast<no_const_func<Import&, const std::string&>>(&Binary::get_import),
-        "Returns the " RST_CLASS_REF(lief.PE.Import) " from the given name",
+        static_cast<no_const_func<Import*, const std::string&>>(&Binary::get_import),
+        "Return the " RST_CLASS_REF(lief.PE.Import) " from the given name or None if not not found",
         "import_name"_a,
         py::return_value_policy::reference)
 
@@ -318,8 +334,8 @@ void create<Binary>(py::module& m) {
         "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources")
 
     .def_property_readonly("resources",
-        static_cast<no_const_getter<ResourceNode&>>(&Binary::resources),
-        "Return the " RST_CLASS_REF(lief.PE.ResourceNode) " tree",
+        static_cast<no_const_getter<ResourceNode*>>(&Binary::resources),
+        "Return the " RST_CLASS_REF(lief.PE.ResourceNode) " tree or None if not not present",
         py::return_value_policy::reference)
 
     .def_property_readonly("overlay",

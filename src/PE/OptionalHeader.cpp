@@ -21,9 +21,9 @@
 #include "logging.hpp"
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 
 namespace LIEF {
@@ -177,12 +177,11 @@ uint32_t OptionalHeader::baseof_code() const {
 
 
 uint32_t OptionalHeader::baseof_data() const {
-  if (magic() == PE_TYPE::PE32) {
-    return baseOfData_;
-  } else {
-    LIEF_WARN("This OptionalHeader::baseof_data is not present for PE32+ binaries");
+  if (magic() == PE_TYPE::PE32_PLUS) {
+    LIEF_ERR("baseof_data is not present in PE64 binaries");
     return 0;
   }
+  return baseOfData_;
 }
 
 
@@ -306,8 +305,7 @@ void OptionalHeader::remove(DLL_CHARACTERISTICS c) {
 std::set<DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list() const {
   std::set<DLL_CHARACTERISTICS> dll_charac;
   std::copy_if(
-      std::begin(details::dll_characteristics_array),
-      std::end(details::dll_characteristics_array),
+      std::begin(details::dll_characteristics_array), std::end(details::dll_characteristics_array),
       std::inserter(dll_charac, std::begin(dll_charac)),
       [this] (DLL_CHARACTERISTICS f) { return has(f); });
 
@@ -357,12 +355,11 @@ void OptionalHeader::baseof_code(uint32_t baseOfCode) {
 
 
 void OptionalHeader::baseof_data(uint32_t baseOfData) {
-  if (magic() == PE_TYPE::PE32) {
-    baseOfData_ = baseOfData;
-  } else {
-    throw LIEF::bad_format("There isn't this attribute in PE32+");
+  if (magic() == PE_TYPE::PE32_PLUS) {
+    LIEF_ERR("baseof_data is not present in PE64 binaries");
+    return;
   }
-
+  baseOfData_ = baseOfData;
 }
 
 
@@ -486,6 +483,9 @@ OptionalHeader& OptionalHeader::operator-=(DLL_CHARACTERISTICS c) {
 }
 
 bool OptionalHeader::operator==(const OptionalHeader& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

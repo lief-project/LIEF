@@ -22,6 +22,7 @@
 
 
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
@@ -50,13 +51,20 @@ class x509;
  * ```
  */
 class LIEF_API SignerInfo : public Object {
-
   friend class Parser;
   friend class SignatureParser;
   friend class Signature;
 
   public:
   using encrypted_digest_t = std::vector<uint8_t>;
+
+  //! Internal container used to store both
+  //! authenticated and unauthenticated attributes
+  using attributes_t = std::vector<std::unique_ptr<Attribute>>;
+
+  //! Iterator which outputs const Attribute&
+  using it_const_attributes_t = const_ref_iterator<const attributes_t&, const Attribute*>;
+
   SignerInfo();
 
   SignerInfo(const SignerInfo& other);
@@ -157,8 +165,8 @@ class LIEF_API SignerInfo : public Object {
 
   std::vector<uint8_t> raw_auth_data_;
 
-  std::vector<std::unique_ptr<Attribute>> authenticated_attributes_;
-  std::vector<std::unique_ptr<Attribute>> unauthenticated_attributes_;
+  attributes_t authenticated_attributes_;
+  attributes_t unauthenticated_attributes_;
 
   std::unique_ptr<x509> cert_;
 };

@@ -23,8 +23,9 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/ELF/type_traits.hpp"
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
@@ -50,15 +51,24 @@ class LIEF_API Segment : public Object {
   friend class Binary;
 
   public:
+  using sections_t        = std::vector<Section*>;
+  using it_sections       = ref_iterator<sections_t&>;
+  using it_const_sections = const_ref_iterator<const sections_t&>;
+
+  static result<Segment> from_raw(const uint8_t* ptr, size_t size);
+  static result<Segment> from_raw(const std::vector<uint8_t>& raw);
+
   Segment();
-  Segment(const std::vector<uint8_t>& header, ELF_CLASS type);
-  Segment(const std::vector<uint8_t>& header);
   Segment(const details::Elf64_Phdr& header);
   Segment(const details::Elf32_Phdr& header);
-  virtual ~Segment();
+  ~Segment() override;
 
   Segment& operator=(Segment other);
   Segment(const Segment& other);
+
+  Segment& operator=(Segment&&);
+  Segment(Segment&&);
+
   void swap(Segment& other);
 
   //! The segment's type (LOAD, DYNAMIC, ...)
@@ -140,16 +150,16 @@ class LIEF_API Segment : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 
   private:
-  SEGMENT_TYPES         type_;
-  ELF_SEGMENT_FLAGS     flags_;
-  uint64_t              file_offset_;
-  uint64_t              virtual_address_;
-  uint64_t              physical_address_;
-  uint64_t              size_;
-  uint64_t              virtual_size_;
-  uint64_t              alignment_;
+  SEGMENT_TYPES         type_ = SEGMENT_TYPES::PT_NULL;
+  ELF_SEGMENT_FLAGS     flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
+  uint64_t              file_offset_ = 0;
+  uint64_t              virtual_address_ = 0;
+  uint64_t              physical_address_ = 0;
+  uint64_t              size_ = 0;
+  uint64_t              virtual_size_ = 0;
+  uint64_t              alignment_ = 0;
   sections_t            sections_;
-  DataHandler::Handler* datahandler_{nullptr};
+  DataHandler::Handler* datahandler_ = nullptr;
   std::vector<uint8_t>  content_c_;
 };
 

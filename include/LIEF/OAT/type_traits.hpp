@@ -13,39 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_OAT_TYPE_TRAITS_H_
-#define LIEF_OAT_TYPE_TRAITS_H_
-
-#include <vector>
-#include <unordered_map>
-#include <map>
-#include "LIEF/DEX.hpp"
-
-#include "LIEF/iterators.hpp"
+#ifndef LIEF_OAT_TYPES_H_
+#define LIEF_OAT_TYPES_H_
+#include <cstdint>
 
 
 namespace LIEF {
 namespace OAT {
-class DexFile;
-class Class;
-class Method;
 
 using oat_version_t = uint32_t;
-
-using dex_files_t        = std::vector<DexFile*>;
-using it_dex_files       = ref_iterator<dex_files_t>;
-using it_const_dex_files = const_ref_iterator<const dex_files_t>;
-
-using classes_t         = std::unordered_map<std::string, Class*>;
-using classes_list_t    = std::vector<Class*>;
-using it_classes        = ref_iterator<classes_list_t>;
-using it_const_classes  = const_ref_iterator<const classes_list_t>;
-
-using methods_t         = std::vector<Method*>;
-using it_methods        = ref_iterator<methods_t>;
-using it_const_methods  = const_ref_iterator<const methods_t>;
-
-using dex2dex_info_t    = std::map<DEX::File*, DEX::dex2dex_info_t>;
 
 
 }

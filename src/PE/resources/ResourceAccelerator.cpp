@@ -18,6 +18,7 @@
 #include "LIEF/exception.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "PE/Structures.hpp"
 
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
@@ -45,6 +46,9 @@ void ResourceAccelerator::accept(Visitor& visitor) const {
 }
 
 bool ResourceAccelerator::operator==(const ResourceAccelerator& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   const auto hash_lhs = Hash::hash(*this);
   const auto hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

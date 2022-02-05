@@ -1,4 +1,4 @@
-/* Copyright 2017 - 2021 R. Thomas
+ /* Copyright 2017 - 2021 R. Thomas
  * Copyright 2017 - 2021 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,33 +18,17 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Section.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
 TLS::~TLS() = default;
+TLS::TLS() = default;
 
-TLS::TLS() :
-  VAOfRawData_{std::make_pair<uint64_t>(0, 0)},
-  addressof_index_{0},
-  addressof_callbacks_{0},
-  sizeof_zero_fill_{0},
-  characteristics_{0}
-{}
-
-TLS::TLS(const TLS& copy) :
-  Object{copy},
-  callbacks_{copy.callbacks_},
-  VAOfRawData_{copy.VAOfRawData_},
-  addressof_index_{copy.addressof_index_},
-  addressof_callbacks_{copy.addressof_callbacks_},
-  sizeof_zero_fill_{copy.sizeof_zero_fill_},
-  characteristics_{copy.characteristics_},
-  data_template_{copy.data_template_}
-{}
+TLS::TLS(const TLS& copy) = default;
 
 TLS& TLS::operator=(TLS copy) {
   swap(copy);
@@ -113,16 +97,12 @@ bool TLS::has_data_directory() const {
   return directory_ != nullptr;
 }
 
-const DataDirectory& TLS::directory() const {
-  if (directory_ != nullptr) {
-    return *(directory_);
-  } else {
-    throw not_found("There is no directory associated with TLS");
-  }
+const DataDirectory* TLS::directory() const {
+  return directory_;
 }
 
-DataDirectory& TLS::directory() {
-  return const_cast<DataDirectory&>(static_cast<const TLS*>(this)->directory());
+DataDirectory* TLS::directory() {
+  return const_cast<DataDirectory*>(static_cast<const TLS*>(this)->directory());
 }
 
 
@@ -131,16 +111,12 @@ bool TLS::has_section() const {
 }
 
 
-const Section& TLS::section() const {
-  if (section_ != nullptr) {
-    return *(section_);
-  } else {
-    throw not_found("There is no section associated with TLS");
-  }
+const Section* TLS::section() const {
+  return section_;
 }
 
-Section& TLS::section() {
-  return const_cast<Section&>(static_cast<const TLS*>(this)->section());
+Section* TLS::section() {
+  return const_cast<Section*>(static_cast<const TLS*>(this)->section());
 }
 
 
@@ -189,6 +165,9 @@ void TLS::accept(LIEF::Visitor& visitor) const {
 }
 
 bool TLS::operator==(const TLS& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -213,7 +192,7 @@ std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   os << std::setw(40) << std::left << std::setfill(' ') << "Size Of Zero Fill: "                    << entry.sizeof_zero_fill()        << std::endl;
 
   if (entry.has_section()) {
-    os << std::setw(40) << std::left << std::setfill(' ') << "Associated section: "                 << entry.section().name() << std::endl;
+    os << std::setw(40) << std::left << std::setfill(' ') << "Associated section: "                 << entry.section()->name() << std::endl;
   }
   return os;
 }

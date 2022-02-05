@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 #include <fstream>
-#include "LIEF/DEX/File.hpp"
 #include "logging.hpp"
+#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/instructions.hpp"
+#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/hash.hpp"
+#include "DEX/Structures.hpp"
 
 #include "visitors/json.hpp"
 
@@ -27,11 +31,11 @@ namespace DEX {
 File::File() :
   name_{"classes.dex"}
 {}
-
+File::~File() = default;
 
 dex_version_t File::version() const {
-  magic_t m = header().magic();
-  const char* version = reinterpret_cast<const char*>(m.data() + sizeof(DEX::magic));
+  Header::magic_t m = header().magic();
+  const auto* version = reinterpret_cast<const char*>(m.data() + sizeof(details::magic));
   return static_cast<dex_version_t>(std::stoul(version));
 }
 
@@ -39,9 +43,8 @@ std::string File::save(const std::string& path, bool deoptimize) const {
   if (path.empty()) {
     if (!name().empty()) {
       return save(name());
-    } else {
-      return save("classes.dex");
     }
+    return save("classes.dex");
   }
 
   if (std::ofstream ifs{path, std::ios::binary | std::ios::trunc}) {
@@ -70,7 +73,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
   std::vector<uint8_t> raw = original_data_;
 
-  for (Method* method : methods_) {
+  for (const std::unique_ptr<Method>& method : methods_) {
     if (method->bytecode().empty()) {
       continue;
     }
@@ -104,7 +107,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_RETURN_VOID_NO_BARRIER:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] return-void-no-barrier -> return-void", dex_pc);
             deoptimize_return(inst_ptr, 0);
             break;
@@ -112,11 +115,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-quick -> iget@0x{:x}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET);
@@ -125,12 +128,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_WIDE_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-wide-quick -> iget-wide@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-wide-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_WIDE);
@@ -139,11 +142,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_OBJECT_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-object-quick -> iget-object@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-object-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_OBJECT);
@@ -152,11 +155,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-quick -> iput@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                  method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT);
@@ -165,11 +168,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_WIDE_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-wide-quick -> iput-wide@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-wide-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_WIDE);
@@ -178,11 +181,11 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_OBJECT_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-object-quick -> iput-objecte@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-object-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_OBJECT);
@@ -191,12 +194,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_INVOKE_VIRTUAL_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] invoke-virtual-quick -> invoke-virtual@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                  method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL);
@@ -205,12 +208,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_INVOKE_VIRTUAL_RANGE_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] invoke-virtual-quick/range -> invoke-virtual/range @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick/range)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL_RANGE);
@@ -219,12 +222,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_BOOLEAN_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-boolean-quick -> iput-boolean@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-boolean-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BOOLEAN);
@@ -233,12 +236,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_BYTE_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-byte-quick -> iput-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-byte-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                  method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BYTE);
@@ -247,12 +250,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_CHAR_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-char-quick -> iput-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-char-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_CHAR);
@@ -261,12 +264,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IPUT_SHORT_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-short-quick -> iput-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-short)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_SHORT);
@@ -275,12 +278,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_BOOLEAN_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-boolean-quick -> iget-boolean @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-boolean-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BOOLEAN);
@@ -289,12 +292,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_BYTE_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-byte-quick -> iget-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-byte-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BYTE);
@@ -303,12 +306,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_CHAR_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-char-quick -> iget-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-char-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_CHAR);
@@ -317,12 +320,12 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
         case OPCODES::OP_IGET_SHORT_QUICK:
           {
-            LIEF_TRACE("{}.{}", method->cls().fullname(), method->name());
+            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-short-quick -> iget-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
               LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-short-quick)",
-                  method->cls().fullname(), method->name(), dex_pc);
+                        method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
             deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_SHORT);
@@ -366,7 +369,6 @@ const std::string& File::location() const {
   return location_;
 }
 
-
 const Header& File::header() const {
   return header_;
 }
@@ -375,58 +377,40 @@ Header& File::header() {
   return const_cast<Header&>(static_cast<const File*>(this)->header());
 }
 
-it_const_classes File::classes() const {
-  classes_list_t classes;
-  classes.reserve(classes_.size());
-
-  std::transform(
-      std::begin(classes_), std::end(classes_),
-      std::back_inserter(classes),
-      [] (const std::pair<std::string, Class*>& it) {
-        return it.second;
-      });
-  return classes;
+File::it_const_classes File::classes() const {
+  return class_list_;
 }
 
-it_classes File::classes() {
-  classes_list_t classes;
-  classes.reserve(classes_.size());
-
-  std::transform(
-      std::begin(classes_), std::end(classes_),
-      std::back_inserter(classes),
-      [] (const std::pair<std::string, Class*>& it) {
-        return it.second;
-      });
-  return classes;
+File::it_classes File::classes() {
+  return class_list_;
 }
 
 bool File::has_class(const std::string& class_name) const {
   return classes_.find(Class::fullname_normalized(class_name)) != std::end(classes_);
 }
 
-const Class& File::get_class(const std::string& class_name) const {
-  if (!has_class(class_name)) {
-    throw not_found(class_name);
+const Class* File::get_class(const std::string& class_name) const {
+  auto it_cls = classes_.find(Class::fullname_normalized(class_name));
+  if (it_cls == std::end(classes_)) {
+    return nullptr;
   }
-  return *(classes_.find(Class::fullname_normalized(class_name))->second);
+  return it_cls->second;
 }
 
-Class& File::get_class(const std::string& class_name) {
-  return const_cast<Class&>(static_cast<const File*>(this)->get_class(class_name));
+Class* File::get_class(const std::string& class_name) {
+  return const_cast<Class*>(static_cast<const File*>(this)->get_class(class_name));
 }
 
 
-const Class& File::get_class(size_t index) const {
+const Class* File::get_class(size_t index) const {
   if (index >= classes_.size()) {
-    throw not_found("Can't find class at index " + std::to_string(index));
+    return nullptr;
   }
-  return *class_list_[index];
-
+  return class_list_[index].get();
 }
 
-Class& File::get_class(size_t index) {
-  return const_cast<Class&>(static_cast<const File*>(this)->get_class(index));
+Class* File::get_class(size_t index) {
+  return const_cast<Class*>(static_cast<const File*>(this)->get_class(index));
 }
 
 
@@ -441,7 +425,7 @@ dex2dex_info_t File::dex2dex_info() const {
   return info;
 }
 
-std::string File::dex2dex_json_info() {
+std::string File::dex2dex_json_info() const {
 
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
@@ -472,45 +456,43 @@ std::string File::dex2dex_json_info() {
 #endif
 }
 
-it_const_methods File::methods() const {
+File::it_const_methods File::methods() const {
   return methods_;
 }
 
-it_methods File::methods() {
+File::it_methods File::methods() {
   return methods_;
 }
 
-it_const_fields File::fields() const {
+File::it_const_fields File::fields() const {
   return fields_;
 }
 
-it_fields File::fields() {
+File::it_fields File::fields() {
   return fields_;
 }
 
-
-it_const_strings File::strings() const {
+File::it_const_strings File::strings() const {
   return strings_;
 }
 
-it_strings File::strings() {
+File::it_strings File::strings() {
   return strings_;
 }
 
-it_const_types File::types() const {
+File::it_const_types File::types() const {
   return types_;
 }
 
-it_types File::types() {
+File::it_types File::types() {
   return types_;
 }
 
-
-it_const_protypes File::prototypes() const {
+File::it_const_prototypes File::prototypes() const {
   return prototypes_;
 }
 
-it_protypes File::prototypes() {
+File::it_prototypes File::prototypes() {
   return prototypes_;
 }
 
@@ -522,7 +504,6 @@ MapList& File::map() {
   return map_;
 }
 
-
 void File::name(const std::string& name) {
   name_ = name;
 }
@@ -531,9 +512,9 @@ void File::location(const std::string& location) {
   location_ = location;
 }
 
-void File::add_class(Class* cls) {
-  classes_.emplace(cls->fullname(), cls);
-  class_list_.push_back(cls);
+void File::add_class(std::unique_ptr<Class> cls) {
+  classes_.emplace(cls->fullname(), cls.get());
+  class_list_.push_back(std::move(cls));
 }
 
 void File::accept(Visitor& visitor) const {
@@ -541,6 +522,9 @@ void File::accept(Visitor& visitor) const {
 }
 
 bool File::operator==(const File& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -573,28 +557,7 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
   return os;
 }
 
-File::~File() {
-  for (const std::pair<const std::string, Class*>& p : classes_) {
-    delete p.second;
-  }
 
-  for (Method* mtd : methods_) {
-    delete mtd;
-  }
-
-  for (std::string* str : strings_) {
-    delete str;
-  }
-
-
-  for (Type* t : types_) {
-    delete t;
-  }
-
-  for (Prototype* pt : prototypes_) {
-    delete pt;
-  }
-}
 
 
 

@@ -39,7 +39,7 @@ void create<Prototype>(py::module& m) {
 
   py::class_<Prototype, LIEF::Object>(m, "Prototype", "DEX Prototype representation")
     .def_property_readonly("return_type",
-        static_cast<no_const_getter_t<Type&>>(&Prototype::return_type),
+        static_cast<no_const_getter_t<Type*>>(&Prototype::return_type),
         "" RST_CLASS_REF(lief.DEX.Type) " returned",
         py::return_value_policy::reference)
 

@@ -23,7 +23,7 @@
 #include "logging.hpp"
 
 #include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/Structures.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {

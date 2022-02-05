@@ -16,7 +16,7 @@
 #include "pyELF.hpp"
 #include "enums_wrapper.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 
 #define PY_ENUM(x) to_string(x), x

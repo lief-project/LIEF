@@ -185,9 +185,10 @@ def print_dynamic_entries(binary):
 
 @exceptions_handler(Exception)
 def print_symbols(symbols, no_trunc):
-    try:
+    can_demangle = len(symbols) > 0 and len(symbols[0].demangled_name) > 0
+    if can_demangle:
         maxsize = max([len(symbol.demangled_name) for symbol in symbols])
-    except:
+    else:
         maxsize = max([len(symbol.name) for symbol in symbols])
 
     SIZE = 70
@@ -208,9 +209,8 @@ def print_symbols(symbols, no_trunc):
         if symbol.exported:
             import_export = "E"
 
-        try:
-            symbol_name = symbol.demangled_name
-        except:
+        symbol_name = symbol.demangled_name
+        if len(symbol_name) == 0:
             symbol_name = symbol.name
 
         wrapped = textwrap.wrap(symbol_name, maxsize)

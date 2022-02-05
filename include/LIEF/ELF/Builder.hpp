@@ -24,6 +24,8 @@
 #include <unordered_map>
 #include <functional>
 
+#include "LIEF/errors.hpp"
+
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
 #include "LIEF/ELF/enums.hpp"
@@ -103,91 +105,88 @@ class LIEF_API Builder {
   };
 
   template<typename ELF_T>
-  void build();
+  ok_error_t build();
 
   template<typename ELF_T>
-  void build_relocatable();
+  ok_error_t build_relocatable();
 
   template<typename ELF_T>
-  void build_exe_lib();
+  ok_error_t build_exe_lib();
 
   template<typename ELF_T>
-  void build(const Header& header);
+  ok_error_t build(const Header& header);
 
   template<typename ELF_T>
-  void build_sections();
+  ok_error_t build_sections();
 
   template<typename ELF_T>
-  void build_segments();
+  ok_error_t build_segments();
 
   template<typename ELF_T>
-  void build_static_symbols();
+  ok_error_t build_static_symbols();
 
   template<typename ELF_T>
-  void build_dynamic();
+  ok_error_t build_dynamic();
 
   template<typename ELF_T>
-  void build_dynamic_section();
+  ok_error_t build_dynamic_section();
 
   template<typename ELF_T>
-  void build_dynamic_symbols();
+  ok_error_t build_dynamic_symbols();
 
   template<typename ELF_T>
-  void build_obj_symbols();
+  ok_error_t build_obj_symbols();
 
   template<typename ELF_T>
-  void build_dynamic_relocations();
+  ok_error_t build_dynamic_relocations();
 
   template<typename ELF_T>
-  void build_pltgot_relocations();
+  ok_error_t build_pltgot_relocations();
 
   template<typename ELF_T>
-  void build_section_relocations();
+  ok_error_t build_section_relocations();
 
   uint32_t sort_dynamic_symbols();
 
   template<typename ELF_T>
-  void build_hash_table();
+  ok_error_t build_hash_table();
 
   template<typename ELF_T>
-  void build_symbol_hash();
+  ok_error_t build_symbol_hash();
 
-  void build_empty_symbol_gnuhash();
-
-  template<typename ELF_T>
-  void build_symbol_requirement();
+  ok_error_t build_empty_symbol_gnuhash();
 
   template<typename ELF_T>
-  void build_symbol_definition();
+  ok_error_t build_symbol_requirement();
+
+  template<typename ELF_T>
+  ok_error_t build_symbol_definition();
 
   template<typename T, typename HANDLER>
   static std::vector<std::string> optimize(const HANDLER& e,
-                                    std::function<std::string(const typename HANDLER::value_type)> getter,
+                                    std::function<std::string(const typename HANDLER::value_type&)> getter,
                                     size_t& offset_counter,
                                     std::unordered_map<std::string, size_t> *of_map_p=nullptr);
   template<typename ELF_T>
-  void build_symbol_version();
+  ok_error_t build_symbol_version();
 
   template<typename ELF_T>
-  void build_interpreter();
+  ok_error_t build_interpreter();
 
   template<typename ELF_T>
-  void build_notes();
+  ok_error_t build_notes();
 
-  void build(const Note& note, std::set<Section*>* sections);
-
-  template<typename ELF_T>
-  void relocate_dynamic_array(DynamicEntryArray& entry_array, DynamicEntry& entry_size);
+  ok_error_t build(const Note& note, std::set<Section*>& sections);
 
   template<typename ELF_T>
-  void build_overlay();
+  ok_error_t build_overlay();
 
   bool should_swap() const;
 
   template<class ELF_T>
-  void process_object_relocations();
+  ok_error_t process_object_relocations();
 
-  static Section& array_section(Binary& bin, uint64_t addr);
+  static Section* array_section(Binary& bin, uint64_t addr);
   build_opt_t build_opt_;
   config_t config_;
   mutable vector_iostream ios_;

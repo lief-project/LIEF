@@ -7,24 +7,23 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  cppcoreguidelines-*,
   -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
   -google-readability-namespace-comments,
+  -google-readability-todo,
   -google-runtime-int,
+  -google-default-arguments
   -google-runtime-references,
   -misc-non-private-member-variables-in-classes,
-  -modernize-redundant-void-arg,
   -modernize-use-trailing-return-type,
-  -readability-braces-around-statements,
+  -performance-noexcept-move-constructor,
   -readability-function-cognitive-complexity,
+  -readability-inconsistent-declaration-parameter-name,
   -readability-magic-numbers,
   -readability-named-parameter,
-  -readability-uppercase-literal-suffix,
-  -readability-else-after-return,
-  -google-readability-todo,
-  -readability-inconsistent-declaration-parameter-name,
-  -performance-noexcept-move-constructor,
   -readability-redundant-string-cstr
+  -readability-uppercase-literal-suffix,
 
 # Turn all the warnings from the checks above into errors.
 #WarningsAsErrors: "*"

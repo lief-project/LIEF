@@ -22,89 +22,59 @@
 using namespace LIEF::MachO;
 
 void print_binary(const Binary& binary) {
-  std::cout << binary.header() << std::endl;
+  std::cout << binary.header() << '\n';
 
-  std::cout << "== Library ==" << std::endl;
+  std::cout << "== Library ==" << '\n';
   for (const DylibCommand& library : binary.libraries()) {
-    std::cout << library << std::endl;
+    std::cout << library << '\n';
   }
-  std::cout << std::endl;
+  std::cout << '\n';
 
-  std::cout << "== Sections ==" << std::endl;
+  std::cout << "== Sections ==" << '\n';
   for (const Section& section : binary.sections()) {
-    std::cout << section << std::endl;
+    std::cout << section << '\n';
   }
 
-  //std::cout << "== Segments ==" << std::endl;
-
-  //for (SegmentCommand& segment : binary.segments()) {
-  //  std::cout << segment << std::endl;
-  //  if (segment.sections().size() > 0) {
-  //    //std::cout << std::hex;
-  //    //std::cout << std::left
-  //    // << std::setw(20) << "Name"
-  //    // << std::setw(17) << "Segment Name"
-  //    // << std::setw(10) << "Address"
-  //    // << std::setw(10) << "Size"
-  //    // << std::setw(10) << "Offset"
-  //    // << std::setw(10) << "Alignment"
-  //    // << std::setw(20) << "Relocation offset"
-  //    // << std::setw(20) << "Nb relocations"
-  //    // << std::setw(10) << "Flags"
-  //    // << std::setw(10) << "Reserved 1"
-  //    // << std::setw(10) << "Reserved 2"
-  //    // << std::setw(10) << "Reserved 3" << std::endl;
-  //    for (Section& section : segment.sections()) {
-  //      std::cout << " * " << section << std::endl;
-  //      auto content = section.content();
-  //    }
-  //  }
-  //}
-  //std::cout << std::endl;
-
-  //auto commands = binary.commands();
   for (const LoadCommand& cmd : binary.commands()) {
-    std::cout << cmd << std::endl;
-    std::cout << "======================" << std::endl;
+    std::cout << cmd << '\n';
+    std::cout << "======================" << '\n';
   }
 
-  std::cout << "== Symbols ==" << std::endl;
+  std::cout << "== Symbols ==" << '\n';
   for (const Symbol& symbol : binary.symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
 
-  std::cout << "== Exported symbols ==" << std::endl;
+  std::cout << "== Exported symbols ==" << '\n';
   for (const Symbol& symbol : binary.exported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
-  std::cout << "== Imported symbols ==" << std::endl;
+  std::cout << "== Imported symbols ==" << '\n';
   for (const Symbol& symbol : binary.imported_symbols()) {
-    std::cout << symbol << std::endl;
+    std::cout << symbol << '\n';
   }
 
 
-  std::cout << "== Relocations ==" << std::endl;
+  std::cout << "== Relocations ==" << '\n';
   for (const Relocation& relocation : binary.relocations()) {
-    std::cout << relocation << std::endl;
+    std::cout << relocation << '\n';
   }
-
-
 
 }
 
 int main(int argc, char **argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
-  std::cout << "MachO Reader" << std::endl;
+  std::cout << "MachO Reader" << '\n';
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <MachO binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <MachO binary>" << '\n';
     return -1;
   }
   std::unique_ptr<FatBinary> binaries{Parser::parse(argv[1])};
   for (const Binary& binary : *binaries) {
     print_binary(binary);
-    std::cout << std::endl;
+    std::cout << '\n';
   }
 
   return 0;

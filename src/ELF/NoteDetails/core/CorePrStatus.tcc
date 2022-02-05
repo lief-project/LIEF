@@ -37,7 +37,10 @@ void CorePrStatus::parse_() {
   }
   const auto* status = reinterpret_cast<const Elf_Prstatus*>(desc.data());
 
-  siginfo_ = status->pr_info;
+  siginfo_.si_signo = status->pr_info.si_signo;
+  siginfo_.si_errno = status->pr_info.si_errno;
+  siginfo_.si_code  = status->pr_info.si_code;
+
   cursig_  = status->pr_cursig;
 
   sigpend_ = status->pr_sigpend;
@@ -48,34 +51,32 @@ void CorePrStatus::parse_() {
   pgrp_ = status->pr_pgrp;
   sid_  = status->pr_sid;
 
-  utime_.tv_sec   = status->pr_utime.tv_sec;
-  utime_.tv_usec  = status->pr_utime.tv_usec;
+  utime_.sec   = status->pr_utime.tv_sec;
+  utime_.usec  = status->pr_utime.tv_usec;
 
-  stime_.tv_sec   = status->pr_stime.tv_sec;
-  stime_.tv_usec  = status->pr_stime.tv_usec;
+  stime_.sec   = status->pr_stime.tv_sec;
+  stime_.usec  = status->pr_stime.tv_usec;
 
-  cutime_.tv_sec  = status->pr_cutime.tv_sec;
-  cutime_.tv_usec = status->pr_cutime.tv_usec;
+  cutime_.sec  = status->pr_cutime.tv_sec;
+  cutime_.usec = status->pr_cutime.tv_usec;
 
-  cstime_.tv_sec  = status->pr_cstime.tv_sec;
-  cstime_.tv_usec = status->pr_cstime.tv_usec;
+  cstime_.sec  = status->pr_cstime.tv_sec;
+  cstime_.usec = status->pr_cstime.tv_usec;
 
   size_t enum_start = 0;
   size_t enum_end   = 0;
   std::tie(enum_start, enum_end) = reg_enum_range();
 
-  const VectorStream& stream(desc);
+  VectorStream stream(std::move(desc));
   stream.setpos(sizeof(Elf_Prstatus));
 
   for (size_t i = enum_start; i < enum_end; ++i) {
-    if (!stream.can_read<uint__>()) {
+    auto val = stream.read<uint__>();
+    if (!val) {
       break;
     }
-    ctx_[static_cast<REGISTERS>(i)] = stream.read<uint__>();
+    ctx_[static_cast<REGISTERS>(i)] = *val;
   }
-
-
-
 }
 
 template <typename ELF_T>
@@ -101,17 +102,17 @@ void CorePrStatus::build_() {
   status.pr_pgrp           = static_cast<int32_t>(pgrp_);
   status.pr_sid            = static_cast<int32_t>(sid_);
 
-  status.pr_utime.tv_sec   = static_cast<uint__>(utime_.tv_sec);
-  status.pr_utime.tv_usec  = static_cast<uint__>(utime_.tv_usec);
+  status.pr_utime.tv_sec   = static_cast<uint__>(utime_.sec);
+  status.pr_utime.tv_usec  = static_cast<uint__>(utime_.usec);
 
-  status.pr_stime.tv_sec   = static_cast<uint__>(stime_.tv_sec);
-  status.pr_stime.tv_usec  = static_cast<uint__>(stime_.tv_usec);
+  status.pr_stime.tv_sec   = static_cast<uint__>(stime_.sec);
+  status.pr_stime.tv_usec  = static_cast<uint__>(stime_.usec);
 
-  status.pr_cutime.tv_sec  = static_cast<uint__>(cutime_.tv_sec);
-  status.pr_cutime.tv_usec = static_cast<uint__>(cutime_.tv_usec);
+  status.pr_cutime.tv_sec  = static_cast<uint__>(cutime_.sec);
+  status.pr_cutime.tv_usec = static_cast<uint__>(cutime_.usec);
 
-  status.pr_cstime.tv_sec  = static_cast<uint__>(cstime_.tv_sec);
-  status.pr_cstime.tv_usec = static_cast<uint__>(cstime_.tv_usec);
+  status.pr_cstime.tv_sec  = static_cast<uint__>(cstime_.sec);
+  status.pr_cstime.tv_usec = static_cast<uint__>(cstime_.usec);
 
   vector_iostream raw_output;
   size_t desc_part_size = sizeof(Elf_Prstatus);
@@ -123,7 +124,7 @@ void CorePrStatus::build_() {
   std::tie(enum_start, enum_end) = reg_enum_range();
 
   for (size_t i = enum_start; i < enum_end; ++i) {
-    REGISTERS reg = static_cast<REGISTERS>(i);
+    auto reg = static_cast<REGISTERS>(i);
     auto val = static_cast<uint__>(get(reg));
     raw_output.write_conv(val);
   }

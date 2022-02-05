@@ -16,49 +16,48 @@
 #include <iostream>
 #include <memory>
 
-#include <LIEF/Abstract/Binary.hpp>
-#include <LIEF/Abstract/Parser.hpp>
+#include <LIEF/Abstract.hpp>
 
 int main(int argc, char **argv) {
-  std::cout << "Abstract Reader" << std::endl;
+  std::cout << "Abstract Reader" << '\n';
   if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <binary>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <binary>" << '\n';
     return -1;
   }
 
   std::unique_ptr<const LIEF::Binary> binary{LIEF::Parser::parse(argv[1])};
 
-  std::cout << "== Header ==" << std::endl;
-  std::cout << binary->header() << std::endl;
+  std::cout << "== Header ==" << '\n';
+  std::cout << binary->header() << '\n';
 
-  std::cout << "== Sections ==" << std::endl;
+  std::cout << "== Sections ==" << '\n';
   for (const LIEF::Section& s : binary->sections()) {
-    std::cout << s << std::endl;
+    std::cout << s << '\n';
   }
 
-  std::cout << "== Symbols ==" << std::endl;
+  std::cout << "== Symbols ==" << '\n';
   for (const LIEF::Symbol& s : binary->symbols()) {
-    std::cout << s << std::endl;
+    std::cout << s << '\n';
   }
 
-  std::cout << "== Exported functions ==" << std::endl;
+  std::cout << "== Exported functions ==" << '\n';
   for(const LIEF::Function& func : binary->exported_functions()) {
-    std::cout << func << std::endl;
+    std::cout << func << '\n';
   }
 
-  std::cout << "== Imported functions ==" << std::endl;
+  std::cout << "== Imported functions ==" << '\n';
   for(const LIEF::Function& func : binary->imported_functions()) {
-    std::cout << func << std::endl;
+    std::cout << func << '\n';
   }
 
-  std::cout << "== Imported Libraries ==" << std::endl;
+  std::cout << "== Imported Libraries ==" << '\n';
   for(const std::string& name : binary->imported_libraries()) {
-    std::cout << name << std::endl;
+    std::cout << name << '\n';
   }
 
-  std::cout << "== Relocation ==" << std::endl;
+  std::cout << "== Relocation ==" << '\n';
   for(const LIEF::Relocation& relocation : binary->relocations()) {
-    std::cout << relocation << std::endl;
+    std::cout << relocation << '\n';
   }
 
   return 0;

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Structures.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {

@@ -18,12 +18,14 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 class VectorStream;
@@ -48,6 +50,25 @@ class LIEF_API DyldInfo : public LoadCommand {
   public:
   //! Tuple of ``offset`` and ``size``
   using info_t = std::pair<uint32_t, uint32_t>;
+
+  //! Internal container for storing BindingInfo
+  using binding_info_t = std::vector<std::unique_ptr<BindingInfo>>;
+
+  //! Iterator which outputs BindingInfo&
+  using it_binding_info = ref_iterator<binding_info_t&, BindingInfo*>;
+
+  //! Iterator which outputs const BindingInfo&
+  using it_const_binding_info = const_ref_iterator<const binding_info_t&, BindingInfo*>;
+
+  //! Internal container for storing ExportInfo
+  using export_info_t = std::vector<std::unique_ptr<ExportInfo>>;
+
+  //! Iterator which outputs const BindingInfo&
+  using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
+
+  //! Iterator which outputs const ExportInfo&
+  using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
+
 
   enum class BINDING_ENCODING_VERSION {
     UNKNOWN = 0,

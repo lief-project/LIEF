@@ -22,6 +22,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -30,18 +31,7 @@ ResourceIcon::ResourceIcon(const ResourceIcon&) = default;
 ResourceIcon& ResourceIcon::operator=(const ResourceIcon&) = default;
 ResourceIcon::~ResourceIcon() = default;
 
-ResourceIcon::ResourceIcon() :
-  width_{0},
-  height_{0},
-  color_count_{0},
-  reserved_{0},
-  planes_{0},
-  bit_count_{0},
-  id_{static_cast<uint32_t>(-1)},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
-{}
-
+ResourceIcon::ResourceIcon() = default;
 
 ResourceIcon::ResourceIcon(const details::pe_resource_icon_group& header) :
   width_{header.width},
@@ -50,9 +40,7 @@ ResourceIcon::ResourceIcon(const details::pe_resource_icon_group& header) :
   reserved_{header.reserved},
   planes_{header.planes},
   bit_count_{header.bit_count},
-  id_{header.ID},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
+  id_{header.ID}
 {}
 
 
@@ -63,36 +51,9 @@ ResourceIcon::ResourceIcon(const details::pe_icon_header& header) :
   reserved_{header.reserved},
   planes_{header.planes},
   bit_count_{header.bit_count},
-  id_{static_cast<uint32_t>(-1)},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
+  id_{static_cast<uint32_t>(-1)}
 {}
 
-
-ResourceIcon::ResourceIcon(const std::string& iconpath) {
-  std::ifstream file(iconpath, std::ios::in | std::ios::binary);
-
-  std::vector<uint8_t> raw;
-  if (file) {
-    file.unsetf(std::ios::skipws);
-    file.seekg(0, std::ios::end);
-    uint64_t size = static_cast<uint64_t>(file.tellg());
-    file.seekg(0, std::ios::beg);
-
-    raw.reserve(size);
-
-    raw.insert(std::begin(raw),
-               std::istream_iterator<uint8_t>(file),
-               std::istream_iterator<uint8_t>());
-  } else {
-    throw LIEF::bad_file("Unable to open " + iconpath); // XXX: Not exception within a ctor
-  }
-
-  const auto* icon_header = reinterpret_cast<const details::pe_icon_header*>(raw.data() + sizeof(details::pe_resource_icon_dir));
-  new (this) ResourceIcon{*icon_header};
-
-  pixels_ = {std::begin(raw) + icon_header->offset, std::begin(raw) + icon_header->offset + icon_header->size};
-}
 
 uint32_t ResourceIcon::id() const {
   return id_;
@@ -216,10 +177,8 @@ void ResourceIcon::save(const std::string& filename) const {
 
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
   if (output_file) {
-    std::copy(
-        std::begin(icon),
-        std::end(icon),
-        std::ostreambuf_iterator<char>(output_file));
+    std::copy(std::begin(icon), std::end(icon),
+              std::ostreambuf_iterator<char>(output_file));
   }
 }
 
@@ -228,6 +187,9 @@ void ResourceIcon::accept(Visitor& visitor) const {
 }
 
 bool ResourceIcon::operator==(const ResourceIcon& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

@@ -15,27 +15,53 @@
  */
 #ifndef LIEF_DEX_FILE_H_
 #define LIEF_DEX_FILE_H_
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/DEX/type_traits.hpp"
 #include "LIEF/DEX/Header.hpp"
-#include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Field.hpp"
-#include "LIEF/DEX/Type.hpp"
-#include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/MapList.hpp"
+#include "LIEF/DEX/instructions.hpp"
+#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
 namespace DEX {
 class Parser;
+class Class;
+class Method;
+class Type;
+class Prototype;
 
 //! Class that represents a DEX file
 class LIEF_API File : public Object {
   friend class Parser;
+
+  public:
+  using classes_t = std::unordered_map<std::string, Class*>;
+  using classes_list_t = std::vector<std::unique_ptr<Class>>;
+  using it_classes = ref_iterator<classes_list_t&, Class*>;
+  using it_const_classes = const_ref_iterator<const classes_list_t&, const Class*>;
+
+  using methods_t = std::vector<std::unique_ptr<Method>>;
+  using it_methods = ref_iterator<methods_t&, Method*>;
+  using it_const_methods = const_ref_iterator<const methods_t&, const Method*>;
+
+  using strings_t           = std::vector<std::unique_ptr<std::string>>;
+  using it_strings          = ref_iterator<strings_t&, std::string*>;
+  using it_const_strings    = const_ref_iterator<const strings_t&, const std::string*>;
+
+  using types_t             = std::vector<std::unique_ptr<Type>>;
+  using it_types            = ref_iterator<types_t&, Type*>;
+  using it_const_types      = const_ref_iterator<const types_t&, const Type*>;
+
+  using prototypes_t        = std::vector<std::unique_ptr<Prototype>>;
+  using it_prototypes       = ref_iterator<prototypes_t&, Prototype*>;
+  using it_const_prototypes = const_ref_iterator<const prototypes_t&, const Prototype*>;
+
+  using fields_t            = std::vector<std::unique_ptr<Field>>;
+  using it_fields           = ref_iterator<fields_t&, Field*>;
+  using it_const_fields     = const_ref_iterator<const fields_t&, const Field*>;
 
   public:
   File& operator=(const File& copy) = delete;
@@ -65,20 +91,20 @@ class LIEF_API File : public Object {
   bool has_class(const std::string& class_name) const;
 
   //! Return the DEX::Class object associated with the given name
-  const Class& get_class(const std::string& class_name) const;
+  const Class* get_class(const std::string& class_name) const;
 
-  Class& get_class(const std::string& class_name);
+  Class* get_class(const std::string& class_name);
 
   //! Return the DEX::Class object associated with the given index
-  const Class& get_class(size_t index) const;
+  const Class* get_class(size_t index) const;
 
-  Class& get_class(size_t index);
+  Class* get_class(size_t index);
 
   //! De-optimize information
   dex2dex_info_t dex2dex_info() const;
 
   //! De-optimize information as JSON
-  std::string dex2dex_json_info();
+  std::string dex2dex_json_info() const;
 
   //! Return an iterator over **all** the DEX::Method used in this DEX file
   it_const_methods methods() const;
@@ -97,8 +123,8 @@ class LIEF_API File : public Object {
   it_types types();
 
   //! Prototype pool
-  it_const_protypes prototypes() const;
-  it_protypes prototypes();
+  it_prototypes prototypes();
+  it_const_prototypes prototypes() const;
 
   //! DEX Map
   const MapList& map() const;
@@ -114,14 +140,14 @@ class LIEF_API File : public Object {
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File();
+  ~File() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& file);
 
   private:
   File();
 
-  void add_class(Class* cls);
+  void add_class(std::unique_ptr<Class> cls);
 
   static void deoptimize_nop(uint8_t* inst_ptr, uint32_t value);
   static void deoptimize_return(uint8_t* inst_ptr, uint32_t value);
@@ -139,8 +165,8 @@ class LIEF_API File : public Object {
   types_t      types_;
   prototypes_t prototypes_;
   MapList      map_;
-  std::vector<Class*> class_list_;
 
+  classes_list_t class_list_;
   std::vector<uint8_t> original_data_;
 };
 

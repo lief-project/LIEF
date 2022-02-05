@@ -16,8 +16,14 @@
 #ifndef LIEF_OAT_HEADER_H_
 #define LIEF_OAT_HEADER_H_
 #include <functional>
+#include <map>
+#include <string>
+#include <vector>
+#include <utility>
+#include <utility>
+#include "LIEF/iterators.hpp"
 #include "LIEF/OAT/type_traits.hpp"
-#include "LIEF/OAT/Structures.hpp"
+#include "LIEF/OAT/enums.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -30,7 +36,7 @@ class LIEF_API Header : public Object {
   friend class Parser;
 
   public:
-  using magic_t               = std::array<uint8_t, sizeof(oat_magic)>;
+  using magic_t               = std::array<uint8_t, 4>; // oat\n
   using key_values_t          = std::map<HEADER_KEYS, std::string>;
   using it_key_values_t       = ref_iterator< std::vector< std::pair<HEADER_KEYS, std::reference_wrapper<std::string>> > >;
   using it_const_key_values_t = const_ref_iterator<std::vector<std::pair<HEADER_KEYS, std::string>>>;
@@ -91,13 +97,13 @@ class LIEF_API Header : public Object {
   keys_t keys() const;
   values_t values() const;
 
-  const std::string& get(HEADER_KEYS key) const;
-  std::string& get(HEADER_KEYS key);
+  const std::string* get(HEADER_KEYS key) const;
+  std::string* get(HEADER_KEYS key);
 
   Header& set(HEADER_KEYS key, const std::string& value);
 
-  const std::string& operator[](HEADER_KEYS key) const;
-  std::string& operator[](HEADER_KEYS key);
+  const std::string* operator[](HEADER_KEYS key) const;
+  std::string* operator[](HEADER_KEYS key);
 
   void magic(const magic_t& magic);
 
@@ -110,28 +116,28 @@ class LIEF_API Header : public Object {
 
   private:
   magic_t magic_;
-  oat_version_t version_;
-  uint32_t checksum_;
-  INSTRUCTION_SETS instruction_set_;
-  uint32_t instruction_set_features_bitmap_;
-  uint32_t dex_file_count_;
-  uint32_t oat_dex_files_offset_; // Since OAT 131 / Android 8.1.0
-  uint32_t executable_offset_;
-  uint32_t i2i_bridge_offset_;
-  uint32_t i2c_code_bridge_offset_;
-  uint32_t jni_dlsym_lookup_offset_;
+  oat_version_t version_ = 0;
+  uint32_t checksum_ = 0;
+  INSTRUCTION_SETS instruction_set_ = INSTRUCTION_SETS::INST_SET_NONE;
+  uint32_t instruction_set_features_bitmap_ = 0;
+  uint32_t dex_file_count_ = 0;
+  uint32_t oat_dex_files_offset_ = 0; // Since OAT 131 / Android 8.1.0
+  uint32_t executable_offset_ = 0;
+  uint32_t i2i_bridge_offset_ = 0;
+  uint32_t i2c_code_bridge_offset_ = 0;
+  uint32_t jni_dlsym_lookup_offset_ = 0;
 
-  uint32_t quick_generic_jni_trampoline_offset_;
-  uint32_t quick_imt_conflict_trampoline_offset_;
-  uint32_t quick_resolution_trampoline_offset_;
-  uint32_t quick_to_interpreter_bridge_offset_;
+  uint32_t quick_generic_jni_trampoline_offset_ = 0;
+  uint32_t quick_imt_conflict_trampoline_offset_ = 0;
+  uint32_t quick_resolution_trampoline_offset_ = 0;
+  uint32_t quick_to_interpreter_bridge_offset_ = 0;
 
-  int32_t image_patch_delta_;
+  int32_t image_patch_delta_ = 0;
 
-  uint32_t image_file_location_oat_checksum_;
-  uint32_t image_file_location_oat_data_begin_;
+  uint32_t image_file_location_oat_checksum_ = 0;
+  uint32_t image_file_location_oat_data_begin_ = 0;
 
-  uint32_t key_value_store_size_;
+  uint32_t key_value_store_size_ = 0;
 
   key_values_t dex2oat_context_;
 

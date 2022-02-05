@@ -22,6 +22,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
+#include "LIEF/errors.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
@@ -84,7 +85,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
   private:
   Parser(const std::string& file);
-  Parser(const std::vector<uint8_t>& data, const std::string& name);
+  Parser(std::vector<uint8_t> data, const std::string& name);
 
   ~Parser();
   Parser();
@@ -92,51 +93,51 @@ class LIEF_API Parser : public LIEF::Parser {
   void init(const std::string& name = "");
 
   template<typename PE_T>
-  void parse();
+  ok_error_t parse();
 
-  void parse_exports();
-  void parse_sections();
-
-  template<typename PE_T>
-  bool parse_headers();
-
-  void parse_configuration();
+  ok_error_t parse_exports();
+  ok_error_t parse_sections();
 
   template<typename PE_T>
-  void parse_data_directories();
+  ok_error_t parse_headers();
+
+  ok_error_t parse_configuration();
 
   template<typename PE_T>
-  void parse_import_table();
-
-  void parse_export_table();
-  void parse_debug();
-  void parse_debug_code_view(Debug& debug_info);
-  void parse_debug_pogo(Debug& debug_info);
+  ok_error_t parse_data_directories();
 
   template<typename PE_T>
-  void parse_tls();
+  ok_error_t parse_import_table();
+
+  ok_error_t parse_export_table();
+  ok_error_t parse_debug();
+  ok_error_t parse_debug_code_view(Debug& debug_info);
+  ok_error_t parse_debug_pogo(Debug& debug_info);
 
   template<typename PE_T>
-  void parse_load_config();
+  ok_error_t parse_tls();
 
-  void parse_relocations();
-  void parse_resources();
-  void parse_string_table();
-  void parse_symbols();
-  void parse_signature();
-  void parse_overlay();
-  void parse_dos_stub();
-  void parse_rich_header();
+  template<typename PE_T>
+  ok_error_t parse_load_config();
 
-  ResourceNode* parse_resource_node(
+  ok_error_t parse_relocations();
+  ok_error_t parse_resources();
+  ok_error_t parse_string_table();
+  ok_error_t parse_symbols();
+  ok_error_t parse_signature();
+  ok_error_t parse_overlay();
+  ok_error_t parse_dos_stub();
+  ok_error_t parse_rich_header();
+
+  std::unique_ptr<ResourceNode> parse_resource_node(
       const details::pe_resource_directory_table& directory_table,
       uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);
 
 
+  PE_TYPE type_ = PE_TYPE::PE32_PLUS;
+  std::unique_ptr<Binary> binary_;
+  std::set<uint32_t> resource_visited_;
   std::unique_ptr<BinaryStream> stream_;
-  Binary*                       binary_{nullptr};
-  PE_TYPE                       type_;
-  std::set<uint32_t>            resource_visited_;
 };
 
 

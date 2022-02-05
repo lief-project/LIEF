@@ -40,9 +40,9 @@ class Layout {
   size_t section_shstr_size();
 
   virtual ~Layout();
+  Layout() = delete;
 
   protected:
-  Layout() = delete;
   Binary* binary_ = nullptr;
 
   std::unordered_map<std::string, size_t> shstr_name_map_;

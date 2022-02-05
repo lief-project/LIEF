@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Class.hpp"
 #include "logging.hpp"
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
@@ -55,15 +56,12 @@ bool Method::has_class() const {
   return parent_ != nullptr;
 }
 
-const Class& Method::cls() const {
-  if (!has_class()) {
-    throw not_found("Can't find class associated with " + name());
-  }
-  return *parent_;
+const Class* Method::cls() const {
+  return parent_;
 }
 
-Class& Method::cls() {
-  return const_cast<Class&>(static_cast<const Method*>(this)->cls());
+Class* Method::cls() {
+  return const_cast<Class*>(static_cast<const Method*>(this)->cls());
 }
 
 size_t Method::index() const {
@@ -94,8 +92,7 @@ bool Method::has(ACCESS_FLAGS f) const {
 Method::access_flags_list_t Method::access_flags() const {
   Method::access_flags_list_t flags;
 
-  std::copy_if(
-      std::begin(access_flags_list),
+  std::copy_if(std::begin(access_flags_list),
       std::end(access_flags_list),
       std::back_inserter(flags),
       [this] (ACCESS_FLAGS f) { return has(f); });
@@ -104,13 +101,12 @@ Method::access_flags_list_t Method::access_flags() const {
 
 }
 
-const Prototype& Method::prototype() const {
-  CHECK(prototype_ != nullptr, "Prototype is null!");
-  return *prototype_;
+const Prototype* Method::prototype() const {
+  return prototype_;
 }
 
-Prototype& Method::prototype() {
-  return const_cast<Prototype&>(static_cast<const Method*>(this)->prototype());
+Prototype* Method::prototype() {
+  return const_cast<Prototype*>(static_cast<const Method*>(this)->prototype());
 }
 
 void Method::accept(Visitor& visitor) const {
@@ -118,6 +114,9 @@ void Method::accept(Visitor& visitor) const {
 }
 
 bool Method::operator==(const Method& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -128,8 +127,17 @@ bool Method::operator!=(const Method& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Method& method) {
-  Prototype::it_const_params ps = method.prototype().parameters_type();
-  std::string pretty_cls_name = method.cls().fullname();
+  const auto* proto = method.prototype();
+  if (!proto) {
+    os << method.name() << "()";
+    return os;
+  }
+  Prototype::it_const_params ps = proto->parameters_type();
+  std::string pretty_cls_name;
+  if (const auto* cls = method.cls()) {
+    pretty_cls_name = cls->fullname();
+  }
+
   if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
     std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/', '.');
@@ -137,8 +145,7 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 
   Method::access_flags_list_t aflags = method.access_flags();
   std::string flags_str = std::accumulate(
-      std::begin(aflags),
-      std::end(aflags),
+      std::begin(aflags), std::end(aflags),
       std::string{},
       [] (const std::string& l, ACCESS_FLAGS r) {
         std::string str = to_string(r);
@@ -149,7 +156,7 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
   if (!flags_str.empty()) {
     os << flags_str << " ";
   }
-  os << method.prototype().return_type()
+  os << proto->return_type()
      << " "
      << pretty_cls_name << "->" << method.name();
 

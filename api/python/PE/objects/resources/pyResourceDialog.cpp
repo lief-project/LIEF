@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
@@ -34,7 +35,7 @@ using setter_t = void (ResourceDialog::*)(T);
 
 template<>
 void create<ResourceDialog>(py::module& m) {
-  py::class_<ResourceDialog, LIEF::Object>(m, "ResourceDialog",
+  py::class_<ResourceDialog, LIEF::Object> dialog(m, "ResourceDialog",
       R"delim(
       Representation of a dialog box.
 
@@ -44,8 +45,11 @@ void create<ResourceDialog>(py::module& m) {
         * Extended one
 
       :attr:`~lief.PE.ResourceDialog.is_extended` can be used to determine which one is implemented
-      )delim")
+      )delim");
 
+  init_ref_iterator<ResourceDialog::it_const_items>(dialog, "it_const_items");
+
+  dialog
     .def_property_readonly("is_extended",
         &ResourceDialog::is_extended,
         "``True`` if the dialog is an extended one")

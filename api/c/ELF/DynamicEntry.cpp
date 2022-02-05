@@ -27,7 +27,7 @@ namespace ELF {
 
 void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 
-  it_dynamic_entries dyn_entries = binary->dynamic_entries();
+  Binary::it_dynamic_entries dyn_entries = binary->dynamic_entries();
   c_binary->dynamic_entries = static_cast<Elf_DynamicEntry_t**>(
       malloc((dyn_entries.size() + 1) * sizeof(Elf_DynamicEntry_t**)));
 
@@ -178,7 +178,7 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
 void destroy_dynamic_entries(Elf_Binary_t* c_binary) {
 
   Elf_DynamicEntry_t **dynamic_entries = c_binary->dynamic_entries;
-  for (size_t idx = 0; dynamic_entries[idx] != NULL; ++idx) {
+  for (size_t idx = 0; dynamic_entries[idx] != nullptr; ++idx) {
     switch(static_cast<DYNAMIC_TAGS>(dynamic_entries[idx]->tag)) {
       case DYNAMIC_TAGS::DT_NEEDED:
         {

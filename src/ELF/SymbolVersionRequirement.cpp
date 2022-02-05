@@ -18,20 +18,16 @@
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Structures.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
+
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 SymbolVersionRequirement::SymbolVersionRequirement() = default;
-
-SymbolVersionRequirement::~SymbolVersionRequirement() {
-  for (SymbolVersionAuxRequirement* svar : symbol_version_aux_requirement_) {
-    delete svar;
-  }
-}
+SymbolVersionRequirement::~SymbolVersionRequirement() = default;
 
 
 SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed& header) :
@@ -48,9 +44,9 @@ SymbolVersionRequirement::SymbolVersionRequirement(const SymbolVersionRequiremen
   version_{other.version_},
   name_{other.name_}
 {
-  symbol_version_aux_requirement_.reserve(other.symbol_version_aux_requirement_.size());
-  for (const SymbolVersionAuxRequirement* aux : other.symbol_version_aux_requirement_) {
-    symbol_version_aux_requirement_.push_back(new SymbolVersionAuxRequirement{*aux});
+  aux_requirements_.reserve(other.aux_requirements_.size());
+  for (const std::unique_ptr<SymbolVersionAuxRequirement>& aux : other.aux_requirements_) {
+    aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(*aux));
   }
 }
 
@@ -61,9 +57,9 @@ SymbolVersionRequirement& SymbolVersionRequirement::operator=(SymbolVersionRequi
 }
 
 void SymbolVersionRequirement::swap(SymbolVersionRequirement& other) {
-  std::swap(symbol_version_aux_requirement_, other.symbol_version_aux_requirement_);
-  std::swap(version_,                        other.version_);
-  std::swap(name_,                           other.name_);
+  std::swap(aux_requirements_, other.aux_requirements_);
+  std::swap(version_,          other.version_);
+  std::swap(name_,             other.name_);
 }
 
 
@@ -73,17 +69,17 @@ uint16_t SymbolVersionRequirement::version() const {
 
 
 uint32_t SymbolVersionRequirement::cnt() const {
-  return static_cast<uint32_t>(symbol_version_aux_requirement_.size());
+  return static_cast<uint32_t>(aux_requirements_.size());
 }
 
 
-it_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
-  return symbol_version_aux_requirement_;
+SymbolVersionRequirement::it_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
+  return aux_requirements_;
 }
 
 
-it_const_symbols_version_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
-  return symbol_version_aux_requirement_;
+SymbolVersionRequirement::it_const_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
+  return aux_requirements_;
 }
 
 
@@ -107,6 +103,9 @@ void SymbolVersionRequirement::accept(Visitor& visitor) const {
 }
 
 bool SymbolVersionRequirement::operator==(const SymbolVersionRequirement& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

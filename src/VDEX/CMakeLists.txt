@@ -1,28 +1,11 @@
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/enums.inc      LIEF_VDEX_ENUMS)
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/structures.inc LIEF_VDEX_STRUCTURES)
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/enums.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/VDEX/enums.hpp
-  @ONLY
-)
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/Structures.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/VDEX/Structures.hpp
-  @ONLY
-)
-
 set(LIEF_VDEX_SRC
   ${CMAKE_CURRENT_LIST_DIR}/Parser.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Parser.tcc
   ${CMAKE_CURRENT_LIST_DIR}/File.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/EnumToString.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Header.cpp
   ${CMAKE_CURRENT_LIST_DIR}/Header.tcc
   ${CMAKE_CURRENT_LIST_DIR}/utils.cpp
   ${CMAKE_CURRENT_LIST_DIR}/hash.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/Convert.cpp
 )
 
 set(LIEF_VDEX_INC_FILES
@@ -31,11 +14,9 @@ set(LIEF_VDEX_INC_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/Parser.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/type_traits.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/utils.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/EnumToString.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/VDEX/hash.hpp"
 
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/VDEX/Structures.hpp"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/VDEX/enums.hpp"
+  ${CMAKE_CURRENT_LIST_DIR}/Structures.hpp
 )
 
 # JSON Public API: Always present

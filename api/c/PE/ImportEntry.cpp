@@ -20,7 +20,7 @@ namespace PE {
 
 void init_c_import_entries(Pe_Import_t* c_import, Import& imp) {
 
-  it_import_entries entries = imp.entries();
+  Import::it_entries entries = imp.entries();
 
   c_import->entries = static_cast<Pe_ImportEntry_t**>(
       malloc((entries.size() + 1) * sizeof(Pe_ImportEntry_t**)));

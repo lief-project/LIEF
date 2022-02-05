@@ -79,6 +79,9 @@ void NoteAbi::accept(Visitor& visitor) const {
 
 
 bool NoteAbi::operator==(const NoteAbi& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

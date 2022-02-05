@@ -19,11 +19,12 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 
@@ -33,6 +34,7 @@ namespace MachO {
 class BinaryParser;
 class Binary;
 class Section;
+class Relocation;
 
 namespace details {
 struct segment_command_32;
@@ -46,7 +48,30 @@ class LIEF_API SegmentCommand : public LoadCommand {
   friend class Binary;
 
   public:
+  struct KeyCmp {
+    bool operator() (const std::unique_ptr<Relocation>& lhs,
+                     const std::unique_ptr<Relocation>& rhs) const;
+  };
+
   using content_t = std::vector<uint8_t>;
+
+  //! Internal container for storing Mach-O Section
+  using sections_t = std::vector<std::unique_ptr<Section>>;
+
+  //! Iterator which outputs Section&
+  using it_sections = ref_iterator<sections_t&, Section*>;
+
+  //! Iterator which outputs const Section&
+  using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
+
+  //! Internal container for storing Mach-O Relocation
+  using relocations_t = std::set<std::unique_ptr<Relocation>, KeyCmp>;
+
+  //! Iterator which outputs Relocation&
+  using it_relocations = ref_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs const Relocation&
+  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
 
   public:
   SegmentCommand();
@@ -56,8 +81,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
   SegmentCommand& operator=(SegmentCommand other);
   SegmentCommand(const SegmentCommand& copy);
 
-  SegmentCommand(const std::string& name, const content_t& content);
-  SegmentCommand(const std::string& name);
+  SegmentCommand(std::string name, content_t content);
+  SegmentCommand(std::string name);
 
   void swap(SegmentCommand& other);
 
@@ -121,7 +146,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   void init_protection(uint32_t init_protection);
   void numberof_sections(uint32_t nb_section);
   void flags(uint32_t flags);
-  void content(const content_t& data);
+  void content(content_t data);
 
   //! Add a new section in this segment
   Section& add_section(const Section& section);

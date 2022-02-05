@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 #include <fstream>
+#include <algorithm>
 
 #include "LIEF/DEX/utils.hpp"
-#include "LIEF/DEX/Structures.hpp"
+#include "DEX/Structures.hpp"
 
 namespace LIEF {
 namespace DEX {
 bool is_dex(const std::string& file) {
   if (std::ifstream ifs{file, std::ios::in | std::ios::binary}) {
 
-    char magic[sizeof(DEX::magic)];
+    char magic[sizeof(details::magic)];
 
     ifs.seekg(0, std::ios::beg);
     ifs.read(magic, sizeof(magic));
 
-    return std::equal(
-        std::begin(magic),
-        std::end(magic),
-        std::begin(DEX::magic));
+    return std::equal(std::begin(magic), std::end(magic),
+                      std::begin(details::magic));
 
   }
 
@@ -40,17 +39,17 @@ bool is_dex(const std::string& file) {
 
 bool is_dex(const std::vector<uint8_t>& raw) {
 
-  if (raw.size() < sizeof(DEX::magic)) {
+  if (raw.size() < sizeof(details::magic)) {
     return false;
   }
 
-  char magic[sizeof(DEX::magic)];
+  char magic[sizeof(details::magic)];
   std::copy(
     reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(DEX::magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic),
     magic);
 
-  return std::equal(std::begin(magic), std::end(magic), std::begin(DEX::magic));
+  return std::equal(std::begin(magic), std::end(magic), std::begin(details::magic));
 
 }
 
@@ -63,7 +62,7 @@ dex_version_t version(const std::string& file) {
 
     char version[4];
 
-    ifs.seekg(sizeof(DEX::magic), std::ios::beg);
+    ifs.seekg(sizeof(details::magic), std::ios::beg);
     ifs.read(version, sizeof(version));
 
     if (std::all_of(std::begin(version), std::end(version) - 1, ::isdigit)) {
@@ -82,8 +81,8 @@ dex_version_t version(const std::vector<uint8_t>& raw) {
 
   char version[4];
   std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(DEX::magic),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(DEX::magic) + sizeof(version),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic),
+    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::magic) + sizeof(version),
     version);
 
 

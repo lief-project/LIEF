@@ -32,8 +32,7 @@ set(LIEF_API_C_ELF_INCLUDE_FILES_C
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/Section.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/Segment.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/Symbol.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/structures.h"
-  "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/ELF/enums.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/enums.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/LIEF/ELF/utils.h"
 )
 

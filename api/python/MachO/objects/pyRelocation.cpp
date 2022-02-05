@@ -20,6 +20,9 @@
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/Section.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 
 #include "pyMachO.hpp"
 
@@ -97,8 +100,8 @@ void create<Relocation>(py::module& m) {
         "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Symbol) " associated with")
 
     .def_property_readonly("symbol",
-        static_cast<Symbol& (Relocation::*)(void)>(&Relocation::symbol),
-        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the relocation (if any)",
+        static_cast<Symbol* (Relocation::*)(void)>(&Relocation::symbol),
+        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the relocation if any, or None",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_section",
@@ -106,8 +109,8 @@ void create<Relocation>(py::module& m) {
         "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Section) " associated with")
 
     .def_property_readonly("section",
-        static_cast<Section& (Relocation::*)(void)>(&Relocation::section),
-        "" RST_CLASS_REF(lief.MachO.Section) " associated with the relocation (if any)",
+        static_cast<Section* (Relocation::*)(void)>(&Relocation::section),
+        "" RST_CLASS_REF(lief.MachO.Section) " associated with the relocation if any, or None",
         py::return_value_policy::reference)
 
 
@@ -125,8 +128,8 @@ void create<Relocation>(py::module& m) {
         "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with")
 
     .def_property_readonly("segment",
-        static_cast<SegmentCommand& (Relocation::*)(void)>(&Relocation::segment),
-        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the relocation (if any)",
+        static_cast<SegmentCommand* (Relocation::*)(void)>(&Relocation::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the relocation if any, or None",
         py::return_value_policy::reference)
 
     .def("__eq__", &Relocation::operator==)

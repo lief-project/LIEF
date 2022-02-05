@@ -15,13 +15,16 @@
  */
 #include <string>
 
+#include "logging.hpp"
+#include "LIEF/ART/Header.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "ART/Structures.hpp"
 
 namespace LIEF {
 namespace ART {
 
 template<>
-Header::Header(const ART_17::header* header) :
+Header::Header(const details::ART_17::header* header) :
   magic_{{'a', 'r', 't', '\n'}},
   version_{0},
   image_begin_{header->image_begin},

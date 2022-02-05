@@ -15,84 +15,84 @@
  */
 #ifndef LIEF_OAT_PARSER_H_
 #define LIEF_OAT_PARSER_H_
-
-
 #include <memory>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
-#include "LIEF/Abstract/Parser.hpp"
-
-#include "LIEF/ELF.hpp"
-
-#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
 
 struct Profiler;
 
 namespace LIEF {
+
 namespace VDEX {
 class File;
 }
-namespace OAT {
 
-//! @brief Class which parse an OAT file and transform into a OAT::Binary
-class LIEF_API Parser : public LIEF::Parser {
+namespace DEX {
+class Class;
+}
+
+namespace OAT {
+class Binary;
+class Class;
+
+//! Class to parse an OAT file to produce an OAT::Binary
+class LIEF_API Parser : public LIEF::ELF::Parser {
   public:
   friend struct ::Profiler;
-    //! Parse an OAT file
-    static std::unique_ptr<Binary> parse(const std::string& oat_file);
-    static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
+  //! Parse an OAT file
+  static std::unique_ptr<Binary> parse(const std::string& oat_file);
+  static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
 
-    static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
 
-    Parser& operator=(const Parser& copy) = delete;
-    Parser(const Parser& copy)            = delete;
+  Parser& operator=(const Parser& copy) = delete;
+  Parser(const Parser& copy)            = delete;
 
-  private:
-    Parser();
-    Parser(const std::string& oat_file);
-    Parser(const std::vector<uint8_t>& data, const std::string& name);
-    ~Parser();
+  protected:
+  Parser();
+  Parser(const std::string& oat_file);
+  Parser(std::vector<uint8_t> data);
+  ~Parser();
 
-    bool has_vdex() const;
-    void set_vdex(VDEX::File* file);
+  inline Binary& oat_binary() {
+    // The type of the parent binary_ is guaranteed by the constructor
+    return *reinterpret_cast<Binary*>(binary_.get());
+  }
 
-    void bind_vdex();
+  bool has_vdex() const;
+  void set_vdex(std::unique_ptr<VDEX::File> file);
 
-    template<typename OAT_T>
-    void parse_binary();
+  template<typename OAT_T>
+  void parse_binary();
 
-    template<typename OAT_T>
-    void parse_header();
+  template<typename OAT_T>
+  void parse_header();
 
-    template<typename OAT_T>
-    void parse_header_keys();
+  template<typename OAT_T>
+  void parse_header_keys();
 
-    template<typename OAT_T>
-    void parse_dex_files();
+  template<typename OAT_T>
+  void parse_dex_files();
 
-    template<typename OAT_T>
-    void parse_type_lookup_table();
+  template<typename OAT_T>
+  void parse_type_lookup_table();
 
-    template<typename OAT_T>
-    void parse_oat_classes();
+  template<typename OAT_T>
+  void parse_oat_classes();
 
-    template<typename OAT_T>
-    void parse_oat_methods(uint64_t methods_offsets, Class* clazz, const DEX::Class& dex_class);
+  template<typename OAT_T>
+  void parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX::Class& dex_class);
 
-    void init(const std::string& name = "");
+  void init(const std::string& name = "");
 
-    LIEF::OAT::Binary* oat_binary_{nullptr};
-    LIEF::VDEX::File* vdex_file_{nullptr};
+  std::unique_ptr<LIEF::VDEX::File> vdex_file_;
 
-    std::unique_ptr<VectorStream> stream_;
-    uint64_t data_address_;
-    uint64_t data_size_;
+  uint64_t data_address_ = 0;
+  uint64_t data_size_ = 0;
 
-    uint64_t exec_start_;
-    uint64_t exec_size_;
+  uint64_t exec_start_ = 0;
+  uint64_t exec_size_ = 0;
 };
 
 

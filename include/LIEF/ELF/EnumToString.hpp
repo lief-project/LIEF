@@ -16,7 +16,7 @@
 #ifndef ELF_ENUM_TO_STRING_H_
 #define ELF_ENUM_TO_STRING_H_
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/Structures.hpp"
+#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {

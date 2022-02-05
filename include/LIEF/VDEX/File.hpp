@@ -23,17 +23,27 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/DEX.hpp"
-
 namespace LIEF {
+namespace DEX {
+class File;
+}
+namespace OAT {
+class Binary;
+}
+
 namespace VDEX {
 class Parser;
 
 //! Main class for the VDEX module which represents a VDEX file
 class LIEF_API File : public Object {
   friend class Parser;
+  friend class OAT::Binary;
 
   public:
+  using dex_files_t = std::vector<std::unique_ptr<DEX::File>>;
+  using it_dex_files = ref_iterator<dex_files_t&, DEX::File*>;
+  using it_const_dex_files = const_ref_iterator<const dex_files_t&, const DEX::File*>;
+
   File& operator=(const File& copy) = delete;
   File(const File& copy)            = delete;
 
@@ -42,8 +52,8 @@ class LIEF_API File : public Object {
   Header& header();
 
   //! Iterator over LIEF::DEX::Files registered
-  DEX::it_dex_files       dex_files();
-  DEX::it_const_dex_files dex_files() const;
+  it_dex_files       dex_files();
+  it_const_dex_files dex_files() const;
 
   dex2dex_info_t dex2dex_info() const;
 
@@ -61,8 +71,8 @@ class LIEF_API File : public Object {
   private:
   File();
 
-  Header           header_;
-  DEX::dex_files_t dex_files_;
+  Header header_;
+  dex_files_t dex_files_;
 };
 
 }

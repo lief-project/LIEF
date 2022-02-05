@@ -26,9 +26,18 @@
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
+
+bool Section::KeyCmp::operator() (const std::unique_ptr<Relocation>& lhs,
+                                  const std::unique_ptr<Relocation>& rhs) const {
+  return *lhs < *rhs;
+}
+
+Section::Section() = default;
+Section::~Section() = default;
 
 Section& Section::operator=(Section other) {
   swap(other);
@@ -50,17 +59,7 @@ Section::Section(const Section& other) :
 {}
 
 
-Section::~Section() {
-  for (Relocation* reloc : relocations_) {
-    delete reloc;
-  }
-}
 
-Section::Section()
-{
-  size_   = 0;
-  offset_ = 0;
-}
 
 Section::Section(const details::section_32& sec) :
   segment_name_{sec.segname, sizeof(sec.sectname)},
@@ -77,8 +76,8 @@ Section::Section(const details::section_32& sec) :
   offset_          = sec.offset;
   virtual_address_ = sec.addr;
 
-  name_         = std::string{name_.c_str()};
-  segment_name_ = std::string{segment_name_.c_str()};
+  name_         = name_.c_str();
+  segment_name_ = segment_name_.c_str();
 }
 
 Section::Section(const details::section_64& sec) :
@@ -97,8 +96,8 @@ Section::Section(const details::section_64& sec) :
   offset_          = sec.offset;
   virtual_address_ = sec.addr;
 
-  name_         = std::string{name_.c_str()};
-  segment_name_ = std::string{segment_name_.c_str()};
+  name_         = name_.c_str();
+  segment_name_ = segment_name_.c_str();
 }
 
 
@@ -124,17 +123,13 @@ void Section::swap(Section& other) {
 }
 
 
-Section::Section(const std::string& name) :
-  Section{}
-{
-  this->name(name);
+Section::Section(std::string name) {
+  this->name(std::move(name));
 }
 
-Section::Section(const std::string& name, const Section::content_t& content) :
-  Section{}
-{
-  this->name(name);
-  this->content(content);
+Section::Section(std::string name, Section::content_t content) {
+  this->name(std::move(name));
+  this->content(std::move(content));
 }
 
 Section::content_t Section::content() const {
@@ -149,11 +144,11 @@ Section::content_t Section::content() const {
   uint64_t relative_offset = offset_ - segment_->file_offset();
   const std::vector<uint8_t>& content = segment_->content();
   if ((relative_offset + size_) > content.size()) {
-    throw LIEF::corrupted("Section's size is bigger than segment's size");
+    LIEF_ERR("Section's size is bigger than segment's size");
+    return {};
   }
-  std::vector<uint8_t> section_content = {
-    content.data() + relative_offset,
-    content.data() + relative_offset + size_};
+  content_t section_content = {content.data() + relative_offset,
+                               content.data() + relative_offset + size_};
   return section_content;
 }
 
@@ -183,11 +178,10 @@ void Section::content(const Section::content_t& data) {
 }
 
 const std::string& Section::segment_name() const {
-  if (segment_ != nullptr) {
-    return segment_->name();
-  } else {
+  if (segment_ == nullptr) {
     return segment_name_;
   }
+  return segment_->name();
 }
 
 uint64_t Section::address() const {
@@ -228,11 +222,11 @@ uint32_t Section::raw_flags() const {
   return flags_;
 }
 
-it_relocations Section::relocations() {
+Section::it_relocations Section::relocations() {
   return relocations_;
 }
 
-it_const_relocations Section::relocations() const {
+Section::it_const_relocations Section::relocations() const {
   return relocations_;
 }
 
@@ -246,8 +240,7 @@ Section::flag_list_t Section::flags_list() const {
   Section::flag_list_t flags;
 
   std::copy_if(
-      std::begin(section_flags_array),
-      std::end(section_flags_array),
+      std::begin(section_flags_array), std::end(section_flags_array),
       std::inserter(flags, std::begin(flags)),
       [this] (MACHO_SECTION_FLAGS f) { return has(f); });
 
@@ -257,7 +250,7 @@ Section::flag_list_t Section::flags_list() const {
 void Section::segment_name(const std::string& name) {
   segment_name_ = name;
   if (segment_ != nullptr) {
-    return segment_->name(name);
+    segment_->name(name);
   }
 }
 
@@ -332,15 +325,12 @@ bool Section::has_segment() const {
   return segment_ != nullptr;
 }
 
-SegmentCommand& Section::segment() {
-  return const_cast<SegmentCommand&>(static_cast<const Section*>(this)->segment());
+SegmentCommand* Section::segment() {
+  return const_cast<SegmentCommand*>(static_cast<const Section*>(this)->segment());
 }
 
-const SegmentCommand& Section::segment() const {
-  if (!has_segment()) {
-    throw not_found("No segment associated with this section");
-  }
-  return *segment_;
+const SegmentCommand* Section::segment() const {
+  return segment_;
 }
 
 
@@ -349,6 +339,9 @@ void Section::accept(Visitor& visitor) const {
 }
 
 bool Section::operator==(const Section& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;

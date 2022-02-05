@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ELF/DataHandler/Node.hpp"
+#include "ELF/DataHandler/Node.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -21,13 +21,9 @@ namespace DataHandler {
 
 Node& Node::operator=(const Node&) = default;
 Node::Node(const Node&) = default;
+Node::~Node() = default;
 
-Node::Node() :
-  size_{0},
-  offset_{0},
-  type_{UNKNOWN}
-{}
-
+Node::Node() = default;
 
 Node::Node(uint64_t offset, uint64_t size, Type type) :
   size_{size},
@@ -65,6 +61,9 @@ void Node::offset(uint64_t offset) {
 
 
 bool Node::operator==(const Node& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   return type() == rhs.type() &&
          size() == rhs.size() &&
          offset() == rhs.offset();

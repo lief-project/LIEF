@@ -19,8 +19,8 @@
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/EnumToString.hpp"
-#include "LIEF/MachO/Structures.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
+#include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -46,6 +46,9 @@ BuildToolVersion::version_t BuildToolVersion::version() const {
 BuildToolVersion::~BuildToolVersion() = default;
 
 bool BuildToolVersion::operator==(const BuildToolVersion& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
@@ -137,6 +140,9 @@ void BuildVersion::accept(Visitor& visitor) const {
 
 
 bool BuildVersion::operator==(const BuildVersion& rhs) const {
+  if (this == &rhs) {
+    return true;
+  }
   size_t hash_lhs = Hash::hash(*this);
   size_t hash_rhs = Hash::hash(rhs);
   return hash_lhs == hash_rhs;
