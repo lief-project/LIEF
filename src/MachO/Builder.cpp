@@ -106,7 +106,7 @@ ok_error_t Builder::build() {
       continue;
     }
 
-    if (MainCommand::classof(cmd.get())) {
+    if (DyldInfo::classof(cmd.get())) {
       build<T>(cmd->as<DyldInfo>());
       continue;
     }
@@ -180,9 +180,10 @@ ok_error_t Builder::build_fat() {
     return {};
   }
   build_fat_header();
-  constexpr auto sizeof_fat = sizeof(details::fat_header);
+  constexpr auto fat_header_sz = sizeof(details::fat_header);
+  constexpr auto fat_arch_sz   = sizeof(details::fat_arch);
   for (size_t i = 0; i < binaries_.size(); ++i) {
-    auto* arch = reinterpret_cast<details::fat_arch*>(raw_.raw().data() + sizeof_fat + i * sizeof_fat);
+    auto* arch = reinterpret_cast<details::fat_arch*>(raw_.raw().data() + fat_header_sz + i * fat_arch_sz);
     Builder builder{*binaries_[i]};
     std::vector<uint8_t> raw = builder.get_build();
     auto alignment = BinaryStream::swap_endian<uint32_t>(arch->align);
