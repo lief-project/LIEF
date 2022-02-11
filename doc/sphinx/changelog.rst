@@ -74,6 +74,7 @@ Changelog
 
 :Dependencies:
   * Upgrade to MbedTLS 3.1.0
+  * Upgrade Catch2 to 2.13.8
   * The different dependencies can be *linked* externally (cf. above and :ref:`lief_third_party`)
 
 :Documentation:

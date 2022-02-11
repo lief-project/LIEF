@@ -52,19 +52,17 @@ add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
 
 # Catch
 # =====
-set(CATCH_VERSION 2.2.3)
-set(CATCH_SHA256 SHA256=46606cb0eae047a4a5f70f0794244d26c51f72e695b52f4f11c54ea1d1421360)
+set(CATCH_VERSION 2.13.8)
+set(CATCH_SHA256 SHA256=532f163e4f2db66dae33f1d0a279e8d9befec8bc6cca60d7b82155f7d06bd89c)
 set(CATCH_URL "${THIRD_PARTY_DIRECTORY}/Catch2-${CATCH_VERSION}.zip" CACHE STRING "URL to the Catch repo")
 
 ExternalProject_Add(catch
     PREFIX         ${CATCH_PREFIX}
     URL            ${CATCH_URL}
     URL_HASH       ${CATCH_SHA256}
-    TIMEOUT 10
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
 )
 ExternalProject_Get_Property(catch source_dir)
 set(CATCH_INCLUDE_DIR "${source_dir}" CACHE INTERNAL "Path to include folder for Catch")
