@@ -46,7 +46,7 @@ jobs:
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
         run: |
-          python ./setup.py --ninja --list-test build bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
+          python ./setup.py --ninja --lief-test build bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
       - name: Build Python ${{ matrix.python-version }} wheel
         shell: bash
         if: matrix.python-version != '3.6'
