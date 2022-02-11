@@ -91,6 +91,8 @@ foreach(search ${_LIEF_SEARCHES})
   find_path(LIEF_INCLUDE_DIR
     NAMES LIEF/LIEF.hpp
     PATH ${${search}}
+    REQUIRED
+    CMAKE_FIND_ROOT_PATH_BOTH
     PATH_SUFFIXES include)
 endforeach()
 
@@ -100,6 +102,8 @@ if(NOT LIEF_LIBRARY)
     find_library(_LIEF_LIBRARY
       NAMES ${LIEF_NAMES}
       PATHS ${${search}}
+      REQUIRED
+      CMAKE_FIND_ROOT_PATH_BOTH
       PATH_SUFFIXES lib lib64)
   endforeach()
 
