@@ -26,12 +26,32 @@
 #    pragma GCC system_header
 #endif
 
+#ifndef LIEF_ENABLES_LEAF_EXCEPTIONS // Disable exceptions by default;
+  #ifndef BOOST_LEAF_NO_EXCEPTIONS
+    #define BOOST_LEAF_NO_EXCEPTIONS
+  #else
+    #define LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED
+  #endif
+#endif
+
 #ifndef LIEF_EXTERNAL_LEAF
 #include <LIEF/third-party/internal/leaf.hpp>
 #else
 #include <boost/leaf.hpp>
 #endif
 
+
+#if defined(BOOST_LEAF_NO_EXCEPTIONS) || defined(BOOST_NO_EXCEPTIONS)
+namespace boost {
+inline void throw_exception(const std::exception&) {
+  std::abort();
+}
+}
+#endif
+
+#if !defined(LIEF_ENABLES_LEAF_EXCEPTIONS) && !defined(LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED)
+#undef BOOST_LEAF_NO_EXCEPTIONS
+#endif
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
