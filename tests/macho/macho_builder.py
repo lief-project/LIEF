@@ -316,6 +316,7 @@ class TestLibraryInjection(TestCase):
 
         original.add_library(self.library_path)
 
+        original.remove_signature()
         original.write(output)
 
         if is_osx() and is_x86_64():
