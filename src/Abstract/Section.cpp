@@ -46,6 +46,11 @@ std::string Section::name() const {
 }
 
 
+const std::string& Section::fullname() const {
+  return name_;
+}
+
+
 void Section::name(const std::string& name) {
   name_ = name;
 }

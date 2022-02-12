@@ -38,7 +38,7 @@ void init_c_sections(Pe_Binary_t* c_binary, Binary* binary) {
           content);
     }
 
-    c_binary->sections[i]->name                    = b_section.name().c_str();
+    c_binary->sections[i]->name                    = b_section.fullname().c_str();
     c_binary->sections[i]->virtual_address         = b_section.virtual_address();
     c_binary->sections[i]->size                    = b_section.size();
     c_binary->sections[i]->offset                  = b_section.offset();

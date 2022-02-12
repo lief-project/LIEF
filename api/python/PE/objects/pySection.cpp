@@ -122,10 +122,6 @@ void create<Section>(py::module& m) {
         &Section::characteristics_list,
         ":attr:`~lief.PE.Section.characteristics` as a ``list``")
 
-    .def_property_readonly("fullname",
-        &Section::fullname,
-        "Return the **fullname** of the section including the trailing bytes")
-
     .def("has_characteristic",
         &Section::has_characteristic,
         "``True`` if the section has the given " RST_CLASS_REF(lief.PE.SECTION_CHARACTERISTICS) "",

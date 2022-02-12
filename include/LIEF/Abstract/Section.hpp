@@ -41,6 +41,10 @@ class LIEF_API Section : public Object {
   //! section's name
   virtual std::string name() const;
 
+  //! Return the **complete** section's name which might
+  //! trailing (``0``) bytes
+  virtual const std::string& fullname() const;
+
   //!  section's content
   virtual std::vector<uint8_t> content() const;
 

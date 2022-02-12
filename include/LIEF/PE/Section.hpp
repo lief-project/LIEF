@@ -98,11 +98,6 @@ class LIEF_API Section : public LIEF::Section {
   //! information about the *purpose* of the section (contain code, BSS-like, ...)
   uint32_t characteristics() const;
 
-  //! Return the **fullname** of the section including the trailing bytes
-  inline const std::string& fullname() const {
-    return name_;
-  }
-
   //! Deprecated do not use. It will likely change in a future release of LIEF
   bool is_type(PE_SECTION_TYPES type) const;
 

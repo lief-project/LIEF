@@ -44,6 +44,10 @@ void create<Section>(py::module& m) {
         static_cast<setter_t<const std::string&>>(&Section::name),
         "Section's name")
 
+    .def_property_readonly("fullname",
+        &Section::fullname,
+        "Return the **fullname** of the section including the trailing bytes")
+
     .def_property("size",
         static_cast<getter_t<uint64_t>>(&Section::size),
         static_cast<setter_t<uint64_t>>(&Section::size),

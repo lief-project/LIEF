@@ -34,7 +34,7 @@ void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
         std::end(section_content),
         content);
 
-    c_binary->sections[i]->name                 = section.name().c_str();
+    c_binary->sections[i]->name                 = section.fullname().c_str();
     c_binary->sections[i]->alignment            = section.alignment();
     c_binary->sections[i]->relocation_offset    = section.relocation_offset();
     c_binary->sections[i]->numberof_relocations = section.numberof_relocations();
@@ -45,7 +45,7 @@ void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
     c_binary->sections[i]->reserved3            = section.reserved3();
     c_binary->sections[i]->virtual_address      = section.virtual_address();
     c_binary->sections[i]->offset               = section.offset();
-    c_binary->sections[i]->size                 = section.size();
+    c_binary->sections[i]->size                 = section_content.size();
     c_binary->sections[i]->content              = content;
     c_binary->sections[i]->entropy              = section.entropy();
   }
