@@ -45,7 +45,7 @@ uint64_t MemoryStream::size() const {
 }
 
 result<const void*> MemoryStream::read_at(uint64_t offset, uint64_t size) const {
-  if (offset > size_ || (offset + size) > size) {
+  if (offset > size_ || (offset + size) > size_) {
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
