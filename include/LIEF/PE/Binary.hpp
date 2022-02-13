@@ -280,7 +280,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<Symbol>& symbols();
   const std::vector<Symbol>& symbols() const;
 
-  //! Return resources as a tree
+  //! Return resources as a tree or a nullptr if there is no resources
   ResourceNode* resources();
   const ResourceNode* resources() const;
 

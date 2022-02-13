@@ -100,7 +100,7 @@ class LIEF_API TLS : public Object {
   //! True if there is a data directory associated with this entry
   bool has_data_directory() const;
 
-  //! Return the DataDirectory associated with this object.
+  //! Return the DataDirectory associated with this object or a nullptr
   //! If it exists, its type should be DATA_DIRECTORY::TLS_TABLE
   DataDirectory*       directory();
   const DataDirectory* directory() const;
@@ -108,7 +108,7 @@ class LIEF_API TLS : public Object {
   //! Check if there is a section associated with this entry
   bool has_section() const;
 
-  //! The section associated with the entry
+  //! The section associated with the entry (or a nullptr)
   Section* section();
   const Section* section() const;
 

@@ -55,7 +55,8 @@ class LIEF_API BindingInfo : public Object {
   //! Check if a MachO::SegmentCommand is associated with this binding
   bool has_segment() const;
 
-  //! The MachO::SegmentCommand associated with the BindingInfo
+  //! The MachO::SegmentCommand associated with the BindingInfo or
+  //! a nullptr of it is not bind to a SegmentCommand
   const SegmentCommand* segment() const;
   SegmentCommand*       segment();
 

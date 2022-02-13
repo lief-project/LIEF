@@ -358,6 +358,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t fat_offset() const;
 
   //! Return the binary's SegmentCommand which encompasses the given virtual address
+  //! or a nullptr if not found.
   SegmentCommand* segment_from_virtual_address(uint64_t virtual_address);
   const SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) const;
 

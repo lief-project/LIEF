@@ -76,6 +76,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! Symbol visibility
   ELF_SYMBOL_VISIBILITY visibility() const;
 
+  //! Section associated with the symbol or a nullptr if
+  //! it does not exist.
   Section* section();
 
   //! This member have slightly different interpretations:
