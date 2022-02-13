@@ -18,7 +18,10 @@
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {
-vector_iostream::vector_iostream(bool endian_swap) : endian_swap_{endian_swap} {}
+vector_iostream::vector_iostream() = default;
+vector_iostream::vector_iostream(bool endian_swap) :
+  endian_swap_{endian_swap}
+{}
 
 size_t vector_iostream::uleb128_size(uint64_t value) {
   size_t size = 0;
@@ -56,28 +59,35 @@ vector_iostream& vector_iostream::put(uint8_t c) {
   return *this;
 }
 vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
-  if (raw_.size() < (static_cast<size_t>(tellp()) + n)) {
-    raw_.resize(static_cast<size_t>(tellp()) + n);
+  const auto pos = static_cast<size_t>(tellp());
+  if (raw_.size() < (pos + n)) {
+    raw_.resize(pos + n);
   }
 
   auto it = std::begin(raw_);
-  std::advance(it, static_cast<size_t>(tellp()));
+  std::advance(it, pos);
   std::copy(s, s + n, it);
 
   current_pos_ += n;
   return *this;
 }
 
-vector_iostream& vector_iostream::write(const std::vector<uint8_t>& s) {
-  if (raw_.size() < (static_cast<size_t>(tellp()) + s.size())) {
-    raw_.resize(static_cast<size_t>(tellp()) + s.size());
+vector_iostream& vector_iostream::write(std::vector<uint8_t> s) {
+  const auto pos = static_cast<size_t>(tellp());
+  if (raw_.size() < (pos + s.size())) {
+    raw_.resize(pos + s.size());
   }
+
   auto it = std::begin(raw_);
-  std::advance(it, static_cast<size_t>(tellp()));
-  std::copy(std::begin(s), std::end(s), it);
+  std::advance(it, pos);
+  std::move(std::begin(s), std::end(s), it);
 
   current_pos_ += s.size();
   return *this;
+}
+
+vector_iostream& vector_iostream::write(span<const uint8_t> s) {
+  return write(s.data(), s.size());
 }
 
 vector_iostream& vector_iostream::write_sized_int(uint64_t value, size_t size) {
@@ -85,26 +95,14 @@ vector_iostream& vector_iostream::write_sized_int(uint64_t value, size_t size) {
   return write(reinterpret_cast<const uint8_t*>(&stack_val), size);
 }
 
-
-vector_iostream& vector_iostream::write(std::vector<uint8_t>&& s) {
-  if (raw_.size() < (static_cast<size_t>(tellp()) + s.size())) {
-    raw_.resize(static_cast<size_t>(tellp()) + s.size());
-  }
-  auto it = std::begin(raw_);
-  std::advance(it, static_cast<size_t>(tellp()));
-  std::move(std::begin(s), std::end(s), it);
-
-  current_pos_ += s.size();
-  return *this;
-}
-
 vector_iostream& vector_iostream::write(const std::string& s) {
-  if (raw_.size() < (static_cast<size_t>(tellp()) + s.size() + 1)) {
-    raw_.resize(static_cast<size_t>(tellp()) + s.size() + 1);
+  const auto pos = static_cast<size_t>(tellp());
+  if (raw_.size() < (pos + s.size() + 1)) {
+    raw_.resize(pos + s.size() + 1);
   }
 
   auto it = std::begin(raw_);
-  std::advance(it, static_cast<size_t>(tellp()));
+  std::advance(it, pos);
   std::copy(std::begin(s), std::end(s), it);
 
   current_pos_ += s.size() + 1;

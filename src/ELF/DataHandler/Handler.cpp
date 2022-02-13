@@ -22,6 +22,7 @@
 
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "LIEF/exception.hpp"
@@ -29,6 +30,40 @@
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
+
+
+//class DataHandlerStream : public SpanStream {
+//  public:
+//  DataHandlerStream(std::vector<uint8_t>& ref, size_t non_aligned_size) :
+//    SpanStream({ref.data(), non_aligned_size})
+//  {
+//    stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
+//  }
+//  ~DataHandlerStream() override = default;
+//};
+class DataHandlerStream : public BinaryStream {
+  public:
+  DataHandlerStream(std::vector<uint8_t>& ref) :
+    data_{ref}
+  {
+    stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
+  }
+  ~DataHandlerStream() override = default;
+
+  inline uint64_t size() const override {
+    return data_.size();
+  }
+
+  inline result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+    if (offset > data_.size() || (offset + size) > data_.size()) {
+      return make_error_code(lief_errors::read_error);
+    }
+    return data_.data() + offset;
+  }
+
+  private:
+  std::vector<uint8_t>& data_;
+};
 
 Handler::~Handler() = default;
 Handler::Handler() = default;
@@ -46,15 +81,27 @@ Handler::Handler(std::vector<uint8_t>&& content) :
 {}
 
 
-result<Handler> Handler::from_stream(BinaryStream& stream) {
-  if (VectorStream::classof(stream)) {
-    Handler hdl;
-    auto& vs = static_cast<VectorStream&>(stream);
-    hdl.data_ = vs.content();
+result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
+  if (VectorStream::classof(*stream)) {
+    auto hdl = std::unique_ptr<Handler>(new Handler{});
+    auto& vs = static_cast<VectorStream&>(*stream);
+
+    hdl->data_ = std::move(vs.move_content());
+    const uint64_t pos = vs.pos();
+    stream = std::make_unique<DataHandlerStream>(hdl->data_);
+    stream->setpos(pos);
     return hdl;
   }
 
-  if (MemoryStream::classof(stream)) {
+
+  if (SpanStream::classof(*stream)) {
+    auto hdl = std::unique_ptr<Handler>(new Handler{});
+    auto& vs = static_cast<SpanStream&>(*stream);
+    hdl->data_ = vs.content();
+    return hdl;
+  }
+
+  if (MemoryStream::classof(*stream)) {
     return make_error_code(lief_errors::not_implemented);
   }
 

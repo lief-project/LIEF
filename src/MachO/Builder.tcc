@@ -347,112 +347,6 @@ ok_error_t Builder::build(DyldInfo* dyld_info) {
             std::back_inserter(dyld_info->original_data_));
 
   dyld_info->original_data_.insert(std::end(dyld_info->original_data_), padding, 0);
-
-
-  // Write Back Content
-
-  // Rebase opcodes
-  // ==============
-  {
-    const buffer_t& rebase_opcodes = dyld_info->rebase_opcodes();
-    if (rebase_opcodes.size() != raw_cmd.rebase_size) {
-      LIEF_WARN("Rebase opcodes size is different from metadata");
-    }
-
-    SegmentCommand* rebase_segment = binary_->segment_from_offset(raw_cmd.rebase_off);
-    if (rebase_segment == nullptr) {
-      LIEF_WARN("Rebease segment is null");
-    } else {
-      uint64_t relative_offset = raw_cmd.rebase_off - rebase_segment->file_offset();
-      std::vector<uint8_t> content = rebase_segment->content();
-      std::move(std::begin(rebase_opcodes), std::end(rebase_opcodes),
-                content.data() + relative_offset);
-      rebase_segment->content(std::move(content));
-    }
-  }
-
-  // Bind opcodes
-  // ============
-  {
-    const buffer_t& bind_opcodes = dyld_info->bind_opcodes();
-    if (bind_opcodes.size() != raw_cmd.bind_size) {
-      LIEF_WARN("Bind opcodes size is different from metadata");
-    }
-
-    SegmentCommand* bind_segment = binary_->segment_from_offset(raw_cmd.bind_off);
-    if (bind_segment == nullptr) {
-      LIEF_WARN("Bind segment is null");
-    } else {
-      uint64_t relative_offset = raw_cmd.bind_off - bind_segment->file_offset();
-      std::vector<uint8_t> content = bind_segment->content();
-      std::move(std::begin(bind_opcodes), std::end(bind_opcodes),
-                content.data() + relative_offset);
-      bind_segment->content(std::move(content));
-    }
-  }
-
-
-  // Weak Bind opcodes
-  // =================
-  {
-    const buffer_t& weak_bind_opcodes = dyld_info->weak_bind_opcodes();
-    if (weak_bind_opcodes.size() != raw_cmd.weak_bind_size) {
-      LIEF_WARN("Weak Bind opcodes size is different from metadata");
-    }
-
-    SegmentCommand* weak_bind_segment = binary_->segment_from_offset(raw_cmd.weak_bind_off);
-    if (weak_bind_segment == nullptr) {
-      LIEF_WARN("Weak bind segment is null");
-    } else {
-      uint64_t relative_offset = raw_cmd.weak_bind_off - weak_bind_segment->file_offset();
-      std::vector<uint8_t> content = weak_bind_segment->content();
-      std::move(std::begin(weak_bind_opcodes), std::end(weak_bind_opcodes),
-                content.data() + relative_offset);
-      weak_bind_segment->content(std::move(content));
-    }
-  }
-
-
-  // Lazy Bind opcodes
-  // =================
-  {
-    const buffer_t& lazy_bind_opcodes = dyld_info->lazy_bind_opcodes();
-    if (lazy_bind_opcodes.size() != raw_cmd.lazy_bind_size) {
-      LIEF_WARN("Lazy Bind opcodes size is different from metadata");
-    }
-
-    SegmentCommand* lazy_bind_segment = binary_->segment_from_offset(raw_cmd.lazy_bind_off);
-    if (lazy_bind_segment == nullptr) {
-      LIEF_WARN("Lazy bind segment is null");
-    } else {
-      uint64_t relative_offset = raw_cmd.lazy_bind_off - lazy_bind_segment->file_offset();
-      std::vector<uint8_t> content = lazy_bind_segment->content();
-      std::move(std::begin(lazy_bind_opcodes), std::end(lazy_bind_opcodes),
-                content.data() + relative_offset);
-      lazy_bind_segment->content(std::move(content));
-    }
-  }
-
-
-  // Export trie
-  // ===========
-  {
-    const buffer_t& export_trie = dyld_info->export_trie();
-    if (export_trie.size() != raw_cmd.export_size) {
-      LIEF_WARN("Export trie size is different from metadata");
-    }
-
-    SegmentCommand* export_segment = binary_->segment_from_offset(raw_cmd.export_off);
-    if (export_segment == nullptr) {
-      LIEF_WARN("Export segment is null");
-    } else {
-      uint64_t relative_offset = raw_cmd.export_off - export_segment->file_offset();
-      std::vector<uint8_t> content = export_segment->content();
-      std::move(std::begin(export_trie), std::end(export_trie),
-                content.data() + relative_offset);
-      export_segment->content(std::move(content));
-    }
-  }
   return ok();
 }
 
@@ -486,11 +380,14 @@ ok_error_t Builder::build(FunctionStarts* function_starts) {
     LIEF_WARN("Can't find segment associated with function starts");
     return make_error_code(lief_errors::not_found);
   }
-  std::vector<uint8_t> content = segment->content();
+  span<uint8_t> content = segment->writable_content();
   uint64_t relative_offset = function_starts->data_offset() - segment->file_offset();
+  if (relative_offset > content.size() || (relative_offset + packed_functions.size()) > content.size()) {
+    LIEF_ERR("LC_FUNCTION_STARTS does not fit in the segment");
+    return make_error_code(lief_errors::build_error);
+  }
   std::move(std::begin(packed_functions), std::end(packed_functions),
             content.data() + relative_offset);
-  segment->content(std::move(content));
 
 
   // Write back the 'linkedit' structure
@@ -678,10 +575,13 @@ ok_error_t Builder::build(SymbolCommand* symbol_command) {
   }
 
   std::vector<uint8_t> symname_data = raw_symbol_names.raw();
-  std::vector<uint8_t> content = segment->content();
+  span<uint8_t> content = segment->writable_content();
   uint64_t relative_offset = symbol_command->strings_offset() - segment->file_offset();
+  if (relative_offset > content.size() || (relative_offset + symname_data.size()) > content.size()) {
+    LIEF_WARN("Symbols names don't fit in the segment");
+    return make_error_code(lief_errors::build_error);
+  }
   std::move(std::begin(symname_data), std::end(symname_data), content.data() + relative_offset);
-  segment->content(std::move(content));
 
   // 2. Fill the n_list table
   // -------------------------------------
@@ -717,12 +617,18 @@ ok_error_t Builder::build(SymbolCommand* symbol_command) {
     return make_error_code(lief_errors::not_found);
   }
 
-  content = segment->content();
+  content = segment->writable_content();
   relative_offset = symbol_command->symbol_offset() - segment->file_offset();
   std::vector<uint8_t> raw_nlist_table = nlist_table.raw();
+
+  if (relative_offset > content.size() || (relative_offset + raw_nlist_table.size()) > content.size()) {
+    LIEF_WARN("Symbols nlist don't fit in the segment");
+    return make_error_code(lief_errors::build_error);
+  }
+
+
   std::move(std::begin(raw_nlist_table), std::end(raw_nlist_table),
             content.data() + relative_offset);
-  segment->content(std::move(content));
 
   // 3. Fill the Header
 

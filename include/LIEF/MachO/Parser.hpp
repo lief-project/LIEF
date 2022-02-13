@@ -78,7 +78,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
   private:
   Parser(const std::string& file, const ParserConfig& conf);
-  Parser(std::vector<uint8_t> data, const std::string& name, const ParserConfig& conf);
+  Parser(std::vector<uint8_t> data, const ParserConfig& conf);
   Parser();
 
   ok_error_t build();

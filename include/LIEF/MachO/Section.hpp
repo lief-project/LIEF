@@ -81,7 +81,7 @@ class LIEF_API Section : public LIEF::Section {
 
   ~Section() override;
 
-  content_t content() const override;
+  span<const uint8_t> content() const override;
 
   //! Update the content of the section
   void content(const content_t& data) override;

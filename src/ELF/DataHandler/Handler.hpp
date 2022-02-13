@@ -60,7 +60,7 @@ class LIEF_API Handler {
 
   ok_error_t reserve(uint64_t offset, uint64_t size);
 
-  static result<Handler> from_stream(BinaryStream& stream);
+  static result<std::unique_ptr<Handler>> from_stream(std::unique_ptr<BinaryStream>& stream);
 
   private:
   Handler();

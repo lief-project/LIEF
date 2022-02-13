@@ -117,6 +117,7 @@ set(LIBLIEF_SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/BinaryStream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/VectorStream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/MemoryStream.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/SpanStream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryStream/Convert.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/visitors/hash.cpp")
 
@@ -124,6 +125,7 @@ set(LIBLIEF_SOURCE_FILES
 # ===============================
 set(LIEF_INC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/errors.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/span.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/exception.hpp"
@@ -142,9 +144,11 @@ set(LIEF_INC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/BinaryStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/VectorStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/MemoryStream.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/SpanStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/Convert.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp"
+)
 
 set(LIEF_VISITOR_INCLUDE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/hash.hpp")
@@ -406,6 +410,30 @@ else()
     ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp/utf8.h)
 endif()
 
+# =======================================
+# tcb/span
+# =======================================
+if(LIEF_EXTERNAL_SPAN)
+  message(STATUS "Using external tcb/span version")
+  if(LIEF_EXTERNAL_SPAN_DIR)
+    message(STATUS "External span include dir: ${LIEF_EXTERNAL_SPAN_DIR}")
+    target_include_directories(LIB_LIEF SYSTEM PUBLIC
+                               ${LIEF_EXTERNAL_SPAN_DIR})
+  endif()
+else()
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp
+    COMMAND
+      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${TCB_SPAN_SRC_DIR}/
+      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
+    DEPENDS lief_span)
+
+  target_sources(LIB_LIEF PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp)
+endif()
+
+
 
 target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
@@ -523,6 +551,10 @@ if(LIEF_PROFILING)
   add_executable(elf_profiler profiling/elf_profiler.cpp)
   target_compile_options(elf_profiler PUBLIC ${PROFILING_FLAGS})
   target_link_libraries(elf_profiler PRIVATE LIB_LIEF)
+
+  add_executable(macho_profiler profiling/macho_profiler.cpp)
+  target_compile_options(macho_profiler PUBLIC ${PROFILING_FLAGS})
+  target_link_libraries(macho_profiler PRIVATE LIB_LIEF)
 endif()
 
 # Coverage flags

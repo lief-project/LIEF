@@ -39,6 +39,9 @@ class BinaryStream {
     UNKNOWN = 0,
     VECTOR,
     MEMORY,
+    SPAN,
+
+    ELF_DATA_HANDLER,
   };
 
   BinaryStream();
@@ -71,13 +74,16 @@ class BinaryStream {
   virtual inline ok_error_t peek_data(std::vector<uint8_t>& container,
                                       uint64_t offset, uint64_t size)
   {
-  // Even though offset + size < ... => offset < ...
-  // the addition could overflow so it's worth checking both
+
+    if (size == 0) {
+      return ok();
+    }
+    // Even though offset + size < ... => offset < ...
+    // the addition could overflow so it's worth checking both
     const bool read_ok = offset <= this->size() && (offset + size) <= this->size();
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
     }
-
     container.resize(size);
     if (peek_in(container.data(), offset, size)) {
       return ok();
@@ -168,7 +174,11 @@ class BinaryStream {
   virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
   inline virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
     if (auto raw = read_at(offset, size)) {
-      memcpy(dst, *raw, size);
+      if (dst == nullptr) {
+        return make_error_code(lief_errors::read_error);
+      }
+      const void* ptr = *raw;
+      memcpy(dst, ptr, size);
       return ok();
     }
     return make_error_code(lief_errors::read_error);

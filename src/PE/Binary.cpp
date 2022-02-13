@@ -595,7 +595,8 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
   }
 
   auto new_section                = std::make_unique<Section>(section);
-  std::vector<uint8_t> content    = new_section->content();
+  span<const uint8_t> content_ref = new_section->content();
+  std::vector<uint8_t> content    = {std::begin(content_ref), std::end(content_ref)};
   const auto section_size         = static_cast<uint32_t>(content.size());
   const auto section_size_aligned = static_cast<uint32_t>(align(section_size, optional_header().file_alignment()));
   const uint32_t virtual_size     = section_size;
@@ -1094,11 +1095,11 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       continue;
     }
     const std::vector<uint8_t>& pad     = sec->padding();
-    const std::vector<uint8_t>& content = sec->content();
+    span<const uint8_t> content = sec->content();
     LIEF_DEBUG("Authentihash:  Append section {:<8}: [0x{:04x}, 0x{:04x}] + [0x{:04x}] = [0x{:04x}, 0x{:04x}]",
-        sec->name(),
-        sec->offset(), sec->offset() + content.size(), pad.size(),
-        sec->offset(), sec->offset() + content.size() + pad.size());
+               sec->name(),
+               sec->offset(), sec->offset() + content.size(), pad.size(),
+               sec->offset(), sec->offset() + content.size() + pad.size());
     if (/* overlapping */ sec->offset() < position) {
       // Trunc the beginning of the overlap
       if (position <= sec->offset() + content.size()) {
@@ -1112,7 +1113,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       }
     } else {
       ios
-        .write(content)
+        .write(content.data(), content.size())
         .write(pad);
     }
     position = sec->offset() + content.size() + pad.size();
@@ -1327,7 +1328,13 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
     return;
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
-  std::vector<uint8_t>& content = section_topatch->content_ref();
+
+  span<uint8_t> content = section_topatch->writable_content();
+  if (offset + patch_value.size() > content.size()) {
+    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the section (limit: 0x{:x})",
+             patch_value.size(), offset, content.size());
+    return;
+  }
   std::copy(std::begin(patch_value), std::end(patch_value),
             content.data() + offset);
 
@@ -1356,11 +1363,46 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value,
     return;
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
-  std::vector<uint8_t>& content = section_topatch->content_ref();
+  span<uint8_t> content = section_topatch->writable_content();
+  if (offset > content.size() || (offset + size) > content.size()) {
+    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the section (limit: 0x{:x})",
+             size, offset, content.size());
+  }
+  switch (size) {
+    case sizeof(uint8_t):
+      {
+        const auto X = static_cast<const uint8_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint8_t));
+        break;
+      }
 
-  std::copy(reinterpret_cast<uint8_t*>(&patch_value), reinterpret_cast<uint8_t*>(&patch_value) + size,
-            content.data() + offset);
+    case sizeof(uint16_t):
+      {
+        const auto X = static_cast<const uint16_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint16_t));
+        break;
+      }
 
+    case sizeof(uint32_t):
+      {
+        const auto X = static_cast<const uint32_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint32_t));
+        break;
+      }
+
+    case sizeof(uint64_t):
+      {
+        const auto X = static_cast<const uint64_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint64_t));
+        break;
+      }
+
+    default:
+      {
+        LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+        return;
+      }
+  }
 }
 
 std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address,
@@ -1380,7 +1422,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
     LIEF_ERR("Can't find the section with the rva 0x{:x}", rva);
     return {};
   }
-  std::vector<uint8_t> content = section->content();
+  span<const uint8_t> content = section->content();
   const uint64_t offset = rva - section->virtual_address();
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {

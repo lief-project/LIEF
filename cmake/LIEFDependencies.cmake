@@ -244,3 +244,20 @@ if(NOT LIEF_OPT_UTFCPP_EXTERNAL)
   set(UTFCPP_INCLUDE_DIR "${SOURCE_DIR}/source")
 endif()
 
+# https://github.com/tcbrindle/span
+# ---------------------------------
+if(NOT LIEF_EXTERNAL_SPAN)
+  set(TCB_SPAN_VERSION 427f6bd)
+  set(TCB_SPAN_SHA256 SHA256=3fde1bb8be41da080d10ad18b3b7a6b1045349dc8ae64fc4380b977478ec68d3)
+  set(TCB_SPAN_URL "${THIRD_PARTY_DIRECTORY}/tcb-span-${TCB_SPAN_VERSION}.zip" CACHE STRING "URL to tcb/span")
+  ExternalProject_Add(lief_span
+    URL               ${TCB_SPAN_URL}
+    URL_HASH          ${TCB_SPAN_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    UPDATE_COMMAND    ""
+    INSTALL_COMMAND   "")
+
+  ExternalProject_get_property(lief_span SOURCE_DIR)
+  set(TCB_SPAN_SRC_DIR "${SOURCE_DIR}")
+endif()

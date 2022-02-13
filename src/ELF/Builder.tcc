@@ -919,13 +919,13 @@ ok_error_t Builder::build_segments() {
   // Write segment content
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     if (segment->physical_size() > 0) {
-      const std::vector<uint8_t>& content = segment->content();
+      span<const uint8_t> content = segment->content();
       LIEF_DEBUG("Write content of segment {}@0{:x} (off: 0x{:x}:0{:x})",
                  to_string(segment->type()), segment->virtual_address(),
                  segment->file_offset(), content.size());
 
       ios_.seekp(segment->file_offset());
-      ios_.write(std::move(content));
+      ios_.write(content);
     }
   }
 

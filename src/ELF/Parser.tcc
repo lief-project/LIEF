@@ -777,7 +777,7 @@ ok_error_t Parser::parse_sections() {
   stream_->setpos(shdr_offset);
   std::unordered_map<Section*, size_t> sections_names;
   for (size_t i = 0; i < numberof_sections; ++i) {
-    LIEF_DEBUG("    Section #{:02d}", i);
+    LIEF_DEBUG("  Elf_Shdr#{:02d}.offset: 0x{:x} ", i, stream_->pos());
     const auto shdr = stream_->read_conv<Elf_Shdr>();
     if (!shdr) {
       LIEF_ERR("  Can't parse section #{:02d}", i);
@@ -788,38 +788,50 @@ ok_error_t Parser::parse_sections() {
     section->datahandler_ = binary_->datahandler_.get();
 
     const uint64_t section_end = section->file_offset() + section->size();
+    bool access_content = true;
+    if (section->file_offset() > stream_->size()) {
+      LIEF_ERR("  Section #{:d} file offset corrupted!", i);
+      access_content = false;
+    }
 
     if (section_end > stream_->size() + 200_MB) {
       LIEF_ERR("  Section #{:d} is too large!", i);
-      continue;
+      access_content = false;
     }
 
     binary_->datahandler_->create(section->file_offset(), section->size(),
                                   DataHandler::Node::SECTION);
 
     // Only if it contains data (with bits)
-    if (section->size() > 0) {
+    if (section->size() > 0 && access_content) {
       uint64_t read_size = section->size();
       if (read_size > Parser::MAX_SECTION_SIZE) {
         LIEF_WARN("Section #{} is {} bytes large. Only the first {} bytes will be taken into account",
-                  read_size, Parser::MAX_SECTION_SIZE);
+                  i, read_size, Parser::MAX_SECTION_SIZE);
         read_size = Parser::MAX_SECTION_SIZE;
       }
 
-      const Elf_Off offset_to_content   = section->file_offset();
+      const Elf_Off offset_to_content = section->file_offset();
       auto alloc = binary_->datahandler_->reserve(section->file_offset(), read_size);
       if (!alloc) {
         LIEF_ERR("Can't allocate memory");
         break;
       }
 
-      std::vector<uint8_t> sec_content;
-      if (!stream_->peek_data(sec_content, offset_to_content, read_size)) {
-        if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
-          LIEF_WARN("  Unable to get content of section #{:d}", i);
+      /* The DataHandlerStream interface references ELF data that are
+       * located in the ELF::DataHandler. Therefore, we can skip reading
+       * the data since they are already present in the data handler.
+       * This optimization saves memory (which is also performed in parse_segments<>(...))
+       */
+      if (stream_->type() != BinaryStream::STREAM_TYPE::ELF_DATA_HANDLER) {
+        std::vector<uint8_t> sec_content;
+        if (!stream_->peek_data(sec_content, offset_to_content, read_size)) {
+          if (section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+            LIEF_WARN("  Unable to get content of section #{:d}", i);
+          }
+        } else {
+          section->content(std::move(sec_content));
         }
-      } else {
-        section->content(std::move(sec_content));
       }
     }
     sections_names[section.get()] = shdr->sh_name;
@@ -882,7 +894,7 @@ ok_error_t Parser::parse_segments() {
       if (read_size > Parser::MAX_SEGMENT_SIZE) {
         LIEF_WARN("Segment #{} is {} bytes large. Only the first {} bytes will be taken into account",
                   i, read_size, Parser::MAX_SEGMENT_SIZE);
-        read_size = Parser::MAX_SECTION_SIZE;
+        read_size = Parser::MAX_SEGMENT_SIZE;
       }
       if (read_size > stream_->size()) {
         LIEF_WARN("Segment #{} has a physical size larger than the current stream size ({} > {}). "
@@ -890,25 +902,37 @@ ok_error_t Parser::parse_segments() {
                   i, read_size, stream_->size());
         read_size = stream_->size();
       }
+      if (segment->file_offset() > stream_->size() || (segment->file_offset() + read_size) > stream_->size()) {
+        LIEF_WARN("Segment #{} has a corrupted file offset (0x{:x}) ", i, segment->file_offset());
+        break;
+      }
       const Elf_Off offset_to_content = segment->file_offset();
       auto alloc = binary_->datahandler_->reserve(segment->file_offset(), read_size);
       if (!alloc) {
         LIEF_ERR("Can't allocate memory");
         break;
       }
-      std::vector<uint8_t> seg_content;
-      if (stream_->peek_data(seg_content, offset_to_content, read_size)) {
-        segment->content(std::move(seg_content));
-        if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
-          auto interpreter = stream_->peek_string_at(offset_to_content, read_size);
-          if (!interpreter) {
-            LIEF_ERR("Can't read the interpreter string");
-          } else {
-            binary_->interpreter_ = *interpreter;
-          }
+      /* The DataHandlerStream interface references ELF data that are
+       * located in the ELF::DataHandler. Therefore, we can skip reading
+       * the data since they are already present in the data handler.
+       * This optimization saves memory (which is also performed in parse_sections<>(...))
+       */
+      if (stream_->type() != BinaryStream::STREAM_TYPE::ELF_DATA_HANDLER) {
+        std::vector<uint8_t> seg_content;
+        if (stream_->peek_data(seg_content, offset_to_content, read_size)) {
+          segment->content(std::move(seg_content));
+        } else {
+          LIEF_ERR("Unable to get the content of segment #{:d}", i);
         }
-      } else {
-        LIEF_ERR("Unable to get the content of segment #{:d}", i);
+      }
+
+      if (segment->type() == SEGMENT_TYPES::PT_INTERP) {
+        auto interpreter = stream_->peek_string_at(offset_to_content, read_size);
+        if (!interpreter) {
+          LIEF_ERR("Can't read the interpreter string");
+        } else {
+          binary_->interpreter_ = *interpreter;
+        }
       }
     }
 

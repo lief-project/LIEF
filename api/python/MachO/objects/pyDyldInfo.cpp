@@ -71,8 +71,11 @@ void create<DyldInfo>(py::module& m) {
         )delim")
 
     .def_property("rebase_opcodes",
-        static_cast<getter_t<const buffer_t&>>(&DyldInfo::rebase_opcodes),
-        static_cast<setter_t<const buffer_t&>>(&DyldInfo::rebase_opcodes),
+        [] (const DyldInfo& self) {
+          span<const uint8_t> content = self.rebase_opcodes();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
+        static_cast<setter_t<buffer_t>>(&DyldInfo::rebase_opcodes),
         "Return the rebase's opcodes as ``list`` of bytes")
 
     .def_property_readonly("show_rebases_opcodes",
@@ -101,8 +104,11 @@ void create<DyldInfo>(py::module& m) {
 
 
     .def_property("bind_opcodes",
-        static_cast<getter_t<const buffer_t&>>(&DyldInfo::bind_opcodes),
-        static_cast<setter_t<const buffer_t&>>(&DyldInfo::bind_opcodes),
+        [] (const DyldInfo& self) {
+          span<const uint8_t> content = self.bind_opcodes();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
+        static_cast<setter_t<buffer_t>>(&DyldInfo::bind_opcodes),
         "Return the binding's opcodes as ``list`` of bytes")
 
     .def_property_readonly("show_bind_opcodes",
@@ -137,8 +143,11 @@ void create<DyldInfo>(py::module& m) {
 
 
     .def_property("weak_bind_opcodes",
-        static_cast<getter_t<const buffer_t&>>(&DyldInfo::weak_bind_opcodes),
-        static_cast<setter_t<const buffer_t&>>(&DyldInfo::weak_bind_opcodes),
+        [] (const DyldInfo& self) {
+          span<const uint8_t> content = self.weak_bind_opcodes();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
+        static_cast<setter_t<buffer_t>>(&DyldInfo::weak_bind_opcodes),
         "Return **Weak** binding's opcodes as ``list`` of bytes")
 
     .def_property_readonly("show_weak_bind_opcodes",
@@ -167,8 +176,11 @@ void create<DyldInfo>(py::module& m) {
 
 
     .def_property("lazy_bind_opcodes",
-        static_cast<getter_t<const buffer_t&>>(&DyldInfo::lazy_bind_opcodes),
-        static_cast<setter_t<const buffer_t&>>(&DyldInfo::lazy_bind_opcodes),
+        [] (const DyldInfo& self) {
+          span<const uint8_t> content = self.lazy_bind_opcodes();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
+        static_cast<setter_t<buffer_t>>(&DyldInfo::lazy_bind_opcodes),
         "Return **lazy** binding's opcodes as ``list`` of bytes")
 
     .def_property_readonly("show_lazy_bind_opcodes",
@@ -218,8 +230,11 @@ void create<DyldInfo>(py::module& m) {
 
 
     .def_property("export_trie",
-        static_cast<getter_t<const buffer_t&>>(&DyldInfo::export_trie),
-        static_cast<setter_t<const buffer_t&>>(&DyldInfo::export_trie),
+        [] (const DyldInfo& self) {
+          span<const uint8_t> content = self.export_trie();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
+        static_cast<setter_t<buffer_t>>(&DyldInfo::export_trie),
         "Return Export's trie as ``list`` of bytes")
 
     .def_property_readonly("exports",

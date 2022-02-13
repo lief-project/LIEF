@@ -118,7 +118,7 @@ Section::Section(const Section& other) :
   info_{other.info_},
   address_align_{other.address_align_},
   entry_size_{other.entry_size_},
-  content_c_{other.content()}
+  content_c_{other.content_c_}
 {
 }
 
@@ -217,7 +217,7 @@ void Section::offset(uint64_t offset) {
   offset_ = offset;
 }
 
-std::vector<uint8_t> Section::content() const {
+span<const uint8_t> Section::content() const {
   if (size() == 0) {
     return {};
   }
@@ -429,6 +429,12 @@ bool Section::operator==(const Section& rhs) const {
 
 bool Section::operator!=(const Section& rhs) const {
   return !(*this == rhs);
+}
+
+
+span<uint8_t> Section::writable_content() {
+  span<const uint8_t> ref = static_cast<const Section*>(this)->content();
+  return {const_cast<uint8_t*>(ref.data()), ref.size()};
 }
 
 

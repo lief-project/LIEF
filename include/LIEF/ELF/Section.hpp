@@ -75,7 +75,7 @@ class LIEF_API Section : public LIEF::Section {
   ELF_SECTION_TYPES type() const;
 
   //! Section's content
-  std::vector<uint8_t> content() const override;
+  span<const uint8_t> content() const override;
 
   //! Set section content
   void content(const std::vector<uint8_t>& data) override;
@@ -164,6 +164,7 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
+  span<uint8_t> writable_content();
   ELF_SECTION_TYPES     type_;
   uint64_t              flags_;
   uint64_t              original_size_;

@@ -112,6 +112,8 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 +-----------------------------------+--------------+--------------------------------------------+
 | Dependency                        | Scope        | Purpose                                    |
 +-----------------------------------+--------------+--------------------------------------------+
+| `tcb/span <span_ref>`_            | ``external`` | C++11 span interface                       |
++-----------------------------------+--------------+--------------------------------------------+
 | `Boost Leaf <leaf_ref>`_          | ``external`` | Error handling (see: :ref:`err_handling` ) |
 +-----------------------------------+--------------+--------------------------------------------+
 | `spdlog <spdlog_ref>`_            | ``internal`` | Logging                                    |
@@ -131,6 +133,7 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 | `Melkor ELF Fuzzer <melkor_ref>`_ | ``internal`` | ELF Fuzzing                                |
 +-----------------------------------+--------------+--------------------------------------------+
 
+.. _span_ref: https://github.com/tcbrindle/span
 .. _spdlog_ref: https://github.com/gabime/spdlog
 .. _mbedtls_ref: https://github.com/ARMmbed/mbedtls
 .. _leaf_ref: https://github.com/boostorg/leaf
@@ -154,6 +157,7 @@ cmake's options:
   * ``LIEF_OPT_MBEDTLS_EXTERNAL``
   * ``LIEF_EXTERNAL_SPDLOG``
   * ``LIEF_OPT_FROZEN_EXTERNAL``
+  * ``LIEF_OPT_EXTERNAL_SPAN/LIEF_EXTERNAL_SPAN_DIR``
 
 By setting these flags, LIEF resolves the dependencies with CMake ``find_package(...)`` which
 is aware of ``<DEPS>_DIR`` to find the package. Boost's Leaf does not provide

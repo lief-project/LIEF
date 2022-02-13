@@ -316,7 +316,8 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   // ====================================================================
   //datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
-  std::vector<uint8_t> content = segment.content();
+  span<const uint8_t> content_ref = segment.content();
+  std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
   auto new_segment = std::make_unique<Segment>(segment);
 
   uint64_t last_offset_sections = std::accumulate(std::begin(sections_), std::end(sections_), 0,
@@ -389,7 +390,9 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table();
 
-  std::vector<uint8_t> content = segment.content();
+  span<const uint8_t> content_ref = segment.content();
+  std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
+
   auto new_segment = std::make_unique<Segment>(segment);
   new_segment->datahandler_ = datahandler_.get();
 
@@ -487,7 +490,9 @@ Segment& Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
   segment_to_extend->physical_size(segment_to_extend->physical_size() + size);
   segment_to_extend->virtual_size(segment_to_extend->virtual_size() + size);
 
-  std::vector<uint8_t> segment_content = segment_to_extend->content();
+  span<const uint8_t> content_ref = segment_to_extend->content();
+  std::vector<uint8_t> segment_content{content_ref.data(), std::end(content_ref)};
+
   segment_content.resize(segment_to_extend->physical_size(), 0);
   segment_to_extend->content(segment_content);
 
@@ -517,7 +522,8 @@ Section& Binary::add_section<true>(const Section& section) {
   LIEF_DEBUG("Adding section '{}' as LOADED", section.name());
   // Create a Segment:
   Segment new_segment;
-  new_segment.content(section.content());
+  span<const uint8_t> content_ref = section.content();
+  new_segment.content({std::begin(content_ref), std::end(content_ref)});
   new_segment.type(SEGMENT_TYPES::PT_LOAD);
 
   new_segment.virtual_address(section.virtual_address());
@@ -585,7 +591,8 @@ Section& Binary::add_section<false>(const Section& section) {
   new_section->size(section.size());
 
   // Copy original content in the data handler
-  new_section->content(section.content());
+  span<const uint8_t> content_ref = section.content();
+  new_section->content({std::begin(content_ref), std::end(content_ref)});
 
   header().numberof_sections(header().numberof_sections() + 1);
 

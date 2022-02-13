@@ -68,6 +68,11 @@ option(LIEF_OPT_UTFCPP_EXTERNAL OFF)
 # This option enables to provide an external version of MbedTLS
 option(LIEF_OPT_MBEDTLS_EXTERNAL OFF)
 
+# This option enables to provide an external
+# version of https://github.com/tcbrindle/span (e.g. present on the system)
+option(LIEF_OPT_EXTERNAL_SPAN OFF)
+set(LIEF_EXTERNAL_SPAN_DIR )
+
 # This option enables to provide an external version of Frozen
 set(_LIEF_USE_FROZEN ON)
 if(LIEF_DISABLE_FROZEN)
@@ -95,6 +100,7 @@ set(LIEF_EXTERNAL_FROZEN 0)
 set(LIEF_EXTERNAL_LEAF 0)
 set(LIEF_EXTERNAL_UTF8CPP 0)
 set(LIEF_EXTERNAL_MBEDTLS 0)
+set(LIEF_EXTERNAL_SPAN 0)
 
 if(LIEF_ELF)
   set(LIEF_ELF_SUPPORT 1)
@@ -157,6 +163,10 @@ endif()
 
 if(LIEF_OPT_MBEDTLS_EXTERNAL)
   set(LIEF_EXTERNAL_MBEDTLS 1)
+endif()
+
+if(LIEF_OPT_EXTERNAL_SPAN)
+  set(LIEF_EXTERNAL_SPAN 1)
 endif()
 
 

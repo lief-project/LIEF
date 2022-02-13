@@ -115,13 +115,13 @@ ok_error_t Parser::init(const std::string& name) {
   try {
     binary_->original_size_ = binary_size_;
     binary_->name(name);
-    auto res = DataHandler::Handler::from_stream(*stream_);
+    auto res = DataHandler::Handler::from_stream(stream_);
     if (!res) {
       LIEF_ERR("The provided stream is not supported by the ELF DataHandler");
       return make_error_code(lief_errors::not_supported);
     }
 
-    binary_->datahandler_ = std::make_unique<DataHandler::Handler>(std::move(*res));
+    binary_->datahandler_ = std::move(*res);
 
     auto res_ident = stream_->peek<Header::identity_t>(0);
     if (!res_ident) {

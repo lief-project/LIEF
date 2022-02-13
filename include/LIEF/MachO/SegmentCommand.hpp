@@ -21,6 +21,7 @@
 #include <iostream>
 #include <memory>
 
+#include "LIEF/span.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
@@ -33,8 +34,10 @@ namespace MachO {
 
 class BinaryParser;
 class Binary;
+class Builder;
 class Section;
 class Relocation;
+class DyldInfo;
 
 namespace details {
 struct segment_command_32;
@@ -46,6 +49,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   friend class BinaryParser;
   friend class Binary;
+  friend class Section;
+  friend class Builder;
 
   public:
   struct KeyCmp {
@@ -130,7 +135,9 @@ class LIEF_API SegmentCommand : public LoadCommand {
   it_const_relocations relocations() const;
 
   //! The raw content of this segment
-  const content_t& content() const;
+  inline span<const uint8_t> content() const {
+    return data_;
+  }
 
   //! The original index of this segment
   inline int8_t index() const {
@@ -170,6 +177,23 @@ class LIEF_API SegmentCommand : public LoadCommand {
   static bool classof(const LoadCommand* cmd);
 
   private:
+  inline span<uint8_t> writable_content() {
+    return data_;
+  }
+
+  void content_resize(size_t size);
+  void content_insert(size_t where, size_t size);
+
+  inline void content_extend(size_t width) {
+    content_resize(data_.size() + width);
+  }
+
+  template<typename Func>
+  LIEF_LOCAL void update_data(Func f);
+
+  template<typename Func>
+  LIEF_LOCAL void update_data(Func f, size_t where, size_t size);
+
   std::string name_;
   uint64_t virtual_address_ = 0;
   uint64_t virtual_size_ = 0;
@@ -184,7 +208,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   sections_t sections_;
   relocations_t relocations_;
 
-
+  DyldInfo* dyld_ = nullptr; //x-ref to keep the spans in a consistent state
 };
 
 }

@@ -18,6 +18,7 @@
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "PE/Structures.hpp"
 
 #include "logging.hpp"
 
@@ -188,7 +189,7 @@ void Builder::build_import_table() {
       LIEF_ERR("Can't find the section associated with the import table");
       return;
     }
-    std::vector<uint8_t> import_content  = original_import->content();
+    span<uint8_t> import_content  = original_import->writable_content();
     uint32_t roffset_import = offset_imports - original_import->offset();
 
     auto* import_header = reinterpret_cast<details::pe_import*>(import_content.data() + roffset_import);
@@ -214,7 +215,6 @@ void Builder::build_import_table() {
       }
       import_header++;
     }
-    original_import->content(import_content);
   }
 
   // Process libraries
@@ -483,7 +483,7 @@ ok_error_t Builder::build_tls() {
     // current .tls section
 
     uint64_t relative_offset = offset_callbacks - section_callbacks->offset();
-    std::vector<uint8_t> callback_data = section_callbacks->content();
+    span<uint8_t> callback_data = section_callbacks->writable_content();
 
     if ((relative_offset + size_needed) > callback_data.size()) {
       LIEF_ERR("Don't have enough space to write callbacks");
@@ -491,13 +491,9 @@ ok_error_t Builder::build_tls() {
     }
 
     for (uint__ callback : tls_obj.callbacks()) {
-      std::copy(
-        reinterpret_cast<uint8_t*>(&callback),
-        reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__),
-        callback_data.data() + relative_offset);
+      memcpy(callback_data.data() + relative_offset, &callback, sizeof(uint__));
       relative_offset += sizeof(uint__);
     }
-    section_callbacks->content(callback_data);
   }
 
 
@@ -520,7 +516,7 @@ ok_error_t Builder::build_tls() {
                   std::end(data_template));
     } else {
       const uint64_t relative_offset = offset_rawdata - section_rawdata->offset();
-      std::vector<uint8_t> section_data = section_rawdata->content();
+      span<uint8_t> section_data = section_rawdata->writable_content();
       const std::vector<uint8_t>& data_template = tls_obj.data_template();
       if ((relative_offset + size_needed) > section_data.size()) {
         return make_error_code(lief_errors::build_error);
@@ -528,7 +524,6 @@ ok_error_t Builder::build_tls() {
 
       std::copy(std::begin(data_template), std::end(data_template),
                 section_data.data() + relative_offset);
-      section_rawdata->content(section_data);
     }
   }
 

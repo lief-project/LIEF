@@ -341,10 +341,20 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
 
   uint64_t end_offset = offset + size;
 
-  if (!stream_->peek_data(dyldinfo->export_trie_, offset, size)) {
-    LIEF_WARN("Can't read the export trie");
-    return make_error_code(lief_errors::read_error);
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the export trie");
+    return make_error_code(lief_errors::not_found);
   }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("The export trie is out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  dyldinfo->export_trie_ = content.subspan(rel_offset, size);
 
   stream_->setpos(offset);
   parse_export_trie(offset, end_offset, "");

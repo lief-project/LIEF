@@ -450,7 +450,7 @@ bool check_layout(const Binary& binary, std::string* error) {
   // {
   //    TODO: Code Signature
   // }
-
+  LIEF_DEBUG("input_indirectsym_pad: {:x}", input_indirectsym_pad);
   const uint64_t object_size = linkedit->file_offset() + linkedit->file_size();
   if (offset != object_size && rounded_offset != object_size) {
     if (error != nullptr) {

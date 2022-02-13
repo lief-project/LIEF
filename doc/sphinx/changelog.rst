@@ -84,56 +84,87 @@ Changelog
 
 :General Design:
 
-  .. warning::
+  :span:
 
-    We started to refactor the API and the internal design to remove C++ exceptions.
-    These changes are described a the dedicated blog (To be published)
-
-    To highlighting the content of the blog for the end users,
-    functions that returned a **reference and which threw an exception** in the case
-    of a failure are now returning a **pointer that is set to nullptr** in the case of a failure.
-
-    If we consider this original code:
+    LIEF now exposes Section/Segment's data through a `span` interface.
+    As `std::span` is available in the STL from C++20 and the LIEF public API aims at being
+    C++11 compliant, we expose this `span` thanks to `tcbrindle/span <https://github.com/tcbrindle/span>`_.
+    This new interface enables to avoid copies of ``std::vector<uint8_t>`` which can be costly.
+    With this new interface, the original ``std::vector<uint8_t>`` can be retrieved as follows:
 
     .. code-block:: cpp
 
-      LIEF::MachO::Binary& bin = ...;
+      auto bin = LIEF::ELF::Parser::parse("/bin/ls");
 
-      try {
-        LIEF::MachO::UUIDCommand& cmd = bin.uuid();
-        std::cout << cmd << "\n";
-      } catch (const LIEF::not_found&) {
-        // ... dedicated processing
+      if (const auto* section = bin->get_section(".text")) {
+        LIEF::span<const uint8_t> text_ref =  section->content();
+        std::vector<uint8_t> copy = {std::begin(text_ref), std::end(text_ref)};
       }
 
-      // Other option with has_uuid()
-      if (bin.has_uuid()) {
-        LIEF::MachO::UUIDCommand& cmd = bin.uuid();
-        std::cout << cmd << "\n";
-      }
+    In Python, span are wrapped by a **read-only** `memory view <https://docs.python.org/3/c-api/memoryview.html>`_.
+    The original *list of bytes* can be retrieved as follows:
 
-    It can now be written as:
+    .. code-block:: python
 
-    .. code-block:: cpp
+      bin = lief.parse("/bin/ls")
+      section = bin.get_section(".text")
 
-      LIEF::MachO::Binary& bin = ...;
+      if section is not None:
+        memory_view = section.content
+        list_of_bytes = list(memory_view)
 
-      if (LIEF::MachO::UUIDCommand* cmd = bin.uuid();) {
-        std::cout << *cmd << "\n";
-      } else {
-        // ... dedicated processing as it is a nullptr
-      }
+  :Exceptions:
 
-      // Other option with has_uuid()
-      if (bin.has_uuid()) { // It ensures that it is not a nullptr
-        LIEF::MachO::UUIDCommand& cmd = *bin.uuid();
-        std::cout << cmd << "\n";
-      }
+    .. warning::
 
-  .. seealso::
+      We started to refactor the API and the internal design to remove C++ exceptions.
+      These changes are described a the dedicated blog (To be published)
 
-    - :ref:`C++ API for errors handling <cpp-api-error-handling>`
-    - :ref:`Python API for errors handling <python-api-error-handling>`
+      To highlighting the content of the blog for the end users,
+      functions that returned a **reference and which threw an exception** in the case
+      of a failure are now returning a **pointer that is set to nullptr** in the case of a failure.
+
+      If we consider this original code:
+
+      .. code-block:: cpp
+
+        LIEF::MachO::Binary& bin = ...;
+
+        try {
+          LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+          std::cout << cmd << "\n";
+        } catch (const LIEF::not_found&) {
+          // ... dedicated processing
+        }
+
+        // Other option with has_uuid()
+        if (bin.has_uuid()) {
+          LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+          std::cout << cmd << "\n";
+        }
+
+      It can now be written as:
+
+      .. code-block:: cpp
+
+        LIEF::MachO::Binary& bin = ...;
+
+        if (LIEF::MachO::UUIDCommand* cmd = bin.uuid();) {
+          std::cout << *cmd << "\n";
+        } else {
+          // ... dedicated processing as it is a nullptr
+        }
+
+        // Other option with has_uuid()
+        if (bin.has_uuid()) { // It ensures that it is not a nullptr
+          LIEF::MachO::UUIDCommand& cmd = *bin.uuid();
+          std::cout << cmd << "\n";
+        }
+
+    .. seealso::
+
+      - :ref:`C++ API for errors handling <cpp-api-error-handling>`
+      - :ref:`Python API for errors handling <python-api-error-handling>`
 
 
 0.11.X - Patch Releases

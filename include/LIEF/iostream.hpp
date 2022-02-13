@@ -18,9 +18,11 @@
 #include <istream>
 #include <streambuf>
 #include <cstdint>
+#include <cstring>
 #include <vector>
 #include <array>
 
+#include "LIEF/span.hpp"
 #include "LIEF/BinaryStream/Convert.hpp"
 
 namespace LIEF {
@@ -30,14 +32,14 @@ class vector_iostream {
   static size_t sleb128_size(int64_t value);
   using pos_type = std::streampos;
   using off_type = std::streamoff;
-
-  vector_iostream(bool endian_swap=false);
+  vector_iostream();
+  vector_iostream(bool endian_swap);
   void reserve(size_t size);
 
   vector_iostream& put(uint8_t c);
   vector_iostream& write(const uint8_t* s, std::streamsize n);
-  vector_iostream& write(const std::vector<uint8_t>& s);
-  vector_iostream& write(std::vector<uint8_t>&& s);
+  vector_iostream& write(span<const uint8_t> sp);
+  vector_iostream& write(std::vector<uint8_t> s);
   vector_iostream& write(const std::string& s);
   vector_iostream& write(size_t count, uint8_t value);
   vector_iostream& write_sized_int(uint64_t value, size_t size);
@@ -52,15 +54,11 @@ class vector_iostream {
 
   template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
   vector_iostream& write(Integer integer) {
-    if (raw_.size() < (static_cast<size_t>(tellp()) + sizeof(Integer))) {
-      raw_.resize(static_cast<size_t>(tellp()) + sizeof(Integer));
+    const auto pos = static_cast<size_t>(tellp());
+    if (raw_.size() < (pos + sizeof(Integer))) {
+      raw_.resize(pos + sizeof(Integer));
     }
-
-    auto int_p = reinterpret_cast<const uint8_t*>(&integer);
-    std::copy(
-        int_p, int_p + sizeof(Integer),
-        std::begin(raw_) + static_cast<size_t>(tellp()));
-
+    memcpy(raw_.data() + pos, &integer, sizeof(Integer));
     current_pos_ += sizeof(Integer);
     return *this;
   }
@@ -94,9 +92,9 @@ class vector_iostream {
   void set_endian_swap(bool swap);
 
   private:
-  pos_type             current_pos_;
+  pos_type             current_pos_ = 0;
   std::vector<uint8_t> raw_;
-  bool                 endian_swap_{false};
+  bool                 endian_swap_ = false;
 };
 
 

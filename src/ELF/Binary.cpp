@@ -36,6 +36,7 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
@@ -517,7 +518,7 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
     return {};
   }
 
-  const std::vector<uint8_t>& data = rodata->content();
+  span<const uint8_t> data = rodata->content();
   std::string current;
   current.reserve(100);
 
@@ -1120,7 +1121,9 @@ Segment& Binary::replace(const Segment& new_segment, const Segment& original_seg
     new_base = next_virtual_address();
   }
 
-  std::vector<uint8_t> content = new_segment.content();
+  span<const uint8_t> content_ref = new_segment.content();
+  std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
+
   auto new_segment_ptr = std::make_unique<Segment>(new_segment);
   new_segment_ptr->datahandler_ = datahandler_.get();
 
@@ -1269,9 +1272,10 @@ Section& Binary::extend(const Section& section, uint64_t size) {
 
   section_to_extend->size(section_to_extend->size() + size);
 
-  std::vector<uint8_t> section_content = section_to_extend->content();
-  section_content.resize(section_to_extend->size(), 0);
-  section_to_extend->content(section_content);
+  span<const uint8_t> content_ref = section_to_extend->content();
+  std::vector<uint8_t> content    = {std::begin(content_ref), std::end(content_ref)};
+  content.resize(section_to_extend->size(), 0);
+  section_to_extend->content(content);
 
 
   header().section_headers_offset(header().section_headers_offset() + shift);
@@ -1308,15 +1312,16 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
       LIEF_ERR("Can't find a section associated with the virtual address 0x{:x}", address);
       return;
     }
-    std::vector<uint8_t> content = section->content();
+    span<uint8_t> content = section->writable_content();
     const uint64_t offset = address - section->file_offset();
 
-    if ((offset + patch_value.size()) > content.size()) {
-      content.resize(offset + patch_value.size());
+    if (offset + patch_value.size() > content.size()) {
+      LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+               patch_value.size(), offset, content.size());
+      return;
     }
     std::copy(std::begin(patch_value), std::end(patch_value),
               content.data() + offset);
-    section->content(content);
     return;
   }
 
@@ -1327,13 +1332,15 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
-  std::vector<uint8_t> content = segment_topatch->content();
-  if ((offset + patch_value.size()) > content.size()) {
-    content.resize(offset + patch_value.size());
+  span<uint8_t> content_ref = segment_topatch->writable_content();
+
+  if (offset + patch_value.size() > content_ref.size()) {
+    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+             patch_value.size(), offset, content_ref.size());
+    return;
   }
   std::copy(std::begin(patch_value), std::end(patch_value),
-            content.data() + offset);
-  segment_topatch->content(content);
+            content_ref.data() + offset);
 }
 
 
@@ -1351,14 +1358,50 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
       LIEF_ERR("Can't find a section associated with the address 0x{:x}", address);
       return;
     }
-    std::vector<uint8_t> content = section->content();
-    const uint64_t offset = address - section->file_offset();
 
-    // TODO: Handle Endiness
-    std::copy(reinterpret_cast<uint8_t*>(&patch_value),
-              reinterpret_cast<uint8_t*>(&patch_value) + size,
-              content.data() + offset);
-    section->content(content);
+    span<uint8_t> content = section->writable_content();
+    const uint64_t offset = address - section->file_offset();
+    if (offset > content.size() || (offset + size) > content.size()) {
+      LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+               size, offset, content.size());
+    }
+
+    switch (size) {
+      case sizeof(uint8_t):
+        {
+          const auto X = static_cast<const uint8_t>(patch_value);
+          memcpy(content.data() + offset, &X, sizeof(uint8_t));
+          break;
+        }
+
+      case sizeof(uint16_t):
+        {
+          const auto X = static_cast<const uint16_t>(patch_value);
+          memcpy(content.data() + offset, &X, sizeof(uint16_t));
+          break;
+        }
+
+      case sizeof(uint32_t):
+        {
+          const auto X = static_cast<const uint32_t>(patch_value);
+          memcpy(content.data() + offset, &X, sizeof(uint32_t));
+          break;
+        }
+
+      case sizeof(uint64_t):
+        {
+          const auto X = static_cast<const uint64_t>(patch_value);
+          memcpy(content.data() + offset, &X, sizeof(uint64_t));
+          break;
+        }
+
+      default:
+        {
+          LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+          return;
+        }
+    }
+
     return;
   }
 
@@ -1368,14 +1411,48 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
     LIEF_ERR("Can't find a segment associated with the virtual address 0x{:x}", address);
     return;
   }
-  const uint64_t offset = address - segment_topatch->virtual_address();
-  std::vector<uint8_t> content = segment_topatch->content();
 
-  // TODO: Handle Endiness
-  std::copy(reinterpret_cast<uint8_t*>(&patch_value),
-            reinterpret_cast<uint8_t*>(&patch_value) + size,
-            content.data() + offset);
-  segment_topatch->content(content);
+  const uint64_t offset = address - segment_topatch->virtual_address();
+  span<uint8_t> content = segment_topatch->writable_content();
+  if (offset > content.size() || (offset + size) > content.size()) {
+    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+             size, offset, content.size());
+  }
+  switch (size) {
+    case sizeof(uint8_t):
+      {
+        const auto X = static_cast<const uint8_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint8_t));
+        break;
+      }
+
+    case sizeof(uint16_t):
+      {
+        const auto X = static_cast<const uint16_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint16_t));
+        break;
+      }
+
+    case sizeof(uint32_t):
+      {
+        const auto X = static_cast<const uint32_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint32_t));
+        break;
+      }
+
+    case sizeof(uint64_t):
+      {
+        const auto X = static_cast<const uint64_t>(patch_value);
+        memcpy(content.data() + offset, &X, sizeof(uint64_t));
+        break;
+      }
+
+    default:
+      {
+        LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+        return;
+      }
+  }
 }
 
 
@@ -1626,7 +1703,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
     return {};
   }
 
-  const std::vector<uint8_t>& content = segment->content();
+  span<const uint8_t> content = segment->content();
   const uint64_t offset = virtual_address - segment->virtual_address();
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {
@@ -2177,7 +2254,7 @@ LIEF::Binary::functions_t Binary::armexid_functions() const {
 
   const Segment* exidx = get(SEGMENT_TYPES::PT_ARM_EXIDX);
   if (exidx != nullptr) {
-    const std::vector<uint8_t>& content = exidx->content();
+    span<const uint8_t> content = exidx->content();
     const size_t nb_functions = content.size() / (2 * sizeof(uint32_t));
     funcs.reserve(nb_functions);
 
@@ -2221,7 +2298,8 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
   const bool is64 = (type() == ELF_CLASS::ELFCLASS64);
   eh_frame_off = eh_frame_off - load_segment->file_offset();
-  VectorStream vs{load_segment->content()};
+
+  SpanStream vs = load_segment->content();
   vs.setpos(eh_frame_off);
 
   if (vs.size() < 4 * sizeof(uint8_t)) {

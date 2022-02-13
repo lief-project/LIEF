@@ -21,11 +21,13 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/span.hpp"
 
 
 namespace LIEF {
 LIEF_API size_t hash(const Object& v);
 LIEF_API size_t hash(const std::vector<uint8_t>& raw);
+LIEF_API size_t hash(span<const uint8_t> raw);
 
 class LIEF_API Hash : public Visitor {
 
@@ -34,6 +36,7 @@ class LIEF_API Hash : public Visitor {
   static size_t hash(const Object& obj);
 
   static size_t hash(const std::vector<uint8_t>& raw);
+  static size_t hash(span<const uint8_t> raw);
   static size_t hash(const void* raw, size_t size);
 
   // combine two elements to produce a size_t.
@@ -50,6 +53,7 @@ class LIEF_API Hash : public Visitor {
   virtual Hash& process(const std::string& str);
   virtual Hash& process(const std::u16string& str);
   virtual Hash& process(const std::vector<uint8_t>& raw);
+  virtual Hash& process(span<const uint8_t> raw);
 
   template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
   Hash& process(T v) {

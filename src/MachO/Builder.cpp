@@ -41,8 +41,8 @@ Builder::~Builder() = default;
 Builder::Builder(Binary& binary) :
   binary_{&binary}
 {
-  raw_.reserve(binary.original_size());
-  binaries_.push_back(&binary);
+  raw_.reserve(binary_->original_size());
+  binaries_.push_back(binary_);
   build();
 }
 
@@ -274,9 +274,9 @@ ok_error_t Builder::build_load_commands() {
   }
 
   for (const SegmentCommand* segment : binary->segments_) {
-    const std::vector<uint8_t>& segment_content = segment->content();
+    span<const uint8_t> segment_content = segment->content();
     raw_.seekp(segment->file_offset());
-    raw_.write(segment_content);
+    raw_.write(segment_content.data(), segment_content.size());
   }
 
   //uint64_t loadCommandsOffset = raw_.size();

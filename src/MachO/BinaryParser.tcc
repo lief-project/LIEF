@@ -109,6 +109,13 @@ ok_error_t BinaryParser::parse() {
         LIEF_WARN("{}", e.what());
       }
     }
+
+    if (DyldInfo* dyld = binary_->dyld_info()) {
+      // Backtrack the Dyld info object in the segment to keep span consistent
+      for (SegmentCommand* segment : binary_->segments_) {
+        segment->dyld_ = dyld;
+      }
+    }
   }
   return ok();
 }
@@ -182,9 +189,10 @@ ok_error_t BinaryParser::parse_load_commands() {
           binary_->offset_seg_[segment->file_offset()] = segment;
           binary_->segments_.push_back(segment);
 
-
-          if (!stream_->peek_data(segment->data_, segment->file_offset(), segment->file_size())) {
-            LIEF_ERR("Segment {}: content corrupted!", segment->name());
+          if (segment->file_size() > 0) {
+            if (!stream_->peek_data(segment->data_, segment->file_offset(), segment->file_size())) {
+              LIEF_ERR("Segment {}: content corrupted!", segment->name());
+            }
           }
 
           // --------
@@ -950,10 +958,20 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
     return ok();
   }
 
-  if (!stream_->peek_data(dyldinfo->rebase_opcodes_, offset, size)) {
-    LIEF_WARN("Can't read the rebase opcodes");
-    return make_error_code(lief_errors::read_error);
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the rebase opcodes");
+    return make_error_code(lief_errors::not_found);
   }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("Rebase opcodes are out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  dyldinfo->rebase_opcodes_ = content.subspan(rel_offset, size);
 
   uint64_t end_offset = offset + size;
 
@@ -1191,10 +1209,20 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
     return ok();
   }
 
-  if (!stream_->peek_data(dyldinfo->bind_opcodes_, offset, size)) {
-    LIEF_WARN("Can't read the bindings opcodes");
-    return make_error_code(lief_errors::read_error);
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the regular bind opcodes");
+    return make_error_code(lief_errors::not_found);
   }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("Regular bind opcodes are out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  dyldinfo->bind_opcodes_ = content.subspan(rel_offset, size);
 
   uint64_t end_offset = offset + size;
 
@@ -1430,7 +1458,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                 const SegmentCommand& current_segment = segments[segment_idx];
                 do {
                   const uint64_t address = current_segment.virtual_address() + segment_offset;
-                  const std::vector<uint8_t>& content = current_segment.content();
+                  span<const uint8_t> content = current_segment.content();
                   if (segment_offset >= content.size() || segment_offset + sizeof(uint64_t) >= content.size()) {
                     LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
                     delta = 0; // exit from de do ... while
@@ -1526,10 +1554,20 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
     return ok();
   }
 
-  if (!stream_->peek_data(dyldinfo->weak_bind_opcodes_, offset, size)) {
-    LIEF_WARN("Can't read the weak binding opcodes");
-    return make_error_code(lief_errors::read_error);
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the weak bind opcodes");
+    return make_error_code(lief_errors::not_found);
   }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("Weak bind opcodes are out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  dyldinfo->weak_bind_opcodes_ = content.subspan(rel_offset, size);
 
   uint64_t end_offset = offset + size;
 
@@ -1759,10 +1797,20 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
     return ok();
   }
 
-  if (!stream_->peek_data(dyldinfo->lazy_bind_opcodes_, offset, size)) {
-    LIEF_WARN("Can't read the lazy binding opcodes");
-    return make_error_code(lief_errors::read_error);
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the lazy bind opcodes");
+    return make_error_code(lief_errors::not_found);
   }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("Lazy bind opcodes are out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  dyldinfo->lazy_bind_opcodes_ = content.subspan(rel_offset, size);
 
   uint64_t end_offset = offset + size;
 

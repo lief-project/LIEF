@@ -132,7 +132,7 @@ Section::Section(std::string name, Section::content_t content) {
   this->content(std::move(content));
 }
 
-Section::content_t Section::content() const {
+span<const uint8_t> Section::content() const {
   if (segment_ == nullptr) {
     return content_;
   }
@@ -142,14 +142,12 @@ Section::content_t Section::content() const {
   }
 
   uint64_t relative_offset = offset_ - segment_->file_offset();
-  const std::vector<uint8_t>& content = segment_->content();
-  if ((relative_offset + size_) > content.size()) {
+  span<const uint8_t> content = segment_->content();
+  if (relative_offset > content.size() || (relative_offset + size_) > content.size()) {
     LIEF_ERR("Section's size is bigger than segment's size");
     return {};
   }
-  content_t section_content = {content.data() + relative_offset,
-                               content.data() + relative_offset + size_};
-  return section_content;
+  return content.subspan(relative_offset, size_);
 }
 
 void Section::content(const Section::content_t& data) {
@@ -163,18 +161,17 @@ void Section::content(const Section::content_t& data) {
     return;
   }
 
-
   uint64_t relative_offset = offset_ - segment_->file_offset();
 
-  std::vector<uint8_t> content = segment_->content();
+  span<uint8_t> content = segment_->writable_content();
 
-  if (data.size() > content.size()) {
+  if (relative_offset > content.size() || (relative_offset + data.size()) > content.size()) {
     LIEF_ERR("New data are bigger than the original one");
     return;
   }
 
-  std::move(std::begin(data), std::end(data), std::begin(content) + relative_offset);
-  segment_->content(content);
+  std::move(std::begin(data), std::end(data),
+            content.data() + relative_offset);
 }
 
 const std::string& Section::segment_name() const {

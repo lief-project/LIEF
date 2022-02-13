@@ -76,13 +76,10 @@ uint32_t Section::sizeof_raw_data() const {
   return size();
 }
 
-std::vector<uint8_t> Section::content() const {
+span<const uint8_t> Section::content() const {
   return content_;
 }
 
-std::vector<uint8_t>& Section::content_ref() {
-  return content_;
-}
 
 uint32_t Section::pointerto_raw_data() const {
   return offset();

@@ -23,7 +23,16 @@
 
 
 namespace LIEF {
-uint64_t align(uint64_t value, uint64_t align_on);
+inline uint64_t align(uint64_t value, uint64_t align_on) {
+  if (align_on == 0) {
+    return value;
+  }
+  const auto r = value % align_on;
+  if (r > 0) {
+    return value + (align_on - r);
+  }
+  return value;
+}
 
 
 template<typename T>

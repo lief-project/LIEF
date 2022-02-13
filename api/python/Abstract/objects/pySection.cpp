@@ -64,7 +64,10 @@ void create<Section>(py::module& m) {
         "Section's virtual address")
 
     .def_property("content",
-        static_cast<getter_t<std::vector<uint8_t>>>(&Section::content),
+        [] (const Section& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
         static_cast<setter_t<const std::vector<uint8_t>&>>(&Section::content),
         "Section's content")
 

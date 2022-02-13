@@ -106,7 +106,10 @@ void create<SegmentCommand>(py::module& m) {
         "Relative index of the segment in the segment table")
 
     .def_property("content",
-        static_cast<getter_t<const SegmentCommand::content_t&>>(&SegmentCommand::content),
+        [] (const SegmentCommand& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
         static_cast<setter_t<SegmentCommand::content_t>>(&SegmentCommand::content),
         "Segment's content")
 

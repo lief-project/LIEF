@@ -56,7 +56,7 @@ Parser::Parser(const std::string& file, const ParserConfig& conf) :
 
 std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const ParserConfig& conf) {
   if (!is_macho(filename)) {
-    LIEF_ERR("{} is not a MachO file");
+    LIEF_ERR("{} is not a MachO file", filename);
     return nullptr;
   }
 
@@ -69,7 +69,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const Pars
 }
 
 // From Vector
-Parser::Parser(std::vector<uint8_t> data, const std::string& name, const ParserConfig& conf) :
+Parser::Parser(std::vector<uint8_t> data, const ParserConfig& conf) :
   stream_{std::make_unique<VectorStream>(std::move(data))},
   config_{conf}
 {}
@@ -82,7 +82,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
     return nullptr;
   }
 
-  Parser parser{data, name, conf};
+  Parser parser{data, conf};
   parser.build();
 
   for (std::unique_ptr<Binary>& binary : parser.binaries_) {

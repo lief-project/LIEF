@@ -42,6 +42,11 @@ class VectorStream : public BinaryStream {
 
   const std::vector<uint8_t>& content() const;
 
+  inline std::vector<uint8_t>&& move_content() {
+    size_ = 0;
+    return std::move(binary_);
+  }
+
   inline uint8_t* p() {
     return this->binary_.data() + this->pos();
   }
@@ -83,7 +88,7 @@ class VectorStream : public BinaryStream {
   protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;
   std::vector<uint8_t> binary_;
-  uint64_t size_ = 0;
+  uint64_t size_ = 0; // Original size without alignment
 };
 }
 

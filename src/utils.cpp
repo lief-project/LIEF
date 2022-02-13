@@ -31,16 +31,6 @@
 #include "third-party/utfcpp.hpp"
 
 namespace LIEF {
-uint64_t align(uint64_t value, uint64_t align_on) {
-  if ((align_on > 0) && (value % align_on) > 0) {
-    return  value + (align_on - (value % align_on));
-  }
-  return value;
-}
-}
-
-
-namespace LIEF {
 namespace LEB128 {
 std::vector<uint8_t> uencode(uint64_t value) {
   std::vector<uint8_t> result;

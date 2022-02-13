@@ -90,6 +90,10 @@ size_t hash(const std::vector<uint8_t>& raw) {
   return Hash::hash(raw);
 }
 
+size_t hash(span<const uint8_t> raw) {
+  return Hash::hash(raw);
+}
+
 Hash::~Hash() = default;
 
 Hash::Hash() :
@@ -129,6 +133,11 @@ Hash& Hash::process(const std::vector<uint8_t>& raw) {
   return *this;
 }
 
+Hash& Hash::process(span<const uint8_t> raw) {
+  value_ = combine(value_, Hash::hash(raw));
+  return *this;
+}
+
 size_t Hash::value() const {
   return value_;
 }
@@ -137,12 +146,17 @@ size_t Hash::value() const {
 // Static methods
 // ==============
 size_t Hash::hash(const std::vector<uint8_t>& raw) {
-  std::vector<uint8_t> sha256(32, 0);
-  mbedtls_sha256(raw.data(), raw.size(), sha256.data(), 0);
+  return hash(raw.data(), raw.size());
+}
 
-  return std::accumulate(
-     std::begin(sha256),
-     std::end(sha256), 0,
+
+size_t Hash::hash(const void* raw, size_t size) {
+  const auto* start = reinterpret_cast<const uint8_t*>(raw);
+
+  std::vector<uint8_t> sha256(32, 0);
+  mbedtls_sha256(start, size, sha256.data(), 0);
+
+  return std::accumulate(std::begin(sha256), std::end(sha256), 0,
      [] (size_t v, uint8_t n) {
         size_t r = v;
         return (r << sizeof(uint8_t) * 8) | n;
@@ -150,9 +164,8 @@ size_t Hash::hash(const std::vector<uint8_t>& raw) {
 }
 
 
-size_t Hash::hash(const void* raw, size_t size) {
-  const auto* start = reinterpret_cast<const uint8_t*>(raw);
-  return Hash::hash(std::vector<uint8_t>{start, start + size});
+size_t Hash::hash(span<const uint8_t> raw) {
+  return hash(raw.data(), raw.size());
 }
 
 }

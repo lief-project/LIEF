@@ -50,7 +50,7 @@ Segment::Segment(const Segment& other) :
   size_{other.size_},
   virtual_size_{other.virtual_size_},
   alignment_{other.alignment_},
-  content_c_{other.content()}
+  content_c_{other.content_c_}
 {}
 
 Segment::Segment(const details::Elf64_Phdr& header) :
@@ -165,7 +165,7 @@ uint64_t Segment::alignment() const {
   return alignment_;
 }
 
-std::vector<uint8_t> Segment::content() const {
+span<const uint8_t> Segment::content() const {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
                to_string(type()), virtual_address());
@@ -185,9 +185,8 @@ std::vector<uint8_t> Segment::content() const {
     LIEF_ERR("Corrupted data");
     return {};
   }
-
   const uint8_t* ptr = binary_content.data() + node.offset();
-  return {ptr, ptr + node.size()};
+  return {ptr, static_cast<size_t>(node.size())};
 }
 
 size_t Segment::get_content_size() const {
@@ -359,42 +358,7 @@ void Segment::type(SEGMENT_TYPES type) {
   type_ = type;
 }
 
-void Segment::content(const std::vector<uint8_t>& content) {
-  if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
-               to_string(type()), virtual_address(), content.size());
-    content_c_ = content;
-
-    physical_size(content.size());
-    return;
-  }
-
-  LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
-             to_string(type()), virtual_address(), file_offset(), content.size());
-
-  auto res = datahandler_->get(file_offset(), physical_size(), DataHandler::Node::SEGMENT);
-  if (!res) {
-    LIEF_ERR("Can't find the node for updating content");
-    return;
-  }
-  DataHandler::Node& node = res.value();
-
-  std::vector<uint8_t>& binary_content = datahandler_->content();
-  datahandler_->reserve(node.offset(), content.size());
-
-  if (node.size() < content.size()) {
-      LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
-                content.size(), to_string(type()), virtual_size(), node.size());
-  }
-
-  physical_size(node.size());
-
-  std::copy(std::begin(content), std::end(content),
-            std::begin(binary_content) + node.offset());
-}
-
-
-void Segment::content(std::vector<uint8_t>&& content) {
+void Segment::content(std::vector<uint8_t> content) {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
                to_string(type()), virtual_address(), content.size());
@@ -453,6 +417,12 @@ bool Segment::operator==(const Segment& rhs) const {
 
 bool Segment::operator!=(const Segment& rhs) const {
   return !(*this == rhs);
+}
+
+
+span<uint8_t> Segment::writable_content() {
+  span<const uint8_t> ref = static_cast<const Segment*>(this)->content();
+  return {const_cast<uint8_t*>(ref.data()), ref.size()};
 }
 
 std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {

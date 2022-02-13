@@ -81,7 +81,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
   }
 
   const uint64_t relative_offset = virtual_address_to_offset(relocation.address()) - segment->file_offset();
-  std::vector<uint8_t> segment_content = segment->content();
+  span<uint8_t> segment_content = segment->writable_content();
   const size_t segment_size = segment_content.size();
 
   if (segment_size == 0) {
@@ -98,7 +98,6 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
   if (*ptr_value >= from && is_valid_addr(*ptr_value)) {
     *ptr_value += shift;
   }
-  segment->content(std::move(segment_content));
   return ok();
 }
 

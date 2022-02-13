@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include "LIEF/types.hpp"
+#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
@@ -46,7 +47,7 @@ class LIEF_API Section : public Object {
   virtual const std::string& fullname() const;
 
   //!  section's content
-  virtual std::vector<uint8_t> content() const;
+  virtual span<const uint8_t> content() const;
 
   //! Change the section size
   virtual void size(uint64_t size);

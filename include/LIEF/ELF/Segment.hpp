@@ -25,6 +25,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/ELF/enums.hpp"
 
@@ -37,6 +38,7 @@ class Handler;
 class Parser;
 class Binary;
 class Section;
+class Builder;
 
 namespace details {
 struct Elf64_Phdr;
@@ -49,6 +51,7 @@ class LIEF_API Segment : public Object {
   friend class Parser;
   friend class Section;
   friend class Binary;
+  friend class Builder;
 
   public:
   using sections_t        = std::vector<Section*>;
@@ -102,7 +105,7 @@ class LIEF_API Segment : public Object {
   uint64_t alignment() const;
 
   //! The raw data associated with this segment.
-  std::vector<uint8_t> content() const;
+  span<const uint8_t> content() const;
 
   //! Check if the current segment has the given flag
   bool has(ELF_SEGMENT_FLAGS flag) const;
@@ -128,8 +131,7 @@ class LIEF_API Segment : public Object {
   void physical_size(uint64_t physical_size);
   void virtual_size(uint64_t virtual_size);
   void alignment(uint64_t alignment);
-  void content(const std::vector<uint8_t>& content);
-  void content(std::vector<uint8_t>&& content);
+  void content(std::vector<uint8_t> content);
 
   template<typename T> T get_content_value(size_t offset) const;
   template<typename T> void set_content_value(size_t offset, T value);
@@ -150,6 +152,8 @@ class LIEF_API Segment : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 
   private:
+  span<uint8_t> writable_content();
+
   SEGMENT_TYPES         type_ = SEGMENT_TYPES::PT_NULL;
   ELF_SEGMENT_FLAGS     flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
   uint64_t              file_offset_ = 0;

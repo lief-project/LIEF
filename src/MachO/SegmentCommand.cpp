@@ -16,10 +16,13 @@
 #include <iomanip>
 #include <memory>
 
+#include "logging.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "MachO/Structures.hpp"
 
@@ -30,6 +33,127 @@ bool SegmentCommand::KeyCmp::operator() (const std::unique_ptr<Relocation>& lhs,
                                          const std::unique_ptr<Relocation>& rhs) const {
   return *lhs < *rhs;
 }
+
+
+/* The DyldInfo object has span fields (rebase_opcodes_, ...) that point to segment data.
+ * When resizing the ``SegmentCommand.data_`` we can break this span as the internal buffer of ``data_``
+ * might be relocated.
+ *
+ * The following helpers keep an internal consistent state of the data
+ */
+
+inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,
+                              uintptr_t original_data_end, std::vector<uint8_t>& new_data)
+{
+  auto span_data_addr = reinterpret_cast<uintptr_t>(sp.data());
+  const bool is_encompassed = original_data_addr <= span_data_addr && span_data_addr < original_data_end;
+  if (!is_encompassed) {
+    return ok();
+  }
+
+  const uintptr_t original_size = original_data_end - original_data_addr;
+  /*
+   * Resize of the container without relocating
+   */
+  if (new_data.data() == sp.data() && new_data.size() >= original_size) {
+    return ok();
+  }
+
+  const uintptr_t delta = span_data_addr - original_data_addr;
+  const bool fit_in_data = delta < new_data.size() && (delta + original_size) <= new_data.size();
+  if (!fit_in_data) {
+    sp = {new_data.data(), static_cast<size_t>(0)};
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  sp = {new_data.data() + delta, sp.size()};
+  return ok();
+}
+
+//! @param[in] offset    Offset where the insertion took place
+//! @param[in] size      Size of the inserted data
+inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr, uintptr_t original_data_end,
+                        size_t offset, size_t size, std::vector<uint8_t>& new_data)
+{
+
+  const uintptr_t original_size = original_data_end - original_data_addr;
+  auto span_data_addr = reinterpret_cast<uintptr_t>(sp.data());
+  const bool is_encompassed = original_data_addr <= span_data_addr && span_data_addr < original_data_end;
+  if (!is_encompassed) {
+    return ok();
+  }
+  // Original relative offset of the span
+  const uintptr_t rel_offset = span_data_addr - original_data_addr;
+  uintptr_t delta_offset = 0;
+
+  // If the insertion took place BEFORE our span,
+  // we need to append the insertion size in the new span
+  if (offset <= rel_offset) {
+    delta_offset = size;
+  }
+
+  const uintptr_t delta_ptr = span_data_addr - original_data_addr;
+  const bool fit_in_data = (delta_ptr +  delta_offset)                  < new_data.size() &&
+                           (delta_ptr +  delta_offset + original_size) <= new_data.size();
+  if (!fit_in_data) {
+    sp = {new_data.data(), static_cast<size_t>(0)};
+    return make_error_code(lief_errors::corrupted);
+  }
+  sp = {new_data.data() + delta_ptr + delta_offset, sp.size()};
+  return ok();
+}
+
+template<typename Func>
+void SegmentCommand::update_data(Func f) {
+  const auto original_data_addr     = reinterpret_cast<uintptr_t>(data_.data());
+  const auto original_data_size     = static_cast<size_t>(data_.size());
+  const uintptr_t original_data_end = original_data_addr + original_data_size;
+  f(data_);
+  if (dyld_ != nullptr) {
+    if (!update_span(dyld_->rebase_opcodes_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning rebase opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->bind_opcodes_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->weak_bind_opcodes_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning weak bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->lazy_bind_opcodes_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning lazy bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->export_trie_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the export trie in segment {}", name_);
+    }
+  }
+}
+
+template<typename Func>
+void SegmentCommand::update_data(Func f, size_t where, size_t size) {
+  const auto original_data_addr     = reinterpret_cast<uintptr_t>(data_.data());
+  const auto original_data_size     = static_cast<size_t>(data_.size());
+  const uintptr_t original_data_end = original_data_addr + original_data_size;
+  f(data_, where, size);
+  if (dyld_ != nullptr) {
+    if (!update_span(dyld_->rebase_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
+      LIEF_WARN("Error while re-spanning rebase opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
+      LIEF_WARN("Error while re-spanning bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->weak_bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
+      LIEF_WARN("Error while re-spanning weak bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->lazy_bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
+      LIEF_WARN("Error while re-spanning lazy bind opcodes in segment {}", name_);
+    }
+    if (!update_span(dyld_->export_trie_, original_data_addr, original_data_end, where, size, data_)) {
+      LIEF_WARN("Error while re-spanning the export trie in segment {}", name_);
+    }
+  }
+}
+
+
 
 SegmentCommand::SegmentCommand() = default;
 SegmentCommand::~SegmentCommand() = default;
@@ -113,6 +237,7 @@ void SegmentCommand::swap(SegmentCommand& other) {
   std::swap(data_,            other.data_);
   std::swap(sections_,        other.sections_);
   std::swap(relocations_,     other.relocations_);
+  std::swap(dyld_,            other.dyld_);
 }
 
 SegmentCommand* SegmentCommand::clone() const {
@@ -183,40 +308,36 @@ SegmentCommand::it_const_relocations SegmentCommand::relocations() const {
   return relocations_;
 }
 
-const SegmentCommand::content_t& SegmentCommand::content() const {
-  return data_;
-}
-
 void SegmentCommand::name(const std::string& name) {
   name_ = name;
 }
 
-void SegmentCommand::virtual_address(uint64_t virtualAddress) {
-  virtual_address_ = virtualAddress;
+void SegmentCommand::virtual_address(uint64_t virtual_address) {
+  virtual_address_ = virtual_address;
 }
 
-void SegmentCommand::virtual_size(uint64_t virtualSize) {
-  virtual_size_ = virtualSize;
+void SegmentCommand::virtual_size(uint64_t virtual_size) {
+  virtual_size_ = virtual_size;
 }
 
-void SegmentCommand::file_size(uint64_t fileSize) {
-  file_size_ = fileSize;
+void SegmentCommand::file_size(uint64_t file_size) {
+  file_size_ = file_size;
 }
 
-void SegmentCommand::file_offset(uint64_t fileOffset) {
-  file_offset_ = fileOffset;
+void SegmentCommand::file_offset(uint64_t file_offset) {
+  file_offset_ = file_offset;
 }
 
-void SegmentCommand::max_protection(uint32_t maxProtection) {
-  max_protection_ = maxProtection;
+void SegmentCommand::max_protection(uint32_t max_protection) {
+  max_protection_ = max_protection;
 }
 
-void SegmentCommand::init_protection(uint32_t initProtection) {
-  init_protection_ = initProtection;
+void SegmentCommand::init_protection(uint32_t init_protection) {
+  init_protection_ = init_protection;
 }
 
-void SegmentCommand::numberof_sections(uint32_t nbSections) {
-  nb_sections_ = nbSections;
+void SegmentCommand::numberof_sections(uint32_t nb_sections) {
+  nb_sections_ = nb_sections;
 }
 
 void SegmentCommand::flags(uint32_t flags) {
@@ -225,7 +346,9 @@ void SegmentCommand::flags(uint32_t flags) {
 
 
 void SegmentCommand::content(SegmentCommand::content_t data) {
-  data_ = std::move(data);
+  update_data([data = std::move(data)] (std::vector<uint8_t>& inner_data) mutable {
+                inner_data = std::move(data);
+              });
 }
 
 
@@ -251,12 +374,13 @@ Section& SegmentCommand::add_section(const Section& section) {
   file_size(file_size() + new_section->size());
 
   const size_t relative_offset = new_section->offset() - file_offset();
-  if ((relative_offset + new_section->size()) >= data_.size()) {
-    data_.resize(relative_offset + new_section->size());
-  }
+  span<const uint8_t> content = section.content();
 
-  const Section::content_t& content = section.content();
-  std::move(std::begin(content), std::end(content),
+  update_data([] (std::vector<uint8_t>& inner_data, size_t w, size_t s) {
+                inner_data.resize(w + s);
+              }, relative_offset, content.size());
+
+  std::copy(std::begin(content), std::end(content),
             std::begin(data_) + relative_offset);
 
   file_size(data_.size());
@@ -278,6 +402,24 @@ bool SegmentCommand::has_section(const std::string& section_name) const {
         return sec->name() == section_name;
       });
   return it != std::end(sections_);
+}
+
+
+
+void SegmentCommand::content_resize(size_t size) {
+  update_data([size] (std::vector<uint8_t>& inner_data) {
+                if (inner_data.size() >= size) {
+                  return;
+                }
+                inner_data.resize(size, 0);
+              });
+}
+
+
+void SegmentCommand::content_insert(size_t where, size_t size) {
+  update_data([] (std::vector<uint8_t>& inner_data, size_t w, size_t s) {
+                inner_data.insert(std::begin(inner_data) + w, s, 0);
+              }, where, size);
 }
 
 

@@ -29,7 +29,7 @@
 #include <mbedtls/x509_crt.h>
 
 #include "logging.hpp"
-
+#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"
 namespace LIEF {
@@ -50,13 +50,13 @@ inline void free_names(mbedtls_x509_name& names) {
 result<VectorStream> VectorStream::from_file(const std::string& file) {
   std::ifstream ifs(file, std::ios::in | std::ios::binary);
   if (!ifs) {
-    LIEF_ERR("Can't opent '{}'", file);
+    LIEF_ERR("Can't open '{}'", file);
     return make_error_code(lief_errors::read_error);
   }
 
   ifs.unsetf(std::ios::skipws);
   ifs.seekg(0, std::ios::end);
-  const size_t size = static_cast<uint64_t>(ifs.tellg());
+  const auto size = static_cast<uint64_t>(ifs.tellg());
   ifs.seekg(0, std::ios::beg);
   std::vector<uint8_t> data;
   data.resize(size, 0);

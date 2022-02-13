@@ -15,12 +15,24 @@ void check(LIEF::PE::Binary& bin) {
   builder.build();
 }
 
-void check(LIEF::MachO::FatBinary& bin) {
+void check(std::unique_ptr<LIEF::MachO::FatBinary> bin) {
   std::stringstream ss;
-  for (LIEF::MachO::Binary& fit : bin) {
+  for (LIEF::MachO::Binary& fit : *bin) {
     ss << fit;
-    LIEF::MachO::Builder builder{fit};
-    builder.build();
+    {
+      auto target = &fit;
+      if (auto* uuid = target->get(LIEF::MachO::LOAD_COMMAND_TYPES::LC_UUID)) {
+        target->extend(*uuid, uuid->size() + 0x100);
+      }
+      if (auto* seg = target->get_segment("__LINKEDIT")) {
+        target->extend(*seg, 0x30000);
+      }
+      target->remove_signature();
+    }
+    {
+      LIEF::MachO::Builder builder{fit};
+      builder.build();
+    }
   }
 }
 
@@ -91,7 +103,7 @@ int main(int argc, char** argv) {
 
   if (LIEF::MachO::is_macho(path)) {
     std::unique_ptr<LIEF::MachO::FatBinary> bin = LIEF::MachO::Parser::parse(path);
-    check(*bin);
+    check(std::move(bin));
     return EXIT_SUCCESS;
   }
 

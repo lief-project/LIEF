@@ -61,7 +61,7 @@ void Section::content(const std::vector<uint8_t>&) {
 }
 
 
-std::vector<uint8_t> Section::content() const {
+span<const uint8_t> Section::content() const {
   LIEF_ERR("Not supported by this format");
   return {};
 }
@@ -129,7 +129,7 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
 }
 
 size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
-  std::vector<uint8_t> content = this->content();
+  span<const uint8_t> content = this->content();
 
   const auto it_found = std::search(
       std::begin(content) + pos, std::end(content),
@@ -180,7 +180,7 @@ std::vector<size_t> Section::search_all(const std::string& v) const {
 
 double Section::entropy() const {
   std::array<uint64_t, 256> frequencies = { {0} };
-  const std::vector<uint8_t>& content = this->content();
+  span<const uint8_t> content = this->content();
   for (uint8_t x : content) {
     frequencies[x]++;
   }
