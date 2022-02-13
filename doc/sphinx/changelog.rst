@@ -118,7 +118,7 @@ Changelog
     .. warning::
 
       We started to refactor the API and the internal design to remove C++ exceptions.
-      These changes are described a the dedicated blog (To be published)
+      These changes are described a the dedicated blog (`LIEF RTTI & Exceptions <https://lief-project.github.io/blog/2022-02-13-lief-rtti-exceptions/>`_)
 
       To highlighting the content of the blog for the end users,
       functions that returned a **reference and which threw an exception** in the case
