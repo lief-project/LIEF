@@ -165,6 +165,7 @@ Changelog
 
       - :ref:`C++ API for errors handling <cpp-api-error-handling>`
       - :ref:`Python API for errors handling <python-api-error-handling>`
+      - `List of the functions that changed <https://gist.github.com/romainthomas/37da45b043c5f8b8db6be2767611f625>`_
 
 
 0.11.X - Patch Releases
