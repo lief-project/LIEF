@@ -29,6 +29,8 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/utils.hpp"
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"

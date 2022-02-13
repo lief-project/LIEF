@@ -33,6 +33,8 @@
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Builder.hpp"
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
