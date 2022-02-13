@@ -44,11 +44,9 @@
 
 
 set(_LIEF_SEARCHES)
-# Search LIEF_ROOT first if it is set.
+
 if(LIEF_ROOT)
-  message(DEPRECATION "LIEF_ROOT is deprecated. Please use LIEF_DIR")
-  set(_LIEF_SEARCH_ROOT PATHS ${LIEF_ROOT} NO_DEFAULT_PATH)
-  list(APPEND _LIEF_SEARCHES _LIEF_SEARCH_ROOT)
+  message(FATAL_ERROR "LIEF_ROOT is no longer supported. Please use LIEF_DIR")
 endif()
 
 if(LIEF_DIR)
