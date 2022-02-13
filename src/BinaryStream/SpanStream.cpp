@@ -27,6 +27,15 @@ SpanStream::SpanStream(span<const uint8_t> data) :
   stype_ = STREAM_TYPE::SPAN;
 }
 
+
+SpanStream::SpanStream(const std::vector<uint8_t>& data) :
+  data_{data}
+{}
+
+result<SpanStream> SpanStream::from_vector(const std::vector<uint8_t>& data) {
+  return SpanStream{data};
+}
+
 result<const void*> SpanStream::read_at(uint64_t offset, uint64_t size) const {
   const uint64_t stream_size = this->size();
   if (offset > stream_size || (offset + size) > stream_size) {
