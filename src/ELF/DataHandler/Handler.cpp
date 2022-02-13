@@ -23,6 +23,7 @@
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "LIEF/exception.hpp"
@@ -93,11 +94,20 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
     return hdl;
   }
 
-
   if (SpanStream::classof(*stream)) {
     auto hdl = std::unique_ptr<Handler>(new Handler{});
     auto& vs = static_cast<SpanStream&>(*stream);
     hdl->data_ = vs.content();
+    return hdl;
+  }
+
+  if (FileStream::classof(*stream)) {
+    auto hdl = std::unique_ptr<Handler>(new Handler{});
+    auto& vs = static_cast<FileStream&>(*stream);
+    hdl->data_ = vs.content();
+    const uint64_t pos = vs.pos();
+    stream = std::make_unique<DataHandlerStream>(hdl->data_);
+    stream->setpos(pos);
     return hdl;
   }
 

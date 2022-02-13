@@ -40,6 +40,7 @@ class BinaryStream {
     VECTOR,
     MEMORY,
     SPAN,
+    FILE,
 
     ELF_DATA_HANDLER,
   };
