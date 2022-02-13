@@ -32,94 +32,69 @@
 #include "MachO/Structures.hpp"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "logging.hpp"
 
 
 namespace LIEF {
 namespace MachO {
 
-bool is_macho(const std::string& file) {
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (!binary) {
-    LIEF_ERR("Unable to open the '{}'", file);
-    return false;
+inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream) {
+  stream.setpos(0);
+  if (auto magic_res = stream.read<uint32_t>()) {
+    return static_cast<MACHO_TYPES>(*magic_res);
   }
+  return make_error_code(lief_errors::read_error);
+}
 
-  MACHO_TYPES magic;
-  binary.seekg(0, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
+inline bool is_macho(BinaryStream& stream) {
+  if (auto magic_res = magic_from_stream(stream)) {
+    const MACHO_TYPES magic = *magic_res;
+    return (magic == MACHO_TYPES::MH_MAGIC ||
+            magic == MACHO_TYPES::MH_CIGAM ||
+            magic == MACHO_TYPES::MH_MAGIC_64 ||
+            magic == MACHO_TYPES::MH_CIGAM_64 ||
+            magic == MACHO_TYPES::FAT_MAGIC ||
+            magic == MACHO_TYPES::FAT_CIGAM);
+  }
+  return false;
+}
 
-  return (magic == MACHO_TYPES::MH_MAGIC ||
-          magic == MACHO_TYPES::MH_CIGAM ||
-          magic == MACHO_TYPES::MH_MAGIC_64 ||
-          magic == MACHO_TYPES::MH_CIGAM_64 ||
-          magic == MACHO_TYPES::FAT_MAGIC ||
-          magic == MACHO_TYPES::FAT_CIGAM);
+bool is_macho(const std::string& file) {
+  if (auto stream = FileStream::from_file(file)) {
+    return is_macho(*stream);
+  }
+  return false;
 }
 
 bool is_macho(const std::vector<uint8_t>& raw) {
-
-  if (raw.size() < sizeof(MACHO_TYPES)) {
-    return false;
+  if (auto stream = SpanStream::from_vector(raw)) {
+    return is_macho(*stream);
   }
-
-  MACHO_TYPES magic;
-
-  std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(uint32_t),
-    reinterpret_cast<uint8_t*>(&magic));
-
-   return magic == MACHO_TYPES::MH_MAGIC    ||
-          magic == MACHO_TYPES::MH_CIGAM    ||
-          magic == MACHO_TYPES::MH_MAGIC_64 ||
-          magic == MACHO_TYPES::MH_CIGAM_64 ||
-          magic == MACHO_TYPES::FAT_MAGIC   ||
-          magic == MACHO_TYPES::FAT_CIGAM;
+  return false;
 }
 
 bool is_fat(const std::string& file) {
-  if (!is_macho(file)) {
-    LIEF_ERR("'{}' is not a MachO", file);
-    return false;
+  if (auto stream = FileStream::from_file(file)) {
+    if (auto magic_res = magic_from_stream(*stream)) {
+      const MACHO_TYPES magic = *magic_res;
+      return magic == MACHO_TYPES::FAT_MAGIC ||
+             magic == MACHO_TYPES::FAT_CIGAM;
+    }
   }
-
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-
-  if (!binary) {
-    LIEF_ERR("Unable to open the '{}'", file);
-    return false;
-  }
-
-  MACHO_TYPES magic;
-  binary.seekg(0, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
-
-  return magic == MACHO_TYPES::FAT_MAGIC ||
-         magic == MACHO_TYPES::FAT_CIGAM;
+  return false;
 }
 
 bool is_64(const std::string& file) {
- if (!is_macho(file)) {
-    LIEF_ERR("'{}' is not a MachO", file);
-    return false;
+  if (auto stream = FileStream::from_file(file)) {
+    if (auto magic_res = magic_from_stream(*stream)) {
+      const MACHO_TYPES magic = *magic_res;
+      return magic == MACHO_TYPES::MH_MAGIC_64 ||
+             magic == MACHO_TYPES::MH_CIGAM_64;
+    }
   }
-
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-
-  if (!binary) {
-    LIEF_ERR("Unable to open the '{}'", file);
-    return false;
-  }
-
-  MACHO_TYPES magic;
-  binary.seekg(0, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&magic), sizeof(uint32_t));
-
-  return magic == MACHO_TYPES::MH_MAGIC_64 ||
-         magic == MACHO_TYPES::MH_CIGAM_64;
-
-
+  return false;
 }
 
 
