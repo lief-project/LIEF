@@ -265,15 +265,25 @@ ok_error_t Parser::parse_data_directories() {
 template<typename PE_T>
 ok_error_t Parser::parse_import_table() {
   using uint__ = typename PE_T::uint;
+  DataDirectory& import_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
+  DataDirectory& iat_dir    = binary_->data_directory(DATA_DIRECTORY::IAT);
 
-  const uint32_t import_rva    = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA();
+  const uint32_t import_rva    = import_dir.RVA();
   const uint64_t import_offset = binary_->rva_to_offset(import_rva);
-  stream_->setpos(import_offset);
+  const size_t   import_end    = import_offset + import_dir.size();
 
-  while (auto raw_imp = stream_->read<details::pe_import>()) {
-    Import import           = *raw_imp;
-    import.directory_       = &(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE));
-    import.iat_directory_   = &(binary_->data_directory(DATA_DIRECTORY::IAT));
+  stream_->setpos(import_offset);
+  result<details::pe_import> imp_res;
+
+  while (stream_->pos() < import_end && (imp_res = stream_->read<details::pe_import>())) {
+    const auto raw_imp = *imp_res;
+    if (BinaryStream::is_all_zero(raw_imp)) {
+      break;
+    }
+
+    Import import           = raw_imp;
+    import.directory_       = &import_dir;
+    import.iat_directory_   = &iat_dir;
     import.type_            = type_;
 
     if (import.name_RVA_ == 0) {
@@ -283,13 +293,14 @@ ok_error_t Parser::parse_import_table() {
 
     // Offset to the Import (Library) name
     const uint64_t offset_name = binary_->rva_to_offset(import.name_RVA_);
-    auto res_name = stream_->peek_string_at(offset_name);
-    if (!res_name) {
+
+    if (auto res_name = stream_->peek_string_at(offset_name))  {
+      import.name_ = std::move(*res_name);
+    } else {
       LIEF_ERR("Can't read the import name (offset: 0x{:x})", offset_name);
       continue;
     }
 
-    import.name_ = std::move(*res_name);
 
     // We assume that a DLL name should be at least 4 length size and "printable
     const std::string& imp_name = import.name();
@@ -316,8 +327,7 @@ ok_error_t Parser::parse_import_table() {
     uint__ table = 0;
 
     if (IAT_offset > 0) {
-      auto res_iat = stream_->peek<uint__>(IAT_offset);
-      if (res_iat) {
+      if (auto res_iat = stream_->peek<uint__>(IAT_offset)) {
         IAT   = *res_iat;
         table = IAT;
         IAT_offset += sizeof(uint__);
@@ -325,8 +335,7 @@ ok_error_t Parser::parse_import_table() {
     }
 
     if (LT_offset > 0) {
-      auto res_lt = stream_->peek<uint__>(LT_offset);
-      if (res_lt) {
+      if (auto res_lt = stream_->peek<uint__>(LT_offset)) {
         table      = *res_lt;
         LT_offset += sizeof(uint__);
       }
@@ -344,13 +353,17 @@ ok_error_t Parser::parse_import_table() {
       if (!entry.is_ordinal()) {
         const size_t hint_off = binary_->rva_to_offset(entry.hint_name_rva());
         const size_t name_off = hint_off + sizeof(uint16_t);
-        auto res_entry_name = stream_->peek_string_at(name_off);
-        if (res_entry_name) {
-          entry.name_ = std::move(*res_entry_name);
+        if (auto entry_name = stream_->peek_string_at(name_off)) {
+          entry.name_ = std::move(*entry_name);
         } else {
           LIEF_ERR("Can't read import entry name");
         }
-        entry.hint_ = static_cast<uint16_t>(hint_off);
+        if (auto hint = stream_->peek<uint16_t>(hint_off)) {
+          entry.hint_ = *hint;
+        } else {
+          LIEF_INFO("Can't read hint value @0x{:x}", hint_off);
+        }
+
 
         // Check that the import name is valid
         if (is_valid_import_name(entry.name())) {

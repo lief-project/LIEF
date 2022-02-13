@@ -26,6 +26,7 @@
 #include "logging.hpp"
 
 #include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
@@ -139,9 +140,15 @@ ok_error_t Parser::parse_dos_stub() {
 ok_error_t Parser::parse_rich_header() {
   LIEF_DEBUG("Parsing rich header");
   const std::vector<uint8_t>& dos_stub = binary_->dos_stub();
-  VectorStream stream{dos_stub};
-  auto it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
-                             std::begin(details::Rich_Magic), std::end(details::Rich_Magic));
+  //SpanStream stream;
+  auto res = SpanStream::from_vector(dos_stub);
+  if (!res) {
+    return make_error_code(lief_errors::parsing_error);
+  }
+  SpanStream stream = std::move(*res);
+
+  const auto it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
+                                   std::begin(details::Rich_Magic), std::end(details::Rich_Magic));
 
   if (it_rich == std::end(dos_stub)) {
     LIEF_DEBUG("Rich header not found!");
@@ -151,46 +158,49 @@ ok_error_t Parser::parse_rich_header() {
   const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
   LIEF_DEBUG("Offset to rich header: 0x{:x}", end_offset_rich_header);
 
-  const auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(details::Rich_Magic));
-  if (!res_xor_key) {
+  if (auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(details::Rich_Magic))) {
+    binary_->rich_header().key(*res_xor_key);
+  } else {
     return make_error_code(lief_errors::read_error);
   }
-  const uint32_t xor_key = *res_xor_key;
 
-  binary_->rich_header().key(xor_key);
+  const uint32_t xor_key = binary_->rich_header().key();
   LIEF_DEBUG("XOR key: 0x{:x}", xor_key);
 
-  uint64_t curent_offset = end_offset_rich_header - sizeof(details::Rich_Magic);
+  int64_t curent_offset = end_offset_rich_header - sizeof(details::Rich_Magic);
 
   std::vector<uint32_t> values;
   values.reserve(dos_stub.size() / sizeof(uint32_t));
 
   result<uint32_t> res_count = 0;
   result<uint32_t> res_value = 0;
+  uint32_t count = 0;
+  uint32_t value;
 
-  while (res_value && *res_value != details::DanS_Magic_number  &&
-         res_count && *res_count != details::DanS_Magic_number) {
+  while (curent_offset > 0 && stream.pos() < stream.size()) {
 
-    res_count = stream.peek<uint32_t>(curent_offset);
-    if (!res_count) {
+    if (auto res_count = stream.peek<uint32_t>(curent_offset)) {
+      count = *res_count ^ xor_key;
+    } else {
       break;
     }
-    uint32_t count = *res_count ^ xor_key;
+
     curent_offset -= sizeof(uint32_t);
-
-    res_value = stream.peek<uint32_t>(curent_offset);
-    if (!res_value) {
+    if (auto res_value = stream.peek<uint32_t>(curent_offset)) {
+      value = *res_value ^ xor_key;
+    } else {
       break;
     }
 
-    uint32_t value = *res_value ^ xor_key;
     curent_offset -= sizeof(uint32_t);
 
     if (value == 0 && count == 0) { // Skip padding entry
       continue;
     }
 
-    if (value == details::DanS_Magic_number || count == details::DanS_Magic_number) {
+    if (value == details::DanS_Magic_number ||
+        count == details::DanS_Magic_number)
+    {
       break;
     }
 

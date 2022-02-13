@@ -13,7 +13,7 @@ from unittest import TestCase
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
+lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
 
 class TestSimple(TestCase):
 
@@ -102,7 +102,7 @@ class TestSimple(TestCase):
 
         entries = rheader.entries
 
-        self.assertEqual(len(entries), 8)
+        self.assertEqual(len(entries), 7)
         entry_4 = entries[4]
 
         self.assertEqual(entry_4.id, 0x95)

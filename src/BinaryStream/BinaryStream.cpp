@@ -186,7 +186,7 @@ result<std::string> BinaryStream::peek_string(size_t maxsize) const {
     off += sizeof(char);
     str_result.push_back(*c);
     ++count;
-  } while (count < maxsize && c && *c != '\0' && pos() < size());
+  } while (count < maxsize && c && *c != '\0' && off < size());
   str_result.back() = '\0';
   return str_result.c_str();
 

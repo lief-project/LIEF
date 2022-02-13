@@ -22,6 +22,7 @@
 #include <istream>
 #include <utility>
 #include <memory>
+#include <algorithm>
 
 #include "LIEF/BinaryStream/Convert.hpp"
 #include "LIEF/errors.hpp"
@@ -171,6 +172,14 @@ class BinaryStream {
   virtual result<std::vector<uint8_t>>               x509_read_serial();
   virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time();
 
+
+  template<class T>
+  static bool is_all_zero(const T& buffer) {
+    const auto* ptr = reinterpret_cast<const uint8_t *const>(&buffer);
+    return std::all_of(ptr, ptr + sizeof(T),
+                       [] (uint8_t x) { return x == 0; });
+  }
+
   protected:
   virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
   inline virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
@@ -202,10 +211,14 @@ result<T> BinaryStream::read() const {
 
 template<class T>
 result<T> BinaryStream::peek() const {
+  const auto current_p = pos();
   T ret;
   if (auto res = peek_in(&ret, pos(), sizeof(T))) {
+    setpos(current_p);
     return ret;
   }
+
+  setpos(current_p);
   return make_error_code(lief_errors::read_error);
 }
 

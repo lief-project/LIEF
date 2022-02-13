@@ -33,6 +33,8 @@
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
 #include "PE/Structures.hpp"
 
 #include "LIEF/utils.hpp"
@@ -56,67 +58,36 @@ inline std::string to_lower(std::string str) {
   return lower;
 }
 
+inline bool is_pe(BinaryStream& stream) {
+  using signature_t = std::array<char, sizeof(details::PE_Magic)>;
+  stream.setpos(0);
+  if (auto dos_header = stream.read<details::pe_dos_header>()) {
+    if (dos_header->Magic != /* MZ */0x5a4d) {
+      return false;
+    }
+    stream.setpos(dos_header->AddressOfNewExeHeader);
+    if (auto res_sig = stream.read<signature_t>()) {
+      const auto signature = *res_sig;
+      return std::equal(std::begin(signature), std::end(signature),
+                        std::begin(details::PE_Magic));
+    }
+  }
+  return false;
+}
+
 bool is_pe(const std::string& file) {
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (!binary) {
-    LIEF_ERR("Unable to open the file!");
-    return false;
+  if (auto stream = FileStream::from_file(file)) {
+    return is_pe(*stream);
   }
-
-  uint64_t file_size;
-  binary.unsetf(std::ios::skipws);
-  binary.seekg(0, std::ios::end);
-  file_size = binary.tellg();
-  binary.seekg(0, std::ios::beg);
-
-
-  if (file_size < sizeof(details::pe_dos_header)) {
-    LIEF_ERR("File too small");
-    return false;
-  }
-
-  char magic[2];
-  details::pe_dos_header dos_header;
-  binary.read(magic, sizeof(magic));
-  if (magic[0] != 'M' || magic[1] != 'Z') {
-    return false;
-  }
-
-  binary.seekg(0, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(details::pe_dos_header));
-  if (dos_header.AddressOfNewExeHeader >= file_size) {
-    return false;
-  }
-  char signature[sizeof(details::PE_Magic)];
-  binary.seekg(dos_header.AddressOfNewExeHeader, std::ios::beg);
-  binary.read(signature, sizeof(details::PE_Magic));
-  return std::equal(std::begin(signature), std::end(signature), std::begin(details::PE_Magic));
+  return false;
 }
 
 
 bool is_pe(const std::vector<uint8_t>& raw) {
-
-  if (raw.size() < sizeof(details::pe_dos_header)) {
-    return false;
+  if (auto stream = SpanStream::from_vector(raw)) {
+    return is_pe(*stream);
   }
-
-  const auto* dos_header = reinterpret_cast<const details::pe_dos_header*>(raw.data());
-  if (raw[0] != 'M' || raw[1] != 'Z') {
-    return false;
-  }
-
-  if ((dos_header->AddressOfNewExeHeader + sizeof(details::pe_header)) >= raw.size()) {
-    return false;
-  }
-
-  VectorStream raw_stream(raw);
-  raw_stream.setpos(dos_header->AddressOfNewExeHeader);
-  const auto *signature = raw_stream.read_array<char>(sizeof(details::PE_Magic));
-  if (signature == nullptr) {
-    return false;
-  }
-
-  return std::equal(signature, signature + sizeof(details::PE_Magic), std::begin(details::PE_Magic));
+  return false;
 }
 
 
@@ -179,96 +150,16 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
 }
 
 result<PE_TYPE> get_type(const std::string& file) {
-  if (!is_pe(file)) {
-    LIEF_ERR("{} is not a PE file", file);
-    return make_error_code(lief_errors::file_error);
+  if (auto stream = FileStream::from_file(file)) {
+    return get_type_from_stream(*stream);
   }
-
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (!binary) {
-    LIEF_ERR("Can't open '{}'", file);
-    return make_error_code(lief_errors::file_error);
-  }
-
-  binary.seekg(0, std::ios::beg);
-
-  details::pe_dos_header dos_header;
-  details::pe32_optional_header optional_header;
-  details::pe_header hdr;
-
-  binary.read(reinterpret_cast<char*>(&dos_header), sizeof(details::pe_dos_header));
-
-  binary.seekg(dos_header.AddressOfNewExeHeader, std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&hdr), sizeof(details::pe_header));
-  const size_t sizeof_opt_header = hdr.SizeOfOptionalHeader;
-
-  binary.seekg(dos_header.AddressOfNewExeHeader + sizeof(details::pe_header), std::ios::beg);
-  binary.read(reinterpret_cast<char*>(&optional_header), sizeof(details::pe32_optional_header));
-  auto type = static_cast<PE_TYPE>(optional_header.Magic);
-
-  // See the ``get_type_from_stream`` comments for the logic of these if cases
-  if (type == PE_TYPE::PE32 || type == PE_TYPE::PE32_PLUS) {
-    return type;
-  }
-
-  if (sizeof_opt_header == SIZEOF_OPT_HEADER_32) {
-    return PE_TYPE::PE32;
-  }
-
-  if (sizeof_opt_header == SIZEOF_OPT_HEADER_64) {
-    return PE_TYPE::PE32_PLUS;
-  }
-
-  LIEF_ERR("Can't determine the PE's type for {}", file);
   return make_error_code(lief_errors::file_format_error);
 }
 
 result<PE_TYPE> get_type(const std::vector<uint8_t>& raw) {
-  if (!is_pe(raw)) {
-    return make_error_code(lief_errors::file_error);
+  if (auto stream = SpanStream::from_vector(raw)) {
+    return get_type_from_stream(*stream);
   }
-
-  VectorStream raw_stream = VectorStream(raw);
-
-  auto dos_header = raw_stream.read<details::pe_dos_header>();
-  if (!dos_header) {
-    LIEF_ERR("Can't read the DOS Header");
-    return dos_header.error();
-  }
-
-  raw_stream.setpos(dos_header->AddressOfNewExeHeader);
-  auto hdr = raw_stream.read<details::pe_header>();
-
-  if (!hdr) {
-    LIEF_ERR("Can't read the PE Header structure");
-    return hdr.error();
-  }
-
-  const size_t sizeof_opt_header = hdr->SizeOfOptionalHeader;
-  raw_stream.setpos(dos_header->AddressOfNewExeHeader + sizeof(details::pe_header));
-
-  auto optional_header = raw_stream.read<details::pe32_optional_header>();
-  if (!optional_header) {
-    LIEF_ERR("Can't read the optional header");
-    return optional_header.error();
-  }
-
-  auto type = static_cast<PE_TYPE>(optional_header->Magic);
-
-  // See the ``get_type_from_stream`` comments for the logic of these if cases
-  if (type == PE_TYPE::PE32 || type == PE_TYPE::PE32_PLUS) {
-    return type;
-  }
-
-  if (sizeof_opt_header == SIZEOF_OPT_HEADER_32) {
-    return PE_TYPE::PE32;
-  }
-
-  if (sizeof_opt_header == SIZEOF_OPT_HEADER_64) {
-    return PE_TYPE::PE32_PLUS;
-  }
-
-  LIEF_ERR("Can't determine the PE's type the given raw bytes");
   return make_error_code(lief_errors::file_format_error);
 }
 

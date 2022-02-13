@@ -19,7 +19,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "LIEF/exception.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "logging.hpp"
 
 #include "LIEF/ELF/utils.hpp"
@@ -28,34 +29,29 @@
 namespace LIEF {
 namespace ELF {
 
-bool is_elf(const std::string& file) {
-  std::ifstream binary(file, std::ios::in | std::ios::binary);
-  if (!binary) {
-    LIEF_ERR("Unable to open the file '{}'", file);
-    return false;
+inline bool is_elf(BinaryStream& stream) {
+  using magic_t = std::array<char, sizeof(details::ElfMagic)>;
+  stream.setpos(0);
+  if (auto res = stream.peek<magic_t>()) {
+    const auto magic = *res;
+    return std::equal(std::begin(magic), std::end(magic),
+                      std::begin(details::ElfMagic));
   }
-  char magic[sizeof(details::ElfMagic)];
+  return false;
+}
 
-  binary.seekg(0, std::ios::beg);
-  binary.read(magic, sizeof(magic));
-  return std::equal(std::begin(magic), std::end(magic), std::begin(details::ElfMagic));
+bool is_elf(const std::string& file) {
+  if (auto stream = FileStream::from_file(file)) {
+    return is_elf(*stream);
+  }
+  return false;
 }
 
 bool is_elf(const std::vector<uint8_t>& raw) {
-
-  char magic[sizeof(details::ElfMagic)];
-
-  if (raw.size() < sizeof(details::ElfMagic)) {
-    return false;
+  if (auto stream = SpanStream::from_vector(raw)) {
+    return is_elf(*stream);
   }
-
-
-  std::copy(
-    reinterpret_cast<const uint8_t*>(raw.data()),
-    reinterpret_cast<const uint8_t*>(raw.data()) + sizeof(details::ElfMagic),
-    magic);
-
-  return std::equal(std::begin(magic), std::end(magic), std::begin(details::ElfMagic));
+  return false;
 }
 
 //! SYSV hash function
