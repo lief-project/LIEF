@@ -79,22 +79,16 @@ Parser::Parser() = default;
 Parser::Parser(const std::string& file) :
   LIEF::Parser{file}
 {
-  // Read from file
-  auto stream = VectorStream::from_file(file);
-  if (!stream) {
-    LIEF_ERR("Can't create the stream");
-  } else {
+  if (auto stream = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*stream));
+  } else {
+    LIEF_ERR("Can't create the stream");
   }
-
-  init(file);
 }
 
-Parser::Parser(std::vector<uint8_t> data, const std::string& name) :
+Parser::Parser(std::vector<uint8_t> data) :
   stream_{std::make_unique<VectorStream>(std::move(data))}
-{
-  init(name);
-}
+{}
 
 
 void Parser::init(const std::string& name) {
@@ -1021,16 +1015,22 @@ ok_error_t Parser::parse_overlay() {
 //
 std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   if (!is_pe(filename)) {
-    LIEF_ERR("{} is not a PE file");
+    LIEF_ERR("{} is not a PE file", filename);
     return nullptr;
   }
   Parser parser{filename};
+  parser.init(filename);
   return std::move(parser.binary_);
 }
 
 
-std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
-  Parser parser{data, name};
+std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+  if (!is_pe(data)) {
+    LIEF_ERR("The provided data are not related to a PE file");
+    return nullptr;
+  }
+  Parser parser{std::move(data)};
+  parser.init(name);
   return std::move(parser.binary_);
 }
 

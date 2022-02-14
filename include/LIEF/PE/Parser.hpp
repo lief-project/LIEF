@@ -78,14 +78,14 @@ class LIEF_API Parser : public LIEF::Parser {
   static std::unique_ptr<Binary> parse(const std::string& filename);
 
   //! Parse a PE binary from a data buffer
-  static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 
   private:
   Parser(const std::string& file);
-  Parser(std::vector<uint8_t> data, const std::string& name);
+  Parser(std::vector<uint8_t> data);
 
   ~Parser();
   Parser();

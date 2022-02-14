@@ -32,7 +32,7 @@ void create<Parser>(py::module& m) {
       py::return_value_policy::take_ownership);
 
     m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+      static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>, const std::string&)>(&Parser::parse),
       "Parse the PE binary from the given **list of bytes** and return a :class:`lief.PE.Binary` object",
       "raw"_a, "name"_a = "",
       py::return_value_policy::take_ownership);
@@ -65,9 +65,11 @@ void create<Parser>(py::module& m) {
         }
 
         std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
+
         std::vector<uint8_t> raw = {
           std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))};
+          std::make_move_iterator(std::end(raw_str))
+        };
 
         return LIEF::PE::Parser::parse(std::move(raw), name);
       },
