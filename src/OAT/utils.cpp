@@ -22,59 +22,44 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/utils.hpp"
 
-
 namespace LIEF {
 namespace OAT {
 
 bool is_oat(const std::string& file) {
-  if (!LIEF::ELF::is_elf(file)) {
+  if (!ELF::is_elf(file)) {
     return false;
   }
 
-  std::unique_ptr<const LIEF::ELF::Binary> elf_binary;
   try {
-    elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(file)};
-  } catch (const LIEF::exception&) {
+    if (const auto elf_binary = ELF::Parser::parse(file)) {
+      return is_oat(*elf_binary);
+    }
+  } catch (const exception&) {
     return false;
   }
-
-  if (elf_binary == nullptr) {
-    return false;
-  }
-
-  return is_oat(*elf_binary);
-
+  return false;
 }
 
 
 bool is_oat(const std::vector<uint8_t>& raw) {
-  std::unique_ptr<const LIEF::ELF::Binary> elf_binary;
   try {
-    elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(raw)};
-  } catch (const LIEF::exception&) {
+    if (const auto elf_binary = ELF::Parser::parse(raw)) {
+      return is_oat(*elf_binary);
+    }
+  } catch (const exception&) {
     return false;
   }
-  if (elf_binary == nullptr) {
-    return false;
-  }
-  return is_oat(*elf_binary);
+  return false;
 }
 
-bool is_oat(const ELF::Binary& elf_binary) {
-  ELF::Binary::it_const_dynamic_symbols dynamic_symbols = elf_binary.dynamic_symbols();
+bool is_oat(const ELF::Binary& elf) {
+  if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
+    const std::vector<uint8_t>& header = elf.get_content_from_virtual_address(oatdata->value(), sizeof(details::oat_magic));
+    return std::equal(std::begin(header), std::end(header),
+                      std::begin(details::oat_magic));
 
-  const auto it_oatdata_symbol = std::find_if(std::begin(dynamic_symbols), std::end(dynamic_symbols),
-      [] (const LIEF::ELF::Symbol& sym) {
-        return sym.name() == "oatdata";
-      });
-
-  if (it_oatdata_symbol == std::end(dynamic_symbols)) {
-    return false;
   }
-
-  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(it_oatdata_symbol->value(), sizeof(details::oat_magic));
-  return std::equal(header.data(), header.data() + sizeof(details::oat_magic),
-                    std::begin(details::oat_magic));
+  return false;
 }
 
 oat_version_t version(const std::string& file) {
@@ -82,18 +67,15 @@ oat_version_t version(const std::string& file) {
     return 0;
   }
 
-  std::unique_ptr<const LIEF::ELF::Binary> elf_binary;
+  std::unique_ptr<const ELF::Binary> elf_binary;
   try {
-    elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(file)};
-  } catch (const LIEF::exception&) {
+    if (const auto elf = ELF::Parser::parse(file)) {
+      return version(*elf_binary);
+    }
+  } catch (const exception&) {
     return 0;
   }
-
-  if (elf_binary == nullptr) {
-    return 0u;
-  }
-
-  return version(*elf_binary);
+  return 0;
 }
 
 oat_version_t version(const std::vector<uint8_t>& raw) {
@@ -101,47 +83,41 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
     return 0;
   }
 
-  std::unique_ptr<const LIEF::ELF::Binary> elf_binary;
+  std::unique_ptr<const ELF::Binary> elf_binary;
   try {
-    elf_binary = std::unique_ptr<const LIEF::ELF::Binary>{LIEF::ELF::Parser::parse(raw)};
-  } catch (const LIEF::exception&) {
+    if (const auto elf = ELF::Parser::parse(raw)) {
+      return version(*elf_binary);
+    }
+  } catch (const exception&) {
     return 0;
   }
-
-  if (elf_binary == nullptr) {
-    return 0u;
-  }
-
-  return version(*elf_binary);
+  return 0;
 }
 
 
-oat_version_t version(const LIEF::ELF::Binary& elf_binary) {
-
-  const Symbol* oatdata_symbol = elf_binary.get_symbol("oatdata");
-  if (oatdata_symbol == nullptr) {
-    return 0;
+oat_version_t version(const ELF::Binary& elf) {
+  if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
+    const std::vector<uint8_t>& header = elf.get_content_from_virtual_address(oatdata->value() + sizeof(details::oat_magic), sizeof(details::oat_version));
+    if (header.size() != sizeof(details::oat_version)) {
+      return 0;
+    }
+    return std::stoul(std::string(reinterpret_cast<const char*>(header.data()), 3));
   }
-
-  const std::vector<uint8_t>& header = elf_binary.get_content_from_virtual_address(oatdata_symbol->value() + sizeof(details::oat_magic), sizeof(details::oat_version));
-
-  uint32_t version = std::stoul(std::string(reinterpret_cast<const char*>(header.data()), 3));
-
-  return version;
+  return 0;
 }
 
-LIEF::Android::ANDROID_VERSIONS android_version(oat_version_t version) {
-  static const std::map<oat_version_t, LIEF::Android::ANDROID_VERSIONS> oat2android {
-    { 64,  LIEF::Android::ANDROID_VERSIONS::VERSION_601 },
-    { 79,  LIEF::Android::ANDROID_VERSIONS::VERSION_700 },
-    { 88,  LIEF::Android::ANDROID_VERSIONS::VERSION_712 },
-    { 124, LIEF::Android::ANDROID_VERSIONS::VERSION_800 },
-    { 131, LIEF::Android::ANDROID_VERSIONS::VERSION_810 },
-    { 138, LIEF::Android::ANDROID_VERSIONS::VERSION_900 },
+Android::ANDROID_VERSIONS android_version(oat_version_t version) {
+  static const std::map<oat_version_t, Android::ANDROID_VERSIONS> oat2android {
+    { 64,  Android::ANDROID_VERSIONS::VERSION_601 },
+    { 79,  Android::ANDROID_VERSIONS::VERSION_700 },
+    { 88,  Android::ANDROID_VERSIONS::VERSION_712 },
+    { 124, Android::ANDROID_VERSIONS::VERSION_800 },
+    { 131, Android::ANDROID_VERSIONS::VERSION_810 },
+    { 138, Android::ANDROID_VERSIONS::VERSION_900 },
 
   };
   auto   it  = oat2android.lower_bound(version);
-  return it == oat2android.end() ? LIEF::Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
+  return it == oat2android.end() ? Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
 }
 
 
