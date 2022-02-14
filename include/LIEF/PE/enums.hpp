@@ -17,6 +17,7 @@
 #include <inttypes.h>
 #include <cstddef>
 #include "LIEF/enums.hpp"
+#define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
 
 namespace LIEF {
