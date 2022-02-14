@@ -16,7 +16,6 @@
 #include <fstream>
 #include <map>
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/VDEX/utils.hpp"
