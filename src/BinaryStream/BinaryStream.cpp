@@ -228,7 +228,7 @@ result<std::u16string> BinaryStream::peek_u16string() const {
     off += sizeof(char16_t);
     u16_str.push_back(*c);
     ++count;
-  } while (c && *c != 0 && pos() < size());
+  } while (c && *c != 0 && off < size());
   u16_str.back() = '\0';
   return u16_str.c_str();
 }
@@ -244,11 +244,18 @@ result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
   if (length == static_cast<size_t>(-1u)) {
     return peek_u16string();
   }
-  std::unique_ptr<char16_t[]> raw = peek_conv_array<char16_t>(pos(), length);
-  if (raw == nullptr) {
-    return std::u16string();
+
+  std::vector<char16_t> raw_u16str;
+  raw_u16str.resize(length, 0);
+  if (peek_in(raw_u16str.data(), pos(), length * sizeof(char16_t))) {
+    if (endian_swap_) {
+      for (char16_t& x : raw_u16str) {
+        LIEF::Convert::swap_endian(&x);
+      }
+    }
+    return std::u16string{std::begin(raw_u16str), std::end(raw_u16str)};
   }
-  return std::u16string{raw.get(), length};
+  return make_error_code(lief_errors::read_error);
 }
 
 result<std::u16string> BinaryStream::peek_u16string_at(size_t offset, size_t length) const {
@@ -261,10 +268,14 @@ result<std::u16string> BinaryStream::peek_u16string_at(size_t offset, size_t len
 
 
 size_t BinaryStream::align(size_t align_on) const {
-  if (align_on == 0 || (pos() % align_on) == 0) {
+  if (align_on == 0) {
     return 0;
   }
-  size_t padding = align_on - (pos() % align_on);
+  const size_t r = pos() % align_on;
+  if (r == 0) {
+    return 0;
+  }
+  size_t padding = align_on - r;
   increment_pos(padding);
   return padding;
 }
