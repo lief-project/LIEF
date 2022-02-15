@@ -16,10 +16,10 @@
 #define LIEF_THIRD_PARTY_SPAN_H_
 #include "LIEF/config.h"
 
-#ifndef LIEF_EXTERNAL_LEAF
+#ifndef LIEF_EXTERNAL_SPAN
 #include <LIEF/third-party/internal/span.hpp>
 #else
-#include <span.hpp>
+#include <tcb/span.hpp>
 #endif
 
 #endif
