@@ -216,6 +216,9 @@ class ref_iterator : public std::iterator<
     return container_.size();
   }
 
+  bool empty() const {
+    return container_.empty();
+  }
 
   typename std::enable_if<!std::is_const<ref_t>::value, remove_const_t<ref_t>>::type
   operator*() {
@@ -439,6 +442,11 @@ class filter_iterator : public std::iterator<
     for (; it != end_iter; ++it) ++size;
     size_c_ = size;
     return size_c_;
+  }
+
+
+  bool empty() const {
+    return size() == 0;
   }
 
 
