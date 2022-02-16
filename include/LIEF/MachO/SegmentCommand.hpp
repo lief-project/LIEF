@@ -53,11 +53,6 @@ class LIEF_API SegmentCommand : public LoadCommand {
   friend class Builder;
 
   public:
-  struct KeyCmp {
-    bool operator() (const std::unique_ptr<Relocation>& lhs,
-                     const std::unique_ptr<Relocation>& rhs) const;
-  };
-
   using content_t = std::vector<uint8_t>;
 
   //! Internal container for storing Mach-O Section
@@ -70,7 +65,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
 
   //! Internal container for storing Mach-O Relocation
-  using relocations_t = std::set<std::unique_ptr<Relocation>, KeyCmp>;
+  using relocations_t = std::vector<std::unique_ptr<Relocation>>;
 
   //! Iterator which outputs Relocation&
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;

@@ -42,8 +42,12 @@ void create<Section>(py::module& m) {
 
   py::class_<Section, LIEF::Section> sec(m, "Section",
       "Class that represents a Mach-O section");
-
-  init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
+  try {
+    /*
+     * it_relocations could be already registered by the SegmentCommand
+     */
+    init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
+  } catch (const std::runtime_error&) { }
 
   sec
     .def(py::init<>())
@@ -117,6 +121,13 @@ void create<Section>(py::module& m) {
         static_cast<SegmentCommand* (Section::*)(void)>(&Section::segment),
         "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the section or None if not present",
         py::return_value_policy::reference)
+
+    .def_property("segment_name",
+        static_cast<getter_t<const std::string&>>(&Section::segment_name),
+        static_cast<setter_t<const std::string&>>(&Section::segment_name),
+        R"delim(
+        The segment name associated with the section
+        )delim")
 
     .def_property_readonly("has_segment",
         &Section::has_segment,

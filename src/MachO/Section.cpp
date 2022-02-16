@@ -31,11 +31,6 @@
 namespace LIEF {
 namespace MachO {
 
-bool Section::KeyCmp::operator() (const std::unique_ptr<Relocation>& lhs,
-                                  const std::unique_ptr<Relocation>& rhs) const {
-  return *lhs < *rhs;
-}
-
 Section::Section() = default;
 Section::~Section() = default;
 
@@ -175,7 +170,7 @@ void Section::content(const Section::content_t& data) {
 }
 
 const std::string& Section::segment_name() const {
-  if (segment_ == nullptr) {
+  if (segment_ == nullptr || segment_->name().empty()) {
     return segment_name_;
   }
   return segment_->name();
@@ -246,7 +241,7 @@ Section::flag_list_t Section::flags_list() const {
 
 void Section::segment_name(const std::string& name) {
   segment_name_ = name;
-  if (segment_ != nullptr) {
+  if (segment_ != nullptr && !segment_->name().empty()) {
     segment_->name(name);
   }
 }

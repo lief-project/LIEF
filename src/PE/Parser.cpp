@@ -758,7 +758,7 @@ ok_error_t Parser::parse_debug_pogo(Debug& debug_info) {
 
     default:
       {
-        LIEF_WARN("PGO: {} is not implemented yet!", to_string(signature));
+        LIEF_INFO("PGO with signature 0x{:x} is not implemented yet!", *res_sig);
       }
   }
   return ok();

@@ -70,6 +70,8 @@ class LIEF_API RelocationDyld : public Relocation {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const Relocation& r);
+
   std::ostream& print(std::ostream& os) const override;
 };
 

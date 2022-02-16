@@ -882,32 +882,40 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
     return make_error_code(lief_errors::corrupted);
   }
 
-  std::unique_ptr<RelocationObject> reloc;
   for (size_t i = 0; i < numberof_relocations; ++i) {
-    auto address = stream_->peek<int32_t>(current_reloc_offset);
-    if (!address) {
+    std::unique_ptr<RelocationObject> reloc;
+    int32_t address = 0;
+    if (auto res = stream_->peek<int32_t>(current_reloc_offset)) {
+      address = *res;
+    } else {
+      LIEF_INFO("Can't read relocation address for #{}@0x{:x}", i, address);
       break;
     }
-    bool is_scattered = static_cast<bool>(*address & R_SCATTERED);
+    bool is_scattered = static_cast<bool>(address & R_SCATTERED);
 
     if (is_scattered) {
-      const auto reloc_info = stream_->peek<details::scattered_relocation_info>(current_reloc_offset);
-      if (!reloc_info) {
+      if (auto res = stream_->peek<details::scattered_relocation_info>(current_reloc_offset)) {
+        reloc = std::make_unique<RelocationObject>(*res);
+        reloc->section_ = &section;
+      } else {
+        LIEF_INFO("Can't read scattered_relocation_info for #{}@0x{:x}", i, current_reloc_offset);
         break;
       }
-      reloc = std::make_unique<RelocationObject>(*reloc_info);
-      reloc->section_ = &section;
     } else {
-      const auto reloc_info = stream_->peek<details::relocation_info>(current_reloc_offset);
-      if (!reloc_info) {
+      details::relocation_info reloc_info;
+      if (auto res = stream_->peek<details::relocation_info>(current_reloc_offset)) {
+        reloc_info = *res;
+        reloc = std::make_unique<RelocationObject>(*res);
+        reloc->section_ = &section;
+      } else {
+        LIEF_INFO("Can't read relocation_info for #{}@0x{:x}", i, current_reloc_offset);
         break;
       }
-      reloc = std::make_unique<RelocationObject>(*reloc_info);
-      reloc->section_ = &section;
 
-      if (reloc_info->r_extern == 1 && reloc_info->r_symbolnum != R_ABS) {
-        if (reloc_info->r_symbolnum < binary_->symbols().size()) {
-          Symbol& symbol = binary_->symbols()[reloc_info->r_symbolnum];
+      const auto symbols = binary_->symbols();
+      if (reloc_info.r_extern == 1 && reloc_info.r_symbolnum != R_ABS) {
+        if (reloc_info.r_symbolnum < symbols.size()) {
+          Symbol& symbol = symbols[reloc_info.r_symbolnum];
           reloc->symbol_ = &symbol;
 
           LIEF_DEBUG("Symbol: {}", symbol.name());
@@ -915,15 +923,38 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
           LIEF_WARN("Relocation #{:d} of {} symbol index is out-of-bound", i, section.name());
         }
       }
-
-      if (reloc_info->r_extern == 0) {
-        if (reloc_info->r_symbolnum < binary_->sections().size()) {
-          Section& relsec = binary_->sections()[reloc_info->r_symbolnum];
+      const auto sections = binary_->sections();
+      if (reloc_info.r_extern == 0) {
+        const uint32_t sec_num = reloc_info.r_symbolnum;
+        if (sec_num == R_ABS) {
+          // TODO(romain): Find a sample that triggers this branch ..
+          const auto it_sym = memoized_symbols_by_address_.find(reloc_info.r_address);
+          if (it_sym != std::end(memoized_symbols_by_address_)) {
+            reloc->symbol_ = it_sym->second;
+          } else {
+            LIEF_WARN("Can't find memoized symbol for the address: 0x{:x}", reloc_info.r_address);
+          }
+        }
+        else if (sec_num < sections.size()) {
+          Section& relsec = sections[reloc_info.r_symbolnum];
           reloc->section_ = &relsec;
-
           LIEF_DEBUG("Section: {}", relsec.name());
         } else {
-          LIEF_WARN("Relocation #{:d} of {} seems corrupted", i, section.name());
+          /*
+           * According to ld64-609/src/ld/parsers/macho_relocatable_file.cpp,
+           * r_symbolnum can be an index that out-bounds the section tables.
+           *
+           * if ( reloc->r_extern() ) {
+           *   [...]
+           * }
+           * else {
+           *   parser.findTargetFromAddressAndSectionNum(contentValue, reloc->r_symbolnum(), target);
+           * }
+           * findTargetFromAddressAndSectionNum can fail *silently* so no need to warn the user about that
+           */
+          LIEF_INFO("Relocation #{:d} of {} seems corrupted: "
+                    "r_symbolnum is {} sections.size(): {}",
+                    i, section.name(), reloc_info.r_symbolnum, sections.size());
         }
       }
     }
@@ -933,7 +964,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
         reloc->section_ = &section;
       }
       reloc->architecture_ = binary_->header().cpu_type();
-      section.relocations_.emplace(std::move(reloc));
+      section.relocations_.push_back(std::move(reloc));
     }
 
     current_reloc_offset += 2 * sizeof(uint32_t);
@@ -2036,10 +2067,7 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
     return make_error_code(lief_errors::corrupted);
   }
 
-  // Check if a relocation already exists:
-  auto new_relocation = std::make_unique<RelocationDyld>(address, type);
-  auto result = segment.relocations_.emplace(std::move(new_relocation));
-  const std::unique_ptr<Relocation>& reloc = *result.first;
+  auto reloc = std::make_unique<RelocationDyld>(address, type);
 
   // result.second is true if the insertion succeed
   reloc->architecture_ = binary_->header().cpu_type();
@@ -2073,6 +2101,7 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
         reloc->size_ = sizeof(uint32_t) * BYTE_BIT;
         break;
       }
+
     case REBASE_TYPES::REBASE_TYPE_THREADED:
       {
         reloc->size_ = sizeof(pint_t) * BYTE_BIT;
@@ -2083,6 +2112,12 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
       {
         LIEF_ERR("Unsuported relocation type: 0x{:x}", type);
       }
+  }
+  // Check if a relocation already exists:
+  if (dyld_reloc_addrs_.insert(address).second) {
+    segment.relocations_.push_back(std::move(reloc));
+  } else {
+    LIEF_DEBUG("[!] Duplicated symbol address in the dyld rebase: 0x{:x}", address);
   }
   return ok();
 }

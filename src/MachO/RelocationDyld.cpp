@@ -101,6 +101,11 @@ bool RelocationDyld::operator<=(const RelocationDyld& rhs) const {
 }
 
 
+bool RelocationDyld::classof(const Relocation& r) {
+  return r.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
+}
+
+
 std::ostream& RelocationDyld::print(std::ostream& os) const {
   return Relocation::print(os);
 }

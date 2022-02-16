@@ -45,7 +45,13 @@ void create<SegmentCommand>(py::module& m) {
       )delim");
 
     init_ref_iterator<SegmentCommand::it_sections>(seg_cmd, "it_sections");
+
+  try {
+    /*
+     * it_relocations could be already registered by the Section
+     */
     init_ref_iterator<SegmentCommand::it_relocations>(seg_cmd, "it_relocations");
+  } catch (const std::runtime_error&) { }
 
   seg_cmd
     .def(py::init<>())

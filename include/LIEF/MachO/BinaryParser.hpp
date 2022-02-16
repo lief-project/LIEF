@@ -142,6 +142,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   std::map<uint64_t, Symbol*>    memoized_symbols_by_address_;
 
   std::vector<DylibCommand*> binding_libs_;
+  std::set<uint64_t> dyld_reloc_addrs_;
 };
 
 

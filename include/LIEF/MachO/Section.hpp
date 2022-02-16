@@ -49,16 +49,12 @@ class LIEF_API Section : public LIEF::Section {
   friend class SegmentCommand;
 
   public:
-  struct KeyCmp {
-    bool operator() (const std::unique_ptr<Relocation>& lhs,
-                     const std::unique_ptr<Relocation>& rhs) const;
-  };
 
   using content_t   = std::vector<uint8_t>;
   using flag_list_t = std::set<MACHO_SECTION_FLAGS>;
 
   //! Internal container for storing Mach-O Relocation
-  using relocations_t = std::set<std::unique_ptr<Relocation>, KeyCmp>;
+  using relocations_t = std::vector<std::unique_ptr<Relocation>>;
 
   //! Iterator which outputs Relocation&
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;

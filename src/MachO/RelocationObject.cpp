@@ -146,6 +146,10 @@ bool RelocationObject::operator!=(const RelocationObject& rhs) const {
 }
 
 
+bool RelocationObject::classof(const Relocation& r) {
+  return r.origin() == RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE;
+}
+
 std::ostream& RelocationObject::print(std::ostream& os) const {
   return Relocation::print(os);
 }

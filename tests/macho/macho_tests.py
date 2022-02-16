@@ -74,27 +74,27 @@ class TestMachO(TestCase):
         relocations  = text_section.relocations
         self.assertEqual(len(relocations), 2)
 
-        # 0
-        self.assertEqual(relocations[0].address, 0x21b)
-        self.assertEqual(relocations[0].type,    1)
+        # 1
+        self.assertEqual(relocations[0].address, 0x233)
+        self.assertEqual(relocations[0].type,    2)
         self.assertEqual(relocations[0].size,    32)
 
         self.assertEqual(relocations[0].is_scattered, False)
 
-        self.assertEqual(relocations[0].has_symbol,  False)
+        self.assertEqual(relocations[0].has_symbol,  True)
+        self.assertEqual(relocations[0].symbol.name, "_printf")
 
         self.assertEqual(relocations[0].has_section,  True)
         self.assertEqual(relocations[0].section.name, text_section.name)
 
-        # 1
-        self.assertEqual(relocations[1].address, 0x233)
-        self.assertEqual(relocations[1].type,    2)
+        # 0
+        self.assertEqual(relocations[1].address, 0x21b)
+        self.assertEqual(relocations[1].type,    1)
         self.assertEqual(relocations[1].size,    32)
 
         self.assertEqual(relocations[1].is_scattered, False)
 
-        self.assertEqual(relocations[1].has_symbol,  True)
-        self.assertEqual(relocations[1].symbol.name, "_printf")
+        self.assertEqual(relocations[1].has_symbol,  False)
 
         self.assertEqual(relocations[1].has_section,  True)
         self.assertEqual(relocations[1].section.name, text_section.name)

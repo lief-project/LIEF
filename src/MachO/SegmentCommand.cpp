@@ -29,12 +29,6 @@
 namespace LIEF {
 namespace MachO {
 
-bool SegmentCommand::KeyCmp::operator() (const std::unique_ptr<Relocation>& lhs,
-                                         const std::unique_ptr<Relocation>& rhs) const {
-  return *lhs < *rhs;
-}
-
-
 /* The DyldInfo object has span fields (rebase_opcodes_, ...) that point to segment data.
  * When resizing the ``SegmentCommand.data_`` we can break this span as the internal buffer of ``data_``
  * might be relocated.
