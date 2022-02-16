@@ -71,6 +71,15 @@ void BinaryStream::increment_pos(size_t value) const {
 }
 
 
+void BinaryStream::decrement_pos(size_t value) const {
+  if (pos_ >= value) {
+    pos_ -= value;
+  } else {
+    pos_ = 0;
+  }
+}
+
+
 BinaryStream::operator bool() const {
   return pos_ < size();
 }

@@ -162,7 +162,6 @@ ok_error_t Parser::init(const std::string& name) {
 
 std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
   if (!is_elf(filename)) {
-    LIEF_ERR("{} is not an ELF", filename);
     return nullptr;
   }
 
@@ -173,9 +172,7 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_
 
 std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data,
                                       const std::string& name, DYNSYM_COUNT_METHODS count_mtd) {
-
   if (!is_elf(data)) {
-    LIEF_ERR("{} is not an ELF", name);
     return nullptr;
   }
 

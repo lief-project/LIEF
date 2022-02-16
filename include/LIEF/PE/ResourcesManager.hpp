@@ -50,9 +50,10 @@ class LIEF_API ResourcesManager : public Object {
   ResourcesManager& operator=(const ResourcesManager&);
   virtual ~ResourcesManager();
 
-  //! Return the @link ResourceNode node @endlink associated with the given LIEF::PE::RESOURCE_TYPES
-  ResourceNode&       get_node_type(RESOURCE_TYPES type);
-  const ResourceNode& get_node_type(RESOURCE_TYPES type) const;
+  //! Return the ResourceNode associated with the given LIEF::PE::RESOURCE_TYPES
+  //! or a nullptr if not found;
+  ResourceNode*       get_node_type(RESOURCE_TYPES type);
+  const ResourceNode* get_node_type(RESOURCE_TYPES type) const;
 
   //! List of LIEF::PE::RESOURCE_TYPES present in the resources
   std::set<RESOURCE_TYPES> get_types_available() const;
@@ -139,15 +140,6 @@ class LIEF_API ResourcesManager : public Object {
   private:
   void print_tree(const ResourceNode& node, std::ostringstream& stream,
                   uint32_t current_depth, uint32_t max_depth) const;
-
-  //! @brief Build the ResourceStringFileInfo from the RT_VERSION node
-  std::unique_ptr<ResourceStringFileInfo> get_string_file_info(const VectorStream& stream,
-      uint16_t type, std::u16string key, size_t start, size_t struct_length) const;
-
-  //! @brief Build the ResourceVarFileInfo from the RT_VERSION node
-  std::unique_ptr<ResourceVarFileInfo> get_var_file_info(const VectorStream& stream,
-      uint16_t type, std::u16string key, size_t start, size_t struct_length) const;
-
   ResourceNode* resources_ = nullptr;
 };
 

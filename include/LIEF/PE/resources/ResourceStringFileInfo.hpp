@@ -28,6 +28,7 @@ namespace PE {
 
 class ResourcesManager;
 class ResourceVersion;
+struct ResourcesParser;
 
 //! Representation of the ``StringFileInfo`` structure
 //!
@@ -38,9 +39,11 @@ class LIEF_API ResourceStringFileInfo : public Object {
 
   friend class ResourcesManager;
   friend class ResourceVersion;
+  friend struct ResourcesParser;
 
   public:
   ResourceStringFileInfo();
+  ResourceStringFileInfo(uint16_t type, std::u16string key);
   ResourceStringFileInfo(const ResourceStringFileInfo&);
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
   virtual ~ResourceStringFileInfo();

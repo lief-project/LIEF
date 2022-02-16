@@ -20,6 +20,7 @@
 #include <functional>
 #include <numeric>
 
+#include "logging.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/hash.hpp"
@@ -37,19 +38,7 @@ ResourceDialogItem::ResourceDialogItem(const ResourceDialogItem&) = default;
 ResourceDialogItem& ResourceDialogItem::operator=(const ResourceDialogItem&) = default;
 ResourceDialogItem::~ResourceDialogItem() = default;
 
-ResourceDialogItem::ResourceDialogItem() :
-  is_extended_{false},
-  help_id_{0},
-  ext_style_{0},
-  style_{0},
-  id_{0},
-  x_{0},
-  y_{0},
-  cx_{0},
-  cy_{0},
-  extra_count_{0}
-{}
-
+ResourceDialogItem::ResourceDialogItem() = default;
 
 ResourceDialogItem::ResourceDialogItem(const details::pe_dialog_item_template_ext& header) :
   is_extended_{true},
@@ -149,7 +138,7 @@ uint32_t ResourceDialogItem::id() const {
 // ============
 uint32_t ResourceDialogItem::help_id() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.helpID does not exist");
   }
   return help_id_;
 }
@@ -157,7 +146,7 @@ uint32_t ResourceDialogItem::help_id() const {
 
 const std::u16string& ResourceDialogItem::title() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.title does not exist");
   }
 
   return title_;

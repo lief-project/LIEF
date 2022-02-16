@@ -381,6 +381,7 @@ struct pe_resource_icon_dir {
   uint16_t reserved; ///< Reserved
   uint16_t type;     ///< Resource type (1 for icons)
   uint16_t count;    ///< Number of icons
+  // GRPICONDIRENTRY idEntries[];
 };
 
 

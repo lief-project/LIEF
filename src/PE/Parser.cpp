@@ -403,12 +403,13 @@ std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_reso
 
   //const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
   size_t directory_array_offset = current_offset + sizeof(details::pe_resource_directory_table);
+  details::pe_resource_directory_entries entries_array;
 
-  auto res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset);
-  if (!res_entries_array) {
+  if (auto res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset)) {
+    entries_array = *res_entries_array;
+  } else {
     return nullptr;
   }
-  auto entries_array = *res_entries_array;
 
   auto directory = std::make_unique<ResourceDirectory>(directory_table);
   directory->depth_ = depth;
@@ -420,11 +421,11 @@ std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_reso
     uint32_t id       = entries_array.NameID.IntegerID;
 
     directory_array_offset += sizeof(details::pe_resource_directory_entries);
-    res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset);
-    if (!res_entries_array) {
+    if (auto res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset)) {
+      entries_array = *res_entries_array;
+    } else {
       break;
     }
-    entries_array = *res_entries_array;
 
     result<std::u16string> name;
 
@@ -437,19 +438,20 @@ std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_reso
       if (res_length && *res_length <= 100) {
         name = stream_->peek_u16string_at(string_offset + sizeof(uint16_t), *res_length);
         if (!name) {
-          LIEF_ERR("Node's name is corrupted");
+          LIEF_ERR("Node's name for the node id: {} is corrupted", id);
         }
       }
     }
 
     if ((0x80000000 & data_rva) == 0) { // We are on a leaf
       uint32_t offset = base_offset + data_rva;
+      details::pe_resource_data_entry data_entry;
 
-      auto res_data_entry = stream_->peek<details::pe_resource_data_entry>(offset);
-      if (!res_data_entry) {
+      if (auto res_data_entry = stream_->peek<details::pe_resource_data_entry>(offset)) {
+        data_entry = *res_data_entry;
+      } else {
         break;
       }
-      auto data_entry = *res_data_entry;
 
       uint32_t content_offset = binary_->rva_to_offset(data_entry.DataRVA);
       uint32_t content_size   = data_entry.Size;
@@ -468,35 +470,32 @@ std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_reso
 
         directory->childs_.push_back(std::move(node));
       } else {
-        LIEF_WARN("The leaf is corrupted");
+        LIEF_DEBUG("The leaf of the node id {} is corrupted", id);
         break;
       }
     } else { // We are on a directory
       const uint32_t directory_rva = data_rva & (~ 0x80000000);
       const uint32_t offset        = base_offset + directory_rva;
-
-      const auto res_next_dir_table = stream_->peek<details::pe_resource_directory_table>(offset);
-      if (!res_next_dir_table) {
-        LIEF_ERR("The directory is corrupted");
-        break;
-      }
-
-      if (resource_visited_.count(offset) > 0) {
+      if (!resource_visited_.insert(offset).second) {
         LIEF_WARN("Infinite loop detected on resources");
         break;
       }
 
-      resource_visited_.insert(offset);
-
-      std::unique_ptr<ResourceNode> node = parse_resource_node(*res_next_dir_table, base_offset, offset, depth + 1);
-      if (node == nullptr) {
-        continue;
+      if (auto res_next_dir_table = stream_->peek<details::pe_resource_directory_table>(offset)) {
+        if (auto node = parse_resource_node(*res_next_dir_table, base_offset, offset, depth + 1)) {
+          if (name) {
+            node->name(*name);
+          }
+          node->id(id);
+          directory->childs_.push_back(std::move(node));
+        } else {
+          // node is a nullptr
+          continue;
+        }
+      } else {
+        LIEF_WARN("The directory of the node id {} is corrupted", id);
+        break;
       }
-      if (name) {
-        node->name(*name);
-      }
-      node->id(id);
-      directory->childs_.push_back(std::move(node));
     }
   }
   return directory;

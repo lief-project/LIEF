@@ -30,12 +30,14 @@ class ResourceStringFileInfo;
 class ResourceVarFileInfo;
 
 class ResourcesManager;
+struct ResourcesParser;
 
 //! Representation of the data associated with the ``RT_VERSION`` entry
 //!
 //! See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
 class LIEF_API ResourceVersion : public Object {
   friend class ResourcesManager;
+  friend struct ResourcesParser;
 
   public:
   ResourceVersion(const ResourceVersion&);

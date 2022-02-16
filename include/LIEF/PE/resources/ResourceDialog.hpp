@@ -30,6 +30,7 @@
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+struct ResourcesParser;
 
 namespace details {
 struct pe_dialog_template_ext;
@@ -46,6 +47,7 @@ struct pe_dialog_template;
 class LIEF_API ResourceDialog : public Object {
 
   friend class ResourcesManager;
+  friend struct ResourcesParser;
 
   public:
   using items_t        = std::vector<ResourceDialogItem>;

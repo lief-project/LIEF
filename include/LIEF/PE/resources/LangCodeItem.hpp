@@ -30,6 +30,7 @@ namespace LIEF {
 namespace PE {
 
 class ResourcesManager;
+struct ResourcesParser;
 
 //! Class which represents the childs of the ResourceStringFileInfo
 //!
@@ -38,10 +39,12 @@ class ResourcesManager;
 class LIEF_API LangCodeItem : public Object {
 
   friend class ResourcesManager;
+  friend struct ResourcesParser;
 
   public:
   using items_t = std::unordered_map<std::u16string, std::u16string>;
   LangCodeItem();
+  LangCodeItem(uint16_t type, std::u16string key);
 
   LangCodeItem(const LangCodeItem&);
   LangCodeItem& operator=(const LangCodeItem&);

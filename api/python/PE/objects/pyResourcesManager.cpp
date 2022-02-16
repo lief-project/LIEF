@@ -129,9 +129,11 @@ void create<ResourcesManager>(py::module& m) {
       "Return list of " RST_CLASS_REF(lief.PE.ResourceAccelerator) " present in the resource")
 
     .def("get_node_type",
-      static_cast<no_const_func<ResourceNode&, RESOURCE_TYPES>>(&ResourcesManager::get_node_type),
-      "Return " RST_CLASS_REF(lief.PE.ResourceNode) " with "
-      "the given " RST_CLASS_REF(lief.PE.RESOURCE_TYPES) "",
+      static_cast<no_const_func<ResourceNode*, RESOURCE_TYPES>>(&ResourcesManager::get_node_type),
+      R"delim(
+      Return :class:`~lief.PE.ResourceNode` with the given :class:`~lief.PE.RESOURCE_TYPES`
+      or None if not found.
+      )delim",
       "type"_a,
       py::return_value_policy::reference)
 

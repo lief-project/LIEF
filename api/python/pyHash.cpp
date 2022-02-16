@@ -21,4 +21,16 @@
 void init_hash_functions(py::module& m) {
   m.def("hash", static_cast<size_t(*)(const LIEF::Object&)>(&LIEF::hash));
   m.def("hash", static_cast<size_t(*)(const std::vector<uint8_t>&)>(&LIEF::hash));
+  m.def("hash",
+        [] (py::bytes bytes) {
+          std::string x = bytes;
+          std::vector<uint8_t> data = {std::begin(x), std::end(x)};
+          return LIEF::hash(data);
+        });
+
+  m.def("hash",
+        [] (const std::string& bytes) {
+          std::vector<uint8_t> data = {std::begin(bytes), std::end(bytes)};
+          return LIEF::hash(data);
+        });
 }

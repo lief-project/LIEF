@@ -29,6 +29,7 @@
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
+struct ResourcesParser;
 
 namespace details {
 struct pe_dialog_item_template_ext;
@@ -39,6 +40,7 @@ struct pe_dialog_item_template;
 class LIEF_API ResourceDialogItem : public Object {
 
   friend class ResourcesManager;
+  friend struct ResourcesParser;
 
   public:
   ResourceDialogItem();
@@ -104,21 +106,21 @@ class LIEF_API ResourceDialogItem : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialogItem& dialog_item);
 
   private:
-  bool     is_extended_;
-  uint32_t help_id_;
-  uint32_t ext_style_;
-  uint32_t style_;
-  uint32_t id_;
+  bool     is_extended_ = true;
+  uint32_t help_id_ = 0;
+  uint32_t ext_style_ = 0;
+  uint32_t style_ = 0;
+  uint32_t id_ = 0;
 
-  int16_t x_;
-  int16_t y_;
-  int16_t cx_;
-  int16_t cy_;
+  int16_t x_ = 0;
+  int16_t y_ = 0;
+  int16_t cx_ = 0;
+  int16_t cy_ = 0;
 
   std::u16string window_class_;
   std::u16string title_;
 
-  uint16_t extra_count_;
+  uint16_t extra_count_ = 0;
 };
 
 

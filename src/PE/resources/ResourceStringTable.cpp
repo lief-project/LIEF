@@ -65,8 +65,7 @@ bool ResourceStringTable::operator!=(const ResourceStringTable& rhs) const {
 
 
 std::ostream& operator<<(std::ostream& os, const ResourceStringTable& string_table) {
-  os << std::dec << "Length: " << string_table.length() << std::endl;
-  os << "Name: \"" << u16tou8(string_table.name()) << "\"" << std::endl;
+  os << u16tou8(string_table.name()) << "\n";
   return os;
 }
 

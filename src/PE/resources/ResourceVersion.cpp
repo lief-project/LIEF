@@ -175,25 +175,25 @@ std::ostream& operator<<(std::ostream& os, const ResourceVersion& version) {
   os << std::setw(6) << std::setfill(' ') << "type:" << version.type()         << std::endl;
   os << std::setw(6) << std::setfill(' ') << "key:"  << u16tou8(version.key()) << std::endl << std::endl;
 
-  if (version.has_fixed_file_info()) {
+  if (const auto* fixed_file_info = version.fixed_file_info()) {
     os << "Fixed file info" << std::endl;
     os << "===============" << std::endl;
-    os << version.fixed_file_info();
+    os << *fixed_file_info;
     os << std::endl;
   }
 
 
-  if (version.has_string_file_info()) {
+  if (const auto* string_file_info = version.string_file_info()) {
     os << "String file info" << std::endl;
     os << "================" << std::endl;
-    os << version.string_file_info();
+    os << *string_file_info;
     os << std::endl;
   }
 
-  if (version.has_var_file_info()) {
+  if (const auto* var_file_info = version.var_file_info()) {
     os << "Var file info" << std::endl;
     os << "=============" << std::endl;
-    os << version.var_file_info();
+    os << *var_file_info;
     os << std::endl;
   }
   return os;

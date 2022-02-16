@@ -33,6 +33,11 @@ ResourceVarFileInfo& ResourceVarFileInfo::operator=(const ResourceVarFileInfo&) 
 ResourceVarFileInfo::~ResourceVarFileInfo() = default;
 
 
+ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key) :
+  type_{type},
+  key_{std::move(key)}
+{}
+
 ResourceVarFileInfo::ResourceVarFileInfo() :
   key_{u8tou16("VarFileInfo")}
 {}

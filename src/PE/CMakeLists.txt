@@ -32,6 +32,7 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ResourcesParser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialog.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialogItem.cpp"
@@ -109,6 +110,7 @@ set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/undef.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/utils.hpp"
   "${CMAKE_CURRENT_LIST_DIR}/Structures.hpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ResourcesParser.hpp"
 )
 
 

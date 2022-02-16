@@ -154,10 +154,7 @@ class TestResource(TestCase):
         self.assertEqual(langcode_item.code_page, lief.PE.CODE_PAGES.UTF_16)
         items = langcode_item.items
         self.assertIn('CompanyName', items)
-        if sys.version_info < (3,):
-            self.assertEqual(items['CompanyName'].encode("utf8"), 'TODO: <Nom de la société>')
-        else:
-            self.assertEqual(items['CompanyName'], b'TODO: <Nom de la soci\xc3\xa9t\xc3\xa9>')
+        self.assertEqual(items['CompanyName'], b'TODO: <Nom de la soci\xc3\xa9t\xc3\xa9>')
 
         self.assertIn('FileVersion', items)
         self.assertEqual(items['FileVersion'], b'1.0.0.1')
@@ -166,10 +163,7 @@ class TestResource(TestCase):
         self.assertEqual(items['InternalName'], b'Hello.exe')
 
         self.assertIn('LegalCopyright', items)
-        if sys.version_info < (3,):
-            self.assertEqual(items['LegalCopyright'].encode("utf8"), 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
-        else:
-            self.assertEqual(items['LegalCopyright'].decode("utf8"), 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
+        self.assertEqual(items['LegalCopyright'].decode("utf8"), 'TODO: (c) <Nom de la société>.  Tous droits réservés.')
 
         self.assertIn('OriginalFilename', items)
         self.assertEqual(items['OriginalFilename'], b'Hello.exe')
@@ -186,6 +180,75 @@ class TestResource(TestCase):
         self.assertEqual(len(var_file_info.translations), 1)
         self.assertEqual(var_file_info.translations[0], 0x4b0040c)
 
+    def test_resource_dialogs(self):
+        evince_path = get_sample('PE/PE32_x86_binary_EvincePortable.zip')
+        evince: lief.PE.Binary = None
+        with zipfile.ZipFile(evince_path, "r") as inz:
+            for f in inz.infolist():
+                if f.filename != "EvincePortable/EvincePortable.exe":
+                    continue
+                fbytes = inz.read(f.filename)
+                evince = lief.parse(fbytes)
+        manager = evince.resources_manager
+
+        self.assertEqual(lief.hash(manager.manifest), 0x762c0ae9)
+        self.assertEqual(len(manager.dialogs), 15)
+
+        dialog = manager.dialogs[0]
+
+        self.assertEqual(dialog.help_id, 0x1)
+        self.assertEqual(dialog.x, 0x0)
+        self.assertEqual(dialog.y, 0x0)
+        self.assertEqual(dialog.cx, 0x118)
+        self.assertEqual(dialog.cy, 0xa2)
+        self.assertEqual(dialog.title, "")
+        self.assertEqual(dialog.typeface, "MS Shell Dlg")
+        self.assertEqual(dialog.weight, 0x0)
+        self.assertEqual(dialog.point_size, 0x8)
+        self.assertEqual(dialog.charset, 0x1)
+        self.assertEqual(dialog.style, 0x0)
+        self.assertEqual(dialog.lang, lief.PE.RESOURCE_LANGS.ENGLISH)
+        self.assertEqual(dialog.sub_lang, lief.PE.RESOURCE_SUBLANGS.ENGLISH_US)
+        self.assertEqual(len(dialog.items), 4)
+        self.assertEqual(dialog.items[0].help_id, 0x0)
+        self.assertEqual(dialog.items[0].extended_style, 0x0)
+        self.assertEqual(dialog.items[0].style, 0x40030000)
+        self.assertEqual(dialog.items[0].x, 0xab)
+        self.assertEqual(dialog.items[0].y, 0x8e)
+        self.assertEqual(dialog.items[0].cx, 0x32)
+        self.assertEqual(dialog.items[0].cy, 0xe)
+        self.assertEqual(dialog.items[0].id, 0x3)
+        self.assertEqual(dialog.items[0].title, "")
+
+        self.assertEqual(dialog.items[1].help_id, 0x0)
+        self.assertEqual(dialog.items[1].extended_style, 0x50010000)
+        self.assertEqual(dialog.items[1].style, 0x8e00df)
+        self.assertEqual(dialog.items[1].x, 0x32)
+        self.assertEqual(dialog.items[1].y, 0xe)
+        self.assertEqual(dialog.items[1].cx, 0x1)
+        self.assertEqual(dialog.items[1].cy, 0x0)
+        self.assertEqual(dialog.items[1].id, 0x80ffff)
+        self.assertEqual(dialog.items[1].title, "")
+
+        self.assertEqual(dialog.items[2].help_id, 0x50010000)
+        self.assertEqual(dialog.items[2].extended_style, 0x8e0007)
+        self.assertEqual(dialog.items[2].style, 0xe0032)
+        self.assertEqual(dialog.items[2].x, 0x2)
+        self.assertEqual(dialog.items[2].y, 0x0)
+        self.assertEqual(dialog.items[2].cx, -1)
+        self.assertEqual(dialog.items[2].cy, 0x80)
+        self.assertEqual(dialog.items[2].id, 0x0)
+        self.assertEqual(dialog.items[2].title, '')
+
+        self.assertEqual(dialog.items[3].help_id, 0x0)
+        self.assertEqual(dialog.items[3].extended_style, 0x0)
+        self.assertEqual(dialog.items[3].style, 0x0)
+        self.assertEqual(dialog.items[3].x, 0x4)
+        self.assertEqual(dialog.items[3].y, 0x4002)
+        self.assertEqual(dialog.items[3].cx, 0x7)
+        self.assertEqual(dialog.items[3].cy, 0x6)
+        self.assertEqual(dialog.items[3].id, 0x82010a)
+        self.assertEqual(dialog.items[3].title, "")
 
     def test_mfc_resource_builder(self):
         sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')

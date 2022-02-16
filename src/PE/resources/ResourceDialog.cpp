@@ -19,7 +19,7 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
-
+#include "logging.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
@@ -195,21 +195,21 @@ void ResourceDialog::sub_lang(RESOURCE_SUBLANGS sub_lang) {
 // ============
 uint16_t ResourceDialog::version() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.dlgVer does not exist");
   }
   return version_;
 }
 
 uint16_t ResourceDialog::signature() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.signature does not exist");
   }
   return signature_;
 }
 
 uint32_t ResourceDialog::help_id() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.helpID does not exist");
   }
   return help_id_;
 }
@@ -217,7 +217,7 @@ uint32_t ResourceDialog::help_id() const {
 
 uint16_t ResourceDialog::weight() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.weight does not exist");
   }
   return weight_;
 }
@@ -225,7 +225,7 @@ uint16_t ResourceDialog::weight() const {
 
 uint8_t ResourceDialog::charset() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.charset does not exist");
   }
   return charset_;
 }
@@ -233,7 +233,7 @@ uint8_t ResourceDialog::charset() const {
 
 uint16_t ResourceDialog::point_size() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.pointsize does not exist");
   }
   return point_size_;
 }
@@ -241,14 +241,14 @@ uint16_t ResourceDialog::point_size() const {
 
 bool ResourceDialog::is_italic() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.italic does not exist");
   }
   return italic_;
 }
 
 const std::u16string& ResourceDialog::title() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.title does not exist");
   }
 
   return title_;
@@ -257,7 +257,7 @@ const std::u16string& ResourceDialog::title() const {
 
 const std::u16string& ResourceDialog::typeface() const {
   if (!is_extended()) {
-    throw not_found("This dialog is not an extended one");
+    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.typeface does not exist");
   }
 
   return typeface_;

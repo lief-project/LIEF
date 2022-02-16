@@ -104,6 +104,7 @@ class BinaryStream {
 
   void setpos(size_t pos) const;
   void increment_pos(size_t value) const;
+  void decrement_pos(size_t value) const;
   size_t pos() const;
 
   operator bool() const;

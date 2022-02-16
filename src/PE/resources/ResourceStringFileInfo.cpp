@@ -28,6 +28,10 @@ ResourceStringFileInfo::ResourceStringFileInfo(const ResourceStringFileInfo&) = 
 ResourceStringFileInfo& ResourceStringFileInfo::operator=(const ResourceStringFileInfo&) = default;
 ResourceStringFileInfo::~ResourceStringFileInfo() = default;
 
+ResourceStringFileInfo::ResourceStringFileInfo(uint16_t type, std::u16string key) :
+  type_{type},
+  key_{std::move(key)}
+{}
 
 ResourceStringFileInfo::ResourceStringFileInfo() :
   key_{u8tou16("StringFileInfo")}

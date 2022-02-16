@@ -15,6 +15,7 @@
  */
 #include <iomanip>
 
+#include "logging.hpp"
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/hash.hpp"
@@ -32,6 +33,10 @@ LangCodeItem::LangCodeItem(const LangCodeItem&) = default;
 LangCodeItem& LangCodeItem::operator=(const LangCodeItem&) = default;
 LangCodeItem::~LangCodeItem() = default;
 
+LangCodeItem::LangCodeItem(uint16_t type, std::u16string key) :
+  type_{type},
+  key_{std::move(key)}
+{}
 
 LangCodeItem::LangCodeItem() :
   key_{u8tou16("040c04B0")}
@@ -48,7 +53,8 @@ const std::u16string& LangCodeItem::key() const {
 
 CODE_PAGES LangCodeItem::code_page() const {
   if (key().length() != 8) {
-    throw corrupted(std::string("'") + u16tou8(key()) + "': Wrong size");
+    LIEF_WARN("{} is expected to be 8 lengthy", u16tou8(key()));
+    return static_cast<CODE_PAGES>(0);
   }
 
   return static_cast<CODE_PAGES>(std::stoul(u16tou8(key().substr(4, 8)), nullptr, 16));
@@ -56,7 +62,8 @@ CODE_PAGES LangCodeItem::code_page() const {
 
 RESOURCE_LANGS LangCodeItem::lang() const {
   if (key().length() != 8) {
-    throw corrupted(std::string("'") + u16tou8(key()) + "': Wrong size");
+    LIEF_WARN("{} is expected to be 8 lengthy", u16tou8(key()));
+    return static_cast<RESOURCE_LANGS>(0);
   }
 
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
@@ -67,7 +74,8 @@ RESOURCE_LANGS LangCodeItem::lang() const {
 
 RESOURCE_SUBLANGS LangCodeItem::sublang() const {
   if (key().length() != 8) {
-    throw corrupted(std::string("'") + u16tou8(key()) + "': Wrong size");
+    LIEF_WARN("{} is expected to be 8 lengthy", u16tou8(key()));
+    return static_cast<RESOURCE_SUBLANGS>(0);
   }
 
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);

@@ -26,6 +26,7 @@ namespace PE {
 
 class ResourcesManager;
 class ResourceVersion;
+struct ResourcesParser;
 
 //! This object describes information about languages supported by the application
 //!
@@ -34,9 +35,11 @@ class LIEF_API ResourceVarFileInfo : public Object {
 
   friend class ResourcesManager;
   friend class ResourceVersion;
+  friend struct ResourcesParser;
 
   public:
   ResourceVarFileInfo();
+  ResourceVarFileInfo(uint16_t type, std::u16string key);
   ResourceVarFileInfo(const ResourceVarFileInfo&);
   ResourceVarFileInfo& operator=(const ResourceVarFileInfo&);
   virtual ~ResourceVarFileInfo();
