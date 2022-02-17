@@ -178,8 +178,8 @@ std::ostream& operator<<(std::ostream& os, const Binary& binary) {
     }
   }
 
-  std::cout << "Number of classes: " << std::dec << binary.classes().size() << std::endl;
-  std::cout << "Number of methods: " << std::dec << binary.methods().size() << std::endl;
+  os << "Number of classes: " << std::dec << binary.classes().size() << std::endl;
+  os << "Number of methods: " << std::dec << binary.methods().size() << std::endl;
 
 
   return os;
