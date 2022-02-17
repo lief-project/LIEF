@@ -19,14 +19,13 @@ class TestForwardInfo(TestCase):
         sample = lief.parse(path)
         exports = sample.get_export()
         forwarded_exports = [exp for exp in exports.entries if exp.is_forwarded]
-        self.assertTrue(len(forwarded_exports) == 82)
-
+        self.assertEqual(len(forwarded_exports), 82)
         # Test JSON Serialization
         json_serialized = json.loads(lief.to_json(forwarded_exports[0]))
 
         self.assertTrue("forward_information" in json_serialized)
-        self.assertTrue(json_serialized["forward_information"]["library"] == "NTDLL")
-        self.assertTrue(json_serialized["forward_information"]["function"] == "RtlInterlockedPushListSList")
+        self.assertEqual(json_serialized["forward_information"]["library"], "NTDLL")
+        self.assertEqual(json_serialized["forward_information"]["function"], "RtlInterlockedPushListSList")
 
 
 if __name__ == '__main__':

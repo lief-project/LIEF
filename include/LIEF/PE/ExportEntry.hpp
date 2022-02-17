@@ -47,6 +47,8 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 
   public:
   ExportEntry();
+  ExportEntry(uint32_t address, bool is_extern,
+              uint16_t ordinal, uint32_t function_rva);
   ExportEntry(const ExportEntry&);
   ExportEntry& operator=(const ExportEntry&);
   virtual ~ExportEntry();
@@ -69,6 +71,11 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 
   inline void value(uint64_t value) override {
     address(value);
+  }
+
+  inline void set_forward_info(std::string lib, std::string function)  {
+    forward_info_.library =  std::move(lib);
+    forward_info_.function = std::move(function);
   }
 
   void accept(Visitor& visitor) const override;

@@ -111,6 +111,7 @@ set(LIBLIEF_SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/internal_utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Object.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Object.tcc"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Visitor.cpp"
@@ -148,6 +149,7 @@ set(LIEF_INC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/MemoryStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/SpanStream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/BinaryStream/Convert.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/internal_utils.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/frozen.hpp"
 )

@@ -135,18 +135,20 @@ ok_error_t Parser::parse_data_directories() {
   // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af contains a non-null final
   // data directory (watermarking?)
   for (size_t i = 0; i < nbof_datadir; ++i) {
-    auto data_dir = stream_->read<details::pe_data_directory>();
-    if (!data_dir) {
+    details::pe_data_directory raw_dir;
+    if (auto res = stream_->read<details::pe_data_directory>()) {
+      raw_dir = *res;
+    } else {
       LIEF_ERR("Can't read data directory at #{}", i);
       return make_error_code(lief_errors::read_error);
     }
-    auto directory = std::make_unique<DataDirectory>(*data_dir, static_cast<DATA_DIRECTORY>(i));
+    const auto dir_type = static_cast<DATA_DIRECTORY>(i);
+    auto directory = std::make_unique<DataDirectory>(raw_dir, dir_type);
     if (directory->RVA() > 0) {
-      // Data directory is not always associated with section
       const uint64_t offset = binary_->rva_to_offset(directory->RVA());
       directory->section_   = binary_->section_from_offset(offset);
-      if (directory->section_ == nullptr) {
-        LIEF_WARN("Unable to find the section associated with {}", to_string(static_cast<DATA_DIRECTORY>(i)));
+      if (directory->section_ == nullptr && dir_type != DATA_DIRECTORY::CERTIFICATE_TABLE) {
+        LIEF_WARN("Unable to find the section associated with {}", to_string(dir_type));
       }
     }
     binary_->data_directories_.push_back(std::move(directory));
@@ -512,96 +514,78 @@ ok_error_t Parser::parse_load_config() {
 
     case WIN_VERSION::WIN_SEH:
       {
-        const auto header = stream_->peek<load_configuration_v0_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v0_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV0>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV0>(*header);
         break;
       }
 
     case WIN_VERSION::WIN8_1:
       {
-        const auto header = stream_->peek<load_configuration_v1_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v1_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV1>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV1>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_9879:
       {
-        const auto header = stream_->peek<load_configuration_v2_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v2_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV2>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV2>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_14286:
       {
-        const auto header = stream_->peek<load_configuration_v3_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v3_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV3>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV3>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_14383:
       {
-        const auto header = stream_->peek<load_configuration_v4_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v4_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV4>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV4>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_14901:
       {
-        const auto header = stream_->peek<load_configuration_v5_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v5_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV5>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV5>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_15002:
       {
-        const auto header = stream_->peek<load_configuration_v6_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v6_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV6>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV6>(*header);
         break;
       }
 
     case WIN_VERSION::WIN10_0_16237:
       {
-        const auto header = stream_->peek<load_configuration_v7_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_v7_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV7>(*header);
         }
-        ld_conf = std::make_unique<LoadConfigurationV7>(*header);
         break;
       }
 
     case WIN_VERSION::WIN_UNKNOWN:
     default:
       {
-        const auto header = stream_->peek<load_configuration_t>(offset);
-        if (!header) {
-          break;
+        if (const auto header = stream_->peek<load_configuration_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfiguration>(*header);
         }
-        ld_conf = std::make_unique<LoadConfiguration>(*header);
       }
   }
 
-  binary_->has_configuration_  = static_cast<bool>(ld_conf);
+  binary_->has_configuration_  = ld_conf != nullptr;
   binary_->load_configuration_ = std::move(ld_conf);
   return ok();
 }

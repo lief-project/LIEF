@@ -183,7 +183,7 @@ result<std::string> BinaryStream::peek_string(size_t maxsize) const {
   size_t off = pos();
 
   if (!can_read<char>()) {
-    return str_result.c_str();
+    return str_result;
   }
 
   size_t count = 0;

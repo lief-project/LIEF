@@ -279,7 +279,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
 
   if (std::all_of(std::begin(entries), std::end(entries),
                   [] (const ImportEntry& entry) { return !entry.is_ordinal(); })) {
-    LIEF_DEBUG("All imports use name. No ordinal!");
+    //LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
   }
 

@@ -26,6 +26,14 @@ ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 
 ExportEntry::ExportEntry() = default;
 
+ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal, uint32_t function_rva) :
+  function_rva_{function_rva},
+  ordinal_{ordinal},
+  address_{address},
+  is_extern_{is_extern}
+{}
+
+
 ExportEntry::forward_information_t::operator bool() const {
   return !library.empty() || !function.empty();
 }

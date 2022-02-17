@@ -788,7 +788,7 @@ void Binary::remove_library(const std::string&) {
 }
 
 void Binary::remove_all_libraries() {
-  imports_ = {};
+  imports_.clear();
 }
 
 uint32_t Binary::predict_function_rva(const std::string& library, const std::string& function) {
@@ -1451,7 +1451,7 @@ const std::vector<uint8_t>& Binary::overlay() const {
 }
 
 std::vector<uint8_t>& Binary::overlay() {
-  return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->overlay());
+  return overlay_;
 }
 
 // Dos stub
@@ -1462,7 +1462,7 @@ const std::vector<uint8_t>& Binary::dos_stub() const {
 }
 
 std::vector<uint8_t>& Binary::dos_stub() {
-  return const_cast<std::vector<uint8_t>&>(static_cast<const Binary*>(this)->dos_stub());
+  return dos_stub_;
 }
 
 
@@ -1473,7 +1473,7 @@ void Binary::dos_stub(const std::vector<uint8_t>& content) {
 // Rich Header
 // -----------
 RichHeader& Binary::rich_header() {
-  return const_cast<RichHeader&>(static_cast<const Binary*>(this)->rich_header());
+  return rich_header_;
 }
 
 const RichHeader& Binary::rich_header() const {

@@ -53,6 +53,7 @@
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
+#include "internal_utils.hpp"
 #include "signature/pkcs7.h"
 #include "Parser.tcc"
 
@@ -73,9 +74,7 @@ constexpr size_t Parser::MAX_DATA_SIZE;
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-//
-// CTOR
-//
+
 Parser::Parser(const std::string& file) :
   LIEF::Parser{file}
 {
@@ -215,10 +214,11 @@ ok_error_t Parser::parse_rich_header() {
 ok_error_t Parser::parse_sections() {
   static constexpr size_t NB_MAX_SECTIONS = 1000;
   LIEF_DEBUG("Parsing sections");
-  const uint32_t sections_offset  =
-    binary_->dos_header().addressof_new_exeheader() +
-    sizeof(details::pe_header) +
-    binary_->header().sizeof_optional_header();
+
+
+  const uint32_t pe_header_off   = binary_->dos_header().addressof_new_exeheader();
+  const uint32_t opt_header_off  = pe_header_off + sizeof(details::pe_header);
+  const uint32_t sections_offset = opt_header_off + binary_->header().sizeof_optional_header();
 
   uint32_t first_section_offset = -1u;
 
@@ -231,12 +231,13 @@ ok_error_t Parser::parse_sections() {
 
   stream_->setpos(sections_offset);
   for (size_t i = 0; i < numberof_sections; ++i) {
-    auto res_raw_sec = stream_->read<details::pe_section>();
-    if (!res_raw_sec) {
+    details::pe_section raw_sec;
+    if (auto res = stream_->read<details::pe_section>()) {
+      raw_sec = *res;
+    } else {
       LIEF_ERR("Can't read section at 0x{:x}", stream_->pos());
       break;
     }
-    const details::pe_section& raw_sec = *res_raw_sec;
     auto section = std::make_unique<Section>(raw_sec);
     uint32_t size_to_read = 0;
     uint32_t offset = raw_sec.PointerToRawData;
@@ -244,11 +245,9 @@ ok_error_t Parser::parse_sections() {
       first_section_offset = std::min(first_section_offset, offset);
     }
 
-    if (raw_sec.VirtualSize > 0) {
-      size_to_read = std::min(raw_sec.VirtualSize, raw_sec.SizeOfRawData); // According to Corkami
-    } else {
-      size_to_read = raw_sec.SizeOfRawData;
-    }
+    size_to_read = raw_sec.VirtualSize > 0 ?
+                   std::min(raw_sec.VirtualSize, raw_sec.SizeOfRawData) : // According to Corkami
+                   raw_sec.SizeOfRawData;
 
     if ((offset + size_to_read) > stream_->size()) {
       uint32_t delta = (offset + size_to_read) - stream_->size();
@@ -387,7 +386,7 @@ ok_error_t Parser::parse_resources() {
   }
 
   binary_->resources_     = parse_resource_node(*res_directory_table, offset, offset);
-  binary_->has_resources_ = (binary_->resources_ != nullptr);
+  binary_->has_resources_ = binary_->resources_ != nullptr;
   return ok();
 }
 
@@ -707,7 +706,7 @@ ok_error_t Parser::parse_debug_code_view(Debug& debug_info) {
 
     default:
       {
-        LIEF_WARN("Signature {} is not implemented yet!", to_string(signature));
+        LIEF_INFO("Signature {} is not implemented yet!", to_string(signature));
       }
   }
   return ok();
@@ -764,6 +763,40 @@ ok_error_t Parser::parse_debug_pogo(Debug& debug_info) {
   return ok();
 }
 
+
+inline result<uint32_t> address_table_value(BinaryStream& stream,
+                                            uint32_t address_table_offset, size_t i) {
+  using element_t = uint32_t;
+  const size_t element_offset = address_table_offset + i * sizeof(element_t);
+  if (auto res = stream.peek<element_t>(element_offset)) {
+    return *res;
+  }
+  return make_error_code(lief_errors::read_error);
+}
+
+inline result<uint16_t> ordinal_table_value(BinaryStream& stream,
+                                            uint32_t ordinal_table_offset, size_t i) {
+  using element_t = uint16_t;
+
+  const size_t element_offset = ordinal_table_offset + i * sizeof(element_t);
+  if (auto res = stream.peek<element_t>(element_offset)) {
+    return *res;
+  }
+  return make_error_code(lief_errors::read_error);
+}
+
+inline result<uint32_t> name_table_value(BinaryStream& stream,
+                                         uint32_t name_table_offset, size_t i) {
+  using element_t = uint32_t;
+
+  const size_t element_offset = name_table_offset + i * sizeof(element_t);
+  if (auto res = stream.peek<element_t>(element_offset)) {
+    return *res;
+  }
+  return make_error_code(lief_errors::read_error);
+}
+
+
 //
 // Parse Export
 //
@@ -772,130 +805,144 @@ ok_error_t Parser::parse_exports() {
   static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
   static constexpr size_t MAX_EXPORT_NAME_SIZE = 300;
 
-  uint32_t exports_rva    = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA();
+  struct range_t {
+    uint32_t start;
+    uint32_t end;
+  };
+  const DataDirectory& export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE);
+
+  uint32_t exports_rva    = export_dir.RVA();
+  uint32_t exports_size   = export_dir.size();
   uint32_t exports_offset = binary_->rva_to_offset(exports_rva);
-  uint32_t exports_size   = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).size();
-  std::pair<uint32_t, uint32_t> range = {exports_rva, exports_rva + exports_size};
+  range_t range = {exports_rva, exports_rva + exports_size};
 
   // First Export directory
-  auto res_export_directory_table = stream_->peek<details::pe_export_directory_table>(exports_offset);
-  if (!res_export_directory_table) {
-    LIEF_WARN("Can't read export table at 0x{:x}", exports_offset);
+  details::pe_export_directory_table export_dir_tbl;
+  if (auto res = stream_->peek<details::pe_export_directory_table>(exports_offset)) {
+    export_dir_tbl = *res;
+  } else {
+    LIEF_WARN("Can't read the export table at 0x{:x}", exports_offset);
     return make_error_code(lief_errors::read_error);
   }
 
-  auto export_directory_table = *res_export_directory_table;
-  Export export_object = export_directory_table;
-  uint32_t name_offset = binary_->rva_to_offset(export_directory_table.NameRVA);
-  auto res_name = stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE);
-  if (res_name && Parser::is_valid_dll_name(*res_name)) {
-    export_object.name_ = std::move(*res_name);
-    LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+  Export export_object = export_dir_tbl;
+  uint32_t name_offset = binary_->rva_to_offset(export_dir_tbl.NameRVA);
+  if (auto res_name = stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE)) {
+    std::string name = *res_name;
+    if (Parser::is_valid_dll_name(name)) {
+      export_object.name_ = std::move(name);
+      LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+    } else {
+      // Empty export names are not allowed
+      if (name.empty()) {
+        return make_error_code(lief_errors::corrupted);
+      }
+      LIEF_DEBUG("'{}' is not a valid export name", printable_string(name));
+    }
   } else {
     LIEF_INFO("DLL name seems corrupted");
   }
+  const uint32_t nbof_addr_entries = export_dir_tbl.AddressTableEntries;
+  const uint32_t nbof_name_ptr     = export_dir_tbl.NumberOfNamePointers;
 
-  // Parse Ordinal name table
-  uint32_t ordinal_table_offset = binary_->rva_to_offset(export_directory_table.OrdinalTableRVA);
-  const uint32_t nbof_name_ptr  = export_directory_table.NumberOfNamePointers;
+  const uint16_t ordinal_base = export_dir_tbl.OrdinalBase;
 
-  if (nbof_name_ptr > NB_ENTRIES_LIMIT) {
-    LIEF_ERR("Too many name pointer entries: #{:d} (limit: {:d})",
-             nbof_name_ptr, NB_ENTRIES_LIMIT);
-    return make_error_code(lief_errors::parsing_error);
-  }
+  const uint32_t address_table_offset = binary_->rva_to_offset(export_dir_tbl.ExportAddressTableRVA);
+  const uint32_t ordinal_table_offset = binary_->rva_to_offset(export_dir_tbl.OrdinalTableRVA);
+  const uint32_t name_table_offset    = binary_->rva_to_offset(export_dir_tbl.NamePointerRVA);
 
-  const auto* ordinal_table = stream_->peek_array<uint16_t>(ordinal_table_offset, nbof_name_ptr);
-  // Parse Ordinal name table
-  if (ordinal_table == nullptr) {
-    LIEF_ERR("Ordinal table corrupted");
-    return make_error_code(lief_errors::parsing_error);
-  }
-
-
-  // Parse Address table
-  uint32_t address_table_offset    = binary_->rva_to_offset(export_directory_table.ExportAddressTableRVA);
-  const uint32_t nbof_addr_entries = export_directory_table.AddressTableEntries;
+  LIEF_DEBUG("Number of entries:   {}", nbof_addr_entries);
+  LIEF_DEBUG("Number of names ptr: {}", nbof_name_ptr);
+  LIEF_DEBUG("Ordinal Base:        {}", ordinal_base);
 
   if (nbof_addr_entries > NB_ENTRIES_LIMIT) {
-    LIEF_ERR("Too many name address entries: #{:d}", nbof_addr_entries);
-    return make_error_code(lief_errors::parsing_error);
+    LIEF_WARN("Export.AddressTableEntries is too large ({})", nbof_addr_entries);
+    return make_error_code(lief_errors::corrupted);
   }
 
-  const auto* address_table = stream_->peek_array<uint32_t>(address_table_offset, nbof_addr_entries);
-
-  if (address_table == nullptr) {
-    LIEF_ERR("Address table corrupted");
-    return make_error_code(lief_errors::parsing_error);
-  }
-
-  if (nbof_addr_entries < nbof_name_ptr) {
-    LIEF_ERR("More exported names than addresses");
-    return make_error_code(lief_errors::parsing_error);
-  }
-
-  // Parse Export name table
-  uint32_t name_table_offset = binary_->rva_to_offset(export_directory_table.NamePointerRVA);
-  const auto *name_table = stream_->peek_array<uint32_t>(name_table_offset, nbof_name_ptr);
-
-  if (name_table == nullptr) {
-    LIEF_ERR("Name table corrupted!");
-    return make_error_code(lief_errors::parsing_error);
+  if (nbof_name_ptr > NB_ENTRIES_LIMIT) {
+    LIEF_WARN("Export.NumberOfNamePointers is too large ({})", nbof_name_ptr);
+    return make_error_code(lief_errors::corrupted);
   }
 
   Export::entries_t export_entries;
-  // Export address table (EXTERN)
-  // =============================
-  std::set<size_t> corrupted_entries; // Ordinal value of corrupted entries
+  export_entries.reserve(nbof_addr_entries);
+
+  std::set<uint32_t> corrupted_entries; // Ordinal value of corrupted entries
+  /*
+   * First, process the Export address table.
+   * This table is an array of RVAs
+   */
   for (size_t i = 0; i < nbof_addr_entries; ++i) {
-    const uint32_t value = address_table[i];
-    // If value is inside export directory => 'external' function
-    if (value >= std::get<0>(range) && value < std::get<1>(range)) {
-      uint32_t name_offset = binary_->rva_to_offset(value);
-      ExportEntry entry;
-      entry.address_      = 0;
-      entry.is_extern_    = true;
-      entry.ordinal_      = i + export_directory_table.OrdinalBase;
-      entry.function_rva_ = value;
-      auto res_name = stream_->peek_string_at(name_offset);
-      if (res_name) {
-        entry.name_ = std::move(*res_name);
-      }
-      export_entries.push_back(std::move(entry));
+    uint32_t addr_value = 0;
+    if (auto res = address_table_value(*stream_, address_table_offset, i)) {
+      addr_value = *res;
     } else {
-      ExportEntry entry;
-      entry.name_         = "";
-      entry.address_      = value;
-      entry.is_extern_    = false;
-      entry.ordinal_      = i + export_directory_table.OrdinalBase;
-      entry.function_rva_ = value;
-
-
-      if (value == 0) {
-        corrupted_entries.insert(entry.ordinal_);
-      }
-
-      export_entries.push_back(std::move(entry));
-
+      LIEF_WARN("Can't read the Export.address_table[{}]", i);
+      break;
     }
+    const uint16_t ordinal = i + ordinal_base;
+    const bool is_extern   = range.start <= addr_value && addr_value < range.end;
+    const uint32_t address = is_extern ? 0 : addr_value;
+
+    ExportEntry entry{address, is_extern, ordinal, addr_value};
+    if (addr_value == 0) {
+      corrupted_entries.insert(ordinal);
+    }
+
+    if (is_extern && addr_value > 0) {
+      uint32_t name_offset = binary_->rva_to_offset(addr_value);
+      if (auto res = stream_->peek_string_at(name_offset)) {
+        entry.name_ = std::move(*res);
+      }
+    }
+    export_entries.push_back(std::move(entry));
   }
 
-
   for (size_t i = 0; i < nbof_name_ptr; ++i) {
-    if (ordinal_table[i] >= export_entries.size()) {
-      LIEF_ERR("Export ordinal is outside the address table");
+    uint16_t ordinal = 0;
+
+    if (auto res = ordinal_table_value(*stream_, ordinal_table_offset, i)) {
+      ordinal = *res;
+    } else {
+      LIEF_WARN("Can't read the Export.ordinal_table[{}]", i);
       break;
     }
 
-    uint32_t name_offset = binary_->rva_to_offset(name_table[i]);
-    auto res_name = stream_->peek_string_at(name_offset);
+    if (ordinal >= export_entries.size()) {
+      LIEF_WARN("Ordinal value ordinal_table[{}]: {} is out of range the export entries", i, ordinal);
+      break;
+    }
 
-    ExportEntry& entry = export_entries[ordinal_table[i]];
+    ExportEntry& entry = export_entries[ordinal];
 
-    // Check if the entry is 'extern' and if the export name is already set
+    if (!entry.is_extern_ && entry.name_.empty()) {
+      uint32_t name_offset = 0;
+      if (auto res = name_table_value(*stream_, name_table_offset, i)) {
+        name_offset = binary_->rva_to_offset(*res);
+      } else {
+        LIEF_WARN("Can't read the Export.name_table[{}]", i);
+        corrupted_entries.insert(entry.ordinal_);
+        continue;
+      }
+      if (auto res = stream_->peek_string_at(name_offset)) {
+        std::string name = *res;
+        if (name.empty() || name.size() > MAX_EXPORT_NAME_SIZE) {
+          if (!name.empty()) {
+            LIEF_WARN("'{}' is not a valid export name", printable_string(name));
+          }
+          corrupted_entries.insert(entry.ordinal_);
+        } else {
+          entry.name_ = std::move(name);
+        }
+      } else {
+        LIEF_WARN("Can't read the Export.enries[{}].name at 0x{:x}", i, name_offset);
+        corrupted_entries.insert(entry.ordinal_);
+      }
+    }
+
     if (entry.is_extern_ && !entry.name_.empty()) {
       std::string fwd_str = entry.name_;
-
       std::string function = fwd_str;
       std::string library;
 
@@ -905,30 +952,17 @@ ok_error_t Parser::parse_exports() {
         library  = fwd_str.substr(0, dot_pos);
         function = fwd_str.substr(dot_pos + 1);
       }
-
-      ExportEntry::forward_information_t finfo;
-      finfo.library  = library;
-      finfo.function = function;
-
-      entry.forward_info_ = finfo;
-    }
-
-
-    if (!res_name || res_name->size() > MAX_EXPORT_NAME_SIZE) {
-      corrupted_entries.insert(entry.ordinal_);
-    } else {
-      entry.name_ = std::move(*res_name);
+      entry.set_forward_info(std::move(library), std::move(function));
     }
   }
 
   for (ExportEntry& entry : export_entries) {
-    if (corrupted_entries.count(entry.ordinal()) != 0) {
-      continue;
+    if (corrupted_entries.count(entry.ordinal()) == 0) {
+      export_object.entries_.push_back(std::move(entry));
     }
-    export_object.entries_.push_back(std::move(entry));
   }
 
-  binary_->export_ = export_object;
+  binary_->export_ = std::move(export_object);
   binary_->has_exports_ = true;
   return ok();
 }
@@ -943,39 +977,51 @@ ok_error_t Parser::parse_signature() {
   const uint32_t signature_size    = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).size();
   const uint64_t end_p = signature_offset + signature_size;
   LIEF_DEBUG("Signature Offset: 0x{:04x}", signature_offset);
-  LIEF_DEBUG("Signature Size: 0x{:04x}", signature_size);
+  LIEF_DEBUG("Signature Size:   0x{:04x}", signature_size);
 
   stream_->setpos(signature_offset);
   while (stream_->pos() < end_p) {
     const uint64_t current_p = stream_->pos();
-    auto res_length = stream_->read<uint32_t>();
-    if (!res_length) {
-      return res_length.error();
+
+    uint32_t length = 0;
+    uint16_t revision = 0;
+    uint16_t certificate_type = 0;
+
+    if (auto res = stream_->read<uint32_t>()) {
+      length = *res;
+    } else {
+      return res.error();
     }
-    auto length = *res_length;
+
     if (length <= SIZEOF_HEADER) {
       LIEF_WARN("The signature seems corrupted!");
       break;
     }
-    auto res_revision = stream_->read<uint16_t>();
-    if (!res_revision) {
+
+    if (auto res = stream_->read<uint16_t>()) {
+      revision = *res;
+    } else {
       LIEF_ERR("Can't parse signature revision");
       break;
     }
-    auto certificate_type = stream_->read<uint16_t>();
-    if (!certificate_type) {
+
+    if (auto res = stream_->read<uint16_t>()) {
+      certificate_type = *res;
+    } else {
       LIEF_ERR("Can't read certificate_type");
       break;
     }
-    LIEF_DEBUG("Signature {}r0x{:x} (0x{:x} bytes)", *certificate_type, *res_revision, length);
+
+    LIEF_DEBUG("Signature {}r0x{:x} (0x{:x} bytes)", certificate_type, revision, length);
+
     std::vector<uint8_t> raw_signature;
     if (!stream_->read_data(raw_signature, length - SIZEOF_HEADER)) {
       LIEF_INFO("Can't read 0x{:x} bytes", length);
       break;
     }
-    auto sign = SignatureParser::parse(std::move(raw_signature));
-    if (sign) {
-      binary_->signatures_.push_back(std::move(sign.value()));
+    ;
+    if (auto sign = SignatureParser::parse(std::move(raw_signature))) {
+      binary_->signatures_.push_back(std::move(*sign));
     } else {
       LIEF_INFO("Unable to parse the signature");
     }
@@ -1014,7 +1060,6 @@ ok_error_t Parser::parse_overlay() {
 //
 std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   if (!is_pe(filename)) {
-    LIEF_ERR("{} is not a PE file", filename);
     return nullptr;
   }
   Parser parser{filename};
@@ -1025,7 +1070,6 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
 std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
   if (!is_pe(data)) {
-    LIEF_ERR("The provided data are not related to a PE file");
     return nullptr;
   }
   Parser parser{std::move(data)};
