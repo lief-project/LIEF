@@ -4,9 +4,9 @@ name: LIEF Windows x64 Quick Tests
 on:
   push:
     branches:
+      - '**'
       - '!master'
       - '!release-**'
-      - '**'
     tags-ignore:
       - "**"
 

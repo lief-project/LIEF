@@ -15,6 +15,8 @@ from utils import get_sample
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.ERROR)
 
+IS_64 = sys.maxsize > 2**32
+
 class TestSimple(TestCase):
 
     def setUp(self):
@@ -187,8 +189,9 @@ class TestSimple(TestCase):
         self.assertEqual(sections[0].numberof_relocations, 0x0)
         self.assertEqual(sections[0].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[0].characteristics), 0x68000020)
-        self.assertEqual(lief.hash(list(sections[0].padding)), 0xffffffffc691aee8)
-        self.assertEqual(lief.hash(list(sections[0].content)), 0x2023e2e)
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[0].padding)), 0xffffffffc691aee8)
+            self.assertEqual(lief.hash(list(sections[0].content)), 0x2023e2e)
 
         self.assertEqual(sections[1].name, ".rdata")
         self.assertEqual(sections[1].virtual_size, 0x2b4)
@@ -200,8 +203,10 @@ class TestSimple(TestCase):
         self.assertEqual(sections[1].numberof_relocations, 0x0)
         self.assertEqual(sections[1].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[1].characteristics), 0x48000040)
-        self.assertEqual(lief.hash(list(sections[1].padding)), 0xffffffffdc061565)
-        self.assertEqual(lief.hash(list(sections[1].content)), 0x7f4ae4d9)
+
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[1].padding)), 0xffffffffdc061565)
+            self.assertEqual(lief.hash(list(sections[1].content)), 0x7f4ae4d9)
 
         self.assertEqual(sections[2].name, ".data")
         self.assertEqual(sections[2].virtual_size, 0x114)
@@ -213,8 +218,10 @@ class TestSimple(TestCase):
         self.assertEqual(sections[2].numberof_relocations, 0x0)
         self.assertEqual(sections[2].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[2].characteristics), 0xc8000040)
-        self.assertEqual(lief.hash(list(sections[2].padding)), 0x391e5290)
-        self.assertEqual(lief.hash(list(sections[2].content)), 0x2109ac81)
+
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[2].padding)), 0x391e5290)
+            self.assertEqual(lief.hash(list(sections[2].content)), 0x2109ac81)
 
         self.assertEqual(sections[3].name, ".pdata")
         self.assertEqual(sections[3].virtual_size, 0x1e0)
@@ -226,8 +233,10 @@ class TestSimple(TestCase):
         self.assertEqual(sections[3].numberof_relocations, 0x0)
         self.assertEqual(sections[3].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[3].characteristics), 0x48000040)
-        self.assertEqual(lief.hash(list(sections[3].padding)), 0xd5f2925)
-        self.assertEqual(lief.hash(list(sections[3].content)), 0x13f38a3e)
+
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[3].padding)), 0xd5f2925)
+            self.assertEqual(lief.hash(list(sections[3].content)), 0x13f38a3e)
 
         self.assertEqual(sections[4].name, "INIT")
         self.assertEqual(sections[4].virtual_size, 0x42a)
@@ -239,8 +248,10 @@ class TestSimple(TestCase):
         self.assertEqual(sections[4].numberof_relocations, 0x0)
         self.assertEqual(sections[4].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[4].characteristics), 0xe2000020)
-        self.assertEqual(lief.hash(list(sections[4].padding)), 0xffffffff93471cc1)
-        self.assertEqual(lief.hash(list(sections[4].content)), 0xffffffffb3ea2b8b)
+
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[4].padding)), 0xffffffff93471cc1)
+            self.assertEqual(lief.hash(list(sections[4].content)), 0xffffffffb3ea2b8b)
 
         self.assertEqual(sections[5].name, ".rsrc")
         self.assertEqual(sections[5].virtual_size, 0x3f0)
@@ -252,8 +263,10 @@ class TestSimple(TestCase):
         self.assertEqual(sections[5].numberof_relocations, 0x0)
         self.assertEqual(sections[5].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[5].characteristics), 0x42000040)
-        self.assertEqual(lief.hash(list(sections[5].padding)), 0x28ec37bb)
-        self.assertEqual(lief.hash(list(sections[5].content)), 0x65f49890)
+
+        if IS_64:
+            self.assertEqual(lief.hash(list(sections[5].padding)), 0x28ec37bb)
+            self.assertEqual(lief.hash(list(sections[5].content)), 0x65f49890)
 
     def test_tls(self):
         self.assertTrue(self.winhello64.has_tls)
