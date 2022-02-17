@@ -181,6 +181,9 @@ std::vector<size_t> Section::search_all(const std::string& v) const {
 double Section::entropy() const {
   std::array<uint64_t, 256> frequencies = { {0} };
   span<const uint8_t> content = this->content();
+  if (content.size() == 0) {
+    return 0.;
+  }
   for (uint8_t x : content) {
     frequencies[x]++;
   }

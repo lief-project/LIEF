@@ -194,12 +194,13 @@ uint64_t Section::offset() const {
 
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr) {
-    auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION);
-    if (!node) {
-      LIEF_ERR("Node not found. Can't resize the section");
-      return;
+    if (auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION)) {
+      node->size(size);
+    } else {
+      if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+        LIEF_ERR("Node not found. Can't resize the section {}", name());
+      }
     }
-    node.value().size(size);
   }
   size_ = size;
 }
@@ -207,12 +208,13 @@ void Section::size(uint64_t size) {
 
 void Section::offset(uint64_t offset) {
   if (datahandler_ != nullptr) {
-    auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
-    if (!node) {
-      LIEF_ERR("Node not found. Can't change the offset of the section");
-      return;
+    if (auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION)) {
+      node->offset(offset);
+    } else {
+      if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+        LIEF_WARN("Node not found. Can't change the offset of the section {}", name());
+      }
     }
-    node.value().offset(offset);
   }
   offset_ = offset;
 }
@@ -232,7 +234,9 @@ span<const uint8_t> Section::content() const {
 
   auto res = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
-    LIEF_ERR("Node node found. Can't access the content of the section");
+    if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+      LIEF_WARN("Section '{}' does not have content", name());
+    }
     return {};
   }
   const std::vector<uint8_t>& binary_content = datahandler_->content();
