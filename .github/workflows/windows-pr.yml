@@ -1,4 +1,4 @@
-name: LIEF Windows Tests
+name: LIEF PR Windows Tests
 
 on: [pull_request]
 

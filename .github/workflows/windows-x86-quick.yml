@@ -1,0 +1,62 @@
+
+name: LIEF Windows x86 Quick Tests
+
+on:
+  push:
+    branches:
+      - '!master'
+      - '!release-**'
+      - '**'
+    tags-ignore:
+      - "**"
+
+jobs:
+  build:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        python-version: [3.9]
+    env:
+      SCCACHE_CACHE_SIZE: 2G
+      SCCACHE_DIR: "C:\\Users\\runner\\AppData\\Local\\Mozilla\\sccache"
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x86
+    - name: Install system dependencies
+      run: |
+        choco install ninja
+        choco install sccache
+        python -m pip install --upgrade pip setuptools
+        python -m pip install wheel mako
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        toolset: "14.16"
+    - name: Get Date
+      id: get-date
+      run: |
+        echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
+      shell: bash
+    - name: Save sccache
+      uses: actions/cache@v2
+      continue-on-error: false
+      with:
+        path: "C:\\Users\\runner\\AppData\\Local\\Mozilla\\sccache"
+        key: ${{ runner.os }}-x86-sccache-${{ steps.get-date.outputs.date }}
+        restore-keys: |
+          ${{ runner.os }}-x86-sccache-
+    - name: Start sccache server
+      run: sccache --start-server
+    - name: ⛓ Build Python ${{ matrix.python-version }} & Test
+      run: |
+        python ./setup.py --ninja --lief-test bdist_wheel
+      shell: cmd
+    - name: 📊 Print sccache stats
+      run: sccache --show-stats
+    - name: 🛑 Stop sccache server
+      run: sccache --stop-server || true
