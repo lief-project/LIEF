@@ -32,9 +32,8 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ~/.ccache
-          key: osx-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          key: osx-${{ runner.os }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
-              osx-${{ runner.os }}-${{ matrix.python-version }}-
               osx-${{ runner.os }}-
       - name: Build Python ${{ matrix.python-version }} wheel and Test
         shell: bash
