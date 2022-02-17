@@ -98,7 +98,7 @@ ok_error_t Builder::build() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_exe_lib() {
-  auto* layout = reinterpret_cast<ExeLayout*>(layout_.get());
+  auto* layout = static_cast<ExeLayout*>(layout_.get());
   // Sort dynamic symbols
   uint32_t new_symndx = sort_dynamic_symbols();
   layout->set_dyn_sym_idx(new_symndx);
@@ -552,11 +552,11 @@ ok_error_t Builder::build_exe_lib() {
 template<class ELF_T>
 ok_error_t Builder::process_object_relocations() {
 
-  auto* layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
+  auto* layout = static_cast<ObjectFileLayout*>(layout_.get());
 
   const auto it_relocations = binary_->object_relocations();
 
-  if (it_relocations.size() == 0) {
+  if (it_relocations.empty()) {
     LIEF_DEBUG("No relocations. Nothing to do");
     return ok();
   }
@@ -616,7 +616,7 @@ ok_error_t Builder::process_object_relocations() {
 
 template<class ELF_T>
 ok_error_t Builder::build_relocatable() {
-  auto layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
+  auto* layout = static_cast<ObjectFileLayout*>(layout_.get());
 
   Header& header = binary_->header();
   uint32_t new_symndx = sort_dynamic_symbols();
@@ -655,22 +655,21 @@ ok_error_t Builder::build_relocatable() {
     if (sec_symtab == nullptr) {
       LIEF_ERR("Object file without a symtab section is not supported. Please consider submitting an issue.");
       return make_error_code(lief_errors::not_supported);
+    }
+    // The .symtab exists
+    const auto sections = binary_->sections();
+    const size_t strtab_idx = sec_symtab->link();
+    if (strtab_idx == 0 || strtab_idx >= sections.size()) {
+      LIEF_ERR("The .strtab index is corrupted");
     } else {
-      // The .symtab exists
-      const auto sections = binary_->sections();
-      const size_t strtab_idx = sec_symtab->link();
-      if (strtab_idx == 0 || strtab_idx >= sections.size()) {
-        LIEF_ERR("The .strtab index is corrupted");
-      } else {
-        Section& strtab = sections[strtab_idx];
-        const size_t strtab_needed_size = layout->section_strtab_size();
-        if (strtab_needed_size > strtab.size() || config_.force_relocations) {
-          LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
-                     strtab_needed_size - strtab.size());
-          layout->relocate_section(strtab, strtab_needed_size);
-        }
-        layout->set_strtab_section(strtab);
+      Section& strtab = sections[strtab_idx];
+      const size_t strtab_needed_size = layout->section_strtab_size();
+      if (strtab_needed_size > strtab.size() || config_.force_relocations) {
+        LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
+                   strtab_needed_size - strtab.size());
+        layout->relocate_section(strtab, strtab_needed_size);
       }
+      layout->set_strtab_section(strtab);
     }
   }
   process_object_relocations<ELF_T>();
@@ -947,7 +946,7 @@ ok_error_t Builder::build_static_symbols() {
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
 
-  auto* layout = reinterpret_cast<ExeLayout*>(layout_.get());
+  auto* layout = static_cast<ExeLayout*>(layout_.get());
 
   LIEF_DEBUG("== Build static symbols ==");
   Section* symbol_section = binary_->static_symbols_section();
@@ -1033,7 +1032,7 @@ ok_error_t Builder::build_dynamic_section() {
 
   LIEF_DEBUG("[+] Building .dynamic");
 
-  const auto& dynstr_map = reinterpret_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  const auto& dynstr_map = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
   vector_iostream dynamic_table_raw;
   for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
 
@@ -1207,7 +1206,7 @@ ok_error_t Builder::build_symbol_hash() {
   }
 
   uint32_t nbucket = sysv->nbucket();
-  uint32_t nchain  = reinterpret_cast<ExeLayout*>(layout_.get())->sysv_nchain();
+  uint32_t nchain  = static_cast<ExeLayout*>(layout_.get())->sysv_nchain();
 
   std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);
   auto *const new_hash_table_ptr = reinterpret_cast<uint32_t*>(new_hash_table.data());
@@ -1271,7 +1270,7 @@ ok_error_t Builder::build_hash_table() {
 
   if (build_opt_.gnu_hash && gnu_hash_sec != nullptr) {
     // The gnu hash table is already in Layout's cache
-    gnu_hash_sec->content(reinterpret_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
+    gnu_hash_sec->content(static_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
   }
   if (has_error) {
     return make_error_code(lief_errors::build_error);
@@ -1288,7 +1287,7 @@ ok_error_t Builder::build_obj_symbols() {
   using Elf_Off  = typename ELF_T::Elf_Off;
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
-  const auto* layout = reinterpret_cast<const ObjectFileLayout*>(layout_.get());
+  const auto* layout = static_cast<const ObjectFileLayout*>(layout_.get());
   const std::unordered_map<std::string, size_t>* str_map = nullptr;
 
   if (layout->is_strtab_shared_shstrtab()) {
@@ -1343,7 +1342,7 @@ ok_error_t Builder::build_dynamic_symbols() {
   using Elf_Sym  = typename ELF_T::Elf_Sym;
   LIEF_DEBUG("[+] Build .dynsym symbols");
 
-  const auto& dynstr_map = reinterpret_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  const auto& dynstr_map = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
 
   // Find useful sections
   // ====================
@@ -1400,7 +1399,7 @@ ok_error_t Builder::build_section_relocations() {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
   LIEF_DEBUG("[+] Building relocations");
 
-  auto* layout = reinterpret_cast<ObjectFileLayout*>(layout_.get());
+  auto* layout = static_cast<ObjectFileLayout*>(layout_.get());
 
   Binary::it_object_relocations object_relocations = binary_->object_relocations();
   const bool is_rela = object_relocations[0].is_rela();
@@ -1474,7 +1473,7 @@ ok_error_t Builder::build_dynamic_relocations() {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
 
   Binary::it_dynamic_relocations dynamic_relocations = binary_->dynamic_relocations();
-  if (dynamic_relocations.size() == 0) {
+  if (dynamic_relocations.empty()) {
     return ok();
   }
 
@@ -1578,7 +1577,7 @@ ok_error_t Builder::build_pltgot_relocations() {
   using Elf_Rel    = typename ELF_T::Elf_Rel;
 
   Binary::it_pltgot_relocations pltgot_relocations = binary_->pltgot_relocations();
-  if (pltgot_relocations.size() == 0) {
+  if (pltgot_relocations.empty()) {
     return ok();
   }
 
@@ -1689,7 +1688,7 @@ ok_error_t Builder::build_symbol_requirement() {
   vector_iostream svr_raw(should_swap());
 
   uint32_t svr_idx = 0;
-  const auto& sym_name_offset = reinterpret_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  const auto& sym_name_offset = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
   for (SymbolVersionRequirement& svr: binary_->symbols_version_requirement()) {
     const std::string& name = svr.name();
 
@@ -1713,7 +1712,7 @@ ok_error_t Builder::build_symbol_requirement() {
     header.vn_version = static_cast<Elf_Half>(svr.version());
     header.vn_cnt     = static_cast<Elf_Half>(svars.size());
     header.vn_file    = static_cast<Elf_Word>(name_offset);
-    header.vn_aux     = static_cast<Elf_Word>(svars.size() > 0 ? sizeof(Elf_Verneed) : 0);
+    header.vn_aux     = static_cast<Elf_Word>(!svars.empty() ? sizeof(Elf_Verneed) : 0);
     header.vn_next    = static_cast<Elf_Word>(next_symbol_offset);
 
     svr_raw.write_conv<Elf_Verneed>(header);
@@ -1800,7 +1799,7 @@ ok_error_t Builder::build_symbol_definition() {
   vector_iostream svd_raw(should_swap());
 
   uint32_t svd_idx = 0;
-  const auto& sym_name_offset = reinterpret_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  const auto& sym_name_offset = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
   for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
 
     SymbolVersionDefinition::it_const_version_aux svas = svd.symbols_aux();
@@ -1817,7 +1816,7 @@ ok_error_t Builder::build_symbol_definition() {
     header.vd_ndx     = static_cast<Elf_Half>(svd.ndx());
     header.vd_cnt     = static_cast<Elf_Half>(svas.size());
     header.vd_hash    = static_cast<Elf_Word>(svd.hash());
-    header.vd_aux     = static_cast<Elf_Word>(svas.size() > 0 ? sizeof(Elf_Verdef) : 0);
+    header.vd_aux     = static_cast<Elf_Word>(!svas.empty() > 0 ? sizeof(Elf_Verdef) : 0);
     header.vd_next    = static_cast<Elf_Word>(next_symbol_offset);
 
     svd_raw.write_conv<Elf_Verdef>(header);
@@ -1888,7 +1887,7 @@ ok_error_t Builder::build_notes() {
   // Clear the original content of the segment
   note_segment->content(std::vector<uint8_t>(note_segment->physical_size(), 0));
 
-  note_segment->content(reinterpret_cast<ExeLayout*>(layout_.get())->raw_notes());
+  note_segment->content(static_cast<ExeLayout*>(layout_.get())->raw_notes());
 
   //TODO: .note.netbds etc
   if (binary_->header().file_type() == E_TYPE::ET_CORE) {

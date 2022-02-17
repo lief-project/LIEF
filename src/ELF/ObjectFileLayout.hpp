@@ -69,7 +69,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
                                                 last_offset_sections);
     }
     LIEF_DEBUG("Sections' last offset: 0x{:x}", last_offset_sections);
-    LIEF_DEBUG("SHDR Table: 0x{:x}", binary_->header().section_headers_offset());
+    LIEF_DEBUG("SHDR Table:            0x{:x}", binary_->header().section_headers_offset());
 
     Header& hdr = binary_->header();
     for (Section& sec : binary_->sections()) {
