@@ -90,14 +90,29 @@ size_t Layout::section_shstr_size() {
   // In the ELF format all the .str sections
   // start with a null entry.
   raw_shstrtab.write<uint8_t>(0);
+  std::vector<std::string> sec_names;
+  sec_names.reserve(binary_->sections_.size());
+  std::transform(std::begin(binary_->sections_), std::end(binary_->sections_),
+                 std::back_inserter(sec_names),
+                 [] (const std::unique_ptr<Section>& s) {
+                   return s->name();
+                 });
+
+  if (!binary_->static_symbols_.empty()) {
+    if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
+      sec_names.push_back(".symtab");
+    }
+    if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
+      sec_names.push_back(".strtab");
+    }
+  }
 
   // First write section names
   size_t offset_counter = raw_shstrtab.tellp();
   std::vector<std::string> shstrtab_opt =
-    Builder::optimize<Section, decltype(binary_->sections_)>(binary_->sections_,
-                      [] (const std::unique_ptr<Section>& sec) { return sec->name(); },
-                      offset_counter,
-                      &shstr_name_map_);
+    Builder::optimize<Section, decltype(sec_names)>(sec_names,
+                      [] (const std::string& s) { return s; },
+                      offset_counter, &shstr_name_map_);
 
   for (const std::string& name : shstrtab_opt) {
     raw_shstrtab.write(name);
