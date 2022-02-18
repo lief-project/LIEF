@@ -2968,7 +2968,10 @@ uint64_t Binary::relocate_phdr_table_v1() {
   size_t delta = next_to_extend->file_offset() - (seg_to_extend->file_offset() + seg_to_extend->physical_size());
   const size_t nb_segments = delta / phdr_size - header.numberof_segments();
   if (nb_segments < header.numberof_segments()) {
-    LIEF_DEBUG("The layout of this binary does not enable to relocate the segment table (v1)");
+    LIEF_DEBUG("The layout of this binary does not enable to relocate the segment table (v1)\n"
+               "We would need at least {} segments while only {} are available",
+               header.numberof_segments(), nb_segments);
+    phdr_reloc_info_.clear();
     return 0;
   }
   phdr_reloc_info_.nb_segments = nb_segments;
