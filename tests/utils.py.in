@@ -19,24 +19,24 @@ def get_compiler():
         raise RuntimeError("Unable to find a compiler")
     return compiler
 
-def is_linux():
+def is_linux() -> bool:
     return sys.platform.startswith("linux")
 
-def is_osx():
+def is_osx() -> bool:
     return sys.platform.startswith("darwin")
 
-def is_x86_64():
+def is_x86_64() -> bool:
     machine = platform.machine().lower()
     return machine in ("x86_64", "amd64")
 
-def is_apple_m1():
+def is_apple_m1() -> bool:
     return is_aarch64() and is_osx()
 
-def is_aarch64():
+def is_aarch64() -> bool:
     machine = platform.machine().lower()
     return machine in ("aarch64", "arm64")
 
-def has_recent_glibc():
+def has_recent_glibc() -> bool:
     """Check if we have at least GLIBC 2.17 (2012)"""
     try:
         out = subprocess.check_output(["ldd", "--version"]).decode("ascii")
@@ -49,3 +49,6 @@ def has_recent_glibc():
             return True
 
     return False
+
+def is_64bits_platform() -> bool:
+    return sys.maxsize > 2**32

@@ -13,7 +13,7 @@ from subprocess import Popen
 import re
 
 import lief
-from utils import get_sample, is_linux, is_x86_64
+from utils import get_sample, is_linux, is_x86_64, is_64bits_platform
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -22,6 +22,7 @@ class TestLargeBss(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
 
+    @unittest.skipUnless(is_64bits_platform(), "requires a 64-bits platform")
     def test_all(self):
         binary_name = "544ca2035a9c15e7756ed8d8067d860bd3157e4eeaa39b4ee932458eebe2434b.elf"
         target: lief.ELF.Binary = lief.parse(get_sample("ELF/{}".format(binary_name)))

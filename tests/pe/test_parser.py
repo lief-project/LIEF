@@ -11,11 +11,9 @@ import unittest
 from unittest import TestCase
 
 import lief
-from utils import get_sample
+from utils import get_sample, is_64bits_platform
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.ERROR)
-
-IS_64 = sys.maxsize > 2**32
 
 class TestSimple(TestCase):
 
@@ -189,7 +187,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[0].numberof_relocations, 0x0)
         self.assertEqual(sections[0].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[0].characteristics), 0x68000020)
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[0].padding)), 0xffffffffc691aee8)
             self.assertEqual(lief.hash(list(sections[0].content)), 0x2023e2e)
 
@@ -204,7 +202,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[1].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[1].characteristics), 0x48000040)
 
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[1].padding)), 0xffffffffdc061565)
             self.assertEqual(lief.hash(list(sections[1].content)), 0x7f4ae4d9)
 
@@ -219,7 +217,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[2].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[2].characteristics), 0xc8000040)
 
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[2].padding)), 0x391e5290)
             self.assertEqual(lief.hash(list(sections[2].content)), 0x2109ac81)
 
@@ -234,7 +232,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[3].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[3].characteristics), 0x48000040)
 
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[3].padding)), 0xd5f2925)
             self.assertEqual(lief.hash(list(sections[3].content)), 0x13f38a3e)
 
@@ -249,7 +247,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[4].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[4].characteristics), 0xe2000020)
 
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[4].padding)), 0xffffffff93471cc1)
             self.assertEqual(lief.hash(list(sections[4].content)), 0xffffffffb3ea2b8b)
 
@@ -264,7 +262,7 @@ class TestSimple(TestCase):
         self.assertEqual(sections[5].numberof_line_numbers, 0x0)
         self.assertEqual(int(sections[5].characteristics), 0x42000040)
 
-        if IS_64:
+        if is_64bits_platform():
             self.assertEqual(lief.hash(list(sections[5].padding)), 0x28ec37bb)
             self.assertEqual(lief.hash(list(sections[5].content)), 0x65f49890)
 
