@@ -68,6 +68,9 @@ option(LIEF_OPT_UTFCPP_EXTERNAL OFF)
 # This option enables to provide an external version of MbedTLS
 option(LIEF_OPT_MBEDTLS_EXTERNAL OFF)
 
+# This option enables to provide an external version of pybind11
+option(LIEF_OPT_PYBIND11_EXTERNAL OFF)
+
 # This option enables to provide an external
 # version of https://github.com/tcbrindle/span (e.g. present on the system)
 option(LIEF_OPT_EXTERNAL_SPAN OFF)
@@ -169,4 +172,9 @@ if(LIEF_OPT_EXTERNAL_SPAN)
   set(LIEF_EXTERNAL_SPAN 1)
 endif()
 
+if(LIEF_PYTHON_API)
+  if(LIEF_OPT_PYBIND11_EXTERNAL)
+    set(LIEF_EXTERNAL_PYBIND11 1)
+  endif()
+endif()
 
