@@ -17,25 +17,34 @@ macro(ADD_FLAG_IF_SUPPORTED flag name)
   endif()
 endmacro()
 
-set(PYTHON_VERSION "3.5" CACHE STRING "Python Version to use")
-find_package(PythonLibsNew EXACT ${PYTHON_VERSION} MODULE REQUIRED)
+add_library(lief_pybind11 INTERFACE)
 
-message(STATUS "Python version: ${PYTHON_VERSION}")
-message(STATUS "Python lib:     ${PYTHON_LIBRARY}")
-message(STATUS "Python include: ${PYTHON_INCLUDE_DIR}")
+if (LIEF_EXTERNAL_PYBIND11)
+  find_package(pybind11 REQUIRED)
+  find_package(PythonLibsNew MODULE REQUIRED)
+  target_link_libraries(lief_pybind11 INTERFACE pybind11::module)
+  get_target_property(PYBIND_INC_DIR pybind11::module INTERFACE_INCLUDE_DIRECTORIES)
+  target_include_directories(lief_pybind11 SYSTEM INTERFACE ${PYBIND_INC_DIR} ${Python_INCLUDE_DIRS})
+else()
+  find_package(PythonLibsNew MODULE REQUIRED)
+  set(PYBIND11_VERSION 2.8.1)
+  set(PYBIND11_SHA256 SHA256=90907e50b76c8e04f1b99e751958d18e72c4cffa750474b5395a93042035e4a3)
+  set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
+  ExternalProject_Add(lief_pybind11_project
+    URL               ${PYBIND11_URL}
+    URL_HASH          ${PYBIND11_SHA256}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   "")
+  add_dependencies(lief_pybind11 lief_pybind11_project)
+  ExternalProject_get_property(lief_pybind11_project SOURCE_DIR)
+  target_include_directories(lief_pybind11 SYSTEM INTERFACE "${SOURCE_DIR}/include")
+endif()
+
+message(STATUS "Python version:     ${PYTHON_VERSION}")
+message(STATUS "Python lib:         ${PYTHON_LIBRARY}")
+message(STATUS "Python include:     ${PYTHON_INCLUDE_DIR}")
 message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
-
-set(PYBIND11_VERSION 2.8.1)
-set(PYBIND11_SHA256 SHA256=90907e50b76c8e04f1b99e751958d18e72c4cffa750474b5395a93042035e4a3)
-set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
-ExternalProject_Add(lief_pybind11
-  URL               ${PYBIND11_URL}
-  URL_HASH          ${PYBIND11_SHA256}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   "")
-ExternalProject_get_property(lief_pybind11 SOURCE_DIR)
-set(PYBIND11_SOURCE_DIR "${SOURCE_DIR}")
 
 
 # Define source files
@@ -142,7 +151,7 @@ ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
 ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
-add_dependencies(pyLIEF lief_pybind11)
+target_link_libraries(pyLIEF PRIVATE lief_pybind11)
 
 if(APPLE)
     set_target_properties(pyLIEF PROPERTIES

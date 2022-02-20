@@ -49,6 +49,7 @@ class LiefDistribution(setuptools.Distribution):
         ('lief-no-cache', None, 'Do not use compiler cache (ccache)'),
 
         ('spdlog-dir=', None, 'Path to the directory that contains spdlogConfig.cmake'),
+        ('lief-config-extra=', None, "Extra CMake config options (list delimited with ';')"),
     ]
 
     def __init__(self, attrs=None):
@@ -74,6 +75,7 @@ class LiefDistribution(setuptools.Distribution):
         self.lief_no_cache  = False
 
         self.spdlog_dir = None
+        self.lief_config_extra = None
         super().__init__(attrs)
 
 
@@ -165,6 +167,11 @@ class BuildLibrary(build_ext):
         if self.distribution.spdlog_dir is not None:
             cmake_args.append("-DLIEF_EXTERNAL_SPDLOG=ON")
             cmake_args.append("-Dspdlog_DIR={}".format(self.distribution.spdlog_dir))
+
+        if self.distribution.lief_config_extra is not None and len(self.distribution.lief_config_extra) > 0:
+            args = self.distribution.lief_config_extra.replace("\n", "")
+            args = map(lambda a : a.strip(), args.split(";"))
+            cmake_args += list(args)
 
         # Main formats
         # ============
