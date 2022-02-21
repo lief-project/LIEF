@@ -336,7 +336,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR
                @ONLY)
 
 target_include_directories(LIB_LIEF
-  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
+  PUBLIC  "$<BUILD_INTERFACE:${LIEF_PUBLIC_INCLUDE_DIR}>"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
@@ -379,7 +379,7 @@ if(LIEF_EXTERNAL_LEAF)
   if(LIEF_EXTERNAL_LEAF_DIR)
     message(STATUS "External LEAF include dir: ${LIEF_EXTERNAL_LEAF_DIR}")
     target_include_directories(LIB_LIEF SYSTEM PUBLIC
-                               ${LIEF_EXTERNAL_LEAF_DIR})
+                               "$<BUILD_INTERFACE:${LIEF_EXTERNAL_LEAF_DIR}>")
   endif()
 else()
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
@@ -422,7 +422,7 @@ if(LIEF_EXTERNAL_SPAN)
   if(LIEF_EXTERNAL_SPAN_DIR)
     message(STATUS "External span include dir: ${LIEF_EXTERNAL_SPAN_DIR}")
     target_include_directories(LIB_LIEF SYSTEM PUBLIC
-                               ${LIEF_EXTERNAL_SPAN_DIR})
+                               "$<BUILD_INTERFACE:${LIEF_EXTERNAL_SPAN_DIR}>")
   endif()
 else()
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp

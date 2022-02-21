@@ -179,7 +179,7 @@ else()
   ExternalProject_get_property(lief_spdlog_project SOURCE_DIR)
   set(SPDLOG_SOURCE_DIR "${SOURCE_DIR}")
   add_dependencies(lief_spdlog lief_spdlog_project)
-  target_include_directories(lief_spdlog SYSTEM INTERFACE ${SPDLOG_SOURCE_DIR}/include)
+  target_include_directories(lief_spdlog SYSTEM INTERFACE "$<BUILD_INTERFACE:${SPDLOG_SOURCE_DIR}/include>")
 endif()
 
 # Frozen

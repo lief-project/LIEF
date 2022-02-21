@@ -18,7 +18,7 @@ endif()
 # -----
 if(LIEF_C_API)
   target_include_directories(LIB_LIEF
-    PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include")
+    PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/api/c/include>")
 
   include("${CMAKE_CURRENT_SOURCE_DIR}/api/c/CMakeLists.txt")
 endif()
