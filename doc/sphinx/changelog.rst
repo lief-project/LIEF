@@ -5,6 +5,9 @@ Changelog
 -------------------------
 
 :ELF:
+  * Enhance the ELF parser to support corner cases described by `netspooky <https://n0.lol/>`_ in :
+    - https://tmpout.sh/2/14.html (*84 byte aarch64 ELF*)
+    - https://tmpout.sh/2/3.html (*Some ELF Parser Bugs*)
   * New ELF Builder which is more efficient in terms of speed and
     in terms of number of segments added when modifying binaries (see: https://lief-project.github.io/blog/2022-01-23-new-elf-builder/)
 

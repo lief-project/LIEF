@@ -152,6 +152,7 @@ class LIEF_API Segment : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 
   private:
+  uint64_t handler_size() const;
   span<uint8_t> writable_content();
 
   SEGMENT_TYPES         type_ = SEGMENT_TYPES::PT_NULL;
@@ -162,6 +163,7 @@ class LIEF_API Segment : public Object {
   uint64_t              size_ = 0;
   uint64_t              virtual_size_ = 0;
   uint64_t              alignment_ = 0;
+  uint64_t              handler_size_ = 0;
   sections_t            sections_;
   DataHandler::Handler* datahandler_ = nullptr;
   std::vector<uint8_t>  content_c_;

@@ -26,6 +26,7 @@
 
 #include "LIEF/exception.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
@@ -80,29 +81,216 @@ Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
   }
 }
 
-bool Parser::should_swap() const {
-  auto res_ident = stream_->peek<Header::identity_t>(0);
-  if (!res_ident) {
-    return false;
-  }
-
-  auto ident = *res_ident;
-  auto endian = static_cast<ELF_DATA>(ident[static_cast<uint8_t>(IDENTITY::EI_DATA)]);
-
-  switch (endian) {
-#ifdef __BYTE_ORDER__
-#if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-    case ELF_DATA::ELFDATA2MSB:
-#elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-    case ELF_DATA::ELFDATA2LSB:
-#endif
-      return true;
-#endif // __BYTE_ORDER__
+ELF_DATA determine_elf_endianess(ARCH machine) {
+  switch (machine) {
+    /* Architectures that are known to be big-endian only */
+    case ARCH::EM_H8_300:
+    case ARCH::EM_SPARC:
+    case ARCH::EM_SPARCV9:
+    case ARCH::EM_S390:
+    case ARCH::EM_68K:
+    case ARCH::EM_OPENRISC:
+      {
+        return ELF_DATA::ELFDATA2MSB;
+      }
+    /* Architectures that are known to be little-endian only */
+    case ARCH::EM_HEXAGON:
+    case ARCH::EM_ALPHA:
+    case ARCH::EM_ALTERA_NIOS2:
+    case ARCH::EM_CRIS:
+    case ARCH::EM_386: // x86
+    case ARCH::EM_X86_64:
+    case ARCH::EM_IA_64:
+      {
+        return ELF_DATA::ELFDATA2LSB;
+      }
     default:
-      // we're good (or don't know what to do), consider bytes are in the expected order
-      return false;
+      {
+        return ELF_DATA::ELFDATANONE;
+      }
   }
 }
+
+/*
+ * Get the endianess of the current architecture
+ */
+constexpr ELF_DATA get_endianess() {
+  #ifdef __BYTE_ORDER__
+    #if defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+      return ELF_DATA::ELFDATA2LSB;
+    #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+      return ELF_DATA::ELFDATA2MSB;
+    #endif
+  #endif
+  /* If there are no __BYTE_ORDER__ we take the (arbitrary) decision that we are
+   * on a little endian architecture.
+   */
+  return ELF_DATA::ELFDATA2LSB;
+}
+
+constexpr ELF_DATA invert_endianess(ELF_DATA endian) {
+  if (endian == ELF_DATA::ELFDATA2MSB) {
+    return ELF_DATA::ELFDATA2LSB;
+  }
+  if (endian == ELF_DATA::ELFDATA2LSB) {
+    return ELF_DATA::ELFDATA2MSB;
+  }
+  return ELF_DATA::ELFDATANONE;
+}
+
+ELF_DATA determine_elf_endianess(BinaryStream& stream) {
+  static const std::set<ARCH> BOTH_ENDIANESS = {
+    ARCH::EM_AARCH64, ARCH::EM_ARM,  ARCH::EM_SH,  ARCH::EM_XTENSA,
+    ARCH::EM_ARC,     ARCH::EM_MIPS, ARCH::EM_PPC, ARCH::EM_PPC64,
+  };
+  ELF_DATA from_ei_data   = ELF_DATA::ELFDATANONE;
+  ELF_DATA from_e_machine = ELF_DATA::ELFDATANONE;
+
+  // First, check EI_CLASS
+  if (auto res = stream.peek<Header::identity_t>()) {
+    auto ident = *res;
+    uint32_t ei_data = ident[static_cast<size_t>(IDENTITY::EI_DATA)];
+    const auto data = static_cast<ELF_DATA>(ei_data);
+    if (data == ELF_DATA::ELFDATA2LSB || data == ELF_DATA::ELFDATA2MSB) {
+      from_ei_data = data;
+    }
+  }
+
+  // Try to determine the size based on Elf_Ehdr.e_machine
+  //
+  // typedef struct {
+  //     unsigned char e_ident[EI_NIDENT]; | +0x00
+  //     uint16_t      e_type;             | +0x10
+  //     uint16_t      e_machine;          | +0x12 <------ THIS
+  //     uint32_t      e_version;          |
+  //     ....
+  // } ElfN_Ehdr;
+  constexpr size_t e_machine_off = offsetof(details::Elf32_Ehdr, e_machine);
+  {
+    // Read Machine type with both endianess
+    ARCH machine      = ARCH::EM_NONE; // e_machine value without endian swap enabled
+    ARCH machine_swap = ARCH::EM_NONE; // e_machine value with endian swap enabled
+    const bool is_swap = stream.should_swap();
+    stream.set_endian_swap(false);
+    if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
+      machine = static_cast<ARCH>(*res);
+    }
+    stream.set_endian_swap(true);
+    if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
+      machine_swap = static_cast<ARCH>(*res);
+    }
+    stream.set_endian_swap(is_swap);
+
+    LIEF_DEBUG("Machine     '{}'", to_string(machine));
+    LIEF_DEBUG("Machine Swap'{}'", to_string(machine_swap));
+
+    const ELF_DATA endian      = determine_elf_endianess(machine);
+    const ELF_DATA endian_swap = determine_elf_endianess(machine_swap);
+
+    if (endian != ELF_DATA::ELFDATANONE) {
+      return endian;
+    }
+
+    if (endian_swap != ELF_DATA::ELFDATANONE) {
+      return endian_swap;
+    }
+
+    if (BOTH_ENDIANESS.find(machine) != std::end(BOTH_ENDIANESS)) {
+      return get_endianess();
+    }
+
+    if (BOTH_ENDIANESS.find(machine_swap) != std::end(BOTH_ENDIANESS)) {
+      return invert_endianess(get_endianess());
+    }
+  }
+  return from_ei_data;
+}
+
+bool Parser::should_swap() const {
+  const ELF_DATA binary_endian  = determine_elf_endianess(*stream_);
+  const ELF_DATA current_endian = get_endianess();
+  LIEF_DEBUG("LIEF Endianness:   '{}'", to_string(current_endian));
+  LIEF_DEBUG("Binary Endianness: '{}'", to_string(binary_endian));
+  if (binary_endian  != ELF_DATA::ELFDATANONE &&
+      current_endian != ELF_DATA::ELFDATANONE)
+  {
+    return binary_endian != current_endian;
+  }
+  return false;
+}
+
+
+
+ELF_CLASS determine_elf_class(BinaryStream& stream) {
+  ELF_CLASS from_ei_class  = ELF_CLASS::ELFCLASSNONE;
+  ELF_CLASS from_e_machine = ELF_CLASS::ELFCLASSNONE;
+
+  // First, check EI_CLASS
+  if (auto res = stream.peek<Header::identity_t>()) {
+    auto ident = *res;
+    uint32_t ei_class = ident[static_cast<size_t>(IDENTITY::EI_CLASS)];
+    const auto typed = static_cast<ELF_CLASS>(ei_class);
+    if (typed == ELF_CLASS::ELFCLASS32 || typed == ELF_CLASS::ELFCLASS64) {
+      from_ei_class = typed;
+    }
+  }
+
+  // Try to determine the size based on Elf_Ehdr.e_machine
+  //
+  // typedef struct {
+  //     unsigned char e_ident[EI_NIDENT]; | +0x00
+  //     uint16_t      e_type;             | +0x10
+  //     uint16_t      e_machine;          | +0x12 <------ THIS
+  //     uint32_t      e_version;          |
+  //     ....
+  // } ElfN_Ehdr;
+  constexpr size_t e_machine_off = offsetof(details::Elf32_Ehdr, e_machine);
+  if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
+    const auto machine = static_cast<ARCH>(*res);
+    switch (machine) {
+      case ARCH::EM_AARCH64:
+      case ARCH::EM_X86_64:
+      case ARCH::EM_PPC64:
+      case ARCH::EM_SPARCV9:
+      case ARCH::EM_IA_64:
+        {
+          from_e_machine = ELF_CLASS::ELFCLASS64;
+          break;
+        }
+      case ARCH::EM_386:
+      case ARCH::EM_ARM:
+      case ARCH::EM_PPC:
+        {
+          from_e_machine = ELF_CLASS::ELFCLASS32;
+          break;
+        }
+      default:
+        {
+          from_e_machine = ELF_CLASS::ELFCLASSNONE;
+          break;
+        }
+    }
+  }
+  if (from_e_machine != ELF_CLASS::ELFCLASSNONE &&
+      from_ei_class != ELF_CLASS::ELFCLASSNONE)
+  {
+    if (from_e_machine == from_ei_class) {
+      return from_ei_class;
+    }
+
+    LIEF_WARN("ELF class from machine type ('{}') does not match ELF class from "
+              "e_ident ('{}'). The binary has been likely modified.",
+              to_string(from_e_machine), to_string(from_ei_class));
+    // Make the priority on Elf_Ehdr.e_machine as it is
+    // this value that is used by the kernel.
+    return from_e_machine;
+  }
+  if (from_e_machine != ELF_CLASS::ELFCLASSNONE) {
+    return from_e_machine;
+  }
+  return from_ei_class;
+}
+
 
 ok_error_t Parser::init(const std::string& name) {
   LIEF_DEBUG("Parsing binary: {}", name);
@@ -123,34 +311,23 @@ ok_error_t Parser::init(const std::string& name) {
 
     binary_->datahandler_ = std::move(*res);
 
-    auto res_ident = stream_->peek<Header::identity_t>(0);
+    auto res_ident = stream_->peek<Header::identity_t>();
     if (!res_ident) {
       LIEF_ERR("Can't read ELF identity. Nothing to parse");
       return res_ident.error();
     }
     stream_->set_endian_swap(should_swap());
-    auto ident = *res_ident;
-    uint32_t type = ident[static_cast<size_t>(IDENTITY::EI_CLASS)];
 
-    binary_->type_ = static_cast<ELF_CLASS>(type);
-    type_ = static_cast<ELF_CLASS>(type);
-    switch (binary_->type_) {
-      case ELF_CLASS::ELFCLASS32:
-        {
-          parse_binary<details::ELF32>();
-          break;
-        }
+    binary_->type_ = determine_elf_class(*stream_);
+    type_ = binary_->type_;
 
-      case ELF_CLASS::ELFCLASS64:
-        {
-          parse_binary<details::ELF64>();
-          break;
-        }
-
+    switch (type_) {
+      case ELF_CLASS::ELFCLASS32: return parse_binary<details::ELF32>();
+      case ELF_CLASS::ELFCLASS64: return parse_binary<details::ELF64>();
       case ELF_CLASS::ELFCLASSNONE:
       default:
         {
-          LIEF_ERR("Can't determine the ELF class");
+          LIEF_ERR("Can't determine the ELF class ({})", static_cast<size_t>(type_));
           return make_error_code(lief_errors::corrupted);
         }
     }

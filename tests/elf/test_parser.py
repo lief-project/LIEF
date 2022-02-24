@@ -11,7 +11,7 @@ import unittest
 from unittest import TestCase
 
 import lief
-from utils import get_sample
+from utils import get_sample, is_64bits_platform
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -236,6 +236,93 @@ class TestAllRelocs(TestCase):
         # check relocation from .rela.eh_frame
         self.assertTrue(relocations[30].has_section)
         self.assertEqual(relocations[30].address,0x2068)
+
+
+class TestTinyAArch64(TestCase):
+    """
+    Test that the parser can process ELF files
+    with corruped EI_CLASS
+    cf. https://tmpout.sh/2/14.html
+    """
+
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.target = lief.parse(get_sample('ELF/tiny_aarch64.elf'))
+
+    def test_tiny(self):
+        self.assertEqual(len(self.target.segments), 1)
+        self.assertEqual(self.target.segments[0].virtual_address, 0x100000000)
+        self.assertEqual(self.target.segments[0].file_offset, 0)
+        self.assertEqual(self.target.segments[0].physical_size, 0x17fffff2)
+        self.assertEqual(len(self.target.segments[0].content), 84)
+        if is_64bits_platform():
+            self.assertEqual(lief.hash(self.target.segments[0].content), 18446744073657409468)
+
+
+class TestCorruptedIdentity(TestCase):
+    """
+    Test that we do not (only) rely on EI_DATA / EI_CLASS
+    to determine the ELFCLASS and the endianness
+    cf. https://tmpout.sh/2/3.html
+    """
+    def setUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.target = lief.parse(get_sample('ELF/hello_ei_data.elf'))
+
+    def test_parser(self):
+        self.assertEqual(len(self.target.segments), 10)
+
+
+class TestArchitectures(TestCase):
+    """
+    Test we support uncommon architectures
+    """
+    def test_s390(self):
+        s390 = lief.parse(get_sample("ELF/elf_reader.s390.elf"))
+        self.assertEqual(len(s390.segments), 10)
+        self.assertEqual(len(s390.sections), 32)
+        self.assertEqual(len(s390.dynamic_symbols), 278)
+        self.assertEqual(len(s390.dynamic_entries), 27)
+
+    def test_xtensa(self):
+       xtensa = lief.parse(get_sample("ELF/elf_reader.xtensa.elf"))
+       self.assertEqual(len(xtensa.segments), 10)
+       self.assertEqual(len(xtensa.sections), 30)
+       self.assertEqual(len(xtensa.dynamic_symbols), 247)
+       self.assertEqual(len(xtensa.dynamic_entries), 25)
+
+    def test_mips(self):
+       mips = lief.parse(get_sample("ELF/elf_reader.mips.elf"))
+       self.assertEqual(len(mips.segments), 12)
+       self.assertEqual(len(mips.sections), 39)
+       self.assertEqual(len(mips.dynamic_symbols), 450)
+       self.assertEqual(len(mips.dynamic_entries), 36)
+
+    def test_riscv64(self):
+       riscv64 = lief.parse(get_sample("ELF/elf_reader.riscv64.elf"))
+       self.assertEqual(len(riscv64.segments), 10)
+       self.assertEqual(len(riscv64.sections), 30)
+       self.assertEqual(len(riscv64.dynamic_symbols), 439)
+       self.assertEqual(len(riscv64.dynamic_entries), 29)
+
+    def test_riscv32(self):
+       riscv32 = lief.parse(get_sample("ELF/elf_reader.riscv32.elf"))
+       self.assertEqual(len(riscv32.segments), 10)
+       self.assertEqual(len(riscv32.sections), 30)
+       self.assertEqual(len(riscv32.dynamic_symbols), 445)
+       self.assertEqual(len(riscv32.dynamic_entries), 29)
+
+    def test_ppc64le(self):
+       ppc64le = lief.parse(get_sample("ELF/elf_reader.ppc64le.elf"))
+       self.assertEqual(len(ppc64le.segments), 10)
+       self.assertEqual(len(ppc64le.sections), 32)
+       self.assertEqual(len(ppc64le.dynamic_symbols), 246)
+       self.assertEqual(len(ppc64le.dynamic_entries), 29)
+
+    def test_hexagon(self):
+       hexagon = lief.parse(get_sample("ELF/modem.hexagon.elf"))
+       self.assertEqual(len(hexagon.segments), 7)
+
 
 if __name__ == '__main__':
 

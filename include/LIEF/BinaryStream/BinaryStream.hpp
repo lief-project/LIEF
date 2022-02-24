@@ -181,6 +181,10 @@ class BinaryStream {
                        [] (uint8_t x) { return x == 0; });
   }
 
+  inline bool should_swap() const {
+    return endian_swap_;
+  }
+
   protected:
   virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
   inline virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {

@@ -83,8 +83,8 @@ Handler::Handler(std::vector<uint8_t>&& content) :
 
 
 result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
+  auto hdl = std::unique_ptr<Handler>(new Handler{});
   if (VectorStream::classof(*stream)) {
-    auto hdl = std::unique_ptr<Handler>(new Handler{});
     auto& vs = static_cast<VectorStream&>(*stream);
 
     hdl->data_ = std::move(vs.move_content());
@@ -95,14 +95,12 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
   }
 
   if (SpanStream::classof(*stream)) {
-    auto hdl = std::unique_ptr<Handler>(new Handler{});
     auto& vs = static_cast<SpanStream&>(*stream);
     hdl->data_ = vs.content();
     return hdl;
   }
 
   if (FileStream::classof(*stream)) {
-    auto hdl = std::unique_ptr<Handler>(new Handler{});
     auto& vs = static_cast<FileStream&>(*stream);
     hdl->data_ = vs.content();
     const uint64_t pos = vs.pos();

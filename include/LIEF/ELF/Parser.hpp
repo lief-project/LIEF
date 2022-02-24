@@ -56,7 +56,6 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t MAX_SECTION_SIZE       = 2_GB;
   static constexpr uint32_t MAX_SEGMENT_SIZE       = 3_GB;
 
-
   //! Parse an ELF file and return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method to use for counting dynamic symbols

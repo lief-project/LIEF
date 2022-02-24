@@ -1130,6 +1130,7 @@ Segment& Binary::replace(const Segment& new_segment, const Segment& original_seg
   DataHandler::Node new_node{new_segment_ptr->file_offset(), new_segment_ptr->physical_size(),
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
+  new_segment_ptr->handler_size_ = new_segment_ptr->physical_size();
 
   const uint64_t last_offset_sections = last_offset_section();
   const uint64_t last_offset_segments = last_offset_segment();

@@ -345,6 +345,7 @@ Segment& Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   uint64_t segmentsize = align(content.size(), psize);
   content.resize(segmentsize, 0);
 
+  new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
 
@@ -411,7 +412,7 @@ Segment& Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 
   uint64_t segmentsize = align(content.size(), 0x10);
   //uint64_t segmentsize = content.size();
-
+  new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
 

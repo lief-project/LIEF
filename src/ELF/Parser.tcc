@@ -889,11 +889,8 @@ ok_error_t Parser::parse_segments() {
 
     auto segment = std::make_unique<Segment>(*elf_phdr);
     segment->datahandler_ = binary_->datahandler_.get();
-    segment->datahandler_->create(segment->file_offset(), segment->physical_size(),
-                                  DataHandler::Node::SEGMENT);
 
-
-    if (segment->physical_size() > 0 && segment->physical_size() < Parser::MAX_SEGMENT_SIZE) {
+    if (0 < segment->physical_size() && segment->physical_size() < Parser::MAX_SEGMENT_SIZE) {
       uint64_t read_size = segment->physical_size();
       if (read_size > Parser::MAX_SEGMENT_SIZE) {
         LIEF_WARN("Segment #{} is {} bytes large. Only the first {} bytes will be taken into account",
@@ -906,6 +903,11 @@ ok_error_t Parser::parse_segments() {
                   i, read_size, stream_->size());
         read_size = stream_->size();
       }
+
+      segment->datahandler_->create(segment->file_offset(), read_size,
+                                    DataHandler::Node::SEGMENT);
+      segment->handler_size_ = read_size;
+
       if (segment->file_offset() > stream_->size() || (segment->file_offset() + read_size) > stream_->size()) {
         LIEF_WARN("Segment #{} has a corrupted file offset (0x{:x}) ", i, segment->file_offset());
         break;
@@ -938,6 +940,10 @@ ok_error_t Parser::parse_segments() {
           binary_->interpreter_ = *interpreter;
         }
       }
+    } else {
+      segment->handler_size_ = segment->physical_size();
+      segment->datahandler_->create(segment->file_offset(), segment->physical_size(),
+                                    DataHandler::Node::SEGMENT);
     }
 
     for (std::unique_ptr<Section>& section : binary_->sections_) {
