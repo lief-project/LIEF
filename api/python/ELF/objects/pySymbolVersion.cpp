@@ -18,6 +18,7 @@
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 #include <string>
 #include <sstream>
@@ -70,11 +71,12 @@ void create<SymbolVersion>(py::module& m) {
         &SymbolVersion::has_auxiliary_version,
         "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersionAux) "")
 
-    .def_property_readonly(
+    .def_property(
         "symbol_version_auxiliary",
          static_cast<SymbolVersionAux* (SymbolVersion::*)(void)>(&SymbolVersion::symbol_version_auxiliary),
+         static_cast<void (SymbolVersion::*)(SymbolVersionAuxRequirement&)>(&SymbolVersion::symbol_version_auxiliary),
         "Return the " RST_CLASS_REF(lief.ELF.SymbolVersionAux) " associated with this version or "
-        "None if not present",
+        "None if not present. The value can be changed by assigning " RST_CLASS_REF(lief.ELF.SymbolVersionAuxRequirement) "",
         py::return_value_policy::reference_internal)
 
 

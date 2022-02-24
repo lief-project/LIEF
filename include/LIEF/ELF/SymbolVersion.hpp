@@ -61,6 +61,9 @@ class LIEF_API SymbolVersion : public Object {
   SymbolVersionAux*       symbol_version_auxiliary();
   const SymbolVersionAux* symbol_version_auxiliary() const;
 
+  //! Set the version's auxiliary requirement
+  void symbol_version_auxiliary(SymbolVersionAuxRequirement& symbol_version_aux_requirement);
+
   void value(uint16_t v);
 
   void accept(Visitor& visitor) const override;
