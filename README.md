@@ -102,7 +102,7 @@ To install the latest **version** (release):
 pip install lief
 ```
 
-To install nightlty build:
+To install nightly build:
 
 ```console
 pip install [--user] --index-url https://lief-project.github.io/packages lief==0.12.0.dev0
