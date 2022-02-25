@@ -843,11 +843,12 @@ ok_error_t Builder::build_sections() {
         // Nevertheless, some (malformed or tricky) ELF binaries
         // might use this type to put content.
         section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
-
-      LIEF_DEBUG("Section content: {}@0x{:x}:0x{:x}",
-                 section->name(), section->file_offset(), section->size());
+      span<const uint8_t> content = section->content();
+      LIEF_DEBUG("[Content] {:20}: 0x{:010x} - 0x{:010x} (0x{:x})",
+                 section->name(), section->file_offset(),
+                 section->file_offset() + content.size(), content.size());
       ios_.seekp(section->file_offset());
-      ios_.write(section->content());
+      ios_.write(content);
     }
 
     Elf_Off offset_name = 0;
@@ -872,10 +873,11 @@ ok_error_t Builder::build_sections() {
 
     // Write Section'header
     if (section_headers_offset > 0) {
-      LIEF_DEBUG("Section header:  {}@0x{:x}:0x{:x}",
+      const uint64_t offset = section_headers_offset + i * sizeof(Elf_Shdr);
+      LIEF_DEBUG("[Header ] {:20}: 0x{:010x} - 0x{:010x}",
                  section->name(),
-                 section_headers_offset + i * sizeof(Elf_Shdr), sizeof(Elf_Shdr));
-      ios_.seekp(section_headers_offset + i * sizeof(Elf_Shdr));
+                 offset, offset + sizeof(Elf_Shdr));
+      ios_.seekp(offset);
       ios_.write_conv<Elf_Shdr>(shdr);
     }
   }
@@ -895,6 +897,7 @@ ok_error_t Builder::build_segments() {
 
   vector_iostream pheaders(should_swap());
   pheaders.reserve(binary_->segments_.size() * sizeof(Elf_Phdr));
+  LIEF_DEBUG("sizeof(PHDR): 0x{:x}", binary_->segments_.size() * sizeof(Elf_Phdr));
 
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     Elf_Phdr phdr;
@@ -919,9 +922,10 @@ ok_error_t Builder::build_segments() {
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     if (segment->physical_size() > 0) {
       span<const uint8_t> content = segment->content();
-      LIEF_DEBUG("Write content of segment {}@0{:x} (off: 0x{:x}:0{:x})",
+      LIEF_DEBUG("[W] {:<13} 0x{:016x}: 0x{:010x} - 0x{:010x} (0x{:x})",
                  to_string(segment->type()), segment->virtual_address(),
-                 segment->file_offset(), content.size());
+                 segment->file_offset(), segment->file_offset() + content.size(),
+                 content.size());
 
       ios_.seekp(segment->file_offset());
       ios_.write(content);
