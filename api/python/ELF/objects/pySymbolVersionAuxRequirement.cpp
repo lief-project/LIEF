@@ -34,6 +34,8 @@ using setter_t = void (SymbolVersionAuxRequirement::*)(T);
 template<>
 void create<SymbolVersionAuxRequirement>(py::module& m) {
   py::class_<SymbolVersionAuxRequirement, SymbolVersionAux>(m, "SymbolVersionAuxRequirement")
+    .def(py::init<>(),"Default constructor")
+
     .def_property("hash",
         static_cast<getter_t<uint32_t>>(&SymbolVersionAuxRequirement::hash),
         static_cast<setter_t<uint32_t>>(&SymbolVersionAuxRequirement::hash),

@@ -97,6 +97,10 @@ void SymbolVersionRequirement::name(const std::string& name) {
   name_ = name;
 }
 
+SymbolVersionAuxRequirement& SymbolVersionRequirement::add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement) {
+  aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(aux_requirement));
+  return *aux_requirements_.back();
+}
 
 void SymbolVersionRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);

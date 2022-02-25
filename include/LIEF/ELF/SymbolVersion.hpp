@@ -61,6 +61,14 @@ class LIEF_API SymbolVersion : public Object {
   SymbolVersionAux*       symbol_version_auxiliary();
   const SymbolVersionAux* symbol_version_auxiliary() const;
 
+  //! Set the version's auxiliary requirement
+  //! The given SymbolVersionAuxRequirement must be an existing
+  //! reference in the ELF::Binary.
+  //!
+  //! On can add a new SymbolVersionAuxRequirement by using
+  //! SymbolVersionRequirement::add_aux_requirement
+  void symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr);
+
   void value(uint16_t v);
 
   void accept(Visitor& visitor) const override;

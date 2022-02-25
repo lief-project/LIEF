@@ -60,6 +60,10 @@ void create<SymbolVersionRequirement>(py::module& m) {
         "Auxiliary entries (iterator over " RST_CLASS_REF(lief.ELF.SymbolVersionAuxRequirement) ")",
         py::return_value_policy::reference_internal)
 
+    .def("add_auxiliary_requirement",
+        static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(const SymbolVersionAuxRequirement&)>(&SymbolVersionRequirement::add_aux_requirement),
+        "Add an auxiliary version requirement to the existing entries")
+
     .def("__eq__", &SymbolVersionRequirement::operator==)
     .def("__ne__", &SymbolVersionRequirement::operator!=)
     .def("__hash__",

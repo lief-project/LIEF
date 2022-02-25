@@ -20,6 +20,7 @@
 
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -59,6 +60,11 @@ const SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() const {
 
 SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() {
   return const_cast<SymbolVersionAux*>(static_cast<const SymbolVersion*>(this)->symbol_version_auxiliary());
+}
+
+void SymbolVersion::symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr) {
+  symbol_aux_ = &svauxr;
+  value_      = svauxr.other();
 }
 
 void SymbolVersion::value(uint16_t value) {

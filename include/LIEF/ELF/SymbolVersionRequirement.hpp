@@ -71,6 +71,9 @@ class LIEF_API SymbolVersionRequirement : public Object {
   void version(uint16_t version);
   void name(const std::string& name);
 
+  //! Add a version auxiliary requirement to the existing list
+  SymbolVersionAuxRequirement& add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
+
   void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersionRequirement& rhs) const;

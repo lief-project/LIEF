@@ -5,6 +5,7 @@ Changelog
 -------------------------
 
 :ELF:
+  * :github_user:`ahaensler` added the support to insert and assign a :class:`lief.ELF.SymbolVersionAuxRequirement` (see: :pr:`670`)
   * Enhance the ELF parser to support corner cases described by `netspooky <https://n0.lol/>`_ in :
     - https://tmpout.sh/2/14.html (*84 byte aarch64 ELF*)
     - https://tmpout.sh/2/3.html (*Some ELF Parser Bugs*)
