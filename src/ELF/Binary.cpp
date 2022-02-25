@@ -2781,7 +2781,8 @@ uint64_t Binary::relocate_phdr_table_v2() {
   Header& header = this->header();
 
   const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
-                                       sizeof(details::ELF32::Elf_Phdr) : sizeof(details::ELF64::Elf_Phdr);
+                                       sizeof(details::ELF32::Elf_Phdr) :
+                                       sizeof(details::ELF64::Elf_Phdr);
 
 
   std::vector<Segment*> load_seg;
@@ -2899,7 +2900,8 @@ uint64_t Binary::relocate_phdr_table_v1() {
   Header& header = this->header();
 
   const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
-                                       sizeof(details::ELF32::Elf_Phdr) : sizeof(details::ELF64::Elf_Phdr);
+                                       sizeof(details::ELF32::Elf_Phdr) :
+                                       sizeof(details::ELF64::Elf_Phdr);
 
   const auto it_segment_phdr = std::find_if(std::begin(segments_), std::end(segments_),
               [] (const std::unique_ptr<Segment>& s) {
@@ -2918,7 +2920,13 @@ uint64_t Binary::relocate_phdr_table_v1() {
   Segment* next_to_extend = nullptr;
   size_t potential_size = 0;
   const size_t nb_loads = load_seg.size();
-  for (size_t i = 0; i < nb_loads; ++i) {
+
+  // This function requires to have at least 2 segments
+  if (nb_loads == 1) {
+    return 0;
+  }
+
+  for (size_t i = 0; i < (nb_loads - 1); ++i) {
     Segment* current = load_seg[i];
     // Skip bss-like segments
     if (current->virtual_size() != current->physical_size()) {
@@ -2926,20 +2934,15 @@ uint64_t Binary::relocate_phdr_table_v1() {
                  to_string(current->type()), current->virtual_address(), current->virtual_size());
       continue;
     }
-    if (i < nb_loads - 1) {
-      Segment* adjacent = load_seg[i + 1];
-      const size_t gap = adjacent->file_offset() - (current->file_offset() + current->physical_size());
-      const size_t nb_seg_gap = gap / phdr_size;
-      LIEF_DEBUG("Gap between {:d} <-> {:d}: {:x} ({:d} segments)", i, i + 1, gap, nb_seg_gap);
-      if (nb_seg_gap > potential_size) {
-        seg_to_extend = current;
-        next_to_extend = adjacent;
-        potential_size = nb_seg_gap;
-      }
-      continue;
+    Segment* adjacent = load_seg[i + 1];
+    const size_t gap = adjacent->file_offset() - (current->file_offset() + current->physical_size());
+    const size_t nb_seg_gap = gap / phdr_size;
+    LIEF_DEBUG("Gap between {:d} <-> {:d}: {:x} ({:d} segments)", i, i + 1, gap, nb_seg_gap);
+    if (nb_seg_gap > potential_size) {
+      seg_to_extend  = current;
+      next_to_extend = adjacent;
+      potential_size = nb_seg_gap;
     }
-    // i == nb_loads - 1 => Last segment
-    return 0;
   }
 
   if (seg_to_extend == nullptr || next_to_extend == nullptr) {
@@ -2954,15 +2957,12 @@ uint64_t Binary::relocate_phdr_table_v1() {
   }
 
   LIEF_DEBUG("Segment selected for the extension: {}@0x{:x}:0x{:x}",
-      to_string(seg_to_extend->type()), seg_to_extend->virtual_address(), seg_to_extend->virtual_size());
+             to_string(seg_to_extend->type()), seg_to_extend->virtual_address(),
+             seg_to_extend->virtual_size());
+
   LIEF_DEBUG("Adjacent segment selected for the extension: {}@0x{:x}:0x{:x}",
-      to_string(next_to_extend->type()), next_to_extend->virtual_address(), next_to_extend->virtual_size());
-
-  // New values
-  const uint64_t new_phdr_offset = seg_to_extend->file_offset() + seg_to_extend->physical_size();
-  phdr_reloc_info_.new_offset = new_phdr_offset;
-
-  header.program_headers_offset(new_phdr_offset);
+             to_string(next_to_extend->type()), next_to_extend->virtual_address(),
+             next_to_extend->virtual_size());
 
   // Extend the segment that wraps the next PHDR table so that it is contiguous
   // with the next segment.
@@ -2975,6 +2975,15 @@ uint64_t Binary::relocate_phdr_table_v1() {
     phdr_reloc_info_.clear();
     return 0;
   }
+
+
+  // New values
+  const uint64_t new_phdr_offset = seg_to_extend->file_offset() + seg_to_extend->physical_size();
+  phdr_reloc_info_.new_offset = new_phdr_offset;
+
+  header.program_headers_offset(new_phdr_offset);
+
+
   phdr_reloc_info_.nb_segments = nb_segments;
   seg_to_extend->physical_size(seg_to_extend->physical_size() + delta);
   seg_to_extend->virtual_size(seg_to_extend->virtual_size() + delta);
