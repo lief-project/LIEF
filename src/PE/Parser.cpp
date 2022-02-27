@@ -803,7 +803,7 @@ inline result<uint32_t> name_table_value(BinaryStream& stream,
 ok_error_t Parser::parse_exports() {
   LIEF_DEBUG("== Parsing exports ==");
   static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
-  static constexpr size_t MAX_EXPORT_NAME_SIZE = 300;
+  static constexpr size_t MAX_EXPORT_NAME_SIZE = 3000; // Because of C++ mangling
 
   struct range_t {
     uint32_t start;
@@ -1019,7 +1019,7 @@ ok_error_t Parser::parse_signature() {
       LIEF_INFO("Can't read 0x{:x} bytes", length);
       break;
     }
-    ;
+
     if (auto sign = SignatureParser::parse(std::move(raw_signature))) {
       binary_->signatures_.push_back(std::move(*sign));
     } else {
@@ -1085,11 +1085,11 @@ bool Parser::is_valid_import_name(const std::string& name) {
   if (name.empty() || name.size() > MAX_IMPORT_NAME_SIZE) {
     return false;
   }
-
-  if (!is_printable(name)) {
-    return false;
-  }
-  return true;
+  const bool valid_chars = std::all_of(std::begin(name), std::end(name),
+      [] (char c) {
+        return ::isprint(c);
+      });
+  return valid_chars;
 }
 
 
