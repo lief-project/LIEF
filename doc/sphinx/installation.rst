@@ -263,13 +263,13 @@ If we are using a CMake version greater than or equal to 3.11, we can use `CMake
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
-   :lines: 33-59
+   :lines: 33-61
 
 And now, to be integrated within a project:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
-   :lines: 62-
+   :lines: 65-
 
 For the compilation:
 

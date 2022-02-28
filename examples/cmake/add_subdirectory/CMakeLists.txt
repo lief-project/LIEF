@@ -2,7 +2,7 @@
 # otherwise 3.11+ for FetchContent command
 cmake_minimum_required(VERSION 3.5)
 
-project(SubdirLIEF CXX)
+project(SubdirLIEF LANGUAGES CXX)
 
 # Use LIEF as an embedded/vendored project
 # ========================================
@@ -32,17 +32,20 @@ else()
   # we're trying to do
   cmake_minimum_required(VERSION 3.11)
 
-  # Common info for specifying LIEF source directory
   # URL of the LIEF repo (Can be your fork)
   set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
+
   # LIEF's version to be used (can be 'master')
   set(LIEF_VERSION 0.12.0)
 
   include(FetchContent)
   FetchContent_Declare(LIEF
-    #GIT_REPOSITORY  "${LIEF_GIT_URL}"
-    #GIT_TAG         ${LIEF_VERSION}
-    SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/../../.."
+    GIT_REPOSITORY  "${LIEF_GIT_URL}"
+    GIT_TAG         ${LIEF_VERSION}
+    # You may specify an existing LIEF source directory if you don't want to
+    # download. Just comment out the above ``GIT_*`` commands and uncoment the
+    # following ``SOURCE_DIR`` line
+    #SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/../../.."
     )
 
   if(${CMAKE_VERSION} VERSION_LESS "3.14.0")
@@ -53,7 +56,7 @@ else()
       add_subdirectory(${LIEF_SOURCE_DIR} ${LIEF_BINARY_DIR})
     endif()
   else()
-    # CMake 3.14+ has single function to make LIEF available
+    # CMake 3.14+ has single function to make LIEF available (recommended)
     FetchContent_MakeAvailable(LIEF)
   endif()
 endif()
