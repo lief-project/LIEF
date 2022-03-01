@@ -176,6 +176,7 @@ source_group("Source Files" FILES ${LIBLIEF_SOURCE_FILES})
 source_group("Header Files\\visitors" FILES ${LIEF_VISITOR_INCLUDE_FILES})
 
 add_library(LIB_LIEF ${LIBLIEF_SOURCE_FILES} ${LIEF_INCLUDE_FILES})
+add_library(LIEF::LIEF ALIAS LIB_LIEF)
 
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
@@ -336,7 +337,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR
                @ONLY)
 
 target_include_directories(LIB_LIEF
-  PUBLIC  "${LIEF_PUBLIC_INCLUDE_DIR}"
+  PUBLIC  "$<BUILD_INTERFACE:${LIEF_PUBLIC_INCLUDE_DIR}>"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
 if(LIEF_ENABLE_JSON)
@@ -379,7 +380,7 @@ if(LIEF_EXTERNAL_LEAF)
   if(LIEF_EXTERNAL_LEAF_DIR)
     message(STATUS "External LEAF include dir: ${LIEF_EXTERNAL_LEAF_DIR}")
     target_include_directories(LIB_LIEF SYSTEM PUBLIC
-                               ${LIEF_EXTERNAL_LEAF_DIR})
+                               "$<BUILD_INTERFACE:${LIEF_EXTERNAL_LEAF_DIR}>")
   endif()
 else()
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
@@ -422,7 +423,7 @@ if(LIEF_EXTERNAL_SPAN)
   if(LIEF_EXTERNAL_SPAN_DIR)
     message(STATUS "External span include dir: ${LIEF_EXTERNAL_SPAN_DIR}")
     target_include_directories(LIB_LIEF SYSTEM PUBLIC
-                               ${LIEF_EXTERNAL_SPAN_DIR})
+                               "$<BUILD_INTERFACE:${LIEF_EXTERNAL_SPAN_DIR}>")
   endif()
 else()
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp
@@ -569,7 +570,7 @@ if(LIEF_COVERAGE)
   target_link_libraries(LIB_LIEF gcov)
 endif()
 
-set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF EXPORT_NAME LIEF CLEAN_DIRECT_OUTPUT 1)
 
 
 # Set a default build type if none was specified
@@ -616,10 +617,10 @@ endif()
 
 # Find Package Config
 # ======================
-configure_package_config_file(
+configure_file(
   LIEFConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
-  INSTALL_DESTINATION share/LIEF/cmake)
+  @ONLY)
 
 write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
@@ -682,10 +683,12 @@ else()
 endif()
 
 install(
-  TARGETS LIB_LIEF
+  TARGETS LIB_LIEF lief_spdlog
+  EXPORT LIEFExport
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT libraries
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(
   DIRECTORY ${LIEF_PUBLIC_INCLUDE_DIR}
@@ -693,11 +696,6 @@ install(
   COMPONENT headers
   FILES_MATCHING
   REGEX "(.*).(hpp|h|def|inc)$")
-
-install(
-  FILES       ${CMAKE_CURRENT_SOURCE_DIR}/scripts/FindLIEF.cmake
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
-  COMPONENT   CMakeScripts)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
@@ -710,7 +708,23 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   COMPONENT   libraries)
 
-export(TARGETS LIB_LIEF lief_spdlog FILE LIEFExport.cmake)
+if(BUILD_SHARED_LIBS)
+  set(lib_type shared)
+else()
+  set(lib_type static)
+endif()
+
+install(
+  EXPORT LIEFExport
+  NAMESPACE LIEF::
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
+  FILE LIEFExport-${lib_type}.cmake
+  COMPONENT config)
+
+export(
+  EXPORT LIEFExport
+  NAMESPACE LIEF::
+  FILE LIEFExport-${lib_type}.cmake)
 
 # Package
 # ======================
