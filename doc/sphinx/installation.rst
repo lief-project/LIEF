@@ -282,7 +282,7 @@ A *full* example is available in the ``examples/cmake/add_subdirectory`` directo
 External Project
 ****************
 
-If you don't want to use LIEF as a submodule or upgrade to CMake 3.11, we can use `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_ to set up a project as a `*superbuild* <https://www.kitware.com/cmake-superbuilds-git-submodules>`:
+If you don't want to use LIEF as a submodule or upgrade to CMake 3.11, we can use `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_ to set up a project as a `*superbuild* <https://www.kitware.com/cmake-superbuilds-git-submodules>`_:
 
 .. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake

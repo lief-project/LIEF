@@ -7,8 +7,10 @@ Changelog
 :ELF:
   * :github_user:`ahaensler` added the support to insert and assign a :class:`lief.ELF.SymbolVersionAuxRequirement` (see: :pr:`670`)
   * Enhance the ELF parser to support corner cases described by `netspooky <https://n0.lol/>`_ in :
+
     - https://tmpout.sh/2/14.html (*84 byte aarch64 ELF*)
     - https://tmpout.sh/2/3.html (*Some ELF Parser Bugs*)
+
   * New ELF Builder which is more efficient in terms of speed and
     in terms of number of segments added when modifying binaries (see: https://lief-project.github.io/blog/2022-01-23-new-elf-builder/)
 
@@ -58,10 +60,11 @@ Changelog
 
 :Abstraction:
   * Abstract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
-  * Add :meth:`lief.Binary.offset_to_virtual_addres`
+  * Add :meth:`lief.Binary.offset_to_virtual_address`
   * Add PE imports/exports as *abstracted* symbols
 
-:Compilation:
+:Compilation & Integration:
+  * :github_user:`ekilmer` updated and modernized the CMake integration files through the PR: :pr:`674`
   * Enable to use a pre-compiled version of spdlog. This feature aims
     at improving compilation time when developing on LIEF.
 
