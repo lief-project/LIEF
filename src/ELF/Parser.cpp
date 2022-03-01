@@ -144,7 +144,7 @@ ELF_DATA determine_elf_endianess(BinaryStream& stream) {
     ARCH::EM_ARC,     ARCH::EM_MIPS, ARCH::EM_PPC, ARCH::EM_PPC64,
   };
   ELF_DATA from_ei_data   = ELF_DATA::ELFDATANONE;
-  ELF_DATA from_e_machine = ELF_DATA::ELFDATANONE;
+  /* ELF_DATA from_e_machine = ELF_DATA::ELFDATANONE; */
 
   // First, check EI_CLASS
   if (auto res = stream.peek<Header::identity_t>()) {
