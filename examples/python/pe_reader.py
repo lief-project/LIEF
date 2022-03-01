@@ -573,6 +573,8 @@ def main():
         print(e)
         sys.exit(1)
 
+    if binary is None:
+        sys.exit(1)
 
     print_information(binary)
 
