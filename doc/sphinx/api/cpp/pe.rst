@@ -67,6 +67,22 @@ Import Entry
 
 ----------
 
+Delay Import
+************
+
+.. doxygenclass:: LIEF::PE::DelayImport
+  :project: lief
+
+----------
+
+Delay Import Entry
+******************
+
+.. doxygenclass:: LIEF::PE::DelayImportEntry
+  :project: lief
+
+----------
+
 TLS
 ***
 

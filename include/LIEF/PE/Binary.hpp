@@ -23,6 +23,7 @@
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/DelayImport.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
@@ -82,6 +83,15 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Iterator that outputs const Import&
   using it_const_imports = const_ref_iterator<const imports_t&>;
+
+  //! Internal container for storing PE's DelayImport
+  using delay_imports_t = std::vector<DelayImport>;
+
+  //! Iterator that output DelayImport&
+  using it_delay_imports = ref_iterator<delay_imports_t&>;
+
+  //! Iterator that outputs const DelayImport&
+  using it_const_delay_imports = const_ref_iterator<const delay_imports_t&>;
 
   //! Internal container for storing Debug information
   using debug_entries_t = std::vector<Debug>;
@@ -387,10 +397,34 @@ class LIEF_API Binary : public LIEF::Binary {
   Import* get_import(const std::string& import_name);
   const Import* get_import(const std::string& import_name) const;
 
-  //! ``True`` if the binary import the given library name
+  //! ``True`` if the binary imports the given library name
   //!
   //! @param[in] import_name Name of the import
   bool has_import(const std::string& import_name) const;
+
+  //! Check if the current binary contains delay imports
+  //!
+  //! @see DelayImport
+  //! @see has_import
+  bool has_delay_imports() const;
+
+  //! Return an iterator over the binary's delay imports
+  it_delay_imports       delay_imports();
+  it_const_delay_imports delay_imports() const;
+
+  //! Returns the PE::DelayImport from the given name. If it can't be
+  //! found, return a nullptr
+  //!
+  //! @param[in] import_name Name of the delay import
+  DelayImport* get_delay_import(const std::string& import_name);
+  const DelayImport* get_delay_import(const std::string& import_name) const;
+
+
+  //! ``True`` if the binary delay-imports the given library name
+  //!
+  //! @param[in] import_name Name of the delay import
+  bool has_delay_import(const std::string& import_name) const;
+
 
   //! Add the function @p function of the library @p library.
   //! If the function fails, it returns a nullptr
@@ -526,6 +560,7 @@ class LIEF_API Binary : public LIEF::Binary {
   relocations_t        relocations_;
   std::unique_ptr<ResourceNode> resources_;
   imports_t            imports_;
+  delay_imports_t      delay_imports_;
   Export               export_;
   debug_entries_t      debug_;
   uint64_t overlay_offset_ = 0;

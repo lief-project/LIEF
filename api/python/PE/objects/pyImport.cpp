@@ -49,7 +49,7 @@ void create<Import>(py::module& m) {
 
   imp
     .def(py::init<>(),
-        "Default constructor with a library name")
+        "Default constructor")
 
     .def(py::init<const std::string&>(),
         "Constructor from a library name",

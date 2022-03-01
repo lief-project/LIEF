@@ -50,6 +50,7 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_data_directories>(bin, "it_data_directories");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
   init_ref_iterator<Binary::it_imports>(bin, "it_imports");
+  init_ref_iterator<Binary::it_delay_imports>(bin, "it_delay_imports");
   init_ref_iterator<Binary::it_symbols>(bin, "it_symbols");
   init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
 
@@ -326,6 +327,24 @@ void create<Binary>(py::module& m) {
     .def("get_import",
         static_cast<no_const_func<Import*, const std::string&>>(&Binary::get_import),
         "Return the " RST_CLASS_REF(lief.PE.Import) " from the given name or None if not not found",
+        "import_name"_a,
+        py::return_value_policy::reference)
+
+    .def_property_readonly("delay_imports",
+        static_cast<no_const_getter<Binary::it_delay_imports>>(&Binary::delay_imports),
+        "Return an iterator over the " RST_CLASS_REF(lief.PE.DelayImport) " ")
+
+    .def_property_readonly("has_delay_imports", &Binary::has_delay_imports,
+        "``True`` if the current binary has delay imports (" RST_CLASS_REF(lief.PE.DelayImport) ")")
+
+    .def("has_delay_import",
+        &Binary::has_delay_import,
+        "``True`` if the binary imports the given library name",
+        "import_name"_a)
+
+    .def("get_delay_import",
+        static_cast<no_const_func<DelayImport*, const std::string&>>(&Binary::get_delay_import),
+        "Return the " RST_CLASS_REF(lief.PE.DelayImport) " from the given name or None if not not found",
         "import_name"_a,
         py::return_value_policy::reference)
 

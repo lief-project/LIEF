@@ -36,6 +36,7 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.data_directories()), std::end(binary.data_directories()));
   process(std::begin(binary.sections()), std::end(binary.sections()));
   process(std::begin(binary.imports()), std::end(binary.imports()));
+  process(std::begin(binary.delay_imports()), std::end(binary.delay_imports()));
   process(std::begin(binary.relocations()), std::end(binary.relocations()));
   process(std::begin(binary.symbols()), std::end(binary.symbols()));
 
@@ -258,6 +259,24 @@ void Hash::visit(const ImportEntry& import_entry) {
   process(import_entry.iat_value());
   process(import_entry.name());
   process(import_entry.data());
+}
+
+
+void Hash::visit(const DelayImport& import) {
+  process(import.attribute());
+  process(import.name());
+  process(import.handle());
+  process(import.names_table());
+  process(import.iat());
+  process(import.biat());
+  process(import.uiat());
+  process(import.timestamp());
+}
+
+void Hash::visit(const DelayImportEntry& import_entry) {
+  process(import_entry.name());
+  process(import_entry.data());
+  process(import_entry.iat_value());
 }
 
 void Hash::visit(const ResourceNode& resource_node) {

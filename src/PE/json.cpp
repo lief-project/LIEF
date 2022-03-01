@@ -141,6 +141,17 @@ void JsonVisitor::visit(const Binary& binary) {
     node_["imports"] = imports;
   }
 
+  // Delay Imports
+  if (binary.has_delay_imports()) {
+    std::vector<json> imports;
+    for (const DelayImport& import : binary.delay_imports()) {
+      JsonVisitor visitor;
+      visitor(import);
+      imports.emplace_back(visitor.get());
+    }
+    node_["delay_imports"] = imports;
+  }
+
   // Resources
   if (binary.has_resources()) {
     JsonVisitor visitor;
@@ -435,6 +446,39 @@ void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
   node_["age"]       = cvpdb.age();
   node_["filename"]  = escape_non_ascii(cvpdb.filename());
 }
+
+void JsonVisitor::visit(const DelayImport& import) {
+
+  std::vector<json> entries;
+  for (const DelayImportEntry& entry : import.entries()) {
+    JsonVisitor visitor;
+    visitor(entry);
+    entries.emplace_back(visitor.get());
+  }
+  node_["attribute"]   = import.attribute();
+  node_["name"]        = import.name();
+  node_["handle"]      = import.handle();
+  node_["iat"]         = import.iat();
+  node_["names_table"] = import.names_table();
+  node_["biat"]        = import.biat();
+  node_["uiat"]        = import.uiat();
+  node_["timestamp"]   = import.timestamp();
+  node_["entries"]     = entries;
+}
+
+void JsonVisitor::visit(const DelayImportEntry& import_entry) {
+  if (import_entry.is_ordinal()) {
+    node_["ordinal"] = import_entry.ordinal();
+  } else {
+    node_["name"] = import_entry.name();
+  }
+
+  node_["value"]       = import_entry.value();
+  node_["iat_address"] = import_entry.iat_value();
+  node_["data"]        = import_entry.data();
+  node_["hint"]        = import_entry.hint();
+}
+
 
 void JsonVisitor::visit(const Import& import) {
 

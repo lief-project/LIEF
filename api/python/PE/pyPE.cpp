@@ -61,6 +61,8 @@ void init_objects(py::module& m) {
   CREATE(PogoEntry, m);
   CREATE(Import, m);
   CREATE(ImportEntry, m);
+  CREATE(DelayImport, m);
+  CREATE(DelayImportEntry, m);
   CREATE(ResourcesManager, m);
   CREATE(ResourceNode, m);
   CREATE(ResourceData, m);

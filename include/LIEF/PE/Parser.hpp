@@ -36,6 +36,7 @@ namespace PE {
 class Debug;
 class ResourceNode;
 class Binary;
+class DelayImport;
 
 namespace details {
 struct pe_resource_directory_table;
@@ -108,6 +109,12 @@ class LIEF_API Parser : public LIEF::Parser {
 
   template<typename PE_T>
   ok_error_t parse_import_table();
+
+  template<typename PE_T>
+  ok_error_t parse_delay_imports();
+
+  template<typename PE_T>
+  ok_error_t parse_delay_names_table(DelayImport& import, uint32_t names_offset);
 
   ok_error_t parse_export_table();
   ok_error_t parse_debug();

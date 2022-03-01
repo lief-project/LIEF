@@ -47,6 +47,8 @@ class CodeView;
 class CodeViewPDB;
 class Import;
 class ImportEntry;
+class DelayImport;
+class DelayImportEntry;
 class ResourceNode;
 class ResourceData;
 class ResourceDirectory;
@@ -115,6 +117,8 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const CodeViewPDB& cvpdb)                    override;
   void visit(const Import& import)                        override;
   void visit(const ImportEntry& import_entry)             override;
+  void visit(const DelayImport& import)                   override;
+  void visit(const DelayImportEntry& import_entry)        override;
   void visit(const ResourceNode& resource_node)           override;
   void visit(const ResourceData& resource_data)           override;
   void visit(const ResourceDirectory& resource_directory) override;

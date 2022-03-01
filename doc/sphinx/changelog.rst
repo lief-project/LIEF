@@ -50,6 +50,9 @@ Changelog
   * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
 :PE:
+  * Add support for PE's delayed imports. see:
+    - :class:`~lief.PE.DelayImport` / :class:`~lief.PE.DelayImportEntry`
+    - :attr:`~lief.PE.Binary.delay_imports`
   * :attr:`lief.PE.LoadConfiguration.reserved1` has been aliased to :attr:`lief.PE.LoadConfiguration.dependent_load_flags`
   * :attr:`lief.PE.LoadConfiguration.characteristics` has been aliased to :attr:`lief.PE.LoadConfiguration.size`
   * Thanks to :github_user:`gdesmar`, we updated the PE checks to support PE files that have a corrupted

@@ -80,6 +80,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_authenticode.py")
 
+  ADD_PYTHON_TEST(PE_PYTHON_delay_imports
+    ${PYTHON_EXECUTABLE}
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_delay_imports.py")
+
   ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_authenticode_reader
     ${PYTHON_EXECUTABLE}
     "${LIEF_EXAMPLES_DIRECTORY}/python/authenticode/authenticode_reader.py \

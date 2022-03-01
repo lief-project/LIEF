@@ -27,6 +27,8 @@
 #include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/DelayImport.hpp"
+#include "LIEF/PE/DelayImportEntry.hpp"
 #include "LIEF/PE/Pogo.hpp"
 #include "LIEF/PE/PogoEntry.hpp"
 #include "LIEF/PE/DataDirectory.hpp"

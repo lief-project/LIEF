@@ -427,6 +427,26 @@ def print_functions(binary):
     for idx, f in enumerate(binary.functions):
         print("    [{:d}] {}: 0x{:x} ({:d} bytes)".format(idx, f.name, f.address, f.size))
 
+
+@exceptions_handler(Exception)
+def print_delay_imports(binary):
+    delay_imports = binary.delay_imports
+    if len(delay_imports) == 0:
+        return
+    print("== Delay Imports ==\n")
+    for imp in delay_imports:
+        print(imp.name)
+        print("  Attribute:   {}".format(imp.attribute))
+        print("  Handle:      0x{:x}".format(imp.handle))
+        print("  IAT:         0x{:x}".format(imp.iat))
+        print("  Names Table: 0x{:x}".format(imp.names_table))
+        print("  Bound IAT:   0x{:x}".format(imp.biat))
+        print("  Unload IAT:  0x{:x}".format(imp.uiat))
+        print("  Timestamp:   0x{:x}".format(imp.timestamp))
+        for entry in imp.entries:
+            print("    {:<25} 0x{:08x}: 0x{:010x} - 0x{:x}".format(entry.name, entry.value, entry.iat_value, entry.hint))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("pe_file")
@@ -502,6 +522,10 @@ def main():
     parser.add_argument('--exception-functions',
             action='store_true', dest='show_pfunctions',
             help='Display functions found in the exception directory')
+
+    parser.add_argument('--delay-imports',
+                        action='store_true', dest='show_delay_imports',
+                        help='Display delay imports')
 
     # Logging setup
     logger_group = parser.add_argument_group('Logger')
@@ -599,6 +623,9 @@ def main():
 
     if args.show_pfunctions or args.show_all:
         print_exception_functions(binary)
+
+    if args.show_delay_imports or args.show_all:
+        print_delay_imports(binary)
 
 if __name__ == "__main__":
     main()

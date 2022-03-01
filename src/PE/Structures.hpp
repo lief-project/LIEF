@@ -48,6 +48,19 @@ namespace STRUCT_SIZES {
   };
 }
 
+struct delay_imports {
+  uint32_t attribute;
+  uint32_t name;
+  uint32_t handle;
+  uint32_t iat;
+  uint32_t name_table;
+  uint32_t bound_iat;
+  uint32_t unload_iat;
+  uint32_t timestamp;
+};
+
+static_assert(sizeof(delay_imports) == 32, "Wrong sizeof(delay_imports)");
+
 #include "structures.inc"
 
 static const HEADER_CHARACTERISTICS header_characteristics_array[] = {

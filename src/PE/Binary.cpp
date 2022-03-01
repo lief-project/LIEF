@@ -384,6 +384,12 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
       lief_symbols.push_back(&entry);
     }
   }
+
+  for (DelayImport& imp : delay_imports_) {
+    for (DelayImportEntry& entry : imp.entries()) {
+      lief_symbols.push_back(&entry);
+    }
+  }
   return lief_symbols;
 }
 
@@ -870,12 +876,7 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
 
 
 bool Binary::has_import(const std::string& import_name) const {
-  const auto it_import = std::find_if(std::begin(imports_), std::end(imports_),
-      [&import_name] (const Import& import) {
-        return import.name() == import_name;
-      });
-
-  return it_import != std::end(imports_);
+  return get_import(import_name) != nullptr;
 }
 
 
@@ -1225,14 +1226,27 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
 
 LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
-  if (has_imports()) {
-    for (const Import& import : imports()) {
-      const Import& resolved = resolve_ordinals(import);
-      for (const ImportEntry& entry : resolved.entries()) {
-        const std::string& name = entry.name();
-        if(!name.empty()) {
-          result.emplace_back(name, entry.iat_address(), Function::flags_list_t{Function::FLAGS::IMPORTED});
-        }
+  for (const Import& import : imports()) {
+    const Import& resolved = resolve_ordinals(import);
+    for (const ImportEntry& entry : resolved.entries()) {
+      const std::string& name = entry.name();
+      if(!name.empty()) {
+        result.emplace_back(name, entry.iat_address(),
+                            Function::flags_list_t{Function::FLAGS::IMPORTED});
+      }
+    }
+  }
+
+
+  for (const DelayImport& import : delay_imports()) {
+    for (const DelayImportEntry& entry : import.entries()) {
+      if (entry.is_ordinal()) {
+        continue;
+      }
+      const std::string& name = entry.name();
+      if(!name.empty()) {
+        result.emplace_back(name, entry.value(),
+                            Function::flags_list_t{Function::FLAGS::IMPORTED});
       }
     }
   }
@@ -1243,6 +1257,9 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
 std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const Import& import : imports()) {
+    result.push_back(import.name());
+  }
+  for (const DelayImport& import : delay_imports()) {
     result.push_back(import.name());
   }
   return result;
@@ -1566,9 +1583,46 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
     }
     functions.push_back(std::move(f));
   }
+
   return functions;
 }
 
+
+// Delay Imports
+// ========================================================
+bool Binary::has_delay_imports() const {
+  return !delay_imports_.empty();
+}
+
+Binary::it_delay_imports Binary::delay_imports() {
+  return delay_imports_;
+}
+
+Binary::it_const_delay_imports Binary::delay_imports() const {
+  return delay_imports_;
+}
+
+
+DelayImport* Binary::get_delay_import(const std::string& import_name) {
+  return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
+}
+
+const DelayImport* Binary::get_delay_import(const std::string& import_name) const {
+  const auto it_import = std::find_if(std::begin(delay_imports_), std::end(delay_imports_),
+      [&import_name] (const DelayImport& import) {
+        return import.name() == import_name;
+      });
+
+  if (it_import == std::end(delay_imports_)) {
+    return nullptr;
+  }
+
+  return &*it_import;
+}
+
+bool Binary::has_delay_import(const std::string& import_name) const {
+  return get_delay_import(import_name) != nullptr;
+}
 
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -1660,6 +1714,15 @@ std::ostream& Binary::print(std::ostream& os) const {
     os << "Imports" << std::endl;
     os << "=======" << std::endl;
     for (const Import& import : imports()) {
+      os << import << std::endl;
+    }
+    os << std::endl;
+  }
+
+  if (has_delay_imports()) {
+    os << "Delay Imports" << std::endl;
+    os << "=============" << std::endl;
+    for (const DelayImport& import : delay_imports()) {
       os << import << std::endl;
     }
     os << std::endl;

@@ -47,6 +47,8 @@ LIEF_ABSTRACT_FORWARD(Function)
 // PE
 // ===============================
 LIEF_PE_FORWARD(Binary)
+LIEF_PE_FORWARD(DelayImport)
+LIEF_PE_FORWARD(DelayImportEntry)
 LIEF_PE_FORWARD(DosHeader)
 LIEF_PE_FORWARD(Header)
 LIEF_PE_FORWARD(OptionalHeader)
@@ -330,6 +332,12 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::ImportEntry
   LIEF_PE_VISITABLE(ImportEntry)
+
+  //! Method to visit a LIEF::PE::DelayImport
+  LIEF_PE_VISITABLE(DelayImport)
+
+  //! Method to visit a LIEF::PE::DelayImportEntry
+  LIEF_PE_VISITABLE(DelayImportEntry)
 
   //! Method to visit a LIEF::PE::ResourceNode
   LIEF_PE_VISITABLE(ResourceNode)

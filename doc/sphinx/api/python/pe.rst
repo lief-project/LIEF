@@ -89,6 +89,27 @@ Import Entry
 
 ----------
 
+Delay Import
+************
+
+.. autoclass:: lief.PE.DelayImport
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Delay Import Entry
+******************
+
+.. autoclass:: lief.PE.DelayImportEntry
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 TLS
 ***
 

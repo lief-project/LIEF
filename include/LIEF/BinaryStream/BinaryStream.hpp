@@ -203,6 +203,30 @@ class BinaryStream {
   STREAM_TYPE stype_ = STREAM_TYPE::UNKNOWN;
 };
 
+class ScopedStream {
+  public:
+  ScopedStream(const ScopedStream&) = delete;
+  ScopedStream& operator=(const ScopedStream&) = delete;
+
+  ScopedStream(const ScopedStream&&) = delete;
+  ScopedStream& operator=(ScopedStream&&) = delete;
+
+  explicit ScopedStream(BinaryStream& stream, uint64_t pos) :
+    pos_{stream.pos()},
+    stream_{stream}
+  {
+    stream_.setpos(pos);
+  }
+
+  inline ~ScopedStream() {
+    stream_.setpos(pos_);
+  }
+
+  private:
+  uint64_t pos_ = 0;
+  BinaryStream& stream_;
+};
+
 
 template<class T>
 result<T> BinaryStream::read() const {

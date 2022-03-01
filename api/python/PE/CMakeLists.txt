@@ -39,6 +39,8 @@ set(LIEF_PYTHON_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocation.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyParser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyImportEntry.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyDelayImport.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyDelayImportEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbol.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyTLS.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyEnums.cpp"

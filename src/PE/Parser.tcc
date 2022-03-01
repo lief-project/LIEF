@@ -26,6 +26,7 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 
+#include "internal_utils.hpp"
 #include "PE/Structures.hpp"
 #include "LoadConfigurations/LoadConfigurations.tcc"
 #include "LIEF/PE/Parser.hpp"
@@ -261,6 +262,17 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
+  {
+    DataDirectory& delay_imports = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
+    if (delay_imports.RVA() > 0) {
+      auto is_ok = parse_delay_imports<PE_T>();
+      if (!is_ok) {
+        LIEF_WARN("The parsing of delay imports has failed or is incomplete ('{}')",
+                  get_error(is_ok).message());
+      }
+    }
+  }
+
   return ok();
 }
 
@@ -366,7 +378,6 @@ ok_error_t Parser::parse_import_table() {
           LIEF_INFO("Can't read hint value @0x{:x}", hint_off);
         }
 
-
         // Check that the import name is valid
         if (is_valid_import_name(entry.name())) {
           import.entries_.push_back(std::move(entry));
@@ -408,6 +419,181 @@ ok_error_t Parser::parse_import_table() {
   binary_->has_imports_ = !binary_->imports_.empty();
   return ok();
 }
+
+
+template<class PE_T>
+ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_offset) {
+  using uint__ = typename PE_T::uint;
+  ScopedStream nstream(*stream_, names_offset);
+
+  uint__ entry_val = 0;
+  if (auto res = stream_->read<uint__>()) {
+    entry_val = *res;
+  } else {
+    LIEF_ERR("Can't read delay_imports.names_table[0]");
+    return res.error();
+  }
+
+  while (names_offset > 0 && entry_val > 0) {
+    DelayImportEntry entry{entry_val, type_};
+    // Index of the current entry (-1 as we start with a read())
+    const size_t index = (stream_->pos() - names_offset) / sizeof(uint__) - 1;
+    const uint32_t iat = index * sizeof(uint__);
+    if (auto res = stream_->peek<uint__>(iat)) {
+      entry.value_ = import.iat() + iat;
+      entry.iat_value_  = *res;
+      LIEF_DEBUG("  [{}].iat : 0x{:010x}", index, entry.iat_value_);
+    } else {
+      LIEF_WARN("Can't access the IAT value @0x{:x}", iat);
+    }
+
+    if (!entry.is_ordinal()) {
+      size_t hint_off = 0;
+      try {
+        hint_off = binary_->rva_to_offset(entry.hint_name_rva());
+      } catch (LIEF::conversion_error&) {
+        LIEF_WARN("Can't convert 0x{:x} into an offset", entry.hint_name_rva());
+        continue;
+      }
+      const size_t name_off = hint_off + sizeof(uint16_t);
+      if (auto entry_name = stream_->peek_string_at(name_off)) {
+        entry.name_ = std::move(*entry_name);
+      } else {
+        LIEF_ERR("Can't read import entry name");
+      }
+      if (auto hint = stream_->peek<uint16_t>(hint_off)) {
+        entry.hint_ = *hint;
+      } else {
+        LIEF_INFO("Can't read hint value @0x{:x}", hint_off);
+      }
+
+      // Check that the import name is valid
+      if (Parser::is_valid_import_name(entry.name())) {
+        LIEF_DEBUG("  [{}].name: {}", index, entry.name());
+        import.entries_.push_back(std::move(entry));
+      } else if (!entry.name().empty()){
+        LIEF_INFO("'{}' is an invalid import name and will be discarded", entry.name());
+      }
+
+    } else {
+      import.entries_.push_back(std::move(entry));
+    }
+
+    if (auto res = stream_->read<uint__>()) {
+      entry_val = *res;
+    } else {
+      LIEF_ERR("Can't read the Name offset value at 0x{:x}", stream_->pos());
+      break;
+    }
+  }
+  return ok();
+}
+
+template<typename PE_T>
+ok_error_t Parser::parse_delay_imports() {
+  LIEF_DEBUG("[>] Parsing the Delay Import Table");
+  std::string dll_name;
+
+  const DataDirectory& dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
+  const uint64_t size = dir.size();
+  uint64_t offset = 0;
+  try {
+    offset = binary_->rva_to_offset(dir.RVA());
+  } catch (LIEF::conversion_error& e) {
+    return make_error_code(lief_errors::conversion_error);
+  }
+  const uint64_t delay_end = offset + size;
+
+  stream_->setpos(offset);
+  while (stream_->pos() < delay_end) {
+    details::delay_imports raw_desc;
+    if (auto res = stream_->read<decltype(raw_desc)>()) {
+      raw_desc = *res;
+    } else {
+      LIEF_ERR("Can't read 'details::delay_imports'");
+      return make_error_code(lief_errors::read_error);
+    }
+    DelayImport import{raw_desc, type_};
+
+    if (BinaryStream::is_all_zero(raw_desc)) {
+      return ok();
+    }
+
+    uint64_t name_offset = 0;
+    try {
+      name_offset = binary_->rva_to_offset(raw_desc.name);
+    } catch (LIEF::conversion_error& e) {
+      LIEF_ERR("Can't convert delay_imports.name: 0x{:x} into an offset", raw_desc.name);
+      continue;
+    }
+
+    if (auto res = stream_->peek_string_at(name_offset)) {
+      dll_name = *res;
+    } else {
+      LIEF_ERR("Can't read the DLL name");
+      return make_error_code(lief_errors::conversion_error);
+    }
+
+    if (!is_valid_dll_name(dll_name)) {
+      if (!dll_name.empty()) {
+        LIEF_WARN("'{}' is not a valid DLL name and will be discarded", printable_string(dll_name));
+        continue;
+      }
+      continue;
+    }
+
+    import.name_ = dll_name;
+
+    LIEF_DEBUG("  delay_imports.name:       {}",       dll_name);
+    LIEF_DEBUG("  delay_imports.attribute:  {}",       raw_desc.attribute);
+    LIEF_DEBUG("  delay_imports.handle:     0x{:04x}", raw_desc.handle);
+    LIEF_DEBUG("  delay_imports.iat:        0x{:04x}", raw_desc.iat);
+    LIEF_DEBUG("  delay_imports.name_table: 0x{:04x}", raw_desc.name_table);
+    LIEF_DEBUG("  delay_imports.bound_iat:  0x{:04x}", raw_desc.bound_iat);
+    LIEF_DEBUG("  delay_imports.unload_iat: 0x{:04x}", raw_desc.unload_iat);
+    LIEF_DEBUG("  delay_imports.timestamp:  0x{:04x}", raw_desc.timestamp);
+
+    // Offset to Delay Import Name Table
+    uint64_t names_offset = 0;
+
+    // Offset to the import address table
+    uint64_t IAT_offset = 0;
+
+    if (raw_desc.name_table > 0) {
+      try {
+        names_offset = binary_->rva_to_offset(raw_desc.name_table);
+      } catch (LIEF::conversion_error& e) {
+        LIEF_ERR("Can't convert delay_imports.name_table: 0x{:x} into an offset", raw_desc.name_table);
+        continue;
+      }
+    }
+
+
+    if (raw_desc.iat > 0) {
+      try {
+        IAT_offset = binary_->rva_to_offset(raw_desc.iat);
+      } catch (LIEF::conversion_error& e) {
+        LIEF_ERR("Can't convert delay_imports.iat: 0x{:x} into an offset", raw_desc.iat);
+        continue;
+      }
+    }
+    LIEF_DEBUG("  [IAT  ]: 0x{:04x}", IAT_offset);
+    LIEF_DEBUG("  [Names]: 0x{:04x}", names_offset);
+
+    if (names_offset > 0) {
+      auto is_ok = parse_delay_names_table<PE_T>(import, names_offset);
+      if (!is_ok) {
+        LIEF_WARN("[!] Delay imports names table parsed with errors ('{}')",
+                  get_error(is_ok).message());
+      }
+    }
+
+    binary_->delay_imports_.push_back(std::move(import));
+  }
+
+  return ok();
+}
+
 
 template<typename PE_T>
 ok_error_t Parser::parse_tls() {
