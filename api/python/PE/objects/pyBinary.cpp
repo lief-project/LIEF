@@ -42,8 +42,11 @@ void create<Binary>(py::module& m) {
 
   py::class_<Binary, LIEF::Binary> bin(m, "Binary",
       R"delim(
-      Class which represents a PE binary
-      This is the main interface to manage and modify a PE executable
+      Class which represents a PE binary which is the main interface
+      to manage and modify a PE executable.
+
+      This object can be instantiated through :func:`lief.parse` or :func:`lief.PE.parse` while
+      the constructor of this object can be used to craft a binary from scratch (see: :ref:`02-pe-from-scratch`)
       )delim");
 
   init_ref_iterator<Binary::it_sections>(bin, "it_section");
@@ -55,7 +58,8 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
 
   bin
-    .def(py::init<const std::string&, PE_TYPE>())
+    .def(py::init<const std::string&, PE_TYPE>(),
+         "name"_a, "type"_a)
 
     .def_property_readonly("sections",
         static_cast<no_const_getter<Binary::it_sections>>(&Binary::sections),
