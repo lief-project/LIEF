@@ -20,6 +20,9 @@
 #include "LIEF/iostream.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
+#define LIEF_PE_FORCE_UNDEF
+#include "LIEF/PE/undef.h"
+
 #include "logging.hpp"
 #include "PE/Structures.hpp"
 #include "hash_stream.hpp"
