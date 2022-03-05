@@ -129,28 +129,28 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
   switch (size) {
     case sizeof(uint8_t):
       {
-        const auto X = static_cast<const uint8_t>(patch_value);
+        auto X = static_cast<uint8_t>(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint8_t));
         break;
       }
 
     case sizeof(uint16_t):
       {
-        const auto X = static_cast<const uint16_t>(patch_value);
+        auto X = static_cast<uint16_t>(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint16_t));
         break;
       }
 
     case sizeof(uint32_t):
       {
-        const auto X = static_cast<const uint32_t>(patch_value);
+        auto X = static_cast<uint32_t>(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint32_t));
         break;
       }
 
     case sizeof(uint64_t):
       {
-        const auto X = static_cast<const uint64_t>(patch_value);
+        auto X = static_cast<uint64_t>(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint64_t));
         break;
       }
