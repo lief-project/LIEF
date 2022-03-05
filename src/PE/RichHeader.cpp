@@ -16,8 +16,13 @@
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
-
 #include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+
+#include "logging.hpp"
+#include "PE/Structures.hpp"
+#include "hash_stream.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -54,6 +59,65 @@ void RichHeader::add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
 
 void RichHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+std::vector<uint8_t> RichHeader::raw() const {
+  return raw(0);
+}
+
+std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
+  static constexpr uint32_t RICH_MAGIC = 0x68636952;
+  vector_iostream wstream;
+
+  wstream
+    .write(details::DanS_Magic_number ^ xor_key)
+    /*
+     * The first chunk needs to be aligned on 64-bit and padded
+     * with 0-xor. We can't use vector_iostream::align as it would not
+     * be encoded.
+     */
+    .write<uint32_t>(0 ^ xor_key)
+    .write<uint32_t>(0 ^ xor_key)
+    .write<uint32_t>(0 ^ xor_key);
+
+  for (auto it = entries_.crbegin(); it != entries_.crend(); ++it) {
+    const RichEntry& entry = *it;
+    const uint32_t value = (static_cast<uint32_t>(entry.id()) << 16) | entry.build_id();
+    wstream
+      .write(value ^ xor_key).write(entry.count() ^ xor_key);
+  }
+
+  wstream
+    .write(RICH_MAGIC).write(xor_key);
+
+  return wstream.raw();
+}
+
+
+std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo) const {
+  return hash(algo, 0);
+}
+
+std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
+  static const std::map<ALGORITHMS, hashstream::HASH> HMAP = {
+    {ALGORITHMS::MD5,     hashstream::HASH::MD5},
+    {ALGORITHMS::SHA_1,   hashstream::HASH::SHA1},
+    {ALGORITHMS::SHA_256, hashstream::HASH::SHA256},
+    {ALGORITHMS::SHA_384, hashstream::HASH::SHA384},
+    {ALGORITHMS::SHA_512, hashstream::HASH::SHA512},
+  };
+
+  auto it_hash = HMAP.find(algo);
+  if (it_hash == std::end(HMAP)) {
+    LIEF_WARN("Unsupported hash algorithm: {}", to_string(algo));
+    return {};
+  }
+
+  const hashstream::HASH hash_type = it_hash->second;
+  hashstream hs(hash_type);
+  const std::vector<uint8_t> clear_raw = raw(xor_key);
+  hs.write(clear_raw.data(), clear_raw.size());
+  return hs.raw();
 }
 
 bool RichHeader::operator==(const RichHeader& rhs) const {

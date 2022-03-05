@@ -356,6 +356,18 @@ class TestSimple(TestCase):
         self.assertEqual(entry_4.id, 0x95)
         self.assertEqual(entry_4.build_id, 0x7809)
         self.assertEqual(entry_4.count, 1)
+        hex_val = bytes(rheader.raw(rheader.key)).hex()
+        self.assertEqual(hex_val,
+                         "a7c718f7e3a676a4e3a676a4e3a676a4"
+                         "eadee5a4e6a676a4e3a677a4fba676a4"
+                         "eadee3a4e2a676a4eadef5a4e0a676a4"
+                         "eadeffa4e1a676a4eadee2a4e2a676a4"
+                         "eadee7a4e2a676a452696368e3a676a4")
+
+        sha256 = bytes(rheader.hash(lief.PE.ALGORITHMS.SHA_256, rheader.key)).hex()
+        self.assertEqual(sha256, "1bda7d55023ff27b0ea1c9f56d53ca77ca4264ac58fdee8daac58cdc060bf2da")
+
+
 
     def test_relocations(self):
         pe: lief.PE.Binary = lief.parse(get_sample("PE/PE64_x86-64_binary_mfc-application.exe"))
