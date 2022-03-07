@@ -436,6 +436,13 @@ class TestSimple(TestCase):
         self.assertEqual(symbol.section_number, 1)
         self.assertEqual(symbol.type, 32)
 
+
+    def test_checksum(self):
+        self.assertEqual(self.atapi.optional_header.computed_checksum,
+                         self.atapi.optional_header.checksum)
+        self.assertEqual(self.winhello64.optional_header.computed_checksum,
+                         self.winhello64.optional_header.checksum)
+
 if __name__ == '__main__':
 
     root_logger = logging.getLogger()

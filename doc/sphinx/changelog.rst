@@ -50,6 +50,8 @@ Changelog
   * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
 
 :PE:
+  * Adding :attr:`lief.PE.OptionalHeader.computed_checksum` that re-computes the :attr:`lief.PE.OptionalHeader.checksum`
+    (c.f. issue :issue:`660`)
   * Enable to recompute the :class:`~lief.PE.RichHeader` (issue: :issue:`587`)
 
     - :meth:`~lief.PE.RichHeader.raw`

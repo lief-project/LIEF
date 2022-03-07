@@ -42,6 +42,12 @@ ok_error_t Parser::parse() {
     return make_error_code(lief_errors::parsing_error);
   }
 
+  if (auto opt_chksum = checksum()) {
+    LIEF_DEBUG("Checksum               : 0x{:06x}", *opt_chksum);
+    LIEF_DEBUG("OptionalHeader.checksum: 0x{:06x}", binary_->optional_header().checksum());
+    binary_->optional_header_.computed_checksum_ = *opt_chksum;
+  }
+
   LIEF_DEBUG("[+] Processing DOS stub & Rich header");
 
   if (!parse_dos_stub()) {

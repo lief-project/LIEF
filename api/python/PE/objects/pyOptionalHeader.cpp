@@ -199,6 +199,16 @@ void create<OptionalHeader>(py::module& m) {
         )delim")
 
 
+    .def_property_readonly("computed_checksum",
+        &OptionalHeader::computed_checksum,
+        R"delim(
+        The re-computed value of the :attr:`~lief.PE.OptionalHeader.checksum`.
+        If both values do not match, it could mean that the binary has been modified
+        after the compilation.
+
+        This value is computed by LIEF when parsing the PE binary.
+        )delim")
+
     .def_property("subsystem",
         static_cast<getter_t<SUBSYSTEM>>(&OptionalHeader::subsystem),
         static_cast<setter_t<SUBSYSTEM>>(&OptionalHeader::subsystem),

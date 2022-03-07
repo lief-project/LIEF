@@ -25,6 +25,7 @@
 
 namespace LIEF {
 namespace PE {
+class Parser;
 
 namespace details {
 struct pe32_optional_header;
@@ -33,6 +34,7 @@ struct pe64_optional_header;
 
 //! Class which represents the PE OptionalHeader structure
 class LIEF_API OptionalHeader : public Object {
+  friend class Parser;
   public:
   OptionalHeader();
   OptionalHeader(const details::pe32_optional_header& header);
@@ -131,6 +133,15 @@ class LIEF_API OptionalHeader : public Object {
   //! The following are checked for validation at load time all **drivers**, any **DLL loaded at boot**
   //! time, and any **DLL** that is loaded into a **critical** Windows process.
   uint32_t checksum() const;
+
+  //! The re-computed value of the OptionalHeader::checksum.
+  //! If both values do not match, it could mean that the binary has been modified
+  //! after the compilation.
+  //!
+  //! This value is computed by LIEF when parsing the PE binary.
+  inline uint32_t computed_checksum() const {
+    return computed_checksum_;
+  }
 
   //! Target subsystem like Driver, XBox, Windows GUI, ...
   SUBSYSTEM subsystem() const;
@@ -245,6 +256,8 @@ class LIEF_API OptionalHeader : public Object {
   uint64_t  sizeOfHeapCommit_;
   uint32_t  loaderFlags_;
   uint32_t  numberOfRvaAndSize_;
+
+  uint32_t  computed_checksum_ = 0;
 };
 }
 }
