@@ -119,7 +119,6 @@ elif os.getenv("CI_LOCAL", "") == "true":
 else:
     logger.error("Can't detect CI!")
     sys.exit(1)
-# TODO(romain): Azure
 
 CI_PRETTY_NAME = pretty_ci_name(CURRENT_CI)
 logger.info("CI: %s", CI_PRETTY_NAME)
@@ -153,7 +152,7 @@ if DEPLOY_IV is None or len(DEPLOY_IV) == 0:
     sys.exit(1)
 
 GIT_USER  = "lief-{}-ci".format(CI_PRETTY_NAME)
-GIT_EMAIL = "lief@quarkslab.com"
+GIT_EMAIL = "ci@lief.re"
 
 CI_CWD = pathlib.Path(get_ci_workdir(CURRENT_CI))
 
