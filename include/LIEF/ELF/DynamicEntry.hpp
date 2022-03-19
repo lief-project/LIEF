@@ -16,27 +16,26 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_H_
 #define LIEF_ELF_DYNAMIC_ENTRY_H_
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
 namespace details {
 struct Elf64_Dyn;
 struct Elf32_Dyn;
-}
+}  // namespace details
 
 //! Class which represents an entry in the dynamic table
-//! These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC`` segment
+//! These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC``
+//! segment
 class LIEF_API DynamicEntry : public Object {
-  public:
-
+ public:
   DynamicEntry(const details::Elf64_Dyn& header);
   DynamicEntry(const details::Elf32_Dyn& header);
   DynamicEntry();
@@ -66,12 +65,13 @@ class LIEF_API DynamicEntry : public Object {
   bool operator==(const DynamicEntry& rhs) const;
   bool operator!=(const DynamicEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DynamicEntry& entry);
 
-  protected:
+ protected:
   DYNAMIC_TAGS tag_;
-  uint64_t     value_;
+  uint64_t value_;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

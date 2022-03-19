@@ -16,10 +16,10 @@
 #ifndef LIEF_ELF_NOTE_DETAILS_CORE_H_
 #define LIEF_ELF_NOTE_DETAILS_CORE_H_
 
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
 #endif

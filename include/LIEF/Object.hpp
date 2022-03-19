@@ -19,39 +19,39 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/visibility.h"
 
-template< class T >
+template <class T>
 using add_pointer_t = typename std::add_pointer<T>::type;
 
-template< class T >
+template <class T>
 using decay_t = typename std::decay<T>::type;
 
-template< class T >
+template <class T>
 using add_const_t = typename std::add_const<T>::type;
 
 namespace LIEF {
 
 class LIEF_API Object {
-  public:
-  template<class T>
+ public:
+  template <class T>
   using output_t = add_pointer_t<decay_t<T>>;
 
-  template<class T>
+  template <class T>
   using output_const_t = add_pointer_t<add_const_t<decay_t<T>>>;
 
-  public:
+ public:
   Object();
   Object(const Object& other);
   Object& operator=(const Object& other);
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL output_t<T> as();
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL output_const_t<T> as() const;
 
   virtual ~Object();
   virtual void accept(Visitor& visitor) const = 0;
 };
-}
+}  // namespace LIEF
 
 #endif

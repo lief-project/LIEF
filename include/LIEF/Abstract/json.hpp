@@ -16,15 +16,15 @@
 #ifndef LIEF_ABSTRACT_JSON_H_
 #define LIEF_ABSTRACT_JSON_H_
 
-#include "LIEF/visibility.h"
 #include <string>
+
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Object;
 
 LIEF_API std::string to_json_from_abstract(const Object& v);
 
-}
+}  // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT
-
+#endif  // LIEF_JSON_SUPPORT

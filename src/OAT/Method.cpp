@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include "LIEF/OAT/Method.hpp"
+
 #include <utility>
 
-#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
 
 namespace LIEF {
@@ -26,41 +27,30 @@ Method::Method() = default;
 Method::Method(const Method&) = default;
 Method& Method::operator=(const Method&) = default;
 
-Method::Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  quick_code) :
-  dex_method_{method},
-  class_{oat_class},
-  quick_code_{std::move(quick_code)}
-{}
+Method::Method(DEX::Method* method, Class* oat_class,
+               std::vector<uint8_t> quick_code)
+    : dex_method_{method},
+      class_{oat_class},
+      quick_code_{std::move(quick_code)} {}
 
-const Class* Method::oat_class() const {
-  return class_;
-}
+const Class* Method::oat_class() const { return class_; }
 
 Class* Method::oat_class() {
   return const_cast<Class*>(static_cast<const Method*>(this)->oat_class());
 }
 
+bool Method::has_dex_method() const { return dex_method_ != nullptr; }
 
-bool Method::has_dex_method() const {
-  return dex_method_ != nullptr;
-}
-
-const DEX::Method* Method::dex_method() const {
-  return dex_method_;
-}
+const DEX::Method* Method::dex_method() const { return dex_method_; }
 
 DEX::Method* Method::dex_method() {
-  return const_cast<DEX::Method*>(static_cast<const Method*>(this)->dex_method());
+  return const_cast<DEX::Method*>(
+      static_cast<const Method*>(this)->dex_method());
 }
 
-bool Method::is_dex2dex_optimized() const {
-  return !dex2dex_info().empty();
-}
+bool Method::is_dex2dex_optimized() const { return !dex2dex_info().empty(); }
 
-bool Method::is_compiled() const {
-  return !quick_code_.empty();
-}
-
+bool Method::is_compiled() const { return !quick_code_.empty(); }
 
 std::string Method::name() const {
   if (dex_method_ == nullptr) {
@@ -74,18 +64,13 @@ const DEX::dex2dex_method_info_t& Method::dex2dex_info() const {
   return dex_method_->dex2dex_info();
 }
 
-
-const Method::quick_code_t& Method::quick_code() const {
-  return quick_code_;
-}
+const Method::quick_code_t& Method::quick_code() const { return quick_code_; }
 
 void Method::quick_code(const Method::quick_code_t& code) {
   quick_code_ = code;
 }
 
-void Method::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Method::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Method::operator==(const Method& rhs) const {
   if (this == &rhs) {
@@ -96,9 +81,7 @@ bool Method::operator==(const Method& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Method::operator!=(const Method& rhs) const {
-  return !(*this == rhs);
-}
+bool Method::operator!=(const Method& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Method& meth) {
   std::string pretty_name = meth.oat_class()->fullname();
@@ -118,7 +101,5 @@ std::ostream& operator<<(std::ostream& os, const Method& meth) {
 
 Method::~Method() = default;
 
-
-
-}
-}
+}  // namespace OAT
+}  // namespace LIEF

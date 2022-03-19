@@ -18,16 +18,15 @@
 #include <iostream>
 #include <set>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v1;
 }
 
@@ -35,18 +34,19 @@ struct load_configuration_v1;
 //!
 //! This structure is available from Windows 8.1
 class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN8_1;
 
-  template<class T>
+  template <class T>
   using flags_list_t = std::set<T>;
 
   using guard_cf_flags_list_t = flags_list_t<GUARD_CF_FLAGS>;
 
   LoadConfigurationV1();
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV1(const details::load_configuration_v1<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV1(
+      const details::load_configuration_v1<T>& header);
 
   LoadConfigurationV1& operator=(const LoadConfigurationV1&);
   LoadConfigurationV1(const LoadConfigurationV1&);
@@ -56,7 +56,8 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   //! @brief The VA where Control Flow Guard check-function pointer is stored.
   uint64_t guard_cf_check_function_pointer() const;
 
-  //! @brief The VA where Control Flow Guard dispatch-function pointer is stored.
+  //! @brief The VA where Control Flow Guard dispatch-function pointer is
+  //! stored.
   uint64_t guard_cf_dispatch_function_pointer() const;
 
   //! @brief The VA of the sorted table of RVAs of each Control Flow Guard
@@ -70,14 +71,18 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   //! @brief Control Flow Guard related flags.
   GUARD_CF_FLAGS guard_flags() const;
 
-  //! @brief Check if the given flag is present in LoadConfigurationV1::guard_flags
+  //! @brief Check if the given flag is present in
+  //! LoadConfigurationV1::guard_flags
   bool has(GUARD_CF_FLAGS flag) const;
 
-  //! @brief LoadConfigurationV1::guard_flags as a list of LIEF::PE::GUARD_CF_FLAGS
+  //! @brief LoadConfigurationV1::guard_flags as a list of
+  //! LIEF::PE::GUARD_CF_FLAGS
   guard_cf_flags_list_t guard_cf_flags_list() const;
 
-  void guard_cf_check_function_pointer(uint64_t guard_cf_check_function_pointer);
-  void guard_cf_dispatch_function_pointer(uint64_t guard_cf_dispatch_function_pointer);
+  void guard_cf_check_function_pointer(
+      uint64_t guard_cf_check_function_pointer);
+  void guard_cf_dispatch_function_pointer(
+      uint64_t guard_cf_dispatch_function_pointer);
   void guard_cf_function_table(uint64_t guard_cf_function_table);
   void guard_cf_function_count(uint64_t guard_cf_function_count);
   void guard_flags(GUARD_CF_FLAGS guard_flags);
@@ -91,14 +96,14 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   uint64_t guard_cf_check_function_pointer_;
   uint64_t guard_cf_dispatch_function_pointer_;
   uint64_t guard_cf_function_table_;
   uint64_t guard_cf_function_count_;
   GUARD_CF_FLAGS guard_flags_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -70,7 +70,7 @@ class ContentInfo;
 class Attribute;
 class ContentType;
 class GenericType;
-//class MsCounterSign;
+// class MsCounterSign;
 class MsSpcNestedSignature;
 class MsSpcStatementType;
 class PKCS9AtSequenceNumber;
@@ -94,80 +94,80 @@ class PogoEntry;
 //! Class that implements the Visitor pattern to output
 //! a JSON representation of a PE object
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const Binary& Binary)                        override;
-  void visit(const DosHeader& dos_header)                 override;
-  void visit(const RichHeader& rich_header)               override;
-  void visit(const RichEntry& rich_entry)                 override;
-  void visit(const Header& header)                        override;
-  void visit(const OptionalHeader& optional_header)       override;
-  void visit(const DataDirectory& data_directory)         override;
-  void visit(const Section& section)                      override;
-  void visit(const Relocation& relocation)                override;
-  void visit(const RelocationEntry& relocation_entry)     override;
-  void visit(const Export& export_)                       override;
-  void visit(const ExportEntry& export_entry)             override;
-  void visit(const TLS& tls)                              override;
-  void visit(const Symbol& Symbol)                        override;
-  void visit(const Debug& debug)                          override;
-  void visit(const CodeView& dv)                          override;
-  void visit(const CodeViewPDB& cvpdb)                    override;
-  void visit(const Import& import)                        override;
-  void visit(const ImportEntry& import_entry)             override;
-  void visit(const DelayImport& import)                   override;
-  void visit(const DelayImportEntry& import_entry)        override;
-  void visit(const ResourceNode& resource_node)           override;
-  void visit(const ResourceData& resource_data)           override;
+ public:
+  void visit(const Binary& Binary) override;
+  void visit(const DosHeader& dos_header) override;
+  void visit(const RichHeader& rich_header) override;
+  void visit(const RichEntry& rich_entry) override;
+  void visit(const Header& header) override;
+  void visit(const OptionalHeader& optional_header) override;
+  void visit(const DataDirectory& data_directory) override;
+  void visit(const Section& section) override;
+  void visit(const Relocation& relocation) override;
+  void visit(const RelocationEntry& relocation_entry) override;
+  void visit(const Export& export_) override;
+  void visit(const ExportEntry& export_entry) override;
+  void visit(const TLS& tls) override;
+  void visit(const Symbol& Symbol) override;
+  void visit(const Debug& debug) override;
+  void visit(const CodeView& dv) override;
+  void visit(const CodeViewPDB& cvpdb) override;
+  void visit(const Import& import) override;
+  void visit(const ImportEntry& import_entry) override;
+  void visit(const DelayImport& import) override;
+  void visit(const DelayImportEntry& import_entry) override;
+  void visit(const ResourceNode& resource_node) override;
+  void visit(const ResourceData& resource_data) override;
   void visit(const ResourceDirectory& resource_directory) override;
-  void visit(const ResourcesManager& resources_manager)   override;
-  void visit(const ResourceVersion& resource_version)     override;
-  void visit(const ResourceStringFileInfo& resource_sfi)  override;
-  void visit(const ResourceFixedFileInfo& resource_ffi)   override;
-  void visit(const ResourceVarFileInfo& resource_vfi)     override;
-  void visit(const ResourceStringTable& resource_st)      override;
-  void visit(const ResourceAccelerator& resource_acc)     override;
-  void visit(const LangCodeItem& resource_lci)            override;
-  void visit(const ResourceIcon& resource_icon)           override;
-  void visit(const ResourceDialog& dialog)                override;
-  void visit(const ResourceDialogItem& dialog_item)       override;
-  void visit(const Signature& signature)                  override;
-  void visit(const x509& x509)                            override;
-  void visit(const SignerInfo& signerinfo)                override;
-  void visit(const ContentInfo& contentinfo)              override;
-  void visit(const Attribute& attr)                       override;
-  void visit(const ContentType& attr)                     override;
-  void visit(const GenericType& attr)                     override;
-  //void visit(const MsCounterSign& attr)                 override;
-  void visit(const MsSpcNestedSignature& attr)            override;
-  void visit(const MsSpcStatementType& attr)              override;
-  void visit(const PKCS9AtSequenceNumber& attr)           override;
-  void visit(const PKCS9CounterSignature& attr)           override;
-  void visit(const PKCS9MessageDigest& attr)              override;
-  void visit(const PKCS9SigningTime& attr)                override;
-  void visit(const SpcSpOpusInfo& attr)                   override;
-  void visit(const CodeIntegrity& code_integrity)         override;
-  void visit(const LoadConfiguration& config)             override;
-  void visit(const LoadConfigurationV0& config)           override;
-  void visit(const LoadConfigurationV1& config)           override;
-  void visit(const LoadConfigurationV2& config)           override;
-  void visit(const LoadConfigurationV3& config)           override;
-  void visit(const LoadConfigurationV4& config)           override;
-  void visit(const LoadConfigurationV5& config)           override;
-  void visit(const LoadConfigurationV6& config)           override;
-  void visit(const LoadConfigurationV7& config)           override;
+  void visit(const ResourcesManager& resources_manager) override;
+  void visit(const ResourceVersion& resource_version) override;
+  void visit(const ResourceStringFileInfo& resource_sfi) override;
+  void visit(const ResourceFixedFileInfo& resource_ffi) override;
+  void visit(const ResourceVarFileInfo& resource_vfi) override;
+  void visit(const ResourceStringTable& resource_st) override;
+  void visit(const ResourceAccelerator& resource_acc) override;
+  void visit(const LangCodeItem& resource_lci) override;
+  void visit(const ResourceIcon& resource_icon) override;
+  void visit(const ResourceDialog& dialog) override;
+  void visit(const ResourceDialogItem& dialog_item) override;
+  void visit(const Signature& signature) override;
+  void visit(const x509& x509) override;
+  void visit(const SignerInfo& signerinfo) override;
+  void visit(const ContentInfo& contentinfo) override;
+  void visit(const Attribute& attr) override;
+  void visit(const ContentType& attr) override;
+  void visit(const GenericType& attr) override;
+  // void visit(const MsCounterSign& attr)                 override;
+  void visit(const MsSpcNestedSignature& attr) override;
+  void visit(const MsSpcStatementType& attr) override;
+  void visit(const PKCS9AtSequenceNumber& attr) override;
+  void visit(const PKCS9CounterSignature& attr) override;
+  void visit(const PKCS9MessageDigest& attr) override;
+  void visit(const PKCS9SigningTime& attr) override;
+  void visit(const SpcSpOpusInfo& attr) override;
+  void visit(const CodeIntegrity& code_integrity) override;
+  void visit(const LoadConfiguration& config) override;
+  void visit(const LoadConfigurationV0& config) override;
+  void visit(const LoadConfigurationV1& config) override;
+  void visit(const LoadConfigurationV2& config) override;
+  void visit(const LoadConfigurationV3& config) override;
+  void visit(const LoadConfigurationV4& config) override;
+  void visit(const LoadConfigurationV5& config) override;
+  void visit(const LoadConfigurationV6& config) override;
+  void visit(const LoadConfigurationV7& config) override;
 
-  void visit(const Pogo& pogo)        override;
-  void visit(const PogoEntry& entry)  override;
+  void visit(const Pogo& pogo) override;
+  void visit(const PogoEntry& entry) override;
 
-  void visit(const LIEF::Binary& binary)   override;
-  void visit(const LIEF::Symbol& symbol)   override;
+  void visit(const LIEF::Binary& binary) override;
+  void visit(const LIEF::Symbol& symbol) override;
   void visit(const LIEF::Section& section) override;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

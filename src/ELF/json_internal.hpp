@@ -16,9 +16,9 @@
 #ifndef LIEF_ELF_JSON_INTERNAL_H_
 #define LIEF_ELF_JSON_INTERNAL_H_
 
+#include "LIEF/ELF.hpp"
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
-#include "LIEF/ELF.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -56,40 +56,40 @@ class SysvHash;
 //! Class that implements the Visitor pattern to output
 //! a JSON representation of an ELF object
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const Binary& binary)                  override;
-  void visit(const Header& header)                  override;
-  void visit(const Section& section)                override;
-  void visit(const Segment& segment)                override;
-  void visit(const DynamicEntry& entry)             override;
-  void visit(const DynamicEntryArray& entry)        override;
-  void visit(const DynamicEntryLibrary& entry)      override;
-  void visit(const DynamicEntryRpath& entry)        override;
-  void visit(const DynamicEntryRunPath& entry)      override;
-  void visit(const DynamicSharedObject& entry)      override;
-  void visit(const DynamicEntryFlags& entry)        override;
-  void visit(const Symbol& symbol)                  override;
-  void visit(const Relocation& relocation)          override;
-  void visit(const SymbolVersion& sv)               override;
-  void visit(const SymbolVersionAux& sv)            override;
+ public:
+  void visit(const Binary& binary) override;
+  void visit(const Header& header) override;
+  void visit(const Section& section) override;
+  void visit(const Segment& segment) override;
+  void visit(const DynamicEntry& entry) override;
+  void visit(const DynamicEntryArray& entry) override;
+  void visit(const DynamicEntryLibrary& entry) override;
+  void visit(const DynamicEntryRpath& entry) override;
+  void visit(const DynamicEntryRunPath& entry) override;
+  void visit(const DynamicSharedObject& entry) override;
+  void visit(const DynamicEntryFlags& entry) override;
+  void visit(const Symbol& symbol) override;
+  void visit(const Relocation& relocation) override;
+  void visit(const SymbolVersion& sv) override;
+  void visit(const SymbolVersionAux& sv) override;
   void visit(const SymbolVersionAuxRequirement& sv) override;
-  void visit(const SymbolVersionRequirement& svr)   override;
-  void visit(const SymbolVersionDefinition& svd)    override;
-  void visit(const Note& note)                      override;
-  void visit(const NoteAbi& note)                   override;
-  void visit(const NoteDetails& details)            override;
-  void visit(const CorePrPsInfo& pinfo)             override;
-  void visit(const CorePrStatus& pstatus)           override;
-  void visit(const CoreAuxv& auxv)                  override;
-  void visit(const CoreSigInfo& siginfo)            override;
-  void visit(const CoreFile& file)                  override;
-  void visit(const GnuHash& gnuhash)                override;
-  void visit(const SysvHash& sysvhash)              override;
+  void visit(const SymbolVersionRequirement& svr) override;
+  void visit(const SymbolVersionDefinition& svd) override;
+  void visit(const Note& note) override;
+  void visit(const NoteAbi& note) override;
+  void visit(const NoteDetails& details) override;
+  void visit(const CorePrPsInfo& pinfo) override;
+  void visit(const CorePrStatus& pstatus) override;
+  void visit(const CoreAuxv& auxv) override;
+  void visit(const CoreSigInfo& siginfo) override;
+  void visit(const CoreFile& file) override;
+  void visit(const GnuHash& gnuhash) override;
+  void visit(const SysvHash& sysvhash) override;
 };
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

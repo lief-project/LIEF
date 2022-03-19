@@ -17,13 +17,12 @@
 #define LIEF_DEX_FILE_H_
 #include <memory>
 
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/MapList.hpp"
-#include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/instructions.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -37,35 +36,38 @@ class Prototype;
 class LIEF_API File : public Object {
   friend class Parser;
 
-  public:
+ public:
   using classes_t = std::unordered_map<std::string, Class*>;
   using classes_list_t = std::vector<std::unique_ptr<Class>>;
   using it_classes = ref_iterator<classes_list_t&, Class*>;
-  using it_const_classes = const_ref_iterator<const classes_list_t&, const Class*>;
+  using it_const_classes =
+      const_ref_iterator<const classes_list_t&, const Class*>;
 
   using methods_t = std::vector<std::unique_ptr<Method>>;
   using it_methods = ref_iterator<methods_t&, Method*>;
   using it_const_methods = const_ref_iterator<const methods_t&, const Method*>;
 
-  using strings_t           = std::vector<std::unique_ptr<std::string>>;
-  using it_strings          = ref_iterator<strings_t&, std::string*>;
-  using it_const_strings    = const_ref_iterator<const strings_t&, const std::string*>;
+  using strings_t = std::vector<std::unique_ptr<std::string>>;
+  using it_strings = ref_iterator<strings_t&, std::string*>;
+  using it_const_strings =
+      const_ref_iterator<const strings_t&, const std::string*>;
 
-  using types_t             = std::vector<std::unique_ptr<Type>>;
-  using it_types            = ref_iterator<types_t&, Type*>;
-  using it_const_types      = const_ref_iterator<const types_t&, const Type*>;
+  using types_t = std::vector<std::unique_ptr<Type>>;
+  using it_types = ref_iterator<types_t&, Type*>;
+  using it_const_types = const_ref_iterator<const types_t&, const Type*>;
 
-  using prototypes_t        = std::vector<std::unique_ptr<Prototype>>;
-  using it_prototypes       = ref_iterator<prototypes_t&, Prototype*>;
-  using it_const_prototypes = const_ref_iterator<const prototypes_t&, const Prototype*>;
+  using prototypes_t = std::vector<std::unique_ptr<Prototype>>;
+  using it_prototypes = ref_iterator<prototypes_t&, Prototype*>;
+  using it_const_prototypes =
+      const_ref_iterator<const prototypes_t&, const Prototype*>;
 
-  using fields_t            = std::vector<std::unique_ptr<Field>>;
-  using it_fields           = ref_iterator<fields_t&, Field*>;
-  using it_const_fields     = const_ref_iterator<const fields_t&, const Field*>;
+  using fields_t = std::vector<std::unique_ptr<Field>>;
+  using it_fields = ref_iterator<fields_t&, Field*>;
+  using it_const_fields = const_ref_iterator<const fields_t&, const Field*>;
 
-  public:
+ public:
   File& operator=(const File& copy) = delete;
-  File(const File& copy)            = delete;
+  File(const File& copy) = delete;
 
   //! Version of the current DEX file
   dex_version_t version() const;
@@ -144,33 +146,36 @@ class LIEF_API File : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& file);
 
-  private:
+ private:
   File();
 
   void add_class(std::unique_ptr<Class> cls);
 
   static void deoptimize_nop(uint8_t* inst_ptr, uint32_t value);
   static void deoptimize_return(uint8_t* inst_ptr, uint32_t value);
-  static void deoptimize_invoke_virtual(uint8_t* inst_ptr, uint32_t value, OPCODES new_inst);
-  static void deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value, OPCODES new_inst);
+  static void deoptimize_invoke_virtual(uint8_t* inst_ptr, uint32_t value,
+                                        OPCODES new_inst);
+  static void deoptimize_instance_field_access(uint8_t* inst_ptr,
+                                               uint32_t value,
+                                               OPCODES new_inst);
 
   std::string name_;
   std::string location_;
 
-  Header       header_;
-  classes_t    classes_;
-  methods_t    methods_;
-  fields_t     fields_;
-  strings_t    strings_;
-  types_t      types_;
+  Header header_;
+  classes_t classes_;
+  methods_t methods_;
+  fields_t fields_;
+  strings_t strings_;
+  types_t types_;
   prototypes_t prototypes_;
-  MapList      map_;
+  MapList map_;
 
   classes_list_t class_list_;
   std::vector<uint8_t> original_data_;
 };
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF
 
 #endif

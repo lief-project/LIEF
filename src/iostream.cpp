@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iterator>
-#include <iostream>
 #include "LIEF/iostream.hpp"
+
+#include <iostream>
+#include <iterator>
 
 namespace LIEF {
 vector_iostream::vector_iostream() = default;
-vector_iostream::vector_iostream(bool endian_swap) :
-  endian_swap_{endian_swap}
-{}
+vector_iostream::vector_iostream(bool endian_swap)
+    : endian_swap_{endian_swap} {}
 
 size_t vector_iostream::uleb128_size(uint64_t value) {
   size_t size = 0;
   do {
     value >>= 7;
     size += sizeof(int8_t);
-  } while(value != 0);
+  } while (value != 0);
   return size;
 }
 
@@ -45,12 +45,8 @@ size_t vector_iostream::sleb128_size(int64_t value) {
   return size;
 }
 
-
-void vector_iostream::reserve(size_t size) {
-  raw_.reserve(size);
-}
+void vector_iostream::reserve(size_t size) { raw_.reserve(size); }
 vector_iostream& vector_iostream::put(uint8_t c) {
-
   if (raw_.size() < (static_cast<size_t>(tellp()) + 1)) {
     raw_.resize(static_cast<size_t>(tellp()) + 1);
   }
@@ -109,7 +105,6 @@ vector_iostream& vector_iostream::write(const std::string& s) {
   return *this;
 }
 
-
 vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
   uint8_t byte;
   do {
@@ -126,7 +121,6 @@ vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
 }
 
 vector_iostream& vector_iostream::write_sleb128(int64_t value) {
-
   bool is_neg = (value < 0);
   uint8_t byte;
   bool more;
@@ -148,7 +142,6 @@ vector_iostream& vector_iostream::write_sleb128(int64_t value) {
   return *this;
 }
 
-
 vector_iostream& vector_iostream::get(std::vector<uint8_t>& c) {
   c = raw_;
   return *this;
@@ -159,56 +152,41 @@ vector_iostream& vector_iostream::move(std::vector<uint8_t>& c) {
   return *this;
 }
 
-vector_iostream& vector_iostream::flush() {
-  return *this;
-}
+vector_iostream& vector_iostream::flush() { return *this; }
 
-const std::vector<uint8_t>& vector_iostream::raw() const {
-  return raw_;
-}
+const std::vector<uint8_t>& vector_iostream::raw() const { return raw_; }
 
-std::vector<uint8_t>& vector_iostream::raw() {
-  return raw_;
-}
+std::vector<uint8_t>& vector_iostream::raw() { return raw_; }
 
-size_t vector_iostream::size() const {
-  return raw_.size();
-}
+size_t vector_iostream::size() const { return raw_.size(); }
 
 // seeks:
-vector_iostream::pos_type vector_iostream::tellp() {
-  return current_pos_;
-}
+vector_iostream::pos_type vector_iostream::tellp() { return current_pos_; }
 vector_iostream& vector_iostream::seekp(vector_iostream::pos_type p) {
   current_pos_ = p;
   return *this;
 }
-vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_base::seekdir dir) {
+vector_iostream& vector_iostream::seekp(vector_iostream::off_type p,
+                                        std::ios_base::seekdir dir) {
   switch (dir) {
-    case std::ios_base::beg:
-      {
-        current_pos_ = p;
-        break;
-      }
+    case std::ios_base::beg: {
+      current_pos_ = p;
+      break;
+    }
 
+    case std::ios_base::end: {
+      // current_pos_ = p;
+      break;
+    }
 
-    case std::ios_base::end:
-      {
-        //current_pos_ = p;
-        break;
-      }
+    case std::ios_base::cur: {
+      current_pos_ += p;
+      break;
+    }
 
-
-    case std::ios_base::cur:
-      {
-        current_pos_ += p;
-        break;
-      }
-
-    default:
-      {
-        break;
-      }
+    default: {
+      break;
+    }
   }
 
   return *this;
@@ -226,18 +204,12 @@ vector_iostream& vector_iostream::align(size_t alignment, uint8_t fill) {
   return *this;
 }
 
-
-void vector_iostream::set_endian_swap(bool swap) {
-  endian_swap_ = swap;
-}
+void vector_iostream::set_endian_swap(bool swap) { endian_swap_ = swap; }
 
 vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
-    raw_.insert(std::end(raw_), count, value);
-    current_pos_ += count;
-    return *this;
+  raw_.insert(std::end(raw_), count, value);
+  current_pos_ += count;
+  return *this;
 }
 
-
-
-}
-
+}  // namespace LIEF

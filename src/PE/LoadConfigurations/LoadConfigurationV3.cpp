@@ -15,24 +15,23 @@
  */
 #include <iomanip>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
-
-#include "LIEF/PE/LoadConfigurations.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV3& LoadConfigurationV3::operator=(const LoadConfigurationV3&) = default;
+LoadConfigurationV3& LoadConfigurationV3::operator=(
+    const LoadConfigurationV3&) = default;
 LoadConfigurationV3::LoadConfigurationV3(const LoadConfigurationV3&) = default;
 LoadConfigurationV3::~LoadConfigurationV3() = default;
 
-LoadConfigurationV3::LoadConfigurationV3() :
-  guard_address_taken_iat_entry_table_{0},
-  guard_address_taken_iat_entry_count_{0},
-  guard_long_jump_target_table_{0},
-  guard_long_jump_target_count_{0}
-{}
+LoadConfigurationV3::LoadConfigurationV3()
+    : guard_address_taken_iat_entry_table_{0},
+      guard_address_taken_iat_entry_count_{0},
+      guard_long_jump_target_table_{0},
+      guard_long_jump_target_count_{0} {}
 
 WIN_VERSION LoadConfigurationV3::version() const {
   return LoadConfigurationV3::VERSION;
@@ -70,7 +69,6 @@ void LoadConfigurationV3::guard_long_jump_target_count(uint64_t value) {
   guard_long_jump_target_count_ = value;
 }
 
-
 void LoadConfigurationV3::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
@@ -91,14 +89,20 @@ bool LoadConfigurationV3::operator!=(const LoadConfigurationV3& rhs) const {
 std::ostream& LoadConfigurationV3::print(std::ostream& os) const {
   LoadConfigurationV2::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard address taken iat entry table:" << std::hex << guard_address_taken_iat_entry_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard address taken iat entry count:" << std::dec << guard_address_taken_iat_entry_count() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard long jump target table:"        << std::hex << guard_long_jump_target_table()        << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard long jump target count:"        << std::dec << guard_long_jump_target_count()        << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Guard address taken iat entry table:" << std::hex
+     << guard_address_taken_iat_entry_table() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Guard address taken iat entry count:" << std::dec
+     << guard_address_taken_iat_entry_count() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Guard long jump target table:" << std::hex
+     << guard_long_jump_target_table() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Guard long jump target count:" << std::dec
+     << guard_long_jump_target_count() << std::endl;
   return os;
 }
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

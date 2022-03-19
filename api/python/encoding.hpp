@@ -16,9 +16,8 @@
 #ifndef PY_LIEF_ENCODING_H_
 #define PY_LIEF_ENCODING_H_
 
-
-#include <pybind11/pybind11.h>
 #include <pybind11/eval.h>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 

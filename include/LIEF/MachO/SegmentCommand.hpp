@@ -16,18 +16,16 @@
 #ifndef LIEF_MACHO_SEGMENT_COMMAND_H_
 #define LIEF_MACHO_SEGMENT_COMMAND_H_
 
-#include <string>
-#include <vector>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/iterators.hpp"
-#include "LIEF/MachO/LoadCommand.hpp"
-
 
 namespace LIEF {
 namespace MachO {
@@ -42,17 +40,17 @@ class DyldInfo;
 namespace details {
 struct segment_command_32;
 struct segment_command_64;
-}
+}  // namespace details
 
-//! Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT / LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
+//! Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT /
+//! LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
 class LIEF_API SegmentCommand : public LoadCommand {
-
   friend class BinaryParser;
   friend class Binary;
   friend class Section;
   friend class Builder;
 
-  public:
+ public:
   using content_t = std::vector<uint8_t>;
 
   //! Internal container for storing Mach-O Section
@@ -62,7 +60,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
   using it_sections = ref_iterator<sections_t&, Section*>;
 
   //! Iterator which outputs const Section&
-  using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
+  using it_const_sections =
+      const_ref_iterator<const sections_t&, const Section*>;
 
   //! Internal container for storing Mach-O Relocation
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
@@ -71,9 +70,10 @@ class LIEF_API SegmentCommand : public LoadCommand {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
-  public:
+ public:
   SegmentCommand();
   SegmentCommand(const details::segment_command_32& cmd);
   SegmentCommand(const details::segment_command_64& cmd);
@@ -125,19 +125,16 @@ class LIEF_API SegmentCommand : public LoadCommand {
   //!
   //! For Mach-O executable or library this iterator should be empty as
   //! the relocations are managed by the Dyld::rebase_opcodes.
-  //! On the other hand, for object files (``.o``) this iterator should not be empty
+  //! On the other hand, for object files (``.o``) this iterator should not be
+  //! empty
   it_relocations relocations();
   it_const_relocations relocations() const;
 
   //! The raw content of this segment
-  inline span<const uint8_t> content() const {
-    return data_;
-  }
+  inline span<const uint8_t> content() const { return data_; }
 
   //! The original index of this segment
-  inline int8_t index() const {
-    return this->index_;
-  }
+  inline int8_t index() const { return this->index_; }
 
   void name(const std::string& name);
   void virtual_address(uint64_t virtual_address);
@@ -171,10 +168,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  inline span<uint8_t> writable_content() {
-    return data_;
-  }
+ private:
+  inline span<uint8_t> writable_content() { return data_; }
 
   void content_resize(size_t size);
   void content_insert(size_t where, size_t size);
@@ -183,10 +178,10 @@ class LIEF_API SegmentCommand : public LoadCommand {
     content_resize(data_.size() + width);
   }
 
-  template<typename Func>
+  template <typename Func>
   LIEF_LOCAL void update_data(Func f);
 
-  template<typename Func>
+  template <typename Func>
   LIEF_LOCAL void update_data(Func f, size_t where, size_t size);
 
   std::string name_;
@@ -198,14 +193,14 @@ class LIEF_API SegmentCommand : public LoadCommand {
   uint32_t init_protection_ = 0;
   uint32_t nb_sections_ = 0;
   uint32_t flags_ = 0;
-  int8_t  index_ = -1;
+  int8_t index_ = -1;
   content_t data_;
   sections_t sections_;
   relocations_t relocations_;
 
-  DyldInfo* dyld_ = nullptr; //x-ref to keep the spans in a consistent state
+  DyldInfo* dyld_ = nullptr;  // x-ref to keep the spans in a consistent state
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

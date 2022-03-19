@@ -23,9 +23,9 @@
 #error "The VDEX module can't be used without the DEX support"
 #endif
 #include "LIEF/DEX.hpp"
+#include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
-#include "LIEF/VDEX/File.hpp"
 #endif
 
 #endif

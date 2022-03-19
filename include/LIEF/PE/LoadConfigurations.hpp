@@ -16,14 +16,14 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATIONS_H_
 #define LIEF_PE_LOAD_CONFIGURATIONS_H_
 
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
 
 #endif

@@ -13,42 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyART.hpp"
-
 #include "LIEF/ART/utils.hpp"
+#include "pyART.hpp"
 
 namespace LIEF {
 namespace ART {
 
 void init_utils(py::module& m) {
+  m.def("is_art", static_cast<bool (*)(const std::string&)>(&is_art),
+        "Check if the **file** given in parameter is an ART", "path"_a);
 
-  m.def("is_art",
-      static_cast<bool (*)(const std::string&)>(&is_art),
-      "Check if the **file** given in parameter is an ART",
-      "path"_a);
+  m.def("is_art", static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_art),
+        "Check if the **raw data** given in parameter is a ART", "raw"_a);
 
-  m.def("is_art",
-      static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_art),
-      "Check if the **raw data** given in parameter is a ART",
-      "raw"_a);
+  m.def("version", static_cast<art_version_t (*)(const std::string&)>(&version),
+        "Return the ART version of the **file** given in parameter", "file"_a);
 
   m.def("version",
-      static_cast<art_version_t (*)(const std::string&)>(&version),
-      "Return the ART version of the **file** given in parameter",
-      "file"_a);
+        static_cast<art_version_t (*)(const std::vector<uint8_t>&)>(&version),
+        "Return the ART version of the **raw data** given in parameter",
+        "raw"_a);
 
-  m.def("version",
-      static_cast<art_version_t (*)(const std::vector<uint8_t>&)>(&version),
-      "Return the ART version of the **raw data** given in parameter",
-      "raw"_a);
-
-
-  m.def("android_version",
-      &android_version,
-      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given ART version ",
-      "art_version"_a);
+  m.def("android_version", &android_version,
+        "Return the " RST_CLASS_REF(
+            lief.Android
+                .ANDROID_VERSIONS) " associated with the given ART version ",
+        "art_version"_a);
 }
 
-}
-}
-
+}  // namespace ART
+}  // namespace LIEF

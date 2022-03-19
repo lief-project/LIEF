@@ -19,11 +19,8 @@
 #include "LIEF/visibility.h"
 namespace LIEF {
 namespace PE {
-class LIEF_API AuxiliarySymbol {
-};
-}
-}
-
+class LIEF_API AuxiliarySymbol {};
+}  // namespace PE
+}  // namespace LIEF
 
 #endif
-

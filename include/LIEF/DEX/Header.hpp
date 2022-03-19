@@ -18,9 +18,8 @@
 #define LIEF_DEX_HEADER_H_
 
 #include "LIEF/DEX/types.hpp"
-
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -34,17 +33,17 @@ class Parser;
 class LIEF_API Header : public Object {
   friend class Parser;
 
-  public:
+ public:
   using location_t = std::pair<uint32_t, uint32_t>;
 
-  using magic_t     = std::array<uint8_t, 8>;
+  using magic_t = std::array<uint8_t, 8>;
   using signature_t = std::array<uint8_t, 20>;
 
   Header();
   Header(const Header&);
   Header& operator=(const Header&);
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL Header(const T& header);
 
   //! The DEX magic bytes (``DEX\n`` followed by the DEX version)
@@ -91,7 +90,7 @@ class LIEF_API Header : public Object {
 
   virtual ~Header();
 
-  private:
+ private:
   magic_t magic_;
   uint32_t checksum_;
   signature_t signature_;
@@ -127,7 +126,7 @@ class LIEF_API Header : public Object {
   uint32_t data_off_;
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 
 #endif

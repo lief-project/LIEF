@@ -18,37 +18,27 @@
 namespace LIEF {
 namespace PE {
 void init_c_data_directories(Pe_Binary_t* c_binary, Binary* binary) {
-
   Binary::it_data_directories data_directories = binary->data_directories();
 
   c_binary->data_directories = static_cast<Pe_DataDirectory_t**>(
       malloc((data_directories.size() + 1) * sizeof(Pe_DataDirectory_t**)));
 
   for (size_t i = 0; i < data_directories.size(); ++i) {
-
-    c_binary->data_directories[i] = static_cast<Pe_DataDirectory_t*>(malloc(sizeof(Pe_DataDirectory_t)));
-    c_binary->data_directories[i]->rva  = data_directories[i].RVA();
+    c_binary->data_directories[i] =
+        static_cast<Pe_DataDirectory_t*>(malloc(sizeof(Pe_DataDirectory_t)));
+    c_binary->data_directories[i]->rva = data_directories[i].RVA();
     c_binary->data_directories[i]->size = data_directories[i].size();
   }
   c_binary->data_directories[data_directories.size()] = nullptr;
-
-
-
 }
 
-
-
 void destroy_data_directories(Pe_Binary_t* c_binary) {
-
-  Pe_DataDirectory_t **data_directories = c_binary->data_directories;
+  Pe_DataDirectory_t** data_directories = c_binary->data_directories;
   for (size_t idx = 0; data_directories[idx] != nullptr; ++idx) {
     free(data_directories[idx]);
   }
   free(c_binary->data_directories);
-
 }
 
-}
-}
-
-
+}  // namespace PE
+}  // namespace LIEF

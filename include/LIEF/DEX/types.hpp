@@ -23,6 +23,6 @@ namespace DEX {
 using dex_version_t = uint32_t;
 
 }
-}
+}  // namespace LIEF
 
 #endif

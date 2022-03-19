@@ -30,7 +30,7 @@ class SymbolVersionAux;
 class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
-  public:
+ public:
   SymbolVersion(uint16_t value);
   SymbolVersion();
 
@@ -58,7 +58,7 @@ class LIEF_API SymbolVersion : public Object {
 
   //! SymbolVersionAux associated with the current Version if any,
   //! or a nullptr
-  SymbolVersionAux*       symbol_version_auxiliary();
+  SymbolVersionAux* symbol_version_auxiliary();
   const SymbolVersionAux* symbol_version_auxiliary() const;
 
   //! Set the version's auxiliary requirement
@@ -76,12 +76,13 @@ class LIEF_API SymbolVersion : public Object {
   bool operator==(const SymbolVersion& rhs) const;
   bool operator!=(const SymbolVersion& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SymbolVersion& symv);
 
-  private:
-  uint16_t          value_ = 0;
+ private:
+  uint16_t value_ = 0;
   SymbolVersionAux* symbol_aux_ = nullptr;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

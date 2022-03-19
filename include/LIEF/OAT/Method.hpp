@@ -16,9 +16,9 @@
 #ifndef LIEF_OAT_METHOD_H_
 #define LIEF_OAT_METHOD_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -30,17 +30,16 @@ class Class;
 
 class LIEF_API Method : public Object {
   friend class Parser;
-  public:
 
+ public:
   //! Container for the Quick Code
   using quick_code_t = std::vector<uint8_t>;
 
-  public:
+ public:
   Method();
-  Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  code = {});
+  Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t> code = {});
   Method(const Method&);
   Method& operator=(const Method&);
-
 
   //! Method's name
   std::string name() const;
@@ -74,17 +73,18 @@ class LIEF_API Method : public Object {
   bool operator==(const Method& rhs) const;
   bool operator!=(const Method& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& meth);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Method& meth);
 
   virtual ~Method();
 
-  private:
+ private:
   DEX::Method* dex_method_ = nullptr;
   Class* class_ = nullptr;
 
   quick_code_t quick_code_;
 };
 
-} // Namespace OAT
-} // Namespace LIEF
+}  // Namespace OAT
+}  // Namespace LIEF
 #endif

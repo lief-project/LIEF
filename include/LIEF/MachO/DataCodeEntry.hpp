@@ -17,10 +17,9 @@
 #define LIEF_MACHO_DATA_CODE_ENTRY_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -31,17 +30,17 @@ struct data_in_code_entry;
 
 //! Interface over an entry in the DataInCode command
 class LIEF_API DataCodeEntry : public LIEF::Object {
-  public:
+ public:
   enum class TYPES {
-    UNKNOWN           = 0,
-    DATA              = 1,
-    JUMP_TABLE_8      = 2,
-    JUMP_TABLE_16     = 3,
-    JUMP_TABLE_32     = 4,
+    UNKNOWN = 0,
+    DATA = 1,
+    JUMP_TABLE_8 = 2,
+    JUMP_TABLE_16 = 3,
+    JUMP_TABLE_32 = 4,
     ABS_JUMP_TABLE_32 = 5,
   };
 
-  public:
+ public:
   DataCodeEntry();
   DataCodeEntry(uint32_t off, uint16_t length, TYPES type);
   DataCodeEntry(const details::data_in_code_entry& entry);
@@ -69,15 +68,16 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DataCodeEntry& entry);
 
-  private:
+ private:
   uint32_t offset_;
   uint16_t length_;
   TYPES type_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 
 #endif

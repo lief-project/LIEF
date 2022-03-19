@@ -31,18 +31,17 @@ extern "C" {
 #endif
 
 struct Macho_Header_t {
-  uint32_t        magic;
-  enum LIEF_MACHO_CPU_TYPES  cpu_type;
-  uint32_t        cpu_subtype;
+  uint32_t magic;
+  enum LIEF_MACHO_CPU_TYPES cpu_type;
+  uint32_t cpu_subtype;
   enum LIEF_MACHO_FILE_TYPES file_type;
-  uint32_t        nb_cmds;
-  uint32_t        sizeof_cmds;
-  uint32_t        flags;
-  uint32_t        reserved;
+  uint32_t nb_cmds;
+  uint32_t sizeof_cmds;
+  uint32_t flags;
+  uint32_t reserved;
 };
 
 typedef struct Macho_Header_t Macho_Header_t;
-
 
 #ifdef __cplusplus
 }

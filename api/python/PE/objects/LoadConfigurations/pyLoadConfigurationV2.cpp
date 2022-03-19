@@ -13,56 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (LoadConfigurationV2::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (LoadConfigurationV2::*)(T);
 
-
-template<>
+template <>
 void create<LoadConfigurationV2>(py::module& m) {
   py::class_<LoadConfigurationV2, LoadConfigurationV1>(m, "LoadConfigurationV2",
-      R"delim(
+                                                       R"delim(
       :class:`~lief.PE.LoadConfigurationV1` enhanced with *code integrity*.
       It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_9879`
       )delim")
 
-    .def(py::init<>())
+      .def(py::init<>())
 
-    .def_property_readonly("code_integrity",
-        static_cast<CodeIntegrity& (LoadConfigurationV2::*)(void)>(&LoadConfigurationV2::code_integrity),
-        "" RST_CLASS_REF(lief.PE.CodeIntegrity) " object",
-        py::return_value_policy::reference)
+      .def_property_readonly(
+          "code_integrity",
+          static_cast<CodeIntegrity& (LoadConfigurationV2::*)(void)>(
+              &LoadConfigurationV2::code_integrity),
+          "" RST_CLASS_REF(lief.PE.CodeIntegrity) " object",
+          py::return_value_policy::reference)
 
+      .def("__eq__", &LoadConfigurationV2::operator==)
+      .def("__ne__", &LoadConfigurationV2::operator!=)
+      .def("__hash__",
+           [](const LoadConfigurationV2& config) { return Hash::hash(config); })
 
-    .def("__eq__", &LoadConfigurationV2::operator==)
-    .def("__ne__", &LoadConfigurationV2::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV2& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV2& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const LoadConfigurationV2& config) {
+        std::ostringstream stream;
+        stream << config;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

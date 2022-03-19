@@ -21,27 +21,28 @@
 // save it (second argument)
 //
 
-#include <iostream>
-#include <memory>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-
 #include <LIEF/MachO.hpp>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <memory>
 
 using namespace LIEF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "MachO Rebuilder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << "\n";
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>"
+              << "\n";
     return 1;
   }
 
   std::unique_ptr<LIEF::MachO::FatBinary> fat = MachO::Parser::parse(argv[1]);
   MachO::Binary* binary = fat->back();
   if (binary == nullptr) {
-    std::cerr << "Can't access binary" << "\n";
+    std::cerr << "Can't access binary"
+              << "\n";
     return 1;
   }
   binary->write(argv[2]);

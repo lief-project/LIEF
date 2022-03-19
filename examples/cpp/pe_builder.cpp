@@ -20,30 +20,29 @@
 // It takes a PE binary as input and write the reconstructed binary in the file
 // given in the second argument.
 
-#include <iostream>
-#include <memory>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-
 #include <LIEF/PE.hpp>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <memory>
 
 using namespace LIEF::PE;
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "PE Rebuilder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>"
+              << '\n';
     return -1;
   }
 
   std::unique_ptr<Binary> binary{Parser::parse(argv[1])};
   Builder builder{*binary};
 
-  builder
-    .build_imports(false)
-    .patch_imports(false)
-    .build_tls(false)
-    .build_resources(false);
+  builder.build_imports(false)
+      .patch_imports(false)
+      .build_tls(false)
+      .build_resources(false);
 
   builder.build();
   builder.write(argv[2]);

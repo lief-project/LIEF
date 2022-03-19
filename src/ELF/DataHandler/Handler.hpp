@@ -17,11 +17,10 @@
 #define ELF_DATA_HANDLER_HANDLER_H_
 #include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/utils.hpp"
-#include "LIEF/errors.hpp"
-
 #include "ELF/DataHandler/Node.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -29,7 +28,7 @@ namespace ELF {
 namespace DataHandler {
 
 class LIEF_API Handler {
-  public:
+ public:
   static constexpr size_t MAX_SIZE = 4_GB;
   Handler(std::vector<uint8_t> content);
   Handler(std::vector<uint8_t>&& content);
@@ -60,16 +59,17 @@ class LIEF_API Handler {
 
   ok_error_t reserve(uint64_t offset, uint64_t size);
 
-  static result<std::unique_ptr<Handler>> from_stream(std::unique_ptr<BinaryStream>& stream);
+  static result<std::unique_ptr<Handler>> from_stream(
+      std::unique_ptr<BinaryStream>& stream);
 
-  private:
+ private:
   Handler();
   Handler(BinaryStream& stream);
   std::vector<uint8_t> data_;
   std::vector<std::unique_ptr<Node>> nodes_;
 };
-} // namespace DataHandler
-} // namespace ELF
-} // namespace LIEF
+}  // namespace DataHandler
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

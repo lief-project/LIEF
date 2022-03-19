@@ -25,105 +25,102 @@
 namespace LIEF {
 
 class LIEF_API exception : public std::exception {
-  public:
+ public:
+  exception(const exception& other);
+  explicit exception(std::string msg);
+  explicit exception(const char* msg);
+  const char* what() const noexcept override;
+  virtual ~exception() noexcept;
 
-    exception(const exception& other);
-    explicit exception(std::string  msg);
-    explicit exception(const char* msg);
-    const char* what() const noexcept override;
-    virtual ~exception() noexcept;
-
-  protected:
-    std::string msg_;
-
+ protected:
+  std::string msg_;
 };
 
 class LIEF_API bad_file : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API bad_format : public bad_file {
-  public:
+ public:
   using bad_file::bad_file;
   using bad_file::what;
 };
 
 class LIEF_API not_implemented : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API not_supported : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API integrity_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API read_out_of_bound : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
   explicit read_out_of_bound(uint64_t offset, uint64_t size);
   explicit read_out_of_bound(uint64_t offset);
-
 };
 
 class LIEF_API not_found : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API corrupted : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API conversion_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API type_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API builder_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API parser_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API pe_error : public exception {
-  public:
+ public:
   using exception::exception;
   using exception::what;
 };
 
 class LIEF_API pe_bad_section_name : public pe_error {
-  public:
+ public:
   using pe_error::pe_error;
   using pe_error::what;
 };
 
-} //namespace ELF
+}  // namespace LIEF
 #endif

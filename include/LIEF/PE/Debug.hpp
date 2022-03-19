@@ -16,14 +16,13 @@
 #ifndef LIEF_PE_DEBUG_H_
 #define LIEF_PE_DEBUG_H_
 
-#include <string>
 #include <iostream>
 #include <memory>
+#include <string>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -38,11 +37,10 @@ struct pe_debug;
 }
 
 class LIEF_API Debug : public Object {
-
   friend class Parser;
   friend class Builder;
 
-  public:
+ public:
   Debug();
   Debug(const details::pe_debug& debug_s);
   Debug(const Debug& copy);
@@ -100,22 +98,22 @@ class LIEF_API Debug : public Object {
   bool operator==(const Debug& rhs) const;
   bool operator!=(const Debug& rhs) const;
 
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Debug& entry);
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry);
-
-  private:
-  uint32_t    characteristics_ = 0;
-  uint32_t    timestamp_ = 0;
-  uint16_t    majorversion_ = 0;
-  uint16_t    minorversion_ = 0;
+ private:
+  uint32_t characteristics_ = 0;
+  uint32_t timestamp_ = 0;
+  uint16_t majorversion_ = 0;
+  uint16_t minorversion_ = 0;
   DEBUG_TYPES type_ = DEBUG_TYPES::IMAGE_DEBUG_TYPE_UNKNOWN;
-  uint32_t    sizeof_data_ = 0;
-  uint32_t    addressof_rawdata_ = 0;
-  uint32_t    pointerto_rawdata_ = 0;
+  uint32_t sizeof_data_ = 0;
+  uint32_t addressof_rawdata_ = 0;
+  uint32_t pointerto_rawdata_ = 0;
 
   std::unique_ptr<CodeView> code_view_;
   std::unique_ptr<Pogo> pogo_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

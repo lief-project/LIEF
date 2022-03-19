@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Builder.hpp"
-#include "LIEF/PE/Binary.hpp"
 #include "LIEF/Abstract/Binary.hpp"
-
-#include "pyPE.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Builder.hpp"
+#include "LIEF/PE/Parser.hpp"
 #include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T, class P>
+template <class T, class P>
 using no_const_func = T (Binary::*)(P);
 
-template<class T>
+template <class T>
 using no_const_getter = T (Binary::*)(void);
 
-template<class T>
+template <class T>
 using getter_t = T (Binary::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Binary::*)(T);
 
-
-template<>
+template <>
 void create<Binary>(py::module& m) {
-
   py::class_<Binary, LIEF::Binary> bin(m, "Binary",
-      R"delim(
+                                       R"delim(
       Class which represents a PE binary which is the main interface
       to manage and modify a PE executable.
 
@@ -415,8 +412,7 @@ void create<Binary>(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

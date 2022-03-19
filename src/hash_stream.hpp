@@ -15,22 +15,15 @@
  */
 #ifndef LIEF_HASH_STREAM_H_
 #define LIEF_HASH_STREAM_H_
-#include <vector>
-#include <string>
 #include <array>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace LIEF {
 class hashstream {
-  public:
-  enum class HASH {
-    MD5,
-    SHA1,
-    SHA224,
-    SHA256,
-    SHA384,
-    SHA512
-  };
+ public:
+  enum class HASH { MD5, SHA1, SHA224, SHA256, SHA384, SHA512 };
   hashstream(HASH type);
 
   hashstream& put(uint8_t c);
@@ -40,21 +33,23 @@ class hashstream {
   hashstream& write(size_t count, uint8_t value);
   hashstream& write_sized_int(uint64_t value, size_t size);
 
-  template<typename T>
+  template <typename T>
   hashstream& write_conv(const T& t);
 
-  template<typename T>
+  template <typename T>
   hashstream& write_conv_array(const std::vector<T>& v);
 
   hashstream& align(size_t size, uint8_t val = 0);
 
-  template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
+  template <class Integer, typename = typename std::enable_if<
+                               std::is_integral<Integer>::value>>
   hashstream& write(Integer integer) {
     const auto* int_p = reinterpret_cast<const uint8_t*>(&integer);
     return write(int_p, sizeof(Integer));
   }
 
-  template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
+  template <typename T, size_t size,
+            typename = typename std::enable_if<std::is_integral<T>::value>>
   hashstream& write(const std::array<T, size>& t) {
     for (T val : t) {
       write<T>(val);
@@ -68,12 +63,11 @@ class hashstream {
   std::vector<uint8_t>& raw();
   ~hashstream();
 
-  private:
+ private:
   std::vector<uint8_t> output_;
   using md_context_t = intptr_t;
   std::unique_ptr<md_context_t> ctx_;
 };
 
-
-}
+}  // namespace LIEF
 #endif

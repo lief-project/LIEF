@@ -20,9 +20,7 @@
 #include <vector>
 
 #include "LIEF/ART/types.hpp"
-
 #include "LIEF/platforms/android.hpp"
-
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
@@ -44,8 +42,7 @@ LIEF_API art_version_t version(const std::vector<uint8_t>& raw);
 //! @brief Return the ANDROID_VERSIONS associated with the given ART version
 LIEF_API LIEF::Android::ANDROID_VERSIONS android_version(art_version_t version);
 
-}
-}
-
+}  // namespace ART
+}  // namespace LIEF
 
 #endif

@@ -18,9 +18,9 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_SIGNING_TIME_H_
 #include <array>
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -29,10 +29,12 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.5`` (PKCS #9)
+//! Interface over the structure described by the OID ``1.2.840.113549.1.9.5``
+//! (PKCS #9)
 //!
 //! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+//! Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
 //! ```raw
 //! signingTime ATTRIBUTE ::= {
@@ -45,11 +47,10 @@ class SignatureParser;
 //! SigningTime ::= Time -- imported from ISO/IEC 9594-8
 //! ```
 class LIEF_API PKCS9SigningTime : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   //! Time as an array [year, month, day, hour, min, sec]
   using time_t = std::array<int32_t, 6>;
 
@@ -59,9 +60,7 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   PKCS9SigningTime& operator=(const PKCS9SigningTime&);
 
   //! Time as an array [year, month, day, hour, min, sec]
-  const time_t& time() const {
-    return time_;
-  }
+  const time_t& time() const { return time_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -71,11 +70,11 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   void accept(Visitor& visitor) const override;
   virtual ~PKCS9SigningTime();
 
-  private:
+ private:
   time_t time_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_SOURCE_VERSION_COMMAND_H_
 #define LIEF_MACHO_SOURCE_VERSION_COMMAND_H_
-#include <iostream>
 #include <array>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <iostream>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -31,10 +30,10 @@ struct source_version_command;
 }
 
 //! Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
-//! This command is used to provide the *version* of the sources used to build the binary
+//! This command is used to provide the *version* of the sources used to build
+//! the binary
 class LIEF_API SourceVersion : public LoadCommand {
-
-  public:
+ public:
   //! Version is an array of **5** integers
   using version_t = std::array<uint32_t, 5>;
 
@@ -61,10 +60,10 @@ class LIEF_API SourceVersion : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   SourceVersion::version_t version_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

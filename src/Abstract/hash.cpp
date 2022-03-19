@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/Abstract/hash.hpp"
+
 #include "LIEF/Abstract.hpp"
 #include "Object.tcc"
 
@@ -25,7 +26,6 @@ AbstractHash::~AbstractHash() = default;
 size_t AbstractHash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::AbstractHash>(obj);
 }
-
 
 void AbstractHash::visit(const Binary& binary) {
   process(binary.format());
@@ -67,6 +67,4 @@ void AbstractHash::visit(const Function& function) {
   process(std::begin(flags), std::end(flags));
 }
 
-
-} // namespace LIEF
-
+}  // namespace LIEF

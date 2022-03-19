@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
-
-#include <string>
-#include <sstream>
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (PKCS9MessageDigest::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (PKCS9MessageDigest::*)(T);
 
-
-template<>
+template <>
 void create<PKCS9MessageDigest>(py::module& m) {
   py::class_<PKCS9MessageDigest, Attribute>(m, "PKCS9MessageDigest",
-    R"delim(
+                                            R"delim(
     Interface over the structure described by the OID ``1.2.840.113549.1.9.4`` (PKCS #9)
 
     The internal structure is described in the
@@ -54,20 +52,20 @@ void create<PKCS9MessageDigest>(py::module& m) {
 
     )delim")
 
-    .def_property_readonly("digest",
-        [] (const PKCS9MessageDigest& digest) -> py::object {
-          const std::vector<uint8_t>& data = digest.digest();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
-        },
-        "Message digeset as a blob of bytes as described in the RFC")
+      .def_property_readonly(
+          "digest",
+          [](const PKCS9MessageDigest& digest) -> py::object {
+            const std::vector<uint8_t>& data = digest.digest();
+            return py::bytes(reinterpret_cast<const char*>(data.data()),
+                             data.size());
+          },
+          "Message digeset as a blob of bytes as described in the RFC")
 
-    .def("__hash__",
-        [] (const PKCS9MessageDigest& obj) {
-          return Hash::hash(obj);
-        })
+      .def("__hash__",
+           [](const PKCS9MessageDigest& obj) { return Hash::hash(obj); })
 
-    .def("__str__", &PKCS9MessageDigest::print);
+      .def("__str__", &PKCS9MessageDigest::print);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "LIEF/DEX/types.hpp"
-
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
@@ -39,8 +38,7 @@ LIEF_API dex_version_t version(const std::string& file);
 //! Return the DEX version of the raw data
 LIEF_API dex_version_t version(const std::vector<uint8_t>& raw);
 
-}
-}
-
+}  // namespace DEX
+}  // namespace LIEF
 
 #endif

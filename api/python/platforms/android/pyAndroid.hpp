@@ -25,7 +25,7 @@ namespace Android {
 void init_python_module(py::module&);
 void init_versions(py::module&);
 
-}
-}
+}  // namespace Android
+}  // namespace LIEF
 
 #endif

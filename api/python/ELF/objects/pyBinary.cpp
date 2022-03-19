@@ -15,29 +15,27 @@
  */
 #include <algorithm>
 
-#include "pyIterators.hpp"
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Binary.hpp"
-
+#include "LIEF/ELF/hash.hpp"
 #include "pyELF.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using no_const_getter = T (Binary::*)(void);
 
-template<class T, class P>
+template <class T, class P>
 using no_const_func = T (Binary::*)(P);
 
-template<class T>
+template <class T>
 using getter_t = T (Binary::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Binary::*)(T);
 
-
-template<>
+template <>
 void create<Binary>(py::module& m) {
   // Binary object
   py::class_<Binary, LIEF::Binary> bin(m, "Binary", R"delim(
@@ -45,8 +43,10 @@ void create<Binary>(py::module& m) {
   )delim");
 
   init_ref_iterator<Binary::it_notes>(bin, "it_notes");
-  init_ref_iterator<Binary::it_symbols_version_requirement>(bin, "it_symbols_version_requirement");
-  init_ref_iterator<Binary::it_symbols_version_definition>(bin, "it_symbols_version_definition");
+  init_ref_iterator<Binary::it_symbols_version_requirement>(
+      bin, "it_symbols_version_requirement");
+  init_ref_iterator<Binary::it_symbols_version_definition>(
+      bin, "it_symbols_version_definition");
   init_ref_iterator<Binary::it_segments>(bin, "it_segments");
   init_ref_iterator<Binary::it_sections>(bin, "it_sections");
   init_ref_iterator<Binary::it_dynamic_entries>(bin, "it_dynamic_entries");
@@ -56,12 +56,11 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_pltgot_relocations>(bin, "it_filter_relocation");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
 
-  init_ref_iterator<Binary::it_symbols>(bin,          "it_dyn_static_symbols");
-  init_ref_iterator<Binary::it_dynamic_symbols>(bin,  "it_symbols");        // For it_dynamic_symbols / it_static_symbols
-  init_ref_iterator<Binary::it_exported_symbols>(bin, "it_filter_symbols"); // For it_imported_symbols
-
-
-
+  init_ref_iterator<Binary::it_symbols>(bin, "it_dyn_static_symbols");
+  init_ref_iterator<Binary::it_dynamic_symbols>(
+      bin, "it_symbols");  // For it_dynamic_symbols / it_static_symbols
+  init_ref_iterator<Binary::it_exported_symbols>(
+      bin, "it_filter_symbols");  // For it_imported_symbols
 
   bin
     .def_property_readonly("type",
@@ -704,5 +703,5 @@ void create<Binary>(py::module& m) {
           return stream.str();
         });
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

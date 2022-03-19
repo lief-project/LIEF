@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/ExportEntry.hpp"
+
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/ExportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -26,33 +27,24 @@ ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
 
 ExportEntry::ExportEntry() = default;
 
-ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal, uint32_t function_rva) :
-  function_rva_{function_rva},
-  ordinal_{ordinal},
-  address_{address},
-  is_extern_{is_extern}
-{}
-
+ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal,
+                         uint32_t function_rva)
+    : function_rva_{function_rva},
+      ordinal_{ordinal},
+      address_{address},
+      is_extern_{is_extern} {}
 
 ExportEntry::forward_information_t::operator bool() const {
   return !library.empty() || !function.empty();
 }
 
-uint16_t ExportEntry::ordinal() const {
-  return ordinal_;
-}
+uint16_t ExportEntry::ordinal() const { return ordinal_; }
 
-uint32_t ExportEntry::address() const {
-  return address_;
-}
+uint32_t ExportEntry::address() const { return address_; }
 
-bool ExportEntry::is_extern() const {
-  return is_extern_;
-}
+bool ExportEntry::is_extern() const { return is_extern_; }
 
-bool ExportEntry::is_forwarded() const {
-  return forward_info_;
-}
+bool ExportEntry::is_forwarded() const { return forward_info_; }
 
 ExportEntry::forward_information_t ExportEntry::forward_information() const {
   if (!is_forwarded()) {
@@ -61,25 +53,15 @@ ExportEntry::forward_information_t ExportEntry::forward_information() const {
   return forward_info_;
 }
 
-uint32_t ExportEntry::function_rva() const {
-  return function_rva_;
-}
+uint32_t ExportEntry::function_rva() const { return function_rva_; }
 
-void ExportEntry::ordinal(uint16_t ordinal) {
-  ordinal_ = ordinal;
-}
+void ExportEntry::ordinal(uint16_t ordinal) { ordinal_ = ordinal; }
 
-void ExportEntry::address(uint32_t address) {
-  address_ = address;
-}
+void ExportEntry::address(uint32_t address) { address_ = address; }
 
-void ExportEntry::is_extern(bool is_extern) {
-  is_extern_ = is_extern;
-}
+void ExportEntry::is_extern(bool is_extern) { is_extern_ = is_extern; }
 
-void ExportEntry::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void ExportEntry::accept(LIEF::Visitor& visitor) const { visitor.visit(*this); }
 
 bool ExportEntry::operator==(const ExportEntry& rhs) const {
   if (this == &rhs) {
@@ -94,8 +76,8 @@ bool ExportEntry::operator!=(const ExportEntry& rhs) const {
   return !(*this == rhs);
 }
 
-
-std::ostream& operator<<(std::ostream& os, const ExportEntry::forward_information_t& info) {
+std::ostream& operator<<(std::ostream& os,
+                         const ExportEntry::forward_information_t& info) {
   os << info.library << "." << info.function;
   return os;
 }
@@ -108,7 +90,7 @@ std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {
     name = name.substr(0, 27) + "... ";
   }
   os << std::setw(33) << name;
-  os << std::setw(5)  << export_entry.ordinal();
+  os << std::setw(5) << export_entry.ordinal();
 
   if (!export_entry.is_extern()) {
     os << std::setw(10) << export_entry.address();
@@ -122,5 +104,5 @@ std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

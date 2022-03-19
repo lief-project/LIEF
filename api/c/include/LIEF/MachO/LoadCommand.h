@@ -32,13 +32,12 @@ extern "C" {
 
 struct Macho_Command_t {
   enum LIEF_MACHO_LOAD_COMMAND_TYPES command;
-  uint32_t                size;
-  uint8_t*                data;
-  uint32_t                offset;
+  uint32_t size;
+  uint8_t* data;
+  uint32_t offset;
 };
 
 typedef struct Macho_Command_t Macho_Command_t;
-
 
 #ifdef __cplusplus
 }

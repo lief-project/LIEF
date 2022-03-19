@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyAbstract.hpp"
+#include <stdexcept>
+#include <string>
 
 #include "LIEF/Abstract/Parser.hpp"
-
-#include <string>
-#include <stdexcept>
+#include "pyAbstract.hpp"
 
 namespace LIEF {
-template<>
+template <>
 void create<Parser>(py::module& m) {
-
-  m.def("parse",
-      [] (py::bytes bytes, const std::string& name) {
+  m.def(
+      "parse",
+      [](py::bytes bytes, const std::string& name) {
         std::string raw_str = bytes;
         std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))
-        };
+            std::make_move_iterator(std::begin(raw_str)),
+            std::make_move_iterator(std::end(raw_str))};
         std::unique_ptr<Binary> binary;
         std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
+        Py_BEGIN_ALLOW_THREADS try {
           binary = Parser::parse(std::move(raw), name);
         } catch (...) {
           ep = std::current_exception();
         }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
+        Py_END_ALLOW_THREADS if (ep) std::rethrow_exception(ep);
         return binary;
       },
       R"delim(
@@ -52,21 +48,19 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "raw"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
+      "raw"_a, "name"_a = "", py::return_value_policy::take_ownership);
 
-  m.def("parse",
-      [] (const std::string& filepath) {
+  m.def(
+      "parse",
+      [](const std::string& filepath) {
         std::unique_ptr<Binary> binary;
         std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
+        Py_BEGIN_ALLOW_THREADS try {
           binary = Parser::parse(filepath);
         } catch (...) {
           ep = std::current_exception();
         }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
+        Py_END_ALLOW_THREADS if (ep) std::rethrow_exception(ep);
         return binary;
       },
       R"delim(
@@ -78,21 +72,19 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "filepath"_a,
-      py::return_value_policy::take_ownership);
+      "filepath"_a, py::return_value_policy::take_ownership);
 
-  m.def("parse",
+  m.def(
+      "parse",
       [](const std::vector<uint8_t>& raw, const std::string& name) {
         std::unique_ptr<Binary> binary;
         std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
+        Py_BEGIN_ALLOW_THREADS try {
           binary = Parser::parse(raw, name);
         } catch (...) {
           ep = std::current_exception();
         }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
+        Py_END_ALLOW_THREADS if (ep) std::rethrow_exception(ep);
         return binary;
       },
       R"delim(
@@ -104,20 +96,17 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "raw"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
+      "raw"_a, "name"_a = "", py::return_value_policy::take_ownership);
 
-
-
-  m.def("parse",
-      [] (py::object byteio, const std::string& name) {
+  m.def(
+      "parse",
+      [](py::object byteio, const std::string& name) {
         const auto& io = py::module::import("io");
         const auto& RawIOBase = io.attr("RawIOBase");
         const auto& BufferedIOBase = io.attr("BufferedIOBase");
         const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
-
 
         if (py::isinstance(byteio, RawIOBase)) {
           rawio = byteio;
@@ -137,20 +126,17 @@ void create<Parser>(py::module& m) {
 
         std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
         std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))
-        };
+            std::make_move_iterator(std::begin(raw_str)),
+            std::make_move_iterator(std::end(raw_str))};
 
         std::unique_ptr<Binary> binary;
         std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
+        Py_BEGIN_ALLOW_THREADS try {
           binary = Parser::parse(std::move(raw), name);
         } catch (...) {
           ep = std::current_exception();
         }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
+        Py_END_ALLOW_THREADS if (ep) std::rethrow_exception(ep);
         return binary;
       },
       R"delim(
@@ -162,7 +148,6 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "io"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
+      "io"_a, "name"_a = "", py::return_value_policy::take_ownership);
 }
-}
+}  // namespace LIEF

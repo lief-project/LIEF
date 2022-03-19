@@ -18,7 +18,7 @@
 #include "LIEF/platforms/android.hpp"
 
 #if defined(__APPLE__)
-  #include "TargetConditionals.h"
+#include "TargetConditionals.h"
 #endif
 
 namespace LIEF {
@@ -40,18 +40,16 @@ constexpr PLATFORMS current_platform() {
 #elif defined(_WIN64) || defined(_WIN32)
   return PLATFORMS::WINDOWS;
 #elif defined(__APPLE__)
-  #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-    return PLATFORMS::IOS;
-  #else
-    return PLATFORMS::OSX;
-  #endif
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
+  return PLATFORMS::IOS;
+#else
+  return PLATFORMS::OSX;
+#endif
 #else
   return PLATFORMS::UNKNOWN;
 #endif
-
 }
 
-
-}
+}  // namespace LIEF
 
 #endif

@@ -16,16 +16,15 @@
 #ifndef LIEF_ABSTRACT_BINARY_H_
 #define LIEF_ABSTRACT_BINARY_H_
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
+#include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
-
-#include "LIEF/Abstract/Header.hpp"
-#include "LIEF/Abstract/Function.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 //! LIEF namespace
 namespace LIEF {
@@ -36,14 +35,12 @@ class Symbol;
 //! Abstract binary that exposes an uniform API for the
 //! different executable file formats
 class LIEF_API Binary : public Object {
-
-  public:
-
+ public:
   //! Type of a virtual address
   enum class VA_TYPES {
-    AUTO = 0, ///< Try to guess if it's relative or not
-    RVA  = 1, ///< Relative
-    VA   = 2, ///< Absolute
+    AUTO = 0,  ///< Try to guess if it's relative or not
+    RVA = 1,   ///< Relative
+    VA = 2,    ///< Absolute
   };
 
   using functions_t = std::vector<Function>;
@@ -75,7 +72,7 @@ class LIEF_API Binary : public Object {
   //! Iterator that outputs const LIEF::Relocation&
   using it_const_relocations = const_ref_iterator<relocations_t>;
 
-  public:
+ public:
   Binary();
   virtual ~Binary();
 
@@ -88,11 +85,13 @@ class LIEF_API Binary : public Object {
   //! Return the abstract header of the binary
   Header header() const;
 
-  //! Return an iterator over the abstracted symbols in which the elements **can** be modified
+  //! Return an iterator over the abstracted symbols in which the elements
+  //! **can** be modified
   it_symbols symbols();
 
-  //! Return an iterator over the abstracted symbols in which the elements **can't** be modified
-  it_const_symbols  symbols() const;
+  //! Return an iterator over the abstracted symbols in which the elements
+  //! **can't** be modified
+  it_const_symbols symbols() const;
 
   //! Check if a Symbol with the given name exists
   bool has_symbol(const std::string& name) const;
@@ -111,7 +110,7 @@ class LIEF_API Binary : public Object {
   virtual void remove_section(const std::string& name, bool clear = false) = 0;
 
   //! Return an iterator over the binary relocation (LIEF::Relocation)
-  it_relocations       relocations();
+  it_relocations relocations();
   it_const_relocations relocations() const;
 
   //! Binary's entrypoint (if any)
@@ -146,7 +145,8 @@ class LIEF_API Binary : public Object {
   //! @param[in] patch_value    Patch to apply
   //! @param[in] addr_type      Specify if the address should be used as an
   //!                           absolute virtual address or a RVA
-  virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
+  virtual void patch_address(uint64_t address,
+                             const std::vector<uint8_t>& patch_value,
                              VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
   //! Patch the address with the given value
@@ -154,13 +154,16 @@ class LIEF_API Binary : public Object {
   //! @param[in] address      Address to patch
   //! @param[in] patch_value  Patch to apply
   //! @param[in] size         Size of the value in **bytes** (1, 2, ... 8)
-  //! @param[in] addr_type    Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+  //! @param[in] addr_type    Specify if the address should be used as an
+  //! absolute virtual address or an RVA
+  virtual void patch_address(uint64_t address, uint64_t patch_value,
+                             size_t size = sizeof(uint64_t),
                              VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
   //! Return the content located at the given virtual address
-  virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address,
-                                        uint64_t size, VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
+  virtual std::vector<uint8_t> get_content_from_virtual_address(
+      uint64_t virtual_address, uint64_t size,
+      VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
 
   //! Change the binary's name
   void name(const std::string& name);
@@ -187,32 +190,37 @@ class LIEF_API Binary : public Object {
   //! Convert the given offset into a virtual address.
   //!
   //! @param[in] offset   The offset to convert.
-  //! @param[in] slide    If not 0, it will replace the default base address (if any)
-  virtual uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
+  //! @param[in] slide    If not 0, it will replace the default base address (if
+  //! any)
+  virtual uint64_t offset_to_virtual_address(uint64_t offset,
+                                             uint64_t slide = 0) const = 0;
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  //! Build & transform the Binary object representation into a *real* executable
+  //! Build & transform the Binary object representation into a *real*
+  //! executable
   virtual void write(const std::string& name) = 0;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Binary& binary);
 
-  protected:
+ protected:
   EXE_FORMATS format_ = EXE_FORMATS::FORMAT_UNKNOWN;
   std::string name_;
 
   uint64_t original_size_ = 0;
 
-  // These functions need to be overloaded by the object that claims to extend this Abstract Binary
+  // These functions need to be overloaded by the object that claims to extend
+  // this Abstract Binary
   virtual Header get_abstract_header() const = 0;
   virtual symbols_t get_abstract_symbols() = 0;
   virtual sections_t get_abstract_sections() = 0;
   virtual relocations_t get_abstract_relocations() = 0;
 
-  virtual functions_t  get_abstract_exported_functions() const = 0;
-  virtual functions_t  get_abstract_imported_functions() const = 0;
-  virtual std::vector<std::string>  get_abstract_imported_libraries() const = 0;
+  virtual functions_t get_abstract_exported_functions() const = 0;
+  virtual functions_t get_abstract_imported_functions() const = 0;
+  virtual std::vector<std::string> get_abstract_imported_libraries() const = 0;
 };
-}
+}  // namespace LIEF
 
 #endif

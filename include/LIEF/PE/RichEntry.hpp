@@ -25,8 +25,7 @@ namespace PE {
 
 //! Class which represents an entry associated to the RichHeader
 class LIEF_API RichEntry : public Object {
-  public:
-
+ public:
   RichEntry();
   RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
   RichEntry(const RichEntry&);
@@ -51,16 +50,15 @@ class LIEF_API RichEntry : public Object {
   bool operator==(const RichEntry& rhs) const;
   bool operator!=(const RichEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const RichEntry& rich_entry);
 
-  private:
+ private:
   uint16_t id_;
   uint16_t build_id_;
   uint32_t count_;
-
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif
-

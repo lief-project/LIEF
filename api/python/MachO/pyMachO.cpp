@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <pybind11/stl_bind.h>
-
 #include "pyMachO.hpp"
 
+#include <pybind11/stl_bind.h>
 
 namespace LIEF {
 namespace MachO {
 
 void init_python_module(py::module& m) {
-  py::module LIEF_MachO_module = m.def_submodule("MachO", "Python API for the MachO format");
+  py::module LIEF_MachO_module =
+      m.def_submodule("MachO", "Python API for the MachO format");
 
   init_enums(LIEF_MachO_module);
   init_objects(LIEF_MachO_module);
@@ -30,7 +30,6 @@ void init_python_module(py::module& m) {
 }
 
 void init_objects(py::module& m) {
-
   CREATE(ParserConfig, m);
   CREATE(Parser, m);
 
@@ -69,5 +68,5 @@ void init_objects(py::module& m) {
   CREATE(FilesetCommand, m);
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

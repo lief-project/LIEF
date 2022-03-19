@@ -16,16 +16,14 @@
 #ifndef LIEF_ELF_RELOCATION_H_
 #define LIEF_ELF_RELOCATION_H_
 
-#include <string>
-#include <map>
 #include <iostream>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <map>
+#include <string>
 
 #include "LIEF/Abstract/Relocation.hpp"
-
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -42,26 +40,26 @@ struct Elf32_Rela;
 
 struct Elf64_Rel;
 struct Elf64_Rela;
-}
+}  // namespace details
 
 //! Class that represents an ELF relocation.
 class LIEF_API Relocation : public LIEF::Relocation {
-
   friend class Parser;
   friend class Binary;
   friend class Builder;
 
-  public:
-  Relocation(const details::Elf32_Rel&  header);
+ public:
+  Relocation(const details::Elf32_Rel& header);
   Relocation(const details::Elf32_Rela& header);
-  Relocation(const details::Elf64_Rel&  header);
+  Relocation(const details::Elf64_Rel& header);
   Relocation(const details::Elf64_Rela& header);
-  Relocation(uint64_t address, uint32_t type = 0, int64_t addend = 0, bool isRela = false);
+  Relocation(uint64_t address, uint32_t type = 0, int64_t addend = 0,
+             bool isRela = false);
 
-  template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
-  Relocation(uint64_t address, T type, int64_t addend = 0, bool isRela = false) :
-    Relocation{address, static_cast<uint32_t>(type), addend, isRela}
-  {}
+  template <class T,
+            typename = typename std::enable_if<std::is_enum<T>::value>::type>
+  Relocation(uint64_t address, T type, int64_t addend = 0, bool isRela = false)
+      : Relocation{address, static_cast<uint32_t>(type), addend, isRela} {}
 
   Relocation();
   Relocation(ARCH arch);
@@ -72,10 +70,11 @@ class LIEF_API Relocation : public LIEF::Relocation {
   void swap(Relocation& other);
 
   //! Additional value that can be involved in the relocation processing
-  int64_t  addend() const;
+  int64_t addend() const;
 
   //! Type of the relocation
-  //! This type depends on the underlying architecture which can be accessed with architecture().
+  //! This type depends on the underlying architecture which can be accessed
+  //! with architecture().
   //!
   //! Depending on the architecture, it can return:
   //!
@@ -91,10 +90,12 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! * RELOC_SPARC
   uint32_t type() const;
 
-  //! Check if the relocation uses the explicit addend() field (this is usually the case for 64 bits binaries)
+  //! Check if the relocation uses the explicit addend() field (this is usually
+  //! the case for 64 bits binaries)
   bool is_rela() const;
 
-  //! Check if the relocation uses the implicit added (i.e. not present in the ELF structure)
+  //! Check if the relocation uses the implicit added (i.e. not present in the
+  //! ELF structure)
   bool is_rel() const;
 
   //! Relocation info which contains for instance the symbol index
@@ -113,7 +114,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   //! Symbol associated with the relocation
   //! If no symbol is tied to this relocation, it returns a nullptr
-  Symbol*       symbol();
+  Symbol* symbol();
   const Symbol* symbol() const;
 
   //! True if the relocation has an associated section
@@ -121,7 +122,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   //! Section associated with this relocation.
   //! If no section is tied to this relocation, it returns a nullptr
-  Section*       section();
+  Section* section();
   const Section* section() const;
 
   void addend(int64_t addend);
@@ -136,21 +137,20 @@ class LIEF_API Relocation : public LIEF::Relocation {
   bool operator==(const Relocation& rhs) const;
   bool operator!=(const Relocation& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Relocation& entry);
 
-  private:
-  uint32_t            type_ = 0;
-  int64_t             addend_ = 0;
-  bool                isRela_ = false;
-  Symbol*             symbol_ = nullptr;
-  ARCH                architecture_ = ARCH::EM_NONE;
+ private:
+  uint32_t type_ = 0;
+  int64_t addend_ = 0;
+  bool isRela_ = false;
+  Symbol* symbol_ = nullptr;
+  ARCH architecture_ = ARCH::EM_NONE;
   RELOCATION_PURPOSES purpose_ = RELOCATION_PURPOSES::RELOC_PURPOSE_NONE;
-  Section*            section_{nullptr};
-  uint32_t            info_ = 0;
+  Section* section_{nullptr};
+  uint32_t info_ = 0;
 };
 
-
-
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif /* _ELF_RELOCATION_H_ */

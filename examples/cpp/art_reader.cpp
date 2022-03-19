@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/ART.hpp>
+#include <LIEF/logging.hpp>
 #include <iostream>
 #include <memory>
 
-#include <LIEF/ART.hpp>
-#include <LIEF/logging.hpp>
-
 using namespace LIEF::ART;
 
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <ART file>" << '\n';
     return EXIT_FAILURE;
   }
 
-
   try {
-     std::unique_ptr<const File> file = LIEF::ART::Parser::parse(argv[1]);
+    std::unique_ptr<const File> file = LIEF::ART::Parser::parse(argv[1]);
   } catch (const LIEF::exception& e) {
     std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
-
 }
-

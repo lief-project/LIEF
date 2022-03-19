@@ -17,10 +17,9 @@
 #define LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -33,7 +32,7 @@ struct dysymtab_command;
 //! This command completes the LC_SYMTAB (SymbolCommand) to provide
 //! a better granularity over the symbols layout.
 class LIEF_API DynamicSymbolCommand : public LoadCommand {
-  public:
+ public:
   DynamicSymbolCommand();
 
   DynamicSymbolCommand(const details::dysymtab_command& cmd);
@@ -91,7 +90,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   //! This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_module_table() const;
 
-  //! Byte offset from the start of the file to the external reference table data.
+  //! Byte offset from the start of the file to the external reference table
+  //! data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t external_reference_symbol_offset() const;
@@ -103,8 +103,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   //! Byte offset from the start of the file to the indirect symbol table data.
   //!
-  //! Indirect symbol table is used by the loader to speed-up symbol resolution during
-  //! the *lazy binding* process
+  //! Indirect symbol table is used by the loader to speed-up symbol resolution
+  //! during the *lazy binding* process
   //!
   //! References:
   //!   * dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp
@@ -116,8 +116,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   //! @see indirect_symbol_offset
   uint32_t nb_indirect_symbols() const;
 
-
-  //! Byte offset from the start of the file to the external relocation table data.
+  //! Byte offset from the start of the file to the external relocation table
+  //! data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t external_relocation_offset() const;
@@ -136,7 +136,6 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_local_relocations() const;
-
 
   void idx_local_symbol(uint32_t value);
   void nb_local_symbols(uint32_t value);
@@ -167,7 +166,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint32_t idx_local_symbol_;
   uint32_t nb_local_symbols_;
 
@@ -196,6 +195,6 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   uint32_t nb_local_relocations_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

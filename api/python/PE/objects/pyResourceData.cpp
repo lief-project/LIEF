@@ -13,57 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/ResourceData.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (ResourceData::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ResourceData::*)(T);
 
-
-template<>
+template <>
 void create<ResourceData>(py::module& m) {
   py::class_<ResourceData, ResourceNode>(m, "ResourceData",
-      R"delim(
+                                         R"delim(
       Class which represents a Data Node in the PE resources tree
       )delim")
-    .def(py::init<>(),
-        "Default constructor")
+      .def(py::init<>(), "Default constructor")
 
-    .def(py::init<const std::vector<uint8_t>&, uint32_t>(),
-        "content"_a, "code_page"_a)
+      .def(py::init<const std::vector<uint8_t>&, uint32_t>(), "content"_a,
+           "code_page"_a)
 
-    .def_property("code_page",
-        static_cast<getter_t<uint32_t>>(&ResourceData::code_page),
-        static_cast<setter_t<uint32_t>>(&ResourceData::code_page),
-        R"delim(
+      .def_property("code_page",
+                    static_cast<getter_t<uint32_t>>(&ResourceData::code_page),
+                    static_cast<setter_t<uint32_t>>(&ResourceData::code_page),
+                    R"delim(
         Return the code page that is used to decode code point
         values within the resource data. Typically, the code page is the Unicode code page.
         )delim")
 
-    .def_property("content",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&ResourceData::content),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&ResourceData::content),
-        "Resource content")
+      .def_property("content",
+                    static_cast<getter_t<const std::vector<uint8_t>&>>(
+                        &ResourceData::content),
+                    static_cast<setter_t<const std::vector<uint8_t>&>>(
+                        &ResourceData::content),
+                    "Resource content")
 
-    .def_property("reserved",
-        static_cast<getter_t<uint32_t>>(&ResourceData::reserved),
-        static_cast<setter_t<uint32_t>>(&ResourceData::reserved),
-        "Reserved value. Should be ``0``")
+      .def_property("reserved",
+                    static_cast<getter_t<uint32_t>>(&ResourceData::reserved),
+                    static_cast<setter_t<uint32_t>>(&ResourceData::reserved),
+                    "Reserved value. Should be ``0``")
 
-    .def_property_readonly("offset",
-        &ResourceData::offset,
-        R"delim(
+      .def_property_readonly("offset", &ResourceData::offset,
+                             R"delim(
         Offset of the content within the resource
 
         .. warning::
@@ -71,22 +69,19 @@ void create<ResourceData>(py::module& m) {
             This value can change when re-building the resource table
         )delim")
 
-    .def("__eq__", &ResourceData::operator==)
-    .def("__ne__", &ResourceData::operator!=)
+      .def("__eq__", &ResourceData::operator==)
+      .def("__ne__", &ResourceData::operator!=)
 
-    .def("__hash__",
-        [] (const ResourceData& node) {
-          return Hash::hash(node);
-        })
+      .def("__hash__",
+           [](const ResourceData& node) { return Hash::hash(node); })
 
-    .def("__str__",
-        [] (const ResourceData& data) {
-          std::ostringstream stream;
-          stream << data;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const ResourceData& data) {
+        std::ostringstream stream;
+        stream << data;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

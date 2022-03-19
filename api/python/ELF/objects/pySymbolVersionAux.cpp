@@ -13,52 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/SymbolVersionAux.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (SymbolVersionAux::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (SymbolVersionAux::*)(T);
 
-template<>
+template <>
 void create<SymbolVersionAux>(py::module& m) {
-
-  py::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
+  py::class_<SymbolVersionAux, LIEF::Object>(
+      m, "SymbolVersionAux",
       "Class which represents an Auxiliary Symbol version")
 
-    .def_property("name",
-        [] (const SymbolVersionAux& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&SymbolVersionAux::name),
-        "Symbol's name (e.g. ``GLIBC_2.2.5``)")
+      .def_property(
+          "name",
+          [](const SymbolVersionAux& obj) {
+            return safe_string_converter(obj.name());
+          },
+          static_cast<setter_t<const std::string&>>(&SymbolVersionAux::name),
+          "Symbol's name (e.g. ``GLIBC_2.2.5``)")
 
-    .def("__eq__", &SymbolVersionAux::operator==)
-    .def("__ne__", &SymbolVersionAux::operator!=)
-    .def("__hash__",
-        [] (const SymbolVersionAux& sva) {
-          return Hash::hash(sva);
-        })
+      .def("__eq__", &SymbolVersionAux::operator==)
+      .def("__ne__", &SymbolVersionAux::operator!=)
+      .def("__hash__",
+           [](const SymbolVersionAux& sva) { return Hash::hash(sva); })
 
-    .def("__str__",
-        [] (const SymbolVersionAux& symbolVersionAux)
-        {
-          std::ostringstream stream;
-          stream << symbolVersionAux;
-          std::string str =  stream.str();
-          return str;
-        });
+      .def("__str__", [](const SymbolVersionAux& symbolVersionAux) {
+        std::ostringstream stream;
+        stream << symbolVersionAux;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

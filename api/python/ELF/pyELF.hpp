@@ -18,15 +18,15 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
+
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
-
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
 namespace ELF {
@@ -64,7 +64,7 @@ class CorePrStatus;
 class CoreAuxv;
 class CoreSigInfo;
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -107,8 +107,8 @@ SPECIALIZE_CREATE(CorePrStatus);
 SPECIALIZE_CREATE(CoreAuxv);
 SPECIALIZE_CREATE(CoreSigInfo);
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 PYBIND11_MAKE_OPAQUE(LIEF::ELF::CoreFile::files_t);
 

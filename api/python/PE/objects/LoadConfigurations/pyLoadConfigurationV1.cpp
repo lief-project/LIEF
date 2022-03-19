@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (LoadConfigurationV1::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (LoadConfigurationV1::*)(T);
 
-
-template<>
+template <>
 void create<LoadConfigurationV1>(py::module& m) {
   py::class_<LoadConfigurationV1, LoadConfigurationV0>(m, "LoadConfigurationV1",
       R"delim(
@@ -98,5 +96,5 @@ void create<LoadConfigurationV1>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

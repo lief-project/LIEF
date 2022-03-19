@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_PE_UTILS_H_
 #define LIEF_PE_UTILS_H_
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/PE/enums.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
-
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -35,7 +34,8 @@ enum class IMPHASH_MODE {
   DEFAULT = 0,    /**< Default implementation */
   LIEF = DEFAULT, /**< Same as IMPHASH_MODE::DEFAULT */
   PEFILE,         /**< Use pefile algorithm */
-  VT = PEFILE,    /**< Same as IMPHASH_MODE::PEFILE since Virus Total is using pefile */
+  VT = PEFILE,    /**< Same as IMPHASH_MODE::PEFILE since Virus Total is using
+                     pefile */
 };
 
 //! check if the `file` is a PE file
@@ -60,28 +60,35 @@ LIEF_LOCAL result<PE_TYPE> get_type_from_stream(BinaryStream& stream);
 //!   * Casse agnostic
 //!   * Ordinal (**in some extent**) agnostic
 //!
-//! If one needs the same output as Virus Total (i.e. pefile), you can pass IMPHASH_MODE::PEFILE
-//! as second parameter.
+//! If one needs the same output as Virus Total (i.e. pefile), you can pass
+//! IMPHASH_MODE::PEFILE as second parameter.
 //!
-//! @warning The default algorithm used to compute the *imphash* value has some variations compared to Yara, pefile, VT implementation
+//! @warning The default algorithm used to compute the *imphash* value has some
+//! variations compared to Yara, pefile, VT implementation
 //!
-//! @see https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
-LIEF_API std::string get_imphash(const Binary& binary, IMPHASH_MODE mode = IMPHASH_MODE::DEFAULT);
+//! @see
+//! https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
+LIEF_API std::string get_imphash(const Binary& binary,
+                                 IMPHASH_MODE mode = IMPHASH_MODE::DEFAULT);
 
 //! Take a PE::Import as entry and try to resolve imports
 //! by ordinal.
 //!
-//! The ``strict`` boolean parameter enables to throw an LIEF::not_found exception
-//! if the ordinal can't be resolved. Otherwise it skips the entry.
+//! The ``strict`` boolean parameter enables to throw an LIEF::not_found
+//! exception if the ordinal can't be resolved. Otherwise it skips the entry.
 //!
 //! @param[in] import Import to resolve
-//! @param[in] strict If set to ``true``, throw an exception if the import can't be resolved
-//! @param[in] use_std If ``true``, it will use the [pefile](https://github.com/erocarrera/pefile/tree/09264be6f731bf8578aee8638cc4046154e03abf/ordlookup) look-up table for resolving imports
+//! @param[in] strict If set to ``true``, throw an exception if the import can't
+//! be resolved
+//! @param[in] use_std If ``true``, it will use the
+//! [pefile](https://github.com/erocarrera/pefile/tree/09264be6f731bf8578aee8638cc4046154e03abf/ordlookup)
+//! look-up table for resolving imports
 //!
 //! @return The PE::import resolved with PE::ImportEntry::name set
-LIEF_API Import resolve_ordinals(const Import& import, bool strict=false, bool use_std=false);
+LIEF_API Import resolve_ordinals(const Import& import, bool strict = false,
+                                 bool use_std = false);
 
 LIEF_API ALGORITHMS algo_from_oid(const std::string& oid);
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

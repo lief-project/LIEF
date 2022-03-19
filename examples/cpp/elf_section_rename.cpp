@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iostream>
-#include <memory>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-
 #include <LIEF/ELF.hpp>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <memory>
 
 //
 // Rename the first section name.
@@ -52,10 +50,11 @@
 //
 //
 //
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "ELF Section rename" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>" << '\n';
+    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>"
+              << '\n';
     return -1;
   }
 
@@ -66,6 +65,4 @@ int main(int argc, char **argv) {
   binary->write(argv[2]);
 
   return 0;
-
-
 }

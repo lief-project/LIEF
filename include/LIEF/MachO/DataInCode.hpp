@@ -15,16 +15,15 @@
  */
 #ifndef LIEF_MACHO_DATA_IN_CODE_COMMAND_H_
 #define LIEF_MACHO_DATA_IN_CODE_COMMAND_H_
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-#include "LIEF/iterators.hpp"
-
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -35,18 +34,19 @@ struct linkedit_data_command;
 }
 
 //! Interface of the LC_DATA_IN_CODE command
-//! This command is used to list slices of code sections that contain data. The *slices*
-//! information are stored as an array of DataCodeEntry
+//! This command is used to list slices of code sections that contain data. The
+//! *slices* information are stored as an array of DataCodeEntry
 //!
 //! @see DataCodeEntry
 class LIEF_API DataInCode : public LoadCommand {
   friend class BinaryParser;
-  public:
-  using entries_t        = std::vector<DataCodeEntry>;
-  using it_const_entries = const_ref_iterator<const entries_t&>;
-  using it_entries       = ref_iterator<entries_t&>;
 
-  public:
+ public:
+  using entries_t = std::vector<DataCodeEntry>;
+  using it_const_entries = const_ref_iterator<const entries_t&>;
+  using it_entries = ref_iterator<entries_t&>;
+
+ public:
   DataInCode();
   DataInCode(const details::linkedit_data_command& cmd);
 
@@ -82,13 +82,12 @@ class LIEF_API DataInCode : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  uint32_t  data_offset_;
-  uint32_t  data_size_;
+ private:
+  uint32_t data_offset_;
+  uint32_t data_size_;
   entries_t entries_;
-
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

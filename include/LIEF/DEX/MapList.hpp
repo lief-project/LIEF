@@ -18,11 +18,10 @@
 #include <map>
 #include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/DEX/MapItem.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -33,16 +32,17 @@ class Class;
 //! follows the main DEX header.
 //!
 //! This MapList aims at referencing the location of other DEX structures as
-//! described in https://source.android.com/devices/tech/dalvik/dex-format#map-item
+//! described in
+//! https://source.android.com/devices/tech/dalvik/dex-format#map-item
 class LIEF_API MapList : public Object {
   friend class Parser;
 
-  public:
-  using items_t           = std::map<MapItem::TYPES, MapItem>;
-  using it_items_t        = ref_iterator<std::vector<MapItem*>>;
-  using it_const_items_t  = const_ref_iterator<std::vector<MapItem*>>;
+ public:
+  using items_t = std::map<MapItem::TYPES, MapItem>;
+  using it_items_t = ref_iterator<std::vector<MapItem*>>;
+  using it_const_items_t = const_ref_iterator<std::vector<MapItem*>>;
 
-  public:
+ public:
   MapList();
 
   MapList(const MapList&);
@@ -72,15 +72,15 @@ class LIEF_API MapList : public Object {
   bool operator==(const MapList& rhs) const;
   bool operator!=(const MapList& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapList& mtd);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const MapList& mtd);
 
   ~MapList() override;
 
-  private:
+ private:
   items_t items_;
-
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 struct Pe_DosHeader_t {
-  uint16_t magic ;
+  uint16_t magic;
   uint16_t used_bytes_in_the_last_page;
   uint16_t file_size_in_pages;
   uint16_t numberof_relocation;
@@ -53,7 +53,6 @@ struct Pe_DosHeader_t {
 };
 
 typedef struct Pe_DosHeader_t Pe_DosHeader_t;
-
 
 #ifdef __cplusplus
 }

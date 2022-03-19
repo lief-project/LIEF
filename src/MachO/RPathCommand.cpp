@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/MachO/RPathCommand.hpp"
+
 #include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/RPathCommand.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,27 +29,17 @@ RPathCommand& RPathCommand::operator=(const RPathCommand&) = default;
 RPathCommand::RPathCommand(const RPathCommand&) = default;
 RPathCommand::~RPathCommand() = default;
 
-RPathCommand::RPathCommand(const details::rpath_command& rpath) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpath.cmd), rpath.cmdsize}
-{}
+RPathCommand::RPathCommand(const details::rpath_command& rpath)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpath.cmd),
+                               rpath.cmdsize} {}
 
-RPathCommand* RPathCommand::clone() const {
-  return new RPathCommand(*this);
-}
+RPathCommand* RPathCommand::clone() const { return new RPathCommand(*this); }
 
-const std::string& RPathCommand::path() const {
-  return path_;
-}
+const std::string& RPathCommand::path() const { return path_; }
 
-void RPathCommand::path(const std::string& path) {
-  path_ = path;
-}
+void RPathCommand::path(const std::string& path) { path_ = path; }
 
-
-void RPathCommand::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void RPathCommand::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool RPathCommand::operator==(const RPathCommand& rhs) const {
   if (this == &rhs) {
@@ -72,11 +62,9 @@ bool RPathCommand::classof(const LoadCommand* cmd) {
 
 std::ostream& RPathCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::left
-     << std::setw(10) << "Path: " << path();
+  os << std::left << std::setw(10) << "Path: " << path();
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

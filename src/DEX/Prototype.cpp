@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/DEX/Prototype.hpp"
+
 #include <numeric>
 
-#include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
@@ -26,10 +27,7 @@ namespace DEX {
 Prototype::Prototype() = default;
 Prototype::Prototype(const Prototype& other) = default;
 
-
-const Type* Prototype::return_type() const {
-  return return_type_;
-}
+const Type* Prototype::return_type() const { return return_type_; }
 
 Type* Prototype::return_type() {
   return const_cast<Type*>(static_cast<const Prototype*>(this)->return_type());
@@ -39,13 +37,9 @@ Prototype::it_const_params Prototype::parameters_type() const {
   return params_;
 }
 
-Prototype::it_params Prototype::parameters_type() {
-  return params_;
-}
+Prototype::it_params Prototype::parameters_type() { return params_; }
 
-void Prototype::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Prototype::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Prototype::operator==(const Prototype& rhs) const {
   if (this == &rhs) {
@@ -61,7 +55,6 @@ bool Prototype::operator!=(const Prototype& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Prototype& type) {
-
   Prototype::it_const_params ps = type.parameters_type();
   if (const auto* t = type.return_type()) {
     os << *t;
@@ -78,8 +71,7 @@ std::ostream& operator<<(std::ostream& os, const Prototype& type) {
   return os;
 }
 
-
 Prototype::~Prototype() = default;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

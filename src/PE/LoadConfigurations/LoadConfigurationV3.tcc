@@ -19,17 +19,17 @@
 namespace LIEF {
 namespace PE {
 
-template<class T>
-LoadConfigurationV3::LoadConfigurationV3(const details::load_configuration_v3<T>& header) :
-  LoadConfigurationV2{reinterpret_cast<const details::load_configuration_v2<T>&>(header)},
-  guard_address_taken_iat_entry_table_{header.GuardAddressTakenIatEntryTable},
-  guard_address_taken_iat_entry_count_{header.GuardAddressTakenIatEntryCount},
-  guard_long_jump_target_table_{header.GuardLongJumpTargetTable},
-  guard_long_jump_target_count_{header.GuardLongJumpTargetCount}
-{
-}
+template <class T>
+LoadConfigurationV3::LoadConfigurationV3(
+    const details::load_configuration_v3<T>& header)
+    : LoadConfigurationV2{reinterpret_cast<
+          const details::load_configuration_v2<T>&>(header)},
+      guard_address_taken_iat_entry_table_{
+          header.GuardAddressTakenIatEntryTable},
+      guard_address_taken_iat_entry_count_{
+          header.GuardAddressTakenIatEntryCount},
+      guard_long_jump_target_table_{header.GuardLongJumpTargetTable},
+      guard_long_jump_target_count_{header.GuardLongJumpTargetCount} {}
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

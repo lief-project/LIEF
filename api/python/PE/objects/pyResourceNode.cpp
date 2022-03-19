@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include <sstream>
+#include <string>
 
+#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
-
-#include <string>
-#include <sstream>
+#include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (ResourceNode::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ResourceNode::*)(T);
 
-
-template<>
+template <>
 void create<ResourceNode>(py::module& m) {
   py::class_<ResourceNode, LIEF::Object> res_node(m, "ResourceNode",
-      R"delim(
+                                                  R"delim(
       Class which represents a Node in the resource tree.
       It is extended by :class:`lief.PE.ResourceData` and :class:`lief.PE.ResourceNode`
       )delim");
@@ -120,5 +118,5 @@ void create<ResourceNode>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

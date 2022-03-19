@@ -13,54 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyAbstract.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/Abstract/Symbol.hpp"
+#include "pyAbstract.hpp"
 
 namespace LIEF {
 
-template<class T>
+template <class T>
 using getter_t = T (Symbol::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Symbol::*)(T);
 
-template<>
+template <>
 void create<Symbol>(py::module& m) {
-
   py::class_<Symbol, Object>(m, "Symbol",
-      R"delim(
+                             R"delim(
       This class represents a symbol in an executable format.
       )delim")
-    .def(py::init())
+      .def(py::init())
 
-    .def_property("name",
-        [] (const Symbol& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&Symbol::name),
-        "Symbol's name")
+      .def_property(
+          "name",
+          [](const Symbol& obj) { return safe_string_converter(obj.name()); },
+          static_cast<setter_t<const std::string&>>(&Symbol::name),
+          "Symbol's name")
 
-    .def_property("value",
-        static_cast<getter_t<uint64_t>>(&Symbol::value),
-        static_cast<setter_t<uint64_t>>(&Symbol::value),
-        "Symbol's value")
+      .def_property("value", static_cast<getter_t<uint64_t>>(&Symbol::value),
+                    static_cast<setter_t<uint64_t>>(&Symbol::value),
+                    "Symbol's value")
 
-    .def_property("size",
-        static_cast<getter_t<uint64_t>>(&Symbol::size),
-        static_cast<setter_t<uint64_t>>(&Symbol::size),
-        "Symbol's size")
+      .def_property("size", static_cast<getter_t<uint64_t>>(&Symbol::size),
+                    static_cast<setter_t<uint64_t>>(&Symbol::size),
+                    "Symbol's size")
 
-    .def("__str__",
-        [] (const Symbol& symbol)
-        {
-          std::ostringstream stream;
-          stream << symbol;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const Symbol& symbol) {
+        std::ostringstream stream;
+        stream << symbol;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
+}  // namespace LIEF

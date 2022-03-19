@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include "logging.hpp"
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/hash.hpp"
-#include "LIEF/DEX/enums.hpp"
-#include "LIEF/DEX/EnumToString.hpp"
 
 #include <numeric>
 #include <utility>
 
+#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/EnumToString.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/DEX/hash.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -34,39 +34,24 @@ Method& Method::operator=(const Method&) = default;
 
 Method::Method() = default;
 
+Method::Method(std::string name, Class* parent)
+    : name_{std::move(name)}, parent_{parent} {}
 
-Method::Method(std::string name, Class* parent) :
-  name_{std::move(name)},
-  parent_{parent}
-{}
+const std::string& Method::name() const { return name_; }
 
-const std::string& Method::name() const {
-  return name_;
-}
+uint64_t Method::code_offset() const { return code_offset_; }
 
-uint64_t Method::code_offset() const {
-  return code_offset_;
-}
+const Method::bytecode_t& Method::bytecode() const { return bytecode_; }
 
-const Method::bytecode_t& Method::bytecode() const {
-  return bytecode_;
-}
+bool Method::has_class() const { return parent_ != nullptr; }
 
-bool Method::has_class() const {
-  return parent_ != nullptr;
-}
-
-const Class* Method::cls() const {
-  return parent_;
-}
+const Class* Method::cls() const { return parent_; }
 
 Class* Method::cls() {
   return const_cast<Class*>(static_cast<const Method*>(this)->cls());
 }
 
-size_t Method::index() const {
-  return original_index_;
-}
+size_t Method::index() const { return original_index_; }
 
 void Method::insert_dex2dex_info(uint32_t pc, uint32_t index) {
   dex2dex_info_.emplace(pc, index);
@@ -76,42 +61,29 @@ const dex2dex_method_info_t& Method::dex2dex_info() const {
   return dex2dex_info_;
 }
 
-bool Method::is_virtual() const {
-  return is_virtual_;
-}
+bool Method::is_virtual() const { return is_virtual_; }
 
-void Method::set_virtual(bool v) {
-  is_virtual_ = v;
-}
+void Method::set_virtual(bool v) { is_virtual_ = v; }
 
-
-bool Method::has(ACCESS_FLAGS f) const {
-  return (access_flags_ & f) != 0u;
-}
+bool Method::has(ACCESS_FLAGS f) const { return (access_flags_ & f) != 0u; }
 
 Method::access_flags_list_t Method::access_flags() const {
   Method::access_flags_list_t flags;
 
-  std::copy_if(std::begin(access_flags_list),
-      std::end(access_flags_list),
-      std::back_inserter(flags),
-      [this] (ACCESS_FLAGS f) { return has(f); });
+  std::copy_if(std::begin(access_flags_list), std::end(access_flags_list),
+               std::back_inserter(flags),
+               [this](ACCESS_FLAGS f) { return has(f); });
 
   return flags;
-
 }
 
-const Prototype* Method::prototype() const {
-  return prototype_;
-}
+const Prototype* Method::prototype() const { return prototype_; }
 
 Prototype* Method::prototype() {
   return const_cast<Prototype*>(static_cast<const Method*>(this)->prototype());
 }
 
-void Method::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Method::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Method::operator==(const Method& rhs) const {
   if (this == &rhs) {
@@ -122,9 +94,7 @@ bool Method::operator==(const Method& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Method::operator!=(const Method& rhs) const {
-  return !(*this == rhs);
-}
+bool Method::operator!=(const Method& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Method& method) {
   const auto* proto = method.prototype();
@@ -140,25 +110,24 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 
   if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
-    std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/', '.');
+    std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/',
+                 '.');
   }
 
   Method::access_flags_list_t aflags = method.access_flags();
-  std::string flags_str = std::accumulate(
-      std::begin(aflags), std::end(aflags),
-      std::string{},
-      [] (const std::string& l, ACCESS_FLAGS r) {
-        std::string str = to_string(r);
-        std::transform(std::begin(str), std::end(str), std::begin(str), ::tolower);
-        return l.empty() ? str : l + " " + str;
-      });
+  std::string flags_str =
+      std::accumulate(std::begin(aflags), std::end(aflags), std::string{},
+                      [](const std::string& l, ACCESS_FLAGS r) {
+                        std::string str = to_string(r);
+                        std::transform(std::begin(str), std::end(str),
+                                       std::begin(str), ::tolower);
+                        return l.empty() ? str : l + " " + str;
+                      });
 
   if (!flags_str.empty()) {
     os << flags_str << " ";
   }
-  os << proto->return_type()
-     << " "
-     << pretty_cls_name << "->" << method.name();
+  os << proto->return_type() << " " << pretty_cls_name << "->" << method.name();
 
   os << "(";
   for (size_t i = 0; i < ps.size(); ++i) {
@@ -174,5 +143,5 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 
 Method::~Method() = default;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

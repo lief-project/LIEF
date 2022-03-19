@@ -15,32 +15,33 @@
  */
 #ifndef LIEF_PE_CODE_VIEW_PDB_H_
 #define LIEF_PE_CODE_VIEW_PDB_H_
-#include <iostream>
 #include <array>
+#include <iostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/CodeView.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 class LIEF_API CodeViewPDB : public CodeView {
-  public:
+ public:
   using signature_t = std::array<uint8_t, 16>;
 
   CodeViewPDB();
-  CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig,
-              uint32_t age, std::string filename);
+  CodeViewPDB(CODE_VIEW_SIGNATURES cv_signature, signature_t sig, uint32_t age,
+              std::string filename);
 
   CodeViewPDB(const CodeViewPDB&);
   CodeViewPDB& operator=(const CodeViewPDB&);
 
   CodeViewPDB* clone() const override;
 
-  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age, const std::string& filename);
-  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age, const std::string& filename);
+  static CodeViewPDB from_pdb70(signature_t sig, uint32_t age,
+                                const std::string& filename);
+  static CodeViewPDB from_pdb20(uint32_t signature, uint32_t age,
+                                const std::string& filename);
 
   signature_t signature() const;
   uint32_t age() const;
@@ -56,17 +57,18 @@ class LIEF_API CodeViewPDB : public CodeView {
   bool operator==(const CodeViewPDB& rhs) const;
   bool operator!=(const CodeViewPDB& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CodeViewPDB& entry);
 
   virtual ~CodeViewPDB();
 
-  private:
+ private:
   signature_t signature_;
-  uint32_t    age_;
+  uint32_t age_;
   std::string filename_;
 };
 
-} // Namespace PE
-} // Namespace LIEF
+}  // Namespace PE
+}  // Namespace LIEF
 
 #endif

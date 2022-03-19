@@ -13,95 +13,86 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-#include <set>
-#include <fstream>
-#include <iterator>
-#include <stdexcept>
-#include <functional>
-#include <map>
-
-#include "LIEF/exception.hpp"
-#include "LIEF/utils.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
+#include <algorithm>
+#include <fstream>
+#include <functional>
+#include <iterator>
+#include <map>
+#include <set>
+#include <stdexcept>
+
+#include "Builder.tcc"
+#include "ExeLayout.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/Relocation.hpp"
-#include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionAux.hpp"
-#include "LIEF/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/Note.hpp"
-
-#include "Builder.tcc"
-
-#include "ExeLayout.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/exception.hpp"
+#include "LIEF/utils.hpp"
 #include "ObjectFileLayout.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-
 Builder::~Builder() = default;
 
-Builder::Builder(Binary& binary) :
-  binary_{&binary},
-  layout_{nullptr}
-{
+Builder::Builder(Binary& binary) : binary_{&binary}, layout_{nullptr} {
   const E_TYPE type = binary.header().file_type();
   switch (type) {
     case E_TYPE::ET_CORE:
     case E_TYPE::ET_DYN:
-    case E_TYPE::ET_EXEC:
-      {
-        layout_ = std::make_unique<ExeLayout>(binary);
-        break;
-      }
+    case E_TYPE::ET_EXEC: {
+      layout_ = std::make_unique<ExeLayout>(binary);
+      break;
+    }
 
-    case E_TYPE::ET_REL:
-      {
-        layout_ = std::make_unique<ObjectFileLayout>(binary);
-        break;
-      }
+    case E_TYPE::ET_REL: {
+      layout_ = std::make_unique<ObjectFileLayout>(binary);
+      break;
+    }
 
-    default:
-      {
-        LIEF_ERR("ELF {} are not supported", to_string(type));
-        std::abort();
-      }
+    default: {
+      LIEF_ERR("ELF {} are not supported", to_string(type));
+      std::abort();
+    }
   }
   ios_.reserve(binary.original_size());
   ios_.set_endian_swap(should_swap());
 }
 
-
 bool Builder::should_swap() const {
   switch (binary_->header().abstract_endianness()) {
 #ifdef __BYTE_ORDER__
-#if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#if defined(__ORDER_LITTLE_ENDIAN__) && \
+    (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
     case ENDIANNESS::ENDIAN_BIG:
 #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
     case ENDIANNESS::ENDIAN_LITTLE:
 #endif
       return true;
-#endif // __BYTE_ORDER__
+#endif  // __BYTE_ORDER__
     default:
-      // we're good (or don't know what to do), consider bytes are in the expected order
+      // we're good (or don't know what to do), consider bytes are in the
+      // expected order
       return false;
   }
 }
-
 
 void Builder::build() {
   if (binary_->type() == ELF_CLASS::ELFCLASS32) {
@@ -117,40 +108,38 @@ void Builder::build() {
   }
 }
 
-const std::vector<uint8_t>& Builder::get_build() {
-  return ios_.raw();
-}
-
+const std::vector<uint8_t>& Builder::get_build() { return ios_.raw(); }
 
 Builder& Builder::force_relocations(bool flag) {
   config_.force_relocations = flag;
   return *this;
 }
 
-
 void Builder::write(const std::string& filename) const {
-  std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
+  std::ofstream output_file{filename,
+                            std::ios::out | std::ios::binary | std::ios::trunc};
   if (!output_file) {
     LIEF_ERR("Can't open {}!", filename);
     return;
   }
   std::vector<uint8_t> content;
   ios_.move(content);
-  output_file.write(reinterpret_cast<const char*>(content.data()), content.size());
+  output_file.write(reinterpret_cast<const char*>(content.data()),
+                    content.size());
 }
-
 
 uint32_t Builder::sort_dynamic_symbols() {
   static const std::string dynsym_section_name = ".dynsym";
   const auto it_begin = std::begin(binary_->dynamic_symbols_);
   const auto it_end = std::end(binary_->dynamic_symbols_);
 
-  const auto it_first_non_local_symbol =
-      std::stable_partition(it_begin, it_end, [] (const std::unique_ptr<Symbol>& sym) {
+  const auto it_first_non_local_symbol = std::stable_partition(
+      it_begin, it_end, [](const std::unique_ptr<Symbol>& sym) {
         return sym->binding() == SYMBOL_BINDINGS::STB_LOCAL;
       });
 
-  const uint32_t first_non_local_symbol_index = std::distance(it_begin, it_first_non_local_symbol);
+  const uint32_t first_non_local_symbol_index =
+      std::distance(it_begin, it_first_non_local_symbol);
 
   Section* section = binary_->get_section(dynsym_section_name);
   if (section != nullptr) {
@@ -159,21 +148,24 @@ uint32_t Builder::sort_dynamic_symbols() {
       // table if information of .dynsym section is smaller than null entries
       // num.
       LIEF_DEBUG("information of {} section changes from {:d} to {:d}",
-                 dynsym_section_name, section->information(), first_non_local_symbol_index);
+                 dynsym_section_name, section->information(),
+                 first_non_local_symbol_index);
 
       section->information(first_non_local_symbol_index);
     }
   }
 
   const auto it_first_exported_symbol = std::stable_partition(
-      it_first_non_local_symbol, it_end, [] (const std::unique_ptr<Symbol>& sym) {
-        return sym->shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+      it_first_non_local_symbol, it_end,
+      [](const std::unique_ptr<Symbol>& sym) {
+        return sym->shndx() ==
+               static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
       });
 
-  const uint32_t first_exported_symbol_index = std::distance(it_begin, it_first_exported_symbol);
+  const uint32_t first_exported_symbol_index =
+      std::distance(it_begin, it_first_exported_symbol);
   return first_exported_symbol_index;
 }
-
 
 ok_error_t Builder::build_empty_symbol_gnuhash() {
   LIEF_DEBUG("Build empty GNU Hash");
@@ -186,9 +178,9 @@ ok_error_t Builder::build_empty_symbol_gnuhash() {
 
   vector_iostream content(should_swap());
   const uint32_t nb_buckets = 1;
-  const uint32_t shift2     = 0;
-  const uint32_t maskwords  = 1;
-  const uint32_t symndx     = 1; // 0 is reserved
+  const uint32_t shift2 = 0;
+  const uint32_t maskwords = 1;
+  const uint32_t symndx = 1;  // 0 is reserved
 
   // nb_buckets
   content.write_conv<uint32_t>(nb_buckets);
@@ -208,8 +200,6 @@ ok_error_t Builder::build_empty_symbol_gnuhash() {
   return ok();
 }
 
-
-
 ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
   using value_t = typename note_to_section_map_t::value_type;
 
@@ -225,9 +215,7 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
 
   const auto it_section_name = std::find_if(
       range_secname.first, range_secname.second,
-      [this] (value_t p) {
-        return binary_->has_section(p.second);
-      });
+      [this](value_t p) { return binary_->has_section(p.second); });
 
   bool has_section = (it_section_name != range_secname.second);
 
@@ -237,10 +225,12 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
   } else if (known_section) {
     section_name = range_secname.first->second;
   } else {
-    section_name = fmt::format(".note.{:x}", static_cast<uint32_t>(note.type()));
+    section_name =
+        fmt::format(".note.{:x}", static_cast<uint32_t>(note.type()));
   }
 
-  const std::unordered_map<const Note*, size_t>& offset_map = reinterpret_cast<ExeLayout*>(layout_.get())->note_off_map();
+  const std::unordered_map<const Note*, size_t>& offset_map =
+      reinterpret_cast<ExeLayout*>(layout_.get())->note_off_map();
   const auto& it_offset = offset_map.find(&note);
 
   // Link section and notes
@@ -264,10 +254,10 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
       // Therefore, when relocating this note, we need
       // to update the segment as well.
       if (note.type() == NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0 &&
-          binary_->has(SEGMENT_TYPES::PT_GNU_PROPERTY))
-      {
+          binary_->has(SEGMENT_TYPES::PT_GNU_PROPERTY)) {
         Segment* seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY);
-        if (seg == nullptr) return ok(); // Should not append as it is checked by has(...)
+        if (seg == nullptr)
+          return ok();  // Should not append as it is checked by has(...)
 
         seg->file_offset(section->offset());
         seg->physical_size(section->size());
@@ -277,30 +267,28 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
       }
     } else /* We already handled this kind of note */ {
       section->virtual_address(0);
-      section-> size(section->size() + note.size());
+      section->size(section->size() + note.size());
     }
   }
   return ok();
 }
 
-
 Section* Builder::array_section(Binary& bin, uint64_t addr) {
   static const std::set<ELF_SECTION_TYPES> ARRAY_TYPES = {
-    ELF_SECTION_TYPES::SHT_INIT_ARRAY,
-    ELF_SECTION_TYPES::SHT_FINI_ARRAY,
-    ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,
+      ELF_SECTION_TYPES::SHT_INIT_ARRAY,
+      ELF_SECTION_TYPES::SHT_FINI_ARRAY,
+      ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,
   };
 
   for (std::unique_ptr<Section>& section : bin.sections_) {
     if (section->virtual_address() <= addr &&
         addr < (section->virtual_address() + section->size()) &&
-        ARRAY_TYPES.count(section->type()) > 0)
-    {
+        ARRAY_TYPES.count(section->type()) > 0) {
       return section.get();
     }
   }
   return nullptr;
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

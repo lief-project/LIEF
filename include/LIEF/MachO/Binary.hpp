@@ -16,17 +16,15 @@
 #ifndef LIEF_MACHO_BINARY_H_
 #define LIEF_MACHO_BINARY_H_
 
-#include <vector>
 #include <map>
-
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/Abstract/Binary.hpp"
-
-#include "LIEF/iterators.hpp"
 #include "LIEF/MachO/Header.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 
@@ -60,13 +58,12 @@ class LoadCommand;
 class Header;
 
 //! Class which represents a MachO binary
-class LIEF_API Binary : public LIEF::Binary  {
-
+class LIEF_API Binary : public LIEF::Binary {
   friend class BinaryParser;
   friend class Builder;
   friend class DyldInfo;
 
-  public:
+ public:
   using range_t = std::pair<uint64_t, uint64_t>;
 
   //! Internal container for storing Mach-O LoadCommand
@@ -91,13 +88,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   using it_exported_symbols = filter_iterator<symbols_t&, Symbol*>;
 
   //! Iterator that outputs exported const Symbol&
-  using it_const_exported_symbols = const_filter_iterator<const symbols_t&, const Symbol*>;
+  using it_const_exported_symbols =
+      const_filter_iterator<const symbols_t&, const Symbol*>;
 
   //! Iterator that outputs imported Symbol&
   using it_imported_symbols = filter_iterator<symbols_t&, Symbol*>;
 
   //! Iterator that outputs imported const Symbol&
-  using it_const_imported_symbols = const_filter_iterator<const symbols_t&, const Symbol*>;
+  using it_const_imported_symbols =
+      const_filter_iterator<const symbols_t&, const Symbol*>;
 
   //! Internal container for caching Mach-O Section
   using sections_cache_t = std::vector<Section*>;
@@ -133,10 +132,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   using it_fileset_binaries = ref_iterator<fileset_binaries_t&, Binary*>;
 
   //! Iterator that outputs const Binary&
-  using it_const_fileset_binaries = const_ref_iterator<const fileset_binaries_t&, Binary*>;
+  using it_const_fileset_binaries =
+      const_ref_iterator<const fileset_binaries_t&, Binary*>;
 
   struct KeyCmp {
-    bool operator() (const Relocation* lhs, const Relocation* rhs) const;
+    bool operator()(const Relocation* lhs, const Relocation* rhs) const;
   };
 
   //! Internal container that store all the relocations
@@ -148,10 +148,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
-
-  public:
+ public:
   Binary(const Binary&) = delete;
   Binary& operator=(const Binary&) = delete;
 
@@ -166,11 +166,11 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return an iterator over the MachO::Binary associated
   //! with the LOAD_COMMAND_TYPES::LC_FILESET_ENTRY commands
-  it_fileset_binaries       filesets();
+  it_fileset_binaries filesets();
   it_const_fileset_binaries filesets() const;
 
   //! Return binary's @link MachO::Symbol symbols @endlink
-  it_symbols       symbols();
+  it_symbols symbols();
   it_const_symbols symbols() const;
 
   //! Check if a symbol with the given name exists
@@ -185,7 +185,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   static bool is_exported(const Symbol& symbol);
 
   //! Return binary's exported symbols (iterator over LIEF::MachO::Symbol)
-  it_exported_symbols       exported_symbols();
+  it_exported_symbols exported_symbols();
   it_const_exported_symbols exported_symbols() const;
 
   //! Check if the given symbol is an imported one
@@ -200,15 +200,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_const_libraries libraries() const;
 
   //! Return an iterator over the SegmentCommand
-  it_segments       segments();
+  it_segments segments();
   it_const_segments segments() const;
 
   //! Return an iterator over the MachO::Section
-  it_sections       sections();
+  it_sections sections();
   it_const_sections sections() const;
 
   //! Return an iterator over the MachO::Relocation
-  it_relocations       relocations();
+  it_relocations relocations();
   it_const_relocations relocations() const;
 
   //! Reconstruct the binary object and write the result in the given `filename`
@@ -247,14 +247,16 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Add a section in the given MachO::SegmentCommand.
   //!
-  //! @warning This method may corrupt the file if the segment is not the first one
+  //! @warning This method may corrupt the file if the segment is not the first
+  //! one
   //!          nor the last one
   Section* add_section(const SegmentCommand& segment, const Section& section);
 
   //! Remove the section with the name provided in the first parameter.
   //!
   //! @param name     Name of the MachO::Section to remove
-  //! @param clear    If ``true`` clear the content of the section before removing
+  //! @param clear    If ``true`` clear the content of the section before
+  //! removing
   void remove_section(const std::string& name, bool clear = false) override;
 
   //! Remove the given LoadCommand
@@ -342,12 +344,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Convert the given offset into a virtual address.
   //!
   //! @param[in] offset    The offset to convert.
-  //! @param[in] slide     If not 0, it will replace the default base address (if any)
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  //! @param[in] slide     If not 0, it will replace the default base address
+  //! (if any)
+  uint64_t offset_to_virtual_address(uint64_t offset,
+                                     uint64_t slide = 0) const override;
 
   //! Return the binary's SegmentCommand that encompasses the provided offset
   //!
-  //! If a SegmentCommand can't be found it returns a null pointer (``nullptr``).
+  //! If a SegmentCommand can't be found it returns a null pointer
+  //! (``nullptr``).
   SegmentCommand* segment_from_offset(uint64_t offset);
   const SegmentCommand* segment_from_offset(uint64_t offset) const;
 
@@ -357,10 +362,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return binary's *fat offset*. ``0`` if not relevant.
   uint64_t fat_offset() const;
 
-  //! Return the binary's SegmentCommand which encompasses the given virtual address
-  //! or a nullptr if not found.
+  //! Return the binary's SegmentCommand which encompasses the given virtual
+  //! address or a nullptr if not found.
   SegmentCommand* segment_from_virtual_address(uint64_t virtual_address);
-  const SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) const;
+  const SegmentCommand* segment_from_virtual_address(
+      uint64_t virtual_address) const;
 
   //! Return the range of virtual addresses
   range_t va_ranges() const;
@@ -383,8 +389,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! @param[in] patch_value   Patch to apply
   //! @param[in] addr_type     Specify if the address should be used as
   //!                          an absolute virtual address or an RVA
-  void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  void patch_address(
+      uint64_t address, const std::vector<uint8_t>& patch_value,
+      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Patch the address with the given value
   //!
@@ -393,13 +400,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! @param[in] size          Size of the value in **bytes** (1, 2, ... 8)
   //! @param[in] addr_type     Specify if the address should be used as
   //!                          an absolute virtual address or an RVA
-  void patch_address(uint64_t address, uint64_t patch_value,
-                     size_t size = sizeof(uint64_t),
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  void patch_address(
+      uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Return the content located at virtual address
-  std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-                            LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
+  std::vector<uint8_t> get_content_from_virtual_address(
+      uint64_t virtual_address, uint64_t size,
+      LIEF::Binary::VA_TYPES addr_type =
+          LIEF::Binary::VA_TYPES::AUTO) const override;
 
   //! The binary entrypoint
   uint64_t entrypoint() const override;
@@ -548,19 +557,19 @@ class LIEF_API Binary : public LIEF::Binary  {
   BuildVersion* build_version();
   const BuildVersion* build_version() const;
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL bool has_command() const;
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL T* command();
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL const T* command() const;
 
-  template<class T>
+  template <class T>
   size_t count_commands() const;
 
-  LoadCommand*       operator[](LOAD_COMMAND_TYPES type);
+  LoadCommand* operator[](LOAD_COMMAND_TYPES type);
   const LoadCommand* operator[](LOAD_COMMAND_TYPES type) const;
 
   //! Return the list of the MachO's constructors
@@ -577,7 +586,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   ~Binary() override;
 
-  private:
+ private:
   //! Default constructor
   Binary();
 
@@ -590,20 +599,19 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! and keep a consistent state of the indexes.
   size_t add_cached_segment(SegmentCommand& segment);
 
-  template<class T>
-  LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
+  template <class T>
+  LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from,
+                                         uint64_t shift);
 
-  LIEF::Header              get_abstract_header() const override;
-  LIEF::Binary::sections_t          get_abstract_sections() override;
-  LIEF::Binary::symbols_t           get_abstract_symbols() override;
-  LIEF::Binary::relocations_t       get_abstract_relocations() override;
+  LIEF::Header get_abstract_header() const override;
+  LIEF::Binary::sections_t get_abstract_sections() override;
+  LIEF::Binary::symbols_t get_abstract_symbols() override;
+  LIEF::Binary::relocations_t get_abstract_relocations() override;
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
-  std::vector<std::string>  get_abstract_imported_libraries() const override;
+  std::vector<std::string> get_abstract_imported_libraries() const override;
 
-  inline relocations_t& relocations_list() {
-    return this->relocations_;
-  }
+  inline relocations_t& relocations_list() { return this->relocations_; }
 
   inline const relocations_t& relocations_list() const {
     return this->relocations_;
@@ -613,10 +621,10 @@ class LIEF_API Binary : public LIEF::Binary  {
     return this->is64_ ? sizeof(uint64_t) : sizeof(uint32_t);
   }
 
-  bool        is64_ = true;
-  Header      header_;
-  commands_t  commands_;
-  symbols_t   symbols_;
+  bool is64_ = true;
+  Header header_;
+  commands_t commands_;
+  symbols_t symbols_;
 
   // Same purpose as sections_cache_t
   libraries_cache_t libraries_;
@@ -638,12 +646,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   // offset_to_virtual_address
   std::map<uint64_t, SegmentCommand*> offset_seg_;
 
-
-  protected:
+ protected:
   uint64_t fat_offset_ = 0;
   uint64_t fileset_offset_ = 0;
 };
 
-} // namespace MachO
-} // namespace LIEF
+}  // namespace MachO
+}  // namespace LIEF
 #endif

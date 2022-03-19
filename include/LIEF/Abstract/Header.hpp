@@ -19,27 +19,24 @@
 #include <iostream>
 #include <set>
 
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/Abstract/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class LIEF_API Header : public Object {
-  public:
+ public:
   Header();
   Header(const Header&);
   Header& operator=(const Header&);
   virtual ~Header();
 
-
-  ARCHITECTURES          architecture() const;
-  const std::set<MODES>& modes()        const;
-  OBJECT_TYPES           object_type()  const;
-  uint64_t               entrypoint()   const;
-  ENDIANNESS             endianness()   const;
-
+  ARCHITECTURES architecture() const;
+  const std::set<MODES>& modes() const;
+  OBJECT_TYPES object_type() const;
+  uint64_t entrypoint() const;
+  ENDIANNESS endianness() const;
 
   //! @brief ``true`` if the binary target a ``32-bits`` architecture
   bool is_32() const;
@@ -48,7 +45,7 @@ class LIEF_API Header : public Object {
   bool is_64() const;
 
   //! @brief Method so that the ``visitor`` can visit us
-  void           accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   void architecture(ARCHITECTURES arch);
   void modes(const std::set<MODES>& m);
@@ -58,15 +55,13 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  protected:
-  ARCHITECTURES   architecture_ = ARCHITECTURES::ARCH_NONE;
+ protected:
+  ARCHITECTURES architecture_ = ARCHITECTURES::ARCH_NONE;
   std::set<MODES> modes_;
-  OBJECT_TYPES    object_type_ = OBJECT_TYPES::TYPE_NONE;
-  uint64_t        entrypoint_ = 0;
-  ENDIANNESS      endianness_ = ENDIANNESS::ENDIAN_NONE;
-
-
+  OBJECT_TYPES object_type_ = OBJECT_TYPES::TYPE_NONE;
+  uint64_t entrypoint_ = 0;
+  ENDIANNESS endianness_ = ENDIANNESS::ENDIAN_NONE;
 };
-}
+}  // namespace LIEF
 
 #endif

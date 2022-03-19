@@ -16,9 +16,9 @@
 #ifndef LIEF_DEX_HASH_H_
 #define LIEF_DEX_HASH_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/hash.hpp"
 #include "LIEF/DEX.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -26,29 +26,29 @@ namespace DEX {
 //! Class which implements a visitor to compute
 //! a **deterministic** hash for LIEF DEX objects
 class LIEF_API Hash : public LIEF::Hash {
-  public:
+ public:
   static size_t hash(const Object& obj);
 
-  public:
+ public:
   using LIEF::Hash::Hash;
   using LIEF::Hash::visit;
 
-  public:
-  void visit(const File& file)          override;
-  void visit(const Header& header)      override;
-  void visit(const Class& cls)          override;
-  void visit(const Field& field)        override;
-  void visit(const Method& method)      override;
+ public:
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
+  void visit(const Class& cls) override;
+  void visit(const Field& field) override;
+  void visit(const Method& method) override;
   void visit(const CodeInfo& code_info) override;
-  void visit(const Type& type)          override;
-  void visit(const Prototype& type)     override;
-  void visit(const MapItem& item)       override;
-  void visit(const MapList& list)       override;
+  void visit(const Type& type) override;
+  void visit(const Prototype& type) override;
+  void visit(const MapItem& item) override;
+  void visit(const MapList& list) override;
 
   ~Hash() override;
 };
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF
 
 #endif

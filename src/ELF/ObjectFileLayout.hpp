@@ -14,28 +14,36 @@
  */
 #ifndef LIEF_ELF_OBJECT_FILE_LAYOUT_H_
 #define LIEF_ELF_OBJECT_FILE_LAYOUT_H_
-#include <LIEF/types.hpp>
 #include <LIEF/visibility.h>
+
+#include <ELF/DataHandler/Handler.hpp>
 #include <LIEF/ELF/Binary.hpp>
 #include <LIEF/ELF/Section.hpp>
 #include <LIEF/ELF/Symbol.hpp>
 #include <LIEF/iostream.hpp>
-#include <ELF/DataHandler/Handler.hpp>
+#include <LIEF/types.hpp>
 
-#include "logging.hpp"
 #include "Layout.hpp"
+#include "logging.hpp"
 namespace LIEF {
 namespace ELF {
 
 //! Class used to compute the size and the offsets of the elements
 //! needed to rebuild the ELF file.
 class LIEF_LOCAL ObjectFileLayout : public Layout {
-  public:
-  using relocations_map_t    = std::unordered_map<Section*, std::vector<Relocation*>>; // Relocation associated with a section
-  using sections_reloc_map_t = std::unordered_map<Section*, Section*>; // Map a section with its associated relocation section
-  using rel_sections_size_t  = std::unordered_map<Section*, size_t>;   // Map relocation sections with needed size
+ public:
+  using relocations_map_t =
+      std::unordered_map<Section*,
+                         std::vector<Relocation*>>;  // Relocation associated
+                                                     // with a section
+  using sections_reloc_map_t =
+      std::unordered_map<Section*, Section*>;  // Map a section with its
+                                               // associated relocation section
+  using rel_sections_size_t =
+      std::unordered_map<Section*,
+                         size_t>;  // Map relocation sections with needed size
 
-  public:
+ public:
   using Layout::Layout;
   ObjectFileLayout(const ObjectFileLayout&) = delete;
   ObjectFileLayout& operator=(const ObjectFileLayout&) = delete;
@@ -65,11 +73,12 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       if (section->type() == LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS) {
         continue;
       }
-      last_offset_sections = std::max<uint64_t>(section->file_offset() + section->size(),
-                                                last_offset_sections);
+      last_offset_sections = std::max<uint64_t>(
+          section->file_offset() + section->size(), last_offset_sections);
     }
     LIEF_DEBUG("Sections' last offset: 0x{:x}", last_offset_sections);
-    LIEF_DEBUG("SHDR Table:            0x{:x}", binary_->header().section_headers_offset());
+    LIEF_DEBUG("SHDR Table:            0x{:x}",
+               binary_->header().section_headers_offset());
 
     Header& hdr = binary_->header();
     for (Section& sec : binary_->sections()) {
@@ -78,7 +87,8 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       }
 
       const size_t needed_size = sec_reloc_info_[&sec];
-      LIEF_DEBUG("Need to relocate: '{}' (0x{:x} bytes)", sec.name(), needed_size);
+      LIEF_DEBUG("Need to relocate: '{}' (0x{:x} bytes)", sec.name(),
+                 needed_size);
 
       DataHandler::Node new_node{last_offset_sections, needed_size,
                                  DataHandler::Node::SECTION};
@@ -98,36 +108,32 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
     return {};
   }
 
-  template<class ELF_T>
+  template <class ELF_T>
   size_t symtab_size() {
     using Elf_Sym = typename ELF_T::Elf_Sym;
     return binary_->static_symbols_.size() * sizeof(Elf_Sym);
   }
 
-  inline relocations_map_t& relocation_map() {
-    return relocation_map_;
-  }
+  inline relocations_map_t& relocation_map() { return relocation_map_; }
 
   inline sections_reloc_map_t& sections_reloc_map() {
     return sections_reloc_map_;
   }
 
-  inline rel_sections_size_t& rel_sections_size() {
-    return rel_sections_size_;
-  }
+  inline rel_sections_size_t& rel_sections_size() { return rel_sections_size_; }
 
   ~ObjectFileLayout() override = default;
 
   ObjectFileLayout() = delete;
-  private:
+
+ private:
   std::unordered_map<const Section*, size_t> sec_reloc_info_;
 
   relocations_map_t relocation_map_;
   sections_reloc_map_t sections_reloc_map_;
   rel_sections_size_t rel_sections_size_;
-
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

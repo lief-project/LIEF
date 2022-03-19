@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/ELF.hpp>
+#include <LIEF/logging.hpp>
 #include <iostream>
 #include <memory>
 
-#include <LIEF/ELF.hpp>
-#include <LIEF/logging.hpp>
-
-
 using namespace LIEF::ELF;
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <ELF binary>" << '\n';
     return EXIT_FAILURE;
   }
-
 
   std::unique_ptr<const Binary> binary;
   try {
@@ -81,12 +77,10 @@ int main(int argc, char **argv) {
     std::cout << symbol << '\n';
   }
 
-
   std::cout << "== Imported symbols ==" << '\n';
   for (const Symbol& symbol : binary->imported_symbols()) {
     std::cout << symbol << '\n';
   }
-
 
   std::cout << "== Dynamic Relocations ==" << '\n';
   for (const Relocation& relocation : binary->dynamic_relocations()) {
@@ -98,12 +92,10 @@ int main(int argc, char **argv) {
     std::cout << relocation << '\n';
   }
 
-
   if (binary->use_gnu_hash()) {
     std::cout << "== GNU Hash ==" << '\n';
     std::cout << binary->gnu_hash() << '\n';
   }
-
 
   if (binary->use_sysv_hash()) {
     std::cout << "== SYSV Hash ==" << '\n';
@@ -118,26 +110,23 @@ int main(int argc, char **argv) {
     }
   }
 
+  // std::cout << "== Symbol Version ==" << '\n';
+  // std::vector<SymbolVersion>* symbolsVersion = binary->get_symbol_version();
+  // for (const auto &symVersion : *symbolsVersion) {
+  //   std::cout << symVersion << '\n';
+  // }
 
-
-  //std::cout << "== Symbol Version ==" << '\n';
-  //std::vector<SymbolVersion>* symbolsVersion = binary->get_symbol_version();
-  //for (const auto &symVersion : *symbolsVersion) {
-  //  std::cout << symVersion << '\n';
-  //}
-
-
-  //std::cout << "== Symbols Version Requirement ==" << '\n';
-  //std::vector<SymbolVersionRequirement> *symR = binary->get_symbol_version_requirement();
-  //for (SymbolVersionRequirement &symbolR : *symR) {
-  //  std::cout << symbolR << '\n' << std::endl;
-  //  auto symAux = symbolR.get_auxiliary_symbols();
-  //  for (auto &symbolAux : symAux) {
-  //    std::cout << *symbolAux << '\n';
-  //  }
-  //  std::cout << '\n';
-  //}
+  // std::cout << "== Symbols Version Requirement ==" << '\n';
+  // std::vector<SymbolVersionRequirement> *symR =
+  // binary->get_symbol_version_requirement(); for (SymbolVersionRequirement
+  // &symbolR : *symR) {
+  //   std::cout << symbolR << '\n' << std::endl;
+  //   auto symAux = symbolR.get_auxiliary_symbols();
+  //   for (auto &symbolAux : symAux) {
+  //     std::cout << *symbolAux << '\n';
+  //   }
+  //   std::cout << '\n';
+  // }
 
   return 0;
-
 }

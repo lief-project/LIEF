@@ -38,7 +38,6 @@ struct Pe_DataDirectory_t {
 
 typedef struct Pe_DataDirectory_t Pe_DataDirectory_t;
 
-
 #ifdef __cplusplus
 }
 #endif

@@ -34,8 +34,7 @@ LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
 LIEF_API unsigned long hash32(const char* name);
 LIEF_API unsigned long hash64(const char* name);
 LIEF_API uint32_t dl_new_hash(const char* name);
-}
-}
-
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

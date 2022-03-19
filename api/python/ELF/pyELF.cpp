@@ -15,11 +15,11 @@
  */
 #include "pyELF.hpp"
 
-
 namespace LIEF {
 namespace ELF {
 void init_python_module(py::module& m) {
-  py::module LIEF_ELF_module = m.def_submodule("ELF", "Python API for the ELF format");
+  py::module LIEF_ELF_module =
+      m.def_submodule("ELF", "Python API for the ELF format");
 
   init_enums(LIEF_ELF_module);
   init_objects(LIEF_ELF_module);
@@ -42,7 +42,7 @@ void init_objects(py::module& m) {
   CREATE(Relocation, m);
   CREATE(SymbolVersionAux, m);
   CREATE(SymbolVersionAuxRequirement, m);
-  CREATE(SymbolVersionDefinition,m );
+  CREATE(SymbolVersionDefinition, m);
   CREATE(SymbolVersionRequirement, m);
   CREATE(DynamicEntry, m);
   CREATE(DynamicEntryLibrary, m);
@@ -66,5 +66,5 @@ void init_objects(py::module& m) {
   CREATE(CoreSigInfo, m);
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

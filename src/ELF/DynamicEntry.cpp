@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdexcept>
-#include <iomanip>
-
-#include "LIEF/exception.hpp"
-#include "LIEF/ELF/hash.hpp"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
+
+#include <iomanip>
+#include <stdexcept>
+
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "LIEF/exception.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -34,46 +34,26 @@ DynamicEntry::DynamicEntry(const DynamicEntry&) = default;
 
 DynamicEntry::~DynamicEntry() = default;
 
-DynamicEntry::DynamicEntry(const details::Elf64_Dyn& header) :
-  tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
-  value_{header.d_un.d_val}
-{}
+DynamicEntry::DynamicEntry(const details::Elf64_Dyn& header)
+    : tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
+      value_{header.d_un.d_val} {}
 
+DynamicEntry::DynamicEntry(const details::Elf32_Dyn& header)
+    : tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
+      value_{header.d_un.d_val} {}
 
-DynamicEntry::DynamicEntry(const details::Elf32_Dyn& header) :
-  tag_{static_cast<DYNAMIC_TAGS>(header.d_tag)},
-  value_{header.d_un.d_val}
-{}
+DynamicEntry::DynamicEntry(DYNAMIC_TAGS tag, uint64_t value)
+    : tag_{tag}, value_{value} {}
 
+DYNAMIC_TAGS DynamicEntry::tag() const { return tag_; }
 
-DynamicEntry::DynamicEntry(DYNAMIC_TAGS tag, uint64_t value) :
-  tag_{tag},
-  value_{value}
-{}
+uint64_t DynamicEntry::value() const { return value_; }
 
+void DynamicEntry::tag(DYNAMIC_TAGS tag) { tag_ = tag; }
 
-DYNAMIC_TAGS DynamicEntry::tag() const {
-  return tag_;
-}
+void DynamicEntry::value(uint64_t value) { value_ = value; }
 
-
-uint64_t DynamicEntry::value() const {
-  return value_;
-}
-
-void DynamicEntry::tag(DYNAMIC_TAGS tag) {
-  tag_ = tag;
-}
-
-
-void DynamicEntry::value(uint64_t value) {
-  value_ = value;
-}
-
-void DynamicEntry::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void DynamicEntry::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DynamicEntry::operator==(const DynamicEntry& rhs) const {
   if (this == &rhs) {
@@ -88,19 +68,15 @@ bool DynamicEntry::operator!=(const DynamicEntry& rhs) const {
   return !(*this == rhs);
 }
 
-
-
 std::ostream& DynamicEntry::print(std::ostream& os) const {
   os << std::hex;
-  os << std::left
-     << std::setw(20) << to_string(tag())
-     << std::setw(10) << value();
+  os << std::left << std::setw(20) << to_string(tag()) << std::setw(10)
+     << value();
   return os;
 }
-
 
 std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry) {
   return entry.print(os);
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

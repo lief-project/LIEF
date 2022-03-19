@@ -18,7 +18,6 @@
 
 #include "LIEF/ELF/Binary.h"
 #include "LIEF/ELF/Binary.hpp"
-
 #include "LIEF/ELF/Section.h"
 #include "LIEF/ELF/Section.hpp"
 
@@ -28,7 +27,7 @@ namespace ELF {
 void init_c_sections(Elf_Binary_t* c_binary, Binary* binary);
 void destroy_sections(Elf_Binary_t* c_binary);
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

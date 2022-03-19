@@ -19,11 +19,10 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/types.hpp"
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -38,10 +37,11 @@ struct load_command;
 class LIEF_API LoadCommand : public Object {
   friend class Builder;
   friend class BinaryParser;
-  public:
+
+ public:
   using raw_t = std::vector<uint8_t>;
 
-  public:
+ public:
   LoadCommand();
   LoadCommand(const details::load_command& command);
   LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size);
@@ -78,15 +78,16 @@ class LIEF_API LoadCommand : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const LoadCommand& cmd);
 
-  protected:
+ protected:
   raw_t original_data_;
   LOAD_COMMAND_TYPES command_;
   uint32_t size_ = 0;
   uint64_t command_offset_ = 0;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

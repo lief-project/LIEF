@@ -17,20 +17,18 @@
 #define PY_LIEF_ART_H_
 
 #include "LIEF/ART.hpp"
-
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
-
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
 namespace ART {
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -41,13 +39,11 @@ void init_enums(py::module&);
 
 void init_utils(py::module&);
 
-
 SPECIALIZE_CREATE(Parser);
 SPECIALIZE_CREATE(File);
 SPECIALIZE_CREATE(Header);
 
-}
-}
-
+}  // namespace ART
+}  // namespace LIEF
 
 #endif

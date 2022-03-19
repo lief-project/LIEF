@@ -15,19 +15,19 @@
  */
 #ifndef LIEF_OSTREAM_H_
 #define LIEF_OSTREAM_H_
-#include <istream>
-#include <streambuf>
+#include <array>
 #include <cstdint>
 #include <cstring>
+#include <istream>
+#include <streambuf>
 #include <vector>
-#include <array>
 
-#include "LIEF/span.hpp"
 #include "LIEF/BinaryStream/Convert.hpp"
+#include "LIEF/span.hpp"
 
 namespace LIEF {
 class vector_iostream {
-  public:
+ public:
   static size_t uleb128_size(uint64_t value);
   static size_t sleb128_size(int64_t value);
   using pos_type = std::streampos;
@@ -44,15 +44,16 @@ class vector_iostream {
   vector_iostream& write(size_t count, uint8_t value);
   vector_iostream& write_sized_int(uint64_t value, size_t size);
 
-  template<typename T>
+  template <typename T>
   vector_iostream& write_conv(const T& t);
 
-  template<typename T>
+  template <typename T>
   vector_iostream& write_conv_array(const std::vector<T>& v);
 
   vector_iostream& align(size_t alignment, uint8_t fill = 0);
 
-  template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
+  template <class Integer, typename = typename std::enable_if<
+                               std::is_integral<Integer>::value>>
   vector_iostream& write(Integer integer) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_.size() < (pos + sizeof(Integer))) {
@@ -63,7 +64,8 @@ class vector_iostream {
     return *this;
   }
 
-  template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
+  template <typename T, size_t size,
+            typename = typename std::enable_if<std::is_integral<T>::value>>
   vector_iostream& write(const std::array<T, size>& t) {
     for (T val : t) {
       write<T>(val);
@@ -84,23 +86,23 @@ class vector_iostream {
   // seeks:
   pos_type tellp();
   vector_iostream& seekp(pos_type p);
-  vector_iostream& seekp(vector_iostream::off_type p, std::ios_base::seekdir dir);
+  vector_iostream& seekp(vector_iostream::off_type p,
+                         std::ios_base::seekdir dir);
 
   const std::vector<uint8_t>& raw() const;
   std::vector<uint8_t>& raw();
 
   void set_endian_swap(bool swap);
 
-  private:
-  pos_type             current_pos_ = 0;
+ private:
+  pos_type current_pos_ = 0;
   std::vector<uint8_t> raw_;
-  bool                 endian_swap_ = false;
+  bool endian_swap_ = false;
 };
 
-
-template<typename T>
+template <typename T>
 vector_iostream& vector_iostream::write_conv(const T& t) {
-  const uint8_t *ptr = nullptr;
+  const uint8_t* ptr = nullptr;
   T tmp = t;
   if (endian_swap_) {
     LIEF::Convert::swap_endian<T>(&tmp);
@@ -112,9 +114,9 @@ vector_iostream& vector_iostream::write_conv(const T& t) {
   return *this;
 }
 
-template<typename T>
+template <typename T>
 vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
-  for (const T& i: v) {
+  for (const T& i : v) {
     const uint8_t* ptr = nullptr;
     T tmp = i;
     if (endian_swap_) {
@@ -128,6 +130,5 @@ vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
   return *this;
 }
 
-
-}
+}  // namespace LIEF
 #endif

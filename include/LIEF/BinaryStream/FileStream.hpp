@@ -16,17 +16,17 @@
 #ifndef LIEF_FILE_STREAM_H
 #define LIEF_FILE_STREAM_H
 
-#include <vector>
-#include <string>
 #include <fstream>
+#include <string>
+#include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/errors.hpp"
 namespace LIEF {
 
 //! Stream interface over a std::ifstream
 class FileStream : public BinaryStream {
-  public:
+ public:
   static result<FileStream> from_file(const std::string& file);
   FileStream(std::ifstream fs, uint64_t size);
 
@@ -39,17 +39,16 @@ class FileStream : public BinaryStream {
   FileStream(FileStream&& other);
   FileStream& operator=(FileStream&& other);
 
-  inline uint64_t size() const override {
-    return size_;
-  }
+  inline uint64_t size() const override { return size_; }
 
   std::vector<uint8_t> content() const;
   ~FileStream() override;
 
   static bool classof(const BinaryStream& stream);
 
-  protected:
-  inline ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const override {
+ protected:
+  inline ok_error_t peek_in(void* dst, uint64_t offset,
+                            uint64_t size) const override {
     if (offset > size_ || offset + size > size_) {
       return make_error_code(lief_errors::read_error);
     }
@@ -65,6 +64,6 @@ class FileStream : public BinaryStream {
   mutable std::ifstream ifs_;
   uint64_t size_ = 0;
 };
-}
+}  // namespace LIEF
 
 #endif

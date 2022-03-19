@@ -18,11 +18,9 @@
 
 #include <memory>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/BinaryStream/VectorStream.hpp"
-
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -34,16 +32,17 @@ class Field;
 
 //! Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
-  public:
+ public:
   friend struct ::Profiler;
   //! Parse the DEX file from the file path given in parameter
   static std::unique_ptr<File> parse(const std::string& file);
-  static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<File> parse(std::vector<uint8_t> data,
+                                     const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
-  private:
+ private:
   Parser();
   Parser(const std::string& file);
   Parser(std::vector<uint8_t> data);
@@ -51,43 +50,43 @@ class LIEF_API Parser {
 
   void init(const std::string& name, dex_version_t version);
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_file();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_header();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_map();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_strings();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_types();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_fields();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_prototypes();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_methods();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_classes();
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_class_data(uint32_t offset, Class& cls);
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_field(size_t index, Class& cls, bool is_static);
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_method(size_t index, Class& cls, bool is_virtual);
 
-  template<typename DEX_T>
+  template <typename DEX_T>
   void parse_code_info(uint32_t offset, Method& method);
 
   void resolve_inheritance();
@@ -117,9 +116,6 @@ class LIEF_API Parser {
   std::unique_ptr<VectorStream> stream_;
 };
 
-
-
-
-} // namespace DEX
-} // namespace LIEF
+}  // namespace DEX
+}  // namespace LIEF
 #endif

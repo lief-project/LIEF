@@ -18,9 +18,8 @@
 
 #include <string>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -28,8 +27,7 @@ namespace ELF {
 //! Class that represents a ``DT_RUNPATH`` wich is used by the loader
 //! to resolve libraries (DynamicEntryLibrary).
 class LIEF_API DynamicEntryRunPath : public DynamicEntry {
-
-  public:
+ public:
   static constexpr char delimiter = ':';
   using DynamicEntry::DynamicEntry;
 
@@ -74,9 +72,9 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 
-  private:
+ private:
   std::string runpath_;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

@@ -16,15 +16,15 @@
 #ifndef LIEF_MEMORY_STREAM_H
 #define LIEF_MEMORY_STREAM_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class Binary;
 class MemoryStream : public BinaryStream {
-  public:
+ public:
   MemoryStream() = delete;
   MemoryStream(uintptr_t base_address);
   MemoryStream(uintptr_t base_address, uint64_t size);
@@ -35,33 +35,25 @@ class MemoryStream : public BinaryStream {
   MemoryStream(MemoryStream&&);
   MemoryStream& operator=(MemoryStream&&);
 
-  inline uintptr_t base_address() const {
-    return this->baseaddr_;
-  }
+  inline uintptr_t base_address() const { return this->baseaddr_; }
 
-  inline uint64_t end() const {
-    return this->baseaddr_ + this->size_;
-  }
+  inline uint64_t end() const { return this->baseaddr_ + this->size_; }
 
-  inline void binary(Binary& bin) {
-    this->binary_ = &bin;
-  }
+  inline void binary(Binary& bin) { this->binary_ = &bin; }
 
-  inline Binary* binary() {
-    return this->binary_;
-  }
+  inline Binary* binary() { return this->binary_; }
 
   uint64_t size() const override;
   ~MemoryStream() override;
 
   static bool classof(const BinaryStream& stream);
 
-  protected:
+ protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;
   uintptr_t baseaddr_ = 0;
   uint64_t size_ = 0;
   Binary* binary_ = nullptr;
 };
-}
+}  // namespace LIEF
 
 #endif

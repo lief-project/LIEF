@@ -16,10 +16,9 @@
 #ifndef LIEF_VISITOR_JSONS_H_
 #define LIEF_VISITOR_JSONS_H_
 
-#include "LIEF/config.h"
-
-#include "LIEF/visibility.h"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/config.h"
+#include "LIEF/visibility.h"
 
 #ifndef LIEF_NLOHMANN_JSON_EXTERNAL
 #include "internal/nlohmann/json.hpp"
@@ -32,19 +31,17 @@ using json = nlohmann::json;
 namespace LIEF {
 
 class JsonVisitor : public Visitor {
-  public:
+ public:
   JsonVisitor();
   JsonVisitor(json node);
   JsonVisitor(const JsonVisitor&);
   JsonVisitor& operator=(const JsonVisitor&);
 
-  inline json get() const {
-    return node_;
-  }
+  inline json get() const { return node_; }
 
-  protected:
+ protected:
   json node_;
 };
 
-}
+}  // namespace LIEF
 #endif

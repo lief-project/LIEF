@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/MachO/SourceVersion.hpp"
+
 #include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/SourceVersion.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,34 +29,26 @@ SourceVersion& SourceVersion::operator=(const SourceVersion&) = default;
 SourceVersion::SourceVersion(const SourceVersion&) = default;
 SourceVersion::~SourceVersion() = default;
 
-SourceVersion::SourceVersion(const details::source_version_command& ver) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(ver.cmd), ver.cmdsize},
-  version_{{
-    static_cast<uint32_t>((ver.version >> 40) & 0xffffff),
-    static_cast<uint32_t>((ver.version >> 30) & 0x3ff),
-    static_cast<uint32_t>((ver.version >> 20) & 0x3ff),
-    static_cast<uint32_t>((ver.version >> 10) & 0x3ff),
-    static_cast<uint32_t>((ver.version >>  0) & 0x3ff)
-  }}
-{}
+SourceVersion::SourceVersion(const details::source_version_command& ver)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(ver.cmd),
+                               ver.cmdsize},
+      version_{{static_cast<uint32_t>((ver.version >> 40) & 0xffffff),
+                static_cast<uint32_t>((ver.version >> 30) & 0x3ff),
+                static_cast<uint32_t>((ver.version >> 20) & 0x3ff),
+                static_cast<uint32_t>((ver.version >> 10) & 0x3ff),
+                static_cast<uint32_t>((ver.version >> 0) & 0x3ff)}} {}
 
-SourceVersion* SourceVersion::clone() const {
-  return new SourceVersion(*this);
+SourceVersion* SourceVersion::clone() const { return new SourceVersion(*this); }
+
+const SourceVersion::version_t& SourceVersion::version() const {
+  return version_;
 }
 
-
- const SourceVersion::version_t& SourceVersion::version() const {
-   return version_;
- }
-
- void SourceVersion::version(const SourceVersion::version_t& version) {
-   version_ = version;
- }
-
-void SourceVersion::accept(Visitor& visitor) const {
-  visitor.visit(*this);
+void SourceVersion::version(const SourceVersion::version_t& version) {
+  version_ = version;
 }
 
+void SourceVersion::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool SourceVersion::operator==(const SourceVersion& rhs) const {
   if (this == &rhs) {
@@ -80,17 +72,11 @@ bool SourceVersion::classof(const LoadCommand* cmd) {
 std::ostream& SourceVersion::print(std::ostream& os) const {
   LoadCommand::print(os);
   const SourceVersion::version_t& version = this->version();
-  os << "Version: " << std::dec
-     << version[0] << "."
-     << version[1] << "."
-     << version[2] << "."
-     << version[3] << "."
-     << version[4]
-     << std::endl;
+  os << "Version: " << std::dec << version[0] << "." << version[1] << "."
+     << version[2] << "." << version[3] << "." << version[4] << std::endl;
 
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

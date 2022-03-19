@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_THREAD_COMMAND_H_
 #define LIEF_MACHO_THREAD_COMMAND_H_
-#include <vector>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <vector>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -33,17 +32,20 @@ struct thread_command;
 }
 
 //! Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
-//! can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
+//! can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is
+//! not present
 //!
 //! Generally speaking, this command aims at defining the original state
 //! of the main thread which includes the registers' values
 class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
-  public:
+
+ public:
   ThreadCommand();
   ThreadCommand(const details::thread_command& cmd,
                 CPU_TYPES arch = CPU_TYPES::CPU_TYPE_ANY);
-  ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
+  ThreadCommand(uint32_t flavor, uint32_t count,
+                CPU_TYPES arch = CPU_TYPES::CPU_TYPE_ANY);
 
   ThreadCommand& operator=(const ThreadCommand& copy);
   ThreadCommand(const ThreadCommand& copy);
@@ -68,15 +70,18 @@ class LIEF_API ThreadCommand : public LoadCommand {
   //! The CPU architecture that is targeted by this ThreadCommand
   CPU_TYPES architecture() const;
 
-  //! The actual thread state as a vector of bytes. Depending on the architecture(),
-  //! these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
+  //! The actual thread state as a vector of bytes. Depending on the
+  //! architecture(), these data can be casted into x86_thread_state_t,
+  //! x86_thread_state64_t, ...
   const std::vector<uint8_t>& state() const;
   std::vector<uint8_t>& state();
 
-  //! Return the initial Program Counter regardless of the underlying architecture.
-  //! This value, when non null, can be used to determine the binary's entrypoint.
+  //! Return the initial Program Counter regardless of the underlying
+  //! architecture. This value, when non null, can be used to determine the
+  //! binary's entrypoint.
   //!
-  //! Underneath, it works by looking for the PC register value in the state() data
+  //! Underneath, it works by looking for the PC register value in the state()
+  //! data
   uint64_t pc() const;
 
   void state(const std::vector<uint8_t>& state);
@@ -93,14 +98,13 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint32_t flavor_;
   uint32_t count_;
   CPU_TYPES architecture_;
   std::vector<uint8_t> state_;
-
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

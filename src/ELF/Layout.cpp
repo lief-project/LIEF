@@ -13,18 +13,17 @@
  * limitations under the License.
  */
 #include "Layout.hpp"
-#include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/Section.hpp"
 
 #include <LIEF/iostream.hpp>
+
 #include "Builder.tcc"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Symbol.hpp"
 
 namespace LIEF {
 namespace ELF {
-Layout::Layout(Binary& bin) :
-  binary_{&bin}
-{}
+Layout::Layout(Binary& bin) : binary_{&bin} {}
 
 Layout::~Layout() = default;
 
@@ -42,7 +41,8 @@ bool Layout::is_strtab_shared_shstrtab() const {
   bool is_shared = true;
   const size_t nb_sections = binary_->sections().size();
   is_shared = is_shared && strtab_idx > 0 && shstrtab_idx > 0;
-  is_shared = is_shared && strtab_idx < nb_sections && shstrtab_idx < nb_sections;
+  is_shared =
+      is_shared && strtab_idx < nb_sections && shstrtab_idx < nb_sections;
   is_shared = is_shared && strtab_idx == shstrtab_idx;
   return is_shared;
 }
@@ -68,10 +68,10 @@ size_t Layout::section_strtab_size() {
   }
 
   std::vector<std::string> symstr_opt =
-    Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,
-                     [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
-                     offset_counter,
-                     &strtab_name_map_);
+      Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(
+          binary_->static_symbols_,
+          [](const std::unique_ptr<Symbol>& sym) { return sym->name(); },
+          offset_counter, &strtab_name_map_);
   for (const std::string& name : symstr_opt) {
     raw_strtab.write(name);
   }
@@ -94,9 +94,7 @@ size_t Layout::section_shstr_size() {
   sec_names.reserve(binary_->sections_.size());
   std::transform(std::begin(binary_->sections_), std::end(binary_->sections_),
                  std::back_inserter(sec_names),
-                 [] (const std::unique_ptr<Section>& s) {
-                   return s->name();
-                 });
+                 [](const std::unique_ptr<Section>& s) { return s->name(); });
 
   if (!binary_->static_symbols_.empty()) {
     if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
@@ -110,23 +108,23 @@ size_t Layout::section_shstr_size() {
   // First write section names
   size_t offset_counter = raw_shstrtab.tellp();
   std::vector<std::string> shstrtab_opt =
-    Builder::optimize<Section, decltype(sec_names)>(sec_names,
-                      [] (const std::string& s) { return s; },
-                      offset_counter, &shstr_name_map_);
+      Builder::optimize<Section, decltype(sec_names)>(
+          sec_names, [](const std::string& s) { return s; }, offset_counter,
+          &shstr_name_map_);
 
   for (const std::string& name : shstrtab_opt) {
     raw_shstrtab.write(name);
   }
 
-  // Check if the .shstrtab and the .strtab are shared (optimization used by clang)
-  // in this case, include the static symbol names
+  // Check if the .shstrtab and the .strtab are shared (optimization used by
+  // clang) in this case, include the static symbol names
   if (!binary_->static_symbols_.empty() && is_strtab_shared_shstrtab()) {
     offset_counter = raw_shstrtab.tellp();
     std::vector<std::string> symstr_opt =
-      Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(binary_->static_symbols_,
-                       [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
-                       offset_counter,
-                       &shstr_name_map_);
+        Builder::optimize<Symbol, decltype(binary_->static_symbols_)>(
+            binary_->static_symbols_,
+            [](const std::unique_ptr<Symbol>& sym) { return sym->name(); },
+            offset_counter, &shstr_name_map_);
     for (const std::string& name : symstr_opt) {
       raw_shstrtab.write(name);
     }
@@ -136,8 +134,5 @@ size_t Layout::section_shstr_size() {
   return raw_shstrtab_.size();
 }
 
-
-
-
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

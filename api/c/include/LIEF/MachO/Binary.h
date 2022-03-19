@@ -26,14 +26,13 @@
 
 #include <stddef.h>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/MachO/Header.h"
 #include "LIEF/MachO/LoadCommand.h"
-#include "LIEF/MachO/Symbol.h"
 #include "LIEF/MachO/Section.h"
 #include "LIEF/MachO/Segment.h"
+#include "LIEF/MachO/Symbol.h"
 #include "LIEF/MachO/enums.h"
+#include "LIEF/visibility.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,28 +40,26 @@ extern "C" {
 
 /** @brief LIEF::MachO::Binary C Handler */
 struct Macho_Binary_t {
-  void*               handler;
-  const char*         name;
-  uint64_t            imagebase;
-  Macho_Header_t      header;
-  Macho_Command_t**   commands;
-  Macho_Symbol_t**    symbols;
-  Macho_Section_t**   sections;
-  Macho_Segment_t**   segments;
-
+  void* handler;
+  const char* name;
+  uint64_t imagebase;
+  Macho_Header_t header;
+  Macho_Command_t** commands;
+  Macho_Symbol_t** symbols;
+  Macho_Section_t** sections;
+  Macho_Segment_t** segments;
 };
 
 typedef struct Macho_Binary_t Macho_Binary_t;
 
 /** @brief Wrapper on LIEF::MachO::Parser::parse */
-LIEF_API Macho_Binary_t** macho_parse(const char *file);
+LIEF_API Macho_Binary_t** macho_parse(const char* file);
 
 LIEF_API void macho_binaries_destroy(Macho_Binary_t** binaries);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 /** @} */
 #endif

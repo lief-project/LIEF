@@ -14,54 +14,40 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "logging.hpp"
 
 #include <iomanip>
 #include <numeric>
 #include <sstream>
 #include <utility>
 
+#include "logging.hpp"
+
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryRpath::DynamicEntryRpath() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0}
-{}
+DynamicEntryRpath::DynamicEntryRpath()
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0} {}
 
-DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath&) = default;
+DynamicEntryRpath& DynamicEntryRpath::operator=(const DynamicEntryRpath&) =
+    default;
 DynamicEntryRpath::DynamicEntryRpath(const DynamicEntryRpath&) = default;
 
+DynamicEntryRpath::DynamicEntryRpath(std::string rpath)
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
+      rpath_{std::move(rpath)} {}
 
-DynamicEntryRpath::DynamicEntryRpath(std::string rpath) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0},
-  rpath_{std::move(rpath)}
-{}
-
-
-DynamicEntryRpath::DynamicEntryRpath(const std::vector<std::string>& paths) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0}
-{
+DynamicEntryRpath::DynamicEntryRpath(const std::vector<std::string>& paths)
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_RPATH, 0} {
   this->paths(paths);
 }
 
-const std::string& DynamicEntryRpath::name() const {
-  return rpath_;
-}
+const std::string& DynamicEntryRpath::name() const { return rpath_; }
 
+void DynamicEntryRpath::name(const std::string& name) { rpath_ = name; }
 
-void DynamicEntryRpath::name(const std::string& name) {
-  rpath_ = name;
-}
+const std::string& DynamicEntryRpath::rpath() const { return name(); }
 
-const std::string& DynamicEntryRpath::rpath() const {
-  return name();
-}
-
-
-void DynamicEntryRpath::rpath(const std::string& rpath) {
-  name(rpath);
-}
-
+void DynamicEntryRpath::rpath(const std::string& rpath) { name(rpath); }
 
 std::vector<std::string> DynamicEntryRpath::paths() const {
   std::stringstream ss;
@@ -75,9 +61,11 @@ std::vector<std::string> DynamicEntryRpath::paths() const {
 }
 
 void DynamicEntryRpath::paths(const std::vector<std::string>& paths) {
-  rpath_ = std::accumulate(std::begin(paths), std::end(paths), std::string(),
-      [] (const std::string& path, const std::string& new_entry) {
-        return path.empty() ? new_entry :  path + DynamicEntryRpath::delimiter + new_entry;
+  rpath_ = std::accumulate(
+      std::begin(paths), std::end(paths), std::string(),
+      [](const std::string& path, const std::string& new_entry) {
+        return path.empty() ? new_entry
+                            : path + DynamicEntryRpath::delimiter + new_entry;
       });
 }
 
@@ -90,16 +78,16 @@ DynamicEntryRpath& DynamicEntryRpath::append(const std::string& path) {
 
 DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
-  paths.erase(std::remove_if(std::begin(paths), std::end(paths),
-                             [&path] (const std::string& p) {
-                               return p == path;
-                             }),
-              std::end(paths));
+  paths.erase(
+      std::remove_if(std::begin(paths), std::end(paths),
+                     [&path](const std::string& p) { return p == path; }),
+      std::end(paths));
   this->paths(paths);
   return *this;
 }
 
-DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path) {
+DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos,
+                                             const std::string& path) {
   std::vector<std::string> paths = this->paths();
 
   if (pos == paths.size()) {
@@ -123,27 +111,17 @@ DynamicEntryRpath& DynamicEntryRpath::operator-=(const std::string& path) {
   return remove(path);
 }
 
-void DynamicEntryRpath::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void DynamicEntryRpath::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DynamicEntryRpath::classof(const DynamicEntry* entry) {
   const DYNAMIC_TAGS tag = entry->tag();
   return tag == DYNAMIC_TAGS::DT_RPATH;
 }
 
-
 std::ostream& DynamicEntryRpath::print(std::ostream& os) const {
-
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << std::setw(10) << rpath();
+  os << std::hex << std::left << std::setw(10) << rpath();
   return os;
-
 }
-}
-}
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

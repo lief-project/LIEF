@@ -13,96 +13,107 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
-
-#include "enums_wrapper.hpp"
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
+#include "enums_wrapper.hpp"
 
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
-#include "pyPE.hpp"
 #include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (Signature::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Signature::*)(T);
 
-
-template<>
+template <>
 void create<Signature>(py::module& m) {
-
   py::class_<Signature, LIEF::Object> signature(m, "Signature");
-  LIEF::enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums(signature, "VERIFICATION_FLAGS", py::arithmetic());
-  verif_flags_enums
-    .value("OK",                            Signature::VERIFICATION_FLAGS::OK)
-    .value("INVALID_SIGNER",                Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
-    .value("UNSUPPORTED_ALGORITHM",         Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM)
-    .value("INCONSISTENT_DIGEST_ALGORITHM", Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM)
-    .value("CERT_NOT_FOUND",                Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND)
-    .value("CORRUPTED_CONTENT_INFO",        Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO)
-    .value("CORRUPTED_AUTH_DATA",           Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA)
-    .value("MISSING_PKCS9_MESSAGE_DIGEST",  Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST)
-    .value("BAD_DIGEST",                    Signature::VERIFICATION_FLAGS::BAD_DIGEST)
-    .value("BAD_SIGNATURE",                 Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
-    .value("NO_SIGNATURE",                  Signature::VERIFICATION_FLAGS::NO_SIGNATURE)
-    .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
-    .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
+  LIEF::enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums(
+      signature, "VERIFICATION_FLAGS", py::arithmetic());
+  verif_flags_enums.value("OK", Signature::VERIFICATION_FLAGS::OK)
+      .value("INVALID_SIGNER", Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
+      .value("UNSUPPORTED_ALGORITHM",
+             Signature::VERIFICATION_FLAGS::UNSUPPORTED_ALGORITHM)
+      .value("INCONSISTENT_DIGEST_ALGORITHM",
+             Signature::VERIFICATION_FLAGS::INCONSISTENT_DIGEST_ALGORITHM)
+      .value("CERT_NOT_FOUND", Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND)
+      .value("CORRUPTED_CONTENT_INFO",
+             Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO)
+      .value("CORRUPTED_AUTH_DATA",
+             Signature::VERIFICATION_FLAGS::CORRUPTED_AUTH_DATA)
+      .value("MISSING_PKCS9_MESSAGE_DIGEST",
+             Signature::VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST)
+      .value("BAD_DIGEST", Signature::VERIFICATION_FLAGS::BAD_DIGEST)
+      .value("BAD_SIGNATURE", Signature::VERIFICATION_FLAGS::BAD_SIGNATURE)
+      .value("NO_SIGNATURE", Signature::VERIFICATION_FLAGS::NO_SIGNATURE)
+      .value("CERT_EXPIRED", Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
+      .value("CERT_FUTURE", Signature::VERIFICATION_FLAGS::CERT_FUTURE);
 
   py::dict verif_flags_entries = verif_flags_enums.attr("__entries");
-  verif_flags_enums
-    .def("__str__", [verif_flags_entries] (const Signature::VERIFICATION_FLAGS& flags) {
+  verif_flags_enums.def(
+      "__str__",
+      [verif_flags_entries](const Signature::VERIFICATION_FLAGS& flags) {
         if (flags == Signature::VERIFICATION_FLAGS::OK) {
           return Signature::flag_to_string(flags);
         }
         std::string flags_str;
         for (const auto& item : verif_flags_entries) {
-          Signature::VERIFICATION_FLAGS flag = item.second[py::int_(0)].cast<Signature::VERIFICATION_FLAGS>();
-          if ((flags & flag) == flag && flag != Signature::VERIFICATION_FLAGS::OK) {
+          Signature::VERIFICATION_FLAGS flag =
+              item.second[py::int_(0)].cast<Signature::VERIFICATION_FLAGS>();
+          if ((flags & flag) == flag &&
+              flag != Signature::VERIFICATION_FLAGS::OK) {
             if (!flags_str.empty()) {
               flags_str += " | ";
             }
-            flags_str += "VERIFICATION_FLAGS." + Signature::flag_to_string(flag);
+            flags_str +=
+                "VERIFICATION_FLAGS." + Signature::flag_to_string(flag);
           }
         }
         return flags_str;
-    }, py::prepend{});
+      },
+      py::prepend{});
 
-  LIEF::enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", py::arithmetic(),
-    R"delim(
+  LIEF::enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS",
+                                              py::arithmetic(),
+                                              R"delim(
     Flags to tweak the verification process of the signature
     See :meth:`lief.PE.Signature.check` and :meth:`lief.PE.Binary.verify_signature`
     )delim")
-    .value("DEFAULT", Signature::VERIFICATION_CHECKS::DEFAULT,
-           "Default behavior that tries to follow the Microsoft verification process as close as possible")
+      .value("DEFAULT", Signature::VERIFICATION_CHECKS::DEFAULT,
+             "Default behavior that tries to follow the Microsoft verification "
+             "process as close as possible")
 
-    .value("HASH_ONLY", Signature::VERIFICATION_CHECKS::HASH_ONLY,
-           R"delim(
+      .value("HASH_ONLY", Signature::VERIFICATION_CHECKS::HASH_ONLY,
+             R"delim(
            Only check that :meth:`lief.PE.Binary.authentihash` matches :attr:`lief.PE.ContentInfo.digest`
            regardless of the signature's validity
            )delim")
 
-    .value("LIFETIME_SIGNING", Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING,
-           R"delim(
+      .value("LIFETIME_SIGNING",
+             Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING,
+             R"delim(
            Same semantic as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`_
            )delim")
 
-    .value("SKIP_CERT_TIME", Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME,
-           R"delim(
+      .value("SKIP_CERT_TIME", Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME,
+             R"delim(
            Skip the verification of the certificates time validities so that even though
            a certificate expired, it returns :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`
            )delim");
 
   init_ref_iterator<Signature::it_const_crt>(signature, "it_const_crt");
-  init_ref_iterator<Signature::it_const_signers_t>(signature, "it_const_signers_t");
+  init_ref_iterator<Signature::it_const_signers_t>(signature,
+                                                   "it_const_signers_t");
 
   signature
     .def_static("parse",
@@ -236,6 +247,5 @@ void create<Signature>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

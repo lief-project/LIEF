@@ -16,33 +16,30 @@
 #ifndef PY_LIEF_MACHO_H_
 #define PY_LIEF_MACHO_H_
 
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Builder.hpp"
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/Parser.hpp"
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
-
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
 void init_objects(py::module&);
 void init_enums(py::module&);
 void init_utils(py::module&);
-
 
 SPECIALIZE_CREATE(Parser);
 SPECIALIZE_CREATE(ParserConfig);
@@ -81,12 +78,10 @@ SPECIALIZE_CREATE(EncryptionInfo);
 SPECIALIZE_CREATE(BuildVersion);
 SPECIALIZE_CREATE(FilesetCommand);
 
-}
-}
-
+}  // namespace MachO
+}  // namespace LIEF
 
 // Opaque containers
 PYBIND11_MAKE_OPAQUE(std::vector<LIEF::MachO::Binary*>)
-
 
 #endif

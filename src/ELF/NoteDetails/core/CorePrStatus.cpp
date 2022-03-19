@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
+#include "CorePrStatus.tcc"
+
 #include <iomanip>
 #include <sstream>
 
-#include "logging.hpp"
-
-#include "LIEF/ELF/hash.hpp"
+#include "ELF/Structures.hpp"
+#include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/Binary.hpp"
-#include "ELF/Structures.hpp"
-
-#include "CorePrStatus.tcc"
+#include "LIEF/ELF/hash.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-CorePrStatus::CorePrStatus(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
+CorePrStatus::CorePrStatus(Note& note) : NoteDetails::NoteDetails{note} {}
 
 CorePrStatus CorePrStatus::make(Note& note) {
   CorePrStatus pinfo(note);
@@ -40,63 +37,37 @@ CorePrStatus CorePrStatus::make(Note& note) {
   return pinfo;
 }
 
-CorePrStatus* CorePrStatus::clone() const {
-  return new CorePrStatus(*this);
-}
+CorePrStatus* CorePrStatus::clone() const { return new CorePrStatus(*this); }
 
 const CorePrStatus::reg_context_t& CorePrStatus::reg_context() const {
   return ctx_;
 }
 
-
 const CorePrStatus::siginfo_t& CorePrStatus::siginfo() const {
   return siginfo_;
 }
 
-uint16_t CorePrStatus::current_sig() const {
-  return cursig_;
-}
+uint16_t CorePrStatus::current_sig() const { return cursig_; }
 
-uint64_t CorePrStatus::sigpend() const {
-  return sigpend_;
-}
+uint64_t CorePrStatus::sigpend() const { return sigpend_; }
 
-uint64_t CorePrStatus::sighold() const {
-  return sighold_;
-}
+uint64_t CorePrStatus::sighold() const { return sighold_; }
 
-int32_t CorePrStatus::pid() const {
-  return pid_;
-}
+int32_t CorePrStatus::pid() const { return pid_; }
 
-int32_t CorePrStatus::ppid() const {
-  return ppid_;
-}
+int32_t CorePrStatus::ppid() const { return ppid_; }
 
-int32_t CorePrStatus::pgrp() const {
-  return pgrp_;
-}
+int32_t CorePrStatus::pgrp() const { return pgrp_; }
 
-int32_t CorePrStatus::sid() const {
-  return sid_;
-}
+int32_t CorePrStatus::sid() const { return sid_; }
 
-CorePrStatus::timeval_t CorePrStatus::utime() const {
-  return utime_;
-}
+CorePrStatus::timeval_t CorePrStatus::utime() const { return utime_; }
 
-CorePrStatus::timeval_t CorePrStatus::stime() const {
-  return stime_;
-}
+CorePrStatus::timeval_t CorePrStatus::stime() const { return stime_; }
 
-CorePrStatus::timeval_t CorePrStatus::cutime() const {
-  return cutime_;
-}
+CorePrStatus::timeval_t CorePrStatus::cutime() const { return cutime_; }
 
-CorePrStatus::timeval_t CorePrStatus::cstime() const {
-  return cstime_;
-}
-
+CorePrStatus::timeval_t CorePrStatus::cstime() const { return cstime_; }
 
 uint64_t CorePrStatus::get(CorePrStatus::REGISTERS reg, bool* error) const {
   if (!has(reg)) {
@@ -116,38 +87,41 @@ bool CorePrStatus::has(CorePrStatus::REGISTERS reg) const {
   return ctx_.find(reg) != std::end(ctx_);
 }
 
-
 uint64_t CorePrStatus::pc() const {
   const ARCH arch = binary()->header().machine_type();
   switch (arch) {
-    case ARCH::EM_386:     return get(REGISTERS::X86_EIP);
-    case ARCH::EM_X86_64:  return get(REGISTERS::X86_64_RIP);
-    case ARCH::EM_ARM:     return get(REGISTERS::ARM_R15);
-    case ARCH::EM_AARCH64: return get(REGISTERS::AARCH64_PC);
-    default:
-      {
-        LIEF_WARN("{} not supported", to_string(arch));
-        return 0;
-      }
+    case ARCH::EM_386:
+      return get(REGISTERS::X86_EIP);
+    case ARCH::EM_X86_64:
+      return get(REGISTERS::X86_64_RIP);
+    case ARCH::EM_ARM:
+      return get(REGISTERS::ARM_R15);
+    case ARCH::EM_AARCH64:
+      return get(REGISTERS::AARCH64_PC);
+    default: {
+      LIEF_WARN("{} not supported", to_string(arch));
+      return 0;
+    }
   }
 }
 
 uint64_t CorePrStatus::sp() const {
   const ARCH arch = binary()->header().machine_type();
   switch (arch) {
-    case ARCH::EM_386:     return get(REGISTERS::X86_ESP);
-    case ARCH::EM_X86_64:  return get(REGISTERS::X86_64_RSP);
-    case ARCH::EM_ARM:     return get(REGISTERS::ARM_R13);
-    case ARCH::EM_AARCH64: return get(REGISTERS::AARCH64_X31);
-    default:
-      {
-        LIEF_WARN("{} not supported", to_string(arch));
-        return 0;
-      }
+    case ARCH::EM_386:
+      return get(REGISTERS::X86_ESP);
+    case ARCH::EM_X86_64:
+      return get(REGISTERS::X86_64_RSP);
+    case ARCH::EM_ARM:
+      return get(REGISTERS::ARM_R13);
+    case ARCH::EM_AARCH64:
+      return get(REGISTERS::AARCH64_X31);
+    default: {
+      LIEF_WARN("{} not supported", to_string(arch));
+      return 0;
+    }
   }
-
 }
-
 
 void CorePrStatus::siginfo(const CorePrStatus::siginfo_t& siginfo) {
   siginfo_ = siginfo;
@@ -220,9 +194,7 @@ bool CorePrStatus::set(REGISTERS reg, uint64_t value) {
   return true;
 }
 
-void CorePrStatus::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CorePrStatus::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool CorePrStatus::operator==(const CorePrStatus& rhs) const {
   if (this == &rhs) {
@@ -238,81 +210,81 @@ bool CorePrStatus::operator!=(const CorePrStatus& rhs) const {
   return !(*this == rhs);
 }
 
-uint64_t& CorePrStatus::operator[](REGISTERS reg) {
-  return ctx_[reg];
-}
+uint64_t& CorePrStatus::operator[](REGISTERS reg) { return ctx_[reg]; }
 
 void CorePrStatus::dump(std::ostream& os) const {
   static constexpr size_t WIDTH = 16;
   os << std::left;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Siginfo: "<< std::dec;
-    dump(os, siginfo());
+  os << std::setw(WIDTH) << std::setfill(' ') << "Siginfo: " << std::dec;
+  dump(os, siginfo());
   os << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Current Signal: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Current Signal: " << std::dec
      << current_sig() << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Pending signal: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Pending signal: " << std::dec
      << sigpend() << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Signal held: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Signal held: " << std::dec
      << sighold() << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "PID: "<< std::dec
-     << pid() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "PID: " << std::dec << pid()
+     << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "PPID: "<< std::dec
-     << ppid() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "PPID: " << std::dec << ppid()
+     << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "PGRP: "<< std::dec
-     << pgrp() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "PGRP: " << std::dec << pgrp()
+     << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "SID: "<< std::dec
-     << sid() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "SID: " << std::dec << sid()
+     << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "utime: "<< std::dec;
-    dump(os, utime());
+  os << std::setw(WIDTH) << std::setfill(' ') << "utime: " << std::dec;
+  dump(os, utime());
   os << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "stime: "<< std::dec;
-    dump(os, stime());
+  os << std::setw(WIDTH) << std::setfill(' ') << "stime: " << std::dec;
+  dump(os, stime());
   os << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "cutime: "<< std::dec;
-    dump(os, cutime());
+  os << std::setw(WIDTH) << std::setfill(' ') << "cutime: " << std::dec;
+  dump(os, cutime());
   os << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "cstime: "<< std::dec;
-    dump(os, cstime());
+  os << std::setw(WIDTH) << std::setfill(' ') << "cstime: " << std::dec;
+  dump(os, cstime());
   os << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Registers: "<< std::dec << std::endl;
-    dump(os, reg_context());
+  os << std::setw(WIDTH) << std::setfill(' ') << "Registers: " << std::dec
+     << std::endl;
+  dump(os, reg_context());
   os << std::endl;
-
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const CorePrStatus::timeval_t& time) {
+std::ostream& CorePrStatus::dump(std::ostream& os,
+                                 const CorePrStatus::timeval_t& time) {
   os << std::dec;
   os << time.sec << ":" << time.usec;
   return os;
 }
 
-std::ostream& CorePrStatus::dump(std::ostream& os, const CorePrStatus::siginfo_t& siginfo) {
+std::ostream& CorePrStatus::dump(std::ostream& os,
+                                 const CorePrStatus::siginfo_t& siginfo) {
   os << std::dec;
-  os << siginfo.si_signo << " - " << siginfo.si_code << " - " << siginfo.si_errno;
+  os << siginfo.si_signo << " - " << siginfo.si_code << " - "
+     << siginfo.si_errno;
   return os;
 }
 
 std::ostream& CorePrStatus::dump(std::ostream& os, const reg_context_t& ctx) {
-
   for (const auto& reg_val : ctx) {
-    os << std::setw(14) << std::setfill(' ') << to_string(reg_val.first) << ": " << std::hex << std::showbase << reg_val.second << std::endl;
+    os << std::setw(14) << std::setfill(' ') << to_string(reg_val.first) << ": "
+       << std::hex << std::showbase << reg_val.second << std::endl;
   }
   return os;
 }
-
 
 void CorePrStatus::parse() {
   if (binary()->type() == ELF_CLASS::ELFCLASS64) {
@@ -330,46 +302,40 @@ void CorePrStatus::build() {
   }
 }
 
-
 std::pair<size_t, size_t> CorePrStatus::reg_enum_range() const {
   const ARCH arch = binary()->header().machine_type();
 
   size_t enum_start = 0;
-  size_t enum_end   = 0;
+  size_t enum_end = 0;
 
   switch (arch) {
-    case ARCH::EM_386:
-      {
-        enum_start = static_cast<size_t>(REGISTERS::X86_START) + 1;
-        enum_end  = static_cast<size_t>(REGISTERS::X86_END);
-        break;
-      }
+    case ARCH::EM_386: {
+      enum_start = static_cast<size_t>(REGISTERS::X86_START) + 1;
+      enum_end = static_cast<size_t>(REGISTERS::X86_END);
+      break;
+    }
 
-    case ARCH::EM_X86_64:
-      {
-        enum_start = static_cast<size_t>(REGISTERS::X86_64_START) + 1;
-        enum_end  = static_cast<size_t>(REGISTERS::X86_64_END);
-        break;
-      }
+    case ARCH::EM_X86_64: {
+      enum_start = static_cast<size_t>(REGISTERS::X86_64_START) + 1;
+      enum_end = static_cast<size_t>(REGISTERS::X86_64_END);
+      break;
+    }
 
-    case ARCH::EM_ARM:
-      {
-        enum_start = static_cast<size_t>(REGISTERS::ARM_START) + 1;
-        enum_end  = static_cast<size_t>(REGISTERS::ARM_END);
-        break;
-      }
+    case ARCH::EM_ARM: {
+      enum_start = static_cast<size_t>(REGISTERS::ARM_START) + 1;
+      enum_end = static_cast<size_t>(REGISTERS::ARM_END);
+      break;
+    }
 
-    case ARCH::EM_AARCH64:
-      {
-        enum_start = static_cast<size_t>(REGISTERS::AARCH64_START) + 1;
-        enum_end  = static_cast<size_t>(REGISTERS::AARCH64_END);
-        break;
-      }
+    case ARCH::EM_AARCH64: {
+      enum_start = static_cast<size_t>(REGISTERS::AARCH64_START) + 1;
+      enum_end = static_cast<size_t>(REGISTERS::AARCH64_END);
+      break;
+    }
 
-    default:
-      {
-        LIEF_WARN("{} not supported", to_string(arch));
-      }
+    default: {
+      LIEF_WARN("{} not supported", to_string(arch));
+    }
   }
   return {enum_start, enum_end};
 }
@@ -379,9 +345,7 @@ std::ostream& operator<<(std::ostream& os, const CorePrStatus& note) {
   return os;
 }
 
-
-
 CorePrStatus::~CorePrStatus() = default;
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

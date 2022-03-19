@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/ART/hash.hpp"
+
 #include "LIEF/ART.hpp"
 
 namespace LIEF {
@@ -26,10 +27,7 @@ size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::ART::Hash>(obj);
 }
 
-
-void Hash::visit(const File& file) {
-  process(file.header());
-}
+void Hash::visit(const File& file) { process(file.header()); }
 
 void Hash::visit(const Header& header) {
   process(header.magic());
@@ -55,8 +53,5 @@ void Hash::visit(const Header& header) {
   process(header.data_size());
 }
 
-
-
-} // namespace ART
-} // namespace LIEF
-
+}  // namespace ART
+}  // namespace LIEF

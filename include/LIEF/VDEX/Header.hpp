@@ -16,9 +16,9 @@
 #ifndef LIEF_VDEX_HEADER_H_
 #define LIEF_VDEX_HEADER_H_
 
+#include "LIEF/Object.hpp"
 #include "LIEF/VDEX/type_traits.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 
 namespace LIEF {
 namespace VDEX {
@@ -27,12 +27,12 @@ class Parser;
 class LIEF_API Header : public Object {
   friend class Parser;
 
-  public:
+ public:
   using magic_t = std::array<uint8_t, 4>;
 
   Header();
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL Header(const T* header);
 
   Header(const Header&);
@@ -61,11 +61,12 @@ class LIEF_API Header : public Object {
   bool operator==(const Header& rhs) const;
   bool operator!=(const Header& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& header);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Header& header);
 
   virtual ~Header();
 
-  private:
+ private:
   magic_t magic_;
   vdex_version_t version_;
 
@@ -76,7 +77,7 @@ class LIEF_API Header : public Object {
   uint32_t quickening_info_size_;
 };
 
-} // Namespace VDEX
-} // Namespace LIEF
+}  // Namespace VDEX
+}  // Namespace LIEF
 
 #endif

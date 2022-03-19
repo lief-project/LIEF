@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-
+#include "LIEF/PE/hash.hpp"
 #include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (DataDirectory::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DataDirectory::*)(T);
 
-
-template<>
+template <>
 void create<DataDirectory>(py::module& m) {
   py::class_<DataDirectory, LIEF::Object>(m, "DataDirectory",
       R"delim(
@@ -78,5 +76,5 @@ void create<DataDirectory>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

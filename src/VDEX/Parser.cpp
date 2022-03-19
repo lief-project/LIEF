@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 
+#include "LIEF/VDEX/Parser.hpp"
+
 #include <memory>
 
-#include "logging.hpp"
-
-#include "LIEF/VDEX/Parser.hpp"
-#include "LIEF/VDEX/utils.hpp"
-#include "VDEX/Structures.hpp"
-
 #include "Header.tcc"
+#include "LIEF/VDEX/utils.hpp"
 #include "Parser.tcc"
+#include "VDEX/Structures.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace VDEX {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   Parser parser{filename};
   return std::unique_ptr<File>{parser.file_};
 }
 
-std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data,
+                                    const std::string& name) {
   Parser parser{data, name};
   return std::unique_ptr<File>{parser.file_};
 }
 
-
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(data)}
-{
+Parser::Parser(const std::vector<uint8_t>& data, const std::string& name)
+    : file_{new File{}}, stream_{std::make_unique<VectorStream>(data)} {
   if (!is_vdex(data)) {
     LIEF_ERR("{} is not a VDEX file!", name);
     delete file_;
@@ -57,9 +54,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   init(name, version);
 }
 
-Parser::Parser(const std::string& file) :
-  file_{new File{}}
-{
+Parser::Parser(const std::string& file) : file_{new File{}} {
   if (!is_vdex(file)) {
     LIEF_ERR("{} is not a VDEX file!", file);
     delete file_;
@@ -74,7 +69,6 @@ Parser::Parser(const std::string& file) :
   vdex_version_t version = VDEX::version(file);
   init(file, version);
 }
-
 
 void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   LIEF_DEBUG("VDEX version: {:d}", version);
@@ -92,5 +86,5 @@ void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   }
 }
 
-} // namespace VDEX
-} // namespace LIEF
+}  // namespace VDEX
+}  // namespace LIEF

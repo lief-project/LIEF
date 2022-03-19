@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include "LIEF/PE/Symbol.hpp"
+
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
-
-#include "LIEF/PE/Symbol.hpp"
-#include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
 
 namespace LIEF {
@@ -41,30 +41,24 @@ Symbol& Symbol::operator=(Symbol other) {
 void Symbol::swap(Symbol& other) {
   LIEF::Symbol::swap(other);
 
-  std::swap(section_number_,        other.section_number_);
-  std::swap(type_,                  other.type_);
-  std::swap(storage_class_,         other.storage_class_);
-  std::swap(numberof_aux_symbols_,  other.numberof_aux_symbols_);
-  std::swap(section_,               other.section_);
+  std::swap(section_number_, other.section_number_);
+  std::swap(type_, other.type_);
+  std::swap(storage_class_, other.storage_class_);
+  std::swap(numberof_aux_symbols_, other.numberof_aux_symbols_);
+  std::swap(section_, other.section_);
 }
 
-Symbol::Symbol(const details::pe_symbol& header) :
-  section_number_(header.SectionNumber),
-  type_(header.Type),
-  numberof_aux_symbols_(header.NumberOfAuxSymbols),
-  storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header.StorageClass))
-{
+Symbol::Symbol(const details::pe_symbol& header)
+    : section_number_(header.SectionNumber),
+      type_(header.Type),
+      numberof_aux_symbols_(header.NumberOfAuxSymbols),
+      storage_class_(static_cast<SYMBOL_STORAGE_CLASS>(header.StorageClass)) {
   value_ = header.Value;
 }
 
+int16_t Symbol::section_number() const { return section_number_; }
 
-int16_t Symbol::section_number() const {
-  return section_number_;
-}
-
-uint16_t Symbol::type() const {
-  return type_;
-}
+uint16_t Symbol::type() const { return type_; }
 
 SYMBOL_BASE_TYPES Symbol::base_type() const {
   return static_cast<SYMBOL_BASE_TYPES>(type_ & 0x0F);
@@ -74,36 +68,23 @@ SYMBOL_COMPLEX_TYPES Symbol::complex_type() const {
   return static_cast<SYMBOL_COMPLEX_TYPES>((type_ >> 4) & 0x0F);
 }
 
+SYMBOL_STORAGE_CLASS Symbol::storage_class() const { return storage_class_; }
 
-SYMBOL_STORAGE_CLASS Symbol::storage_class() const {
-  return storage_class_;
-}
-
-
-uint8_t Symbol::numberof_aux_symbols() const {
-  return numberof_aux_symbols_;
-}
-
+uint8_t Symbol::numberof_aux_symbols() const { return numberof_aux_symbols_; }
 
 std::wstring Symbol::wname() const {
   return {std::begin(name_), std::end(name_)};
 }
 
-const Section* Symbol::section() const {
-  return section_;
-}
+const Section* Symbol::section() const { return section_; }
 
 Section* Symbol::section() {
   return const_cast<Section*>(static_cast<const Symbol*>(this)->section());
 }
 
-bool Symbol::has_section() const {
-  return section_ != nullptr;
-}
+bool Symbol::has_section() const { return section_ != nullptr; }
 
-void Symbol::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Symbol::accept(LIEF::Visitor& visitor) const { visitor.visit(*this); }
 
 bool Symbol::operator==(const Symbol& rhs) const {
   if (this == &rhs) {
@@ -114,48 +95,40 @@ bool Symbol::operator==(const Symbol& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Symbol::operator!=(const Symbol& rhs) const {
-  return !(*this == rhs);
-}
-
+bool Symbol::operator!=(const Symbol& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
   std::string section_number_str;
   if (entry.section_number() <= 0) {
-    section_number_str = to_string(
-        static_cast<SYMBOL_SECTION_NUMBER>(entry.section_number()));
+    section_number_str =
+        to_string(static_cast<SYMBOL_SECTION_NUMBER>(entry.section_number()));
   } else {
     if (entry.has_section()) {
       section_number_str = entry.section()->name();
     } else {
-      section_number_str = std::to_string(static_cast<uint32_t>(entry.section_number())); // section
+      section_number_str = std::to_string(
+          static_cast<uint32_t>(entry.section_number()));  // section
     }
   }
 
   std::string name = entry.name();
   // UTF8 -> ASCII
-  std::transform(std::begin(name), std::end(name),
-      std::begin(name),
-      [] (char c) {
-        return (c <= '~' && c >= '!') ? c : ' ';
-      });
+  std::transform(std::begin(name), std::end(name), std::begin(name),
+                 [](char c) { return (c <= '~' && c >= '!') ? c : ' '; });
 
   if (name.size() > 20) {
     name = name.substr(0, 17) + "...";
   }
 
-
   os << std::hex;
-  os << std::left
-     << std::setw(30) << name
-     << std::setw(10) << entry.value()
-     << std::setw(20) << section_number_str
-     << std::setw(10) << to_string(entry.base_type())
-     << std::setw(10) << to_string(entry.complex_type())
-     << std::setw(10) << to_string(entry.storage_class());
+  os << std::left << std::setw(30) << name << std::setw(10) << entry.value()
+     << std::setw(20) << section_number_str << std::setw(10)
+     << to_string(entry.base_type()) << std::setw(10)
+     << to_string(entry.complex_type()) << std::setw(10)
+     << to_string(entry.storage_class());
 
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

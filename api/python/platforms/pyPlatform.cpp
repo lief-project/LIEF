@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 #include "pyPlatform.hpp"
+
 #include "enums_wrapper.hpp"
 
 namespace LIEF {
 
 void init_python_platforms(py::module& m) {
   LIEF::enum_<PLATFORMS>(m, "PLATFORMS")
-    .value("UNKNOWN", PLATFORMS::UNKNOWN)
-    .value("LINUX",   PLATFORMS::LINUX)
-    .value("ANDROID", PLATFORMS::ANDROID_PLAT)
-    .value("WINDOWS", PLATFORMS::WINDOWS)
-    .value("IOS",     PLATFORMS::IOS)
-    .value("OSX",     PLATFORMS::OSX);
+      .value("UNKNOWN", PLATFORMS::UNKNOWN)
+      .value("LINUX", PLATFORMS::LINUX)
+      .value("ANDROID", PLATFORMS::ANDROID_PLAT)
+      .value("WINDOWS", PLATFORMS::WINDOWS)
+      .value("IOS", PLATFORMS::IOS)
+      .value("OSX", PLATFORMS::OSX);
 
   m.def("current_platform", &current_platform,
-      "Return the current plaform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum");
-
+        "Return the current plaform (Linux, Windows, ...) as a "
+        ":attr:`lief.PLATFORMS` enum");
 }
 
-}
+}  // namespace LIEF

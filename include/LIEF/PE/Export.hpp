@@ -20,8 +20,8 @@
 #include <string>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -38,10 +38,9 @@ class LIEF_API Export : public Object {
   friend class Builder;
   friend class Parser;
 
-  public:
-
-  using entries_t        = std::vector<ExportEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
+ public:
+  using entries_t = std::vector<ExportEntry>;
+  using it_entries = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
   Export();
@@ -88,18 +87,17 @@ class LIEF_API Export : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Export& exp);
 
-  private:
-  uint32_t    exportFlags_;
-  uint32_t    timestamp_;
-  uint16_t    majorVersion_;
-  uint16_t    minorVersion_;
-  uint32_t    ordinalBase_;
+ private:
+  uint32_t exportFlags_;
+  uint32_t timestamp_;
+  uint16_t majorVersion_;
+  uint16_t minorVersion_;
+  uint32_t ordinalBase_;
   std::string name_;
-  entries_t   entries_;
-
+  entries_t entries_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif /* PE_EXPORT_H_ */

@@ -15,22 +15,20 @@
  */
 #include <iomanip>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
-
-#include "LIEF/PE/LoadConfigurations.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV4& LoadConfigurationV4::operator=(const LoadConfigurationV4&) = default;
+LoadConfigurationV4& LoadConfigurationV4::operator=(
+    const LoadConfigurationV4&) = default;
 LoadConfigurationV4::LoadConfigurationV4(const LoadConfigurationV4&) = default;
 LoadConfigurationV4::~LoadConfigurationV4() = default;
 
-LoadConfigurationV4::LoadConfigurationV4() :
-  dynamic_value_reloc_table_{0},
-  hybrid_metadata_pointer_{0}
-{}
+LoadConfigurationV4::LoadConfigurationV4()
+    : dynamic_value_reloc_table_{0}, hybrid_metadata_pointer_{0} {}
 
 WIN_VERSION LoadConfigurationV4::version() const {
   return LoadConfigurationV4::VERSION;
@@ -72,13 +70,14 @@ bool LoadConfigurationV4::operator!=(const LoadConfigurationV4& rhs) const {
 std::ostream& LoadConfigurationV4::print(std::ostream& os) const {
   LoadConfigurationV3::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value relocation table:" << std::hex << dynamic_value_reloc_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hybrid metadata pointer:"        << std::hex << hybrid_metadata_pointer()   << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Dynamic value relocation table:" << std::hex
+     << dynamic_value_reloc_table() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Hybrid metadata pointer:" << std::hex << hybrid_metadata_pointer()
+     << std::endl;
   return os;
 }
 
-
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

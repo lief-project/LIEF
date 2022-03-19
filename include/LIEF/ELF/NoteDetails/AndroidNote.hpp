@@ -16,12 +16,12 @@
 #ifndef LIEF_ELF_ANDROID_NOTE_H_
 #define LIEF_ELF_ANDROID_NOTE_H_
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
+#include "LIEF/ELF/NoteDetails.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -33,28 +33,30 @@ class Note;
 
 //! Class representing the ".note.android.ident" section
 //!
-//! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
+//! @see:
+//! https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API AndroidNote : public NoteDetails {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
 
-  public:
+ public:
   static constexpr const char NAME[] = "Android";
 
-  static constexpr size_t sdk_version_offset      = 0;
-  static constexpr size_t sdk_version_size        = sizeof(uint32_t);
+  static constexpr size_t sdk_version_offset = 0;
+  static constexpr size_t sdk_version_size = sizeof(uint32_t);
 
-  static constexpr size_t ndk_version_offset      = sdk_version_offset + sdk_version_size;
-  static constexpr size_t ndk_version_size        = 64 * sizeof(char);
+  static constexpr size_t ndk_version_offset =
+      sdk_version_offset + sdk_version_size;
+  static constexpr size_t ndk_version_size = 64 * sizeof(char);
 
-  static constexpr size_t ndk_build_number_offset = ndk_version_offset + ndk_version_size;
-  static constexpr size_t ndk_build_number_size   = 64 * sizeof(char);
+  static constexpr size_t ndk_build_number_offset =
+      ndk_version_offset + ndk_version_size;
+  static constexpr size_t ndk_build_number_size = 64 * sizeof(char);
 
   static AndroidNote make(Note& note);
 
-  public:
+ public:
   using NoteDetails::NoteDetails;
   using description_t = std::vector<uint8_t>;
 
@@ -82,13 +84,14 @@ class LIEF_API AndroidNote : public NoteDetails {
 
   virtual ~AndroidNote();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const AndroidNote& note);
 
-  protected:
+ protected:
   void parse() override;
   void build() override;
 
-  private:
+ private:
   AndroidNote(Note& note);
 
   uint32_t sdk_version_ = 0;
@@ -96,8 +99,7 @@ class LIEF_API AndroidNote : public NoteDetails {
   std::string ndk_build_number_;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

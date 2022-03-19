@@ -14,58 +14,53 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (SegmentSplitInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (SegmentSplitInfo::*)(T);
 
-
-template<>
+template <>
 void create<SegmentSplitInfo>(py::module& m) {
+  py::class_<SegmentSplitInfo, LoadCommand>(
+      m, "SegmentSplitInfo",
+      "Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO "
+      "command")
 
-  py::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo",
-      "Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command")
+      .def_property(
+          "data_offset",
+          static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
+          static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
+          "Offset in the binary where the data start")
 
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
-        static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
-        "Offset in the binary where the data start")
+      .def_property(
+          "data_size",
+          static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_size),
+          static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_size),
+          "Size of the raw data")
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_size),
-        static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_size),
-        "Size of the raw data")
+      .def("__eq__", &SegmentSplitInfo::operator==)
+      .def("__ne__", &SegmentSplitInfo::operator!=)
+      .def("__hash__",
+           [](const SegmentSplitInfo& func) { return Hash::hash(func); })
 
-    .def("__eq__", &SegmentSplitInfo::operator==)
-    .def("__ne__", &SegmentSplitInfo::operator!=)
-    .def("__hash__",
-        [] (const SegmentSplitInfo& func) {
-          return Hash::hash(func);
-        })
-
-
-    .def("__str__",
-        [] (const SegmentSplitInfo& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const SegmentSplitInfo& func) {
+        std::ostringstream stream;
+        stream << func;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

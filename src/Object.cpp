@@ -20,4 +20,4 @@ Object::Object() = default;
 Object::Object(const Object&) = default;
 Object& Object::operator=(const Object&) = default;
 Object::~Object() = default;
-}
+}  // namespace LIEF

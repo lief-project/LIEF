@@ -33,8 +33,8 @@ struct pe_dos_header;
 //!
 //! Most of the attributes of this structures are not relevant.
 class LIEF_API DosHeader : public Object {
-  public:
-  using reserved_t  = std::array<uint16_t, 4>;
+ public:
+  using reserved_t = std::array<uint16_t, 4>;
   using reserved2_t = std::array<uint16_t, 10>;
 
   DosHeader(const details::pe_dos_header& header);
@@ -58,7 +58,7 @@ class LIEF_API DosHeader : public Object {
   uint16_t initial_relative_cs() const;
   uint16_t addressof_relocation_table() const;
   uint16_t overlay_number() const;
-  reserved_t  reserved() const;
+  reserved_t reserved() const;
   uint16_t oem_id() const;
   uint16_t oem_info() const;
   reserved2_t reserved2() const;
@@ -91,31 +91,31 @@ class LIEF_API DosHeader : public Object {
   bool operator==(const DosHeader& rhs) const;
   bool operator!=(const DosHeader& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DosHeader& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DosHeader& entry);
 
-  private:
-  uint16_t    magic_;
-  uint16_t    usedBytesInTheLastPage_;
-  uint16_t    fileSizeInPages_;
-  uint16_t    numberOfRelocation_;
-  uint16_t    headerSizeInParagraphs_;
-  uint16_t    minimumExtraParagraphs_;
-  uint16_t    maximumExtraParagraphs_;
-  uint16_t    initialRelativeSS_;
-  uint16_t    initialSP_;
-  uint16_t    checksum_;
-  uint16_t    initialIP_;
-  uint16_t    initialRelativeCS_;
-  uint16_t    addressOfRelocationTable_;
-  uint16_t    overlayNumber_;
-  reserved_t  reserved_;
-  uint16_t    oEMid_;
-  uint16_t    oEMinfo_;
+ private:
+  uint16_t magic_;
+  uint16_t usedBytesInTheLastPage_;
+  uint16_t fileSizeInPages_;
+  uint16_t numberOfRelocation_;
+  uint16_t headerSizeInParagraphs_;
+  uint16_t minimumExtraParagraphs_;
+  uint16_t maximumExtraParagraphs_;
+  uint16_t initialRelativeSS_;
+  uint16_t initialSP_;
+  uint16_t checksum_;
+  uint16_t initialIP_;
+  uint16_t initialRelativeCS_;
+  uint16_t addressOfRelocationTable_;
+  uint16_t overlayNumber_;
+  reserved_t reserved_;
+  uint16_t oEMid_;
+  uint16_t oEMinfo_;
   reserved2_t reserved2_;
-  uint32_t    addressOfNewExeHeader_;
+  uint32_t addressOfNewExeHeader_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif
-

@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_UUID_COMMAND_H_
 #define LIEF_MACHO_UUID_COMMAND_H_
-#include <iostream>
 #include <array>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <iostream>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -34,7 +33,7 @@ using uuid_t = std::array<uint8_t, 16>;
 
 //! Class that represents the UUID command
 class LIEF_API UUIDCommand : public LoadCommand {
-  public:
+ public:
   UUIDCommand();
   UUIDCommand(const details::uuid_command& cmd);
 
@@ -47,7 +46,7 @@ class LIEF_API UUIDCommand : public LoadCommand {
 
   //! The UUID as a 16-bytes array
   uuid_t uuid() const;
-  void   uuid(const uuid_t& uuid);
+  void uuid(const uuid_t& uuid);
 
   bool operator==(const UUIDCommand& rhs) const;
   bool operator!=(const UUIDCommand& rhs) const;
@@ -58,10 +57,10 @@ class LIEF_API UUIDCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uuid_t uuid_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

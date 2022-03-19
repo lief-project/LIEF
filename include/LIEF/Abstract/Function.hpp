@@ -16,8 +16,8 @@
 #ifndef LIEF_ABSTRACT_FUNCTION_H_
 #define LIEF_ABSTRACT_FUNCTION_H_
 
-#include <string>
 #include <set>
+#include <string>
 
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/visibility.h"
@@ -26,7 +26,7 @@ namespace LIEF {
 
 //! Class that represents a function in the binary
 class LIEF_API Function : public Symbol {
-  public:
+ public:
   //! Flags used to characterize the semantic
   //! of the function
   enum class FLAGS {
@@ -34,7 +34,8 @@ class LIEF_API Function : public Symbol {
     //! The function acts as constructor.
     //!
     //! Usually this flag is associated with functions
-    //! that are located in the ``.init_array``, ``__mod_init_func`` or ``.tls`` sections
+    //! that are located in the ``.init_array``, ``__mod_init_func`` or ``.tls``
+    //! sections
     CONSTRUCTOR,
 
     //! The function acts a destructor.
@@ -50,19 +51,21 @@ class LIEF_API Function : public Symbol {
     //! returns its virtual address in the binary
     EXPORTED,
 
-    //! The function is **imported** by the binary and the address() should return 0
+    //! The function is **imported** by the binary and the address() should
+    //! return 0
     IMPORTED,
   };
 
   using flags_list_t = std::vector<FLAGS>;
-  using flags_t      = std::set<FLAGS>;
+  using flags_t = std::set<FLAGS>;
 
-  public:
+ public:
   Function();
   Function(const std::string& name);
   Function(uint64_t address);
   Function(const std::string& name, uint64_t address);
-  Function(const std::string& name, uint64_t address, const flags_list_t& flags);
+  Function(const std::string& name, uint64_t address,
+           const flags_list_t& flags);
   Function(const Function&);
   Function& operator=(const Function&);
   virtual ~Function();
@@ -73,20 +76,20 @@ class LIEF_API Function : public Symbol {
   //! Add a flag to the current function
   Function& add(FLAGS f);
 
-  //! Address of the current function. For functions that are set with the FLAGS::IMPORTED flag,
-  //! this value is likely 0.
+  //! Address of the current function. For functions that are set with the
+  //! FLAGS::IMPORTED flag, this value is likely 0.
   uint64_t address() const;
   void address(uint64_t address);
 
   //! Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Function& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Function& entry);
 
-  protected:
+ protected:
   flags_t flags_;
 };
-}
+}  // namespace LIEF
 
 #endif
-

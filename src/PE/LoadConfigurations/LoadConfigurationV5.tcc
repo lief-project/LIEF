@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/Structures.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
+#include "PE/Structures.hpp"
 namespace LIEF {
 namespace PE {
 
-template<class T>
-LoadConfigurationV5::LoadConfigurationV5(const details::load_configuration_v5<T>& header) :
-  LoadConfigurationV4{reinterpret_cast<const details::load_configuration_v4<T>&>(header)},
-  guard_rf_failure_routine_{header.GuardRFFailureRoutine},
-  guard_rf_failure_routine_function_pointer_{header.GuardRFFailureRoutineFunctionPointer},
-  dynamic_value_reloctable_offset_{header.DynamicValueRelocTableOffset},
-  dynamic_value_reloctable_section_{header.DynamicValueRelocTableSection},
-  reserved2_{header.Reserved2}
-{}
+template <class T>
+LoadConfigurationV5::LoadConfigurationV5(
+    const details::load_configuration_v5<T>& header)
+    : LoadConfigurationV4{reinterpret_cast<
+          const details::load_configuration_v4<T>&>(header)},
+      guard_rf_failure_routine_{header.GuardRFFailureRoutine},
+      guard_rf_failure_routine_function_pointer_{
+          header.GuardRFFailureRoutineFunctionPointer},
+      dynamic_value_reloctable_offset_{header.DynamicValueRelocTableOffset},
+      dynamic_value_reloctable_section_{header.DynamicValueRelocTableSection},
+      reserved2_{header.Reserved2} {}
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

@@ -31,40 +31,39 @@ extern "C" {
 #endif
 
 struct Pe_OptionalHeader_t {
-  enum LIEF_PE_PE_TYPES  magic;
-  uint8_t        major_linker_version;
-  uint8_t        minor_linker_version;
-  uint32_t       sizeof_code;
-  uint32_t       sizeof_initialized_data;
-  uint32_t       sizeof_uninitialized_data;
-  uint32_t       addressof_entrypoint;
-  uint32_t       baseof_code;
-  uint32_t       baseof_data;
-  uint64_t       imagebase;
-  uint32_t       section_alignment;
-  uint32_t       file_alignment;
-  uint16_t       major_operating_system_version;
-  uint16_t       minor_operating_system_version;
-  uint16_t       major_image_version;
-  uint16_t       minor_image_version;
-  uint16_t       major_subsystem_version;
-  uint16_t       minor_subsystem_version;
-  uint32_t       win32_version_value;
-  uint32_t       sizeof_image;
-  uint32_t       sizeof_headers;
-  uint32_t       checksum;
+  enum LIEF_PE_PE_TYPES magic;
+  uint8_t major_linker_version;
+  uint8_t minor_linker_version;
+  uint32_t sizeof_code;
+  uint32_t sizeof_initialized_data;
+  uint32_t sizeof_uninitialized_data;
+  uint32_t addressof_entrypoint;
+  uint32_t baseof_code;
+  uint32_t baseof_data;
+  uint64_t imagebase;
+  uint32_t section_alignment;
+  uint32_t file_alignment;
+  uint16_t major_operating_system_version;
+  uint16_t minor_operating_system_version;
+  uint16_t major_image_version;
+  uint16_t minor_image_version;
+  uint16_t major_subsystem_version;
+  uint16_t minor_subsystem_version;
+  uint32_t win32_version_value;
+  uint32_t sizeof_image;
+  uint32_t sizeof_headers;
+  uint32_t checksum;
   enum LIEF_PE_SUBSYSTEM subsystem;
-  uint32_t       dll_characteristics;
-  uint64_t       sizeof_stack_reserve;
-  uint64_t       sizeof_stack_commit;
-  uint64_t       sizeof_heap_reserve;
-  uint64_t       sizeof_heap_commit;
-  uint32_t       loader_flags;
-  uint32_t       numberof_rva_and_size;
+  uint32_t dll_characteristics;
+  uint64_t sizeof_stack_reserve;
+  uint64_t sizeof_stack_commit;
+  uint64_t sizeof_heap_reserve;
+  uint64_t sizeof_heap_commit;
+  uint32_t loader_flags;
+  uint32_t numberof_rva_and_size;
 };
 
 typedef struct Pe_OptionalHeader_t Pe_OptionalHeader_t;
-
 
 #ifdef __cplusplus
 }

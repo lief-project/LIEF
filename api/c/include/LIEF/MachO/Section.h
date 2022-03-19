@@ -31,25 +31,23 @@ extern "C" {
 #endif
 
 struct Macho_Section_t {
-
-  const char*              name;
-  uint32_t                 alignment;
-  uint32_t                 relocation_offset;
-  uint32_t                 numberof_relocations;
-  uint32_t                 flags;
+  const char* name;
+  uint32_t alignment;
+  uint32_t relocation_offset;
+  uint32_t numberof_relocations;
+  uint32_t flags;
   enum LIEF_MACHO_MACHO_SECTION_TYPES type;
-  uint32_t                 reserved1;
-  uint32_t                 reserved2;
-  uint32_t                 reserved3;
-  uint64_t                 virtual_address;
-  uint64_t                 offset;
-  uint64_t                 size;
-  uint8_t*                 content;
-  double                   entropy;
+  uint32_t reserved1;
+  uint32_t reserved2;
+  uint32_t reserved3;
+  uint64_t virtual_address;
+  uint64_t offset;
+  uint64_t size;
+  uint8_t* content;
+  double entropy;
 };
 
 typedef struct Macho_Section_t Macho_Section_t;
-
 
 #ifdef __cplusplus
 }

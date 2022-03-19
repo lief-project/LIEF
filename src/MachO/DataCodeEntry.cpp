@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
+#include "LIEF/MachO/DataCodeEntry.hpp"
 
-#include "LIEF/MachO/hash.hpp"
+#include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/EnumToString.hpp"
-#include "LIEF/MachO/DataCodeEntry.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,53 +29,30 @@ DataCodeEntry& DataCodeEntry::operator=(const DataCodeEntry&) = default;
 DataCodeEntry::DataCodeEntry(const DataCodeEntry&) = default;
 DataCodeEntry::~DataCodeEntry() = default;
 
-DataCodeEntry::DataCodeEntry() :
-  offset_{0},
-  length_{0},
-  type_{TYPES::UNKNOWN}
-{}
+DataCodeEntry::DataCodeEntry()
+    : offset_{0}, length_{0}, type_{TYPES::UNKNOWN} {}
 
-DataCodeEntry::DataCodeEntry(uint32_t off, uint16_t length, TYPES type) :
-  offset_{off},
-  length_{length},
-  type_{type}
-{}
+DataCodeEntry::DataCodeEntry(uint32_t off, uint16_t length, TYPES type)
+    : offset_{off}, length_{length}, type_{type} {}
 
-DataCodeEntry::DataCodeEntry(const details::data_in_code_entry& entry) :
-  offset_{entry.offset},
-  length_{entry.length},
-  type_{static_cast<TYPES>(entry.kind)}
-{}
+DataCodeEntry::DataCodeEntry(const details::data_in_code_entry& entry)
+    : offset_{entry.offset},
+      length_{entry.length},
+      type_{static_cast<TYPES>(entry.kind)} {}
 
+uint32_t DataCodeEntry::offset() const { return offset_; }
 
-uint32_t DataCodeEntry::offset() const {
-  return offset_;
-}
+uint16_t DataCodeEntry::length() const { return length_; }
 
-uint16_t DataCodeEntry::length() const {
-  return length_;
-}
+DataCodeEntry::TYPES DataCodeEntry::type() const { return type_; }
 
-DataCodeEntry::TYPES DataCodeEntry::type() const {
-  return type_;
-}
+void DataCodeEntry::offset(uint32_t off) { offset_ = off; }
 
-void DataCodeEntry::offset(uint32_t off) {
-  offset_ = off;
-}
+void DataCodeEntry::length(uint16_t length) { length_ = length; }
 
-void DataCodeEntry::length(uint16_t length) {
-  length_ = length;
-}
+void DataCodeEntry::type(TYPES type) { type_ = type; }
 
-void DataCodeEntry::type(TYPES type) {
-  type_ = type;
-}
-
-void DataCodeEntry::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void DataCodeEntry::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DataCodeEntry::operator==(const DataCodeEntry& rhs) const {
   if (this == &rhs) {
@@ -92,19 +69,13 @@ bool DataCodeEntry::operator!=(const DataCodeEntry& rhs) const {
 
 std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry) {
   os << std::hex;
-  os << std::left
-     << std::showbase
+  os << std::left << std::showbase
 
-     << entry.offset() << " "
-     << entry.length() << " "
+     << entry.offset() << " " << entry.length() << " "
      << to_string(entry.type());
-
 
   return os;
 }
 
-
-
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

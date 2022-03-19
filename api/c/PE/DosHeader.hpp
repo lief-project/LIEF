@@ -18,7 +18,6 @@
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/Binary.hpp"
-
 #include "LIEF/PE/DosHeader.h"
 #include "LIEF/PE/DosHeader.hpp"
 
@@ -28,6 +27,6 @@ namespace PE {
 void init_c_dos_header(Pe_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

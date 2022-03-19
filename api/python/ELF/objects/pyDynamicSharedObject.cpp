@@ -13,62 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (DynamicSharedObject::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DynamicSharedObject::*)(T);
 
-
-template<>
+template <>
 void create<DynamicSharedObject>(py::module& m) {
-
   py::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject",
-      R"delim(
+                                                R"delim(
       Class which represents a ``DT_SONAME`` entry in the dynamic table
       This kind of entry is usually used no name the original library.
 
       This entry is not present for executable.
       )delim")
 
-    .def(py::init<const std::string &>(),
-        "Constructor from library name",
-        "library_name"_a)
+      .def(py::init<const std::string&>(), "Constructor from library name",
+           "library_name"_a)
 
-    .def_property("name",
-        [] (const DynamicSharedObject& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&DynamicSharedObject::name),
-        "Return the library name")
+      .def_property(
+          "name",
+          [](const DynamicSharedObject& obj) {
+            return safe_string_converter(obj.name());
+          },
+          static_cast<setter_t<const std::string&>>(&DynamicSharedObject::name),
+          "Return the library name")
 
-    .def("__eq__", &DynamicSharedObject::operator==)
-    .def("__ne__", &DynamicSharedObject::operator!=)
-    .def("__hash__",
-        [] (const DynamicSharedObject& entry) {
-          return Hash::hash(entry);
-        })
+      .def("__eq__", &DynamicSharedObject::operator==)
+      .def("__ne__", &DynamicSharedObject::operator!=)
+      .def("__hash__",
+           [](const DynamicSharedObject& entry) { return Hash::hash(entry); })
 
-    .def("__str__",
-        [] (const DynamicSharedObject& dynamicSharedObject) {
-          std::ostringstream stream;
-          stream << dynamicSharedObject;
-          return stream.str();
-        });
+      .def("__str__", [](const DynamicSharedObject& dynamicSharedObject) {
+        std::ostringstream stream;
+        stream << dynamicSharedObject;
+        return stream.str();
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

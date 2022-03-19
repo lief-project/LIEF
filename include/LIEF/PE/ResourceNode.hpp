@@ -15,15 +15,14 @@
  */
 #ifndef LIEF_PE_RESOURCE_NODE_H_
 #define LIEF_PE_RESOURCE_NODE_H_
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -36,13 +35,12 @@ class Builder;
 
 //! Class which represents a Node in the resource tree.
 class LIEF_API ResourceNode : public Object {
-
   friend class Parser;
   friend class Builder;
 
-  public:
-  using childs_t        = std::vector<std::unique_ptr<ResourceNode>>;
-  using it_childs       = ref_iterator<childs_t&, ResourceNode*>;
+ public:
+  using childs_t = std::vector<std::unique_ptr<ResourceNode>>;
+  using it_childs = ref_iterator<childs_t&, ResourceNode*>;
   using it_const_childs = const_ref_iterator<const childs_t&, ResourceNode*>;
 
   //! Enum that identifies the type of a node in
@@ -73,7 +71,7 @@ class LIEF_API ResourceNode : public Object {
   const std::u16string& name() const;
 
   //! Iterator on node's children
-  it_childs       childs();
+  it_childs childs();
   it_const_childs childs() const;
 
   //! ``True`` if the entry uses a name as ID
@@ -124,16 +122,17 @@ class LIEF_API ResourceNode : public Object {
   bool operator==(const ResourceNode& rhs) const;
   bool operator!=(const ResourceNode& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceNode& node);
 
-  protected:
+ protected:
   ResourceNode();
-  TYPE           type_ = TYPE::UNKNOWN;
-  uint32_t       id_ = 0;
+  TYPE type_ = TYPE::UNKNOWN;
+  uint32_t id_ = 0;
   std::u16string name_;
-  childs_t       childs_;
-  uint32_t       depth_ = 0;
+  childs_t childs_;
+  uint32_t depth_ = 0;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif /* RESOURCENODE_H_ */

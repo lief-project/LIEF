@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/utils.hpp"
+
 #include <algorithm>
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
 #include <vector>
 
+#include "ELF/Structures.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "logging.hpp"
-
-#include "LIEF/ELF/utils.hpp"
-#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -91,13 +91,5 @@ uint32_t dl_new_hash(const char* name) {
   return h & 0xffffffff;
 }
 
-
-
-} // namespace ELF
-} // namespace LIEF
-
-
-
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

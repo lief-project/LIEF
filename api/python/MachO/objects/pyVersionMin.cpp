@@ -14,63 +14,56 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (VersionMin::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (VersionMin::*)(T);
 
-
-template<>
+template <>
 void create<VersionMin>(py::module& m) {
+  py::class_<VersionMin, LoadCommand>(
+      m, "VersionMin",
+      "Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, "
+      "... commands")
 
-  py::class_<VersionMin, LoadCommand>(m, "VersionMin",
-      "Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ... commands")
+      .def_property("version",
+                    static_cast<getter_t<const VersionMin::version_t&>>(
+                        &VersionMin::version),
+                    static_cast<setter_t<const VersionMin::version_t&>>(
+                        &VersionMin::version),
+                    "Version as a tuple of **3** integers",
+                    py::return_value_policy::reference_internal)
 
-    .def_property("version",
-        static_cast<getter_t<const VersionMin::version_t&>>(&VersionMin::version),
-        static_cast<setter_t<const VersionMin::version_t&>>(&VersionMin::version),
-        "Version as a tuple of **3** integers",
-        py::return_value_policy::reference_internal)
+      .def_property(
+          "sdk",
+          static_cast<getter_t<const VersionMin::version_t&>>(&VersionMin::sdk),
+          static_cast<setter_t<const VersionMin::version_t&>>(&VersionMin::sdk),
+          "SDK as a tuple of **3** integers",
+          py::return_value_policy::reference_internal)
 
+      .def("__eq__", &VersionMin::operator==)
+      .def("__ne__", &VersionMin::operator!=)
+      .def("__hash__",
+           [](const VersionMin& version) { return Hash::hash(version); })
 
-    .def_property("sdk",
-        static_cast<getter_t<const VersionMin::version_t&>>(&VersionMin::sdk),
-        static_cast<setter_t<const VersionMin::version_t&>>(&VersionMin::sdk),
-        "SDK as a tuple of **3** integers",
-        py::return_value_policy::reference_internal)
-
-
-    .def("__eq__", &VersionMin::operator==)
-    .def("__ne__", &VersionMin::operator!=)
-    .def("__hash__",
-        [] (const VersionMin& version) {
-          return Hash::hash(version);
-        })
-
-
-    .def("__str__",
-        [] (const VersionMin& version)
-        {
-          std::ostringstream stream;
-          stream << version;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const VersionMin& version) {
+        std::ostringstream stream;
+        stream << version;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
+#include "LIEF/ART/Parser.hpp"
+
 #include <memory>
 
-#include "logging.hpp"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/ART/Parser.hpp"
-#include "LIEF/ART/utils.hpp"
-#include "LIEF/ART/File.hpp"
-
 #include "ART/Structures.hpp"
-
 #include "Header.tcc"
+#include "LIEF/ART/File.hpp"
+#include "LIEF/ART/utils.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "Parser.tcc"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ART {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   if (!is_art(filename)) {
@@ -46,7 +44,8 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
   return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
+                                    const std::string& name) {
   if (!is_art(data)) {
     LIEF_ERR("'{}' is not an ART file", name);
     return nullptr;
@@ -58,16 +57,11 @@ std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string
   return std::move(parser.file_);
 }
 
+Parser::Parser(std::vector<uint8_t> data)
+    : file_{new File{}},
+      stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
-Parser::Parser(std::vector<uint8_t> data) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(std::move(data))}
-{
-}
-
-Parser::Parser(const std::string& file) :
-  file_{new File{}}
-{
+Parser::Parser(const std::string& file) : file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
     LIEF_ERR("Can't create the stream");
@@ -76,9 +70,7 @@ Parser::Parser(const std::string& file) :
   stream_ = std::make_unique<VectorStream>(std::move(*stream));
 }
 
-
 void Parser::init(const std::string& /*name*/, art_version_t version) {
-
   if (version <= details::ART_17::art_version) {
     return parse_file<details::ART17>();
   }
@@ -104,5 +96,5 @@ void Parser::init(const std::string& /*name*/, art_version_t version) {
   }
 }
 
-} // namespace ART
-} // namespace LIEF
+}  // namespace ART
+}  // namespace LIEF

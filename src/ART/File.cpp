@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-
 #include "LIEF/ART/File.hpp"
+
 #include "LIEF/ART/hash.hpp"
 
 namespace LIEF {
@@ -23,17 +23,13 @@ namespace ART {
 
 File::File() = default;
 
-const Header& File::header() const {
-  return header_;
-}
+const Header& File::header() const { return header_; }
 
 Header& File::header() {
   return const_cast<Header&>(static_cast<const File*>(this)->header());
 }
 
-void File::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void File::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool File::operator==(const File& rhs) const {
   if (this == &rhs) {
@@ -44,10 +40,7 @@ bool File::operator==(const File& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool File::operator!=(const File& rhs) const {
-  return !(*this == rhs);
-}
-
+bool File::operator!=(const File& rhs) const { return !(*this == rhs); }
 
 File::~File() = default;
 
@@ -56,5 +49,5 @@ std::ostream& operator<<(std::ostream& os, const File& art_file) {
   return os;
 }
 
-} // Namespace ART
-} // Namespace LIEF
+}  // Namespace ART
+}  // Namespace LIEF

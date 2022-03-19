@@ -20,12 +20,11 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/utils.hpp"
-#include "LIEF/errors.hpp"
-
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -45,7 +44,7 @@ struct pe_resource_directory_table;
 //! Main interface to parse PE binaries. In particular the **static** functions:
 //! Parser::parse should be used to get a LIEF::PE::Binary
 class LIEF_API Parser : public LIEF::Parser {
-  public:
+ public:
   friend struct ::Profiler;
 
   //! Maximum size of the data read
@@ -59,11 +58,12 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Max size of the padding section
   static constexpr size_t MAX_PADDING_SIZE = 1_GB;
 
-  public:
+ public:
   //! Check if the given name is a valid import.
   //!
   //! This check verified that:
-  //!   1. The name is not too large or empty (cf. https://stackoverflow.com/a/23340781)
+  //!   1. The name is not too large or empty (cf.
+  //!   https://stackoverflow.com/a/23340781)
   //!   2. All the characters are printable
   static bool is_valid_import_name(const std::string& name);
 
@@ -74,17 +74,18 @@ class LIEF_API Parser : public LIEF::Parser {
   //!   2. All the characters are printable
   static bool is_valid_dll_name(const std::string& name);
 
-  public:
+ public:
   //! Parse a PE binary from the given filename
   static std::unique_ptr<Binary> parse(const std::string& filename);
 
   //! Parse a PE binary from a data buffer
-  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
+                                       const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
-  private:
+ private:
   Parser(const std::string& file);
   Parser(std::vector<uint8_t> data);
 
@@ -93,38 +94,39 @@ class LIEF_API Parser : public LIEF::Parser {
 
   void init(const std::string& name = "");
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse();
 
   ok_error_t parse_exports();
   ok_error_t parse_sections();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_headers();
 
   ok_error_t parse_configuration();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_data_directories();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_import_table();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_delay_imports();
 
-  template<typename PE_T>
-  ok_error_t parse_delay_names_table(DelayImport& import, uint32_t names_offset);
+  template <typename PE_T>
+  ok_error_t parse_delay_names_table(DelayImport& import,
+                                     uint32_t names_offset);
 
   ok_error_t parse_export_table();
   ok_error_t parse_debug();
   ok_error_t parse_debug_code_view(Debug& debug_info);
   ok_error_t parse_debug_pogo(Debug& debug_info);
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_tls();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t parse_load_config();
 
   ok_error_t parse_relocations();
@@ -142,14 +144,12 @@ class LIEF_API Parser : public LIEF::Parser {
       const details::pe_resource_directory_table& directory_table,
       uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);
 
-
   PE_TYPE type_ = PE_TYPE::PE32_PLUS;
   std::unique_ptr<Binary> binary_;
   std::set<uint32_t> resource_visited_;
   std::unique_ptr<BinaryStream> stream_;
 };
 
-
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

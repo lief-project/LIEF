@@ -15,38 +15,41 @@
  * limitations under the License.
  */
 
+#include "LIEF/DEX/Class.hpp"
+
 #include <utility>
 
-#include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
 
 namespace LIEF {
 namespace DEX {
 Class::Class() = default;
 
-Class::Class(std::string  fullname, uint32_t access_flags,
-             Class* parent, std::string source_filename) :
-  fullname_{std::move(fullname)},
-  access_flags_{access_flags},
-  parent_{parent},
-  source_filename_{std::move(source_filename)},
-  original_index_{-1u}
-{}
+Class::Class(std::string fullname, uint32_t access_flags, Class* parent,
+             std::string source_filename)
+    : fullname_{std::move(fullname)},
+      access_flags_{access_flags},
+      parent_{parent},
+      source_filename_{std::move(source_filename)},
+      original_index_{-1u} {}
 
 std::string Class::package_normalized(const std::string& pkg) {
   std::string package_normalized = pkg;
 
   // 1. Remove the '/' at the end
   if (package_normalized.back() == '/') {
-    package_normalized = package_normalized.substr(0, package_normalized.size() - 1);
+    package_normalized =
+        package_normalized.substr(0, package_normalized.size() - 1);
   }
 
   // 2. Replace '.' with '/'
-  std::replace(std::begin(package_normalized), std::end(package_normalized), '.', '/');
+  std::replace(std::begin(package_normalized), std::end(package_normalized),
+               '.', '/');
   return package_normalized;
 }
 
-std::string Class::fullname_normalized(const std::string& pkg, const std::string& cls_name) {
+std::string Class::fullname_normalized(const std::string& pkg,
+                                       const std::string& cls_name) {
   return "L" + Class::package_normalized(pkg) + "/" + cls_name + ";";
 }
 
@@ -54,7 +57,8 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
   std::string package_normalized = pkg_cls;
 
   // 1. Replace '.' with '/'
-  std::replace(std::begin(package_normalized), std::end(package_normalized), '.', '/');
+  std::replace(std::begin(package_normalized), std::end(package_normalized),
+               '.', '/');
 
   // 2. Add 'L' at the beginning
   if (package_normalized.front() != 'L') {
@@ -69,10 +73,7 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
   return package_normalized;
 }
 
-const std::string& Class::fullname() const {
-  return fullname_;
-}
-
+const std::string& Class::fullname() const { return fullname_; }
 
 std::string Class::package_name() const {
   size_t pos = fullname_.find_last_of('/');
@@ -101,83 +102,55 @@ std::string Class::pretty_name() const {
   return pretty_name;
 }
 
-
-bool Class::has(ACCESS_FLAGS f) const {
-  return (access_flags_ & f) > 0;
-}
+bool Class::has(ACCESS_FLAGS f) const { return (access_flags_ & f) > 0; }
 
 Class::access_flags_list_t Class::access_flags() const {
-
   Class::access_flags_list_t flags;
 
   std::copy_if(std::begin(access_flags_list), std::end(access_flags_list),
                std::back_inserter(flags),
-               [this] (ACCESS_FLAGS f) { return has(f); });
+               [this](ACCESS_FLAGS f) { return has(f); });
 
   return flags;
 }
 
+bool Class::has_parent() const { return parent_ != nullptr; }
 
-bool Class::has_parent() const {
-  return parent_ != nullptr;
-}
-
-const Class* Class::parent() const {
-  return parent_;
-}
+const Class* Class::parent() const { return parent_; }
 
 Class* Class::parent() {
   return const_cast<Class*>(static_cast<const Class*>(this)->parent());
 }
 
-Class::it_const_methods Class::methods() const {
-  return methods_;
-}
+Class::it_const_methods Class::methods() const { return methods_; }
 
-Class::it_methods Class::methods() {
-  return methods_;
-}
+Class::it_methods Class::methods() { return methods_; }
 
-Class::it_const_fields Class::fields() const {
-  return fields_;
-}
+Class::it_const_fields Class::fields() const { return fields_; }
 
-Class::it_fields Class::fields() {
-  return fields_;
-}
+Class::it_fields Class::fields() { return fields_; }
 
 Class::it_named_methods Class::methods(const std::string& name) {
-  return {methods_, [name] (const Method* meth) {
-    return meth->name() == name;
-  }};
+  return {methods_,
+          [name](const Method* meth) { return meth->name() == name; }};
 }
 
 Class::it_const_named_methods Class::methods(const std::string& name) const {
-  return {methods_, [name] (const Method* meth) {
-    return meth->name() == name;
-  }};
+  return {methods_,
+          [name](const Method* meth) { return meth->name() == name; }};
 }
 
-
 Class::it_named_fields Class::fields(const std::string& name) {
-  return {fields_, [name] (const Field* f) {
-    return f->name() == name;
-  }};
+  return {fields_, [name](const Field* f) { return f->name() == name; }};
 }
 
 Class::it_const_named_fields Class::fields(const std::string& name) const {
-  return {fields_, [name] (const Field* f) {
-    return f->name() == name;
-  }};
+  return {fields_, [name](const Field* f) { return f->name() == name; }};
 }
 
-size_t Class::index() const {
-  return original_index_;
-}
+size_t Class::index() const { return original_index_; }
 
-const std::string& Class::source_filename() const {
-  return source_filename_;
-}
+const std::string& Class::source_filename() const { return source_filename_; }
 
 dex2dex_class_info_t Class::dex2dex_info() const {
   dex2dex_class_info_t info;
@@ -189,9 +162,7 @@ dex2dex_class_info_t Class::dex2dex_info() const {
   return info;
 }
 
-void Class::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Class::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Class::operator==(const Class& rhs) const {
   if (this == &rhs) {
@@ -202,9 +173,7 @@ bool Class::operator==(const Class& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Class::operator!=(const Class& rhs) const {
-  return !(*this == rhs);
-}
+bool Class::operator!=(const Class& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Class& cls) {
   os << cls.pretty_name();
@@ -219,5 +188,5 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
 
 Class::~Class() = default;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-#include <fstream>
-
-#include "logging.hpp"
 #include "LIEF/Abstract/Parser.hpp"
 
+#include <fstream>
+
 #include "LIEF/OAT.hpp"
+#include "logging.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/utils.hpp"
 #endif
 
 #if defined(LIEF_PE_SUPPORT)
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/utils.hpp"
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)
-#include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/utils.hpp"
 #endif
 
 #include "LIEF/exception.hpp"
@@ -47,7 +47,6 @@ Parser::~Parser() = default;
 Parser::Parser() = default;
 
 std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
-
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(filename)) {
     return OAT::Parser::parse(filename);
@@ -60,10 +59,9 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   }
 #endif
 
-
 #if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(filename)) {
-     return PE::Parser::parse(filename);
+    return PE::Parser::parse(filename);
   }
 #endif
 
@@ -80,11 +78,10 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
   LIEF_ERR("Unknown format");
   return nullptr;
-
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
-
+std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw,
+                                      const std::string& name) {
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(raw)) {
     return OAT::Parser::parse(raw, name);
@@ -97,10 +94,9 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
   }
 #endif
 
-
 #if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(raw)) {
-     return PE::Parser::parse(raw, name);
+    return PE::Parser::parse(raw, name);
   }
 #endif
 
@@ -117,12 +113,9 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
 
   LIEF_ERR("Unknown format");
   return nullptr;
-
 }
 
-Parser::Parser(const std::string& filename) :
-  binary_name_{filename}
-{
+Parser::Parser(const std::string& filename) : binary_name_{filename} {
   std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   if (!file) {
@@ -135,4 +128,4 @@ Parser::Parser(const std::string& filename) :
   file.seekg(0, std::ios::beg);
 }
 
-}
+}  // namespace LIEF

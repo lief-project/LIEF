@@ -13,52 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/exception.hpp"
+
 #include <sstream>
 #include <utility>
 
-#include "LIEF/exception.hpp"
-#include "logging.hpp"
 #include "LIEF/config.h"
-
+#include "logging.hpp"
 
 namespace LIEF {
 exception::exception(const exception&) = default;
 exception::~exception() noexcept = default;
 
 exception::exception(std::string msg) : msg_{std::move(msg)} {
-
 #if defined(LIEF_LOGGING_SUPPORT)
-//std::ostringstream oss;
-//oss << std::endl << el::base::debug::StackTrace();
-//this->msg_ += oss.str();
+// std::ostringstream oss;
+// oss << std::endl << el::base::debug::StackTrace();
+// this->msg_ += oss.str();
 #endif
-
 }
 exception::exception(const char* msg) : msg_{msg} {
 #if defined(LIEF_LOGGING_SUPPORT)
-//std::ostringstream oss;
-//oss << std::endl << el::base::debug::StackTrace();
-//this->msg_ += oss.str();
+// std::ostringstream oss;
+// oss << std::endl << el::base::debug::StackTrace();
+// this->msg_ += oss.str();
 #endif
 }
 
-const char* exception::what() const noexcept {
-  return this->msg_.c_str();
-}
+const char* exception::what() const noexcept { return this->msg_.c_str(); }
 
-
-read_out_of_bound::read_out_of_bound(uint64_t offset, uint64_t size) : LIEF::exception("") {
+read_out_of_bound::read_out_of_bound(uint64_t offset, uint64_t size)
+    : LIEF::exception("") {
   std::ostringstream oss;
-  oss << "Try to read 0x" << std::hex << size
-      << " bytes from 0x" << std::hex << offset
-      << " (" << std::hex << offset + size << ") which is bigger than the binary's size";
+  oss << "Try to read 0x" << std::hex << size << " bytes from 0x" << std::hex
+      << offset << " (" << std::hex << offset + size
+      << ") which is bigger than the binary's size";
   this->msg_ += oss.str();
 }
 
 read_out_of_bound::read_out_of_bound(uint64_t offset) : LIEF::exception("") {
   std::ostringstream oss;
-  oss << "Offset: 0x" << std::hex << offset << " is bigger than the binary size";
+  oss << "Offset: 0x" << std::hex << offset
+      << " is bigger than the binary size";
   this->msg_ += oss.str();
 }
 
-}
+}  // namespace LIEF

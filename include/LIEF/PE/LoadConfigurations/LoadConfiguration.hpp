@@ -18,15 +18,14 @@
 #include <iostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration;
 }
 
@@ -34,13 +33,13 @@ struct load_configuration;
 //!
 //! It's the base class for any future versions of the structure
 class LIEF_API LoadConfiguration : public Object {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_UNKNOWN;
   static constexpr size_t PRINT_WIDTH = 45;
 
   LoadConfiguration();
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL LoadConfiguration(const details::load_configuration<T>& header);
 
   LoadConfiguration& operator=(const LoadConfiguration&);
@@ -102,7 +101,8 @@ class LIEF_API LoadConfiguration : public Object {
   uint64_t virtual_memory_threshold() const;
 
   //! Setting this field to a non-zero value is equivalent to calling
-  //! ``SetProcessAffinityMask`` with this value during process startup (.exe only)
+  //! ``SetProcessAffinityMask`` with this value during process startup (.exe
+  //! only)
   uint64_t process_affinity_mask() const;
 
   //! Process heap flags that correspond to the first argument of the
@@ -118,7 +118,8 @@ class LIEF_API LoadConfiguration : public Object {
 
   //! Alias for reserved1.
   //!
-  //! On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags
+  //! On recent the version of the structure, Microsoft renamed reserved1 to
+  //! DependentLoadFlags
   uint16_t dependent_load_flags() const;
 
   //! Reserved for use by the system.
@@ -127,7 +128,6 @@ class LIEF_API LoadConfiguration : public Object {
   //! A pointer to a cookie that is used by Visual C++ or GS
   //! implementation.
   uint32_t security_cookie() const;
-
 
   void characteristics(uint32_t characteristics);
   void timedatestamp(uint32_t timedatestamp);
@@ -138,7 +138,8 @@ class LIEF_API LoadConfiguration : public Object {
   void global_flags_clear(uint32_t global_flags_clear);
   void global_flags_set(uint32_t global_flags_set);
 
-  void critical_section_default_timeout(uint32_t critical_section_default_timeout);
+  void critical_section_default_timeout(
+      uint32_t critical_section_default_timeout);
 
   void decommit_free_block_threshold(uint64_t decommit_free_block_threshold);
   void decommit_total_free_threshold(uint64_t decommit_total_free_threshold);
@@ -163,11 +164,11 @@ class LIEF_API LoadConfiguration : public Object {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadConfiguration& config);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const LoadConfiguration& config);
 
-
-  protected:
-  uint32_t characteristics_; // also named size
+ protected:
+  uint32_t characteristics_;  // also named size
   uint32_t timedatestamp_;
 
   uint16_t major_version_;
@@ -191,7 +192,7 @@ class LIEF_API LoadConfiguration : public Object {
   uint64_t editlist_;
   uint64_t security_cookie_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

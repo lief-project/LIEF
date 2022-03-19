@@ -14,22 +14,24 @@
  */
 #ifndef LIEF_ELF_LAYOUT_H_
 #define LIEF_ELF_LAYOUT_H_
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 namespace LIEF {
 namespace ELF {
 class Section;
 class Binary;
 class Layout {
-  public:
+ public:
   Layout(Binary& bin);
 
-  inline virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
+  inline virtual const std::unordered_map<std::string, size_t>& shstr_map()
+      const {
     return shstr_name_map_;
   }
 
-  inline virtual const std::unordered_map<std::string, size_t>& strtab_map() const {
+  inline virtual const std::unordered_map<std::string, size_t>& strtab_map()
+      const {
     return strtab_name_map_;
   }
 
@@ -45,9 +47,7 @@ class Layout {
     strtab_section_ = &section;
   }
 
-  inline void set_dyn_sym_idx(int32_t val) {
-    new_symndx_ = val;
-  }
+  inline void set_dyn_sym_idx(int32_t val) { new_symndx_ = val; }
 
   bool is_strtab_shared_shstrtab() const;
   size_t section_strtab_size();
@@ -56,7 +56,7 @@ class Layout {
   virtual ~Layout();
   Layout() = delete;
 
-  protected:
+ protected:
   Binary* binary_ = nullptr;
 
   std::unordered_map<std::string, size_t> shstr_name_map_;
@@ -68,6 +68,6 @@ class Layout {
   Section* strtab_section_ = nullptr;
   int32_t new_symndx_ = -1;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

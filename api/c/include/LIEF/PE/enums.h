@@ -6,9 +6,9 @@
 extern "C" {
 #endif
 
-#define _LIEF_EN(N) LIEF_PE_##N         // enum LIEF_N {
-#define _LIEF_EN_2(N, TYPE) LIEF_PE_##N // enum LIEF_N {
-#define _LIEF_EI(X) LIEF_PE_##X         //   LIEF_X
+#define _LIEF_EN(N) LIEF_PE_##N          // enum LIEF_N {
+#define _LIEF_EN_2(N, TYPE) LIEF_PE_##N  // enum LIEF_N {
+#define _LIEF_EI(X) LIEF_PE_##X          //   LIEF_X
 
 #include "LIEF/PE/enums.inc"
 
@@ -19,6 +19,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

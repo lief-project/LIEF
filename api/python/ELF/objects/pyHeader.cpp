@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (Header::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Header::*)(T);
 
-
-template<>
+template <>
 void create<Header>(py::module& m) {
-
   py::class_<Header, LIEF::Object>(m, "Header",
       R"delim(
       Class which represents the ELF's header. This is the ELF structure
@@ -240,5 +237,5 @@ void create<Header>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

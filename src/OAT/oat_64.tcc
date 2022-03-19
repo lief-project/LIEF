@@ -16,25 +16,22 @@
 
 #include <type_traits>
 
-#include "logging.hpp"
-
-#include "LIEF/utils.hpp"
-
-#include "LIEF/DEX.hpp"
-#include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
-
 #include "DEX/Structures.hpp"
+#include "LIEF/DEX.hpp"
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Parser.hpp"
+#include "LIEF/utils.hpp"
 #include "OAT/Structures.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace OAT {
 
-template<>
+template <>
 void Parser::parse_dex_files<details::OAT64_t>() {
   using oat_header = typename details::OAT64_t::oat_header;
-  using dex35_header_t  = DEX::details::DEX35::dex_header;
+  using dex35_header_t = DEX::details::DEX35::dex_header;
 
   auto& oat = oat_binary();
 
@@ -45,8 +42,7 @@ void Parser::parse_dex_files<details::OAT64_t>() {
   LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
 
   stream_->setpos(dexfiles_offset);
-  for (size_t i = 0; i < nb_dex_files; ++i ) {
-
+  for (size_t i = 0; i < nb_dex_files; ++i) {
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
     auto dex_file = std::make_unique<DexFile>();
 
@@ -92,7 +88,6 @@ void Parser::parse_dex_files<details::OAT64_t>() {
     oat.oat_dex_files_.push_back(std::move(dex_file));
   }
 
-
   for (size_t i = 0; i < nb_dex_files; ++i) {
     uint64_t offset = oat.oat_dex_files_[i]->dex_offset();
 
@@ -119,19 +114,17 @@ void Parser::parse_dex_files<details::OAT64_t>() {
 
     std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[i];
     if (DEX::is_dex(data_v)) {
-      std::unique_ptr<DEX::File> dexfile = DEX::Parser::parse(std::move(data_v), name);
+      std::unique_ptr<DEX::File> dexfile =
+          DEX::Parser::parse(std::move(data_v), name);
       dexfile->location(oat_dex_file->location());
       oat_dex_file->dex_file_ = dexfile.get();
       oat.dex_files_.push_back(std::move(dexfile));
     } else {
-      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), stream_->pos());
+      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name,
+                oat_dex_file->location(), stream_->pos());
     }
   }
 }
 
-
-
-
-} // Namespace OAT
-} // Namespace LIEF
-
+}  // Namespace OAT
+}  // Namespace LIEF

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-#include <algorithm>
+#include "LIEF/DEX/utils.hpp"
 
+#include <algorithm>
+#include <fstream>
+
+#include "DEX/Structures.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-
-#include "LIEF/DEX/utils.hpp"
-#include "DEX/Structures.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -44,15 +44,15 @@ inline dex_version_t version(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits = std::all_of(std::begin(version), std::end(version),
-        [] (char c) { return c == 0 || ::isdigit(c); });
+    const bool are_digits =
+        std::all_of(std::begin(version), std::end(version),
+                    [](char c) { return c == 0 || ::isdigit(c); });
     if (!are_digits) {
       return 0;
     }
     return static_cast<dex_version_t>(std::stoul(version.data()));
   }
   return 0;
-
 }
 
 bool is_dex(const std::string& file) {
@@ -83,6 +83,5 @@ dex_version_t version(const std::vector<uint8_t>& raw) {
   return 0;
 }
 
-
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

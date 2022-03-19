@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 #ifdef uuid_t
@@ -31,43 +29,34 @@
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (UUIDCommand::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (UUIDCommand::*)(T);
 
-
-template<>
+template <>
 void create<UUIDCommand>(py::module& m) {
-
   py::class_<UUIDCommand, LoadCommand>(m, "UUIDCommand",
-      "Class that represents the UUID command")
+                                       "Class that represents the UUID command")
 
-    .def_property("uuid",
-        static_cast<getter_t<LIEF::MachO::uuid_t>>(&UUIDCommand::uuid),
-        static_cast<setter_t<const LIEF::MachO::uuid_t&>>(&UUIDCommand::uuid),
-        "UUID as a list",
-        py::return_value_policy::reference_internal)
+      .def_property(
+          "uuid",
+          static_cast<getter_t<LIEF::MachO::uuid_t>>(&UUIDCommand::uuid),
+          static_cast<setter_t<const LIEF::MachO::uuid_t&>>(&UUIDCommand::uuid),
+          "UUID as a list", py::return_value_policy::reference_internal)
 
+      .def("__eq__", &UUIDCommand::operator==)
+      .def("__ne__", &UUIDCommand::operator!=)
+      .def("__hash__", [](const UUIDCommand& uuid) { return Hash::hash(uuid); })
 
-    .def("__eq__", &UUIDCommand::operator==)
-    .def("__ne__", &UUIDCommand::operator!=)
-    .def("__hash__",
-        [] (const UUIDCommand& uuid) {
-          return Hash::hash(uuid);
-        })
-
-
-    .def("__str__",
-        [] (const UUIDCommand& uuid)
-        {
-          std::ostringstream stream;
-          stream << uuid;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const UUIDCommand& uuid) {
+        std::ostringstream stream;
+        stream << uuid;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

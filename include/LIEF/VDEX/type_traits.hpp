@@ -21,7 +21,7 @@ namespace LIEF {
 namespace VDEX {
 using vdex_version_t = uint32_t;
 using dex2dex_info_t = LIEF::OAT::Binary::dex2dex_info_t;
-}
-}
+}  // namespace VDEX
+}  // namespace LIEF
 
 #endif

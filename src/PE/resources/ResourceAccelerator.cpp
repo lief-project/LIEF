@@ -15,31 +15,30 @@
  * limitations under the License.
  */
 
-#include "LIEF/exception.hpp"
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/EnumToString.hpp"
-#include "PE/Structures.hpp"
-
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
+
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/exception.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
 ResourceAccelerator::ResourceAccelerator(const ResourceAccelerator&) = default;
-ResourceAccelerator& ResourceAccelerator::operator=(const ResourceAccelerator&) = default;
+ResourceAccelerator& ResourceAccelerator::operator=(
+    const ResourceAccelerator&) = default;
 ResourceAccelerator::~ResourceAccelerator() = default;
 
-ResourceAccelerator::ResourceAccelerator() :
-  flags_{0},
-  ansi_{0},
-  id_{0},
-  padding_{0} {}
+ResourceAccelerator::ResourceAccelerator()
+    : flags_{0}, ansi_{0}, id_{0}, padding_{0} {}
 
-ResourceAccelerator::ResourceAccelerator(const details::pe_resource_acceltableentry& entry) :
-  flags_{entry.fFlags},
-  ansi_{entry.wAnsi},
-  id_{static_cast<uint16_t>(entry.wId)},
-  padding_{entry.padding} {}
+ResourceAccelerator::ResourceAccelerator(
+    const details::pe_resource_acceltableentry& entry)
+    : flags_{entry.fFlags},
+      ansi_{entry.wAnsi},
+      id_{static_cast<uint16_t>(entry.wId)},
+      padding_{entry.padding} {}
 
 void ResourceAccelerator::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -78,32 +77,23 @@ std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
   std::set<ACCELERATOR_FLAGS> flags_set;
 
   const auto flags_tmp = flags_;
-  std::copy_if(
-    std::cbegin(details::accelerator_array),
-    std::cend(details::accelerator_array),
-    std::inserter(flags_set, std::begin(flags_set)),
-    [flags_tmp](ACCELERATOR_FLAGS c) {
-      return (static_cast<uint16_t>(flags_tmp) & static_cast<uint16_t>(c)) > 0;
-    }
-  );
+  std::copy_if(std::cbegin(details::accelerator_array),
+               std::cend(details::accelerator_array),
+               std::inserter(flags_set, std::begin(flags_set)),
+               [flags_tmp](ACCELERATOR_FLAGS c) {
+                 return (static_cast<uint16_t>(flags_tmp) &
+                         static_cast<uint16_t>(c)) > 0;
+               });
   return flags_set;
 }
 
-int16_t ResourceAccelerator::flags() const {
-  return flags_;
-}
+int16_t ResourceAccelerator::flags() const { return flags_; }
 
-int16_t ResourceAccelerator::ansi() const {
-  return ansi_;
-}
+int16_t ResourceAccelerator::ansi() const { return ansi_; }
 
-uint16_t ResourceAccelerator::id() const {
-  return id_;
-}
+uint16_t ResourceAccelerator::id() const { return id_; }
 
-int16_t ResourceAccelerator::padding() const {
-  return padding_;
-}
+int16_t ResourceAccelerator::padding() const { return padding_; }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

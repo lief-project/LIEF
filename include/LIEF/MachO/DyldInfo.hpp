@@ -15,18 +15,17 @@
  */
 #ifndef LIEF_MACHO_DYLD_INFO_COMMAND_H_
 #define LIEF_MACHO_DYLD_INFO_COMMAND_H_
-#include <string>
-#include <vector>
 #include <iostream>
 #include <memory>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-#include "LIEF/span.hpp"
+#include <string>
+#include <vector>
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/type_traits.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -44,13 +43,12 @@ struct dyld_info_command;
 
 //! Class that represents the LC_DYLD_INFO and LC_DYLD_INFO_ONLY commands
 class LIEF_API DyldInfo : public LoadCommand {
-
   friend class BinaryParser;
   friend class Binary;
   friend class Builder;
   friend class SegmentCommand;
 
-  public:
+ public:
   //! Tuple of ``offset`` and ``size``
   using info_t = std::pair<uint32_t, uint32_t>;
 
@@ -61,7 +59,8 @@ class LIEF_API DyldInfo : public LoadCommand {
   using it_binding_info = ref_iterator<binding_info_t&, BindingInfo*>;
 
   //! Iterator which outputs const BindingInfo&
-  using it_const_binding_info = const_ref_iterator<const binding_info_t&, BindingInfo*>;
+  using it_const_binding_info =
+      const_ref_iterator<const binding_info_t&, BindingInfo*>;
 
   //! Internal container for storing ExportInfo
   using export_info_t = std::vector<std::unique_ptr<ExportInfo>>;
@@ -70,14 +69,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
 
   //! Iterator which outputs const ExportInfo&
-  using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
+  using it_const_export_info =
+      const_ref_iterator<const export_info_t&, ExportInfo*>;
 
-
-  enum class BINDING_ENCODING_VERSION {
-    UNKNOWN = 0,
-    V1,
-    V2
-  };
+  enum class BINDING_ENCODING_VERSION { UNKNOWN = 0, V1, V2 };
 
   DyldInfo();
   DyldInfo(const details::dyld_info_command& dyld_info_cmd);
@@ -108,11 +103,10 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   //! Return Rebase's opcodes as raw data
   span<const uint8_t> rebase_opcodes() const;
-  span<uint8_t>       rebase_opcodes();
+  span<uint8_t> rebase_opcodes();
 
   //! Set new opcodes
   void rebase_opcodes(buffer_t raw);
-
 
   //! Return the rebase opcodes in a humman-readable way
   std::string show_rebases_opcodes() const;
@@ -124,7 +118,8 @@ class LIEF_API DyldInfo : public LoadCommand {
   //! The rebase information is a stream of byte sized
   //! opcodes for which symbolic names start with BIND_OPCODE_.
   //! Conceptually the bind information is a table of tuples:
-  //!    <seg-index, seg-offset, type, symbol-library-ordinal, symbol-name, addend>
+  //!    <seg-index, seg-offset, type, symbol-library-ordinal, symbol-name,
+  //!    addend>
   //! The opcodes are a compressed way to encode the table by only
   //! encoding when a column changes.  In addition simple patterns
   //! like for runs of pointers initialzed to the same value can be
@@ -135,7 +130,7 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   //! Return Binding's opcodes as raw data
   span<const uint8_t> bind_opcodes() const;
-  span<uint8_t>       bind_opcodes();
+  span<uint8_t> bind_opcodes();
 
   //! Set new opcodes
   void bind_opcodes(buffer_t raw);
@@ -164,7 +159,7 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   //! Return **Weak** Binding's opcodes as raw data
   span<const uint8_t> weak_bind_opcodes() const;
-  span<uint8_t>       weak_bind_opcodes();
+  span<uint8_t> weak_bind_opcodes();
 
   //! Set new opcodes
   void weak_bind_opcodes(buffer_t raw);
@@ -190,7 +185,7 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   //! Return **Lazy** Binding's opcodes as raw data
   span<const uint8_t> lazy_bind_opcodes() const;
-  span<uint8_t>       lazy_bind_opcodes();
+  span<uint8_t> lazy_bind_opcodes();
 
   //! Set new opcodes
   void lazy_bind_opcodes(buffer_t raw);
@@ -199,7 +194,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   std::string show_lazy_bind_opcodes() const;
 
   //! Iterator over BindingInfo entries
-  it_binding_info       bindings();
+  it_binding_info bindings();
   it_const_binding_info bindings() const;
 
   //! *Export* information
@@ -231,12 +226,12 @@ class LIEF_API DyldInfo : public LoadCommand {
   const info_t& export_info() const;
 
   //! Iterator over ExportInfo entries
-  it_export_info       exports();
+  it_export_info exports();
   it_const_export_info exports() const;
 
   //! Return Export's trie as raw data
   span<const uint8_t> export_trie() const;
-  span<uint8_t>       export_trie();
+  span<uint8_t> export_trie();
 
   //! Set new trie
   void export_trie(buffer_t raw);
@@ -274,16 +269,23 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  using bind_container_t = std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
+ private:
+  using bind_container_t =
+      std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
 
-  void show_bindings(std::ostream& os, span<const uint8_t> buffer, bool is_lazy = false) const;
+  void show_bindings(std::ostream& os, span<const uint8_t> buffer,
+                     bool is_lazy = false) const;
 
-  void show_trie(std::ostream& output, std::string output_prefix, BinaryStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
+  void show_trie(std::ostream& output, std::string output_prefix,
+                 BinaryStream& stream, uint64_t start, uint64_t end,
+                 const std::string& prefix) const;
 
-  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(const bind_container_t& bindings, std::vector<RelocationDyld*> rebases);
+  LIEF_LOCAL DyldInfo& update_standard_bindings(
+      const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(
+      const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(
+      const bind_container_t& bindings, std::vector<RelocationDyld*> rebases);
 
   LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings);
   LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
@@ -292,29 +294,30 @@ class LIEF_API DyldInfo : public LoadCommand {
   LIEF_LOCAL DyldInfo& update_binding_info();
   LIEF_LOCAL DyldInfo& update_export_trie();
 
-  info_t   rebase_;
+  info_t rebase_;
   span<uint8_t> rebase_opcodes_;
 
-  info_t   bind_;
+  info_t bind_;
   span<uint8_t> bind_opcodes_;
 
-  info_t   weak_bind_;
+  info_t weak_bind_;
   span<uint8_t> weak_bind_opcodes_;
 
-  info_t   lazy_bind_;
+  info_t lazy_bind_;
   span<uint8_t> lazy_bind_opcodes_;
 
-  info_t   export_;
+  info_t export_;
   span<uint8_t> export_trie_;
 
-  export_info_t  export_info_;
+  export_info_t export_info_;
   binding_info_t binding_info_;
 
-  BINDING_ENCODING_VERSION binding_encoding_version_ = BINDING_ENCODING_VERSION::UNKNOWN;
+  BINDING_ENCODING_VERSION binding_encoding_version_ =
+      BINDING_ENCODING_VERSION::UNKNOWN;
 
   Binary* binary_ = nullptr;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

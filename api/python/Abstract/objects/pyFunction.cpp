@@ -13,64 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyAbstract.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/Abstract/Symbol.hpp"
+#include "pyAbstract.hpp"
 
 #define PY_ENUM(x) LIEF::to_string(x), x
 
 namespace LIEF {
 
-template<class T>
+template <class T>
 using getter_t = T (Function::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Function::*)(T);
 
-template<>
+template <>
 void create<Function>(py::module& m) {
-
   py::class_<Function, Symbol> pyfunction(m, "Function",
-      R"delim(
+                                          R"delim(
       Class which represents a Function in an executable file format.
       )delim");
 
   py::enum_<Function::FLAGS>(pyfunction, "FLAGS")
-    .value(PY_ENUM(Function::FLAGS::IMPORTED))
-    .value(PY_ENUM(Function::FLAGS::EXPORTED))
-    .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
-    .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
-    .value(PY_ENUM(Function::FLAGS::DEBUG));
+      .value(PY_ENUM(Function::FLAGS::IMPORTED))
+      .value(PY_ENUM(Function::FLAGS::EXPORTED))
+      .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
+      .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
+      .value(PY_ENUM(Function::FLAGS::DEBUG));
 
-    pyfunction
-    .def(py::init())
-    .def(py::init<const std::string&>())
-    .def(py::init<uint64_t>())
-    .def(py::init<const std::string&, uint64_t>())
+  pyfunction.def(py::init())
+      .def(py::init<const std::string&>())
+      .def(py::init<uint64_t>())
+      .def(py::init<const std::string&, uint64_t>())
 
-    .def("add",
-        &Function::add,
-        "Add the given " RST_CLASS_REF(lief.Function.FLAGS) "",
-        "flag"_a)
+      .def("add", &Function::add,
+           "Add the given " RST_CLASS_REF(lief.Function.FLAGS) "", "flag"_a)
 
-    .def_property_readonly("flags",
-        &Function::flags,
-        "Function flags as a list of " RST_CLASS_REF(lief.Function.FLAGS) "")
+      .def_property_readonly(
+          "flags", &Function::flags,
+          "Function flags as a list of " RST_CLASS_REF(lief.Function.FLAGS) "")
 
-    .def_property("address",
-        static_cast<getter_t<uint64_t>>(&Function::address),
-        static_cast<setter_t<uint64_t>>(&Function::address),
-        "Function's address")
+      .def_property("address",
+                    static_cast<getter_t<uint64_t>>(&Function::address),
+                    static_cast<setter_t<uint64_t>>(&Function::address),
+                    "Function's address")
 
-    .def("__str__",
-        [] (const Function& f) {
-          std::ostringstream stream;
-          stream << f;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const Function& f) {
+        std::ostringstream stream;
+        stream << f;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
+}  // namespace LIEF

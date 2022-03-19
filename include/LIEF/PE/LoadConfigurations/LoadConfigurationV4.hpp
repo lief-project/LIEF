@@ -17,16 +17,15 @@
 #define LIEF_PE_LOAD_CONFIGURATION_V4_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v4;
 }
 
@@ -34,13 +33,14 @@ struct load_configuration_v4;
 //! * Kind of dynamic relocations
 //! * *Hybrid Metadata Pointer*
 class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14383;
 
   LoadConfigurationV4();
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV4(const details::load_configuration_v4<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV4(
+      const details::load_configuration_v4<T>& header);
 
   LoadConfigurationV4& operator=(const LoadConfigurationV4&);
   LoadConfigurationV4(const LoadConfigurationV4&);
@@ -64,11 +64,11 @@ class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   uint64_t dynamic_value_reloc_table_;
   uint64_t hybrid_metadata_pointer_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

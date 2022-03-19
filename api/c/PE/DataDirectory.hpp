@@ -18,7 +18,6 @@
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/Binary.hpp"
-
 #include "LIEF/PE/DataDirectory.h"
 #include "LIEF/PE/DataDirectory.hpp"
 
@@ -28,7 +27,7 @@ namespace PE {
 void init_c_data_directories(Pe_Binary_t* c_binary, Binary* binary);
 void destroy_data_directories(Pe_Binary_t* c_binary);
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

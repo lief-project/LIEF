@@ -18,7 +18,6 @@
 
 #include "LIEF/MachO/Binary.h"
 #include "LIEF/MachO/Binary.hpp"
-
 #include "LIEF/MachO/Symbol.h"
 #include "LIEF/MachO/Symbol.hpp"
 
@@ -28,7 +27,7 @@ namespace MachO {
 void init_c_symbols(Macho_Binary_t* c_binary, Binary* binary);
 void destroy_symbols(Macho_Binary_t* c_binary);
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 
 #endif

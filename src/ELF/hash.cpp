@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/ELF/hash.hpp"
+
 #include "LIEF/ELF.hpp"
 
 namespace LIEF {
@@ -26,15 +27,17 @@ size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::ELF::Hash>(obj);
 }
 
-
 void Hash::visit(const Binary& binary) {
   process(binary.header());
 
   process(std::begin(binary.sections()), std::end(binary.sections()));
   process(std::begin(binary.segments()), std::end(binary.segments()));
-  process(std::begin(binary.dynamic_entries()), std::end(binary.dynamic_entries()));
-  process(std::begin(binary.dynamic_symbols()), std::end(binary.dynamic_symbols()));
-  process(std::begin(binary.static_symbols()), std::end(binary.static_symbols()));
+  process(std::begin(binary.dynamic_entries()),
+          std::end(binary.dynamic_entries()));
+  process(std::begin(binary.dynamic_symbols()),
+          std::end(binary.dynamic_symbols()));
+  process(std::begin(binary.static_symbols()),
+          std::end(binary.static_symbols()));
   process(std::begin(binary.relocations()), std::end(binary.relocations()));
   process(std::begin(binary.notes()), std::end(binary.notes()));
 
@@ -49,9 +52,7 @@ void Hash::visit(const Binary& binary) {
   if (binary.has_interpreter()) {
     process(binary.interpreter());
   }
-
 }
-
 
 void Hash::visit(const Header& header) {
   process(header.file_type());
@@ -67,7 +68,6 @@ void Hash::visit(const Header& header) {
   process(header.section_name_table_idx());
   process(header.identity());
 }
-
 
 void Hash::visit(const Section& section) {
   process(section.name());
@@ -101,36 +101,30 @@ void Hash::visit(const DynamicEntry& entry) {
   process(entry.value());
 }
 
-
 void Hash::visit(const DynamicEntryArray& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
   process(entry.array());
 }
-
 
 void Hash::visit(const DynamicEntryLibrary& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
   process(entry.name());
 }
 
-
 void Hash::visit(const DynamicEntryRpath& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
   process(entry.rpath());
 }
-
 
 void Hash::visit(const DynamicEntryRunPath& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
   process(entry.runpath());
 }
 
-
 void Hash::visit(const DynamicSharedObject& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
   process(entry.name());
 }
-
 
 void Hash::visit(const DynamicEntryFlags& entry) {
   visit(static_cast<const DynamicEntry&>(entry));
@@ -168,7 +162,6 @@ void Hash::visit(const Relocation& relocation) {
   if (sym != nullptr) {
     process(*sym);
   }
-
 }
 
 void Hash::visit(const SymbolVersion& sv) {
@@ -181,7 +174,8 @@ void Hash::visit(const SymbolVersion& sv) {
 void Hash::visit(const SymbolVersionRequirement& svr) {
   process(svr.version());
   process(svr.name());
-  process(std::begin(svr.auxiliary_symbols()), std::end(svr.auxiliary_symbols()));
+  process(std::begin(svr.auxiliary_symbols()),
+          std::end(svr.auxiliary_symbols()));
 }
 
 void Hash::visit(const SymbolVersionDefinition& svd) {
@@ -191,9 +185,7 @@ void Hash::visit(const SymbolVersionDefinition& svd) {
   process(svd.hash());
 }
 
-void Hash::visit(const SymbolVersionAux& sv) {
-  process(sv.name());
-}
+void Hash::visit(const SymbolVersionAux& sv) { process(sv.name()); }
 
 void Hash::visit(const SymbolVersionAuxRequirement& svar) {
   visit(static_cast<const SymbolVersionAux&>(svar));
@@ -208,9 +200,7 @@ void Hash::visit(const Note& note) {
   process(note.description());
 }
 
-void Hash::visit(const NoteDetails& details) {
-  process(details.description());
-}
+void Hash::visit(const NoteDetails& details) { process(details.description()); }
 
 void Hash::visit(const AndroidNote& note) {
   visit(static_cast<const NoteDetails&>(note));
@@ -256,16 +246,17 @@ void Hash::visit(const CorePrStatus& pstatus) {
   process(pstatus.cstime().sec);
   process(pstatus.cstime().usec);
 
-  for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
-    process(val.first);  // Register
-    process(val.second); // Value
+  for (const CorePrStatus::reg_context_t::value_type& val :
+       pstatus.reg_context()) {
+    process(val.first);   // Register
+    process(val.second);  // Value
   }
 }
 
 void Hash::visit(const CoreAuxv& auxv) {
   for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
-    process(val.first);  // Type
-    process(val.second); // Value
+    process(val.first);   // Type
+    process(val.second);  // Value
   }
 }
 
@@ -302,8 +293,5 @@ void Hash::visit(const SysvHash& sysvhash) {
   process(sysvhash.chains());
 }
 
-
-
-} // namespace ELF
-} // namespace LIEF
-
+}  // namespace ELF
+}  // namespace LIEF

@@ -13,49 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
-
-#include <string>
-#include <sstream>
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (GenericType::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (GenericType::*)(T);
 
-
-template<>
+template <>
 void create<GenericType>(py::module& m) {
   py::class_<GenericType, Attribute>(m, "GenericType",
-    R"delim(
+                                     R"delim(
     Interface over an attribute for which the internal structure is not supported by LIEF
     )delim")
-    .def_property_readonly("oid",
-        &GenericType::oid,
-        "OID of the original attribute")
+      .def_property_readonly("oid", &GenericType::oid,
+                             "OID of the original attribute")
 
-    .def_property_readonly("raw_content",
-        [] (const GenericType& type) -> py::bytes {
-          const std::vector<uint8_t>& raw = type.raw_content();
-          return py::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
-        },
-        "Original DER blob of the attribute")
+      .def_property_readonly(
+          "raw_content",
+          [](const GenericType& type) -> py::bytes {
+            const std::vector<uint8_t>& raw = type.raw_content();
+            return py::bytes(reinterpret_cast<const char*>(raw.data()),
+                             raw.size());
+          },
+          "Original DER blob of the attribute")
 
-    .def("__hash__",
-        [] (const GenericType& obj) {
-          return Hash::hash(obj);
-        })
+      .def("__hash__", [](const GenericType& obj) { return Hash::hash(obj); })
 
-    .def("__str__", &GenericType::print);
+      .def("__str__", &GenericType::print);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

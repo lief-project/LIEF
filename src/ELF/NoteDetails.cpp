@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/NoteDetails.hpp"
+
+#include <algorithm>
 #include <iomanip>
 #include <numeric>
 #include <sstream>
-#include <algorithm>
-
-#include "LIEF/exception.hpp"
-#include "LIEF/utils.hpp"
-
-#include "logging.hpp"
-
-#include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
-
-#include "LIEF/ELF/NoteDetails.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "LIEF/exception.hpp"
+#include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -36,13 +33,9 @@ namespace ELF {
 NoteDetails::~NoteDetails() = default;
 NoteDetails::NoteDetails() = default;
 
-NoteDetails::NoteDetails(Note& note):
-  note_{&note}
-{}
+NoteDetails::NoteDetails(Note& note) : note_{&note} {}
 
-NoteDetails* NoteDetails::clone() const {
-  return new NoteDetails(*this);
-}
+NoteDetails* NoteDetails::clone() const { return new NoteDetails(*this); }
 
 const Note::description_t& NoteDetails::description() const {
   if (note_ == nullptr) {
@@ -58,11 +51,9 @@ Note::description_t& NoteDetails::description() {
   return note_->description();
 }
 
-
 Binary* NoteDetails::binary() {
   return const_cast<Binary*>(static_cast<const NoteDetails*>(this)->binary());
 }
-
 
 const Binary* NoteDetails::binary() const {
   if (note_ == nullptr) {
@@ -71,10 +62,7 @@ const Binary* NoteDetails::binary() const {
   return note_->binary_;
 }
 
-void NoteDetails::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void NoteDetails::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool NoteDetails::operator==(const NoteDetails& rhs) const {
   if (this == &rhs) {
@@ -89,22 +77,16 @@ bool NoteDetails::operator!=(const NoteDetails& rhs) const {
   return !(*this == rhs);
 }
 
+void NoteDetails::dump(std::ostream&) const {}
 
-void NoteDetails::dump(std::ostream&) const {
-}
+void NoteDetails::parse() {}
 
-void NoteDetails::parse() {
-}
-
-void NoteDetails::build() {
-}
-
+void NoteDetails::build() {}
 
 std::ostream& operator<<(std::ostream& os, const NoteDetails& note) {
   note.dump(os);
   return os;
-
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

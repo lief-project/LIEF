@@ -16,8 +16,8 @@
 #ifndef LIEF_PE_ENUM_TO_STRING_H
 #define LIEF_PE_ENUM_TO_STRING_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -70,8 +70,6 @@ LIEF_API const char* to_string(ACCELERATOR_VK_CODES e);
 LIEF_API const char* to_string(ALGORITHMS e);
 LIEF_API const char* to_string(SIG_ATTRIBUTE_TYPES e);
 
-} // namespace PE
-} // namespace LIEF
+}  // namespace PE
+}  // namespace LIEF
 #endif
-
-

@@ -18,15 +18,14 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
-#include <utility>
-#include <utility>
-#include "LIEF/iterators.hpp"
-#include "LIEF/OAT/type_traits.hpp"
-#include "LIEF/OAT/enums.hpp"
 
-#include "LIEF/visibility.h"
+#include "LIEF/OAT/enums.hpp"
+#include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace OAT {
@@ -35,26 +34,28 @@ class Parser;
 class LIEF_API Header : public Object {
   friend class Parser;
 
-  public:
-  using magic_t               = std::array<uint8_t, 4>; // oat\n
-  using key_values_t          = std::map<HEADER_KEYS, std::string>;
-  using it_key_values_t       = ref_iterator< std::vector< std::pair<HEADER_KEYS, std::reference_wrapper<std::string>> > >;
-  using it_const_key_values_t = const_ref_iterator<std::vector<std::pair<HEADER_KEYS, std::string>>>;
+ public:
+  using magic_t = std::array<uint8_t, 4>;  // oat\n
+  using key_values_t = std::map<HEADER_KEYS, std::string>;
+  using it_key_values_t = ref_iterator<
+      std::vector<std::pair<HEADER_KEYS, std::reference_wrapper<std::string>>>>;
+  using it_const_key_values_t =
+      const_ref_iterator<std::vector<std::pair<HEADER_KEYS, std::string>>>;
 
   //! @brief Iterator type over
-  using keys_t   = std::vector<HEADER_KEYS>;
+  using keys_t = std::vector<HEADER_KEYS>;
   using values_t = std::vector<std::string>;
 
-  public:
+ public:
   //! Return the string value associated with the given key
   static std::string key_to_string(HEADER_KEYS key);
 
-  public:
+ public:
   Header();
   Header(const Header&);
   Header& operator=(const Header&);
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL Header(const T* header);
 
   //! Magic value: ``oat``
@@ -67,7 +68,6 @@ class LIEF_API Header : public Object {
 
   INSTRUCTION_SETS instruction_set() const;
   // TODO instruction_set_features_bitmap_() const;
-
 
   uint32_t nb_dex_files() const;
 
@@ -91,7 +91,7 @@ class LIEF_API Header : public Object {
 
   uint32_t key_value_size() const;
 
-  it_key_values_t       key_values();
+  it_key_values_t key_values();
   it_const_key_values_t key_values() const;
 
   keys_t keys() const;
@@ -114,14 +114,14 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  private:
+ private:
   magic_t magic_;
   oat_version_t version_ = 0;
   uint32_t checksum_ = 0;
   INSTRUCTION_SETS instruction_set_ = INSTRUCTION_SETS::INST_SET_NONE;
   uint32_t instruction_set_features_bitmap_ = 0;
   uint32_t dex_file_count_ = 0;
-  uint32_t oat_dex_files_offset_ = 0; // Since OAT 131 / Android 8.1.0
+  uint32_t oat_dex_files_offset_ = 0;  // Since OAT 131 / Android 8.1.0
   uint32_t executable_offset_ = 0;
   uint32_t i2i_bridge_offset_ = 0;
   uint32_t i2c_code_bridge_offset_ = 0;
@@ -140,11 +140,9 @@ class LIEF_API Header : public Object {
   uint32_t key_value_store_size_ = 0;
 
   key_values_t dex2oat_context_;
-
-
 };
 
-}
-}
+}  // namespace OAT
+}  // namespace LIEF
 
 #endif

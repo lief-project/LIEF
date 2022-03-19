@@ -15,10 +15,9 @@
  */
 #ifndef LIEF_ENUM_TO_STRING_H
 #define LIEF_ENUM_TO_STRING_H
-#include "LIEF/visibility.h"
-
-#include "LIEF/Abstract/enums.hpp"
 #include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/Abstract/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 LIEF_API const char* to_string(EXE_FORMATS e);
@@ -28,7 +27,6 @@ LIEF_API const char* to_string(MODES e);
 LIEF_API const char* to_string(ENDIANNESS e);
 LIEF_API const char* to_string(Binary::VA_TYPES e);
 LIEF_API const char* to_string(Function::FLAGS e);
-} // namespace LIEF
+}  // namespace LIEF
 
 #endif
-

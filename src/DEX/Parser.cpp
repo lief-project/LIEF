@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
+#include "LIEF/DEX/Parser.hpp"
+
 #include <memory>
 
-#include "logging.hpp"
-
-#include "LIEF/DEX/Parser.hpp"
-#include "LIEF/DEX/utils.hpp"
 #include "DEX/Structures.hpp"
-
+#include "LIEF/DEX/utils.hpp"
 #include "Parser.tcc"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   if (!is_dex(filename)) {
@@ -41,7 +40,8 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
   return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
+                                    const std::string& name) {
   if (!is_dex(data)) {
     LIEF_ERR("'{}' is not a DEX File", name);
     return nullptr;
@@ -53,15 +53,11 @@ std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string
   return std::move(parser.file_);
 }
 
+Parser::Parser(std::vector<uint8_t> data)
+    : file_{new File{}},
+      stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
-Parser::Parser(std::vector<uint8_t> data) :
-  file_{new File{}},
-  stream_{std::make_unique<VectorStream>(std::move(data))}
-{}
-
-Parser::Parser(const std::string& file) :
-  file_{new File{}}
-{
+Parser::Parser(const std::string& file) : file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
     LIEF_ERR("Can't create the stream");
@@ -69,7 +65,6 @@ Parser::Parser(const std::string& file) :
     stream_ = std::make_unique<VectorStream>(std::move(*stream));
   }
 }
-
 
 void Parser::init(const std::string& name, dex_version_t version) {
   LIEF_DEBUG("Parsing file: {}", name);
@@ -92,7 +87,8 @@ void Parser::init(const std::string& name, dex_version_t version) {
 }
 
 void Parser::resolve_inheritance() {
-  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", inheritance_.size());
+  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes",
+             inheritance_.size());
 
   for (const std::pair<const std::string, Class*>& p : inheritance_) {
     const std::string& parent_name = p.first;
@@ -110,7 +106,8 @@ void Parser::resolve_inheritance() {
 }
 
 void Parser::resolve_external_methods() {
-  LIEF_DEBUG("Resolving external methods for #{:d} methods", class_method_map_.size());
+  LIEF_DEBUG("Resolving external methods for #{:d} methods",
+             class_method_map_.size());
 
   for (const std::pair<const std::string, Method*>& p : class_method_map_) {
     const std::string& clazz = p.first;
@@ -127,12 +124,12 @@ void Parser::resolve_external_methods() {
       method->parent_ = cls;
       cls->methods_.push_back(method);
     }
-
   }
 }
 
 void Parser::resolve_external_fields() {
-  LIEF_DEBUG("Resolving external fields for #{:d} fields", class_field_map_.size());
+  LIEF_DEBUG("Resolving external fields for #{:d} fields",
+             class_field_map_.size());
 
   for (const std::pair<const std::string, Field*>& p : class_field_map_) {
     const std::string& clazz = p.first;
@@ -149,13 +146,12 @@ void Parser::resolve_external_fields() {
       field->parent_ = cls;
       cls->fields_.push_back(field);
     }
-
   }
 }
 
 void Parser::resolve_types() {
   for (const auto& p : class_type_map_) {
-    if(Class* cls = file_->get_class(p.first)) {
+    if (Class* cls = file_->get_class(p.first)) {
       p.second->underlying_array_type().cls_ = cls;
     } else {
       auto new_cls = std::make_unique<Class>(p.first);
@@ -165,7 +161,5 @@ void Parser::resolve_types() {
   }
 }
 
-
-
-} // namespace DEX
-} // namespace LIEF
+}  // namespace DEX
+}  // namespace LIEF

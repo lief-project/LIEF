@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/config.h"
-
-#include "logging.hpp"
 #include "LIEF/OAT/json.hpp"
+#include "LIEF/config.h"
+#include "logging.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
 #include "OAT/json_internal.hpp"
@@ -38,5 +37,5 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace OAT
-} // namespace LIEF
+}  // namespace OAT
+}  // namespace LIEF

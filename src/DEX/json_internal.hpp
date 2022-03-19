@@ -27,23 +27,23 @@ json to_json_obj(const Object& v);
 //! Class that implements the Visitor pattern to output
 //! a JSON representation of an ELF object
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const File& file)         override;
-  void visit(const Header& header)     override;
-  void visit(const Class& cls)         override;
-  void visit(const Method& method)     override;
-  void visit(const Field& field)       override;
+ public:
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
+  void visit(const Class& cls) override;
+  void visit(const Method& method) override;
+  void visit(const Field& field) override;
   void visit(const CodeInfo& codeinfo) override;
-  void visit(const Type& type)         override;
-  void visit(const Prototype& type)    override;
-  void visit(const MapItem& item)      override;
-  void visit(const MapList& list)      override;
+  void visit(const Type& type) override;
+  void visit(const Prototype& type) override;
+  void visit(const MapItem& item) override;
+  void visit(const MapList& list) override;
 };
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT
+#endif  // LIEF_JSON_SUPPORT

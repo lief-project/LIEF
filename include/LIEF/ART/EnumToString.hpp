@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_ART_ENUM_TO_STRING_H_
 #define LIEF_ART_ENUM_TO_STRING_H_
-#include "LIEF/visibility.h"
 #include "LIEF/ART/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ART {
@@ -33,8 +33,7 @@ LIEF_API const char* to_string(ART_44::IMAGE_METHODS e);
 LIEF_API const char* to_string(ART_17::IMAGE_ROOTS e);
 LIEF_API const char* to_string(ART_44::IMAGE_ROOTS e);
 
-} // namespace ART
-} // namespace LIEF
+}  // namespace ART
+}  // namespace LIEF
 
 #endif
-

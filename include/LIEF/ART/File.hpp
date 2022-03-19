@@ -18,9 +18,8 @@
 #include <iostream>
 
 #include "LIEF/ART/Header.hpp"
-
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ART {
@@ -29,9 +28,9 @@ class Parser;
 class LIEF_API File : public Object {
   friend class Parser;
 
-  public:
+ public:
   File& operator=(const File& copy) = delete;
-  File(const File& copy)            = delete;
+  File(const File& copy) = delete;
 
   const Header& header() const;
   Header& header();
@@ -43,15 +42,16 @@ class LIEF_API File : public Object {
 
   ~File() override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& art_file);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const File& art_file);
 
-  private:
+ private:
   File();
 
   Header header_;
 };
 
-}
-}
+}  // namespace ART
+}  // namespace LIEF
 
 #endif

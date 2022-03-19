@@ -16,13 +16,12 @@
 #ifndef LIEF_PE_HEADER_H_
 #define LIEF_PE_HEADER_H_
 #include <array>
-#include <set>
 #include <iostream>
+#include <set>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -33,7 +32,7 @@ struct pe_header;
 
 //! Class that represents the PE header (which follows the DosHeader)
 class LIEF_API Header : public Object {
-  public:
+ public:
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
   Header();
   Header(const details::pe_header& header);
@@ -57,18 +56,22 @@ class LIEF_API Header : public Object {
 
   //! The offset of the **COFF** symbol table.
   //!
-  //! This value should be zero for an image because COFF debugging information is deprecated.
+  //! This value should be zero for an image because COFF debugging information
+  //! is deprecated.
   uint32_t pointerto_symbol_table() const;
 
-  //! The number of entries in the symbol table. This data can be used to locate the string table
-  //! which immediately follows the symbol table.
+  //! The number of entries in the symbol table. This data can be used to locate
+  //! the string table which immediately follows the symbol table.
   //!
-  //! This value should be zero for an image because COFF debugging information is deprecated.
+  //! This value should be zero for an image because COFF debugging information
+  //! is deprecated.
   uint32_t numberof_symbols() const;
 
-  //! Size of the OptionalHeader **AND** the data directories which follows this header.
+  //! Size of the OptionalHeader **AND** the data directories which follows this
+  //! header.
   //!
-  //! This value is equivalent to: ``sizeof(pe_optional_header) + NB_DATA_DIR * sizeof(data_directory)``
+  //! This value is equivalent to: ``sizeof(pe_optional_header) + NB_DATA_DIR *
+  //! sizeof(data_directory)``
   //!
   //! This size **should** be either:
   //! * 0xE0 (224) for a PE32  (32 bits)
@@ -101,10 +104,11 @@ class LIEF_API Header : public Object {
   bool operator==(const Header& rhs) const;
   bool operator!=(const Header& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Header& entry);
 
-  private:
-  signature_t   signature_;
+ private:
+  signature_t signature_;
   MACHINE_TYPES machine_;
   uint16_t numberOfSections_;
   uint32_t timeDateStamp_;
@@ -112,9 +116,8 @@ class LIEF_API Header : public Object {
   uint32_t numberOfSymbols_;
   uint16_t sizeOfOptionalHeader_;
   HEADER_CHARACTERISTICS characteristics_;
-
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -24,19 +24,18 @@
 #include <string>
 
 #include "LIEF/PE.hpp"
-
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -115,9 +114,8 @@ SPECIALIZE_CREATE(ResourcesManager);
 
 SPECIALIZE_CREATE(Builder);
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 // Opaque containers
 PYBIND11_MAKE_OPAQUE(std::vector<LIEF::PE::LangCodeItem>)

@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/DyldEnvironment.hpp"
+
 #include <iomanip>
 
 #include "LIEF/MachO/hash.hpp"
-#include "LIEF/MachO/DyldEnvironment.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -27,27 +28,19 @@ DyldEnvironment& DyldEnvironment::operator=(const DyldEnvironment&) = default;
 DyldEnvironment::DyldEnvironment(const DyldEnvironment&) = default;
 DyldEnvironment::~DyldEnvironment() = default;
 
-DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
-{}
+DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize} {}
 
 DyldEnvironment* DyldEnvironment::clone() const {
   return new DyldEnvironment(*this);
 }
 
-const std::string& DyldEnvironment::value() const {
-  return value_;
-}
+const std::string& DyldEnvironment::value() const { return value_; }
 
-void DyldEnvironment::value(const std::string& value) {
-  value_ = value;
-}
+void DyldEnvironment::value(const std::string& value) { value_ = value; }
 
-
-void DyldEnvironment::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void DyldEnvironment::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DyldEnvironment::operator==(const DyldEnvironment& rhs) const {
   if (this == &rhs) {
@@ -71,10 +64,9 @@ bool DyldEnvironment::classof(const LoadCommand* cmd) {
 std::ostream& DyldEnvironment::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
-  os << std::left
-     << std::setw(35) << value();
+  os << std::left << std::setw(35) << value();
   return os;
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

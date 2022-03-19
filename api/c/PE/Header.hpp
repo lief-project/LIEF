@@ -18,7 +18,6 @@
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/Binary.hpp"
-
 #include "LIEF/PE/Header.h"
 #include "LIEF/PE/Header.hpp"
 
@@ -28,6 +27,6 @@ namespace PE {
 void init_c_header(Pe_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

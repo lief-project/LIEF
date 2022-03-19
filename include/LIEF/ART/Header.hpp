@@ -16,11 +16,10 @@
 #ifndef LIEF_ART_HEADER_H_
 #define LIEF_ART_HEADER_H_
 
-#include "LIEF/ART/types.hpp"
 #include "LIEF/ART/enums.hpp"
-
-#include "LIEF/visibility.h"
+#include "LIEF/ART/types.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ART {
@@ -29,12 +28,12 @@ class Parser;
 class LIEF_API Header : public Object {
   friend class Parser;
 
-  public:
+ public:
   using magic_t = std::array<uint8_t, 4>;
 
   Header();
 
-  template<class T>
+  template <class T>
   LIEF_LOCAL Header(const T* header);
 
   Header(const Header&);
@@ -83,8 +82,8 @@ class LIEF_API Header : public Object {
 
   virtual ~Header();
 
-  private:
-  magic_t       magic_;
+ private:
+  magic_t magic_;
   art_version_t version_;
 
   uint32_t image_begin_;
@@ -123,7 +122,7 @@ class LIEF_API Header : public Object {
   uint32_t data_size_;
 };
 
-} // Namespace ART
-} // Namespace LIEF
+}  // Namespace ART
+}  // Namespace LIEF
 
 #endif

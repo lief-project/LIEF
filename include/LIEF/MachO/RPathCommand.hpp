@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_RPATH_COMMAND_H_
 #define LIEF_MACHO_RPATH_COMMAND_H_
-#include <string>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <string>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -35,7 +34,7 @@ struct rpath_command;
 //! This command is used to add path for searching libraries
 //! associated with the ``@rpath`` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
-  public:
+ public:
   RPathCommand();
   RPathCommand(const details::rpath_command& rpathCmd);
 
@@ -59,10 +58,10 @@ class LIEF_API RPathCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   std::string path_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

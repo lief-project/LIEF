@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_CODE_SIGNATURE_COMMAND_H_
 #define LIEF_MACHO_CODE_SIGNATURE_COMMAND_H_
-#include <vector>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <vector>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -33,7 +32,8 @@ struct linkedit_data_command;
 
 class LIEF_API CodeSignature : public LoadCommand {
   friend class BinaryParser;
-  public:
+
+ public:
   CodeSignature();
   CodeSignature(const details::linkedit_data_command& cmd);
 
@@ -62,13 +62,12 @@ class LIEF_API CodeSignature : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  uint32_t              data_offset_;
-  uint32_t              data_size_;
-  std::vector<uint8_t>  raw_signature_;
-
+ private:
+  uint32_t data_offset_;
+  uint32_t data_size_;
+  std::vector<uint8_t> raw_signature_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

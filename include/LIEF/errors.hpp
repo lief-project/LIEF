@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_ERROR_H_
 #define LIEF_ERROR_H_
-#include <system_error>
 #include <LIEF/third-party/leaf.hpp>
+#include <system_error>
 
 //! LIEF error codes definition
 enum class lief_errors {
@@ -48,10 +48,9 @@ const std::error_category& error_category();
 std::error_code make_error_code(lief_errors e);
 
 namespace std {
-  template<>
-  struct is_error_code_enum<lief_errors>: std::true_type
-  {};
-}
+template <>
+struct is_error_code_enum<lief_errors> : std::true_type {};
+}  // namespace std
 
 const std::error_category& lief_error_category();
 
@@ -60,11 +59,11 @@ inline std::error_code make_error_code(lief_errors e) {
   return std::error_code(int(e), lief_error_category());
 }
 
-
 namespace LIEF {
 //! Wrapper that contains an Object (``T``) or an error
 //!
-//! The LEAF implementation exposes the method ``value()`` to access the underlying object (if no error)
+//! The LEAF implementation exposes the method ``value()`` to access the
+//! underlying object (if no error)
 //!
 //! Typical usage is:
 //!
@@ -78,11 +77,11 @@ namespace LIEF {
 //! \endcode
 //!
 //! See https://boostorg.github.io/leaf/ for more details
-template<typename T>
+template <typename T>
 using result = boost::leaf::result<T>;
 
 //! Abstraction over the implementation
-template<typename T>
+template <typename T>
 using error_result_t = typename result<T>::error_resul;
 
 //! Abstraction over the implementation
@@ -92,13 +91,14 @@ using error_t = boost::leaf::error_id;
 error_t return_error(lief_errors);
 
 //! Get the error code associated with the result
-template<class T>
+template <class T>
 std::error_code get_error(result<T>& err) {
-  return make_error_code(lief_errors(boost::leaf::error_id(err.error()).value()));
+  return make_error_code(
+      lief_errors(boost::leaf::error_id(err.error()).value()));
 }
 
 //! Return the lief_errors when the provided ``result<T>`` is an error
-template<class T>
+template <class T>
 lief_errors as_lief_err(result<T>& err) {
   return lief_errors(boost::leaf::error_id(err.error()).value());
 }
@@ -107,9 +107,7 @@ lief_errors as_lief_err(result<T>& err) {
 struct ok_t {};
 
 //! Return success for function with return type ok_error_t.
-inline ok_t ok() {
-  return ok_t{};
-}
+inline ok_t ok() { return ok_t{}; }
 
 //! Opaque structure that is used by LIEF to avoid
 //! writing ``result<void> f(...)``. Instead, it makes the output
@@ -125,10 +123,6 @@ inline ok_t ok() {
 //! \endcode
 using ok_error_t = result<ok_t>;
 
-}
-
-
-
-
+}  // namespace LIEF
 
 #endif

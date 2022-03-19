@@ -15,21 +15,20 @@
  */
 #include <algorithm>
 
-#include "LIEF/exception.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/iostream.hpp"
-
-#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/exception.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
 void CoreAuxv::parse_() {
-  using Elf_Auxv  = typename ELF_T::Elf_Auxv;
-  using uint__    = typename ELF_T::uint;
+  using Elf_Auxv = typename ELF_T::Elf_Auxv;
+  using uint__ = typename ELF_T::uint;
 
   const Note::description_t& desc = description();
   if (desc.size() < sizeof(Elf_Auxv)) {
@@ -49,13 +48,12 @@ void CoreAuxv::parse_() {
     }
     ctx_[type] = static_cast<uint__>(auxv.a_un.a_val);
   }
-
 }
 
 template <typename ELF_T>
 void CoreAuxv::build_() {
-  using Elf_Auxv  = typename ELF_T::Elf_Auxv;
-  using uint__    = typename ELF_T::uint;
+  using Elf_Auxv = typename ELF_T::Elf_Auxv;
+  using uint__ = typename ELF_T::uint;
 
   Note::description_t& desc = description();
 
@@ -68,7 +66,8 @@ void CoreAuxv::build_() {
     if (type == AUX_TYPE::AT_NULL) {
       continue;
     }
-    const Elf_Auxv aux = { static_cast<uint__>(val.first), {static_cast<uint__>(val.second)} };
+    const Elf_Auxv aux = {static_cast<uint__>(val.first),
+                          {static_cast<uint__>(val.second)}};
     raw_output.write_conv(aux);
   }
   // AT_NULL
@@ -76,9 +75,8 @@ void CoreAuxv::build_() {
   raw_output.write_conv(terminator);
 
   std::vector<uint8_t> raw = raw_output.raw();
-  std::copy(std::begin(raw), std::end(raw),
-            std::begin(desc));
+  std::copy(std::begin(raw), std::end(raw), std::begin(desc));
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

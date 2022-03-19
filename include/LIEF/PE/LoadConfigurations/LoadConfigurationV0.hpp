@@ -17,20 +17,20 @@
 #define LIEF_PE_LOAD_CONFIGURATION_V0_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v0;
 }
 
 //! LoadConfiguration enhanced with SEH
 class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_SEH;
 
   LoadConfigurationV0();
@@ -38,8 +38,9 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   LoadConfigurationV0& operator=(const LoadConfigurationV0&);
   LoadConfigurationV0(const LoadConfigurationV0&);
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV0(const details::load_configuration_v0<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV0(
+      const details::load_configuration_v0<T>& header);
 
   WIN_VERSION version() const override;
 
@@ -62,11 +63,11 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   uint64_t se_handler_table_;
   uint64_t se_handler_count_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -17,11 +17,9 @@
 #ifndef LIEF_PE_RESOURCE_ACCELERATOR_H_
 #define LIEF_PE_RESOURCE_ACCELERATOR_H_
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -32,10 +30,9 @@ struct pe_resource_acceltableentry;
 }
 
 class LIEF_API ResourceAccelerator : public Object {
-
   friend class ResourcesManager;
 
-  public:
+ public:
   ResourceAccelerator();
   explicit ResourceAccelerator(const details::pe_resource_acceltableentry&);
 
@@ -50,13 +47,15 @@ class LIEF_API ResourceAccelerator : public Object {
   //! Describe the keyboard accelerator characteristics
   int16_t flags() const;
 
-  //! An ANSI character value or a virtual-key code that identifies the accelerator key
+  //! An ANSI character value or a virtual-key code that identifies the
+  //! accelerator key
   int16_t ansi() const;
 
   //! An identifier for the keyboard accelerator
   uint16_t id() const;
 
-  //! The number of bytes inserted to ensure that the structure is aligned on a DWORD boundary.
+  //! The number of bytes inserted to ensure that the structure is aligned on a
+  //! DWORD boundary.
   int16_t padding() const;
 
   void accept(Visitor& visitor) const override;
@@ -64,17 +63,17 @@ class LIEF_API ResourceAccelerator : public Object {
   bool operator==(const ResourceAccelerator& rhs) const;
   bool operator!=(const ResourceAccelerator& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceAccelerator& acc);
 
-  private:
+ private:
   int16_t flags_;
   int16_t ansi_;
   uint16_t id_;
   int16_t padding_;
-
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <sstream>
-#include <numeric>
+#include "LIEF/PE/CodeView.hpp"
 
-#include "LIEF/PE/hash.hpp"
+#include <iomanip>
+#include <numeric>
+#include <sstream>
 
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/CodeView.hpp"
+#include "LIEF/PE/hash.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -29,25 +29,14 @@ CodeView::CodeView(const CodeView&) = default;
 CodeView& CodeView::operator=(const CodeView&) = default;
 CodeView::~CodeView() = default;
 
-CodeView::CodeView() :
-  cv_signature_{CODE_VIEW_SIGNATURES::CVS_UNKNOWN}
-{}
+CodeView::CodeView() : cv_signature_{CODE_VIEW_SIGNATURES::CVS_UNKNOWN} {}
 
+CodeView::CodeView(CODE_VIEW_SIGNATURES cv_signature)
+    : cv_signature_{cv_signature} {}
 
-CodeView::CodeView(CODE_VIEW_SIGNATURES cv_signature) :
-  cv_signature_{cv_signature}
-{}
+CODE_VIEW_SIGNATURES CodeView::cv_signature() const { return cv_signature_; }
 
-
-
-CODE_VIEW_SIGNATURES CodeView::cv_signature() const {
-  return cv_signature_;
-}
-
-
-void CodeView::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CodeView::accept(LIEF::Visitor& visitor) const { visitor.visit(*this); }
 
 bool CodeView::operator==(const CodeView& rhs) const {
   if (this == &rhs) {
@@ -58,10 +47,7 @@ bool CodeView::operator==(const CodeView& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool CodeView::operator!=(const CodeView& rhs) const {
-  return !(*this == rhs);
-}
-
+bool CodeView::operator!=(const CodeView& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const CodeView& entry) {
   static constexpr size_t WIDTH = 22;
@@ -70,9 +56,10 @@ std::ostream& operator<<(std::ostream& os, const CodeView& entry) {
   os << std::left;
   os << std::setfill(' ');
 
-  os << std::setw(WIDTH) << "Code View Signature:" << to_string(entry.cv_signature())  << std::endl;
+  os << std::setw(WIDTH)
+     << "Code View Signature:" << to_string(entry.cv_signature()) << std::endl;
   return os;
 }
 
-} // namespace PE
-} // namespace LIEF
+}  // namespace PE
+}  // namespace LIEF

@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-#include <map>
-#include "LIEF/config.h"
 #include "LIEF/logging.hpp"
+
+#include <map>
+
+#include "LIEF/config.h"
 #include "LIEF/platforms.hpp"
 #include "logging.hpp"
-
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/android_sink.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
 
 namespace LIEF {
 namespace logging {
@@ -37,19 +38,17 @@ Logger::~Logger() = default;
 Logger::Logger() {
   if /* constexpr */ (lief_logging_support) {
     if /* constexpr */ (current_platform() == PLATFORMS::ANDROID_PLAT) {
-      #if defined(__ANDROID__)
+#if defined(__ANDROID__)
       sink_ = spdlog::android_logger_mt("LIEF", "lief");
-      #else
-      // Should not append ...
-      #endif
-    }
-    else if (current_platform() == PLATFORMS::IOS) {
-      sink_ = spdlog::basic_logger_mt("LIEF", "/tmp/lief.log", /* truncate */ true);
-    }
-    else {
+#else
+// Should not append ...
+#endif
+    } else if (current_platform() == PLATFORMS::IOS) {
+      sink_ =
+          spdlog::basic_logger_mt("LIEF", "/tmp/lief.log", /* truncate */ true);
+    } else {
       sink_ = spdlog::stderr_color_mt("LIEF");
     }
-
 
     sink_->set_level(spdlog::level::warn);
     sink_->set_pattern("%v");
@@ -65,24 +64,20 @@ Logger& Logger::instance() {
   return *instance_;
 }
 
-
-void Logger::destroy() {
-  delete instance_;
-}
+void Logger::destroy() { delete instance_; }
 
 const char* to_string(LOGGING_LEVEL e) {
-  const std::map<LOGGING_LEVEL, const char*> enumStrings {
-    { LOGGING_LEVEL::LOG_TRACE,   "TRACE"    },
-    { LOGGING_LEVEL::LOG_DEBUG,   "DEBUG"    },
-    { LOGGING_LEVEL::LOG_INFO,    "INFO"     },
-    { LOGGING_LEVEL::LOG_ERR,     "ERROR"    },
-    { LOGGING_LEVEL::LOG_WARN,    "WARNING"  },
-    { LOGGING_LEVEL::LOG_CRITICAL,"CRITICAL" },
+  const std::map<LOGGING_LEVEL, const char*> enumStrings{
+      {LOGGING_LEVEL::LOG_TRACE, "TRACE"},
+      {LOGGING_LEVEL::LOG_DEBUG, "DEBUG"},
+      {LOGGING_LEVEL::LOG_INFO, "INFO"},
+      {LOGGING_LEVEL::LOG_ERR, "ERROR"},
+      {LOGGING_LEVEL::LOG_WARN, "WARNING"},
+      {LOGGING_LEVEL::LOG_CRITICAL, "CRITICAL"},
   };
-  auto   it  = enumStrings.find(e);
+  auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
-
 
 void Logger::disable() {
   if /* constexpr */ (lief_logging_support) {
@@ -101,66 +96,52 @@ void Logger::set_level(LOGGING_LEVEL level) {
     return;
   }
   switch (level) {
-    case LOG_TRACE:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::trace);
-        Logger::instance().sink_->flush_on(spdlog::level::trace);
-        break;
-      }
+    case LOG_TRACE: {
+      Logger::instance().sink_->set_level(spdlog::level::trace);
+      Logger::instance().sink_->flush_on(spdlog::level::trace);
+      break;
+    }
 
-    case LOG_DEBUG:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::debug);
-        Logger::instance().sink_->flush_on(spdlog::level::debug);
-        break;
-      }
+    case LOG_DEBUG: {
+      Logger::instance().sink_->set_level(spdlog::level::debug);
+      Logger::instance().sink_->flush_on(spdlog::level::debug);
+      break;
+    }
 
-    case LOG_INFO:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::info);
-        Logger::instance().sink_->flush_on(spdlog::level::info);
-        break;
-      }
+    case LOG_INFO: {
+      Logger::instance().sink_->set_level(spdlog::level::info);
+      Logger::instance().sink_->flush_on(spdlog::level::info);
+      break;
+    }
 
     default:
-    case LOG_WARN:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::warn);
-        Logger::instance().sink_->flush_on(spdlog::level::warn);
-        break;
-      }
+    case LOG_WARN: {
+      Logger::instance().sink_->set_level(spdlog::level::warn);
+      Logger::instance().sink_->flush_on(spdlog::level::warn);
+      break;
+    }
 
-    case LOG_ERR:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::err);
-        Logger::instance().sink_->flush_on(spdlog::level::err);
-        break;
-      }
+    case LOG_ERR: {
+      Logger::instance().sink_->set_level(spdlog::level::err);
+      Logger::instance().sink_->flush_on(spdlog::level::err);
+      break;
+    }
 
-    case LOG_CRITICAL:
-      {
-        Logger::instance().sink_->set_level(spdlog::level::critical);
-        Logger::instance().sink_->flush_on(spdlog::level::critical);
-        break;
-      }
+    case LOG_CRITICAL: {
+      Logger::instance().sink_->set_level(spdlog::level::critical);
+      Logger::instance().sink_->flush_on(spdlog::level::critical);
+      break;
+    }
   }
 }
 
 // Public interface
 
-void disable() {
-  Logger::disable();
-}
+void disable() { Logger::disable(); }
 
-void enable() {
-  Logger::enable();
-}
+void enable() { Logger::enable(); }
 
-void set_level(LOGGING_LEVEL level) {
-  Logger::set_level(level);
-}
+void set_level(LOGGING_LEVEL level) { Logger::set_level(level); }
 
-}
-}
-
-
+}  // namespace logging
+}  // namespace LIEF

@@ -16,24 +16,20 @@
 
 #include <type_traits>
 
-#include "logging.hpp"
-
-#include "LIEF/utils.hpp"
-
 #include "LIEF/DEX.hpp"
-#include "LIEF/VDEX/File.hpp"
-
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
-
+#include "LIEF/VDEX/File.hpp"
+#include "LIEF/utils.hpp"
 #include "OAT/Structures.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace OAT {
 
-template<>
+template <>
 void Parser::parse_dex_files<details::OAT124_t>() {
   using oat_header = typename details::OAT124_t::oat_header;
 
@@ -49,8 +45,7 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   classes_offsets_offset.reserve(nb_dex_files);
 
   stream_->setpos(dexfiles_offset);
-  for (size_t i = 0; i < nb_dex_files; ++i ) {
-
+  for (size_t i = 0; i < nb_dex_files; ++i) {
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
 
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
@@ -106,13 +101,13 @@ void Parser::parse_dex_files<details::OAT124_t>() {
       std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[i];
       oat_dex_file->dex_file_ = &dexfiles[i];
 
-
       const uint32_t nb_classes = dexfiles[i].header().nb_classes();
 
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        if (auto res = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+        if (auto res = stream_->peek<uint32_t>(classes_offset +
+                                               cls_idx * sizeof(uint32_t))) {
           oat_dex_file->classes_offsets_.push_back(*res);
         } else {
           break;
@@ -122,6 +117,5 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   }
 }
 
-
-} // Namespace OAT
-} // Namespace LIEF
+}  // Namespace OAT
+}  // Namespace LIEF

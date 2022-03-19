@@ -16,15 +16,14 @@
 
 #include "LIEF/PE/signature/RsaInfo.hpp"
 
-#include <algorithm>
-#include <fstream>
-
-#include <mbedtls/x509.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/oid.h>
-#include <mbedtls/rsa.h>
 #include <mbedtls/pk.h>
+#include <mbedtls/rsa.h>
+#include <mbedtls/x509.h>
 
+#include <algorithm>
+#include <fstream>
 
 namespace LIEF {
 namespace PE {
@@ -35,44 +34,38 @@ RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
   const auto* pctx = reinterpret_cast<const mbedtls_rsa_context*>(ctx);
   auto* local_ctx = new mbedtls_rsa_context{};
   mbedtls_rsa_init(local_ctx);
-  mbedtls_rsa_set_padding(local_ctx, pctx->private_padding,
-                          static_cast<mbedtls_md_type_t>(pctx->private_hash_id));
+  mbedtls_rsa_set_padding(
+      local_ctx, pctx->private_padding,
+      static_cast<mbedtls_md_type_t>(pctx->private_hash_id));
   mbedtls_rsa_copy(local_ctx, pctx);
   mbedtls_rsa_complete(local_ctx);
   ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
 }
 
-RsaInfo::RsaInfo(const RsaInfo& other)
-{
+RsaInfo::RsaInfo(const RsaInfo& other) {
   if (other.ctx_ != nullptr) {
     const auto* octx = reinterpret_cast<const mbedtls_rsa_context*>(other.ctx_);
     auto* local_ctx = new mbedtls_rsa_context{};
     mbedtls_rsa_init(local_ctx);
-    mbedtls_rsa_set_padding(local_ctx, octx->private_padding,
-                            static_cast<mbedtls_md_type_t>(octx->private_hash_id));
+    mbedtls_rsa_set_padding(
+        local_ctx, octx->private_padding,
+        static_cast<mbedtls_md_type_t>(octx->private_hash_id));
     mbedtls_rsa_copy(local_ctx, octx);
     mbedtls_rsa_complete(local_ctx);
     ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
   }
 }
 
-
-RsaInfo::RsaInfo(RsaInfo&& other) :
-  ctx_{other.ctx_}
-{}
+RsaInfo::RsaInfo(RsaInfo&& other) : ctx_{other.ctx_} {}
 
 RsaInfo& RsaInfo::operator=(RsaInfo other) {
   swap(other);
   return *this;
 }
 
-void RsaInfo::swap(RsaInfo& other) {
-  std::swap(ctx_, other.ctx_);
-}
+void RsaInfo::swap(RsaInfo& other) { std::swap(ctx_, other.ctx_); }
 
-RsaInfo::operator bool() const {
-  return ctx_ != nullptr;
-}
+RsaInfo::operator bool() const { return ctx_ != nullptr; }
 
 bool RsaInfo::has_public_key() const {
   auto* lctx = reinterpret_cast<mbedtls_rsa_context*>(ctx_);
@@ -83,7 +76,6 @@ bool RsaInfo::has_private_key() const {
   auto* lctx = reinterpret_cast<mbedtls_rsa_context*>(ctx_);
   return mbedtls_rsa_check_privkey(lctx) == 0;
 }
-
 
 RsaInfo::bignum_wrapper_t RsaInfo::N() const {
   auto* lctx = reinterpret_cast<mbedtls_rsa_context*>(ctx_);
@@ -125,7 +117,6 @@ size_t RsaInfo::key_size() const {
   return mbedtls_rsa_get_len(lctx) * 8;
 }
 
-
 RsaInfo::~RsaInfo() {
   if (ctx_ != nullptr) {
     auto* lctx = reinterpret_cast<mbedtls_rsa_context*>(ctx_);
@@ -133,7 +124,6 @@ RsaInfo::~RsaInfo() {
     delete lctx;
   }
 }
-
 
 std::ostream& operator<<(std::ostream& os, const RsaInfo& info) {
   if (!info) {
@@ -145,5 +135,5 @@ std::ostream& operator<<(std::ostream& os, const RsaInfo& info) {
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -16,13 +16,12 @@
 #ifndef LIEF_PE_RESOURCE_DIRECTORY_H_
 #define LIEF_PE_RESOURCE_DIRECTORY_H_
 
-#include <string>
 #include <list>
+#include <string>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -35,11 +34,10 @@ struct pe_resource_directory_table;
 }
 
 class LIEF_API ResourceDirectory : public ResourceNode {
-
   friend class Parser;
   friend class Builder;
 
-  public:
+ public:
   ResourceDirectory();
   ResourceDirectory(const details::pe_resource_directory_table& header);
 
@@ -89,17 +87,17 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   bool operator==(const ResourceDirectory& rhs) const;
   bool operator!=(const ResourceDirectory& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceDirectory& directory);
 
-  private:
+ private:
   uint32_t characteristics_ = 0;
   uint32_t timeDateStamp_ = 0;
   uint16_t majorVersion_ = 0;
   uint16_t minorVersion_ = 0;
   uint16_t numberOfNameEntries_ = 0;
   uint16_t numberOfIDEntries_ = 0;
-
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif /* RESOURCEDIRECTORY_H_ */

@@ -16,13 +16,14 @@
 #ifndef PY_LIEF_ERR_H_
 #define PY_LIEF_ERR_H_
 #include <pybind11/pybind11.h>
+
 #include "LIEF/errors.hpp"
 
 namespace py = pybind11;
 
-
-template <class Func, typename... Ts,
-          std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
+template <
+    class Func, typename... Ts,
+    std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
 py::object error_or(Func f, Ts&&... args) {
   auto&& ret = f(std::forward<Ts>(args)...);
   if (!ret) {
@@ -31,9 +32,9 @@ py::object error_or(Func f, Ts&&... args) {
   return py::cast(ret.value());
 }
 
-
-template <class Func, typename... Ts,
-          std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
+template <
+    class Func, typename... Ts,
+    std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
 py::object error_or(Func f, Ts&&... args) {
   auto&& ret = std::mem_fn(f)(std::forward<Ts>(args)...);
   if (!ret) {
@@ -41,7 +42,6 @@ py::object error_or(Func f, Ts&&... args) {
   }
   return py::cast(ret.value());
 }
-
 
 void init_LIEF_errors(py::module&);
 

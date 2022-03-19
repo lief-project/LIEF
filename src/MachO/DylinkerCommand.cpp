@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/DylinkerCommand.hpp"
+
 #include <iomanip>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/DylinkerCommand.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -28,27 +28,19 @@ DylinkerCommand& DylinkerCommand::operator=(const DylinkerCommand&) = default;
 DylinkerCommand::DylinkerCommand(const DylinkerCommand&) = default;
 DylinkerCommand::~DylinkerCommand() = default;
 
-DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
-{}
+DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize} {}
 
 DylinkerCommand* DylinkerCommand::clone() const {
   return new DylinkerCommand(*this);
 }
 
-const std::string& DylinkerCommand::name() const {
-  return name_;
-}
+const std::string& DylinkerCommand::name() const { return name_; }
 
-void DylinkerCommand::name(const std::string& name) {
-  name_ = name;
-}
+void DylinkerCommand::name(const std::string& name) { name_ = name; }
 
-
-void DylinkerCommand::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void DylinkerCommand::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DylinkerCommand::operator==(const DylinkerCommand& rhs) const {
   if (this == &rhs) {
@@ -73,10 +65,9 @@ bool DylinkerCommand::classof(const LoadCommand* cmd) {
 std::ostream& DylinkerCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex;
-  os << std::left
-     << std::setw(35) << name();
+  os << std::left << std::setw(35) << name();
   return os;
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

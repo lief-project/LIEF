@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "PE/ResourcesParser.hpp"
-#include "PE/Structures.hpp"
+
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/utils.hpp"
-
-#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
-#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/utils.hpp"
+#include "PE/Structures.hpp"
+#include "logging.hpp"
 namespace LIEF {
 namespace PE {
-result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stream) {
+result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(
+    BinaryStream& stream) {
   stream.setpos(0);
   LIEF_DEBUG("Parsing VS_VERSIONINFO | Stream size: 0x{:x}", stream.size());
 
@@ -50,7 +51,6 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
     LIEF_ERR("Can't read VS_VERSIONINFO.wLength");
     return make_error_code(lief_errors::parsing_error);
   }
-
 
   // wValueLength: Size of the fixed file info struct
   if (auto res = stream.read<uint16_t>()) {
@@ -82,7 +82,9 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
     std::string u8szKey = u16tou8(szKey);
     LIEF_DEBUG("VS_VERSIONINFO.szKey: {}", u8szKey);
     if (u8szKey != "VS_VERSION_INFO") {
-      LIEF_WARN("VS_VERSIONINFO.szKey should be equal to 'VS_VERSION_INFO' but is {}", u8szKey);
+      LIEF_WARN(
+          "VS_VERSIONINFO.szKey should be equal to 'VS_VERSION_INFO' but is {}",
+          u8szKey);
     }
   } else {
     LIEF_ERR("Can't read VS_VERSIONINFO.szKey");
@@ -94,11 +96,13 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
 
   if (wValueLength > 0) {
     if (wValueLength == sizeof(details::pe_resource_fixed_file_info)) {
-      // VS_FIXEDFILEINFO - https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo
+      // VS_FIXEDFILEINFO -
+      // https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo
       if (auto res = stream.peek<details::pe_resource_fixed_file_info>()) {
         const auto VS_FIXEDFILEINFO = *res;
         if (VS_FIXEDFILEINFO.signature == 0xFEEF04BD) {
-          version.fixed_file_info_ = std::make_unique<ResourceFixedFileInfo>(VS_FIXEDFILEINFO);
+          version.fixed_file_info_ =
+              std::make_unique<ResourceFixedFileInfo>(VS_FIXEDFILEINFO);
         } else {
           LIEF_WARN("Bad magic value for VS_FIXEDFILEINFO");
         }
@@ -115,7 +119,7 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
   stream.align(sizeof(uint32_t));
 
   version.type_ = wType;
-  version.key_  = std::move(szKey);
+  version.key_ = std::move(szKey);
 
   LIEF_DEBUG("Reading VS_VERSION_INFO.children[0] @0x{:x}", stream.pos());
   if (!stream.can_read<uint16_t>()) {
@@ -123,7 +127,8 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
   }
 
   const uint16_t child_1_len = *stream.peek<uint16_t>();
-  LIEF_DEBUG("VS_VERSION_INFO.children[0]: 0x{:x} bytes @0x{:x}", child_1_len, stream.pos());
+  LIEF_DEBUG("VS_VERSION_INFO.children[0]: 0x{:x} bytes @0x{:x}", child_1_len,
+             stream.pos());
   std::vector<uint8_t> child_1_data;
   if (stream.read_data(child_1_data, child_1_len)) {
     if (auto span_stream = SpanStream::from_vector(child_1_data)) {
@@ -145,7 +150,8 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
 
   const uint16_t child_2_len = *stream.peek<uint16_t>();
 
-  LIEF_DEBUG("VS_VERSION_INFO.children[1]: 0x{:x} bytes @0x{:x}", child_2_len, stream.pos());
+  LIEF_DEBUG("VS_VERSION_INFO.children[1]: 0x{:x} bytes @0x{:x}", child_2_len,
+             stream.pos());
   std::vector<uint8_t> child_2_data;
   if (stream.read_data(child_2_data, child_2_len)) {
     if (auto span_stream = SpanStream::from_vector(child_2_data)) {
@@ -161,7 +167,8 @@ result<ResourceVersion> ResourcesParser::parse_vs_versioninfo(BinaryStream& stre
   return version;
 }
 
-ok_error_t ResourcesParser::parse_version_info_child(ResourceVersion& version, BinaryStream& stream) {
+ok_error_t ResourcesParser::parse_version_info_child(ResourceVersion& version,
+                                                     BinaryStream& stream) {
   /*  Both StringFileInfo & VarFileInfo share the following header:
    *  WORD        wLength;
    *  WORD        wValueLength;
@@ -190,7 +197,8 @@ ok_error_t ResourcesParser::parse_version_info_child(ResourceVersion& version, B
     wValueLength = *res;
     LIEF_DEBUG("Child.wValueLength: 0x{:x}", wValueLength);
     if (wValueLength != 0) {
-      LIEF_WARN("Child.wValueLength should be 0 instead of 0x{:x}", wValueLength);
+      LIEF_WARN("Child.wValueLength should be 0 instead of 0x{:x}",
+                wValueLength);
     }
   } else {
     LIEF_ERR("Can't read Child.wValueLength");
@@ -217,18 +225,20 @@ ok_error_t ResourcesParser::parse_version_info_child(ResourceVersion& version, B
     szKey = *res;
     std::string u8szKey = u16tou8(szKey);
     if (u8szKey == "VarFileInfo") {
-      version.var_file_info_ = std::make_unique<ResourceVarFileInfo>(wType, szKey);
+      version.var_file_info_ =
+          std::make_unique<ResourceVarFileInfo>(wType, szKey);
       if (!parse_var_file_info(version, stream)) {
         LIEF_WARN("Failed to parse VarFileInfo");
       }
-    }
-    else if (u8szKey == "StringFileInfo") {
-      version.string_file_info_ = std::make_unique<ResourceStringFileInfo>(wType, szKey);
+    } else if (u8szKey == "StringFileInfo") {
+      version.string_file_info_ =
+          std::make_unique<ResourceStringFileInfo>(wType, szKey);
       if (!parse_string_file_info(version, stream)) {
         LIEF_WARN("Failed to parse StringFileInfo");
       }
     } else {
-      LIEF_WARN("Child.szKey is neither VarFileInfo/StringFileInfo: '{}'", u8szKey);
+      LIEF_WARN("Child.szKey is neither VarFileInfo/StringFileInfo: '{}'",
+                u8szKey);
       return make_error_code(lief_errors::parsing_error);
     }
     return ok();
@@ -239,18 +249,18 @@ ok_error_t ResourcesParser::parse_version_info_child(ResourceVersion& version, B
   return ok();
 }
 
-
-ok_error_t ResourcesParser::parse_var_file_info(ResourceVersion& version, BinaryStream& stream) {
-   /*  https://docs.microsoft.com/en-us/windows/win32/menurc/varfileinfo
-    * typedef struct {
-    *   WORD  wLength;
-    *   WORD  wValueLength;
-    *   WORD  wType;
-    *   WCHAR szKey;
-    *   WORD  Padding;
-    *   DWORD Value;
-    * } Var;
-    */
+ok_error_t ResourcesParser::parse_var_file_info(ResourceVersion& version,
+                                                BinaryStream& stream) {
+  /*  https://docs.microsoft.com/en-us/windows/win32/menurc/varfileinfo
+   * typedef struct {
+   *   WORD  wLength;
+   *   WORD  wValueLength;
+   *   WORD  wType;
+   *   WCHAR szKey;
+   *   WORD  Padding;
+   *   DWORD Value;
+   * } Var;
+   */
   while (stream) {
     uint16_t wLength = 0;
     uint16_t wValueLength = 0;
@@ -309,7 +319,8 @@ ok_error_t ResourcesParser::parse_var_file_info(ResourceVersion& version, Binary
   return ok();
 }
 
-ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, BinaryStream& stream) {
+ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version,
+                                                   BinaryStream& stream) {
   /*
    * https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
    *
@@ -389,7 +400,7 @@ ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, Bin
 
       LangCodeItem lang{wType, szKey};
       stream.align(sizeof(uint32_t));
-      if(parse_string(lang, stream)) {
+      if (parse_string(lang, stream)) {
         version.string_file_info_->childs_.push_back(std::move(lang));
       } else {
         LIEF_WARN("StringTable.String parsed with error");
@@ -402,8 +413,8 @@ ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, Bin
   return ok();
 }
 
-
-ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream) {
+ok_error_t ResourcesParser::parse_string(LangCodeItem& lci,
+                                         BinaryStream& stream) {
   /* https://docs.microsoft.com/en-us/windows/win32/menurc/string-str
    * typedef struct {
    *   WORD  wLength;
@@ -451,7 +462,7 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
       stream.align(sizeof(uint32_t));
       LIEF_DEBUG("String.Value @0x{:x}", stream.pos());
       if (auto res = stream.read_u16string(wValueLength)) {
-        value = res->c_str(); // To remove trailling \0
+        value = res->c_str();  // To remove trailling \0
         std::string u8value = u16tou8(value);
         LIEF_DEBUG("{}: {}", u8szKey, u8value);
         lci.items_.emplace(szKey, value);
@@ -465,14 +476,15 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
   return ok();
 }
 
-
 ok_error_t ResourcesParser::parse_dialogs(std::vector<ResourceDialog>& dialogs,
-                                          const ResourceData& node, BinaryStream& stream) {
+                                          const ResourceData& node,
+                                          BinaryStream& stream) {
   // Parse Dialogs as described in
-  // - https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
+  // -
+  // https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
   // - https://docs.microsoft.com/en-us/windows/win32/dlgbox/dlgtemplateex
-  // The given `stream` can point to both DLGTEMPLATEEX / DLGTEMPLATE so we need first
-  // to determine the kind of the dialog
+  // The given `stream` can point to both DLGTEMPLATEEX / DLGTEMPLATE so we need
+  // first to determine the kind of the dialog
 
   // Try first DLGTEMPLATEEX
   if (auto dlgVer = stream.peek<uint16_t>()) {
@@ -485,9 +497,9 @@ ok_error_t ResourcesParser::parse_dialogs(std::vector<ResourceDialog>& dialogs,
   return parse_regular_dialogs(dialogs, node, stream);
 }
 
-
-ok_error_t ResourcesParser::parse_ext_dialogs(std::vector<ResourceDialog>& dialogs,
-                                              const ResourceData& node, BinaryStream& stream) {
+ok_error_t ResourcesParser::parse_ext_dialogs(
+    std::vector<ResourceDialog>& dialogs, const ResourceData& node,
+    BinaryStream& stream) {
   using sz_Or_Ord = uint16_t;
 
   ResourceDialog new_dialog;
@@ -515,42 +527,40 @@ ok_error_t ResourcesParser::parse_ext_dialogs(std::vector<ResourceDialog>& dialo
     return make_error_code(lief_errors::read_error);
   }
 
-  switch(menu) {
-    case 0x0000:
-      {
-        LIEF_DEBUG("Dialog does not have a menu");
-        break;
-      }
+  switch (menu) {
+    case 0x0000: {
+      LIEF_DEBUG("Dialog does not have a menu");
+      break;
+    }
 
-    case 0xFFFF:
-      {
-        // if the first element is 0xFFFF, the array has one additional element
-        // that specifies the ordinal value of a menu resource in an executable file [...]"
-        uint16_t menu_ordinal = 0;
-        if (auto res = stream.read<uint16_t>()) {
-          menu_ordinal = *res;
-          LIEF_DEBUG("DLGTEMPLATEEX.menu.ordinal: 0x{:x}", menu_ordinal);
-        } else {
-          LIEF_INFO("Can't read DLGTEMPLATEEX.menu.ordinal");
-          return make_error_code(lief_errors::read_error);
-        }
-        break;
+    case 0xFFFF: {
+      // if the first element is 0xFFFF, the array has one additional element
+      // that specifies the ordinal value of a menu resource in an executable
+      // file [...]"
+      uint16_t menu_ordinal = 0;
+      if (auto res = stream.read<uint16_t>()) {
+        menu_ordinal = *res;
+        LIEF_DEBUG("DLGTEMPLATEEX.menu.ordinal: 0x{:x}", menu_ordinal);
+      } else {
+        LIEF_INFO("Can't read DLGTEMPLATEEX.menu.ordinal");
+        return make_error_code(lief_errors::read_error);
       }
+      break;
+    }
 
-    default:
-      {
-        // If the first element has any other value, the system treats the array as a
-        // null-terminated Unicode string that specifies the name of a menu resource
-        // in an executable file [...]
-        std::u16string menu_name;
-        if (auto res = stream.read_u16string()) {
-          menu_name = *res;
-          LIEF_DEBUG("DLGTEMPLATEEX.menu.name: {}", u16tou8(menu_name));
-        } else {
-          LIEF_INFO("Can't read DLGTEMPLATEEX.menu.name");
-          return make_error_code(lief_errors::read_error);
-        }
+    default: {
+      // If the first element has any other value, the system treats the array
+      // as a null-terminated Unicode string that specifies the name of a menu
+      // resource in an executable file [...]
+      std::u16string menu_name;
+      if (auto res = stream.read_u16string()) {
+        menu_name = *res;
+        LIEF_DEBUG("DLGTEMPLATEEX.menu.name: {}", u16tou8(menu_name));
+      } else {
+        LIEF_INFO("Can't read DLGTEMPLATEEX.menu.name");
+        return make_error_code(lief_errors::read_error);
       }
+    }
   }
 
   stream.align(sizeof(uint16_t));
@@ -563,37 +573,36 @@ ok_error_t ResourcesParser::parse_ext_dialogs(std::vector<ResourceDialog>& dialo
     return make_error_code(lief_errors::read_error);
   }
 
-  switch(windowClass) {
-    case 0x0000:
-      {
-        LIEF_DEBUG("Windows class uses a predefined dialog box");
-        break;
-      }
+  switch (windowClass) {
+    case 0x0000: {
+      LIEF_DEBUG("Windows class uses a predefined dialog box");
+      break;
+    }
 
-    case 0xFFFF:
-      {
-        uint16_t windowClass_ordinal = 0;
-        if (auto res = stream.read<uint16_t>()) {
-          windowClass_ordinal = *res;
-          LIEF_DEBUG("DLGTEMPLATEEX.windowClass.ordinal: 0x{:x}", windowClass_ordinal);
-        } else {
-          LIEF_INFO("Can't read DLGTEMPLATEEX.windowClass.ordinal");
-          return make_error_code(lief_errors::read_error);
-        }
-        break;
+    case 0xFFFF: {
+      uint16_t windowClass_ordinal = 0;
+      if (auto res = stream.read<uint16_t>()) {
+        windowClass_ordinal = *res;
+        LIEF_DEBUG("DLGTEMPLATEEX.windowClass.ordinal: 0x{:x}",
+                   windowClass_ordinal);
+      } else {
+        LIEF_INFO("Can't read DLGTEMPLATEEX.windowClass.ordinal");
+        return make_error_code(lief_errors::read_error);
       }
+      break;
+    }
 
-    default:
-      {
-        std::u16string windowClass_name;
-        if (auto res = stream.read_u16string()) {
-          windowClass_name = *res;
-          LIEF_DEBUG("DLGTEMPLATEEX.windowClass.name: {}", u16tou8(windowClass_name));
-        } else {
-          LIEF_INFO("Can't read DLGTEMPLATEEX.windowClass.name");
-          return make_error_code(lief_errors::read_error);
-        }
+    default: {
+      std::u16string windowClass_name;
+      if (auto res = stream.read_u16string()) {
+        windowClass_name = *res;
+        LIEF_DEBUG("DLGTEMPLATEEX.windowClass.name: {}",
+                   u16tou8(windowClass_name));
+      } else {
+        LIEF_INFO("Can't read DLGTEMPLATEEX.windowClass.name");
+        return make_error_code(lief_errors::read_error);
       }
+    }
   }
 
   stream.align(sizeof(uint16_t));
@@ -624,13 +633,15 @@ ok_error_t ResourcesParser::parse_ext_dialogs(std::vector<ResourceDialog>& dialo
   return ok();
 }
 
-
-ok_error_t ResourcesParser::parse_tail_ext_dialog(ResourceDialog& dialog, BinaryStream& stream)
-{
-  const std::set<DIALOG_BOX_STYLES>& dialogbox_styles = dialog.dialogbox_style_list();
-  // [...] This member is present only if the style member specifies DS_SETFONT or DS_SHELLFONT. [...]
-  const bool has_ext_members = dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SHELLFONT) > 0 ||
-                               dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SETFONT) > 0;
+ok_error_t ResourcesParser::parse_tail_ext_dialog(ResourceDialog& dialog,
+                                                  BinaryStream& stream) {
+  const std::set<DIALOG_BOX_STYLES>& dialogbox_styles =
+      dialog.dialogbox_style_list();
+  // [...] This member is present only if the style member specifies DS_SETFONT
+  // or DS_SHELLFONT. [...]
+  const bool has_ext_members =
+      dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SHELLFONT) > 0 ||
+      dialogbox_styles.count(DIALOG_BOX_STYLES::DS_SETFONT) > 0;
   if (!has_ext_members) {
     return ok();
   }
@@ -687,10 +698,12 @@ ok_error_t ResourcesParser::parse_tail_ext_dialog(ResourceDialog& dialog, Binary
   return ok();
 }
 
-ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, BinaryStream& stream) {
+ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog,
+                                                  BinaryStream& stream) {
   using sz_Or_Ord = uint16_t;
 
-  // See: https://docs.microsoft.com/en-us/windows/win32/dlgbox/dlgitemtemplateex
+  // See:
+  // https://docs.microsoft.com/en-us/windows/win32/dlgbox/dlgitemtemplateex
   stream.align(sizeof(uint32_t));
 
   ResourceDialogItem dialog_item;
@@ -729,7 +742,8 @@ ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, Binary
       uint16_t windowClass_ordinal = 0;
       if (auto res = stream.read<uint16_t>()) {
         windowClass_ordinal = *res;
-        LIEF_DEBUG("DLGITEMTEMPLATEEX.windowClass.ordinal: 0x{:x}", windowClass_ordinal);
+        LIEF_DEBUG("DLGITEMTEMPLATEEX.windowClass.ordinal: 0x{:x}",
+                   windowClass_ordinal);
       } else {
         LIEF_INFO("Can't read DLGITEMTEMPLATEEX.windowClass.ordinal");
         return make_error_code(lief_errors::read_error);
@@ -741,7 +755,8 @@ ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, Binary
       if (auto res = stream.read_u16string()) {
         windowClass_name = *res;
         dialog_item.window_class_ = windowClass_name;
-        LIEF_DEBUG("DLGITEMTEMPLATEEX.windowClass.name: {}", u16tou8(windowClass_name));
+        LIEF_DEBUG("DLGITEMTEMPLATEEX.windowClass.name: {}",
+                   u16tou8(windowClass_name));
       } else {
         LIEF_INFO("Can't read DLGTEMPLATEEX.windowClass.name");
         return make_error_code(lief_errors::read_error);
@@ -799,9 +814,10 @@ ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, Binary
 }
 
 ok_error_t ResourcesParser::parse_regular_dialogs(std::vector<ResourceDialog>&,
-                                                  const ResourceData&, BinaryStream&) {
+                                                  const ResourceData&,
+                                                  BinaryStream&) {
   return make_error_code(lief_errors::not_implemented);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

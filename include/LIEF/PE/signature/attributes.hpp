@@ -26,4 +26,3 @@
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 #endif
-

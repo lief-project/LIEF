@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
-
-#include <string>
-#include <sstream>
-
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (LangCodeItem::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (LangCodeItem::*)(T);
 
-
-template<>
+template <>
 void create<LangCodeItem>(py::module& m) {
   py::class_<LangCodeItem, LIEF::Object>(m, "LangCodeItem",
       R"delim(
@@ -116,6 +113,5 @@ void create<LangCodeItem>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

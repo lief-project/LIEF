@@ -16,21 +16,20 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H_
 #define LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H_
 
-#include <set>
 #include <ostream>
+#include <set>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
 
 class LIEF_API DynamicEntryFlags : public DynamicEntry {
-
-  public:
+ public:
   using flags_list_t = std::set<uint32_t>;
 
-  public:
+ public:
   using DynamicEntry::DynamicEntry;
   DynamicEntryFlags();
 
@@ -71,7 +70,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

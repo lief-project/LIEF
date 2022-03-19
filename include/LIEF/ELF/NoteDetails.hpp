@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_NOTE_DETAILS_H_
 #define LIEF_ELF_NOTE_DETAILS_H_
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -31,19 +31,18 @@ class Binary;
 class Note;
 
 class LIEF_API NoteDetails : public Object {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
 
-  public:
+ public:
   using description_t = std::vector<uint8_t>;
   NoteDetails();
 
-  protected:
+ protected:
   NoteDetails(Note& note);
 
-  public:
+ public:
   virtual ~NoteDetails();
 
   virtual NoteDetails* clone() const;
@@ -57,9 +56,10 @@ class LIEF_API NoteDetails : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteDetails& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const NoteDetails& note);
 
-  protected:
+ protected:
   virtual void parse();
   virtual void build();
 
@@ -67,13 +67,12 @@ class LIEF_API NoteDetails : public Object {
   Binary* binary();
   const Binary* binary() const;
 
-  private:
+ private:
   Note* note_{nullptr};
   description_t empty_;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

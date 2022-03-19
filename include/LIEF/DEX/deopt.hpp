@@ -25,10 +25,10 @@ class Method;
 
 // Method Index: {dex_pc: index, ...}
 using dex2dex_method_info_t = std::unordered_map<uint32_t, uint32_t>;
-using dex2dex_class_info_t  = std::unordered_map<Method*, dex2dex_method_info_t>;
-using dex2dex_info_t        = std::unordered_map<Class*, dex2dex_class_info_t>;
+using dex2dex_class_info_t = std::unordered_map<Method*, dex2dex_method_info_t>;
+using dex2dex_info_t = std::unordered_map<Class*, dex2dex_class_info_t>;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF
 
 #endif

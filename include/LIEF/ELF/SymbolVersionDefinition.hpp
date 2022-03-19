@@ -18,11 +18,10 @@
 #include <iostream>
 #include <memory>
 
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -32,15 +31,18 @@ class Parser;
 namespace details {
 struct Elf64_Verdef;
 struct Elf32_Verdef;
-}
+}  // namespace details
 
-//! Class which represents an entry defined in ``DT_VERDEF`` or ``.gnu.version_d``
+//! Class which represents an entry defined in ``DT_VERDEF`` or
+//! ``.gnu.version_d``
 class LIEF_API SymbolVersionDefinition : public Object {
   friend class Parser;
-  public:
-  using version_aux_t        = std::vector<std::unique_ptr<SymbolVersionAux>>;
-  using it_version_aux       = ref_iterator<version_aux_t&, SymbolVersionAux*>;
-  using it_const_version_aux = const_ref_iterator<const version_aux_t&, const SymbolVersionAux*>;
+
+ public:
+  using version_aux_t = std::vector<std::unique_ptr<SymbolVersionAux>>;
+  using it_version_aux = ref_iterator<version_aux_t&, SymbolVersionAux*>;
+  using it_const_version_aux =
+      const_ref_iterator<const version_aux_t&, const SymbolVersionAux*>;
 
   SymbolVersionDefinition();
   SymbolVersionDefinition(const details::Elf64_Verdef& header);
@@ -69,7 +71,7 @@ class LIEF_API SymbolVersionDefinition : public Object {
   uint32_t hash() const;
 
   //! SymbolVersionAux entries
-  it_version_aux       symbols_aux();
+  it_version_aux symbols_aux();
   it_const_version_aux symbols_aux() const;
 
   void version(uint16_t version);
@@ -81,16 +83,16 @@ class LIEF_API SymbolVersionDefinition : public Object {
   bool operator==(const SymbolVersionDefinition& rhs) const;
   bool operator!=(const SymbolVersionDefinition& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SymbolVersionDefinition& sym);
 
-  private:
+ private:
   uint16_t version_ = 1;
   uint16_t flags_ = 0;
-  uint16_t ndx_  = 0;
+  uint16_t ndx_ = 0;
   uint32_t hash_ = 0;
   version_aux_t symbol_version_aux_;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif
-

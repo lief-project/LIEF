@@ -14,63 +14,52 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (MainCommand::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (MainCommand::*)(T);
 
-
-template<>
+template <>
 void create<MainCommand>(py::module& m) {
-
   py::class_<MainCommand, LoadCommand>(m, "MainCommand",
-      R"delim(
+                                       R"delim(
       Class that represent the LC_MAIN command. This kind
       of command can be used to determine the entrypoint of an executable
       )delim")
 
-    .def_property("entrypoint",
-        static_cast<getter_t<uint64_t>>(&MainCommand::entrypoint),
-        static_cast<setter_t<uint64_t>>(&MainCommand::entrypoint),
-        "Offset of the *main* function relative to the ``__TEXT`` segment")
+      .def_property(
+          "entrypoint",
+          static_cast<getter_t<uint64_t>>(&MainCommand::entrypoint),
+          static_cast<setter_t<uint64_t>>(&MainCommand::entrypoint),
+          "Offset of the *main* function relative to the ``__TEXT`` segment")
 
-    .def_property("stack_size",
-        static_cast<getter_t<uint64_t>>(&MainCommand::stack_size),
-        static_cast<setter_t<uint64_t>>(&MainCommand::stack_size),
-        "The initial stack size (if not 0)")
+      .def_property("stack_size",
+                    static_cast<getter_t<uint64_t>>(&MainCommand::stack_size),
+                    static_cast<setter_t<uint64_t>>(&MainCommand::stack_size),
+                    "The initial stack size (if not 0)")
 
+      .def("__eq__", &MainCommand::operator==)
+      .def("__ne__", &MainCommand::operator!=)
+      .def("__hash__", [](const MainCommand& main) { return Hash::hash(main); })
 
-    .def("__eq__", &MainCommand::operator==)
-    .def("__ne__", &MainCommand::operator!=)
-    .def("__hash__",
-        [] (const MainCommand& main) {
-          return Hash::hash(main);
-        })
-
-
-    .def("__str__",
-        [] (const MainCommand& main)
-        {
-          std::ostringstream stream;
-          stream << main;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const MainCommand& main) {
+        std::ostringstream stream;
+        stream << main;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

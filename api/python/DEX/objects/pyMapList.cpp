@@ -15,26 +15,23 @@
  */
 #include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/hash.hpp"
-
 #include "pyDEX.hpp"
 #include "pyIterators.hpp"
 
 namespace LIEF {
 namespace DEX {
 
-template<class T>
+template <class T>
 using getter_t = T (MapList::*)(void) const;
 
-template<class T>
+template <class T>
 using no_const_getter_t = T (MapList::*)(void);
 
-template<class T>
+template <class T>
 using setter_t = void (MapList::*)(T);
 
-
-template<>
+template <>
 void create<MapList>(py::module& m) {
-
   init_ref_iterator<MapList::it_items_t>(m, "lief.DEX.MapList.it_items_t");
 
   py::class_<MapList, LIEF::Object>(m, "MapList", "DEX MapList representation")
@@ -72,5 +69,5 @@ void create<MapList>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

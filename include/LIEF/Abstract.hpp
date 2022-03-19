@@ -17,12 +17,12 @@
 #define LIEF_ABSTRACT_H_
 
 #include <LIEF/Abstract/Binary.hpp>
-#include <LIEF/Abstract/enums.hpp>
 #include <LIEF/Abstract/EnumToString.hpp>
+#include <LIEF/Abstract/Function.hpp>
 #include <LIEF/Abstract/Parser.hpp>
 #include <LIEF/Abstract/Relocation.hpp>
-#include <LIEF/Abstract/Function.hpp>
-#include <LIEF/Abstract/Symbol.hpp>
 #include <LIEF/Abstract/Section.hpp>
+#include <LIEF/Abstract/Symbol.hpp>
+#include <LIEF/Abstract/enums.hpp>
 
 #endif

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/MachO/DataInCode.hpp"
+
 #include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/DataInCode.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,52 +29,32 @@ DataInCode& DataInCode::operator=(const DataInCode&) = default;
 DataInCode::DataInCode(const DataInCode&) = default;
 DataInCode::~DataInCode() = default;
 
-DataInCode::DataInCode(const details::linkedit_data_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
-  data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+DataInCode::DataInCode(const details::linkedit_data_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize},
+      data_offset_{cmd.dataoff},
+      data_size_{cmd.datasize} {}
 
-DataInCode* DataInCode::clone() const {
-  return new DataInCode(*this);
-}
+DataInCode* DataInCode::clone() const { return new DataInCode(*this); }
 
-uint32_t DataInCode::data_offset() const {
-  return data_offset_;
-}
+uint32_t DataInCode::data_offset() const { return data_offset_; }
 
-uint32_t DataInCode::data_size() const {
-  return data_size_;
-}
+uint32_t DataInCode::data_size() const { return data_size_; }
 
-void DataInCode::data_offset(uint32_t offset) {
-  data_offset_ = offset;
-}
+void DataInCode::data_offset(uint32_t offset) { data_offset_ = offset; }
 
-void DataInCode::data_size(uint32_t size) {
-  data_size_ = size;
-}
-
+void DataInCode::data_size(uint32_t size) { data_size_ = size; }
 
 DataInCode& DataInCode::add(const DataCodeEntry& entry) {
   entries_.push_back(entry);
   return *this;
 }
 
+DataInCode::it_const_entries DataInCode::entries() const { return entries_; }
 
-DataInCode::it_const_entries DataInCode::entries() const {
-  return entries_;
-}
+DataInCode::it_entries DataInCode::entries() { return entries_; }
 
-DataInCode::it_entries DataInCode::entries() {
-  return entries_;
-}
-
-
-void DataInCode::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void DataInCode::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DataInCode::operator==(const DataInCode& rhs) const {
   if (this == &rhs) {
@@ -95,17 +75,17 @@ bool DataInCode::classof(const LoadCommand* cmd) {
   return type == LOAD_COMMAND_TYPES::LC_DATA_IN_CODE;
 }
 
-
 std::ostream& DataInCode::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
   os << std::endl;
   os << "Data location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
+  os << std::setw(8) << "Offset"
+     << ": 0x" << data_offset() << std::endl;
+  os << std::setw(8) << "Size"
+     << ": 0x" << data_size() << std::endl;
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

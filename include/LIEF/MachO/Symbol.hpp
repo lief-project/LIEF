@@ -18,13 +18,11 @@
 
 #include <iostream>
 
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/Abstract/Symbol.hpp"
-
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -37,7 +35,7 @@ class DylibCommand;
 namespace details {
 struct nlist_32;
 struct nlist_64;
-}
+}  // namespace details
 
 //! Class that represents a Symbol in a Mach-O file.
 //!
@@ -46,10 +44,9 @@ struct nlist_64;
 //! 2. The Dyld Export trie
 //! 3. The Dyld Symbol bindings
 class LIEF_API Symbol : public LIEF::Symbol {
-
   friend class BinaryParser;
 
-  public:
+ public:
   Symbol();
 
   Symbol(const details::nlist_32& cmd);
@@ -74,7 +71,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! This value is set when the symbol comes from the Dyld Export trie
   bool has_export_info() const;
 
-  //! Return the ExportInfo associated with this symbol (or nullptr if not present)
+  //! Return the ExportInfo associated with this symbol (or nullptr if not
+  //! present)
   //! @see has_export_info
   const ExportInfo* export_info() const;
   ExportInfo* export_info();
@@ -83,7 +81,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! This value is set when the symbol comes from the Dyld symbol bindings
   bool has_binding_info() const;
 
-  //! Return the BindingInfo associated with this symbol (or nullptr if not present)
+  //! Return the BindingInfo associated with this symbol (or nullptr if not
+  //! present)
   //! @see has_binding_info
   const BindingInfo* binding_info() const;
   BindingInfo* binding_info();
@@ -98,15 +97,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   //! Return the library in which the symbol is defined.
   //! It returns a null pointer if the library can't be resolved
-  inline const DylibCommand* library() const {
-    return library_;
-  }
+  inline const DylibCommand* library() const { return library_; }
 
-  inline DylibCommand* library() {
-    return library_;
-  }
+  inline DylibCommand* library() { return library_; }
 
-  //! Return the origin of the symbol: from LC_SYMTAB command or from the Dyld information
+  //! Return the origin of the symbol: from LC_SYMTAB command or from the Dyld
+  //! information
   SYMBOL_ORIGINS origin() const;
 
   void type(uint8_t type);
@@ -118,12 +114,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   bool operator==(const Symbol& rhs) const;
   bool operator!=(const Symbol& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Symbol& symbol);
 
-  private:
-  inline void library(DylibCommand& library) {
-    this->library_ = &library;
-  }
+ private:
+  inline void library(DylibCommand& library) { this->library_ = &library; }
 
   uint8_t type_ = 0;
   uint8_t numberof_sections_ = 0;
@@ -137,6 +132,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
   SYMBOL_ORIGINS origin_ = SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

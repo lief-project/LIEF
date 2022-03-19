@@ -17,10 +17,9 @@
 #define LIEF_MACHO_RELOCATION_OBJECT_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -30,21 +29,22 @@ class BinaryParser;
 namespace details {
 struct relocation_info;
 struct scattered_relocation_info;
-}
+}  // namespace details
 
 //! Class that represents a relocation presents in the MachO object
-//! file (``.o``). Usually, this kind of relocation is found in the MachO::Section
+//! file (``.o``). Usually, this kind of relocation is found in the
+//! MachO::Section
 //!
 //! @see RelocationDyld
 class LIEF_API RelocationObject : public Relocation {
-
   friend class BinaryParser;
 
-  public:
+ public:
   using Relocation::Relocation;
   RelocationObject();
   RelocationObject(const details::relocation_info& relocinfo);
-  RelocationObject(const details::scattered_relocation_info& scattered_relocinfo);
+  RelocationObject(
+      const details::scattered_relocation_info& scattered_relocinfo);
 
   RelocationObject& operator=(RelocationObject other);
   RelocationObject(const RelocationObject& other);
@@ -62,23 +62,25 @@ class LIEF_API RelocationObject : public Relocation {
   size_t size() const override;
 
   //! Address where the relocation is applied
-  //! This address is relative to the start of the section where the relocation takes place
+  //! This address is relative to the start of the section where the relocation
+  //! takes place
   uint64_t address() const override;
 
   //! ``true`` if the relocation is a scattered one
   bool is_scattered() const;
 
   //! For **scattered** relocations:
-  //! The address of the relocatable expression for the item in the file that needs
-  //! to be updated if the address is changed.
+  //! The address of the relocatable expression for the item in the file that
+  //! needs to be updated if the address is changed.
   //!
   //! For relocatable expressions with the difference of two section addresses,
   //! the address from which to subtract (in mathematical terms, the minuend)
-  //! is contained in the first relocation entry and the address to subtract (the subtrahend)
-  //! is contained in the second relocation entry.
+  //! is contained in the first relocation entry and the address to subtract
+  //! (the subtrahend) is contained in the second relocation entry.
   int32_t value() const;
 
-  //! Origin of the relocation. For this object it should be RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE)
+  //! Origin of the relocation. For this object it should be
+  //! RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE)
   RELOCATION_ORIGINS origin() const override;
 
   void pc_relative(bool val) override;
@@ -95,12 +97,12 @@ class LIEF_API RelocationObject : public Relocation {
 
   static bool classof(const Relocation& r);
 
-  private:
+ private:
   bool is_pcrel_ = false;
   bool is_scattered_ = false;
   int32_t value_ = 0;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

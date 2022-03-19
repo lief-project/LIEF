@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/DEX/EnumToString.hpp"
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
-
-#include "LIEF/DEX/EnumToString.hpp"
-
 #include "pyDEX.hpp"
 
 #define PY_ENUM(x) to_string(x), x
@@ -25,38 +23,35 @@
 namespace LIEF {
 namespace DEX {
 
-template<class T>
+template <class T>
 using getter_t = T (Type::*)(void) const;
 
-template<class T>
+template <class T>
 using no_const_getter_t = T (Type::*)(void);
 
-template<class T>
+template <class T>
 using setter_t = void (Type::*)(T);
 
-
-template<>
+template <>
 void create<Type>(py::module& m) {
-
   py::class_<Type, LIEF::Object> pytype(m, "Type", "DEX Type representation");
 
   py::enum_<Type::TYPES>(pytype, "TYPES")
-    .value(PY_ENUM(Type::TYPES::UNKNOWN))
-    .value(PY_ENUM(Type::TYPES::ARRAY))
-    .value(PY_ENUM(Type::TYPES::PRIMITIVE))
-    .value(PY_ENUM(Type::TYPES::CLASS));
+      .value(PY_ENUM(Type::TYPES::UNKNOWN))
+      .value(PY_ENUM(Type::TYPES::ARRAY))
+      .value(PY_ENUM(Type::TYPES::PRIMITIVE))
+      .value(PY_ENUM(Type::TYPES::CLASS));
 
   py::enum_<Type::PRIMITIVES>(pytype, "PRIMITIVES")
-    .value(PY_ENUM(Type::PRIMITIVES::VOID_T))
-    .value(PY_ENUM(Type::PRIMITIVES::BOOLEAN))
-    .value(PY_ENUM(Type::PRIMITIVES::BYTE))
-    .value(PY_ENUM(Type::PRIMITIVES::SHORT))
-    .value(PY_ENUM(Type::PRIMITIVES::CHAR))
-    .value(PY_ENUM(Type::PRIMITIVES::INT))
-    .value(PY_ENUM(Type::PRIMITIVES::LONG))
-    .value(PY_ENUM(Type::PRIMITIVES::FLOAT))
-    .value(PY_ENUM(Type::PRIMITIVES::DOUBLE));
-
+      .value(PY_ENUM(Type::PRIMITIVES::VOID_T))
+      .value(PY_ENUM(Type::PRIMITIVES::BOOLEAN))
+      .value(PY_ENUM(Type::PRIMITIVES::BYTE))
+      .value(PY_ENUM(Type::PRIMITIVES::SHORT))
+      .value(PY_ENUM(Type::PRIMITIVES::CHAR))
+      .value(PY_ENUM(Type::PRIMITIVES::INT))
+      .value(PY_ENUM(Type::PRIMITIVES::LONG))
+      .value(PY_ENUM(Type::PRIMITIVES::FLOAT))
+      .value(PY_ENUM(Type::PRIMITIVES::DOUBLE));
 
   pytype
     .def_property_readonly("type",
@@ -121,5 +116,5 @@ void create<Type>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

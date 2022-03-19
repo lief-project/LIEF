@@ -17,12 +17,10 @@
 #define LIEF_MACHO_BINDING_INFO_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/MachO/enums.hpp"
-
+#include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -34,19 +32,16 @@ class BinaryParser;
 //! Class that provides an interface over an entry in DyldInfo structure
 //!
 //! This class does not represent a structure that exists in the Mach-O format
-//! specifications but it provides a *view* on an entry of the Dyld binding opcodes.
+//! specifications but it provides a *view* on an entry of the Dyld binding
+//! opcodes.
 class LIEF_API BindingInfo : public Object {
-
   friend class BinaryParser;
 
-  public:
+ public:
   BindingInfo();
-  BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
-      uint64_t address,
-      int64_t addend = 0,
-      int32_t oridnal = 0,
-      bool is_weak = false,
-      bool is_non_weak_definition = false, uint64_t offset = 0);
+  BindingInfo(BINDING_CLASS cls, BIND_TYPES type, uint64_t address,
+              int64_t addend = 0, int32_t oridnal = 0, bool is_weak = false,
+              bool is_non_weak_definition = false, uint64_t offset = 0);
 
   BindingInfo& operator=(BindingInfo other);
   BindingInfo(const BindingInfo& other);
@@ -58,7 +53,7 @@ class LIEF_API BindingInfo : public Object {
   //! The MachO::SegmentCommand associated with the BindingInfo or
   //! a nullptr of it is not bind to a SegmentCommand
   const SegmentCommand* segment() const;
-  SegmentCommand*       segment();
+  SegmentCommand* segment();
 
   //! Check if a MachO::DylibCommand is tied with the BindingInfo
   bool has_library() const;
@@ -66,7 +61,7 @@ class LIEF_API BindingInfo : public Object {
   //! MachO::DylibCommand associated with the BindingInfo or a nullptr
   //! if not present
   const DylibCommand* library() const;
-  DylibCommand*       library();
+  DylibCommand* library();
 
   //! Check if a MachO::Symbol is associated with the BindingInfo
   bool has_symbol() const;
@@ -74,7 +69,7 @@ class LIEF_API BindingInfo : public Object {
   //! MachO::Symbol associated with the BindingInfo or
   //! a nullptr if not present
   const Symbol* symbol() const;
-  Symbol*       symbol();
+  Symbol* symbol();
 
   //! Address of the binding
   uint64_t address() const;
@@ -116,22 +111,23 @@ class LIEF_API BindingInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const BindingInfo& binding_info);
 
-  private:
-  BINDING_CLASS   class_ = BINDING_CLASS::BIND_CLASS_STANDARD;
-  BIND_TYPES      binding_type_ = BIND_TYPES::BIND_TYPE_POINTER;
+ private:
+  BINDING_CLASS class_ = BINDING_CLASS::BIND_CLASS_STANDARD;
+  BIND_TYPES binding_type_ = BIND_TYPES::BIND_TYPE_POINTER;
   SegmentCommand* segment_ = nullptr;
-  Symbol*         symbol_ = nullptr;
-  int32_t         library_ordinal_ = 0;
-  int64_t         addend_ = 0;
-  bool            is_weak_import_ = false;
-  bool            is_non_weak_definition_ = false;
-  DylibCommand*   library_ = nullptr;
-  uint64_t        address_ = 0;
-  uint64_t        offset_ = 0;
+  Symbol* symbol_ = nullptr;
+  int32_t library_ordinal_ = 0;
+  int64_t addend_ = 0;
+  bool is_weak_import_ = false;
+  bool is_non_weak_definition_ = false;
+  DylibCommand* library_ = nullptr;
+  uint64_t address_ = 0;
+  uint64_t offset_ = 0;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

@@ -16,23 +16,20 @@
 
 #include <type_traits>
 
-#include "logging.hpp"
-
-#include "LIEF/utils.hpp"
-
 #include "LIEF/DEX.hpp"
-
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
 #include "LIEF/VDEX/File.hpp"
+#include "LIEF/utils.hpp"
 #include "OAT/Structures.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace OAT {
 
-template<>
+template <>
 void Parser::parse_dex_files<details::OAT131_t>() {
   auto& oat = oat_binary();
   size_t nb_dex_files = oat.header_.nb_dex_files();
@@ -46,7 +43,6 @@ void Parser::parse_dex_files<details::OAT131_t>() {
 
   stream_->setpos(oat_dex_files_offset);
   for (size_t i = 0; i < nb_dex_files; ++i) {
-
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
 
     auto dex_file = std::make_unique<DexFile>();
@@ -111,7 +107,8 @@ void Parser::parse_dex_files<details::OAT131_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        if (auto off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+        if (auto off = stream_->peek<uint32_t>(classes_offset +
+                                               cls_idx * sizeof(uint32_t))) {
           oat_dex_file->classes_offsets_.push_back(*off);
         } else {
           break;
@@ -121,11 +118,5 @@ void Parser::parse_dex_files<details::OAT131_t>() {
   }
 }
 
-
-
-
-
-
-
-} // Namespace OAT
-} // Namespace LIEF
+}  // Namespace OAT
+}  // Namespace LIEF

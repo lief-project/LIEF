@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iostream>
-#include <iomanip>
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+
 #include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <iterator>
 
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -30,93 +30,77 @@ namespace ELF {
 SymbolVersionDefinition::SymbolVersionDefinition() = default;
 SymbolVersionDefinition::~SymbolVersionDefinition() = default;
 
-SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf64_Verdef& header) :
-  version_{header.vd_version},
-  flags_{header.vd_flags},
-  ndx_{header.vd_ndx},
-  hash_{header.vd_hash}
-{}
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const details::Elf64_Verdef& header)
+    : version_{header.vd_version},
+      flags_{header.vd_flags},
+      ndx_{header.vd_ndx},
+      hash_{header.vd_hash} {}
 
-SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf32_Verdef& header) :
-  version_{header.vd_version},
-  flags_{header.vd_flags},
-  ndx_{header.vd_ndx},
-  hash_{header.vd_hash}
-{}
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const details::Elf32_Verdef& header)
+    : version_{header.vd_version},
+      flags_{header.vd_flags},
+      ndx_{header.vd_ndx},
+      hash_{header.vd_hash} {}
 
-
-SymbolVersionDefinition::SymbolVersionDefinition(const SymbolVersionDefinition& other) :
-  Object{other},
-  version_{other.version_},
-  flags_{other.flags_},
-  ndx_{other.ndx_},
-  hash_{other.hash_}
-{
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const SymbolVersionDefinition& other)
+    : Object{other},
+      version_{other.version_},
+      flags_{other.flags_},
+      ndx_{other.ndx_},
+      hash_{other.hash_} {
   symbol_version_aux_.reserve(other.symbol_version_aux_.size());
-  for (const std::unique_ptr<SymbolVersionAux>& aux : other.symbol_version_aux_) {
+  for (const std::unique_ptr<SymbolVersionAux>& aux :
+       other.symbol_version_aux_) {
     symbol_version_aux_.emplace_back(new SymbolVersionAux{*aux});
   }
 }
 
-SymbolVersionDefinition& SymbolVersionDefinition::operator=(SymbolVersionDefinition other) {
+SymbolVersionDefinition& SymbolVersionDefinition::operator=(
+    SymbolVersionDefinition other) {
   swap(other);
   return *this;
 }
 
-
-
 void SymbolVersionDefinition::swap(SymbolVersionDefinition& other) {
-  std::swap(version_,            other.version_);
-  std::swap(flags_,              other.flags_);
-  std::swap(ndx_,                other.ndx_);
-  std::swap(hash_,               other.hash_);
+  std::swap(version_, other.version_);
+  std::swap(flags_, other.flags_);
+  std::swap(ndx_, other.ndx_);
+  std::swap(hash_, other.hash_);
   std::swap(symbol_version_aux_, other.symbol_version_aux_);
 }
 
+uint16_t SymbolVersionDefinition::version() const { return version_; }
 
-uint16_t SymbolVersionDefinition::version() const {
-  return version_;
-}
+uint16_t SymbolVersionDefinition::flags() const { return flags_; }
 
-uint16_t SymbolVersionDefinition::flags() const {
-  return flags_;
-}
+uint16_t SymbolVersionDefinition::ndx() const { return ndx_; }
 
-uint16_t SymbolVersionDefinition::ndx() const {
-  return ndx_;
-}
-
-uint32_t SymbolVersionDefinition::hash() const {
-  return hash_;
-}
+uint32_t SymbolVersionDefinition::hash() const { return hash_; }
 
 SymbolVersionDefinition::it_version_aux SymbolVersionDefinition::symbols_aux() {
   return symbol_version_aux_;
 }
 
-SymbolVersionDefinition::it_const_version_aux SymbolVersionDefinition::symbols_aux() const {
+SymbolVersionDefinition::it_const_version_aux
+SymbolVersionDefinition::symbols_aux() const {
   return symbol_version_aux_;
-
 }
 
-void SymbolVersionDefinition::version(uint16_t version) {
-  version_ = version;
-}
+void SymbolVersionDefinition::version(uint16_t version) { version_ = version; }
 
-void SymbolVersionDefinition::flags(uint16_t flags) {
-  flags_ = flags;
-}
+void SymbolVersionDefinition::flags(uint16_t flags) { flags_ = flags; }
 
-void SymbolVersionDefinition::hash(uint32_t hash) {
-  hash_ = hash;
-}
+void SymbolVersionDefinition::hash(uint32_t hash) { hash_ = hash; }
 
 void SymbolVersionDefinition::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-bool SymbolVersionDefinition::operator==(const SymbolVersionDefinition& rhs) const {
+bool SymbolVersionDefinition::operator==(
+    const SymbolVersionDefinition& rhs) const {
   if (this == &rhs) {
     return true;
   }
@@ -125,7 +109,8 @@ bool SymbolVersionDefinition::operator==(const SymbolVersionDefinition& rhs) con
   return hash_lhs == hash_rhs;
 }
 
-bool SymbolVersionDefinition::operator!=(const SymbolVersionDefinition& rhs) const {
+bool SymbolVersionDefinition::operator!=(
+    const SymbolVersionDefinition& rhs) const {
   return !(*this == rhs);
 }
 
@@ -138,5 +123,5 @@ std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {
 
   return os;
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

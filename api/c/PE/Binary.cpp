@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cstring>
-
 #include "LIEF/PE/Binary.h"
 
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Binary.hpp"
+#include <cstring>
 
 #include "Binary.hpp"
+#include "DataDirectory.hpp"
 #include "DosHeader.hpp"
 #include "Header.hpp"
+#include "Import.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
 #include "OptionalHeader.hpp"
 #include "Section.hpp"
-#include "DataDirectory.hpp"
-#include "Import.hpp"
 
 using namespace LIEF::PE;
 
@@ -34,7 +33,7 @@ namespace LIEF {
 namespace PE {
 
 void init_c_binary(Pe_Binary_t* c_binary, Binary* binary) {
-  c_binary->name    = binary->name().c_str();
+  c_binary->name = binary->name().c_str();
   c_binary->handler = reinterpret_cast<void*>(binary);
 
   init_c_dos_header(c_binary, binary);
@@ -43,13 +42,12 @@ void init_c_binary(Pe_Binary_t* c_binary, Binary* binary) {
   init_c_sections(c_binary, binary);
   init_c_data_directories(c_binary, binary);
   init_c_imports(c_binary, binary);
-
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
-Pe_Binary_t* pe_parse(const char *file) {
+Pe_Binary_t* pe_parse(const char* file) {
   Binary* binary = Parser::parse(file).release();
   auto* c_binary = static_cast<Pe_Binary_t*>(malloc(sizeof(Pe_Binary_t)));
   std::memset(c_binary, 0, sizeof(Pe_Binary_t));

@@ -20,7 +20,6 @@
 
 #ifdef LIEF_JSON_SUPPORT
 
-
 #ifdef LIEF_ELF_SUPPORT
 #include "LIEF/ELF/json.hpp"
 #endif
@@ -29,12 +28,11 @@
 #include "LIEF/PE/json.hpp"
 #endif
 
-#include "LIEF/Abstract/json.hpp"
-
 #include "LIEF/Abstract.hpp"
+#include "LIEF/Abstract/json.hpp"
 #include "LIEF/ELF.hpp"
 #include "LIEF/PE.hpp"
 
-#endif // LIEF_JSON_SUPPORT
+#endif  // LIEF_JSON_SUPPORT
 
 #endif

@@ -17,8 +17,8 @@
 #define LIEF_OAT_PARSER_H_
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Parser.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -38,18 +38,20 @@ class Class;
 
 //! Class to parse an OAT file to produce an OAT::Binary
 class LIEF_API Parser : public LIEF::ELF::Parser {
-  public:
+ public:
   friend struct ::Profiler;
   //! Parse an OAT file
   static std::unique_ptr<Binary> parse(const std::string& oat_file);
-  static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
+  static std::unique_ptr<Binary> parse(const std::string& oat_file,
+                                       const std::string& vdex_file);
 
-  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
+                                       const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
-  protected:
+ protected:
   Parser();
   Parser(const std::string& oat_file);
   Parser(std::vector<uint8_t> data);
@@ -63,26 +65,27 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   bool has_vdex() const;
   void set_vdex(std::unique_ptr<VDEX::File> file);
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_binary();
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_header();
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_header_keys();
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_dex_files();
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_type_lookup_table();
 
-  template<typename OAT_T>
+  template <typename OAT_T>
   void parse_oat_classes();
 
-  template<typename OAT_T>
-  void parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX::Class& dex_class);
+  template <typename OAT_T>
+  void parse_oat_methods(uint64_t methods_offsets, Class& clazz,
+                         const DEX::Class& dex_class);
 
   void init(const std::string& name = "");
 
@@ -95,9 +98,6 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   uint64_t exec_size_ = 0;
 };
 
-
-
-
-} // namespace OAT
-} // namespace LIEF
+}  // namespace OAT
+}  // namespace LIEF
 #endif

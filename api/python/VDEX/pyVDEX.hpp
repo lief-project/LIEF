@@ -17,20 +17,18 @@
 #define PY_LIEF_VDEX_H_
 
 #include "LIEF/VDEX.hpp"
-
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
-
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
 namespace VDEX {
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -39,13 +37,11 @@ void init_objects(py::module&);
 
 void init_utils(py::module&);
 
-
 SPECIALIZE_CREATE(Parser);
 SPECIALIZE_CREATE(File);
 SPECIALIZE_CREATE(Header);
 
-}
-}
-
+}  // namespace VDEX
+}  // namespace LIEF
 
 #endif

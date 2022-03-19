@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/Parser.hpp"
+
 #include <cstring>
 
-#include "LIEF/MachO/Binary.h"
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/FatBinary.hpp"
-
 #include "Binary.hpp"
+#include "LIEF/MachO/Binary.h"
+#include "LIEF/MachO/FatBinary.hpp"
 
 using namespace LIEF::MachO;
 
-Macho_Binary_t** macho_parse(const char *file) {
+Macho_Binary_t** macho_parse(const char* file) {
   FatBinary* fat = Parser::parse(file).release();
 
   auto** c_macho_binaries = static_cast<Macho_Binary_t**>(
@@ -32,7 +32,8 @@ Macho_Binary_t** macho_parse(const char *file) {
   for (size_t i = 0; i < fat->size(); ++i) {
     Binary* binary = fat->at(i);
     if (binary != nullptr) {
-      c_macho_binaries[i] = static_cast<Macho_Binary_t*>(malloc(sizeof(Macho_Binary_t)));
+      c_macho_binaries[i] =
+          static_cast<Macho_Binary_t*>(malloc(sizeof(Macho_Binary_t)));
       init_c_binary(c_macho_binaries[i], binary);
     }
   }
@@ -41,4 +42,3 @@ Macho_Binary_t** macho_parse(const char *file) {
 
   return c_macho_binaries;
 }
-

@@ -19,14 +19,14 @@
 #include "LIEF/config.h"
 
 #if defined(LIEF_OAT_SUPPORT)
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Class.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/OAT/Header.hpp"
+#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/utils.hpp"
-#include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/Header.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/Method.hpp"
-#include "LIEF/OAT/EnumToString.hpp"
 #endif
 
 #endif

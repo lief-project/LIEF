@@ -27,7 +27,7 @@ struct pe_code_integrity;
 }
 
 class LIEF_API CodeIntegrity : public Object {
-  public:
+ public:
   static constexpr size_t PRINT_WIDTH = 20;
   CodeIntegrity();
   CodeIntegrity(const details::pe_code_integrity& header);
@@ -56,17 +56,17 @@ class LIEF_API CodeIntegrity : public Object {
   bool operator==(const CodeIntegrity& rhs) const;
   bool operator!=(const CodeIntegrity& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CodeIntegrity& entry);
 
-  private:
+ private:
   uint16_t flags_;
   uint16_t catalog_;
 
   uint32_t catalog_offset_;
   uint32_t reserved_;
-
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

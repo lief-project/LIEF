@@ -19,18 +19,17 @@
 namespace LIEF {
 namespace PE {
 
-template<class T>
-LoadConfigurationV1::LoadConfigurationV1(const details::load_configuration_v1<T>& header) :
-  LoadConfigurationV0{reinterpret_cast<const details::load_configuration_v0<T>&>(header)},
-  guard_cf_check_function_pointer_{header.GuardCFCheckFunctionPointer},
-  guard_cf_dispatch_function_pointer_{header.GuardCFDispatchFunctionPointer},
-  guard_cf_function_table_{header.GuardCFFunctionTable},
-  guard_cf_function_count_{header.GuardCFFunctionCount},
-  guard_flags_{static_cast<GUARD_CF_FLAGS>(header.GuardFlags)}
-{
-}
+template <class T>
+LoadConfigurationV1::LoadConfigurationV1(
+    const details::load_configuration_v1<T>& header)
+    : LoadConfigurationV0{reinterpret_cast<
+          const details::load_configuration_v0<T>&>(header)},
+      guard_cf_check_function_pointer_{header.GuardCFCheckFunctionPointer},
+      guard_cf_dispatch_function_pointer_{
+          header.GuardCFDispatchFunctionPointer},
+      guard_cf_function_table_{header.GuardCFFunctionTable},
+      guard_cf_function_count_{header.GuardCFFunctionCount},
+      guard_flags_{static_cast<GUARD_CF_FLAGS>(header.GuardFlags)} {}
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

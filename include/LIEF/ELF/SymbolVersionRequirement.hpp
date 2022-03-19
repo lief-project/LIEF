@@ -16,14 +16,14 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H_
 #define LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H_
 
-#include <string>
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -32,16 +32,21 @@ class Parser;
 namespace details {
 struct Elf64_Verneed;
 struct Elf32_Verneed;
-}
+}  // namespace details
 
-//! Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table
+//! Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r``
+//! table
 class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 
-  public:
-  using aux_requirement_t        = std::vector<std::unique_ptr<SymbolVersionAuxRequirement>>;
-  using it_aux_requirement       = ref_iterator<aux_requirement_t&, SymbolVersionAuxRequirement*>;
-  using it_const_aux_requirement = const_ref_iterator<const aux_requirement_t&, const SymbolVersionAuxRequirement*>;
+ public:
+  using aux_requirement_t =
+      std::vector<std::unique_ptr<SymbolVersionAuxRequirement>>;
+  using it_aux_requirement =
+      ref_iterator<aux_requirement_t&, SymbolVersionAuxRequirement*>;
+  using it_const_aux_requirement =
+      const_ref_iterator<const aux_requirement_t&,
+                         const SymbolVersionAuxRequirement*>;
 
   SymbolVersionRequirement();
   SymbolVersionRequirement(const details::Elf64_Verneed& header);
@@ -62,32 +67,34 @@ class LIEF_API SymbolVersionRequirement : public Object {
   uint32_t cnt() const;
 
   //! Auxiliary entries as an iterator over SymbolVersionAuxRequirement
-  it_aux_requirement       auxiliary_symbols();
+  it_aux_requirement auxiliary_symbols();
   it_const_aux_requirement auxiliary_symbols() const;
 
-  //! Return the library name associated with this requirement (e.g. ``libc.so.6``)
+  //! Return the library name associated with this requirement (e.g.
+  //! ``libc.so.6``)
   const std::string& name() const;
 
   void version(uint16_t version);
   void name(const std::string& name);
 
   //! Add a version auxiliary requirement to the existing list
-  SymbolVersionAuxRequirement& add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
+  SymbolVersionAuxRequirement& add_aux_requirement(
+      const SymbolVersionAuxRequirement& aux_requirement);
 
   void accept(Visitor& visitor) const override;
 
   bool operator==(const SymbolVersionRequirement& rhs) const;
   bool operator!=(const SymbolVersionRequirement& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const SymbolVersionRequirement& symr);
 
-  private:
+ private:
   aux_requirement_t aux_requirements_;
-  uint16_t    version_ = 0;
+  uint16_t version_ = 0;
   std::string name_;
 };
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif
-

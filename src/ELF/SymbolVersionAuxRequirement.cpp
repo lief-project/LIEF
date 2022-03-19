@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ELF/hash.hpp"
-
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -24,58 +24,41 @@ namespace ELF {
 SymbolVersionAuxRequirement::SymbolVersionAuxRequirement() = default;
 
 SymbolVersionAuxRequirement::~SymbolVersionAuxRequirement() = default;
-SymbolVersionAuxRequirement& SymbolVersionAuxRequirement::operator=(const SymbolVersionAuxRequirement&) = default;
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&) = default;
+SymbolVersionAuxRequirement& SymbolVersionAuxRequirement::operator=(
+    const SymbolVersionAuxRequirement&) = default;
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(
+    const SymbolVersionAuxRequirement&) = default;
 
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(
+    const details::Elf64_Vernaux& header)
+    : hash_{header.vna_hash},
+      flags_{header.vna_flags},
+      other_{header.vna_other} {}
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header) :
-  hash_{header.vna_hash},
-  flags_{header.vna_flags},
-  other_{header.vna_other}
-{}
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(
+    const details::Elf32_Vernaux& header)
+    : hash_{header.vna_hash},
+      flags_{header.vna_flags},
+      other_{header.vna_other} {}
 
+uint32_t SymbolVersionAuxRequirement::hash() const { return hash_; }
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header) :
-  hash_{header.vna_hash},
-  flags_{header.vna_flags},
-  other_{header.vna_other}
-{}
+uint16_t SymbolVersionAuxRequirement::flags() const { return flags_; }
 
+uint16_t SymbolVersionAuxRequirement::other() const { return other_; }
 
-uint32_t SymbolVersionAuxRequirement::hash() const {
-  return hash_;
-}
+void SymbolVersionAuxRequirement::hash(uint32_t hash) { hash_ = hash; }
 
+void SymbolVersionAuxRequirement::flags(uint16_t flags) { flags_ = flags; }
 
-uint16_t SymbolVersionAuxRequirement::flags() const {
-  return flags_;
-}
-
-
-uint16_t SymbolVersionAuxRequirement::other() const {
-  return other_;
-}
-
-
-void SymbolVersionAuxRequirement::hash(uint32_t hash) {
-  hash_ = hash;
-}
-
-
-void SymbolVersionAuxRequirement::flags(uint16_t flags) {
-  flags_ = flags;
-}
-
-
-void SymbolVersionAuxRequirement::other(uint16_t other) {
-  other_ = other;
-}
+void SymbolVersionAuxRequirement::other(uint16_t other) { other_ = other; }
 
 void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool SymbolVersionAuxRequirement::operator==(const SymbolVersionAuxRequirement& rhs) const {
+bool SymbolVersionAuxRequirement::operator==(
+    const SymbolVersionAuxRequirement& rhs) const {
   if (this == &rhs) {
     return true;
   }
@@ -84,15 +67,15 @@ bool SymbolVersionAuxRequirement::operator==(const SymbolVersionAuxRequirement& 
   return hash_lhs == hash_rhs;
 }
 
-bool SymbolVersionAuxRequirement::operator!=(const SymbolVersionAuxRequirement& rhs) const {
+bool SymbolVersionAuxRequirement::operator!=(
+    const SymbolVersionAuxRequirement& rhs) const {
   return !(*this == rhs);
 }
 
-
-
-std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux) {
+std::ostream& operator<<(std::ostream& os,
+                         const SymbolVersionAuxRequirement& symAux) {
   os << symAux.name();
   return os;
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

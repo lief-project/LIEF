@@ -19,19 +19,19 @@
 // LEAF raises warnings which pollute the LIEF's warning
 // This sequence disables the warning for the include
 #if defined(_MSC_VER)
-#    pragma warning(push,1)
+#pragma warning(push, 1)
 #elif defined(__clang__)
-#    pragma clang system_header
-#elif (__GNUC__*100+__GNUC_MINOR__>301)
-#    pragma GCC system_header
+#pragma clang system_header
+#elif (__GNUC__ * 100 + __GNUC_MINOR__ > 301)
+#pragma GCC system_header
 #endif
 
-#ifndef LIEF_ENABLES_LEAF_EXCEPTIONS // Disable exceptions by default;
-  #ifndef BOOST_LEAF_NO_EXCEPTIONS
-    #define BOOST_LEAF_NO_EXCEPTIONS
-  #else
-    #define LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED
-  #endif
+#ifndef LIEF_ENABLES_LEAF_EXCEPTIONS  // Disable exceptions by default;
+#ifndef BOOST_LEAF_NO_EXCEPTIONS
+#define BOOST_LEAF_NO_EXCEPTIONS
+#else
+#define LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED
+#endif
 #endif
 
 #ifndef LIEF_EXTERNAL_LEAF
@@ -40,22 +40,19 @@
 #include <boost/leaf.hpp>
 #endif
 
-
 #if defined(BOOST_LEAF_NO_EXCEPTIONS) || defined(BOOST_NO_EXCEPTIONS)
 namespace boost {
-inline void throw_exception(const std::exception&) {
-  std::abort();
-}
-}
+inline void throw_exception(const std::exception&) { std::abort(); }
+}  // namespace boost
 #endif
 
-#if !defined(LIEF_ENABLES_LEAF_EXCEPTIONS) && !defined(LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED)
+#if !defined(LIEF_ENABLES_LEAF_EXCEPTIONS) && \
+    !defined(LIEF_BOOST_NO_EXCEPTIONS_ALREADY_DEFINED)
 #undef BOOST_LEAF_NO_EXCEPTIONS
 #endif
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-
 
 #endif

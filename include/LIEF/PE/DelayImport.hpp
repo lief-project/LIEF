@@ -16,15 +16,14 @@
 #ifndef LIEF_PE_DELAY_IMPORT_H
 #define LIEF_PE_DELAY_IMPORT_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/PE/DelayImportEntry.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-
-#include "LIEF/PE/DelayImportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -35,13 +34,12 @@ struct delay_imports;
 
 //! Class that represents a PE delayed import.
 class LIEF_API DelayImport : public Object {
-
   friend class Parser;
   friend class Builder;
 
-  public:
-  using entries_t        = std::vector<DelayImportEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
+ public:
+  using entries_t = std::vector<DelayImportEntry>;
+  using it_entries = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
   DelayImport();
@@ -111,9 +109,10 @@ class LIEF_API DelayImport : public Object {
   bool operator==(const DelayImport& rhs) const;
   bool operator!=(const DelayImport& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImport& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DelayImport& entry);
 
-  private:
+ private:
   uint32_t attribute_ = 0;
   std::string name_;
   uint32_t handle_ = 0;
@@ -127,7 +126,7 @@ class LIEF_API DelayImport : public Object {
   PE_TYPE type_ = PE_TYPE::PE32;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

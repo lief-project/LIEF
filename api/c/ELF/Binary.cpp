@@ -13,42 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cstring>
 #include "LIEF/ELF/Binary.h"
+
+#include <cstring>
+
+#include "Binary.hpp"
+#include "DynamicEntry.hpp"
+#include "Header.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Header.h"
+#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Section.h"
 #include "LIEF/ELF/Segment.h"
-#include "LIEF/ELF/Header.h"
 #include "LIEF/ELF/Symbol.h"
-
-#include "LIEF/ELF/Parser.hpp"
-#include "LIEF/ELF/Binary.hpp"
-
 #include "Section.hpp"
 #include "Segment.hpp"
-#include "DynamicEntry.hpp"
 #include "Symbol.hpp"
-#include "Header.hpp"
-#include "Binary.hpp"
 
 using namespace LIEF::ELF;
 
 namespace LIEF {
 namespace ELF {
 void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
-  c_binary->handler     = reinterpret_cast<void*>(binary);
-  c_binary->name        = binary->name().c_str();
-  c_binary->type        = static_cast<enum LIEF_ELF_ELF_CLASS>(binary->type());
+  c_binary->handler = reinterpret_cast<void*>(binary);
+  c_binary->name = binary->name().c_str();
+  c_binary->type = static_cast<enum LIEF_ELF_ELF_CLASS>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
     const std::string& interp = binary->interpreter();
-    c_binary->interpreter = static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
+    c_binary->interpreter =
+        static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
     std::memcpy(
         reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
-        reinterpret_cast<const void*>(interp.data()),
-        interp.size());
-    reinterpret_cast<char*>(const_cast<char*>(c_binary->interpreter))[interp.size()] = '\0';
+        reinterpret_cast<const void*>(interp.data()), interp.size());
+    reinterpret_cast<char*>(
+        const_cast<char*>(c_binary->interpreter))[interp.size()] = '\0';
   }
-
 
   init_c_header(c_binary, binary);
   init_c_sections(c_binary, binary);
@@ -56,14 +56,12 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   init_c_dynamic_symbols(c_binary, binary);
   init_c_static_symbols(c_binary, binary);
   init_c_dynamic_entries(c_binary, binary);
-
-
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
-Elf_Binary_t* elf_parse(const char *file) {
+Elf_Binary_t* elf_parse(const char* file) {
   Binary* binary = Parser::parse(file).release();
   auto* c_binary = static_cast<Elf_Binary_t*>(malloc(sizeof(Elf_Binary_t)));
   memset(c_binary, 0, sizeof(Elf_Binary_t));
@@ -79,7 +77,8 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
 
   hdr.file_type(static_cast<LIEF::ELF::E_TYPE>(binary->header.file_type));
   hdr.machine_type(static_cast<LIEF::ELF::ARCH>(binary->header.machine_type));
-  hdr.object_file_version(static_cast<LIEF::ELF::VERSION>(binary->header.object_file_version));
+  hdr.object_file_version(
+      static_cast<LIEF::ELF::VERSION>(binary->header.object_file_version));
   hdr.program_headers_offset(binary->header.program_headers_offset);
   hdr.section_headers_offset(binary->header.section_headers_offset);
   hdr.processor_flag(binary->header.processor_flags);
@@ -91,10 +90,9 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
   hdr.section_name_table_idx(binary->header.name_string_table_idx);
   hdr.entrypoint(binary->header.entrypoint);
 
-  //TODO: identity
+  // TODO: identity
   return 1;
 }
-
 
 void elf_binary_destroy(Elf_Binary_t* binary) {
   destroy_sections(binary);
@@ -109,6 +107,5 @@ void elf_binary_destroy(Elf_Binary_t* binary) {
 
   delete reinterpret_cast<Binary*>(binary->handler);
   free(binary);
-
 }
 //}

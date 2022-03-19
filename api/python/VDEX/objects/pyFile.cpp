@@ -15,28 +15,26 @@
  */
 #include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/hash.hpp"
-
 #include "pyIterators.hpp"
 #include "pyVDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
 
-template<class T>
+template <class T>
 using no_const_getter = T (File::*)();
 
-template<class T, class P>
+template <class T, class P>
 using no_const_func = T (File::*)(P);
 
-template<class T>
+template <class T>
 using getter_t = T (File::*)() const;
 
-template<class T>
+template <class T>
 using setter_t = void (File::*)(T);
 
-template<>
+template <>
 void create<File>(py::module& m) {
-
   // File object
   py::class_<File, LIEF::Object> file(m, "File", "VDEX File representation");
 
@@ -50,40 +48,33 @@ void create<File>(py::module& m) {
    */
   try {
     init_ref_iterator<File::it_dex_files>(file, "it_dex_files");
-  } catch (const std::runtime_error&) {}
+  } catch (const std::runtime_error&) {
+  }
 
-  file
-    .def_property_readonly("header",
-        static_cast<no_const_getter<Header&>>(&File::header),
-        "Return the VDEX " RST_CLASS_REF(lief.VDEX.Header) "",
-        py::return_value_policy::reference)
+  file.def_property_readonly(
+          "header", static_cast<no_const_getter<Header&>>(&File::header),
+          "Return the VDEX " RST_CLASS_REF(lief.VDEX.Header) "",
+          py::return_value_policy::reference)
 
-    .def_property_readonly("dex_files",
-        static_cast<no_const_getter<File::it_dex_files>>(&File::dex_files),
-        "Return an iterator over " RST_CLASS_REF(lief.DEX.File) "",
-        py::return_value_policy::reference)
+      .def_property_readonly(
+          "dex_files",
+          static_cast<no_const_getter<File::it_dex_files>>(&File::dex_files),
+          "Return an iterator over " RST_CLASS_REF(lief.DEX.File) "",
+          py::return_value_policy::reference)
 
-    .def_property_readonly("dex2dex_json_info",
-        &File::dex2dex_json_info)
+      .def_property_readonly("dex2dex_json_info", &File::dex2dex_json_info)
 
-    .def("__eq__", &File::operator==)
-    .def("__ne__", &File::operator!=)
-    .def("__hash__",
-        [] (const File& file) {
-          return Hash::hash(file);
-        })
+      .def("__eq__", &File::operator==)
+      .def("__ne__", &File::operator!=)
+      .def("__hash__", [](const File& file) { return Hash::hash(file); })
 
-
-    .def("__str__",
-        [] (const File& file)
-        {
-          std::ostringstream stream;
-          stream << file;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const File& file) {
+        std::ostringstream stream;
+        stream << file;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
-
+}  // namespace VDEX
+}  // namespace LIEF

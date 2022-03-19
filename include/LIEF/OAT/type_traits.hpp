@@ -17,14 +17,12 @@
 #define LIEF_OAT_TYPES_H_
 #include <cstdint>
 
-
 namespace LIEF {
 namespace OAT {
 
 using oat_version_t = uint32_t;
 
-
 }
-}
+}  // namespace LIEF
 
 #endif

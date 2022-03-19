@@ -15,8 +15,8 @@
  */
 #ifndef ELF_ENUM_TO_STRING_H_
 #define ELF_ENUM_TO_STRING_H_
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -57,10 +57,7 @@ LIEF_API const char* to_string(ARM_EFLAGS e);
 LIEF_API const char* to_string(MIPS_EFLAGS e);
 LIEF_API const char* to_string(HEXAGON_EFLAGS e);
 
-
-
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif
-

@@ -13,56 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "ELF/DataHandler/Handler.hpp"
+
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
-#include <algorithm>
 #include <utility>
 
-#include "logging.hpp"
-
-#include "LIEF/BinaryStream/MemoryStream.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
-
-#include "ELF/DataHandler/Handler.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/exception.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 
-
-//class DataHandlerStream : public SpanStream {
-//  public:
-//  DataHandlerStream(std::vector<uint8_t>& ref, size_t non_aligned_size) :
-//    SpanStream({ref.data(), non_aligned_size})
-//  {
-//    stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
-//  }
-//  ~DataHandlerStream() override = default;
-//};
+// class DataHandlerStream : public SpanStream {
+//   public:
+//   DataHandlerStream(std::vector<uint8_t>& ref, size_t non_aligned_size) :
+//     SpanStream({ref.data(), non_aligned_size})
+//   {
+//     stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
+//   }
+//   ~DataHandlerStream() override = default;
+// };
 class DataHandlerStream : public BinaryStream {
-  public:
-  DataHandlerStream(std::vector<uint8_t>& ref) :
-    data_{ref}
-  {
+ public:
+  DataHandlerStream(std::vector<uint8_t>& ref) : data_{ref} {
     stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
   }
   ~DataHandlerStream() override = default;
 
-  inline uint64_t size() const override {
-    return data_.size();
-  }
+  inline uint64_t size() const override { return data_.size(); }
 
-  inline result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+  inline result<const void*> read_at(uint64_t offset,
+                                     uint64_t size) const override {
     if (offset > data_.size() || (offset + size) > data_.size()) {
       return make_error_code(lief_errors::read_error);
     }
     return data_.data() + offset;
   }
 
-  private:
+ private:
   std::vector<uint8_t>& data_;
 };
 
@@ -72,17 +67,12 @@ Handler::Handler() = default;
 Handler& Handler::operator=(Handler&&) = default;
 Handler::Handler(Handler&&) = default;
 
-Handler::Handler(std::vector<uint8_t> content) :
-  data_{std::move(content)}
-{}
+Handler::Handler(std::vector<uint8_t> content) : data_{std::move(content)} {}
 
+Handler::Handler(std::vector<uint8_t>&& content) : data_{std::move(content)} {}
 
-Handler::Handler(std::vector<uint8_t>&& content) :
-  data_{std::move(content)}
-{}
-
-
-result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
+result<std::unique_ptr<Handler>> Handler::from_stream(
+    std::unique_ptr<BinaryStream>& stream) {
   auto hdl = std::unique_ptr<Handler>(new Handler{});
   if (VectorStream::classof(*stream)) {
     auto& vs = static_cast<VectorStream&>(*stream);
@@ -117,30 +107,27 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
   return make_error_code(lief_errors::not_supported);
 }
 
-const std::vector<uint8_t>& Handler::content() const {
-  return data_;
-}
+const std::vector<uint8_t>& Handler::content() const { return data_; }
 
 std::vector<uint8_t>& Handler::content() {
-  return const_cast<std::vector<uint8_t>&>(static_cast<const Handler*>(this)->content());
+  return const_cast<std::vector<uint8_t>&>(
+      static_cast<const Handler*>(this)->content());
 }
 
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
-                                      return tmp == *node;
-                                    });
+  const auto it_node = std::find_if(
+      std::begin(nodes_), std::end(nodes_),
+      [&tmp](const std::unique_ptr<Node>& node) { return tmp == *node; });
   return it_node != std::end(nodes_);
 }
 
 result<Node&> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
-                                      return tmp == *node;
-                                    });
+  const auto it_node = std::find_if(
+      std::begin(nodes_), std::end(nodes_),
+      [&tmp](const std::unique_ptr<Node>& node) { return tmp == *node; });
 
   if (it_node == std::end(nodes_)) {
     return make_error_code(lief_errors::not_found);
@@ -148,29 +135,24 @@ result<Node&> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
   return **it_node;
 }
 
-
 void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
-
   Node tmp{offset, size, type};
 
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
-                                      return tmp == *node;
-                                    });
+  const auto it_node = std::find_if(
+      std::begin(nodes_), std::end(nodes_),
+      [&tmp](const std::unique_ptr<Node>& node) { return tmp == *node; });
 
   if (it_node == std::end(nodes_)) {
     LIEF_ERR("Unable to find the node");
   }
 
-   nodes_.erase(it_node);
+  nodes_.erase(it_node);
 }
-
 
 Node& Handler::create(uint64_t offset, uint64_t size, Node::Type type) {
   nodes_.push_back(std::make_unique<Node>(offset, size, type));
   return *nodes_.back();
 }
-
 
 Node& Handler::add(const Node& node) {
   nodes_.push_back(std::make_unique<Node>(node));
@@ -186,7 +168,6 @@ ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
   return ok();
 }
 
-
 ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
   const bool must_resize = data_.size() < (offset + size);
   if (!must_resize) {
@@ -201,7 +182,6 @@ ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
   return ok();
 }
 
-
-} // namespace DataHandler
-} // namespace ELF
-} // namespace LIEF
+}  // namespace DataHandler
+}  // namespace ELF
+}  // namespace LIEF

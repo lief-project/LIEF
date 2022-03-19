@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/config.h"
-#include "LIEF/json.hpp"
 #include "LIEF/Abstract/json.hpp"
 #include "LIEF/Object.hpp"
-
+#include "LIEF/config.h"
+#include "LIEF/json.hpp"
 #include "pyLIEF.hpp"
 
 void init_json_functions(py::module& m) {

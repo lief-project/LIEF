@@ -26,16 +26,14 @@
 
 #include <stddef.h>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.h"
-
+#include "LIEF/PE/DataDirectory.h"
 #include "LIEF/PE/DosHeader.h"
 #include "LIEF/PE/Header.h"
-#include "LIEF/PE/OptionalHeader.h"
-#include "LIEF/PE/DataDirectory.h"
-#include "LIEF/PE/Section.h"
 #include "LIEF/PE/Import.h"
+#include "LIEF/PE/OptionalHeader.h"
+#include "LIEF/PE/Section.h"
+#include "LIEF/PE/enums.h"
+#include "LIEF/visibility.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,27 +41,26 @@ extern "C" {
 
 /** @brief LIEF::PE::Binary C Handler */
 struct Pe_Binary_t {
-  void*                handler;
-  const char*          name;
-  Pe_DosHeader_t       dos_header;
-  Pe_Header_t          header;
-  Pe_OptionalHeader_t  optional_header;
+  void* handler;
+  const char* name;
+  Pe_DosHeader_t dos_header;
+  Pe_Header_t header;
+  Pe_OptionalHeader_t optional_header;
   Pe_DataDirectory_t** data_directories;
-  Pe_Section_t**       sections;
-  Pe_Import_t**        imports;
+  Pe_Section_t** sections;
+  Pe_Import_t** imports;
 };
 
 typedef struct Pe_Binary_t Pe_Binary_t;
 
 /** Wrapper on LIEF::PE::Parser::parse */
-LIEF_API Pe_Binary_t* pe_parse(const char *file);
+LIEF_API Pe_Binary_t* pe_parse(const char* file);
 
 LIEF_API void pe_binary_destroy(Pe_Binary_t* binary);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 /** @} */
 #endif

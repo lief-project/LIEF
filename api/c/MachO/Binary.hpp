@@ -25,6 +25,6 @@ namespace MachO {
 void init_c_binary(Macho_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

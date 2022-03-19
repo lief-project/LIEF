@@ -15,9 +15,9 @@
  */
 
 #include "LIEF/OAT/hash.hpp"
-#include "LIEF/OAT.hpp"
 
 #include "LIEF/DEX/hash.hpp"
+#include "LIEF/OAT.hpp"
 
 namespace LIEF {
 namespace OAT {
@@ -28,7 +28,6 @@ size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::OAT::Hash>(obj);
 }
 
-
 void Hash::visit(const Binary& binary) {
   process(binary.header());
 
@@ -36,7 +35,6 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.classes()), std::end(binary.classes()));
   process(std::begin(binary.methods()), std::end(binary.methods()));
 }
-
 
 void Hash::visit(const Header& header) {
   process(header.magic());
@@ -62,7 +60,6 @@ void Hash::visit(const Header& header) {
   process(std::begin(header.values()), std::end(header.values()));
 }
 
-
 void Hash::visit(const DexFile& dex_file) {
   process(dex_file.location());
   process(dex_file.checksum());
@@ -73,7 +70,6 @@ void Hash::visit(const DexFile& dex_file) {
   process(dex_file.lookup_table_offset());
   process(dex_file.classes_offsets());
 }
-
 
 void Hash::visit(const Class& cls) {
   if (cls.has_dex_class()) {
@@ -88,7 +84,6 @@ void Hash::visit(const Class& cls) {
   process(std::begin(it), std::end(it));
 }
 
-
 void Hash::visit(const Method& meth) {
   if (meth.has_dex_method()) {
     process(DEX::Hash::hash(*meth.dex_method()));
@@ -98,8 +93,5 @@ void Hash::visit(const Method& meth) {
   process(meth.quick_code());
 }
 
-
-
-} // namespace OAT
-} // namespace LIEF
-
+}  // namespace OAT
+}  // namespace LIEF

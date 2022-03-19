@@ -16,25 +16,22 @@
 
 #include <type_traits>
 
-#include "logging.hpp"
-
-#include "LIEF/utils.hpp"
-
 #include "DEX/Structures.hpp"
-#include "OAT/Structures.hpp"
-
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/utils.hpp"
+#include "OAT/Structures.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace OAT {
 
-template<>
+template <>
 void Parser::parse_dex_files<details::OAT79_t>() {
   using oat_header = typename details::OAT79_t::oat_header;
-  using dex35_header_t  = DEX::details::DEX35::dex_header;
+  using dex35_header_t = DEX::details::DEX35::dex_header;
 
   auto& oat = oat_binary();
   size_t nb_dex_files = oat.header_.nb_dex_files();
@@ -46,11 +43,9 @@ void Parser::parse_dex_files<details::OAT79_t>() {
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
 
-
   stream_->setpos(dexfiles_offset);
 
-  for (size_t i = 0; i < nb_dex_files; ++i ) {
-
+  for (size_t i = 0; i < nb_dex_files; ++i) {
     LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
     auto location_size = stream_->read<uint32_t>();
@@ -106,7 +101,6 @@ void Parser::parse_dex_files<details::OAT79_t>() {
     }
     const auto dex_hdr = *res_dex_hdr;
 
-
     std::vector<uint8_t> data_v;
     const auto* data = stream_->peek_array<uint8_t>(offset, dex_hdr.file_size);
     if (data != nullptr) {
@@ -121,7 +115,8 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 
     std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[i];
     if (DEX::is_dex(data_v)) {
-      std::unique_ptr<DEX::File> dexfile = DEX::Parser::parse(std::move(data_v), name);
+      std::unique_ptr<DEX::File> dexfile =
+          DEX::Parser::parse(std::move(data_v), name);
       dexfile->location(oat_dex_file->location());
       const uint32_t nb_classes = dexfile->header().nb_classes();
 
@@ -132,19 +127,19 @@ void Parser::parse_dex_files<details::OAT79_t>() {
       oat_dex_file->classes_offsets_.reserve(nb_classes);
 
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        if (auto off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+        if (auto off = stream_->peek<uint32_t>(classes_offset +
+                                               cls_idx * sizeof(uint32_t))) {
           oat_dex_file->classes_offsets_.push_back(*off);
         } else {
           break;
         }
       }
     } else {
-      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), stream_->pos());
+      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name,
+                oat_dex_file->location(), stream_->pos());
     }
   }
 }
 
-
-
-} // Namespace OAT
-} // Namespace LIEF
+}  // Namespace OAT
+}  // Namespace LIEF

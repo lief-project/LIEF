@@ -17,31 +17,31 @@
 #define LIEF_PE_LOAD_CONFIGURATION_V2_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v2;
 }
 
 //! @brief LoadConfiguration enhanced with code integrity
 class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_9879;
   LoadConfigurationV2();
 
   LoadConfigurationV2& operator=(const LoadConfigurationV2&);
   LoadConfigurationV2(const LoadConfigurationV2&);
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV2(const details::load_configuration_v2<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV2(
+      const details::load_configuration_v2<T>& header);
 
   WIN_VERSION version() const override;
 
@@ -58,10 +58,10 @@ class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   CodeIntegrity code_integrity_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

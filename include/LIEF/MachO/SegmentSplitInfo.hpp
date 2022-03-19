@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
 #define LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
-#include <vector>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <vector>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -34,7 +33,8 @@ struct linkedit_data_command;
 //! Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
-  public:
+
+ public:
   SegmentSplitInfo();
   SegmentSplitInfo(const details::linkedit_data_command& cmd);
 
@@ -60,13 +60,12 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  uint32_t              data_offset_;
-  uint32_t              data_size_;
-  std::vector<uint8_t>  raw_;
-
+ private:
+  uint32_t data_offset_;
+  uint32_t data_size_;
+  std::vector<uint8_t> raw_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

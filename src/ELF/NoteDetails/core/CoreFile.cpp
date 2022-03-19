@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
+#include "CoreFile.tcc"
+
 #include <iomanip>
 #include <sstream>
 
-#include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
-
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/Binary.hpp"
 #include "ELF/Structures.hpp"
-
-#include "CoreFile.tcc"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-CoreFile::CoreFile(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
+CoreFile::CoreFile(Note& note) : NoteDetails::NoteDetails{note} {}
 
 CoreFile CoreFile::make(Note& note) {
   CoreFile file(note);
@@ -39,45 +36,26 @@ CoreFile CoreFile::make(Note& note) {
   return file;
 }
 
-CoreFile* CoreFile::clone() const {
-  return new CoreFile(*this);
-}
+CoreFile* CoreFile::clone() const { return new CoreFile(*this); }
 
+uint64_t CoreFile::count() const { return files_.size(); }
 
-uint64_t CoreFile::count() const {
-  return files_.size();
-}
+const CoreFile::files_t& CoreFile::files() const { return files_; }
 
-const CoreFile::files_t& CoreFile::files() const {
-  return files_;
-}
+CoreFile::iterator CoreFile::begin() { return std::begin(files_); }
 
+CoreFile::iterator CoreFile::end() { return std::end(files_); }
 
-CoreFile::iterator CoreFile::begin() {
-  return std::begin(files_);
-}
+CoreFile::const_iterator CoreFile::begin() const { return std::begin(files_); }
 
-CoreFile::iterator CoreFile::end() {
-  return std::end(files_);
-}
-
-CoreFile::const_iterator CoreFile::begin() const {
-  return std::begin(files_);
-}
-
-CoreFile::const_iterator CoreFile::end() const {
-  return std::end(files_);
-}
+CoreFile::const_iterator CoreFile::end() const { return std::end(files_); }
 
 void CoreFile::files(const CoreFile::files_t& files) {
   files_ = files;
   build();
 }
 
-
-void CoreFile::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CoreFile::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool CoreFile::operator==(const CoreFile& rhs) const {
   if (this == &rhs) {
@@ -88,19 +66,19 @@ bool CoreFile::operator==(const CoreFile& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool CoreFile::operator!=(const CoreFile& rhs) const {
-  return !(*this == rhs);
-}
+bool CoreFile::operator!=(const CoreFile& rhs) const { return !(*this == rhs); }
 
 void CoreFile::dump(std::ostream& os) const {
   static constexpr size_t WIDTH = 16;
   os << std::left;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Files: "<< std::dec << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "Files: " << std::dec
+     << std::endl;
   for (const CoreFileEntry& file : files()) {
     os << " - ";
     os << file.path << " ";
-    os << "[" << std::hex << std::showbase << file.start << ", " << file.end << "] ";
+    os << "[" << std::hex << std::showbase << file.start << ", " << file.end
+       << "] ";
     os << file.file_ofs;
     os << std::endl;
   }
@@ -130,12 +108,12 @@ std::ostream& operator<<(std::ostream& os, const CoreFile& note) {
 
 CoreFile::~CoreFile() = default;
 
-
 std::ostream& operator<<(std::ostream& os, const CoreFileEntry& entry) {
   os << std::hex << std::showbase;
-  os << entry.path << ": [" << entry.start << ", " << entry.end << "]@" << entry.file_ofs;
+  os << entry.path << ": [" << entry.start << ", " << entry.end << "]@"
+     << entry.file_ofs;
   return os;
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

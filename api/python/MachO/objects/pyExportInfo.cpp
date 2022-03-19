@@ -14,34 +14,30 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/DylibCommand.hpp"
-
-#include "pyMachO.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "pyIterators.hpp"
+#include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (ExportInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using no_const_getter_t = T (ExportInfo::*)(void);
 
-template<class T>
+template <class T>
 using setter_t = void (ExportInfo::*)(T);
 
-
-template<>
+template <>
 void create<ExportInfo>(py::module& m) {
-
   py::class_<ExportInfo, LIEF::Object>(m, "ExportInfo",
       R"delim(
       Class that provides an interface over the Dyld export info
@@ -114,8 +110,7 @@ void create<ExportInfo>(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

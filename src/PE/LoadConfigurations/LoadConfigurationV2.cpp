@@ -15,16 +15,16 @@
  */
 #include <iomanip>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/iostream.hpp"
 
-#include "LIEF/PE/LoadConfigurations.hpp"
-
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV2& LoadConfigurationV2::operator=(const LoadConfigurationV2&) = default;
+LoadConfigurationV2& LoadConfigurationV2::operator=(
+    const LoadConfigurationV2&) = default;
 LoadConfigurationV2::LoadConfigurationV2(const LoadConfigurationV2&) = default;
 LoadConfigurationV2::~LoadConfigurationV2() = default;
 
@@ -34,13 +34,13 @@ WIN_VERSION LoadConfigurationV2::version() const {
   return LoadConfigurationV2::VERSION;
 }
 
-
 const CodeIntegrity& LoadConfigurationV2::code_integrity() const {
   return code_integrity_;
 }
 
 CodeIntegrity& LoadConfigurationV2::code_integrity() {
-  return const_cast<CodeIntegrity&>(static_cast<const LoadConfigurationV2*>(this)->code_integrity());
+  return const_cast<CodeIntegrity&>(
+      static_cast<const LoadConfigurationV2*>(this)->code_integrity());
 }
 
 void LoadConfigurationV2::accept(Visitor& visitor) const {
@@ -63,13 +63,11 @@ bool LoadConfigurationV2::operator!=(const LoadConfigurationV2& rhs) const {
 std::ostream& LoadConfigurationV2::print(std::ostream& os) const {
   LoadConfigurationV1::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Code Integrity:" << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "Code Integrity:" << std::endl;
   os << code_integrity();
   return os;
 }
 
-
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

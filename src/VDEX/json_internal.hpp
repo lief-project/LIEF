@@ -23,16 +23,15 @@ namespace LIEF {
 namespace VDEX {
 
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const File& file)      override;
-  void visit(const Header& header)  override;
+ public:
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
 };
 
-}
-}
+}  // namespace VDEX
+}  // namespace LIEF
 
-#endif // LIEF_JSON_SUPPORT
-
+#endif  // LIEF_JSON_SUPPORT

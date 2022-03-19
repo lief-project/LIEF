@@ -15,29 +15,29 @@
  */
 #ifndef LIEF_PE_IMPORT_ENTRY_H_
 #define LIEF_PE_IMPORT_ENTRY_H_
-#include <string>
 #include <iostream>
+#include <string>
 
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Symbol.hpp"
-
+#include "LIEF/Object.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
 
-//! Class that represents an entry (i.e. an import) in the import table (Import).
+//! Class that represents an entry (i.e. an import) in the import table
+//! (Import).
 //!
-//! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-//! LIEF::Symbol::value API
+//! It extends the LIEF::Symbol generic class that exposes the
+//! LIEF::Symbol::name and LIEF::Symbol::value API
 class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
 
-  public:
+ public:
   ImportEntry();
   ImportEntry(uint64_t data, const std::string& name = "");
   ImportEntry(const std::string& name);
@@ -75,17 +75,18 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   bool operator==(const ImportEntry& rhs) const;
   bool operator!=(const ImportEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ImportEntry& entry);
 
-  private:
+ private:
   uint64_t data_ = 0;
   uint16_t hint_ = 0;
   uint64_t iat_value_ = 0;
   uint64_t rva_ = 0;
-  PE_TYPE  type_ = PE_TYPE::PE32_PLUS;
+  PE_TYPE type_ = PE_TYPE::PE32_PLUS;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif /* IMPORTENTRY_H_ */

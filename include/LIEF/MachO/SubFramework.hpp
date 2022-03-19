@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_SUB_FRAMEWORK_H_
 #define LIEF_MACHO_SUB_FRAMEWORK_H_
-#include <string>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <string>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -38,15 +37,16 @@ struct sub_framework_command;
 //!
 //! > A dynamically linked shared library may be a subframework of an umbrella
 //! > framework.  If so it will be linked with "-umbrella umbrella_name" where
-//! > Where "umbrella_name" is the name of the umbrella framework. A subframework
-//! > can only be linked against by its umbrella framework or other subframeworks
-//! > that are part of the same umbrella framework.  Otherwise the static link
-//! > editor produces an error and states to link against the umbrella framework.
-//! > The name of the umbrella framework for subframeworks is recorded in the
-//! > following structure.
+//! > Where "umbrella_name" is the name of the umbrella framework. A
+//! subframework > can only be linked against by its umbrella framework or other
+//! subframeworks > that are part of the same umbrella framework.  Otherwise the
+//! static link > editor produces an error and states to link against the
+//! umbrella framework. > The name of the umbrella framework for subframeworks
+//! is recorded in the > following structure.
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;
-  public:
+
+ public:
   SubFramework();
   SubFramework(const details::sub_framework_command& cmd);
 
@@ -70,10 +70,10 @@ class LIEF_API SubFramework : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   std::string umbrella_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

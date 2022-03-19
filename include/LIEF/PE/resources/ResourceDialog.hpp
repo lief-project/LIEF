@@ -17,15 +17,14 @@
 #ifndef LIEF_PE_RESOURCE_DIALOG_H_
 #define LIEF_PE_RESOURCE_DIALOG_H_
 #include <iostream>
-#include <sstream>
 #include <set>
+#include <sstream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-#include "LIEF/iterators.hpp"
-
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/resources/ResourceDialogItem.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -35,7 +34,7 @@ struct ResourcesParser;
 namespace details {
 struct pe_dialog_template_ext;
 struct pe_dialog_template;
-}
+}  // namespace details
 
 //! Representation of a dialog box
 //!
@@ -45,13 +44,12 @@ struct pe_dialog_template;
 //!
 //! ResourceDialog::is_extended determine the type of the Dialog
 class LIEF_API ResourceDialog : public Object {
-
   friend class ResourcesManager;
   friend struct ResourcesParser;
 
-  public:
-  using items_t        = std::vector<ResourceDialogItem>;
-  using it_items       = ref_iterator<items_t&>;
+ public:
+  using items_t = std::vector<ResourceDialogItem>;
+  using it_items = ref_iterator<items_t&>;
   using it_const_items = const_ref_iterator<const items_t&>;
 
   ResourceDialog();
@@ -75,8 +73,8 @@ class LIEF_API ResourceDialog : public Object {
 
   bool has_extended_style(EXTENDED_WINDOW_STYLES style) const;
 
-  //! The style of the dialog box. This member can be a combination of LIEF::PE::WINDOW_STYLES values and
-  //! LIEF::PE::DIALOG_BOX_STYLES values.
+  //! The style of the dialog box. This member can be a combination of
+  //! LIEF::PE::WINDOW_STYLES values and LIEF::PE::DIALOG_BOX_STYLES values.
   uint32_t style() const;
 
   //! Return list of LIEF::PE::WINDOW_STYLES associated with the
@@ -89,10 +87,12 @@ class LIEF_API ResourceDialog : public Object {
   std::set<DIALOG_BOX_STYLES> dialogbox_style_list() const;
   bool has_dialogbox_style(DIALOG_BOX_STYLES style) const;
 
-  //! The x-coordinate, in dialog box units, of the upper-left corner of the dialog box.
+  //! The x-coordinate, in dialog box units, of the upper-left corner of the
+  //! dialog box.
   int16_t x() const;
 
-  //! The y-coordinate, in dialog box units, of the upper-left corner of the dialog box.
+  //! The y-coordinate, in dialog box units, of the upper-left corner of the
+  //! dialog box.
   int16_t y() const;
 
   //! The width, in dialog box units, of the dialog box.
@@ -101,7 +101,8 @@ class LIEF_API ResourceDialog : public Object {
   //! The height, in dialog box units, of the dialog box.
   int16_t cy() const;
 
-  //! Iterator on the controls (ResourceDialogItem) that defines the Dialog (Button, Label...)
+  //! Iterator on the controls (ResourceDialogItem) that defines the Dialog
+  //! (Button, Label...)
   it_const_items items() const;
 
   //! RESOURCE_LANGS associated with the Dialog
@@ -113,11 +114,11 @@ class LIEF_API ResourceDialog : public Object {
   void lang(RESOURCE_LANGS lang);
   void sub_lang(RESOURCE_SUBLANGS sub_lang);
 
-
   // Extended API
   // ============
 
-  //! The version number of the extended dialog box template. This member must be set to 1.
+  //! The version number of the extended dialog box template. This member must
+  //! be set to 1.
   uint16_t version() const;
 
   //! Indicates whether a template is an extended dialog box template:
@@ -134,10 +135,12 @@ class LIEF_API ResourceDialog : public Object {
   //! The weight of the font
   uint16_t weight() const;
 
-  //! The point size of the font to use for the text in the dialog box and its controls.
+  //! The point size of the font to use for the text in the dialog box and its
+  //! controls.
   uint16_t point_size() const;
 
-  //! Indicates whether the font is italic. If this value is ``true``, the font is italic
+  //! Indicates whether the font is italic. If this value is ``true``, the font
+  //! is italic
   bool is_italic() const;
 
   //! The character to be used
@@ -154,9 +157,10 @@ class LIEF_API ResourceDialog : public Object {
   bool operator==(const ResourceDialog& rhs) const;
   bool operator!=(const ResourceDialog& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceDialog& dialog);
 
-  private:
+ private:
   uint16_t version_;
   uint16_t signature_;
   uint32_t help_id_;
@@ -172,23 +176,19 @@ class LIEF_API ResourceDialog : public Object {
   std::u16string window_class_;
   std::u16string title_;
 
-  uint16_t       point_size_;
-  uint16_t       weight_;
-  bool           italic_;
-  uint8_t        charset_;
+  uint16_t point_size_;
+  uint16_t weight_;
+  bool italic_;
+  uint8_t charset_;
   std::u16string typeface_;
 
   items_t items_;
 
   RESOURCE_LANGS lang_;
   RESOURCE_SUBLANGS sublang_;
-
-
 };
 
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

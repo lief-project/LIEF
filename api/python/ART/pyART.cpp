@@ -15,17 +15,16 @@
  */
 #include "pyART.hpp"
 
-
 namespace LIEF {
 namespace ART {
 void init_python_module(py::module& m) {
-  py::module LIEF_ART_module = m.def_submodule("ART", "Python API for ART format");
+  py::module LIEF_ART_module =
+      m.def_submodule("ART", "Python API for ART format");
 
   init_enums(LIEF_ART_module);
   init_objects(LIEF_ART_module);
   init_utils(LIEF_ART_module);
 }
-
 
 void init_objects(py::module& m) {
   CREATE(Parser, m);
@@ -33,5 +32,5 @@ void init_objects(py::module& m) {
   CREATE(Header, m);
 }
 
-}
-}
+}  // namespace ART
+}  // namespace LIEF

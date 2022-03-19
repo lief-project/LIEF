@@ -16,11 +16,11 @@
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_COUNTER_SIG_H_
 #define LIEF_PE_ATTRIBUTES_PKCS9_COUNTER_SIG_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -29,11 +29,12 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
+//! Interface over the structure described by the OID ``1.2.840.113549.1.9.6``
+//! (PKCS #9)
 //!
 //! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+//! Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
 //! ```raw
 //! counterSignature ATTRIBUTE ::= {
@@ -42,11 +43,10 @@ class SignatureParser;
 //! }
 //! ```
 class LIEF_API PKCS9CounterSignature : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   PKCS9CounterSignature();
   PKCS9CounterSignature(SignerInfo signer);
   PKCS9CounterSignature(const PKCS9CounterSignature&);
@@ -55,9 +55,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! SignerInfo as described in the RFC #2985
-  inline const SignerInfo& signer() const {
-    return this->signer_;
-  }
+  inline const SignerInfo& signer() const { return this->signer_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -66,11 +64,11 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
 
   virtual ~PKCS9CounterSignature();
 
-  private:
+ private:
   SignerInfo signer_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

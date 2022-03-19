@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/RichHeader.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (RichHeader::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (RichHeader::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (RichHeader::*)(void);
 
-
-template<>
+template <>
 void create<RichHeader>(py::module& m) {
   py::class_<RichHeader> rich(m, "RichHeader",
-      R"delim(
+                              R"delim(
       Class which represents the not-so-documented rich header
 
       This structure is usually located at the end of the :attr:`~lief.PE.Binary.dos_stub`
@@ -124,5 +122,5 @@ void create<RichHeader>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

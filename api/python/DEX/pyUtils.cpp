@@ -13,37 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyDEX.hpp"
-
 #include "LIEF/DEX/utils.hpp"
+#include "pyDEX.hpp"
 
 namespace LIEF {
 namespace DEX {
 
 void init_utils(py::module& m) {
+  m.def("is_dex", static_cast<bool (*)(const std::string&)>(&is_dex),
+        "Check if the **file** given in parameter is a DEX", "path"_a);
 
-  m.def("is_dex",
-      static_cast<bool (*)(const std::string&)>(&is_dex),
-      "Check if the **file** given in parameter is a DEX",
-      "path"_a);
+  m.def("is_dex", static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_dex),
+        "Check if the **raw data** given in parameter is a DEX", "raw"_a);
 
-  m.def("is_dex",
-      static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_dex),
-      "Check if the **raw data** given in parameter is a DEX",
-      "raw"_a);
+  m.def("version", static_cast<dex_version_t (*)(const std::string&)>(&version),
+        "Return the DEX version of the **file** given in parameter", "file"_a);
 
   m.def("version",
-      static_cast<dex_version_t (*)(const std::string&)>(&version),
-      "Return the DEX version of the **file** given in parameter",
-      "file"_a);
-
-  m.def("version",
-      static_cast<dex_version_t (*)(const std::vector<uint8_t>&)>(&version),
-      "Return the DEX version of the **raw data** given in parameter",
-      "raw"_a);
-
+        static_cast<dex_version_t (*)(const std::vector<uint8_t>&)>(&version),
+        "Return the DEX version of the **raw data** given in parameter",
+        "raw"_a);
 }
 
-}
-}
-
+}  // namespace DEX
+}  // namespace LIEF

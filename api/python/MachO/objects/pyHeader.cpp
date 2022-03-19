@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Header.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (Header::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Header::*)(T);
 
-
-template<>
+template <>
 void create<Header>(py::module& m) {
-
   py::class_<Header, LIEF::Object>(m, "Header",
       "Class that represents the Mach-O header")
     .def(py::init<>())
@@ -131,5 +128,5 @@ void create<Header>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

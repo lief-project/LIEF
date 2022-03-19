@@ -18,7 +18,6 @@
 
 #include "LIEF/ELF/Binary.h"
 #include "LIEF/ELF/Binary.hpp"
-
 #include "LIEF/ELF/Header.h"
 #include "LIEF/ELF/Header.hpp"
 
@@ -28,6 +27,6 @@ namespace ELF {
 void init_c_header(Elf_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

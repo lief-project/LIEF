@@ -17,14 +17,12 @@
 #ifndef LIEF_PE_RESOURCE_DIALOG_ITEM_H_
 #define LIEF_PE_RESOURCE_DIALOG_ITEM_H_
 #include <iostream>
-#include <sstream>
 #include <set>
-
-#include "LIEF/visibility.h"
+#include <sstream>
 
 #include "LIEF/Object.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -34,15 +32,14 @@ struct ResourcesParser;
 namespace details {
 struct pe_dialog_item_template_ext;
 struct pe_dialog_item_template;
-}
+}  // namespace details
 
 //! This class represents an item in the ResourceDialog
 class LIEF_API ResourceDialogItem : public Object {
-
   friend class ResourcesManager;
   friend struct ResourcesParser;
 
-  public:
+ public:
   ResourceDialogItem();
   ResourceDialogItem(const details::pe_dialog_item_template_ext& header);
   ResourceDialogItem(const details::pe_dialog_item_template& header);
@@ -71,12 +68,14 @@ class LIEF_API ResourceDialogItem : public Object {
   std::set<WINDOW_STYLES> style_list() const;
   bool has_style(WINDOW_STYLES style) const;
 
-  //! The x-coordinate, in dialog box units, of the upper-left corner of the control.
-  //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
+  //! The x-coordinate, in dialog box units, of the upper-left corner of the
+  //! control. This coordinate is always relative to the upper-left corner of
+  //! the dialog box's client area.
   int16_t x() const;
 
-  //! The y-coordinate, in dialog box units, of the upper-left corner of the control.
-  //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
+  //! The y-coordinate, in dialog box units, of the upper-left corner of the
+  //! control. This coordinate is always relative to the upper-left corner of
+  //! the dialog box's client area.
   int16_t y() const;
 
   //! The width, in dialog box units, of the control.
@@ -87,7 +86,6 @@ class LIEF_API ResourceDialogItem : public Object {
 
   //! The control identifier.
   uint32_t id() const;
-
 
   // Extended API
   // ============
@@ -103,10 +101,11 @@ class LIEF_API ResourceDialogItem : public Object {
   bool operator==(const ResourceDialogItem& rhs) const;
   bool operator!=(const ResourceDialogItem& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialogItem& dialog_item);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const ResourceDialogItem& dialog_item);
 
-  private:
-  bool     is_extended_ = true;
+ private:
+  bool is_extended_ = true;
   uint32_t help_id_ = 0;
   uint32_t ext_style_ = 0;
   uint32_t style_ = 0;
@@ -123,9 +122,7 @@ class LIEF_API ResourceDialogItem : public Object {
   uint16_t extra_count_ = 0;
 };
 
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -17,28 +17,28 @@
 #define LIEF_PE_LOAD_CONFIGURATION_V6_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v6;
 }
 
 //! @brief Load Configuration enhanced with Hotpatch and improved RFG
 class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
-  public:
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_15002;
 
   LoadConfigurationV6();
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV6(const details::load_configuration_v6<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV6(
+      const details::load_configuration_v6<T>& header);
 
   LoadConfigurationV6& operator=(const LoadConfigurationV6&);
   LoadConfigurationV6(const LoadConfigurationV6&);
@@ -63,11 +63,11 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   uint64_t guardrf_verify_stackpointer_function_pointer_;
   uint32_t hotpatch_table_offset_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

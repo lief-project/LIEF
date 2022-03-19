@@ -1,12 +1,13 @@
-#include "LIEF/ELF.hpp"
-#include "LIEF/PE.hpp"
-#include "LIEF/MachO.hpp"
-#include "LIEF/DEX.hpp"
-#include "LIEF/OAT.hpp"
-#include "LIEF/VDEX.hpp"
-#include "LIEF/ART.hpp"
-#include "logging.hpp"
 #include <sstream>
+
+#include "LIEF/ART.hpp"
+#include "LIEF/DEX.hpp"
+#include "LIEF/ELF.hpp"
+#include "LIEF/MachO.hpp"
+#include "LIEF/OAT.hpp"
+#include "LIEF/PE.hpp"
+#include "LIEF/VDEX.hpp"
+#include "logging.hpp"
 
 void check(LIEF::PE::Binary& bin) {
   std::stringstream ss;
@@ -59,11 +60,12 @@ void check(LIEF::ART::File& file) {
   ss << file;
 }
 
-
 void check(LIEF::OAT::Binary& bin) {
   std::stringstream ss;
   ss << bin;
-  for (auto& _ : bin.dex_files()) { ss << _; }
+  for (auto& _ : bin.dex_files()) {
+    ss << _;
+  }
   for (auto& oat_dex : bin.oat_dex_files()) {
     ss << oat_dex;
     check(*oat_dex.dex_file());
@@ -102,7 +104,8 @@ int main(int argc, char** argv) {
   }
 
   if (LIEF::MachO::is_macho(path)) {
-    std::unique_ptr<LIEF::MachO::FatBinary> bin = LIEF::MachO::Parser::parse(path);
+    std::unique_ptr<LIEF::MachO::FatBinary> bin =
+        LIEF::MachO::Parser::parse(path);
     check(std::move(bin));
     return EXIT_SUCCESS;
   }

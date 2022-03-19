@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/hash.hpp"
+
 #include <functional>
 #include <numeric>
 
 #include "mbedtls/sha256.h"
-
-#include "LIEF/hash.hpp"
-
 
 #if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/hash.hpp"
@@ -83,27 +82,17 @@ size_t hash(const Object& v) {
 #endif
 
   return value;
-
 }
 
-size_t hash(const std::vector<uint8_t>& raw) {
-  return Hash::hash(raw);
-}
+size_t hash(const std::vector<uint8_t>& raw) { return Hash::hash(raw); }
 
-size_t hash(span<const uint8_t> raw) {
-  return Hash::hash(raw);
-}
+size_t hash(span<const uint8_t> raw) { return Hash::hash(raw); }
 
 Hash::~Hash() = default;
 
-Hash::Hash() :
-  value_{0}
-{}
+Hash::Hash() : value_{0} {}
 
-Hash::Hash(size_t init_value) :
-  value_{init_value}
-{}
-
+Hash::Hash(size_t init_value) : value_{init_value} {}
 
 Hash& Hash::process(const Object& obj) {
   Hash hasher;
@@ -122,7 +111,6 @@ Hash& Hash::process(const std::string& str) {
   return *this;
 }
 
-
 Hash& Hash::process(const std::u16string& str) {
   value_ = combine(value_, std::hash<std::u16string>{}(str));
   return *this;
@@ -138,17 +126,13 @@ Hash& Hash::process(span<const uint8_t> raw) {
   return *this;
 }
 
-size_t Hash::value() const {
-  return value_;
-}
-
+size_t Hash::value() const { return value_; }
 
 // Static methods
 // ==============
 size_t Hash::hash(const std::vector<uint8_t>& raw) {
   return hash(raw.data(), raw.size());
 }
-
 
 size_t Hash::hash(const void* raw, size_t size) {
   const auto* start = reinterpret_cast<const uint8_t*>(raw);
@@ -157,15 +141,14 @@ size_t Hash::hash(const void* raw, size_t size) {
   mbedtls_sha256(start, size, sha256.data(), 0);
 
   return std::accumulate(std::begin(sha256), std::end(sha256), 0,
-     [] (size_t v, uint8_t n) {
-        size_t r = v;
-        return (r << sizeof(uint8_t) * 8) | n;
-     });
+                         [](size_t v, uint8_t n) {
+                           size_t r = v;
+                           return (r << sizeof(uint8_t) * 8) | n;
+                         });
 }
-
 
 size_t Hash::hash(span<const uint8_t> raw) {
   return hash(raw.data(), raw.size());
 }
 
-}
+}  // namespace LIEF

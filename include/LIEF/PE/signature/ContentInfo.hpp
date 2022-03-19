@@ -17,10 +17,9 @@
 #define LIEF_PE_CONTENT_INFO_H_
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/signature/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -28,7 +27,8 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-/** ContentInfo as described in the RFC2315 (https://tools.ietf.org/html/rfc2315#section-7)
+/** ContentInfo as described in the RFC2315
+ * (https://tools.ietf.org/html/rfc2315#section-7)
  *
  * ```raw
  * ContentInfo ::= SEQUENCE {
@@ -39,8 +39,9 @@ class SignatureParser;
  * ContentType ::= OBJECT IDENTIFIER
  * ```
  *
- * In the case of PE signature, ContentType **must** be set to SPC_INDIRECT_DATA_OBJID
- * OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by the structure: ``SpcIndirectDataContent``
+ * In the case of PE signature, ContentType **must** be set to
+ * SPC_INDIRECT_DATA_OBJID OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined
+ * by the structure: ``SpcIndirectDataContent``
  * ```raw
  * SpcIndirectDataContent ::= SEQUENCE {
  *  data          SpcAttributeTypeAndOptionalValue,
@@ -54,7 +55,8 @@ class SignatureParser;
  * ```
  *
  * For PE signature, ``SpcAttributeTypeAndOptionalValue.type``
- * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the value is defined by
+ * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the
+ * value is defined by
  * ``SpcPeImageData``
  *
  * ```raw
@@ -70,55 +72,46 @@ class SignatureParser;
  * ```
  */
 class LIEF_API ContentInfo : public Object {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   ContentInfo();
   ContentInfo(const ContentInfo&);
   ContentInfo& operator=(const ContentInfo&);
 
   //! Return the OID that describes the content wrapped by this object.
   //! It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
-  inline oid_t content_type() const {
-    return content_type_;
-  }
+  inline oid_t content_type() const { return content_type_; }
 
   //! Digest used to hash the file
   //!
   //! It should match LIEF::PE::SignerInfo::digest_algorithm
-  inline ALGORITHMS digest_algorithm() const {
-    return digest_algorithm_;
-  }
+  inline ALGORITHMS digest_algorithm() const { return digest_algorithm_; }
 
   //! PE's authentihash
   //!
   //! @see LIEF::PE::Binary::authentihash
-  inline const std::vector<uint8_t>& digest() const {
-    return digest_;
-  }
+  inline const std::vector<uint8_t>& digest() const { return digest_; }
 
-  inline const std::string& file() const {
-    return file_;
-  }
+  inline const std::string& file() const { return file_; }
 
   void accept(Visitor& visitor) const override;
 
   virtual ~ContentInfo();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ContentInfo& content_info);
 
-  private:
+ private:
   oid_t content_type_;
   std::string file_;
   uint8_t flags_ = 0;
   ALGORITHMS digest_algorithm_ = ALGORITHMS::UNKNOWN;
   std::vector<uint8_t> digest_;
-
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

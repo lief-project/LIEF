@@ -39,7 +39,8 @@ for e in encodings:
     except (UnicodeEncodeError, UnicodeDecodeError) as e:
       continue
 name_str = name_bytes.decode('ascii', 'backslashreplace')
-  )", global, local);
+  )",
+                                global, local);
 #else
   py::eval<py::eval_statements>(R"(
 def handler(err):
@@ -49,7 +50,8 @@ def handler(err):
 import codecs
 codecs.register_error('backslashreplace_', handler)
 name_str = name_bytes.decode('ascii', 'backslashreplace_')
-          )", global, local);
+          )",
+                                global, local);
 #endif
   return local["name_str"];
 }

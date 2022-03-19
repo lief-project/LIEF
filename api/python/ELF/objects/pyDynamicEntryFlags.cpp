@@ -13,29 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (DynamicEntryFlags::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DynamicEntryFlags::*)(T);
 
-
-template<>
+template <>
 void create<DynamicEntryFlags>(py::module& m) {
-
   py::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
     .def(py::init<>())
 
@@ -112,5 +108,5 @@ void create<DynamicEntryFlags>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

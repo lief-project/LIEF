@@ -13,36 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+
 #include <utility>
 
 #include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/SymbolVersionAux.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 SymbolVersionAux::~SymbolVersionAux() = default;
-SymbolVersionAux& SymbolVersionAux::operator=(const SymbolVersionAux&) = default;
+SymbolVersionAux& SymbolVersionAux::operator=(const SymbolVersionAux&) =
+    default;
 SymbolVersionAux::SymbolVersionAux(const SymbolVersionAux&) = default;
 
 SymbolVersionAux::SymbolVersionAux() = default;
 
-SymbolVersionAux::SymbolVersionAux(std::string  name) :
-  name_{std::move(name)}
-{}
+SymbolVersionAux::SymbolVersionAux(std::string name) : name_{std::move(name)} {}
 
-const std::string& SymbolVersionAux::name() const {
-  return name_;
-}
+const std::string& SymbolVersionAux::name() const { return name_; }
 
-void SymbolVersionAux::name(const std::string& name) {
-  name_ = name;
-}
+void SymbolVersionAux::name(const std::string& name) { name_ = name; }
 
-void SymbolVersionAux::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void SymbolVersionAux::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool SymbolVersionAux::operator==(const SymbolVersionAux& rhs) const {
   if (this == &rhs) {
@@ -57,11 +50,9 @@ bool SymbolVersionAux::operator!=(const SymbolVersionAux& rhs) const {
   return !(*this == rhs);
 }
 
-
-
 std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux) {
   os << symAux.name();
   return os;
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

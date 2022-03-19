@@ -16,17 +16,15 @@
 #ifndef LIEF_ELF_SECTION_H_
 #define LIEF_ELF_SECTION_H_
 
-#include <string>
-#include <vector>
 #include <iostream>
 #include <set>
-
-#include "LIEF/visibility.h"
+#include <string>
+#include <vector>
 
 #include "LIEF/Abstract/Section.hpp"
-
 #include "LIEF/ELF/enums.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -45,7 +43,7 @@ class ObjectFileLayout;
 namespace details {
 struct Elf64_Shdr;
 struct Elf32_Shdr;
-}
+}  // namespace details
 
 //! Class wich represents an ELF Section
 class LIEF_API Section : public LIEF::Section {
@@ -55,15 +53,16 @@ class LIEF_API Section : public LIEF::Section {
   friend class ExeLayout;
   friend class ObjectFileLayout;
 
-  public:
-  using segments_t        = std::vector<Segment*>;
-  using it_segments       = ref_iterator<segments_t&>;
+ public:
+  using segments_t = std::vector<Segment*>;
+  using it_segments = ref_iterator<segments_t&>;
   using it_const_segments = const_ref_iterator<const segments_t&>;
 
-  Section(const uint8_t *data, ELF_CLASS type);
+  Section(const uint8_t* data, ELF_CLASS type);
   Section(const details::Elf64_Shdr& header);
   Section(const details::Elf32_Shdr& header);
-  Section(const std::string& name, ELF_SECTION_TYPES type = ELF_SECTION_TYPES::SHT_PROGBITS);
+  Section(const std::string& name,
+          ELF_SECTION_TYPES type = ELF_SECTION_TYPES::SHT_PROGBITS);
 
   Section();
   ~Section() override;
@@ -104,7 +103,6 @@ class LIEF_API Section : public LIEF::Section {
 
   uint64_t offset() const override;
 
-
   //! @see offset
   uint64_t file_offset() const;
 
@@ -121,12 +119,12 @@ class LIEF_API Section : public LIEF::Section {
   //! This meaning of this value depends on the section's type
   uint64_t information() const;
 
-  //! This function returns the size of an element in the case of a section that contains
-  //! an array.
+  //! This function returns the size of an element in the case of a section that
+  //! contains an array.
   //
-  //! For instance, the `.dynamic` section contains an array of DynamicEntry. As the
-  //! size of the raw C structure of this entry is 0x10 (``sizeof(Elf64_Dyn)``)
-  //! in a ELF64, the `entry_size` is set to this value.
+  //! For instance, the `.dynamic` section contains an array of DynamicEntry. As
+  //! the size of the raw C structure of this entry is 0x10
+  //! (``sizeof(Elf64_Dyn)``) in a ELF64, the `entry_size` is set to this value.
   uint64_t entry_size() const;
 
   //! Index to another section
@@ -150,7 +148,7 @@ class LIEF_API Section : public LIEF::Section {
   void alignment(uint64_t alignment);
   void entry_size(uint64_t entry_size);
 
-  it_segments       segments();
+  it_segments segments();
   it_const_segments segments() const;
 
   void accept(Visitor& visitor) const override;
@@ -161,22 +159,23 @@ class LIEF_API Section : public LIEF::Section {
   bool operator==(const Section& rhs) const;
   bool operator!=(const Section& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Section& section);
 
-  private:
+ private:
   span<uint8_t> writable_content();
-  ELF_SECTION_TYPES     type_;
-  uint64_t              flags_;
-  uint64_t              original_size_;
-  uint32_t              link_;
-  uint32_t              info_;
-  uint64_t              address_align_;
-  uint64_t              entry_size_;
-  segments_t            segments_;
+  ELF_SECTION_TYPES type_;
+  uint64_t flags_;
+  uint64_t original_size_;
+  uint32_t link_;
+  uint32_t info_;
+  uint64_t address_align_;
+  uint64_t entry_size_;
+  segments_t segments_;
   DataHandler::Handler* datahandler_{nullptr};
-  std::vector<uint8_t>  content_c_;
+  std::vector<uint8_t> content_c_;
 };
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif /* _ELF_SECTION_H_ */

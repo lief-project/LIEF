@@ -16,12 +16,11 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H_
 #define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H_
 
-#include <string>
 #include <ostream>
-
-#include "LIEF/visibility.h"
+#include <string>
 
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -30,8 +29,7 @@ namespace ELF {
 //!
 //! This kind of entry is usually used to create library dependency.
 class LIEF_API DynamicEntryLibrary : public DynamicEntry {
-
-  public:
+ public:
   using DynamicEntry::DynamicEntry;
 
   DynamicEntryLibrary();
@@ -50,10 +48,10 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 
-  private:
+ private:
   std::string libname_;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

@@ -17,10 +17,9 @@
 #define LIEF_ELF_UNDEF_H_
 
 #ifdef PT_LOAD
-#pragma message("LIEF will disable #define enums. Please use LIEF_ELF_XXXX or LIEF::ELF::XXXX instead!")
+#pragma message( \
+    "LIEF will disable #define enums. Please use LIEF_ELF_XXXX or LIEF::ELF::XXXX instead!")
 #endif
-
-
 
 #undef EI_MAG0
 #undef EI_MAG1
@@ -34,7 +33,6 @@
 #undef EI_PAD
 #undef EI_NIDENT
 
-
 #undef ET_NONE
 #undef ET_REL
 #undef ET_EXEC
@@ -43,11 +41,8 @@
 #undef ET_LOPROC
 #undef ET_HIPROC
 
-
 #undef EV_NONE
 #undef EV_CURRENT
-
-
 
 #undef EM_NONE
 #undef EM_M32
@@ -233,7 +228,6 @@
 #undef EM_RISCV
 #undef EM_BPF
 
-
 #undef ELFCLASSNONE
 #undef ELFCLASS32
 #undef ELFCLASS64
@@ -287,13 +281,11 @@
 
 #undef EF_MIPS_NAN2008
 
-
 #undef EF_MIPS_ABI_O32
 #undef EF_MIPS_ABI_O64
 #undef EF_MIPS_ABI_EABI32
 #undef EF_MIPS_ABI_EABI64
 #undef EF_MIPS_ABI
-
 
 #undef EF_MIPS_MACH_3900
 #undef EF_MIPS_MACH_4010
@@ -315,12 +307,10 @@
 #undef EF_MIPS_MACH_LS3A
 #undef EF_MIPS_MACH
 
-
 #undef EF_MIPS_MICROMIPS
 #undef EF_MIPS_ARCH_ASE_M16
 #undef EF_MIPS_ARCH_ASE_MDMX
 #undef EF_MIPS_ARCH_ASE
-
 
 #undef EF_MIPS_ARCH_1
 #undef EF_MIPS_ARCH_2
@@ -335,7 +325,6 @@
 #undef EF_MIPS_ARCH_64R6
 #undef EF_MIPS_ARCH
 
-
 #undef EF_HEXAGON_MACH_V2
 #undef EF_HEXAGON_MACH_V3
 #undef EF_HEXAGON_MACH_V4
@@ -347,7 +336,6 @@
 #undef EF_HEXAGON_ISA_V4
 #undef EF_HEXAGON_ISA_V5
 
-
 #undef SHN_UNDEF
 #undef SHN_LORESERVE
 #undef SHN_LOPROC
@@ -358,7 +346,6 @@
 #undef SHN_COMMON
 #undef SHN_XINDEX
 #undef SHN_HIRESERVE
-
 
 #undef SHT_NULL
 #undef SHT_PROGBITS
@@ -490,7 +477,6 @@
 #undef PT_MIPS_RTPROC
 #undef PT_MIPS_OPTIONS
 #undef PT_MIPS_ABIFLAGS
-
 
 #undef PF_NONE
 #undef PF_X
@@ -677,7 +663,6 @@
 #undef COUNT_HASH
 #undef COUNT_RELOCATIONS
 
-
 #undef NT_UNKNOWN
 #undef NT_GNU_ABI_TAG
 #undef NT_GNU_HWCAP
@@ -699,7 +684,6 @@
 #undef ELF_NOTE_OS_FREEBSD
 #undef ELF_NOTE_OS_NETBSD
 #undef ELF_NOTE_OS_SYLLABLE
-
 
 #undef RELOC_PURPOSE_NONE
 #undef RELOC_PURPOSE_PLTGOT
@@ -1574,7 +1558,6 @@
 #undef R_X86_64_GOTPCRELX
 #undef R_X86_64_REX_GOTPCRELX
 
-
 #undef AT_NULL
 #undef AT_IGNORE
 #undef AT_EXECFD
@@ -1612,6 +1595,5 @@
 #undef AT_L3_CACHESHAPE
 
 #undef NT_GNU_PROPERTY_TYPE_0
-
 
 #endif

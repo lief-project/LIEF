@@ -18,12 +18,10 @@
 #include <memory>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
-
+#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -34,7 +32,8 @@ class Parser;
 class SignatureParser;
 class x509;
 
-/** SignerInfo as described in the [RFC 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
+/** SignerInfo as described in the [RFC
+ * 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
  *
  * ```raw
  * SignerInfo ::= SEQUENCE {
@@ -55,7 +54,7 @@ class LIEF_API SignerInfo : public Object {
   friend class SignatureParser;
   friend class Signature;
 
-  public:
+ public:
   using encrypted_digest_t = std::vector<uint8_t>;
 
   //! Internal container used to store both
@@ -63,7 +62,8 @@ class LIEF_API SignerInfo : public Object {
   using attributes_t = std::vector<std::unique_ptr<Attribute>>;
 
   //! Iterator which outputs const Attribute&
-  using it_const_attributes_t = const_ref_iterator<const attributes_t&, const Attribute*>;
+  using it_const_attributes_t =
+      const_ref_iterator<const attributes_t&, const Attribute*>;
 
   SignerInfo();
 
@@ -84,14 +84,10 @@ class LIEF_API SignerInfo : public Object {
   //! @see
   //! LIEF::PE::x509::serial_number
   //! SignerInfo::issuer
-  inline const std::vector<uint8_t>& serial_number() const {
-    return serialno_;
-  }
+  inline const std::vector<uint8_t>& serial_number() const { return serialno_; }
 
   //! Return the x509::issuer used by this signer
-  inline const std::string& issuer() const {
-    return issuer_;
-  };
+  inline const std::string& issuer() const { return issuer_; };
 
   //! Algorithm (OID) used to hash the file.
   //!
@@ -120,45 +116,44 @@ class LIEF_API SignerInfo : public Object {
   //! found, it returns a nullptr.
   const Attribute* get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
 
-  //! Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  //! Return the authenticated attribute matching the given
+  //! PE::SIG_ATTRIBUTE_TYPES.
   //!
   //! It returns **the first** entry that matches the given type. If it can't be
   //! found, it returns a nullptr.
   const Attribute* get_auth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
 
-  //! Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  //! Return the un-authenticated attribute matching the given
+  //! PE::SIG_ATTRIBUTE_TYPES.
   //!
   //! It returns **the first** entry that matches the given type. If it can't be
   //! found, it returns a nullptr.
   const Attribute* get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
 
-  //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
-  inline const x509* cert() const {
-    return cert_.get();
-  }
+  //! x509 certificate used by this signer. If it can't be found, it returns a
+  //! nullptr
+  inline const x509* cert() const { return cert_.get(); }
 
-  //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
-  inline x509* cert() {
-    return cert_.get();
-  }
+  //! x509 certificate used by this signer. If it can't be found, it returns a
+  //! nullptr
+  inline x509* cert() { return cert_.get(); }
 
   //! Raw blob that is signed by the signer certificate
-  const std::vector<uint8_t> raw_auth_data() const {
-    return raw_auth_data_;
-  }
+  const std::vector<uint8_t> raw_auth_data() const { return raw_auth_data_; }
 
   void accept(Visitor& visitor) const override;
 
   virtual ~SignerInfo();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SignerInfo& signer_info);
 
-  private:
+ private:
   uint32_t version_ = 0;
   std::string issuer_;
   std::vector<uint8_t> serialno_;
 
-  ALGORITHMS digest_algorithm_     = ALGORITHMS::UNKNOWN;
+  ALGORITHMS digest_algorithm_ = ALGORITHMS::UNKNOWN;
   ALGORITHMS digest_enc_algorithm_ = ALGORITHMS::UNKNOWN;
 
   encrypted_digest_t encrypted_digest_;
@@ -171,7 +166,7 @@ class LIEF_API SignerInfo : public Object {
   std::unique_ptr<x509> cert_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

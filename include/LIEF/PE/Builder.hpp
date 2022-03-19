@@ -16,22 +16,21 @@
 #ifndef LIEF_PE_BUILDER_H_
 #define LIEF_PE_BUILDER_H_
 
+#include <algorithm>
 #include <cstring>
-#include <string>
-#include <vector>
-#include <iterator>
+#include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <ostream>
 #include <sstream>
-#include <algorithm>
-#include <iomanip>
-
-#include "LIEF/visibility.h"
-#include "LIEF/utils.hpp"
-#include "LIEF/iostream.hpp"
+#include <string>
+#include <vector>
 
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -40,7 +39,7 @@ namespace PE {
 
 //! Class that is used to rebuild a raw PE binary from a PE::Binary object
 class LIEF_API Builder {
-  public:
+ public:
   friend struct ::Profiler;
 
   Builder() = delete;
@@ -53,14 +52,13 @@ class LIEF_API Builder {
   //! @brief Construct a ``jmp [address] @ from``.
   //!
   //! It is used when patching import table
-  template<typename PE_T>
+  template <typename PE_T>
   static std::vector<uint8_t> build_jmp(uint64_t from, uint64_t address);
-
 
   //! @brief Construct a ``jmp far address @ from``.
   //!
   //! It is used for hooking
-  template<typename PE_T>
+  template <typename PE_T>
   static std::vector<uint8_t> build_jmp_hook(uint64_t from, uint64_t address);
 
   //! @brief Rebuild the import table in new section
@@ -69,7 +67,8 @@ class LIEF_API Builder {
   //! @brief Patch the original import table in order to
   //! redirect functions to the new import table.
   //!
-  //! This setting should be used with LIEF::PE::Builder::build_imports set to ``true``
+  //! This setting should be used with LIEF::PE::Builder::build_imports set to
+  //! ``true``
   Builder& patch_imports(bool flag = true);
 
   //! @brief Rebuild the relocation table in another section
@@ -101,16 +100,16 @@ class LIEF_API Builder {
   ok_error_t build(const DataDirectory& data_directory);
   ok_error_t build(const Section& section);
 
-  protected:
-  template<typename PE_T>
+ protected:
+  template <typename PE_T>
   ok_error_t build_optional_header(const OptionalHeader& optional_header);
 
   //! @brief Rebuild Import Table
   // TODO: Bug with x86
-  template<typename PE_T>
+  template <typename PE_T>
   void build_import_table();
 
-  template<typename PE_T>
+  template <typename PE_T>
   ok_error_t build_tls();
 
   ok_error_t build_relocation();
@@ -118,13 +117,14 @@ class LIEF_API Builder {
   ok_error_t build_overlay();
   ok_error_t build_dos_stub();
 
-  ok_error_t compute_resources_size(ResourceNode& node, uint32_t *header_size,
-                              uint32_t *data_size, uint32_t *name_size);
+  ok_error_t compute_resources_size(ResourceNode& node, uint32_t* header_size,
+                                    uint32_t* data_size, uint32_t* name_size);
 
-  ok_error_t construct_resources(ResourceNode& node, std::vector<uint8_t>* content,
-                           uint32_t* offset_header, uint32_t* offset_data, uint32_t* offset_name,
-                           uint32_t base_rva, uint32_t depth);
-
+  ok_error_t construct_resources(ResourceNode& node,
+                                 std::vector<uint8_t>* content,
+                                 uint32_t* offset_header, uint32_t* offset_data,
+                                 uint32_t* offset_name, uint32_t base_rva,
+                                 uint32_t depth);
 
   mutable vector_iostream ios_;
   Binary* binary_ = nullptr;
@@ -136,9 +136,8 @@ class LIEF_API Builder {
   bool build_resources_ = false;
   bool build_overlay_ = true;
   bool build_dos_stub_ = true;
-
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

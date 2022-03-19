@@ -18,10 +18,10 @@
 namespace LIEF {
 namespace Convert {
 
-template<typename T>
+template <typename T>
 void swap_endian(T*);
 
 }
-}
+}  // namespace LIEF
 
-#endif // LIEF_CONVERT_H_
+#endif  // LIEF_CONVERT_H_

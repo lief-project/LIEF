@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 #include <iomanip>
+
 #include "LIEF/Object.hpp"
 
 namespace LIEF {
 
-template<class T>
+template <class T>
 Object::output_t<T> Object::as() {
   return static_cast<Object::output_t<T>>(this);
 }
 
-template<class T>
+template <class T>
 Object::output_const_t<T> Object::as() const {
   return static_cast<Object::output_const_t<T>>(this);
 }
 
-
-} // namespace LIEF
-
+}  // namespace LIEF

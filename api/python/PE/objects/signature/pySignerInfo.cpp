@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
-
-#include "pyPE.hpp"
+#include "LIEF/PE/signature/SignerInfo.hpp"
 #include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (SignerInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (SignerInfo::*)(T);
 
-
-template<>
+template <>
 void create<SignerInfo>(py::module& m) {
-
   py::class_<SignerInfo, LIEF::Object> signer(m, "SignerInfo",
-    R"delim(
+                                              R"delim(
     SignerInfo as described in the `RFC 2315 #Section 9.2 <https://tools.ietf.org/html/rfc2315#section-9.2>`_
 
     .. code-block:: text
@@ -55,8 +52,8 @@ void create<SignerInfo>(py::module& m) {
       EncryptedDigest ::= OCTET STRING
     )delim");
 
-
-  init_ref_iterator<SignerInfo::it_const_attributes_t>(signer, "it_const_attributes_t");
+  init_ref_iterator<SignerInfo::it_const_attributes_t>(signer,
+                                                       "it_const_attributes_t");
 
   signer
     .def_property_readonly("version",
@@ -157,9 +154,7 @@ void create<SignerInfo>(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
-
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

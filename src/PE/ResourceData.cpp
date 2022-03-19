@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/ResourceData.hpp"
+
 #include <iomanip>
 #include <utility>
 
 #include "LIEF/PE/hash.hpp"
-
-#include "LIEF/PE/ResourceData.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -28,76 +28,46 @@ ResourceData& ResourceData::operator=(ResourceData other) {
   return *this;
 }
 
-ResourceData::ResourceData(const ResourceData& other) :
-  ResourceNode{static_cast<const ResourceNode&>(other)},
-  content_{other.content_},
-  code_page_{other.code_page_},
-  reserved_{other.reserved_}
-{}
+ResourceData::ResourceData(const ResourceData& other)
+    : ResourceNode{static_cast<const ResourceNode&>(other)},
+      content_{other.content_},
+      code_page_{other.code_page_},
+      reserved_{other.reserved_} {}
 
-ResourceData* ResourceData::clone() const {
-  return new ResourceData{*this};
-}
+ResourceData* ResourceData::clone() const { return new ResourceData{*this}; }
 
 void ResourceData::swap(ResourceData& other) {
   ResourceNode::swap(other);
 
-  std::swap(content_,    other.content_);
-  std::swap(code_page_,  other.code_page_);
-  std::swap(reserved_,   other.reserved_);
+  std::swap(content_, other.content_);
+  std::swap(code_page_, other.code_page_);
+  std::swap(reserved_, other.reserved_);
 }
 
+ResourceData::ResourceData() { type_ = ResourceNode::TYPE::DATA; }
 
-ResourceData::ResourceData() {
+ResourceData::ResourceData(std::vector<uint8_t> content, uint32_t code_page)
+    : content_{std::move(content)}, code_page_{code_page} {
   type_ = ResourceNode::TYPE::DATA;
 }
 
+uint32_t ResourceData::code_page() const { return code_page_; }
 
-ResourceData::ResourceData(std::vector<uint8_t> content, uint32_t code_page) :
-  content_{std::move(content)},
-  code_page_{code_page}
-{
-  type_ = ResourceNode::TYPE::DATA;
-}
+const std::vector<uint8_t>& ResourceData::content() const { return content_; }
 
+uint32_t ResourceData::reserved() const { return reserved_; }
 
+uint32_t ResourceData::offset() const { return offset_; }
 
-uint32_t ResourceData::code_page() const {
-  return code_page_;
-}
-
-
-const std::vector<uint8_t>& ResourceData::content() const {
-  return content_;
-}
-
-
-uint32_t ResourceData::reserved() const {
-  return reserved_;
-}
-
-uint32_t ResourceData::offset() const {
-  return offset_;
-}
-
-
-void ResourceData::code_page(uint32_t code_page) {
-  code_page_ = code_page;
-}
-
+void ResourceData::code_page(uint32_t code_page) { code_page_ = code_page; }
 
 void ResourceData::content(const std::vector<uint8_t>& content) {
   content_ = content;
 }
 
+void ResourceData::reserved(uint32_t value) { reserved_ = value; }
 
-void ResourceData::reserved(uint32_t value) {
-  reserved_ = value;
-}
-
-void ResourceData::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void ResourceData::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool ResourceData::operator==(const ResourceData& rhs) const {
   if (this == &rhs) {
@@ -112,16 +82,18 @@ bool ResourceData::operator!=(const ResourceData& rhs) const {
   return !(*this == rhs);
 }
 
-
 std::ostream& operator<<(std::ostream& os, const ResourceData& data) {
   os << static_cast<const ResourceNode&>(data) << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Code page :" << data.code_page()                       << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Reserved :"  << data.reserved()                        << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Size :"      << data.content().size()                  << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Hash :"      << std::hex << Hash::hash(data.content()) << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ')
+     << "Code page :" << data.code_page() << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ')
+     << "Reserved :" << data.reserved() << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ')
+     << "Size :" << data.content().size() << std::endl;
+  os << "    " << std::setw(13) << std::left << std::setfill(' ')
+     << "Hash :" << std::hex << Hash::hash(data.content()) << std::endl;
   return os;
 }
 
-
-}
-}
+}  // namespace PE
+}  // namespace LIEF

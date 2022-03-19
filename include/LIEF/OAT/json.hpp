@@ -16,15 +16,15 @@
 #ifndef LIEF_OAT_PUBLIC_JSON_H_
 #define LIEF_OAT_PUBLIC_JSON_H_
 
-#include "LIEF/visibility.h"
 #include <string>
+
+#include "LIEF/visibility.h"
 namespace LIEF {
 class Object;
 
 namespace OAT {
 LIEF_API std::string to_json(const Object& v);
 }
-}
-
+}  // namespace LIEF
 
 #endif

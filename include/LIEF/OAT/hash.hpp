@@ -16,32 +16,32 @@
 #ifndef LIEF_OAT_HASH_H_
 #define LIEF_OAT_HASH_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/hash.hpp"
 #include "LIEF/OAT.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace OAT {
 
 class LIEF_API Hash : public LIEF::Hash {
-  public:
+ public:
   static size_t hash(const Object& obj);
 
-  public:
+ public:
   using LIEF::Hash::Hash;
   using LIEF::Hash::visit;
 
-  public:
-  void visit(const Binary& binary)        override;
-  void visit(const Header& header)        override;
-  void visit(const DexFile& dex_file)     override;
-  void visit(const Class& cls)            override;
-  void visit(const Method& method)        override;
+ public:
+  void visit(const Binary& binary) override;
+  void visit(const Header& header) override;
+  void visit(const DexFile& dex_file) override;
+  void visit(const Class& cls) override;
+  void visit(const Method& method) override;
 
   virtual ~Hash();
 };
 
-}
-}
+}  // namespace OAT
+}  // namespace LIEF
 
 #endif

@@ -25,12 +25,8 @@ namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 class LIEF_API Node {
-  public:
-  enum Type : uint8_t {
-    SECTION = 0,
-    SEGMENT = 1,
-    UNKNOWN = 2
-  };
+ public:
+  enum Type : uint8_t { SECTION = 0, SEGMENT = 1, UNKNOWN = 2 };
   Node();
   Node(uint64_t offset, uint64_t size, Type type);
 
@@ -39,7 +35,7 @@ class LIEF_API Node {
 
   uint64_t size() const;
   uint64_t offset() const;
-  Type     type() const;
+  Type type() const;
 
   void size(uint64_t size);
   void type(Type type);
@@ -55,14 +51,14 @@ class LIEF_API Node {
   bool operator>=(const Node& rhs) const;
   ~Node();
 
-  private:
+ private:
   uint64_t size_ = 0;
   uint64_t offset_ = 0;
-  Type     type_ = Type::UNKNOWN;
+  Type type_ = Type::UNKNOWN;
 };
 
-} // namespace DataHandler
-} // namespace ELF
-} // namespace LIEF
+}  // namespace DataHandler
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

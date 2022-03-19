@@ -18,8 +18,8 @@
 
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -29,11 +29,10 @@ class Builder;
 
 //! Class which represents a Data Node in the PE resources tree
 class LIEF_API ResourceData : public ResourceNode {
-
   friend class Parser;
   friend class Builder;
 
-  public:
+ public:
   ResourceData();
   ResourceData(std::vector<uint8_t> content, uint32_t code_page);
 
@@ -46,7 +45,8 @@ class LIEF_API ResourceData : public ResourceNode {
   ResourceData* clone() const override;
 
   //! Return the code page that is used to decode code point
-  //! values within the resource data. Typically, the code page is the Unicode code page.
+  //! values within the resource data. Typically, the code page is the Unicode
+  //! code page.
   uint32_t code_page() const;
 
   //! Resource content
@@ -69,16 +69,16 @@ class LIEF_API ResourceData : public ResourceNode {
   bool operator==(const ResourceData& rhs) const;
   bool operator!=(const ResourceData& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceData& data);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceData& data);
 
-  private:
+ private:
   std::vector<uint8_t> content_;
   uint32_t code_page_ = 0;
   uint32_t reserved_ = 0;
   uint32_t offset_ = 0;
-
 };
 
-} // namespace PE
-} // namepsace LIEF
+}  // namespace PE
+}  // namespace LIEF
 #endif /* RESOURCEDATA_H_ */

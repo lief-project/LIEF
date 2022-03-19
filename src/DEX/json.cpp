@@ -26,7 +26,6 @@ json to_json_obj(const Object& v) {
   return visitor.get();
 }
 
-
 void JsonVisitor::visit(const File& file) {
   JsonVisitor header_visitor;
   header_visitor(file.header());
@@ -42,31 +41,30 @@ void JsonVisitor::visit(const File& file) {
     classes.emplace_back(clsvisitor.get());
   }
 
-  node_["header"]  = header_visitor.get();
+  node_["header"] = header_visitor.get();
   node_["classes"] = classes;
-  node_["map"]     = map_item_visitor.get();
+  node_["map"] = map_item_visitor.get();
 }
 
 void JsonVisitor::visit(const Header& header) {
-  node_["magic"]       = header.magic();
-  node_["checksum"]    = header.checksum();
-  node_["signature"]   = header.signature();
-  node_["file_size"]   = header.file_size();
+  node_["magic"] = header.magic();
+  node_["checksum"] = header.checksum();
+  node_["signature"] = header.signature();
+  node_["file_size"] = header.file_size();
   node_["header_size"] = header.header_size();
-  node_["endian_tag"]  = header.endian_tag();
-  node_["map"]         = header.map();
-  node_["strings"]     = header.strings();
-  node_["link"]        = header.link();
-  node_["types"]       = header.types();
-  node_["prototypes"]  = header.prototypes();
-  node_["fields"]      = header.fields();
-  node_["methods"]     = header.methods();
-  node_["classes"]     = header.classes();
-  node_["data"]        = header.data();
+  node_["endian_tag"] = header.endian_tag();
+  node_["map"] = header.map();
+  node_["strings"] = header.strings();
+  node_["link"] = header.link();
+  node_["types"] = header.types();
+  node_["prototypes"] = header.prototypes();
+  node_["fields"] = header.fields();
+  node_["methods"] = header.methods();
+  node_["classes"] = header.classes();
+  node_["data"] = header.data();
 }
 
-void JsonVisitor::visit(const CodeInfo& /*code_info*/) {
-}
+void JsonVisitor::visit(const CodeInfo& /*code_info*/) {}
 
 void JsonVisitor::visit(const Class& cls) {
   std::vector<json> flags;
@@ -87,12 +85,12 @@ void JsonVisitor::visit(const Class& cls) {
     mv(m);
     methods.emplace_back(mv.get());
   }
-  node_["fullname"]         = cls.fullname();
-  node_["source_filename"]  = cls.source_filename();
-  node_["access_flags"]     = flags;
-  node_["index"]            = cls.index();
-  node_["fields"]           = fields;
-  node_["methods"]          = methods;
+  node_["fullname"] = cls.fullname();
+  node_["source_filename"] = cls.source_filename();
+  node_["access_flags"] = flags;
+  node_["index"] = cls.index();
+  node_["fields"] = fields;
+  node_["methods"] = methods;
 
   if (const auto* parent = cls.parent()) {
     node_["parent"] = parent->fullname();
@@ -108,10 +106,10 @@ void JsonVisitor::visit(const Field& field) {
   JsonVisitor type_visitor;
   type_visitor(*field.type());
 
-  node_["name"]         = field.name();
-  node_["index"]        = field.index();
-  node_["is_static"]    = field.is_static();
-  node_["type"]         = type_visitor.get();
+  node_["name"] = field.name();
+  node_["index"] = field.index();
+  node_["is_static"] = field.is_static();
+  node_["type"] = type_visitor.get();
   node_["access_flags"] = flags;
 }
 
@@ -126,48 +124,44 @@ void JsonVisitor::visit(const Method& method) {
     proto_visitor(*p);
   }
 
-  node_["name"]         = method.name();
-  node_["code_offset"]  = method.code_offset();
-  node_["index"]        = method.index();
-  node_["is_virtual"]   = method.is_virtual();
-  node_["prototype"]    = proto_visitor.get();
+  node_["name"] = method.name();
+  node_["code_offset"] = method.code_offset();
+  node_["index"] = method.index();
+  node_["is_virtual"] = method.is_virtual();
+  node_["prototype"] = proto_visitor.get();
   node_["access_flags"] = flags;
 }
 
 void JsonVisitor::visit(const Type& type) {
-
   node_["type"] = to_string(type.type());
-  switch(type.type()) {
-    case Type::TYPES::CLASS:
-      {
-        node_["value"] = type.cls().fullname();
+  switch (type.type()) {
+    case Type::TYPES::CLASS: {
+      node_["value"] = type.cls().fullname();
+      break;
+    }
+
+    case Type::TYPES::PRIMITIVE: {
+      node_["value"] = Type::pretty_name(type.primitive());
+      break;
+    }
+
+    case Type::TYPES::ARRAY: {
+      const Type& uderlying_t = type.underlying_array_type();
+      node_["dim"] = type.dim();
+
+      if (uderlying_t.type() == Type::TYPES::CLASS) {
+        node_["value"] = uderlying_t.cls().fullname();
         break;
       }
 
-    case Type::TYPES::PRIMITIVE:
-      {
+      if (uderlying_t.type() == Type::TYPES::PRIMITIVE) {
         node_["value"] = Type::pretty_name(type.primitive());
         break;
       }
-
-    case Type::TYPES::ARRAY:
-      {
-        const Type& uderlying_t = type.underlying_array_type();
-        node_["dim"] = type.dim();
-
-        if (uderlying_t.type() == Type::TYPES::CLASS) {
-          node_["value"] = uderlying_t.cls().fullname();
-          break;
-        }
-
-        if (uderlying_t.type() == Type::TYPES::PRIMITIVE) {
-          node_["value"] = Type::pretty_name(type.primitive());
-          break;
-        }
-        break;
-      }
-    default:
-      {}
+      break;
+    }
+    default: {
+    }
   }
 }
 
@@ -182,18 +176,16 @@ void JsonVisitor::visit(const Prototype& type) {
     JsonVisitor pvisitor;
     pvisitor(t);
     params.emplace_back(pvisitor.get());
-
   }
 
   node_["return_type"] = rtype_visitor.get();
-  node_["parameters"]  = params;
+  node_["parameters"] = params;
 }
 
 void JsonVisitor::visit(const MapItem& item) {
   node_["offset"] = item.offset();
-  node_["size"]   = item.size();
-  node_["type"]   = to_string(item.type());
-
+  node_["size"] = item.size();
+  node_["type"] = to_string(item.type());
 }
 
 void JsonVisitor::visit(const MapList& list) {
@@ -206,8 +198,5 @@ void JsonVisitor::visit(const MapList& list) {
   node_["map_items"] = items;
 }
 
-
-
-} // namespace DEX
-} // namespace LIEF
-
+}  // namespace DEX
+}  // namespace LIEF

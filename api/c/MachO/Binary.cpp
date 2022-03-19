@@ -15,24 +15,21 @@
  */
 #include "LIEF/MachO/Binary.h"
 
-#include "LIEF/MachO/Binary.hpp"
-
 #include "Binary.hpp"
-#include "Section.hpp"
 #include "Header.hpp"
-#include "Symbol.hpp"
-#include "Segment.hpp"
+#include "LIEF/MachO/Binary.hpp"
 #include "LoadCommand.hpp"
-
+#include "Section.hpp"
+#include "Segment.hpp"
+#include "Symbol.hpp"
 
 using namespace LIEF::MachO;
 
 namespace LIEF {
 namespace MachO {
 void init_c_binary(Macho_Binary_t* c_binary, Binary* binary) {
-
   c_binary->handler = reinterpret_cast<void*>(binary);
-  c_binary->name    = binary->name().c_str();
+  c_binary->name = binary->name().c_str();
   c_binary->imagebase = binary->imagebase();
   init_c_header(c_binary, binary);
   init_c_commands(c_binary, binary);
@@ -40,8 +37,8 @@ void init_c_binary(Macho_Binary_t* c_binary, Binary* binary) {
   init_c_sections(c_binary, binary);
   init_c_segments(c_binary, binary);
 }
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 
 void macho_binaries_destroy(Macho_Binary_t** binaries) {
   for (size_t i = 0; binaries[i] != nullptr; ++i) {
@@ -54,5 +51,4 @@ void macho_binaries_destroy(Macho_Binary_t** binaries) {
     free(binaries[i]);
   }
   free(binaries);
-
 }

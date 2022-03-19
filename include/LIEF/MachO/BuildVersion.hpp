@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_MACHO_BUILD_VERSION_COMMAND_H_
 #define LIEF_MACHO_BUILD_VERSION_COMMAND_H_
-#include <vector>
-#include <iostream>
 #include <array>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <iostream>
+#include <vector>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -30,25 +29,24 @@ namespace MachO {
 namespace details {
 struct build_tool_version;
 struct build_version_command;
-}
+}  // namespace details
 
 //! Class that represents a tool's version that was
 //! involved in the build of the binary
 class LIEF_API BuildToolVersion : public LIEF::Object {
-  public:
-
+ public:
   //! A version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
-  public:
+ public:
   enum class TOOLS {
     UNKNOWN = 0,
-    CLANG   = 1,
-    SWIFT   = 2,
-    LD      = 3,
+    CLANG = 1,
+    SWIFT = 2,
+    LD = 3,
   };
 
-  public:
+ public:
   BuildToolVersion();
   BuildToolVersion(const details::build_tool_version& tool);
 
@@ -65,9 +63,10 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const BuildToolVersion& tool);
 
-  private:
+ private:
   TOOLS tool_{TOOLS::UNKNOWN};
   version_t version_;
 };
@@ -75,22 +74,22 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
 class LIEF_API BuildVersion : public LoadCommand {
   friend class BinaryParser;
 
-  public:
+ public:
   //! Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   using tools_list_t = std::vector<BuildToolVersion>;
 
-  public:
+ public:
   enum class PLATFORMS {
     UNKNOWN = 0,
-    MACOS   = 1,
-    IOS     = 2,
-    TVOS    = 3,
+    MACOS = 1,
+    IOS = 2,
+    TVOS = 3,
     WATCHOS = 4,
   };
 
-  public:
+ public:
   BuildVersion();
   BuildVersion(const details::build_version_command& version_cmd);
 
@@ -121,13 +120,13 @@ class LIEF_API BuildVersion : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   PLATFORMS platform_{PLATFORMS::UNKNOWN};
   version_t minos_;
   version_t sdk_;
   tools_list_t tools_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

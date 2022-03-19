@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/LoadCommand.hpp"
+
 #include <iostream>
 
-#include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -33,66 +33,41 @@ LoadCommand& LoadCommand::operator=(LoadCommand other) {
   return *this;
 }
 
-LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size) :
-  command_{type},
-  size_{size}
-{}
+LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size)
+    : command_{type}, size_{size} {}
 
-LoadCommand::LoadCommand(const details::load_command& command) :
-  command_{static_cast<LOAD_COMMAND_TYPES>(command.cmd)},
-  size_{command.cmdsize}
-{}
-
+LoadCommand::LoadCommand(const details::load_command& command)
+    : command_{static_cast<LOAD_COMMAND_TYPES>(command.cmd)},
+      size_{command.cmdsize} {}
 
 void LoadCommand::swap(LoadCommand& other) {
-  std::swap(original_data_,  other.original_data_);
-  std::swap(command_,        other.command_);
-  std::swap(size_,           other.size_);
+  std::swap(original_data_, other.original_data_);
+  std::swap(command_, other.command_);
+  std::swap(size_, other.size_);
   std::swap(command_offset_, other.command_offset_);
 }
 
-LoadCommand* LoadCommand::clone() const {
-  return new LoadCommand{*this};
-}
+LoadCommand* LoadCommand::clone() const { return new LoadCommand{*this}; }
 
-LOAD_COMMAND_TYPES LoadCommand::command() const {
-  return command_;
-}
+LOAD_COMMAND_TYPES LoadCommand::command() const { return command_; }
 
-uint32_t LoadCommand::size() const {
-  return size_;
-}
+uint32_t LoadCommand::size() const { return size_; }
 
-const LoadCommand::raw_t& LoadCommand::data() const {
-  return original_data_;
-}
+const LoadCommand::raw_t& LoadCommand::data() const { return original_data_; }
 
-
-uint64_t LoadCommand::command_offset() const {
-  return command_offset_;
-}
+uint64_t LoadCommand::command_offset() const { return command_offset_; }
 
 void LoadCommand::data(const LoadCommand::raw_t& data) {
   original_data_ = data;
 }
 
-void LoadCommand::command(LOAD_COMMAND_TYPES command) {
-  command_ = command;
-}
+void LoadCommand::command(LOAD_COMMAND_TYPES command) { command_ = command; }
 
-void LoadCommand::size(uint32_t size) {
-  size_ = size;
-}
+void LoadCommand::size(uint32_t size) { size_ = size; }
 
+void LoadCommand::command_offset(uint64_t offset) { command_offset_ = offset; }
 
-void LoadCommand::command_offset(uint64_t offset) {
-  command_offset_ = offset;
-}
-
-
-void LoadCommand::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void LoadCommand::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool LoadCommand::operator==(const LoadCommand& rhs) const {
   if (this == &rhs) {
@@ -119,5 +94,5 @@ std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd) {
   return cmd.print(os);
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

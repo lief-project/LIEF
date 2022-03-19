@@ -15,8 +15,9 @@
  */
 
 #include "LIEF/VDEX/File.hpp"
-#include "LIEF/VDEX/hash.hpp"
+
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/VDEX/hash.hpp"
 #include "visitors/json.hpp"
 
 namespace LIEF {
@@ -25,23 +26,15 @@ namespace VDEX {
 File::~File() = default;
 File::File() = default;
 
-
-const Header& File::header() const {
-  return header_;
-}
+const Header& File::header() const { return header_; }
 
 Header& File::header() {
   return const_cast<Header&>(static_cast<const File*>(this)->header());
 }
 
+File::it_dex_files File::dex_files() { return dex_files_; }
 
-File::it_dex_files File::dex_files() {
-  return dex_files_;
-}
-
-File::it_const_dex_files File::dex_files() const {
-  return dex_files_;
-}
+File::it_const_dex_files File::dex_files() const { return dex_files_; }
 
 dex2dex_info_t File::dex2dex_info() const {
   dex2dex_info_t info;
@@ -52,7 +45,6 @@ dex2dex_info_t File::dex2dex_info() const {
 }
 
 std::string File::dex2dex_json_info() {
-
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
@@ -67,9 +59,7 @@ std::string File::dex2dex_json_info() {
 #endif
 }
 
-void File::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void File::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool File::operator==(const File& rhs) const {
   if (this == &rhs) {
@@ -80,18 +70,13 @@ bool File::operator==(const File& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool File::operator!=(const File& rhs) const {
-  return !(*this == rhs);
-}
-
-
+bool File::operator!=(const File& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
   os << "Header" << std::endl;
   os << "======" << std::endl;
 
   os << vdex_file.header() << std::endl << std::endl;
-
 
   os << "DEX Files" << std::endl;
   os << "=========" << std::endl;
@@ -100,9 +85,8 @@ std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
     os << f << std::endl << std::endl;
   }
 
-
   return os;
 }
 
-} // Namespace VDEX
-} // Namespace LIEF
+}  // Namespace VDEX
+}  // Namespace LIEF

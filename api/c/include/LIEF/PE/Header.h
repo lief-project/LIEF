@@ -32,18 +32,17 @@ extern "C" {
 #endif
 
 struct Pe_Header_t {
-  uint8_t            signature[4];
+  uint8_t signature[4];
   enum LIEF_PE_MACHINE_TYPES machine;
-  uint16_t           numberof_sections;
-  uint32_t           time_date_stamp;
-  uint32_t           pointerto_symbol_table;
-  uint32_t           numberof_symbols;
-  uint16_t           sizeof_optional_header;
-  uint16_t           characteristics;
+  uint16_t numberof_sections;
+  uint32_t time_date_stamp;
+  uint32_t pointerto_symbol_table;
+  uint32_t numberof_symbols;
+  uint16_t sizeof_optional_header;
+  uint16_t characteristics;
 };
 
 typedef struct Pe_Header_t Pe_Header_t;
-
 
 #ifdef __cplusplus
 }

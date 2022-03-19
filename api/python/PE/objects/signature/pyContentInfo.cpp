@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
-
 #include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (ContentInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ContentInfo::*)(T);
 
-
-template<>
+template <>
 void create<ContentInfo>(py::module& m) {
-
   py::class_<ContentInfo, LIEF::Object>(m, "ContentInfo",
       R"delim(
       ContentInfo as described in the `RFC 2315 <https://tools.ietf.org/html/rfc2315#section-7>`_
@@ -111,6 +108,5 @@ void create<ContentInfo>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

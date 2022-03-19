@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 #include "LIEF/logging.hpp"
+
 #include "LIEF/logging.h"
 
 using namespace LIEF::logging;
 
-void lief_logging_disable(void) {
-  disable();
-}
+void lief_logging_disable(void) { disable(); }
 
-void lief_logging_enable(void) {
-  enable();
-}
+void lief_logging_enable(void) { enable(); }
 
 void lief_logging_set_level(uint32_t level) {
   set_level(static_cast<LOGGING_LEVEL>(level));

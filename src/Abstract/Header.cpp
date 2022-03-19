@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/Abstract/Header.hpp"
+
 #include <iomanip>
 #include <numeric>
 
-#include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
 
 namespace LIEF {
@@ -24,82 +25,41 @@ Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 Header::~Header() = default;
 
-
 Header::Header() = default;
 
-ARCHITECTURES Header::architecture() const {
-  return architecture_;
-}
+ARCHITECTURES Header::architecture() const { return architecture_; }
 
+OBJECT_TYPES Header::object_type() const { return object_type_; }
 
-OBJECT_TYPES Header::object_type() const {
-  return object_type_;
-}
+const std::set<MODES>& Header::modes() const { return modes_; }
 
+bool Header::is_32() const { return modes().count(MODES::MODE_32) > 0; }
 
-const std::set<MODES>& Header::modes() const {
-  return modes_;
-}
+bool Header::is_64() const { return modes().count(MODES::MODE_64) > 0; }
 
+uint64_t Header::entrypoint() const { return entrypoint_; }
 
-bool Header::is_32() const {
-  return modes().count(MODES::MODE_32) > 0;
-}
+ENDIANNESS Header::endianness() const { return endianness_; }
 
+void Header::accept(Visitor& visitor) const { visitor.visit(*this); }
 
-bool Header::is_64() const {
-  return modes().count(MODES::MODE_64) > 0;
-}
+void Header::architecture(ARCHITECTURES arch) { architecture_ = arch; }
 
+void Header::object_type(OBJECT_TYPES type) { object_type_ = type; }
 
-uint64_t Header::entrypoint() const {
-  return entrypoint_;
-}
+void Header::modes(const std::set<MODES>& m) { modes_ = m; }
 
+void Header::entrypoint(uint64_t entrypoint) { entrypoint_ = entrypoint; }
 
-ENDIANNESS Header::endianness() const {
-  return endianness_;
-}
-
-
-void Header::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
-
-void Header::architecture(ARCHITECTURES arch) {
-  architecture_ = arch;
-}
-
-
-void Header::object_type(OBJECT_TYPES type) {
-  object_type_ = type;
-}
-
-
-void Header::modes(const std::set<MODES>& m) {
-  modes_ = m;
-}
-
-
-void Header::entrypoint(uint64_t entrypoint) {
-  entrypoint_ = entrypoint;
-}
-
-
-void Header::endianness(ENDIANNESS endianness) {
-  endianness_ = endianness;
-}
+void Header::endianness(ENDIANNESS endianness) { endianness_ = endianness; }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
-
   const std::set<MODES>& m = hdr.modes();
   std::string modes = std::accumulate(
-     std::begin(m),
-     std::end(m), std::string{},
-     [] (const std::string& a, MODES b) {
-         return a.empty() ? to_string(b) : a + "-" + to_string(b);
-     });
+      std::begin(m), std::end(m), std::string{},
+      [](const std::string& a, MODES b) {
+        return a.empty() ? to_string(b) : a + "-" + to_string(b);
+      });
   os << std::hex << std::left;
 
   std::string bitness = "UNKNOWN";
@@ -111,14 +71,19 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
     bitness = "64";
   }
 
-  os << std::setw(33) << std::setfill(' ') << "Architecture:" << to_string(hdr.architecture()) << "_" << modes << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint()                      << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Object type:"  << to_string(hdr.object_type())                  << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "32/64 bits:"   << bitness                                       << std::endl;
+  os << std::setw(33) << std::setfill(' ')
+     << "Architecture:" << to_string(hdr.architecture()) << "_" << modes
+     << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"
+     << "0x" << hdr.entrypoint() << std::endl;
+  os << std::setw(33) << std::setfill(' ')
+     << "Object type:" << to_string(hdr.object_type()) << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "32/64 bits:" << bitness
+     << std::endl;
 
-  os << std::setw(33) << std::setfill(' ') << "Endianness:"   << to_string(hdr.endianness())                                       << std::endl;
+  os << std::setw(33) << std::setfill(' ')
+     << "Endianness:" << to_string(hdr.endianness()) << std::endl;
   return os;
 }
 
-
-}
+}  // namespace LIEF

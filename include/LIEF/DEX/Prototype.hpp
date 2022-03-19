@@ -16,9 +16,9 @@
 #ifndef LIEF_DEX_PROTOTYPE_H_
 #define LIEF_DEX_PROTOTYPE_H_
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -29,12 +29,12 @@ class Type;
 class LIEF_API Prototype : public Object {
   friend class Parser;
 
-  public:
+ public:
   using parameters_type_t = std::vector<Type*>;
-  using it_params         = ref_iterator<parameters_type_t>;
-  using it_const_params   = const_ref_iterator<const parameters_type_t>;
+  using it_params = ref_iterator<parameters_type_t>;
+  using it_const_params = const_ref_iterator<const parameters_type_t>;
 
-  public:
+ public:
   Prototype();
   Prototype(const Prototype& other);
 
@@ -51,16 +51,16 @@ class LIEF_API Prototype : public Object {
   bool operator==(const Prototype& rhs) const;
   bool operator!=(const Prototype& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Prototype& type);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Prototype& type);
 
   virtual ~Prototype();
 
-  private:
+ private:
   Type* return_type_ = nullptr;
   parameters_type_t params_;
-
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

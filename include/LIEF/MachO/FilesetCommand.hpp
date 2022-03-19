@@ -17,11 +17,9 @@
 #define LIEF_MACHO_FILESET_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/types.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
-
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -34,7 +32,7 @@ struct fileset_entry_command;
 
 //! Class associated with the LC_FILESET_ENTRY commands
 class LIEF_API FilesetCommand : public LoadCommand {
-  public:
+ public:
   friend class BinaryParser;
   using content_t = std::vector<uint8_t>;
 
@@ -51,7 +49,8 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   virtual ~FilesetCommand();
 
-  //! Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
+  //! Name of the underlying MachO binary (e.g.
+  //! ``com.apple.security.quarantine``)
   const std::string& name() const;
 
   //! Memory address where the MachO file should be mapped
@@ -62,13 +61,9 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   //! Return a pointer on the LIEF::MachO::Binary associated
   //! with this entry
-  inline const Binary* binary() const {
-    return binary_;
-  }
+  inline const Binary* binary() const { return binary_; }
 
-  inline Binary* binary() {
-    return binary_;
-  }
+  inline Binary* binary() { return binary_; }
 
   void name(const std::string& name);
   void virtual_address(uint64_t virtual_address);
@@ -81,13 +76,13 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   std::string name_;
   uint64_t virtual_address_{0};
   uint64_t file_offset_{0};
   Binary* binary_ = nullptr;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

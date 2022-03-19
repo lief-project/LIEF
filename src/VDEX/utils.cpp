@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/VDEX/utils.hpp"
+
 #include <fstream>
 #include <map>
 
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/VDEX/utils.hpp"
 #include "VDEX/Structures.hpp"
 
 namespace LIEF {
@@ -43,8 +44,9 @@ inline vdex_version_t version(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits = std::all_of(std::begin(version), std::end(version),
-        [] (char c) { return c == 0 || ::isdigit(c); });
+    const bool are_digits =
+        std::all_of(std::begin(version), std::end(version),
+                    [](char c) { return c == 0 || ::isdigit(c); });
     if (!are_digits) {
       return 0;
     }
@@ -82,15 +84,17 @@ vdex_version_t version(const std::vector<uint8_t>& raw) {
 }
 
 LIEF::Android::ANDROID_VERSIONS android_version(vdex_version_t version) {
-  static const std::map<vdex_version_t, LIEF::Android::ANDROID_VERSIONS> oat2android {
-    { 6,  LIEF::Android::ANDROID_VERSIONS::VERSION_800 },
-    { 10, LIEF::Android::ANDROID_VERSIONS::VERSION_810 },
+  static const std::map<vdex_version_t, LIEF::Android::ANDROID_VERSIONS>
+      oat2android{
+          {6, LIEF::Android::ANDROID_VERSIONS::VERSION_800},
+          {10, LIEF::Android::ANDROID_VERSIONS::VERSION_810},
 
-  };
-  auto   it  = oat2android.lower_bound(version);
-  return it == oat2android.end() ? LIEF::Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
+      };
+  auto it = oat2android.lower_bound(version);
+  return it == oat2android.end()
+             ? LIEF::Android::ANDROID_VERSIONS::VERSION_UNKNOWN
+             : it->second;
 }
 
-
-}
-}
+}  // namespace VDEX
+}  // namespace LIEF

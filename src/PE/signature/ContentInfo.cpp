@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/signature/ContentInfo.hpp"
+
 #include <iomanip>
 
-#include "LIEF/PE/signature/OIDToString.hpp"
-#include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/utils.hpp"
 
 namespace LIEF {
@@ -28,18 +29,14 @@ ContentInfo::ContentInfo(const ContentInfo&) = default;
 ContentInfo& ContentInfo::operator=(const ContentInfo&) = default;
 ContentInfo::~ContentInfo() = default;
 
-
-void ContentInfo::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void ContentInfo::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
-  os << "Authentihash: " << hex_dump(content_info.digest())
-     << "(" << to_string(content_info.digest_algorithm()) << ")\n";
+  os << "Authentihash: " << hex_dump(content_info.digest()) << "("
+     << to_string(content_info.digest_algorithm()) << ")\n";
 
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

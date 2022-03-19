@@ -15,19 +15,18 @@
  */
 #include <algorithm>
 
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/exception.hpp"
 #include "LIEF/utils.hpp"
-
-#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/Binary.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
 void CorePrPsInfo::parse_() {
-  using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
+  using Elf_Prpsinfo = typename ELF_T::Elf_Prpsinfo;
 
   const Note::description_t& desc = description();
 
@@ -39,18 +38,18 @@ void CorePrPsInfo::parse_() {
 
   // parse info structure
   file_name_ = info->pr_fname;
-  flags_     = info->pr_flag;
-  uid_       = info->pr_uid;
-  gid_       = info->pr_gid;
-  pid_       = info->pr_pid;
-  ppid_      = info->pr_ppid;
-  pgrp_      = info->pr_pgrp;
-  sid_       = info->pr_sid;
+  flags_ = info->pr_flag;
+  uid_ = info->pr_uid;
+  gid_ = info->pr_gid;
+  pid_ = info->pr_pid;
+  ppid_ = info->pr_ppid;
+  pgrp_ = info->pr_pgrp;
+  sid_ = info->pr_sid;
 }
 
 template <typename ELF_T>
 void CorePrPsInfo::build_() {
-  using Elf_Prpsinfo  = typename ELF_T::Elf_Prpsinfo;
+  using Elf_Prpsinfo = typename ELF_T::Elf_Prpsinfo;
   Note::description_t& desc = description();
   constexpr size_t desc_size = sizeof(Elf_Prpsinfo);
   if (desc.size() < desc_size) {
@@ -64,19 +63,16 @@ void CorePrPsInfo::build_() {
   std::string fname = file_name_;
   fname.resize(fname_size, 0);
 
-  std::move(
-      std::begin(file_name_),
-      std::end(file_name_),
-      info->pr_fname);
+  std::move(std::begin(file_name_), std::end(file_name_), info->pr_fname);
 
   info->pr_flag = flags_;
-  info->pr_uid  = uid_;
-  info->pr_gid  = gid_;
-  info->pr_pid  = pid_;
+  info->pr_uid = uid_;
+  info->pr_gid = gid_;
+  info->pr_pid = pid_;
   info->pr_ppid = ppid_;
   info->pr_pgrp = pgrp_;
-  info->pr_sid  = sid_;
+  info->pr_sid = sid_;
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

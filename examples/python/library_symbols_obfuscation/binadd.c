@@ -3,7 +3,7 @@
 
 #include "libadd.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 3) {
     printf("Usage: %s <a> <b>\n", argv[0]);
     exit(-1);
@@ -13,4 +13,3 @@ int main(int argc, char **argv) {
   printf("From myLIb, a + b = %d\n", res);
   return 0;
 }
-

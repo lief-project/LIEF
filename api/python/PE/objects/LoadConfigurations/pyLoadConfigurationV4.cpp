@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (LoadConfigurationV4::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (LoadConfigurationV4::*)(T);
 
-
-template<>
+template <>
 void create<LoadConfigurationV4>(py::module& m) {
   py::class_<LoadConfigurationV4, LoadConfigurationV3>(m, "LoadConfigurationV4",
-      R"delim(
+                                                       R"delim(
       :class:`~lief.PE.LoadConfigurationV3` enhanced with:
 
         * Kind of dynamic relocations
@@ -42,35 +40,34 @@ void create<LoadConfigurationV4>(py::module& m) {
 
       It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_14383`
       )delim")
-    .def(py::init<>())
+      .def(py::init<>())
 
-    .def_property("dynamic_value_reloc_table",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV4::dynamic_value_reloc_table),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV4::dynamic_value_reloc_table),
-        "VA of pointing to a ``IMAGE_DYNAMIC_RELOCATION_TABLE``")
+      .def_property("dynamic_value_reloc_table",
+                    static_cast<getter_t<uint64_t>>(
+                        &LoadConfigurationV4::dynamic_value_reloc_table),
+                    static_cast<setter_t<uint64_t>>(
+                        &LoadConfigurationV4::dynamic_value_reloc_table),
+                    "VA of pointing to a ``IMAGE_DYNAMIC_RELOCATION_TABLE``")
 
-    .def_property("hybrid_metadata_pointer",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV4::hybrid_metadata_pointer),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV4::hybrid_metadata_pointer),
-        "")
+      .def_property("hybrid_metadata_pointer",
+                    static_cast<getter_t<uint64_t>>(
+                        &LoadConfigurationV4::hybrid_metadata_pointer),
+                    static_cast<setter_t<uint64_t>>(
+                        &LoadConfigurationV4::hybrid_metadata_pointer),
+                    "")
 
+      .def("__eq__", &LoadConfigurationV4::operator==)
+      .def("__ne__", &LoadConfigurationV4::operator!=)
+      .def("__hash__",
+           [](const LoadConfigurationV4& config) { return Hash::hash(config); })
 
-    .def("__eq__", &LoadConfigurationV4::operator==)
-    .def("__ne__", &LoadConfigurationV4::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV4& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV4& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const LoadConfigurationV4& config) {
+        std::ostringstream stream;
+        stream << config;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

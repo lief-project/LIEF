@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryArray.hpp"
-#include "LIEF/exception.hpp"
-#include "logging.hpp"
 
+#include <iomanip>
 #include <numeric>
 #include <sstream>
-#include <iomanip>
 #include <utility>
+
+#include "LIEF/exception.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 DynamicEntryArray::DynamicEntryArray() = default;
-DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = default;
+DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) =
+    default;
 DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
 
-
-DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, array_t array) :
-  DynamicEntry::DynamicEntry{tag, 0},
-  array_{std::move(array)}
-{}
-
+DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, array_t array)
+    : DynamicEntry::DynamicEntry{tag, 0}, array_{std::move(array)} {}
 
 DynamicEntryArray::array_t& DynamicEntryArray::array() {
-  return const_cast<DynamicEntryArray::array_t&>(static_cast<const DynamicEntryArray*>(this)->array());
+  return const_cast<DynamicEntryArray::array_t&>(
+      static_cast<const DynamicEntryArray*>(this)->array());
 }
-
 
 const DynamicEntryArray::array_t& DynamicEntryArray::array() const {
   return array_;
@@ -56,7 +54,7 @@ DynamicEntryArray& DynamicEntryArray::append(uint64_t function) {
 
 DynamicEntryArray& DynamicEntryArray::remove(uint64_t function) {
   array_.erase(std::remove_if(std::begin(array_), std::end(array_),
-                              [function] (uint64_t v) { return v == function; }),
+                              [function](uint64_t v) { return v == function; }),
                std::end(array_));
   return *this;
 }
@@ -75,10 +73,7 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
   return *this;
 }
 
-
-size_t DynamicEntryArray::size() const {
-  return array_.size();
-}
+size_t DynamicEntryArray::size() const { return array_.size(); }
 
 DynamicEntryArray& DynamicEntryArray::operator+=(uint64_t value) {
   return append(value);
@@ -96,12 +91,11 @@ const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
 }
 
 uint64_t& DynamicEntryArray::operator[](size_t idx) {
-  return const_cast<uint64_t&>(static_cast<const DynamicEntryArray*>(this)->operator[](idx));
+  return const_cast<uint64_t&>(
+      static_cast<const DynamicEntryArray*>(this)->operator[](idx));
 }
 
-void DynamicEntryArray::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void DynamicEntryArray::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DynamicEntryArray::classof(const DynamicEntry* entry) {
   const DYNAMIC_TAGS tag = entry->tag();
@@ -113,26 +107,19 @@ bool DynamicEntryArray::classof(const DynamicEntry* entry) {
 std::ostream& DynamicEntryArray::print(std::ostream& os) const {
   const DynamicEntryArray::array_t& array = this->array();
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << "["
+  os << std::hex << std::left << "["
      << std::accumulate(std::begin(array), std::end(array), std::string(),
-         [] (std::string& s, uint64_t x) {
-          std::stringstream ss;
-          ss << "0x" << std::hex << x;
-            return s.empty() ? ss.str() : s + ", " + ss.str();
-         })
+                        [](std::string& s, uint64_t x) {
+                          std::stringstream ss;
+                          ss << "0x" << std::hex << x;
+                          return s.empty() ? ss.str() : s + ", " + ss.str();
+                        })
      << "]";
-
 
   return os;
 }
 
-
 DynamicEntryArray::~DynamicEntryArray() = default;
 
-}
-}
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

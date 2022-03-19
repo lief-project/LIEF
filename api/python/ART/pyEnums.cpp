@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyART.hpp"
-#include "LIEF/ART/enums.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/enums.hpp"
+#include "pyART.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 
 namespace LIEF {
 namespace ART {
 void init_enums(py::module& m) {
-
   py::enum_<STORAGE_MODES>(m, "STORAGE_MODES")
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_UNCOMPRESSED))
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4))
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4HC));
-
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_UNCOMPRESSED))
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4))
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4HC));
 }
-}
-}
+}  // namespace ART
+}  // namespace LIEF

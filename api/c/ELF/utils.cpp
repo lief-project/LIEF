@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/utils.hpp"
+
 #include "LIEF/ELF/utils.h"
 
-bool is_elf(const char* file) {
-  return LIEF::ELF::is_elf(file);
-}
-
+bool is_elf(const char* file) { return LIEF::ELF::is_elf(file); }

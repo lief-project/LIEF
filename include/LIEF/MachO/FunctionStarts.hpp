@@ -15,15 +15,14 @@
  */
 #ifndef LIEF_MACHO_FUNCTION_STARTS_COMMAND_H_
 #define LIEF_MACHO_FUNCTION_STARTS_COMMAND_H_
+#include <array>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <array>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -32,12 +31,11 @@ namespace details {
 struct linkedit_data_command;
 }
 
-
 //! Class which represents the LC_FUNCTION_STARTS command
 //!
 //! This command is an array of ULEB128 encoded values
 class LIEF_API FunctionStarts : public LoadCommand {
-  public:
+ public:
   FunctionStarts();
   FunctionStarts(const details::linkedit_data_command& cmd);
 
@@ -46,7 +44,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   FunctionStarts* clone() const override;
 
-  //! Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
+  //! Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are
+  //! located
   uint32_t data_offset() const;
 
   //! Size of the functions list in the binary
@@ -54,7 +53,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   //! Addresses of every function entry point in the executable.
   //!
-  //! This allows functions to exist for which there are no entries in the symbol table.
+  //! This allows functions to exist for which there are no entries in the
+  //! symbol table.
   //!
   //! @warning The address is relative to the ``__TEXT`` segment
   const std::vector<uint64_t>& functions() const;
@@ -79,12 +79,12 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint32_t data_offset_;
   uint32_t data_size_;
   std::vector<uint64_t> functions_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

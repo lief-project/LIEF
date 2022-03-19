@@ -16,10 +16,10 @@
 #ifndef LIEF_PE_ATTRIBUTES_H_
 #define LIEF_PE_ATTRIBUTES_H_
 #include <memory>
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 
+#include "LIEF/Object.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -29,11 +29,10 @@ class SignatureParser;
 
 //! Interface over PKCS #7 attribute
 class LIEF_API Attribute : public Object {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   Attribute();
   Attribute(const Attribute&);
   Attribute& operator=(const Attribute&);
@@ -41,9 +40,7 @@ class LIEF_API Attribute : public Object {
   virtual std::unique_ptr<Attribute> clone() const = 0;
 
   //! Concrete type of the attribute
-  inline virtual SIG_ATTRIBUTE_TYPES type() const {
-    return type_;
-  }
+  inline virtual SIG_ATTRIBUTE_TYPES type() const { return type_; }
 
   //! Print information about the underlying attribute
   virtual std::string print() const = 0;
@@ -52,14 +49,15 @@ class LIEF_API Attribute : public Object {
 
   virtual ~Attribute();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Attribute& Attribute);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Attribute& Attribute);
 
-  protected:
+ protected:
   Attribute(SIG_ATTRIBUTE_TYPES type);
   SIG_ATTRIBUTE_TYPES type_ = SIG_ATTRIBUTE_TYPES::UNKNOWN;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

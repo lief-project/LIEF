@@ -15,12 +15,10 @@
 #ifndef LIEF_DEX_FIELD_H_
 #define LIEF_DEX_FIELD_H_
 
-#include "LIEF/DEX/enums.hpp"
-
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -30,10 +28,11 @@ class Class;
 //! Class which represent a DEX Field
 class LIEF_API Field : public Object {
   friend class Parser;
-  public:
+
+ public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
-  public:
+ public:
   Field();
   Field(std::string name, Class* parent = nullptr);
 
@@ -76,10 +75,10 @@ class LIEF_API Field : public Object {
 
   virtual ~Field();
 
-  private:
+ private:
   void set_static(bool v);
 
-  private:
+ private:
   std::string name_;
   Class* parent_ = nullptr;
   Type* type_ = nullptr;
@@ -88,6 +87,6 @@ class LIEF_API Field : public Object {
   bool is_static_ = false;
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

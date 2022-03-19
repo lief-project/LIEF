@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 #include "LIEF/BinaryStream/Convert.hpp"
+
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#define TMPL_DECL(T) template<> void swap_endian<T>(T* u) { *u = BinaryStream::swap_endian(*u); }
+#define TMPL_DECL(T)                    \
+  template <>                           \
+  void swap_endian<T>(T * u) {          \
+    *u = BinaryStream::swap_endian(*u); \
+  }
 
 /* In place conversions for BinaryStream/VectorStream data */
 namespace LIEF {
@@ -35,6 +40,5 @@ TMPL_DECL(int16_t)
 TMPL_DECL(int32_t)
 TMPL_DECL(int64_t)
 
-
-}
-}
+}  // namespace Convert
+}  // namespace LIEF

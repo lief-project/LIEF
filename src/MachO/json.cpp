@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-
-#include "MachO/json_internal.hpp"
 #include "LIEF/MachO.hpp"
-#include "Object.tcc"
 #include "MachO/Binary.tcc"
+#include "MachO/json_internal.hpp"
+#include "Object.tcc"
 
 namespace LIEF {
 namespace MachO {
 
-
-template<class T>
+template <class T>
 inline void process_command(json& node, const Binary& bin, const char* key) {
   auto* cmd = bin.command<T>();
   if (cmd != nullptr) {
@@ -33,7 +31,6 @@ inline void process_command(json& node, const Binary& bin, const char* key) {
     node[key] = v.get();
   }
 }
-
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
@@ -78,13 +75,12 @@ void JsonVisitor::visit(const Binary& binary) {
     libraries.emplace_back(visitor.get());
   }
 
-
-  node_["header"]      = header_visitor.get();
-  node_["sections"]    = sections;
-  node_["segments"]    = segments;
-  node_["symbols"]     = symbols;
+  node_["header"] = header_visitor.get();
+  node_["sections"] = sections;
+  node_["segments"] = segments;
+  node_["symbols"] = symbols;
   node_["relocations"] = relocations;
-  node_["libraries"]   = libraries;
+  node_["libraries"] = libraries;
 
   process_command<UUIDCommand>(node_, binary, "uuid");
   process_command<MainCommand>(node_, binary, "main_command");
@@ -96,36 +92,34 @@ void JsonVisitor::visit(const Binary& binary) {
   process_command<ThreadCommand>(node_, binary, "thread_command");
   process_command<RPathCommand>(node_, binary, "rpath");
   process_command<SymbolCommand>(node_, binary, "symbol_command");
-  process_command<DynamicSymbolCommand>(node_, binary, "dynamic_symbol_command");
+  process_command<DynamicSymbolCommand>(node_, binary,
+                                        "dynamic_symbol_command");
   process_command<CodeSignature>(node_, binary, "code_signature");
   process_command<DataInCode>(node_, binary, "data_in_code");
   process_command<EncryptionInfo>(node_, binary, "encryption_info");
   process_command<BuildVersion>(node_, binary, "build_verison");
 }
 
-
 void JsonVisitor::visit(const Header& header) {
-
   std::vector<json> flags;
   for (HEADER_FLAGS f : header.flags_list()) {
     flags.emplace_back(to_string(f));
   }
-  node_["magic"]       = to_string(header.magic());
-  node_["cpu_type"]    = to_string(header.cpu_type());
+  node_["magic"] = to_string(header.magic());
+  node_["cpu_type"] = to_string(header.cpu_type());
   node_["cpu_subtype"] = header.cpu_subtype();
-  node_["file_type"]   = to_string(header.file_type());
-  node_["nb_cmds"]     = header.nb_cmds();
+  node_["file_type"] = to_string(header.file_type());
+  node_["nb_cmds"] = header.nb_cmds();
   node_["sizeof_cmds"] = header.sizeof_cmds();
-  node_["reserved"]    = header.reserved();
-  node_["flags"]       = flags;
+  node_["reserved"] = header.reserved();
+  node_["flags"] = flags;
 }
 
-
 void JsonVisitor::visit(const LoadCommand& cmd) {
-  node_["command"]        = to_string(cmd.command());
-  node_["command_size"]   = cmd.size();
+  node_["command"] = to_string(cmd.command());
+  node_["command_size"] = cmd.size();
   node_["command_offset"] = cmd.command_offset();
-  node_["data_hash"]      = LIEF::hash(cmd.data());
+  node_["data_hash"] = LIEF::hash(cmd.data());
 }
 
 void JsonVisitor::visit(const UUIDCommand& uuid) {
@@ -135,52 +129,50 @@ void JsonVisitor::visit(const UUIDCommand& uuid) {
 
 void JsonVisitor::visit(const SymbolCommand& symbol) {
   visit(*symbol.as<LoadCommand>());
-  node_["symbol_offset"]    = symbol.symbol_offset();
+  node_["symbol_offset"] = symbol.symbol_offset();
   node_["numberof_symbols"] = symbol.numberof_symbols();
-  node_["strings_offset"]   = symbol.strings_offset();
-  node_["strings_size"]     = symbol.strings_size();
+  node_["strings_offset"] = symbol.strings_offset();
+  node_["strings_size"] = symbol.strings_size();
 }
 
 void JsonVisitor::visit(const SegmentCommand& segment) {
-
   std::vector<json> sections;
   for (const Section& section : segment.sections()) {
     sections.emplace_back(section.name());
   }
 
   visit(*segment.as<LoadCommand>());
-  node_["name"]              = segment.name();
-  node_["virtual_address"]   = segment.virtual_address();
-  node_["virtual_size"]      = segment.virtual_size();
-  node_["file_size"]         = segment.file_size();
-  node_["file_offset"]       = segment.file_offset();
-  node_["max_protection"]    = segment.max_protection();
-  node_["init_protection"]   = segment.init_protection();
+  node_["name"] = segment.name();
+  node_["virtual_address"] = segment.virtual_address();
+  node_["virtual_size"] = segment.virtual_size();
+  node_["file_size"] = segment.file_size();
+  node_["file_offset"] = segment.file_offset();
+  node_["max_protection"] = segment.max_protection();
+  node_["init_protection"] = segment.init_protection();
   node_["numberof_sections"] = segment.numberof_sections();
-  node_["flags"]             = segment.flags();
-  node_["sections"]          = sections;
-  node_["content_hash"]      = LIEF::hash(segment.content());
+  node_["flags"] = segment.flags();
+  node_["sections"] = sections;
+  node_["content_hash"] = LIEF::hash(segment.content());
 }
 
 void JsonVisitor::visit(const Section& section) {
-
   std::vector<json> flags;
   for (MACHO_SECTION_FLAGS f : section.flags_list()) {
     flags.emplace_back(to_string(f));
   }
-  node_["name"]                 = section.name();
-  node_["virtual_address"]      = section.virtual_address();
-  node_["offset"]               = section.offset();
-  node_["size"]                 = section.size();
-  node_["alignment"]            = section.alignment();
-  node_["relocation_offset"]    = section.relocation_offset();
+  node_["name"] = section.name();
+  node_["virtual_address"] = section.virtual_address();
+  node_["offset"] = section.offset();
+  node_["size"] = section.size();
+  node_["alignment"] = section.alignment();
+  node_["relocation_offset"] = section.relocation_offset();
   node_["numberof_relocations"] = section.numberof_relocations();
-  node_["flags"]                = section.flags();
-  node_["type"]                 = to_string(section.type());
-  node_["reserved1"]            = section.reserved1();
-  node_["reserved2"]            = section.reserved2();
-  node_["reserved3"]            = section.reserved3();
-  node_["content_hash"]         = LIEF::hash(section.content());
+  node_["flags"] = section.flags();
+  node_["type"] = to_string(section.type());
+  node_["reserved1"] = section.reserved1();
+  node_["reserved2"] = section.reserved2();
+  node_["reserved3"] = section.reserved3();
+  node_["content_hash"] = LIEF::hash(section.content());
 }
 
 void JsonVisitor::visit(const MainCommand& maincmd) {
@@ -193,24 +185,29 @@ void JsonVisitor::visit(const MainCommand& maincmd) {
 void JsonVisitor::visit(const DynamicSymbolCommand& dynamic_symbol) {
   visit(*dynamic_symbol.as<LoadCommand>());
 
-  node_["idx_local_symbol"]                 = dynamic_symbol.idx_local_symbol();
-  node_["nb_local_symbols"]                 = dynamic_symbol.nb_local_symbols();
-  node_["idx_external_define_symbol"]       = dynamic_symbol.idx_external_define_symbol();
-  node_["nb_external_define_symbols"]       = dynamic_symbol.nb_external_define_symbols();
-  node_["idx_undefined_symbol"]             = dynamic_symbol.idx_undefined_symbol();
-  node_["nb_undefined_symbols"]             = dynamic_symbol.nb_undefined_symbols();
-  node_["toc_offset"]                       = dynamic_symbol.toc_offset();
-  node_["nb_toc"]                           = dynamic_symbol.nb_toc();
-  node_["module_table_offset"]              = dynamic_symbol.module_table_offset();
-  node_["nb_module_table"]                  = dynamic_symbol.nb_module_table();
-  node_["external_reference_symbol_offset"] = dynamic_symbol.external_reference_symbol_offset();
-  node_["nb_external_reference_symbols"]    = dynamic_symbol.nb_external_reference_symbols();
-  node_["indirect_symbol_offset"]           = dynamic_symbol.indirect_symbol_offset();
-  node_["nb_indirect_symbols"]              = dynamic_symbol.nb_indirect_symbols();
-  node_["external_relocation_offset"]       = dynamic_symbol.external_relocation_offset();
-  node_["nb_external_relocations"]          = dynamic_symbol.nb_external_relocations();
-  node_["local_relocation_offset"]          = dynamic_symbol.local_relocation_offset();
-  node_["nb_local_relocations"]             = dynamic_symbol.nb_local_relocations();
+  node_["idx_local_symbol"] = dynamic_symbol.idx_local_symbol();
+  node_["nb_local_symbols"] = dynamic_symbol.nb_local_symbols();
+  node_["idx_external_define_symbol"] =
+      dynamic_symbol.idx_external_define_symbol();
+  node_["nb_external_define_symbols"] =
+      dynamic_symbol.nb_external_define_symbols();
+  node_["idx_undefined_symbol"] = dynamic_symbol.idx_undefined_symbol();
+  node_["nb_undefined_symbols"] = dynamic_symbol.nb_undefined_symbols();
+  node_["toc_offset"] = dynamic_symbol.toc_offset();
+  node_["nb_toc"] = dynamic_symbol.nb_toc();
+  node_["module_table_offset"] = dynamic_symbol.module_table_offset();
+  node_["nb_module_table"] = dynamic_symbol.nb_module_table();
+  node_["external_reference_symbol_offset"] =
+      dynamic_symbol.external_reference_symbol_offset();
+  node_["nb_external_reference_symbols"] =
+      dynamic_symbol.nb_external_reference_symbols();
+  node_["indirect_symbol_offset"] = dynamic_symbol.indirect_symbol_offset();
+  node_["nb_indirect_symbols"] = dynamic_symbol.nb_indirect_symbols();
+  node_["external_relocation_offset"] =
+      dynamic_symbol.external_relocation_offset();
+  node_["nb_external_relocations"] = dynamic_symbol.nb_external_relocations();
+  node_["local_relocation_offset"] = dynamic_symbol.local_relocation_offset();
+  node_["nb_local_relocations"] = dynamic_symbol.nb_local_relocations();
 }
 
 void JsonVisitor::visit(const DylinkerCommand& dylinker) {
@@ -222,9 +219,9 @@ void JsonVisitor::visit(const DylinkerCommand& dylinker) {
 void JsonVisitor::visit(const DylibCommand& dylib) {
   visit(*dylib.as<LoadCommand>());
 
-  node_["name"]                  = dylib.name();
-  node_["timestamp"]             = dylib.timestamp();
-  node_["current_version"]       = dylib.current_version();
+  node_["name"] = dylib.name();
+  node_["timestamp"] = dylib.timestamp();
+  node_["current_version"] = dylib.current_version();
   node_["compatibility_version"] = dylib.compatibility_version();
 }
 
@@ -232,8 +229,8 @@ void JsonVisitor::visit(const ThreadCommand& threadcmd) {
   visit(*threadcmd.as<LoadCommand>());
 
   node_["flavor"] = threadcmd.flavor();
-  node_["count"]  = threadcmd.count();
-  node_["pc"]     = threadcmd.pc();
+  node_["count"] = threadcmd.count();
+  node_["pc"] = threadcmd.pc();
 }
 
 void JsonVisitor::visit(const RPathCommand& rpath) {
@@ -243,15 +240,15 @@ void JsonVisitor::visit(const RPathCommand& rpath) {
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {
-  node_["value"]             = symbol.value();
-  node_["size"]              = symbol.size();
-  node_["name"]              = symbol.name();
+  node_["value"] = symbol.value();
+  node_["size"] = symbol.size();
+  node_["name"] = symbol.name();
 
-  node_["type"]              = symbol.type();
+  node_["type"] = symbol.type();
   node_["numberof_sections"] = symbol.numberof_sections();
-  node_["description"]       = symbol.description();
-  node_["origin"]            = to_string(symbol.origin());
-  node_["is_external"]       = symbol.is_external();
+  node_["description"] = symbol.description();
+  node_["origin"] = to_string(symbol.origin());
+  node_["is_external"] = symbol.is_external();
 
   if (symbol.has_export_info()) {
     JsonVisitor v;
@@ -267,10 +264,9 @@ void JsonVisitor::visit(const Symbol& symbol) {
 }
 
 void JsonVisitor::visit(const Relocation& relocation) {
-
   node_["is_pc_relative"] = relocation.is_pc_relative();
-  node_["architecture"]   = to_string(relocation.architecture());
-  node_["origin"]         = to_string(relocation.origin());
+  node_["architecture"] = to_string(relocation.architecture());
+  node_["origin"] = to_string(relocation.origin());
   if (relocation.has_symbol()) {
     node_["symbol"] = relocation.symbol()->name();
   }
@@ -287,7 +283,7 @@ void JsonVisitor::visit(const Relocation& relocation) {
 void JsonVisitor::visit(const RelocationObject& robject) {
   visit(*robject.as<Relocation>());
 
-  node_["value"]        = robject.value();
+  node_["value"] = robject.value();
   node_["is_scattered"] = robject.is_scattered();
 }
 
@@ -296,12 +292,12 @@ void JsonVisitor::visit(const RelocationDyld& rdyld) {
 }
 
 void JsonVisitor::visit(const BindingInfo& binding) {
-  node_["address"]         = binding.address();
-  node_["binding_class"]   = to_string(binding.binding_class());
-  node_["binding_type"]    = to_string(binding.binding_type());
+  node_["address"] = binding.address();
+  node_["binding_class"] = to_string(binding.binding_class());
+  node_["binding_type"] = to_string(binding.binding_type());
   node_["library_ordinal"] = binding.library_ordinal();
-  node_["addend"]          = binding.addend();
-  node_["is_weak_import"]  = binding.is_weak_import();
+  node_["addend"] = binding.addend();
+  node_["is_weak_import"] = binding.is_weak_import();
   node_["original_offset"] = binding.original_offset();
 
   if (binding.has_symbol()) {
@@ -315,12 +311,10 @@ void JsonVisitor::visit(const BindingInfo& binding) {
   if (binding.has_library()) {
     node_["library"] = binding.library()->name();
   }
-
 }
 
 void JsonVisitor::visit(const ExportInfo& einfo) {
-
-  node_["flags"]   = einfo.flags();
+  node_["flags"] = einfo.flags();
   node_["address"] = einfo.address();
 
   if (einfo.has_symbol()) {
@@ -332,14 +326,14 @@ void JsonVisitor::visit(const FunctionStarts& fs) {
   visit(*fs.as<LoadCommand>());
 
   node_["data_offset"] = fs.data_offset();
-  node_["data_size"]   = fs.data_size();
-  node_["functions"]   = fs.functions();
+  node_["data_size"] = fs.data_size();
+  node_["functions"] = fs.functions();
 }
 
 void JsonVisitor::visit(const CodeSignature& cs) {
   visit(*cs.as<LoadCommand>());
   node_["data_offset"] = cs.data_offset();
-  node_["data_size"]   = cs.data_size();
+  node_["data_size"] = cs.data_size();
 }
 
 void JsonVisitor::visit(const DataInCode& dic) {
@@ -352,34 +346,32 @@ void JsonVisitor::visit(const DataInCode& dic) {
   }
 
   node_["data_offset"] = dic.data_offset();
-  node_["data_size"]   = dic.data_size();
-  node_["entries"]     = entries;
+  node_["data_size"] = dic.data_size();
+  node_["entries"] = entries;
 }
 
 void JsonVisitor::visit(const DataCodeEntry& dce) {
   node_["offset"] = dce.offset();
   node_["length"] = dce.length();
-  node_["type"]   = to_string(dce.type());
+  node_["type"] = to_string(dce.type());
 }
-
 
 void JsonVisitor::visit(const SourceVersion& sv) {
   visit(*sv.as<LoadCommand>());
   node_["version"] = sv.version();
 }
 
-
 void JsonVisitor::visit(const VersionMin& vmin) {
   visit(*vmin.as<LoadCommand>());
 
   node_["version"] = vmin.version();
-  node_["sdk"]     = vmin.sdk();
+  node_["sdk"] = vmin.sdk();
 }
 
 void JsonVisitor::visit(const SegmentSplitInfo& ssi) {
   visit(*ssi.as<LoadCommand>());
   node_["data_offset"] = ssi.data_offset();
-  node_["data_size"]   = ssi.data_size();
+  node_["data_size"] = ssi.data_size();
 }
 
 void JsonVisitor::visit(const SubFramework& sf) {
@@ -392,21 +384,19 @@ void JsonVisitor::visit(const DyldEnvironment& dv) {
   node_["value"] = dv.value();
 }
 
-
 void JsonVisitor::visit(const EncryptionInfo& e) {
   visit(*e.as<LoadCommand>());
   node_["crypt_offset"] = e.crypt_offset();
-  node_["crypt_size"]   = e.crypt_size();
-  node_["crypt_id"]     = e.crypt_id();
+  node_["crypt_size"] = e.crypt_size();
+  node_["crypt_id"] = e.crypt_id();
 }
-
 
 void JsonVisitor::visit(const BuildVersion& e) {
   visit(*e.as<LoadCommand>());
 
   node_["platform"] = to_string(e.platform());
-  node_["minos"]    = e.minos();
-  node_["sdk"]      = e.sdk();
+  node_["minos"] = e.minos();
+  node_["sdk"] = e.sdk();
 
   std::vector<json> tools;
 
@@ -418,20 +408,16 @@ void JsonVisitor::visit(const BuildVersion& e) {
   node_["tools"] = tools;
 }
 
-
 void JsonVisitor::visit(const BuildToolVersion& e) {
-  node_["tool"]    = to_string(e.tool());
+  node_["tool"] = to_string(e.tool());
   node_["version"] = e.version();
 }
 
 void JsonVisitor::visit(const FilesetCommand& e) {
-  node_["name"]            = e.name();
-  node_["file_offset"]     = e.file_offset();
+  node_["name"] = e.name();
+  node_["file_offset"] = e.file_offset();
   node_["virtual_address"] = e.virtual_address();
 }
 
-
-
-} // namespace MachO
-} // namespace LIEF
-
+}  // namespace MachO
+}  // namespace LIEF

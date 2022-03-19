@@ -17,30 +17,25 @@
 
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/Section.hpp"
-
+#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/hash.hpp"
-
-#include "pyMachO.hpp"
 #include "pyIterators.hpp"
+#include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using no_const_getter = T (Binary::*)(void);
 
-template<class T, class P>
+template <class T, class P>
 using no_const_func = T (Binary::*)(P);
 
-
-template<>
+template <>
 void create<Binary>(py::module& m) {
-
-
   py::class_<Binary, LIEF::Binary> bin(m, "Binary",
-      R"delim(
+                                       R"delim(
       Class which represents a MachO binary
       )delim");
 
@@ -54,7 +49,7 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
 
   // --> Already registered with FatMachO (same container)
-  //init_ref_iterator<Binary::it_fileset_binaries>(bin, "it_fileset_binaries");
+  // init_ref_iterator<Binary::it_fileset_binaries>(bin, "it_fileset_binaries");
 
   bin
     .def_property_readonly("header",
@@ -539,6 +534,5 @@ void create<Binary>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace MachO
+}  // namespace LIEF

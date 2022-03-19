@@ -13,78 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/Symbol.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (Symbol::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Symbol::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (Symbol::*)(void);
 
-
-template<>
+template <>
 void create<Symbol>(py::module& m) {
   py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
-    .def(py::init<>())
+      .def(py::init<>())
 
-    .def_property("name",
-        static_cast<getter_t<std::wstring>>      (&Symbol::wname),
-        static_cast<setter_t<const std::string&>>(&Symbol::name))
+      .def_property("name", static_cast<getter_t<std::wstring>>(&Symbol::wname),
+                    static_cast<setter_t<const std::string&>>(&Symbol::name))
 
-    .def_property_readonly("section_number",
-        &Symbol::section_number)
+      .def_property_readonly("section_number", &Symbol::section_number)
 
-    .def_property_readonly("type",
-        &Symbol::type)
+      .def_property_readonly("type", &Symbol::type)
 
-    .def_property_readonly("base_type",
-        &Symbol::base_type)
+      .def_property_readonly("base_type", &Symbol::base_type)
 
-    .def_property_readonly("complex_type",
-        &Symbol::complex_type)
+      .def_property_readonly("complex_type", &Symbol::complex_type)
 
-    .def_property_readonly("storage_class",
-        &Symbol::storage_class)
+      .def_property_readonly("storage_class", &Symbol::storage_class)
 
-    .def_property_readonly("numberof_aux_symbols",
-        &Symbol::numberof_aux_symbols)
+      .def_property_readonly("numberof_aux_symbols",
+                             &Symbol::numberof_aux_symbols)
 
-    .def_property_readonly("section",
-        static_cast<no_const_getter<Section*>>(&Symbol::section),
-        py::return_value_policy::reference)
+      .def_property_readonly(
+          "section", static_cast<no_const_getter<Section*>>(&Symbol::section),
+          py::return_value_policy::reference)
 
-    .def_property_readonly("has_section",
-        &Symbol::has_section,
-        "``True`` if symbols are located in a section")
+      .def_property_readonly("has_section", &Symbol::has_section,
+                             "``True`` if symbols are located in a section")
 
-    .def("__eq__", &Symbol::operator==)
-    .def("__ne__", &Symbol::operator!=)
-    .def("__hash__",
-        [] (const Symbol& symbol) {
-          return Hash::hash(symbol);
-        })
+      .def("__eq__", &Symbol::operator==)
+      .def("__ne__", &Symbol::operator!=)
+      .def("__hash__", [](const Symbol& symbol) { return Hash::hash(symbol); })
 
-
-    .def("__str__", [] (const Symbol& symbol)
-        {
-          std::ostringstream stream;
-          stream << symbol;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const Symbol& symbol) {
+        std::ostringstream stream;
+        stream << symbol;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

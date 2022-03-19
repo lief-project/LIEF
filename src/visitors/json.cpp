@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "visitors/json.hpp"
+
 #include <utility>
 
 #include "LIEF/Abstract.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
 
-#include "visitors/json.hpp"
-
 namespace LIEF {
 
 JsonVisitor::JsonVisitor() = default;
 
-JsonVisitor::JsonVisitor(json node) :
-  node_{std::move(node)}
-{}
+JsonVisitor::JsonVisitor(json node) : node_{std::move(node)} {}
 
-JsonVisitor::JsonVisitor(const JsonVisitor&)            = default;
+JsonVisitor::JsonVisitor(const JsonVisitor&) = default;
 JsonVisitor& JsonVisitor::operator=(const JsonVisitor&) = default;
 
-}
-
+}  // namespace LIEF

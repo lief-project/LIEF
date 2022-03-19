@@ -17,8 +17,9 @@
 #ifndef LIEF_PE_JSON_H_
 #define LIEF_PE_JSON_H_
 
-#include "LIEF/visibility.h"
 #include <string>
+
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Object;
@@ -27,6 +28,6 @@ namespace PE {
 LIEF_API std::string to_json(const Object& v);
 
 }
-}
+}  // namespace LIEF
 
 #endif

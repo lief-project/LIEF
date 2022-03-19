@@ -15,17 +15,15 @@
  */
 #ifndef LIEF_MACHO_PARSER_H_
 #define LIEF_MACHO_PARSER_H_
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-
-#include "LIEF/types.hpp"
-#include "LIEF/errors.hpp"
-#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
-
 #include "LIEF/MachO/ParserConfig.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -45,10 +43,10 @@ class FatBinary;
 //!
 //! @see MachO::Parser
 class LIEF_API Parser : public LIEF::Parser {
-  public:
+ public:
   friend struct ::Profiler;
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
   ~Parser();
 
@@ -60,8 +58,9 @@ class LIEF_API Parser : public LIEF::Parser {
   //!
   //! @param[in] filename   Path to the Mach-O file
   //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
-  static std::unique_ptr<FatBinary> parse(const std::string& filename,
-                                          const ParserConfig& conf = ParserConfig::deep());
+  static std::unique_ptr<FatBinary> parse(
+      const std::string& filename,
+      const ParserConfig& conf = ParserConfig::deep());
 
   //! Parse a Mach-O file from the raw content provided by the ``data``
   //! parameter
@@ -72,11 +71,11 @@ class LIEF_API Parser : public LIEF::Parser {
   //! @param[in] data       Mach-O file as a vector of bytes
   //! @param[in] name       A name for the Mach-O file
   //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
-  static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data,
-                                          const std::string& name = "",
-                                          const ParserConfig& conf = ParserConfig::deep());
+  static std::unique_ptr<FatBinary> parse(
+      const std::vector<uint8_t>& data, const std::string& name = "",
+      const ParserConfig& conf = ParserConfig::deep());
 
-  private:
+ private:
   Parser(const std::string& file, const ParserConfig& conf);
   Parser(std::vector<uint8_t> data, const ParserConfig& conf);
   Parser();
@@ -88,6 +87,6 @@ class LIEF_API Parser : public LIEF::Parser {
   std::vector<std::unique_ptr<Binary>> binaries_;
   ParserConfig config_;
 };
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

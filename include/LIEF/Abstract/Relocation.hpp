@@ -16,15 +16,14 @@
 #ifndef LIEF_ABSTRACT_RELOCATION_H_
 #define LIEF_ABSTRACT_RELOCATION_H_
 
-#include "LIEF/types.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
 //! Class which represents an abstracted Relocation
 class LIEF_API Relocation : public Object {
-
-  public:
+ public:
   Relocation();
 
   //! Constructor from a relocation's address and size
@@ -63,13 +62,13 @@ class LIEF_API Relocation : public Object {
   //! Comparaison based on the Relocation's **address**
   virtual bool operator>=(const Relocation& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Relocation& entry);
 
-  protected:
+ protected:
   uint64_t address_ = 0;
-  uint8_t  size_ = 0;
+  uint8_t size_ = 0;
 };
 
-
-}
+}  // namespace LIEF
 #endif

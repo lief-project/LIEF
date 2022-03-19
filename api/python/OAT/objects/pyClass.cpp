@@ -15,25 +15,23 @@
  */
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/hash.hpp"
-
 #include "pyIterators.hpp"
 #include "pyOAT.hpp"
 
 namespace LIEF {
 namespace OAT {
 
-template<class T>
+template <class T>
 using getter_t = T (Class::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Class::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (Class::*)(void);
 
-template<>
+template <>
 void create<Class>(py::module& m) {
-
   py::class_<Class, LIEF::Object> cls(m, "Class", "OAT Class representation");
 
   init_ref_iterator<Class::it_methods>(cls, "it_methods");
@@ -103,6 +101,5 @@ void create<Class>(py::module& m) {
         });
 }
 
-
-}
-}
+}  // namespace OAT
+}  // namespace LIEF

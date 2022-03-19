@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/OAT/Binary.hpp"
+
 #include <fstream>
 
+#include "LIEF/DEX/File.hpp"
+#include "LIEF/OAT/hash.hpp"
 #include "LIEF/VDEX.hpp"
 #include "LIEF/VDEX/File.hpp"
-#include "LIEF/DEX/File.hpp"
-
-#include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/hash.hpp"
 #include "logging.hpp"
 #include "visitors/json.hpp"
-
 
 namespace LIEF {
 namespace OAT {
@@ -31,9 +30,7 @@ namespace OAT {
 Binary::Binary() = default;
 Binary::~Binary() = default;
 
-const Header& Binary::header() const {
-  return header_;
-}
+const Header& Binary::header() const { return header_; }
 
 Header& Binary::header() {
   return const_cast<Header&>(static_cast<const Binary*>(this)->header());
@@ -53,25 +50,19 @@ Binary::it_const_dex_files Binary::dex_files() const {
   return dex_files_;
 }
 
-Binary::it_oat_dex_files Binary::oat_dex_files() {
-  return oat_dex_files_;
-}
+Binary::it_oat_dex_files Binary::oat_dex_files() { return oat_dex_files_; }
 
 Binary::it_const_oat_dex_files Binary::oat_dex_files() const {
   return oat_dex_files_;
 }
 
+Binary::it_const_classes Binary::classes() const { return classes_list_; }
 
-Binary::it_const_classes Binary::classes() const {
-  return classes_list_;
-}
-
-Binary::it_classes Binary::classes() {
-  return classes_list_;
-}
+Binary::it_classes Binary::classes() { return classes_list_; }
 
 bool Binary::has_class(const std::string& class_name) const {
-  return classes_.find(DEX::Class::fullname_normalized(class_name)) != std::end(classes_);
+  return classes_.find(DEX::Class::fullname_normalized(class_name)) !=
+         std::end(classes_);
 }
 
 const Class* Binary::get_class(const std::string& class_name) const {
@@ -83,19 +74,20 @@ const Class* Binary::get_class(const std::string& class_name) const {
 }
 
 Class* Binary::get_class(const std::string& class_name) {
-  return const_cast<Class*>(static_cast<const Binary*>(this)->get_class(class_name));
+  return const_cast<Class*>(
+      static_cast<const Binary*>(this)->get_class(class_name));
 }
-
 
 const Class* Binary::get_class(size_t index) const {
   if (index >= classes_.size()) {
     return nullptr;
   }
 
-  const auto it = std::find_if(std::begin(classes_), std::end(classes_),
-      [index] (const std::pair<std::string, Class*>& p) {
-        return p.second->index() == index;
-      });
+  const auto it =
+      std::find_if(std::begin(classes_), std::end(classes_),
+                   [index](const std::pair<std::string, Class*>& p) {
+                     return p.second->index() == index;
+                   });
 
   if (it == std::end(classes_)) {
     return nullptr;
@@ -107,13 +99,9 @@ Class* Binary::get_class(size_t index) {
   return const_cast<Class*>(static_cast<const Binary*>(this)->get_class(index));
 }
 
-Binary::it_const_methods Binary::methods() const {
-  return methods_;
-}
+Binary::it_const_methods Binary::methods() const { return methods_; }
 
-Binary::it_methods Binary::methods() {
-  return methods_;
-}
+Binary::it_methods Binary::methods() { return methods_; }
 
 Binary::dex2dex_info_t Binary::dex2dex_info() const {
   dex2dex_info_t info;
@@ -125,7 +113,6 @@ Binary::dex2dex_info_t Binary::dex2dex_info() const {
 }
 
 std::string Binary::dex2dex_json_info() {
-
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
@@ -138,7 +125,6 @@ std::string Binary::dex2dex_json_info() {
 #else
   return "";
 #endif
-
 }
 
 void Binary::add_class(std::unique_ptr<Class> cls) {
@@ -146,9 +132,7 @@ void Binary::add_class(std::unique_ptr<Class> cls) {
   classes_list_.push_back(std::move(cls));
 }
 
-void Binary::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Binary::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Binary::operator==(const Binary& rhs) const {
   if (this == &rhs) {
@@ -159,12 +143,9 @@ bool Binary::operator==(const Binary& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Binary::operator!=(const Binary& rhs) const {
-  return !(*this == rhs);
-}
+bool Binary::operator!=(const Binary& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Binary& binary) {
-
   os << "Header" << std::endl;
   os << "======" << std::endl;
   os << binary.header() << std::endl;
@@ -178,13 +159,13 @@ std::ostream& operator<<(std::ostream& os, const Binary& binary) {
     }
   }
 
-  os << "Number of classes: " << std::dec << binary.classes().size() << std::endl;
-  os << "Number of methods: " << std::dec << binary.methods().size() << std::endl;
-
+  os << "Number of classes: " << std::dec << binary.classes().size()
+     << std::endl;
+  os << "Number of methods: " << std::dec << binary.methods().size()
+     << std::endl;
 
   return os;
 }
 
-
-}
-}
+}  // namespace OAT
+}  // namespace LIEF

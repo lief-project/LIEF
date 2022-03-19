@@ -18,9 +18,8 @@
 
 #include <string>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -34,10 +33,10 @@ namespace ELF {
 //! The underlying values are 64-bits integers to cover both:
 //! ELF32 and ELF64 binaries.
 class LIEF_API DynamicEntryArray : public DynamicEntry {
-  public:
+ public:
   using array_t = std::vector<uint64_t>;
 
-  public:
+ public:
   using DynamicEntry::DynamicEntry;
 
   DynamicEntryArray();
@@ -68,7 +67,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   DynamicEntryArray& operator-=(uint64_t value);
 
   const uint64_t& operator[](size_t idx) const;
-  uint64_t&       operator[](size_t idx);
+  uint64_t& operator[](size_t idx);
 
   void accept(Visitor& visitor) const override;
 
@@ -78,11 +77,10 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   static bool classof(const DynamicEntry* entry);
 
-  private:
+ private:
   array_t array_;
-
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

@@ -18,15 +18,13 @@
 namespace LIEF {
 namespace PE {
 
-template<class T>
-LoadConfigurationV4::LoadConfigurationV4(const details::load_configuration_v4<T>& header) :
-  LoadConfigurationV3{reinterpret_cast<const details::load_configuration_v3<T>&>(header)},
-  dynamic_value_reloc_table_{header.DynamicValueRelocTable},
-  hybrid_metadata_pointer_{header.HybridMetadataPointer}
-{
-}
+template <class T>
+LoadConfigurationV4::LoadConfigurationV4(
+    const details::load_configuration_v4<T>& header)
+    : LoadConfigurationV3{reinterpret_cast<
+          const details::load_configuration_v3<T>&>(header)},
+      dynamic_value_reloc_table_{header.DynamicValueRelocTable},
+      hybrid_metadata_pointer_{header.HybridMetadataPointer} {}
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

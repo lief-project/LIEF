@@ -18,10 +18,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -32,16 +31,16 @@ struct ResourcesParser;
 
 //! Representation of the ``StringFileInfo`` structure
 //!
-//! It contains version information that can be displayed for a particular language and code page.
+//! It contains version information that can be displayed for a particular
+//! language and code page.
 //!
 //! See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
 class LIEF_API ResourceStringFileInfo : public Object {
-
   friend class ResourcesManager;
   friend class ResourceVersion;
   friend struct ResourcesParser;
 
-  public:
+ public:
   ResourceStringFileInfo();
   ResourceStringFileInfo(uint16_t type, std::u16string key);
   ResourceStringFileInfo(const ResourceStringFileInfo&);
@@ -63,7 +62,7 @@ class LIEF_API ResourceStringFileInfo : public Object {
   //! language and code page for displaying the ``key: value`` of
   //! LangCodeItem::items
   const std::vector<LangCodeItem>& langcode_items() const;
-  std::vector<LangCodeItem>&       langcode_items();
+  std::vector<LangCodeItem>& langcode_items();
 
   void type(uint16_t type);
 
@@ -76,21 +75,16 @@ class LIEF_API ResourceStringFileInfo : public Object {
   bool operator==(const ResourceStringFileInfo& rhs) const;
   bool operator!=(const ResourceStringFileInfo& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const ResourceStringFileInfo& string_file_info);
 
-  private:
-  uint16_t       type_ = 0;
+ private:
+  uint16_t type_ = 0;
   std::u16string key_;
   std::vector<LangCodeItem> childs_;
-
-
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

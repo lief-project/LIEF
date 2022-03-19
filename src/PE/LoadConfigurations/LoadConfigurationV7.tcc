@@ -16,15 +16,13 @@
 namespace LIEF {
 namespace PE {
 
-template<class T>
-LoadConfigurationV7::LoadConfigurationV7(const details::load_configuration_v7<T>& header) :
-  LoadConfigurationV6{reinterpret_cast<const details::load_configuration_v6<T>&>(header)},
-  reserved3_{header.Reserved3},
-  addressof_unicode_string_{header.AddressOfSomeUnicodeString}
-{
-}
+template <class T>
+LoadConfigurationV7::LoadConfigurationV7(
+    const details::load_configuration_v7<T>& header)
+    : LoadConfigurationV6{reinterpret_cast<
+          const details::load_configuration_v6<T>&>(header)},
+      reserved3_{header.Reserved3},
+      addressof_unicode_string_{header.AddressOfSomeUnicodeString} {}
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

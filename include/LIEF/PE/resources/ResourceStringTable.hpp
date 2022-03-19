@@ -18,17 +18,17 @@
 #define LIEF_PE_RESOURCE_STRING_TABLE_H_
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 class ResourcesManager;
 
 class LIEF_API ResourceStringTable : public Object {
-
   friend class ResourcesManager;
-  public:
+
+ public:
   ResourceStringTable();
 
   ResourceStringTable(int16_t length, std::u16string name);
@@ -49,14 +49,15 @@ class LIEF_API ResourceStringTable : public Object {
   bool operator==(const ResourceStringTable& rhs) const;
   bool operator!=(const ResourceStringTable& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringTable& string_table);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const ResourceStringTable& string_table);
 
-  private:
+ private:
   std::u16string name_;
   int16_t length_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

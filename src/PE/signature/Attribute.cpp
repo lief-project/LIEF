@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/signature/Attribute.hpp"
+
 #include <iomanip>
 
 #include "LIEF/utils.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -24,9 +25,7 @@ namespace PE {
 Attribute::Attribute() = default;
 Attribute::Attribute(const Attribute& other) = default;
 
-Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) :
-  type_{type}
-{}
+Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) : type_{type} {}
 
 Attribute& Attribute::operator=(const Attribute& other) {
   if (this != &other) {
@@ -37,14 +36,12 @@ Attribute& Attribute::operator=(const Attribute& other) {
 
 Attribute::~Attribute() = default;
 
-void Attribute::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Attribute::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 std::ostream& operator<<(std::ostream& os, const Attribute& attribute) {
   os << attribute.print();
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -13,55 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/CodeViewPDB.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/CodeViewPDB.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (CodeViewPDB::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (CodeViewPDB::*)(T);
 
-
-template<>
+template <>
 void create<CodeViewPDB>(py::module& m) {
   py::class_<CodeViewPDB, CodeView>(m, "CodeViewPDB")
-    .def(py::init<>())
+      .def(py::init<>())
 
-    .def_property("signature",
-        static_cast<getter_t<CodeViewPDB::signature_t>>(&CodeViewPDB::signature),
-        static_cast<setter_t<CodeViewPDB::signature_t>>(&CodeViewPDB::signature))
+      .def_property("signature",
+                    static_cast<getter_t<CodeViewPDB::signature_t>>(
+                        &CodeViewPDB::signature),
+                    static_cast<setter_t<CodeViewPDB::signature_t>>(
+                        &CodeViewPDB::signature))
 
-    .def_property("age",
-        static_cast<getter_t<uint32_t>>(&CodeViewPDB::age),
-        static_cast<setter_t<uint32_t>>(&CodeViewPDB::age))
+      .def_property("age", static_cast<getter_t<uint32_t>>(&CodeViewPDB::age),
+                    static_cast<setter_t<uint32_t>>(&CodeViewPDB::age))
 
-    .def_property("filename",
-        static_cast<getter_t<const std::string&>>(&CodeViewPDB::filename),
-        static_cast<setter_t<const std::string&>>(&CodeViewPDB::filename))
+      .def_property(
+          "filename",
+          static_cast<getter_t<const std::string&>>(&CodeViewPDB::filename),
+          static_cast<setter_t<const std::string&>>(&CodeViewPDB::filename))
 
-    .def("__eq__", &CodeViewPDB::operator==)
-    .def("__ne__", &CodeViewPDB::operator!=)
-    .def("__hash__",
-        [] (const CodeViewPDB& codeview) {
-          return Hash::hash(codeview);
-        })
+      .def("__eq__", &CodeViewPDB::operator==)
+      .def("__ne__", &CodeViewPDB::operator!=)
+      .def("__hash__",
+           [](const CodeViewPDB& codeview) { return Hash::hash(codeview); })
 
-    .def("__str__", [] (const CodeViewPDB& cv)
-        {
-          std::ostringstream stream;
-          stream << cv;
-          return stream.str();
-        });
+      .def("__str__", [](const CodeViewPDB& cv) {
+        std::ostringstream stream;
+        stream << cv;
+        return stream.str();
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

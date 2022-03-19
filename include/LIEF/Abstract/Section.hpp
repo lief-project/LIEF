@@ -16,19 +16,19 @@
 #ifndef LIEF_ABSTRACT_SECTION_H_
 #define LIEF_ABSTRACT_SECTION_H_
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
-#include "LIEF/types.hpp"
-#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
 //! Class which represents an abstracted section
 class LIEF_API Section : public Object {
-  public:
+ public:
   static constexpr size_t npos = -1;
 
   Section();
@@ -95,20 +95,19 @@ class LIEF_API Section : public Object {
   bool operator==(const Section& rhs) const;
   bool operator!=(const Section& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Section& entry);
 
-  protected:
+ protected:
   std::string name_;
-  uint64_t    virtual_address_ = 0;
-  uint64_t    size_ = 0;
-  uint64_t    offset_ = 0;
+  uint64_t virtual_address_ = 0;
+  uint64_t size_ = 0;
+  uint64_t offset_ = 0;
 
-  private:
-  template<typename T>
+ private:
+  template <typename T>
   std::vector<size_t> search_all_(const T& v) const;
-
-
 };
-}
+}  // namespace LIEF
 
 #endif

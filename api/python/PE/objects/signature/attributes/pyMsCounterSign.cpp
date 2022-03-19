@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
-
 #include "pyPE.hpp"
 
 namespace LIEF {
-namespace PE {
-
-}
-}
-
+namespace PE {}
+}  // namespace LIEF

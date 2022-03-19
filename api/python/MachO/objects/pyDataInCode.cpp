@@ -14,77 +14,66 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyIterators.hpp"
 #include "pyMachO.hpp"
-
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (DataInCode::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DataInCode::*)(T);
 
-
-template<>
+template <>
 void create<DataInCode>(py::module& m) {
-
   // Init Iterator
   init_ref_iterator<DataInCode::it_entries>(m, "it_data_in_code_entries");
 
   py::class_<DataInCode, LoadCommand>(m, "DataInCode",
-      R"delim(
+                                      R"delim(
       Interface of the LC_DATA_IN_CODE command
 
       This command is used to list slices of code sections that contain data. The *slices*
       information are stored as an array of :class:`~lief.MachO.DataCodeEntry`
       )delim")
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&DataInCode::data_offset),
-        static_cast<setter_t<uint32_t>>(&DataInCode::data_offset),
-        "Start of the array of the DataCodeEntry entries")
+      .def_property("data_offset",
+                    static_cast<getter_t<uint32_t>>(&DataInCode::data_offset),
+                    static_cast<setter_t<uint32_t>>(&DataInCode::data_offset),
+                    "Start of the array of the DataCodeEntry entries")
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&DataInCode::data_size),
-        static_cast<setter_t<uint32_t>>(&DataInCode::data_size),
-        "Whole size of the array (``size = sizeof(DataCodeEntry) * nb_elements``)")
+      .def_property("data_size",
+                    static_cast<getter_t<uint32_t>>(&DataInCode::data_size),
+                    static_cast<setter_t<uint32_t>>(&DataInCode::data_size),
+                    "Whole size of the array (``size = sizeof(DataCodeEntry) * "
+                    "nb_elements``)")
 
-    .def_property_readonly("entries",
-        static_cast<DataInCode::it_entries (DataInCode::*)(void)>(&DataInCode::entries),
-        "Iterator over " RST_CLASS_REF(lief.MachO.DataCodeEntry) "",
-        py::return_value_policy::reference_internal)
+      .def_property_readonly(
+          "entries",
+          static_cast<DataInCode::it_entries (DataInCode::*)(void)>(
+              &DataInCode::entries),
+          "Iterator over " RST_CLASS_REF(lief.MachO.DataCodeEntry) "",
+          py::return_value_policy::reference_internal)
 
-    .def("add",
-        &DataInCode::add,
-        "Add an new " RST_CLASS_REF(lief.MachO.DataCodeEntry) "",
-        "entry"_a)
+      .def("add", &DataInCode::add,
+           "Add an new " RST_CLASS_REF(lief.MachO.DataCodeEntry) "", "entry"_a)
 
-    .def("__eq__", &DataInCode::operator==)
-    .def("__ne__", &DataInCode::operator!=)
-    .def("__hash__",
-        [] (const DataInCode& func) {
-          return Hash::hash(func);
-        })
+      .def("__eq__", &DataInCode::operator==)
+      .def("__ne__", &DataInCode::operator!=)
+      .def("__hash__", [](const DataInCode& func) { return Hash::hash(func); })
 
-
-    .def("__str__",
-        [] (const DataInCode& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const DataInCode& func) {
+        std::ostringstream stream;
+        stream << func;
+        std::string str = stream.str();
+        return str;
+      });
 }
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

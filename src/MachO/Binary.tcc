@@ -13,66 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/errors.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 bool Binary::has_command() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  const auto it_cmd = std::find_if(
-      std::begin(commands_), std::end(commands_),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
+  const auto it_cmd =
+      std::find_if(std::begin(commands_), std::end(commands_),
+                   [](const std::unique_ptr<LoadCommand>& command) {
+                     return T::classof(command.get());
+                   });
   return it_cmd != std::end(commands_);
 }
 
-template<class T>
+template <class T>
 T* Binary::command() {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
   return const_cast<T*>(static_cast<const Binary*>(this)->command<T>());
 }
 
-template<class T>
+template <class T>
 const T* Binary::command() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  const auto it_cmd = std::find_if(
-      std::begin(commands_), std::end(commands_),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
+  const auto it_cmd =
+      std::find_if(std::begin(commands_), std::end(commands_),
+                   [](const std::unique_ptr<LoadCommand>& command) {
+                     return T::classof(command.get());
+                   });
 
   if (it_cmd == std::end(commands_)) {
     return nullptr;
   }
 
   return reinterpret_cast<const T*>(it_cmd->get());
-
 }
 
-template<class T>
+template <class T>
 size_t Binary::count_commands() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
 
-  size_t nb_cmd = std::count_if(
-      std::begin(commands_), std::end(commands_),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
+  size_t nb_cmd =
+      std::count_if(std::begin(commands_), std::end(commands_),
+                    [](const std::unique_ptr<LoadCommand>& command) {
+                      return T::classof(command.get());
+                    });
   return nb_cmd;
-
 }
 
-template<class T>
-ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift) {
-
+template <class T>
+ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from,
+                                    uint64_t shift) {
   SegmentCommand* segment = segment_from_virtual_address(relocation.address());
   if (segment == nullptr) {
     LIEF_DEBUG("Can't find the segment associated with the relocation: 0x{:x}",
@@ -80,7 +82,8 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
     return make_error_code(lief_errors::not_found);
   }
 
-  const uint64_t relative_offset = virtual_address_to_offset(relocation.address()) - segment->file_offset();
+  const uint64_t relative_offset =
+      virtual_address_to_offset(relocation.address()) - segment->file_offset();
   span<uint8_t> segment_content = segment->writable_content();
   const size_t segment_size = segment_content.size();
 
@@ -89,18 +92,19 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
     return ok();
   }
 
-  if (relative_offset >= segment_size || (relative_offset + sizeof(T)) >= segment_size) {
+  if (relative_offset >= segment_size ||
+      (relative_offset + sizeof(T)) >= segment_size) {
     LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
-  auto* ptr_value = reinterpret_cast<T*>(segment_content.data() + relative_offset);
+  auto* ptr_value =
+      reinterpret_cast<T*>(segment_content.data() + relative_offset);
   if (*ptr_value >= from && is_valid_addr(*ptr_value)) {
     *ptr_value += shift;
   }
   return ok();
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

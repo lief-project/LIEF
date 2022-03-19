@@ -26,31 +26,26 @@ void init_c_symbols(Macho_Binary_t* c_binary, Binary* binary) {
   for (size_t i = 0; i < symbols.size(); ++i) {
     const Symbol& symbol = symbols[i];
 
-    c_binary->symbols[i] = static_cast<Macho_Symbol_t*>(malloc(sizeof(Macho_Symbol_t)));
+    c_binary->symbols[i] =
+        static_cast<Macho_Symbol_t*>(malloc(sizeof(Macho_Symbol_t)));
 
-    c_binary->symbols[i]->name              = symbol.name().c_str();
-    c_binary->symbols[i]->type              = symbol.type();
+    c_binary->symbols[i]->name = symbol.name().c_str();
+    c_binary->symbols[i]->type = symbol.type();
     c_binary->symbols[i]->numberof_sections = symbol.numberof_sections();
-    c_binary->symbols[i]->description       = symbol.description();
-    c_binary->symbols[i]->value             = symbol.value();
+    c_binary->symbols[i]->description = symbol.description();
+    c_binary->symbols[i]->value = symbol.value();
   }
 
   c_binary->symbols[symbols.size()] = nullptr;
-
 }
 
-
-
 void destroy_symbols(Macho_Binary_t* c_binary) {
-  Macho_Symbol_t **symbols = c_binary->symbols;
+  Macho_Symbol_t** symbols = c_binary->symbols;
   for (size_t idx = 0; symbols[idx] != nullptr; ++idx) {
     free(symbols[idx]);
   }
   free(c_binary->symbols);
-
 }
 
-}
-}
-
-
+}  // namespace MachO
+}  // namespace LIEF

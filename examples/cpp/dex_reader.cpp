@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/DEX.hpp>
+#include <LIEF/logging.hpp>
 #include <iostream>
 #include <memory>
 
-#include <LIEF/DEX.hpp>
-#include <LIEF/logging.hpp>
-
 using namespace LIEF::DEX;
 
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <DEX file>" << '\n';
@@ -37,6 +35,4 @@ int main(int argc, char **argv) {
     std::cerr << e.what() << '\n';
     return EXIT_FAILURE;
   }
-
 }
-

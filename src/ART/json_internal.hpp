@@ -23,14 +23,14 @@ namespace LIEF {
 namespace ART {
 
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const File& header)   override;
+ public:
+  void visit(const File& header) override;
   void visit(const Header& header) override;
 };
 
-}
-}
+}  // namespace ART
+}  // namespace LIEF
 #endif

@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/ImportEntry.hpp"
+
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
-
-#include "LIEF/PE/ImportEntry.hpp"
-
 
 namespace LIEF {
 namespace PE {
@@ -29,21 +28,18 @@ ImportEntry::~ImportEntry() = default;
 
 ImportEntry::ImportEntry() = default;
 
-ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
-  data_{data},
-  type_{PE_TYPE::PE32}
-{
+ImportEntry::ImportEntry(uint64_t data, const std::string& name)
+    : data_{data}, type_{PE_TYPE::PE32} {
   name_ = name;
 }
 
-
-ImportEntry::ImportEntry(const std::string& name) :
-  ImportEntry{0, name}
-{}
+ImportEntry::ImportEntry(const std::string& name) : ImportEntry{0, name} {}
 
 bool ImportEntry::is_ordinal() const {
-  // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
-  const uint64_t ORDINAL_MASK = type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
+  // See:
+  // https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
+  const uint64_t ORDINAL_MASK =
+      type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
   bool ordinal_bit_is_set = static_cast<bool>(data_ & ORDINAL_MASK);
 
   // Check that bit 31 / 63 is set
@@ -63,35 +59,19 @@ uint16_t ImportEntry::ordinal() const {
   return data_ & 0xFFFF;
 }
 
-uint16_t ImportEntry::hint() const {
-  return hint_;
-}
+uint16_t ImportEntry::hint() const { return hint_; }
 
-uint64_t ImportEntry::iat_value() const {
-  return iat_value_;
-}
+uint64_t ImportEntry::iat_value() const { return iat_value_; }
 
+uint64_t ImportEntry::hint_name_rva() const { return data(); }
 
-uint64_t ImportEntry::hint_name_rva() const {
-  return data();
-}
+uint64_t ImportEntry::data() const { return data_; }
 
-uint64_t ImportEntry::data() const {
-  return data_;
-}
+uint64_t ImportEntry::iat_address() const { return rva_; }
 
-uint64_t ImportEntry::iat_address() const {
-  return rva_;
-}
+void ImportEntry::data(uint64_t data) { data_ = data; }
 
-void ImportEntry::data(uint64_t data) {
-  data_ = data;
-}
-
-
-void ImportEntry::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void ImportEntry::accept(LIEF::Visitor& visitor) const { visitor.visit(*this); }
 
 bool ImportEntry::operator==(const ImportEntry& rhs) const {
   if (this == &rhs) {
@@ -106,7 +86,6 @@ bool ImportEntry::operator!=(const ImportEntry& rhs) const {
   return !(*this == rhs);
 }
 
-
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   os << std::hex;
   os << std::left;
@@ -119,5 +98,5 @@ std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   return os;
 }
 
-} // namespace PE
-} // namepsace LIEF
+}  // namespace PE
+}  // namespace LIEF

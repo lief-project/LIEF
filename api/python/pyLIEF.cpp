@@ -13,49 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "pyLIEF.hpp"
+
 #include "LIEF/logging.hpp"
 #include "LIEF/version.h"
-#include "pyLIEF.hpp"
 #include "pyAbstract.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
-  #include "ELF/pyELF.hpp"
+#include "ELF/pyELF.hpp"
 #endif
 
 #if defined(LIEF_PE_SUPPORT)
-  #include "PE/pyPE.hpp"
+#include "PE/pyPE.hpp"
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)
-  #include "MachO/pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 #endif
 
 #if defined(LIEF_OAT_SUPPORT)
-  #include "OAT/pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 #endif
 
 #if defined(LIEF_VDEX_SUPPORT)
-  #include "VDEX/pyVDEX.hpp"
+#include "VDEX/pyVDEX.hpp"
 #endif
 
 #if defined(LIEF_DEX_SUPPORT)
-  #include "DEX/pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
 #endif
 
 #if defined(LIEF_ART_SUPPORT)
-  #include "ART/pyART.hpp"
+#include "ART/pyART.hpp"
 #endif
-
 
 #include "platforms/android/pyAndroid.hpp"
 #include "platforms/pyPlatform.hpp"
 
-
 PYBIND11_MODULE(lief, LIEF_module) {
-
-  LIEF_module.attr("__version__")   = py::str(LIEF_VERSION);
-  LIEF_module.attr("__tag__")       = py::str(LIEF_TAG);
-  LIEF_module.attr("__commit__")    = py::str(LIEF_COMMIT);
+  LIEF_module.attr("__version__") = py::str(LIEF_VERSION);
+  LIEF_module.attr("__tag__") = py::str(LIEF_TAG);
+  LIEF_module.attr("__commit__") = py::str(LIEF_COMMIT);
   LIEF_module.attr("__is_tagged__") = py::bool_(LIEF_TAGGED);
   LIEF_module.doc() = "Python API for LIEF";
 
@@ -74,7 +72,6 @@ PYBIND11_MODULE(lief, LIEF_module) {
   LIEF::init_python_module(LIEF_module);
 
   init_hash_functions(LIEF_module);
-
 
   // Init the ELF module
 #if defined(LIEF_ELF_SUPPORT)
@@ -115,7 +112,6 @@ PYBIND11_MODULE(lief, LIEF_module) {
 
   // Init util functions
   init_utils_functions(LIEF_module);
-
 
   init_json_functions(LIEF_module);
 }

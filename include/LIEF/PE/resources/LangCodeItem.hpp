@@ -17,14 +17,12 @@
 #define LIEF_PE_RESOURCE_LANG_CODE_ITEM_H_
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <unordered_map>
-
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/Object.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -37,11 +35,10 @@ struct ResourcesParser;
 //! @see: LIEF::PE::ResourceStringFileInfo
 //! @see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
 class LIEF_API LangCodeItem : public Object {
-
   friend class ResourcesManager;
   friend struct ResourcesParser;
 
-  public:
+ public:
   using items_t = std::unordered_map<std::u16string, std::u16string>;
   LangCodeItem();
   LangCodeItem(uint16_t type, std::u16string key);
@@ -57,12 +54,14 @@ class LIEF_API LangCodeItem : public Object {
 
   //! A 8-digit hexadecimal number stored as an Unicode string.
   //! * The four most significant digits represent the language identifier.
-  //! * The four least significant digits represent the code page for which the data is formatted.
+  //! * The four least significant digits represent the code page for which the
+  //! data is formatted.
   //!
   //! @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
   const std::u16string& key() const;
 
-  //! [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
+  //! [Code
+  //! page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
   //! for which LangCodeItem::items are defined
   CODE_PAGES code_page() const;
 
@@ -73,7 +72,7 @@ class LIEF_API LangCodeItem : public Object {
   RESOURCE_SUBLANGS sublang() const;
 
   const items_t& items() const;
-  items_t&       items();
+  items_t& items();
 
   void type(uint16_t type);
   void key(const std::u16string& key);
@@ -90,19 +89,16 @@ class LIEF_API LangCodeItem : public Object {
   bool operator==(const LangCodeItem& rhs) const;
   bool operator!=(const LangCodeItem& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const LangCodeItem& item);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const LangCodeItem& item);
 
-  private:
-  uint16_t       type_ = 0;
+ private:
+  uint16_t type_ = 0;
   std::u16string key_;
-  items_t        items_;
+  items_t items_;
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

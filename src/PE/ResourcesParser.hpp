@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_PE_RESOURCES_PARSER_H
 #define LIEF_PE_RESOURCES_PARSER_H
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/resources/ResourceVersion.hpp"
+#include "LIEF/errors.hpp"
 namespace LIEF {
 class BinaryStream;
 namespace PE {
@@ -42,25 +42,33 @@ struct ResourcesParser {
   //! See: https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
   static result<ResourceVersion> parse_vs_versioninfo(BinaryStream& stream);
 
-  static ok_error_t parse_version_info_child(ResourceVersion& version, BinaryStream& stream);
+  static ok_error_t parse_version_info_child(ResourceVersion& version,
+                                             BinaryStream& stream);
 
-  static ok_error_t parse_var_file_info(ResourceVersion& version, BinaryStream& stream);
-  static ok_error_t parse_string_file_info(ResourceVersion& version, BinaryStream& stream);
+  static ok_error_t parse_var_file_info(ResourceVersion& version,
+                                        BinaryStream& stream);
+  static ok_error_t parse_string_file_info(ResourceVersion& version,
+                                           BinaryStream& stream);
   static ok_error_t parse_string(LangCodeItem& lci, BinaryStream& stream);
 
   static ok_error_t parse_dialogs(std::vector<ResourceDialog>& dialogs,
-                                  const ResourceData& node, BinaryStream& stream);
+                                  const ResourceData& node,
+                                  BinaryStream& stream);
 
   static ok_error_t parse_ext_dialogs(std::vector<ResourceDialog>& dialogs,
-                                      const ResourceData& node, BinaryStream& stream);
+                                      const ResourceData& node,
+                                      BinaryStream& stream);
 
-  static ok_error_t parse_tail_ext_dialog(ResourceDialog& dialog, BinaryStream& stream);
-  static ok_error_t parse_ext_dialog_item(ResourceDialog& dialog, BinaryStream& stream);
+  static ok_error_t parse_tail_ext_dialog(ResourceDialog& dialog,
+                                          BinaryStream& stream);
+  static ok_error_t parse_ext_dialog_item(ResourceDialog& dialog,
+                                          BinaryStream& stream);
 
   static ok_error_t parse_regular_dialogs(std::vector<ResourceDialog>& dialog,
-                                          const ResourceData& node, BinaryStream& stream);
+                                          const ResourceData& node,
+                                          BinaryStream& stream);
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

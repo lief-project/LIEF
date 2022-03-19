@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <memory>
-#include <type_traits>
-#include <numeric>
-#include <sstream>
+#include "LIEF/PE/signature/SignerInfo.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
-#include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/PE/signature/OIDToString.hpp"
-#include "LIEF/PE/signature/SignerInfo.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
+#include <iomanip>
+#include <memory>
+#include <numeric>
+#include <sstream>
+#include <type_traits>
 
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -37,21 +37,22 @@ SignerInfo::~SignerInfo() = default;
 SignerInfo::SignerInfo(SignerInfo&&) = default;
 SignerInfo& SignerInfo::operator=(SignerInfo&&) = default;
 
-SignerInfo::SignerInfo(const SignerInfo& other) :
-  Object::Object(other),
-  version_{other.version_},
-  issuer_{other.issuer_},
-  serialno_{other.serialno_},
-  digest_algorithm_{other.digest_algorithm_},
-  digest_enc_algorithm_{other.digest_enc_algorithm_},
-  encrypted_digest_{other.encrypted_digest_},
-  raw_auth_data_{other.raw_auth_data_}
-{
-  for (const std::unique_ptr<Attribute>& attr : other.authenticated_attributes_) {
+SignerInfo::SignerInfo(const SignerInfo& other)
+    : Object::Object(other),
+      version_{other.version_},
+      issuer_{other.issuer_},
+      serialno_{other.serialno_},
+      digest_algorithm_{other.digest_algorithm_},
+      digest_enc_algorithm_{other.digest_enc_algorithm_},
+      encrypted_digest_{other.encrypted_digest_},
+      raw_auth_data_{other.raw_auth_data_} {
+  for (const std::unique_ptr<Attribute>& attr :
+       other.authenticated_attributes_) {
     authenticated_attributes_.push_back(attr->clone());
   }
 
-  for (const std::unique_ptr<Attribute>& attr : other.unauthenticated_attributes_) {
+  for (const std::unique_ptr<Attribute>& attr :
+       other.unauthenticated_attributes_) {
     unauthenticated_attributes_.push_back(attr->clone());
   }
 
@@ -66,26 +67,21 @@ SignerInfo& SignerInfo::operator=(SignerInfo other) {
 }
 
 void SignerInfo::swap(SignerInfo& other) {
-  std::swap(version_,                    other.version_);
-  std::swap(issuer_,                     other.issuer_);
-  std::swap(serialno_,                   other.serialno_);
-  std::swap(digest_algorithm_,           other.digest_algorithm_);
-  std::swap(digest_enc_algorithm_,       other.digest_enc_algorithm_);
-  std::swap(encrypted_digest_,           other.encrypted_digest_);
-  std::swap(raw_auth_data_,              other.raw_auth_data_);
-  std::swap(authenticated_attributes_,   other.authenticated_attributes_);
+  std::swap(version_, other.version_);
+  std::swap(issuer_, other.issuer_);
+  std::swap(serialno_, other.serialno_);
+  std::swap(digest_algorithm_, other.digest_algorithm_);
+  std::swap(digest_enc_algorithm_, other.digest_enc_algorithm_);
+  std::swap(encrypted_digest_, other.encrypted_digest_);
+  std::swap(raw_auth_data_, other.raw_auth_data_);
+  std::swap(authenticated_attributes_, other.authenticated_attributes_);
   std::swap(unauthenticated_attributes_, other.unauthenticated_attributes_);
-  std::swap(cert_,                       other.cert_);
+  std::swap(cert_, other.cert_);
 }
 
+uint32_t SignerInfo::version() const { return version_; }
 
-uint32_t SignerInfo::version() const {
-  return version_;
-}
-
-ALGORITHMS SignerInfo::digest_algorithm() const {
-  return digest_algorithm_;
-}
+ALGORITHMS SignerInfo::digest_algorithm() const { return digest_algorithm_; }
 
 ALGORITHMS SignerInfo::encryption_algorithm() const {
   return digest_enc_algorithm_;
@@ -99,10 +95,10 @@ SignerInfo::it_const_attributes_t SignerInfo::authenticated_attributes() const {
   return authenticated_attributes_;
 }
 
-SignerInfo::it_const_attributes_t SignerInfo::unauthenticated_attributes() const {
+SignerInfo::it_const_attributes_t SignerInfo::unauthenticated_attributes()
+    const {
   return unauthenticated_attributes_;
 }
-
 
 const Attribute* SignerInfo::get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   const Attribute* attr = get_auth_attribute(type);
@@ -120,43 +116,43 @@ const Attribute* SignerInfo::get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
   return nullptr;
 }
 
-const Attribute* SignerInfo::get_auth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
-  auto it_auth = std::find_if(std::begin(authenticated_attributes_), std::end(authenticated_attributes_),
-      [type] (const std::unique_ptr<Attribute>& attr) {
-        return attr->type() == type;
-      });
+const Attribute* SignerInfo::get_auth_attribute(
+    PE::SIG_ATTRIBUTE_TYPES type) const {
+  auto it_auth = std::find_if(std::begin(authenticated_attributes_),
+                              std::end(authenticated_attributes_),
+                              [type](const std::unique_ptr<Attribute>& attr) {
+                                return attr->type() == type;
+                              });
   if (it_auth != std::end(authenticated_attributes_)) {
     return it_auth->get();
   }
   return nullptr;
 }
 
-const Attribute* SignerInfo::get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const {
-  auto it_uauth = std::find_if(std::begin(unauthenticated_attributes_), std::end(unauthenticated_attributes_),
-      [type] (const std::unique_ptr<Attribute>& attr) {
-        return attr->type() == type;
-      });
+const Attribute* SignerInfo::get_unauth_attribute(
+    PE::SIG_ATTRIBUTE_TYPES type) const {
+  auto it_uauth = std::find_if(std::begin(unauthenticated_attributes_),
+                               std::end(unauthenticated_attributes_),
+                               [type](const std::unique_ptr<Attribute>& attr) {
+                                 return attr->type() == type;
+                               });
   if (it_uauth != std::end(unauthenticated_attributes_)) {
     return it_uauth->get();
   }
   return nullptr;
 }
 
-
-void SignerInfo::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void SignerInfo::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
   os << fmt::format("{}/{} - {} - {:d} auth attr - {:d} unauth attr",
-      to_string(signer_info.digest_algorithm()),
-      to_string(signer_info.encryption_algorithm()),
-      signer_info.issuer(),
-      signer_info.authenticated_attributes().size(),
-      signer_info.unauthenticated_attributes().size());
+                    to_string(signer_info.digest_algorithm()),
+                    to_string(signer_info.encryption_algorithm()),
+                    signer_info.issuer(),
+                    signer_info.authenticated_attributes().size(),
+                    signer_info.unauthenticated_attributes().size());
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

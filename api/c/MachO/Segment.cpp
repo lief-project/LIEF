@@ -26,45 +26,38 @@ void init_c_segments(Macho_Binary_t* c_binary, Binary* binary) {
   for (size_t i = 0; i < segments.size(); ++i) {
     SegmentCommand& segment = segments[i];
 
-    c_binary->segments[i] = static_cast<Macho_Segment_t*>(malloc(sizeof(Macho_Segment_t)));
+    c_binary->segments[i] =
+        static_cast<Macho_Segment_t*>(malloc(sizeof(Macho_Segment_t)));
     span<const uint8_t> segment_content = segment.content();
-    auto* content = static_cast<uint8_t*>(malloc(segment_content.size() * sizeof(uint8_t)));
-    std::copy(
-        std::begin(segment_content),
-        std::end(segment_content),
-        content);
+    auto* content =
+        static_cast<uint8_t*>(malloc(segment_content.size() * sizeof(uint8_t)));
+    std::copy(std::begin(segment_content), std::end(segment_content), content);
 
-    c_binary->segments[i]->name              = segment.name().c_str();
-    c_binary->segments[i]->virtual_address   = segment.virtual_address();
-    c_binary->segments[i]->virtual_size      = segment.virtual_size();
-    c_binary->segments[i]->file_size         = segment.file_size();
-    c_binary->segments[i]->file_offset       = segment.file_offset();
-    c_binary->segments[i]->max_protection    = segment.max_protection();
-    c_binary->segments[i]->init_protection   = segment.init_protection();
+    c_binary->segments[i]->name = segment.name().c_str();
+    c_binary->segments[i]->virtual_address = segment.virtual_address();
+    c_binary->segments[i]->virtual_size = segment.virtual_size();
+    c_binary->segments[i]->file_size = segment.file_size();
+    c_binary->segments[i]->file_offset = segment.file_offset();
+    c_binary->segments[i]->max_protection = segment.max_protection();
+    c_binary->segments[i]->init_protection = segment.init_protection();
     c_binary->segments[i]->numberof_sections = segment.numberof_sections();
-    c_binary->segments[i]->flags             = segment.flags();
-    c_binary->segments[i]->content           = content;
-    c_binary->segments[i]->size              = segment_content.size();
-    c_binary->segments[i]->sections          = nullptr; //TODO
+    c_binary->segments[i]->flags = segment.flags();
+    c_binary->segments[i]->content = content;
+    c_binary->segments[i]->size = segment_content.size();
+    c_binary->segments[i]->sections = nullptr;  // TODO
   }
 
   c_binary->segments[segments.size()] = nullptr;
-
 }
 
-
-
 void destroy_segments(Macho_Binary_t* c_binary) {
-  Macho_Segment_t **segments = c_binary->segments;
+  Macho_Segment_t** segments = c_binary->segments;
   for (size_t idx = 0; segments[idx] != nullptr; ++idx) {
     free(segments[idx]->content);
     free(segments[idx]);
   }
   free(c_binary->segments);
-
 }
 
-}
-}
-
-
+}  // namespace MachO
+}  // namespace LIEF

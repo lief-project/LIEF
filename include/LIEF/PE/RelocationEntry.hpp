@@ -16,15 +16,13 @@
 #ifndef LIEF_PE_RELOCATION_ENTRY_H_
 #define LIEF_PE_RELOCATION_ENTRY_H_
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "LIEF/Abstract/Relocation.hpp"
-
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -35,14 +33,14 @@ class Relocation;
 
 //! Class which represents an entry of the PE relocation table
 //!
-//! It extends the LIEF::Relocation object to provide an uniform API across the file formats
+//! It extends the LIEF::Relocation object to provide an uniform API across the
+//! file formats
 class LIEF_API RelocationEntry : public LIEF::Relocation {
-
   friend class Parser;
   friend class Builder;
   friend class PE::Relocation;
 
-  public:
+ public:
   RelocationEntry();
   RelocationEntry(const RelocationEntry& other);
   RelocationEntry& operator=(RelocationEntry other);
@@ -67,7 +65,8 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   //! - The **low** 12 bits store the relocation offset
   uint16_t data() const;
 
-  //! Offset relative to Relocation::virtual_address where the relocation occurs.
+  //! Offset relative to Relocation::virtual_address where the relocation
+  //! occurs.
   uint16_t position() const;
 
   //! Type of the relocation
@@ -82,14 +81,15 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   bool operator==(const RelocationEntry& rhs) const;
   bool operator!=(const RelocationEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const RelocationEntry& entry);
 
-  private:
-  uint16_t               position_;
+ private:
+  uint16_t position_;
   RELOCATIONS_BASE_TYPES type_;
-  PE::Relocation*        relocation_{nullptr}; // Used to compute some information
+  PE::Relocation* relocation_{nullptr};  // Used to compute some information
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

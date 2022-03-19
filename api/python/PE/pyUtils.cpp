@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
 #include "LIEF/PE/utils.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
 void init_utils(py::module& m) {
-  py::enum_<IMPHASH_MODE>(m, "IMPHASH_MODE",
+  py::enum_<IMPHASH_MODE>(
+      m, "IMPHASH_MODE",
       "Enum to define the behavior of :func:`~lief.PE.get_imphash`")
-    .value("DEFAULT", IMPHASH_MODE::DEFAULT, "Default implementation")
-    .value("LIEF",    IMPHASH_MODE::LIEF,    "Same as DEFAULT")
-    .value("PEFILE",  IMPHASH_MODE::PEFILE,  "Use pefile algorithm")
-    .value("VT",      IMPHASH_MODE::VT,      "Same as PEFILE since Virus Total is using pefile");
+      .value("DEFAULT", IMPHASH_MODE::DEFAULT, "Default implementation")
+      .value("LIEF", IMPHASH_MODE::LIEF, "Same as DEFAULT")
+      .value("PEFILE", IMPHASH_MODE::PEFILE, "Use pefile algorithm")
+      .value("VT", IMPHASH_MODE::VT,
+             "Same as PEFILE since Virus Total is using pefile");
 
-  m.def("is_pe",
-      static_cast<bool (*)(const std::string&)>(&is_pe),
-      "Check if the given file is a ``PE``",
-      "file"_a);
+  m.def("is_pe", static_cast<bool (*)(const std::string&)>(&is_pe),
+        "Check if the given file is a ``PE``", "file"_a);
 
-  m.def("is_pe",
-      static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_pe),
-      "Check if the given raw data is a ``PE``",
-      "raw"_a);
+  m.def("is_pe", static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_pe),
+        "Check if the given raw data is a ``PE``", "raw"_a);
 
   m.def("get_type",
       [] (const std::string& file) {
@@ -46,7 +43,6 @@ void init_utils(py::module& m) {
       "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) "",
       "file"_a);
 
-
   m.def("get_type",
       [] (const std::vector<uint8_t>& raw) {
         return error_or(static_cast<result<PE_TYPE> (*)(const std::vector<uint8_t>&)>(&get_type), raw);
@@ -55,9 +51,8 @@ void init_utils(py::module& m) {
       "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) "",
       "raw"_a);
 
-  m.def("get_imphash",
-      &get_imphash,
-      R"delim(
+  m.def("get_imphash", &get_imphash,
+        R"delim(
       Compute the hash of imported functions
 
       Properties of the hash generated:
@@ -77,7 +72,7 @@ void init_utils(py::module& m) {
       .. seealso::
           https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
       )delim",
-      "binary"_a, "mode"_a = IMPHASH_MODE::DEFAULT);
+        "binary"_a, "mode"_a = IMPHASH_MODE::DEFAULT);
 
   m.def("resolve_ordinals",
       &resolve_ordinals,
@@ -89,5 +84,5 @@ void init_utils(py::module& m) {
       py::return_value_policy::copy);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

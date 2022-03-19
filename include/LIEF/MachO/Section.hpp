@@ -15,19 +15,17 @@
  */
 #ifndef LIEF_MACHO_SECTION_H_
 #define LIEF_MACHO_SECTION_H_
+#include <iostream>
+#include <memory>
+#include <set>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <set>
-#include <memory>
-
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Section.hpp"
-
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -39,18 +37,16 @@ class Binary;
 namespace details {
 struct section_32;
 struct section_64;
-}
+}  // namespace details
 
 //! Class that represents a Mach-O section
 class LIEF_API Section : public LIEF::Section {
-
   friend class BinaryParser;
   friend class Binary;
   friend class SegmentCommand;
 
-  public:
-
-  using content_t   = std::vector<uint8_t>;
+ public:
+  using content_t = std::vector<uint8_t>;
   using flag_list_t = std::set<MACHO_SECTION_FLAGS>;
 
   //! Internal container for storing Mach-O Relocation
@@ -60,9 +56,10 @@ class LIEF_API Section : public LIEF::Section {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
-  public:
+ public:
   Section();
   Section(const details::section_32& section_cmd);
   Section(const details::section_64& section_cmd);
@@ -92,7 +89,8 @@ class LIEF_API Section : public LIEF::Section {
   uint32_t alignment() const;
 
   //! Offset of the relocation table. This value should be 0
-  //! for executable and libraries as the relocations are managed by the DyldInfo::rebase
+  //! for executable and libraries as the relocations are managed by the
+  //! DyldInfo::rebase
   //!
   //! Other the other hand, for object files (``.o``) this value should not be 0
   //!
@@ -146,8 +144,8 @@ class LIEF_API Section : public LIEF::Section {
 
   //! Return an iterator over the MachO::Relocation associated with this section
   //!
-  //! This iterator is likely to be empty of executable and libraries while it should not
-  //! for object files (``.o``)
+  //! This iterator is likely to be empty of executable and libraries while it
+  //! should not for object files (``.o``)
   it_relocations relocations();
   it_const_relocations relocations() const;
 
@@ -180,9 +178,10 @@ class LIEF_API Section : public LIEF::Section {
   bool operator==(const Section& rhs) const;
   bool operator!=(const Section& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Section& section);
 
-  private:
+ private:
   std::string segment_name_;
   uint64_t original_size_ = 0;
   uint32_t align_ = 0;
@@ -193,10 +192,10 @@ class LIEF_API Section : public LIEF::Section {
   uint32_t reserved2_ = 0;
   uint32_t reserved3_ = 0;
   content_t content_;
-  SegmentCommand *segment_ = nullptr;
+  SegmentCommand* segment_ = nullptr;
   relocations_t relocations_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

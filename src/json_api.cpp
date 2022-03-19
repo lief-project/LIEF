@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-#include "logging.hpp"
 #include "LIEF/config.h"
 #include "LIEF/json.hpp"
+#include "logging.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)
-  #if defined(LIEF_PE_SUPPORT)
-    #include "PE/json_internal.hpp"
-  #endif
+#if defined(LIEF_PE_SUPPORT)
+#include "PE/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_ELF_SUPPORT)
-    #include "ELF/json_internal.hpp"
-  #endif
+#if defined(LIEF_ELF_SUPPORT)
+#include "ELF/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_MACHO_SUPPORT)
-    #include "MachO/json_internal.hpp"
-  #endif
+#if defined(LIEF_MACHO_SUPPORT)
+#include "MachO/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_OAT_SUPPORT)
-    #include "OAT/json_internal.hpp"
-  #endif
+#if defined(LIEF_OAT_SUPPORT)
+#include "OAT/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_ART_SUPPORT)
-   #include "ART/json_internal.hpp"
-  #endif
+#if defined(LIEF_ART_SUPPORT)
+#include "ART/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_DEX_SUPPORT)
-    #include "DEX/json_internal.hpp"
-  #endif
+#if defined(LIEF_DEX_SUPPORT)
+#include "DEX/json_internal.hpp"
+#endif
 
-  #if defined(LIEF_VDEX_SUPPORT)
-    #include "VDEX/json_internal.hpp"
-  #endif
-#endif // LIEF_JSON_SUPPORT
+#if defined(LIEF_VDEX_SUPPORT)
+#include "VDEX/json_internal.hpp"
+#endif
+#endif  // LIEF_JSON_SUPPORT
 
 namespace LIEF {
 
@@ -80,7 +80,6 @@ std::string to_json(const Object& v) {
   }
 #endif
 
-
 #if defined(LIEF_OAT_SUPPORT)
   OAT::JsonVisitor oat_visitor;
   oat_visitor(v);
@@ -89,7 +88,6 @@ std::string to_json(const Object& v) {
     node.update(oatjson);
   }
 #endif
-
 
 #if defined(LIEF_ART_SUPPORT)
   ART::JsonVisitor art_visitor;
@@ -109,7 +107,6 @@ std::string to_json(const Object& v) {
   }
 #endif
 
-
 #if defined(LIEF_VDEX_SUPPORT)
   VDEX::JsonVisitor vdex_visitor;
   vdex_visitor(v);
@@ -126,4 +123,4 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-}
+}  // namespace LIEF

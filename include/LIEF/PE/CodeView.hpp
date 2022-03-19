@@ -18,15 +18,13 @@
 #include <iostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 class LIEF_API CodeView : public Object {
-  public:
-
+ public:
   CodeView();
   CodeView(CODE_VIEW_SIGNATURES cv_signature);
 
@@ -43,15 +41,16 @@ class LIEF_API CodeView : public Object {
   bool operator==(const CodeView& rhs) const;
   bool operator!=(const CodeView& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CodeView& entry);
 
   virtual ~CodeView();
 
-  protected:
+ protected:
   CODE_VIEW_SIGNATURES cv_signature_;
 };
 
-} // Namespace PE
-} // Namespace LIEF
+}  // Namespace PE
+}  // Namespace LIEF
 
 #endif

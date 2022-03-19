@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/ELF.hpp>
 #include <iostream>
 #include <memory>
 
-#include <LIEF/ELF.hpp>
-
 using namespace LIEF::ELF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <ELF binary>" << '\n';
     return EXIT_FAILURE;
@@ -42,7 +41,5 @@ int main(int argc, char **argv) {
     std::cout << symbol << '\n';
   }
 
-
   return 0;
-
 }

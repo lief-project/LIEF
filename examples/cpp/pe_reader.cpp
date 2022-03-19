@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/PE.hpp>
+#include <LIEF/logging.hpp>
 #include <iostream>
 #include <memory>
 
-#include <LIEF/PE.hpp>
-#include <LIEF/logging.hpp>
-
 using namespace LIEF::PE;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   std::cout << "PE Reader" << '\n';
   if (argc != 2) {
@@ -86,14 +85,12 @@ int main(int argc, char **argv) {
     }
   }
 
-
   if (binary->has_debug()) {
     std::cout << "== Debug ==" << '\n';
     for (const Debug& debug : binary->debug()) {
       std::cout << debug << '\n';
     }
   }
-
 
   if (binary->has_resources()) {
     std::cout << "== Resources ==" << '\n';

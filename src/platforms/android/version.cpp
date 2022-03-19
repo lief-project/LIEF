@@ -14,58 +14,58 @@
  * limitations under the License.
  */
 #include "LIEF/platforms/android/version.hpp"
+
 #include <map>
 namespace LIEF {
 namespace Android {
 
 const char* code_name(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> version2code {
-    { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN"     },
-    { ANDROID_VERSIONS::VERSION_601,      "Marshmallow" },
-    { ANDROID_VERSIONS::VERSION_700,      "Nougat"      },
-    { ANDROID_VERSIONS::VERSION_710,      "Nougat"      },
-    { ANDROID_VERSIONS::VERSION_712,      "Nougat"      },
-    { ANDROID_VERSIONS::VERSION_800,      "Oreo"        },
-    { ANDROID_VERSIONS::VERSION_810,      "Oreo"        },
-    { ANDROID_VERSIONS::VERSION_900,      "Pie"        },
+  const std::map<ANDROID_VERSIONS, const char*> version2code{
+      {ANDROID_VERSIONS::VERSION_UNKNOWN, "UNKNOWN"},
+      {ANDROID_VERSIONS::VERSION_601, "Marshmallow"},
+      {ANDROID_VERSIONS::VERSION_700, "Nougat"},
+      {ANDROID_VERSIONS::VERSION_710, "Nougat"},
+      {ANDROID_VERSIONS::VERSION_712, "Nougat"},
+      {ANDROID_VERSIONS::VERSION_800, "Oreo"},
+      {ANDROID_VERSIONS::VERSION_810, "Oreo"},
+      {ANDROID_VERSIONS::VERSION_900, "Pie"},
 
   };
-  auto   it  = version2code.find(version);
+  auto it = version2code.find(version);
   return it == version2code.end() ? "UNDEFINED" : it->second;
 }
 
 const char* version_string(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> version2code {
-    { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN" },
-    { ANDROID_VERSIONS::VERSION_601,      "6.0.1"   },
-    { ANDROID_VERSIONS::VERSION_700,      "7.0.0"   },
-    { ANDROID_VERSIONS::VERSION_710,      "7.1.0"   },
-    { ANDROID_VERSIONS::VERSION_712,      "7.1.2"   },
-    { ANDROID_VERSIONS::VERSION_800,      "8.0.0"   },
-    { ANDROID_VERSIONS::VERSION_810,      "8.1.0"   },
-    { ANDROID_VERSIONS::VERSION_900,      "9.0.0"   },
+  const std::map<ANDROID_VERSIONS, const char*> version2code{
+      {ANDROID_VERSIONS::VERSION_UNKNOWN, "UNKNOWN"},
+      {ANDROID_VERSIONS::VERSION_601, "6.0.1"},
+      {ANDROID_VERSIONS::VERSION_700, "7.0.0"},
+      {ANDROID_VERSIONS::VERSION_710, "7.1.0"},
+      {ANDROID_VERSIONS::VERSION_712, "7.1.2"},
+      {ANDROID_VERSIONS::VERSION_800, "8.0.0"},
+      {ANDROID_VERSIONS::VERSION_810, "8.1.0"},
+      {ANDROID_VERSIONS::VERSION_900, "9.0.0"},
 
   };
-  auto   it  = version2code.find(version);
+  auto it = version2code.find(version);
   return it == version2code.end() ? "UNDEFINED" : it->second;
 }
 
 const char* to_string(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> enumStrings {
-    { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN"     },
-    { ANDROID_VERSIONS::VERSION_601,      "VERSION_601" },
-    { ANDROID_VERSIONS::VERSION_700,      "VERSION_700" },
-    { ANDROID_VERSIONS::VERSION_710,      "VERSION_710" },
-    { ANDROID_VERSIONS::VERSION_712,      "VERSION_712" },
-    { ANDROID_VERSIONS::VERSION_800,      "VERSION_800" },
-    { ANDROID_VERSIONS::VERSION_810,      "VERSION_810" },
-    { ANDROID_VERSIONS::VERSION_900,      "VERSION_900" },
+  const std::map<ANDROID_VERSIONS, const char*> enumStrings{
+      {ANDROID_VERSIONS::VERSION_UNKNOWN, "UNKNOWN"},
+      {ANDROID_VERSIONS::VERSION_601, "VERSION_601"},
+      {ANDROID_VERSIONS::VERSION_700, "VERSION_700"},
+      {ANDROID_VERSIONS::VERSION_710, "VERSION_710"},
+      {ANDROID_VERSIONS::VERSION_712, "VERSION_712"},
+      {ANDROID_VERSIONS::VERSION_800, "VERSION_800"},
+      {ANDROID_VERSIONS::VERSION_810, "VERSION_810"},
+      {ANDROID_VERSIONS::VERSION_900, "VERSION_900"},
 
   };
-  auto   it  = enumStrings.find(version);
+  auto it = enumStrings.find(version);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-
-}
-}
+}  // namespace Android
+}  // namespace LIEF

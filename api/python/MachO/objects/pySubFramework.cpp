@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (SubFramework::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (SubFramework::*)(T);
 
-
-template<>
+template <>
 void create<SubFramework>(py::module& m) {
-
   py::class_<SubFramework, LoadCommand>(m, "SubFramework",
-      R"delim(
+                                        R"delim(
       Class that represents the SubFramework command.
       Accodring to the Mach-O ``loader.h`` documentation:
 
@@ -52,29 +48,24 @@ void create<SubFramework>(py::module& m) {
       > following structure.
       )delim")
 
-    .def_property("umbrella",
-        static_cast<getter_t<const std::string&>>(&SubFramework::umbrella),
-        static_cast<setter_t<const std::string&>>(&SubFramework::umbrella),
-        "Name of the umbrella framework")
+      .def_property(
+          "umbrella",
+          static_cast<getter_t<const std::string&>>(&SubFramework::umbrella),
+          static_cast<setter_t<const std::string&>>(&SubFramework::umbrella),
+          "Name of the umbrella framework")
 
-    .def("__eq__", &SubFramework::operator==)
-    .def("__ne__", &SubFramework::operator!=)
-    .def("__hash__",
-        [] (const SubFramework& func) {
-          return Hash::hash(func);
-        })
+      .def("__eq__", &SubFramework::operator==)
+      .def("__ne__", &SubFramework::operator!=)
+      .def("__hash__",
+           [](const SubFramework& func) { return Hash::hash(func); })
 
-
-    .def("__str__",
-        [] (const SubFramework& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const SubFramework& func) {
+        std::ostringstream stream;
+        stream << func;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

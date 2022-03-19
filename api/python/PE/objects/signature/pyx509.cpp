@@ -13,75 +13,129 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
-
-#include "enums_wrapper.hpp"
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/x509.hpp"
 #include "LIEF/PE/signature/RsaInfo.hpp"
-
+#include "LIEF/PE/signature/x509.hpp"
+#include "enums_wrapper.hpp"
 #include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (x509::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (x509::*)(T);
 
-
-template<>
+template <>
 void create<x509>(py::module& m) {
+  py::class_<x509, LIEF::Object> cls_x509(m, "x509",
+                                          "Interface over a x509 certificate");
 
-  py::class_<x509, LIEF::Object> cls_x509(m, "x509", "Interface over a x509 certificate");
+  LIEF::enum_<x509::VERIFICATION_FLAGS>(
+      cls_x509, "VERIFICATION_FLAGS", py::arithmetic(),
+      "Verification flags associated with " RST_METH_REF(
+          lief.PE.x509.verify) "")
+      .value("OK", x509::VERIFICATION_FLAGS::OK, "The verification succeed")
+      .value("BADCERT_EXPIRED", x509::VERIFICATION_FLAGS::BADCERT_EXPIRED,
+             "The certificate validity has expired")
+      .value("BADCERT_REVOKED", x509::VERIFICATION_FLAGS::BADCERT_REVOKED,
+             "The certificate has been revoked (is on a CRL)")
+      .value("BADCERT_CN_MISMATCH",
+             x509::VERIFICATION_FLAGS::BADCERT_CN_MISMATCH,
+             "The certificate Common Name (CN) does not match with the "
+             "expected CN.")
+      .value("BADCERT_NOT_TRUSTED",
+             x509::VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED,
+             "The certificate is not correctly signed by the trusted CA.")
+      .value("BADCRL_NOT_TRUSTED", x509::VERIFICATION_FLAGS::BADCRL_NOT_TRUSTED,
+             "The CRL is not correctly signed by the trusted CA.")
+      .value("BADCRL_EXPIRED", x509::VERIFICATION_FLAGS::BADCRL_EXPIRED,
+             "The CRL is expired.")
+      .value("BADCERT_MISSING", x509::VERIFICATION_FLAGS::BADCERT_MISSING,
+             "Certificate was missing.")
+      .value("BADCERT_SKIP_VERIFY",
+             x509::VERIFICATION_FLAGS::BADCERT_SKIP_VERIFY,
+             "Certificate verification was skipped.")
+      .value("BADCERT_OTHERNATURE", x509::VERIFICATION_FLAGS::BADCERT_OTHER,
+             "Other reason")
+      .value("BADCERT_FUTURE", x509::VERIFICATION_FLAGS::BADCERT_FUTURE,
+             "The certificate validity starts in the future.")
+      .value("BADCRL_FUTURE", x509::VERIFICATION_FLAGS::BADCRL_FUTURE,
+             "The CRL is from the future")
+      .value("BADCERT_KEY_USAGE", x509::VERIFICATION_FLAGS::BADCERT_KEY_USAGE,
+             "Usage does not match the keyUsage extension.")
+      .value("BADCERT_EXT_KEY_USAGE",
+             x509::VERIFICATION_FLAGS::BADCERT_EXT_KEY_USAGE,
+             "Usage does not match the extendedKeyUsage extension.")
+      .value("BADCERT_NS_CERT_TYPE",
+             x509::VERIFICATION_FLAGS::BADCERT_NS_CERT_TYPE,
+             "Usage does not match the nsCertType extension.")
+      .value("BADCERT_BAD_MD", x509::VERIFICATION_FLAGS::BADCERT_BAD_MD,
+             "The certificate is signed with an unacceptable hash.")
+      .value("BADCERT_BAD_PK", x509::VERIFICATION_FLAGS::BADCERT_BAD_PK,
+             "The certificate is signed with an unacceptable PK alg (eg RSA vs "
+             "ECDSA).")
+      .value("BADCERT_BAD_KEY", x509::VERIFICATION_FLAGS::BADCERT_BAD_KEY,
+             "The certificate is signed with an unacceptable key (eg bad "
+             "curve, RSA too short).")
+      .value("BADCRL_BAD_MD", x509::VERIFICATION_FLAGS::BADCRL_BAD_MD,
+             "The CRL is signed with an unacceptable hash.")
+      .value("BADCRL_BAD_PK", x509::VERIFICATION_FLAGS::BADCRL_BAD_PK,
+             "The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).")
+      .value("BADCRL_BAD_KEY", x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY,
+             "The CRL is signed with an unacceptable key (eg bad curve, RSA "
+             "too short).");
 
-  LIEF::enum_<x509::VERIFICATION_FLAGS>(cls_x509, "VERIFICATION_FLAGS", py::arithmetic(),
-      "Verification flags associated with " RST_METH_REF(lief.PE.x509.verify) "")
-    .value("OK",                    x509::VERIFICATION_FLAGS::OK,                    "The verification succeed")
-    .value("BADCERT_EXPIRED",       x509::VERIFICATION_FLAGS::BADCERT_EXPIRED,       "The certificate validity has expired")
-    .value("BADCERT_REVOKED",       x509::VERIFICATION_FLAGS::BADCERT_REVOKED,       "The certificate has been revoked (is on a CRL)")
-    .value("BADCERT_CN_MISMATCH",   x509::VERIFICATION_FLAGS::BADCERT_CN_MISMATCH,   "The certificate Common Name (CN) does not match with the expected CN.")
-    .value("BADCERT_NOT_TRUSTED",   x509::VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED,   "The certificate is not correctly signed by the trusted CA.")
-    .value("BADCRL_NOT_TRUSTED",    x509::VERIFICATION_FLAGS::BADCRL_NOT_TRUSTED,    "The CRL is not correctly signed by the trusted CA.")
-    .value("BADCRL_EXPIRED",        x509::VERIFICATION_FLAGS::BADCRL_EXPIRED,        "The CRL is expired.")
-    .value("BADCERT_MISSING",       x509::VERIFICATION_FLAGS::BADCERT_MISSING,       "Certificate was missing.")
-    .value("BADCERT_SKIP_VERIFY",   x509::VERIFICATION_FLAGS::BADCERT_SKIP_VERIFY,   "Certificate verification was skipped.")
-    .value("BADCERT_OTHERNATURE",   x509::VERIFICATION_FLAGS::BADCERT_OTHER,         "Other reason")
-    .value("BADCERT_FUTURE",        x509::VERIFICATION_FLAGS::BADCERT_FUTURE,        "The certificate validity starts in the future.")
-    .value("BADCRL_FUTURE",         x509::VERIFICATION_FLAGS::BADCRL_FUTURE,         "The CRL is from the future")
-    .value("BADCERT_KEY_USAGE",     x509::VERIFICATION_FLAGS::BADCERT_KEY_USAGE,     "Usage does not match the keyUsage extension.")
-    .value("BADCERT_EXT_KEY_USAGE", x509::VERIFICATION_FLAGS::BADCERT_EXT_KEY_USAGE, "Usage does not match the extendedKeyUsage extension.")
-    .value("BADCERT_NS_CERT_TYPE",  x509::VERIFICATION_FLAGS::BADCERT_NS_CERT_TYPE,  "Usage does not match the nsCertType extension.")
-    .value("BADCERT_BAD_MD",        x509::VERIFICATION_FLAGS::BADCERT_BAD_MD,        "The certificate is signed with an unacceptable hash.")
-    .value("BADCERT_BAD_PK",        x509::VERIFICATION_FLAGS::BADCERT_BAD_PK,        "The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).")
-    .value("BADCERT_BAD_KEY",       x509::VERIFICATION_FLAGS::BADCERT_BAD_KEY,       "The certificate is signed with an unacceptable key (eg bad curve, RSA too short).")
-    .value("BADCRL_BAD_MD",         x509::VERIFICATION_FLAGS::BADCRL_BAD_MD,         "The CRL is signed with an unacceptable hash.")
-    .value("BADCRL_BAD_PK",         x509::VERIFICATION_FLAGS::BADCRL_BAD_PK,         "The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).")
-    .value("BADCRL_BAD_KEY",        x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY,        "The CRL is signed with an unacceptable key (eg bad curve, RSA too short).");
+  LIEF::enum_<x509::KEY_TYPES>(cls_x509, "KEY_TYPES",
+                               "Public key scheme used by the x509 certificate")
+      .value("NONE", x509::KEY_TYPES::NONE, "Unknown scheme")
+      .value("RSA", x509::KEY_TYPES::RSA, "RSA scheme")
+      .value("ECKEY", x509::KEY_TYPES::ECKEY, "Elliptic-curve scheme")
+      .value("ECKEY_DH", x509::KEY_TYPES::ECKEY_DH,
+             "Elliptic-curve Diffie-Hellman")
+      .value("ECDSA", x509::KEY_TYPES::ECDSA,
+             "Elliptic-curve Digital Signature Algorithm")
+      .value("RSA_ALT", x509::KEY_TYPES::RSA_ALT,
+             "RSA scheme with an alternative implementation for signing and "
+             "decrypting")
+      .value("RSASSA_PSS", x509::KEY_TYPES::RSASSA_PSS,
+             "RSA Probabilistic signature scheme");
 
-  LIEF::enum_<x509::KEY_TYPES>(cls_x509, "KEY_TYPES", "Public key scheme used by the x509 certificate")
-    .value("NONE",       x509::KEY_TYPES::NONE,       "Unknown scheme")
-    .value("RSA",        x509::KEY_TYPES::RSA,        "RSA scheme")
-    .value("ECKEY",      x509::KEY_TYPES::ECKEY,      "Elliptic-curve scheme")
-    .value("ECKEY_DH",   x509::KEY_TYPES::ECKEY_DH,   "Elliptic-curve Diffie-Hellman")
-    .value("ECDSA",      x509::KEY_TYPES::ECDSA,      "Elliptic-curve Digital Signature Algorithm")
-    .value("RSA_ALT",    x509::KEY_TYPES::RSA_ALT,    "RSA scheme with an alternative implementation for signing and decrypting")
-    .value("RSASSA_PSS", x509::KEY_TYPES::RSASSA_PSS, "RSA Probabilistic signature scheme");
-
-  LIEF::enum_<x509::KEY_USAGE>(cls_x509, "KEY_USAGE", "Key usage as defined in `RFC #5280 - section-4.2.1.3 <https://tools.ietf.org/html/rfc5280#section-4.2.1.3>`_")
-    .value("DIGITAL_SIGNATURE", x509::KEY_USAGE::DIGITAL_SIGNATURE,  "The key is used for digital signature")
-    .value("NON_REPUDIATION",   x509::KEY_USAGE::NON_REPUDIATION,    "The key is used for digital signature AND to protects against falsely denying some action")
-    .value("KEY_ENCIPHERMENT",  x509::KEY_USAGE::KEY_ENCIPHERMENT,   "The key is used for enciphering private or secret keys")
-    .value("DATA_ENCIPHERMENT", x509::KEY_USAGE::DATA_ENCIPHERMENT,  "The key is used for directly enciphering raw user data without the use of an intermediate symmetric cipher")
-    .value("KEY_AGREEMENT",     x509::KEY_USAGE::KEY_AGREEMENT,      "The Key is used for key agreement. (e.g. with Diffie-Hellman)")
-    .value("KEY_CERT_SIGN",     x509::KEY_USAGE::KEY_CERT_SIGN,      "The key is used for verifying signatures on public key certificates")
-    .value("CRL_SIGN",          x509::KEY_USAGE::CRL_SIGN,           "The key is used for verifying signatures on certificate revocation lists")
-    .value("ENCIPHER_ONLY",     x509::KEY_USAGE::ENCIPHER_ONLY,      "In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for enciphering data while performing key agreement")
-    .value("DECIPHER_ONLY",     x509::KEY_USAGE::DECIPHER_ONLY,      "In **association with** KEY_AGREEMENT (otherwise the meaning is undefined), the key is only used for deciphering data while performing key agreement");
+  LIEF::enum_<x509::KEY_USAGE>(
+      cls_x509, "KEY_USAGE",
+      "Key usage as defined in `RFC #5280 - section-4.2.1.3 "
+      "<https://tools.ietf.org/html/rfc5280#section-4.2.1.3>`_")
+      .value("DIGITAL_SIGNATURE", x509::KEY_USAGE::DIGITAL_SIGNATURE,
+             "The key is used for digital signature")
+      .value("NON_REPUDIATION", x509::KEY_USAGE::NON_REPUDIATION,
+             "The key is used for digital signature AND to protects against "
+             "falsely denying some action")
+      .value("KEY_ENCIPHERMENT", x509::KEY_USAGE::KEY_ENCIPHERMENT,
+             "The key is used for enciphering private or secret keys")
+      .value("DATA_ENCIPHERMENT", x509::KEY_USAGE::DATA_ENCIPHERMENT,
+             "The key is used for directly enciphering raw user data without "
+             "the use of an intermediate symmetric cipher")
+      .value("KEY_AGREEMENT", x509::KEY_USAGE::KEY_AGREEMENT,
+             "The Key is used for key agreement. (e.g. with Diffie-Hellman)")
+      .value(
+          "KEY_CERT_SIGN", x509::KEY_USAGE::KEY_CERT_SIGN,
+          "The key is used for verifying signatures on public key certificates")
+      .value("CRL_SIGN", x509::KEY_USAGE::CRL_SIGN,
+             "The key is used for verifying signatures on certificate "
+             "revocation lists")
+      .value("ENCIPHER_ONLY", x509::KEY_USAGE::ENCIPHER_ONLY,
+             "In **association with** KEY_AGREEMENT (otherwise the meaning is "
+             "undefined), the key is only used for enciphering data while "
+             "performing key agreement")
+      .value("DECIPHER_ONLY", x509::KEY_USAGE::DECIPHER_ONLY,
+             "In **association with** KEY_AGREEMENT (otherwise the meaning is "
+             "undefined), the key is only used for deciphering data while "
+             "performing key agreement");
 
   cls_x509
     .def_static("parse",
@@ -217,6 +271,5 @@ void create<x509>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

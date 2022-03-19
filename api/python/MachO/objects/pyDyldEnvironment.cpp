@@ -14,57 +14,48 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DyldEnvironment.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (DyldEnvironment::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DyldEnvironment::*)(T);
 
-
-template<>
+template <>
 void create<DyldEnvironment>(py::module& m) {
-
   py::class_<DyldEnvironment, LoadCommand>(m, "DyldEnvironment",
-      R"delim(
+                                           R"delim(
       Class that represents a LC_DYLD_ENVIRONMENT which is
       used by the Mach-O linker/loader to initialize an environment variable
       )delim")
 
-    .def_property("value",
-        static_cast<getter_t<const std::string&>>(&DyldEnvironment::value),
-        static_cast<setter_t<const std::string&>>(&DyldEnvironment::value),
-        "Environment variable as a string",
-        py::return_value_policy::reference_internal)
+      .def_property(
+          "value",
+          static_cast<getter_t<const std::string&>>(&DyldEnvironment::value),
+          static_cast<setter_t<const std::string&>>(&DyldEnvironment::value),
+          "Environment variable as a string",
+          py::return_value_policy::reference_internal)
 
-    .def("__eq__", &DyldEnvironment::operator==)
-    .def("__ne__", &DyldEnvironment::operator!=)
-    .def("__hash__",
-        [] (const DyldEnvironment& env) {
-          return Hash::hash(env);
-        })
+      .def("__eq__", &DyldEnvironment::operator==)
+      .def("__ne__", &DyldEnvironment::operator!=)
+      .def("__hash__",
+           [](const DyldEnvironment& env) { return Hash::hash(env); })
 
-
-    .def("__str__",
-        [] (const DyldEnvironment& env)
-        {
-          std::ostringstream stream;
-          stream << env;
-          return stream.str();
-        });
-
+      .def("__str__", [](const DyldEnvironment& env) {
+        std::ostringstream stream;
+        stream << env;
+        return stream.str();
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

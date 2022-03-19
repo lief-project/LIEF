@@ -31,22 +31,21 @@ extern "C" {
 #endif
 
 struct Macho_Segment_t {
-  const char*       name;
-  uint64_t          virtual_address;
-  uint64_t          virtual_size;
-  uint64_t          file_size;
-  uint64_t          file_offset;
-  uint32_t          max_protection;
-  uint32_t          init_protection;
-  uint32_t          numberof_sections;
-  uint32_t          flags;
-  uint8_t*          content;
-  uint64_t          size;
+  const char* name;
+  uint64_t virtual_address;
+  uint64_t virtual_size;
+  uint64_t file_size;
+  uint64_t file_offset;
+  uint32_t max_protection;
+  uint32_t init_protection;
+  uint32_t numberof_sections;
+  uint32_t flags;
+  uint8_t* content;
+  uint64_t size;
   Macho_Section_t** sections;
 };
 
 typedef struct Macho_Segment_t Macho_Segment_t;
-
 
 #ifdef __cplusplus
 }

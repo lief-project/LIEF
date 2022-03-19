@@ -18,11 +18,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -31,13 +29,12 @@ class ResourcesManager;
 namespace details {
 struct pe_resource_icon_group;
 struct pe_icon_header;
-}
+}  // namespace details
 
 class LIEF_API ResourceIcon : public Object {
-
   friend class ResourcesManager;
 
-  public:
+ public:
   ResourceIcon();
   ResourceIcon(const details::pe_resource_icon_group& header);
   ResourceIcon(const details::pe_icon_header& header);
@@ -101,28 +98,23 @@ class LIEF_API ResourceIcon : public Object {
   bool operator==(const ResourceIcon& rhs) const;
   bool operator!=(const ResourceIcon& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceIcon& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceIcon& entry);
 
-  private:
-  uint8_t              width_ = 0;
-  uint8_t              height_ = 0;
-  uint8_t              color_count_ = 0;
-  uint8_t              reserved_ = 0;
-  uint16_t             planes_ = 0;
-  uint16_t             bit_count_ = 0;
-  uint32_t             id_ = -1u;
-  RESOURCE_LANGS       lang_ = RESOURCE_LANGS::LANG_NEUTRAL;
-  RESOURCE_SUBLANGS    sublang_ = RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
+ private:
+  uint8_t width_ = 0;
+  uint8_t height_ = 0;
+  uint8_t color_count_ = 0;
+  uint8_t reserved_ = 0;
+  uint16_t planes_ = 0;
+  uint16_t bit_count_ = 0;
+  uint32_t id_ = -1u;
+  RESOURCE_LANGS lang_ = RESOURCE_LANGS::LANG_NEUTRAL;
+  RESOURCE_SUBLANGS sublang_ = RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
   std::vector<uint8_t> pixels_;
-
-
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

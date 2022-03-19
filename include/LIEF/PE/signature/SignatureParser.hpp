@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_PE_SIGNATURE_PARSER_H_
 #define LIEF_PE_SIGNATURE_PARSER_H_
+#include <array>
 #include <memory>
 #include <string>
-#include <array>
 
-#include "LIEF/errors.hpp"
-
-#include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/errors.hpp"
 
 namespace LIEF {
 class VectorStream;
@@ -47,34 +46,39 @@ class LIEF_API SignatureParser {
     uint64_t end = 0;
   };
 
-  public:
+ public:
   using attributes_t = std::vector<std::unique_ptr<Attribute>>;
   using signer_infos_t = std::vector<SignerInfo>;
   using x509_certificates_t = std::vector<x509>;
   using time_t = std::array<int32_t, 6>;
 
   //! Parse a PKCS #7 signature given a raw blob
-  static result<Signature> parse(std::vector<uint8_t> data, bool skip_header = false);
+  static result<Signature> parse(std::vector<uint8_t> data,
+                                 bool skip_header = false);
 
   //! Parse a PKCS #7 signature from a file path
   static result<Signature> parse(const std::string& path);
   SignatureParser(const SignatureParser&) = delete;
   SignatureParser& operator=(const SignatureParser&) = delete;
-  private:
+
+ private:
   SignatureParser(std::vector<uint8_t> data);
   ~SignatureParser();
   SignatureParser();
 
   result<Signature> parse_signature();
 
-  static result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
+  static result<ContentInfo> parse_content_info(VectorStream& stream,
+                                                range_t& range);
   static result<x509_certificates_t> parse_certificates(VectorStream& stream);
   result<signer_infos_t> parse_signer_infos(VectorStream& stream);
   result<attributes_t> parse_attributes(VectorStream& stream);
-  static result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
+  static result<std::unique_ptr<Attribute>> parse_content_type(
+      VectorStream& stream);
 
   result<signer_infos_t> parse_pkcs9_counter_sign(VectorStream& stream);
-  static result<std::vector<uint8_t>> parse_pkcs9_message_digest(VectorStream& stream);
+  static result<std::vector<uint8_t>> parse_pkcs9_message_digest(
+      VectorStream& stream);
   static result<int32_t> parse_pkcs9_at_sequence_number(VectorStream& stream);
   static result<time_t> parse_pkcs9_signing_time(VectorStream& stream);
 
@@ -90,7 +94,7 @@ class LIEF_API SignatureParser {
   std::unique_ptr<VectorStream> stream_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -16,9 +16,9 @@
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H_
 #define LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -27,10 +27,12 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.25.4`` (PKCS #9)
+//! Interface over the structure described by the OID
+//! ``1.2.840.113549.1.9.25.4`` (PKCS #9)
 //!
 //! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+//! Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
 //! ```raw
 //! sequenceNumber ATTRIBUTE ::= {
@@ -43,11 +45,10 @@ class SignatureParser;
 //! SequenceNumber ::= INTEGER (1..MAX)
 //! ```
 class LIEF_API PKCS9AtSequenceNumber : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   PKCS9AtSequenceNumber();
   PKCS9AtSequenceNumber(uint32_t num);
   PKCS9AtSequenceNumber(const PKCS9AtSequenceNumber&);
@@ -56,9 +57,7 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Number as described in the RFC
-  inline uint32_t number() const {
-    return number_;
-  }
+  inline uint32_t number() const { return number_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -66,11 +65,11 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   void accept(Visitor& visitor) const override;
   virtual ~PKCS9AtSequenceNumber();
 
-  private:
+ private:
   uint32_t number_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

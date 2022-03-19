@@ -15,8 +15,8 @@
  */
 #ifndef OAT_ENUM_TO_STRING_H_
 #define OAT_ENUM_TO_STRING_H_
-#include "LIEF/visibility.h"
 #include "LIEF/OAT/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace OAT {
@@ -26,8 +26,7 @@ LIEF_API const char* to_string(OAT_CLASS_STATUS e);
 LIEF_API const char* to_string(HEADER_KEYS e);
 LIEF_API const char* to_string(INSTRUCTION_SETS e);
 
-} // namespace OAT
-} // namespace LIEF
+}  // namespace OAT
+}  // namespace LIEF
 
 #endif
-

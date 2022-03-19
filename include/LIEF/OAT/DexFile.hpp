@@ -16,12 +16,10 @@
 #ifndef LIEF_OAT_DEXFILE_H_
 #define LIEF_OAT_DEXFILE_H_
 
-#include "LIEF/OAT/type_traits.hpp"
-
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/DEX.hpp"
+#include "LIEF/OAT/type_traits.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace OAT {
@@ -30,7 +28,7 @@ class Parser;
 class LIEF_API DexFile : public Object {
   friend class Parser;
 
-  public:
+ public:
   DexFile();
   DexFile(const DexFile&);
   DexFile& operator=(const DexFile&);
@@ -66,9 +64,10 @@ class LIEF_API DexFile : public Object {
 
   virtual ~DexFile();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DexFile& dex_file);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DexFile& dex_file);
 
-  private:
+ private:
   std::string location_;
   uint32_t checksum_ = 0;
   uint32_t dex_offset_ = 0;
@@ -84,10 +83,8 @@ class LIEF_API DexFile : public Object {
   // OAT 131 (Android 8.1.0)
   uint32_t method_bss_mapping_offset_ = 0;
   uint32_t dex_sections_layout_offset_ = 0;
-
-
 };
 
-} // Namespace OAT
-} // Namespace LIEF
+}  // Namespace OAT
+}  // Namespace LIEF
 #endif

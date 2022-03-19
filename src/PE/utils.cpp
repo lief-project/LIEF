@@ -13,39 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/utils.hpp"
+
 #include <algorithm>
-#include <fstream>
-#include <iterator>
 #include <exception>
-#include <string>
-#include <numeric>
+#include <fstream>
 #include <iomanip>
+#include <iterator>
+#include <numeric>
 #include <sstream>
 #include <string>
 
+#include "LIEF/exception.hpp"
 #include "logging.hpp"
 #include "mbedtls/md5.h"
-
-#include "LIEF/exception.hpp"
-
-#include "LIEF/PE/utils.hpp"
 #define LIEF_PE_FORCE_UNDEF
-#include "LIEF/PE/undef.h"
+#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/BinaryStream/FileStream.hpp"
-#include "PE/Structures.hpp"
-
+#include "LIEF/PE/undef.h"
 #include "LIEF/utils.hpp"
-
-
+#include "PE/Structures.hpp"
+#include "hash_stream.hpp"
 #include "utils/ordinals_lookup_tables/libraries_table.hpp"
 #include "utils/ordinals_lookup_tables_std/libraries_table.hpp"
-
-#include "hash_stream.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -55,8 +49,7 @@ static constexpr size_t SIZEOF_OPT_HEADER_64 = 0xF0;
 
 inline std::string to_lower(std::string str) {
   std::string lower = str;
-  std::transform(std::begin(str), std::end(str),
-                 std::begin(lower), ::tolower);
+  std::transform(std::begin(str), std::end(str), std::begin(lower), ::tolower);
   return lower;
 }
 
@@ -64,7 +57,7 @@ inline bool is_pe(BinaryStream& stream) {
   using signature_t = std::array<char, sizeof(details::PE_Magic)>;
   stream.setpos(0);
   if (auto dos_header = stream.read<details::pe_dos_header>()) {
-    if (dos_header->Magic != /* MZ */0x5a4d) {
+    if (dos_header->Magic != /* MZ */ 0x5a4d) {
       return false;
     }
     stream.setpos(dos_header->AddressOfNewExeHeader);
@@ -84,14 +77,12 @@ bool is_pe(const std::string& file) {
   return false;
 }
 
-
 bool is_pe(const std::vector<uint8_t>& raw) {
   if (auto stream = SpanStream::from_vector(raw)) {
     return is_pe(*stream);
   }
   return false;
 }
-
 
 result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   const uint64_t cpos = stream.pos();
@@ -116,7 +107,10 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   const size_t sizeof_opt_header = header->SizeOfOptionalHeader;
   if (sizeof_opt_header != SIZEOF_OPT_HEADER_32 &&
       sizeof_opt_header != SIZEOF_OPT_HEADER_64) {
-    LIEF_WARN("The value of the SizeOfOptionalHeader in the PE header seems corrupted 0x{:x}", sizeof_opt_header);
+    LIEF_WARN(
+        "The value of the SizeOfOptionalHeader in the PE header seems "
+        "corrupted 0x{:x}",
+        sizeof_opt_header);
   }
 
   auto opt_hdr = stream.read<details::pe32_optional_header>();
@@ -125,7 +119,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
     return opt_hdr.error();
   }
   const auto type = static_cast<PE_TYPE>(opt_hdr->Magic);
-  stream.setpos(cpos); // Restore the original position
+  stream.setpos(cpos);  // Restore the original position
 
   /*
    * We first try to determine PE's type from the OptionalHeader's Magic.
@@ -165,7 +159,6 @@ result<PE_TYPE> get_type(const std::vector<uint8_t>& raw) {
   return make_error_code(lief_errors::file_format_error);
 }
 
-
 std::string get_imphash_std(const Binary& binary) {
   static const std::set<std::string> ALLOWED_EXT = {"dll", "ocx", "sys"};
   std::vector<uint8_t> md5_buffer(16);
@@ -178,7 +171,8 @@ std::string get_imphash_std(const Binary& binary) {
   for (const Import& imp : binary.imports()) {
     std::string libname = imp.name();
 
-    Import resolved = resolve_ordinals(imp, /* strict */ false, /* use_std */ true);
+    Import resolved =
+        resolve_ordinals(imp, /* strict */ false, /* use_std */ true);
     size_t ext_idx = resolved.name().find_last_of('.');
     std::string name = resolved.name();
     std::string ext;
@@ -210,14 +204,14 @@ std::string get_imphash_std(const Binary& binary) {
     }
     lstr += to_lower(entries_string);
 
-    // use write(uint8_t*, size_t) instead of write(const std::string&) to avoid null char
+    // use write(uint8_t*, size_t) instead of write(const std::string&) to avoid
+    // null char
     hs.write(reinterpret_cast<const uint8_t*>(lstr.data()), lstr.size());
     lstr.clear();
   }
 
   return hex_dump(hs.raw(), "");
 }
-
 
 std::string get_imphash_lief(const Binary& binary) {
   std::vector<uint8_t> md5_buffer(16);
@@ -248,38 +242,34 @@ std::string get_imphash_lief(const Binary& binary) {
     import_list += to_lower(entries_string);
   }
 
-  std::sort(std::begin(import_list), std::end(import_list),
-            std::less<>());
+  std::sort(std::begin(import_list), std::end(import_list), std::less<>());
 
-  mbedtls_md5(
-      reinterpret_cast<const uint8_t*>(import_list.data()),
-      import_list.size(),
-      md5_buffer.data());
+  mbedtls_md5(reinterpret_cast<const uint8_t*>(import_list.data()),
+              import_list.size(), md5_buffer.data());
   return hex_dump(md5_buffer, "");
 }
 
 std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
   switch (mode) {
-    case IMPHASH_MODE::LIEF:
-      {
-        return get_imphash_lief(binary);
-      }
-    case IMPHASH_MODE::PEFILE:
-      {
-        return get_imphash_std(binary);
-      }
+    case IMPHASH_MODE::LIEF: {
+      return get_imphash_lief(binary);
+    }
+    case IMPHASH_MODE::PEFILE: {
+      return get_imphash_std(binary);
+    }
   }
   return "";
 }
 
 Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
-  using ordinal_resolver_t = const char*(*)(uint32_t);
+  using ordinal_resolver_t = const char* (*)(uint32_t);
 
   Import::it_const_entries entries = import.entries();
 
-  if (std::all_of(std::begin(entries), std::end(entries),
-                  [] (const ImportEntry& entry) { return !entry.is_ordinal(); })) {
-    //LIEF_DEBUG("All imports use name. No ordinal!");
+  if (std::all_of(
+          std::begin(entries), std::end(entries),
+          [](const ImportEntry& entry) { return !entry.is_ordinal(); })) {
+    // LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
   }
 
@@ -311,10 +301,12 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
       LIEF_DEBUG("Dealing with: {}", entry);
-      const char* entry_name = ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
+      const char* entry_name =
+          ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
       if (entry_name == nullptr) {
         if (strict) {
-          throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
+          throw not_found("Unable to resolve ordinal: " +
+                          std::to_string(entry.ordinal()));
         }
         LIEF_DEBUG("Unable to resolve ordinal: #{:d}", entry.ordinal());
         continue;
@@ -328,30 +320,29 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
 }
 ALGORITHMS algo_from_oid(const std::string& oid) {
   static const std::unordered_map<std::string, ALGORITHMS> OID_MAP = {
-    { "2.16.840.1.101.3.4.2.3", ALGORITHMS::SHA_512 },
-    { "2.16.840.1.101.3.4.2.2", ALGORITHMS::SHA_384 },
-    { "2.16.840.1.101.3.4.2.1", ALGORITHMS::SHA_256 },
-    { "1.3.14.3.2.26",          ALGORITHMS::SHA_1   },
+      {"2.16.840.1.101.3.4.2.3", ALGORITHMS::SHA_512},
+      {"2.16.840.1.101.3.4.2.2", ALGORITHMS::SHA_384},
+      {"2.16.840.1.101.3.4.2.1", ALGORITHMS::SHA_256},
+      {"1.3.14.3.2.26", ALGORITHMS::SHA_1},
 
-    { "1.2.840.113549.2.5",     ALGORITHMS::MD5 },
-    { "1.2.840.113549.2.4",     ALGORITHMS::MD4 },
-    { "1.2.840.113549.2.2",     ALGORITHMS::MD2 },
+      {"1.2.840.113549.2.5", ALGORITHMS::MD5},
+      {"1.2.840.113549.2.4", ALGORITHMS::MD4},
+      {"1.2.840.113549.2.2", ALGORITHMS::MD2},
 
-    { "1.2.840.113549.1.1.1",   ALGORITHMS::RSA },
-    { "1.2.840.10045.2.1",      ALGORITHMS::EC  },
+      {"1.2.840.113549.1.1.1", ALGORITHMS::RSA},
+      {"1.2.840.10045.2.1", ALGORITHMS::EC},
 
-    { "1.2.840.113549.1.1.4",   ALGORITHMS::MD5_RSA        },
-    { "1.2.840.10040.4.3",      ALGORITHMS::SHA1_DSA       },
-    { "1.2.840.113549.1.1.5",   ALGORITHMS::SHA1_RSA       },
-    { "1.2.840.113549.1.1.11",  ALGORITHMS::SHA_256_RSA    },
-    { "1.2.840.113549.1.1.12",  ALGORITHMS::SHA_384_RSA    },
-    { "1.2.840.113549.1.1.13",  ALGORITHMS::SHA_512_RSA    },
-    { "1.2.840.10045.4.1",      ALGORITHMS::SHA1_ECDSA     },
-    { "1.2.840.10045.4.3.2",    ALGORITHMS::SHA_256_ECDSA  },
-    { "1.2.840.10045.4.3.3",    ALGORITHMS::SHA_384_ECDSA  },
-    { "1.2.840.10045.4.3.4",    ALGORITHMS::SHA_512_ECDSA  },
+      {"1.2.840.113549.1.1.4", ALGORITHMS::MD5_RSA},
+      {"1.2.840.10040.4.3", ALGORITHMS::SHA1_DSA},
+      {"1.2.840.113549.1.1.5", ALGORITHMS::SHA1_RSA},
+      {"1.2.840.113549.1.1.11", ALGORITHMS::SHA_256_RSA},
+      {"1.2.840.113549.1.1.12", ALGORITHMS::SHA_384_RSA},
+      {"1.2.840.113549.1.1.13", ALGORITHMS::SHA_512_RSA},
+      {"1.2.840.10045.4.1", ALGORITHMS::SHA1_ECDSA},
+      {"1.2.840.10045.4.3.2", ALGORITHMS::SHA_256_ECDSA},
+      {"1.2.840.10045.4.3.3", ALGORITHMS::SHA_384_ECDSA},
+      {"1.2.840.10045.4.3.4", ALGORITHMS::SHA_512_ECDSA},
   };
-
 
   const auto it = OID_MAP.find(oid.c_str());
   if (it == std::end(OID_MAP)) {
@@ -360,6 +351,5 @@ ALGORITHMS algo_from_oid(const std::string& oid) {
   return it->second;
 }
 
-
-}
-}
+}  // namespace PE
+}  // namespace LIEF

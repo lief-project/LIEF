@@ -16,10 +16,9 @@
 #ifndef LIEF_ABSTRACT_JSON_INTERNAL_H_
 #define LIEF_ABSTRACT_JSON_INTERNAL_H_
 
-#include "LIEF/config.h"
-
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract.hpp"
+#include "LIEF/config.h"
+#include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
 namespace LIEF {
@@ -27,17 +26,17 @@ namespace LIEF {
 //! Class that implements the Visitor pattern to serialize LIEF abstracted
 //! object in JSON
 class AbstractJsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const Binary& binary)         override;
-  void visit(const Header& header)         override;
-  void visit(const Section& section)       override;
-  void visit(const Symbol& symbol)         override;
+ public:
+  void visit(const Binary& binary) override;
+  void visit(const Header& header) override;
+  void visit(const Section& section) override;
+  void visit(const Symbol& symbol) override;
   void visit(const Relocation& relocation) override;
-  void visit(const Function& f)            override;
+  void visit(const Function& f) override;
 };
 
-}
+}  // namespace LIEF
 #endif

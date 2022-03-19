@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyAndroid.hpp"
 #include "LIEF/platforms/android/version.hpp"
+#include "pyAndroid.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -23,14 +23,14 @@ namespace Android {
 
 void init_versions(py::module& m) {
   py::enum_<ANDROID_VERSIONS>(m, "ANDROID_VERSIONS")
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_UNKNOWN))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_601))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_700))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_710))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_712))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_800))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_900));
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_UNKNOWN))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_601))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_700))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_710))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_712))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_800))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_900));
 
   m.def("code_name",
       &code_name,
@@ -47,5 +47,5 @@ void init_versions(py::module& m) {
       "version"_a);
 }
 
-}
-}
+}  // namespace Android
+}  // namespace LIEF

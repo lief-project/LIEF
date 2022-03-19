@@ -16,14 +16,13 @@
 #ifndef LIEF_ELF_NOTE_H_
 #define LIEF_ELF_NOTE_H_
 
-#include <vector>
 #include <iostream>
 #include <memory>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -35,21 +34,23 @@ class NoteDetails;
 
 //! Class which represents an ELF note
 class LIEF_API Note : public Object {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
   friend class NoteDetails;
 
-  public:
+ public:
   //! Container used to handle the description data
   using description_t = std::vector<uint8_t>;
 
-  public:
+ public:
   Note();
-  Note(std::string  name, uint32_t type, description_t description, Binary* binary=nullptr);
-  Note(const std::string& name, NOTE_TYPES type, const description_t& description, Binary* binary=nullptr);
-  Note(const std::string& name, NOTE_TYPES_CORE type, const description_t& description, Binary* binary=nullptr);
+  Note(std::string name, uint32_t type, description_t description,
+       Binary* binary = nullptr);
+  Note(const std::string& name, NOTE_TYPES type,
+       const description_t& description, Binary* binary = nullptr);
+  Note(const std::string& name, NOTE_TYPES_CORE type,
+       const description_t& description, Binary* binary = nullptr);
 
   Note& operator=(Note copy);
   Note(const Note& copy);
@@ -76,7 +77,8 @@ class LIEF_API Note : public Object {
 
   //! True if the current note is specific to Android.
   //!
-  //! If true, ``details()`` returns a reference to the LIEF::ELF::AndroidNote object
+  //! If true, ``details()`` returns a reference to the LIEF::ELF::AndroidNote
+  //! object
   bool is_android() const;
 
   const NoteDetails& details() const;
@@ -101,19 +103,18 @@ class LIEF_API Note : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Note& note);
 
-  protected:
-  Binary*       binary_{nullptr};
-  std::string   name_;
-  NOTE_TYPES    type_;
+ protected:
+  Binary* binary_{nullptr};
+  std::string name_;
+  NOTE_TYPES type_;
   description_t description_;
 
-  private:
+ private:
   bool is_core_{false};
   std::pair<NOTE_TYPES, std::unique_ptr<NoteDetails>> details_;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

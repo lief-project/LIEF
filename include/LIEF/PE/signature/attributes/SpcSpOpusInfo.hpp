@@ -18,10 +18,9 @@
 #define LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H_
 #include <memory>
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
-
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -33,7 +32,8 @@ class SignatureParser;
 //! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.12``
 //!
 //! The internal structure is described in the official document:
-//! [Windows Authenticode Portable Executable Signature Format](http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx)
+//! [Windows Authenticode Portable Executable Signature
+//! Format](http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx)
 //!
 //! ```raw
 //! SpcSpOpusInfo ::= SEQUENCE {
@@ -42,11 +42,10 @@ class SignatureParser;
 //! }
 //! ```
 class LIEF_API SpcSpOpusInfo : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   SpcSpOpusInfo();
   SpcSpOpusInfo(std::string program_name, std::string more_info);
   SpcSpOpusInfo(const SpcSpOpusInfo&);
@@ -55,14 +54,10 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Program description provided by the publisher
-  inline const std::string& program_name() const {
-    return program_name_;
-  }
+  inline const std::string& program_name() const { return program_name_; }
 
   //! Other information such as an url
-  inline const std::string& more_info() const {
-    return more_info_;
-  }
+  inline const std::string& more_info() const { return more_info_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -71,12 +66,12 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
 
   virtual ~SpcSpOpusInfo();
 
-  private:
+ private:
   std::string program_name_;
   std::string more_info_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -33,23 +33,21 @@ extern "C" {
 
 struct Pe_Section_t {
   const char* name;
-  uint64_t    virtual_address;
-  uint64_t    size;
-  uint64_t    offset;
+  uint64_t virtual_address;
+  uint64_t size;
+  uint64_t offset;
 
-  uint32_t    virtual_size;
-  uint32_t    pointerto_relocation;
-  uint32_t    pointerto_line_numbers;
-  uint32_t    characteristics;
+  uint32_t virtual_size;
+  uint32_t pointerto_relocation;
+  uint32_t pointerto_line_numbers;
+  uint32_t characteristics;
 
-  uint8_t*    content;
-  uint64_t    content_size;
-  double      entropy;
-
+  uint8_t* content;
+  uint64_t content_size;
+  double entropy;
 };
 
 typedef struct Pe_Section_t Pe_Section_t;
-
 
 #ifdef __cplusplus
 }

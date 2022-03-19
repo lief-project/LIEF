@@ -16,18 +16,17 @@
 #ifndef LIEF_ELF_SEGMENT_H_
 #define LIEF_ELF_SEGMENT_H_
 
-#include <string>
-#include <vector>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
-
-#include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -43,19 +42,18 @@ class Builder;
 namespace details {
 struct Elf64_Phdr;
 struct Elf32_Phdr;
-}
+}  // namespace details
 
 //! Class which represents the ELF segments
 class LIEF_API Segment : public Object {
-
   friend class Parser;
   friend class Section;
   friend class Binary;
   friend class Builder;
 
-  public:
-  using sections_t        = std::vector<Section*>;
-  using it_sections       = ref_iterator<sections_t&>;
+ public:
+  using sections_t = std::vector<Section*>;
+  using it_sections = ref_iterator<sections_t&>;
   using it_const_sections = const_ref_iterator<const sections_t&>;
 
   static result<Segment> from_raw(const uint8_t* ptr, size_t size);
@@ -133,12 +131,14 @@ class LIEF_API Segment : public Object {
   void alignment(uint64_t alignment);
   void content(std::vector<uint8_t> content);
 
-  template<typename T> T get_content_value(size_t offset) const;
-  template<typename T> void set_content_value(size_t offset, T value);
+  template <typename T>
+  T get_content_value(size_t offset) const;
+  template <typename T>
+  void set_content_value(size_t offset, T value);
   size_t get_content_size() const;
 
   //! Iterator over the sections wrapped by this segment
-  it_sections       sections();
+  it_sections sections();
   it_const_sections sections() const;
 
   void accept(Visitor& visitor) const override;
@@ -149,27 +149,27 @@ class LIEF_API Segment : public Object {
   bool operator==(const Segment& rhs) const;
   bool operator!=(const Segment& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Segment& segment);
 
-  private:
+ private:
   uint64_t handler_size() const;
   span<uint8_t> writable_content();
 
-  SEGMENT_TYPES         type_ = SEGMENT_TYPES::PT_NULL;
-  ELF_SEGMENT_FLAGS     flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
-  uint64_t              file_offset_ = 0;
-  uint64_t              virtual_address_ = 0;
-  uint64_t              physical_address_ = 0;
-  uint64_t              size_ = 0;
-  uint64_t              virtual_size_ = 0;
-  uint64_t              alignment_ = 0;
-  uint64_t              handler_size_ = 0;
-  sections_t            sections_;
+  SEGMENT_TYPES type_ = SEGMENT_TYPES::PT_NULL;
+  ELF_SEGMENT_FLAGS flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
+  uint64_t file_offset_ = 0;
+  uint64_t virtual_address_ = 0;
+  uint64_t physical_address_ = 0;
+  uint64_t size_ = 0;
+  uint64_t virtual_size_ = 0;
+  uint64_t alignment_ = 0;
+  uint64_t handler_size_ = 0;
+  sections_t sections_;
   DataHandler::Handler* datahandler_ = nullptr;
-  std::vector<uint8_t>  content_c_;
+  std::vector<uint8_t> content_c_;
 };
 
-
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif /* _ELF_SEGMENT_H_ */

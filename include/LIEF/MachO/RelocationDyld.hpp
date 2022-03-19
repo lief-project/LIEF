@@ -17,10 +17,9 @@
 #define LIEF_MACHO_RELOCATION_DYLD_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -29,13 +28,12 @@ class BinaryParser;
 
 //! Class that represents a relocation found in the DyldInfo structure.
 //!
-//! While this class does not have an associated structure in the Mach-O format specification,
-//! it provides a convenient interface for the Dyld::rebase
+//! While this class does not have an associated structure in the Mach-O format
+//! specification, it provides a convenient interface for the Dyld::rebase
 class LIEF_API RelocationDyld : public Relocation {
-
   friend class BinaryParser;
 
-  public:
+ public:
   using Relocation::Relocation;
   RelocationDyld();
 
@@ -49,8 +47,8 @@ class LIEF_API RelocationDyld : public Relocation {
   //! Indicates whether the item containing the address to be
   //! relocated is part of a CPU instruction that uses PC-relative addressing.
   //!
-  //! For addresses contained in PC-relative instructions, the CPU adds the address of
-  //! the instruction to the address contained in the instruction.
+  //! For addresses contained in PC-relative instructions, the CPU adds the
+  //! address of the instruction to the address contained in the instruction.
   bool is_pc_relative() const override;
 
   //! Origin of the relocation. For this concrete object, it
@@ -75,6 +73,6 @@ class LIEF_API RelocationDyld : public Relocation {
   std::ostream& print(std::ostream& os) const override;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

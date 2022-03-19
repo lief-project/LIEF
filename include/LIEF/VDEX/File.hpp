@@ -17,11 +17,10 @@
 #define LIEF_VDEX_FILE_H_
 #include <iostream>
 
+#include "LIEF/Object.hpp"
 #include "LIEF/VDEX/Header.hpp"
 #include "LIEF/VDEX/type_traits.hpp"
-
 #include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -39,20 +38,21 @@ class LIEF_API File : public Object {
   friend class Parser;
   friend class OAT::Binary;
 
-  public:
+ public:
   using dex_files_t = std::vector<std::unique_ptr<DEX::File>>;
   using it_dex_files = ref_iterator<dex_files_t&, DEX::File*>;
-  using it_const_dex_files = const_ref_iterator<const dex_files_t&, const DEX::File*>;
+  using it_const_dex_files =
+      const_ref_iterator<const dex_files_t&, const DEX::File*>;
 
   File& operator=(const File& copy) = delete;
-  File(const File& copy)            = delete;
+  File(const File& copy) = delete;
 
   //! VDEX Header
   const Header& header() const;
   Header& header();
 
   //! Iterator over LIEF::DEX::Files registered
-  it_dex_files       dex_files();
+  it_dex_files dex_files();
   it_const_dex_files dex_files() const;
 
   dex2dex_info_t dex2dex_info() const;
@@ -66,16 +66,17 @@ class LIEF_API File : public Object {
 
   virtual ~File();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& vdex_file);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const File& vdex_file);
 
-  private:
+ private:
   File();
 
   Header header_;
   dex_files_t dex_files_;
 };
 
-}
-}
+}  // namespace VDEX
+}  // namespace LIEF
 
 #endif

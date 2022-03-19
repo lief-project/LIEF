@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_PE_SIGNATURE_RSA_INFO_H_
 #define LIEF_PE_SIGNATURE_RSA_INFO_H_
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -29,11 +29,11 @@ class x509;
 class LIEF_API RsaInfo {
   friend class x509;
 
-  public:
+ public:
   using rsa_ctx_handle = void*;
-  using bignum_wrapper_t = std::vector<uint8_t>; ///< Container for BigInt
+  using bignum_wrapper_t = std::vector<uint8_t>;  ///< Container for BigInt
 
-  public:
+ public:
   RsaInfo(const RsaInfo& other);
   RsaInfo(RsaInfo&& other);
   RsaInfo& operator=(RsaInfo other);
@@ -65,16 +65,17 @@ class LIEF_API RsaInfo {
   void swap(RsaInfo& other);
   operator bool() const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RsaInfo& info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const RsaInfo& info);
 
   ~RsaInfo();
 
-  private:
+ private:
   RsaInfo();
   RsaInfo(const rsa_ctx_handle ctx);
   rsa_ctx_handle ctx_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 #endif

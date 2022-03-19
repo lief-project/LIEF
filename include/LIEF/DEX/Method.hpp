@@ -16,13 +16,11 @@
 #ifndef LIEF_DEX_METHOD_H_
 #define LIEF_DEX_METHOD_H_
 
-
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
-
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/CodeInfo.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -33,10 +31,11 @@ class Prototype;
 //! Class which represents a DEX::Method
 class LIEF_API Method : public Object {
   friend class Parser;
-  public:
+
+ public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
-  public:
+ public:
   using bytecode_t = std::vector<uint8_t>;
   Method();
   Method(std::string name, Class* parent = nullptr);
@@ -91,10 +90,10 @@ class LIEF_API Method : public Object {
 
   virtual ~Method();
 
-  private:
+ private:
   void set_virtual(bool v);
 
-  private:
+ private:
   std::string name_;
   Class* parent_ = nullptr;
   Prototype* prototype_ = nullptr;
@@ -108,9 +107,8 @@ class LIEF_API Method : public Object {
   CodeInfo code_info_;
 
   dex2dex_method_info_t dex2dex_info_;
-
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

@@ -15,18 +15,16 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_COMMAND_H_
 #define LIEF_MACHO_RELOCATION_COMMAND_H_
+#include <array>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <array>
 
 #include "LIEF/Abstract/Relocation.hpp"
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-#include "LIEF/Object.hpp"
-
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -39,10 +37,9 @@ class BinaryParser;
 //!   * MachO::RelocationObject
 //!   * MachO::RelocationDyld
 class LIEF_API Relocation : public LIEF::Relocation {
-
   friend class BinaryParser;
 
-  public:
+ public:
   using LIEF::Relocation::address;
   using LIEF::Relocation::size;
 
@@ -60,8 +57,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! Indicates whether the item containing the address to be
   //! relocated is part of a CPU instruction that uses PC-relative addressing.
   //!
-  //! For addresses contained in PC-relative instructions, the CPU adds the address of
-  //! the instruction to the address contained in the instruction.
+  //! For addresses contained in PC-relative instructions, the CPU adds the
+  //! address of the instruction to the address contained in the instruction.
   virtual bool is_pc_relative() const = 0;
 
   //! Type of the relocation according to the
@@ -116,16 +113,17 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Relocation& relocation);
 
-  protected:
-  Symbol*         symbol_ = nullptr;
-  uint8_t         type_ = 0;
-  CPU_TYPES       architecture_ = CPU_TYPES::CPU_TYPE_ANY;
-  Section*        section_ = nullptr;
+ protected:
+  Symbol* symbol_ = nullptr;
+  uint8_t type_ = 0;
+  CPU_TYPES architecture_ = CPU_TYPES::CPU_TYPE_ANY;
+  Section* section_ = nullptr;
   SegmentCommand* segment_ = nullptr;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

@@ -18,13 +18,13 @@
 
 #include <string>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class SpanStream : public BinaryStream {
-  public:
+ public:
   static result<SpanStream> from_vector(const std::vector<uint8_t>& data);
   SpanStream(span<const uint8_t> data);
   SpanStream(const std::vector<uint8_t>& data);
@@ -36,9 +36,7 @@ class SpanStream : public BinaryStream {
   SpanStream(SpanStream&& other);
   SpanStream& operator=(SpanStream&& other);
 
-  inline uint64_t size() const override {
-    return data_.size();
-  }
+  inline uint64_t size() const override { return data_.size(); }
 
   std::vector<uint8_t> content() const;
 
@@ -46,12 +44,12 @@ class SpanStream : public BinaryStream {
 
   static bool classof(const BinaryStream& stream);
 
-  protected:
+ protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;
 
-  protected:
+ protected:
   span<const uint8_t> data_;
 };
-}
+}  // namespace LIEF
 
 #endif

@@ -16,12 +16,11 @@
 #ifndef LIEF_PE_RESOURCE_VERSION_H_
 #define LIEF_PE_RESOURCE_VERSION_H_
 #include <iostream>
-#include <sstream>
 #include <memory>
-
-#include "LIEF/visibility.h"
+#include <sstream>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -34,12 +33,13 @@ struct ResourcesParser;
 
 //! Representation of the data associated with the ``RT_VERSION`` entry
 //!
-//! See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
+//! See: ``VS_VERSIONINFO`` -
+//! https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
 class LIEF_API ResourceVersion : public Object {
   friend class ResourcesManager;
   friend struct ResourcesParser;
 
-  public:
+ public:
   ResourceVersion(const ResourceVersion&);
   ResourceVersion& operator=(const ResourceVersion&);
   virtual ~ResourceVersion();
@@ -63,21 +63,23 @@ class LIEF_API ResourceVersion : public Object {
   bool has_var_file_info() const;
 
   //! Object that describes various information about the application's version.
-  //! This is an optional information and if it is not present, it returns a nullptr
+  //! This is an optional information and if it is not present, it returns a
+  //! nullptr
   const ResourceFixedFileInfo* fixed_file_info() const;
-  ResourceFixedFileInfo*       fixed_file_info();
+  ResourceFixedFileInfo* fixed_file_info();
 
   //! Object that describes various information about the application's version.
   //! The underlying structure is basically a dictionary (key/value)
   //!
   //! This structure is not always present and if not, it returns a nullptr
   const ResourceStringFileInfo* string_file_info() const;
-  ResourceStringFileInfo*       string_file_info();
+  ResourceStringFileInfo* string_file_info();
 
-  //! Object that describes information about languages supported by the application
-  //! This structure is not always present and if not, it returns a nullptr
+  //! Object that describes information about languages supported by the
+  //! application This structure is not always present and if not, it returns a
+  //! nullptr
   const ResourceVarFileInfo* var_file_info() const;
-  ResourceVarFileInfo*       var_file_info();
+  ResourceVarFileInfo* var_file_info();
 
   void type(uint16_t type);
 
@@ -98,25 +100,22 @@ class LIEF_API ResourceVersion : public Object {
   bool operator==(const ResourceVersion& rhs) const;
   bool operator!=(const ResourceVersion& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVersion& version);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceVersion& version);
 
-  private:
+ private:
   ResourceVersion();
 
-  uint16_t       type_;
+  uint16_t type_;
   std::u16string key_;
 
   // Optional structures
-  std::unique_ptr<ResourceFixedFileInfo>  fixed_file_info_;
+  std::unique_ptr<ResourceFixedFileInfo> fixed_file_info_;
   std::unique_ptr<ResourceStringFileInfo> string_file_info_;
-  std::unique_ptr<ResourceVarFileInfo>    var_file_info_;
+  std::unique_ptr<ResourceVarFileInfo> var_file_info_;
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

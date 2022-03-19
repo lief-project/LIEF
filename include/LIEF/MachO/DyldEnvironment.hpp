@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
 #define LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
-#include <string>
 #include <iostream>
-
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
+#include <string>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -33,7 +32,7 @@ struct dylinker_command;
 //! Class that represents a LC_DYLD_ENVIRONMENT which is
 //! used by the Mach-O linker/loader to initialize an environment variable
 class LIEF_API DyldEnvironment : public LoadCommand {
-  public:
+ public:
   DyldEnvironment();
   DyldEnvironment(const details::dylinker_command& cmd);
 
@@ -58,10 +57,10 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   std::string value_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

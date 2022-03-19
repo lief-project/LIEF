@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_AUX_H_
 #define LIEF_ELF_SYMBOL_VERSION_AUX_H_
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -29,7 +29,8 @@ class Parser;
 //! @brief Class which represents an Auxiliary Symbol version
 class LIEF_API SymbolVersionAux : public Object {
   friend class Parser;
-  public:
+
+ public:
   SymbolVersionAux(std::string name);
   SymbolVersionAux();
   virtual ~SymbolVersionAux();
@@ -47,12 +48,13 @@ class LIEF_API SymbolVersionAux : public Object {
   bool operator==(const SymbolVersionAux& rhs) const;
   bool operator!=(const SymbolVersionAux& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& symAux);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SymbolVersionAux& symAux);
 
-  protected:
+ protected:
   std::string name_;
 };
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

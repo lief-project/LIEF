@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/TLS.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (TLS::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (TLS::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (TLS::*)(void);
 
-
-template<>
+template <>
 void create<TLS>(py::module& m) {
   py::class_<TLS, LIEF::Object>(m, "TLS",
       R"delim(
@@ -149,5 +147,5 @@ void create<TLS>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

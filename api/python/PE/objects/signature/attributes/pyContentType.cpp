@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
-
-#include <string>
-#include <sstream>
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (ContentType::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ContentType::*)(T);
 
-
-template<>
+template <>
 void create<ContentType>(py::module& m) {
   py::class_<ContentType, Attribute>(m, "ContentType",
-    R"delim(
+                                     R"delim(
     Interface over the structure described by the OID ``1.2.840.113549.1.9.3`` (PKCS #9)
     The internal structure is described in the:
     `RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0 <https://tools.ietf.org/html/rfc2985>`_
@@ -45,16 +43,13 @@ void create<ContentType>(py::module& m) {
         ContentType ::= OBJECT IDENTIFIER
 
     )delim")
-    .def_property_readonly("oid",
-        &ContentType::oid, "OID as described in RFC #2985 (string object)")
+      .def_property_readonly("oid", &ContentType::oid,
+                             "OID as described in RFC #2985 (string object)")
 
-    .def("__hash__",
-        [] (const ContentType& obj) {
-          return Hash::hash(obj);
-        })
+      .def("__hash__", [](const ContentType& obj) { return Hash::hash(obj); })
 
-    .def("__str__", &ContentType::print);
+      .def("__str__", &ContentType::print);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -18,10 +18,9 @@
 #include <iostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -30,13 +29,12 @@ class Builder;
 class Parser;
 
 class LIEF_API Pogo : public Object {
-
   friend class Builder;
   friend class Parser;
 
-  public:
-  using entries_t        = std::vector<PogoEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
+ public:
+  using entries_t = std::vector<PogoEntry>;
+  using it_entries = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
   Pogo();
@@ -47,8 +45,8 @@ class LIEF_API Pogo : public Object {
 
   virtual Pogo* clone() const;
 
-  POGO_SIGNATURES  signature() const;
-  it_entries       entries();
+  POGO_SIGNATURES signature() const;
+  it_entries entries();
   it_const_entries entries() const;
 
   void signature(POGO_SIGNATURES signature);
@@ -62,12 +60,12 @@ class LIEF_API Pogo : public Object {
 
   virtual ~Pogo();
 
-  protected:
+ protected:
   POGO_SIGNATURES signature_ = POGO_SIGNATURES::POGO_UNKNOWN;
   entries_t entries_;
 };
 
-} // Namespace PE
-} // Namespace LIEF
+}  // Namespace PE
+}  // Namespace LIEF
 
 #endif

@@ -17,14 +17,15 @@
 #define LIEF_ART_TYPE_TRAITS_H_
 
 #include <vector>
+
 #include "LIEF/iterators.hpp"
 
 namespace LIEF {
 namespace ART {
 
-  using art_version_t = uint32_t;
+using art_version_t = uint32_t;
 
-} // Namesapce ART
-} // Namespace LIEF
+}  // namespace ART
+}  // Namespace LIEF
 
 #endif

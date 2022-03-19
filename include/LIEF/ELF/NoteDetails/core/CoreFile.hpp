@@ -16,13 +16,12 @@
 #ifndef LIEF_ELF_CORE_FILE_H_
 #define LIEF_ELF_CORE_FILE_H_
 
-#include <vector>
 #include <iostream>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -34,25 +33,25 @@ class Note;
 
 //! Core file entry
 struct CoreFileEntry {
-  uint64_t      start;    ///< Start address of mapped file
-  uint64_t      end;      ///< End address of mapped file
-  uint64_t      file_ofs; ///< Offset (in core) of mapped file
-  std::string   path;     ///< Path of mapped file
+  uint64_t start;     ///< Start address of mapped file
+  uint64_t end;       ///< End address of mapped file
+  uint64_t file_ofs;  ///< Offset (in core) of mapped file
+  std::string path;   ///< Path of mapped file
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreFileEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CoreFileEntry& entry);
 };
 
 //! Class representing core PrPsInfo object
 class LIEF_API CoreFile : public NoteDetails {
-
-  public:
+ public:
   using NoteDetails::NoteDetails;
 
-  using files_t        = std::vector<CoreFileEntry>;
-  using iterator       = files_t::iterator;
+  using files_t = std::vector<CoreFileEntry>;
+  using iterator = files_t::iterator;
   using const_iterator = files_t::const_iterator;
 
-  public:
+ public:
   static CoreFile make(Note& note);
 
   CoreFile* clone() const override;
@@ -80,9 +79,10 @@ class LIEF_API CoreFile : public NoteDetails {
 
   virtual ~CoreFile();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreFile& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CoreFile& note);
 
-  protected:
+ protected:
   template <typename ELF_T>
   LIEF_LOCAL void parse_();
 
@@ -92,15 +92,15 @@ class LIEF_API CoreFile : public NoteDetails {
   void parse() override;
   void build() override;
 
-  private:
+ private:
   CoreFile(Note& note);
 
-  private:
-  files_t  files_;
+ private:
+  files_t files_;
   uint64_t page_size_;
 };
 
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

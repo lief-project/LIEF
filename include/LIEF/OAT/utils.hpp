@@ -19,11 +19,10 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/platforms/android.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -52,9 +51,7 @@ LIEF_API oat_version_t version(const LIEF::ELF::Binary& elf_binary);
 //! @brief Return the ANDROID_VERSIONS associated with the given OAT version
 LIEF_API LIEF::Android::ANDROID_VERSIONS android_version(oat_version_t version);
 
-
-}
-}
-
+}  // namespace OAT
+}  // namespace LIEF
 
 #endif

@@ -14,58 +14,49 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (CodeSignature::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (CodeSignature::*)(T);
 
-
-template<>
+template <>
 void create<CodeSignature>(py::module& m) {
-
   py::class_<CodeSignature, LoadCommand>(m, "CodeSignature")
 
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&CodeSignature::data_offset),
-        static_cast<setter_t<uint32_t>>(&CodeSignature::data_offset),
-        "Offset in the binary where the signature starts")
+      .def_property(
+          "data_offset",
+          static_cast<getter_t<uint32_t>>(&CodeSignature::data_offset),
+          static_cast<setter_t<uint32_t>>(&CodeSignature::data_offset),
+          "Offset in the binary where the signature starts")
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&CodeSignature::data_size),
-        static_cast<setter_t<uint32_t>>(&CodeSignature::data_size),
-        "Size of the raw signature")
+      .def_property("data_size",
+                    static_cast<getter_t<uint32_t>>(&CodeSignature::data_size),
+                    static_cast<setter_t<uint32_t>>(&CodeSignature::data_size),
+                    "Size of the raw signature")
 
-    .def("__eq__", &CodeSignature::operator==)
-    .def("__ne__", &CodeSignature::operator!=)
-    .def("__hash__",
-        [] (const CodeSignature& func) {
-          return Hash::hash(func);
-        })
+      .def("__eq__", &CodeSignature::operator==)
+      .def("__ne__", &CodeSignature::operator!=)
+      .def("__hash__",
+           [](const CodeSignature& func) { return Hash::hash(func); })
 
-
-    .def("__str__",
-        [] (const CodeSignature& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const CodeSignature& func) {
+        std::ostringstream stream;
+        stream << func;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

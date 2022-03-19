@@ -15,32 +15,32 @@
  */
 #ifndef LIEF_PE_DELAY_IMPORT_ENTRY_H
 #define LIEF_PE_DELAY_IMPORT_ENTRY_H
-#include <string>
 #include <iostream>
+#include <string>
 
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Symbol.hpp"
-
+#include "LIEF/Object.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
 
-//! Class that represents an entry (i.e. an import) in the delay import table (DelayImport).
+//! Class that represents an entry (i.e. an import) in the delay import table
+//! (DelayImport).
 //!
-//! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-//! LIEF::Symbol::value API
+//! It extends the LIEF::Symbol generic class that exposes the
+//! LIEF::Symbol::name and LIEF::Symbol::value API
 //!
-//! The meaning of LIEF::Symbol::value for this PE object is the address (as an RVA) in the IAT
-//! where the resolution should take place
+//! The meaning of LIEF::Symbol::value for this PE object is the address (as an
+//! RVA) in the IAT where the resolution should take place
 class LIEF_API DelayImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
 
-  public:
+ public:
   DelayImportEntry();
   DelayImportEntry(uint64_t data, PE_TYPE type);
 
@@ -78,17 +78,18 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
   bool operator==(const DelayImportEntry& rhs) const;
   bool operator!=(const DelayImportEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DelayImportEntry& entry);
 
-  private:
+ private:
   uint64_t data_ = 0;
   uint16_t hint_ = 0;
   uint64_t iat_offset_ = 0;
   uint64_t iat_value_ = 0;
-  PE_TYPE  type_ = PE_TYPE::PE32_PLUS;
+  PE_TYPE type_ = PE_TYPE::PE32_PLUS;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif /* LIEF_PE_DELAY_IMPORT_ENTRY_H */

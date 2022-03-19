@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
-
-#include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Section.hpp"
-
-#include "pyIterators.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "pyELF.hpp"
+#include "pyIterators.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (Segment::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Segment::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (Segment::*)(void);
 
-
-template<>
+template <>
 void create<Segment>(py::module& m) {
   py::class_<Segment, LIEF::Object> seg(m, "Segment",
-      R"delim(
+                                        R"delim(
       Class which represents the ELF segments
       )delim");
 
@@ -193,5 +190,5 @@ void create<Segment>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

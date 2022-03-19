@@ -16,17 +16,17 @@
 #ifndef PY_LIEF_ABSTRACT_H_
 #define PY_LIEF_ABSTRACT_H_
 
-#include "pyLIEF.hpp"
 #include "LIEF/Abstract.hpp"
+#include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF {
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -40,5 +40,5 @@ SPECIALIZE_CREATE(Symbol);
 SPECIALIZE_CREATE(Parser);
 SPECIALIZE_CREATE(Relocation);
 SPECIALIZE_CREATE(Function);
-}
+}  // namespace LIEF
 #endif

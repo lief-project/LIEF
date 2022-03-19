@@ -14,57 +14,50 @@
  * limitations under the License.
  */
 
-
-#include "pyELF.hpp"
-
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<>
+template <>
 void create<Builder>(py::module& m) {
   py::class_<Builder> builder(m, "Builder",
-      R"delim(
+                              R"delim(
       Class which takes an :class:`lief.ELF.Binary` object and reconstructs a valid binary
       )delim");
 
-  py::class_<Builder::config_t>(builder, "config_t",
-                                "Interface to tweak the " RST_CLASS_REF(lief.ELF.Builder) "")
-    .def(py::init<>())
-    .def_readwrite("force_relocations", &Builder::config_t::force_relocations,
-                   "Force to relocate all the ELF structures that can be relocated (mostly for testing)");
+  py::class_<Builder::config_t>(
+      builder, "config_t",
+      "Interface to tweak the " RST_CLASS_REF(lief.ELF.Builder) "")
+      .def(py::init<>())
+      .def_readwrite("force_relocations", &Builder::config_t::force_relocations,
+                     "Force to relocate all the ELF structures that can be "
+                     "relocated (mostly for testing)");
 
   builder
-    .def(py::init<Binary&>(),
-        "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) "",
-        "elf_binary"_a)
+      .def(py::init<Binary&>(),
+           "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) "",
+           "elf_binary"_a)
 
-    .def("build",
-        static_cast<void (Builder::*)(void)>(&Builder::build),
-        "Perform the build of the provided ELF binary")
+      .def("build", static_cast<void (Builder::*)(void)>(&Builder::build),
+           "Perform the build of the provided ELF binary")
 
-    .def("set_config",
-        &Builder::set_config,
-        "Tweak the ELF builder with the provided config parameter")
+      .def("set_config", &Builder::set_config,
+           "Tweak the ELF builder with the provided config parameter")
 
-    .def("force_relocations",
-        &Builder::force_relocations,
-        "Force relocating all the ELF characteristics supported by LIEF"
-        "flag"_a = true,
-        py::return_value_policy::reference_internal)
+      .def("force_relocations", &Builder::force_relocations,
+           "Force relocating all the ELF characteristics supported by LIEF"
+           "flag"_a = true,
+           py::return_value_policy::reference_internal)
 
-    .def("write",
-        &Builder::write,
-        "Write the build result into the ``output`` file",
-        "output"_a)
+      .def("write", &Builder::write,
+           "Write the build result into the ``output`` file", "output"_a)
 
-    .def("get_build",
-        &Builder::get_build,
-        "Return the build result as a ``list`` of bytes",
-        py::return_value_policy::reference_internal);
-
+      .def("get_build", &Builder::get_build,
+           "Return the build result as a ``list`` of bytes",
+           py::return_value_policy::reference_internal);
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

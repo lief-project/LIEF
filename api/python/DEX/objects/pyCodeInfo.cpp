@@ -15,41 +15,35 @@
  */
 #include "LIEF/DEX/CodeInfo.hpp"
 #include "LIEF/DEX/hash.hpp"
-
 #include "pyDEX.hpp"
 
 namespace LIEF {
 namespace DEX {
 
-template<class T>
+template <class T>
 using getter_t = T (CodeInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using no_const_getter_t = T (CodeInfo::*)(void);
 
-template<class T>
+template <class T>
 using setter_t = void (CodeInfo::*)(T);
 
-
-template<>
+template <>
 void create<CodeInfo>(py::module& m) {
+  py::class_<CodeInfo, LIEF::Object>(m, "CodeInfo",
+                                     "DEX CodeInfo representation")
 
-  py::class_<CodeInfo, LIEF::Object>(m, "CodeInfo", "DEX CodeInfo representation")
+      .def("__eq__", &CodeInfo::operator==)
+      .def("__ne__", &CodeInfo::operator!=)
+      .def("__hash__", [](const CodeInfo& cinfo) { return Hash::hash(cinfo); })
 
-    .def("__eq__", &CodeInfo::operator==)
-    .def("__ne__", &CodeInfo::operator!=)
-    .def("__hash__",
-        [] (const CodeInfo& cinfo) {
-          return Hash::hash(cinfo);
-        })
-
-    .def("__str__",
-        [] (const CodeInfo& cinfo) {
-          std::ostringstream stream;
-          stream << cinfo;
-          return stream.str();
-        });
+      .def("__str__", [](const CodeInfo& cinfo) {
+        std::ostringstream stream;
+        stream << cinfo;
+        return stream.str();
+      });
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

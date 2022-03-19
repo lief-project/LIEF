@@ -15,15 +15,14 @@
  */
 #ifndef LIEF_MACHO_FAT_BINARY_H_
 #define LIEF_MACHO_FAT_BINARY_H_
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/enums.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Parser;
@@ -34,15 +33,14 @@ class Builder;
 class Binary;
 
 //! Class which represent a Mach-O (fat) binary
-//! This object is also used for representing Mach-O binaries that are **NOT FAT**
+//! This object is also used for representing Mach-O binaries that are **NOT
+//! FAT**
 class LIEF_API FatBinary {
-
   friend class LIEF::Parser;
   friend class Parser;
   friend class Builder;
 
-  public:
-
+ public:
   //! Internal containter used to store Binary objects within a Fat Mach-O
   using binaries_t = std::vector<std::unique_ptr<Binary>>;
 
@@ -69,22 +67,22 @@ class LIEF_API FatBinary {
   it_binaries end();
   it_const_binaries end() const;
 
-  //! Get a pointer to the last MachO::Binary object presents in this Fat Binary.
-  //! It returns a nullptr if no binary are present.
+  //! Get a pointer to the last MachO::Binary object presents in this Fat
+  //! Binary. It returns a nullptr if no binary are present.
   std::unique_ptr<Binary> pop_back();
 
   //! Get a pointer to the MachO::Binary specified by the ``index``.
   //! It returns a nullptr if the binary does not exist at the given index.
-  Binary*       at(size_t index);
+  Binary* at(size_t index);
   const Binary* at(size_t index) const;
 
-  Binary*       back();
+  Binary* back();
   const Binary* back() const;
 
-  Binary*       front();
+  Binary* front();
   const Binary* front() const;
 
-  Binary*       operator[](size_t index);
+  Binary* operator[](size_t index);
   const Binary* operator[](size_t index) const;
 
   //! Extract a MachO::Binary object. Gives ownership to the caller, and
@@ -104,14 +102,15 @@ class LIEF_API FatBinary {
   //! Reconstruct the Fat binary object and return his content as bytes
   std::vector<uint8_t> raw();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const FatBinary& fatbinary);
 
-  private:
+ private:
   FatBinary();
   FatBinary(binaries_t binaries);
   binaries_t binaries_;
 };
 
-} // namespace MachO
-} // namespace LIEF
+}  // namespace MachO
+}  // namespace LIEF
 #endif

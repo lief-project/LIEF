@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Relocation.hpp"
-#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (Relocation::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Relocation::*)(T);
 
-
-template<>
+template <>
 void create<Relocation>(py::module& m) {
-
   py::class_<Relocation, LIEF::Relocation>(m, "Relocation",
       R"delim(
       It extends the LIEF :class:`lief.Relocation` abstract class and it is sub-classed by
@@ -148,8 +144,7 @@ void create<Relocation>(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

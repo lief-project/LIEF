@@ -15,38 +15,30 @@
  * limitations under the License.
  */
 
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
+
 #include <utility>
 
-#include "LIEF/utils.hpp"
-
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/EnumToString.hpp"
-
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace PE {
 
 ResourceStringTable::ResourceStringTable(const ResourceStringTable&) = default;
-ResourceStringTable& ResourceStringTable::operator=(const ResourceStringTable&) = default;
+ResourceStringTable& ResourceStringTable::operator=(
+    const ResourceStringTable&) = default;
 ResourceStringTable::~ResourceStringTable() = default;
 
-ResourceStringTable::ResourceStringTable() :
-  length_{0}
-{}
+ResourceStringTable::ResourceStringTable() : length_{0} {}
 
-ResourceStringTable::ResourceStringTable(int16_t length, std::u16string name) :
-  name_{std::move(name)},
-  length_{length}
-{}
+ResourceStringTable::ResourceStringTable(int16_t length, std::u16string name)
+    : name_{std::move(name)}, length_{length} {}
 
-int16_t ResourceStringTable::length() const {
-  return length_;
-}
+int16_t ResourceStringTable::length() const { return length_; }
 
-const std::u16string& ResourceStringTable::name() const {
-  return name_;
-}
+const std::u16string& ResourceStringTable::name() const { return name_; }
 
 void ResourceStringTable::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -63,11 +55,11 @@ bool ResourceStringTable::operator!=(const ResourceStringTable& rhs) const {
   return !(*this == rhs);
 }
 
-
-std::ostream& operator<<(std::ostream& os, const ResourceStringTable& string_table) {
+std::ostream& operator<<(std::ostream& os,
+                         const ResourceStringTable& string_table) {
   os << u16tou8(string_table.name()) << "\n";
   return os;
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

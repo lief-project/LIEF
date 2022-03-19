@@ -16,12 +16,12 @@
 #ifndef LIEF_PE_DATADIRECTORY_H_
 #define LIEF_PE_DATADIRECTORY_H_
 
-#include <memory>
 #include <iostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -37,12 +37,11 @@ struct pe_data_directory;
 
 //! Class that represents a PE data directory entry
 class LIEF_API DataDirectory : public Object {
-
   friend class Builder;
   friend class Parser;
   friend class Binary;
 
-  public:
+ public:
   DataDirectory();
   DataDirectory(DATA_DIRECTORY type);
   DataDirectory(const details::pe_data_directory& header, DATA_DIRECTORY type);
@@ -78,15 +77,16 @@ class LIEF_API DataDirectory : public Object {
   bool operator==(const DataDirectory& rhs) const;
   bool operator!=(const DataDirectory& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DataDirectory& entry);
 
-  private:
-  uint32_t       rva_ = 0;
-  uint32_t       size_ = 0;
+ private:
+  uint32_t rva_ = 0;
+  uint32_t size_ = 0;
   DATA_DIRECTORY type_ = DATA_DIRECTORY::NUM_DATA_DIRECTORIES;
-  Section*       section_ = nullptr;
+  Section* section_ = nullptr;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif /* LIEF_PE_DATADIRECTORY_H_ */

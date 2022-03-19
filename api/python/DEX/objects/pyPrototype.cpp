@@ -15,52 +15,49 @@
  */
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/hash.hpp"
-
 #include "pyDEX.hpp"
 #include "pyIterators.hpp"
 
 namespace LIEF {
 namespace DEX {
 
-template<class T>
+template <class T>
 using getter_t = T (Prototype::*)(void) const;
 
-template<class T>
+template <class T>
 using no_const_getter_t = T (Prototype::*)(void);
 
-template<class T>
+template <class T>
 using setter_t = void (Prototype::*)(T);
 
-
-template<>
+template <>
 void create<Prototype>(py::module& m) {
-
   init_ref_iterator<Prototype::it_params>(m, "lief.DEX.Prototype.it_params");
 
-  py::class_<Prototype, LIEF::Object>(m, "Prototype", "DEX Prototype representation")
-    .def_property_readonly("return_type",
-        static_cast<no_const_getter_t<Type*>>(&Prototype::return_type),
-        "" RST_CLASS_REF(lief.DEX.Type) " returned",
-        py::return_value_policy::reference)
+  py::class_<Prototype, LIEF::Object>(m, "Prototype",
+                                      "DEX Prototype representation")
+      .def_property_readonly(
+          "return_type",
+          static_cast<no_const_getter_t<Type*>>(&Prototype::return_type),
+          "" RST_CLASS_REF(lief.DEX.Type) " returned",
+          py::return_value_policy::reference)
 
-    .def_property_readonly("parameters_type",
-        static_cast<no_const_getter_t<Prototype::it_params>>(&Prototype::parameters_type),
-        "Iterator over parameters  " RST_CLASS_REF(lief.DEX.Type) "")
+      .def_property_readonly(
+          "parameters_type",
+          static_cast<no_const_getter_t<Prototype::it_params>>(
+              &Prototype::parameters_type),
+          "Iterator over parameters  " RST_CLASS_REF(lief.DEX.Type) "")
 
-    .def("__eq__", &Prototype::operator==)
-    .def("__ne__", &Prototype::operator!=)
-    .def("__hash__",
-        [] (const Prototype& ptype) {
-          return Hash::hash(ptype);
-        })
+      .def("__eq__", &Prototype::operator==)
+      .def("__ne__", &Prototype::operator!=)
+      .def("__hash__", [](const Prototype& ptype) { return Hash::hash(ptype); })
 
-    .def("__str__",
-        [] (const Prototype& ptype) {
-          std::ostringstream stream;
-          stream << ptype;
-          return stream.str();
-        });
+      .def("__str__", [](const Prototype& ptype) {
+        std::ostringstream stream;
+        stream << ptype;
+        return stream.str();
+      });
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

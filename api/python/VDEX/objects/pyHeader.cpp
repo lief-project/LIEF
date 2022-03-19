@@ -15,64 +15,59 @@
  */
 #include "LIEF/VDEX/Header.hpp"
 #include "LIEF/VDEX/hash.hpp"
-
 #include "pyVDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
 
-template<class T>
+template <class T>
 using getter_t = T (Header::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Header::*)(T);
 
-template<>
+template <>
 void create<Header>(py::module& m) {
-
   py::class_<Header, LIEF::Object>(m, "Header", "VDEX Header representation")
 
-    .def_property_readonly("magic",
-        static_cast<getter_t<Header::magic_t>>(&Header::magic),
-        "Magic value used to identify VDEX")
+      .def_property_readonly(
+          "magic", static_cast<getter_t<Header::magic_t>>(&Header::magic),
+          "Magic value used to identify VDEX")
 
-    .def_property_readonly("version",
-        static_cast<getter_t<vdex_version_t>>(&Header::version),
-        "VDEX version number")
+      .def_property_readonly(
+          "version", static_cast<getter_t<vdex_version_t>>(&Header::version),
+          "VDEX version number")
 
-    .def_property_readonly("nb_dex_files",
-        static_cast<getter_t<uint32_t>>(&Header::nb_dex_files),
-        "Number of " RST_CLASS_REF(lief.DEX.File) " files registered")
+      .def_property_readonly(
+          "nb_dex_files",
+          static_cast<getter_t<uint32_t>>(&Header::nb_dex_files),
+          "Number of " RST_CLASS_REF(lief.DEX.File) " files registered")
 
-    .def_property_readonly("dex_size",
-        static_cast<getter_t<uint32_t>>(&Header::dex_size),
-        "Size of **all** " RST_CLASS_REF(lief.DEX.File) "")
+      .def_property_readonly("dex_size",
+                             static_cast<getter_t<uint32_t>>(&Header::dex_size),
+                             "Size of **all** " RST_CLASS_REF(lief.DEX.File) "")
 
-    .def_property_readonly("verifier_deps_size",
-        static_cast<getter_t<uint32_t>>(&Header::verifier_deps_size),
-        "Size of verifier deps section")
+      .def_property_readonly(
+          "verifier_deps_size",
+          static_cast<getter_t<uint32_t>>(&Header::verifier_deps_size),
+          "Size of verifier deps section")
 
-    .def_property_readonly("quickening_info_size",
-        static_cast<getter_t<uint32_t>>(&Header::quickening_info_size),
-        "Size of quickening info section")
+      .def_property_readonly(
+          "quickening_info_size",
+          static_cast<getter_t<uint32_t>>(&Header::quickening_info_size),
+          "Size of quickening info section")
 
-    .def("__eq__", &Header::operator==)
-    .def("__ne__", &Header::operator!=)
-    .def("__hash__",
-        [] (const Header& header) {
-          return Hash::hash(header);
-        })
+      .def("__eq__", &Header::operator==)
+      .def("__ne__", &Header::operator!=)
+      .def("__hash__", [](const Header& header) { return Hash::hash(header); })
 
-    .def("__str__",
-        [] (const Header& header)
-        {
-          std::ostringstream stream;
-          stream << header;
-          std::string str =  stream.str();
-          return str;
-        });
+      .def("__str__", [](const Header& header) {
+        std::ostringstream stream;
+        stream << header;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
-
+}  // namespace VDEX
+}  // namespace LIEF

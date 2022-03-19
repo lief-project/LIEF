@@ -19,10 +19,10 @@
 //! @defgroup macho_c_api MachO C API
 
 #include "LIEF/MachO/Binary.h"
-#include "LIEF/MachO/Symbol.h"
-#include "LIEF/MachO/Segment.h"
-#include "LIEF/MachO/Section.h"
-#include "LIEF/MachO/LoadCommand.h"
-#include "LIEF/MachO/Header.h"
 #include "LIEF/MachO/EnumToString.h"
+#include "LIEF/MachO/Header.h"
+#include "LIEF/MachO/LoadCommand.h"
+#include "LIEF/MachO/Section.h"
+#include "LIEF/MachO/Segment.h"
+#include "LIEF/MachO/Symbol.h"
 #endif

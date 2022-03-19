@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_SYSV_HASH_H_
 #define LIEF_ELF_SYSV_HASH_H_
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -36,12 +36,11 @@ class Binary;
 //! - http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
 //! - https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
 class LIEF_API SysvHash : public Object {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
 
-  public:
+ public:
   SysvHash();
   SysvHash& operator=(const SysvHash& copy);
   SysvHash(const SysvHash& copy);
@@ -62,25 +61,22 @@ class LIEF_API SysvHash : public Object {
   //! @brief Chains values
   const std::vector<uint32_t>& chains() const;
 
-  inline void nchain(uint32_t nb) {
-    chains_.resize(nb);
-  }
+  inline void nchain(uint32_t nb) { chains_.resize(nb); }
 
   bool operator==(const SysvHash& rhs) const;
   bool operator!=(const SysvHash& rhs) const;
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SysvHash& sysvhash);
 
-  private:
+ private:
   std::vector<uint32_t> buckets_;
   std::vector<uint32_t> chains_;
-
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

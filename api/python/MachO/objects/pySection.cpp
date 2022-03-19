@@ -13,41 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
-#include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-
-#include "pyMachO.hpp"
+#include "LIEF/MachO/hash.hpp"
 #include "pyIterators.hpp"
+#include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (Section::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Section::*)(T);
 
-template<class T>
+template <class T>
 using no_const_getter = T (Section::*)(void);
 
-
-template<>
+template <>
 void create<Section>(py::module& m) {
-
-  py::class_<Section, LIEF::Section> sec(m, "Section",
-      "Class that represents a Mach-O section");
+  py::class_<Section, LIEF::Section> sec(
+      m, "Section", "Class that represents a Mach-O section");
   try {
     /*
      * it_relocations could be already registered by the SegmentCommand
      */
     init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
-  } catch (const std::runtime_error&) { }
+  } catch (const std::runtime_error&) {
+  }
 
   sec
     .def(py::init<>())
@@ -173,9 +171,7 @@ void create<Section>(py::module& m) {
           std::string str =  stream.str();
           return str;
         });
-
 }
 
-}
-}
-
+}  // namespace MachO
+}  // namespace LIEF

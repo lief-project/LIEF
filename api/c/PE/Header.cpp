@@ -19,24 +19,23 @@ namespace LIEF {
 namespace PE {
 
 void init_c_header(Pe_Binary_t* c_binary, Binary* binary) {
-
   const Header& header = binary->header();
 
   const Header::signature_t& signature = header.signature();
 
-  c_binary->header.machine                = static_cast<enum LIEF_PE_MACHINE_TYPES>(header.machine());
-  c_binary->header.numberof_sections      = header.numberof_sections();
-  c_binary->header.time_date_stamp        = header.time_date_stamp();
+  c_binary->header.machine =
+      static_cast<enum LIEF_PE_MACHINE_TYPES>(header.machine());
+  c_binary->header.numberof_sections = header.numberof_sections();
+  c_binary->header.time_date_stamp = header.time_date_stamp();
   c_binary->header.pointerto_symbol_table = header.pointerto_symbol_table();
-  c_binary->header.numberof_symbols       = header.numberof_symbols();
+  c_binary->header.numberof_symbols = header.numberof_symbols();
   c_binary->header.sizeof_optional_header = header.sizeof_optional_header();
-  c_binary->header.characteristics        = static_cast<uint16_t>(header.characteristics());
+  c_binary->header.characteristics =
+      static_cast<uint16_t>(header.characteristics());
 
-  std::copy(
-      std::begin(signature),
-      std::end(signature),
-      c_binary->header.signature);
+  std::copy(std::begin(signature), std::end(signature),
+            c_binary->header.signature);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

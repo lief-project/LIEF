@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include <sstream>
+#include <string>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
-
-#include <string>
-#include <sstream>
-
+#include "pyIterators.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (ResourceDialog::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ResourceDialog::*)(T);
 
-
-template<>
+template <>
 void create<ResourceDialog>(py::module& m) {
   py::class_<ResourceDialog, LIEF::Object> dialog(m, "ResourceDialog",
-      R"delim(
+                                                  R"delim(
       Representation of a dialog box.
 
       Windows allows two kinds of dialog box:
@@ -179,6 +176,5 @@ void create<ResourceDialog>(py::module& m) {
         });
 }
 
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF

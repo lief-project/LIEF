@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/hash.hpp"
-
 #include "LIEF/MachO/SymbolCommand.hpp"
+
+#include "LIEF/MachO/hash.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -26,54 +26,33 @@ SymbolCommand& SymbolCommand::operator=(const SymbolCommand&) = default;
 SymbolCommand::SymbolCommand(const SymbolCommand&) = default;
 SymbolCommand::~SymbolCommand() = default;
 
-SymbolCommand::SymbolCommand(const details::symtab_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
-  symbolOffset_{cmd.symoff},
-  numberOfSymbols_{cmd.nsyms},
-  stringsOffset_{cmd.stroff},
-  stringsSize_{cmd.strsize}
-{}
+SymbolCommand::SymbolCommand(const details::symtab_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize},
+      symbolOffset_{cmd.symoff},
+      numberOfSymbols_{cmd.nsyms},
+      stringsOffset_{cmd.stroff},
+      stringsSize_{cmd.strsize} {}
 
-SymbolCommand* SymbolCommand::clone() const {
-  return new SymbolCommand(*this);
-}
+SymbolCommand* SymbolCommand::clone() const { return new SymbolCommand(*this); }
 
-uint32_t SymbolCommand::symbol_offset() const {
-  return symbolOffset_;
-}
+uint32_t SymbolCommand::symbol_offset() const { return symbolOffset_; }
 
-uint32_t SymbolCommand::numberof_symbols() const {
-  return numberOfSymbols_;
-}
+uint32_t SymbolCommand::numberof_symbols() const { return numberOfSymbols_; }
 
-uint32_t SymbolCommand::strings_offset() const {
-  return stringsOffset_;
-}
+uint32_t SymbolCommand::strings_offset() const { return stringsOffset_; }
 
-uint32_t SymbolCommand::strings_size() const {
-  return stringsSize_;
-}
+uint32_t SymbolCommand::strings_size() const { return stringsSize_; }
 
-void SymbolCommand::symbol_offset(uint32_t offset) {
-  symbolOffset_ = offset;
-}
+void SymbolCommand::symbol_offset(uint32_t offset) { symbolOffset_ = offset; }
 
-void SymbolCommand::numberof_symbols(uint32_t nb) {
-  numberOfSymbols_ = nb;
-}
+void SymbolCommand::numberof_symbols(uint32_t nb) { numberOfSymbols_ = nb; }
 
-void SymbolCommand::strings_offset(uint32_t offset) {
-  stringsOffset_ = offset;
-}
+void SymbolCommand::strings_offset(uint32_t offset) { stringsOffset_ = offset; }
 
-void SymbolCommand::strings_size(uint32_t size) {
-  stringsSize_ = size;
-}
+void SymbolCommand::strings_size(uint32_t size) { stringsSize_ = size; }
 
-void SymbolCommand::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void SymbolCommand::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool SymbolCommand::operator==(const SymbolCommand& rhs) const {
   if (this == &rhs) {
@@ -99,6 +78,5 @@ std::ostream& SymbolCommand::print(std::ostream& os) const {
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

@@ -13,47 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (NoteDetails::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (NoteDetails::*)(T);
 
-
-template<>
+template <>
 void create<NoteDetails>(py::module& m) {
-
   py::class_<NoteDetails, LIEF::Object>(m, "NoteDetails")
-    .def(py::init<>(),
-        "Default ctor")
+      .def(py::init<>(), "Default ctor")
 
-    .def("__eq__", &NoteDetails::operator==)
-    .def("__ne__", &NoteDetails::operator!=)
-    .def("__hash__",
-        [] (const NoteDetails& note) {
-          return Hash::hash(note);
-        })
+      .def("__eq__", &NoteDetails::operator==)
+      .def("__ne__", &NoteDetails::operator!=)
+      .def("__hash__", [](const NoteDetails& note) { return Hash::hash(note); })
 
-    .def("__str__",
-        [] (const NoteDetails& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const NoteDetails& note) {
+        std::ostringstream stream;
+        stream << note;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

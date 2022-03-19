@@ -23,61 +23,57 @@ namespace LIEF {
 //! LIEF executable format
 enum EXE_FORMATS {
   FORMAT_UNKNOWN = 0,
-  FORMAT_ELF     = 1, /// ELF. See: LIEF::ELF
-  FORMAT_PE      = 2, /// PE. See: LIEF::PE
-  FORMAT_MACHO   = 3, /// Mach-O. See: LIEF::MachO
+  FORMAT_ELF = 1,    /// ELF. See: LIEF::ELF
+  FORMAT_PE = 2,     /// PE. See: LIEF::PE
+  FORMAT_MACHO = 3,  /// Mach-O. See: LIEF::MachO
 };
 
 enum OBJECT_TYPES {
-  TYPE_NONE       = 0,
+  TYPE_NONE = 0,
   TYPE_EXECUTABLE = 1,
-  TYPE_LIBRARY    = 2,
-  TYPE_OBJECT     = 3,
+  TYPE_LIBRARY = 2,
+  TYPE_OBJECT = 3,
 };
 
 // Inspired from capstone
 enum ARCHITECTURES {
-  ARCH_NONE  = 0,
-  ARCH_ARM   = 1,
+  ARCH_NONE = 0,
+  ARCH_ARM = 1,
   ARCH_ARM64 = 2,
-  ARCH_MIPS  = 3,
-  ARCH_X86   = 4,
-  ARCH_PPC   = 5,
+  ARCH_MIPS = 3,
+  ARCH_X86 = 4,
+  ARCH_PPC = 5,
   ARCH_SPARC = 6,
-  ARCH_SYSZ  = 7,
+  ARCH_SYSZ = 7,
   ARCH_XCORE = 8,
   ARCH_INTEL = 9,
   ARCH_RISCV = 10,
 };
 
 enum MODES {
-  MODE_NONE          = 0,
-  MODE_16            = 1,
-  MODE_32            = 2,
-  MODE_64            = 3,
-  MODE_ARM           = 4,
-  MODE_THUMB         = 5,
-  MODE_MCLASS        = 6,
-  MODE_MICRO         = 7,
-  MODE_MIPS3         = 8,
-  MODE_MIPS32R6      = 9,
-  MODE_MIPSGP64      = 10,
-  MODE_V7            = 11,
-  MODE_V8            = 12,
-  MODE_V9            = 13,
-  MODE_MIPS32        = 14,
-  MODE_MIPS64        = 15,
+  MODE_NONE = 0,
+  MODE_16 = 1,
+  MODE_32 = 2,
+  MODE_64 = 3,
+  MODE_ARM = 4,
+  MODE_THUMB = 5,
+  MODE_MCLASS = 6,
+  MODE_MICRO = 7,
+  MODE_MIPS3 = 8,
+  MODE_MIPS32R6 = 9,
+  MODE_MIPSGP64 = 10,
+  MODE_V7 = 11,
+  MODE_V8 = 12,
+  MODE_V9 = 13,
+  MODE_MIPS32 = 14,
+  MODE_MIPS64 = 15,
 };
 
 enum ENDIANNESS {
-  ENDIAN_NONE   = 0,
-  ENDIAN_BIG    = 1,
+  ENDIAN_NONE = 0,
+  ENDIAN_BIG = 1,
   ENDIAN_LITTLE = 2,
 };
 
-
-
-
-
-} // namespace LIEF
+}  // namespace LIEF
 #endif

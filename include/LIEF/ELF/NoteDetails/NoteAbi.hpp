@@ -16,13 +16,13 @@
 #ifndef LIEF_ELF_NOTE_DETAILS_ABI_H_
 #define LIEF_ELF_NOTE_DETAILS_ABI_H_
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -33,29 +33,28 @@ class Binary;
 
 //! Class representing the ``.note.android.ident`` section
 //!
-//! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
+//! @see:
+//! https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API NoteAbi : public NoteDetails {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
 
-  public:
-
+ public:
   //! Version type: (Major, Minor, Patch)
   using version_t = std::array<uint32_t, 3>;
 
-  static constexpr size_t abi_offset      = 0;
-  static constexpr size_t abi_size        = sizeof(uint32_t);
+  static constexpr size_t abi_offset = 0;
+  static constexpr size_t abi_size = sizeof(uint32_t);
 
-  static constexpr size_t version_offset  = abi_offset + abi_size;
-  static constexpr size_t version_size    = 3 * sizeof(uint32_t);
+  static constexpr size_t version_offset = abi_offset + abi_size;
+  static constexpr size_t version_size = 3 * sizeof(uint32_t);
 
   static NoteAbi make(Note& note);
 
   NoteAbi* clone() const override;
 
-  public:
+ public:
   using NoteDetails::NoteDetails;
   using description_t = typename Note::description_t;
 
@@ -74,21 +73,20 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   virtual ~NoteAbi();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteAbi& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const NoteAbi& note);
 
-  protected:
+ protected:
   void parse() override;
 
-  private:
+ private:
   NoteAbi(Note& note);
 
   version_t version_;
   NOTE_ABIS abi_;
-
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

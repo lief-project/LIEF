@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+
 #include <algorithm>
 #include <iterator>
 
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionRequirement.hpp"
-
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -29,76 +28,63 @@ namespace ELF {
 SymbolVersionRequirement::SymbolVersionRequirement() = default;
 SymbolVersionRequirement::~SymbolVersionRequirement() = default;
 
+SymbolVersionRequirement::SymbolVersionRequirement(
+    const details::Elf64_Verneed& header)
+    : version_{header.vn_version} {}
 
-SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed& header) :
-  version_{header.vn_version}
-{}
+SymbolVersionRequirement::SymbolVersionRequirement(
+    const details::Elf32_Verneed& header)
+    : version_{header.vn_version} {}
 
-SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf32_Verneed& header)  :
-  version_{header.vn_version}
-{}
-
-
-SymbolVersionRequirement::SymbolVersionRequirement(const SymbolVersionRequirement& other) :
-  Object{other},
-  version_{other.version_},
-  name_{other.name_}
-{
+SymbolVersionRequirement::SymbolVersionRequirement(
+    const SymbolVersionRequirement& other)
+    : Object{other}, version_{other.version_}, name_{other.name_} {
   aux_requirements_.reserve(other.aux_requirements_.size());
-  for (const std::unique_ptr<SymbolVersionAuxRequirement>& aux : other.aux_requirements_) {
-    aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(*aux));
+  for (const std::unique_ptr<SymbolVersionAuxRequirement>& aux :
+       other.aux_requirements_) {
+    aux_requirements_.push_back(
+        std::make_unique<SymbolVersionAuxRequirement>(*aux));
   }
 }
 
-
-SymbolVersionRequirement& SymbolVersionRequirement::operator=(SymbolVersionRequirement other) {
+SymbolVersionRequirement& SymbolVersionRequirement::operator=(
+    SymbolVersionRequirement other) {
   swap(other);
   return *this;
 }
 
 void SymbolVersionRequirement::swap(SymbolVersionRequirement& other) {
   std::swap(aux_requirements_, other.aux_requirements_);
-  std::swap(version_,          other.version_);
-  std::swap(name_,             other.name_);
+  std::swap(version_, other.version_);
+  std::swap(name_, other.name_);
 }
 
-
-uint16_t SymbolVersionRequirement::version() const {
-  return version_;
-}
-
+uint16_t SymbolVersionRequirement::version() const { return version_; }
 
 uint32_t SymbolVersionRequirement::cnt() const {
   return static_cast<uint32_t>(aux_requirements_.size());
 }
 
-
-SymbolVersionRequirement::it_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
+SymbolVersionRequirement::it_aux_requirement
+SymbolVersionRequirement::auxiliary_symbols() {
   return aux_requirements_;
 }
 
-
-SymbolVersionRequirement::it_const_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
+SymbolVersionRequirement::it_const_aux_requirement
+SymbolVersionRequirement::auxiliary_symbols() const {
   return aux_requirements_;
 }
 
+const std::string& SymbolVersionRequirement::name() const { return name_; }
 
-const std::string& SymbolVersionRequirement::name() const {
-  return name_;
-}
+void SymbolVersionRequirement::version(uint16_t version) { version_ = version; }
 
+void SymbolVersionRequirement::name(const std::string& name) { name_ = name; }
 
-void SymbolVersionRequirement::version(uint16_t version) {
-  version_ = version;
-}
-
-
-void SymbolVersionRequirement::name(const std::string& name) {
-  name_ = name;
-}
-
-SymbolVersionAuxRequirement& SymbolVersionRequirement::add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement) {
-  aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(aux_requirement));
+SymbolVersionAuxRequirement& SymbolVersionRequirement::add_aux_requirement(
+    const SymbolVersionAuxRequirement& aux_requirement) {
+  aux_requirements_.push_back(
+      std::make_unique<SymbolVersionAuxRequirement>(aux_requirement));
   return *aux_requirements_.back();
 }
 
@@ -106,7 +92,8 @@ void SymbolVersionRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool SymbolVersionRequirement::operator==(const SymbolVersionRequirement& rhs) const {
+bool SymbolVersionRequirement::operator==(
+    const SymbolVersionRequirement& rhs) const {
   if (this == &rhs) {
     return true;
   }
@@ -115,16 +102,16 @@ bool SymbolVersionRequirement::operator==(const SymbolVersionRequirement& rhs) c
   return hash_lhs == hash_rhs;
 }
 
-bool SymbolVersionRequirement::operator!=(const SymbolVersionRequirement& rhs) const {
+bool SymbolVersionRequirement::operator!=(
+    const SymbolVersionRequirement& rhs) const {
   return !(*this == rhs);
 }
 
-
-
-std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr) {
+std::ostream& operator<<(std::ostream& os,
+                         const SymbolVersionRequirement& symr) {
   os << symr.version() << " " << symr.name();
 
   return os;
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

@@ -26,37 +26,67 @@ namespace LIEF {
 
 template <class Type>
 class LIEF_LOCAL enum_ : public pybind11::enum_<Type> {
-  public:
+ public:
   using py::enum_<Type>::def;
   using py::enum_<Type>::def_property_readonly_static;
   using Scalar = typename py::enum_<Type>::Scalar;
 
   template <typename... Extra>
-  enum_(const py::handle &scope, const char *name, const Extra&... extra) :
-    py::enum_<Type>{scope, name, extra...}
-  {
-    constexpr bool is_arithmetic = py::detail::any_of<std::is_same<py::arithmetic, Extra>...>::value;
-    def("__eq__", [](const Type &value, Scalar value2) { return (Scalar) value == value2; });
-    def("__ne__", [](const Type &value, Scalar value2) { return (Scalar) value != value2; });
+  enum_(const py::handle& scope, const char* name, const Extra&... extra)
+      : py::enum_<Type>{scope, name, extra...} {
+    constexpr bool is_arithmetic =
+        py::detail::any_of<std::is_same<py::arithmetic, Extra>...>::value;
+    def("__eq__", [](const Type& value, Scalar value2) {
+      return (Scalar)value == value2;
+    });
+    def("__ne__", [](const Type& value, Scalar value2) {
+      return (Scalar)value != value2;
+    });
     if (is_arithmetic) {
-      def("__lt__", [](const Type &value, Scalar value2) { return (Scalar) value < value2; });
-      def("__gt__", [](const Type &value, Scalar value2) { return (Scalar) value > value2; });
-      def("__le__", [](const Type &value, Scalar value2) { return (Scalar) value <= value2; });
-      def("__ge__", [](const Type &value, Scalar value2) { return (Scalar) value >= value2; });
-      def("__invert__", [](const Type &value) { return ~((Scalar) value); });
-      def("__and__", [](const Type &value, Scalar value2) { return (Scalar) value & value2; });
-      def("__or__", [](const Type &value, Scalar value2) { return (Scalar) value | value2; });
-      def("__xor__", [](const Type &value, Scalar value2) { return (Scalar) value ^ value2; });
-      def("__rand__", [](const Type &value, Scalar value2) { return (Scalar) value & value2; });
-      def("__ror__", [](const Type &value, Scalar value2) { return (Scalar) value | value2; });
-      def("__rxor__", [](const Type &value, Scalar value2) { return (Scalar) value ^ value2; });
-      def("__and__", [](const Type &value, const Type &value2) { return (Scalar) value & (Scalar) value2; });
-      def("__or__", [](const Type &value, const Type &value2) { return (Scalar) value | (Scalar) value2; });
-      def("__xor__", [](const Type &value, const Type &value2) { return (Scalar) value ^ (Scalar) value2; });
+      def("__lt__", [](const Type& value, Scalar value2) {
+        return (Scalar)value < value2;
+      });
+      def("__gt__", [](const Type& value, Scalar value2) {
+        return (Scalar)value > value2;
+      });
+      def("__le__", [](const Type& value, Scalar value2) {
+        return (Scalar)value <= value2;
+      });
+      def("__ge__", [](const Type& value, Scalar value2) {
+        return (Scalar)value >= value2;
+      });
+      def("__invert__", [](const Type& value) { return ~((Scalar)value); });
+      def("__and__", [](const Type& value, Scalar value2) {
+        return (Scalar)value & value2;
+      });
+      def("__or__", [](const Type& value, Scalar value2) {
+        return (Scalar)value | value2;
+      });
+      def("__xor__", [](const Type& value, Scalar value2) {
+        return (Scalar)value ^ value2;
+      });
+      def("__rand__", [](const Type& value, Scalar value2) {
+        return (Scalar)value & value2;
+      });
+      def("__ror__", [](const Type& value, Scalar value2) {
+        return (Scalar)value | value2;
+      });
+      def("__rxor__", [](const Type& value, Scalar value2) {
+        return (Scalar)value ^ value2;
+      });
+      def("__and__", [](const Type& value, const Type& value2) {
+        return (Scalar)value & (Scalar)value2;
+      });
+      def("__or__", [](const Type& value, const Type& value2) {
+        return (Scalar)value | (Scalar)value2;
+      });
+      def("__xor__", [](const Type& value, const Type& value2) {
+        return (Scalar)value ^ (Scalar)value2;
+      });
     }
   }
 };
 
-}
+}  // namespace LIEF
 
 #endif

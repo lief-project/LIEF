@@ -15,10 +15,10 @@
  */
 #ifndef LIEF_DEX_ENUM_TO_STRING_H_
 #define LIEF_DEX_ENUM_TO_STRING_H_
-#include "LIEF/visibility.h"
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/MapItem.hpp"
 #include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -28,8 +28,7 @@ LIEF_API const char* to_string(ACCESS_FLAGS e);
 LIEF_API const char* to_string(Type::TYPES e);
 LIEF_API const char* to_string(Type::PRIMITIVES e);
 
-} // namespace DEX
-} // namespace LIEF
+}  // namespace DEX
+}  // namespace LIEF
 
 #endif
-

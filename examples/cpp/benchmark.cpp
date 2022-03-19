@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iostream>
-#include <chrono>
-
 #include <LIEF/LIEF.hpp>
+#include <chrono>
+#include <iostream>
 
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <Binary>" << '\n';
@@ -33,8 +31,7 @@ int main(int argc, char **argv) {
 
   end = std::chrono::system_clock::now();
 
-  size_t elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+  size_t elapsed_seconds =
+      std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
   std::cout << "[Parser] Time: " << std::dec << elapsed_seconds << "s" << '\n';
-
 }
-

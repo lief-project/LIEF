@@ -18,7 +18,6 @@
 
 #include "LIEF/MachO/Binary.h"
 #include "LIEF/MachO/Binary.hpp"
-
 #include "LIEF/MachO/Header.h"
 #include "LIEF/MachO/Header.hpp"
 
@@ -28,6 +27,6 @@ namespace MachO {
 void init_c_header(Macho_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

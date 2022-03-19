@@ -17,10 +17,9 @@
 #define LIEF_MACHO_MAIN_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -32,7 +31,7 @@ struct entry_point_command;
 //! Class that represent the LC_MAIN command. This kind
 //! of command can be used to determine the entrypoint of an executable
 class LIEF_API MainCommand : public LoadCommand {
-  public:
+ public:
   MainCommand();
   MainCommand(const details::entry_point_command& cmd);
 
@@ -62,11 +61,11 @@ class LIEF_API MainCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint64_t entrypoint_ = 0;
   uint64_t stack_size_ = 0;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

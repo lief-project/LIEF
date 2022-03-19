@@ -17,29 +17,28 @@
 #define LIEF_PE_LOAD_CONFIGURATION_V3_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
+#include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
 
 namespace details {
-template<class T>
+template <class T>
 struct load_configuration_v3;
 }
 
 //! @brief LoadConfiguration with Control Flow Guard improved
 class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
-  public:
-
+ public:
   static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_14286;
 
   LoadConfigurationV3();
 
-  template<class T>
-  LIEF_LOCAL LoadConfigurationV3(const details::load_configuration_v3<T>& header);
+  template <class T>
+  LIEF_LOCAL LoadConfigurationV3(
+      const details::load_configuration_v3<T>& header);
 
   LoadConfigurationV3& operator=(const LoadConfigurationV3&);
   LoadConfigurationV3(const LoadConfigurationV3&);
@@ -49,13 +48,15 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
   //! @brief VA of a table associated with CFG's *IAT* checks
   uint64_t guard_address_taken_iat_entry_table() const;
 
-  //! @brief Number of entries in the LoadConfigurationV3::guard_address_taken_iat_entry_table
+  //! @brief Number of entries in the
+  //! LoadConfigurationV3::guard_address_taken_iat_entry_table
   uint64_t guard_address_taken_iat_entry_count() const;
 
   //! @brief VA of a table associated with CFG's *long jump*
   uint64_t guard_long_jump_target_table() const;
 
-  //! @brief Number of entries in the LoadConfigurationV3::guard_long_jump_target_table
+  //! @brief Number of entries in the
+  //! LoadConfigurationV3::guard_long_jump_target_table
   uint64_t guard_long_jump_target_count() const;
 
   void guard_address_taken_iat_entry_table(uint64_t value);
@@ -72,13 +73,13 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
 
   std::ostream& print(std::ostream& os) const override;
 
-  protected:
+ protected:
   uint64_t guard_address_taken_iat_entry_table_;
   uint64_t guard_address_taken_iat_entry_count_;
   uint64_t guard_long_jump_target_table_;
   uint64_t guard_long_jump_target_count_;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

@@ -15,17 +15,16 @@
  */
 #include "pyDEX.hpp"
 
-
 namespace LIEF {
 namespace DEX {
 void init_python_module(py::module& m) {
-  py::module LIEF_DEX_module = m.def_submodule("DEX", "Python API for DEX format");
+  py::module LIEF_DEX_module =
+      m.def_submodule("DEX", "Python API for DEX format");
 
   init_enums(LIEF_DEX_module);
   init_objects(LIEF_DEX_module);
   init_utils(LIEF_DEX_module);
 }
-
 
 void init_objects(py::module& m) {
   CREATE(Parser, m);
@@ -41,5 +40,5 @@ void init_objects(py::module& m) {
   CREATE(CodeInfo, m);
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

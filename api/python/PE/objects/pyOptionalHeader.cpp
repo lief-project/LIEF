@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/OptionalHeader.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/PE/OptionalHeader.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (OptionalHeader::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (OptionalHeader::*)(T);
 
-
-template<>
+template <>
 void create<OptionalHeader>(py::module& m) {
   py::class_<OptionalHeader, LIEF::Object>(m, "OptionalHeader",
       R"delim(
@@ -308,5 +306,5 @@ void create<OptionalHeader>(py::module& m) {
           return str;
         });
 }
-}
-}
+}  // namespace PE
+}  // namespace LIEF

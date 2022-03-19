@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyLIEF.hpp"
 #include "pyAbstract.hpp"
+
+#include "pyLIEF.hpp"
 namespace LIEF {
 
 void init_python_module(py::module& m) {
@@ -32,6 +33,4 @@ void init_objects(py::module& m) {
   CREATE(Function, m);
 }
 
-
-}
-
+}  // namespace LIEF

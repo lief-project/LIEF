@@ -18,9 +18,8 @@
 
 #include <string>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -30,8 +29,7 @@ namespace ELF {
 //!
 //! This entry is not present for executable.
 class LIEF_API DynamicSharedObject : public DynamicEntry {
-
-  public:
+ public:
   using DynamicEntry::DynamicEntry;
   DynamicSharedObject();
   DynamicSharedObject(std::string name);
@@ -49,9 +47,9 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   static bool classof(const DynamicEntry* entry);
 
-  private:
+ private:
   std::string name_;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

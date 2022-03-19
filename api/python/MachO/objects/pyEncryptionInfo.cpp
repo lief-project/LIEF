@@ -14,70 +14,61 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (EncryptionInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (EncryptionInfo::*)(T);
 
-
-template<>
+template <>
 void create<EncryptionInfo>(py::module& m) {
-
   py::class_<EncryptionInfo, LoadCommand>(m, "EncryptionInfo",
-      R"delim(
+                                          R"delim(
       Class that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64 commands
 
       The encryption info is usually present in Mach-O executables that
       target iOS to encrypt some sections of the binary
       )delim")
 
-    .def_property("crypt_offset",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
-        "File offset of encrypted range")
+      .def_property(
+          "crypt_offset",
+          static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
+          static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
+          "File offset of encrypted range")
 
-    .def_property("crypt_size",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_size),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_size),
-        "File size of encrypted range")
+      .def_property(
+          "crypt_size",
+          static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_size),
+          static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_size),
+          "File size of encrypted range")
 
-    .def_property("crypt_id",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_id),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_id),
-        "The encryption system. 0 means no encrypted")
+      .def_property("crypt_id",
+                    static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_id),
+                    static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_id),
+                    "The encryption system. 0 means no encrypted")
 
+      .def("__eq__", &EncryptionInfo::operator==)
+      .def("__ne__", &EncryptionInfo::operator!=)
+      .def("__hash__",
+           [](const EncryptionInfo& uuid) { return Hash::hash(uuid); })
 
-
-    .def("__eq__", &EncryptionInfo::operator==)
-    .def("__ne__", &EncryptionInfo::operator!=)
-    .def("__hash__",
-        [] (const EncryptionInfo& uuid) {
-          return Hash::hash(uuid);
-        })
-
-
-    .def("__str__",
-        [] (const EncryptionInfo& uuid)
-        {
-          std::ostringstream stream;
-          stream << uuid;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const EncryptionInfo& uuid) {
+        std::ostringstream stream;
+        stream << uuid;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

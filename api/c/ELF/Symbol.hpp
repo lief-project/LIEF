@@ -18,7 +18,6 @@
 
 #include "LIEF/ELF/Binary.h"
 #include "LIEF/ELF/Binary.hpp"
-
 #include "LIEF/ELF/Symbol.h"
 #include "LIEF/ELF/Symbol.hpp"
 
@@ -31,7 +30,7 @@ void init_c_static_symbols(Elf_Binary_t* c_binary, Binary* binary);
 void destroy_dynamic_symbols(Elf_Binary_t* c_binary);
 void destroy_static_symbols(Elf_Binary_t* c_binary);
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

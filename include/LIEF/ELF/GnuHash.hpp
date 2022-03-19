@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_GNU_HASH_H_
 #define LIEF_ELF_GNU_HASH_H_
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -33,17 +33,15 @@ class Binary;
 //! Most of the fields are read-only since the values
 //! are re-computed by the LIEF::ELF::Builder.
 class LIEF_API GnuHash : public Object {
-
   friend class Parser;
   friend class Builder;
   friend class Binary;
 
-  public:
+ public:
   GnuHash();
   GnuHash(uint32_t symbol_idx, uint32_t shift2,
           std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
           std::vector<uint32_t> hash_values = {});
-
 
   GnuHash& operator=(const GnuHash& copy);
   GnuHash(const GnuHash& copy);
@@ -100,11 +98,12 @@ class LIEF_API GnuHash : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const GnuHash& gnuhash);
 
-  private:
+ private:
   uint32_t symbol_index_ = 0;
-  uint32_t shift2_       = 0;
+  uint32_t shift2_ = 0;
 
   std::vector<uint64_t> bloom_filters_;
   std::vector<uint32_t> buckets_;
@@ -113,8 +112,7 @@ class LIEF_API GnuHash : public Object {
   size_t c_ = 0;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

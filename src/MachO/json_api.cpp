@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO.hpp"
 #include "LIEF/config.h"
 #include "logging.hpp"
-#include "LIEF/MachO.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
 #include "MachO/json_internal.hpp"
@@ -35,5 +35,5 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace MachO
-} // namespace LIEF
+}  // namespace MachO
+}  // namespace LIEF

@@ -17,23 +17,21 @@
 #include <algorithm>
 #include <limits>
 
-#include "logging.hpp"
-#include "LIEF/exception.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/iostream.hpp"
-
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
-
+#include "LIEF/exception.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 template <typename ELF_T>
 void CoreFile::parse_() {
-  using Elf_Addr  = typename ELF_T::Elf_Addr;
-  using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_FileEntry = typename ELF_T::Elf_FileEntry;
 
   VectorStream stream{description()};
 
@@ -72,8 +70,8 @@ void CoreFile::parse_() {
 
 template <typename ELF_T>
 void CoreFile::build_() {
-  using Elf_Addr  = typename ELF_T::Elf_Addr;
-  using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_FileEntry = typename ELF_T::Elf_FileEntry;
 
   Note::description_t& desc = description();
 
@@ -86,19 +84,17 @@ void CoreFile::build_() {
 
   raw_output.write_conv<Elf_Addr>(cnt);
   raw_output.write_conv<Elf_Addr>(page_size);
-  for (const CoreFileEntry& entry: files_) {
-    const Elf_FileEntry raw_entry = {
-      static_cast<Elf_Addr>(entry.start),
-      static_cast<Elf_Addr>(entry.end),
-      static_cast<Elf_Addr>(entry.file_ofs)
-    };
+  for (const CoreFileEntry& entry : files_) {
+    const Elf_FileEntry raw_entry = {static_cast<Elf_Addr>(entry.start),
+                                     static_cast<Elf_Addr>(entry.end),
+                                     static_cast<Elf_Addr>(entry.file_ofs)};
     raw_output.write_conv<Elf_FileEntry>(raw_entry);
   }
-  for (const CoreFileEntry& entry: files_) {
+  for (const CoreFileEntry& entry : files_) {
     raw_output.write(entry.path);
   }
   desc = std::move(raw_output.raw());
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/DEX/hash.hpp"
+
 #include "LIEF/DEX.hpp"
 
 namespace LIEF {
@@ -26,7 +27,6 @@ size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::DEX::Hash>(obj);
 }
 
-
 void Hash::visit(const File& file) {
   process(file.location());
   process(file.header());
@@ -34,7 +34,6 @@ void Hash::visit(const File& file) {
   process(std::begin(file.classes()), std::end(file.classes()));
   process(std::begin(file.methods()), std::end(file.methods()));
   process(std::begin(file.strings()), std::end(file.strings()));
-
 }
 
 void Hash::visit(const Header& header) {
@@ -54,11 +53,9 @@ void Hash::visit(const Header& header) {
   process(header.data());
 }
 
-void Hash::visit(const CodeInfo& /*code_info*/) {
-}
+void Hash::visit(const CodeInfo& /*code_info*/) {}
 
 void Hash::visit(const Class& cls) {
-
   Class::it_const_fields fields = cls.fields();
   Class::it_const_methods methods = cls.methods();
   process(cls.fullname());
@@ -84,33 +81,28 @@ void Hash::visit(const Method& method) {
   }
 }
 
-
 void Hash::visit(const Type& type) {
   switch (type.type()) {
-    case Type::TYPES::ARRAY:
-      {
-        process(type.dim());
-        process(type.underlying_array_type());
-        break;
-      }
+    case Type::TYPES::ARRAY: {
+      process(type.dim());
+      process(type.underlying_array_type());
+      break;
+    }
 
-    case Type::TYPES::PRIMITIVE:
-      {
-        process(type.primitive());
-        break;
-      }
+    case Type::TYPES::PRIMITIVE: {
+      process(type.primitive());
+      break;
+    }
 
-    case Type::TYPES::CLASS:
-      {
-        process(type.cls().fullname());
-        break;
-      }
+    case Type::TYPES::CLASS: {
+      process(type.cls().fullname());
+      break;
+    }
 
     case Type::TYPES::UNKNOWN:
-    default:
-      {
-        process(Type::TYPES::UNKNOWN);
-      }
+    default: {
+      process(Type::TYPES::UNKNOWN);
+    }
   }
 }
 
@@ -118,8 +110,7 @@ void Hash::visit(const Prototype& type) {
   if (const auto* rty = type.return_type()) {
     process(*rty);
   }
-  process(std::begin(type.parameters_type()),
-          std::end(type.parameters_type()));
+  process(std::begin(type.parameters_type()), std::end(type.parameters_type()));
 }
 
 void Hash::visit(const MapItem& item) {
@@ -133,7 +124,5 @@ void Hash::visit(const MapList& list) {
   process(std::begin(list.items()), std::end(list.items()));
 }
 
-
-} // namespace DEX
-} // namespace LIEF
-
+}  // namespace DEX
+}  // namespace LIEF

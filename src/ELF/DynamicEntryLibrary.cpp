@@ -21,27 +21,20 @@
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryLibrary& DynamicEntryLibrary::operator=(const DynamicEntryLibrary&) = default;
+DynamicEntryLibrary& DynamicEntryLibrary::operator=(
+    const DynamicEntryLibrary&) = default;
 DynamicEntryLibrary::DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
 
-DynamicEntryLibrary::DynamicEntryLibrary() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0}
-{}
+DynamicEntryLibrary::DynamicEntryLibrary()
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0} {}
 
-DynamicEntryLibrary::DynamicEntryLibrary(std::string name) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
-  libname_{std::move(name)}
-{}
+DynamicEntryLibrary::DynamicEntryLibrary(std::string name)
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_NEEDED, 0},
+      libname_{std::move(name)} {}
 
-const std::string& DynamicEntryLibrary::name() const {
-  return libname_;
-}
+const std::string& DynamicEntryLibrary::name() const { return libname_; }
 
-
-void DynamicEntryLibrary::name(const std::string& name) {
-  libname_ = name;
-}
-
+void DynamicEntryLibrary::name(const std::string& name) { libname_ = name; }
 
 void DynamicEntryLibrary::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -53,16 +46,9 @@ bool DynamicEntryLibrary::classof(const DynamicEntry* entry) {
 }
 
 std::ostream& DynamicEntryLibrary::print(std::ostream& os) const {
-
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << std::setw(10) << name();
+  os << std::hex << std::left << std::setw(10) << name();
   return os;
-
 }
-}
-}
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

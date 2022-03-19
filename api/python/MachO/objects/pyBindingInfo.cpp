@@ -14,32 +14,27 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/DylibCommand.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
-
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (BindingInfo::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (BindingInfo::*)(T);
 
-
-template<>
+template <>
 void create<BindingInfo>(py::module& m) {
-
   py::class_<BindingInfo, LIEF::Object>(m, "BindingInfo",
       R"delim(
       Class that provides an interface over an entry in DyldInfo structure
@@ -131,8 +126,7 @@ void create<BindingInfo>(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

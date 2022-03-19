@@ -16,13 +16,12 @@
 #ifndef LIEF_MACHO_DYLIB_COMMAND_H_
 #define LIEF_MACHO_DYLIB_COMMAND_H_
 #include <array>
-#include <string>
 #include <iostream>
-
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
+#include <string>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -33,10 +32,10 @@ struct dylib_command;
 
 //! Class which represents a library dependency
 class LIEF_API DylibCommand : public LoadCommand {
-  public:
+ public:
   using version_t = std::array<uint16_t, 3>;
 
-  public:
+ public:
   //! Helper to convert an integer into a version array
   static version_t int2version(uint32_t version);
 
@@ -45,41 +44,40 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   //! Factory function to generate a LC_LOAD_WEAK_DYLIB library
   static DylibCommand weak_dylib(const std::string& name,
-      uint32_t timestamp = 0,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+                                 uint32_t timestamp = 0,
+                                 uint32_t current_version = 0,
+                                 uint32_t compat_version = 0);
 
   //! Factory function to generate a LC_ID_DYLIB library
-  static DylibCommand id_dylib(const std::string& name,
-      uint32_t timestamp = 0,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+  static DylibCommand id_dylib(const std::string& name, uint32_t timestamp = 0,
+                               uint32_t current_version = 0,
+                               uint32_t compat_version = 0);
 
   //! Factory function to generate a LC_LOAD_DYLIB library
   static DylibCommand load_dylib(const std::string& name,
-      uint32_t timestamp = 2,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+                                 uint32_t timestamp = 2,
+                                 uint32_t current_version = 0,
+                                 uint32_t compat_version = 0);
 
   //! Factory function to generate a LC_REEXPORT_DYLIB library
   static DylibCommand reexport_dylib(const std::string& name,
-      uint32_t timestamp = 0,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+                                     uint32_t timestamp = 0,
+                                     uint32_t current_version = 0,
+                                     uint32_t compat_version = 0);
 
   //! Factory function to generate a LC_LOAD_UPWARD_DYLIB library
   static DylibCommand load_upward_dylib(const std::string& name,
-      uint32_t timestamp = 0,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+                                        uint32_t timestamp = 0,
+                                        uint32_t current_version = 0,
+                                        uint32_t compat_version = 0);
 
   //! Factory function to generate a LC_LAZY_LOAD_DYLIB library
   static DylibCommand lazy_load_dylib(const std::string& name,
-      uint32_t timestamp = 0,
-      uint32_t current_version = 0,
-      uint32_t compat_version = 0);
+                                      uint32_t timestamp = 0,
+                                      uint32_t current_version = 0,
+                                      uint32_t compat_version = 0);
 
-  public:
+ public:
   DylibCommand();
   DylibCommand(const details::dylib_command& cmd);
 
@@ -116,11 +114,9 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
-  static DylibCommand create(LOAD_COMMAND_TYPES type,
-                             const std::string& name,
-                             uint32_t timestamp,
-                             uint32_t current_version,
+ private:
+  static DylibCommand create(LOAD_COMMAND_TYPES type, const std::string& name,
+                             uint32_t timestamp, uint32_t current_version,
                              uint32_t compat_version);
   std::string name_;
   uint32_t timestamp_;
@@ -128,7 +124,6 @@ class LIEF_API DylibCommand : public LoadCommand {
   uint32_t compatibility_version_;
 };
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

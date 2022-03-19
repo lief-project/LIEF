@@ -16,14 +16,11 @@
 #ifndef LIEF_VDEX_PARSER_H_
 #define LIEF_VDEX_PARSER_H_
 
-
 #include <memory>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/BinaryStream/VectorStream.hpp"
-
 #include "LIEF/VDEX/File.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -32,16 +29,17 @@ namespace VDEX {
 
 //! @brief Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
-  public:
+ public:
   friend struct ::Profiler;
 
   static std::unique_ptr<File> parse(const std::string& file);
-  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data,
+                                     const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
-  private:
+ private:
   Parser();
   Parser(const std::string& file);
   Parser(const std::vector<uint8_t>& data, const std::string& name);
@@ -49,31 +47,28 @@ class LIEF_API Parser {
 
   void init(const std::string& name, vdex_version_t version);
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_file();
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_header();
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_checksums();
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_dex_files();
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_verifier_deps();
 
-  template<typename VDEX_T>
+  template <typename VDEX_T>
   void parse_quickening_info();
 
   LIEF::VDEX::File* file_ = nullptr;
   std::unique_ptr<VectorStream> stream_;
 };
 
-
-
-
-} // namespace VDEX
-} // namespace LIEF
+}  // namespace VDEX
+}  // namespace LIEF
 #endif

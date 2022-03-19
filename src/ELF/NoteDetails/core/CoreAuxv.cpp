@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
+#include "CoreAuxv.tcc"
+
 #include <iomanip>
 #include <sstream>
 
-#include "logging.hpp"
-
-#include "LIEF/ELF/hash.hpp"
+#include "ELF/Structures.hpp"
+#include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/Binary.hpp"
-
-#include "ELF/Structures.hpp"
-
-#include "CoreAuxv.tcc"
+#include "LIEF/ELF/hash.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-CoreAuxv::CoreAuxv(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
+CoreAuxv::CoreAuxv(Note& note) : NoteDetails::NoteDetails{note} {}
 
 CoreAuxv CoreAuxv::make(Note& note) {
   CoreAuxv pinfo(note);
@@ -41,15 +37,9 @@ CoreAuxv CoreAuxv::make(Note& note) {
   return pinfo;
 }
 
-CoreAuxv* CoreAuxv::clone() const {
-  return new CoreAuxv(*this);
-}
+CoreAuxv* CoreAuxv::clone() const { return new CoreAuxv(*this); }
 
-
-const CoreAuxv::val_context_t& CoreAuxv::values() const {
-  return ctx_;
-}
-
+const CoreAuxv::val_context_t& CoreAuxv::values() const { return ctx_; }
 
 uint64_t CoreAuxv::get(LIEF::ELF::AUX_TYPE atype, bool* error) const {
   if (!has(atype)) {
@@ -69,7 +59,6 @@ bool CoreAuxv::has(LIEF::ELF::AUX_TYPE reg) const {
   return ctx_.find(reg) != std::end(ctx_);
 }
 
-
 void CoreAuxv::values(const val_context_t& ctx) {
   ctx_ = ctx;
   build();
@@ -81,9 +70,7 @@ bool CoreAuxv::set(LIEF::ELF::AUX_TYPE atype, uint64_t value) {
   return true;
 }
 
-void CoreAuxv::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CoreAuxv::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool CoreAuxv::operator==(const CoreAuxv& rhs) const {
   if (this == &rhs) {
@@ -94,9 +81,7 @@ bool CoreAuxv::operator==(const CoreAuxv& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool CoreAuxv::operator!=(const CoreAuxv& rhs) const {
-  return !(*this == rhs);
-}
+bool CoreAuxv::operator!=(const CoreAuxv& rhs) const { return !(*this == rhs); }
 
 uint64_t& CoreAuxv::operator[](LIEF::ELF::AUX_TYPE atype) {
   return ctx_[atype];
@@ -106,13 +91,14 @@ void CoreAuxv::dump(std::ostream& os) const {
   static constexpr size_t WIDTH = 16;
   os << std::left;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Auxiliary values: "<< std::dec << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ')
+     << "Auxiliary values: " << std::dec << std::endl;
   for (const auto& val : ctx_) {
-    os << std::setw(14) << std::setfill(' ') << to_string(val.first) << ": " << std::hex << std::showbase << val.second << std::endl;
+    os << std::setw(14) << std::setfill(' ') << to_string(val.first) << ": "
+       << std::hex << std::showbase << val.second << std::endl;
   }
   os << std::endl;
 }
-
 
 void CoreAuxv::parse() {
   if (binary()->type() == ELF_CLASS::ELFCLASS64) {
@@ -130,14 +116,12 @@ void CoreAuxv::build() {
   }
 }
 
-
 std::ostream& operator<<(std::ostream& os, const CoreAuxv& note) {
   note.dump(os);
   return os;
 }
 
-
 CoreAuxv::~CoreAuxv() = default;
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

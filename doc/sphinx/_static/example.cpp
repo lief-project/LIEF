@@ -17,15 +17,14 @@
 #include <string>
 
 class MyClass {
-  public:
-    MyClass(void) : message_{"hello"} {};
-    MyClass(const std::string& message) : message_{message} {};
-    void say_hello(void) { std::cout << this->message_<< std::endl; }
+ public:
+  MyClass(void) : message_{"hello"} {};
+  MyClass(const std::string& message) : message_{message} {};
+  void say_hello(void) { std::cout << this->message_ << std::endl; }
 
-  private:
-    std::string message_;
+ private:
+  std::string message_;
 };
-
 
 int main(void) {
   MyClass a{"Bonjour"};

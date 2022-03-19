@@ -19,11 +19,11 @@ namespace LIEF {
 namespace Android {
 
 void init_python_module(py::module& m) {
-  py::module lief_android_module = m.def_submodule("Android", "Python API for Android platform");
+  py::module lief_android_module =
+      m.def_submodule("Android", "Python API for Android platform");
 
   init_versions(lief_android_module);
-
 }
 
-}
-}
+}  // namespace Android
+}  // namespace LIEF

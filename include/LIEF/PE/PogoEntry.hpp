@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_PE_POGO_ENTRY_H_
 #define LIEF_PE_POGO_ENTRY_H_
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -30,15 +29,13 @@ class Builder;
 class Parser;
 
 class LIEF_API PogoEntry : public Object {
-
   friend class Builder;
   friend class Parser;
 
-  public:
-
+ public:
   PogoEntry();
   PogoEntry(const PogoEntry&);
-  PogoEntry(uint32_t start_rva, uint32_t size, std::string  name);
+  PogoEntry(uint32_t start_rva, uint32_t size, std::string name);
 
   PogoEntry& operator=(const PogoEntry&);
   virtual ~PogoEntry();
@@ -56,16 +53,16 @@ class LIEF_API PogoEntry : public Object {
   bool operator==(const PogoEntry& rhs) const;
   bool operator!=(const PogoEntry& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const PogoEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const PogoEntry& entry);
 
-
-  protected:
+ protected:
   uint32_t start_rva_;
   uint32_t size_;
   std::string name_;
 };
 
-} // Namespace PE
-} // Namespace LIEF
+}  // Namespace PE
+}  // Namespace LIEF
 
 #endif

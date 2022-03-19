@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 #include "Import.hpp"
+
 #include "ImportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
 
 void init_c_imports(Pe_Binary_t* c_binary, Binary* binary) {
-
   if (!binary->has_imports()) {
     c_binary->imports = nullptr;
   }
@@ -32,34 +32,35 @@ void init_c_imports(Pe_Binary_t* c_binary, Binary* binary) {
 
   for (size_t i = 0; i < imports.size(); ++i) {
     Import& imp = imports[i];
-    c_binary->imports[i] = static_cast<Pe_Import_t*>(malloc(sizeof(Pe_Import_t)));
+    c_binary->imports[i] =
+        static_cast<Pe_Import_t*>(malloc(sizeof(Pe_Import_t)));
 
-    c_binary->imports[i]->name                     = imp.name().c_str();
-    c_binary->imports[i]->forwarder_chain          = imp.forwarder_chain();
-    c_binary->imports[i]->timedatestamp            = imp.forwarder_chain();
-    c_binary->imports[i]->import_address_table_rva = imp.import_address_table_rva();
-    c_binary->imports[i]->import_lookup_table_rva  = imp.import_lookup_table_rva();
-    c_binary->imports[i]->entries                  = nullptr;
+    c_binary->imports[i]->name = imp.name().c_str();
+    c_binary->imports[i]->forwarder_chain = imp.forwarder_chain();
+    c_binary->imports[i]->timedatestamp = imp.forwarder_chain();
+    c_binary->imports[i]->import_address_table_rva =
+        imp.import_address_table_rva();
+    c_binary->imports[i]->import_lookup_table_rva =
+        imp.import_lookup_table_rva();
+    c_binary->imports[i]->entries = nullptr;
     init_c_import_entries(c_binary->imports[i], imp);
   }
 
   c_binary->imports[imports.size()] = nullptr;
 }
 
-
 void destroy_imports(Pe_Binary_t* c_binary) {
   if (c_binary->imports == nullptr) {
     return;
   }
 
-  Pe_Import_t **imports = c_binary->imports;
+  Pe_Import_t** imports = c_binary->imports;
   for (size_t idx = 0; imports[idx] != nullptr; ++idx) {
     destroy_import_entries(imports[idx]);
     free(imports[idx]);
   }
   free(c_binary->imports);
-
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

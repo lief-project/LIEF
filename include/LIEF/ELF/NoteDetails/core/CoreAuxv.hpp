@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_CORE_AUXV_H_
 #define LIEF_ELF_CORE_AUXV_H_
 
-#include <vector>
 #include <iostream>
 #include <map>
 #include <utility>
+#include <vector>
 
+#include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/enums.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -36,13 +36,12 @@ class Note;
 
 //! Class representing core Auxv object
 class LIEF_API CoreAuxv : public NoteDetails {
-
-  public:
+ public:
   using NoteDetails::NoteDetails;
 
   using val_context_t = std::map<AUX_TYPE, uint64_t>;
 
-  public:
+ public:
   static CoreAuxv make(Note& note);
 
   CoreAuxv* clone() const override;
@@ -51,8 +50,8 @@ class LIEF_API CoreAuxv : public NoteDetails {
   const val_context_t& values() const;
 
   //! Get an auxiliary value. If ``error`` is set,
-  //! this function and the value exists, the function set the boolean value to ``false``
-  //! Otherwise it set the value to ``true``
+  //! this function and the value exists, the function set the boolean value to
+  //! ``false`` Otherwise it set the value to ``true``
   uint64_t get(AUX_TYPE atype, bool* error = nullptr) const;
 
   //! Check if the given register is present in the info
@@ -73,9 +72,10 @@ class LIEF_API CoreAuxv : public NoteDetails {
 
   virtual ~CoreAuxv();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreAuxv& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CoreAuxv& note);
 
-  protected:
+ protected:
   template <typename ELF_T>
   LIEF_LOCAL void parse_();
 
@@ -85,14 +85,13 @@ class LIEF_API CoreAuxv : public NoteDetails {
   void parse() override;
   void build() override;
 
-  private:
+ private:
   CoreAuxv(Note& note);
 
   val_context_t ctx_;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/SymbolVersion.hpp"
+
 #include <iomanip>
 
-#include "LIEF/exception.hpp"
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "LIEF/exception.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -32,23 +32,13 @@ SymbolVersion& SymbolVersion::operator=(const SymbolVersion&) = default;
 
 SymbolVersion::SymbolVersion(const SymbolVersion&) = default;
 
-SymbolVersion::SymbolVersion(uint16_t value) :
-  value_{value}
-{}
+SymbolVersion::SymbolVersion(uint16_t value) : value_{value} {}
 
+SymbolVersion SymbolVersion::local() { return SymbolVersion{0}; }
 
-SymbolVersion SymbolVersion::local() {
-  return SymbolVersion{0};
-}
+SymbolVersion SymbolVersion::global() { return SymbolVersion{1}; }
 
-SymbolVersion SymbolVersion::global() {
-  return SymbolVersion{1};
-}
-
-uint16_t SymbolVersion::value() const {
-  return value_;
-}
-
+uint16_t SymbolVersion::value() const { return value_; }
 
 bool SymbolVersion::has_auxiliary_version() const {
   return symbol_aux_ != nullptr;
@@ -59,21 +49,19 @@ const SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() const {
 }
 
 SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() {
-  return const_cast<SymbolVersionAux*>(static_cast<const SymbolVersion*>(this)->symbol_version_auxiliary());
+  return const_cast<SymbolVersionAux*>(
+      static_cast<const SymbolVersion*>(this)->symbol_version_auxiliary());
 }
 
-void SymbolVersion::symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr) {
+void SymbolVersion::symbol_version_auxiliary(
+    SymbolVersionAuxRequirement& svauxr) {
   symbol_aux_ = &svauxr;
-  value_      = svauxr.other();
+  value_ = svauxr.other();
 }
 
-void SymbolVersion::value(uint16_t value) {
-  value_ = value;
-}
+void SymbolVersion::value(uint16_t value) { value_ = value; }
 
-void SymbolVersion::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void SymbolVersion::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool SymbolVersion::operator==(const SymbolVersion& rhs) const {
   if (this == &rhs) {
@@ -95,7 +83,7 @@ std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
     std::string type;
     if (symv.value() == 0) {
       type = "* Local *";
-    } else if (symv.value() == 1){
+    } else if (symv.value() == 1) {
       type = "* Global *";
     } else {
       type = "* ERROR (" + std::to_string(symv.value()) + ") *";
@@ -105,5 +93,5 @@ std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
 
   return os;
 }
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

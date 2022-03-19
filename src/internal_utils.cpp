@@ -29,6 +29,5 @@ std::string printable_string(const std::string& str) {
     }
   }
   return out;
-
 }
-}
+}  // namespace LIEF

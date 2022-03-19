@@ -16,14 +16,13 @@
 #ifndef LIEF_ELF_SYMBOL_H_
 #define LIEF_ELF_SYMBOL_H_
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Symbol.hpp"
-
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -35,21 +34,19 @@ class Section;
 namespace details {
 struct Elf32_Sym;
 struct Elf64_Sym;
-}
+}  // namespace details
 
 //! Class which represents an ELF symbol
 class LIEF_API Symbol : public LIEF::Symbol {
   friend class Parser;
   friend class Binary;
 
-  public:
+ public:
   Symbol(const details::Elf32_Sym& header);
   Symbol(const details::Elf64_Sym& header);
-  Symbol(std::string name,
-      ELF_SYMBOL_TYPES type = ELF_SYMBOL_TYPES::STT_NOTYPE,
-      SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK,
-      uint8_t other = 0, uint16_t shndx = 0,
-      uint64_t value = 0, uint64_t size = 0);
+  Symbol(std::string name, ELF_SYMBOL_TYPES type = ELF_SYMBOL_TYPES::STT_NOTYPE,
+         SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK, uint8_t other = 0,
+         uint16_t shndx = 0, uint64_t value = 0, uint64_t size = 0);
   Symbol();
 
   ~Symbol() override;
@@ -58,7 +55,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   Symbol(const Symbol& other);
   void swap(Symbol& other);
 
-  //! The symbol's type provides a general classification for the associated entity
+  //! The symbol's type provides a general classification for the associated
+  //! entity
   ELF_SYMBOL_TYPES type() const;
 
   //! The symbol's binding determines the linkage visibility and behavior
@@ -81,31 +79,36 @@ class LIEF_API Symbol : public LIEF::Symbol {
   Section* section();
 
   //! This member have slightly different interpretations:
-  //!   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
+  //!   * In relocatable files, `value` holds alignment constraints for a symbol
+  //!   for which section index
   //!     is SHN_COMMON
-  //!   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
+  //!   * In relocatable files, `value` holds a section offset for a defined
+  //!   symbol. That is, `value` is an
   //!     offset from the beginning of the section associated with this symbol.
-  //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
-  //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
-  //!     a virtual address (memory interpretation) for which the section number is irrelevant.
-  //uint64_t value() const;
+  //!   * In executable and shared object files, `value` holds a virtual
+  //!   address. To make these files's
+  //!     symbols more useful for the dynamic linker, the section offset (file
+  //!     interpretation) gives way to a virtual address (memory interpretation)
+  //!     for which the section number is irrelevant.
+  // uint64_t value() const;
 
   //! Symbol size
   //!
-  //! Many symbols have associated sizes. For example, a data object's size is the number of
-  //! bytes contained in the object. This member holds `0` if the symbol has no size or
-  //! an unknown size.
-  //uint64_t size() const;
+  //! Many symbols have associated sizes. For example, a data object's size is
+  //! the number of bytes contained in the object. This member holds `0` if the
+  //! symbol has no size or an unknown size.
+  // uint64_t size() const;
 
   //! @see Symbol::section_idx
   uint16_t shndx() const;
 
-  //! Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
+  //! Check if this symbols has a @link ELF::SymbolVersion symbol version
+  //! @endlink
   bool has_version() const;
 
   //! Return the SymbolVersion associated with this symbol.
   //! If there is no symbol version, return a nullptr
-  SymbolVersion*       symbol_version();
+  SymbolVersion* symbol_version();
   const SymbolVersion* symbol_version() const;
 
   //! Symbol's unmangled name. If not available, it returns an empty string
@@ -154,16 +157,17 @@ class LIEF_API Symbol : public LIEF::Symbol {
   bool operator==(const Symbol& rhs) const;
   bool operator!=(const Symbol& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Symbol& entry);
 
-  private:
-  ELF_SYMBOL_TYPES type_    = ELF_SYMBOL_TYPES::STT_NOTYPE;
-  SYMBOL_BINDINGS  binding_ = SYMBOL_BINDINGS::STB_LOCAL;
-  uint8_t          other_   = 0;
-  uint16_t         shndx_   = 0;
-  Section*         section_ = nullptr;
-  SymbolVersion*   symbol_version_ = nullptr;
+ private:
+  ELF_SYMBOL_TYPES type_ = ELF_SYMBOL_TYPES::STT_NOTYPE;
+  SYMBOL_BINDINGS binding_ = SYMBOL_BINDINGS::STB_LOCAL;
+  uint8_t other_ = 0;
+  uint16_t shndx_ = 0;
+  Section* section_ = nullptr;
+  SymbolVersion* symbol_version_ = nullptr;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif /* _ELF_SYMBOL_H_ */

@@ -17,10 +17,9 @@
 #define LIEF_MACHO_ENCRYPTION_INFO_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -29,12 +28,13 @@ namespace details {
 struct encryption_info_command;
 }
 
-//! Class that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64 commands
+//! Class that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64
+//! commands
 //!
 //! The encryption info is usually present in Mach-O executables that
 //! target iOS to encrypt some sections of the binary
 class LIEF_API EncryptionInfo : public LoadCommand {
-  public:
+ public:
   EncryptionInfo();
   EncryptionInfo(const details::encryption_info_command& cmd);
 
@@ -65,12 +65,12 @@ class LIEF_API EncryptionInfo : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint32_t coff_;
   uint32_t csize_;
   uint32_t cid_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

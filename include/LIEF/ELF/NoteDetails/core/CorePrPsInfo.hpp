@@ -16,13 +16,12 @@
 #ifndef LIEF_ELF_CORE_PSINFO_H_
 #define LIEF_ELF_CORE_PSINFO_H_
 
-#include <vector>
 #include <iostream>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -34,11 +33,10 @@ class Binary;
 
 //! Class representing core PrPsInfo object
 class LIEF_API CorePrPsInfo : public NoteDetails {
-
-  public:
+ public:
   using NoteDetails::NoteDetails;
 
-  public:
+ public:
   static CorePrPsInfo make(Note& note);
 
   CorePrPsInfo* clone() const override;
@@ -85,9 +83,10 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
 
   virtual ~CorePrPsInfo();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrPsInfo& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CorePrPsInfo& note);
 
-  protected:
+ protected:
   template <typename ELF_T>
   LIEF_LOCAL void parse_();
 
@@ -97,10 +96,10 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   void parse() override;
   void build() override;
 
-  private:
+ private:
   CorePrPsInfo(Note& note);
 
-  private:
+ private:
   std::string file_name_;
   uint64_t flags_;
   uint32_t uid_;
@@ -111,7 +110,7 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   int32_t sid_;
 };
 
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

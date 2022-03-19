@@ -17,20 +17,17 @@
 #ifndef LIEF_ELF_BUIDLER_H_
 #define LIEF_ELF_BUIDLER_H_
 
-#include <vector>
-#include <memory>
-#include <string>
-#include <set>
-#include <unordered_map>
 #include <functional>
+#include <memory>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/errors.hpp"
-
-#include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
-#include "LIEF/ELF/enums.hpp"
-
-#include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
 struct Profiler;
 
@@ -53,12 +50,15 @@ class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
   friend class ExeLayout;
-  public:
+
+ public:
   friend struct ::Profiler;
 
   //! Configuration options to tweak the building process
   struct config_t {
-    bool force_relocations = false; /// Force to relocate all the ELF structures that can be relocated (mostly for testing)
+    bool force_relocations =
+        false;  /// Force to relocate all the ELF structures that can be
+                /// relocated (mostly for testing)
   };
 
   Builder(Binary& binary);
@@ -84,106 +84,107 @@ class LIEF_API Builder {
   //! Write the built ELF binary in the ``filename`` given in parameter
   void write(const std::string& filename) const;
 
-  protected:
+ protected:
   struct build_opt_t {
-    bool gnu_hash        = true;
-    bool dt_hash         = true;
-    bool rela            = true;
-    bool jmprel          = true;
-    bool dyn_str         = true;
-    bool symtab          = true;
-    bool static_symtab   = true;
-    bool sym_versym      = true;
-    bool sym_verdef      = true;
-    bool sym_verneed     = true;
+    bool gnu_hash = true;
+    bool dt_hash = true;
+    bool rela = true;
+    bool jmprel = true;
+    bool dyn_str = true;
+    bool symtab = true;
+    bool static_symtab = true;
+    bool sym_versym = true;
+    bool sym_verdef = true;
+    bool sym_verneed = true;
     bool dynamic_section = true;
-    bool init_array      = true;
-    bool preinit_array   = true;
-    bool fini_array      = true;
-    bool notes           = true;
-    bool interpreter     = true;
+    bool init_array = true;
+    bool preinit_array = true;
+    bool fini_array = true;
+    bool notes = true;
+    bool interpreter = true;
   };
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_relocatable();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_exe_lib();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build(const Header& header);
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_sections();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_segments();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_static_symbols();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_dynamic();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_dynamic_section();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_dynamic_symbols();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_obj_symbols();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_dynamic_relocations();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_pltgot_relocations();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_section_relocations();
 
   uint32_t sort_dynamic_symbols();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_hash_table();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_symbol_hash();
 
   ok_error_t build_empty_symbol_gnuhash();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_symbol_requirement();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_symbol_definition();
 
-  template<typename T, typename HANDLER>
-  static std::vector<std::string> optimize(const HANDLER& e,
-                                    std::function<std::string(const typename HANDLER::value_type&)> getter,
-                                    size_t& offset_counter,
-                                    std::unordered_map<std::string, size_t> *of_map_p=nullptr);
-  template<typename ELF_T>
+  template <typename T, typename HANDLER>
+  static std::vector<std::string> optimize(
+      const HANDLER& e,
+      std::function<std::string(const typename HANDLER::value_type&)> getter,
+      size_t& offset_counter,
+      std::unordered_map<std::string, size_t>* of_map_p = nullptr);
+  template <typename ELF_T>
   ok_error_t build_symbol_version();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_interpreter();
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_notes();
 
   ok_error_t build(const Note& note, std::set<Section*>& sections);
 
-  template<typename ELF_T>
+  template <typename ELF_T>
   ok_error_t build_overlay();
 
   bool should_swap() const;
 
-  template<class ELF_T>
+  template <class ELF_T>
   ok_error_t process_object_relocations();
 
   static Section* array_section(Binary& bin, uint64_t addr);
@@ -192,13 +193,9 @@ class LIEF_API Builder {
   mutable vector_iostream ios_;
   Binary* binary_{nullptr};
   std::unique_ptr<Layout> layout_;
-
 };
 
-} // namespace ELF
-} // namespace LIEF
-
-
-
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

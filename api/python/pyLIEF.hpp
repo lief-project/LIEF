@@ -16,25 +16,24 @@
 #ifndef PY_LIEF_H_
 #define PY_LIEF_H_
 
+#include <LIEF/config.h>
+#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <pybind11/operators.h>
+
 #include <functional>
 
-#include <LIEF/config.h>
-
 #include "encoding.hpp"
-
 #include "pyErr.hpp"
 
-#define RST_CLASS_REF(X) ":class:`~"#X"`"
-#define RST_CLASS_REF_FULL(X) ":class:`"#X"`"
+#define RST_CLASS_REF(X) ":class:`~" #X "`"
+#define RST_CLASS_REF_FULL(X) ":class:`" #X "`"
 
-#define RST_ATTR_REF(X) ":attr:`~"#X"`"
-#define RST_ATTR_REF_FULL(X) ":attr:`"#X"`"
+#define RST_ATTR_REF(X) ":attr:`~" #X "`"
+#define RST_ATTR_REF_FULL(X) ":attr:`" #X "`"
 
-#define RST_METH_REF(X) ":class:`~"#X"`"
-#define RST_METH_REF_FULL(X) ":class:`"#X"`"
+#define RST_METH_REF(X) ":class:`~" #X "`"
+#define RST_METH_REF_FULL(X) ":class:`" #X "`"
 
 namespace py = pybind11;
 
@@ -45,7 +44,6 @@ void init_LIEF_Logger(py::module&);
 void init_LIEF_exceptions(py::module&);
 void init_LIEF_module(py::module&);
 void init_hash_functions(py::module&);
-
 
 void init_utils_functions(py::module&);
 

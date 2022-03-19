@@ -17,7 +17,6 @@
 #define LIEF_INTERNAL_UTILS_HEADER
 #include <string>
 
-
 namespace LIEF {
 std::string printable_string(const std::string& str);
 }

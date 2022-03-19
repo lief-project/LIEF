@@ -1,37 +1,33 @@
 /* Copyright 2017 - 2022 R. Thomas
-* Copyright 2017 - 2022 Quarkslab
-* Copyright 2017 - 2021 K. Nakagawa
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2017 - 2022 Quarkslab
+ * Copyright 2017 - 2021 K. Nakagawa
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef LIEF_VISITOR_H_
 #define LIEF_VISITOR_H_
-#include <set>
-#include <vector>
 #include <array>
-#include <string>
 #include <functional>
 #include <iostream>
+#include <set>
+#include <string>
 #include <utility>
-
-#include "LIEF/config.h"
-
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/PE/signature/types.hpp"
-
+#include "LIEF/config.h"
+#include "LIEF/visibility.h"
 #include "LIEF/visitor_macros.hpp"
-
 
 namespace LIEF {
 // Forward declarations
@@ -89,7 +85,7 @@ LIEF_PE_FORWARD(ContentInfo)
 LIEF_PE_FORWARD(Attribute)
 LIEF_PE_FORWARD(ContentType)
 LIEF_PE_FORWARD(GenericType)
-//LIEF_PE_FORWARD(MsCounterSign)
+// LIEF_PE_FORWARD(MsCounterSign)
 LIEF_PE_FORWARD(MsSpcNestedSignature)
 LIEF_PE_FORWARD(MsSpcStatementType)
 LIEF_PE_FORWARD(PKCS9AtSequenceNumber)
@@ -142,7 +138,6 @@ LIEF_ELF_FORWARD(CoreSigInfo)
 LIEF_ELF_FORWARD(CoreFile)
 LIEF_ELF_FORWARD(GnuHash)
 LIEF_ELF_FORWARD(SysvHash)
-
 
 // MACHO
 // ===============================
@@ -210,15 +205,14 @@ LIEF_VDEX_FORWARD(Header)
 LIEF_ART_FORWARD(File)
 LIEF_ART_FORWARD(Header)
 
-
 class LIEF_API Visitor {
-  public:
+ public:
   Visitor();
   virtual ~Visitor();
 
   virtual void operator()();
 
-  template<typename Arg1, typename... Args>
+  template <typename Arg1, typename... Args>
   void operator()(Arg1&& arg1, Args&&... args);
 
   virtual void visit(const Object&);
@@ -403,7 +397,7 @@ class LIEF_API Visitor {
   LIEF_PE_VISITABLE(GenericType)
 
   //! Method to visit a LIEF::PE::MsCounterSign
-  //LIEF_PE_VISITABLE(MsCounterSign)
+  // LIEF_PE_VISITABLE(MsCounterSign)
 
   //! Method to visit a LIEF::PE::MsSpcNestedSignature
   LIEF_PE_VISITABLE(MsSpcNestedSignature)
@@ -578,14 +572,13 @@ class LIEF_API Visitor {
   //! Method to visit a LIEF::OAT::Method
   LIEF_OAT_VISITABLE(Method)
 
-
   // DEX part
   // ========
 
   //! Method to visit a LIEF::DEX::File
   LIEF_DEX_VISITABLE(File)
 
-//! Method to visit a LIEF::DEX::Field
+  //! Method to visit a LIEF::DEX::Field
   LIEF_DEX_VISITABLE(Field)
 
   //! Method to visit a LIEF::DEX::Method
@@ -630,23 +623,20 @@ class LIEF_API Visitor {
   //! Method to visit a LIEF::ART::Header
   LIEF_ART_VISITABLE(Header)
 
-  template<class T>
+  template <class T>
   void dispatch(const T& obj);
 
-
-  private:
+ private:
   std::set<size_t> visited_;
 };
 
-
-
-template<typename Arg1, typename... Args>
+template <typename Arg1, typename... Args>
 void Visitor::operator()(Arg1&& arg1, Args&&... args) {
   dispatch(std::forward<Arg1>(arg1));
-  operator()(std::forward<Args>(args)... );
+  operator()(std::forward<Args>(args)...);
 }
 
-template<class T>
+template <class T>
 void Visitor::dispatch(const T& obj) {
   size_t hash = reinterpret_cast<size_t>(&obj);
   if (visited_.find(hash) != std::end(visited_)) {
@@ -658,5 +648,5 @@ void Visitor::dispatch(const T& obj) {
   visit(obj);
 }
 
-}
+}  // namespace LIEF
 #endif

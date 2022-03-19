@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/DWARF/enums.hpp"
-#include "LIEF/utils.hpp"
-#include "third-party/utfcpp.hpp"
-#include <mbedtls/platform.h>
+
 #include <mbedtls/asn1.h>
 #include <mbedtls/error.h>
 #include <mbedtls/oid.h>
+#include <mbedtls/platform.h>
 #include <mbedtls/x509_crt.h>
 
-#include "intmem.h"
-
-#include <iomanip>
-#include <sstream>
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
+
+#include "LIEF/DWARF/enums.hpp"
+#include "LIEF/utils.hpp"
+#include "intmem.h"
+#include "third-party/utfcpp.hpp"
 
 #define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)
 
@@ -36,18 +37,17 @@ namespace LIEF {
 BinaryStream::~BinaryStream() = default;
 BinaryStream::BinaryStream() = default;
 
-
-template<typename T>
+template <typename T>
 T BinaryStream::swap_endian(T u) {
   return intmem::bswap(u);
 }
 
-template<>
+template <>
 char16_t BinaryStream::swap_endian<char16_t>(char16_t u) {
   return intmem::bswap(static_cast<uint16_t>(u));
 }
 
-template<>
+template <>
 char BinaryStream::swap_endian<char>(char u) {
   return intmem::bswap(static_cast<uint8_t>(u));
 }
@@ -62,14 +62,9 @@ TMPL_DECL(int16_t);
 TMPL_DECL(int32_t);
 TMPL_DECL(int64_t);
 
-void BinaryStream::setpos(size_t pos) const {
-  pos_ = pos;
-}
+void BinaryStream::setpos(size_t pos) const { pos_ = pos; }
 
-void BinaryStream::increment_pos(size_t value) const {
-  pos_ += value;
-}
-
+void BinaryStream::increment_pos(size_t value) const { pos_ += value; }
 
 void BinaryStream::decrement_pos(size_t value) const {
   if (pos_ >= value) {
@@ -79,54 +74,42 @@ void BinaryStream::decrement_pos(size_t value) const {
   }
 }
 
+BinaryStream::operator bool() const { return pos_ < size(); }
 
-BinaryStream::operator bool() const {
-  return pos_ < size();
-}
-
-size_t BinaryStream::pos() const {
-  return pos_;
-}
-
+size_t BinaryStream::pos() const { return pos_; }
 
 result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
-  const auto encodevalue =  static_cast<LIEF::DWARF::EH_ENCODING>(encoding & 0x0F);
+  const auto encodevalue =
+      static_cast<LIEF::DWARF::EH_ENCODING>(encoding & 0x0F);
 
   switch (encodevalue) {
-    case LIEF::DWARF::EH_ENCODING::ULEB128:
-      {
-        return read_uleb128();
-      }
+    case LIEF::DWARF::EH_ENCODING::ULEB128: {
+      return read_uleb128();
+    }
 
     case LIEF::DWARF::EH_ENCODING::SDATA2:
-    case LIEF::DWARF::EH_ENCODING::UDATA2:
-      {
-        return read<int16_t>();
-      }
+    case LIEF::DWARF::EH_ENCODING::UDATA2: {
+      return read<int16_t>();
+    }
 
     case LIEF::DWARF::EH_ENCODING::SDATA4:
-    case LIEF::DWARF::EH_ENCODING::UDATA4:
-      {
-        return read<int32_t>();
-      }
+    case LIEF::DWARF::EH_ENCODING::UDATA4: {
+      return read<int32_t>();
+    }
 
     case LIEF::DWARF::EH_ENCODING::SDATA8:
-    case LIEF::DWARF::EH_ENCODING::UDATA8:
-      {
-        return read<int64_t>();
-      }
+    case LIEF::DWARF::EH_ENCODING::UDATA8: {
+      return read<int64_t>();
+    }
 
-    case LIEF::DWARF::EH_ENCODING::SLEB128:
-      {
-        return read_sleb128();
-      }
+    case LIEF::DWARF::EH_ENCODING::SLEB128: {
+      return read_sleb128();
+    }
 
-    default:
-      {
-        return 0;
-      }
+    default: {
+      return 0;
+    }
   }
-
 }
 
 result<uint64_t> BinaryStream::read_uleb128() const {
@@ -146,7 +129,7 @@ result<uint64_t> BinaryStream::read_uleb128() const {
 }
 
 result<uint64_t> BinaryStream::read_sleb128() const {
-  int64_t  value = 0;
+  int64_t value = 0;
   unsigned shift = 0;
   result<uint8_t> byte_read;
   do {
@@ -157,7 +140,6 @@ result<uint64_t> BinaryStream::read_sleb128() const {
     value += static_cast<int64_t>(*byte_read & 0x7f) << shift;
     shift += 7;
   } while (byte_read && *byte_read >= 128);
-
 
   // Sign extend
   if ((*byte_read & 0x40) != 0) {
@@ -172,7 +154,7 @@ result<std::string> BinaryStream::read_string(size_t maxsize) const {
   if (!str) {
     return str.error();
   }
-  increment_pos(str->size() + 1); // +1 for'\0'
+  increment_pos(str->size() + 1);  // +1 for'\0'
   return str;
 }
 
@@ -198,10 +180,10 @@ result<std::string> BinaryStream::peek_string(size_t maxsize) const {
   } while (count < maxsize && c && *c != '\0' && off < size());
   str_result.back() = '\0';
   return str_result.c_str();
-
 }
 
-result<std::string> BinaryStream::peek_string_at(size_t offset, size_t maxsize) const {
+result<std::string> BinaryStream::peek_string_at(size_t offset,
+                                                 size_t maxsize) const {
   size_t saved_offset = pos();
   setpos(offset);
   result<std::string> tmp = peek_string(maxsize);
@@ -214,7 +196,7 @@ result<std::u16string> BinaryStream::read_u16string() const {
   if (!str) {
     return str.error();
   }
-  increment_pos((str->size() + 1) * sizeof(uint16_t)); // +1 for'\0'
+  increment_pos((str->size() + 1) * sizeof(uint16_t));  // +1 for'\0'
   return str.value();
 }
 
@@ -242,10 +224,9 @@ result<std::u16string> BinaryStream::peek_u16string() const {
   return u16_str.c_str();
 }
 
-
 result<std::u16string> BinaryStream::read_u16string(size_t length) const {
   result<std::u16string> str = peek_u16string(length);
-  increment_pos(length * sizeof(uint16_t)); // +1 for'\0'
+  increment_pos(length * sizeof(uint16_t));  // +1 for'\0'
   return str;
 }
 
@@ -267,14 +248,14 @@ result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
   return make_error_code(lief_errors::read_error);
 }
 
-result<std::u16string> BinaryStream::peek_u16string_at(size_t offset, size_t length) const {
+result<std::u16string> BinaryStream::peek_u16string_at(size_t offset,
+                                                       size_t length) const {
   size_t saved_offset = pos();
   setpos(offset);
   result<std::u16string> tmp = peek_u16string(length);
   setpos(saved_offset);
   return tmp;
 }
-
 
 size_t BinaryStream::align(size_t align_on) const {
   if (align_on == 0) {
@@ -288,7 +269,6 @@ size_t BinaryStream::align(size_t align_on) const {
   increment_pos(padding);
   return padding;
 }
-
 
 result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
   std::u32string u32str;
@@ -306,7 +286,6 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
       }
       u32str.push_back(a);
     } else if ((a & 0xe0) == 0xc0) {
-
       result<uint8_t> res_b = read<int8_t>();
       if (!res_b) {
         return res_b.error();
@@ -318,21 +297,22 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
       }
       u32str.push_back(static_cast<char32_t>((((a & 0x1F) << 6) | (b & 0x3F))));
     } else if ((a & 0xf0) == 0xe0) {
-        result<uint8_t> res_b = read<uint8_t>();
-        result<uint8_t> res_c = read<uint8_t>();
-        if (!res_b) {
-          return res_b.error();
-        }
-        if (!res_c) {
-          return res_c.error();
-        }
-        uint8_t b = *res_b;
-        uint8_t c = *res_c;
+      result<uint8_t> res_b = read<uint8_t>();
+      result<uint8_t> res_c = read<uint8_t>();
+      if (!res_b) {
+        return res_b.error();
+      }
+      if (!res_c) {
+        return res_c.error();
+      }
+      uint8_t b = *res_b;
+      uint8_t c = *res_c;
 
-        if (((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80)) {
-          break;
-        }
-        u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+      if (((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80)) {
+        break;
+      }
+      u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) |
+                                             ((b & 0x3F) << 6) | (c & 0x3F)));
     } else {
       break;
     }
@@ -340,18 +320,17 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
 
   std::string u8str;
 
-  std::replace_if(std::begin(u32str), std::end(u32str),
-      [] (const char32_t c) {
-        return !utf8::internal::is_code_point_valid(c);
-      }, '.');
+  std::replace_if(
+      std::begin(u32str), std::end(u32str),
+      [](const char32_t c) { return !utf8::internal::is_code_point_valid(c); },
+      '.');
 
-  utf8::utf32to8(std::begin(u32str), std::end(u32str), std::back_inserter(u8str));
+  utf8::utf32to8(std::begin(u32str), std::end(u32str),
+                 std::back_inserter(u8str));
   return u8str;
 }
 
-void BinaryStream::set_endian_swap(bool swap) {
-  endian_swap_ = swap;
-}
+void BinaryStream::set_endian_swap(bool swap) { endian_swap_ = swap; }
 
 result<size_t> BinaryStream::asn1_read_tag(int) {
   return make_error_code(lief_errors::not_implemented);
@@ -397,7 +376,4 @@ result<std::unique_ptr<mbedtls_x509_time>> BinaryStream::x509_read_time() {
   return make_error_code(lief_errors::not_implemented);
 }
 
-
-
-}
-
+}  // namespace LIEF

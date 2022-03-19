@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/Pogo.hpp"
+
 #include <iomanip>
-#include <sstream>
 #include <numeric>
+#include <sstream>
 #include <utility>
 
-#include "LIEF/PE/hash.hpp"
-
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/Pogo.hpp"
 #include "LIEF/PE/PogoEntry.hpp"
+#include "LIEF/PE/hash.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -32,35 +32,20 @@ Pogo::Pogo(const Pogo&) = default;
 Pogo& Pogo::operator=(const Pogo&) = default;
 Pogo::~Pogo() = default;
 
-Pogo::Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry> entries) :
-  signature_{signature},
-  entries_{std::move(entries)}
-{}
+Pogo::Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry> entries)
+    : signature_{signature}, entries_{std::move(entries)} {}
 
-Pogo* Pogo::clone() const {
-  return new Pogo{*this};
-}
+Pogo* Pogo::clone() const { return new Pogo{*this}; }
 
+POGO_SIGNATURES Pogo::signature() const { return signature_; }
 
-POGO_SIGNATURES Pogo::signature() const {
-  return signature_;
-}
+Pogo::it_entries Pogo::entries() { return entries_; }
 
-Pogo::it_entries Pogo::entries() {
-  return entries_;
-}
+Pogo::it_const_entries Pogo::entries() const { return entries_; }
 
-Pogo::it_const_entries Pogo::entries() const {
-  return entries_;
-}
+void Pogo::signature(POGO_SIGNATURES signature) { signature_ = signature; }
 
-void Pogo::signature(POGO_SIGNATURES signature) {
-  signature_ = signature;
-}
-
-void Pogo::accept(LIEF::Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Pogo::accept(LIEF::Visitor& visitor) const { visitor.visit(*this); }
 
 bool Pogo::operator==(const Pogo& rhs) const {
   if (this == &rhs) {
@@ -71,10 +56,7 @@ bool Pogo::operator==(const Pogo& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Pogo::operator!=(const Pogo& rhs) const {
-  return !(*this == rhs);
-}
-
+bool Pogo::operator!=(const Pogo& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Pogo& pogo_entry) {
   static constexpr size_t WIDTH = 22;
@@ -83,12 +65,13 @@ std::ostream& operator<<(std::ostream& os, const Pogo& pogo_entry) {
   os << std::left;
   os << std::setfill(' ');
 
-  os << std::setw(WIDTH) << "POGO Signature:"  << to_string(pogo_entry.signature()) << std::endl;
+  os << std::setw(WIDTH)
+     << "POGO Signature:" << to_string(pogo_entry.signature()) << std::endl;
   for (const PogoEntry& entry : pogo_entry.entries()) {
     os << "  " << entry << std::endl;
   }
   return os;
 }
 
-} // namespace PE
-} // namespace LIEF
+}  // namespace PE
+}  // namespace LIEF

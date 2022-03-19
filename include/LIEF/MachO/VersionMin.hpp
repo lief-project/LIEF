@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_MACHO_VERSION_MIN_COMMAND_H_
 #define LIEF_MACHO_VERSION_MIN_COMMAND_H_
-#include <iostream>
 #include <array>
-
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <iostream>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -30,10 +29,10 @@ namespace details {
 struct version_min_command;
 }
 
-//! Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ... commands.
+//! Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ...
+//! commands.
 class LIEF_API VersionMin : public LoadCommand {
-
-  public:
+ public:
   //! Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
@@ -64,11 +63,11 @@ class LIEF_API VersionMin : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   version_t version_;
   version_t sdk_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

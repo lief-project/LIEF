@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/MachO/FunctionStarts.hpp"
+
 #include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/FunctionStarts.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,31 +29,23 @@ FunctionStarts& FunctionStarts::operator=(const FunctionStarts&) = default;
 FunctionStarts::FunctionStarts(const FunctionStarts&) = default;
 FunctionStarts::~FunctionStarts() = default;
 
-FunctionStarts::FunctionStarts(const details::linkedit_data_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
-  data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+FunctionStarts::FunctionStarts(const details::linkedit_data_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize},
+      data_offset_{cmd.dataoff},
+      data_size_{cmd.datasize} {}
 
 FunctionStarts* FunctionStarts::clone() const {
   return new FunctionStarts(*this);
 }
 
-uint32_t FunctionStarts::data_offset() const {
-  return data_offset_;
-}
+uint32_t FunctionStarts::data_offset() const { return data_offset_; }
 
-uint32_t FunctionStarts::data_size() const {
-  return data_size_;
-}
+uint32_t FunctionStarts::data_size() const { return data_size_; }
 
-void FunctionStarts::data_offset(uint32_t offset) {
-  data_offset_ = offset;
-}
+void FunctionStarts::data_offset(uint32_t offset) { data_offset_ = offset; }
 
-void FunctionStarts::data_size(uint32_t size) {
-  data_size_ = size;
-}
+void FunctionStarts::data_size(uint32_t size) { data_size_ = size; }
 
 void FunctionStarts::functions(const std::vector<uint64_t>& funcs) {
   functions_ = funcs;
@@ -64,17 +56,15 @@ const std::vector<uint64_t>& FunctionStarts::functions() const {
 }
 
 std::vector<uint64_t>& FunctionStarts::functions() {
-  return const_cast<std::vector<uint64_t>&>(static_cast<const FunctionStarts*>(this)->functions());
+  return const_cast<std::vector<uint64_t>&>(
+      static_cast<const FunctionStarts*>(this)->functions());
 }
 
 void FunctionStarts::add_function(uint64_t address) {
   functions_.emplace_back(address);
 }
 
-void FunctionStarts::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void FunctionStarts::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool FunctionStarts::operator==(const FunctionStarts& rhs) const {
   if (this == &rhs) {
@@ -95,23 +85,24 @@ bool FunctionStarts::classof(const LoadCommand* cmd) {
   return type == LOAD_COMMAND_TYPES::LC_FUNCTION_STARTS;
 }
 
-
 std::ostream& FunctionStarts::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
   os << std::endl;
   os << "Function starts location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
+  os << std::setw(8) << "Offset"
+     << ": 0x" << data_offset() << std::endl;
+  os << std::setw(8) << "Size"
+     << ": 0x" << data_size() << std::endl;
   os << "Functions (" << std::dec << functions().size() << "):" << std::endl;
   for (size_t i = 0; i < functions().size(); ++i) {
     os << "    [" << std::dec << i << "] ";
     os << "__TEXT + ";
-    os << std::hex << std::setw(6) << std::setfill(' ') << functions()[i] << std::endl;
+    os << std::hex << std::setw(6) << std::setfill(' ') << functions()[i]
+       << std::endl;
   }
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

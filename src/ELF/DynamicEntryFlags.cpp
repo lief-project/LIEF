@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
+
+#include <iomanip>
 #include <numeric>
 #include <sstream>
-#include <iomanip>
 
-#include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
 
 namespace LIEF {
 namespace ELF {
 
 DynamicEntryFlags::DynamicEntryFlags() = default;
-DynamicEntryFlags& DynamicEntryFlags::operator=(const DynamicEntryFlags&) = default;
+DynamicEntryFlags& DynamicEntryFlags::operator=(const DynamicEntryFlags&) =
+    default;
 DynamicEntryFlags::DynamicEntryFlags(const DynamicEntryFlags&) = default;
 
 bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
@@ -36,7 +38,6 @@ bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
   return (static_cast<uint64_t>(f) & value()) > 0;
 }
 
-
 bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
   if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
     return false;
@@ -46,7 +47,6 @@ bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
 
 DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags() const {
   DynamicEntryFlags::flags_list_t flags;
-
 
   if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
     for (DYNAMIC_FLAGS f : details::dynamic_flags_array) {
@@ -88,7 +88,7 @@ void DynamicEntryFlags::remove(DYNAMIC_FLAGS f) {
     return;
   }
 
-  value(value() & (~ static_cast<uint64_t>(f)));
+  value(value() & (~static_cast<uint64_t>(f)));
 }
 
 void DynamicEntryFlags::remove(DYNAMIC_FLAGS_1 f) {
@@ -96,9 +96,8 @@ void DynamicEntryFlags::remove(DYNAMIC_FLAGS_1 f) {
     return;
   }
 
-  value(value() & (~ static_cast<uint64_t>(f)));
+  value(value() & (~static_cast<uint64_t>(f)));
 }
-
 
 DynamicEntryFlags& DynamicEntryFlags::operator+=(DYNAMIC_FLAGS f) {
   add(f);
@@ -120,14 +119,11 @@ DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS_1 f) {
   return *this;
 }
 
-void DynamicEntryFlags::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void DynamicEntryFlags::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool DynamicEntryFlags::classof(const DynamicEntry* entry) {
   const DYNAMIC_TAGS tag = entry->tag();
-  return tag == DYNAMIC_TAGS::DT_FLAGS_1 ||
-         tag == DYNAMIC_TAGS::DT_FLAGS;
+  return tag == DYNAMIC_TAGS::DT_FLAGS_1 || tag == DYNAMIC_TAGS::DT_FLAGS;
 }
 
 std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
@@ -137,19 +133,21 @@ std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   std::string flags_str;
 
   if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
-       [] (const std::string& a, const uint32_t flag) {
+    flags_str = std::accumulate(
+        std::begin(flags), std::end(flags), std::string{},
+        [](const std::string& a, const uint32_t flag) {
           auto f = static_cast<DYNAMIC_FLAGS>(flag);
           return a.empty() ? to_string(f) : a + " - " + to_string(f);
-       });
+        });
   }
 
   if (tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
-       [] (const std::string& a, const uint32_t flag) {
+    flags_str = std::accumulate(
+        std::begin(flags), std::end(flags), std::string{},
+        [](const std::string& a, const uint32_t flag) {
           auto f = static_cast<DYNAMIC_FLAGS_1>(flag);
           return a.empty() ? to_string(f) : a + " - " + to_string(f);
-       });
+        });
   }
 
   os << " " << flags_str;
@@ -157,8 +155,5 @@ std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   return os;
 }
 
-}
-}
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

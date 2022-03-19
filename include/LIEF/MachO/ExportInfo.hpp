@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_MACHO_EXPORT_INFO_COMMAND_H_
 #define LIEF_MACHO_EXPORT_INFO_COMMAND_H_
-#include <vector>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
-#include "LIEF/types.hpp"
+#include <vector>
 
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -36,10 +35,9 @@ class DylibCommand;
 //! This class does not represent a structure that exists in the Mach-O format
 //! specification but provides a *view* on an entry of the Dyld export trie.
 class LIEF_API ExportInfo : public Object {
-
   friend class BinaryParser;
 
-  public:
+ public:
   using flag_list_t = std::vector<EXPORT_SYMBOL_FLAGS>;
 
   ExportInfo();
@@ -96,9 +94,10 @@ class LIEF_API ExportInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ExportInfo& export_info);
 
-  private:
+ private:
   uint64_t node_offset_ = 0;
   uint64_t flags_ = 0;
   uint64_t address_ = 0;
@@ -109,6 +108,6 @@ class LIEF_API ExportInfo : public Object {
   DylibCommand* alias_location_ = nullptr;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

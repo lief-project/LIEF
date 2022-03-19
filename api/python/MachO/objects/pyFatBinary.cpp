@@ -16,25 +16,21 @@
 #include <algorithm>
 
 #include "LIEF/MachO/FatBinary.hpp"
-
 #include "pyIterators.hpp"
 #include "pyMachO.hpp"
-
 
 namespace LIEF {
 namespace MachO {
 
-template<>
+template <>
 void create<FatBinary>(py::module& m) {
-
-
   py::class_<FatBinary> fat(m, "FatBinary",
-      R"delim(
+                            R"delim(
       Class which represent a Mach-O (fat) binary
       This object is also used for representing Mach-O binaries that are **NOT FAT**
       )delim");
 
-    init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
+  init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
 
   fat
     .def_property_readonly("size",
@@ -83,8 +79,7 @@ void create<FatBinary>(py::module& m) {
           std::string str = stream.str();
           return str;
         });
-
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/PE/Section.hpp"
-
-#include <string>
-#include <sstream>
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (Section::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (Section::*)(T);
 
-
-template<>
+template <>
 void create<Section>(py::module& m) {
   py::class_<Section, LIEF::Section>(m, "Section",
       R"delim(
@@ -150,5 +148,5 @@ void create<Section>(py::module& m) {
         });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -16,14 +16,14 @@
 #ifndef VECTOR_BINARY_STREAM_H
 #define VECTOR_BINARY_STREAM_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/errors.hpp"
 namespace LIEF {
 class VectorStream : public BinaryStream {
-  public:
+ public:
   static result<VectorStream> from_file(const std::string& file);
   VectorStream(std::vector<uint8_t> data);
 
@@ -36,9 +36,7 @@ class VectorStream : public BinaryStream {
   VectorStream(VectorStream&& other);
   VectorStream& operator=(VectorStream&& other);
 
-  inline uint64_t size() const override {
-    return size_;
-  }
+  inline uint64_t size() const override { return size_; }
 
   const std::vector<uint8_t>& content() const;
 
@@ -47,25 +45,15 @@ class VectorStream : public BinaryStream {
     return std::move(binary_);
   }
 
-  inline uint8_t* p() {
-    return this->binary_.data() + this->pos();
-  }
+  inline uint8_t* p() { return this->binary_.data() + this->pos(); }
 
-  inline const uint8_t* p() const {
-    return this->binary_.data() + this->pos();
-  }
+  inline const uint8_t* p() const { return this->binary_.data() + this->pos(); }
 
-  inline uint8_t* start() {
-    return this->binary_.data();
-  }
+  inline uint8_t* start() { return this->binary_.data(); }
 
-  inline const uint8_t* start() const {
-    return this->binary_.data();
-  }
+  inline const uint8_t* start() const { return this->binary_.data(); }
 
-  inline uint8_t* end() {
-    return this->binary_.data() + this->binary_.size();
-  }
+  inline uint8_t* end() { return this->binary_.data() + this->binary_.size(); }
 
   inline const uint8_t* end() const {
     return this->binary_.data() + this->binary_.size();
@@ -85,11 +73,11 @@ class VectorStream : public BinaryStream {
 
   static bool classof(const BinaryStream& stream);
 
-  protected:
+ protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;
   std::vector<uint8_t> binary_;
-  uint64_t size_ = 0; // Original size without alignment
+  uint64_t size_ = 0;  // Original size without alignment
 };
-}
+}  // namespace LIEF
 
 #endif

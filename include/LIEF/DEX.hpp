@@ -18,15 +18,15 @@
 #include "LIEF/config.h"
 
 #if defined(LIEF_DEX_SUPPORT)
-#include "LIEF/DEX/Parser.hpp"
-#include "LIEF/DEX/utils.hpp"
-#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/EnumToString.hpp"
+#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Field.hpp"
-#include "LIEF/DEX/EnumToString.hpp"
+#include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/utils.hpp"
 #endif
 
 #endif

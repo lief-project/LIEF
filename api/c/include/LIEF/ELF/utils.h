@@ -26,9 +26,8 @@
 
 #include <stddef.h>
 
-#include "LIEF/visibility.h"
 #include "LIEF/types.h"
-
+#include "LIEF/visibility.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +39,6 @@ LIEF_API bool is_elf(const char* file);
 #ifdef __cplusplus
 }
 #endif
-
 
 /** @} */
 #endif

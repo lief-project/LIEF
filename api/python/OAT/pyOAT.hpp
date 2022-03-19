@@ -16,25 +16,27 @@
 #ifndef PY_LIEF_OAT_H_
 #define PY_LIEF_OAT_H_
 
+#include <pybind11/stl.h>
+
+#include <functional>
+
 #include "LIEF/OAT.hpp"
 #include "pyLIEF.hpp"
 
-#include <pybind11/stl.h>
-#include <functional>
-
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
+#define SPECIALIZE_CREATE(X) \
+  template <>                \
   void create<X>(py::module&)
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
-
-PYBIND11_MAKE_OPAQUE(LIEF::OAT::Header::it_key_values_t::value_type); // std::pair<HEADER_KEYS, ref<std::string>>
+PYBIND11_MAKE_OPAQUE(
+    LIEF::OAT::Header::it_key_values_t::value_type);  // std::pair<HEADER_KEYS,
+                                                      // ref<std::string>>
 
 namespace LIEF {
 namespace OAT {
 
-template<class T>
+template <class T>
 void create(py::module&);
 
 void init_python_module(py::module& m);
@@ -50,8 +52,7 @@ SPECIALIZE_CREATE(Header);
 SPECIALIZE_CREATE(DexFile);
 SPECIALIZE_CREATE(Class);
 SPECIALIZE_CREATE(Method);
-}
-}
-
+}  // namespace OAT
+}  // namespace LIEF
 
 #endif

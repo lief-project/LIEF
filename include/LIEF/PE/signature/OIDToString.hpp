@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_PE_OID_TO_STRING_H_
 #define LIEF_PE_OID_TO_STRING_H_
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -24,7 +24,7 @@ namespace PE {
 //! @brief Convert an OID to a human-readable string
 LIEF_API const char* oid_to_string(const oid_t& oid);
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

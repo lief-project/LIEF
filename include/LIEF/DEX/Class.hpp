@@ -16,12 +16,11 @@
 #ifndef LIEF_DEX_CLASS_H_
 #define LIEF_DEX_CLASS_H_
 
-#include "LIEF/visibility.h"
+#include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/enums.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
-
-#include "LIEF/DEX/enums.hpp"
-#include "LIEF/DEX/deopt.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -33,7 +32,7 @@ class Method;
 class LIEF_API Class : public Object {
   friend class Parser;
 
-  public:
+ public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
   using methods_t = std::vector<Method*>;
@@ -50,10 +49,11 @@ class LIEF_API Class : public Object {
   using it_named_fields = filter_iterator<fields_t&>;
   using it_const_named_fields = const_filter_iterator<const fields_t&>;
 
-  public:
+ public:
   static std::string package_normalized(const std::string& pkg_name);
   static std::string fullname_normalized(const std::string& pkg_cls);
-  static std::string fullname_normalized(const std::string& pkg, const std::string& cls_name);
+  static std::string fullname_normalized(const std::string& pkg,
+                                         const std::string& cls_name);
 
   Class();
   Class(const Class&) = delete;
@@ -121,17 +121,17 @@ class LIEF_API Class : public Object {
 
   ~Class() override;
 
-  private:
+ private:
   std::string fullname_;
-  uint32_t    access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
-  Class*      parent_ = nullptr;
-  methods_t   methods_;
-  fields_t    fields_;
+  uint32_t access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
+  Class* parent_ = nullptr;
+  methods_t methods_;
+  fields_t fields_;
   std::string source_filename_;
 
   uint32_t original_index_ = -1u;
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

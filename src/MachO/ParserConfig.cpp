@@ -14,45 +14,41 @@
  * limitations under the License.
  */
 
-
-#include "logging.hpp"
-
 #include "LIEF/MachO/ParserConfig.hpp"
 
+#include "logging.hpp"
 
 namespace LIEF {
 namespace MachO {
 
 ParserConfig ParserConfig::deep() {
   ParserConfig conf;
-  conf.parse_dyld_exports  = true;
+  conf.parse_dyld_exports = true;
   conf.parse_dyld_bindings = true;
-  conf.parse_dyld_rebases  = true;
+  conf.parse_dyld_rebases = true;
   return conf;
 }
 
 ParserConfig ParserConfig::quick() {
   ParserConfig conf;
-  conf.parse_dyld_exports  = false;
+  conf.parse_dyld_exports = false;
   conf.parse_dyld_bindings = false;
-  conf.parse_dyld_rebases  = false;
+  conf.parse_dyld_rebases = false;
   return conf;
 }
 
-
 ParserConfig& ParserConfig::full_dyldinfo(bool flag) {
   if (flag) {
-    parse_dyld_exports  = true;
+    parse_dyld_exports = true;
     parse_dyld_bindings = true;
-    parse_dyld_rebases  = true;
+    parse_dyld_rebases = true;
   } else {
-    parse_dyld_exports  = false;
+    parse_dyld_exports = false;
     parse_dyld_bindings = false;
-    parse_dyld_rebases  = false;
+    parse_dyld_rebases = false;
   }
   return *this;
 }
 
-
-} //namespace MachO
-}
+}  // namespace MachO
+}  // namespace LIEF

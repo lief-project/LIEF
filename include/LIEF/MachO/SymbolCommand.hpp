@@ -17,10 +17,9 @@
 #define LIEF_MACHO_SYMBOL_COMMAND_H_
 #include <iostream>
 
-#include "LIEF/visibility.h"
-
-#include "LIEF/types.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -31,7 +30,7 @@ struct symtab_command;
 
 //! Class that represents the LC_SYMTAB command
 class LIEF_API SymbolCommand : public LoadCommand {
-  public:
+ public:
   SymbolCommand();
   SymbolCommand(const details::symtab_command& command);
 
@@ -42,7 +41,8 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   virtual ~SymbolCommand();
 
-  //! Offset from the start of the file to the n_list associated with the command
+  //! Offset from the start of the file to the n_list associated with the
+  //! command
   uint32_t symbol_offset() const;
 
   //! Number of symbols registered
@@ -68,13 +68,13 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+ private:
   uint32_t symbolOffset_;
   uint32_t numberOfSymbols_;
   uint32_t stringsOffset_;
   uint32_t stringsSize_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

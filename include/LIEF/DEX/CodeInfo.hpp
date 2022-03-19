@@ -15,9 +15,8 @@
  */
 #ifndef LIEF_DEX_CODE_INFO_H_
 #define LIEF_DEX_CODE_INFO_H_
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace DEX {
@@ -30,7 +29,7 @@ class Method;
 class LIEF_API CodeInfo : public Object {
   friend class Parser;
 
-  public:
+ public:
   CodeInfo();
   CodeInfo(const details::code_item& codeitem);
 
@@ -44,15 +43,15 @@ class LIEF_API CodeInfo : public Object {
 
   virtual ~CodeInfo();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeInfo& cinfo);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CodeInfo& cinfo);
 
-  private:
+ private:
   uint16_t nb_registers_ = 0;
   uint16_t args_input_sizes_ = 0;
   uint16_t output_sizes_ = 0;
-
 };
 
-} // Namespace DEX
-} // Namespace LIEF
+}  // Namespace DEX
+}  // Namespace LIEF
 #endif

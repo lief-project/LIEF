@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/DEX/json.hpp"
 #include "LIEF/config.h"
 #include "logging.hpp"
-#include "LIEF/DEX/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
 #include "DEX/json_internal.hpp"
@@ -36,5 +36,5 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-}
-} // namespace LIEF
+}  // namespace DEX
+}  // namespace LIEF

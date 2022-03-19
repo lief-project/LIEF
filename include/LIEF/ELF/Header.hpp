@@ -16,15 +16,14 @@
 #ifndef LIEF_ELF_HEADER_H_
 #define LIEF_ELF_HEADER_H_
 
-#include <iostream>
 #include <array>
+#include <iostream>
 #include <vector>
 
+#include "LIEF/Abstract/enums.hpp"
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Abstract/enums.hpp"
-
-#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -33,25 +32,26 @@ class Parser;
 namespace details {
 struct Elf32_Ehdr;
 struct Elf64_Ehdr;
-}
+}  // namespace details
 
 //! Class which represents the ELF's header. This is the ELF structure
 //! that starts an ELF file.
 class LIEF_API Header : public Object {
   friend class Parser;
-  public:
+
+ public:
   using identity_t = std::array<uint8_t, 16>;
   using abstract_architecture_t = std::pair<ARCHITECTURES, std::set<MODES>>;
 
-  template<class T>
+  template <class T>
   using flags_list_t = std::set<T>;
 
-  using arm_flags_list_t     = flags_list_t<ARM_EFLAGS>;
-  using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
+  using arm_flags_list_t = flags_list_t<ARM_EFLAGS>;
+  using mips_flags_list_t = flags_list_t<MIPS_EFLAGS>;
   using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
-  using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
+  using ppc64_flags_list_t = flags_list_t<PPC64_EFLAGS>;
 
-  public:
+ public:
   Header();
   Header(const details::Elf32_Ehdr& header);
   Header(const details::Elf64_Ehdr& header);
@@ -145,7 +145,7 @@ class LIEF_API Header : public Object {
   uint32_t section_name_table_idx() const;
 
   //! Return the ELF identity as an ``std::array``
-  identity_t&       identity();
+  identity_t& identity();
   const identity_t& identity() const;
 
   //! Return the object's class. ``ELF64`` or ``ELF32``
@@ -191,7 +191,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  private:
+ private:
   //! Field which represents ElfXX_Ehdr->e_ident
   identity_t identity_;
 
@@ -233,8 +233,7 @@ class LIEF_API Header : public Object {
 
   //! Field which represents ElfXX_Ehdr->e_shstrndx
   uint32_t section_string_table_idx_;
-
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-#include "VDEX/json_internal.hpp"
 #include "DEX/json_internal.hpp"
-
-#include "LIEF/VDEX.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/VDEX.hpp"
+#include "VDEX/json_internal.hpp"
 
 namespace LIEF {
 namespace VDEX {
@@ -32,18 +31,18 @@ void JsonVisitor::visit(const File& file) {
     dexfiles.emplace_back(DEX::to_json_obj(dexfile));
   }
 
-  node_["header"]    = vheader.get();
+  node_["header"] = vheader.get();
   node_["dex_files"] = dexfiles;
 }
 
 void JsonVisitor::visit(const Header& header) {
-  node_["magic"]                = header.magic();
-  node_["version"]              = header.version();
-  node_["nb_dex_files"]         = header.nb_dex_files();
-  node_["dex_size"]             = header.dex_size();
-  node_["verifier_deps_size"]   = header.verifier_deps_size();
+  node_["magic"] = header.magic();
+  node_["version"] = header.version();
+  node_["nb_dex_files"] = header.nb_dex_files();
+  node_["dex_size"] = header.dex_size();
+  node_["verifier_deps_size"] = header.verifier_deps_size();
   node_["quickening_info_size"] = header.quickening_info_size();
 }
 
-} // namespace VDEX
-} // namespace LIEF
+}  // namespace VDEX
+}  // namespace LIEF

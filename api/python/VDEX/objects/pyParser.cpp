@@ -13,41 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyVDEX.hpp"
+#include <string>
 
 #include "LIEF/VDEX/Parser.hpp"
-
-#include <string>
+#include "pyVDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
 
-template<>
+template <>
 void create<Parser>(py::module& m) {
-
   // Parser (Parser)
   m.def("parse",
-    static_cast<std::unique_ptr<File> (*) (const std::string&)>(&Parser::parse),
-    "Parse the given filename and return a " RST_CLASS_REF(lief.VDEX.File) " object",
-    "filename"_a,
-    py::return_value_policy::take_ownership);
+        static_cast<std::unique_ptr<File> (*)(const std::string&)>(
+            &Parser::parse),
+        "Parse the given filename and return a " RST_CLASS_REF(
+            lief.VDEX.File) " object",
+        "filename"_a, py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<File> (*) (const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
-    "Parse the given raw data and return a " RST_CLASS_REF(lief.VDEX.File) " object",
-    "raw"_a, py::arg("name") = "",
-    py::return_value_policy::take_ownership);
+        static_cast<std::unique_ptr<File> (*)(
+            const std::vector<uint8_t>&, const std::string&)>(&Parser::parse),
+        "Parse the given raw data and return a " RST_CLASS_REF(
+            lief.VDEX.File) " object",
+        "raw"_a, py::arg("name") = "", py::return_value_policy::take_ownership);
 
-
-  m.def("parse",
-      [] (py::object byteio, const std::string& name) {
+  m.def(
+      "parse",
+      [](py::object byteio, const std::string& name) {
         const auto& io = py::module::import("io");
         const auto& RawIOBase = io.attr("RawIOBase");
         const auto& BufferedIOBase = io.attr("BufferedIOBase");
         const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
-
 
         if (py::isinstance(byteio, RawIOBase)) {
           rawio = byteio;
@@ -67,14 +66,12 @@ void create<Parser>(py::module& m) {
 
         std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
         std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))};
+            std::make_move_iterator(std::begin(raw_str)),
+            std::make_move_iterator(std::end(raw_str))};
 
         return LIEF::VDEX::Parser::parse(std::move(raw), name);
       },
-      "io"_a,
-      "name"_a = "",
-      py::return_value_policy::take_ownership);
+      "io"_a, "name"_a = "", py::return_value_policy::take_ownership);
 }
-}
-}
+}  // namespace VDEX
+}  // namespace LIEF

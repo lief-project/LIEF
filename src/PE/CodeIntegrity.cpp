@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/PE/CodeIntegrity.hpp"
+
 #include <iomanip>
+#include <numeric>
 #include <sstream>
 
-#include "LIEF/PE/hash.hpp"
-
 #include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/CodeIntegrity.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "PE/Structures.hpp"
 
 namespace LIEF {
@@ -30,53 +30,31 @@ CodeIntegrity::~CodeIntegrity() = default;
 CodeIntegrity& CodeIntegrity::operator=(const CodeIntegrity&) = default;
 CodeIntegrity::CodeIntegrity(const CodeIntegrity&) = default;
 
-CodeIntegrity::CodeIntegrity() :
-  flags_{0},
-  catalog_{0},
-  catalog_offset_{0},
-  reserved_{0}
-{}
+CodeIntegrity::CodeIntegrity()
+    : flags_{0}, catalog_{0}, catalog_offset_{0}, reserved_{0} {}
 
+CodeIntegrity::CodeIntegrity(const details::pe_code_integrity& header)
+    : flags_{header.Flags},
+      catalog_{header.Catalog},
+      catalog_offset_{header.CatalogOffset},
+      reserved_{header.Reserved} {}
 
-CodeIntegrity::CodeIntegrity(const details::pe_code_integrity& header) :
-  flags_{header.Flags},
-  catalog_{header.Catalog},
-  catalog_offset_{header.CatalogOffset},
-  reserved_{header.Reserved}
-{}
+uint16_t CodeIntegrity::flags() const { return flags_; }
+uint16_t CodeIntegrity::catalog() const { return catalog_; }
 
+uint32_t CodeIntegrity::catalog_offset() const { return catalog_offset_; }
 
-uint16_t CodeIntegrity::flags() const {
-  return flags_;
-}
-uint16_t CodeIntegrity::catalog() const {
-  return catalog_;
-}
+uint32_t CodeIntegrity::reserved() const { return reserved_; }
 
-uint32_t CodeIntegrity::catalog_offset() const {
-  return catalog_offset_;
-}
+void CodeIntegrity::flags(uint16_t flags) { flags_ = flags; }
 
-uint32_t CodeIntegrity::reserved() const {
-  return reserved_;
-}
-
-
-void CodeIntegrity::flags(uint16_t flags) {
-  flags_ = flags;
-}
-
-void CodeIntegrity::catalog(uint16_t catalog) {
-  catalog_ = catalog;
-}
+void CodeIntegrity::catalog(uint16_t catalog) { catalog_ = catalog; }
 
 void CodeIntegrity::catalog_offset(uint32_t catalog_offset) {
   catalog_offset_ = catalog_offset;
 }
 
-void CodeIntegrity::reserved(uint32_t reserved) {
-  reserved_ = reserved;
-}
+void CodeIntegrity::reserved(uint32_t reserved) { reserved_ = reserved; }
 
 void CodeIntegrity::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -97,13 +75,16 @@ bool CodeIntegrity::operator!=(const CodeIntegrity& rhs) const {
 
 std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry) {
   os << std::hex << std::left << std::showbase;
-  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ') << "Flags:"          << std::hex << entry.flags()          << std::endl;
-  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ') << "Catalog:"        << std::hex << entry.catalog()        << std::endl;
-  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ') << "Catalog offset:" << std::hex << entry.catalog_offset() << std::endl;
-  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ') << "Reserved:"       << std::hex << entry.reserved()       << std::endl;
+  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ')
+     << "Flags:" << std::hex << entry.flags() << std::endl;
+  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ')
+     << "Catalog:" << std::hex << entry.catalog() << std::endl;
+  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ')
+     << "Catalog offset:" << std::hex << entry.catalog_offset() << std::endl;
+  os << std::setw(CodeIntegrity::PRINT_WIDTH) << std::setfill(' ')
+     << "Reserved:" << std::hex << entry.reserved() << std::endl;
   return os;
-
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include "LIEF/MachO/SubFramework.hpp"
+
 #include <iomanip>
+#include <numeric>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/SubFramework.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -29,26 +29,17 @@ SubFramework& SubFramework::operator=(const SubFramework&) = default;
 SubFramework::SubFramework(const SubFramework&) = default;
 SubFramework::~SubFramework() = default;
 
-SubFramework::SubFramework(const details::sub_framework_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
-{}
+SubFramework::SubFramework(const details::sub_framework_command& cmd)
+    : LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd),
+                               cmd.cmdsize} {}
 
-SubFramework* SubFramework::clone() const {
-  return new SubFramework(*this);
-}
+SubFramework* SubFramework::clone() const { return new SubFramework(*this); }
 
-const std::string& SubFramework::umbrella() const {
-  return umbrella_;
-}
+const std::string& SubFramework::umbrella() const { return umbrella_; }
 
-void SubFramework::umbrella(const std::string& u) {
-  umbrella_ = u;
-}
+void SubFramework::umbrella(const std::string& u) { umbrella_ = u; }
 
-void SubFramework::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void SubFramework::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool SubFramework::operator==(const SubFramework& rhs) const {
   if (this == &rhs) {
@@ -62,7 +53,6 @@ bool SubFramework::operator==(const SubFramework& rhs) const {
 bool SubFramework::operator!=(const SubFramework& rhs) const {
   return !(*this == rhs);
 }
-
 
 bool SubFramework::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc
@@ -78,6 +68,5 @@ std::ostream& SubFramework::print(std::ostream& os) const {
   return os;
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

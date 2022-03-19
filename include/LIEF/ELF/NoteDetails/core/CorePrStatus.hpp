@@ -16,15 +16,14 @@
 #ifndef LIEF_ELF_CORE_PRSTATUS_H_
 #define LIEF_ELF_CORE_PRSTATUS_H_
 
-#include <vector>
 #include <iostream>
 #include <map>
 #include <utility>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -35,8 +34,7 @@ class Binary;
 
 //! Class representing core PrPsInfo object
 class LIEF_API CorePrStatus : public NoteDetails {
-
-  public:
+ public:
   using NoteDetails::NoteDetails;
   struct siginfo_t {
     int32_t si_signo;
@@ -49,46 +47,121 @@ class LIEF_API CorePrStatus : public NoteDetails {
     uint64_t usec;
   };
 
-
-  enum class REGISTERS  {
+  enum class REGISTERS {
     UNKNOWN,
 
     // x86
     // ===
     X86_START,
-      X86_EBX, X86_ECX, X86_EDX, X86_ESI, X86_EDI, X86_EBP, X86_EAX,
-      X86_DS, X86_ES, X86_FS, X86_GS, X86__, X86_EIP, X86_CS, X86_EFLAGS, X86_ESP, X86_SS,
+    X86_EBX,
+    X86_ECX,
+    X86_EDX,
+    X86_ESI,
+    X86_EDI,
+    X86_EBP,
+    X86_EAX,
+    X86_DS,
+    X86_ES,
+    X86_FS,
+    X86_GS,
+    X86__,
+    X86_EIP,
+    X86_CS,
+    X86_EFLAGS,
+    X86_ESP,
+    X86_SS,
     X86_END,
 
     // x86-64
     // ======
     X86_64_START,
-      X86_64_R15, X86_64_R14, X86_64_R13, X86_64_R12, X86_64_RBP, X86_64_RBX, X86_64_R11, X86_64_R10,
-      X86_64_R9, X86_64_R8, X86_64_RAX, X86_64_RCX, X86_64_RDX, X86_64_RSI, X86_64_RDI, X86_64__,
-      X86_64_RIP, X86_64_CS, X86_64_EFLAGS, X86_64_RSP, X86_64_SS,
+    X86_64_R15,
+    X86_64_R14,
+    X86_64_R13,
+    X86_64_R12,
+    X86_64_RBP,
+    X86_64_RBX,
+    X86_64_R11,
+    X86_64_R10,
+    X86_64_R9,
+    X86_64_R8,
+    X86_64_RAX,
+    X86_64_RCX,
+    X86_64_RDX,
+    X86_64_RSI,
+    X86_64_RDI,
+    X86_64__,
+    X86_64_RIP,
+    X86_64_CS,
+    X86_64_EFLAGS,
+    X86_64_RSP,
+    X86_64_SS,
     X86_64_END,
 
     // ARM
     // ===
     ARM_START,
-      ARM_R0, ARM_R1, ARM_R2,  ARM_R3,  ARM_R4,  ARM_R5,  ARM_R6,  ARM_R7,
-      ARM_R8, ARM_R9, ARM_R10, ARM_R11, ARM_R12, ARM_R13, ARM_R14, ARM_R15,
-      ARM_CPSR,
+    ARM_R0,
+    ARM_R1,
+    ARM_R2,
+    ARM_R3,
+    ARM_R4,
+    ARM_R5,
+    ARM_R6,
+    ARM_R7,
+    ARM_R8,
+    ARM_R9,
+    ARM_R10,
+    ARM_R11,
+    ARM_R12,
+    ARM_R13,
+    ARM_R14,
+    ARM_R15,
+    ARM_CPSR,
     ARM_END,
 
     // AArch64
     // =======
     AARCH64_START,
-      AARCH64_X0,  AARCH64_X1,  AARCH64_X2,  AARCH64_X3,  AARCH64_X4,  AARCH64_X5,  AARCH64_X6,  AARCH64_X7,
-      AARCH64_X8,  AARCH64_X9,  AARCH64_X10, AARCH64_X11, AARCH64_X12, AARCH64_X13, AARCH64_X14, AARCH64_X15,
-      AARCH64_X16, AARCH64_X17, AARCH64_X18, AARCH64_X19, AARCH64_X20, AARCH64_X21, AARCH64_X22, AARCH64_X23,
-      AARCH64_X24, AARCH64_X25, AARCH64_X26, AARCH64_X27, AARCH64_X28, AARCH64_X29, AARCH64_X30, AARCH64_X31,
-      AARCH64_PC, AARCH64__,
+    AARCH64_X0,
+    AARCH64_X1,
+    AARCH64_X2,
+    AARCH64_X3,
+    AARCH64_X4,
+    AARCH64_X5,
+    AARCH64_X6,
+    AARCH64_X7,
+    AARCH64_X8,
+    AARCH64_X9,
+    AARCH64_X10,
+    AARCH64_X11,
+    AARCH64_X12,
+    AARCH64_X13,
+    AARCH64_X14,
+    AARCH64_X15,
+    AARCH64_X16,
+    AARCH64_X17,
+    AARCH64_X18,
+    AARCH64_X19,
+    AARCH64_X20,
+    AARCH64_X21,
+    AARCH64_X22,
+    AARCH64_X23,
+    AARCH64_X24,
+    AARCH64_X25,
+    AARCH64_X26,
+    AARCH64_X27,
+    AARCH64_X28,
+    AARCH64_X29,
+    AARCH64_X30,
+    AARCH64_X31,
+    AARCH64_PC,
+    AARCH64__,
     AARCH64_END,
   };
   using reg_context_t = std::map<REGISTERS, uint64_t>;
 
-  public:
+ public:
   static CorePrStatus make(Note& note);
 
   CorePrStatus* clone() const override;
@@ -139,8 +212,8 @@ class LIEF_API CorePrStatus : public NoteDetails {
   uint64_t sp() const;
 
   //! Get register value. If ``error`` is set,
-  //! this function and the register exists, the function set the boolean value to ``false``
-  //! Otherwise it set the value to ``true``
+  //! this function and the register exists, the function set the boolean value
+  //! to ``false`` Otherwise it set the value to ``true``
   uint64_t get(REGISTERS reg, bool* error = nullptr) const;
 
   //! Check if the given register is present in the info
@@ -180,9 +253,10 @@ class LIEF_API CorePrStatus : public NoteDetails {
 
   virtual ~CorePrStatus();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrStatus& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CorePrStatus& note);
 
-  protected:
+ protected:
   template <typename ELF_T>
   LIEF_LOCAL void parse_();
 
@@ -192,13 +266,13 @@ class LIEF_API CorePrStatus : public NoteDetails {
   void parse() override;
   void build() override;
 
-  private:
+ private:
   CorePrStatus(Note& note);
 
   std::pair<size_t, size_t> reg_enum_range() const;
 
   siginfo_t siginfo_;
-  uint16_t  cursig_;
+  uint16_t cursig_;
 
   uint64_t sigpend_;
   uint64_t sighold_;
@@ -216,10 +290,9 @@ class LIEF_API CorePrStatus : public NoteDetails {
   reg_context_t ctx_;
 };
 
-
 LIEF_API const char* to_string(CorePrStatus::REGISTERS e);
 
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

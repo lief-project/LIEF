@@ -17,10 +17,9 @@
 #define LIEF_PE_ATTRIBUTES_CONTENT_TYPE_H_
 #include <memory>
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
-
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -29,29 +28,28 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.3`` (PKCS #9)
+//! Interface over the structure described by the OID ``1.2.840.113549.1.9.3``
+//! (PKCS #9)
 //!
 //! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+//! Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
 //! ```raw
 //! ContentType ::= OBJECT IDENTIFIER
 //! ```
 class LIEF_API ContentType : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   ContentType();
   ContentType(oid_t oid);
   ContentType(const ContentType&);
   ContentType& operator=(const ContentType&);
 
   //! OID as described in RFC #2985
-  inline const oid_t& oid() const {
-    return oid_;
-  }
+  inline const oid_t& oid() const { return oid_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -61,11 +59,11 @@ class LIEF_API ContentType : public Attribute {
   void accept(Visitor& visitor) const override;
   virtual ~ContentType();
 
-  private:
+ private:
   oid_t oid_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

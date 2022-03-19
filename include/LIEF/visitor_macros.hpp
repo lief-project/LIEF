@@ -20,114 +20,107 @@
 // PE Support
 // ==========
 #if defined(LIEF_PE_SUPPORT)
-  #define LIEF_PE_FORWARD(OBJ) \
-    namespace PE   {           \
-    class OBJ;                 \
-    }
+#define LIEF_PE_FORWARD(OBJ) \
+  namespace PE {             \
+  class OBJ;                 \
+  }
 
-  #define LIEF_PE_VISITABLE(OBJ) \
-    virtual void visit(const PE::OBJ&) {}
+#define LIEF_PE_VISITABLE(OBJ) \
+  virtual void visit(const PE::OBJ&) {}
 #else
-  #define LIEF_PE_VISITABLE(OBJ)
-  #define LIEF_PE_FORWARD(OBJ)
+#define LIEF_PE_VISITABLE(OBJ)
+#define LIEF_PE_FORWARD(OBJ)
 #endif
-
 
 // ELF Support
 // ===========
 #if defined(LIEF_ELF_SUPPORT)
-  #define LIEF_ELF_FORWARD(OBJ) \
-    namespace ELF   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_ELF_VISITABLE(OBJ)         \
-    virtual void visit(const ELF::OBJ&) {}
+#define LIEF_ELF_FORWARD(OBJ) \
+  namespace ELF {             \
+  class OBJ;                  \
+  }
+#define LIEF_ELF_VISITABLE(OBJ) \
+  virtual void visit(const ELF::OBJ&) {}
 #else
-  #define LIEF_ELF_FORWARD(OBJ)
-  #define LIEF_ELF_VISITABLE(OBJ)
+#define LIEF_ELF_FORWARD(OBJ)
+#define LIEF_ELF_VISITABLE(OBJ)
 #endif
 
 // MachO Support
 // =============
 #if defined(LIEF_MACHO_SUPPORT)
-  #define LIEF_MACHO_FORWARD(OBJ) \
-    namespace MachO   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_MACHO_VISITABLE(OBJ) \
-    virtual void visit(const MachO::OBJ&) {}
+#define LIEF_MACHO_FORWARD(OBJ) \
+  namespace MachO {             \
+  class OBJ;                    \
+  }
+#define LIEF_MACHO_VISITABLE(OBJ) \
+  virtual void visit(const MachO::OBJ&) {}
 #else
-  #define LIEF_MACHO_FORWARD(OBJ)
-  #define LIEF_MACHO_VISITABLE(OBJ)
+#define LIEF_MACHO_FORWARD(OBJ)
+#define LIEF_MACHO_VISITABLE(OBJ)
 #endif
-
 
 // OAT Support
 // ===========
 #if defined(LIEF_OAT_SUPPORT)
-  #define LIEF_OAT_FORWARD(OBJ) \
-    namespace OAT   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_OAT_VISITABLE(OBJ) \
-    virtual void visit(const OAT::OBJ&) {}
+#define LIEF_OAT_FORWARD(OBJ) \
+  namespace OAT {             \
+  class OBJ;                  \
+  }
+#define LIEF_OAT_VISITABLE(OBJ) \
+  virtual void visit(const OAT::OBJ&) {}
 #else
-  #define LIEF_OAT_FORWARD(OBJ)
-  #define LIEF_OAT_VISITABLE(OBJ)
+#define LIEF_OAT_FORWARD(OBJ)
+#define LIEF_OAT_VISITABLE(OBJ)
 #endif
-
 
 // DEX Support
 // ===========
 #if defined(LIEF_DEX_SUPPORT)
-  #define LIEF_DEX_FORWARD(OBJ) \
-    namespace DEX   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_DEX_VISITABLE(OBJ) \
-    virtual void visit(const DEX::OBJ&) {}
+#define LIEF_DEX_FORWARD(OBJ) \
+  namespace DEX {             \
+  class OBJ;                  \
+  }
+#define LIEF_DEX_VISITABLE(OBJ) \
+  virtual void visit(const DEX::OBJ&) {}
 #else
-  #define LIEF_DEX_FORWARD(OBJ)
-  #define LIEF_DEX_VISITABLE(OBJ)
+#define LIEF_DEX_FORWARD(OBJ)
+#define LIEF_DEX_VISITABLE(OBJ)
 #endif
-
 
 // VDEX Support
 // ===========
 #if defined(LIEF_VDEX_SUPPORT)
-  #define LIEF_VDEX_FORWARD(OBJ) \
-    namespace VDEX   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_VDEX_VISITABLE(OBJ) \
-    virtual void visit(const VDEX::OBJ&) {}
+#define LIEF_VDEX_FORWARD(OBJ) \
+  namespace VDEX {             \
+  class OBJ;                   \
+  }
+#define LIEF_VDEX_VISITABLE(OBJ) \
+  virtual void visit(const VDEX::OBJ&) {}
 #else
-  #define LIEF_VDEX_FORWARD(OBJ)
-  #define LIEF_VDEX_VISITABLE(OBJ)
+#define LIEF_VDEX_FORWARD(OBJ)
+#define LIEF_VDEX_VISITABLE(OBJ)
 #endif
-
 
 // ART Support
 // ===========
 #if defined(LIEF_ART_SUPPORT)
-  #define LIEF_ART_FORWARD(OBJ) \
-    namespace ART   {           \
-    class OBJ;                 \
-    }
-  #define LIEF_ART_VISITABLE(OBJ) \
-    virtual void visit(const ART::OBJ&) {}
+#define LIEF_ART_FORWARD(OBJ) \
+  namespace ART {             \
+  class OBJ;                  \
+  }
+#define LIEF_ART_VISITABLE(OBJ) \
+  virtual void visit(const ART::OBJ&) {}
 #else
-  #define LIEF_ART_FORWARD(OBJ)
-  #define LIEF_ART_VISITABLE(OBJ)
+#define LIEF_ART_FORWARD(OBJ)
+#define LIEF_ART_VISITABLE(OBJ)
 #endif
 
 // Abstract
 // ========
-#define LIEF_ABSTRACT_FORWARD(OBJ) \
-  class OBJ;
+#define LIEF_ABSTRACT_FORWARD(OBJ) class OBJ;
 
 #define LIEF_ABSTRACT_VISITABLE(OBJ) \
   virtual void visit(const OBJ&) {}
-
 
 #endif

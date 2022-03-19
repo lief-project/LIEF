@@ -14,49 +14,48 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (FunctionStarts::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (FunctionStarts::*)(T);
 
-
-template<>
+template <>
 void create<FunctionStarts>(py::module& m) {
-
   py::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts",
-      R"delim(
+                                          R"delim(
       Class which represents the LC_FUNCTION_STARTS command
 
       This command is an array of ULEB128 encoded values
       )delim")
 
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&FunctionStarts::data_offset),
-        static_cast<setter_t<uint32_t>>(&FunctionStarts::data_offset),
-        "Offset in the binary where *start functions* are located")
+      .def_property(
+          "data_offset",
+          static_cast<getter_t<uint32_t>>(&FunctionStarts::data_offset),
+          static_cast<setter_t<uint32_t>>(&FunctionStarts::data_offset),
+          "Offset in the binary where *start functions* are located")
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&FunctionStarts::data_size),
-        static_cast<setter_t<uint32_t>>(&FunctionStarts::data_size),
-        "Size of the functions list in the binary")
+      .def_property("data_size",
+                    static_cast<getter_t<uint32_t>>(&FunctionStarts::data_size),
+                    static_cast<setter_t<uint32_t>>(&FunctionStarts::data_size),
+                    "Size of the functions list in the binary")
 
-    .def_property("functions",
-        static_cast<getter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
-        static_cast<setter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
-        R"delim(
+      .def_property("functions",
+                    static_cast<getter_t<const std::vector<uint64_t>&>>(
+                        &FunctionStarts::functions),
+                    static_cast<setter_t<const std::vector<uint64_t>&>>(
+                        &FunctionStarts::functions),
+                    R"delim(
         Addresses of every function entry point in the executable
 
         This allows functions to exist for which there are no entries in the symbol table.
@@ -65,31 +64,23 @@ void create<FunctionStarts>(py::module& m) {
 
           The address is relative to the ``__TEXT`` segment
         )delim",
-        py::return_value_policy::reference_internal)
+                    py::return_value_policy::reference_internal)
 
-    .def("add_function",
-      &FunctionStarts::add_function,
-      "Add a new function",
-      "address"_a)
+      .def("add_function", &FunctionStarts::add_function, "Add a new function",
+           "address"_a)
 
-    .def("__eq__", &FunctionStarts::operator==)
-    .def("__ne__", &FunctionStarts::operator!=)
-    .def("__hash__",
-        [] (const FunctionStarts& func) {
-          return Hash::hash(func);
-        })
+      .def("__eq__", &FunctionStarts::operator==)
+      .def("__ne__", &FunctionStarts::operator!=)
+      .def("__hash__",
+           [](const FunctionStarts& func) { return Hash::hash(func); })
 
-
-    .def("__str__",
-        [] (const FunctionStarts& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const FunctionStarts& func) {
+        std::ostringstream stream;
+        stream << func;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

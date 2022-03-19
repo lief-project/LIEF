@@ -19,9 +19,8 @@
 #include <set>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -30,12 +29,13 @@ class Parser;
 namespace details {
 struct pe32_optional_header;
 struct pe64_optional_header;
-}
+}  // namespace details
 
 //! Class which represents the PE OptionalHeader structure
 class LIEF_API OptionalHeader : public Object {
   friend class Parser;
-  public:
+
+ public:
   OptionalHeader();
   OptionalHeader(const details::pe32_optional_header& header);
   OptionalHeader(const details::pe64_optional_header& header);
@@ -53,28 +53,33 @@ class LIEF_API OptionalHeader : public Object {
   uint8_t minor_linker_version() const;
 
   //! The size of the code ``.text`` section or the sum of
-  //! all the sections that contain code (ie. PE::Section with the flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE)
+  //! all the sections that contain code (ie. PE::Section with the flag
+  //! SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE)
   uint32_t sizeof_code() const;
 
-  //! The size of the initialized data which are usually located in the ``.data`` section.
-  //! If the initialized data are split across multiple sections, it is the sum of the sections.
+  //! The size of the initialized data which are usually located in the
+  //! ``.data`` section. If the initialized data are split across multiple
+  //! sections, it is the sum of the sections.
   //!
-  //! The sections associated with the initialized data are usually identified with the
-  //! flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA
+  //! The sections associated with the initialized data are usually identified
+  //! with the flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA
   uint32_t sizeof_initialized_data() const;
 
-  //! The size of the uninitialized data which are usually located in the ``.bss`` section.
-  //! If the uninitialized data are split across multiple sections, it is the sum of the sections.
+  //! The size of the uninitialized data which are usually located in the
+  //! ``.bss`` section. If the uninitialized data are split across multiple
+  //! sections, it is the sum of the sections.
   //!
-  //! The sections associated with the uninitialized data are usually identified with the
-  //! flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_UNINITIALIZED_DATA
+  //! The sections associated with the uninitialized data are usually identified
+  //! with the flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_UNINITIALIZED_DATA
   uint32_t sizeof_uninitialized_data() const;
 
-  //! The address of the entry point relative to the image base when the executable file is
-  //! loaded into memory. For program images, this is the starting address. For device
-  //! drivers, this is the address of the initialization function.
+  //! The address of the entry point relative to the image base when the
+  //! executable file is loaded into memory. For program images, this is the
+  //! starting address. For device drivers, this is the address of the
+  //! initialization function.
   //!
-  //! An entry point is optional for DLLs. When no entry point is present, this field must be zero.
+  //! An entry point is optional for DLLs. When no entry point is present, this
+  //! field must be zero.
   uint32_t addressof_entrypoint() const;
 
   //! Address relative to the imagebase where the binary's code starts.
@@ -94,8 +99,8 @@ class LIEF_API OptionalHeader : public Object {
   //! the default is the page size for the architecture.
   uint32_t section_alignment() const;
 
-  //! The section's file alignment. This value must be a power of 2 between 512 and 64K.
-  //! The default value is usually 512
+  //! The section's file alignment. This value must be a power of 2 between 512
+  //! and 64K. The default value is usually 512
   uint32_t file_alignment() const;
 
   //! The **major** version number of the required operating system
@@ -120,41 +125,45 @@ class LIEF_API OptionalHeader : public Object {
   //! is reserved and **should** be 0.
   uint32_t win32_version_value() const;
 
-  //! The size (in bytes) of the image, including all headers, as the image is loaded in memory.
+  //! The size (in bytes) of the image, including all headers, as the image is
+  //! loaded in memory.
   //!
-  //! It must be a multiple of section_alignment and should match Binary::virtual_size
+  //! It must be a multiple of section_alignment and should match
+  //! Binary::virtual_size
   uint32_t sizeof_image() const;
 
-  //! Size of the DosHeader + PE Header + Section headers rounded up to a multiple of the file_alignment
+  //! Size of the DosHeader + PE Header + Section headers rounded up to a
+  //! multiple of the file_alignment
   uint32_t sizeof_headers() const;
 
-  //! The image file checksum. The algorithm for computing the checksum is incorporated into ``IMAGHELP.DLL``.
+  //! The image file checksum. The algorithm for computing the checksum is
+  //! incorporated into ``IMAGHELP.DLL``.
   //!
-  //! The following are checked for validation at load time all **drivers**, any **DLL loaded at boot**
-  //! time, and any **DLL** that is loaded into a **critical** Windows process.
+  //! The following are checked for validation at load time all **drivers**, any
+  //! **DLL loaded at boot** time, and any **DLL** that is loaded into a
+  //! **critical** Windows process.
   uint32_t checksum() const;
 
   //! The re-computed value of the OptionalHeader::checksum.
-  //! If both values do not match, it could mean that the binary has been modified
-  //! after the compilation.
+  //! If both values do not match, it could mean that the binary has been
+  //! modified after the compilation.
   //!
   //! This value is computed by LIEF when parsing the PE binary.
-  inline uint32_t computed_checksum() const {
-    return computed_checksum_;
-  }
+  inline uint32_t computed_checksum() const { return computed_checksum_; }
 
   //! Target subsystem like Driver, XBox, Windows GUI, ...
   SUBSYSTEM subsystem() const;
 
   //! Some characteristics of the underlying binary like the support of the PIE.
-  //! The prefix ``dll`` comes from the official PE specifications but these characteristics
-  //! are also used for **executables**
+  //! The prefix ``dll`` comes from the official PE specifications but these
+  //! characteristics are also used for **executables**
   uint32_t dll_characteristics() const;
 
   //! Size of the stack to reserve when loading the PE binary
   //!
-  //! Only :attr:`~lief.PE.OptionalHeader.sizeof_stack_commit` is committed, the rest is made
-  //! available one page at a time until the reserve size is reached.
+  //! Only :attr:`~lief.PE.OptionalHeader.sizeof_stack_commit` is committed, the
+  //! rest is made available one page at a time until the reserve size is
+  //! reached.
   uint64_t sizeof_stack_reserve() const;
 
   //! Size of the stack to commit
@@ -166,16 +175,19 @@ class LIEF_API OptionalHeader : public Object {
   //! Size of the heap to commit
   uint64_t sizeof_heap_commit() const;
 
-  //! According to the PE specifications, this value is *reserved* and **should** be 0.
+  //! According to the PE specifications, this value is *reserved* and
+  //! **should** be 0.
   uint32_t loader_flags() const;
 
   //! The number of DataDirectory that follow this header.
   uint32_t numberof_rva_and_size() const;
 
-  //! Check if the given DLL_CHARACTERISTICS is included in the dll_characteristics
+  //! Check if the given DLL_CHARACTERISTICS is included in the
+  //! dll_characteristics
   bool has(DLL_CHARACTERISTICS c) const;
 
-  //! Return the list of the dll_characteristics as an std::set of DLL_CHARACTERISTICS
+  //! Return the list of the dll_characteristics as an std::set of
+  //! DLL_CHARACTERISTICS
   std::set<DLL_CHARACTERISTICS> dll_characteristics_list() const;
 
   //! Add a DLL_CHARACTERISTICS to the current characteristics
@@ -223,43 +235,44 @@ class LIEF_API OptionalHeader : public Object {
   bool operator==(const OptionalHeader& rhs) const;
   bool operator!=(const OptionalHeader& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const OptionalHeader& entry);
 
-  private:
-  PE_TYPE   magic_;
-  uint8_t   majorLinkerVersion_;
-  uint8_t   minorLinkerVersion_;
-  uint32_t  sizeOfCode_;
-  uint32_t  sizeOfInitializedData_;
-  uint32_t  sizeOfUninitializedData_;
-  uint32_t  addressOfEntryPoint_; // RVA
-  uint32_t  baseOfCode_;          // RVA
-  uint32_t  baseOfData_;          //Not present in PE32+
-  uint64_t  imageBase_;
-  uint32_t  sectionAlignment_;
-  uint32_t  fileAlignment_;
-  uint16_t  majorOperatingSystemVersion_;
-  uint16_t  minorOperatingSystemVersion_;
-  uint16_t  majorImageVersion_;
-  uint16_t  minorImageVersion_;
-  uint16_t  majorSubsystemVersion_;
-  uint16_t  minorSubsystemVersion_;
-  uint32_t  win32VersionValue_;
-  uint32_t  sizeOfImage_;
-  uint32_t  sizeOfHeaders_;
-  uint32_t  checkSum_;
+ private:
+  PE_TYPE magic_;
+  uint8_t majorLinkerVersion_;
+  uint8_t minorLinkerVersion_;
+  uint32_t sizeOfCode_;
+  uint32_t sizeOfInitializedData_;
+  uint32_t sizeOfUninitializedData_;
+  uint32_t addressOfEntryPoint_;  // RVA
+  uint32_t baseOfCode_;           // RVA
+  uint32_t baseOfData_;           // Not present in PE32+
+  uint64_t imageBase_;
+  uint32_t sectionAlignment_;
+  uint32_t fileAlignment_;
+  uint16_t majorOperatingSystemVersion_;
+  uint16_t minorOperatingSystemVersion_;
+  uint16_t majorImageVersion_;
+  uint16_t minorImageVersion_;
+  uint16_t majorSubsystemVersion_;
+  uint16_t minorSubsystemVersion_;
+  uint32_t win32VersionValue_;
+  uint32_t sizeOfImage_;
+  uint32_t sizeOfHeaders_;
+  uint32_t checkSum_;
   SUBSYSTEM subsystem_;
-  uint32_t  DLLCharacteristics_;
-  uint64_t  sizeOfStackReserve_;
-  uint64_t  sizeOfStackCommit_;
-  uint64_t  sizeOfHeapReserve_;
-  uint64_t  sizeOfHeapCommit_;
-  uint32_t  loaderFlags_;
-  uint32_t  numberOfRvaAndSize_;
+  uint32_t DLLCharacteristics_;
+  uint64_t sizeOfStackReserve_;
+  uint64_t sizeOfStackCommit_;
+  uint64_t sizeOfHeapReserve_;
+  uint64_t sizeOfHeapCommit_;
+  uint32_t loaderFlags_;
+  uint32_t numberOfRvaAndSize_;
 
-  uint32_t  computed_checksum_ = 0;
+  uint32_t computed_checksum_ = 0;
 };
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

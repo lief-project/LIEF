@@ -16,11 +16,11 @@
 #ifndef LIEF_MACHO_UTILS_H_
 #define LIEF_MACHO_UTILS_H_
 
-#include "LIEF/types.hpp"
-#include "LIEF/visibility.h"
-
 #include <string>
 #include <vector>
+
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -41,8 +41,7 @@ LIEF_API bool is_64(const std::string& file);
 //! Check the layout of the given Mach-O binary. It checks if it can be signed
 //! according to cctools-921/libstuff/checkout.c
 LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
-}
-}
-
+}  // namespace MachO
+}  // namespace LIEF
 
 #endif

@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/DEX/Type.hpp"
+
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
 
@@ -23,59 +24,39 @@ namespace DEX {
 
 Type::Type() = default;
 
-Type::Type(const std::string& mangled) {
-  parse(mangled);
-}
+Type::Type(const std::string& mangled) { parse(mangled); }
 
-
-Type::Type(const Type& other) :
-  Object{other},
-  type_{other.type_}
-{
+Type::Type(const Type& other) : Object{other}, type_{other.type_} {
   switch (type()) {
-    case TYPES::ARRAY:
-      {
-        array_ = new array_t{};
-        std::copy(
-            std::begin(other.array()),
-            std::end(other.array()),
-            std::back_inserter(*array_));
-        break;
-      }
+    case TYPES::ARRAY: {
+      array_ = new array_t{};
+      std::copy(std::begin(other.array()), std::end(other.array()),
+                std::back_inserter(*array_));
+      break;
+    }
 
-    case TYPES::CLASS:
-      {
-        cls_ = other.cls_;
-        break;
-      }
+    case TYPES::CLASS: {
+      cls_ = other.cls_;
+      break;
+    }
 
-    case TYPES::PRIMITIVE:
-      {
-        basic_ = new PRIMITIVES{other.primitive()};
-        break;
-      }
+    case TYPES::PRIMITIVE: {
+      basic_ = new PRIMITIVES{other.primitive()};
+      break;
+    }
 
-    default:
-      {}
+    default: {
+    }
   }
 }
 
-Type::TYPES Type::type() const {
-  return type_;
-}
+Type::TYPES Type::type() const { return type_; }
 
-const Class& Type::cls() const {
-  return *cls_;
-}
+const Class& Type::cls() const { return *cls_; }
 
-const Type::array_t& Type::array() const {
-  return *array_;
-}
+const Type::array_t& Type::array() const { return *array_; }
 
-const Type::PRIMITIVES& Type::primitive() const {
-  return *basic_;
-}
-
+const Type::PRIMITIVES& Type::primitive() const { return *basic_; }
 
 Class& Type::cls() {
   return const_cast<Class&>(static_cast<const Type*>(this)->cls());
@@ -86,7 +67,8 @@ Type::array_t& Type::array() {
 }
 
 Type::PRIMITIVES& Type::primitive() {
-  return const_cast<Type::PRIMITIVES&>(static_cast<const Type*>(this)->primitive());
+  return const_cast<Type::PRIMITIVES&>(
+      static_cast<const Type*>(this)->primitive());
 }
 
 const Type& Type::underlying_array_type() const {
@@ -97,98 +79,87 @@ const Type& Type::underlying_array_type() const {
   return *underlying_type;
 }
 
-
 Type& Type::underlying_array_type() {
-  return const_cast<Type&>((static_cast<const Type*>(this)->underlying_array_type()));
+  return const_cast<Type&>(
+      (static_cast<const Type*>(this)->underlying_array_type()));
 }
-
 
 void Type::parse(const std::string& type) {
   const char t = type[0];
-  switch(t) {
-    case 'V':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::VOID_T};
-        break;
-      }
+  switch (t) {
+    case 'V': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::VOID_T};
+      break;
+    }
 
-    case 'Z':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BOOLEAN};
-        break;
-      }
+    case 'Z': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BOOLEAN};
+      break;
+    }
 
-    case 'B':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BYTE};
-        break;
-      }
+    case 'B': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::BYTE};
+      break;
+    }
 
-    case 'S':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::SHORT};
-        break;
-      }
+    case 'S': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::SHORT};
+      break;
+    }
 
-    case 'C':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::CHAR};
-        break;
-      }
+    case 'C': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::CHAR};
+      break;
+    }
 
-    case 'I':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::INT};
-        break;
-      }
+    case 'I': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::INT};
+      break;
+    }
 
-    case 'J':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::LONG};
-        break;
-      }
+    case 'J': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::LONG};
+      break;
+    }
 
-    case 'F':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::FLOAT};
-        break;
-      }
+    case 'F': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::FLOAT};
+      break;
+    }
 
-    case 'D':
-      {
-        type_ = Type::TYPES::PRIMITIVE;
-        basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::DOUBLE};
-        break;
-      }
+    case 'D': {
+      type_ = Type::TYPES::PRIMITIVE;
+      basic_ = new Type::PRIMITIVES{Type::PRIMITIVES::DOUBLE};
+      break;
+    }
 
-    case 'L': //CLASS
-      {
-        type_ = Type::TYPES::CLASS;
-        break;
-      }
+    case 'L':  // CLASS
+    {
+      type_ = Type::TYPES::CLASS;
+      break;
+    }
 
-    case '[': //ARRAY
-      {
-        if (array_ == nullptr) {
-          array_ = new array_t{};
-        }
-        type_ = Type::TYPES::ARRAY;
-        array_->emplace_back(type.substr(1));
-        break;
+    case '[':  // ARRAY
+    {
+      if (array_ == nullptr) {
+        array_ = new array_t{};
       }
+      type_ = Type::TYPES::ARRAY;
+      array_->emplace_back(type.substr(1));
+      break;
+    }
 
-    default:
-      {
-        LIEF_WARN("Unknown type: '{}'", t);
-      }
+    default: {
+      LIEF_WARN("Unknown type: '{}'", t);
+    }
   }
 }
 
@@ -206,9 +177,7 @@ size_t Type::dim() const {
   return d;
 }
 
-void Type::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Type::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Type::operator==(const Type& rhs) const {
   if (this == &rhs) {
@@ -219,117 +188,97 @@ bool Type::operator==(const Type& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Type::operator!=(const Type& rhs) const {
-  return !(*this == rhs);
-}
+bool Type::operator!=(const Type& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Type& type) {
   switch (type.type()) {
-    case Type::TYPES::ARRAY:
-      {
-        os << type.underlying_array_type();
-        for (size_t i = 0; i < type.dim(); ++i) {
-          os << "[]";
-        }
-        return os;
+    case Type::TYPES::ARRAY: {
+      os << type.underlying_array_type();
+      for (size_t i = 0; i < type.dim(); ++i) {
+        os << "[]";
       }
+      return os;
+    }
 
-    case Type::TYPES::CLASS:
-      {
-        os << type.cls().fullname();
-        return os;
-      }
+    case Type::TYPES::CLASS: {
+      os << type.cls().fullname();
+      return os;
+    }
 
-    case Type::TYPES::PRIMITIVE:
-      {
-        os << Type::pretty_name(type.primitive());
-        return os;
-      }
+    case Type::TYPES::PRIMITIVE: {
+      os << Type::pretty_name(type.primitive());
+      return os;
+    }
 
-    default:
-      {
-        return os;
-      }
+    default: {
+      return os;
+    }
   }
   return os;
 }
 
-
 std::string Type::pretty_name(PRIMITIVES p) {
   switch (p) {
-    case PRIMITIVES::BOOLEAN:
-      {
-        return "bool";
-      }
+    case PRIMITIVES::BOOLEAN: {
+      return "bool";
+    }
 
-    case PRIMITIVES::BYTE:
-      {
-        return "byte";
-      }
+    case PRIMITIVES::BYTE: {
+      return "byte";
+    }
 
-    case PRIMITIVES::CHAR:
-      {
-        return "char";
-      }
+    case PRIMITIVES::CHAR: {
+      return "char";
+    }
 
-    case PRIMITIVES::DOUBLE:
-      {
-        return "double";
-      }
+    case PRIMITIVES::DOUBLE: {
+      return "double";
+    }
 
-    case PRIMITIVES::FLOAT:
-      {
-        return "float";
-      }
+    case PRIMITIVES::FLOAT: {
+      return "float";
+    }
 
-    case PRIMITIVES::INT:
-      {
-        return "int";
-      }
+    case PRIMITIVES::INT: {
+      return "int";
+    }
 
-    case PRIMITIVES::LONG:
-      {
-        return "long";
-      }
+    case PRIMITIVES::LONG: {
+      return "long";
+    }
 
-    case PRIMITIVES::SHORT:
-      {
-        return "short";
-      }
+    case PRIMITIVES::SHORT: {
+      return "short";
+    }
 
-    case PRIMITIVES::VOID_T:
-      {
-        return "void";
-      }
+    case PRIMITIVES::VOID_T: {
+      return "void";
+    }
 
-    default:
-      {
-        return "";
-      }
+    default: {
+      return "";
+    }
   }
 }
 
 Type::~Type() {
   switch (type()) {
-    case Type::TYPES::ARRAY:
-      {
-        delete array_;
-        break;
-      }
+    case Type::TYPES::ARRAY: {
+      delete array_;
+      break;
+    }
 
-    case Type::TYPES::PRIMITIVE:
-      {
-        delete basic_;
-        break;
-      }
+    case Type::TYPES::PRIMITIVE: {
+      delete basic_;
+      break;
+    }
 
     case Type::TYPES::CLASS:
     case Type::TYPES::UNKNOWN:
-    default:
-      {
-      }
+    default: {
+    }
   }
 }
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

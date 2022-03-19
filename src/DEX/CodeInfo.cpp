@@ -16,8 +16,9 @@
  */
 
 #include "LIEF/DEX/CodeInfo.hpp"
-#include "LIEF/DEX/hash.hpp"
+
 #include "DEX/Structures.hpp"
+#include "LIEF/DEX/hash.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -26,16 +27,12 @@ CodeInfo::CodeInfo() = default;
 CodeInfo::CodeInfo(const CodeInfo&) = default;
 CodeInfo& CodeInfo::operator=(const CodeInfo&) = default;
 
-CodeInfo::CodeInfo(const details::code_item& codeitem) :
-  nb_registers_{codeitem.registers_size},
-  args_input_sizes_{codeitem.ins_size},
-  output_sizes_{codeitem.outs_size}
-{}
+CodeInfo::CodeInfo(const details::code_item& codeitem)
+    : nb_registers_{codeitem.registers_size},
+      args_input_sizes_{codeitem.ins_size},
+      output_sizes_{codeitem.outs_size} {}
 
-
-void CodeInfo::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CodeInfo::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool CodeInfo::operator==(const CodeInfo& rhs) const {
   if (this == &rhs) {
@@ -46,16 +43,13 @@ bool CodeInfo::operator==(const CodeInfo& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool CodeInfo::operator!=(const CodeInfo& rhs) const {
-  return !(*this == rhs);
-}
+bool CodeInfo::operator!=(const CodeInfo& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {
-
   return os;
 }
 
 CodeInfo::~CodeInfo() = default;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

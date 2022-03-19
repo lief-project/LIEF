@@ -13,56 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<class T>
+template <class T>
 using getter_t = T (LoadConfigurationV7::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (LoadConfigurationV7::*)(T);
 
-template<>
+template <>
 void create<LoadConfigurationV7>(py::module& m) {
   py::class_<LoadConfigurationV7, LoadConfigurationV6>(m, "LoadConfigurationV7")
-    .def(py::init<>())
+      .def(py::init<>())
 
-    .def_property("reserved3",
-        static_cast<getter_t<uint32_t>>(&LoadConfigurationV7::reserved3),
-        static_cast<setter_t<uint32_t>>(&LoadConfigurationV7::reserved3),
-        "")
+      .def_property(
+          "reserved3",
+          static_cast<getter_t<uint32_t>>(&LoadConfigurationV7::reserved3),
+          static_cast<setter_t<uint32_t>>(&LoadConfigurationV7::reserved3), "")
 
-    .def_property("addressof_unicode_string",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV7::addressof_unicode_string),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV7::addressof_unicode_string),
-        "")
+      .def_property("addressof_unicode_string",
+                    static_cast<getter_t<uint64_t>>(
+                        &LoadConfigurationV7::addressof_unicode_string),
+                    static_cast<setter_t<uint64_t>>(
+                        &LoadConfigurationV7::addressof_unicode_string),
+                    "")
 
+      .def("__eq__", &LoadConfigurationV7::operator==)
+      .def("__ne__", &LoadConfigurationV7::operator!=)
+      .def("__hash__",
+           [](const LoadConfigurationV7& config) { return Hash::hash(config); })
 
-    .def("__eq__", &LoadConfigurationV7::operator==)
-    .def("__ne__", &LoadConfigurationV7::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV7& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV7& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const LoadConfigurationV7& config) {
+        std::ostringstream stream;
+        stream << config;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

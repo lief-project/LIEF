@@ -13,54 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (NoteAbi::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (NoteAbi::*)(T);
 
-template<>
+template <>
 void create<NoteAbi>(py::module& m) {
-
   py::class_<NoteAbi, NoteDetails>(m, "NoteAbi")
 
-    .def_property_readonly("abi",
-        static_cast<getter_t<NOTE_ABIS>>(&NoteAbi::abi),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_ABIS) ""
-        )
+      .def_property_readonly(
+          "abi", static_cast<getter_t<NOTE_ABIS>>(&NoteAbi::abi),
+          "Return the target " RST_CLASS_REF(lief.ELF.NOTE_ABIS) "")
 
-    .def_property_readonly("version",
-        static_cast<getter_t<NoteAbi::version_t>>(&NoteAbi::version),
-        "Return the target version as ``(Major, Minor, Patch)``"
-        )
+      .def_property_readonly(
+          "version",
+          static_cast<getter_t<NoteAbi::version_t>>(&NoteAbi::version),
+          "Return the target version as ``(Major, Minor, Patch)``")
 
-    .def("__eq__", &NoteAbi::operator==)
-    .def("__ne__", &NoteAbi::operator!=)
-    .def("__hash__",
-        [] (const NoteAbi& note) {
-          return Hash::hash(note);
-        })
+      .def("__eq__", &NoteAbi::operator==)
+      .def("__ne__", &NoteAbi::operator!=)
+      .def("__hash__", [](const NoteAbi& note) { return Hash::hash(note); })
 
-    .def("__str__",
-        [] (const NoteAbi& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+      .def("__str__", [](const NoteAbi& note) {
+        std::ostringstream stream;
+        stream << note;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

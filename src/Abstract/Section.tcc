@@ -17,7 +17,7 @@
 #include <limits>
 namespace LIEF {
 
-template<typename T>
+template <typename T>
 std::vector<size_t> Section::search_all_(const T& v) const {
   std::vector<size_t> result;
   size_t pos = search(v, 0);
@@ -29,9 +29,9 @@ std::vector<size_t> Section::search_all_(const T& v) const {
   do {
     result.push_back(pos);
     pos = search(v, pos + 1);
-  } while(pos != Section::npos);
+  } while (pos != Section::npos);
 
   return result;
 }
 
-}
+}  // namespace LIEF

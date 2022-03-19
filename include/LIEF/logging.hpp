@@ -16,8 +16,8 @@
 #ifndef LIEF_LOGGING_H_
 #define LIEF_LOGGING_H_
 
-#include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace logging {
@@ -48,7 +48,7 @@ LIEF_API void enable();
 //! Change the logging level (**hierarchical**)
 LIEF_API void set_level(LOGGING_LEVEL level);
 
-}
-}
+}  // namespace logging
+}  // namespace LIEF
 
 #endif

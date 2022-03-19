@@ -18,9 +18,8 @@
 #include <iostream>
 #include <sstream>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 namespace LIEF {
 namespace PE {
 
@@ -28,16 +27,16 @@ class ResourcesManager;
 class ResourceVersion;
 struct ResourcesParser;
 
-//! This object describes information about languages supported by the application
+//! This object describes information about languages supported by the
+//! application
 //!
 //! @see LIEF::PE::ResourceVersion
 class LIEF_API ResourceVarFileInfo : public Object {
-
   friend class ResourcesManager;
   friend class ResourceVersion;
   friend struct ResourcesParser;
 
-  public:
+ public:
   ResourceVarFileInfo();
   ResourceVarFileInfo(uint16_t type, std::u16string key);
   ResourceVarFileInfo(const ResourceVarFileInfo&);
@@ -55,11 +54,12 @@ class LIEF_API ResourceVarFileInfo : public Object {
 
   //! List of languages that the application supports
   //!
-  //! The **least** significant 16-bits  must contain a Microsoft language identifier,
-  //! and the **most** significant 16-bits must contain the PE::CODE_PAGES
-  //! Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
+  //! The **least** significant 16-bits  must contain a Microsoft language
+  //! identifier, and the **most** significant 16-bits must contain the
+  //! PE::CODE_PAGES Either **most** or **least** 16-bits can be zero,
+  //! indicating that the file is language or code page independent.
   const std::vector<uint32_t>& translations() const;
-  std::vector<uint32_t>&       translations();
+  std::vector<uint32_t>& translations();
 
   void type(uint16_t type);
 
@@ -73,20 +73,16 @@ class LIEF_API ResourceVarFileInfo : public Object {
   bool operator==(const ResourceVarFileInfo& rhs) const;
   bool operator!=(const ResourceVarFileInfo& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceVarFileInfo& entry);
 
-  private:
-  uint16_t       type_ = 0;
+ private:
+  uint16_t type_ = 0;
   std::u16string key_;
   std::vector<uint32_t> translations_;
-
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

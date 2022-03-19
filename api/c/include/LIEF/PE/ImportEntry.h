@@ -18,10 +18,9 @@
 
 #include <inttypes.h>
 
-#include "LIEF/types.h"
-
-#include "LIEF/PE/enums.h"
 #include "LIEF/PE/ImportEntry.h"
+#include "LIEF/PE/enums.h"
+#include "LIEF/types.h"
 
 /**  @defgroup pe_import_entry_c_api Import Entry
  *  @ingroup pe_c_api
@@ -36,18 +35,17 @@ extern "C" {
 #endif
 
 struct Pe_ImportEntry_t {
-  bool        is_ordinal;
+  bool is_ordinal;
   const char* name;
-  uint16_t    ordinal;
-  uint64_t    hint_name_rva;
-  uint16_t    hint;
-  uint64_t    iat_value;
-  uint64_t    data;
-  uint64_t    iat_address;
+  uint16_t ordinal;
+  uint64_t hint_name_rva;
+  uint16_t hint;
+  uint64_t iat_value;
+  uint64_t data;
+  uint64_t iat_address;
 };
 
 typedef struct Pe_ImportEntry_t Pe_ImportEntry_t;
-
 
 #ifdef __cplusplus
 }

@@ -15,9 +15,8 @@
  */
 #include <LIEF/MachO.hpp>
 #include <LIEF/logging.hpp>
-
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 using namespace LIEF::MachO;
 
@@ -45,7 +44,6 @@ void print_binary(const Binary& binary) {
     std::cout << symbol << '\n';
   }
 
-
   std::cout << "== Exported symbols ==" << '\n';
   for (const Symbol& symbol : binary.exported_symbols()) {
     std::cout << symbol << '\n';
@@ -56,15 +54,13 @@ void print_binary(const Binary& binary) {
     std::cout << symbol << '\n';
   }
 
-
   std::cout << "== Relocations ==" << '\n';
   for (const Relocation& relocation : binary.relocations()) {
     std::cout << relocation << '\n';
   }
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   std::cout << "MachO Reader" << '\n';
   if (argc != 2) {
@@ -79,4 +75,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-

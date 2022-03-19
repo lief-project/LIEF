@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/ELF/SysvHash.hpp"
+
 #include <iomanip>
 #include <numeric>
 #include <sstream>
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/SysvHash.hpp"
-
 namespace LIEF {
 namespace ELF {
 SysvHash& SysvHash::operator=(const SysvHash&) = default;
-SysvHash::SysvHash(const SysvHash&)            = default;
-SysvHash::~SysvHash()                          = default;
-SysvHash::SysvHash()                           = default;
-SysvHash& SysvHash::operator=(SysvHash&&)      = default;
-SysvHash::SysvHash(SysvHash&&)                 = default;
-
+SysvHash::SysvHash(const SysvHash&) = default;
+SysvHash::~SysvHash() = default;
+SysvHash::SysvHash() = default;
+SysvHash& SysvHash::operator=(SysvHash&&) = default;
+SysvHash::SysvHash(SysvHash&&) = default;
 
 uint32_t SysvHash::nbucket() const {
   return static_cast<uint32_t>(buckets_.size());
@@ -39,13 +38,9 @@ uint32_t SysvHash::nchain() const {
   return static_cast<uint32_t>(chains_.size());
 }
 
-const std::vector<uint32_t>& SysvHash::buckets() const {
-  return buckets_;
-}
+const std::vector<uint32_t>& SysvHash::buckets() const { return buckets_; }
 
-const std::vector<uint32_t>& SysvHash::chains() const {
-  return chains_;
-}
+const std::vector<uint32_t>& SysvHash::chains() const { return chains_; }
 
 bool SysvHash::operator==(const SysvHash& rhs) const {
   if (this == &rhs) {
@@ -56,26 +51,19 @@ bool SysvHash::operator==(const SysvHash& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool SysvHash::operator!=(const SysvHash& rhs) const {
-  return !(*this == rhs);
-}
+bool SysvHash::operator!=(const SysvHash& rhs) const { return !(*this == rhs); }
 
-
-void SysvHash::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void SysvHash::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
   os << std::hex << std::left;
 
   const std::vector<uint32_t>& buckets = sysvhash.buckets();
-  const std::vector<uint32_t>& chains  = sysvhash.chains();
+  const std::vector<uint32_t>& chains = sysvhash.chains();
 
   std::string buckets_str = std::accumulate(
-      std::begin(buckets),
-      std::end(buckets), std::string{},
-      [] (const std::string& a, uint32_t b) {
+      std::begin(buckets), std::end(buckets), std::string{},
+      [](const std::string& a, uint32_t b) {
         std::ostringstream dec_bucket;
         dec_bucket << std::dec;
         dec_bucket << b;
@@ -83,12 +71,10 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
         return a.empty() ? "[" + dec_bucket.str() : a + ", " + dec_bucket.str();
       });
   buckets_str += "]";
-
 
   std::string chains_str = std::accumulate(
-      std::begin(chains),
-      std::end(chains), std::string{},
-      [] (const std::string& a, uint32_t b) {
+      std::begin(chains), std::end(chains), std::string{},
+      [](const std::string& a, uint32_t b) {
         std::ostringstream dec_bucket;
         dec_bucket << std::dec;
         dec_bucket << b;
@@ -97,17 +83,18 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
       });
   buckets_str += "]";
 
+  os << std::setw(33) << std::setfill(' ')
+     << "Number of buckets:" << sysvhash.nbucket() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Buckets:" << buckets_str
+     << std::endl;
 
-
-  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << sysvhash.nbucket() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str        << std::endl;
-
-  os << std::setw(33) << std::setfill(' ') << "Number of chains:"   << sysvhash.nchain() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Chains:"             << chains_str        << std::endl;
+  os << std::setw(33) << std::setfill(' ')
+     << "Number of chains:" << sysvhash.nchain() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Chains:" << chains_str
+     << std::endl;
 
   return os;
-
 }
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

@@ -20,28 +20,21 @@
 
 namespace LIEF {
 namespace ELF {
-DynamicSharedObject::DynamicSharedObject() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0}
-{}
+DynamicSharedObject::DynamicSharedObject()
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0} {}
 
-DynamicSharedObject& DynamicSharedObject::operator=(const DynamicSharedObject&) = default;
+DynamicSharedObject& DynamicSharedObject::operator=(
+    const DynamicSharedObject&) = default;
 
 DynamicSharedObject::DynamicSharedObject(const DynamicSharedObject&) = default;
 
-DynamicSharedObject::DynamicSharedObject(std::string name) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
-  name_{std::move(name)}
-{}
+DynamicSharedObject::DynamicSharedObject(std::string name)
+    : DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
+      name_{std::move(name)} {}
 
+const std::string& DynamicSharedObject::name() const { return name_; }
 
-const std::string& DynamicSharedObject::name() const {
-  return name_;
-}
-
-
-void DynamicSharedObject::name(const std::string& name) {
-  name_ = name;
-}
+void DynamicSharedObject::name(const std::string& name) { name_ = name; }
 
 void DynamicSharedObject::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -52,17 +45,10 @@ bool DynamicSharedObject::classof(const DynamicEntry* entry) {
   return tag == DYNAMIC_TAGS::DT_SONAME;
 }
 
-
 std::ostream& DynamicSharedObject::print(std::ostream& os) const {
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << std::setw(10) << name();
+  os << std::hex << std::left << std::setw(10) << name();
   return os;
-
 }
-}
-}
-
-
-
+}  // namespace ELF
+}  // namespace LIEF

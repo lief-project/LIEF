@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/MachO/hash.hpp"
+
 #include "LIEF/MachO.hpp"
 #include "Object.tcc"
 
@@ -32,7 +33,6 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.commands()), std::end(binary.commands()));
   process(std::begin(binary.symbols()), std::end(binary.symbols()));
 }
-
 
 void Hash::visit(const Header& header) {
   process(header.magic());
@@ -58,7 +58,6 @@ void Hash::visit(const UUIDCommand& uuid) {
 }
 
 void Hash::visit(const SymbolCommand& symbol) {
-
   visit(*symbol.as<LoadCommand>());
   process(symbol.symbol_offset());
   process(symbol.numberof_symbols());
@@ -67,7 +66,6 @@ void Hash::visit(const SymbolCommand& symbol) {
 }
 
 void Hash::visit(const SegmentCommand& segment) {
-
   visit(*segment.as<LoadCommand>());
   process(segment.name());
   process(segment.virtual_address());
@@ -99,7 +97,6 @@ void Hash::visit(const Section& section) {
 }
 
 void Hash::visit(const MainCommand& maincmd) {
-
   visit(*maincmd.as<LoadCommand>());
 
   process(maincmd.entrypoint());
@@ -171,17 +168,16 @@ void Hash::visit(const Symbol& symbol) {
   process(symbol.numberof_sections());
   process(symbol.description());
 
-  //if (symbol.has_binding_info()) {
-  //  process(symbol.binding_info());
-  //}
+  // if (symbol.has_binding_info()) {
+  //   process(symbol.binding_info());
+  // }
 
-  //if (symbol.has_export_info()) {
-  //  process(symbol.export_info());
-  //}
+  // if (symbol.has_export_info()) {
+  //   process(symbol.export_info());
+  // }
 }
 
 void Hash::visit(const Relocation& relocation) {
-
   process(relocation.size());
   process(relocation.address());
   process(static_cast<size_t>(relocation.is_pc_relative()));
@@ -194,7 +190,6 @@ void Hash::visit(const Relocation& relocation) {
 }
 
 void Hash::visit(const RelocationObject& robject) {
-
   visit(*robject.as<Relocation>());
   process(static_cast<size_t>(robject.is_scattered()));
   if (robject.is_scattered()) {
@@ -207,7 +202,6 @@ void Hash::visit(const RelocationDyld& rdyld) {
 }
 
 void Hash::visit(const BindingInfo& binding) {
-
   process(binding.binding_class());
   process(binding.binding_type());
   process(binding.library_ordinal());
@@ -239,7 +233,6 @@ void Hash::visit(const FunctionStarts& fs) {
   process(fs.data_offset());
   process(fs.data_size());
   process(fs.functions());
-
 }
 
 void Hash::visit(const CodeSignature& cs) {
@@ -316,8 +309,5 @@ void Hash::visit(const FilesetCommand& e) {
   process(e.file_offset());
 }
 
-
-
-} // namespace MachO
-} // namespace LIEF
-
+}  // namespace MachO
+}  // namespace LIEF

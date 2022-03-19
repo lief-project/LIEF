@@ -19,12 +19,10 @@
 #include <iostream>
 #include <set>
 
+#include "LIEF/Abstract/enums.hpp"
+#include "LIEF/MachO/enums.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/Abstract/enums.hpp"
-
-#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -32,17 +30,17 @@ namespace MachO {
 namespace details {
 struct mach_header_64;
 struct mach_header;
-}
+}  // namespace details
 
 //! Class that represents the Mach-O header
 class LIEF_API Header : public Object {
-  public:
+ public:
   using flags_list_t = std::set<HEADER_FLAGS>;
 
-  public:
+ public:
   Header();
   Header(const details::mach_header_64& header);
-  Header(const details::mach_header&    header);
+  Header(const details::mach_header& header);
 
   Header& operator=(const Header& copy);
   Header(const Header& copy);
@@ -61,7 +59,8 @@ class LIEF_API Header : public Object {
   //! for which the Mach-O binary has been compiled for.
   uint32_t cpu_subtype() const;
 
-  //! Return the type of the Mach-O file (executable, object, shared library, ...)
+  //! Return the type of the Mach-O file (executable, object, shared library,
+  //! ...)
   FILE_TYPES file_type() const;
 
   //! Return the HEADER_FLAGS as a std::set
@@ -114,17 +113,17 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
-  private:
+ private:
   MACHO_TYPES magic_;
-  CPU_TYPES   cputype_;
-  uint32_t    cpusubtype_;
-  FILE_TYPES  filetype_;
-  uint32_t    ncmds_;
-  uint32_t    sizeofcmds_;
-  uint32_t    flags_;
-  uint32_t    reserved_;
+  CPU_TYPES cputype_;
+  uint32_t cpusubtype_;
+  FILE_TYPES filetype_;
+  uint32_t ncmds_;
+  uint32_t sizeofcmds_;
+  uint32_t flags_;
+  uint32_t reserved_;
 };
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF
 #endif

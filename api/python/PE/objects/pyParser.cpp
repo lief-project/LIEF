@@ -13,40 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <string>
 
 #include "LIEF/PE/Parser.hpp"
-
-#include <string>
+#include "pyPE.hpp"
 
 namespace LIEF {
 namespace PE {
 
-template<>
+template <>
 void create<Parser>(py::module& m) {
+  m.def("parse",
+        static_cast<std::unique_ptr<Binary> (*)(const std::string&)>(
+            &Parser::parse),
+        "Parse the PE binary from the given **file path** and return "
+        "a " RST_CLASS_REF(lief.PE.Binary) " object",
+        "filename"_a, py::return_value_policy::take_ownership);
 
-    m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
-      "Parse the PE binary from the given **file path** and return a " RST_CLASS_REF(lief.PE.Binary) " object",
-      "filename"_a,
-      py::return_value_policy::take_ownership);
+  m.def("parse",
+        static_cast<std::unique_ptr<Binary> (*)(
+            std::vector<uint8_t>, const std::string&)>(&Parser::parse),
+        "Parse the PE binary from the given **list of bytes** and return a "
+        ":class:`lief.PE.Binary` object",
+        "raw"_a, "name"_a = "", py::return_value_policy::take_ownership);
 
-    m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>, const std::string&)>(&Parser::parse),
-      "Parse the PE binary from the given **list of bytes** and return a :class:`lief.PE.Binary` object",
-      "raw"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
-
-
-    m.def("parse",
-      [] (py::object byteio, const std::string& name) {
+  m.def(
+      "parse",
+      [](py::object byteio, const std::string& name) {
         const auto& io = py::module::import("io");
         const auto& RawIOBase = io.attr("RawIOBase");
         const auto& BufferedIOBase = io.attr("BufferedIOBase");
         const auto& TextIOBase = io.attr("TextIOBase");
 
         py::object rawio;
-
 
         if (py::isinstance(byteio, RawIOBase)) {
           rawio = byteio;
@@ -67,16 +66,15 @@ void create<Parser>(py::module& m) {
         std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
 
         std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))
-        };
+            std::make_move_iterator(std::begin(raw_str)),
+            std::make_move_iterator(std::end(raw_str))};
 
         return LIEF::PE::Parser::parse(std::move(raw), name);
       },
-      "Parse the PE binary from the given Python IO interface and return a :class:`lief.PE.Binary` object",
-      "io"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
+      "Parse the PE binary from the given Python IO interface and return a "
+      ":class:`lief.PE.Binary` object",
+      "io"_a, "name"_a = "", py::return_value_policy::take_ownership);
 }
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF

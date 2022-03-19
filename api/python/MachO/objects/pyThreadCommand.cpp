@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (ThreadCommand::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (ThreadCommand::*)(T);
 
-
-
-template<>
+template <>
 void create<ThreadCommand>(py::module& m) {
-
   py::class_<ThreadCommand, LoadCommand>(m, "ThreadCommand",
-      R"delim(
+                                         R"delim(
       Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
       can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
 
@@ -46,10 +41,10 @@ void create<ThreadCommand>(py::module& m) {
       of the main thread which includes the registers' values
       )delim")
 
-    .def_property("flavor",
-        static_cast<getter_t<uint32_t>>(&ThreadCommand::flavor),
-        static_cast<setter_t<uint32_t>>(&ThreadCommand::flavor),
-        R"delim(
+      .def_property("flavor",
+                    static_cast<getter_t<uint32_t>>(&ThreadCommand::flavor),
+                    static_cast<setter_t<uint32_t>>(&ThreadCommand::flavor),
+                    R"delim(
         Integer that defines a special *flavor* for the thread.
 
         The meaning of this value depends on the :attr:`~lief.MachO.ThreadCommand.architecture`.
@@ -59,57 +54,52 @@ void create<ThreadCommand>(py::module& m) {
         - xnu/osfmk/mach/i386/thread_status.h for the x86/x86-64 architectures
         )delim")
 
-
-    .def_property("state",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&ThreadCommand::state),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&ThreadCommand::state),
-        R"delim(
+      .def_property("state",
+                    static_cast<getter_t<const std::vector<uint8_t>&>>(
+                        &ThreadCommand::state),
+                    static_cast<setter_t<const std::vector<uint8_t>&>>(
+                        &ThreadCommand::state),
+                    R"delim(
         The actual thread state as a vector of bytes. Depending on the architecture(),
         these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
         )delim")
 
-
-    .def_property("count",
-        static_cast<getter_t<uint32_t>>(&ThreadCommand::count),
-        static_cast<setter_t<uint32_t>>(&ThreadCommand::count),
-        R"delim(
+      .def_property("count",
+                    static_cast<getter_t<uint32_t>>(&ThreadCommand::count),
+                    static_cast<setter_t<uint32_t>>(&ThreadCommand::count),
+                    R"delim(
         Size of the thread state data with 32-bits alignment.
 
         This value should match len(:attr:`~lief.MachO.ThreadCommand.state`)
         )delim")
 
-    .def_property_readonly("pc",
-        static_cast<getter_t<uint64_t>>(&ThreadCommand::pc),
-        R"delim(
+      .def_property_readonly(
+          "pc", static_cast<getter_t<uint64_t>>(&ThreadCommand::pc),
+          R"delim(
         Return the initial Program Counter regardless of the underlying architecture.
         This value, when non null, can be used to determine the binary's entrypoint.
 
         Underneath, it works by looking for the PC register value in the :attr:`~lief.MachO.ThreadCommand.state` data
         )delim")
 
-    .def_property("architecture",
-        static_cast<getter_t<CPU_TYPES>>(&ThreadCommand::architecture),
-        static_cast<setter_t<CPU_TYPES>>(&ThreadCommand::architecture),
-        "The CPU architecture that is targeted by this ThreadCommand")
+      .def_property(
+          "architecture",
+          static_cast<getter_t<CPU_TYPES>>(&ThreadCommand::architecture),
+          static_cast<setter_t<CPU_TYPES>>(&ThreadCommand::architecture),
+          "The CPU architecture that is targeted by this ThreadCommand")
 
-    .def("__eq__", &ThreadCommand::operator==)
-    .def("__ne__", &ThreadCommand::operator!=)
-    .def("__hash__",
-        [] (const ThreadCommand& thread) {
-          return LIEF::Hash::hash(thread);
-        })
+      .def("__eq__", &ThreadCommand::operator==)
+      .def("__ne__", &ThreadCommand::operator!=)
+      .def("__hash__",
+           [](const ThreadCommand& thread) { return LIEF::Hash::hash(thread); })
 
-
-    .def("__str__",
-        [] (const ThreadCommand& thread)
-        {
-          std::ostringstream stream;
-          stream << thread;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const ThreadCommand& thread) {
+        std::ostringstream stream;
+        stream << thread;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

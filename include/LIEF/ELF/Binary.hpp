@@ -16,16 +16,13 @@
 #ifndef LIEF_ELF_BINARY_H_
 #define LIEF_ELF_BINARY_H_
 
-#include <vector>
 #include <memory>
-
-#include "LIEF/visibility.h"
-
-#include "LIEF/iterators.hpp"
+#include <vector>
 
 #include "LIEF/Abstract/Binary.hpp"
-
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 //! Namespace related to the LIEF's ELF module
@@ -59,9 +56,9 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class Layout;
   friend class ObjectFileLayout;
 
-  public:
-  using string_list_t  = std::vector<std::string>;
-  using overlay_t      = std::vector<uint8_t>;
+ public:
+  using string_list_t = std::vector<std::string>;
+  using overlay_t = std::vector<uint8_t>;
 
   //! Internal container for storing notes
   using notes_t = std::vector<std::unique_ptr<Note>>;
@@ -73,22 +70,30 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_notes = const_ref_iterator<const notes_t&, const Note*>;
 
   //! Internal container for storing SymbolVersionRequirement
-  using symbols_version_requirement_t = std::vector<std::unique_ptr<SymbolVersionRequirement>>;
+  using symbols_version_requirement_t =
+      std::vector<std::unique_ptr<SymbolVersionRequirement>>;
 
   //! Iterator which outputs SymbolVersionRequirement& object
-  using it_symbols_version_requirement = ref_iterator<symbols_version_requirement_t&, SymbolVersionRequirement*>;
+  using it_symbols_version_requirement =
+      ref_iterator<symbols_version_requirement_t&, SymbolVersionRequirement*>;
 
   //! Iterator which outputs const SymbolVersionRequirement& object
-  using it_const_symbols_version_requirement = const_ref_iterator<const symbols_version_requirement_t&, const SymbolVersionRequirement*>;
+  using it_const_symbols_version_requirement =
+      const_ref_iterator<const symbols_version_requirement_t&,
+                         const SymbolVersionRequirement*>;
 
   //! Internal container for storing SymbolVersionDefinition
-  using symbols_version_definition_t = std::vector<std::unique_ptr<SymbolVersionDefinition>>;
+  using symbols_version_definition_t =
+      std::vector<std::unique_ptr<SymbolVersionDefinition>>;
 
   //! Iterator which outputs SymbolVersionDefinition& object
-  using it_symbols_version_definition       = ref_iterator<symbols_version_definition_t&, SymbolVersionDefinition*>;
+  using it_symbols_version_definition =
+      ref_iterator<symbols_version_definition_t&, SymbolVersionDefinition*>;
 
   //! Iterator which outputs const SymbolVersionDefinition& object
-  using it_const_symbols_version_definition = const_ref_iterator<const symbols_version_definition_t&, const SymbolVersionDefinition*>;
+  using it_const_symbols_version_definition =
+      const_ref_iterator<const symbols_version_definition_t&,
+                         const SymbolVersionDefinition*>;
 
   //! Internal container for storing ELF's Segment
   using segments_t = std::vector<std::unique_ptr<Segment>>;
@@ -97,7 +102,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_segments = ref_iterator<segments_t&, Segment*>;
 
   //! Iterator which outputs const Segment& object
-  using it_const_segments = const_ref_iterator<const segments_t&, const Segment*>;
+  using it_const_segments =
+      const_ref_iterator<const segments_t&, const Segment*>;
 
   //! Internal container for storing ELF's DynamicEntry
   using dynamic_entries_t = std::vector<std::unique_ptr<DynamicEntry>>;
@@ -106,7 +112,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_dynamic_entries = ref_iterator<dynamic_entries_t&, DynamicEntry*>;
 
   //! Iterator which outputs const DynamicEntry& object
-  using it_const_dynamic_entries = const_ref_iterator<const dynamic_entries_t&, const DynamicEntry*>;
+  using it_const_dynamic_entries =
+      const_ref_iterator<const dynamic_entries_t&, const DynamicEntry*>;
 
   //! Internal container for storing ELF's SymbolVersion
   using symbols_version_t = std::vector<std::unique_ptr<SymbolVersion>>;
@@ -115,7 +122,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_symbols_version = ref_iterator<symbols_version_t&, SymbolVersion*>;
 
   //! Iterator which outputs const SymbolVersion& object
-  using it_const_symbols_version = const_ref_iterator<const symbols_version_t&, const SymbolVersion*>;
+  using it_const_symbols_version =
+      const_ref_iterator<const symbols_version_t&, const SymbolVersion*>;
 
   //! Internal container for storing ELF's Relocation
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
@@ -124,25 +132,31 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_pltgot_relocations = filter_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs plt/got const Relocation& object
-  using it_const_pltgot_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+  using it_const_pltgot_relocations =
+      const_filter_iterator<const relocations_t&, const Relocation*>;
 
-  //! Iterator which outputs dynamic Relocation& object (not related to the PLT/GOT mechanism)
+  //! Iterator which outputs dynamic Relocation& object (not related to the
+  //! PLT/GOT mechanism)
   using it_dynamic_relocations = filter_iterator<relocations_t&, Relocation*>;
 
-  //! Iterator which outputs dynamic const Relocation& object (not related to the PLT/GOT mechanism)
-  using it_const_dynamic_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+  //! Iterator which outputs dynamic const Relocation& object (not related to
+  //! the PLT/GOT mechanism)
+  using it_const_dynamic_relocations =
+      const_filter_iterator<const relocations_t&, const Relocation*>;
 
   //! Iterator which outputs Relocation& object found in object files (.o)
   using it_object_relocations = filter_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs const Relocation& object found in object files (.o)
-  using it_const_object_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+  using it_const_object_relocations =
+      const_filter_iterator<const relocations_t&, const Relocation*>;
 
   //! Iterator which outputs Relocation& object
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   //! Iterator which outputs const Relocation& object
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
   //! Internal container for storing ELF's Symbol
   using symbols_t = std::vector<std::unique_ptr<Symbol>>;
@@ -151,13 +165,15 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_dynamic_symbols = ref_iterator<symbols_t&, Symbol*>;
 
   //! Iterator which outputs the Dynamic const Symbol& object
-  using it_const_dynamic_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+  using it_const_dynamic_symbols =
+      const_ref_iterator<const symbols_t&, const Symbol*>;
 
   //! Iterator which outputs the static/debug Symbol& object
   using it_static_symbols = ref_iterator<symbols_t&, Symbol*>;
 
   //! Iterator which outputs the static/debug const Symbol& object
-  using it_const_static_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+  using it_const_static_symbols =
+      const_ref_iterator<const symbols_t&, const Symbol*>;
 
   //! Iterator which outputs static and dynamic Symbol& object
   using it_symbols = ref_iterator<std::vector<Symbol*>>;
@@ -184,17 +200,18 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_sections = ref_iterator<sections_t&, Section*>;
 
   //! Iterator which outputs const Section& object
-  using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
+  using it_const_sections =
+      const_ref_iterator<const sections_t&, const Section*>;
 
-  public:
-  Binary& operator=(const Binary& ) = delete;
+ public:
+  Binary& operator=(const Binary&) = delete;
   Binary(const Binary& copy) = delete;
 
   //! Return binary's class (ELF32 or ELF64)
   ELF_CLASS type() const;
 
   //! Return @link ELF::Header Elf header @endlink
-  Header&       header();
+  Header& header();
   const Header& header() const;
 
   //! Return the last offset used in binary
@@ -209,18 +226,18 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t next_virtual_address() const;
 
   //! Return an iterator over the binary's sections
-  it_sections       sections();
+  it_sections sections();
   it_const_sections sections() const;
 
   //! Return the binary's entrypoint
   uint64_t entrypoint() const override;
 
   //! Return binary's segments
-  it_segments       segments();
+  it_segments segments();
   it_const_segments segments() const;
 
   //! Return binary's dynamic entries
-  it_dynamic_entries       dynamic_entries();
+  it_dynamic_entries dynamic_entries();
   it_const_dynamic_entries dynamic_entries() const;
 
   //! Add the given dynamic entry and return the new entry
@@ -253,35 +270,35 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return an iterator over the binary's dynamic symbols
   //! The dynamic symbols are those located in the ``.dynsym`` section
-  it_dynamic_symbols       dynamic_symbols();
+  it_dynamic_symbols dynamic_symbols();
   it_const_dynamic_symbols dynamic_symbols() const;
 
   //! Return symbols which are exported by the binary
-  it_exported_symbols       exported_symbols();
+  it_exported_symbols exported_symbols();
   it_const_exported_symbols exported_symbols() const;
 
   //! Return symbols which are imported by the binary
-  it_imported_symbols       imported_symbols();
+  it_imported_symbols imported_symbols();
   it_const_imported_symbols imported_symbols() const;
 
   //! Return statics symbols.
-  it_static_symbols       static_symbols();
+  it_static_symbols static_symbols();
   it_const_static_symbols static_symbols() const;
 
   //! Return the symbol versions
-  it_symbols_version       symbols_version();
+  it_symbols_version symbols_version();
   it_const_symbols_version symbols_version() const;
 
   //! Return symbols version definition
-  it_symbols_version_definition       symbols_version_definition();
+  it_symbols_version_definition symbols_version_definition();
   it_const_symbols_version_definition symbols_version_definition() const;
 
   //! Return Symbol version requirement
-  it_symbols_version_requirement       symbols_version_requirement();
+  it_symbols_version_requirement symbols_version_requirement();
   it_const_symbols_version_requirement symbols_version_requirement() const;
 
   //! Return dynamic relocations
-  it_dynamic_relocations       dynamic_relocations();
+  it_dynamic_relocations dynamic_relocations();
   it_const_dynamic_relocations dynamic_relocations() const;
 
   //! Add a new *dynamic* relocation.
@@ -302,36 +319,37 @@ class LIEF_API Binary : public LIEF::Binary {
   //! The first parameter is the section to add while the second parameter
   //! is the LIEF::ELF::Section associated with the relocation.
   //!
-  //! If there is an error, this function returns a ``nullptr``. Otherwise, it returns
-  //! the relocation added.
-  Relocation* add_object_relocation(const Relocation& relocation, const Section& section);
+  //! If there is an error, this function returns a ``nullptr``. Otherwise, it
+  //! returns the relocation added.
+  Relocation* add_object_relocation(const Relocation& relocation,
+                                    const Section& section);
 
   //! Return `plt.got` relocations
-  it_pltgot_relocations       pltgot_relocations();
+  it_pltgot_relocations pltgot_relocations();
   it_const_pltgot_relocations pltgot_relocations() const;
 
   //! Return relocations used in an object file (``*.o``)
-  it_object_relocations       object_relocations();
+  it_object_relocations object_relocations();
   it_const_object_relocations object_relocations() const;
 
   //! Return **all** relocations present in the binary
-  it_relocations       relocations();
+  it_relocations relocations();
   it_const_relocations relocations() const;
 
   //! Return relocation associated with the given address.
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(uint64_t address) const;
-  Relocation*       get_relocation(uint64_t address);
+  Relocation* get_relocation(uint64_t address);
 
   //! Return relocation associated with the given Symbol
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(const Symbol& symbol) const;
-  Relocation*       get_relocation(const Symbol& symbol);
+  Relocation* get_relocation(const Symbol& symbol);
 
   //! Return relocation associated with the given Symbol name
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(const std::string& symbol_name) const;
-  Relocation*       get_relocation(const std::string& symbol_name);
+  Relocation* get_relocation(const std::string& symbol_name);
 
   //! ``true`` if GNU hash is used
   //!
@@ -348,7 +366,8 @@ class LIEF_API Binary : public LIEF::Binary {
   bool use_sysv_hash() const;
 
   //! Return the SysvHash object as a **read-only** object
-  //! If the ELF binary does not use the legacy sysv hash table, return a nullptr
+  //! If the ELF binary does not use the legacy sysv hash table, return a
+  //! nullptr
   const SysvHash* sysv_hash() const;
 
   //! Check if a section with the given name exists in the binary
@@ -362,7 +381,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return Section with the given `name`. If the section can't be
   //! found, it returns a nullptr
-  Section*       get_section(const std::string& name);
+  Section* get_section(const std::string& name);
   const Section* get_section(const std::string& name) const;
 
   //! Return the `.text` section. If the section
@@ -404,7 +423,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void interpreter(const std::string& interpreter);
 
   //! Return an iterator on both static and dynamic symbols
-  it_symbols       symbols();
+  it_symbols symbols();
   it_const_symbols symbols() const;
 
   //! Export the given symbol and create it if it doesn't exist
@@ -413,7 +432,8 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Export the symbol with the given name and create it if it doesn't exist
   Symbol& export_symbol(const std::string& symbol_name, uint64_t value = 0);
 
-  //! Check if the symbol with the given ``name`` exists in the dynamic symbols table
+  //! Check if the symbol with the given ``name`` exists in the dynamic symbols
+  //! table
   bool has_dynamic_symbol(const std::string& name) const;
 
   //! Get the dynamic symbol from the given name.
@@ -422,7 +442,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   Symbol* get_dynamic_symbol(const std::string& name);
 
-  //! Check if the symbol with the given ``name`` exists in the static symbol table
+  //! Check if the symbol with the given ``name`` exists in the static symbol
+  //! table
   bool has_static_symbol(const std::string& name) const;
 
   //! Get the static symbol from the given name
@@ -464,15 +485,18 @@ class LIEF_API Binary : public LIEF::Binary {
   //
   //! @param[in] func_name    The function's name target
   //! @param[in] demangled    Use the demangled name
-  uint64_t get_function_address(const std::string& func_name, bool demangled) const;
+  uint64_t get_function_address(const std::string& func_name,
+                                bool demangled) const;
 
   //! Add a new section in the binary
   //!
   //! @param[in] section    The section object to insert
-  //! @param[in] loaded     Boolean value to indicate that section's data must be loaded
+  //! @param[in] loaded     Boolean value to indicate that section's data must
+  //! be loaded
   //!                       by a PT_LOAD segment
   //!
-  //! @return The section added. The `size` and the `virtual address` might change.
+  //! @return The section added. The `size` and the `virtual address` might
+  //! change.
   Section& add(const Section& section, bool loaded = true);
 
   Section& extend(const Section& section, uint64_t size);
@@ -481,7 +505,8 @@ class LIEF_API Binary : public LIEF::Binary {
   Symbol& add_static_symbol(const Symbol& symbol);
 
   //! Add a dynamic symbol with the associated SymbolVersion
-  Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* version = nullptr);
+  Symbol& add_dynamic_symbol(const Symbol& symbol,
+                             const SymbolVersion* version = nullptr);
 
   //! Create a symbol for the function at the given address and export it
   Symbol& add_exported_function(uint64_t address, const std::string& name = "");
@@ -507,42 +532,45 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! The segment is inserted at the end
   //!
-  //! @return The segment added. `Virtual address` and `File Offset` might change.
+  //! @return The segment added. `Virtual address` and `File Offset` might
+  //! change.
   Segment& add(const Segment& segment, uint64_t base = 0);
 
-  //! Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment.
+  //! Replace the segment given in 2nd parameter with the segment given in the
+  //! first one and return the updated segment.
   //!
   //! @warning The ``original_segment`` is no longer valid after this function
-  Segment& replace(const Segment& new_segment, const Segment& original_segment, uint64_t base = 0);
+  Segment& replace(const Segment& new_segment, const Segment& original_segment,
+                   uint64_t base = 0);
 
   Segment& extend(const Segment& segment, uint64_t size);
-
 
   //! Patch the content at virtual address @p address with @p patch_value
   //!
   //! @param[in] address      Address to patch
   //! @param[in] patch_value  Patch to apply
-  //! @param[in] addr_type    Specify if the address should be used as an absolute virtual address or an RVA
-  void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
-
+  //! @param[in] addr_type    Specify if the address should be used as an
+  //! absolute virtual address or an RVA
+  void patch_address(
+      uint64_t address, const std::vector<uint8_t>& patch_value,
+      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Patch the address with the given value
   //!
   //! @param[in] address        Address to patch
   //! @param[in] patch_value    Patch to apply
   //! @param[in] size           Size of the value in **bytes** (1, 2, ... 8)
-  //! @param[in] addr_type      Specify if the address should be used as an absolute virtual address or an RVA
-  void patch_address(uint64_t address, uint64_t patch_value,
-                     size_t size = sizeof(uint64_t),
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  //! @param[in] addr_type      Specify if the address should be used as an
+  //! absolute virtual address or an RVA
+  void patch_address(
+      uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
 
   //! Patch the imported symbol with the ``address``
   //!
   //! @param[in] symbol Imported symbol to patch
   //! @param[in] address New address
   void patch_pltgot(const Symbol& symbol, uint64_t address);
-
 
   //! Patch the imported symbol's name with the ``address``
   //!
@@ -573,8 +601,10 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Convert the given offset into a virtual address.
   //!
   //! @param[in] offset   The offset to convert.
-  //! @param[in] slide    If not 0, it will replace the default base address (if any)
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  //! @param[in] slide    If not 0, it will replace the default base address (if
+  //! any)
+  uint64_t offset_to_virtual_address(uint64_t offset,
+                                     uint64_t slide = 0) const override;
 
   //! Check if the binary has been compiled with `-fpie -pie` flags
   //!
@@ -588,48 +618,53 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return the ELF::Section from the given @p offset. Return a nullptr
   //! if a section can't be found
   //!
-  //! If @p skip_nobits is set (which is the case by default), this function won't
-  //! consider section for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-  const Section* section_from_offset(uint64_t offset, bool skip_nobits = true) const;
-  Section*       section_from_offset(uint64_t offset, bool skip_nobits = true);
+  //! If @p skip_nobits is set (which is the case by default), this function
+  //! won't consider section for which the type is ``SHT_NOBITS`` (like ``.bss,
+  //! .tbss, ...``)
+  const Section* section_from_offset(uint64_t offset,
+                                     bool skip_nobits = true) const;
+  Section* section_from_offset(uint64_t offset, bool skip_nobits = true);
 
   //! Return the ELF::Section from the given @p address. Return a nullptr
   //! if a section can't be found.
   //!
-  //! If @p skip_nobits is set (which is the case by default), this function won't
-  //! consider section for which type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-  const Section* section_from_virtual_address(uint64_t address, bool skip_nobits = true) const;
-  Section*       section_from_virtual_address(uint64_t address, bool skip_nobits = true);
+  //! If @p skip_nobits is set (which is the case by default), this function
+  //! won't consider section for which type is ``SHT_NOBITS`` (like ``.bss,
+  //! .tbss, ...``)
+  const Section* section_from_virtual_address(uint64_t address,
+                                              bool skip_nobits = true) const;
+  Section* section_from_virtual_address(uint64_t address,
+                                        bool skip_nobits = true);
 
   //! Return the ELF::Segment from the given @p address. Return a nullptr
   //! if a segment can't be found.
   const Segment* segment_from_virtual_address(uint64_t address) const;
-  Segment*       segment_from_virtual_address(uint64_t address);
+  Segment* segment_from_virtual_address(uint64_t address);
 
   //! Return the ELF::Segment from the @p offset. Return a nullptr
   //! if a segment can't be found.
   const Segment* segment_from_offset(uint64_t offset) const;
-  Segment*       segment_from_offset(uint64_t offset);
+  Segment* segment_from_offset(uint64_t offset);
 
   //! Return the **first** ELF::DynamicEntry associated with the given tag
   //! If the tag can't be found, it returns a nullptr
   const DynamicEntry* get(DYNAMIC_TAGS tag) const;
-  DynamicEntry*       get(DYNAMIC_TAGS tag);
+  DynamicEntry* get(DYNAMIC_TAGS tag);
 
   //! Return the **first** ELF::Segment associated with the given type.
   //! If a segment can't be found, it returns a nullptr.
   const Segment* get(SEGMENT_TYPES type) const;
-  Segment*       get(SEGMENT_TYPES type);
+  Segment* get(SEGMENT_TYPES type);
 
   //! Return the **first** ELF::Note associated with the given type
   //! If a note can't be found, it returns a nullptr.
   const Note* get(NOTE_TYPES type) const;
-  Note*       get(NOTE_TYPES type);
+  Note* get(NOTE_TYPES type);
 
   //! Return the **first** ELF::Section associated with the given type
   //! If a section can't be found, it returns a nullptr.
   const Section* get(ELF_SECTION_TYPES type) const;
-  Section*       get(ELF_SECTION_TYPES type);
+  Section* get(ELF_SECTION_TYPES type);
 
   //! Check if an ELF::DynamicEntry associated with the given tag exists.
   bool has(DYNAMIC_TAGS tag) const;
@@ -644,8 +679,10 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has(ELF_SECTION_TYPES type) const;
 
   //! Return the content located at virtual address
-  std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-                            LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
+  std::vector<uint8_t> get_content_from_virtual_address(
+      uint64_t virtual_address, uint64_t size,
+      LIEF::Binary::VA_TYPES addr_type =
+          LIEF::Binary::VA_TYPES::AUTO) const override;
 
   //! Method associated with the visitor pattern.
   void accept(LIEF::Visitor& visitor) const override;
@@ -653,10 +690,12 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Apply the given permutation on the dynamic symbols table
   void permute_dynamic_symbols(const std::vector<size_t>& permutation);
 
-  //! List of binary constructors (typically, the functions located in the ``.init_array``)
+  //! List of binary constructors (typically, the functions located in the
+  //! ``.init_array``)
   LIEF::Binary::functions_t ctor_functions() const override;
 
-  //! List of the binary destructors (typically, the functions located in the ``.fini_array``)
+  //! List of the binary destructors (typically, the functions located in the
+  //! ``.fini_array``)
   LIEF::Binary::functions_t dtor_functions() const;
 
   //! List of the functions found the in the binary.
@@ -672,8 +711,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   it_notes notes();
 
-  //! Return the last offset used by the ELF binary according to both: the sections table
-  //! and the segments table
+  //! Return the last offset used by the ELF binary according to both: the
+  //! sections table and the segments table
   uint64_t eof_offset() const;
 
   //! True if data are present at the end of the binary
@@ -694,7 +733,6 @@ class LIEF_API Binary : public LIEF::Binary {
   bool operator==(const Binary& rhs) const;
   bool operator!=(const Binary& rhs) const;
 
-
   Binary& operator+=(const DynamicEntry& entry);
   Binary& operator+=(const Section& section);
   Binary& operator+=(const Segment& segment);
@@ -706,19 +744,19 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary& operator-=(const Note& note);
   Binary& operator-=(NOTE_TYPES type);
 
-  Segment*       operator[](SEGMENT_TYPES type);
+  Segment* operator[](SEGMENT_TYPES type);
   const Segment* operator[](SEGMENT_TYPES type) const;
 
-  DynamicEntry*       operator[](DYNAMIC_TAGS tag);
+  DynamicEntry* operator[](DYNAMIC_TAGS tag);
   const DynamicEntry* operator[](DYNAMIC_TAGS tag) const;
 
-  Note*       operator[](NOTE_TYPES type);
+  Note* operator[](NOTE_TYPES type);
   const Note* operator[](NOTE_TYPES type) const;
 
-  Section*       operator[](ELF_SECTION_TYPES type);
+  Section* operator[](ELF_SECTION_TYPES type);
   const Section* operator[](ELF_SECTION_TYPES type) const;
 
-  protected:
+ protected:
   struct phdr_relocation_info_t {
     uint64_t new_offset = 0;
     size_t nb_segments = 0;
@@ -737,13 +775,13 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
   std::vector<std::string> get_abstract_imported_libraries() const override;
-  LIEF::Binary::symbols_t     get_abstract_symbols() override;
+  LIEF::Binary::symbols_t get_abstract_symbols() override;
   LIEF::Binary::relocations_t get_abstract_relocations() override;
 
-  template<ELF::ARCH ARCH>
+  template <ELF::ARCH ARCH>
   void patch_relocations(uint64_t from, uint64_t shift);
 
-  template<class T>
+  template <class T>
   void patch_addend(Relocation& relocatio, uint64_t from, uint64_t shift);
 
   void shift_sections(uint64_t from, uint64_t shift);
@@ -752,13 +790,13 @@ class LIEF_API Binary : public LIEF::Binary {
   void shift_symbols(uint64_t from, uint64_t shift);
   void shift_relocations(uint64_t from, uint64_t shift);
 
-  template<class ELF_T>
+  template <class ELF_T>
   void fix_got_entries(uint64_t from, uint64_t shift);
 
   LIEF::Binary::functions_t eh_frame_functions() const;
   LIEF::Binary::functions_t armexid_functions() const;
 
-  template<E_TYPE OBJECT_TYPE, bool note = false>
+  template <E_TYPE OBJECT_TYPE, bool note = false>
   Segment& add_segment(const Segment& segment, uint64_t base);
 
   uint64_t relocate_phdr_table();
@@ -766,10 +804,10 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t relocate_phdr_table_v1();
   uint64_t relocate_phdr_table_v2();
 
-  template<SEGMENT_TYPES PT>
+  template <SEGMENT_TYPES PT>
   Segment& extend_segment(const Segment& segment, uint64_t size);
 
-  template<bool LOADED>
+  template <bool LOADED>
   Section& add_section(const Section& section);
   std::vector<Symbol*> static_dyn_symbols() const;
 
@@ -787,7 +825,7 @@ class LIEF_API Binary : public LIEF::Binary {
   relocations_t relocations_;
   symbols_version_t symbol_version_table_;
   symbols_version_requirement_t symbol_version_requirements_;
-  symbols_version_definition_t  symbol_version_definition_;
+  symbols_version_definition_t symbol_version_definition_;
   notes_t notes_;
   std::unique_ptr<GnuHash> gnu_hash_;
   std::unique_ptr<SysvHash> sysv_hash_;
@@ -798,6 +836,6 @@ class LIEF_API Binary : public LIEF::Binary {
   overlay_t overlay_;
 };
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

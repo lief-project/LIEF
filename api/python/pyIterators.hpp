@@ -21,38 +21,35 @@
 
 namespace py = pybind11;
 
-template<class T>
+template <class T>
 void init_ref_iterator(py::handle& m, const char* it_name) {
   py::class_<T>(m, it_name)
-    .def("__getitem__",
-        [](T& v, size_t i) -> typename T::reference {
-            if (i >= v.size())
-                throw py::index_error();
+      .def(
+          "__getitem__",
+          [](T& v, size_t i) -> typename T::reference {
+            if (i >= v.size()) throw py::index_error();
             return v[i];
-        },
-        py::return_value_policy::reference)
+          },
+          py::return_value_policy::reference)
 
-    .def("__len__",
-        [] (T& v) {
-          return  v.size();
-        })
+      .def("__len__", [](T& v) { return v.size(); })
 
-    .def("__iter__",
-        [] (const T& v) {
-          return py::make_iterator(std::begin(v), std::end(v));
-        }, py::keep_alive<0, 1>())
+      .def(
+          "__iter__",
+          [](const T& v) {
+            return py::make_iterator(std::begin(v), std::end(v));
+          },
+          py::keep_alive<0, 1>())
 
-    .def("__next__",
-        [] (T& v) -> typename T::reference {
-          if (v == std::end(v)) {
-            throw py::stop_iteration();
-          }
-          return *(v++);
-
-    }, py::return_value_policy::reference);
-
-
-
+      .def(
+          "__next__",
+          [](T& v) -> typename T::reference {
+            if (v == std::end(v)) {
+              throw py::stop_iteration();
+            }
+            return *(v++);
+          },
+          py::return_value_policy::reference);
 }
 
 #endif

@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (RelocationObject::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (RelocationObject::*)(T);
 
-
-template<>
+template <>
 void create<RelocationObject>(py::module& m) {
-
   py::class_<RelocationObject, Relocation>(m, "RelocationObject",
-      R"delim(
+                                           R"delim(
       Class that represents a relocation presents in the MachO object
       file (``.o``). Usually, this kind of relocation is found in the :class:`lief.MachO.Section`.
       )delim")
 
-    .def_property("value",
-        static_cast<getter_t<int32_t>>(&RelocationObject::value),
-        static_cast<setter_t<int32_t>>(&RelocationObject::value),
-        R"delim(
+      .def_property("value",
+                    static_cast<getter_t<int32_t>>(&RelocationObject::value),
+                    static_cast<setter_t<int32_t>>(&RelocationObject::value),
+                    R"delim(
         For **scattered** relocations, the address of the relocatable expression
         for the item in the file that needs to be updated if the address is changed.
 
@@ -55,29 +51,23 @@ void create<RelocationObject>(py::module& m) {
         is contained in the second relocation entry.",
         )delim")
 
+      .def_property_readonly("is_scattered", &RelocationObject::is_scattered,
+                             "``True`` if the relocation is a scattered one")
 
-    .def_property_readonly("is_scattered",
-        &RelocationObject::is_scattered,
-        "``True`` if the relocation is a scattered one")
+      .def("__eq__", &RelocationObject::operator==)
+      .def("__ne__", &RelocationObject::operator!=)
+      .def("__hash__",
+           [](const RelocationObject& relocation) {
+             return Hash::hash(relocation);
+           })
 
-    .def("__eq__", &RelocationObject::operator==)
-    .def("__ne__", &RelocationObject::operator!=)
-    .def("__hash__",
-        [] (const RelocationObject& relocation) {
-          return Hash::hash(relocation);
-        })
-
-
-    .def("__str__",
-        [] (const RelocationObject& relocation)
-        {
-          std::ostringstream stream;
-          stream << relocation;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const RelocationObject& relocation) {
+        std::ostringstream stream;
+        stream << relocation;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

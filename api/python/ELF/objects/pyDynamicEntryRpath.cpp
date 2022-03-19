@@ -13,101 +13,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (DynamicEntryRpath::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DynamicEntryRpath::*)(T);
 
-
-template<>
+template <>
 void create<DynamicEntryRpath>(py::module& m) {
   py::class_<DynamicEntryRpath, DynamicEntry>(m, "DynamicEntryRpath",
-      R"delim(
+                                              R"delim(
       Class which represents a ``DT_RPATH`` entry. This attribute is
       deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See :class:`~lief.ELF.DynamicRunPath`)
       )delim")
 
-    .def(py::init<const std::string &>(),
-        "Constructor from (r)path",
-        "path"_a = "")
+      .def(py::init<const std::string&>(), "Constructor from (r)path",
+           "path"_a = "")
 
-    .def(py::init<const std::vector<std::string> &>(),
-        "Constructor from a list of paths",
-        "paths"_a)
+      .def(py::init<const std::vector<std::string>&>(),
+           "Constructor from a list of paths", "paths"_a)
 
-    .def_property("name",
-        [] (const DynamicEntryRpath& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::name),
-        "The actual rpath as a string")
+      .def_property(
+          "name",
+          [](const DynamicEntryRpath& obj) {
+            return safe_string_converter(obj.name());
+          },
+          static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::name),
+          "The actual rpath as a string")
 
-    .def_property("rpath",
-        [] (const DynamicEntryRpath& obj) {
-          return safe_string_converter(obj.rpath());
-        },
-        static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::rpath),
-        "The actual rpath as a string")
+      .def_property(
+          "rpath",
+          [](const DynamicEntryRpath& obj) {
+            return safe_string_converter(obj.rpath());
+          },
+          static_cast<setter_t<const std::string&>>(&DynamicEntryRpath::rpath),
+          "The actual rpath as a string")
 
+      .def_property("paths",
+                    static_cast<getter_t<std::vector<std::string>>>(
+                        &DynamicEntryRpath::paths),
+                    static_cast<setter_t<const std::vector<std::string>&>>(
+                        &DynamicEntryRpath::paths),
+                    "Paths as a list")
 
-    .def_property("paths",
-        static_cast<getter_t<std::vector<std::string> >>(&DynamicEntryRpath::paths),
-        static_cast<setter_t<const std::vector<std::string>&>>(&DynamicEntryRpath::paths),
-        "Paths as a list")
+      .def("insert", &DynamicEntryRpath::insert,
+           "Insert a ``path`` at the given ``position``", "position"_a,
+           "path"_a, py::return_value_policy::reference)
 
-    .def("insert",
-        &DynamicEntryRpath::insert,
-        "Insert a ``path`` at the given ``position``",
-        "position"_a, "path"_a,
-        py::return_value_policy::reference)
+      .def("append", &DynamicEntryRpath::append, "Append the given ``path`` ",
+           "path"_a, py::return_value_policy::reference)
 
-    .def("append",
-        &DynamicEntryRpath::append,
-        "Append the given ``path`` ",
-        "path"_a,
-        py::return_value_policy::reference)
+      .def("remove", &DynamicEntryRpath::remove, "Remove the given ``path`` ",
+           "path"_a, py::return_value_policy::reference)
 
+      .def(py::self += std::string())
+      .def(py::self -= std::string())
 
-    .def("remove",
-        &DynamicEntryRpath::remove,
-        "Remove the given ``path`` ",
-        "path"_a,
-        py::return_value_policy::reference)
+      .def("__eq__", &DynamicEntryRpath::operator==)
+      .def("__ne__", &DynamicEntryRpath::operator!=)
+      .def("__hash__",
+           [](const DynamicEntryRpath& entry) { return Hash::hash(entry); })
 
-    .def(py::self += std::string())
-    .def(py::self -= std::string())
-
-    .def("__eq__", &DynamicEntryRpath::operator==)
-    .def("__ne__", &DynamicEntryRpath::operator!=)
-    .def("__hash__",
-        [] (const DynamicEntryRpath& entry) {
-          return Hash::hash(entry);
-        })
-
-
-    .def("__str__",
-        [] (const DynamicEntryRpath& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          std::string str =  stream.str();
-          return str;
-        });
+      .def("__str__", [](const DynamicEntryRpath& entry) {
+        std::ostringstream stream;
+        stream << entry;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

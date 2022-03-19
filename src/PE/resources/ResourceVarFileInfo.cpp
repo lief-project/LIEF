@@ -13,72 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <sstream>
-#include <numeric>
-
-#include "LIEF/PE/hash.hpp"
-
-#include "LIEF/utils.hpp"
-#include "LIEF/PE/EnumToString.hpp"
-
-#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+
+#include <iomanip>
+#include <numeric>
+#include <sstream>
+
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace PE {
 
 ResourceVarFileInfo::ResourceVarFileInfo(const ResourceVarFileInfo&) = default;
-ResourceVarFileInfo& ResourceVarFileInfo::operator=(const ResourceVarFileInfo&) = default;
+ResourceVarFileInfo& ResourceVarFileInfo::operator=(
+    const ResourceVarFileInfo&) = default;
 ResourceVarFileInfo::~ResourceVarFileInfo() = default;
 
+ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key)
+    : type_{type}, key_{std::move(key)} {}
 
-ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key) :
-  type_{type},
-  key_{std::move(key)}
-{}
+ResourceVarFileInfo::ResourceVarFileInfo() : key_{u8tou16("VarFileInfo")} {}
 
-ResourceVarFileInfo::ResourceVarFileInfo() :
-  key_{u8tou16("VarFileInfo")}
-{}
+uint16_t ResourceVarFileInfo::type() const { return type_; }
 
-
-uint16_t ResourceVarFileInfo::type() const {
-  return type_;
-}
-
-const std::u16string& ResourceVarFileInfo::key() const {
-  return key_;
-}
+const std::u16string& ResourceVarFileInfo::key() const { return key_; }
 
 const std::vector<uint32_t>& ResourceVarFileInfo::translations() const {
   return translations_;
 }
 
-void ResourceVarFileInfo::type(uint16_t type) {
-  type_ = type;
-}
+void ResourceVarFileInfo::type(uint16_t type) { type_ = type; }
 
-void ResourceVarFileInfo::key(const std::u16string& key) {
-  key_ = key;
-}
+void ResourceVarFileInfo::key(const std::u16string& key) { key_ = key; }
 
 void ResourceVarFileInfo::key(const std::string& key) {
   this->key(u8tou16(key));
 }
 
 std::vector<uint32_t>& ResourceVarFileInfo::translations() {
-  return const_cast<std::vector<uint32_t>&>(static_cast<const ResourceVarFileInfo*>(this)->translations());
+  return const_cast<std::vector<uint32_t>&>(
+      static_cast<const ResourceVarFileInfo*>(this)->translations());
 }
 
-void ResourceVarFileInfo::translations(const std::vector<uint32_t>& translations) {
+void ResourceVarFileInfo::translations(
+    const std::vector<uint32_t>& translations) {
   translations_ = translations;
 }
 
 void ResourceVarFileInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 bool ResourceVarFileInfo::operator==(const ResourceVarFileInfo& rhs) const {
   if (this == &rhs) {
@@ -94,30 +81,33 @@ bool ResourceVarFileInfo::operator!=(const ResourceVarFileInfo& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
-
   std::string translation_str = std::accumulate(
-     std::begin(entry.translations()), std::end(entry.translations()), std::string{},
-     [] (const std::string& a, uint32_t t) {
-       std::stringstream ss;
-       uint16_t lsb = t & 0xFFFF;
-       uint16_t msb = t >> 16;
-       auto cp = static_cast<CODE_PAGES>(msb);
+      std::begin(entry.translations()), std::end(entry.translations()),
+      std::string{}, [](const std::string& a, uint32_t t) {
+        std::stringstream ss;
+        uint16_t lsb = t & 0xFFFF;
+        uint16_t msb = t >> 16;
+        auto cp = static_cast<CODE_PAGES>(msb);
 
-       auto lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
-       RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(lang, (lsb >> 10));
+        auto lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
+        RESOURCE_SUBLANGS sublang =
+            ResourcesManager::sub_lang(lang, (lsb >> 10));
 
-       ss << to_string(cp) << "/" << to_string(lang) << "/" << to_string(sublang);
-       return a.empty() ? ss.str() : a + " - " + ss.str();
-     });
+        ss << to_string(cp) << "/" << to_string(lang) << "/"
+           << to_string(sublang);
+        return a.empty() ? ss.str() : a + " - " + ss.str();
+      });
 
   os << std::hex << std::left;
-  os << std::setw(14) << std::setfill(' ') << "type:"          << entry.type()         << std::endl;
-  os << std::setw(14) << std::setfill(' ') << "key:"           << u16tou8(entry.key()) << std::endl;
-  os << std::setw(14) << std::setfill(' ') << "Translations:"  << translation_str      << std::endl;
+  os << std::setw(14) << std::setfill(' ') << "type:" << entry.type()
+     << std::endl;
+  os << std::setw(14) << std::setfill(' ') << "key:" << u16tou8(entry.key())
+     << std::endl;
+  os << std::setw(14) << std::setfill(' ') << "Translations:" << translation_str
+     << std::endl;
 
   return os;
 }
 
-
-}
-}
+}  // namespace PE
+}  // namespace LIEF

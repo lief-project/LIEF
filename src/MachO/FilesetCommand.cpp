@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/FilesetCommand.hpp"
+
 #include <iomanip>
 
 #include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/FilesetCommand.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -25,15 +25,12 @@ namespace MachO {
 
 FilesetCommand::FilesetCommand() = default;
 
-FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd) :
-  LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, cmd.cmdsize},
-  virtual_address_{cmd.vmaddr},
-  file_offset_{cmd.fileoff}
-{}
+FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd)
+    : LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, cmd.cmdsize},
+      virtual_address_{cmd.vmaddr},
+      file_offset_{cmd.fileoff} {}
 
-FilesetCommand::FilesetCommand(const std::string& name) :
-  FilesetCommand{}
-{
+FilesetCommand::FilesetCommand(const std::string& name) : FilesetCommand{} {
   this->name(name);
 }
 
@@ -42,12 +39,11 @@ FilesetCommand& FilesetCommand::operator=(FilesetCommand other) {
   return *this;
 }
 
-FilesetCommand::FilesetCommand(const FilesetCommand& other) :
-  LoadCommand{other},
-  name_{other.name_},
-  virtual_address_{other.virtual_address_},
-  file_offset_{other.file_offset_}
-{}
+FilesetCommand::FilesetCommand(const FilesetCommand& other)
+    : LoadCommand{other},
+      name_{other.name_},
+      virtual_address_{other.virtual_address_},
+      file_offset_{other.file_offset_} {}
 
 FilesetCommand::~FilesetCommand() = default;
 
@@ -55,28 +51,20 @@ void FilesetCommand::swap(FilesetCommand& other) {
   LoadCommand::swap(other);
 
   std::swap(virtual_address_, other.virtual_address_);
-  std::swap(file_offset_,     other.file_offset_);
+  std::swap(file_offset_, other.file_offset_);
 }
 
 FilesetCommand* FilesetCommand::clone() const {
   return new FilesetCommand(*this);
 }
 
-const std::string& FilesetCommand::name() const {
-  return name_;
-}
+const std::string& FilesetCommand::name() const { return name_; }
 
-uint64_t FilesetCommand::virtual_address() const {
-  return virtual_address_;
-}
+uint64_t FilesetCommand::virtual_address() const { return virtual_address_; }
 
-uint64_t FilesetCommand::file_offset() const {
-  return file_offset_;
-}
+uint64_t FilesetCommand::file_offset() const { return file_offset_; }
 
-void FilesetCommand::name(const std::string& name) {
-  name_ = name;
-}
+void FilesetCommand::name(const std::string& name) { name_ = name; }
 
 void FilesetCommand::virtual_address(uint64_t virtual_address) {
   virtual_address_ = virtual_address;
@@ -87,14 +75,10 @@ void FilesetCommand::file_offset(uint64_t file_offset) {
 }
 
 std::ostream& FilesetCommand::print(std::ostream& os) const {
-
   LoadCommand::print(os);
   os << std::hex;
-  os << std::left
-     << std::setw(15) << name()
-     << std::setw(15) << virtual_address()
-     << std::setw(15) << file_offset()
-     << std::endl;
+  os << std::left << std::setw(15) << name() << std::setw(15)
+     << virtual_address() << std::setw(15) << file_offset() << std::endl;
   return os;
 }
 
@@ -117,5 +101,5 @@ bool FilesetCommand::classof(const LoadCommand* cmd) {
   return type == LOAD_COMMAND_TYPES::LC_FILESET_ENTRY;
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

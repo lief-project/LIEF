@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
+#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
+
 #include <iomanip>
 #include <sstream>
 
-#include "logging.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-CoreSigInfo::CoreSigInfo(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
+CoreSigInfo::CoreSigInfo(Note& note) : NoteDetails::NoteDetails{note} {}
 
 CoreSigInfo CoreSigInfo::make(Note& note) {
   CoreSigInfo pinfo(note);
@@ -38,21 +35,13 @@ CoreSigInfo CoreSigInfo::make(Note& note) {
   return pinfo;
 }
 
-CoreSigInfo* CoreSigInfo::clone() const {
-  return new CoreSigInfo(*this);
-}
+CoreSigInfo* CoreSigInfo::clone() const { return new CoreSigInfo(*this); }
 
-int32_t CoreSigInfo::signo() const {
-  return siginfo_.si_signo;
-}
+int32_t CoreSigInfo::signo() const { return siginfo_.si_signo; }
 
-int32_t CoreSigInfo::sigcode() const {
-  return siginfo_.si_code;
-}
+int32_t CoreSigInfo::sigcode() const { return siginfo_.si_code; }
 
-int32_t CoreSigInfo::sigerrno() const {
-  return siginfo_.si_errno;
-}
+int32_t CoreSigInfo::sigerrno() const { return siginfo_.si_errno; }
 
 void CoreSigInfo::signo(int32_t signo) {
   siginfo_.si_signo = signo;
@@ -69,9 +58,7 @@ void CoreSigInfo::sigerrno(int32_t sigerrno) {
   build();
 }
 
-void CoreSigInfo::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void CoreSigInfo::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool CoreSigInfo::operator==(const CoreSigInfo& rhs) const {
   if (this == &rhs) {
@@ -90,48 +77,45 @@ void CoreSigInfo::dump(std::ostream& os) const {
   static constexpr size_t WIDTH = 16;
   os << std::left;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Signo: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Signo: " << std::dec
      << signo() << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Code: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Code: " << std::dec
      << sigcode() << std::endl;
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Errno: "<< std::dec
+  os << std::setw(WIDTH) << std::setfill(' ') << "Errno: " << std::dec
      << sigerrno() << std::endl;
 }
-
 
 void CoreSigInfo::parse() {
   const Note::description_t& desc = description();
   if (desc.size() < sizeof(details::Elf_siginfo)) {
     return;
   }
-  const auto* siginfo = reinterpret_cast<const details::Elf_siginfo*>(desc.data());
+  const auto* siginfo =
+      reinterpret_cast<const details::Elf_siginfo*>(desc.data());
   siginfo_.si_signo = siginfo->si_signo;
-  siginfo_.si_code  = siginfo->si_code;
+  siginfo_.si_code = siginfo->si_code;
   siginfo_.si_errno = siginfo->si_errno;
 }
-
 
 void CoreSigInfo::build() {
   Note::description_t& desc = description();
   if (desc.size() < sizeof(details::Elf_siginfo)) {
     desc.resize(sizeof(details::Elf_siginfo));
   }
-  std::copy(
-    reinterpret_cast<const uint8_t*>(&siginfo_),
-    reinterpret_cast<const uint8_t*>(&siginfo_) + sizeof(details::Elf_siginfo),
-    std::begin(desc));
+  std::copy(reinterpret_cast<const uint8_t*>(&siginfo_),
+            reinterpret_cast<const uint8_t*>(&siginfo_) +
+                sizeof(details::Elf_siginfo),
+            std::begin(desc));
 }
-
 
 std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note) {
   note.dump(os);
   return os;
 }
 
-
 CoreSigInfo::~CoreSigInfo() = default;
 
-} // namespace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF

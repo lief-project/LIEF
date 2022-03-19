@@ -18,7 +18,6 @@
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/Binary.hpp"
-
 #include "LIEF/PE/Import.h"
 #include "LIEF/PE/Import.hpp"
 
@@ -28,7 +27,7 @@ namespace PE {
 void init_c_imports(Pe_Binary_t* c_binary, Binary* binary);
 void destroy_imports(Pe_Binary_t* c_binary);
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

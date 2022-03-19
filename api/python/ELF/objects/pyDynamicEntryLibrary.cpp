@@ -13,63 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/hash.hpp"
+#include "pyELF.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-template<class T>
+template <class T>
 using getter_t = T (DynamicEntryLibrary::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (DynamicEntryLibrary::*)(T);
 
-
-template<>
+template <>
 void create<DynamicEntryLibrary>(py::module& m) {
   py::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary",
-      R"delim(
+                                                R"delim(
       Class which represents a ``DT_NEEDED`` entry in the dynamic table.
 
       This kind of entry is usually used to create library dependency.
       )delim")
 
-    .def(py::init<const std::string &>(),
-        "Constructor from a library name",
-        "library_name"_a)
+      .def(py::init<const std::string&>(), "Constructor from a library name",
+           "library_name"_a)
 
-    .def_property("name",
-        [] (const DynamicEntryLibrary& obj) {
-          return safe_string_converter(obj.name());
-        },
-        static_cast<setter_t<const std::string&>>(&DynamicEntryLibrary::name),
-        "Library associated with this entry (e.g. ``libc.so.6``)")
+      .def_property(
+          "name",
+          [](const DynamicEntryLibrary& obj) {
+            return safe_string_converter(obj.name());
+          },
+          static_cast<setter_t<const std::string&>>(&DynamicEntryLibrary::name),
+          "Library associated with this entry (e.g. ``libc.so.6``)")
 
-    .def("__eq__", &DynamicEntryLibrary::operator==)
-    .def("__ne__", &DynamicEntryLibrary::operator!=)
-    .def("__hash__",
-        [] (const DynamicEntryLibrary& entry) {
-          return Hash::hash(entry);
-        })
+      .def("__eq__", &DynamicEntryLibrary::operator==)
+      .def("__ne__", &DynamicEntryLibrary::operator!=)
+      .def("__hash__",
+           [](const DynamicEntryLibrary& entry) { return Hash::hash(entry); })
 
-
-    .def("__str__",
-        [] (const DynamicEntryLibrary& dynamicEntryLibrary)
-        {
-          std::ostringstream stream;
-          stream << dynamicEntryLibrary;
-          std::string str =  stream.str();
-          return str;
-        });
+      .def("__str__", [](const DynamicEntryLibrary& dynamicEntryLibrary) {
+        std::ostringstream stream;
+        stream << dynamicEntryLibrary;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace ELF
+}  // namespace LIEF

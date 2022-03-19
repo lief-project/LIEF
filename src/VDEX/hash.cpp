@@ -15,8 +15,9 @@
  */
 
 #include "LIEF/VDEX/hash.hpp"
-#include "LIEF/VDEX.hpp"
+
 #include "LIEF/DEX/hash.hpp"
+#include "LIEF/VDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
@@ -26,7 +27,6 @@ Hash::~Hash() = default;
 size_t Hash::hash(const Object& obj) {
   return LIEF::Hash::hash<LIEF::VDEX::Hash>(obj);
 }
-
 
 void Hash::visit(const File& file) {
   process(file.header());
@@ -44,8 +44,5 @@ void Hash::visit(const Header& header) {
   process(header.quickening_info_size());
 }
 
-
-
-} // namespace VDEX
-} // namespace LIEF
-
+}  // namespace VDEX
+}  // namespace LIEF

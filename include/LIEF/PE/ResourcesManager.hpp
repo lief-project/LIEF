@@ -17,32 +17,32 @@
 #ifndef LIEF_PE_RESOURCES_MANAGER_H_
 #define LIEF_PE_RESOURCES_MANAGER_H_
 #include <iostream>
-#include <sstream>
 #include <set>
+#include <sstream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-
-#include "LIEF/PE/resources/ResourceVersion.hpp"
-#include "LIEF/PE/resources/ResourceIcon.hpp"
-#include "LIEF/PE/resources/ResourceDialog.hpp"
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
+#include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceIcon.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/PE/resources/ResourceVersion.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
 
 namespace PE {
 
-//! The Resource Manager provides an enhanced API to manipulate the resource tree.
+//! The Resource Manager provides an enhanced API to manipulate the resource
+//! tree.
 class LIEF_API ResourcesManager : public Object {
-  public:
+ public:
   static RESOURCE_SUBLANGS sub_lang(RESOURCE_LANGS lang, size_t index);
 
   static RESOURCE_LANGS lang_from_id(size_t id);
   static RESOURCE_SUBLANGS sublang_from_id(size_t id);
 
-  public:
+ public:
   ResourcesManager() = delete;
   ResourcesManager(ResourceNode& rsrc);
 
@@ -52,7 +52,7 @@ class LIEF_API ResourcesManager : public Object {
 
   //! Return the ResourceNode associated with the given LIEF::PE::RESOURCE_TYPES
   //! or a nullptr if not found;
-  ResourceNode*       get_node_type(RESOURCE_TYPES type);
+  ResourceNode* get_node_type(RESOURCE_TYPES type);
   const ResourceNode* get_node_type(RESOURCE_TYPES type) const;
 
   //! List of LIEF::PE::RESOURCE_TYPES present in the resources
@@ -67,7 +67,7 @@ class LIEF_API ResourcesManager : public Object {
   //! ``true`` if the resource has the given LIEF::PE::RESOURCE_TYPES
   bool has_type(RESOURCE_TYPES type) const;
 
-    //! ``true`` if resources contain the Manifest element
+  //! ``true`` if resources contain the Manifest element
   bool has_manifest() const;
 
   //! Return the manifest as a std::string or an empty string if not found
@@ -92,18 +92,19 @@ class LIEF_API ResourcesManager : public Object {
   //! Add an icon to the resources
   void add_icon(const ResourceIcon& icon);
 
-  //void remove_icon(const ResourceIcon& icon)
+  // void remove_icon(const ResourceIcon& icon)
 
   void change_icon(const ResourceIcon& original, const ResourceIcon& newone);
 
-  //! ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs @endlink
+  //! ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs
+  //! @endlink
   bool has_dialogs() const;
 
   //! Return the list of the dialogs present in the resource
   std::vector<ResourceDialog> dialogs() const;
 
-
-  //! ``true`` if the resources contain a @link LIEF::PE::ResourceStringTable @endlink
+  //! ``true`` if the resources contain a @link LIEF::PE::ResourceStringTable
+  //! @endlink
   bool has_string_table() const;
 
   //! Return the list of the string table in the resource
@@ -121,13 +122,14 @@ class LIEF_API ResourcesManager : public Object {
   // Accelerator
   // =====
 
-  //! ``true`` if the resources contain @link LIEF::PE::ResourceAccelerator @endlink
+  //! ``true`` if the resources contain @link LIEF::PE::ResourceAccelerator
+  //! @endlink
   bool has_accelerator() const;
 
   //! Return the list of the accelerator in the resource
   std::vector<ResourceAccelerator> accelerator() const;
 
-  //!Print the resource tree to the given depth
+  //! Print the resource tree to the given depth
   std::string print(uint32_t depth = 0) const;
 
   void accept(Visitor& visitor) const override;
@@ -135,15 +137,16 @@ class LIEF_API ResourcesManager : public Object {
   bool operator==(const ResourcesManager& rhs) const;
   bool operator!=(const ResourcesManager& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourcesManager& m);
 
-  private:
+ private:
   void print_tree(const ResourceNode& node, std::ostringstream& stream,
                   uint32_t current_depth, uint32_t max_depth) const;
   ResourceNode* resources_ = nullptr;
 };
 
-} // namespace PE
-} // namespace LIEF
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

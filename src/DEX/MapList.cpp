@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/DEX/MapList.hpp"
+
 #include <numeric>
 
-#include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
 
@@ -30,13 +31,10 @@ MapList& MapList::operator=(const MapList&) = default;
 MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(std::begin(items_), std::end(items_),
-                 std::back_inserter(items),
-                 [] (MapList::items_t::value_type& p) -> MapItem* {
-                   return &(p.second);
-                 });
+  std::transform(
+      std::begin(items_), std::end(items_), std::back_inserter(items),
+      [](MapList::items_t::value_type& p) -> MapItem* { return &(p.second); });
   return items;
-
 }
 
 MapList::it_const_items_t MapList::items() const {
@@ -44,17 +42,13 @@ MapList::it_const_items_t MapList::items() const {
   items.reserve(items_.size());
   std::transform(std::begin(items_), std::end(items_),
                  std::back_inserter(items),
-                 [] (const MapList::items_t::value_type& p) -> MapItem* {
+                 [](const MapList::items_t::value_type& p) -> MapItem* {
                    return const_cast<MapItem*>(&(p.second));
                  });
   return items;
-
 }
 
-
-bool MapList::has(MapItem::TYPES type) const {
-  return items_.count(type) > 0;
-}
+bool MapList::has(MapItem::TYPES type) const { return items_.count(type) > 0; }
 
 const MapItem& MapList::get(MapItem::TYPES type) const {
   const auto it = items_.find(type);
@@ -70,13 +64,9 @@ const MapItem& MapList::operator[](MapItem::TYPES type) const {
   return get(type);
 }
 
-MapItem& MapList::operator[](MapItem::TYPES type) {
-  return get(type);
-}
+MapItem& MapList::operator[](MapItem::TYPES type) { return get(type); }
 
-void MapList::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void MapList::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool MapList::operator==(const MapList& rhs) const {
   if (this == &rhs) {
@@ -87,9 +77,7 @@ bool MapList::operator==(const MapList& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool MapList::operator!=(const MapList& rhs) const {
-  return !(*this == rhs);
-}
+bool MapList::operator!=(const MapList& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
   for (const MapItem& item : mlist.items()) {
@@ -98,8 +86,7 @@ std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
   return os;
 }
 
-
 MapList::~MapList() = default;
 
-}
-}
+}  // namespace DEX
+}  // namespace LIEF

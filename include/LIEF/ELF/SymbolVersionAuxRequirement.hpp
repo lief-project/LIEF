@@ -16,23 +16,22 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_AUX_REQUIREMENT_H_
 #define LIEF_ELF_SYMBOL_VERSION_AUX_REQUIREMENT_H_
 
-#include <string>
 #include <iostream>
-
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
+#include <string>
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
 namespace details {
 struct Elf64_Vernaux;
 struct Elf32_Vernaux;
-}
+}  // namespace details
 
 class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
-  public:
+ public:
   using SymbolVersionAux::name;
 
   SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header);
@@ -65,13 +64,14 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   bool operator==(const SymbolVersionAuxRequirement& rhs) const;
   bool operator!=(const SymbolVersionAuxRequirement& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const SymbolVersionAuxRequirement& symAux);
 
-  private:
+ private:
   uint32_t hash_ = 0;
   uint16_t flags_ = 0;
   uint16_t other_ = 0;
 };
-}
-}
+}  // namespace ELF
+}  // namespace LIEF
 #endif

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
-
 #include "LIEF/BinaryStream/FileStream.hpp"
+
+#include "logging.hpp"
 namespace LIEF {
 
 FileStream::FileStream(FileStream&& other) = default;
@@ -36,11 +36,8 @@ result<FileStream> FileStream::from_file(const std::string& file) {
   return FileStream{std::move(ifs), size};
 }
 
-
-FileStream::FileStream(std::ifstream fs, uint64_t size) :
-  ifs_{std::move(fs)},
-  size_{size}
-{
+FileStream::FileStream(std::ifstream fs, uint64_t size)
+    : ifs_{std::move(fs)}, size_{size} {
   stype_ = STREAM_TYPE::FILE;
 }
 
@@ -57,5 +54,4 @@ std::vector<uint8_t> FileStream::content() const {
 bool FileStream::classof(const BinaryStream& stream) {
   return stream.type() == STREAM_TYPE::FILE;
 }
-}
-
+}  // namespace LIEF

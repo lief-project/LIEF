@@ -26,37 +26,31 @@ void init_c_commands(Macho_Binary_t* c_binary, Binary* binary) {
   for (size_t i = 0; i < commands.size(); ++i) {
     LoadCommand& cmd = commands[i];
 
-    c_binary->commands[i] = static_cast<Macho_Command_t*>(malloc(sizeof(Macho_Command_t)));
+    c_binary->commands[i] =
+        static_cast<Macho_Command_t*>(malloc(sizeof(Macho_Command_t)));
     const std::vector<uint8_t>& cmd_content = cmd.data();
-    auto* content = static_cast<uint8_t*>(malloc(cmd_content.size() * sizeof(uint8_t)));
-    std::copy(
-        std::begin(cmd_content),
-        std::end(cmd_content),
-        content);
+    auto* content =
+        static_cast<uint8_t*>(malloc(cmd_content.size() * sizeof(uint8_t)));
+    std::copy(std::begin(cmd_content), std::end(cmd_content), content);
 
-    c_binary->commands[i]->command = static_cast<enum LIEF_MACHO_LOAD_COMMAND_TYPES>(cmd.command());
-    c_binary->commands[i]->size    = cmd.size();
-    c_binary->commands[i]->data    = content;
-    c_binary->commands[i]->offset  = cmd.command_offset();
+    c_binary->commands[i]->command =
+        static_cast<enum LIEF_MACHO_LOAD_COMMAND_TYPES>(cmd.command());
+    c_binary->commands[i]->size = cmd.size();
+    c_binary->commands[i]->data = content;
+    c_binary->commands[i]->offset = cmd.command_offset();
   }
 
   c_binary->commands[commands.size()] = nullptr;
-
 }
 
-
-
 void destroy_commands(Macho_Binary_t* c_binary) {
-  Macho_Command_t **commands = c_binary->commands;
+  Macho_Command_t** commands = c_binary->commands;
   for (size_t idx = 0; commands[idx] != nullptr; ++idx) {
     free(commands[idx]->data);
     free(commands[idx]);
   }
   free(c_binary->commands);
-
 }
 
-}
-}
-
-
+}  // namespace MachO
+}  // namespace LIEF

@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
-
-#include "LIEF/utils.hpp"
-#include "LIEF/ART/Parser.hpp"
-#include "LIEF/ART/File.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/File.hpp"
+#include "LIEF/ART/Parser.hpp"
+#include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace ART {
 
-template<typename ART_T>
+template <typename ART_T>
 void Parser::parse_file() {
   LIEF_DEBUG("Parsing ART version {}", ART_T::art_version);
   /* const size_t ptr_size = */ parse_header<ART_T>();
 }
 
-template<typename ART_T>
+template <typename ART_T>
 size_t Parser::parse_header() {
   using art_header_t = typename ART_T::art_header_t;
 
@@ -40,7 +39,8 @@ size_t Parser::parse_header() {
   const auto hdr = std::move(*res_hdr);
   imagebase_ = hdr.image_begin;
 
-  if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t)) {
+  if (hdr.pointer_size != sizeof(uint32_t) &&
+      hdr.pointer_size != sizeof(uint64_t)) {
     throw corrupted("Wrong pointer size!");
   }
   file_->header_ = &hdr;
@@ -331,5 +331,5 @@ void Parser::parse_interned_strings(size_t offset, size_t size) {
 }
 #endif
 
-}
-}
+}  // namespace ART
+}  // namespace LIEF

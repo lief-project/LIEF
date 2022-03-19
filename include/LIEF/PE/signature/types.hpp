@@ -22,8 +22,7 @@ namespace PE {
 
 using oid_t = std::string;
 
-
 }
-}
+}  // namespace LIEF
 
 #endif

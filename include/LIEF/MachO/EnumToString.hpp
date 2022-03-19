@@ -15,11 +15,10 @@
  */
 #ifndef LIEF_MACHO_ENUM_TO_STRING_H
 #define LIEF_MACHO_ENUM_TO_STRING_H
-#include "LIEF/visibility.h"
-
-#include "LIEF/MachO/enums.hpp"
-#include "LIEF/MachO/DataCodeEntry.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/MachO/DataCodeEntry.hpp"
+#include "LIEF/MachO/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace MachO {
@@ -57,8 +56,7 @@ LIEF_API const char* to_string(DataCodeEntry::TYPES e);
 LIEF_API const char* to_string(BuildVersion::PLATFORMS e);
 LIEF_API const char* to_string(BuildToolVersion::TOOLS e);
 
-
-} // namespace MachO
-} // namespace LIEF
+}  // namespace MachO
+}  // namespace LIEF
 
 #endif

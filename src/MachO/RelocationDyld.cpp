@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
+
+#include <iomanip>
+#include <numeric>
+
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -30,14 +31,11 @@ RelocationDyld& RelocationDyld::operator=(const RelocationDyld&) = default;
 RelocationDyld::RelocationDyld(const RelocationDyld&) = default;
 
 bool RelocationDyld::is_pc_relative() const {
-  return static_cast<REBASE_TYPES>(type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
+  return static_cast<REBASE_TYPES>(type()) ==
+         REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
 }
 
-
-Relocation* RelocationDyld::clone() const {
-  return new RelocationDyld(*this);
-}
-
+Relocation* RelocationDyld::clone() const { return new RelocationDyld(*this); }
 
 RELOCATION_ORIGINS RelocationDyld::origin() const {
   return RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
@@ -59,10 +57,7 @@ void RelocationDyld::pc_relative(bool val) {
   }
 }
 
-void RelocationDyld::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
+void RelocationDyld::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool RelocationDyld::operator==(const RelocationDyld& rhs) const {
   if (this == &rhs) {
@@ -100,16 +95,13 @@ bool RelocationDyld::operator<=(const RelocationDyld& rhs) const {
   return !(*this > rhs);
 }
 
-
 bool RelocationDyld::classof(const Relocation& r) {
   return r.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
 }
-
 
 std::ostream& RelocationDyld::print(std::ostream& os) const {
   return Relocation::print(os);
 }
 
-
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

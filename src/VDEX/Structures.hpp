@@ -17,6 +17,7 @@
 #define LIEF_VDEX_STRUCTURES_H_
 
 #include <cstring>
+
 #include "LIEF/types.hpp"
 
 namespace LIEF {
@@ -25,7 +26,7 @@ namespace VDEX {
 namespace details {
 using vdex_version_t = uint32_t;
 
-static constexpr uint8_t magic[] = { 'v', 'd', 'e', 'x' };
+static constexpr uint8_t magic[] = {'v', 'd', 'e', 'x'};
 static constexpr vdex_version_t vdex_version = 0;
 
 using checksum_t = uint32_t;
@@ -38,7 +39,6 @@ struct header {
   uint32_t dex_size;
   uint32_t verifier_deps_size;
   uint32_t quickening_info_size;
-
 };
 
 // =======================
@@ -47,7 +47,7 @@ struct header {
 namespace VDEX_6 {
 using header = details::header;
 static constexpr vdex_version_t vdex_version = 6;
-}
+}  // namespace VDEX_6
 
 // =======================
 // VDEX Version 10
@@ -55,7 +55,7 @@ static constexpr vdex_version_t vdex_version = 6;
 namespace VDEX_10 {
 using header = details::header;
 static constexpr vdex_version_t vdex_version = 10;
-}
+}  // namespace VDEX_10
 
 // =======================
 // VDEX Version 11
@@ -63,23 +63,23 @@ static constexpr vdex_version_t vdex_version = 10;
 namespace VDEX_11 {
 using header = details::header;
 static constexpr vdex_version_t vdex_version = 11;
-}
+}  // namespace VDEX_11
 
 class VDEX6 {
-  public:
-  using vdex_header                            = VDEX_6::header;
+ public:
+  using vdex_header = VDEX_6::header;
   static constexpr vdex_version_t vdex_version = VDEX_6::vdex_version;
 };
 
 class VDEX10 {
-  public:
-  using vdex_header                            = VDEX_10::header;
+ public:
+  using vdex_header = VDEX_10::header;
   static constexpr vdex_version_t vdex_version = VDEX_10::vdex_version;
 };
 
 class VDEX11 {
-  public:
-  using vdex_header                            = VDEX_11::header;
+ public:
+  using vdex_header = VDEX_11::header;
   static constexpr vdex_version_t vdex_version = VDEX_11::vdex_version;
 };
 
@@ -87,4 +87,3 @@ class VDEX11 {
 } /* end namespace VDEX */
 } /* end namespace LIEF */
 #endif
-

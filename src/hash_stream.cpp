@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "hash_stream.hpp"
+
+#include "logging.hpp"
 #include "mbedtls/md.h"
 
 namespace LIEF {
@@ -23,60 +24,57 @@ inline mbedtls_md_context_t* cast(std::unique_ptr<intptr_t>& in) {
   return reinterpret_cast<mbedtls_md_context_t*>(in.get());
 }
 
-hashstream::hashstream(HASH type) :
-  ctx_{reinterpret_cast<intptr_t*>(new mbedtls_md_context_t{})}
-{
+hashstream::hashstream(HASH type)
+    : ctx_{reinterpret_cast<intptr_t*>(new mbedtls_md_context_t{})} {
   int ret = 0;
   mbedtls_md_init(cast(this->ctx_));
   switch (type) {
-    case HASH::MD5:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_MD5);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::MD5: {
+      const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_MD5);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
 
-    case HASH::SHA1:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::SHA1: {
+      const mbedtls_md_info_t* info =
+          mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
 
-    case HASH::SHA224:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA224);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::SHA224: {
+      const mbedtls_md_info_t* info =
+          mbedtls_md_info_from_type(MBEDTLS_MD_SHA224);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
 
-    case HASH::SHA256:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::SHA256: {
+      const mbedtls_md_info_t* info =
+          mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
 
-    case HASH::SHA384:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA384);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::SHA384: {
+      const mbedtls_md_info_t* info =
+          mbedtls_md_info_from_type(MBEDTLS_MD_SHA384);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
 
-
-    case HASH::SHA512:
-      {
-        const mbedtls_md_info_t* info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA512);
-        ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
-        this->output_.resize(mbedtls_md_get_size(info));
-        break;
-      }
+    case HASH::SHA512: {
+      const mbedtls_md_info_t* info =
+          mbedtls_md_info_from_type(MBEDTLS_MD_SHA512);
+      ret = mbedtls_md_setup(cast(this->ctx_), info, 0);
+      this->output_.resize(mbedtls_md_get_size(info));
+      break;
+    }
   }
   mbedtls_md_starts(cast(this->ctx_));
   if (ret != 0) {
@@ -84,14 +82,13 @@ hashstream::hashstream(HASH type) :
   }
 }
 
-hashstream& hashstream::put(uint8_t c) {
-  return this->write(&c, 1);
-}
+hashstream& hashstream::put(uint8_t c) { return this->write(&c, 1); }
 
 hashstream& hashstream::write(const uint8_t* s, size_t n) {
   int ret = mbedtls_md_update(cast(this->ctx_), s, n);
   if (ret != 0) {
-    LIEF_WARN("mbedtls_md_update(0x{}, 0x{:x}) failed with retcode: 0x{:x}", reinterpret_cast<uintptr_t>(s), n, ret);
+    LIEF_WARN("mbedtls_md_update(0x{}, 0x{:x}) failed with retcode: 0x{:x}",
+              reinterpret_cast<uintptr_t>(s), n, ret);
   }
   return *this;
 }
@@ -131,11 +128,6 @@ std::vector<uint8_t>& hashstream::raw() {
   return this->output_;
 }
 
-hashstream::~hashstream() {
-  mbedtls_md_free(cast(this->ctx_));
-}
+hashstream::~hashstream() { mbedtls_md_free(cast(this->ctx_)); }
 
-
-
-}
-
+}  // namespace LIEF

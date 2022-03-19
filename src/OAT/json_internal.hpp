@@ -16,7 +16,6 @@
 #ifndef LIEF_OAT_JSON_INTERNAL_H_
 #define LIEF_OAT_JSON_INTERNAL_H_
 
-
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
@@ -24,18 +23,17 @@ namespace LIEF {
 namespace OAT {
 
 class JsonVisitor : public LIEF::JsonVisitor {
-  public:
+ public:
   using LIEF::JsonVisitor::JsonVisitor;
 
-  public:
-  void visit(const Binary& binary)        override;
-  void visit(const Header& header)        override;
-  void visit(const DexFile& dex_file)     override;
-  void visit(const Class& cls)            override;
-  void visit(const Method& method)        override;
+ public:
+  void visit(const Binary& binary) override;
+  void visit(const Header& header) override;
+  void visit(const DexFile& dex_file) override;
+  void visit(const Class& cls) override;
+  void visit(const Method& method) override;
 };
 
-}
-}
-#endif // LIEF_JSON_SUPPORT
-
+}  // namespace OAT
+}  // namespace LIEF
+#endif  // LIEF_JSON_SUPPORT

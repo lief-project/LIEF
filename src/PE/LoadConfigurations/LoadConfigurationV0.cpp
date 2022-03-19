@@ -15,23 +15,20 @@
  */
 #include <iomanip>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"
-
-#include "LIEF/PE/LoadConfigurations.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV0& LoadConfigurationV0::operator=(const LoadConfigurationV0&) = default;
+LoadConfigurationV0& LoadConfigurationV0::operator=(
+    const LoadConfigurationV0&) = default;
 LoadConfigurationV0::LoadConfigurationV0(const LoadConfigurationV0&) = default;
 LoadConfigurationV0::~LoadConfigurationV0() = default;
 
-LoadConfigurationV0::LoadConfigurationV0() :
-  se_handler_table_{0},
-  se_handler_count_{0}
-{}
-
+LoadConfigurationV0::LoadConfigurationV0()
+    : se_handler_table_{0}, se_handler_count_{0} {}
 
 WIN_VERSION LoadConfigurationV0::version() const {
   return LoadConfigurationV0::VERSION;
@@ -73,12 +70,12 @@ bool LoadConfigurationV0::operator!=(const LoadConfigurationV0& rhs) const {
 std::ostream& LoadConfigurationV0::print(std::ostream& os) const {
   LoadConfiguration::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler table:" << std::hex << se_handler_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler count:" << std::dec << se_handler_count() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "SE handler table:" << std::hex << se_handler_table() << std::endl;
+  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ')
+     << "SE handler count:" << std::dec << se_handler_count() << std::endl;
   return os;
 }
 
-
-} // namespace PE
-} // namespace LIEF
-
+}  // namespace PE
+}  // namespace LIEF

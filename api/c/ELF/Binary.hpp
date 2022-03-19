@@ -25,6 +25,6 @@ namespace ELF {
 void init_c_binary(Elf_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

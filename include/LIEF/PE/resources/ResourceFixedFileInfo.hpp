@@ -18,11 +18,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
-
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace PE {
@@ -31,11 +29,11 @@ namespace details {
 struct pe_resource_fixed_file_info;
 }
 
-//! Representation of [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
+//! Representation of
+//! [VS_FIXEDFILEINFO](https://docs.microsoft.com/en-us/windows/win32/api/verrsrc/ns-verrsrc-vs_fixedfileinfo)
 //! Structure
 class LIEF_API ResourceFixedFileInfo : public Object {
-
-  public:
+ public:
   ResourceFixedFileInfo();
   ResourceFixedFileInfo(const details::pe_resource_fixed_file_info& header);
 
@@ -54,26 +52,32 @@ class LIEF_API ResourceFixedFileInfo : public Object {
 
   //! The **most** significant 32 bits of the file's binary version number.
   //!
-  //! This member is used with ResourceFixedFileInfo::file_version_LS to form a 64-bits
-  //! value used for numeric comparisons.
+  //! This member is used with ResourceFixedFileInfo::file_version_LS to form a
+  //! 64-bits value used for numeric comparisons.
   uint32_t file_version_MS() const;
 
   //! The **least** significant 32 bits of the file's binary version number.
   //!
-  //! This member is used with ResourceFixedFileInfo::file_version_MS to form a 64-bits value used for numeric comparisons.
+  //! This member is used with ResourceFixedFileInfo::file_version_MS to form a
+  //! 64-bits value used for numeric comparisons.
   uint32_t file_version_LS() const;
 
-  //! The **most** significant 32 bits of the product with which this file was distributed
+  //! The **most** significant 32 bits of the product with which this file was
+  //! distributed
   //!
-  //! This member is used with ResourceFixedFileInfo::product_version_LS to form a 64-bits value used for numeric comparisons.
+  //! This member is used with ResourceFixedFileInfo::product_version_LS to form
+  //! a 64-bits value used for numeric comparisons.
   uint32_t product_version_MS() const;
 
-  //! The **least** significant 32 bits of the product with which this file was distributed
+  //! The **least** significant 32 bits of the product with which this file was
+  //! distributed
   //!
-  //! This member is used with ResourceFixedFileInfo::product_version_MS to form a 64-bits value used for numeric comparisons.
+  //! This member is used with ResourceFixedFileInfo::product_version_MS to form
+  //! a 64-bits value used for numeric comparisons.
   uint32_t product_version_LS() const;
 
-  //! Contains a bitmask that specifies the valid bits in ResourceFixedFileInfo::file_flags.
+  //! Contains a bitmask that specifies the valid bits in
+  //! ResourceFixedFileInfo::file_flags.
   //!
   //! A bit is valid only if it was defined when the file was created.
   uint32_t file_flags_mask() const;
@@ -82,7 +86,8 @@ class LIEF_API ResourceFixedFileInfo : public Object {
   //! (PE::FIXED_VERSION_FILE_FLAGS)
   uint32_t file_flags() const;
 
-  //! The operating system for which this file was designed (PE::FIXED_VERSION_OS).
+  //! The operating system for which this file was designed
+  //! (PE::FIXED_VERSION_OS).
   FIXED_VERSION_OS file_os() const;
 
   //! The general type of file (PE::FIXED_VERSION_FILE_TYPES)
@@ -91,10 +96,12 @@ class LIEF_API ResourceFixedFileInfo : public Object {
   //! The function of the file (PE::FIXED_VERSION_FILE_SUB_TYPES)
   FIXED_VERSION_FILE_SUB_TYPES file_subtype() const;
 
-  //! The **most** significant 32 bits of the file's 64-bit binary creation date and time stamp.
+  //! The **most** significant 32 bits of the file's 64-bit binary creation date
+  //! and time stamp.
   uint32_t file_date_MS() const;
 
-  //! The **least** significant 32 bits of the file's 64-bit binary creation date and time stamp.
+  //! The **least** significant 32 bits of the file's 64-bit binary creation
+  //! date and time stamp.
   uint32_t file_date_LS() const;
 
   void signature(uint32_t signature);
@@ -116,31 +123,26 @@ class LIEF_API ResourceFixedFileInfo : public Object {
   bool operator==(const ResourceFixedFileInfo& rhs) const;
   bool operator!=(const ResourceFixedFileInfo& rhs) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_info);
+  LIEF_API friend std::ostream& operator<<(
+      std::ostream& os, const ResourceFixedFileInfo& fixed_info);
 
-  private:
-  uint32_t                     signature_;
-  uint32_t                     struct_version_;
-  uint32_t                     file_version_MS_;
-  uint32_t                     file_version_LS_;
-  uint32_t                     product_version_MS_;
-  uint32_t                     product_version_LS_;
-  uint32_t                     file_flags_mask_;
-  uint32_t                     file_flags_;
-  FIXED_VERSION_OS             file_os_;
-  FIXED_VERSION_FILE_TYPES     file_type_;
+ private:
+  uint32_t signature_;
+  uint32_t struct_version_;
+  uint32_t file_version_MS_;
+  uint32_t file_version_LS_;
+  uint32_t product_version_MS_;
+  uint32_t product_version_LS_;
+  uint32_t file_flags_mask_;
+  uint32_t file_flags_;
+  FIXED_VERSION_OS file_os_;
+  FIXED_VERSION_FILE_TYPES file_type_;
   FIXED_VERSION_FILE_SUB_TYPES file_subtype_;
-  uint32_t                     file_date_MS_;
-  uint32_t                     file_date_LS_;
-
-
+  uint32_t file_date_MS_;
+  uint32_t file_date_LS_;
 };
 
-
-
-
-}
-}
-
+}  // namespace PE
+}  // namespace LIEF
 
 #endif

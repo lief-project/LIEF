@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 #include <algorithm>
-
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
-
+#include "LIEF/MachO/hash.hpp"
 #include "pyMachO.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-template<class T>
+template <class T>
 using getter_t = T (RelocationDyld::*)(void) const;
 
-template<class T>
+template <class T>
 using setter_t = void (RelocationDyld::*)(T);
 
-
-template<>
+template <>
 void create<RelocationDyld>(py::module& m) {
-
   py::class_<RelocationDyld, Relocation>(m, "RelocationDyld",
-      R"delim(
+                                         R"delim(
       Class that represents a relocation found in the :class:`~lief.MachO.DyldInfo` structure.
 
       While this class does not have an associated structure in the Mach-O format specification,
@@ -46,27 +42,24 @@ void create<RelocationDyld>(py::module& m) {
       See also: :class:`~lief.MachO.RelocationObject`
       )delim")
 
-    .def("__le__", &RelocationDyld::operator<=)
-    .def("__lt__", &RelocationDyld::operator<)
-    .def("__ge__", &RelocationDyld::operator>=)
-    .def("__gt__", &RelocationDyld::operator>)
-    .def("__eq__", &RelocationDyld::operator==)
-    .def("__ne__", &RelocationDyld::operator!=)
-    .def("__hash__",
-        [] (const RelocationDyld& relocation) {
-          return Hash::hash(relocation);
-        })
+      .def("__le__", &RelocationDyld::operator<=)
+      .def("__lt__", &RelocationDyld::operator<)
+      .def("__ge__", &RelocationDyld::operator>=)
+      .def("__gt__", &RelocationDyld::operator>)
+      .def("__eq__", &RelocationDyld::operator==)
+      .def("__ne__", &RelocationDyld::operator!=)
+      .def("__hash__",
+           [](const RelocationDyld& relocation) {
+             return Hash::hash(relocation);
+           })
 
-    .def("__str__",
-        [] (const RelocationDyld& relocation)
-        {
-          std::ostringstream stream;
-          stream << relocation;
-          std::string str = stream.str();
-          return str;
-        });
-
+      .def("__str__", [](const RelocationDyld& relocation) {
+        std::ostringstream stream;
+        stream << relocation;
+        std::string str = stream.str();
+        return str;
+      });
 }
 
-}
-}
+}  // namespace MachO
+}  // namespace LIEF

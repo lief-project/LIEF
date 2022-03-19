@@ -16,15 +16,14 @@
 #ifndef LIEF_ELF_CORE_SIGINFO_H_
 #define LIEF_ELF_CORE_SIGINFO_H_
 
-#include <vector>
 #include <iostream>
 #include <map>
 #include <utility>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -36,11 +35,10 @@ class Binary;
 
 //! Class representing core siginfo object
 class LIEF_API CoreSigInfo : public NoteDetails {
-
-  public:
+ public:
   using NoteDetails::NoteDetails;
 
-  public:
+ public:
   static CoreSigInfo make(Note& note);
 
   CoreSigInfo* clone() const override;
@@ -67,13 +65,14 @@ class LIEF_API CoreSigInfo : public NoteDetails {
 
   virtual ~CoreSigInfo();
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CoreSigInfo& note);
 
-  protected:
+ protected:
   void parse() override;
   void build() override;
 
-  private:
+ private:
   CoreSigInfo(Note& note);
   struct siginfo_t {
     int32_t si_signo;
@@ -84,8 +83,7 @@ class LIEF_API CoreSigInfo : public NoteDetails {
   siginfo_t siginfo_;
 };
 
-
-} // namepsace ELF
-} // namespace LIEF
+}  // namespace ELF
+}  // namespace LIEF
 
 #endif

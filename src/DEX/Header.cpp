@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Header.hpp"
+
+#include <iomanip>
+#include <numeric>
+#include <sstream>
+
 #include "LIEF/DEX/hash.hpp"
 #include "LIEF/utils.hpp"
 
-#include <numeric>
-#include <sstream>
-#include <iomanip>
+#define PRINT_FIELD(name, attr)                                           \
+  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr \
+     << std::endl
 
-#define PRINT_FIELD(name,attr) \
-  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << std::endl
-
-#define PRINT_LOCATION(name,attr)                                               \
-  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr.first \
-     << std::dec << " (#" << attr.second << ")" << std::endl
+#define PRINT_LOCATION(name, attr)                                \
+  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex \
+     << attr.first << std::dec << " (#" << attr.second << ")" << std::endl
 
 namespace LIEF {
 namespace DEX {
@@ -36,51 +38,29 @@ Header::Header() = default;
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
 
+Header::magic_t Header::magic() const { return magic_; }
 
+uint32_t Header::checksum() const { return checksum_; }
 
-Header::magic_t Header::magic() const {
-  return magic_;
-}
+Header::signature_t Header::signature() const { return signature_; }
 
-uint32_t Header::checksum() const {
-  return checksum_;
-}
+uint32_t Header::file_size() const { return file_size_; }
 
-Header::signature_t Header::signature() const {
-  return signature_;
-}
+uint32_t Header::header_size() const { return header_size_; }
 
-uint32_t Header::file_size() const {
-  return file_size_;
-}
+uint32_t Header::endian_tag() const { return endian_tag_; }
 
-uint32_t Header::header_size() const {
-  return header_size_;
-}
+uint32_t Header::nb_classes() const { return class_defs_size_; }
 
-uint32_t Header::endian_tag() const {
-  return endian_tag_;
-}
+uint32_t Header::nb_methods() const { return method_ids_size_; }
 
-uint32_t Header::nb_classes() const {
-  return class_defs_size_;
-}
-
-uint32_t Header::nb_methods() const {
-  return method_ids_size_;
-}
-
-uint32_t Header::map() const {
-  return map_off_;
-}
+uint32_t Header::map() const { return map_off_; }
 
 Header::location_t Header::strings() const {
   return {string_ids_off_, string_ids_size_};
 }
 
-Header::location_t Header::link() const {
-  return {link_off_, link_size_};
-}
+Header::location_t Header::link() const { return {link_off_, link_size_}; }
 
 Header::location_t Header::types() const {
   return {type_ids_off_, type_ids_size_};
@@ -102,14 +82,9 @@ Header::location_t Header::classes() const {
   return {class_defs_off_, class_defs_size_};
 }
 
-Header::location_t Header::data() const {
-  return {data_off_, data_size_};
-}
+Header::location_t Header::data() const { return {data_off_, data_size_}; }
 
-
-void Header::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
+void Header::accept(Visitor& visitor) const { visitor.visit(*this); }
 
 bool Header::operator==(const Header& rhs) const {
   if (this == &rhs) {
@@ -120,9 +95,7 @@ bool Header::operator==(const Header& rhs) const {
   return hash_lhs == hash_rhs;
 }
 
-bool Header::operator!=(const Header& rhs) const {
-  return !(*this == rhs);
-}
+bool Header::operator!=(const Header& rhs) const { return !(*this == rhs); }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   static constexpr size_t WIDTH = 20;
@@ -139,41 +112,35 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   }
 
   const Header::signature_t& sig = hdr.signature();
-  std::string sig_str = std::accumulate(
-      std::begin(sig),
-      std::end(sig),
-      std::string{},
-      [] (const std::string& s, uint8_t c) {
-        std::stringstream ss;
-        return s + hex_str(c);
-      });
-
+  std::string sig_str =
+      std::accumulate(std::begin(sig), std::end(sig), std::string{},
+                      [](const std::string& s, uint8_t c) {
+                        std::stringstream ss;
+                        return s + hex_str(c);
+                      });
 
   os << std::hex << std::left << std::showbase;
-  PRINT_FIELD("Magic:",       magic_str);
-  PRINT_FIELD("Checksum:",    hdr.checksum());
-  PRINT_FIELD("Signature:",   sig_str);
-  PRINT_FIELD("File Size:",   hdr.file_size());
+  PRINT_FIELD("Magic:", magic_str);
+  PRINT_FIELD("Checksum:", hdr.checksum());
+  PRINT_FIELD("Signature:", sig_str);
+  PRINT_FIELD("File Size:", hdr.file_size());
   PRINT_FIELD("Header Size:", hdr.header_size());
-  PRINT_FIELD("Endian Tag:",  hdr.endian_tag());
-  PRINT_FIELD("Map Offset:",  hdr.map());
+  PRINT_FIELD("Endian Tag:", hdr.endian_tag());
+  PRINT_FIELD("Map Offset:", hdr.map());
 
-  PRINT_LOCATION("Strings:",     hdr.strings());
-  PRINT_LOCATION("Link:",        hdr.link());
-  PRINT_LOCATION("Types:",       hdr.types());
-  PRINT_LOCATION("Prototypes:",  hdr.prototypes());
-  PRINT_LOCATION("Fields:",      hdr.fields());
-  PRINT_LOCATION("Methods:",     hdr.methods());
-  PRINT_LOCATION("Classes:",     hdr.classes());
-  PRINT_LOCATION("Data:",        hdr.data());
+  PRINT_LOCATION("Strings:", hdr.strings());
+  PRINT_LOCATION("Link:", hdr.link());
+  PRINT_LOCATION("Types:", hdr.types());
+  PRINT_LOCATION("Prototypes:", hdr.prototypes());
+  PRINT_LOCATION("Fields:", hdr.fields());
+  PRINT_LOCATION("Methods:", hdr.methods());
+  PRINT_LOCATION("Classes:", hdr.classes());
+  PRINT_LOCATION("Data:", hdr.data());
 
   return os;
 }
 
 Header::~Header() = default;
 
-
-
-} // Namespace DEX
-} // Namespace LIEF
-
+}  // Namespace DEX
+}  // Namespace LIEF

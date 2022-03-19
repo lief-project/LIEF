@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyLIEF.hpp"
-
 #include "LIEF/logging.hpp"
+#include "pyLIEF.hpp"
 
 #define PY_ENUM(x) LIEF::logging::to_string(x), x
 
@@ -23,23 +22,18 @@ void init_LIEF_Logger(py::module& m) {
   py::module logging = m.def_submodule("logging");
 
   py::enum_<LIEF::logging::LOGGING_LEVEL>(logging, "LOGGING_LEVEL")
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_TRACE))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_CRITICAL))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_ERR))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_WARN))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_INFO));
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_TRACE))
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG))
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_CRITICAL))
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_ERR))
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_WARN))
+      .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_INFO));
 
-  logging.def("disable",
-      &LIEF::logging::disable,
-      "Disable the logger globally");
+  logging.def("disable", &LIEF::logging::disable,
+              "Disable the logger globally");
 
-  logging.def("enable",
-      &LIEF::logging::enable,
-      "Enable the logger globally");
+  logging.def("enable", &LIEF::logging::enable, "Enable the logger globally");
 
-  logging.def("set_level",
-      &LIEF::logging::set_level,
-      "Change logging level",
-      "level"_a);
+  logging.def("set_level", &LIEF::logging::set_level, "Change logging level",
+              "level"_a);
 }

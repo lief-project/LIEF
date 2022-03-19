@@ -16,29 +16,29 @@
 #ifndef LIEF_ART_HASH_H_
 #define LIEF_ART_HASH_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/hash.hpp"
 #include "LIEF/ART.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ART {
 
 class LIEF_API Hash : public LIEF::Hash {
-  public:
+ public:
   static size_t hash(const Object& obj);
 
-  public:
+ public:
   using LIEF::Hash::Hash;
   using LIEF::Hash::visit;
 
-  public:
-  void visit(const File& file)      override;
-  void visit(const Header& header)  override;
+ public:
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
 
   ~Hash() override;
 };
 
-}
-}
+}  // namespace ART
+}  // namespace LIEF
 
 #endif

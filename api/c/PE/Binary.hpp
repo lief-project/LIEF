@@ -25,6 +25,6 @@ namespace PE {
 void init_c_binary(Pe_Binary_t* c_binary, Binary* binary);
 
 }
-}
+}  // namespace LIEF
 
 #endif

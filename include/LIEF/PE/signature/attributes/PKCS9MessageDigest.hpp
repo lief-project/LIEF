@@ -16,9 +16,9 @@
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H_
 #define LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H_
 
-#include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -27,10 +27,12 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.4`` (PKCS #9)
+//! Interface over the structure described by the OID ``1.2.840.113549.1.9.4``
+//! (PKCS #9)
 //!
 //! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+//! Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
 //! ```raw
 //! messageDigest ATTRIBUTE ::= {
@@ -43,11 +45,10 @@ class SignatureParser;
 //! MessageDigest ::= OCTET STRING
 //! ```
 class LIEF_API PKCS9MessageDigest : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
-  public:
+ public:
   PKCS9MessageDigest();
   PKCS9MessageDigest(std::vector<uint8_t> digest);
   PKCS9MessageDigest(const PKCS9MessageDigest&);
@@ -56,9 +57,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Message digeset as a blob of bytes as described in the RFC
-  inline const std::vector<uint8_t>& digest() const {
-    return digest_;
-  }
+  inline const std::vector<uint8_t>& digest() const { return digest_; }
 
   //! Print information about the attribute
   std::string print() const override;
@@ -67,11 +66,11 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
 
   virtual ~PKCS9MessageDigest();
 
-  private:
+ private:
   std::vector<uint8_t> digest_;
 };
 
-}
-}
+}  // namespace PE
+}  // namespace LIEF
 
 #endif
