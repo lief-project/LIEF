@@ -181,6 +181,7 @@ else()
   add_dependencies(lief_spdlog lief_spdlog_project)
   target_include_directories(lief_spdlog SYSTEM INTERFACE "$<BUILD_INTERFACE:${SPDLOG_SOURCE_DIR}/include>")
 endif()
+add_compile_definitions(lief_spdlog SPDLOG_HEADER_ONLY)
 
 # Frozen
 # ------

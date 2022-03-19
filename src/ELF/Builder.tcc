@@ -17,6 +17,7 @@
 #include <cassert>
 #include <numeric>
 #include <unordered_map>
+#include <utility>
 
 #include "ELF/Structures.hpp"
 #include "ExeLayout.hpp"
@@ -1782,7 +1783,14 @@ ok_error_t Builder::build_symbol_requirement() {
     return make_error_code(lief_errors::not_found);
   }
   const Elf_Addr svr_address = dt_verneed->value();
-  const Elf_Off svr_offset = binary_->virtual_address_to_offset(svr_address);
+  result<uint64_t> maybe_svr_offset =
+      binary_->virtual_address_to_offset(svr_address);
+
+  if (is_error(maybe_svr_offset)) {
+    return extract_error(maybe_svr_offset);
+  }
+
+  Elf_Off svr_offset = extract_value(maybe_svr_offset);
   const auto svr_nb = static_cast<uint32_t>(dt_verneednum->value());
 
   if (svr_nb != binary_->symbol_version_requirements_.size()) {
@@ -1898,7 +1906,14 @@ ok_error_t Builder::build_symbol_definition() {
   }
 
   const Elf_Addr svd_va = dt_verdef->value();
-  const Elf_Off svd_offset = binary_->virtual_address_to_offset(svd_va);
+  result<uint64_t> maybe_svd_offset =
+      binary_->virtual_address_to_offset(svd_va);
+
+  if (is_error(maybe_svd_offset)) {
+    return extract_error(maybe_svd_offset);
+  }
+
+  const Elf_Off svd_offset = extract_value(maybe_svd_offset);
   const uint32_t svd_nb = dt_verdefnum->value();
 
   if (svd_nb != binary_->symbol_version_definition_.size()) {

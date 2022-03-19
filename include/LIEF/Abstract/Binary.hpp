@@ -22,6 +22,7 @@
 #include "LIEF/Abstract/Function.hpp"
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -72,9 +73,8 @@ class LIEF_API Binary : public Object {
   //! Iterator that outputs const LIEF::Relocation&
   using it_const_relocations = const_ref_iterator<relocations_t>;
 
- public:
   Binary();
-  virtual ~Binary();
+  ~Binary() override;
 
   Binary& operator=(const Binary&);
   Binary(const Binary&);
@@ -132,7 +132,8 @@ class LIEF_API Binary : public Object {
   functions_t imported_functions() const;
 
   //! Return the address of the given function name
-  virtual uint64_t get_function_address(const std::string& func_name) const;
+  virtual result<uint64_t> get_function_address(
+      const std::string& func_name) const;
 
   //! Method so that a ``visitor`` can visit us
   void accept(Visitor& visitor) const override;

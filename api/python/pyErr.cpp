@@ -38,5 +38,8 @@ void init_LIEF_errors(py::module& m) {
       .value("file_format_error", lief_errors::file_format_error)
       .value("parsing_error", lief_errors::parsing_error)
       .value("build_error", lief_errors::build_error)
-      .value("data_too_large", lief_errors::data_too_large);
+      .value("data_too_large", lief_errors::data_too_large)
+      .value("allocation_error", lief_errors::allocation_error)
+      .value("failed_precondition_error",
+             lief_errors::failed_precondition_error);
 }

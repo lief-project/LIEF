@@ -23,6 +23,7 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {

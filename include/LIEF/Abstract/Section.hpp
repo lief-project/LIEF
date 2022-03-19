@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -31,13 +32,15 @@ class LIEF_API Section : public Object {
  public:
   static constexpr size_t npos = -1;
 
-  Section();
-  Section(std::string name);
+  Section() = default;
+  explicit Section(std::string name);
 
-  virtual ~Section();
+  ~Section() override = default;
 
-  Section& operator=(const Section&);
-  Section(const Section&);
+  Section& operator=(const Section&) = default;
+  Section& operator=(Section&&) = default;
+  Section(const Section&) = default;
+  Section(Section&&) = default;
 
   //! section's name
   virtual std::string name() const;

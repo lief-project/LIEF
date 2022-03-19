@@ -404,7 +404,7 @@ void create<Binary>(py::module& m) {
         "virtual_address"_a)
 
     .def("add",
-        static_cast<Section& (Binary::*)(const Section&, bool)>(&Binary::add),
+        static_cast<Section* (Binary::*)(const Section&, bool)>(&Binary::add),
         R"delim(
         Add the given :class:`~lief.ELF.Section` to the binary.
 
@@ -415,7 +415,7 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("add",
-        static_cast<Segment& (Binary::*)(const Segment&, uint64_t)>(&Binary::add),
+        static_cast<Segment* (Binary::*)(const Segment&, uint64_t)>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.ELF.Segment) " in the binary"
         "segment"_a, "base"_a = 0,
         py::return_value_policy::reference)
@@ -427,7 +427,7 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("replace",
-        static_cast<Segment& (Binary::*)(const Segment&, const Segment&, uint64_t)>(&Binary::replace),
+        static_cast<Segment* (Binary::*)(const Segment&, const Segment&, uint64_t)>(&Binary::replace),
         R"delim(
         Replace the :class:`~lief.ELF.Segment` given in 2nd parameter with the
         :class:`~lief.ELF.Segment` given in the first parameter and return the updated segment.
@@ -440,13 +440,13 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("extend",
-        static_cast<Segment& (Binary::*)(const Segment&, uint64_t)>(&Binary::extend),
+        static_cast<Segment* (Binary::*)(const Segment&, uint64_t)>(&Binary::extend),
         "Extend the given given " RST_CLASS_REF(lief.ELF.Segment) " by the given size",
         "segment"_a, "size"_a,
         py::return_value_policy::reference)
 
     .def("extend",
-        static_cast<Section& (Binary::*)(const Section&, uint64_t)>(&Binary::extend),
+        static_cast<Section* (Binary::*)(const Section&, uint64_t)>(&Binary::extend),
         "Extend the given given " RST_CLASS_REF(lief.ELF.Section) " by the given size",
         "segment"_a, "size"_a,
         py::return_value_policy::reference)

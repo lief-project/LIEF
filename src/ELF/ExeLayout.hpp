@@ -14,35 +14,35 @@
  */
 #ifndef LIEF_ELF_EXE_LAYOUT_H_
 #define LIEF_ELF_EXE_LAYOUT_H_
-#include <LIEF/visibility.h>
 
-#include <ELF/Structures.hpp>
-#include <LIEF/ELF/Binary.hpp>
-#include <LIEF/ELF/Builder.hpp>
-#include <LIEF/ELF/DynamicEntryArray.hpp>
-#include <LIEF/ELF/DynamicEntryLibrary.hpp>
-#include <LIEF/ELF/DynamicEntryRpath.hpp>
-#include <LIEF/ELF/DynamicEntryRunPath.hpp>
-#include <LIEF/ELF/DynamicSharedObject.hpp>
-#include <LIEF/ELF/EnumToString.hpp>
-#include <LIEF/ELF/GnuHash.hpp>
-#include <LIEF/ELF/Note.hpp>
-#include <LIEF/ELF/Relocation.hpp>
-#include <LIEF/ELF/Section.hpp>
-#include <LIEF/ELF/Segment.hpp>
-#include <LIEF/ELF/Symbol.hpp>
-#include <LIEF/ELF/SymbolVersionAux.hpp>
-#include <LIEF/ELF/SymbolVersionAuxRequirement.hpp>
-#include <LIEF/ELF/SymbolVersionDefinition.hpp>
-#include <LIEF/ELF/SymbolVersionRequirement.hpp>
-#include <LIEF/ELF/SysvHash.hpp>
-#include <LIEF/ELF/utils.hpp>
-#include <LIEF/errors.hpp>
-#include <LIEF/iostream.hpp>
-#include <LIEF/types.hpp>
-
+#include "ELF/Structures.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/GnuHash.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/ELF/SysvHash.hpp"
+#include "LIEF/ELF/utils.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/types.hpp"
+#include "LIEF/visibility.h"
 #include "Layout.hpp"
 #include "logging.hpp"
+
 namespace LIEF {
 namespace ELF {
 
@@ -532,7 +532,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
       interp_segment.type(SEGMENT_TYPES::PT_INTERP);
       interp_segment.add(ELF_SEGMENT_FLAGS::PF_R);
       interp_segment.content(std::vector<uint8_t>(interp_size_));
-      interp = &binary_->add(interp_segment);
+      interp = binary_->add(interp_segment);
+      if (interp == nullptr) {
+        LIEF_DEBUG("Could not add a new interp segment.");
+        return make_error_code(lief_errors::allocation_error);
+      }
       LIEF_DEBUG("Interp Segment: 0x{:x}:0x{:x}", interp->virtual_address(),
                  interp->virtual_size());
     }
@@ -575,7 +579,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rsegment.type(SEGMENT_TYPES::PT_LOAD);
       rsegment.add(ELF_SEGMENT_FLAGS::PF_R);
       rsegment.content(std::vector<uint8_t>(read_segment));
-      new_rsegment = &binary_->add(rsegment);
+      new_rsegment = binary_->add(rsegment);
+
+      if (new_rsegment == nullptr) {
+        LIEF_DEBUG("Could not allocate a new R segment.");
+        return make_error_code(lief_errors::allocation_error);
+      }
+
       LIEF_DEBUG("R-Segment: 0x{:x}:0x{:x}", new_rsegment->virtual_address(),
                  new_rsegment->virtual_size());
     }
@@ -603,7 +613,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rwsegment.add(ELF_SEGMENT_FLAGS::PF_R);
       rwsegment.add(ELF_SEGMENT_FLAGS::PF_W);
       rwsegment.content(std::vector<uint8_t>(read_write_segment));
-      new_rwsegment = &binary_->add(rwsegment);
+      new_rwsegment = binary_->add(rwsegment);
+
+      if (new_rwsegment == nullptr) {
+        LIEF_DEBUG("Could not allocate a new RW segment.");
+        return make_error_code(lief_errors::allocation_error);
+      }
+
       LIEF_DEBUG("RW-Segment: 0x{:x}:0x{:x}", new_rwsegment->virtual_address(),
                  new_rwsegment->virtual_size());
     }
@@ -647,18 +663,27 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       Section* section = nullptr;
       Segment::it_sections sections = pt_interp->sections();
-      if (sections.size() > 0) {
+      if (!sections.empty()) {
         section = &sections[0];
       }
       pt_interp->virtual_address(va_r_base);
       pt_interp->virtual_size(interp_size_);
       pt_interp->physical_address(va_r_base);
-      pt_interp->file_offset(binary_->virtual_address_to_offset(va_r_base));
+
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+      pt_interp->file_offset(offset);
       pt_interp->physical_size(interp_size_);
       if (section != nullptr) {
         section->virtual_address(va_r_base);
         section->size(interp_size_);
-        section->offset(binary_->virtual_address_to_offset(va_r_base));
+        section->offset(offset);
         section->original_size_ = interp_size_;
       }
 
@@ -671,10 +696,19 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_ERR("Can't find the PT_NOTE segment");
         return make_error_code(lief_errors::file_format_error);
       }
+
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
       note_segment->virtual_address(va_r_base);
       note_segment->virtual_size(raw_notes_.size());
       note_segment->physical_address(va_r_base);
-      note_segment->file_offset(binary_->virtual_address_to_offset(va_r_base));
+      note_segment->file_offset(offset);
       note_segment->physical_size(raw_notes_.size());
       va_r_base += raw_notes_.size();
     }
@@ -692,13 +726,22 @@ class LIEF_LOCAL ExeLayout : public Layout {
       dynamic_segment->virtual_address(va_rw_base);
       dynamic_segment->virtual_size(dynamic_size_);
       dynamic_segment->physical_address(va_rw_base);
-      dynamic_segment->file_offset(
-          binary_->virtual_address_to_offset(va_rw_base));
+
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_rw_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
+      dynamic_segment->file_offset(offset);
       dynamic_segment->physical_size(dynamic_size_);
 
       dynamic_section->virtual_address(va_rw_base);
       dynamic_section->size(dynamic_size_);
-      dynamic_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      dynamic_section->offset(offset);
       dynamic_section->original_size_ = dynamic_size_;
       va_rw_base += dynamic_size_;
     }
@@ -720,9 +763,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       dyn_sym_section->virtual_address(va_r_base);
       dyn_sym_section->size(dynsym_size_);
-      dyn_sym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_sym_section->offset(offset);
       dyn_sym_section->original_size_ = dynsym_size_;
       dt_symtab->value(va_r_base);
 
@@ -747,9 +799,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       dyn_str_section->virtual_address(va_r_base);
       dyn_str_section->size(raw_dynstr_.size());
-      dyn_str_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_str_section->offset(offset);
       dyn_str_section->original_size_ = raw_dynstr_.size();
 
       dt_strtab->value(va_r_base);
@@ -773,9 +834,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       versym_section->virtual_address(va_r_base);
       versym_section->size(sver_size_);
-      versym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      versym_section->offset(offset);
       versym_section->original_size_ = sver_size_;
       dt_versym->value(va_r_base);
 
@@ -798,9 +868,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       verdef_section->virtual_address(va_r_base);
       verdef_section->size(sverd_size_);
-      verdef_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verdef_section->offset(offset);
       verdef_section->original_size_ = sverd_size_;
       dt_verdef->value(va_r_base);
 
@@ -823,9 +902,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       verreq_section->virtual_address(va_r_base);
       verreq_section->size(sverr_size_);
-      verreq_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verreq_section->offset(offset);
       verreq_section->original_size_ = sverr_size_;
       dt_verreq->value(va_r_base);
 
@@ -859,11 +947,19 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       LIEF_DEBUG("Update {}", dyn_relocation_section->name());
       dyn_relocation_section->virtual_address(va_r_base);
       dyn_relocation_section->size(dynamic_reloc_size_);
-      dyn_relocation_section->offset(
-          binary_->virtual_address_to_offset(va_r_base));
+      dyn_relocation_section->offset(offset);
       dyn_relocation_section->original_size_ = dynamic_reloc_size_;
 
       dt_reloc->value(va_r_base);
@@ -892,9 +988,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       relocation_section->virtual_address(va_r_base);
       relocation_section->size(pltgot_reloc_size_);
-      relocation_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      relocation_section->offset(offset);
       relocation_section->original_size_ = pltgot_reloc_size_;
 
       dt_reloc->value(va_r_base);
@@ -920,9 +1025,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       section->virtual_address(va_r_base);
       section->size(raw_gnu_hash_.size());
-      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->offset(offset);
       section->original_size_ = raw_gnu_hash_.size();
 
       dt_gnu_hash->value(va_r_base);
@@ -946,9 +1060,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_r_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       section->virtual_address(va_r_base);
       section->size(sysv_size_);
-      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->offset(offset);
       section->original_size_ = sysv_size_;
 
       dt_hash->value(va_r_base);
@@ -1005,10 +1128,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_rw_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       init_array_section->virtual_address(va_rw_base);
       init_array_section->size(init_size_);
-      init_array_section->offset(
-          binary_->virtual_address_to_offset(va_rw_base));
+      init_array_section->offset(offset);
       init_array_section->original_size_ = init_size_;
 
       dt_init_array->value(va_rw_base);
@@ -1064,10 +1195,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_rw_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       preinit_array_section->virtual_address(va_rw_base);
       preinit_array_section->size(preinit_size_);
-      preinit_array_section->offset(
-          binary_->virtual_address_to_offset(va_rw_base));
+      preinit_array_section->offset(offset);
       preinit_array_section->original_size_ = preinit_size_;
 
       dt_preinit_array->value(va_rw_base);
@@ -1121,10 +1260,18 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      result<uint64_t> maybe_offset =
+          binary_->virtual_address_to_offset(va_rw_base);
+
+      if (is_error(maybe_offset)) {
+        return extract_error(maybe_offset);
+      }
+
+      uint64_t offset = extract_value(maybe_offset);
+
       fini_array_section->virtual_address(va_rw_base);
       fini_array_section->size(fini_size_);
-      fini_array_section->offset(
-          binary_->virtual_address_to_offset(va_rw_base));
+      fini_array_section->offset(offset);
       fini_array_section->original_size_ = fini_size_;
 
       dt_fini_array->value(va_rw_base);
@@ -1154,7 +1301,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
       Section strtab{".strtab", ELF_SECTION_TYPES::SHT_STRTAB};
       strtab.content(raw_strtab_);
       strtab.alignment(1);
-      Section& new_strtab = binary_->add(strtab, /* loaded */ false);
+      Section* new_strtab_ptr = binary_->add(strtab, /* loaded */ false);
+      if (new_strtab_ptr == nullptr) {
+        LIEF_DEBUG("Could not allocate a new strtab.");
+        return make_error_code(lief_errors::allocation_error);
+      }
+
+      // This is safe because we already confirmed it's not nullptr.
+      Section& new_strtab = *new_strtab_ptr;
       LIEF_DEBUG("New .strtab section: #{:d} {} 0x{:x} (size: {:x})",
                  strtab_idx, new_strtab.name(), new_strtab.file_offset(),
                  new_strtab.size());
@@ -1197,7 +1351,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
       symtab.entry_size(sizeof_sym);
       symtab.alignment(8);
       symtab.link(strtab_idx);
-      Section& new_symtab = binary_->add(symtab, /* loaded */ false);
+      Section* new_symtab_ptr = binary_->add(symtab, /* loaded */ false);
+
+      if (new_symtab_ptr == nullptr) {
+        LIEF_DEBUG("Could not allocate a new symtab.");
+        return make_error_code(lief_errors::allocation_error);
+      }
+
+      Section& new_symtab = *new_symtab_ptr;
       LIEF_DEBUG("New .symtab section: {} 0x{:x} (size: {:x})",
                  new_symtab.name(), new_symtab.file_offset(),
                  new_symtab.size());
@@ -1252,7 +1413,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
           Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
           section += ELF_SECTION_FLAGS::SHF_ALLOC;
 
-          Section& section_added = binary_->add(section, /*loaded */ false);
+          Section* section_added_ptr = binary_->add(section, /*loaded */ false);
+
+          if (section_added_ptr == nullptr) {
+            LIEF_DEBUG("Could not add a new section.");
+            return make_error_code(lief_errors::allocation_error);
+          }
+
+          Section& section_added = *section_added_ptr;
           section_added.offset(segment_note->file_offset() + note_offset);
           section_added.size(note.size());
           section.virtual_address(segment_note->virtual_address() +

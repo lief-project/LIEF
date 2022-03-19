@@ -174,11 +174,11 @@ ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
     return ok();
   }
 
-  try {
-    data_.resize(offset + size, 0);
-  } catch (const std::bad_alloc&) {
+  data_.resize(offset + size, 0);
+  if (data_.size() < offset + size) {
     return make_error_code(lief_errors::data_too_large);
   }
+
   return ok();
 }
 

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stdint.h>
+
 #include <algorithm>
 #include <cctype>
 #include <iterator>
@@ -20,7 +22,9 @@
 #include <numeric>
 #include <sstream>
 
+#include "ELF/Structures.hpp"
 #include "LIEF/DWARF/enums.hpp"
+#include "LIEF/errors.hpp"
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
@@ -964,18 +968,18 @@ std::vector<uint8_t> Binary::raw() {
   return builder.get_build();
 }
 
-uint64_t Binary::get_function_address(const std::string& func_name) const {
-  try {
-    return get_function_address(func_name, true);
-  } catch (const not_found&) {
-    return get_function_address(func_name, false);
-  } catch (const not_supported&) {
-    return get_function_address(func_name, false);
+result<uint64_t> Binary::get_function_address(
+    const std::string& func_name) const {
+  result<uint64_t> result = get_function_address(func_name, /*demangled=*/true);
+  if (is_ok(result)) {
+    return result;
   }
+
+  return get_function_address(func_name, /*demangled=*/false);
 }
 
-uint64_t Binary::get_function_address(const std::string& func_name,
-                                      bool demangled) const {
+result<uint64_t> Binary::get_function_address(const std::string& func_name,
+                                              bool demangled) const {
   const auto it_symbol = std::find_if(
       std::begin(static_symbols_), std::end(static_symbols_),
       [&func_name, demangled](const std::unique_ptr<Symbol>& symbol) {
@@ -992,13 +996,13 @@ uint64_t Binary::get_function_address(const std::string& func_name,
       });
 
   if (it_symbol == std::end(static_symbols_)) {
-    throw not_found("Can't find the function name");
+    return make_error_code(lief_errors::not_found);
   }
 
   return (*it_symbol)->value();
 }
 
-Section& Binary::add(const Section& section, bool loaded) {
+Section* Binary::add(const Section& section, bool loaded) {
   if (loaded) {
     return add_section<true>(section);
   }
@@ -1030,7 +1034,7 @@ bool Binary::has_nx() const {
   return !(*it_stack)->has(ELF_SEGMENT_FLAGS::PF_X);
 }
 
-Segment& Binary::add(const Segment& segment, uint64_t base) {
+Segment* Binary::add(const Segment& segment, uint64_t base) {
   const uint64_t new_base = base == 0 ? next_virtual_address() : base;
 
   switch (header().file_type()) {
@@ -1038,15 +1042,12 @@ Segment& Binary::add(const Segment& segment, uint64_t base) {
       return add_segment<E_TYPE::ET_EXEC>(segment, new_base);
     case E_TYPE::ET_DYN:
       return add_segment<E_TYPE::ET_DYN>(segment, new_base);
-    default: {
-      throw not_implemented(std::string("Adding segment for ") +
-                            to_string(header().file_type()) +
-                            " is not implemented");
-    }
+    default:
+      return nullptr;
   }
 }
 
-Segment& Binary::replace(const Segment& new_segment,
+Segment* Binary::replace(const Segment& new_segment,
                          const Segment& original_segment, uint64_t base) {
   const auto it_original_segment =
       std::find_if(std::begin(segments_), std::end(segments_),
@@ -1055,7 +1056,7 @@ Segment& Binary::replace(const Segment& new_segment,
                    });
 
   if (it_original_segment == std::end(segments_)) {
-    throw not_found("Unable to find the segment in the current binary");
+    return nullptr;
   }
 
   uint64_t new_base = base;
@@ -1105,7 +1106,7 @@ Segment& Binary::replace(const Segment& new_segment,
                                        new_segment_ptr->physical_size());
   if (!alloc) {
     LIEF_ERR("Allocation failed");
-    throw corrupted("Allocation failed");  // TODO(romain): To be removed
+    return nullptr;
   }
   new_segment_ptr->content(content);
 
@@ -1136,7 +1137,7 @@ Segment& Binary::replace(const Segment& new_segment,
   header.section_headers_offset(new_section_hdr_offset);
 
   segments_.push_back(std::move(new_segment_ptr));
-  return *segments_.back();
+  return segments_.back().get();
 }
 
 void Binary::remove(const Segment& segment) {
@@ -1161,29 +1162,27 @@ void Binary::remove(const Segment& segment) {
   segments_.erase(it_segment);
 }
 
-Segment& Binary::extend(const Segment& segment, uint64_t size) {
+Segment* Binary::extend(const Segment& segment, uint64_t size) {
   const SEGMENT_TYPES type = segment.type();
   switch (type) {
     case SEGMENT_TYPES::PT_PHDR:
     case SEGMENT_TYPES::PT_LOAD: {
       return extend_segment<SEGMENT_TYPES::PT_LOAD>(segment, size);
     }
-
-    default: {
-      throw not_implemented(std::string("Extending segment '") +
-                            to_string(type) + "' is not implemented");
-    }
+    default:
+      return nullptr;
   }
 }
 
-Section& Binary::extend(const Section& section, uint64_t size) {
+Section* Binary::extend(const Section& section, uint64_t size) {
   const auto it_section = std::find_if(
       std::begin(sections_), std::end(sections_),
       [&section](const std::unique_ptr<Section>& s) { return *s == section; });
 
   if (it_section == std::end(sections_)) {
-    throw not_found("Unable to find the section " + section.name() +
-                    " in the current binary");
+    LIEF_DEBUG("Unable to find the section {} in the current binary",
+               section.name());
+    return nullptr;
   }
 
   std::unique_ptr<Section>& section_to_extend = *it_section;
@@ -1199,8 +1198,8 @@ Section& Binary::extend(const Section& section, uint64_t size) {
       section_to_extend->offset() + section_to_extend->size(), size);
 
   if (!alloc) {
-    LIEF_ERR("Allocation failed");
-    throw corrupted("Allocation failed");  // TODO(romain): To be removed
+    LIEF_DEBUG("Could not allocate a new section to accomodate the extension.");
+    return nullptr;
   }
 
   shift_sections(from_offset, shift);
@@ -1243,7 +1242,7 @@ Section& Binary::extend(const Section& section, uint64_t size) {
     }
   }
 
-  return *section_to_extend;
+  return section_to_extend.get();
 }
 
 // Patch
@@ -1288,8 +1287,8 @@ void Binary::patch_address(uint64_t address,
 
   if (offset + patch_value.size() > content_ref.size()) {
     LIEF_ERR(
-        "The patch value ({} bytes @0x{:x}) is out of bounds of the segment "
-        "(limit: 0x{:x})",
+        "The patch value ({} bytes @0x{:x}) is out of bounds of the "
+        "segment (limit: 0x{:x})",
         patch_value.size(), offset, content_ref.size());
     return;
   }
@@ -1540,7 +1539,8 @@ Symbol& Binary::add_dynamic_symbol(const Symbol& symbol,
   return *dynamic_symbols_.back();
 }
 
-uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
+result<uint64_t> Binary::virtual_address_to_offset(
+    uint64_t virtual_address) const {
   const auto it_segment = std::find_if(
       std::begin(segments_), std::end(segments_),
       [virtual_address](const std::unique_ptr<Segment>& segment) {
@@ -1551,8 +1551,8 @@ uint64_t Binary::virtual_address_to_offset(uint64_t virtual_address) const {
       });
 
   if (it_segment == std::end(segments_)) {
-    LIEF_DEBUG("Address: 0x{:x}", virtual_address);
-    throw conversion_error("Invalid virtual address");
+    LIEF_DEBUG("Address: 0x{:x} is invalid.", virtual_address);
+    return make_error_code(lief_errors::not_found);
   }
   uint64_t base_address =
       (*it_segment)->virtual_address() - (*it_segment)->file_offset();
@@ -2217,7 +2217,15 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
   const uint64_t eh_frame_addr = eh_frame_seg->virtual_address();
   const uint64_t eh_frame_rva = eh_frame_addr - imagebase();
-  uint64_t eh_frame_off = virtual_address_to_offset(eh_frame_addr);
+  result<uint64_t> maybe_eh_frame_off =
+      virtual_address_to_offset(eh_frame_addr);
+
+  if (is_error(maybe_eh_frame_off)) {
+    LIEF_DEBUG("Could not find the offset to eh_frame.");
+    return functions;
+  }
+
+  uint64_t eh_frame_off = extract_value(maybe_eh_frame_off);
   const auto it_load_segment = std::find_if(
       std::begin(segments_), std::end(segments_),
       [eh_frame_addr](const std::unique_ptr<Segment>& s) {

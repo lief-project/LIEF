@@ -20,6 +20,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <utility>
 
 #include "LIEF/Abstract/hash.hpp"
@@ -29,15 +30,9 @@
 
 namespace LIEF {
 
-Section::Section() = default;
-
 Section::Section(std::string name) : name_{std::move(name)} {}
 
-Section::~Section() = default;
-Section& Section::operator=(const Section&) = default;
-Section::Section(const Section&) = default;
-
-std::string Section::name() const { return name_.c_str(); }
+std::string Section::name() const { return name_; }
 
 const std::string& Section::fullname() const { return name_; }
 
@@ -62,7 +57,6 @@ uint64_t Section::virtual_address() const { return virtual_address_; }
 
 void Section::virtual_address(uint64_t virtual_address) {
   virtual_address_ = virtual_address;
-  ;
 }
 
 void Section::offset(uint64_t offset) { offset_ = offset; }
@@ -71,7 +65,7 @@ void Section::offset(uint64_t offset) { offset_ = offset; }
 // ================
 size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
   if (size > sizeof(integer)) {
-    throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
+    return Section::npos;
   }
 
   size_t minimal_size = size;
@@ -85,8 +79,7 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
     } else if (integer < std::numeric_limits<uint64_t>::max()) {
       minimal_size = sizeof(uint64_t);
     } else {
-      throw exception("Unable to find an appropriated type of " +
-                      std::to_string(integer));
+      return Section::npos;
     }
   }
 
@@ -102,7 +95,7 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
 size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   span<const uint8_t> content = this->content();
 
-  const auto it_found =
+  const auto* it_found =
       std::search(std::begin(content) + pos, std::end(content),
                   std::begin(pattern), std::end(pattern));
 
@@ -150,9 +143,10 @@ std::vector<size_t> Section::search_all(const std::string& v) const {
 }
 
 double Section::entropy() const {
-  std::array<uint64_t, 256> frequencies = {{0}};
+  std::array<uint64_t, std::numeric_limits<uint8_t>::max() + 1> frequencies = {
+      {0}};
   span<const uint8_t> content = this->content();
-  if (content.size() == 0) {
+  if (content.empty()) {
     return 0.;
   }
   for (uint8_t x : content) {

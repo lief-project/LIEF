@@ -37,6 +37,8 @@ enum class lief_errors {
   build_error,
 
   data_too_large,
+  allocation_error,
+  failed_precondition_error,
   /*
    * When adding a new error, do not forget
    * to update the Python bindings as well (pyErr.cpp)
@@ -86,6 +88,28 @@ using error_result_t = typename result<T>::error_resul;
 
 //! Abstraction over the implementation
 using error_t = boost::leaf::error_id;
+
+//! Abstraction over the implementation.
+template <typename T>
+error_t extract_error(result<T>& result) {
+  return result.error();
+}
+
+//! Abstraction over the implementation.
+template <typename T>
+T extract_value(result<T>& result) {
+  return result.value();
+}
+
+template <typename T>
+bool is_error(const result<T>& result) {
+  return result.has_error();
+}
+
+template <typename T>
+bool is_ok(const result<T>& result) {
+  return result.has_value();
+}
 
 //! Create an error_t from a lief_errors
 error_t return_error(lief_errors);
