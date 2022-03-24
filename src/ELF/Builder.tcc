@@ -296,10 +296,9 @@ ok_error_t Builder::build_exe_lib() {
     }
   }
 
-  DynamicEntry* dt_preinit_array   = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAY);
-  DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
-  if (dt_preinit_array != nullptr && dt_preinit_arraysz != nullptr)
-  {
+  DynamicEntry* dt_preinit_array   = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
+  DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
+  if (dt_preinit_array != nullptr && dt_preinit_arraysz != nullptr) {
     const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
     const uint64_t current_size = dt_preinit_arraysz->value();
     Section* array_section   = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
