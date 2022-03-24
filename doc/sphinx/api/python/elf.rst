@@ -179,6 +179,17 @@ Symbol Version Requirement
 
 ----------
 
+Symbol Version Auxiliary Requirement
+************************************
+
+.. autoclass:: lief.ELF.SymbolVersionAuxRequirement
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
 GNU Hash table
 **************
 

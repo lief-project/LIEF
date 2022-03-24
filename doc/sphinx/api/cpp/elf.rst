@@ -132,6 +132,30 @@ Symbol Version Auxiliary
 
 ----------
 
+Symbol Version Definition
+*************************
+
+.. doxygenclass:: LIEF::ELF::SymbolVersionDefinition
+   :project: lief
+
+----------
+
+Symbol Version Requirement
+**************************
+
+.. doxygenclass:: LIEF::ELF::SymbolVersionRequirement
+   :project: lief
+
+----------
+
+Symbol Version Auxiliary Requirement
+************************************
+
+.. doxygenclass:: LIEF::ELF::SymbolVersionAuxRequirement
+   :project: lief
+
+----------
+
 GNU Hash table
 **************
 
@@ -228,6 +252,14 @@ Note ABI
 ********
 
 .. doxygenclass:: LIEF::ELF::NoteAbi
+   :project: lief
+
+----------
+
+Builder
+*******
+
+.. doxygenclass:: LIEF::ELF::Builder
    :project: lief
 
 ----------
