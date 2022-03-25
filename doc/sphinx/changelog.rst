@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.12.0 - Not Released Yet
--------------------------
+0.12.0 - March 25, 2022
+-----------------------
 
 :ELF:
   * :github_user:`ahaensler` added the support to insert and assign a :class:`lief.ELF.SymbolVersionAuxRequirement` (see: :pr:`670`)
