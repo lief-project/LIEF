@@ -42,6 +42,12 @@ jobs:
            -v $GITHUB_WORKSPACE:/work \
            -v $HOME/.ccache:/ccache \
           --rm liefproject/android-arm64 bash /work/scripts/docker/android-aarch64.sh
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-sdk
+          path: build/*.tar.gz
+          retention-days: 3
       - name: Deploy
         env:
           LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}

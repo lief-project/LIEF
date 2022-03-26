@@ -41,6 +41,12 @@ jobs:
           CCACHE_COMPRESS: 1
         run: |
           bash scripts/osx/package_ios.sh
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-sdk
+          path: build/*.tar.gz
+          retention-days: 3
       - name: Deploy
         env:
           LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
