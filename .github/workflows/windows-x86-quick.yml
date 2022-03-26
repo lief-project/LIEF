@@ -1,5 +1,5 @@
 
-name: LIEF Windows x86 Quick Tests
+name: LIEF Windows x86 Quick
 
 on:
   push:

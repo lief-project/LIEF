@@ -68,6 +68,19 @@ jobs:
           CCACHE_COMPRESS: 1
         run: |
           bash scripts/osx/package_sdk.sh
+      - name: 'Upload SDK Artifact'
+        if: matrix.python-version == '3.9' # Build the SDk only with Python 3.9
+        uses: actions/upload-artifact@v3
+        with:
+          name: osx-sdk
+          path: build/*.tar.gz
+          retention-days: 3
+      - name: 'Upload Python Wheel Artifact - ${{ matrix.python-version }}'
+        uses: actions/upload-artifact@v3
+        with:
+          name: osx-wheel-${{ matrix.python-version }}
+          path: dist/*.whl
+          retention-days: 3
       - name: Deploy
         env:
           LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}

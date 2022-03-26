@@ -1,5 +1,5 @@
 
-name: LIEF Windows x64 Tests
+name: LIEF Windows x64
 
 on:
   push:
@@ -66,6 +66,19 @@ jobs:
       if: matrix.python-version == 3.9
       run: |
         python ./scripts/windows/package_sdk.py
+    - name: 'Upload SDK Artifact'
+      if: matrix.python-version == 3.9
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-x64-sdk
+        path: build/*.zip
+        retention-days: 3
+    - name: 'Upload Python Wheel Artifact - ${{ matrix.python-version }}'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-x64-wheel-${{ matrix.python-version }}
+        path: dist/*.whl
+        retention-days: 3
     - name: 📊 Print sccache stats
       run: sccache --show-stats
     - name: 🛑 Stop sccache server
