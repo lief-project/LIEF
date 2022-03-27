@@ -7,6 +7,8 @@ import pathlib
 import subprocess
 import shutil
 import json
+import requests
+from collections import defaultdict
 from datetime import datetime
 from mako.template import Template
 from enum import Enum, auto
@@ -127,8 +129,10 @@ ALLOWED_BRANCHES = {"master", "deploy", "devel"}
 BRANCH_NAME = get_branch(CURRENT_CI)
 TAG_NAME    = get_tag(CURRENT_CI)
 IS_TAGGED   = TAG_NAME is not None and len(TAG_NAME) > 0
+
 logger.info("Branch: %s", BRANCH_NAME)
 logger.info("Tag:    %s", TAG_NAME)
+
 if BRANCH_NAME not in ALLOWED_BRANCHES and not IS_TAGGED:
     logger.info("Skip deployment for branch '%s'", BRANCH_NAME)
     sys.exit(0)
@@ -140,8 +144,9 @@ if is_pr(CURRENT_CI):
 CURRENTDIR = pathlib.Path(__file__).resolve().parent
 REPODIR    = CURRENTDIR.parent
 
-DEPLOY_KEY = os.getenv("LIEF_AUTOMATIC_BUILDS_KEY", None)
-DEPLOY_IV  = os.getenv("LIEF_AUTOMATIC_BUILDS_IV", None)
+LIEF_GITLAB_TOKEN = os.getenv("LIEF_GITLAB_TOKEN", None)
+DEPLOY_KEY        = os.getenv("LIEF_AUTOMATIC_BUILDS_KEY", None)
+DEPLOY_IV         = os.getenv("LIEF_AUTOMATIC_BUILDS_IV", None)
 
 if DEPLOY_KEY is None or len(DEPLOY_KEY) == 0:
     logger.error("Deploy key is not set!")
@@ -149,6 +154,10 @@ if DEPLOY_KEY is None or len(DEPLOY_KEY) == 0:
 
 if DEPLOY_IV is None or len(DEPLOY_IV) == 0:
     logger.error("Deploy IV is not set!")
+    sys.exit(1)
+
+if LIEF_GITLAB_TOKEN is None or len(LIEF_GITLAB_TOKEN) == 0:
+    logger.error("LIEF_GITLAB_TOKEN is not set!")
     sys.exit(1)
 
 GIT_USER  = "lief-{}-ci".format(CI_PRETTY_NAME)
@@ -165,10 +174,11 @@ LIEF_PACKAGE_DIR      = REPODIR / "deploy-packages"
 LIEF_PACKAGE_SSH_REPO = "git@github.com:lief-project/packages.git"
 SDK_PACKAGE_DIR       = LIEF_PACKAGE_DIR / "sdk"
 PYPI_PACKAGE_DIR      = LIEF_PACKAGE_DIR / "lief"
-JSON_PACKAGE          = LIEF_PACKAGE_DIR / "packages.json"
 DIST_DIR              = REPODIR / "dist"
 BUILD_DIR             = REPODIR / "build"
 
+# Gitlab
+GITLAB_PROJECT_ID = 34840840 # https://gitlab.com/lief-project/packages
 
 logger.debug("Working directory: %s", CI_CWD)
 
@@ -183,14 +193,198 @@ SSH_AGENT   = shutil.which("ssh-agent")
 SSH_ADD     = shutil.which("ssh-add")
 SSH_KEYSCAN = shutil.which("ssh-keyscan")
 
-if DEPLOY_KEY is None:
-    logger.error("Deploy key is not set!")
-    sys.exit(1)
+INDEX_TEMPLATE = r"""
+<html>
+<title>Links for lief</title>
+<body>
+<h1>Links for lief</h1>
+% for name, file_id in files:
+    <a href="https://gitlab.com/lief-project/packages/-/package_files/${file_id}/download">${name}</a><br />
+% endfor
+</body>
+</html>
+"""
 
-if DEPLOY_IV is None:
-    logger.error("Deploy IV is not set!")
-    sys.exit(1)
+def delete_file(file_info):
+    logger.info("Deleting %s [%s]", file_info["file_name"], file_info["created_at"])
+    url = "https://gitlab.com/api/v4/projects/{project_id}/packages/{pkd_id}/package_files/{file_id}"
+    headers = {
+        "PRIVATE-TOKEN": LIEF_GITLAB_TOKEN
+    }
 
+    url = url.format(
+        project_id=GITLAB_PROJECT_ID,
+        pkd_id=file_info["package_id"],
+        file_id=file_info["id"],
+    )
+    r = requests.delete(url, headers=headers)
+    if r.status_code != 204:
+        logger.error("Error while deleting the file (%s)", r.text)
+        sys.exit(1)
+
+def list_packages_files(pkg_id: int):
+    url = "https://gitlab.com/api/v4/projects/{project_id}/packages/{pkg_id}/package_files"
+    url = url.format(project_id=GITLAB_PROJECT_ID, pkg_id=pkg_id)
+
+    headers = {
+        "PRIVATE-TOKEN": LIEF_GITLAB_TOKEN
+    }
+
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        logger.error("Error while listing packages with id: %d (%s)", pkg_id, r.text)
+        sys.exit(1)
+
+    return r.json()
+
+def list_packages():
+    url     = "https://gitlab.com/api/v4/projects/{project_id}/packages".format(project_id=GITLAB_PROJECT_ID)
+    headers = {
+        "PRIVATE-TOKEN": LIEF_GITLAB_TOKEN
+    }
+
+    r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        logger.error("Error while trying to list packages (%s)", r.text)
+        sys.exit(1)
+
+    return r.json()
+
+def push_file(file_path: str, pkg_name: str, version: str):
+    file = pathlib.Path(file_path)
+    if not file.exists():
+        logger.error("%s does not exist", file_path)
+        return None
+
+    url     = "https://gitlab.com/api/v4/projects/{project_id}/packages/generic/{pkg_name}/{version}/{file_name}"
+    headers = {
+        "PRIVATE-TOKEN": LIEF_GITLAB_TOKEN
+    }
+
+    url = url.format(
+        project_id=GITLAB_PROJECT_ID,
+        pkg_name=pkg_name,
+        version=version,
+        file_name=file.name
+    )
+
+    r = requests.put(url, data=file.read_bytes(), headers=headers)
+    if r.status_code != 201:
+        logger.error("Error while trying to upload: %s (%s)", file_path, r.text)
+        sys.exit(1)
+
+    return r.json()
+
+
+def process_pkg_files(files):
+    targets     = []
+    remove_list = []
+    for fname, info in files.items():
+        sorted(info, key=lambda e: e["created_at"])
+        info.reverse()
+        if len(info) == 0:
+            pass
+        elif len(info) == 1:
+            targets.append(info[0])
+        else:
+            target    = info[0]
+            to_remove = info[1:]
+            targets.append(target)
+            remove_list += to_remove
+    return (tuple(targets), tuple(remove_list))
+
+def process_packages():
+    packages = list_packages()
+    if packages is None:
+        logger.error("No packages")
+        sys.exit(1)
+
+    keeps   = []
+    removes = []
+
+    for pkg in packages:
+        name         = pkg["name"]
+        version      = pkg["version"]
+        package_type = pkg["package_type"]
+        id           = pkg["id"]
+        files = list_packages_files(id)
+        files_info = defaultdict(list)
+        for pkg_file in files:
+            fname = pkg_file["file_name"]
+            fdate = pkg_file["created_at"]
+            files_info[fname].append(dict(pkg_file))
+        keep, remove = process_pkg_files(files_info)
+
+        keeps   += list(keep)
+        removes += list(remove)
+
+    return (keeps, removes)
+
+
+def generate_wheel_index(files):
+    tmpl_info = [(info["file_name"], info["id"]) for info in files]
+    html = Template(INDEX_TEMPLATE).render(files=tmpl_info)
+    return html
+
+def generate_sdk_index(files):
+    tmpl_info = [(info["file_name"], info["id"]) for info in files]
+    html = Template(INDEX_TEMPLATE).render(files=tmpl_info)
+    return html
+
+def generate_index(files):
+    python_wheels = [f for f in files if f["file_name"].endswith(".whl")]
+    sdk_files     = [f for f in files if f["file_name"].endswith(".zip") or f["file_name"].endswith(".tar.gz")]
+
+    wheel_index = generate_wheel_index(python_wheels)
+    sdk_index = generate_sdk_index(sdk_files)
+
+    SDK_PACKAGE_DIR.mkdir(exist_ok=True)
+    PYPI_PACKAGE_DIR.mkdir(exist_ok=True)
+
+    with open((PYPI_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
+        f.write(wheel_index)
+
+    with open((SDK_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
+        f.write(sdk_index)
+
+gitlab_packages_name    = "lief"
+gitlab_packages_version = "latest"
+
+if BRANCH_NAME != "master":
+    gitlab_packages_name = "lief-{}".format(BRANCH_NAME.replace("/", "-").replace("_", "-"))
+
+if IS_TAGGED:
+    gitlab_packages_name    = "lief-{}".format(str(TAG_NAME))
+    gitlab_packages_version = str(TAG_NAME)
+
+for file in DIST_DIR.glob("*.whl"):
+    logger.debug("[WHEEL] Uploading '%s'", file.as_posix())
+    push_file(file.as_posix(), gitlab_packages_name, gitlab_packages_version)
+
+for file in BUILD_DIR.glob("*.zip"):
+    logger.debug("[SDK  ] Uploading '%s'", file.as_posix())
+    push_file(file.as_posix(), gitlab_packages_name, gitlab_packages_version)
+
+for file in BUILD_DIR.glob("*.tar.gz"):
+    logger.debug("[SDK  ] Uploading '%s'", file.as_posix())
+    push_file(file.as_posix(), gitlab_packages_name, gitlab_packages_version)
+
+
+keep, remove = process_packages()
+
+while len(remove) > 0:
+    for file in remove:
+        fname = file["file_name"]
+        fdate = file["created_at"]
+        logger.info("  [REMOVE]: %s (%s)", fname, fdate)
+        delete_file(file)
+    keep, remove = process_packages()
+
+
+for file in keep:
+    fname = file["file_name"]
+    fdate = file["created_at"]
+    logger.info("  [KEEP  ]: %s (%s)", fname, fdate)
 
 #####################
 # Clone package repo
@@ -227,18 +421,7 @@ if not LIEF_PACKAGE_DIR.is_dir():
         pmaster = subprocess.Popen(cmd, shell=True, cwd=LIEF_PACKAGE_DIR, stderr=subprocess.STDOUT)
         pmaster.wait()
 
-SDK_PACKAGE_DIR.mkdir(exist_ok=True)
-PYPI_PACKAGE_DIR.mkdir(exist_ok=True)
-
-packages_info = {}
-new_packages_info = {}
-if JSON_PACKAGE.is_file():
-    try:
-        packages_info = json.loads(JSON_PACKAGE.read_bytes())
-    except json.decoder.JSONDecodeError as e:
-        logger.error(e)
-else:
-    JSON_PACKAGE.touch()
+(LIEF_PACKAGE_DIR / ".nojekyll").touch()
 
 logger.info("CI: %s - %s", GIT_USER, GIT_EMAIL)
 cmds = [
@@ -255,55 +438,8 @@ for cmd in cmds:
     if p.returncode:
         sys.exit(1)
 
-for file in DIST_DIR.glob("*.whl"):
-    logger.debug("Copying '%s' to '%s'", file.as_posix(), PYPI_PACKAGE_DIR.as_posix())
-    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-    shutil.copy(file.as_posix(), PYPI_PACKAGE_DIR.as_posix())
-
-for file in BUILD_DIR.glob("*.zip"):
-    logger.debug("Copying '%s' to '%s'", file.as_posix(), SDK_PACKAGE_DIR.as_posix())
-    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-    shutil.copy(file.as_posix(), SDK_PACKAGE_DIR.as_posix())
-
-for file in BUILD_DIR.glob("*.tar.gz"):
-    logger.debug("Copying '%s' to '%s'", file.as_posix(), SDK_PACKAGE_DIR.as_posix())
-    new_packages_info[file.name] = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-    shutil.copy(file.as_posix(), SDK_PACKAGE_DIR.as_posix())
-
-for k, v in new_packages_info.items():
-    logger.info("{:<30}: {}".format(k, v))
-
-try:
-    packages_info.update(new_packages_info)
-    JSON_PACKAGE.write_text(json.dumps(packages_info))
-except Exception as e:
-    logger.error(e)
-
-INDEX_TEMPLATE = r"""
-<html>
-<title>Links for lief</title>
-<body>
-<h1>Links for lief</h1>
-% for name in names:
-    <a href="${base_url}/${base}/${name}">${name}</a><br />
-% endfor
-</body>
-</html>
-"""
-
-EXCLUDED = ['index.html', '.gitkeep']
-BASE_URL = "https://lief-project.github.io"
-
-fnames = [fname for fname in sorted(f.name for f in PYPI_PACKAGE_DIR.iterdir() if f.is_file() and f.name not in EXCLUDED)]
-html = Template(INDEX_TEMPLATE).render(names=fnames, base_url=BASE_URL, base="packages/lief")
-with open((PYPI_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
-    f.write(html)
-
-
-fnames = [fname for fname in sorted(f.name for f in SDK_PACKAGE_DIR.iterdir() if f.is_file() and f.name not in EXCLUDED)]
-html = Template(INDEX_TEMPLATE).render(names=fnames, base_url=BASE_URL, base="packages/sdk")
-with open((SDK_PACKAGE_DIR / "index.html").as_posix(), "w") as f:
-    f.write(html)
+# Generate indexes for the wheels / SDK
+generate_index(keep)
 
 if not SSH_DIR.is_dir():
     SSH_DIR.mkdir(mode=0o700)
