@@ -68,6 +68,7 @@ jobs:
           LIEF_AUTOMATIC_BUILDS_KEY: ${{ secrets.LIEF_AUTOMATIC_BUILDS_KEY }}
           LIEF_AUTOMATIC_BUILDS_IV: ${{ secrets.LIEF_AUTOMATIC_BUILDS_IV }}
           LIEF_GITLAB_TOKEN: ${{ secrets.LIEF_GITLAB_TOKEN }}
+          GITLAB_PROJECT_ID: ${{ secrets.GITLAB_PROJECT_ID }}
         shell: bash
         run: |
           docker run \
@@ -79,6 +80,7 @@ jobs:
             -e LIEF_AUTOMATIC_BUILDS_KEY=$LIEF_AUTOMATIC_BUILDS_KEY \
             -e LIEF_AUTOMATIC_BUILDS_IV=$LIEF_AUTOMATIC_BUILDS_IV \
             -e LIEF_GITLAB_TOKEN=$LIEF_GITLAB_TOKEN \
+            -e GITLAB_PROJECT_ID=$GITLAB_PROJECT_ID \
             --rm \
             liefproject/deploy python3 /src/.github/deploy.py
 
