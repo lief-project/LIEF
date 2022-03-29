@@ -55,12 +55,12 @@ jobs:
     - name: ⛓ Build Python ${{ matrix.python-version }} & Test
       if: matrix.python-version == 3.6
       run: |
-        python ./setup.py --ninja --lief-test bdist_wheel
+        python ./setup.py --ninja --lief-test --plat-name=win32 bdist_wheel
       shell: cmd
     - name: ❱ Build Python ${{ matrix.python-version }}
       if: matrix.python-version != 3.6
       run: |
-        python ./setup.py --ninja bdist_wheel
+        python ./setup.py --ninja --plat-name=win32 bdist_wheel
       shell: cmd
     - name: ❱ Build SDK
       if: matrix.python-version == 3.9
