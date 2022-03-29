@@ -389,7 +389,7 @@ ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, Bin
 
       LangCodeItem lang{wType, szKey};
       stream.align(sizeof(uint32_t));
-      if(parse_string(lang, stream)) {
+      if (parse_string(lang, stream)) {
         version.string_file_info_->childs_.push_back(std::move(lang));
       } else {
         LIEF_WARN("StringTable.String parsed with error");
@@ -445,12 +445,19 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
       LIEF_ERR("Can't read String.wType");
     }
     LIEF_DEBUG("String.szKey @0x{:x}", stream.pos());
+    /*
+     * Read the Key
+     */
     if (auto res = stream.read_u16string()) {
       szKey = *res;
       std::string u8szKey = u16tou8(szKey);
       stream.align(sizeof(uint32_t));
+      LIEF_DEBUG("String.Key: {}", u8szKey);
+      /*
+       * Read the value
+       */
       LIEF_DEBUG("String.Value @0x{:x}", stream.pos());
-      if (auto res = stream.read_u16string(wValueLength)) {
+      if (auto res = stream.read_u16string(wValueLength / 2)) {
         value = res->c_str(); // To remove trailling \0
         std::string u8value = u16tou8(value);
         LIEF_DEBUG("{}: {}", u8szKey, u8value);
