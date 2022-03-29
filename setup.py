@@ -411,7 +411,7 @@ distutils.sysconfig.get_config_vars = distutils_get_config_vars
 # From setuptools-git-version
 command       = 'git describe --tags --long --dirty'
 is_tagged_cmd = 'git tag --list --points-at=HEAD'
-fmt_dev       = '{tag}+{gitsha}'
+fmt_dev       = '{tag}.dev0'
 fmt_tagged    = '{tag}'
 
 def format_version(version: str, fmt: str = fmt_dev, is_dev: bool = False):

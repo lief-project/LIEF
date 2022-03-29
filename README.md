@@ -105,13 +105,13 @@ pip install lief
 To install nightly build:
 
 ```console
-pip install [--user] --index-url https://lief-project.github.io/packages lief==0.12.0.dev0
+pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief==0.13.0.dev0
 ```
 
 ### Packages
 
 * **Nightly**: https://github.com/lief-project/packages/tree/gh-pages
-* **v0.11.5**: https://github.com/lief-project/LIEF/releases/tag/0.11.5
+* **v0.12.0**: https://github.com/lief-project/LIEF/releases/tag/0.12.0
 
 Here are guides to install or integrate LIEF:
 
