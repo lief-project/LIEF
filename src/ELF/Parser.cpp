@@ -609,18 +609,16 @@ ok_error_t Parser::parse_overlay() {
 }
 
 bool Parser::check_section_in_segment(const Section& section, const Segment& segment) {
-  const uint64_t sec_end = section.virtual_address() + section.size();
   if (section.virtual_address() > 0) {
     const uint64_t seg_vend = segment.virtual_address() + segment.virtual_size();
     return segment.virtual_address() <= section.virtual_address() &&
-           sec_end <= seg_vend;
+           section.virtual_address() + section.size() <= seg_vend;
   }
 
   if (section.file_offset() > 0) {
     const uint64_t seg_end = segment.file_offset() + segment.physical_size();
     return segment.file_offset() <= section.file_offset() &&
-           sec_end < seg_end;
-
+           section.file_offset() + section.size() <= seg_end;
   }
   return false;
 }
