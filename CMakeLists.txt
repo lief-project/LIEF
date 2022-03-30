@@ -669,6 +669,7 @@ endif()
 
 if(UNIX)
   include(GNUInstallDirs)
+  set(CMAKE_INSTALL_LIBDIR "lib")
 else()
   if(WIN32)
       set(CMAKE_INSTALL_LIBDIR      "lib")
