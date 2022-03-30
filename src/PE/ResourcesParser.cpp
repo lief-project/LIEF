@@ -407,7 +407,7 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
   /* https://docs.microsoft.com/en-us/windows/win32/menurc/string-str
    * typedef struct {
    *   WORD  wLength;
-   *   WORD  wValueLength;
+   *   WORD  wValueLength; // The size, in words, of the Value member.
    *   WORD  wType;
    *   WCHAR szKey;
    *   WORD  Padding;
@@ -457,7 +457,11 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
        * Read the value
        */
       LIEF_DEBUG("String.Value @0x{:x}", stream.pos());
-      if (auto res = stream.read_u16string(wValueLength / 2)) {
+      if (auto res = stream.read_u16string()) {
+        if (res->size() + /* null char */ 1 != wValueLength) {
+          LIEF_INFO("String.Value.size() is different from wValueLength ({} / {})",
+                    wValueLength, res->size() + 1);
+        }
         value = res->c_str(); // To remove trailling \0
         std::string u8value = u16tou8(value);
         LIEF_DEBUG("{}: {}", u8szKey, u8value);
