@@ -625,11 +625,12 @@ ok_error_t ResourcesParser::parse_ext_dialogs(std::vector<ResourceDialog>& dialo
   }
 
   for (size_t i = 0; i < cDlgItems; ++i) {
-    LIEF_DEBUG("parsing DLGTEMPLATEEX.item[{}]", i);
+    LIEF_DEBUG("parsing DLGTEMPLATEEX.item[{}] at 0x{:04x}", i, stream.pos());
     if (!parse_ext_dialog_item(new_dialog, stream)) {
       LIEF_INFO("Error while parsing DLGTEMPLATEEX.item[{}]", i);
       break;
     }
+    LIEF_DEBUG("[Done]: DLGTEMPLATEEX.item[{}]\n", i);
   }
   dialogs.push_back(std::move(new_dialog));
   return ok();
@@ -791,7 +792,6 @@ ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, Binary
         return make_error_code(lief_errors::read_error);
       }
     }
-    stream.align(sizeof(uint32_t));
   }
 
   /* extraCount */ {
@@ -811,6 +811,7 @@ ok_error_t ResourcesParser::parse_ext_dialog_item(ResourceDialog& dialog, Binary
 
 ok_error_t ResourcesParser::parse_regular_dialogs(std::vector<ResourceDialog>&,
                                                   const ResourceData&, BinaryStream&) {
+  LIEF_INFO("Parsing regular dialogs is not implemented");
   return make_error_code(lief_errors::not_implemented);
 }
 
