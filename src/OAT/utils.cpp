@@ -67,10 +67,9 @@ oat_version_t version(const std::string& file) {
     return 0;
   }
 
-  std::unique_ptr<const ELF::Binary> elf_binary;
   try {
     if (const auto elf = ELF::Parser::parse(file)) {
-      return version(*elf_binary);
+      return version(*elf);
     }
   } catch (const exception&) {
     return 0;
@@ -83,10 +82,9 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
     return 0;
   }
 
-  std::unique_ptr<const ELF::Binary> elf_binary;
   try {
     if (const auto elf = ELF::Parser::parse(raw)) {
-      return version(*elf_binary);
+      return version(*elf);
     }
   } catch (const exception&) {
     return 0;
