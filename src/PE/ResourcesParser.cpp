@@ -421,12 +421,14 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
   std::u16string value;
   while (stream) {
     stream.align(sizeof(uint32_t));
+    const size_t pos = stream.pos();
     if (auto res = stream.read<uint16_t>()) {
       wLength = *res;
       LIEF_DEBUG("String.wLength: 0x{:x}", wLength);
     } else {
       LIEF_ERR("Can't read String.wLength");
     }
+    const size_t end_offset = pos + wLength;
 
     if (auto res = stream.read<uint16_t>()) {
       wValueLength = *res;
@@ -472,6 +474,7 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
       LIEF_ERR("Can't read String.szKey");
       return make_error_code(lief_errors::parsing_error);
     }
+    stream.setpos(end_offset);
   }
   return ok();
 }
