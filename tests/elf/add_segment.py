@@ -106,12 +106,15 @@ class TestAddSegment(TestCase):
     def test_misc(self):
         list_binaries = [
         '/usr/bin/ls',
+        '/bin/ls',
         '/usr/bin/ssh',
         '/usr/bin/nm',
         '/usr/bin/openssl',
         '/usr/bin/bc',
         '/usr/bin/bzip2',
+        '/bin/bzip2',
         '/usr/bin/cp',
+        '/bin/cp',
         '/usr/bin/find',
         '/usr/bin/file',
         ]

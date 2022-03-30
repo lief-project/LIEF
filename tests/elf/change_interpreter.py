@@ -30,6 +30,7 @@ class TestChangeInterpreter(TestCase):
     @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
     def test_misc(self):
         list_binaries = [
+        '/bin/ls',
         '/usr/bin/ls',
         '/usr/bin/ssh',
         '/usr/bin/nm',

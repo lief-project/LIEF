@@ -29,9 +29,10 @@ class TestGOTPatch(TestCase):
         libfreebl3_path = get_sample('ELF/ELF64_x86-64_library_libfreebl3.so')
         output_ls         = os.path.join(self.tmp_dir, "ls.new")
         output_libfreebl3 = os.path.join(self.tmp_dir, "libfreebl3.so")
-
         libfreebl3 = lief.parse(libfreebl3_path)
         ls         = lief.parse("/usr/bin/ls")
+        if ls is None:
+            ls = lief.parse("/bin/ls")
 
         if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in ls and ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
             ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
