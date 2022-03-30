@@ -854,6 +854,7 @@ ok_error_t Parser::parse_exports() {
   LIEF_DEBUG("Number of entries:   {}", nbof_addr_entries);
   LIEF_DEBUG("Number of names ptr: {}", nbof_name_ptr);
   LIEF_DEBUG("Ordinal Base:        {}", ordinal_base);
+  LIEF_DEBUG("External Range:      0x{:06x} - 0x{:06x}", range.start, range.end);
 
   if (nbof_addr_entries > NB_ENTRIES_LIMIT) {
     LIEF_WARN("Export.AddressTableEntries is too large ({})", nbof_addr_entries);
@@ -881,6 +882,7 @@ ok_error_t Parser::parse_exports() {
       LIEF_WARN("Can't read the Export.address_table[{}]", i);
       break;
     }
+    LIEF_DEBUG("Export.address_table[{}].addr_value: 0x{:04x}", i, addr_value);
     const uint16_t ordinal = i + ordinal_base;
     const bool is_extern   = range.start <= addr_value && addr_value < range.end;
     const uint32_t address = is_extern ? 0 : addr_value;
@@ -894,6 +896,11 @@ ok_error_t Parser::parse_exports() {
       uint32_t name_offset = binary_->rva_to_offset(addr_value);
       if (auto res = stream_->peek_string_at(name_offset)) {
         entry.name_ = std::move(*res);
+        if (entry.name_.size() > MAX_EXPORT_NAME_SIZE || !is_printable(entry.name_)) {
+          LIEF_INFO("'{}' is not a valid export name", printable_string(entry.name_));
+          entry = ExportEntry{address, is_extern, ordinal, addr_value};
+          entry.name_.clear();
+        }
       }
     }
     export_entries.push_back(std::move(entry));
@@ -916,7 +923,7 @@ ok_error_t Parser::parse_exports() {
 
     ExportEntry& entry = export_entries[ordinal];
 
-    if (!entry.is_extern_ && entry.name_.empty()) {
+    if (entry.name_.empty()) {
       uint32_t name_offset = 0;
       if (auto res = name_table_value(*stream_, name_table_offset, i)) {
         name_offset = binary_->rva_to_offset(*res);
