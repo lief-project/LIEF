@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyIterators.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
@@ -37,9 +38,15 @@ using no_const_func = T (ResourcesManager::*)(P);
 
 template<>
 void create<ResourcesManager>(py::module& m) {
-  py::class_<ResourcesManager, LIEF::Object>(m, "ResourcesManager",
-      "The Resource Manager provides an enhanced API to manipulate the resource tree")
+  py::class_<ResourcesManager, LIEF::Object> manager(m, "ResourcesManager",
+      "The Resource Manager provides an enhanced API to manipulate the resource tree");
 
+  init_ref_iterator<ResourcesManager::it_const_dialogs>(manager, "it_const_dialogs");
+  init_ref_iterator<ResourcesManager::it_const_icons>(manager, "it_const_icons");
+  init_ref_iterator<ResourcesManager::it_const_strings_table>(manager, "it_const_strings_table");
+  init_ref_iterator<ResourcesManager::it_const_accelerators>(manager, "it_const_accelerators");
+
+  manager
     .def_property_readonly("has_manifest",
         &ResourcesManager::has_manifest,
         "``True`` if the resources contain a Manifest element")

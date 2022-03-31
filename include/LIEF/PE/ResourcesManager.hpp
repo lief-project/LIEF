@@ -43,6 +43,18 @@ class LIEF_API ResourcesManager : public Object {
   static RESOURCE_SUBLANGS sublang_from_id(size_t id);
 
   public:
+  using dialogs_t = std::vector<ResourceDialog>;
+  using it_const_dialogs = const_ref_iterator<dialogs_t>;
+
+  using icons_t = std::vector<ResourceIcon>;
+  using it_const_icons = const_ref_iterator<icons_t>;
+
+  using strings_table_t = std::vector<ResourceStringTable>;
+  using it_const_strings_table = const_ref_iterator<strings_table_t>;
+
+  using accelerators_t = std::vector<ResourceAccelerator>;
+  using it_const_accelerators = const_ref_iterator<accelerators_t>;
+
   ResourcesManager() = delete;
   ResourcesManager(ResourceNode& rsrc);
 
@@ -87,7 +99,7 @@ class LIEF_API ResourcesManager : public Object {
   bool has_icons() const;
 
   //! Return the list of the icons present in the resources
-  std::vector<ResourceIcon> icons() const;
+  it_const_icons icons() const;
 
   //! Add an icon to the resources
   void add_icon(const ResourceIcon& icon);
@@ -100,14 +112,13 @@ class LIEF_API ResourcesManager : public Object {
   bool has_dialogs() const;
 
   //! Return the list of the dialogs present in the resource
-  std::vector<ResourceDialog> dialogs() const;
-
+  it_const_dialogs dialogs() const;
 
   //! ``true`` if the resources contain a @link LIEF::PE::ResourceStringTable @endlink
   bool has_string_table() const;
 
   //! Return the list of the string table in the resource
-  std::vector<ResourceStringTable> string_table() const;
+  it_const_strings_table string_table() const;
 
   // HTML
   // ====
@@ -125,7 +136,7 @@ class LIEF_API ResourcesManager : public Object {
   bool has_accelerator() const;
 
   //! Return the list of the accelerator in the resource
-  std::vector<ResourceAccelerator> accelerator() const;
+  it_const_accelerators accelerator() const;
 
   //!Print the resource tree to the given depth
   std::string print(uint32_t depth = 0) const;

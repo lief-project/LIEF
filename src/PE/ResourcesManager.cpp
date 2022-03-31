@@ -419,20 +419,20 @@ bool ResourcesManager::has_icons() const {
   return root_icon != nullptr && root_grp_icon != nullptr;
 }
 
-std::vector<ResourceIcon> ResourcesManager::icons() const {
+ResourcesManager::it_const_icons ResourcesManager::icons() const {
+  std::vector<ResourceIcon> icons;
   const ResourceNode* root_icon     = get_node_type(RESOURCE_TYPES::ICON);
   const ResourceNode* root_grp_icon = get_node_type(RESOURCE_TYPES::GROUP_ICON);
   if (root_icon == nullptr) {
     LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ICON));
-    return {};
+    return icons;
   }
 
   if (root_grp_icon == nullptr) {
     LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::GROUP_ICON));
-    return {};
+    return icons;
   }
 
-  std::vector<ResourceIcon> icons;
   for (const ResourceNode& grp_icon_lvl2 : root_grp_icon->childs()) {
     for (const ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
       if (!grp_icon_lvl3.is_data()) {
@@ -469,7 +469,7 @@ std::vector<ResourceIcon> ResourcesManager::icons() const {
       // Some checks
       if (group_icon_header.type != 1) {
         LIEF_ERR("Group icon type should be equal to 1 (vs {})", group_icon_header.type);
-        return {};
+        return icons;
       }
 
       for (size_t i = 0; i < group_icon_header.count; ++i) {
@@ -690,17 +690,17 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 // * Windows class as ordinal
 // * Extra count
 // ====================================================================
-std::vector<ResourceDialog> ResourcesManager::dialogs() const {
+ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {
   std::vector<ResourceDialog> dialogs;
 
   const ResourceNode* dialog_node = get_node_type(RESOURCE_TYPES::DIALOG);
   if (dialog_node == nullptr) {
-    return {};
+    return dialogs;
   }
 
   if (!dialog_node->is_directory()) {
     LIEF_INFO("Expecting a Directory node for the Dialog Node");
-    return {};
+    return dialogs;
   }
   const auto& dialog_dir = static_cast<const ResourceDirectory&>(*dialog_node);
 
@@ -738,14 +738,14 @@ bool ResourcesManager::has_dialogs() const {
 }
 
 // String table entry
-std::vector<ResourceStringTable> ResourcesManager::string_table() const {
+ResourcesManager::it_const_strings_table ResourcesManager::string_table() const {
+  std::vector<ResourceStringTable> string_table;
   const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::STRING);
   if (root_node == nullptr) {
     LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::STRING));
-    return {};
+    return string_table;
   }
 
-  std::vector<ResourceStringTable> string_table;
   for (const ResourceNode& child_l1 : root_node->childs()) {
 
     for (const ResourceNode& child_l2 : child_l1.childs()) {
@@ -831,14 +831,14 @@ bool ResourcesManager::has_accelerator() const {
   return get_node_type(RESOURCE_TYPES::ACCELERATOR) != nullptr;
 }
 
-std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
+ResourcesManager::it_const_accelerators ResourcesManager::accelerator() const {
+  std::vector<ResourceAccelerator> accelerator;
   const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::ACCELERATOR);
   if (root_node == nullptr) {
     LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ACCELERATOR));
-    return {};
+    return accelerator;
   }
 
-  std::vector<ResourceAccelerator> accelerator;
   for (const ResourceNode& child_l1 : root_node->childs()) {
     for (const ResourceNode& child_l2 : child_l1.childs()) {
       if (!child_l2.is_data()) {
@@ -855,7 +855,7 @@ std::vector<ResourceAccelerator> ResourcesManager::accelerator() const {
       auto res_span = SpanStream::from_vector(content);
       if (!res_span) {
         LIEF_ERR("Can't create a span stream for node id: {}", accelerator_node.id());
-        return {};
+        return accelerator;
       }
       SpanStream stream = std::move(*res_span);
       while (stream) {
@@ -1007,20 +1007,20 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
     os << std::endl;
   }
 
-  const std::vector<ResourceIcon>& icons = rsrc.icons();
+  const auto& icons = rsrc.icons();
   for (size_t i = 0; i < icons.size(); ++i) {
     os << "Icon #" << std::dec << i << " : " << std::endl;
     os << icons[i] << std::endl;
   }
 
 
-  const std::vector<ResourceDialog>& dialogs = rsrc.dialogs();
+  const auto& dialogs = rsrc.dialogs();
   for (size_t i = 0; i < dialogs.size(); ++i) {
     os << "Dialog #" << std::dec << i << " : " << std::endl;
     os << dialogs[i] << std::endl;
   }
 
-  const std::vector<ResourceStringTable>& str_table = rsrc.string_table();
+  const auto& str_table = rsrc.string_table();
   for (size_t i = 0; i < str_table.size(); ++i) {
     os << fmt::format("StringTable[{}]: {}", i, str_table[i]);
   }

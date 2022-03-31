@@ -30,7 +30,7 @@ void init_ref_iterator(py::handle& m, const char* it_name) {
                 throw py::index_error();
             return v[i];
         },
-        py::return_value_policy::reference)
+        py::return_value_policy::reference_internal, py::keep_alive<1, 0>())
 
     .def("__len__",
         [] (T& v) {
@@ -48,8 +48,7 @@ void init_ref_iterator(py::handle& m, const char* it_name) {
             throw py::stop_iteration();
           }
           return *(v++);
-
-    }, py::return_value_policy::reference);
+        }, py::return_value_policy::reference_internal, py::keep_alive<1, 0>());
 
 
 
