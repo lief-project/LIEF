@@ -292,7 +292,7 @@ And now, to be integrated with our main ``HelloLIEF`` project that is located in
 
 .. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake
-   :lines: 42-
+   :lines: 44-
 
 For the compilation:
 

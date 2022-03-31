@@ -36,7 +36,7 @@ class x509;
 
 /** SignerInfo as described in the [RFC 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
  *
- * ```raw
+ * ```text
  * SignerInfo ::= SEQUENCE {
  *  version Version,
  *  issuerAndSerialNumber     IssuerAndSerialNumber,

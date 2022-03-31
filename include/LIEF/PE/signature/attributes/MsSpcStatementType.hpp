@@ -32,7 +32,7 @@ class SignatureParser;
 //! The internal structure is described in the official document:
 //! [Windows Authenticode Portable Executable Signature Format](http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx)
 //!
-//! ```raw
+//! ```text
 //! SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
 //! ```
 class LIEF_API MsSpcStatementType : public Attribute {

@@ -30,7 +30,7 @@ class SignatureParser;
 
 /** ContentInfo as described in the RFC2315 (https://tools.ietf.org/html/rfc2315#section-7)
  *
- * ```raw
+ * ```text
  * ContentInfo ::= SEQUENCE {
  *   contentType ContentType,
  *   content     [0] EXPLICIT ANY DEFINED BY contentType OPTIONAL
@@ -41,7 +41,7 @@ class SignatureParser;
  *
  * In the case of PE signature, ContentType **must** be set to SPC_INDIRECT_DATA_OBJID
  * OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by the structure: ``SpcIndirectDataContent``
- * ```raw
+ * ```text
  * SpcIndirectDataContent ::= SEQUENCE {
  *  data          SpcAttributeTypeAndOptionalValue,
  *  messageDigest DigestInfo
@@ -57,7 +57,7 @@ class SignatureParser;
  * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the value is defined by
  * ``SpcPeImageData``
  *
- * ```raw
+ * ```text
  * DigestInfo ::= SEQUENCE {
  *  digestAlgorithm  AlgorithmIdentifier,
  *  digest           OCTETSTRING

@@ -32,7 +32,7 @@ class SignatureParser;
 //! The internal structure is described in the
 //! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
 //!
-//! ```raw
+//! ```text
 //! sequenceNumber ATTRIBUTE ::= {
 //!   WITH SYNTAX SequenceNumber
 //!   EQUALITY MATCHING RULE integerMatch

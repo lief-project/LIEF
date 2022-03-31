@@ -33,7 +33,7 @@ class SignatureParser;
 //!
 //! The internal structure is not documented but we can infer the following structure:
 //!
-//! ```raw
+//! ```text
 //! MsSpcNestedSignature ::= SET OF SignedData
 //! ```
 //!
