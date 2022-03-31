@@ -66,22 +66,22 @@ Main features:
 - [Download / Install](#downloads--install)
 - [Getting started](#getting-started)
 - [Documentation](#documentation)
-  - [Sphinx](https://lief.quarkslab.com/doc/stable/index.html)
-  - [Doxygen](https://lief.quarkslab.com/doc/latest/doxygen/index.html)
+  - [Sphinx](https://lief-project.github.io/doc/stable/index.html)
+  - [Doxygen](https://lief-project.github.io/doc/latest/doxygen/index.html)
   - Tutorials:
-    - [Parse and manipulate formats](https://lief.quarkslab.com/doc/latest/tutorials/01_play_with_formats.html)
-    - [Create a PE from scratch](https://lief.quarkslab.com/doc/latest/tutorials/02_pe_from_scratch.html)
-    - [Play with ELF symbols](https://lief.quarkslab.com/doc/latest/tutorials/03_elf_change_symbols.html)
-    - [ELF Hooking](https://lief.quarkslab.com/doc/latest/tutorials/04_elf_hooking.html)
-    - [Infecting the plt/got](https://lief.quarkslab.com/doc/latest/tutorials/05_elf_infect_plt_got.html)
-    - [PE Hooking](https://lief.quarkslab.com/doc/latest/tutorials/06_pe_hooking.html)
-    - [PE Resources](https://lief.quarkslab.com/doc/latest/tutorials/07_pe_resource.html)
-    - [Transforming an ELF executable into a library](https://lief.quarkslab.com/doc/latest/tutorials/08_elf_bin2lib.html)
-    - [How to use frida on a non-rooted device](https://lief.quarkslab.com/doc/latest/tutorials/09_frida_lief.html)
-    - [Android formats](https://lief.quarkslab.com/doc/latest/tutorials/10_android_formats.html)
-    - [Mach-O modification](https://lief.quarkslab.com/doc/latest/tutorials/11_macho_modification.html)
-    - [ELF Coredump](https://lief.quarkslab.com/doc/latest/tutorials/12_elf_coredump.html)
-    - [PE Authenticode](https://lief.quarkslab.com/doc/latest/tutorials/13_pe_authenticode.html)
+    - [Parse and manipulate formats](https://lief-project.github.io/doc/latest/tutorials/01_play_with_formats.html)
+    - [Create a PE from scratch](https://lief-project.github.io/doc/latest/tutorials/02_pe_from_scratch.html)
+    - [Play with ELF symbols](https://lief-project.github.io/doc/latest/tutorials/03_elf_change_symbols.html)
+    - [ELF Hooking](https://lief-project.github.io/doc/latest/tutorials/04_elf_hooking.html)
+    - [Infecting the plt/got](https://lief-project.github.io/doc/latest/tutorials/05_elf_infect_plt_got.html)
+    - [PE Hooking](https://lief-project.github.io/doc/latest/tutorials/06_pe_hooking.html)
+    - [PE Resources](https://lief-project.github.io/doc/latest/tutorials/07_pe_resource.html)
+    - [Transforming an ELF executable into a library](https://lief-project.github.io/doc/latest/tutorials/08_elf_bin2lib.html)
+    - [How to use frida on a non-rooted device](https://lief-project.github.io/doc/latest/tutorials/09_frida_lief.html)
+    - [Android formats](https://lief-project.github.io/doc/latest/tutorials/10_android_formats.html)
+    - [Mach-O modification](https://lief-project.github.io/doc/latest/tutorials/11_macho_modification.html)
+    - [ELF Coredump](https://lief-project.github.io/doc/latest/tutorials/12_elf_coredump.html)
+    - [PE Authenticode](https://lief-project.github.io/doc/latest/tutorials/13_pe_authenticode.html)
 - [Contact](#contact)
 - [About](#about)
   - [Authors](#authors)
@@ -110,15 +110,17 @@ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest
 
 ### Packages
 
-* **Nightly**: https://github.com/lief-project/packages/tree/gh-pages
-* **v0.12.0**: https://github.com/lief-project/LIEF/releases/tag/0.12.0
+- **Nightly**:
+  * SDK: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
+  * Python Wheels: https://lief.s3-website.fr-par.scw.cloud/latest/lief
+- **v0.12.0**: https://github.com/lief-project/LIEF/releases/tag/0.12.0
 
 Here are guides to install or integrate LIEF:
 
-  * [Python](https://lief.quarkslab.com/doc/latest/installation.html#python)
-  * [VisualStudio](https://lief.quarkslab.com/doc/latest/installation.html#visual-studio-integration)
-  * [XCode](https://lief.quarkslab.com/doc/latest/installation.html#xcode-integration)
-  * [CMake](https://lief.quarkslab.com/doc/latest/installation.html#cmake-integration)
+  * [Python](https://lief-project.github.io/doc/latest/installation.html#python)
+  * [VisualStudio](https://lief-project.github.io/doc/latest/installation.html#visual-studio-integration)
+  * [XCode](https://lief-project.github.io/doc/latest/installation.html#xcode-integration)
+  * [CMake](https://lief-project.github.io/doc/latest/installation.html#cmake-integration)
 
 ## Getting started
 
@@ -196,10 +198,10 @@ int main(int argc, char** argv) {
 
 ## Documentation
 
-* [Main documentation](https://lief.quarkslab.com/doc/latest/index.html)
-* [Tutorial](https://lief.quarkslab.com/doc/latest/tutorials/index.html)
-* [API](https://lief.quarkslab.com/doc/latest/api/index.html)
-* [Doxygen](https://lief.quarkslab.com/doc/latest/doxygen/index.html)
+* [Main documentation](https://lief-project.github.io/doc/latest/index.html)
+* [Tutorial](https://lief-project.github.io/doc/latest/tutorials/index.html)
+* [API](https://lief-project.github.io/doc/latest/api/index.html)
+* [Doxygen](https://lief-project.github.io/doc/latest/doxygen/index.html)
 
 ## Contact
 
@@ -214,7 +216,7 @@ Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://ww
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.11.2/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.12.0/LICENSE).
 
 ### Bibtex
 
