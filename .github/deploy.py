@@ -248,8 +248,13 @@ dir_name = "latest"
 if BRANCH_NAME != "master":
     dir_name = "{}".format(BRANCH_NAME.replace("/", "-").replace("_", "-"))
 
+if BRANCH_NAME.startswith("release-"):
+    _, dir_name = BRANCH_NAME.split("release-")
+
 if IS_TAGGED:
     dir_name = str(TAG_NAME)
+
+logger.info("Destination directory: %s", dir_name)
 
 for file in DIST_DIR.glob("*.whl"):
     logger.info("[WHEEL] Uploading '%s'", file.as_posix())
