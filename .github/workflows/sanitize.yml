@@ -1,0 +1,49 @@
+name: 'sanitize'
+on:
+  push:
+    tags:
+      - '**'
+  schedule:
+    - cron:  '0 0 * * 1'
+
+jobs:
+  gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: compile
+        shell: bash
+        run: |
+          docker run --rm \
+           -e BUILD_DIR=/tmp/build_gcc \
+           -e SRC_DIR=/src \
+           -v $GITHUB_WORKSPACE:/src \
+           liefproject/sanity:latest bash /src/scripts/docker/gcc.sh
+  clang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: compile
+        shell: bash
+        run: |
+          docker run --rm \
+           -e BUILD_DIR=/tmp/build_clang \
+           -e SRC_DIR=/src \
+           -v $GITHUB_WORKSPACE:/src \
+           liefproject/sanity:latest bash /src/scripts/docker/clang.sh
+  asan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: compile
+        shell: bash
+        run: |
+          docker run --rm \
+           -v $GITHUB_WORKSPACE:/src \
+           liefproject/sanity:latest bash /src/scripts/docker/asan_check.sh
