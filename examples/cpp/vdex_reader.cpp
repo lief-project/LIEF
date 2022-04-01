@@ -29,17 +29,13 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  std::unique_ptr<const File> file;
 
-  try {
-    file = std::unique_ptr<const File>{LIEF::VDEX::Parser::parse(argv[1])};
-    for (auto& f : file->dex_files()) {
+  if (const auto file = LIEF::VDEX::Parser::parse(argv[1])) {
+    for (const auto& f : file->dex_files()) {
       std::cout << f.location() << '\n';
     }
-  } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << '\n';
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
-
+  return EXIT_FAILURE;
 }
 

@@ -158,7 +158,10 @@ void JsonVisitor::visit(const Binary& binary) {
     binary.resources()->accept(visitor);
 
     JsonVisitor manager_visitor;
-    binary.resources_manager().accept(manager_visitor);
+
+    if (auto manager = binary.resources_manager()) {
+      manager->accept(manager_visitor);
+    }
 
     node_["resources_tree"]    = visitor.get();
     node_["resources_manager"] = manager_visitor.get();
@@ -572,89 +575,63 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
 void JsonVisitor::visit(const ResourcesManager& resources_manager) {
 
   if (resources_manager.has_manifest()) {
-    try {
-      node_["manifest"] = escape_non_ascii(resources_manager.manifest()) ;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
-    }
+    node_["manifest"] = escape_non_ascii(resources_manager.manifest()) ;
   }
 
   if (resources_manager.has_html()) {
-    try {
-      std::vector<std::string> escaped_strs;
-      for (const std::string& elem : resources_manager.html()) {
-        escaped_strs.emplace_back(escape_non_ascii(elem));
-      }
-      node_["html"] = escaped_strs;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    std::vector<std::string> escaped_strs;
+    for (const std::string& elem : resources_manager.html()) {
+      escaped_strs.emplace_back(escape_non_ascii(elem));
     }
+    node_["html"] = escaped_strs;
   }
 
   if (resources_manager.has_version()) {
     JsonVisitor version_visitor;
-    try {
-      version_visitor(resources_manager.version());
-      node_["version"] = version_visitor.get();
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    if (auto version = resources_manager.version()) {
+      version_visitor(*version);
     }
+    node_["version"] = version_visitor.get();
   }
 
   if (resources_manager.has_icons()) {
     std::vector<json> icons;
-    try {
-      for (const ResourceIcon& icon : resources_manager.icons()) {
-        JsonVisitor icon_visitor;
-        icon_visitor(icon);
-        icons.emplace_back(icon_visitor.get());
-      }
-      node_["icons"] = icons;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    for (const ResourceIcon& icon : resources_manager.icons()) {
+      JsonVisitor icon_visitor;
+      icon_visitor(icon);
+      icons.emplace_back(icon_visitor.get());
     }
+    node_["icons"] = icons;
   }
 
   if (resources_manager.has_dialogs()) {
     std::vector<json> dialogs;
-    try {
-      for (const ResourceDialog& dialog : resources_manager.dialogs()) {
-        JsonVisitor dialog_visitor;
-        dialog_visitor(dialog);
-        dialogs.emplace_back(dialog_visitor.get());
-      }
-      node_["dialogs"] = dialogs;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    for (const ResourceDialog& dialog : resources_manager.dialogs()) {
+      JsonVisitor dialog_visitor;
+      dialog_visitor(dialog);
+      dialogs.emplace_back(dialog_visitor.get());
     }
+    node_["dialogs"] = dialogs;
   }
 
   if (resources_manager.has_string_table()) {
     std::vector<json> string_table_json;
-    try {
-      for (const ResourceStringTable& string_table : resources_manager.string_table()) {
-        JsonVisitor string_table_visitor;
-        string_table_visitor(string_table);
-        string_table_json.emplace_back(string_table_visitor.get());
-      }
-      node_["string_table"] = string_table_json;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    for (const ResourceStringTable& string_table : resources_manager.string_table()) {
+      JsonVisitor string_table_visitor;
+      string_table_visitor(string_table);
+      string_table_json.emplace_back(string_table_visitor.get());
     }
+    node_["string_table"] = string_table_json;
   }
 
   if (resources_manager.has_accelerator()) {
     std::vector<json> accelerator_json;
-    try {
-      for (const ResourceAccelerator& acc : resources_manager.accelerator()) {
-        JsonVisitor accelerator_visitor;
-        accelerator_visitor(acc);
-        accelerator_json.emplace_back(accelerator_visitor.get());
-      }
-      node_["accelerator"] = accelerator_json;
-    } catch (const LIEF::exception& e) {
-      LIEF_WARN("{}", e.what());
+    for (const ResourceAccelerator& acc : resources_manager.accelerator()) {
+      JsonVisitor accelerator_visitor;
+      accelerator_visitor(acc);
+      accelerator_json.emplace_back(accelerator_visitor.get());
     }
+    node_["accelerator"] = accelerator_json;
   }
 }
 

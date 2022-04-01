@@ -16,6 +16,7 @@
  */
 #include "pyPE.hpp"
 #include "pyIterators.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
@@ -64,9 +65,10 @@ void create<ResourcesManager>(py::module& m) {
         "``true`` if the resources contain a " RST_CLASS_REF(lief.PE.ResourceVersion) "")
 
     .def_property_readonly("version",
-        static_cast<getter_t<ResourceVersion>>(&ResourcesManager::version),
+        [] (ResourcesManager& self) {
+          return error_or(&ResourcesManager::version, self);
+        },
         "Return the " RST_CLASS_REF(lief.PE.ResourceVersion) "")
-
 
     .def_property_readonly("has_icons",
         &ResourcesManager::has_icons,

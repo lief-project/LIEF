@@ -15,6 +15,7 @@
  */
 #include "pyPE.hpp"
 #include "pyIterators.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Import.hpp"
@@ -123,7 +124,9 @@ void create<Import>(py::module& m) {
         )delim")
 
     .def("get_function_rva_from_iat",
-        &Import::get_function_rva_from_iat,
+        [] (const Import& self, const std::string& name) {
+          return error_or(&Import::get_function_rva_from_iat, self, name);
+        },
         "Return the relative virtual address of the given function within the *Import Address Table*",
         "function_name"_a)
 

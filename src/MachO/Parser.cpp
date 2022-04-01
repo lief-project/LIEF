@@ -147,22 +147,17 @@ ok_error_t Parser::build() {
   }
   auto type = static_cast<MACHO_TYPES>(*res_type);
 
-  try {
-    // Fat binary
-    if (type == MACHO_TYPES::FAT_MAGIC || type == MACHO_TYPES::FAT_CIGAM) {
-      if (!build_fat()) {
-        LIEF_WARN("Errors while parsing the Fat MachO");
-      }
-    } else { // fit binary
-      std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
-      if (bin == nullptr) {
-        return make_error_code(lief_errors::parsing_error);
-      }
-      binaries_.push_back(std::move(bin));
+  // Fat binary
+  if (type == MACHO_TYPES::FAT_MAGIC || type == MACHO_TYPES::FAT_CIGAM) {
+    if (!build_fat()) {
+      LIEF_WARN("Errors while parsing the Fat MachO");
     }
-  } catch (const std::exception& e) {
-    LIEF_DEBUG("{}", e.what());
-    return make_error_code(lief_errors::parsing_error);
+  } else { // fit binary
+    std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
+    if (bin == nullptr) {
+      return make_error_code(lief_errors::parsing_error);
+    }
+    binaries_.push_back(std::move(bin));
   }
 
   return ok();

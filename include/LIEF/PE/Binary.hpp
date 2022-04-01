@@ -150,7 +150,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! @param[in] offset The offset to convert.
   //! @param[in] slide  If not 0, it will replace the default base address (if any)
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   //! Return binary's imagebase. ``0`` if not relevant
   //!
@@ -301,8 +301,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void set_resources(const ResourceData& resource);
 
   //! Return the ResourcesManager (class to manage resources more easily than the tree one)
-  ResourcesManager resources_manager();
-  const ResourcesManager resources_manager() const;
+  result<ResourcesManager> resources_manager() const;
 
   //! Return binary's section from its name.
   //! If the secion can't be found, return a nullptr
@@ -329,7 +328,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(const Section& section, bool clear = false);
 
   //! Add a section to the binary and return the section added.
-  Section& add_section(const Section& section,
+  Section* add_section(const Section& section,
                        PE_SECTION_TYPES type = PE_SECTION_TYPES::UNKNOWN);
 
   //! Return an iterator over the PE's Relocation

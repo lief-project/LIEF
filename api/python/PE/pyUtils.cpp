@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "pyPE.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/PE/utils.hpp"
 
@@ -80,7 +81,9 @@ void init_utils(py::module& m) {
       "binary"_a, "mode"_a = IMPHASH_MODE::DEFAULT);
 
   m.def("resolve_ordinals",
-      &resolve_ordinals,
+      [] (const Import& import, bool strict = false, bool use_std = false) {
+        return error_or(resolve_ordinals, import, strict, use_std);
+      },
       "Take an " RST_CLASS_REF(lief.PE.Import) " as entry and try to resolve its ordinal imports\n\n"
 
       "The ``strict`` boolean parameter enables to throw a " RST_CLASS_REF(lief.not_found) " exception "

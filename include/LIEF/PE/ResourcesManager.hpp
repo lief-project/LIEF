@@ -20,6 +20,7 @@
 #include <sstream>
 #include <set>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
@@ -60,6 +61,10 @@ class LIEF_API ResourcesManager : public Object {
 
   ResourcesManager(const ResourcesManager&);
   ResourcesManager& operator=(const ResourcesManager&);
+
+  ResourcesManager(ResourcesManager&&);
+  ResourcesManager& operator=(ResourcesManager&&);
+
   virtual ~ResourcesManager();
 
   //! Return the ResourceNode associated with the given LIEF::PE::RESOURCE_TYPES
@@ -93,7 +98,7 @@ class LIEF_API ResourcesManager : public Object {
   bool has_version() const;
 
   //! Return the ResourceVersion if any
-  ResourceVersion version() const;
+  result<ResourceVersion> version() const;
 
   //! ``true`` if resources contain a LIEF::PE::ResourceIcon
   bool has_icons() const;

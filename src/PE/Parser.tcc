@@ -60,35 +60,24 @@ ok_error_t Parser::parse() {
 
   LIEF_DEBUG("[+] Processing sections");
 
-  try {
-    if (!parse_sections()) {
-      LIEF_WARN("Fail to parse the sections");
-    }
-  } catch (const corrupted& e) {
-    LIEF_WARN("{}", e.what());
+  if (!parse_sections()) {
+    LIEF_WARN("Fail to parse the sections");
   }
 
   LIEF_DEBUG("[+] Processing data directories");
 
-  try {
-    if (!parse_data_directories<PE_T>()) {
-      LIEF_WARN("Fail to parse the data directories");
-    }
-  } catch (const exception& e) {
-    LIEF_WARN("{}", e.what());
+  if (!parse_data_directories<PE_T>()) {
+    LIEF_WARN("Fail to parse the data directories");
   }
 
-  try {
-    if (!parse_symbols()) {
-      LIEF_WARN("Fail to parse the symbols");
-    }
-  } catch (const corrupted& e) {
-    LIEF_WARN("{}", e.what());
+  if (!parse_symbols()) {
+    LIEF_WARN("Fail to parse the symbols");
   }
 
   if (!parse_overlay()) {
     LIEF_WARN("Fail to parse the overlay");
   }
+
   return ok();
 }
 
@@ -161,37 +150,25 @@ ok_error_t Parser::parse_data_directories() {
     binary_->data_directories_.push_back(std::move(directory));
   }
 
-  try {
-    // Import Table
-    DataDirectory& import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-    if (import_data_dir.RVA() > 0) {
-      LIEF_DEBUG("Processing Import Table");
-      if (import_data_dir.has_section()) {
-        import_data_dir.section()->add_type(PE_SECTION_TYPES::IMPORT);
-      }
-      parse_import_table<PE_T>();
+  // Import Table
+  DataDirectory& import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
+  if (import_data_dir.RVA() > 0) {
+    LIEF_DEBUG("Processing Import Table");
+    if (import_data_dir.has_section()) {
+      import_data_dir.section()->add_type(PE_SECTION_TYPES::IMPORT);
     }
-  } catch (const exception& e) {
-    LIEF_WARN("{}", e.what());
+    parse_import_table<PE_T>();
   }
 
   // Exports
   if (binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0) {
     LIEF_DEBUG("[+] Processing Exports");
-    try {
-      parse_exports();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
-    }
+    parse_exports();
   }
 
   // Signature
   if (binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
-    try {
-      parse_signature();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
-    }
+    parse_signature();
   }
 
   {
@@ -201,11 +178,7 @@ ok_error_t Parser::parse_data_directories() {
       if (tls_data_dir.has_section()) {
         tls_data_dir.section()->add_type(PE_SECTION_TYPES::TLS);
       }
-      try {
-        parse_tls<PE_T>();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_tls<PE_T>();
     }
   }
 
@@ -216,11 +189,7 @@ ok_error_t Parser::parse_data_directories() {
       if (load_config_data_dir.has_section()) {
         load_config_data_dir.section()->add_type(PE_SECTION_TYPES::LOAD_CONFIG);
       }
-      try {
-        parse_load_config<PE_T>();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_load_config<PE_T>();
     }
   }
 
@@ -231,11 +200,7 @@ ok_error_t Parser::parse_data_directories() {
       if (reloc_data_dir.has_section()) {
         reloc_data_dir.section()->add_type(PE_SECTION_TYPES::RELOCATION);
       }
-      try {
-        parse_relocations();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_relocations();
     }
   }
 
@@ -246,11 +211,7 @@ ok_error_t Parser::parse_data_directories() {
       if (debug_data_dir.has_section()) {
         debug_data_dir.section()->add_type(PE_SECTION_TYPES::DEBUG);
       }
-      try {
-        parse_debug();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_debug();
     }
   }
   {
@@ -260,11 +221,7 @@ ok_error_t Parser::parse_data_directories() {
       if (res_data_dir.has_section()) {
         res_data_dir.section()->add_type(PE_SECTION_TYPES::RESOURCE);
       }
-      try {
-        parse_resources();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_resources();
     }
   }
 
@@ -454,13 +411,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_o
     }
 
     if (!entry.is_ordinal()) {
-      size_t hint_off = 0;
-      try {
-        hint_off = binary_->rva_to_offset(entry.hint_name_rva());
-      } catch (LIEF::conversion_error&) {
-        LIEF_WARN("Can't convert 0x{:x} into an offset", entry.hint_name_rva());
-        continue;
-      }
+      size_t hint_off = binary_->rva_to_offset(entry.hint_name_rva());
       const size_t name_off = hint_off + sizeof(uint16_t);
       if (auto entry_name = stream_->peek_string_at(name_off)) {
         entry.name_ = std::move(*entry_name);
@@ -502,12 +453,7 @@ ok_error_t Parser::parse_delay_imports() {
 
   const DataDirectory& dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
   const uint64_t size = dir.size();
-  uint64_t offset = 0;
-  try {
-    offset = binary_->rva_to_offset(dir.RVA());
-  } catch (LIEF::conversion_error& e) {
-    return make_error_code(lief_errors::conversion_error);
-  }
+  uint64_t offset = binary_->rva_to_offset(dir.RVA());
   const uint64_t delay_end = offset + size;
 
   stream_->setpos(offset);
@@ -525,13 +471,7 @@ ok_error_t Parser::parse_delay_imports() {
       return ok();
     }
 
-    uint64_t name_offset = 0;
-    try {
-      name_offset = binary_->rva_to_offset(raw_desc.name);
-    } catch (LIEF::conversion_error& e) {
-      LIEF_ERR("Can't convert delay_imports.name: 0x{:x} into an offset", raw_desc.name);
-      continue;
-    }
+    uint64_t name_offset = binary_->rva_to_offset(raw_desc.name);
 
     if (auto res = stream_->peek_string_at(name_offset)) {
       dll_name = *res;
@@ -566,22 +506,12 @@ ok_error_t Parser::parse_delay_imports() {
     uint64_t IAT_offset = 0;
 
     if (raw_desc.name_table > 0) {
-      try {
-        names_offset = binary_->rva_to_offset(raw_desc.name_table);
-      } catch (LIEF::conversion_error& e) {
-        LIEF_ERR("Can't convert delay_imports.name_table: 0x{:x} into an offset", raw_desc.name_table);
-        continue;
-      }
+      names_offset = binary_->rva_to_offset(raw_desc.name_table);
     }
 
 
     if (raw_desc.iat > 0) {
-      try {
-        IAT_offset = binary_->rva_to_offset(raw_desc.iat);
-      } catch (LIEF::conversion_error& e) {
-        LIEF_ERR("Can't convert delay_imports.iat: 0x{:x} into an offset", raw_desc.iat);
-        continue;
-      }
+      IAT_offset = binary_->rva_to_offset(raw_desc.iat);
     }
     LIEF_DEBUG("  [IAT  ]: 0x{:04x}", IAT_offset);
     LIEF_DEBUG("  [Names]: 0x{:04x}", names_offset);

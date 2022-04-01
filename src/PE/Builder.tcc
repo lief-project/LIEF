@@ -179,7 +179,10 @@ void Builder::build_import_table() {
 
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
   uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
-  Section& import_section = binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
+  Section* import_section = binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
+  if (import_section == nullptr) {
+    return;
+  }
 
 
   // Patch the original IAT with the address of the associated trampoline
@@ -206,7 +209,7 @@ void Builder::build_import_table() {
       auto *IAT         = reinterpret_cast<uint__*>(import_content.data() + offsetIAT);
 
       while (*lookupTable != 0) {
-        *IAT = static_cast<uint__>(binary_->optional_header().imagebase() + import_section.virtual_address() + jumpOffsetTmp);
+        *IAT = static_cast<uint__>(binary_->optional_header().imagebase() + import_section->virtual_address() + jumpOffsetTmp);
         *lookupTable = *IAT;
         jumpOffsetTmp += trampoline_size;
 
@@ -221,11 +224,11 @@ void Builder::build_import_table() {
   for (const Import& import : binary_->imports()) {
     // Header
     details::pe_import header;
-    header.ImportLookupTableRVA  = static_cast<uint__>(import_section.virtual_address() + lookuptable_offset);
+    header.ImportLookupTableRVA  = static_cast<uint__>(import_section->virtual_address() + lookuptable_offset);
     header.TimeDateStamp         = static_cast<uint32_t>(import.timedatestamp());
     header.ForwarderChain        = static_cast<uint32_t>(import.forwarder_chain());
-    header.NameRVA               = static_cast<uint__>(import_section.virtual_address() + libraries_name_offset);
-    header.ImportAddressTableRVA = static_cast<uint__>(import_section.virtual_address() + iat_offset);
+    header.NameRVA               = static_cast<uint__>(import_section->virtual_address() + libraries_name_offset);
+    header.ImportAddressTableRVA = static_cast<uint__>(import_section->virtual_address() + iat_offset);
 
     // Copy the header in the "header section"
     std::copy(
@@ -250,12 +253,12 @@ void Builder::build_import_table() {
       // If patch is enabled, we have to create a trampoline for this function
       if (patch_imports_) {
         std::vector<uint8_t> instructions;
-        uint64_t address = binary_->optional_header().imagebase() + import_section.virtual_address() + iat_offset;
+        uint64_t address = binary_->optional_header().imagebase() + import_section->virtual_address() + iat_offset;
         if (binary_->hooks_.count(import_name) > 0 && binary_->hooks_[import_name].count(entry.name())) {
           address = binary_->hooks_[import_name][entry.name()];
-          instructions = Builder::build_jmp_hook<PE_T>(binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
+          instructions = Builder::build_jmp_hook<PE_T>(binary_->optional_header().imagebase() + import_section->virtual_address() + trampolines_offset, address);
         } else {
-          instructions = Builder::build_jmp<PE_T>(binary_->optional_header().imagebase() + import_section.virtual_address() + trampolines_offset, address);
+          instructions = Builder::build_jmp<PE_T>(binary_->optional_header().imagebase() + import_section->virtual_address() + trampolines_offset, address);
         }
         std::copy(
             std::begin(instructions),
@@ -270,7 +273,7 @@ void Builder::build_import_table() {
 
       if (!entry.is_ordinal()) {
 
-        lookup_table_value = import_section.virtual_address() + functions_name_offset;
+        lookup_table_value = import_section->virtual_address() + functions_name_offset;
 
         // Insert entry in hint/name table
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -337,10 +340,10 @@ void Builder::build_import_table() {
   import_table_offset += sizeof(details::pe_import);
 
   // Fill the section
-  import_section.content(content);
+  import_section->content(content);
 
   // Update IAT data directory
-  const auto rva = static_cast<uint32_t>(import_section.virtual_address() + iat_offset);
+  const auto rva = static_cast<uint32_t>(import_section->virtual_address() + iat_offset);
   binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
   binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
 }
@@ -435,7 +438,11 @@ ok_error_t Builder::build_tls() {
     tls_section_size = align(tls_section_size, binary_->optional_header().file_alignment());
     new_section.content(std::vector<uint8_t>(tls_section_size, 0));
 
-    tls_section = &(binary_->add_section(new_section, PE_SECTION_TYPES::TLS));
+    tls_section = binary_->add_section(new_section, PE_SECTION_TYPES::TLS);
+    if (tls_section == nullptr) {
+      return make_error_code(lief_errors::build_error);
+    }
+
   } else {
     tls_section = it_tls->get();
   }

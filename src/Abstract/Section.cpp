@@ -98,7 +98,7 @@ void Section::offset(uint64_t offset) {
 // ================
 size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
   if (size > sizeof(integer)) {
-    throw std::runtime_error("Invalid size (" + std::to_string(size) + ")");
+    return npos;
   }
 
   size_t minimal_size = size;
@@ -115,16 +115,12 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
     else if (integer < std::numeric_limits<uint64_t>::max()) {
       minimal_size = sizeof(uint64_t);
     } else {
-      throw exception("Unable to find an appropriated type of " + std::to_string(integer));
+      return npos;
     }
   }
 
   std::vector<uint8_t> pattern(minimal_size, 0);
-
-  std::copy(reinterpret_cast<const uint8_t*>(&integer),
-            reinterpret_cast<const uint8_t*>(&integer) + minimal_size,
-            pattern.data());
-
+  memcpy(pattern.data(), &integer, minimal_size);
   return search(pattern, pos);
 }
 
@@ -136,7 +132,7 @@ size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
       std::begin(pattern), std::end(pattern));
 
   if (it_found == std::end(content)) {
-    return Section::npos;
+    return npos;
   }
 
   return std::distance(std::begin(content), it_found);

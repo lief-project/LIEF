@@ -29,15 +29,11 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  std::unique_ptr<const Binary> binary;
-
-  try {
-    std::unique_ptr<const Binary> binary = LIEF::OAT::Parser::parse(argv[1]);
-    std::cout << *binary << '\n';
-  } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << '\n';
-    return EXIT_FAILURE;
+  if (std::unique_ptr<const Binary> binary = LIEF::OAT::Parser::parse(argv[1])) {
+    std::cout << *binary << "\n";
+    return EXIT_SUCCESS;
   }
 
+  return EXIT_FAILURE;
 }
 

@@ -121,10 +121,7 @@ ok_error_t Builder::build() {
 
   if (binary_->has_resources() && binary_->resources_ != nullptr && build_resources_) {
     LIEF_DEBUG("[+] Resources");
-    try {
-      build_resources();
-    } catch (not_found&) {
-    }
+    build_resources();
   }
 
   if (binary_->has_imports() && build_imports_) {
@@ -249,12 +246,16 @@ ok_error_t Builder::build_resources() {
   new_section_rsrc.characteristics(0x40000040);
   new_section_rsrc.content(content);
 
-  Section& rsrc_section = binary_->add_section(new_section_rsrc, PE_SECTION_TYPES::RESOURCE);
+  Section* rsrc_section = binary_->add_section(new_section_rsrc, PE_SECTION_TYPES::RESOURCE);
+  if (rsrc_section == nullptr) {
+    LIEF_WARN("Fail to create a resource section");
+    return make_error_code(lief_errors::build_error);
+  }
 
   construct_resources(*node, &content, &offset_header, &offset_data, &offset_name,
-                      rsrc_section.virtual_address(), 0);
+                      rsrc_section->virtual_address(), 0);
 
-  rsrc_section.content(content);
+  rsrc_section->content(content);
   return ok();
 }
 

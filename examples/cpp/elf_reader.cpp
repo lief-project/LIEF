@@ -31,11 +31,8 @@ int main(int argc, char **argv) {
   }
 
 
-  std::unique_ptr<const Binary> binary;
-  try {
-    binary = std::unique_ptr<const Binary>{Parser::parse(argv[1])};
-  } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << '\n';
+  std::unique_ptr<const Binary> binary = std::unique_ptr<const Binary>{Parser::parse(argv[1])};
+  if (binary == nullptr) {
     return EXIT_FAILURE;
   }
 

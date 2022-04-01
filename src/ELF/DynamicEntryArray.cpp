@@ -89,8 +89,10 @@ DynamicEntryArray& DynamicEntryArray::operator-=(uint64_t value) {
 }
 
 const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
+  static uint64_t GARBAGE;
   if (idx >= array_.size()) {
-    throw corrupted(std::to_string(idx) + " is out of ranges");
+    LIEF_WARN("DynamicEntryArray[{}] is out-of-range", idx);
+    return GARBAGE;
   }
   return array_[idx];
 }

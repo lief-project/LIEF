@@ -116,7 +116,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
   uint64_t get_dynamic_string_table() const;
 
-  uint64_t get_dynamic_string_table_from_segments() const;
+  result<uint64_t> get_dynamic_string_table_from_segments() const;
 
   uint64_t get_dynamic_string_table_from_sections() const;
 

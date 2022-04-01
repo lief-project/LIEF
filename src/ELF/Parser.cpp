@@ -300,40 +300,37 @@ ok_error_t Parser::init(const std::string& name) {
     return make_error_code(lief_errors::parsing_error);
   }
 
-  try {
-    binary_->original_size_ = binary_size_;
-    binary_->name(name);
-    auto res = DataHandler::Handler::from_stream(stream_);
-    if (!res) {
-      LIEF_ERR("The provided stream is not supported by the ELF DataHandler");
-      return make_error_code(lief_errors::not_supported);
-    }
-
-    binary_->datahandler_ = std::move(*res);
-
-    auto res_ident = stream_->peek<Header::identity_t>();
-    if (!res_ident) {
-      LIEF_ERR("Can't read ELF identity. Nothing to parse");
-      return res_ident.error();
-    }
-    stream_->set_endian_swap(should_swap());
-
-    binary_->type_ = determine_elf_class(*stream_);
-    type_ = binary_->type_;
-
-    switch (type_) {
-      case ELF_CLASS::ELFCLASS32: return parse_binary<details::ELF32>();
-      case ELF_CLASS::ELFCLASS64: return parse_binary<details::ELF64>();
-      case ELF_CLASS::ELFCLASSNONE:
-      default:
-        {
-          LIEF_ERR("Can't determine the ELF class ({})", static_cast<size_t>(type_));
-          return make_error_code(lief_errors::corrupted);
-        }
-    }
-  } catch (const std::exception& e) {
-    LIEF_WARN("{}", e.what());
+  binary_->original_size_ = binary_size_;
+  binary_->name(name);
+  auto res = DataHandler::Handler::from_stream(stream_);
+  if (!res) {
+    LIEF_ERR("The provided stream is not supported by the ELF DataHandler");
+    return make_error_code(lief_errors::not_supported);
   }
+
+  binary_->datahandler_ = std::move(*res);
+
+  auto res_ident = stream_->peek<Header::identity_t>();
+  if (!res_ident) {
+    LIEF_ERR("Can't read ELF identity. Nothing to parse");
+    return res_ident.error();
+  }
+  stream_->set_endian_swap(should_swap());
+
+  binary_->type_ = determine_elf_class(*stream_);
+  type_ = binary_->type_;
+
+  switch (type_) {
+    case ELF_CLASS::ELFCLASS32: return parse_binary<details::ELF32>();
+    case ELF_CLASS::ELFCLASS64: return parse_binary<details::ELF64>();
+    case ELF_CLASS::ELFCLASSNONE:
+    default:
+      {
+        LIEF_ERR("Can't determine the ELF class ({})", static_cast<size_t>(type_));
+        return make_error_code(lief_errors::corrupted);
+      }
+  }
+
   return ok();
 }
 
@@ -377,7 +374,7 @@ ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
 }
 
 
-uint64_t Parser::get_dynamic_string_table_from_segments() const {
+result<uint64_t> Parser::get_dynamic_string_table_from_segments() const {
   Segment* dyn_segment = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
   if (dyn_segment == nullptr) {
     return 0;
@@ -439,11 +436,10 @@ uint64_t Parser::get_dynamic_string_table_from_sections() const {
 }
 
 uint64_t Parser::get_dynamic_string_table() const {
-  uint64_t offset = get_dynamic_string_table_from_segments();
-  if (offset == 0) {
-    offset = get_dynamic_string_table_from_sections();
+  if (auto res = get_dynamic_string_table_from_segments()) {
+    return *res;
   }
-  return offset;
+  return get_dynamic_string_table_from_sections();
 }
 
 

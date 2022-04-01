@@ -101,14 +101,14 @@ uint32_t Import::import_lookup_table_rva() const {
 }
 
 
-uint32_t Import::get_function_rva_from_iat(const std::string& function) const {
+result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) const {
   const auto it_function = std::find_if(std::begin(entries_), std::end(entries_),
       [&function] (const ImportEntry& entry) {
         return entry.name() == function;
       });
 
   if (it_function == std::end(entries_)) {
-    throw LIEF::not_found("No such function ('" + function + "')");
+    return make_error_code(lief_errors::not_found);
   }
 
   // Index of the function in the imported functions

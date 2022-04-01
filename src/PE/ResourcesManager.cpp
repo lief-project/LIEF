@@ -47,6 +47,10 @@
 namespace LIEF {
 namespace PE {
 
+
+ResourcesManager::ResourcesManager(ResourcesManager&&) = default;
+ResourcesManager& ResourcesManager::operator=(ResourcesManager&&) = default;
+
 ResourcesManager::ResourcesManager(const ResourcesManager&) = default;
 ResourcesManager& ResourcesManager::operator=(const ResourcesManager&) = default;
 ResourcesManager::~ResourcesManager() = default;
@@ -377,25 +381,25 @@ bool ResourcesManager::has_version() const {
   return get_node_type(RESOURCE_TYPES::VERSION) != nullptr;
 }
 
-ResourceVersion ResourcesManager::version() const {
+result<ResourceVersion> ResourcesManager::version() const {
   const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::VERSION);
   if (root_node == nullptr) {
-    throw not_found("Resource version not found");
+    return make_error_code(lief_errors::not_found);
   }
 
   // First level of child nodes
   ResourceNode::it_const_childs childs_l1 = root_node->childs();
   if (childs_l1.empty()) {
-    throw not_found("Resource version corrupted");
+    return make_error_code(lief_errors::corrupted);
   }
 
   ResourceNode::it_childs childs_l2 = childs_l1[0].childs();
   if (childs_l2.empty()) {
-    throw not_found("Resource version corrupted");
+    return make_error_code(lief_errors::corrupted);
   }
 
   if (!childs_l2[0].is_data()) {
-    throw not_found("Resource version corrupted");
+    return make_error_code(lief_errors::corrupted);
   }
 
   const auto& version_node = static_cast<const ResourceData&>(childs_l2[0]);
@@ -407,7 +411,7 @@ ResourceVersion ResourcesManager::version() const {
       return *version;
     }
   }
-  throw not_found("Resource version corrupted");
+  return make_error_code(lief_errors::corrupted);
 }
 
 // Icons
@@ -997,14 +1001,12 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
 
 
   if (rsrc.has_version()) {
-    os << "Version" << std::endl;
-    os << "=======" << std::endl << std::endl;
-    try {
-      os << rsrc.version();
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
+    if (auto version = rsrc.version()) {
+      os << "Version" << std::endl;
+      os << "=======" << std::endl << std::endl;
+      os << *version;
+      os << std::endl;
     }
-    os << std::endl;
   }
 
   const auto& icons = rsrc.icons();

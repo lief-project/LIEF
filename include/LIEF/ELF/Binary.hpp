@@ -20,7 +20,7 @@
 #include <memory>
 
 #include "LIEF/visibility.h"
-
+#include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
@@ -458,13 +458,13 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove_dynamic_symbol(Symbol* symbol);
 
   //! Return the address of the given function name
-  uint64_t get_function_address(const std::string& func_name) const override;
+  result<uint64_t> get_function_address(const std::string& func_name) const override;
 
   //! Return the address of the given function name
   //
   //! @param[in] func_name    The function's name target
   //! @param[in] demangled    Use the demangled name
-  uint64_t get_function_address(const std::string& func_name, bool demangled) const;
+  result<uint64_t> get_function_address(const std::string& func_name, bool demangled) const;
 
   //! Add a new section in the binary
   //!
@@ -473,9 +473,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //!                       by a PT_LOAD segment
   //!
   //! @return The section added. The `size` and the `virtual address` might change.
-  Section& add(const Section& section, bool loaded = true);
+  Section* add(const Section& section, bool loaded = true);
 
-  Section& extend(const Section& section, uint64_t size);
+  Section* extend(const Section& section, uint64_t size);
 
   //! Add a static symbol
   Symbol& add_static_symbol(const Symbol& symbol);
@@ -508,14 +508,14 @@ class LIEF_API Binary : public LIEF::Binary {
   //! The segment is inserted at the end
   //!
   //! @return The segment added. `Virtual address` and `File Offset` might change.
-  Segment& add(const Segment& segment, uint64_t base = 0);
+  Segment* add(const Segment& segment, uint64_t base = 0);
 
   //! Replace the segment given in 2nd parameter with the segment given in the first one and return the updated segment.
   //!
   //! @warning The ``original_segment`` is no longer valid after this function
-  Segment& replace(const Segment& new_segment, const Segment& original_segment, uint64_t base = 0);
+  Segment* replace(const Segment& new_segment, const Segment& original_segment, uint64_t base = 0);
 
-  Segment& extend(const Segment& segment, uint64_t size);
+  Segment* extend(const Segment& segment, uint64_t size);
 
 
   //! Patch the content at virtual address @p address with @p patch_value
@@ -568,13 +568,13 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> raw();
 
   //! Convert a virtual address to a file offset
-  uint64_t virtual_address_to_offset(uint64_t virtual_address) const;
+  result<uint64_t> virtual_address_to_offset(uint64_t virtual_address) const;
 
   //! Convert the given offset into a virtual address.
   //!
   //! @param[in] offset   The offset to convert.
   //! @param[in] slide    If not 0, it will replace the default base address (if any)
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   //! Check if the binary has been compiled with `-fpie -pie` flags
   //!
@@ -759,7 +759,7 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF::Binary::functions_t armexid_functions() const;
 
   template<E_TYPE OBJECT_TYPE, bool note = false>
-  Segment& add_segment(const Segment& segment, uint64_t base);
+  Segment* add_segment(const Segment& segment, uint64_t base);
 
   uint64_t relocate_phdr_table();
   uint64_t relocate_phdr_table_pie();
@@ -767,10 +767,10 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t relocate_phdr_table_v2();
 
   template<SEGMENT_TYPES PT>
-  Segment& extend_segment(const Segment& segment, uint64_t size);
+  Segment* extend_segment(const Segment& segment, uint64_t size);
 
   template<bool LOADED>
-  Section& add_section(const Section& section);
+  Section* add_section(const Section& section);
   std::vector<Symbol*> static_dyn_symbols() const;
 
   std::string shstrtab_name() const;

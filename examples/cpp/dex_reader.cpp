@@ -29,14 +29,11 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  std::unique_ptr<const File> file;
-
-  try {
-    std::unique_ptr<const File> file = LIEF::DEX::Parser::parse(argv[1]);
-  } catch (const LIEF::exception& e) {
-    std::cerr << e.what() << '\n';
-    return EXIT_FAILURE;
+  if (std::unique_ptr<const File> file = LIEF::DEX::Parser::parse(argv[1])) {
+    std::cout << *file << "\n";
+    return EXIT_SUCCESS;
   }
 
+  return EXIT_FAILURE;
 }
 

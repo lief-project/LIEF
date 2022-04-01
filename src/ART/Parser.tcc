@@ -41,7 +41,8 @@ size_t Parser::parse_header() {
   imagebase_ = hdr.image_begin;
 
   if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t)) {
-    throw corrupted("Wrong pointer size!");
+    LIEF_WARN("ART Header pointer_size is not consistent");
+    return 0;
   }
   file_->header_ = &hdr;
   return hdr.pointer_size;
@@ -54,7 +55,7 @@ void Parser::parse_sections() {
   using art_header_t   = typename ART_T::art_header_t;
   using jarray_t       = typename ART_T::template jarray_t<>;
   using jclass_t       = typename ART_T::template jclass_t<>;
-  using jobject_t       = typename ART_T::template jobject_t<>;
+  using jobject_t      = typename ART_T::template jobject_t<>;
 
   VLOG(VDEBUG) << "Parsing Image Sections" << std::endl;
   size_t nb_sections = file_->header().nb_sections_;

@@ -142,14 +142,8 @@ ok_error_t BinaryParser::init_and_parse() {
   binary_->is64_ = is64_;
   type_          = type;
 
-  try {
-    is64_ ? parse<details::MachO64>() :
-            parse<details::MachO32>();
-  } catch (const std::exception& e) {
-    LIEF_DEBUG("{}", e.what());
-    return make_error_code(lief_errors::parsing_error);
-  }
-  return ok();
+  return is64_ ? parse<details::MachO64>() :
+                 parse<details::MachO32>();
 }
 
 

@@ -1,11 +1,18 @@
 Changelog
 =========
 
+0.13.0 - Not Released Yet
+-------------------------
+
+:General Design:
+
+  * Remove the exceptions
+
 0.12.1 - Not Released Yet
 -------------------------
 
 :PE:
-  * Fix parsing regressions (:issue:`6889`, :issue:`687`, :issue:`686`, :issue:`685`)
+  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`)
 
 :Compilation:
   * Nightly builds are now upload to Saleway's S3 server:

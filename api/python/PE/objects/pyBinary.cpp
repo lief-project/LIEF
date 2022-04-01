@@ -353,7 +353,9 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference)
 
     .def_property_readonly("resources_manager",
-        static_cast<no_const_getter<ResourcesManager>>(&Binary::resources_manager),
+        [] (Binary& self) {
+          return error_or(&Binary::resources_manager, self);
+        },
         "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources")
 
     .def_property_readonly("resources",

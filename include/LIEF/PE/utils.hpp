@@ -21,6 +21,7 @@
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/errors.hpp"
 
 
 namespace LIEF {
@@ -79,7 +80,7 @@ LIEF_API std::string get_imphash(const Binary& binary, IMPHASH_MODE mode = IMPHA
 //! @param[in] use_std If ``true``, it will use the [pefile](https://github.com/erocarrera/pefile/tree/09264be6f731bf8578aee8638cc4046154e03abf/ordlookup) look-up table for resolving imports
 //!
 //! @return The PE::import resolved with PE::ImportEntry::name set
-LIEF_API Import resolve_ordinals(const Import& import, bool strict=false, bool use_std=false);
+LIEF_API result<Import> resolve_ordinals(const Import& import, bool strict=false, bool use_std=false);
 
 LIEF_API ALGORITHMS algo_from_oid(const std::string& oid);
 }

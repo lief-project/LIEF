@@ -79,8 +79,11 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
                relocation.address());
     return make_error_code(lief_errors::not_found);
   }
-
-  const uint64_t relative_offset = virtual_address_to_offset(relocation.address()) - segment->file_offset();
+  auto offset = virtual_address_to_offset(relocation.address());
+  if (!offset) {
+    return offset.error();
+  }
+  uint64_t relative_offset = *offset - segment->file_offset();
   span<uint8_t> segment_content = segment->writable_content();
   const size_t segment_size = segment_content.size();
 

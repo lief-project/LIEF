@@ -95,9 +95,9 @@ int main(int argc, char **argv) {
   }
 
 
-  if (binary->has_resources()) {
+  if (auto manager = binary->resources_manager()) {
     std::cout << "== Resources ==" << '\n';
-    std::cout << binary->resources_manager() << '\n';
+    std::cout << *manager << '\n';
   }
 
   for (const Signature& sig : binary->signatures()) {

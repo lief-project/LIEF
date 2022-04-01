@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
@@ -81,7 +82,7 @@ class LIEF_API Import : public Object {
   //!
   //! @warning
   //! This address could change when re-building the binary
-  uint32_t get_function_rva_from_iat(const std::string& function) const;
+  result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
 
   //! Return the imported function with the given name
   ImportEntry*       get_entry(const std::string& name);

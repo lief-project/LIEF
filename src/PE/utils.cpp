@@ -177,8 +177,11 @@ std::string get_imphash_std(const Binary& binary) {
   hashstream hs(hashstream::HASH::MD5);
   for (const Import& imp : binary.imports()) {
     std::string libname = imp.name();
+    Import resolved = imp;
+    if (auto resolution = resolve_ordinals(imp, /* strict */ false, /* use_std */ true)) {
+      resolved = std::move(*resolution);
+    }
 
-    Import resolved = resolve_ordinals(imp, /* strict */ false, /* use_std */ true);
     size_t ext_idx = resolved.name().find_last_of('.');
     std::string name = resolved.name();
     std::string ext;
@@ -229,7 +232,11 @@ std::string get_imphash_lief(const Binary& binary) {
 
   std::string import_list;
   for (const Import& imp : imports) {
-    Import resolved = resolve_ordinals(imp);
+    Import resolved = imp;
+    if (auto resolution = resolve_ordinals(imp)) {
+      resolved = std::move(*resolution);
+    }
+
     size_t ext_idx = resolved.name().find_last_of('.');
     std::string name_without_ext = resolved.name();
 
@@ -272,7 +279,7 @@ std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
   return "";
 }
 
-Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
+result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std) {
   using ordinal_resolver_t = const char*(*)(uint32_t);
 
   Import::it_const_entries entries = import.entries();
@@ -299,11 +306,10 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
   }
 
   if (ordinal_resolver == nullptr) {
-    std::string msg = "Ordinal lookup table for '" + name + "' !implemented";
     if (strict) {
-      throw not_found(msg);
+      return make_error_code(lief_errors::not_implemented);
     }
-    LIEF_DEBUG("{}", msg);
+    LIEF_DEBUG("Ordinal lookup table for '{}' not implemented", name);
     return import;
   }
 
@@ -314,7 +320,7 @@ Import resolve_ordinals(const Import& import, bool strict, bool use_std) {
       const char* entry_name = ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
       if (entry_name == nullptr) {
         if (strict) {
-          throw not_found("Unable to resolve ordinal: " + std::to_string(entry.ordinal()));
+          return make_error_code(lief_errors::not_supported);
         }
         LIEF_DEBUG("Unable to resolve ordinal: #{:d}", entry.ordinal());
         continue;

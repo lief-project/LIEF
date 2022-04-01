@@ -313,7 +313,9 @@ void Hash::visit(const ResourcesManager& resources_manager) {
   }
 
   if (resources_manager.has_version()) {
-    process(resources_manager.version());
+    if (auto version = resources_manager.version()) {
+      process(*version);
+    }
   }
 
   if (resources_manager.has_icons()) {

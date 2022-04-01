@@ -228,19 +228,19 @@ class LIEF_API Binary : public LIEF::Binary  {
   LoadCommand* get(LOAD_COMMAND_TYPES type);
 
   //! Insert a new LoadCommand
-  LoadCommand& add(const LoadCommand& command);
+  LoadCommand* add(const LoadCommand& command);
 
   //! Insert a new LoadCommand at the specified ``index``
-  LoadCommand& add(const LoadCommand& command, size_t index);
+  LoadCommand* add(const LoadCommand& command, size_t index);
 
   //! Insert the given DylibCommand
-  LoadCommand& add(const DylibCommand& library);
+  LoadCommand* add(const DylibCommand& library);
 
   //! Add a new LC_SEGMENT command from the given SegmentCommand
-  LoadCommand& add(const SegmentCommand& segment);
+  LoadCommand* add(const SegmentCommand& segment);
 
   //! Insert a new shared library through a ``LC_LOAD_DYLIB`` command
-  LoadCommand& add_library(const std::string& name);
+  LoadCommand* add_library(const std::string& name);
 
   //! Add a new MachO::Section in the __TEXT segment
   Section* add_section(const Section& section);
@@ -337,13 +337,13 @@ class LIEF_API Binary : public LIEF::Binary  {
   const Section* section_from_virtual_address(uint64_t virtual_address) const;
 
   //! Convert a virtual address to an offset in the file
-  uint64_t virtual_address_to_offset(uint64_t virtual_address) const;
+  result<uint64_t> virtual_address_to_offset(uint64_t virtual_address) const;
 
   //! Convert the given offset into a virtual address.
   //!
   //! @param[in] offset    The offset to convert.
   //! @param[in] slide     If not 0, it will replace the default base address (if any)
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
 
   //! Return the binary's SegmentCommand that encompasses the provided offset
   //!

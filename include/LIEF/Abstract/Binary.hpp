@@ -23,6 +23,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/errors.hpp"
 
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Function.hpp"
@@ -133,7 +134,7 @@ class LIEF_API Binary : public Object {
   functions_t imported_functions() const;
 
   //! Return the address of the given function name
-  virtual uint64_t get_function_address(const std::string& func_name) const;
+  virtual result<uint64_t> get_function_address(const std::string& func_name) const;
 
   //! Method so that a ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
@@ -188,7 +189,7 @@ class LIEF_API Binary : public Object {
   //!
   //! @param[in] offset   The offset to convert.
   //! @param[in] slide    If not 0, it will replace the default base address (if any)
-  virtual uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
+  virtual result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
 
   virtual std::ostream& print(std::ostream& os) const;
 

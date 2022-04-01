@@ -18,6 +18,7 @@
 
 #include "pyAbstract.hpp"
 #include "pyIterators.hpp"
+#include "pyErr.hpp"
 #include "LIEF/Abstract/Binary.hpp"
 
 
@@ -141,7 +142,9 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def("get_function_address",
-        &Binary::get_function_address,
+        [] (const Binary& self, const std::string& name) {
+          return error_or(&Binary::get_function_address, self, name);
+        },
         "Return the address of the given function name",
         "function_name"_a)
 
@@ -219,7 +222,10 @@ void create<Binary>(py::module& m) {
         "Return all **virtual addresses** that *use* the ``address`` given in parameter",
         "virtual_address"_a)
 
-    .def("offset_to_virtual_address", &Binary::offset_to_virtual_address,
+    .def("offset_to_virtual_address",
+        [] (const Binary& self, uint64_t offset, uint64_t slide) {
+          return error_or(&Binary::offset_to_virtual_address, self, offset, slide);
+        },
         "Convert an offset into a virtual address.",
         "offset"_a, "slide"_a = 0)
 

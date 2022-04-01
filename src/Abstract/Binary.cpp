@@ -100,9 +100,9 @@ std::vector<std::string> Binary::imported_libraries() const {
   return get_abstract_imported_libraries();
 }
 
-uint64_t Binary::get_function_address(const std::string&) const {
+result<uint64_t> Binary::get_function_address(const std::string&) const {
   LIEF_ERR("Not implemented for this format");
-  return 0;
+  return make_error_code(lief_errors::not_implemented);
 }
 
 std::vector<uint64_t> Binary::xref(uint64_t address) const {

@@ -555,15 +555,17 @@ class LIEF_LOCAL ExeLayout : public Layout {
     /* PT_INTERP segment (optional)
      *
      */
-    Segment* interp = nullptr;
     if (interp_size_ > 0 && !binary_->has(SEGMENT_TYPES::PT_INTERP)) {
       Segment interp_segment;
       interp_segment.alignment(0x8);
       interp_segment.type(SEGMENT_TYPES::PT_INTERP);
       interp_segment.add(ELF_SEGMENT_FLAGS::PF_R);
       interp_segment.content(std::vector<uint8_t>(interp_size_));
-      interp = &binary_->add(interp_segment);
-      LIEF_DEBUG("Interp Segment: 0x{:x}:0x{:x}", interp->virtual_address(), interp->virtual_size());
+      if (auto interp = binary_->add(interp_segment)) {
+        LIEF_DEBUG("Interp Segment: 0x{:x}:0x{:x}", interp->virtual_address(), interp->virtual_size());
+      } else {
+        LIEF_ERR("Can't add a new PT_INTERP");
+      }
     }
 
     /* Segment 1.
@@ -598,6 +600,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (relocate_gnu_hash_) {
       read_segment += raw_gnu_hash_.size();
     }
+
     Segment* new_rsegment = nullptr;
 
     if (read_segment > 0) {
@@ -606,8 +609,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rsegment.type(SEGMENT_TYPES::PT_LOAD);
       rsegment.add(ELF_SEGMENT_FLAGS::PF_R);
       rsegment.content(std::vector<uint8_t>(read_segment));
-      new_rsegment = &binary_->add(rsegment);
-      LIEF_DEBUG("R-Segment: 0x{:x}:0x{:x}", new_rsegment->virtual_address(), new_rsegment->virtual_size());
+      new_rsegment = binary_->add(rsegment);
+      if (new_rsegment != nullptr) {
+        LIEF_DEBUG("R-Segment: 0x{:x}:0x{:x}", new_rsegment->virtual_address(), new_rsegment->virtual_size());
+      } else {
+        LIEF_ERR("Can't add a new R-Segment");
+        return make_error_code(lief_errors::build_error);
+      }
     }
 
     /* Segment 2
@@ -632,8 +640,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rwsegment.add(ELF_SEGMENT_FLAGS::PF_R);
       rwsegment.add(ELF_SEGMENT_FLAGS::PF_W);
       rwsegment.content(std::vector<uint8_t>(read_write_segment));
-      new_rwsegment = &binary_->add(rwsegment);
-      LIEF_DEBUG("RW-Segment: 0x{:x}:0x{:x}", new_rwsegment->virtual_address(), new_rwsegment->virtual_size());
+      new_rwsegment = binary_->add(rwsegment);
+      if (new_rwsegment != nullptr) {
+        LIEF_DEBUG("RW-Segment: 0x{:x}:0x{:x}", new_rwsegment->virtual_address(), new_rwsegment->virtual_size());
+      } else {
+        LIEF_ERR("Can't add a new RW-Segment");
+        return make_error_code(lief_errors::build_error);
+      }
     }
 
 
@@ -680,12 +693,19 @@ class LIEF_LOCAL ExeLayout : public Layout {
       pt_interp->virtual_address(va_r_base);
       pt_interp->virtual_size(interp_size_);
       pt_interp->physical_address(va_r_base);
-      pt_interp->file_offset(binary_->virtual_address_to_offset(va_r_base));
       pt_interp->physical_size(interp_size_);
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      pt_interp->file_offset(offset_r_base);
       if (section != nullptr) {
         section->virtual_address(va_r_base);
         section->size(interp_size_);
-        section->offset(binary_->virtual_address_to_offset(va_r_base));
+        section->offset(offset_r_base);
         section->original_size_ = interp_size_;
       }
 
@@ -702,8 +722,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
       note_segment->virtual_address(va_r_base);
       note_segment->virtual_size(raw_notes_.size());
       note_segment->physical_address(va_r_base);
-      note_segment->file_offset(binary_->virtual_address_to_offset(va_r_base));
       note_segment->physical_size(raw_notes_.size());
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      note_segment->file_offset(offset_r_base);
       va_r_base += raw_notes_.size();
     }
 
@@ -717,15 +745,22 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_rw_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_rw_base)) {
+        offset_rw_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       dynamic_segment->virtual_address(va_rw_base);
       dynamic_segment->virtual_size(dynamic_size_);
       dynamic_segment->physical_address(va_rw_base);
-      dynamic_segment->file_offset(binary_->virtual_address_to_offset(va_rw_base));
+      dynamic_segment->file_offset(offset_rw_base);
       dynamic_segment->physical_size(dynamic_size_);
 
       dynamic_section->virtual_address(va_rw_base);
       dynamic_section->size(dynamic_size_);
-      dynamic_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      dynamic_section->offset(offset_rw_base);
       dynamic_section->original_size_ = dynamic_size_;
       va_rw_base += dynamic_size_;
     }
@@ -746,9 +781,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       dyn_sym_section->virtual_address(va_r_base);
       dyn_sym_section->size(dynsym_size_);
-      dyn_sym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_sym_section->offset(offset_r_base);
       dyn_sym_section->original_size_ = dynsym_size_;
       dt_symtab->value(va_r_base);
 
@@ -771,10 +813,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_ERR("Can't find the .dynstr section");
         return make_error_code(lief_errors::file_format_error);
       }
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
 
       dyn_str_section->virtual_address(va_r_base);
       dyn_str_section->size(raw_dynstr_.size());
-      dyn_str_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_str_section->offset(offset_r_base);
       dyn_str_section->original_size_ = raw_dynstr_.size();
 
       dt_strtab->value(va_r_base);
@@ -798,9 +846,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       versym_section->virtual_address(va_r_base);
       versym_section->size(sver_size_);
-      versym_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      versym_section->offset(offset_r_base);
       versym_section->original_size_ = sver_size_;
       dt_versym->value(va_r_base);
 
@@ -822,9 +877,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       verdef_section->virtual_address(va_r_base);
       verdef_section->size(sverd_size_);
-      verdef_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verdef_section->offset(offset_r_base);
       verdef_section->original_size_ = sverd_size_;
       dt_verdef->value(va_r_base);
 
@@ -846,9 +908,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       verreq_section->virtual_address(va_r_base);
       verreq_section->size(sverr_size_);
-      verreq_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      verreq_section->offset(offset_r_base);
       verreq_section->original_size_ = sverr_size_;
       dt_verreq->value(va_r_base);
 
@@ -881,9 +950,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
 
       LIEF_DEBUG("Update {}", dyn_relocation_section->name());
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
       dyn_relocation_section->virtual_address(va_r_base);
       dyn_relocation_section->size(dynamic_reloc_size_);
-      dyn_relocation_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      dyn_relocation_section->offset(offset_r_base);
       dyn_relocation_section->original_size_ = dynamic_reloc_size_;
 
       dt_reloc->value(va_r_base);
@@ -911,9 +987,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       relocation_section->virtual_address(va_r_base);
       relocation_section->size(pltgot_reloc_size_);
-      relocation_section->offset(binary_->virtual_address_to_offset(va_r_base));
+      relocation_section->offset(offset_r_base);
       relocation_section->original_size_ = pltgot_reloc_size_;
 
       dt_reloc->value(va_r_base);
@@ -939,9 +1022,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       section->virtual_address(va_r_base);
       section->size(raw_gnu_hash_.size());
-      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->offset(offset_r_base);
       section->original_size_ = raw_gnu_hash_.size();
 
       dt_gnu_hash->value(va_r_base);
@@ -964,9 +1054,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       section->virtual_address(va_r_base);
       section->size(sysv_size_);
-      section->offset(binary_->virtual_address_to_offset(va_r_base));
+      section->offset(offset_r_base);
       section->original_size_ = sysv_size_;
 
       dt_hash->value(va_r_base);
@@ -1018,9 +1115,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      uint64_t offset_rw_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_rw_base)) {
+        offset_rw_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       init_array_section->virtual_address(va_rw_base);
       init_array_section->size(init_size_);
-      init_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      init_array_section->offset(offset_rw_base);
       init_array_section->original_size_ = init_size_;
 
       dt_init_array->value(va_rw_base);
@@ -1068,9 +1172,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      uint64_t offset_rw_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_rw_base)) {
+        offset_rw_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       preinit_array_section->virtual_address(va_rw_base);
       preinit_array_section->size(preinit_size_);
-      preinit_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      preinit_array_section->offset(offset_rw_base);
       preinit_array_section->original_size_ = preinit_size_;
 
       dt_preinit_array->value(va_rw_base);
@@ -1120,9 +1231,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
         }
       }
 
+      uint64_t offset_rw_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_rw_base)) {
+        offset_rw_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
       fini_array_section->virtual_address(va_rw_base);
       fini_array_section->size(fini_size_);
-      fini_array_section->offset(binary_->virtual_address_to_offset(va_rw_base));
+      fini_array_section->offset(offset_rw_base);
       fini_array_section->original_size_ = fini_size_;
 
       dt_fini_array->value(va_rw_base);
@@ -1150,16 +1268,22 @@ class LIEF_LOCAL ExeLayout : public Layout {
       Section strtab{".strtab", ELF_SECTION_TYPES::SHT_STRTAB};
       strtab.content(raw_strtab_);
       strtab.alignment(1);
-      Section& new_strtab = binary_->add(strtab, /* loaded */ false);
+      Section* new_strtab = binary_->add(strtab, /* loaded */ false);
+
+      if (new_strtab == nullptr) {
+        LIEF_ERR("Can't add a new .strtab section");
+        return make_error_code(lief_errors::build_error);
+      }
+
       LIEF_DEBUG("New .strtab section: #{:d} {} 0x{:x} (size: {:x})",
-                 strtab_idx, new_strtab.name(), new_strtab.file_offset(), new_strtab.size());
+                 strtab_idx, new_strtab->name(), new_strtab->file_offset(), new_strtab->size());
 
       Section* sec_symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
       if (sec_symtab != nullptr) {
         LIEF_DEBUG("Link section {} with the new .strtab (idx: #{:d})", sec_symtab->name(), strtab_idx);
         sec_symtab->link(strtab_idx);
       }
-      set_strtab_section(new_strtab);
+      set_strtab_section(*new_strtab);
     }
 
     if (strtab_section_ != nullptr) {
@@ -1189,9 +1313,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       symtab.entry_size(sizeof_sym);
       symtab.alignment(8);
       symtab.link(strtab_idx);
-      Section& new_symtab = binary_->add(symtab, /* loaded */ false);
+      Section* new_symtab = binary_->add(symtab, /* loaded */ false);
+      if (new_symtab == nullptr) {
+        LIEF_ERR("Can't add a new .symbtab section");
+        return make_error_code(lief_errors::build_error);
+      }
       LIEF_DEBUG("New .symtab section: {} 0x{:x} (size: {:x})",
-                 new_symtab.name(), new_symtab.file_offset(), new_symtab.size());
+                 new_symtab->name(), new_symtab->file_offset(), new_symtab->size());
     }
 
     // Process note sections
@@ -1244,11 +1372,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
           Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
           section += ELF_SECTION_FLAGS::SHF_ALLOC;
 
-          Section& section_added = binary_->add(section, /*loaded */ false);
-          section_added.offset(segment_note->file_offset() + note_offset);
-          section_added.size(note.size());
+          Section* section_added = binary_->add(section, /*loaded */ false);
+          if (section_added == nullptr) {
+            LIEF_ERR("Can't add SHT_NOTE section");
+            return make_error_code(lief_errors::build_error);
+          }
+          section_added->offset(segment_note->file_offset() + note_offset);
+          section_added->size(note.size());
           section.virtual_address(segment_note->virtual_address() + note_offset);
-          section_added.alignment(4);
+          section_added->alignment(4);
         }
       }
     }

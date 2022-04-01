@@ -19,6 +19,7 @@
 #include "LIEF/exception.hpp"
 
 #include "LIEF/PE/ImportEntry.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF {
@@ -57,7 +58,8 @@ bool ImportEntry::is_ordinal() const {
 
 uint16_t ImportEntry::ordinal() const {
   if (!is_ordinal()) {
-    throw LIEF::not_found("This import is not ordinal");
+    LIEF_WARN("This import is not ordinal");
+    return 0;
   }
 
   return data_ & 0xFFFF;

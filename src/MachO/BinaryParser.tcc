@@ -77,37 +77,21 @@ ok_error_t BinaryParser::parse() {
   }
 
   for (Section& section : binary_->sections()) {
-    try {
-      parse_relocations<MACHO_T>(section);
-    } catch (const exception& e) {
-      LIEF_WARN("{}", e.what());
-    }
+    parse_relocations<MACHO_T>(section);
   }
 
   if (binary_->has_dyld_info()) {
 
     if (config_.parse_dyld_exports) {
-      try {
-        parse_dyldinfo_export();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_dyldinfo_export();
     }
 
     if (config_.parse_dyld_bindings) {
-      try {
-        parse_dyldinfo_binds<MACHO_T>();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_dyldinfo_binds<MACHO_T>();
     }
 
     if (config_.parse_dyld_rebases) {
-      try {
-        parse_dyldinfo_rebases<MACHO_T>();
-      } catch (const exception& e) {
-        LIEF_WARN("{}", e.what());
-      }
+      parse_dyldinfo_rebases<MACHO_T>();
     }
 
     if (DyldInfo* dyld = binary_->dyld_info()) {
@@ -808,33 +792,27 @@ ok_error_t BinaryParser::parse_load_commands() {
           }
 
 
-          try {
-            /* TODO(romain): This part needs to be refactored
-             * we should not have to make this kind construction and move
-             * with the BinaryParser constructor
-             */
-            const size_t current_pos = stream_->pos();
-            stream_->setpos(cmd->fileoff);
-            BinaryParser bp;
-            bp.stream_ = std::move(stream_);
-            bp.config_ = config_;
-            if (!bp.init_and_parse()) {
-              LIEF_WARN("Parsing the Binary fileset raised error.");
-            }
-
-            stream_ = std::move(bp.stream_);
-            stream_->setpos(current_pos);
-
-            if (bp.binary_ != nullptr) {
-              std::unique_ptr<Binary> filset_bin = std::move(bp.binary_);
-              filset_bin->name_ = *entry_name;
-              binary_->filesets_.push_back(std::move(filset_bin));
-            }
-
-          } catch (const std::exception& e) {
-            LIEF_DEBUG("{}", e.what());
+          /* TODO(romain): This part needs to be refactored
+           * we should not have to make this kind construction and move
+           * with the BinaryParser constructor
+           */
+          const size_t current_pos = stream_->pos();
+          stream_->setpos(cmd->fileoff);
+          BinaryParser bp;
+          bp.stream_ = std::move(stream_);
+          bp.config_ = config_;
+          if (!bp.init_and_parse()) {
+            LIEF_WARN("Parsing the Binary fileset raised error.");
           }
 
+          stream_ = std::move(bp.stream_);
+          stream_->setpos(current_pos);
+
+          if (bp.binary_ != nullptr) {
+            std::unique_ptr<Binary> filset_bin = std::move(bp.binary_);
+            filset_bin->name_ = *entry_name;
+            binary_->filesets_.push_back(std::move(filset_bin));
+          }
           break;
         }
 
@@ -1196,28 +1174,10 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
 template<class MACHO_T>
 ok_error_t BinaryParser::parse_dyldinfo_binds() {
 
-  try {
-    parse_dyldinfo_generic_bind<MACHO_T>();
-  } catch (const exception& e) {
-    LIEF_ERR("Can't correctly parse Dyld binding info");
-    return make_error_code(lief_errors::corrupted);
-  }
+  parse_dyldinfo_generic_bind<MACHO_T>();
+  parse_dyldinfo_weak_bind<MACHO_T>();
+  parse_dyldinfo_lazy_bind<MACHO_T>();
 
-
-  try {
-    parse_dyldinfo_weak_bind<MACHO_T>();
-  } catch (const exception& e) {
-    LIEF_ERR("Can't correctly parse weak Dyld binding info");
-    return make_error_code(lief_errors::corrupted);
-  }
-
-
-  try {
-    parse_dyldinfo_lazy_bind<MACHO_T>();
-  } catch (const exception& e) {
-    LIEF_ERR("Can't correctly parse lazy Dyld binding info");
-    return make_error_code(lief_errors::corrupted);
-  }
   return ok();
 }
 

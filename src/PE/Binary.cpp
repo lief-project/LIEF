@@ -196,7 +196,7 @@ uint64_t Binary::imagebase() const {
   return optional_header().imagebase();
 }
 
-uint64_t Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
+result<uint64_t> Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
   const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
       [offset] (const std::unique_ptr<Section>& section) {
         return (offset >= section->offset() &&
@@ -584,7 +584,7 @@ void Binary::make_space_for_new_section() {
   available_sections_space_++;
 }
 
-Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
+Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
   if (available_sections_space_ < 0) {
     make_space_for_new_section();
@@ -702,7 +702,8 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
 
   if (sections_.size() >= std::numeric_limits<uint16_t>::max()) {
-    throw pe_error("Binary reachs its maximum number of sections");
+    LIEF_INFO("Binary reachs its maximum number of sections");
+    return nullptr;
   }
 
   available_sections_space_--;
@@ -712,9 +713,9 @@ Section& Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
   optional_header().sizeof_image(this->virtual_size());
   optional_header().sizeof_headers(sizeof_headers());
-
+  Section* sec = new_section.get();
   sections_.push_back(std::move(new_section));
-  return *(sections_.back());
+  return sec;
 }
 
 
@@ -1227,7 +1228,10 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
 LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   for (const Import& import : imports()) {
-    const Import& resolved = resolve_ordinals(import);
+    Import resolved = import;
+    if (auto resolution = resolve_ordinals(import)) {
+      resolved = std::move(*resolution);
+    }
     for (const ImportEntry& entry : resolved.entries()) {
       const std::string& name = entry.name();
       if(!name.empty()) {
@@ -1505,20 +1509,12 @@ void Binary::rich_header(const RichHeader& rich_header) {
 // Resource manager
 // ===============
 
-ResourcesManager Binary::resources_manager() {
+result<ResourcesManager> Binary::resources_manager() const {
   if (resources_ == nullptr || !has_resources()) {
-    throw not_found("There is no resources in the binary");
+    return make_error_code(lief_errors::not_found);
   }
   return ResourcesManager{*resources_};
 }
-
-const ResourcesManager Binary::resources_manager() const {
-  if (resources_ == nullptr || !has_resources()) {
-    throw not_found("There is no resources in the binary");
-  }
-  return ResourcesManager{*resources_};
-}
-
 
 LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
@@ -1758,10 +1754,12 @@ std::ostream& Binary::print(std::ostream& os) const {
 
 
   if (has_resources()) {
-    os << "Resources" << std::endl;
-    os << "=========" << std::endl;
-    os << resources_manager() << std::endl;
-    os << std::endl;
+    if (auto manager = resources_manager()) {
+      os << "Resources" << std::endl;
+      os << "=========" << std::endl;
+      os << *manager << std::endl;
+      os << std::endl;
+    }
   }
 
   os << "Symbols" << std::endl;
