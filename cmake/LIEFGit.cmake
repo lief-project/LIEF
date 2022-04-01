@@ -41,11 +41,16 @@ execute_process(
 
 string(COMPARE NOTEQUAL "${LIEF_GIT_COMMIT_TAGGED}" "" LIEF_IS_TAGGED)
 
-STRING(REGEX MATCHALL "([0-9]+)" VERSION_STRING "${LIEF_GIT_TAG}")
+string(REGEX MATCHALL "([0-9]+)" VERSION_STRING "${LIEF_GIT_TAG}")
 
 message(STATUS "Tagged: ${LIEF_IS_TAGGED}")
 if (${LIEF_IS_TAGGED})
   message(STATUS "Tag: ${LIEF_GIT_TAG}")
+else()
+  if(LIEF_GIT_BRANCH MATCHES "^release-")
+    string(REGEX MATCHALL "([0-9]+)" VERSION_STRING "${LIEF_GIT_BRANCH}")
+    message(STATUS "${VERSION_STRING}")
+  endif()
 endif()
 message(STATUS "Current branch: ${LIEF_GIT_BRANCH}")
 
@@ -56,8 +61,12 @@ if (VERSION_STRING)
   list(GET VERSION_STRING 2 LIEF_VERSION_PATCH)
 
   if (NOT ${LIEF_IS_TAGGED})
-    MATH(EXPR LIEF_VERSION_MINOR "${LIEF_VERSION_MINOR}+1")
-    set(LIEF_VERSION_PATCH 0)
+    if(LIEF_GIT_BRANCH MATCHES "^release-")
+      message(STATUS "Release branch")
+    else()
+      MATH(EXPR LIEF_VERSION_MINOR "${LIEF_VERSION_MINOR}+1")
+      set(LIEF_VERSION_PATCH 0)
+    endif()
   endif()
 else()
   set(LIEF_VERSION_MAJOR 0)

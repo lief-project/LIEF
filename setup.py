@@ -410,11 +410,23 @@ distutils.sysconfig.get_config_vars = distutils_get_config_vars
 
 # From setuptools-git-version
 command       = 'git describe --tags --long --dirty'
+git_branch    = 'git rev-parse --abbrev-ref HEAD'
 is_tagged_cmd = 'git tag --list --points-at=HEAD'
 fmt_dev       = '{tag}.dev0'
 fmt_tagged    = '{tag}'
 
+def get_branch():
+    try:
+        return subprocess.check_output(git_branch.split()).decode('utf-8').strip()
+    except Exception:
+        return None
+
 def format_version(version: str, fmt: str = fmt_dev, is_dev: bool = False):
+    branch = get_branch()
+    if branch is not None and branch.startswith("release-"):
+        _, version = branch.split("release-")
+        return version
+
     parts = version.split('-')
     assert len(parts) in (3, 4)
     dirty = len(parts) == 4
