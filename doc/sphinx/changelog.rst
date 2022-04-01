@@ -12,9 +12,10 @@ Changelog
 -------------------------
 
 :PE:
-  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`)
+  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`, :issue:`691`)
 
 :Compilation:
+
   * Nightly builds are now upload to Saleway's S3 server:
 
     - https://lief.s3-website.fr-par.scw.cloud/latest/lief
