@@ -328,12 +328,20 @@ ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, Bin
     uint16_t wType = 0;
     std::u16string szKey;
 
+    const size_t pos = stream.pos();
+
     if (auto res = stream.read<uint16_t>()) {
       wLength = *res;
       LIEF_DEBUG("StringTable.wLength: 0x{:x}", wLength);
+      if (wLength == 0) {
+        LIEF_WARN("StringTable.wLength should not be null");
+        break;
+      }
     } else {
       LIEF_ERR("Can't read StringTable.wLength");
     }
+
+    const size_t end_offset = pos + wLength;
 
     if (auto res = stream.read<uint16_t>()) {
       wValueLength = *res;
@@ -398,6 +406,7 @@ ok_error_t ResourcesParser::parse_string_file_info(ResourceVersion& version, Bin
       LIEF_ERR("Can't read StringTable.szKey");
       return make_error_code(lief_errors::parsing_error);
     }
+    stream.setpos(end_offset);
   }
   return ok();
 }
@@ -425,9 +434,14 @@ ok_error_t ResourcesParser::parse_string(LangCodeItem& lci, BinaryStream& stream
     if (auto res = stream.read<uint16_t>()) {
       wLength = *res;
       LIEF_DEBUG("String.wLength: 0x{:x}", wLength);
+      if (wLength == 0) {
+        LIEF_WARN("String.wLength should not be null.");
+        break;
+      }
     } else {
       LIEF_ERR("Can't read String.wLength");
     }
+
     const size_t end_offset = pos + wLength;
 
     if (auto res = stream.read<uint16_t>()) {
