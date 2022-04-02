@@ -4,6 +4,9 @@ Changelog
 0.12.1 - Not Released Yet
 -------------------------
 
+:ELF:
+  * Fix section inclusion calculations (:pr:`692`)
+
 :PE:
   * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`, :issue:`691`)
 
